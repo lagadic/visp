@@ -62,7 +62,7 @@
 #include <visp/vpMbEdgeTracker.h>
 #include <visp/vpMbtDistanceLine.h>
 #include <visp/vpMbtXmlParser.h>
-#include <visp/vpMbtPolygon.h>
+#include <visp/vpPolygon3D.h>
 #include <visp/vpVelocityTwistMatrix.h>
 
 #include <limits>
@@ -1444,7 +1444,7 @@ vpMbEdgeTracker::loadConfigFile(const char* configFile)
     setFarClippingDistance(xmlp.getFarClippingDistance());
   
   if(xmlp.getFovClipping())
-    setClipping(clippingFlag | vpMbtPolygon::FOV_CLIPPING);
+    setClipping(clippingFlag | vpPolygon3D::FOV_CLIPPING);
 
   useLodGeneral = xmlp.getLodState();
   minLineLengthThresholdGeneral = xmlp.getMinLineLengthThreshold();
@@ -1852,13 +1852,13 @@ vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygon, std::string name
         l->setIndex(nline) ;
         l->setName(name);
         
-        if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
+        if(clippingFlag != vpPolygon3D::NO_CLIPPING)
           l->getPolygon().setClipping(clippingFlag);
         
-        if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
+        if((clippingFlag & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING)
           l->getPolygon().setNearClippingDistance(distNearClip);
         
-        if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
+        if((clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING)
           l->getPolygon().setFarClippingDistance(distFarClip);
         
         nline +=1 ;
@@ -1930,13 +1930,13 @@ vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &
         ci->index_polygon = idFace;
         ci->hiddenface = &faces ;
 
-//        if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
+//        if(clippingFlag != vpPolygon3D::NO_CLIPPING)
 //          ci->getPolygon().setClipping(clippingFlag);
 
-//        if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
+//        if((clippingFlag & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING)
 //          ci->getPolygon().setNearClippingDistance(distNearClip);
 
-//        if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
+//        if((clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING)
 //          ci->getPolygon().setFarClippingDistance(distFarClip);
 
         ncircle +=1;
@@ -2267,7 +2267,7 @@ vpMbEdgeTracker::resetTracker()
   
   angleAppears = vpMath::rad(89);
   angleDisappears = vpMath::rad(89);
-  clippingFlag = vpMbtPolygon::NO_CLIPPING;
+  clippingFlag = vpPolygon3D::NO_CLIPPING;
 
   // reinitialization of the scales.
   this->setScales(scales);
@@ -2460,7 +2460,7 @@ vpMbEdgeTracker::setScales(const std::vector<bool>& scale)
 void            
 vpMbEdgeTracker::setFarClippingDistance(const double &dist) 
 { 
-  if( (clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING && dist <= distNearClip)
+  if( (clippingFlag & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING && dist <= distNearClip)
     vpTRACE("Far clipping value cannot be inferior than near clipping value. Far clipping won't be considered.");
   else if ( dist < 0 ) 
     vpTRACE("Far clipping value cannot be inferior than 0. Far clipping won't be considered.");
@@ -2487,7 +2487,7 @@ vpMbEdgeTracker::setFarClippingDistance(const double &dist)
 void           
 vpMbEdgeTracker::setNearClippingDistance(const double &dist) 
 { 
-  if( (clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING && dist >= distFarClip)
+  if( (clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING && dist >= distFarClip)
     vpTRACE("Near clipping value cannot be superior than far clipping value. Near clipping won't be considered.");
   else if ( dist < 0 ) 
     vpTRACE("Near clipping value cannot be inferior than 0. Near clipping won't be considered.");

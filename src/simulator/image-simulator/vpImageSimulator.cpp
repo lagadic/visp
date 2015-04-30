@@ -48,7 +48,7 @@
 #include <visp/vpPixelMeterConversion.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpMatrixException.h>
-#include <visp/vpMbtPolygon.h>
+#include <visp/vpPolygon3D.h>
 
 /*!
   Basic constructor.
@@ -1531,7 +1531,7 @@ vpImageSimulator::setCameraPosition(const vpHomogeneousMatrix &cMt_)
 
     std::vector<vpPoint> *ptPtr = &pt;
     if(needClipping){
-        vpMbtPolygon::getClippedPolygon(pt,ptClipped,cMt,vpMbtPolygon::NEAR_CLIPPING);
+        vpPolygon3D::getClippedPolygon(pt,ptClipped,cMt,vpPolygon3D::NEAR_CLIPPING);
         ptPtr = &ptClipped;
     }
 

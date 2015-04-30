@@ -131,7 +131,7 @@ vpMbTracker::vpMbTracker()
   poseSavingFilename(), computeCovariance(false), covarianceMatrix(), computeProjError(false),
   projectionError(90.0), displayFeatures(false), m_w(), m_error(), faces(),
   angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ), distNearClip(0.001),
-  distFarClip(100), clippingFlag(vpMbtPolygon::NO_CLIPPING), useOgre(false),
+  distFarClip(100), clippingFlag(vpPolygon3D::NO_CLIPPING), useOgre(false),
   nbPoints(0), nbLines(0), nbPolygonLines(0), nbPolygonPoints(0), nbCylinders(0), nbCircles(0),
   useLodGeneral(false), applyLodSettingInConfig(false), minLineLengthThresholdGeneral(50.0),
   minPolygonAreaThresholdGeneral(2500.0), mapOfParameterNames()
@@ -820,13 +820,13 @@ void vpMbTracker::addPolygon(const std::vector<vpPoint>& corners, const int idFa
 
   faces.addPolygon(&polygon);
 
-  if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
+  if(clippingFlag != vpPolygon3D::NO_CLIPPING)
     faces.getPolygon().back()->setClipping(clippingFlag);
 
-  if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
+  if((clippingFlag & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING)
     faces.getPolygon().back()->setNearClippingDistance(distNearClip);
 
-  if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
+  if((clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING)
     faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
@@ -901,13 +901,13 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const vpPoint
     polygon.setIndex(idFace);
     faces.addPolygon(&polygon);
 
-    if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
+    if(clippingFlag != vpPolygon3D::NO_CLIPPING)
       faces.getPolygon().back()->setClipping(clippingFlag);
 
-    if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
+    if((clippingFlag & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING)
       faces.getPolygon().back()->setNearClippingDistance(distNearClip);
 
-    if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
+    if((clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING)
       faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
@@ -936,13 +936,13 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const int idF
 
   faces.addPolygon(&polygon) ;
 
-  if(clippingFlag != vpMbtPolygon::NO_CLIPPING)
+  if(clippingFlag != vpPolygon3D::NO_CLIPPING)
     faces.getPolygon().back()->setClipping(clippingFlag);
 
-  if((clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING)
+  if((clippingFlag & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING)
     faces.getPolygon().back()->setNearClippingDistance(distNearClip);
 
-  if((clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING)
+  if((clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING)
     faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
@@ -2180,12 +2180,12 @@ vpMbTracker::setOgreVisibilityTest(const bool &v)
 void
 vpMbTracker::setFarClippingDistance(const double &dist)
 {
-  if( (clippingFlag & vpMbtPolygon::NEAR_CLIPPING) == vpMbtPolygon::NEAR_CLIPPING && dist <= distNearClip)
+  if( (clippingFlag & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING && dist <= distNearClip)
     vpTRACE("Far clipping value cannot be inferior than near clipping value. Far clipping won't be considered.");
   else if ( dist < 0 )
     vpTRACE("Far clipping value cannot be inferior than 0. Far clipping won't be considered.");
   else{
-    clippingFlag = (clippingFlag | vpMbtPolygon::FAR_CLIPPING);
+    clippingFlag = (clippingFlag | vpPolygon3D::FAR_CLIPPING);
     distFarClip = dist;
     for (unsigned int i = 0; i < faces.size(); i ++){
       faces[i]->setFarClippingDistance(distFarClip);
@@ -2262,12 +2262,12 @@ vpMbTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const st
 void
 vpMbTracker::setNearClippingDistance(const double &dist)
 {
-  if( (clippingFlag & vpMbtPolygon::FAR_CLIPPING) == vpMbtPolygon::FAR_CLIPPING && dist >= distFarClip)
+  if( (clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING && dist >= distFarClip)
     vpTRACE("Near clipping value cannot be superior than far clipping value. Near clipping won't be considered.");
   else if ( dist < 0 )
     vpTRACE("Near clipping value cannot be inferior than 0. Near clipping won't be considered.");
   else{
-    clippingFlag = (clippingFlag | vpMbtPolygon::NEAR_CLIPPING);
+    clippingFlag = (clippingFlag | vpPolygon3D::NEAR_CLIPPING);
     distNearClip = dist;
     for (unsigned int i = 0; i < faces.size(); i ++){
       faces[i]->setNearClippingDistance(distNearClip);

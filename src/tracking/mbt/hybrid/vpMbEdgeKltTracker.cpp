@@ -338,7 +338,7 @@ vpMbEdgeKltTracker::loadConfigFile(const char* configFile)
     setFarClippingDistance(xmlp.getFarClippingDistance());
 
   if(xmlp.getFovClipping()){
-    setClipping(vpMbEdgeTracker::clippingFlag | vpMbtPolygon::FOV_CLIPPING);
+    setClipping(vpMbEdgeTracker::clippingFlag | vpPolygon3D::FOV_CLIPPING);
   }
 
   useLodGeneral = xmlp.getLodState();

@@ -333,7 +333,7 @@ vpMbtDistanceKltPoints::updateMask(
   int i_min, i_max, j_min, j_max;
   std::vector<vpImagePoint> roi;
   polygon->getRoiClipped(cam, roi);
-  vpMbtPolygon::getMinMaxRoi(roi, i_min, i_max, j_min,j_max);
+  vpPolygon3D::getMinMaxRoi(roi, i_min, i_max, j_min,j_max);
 
   /* check image boundaries */
   if(i_min > height){ //underflow

@@ -528,12 +528,12 @@ vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogeneousM
     poly.computeRoiClipped(c);
     
     if( poly.roiPointsClip.size() == 2 && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::NEAR_CLIPPING) == 0) && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::FAR_CLIPPING) == 0) && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::DOWN_CLIPPING) == 0) && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::UP_CLIPPING) == 0) && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::LEFT_CLIPPING) == 0) && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::RIGHT_CLIPPING) == 0)){ 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::UP_CLIPPING) == 0) &&
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
       vpMeterPixelConversion::convertPoint(camera,poly.roiPointsClip[0].first.get_x(),poly.roiPointsClip[0].first.get_y(),ip1);
       vpMeterPixelConversion::convertPoint(camera,poly.roiPointsClip[1].first.get_x(),poly.roiPointsClip[1].first.get_y(),ip2);
 
@@ -570,12 +570,12 @@ vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &
     poly.computeRoiClipped(c);
     
     if( poly.roiPointsClip.size() == 2 && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::NEAR_CLIPPING) == 0) && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::FAR_CLIPPING) == 0) && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::DOWN_CLIPPING) == 0) && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::UP_CLIPPING) == 0) && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::LEFT_CLIPPING) == 0) && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpMbtPolygon::RIGHT_CLIPPING) == 0)){ 
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::UP_CLIPPING) == 0) &&
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
+       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
       vpMeterPixelConversion::convertPoint(camera,poly.roiPointsClip[0].first.get_x(),poly.roiPointsClip[0].first.get_y(),ip1);
       vpMeterPixelConversion::convertPoint(camera,poly.roiPointsClip[1].first.get_x(),poly.roiPointsClip[1].first.get_y(),ip2);
 

@@ -289,6 +289,7 @@ SET (SRC_TOOLS
   tools/geometry/vpRect.cpp
   tools/geometry/vpTriangle.cpp
   tools/geometry/vpPolygon.cpp
+  tools/geometry/vpPolygon3D.cpp
   tools/histogram/vpHistogram.cpp
   tools/histogram/vpHistogramPeak.cpp
   tools/histogram/vpHistogramValey.cpp

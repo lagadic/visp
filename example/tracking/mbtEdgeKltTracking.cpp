@@ -361,8 +361,8 @@ main(int argc, const char ** argv)
     // Specify the clipping to
     tracker.setNearClippingDistance(0.01);
     tracker.setFarClippingDistance(0.90);
-    tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
-    //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+    tracker.setClipping(tracker.getClipping() | vpPolygon3D::FOV_CLIPPING);
+    //   tracker.setClipping(tracker.getClipping() | vpPolygon3D::LEFT_CLIPPING | vpPolygon3D::RIGHT_CLIPPING | vpPolygon3D::UP_CLIPPING | vpPolygon3D::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
 
     // Display the moving edges, and the Klt points
@@ -463,8 +463,8 @@ main(int argc, const char ** argv)
         // Specify the clipping to
         tracker.setNearClippingDistance(0.01);
         tracker.setFarClippingDistance(0.90);
-        tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
-        //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+        tracker.setClipping(tracker.getClipping() | vpPolygon3D::FOV_CLIPPING);
+        //   tracker.setClipping(tracker.getClipping() | vpPolygon3D::LEFT_CLIPPING | vpPolygon3D::RIGHT_CLIPPING | vpPolygon3D::UP_CLIPPING | vpPolygon3D::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
         tracker.loadModel(modelFile);
         tracker.setCameraParameters(cam);

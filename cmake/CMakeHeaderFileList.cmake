@@ -234,6 +234,7 @@ SET (HEADER_TOOLS
   tools/geometry/vpRect.h
   tools/geometry/vpTriangle.h
   tools/geometry/vpPolygon.h
+  tools/geometry/vpPolygon3D.h
   tools/histogram/vpHistogram.h
   tools/histogram/vpHistogramPeak.h
   tools/histogram/vpHistogramValey.h

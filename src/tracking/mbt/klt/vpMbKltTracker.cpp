@@ -260,7 +260,7 @@ vpMbKltTracker::resetTracker()
   angleAppears = vpMath::rad(65);
   angleDisappears = vpMath::rad(75);
   
-  clippingFlag = vpMbtPolygon::NO_CLIPPING;
+  clippingFlag = vpPolygon3D::NO_CLIPPING;
   
   maskBorder = 5;
   threshold_outlier = 0.5;
@@ -886,7 +886,7 @@ vpMbKltTracker::loadConfigFile(const char* configFile)
     setFarClippingDistance(xmlp.getFarClippingDistance());
   
   if(xmlp.getFovClipping())
-    setClipping(clippingFlag = clippingFlag | vpMbtPolygon::FOV_CLIPPING);
+    setClipping(clippingFlag = clippingFlag | vpPolygon3D::FOV_CLIPPING);
 
   useLodGeneral = xmlp.getLodState();
   minLineLengthThresholdGeneral = xmlp.getMinLineLengthThreshold();
@@ -936,12 +936,12 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
       kltpoly->polygon->getRoiClipped(c, roi);
       
       for (unsigned int j = 0; j < roi.size(); j += 1){
-        if(((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::NEAR_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::FAR_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::DOWN_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::UP_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::LEFT_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::RIGHT_CLIPPING) == 0)){
+        if(((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::UP_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
           vpImagePoint ip1, ip2;
           ip1 = roi[j].first;
           ip2 = roi[(j+1)%roi.size()].first;
@@ -1001,12 +1001,12 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
       kltpoly->polygon->getRoiClipped(c, roi);
 
       for (unsigned int j = 0; j < roi.size(); j += 1){
-        if(((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::NEAR_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::FAR_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::DOWN_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::UP_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::LEFT_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpMbtPolygon::RIGHT_CLIPPING) == 0)){
+        if(((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::UP_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
           vpImagePoint ip1, ip2;
           ip1 = roi[j].first;
           ip2 = roi[(j+1)%roi.size()].first;

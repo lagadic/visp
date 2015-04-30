@@ -48,7 +48,7 @@
 
 #include <map>
 
-#include <visp/vpMbtPolygon.h>
+#include <visp/vpPolygon3D.h>
 #include <visp/vpKltOpencv.h>
 #include <visp/vpPlane.h>
 #include <visp/vpDisplay.h>
