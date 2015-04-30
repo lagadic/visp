@@ -53,7 +53,6 @@
 #include <visp/vpMath.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPixelMeterConversion.h>
-#include <visp/vpPose.h>
 #include <fstream>
 #include <list>
 #include <vector>

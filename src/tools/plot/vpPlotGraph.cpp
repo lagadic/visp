@@ -47,7 +47,7 @@
 #include <visp/vpMath.h>
 #include <visp/vpMeterPixelConversion.h>
 #include <visp/vpPixelMeterConversion.h>
-#include <visp/vpPose.h>
+//#include <visp/vpPose.h>
 
 #include <visp/vpDisplayOpenCV.h>
 #include <visp/vpDisplayX.h>
@@ -167,7 +167,7 @@ vpPlotGraph::initSize (vpImagePoint top_left, unsigned int w, unsigned int h, un
   cam.initPersProjWithoutDistortion(1000,1000,this->dWidth/2.0,this->dHeight/2.0);
   
   findPose();
-  
+
   cMf.buildFrom(0,0,cMo[2][3],0,0,0);
 }
 
@@ -188,6 +188,8 @@ vpPlotGraph::findPose()
   iP[3].set_ij(dHeight-1,0);
 
   double x=0, y=0;
+#if 0
+  // Modified by FS to remove dependency with visp_vision (pose) module
   vpPose pose;
   pose.clearPoint();
 
@@ -201,6 +203,17 @@ vpPlotGraph::findPose()
   
   pose.computePose(vpPose::LAGRANGE, cMo) ;
   pose.computePose(vpPose::VIRTUAL_VS, cMo);
+
+#else
+  // Instead of pose computation we use an approximation
+  double Z = 0;
+  for(unsigned int i=0; i< 4; i++) {
+    vpPixelMeterConversion::convertPoint(cam, iP[i], x, y);
+    Z = vpMath::maximum(Z, point[i].get_oX() / x);
+    Z = vpMath::maximum(Z, point[i].get_oY() / y);
+  }
+  cMo[2][3] = Z;
+#endif
 }
 
 void
