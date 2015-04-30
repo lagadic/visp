@@ -46,80 +46,21 @@
   \brief Test various svd decompositions.
 */
 
-
-
 #include <visp/vpTime.h>
 
 #include <visp/vpMatrix.h>
 #include <visp/vpColVector.h>
-#include <visp/vpParseArgv.h>
 #include <vector>
 #include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
-// List of allowed command line options
-#define GETOPTARGS	"h"
 
-void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv);
 bool testSvdOpenCvGSLCoherence(double epsilon);
 #ifdef VISP_HAVE_GSL
 bool testRandom(double epsilon);
 #endif
 
-/*!
 
-  Print the program options.
-
-*/
-void usage(const char *name, const char *badparam)
-{
-  fprintf(stdout, "\n\
-Test various svd decompositions.\n\
-\n\
-SYNOPSIS\n\
-  %s [-h]\n", name);
-
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-  -h\n\
-     Print the help.\n");
-
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
-}
-/*!
-
-  Set the program options.
-
-  \return false if the program has to be stopped, true otherwise.
-
-*/
-bool getOptions(int argc, const char **argv)
-{
-  const char *optarg_;
-  int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
-
-    switch (c) {
-    case 'h': usage(argv[0], NULL); return false; break;
-
-    default:
-      usage(argv[0], optarg_);
-      return false; break;
-    }
-  }
-
-  if ((c == 1) || (c == -1)) {
-    // standalone param or error
-    usage(argv[0], NULL);
-    std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
-    return false;
-  }
-
-  return true;
-}
 #define abs(x) ((x) < 0 ? - (x) : (x))
 #ifdef VISP_HAVE_GSL
 
@@ -191,14 +132,9 @@ bool testSvdOpenCvGSLCoherence(double epsilon)
 }
 
 int
-main(int argc, const char ** argv)
+main()
 {
   try {
-    // Read the command line options
-    if (getOptions(argc, argv) == false) {
-      exit (-1);
-    }
-
     vpMatrix L(60000,6), Ls ;
     for (unsigned int i=0 ; i < L.getRows() ; i++)
       for  (unsigned int j=0 ; j < L.getCols() ; j++)

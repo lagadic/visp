@@ -55,7 +55,7 @@
 #include <stdio.h>
 #include <iostream>
 // List of allowed command line options
-#define GETOPTARGS	"ho:"
+#define GETOPTARGS	"cdho:"
 
 void usage(const char *name, const char *badparam, std::string ofilename);
 bool getOptions(int argc, const char **argv, std::string &ofilename);
@@ -118,6 +118,9 @@ bool getOptions(int argc, const char **argv, std::string &ofilename)
     case 'o': ofilename = optarg_; break;
     case 'h': usage(argv[0], NULL, ofilename); return false; break;
 
+    case 'c':
+    case 'd':
+      break;
     default:
       usage(argv[0], optarg_, ofilename);
       return false; break;

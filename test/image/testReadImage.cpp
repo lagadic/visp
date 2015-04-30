@@ -55,7 +55,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"i:p:h"
+#define GETOPTARGS	"cdi:p:h"
 
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath);
@@ -124,6 +124,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
     case 'i': ipath = optarg_; break;
     case 'p': ppath = optarg_; break;
     case 'h': usage(argv[0], NULL, ipath, ppath); return false; break;
+
+    case 'c':
+    case 'd':
+      break;
 
     default:
       usage(argv[0], optarg_, ipath, ppath); return false; break;

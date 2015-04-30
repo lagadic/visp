@@ -46,9 +46,6 @@
   \brief Performs various tests on the the point class.
 */
 
-// List of allowed command line options
-#define GETOPTARGS	"h"
-
 #include <visp/vpMath.h>
 #include <visp/vpHomogeneousMatrix.h>
 #include <visp/vpPoint.h>
@@ -56,79 +53,13 @@
 #include <visp/vpFeatureException.h>
 #include <visp/vpDebug.h>
 #include <visp/vpFeatureBuilder.h>
-#include <visp/vpParseArgv.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 
-
-void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv);
-
-/*!
-
-  Print the program options.
-
-*/
-void usage(const char *name, const char *badparam)
-{
-  fprintf(stdout, "\n\
-Performs various tests on the point class.\n\
-\n\
-SYNOPSIS\n\
-  %s [-h]\n", name);
-
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-  -h\n\
-     Print the help.\n");
-
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
-}
-/*!
-
-  Set the program options.
-
-  \return false if the program has to be stopped, true otherwise.
-
-*/
-bool getOptions(int argc, const char **argv)
-{
-  const char *optarg_;
-  int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
-
-    switch (c) {
-    case 'h': usage(argv[0], NULL); return false; break;
-
-    default:
-      usage(argv[0], optarg_);
-      return false; break;
-    }
-  }
-
-  if ((c == 1) || (c == -1)) {
-    // standalone param or error
-    usage(argv[0], NULL);
-    std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
-    return false;
-  }
-
-  return true;
-}
-
-
-int
-main(int argc, const char ** argv)
+int main()
 {
   try {
-    // Read the command line options
-    if (getOptions(argc, argv) == false) {
-      exit (-1);
-    }
-
     vpHomogeneousMatrix cMo ;
     cMo[0][3] = 0.1 ;
     cMo[1][3] = 0.2 ;

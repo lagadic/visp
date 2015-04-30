@@ -206,7 +206,7 @@ vpExampleDataParser::writeMainClass(xmlNodePtr node)
 /* -------------------------------------------------------------------------- */
 
 // List of allowed command line options
-#define GETOPTARGS	"o:h"
+#define GETOPTARGS	"cdo:h"
 
 void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user);
 bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user);
@@ -264,6 +264,10 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
     switch (c) {
     case 'o': opath = optarg_; break;
     case 'h': usage(argv[0], NULL, opath, user); return false; break;
+
+    case 'c':
+    case 'd':
+      break;
 
     default:
       usage(argv[0], optarg_, opath, user); return false; break;

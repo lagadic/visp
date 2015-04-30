@@ -61,7 +61,7 @@
  */
 
 // List of allowed command line options
-#define GETOPTARGS  "i:o:h"
+#define GETOPTARGS  "cdi:o:h"
 
 //#define COLOR
 #define BW
@@ -138,6 +138,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     case 'i': ipath = optarg_; break;
     case 'o': opath = optarg_; break;
     case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
+
+    case 'c':
+    case 'd':
+      break;
 
     default:
       usage(argv[0], optarg_, ipath, opath, user); return false; break;

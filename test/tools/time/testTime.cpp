@@ -59,78 +59,10 @@
 #include <iostream>
 #include <time.h>
 #include <visp/vpTime.h>
-#include <visp/vpParseArgv.h>
 
-void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv);
-
-// List of allowed command line options
-#define GETOPTARGS	"h"
-
-/*!
-
-  Print the program options.
-
-*/
-void usage(const char *name, const char *badparam)
-{
-  fprintf(stdout, "\n\
-Time management.\n\
-\n\
-SYNOPSIS\n\
-  %s [-h]\n", name);
-
-  fprintf(stdout, "\n\
-OPTIONS:                                               Default\n\
-  -h\n\
-     Print the help.\n");
-
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
-}
-/*!
-
-  Set the program options.
-
-  \return false if the program has to be stopped, true otherwise.
-
-*/
-bool getOptions(int argc, const char **argv)
-{
-  const char *optarg_;
-  int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
-
-    switch (c) {
-    case 'h': usage(argv[0], NULL); return false; break;
-
-    default:
-      usage(argv[0], optarg_);
-      return false; break;
-    }
-  }
-
-  if ((c == 1) || (c == -1)) {
-    // standalone param or error
-    usage(argv[0], NULL);
-    std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
-    return false;
-  }
-
-  return true;
-}
-
-
-int
-main(int argc, const char ** argv)
+int main()
 {
   try {
-    // Read the command line options
-    if (getOptions(argc, argv) == false) {
-      exit (-1);
-    }
-
     double v = 0;
 
     double t0 = vpTime::measureTimeMs();
