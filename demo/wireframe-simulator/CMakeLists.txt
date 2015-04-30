@@ -38,38 +38,45 @@
 #
 #############################################################################
 
+project(demo-wireframe-simulator)
+
+cmake_minimum_required(VERSION 2.6)
+
+find_package(VISP REQUIRED)
+
 # SOURCE variable corresponds to the list of all the sources to build binaries.
 # The generate binary comes by removing the .cpp extension to
 # the source name.
 #
 # If you want to add/remove a source, modify here
-set (SOURCE
+set(demo_cpp
   servoSimu4Points.cpp
   servoSimuCylinder.cpp
   servoSimuSphere.cpp
 )
 
 # rule for binary build
-foreach(source ${SOURCE})
+foreach(cpp ${demo_cpp})
   # Compute the name of the binary to create
-  get_filename_component(binary ${source} NAME_WE)
+  get_filename_component(bin ${cpp} NAME_WE)
 
   # From source compile the binary and add link rules
-  add_executable(${binary} ${source})
-  target_link_libraries(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
-  add_dependencies(visp_demos ${binary})
+  include_directories(${VISP_INCLUDE_DIRS})
+  add_executable(${bin} ${cpp})
+  target_link_libraries(${bin} ${VISP_LIBRARIES})
+  add_dependencies(visp_demos ${bin})
   if(ENABLE_SOLUTION_FOLDERS)
-    set_target_properties(${binary} PROPERTIES FOLDER "demos")
+    set_target_properties(${bin} PROPERTIES FOLDER "demos")
   endif()
 
   if(UNIX)
-    install(TARGETS ${binary}
+    install(TARGETS ${bin}
       DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/demo/wireframe-simulator
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
       OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
       OWNER_WRITE)
   else()
-    install(TARGETS ${binary}
+    install(TARGETS ${bin}
       DESTINATION demo/wireframe-simulator
       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
       OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE

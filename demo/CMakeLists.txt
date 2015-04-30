@@ -38,14 +38,5 @@
 #
 #############################################################################
 
-# Set SRC_SUBDIRS variable to all the sub directories we want to parse during
-# the build process. 
-#
-# If you add/remove a directory, modify here
-SET (SRC_SUBDIRS
-  wireframe-simulator
-)
-
-# Build process propagation in the sub directories
-SUBDIRS(${SRC_SUBDIRS})
+add_subdirectory(wireframe-simulator)
 
