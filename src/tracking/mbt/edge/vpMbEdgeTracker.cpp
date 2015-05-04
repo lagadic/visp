@@ -100,7 +100,7 @@ vpMbEdgeTracker::~vpMbEdgeTracker()
   vpMbtDistanceCylinder *cy;
   vpMbtDistanceCircle *ci;
 
-  for (unsigned int i = 0; i < lines.size(); i += 1){
+  for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
         l = *it;
