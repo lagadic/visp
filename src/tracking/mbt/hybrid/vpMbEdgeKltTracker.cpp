@@ -112,7 +112,6 @@ vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneou
     vpMbKltTracker::setPose(I, cdMo);
     
     if (! lines[scaleLevel].empty()) {
-      lines[scaleLevel].front() ;
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
         if((*it)->meline != NULL){
           delete (*it)->meline;
@@ -122,7 +121,6 @@ vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneou
     }
     
     if (! cylinders[scaleLevel].empty()) {
-      cylinders[scaleLevel].front() ;
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
         if((*it)->meline1 != NULL){
           delete (*it)->meline1;
@@ -136,7 +134,6 @@ vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneou
     }
 
     if (! circles[scaleLevel].empty()) {
-      circles[scaleLevel].front() ;
       for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
         if((*it)->meEllipse != NULL){
           delete (*it)->meEllipse;
