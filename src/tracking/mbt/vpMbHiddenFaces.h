@@ -271,7 +271,7 @@ vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces()
 #ifdef VISP_HAVE_OGRE
   ogreInitialised = false;
   nbRayAttempts = 1;
-  ratioVisibleRay = 100;
+  ratioVisibleRay = 1.0;
   ogre = new vpAROgre();
   ogre->setShowConfigDialog(false);
   ogreBackground = vpImage<unsigned char>(480, 640, 0);
@@ -366,6 +366,8 @@ vpMbHiddenFaces<PolygonType>::reset()
   lOgrePolygons.resize(0);
 
   ogreInitialised = false;
+  nbRayAttempts = 1;
+  ratioVisibleRay = 1.0;
   ogre = new vpAROgre();
   ogre->setShowConfigDialog(false);
   ogreBackground = vpImage<unsigned char>(480, 640);
