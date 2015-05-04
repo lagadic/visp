@@ -416,6 +416,9 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
   vpMbEdgeTracker::initMovingEdge(I, cMo) ;
   vpMbEdgeTracker::reinitMovingEdge(I, cMo);
 
+  if(computeProjError)
+    vpMbEdgeTracker::computeProjectionError(I);
+
   if(reInit)
     return true;
   
