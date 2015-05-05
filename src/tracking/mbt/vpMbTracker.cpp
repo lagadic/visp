@@ -1365,12 +1365,13 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
           fileId >> x;
           fileId >> y;
           fileId >> z;
-          fileId.ignore(256, '\n'); // skip the rest of the line
 
           if (caoVersion == 2) {
               fileId >> i;
               fileId >> j;
           }
+
+          fileId.ignore(256, '\n'); // skip the rest of the line
 
           caoPoints[k].setWorldCoordinates(x, y, z);
       }
