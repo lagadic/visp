@@ -61,6 +61,7 @@
 #if defined (VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400)  // Require opencv >= 1.1.0 < 3.0.0
+#  include <opencv2/core/core.hpp>
 #  include <opencv2/features2d/features2d.hpp>
 #  include <opencv2/legacy/compat.hpp>
 #  include <opencv2/nonfree/nonfree.hpp>
