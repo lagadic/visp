@@ -92,6 +92,8 @@ add_test(servoSimu3D_cMcd_CamVelocityWithoutVpServo	servoSimu3D_cMcd_CamVelocity
 add_test(servoSimuCircle2DCamVelocity			servoSimuCircle2DCamVelocity			)
 add_test(servoSimuCircle2DCamVelocityDisplay		servoSimuCircle2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
 add_test(servoSimuCylinder2DCamVelocityDisplay		servoSimuCylinder2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
+add_test(servoSimuCylinder2DCamVelocityDisplaySecondaryTask   servoSimuCylinder2DCamVelocityDisplaySecondaryTask -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(servoSimuCylinder2DCamVelocityDisplaySecondaryTask2 servoSimuCylinder2DCamVelocityDisplaySecondaryTask -c ${OPTION_TO_DESACTIVE_DISPLAY} -p)
 add_test(servoSimuFourPoints2DCamVelocity		servoSimuFourPoints2DCamVelocity		)
 add_test(servoSimuFourPoints2DCamVelocityDisplay	servoSimuFourPoints2DCamVelocityDisplay -c ${OPTION_TO_DESACTIVE_DISPLAY}	)
 add_test(servoSimuLine2DCamVelocityDisplay		servoSimuLine2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)

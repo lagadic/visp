@@ -79,10 +79,10 @@
 #include <visp/vpServoDisplay.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdh"
+#define GETOPTARGS	"cdhp"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display, bool &use_large_proj_operator);
 
 /*!
 
@@ -101,7 +101,7 @@ Simulation of a 2D visual servoing on a cylinder:\n\
 - display the camera view.\n\
           \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-h] [-p]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -113,6 +113,9 @@ OPTIONS:                                               Default\n\
   -d \n\
      Turn off the display.\n\
                   \n\
+  -lp \n\
+      Use the large projection operator.\n\
+                   \n\
   -h\n\
      Print the help.\n");
 
@@ -131,7 +134,7 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display, bool &use_large_proj_operator )
 {
   const char *optarg_;
   int	c;
@@ -140,6 +143,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
     switch (c) {
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
+    case 'p': use_large_proj_operator = true; break;
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
@@ -166,9 +170,10 @@ main(int argc, const char ** argv)
   try {
     bool opt_display = true;
     bool opt_click_allowed = true;
+    bool use_large_proj_operator = false;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
+    if (getOptions(argc, argv, opt_click_allowed, opt_display, use_large_proj_operator) == false) {
       exit (-1);
     }
 
@@ -211,6 +216,11 @@ main(int argc, const char ** argv)
         exit(-1);
       }
     }
+
+    if(use_large_proj_operator)
+      std::cout << "Use large projection operator" << std::endl;
+    else
+      std::cout << "Use classic projection operator" << std::endl;
 
     vpProjectionDisplay externalview ;
 
@@ -396,7 +406,7 @@ main(int argc, const char ** argv)
       {
         e2 = 0;
         e1[0] = fabs(vitesse)  ;
-        proj_e1 = task.secondaryTask(e1);
+        proj_e1 = task.secondaryTask(e1, use_large_proj_operator);
         rapport = vitesse/proj_e1[0];
         proj_e1 *= rapport ;
         v += proj_e1 ;
@@ -406,7 +416,7 @@ main(int argc, const char ** argv)
       {
         e1 = 0;
         e2[1] = fabs(vitesse)  ;
-        proj_e2 = task.secondaryTask(e2);
+        proj_e2 = task.secondaryTask(e2, use_large_proj_operator) ;
         rapport = vitesse/proj_e2[1];
         proj_e2 *= rapport ;
         v += proj_e2 ;
@@ -416,7 +426,7 @@ main(int argc, const char ** argv)
       {
         e2 = 0;
         e1[0] = -fabs(vitesse)  ;
-        proj_e1 = task.secondaryTask(e1);
+        proj_e1 = task.secondaryTask(e1, use_large_proj_operator);
         rapport = -vitesse/proj_e1[0];
         proj_e1 *= rapport ;
         v += proj_e1 ;
@@ -426,7 +436,7 @@ main(int argc, const char ** argv)
       {
         e1 = 0;
         e2[1] = -fabs(vitesse)  ;
-        proj_e2 = task.secondaryTask(e2);
+        proj_e2 = task.secondaryTask(e2, use_large_proj_operator);
         rapport = -vitesse/proj_e2[1];
         proj_e2 *= rapport ;
         v += proj_e2 ;

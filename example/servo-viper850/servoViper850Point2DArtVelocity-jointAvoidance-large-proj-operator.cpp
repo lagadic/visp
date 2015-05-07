@@ -1,10 +1,10 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id: servoViper850Point2DArtVelocity-jointAvoidance-gpa.cpp 4698 2014-03-26 06:55:37Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
- * 
+ *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * ("GPL") version 2 as published by the Free Software Foundation.
@@ -12,11 +12,11 @@
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional 
+ * GPL, please contact INRIA about acquiring a ViSP Professional
  * Edition License.
  *
  * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -26,7 +26,7 @@
  *
  * If you have questions regarding the use of this file, please contact
  * INRIA at visp@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -39,15 +39,15 @@
  * Authors:
  * Eric Marchand
  * Fabien Spindler
+ * Giovanni Claudio
  *
  *****************************************************************************/
 
 /*!
   \example servoViper850Point2DArtVelocity-jointAvoidance-gpa.cpp
 
-  Joint limits avoidance using a gradient projection approach. 
-
-  Implemented from \cite Marchand96f and section II.B in \cite Chaumette01c.
+  Joint limits avoidance using a secondary task for joint limit avoidance \cite Marey:2010b using the
+  new large projection operator (see equation(24) in the paper \cite Marey:2010).
 */
 
 #include <visp/vpConfig.h>
@@ -59,7 +59,7 @@
 #include <fstream>
 #include <sstream>
 
-#if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394) && defined(VISP_HAVE_DISPLAY))
+#if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394_2) && defined(VISP_HAVE_DISPLAY))
 
 #include <visp/vp1394TwoGrabber.h>
 #include <visp/vpImage.h>
@@ -83,24 +83,9 @@
 
 
 int
-main(int argc, char* argv[])
+main()
 {
   try {
-
-    bool use_large_proj_operator = false;
-
-    for (int i=0; i<argc; i++) {
-      if (std::string(argv[i]) == "-p")
-      {
-        use_large_proj_operator = true;
-        std::cout << "Use the large projection operator." << std::endl;
-      }
-      else if (std::string(argv[i]) == "-h") {
-        std::cout << "Usage: " << argv[0] << "[-p] To use the large projection operator." << std::endl;
-        return 0;
-      }
-    }
-
     vpRobotViper850 robot ;
 
     vpServo task ;
@@ -130,85 +115,63 @@ main(int argc, char* argv[])
     jointMin = robot.getJointMin();
     jointMax = robot.getJointMax();
 
-    vpColVector Qmin(6), tQmin(6) ;
-    vpColVector Qmax(6), tQmax(6) ;
     vpColVector Qmiddle(6);
-    vpColVector data(10) ;
+    vpColVector data(12) ;
 
-    double rho = 0.15 ;
-    for (unsigned int i=0 ; i < 6 ; i++)
-    {
-      Qmin[i] = jointMin[i] + 0.5*rho*(jointMax[i]-jointMin[i]) ;
-      Qmax[i] = jointMax[i] - 0.5*rho*(jointMax[i]-jointMin[i]) ;
-    }
-    Qmiddle = (Qmin + Qmax) /2.;
-    double rho1 = 0.1 ;
+    Qmiddle = (jointMin + jointMax) /2.;
+    //    double rho1 = 0.1 ;
     
-    for (unsigned int i=0 ; i < 6 ; i++) {
-      tQmin[i]=Qmin[i]+ 0.5*(rho1)*(Qmax[i]-Qmin[i]) ;
-      tQmax[i]=Qmax[i]- 0.5*(rho1)*(Qmax[i]-Qmin[i]) ;
-    }
+    double rho = 0.1;
+    double rho1 = 0.3;
 
     vpColVector q(6) ;
 
     // Create a window with two graphics
-    // - first graphic to plot q(t), Qmin, Qmax, tQmin and tQmax
-    // - second graphic to plot the cost function h_s
+    // - first graphic to plot q(t), Qmin, Qmax, Ql0min, Ql1min, Ql0max and Ql1max
     vpPlot plot(2);
 
-    // The first graphic contains 10 data to plot: q(t), Qmin, Qmax, tQmin and
-    // tQmax
-    plot.initGraph(0, 10);
-    // The second graphic contains 1 curve, the cost function h_s
-    plot.initGraph(1, 1);
-
+    // The first graphic contains 12 data to plot: q(t), Low Limits, Upper Limits, ql0min, ql1min, ql0max and ql1max
+    plot.initGraph(0, 12);
+    // The second graphic contains the values of the secondaty task velocities
+    plot.initGraph(1, 6);
 
     // For the first graphic :
-    // - along the x axis the expected values are between 0 and 200 
-    // - along the y axis the expected values are between -1.2 and 1.2 
+    // - along the x axis the expected values are between 0 and 200
+    // - along the y axis the expected values are between -1.2 and 1.2
     plot.initRange(0, 0., 200., -1.2, 1.2);
     plot.setTitle(0, "Joint behavior");
 
     // For the second graphic :
-    // - along the x axis the expected values are between 0 and 200 and 
-    //   the step is 1 
-    // - along the y axis the expected values are between 0 and 0.0001 and the
-    //   step is 0.00001
-    plot.initRange(1, 0., 200., 0., 1e-4);
-    plot.setTitle(1, "Cost function");
+    plot.setTitle(1, "Q secondary task");
 
-    // For the first graphic, set the curves legend
+    // For the first and second graphic, set the curves legend
     char legend[10];
     for (unsigned int i=0; i < 6; i++) {
       sprintf(legend, "q%d", i+1);
       plot.setLegend(0, i, legend);
+      plot.setLegend(1, i, legend);
     }
-    plot.setLegend(0, 6, "tQmin");
-    plot.setLegend(0, 7, "tQmax");
-    plot.setLegend(0, 8, "Qmin");
-    plot.setLegend(0, 9, "Qmax");
+    plot.setLegend(0, 6, "Low Limit");
+    plot.setLegend(0, 7, "Upper Limit");
+    plot.setLegend(0, 8, "ql0 min");
+    plot.setLegend(0, 9, "ql0 max");
+    plot.setLegend(0, 10, "ql1 min");
+    plot.setLegend(0, 11, "ql1 max");
 
     // Set the curves color
-    plot.setColor(0, 0, vpColor::red); 
-    plot.setColor(0, 1, vpColor::green); 
-    plot.setColor(0, 2, vpColor::blue); 
-    plot.setColor(0, 3, vpColor::orange); 
-    plot.setColor(0, 4, vpColor(0, 128, 0)); 
-    plot.setColor(0, 5, vpColor::cyan); 
-    for (unsigned int i= 6; i < 10; i++)
+    plot.setColor(0, 0, vpColor::red);
+    plot.setColor(0, 1, vpColor::green);
+    plot.setColor(0, 2, vpColor::blue);
+    plot.setColor(0, 3, vpColor::orange);
+    plot.setColor(0, 4, vpColor(0, 128, 0));
+    plot.setColor(0, 5, vpColor::cyan);
+    for (unsigned int i= 6; i < 12; i++)
       plot.setColor(0, i, vpColor::black); // for Q and tQ [min,max]
 
-    // For the second graphic, set the curves legend
-    plot.setLegend(1, 0, "h_s");
-
-    double beta = 1; 
-
-    // Set the amplitude of the control law due to the secondary task
-    std::cout << " Give the parameters beta (1) : ";
-    std::cin >> beta ;
+    vpColVector sec_task(6) ;
 
     vpDot2 dot ;
-
+    
     std::cout << "Click on a dot..." << std::endl;
     dot.initTracking(I) ;
     vpImagePoint cog = dot.getCog();
@@ -287,35 +250,11 @@ main(int argc, char* argv[])
       task.set_eJe(eJe) ;
 
       vpColVector prim_task ;
-      vpColVector e2(6) ;
       // Compute the visual servoing skew vector
       prim_task = task.computeControlLaw() ;
 
-      vpColVector sec_task(6) ;
-      double h_s = 0 ;
-      {
-        // joint limit avoidance with secondary task
-
-        vpColVector de2dt(6);
-        de2dt = 0 ;
-        e2 = 0 ;
-        for (unsigned int i=0 ; i < 6 ; i++)
-        {
-          double S = 0 ;
-          if (q[i] > tQmax[i]) S = q[i] - tQmax[i] ;
-          if (q[i] < tQmin[i]) S = q[i] - tQmin[i] ;
-          double D = (Qmax[i]-Qmin[i]) ;
-          h_s += vpMath::sqr(S)/D ;
-          e2[i] = S/D ;
-        }
-        h_s = beta*h_s/2.0 ; // cost function
-        e2 *= beta ;
-        //	std::cout << e2.t() << std::endl;
-        std::cout << "Cost function h_s: " << h_s << std::endl;
-
-        sec_task = task.secondaryTask(e2, de2dt, use_large_proj_operator) ;
-
-      }
+      // Compute the secondary task for the joint limit avoidance
+      sec_task = task.secondaryTaskJointLimitAvoidance(q, prim_task, jointMin, jointMax, rho, rho1);
 
       vpColVector v ;
       v = prim_task + sec_task;
@@ -332,15 +271,26 @@ main(int argc, char* argv[])
         // q normalized between (entre -1 et 1)
         for (unsigned int i=0 ; i < 6 ; i++) {
           data[i] = (q[i] - Qmiddle[i]) ;
-          data[i] /= (Qmax[i] - Qmin[i]) ;
+          data[i] /= (jointMax[i] - jointMin[i]) ;
           data[i]*=2 ;
         }
+
+        data[6] = -1.0;
+        data[7] = 1.0;
+
         unsigned int joint = 2;
-        data[6] = 2*(tQmin[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
-        data[7] = 2*(tQmax[joint]-Qmiddle[joint])/(Qmax[joint] - Qmin[joint]) ;
-        data[8] = -1 ; data[9] = 1 ;
-        plot.plot(0, iter, data); // plot q, Qmin, Qmax, tQmin, tQmax
-        plot.plot(1, 0, iter, h_s); // plot the cost function
+        double tQmin_l0 = jointMin[joint] + rho *(jointMax[joint] - jointMin[joint]);
+        double tQmax_l0 = jointMax[joint] - rho *(jointMax[joint] - jointMin[joint]);
+
+        double tQmin_l1 =  tQmin_l0 - rho * rho1 * (jointMax[joint] - jointMin[joint]);
+        double tQmax_l1 =  tQmax_l0 + rho * rho1 * (jointMax[joint] - jointMin[joint]);
+
+        data[8] = 2*(tQmin_l0 - Qmiddle[joint])/(jointMax[joint] - jointMin[joint]);
+        data[9] = 2*(tQmax_l0 - Qmiddle[joint])/(jointMax[joint] - jointMin[joint]);
+        data[10] = 2*(tQmin_l1 - Qmiddle[joint])/(jointMax[joint] - jointMin[joint]);
+        data[11] = 2*(tQmax_l1 - Qmiddle[joint])/(jointMax[joint] - jointMin[joint]);
+        plot.plot(0, iter, data); // plot q(t), Low Limits, Upper Limits, ql0min, ql1min, ql0max and ql1max
+        plot.plot(1, iter, sec_task); //plot secondary task velocities
       }
 
       vpDisplay::flush(I) ;
@@ -351,17 +301,18 @@ main(int argc, char* argv[])
     task.kill();
     return 0;
   }
-  catch (vpException &e)
+  catch (...)
   {
-    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
+    vpERROR_TRACE(" Test failed") ;
     return 0;
   }
 }
+
 
 #else
 int
 main()
 {
-  vpERROR_TRACE("You do not have an Viper 850 robot or a firewire framegrabber connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot or a firewire framegrabber connected to your computer...");
 }
 #endif

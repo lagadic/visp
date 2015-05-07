@@ -4,7 +4,7 @@
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
- * 
+ *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * ("GPL") version 2 as published by the Free Software Foundation.
@@ -12,11 +12,11 @@
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional 
+ * GPL, please contact INRIA about acquiring a ViSP Professional
  * Edition License.
  *
  * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -26,7 +26,7 @@
  *
  * If you have questions regarding the use of this file, please contact
  * INRIA at visp@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -108,8 +108,8 @@ int main()
   s_tu.buildFrom(cdMc);
 
   // Build the desired visual feature s* = (0,0)
-  vpFeatureTranslation s_star_t(vpFeatureTranslation::cdMc); // Default initialization to zero 
-  vpFeatureThetaU s_star_tu(vpFeatureThetaU::cdRc);// Default initialization to zero 
+  vpFeatureTranslation s_star_t(vpFeatureTranslation::cdMc); // Default initialization to zero
+  vpFeatureThetaU s_star_tu(vpFeatureThetaU::cdRc);// Default initialization to zero
 
   vpColVector v; // Camera velocity
   double error;  // Task error
@@ -120,15 +120,15 @@ int main()
   // Visual servo task initialization
   // - Camera is monted on the robot end-effector and velocities are
   //   computed in the camera frame
-  task.setServo(vpServo::EYEINHAND_CAMERA); 
+  task.setServo(vpServo::EYEINHAND_CAMERA);
   // - Interaction matrix is computed with the current visual features s
-  task.setInteractionMatrixType(vpServo::CURRENT); 
+  task.setInteractionMatrixType(vpServo::CURRENT);
   // - Set the contant gain to 1
   task.setLambda(1);
   // - Add current and desired translation feature
-  task.addFeature(s_t, s_star_t); 
+  task.addFeature(s_t, s_star_t);
   // - Add current and desired ThetaU feature for the rotation
-  task.addFeature(s_tu, s_star_tu); 
+  task.addFeature(s_tu, s_star_tu);
 
   // Visual servoing loop. The objective is here to update the visual
   // features s = (c*_t_c, ThetaU), compute the control law and apply
@@ -284,6 +284,8 @@ public:
     return servoType;
   }
 
+  vpMatrix getLargeP() const;
+
   vpMatrix getTaskJacobian() const;
   vpMatrix getTaskJacobianPseudoInverse() const;
   unsigned int getTaskRank() const;
@@ -328,9 +330,13 @@ public:
              std::ostream &os = std::cout) ;
 
   // Add a secondary task.
-  vpColVector secondaryTask(const vpColVector &de2dt) ;
+  vpColVector secondaryTask(const vpColVector &de2dt, const bool &useLargeProjectionOperator = false) ;
   // Add a secondary task.
-  vpColVector secondaryTask(const vpColVector &e2, const vpColVector &de2dt) ;
+  vpColVector secondaryTask(const vpColVector &e2, const vpColVector &de2dt, const bool &useLargeProjectionOperator = false) ;
+  // Add a secondary task to avoid the joint limit.
+  vpColVector secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq, const vpColVector & jointMin,
+                                               const vpColVector & jointMax, const double &rho=0.1, const double &rho1=0.3, const double &lambda_tune=0.7) const;
+
 
   /*!
     Set a variable which enables to compute the interaction matrix at each iteration.
@@ -455,6 +461,11 @@ public:
   //! Basic initialization.
   void init() ;
 
+  /*!
+    Compute the classic projetion operator and the large projection operator.
+   */
+  void computeProjectionOperators();
+
   public:
   //! Interaction matrix
   vpMatrix L ;
@@ -555,6 +566,25 @@ public:
   vpMatrix WpW ;
   //! Projection operators \f$\bf I-WpW\f$.
   vpMatrix I_WpW ;
+  /*!
+    New Large projection operator (see equation(24) in the paper \cite Marey:2010). This projection operator allows
+    performing secondary task even when the main task is full rank.
+  \f[
+   {\bf P} =\bar{\lambda }\left ( \left \| {\bf e} \right \| \right ){\bf P}_{ \left \| {\bf e } \right \| } \left
+   ( 1 - \bar{\lambda }\left ( \left \| {\bf e } \right \| \right ) \right ) \left (  {\bf I-W^+W}\right )
+  \f]
+
+  with
+
+  \f[
+  {\bf P}_{\left \| {\bf e } \right \| } = I_{n} - \frac{1}{{\bf e }^\top {\bf J_{{\bf e }} } {\bf J_{{\bf e }}^\top }
+  {\bf e }}{\bf J_{{\bf e }}^\top }{\bf e }{\bf e }^\top{\bf J_{{\bf e }} }
+  \f]
+
+   */
+  vpMatrix P;
+
+
 
   //! Singular values from the pseudo inverse.
   vpColVector sv ;
