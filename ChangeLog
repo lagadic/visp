@@ -13,6 +13,7 @@ ViSP 2.11.0 (under development)
     . [18748] Ogre and wireframe resources not found after ViSP installation
     . [18823] vpMatrix::kernel method returns false result if matrix has
       less rows than columns
+    . [18939] vpParseArgv::ARGV_CONSTANT segfault
 
 ----------------------------------------------
 ViSP 2.10.0 (released February 13th, 2015)
