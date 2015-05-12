@@ -72,6 +72,30 @@ std::string vpIoTools::configFile = "";
 std::vector<std::string> vpIoTools::configVars = std::vector<std::string>();
 std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 
+/*!
+  Sets the base name (prefix) of the experiment files.
+    
+  \param s : Prefix of the experiment files.
+*/
+void vpIoTools::setBaseName(const std::string &s) {baseName = s;}
+/*!
+  Sets the base directory of the experiment files.
+    
+  \param dir : Directory where the data will be saved.
+*/
+void vpIoTools::setBaseDir(const std::string &dir) {baseDir = dir + "/";}
+/*!
+  Gets the base name (prefix) of the experiment files.
+    
+  \return the base name of the experiment files.
+*/
+std::string vpIoTools::getBaseName() {return baseName;}
+/*!
+  Gets the full path of the experiment files : baseDir/baseName
+    
+  \return the full path of the experiment files.
+*/
+std::string vpIoTools::getFullName() {return baseDir + baseName;}
 
 /*!
   Get the user name.

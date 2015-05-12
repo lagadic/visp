@@ -101,3 +101,64 @@ bool vpMath::isNaN(const double value)
   #endif
 #endif
 }
+
+/*!
+  Compute \f$ (1-cos(x))/x^2 \f$
+
+  \param cosx : Value of cos(x).
+  \param x : Value of x.
+
+  \return \f$ (1-cosx)/x^2 \f$
+
+*/
+double vpMath::mcosc(double cosx, double x)
+{
+  if (fabs(x) < ang_min_mc) return 0.5 ;
+  else  return ((1.0-cosx)/x/x) ;
+}
+
+/*!
+
+  Compute \f$ (1-sinc(x))/x^2 \f$ with \f$ sinc(x) = sinx / x \f$.
+
+  \param sinx : value of sin(x).
+  \param x  : Value of x.
+
+  \return \f$ (1-sinc(x))/x^2 \f$
+
+*/
+double vpMath::msinc(double sinx, double x)
+{
+  if (fabs(x) < ang_min_mc) return (1./6.0) ;
+  else  return ((1.0-sinx/x)/x/x) ;
+}
+
+/*!
+
+  Compute sinus cardinal \f$ \frac{sin(x)}{x} \f$.
+
+  \param x : Value of x.
+
+  \return Sinus cardinal.
+
+*/
+double vpMath::sinc(double x)
+{
+  if (fabs(x) < ang_min_sinc) return 1.0 ;
+  else  return sin(x)/x ;
+}
+/*!
+
+  Compute sinus cardinal \f$ \frac{sin(x)}{x}\f$.
+
+  \param sinx : Value of sin(x).
+  \param x : Value of x.
+
+  \return Sinus cardinal.
+
+*/
+double vpMath::sinc(double sinx, double x)
+{
+  if (fabs(x) < ang_min_sinc) return 1.0 ;
+  else  return (sinx/x) ;
+}

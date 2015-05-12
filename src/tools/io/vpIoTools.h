@@ -211,34 +211,14 @@ public:
 			    const unsigned int &nRows = 0);
   
   // construct experiment filename & path
-  /*!
-    Sets the base name (prefix) of the experiment files.
-    
-    \param s : Prefix of the experiment files.
-  */
-  inline static void setBaseName(const std::string &s) {baseName = s;}
-  /*!
-    Sets the base directory of the experiment files.
-    
-    \param dir : Directory where the data will be saved.
-  */
-  static inline void setBaseDir(const std::string &dir) {baseDir = dir + "/";}
+  static void setBaseName(const std::string &s);
+  static void setBaseDir(const std::string &dir);
   static void addNameElement(const std::string &strTrue, 
 			     const bool &cond=true, 
 			     const std::string &strFalse="");
   static void addNameElement(const std::string &strTrue, const double &val);
-  /*!
-    Gets the base name (prefix) of the experiment files.
-    
-    \return the base name of the experiment files.
-  */
-  inline static std::string getBaseName() {return baseName;}
-  /*!
-    Gets the full path of the experiment files : baseDir/baseName
-    
-    \return the full path of the experiment files.
-  */
-  inline static std::string getFullName() {return baseDir + baseName;}
+  static std::string getBaseName();
+  static std::string getFullName();
   
   // write files
   static void saveConfigFile(const bool &actuallySave = true);

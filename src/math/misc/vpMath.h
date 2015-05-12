@@ -162,10 +162,10 @@ class VISP_EXPORT vpMath
 
 
   // sinus cardinal
-  static inline double sinc(double x) ;
-  static inline double sinc(double sinx, double x) ;
-  static inline double mcosc(double cosx, double x) ;
-  static inline double msinc(double sinx, double x) ;
+  static double sinc(double x) ;
+  static double sinc(double sinx, double x) ;
+  static double mcosc(double cosx, double x) ;
+  static double msinc(double sinx, double x) ;
 
   // sigmoid
   static inline double sigmoid(double x, double x0=0.,double x1=1., double n=12.);
@@ -289,67 +289,6 @@ bool vpMath::equal(double x, double y, double s)
 bool vpMath::greater(double x, double y, double s)
 {
   return(x>(y-s));
-}
-
-/*!
-
-  Compute sinus cardinal \f$ \frac{sin(x)}{x} \f$.
-
-  \param x : Value of x.
-
-  \return Sinus cardinal.
-
-*/
-double vpMath::sinc(double x)
-{
-  if (fabs(x) < ang_min_sinc) return 1.0 ;
-  else  return sin(x)/x ;
-}
-/*!
-
-  Compute sinus cardinal \f$ \frac{sin(x)}{x}\f$.
-
-  \param sinx : Value of sin(x).
-  \param x : Value of x.
-
-  \return Sinus cardinal.
-
-*/
-double vpMath::sinc(double sinx, double x)
-{
-  if (fabs(x) < ang_min_sinc) return 1.0 ;
-  else  return (sinx/x) ;
-}
-
-/*!
-  Compute \f$ (1-cos(x))/x^2 \f$
-
-  \param cosx : Value of cos(x).
-  \param x : Value of x.
-
-  \return \f$ (1-cosx)/x^2 \f$
-
-*/
-double vpMath::mcosc(double cosx, double x)
-{
-  if (fabs(x) < ang_min_mc) return 0.5 ;
-  else  return ((1.0-cosx)/x/x) ;
-}
-
-/*!
-
-  Compute \f$ (1-sinc(x))/x^2 \f$ with \f$ sinc(x) = sinx / x \f$.
-
-  \param sinx : value of sin(x).
-  \param x  : Value of x.
-
-  \return \f$ (1-sinc(x))/x^2 \f$
-
-*/
-double vpMath::msinc(double sinx, double x)
-{
-  if (fabs(x) < ang_min_mc) return (1./6.0) ;
-  else  return ((1.0-sinx/x)/x/x) ;
 }
 
 /*!
