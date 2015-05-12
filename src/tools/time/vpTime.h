@@ -76,17 +76,17 @@ int main()
 
 */
 
-class VISP_EXPORT vpTime
+namespace vpTime
 {
-public:
-  static double minTimeForUsleepCall;
 
-  static double measureTimeSecond() ;
-  static double measureTimeMs() ;
-  static double measureTimeMicros() ;
-  static void sleepMs(double t);
-  static int  wait(double t0, double t) ;
-  static void wait(double t) ;
-} ;
+VISP_EXPORT double getMinTimeForUsleepCall();
+VISP_EXPORT double measureTimeSecond() ;
+VISP_EXPORT double measureTimeMs() ;
+VISP_EXPORT double measureTimeMicros() ;
+VISP_EXPORT void sleepMs(double t);
+VISP_EXPORT int  wait(double t0, double t) ;
+VISP_EXPORT void wait(double t) ;
+
+};
 
 #endif

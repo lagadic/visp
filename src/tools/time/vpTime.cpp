@@ -64,26 +64,29 @@
 #  include <winbase.h>
 #endif
 
-double vpTime::minTimeForUsleepCall = 4; /*! This time is in
-					    milli-seconds. Threshold to
-					    activate usleep() in waiting
-					    methods (see wait()). This
-					    threshold is needed, because
-					    usleep() is not accurate on many
-					    machines.  Call sleep() functions
-					    during the time to wait minus
-					    vpTime::minTimeForUsleepCall. The
-					    rest of the time to wait is managed
-					    by a while loop. */
+namespace vpTime
+{
 
+/*!
+   This time is in milli-seconds. Threshold to activate usleep() in waiting
+   methods (see wait()). This threshold is needed, because usleep() is not
+   accurate on many machines.  Call sleep() functions during the time to wait
+   minus vpTime::minTimeForUsleepCall. The rest of the time to wait is managed
+   by a while loop.
+*/
+double minTimeForUsleepCall = 4;
 
+double getMinTimeForUsleepCall()
+{
+  return minTimeForUsleepCall;
+}
 /*!
   Return the time in milliseconds since January 1st 1970.
 
   \sa measureTimeMicros(), measureTimeSecond()
 */
 double
-vpTime::measureTimeMs()
+measureTimeMs()
 {
 #if defined(_WIN32)
   LARGE_INTEGER time, frequency;
@@ -92,8 +95,8 @@ vpTime::measureTimeMs()
     return(timeGetTime());
   }
   else{
-  QueryPerformanceCounter(&time);
-  return (double)(1000.0*time.QuadPart/frequency.QuadPart);
+    QueryPerformanceCounter(&time);
+    return (double)(1000.0*time.QuadPart/frequency.QuadPart);
   }
 #elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   struct timeval tp;
@@ -109,7 +112,7 @@ vpTime::measureTimeMs()
   \sa measureTimeMs(), measureTimeSecond()
 */
 double
-vpTime::measureTimeMicros()
+measureTimeMicros()
 {
 #if defined(_WIN32)
   LARGE_INTEGER time, frequency;
@@ -118,8 +121,8 @@ vpTime::measureTimeMicros()
     return(timeGetTime());
   }
   else{
-  QueryPerformanceCounter(&time);
-  return (double)(1000000.0*time.QuadPart/frequency.QuadPart);
+    QueryPerformanceCounter(&time);
+    return (double)(1000000.0*time.QuadPart/frequency.QuadPart);
   }
 #else
 
@@ -146,7 +149,7 @@ vpTime::measureTimeMicros()
 */
 
 int
-vpTime::wait(double t0, double t)
+wait(double t0, double t)
 {
   double timeCurrent, timeToWait;
   timeCurrent = measureTimeMs();
@@ -186,7 +189,7 @@ vpTime::wait(double t0, double t)
   \param t : Time to wait in ms.
 
 */
-void vpTime::wait(double t)
+void wait(double t)
 {
   double t0, timeCurrent, timeToWait;
   t0 = timeCurrent = measureTimeMs();
@@ -197,7 +200,7 @@ void vpTime::wait(double t)
     return;
   else {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-	if (timeToWait > vpTime::minTimeForUsleepCall) {
+    if (timeToWait > vpTime::minTimeForUsleepCall) {
       usleep((unsigned long )((timeToWait-vpTime::minTimeForUsleepCall)*1000));
     }
 #elif defined(_WIN32)
@@ -222,7 +225,7 @@ void vpTime::wait(double t)
 
   \sa measureTimeMs()
 */
-double  vpTime::measureTimeSecond()
+double  measureTimeSecond()
 {
   return vpTime::measureTimeMs()/1000.0 ;
 }
@@ -233,13 +236,14 @@ double  vpTime::measureTimeSecond()
   \param t : Time to sleep in ms.
 
 */
-void vpTime::sleepMs(double t)
+void sleepMs(double t)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-   usleep((unsigned long )(t*1000));
+  usleep((unsigned long )(t*1000));
 #elif defined(_WIN32)
-   Sleep((DWORD)(t));
+  Sleep((DWORD)(t));
 #endif
 }
 
+};
 

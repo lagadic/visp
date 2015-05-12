@@ -615,7 +615,7 @@ vpSimulatorAfma6::updateArticularPosition()
       vpTime::wait( tcur, 1000*getSamplingTime() );
       tcur_1 = tcur;
     }else{
-      vpTime::wait(tcur, vpTime::minTimeForUsleepCall);
+      vpTime::wait(tcur, vpTime::getMinTimeForUsleepCall());
     }
   }
 }

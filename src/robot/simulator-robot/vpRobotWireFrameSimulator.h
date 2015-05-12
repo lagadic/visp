@@ -296,13 +296,13 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
       \param delta_t : Sampling time in second used to compute the robot displacement from
       the velocity applied to the robot during this time.
 
-      Since the wireframe simulator is threaded, the sampling time is set to vpTime::minTimeForUsleepCall / 1000 seconds.
+      Since the wireframe simulator is threaded, the sampling time is set to vpTime::getMinTimeForUsleepCall() / 1000 seconds.
 
     */
     inline void setSamplingTime(const double &delta_t)
     {
-      if(delta_t < static_cast<float>(vpTime::minTimeForUsleepCall * 1e-3)){
-        this->delta_t_ = static_cast<float>(vpTime::minTimeForUsleepCall * 1e-3);
+      if(delta_t < static_cast<float>(vpTime::getMinTimeForUsleepCall() * 1e-3)){
+        this->delta_t_ = static_cast<float>(vpTime::getMinTimeForUsleepCall() * 1e-3);
       } else {
         this->delta_t_ = delta_t;
       }
