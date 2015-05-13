@@ -42,6 +42,9 @@
 
 #include <visp3/core/vpColor.h>
 
+// FS: Sould be improved to avoid the #if preprocessor line. Not a good idea to define colors in static.
+//     See also vpColor.h where things need to be improved.
+#if !defined(visp_EXPORTS)
 /*!< Predefined black color with R=G=B=0 and identifier vpColor::id_black. */
 vpColor const vpColor::black  = vpColor(0, 0, 0, id_black);
 /*!< Predefined white color with R=G=B=255 and identifier vpColor::id_white. */
@@ -91,35 +94,34 @@ vpColor const vpColor::orange = vpColor(255, 165, 0, id_orange);
 /*!< Predefined purple color with R=128, G=0 and B=128 and identifier
    vpColor::id_purple. */
 vpColor const vpColor::purple = vpColor(128, 0, 128, id_purple);
+/*!< Predefined none color with R=G=B=0 and identifier vpColor::id_unknown. */
+vpColor const vpColor::none = vpColor(0, 0, 0, id_unknown);
 
 const unsigned int vpColor::nbColors = 18;
 
-
-vpColor colors[6] = {vpColor::blue,vpColor::green,vpColor::red,vpColor::cyan,vpColor::orange,vpColor::purple};
-
 /*!< Array of available colors. */
 vpColor const vpColor::allColors[vpColor::nbColors] = {
-		vpColor::blue ,	 	// 12
-		vpColor::green ,	// 9
-		vpColor::red ,	 	// 6
-		vpColor::cyan ,	 	// 15
-		vpColor::purple ,	// 4
-		vpColor::yellow ,	// 14
-		vpColor::orange ,	// 16
-		vpColor::lightBlue ,// 11
-		vpColor::lightGreen,// 8
-		vpColor::lightRed ,	// 5
-		vpColor::darkBlue ,	// 13
-		vpColor::darkGreen ,// 10
-		vpColor::darkRed ,	// 7
-		vpColor::lightGray ,// 2
-		vpColor::gray ,	 	// 3
-		vpColor::darkGray ,	// 4
-		vpColor::black ,	// 0
-		vpColor::white};	// 17
+    vpColor::blue ,	 	// 12
+    vpColor::green ,	// 9
+    vpColor::red ,	 	// 6
+    vpColor::cyan ,	 	// 15
+    vpColor::purple ,	// 4
+    vpColor::yellow ,	// 14
+    vpColor::orange ,	// 16
+    vpColor::lightBlue ,// 11
+    vpColor::lightGreen,// 8
+    vpColor::lightRed ,	// 5
+    vpColor::darkBlue ,	// 13
+    vpColor::darkGreen ,// 10
+    vpColor::darkRed ,	// 7
+    vpColor::lightGray ,// 2
+    vpColor::gray ,	 	// 3
+    vpColor::darkGray ,	// 4
+    vpColor::black ,	// 0
+    vpColor::white};	// 17
+#endif
 
-/*!< Predefined none color with R=G=B=0 and identifier vpColor::id_unknown. */
-vpColor const vpColor::none = vpColor(0, 0, 0, id_unknown);
+vpColor colors[6] = {vpColor::blue,vpColor::green,vpColor::red,vpColor::cyan,vpColor::orange,vpColor::purple};
 
 /*!
   Compare two colors.

@@ -241,4 +241,83 @@ class VISP_EXPORT vpColor : public vpRGBa
 
 };
 
+// In this file if windows
+#if (defined(_WIN32) || defined(__CYGWIN__)) && defined(visp_EXPORTS)
+/*!< Predefined black color with R=G=B=0 and identifier vpColor::id_black. */
+vpColor const __declspec(selectany) vpColor::black  = vpColor(0, 0, 0, id_black);
+/*!< Predefined white color with R=G=B=255 and identifier vpColor::id_white. */
+vpColor const __declspec(selectany) vpColor::white  = vpColor(255, 255, 255, id_white);
+/*!< Predefined light gray color with R=G=B=64 and identifier vpColor::id_lightGray. */
+vpColor const __declspec(selectany) vpColor::lightGray  = vpColor(192, 192, 192, id_lightGray);
+/*!< Predefined gray color with R=G=B=128 and identifier vpColor::id_gray. */
+vpColor const __declspec(selectany) vpColor::gray  = vpColor(128, 128, 128, id_gray);
+/*!< Predefined dark gray color with R=G=B=192 and identifier vpColor::id_darkGray. */
+vpColor const __declspec(selectany) vpColor::darkGray  = vpColor(64, 64, 64, id_darkGray);
+/*!< Predefined light red color with R= 255 and G=B=140 and identifier
+   vpColor::id_lightRed. */
+vpColor const __declspec(selectany) vpColor::lightRed  = vpColor(255, 140, 140, id_lightRed);
+/*!< Predefined red color with R=255 and G=B=0 and identifier
+   vpColor::id_red. */
+vpColor const __declspec(selectany) vpColor::red    = vpColor(255, 0, 0, id_red);
+/*!< Predefined dark red color with R= 128 and G=B=0 and identifier
+   vpColor::id_darkRed. */
+vpColor const __declspec(selectany) vpColor::darkRed  = vpColor(128, 0, 0, id_darkRed);
+/*!< Predefined light green color with G= 255 and R=B=140 and identifier
+   vpColor::id_lightGreen. */
+vpColor const __declspec(selectany) vpColor::lightGreen  = vpColor(140, 255, 140, id_lightGreen);
+/*!< Predefined green color with G=255 and R=B=0 and identifier
+   vpColor::id_green. */
+vpColor const __declspec(selectany) vpColor::green  = vpColor(0, 255, 0, id_green);
+/*!< Predefined dark green color with G= 128 and R=B=0 and identifier
+   vpColor::id_darkGreen. */
+vpColor const __declspec(selectany) vpColor::darkGreen  = vpColor(0, 128, 0, id_darkGreen);
+/*!< Predefined light blue color with B= 255 and R=G=140 and identifier
+   vpColor::id_lightBlue. */
+vpColor const __declspec(selectany) vpColor::lightBlue  = vpColor(140, 140, 255, id_lightBlue);
+/*!< Predefined blue color with R=G=0 and B=255 and identifier
+   vpColor::id_blue. */
+vpColor const __declspec(selectany) vpColor::blue   = vpColor(0, 0, 255, id_blue);
+/*!< Predefined dark blue color with B= 128 and R=G=0 and identifier
+   vpColor::id_darkBlue. */
+vpColor const __declspec(selectany) vpColor::darkBlue  = vpColor(0, 0, 128, id_darkBlue);
+/*!< Predefined yellow color with R=G=255 and B=0 and identifier
+   vpColor::id_yellow. */
+vpColor const __declspec(selectany) vpColor::yellow = vpColor(255, 255, 0, id_yellow);
+/*!< Predefined cyan color with R=0 and G=B=255 and identifier
+   vpColor::id_cyan. */
+vpColor const __declspec(selectany) vpColor::cyan   = vpColor(0, 255, 255, id_cyan);
+/*!< Predefined orange color with R=255, G=165 and B=0 and identifier
+   vpColor::id_orange. */
+vpColor const __declspec(selectany) vpColor::orange = vpColor(255, 165, 0, id_orange);
+/*!< Predefined purple color with R=128, G=0 and B=128 and identifier
+   vpColor::id_purple. */
+vpColor const __declspec(selectany) vpColor::purple = vpColor(128, 0, 128, id_purple);
+/*!< Predefined none color with R=G=B=0 and identifier vpColor::id_unknown. */
+vpColor const __declspec(selectany) vpColor::none = vpColor(0, 0, 0, id_unknown);
+
+const __declspec(selectany) unsigned int vpColor::nbColors = 18;
+
+/*!< Array of available colors. */
+vpColor const __declspec(selectany) vpColor::allColors[vpColor::nbColors] = {
+    vpColor::blue ,	 	// 12
+    vpColor::green ,	// 9
+    vpColor::red ,	 	// 6
+    vpColor::cyan ,	 	// 15
+    vpColor::purple ,	// 4
+    vpColor::yellow ,	// 14
+    vpColor::orange ,	// 16
+    vpColor::lightBlue ,// 11
+    vpColor::lightGreen,// 8
+    vpColor::lightRed ,	// 5
+    vpColor::darkBlue ,	// 13
+    vpColor::darkGreen ,// 10
+    vpColor::darkRed ,	// 7
+    vpColor::lightGray ,// 2
+    vpColor::gray ,	 	// 3
+    vpColor::darkGray ,	// 4
+    vpColor::black ,	// 0
+    vpColor::white};	// 17
+
+#endif
+
 #endif
