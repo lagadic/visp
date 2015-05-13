@@ -26,14 +26,6 @@ if(DOXYGEN_FOUND)
 endif()
 
 # ----------------------------------------------------------------------------
-#   Tests target, for make visp_library
-# ----------------------------------------------------------------------------
-add_custom_target(visp_library)
-if(ENABLE_SOLUTION_FOLDERS)
-  set_target_properties(visp_library PROPERTIES FOLDER "extra")
-endif()
-
-# ----------------------------------------------------------------------------
 #   Tests target, for make visp_tests
 # ----------------------------------------------------------------------------
 if(BUILD_TESTS)

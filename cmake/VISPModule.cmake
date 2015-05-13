@@ -799,49 +799,9 @@ function(vp_add_tests)
           add_test(${the_target} ${the_target} -c ${OPTION_TO_DESACTIVE_DISPLAY})
         endif()
         # TODO FS add visp_test_${name} target to group all the tests
-        #add_dependencies(visp_tests ${the_target})
+        add_dependencies(visp_tests ${the_target})
         if(ENABLE_SOLUTION_FOLDERS)
           set_target_properties(${the_target} PROPERTIES FOLDER "tests")
-        endif()
-      endforeach()
-
-    else(VP_DEPENDENCIES_FOUND)
-      # TODO: warn about unsatisfied dependencies
-    endif(VP_DEPENDENCIES_FOUND)
-
-  endif()
-endfunction()
-
-# this is a command for adding ViSP samples to the module
-# vp_add_samples([FILES <source group name> <list of sources>] [DEPENDS_ON] <list of extra dependencies>)
-function(vp_add_samples)
-  vp_debug_message("vp_add_samples(" ${ARGN} ")")
-
-  set(sample_path "${CMAKE_CURRENT_LIST_DIR}/sample")
-  if(BUILD_SAMPLES AND EXISTS "${sample_path}")
-    __vp_parse_test_sources(SAMPLE ${ARGN})
-
-    set(sample_deps ${the_module} ${VISP_MODULE_${the_module}_DEPS})
-    vp_check_dependencies(${sample_deps})
-    if(VP_DEPENDENCIES_FOUND)
-      if(NOT VISP_SAMPLE_${the_module}_SOURCES)
-        file(GLOB_RECURSE sample_srcs "${sample_path}/*.cpp")
-        vp_source_group("Src" DIRBASE "${sample_path}" FILES ${sample_srcs})
-        set(VISP_SAMPLE_${the_module}_SOURCES ${sample_srcs})
-      endif()
-
-      foreach(t ${VISP_SAMPLE_${the_module}_SOURCES})
-        # Compute the name of the binary to create
-        get_filename_component(the_target ${t} NAME_WE)
-        # From source compile the binary and add link rules
-        vp_add_executable(${the_target} ${t})
-        vp_target_include_modules(${the_target} ${sample_deps})
-        vp_target_link_libraries(${the_target} ${sample_deps} ${VISP_MODULE_${the_module}_DEPS} ${VISP_LINKER_LIBS})
-        add_test(${the_target} ${the_target})
-        # TODO FS add visp_sample_${name} target to group all the samples
-        #add_dependencies(visp_samples ${the_target})
-        if(ENABLE_SOLUTION_FOLDERS)
-          set_target_properties(${the_target} PROPERTIES FOLDER "samples")
         endif()
       endforeach()
 
