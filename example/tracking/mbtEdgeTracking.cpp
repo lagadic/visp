@@ -47,20 +47,20 @@
   \brief Example of model based tracking on an image sequence containing a cube.
 */
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
-#include <visp/vpDisplayD3D.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpMath.h>
-#include <visp/vpMbEdgeTracker.h>
-#include <visp/vpVideoReader.h>
-#include <visp/vpParseArgv.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/mbt/vpMbEdgeTracker.h>
+#include <visp3/core/vpVideoReader.h>
+#include <visp3/core/vpParseArgv.h>
 
 #if defined (VISP_HAVE_DISPLAY)
 
@@ -350,8 +350,8 @@ main(int argc, const char ** argv)
     // Specify the clipping to use
     tracker.setNearClippingDistance(0.01);
     tracker.setFarClippingDistance(0.90);
-    tracker.setClipping(tracker.getClipping() | vpPolygon3D::FOV_CLIPPING);
-    //   tracker.setClipping(tracker.getClipping() | vpPolygon3D::LEFT_CLIPPING | vpPolygon3D::RIGHT_CLIPPING | vpPolygon3D::UP_CLIPPING | vpPolygon3D::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+    tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+    //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
 
     // Display the moving edges, see documentation for the signification of the colours
@@ -439,8 +439,8 @@ main(int argc, const char ** argv)
         // Specify the clipping to use
         tracker.setNearClippingDistance(0.01);
         tracker.setFarClippingDistance(0.90);
-        tracker.setClipping(tracker.getClipping() | vpPolygon3D::FOV_CLIPPING);
-        //   tracker.setClipping(tracker.getClipping() | vpPolygon3D::LEFT_CLIPPING | vpPolygon3D::RIGHT_CLIPPING | vpPolygon3D::UP_CLIPPING | vpPolygon3D::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+        tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+        //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
         tracker.loadModel(modelFile);
         tracker.setCameraParameters(cam);

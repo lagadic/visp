@@ -1,10 +1,13 @@
 //! \example tutorial-blob-tracker-live-firewire.cpp
-#include <visp/vp1394CMUGrabber.h>
-#include <visp/vp1394TwoGrabber.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDot2.h>
+#include <visp3/visp_modules.h>
+#ifdef VISP_HAVE_MODULE_SENSOR
+#include <visp3/sensor/vp1394CMUGrabber.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#endif
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDot2.h>
 
 int main()
 {

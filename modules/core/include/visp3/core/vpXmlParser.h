@@ -1,0 +1,311 @@
+/****************************************************************************
+ *
+ * $Id: vpXmlParser.h 4574 2014-01-09 08:48:51Z fspindle $
+ *
+ * This file is part of the ViSP software.
+ * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
+ * 
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact INRIA about acquiring a ViSP Professional 
+ * Edition License.
+ *
+ * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
+ * 
+ * This software was developed at:
+ * INRIA Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ * http://www.irisa.fr/lagadic
+ *
+ * If you have questions regarding the use of this file, please contact
+ * INRIA at visp@inria.fr
+ * 
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *
+ * Description:
+ * Tools to automatise the creation of xml parser based on the libXML2
+ *
+ * Authors:
+ * Romain Tallonneau
+ *
+ *****************************************************************************/
+
+#ifndef vpXmlParser_HH
+#define vpXmlParser_HH
+
+/*!
+  \file vpXmlParser.h
+  \brief Tools to simplify the creation of xml parser based on the libXML2
+*/
+ 
+#include <visp3/core/vpConfig.h>
+
+#ifdef VISP_HAVE_XML2
+
+#include <visp3/core/vpException.h>
+
+#include <libxml/parser.h>
+
+#include <string>
+#include <sstream>
+#include <iomanip>
+#include <typeinfo>
+#include <map>
+#include <string.h>
+
+ 
+/*!
+  \class vpXmlParser
+
+  \brief This class intends to simplify the creation of xml parser based on the 
+  libxml2 third party library.
+  
+  This class can be useful to manage external data parameters (for example for 
+  configuration of an experiment, ...).
+
+  \warning This class is only available if libxml2 is installed and detected by ViSP.
+
+  In order to use this class, you have to create a new class inheriting from this one.
+  In the child class, you have to implement the methods:
+  - writeMainClass()
+  - readMainClass()
+  
+  These two methods depends on the data to parse, and must not be directly called
+  (they are called from the parse() and the save() methods). 
+  
+  Following is an example of implementation for the document:
+  
+  \code
+  <config>
+      <range>5</range>
+      <step>7</step>
+      <size_filter>3</size_filter>
+  </config>
+  \endcode
+  
+  A class to parse this document is declared as follows:
+  
+  \code
+  class vpDataParser: public vpXmlParser
+  {
+  private:
+    int m_range;
+    int m_step;
+    int m_size_filter
+  public:
+    typedef enum{
+      config,
+      range,
+      step,
+      size_filter
+    }dataToParse
+  
+    vpDataParser(){
+      nodeMap["config"] = config;
+      nodeMap["range"] = range;
+      nodeMap["step"] = step;
+      nodeMap["size_filter"] = size_filter;
+    }
+    
+    virtual void writeMainClass(xmlNodePtr node);
+    virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
+    
+    // additionals methods specific to the data to parse
+    // such as: accessors
+  }
+  \endcode
+  
+  The readMainClass function implementation is:
+  
+  \code
+  void 
+  vpDataParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
+  {
+    for (xmlNodePtr tmpNode = node->xmlChildrenNode; tmpNode != NULL;  tmpNode = tmpNode->next)  {
+      if(tmpNode->type == XML_ELEMENT_NODE){
+
+        std::map<std::string, int>::iterator iter= this->nodeMap.find((char*)tmpNode->name);
+        if(iter == nodeMap.end()){
+          continue;
+        }
+
+        switch (iter->second){
+        case range:
+        	this->m_range = xmlReadIntChild(doc, tmpNode);
+        	break;
+        case step:
+        	this->m_step = xmlReadIntChild(doc, tmpNode);
+        	break;
+        case size_filter:
+        	this->m_size_filter = xmlReadIntChild(doc, tmpNode);
+        	break;
+        default:
+        	std::cout << "problem in the readMainClass (" << iter->second << " , " << iter->first << " )" << std::endl;
+        	break;
+        }
+      }
+    }
+  }
+  \endcode
+  
+  Data can now be accessed through the internal variables of the class vpDataParser.
+  
+  To store the data in a xml file, the function save has to be called. This 
+  function needs the implementation of the writeMainClass function.
+  
+  For example,
+  
+  \code
+  void 
+  vpDataParser::writeMainClass(xmlNodePtr node)
+  {
+    xmlWriteIntChild(node, "range", m_range);
+    xmlWriteIntChild(node, "step", m_step);
+    xmlWriteIntChild(node, "size_filter", m_size_filter);
+  }
+  \endcode
+    
+*/
+class VISP_EXPORT vpXmlParser
+{
+protected:
+  std::string xmlReadStringChild (xmlDocPtr doc, xmlNodePtr node);
+  char* xmlReadCharChild (xmlDocPtr doc, xmlNodePtr node);
+  int xmlReadIntChild (xmlDocPtr doc, xmlNodePtr node);
+  unsigned int xmlReadUnsignedIntChild (xmlDocPtr doc, xmlNodePtr node);
+  double xmlReadDoubleChild (xmlDocPtr doc, xmlNodePtr node);
+  
+
+  void xmlWriteStringChild(xmlNodePtr node, const char* label, const std::string& value);
+  void xmlWriteCharChild(xmlNodePtr node, const char* label, const char* value);
+  void xmlWriteIntChild(xmlNodePtr node, const char* label, const int value);
+  void xmlWriteUnsignedIntChild(xmlNodePtr node, const char* label, const unsigned int value);
+  void xmlWriteDoubleChild(xmlNodePtr node, const char* label, const double value);
+  
+  /*!
+    The map describing the data to parse
+  */
+  std::map<std::string, int> nodeMap;
+  
+  /*!
+    The name of the main tag for the file to parse
+  */
+  std::string main_tag;
+  
+public:
+  
+  vpXmlParser();
+  vpXmlParser(const vpXmlParser& _twin);
+  virtual ~vpXmlParser();
+
+  /*!
+  As stated in http://xmlsoft.org/html/libxml-parser.html#xmlCleanupParser
+  to clean up memory allocated by the xml2 library itself, the user should call
+  xmlCleanupParser() only when the process has finished using the xml2 library.
+  In case of doubt abstain from calling this function or do it just before calling exit()
+  to avoid leak reports from valgrind ! That's why
+  in ViSP the destructor doesn't call xmlCleanupParser(). Rather we provide the static
+  function vpXmlParser::cleanup() that calls xmlCleanupParser() that could be called
+  just before exit().
+    */
+  static void cleanup()
+  {
+    xmlCleanupParser();
+  }
+
+  /* virtual */ void parse(const std::string& filename);
+  /* virtual */ void save(const std::string& filename, const bool append=false);
+
+  /*!
+    Set the map describing the data to parse. This map stores the name of each 
+    node and an associated key used to simplify the parsing of the file.
+    
+    If the following file want to be parsed:
+    
+    \code
+    <config>
+      <range>5</range>
+      <step>7</step>
+      <size_filter>3</size_filter>
+    </config>
+    \endcode
+    
+    The following map has to be declared:
+    
+    \code
+    std::map dataToParse;
+    dataToParse["config"] = 0;
+    dataToParse["range"] = 1;
+    dataToParse["step"] = 2;
+    dataToParse["size_filter"] = 3;
+    \endcode
+    
+    Or, you can use keyzord instead of number as key but it implies to declare 
+    in the child class an enumeration type of the name. For example:
+    
+    \code
+    typedef enum{
+      config,
+      range,
+      step,
+      size_filter} data_enum;
+    
+    std::map dataToParse;
+    dataToParse["config"] = config;
+    dataToParse["range"] = range;
+    dataToParse["step"] = step;
+    dataToParse["size_filter"] = size_filter;
+    \endcode
+    
+    \param _map : the map describing the data to parse
+  */
+  void setMap(const std::map<std::string, int>& _map){ nodeMap = _map;}
+  
+  /*!
+    set the name of the main tag
+    
+    The main tag corresponds to the name of the root node 
+    
+    \param tag : name of the root node of the document
+  */
+  inline void setMainTag(const std::string& tag){ main_tag = tag;}
+
+protected:
+  /*!
+    pure virtual method used to read the document.
+    
+    As the content of the function depends on the structure of the file to read,
+    data name, data types and data values, it has to be reimplemented for every 
+    type of filenam
+    
+    \param doc : a pointer representing the document
+    \param node : the root node of the document
+  */
+  virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node)=0;
+  
+  /*!
+    pure virtual method used to write the document.
+    
+    As the content of the function depends on the structure of the file to read,
+    data name and data types, it has to be reimplemented for every 
+    type of file to parse.
+    
+    \param node : the root node of the document
+  */
+  virtual void writeMainClass(xmlNodePtr node)=0;
+   
+};
+
+
+#endif /* VISP_HAVE_XML2 */
+
+#endif

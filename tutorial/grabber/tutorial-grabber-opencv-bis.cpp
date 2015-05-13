@@ -1,7 +1,7 @@
 /*! \example tutorial-grabber-opencv-bis.cpp */
 #include <stdlib.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpImageConvert.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpImageConvert.h>
 
 // usage: binary <device name>
 // device name: 0 is the default to dial with the first camera,

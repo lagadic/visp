@@ -38,7 +38,12 @@
 #
 #############################################################################
 
-MACRO(ADD_EXTRA_COMPILATION_FLAGS)
+macro(vp_add_extra_compilation_flags)
+  # By default set release configuration
+  if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE String "Choose the type of build, options are: None Debug Release" FORCE)
+  endif()
+
   include(CheckCXXCompilerFlag)
   if(CMAKE_COMPILER_IS_GNUCXX OR MINGW) #Not only UNIX but also WIN32 for MinGW
 
@@ -146,10 +151,43 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
   endif()
 
-  if(UNIX)
-    if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+#  FS no more needed since it is added by default by CMake when build as shared
+#  if(UNIX)
+#    if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
+#      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+#    endif()
+#  endif()
+
+  # OpenMP
+  if(USE_OPENMP)
+    set(VISP_OPENMP_FLAGS "${OpenMP_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  else()
+    set(VISP_OPENMP_FLAGS "")
+    if(OpenMP_CXX_FLAGS)
+      string(REPLACE ${OpenMP_CXX_FLAGS} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     endif()
+  endif()
+
+  # C++11
+  if(USE_CPP11)
+    set(VISP_CPP11_FLAGS "${CPP11_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP11_CXX_FLAGS}")
+  else()
+    set(VISP_CPP11_FLAGS "")
+    if(CPP11_CXX_FLAGS)
+      string(REPLACE ${CPP11_CXX_FLAGS} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    endif()
+  endif()
+
+  if(BUILD_COVERAGE)
+    # Add build options for test coverage. Currently coverage is only supported
+    # on gcc compiler
+    # Because using -fprofile-arcs with shared lib can cause problems like:
+    # hidden symbol `__bb_init_func', we add this option only for static
+    # library build
+    message(STATUS "Add -ftest-coverage -fprofile-arcs compiler options")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
   endif()
 
   # Remove duplicates compilation flags
@@ -163,4 +201,4 @@ MACRO(ADD_EXTRA_COMPILATION_FLAGS)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "common C build flags" FORCE)
 
   #message("CMAKE_CXX_FLAGS : ${CMAKE_CXX_FLAGS}")
-ENDMACRO(ADD_EXTRA_COMPILATION_FLAGS)
+endmacro(vp_add_extra_compilation_flags)

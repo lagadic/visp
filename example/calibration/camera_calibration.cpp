@@ -40,7 +40,7 @@
  *****************************************************************************/
 #include <iostream>
 
-#include <visp/vpConfig.h>
+#include <visp3/core/vpConfig.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
 
@@ -49,17 +49,17 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include <visp/vpCalibration.h>
+#include <visp3/vision/vpCalibration.h>
 
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayD3D.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpPoint.h>
-#include <visp/vpVideoReader.h>
-#include <visp/vpXmlParserCamera.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpVideoReader.h>
+#include <visp3/core/vpXmlParserCamera.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

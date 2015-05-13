@@ -55,16 +55,16 @@
 
 */
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
 #ifdef VISP_HAVE_AFMA4
 
 #include <unistd.h>
 #include <stdlib.h>
 
-#include <visp/vpParseArgv.h>
-#include <visp/vpRobotAfma4.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/robot/vpRobotAfma4.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"mh"

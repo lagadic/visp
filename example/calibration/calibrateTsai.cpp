@@ -50,11 +50,11 @@
 #include <iomanip>
 #include <vector>
 
-#include <visp/vpDebug.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpCalibration.h>
-#include <visp/vpExponentialMap.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/vision/vpCalibration.h>
+#include <visp3/core/vpExponentialMap.h>
 
 int main()
 {

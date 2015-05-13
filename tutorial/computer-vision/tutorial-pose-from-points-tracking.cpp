@@ -1,12 +1,15 @@
 /*! \example tutorial-pose-from-points-tracking.cpp */
-#include <visp/vp1394CMUGrabber.h>
-#include <visp/vp1394TwoGrabber.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDot2.h>
-#include <visp/vpPixelMeterConversion.h>
-#include <visp/vpPose.h>
+#include <visp3/visp_modules.h>
+#ifdef VISP_HAVE_MODULE_SENSOR
+#include <visp3/sensor/vp1394CMUGrabber.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#endif
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDot2.h>
+#include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/vision/vpPose.h>
 
 void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
                  const vpCameraParameters &cam, bool init, vpHomogeneousMatrix &cMo);

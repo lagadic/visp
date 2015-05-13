@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include <visp/vpDebug.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
 
 
 int main()

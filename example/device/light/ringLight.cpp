@@ -47,8 +47,8 @@
 
 
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #if defined VISP_HAVE_PARPORT
@@ -56,9 +56,9 @@
 #include <stdio.h>
 #include <iostream>
 
-#include <visp/vpRingLight.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpTime.h>
+#include <visp3/robot/vpRingLight.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpTime.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"d:hn:ot:"

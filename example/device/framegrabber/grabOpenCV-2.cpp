@@ -39,7 +39,7 @@
  *
  *****************************************************************************/
 
-#include <visp/vpConfig.h>
+#include <visp3/core/vpConfig.h>
 
 /*!
   \example grabOpenCV-2.cpp
@@ -50,14 +50,14 @@
 
 #include <iostream>
 
-#include <visp/vpConfig.h>
+#include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageConvert.h>
-#include <visp/vpOpenCVGrabber.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageConvert.h>
+#include <visp3/sensor/vpOpenCVGrabber.h>
 
 
 // usage: binary <device name>

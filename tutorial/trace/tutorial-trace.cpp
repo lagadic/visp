@@ -3,7 +3,7 @@
 //#define VP_DEBUG        // Activate the debug mode
 #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
 
-#include <visp/vpDebug.h>
+#include <visp3/core/vpDebug.h>
 
 int main()
 {

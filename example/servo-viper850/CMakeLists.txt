@@ -38,6 +38,12 @@
 #
 #############################################################################
 
+set(EXAMPLES_REQUIRED_DEPS visp_core visp_vs visp_robot visp_sensor visp_vision)
+
+vp_check_dependencies(${EXAMPLES_REQUIRED_DEPS})
+
+if(VP_DEPENDENCIES_FOUND)
+
 # SOURCE variable corresponds to the list of all the sources to build binaries.
 # The generate binary comes by removing the .cpp extension to
 # the source name.
@@ -50,11 +56,12 @@ set(SOURCE
   servoViper850FourPointsKinect.cpp
   servoViper850Point2DArtVelocity-jointAvoidance-gpa.cpp
   servoViper850Point2DArtVelocity-jointAvoidance-basic.cpp
-  servoViper850Point2DArtVelocity-jointAvoidance-large-proj-operator.cpp
   servoViper850Point2DArtVelocity.cpp
   servoViper850Point2DCamVelocity.cpp
   servoViper850Point2DCamVelocityKalman.cpp
 )
+
+vp_include_modules_recurse(${EXAMPLES_REQUIRED_DEPS})
 
 foreach(source ${SOURCE})
   # Compute the name of the binary to create
@@ -62,10 +69,12 @@ foreach(source ${SOURCE})
 
   # From source compile the binary and add link rules
   add_executable(${binary} ${source})
-  target_link_libraries(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
+  target_link_libraries(${binary} ${EXAMPLES_REQUIRED_DEPS})
 
   add_dependencies(visp_examples ${binary})
   if(ENABLE_SOLUTION_FOLDERS)
     set_target_properties(${binary} PROPERTIES FOLDER "examples")
   endif()
 endforeach()
+
+endif()

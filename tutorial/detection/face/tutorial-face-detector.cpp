@@ -1,11 +1,11 @@
 //! \example tutorial-face-detector.cpp
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
 //! [Include]
-#include <visp/vpDetectorFace.h>
+#include <visp3/detection/vpDetectorFace.h>
 //! [Include]
-#include <visp/vpVideoReader.h>
+#include <visp3/core/vpVideoReader.h>
 
 int main(int argc, const char* argv[])
 {

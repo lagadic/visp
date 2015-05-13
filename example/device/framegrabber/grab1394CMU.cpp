@@ -50,14 +50,14 @@
 #include <stdlib.h>
 #include <iostream>
 
-#include <visp/vpConfig.h>
-#include <visp/vp1394CMUGrabber.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpTime.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/sensor/vp1394CMUGrabber.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpTime.h>
 
 #define GRAB_COLOR
 

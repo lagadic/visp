@@ -1,11 +1,11 @@
 /*! \example tutorial-video-recorder.cpp */
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpTime.h>
-#include <visp/vpVideoWriter.h>
-#include <visp/vpV4l2Grabber.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpTime.h>
+#include <visp3/core/vpVideoWriter.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
 
 /*!
  This example allows to record a video from a camera.

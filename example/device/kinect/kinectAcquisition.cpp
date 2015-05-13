@@ -48,20 +48,20 @@
 */
 
 
-#include <visp/vpConfig.h>
+#include <visp3/core/vpConfig.h>
 #include <iostream>
 #ifdef VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI))	
 
 
-#include <visp/vpImage.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpKinect.h>
-#include <visp/vpTime.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/sensor/vpKinect.h>
+#include <visp3/core/vpTime.h>
 
 int main() {
   try {

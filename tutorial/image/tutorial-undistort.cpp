@@ -1,7 +1,7 @@
 //! \example tutorial-undistort.cpp
-#include <visp/vpImageIo.h>
-#include <visp/vpImageTools.h>
-#include <visp/vpXmlParserCamera.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpImageTools.h>
+#include <visp3/core/vpXmlParserCamera.h>
 
 int main()
 {

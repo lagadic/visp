@@ -41,8 +41,8 @@
  *****************************************************************************/
 
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 #include <stdlib.h>
 /*!
   \file grabV4l2.cpp
@@ -55,14 +55,14 @@
 
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
 
-#include <visp/vpDisplay.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpTime.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpV4l2Grabber.h>
+#include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpTime.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"df:i:hn:o:p:s:t:v:x"

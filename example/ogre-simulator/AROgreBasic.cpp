@@ -47,7 +47,7 @@
 
 
 
-#include <visp/vpConfig.h>
+#include <visp3/core/vpConfig.h>
 #include <iostream>
 
 //#if defined(VISP_HAVE_OGRE) && (defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK) || (defined(VISP_HAVE_X11) && ! defined(APPLE)))
@@ -59,22 +59,22 @@
 // /usr/X11R6/include/X11/X.h:108: error: ‘Cursor’ has a previous
 // declaration as ‘typedef XID Cursor’. That's why it should not be
 // used on APPLE platforms
-#  include <visp/vpDisplayX.h>
+#  include <visp3/core/vpDisplayX.h>
 #endif
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayD3D.h>
-#include <visp/vpPose.h>
-#include <visp/vpPoint.h>
-#include <visp/vpImagePoint.h>
-#include <visp/vpDot2.h>
-#include <visp/vpPixelMeterConversion.h>
-#include <visp/vpVideoReader.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpDebug.h>
-#include <visp/vpAROgre.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/vision/vpPose.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpDot2.h>
+#include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpVideoReader.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/ar/vpAROgre.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"ci:p:h"

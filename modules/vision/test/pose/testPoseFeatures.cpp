@@ -1,0 +1,216 @@
+/****************************************************************************
+ *
+ * $Id$
+ *
+ * This file is part of the ViSP software.
+ * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
+ * 
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact INRIA about acquiring a ViSP Professional 
+ * Edition License.
+ *
+ * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
+ * 
+ * This software was developed at:
+ * INRIA Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ * http://www.irisa.fr/lagadic
+ *
+ * If you have questions regarding the use of this file, please contact
+ * INRIA at visp@inria.fr
+ * 
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *
+ * Description:
+ * Compute the pose from visual features by virtual visual servoing.
+ *
+ * Authors:
+ * Aurelien Yol
+ *
+ *****************************************************************************/
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/vision/vpPoseFeatures.h>
+#include <visp3/vision/vpPose.h>
+#include <iostream>
+#include <vector>
+#include <visp3/vision/vpPose.h>
+#include <limits> 
+
+/*!
+  \example testPoseFeatures.cpp
+
+  Compute the pose from different features.
+
+*/
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+class vp_createPointClass{
+public:
+  int value;
+  
+  vp_createPointClass() : value(0){}
+  
+  int vp_createPoint(vpFeaturePoint &fp,const vpPoint &v){
+    value += 1;
+    vpFeatureBuilder::create(fp,v);
+    return value;
+  }
+};
+
+void vp_createPoint(vpFeaturePoint &fp,const vpPoint &v){
+  vpFeatureBuilder::create(fp,v);
+}
+
+void vp_createLine(vpFeatureLine &fp,const vpLine &v){
+  vpFeatureBuilder::create(fp,v);
+}
+#endif
+#endif
+
+int main()
+{
+  try {
+    vpImage<unsigned char> I(600,600);
+
+    vpHomogeneousMatrix cMo_ref(0., 0., 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(60));
+    vpPoseVector pose_ref = vpPoseVector(cMo_ref);
+
+    std::cout << "Reference pose used to create the visual features : " << std::endl;
+    std::cout << pose_ref.t() << std::endl;
+
+    vpPoseFeatures pose;
+
+    vpPoint pts[6];
+    
+    double val = 0.25;
+    double val2 = 0.0;
+
+    //2D Point Feature
+    pts[0].setWorldCoordinates(0.0,-val,val2);
+    pts[1].setWorldCoordinates(0.0,val,val2);
+    pts[2].setWorldCoordinates(-val,val,val2);
+
+    //Segment Feature
+    pts[3].setWorldCoordinates(-val,-val/2.0,val2);
+    pts[4].setWorldCoordinates(val,val/2.0,val2);
+
+    //3D point Feature
+    pts[5].setWorldCoordinates(0.0,0.0,-1.5);
+
+    //Line Feature
+    vpLine line;
+    line.setWorldCoordinates(0.0,1.0,0.0,.0,
+                             0.0,0.0,1.0,0.0);
+
+    //Vanishing Point Feature
+    vpLine l1;
+    l1.setWorldCoordinates(0.0,1.0,0.2,0.0,
+                           1.0,0.0,0.0,-0.25);
+
+    vpLine l2;
+    l2.setWorldCoordinates(0.0,1.0,0.2,0.0,
+                           -1.0,0.0,0.0,-0.25);
+
+    //Ellipse Feature
+    vpCircle circle;
+    circle.setWorldCoordinates(0.0, 0.0, 1.0 , 0.0, 0.0, 0.0, 0.25);
+
+    pts[0].project(cMo_ref);
+    pts[1].project(cMo_ref);
+    pts[2].project(cMo_ref);
+
+    pts[3].project(cMo_ref);
+    pts[4].project(cMo_ref);
+
+    pts[5].project(cMo_ref);
+
+    line.project(cMo_ref);
+
+    l1.project(cMo_ref);
+    l2.project(cMo_ref);
+
+    circle.project(cMo_ref);
+
+    pose.addFeaturePoint(pts[0]);
+    //   pose.addFeaturePoint(pts[1]);
+    pose.addFeaturePoint(pts[2]);
+
+    pose.addFeaturePoint3D(pts[5]);
+
+    pose.addFeatureVanishingPoint(l1,l2);
+
+    //   pose.addFeatureSegment(pts[3],pts[4]);
+    //
+    //   pose.addFeatureLine(line);
+
+    pose.addFeatureEllipse(circle);
+
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+    vpFeaturePoint fp;
+    vpFeatureLine fl;
+    vpFeatureSegment fs;
+    void (*ptr)(vpFeatureSegment&, vpPoint&, vpPoint&) = &vpFeatureBuilder::create;
+    vp_createPointClass cpClass;
+    int (vp_createPointClass::*ptrClass)(vpFeaturePoint&, const vpPoint&) = &vp_createPointClass::vp_createPoint;
+    pose.addSpecificFeature(&cpClass, ptrClass, fp, pts[1]);
+    pose.addSpecificFeature(&vp_createLine, fl, line);
+    pose.addSpecificFeature(ptr, fs, pts[3], pts[4]);
+#endif
+
+    pose.setVerbose(true);
+    pose.setLambda(0.6);
+    pose.setVVSIterMax(200);
+    pose.setCovarianceComputation(true);
+
+    vpHomogeneousMatrix cMo_est(0.4, 0.3, 1.5, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+    vpPoseVector pose_est = vpPoseVector(cMo_est);
+    std::cout << "\nPose used as initialisation of the pose computation : " << std::endl;
+    std::cout << pose_est.t() << std::endl;
+
+    pose.computePose(cMo_est);
+    //   pose.computePose(cMo_est, vpPoseFeatures::ROBUST_VIRTUAL_VS);
+
+
+    std::cout << "\nEstimated pose from visual features : " << std::endl;
+    pose_est.buildFrom(cMo_est);
+    std::cout << pose_est.t() << std::endl;
+
+    std::cout << "\nResulting covariance (Diag): " << std::endl;
+    vpMatrix covariance = pose.getCovarianceMatrix();
+    std::cout << covariance[0][0] << " " << covariance[1][1] << " "
+              << covariance[2][2] << " " << covariance[3][3] << " "
+              << covariance[4][4] << " " << covariance[5][5] << " " << std::endl;
+
+    int test_fail = 0;
+    for(unsigned int i=0; i<6; i++) {
+      if (std::fabs(pose_ref[i]-pose_est[i]) > 0.001)
+        test_fail = 1;
+    }
+
+    std::cout << "\nPose is " << (test_fail ? "badly" : "well") << " estimated" << std::endl;
+
+    return test_fail;
+  }
+  catch(vpException e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+    return 1;
+  }
+}

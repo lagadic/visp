@@ -1,6 +1,6 @@
 /*! \example tutorial-grabber-opencv.cpp */
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpOpenCVGrabber.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/sensor/vpOpenCVGrabber.h>
 
 int main()
 {

@@ -47,11 +47,11 @@
 
  */
 
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpColor.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpImagePoint.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpColor.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpImagePoint.h>
 
 int main()
 {

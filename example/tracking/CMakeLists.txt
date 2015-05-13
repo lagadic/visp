@@ -38,6 +38,12 @@
 #
 #############################################################################
 
+set(EXAMPLES_REQUIRED_DEPS visp_core visp_mbt visp_tt visp_vision)
+
+vp_check_dependencies(${EXAMPLES_REQUIRED_DEPS})
+
+if(VP_DEPENDENCIES_FOUND)
+
 # SOURCE variable corresponds to the list of all the sources to build binaries.
 # The generate binary comes by removing the .cpp extension to
 # the source name.
@@ -58,6 +64,8 @@ set(SOURCE
   trackKltOpencv.cpp
 )
 
+vp_include_modules_recurse(${EXAMPLES_REQUIRED_DEPS})
+
 # rule for binary build
 foreach(source ${SOURCE})
   # Compute the name of the binary to create
@@ -65,7 +73,7 @@ foreach(source ${SOURCE})
 
   # From source compile the binary and add link rules
   add_executable(${binary} ${source})
-  target_link_libraries(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
+  target_link_libraries(${binary} ${EXAMPLES_REQUIRED_DEPS})
 
   add_dependencies(visp_examples ${binary})
   if(ENABLE_SOLUTION_FOLDERS)
@@ -164,3 +172,5 @@ add_test(templateTrackerPyramidal-ZNCCInverseCompositional-Homography    templat
 add_test(templateTrackerPyramidal-ZNCCInverseCompositional-HomographySL3 templateTracker -c -l 2 -t 5 -w 2 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-ZNCCInverseCompositional-SRT           templateTracker -c -l 2 -t 5 -w 3 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-ZNCCInverseCompositional-Translation   templateTracker -c -l 2 -t 5 -w 4 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+
+endif()

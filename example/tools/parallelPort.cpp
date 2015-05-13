@@ -45,8 +45,8 @@
   Send a data to the parallel port.
 */
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
 #if defined VISP_HAVE_PARPORT
 #include <stdlib.h>
@@ -54,8 +54,8 @@
 #include <iostream>
 #include <signal.h>
 
-#include <visp/vpParallelPort.h>
-#include <visp/vpParseArgv.h>
+#include <visp3/core/vpParallelPort.h>
+#include <visp3/core/vpParseArgv.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"d:h"

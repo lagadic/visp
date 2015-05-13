@@ -50,24 +50,24 @@
   of the four points.
 */
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
 
 #ifdef VISP_HAVE_COIN3D_AND_GUI
 
-#include <visp/vpImage.h>
-#include <visp/vpCameraParameters.h>
-#include <visp/vpTime.h>
-#include <visp/vpSimulator.h>
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeaturePointPolar.h>
-#include <visp/vpServo.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpTime.h>
+#include <visp3/ar/vpSimulator.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpFeaturePointPolar.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpIoTools.h>
 
 #define GETOPTARGS	"di:h"
 #define SAVE 0

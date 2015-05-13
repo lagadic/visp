@@ -86,47 +86,41 @@ macro(CheckCompilation_gsl1 MY_INCLUDE_DIR MY_LIBRARY MY_BUILD_SUCCEED)
     set(${MY_BUILD_SUCCEED} ${BUILD_SUCCEED})
 endmacro()
 
-find_path(GSL_INCLUDE_DIR gsl/gsl_linalg.h
+set(GSL_LIB_SEARCH_PATH
+  "$ENV{GSL_HOME}/lib"
+  "$ENV{GSL_DIR}/lib"
+  /usr/lib
+  /usr/local/lib
+)
+set(GSL_INC_SEARCH_PATH
   $ENV{GSL_HOME}/include
   $ENV{GSL_DIR}/include
   /usr/include
   /usr/local/include
 )
 
+find_path(GSL_INCLUDE_DIR gsl/gsl_linalg.h
+  ${GSL_INC_SEARCH_PATH}
+)
+
 find_library(GSL_gsl_LIBRARY
   NAMES gsl
-  PATHS
-    "$ENV{GSL_HOME}/lib"
-    "$ENV{GSL_DIR}/lib"
-    /usr/lib
-    /usr/local/lib
+  PATHS ${GSL_LIB_SEARCH_PATH}
 )
 
 if(WIN32)
   find_library(GSL_cblas_LIBRARY
     NAMES cblas
-    PATHS
-      "$ENV{GSL_HOME}/lib"
-      "$ENV{GSL_DIR}/lib"
-      /usr/lib
-      /usr/local/lib
+    PATHS ${GSL_LIB_SEARCH_PATH}
   )
 
   find_library(GSL_gsl_LIBRARY_DEBUG
     NAMES gsl_d
-    PATHS
-      "$ENV{GSL_HOME}/lib"
-      "$ENV{GSL_DIR}/lib"
-      /usr/lib
-      /usr/local/lib
+    PATHS ${GSL_LIB_SEARCH_PATH}
   )
   find_library(GSL_cblas_LIBRARY_DEBUG
     NAMES cblas_d
-    PATHS
-      "$ENV{GSL_HOME}/lib"
-      "$ENV{GSL_DIR}/lib"
-      /usr/lib
-      /usr/local/lib
+    PATHS ${GSL_LIB_SEARCH_PATH}
   )
 
   if(GSL_INCLUDE_DIR AND GSL_gsl_LIBRARY AND GSL_cblas_LIBRARY
@@ -160,11 +154,7 @@ else()
 
       find_library(GSL_cblas_LIBRARY
         NAMES gslcblas
-        PATHS
-          "$ENV{GSL_HOME}/lib"
-          "$ENV{GSL_DIR}/lib"
-          /usr/lib
-          /usr/local/lib
+        PATHS ${GSL_LIB_SEARCH_PATH}
       )
       if(GSL_cblas_LIBRARY)
         list(APPEND GSL_LIBRARIES ${GSL_cblas_LIBRARY})

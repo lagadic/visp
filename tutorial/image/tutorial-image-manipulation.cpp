@@ -1,5 +1,5 @@
 /*! \example tutorial-image-manipulation.cpp */
-#include <visp/vpImage.h>
+#include <visp3/core/vpImage.h>
 
 int main()
 {

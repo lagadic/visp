@@ -1,11 +1,11 @@
 /*! \example tutorial-template-tracker.cpp */
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpVideoReader.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpVideoReader.h>
 //! [Include]
-#include <visp/vpTemplateTrackerSSDInverseCompositional.h>
-#include <visp/vpTemplateTrackerWarpHomography.h>
+#include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
+#include <visp3/tt/vpTemplateTrackerWarpHomography.h>
 //! [Include]
 
 int main(int argc, char** argv)

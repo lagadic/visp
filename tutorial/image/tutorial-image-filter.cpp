@@ -1,12 +1,12 @@
 //! \example tutorial-image-filter.cpp
 
-#include <visp/vpDisplayD3D.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpImageFilter.h>
+#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpImageFilter.h>
 
 void display(vpImage<unsigned char> &I, const std::string &title);
 void display(vpImage<double> &D, const std::string &title);

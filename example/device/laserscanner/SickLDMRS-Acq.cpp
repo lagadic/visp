@@ -50,9 +50,9 @@
   platforms since the Sick LD-MRS driver was not ported to Windows.
 
 */
-#include <visp/vpDebug.h>
-#include <visp/vpSickLDMRS.h>
-#include <visp/vpParseArgv.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/sensor/vpSickLDMRS.h>
+#include <visp3/core/vpParseArgv.h>
 
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))

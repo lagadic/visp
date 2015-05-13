@@ -2,7 +2,7 @@ project(tutorial-computer-vision)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED)
+find_package(VISP REQUIRED core vision)
 
 set(tutorial_cpp
   tutorial-homography-from-points.cpp

@@ -52,8 +52,8 @@
 
  */
 
-#include <visp/vpImage.h>
-#include <visp/vpV4l2Grabber.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
 
 int main()
 {

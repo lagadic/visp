@@ -47,31 +47,31 @@
 
 #define PRINT_CONDITION_NUMBER
 
-#include <visp/vpDebug.h>
-#include <visp/vpConfig.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpConfig.h>
 #include <iostream>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpMomentObject.h>
-#include <visp/vpMomentDatabase.h>
-#include <visp/vpMomentCommon.h>
-#include <visp/vpFeatureMomentCommon.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpCameraParameters.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpServo.h>
-#include <visp/vpDebug.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpImageSimulator.h>
-#include <visp/vpPlane.h>
-#include <visp/vpPoseVector.h>
-#include <visp/vpPlot.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpMomentObject.h>
+#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentCommon.h>
+#include <visp3/core/vpFeatureMomentCommon.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/core/vpImageSimulator.h>
+#include <visp3/core/vpPlane.h>
+#include <visp3/core/vpPoseVector.h>
+#include <visp3/core/vpPlot.h>
 
 #if !defined(_WIN32) && !defined(VISP_HAVE_PTHREAD)
 // Robot simulator used in this example is not available

@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id$
+# $Id: FindXML2.cmake 5316 2015-02-12 10:58:18Z fspindle $
 #
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2014 by INRIA. All rights reserved.

@@ -60,33 +60,33 @@
 
 
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h> // Debug trace
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h> // Debug trace
 #include <stdlib.h>
 #if (defined (VISP_HAVE_AFMA4) && defined (VISP_HAVE_DC1394))
 
-#include <visp/vp1394TwoGrabber.h>
-#include <visp/vpImage.h>
-#include <visp/vpDisplay.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayGTK.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayGTK.h>
 
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpPoint.h>
-#include <visp/vpServo.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpRobotAfma4.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpException.h>
-#include <visp/vpMatrixException.h>
-#include <visp/vpServoDisplay.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpDot2.h>
-#include <visp/vpAdaptiveGain.h>
-#include <visp/vpLinearKalmanFilterInstantiation.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/robot/vpRobotAfma4.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpMatrixException.h>
+#include <visp3/vs/vpServoDisplay.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpDot2.h>
+#include <visp3/vs/vpAdaptiveGain.h>
+#include <visp3/core/vpLinearKalmanFilterInstantiation.h>
 
 
 // List of allowed command line options

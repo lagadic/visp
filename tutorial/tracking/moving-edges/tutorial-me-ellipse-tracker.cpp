@@ -1,11 +1,14 @@
 /*! \example tutorial-me-ellipse-tracker.cpp */
-#include <visp/vp1394CMUGrabber.h>
-#include <visp/vp1394TwoGrabber.h>
-#include <visp/vpV4l2Grabber.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpMeEllipse.h>
+#include <visp3/visp_modules.h>
+#ifdef VISP_HAVE_MODULE_SENSOR
+#include <visp3/sensor/vp1394CMUGrabber.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
+#endif
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpMeEllipse.h>
 
 int main()
 {
@@ -20,20 +23,17 @@ int main()
 #elif defined(VISP_HAVE_V4L2)
     vpV4l2Grabber g;
 #elif defined(VISP_HAVE_OPENCV)
-    cv::VideoCapture g(0); // open the default camera
-    if(!g.isOpened()) { // check if we succeeded
-      std::cout << "Failed to open the camera" << std::endl;
-      return -1;
-    }
-    cv::Mat frame;
+  cv::VideoCapture g(0); // open the default camera
+  if(!g.isOpened()) { // check if we succeeded
+    std::cout << "Failed to open the camera" << std::endl;
+    return -1;
+  }
+  cv::Mat frame;
+  g >> frame; // get a new frame from camera
+  vpImageConvert::convert(frame, I);
 #endif
-
-#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
+    g.open(I);
     g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
-    g >> frame; // get a new frame from camera
-    vpImageConvert::convert(frame, I);
-#endif
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I, 0, 0, "Camera view");

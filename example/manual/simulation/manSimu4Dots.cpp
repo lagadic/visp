@@ -51,39 +51,39 @@
   from the camera and from an external view using vpSimulator.
 */
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
 
 #if (defined(VISP_HAVE_COIN3D_AND_GUI) && (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)))
 
-#include <visp/vpImage.h>
-#include <visp/vpCameraParameters.h>
-#include <visp/vpTime.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageConvert.h>
-#include <visp/vpSimulator.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpTime.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageConvert.h>
+#include <visp3/ar/vpSimulator.h>
 
 #if defined(VISP_HAVE_X11)
-#  include <visp/vpDisplayX.h>
+#  include <visp3/core/vpDisplayX.h>
 #elif defined(VISP_HAVE_GDI)
-#  include <visp/vpDisplayGDI.h>
+#  include <visp3/core/vpDisplayGDI.h>
 #elif defined(VISP_HAVE_GTK)
-#  include <visp/vpDisplayGTK.h>
+#  include <visp3/core/vpDisplayGTK.h>
 #endif
 // You may have strange compiler issues using the simulator based on SoQt 
 // and the vpDisplayGTK. In that case prefer to use another display like
 // vpDisplayX under linux or vpDisplayGDI under Windows
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpPose.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpDot2.h>
-#include <visp/vpServo.h>
-#include <visp/vpServoDisplay.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpIoTools.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/vision/vpPose.h>
+#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/core/vpDot2.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/vs/vpServoDisplay.h>
+#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/core/vpIoTools.h>
 
 static
 void *mainLoop (void *_simu)

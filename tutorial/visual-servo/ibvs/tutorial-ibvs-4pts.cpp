@@ -1,7 +1,7 @@
 /*! \example tutorial-ibvs-4pts.cpp */
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpServo.h>
-#include <visp/vpSimulatorCamera.h>
+#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 
 int main()
 {

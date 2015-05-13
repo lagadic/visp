@@ -56,17 +56,17 @@
 */
 
 
-#include <visp/vpMath.h>
-#include <visp/vpRotationMatrix.h>
-#include <visp/vpHomography.h>
-#include <visp/vpDebug.h>
-#include <visp/vpThetaUVector.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpRotationMatrix.h>
+#include <visp3/vision/vpHomography.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpThetaUVector.h>
 
-#include <visp/vpPoint.h>
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpDebug.h>
-#include <visp/vpParseArgv.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpParseArgv.h>
 #include <stdlib.h>
 // List of allowed command line options
 #define GETOPTARGS	"h"
@@ -244,7 +244,8 @@ main(int argc, const char ** argv)
     std::list<vpTranslationVector> laTb ;
     std::list<vpColVector> lnb ;
 
-    vpHomography::computeDisplacement(aHb.convert(),bP[0].get_x(),bP[0].get_y(), laRb, laTb, lnb) ;
+    vpHomography::computeDisplacement(aHb,bP[0].get_x(),bP[0].get_y(),
+        laRb, laTb, lnb) ;
 
     std::list<vpRotationMatrix>::const_iterator it_laRb = laRb.begin();
     std::list<vpTranslationVector>::const_iterator it_laTb = laTb.begin();

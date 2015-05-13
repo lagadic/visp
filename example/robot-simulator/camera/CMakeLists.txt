@@ -38,6 +38,12 @@
 #
 #############################################################################
 
+set(EXAMPLES_REQUIRED_DEPS visp_core visp_vs visp_robot)
+
+vp_check_dependencies(${EXAMPLES_REQUIRED_DEPS})
+
+if(VP_DEPENDENCIES_FOUND)
+
 # SOURCE variable corresponds to the list of all the sources to build binaries.
 # The generate binary comes by removing the .cpp extension to
 # the source name.
@@ -69,6 +75,8 @@ set(SOURCE
   servoSimuThetaUCamVelocity.cpp
 )
 
+vp_include_modules_recurse(${EXAMPLES_REQUIRED_DEPS})
+
 # rule for binary build
 foreach(source ${SOURCE})
   # Compute the name of the binary to create
@@ -76,7 +84,7 @@ foreach(source ${SOURCE})
 
   # From source compile the binary and add link rules
   add_executable(${binary} ${source})
-  target_link_libraries(${binary} ${VISP_INTERN_LIBRARY} ${VISP_EXTERN_LIBRARIES})
+  target_link_libraries(${binary} ${EXAMPLES_REQUIRED_DEPS})
 
   add_dependencies(visp_examples ${binary})
   if(ENABLE_SOLUTION_FOLDERS)
@@ -92,8 +100,6 @@ add_test(servoSimu3D_cMcd_CamVelocityWithoutVpServo	servoSimu3D_cMcd_CamVelocity
 add_test(servoSimuCircle2DCamVelocity			servoSimuCircle2DCamVelocity			)
 add_test(servoSimuCircle2DCamVelocityDisplay		servoSimuCircle2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
 add_test(servoSimuCylinder2DCamVelocityDisplay		servoSimuCylinder2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
-add_test(servoSimuCylinder2DCamVelocityDisplaySecondaryTask   servoSimuCylinder2DCamVelocityDisplaySecondaryTask -c ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(servoSimuCylinder2DCamVelocityDisplaySecondaryTask2 servoSimuCylinder2DCamVelocityDisplaySecondaryTask -c ${OPTION_TO_DESACTIVE_DISPLAY} -p)
 add_test(servoSimuFourPoints2DCamVelocity		servoSimuFourPoints2DCamVelocity		)
 add_test(servoSimuFourPoints2DCamVelocityDisplay	servoSimuFourPoints2DCamVelocityDisplay -c ${OPTION_TO_DESACTIVE_DISPLAY}	)
 add_test(servoSimuLine2DCamVelocityDisplay		servoSimuLine2DCamVelocityDisplay	-c ${OPTION_TO_DESACTIVE_DISPLAY}	)
@@ -107,3 +113,5 @@ add_test(servoSimuPoint3DCamVelocity			servoSimuPoint3DCamVelocity			)
 add_test(servoSimuSphere2DCamVelocity			servoSimuSphere2DCamVelocity			)
 add_test(servoSimuSphere2DCamVelocitySecondaryTask	servoSimuSphere2DCamVelocitySecondaryTask	)
 add_test(servoSimuThetaUCamVelocity			servoSimuThetaUCamVelocity			)
+
+endif()

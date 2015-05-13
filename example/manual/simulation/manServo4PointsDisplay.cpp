@@ -49,27 +49,27 @@
   Visual servoing experiment on 4 points with a display.
 */
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
 #ifdef VISP_HAVE_GTK
 
-#include <visp/vpImage.h>
-#include <visp/vpCameraParameters.h>
-#include <visp/vpTime.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageConvert.h>
-#include <visp/vpDisplayGTK.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpTime.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpDisplayGTK.h>
 
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpPose.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpServo.h>
-#include <visp/vpServoDisplay.h>
-#include <visp/vpRobotCamera.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpIoTools.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/vision/vpPose.h>
+#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/vs/vpServoDisplay.h>
+#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/core/vpIoTools.h>
 
 int main()
 {

@@ -1,0 +1,319 @@
+#############################################################################
+#
+# This file is part of the ViSP software.
+# Copyright (C) 2005 - 2015 by INRIA. All rights reserved.
+# 
+# This software is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# ("GPL") version 2 as published by the Free Software Foundation.
+# See the file LICENSE.txt at the root directory of this source
+# distribution for additional information about the GNU GPL.
+#
+# For using ViSP with software that can not be combined with the GNU
+# GPL, please contact INRIA about acquiring a ViSP Professional 
+# Edition License.
+#
+# See http://www.irisa.fr/lagadic/visp/visp.html for more information.
+# 
+# This software was developed at:
+# INRIA Rennes - Bretagne Atlantique
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# France
+# http://www.irisa.fr/lagadic
+#
+# If you have questions regarding the use of this file, please contact
+# INRIA at visp@inria.fr
+# 
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Description:
+# CMake package config file for ViSP.
+#
+# ** File generated automatically, do not modify **
+#
+# This file will define the following CMake variables:
+#   - VISP_LIBS           : The list of all imported targets for VISP modules.
+#   - VISP_INCLUDE_DIRS   : ViSP and third-party include directories
+#   - VISP_LIBRARIES      : ViSP library to link against. Third-party libraries are
+#                           linked automatically thanks to cmake export file VISPModules.cmake
+#   - VISP_VERSION_STRING : Full ViSP version that is build, "@VISP_VERSION@"
+#   - VISP_VERSION_MAJOR  : Major version part of VISP_VERSION: "@VISP_VERSION_MAJOR@" 
+#   - VISP_VERSION_MINOR  : Minor version part of VISP_VERSION: "@VISP_VERSION_MINOR@"
+#   - VISP_VERSION_PATCH  : Patch version part of VISP_VERSION: "@VISP_VERSION_PATCH@"
+#
+#  Advanced variables:
+#    - VISP_SHARED        : Use ViSP as shared library
+#    - VISP_CONFIG_PATH   : Path to this VISPConfig.cmake
+#    - VISP_USE_FILE      : File to include to use ViSP without specific cmake code
+#    - VISP_LIB_COMPONENTS: Present VISP modules list
+#
+# Typical usage in user project:
+#
+#   find_package(VISP REQUIRED)
+#   include_directories(${VISP_INCLUDE_DIRS})
+#   target_link_libraries(MY_TARGET_NAME ${VISP_LIBRARIES})
+#
+# It is also possible to build your project using VISP_USE_FILE.
+#
+#   find_package(VISP)
+#   if(VISP_FOUND)
+#     include(${VISP_USE_FILE})
+#   endif()
+#
+# Or you can search for specific OpenCV modules:
+#
+#   find_package(VISP REQUIRED core videoio)
+#
+# If the module is found then VISP_<MODULE>_FOUND is set to TRUE.
+#
+# Authors:
+# Fabien Spindler
+#
+#############################################################################
+
+#if(VISP_FOUND)
+#  return()
+#endif()
+
+#set(VISP_FOUND TRUE)
+
+# Set the version numbers
+set(VISP_VERSION_STRING "@VISP_VERSION@")
+set(VISP_VERSION_MAJOR  "@VISP_VERSION_MAJOR@")
+set(VISP_VERSION_MINOR  "@VISP_VERSION_MINOR@")
+set(VISP_VERSION_PATCH  "@VISP_VERSION_PATCH@")
+
+set(VISP_LIB_COMPONENTS @VISP_MODULES_CONFIGCMAKE@)
+
+# Form list of modules (components) to find
+if(NOT VISP_FIND_COMPONENTS)
+  set(VISP_FIND_COMPONENTS ${VISP_LIB_COMPONENTS})
+endif()
+
+# expand short module names and see if requested components exist
+set(VISP_FIND_COMPONENTS_ "")
+foreach(__vpcomponent ${VISP_FIND_COMPONENTS})
+  if(NOT __vpcomponent MATCHES "^visp_")
+    set(__vpcomponent visp_${__vpcomponent})
+  endif()
+  list(FIND VISP_LIB_COMPONENTS ${__vpcomponent} __vpcomponentIdx)
+  if(__vpcomponentIdx LESS 0)
+    #requested component is not found...
+    if(VISP_FIND_REQUIRED)
+      message(FATAL_ERROR "${__vpcomponent} is required but was not found")
+    elseif(NOT VISP_FIND_QUIETLY)
+      message(WARNING "${__vpcomponent} is required but was not found")
+    endif()
+    #indicate that module is NOT found
+    string(TOUPPER "${__vpcomponent}" __vpcomponentUP)
+    set(${__vpcomponentUP}_FOUND "${__vpcomponentUP}_FOUND-NOTFOUND")
+  else()
+    list(APPEND VISP_FIND_COMPONENTS_ ${__vpcomponent})
+    # Not using list(APPEND) here, because VISP_LIBS may not exist yet.
+    # Also not clearing VISP_LIBS anywhere, so that multiple calls
+    # to find_package(VISP) with different component lists add up.
+    set(VISP_LIBS ${VISP_LIBS} "${__vpcomponent}")
+    #indicate that module is found
+    string(TOUPPER "${__vpcomponent}" __vpcomponentUP)
+    set(${__vpcomponentUP}_FOUND 1)
+  endif()
+endforeach()
+set(VISP_FIND_COMPONENTS ${VISP_FIND_COMPONENTS_})
+#message("VISP_FIND_COMPONENTS: ${VISP_FIND_COMPONENTS}")
+
+# Resolve dependencies
+foreach(__opttype OPT DBG)
+  set(VISP_LIBS_${__opttype} "${VISP_LIBS}")
+endforeach()
+
+# Some additional settings are required if ViSP is built as static libs
+set(VISP_SHARED @BUILD_SHARED_LIBS@)
+
+# Extract the directory where *this* file has been installed (determined at cmake run-time)
+get_filename_component(VISP_CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" PATH CACHE)
+mark_as_advanced(VISP_CONFIG_PATH)
+
+if(NOT WIN32)
+  # Since this file is installed in ./${VISP_INSTALL_LIBDIR}/cmake/visp
+  # the first "../../" are here to go to ${VISP_INSTALL_LIBDIR}, and then
+  # VISP_INSTALL_LIBDIR_TO_PARENT goes to the parent dir "."
+  set(VISP_INSTALL_PATH "${VISP_CONFIG_PATH}/../../@VISP_INSTALL_LIBDIR_TO_PARENT@")
+  # Get the absolute path with no ../.. relative marks, to eliminate implicit linker warnings
+  if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} VERSION_LESS 2.8)
+    get_filename_component(VISP_INSTALL_PATH "${VISP_INSTALL_PATH}" ABSOLUTE)
+  else()
+    get_filename_component(VISP_INSTALL_PATH "${VISP_INSTALL_PATH}" REALPATH)
+  endif()
+endif()
+
+# Tells the user project where to find ViSP headers
+set(VISP_INCLUDE_DIRS "@VISP_INCLUDE_DIRS_CONFIGCMAKE@")
+
+# Tells the user project ViSP library name
+set(VISP_LIBRARIES ${VISP_LIBS})
+
+# need to be improved
+if(POLICY CMP0024)
+  # Fix to prevent multiple includes
+  if(NOT TARGET visp_core)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0024 OLD)
+    # Our library dependencies (contains definitions for IMPORTED targets)
+    include("${CMAKE_CURRENT_LIST_DIR}/VISPModules.cmake")
+    cmake_policy(POP)
+  endif()
+else()
+  # Fix for cmake 2.8.7 to prevent multiple includes
+  if(NOT TARGET visp_core)
+    # Our library dependencies (contains definitions for IMPORTED targets)
+    include("${CMAKE_CURRENT_LIST_DIR}/VISPModules.cmake")
+  endif()
+endif()
+
+# where to find the USE file to be used by user project
+set(VISP_USE_FILE "${CMAKE_CURRENT_LIST_DIR}/VISPUse.cmake")
+
+if(BUILD_TEST_COVERAGE)
+  # Add build options for test coverage. Currently coverage is only supported
+  # on gcc compiler 
+  # Because using -fprofile-arcs with shared lib can cause problems like:
+  # hidden symbol `__bb_init_func', we add this option only for static 
+  # library build
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
+endif()
+
+#----------------------------------------------------------------------
+# Remember VISP' third party libs configuration:
+#----------------------------------------------------------------------
+SET(VISP_HAVE_X11            "@VISP_HAVE_X11@")
+SET(VISP_HAVE_PTHREAD        "@VISP_HAVE_PTHREAD@")
+SET(VISP_HAVE_GTK            "@VISP_HAVE_GTK@")
+SET(VISP_HAVE_GDI            "@VISP_HAVE_GDI@")
+SET(VISP_HAVE_D3D9           "@VISP_HAVE_D3D9@")
+SET(VISP_HAVE_DISPLAY        "@VISP_HAVE_DISPLAY@")
+SET(VISP_HAVE_GSL            "@VISP_HAVE_GSL@")
+SET(VISP_HAVE_LAPACK_C       "@VISP_HAVE_LAPACK_C@")
+SET(VISP_HAVE_LIBFREENECT    "@VISP_HAVE_LIBFREENECT@")
+SET(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES "@VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES@")
+SET(VISP_HAVE_LIBFREENECT_OLD "@VISP_HAVE_LIBFREENECT_OLD@")
+SET(VISP_HAVE_LIBUSB_1       "@VISP_HAVE_LIBUSB_1@")
+SET(VISP_HAVE_OPENCV         "@VISP_HAVE_OPENCV@")
+SET(VISP_HAVE_OPENCV_NONFREE "@VISP_HAVE_OPENCV_NONFREE@")
+SET(VISP_HAVE_OPENCV_VERSION "@VISP_HAVE_OPENCV_VERSION@")
+SET(VISP_HAVE_OGRE           "@VISP_HAVE_OGRE@")
+SET(VISP_HAVE_OPENGL         "@VISP_HAVE_OPENGL@")
+SET(VISP_HAVE_OIS            "@VISP_HAVE_OIS@")
+SET(VISP_HAVE_COIN3D_AND_GUI   "@VISP_HAVE_COIN3D_AND_GUI@")
+SET(VISP_HAVE_COIN3D           "@VISP_HAVE_COIN3D@")
+SET(VISP_HAVE_QT             "@VISP_HAVE_QT@")
+SET(VISP_HAVE_SOQT           "@VISP_HAVE_SOQT@")
+SET(VISP_HAVE_SOWIN          "@VISP_HAVE_SOWIN@")
+SET(VISP_HAVE_SOXT           "@VISP_HAVE_SOXT@")
+SET(VISP_HAVE_DC1394         "@VISP_HAVE_DC1394@")
+SET(VISP_HAVE_CMU1394        "@VISP_HAVE_CMU1394@")
+SET(VISP_HAVE_V4L2           "@VISP_HAVE_V4L2@")
+SET(VISP_HAVE_DIRECTSHOW     "@VISP_HAVE_DIRECTSHOW@")
+SET(VISP_HAVE_AFMA4          "@VISP_HAVE_AFMA4@")
+SET(VISP_HAVE_AFMA6          "@VISP_HAVE_AFMA6@")
+SET(VISP_HAVE_BICLOPS        "@VISP_HAVE_BICLOPS@")
+SET(VISP_HAVE_PTU46          "@VISP_HAVE_PTU46@")
+SET(VISP_HAVE_VIPER650       "@VISP_HAVE_VIPER650@")
+SET(VISP_HAVE_VIPER850       "@VISP_HAVE_VIPER850@")
+SET(VISP_HAVE_PIONEER        "@VISP_HAVE_PIONEER@")
+SET(VISP_HAVE_PARPORT        "@VISP_HAVE_PARPORT@")
+SET(VISP_HAVE_XML2           "@VISP_HAVE_XML2@")
+SET(VISP_HAVE_JPEG        "@VISP_HAVE_JPEG@")
+SET(VISP_HAVE_PNG         "@VISP_HAVE_PNG@")
+SET(VISP_HAVE_FFMPEG         "@VISP_HAVE_FFMPEG@")
+SET(VISP_HAVE_YARP           "@VISP_HAVE_YARP@")
+SET(VISP_HAVE_OPENMP         "@VISP_HAVE_OPENMP@")
+SET(VISP_HAVE_ACCESS_TO_NAS  "@VISP_HAVE_ACCESS_TO_NAS@")
+SET(VISP_HAVE_CPP11_COMPATIBILITY "@VISP_HAVE_CPP11_COMPATIBILITY@")
+
+#----------------------------------------------------------------------
+# Some useful macro to be able to build the tutorials along side ViSP
+#----------------------------------------------------------------------
+# Create a target from the *.cpp file, link against ViSP libraries and add a dependency to ViSP library
+# tu ensure that the library is build before this target.
+macro(visp_add_target file_cpp)
+  get_filename_component(target ${file_cpp} NAME_WE)
+  include_directories(${VISP_INCLUDE_DIRS})
+  add_executable(${target} ${file_cpp})
+  target_link_libraries(${target} ${VISP_LIBRARIES})
+endmacro()
+
+# Create a dependency to the target extracted from the *.cpp file and put the target in the solution dependency folder.
+macro(visp_add_dependency file_cpp dependency)
+  get_filename_component(target ${file_cpp} NAME_WE)
+  if(TARGET visp_${dependency})
+    add_dependencies(visp_${dependency} ${target})
+    if(ENABLE_SOLUTION_FOLDERS)
+      set_target_properties(${target} PROPERTIES FOLDER "${dependency}")
+    endif()
+  endif()
+endmacro()
+
+# Copy the data files to the same location than the target associated to the cpp files
+# Since CMake 3.0.0 policy CMP0026 was introduced to disallow location property on target.
+# If CMake 3.0.0 is used, we use $<TARGET_FILE_DIR:tgt> to get the target location
+if (CMAKE_VERSION VERSION_GREATER 2.8.12)
+  macro(visp_copy_data file_cpp file_data)
+    get_filename_component(target ${file_cpp} NAME_WE)
+    #get_target_property(target_location ${target} LOCATION)
+    get_filename_component(target_location "${target_location}" PATH)
+    add_custom_command(
+      TARGET ${target}
+      POST_BUILD
+      #COMMAND ${CMAKE_COMMAND} -E copy "${file_data}" "${target_location}"
+      COMMAND ${CMAKE_COMMAND} -E copy "${file_data}" "$<TARGET_FILE_DIR:${target}>"
+    )
+  endmacro()
+else()
+  macro(visp_copy_data file_cpp file_data)
+    get_filename_component(target ${file_cpp} NAME_WE)
+    get_target_property(target_location ${target} LOCATION)
+    get_filename_component(target_location "${target_location}" PATH)
+    add_custom_command(
+      TARGET ${target}
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy "${file_data}" "${target_location}"
+    )
+  endmacro()
+endif()
+
+# Check dependencies for examples
+macro(visp_check_dependencies)
+  set(VP_DEPENDENCIES_FOUND TRUE)
+  foreach(d ${ARGN})
+    if(NOT TARGET ${d})
+      #message(WARNING "ViSP: Can't resolve dependency: ${d}")
+      set(VP_DEPENDENCIES_FOUND FALSE)
+      break()
+    endif()
+  endforeach()
+endmacro()
+
+# add subdirectory if dependencies are found
+# visp_add_subdirectory(<subdir> REQUIRED_DEPS <deps>)
+macro(visp_add_subdirectory subdir)
+  set(__condition "")
+
+  foreach(arg ${ARGN})
+    if(arg STREQUAL "REQUIRED_DEPS")
+      set(__varname "__deps")
+    else()
+      list(APPEND ${__varname} ${arg})
+    endif()
+  endforeach()
+  if(__deps STREQUAL "")
+    set(VP_DEPENDENCIES_FOUND TRUE)
+  else()
+    visp_check_dependencies(${__deps})
+  endif()
+
+  if(VP_DEPENDENCIES_FOUND)
+    add_subdirectory(${subdir})
+  endif()
+endmacro()

@@ -61,18 +61,18 @@
   select the layers to proceed.
 
 */
-#include <visp/vpDebug.h>
-#include <visp/vpImagePoint.h>
-#include <visp/vpSickLDMRS.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpDisplay.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vp1394TwoGrabber.h>
-#include <visp/vpIoTools.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/sensor/vpSickLDMRS.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/core/vpIoTools.h>
  
 #if ( !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) ) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK))
 

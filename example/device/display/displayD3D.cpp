@@ -48,17 +48,17 @@
 
 */
 
-#include <visp/vpDebug.h>
-#include <visp/vpConfig.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpConfig.h>
 
 #if ( defined(VISP_HAVE_D3D9) )
 
-#include <visp/vpDisplayD3D.h>
+#include <visp3/core/vpDisplayD3D.h>
 
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpIoTools.h>
 
 /*!
   \example displayD3D.cpp

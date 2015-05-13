@@ -57,8 +57,8 @@
 
 */
 
-#include <visp/vpDebug.h>
-#include <visp/vpConfig.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpConfig.h>
 
 #if (defined(_WIN32) || defined(VISP_HAVE_PTHREAD)) && (defined (VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI))
 
@@ -69,21 +69,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <visp/vpCameraParameters.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImage.h>
-#include <visp/vpImagePoint.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpMath.h>
-#include <visp/vpMeterPixelConversion.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpServo.h>
-#include <visp/vpSimulatorViper850.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/robot/vpSimulatorViper850.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"cdh"

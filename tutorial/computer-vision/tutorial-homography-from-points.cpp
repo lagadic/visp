@@ -1,9 +1,9 @@
 //! \example tutorial-homography-from-points.cpp
 
 //! [Include]
-#include <visp/vpHomography.h>
+#include <visp3/vision/vpHomography.h>
 //! [Include]
-#include <visp/vpMeterPixelConversion.h>
+#include <visp3/core/vpMeterPixelConversion.h>
 
 int main()
 {

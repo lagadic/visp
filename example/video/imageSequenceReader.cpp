@@ -49,16 +49,16 @@
   Reading an image sequence using vpVideoReader class.
  */
 
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpDebug.h>
-#include <visp/vpVideoReader.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpVideoReader.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayGDI.h>
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)
 

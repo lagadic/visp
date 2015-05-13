@@ -1,13 +1,13 @@
 //! \example tutorial-viewer.cpp
 //! [Include display]
-#include <visp/vpDisplayD3D.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayOpenCV.h>
 //! [Include display]
 //! [Include io]
-#include <visp/vpImageIo.h>
+#include <visp3/core/vpImageIo.h>
 //! [Include io]
 
 int main(int argc, char** argv)

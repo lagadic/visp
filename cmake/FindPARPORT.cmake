@@ -35,24 +35,25 @@
 # Once run this will define: 
 #
 # PARPORT_FOUND
+# PARPORT_INCLUDE_DIRS
 #
 # Authors:
 # Fabien Spindler
 #
 #############################################################################
 
-FIND_PATH(PARPORT_INCLUDE_DIR linux/parport.h
+find_path(PARPORT_INCLUDE_DIRS linux/parport.h
   /usr/include 
-  /usr/src/linux/include)
-  #MESSAGE("DBG PARPORT_INCLUDE_DIR=${PARPORT_INCLUDE_DIR}")  
+  /usr/src/linux/include
+)
 
-MARK_AS_ADVANCED(
-  PARPORT_INCLUDE_DIR
+mark_as_advanced(
+  PARPORT_INCLUDE_DIRS
 )
       
-IF(PARPORT_INCLUDE_DIR)
-  SET(PARPORT_FOUND TRUE)
-ELSE(PARPORT_INCLUDE_DIR)
-  SET(PARPORT_FOUND FALSE)
-ENDIF(PARPORT_INCLUDE_DIR)
+if(PARPORT_INCLUDE_DIRS)
+  set(PARPORT_FOUND TRUE)
+else()
+  set(PARPORT_FOUND FALSE)
+endif()
   

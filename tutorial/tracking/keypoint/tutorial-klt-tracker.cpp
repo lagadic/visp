@@ -1,9 +1,9 @@
 //! \example tutorial-klt-tracker.cpp
 //! [Include]
-#include <visp/vpImageConvert.h>
-#include <visp/vpKltOpencv.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpVideoReader.h>
+#include <visp3/core/vpImageConvert.h>
+#include <visp3/vision/vpKltOpencv.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpVideoReader.h>
 //! [Include]
 
 int main(int argc, const char *argv[])

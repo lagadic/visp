@@ -52,10 +52,10 @@
 
  */
 
-#include <visp/vpConfig.h>
+#include <visp3/core/vpConfig.h>
 
-#include <visp/vpImage.h>
-#include <visp/vpDirectShowGrabber.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/sensor/vpDirectShowGrabber.h>
 
 int main()
 {

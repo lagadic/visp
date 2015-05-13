@@ -1,10 +1,10 @@
 /*! \example tutorial-ibvs-4pts-wireframe-robot-viper.cpp */
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpServo.h>
-#include <visp/vpSimulatorViper850.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/robot/vpSimulatorViper850.h>
 
 void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point,
                         const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam);

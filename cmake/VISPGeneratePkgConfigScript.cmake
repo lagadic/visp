@@ -1,7 +1,5 @@
 #############################################################################
 #
-# $Id$
-#
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
 # 
@@ -50,13 +48,13 @@ if (UNIX)
   # for Unix platforms: Linux, OSX
   #
   ####################################################################### 
-  set(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_CMAKE_MODULE_PATH}/visp-config.in")
+  set(FILE_VISP_CONFIG_SCRIPT_IN "cmake/templates/visp-config.in")
   set(FILE_VISP_CONFIG_SCRIPT    "${BINARY_OUTPUT_PATH}/visp-config")
 
-  set(FILE_VISP_CONFIG_SCRIPT_INSTALL_IN "${VISP_CMAKE_MODULE_PATH}/visp-config.install.in")
+  set(FILE_VISP_CONFIG_SCRIPT_INSTALL_IN "cmake/templates/visp-config.install.in")
   set(FILE_VISP_CONFIG_SCRIPT_INSTALL    "${VISP_BINARY_DIR}/unix-install/visp-config")
   
-  set(FILE_VISP_CONFIG_PC_INSTALL_IN "${VISP_CMAKE_MODULE_PATH}/visp.pc.in")
+  set(FILE_VISP_CONFIG_PC_INSTALL_IN "cmake/templates/visp.pc.in")
   set(FILE_VISP_CONFIG_PC_INSTALL    "${VISP_BINARY_DIR}/unix-install/visp.pc")
 
   #---------------------------------------------------------------------
@@ -67,22 +65,15 @@ if (UNIX)
   #---------------------------------------------------------------------
   # Updates VISP_CONFIG_CFLAGS
   #----------------------------------------------------------------------
-  foreach(INCDIR ${VISP_EXTERN_INCLUDE_DIRS})
-    list(APPEND VISP_CONFIG_CFLAGS "-I${INCDIR}")
+  foreach(m ${VISP_MODULES_BUILD})
+    foreach(inc ${VISP_MODULE_${m}_INC_DEPS})
+      list(APPEND VISP_CONFIG_CFLAGS "-I${inc}")
+    endforeach()
   endforeach()
-
-  # Suppress twins
-  if(VISP_CONFIG_CFLAGS)
-    list(REMOVE_DUPLICATES VISP_CONFIG_CFLAGS)
-  endif()
+  vp_list_unique(VISP_CONFIG_CFLAGS)
 
   # Format the string to suppress CMake separators ";"
-  set(VISP_CONFIG_CFLAGS_REFORMATED "")
-  foreach(element ${VISP_CONFIG_CFLAGS})
-    set(VISP_CONFIG_CFLAGS_REFORMATED "${VISP_CONFIG_CFLAGS_REFORMATED} ${element}")
-  endforeach()
-  set(VISP_CONFIG_CFLAGS ${VISP_CONFIG_CFLAGS_REFORMATED})
-#  message(": ${VISP_CONFIG_CFLAGS}")
+  vp_list_remove_separator(VISP_CONFIG_CFLAGS)
 
   if(BUILD_TEST_COVERAGE)
     # Add build options for test coverage. Currently coverage is only supported
@@ -92,68 +83,6 @@ if (UNIX)
     # library build
     set(VISP_CONFIG_CFLAGS "${VISP_CONFIG_CFLAGS} -ftest-coverage -fprofile-arcs")
   endif()
-
-  #---------------------------------------------------------------------
-  # Updates VISP_CONFIG_LIBS
-  #
-  # add "-l" to library names
-  # skip *.so, *.a, *.dylib, -framework*, -l*
-  #
-  #----------------------------------------------------------------------
-
-  # need to be improved
-  if(POLICY CMP0026)
-    cmake_policy(PUSH)
-    cmake_policy(SET CMP0026 OLD)
-    get_target_property(visp_libpath ${VISP_INTERN_LIBRARY} LOCATION_Release)
-    cmake_policy(POP)
-  else()
-    get_target_property(visp_libpath ${VISP_INTERN_LIBRARY} LOCATION_Release)
-  endif()
-  #message("ViSP libpath: ${vip_libpath}")
-  get_filename_component(visp_libname "${visp_libpath}" NAME)
-
-  #message("ViSP libname: ${visp_libname}")
-  # Manage the libs	
-  list(REMOVE_ITEM VISP_EXTERN_LIBRARIES "debug")
-  list(REMOVE_ITEM VISP_EXTERN_LIBRARIES "optimized")
-  set(TMP_LIBS)
-  foreach(lib ${VISP_EXTERN_LIBRARIES})
-    if("${lib}" MATCHES "[-][f][r][a][m][e][w][o][r][k]+.")
-      # does nothing
-      list(APPEND TMP_LIBS ${lib})
-    elseif("${lib}" MATCHES ".[.][f][r][a][m][e][w][o][r][k]+$")
-      # replace /path/name.framework by -framework name
-      get_filename_component(FRAMEWORK ${lib} NAME_WE)
-      #message("add -framework ${FRAMEWORK}")
-      list(APPEND TMP_LIBS "-framework ${FRAMEWORK}")
-    elseif("${lib}" MATCHES ".[.][s][o]+$" OR "${lib}" MATCHES ".[.][a]+$")
-      list(APPEND TMP_LIBS ${lib})
-    elseif("${lib}" MATCHES ".[.][s][o][.][0123456789]+$")
-      # does nothing
-      list(APPEND TMP_LIBS ${lib})
-    elseif("${lib}" MATCHES ".[.][s][o][.][0123456789]*[.][0123456789]+$")
-      # does nothing
-      list(APPEND TMP_LIBS ${lib})
-    elseif("${lib}" MATCHES ".[.][s][o][.][0123456789]*[.][0123456789]*[.][0123456789]+$")
-      # does nothing
-      list(APPEND TMP_LIBS ${lib})
-    elseif("${lib}" MATCHES ".[.][d][y][l][i][b]+$")
-      # does nothing
-      list(APPEND TMP_LIBS ${lib})
-    elseif("${lib}" MATCHES "^(-l)")
-      # does nothing
-      list(APPEND TMP_LIBS ${lib})
-    else()
-      # add -l prefix
-      #MESSAGE("add -l${lib}")
-      list(APPEND TMP_LIBS "${lib}")
-    endif()
-  endforeach()
-
-  foreach(val ${TMP_LIBS})
-     set(VISP_CONFIG_LIBS "${VISP_CONFIG_LIBS} ${val}")
-  endforeach(val)
  
   #---------------------------------------------------------------------
   # Updates the <build dir>/bin/visp-config shell script
@@ -164,8 +93,27 @@ if (UNIX)
   # prepend with ViSP own include dir
   set(VISP_CONFIG_CFLAGS_SCRIPT "-I$PREFIX/${CMAKE_INSTALL_INCLUDEDIR} ${VISP_CONFIG_CFLAGS}")
 
-  # prepend with ViSP own lib
-  set(VISP_CONFIG_LIBS_SCRIPT  "$PREFIX/${CMAKE_INSTALL_LIBDIR}/${visp_libname} ${VISP_CONFIG_LIBS}")
+  # prepend with ViSP own modules first
+  set(VISP_CONFIG_LIBS_SCRIPT "")
+  foreach(m ${VISP_MODULES_BUILD})
+    # need to be improved
+    if(POLICY CMP0026)
+      cmake_policy(PUSH)
+      cmake_policy(SET CMP0026 OLD)
+      get_target_property(m_libpath ${m} LOCATION_Release)
+      cmake_policy(POP)
+    else()
+      get_target_property(m_libpath ${m} LOCATION_Release)
+    endif()
+    get_filename_component(m_libname "${m_libpath}" NAME)
+    list(APPEND VISP_CONFIG_LIBS_SCRIPT "$PREFIX/${CMAKE_INSTALL_LIBDIR}/${m_libname}")
+  endforeach()
+  # append deps
+  foreach(m ${VISP_MODULES_BUILD})
+    list(APPEND VISP_CONFIG_LIBS_SCRIPT ${VISP_MODULE_${m}_LINK_DEPS})
+  endforeach()
+  vp_list_unique(VISP_CONFIG_LIBS_SCRIPT)
+#  message("VISP_CONFIG_LIBS_SCRIPT: ${VISP_CONFIG_LIBS_SCRIPT}")
 
   set(VISP_ECHO_NO_NEWLINE_CHARACTER "")
   set(VISP_ECHO_NO_NEWLINE_OPTION "")
@@ -195,8 +143,27 @@ if (UNIX)
   # prepend with ViSP own include dir
   set(VISP_CONFIG_CFLAGS_PC "-I\${includedir} ${VISP_CONFIG_CFLAGS}")
 
-  # prepend with ViSP own lib dir and append -L<lib dir>
-  set(VISP_CONFIG_LIBS_PC  "\${libdir}/${visp_libname} ${VISP_CONFIG_LIBS}")
+  # prepend with ViSP own modules first
+  set(VISP_CONFIG_LIBS_PC "")
+  foreach(m ${VISP_MODULES_BUILD})
+    # need to be improved
+    if(POLICY CMP0026)
+      cmake_policy(PUSH)
+      cmake_policy(SET CMP0026 OLD)
+      get_target_property(m_libpath ${m} LOCATION_Release)
+      cmake_policy(POP)
+    else()
+      get_target_property(m_libpath ${m} LOCATION_Release)
+    endif()
+    get_filename_component(m_libname "${m_libpath}" NAME)
+    list(APPEND VISP_CONFIG_LIBS_PC "\${libdir}/${m_libname}")
+  endforeach()
+  # append deps
+  foreach(m ${VISP_MODULES_BUILD})
+    list(APPEND VISP_CONFIG_LIBS_PC ${VISP_MODULE_${m}_LINK_DEPS})
+  endforeach()
+  vp_list_remove_separator(VISP_CONFIG_LIBS_PC)
+
   configure_file(${FILE_VISP_CONFIG_PC_INSTALL_IN} ${FILE_VISP_CONFIG_PC_INSTALL})
 
 else(UNIX)
@@ -205,10 +172,10 @@ else(UNIX)
   # for windows platforms
   #
   ####################################################################### 
-  set(FILE_VISP_CONFIG_SCRIPT_IN "${VISP_CMAKE_MODULE_PATH}/visp-config.bat.in")
+  set(FILE_VISP_CONFIG_SCRIPT_IN "cmake/templates/visp-config.bat.in")
   set(FILE_VISP_CONFIG_SCRIPT    "${BINARY_OUTPUT_PATH}/visp-config.bat")
     
-  set(FILE_VISP_CONFIG_SCRIPT_INSTALL_IN "${VISP_CMAKE_MODULE_PATH}/visp-config.bat.in")
+  set(FILE_VISP_CONFIG_SCRIPT_INSTALL_IN "cmake/templates/visp-config.bat.in")
   set(FILE_VISP_CONFIG_SCRIPT_INSTALL    "${VISP_BINARY_DIR}/win-install/visp-config-${VISP_ARCH}-${VISP_RUNTIME}.bat")
 
   #---------------------------------------------------------------------
@@ -230,13 +197,15 @@ else(UNIX)
   endif()
 
   #---------------------------------------------------------------------
-  # Updates VISP_CONFIG_SCRIPT_INCLUDE
+  # Updates VISP_CONFIG_SCRIPT_INCL
   #----------------------------------------------------------------------
-  list(APPEND VISP_EXTERN_INCLUDE_DIRS "%PREFIX%/${CMAKE_INSTALL_INCLUDEDIR}")
-  list(REMOVE_DUPLICATES VISP_EXTERN_INCLUDE_DIRS)
-
-  # Format the string
-  set(VISP_CONFIG_SCRIPT_INC ${VISP_EXTERN_INCLUDE_DIRS})
+  set(VISP_CONFIG_SCRIPT_INC "%PREFIX%/${CMAKE_INSTALL_INCLUDEDIR}")
+  foreach(m ${VISP_MODULES_BUILD})
+    foreach(inc ${VISP_MODULE_${m}_INC_DEPS})
+      list(APPEND VISP_CONFIG_SCRIPT_INC "${inc}")
+    endforeach()
+  endforeach()
+  vp_list_unique(VISP_CONFIG_SCRIPT_INC)
   #message(VISP_CONFIG_SCRIPT_INC ${VISP_CONFIG_SCRIPT_INC})
 
   #---------------------------------------------------------------------
@@ -316,7 +285,8 @@ install(FILES ${FILE_VISP_CONFIG_SCRIPT_INSTALL}
   PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
   OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
   OWNER_WRITE
-  COMPONENT libraries)
+  COMPONENT dev
+)
     
 # install rule for visp.pc pkg-config file
 if(UNIX)
@@ -324,7 +294,8 @@ if(UNIX)
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
     OWNER_WRITE
-    COMPONENT libraries)
+    COMPONENT dev
+  )
 else()
   # not implemented yet
 endif()

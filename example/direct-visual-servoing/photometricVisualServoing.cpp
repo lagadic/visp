@@ -45,33 +45,33 @@
 */
 
 
-#include <visp/vpDebug.h>
+#include <visp3/core/vpDebug.h>
 
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpImageTools.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpImageTools.h>
 
-#include <visp/vpCameraParameters.h>
-#include <visp/vpTime.h>
-#include <visp/vpRobotCamera.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpTime.h>
+#include <visp3/robot/vpRobotCamera.h>
 
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayD3D.h>
-#include <visp/vpDisplayX.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/core/vpDisplayX.h>
 
-#include <visp/vpFeatureLuminance.h>
-#include <visp/vpParseArgv.h>
+#include <visp3/core/vpFeatureLuminance.h>
+#include <visp3/core/vpParseArgv.h>
 
-#include <visp/vpImageSimulator.h>
+#include <visp3/core/vpImageSimulator.h>
 #include <stdlib.h>
 #define  Z             1
 
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpIoTools.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"cdi:n:h"

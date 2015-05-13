@@ -46,13 +46,13 @@
 */
 
 
-#include <visp/vpTranslationVector.h>
-#include <visp/vpRotationVector.h>
-#include <visp/vpThetaUVector.h>
-#include <visp/vpRxyzVector.h>
-#include <visp/vpColVector.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpExponentialMap.h>
+#include <visp3/core/vpTranslationVector.h>
+#include <visp3/core/vpRotationVector.h>
+#include <visp3/core/vpThetaUVector.h>
+#include <visp3/core/vpRxyzVector.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpExponentialMap.h>
 
 
 int

@@ -1,7 +1,7 @@
 #include <iostream>
-#include <visp/vpMath.h>
-#include <visp/vpRotationMatrix.h>
-#include <visp/vpThetaUVector.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpThetaUVector.h>
 #include <limits>
 
 int main()

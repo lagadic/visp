@@ -50,24 +50,24 @@
   Detection of points of interests and matching using a Fern classifier.
 */
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
 #if ((defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)) && (VISP_HAVE_OPENCV_VERSION >= 0x020000) && (VISP_HAVE_OPENCV_VERSION < 0x030000))
 
 #include <iostream>
 #include <stdlib.h>
-#include <visp/vpFernClassifier.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpHomography.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpTime.h>
+#include <visp3/vision/vpFernClassifier.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/vision/vpHomography.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpTime.h>
 #include <iomanip>
 
 #define GETOPTARGS  "hlcdb:i:p"

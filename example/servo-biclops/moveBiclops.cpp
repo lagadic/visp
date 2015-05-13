@@ -58,15 +58,15 @@
 
 
 
-#include <visp/vpParseArgv.h>
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
-#include <visp/vpColVector.h>
-#include <visp/vpTime.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpTime.h>
 #include <stdlib.h>
 #ifdef VISP_HAVE_BICLOPS
 
-#include <visp/vpRobotBiclops.h>
+#include <visp3/robot/vpRobotBiclops.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"c:h"

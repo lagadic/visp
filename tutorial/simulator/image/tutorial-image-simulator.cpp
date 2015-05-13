@@ -1,10 +1,10 @@
 //! \example tutorial-image-simulator.cpp
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpImageIo.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpImageIo.h>
 //! [Include]
-#include <visp/vpImageSimulator.h>
+#include <visp3/core/vpImageSimulator.h>
 //! [Include]
 
 int main()

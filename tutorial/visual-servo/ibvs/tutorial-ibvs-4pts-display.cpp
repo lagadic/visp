@@ -1,12 +1,12 @@
 /*! \example tutorial-ibvs-4pts-display.cpp */
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpServo.h>
-#include <visp/vpSimulatorCamera.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpProjectionDisplay.h>
-#include <visp/vpServoDisplay.h>
+#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/robot/vpSimulatorCamera.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpProjectionDisplay.h>
+#include <visp3/vs/vpServoDisplay.h>
 
 void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &point,
                         const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam);

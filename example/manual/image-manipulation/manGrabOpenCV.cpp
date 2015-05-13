@@ -44,9 +44,9 @@
   \brief Images grabbing example with the vpOpenCVGrabber class.
 
  */
-#include <visp/vpConfig.h>
-#include <visp/vpImage.h>
-#include <visp/vpOpenCVGrabber.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/sensor/vpOpenCVGrabber.h>
 
 int main(){
   vpImage<unsigned char> I; // Grey level image

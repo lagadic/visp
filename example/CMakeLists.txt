@@ -42,7 +42,8 @@
 # the build process. 
 #
 # If you add/remove a directory, modify here
-SET (SRC_SUBDIRS
+
+set(SRC_SUBDIRS
   calibration
   coin-simulator
   device
@@ -75,4 +76,6 @@ SET (SRC_SUBDIRS
 )
 
 # Build process propagation in the sub directories
-SUBDIRS(${SRC_SUBDIRS})
+foreach(subdir ${SRC_SUBDIRS})
+  add_subdirectory(${subdir})
+endforeach()

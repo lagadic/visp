@@ -45,15 +45,15 @@
   Keyboard example.
 */
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <stdio.h>
 #include <iostream>
 #include <signal.h>
 
-#include <visp/vpKeyboard.h>
+#include <visp3/core/vpKeyboard.h>
 
 
 int

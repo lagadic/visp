@@ -53,24 +53,24 @@
 */
 
 
-#include <visp/vpDebug.h>
-#include <visp/vpImageIo.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpImageIo.h>
 // For 2D image 
-#include <visp/vpImage.h>
+#include <visp3/core/vpImage.h>
 // Video device interface
-#include <visp/vpDisplay.h>
-#include <visp/vpDisplayGTK.h>
+#include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpDisplayGTK.h>
 
 // For frame transformation and projection
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpCameraParameters.h>
 
 // Needed geometric features
-#include <visp/vpPoint.h>
-#include <visp/vpLine.h>
-#include <visp/vpCylinder.h>
-#include <visp/vpCircle.h>
-#include <visp/vpSphere.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpLine.h>
+#include <visp3/core/vpCylinder.h>
+#include <visp3/core/vpCircle.h>
+#include <visp3/core/vpSphere.h>
 
 #include <iostream>
 

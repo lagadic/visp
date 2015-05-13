@@ -46,11 +46,11 @@
   Plot 2D curves example.
 */
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
-#include <visp/vpPlot.h>
-#include <visp/vpMath.h>
+#include <visp3/core/vpPlot.h>
+#include <visp3/core/vpMath.h>
 
 int main ()
 {

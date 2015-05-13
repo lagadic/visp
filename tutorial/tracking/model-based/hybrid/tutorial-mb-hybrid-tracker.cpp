@@ -1,11 +1,11 @@
 /*! \example tutorial-mb-hybrid-tracker.cpp */
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpMbEdgeKltTracker.h>
-#include <visp/vpVideoReader.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/mbt/vpMbEdgeKltTracker.h>
+#include <visp3/core/vpVideoReader.h>
 
 int main(int argc, char** argv)
 {

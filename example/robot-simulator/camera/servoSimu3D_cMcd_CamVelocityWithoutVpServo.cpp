@@ -85,14 +85,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <visp/vpMath.h>
-#include <visp/vpFeatureThetaU.h>
-#include <visp/vpFeatureTranslation.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpServo.h>
-#include <visp/vpSimulatorCamera.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpFeatureThetaU.h>
+#include <visp3/core/vpFeatureTranslation.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"h"

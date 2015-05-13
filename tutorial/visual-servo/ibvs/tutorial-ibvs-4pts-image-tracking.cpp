@@ -1,13 +1,13 @@
 /*! \example tutorial-ibvs-4pts-image-tracking.cpp */
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpImageSimulator.h>
-#include <visp/vpServo.h>
-#include <visp/vpServoDisplay.h>
-#include <visp/vpSimulatorCamera.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpImageSimulator.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/vs/vpServoDisplay.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 
 void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot);
 

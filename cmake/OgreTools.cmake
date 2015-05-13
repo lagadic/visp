@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id$
+# $Id: OgreTools.cmake 4769 2014-07-08 20:25:50Z fspindle $
 #
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
@@ -46,7 +46,7 @@
 # one doesn't detect anything
 #########################################################
 
-macro(ogre_find_plugin_lib_visp PLUGIN)
+macro(vp_ogre_find_plugin_lib_visp PLUGIN)
   # On Unix, the plugins might have no prefix
   if (CMAKE_FIND_LIBRARY_PREFIXES)
     set(TMP_CMAKE_LIB_PREFIX ${CMAKE_FIND_LIBRARY_PREFIXES})
@@ -76,59 +76,59 @@ macro(ogre_find_plugin_lib_visp PLUGIN)
   endif ()
 
   mark_as_advanced(OGRE_${PLUGIN}_LIBRARY_REL OGRE_${PLUGIN}_LIBRARY_DBG OGRE_${PLUGIN}_LIBRARY_FWK)
+endmacro()
 
-endmacro(ogre_find_plugin_lib_visp)
-
-MACRO(CREATE_OGRE_PLUGIN_CONFIG_FILE)
-    	SET(VISP_HAVE_OGRE_PLUGINS_PATH ${VISP_BINARY_DIR}/data/ogre-simulator)
+macro(vp_create_ogre_plugin_config_file)
+  set(VISP_HAVE_OGRE_PLUGINS_PATH ${VISP_BINARY_DIR}/data/ogre-simulator)
+  # make the vars global
+  set(VISP_HAVE_OGRE_PLUGINS_PATH ${VISP_HAVE_OGRE_PLUGINS_PATH} CACHE INTERNAL "Ogre plugins location")
 
 	# If OGRE_PLUGIN_DIR_REL and OGRE_PLUGIN_DIR_DBG are not defined we 
-        # try to find them manually
-	IF(NOT OGRE_PLUGIN_DIR_REL AND NOT OGRE_PLUGIN_DIR_DBG)
-          ogre_find_plugin_lib_visp(RenderSystem_Direct3D9)
-          ogre_find_plugin_lib_visp(RenderSystem_Direct3D10)
-          ogre_find_plugin_lib_visp(RenderSystem_Direct3D11)
-          ogre_find_plugin_lib_visp(RenderSystem_GL)
-          ogre_find_plugin_lib_visp(RenderSystem_GLES)
-          ogre_find_plugin_lib_visp(Plugin_ParticleFX)
-          ogre_find_plugin_lib_visp(Plugin_BSPSceneManager)
-          ogre_find_plugin_lib_visp(Plugin_CgProgramManager)
-          ogre_find_plugin_lib_visp(Plugin_PCZSceneManager)
-          ogre_find_plugin_lib_visp(Plugin_OctreeSceneManager)
-          ogre_find_plugin_lib_visp(Plugin_OctreeZone)
+  # try to find them manually
+  if(NOT OGRE_PLUGIN_DIR_REL AND NOT OGRE_PLUGIN_DIR_DBG)
+    vp_ogre_find_plugin_lib_visp(RenderSystem_Direct3D9)
+    vp_ogre_find_plugin_lib_visp(RenderSystem_Direct3D10)
+    vp_ogre_find_plugin_lib_visp(RenderSystem_Direct3D11)
+    vp_ogre_find_plugin_lib_visp(RenderSystem_GL)
+    vp_ogre_find_plugin_lib_visp(RenderSystem_GLES)
+    vp_ogre_find_plugin_lib_visp(Plugin_ParticleFX)
+    vp_ogre_find_plugin_lib_visp(Plugin_BSPSceneManager)
+    vp_ogre_find_plugin_lib_visp(Plugin_CgProgramManager)
+    vp_ogre_find_plugin_lib_visp(Plugin_PCZSceneManager)
+    vp_ogre_find_plugin_lib_visp(Plugin_OctreeSceneManager)
+    vp_ogre_find_plugin_lib_visp(Plugin_OctreeZone)
 
+    if(OGRE_RenderSystem_GL_LIBRARY_REL)
+      get_filename_component(OGRE_PLUGIN_DIR_REL ${OGRE_RenderSystem_GL_LIBRARY_REL} PATH)
+      #message("set manually OGRE_PLUGIN_DIR_REL to ${OGRE_PLUGIN_DIR_REL}")
+    elseif(OGRE_RenderSystem_GL_LIBRARY_DBG)
+      get_filename_component(OGRE_PLUGIN_DIR_DBG ${OGRE_RenderSystem_GL_LIBRARY_DBG} PATH)
+      #message("set manually OGRE_PLUGIN_DIR_DBG to ${OGRE_PLUGIN_DIR_DBG}")
+    endif()
+  endif()
 
-          IF(OGRE_RenderSystem_GL_LIBRARY_REL)
-	    GET_FILENAME_COMPONENT(OGRE_PLUGIN_DIR_REL ${OGRE_RenderSystem_GL_LIBRARY_REL} PATH)
-            #message("set manually OGRE_PLUGIN_DIR_REL to ${OGRE_PLUGIN_DIR_REL}")
-          ELSEIF(OGRE_RenderSystem_GL_LIBRARY_DBG)
-	    GET_FILENAME_COMPONENT(OGRE_PLUGIN_DIR_DBG ${OGRE_RenderSystem_GL_LIBRARY_DBG} PATH)
-            #message("set manually OGRE_PLUGIN_DIR_DBG to ${OGRE_PLUGIN_DIR_DBG}")
- 	  ENDIF()
-	ENDIF()
-
-        IF(OGRE_PLUGIN_DIR_REL)
-	  LIST(APPEND PLUGIN_REL ${OGRE_RenderSystem_Direct3D9_LIBRARY_REL})
-	  LIST(APPEND PLUGIN_REL ${OGRE_RenderSystem_Direct3D10_LIBRARY_REL})
-	  LIST(APPEND PLUGIN_REL ${OGRE_RenderSystem_Direct3D11_LIBRARY_REL})
-          LIST(APPEND PLUGIN_REL ${OGRE_RenderSystem_GL_LIBRARY_REL})
-	  LIST(APPEND PLUGIN_REL ${OGRE_RenderSystem_GLES_LIBRARY_REL})
-	  LIST(APPEND PLUGIN_REL ${OGRE_Plugin_ParticleFX_LIBRARY_REL})
-	  LIST(APPEND PLUGIN_REL ${OGRE_Plugin_BSPSceneManager_LIBRARY_REL})
-	  LIST(APPEND PLUGIN_REL ${OGRE_Plugin_CgProgramManager_LIBRARY_REL})
-	  LIST(APPEND PLUGIN_REL ${OGRE_Plugin_PCZSceneManager_LIBRARY_REL})
-	  LIST(APPEND PLUGIN_REL ${OGRE_Plugin_OctreeSceneManager_LIBRARY_REL})
-	  IF (NOT APPLE)
+  if(OGRE_PLUGIN_DIR_REL)
+    list(APPEND PLUGIN_REL ${OGRE_RenderSystem_Direct3D9_LIBRARY_REL})
+    list(APPEND PLUGIN_REL ${OGRE_RenderSystem_Direct3D10_LIBRARY_REL})
+    list(APPEND PLUGIN_REL ${OGRE_RenderSystem_Direct3D11_LIBRARY_REL})
+    list(APPEND PLUGIN_REL ${OGRE_RenderSystem_GL_LIBRARY_REL})
+    list(APPEND PLUGIN_REL ${OGRE_RenderSystem_GLES_LIBRARY_REL})
+    list(APPEND PLUGIN_REL ${OGRE_Plugin_ParticleFX_LIBRARY_REL})
+    list(APPEND PLUGIN_REL ${OGRE_Plugin_BSPSceneManager_LIBRARY_REL})
+    list(APPEND PLUGIN_REL ${OGRE_Plugin_CgProgramManager_LIBRARY_REL})
+    list(APPEND PLUGIN_REL ${OGRE_Plugin_PCZSceneManager_LIBRARY_REL})
+    list(APPEND PLUGIN_REL ${OGRE_Plugin_OctreeSceneManager_LIBRARY_REL})
+    if(NOT APPLE)
 	    # Since the plugin Plugin_Octree causes problems on OSX, we take 
-            # it only into account on non Apple platforms
-	    LIST(APPEND PLUGIN_REL ${OGRE_Plugin_OctreeZone_LIBRARY_REL})
-	  ENDIF()
+      # it only into account on non Apple platforms
+      list(APPEND PLUGIN_REL ${OGRE_Plugin_OctreeZone_LIBRARY_REL})
+    endif()
 
- 	  SET(PLUGINS_CONTENT_REL "# Defines plugins to load\n\n")
-	  LIST(APPEND PLUGINS_CONTENT_REL "# Define plugin folder\n")
+    set(PLUGINS_CONTENT_REL "# Defines plugins to load\n\n")
+    list(APPEND PLUGINS_CONTENT_REL "# Define plugin folder\n")
 
-	  LIST(APPEND PLUGINS_CONTENT_REL "PluginFolder=${OGRE_PLUGIN_DIR_REL}/\n\n")
-	  LIST(APPEND PLUGINS_CONTENT_REL "# Define plugins\n")
+    list(APPEND PLUGINS_CONTENT_REL "PluginFolder=${OGRE_PLUGIN_DIR_REL}/\n\n")
+    list(APPEND PLUGINS_CONTENT_REL "# Define plugins\n")
 	  foreach(PLUGIN ${PLUGIN_REL})
 	    if(PLUGIN)
 	      GET_FILENAME_COMPONENT(PLUGIN_NAME ${PLUGIN} NAME_WE)
@@ -136,39 +136,239 @@ MACRO(CREATE_OGRE_PLUGIN_CONFIG_FILE)
 	    endif()
 	  endforeach()
 	  #MESSAGE("PLUGINS_CONTENT_REL: ${PLUGINS_CONTENT_REL}")
-          FILE(WRITE "${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins.cfg" ${PLUGINS_CONTENT_REL})
-        ENDIF()
+    file(WRITE "${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins.cfg" ${PLUGINS_CONTENT_REL})
+  endif()
 	  
-        IF(OGRE_PLUGIN_DIR_DBG)
-	  LIST(APPEND PLUGIN_DBG ${OGRE_RenderSystem_Direct3D9_LIBRARY_DBG})
-	  LIST(APPEND PLUGIN_DBG ${OGRE_RenderSystem_Direct3D10_LIBRARY_DBG})
-	  LIST(APPEND PLUGIN_DBG ${OGRE_RenderSystem_Direct3D11_LIBRARY_DBG})
-	  LIST(APPEND PLUGIN_DBG ${OGRE_RenderSystem_GL_LIBRARY_DBG})
-	  LIST(APPEND PLUGIN_DBG ${OGRE_RenderSystem_GLES_LIBRARY_DBG})
-	  LIST(APPEND PLUGIN_DBG ${OGRE_Plugin_ParticleFX_LIBRARY_DBG})
-	  LIST(APPEND PLUGIN_DBG ${OGRE_Plugin_BSPSceneManager_LIBRARY_DBG})
-	  LIST(APPEND PLUGIN_DBG ${OGRE_Plugin_CgProgramManager_LIBRARY_DBG})
-	  LIST(APPEND PLUGIN_DBG ${OGRE_Plugin_PCZSceneManager_LIBRARY_DBG})
-	  LIST(APPEND PLUGIN_DBG ${OGRE_Plugin_OctreeSceneManager_LIBRARY_DBG})
-	  IF (NOT APPLE)
+  if(OGRE_PLUGIN_DIR_DBG)
+    list(APPEND PLUGIN_DBG ${OGRE_RenderSystem_Direct3D9_LIBRARY_DBG})
+    list(APPEND PLUGIN_DBG ${OGRE_RenderSystem_Direct3D10_LIBRARY_DBG})
+    list(APPEND PLUGIN_DBG ${OGRE_RenderSystem_Direct3D11_LIBRARY_DBG})
+    list(APPEND PLUGIN_DBG ${OGRE_RenderSystem_GL_LIBRARY_DBG})
+    list(APPEND PLUGIN_DBG ${OGRE_RenderSystem_GLES_LIBRARY_DBG})
+    list(APPEND PLUGIN_DBG ${OGRE_Plugin_ParticleFX_LIBRARY_DBG})
+    list(APPEND PLUGIN_DBG ${OGRE_Plugin_BSPSceneManager_LIBRARY_DBG})
+    list(APPEND PLUGIN_DBG ${OGRE_Plugin_CgProgramManager_LIBRARY_DBG})
+    list(APPEND PLUGIN_DBG ${OGRE_Plugin_PCZSceneManager_LIBRARY_DBG})
+    list(APPEND PLUGIN_DBG ${OGRE_Plugin_OctreeSceneManager_LIBRARY_DBG})
+    if(NOT APPLE)
 	    # Since the plugin Plugin_Octree causes problems on OSX, we take 
-            # it only into account on non Apple platforms
-	    LIST(APPEND PLUGIN_DBG ${OGRE_Plugin_OctreeZone_LIBRARY_DBG})
-	  ENDIF()
+      # it only into account on non Apple platforms
+      list(APPEND PLUGIN_DBG ${OGRE_Plugin_OctreeZone_LIBRARY_DBG})
+    endif()
 
- 	  SET(PLUGINS_CONTENT_DBG "# Defines plugins to load\n\n")
-	  LIST(APPEND PLUGINS_CONTENT_DBG "# Define plugin folder\n")
-	  LIST(APPEND PLUGINS_CONTENT_DBG "PluginFolder=${OGRE_PLUGIN_DIR_DBG}/\n\n")
-	  LIST(APPEND PLUGINS_CONTENT_DBG "# Define plugins\n")
+    set(PLUGINS_CONTENT_DBG "# Defines plugins to load\n\n")
+    list(APPEND PLUGINS_CONTENT_DBG "# Define plugin folder\n")
+    list(APPEND PLUGINS_CONTENT_DBG "PluginFolder=${OGRE_PLUGIN_DIR_DBG}/\n\n")
+    list(APPEND PLUGINS_CONTENT_DBG "# Define plugins\n")
 	  foreach(PLUGIN ${PLUGIN_DBG})
 	    if(PLUGIN)
-	      GET_FILENAME_COMPONENT(PLUGIN_NAME ${PLUGIN} NAME_WE)
-  	      LIST(APPEND PLUGINS_CONTENT_DBG " Plugin=${PLUGIN_NAME}\n")
+        get_filename_component(PLUGIN_NAME ${PLUGIN} NAME_WE)
+        list(APPEND PLUGINS_CONTENT_DBG " Plugin=${PLUGIN_NAME}\n")
 	    endif()
 	  endforeach()
 	  
 	  #MESSAGE("PLUGINS_CONTENT_DBG: ${PLUGINS_CONTENT_DBG}")
-          FILE(WRITE "${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins_d.cfg" ${PLUGINS_CONTENT_DBG})
-        ENDIF()
+    file(WRITE "${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins_d.cfg" ${PLUGINS_CONTENT_DBG})
+  endif()
+endmacro()
 
-ENDMACRO()
+function(vp_set_ogre_media)
+  # if OGRE_MEDIA_DIR is empty, try to find the path by searching for plugins.cfg
+  # Introduced since Ubuntu 12.04
+  if(NOT OGRE_MEDIA_DIR)
+    find_path(OGRE_MEDIA_DIR ../plugins.cfg
+      $ENV{OGRE_MEDIA_DIR}
+      /usr/share/OGRE-1.7.4/media
+      /usr/share/OGRE-1.8.0/media
+      /usr/share/OGRE-1.8.1/media
+      /usr/share/OGRE-1.9.0/media
+    )
+  endif()
+
+  # If Ogre media are not available we provide the minimal material to run the examples:
+  # - resources.cfg
+  # - plugins.cfg
+  # - media/materials/...
+  # - media/models/...
+  #
+  # We need to introduce OGRE_MEDIA_NOT_AVAILABLE to memorize when OGRE_MEDIA_DIR is not set.
+  # Because in that case, OGRE_MEDIA_DIR should be set first to VISP_HAVE_OGRE_RESOURCES_PATH
+  #  (for the "make all" case) then to VISP_INSTALL_DIR_OGRE_RESOURCES (for the "make install" case)
+  if(NOT OGRE_MEDIA_DIR)
+    set(OGRE_MEDIA_NOT_AVAILABLE "TRUE")
+  endif()
+
+  # Try to search for an existing plugins.cfg file
+  # Here we cannot use OGRE_PLUGIN_DIR_REL or OGRE_PLUGIN_DIR_DBG where
+  # we may find an existing plugins.cfg file, since under Windows in these
+  # files the PluginFolder is set to a relative path. We need an absolute
+  # path to avoid recopy of the plugins in ViSP.
+  # Under Linux or OSX, we may find plugins.cfg with a PluginFolder set
+  # to an absolute path in OGRE_MEDIA_DIR/..
+  find_path(VISP_HAVE_OGRE_PLUGINS_PATH
+    NAMES plugins.cfg
+    PATHS ${OGRE_MEDIA_DIR}/..
+    NO_SYSTEM_ENVIRONMENT_PATH
+  )
+
+  #message("OGRE_PLUGIN_DIR_REL: ${OGRE_PLUGIN_DIR_REL}")
+  #message("OGRE_PLUGIN_DIR_DBG: ${OGRE_PLUGIN_DIR_DBG}")
+
+  # If no plugins.cfg file is found, we create one with absolute path
+  if(NOT VISP_HAVE_OGRE_PLUGINS_PATH)
+    # case 1: normal case
+    #--------------
+    vp_create_ogre_plugin_config_file()
+
+    # case 2: install or packaging case
+    #--------------
+    # install rule for plugins.cfg:
+    if(UNIX)
+      if(OGRE_PLUGIN_DIR_REL)
+        install(FILES
+          ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins.cfg
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/visp/data/ogre-simulator
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+          COMPONENT dev
+        )
+      endif()
+      if(OGRE_PLUGIN_DIR_DBG)
+        install(FILES
+          ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins_d.cfg
+          DESTINATION ${CMAKE_INSTALL_LIBDIR}/visp/data/ogre-simulator
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+          COMPONENT dev
+        )
+      endif()
+
+    else()
+      if(OGRE_PLUGIN_DIR_REL)
+        install(FILES
+          ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins.cfg
+          DESTINATION data/ogre-simulator
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+          COMPONENT dev
+        )
+      endif()
+      if(OGRE_PLUGIN_DIR_DBG)
+        install(FILES
+          ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins_d.cfg
+          DESTINATION data/ogre-simulator
+          PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+          COMPONENT dev
+        )
+      endif()
+    endif()
+  endif()
+
+  # Try to search for an existing resources.cfg file
+  find_path(VISP_HAVE_OGRE_RESOURCES_PATH
+    NAMES resources.cfg
+    PATHS ${OGRE_MEDIA_DIR}/..
+    NO_SYSTEM_ENVIRONMENT_PATH
+  )
+
+  # Here we copy all the minimal media files
+  # - media/materials/...
+  # - media/models/...
+  if(OGRE_MEDIA_NOT_AVAILABLE)
+    file(COPY modules/ar/data/ogre-simulator/media DESTINATION ${VISP_BINARY_DIR}/data/ogre-simulator)
+  endif()
+
+  # Here we create a resources.cfg if it was not found
+  if(NOT VISP_HAVE_OGRE_RESOURCES_PATH)
+    # we create a resources.cfg file for vpAROgre.cpp
+    # case 1: normal case
+    #         If OGRE_MEDIA_DIR is not found, we set it to VISP_HAVE_OGRE_RESOURCES_PATH in order to use
+    #         the minimal requested media to run the examples
+    #--------------
+    set(VISP_HAVE_OGRE_RESOURCES_PATH ${VISP_BINARY_DIR}/data/ogre-simulator)
+    # make the var global
+    set(VISP_HAVE_OGRE_RESOURCES_PATH ${VISP_HAVE_OGRE_RESOURCES_PATH} CACHE INTERNAL "Ogre resources location")
+
+    if(OGRE_MEDIA_NOT_AVAILABLE)
+      set(OGRE_MEDIA_DIR ${VISP_HAVE_OGRE_RESOURCES_PATH}/media)
+    endif()
+
+    # On Fedora 20 when ogre-devel and ogre-samples packages are installed, AROgre and
+    # AROgreBasic examples produce a segfault when the folowing line in resource.cf.in
+    # is commented:
+    # '#FileSystem=@OGRE_MEDIA_DIR@/materials/programs'
+    # Here we check if @OGRE_MEDIA_DIR@/materials/programs forder is empty.
+    # If empty, we comment the line to avoid lintian warnings.
+    # If not empty we remove the comment to use the available programs.
+    file(GLOB OGRE_PROGRAM_CONTENT ${OGRE_MEDIA_DIR}/materials/programs/*.*)
+    if(OGRE_PROGRAM_CONTENT)
+      set(OGRE_COMMENT_LINE "")
+    else()
+      set(OGRE_COMMENT_LINE "#")
+    endif()
+    configure_file(
+      ${VISP_SOURCE_DIR}/cmake/templates/resources.cfg.in
+      ${VISP_HAVE_OGRE_RESOURCES_PATH}/resources.cfg
+      IMMEDIATE @ONLY
+    )
+
+    # case 2: install or packaging case
+    #         If OGRE_MEDIA_DIR is not found, we set it to VISP_INSTALL_DIR_OGRE_RESOURCES in order to use
+    #         the minimal requested media to run the examples
+    #--------------
+    if(UNIX)
+      set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/data/ogre-simulator")
+    else()
+      set(VISP_INSTALL_DIR_OGRE_RESOURCES "${CMAKE_INSTALL_PREFIX}/data/ogre-simulator")
+    endif()
+    # make the var global
+    set(VISP_INSTALL_DIR_OGRE_RESOURCES ${VISP_INSTALL_DIR_OGRE_RESOURCES} CACHE INTERNAL "Ogre media install dir")
+
+    if(OGRE_MEDIA_NOT_AVAILABLE)
+      set(OGRE_MEDIA_DIR ${VISP_INSTALL_DIR_OGRE_RESOURCES}/media)
+    endif()
+
+    # install rule for resources.cfg and Ogre media if they are not available:
+    if(UNIX)
+      configure_file(
+        ${VISP_SOURCE_DIR}/cmake/templates/resources.cfg.in
+        ${VISP_BINARY_DIR}/unix-install/resources.cfg
+        IMMEDIATE @ONLY
+      )
+      install(FILES
+        ${VISP_BINARY_DIR}/unix-install/resources.cfg
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/data/ogre-simulator
+        PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+        COMPONENT dev
+      )
+      if(OGRE_MEDIA_NOT_AVAILABLE)
+        install(DIRECTORY
+          data/ogre-simulator/media
+          DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/data/ogre-simulator
+          FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+          COMPONENT dev
+        )
+      endif()
+    else()
+      configure_file(
+        ${VISP_SOURCE_DIR}/cmake/templates/resources.cfg.in
+        ${VISP_BINARY_DIR}/win-install/resources.cfg
+        IMMEDIATE @ONLY
+      )
+      install(FILES
+        ${VISP_BINARY_DIR}/win-install/resources.cfg
+        DESTINATION data/ogre-simulator
+        PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+        COMPONENT dev
+      )
+      if(OGRE_MEDIA_NOT_AVAILABLE)
+        install(DIRECTORY
+          data/ogre-simulator/media
+          DESTINATION data/ogre-simulator
+          FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+          COMPONENT dev
+        )
+      endif()
+    endif()
+  endif()
+
+  #mark_as_advanced(VISP_HAVE_OGRE_PLUGINS_PATH)
+  #mark_as_advanced(VISP_HAVE_OGRE_RESOURCES_PATH)
+endfunction()

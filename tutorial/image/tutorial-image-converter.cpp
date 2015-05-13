@@ -1,6 +1,6 @@
 /*! \example tutorial-image-converter.cpp */
-#include <visp/vpImageIo.h>
-#include <visp/vpImageConvert.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpImageConvert.h>
 
 int main()
 {

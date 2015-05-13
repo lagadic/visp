@@ -41,19 +41,19 @@
  *****************************************************************************/
 
 
-#include <visp/vpDebug.h>
-#include <visp/vpConfig.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpConfig.h>
 #include <stdlib.h>
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
-#include <visp/vpDiskGrabber.h>
-#include <visp/vpDisplay.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpImage.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpTime.h>
+#include <visp3/core/vpDiskGrabber.h>
+#include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpTime.h>
 
 /*!
   \file grabDisk.cpp

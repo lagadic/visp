@@ -46,13 +46,13 @@
 
 #include <iostream>
 
-#include <visp/vpOpenCVGrabber.h>
-#include <visp/vpV4l2Grabber.h>
-#include <visp/vp1394TwoGrabber.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImage.h>
-#include <visp/vpCameraParameters.h>
-#include <visp/vpAROgre.h>
+#include <visp3/sensor/vpOpenCVGrabber.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/ar/vpAROgre.h>
 
 int main()
 {

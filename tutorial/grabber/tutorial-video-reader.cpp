@@ -1,10 +1,10 @@
 //! \example tutorial-video-reader.cpp
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
 //! [Include]
-#include <visp/vpTime.h>
-#include <visp/vpVideoReader.h>
+#include <visp3/core/vpTime.h>
+#include <visp3/core/vpVideoReader.h>
 //! [Include]
 
 /*!

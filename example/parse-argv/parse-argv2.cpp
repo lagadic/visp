@@ -54,8 +54,8 @@
 
 
 
-#include <visp/vpDebug.h>
-#include <visp/vpParseArgv.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpParseArgv.h>
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>

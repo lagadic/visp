@@ -63,28 +63,28 @@
 */
 
 
-#include <visp/vpDebug.h>
-#include <visp/vpConfig.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpConfig.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpImagePoint.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpImagePoint.h>
 
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
 
-#include <visp/vpPose.h>
-#include <visp/vpDot.h>
-#include <visp/vpPixelMeterConversion.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
+#include <visp3/vision/vpPose.h>
+#include <visp3/core/vpDot.h>
+#include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpIoTools.h>
 
 
 // List of allowed command line options

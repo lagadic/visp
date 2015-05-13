@@ -40,9 +40,9 @@
 
 project(demo-wireframe-simulator)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
-find_package(VISP REQUIRED)
+find_package(VISP REQUIRED core robot vs)
 
 # SOURCE variable corresponds to the list of all the sources to build binaries.
 # The generate binary comes by removing the .cpp extension to
@@ -64,7 +64,7 @@ foreach(cpp ${demo_cpp})
   include_directories(${VISP_INCLUDE_DIRS})
   add_executable(${bin} ${cpp})
   target_link_libraries(${bin} ${VISP_LIBRARIES})
-  add_dependencies(visp_demos ${bin})
+  #add_dependencies(visp_demos ${bin})
   if(ENABLE_SOLUTION_FOLDERS)
     set_target_properties(${bin} PROPERTIES FOLDER "demos")
   endif()

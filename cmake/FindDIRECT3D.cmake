@@ -1,6 +1,6 @@
 #############################################################################
 #
-# $Id$
+# $Id: FindDIRECT3D.cmake 4574 2014-01-09 08:48:51Z fspindle $
 #
 # This file is part of the ViSP software.
 # Copyright (C) 2005 - 2014 by INRIA. All rights reserved.

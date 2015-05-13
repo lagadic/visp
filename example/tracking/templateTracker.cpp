@@ -46,33 +46,33 @@
   \brief Example of template tracking.
 */
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
-#include <visp/vpDisplayD3D.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpMath.h>
-#include <visp/vpVideoReader.h>
-#include <visp/vpParseArgv.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpVideoReader.h>
+#include <visp3/core/vpParseArgv.h>
 
-#include <visp/vpTemplateTrackerSSD.h>
-#include <visp/vpTemplateTrackerSSDForwardAdditional.h>
-#include <visp/vpTemplateTrackerSSDForwardCompositional.h>
-#include <visp/vpTemplateTrackerSSDInverseCompositional.h>
-#include <visp/vpTemplateTrackerSSDESM.h>
-#include <visp/vpTemplateTrackerZNCCForwardAdditional.h>
-#include <visp/vpTemplateTrackerZNCCInverseCompositional.h>
+#include <visp3/tt/vpTemplateTrackerSSD.h>
+#include <visp3/tt/vpTemplateTrackerSSDForwardAdditional.h>
+#include <visp3/tt/vpTemplateTrackerSSDForwardCompositional.h>
+#include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
+#include <visp3/tt/vpTemplateTrackerSSDESM.h>
+#include <visp3/tt/vpTemplateTrackerZNCCForwardAdditional.h>
+#include <visp3/tt/vpTemplateTrackerZNCCInverseCompositional.h>
 
-#include <visp/vpTemplateTrackerWarpAffine.h>
-#include <visp/vpTemplateTrackerWarpHomography.h>
-#include <visp/vpTemplateTrackerWarpHomographySL3.h>
-#include <visp/vpTemplateTrackerWarpSRT.h>
-#include <visp/vpTemplateTrackerWarpTranslation.h>
+#include <visp3/tt/vpTemplateTrackerWarpAffine.h>
+#include <visp3/tt/vpTemplateTrackerWarpHomography.h>
+#include <visp3/tt/vpTemplateTrackerWarpHomographySL3.h>
+#include <visp3/tt/vpTemplateTrackerWarpSRT.h>
+#include <visp3/tt/vpTemplateTrackerWarpTranslation.h>
 
 #if defined (VISP_HAVE_DISPLAY)
 

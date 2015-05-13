@@ -61,8 +61,8 @@
   point.
 
 */
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h> // Debug trace
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h> // Debug trace
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #  include <unistd.h>
 #endif
@@ -76,26 +76,26 @@
 #  include <pthread.h>
 #endif
 
-#include <visp/vp1394TwoGrabber.h>
-#include <visp/vpImage.h>
-#include <visp/vpDisplay.h>
-#include <visp/vpDisplayX.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpDisplayX.h>
 
-#include <visp/vpMath.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpPoint.h>
-#include <visp/vpServo.h>
-#include <visp/vpFeatureBuilder.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/core/vpFeatureBuilder.h>
 
-#include <visp/vpRobotPtu46.h>
+#include <visp3/robot/vpRobotPtu46.h>
 
 // Exception
-#include <visp/vpException.h>
-#include <visp/vpMatrixException.h>
-#include <visp/vpServoDisplay.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpMatrixException.h>
+#include <visp3/vs/vpServoDisplay.h>
 
-#include <visp/vpDot2.h>
+#include <visp3/core/vpDot2.h>
 
 
 #ifdef VISP_HAVE_PTHREAD

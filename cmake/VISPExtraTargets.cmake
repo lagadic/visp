@@ -2,7 +2,7 @@
 #   Uninstall target, for "make uninstall"
 # ----------------------------------------------------------------------------
 configure_file(
-  "${VISP_CMAKE_MODULE_PATH}/cmake_uninstall.cmake.in"
+  cmake/templates/cmake_uninstall.cmake.in
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   IMMEDIATE @ONLY)
 
@@ -72,3 +72,12 @@ if(BUILD_TUTORIALS)
     set_target_properties(visp_tutorials PROPERTIES FOLDER "extra")
   endif()
 endif()
+
+# ----------------------------------------------------------------------------
+#   Target building all ViSP modules
+# ----------------------------------------------------------------------------
+add_custom_target(visp_modules)
+if(ENABLE_SOLUTION_FOLDERS)
+  set_target_properties(visp_modules PROPERTIES FOLDER "extra")
+endif()
+

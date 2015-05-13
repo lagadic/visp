@@ -38,5 +38,11 @@
 #
 #############################################################################
 
-add_subdirectory(wireframe-simulator)
+set(WIREFRAME_SIMULATOR_REQUIRED_DEPS visp_core visp_robot visp_vs)
+
+vp_check_dependencies(${WIREFRAME_SIMULATOR_REQUIRED_DEPS})
+
+if(VP_DEPENDENCIES_FOUND)
+  add_subdirectory(wireframe-simulator)
+endif()
 

@@ -41,8 +41,8 @@
  *
  *****************************************************************************/
 
-#include <visp/vpConfig.h>
-#include <visp/vpDebug.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
 /*!
 \file grabDirectShowMulti.cpp
@@ -60,13 +60,13 @@
 #if defined (VISP_HAVE_DIRECTSHOW)
 #if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 
-#include <visp/vpDirectShowGrabber.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpTime.h>
+#include <visp3/sensor/vpDirectShowGrabber.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpTime.h>
 
 
 // List of allowed command line options

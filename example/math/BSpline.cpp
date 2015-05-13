@@ -52,21 +52,21 @@
 
 
 
-#include <visp/vpDebug.h>
+#include <visp3/core/vpDebug.h>
 
-#include <visp/vpBSpline.h>
+#include <visp3/core/vpBSpline.h>
 
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpImagePoint.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayD3D.h>
-#include <visp/vpDisplayX.h> // Should be after #include <visp/vpDisplayOpenCV.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/core/vpDisplayX.h> // Should be after #include <visp3/core/vpDisplayOpenCV.h>
 
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpIoTools.h>
 #include <cstdlib>
 #include <stdlib.h>
 

@@ -1,0 +1,111 @@
+/****************************************************************************
+ *
+ * $Id$
+ *
+ * This file is part of the ViSP software.
+ * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
+ * 
+ * This software is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * ("GPL") version 2 as published by the Free Software Foundation.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact INRIA about acquiring a ViSP Professional 
+ * Edition License.
+ *
+ * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
+ * 
+ * This software was developed at:
+ * INRIA Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ * http://www.irisa.fr/lagadic
+ *
+ * If you have questions regarding the use of this file, please contact
+ * INRIA at visp@inria.fr
+ * 
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *
+ * Description:
+ * Generic tracker.
+ *
+ * Authors:
+ * Eric Marchand
+ *
+ *****************************************************************************/
+
+
+
+#ifndef vpTracker_H
+#define vpTracker_H
+
+/*!
+  \file vpTracker.h
+  \brief Class that defines what is a generic tracker.
+*/
+
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+
+
+/*!
+  \class vpTracker
+  \brief Class that defines what is a feature generic tracker.
+
+  A tracker is able to track features with parameters expressed in:
+  - in the camera frame \e cP. These parameters are located in the public
+    attribute vpTracker::cP.
+  - in the image plane \e p. These parameters are located in the public
+    attribute vpTracker::p. They correspond to normalized coordinates 
+    of the feature expressed in meters.
+
+*/
+class VISP_EXPORT vpTracker
+{
+
+
+public:
+  /*!
+    Feature coordinates expressed in the image plane \e p. They correspond
+    to 2D normalized coordinates expressed in meters.
+  */
+  vpColVector p ;
+  /*!
+    Feature coordinates expressed in the camera frame \e cP. 
+  */
+  vpColVector cP ;
+
+  /*!
+    Flag used to indicate if the feature parameters \e cP expressed
+    in the camera frame are available.
+  */
+  bool cPAvailable ;
+
+public:
+  //! Default initialization.
+  void init() ;
+  //! Default constructor.
+  vpTracker() ;
+  //! Copy constructor.
+  vpTracker(const vpTracker &tracker) ;
+  //! Copy operator.
+  vpTracker &operator=(const vpTracker &tracker);
+
+  //! Destructor.
+  virtual ~vpTracker() { ; }
+} ;
+
+
+#endif
+
+/*
+ * Local variables:
+ * c-basic-offset: 2
+ * End:
+ */

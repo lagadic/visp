@@ -41,9 +41,9 @@
 
 #include <iostream>
 
-#include <visp/vpConfig.h>
-#include <visp/vpTime.h>
-#include <visp/vpRobotPioneer.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpTime.h>
+#include <visp3/robot/vpRobotPioneer.h>
 
 #ifndef VISP_HAVE_PIONEER
 int main()

@@ -47,8 +47,8 @@
 */
 
 #include <iostream>
-#include <visp/vpConfig.h>
-#include <visp/vpPlot.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpPlot.h>
 
 int main ()
 {

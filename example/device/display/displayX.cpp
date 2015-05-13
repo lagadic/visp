@@ -48,18 +48,18 @@
 
 */
 
-#include <visp/vpDebug.h>
-#include <visp/vpConfig.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpConfig.h>
 #include <stdlib.h>
 #ifdef VISP_HAVE_X11
 
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpIoTools.h>
 
-#include <visp/vpTime.h>
+#include <visp3/core/vpTime.h>
 
 /*!
   \example displayX.cpp

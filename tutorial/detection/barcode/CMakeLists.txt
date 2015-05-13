@@ -2,7 +2,7 @@ project(tutorial-barcode)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED)
+find_package(VISP REQUIRED visp_core visp_detection)
 
 set(tutorial_cpp
   tutorial-barcode-detector.cpp

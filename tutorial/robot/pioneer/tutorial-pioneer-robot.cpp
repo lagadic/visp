@@ -1,6 +1,6 @@
 /*! \example tutorial-pioneer-robot.cpp */
 #include <iostream>
-#include <visp/vpRobotPioneer.h>
+#include <visp3/robot/vpRobotPioneer.h>
 
 int main()
 {

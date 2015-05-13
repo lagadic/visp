@@ -40,23 +40,23 @@
  *****************************************************************************/
 #include <iostream>
 
-#include <visp/vpConfig.h>
-#include <visp/vpRobotPioneer.h>
-#include <visp/vpCameraParameters.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDot2.h>
-#include <visp/vpFeatureBuilder.h>
-#include <visp/vpFeatureDepth.h>
-#include <visp/vpFeaturePoint.h>
-#include <visp/vpHomogeneousMatrix.h>
-#include <visp/vpImage.h>
-#include <visp/vpImageConvert.h>
-#include <visp/vp1394TwoGrabber.h>
-#include <visp/vp1394CMUGrabber.h>
-#include <visp/vpOpenCVGrabber.h>
-#include <visp/vpV4l2Grabber.h>
-#include <visp/vpVelocityTwistMatrix.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/robot/vpRobotPioneer.h>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDot2.h>
+#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/core/vpFeatureDepth.h>
+#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageConvert.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vp1394CMUGrabber.h>
+#include <visp3/sensor/vpOpenCVGrabber.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
+#include <visp3/core/vpVelocityTwistMatrix.h>
 
 #if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)

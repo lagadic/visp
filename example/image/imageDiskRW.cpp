@@ -59,11 +59,11 @@
 
 
 
-#include <visp/vpImage.h>
-#include <visp/vpImageIo.h>
-#include <visp/vpParseArgv.h>
-#include <visp/vpIoTools.h>
-#include <visp/vpDebug.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageIo.h>
+#include <visp3/core/vpParseArgv.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpDebug.h>
 #include <stdlib.h>
 #include <stdio.h>
 // List of allowed command line options
