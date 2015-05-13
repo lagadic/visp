@@ -113,11 +113,11 @@ public:
   */
 
   // feature selection
-  inline static unsigned int selectX()  { return FEATURE_LINE[0] ; }
-  inline static unsigned int selectY()  { return FEATURE_LINE[1] ; }
-  inline static unsigned int selectMu20()  { return FEATURE_LINE[2] ; }
-  inline static unsigned int selectMu11()  { return FEATURE_LINE[3] ; }
-  inline static unsigned int selectMu02()  { return FEATURE_LINE[4] ; }
+  static unsigned int selectX();
+  static unsigned int selectY();
+  static unsigned int selectMu20();
+  static unsigned int selectMu11();
+  static unsigned int selectMu02();
 
   //! compute the interaction matrix from a subset a the possible features
   vpMatrix  interaction(const unsigned int select = FEATURE_ALL);

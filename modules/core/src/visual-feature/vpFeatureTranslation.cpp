@@ -610,8 +610,138 @@ vpFeatureTranslation::display(const vpCameraParameters &/* cam */,
     }
 }
  
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+/*!
+
+  Function used to select the \f$ t_x\f$ subset of the translation
+  visual feature.
+
+  This function is to use in conjunction with interaction() in order
+  to compute the interaction matrix associated to \f$ t_x\f$.
+
+  See the interaction() method for an usage example.
+
+  This function is also useful in the vpServo class to indicate that
+  a subset of the visual feature is to use in the control law:
+
+  - With the feature type cdMc:
+  \code
+  vpFeatureTranslation t(vpFeatureTranslation::cdMc);
+  vpServo task;
+  ...
+  // Add the (tx,ty) subset features from 3D translation to the task
+  task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
+  \endcode
+
+  - With the feature type cMcd:
+  \code
+  vpFeatureTranslation t(vpFeatureTranslation::cMcd);
+  vpServo task;
+  ...
+  // Add the (tx,ty) subset features from 3D translation to the task
+  task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
+  \endcode
+
+  - With the feature type cMo:
+  \code
+  vpFeatureTranslation t(vpFeatureTranslation::cMo);
+  vpFeatureTranslation t_star(vpFeatureTranslation::cMo);
+  vpServo task;
+  ...
+  // Add the (tx,ty) subset features from 3D translation to the task
+  task.addFeature(t, t_star, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
+  \endcode
+
+  \sa selectTy(), selectTz()
+
+*/
+unsigned int vpFeatureTranslation::selectTx()  { return FEATURE_LINE[0] ; }
+
+/*!
+
+  Function used to select the \f$ t_y\f$ subset of the translation
+  visual feature.
+
+  This function is to use in conjunction with interaction() in order
+  to compute the interaction matrix associated to \f$ t_y\f$.
+
+  See the interaction() method for an usage example.
+
+  This function is also useful in the vpServo class to indicate that
+  a subset of the visual feature is to use in the control law:
+
+  - With the feature type cdMc:
+  \code
+  vpFeatureTranslation t(vpFeatureTranslation::cdMc);
+  vpServo task;
+  ...
+  // Add the (tx,ty) subset features from 3D translation to the task
+  task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
+  \endcode
+
+  - With the feature type cMcd:
+  \code
+  vpFeatureTranslation t(vpFeatureTranslation::cMcd);
+  vpServo task;
+  ...
+  // Add the (tx,ty) subset features from 3D translation to the task
+  task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
+  \endcode
+
+  - With the feature type cMo:
+  \code
+  vpFeatureTranslation t(vpFeatureTranslation::cMo);
+  vpFeatureTranslation t_star(vpFeatureTranslation::cMo);
+  vpServo task;
+  ...
+  // Add the (tx,ty) subset features from 3D translation to the task
+  task.addFeature(t, t_star, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
+  \endcode
+
+  \sa selectTx(), selectTz()
+*/
+unsigned int vpFeatureTranslation::selectTy()  { return FEATURE_LINE[1] ; }
+
+/*!
+
+  Function used to select the \f$ t_z\f$ subset of the translation
+  visual feature.
+
+  This function is to use in conjunction with interaction() in order
+  to compute the interaction matrix associated to \f$ t_z\f$.
+
+  See the interaction() method for an usage example.
+
+  This function is also useful in the vpServo class to indicate that
+  a subset of the visual feature is to use in the control law:
+
+  - With the feature type cdMc:
+  \code
+  vpFeatureTranslation t(vpFeatureTranslation::cdMc);
+  vpServo task;
+  ...
+  // Add the (tz) subset feature from 3D translation to the task
+  task.addFeature(t, vpFeatureTranslation::selectTz());
+  \endcode
+
+  - With the feature type cMcd:
+  \code
+  vpFeatureTranslation t(vpFeatureTranslation::cMcd);
+  vpServo task;
+  ...
+  // Add the (tz) subset feature from 3D translation to the task
+  task.addFeature(t, vpFeatureTranslation::selectTz());
+  \endcode
+
+  - With the feature type cMo:
+  \code
+  vpFeatureTranslation t(vpFeatureTranslation::cMo);
+  vpFeatureTranslation t_star(vpFeatureTranslation::cMo);
+  vpServo task;
+  ...
+  // Add the (tz) subset feature from 3D translation to the task
+  task.addFeature(t, t_star, vpFeatureTranslation::selectTz());
+  \endcode
+
+  \sa selectTx(), selectTy()
+*/
+unsigned int vpFeatureTranslation::selectTz()  { return FEATURE_LINE[2] ; }

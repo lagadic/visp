@@ -290,82 +290,10 @@ public:
   /*
     vpBasicFeature method instantiation
   */
+  static unsigned int selectTUx();
+  static unsigned int selectTUy();
+  static unsigned int selectTUz();
 
-  /*! 
-
-    Function used to select the \f$ \theta u_x\f$ subset of the \f$
-    \theta u \f$ visual feature.
-
-    This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$ \theta u_x\f$.
-
-    See the interaction() method for an usage example.
-
-    This function is also useful in the vpServo class to indicate that
-    a subset of the visual feature is to use in the control law:
-
-    \code 
-    vpFeatureThetaU tu;
-    vpServo task;
-    ...
-    // Add the (ThetaU_x, ThetaU_y) subset features from the 3D ThetaU
-    // rotation to the task
-    task.addFeature(tu, vpFeatureThetaU::selectTUx() | vpFeatureThetaU::selectTUy());
-    \endcode
-
-    \sa selectTUy(), selectTUz()
-  */
-  inline static unsigned int selectTUx()  { return FEATURE_LINE[0] ; }
-  /*! 
-
-    Function used to select the \f$ \theta u_y\f$ subset of the \f$
-    \theta u \f$ visual feature.
-
-    This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$ \theta u_y\f$.
-
-    See the interaction() method for an usage example.
-
-    This function is also useful in the vpServo class to indicate that
-    a subset of the visual feature is to use in the control law:
-
-    \code 
-    vpFeatureThetaU tu;
-    vpServo task;
-    ...
-    // Add the (ThetaU_x, ThetaU_y) subset features from the 3D ThetaU
-    // rotation to the task
-    task.addFeature(tu, vpFeatureThetaU::selectTUx() | vpFeatureThetaU::selectTUy());
-    \endcode
-
-    \sa selectTUx(), selectTUz()
-  */
-  inline static unsigned int selectTUy()  { return FEATURE_LINE[1] ; }
-  /*! 
-
-    Function used to select the \f$ \theta u_z\f$ subset of the \f$
-    \theta u \f$ visual feature.
-
-    This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$ \theta u_z\f$.
-
-    See the interaction() method for an usage example.
-
-    This function is also useful in the vpServo class to indicate that
-    a subset of the visual feature is to use in the control law:
-
-    \code 
-    vpFeatureThetaU tu;
-    vpServo task;
-    ...
-    // Add the (ThetaU_z) subset feature from the 3D ThetaU
-    // rotation to the task
-    task.addFeature(tu, vpFeatureThetaU::selectTUz());
-    \endcode
-
-    \sa selectTUx(), selectTUy()
-  */
-  inline static unsigned int selectTUz()  { return FEATURE_LINE[2] ; }
   // compute the interaction matrix from a subset a the possible features
   vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
   // compute the error between two visual features from a subset

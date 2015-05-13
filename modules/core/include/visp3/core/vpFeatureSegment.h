@@ -157,104 +157,10 @@ public:
     */
   bool isNormalized() { return normalized_; };
 
-  /*!
-
-    Function used to select the \f$x_c\f$ or \f$x_n\f$ subfeature.
-
-    This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$x_c\f$ or \f$x_n\f$ feature.
-
-    See the interaction() method for an usage example.
-
-    This function is also useful in the vpServo class to indicate that
-    a subset of the visual feature is to use in the control law:
-
-    \code
-  vpFeatureSegment s, s_star; // Current and desired visual feature
-  vpServo task;
-  ...
-  // Add only the xc subset feature from a segment to the task
-  task.addFeature(s, s_star, vpFeatureSegment::selectXc());
-    \endcode
-
-    \sa selectYc(), selectL(), selectAlpha()
-  */
-  inline static unsigned int selectXc()  { return FEATURE_LINE[0] ; }
-
-  /*!
-
-    Function used to select the \f$y_c\f$ or \f$y_n\f$ subfeature.
-
-    This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$y_c\f$ or \f$y_n\f$ feature.
-
-    See the interaction() method for an usage example.
-
-    This function is also useful in the vpServo class to indicate that
-    a subset of the visual feature is to use in the control law:
-
-    \code
-  vpFeatureSegment s, s_star; // Current and desired visual feature
-  vpServo task;
-  ...
-  // Add only the yc subset feature from a segment to the task
-  task.addFeature(s, s_star, vpFeatureSegment::selectYc());
-    \endcode
-
-    \sa selectXc(), selectL(), selectAlpha()
-  */
-
-  inline static unsigned int selectYc()  { return FEATURE_LINE[1] ; }
-
-  /*!
-
-    Function used to select the \f$l\f$ or \f$l_n\f$ subfeature.
-
-    This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$l\f$ or \f$l_n\f$ feature.
-
-    See the interaction() method for an usage example.
-
-    This function is also useful in the vpServo class to indicate that
-    a subset of the visual feature is to use in the control law:
-
-    \code
-  vpFeatureSegment s, s_star; // Current and desired visual feature
-  vpServo task;
-  ...
-  // Add only the l subset feature from a segment to the task
-  task.addFeature(s, s_star, vpFeatureSegment::selectL());
-    \endcode
-
-    \sa selectXc(), selectYc(), selectAlpha()
-  */
-
-  inline static unsigned int selectL()  { return FEATURE_LINE[2] ; }
-
-  /*!
-
-    Function used to select the \f$\alpha\f$ subfeature.
-
-    This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$\alpha\f$ feature.
-
-    See the interaction() method for an usage example.
-
-    This function is also useful in the vpServo class to indicate that
-    a subset of the visual feature is to use in the control law:
-
-    \code
-  vpFeatureSegment s, s_star; // Current and desired visual feature
-  vpServo task;
-  ...
-  // Add only the alpha subset feature from a segment to the task
-  task.addFeature(s, s_star, vpFeatureSegment::selectAlpha());
-    \endcode
-
-    \sa selectXc(), selectYc(), selectL()
-  */
-
-  inline static unsigned int selectAlpha() { return FEATURE_LINE[3] ; }
+  static unsigned int selectXc();
+  static unsigned int selectYc();
+  static unsigned int selectL();
+  static unsigned int selectAlpha();
   
   /*!
     Set the king of feature to consider.

@@ -623,9 +623,80 @@ vpFeaturePoint3D::display(const vpCameraParameters &/*cam*/,
     // to produce a failure
   }
 }
+/*!
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+  Function used to select the \f$ X\f$ subset coordinate of the 3D point
+  visual feature.
+
+  This function is to use in conjunction with interaction() in order
+  to compute the interaction matrix associated to \f$ X\f$ feature.
+
+  See the interaction() method for an usage example.
+
+  This function is also useful in the vpServo class to indicate that
+  a subset of the visual feature is to use in the control law:
+
+  \code
+  vpFeaturePoint3D p;
+  vpServo task;
+  ...
+  // Add the (X,Y) subset coordinates features from a 3D point to the task
+  task.addFeature(p, vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectY());
+  \endcode
+
+  \sa selectY(), selectZ()
+
+*/
+unsigned int vpFeaturePoint3D::selectX()  { return FEATURE_LINE[0] ; }
+
+/*!
+
+  Function used to select the \f$ Y\f$ subset coordinate of the 3D point
+  visual feature.
+
+  This function is to use in conjunction with interaction() in order
+  to compute the interaction matrix associated to \f$ Y\f$ feature.
+
+  See the interaction() method for an usage example.
+
+  This function is also useful in the vpServo class to indicate that
+  a subset of the visual feature is to use in the control law:
+
+  \code
+  vpFeaturePoint3D p;
+  vpServo task;
+  ...
+  // Add the (X,Y) subset coordinates features from a 3D point to the task
+  task.addFeature(p, vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectY());
+  \endcode
+
+  \sa selectX(), selectZ()
+
+*/
+unsigned int vpFeaturePoint3D::selectY()  { return FEATURE_LINE[1] ; }
+
+/*!
+
+  Function used to select the \f$ Z\f$ subset coordinate of the 3D point
+  visual feature.
+
+  This function is to use in conjunction with interaction() in order
+  to compute the interaction matrix associated to \f$ Z\f$ feature.
+
+  See the interaction() method for an usage example.
+
+  This function is also useful in the vpServo class to indicate that
+  a subset of the visual feature is to use in the control law:
+
+  \code
+  vpFeaturePoint3D p;
+  vpServo task;
+  ...
+  // Add the (Z) subset coordinate feature from a 3D point to the task
+  task.addFeature(p, vpFeaturePoint3D::selectZ());
+  \endcode
+
+  \sa selectX(), selectY()
+
+*/
+unsigned int vpFeaturePoint3D::selectZ()  { return FEATURE_LINE[2] ; }

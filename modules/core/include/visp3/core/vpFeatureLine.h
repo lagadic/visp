@@ -242,41 +242,8 @@ public:
 
 public:
 
-  /*! 
-
-    Function used to select the \f$ \rho \f$ subset of the line visual feature.
-
-    This function is to use in conjunction with interaction() in order to compute the interaction matrix associated to \f$ \rho \f$.
-
-    This function is also useful in the vpServo class to indicate that a subset of the visual feature is to use in the control law:
-
-    \code 
-    vpFeatureLine s;
-    vpServo task;
-    ...
-    // Add the (rho) subset features from the 2D line
-    task.addFeature(s, vpFeatureLine::selectRho());
-    \endcode
-  */
-  inline static unsigned int selectRho()  { return FEATURE_LINE[0] ; }
-
-  /*! 
-
-    Function used to select the \f$ \theta \f$ subset of the line visual feature.
-
-    This function is to use in conjunction with interaction() in order to compute the interaction matrix associated to \f$ \theta \f$.
-
-    This function is also useful in the vpServo class to indicate that a subset of the visual feature is to use in the control law:
-
-    \code 
-    vpFeatureLine s;
-    vpServo task;
-    ...
-    // Add the (rho) subset features from the 2D line
-    task.addFeature(s, vpFeatureLine::selectTheta());
-    \endcode
-  */
-  inline static unsigned int selectTheta()  { return FEATURE_LINE[1] ; }
+  static unsigned int selectRho();
+  static unsigned int selectTheta();
 
   vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
 
@@ -289,8 +256,6 @@ public:
 
   vpFeatureLine *duplicate() const ;
 
-
-public:
   void display(const vpCameraParameters &cam,
                const vpImage<unsigned char> &I,
                const vpColor &color=vpColor::green,

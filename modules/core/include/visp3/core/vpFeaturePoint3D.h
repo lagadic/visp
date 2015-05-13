@@ -255,83 +255,10 @@ public:
     vpBasicFeature method instantiation
   */
 
-  /*! 
+  static unsigned int selectX();
+  static unsigned int selectY();
+  static unsigned int selectZ();
 
-    Function used to select the \f$ X\f$ subset coordinate of the 3D point
-    visual feature.
-
-    This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$ X\f$ feature.
-
-    See the interaction() method for an usage example.
-
-    This function is also useful in the vpServo class to indicate that
-    a subset of the visual feature is to use in the control law:
-
-    \code
-    vpFeaturePoint3D p;
-    vpServo task;
-    ...
-    // Add the (X,Y) subset coordinates features from a 3D point to the task
-    task.addFeature(p, vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectY());
-    \endcode
-
-    \sa selectY(), selectZ()
-
-  */
-  inline static unsigned int selectX()  { return FEATURE_LINE[0] ; }
-
-  /*! 
-
-    Function used to select the \f$ Y\f$ subset coordinate of the 3D point
-    visual feature.
-
-    This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$ Y\f$ feature.
-
-    See the interaction() method for an usage example.
-
-    This function is also useful in the vpServo class to indicate that
-    a subset of the visual feature is to use in the control law:
-
-    \code
-    vpFeaturePoint3D p;
-    vpServo task;
-    ...
-    // Add the (X,Y) subset coordinates features from a 3D point to the task
-    task.addFeature(p, vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectY());
-    \endcode
-
-    \sa selectX(), selectZ()
-
-  */
-  inline static unsigned int selectY()  { return FEATURE_LINE[1] ; }
-
-  /*! 
-
-    Function used to select the \f$ Z\f$ subset coordinate of the 3D point
-    visual feature.
-
-    This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$ Z\f$ feature.
-
-    See the interaction() method for an usage example.
-
-    This function is also useful in the vpServo class to indicate that
-    a subset of the visual feature is to use in the control law:
-
-    \code
-    vpFeaturePoint3D p;
-    vpServo task;
-    ...
-    // Add the (Z) subset coordinate feature from a 3D point to the task
-    task.addFeature(p, vpFeaturePoint3D::selectZ());
-    \endcode
-
-    \sa selectX(), selectY()
-
-  */
-  inline static unsigned int selectZ()  { return FEATURE_LINE[2] ; }
   // compute the interaction matrix from a subset a the possible features
   vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
   // compute the error between two visual features from a subset

@@ -549,9 +549,38 @@ vpFeaturePoint *vpFeaturePoint::duplicate() const
   return feature ;
 }
 
+/*!
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+  Function used to select the \f$ x \f$ subset of the point visual feature.
+
+  This function is to use in conjunction with interaction() in order to compute the interaction matrix associated to \f$ x \f$.
+
+  This function is also useful in the vpServo class to indicate that a subset of the visual feature is to use in the control law:
+
+  \code
+  vpFeaturePoint s;
+  vpServo task;
+  ...
+  // Add the (x) subset features from the 2D point
+  task.addFeature(s, vpFeaturePoint::selectX());
+  \endcode
+*/
+unsigned int vpFeaturePoint::selectX()  { return FEATURE_LINE[0] ; }
+
+/*!
+
+  Function used to select the \f$ y \f$ subset of the point visual feature.
+
+  This function is to use in conjunction with interaction() in order to compute the interaction matrix associated to \f$ y \f$.
+
+  This function is also useful in the vpServo class to indicate that a subset of the visual feature is to use in the control law:
+
+  \code
+  vpFeaturePoint s;
+  vpServo task;
+  ...
+  // Add the (y) subset features from the 2D point
+  task.addFeature(s, vpFeaturePoint::selectY());
+  \endcode
+*/
+unsigned int vpFeaturePoint::selectY()  { return FEATURE_LINE[1] ; }

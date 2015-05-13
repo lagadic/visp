@@ -116,8 +116,8 @@ public:
     vpBasicFeature method instantiation
   */
   // feature selection
-  inline static unsigned int selectX()  { return FEATURE_LINE[0] ; }
-  inline static unsigned int selectY()  { return FEATURE_LINE[1] ; }
+  static unsigned int selectX();
+  static unsigned int selectY();
 
 
     //! compute the interaction matrix from a subset a the possible features

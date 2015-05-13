@@ -481,9 +481,8 @@ vpFeatureEllipse *vpFeatureEllipse::duplicate() const
   return feature ;
 }
 
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+unsigned int vpFeatureEllipse::selectX()  { return FEATURE_LINE[0] ; }
+unsigned int vpFeatureEllipse::selectY()  { return FEATURE_LINE[1] ; }
+unsigned int vpFeatureEllipse::selectMu20()  { return FEATURE_LINE[2] ; }
+unsigned int vpFeatureEllipse::selectMu11()  { return FEATURE_LINE[3] ; }
+unsigned int vpFeatureEllipse::selectMu02()  { return FEATURE_LINE[4] ; }

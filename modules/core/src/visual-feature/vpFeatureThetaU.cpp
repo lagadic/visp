@@ -698,8 +698,78 @@ vpFeatureThetaU::display(const vpCameraParameters &/* cam */,
   }
 }
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+/*!
+
+  Function used to select the \f$ \theta u_x\f$ subset of the \f$
+  \theta u \f$ visual feature.
+
+  This function is to use in conjunction with interaction() in order
+  to compute the interaction matrix associated to \f$ \theta u_x\f$.
+
+  See the interaction() method for an usage example.
+
+  This function is also useful in the vpServo class to indicate that
+  a subset of the visual feature is to use in the control law:
+
+  \code
+  vpFeatureThetaU tu;
+  vpServo task;
+  ...
+  // Add the (ThetaU_x, ThetaU_y) subset features from the 3D ThetaU
+  // rotation to the task
+  task.addFeature(tu, vpFeatureThetaU::selectTUx() | vpFeatureThetaU::selectTUy());
+  \endcode
+
+  \sa selectTUy(), selectTUz()
+*/
+unsigned int vpFeatureThetaU::selectTUx()  { return FEATURE_LINE[0] ; }
+/*!
+
+  Function used to select the \f$ \theta u_y\f$ subset of the \f$
+  \theta u \f$ visual feature.
+
+  This function is to use in conjunction with interaction() in order
+  to compute the interaction matrix associated to \f$ \theta u_y\f$.
+
+  See the interaction() method for an usage example.
+
+  This function is also useful in the vpServo class to indicate that
+  a subset of the visual feature is to use in the control law:
+
+  \code
+  vpFeatureThetaU tu;
+  vpServo task;
+  ...
+  // Add the (ThetaU_x, ThetaU_y) subset features from the 3D ThetaU
+  // rotation to the task
+  task.addFeature(tu, vpFeatureThetaU::selectTUx() | vpFeatureThetaU::selectTUy());
+  \endcode
+
+  \sa selectTUx(), selectTUz()
+*/
+unsigned int vpFeatureThetaU::selectTUy()  { return FEATURE_LINE[1] ; }
+/*!
+
+  Function used to select the \f$ \theta u_z\f$ subset of the \f$
+  \theta u \f$ visual feature.
+
+  This function is to use in conjunction with interaction() in order
+  to compute the interaction matrix associated to \f$ \theta u_z\f$.
+
+  See the interaction() method for an usage example.
+
+  This function is also useful in the vpServo class to indicate that
+  a subset of the visual feature is to use in the control law:
+
+  \code
+  vpFeatureThetaU tu;
+  vpServo task;
+  ...
+  // Add the (ThetaU_z) subset feature from the 3D ThetaU
+  // rotation to the task
+  task.addFeature(tu, vpFeatureThetaU::selectTUz());
+  \endcode
+
+  \sa selectTUx(), selectTUy()
+*/
+unsigned int vpFeatureThetaU::selectTUz()  { return FEATURE_LINE[2] ; }

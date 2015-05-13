@@ -303,57 +303,9 @@ public:
   /*
     vpBasicFeature method instantiation
   */
+  static unsigned int selectRho();
+  static unsigned int selectTheta();
 
-  /*! 
-
-    Function used to select the \f$\rho\f$ subset polar
-    coordinate of the image point visual feature.
-
-    This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$\rho\f$ feature.
-
-    See the interaction() method for an usage example.
-
-    This function is also useful in the vpServo class to indicate that
-    a subset of the visual feature is to use in the control law:
-
-    \code
-    vpFeaturePointPolar p;
-    vpServo task;
-    ...
-    // Add only the rho subset coordinate feature from an image point to the task
-    task.addFeature(p, vpFeaturePointPolar::selectRho());
-    \endcode
-
-    \sa selectTheta()
-  */
-  inline static unsigned int selectRho()  { return FEATURE_LINE[0] ; }
-
-
-  /*! 
-
-    Function used to select the \f$\theta\f$ subset polar
-    coordinate of the image point visual feature.
-
-    This function is to use in conjunction with interaction() in order
-    to compute the interaction matrix associated to \f$\theta\f$ feature.
-
-    See the interaction() method for an usage example.
-
-    This function is also useful in the vpServo class to indicate that
-    a subset of the visual feature is to use in the control law:
-
-    \code
-    vpFeaturePointPolar p;
-    vpServo task;
-    ...
-    // Add only the theta subset coordinate feature from an image point to the task
-    task.addFeature(p, vpFeaturePointPolar::selectTheta());
-    \endcode
-
-    \sa selectRho()
-  */
-  inline static unsigned int selectTheta()  { return FEATURE_LINE[1] ; }
   // compute the interaction matrix from a subset a the possible features
   vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
   // compute the error between two visual features from a subset

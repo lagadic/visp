@@ -318,3 +318,6 @@ vpFeatureVanishingPoint *vpFeatureVanishingPoint::duplicate() const
   vpFeatureVanishingPoint *feature = new vpFeatureVanishingPoint ;
   return feature ;
 }
+
+unsigned int vpFeatureVanishingPoint::selectX()  { return FEATURE_LINE[0] ; }
+unsigned int vpFeatureVanishingPoint::selectY()  { return FEATURE_LINE[1] ; }

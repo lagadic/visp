@@ -226,41 +226,8 @@ public:
   */
 
   // feature selection
-  /*! 
-
-    Function used to select the \f$ x \f$ subset of the point visual feature.
-
-    This function is to use in conjunction with interaction() in order to compute the interaction matrix associated to \f$ x \f$.
-
-    This function is also useful in the vpServo class to indicate that a subset of the visual feature is to use in the control law:
-
-    \code 
-    vpFeaturePoint s;
-    vpServo task;
-    ...
-    // Add the (x) subset features from the 2D point
-    task.addFeature(s, vpFeaturePoint::selectX());
-    \endcode
-  */
-  inline static unsigned int selectX()  { return FEATURE_LINE[0] ; }
-
-  /*! 
-
-    Function used to select the \f$ y \f$ subset of the point visual feature.
-
-    This function is to use in conjunction with interaction() in order to compute the interaction matrix associated to \f$ y \f$.
-
-    This function is also useful in the vpServo class to indicate that a subset of the visual feature is to use in the control law:
-
-    \code 
-    vpFeaturePoint s;
-    vpServo task;
-    ...
-    // Add the (y) subset features from the 2D point
-    task.addFeature(s, vpFeaturePoint::selectY());
-    \endcode
-  */
-  inline static unsigned int selectY()  { return FEATURE_LINE[1] ; }
+  static unsigned int selectX();
+  static unsigned int selectY();
 
   vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
 
