@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id$
+ * $Id: vpSimulatorException.h 5450 2015-05-13 09:32:11Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
@@ -39,58 +39,24 @@
  *
  *****************************************************************************/
 
-
-#ifndef __vpSimulatorException_H
-#define __vpSimulatorException_H
-
-
-/* ------------------------------------------------------------------------- */
-/* --- INCLUDE ------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
-
-
 /* \file vpSimulatorException.h
    \brief error that can be emited by the vpSimulator class and its derivates
  */
 /* Classes standards. */
 
-#include <visp3/core/vpException.h>
+#include <visp3/ar/vpSimulatorException.h>
 
-#include <iostream>                /* Classe std::ostream.    */
-#include <string>                  /* Classe string.     */
-
-/* ------------------------------------------------------------------------- */
-/* --- CLASS --------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
-
-/*!
-
-  \class vpSimulatorException
-
-  \ingroup Exception
-
-  \brief Error that can be emited by the vpSimulator class and its derivates.
- */
-class VISP_EXPORT vpSimulatorException : public vpException
+vpSimulatorException::vpSimulatorException (const int id, const char* format, ...)
 {
-  public:
-    /*!
-    \brief Lists the possible error than can be emmited while calling
-    vpSimulator member
-   */
-    enum errorSimulatorCodeEnum
-    {
-      ioError,
-      noFileNameError,
-      notInitializedError,
-      windowSizeNotInitializedError,
-      badInitializationError
-    } ;
+  this->code = id;
+  va_list args;
+  va_start(args, format);
+  setMessage(format, args);
+  va_end (args);
+}
 
-  public:
-    vpSimulatorException (const int id, const char* format, ...);
-    vpSimulatorException (const int id, const std::string & msg);
-    vpSimulatorException (const int id);
-};
+vpSimulatorException::vpSimulatorException (const int id, const std::string & msg)
+  : vpException(id, msg){ ; }
 
-#endif
+vpSimulatorException::vpSimulatorException (const int id)
+  : vpException(id){ ; }
