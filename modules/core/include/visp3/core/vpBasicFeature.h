@@ -84,7 +84,9 @@ class VISP_EXPORT vpBasicFeature
 public: // Public constantes
   static const unsigned int FEATURE_LINE [32];
 
-  static const unsigned int FEATURE_ALL;
+  enum {
+    FEATURE_ALL = 0xffff
+  };
 
 protected:
   //! State of the visual feature.
