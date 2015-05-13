@@ -362,9 +362,6 @@ endfunction()
 function(_vp_append_target_includes target)
   if(DEFINED VP_TARGET_INCLUDE_DIRS_${target})
     target_include_directories(${target} PRIVATE ${VP_TARGET_INCLUDE_DIRS_${target}})
-    if (TARGET ${target}_object)
-      target_include_directories(${target}_object PRIVATE ${VP_TARGET_INCLUDE_DIRS_${target}})
-    endif()
     unset(VP_TARGET_INCLUDE_DIRS_${target} CACHE)
   endif()
 endfunction()
@@ -376,24 +373,6 @@ endfunction()
 
 function(vp_add_library target)
   add_library(${target} ${ARGN})
-
-  # Add OBJECT library (added in cmake 2.8.8) to use in compound modules
-  if (NOT CMAKE_VERSION VERSION_LESS "2.8.8"
-      AND NOT VISP_MODULE_${target}_CHILDREN
-      AND NOT VISP_MODULE_${target}_CLASS STREQUAL "BINDINGS"
-    )
-    set(sources ${ARGN})
-    add_library(${target}_object OBJECT ${sources})
-    set_target_properties(${target}_object PROPERTIES
-      EXCLUDE_FROM_ALL True
-      EXCLUDE_FROM_DEFAULT_BUILD True
-      POSITION_INDEPENDENT_CODE True
-      )
-    if (ENABLE_SOLUTION_FOLDERS)
-      set_target_properties(${target}_object PROPERTIES FOLDER "object_libraries")
-    endif()
-    unset(sources)
-  endif()
 
   _vp_append_target_includes(${target})
 endfunction()

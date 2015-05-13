@@ -592,38 +592,11 @@ macro(vp_create_module)
 endmacro()
 
 macro(_vp_create_module)
-  set(sub_objs "")
-  set(sub_links "")
-  if (VISP_MODULE_${the_module}_CHILDREN)
-    status("Complex module ${the_module}")
-    foreach (m ${VISP_MODULE_${the_module}_CHILDREN})
-      if (BUILD_${m} AND TARGET ${m}_object)
-        get_target_property(_sub_links ${m} LINK_LIBRARIES)
-        list(APPEND sub_objs $<TARGET_OBJECTS:${m}_object>)
-        list(APPEND sub_links ${_sub_links})
-        status("    + ${m}")
-      else()
-        status("    - ${m}")
-      endif()
-    endforeach()
-  endif()
-
   vp_create_compat_headers(${VISP_MODULE_${the_module}_HEADERS})
   vp_create_global_module_header(${the_module})
 
   vp_add_library(${the_module} ${VISP_MODULE_TYPE} ${VISP_MODULE_${the_module}_HEADERS} ${VISP_MODULE_${the_module}_SOURCES}
-    "${VISP_INCLUDE_DIR}/visp3/core/vpConfig.h" "${VISP_INCLUDE_DIR}/visp3/visp_modules.h"
-    ${sub_objs})
-
-  # TODO: is it needed?
-  if (sub_links)
-    vp_list_filterout(sub_links "^visp_")
-    vp_list_unique(sub_links)
-    target_link_libraries(${the_module} ${sub_links})
-  endif()
-
-  unset(sub_objs)
-  unset(sub_links)
+    "${VISP_INCLUDE_DIR}/visp3/core/vpConfig.h" "${VISP_INCLUDE_DIR}/visp3/visp_modules.h")
 
   vp_target_link_libraries(${the_module} ${VISP_MODULE_${the_module}_DEPS_TO_LINK})
   #vp_target_link_libraries(${the_module} LINK_INTERFACE_LIBRARIES ${VISP_MODULE_${the_module}_DEPS_TO_LINK})
@@ -689,13 +662,6 @@ macro(_vp_create_module)
     endif()
   endforeach()
 
-  if (TARGET ${the_module}_object)
-    # copy COMPILE_DEFINITIONS
-    get_target_property(main_defs ${the_module} COMPILE_DEFINITIONS)
-    if (main_defs)
-      set_target_properties(${the_module}_object PROPERTIES COMPILE_DEFINITIONS ${main_defs})
-    endif()
-  endif()
 endmacro()
 
 
