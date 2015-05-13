@@ -459,6 +459,12 @@ macro(vp_set_module_sources)
   # use full paths for module to be independent from the module location
   vp_convert_to_full_paths(VISP_MODULE_${the_module}_HEADERS)
 
+  if(${the_module} MATCHES visp_core)
+    list(APPEND VISP_MODULE_${the_module}_HEADERS "${VISP_INCLUDE_DIR}/visp3/core/vpConfig.h")
+    list(APPEND VISP_MODULE_${the_module}_HEADERS "${VISP_INCLUDE_DIR}/visp3/visp_modules.h")
+  endif()
+
+
   set(VISP_MODULE_${the_module}_HEADERS ${VISP_MODULE_${the_module}_HEADERS} CACHE INTERNAL "List of header files for ${the_module}")
   set(VISP_MODULE_${the_module}_SOURCES ${VISP_MODULE_${the_module}_SOURCES} CACHE INTERNAL "List of source files for ${the_module}")
 endmacro()
@@ -483,9 +489,9 @@ macro(vp_glob_module_sources)
   )
 
   vp_source_group("Src" DIRBASE "${CMAKE_CURRENT_LIST_DIR}/src" FILES ${lib_srcs} ${lib_int_hdrs})
-  vp_source_group("Include" DIRBASE "${CMAKE_CURRENT_LIST_DIR}/include" FILES ${lib_hdrs} ${lib_hdrs_detail})
+  vp_source_group("Include" DIRBASE "${CMAKE_CURRENT_LIST_DIR}/include" FILES ${lib_hdrs})
 
-  vp_set_module_sources(${_argn} HEADERS ${lib_hdrs} ${lib_hdrs_detail}
+  vp_set_module_sources(${_argn} HEADERS ${lib_hdrs}
                         SOURCES ${lib_srcs} ${lib_int_hdrs})
 endmacro()
 
@@ -595,8 +601,7 @@ macro(_vp_create_module)
   vp_create_compat_headers(${VISP_MODULE_${the_module}_HEADERS})
   vp_create_global_module_header(${the_module})
 
-  vp_add_library(${the_module} ${VISP_MODULE_TYPE} ${VISP_MODULE_${the_module}_HEADERS} ${VISP_MODULE_${the_module}_SOURCES}
-    "${VISP_INCLUDE_DIR}/visp3/core/vpConfig.h" "${VISP_INCLUDE_DIR}/visp3/visp_modules.h")
+  vp_add_library(${the_module} ${VISP_MODULE_TYPE} ${VISP_MODULE_${the_module}_HEADERS} ${VISP_MODULE_${the_module}_SOURCES})
 
   vp_target_link_libraries(${the_module} ${VISP_MODULE_${the_module}_DEPS_TO_LINK})
   #vp_target_link_libraries(${the_module} LINK_INTERFACE_LIBRARIES ${VISP_MODULE_${the_module}_DEPS_TO_LINK})
