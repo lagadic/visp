@@ -242,7 +242,7 @@ class VISP_EXPORT vpColor : public vpRGBa
 };
 
 // In this file if windows
-#if (defined(_WIN32) || defined(__CYGWIN__)) && defined(visp_EXPORTS)
+#if defined(VISP_USE_MSVC)
 /*!< Predefined black color with R=G=B=0 and identifier vpColor::id_black. */
 vpColor const __declspec(selectany) vpColor::black  = vpColor(0, 0, 0, id_black);
 /*!< Predefined white color with R=G=B=255 and identifier vpColor::id_white. */
