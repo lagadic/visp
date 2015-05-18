@@ -222,6 +222,7 @@ VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" O
 #-------------------------------------------------------------------------------
 # specific things that need to be updated in vpConfig.h and ViSP-third-party.txt
 #-------------------------------------------------------------------------------
+VP_SET(VISP_HAVE_OPENMP      TRUE IF USE_OPENMP)
 VP_SET(VISP_HAVE_OPENCV      TRUE IF (BUILD_MODULE_visp_core AND USE_OPENCV))
 VP_SET(VISP_HAVE_X11         TRUE IF (BUILD_MODULE_visp_core AND USE_X11))
 VP_SET(VISP_HAVE_GTK         TRUE IF (BUILD_MODULE_visp_core AND USE_GTK2))
@@ -231,8 +232,9 @@ VP_SET(VISP_HAVE_JPEG        TRUE IF (BUILD_MODULE_visp_core AND USE_JPEG))
 VP_SET(VISP_HAVE_PNG         TRUE IF (BUILD_MODULE_visp_core AND USE_PNG))
 VP_SET(VISP_HAVE_YARP        TRUE IF (BUILD_MODULE_visp_core AND USE_YARP))
 VP_SET(VISP_HAVE_GSL         TRUE IF (BUILD_MODULE_visp_core AND USE_GSL))
-VP_SET(VISP_HAVE_LAPACK_C    TRUE IF (BUILD_MODULE_visp_core AND USE_LAPACK_C))
+VP_SET(VISP_HAVE_LAPACK_C    TRUE IF (BUILD_MODULE_visp_core AND USE_LAPACK))
 VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND USE_PTHREAD))
+VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
 VP_SET(VISP_HAVE_FFMPEG      TRUE IF (BUILD_MODULE_visp_core AND USE_FFMPEG))
 
 VP_SET(VISP_HAVE_OGRE        TRUE IF (BUILD_MODULE_visp_ar AND USE_OGRE))
