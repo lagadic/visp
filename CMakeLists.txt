@@ -210,7 +210,7 @@ VP_OPTION(USE_X11         X11         ""    "Include X11 support"          "" ON
 VP_OPTION(USE_GTK2        MyGTK2       ""    "Include gtk2 support"         "" OFF)
 VP_OPTION(USE_JPEG       "JPEG;MyJPEG" ""    "Include jpeg support"         "" ON)
 VP_OPTION(USE_PNG        "PNG;MyPNG"   ""    "Include png support"          "" ON)
-VP_OPTION(USE_FFMPEG      FFMPEG       ""    "Include ffmpeg support"       "" ON)
+VP_OPTION(USE_FFMPEG      FFMPEG       ""    "Include ffmpeg support"       "" OFF)
 # To control Pioneer mobile robots, under UNIX we need Aria, pthread, rt and dl 3rd party libraries
 VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" ON)
 #VP_OPTION(USE_RT          RT           ""    "Include rt support"           "" ON)
