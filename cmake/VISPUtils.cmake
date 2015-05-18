@@ -384,16 +384,20 @@ endfunction()
 #   <package>_LIBRARIES
 #   VISP_HAVE_<package>
 macro(VP_CHECK_PACKAGE package)
-  set(ALIAS               ${package})
-  set(ALIAS_FOUND         ${ALIAS}_FOUND)
-  set(ALIAS_INCLUDE_DIRS  ${ALIAS}_INCLUDE_DIRS)
-  set(ALIAS_LIBRARIES     ${ALIAS}_LIBRARIES)
-  set(ALIAS_VISP_HAVE     VISP_HAVE_${ALIAS})
+  set(ALIAS                 ${package})
+  string(TOUPPER "${ALIAS}" ALIAS_UPPER) # useful for OpenGL
+  set(ALIAS_FOUND           ${ALIAS}_FOUND)
+  set(ALIAS_UPPER_FOUND     ${ALIAS_UPPER}_FOUND)
+  set(ALIAS_INCLUDE_DIRS    ${ALIAS}_INCLUDE_DIRS)
+  set(ALIAS_LIBRARIES       ${ALIAS}_LIBRARIES)
+  set(ALIAS_VISP_HAVE       VISP_HAVE_${ALIAS})
+  set(ALIAS_UPPER_VISP_HAVE VISP_HAVE_${ALIAS_UPPER})
 
   find_package(${ALIAS})
 
-  if(${ALIAS_FOUND})
+  if(${ALIAS_FOUND} OR ${ALIAS_UPPER_FOUND})
     set(${ALIAS_VISP_HAVE} 1)
+    set(${ALIAS_UPPER_VISP_HAVE} 1)
   endif()
 endmacro()
 
