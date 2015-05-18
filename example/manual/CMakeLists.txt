@@ -38,7 +38,7 @@
 #
 #############################################################################
 
-set(EXAMPLES_REQUIRED_DEPS visp_core visp_sensor visp_vs visp_robot visp_ar)
+set(EXAMPLES_REQUIRED_DEPS visp_core visp_sensor visp_vs visp_robot visp_ar visp_vision)
 
 vp_check_dependencies(${EXAMPLES_REQUIRED_DEPS})
 
