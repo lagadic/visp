@@ -43,18 +43,20 @@
 #
 #############################################################################
 
-FIND_PATH(ARIA_INCLUDE_DIR Aria.h
-    $ENV{ARIA_HOME}/include
-    /usr/local/Aria/include
-    /usr/Aria/include
-    /usr/include
-    /usr/local/include
-	"C:/Program Files/MobileRobots/Aria/include"
-    )
+find_path(ARIA_INCLUDE_DIR Aria.h
+  $ENV{ARIA_HOME}/include
+  /usr/local/Aria/include
+  /usr/Aria/include
+  /usr/include
+  /usr/include/Aria
+  /usr/local/include
+  /usr/local/include/Aria
+  "C:/Program Files/MobileRobots/Aria/include"
+)
 #MESSAGE("DBG ARIA_INCLUDE_DIR=${ARIA_INCLUDE_DIR}")  
 
 if(UNIX)  
-  FIND_LIBRARY(ARIA_LIBRARY
+  find_library(ARIA_LIBRARY
     NAMES Aria
     PATHS 
     $ENV{ARIA_HOME}/lib
@@ -62,8 +64,8 @@ if(UNIX)
     /usr/Aria/lib
     /usr/lib
     /usr/local/lib
-	"C:/Program Files/MobileRobots/Aria/lib"
-    )
+    "C:/Program Files/MobileRobots/Aria/lib"
+  )
   #MESSAGE("DBG ARIA_LIBRARY=${ARIA_LIBRARY}")
 else()
   if(MSVC11)
@@ -80,7 +82,7 @@ else()
     set(ARIA_SUFFIX_NAME "")
   endif()
   
-  FIND_LIBRARY(ARIA_LIBRARY_DEBUG
+  find_library(ARIA_LIBRARY_DEBUG
     NAMES AriaDebug${ARIA_SUFFIX_NAME}
     PATHS 
     $ENV{ARIA_HOME}/lib
@@ -88,9 +90,9 @@ else()
     /usr/Aria/lib
     /usr/lib
     /usr/local/lib
-	"C:/Program Files/MobileRobots/Aria/lib"
-    )
-  FIND_LIBRARY(ARIA_LIBRARY_RELEASE
+    "C:/Program Files/MobileRobots/Aria/lib"
+  )
+  find_library(ARIA_LIBRARY_RELEASE
     NAMES Aria${ARIA_SUFFIX_NAME}
     PATHS 
     $ENV{ARIA_HOME}/lib
@@ -98,37 +100,37 @@ else()
     /usr/Aria/lib
     /usr/lib
     /usr/local/lib
-	"C:/Program Files/MobileRobots/Aria/lib"
-    )
+    "C:/Program Files/MobileRobots/Aria/lib"
+  )
 endif()
     
 if(UNIX)  
-  IF(ARIA_LIBRARY AND ARIA_INCLUDE_DIR)
-    SET(ARIA_INCLUDE_DIRS ${ARIA_INCLUDE_DIR})
-    SET(ARIA_LIBRARIES ${ARIA_LIBRARY})
-    SET(ARIA_FOUND TRUE)
-  ELSE()
-    SET(ARIA_FOUND FALSE)
-  ENDIF()
+  if(ARIA_LIBRARY AND ARIA_INCLUDE_DIR)
+    set(ARIA_INCLUDE_DIRS ${ARIA_INCLUDE_DIR})
+    set(ARIA_LIBRARIES ${ARIA_LIBRARY})
+    set(ARIA_FOUND TRUE)
+  else()
+    set(ARIA_FOUND FALSE)
+  endif()
 else()
   set(ARIA_LIBRARIES "")
-  IF(ARIA_LIBRARY_RELEASE AND ARIA_INCLUDE_DIR)
-    SET(ARIA_INCLUDE_DIRS ${ARIA_INCLUDE_DIR})
-    LIST(APPEND ARIA_LIBRARIES optimized ${ARIA_LIBRARY_RELEASE})
-    SET(ARIA_FOUND TRUE)
-  ENDIF()
+  if(ARIA_LIBRARY_RELEASE AND ARIA_INCLUDE_DIR)
+    set(ARIA_INCLUDE_DIRS ${ARIA_INCLUDE_DIR})
+    list(APPEND ARIA_LIBRARIES optimized ${ARIA_LIBRARY_RELEASE})
+    set(ARIA_FOUND TRUE)
+  endif()
   IF(ARIA_LIBRARY_DEBUG AND ARIA_INCLUDE_DIR)
-    SET(ARIA_INCLUDE_DIRS ${ARIA_INCLUDE_DIR})
-    LIST(APPEND ARIA_LIBRARIES debug ${ARIA_LIBRARY_DEBUG})
-    SET(ARIA_FOUND TRUE)
-  ENDIF()
+    set(ARIA_INCLUDE_DIRS ${ARIA_INCLUDE_DIR})
+    list(APPEND ARIA_LIBRARIES debug ${ARIA_LIBRARY_DEBUG})
+    set(ARIA_FOUND TRUE)
+  endif()
 
 endif()
   
-MARK_AS_ADVANCED(
-    ARIA_INCLUDE_DIR
-    ARIA_LIBRARY
-    ARIA_LIBRARY_DEBUG
-    ARIA_LIBRARY_RELEASE
-    )
+mark_as_advanced(
+  ARIA_INCLUDE_DIR
+  ARIA_LIBRARY
+  ARIA_LIBRARY_DEBUG
+  ARIA_LIBRARY_RELEASE
+)
 
