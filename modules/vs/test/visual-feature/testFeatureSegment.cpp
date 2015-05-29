@@ -44,6 +44,10 @@
 #include <vector>
 #include <numeric>
 
+#include <visp3/visp_modules.h>
+
+#ifdef VISP_HAVE_MODULE_ROBOT
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpDisplay.h>
@@ -261,3 +265,12 @@ int main(int argc, const char **argv)
     return 1;
   }
 }
+
+#else
+int main()
+{
+  std::cout << "Test empty since visp_robot module is not available.\n" << std::endl;
+  return 0;
+}
+
+#endif

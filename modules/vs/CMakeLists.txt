@@ -1,4 +1,4 @@
-vp_add_module(vs visp_core OPTIONAL visp_robot)
+vp_add_module(vs visp_core)
 vp_glob_module_sources()
 vp_module_include_directories()
 vp_create_module()
