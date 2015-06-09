@@ -1,9 +1,9 @@
 //! \example tutorial-matching-keypoint-homography.cpp
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/vision/vpHomography.h>
-#include <visp3/vision/vpKeyPoint.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpVideoReader.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpHomography.h>
+#include <visp/vpKeyPoint.h>
+#include <visp/vpPixelMeterConversion.h>
+#include <visp/vpVideoReader.h>
 
 int main(int argc, const char **argv)
 {  
@@ -83,16 +83,11 @@ int main(int argc, const char **argv)
     //! [Allocation]
 
     for (unsigned int i = 0; i < nbMatch; i++) {
-      vpImagePoint matched_ref, matched_cur;
-      keypoint.getMatchedPoints(i, matched_ref, matched_cur);
+      keypoint.getMatchedPoints(i, iPref[i], iPcur[i]);
       //! [Pixel conversion]
-      vpPixelMeterConversion::convertPoint(cam, matched_ref, mPref_x[i], mPref_y[i]);
-      vpPixelMeterConversion::convertPoint(cam, matched_cur, mPcur_x[i], mPcur_y[i]);
+      vpPixelMeterConversion::convertPoint(cam, iPref[i], mPref_x[i], mPref_y[i]);
+      vpPixelMeterConversion::convertPoint(cam, iPcur[i], mPcur_x[i], mPcur_y[i]);
       //! [Pixel conversion]
-
-      // Store the image coordinates in pixel of the matched points
-      iPref[i] = matched_ref;
-      iPcur[i] = matched_cur;
     }
 
     //! [Homography estimation]
