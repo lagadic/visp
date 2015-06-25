@@ -202,7 +202,7 @@ VP_OPTION(USE_QT          Qt          ""    "Include Coin/SoQt/Qt support" "" ON
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D)
 VP_OPTION(USE_PTHREAD     PTHREAD     ""    "Include pthread support"      "" ON)
 VP_OPTION(USE_XML2        XML2        ""    "Include xml support"          "" ON)
-VP_OPTION(USE_OPENCV      OpenCV      ""    "Include OpenCV support" "OpenCV_DIR;OpenCV_FOUND;OPENCV_FOUND" ON)
+VP_OPTION(USE_OPENCV      OpenCV      QUIET "Include OpenCV support" "OpenCV_DIR;OpenCV_FOUND;OPENCV_FOUND" ON)
 VP_OPTION(USE_ZLIB        "ZLIB;MyZLIB" ""  "Include zlib support"         "" ON)
 VP_OPTION(USE_X11         X11         ""    "Include X11 support"          "" ON)
 # The native FindGTK2.cmake doesn't consider libgobject-2.0 that is 
