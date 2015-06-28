@@ -57,8 +57,6 @@
 #ifndef VPSCALE_HH
 #define VPSCALE_HH
 
-#define EPANECHNIKOV 0
-
 #include <visp3/core/vpColVector.h>
 #include <math.h>
 
@@ -87,7 +85,7 @@ public:
 
   //! Constructor
   vpScale();
-  vpScale(double kernel_bandwidth, unsigned int dim=1, int type=EPANECHNIKOV);
+  vpScale(double kernel_bandwidth, unsigned int dim=1);
   //! Destructor
   virtual ~vpScale(void);
 
