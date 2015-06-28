@@ -60,7 +60,7 @@
 
 //! Constructor
 vpScale::vpScale()
-  : bandwidth(0.02), dimension(1), kernel_type(EPANECHNIKOV)
+  : bandwidth(0.02), dimension(1)
 {
 #if (DEBUG_LEVEL2)
   std::cout << "vpScale constructor reached" << std::endl;
@@ -73,7 +73,7 @@ vpScale::vpScale()
 
 //! Constructor
 vpScale::vpScale(double kernel_bandwidth, unsigned int dim, int type)
-  : bandwidth(kernel_bandwidth), dimension(dim), kernel_type(type)
+  : bandwidth(kernel_bandwidth), dimension(dim)
 
 {
 #if (DEBUG_LEVEL2)

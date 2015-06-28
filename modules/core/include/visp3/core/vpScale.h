@@ -82,7 +82,6 @@ class VISP_EXPORT vpScale
 private:
   double bandwidth;
   unsigned int dimension;
-  int kernel_type;
 
 public:
 
