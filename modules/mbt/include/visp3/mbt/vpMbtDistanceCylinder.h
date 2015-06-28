@@ -72,7 +72,6 @@ class VISP_EXPORT vpMbtDistanceCylinder
     unsigned int index;
     vpCameraParameters cam;
     vpMe *me;
-    double alpha;
     double wmean1;
     double wmean2;
     vpFeatureLine featureline1 ;
