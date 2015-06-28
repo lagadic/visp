@@ -183,10 +183,7 @@ vpAR::setImage(vpImage<vpRGBa> &I)
 
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_ar.a(vpAR.cpp.o) has no symbols
+void dummy_vpAR() {};
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

@@ -3524,4 +3524,7 @@ void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(const cv::Mat& image,
 }
 #endif
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_vision.a(vpKeyPoint.cpp.o) has no symbols
+void dummy_vpKeyPoint() {};
 #endif

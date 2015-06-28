@@ -1213,5 +1213,8 @@ void vpD3DRenderer::getImage(vpImage<vpRGBa> &I)
     }
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpD3DRenderer.cpp.o) has no symbols
+void dummy_vpD3DRenderer() {};
 #endif
 #endif

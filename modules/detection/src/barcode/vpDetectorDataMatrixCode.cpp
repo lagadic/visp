@@ -124,4 +124,7 @@ bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
   return detected;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpDetectorDataMatrixCode.cpp.o) has no symbols
+void dummy_vpDetectorDataMatrixCode() {};
 #endif

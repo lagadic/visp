@@ -1092,10 +1092,7 @@ vpSimulator::getInternalImage(vpImage<unsigned char> &I)
   get =1 ;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_ar.a(vpSimulator.cpp.o) has no symbols
+void dummy_vpSimulator() {};
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

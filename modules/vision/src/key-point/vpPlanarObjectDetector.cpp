@@ -538,5 +538,8 @@ vpPlanarObjectDetector::getMatchedPoints(const unsigned int _index, vpImagePoint
   _currentPoint = currentImagePoints[_index];
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_vision.a(vpPlanarObjectDetector.cpp.o) has no symbols
+void dummy_vpPlanarObjectDetector() {};
 #endif
 

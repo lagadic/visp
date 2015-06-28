@@ -1363,4 +1363,8 @@ vpV4l2Grabber::printBufInfo(struct v4l2_buffer buf)
 	  buf.length, buf.length, buf.bytesused);
 
 }
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_sensor.a(vpV4l2Grabber.cpp.o) has no symbols
+void dummy_vpV4l2Grabber() {};
 #endif

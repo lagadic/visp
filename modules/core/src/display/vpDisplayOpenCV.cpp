@@ -2211,10 +2211,7 @@ vpDisplayOpenCV::getPointerPosition ( vpImagePoint &ip)
   //return false; // Never reached after throw()
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpDisplayOpenCV.cpp.o) has no symbols
+void dummy_vpDisplayOpenCV() {};
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

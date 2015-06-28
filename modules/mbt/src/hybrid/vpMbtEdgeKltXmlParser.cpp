@@ -206,5 +206,8 @@ vpMbtEdgeKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   }
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_mbt.a(vpMbtEdgeKltXmlParser.cpp.o) has no symbols
+void dummy_vpMbtEdgeKltXmlParser() {};
 #endif
 

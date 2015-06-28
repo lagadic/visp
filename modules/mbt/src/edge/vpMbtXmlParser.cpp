@@ -472,5 +472,8 @@ vpMbtXmlParser::read_contrast (xmlDocPtr doc, xmlNodePtr node)
     std::cout <<"ecm : contrast : mu2 " << this->m_ecm.getMu2()<<std::endl;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_mbt.a(vpMbtXmlParser.cpp.o) has no symbols
+void dummy_vpMbtXmlParser() {};
 #endif
 

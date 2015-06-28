@@ -1424,13 +1424,8 @@ vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame,
 
 }
 
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
-
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_robot.a(vpRobotBiclops.cpp.o) has no symbols
+void dummy_vpRobotBiclops() {};
 #endif
 

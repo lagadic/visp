@@ -3832,5 +3832,8 @@ vp1394TwoGrabber::getColorCodingSupported(vp1394TwoVideoModeType mode,
 }
 #endif
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_sensor.a(vp1394TwoGrabber.cpp.o) has no symbols
+void dummy_vp1394TwoGrabber() {};
 #endif
 

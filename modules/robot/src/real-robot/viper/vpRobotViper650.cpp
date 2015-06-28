@@ -2344,5 +2344,7 @@ vpRobotViper650::getMaxRotationVelocityJoint6() const
   return maxRotationVelocity_joint6;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_robot.a(vpRobotViper650.cpp.o) has no symbols
+void dummy_vpRobotViper650() {};
 #endif
-

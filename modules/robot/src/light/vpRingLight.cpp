@@ -226,4 +226,7 @@ void vpRingLight::off()
   parport.sendData(data);
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_robot.a(vpRingLight.cpp.o) has no symbols
+void dummy_vpRingLight() {};
 #endif

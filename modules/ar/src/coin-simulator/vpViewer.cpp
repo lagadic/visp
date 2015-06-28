@@ -263,4 +263,7 @@ vpViewer::processSoEvent(const SoEvent * const event)
 
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_ar.a(vpViewer.cpp.o) has no symbols
+void dummy_vpViewer() {};
 #endif

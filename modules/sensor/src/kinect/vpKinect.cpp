@@ -311,8 +311,7 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> & Irgb, const vpImage<float> &
 	}
 }
 
-
-
-
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_sensor.a(vpKinect.cpp.o) has no symbols
+void dummy_vpKinect() {};
 #endif // VISP_HAVE_LIBFREENECT
-

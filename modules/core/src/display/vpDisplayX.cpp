@@ -3395,6 +3395,8 @@ int vpDisplayX::getMsb(unsigned int u32val)
     }
     return i;
 }
-
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpDisplayX.cpp.o) has no symbols
+void dummy_vpDisplayX() {};
 #endif
 

@@ -173,4 +173,7 @@ vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I,
   vpDisplay::displayArrow(I, ipo, ipx, vpColor::red, 4+thickness, 2+thickness, thickness) ;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpProjectionDisplay.cpp.o) has no symbols
+void dummy_vpProjectionDisplay() {};
 #endif

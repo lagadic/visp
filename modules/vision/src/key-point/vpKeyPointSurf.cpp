@@ -42,8 +42,7 @@
 
 #include <visp3/vision/vpKeyPointSurf.h>
 
-#if defined (VISP_HAVE_OPENCV_NONFREE)
-#if (VISP_HAVE_OPENCV_VERSION >= 0x010100) && VISP_HAVE_OPENCV_VERSION < 0x030000// Require opencv >= 1.1.0 < 3.0.0
+#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x010100) && (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 1.1.0 < 3.0.0
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
@@ -777,7 +776,8 @@ void vpKeyPointSurf::getDescriptorParamReferencePoint (const int index, int& siz
   }
 }
 
-
-#endif
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_vision.a(vpKeyPointSurf.cpp.o) has no symbols
+void dummy_vpKeyPointSurf() {};
 #endif
 

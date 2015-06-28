@@ -383,5 +383,8 @@ vpMbXmlParser::read_lod (xmlDocPtr doc, xmlNodePtr node) {
     std::cout <<"lod : min polygon area threshold : " << minPolygonAreaThreshold <<std::endl;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_mbt.a(vpMbXmlParser.cpp.o) has no symbols
+void dummy_vpMbXmlParser() {};
 #endif
 

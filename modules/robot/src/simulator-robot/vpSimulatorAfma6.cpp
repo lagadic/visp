@@ -2593,7 +2593,7 @@ vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<unsigned
 		}
 
 		// update pose error
-    cdMc = cdMo_*get_cMo().inverse();
+        cdMc = cdMo_*get_cMo().inverse();
 		cdMc.extract(cdRc);
 		cdMc.extract(cdTc);
 		cdTUc.buildFrom(cdRc);
@@ -2625,4 +2625,7 @@ vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<unsigned
 	return(err.euclideanNorm()<= errMax);
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_robot.a(vpSimulatorAfma6.cpp.o) has no symbols
+void dummy_vpSimulatorAfma6() {};
 #endif

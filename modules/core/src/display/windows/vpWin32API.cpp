@@ -138,4 +138,7 @@ HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes, UINT cBitsPerPel, 
   return ret;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpWin32API.cpp.o) has no symbols
+void dummy_vpWin32API() {};
 #endif

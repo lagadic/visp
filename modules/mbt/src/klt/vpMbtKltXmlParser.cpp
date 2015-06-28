@@ -291,5 +291,8 @@ vpMbtKltXmlParser::read_klt(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "klt : Pyramid Levels : "<< pyramidLevels <<std::endl;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_mbt.a(vpMbtKltXmlParser.cpp.o) has no symbols
+void dummy_vpMbtKltXmlParser() {};
 #endif
 

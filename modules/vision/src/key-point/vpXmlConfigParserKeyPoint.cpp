@@ -424,4 +424,7 @@ vpXmlConfigParserKeyPoint::read_ransac(xmlDocPtr doc, xmlNodePtr node)
     std::cout << "ransac: consensus percentage: "<< m_ransacConsensusPercentage <<std::endl;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_vision.a(vpXmlConfigParserKeyPoint.cpp.o) has no symbols
+void dummy_vpXmlConfigParserKeyPoint() {};
 #endif //VISP_HAVE_XML2

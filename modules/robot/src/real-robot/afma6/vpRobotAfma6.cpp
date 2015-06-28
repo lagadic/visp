@@ -2236,10 +2236,9 @@ NULL));
   return status;
 
 }
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_robot.a(vpRobotAfma6.cpp.o) has no symbols
+void dummy_vpRobotAfma6() {};
 #endif
 

@@ -372,4 +372,7 @@ vpRobotWireFrameSimulator::get_cMo()
   return cMoTemp;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_robot.a(vpRobotWireFrameSimulator.cpp.o) has no symbols
+void dummy_vpRobotWireFrameSimulator() {};
 #endif

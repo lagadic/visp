@@ -605,4 +605,7 @@ vpXmlParserHomogeneousMatrix::str2xmlcode (char * str, vpXmlCodeType & res)
 
   return back;
 }
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpXmlParserHomogeneousMatrix.cpp.o) has no symbols
+void dummy_vpXmlParserHomogeneousMatrix() {};
 #endif //VISP_HAVE_XML2

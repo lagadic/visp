@@ -484,11 +484,8 @@ vpRobotBiclopsController::readShm()
   return tmp_shm;
 }
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
-
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_robot.a(vpRobotBiclopsController.cpp.o) has no symbols
+void dummy_vpRobotBiclopsController() {};
 #endif
 

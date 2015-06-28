@@ -580,5 +580,8 @@ vpFernClassifier::setImage(const vpImage<unsigned char>& I)
 
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_vision.a(vpFernClassifier.cpp.o) has no symbols
+void dummy_vpFernClassifier() {};
 #endif
 

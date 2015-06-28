@@ -1713,10 +1713,7 @@ vpDisplayGTK::getPointerPosition ( vpImagePoint &ip)
   return true;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpDisplayGTK.cpp.o) has no symbols
+void dummy_vpDisplayGTK() {};
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

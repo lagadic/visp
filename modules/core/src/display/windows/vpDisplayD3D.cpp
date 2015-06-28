@@ -116,5 +116,8 @@ vpDisplayD3D::vpDisplayD3D(vpImage<unsigned char> &I,
 */
 vpDisplayD3D::~vpDisplayD3D(){}
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpDisplayD3D.cpp.o) has no symbols
+void dummy_vpDisplayD3D() {};
 #endif
 

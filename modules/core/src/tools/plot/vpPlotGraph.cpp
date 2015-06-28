@@ -1421,5 +1421,8 @@ vpPlotGraph::navigation(const vpImage<unsigned char> &I, bool &changed, vpMouseB
   return mov;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpPlotGraph.cpp.o) has no symbols
+void dummy_vpPlotGraph() {};
 #endif
 #endif

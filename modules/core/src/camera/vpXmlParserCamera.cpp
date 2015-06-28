@@ -1098,4 +1098,7 @@ vpXmlParserCamera::str2xmlcode (char * str, vpXmlCodeType & res)
 
   return back;
 }
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpXmlParserCamera.cpp.o) has no symbols
+void dummy_vpXmlParserCamera() {};
 #endif //VISP_HAVE_XML2

@@ -284,6 +284,10 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
 	}
 	return S_OK;
 }
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_sensor.a(vpDirectShowSampleGrabberI.cpp.o) has no symbols
+void dummy_vpDirectShowSampleGrabberI() {};
 #endif
 
 #endif

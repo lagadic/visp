@@ -1160,4 +1160,7 @@ void vpGDIRenderer::getImage(vpImage<vpRGBa> &I)
   delete [] imBuffer;
 }
 #endif
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpGDIRenderer.cpp.o) has no symbols
+void dummy_vpGDIRenderer() {};
 #endif

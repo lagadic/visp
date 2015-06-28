@@ -941,4 +941,7 @@ void vpDisplayWin32::getImage(vpImage<vpRGBa> &I)
   window.renderer->getImage(I);
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpDisplayWin32.cpp.o) has no symbols
+void dummy_vpDisplayWin32() {};
 #endif

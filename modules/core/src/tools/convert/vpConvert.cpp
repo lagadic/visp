@@ -432,4 +432,7 @@
       std::transform(from.begin(), from.end(), to.begin(), vpObjectPointToPoint3d);
     }
   }
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpConvert.cpp.o) has no symbols
+void dummy_vpConvert() {};
 #endif

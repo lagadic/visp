@@ -232,5 +232,7 @@ vpColVector vpRobotPioneer::getVelocity (const vpRobot::vpControlFrameType frame
   return velocity;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_robot.a(vpRobotPioneer.cpp.o) has no symbols
+void dummy_vpRobotPioneer() {};
 #endif
-

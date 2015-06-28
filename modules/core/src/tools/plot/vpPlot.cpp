@@ -633,4 +633,7 @@ void vpPlot::saveData(const unsigned int graphNum, const char* dataFile)
   fichier.close();
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_core.a(vpPlot.cpp.o) has no symbols
+void dummy_vpPlot() {};
 #endif
