@@ -358,7 +358,7 @@ int vpNetwork::receive(T* object, const unsigned int &sizeOfObject)
 template<typename T>
 int vpNetwork::receiveFrom(T* object, const unsigned int &receptorEmitting, const unsigned int &sizeOfObject)
 {
-  if(receptor_list.size() == 0 || receptorEmitting > (int)receptor_list.size()-1 )
+  if(receptor_list.size() == 0 || receptorEmitting > (unsigned int)receptor_list.size()-1 )
   {
     if(verboseMode)
       vpTRACE( "No receptor at the specified index" );
@@ -474,7 +474,7 @@ int vpNetwork::send(T* object, const unsigned int &sizeOfObject)
 template<typename T>
 int vpNetwork::sendTo(T* object, const unsigned int &dest, const unsigned int &sizeOfObject)
 {
-  if(receptor_list.size() == 0 || dest > (int)receptor_list.size()-1 )
+  if(receptor_list.size() == 0 || dest > (unsigned int)receptor_list.size()-1 )
   {
     if(verboseMode)
       vpTRACE( "No receptor at the specified index." );
