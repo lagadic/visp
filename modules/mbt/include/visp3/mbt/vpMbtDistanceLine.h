@@ -75,7 +75,6 @@ class VISP_EXPORT vpMbtDistanceLine
     vpMe *me;
     bool isTrackedLine;
     bool isTrackedLineWithVisibility;
-    double alpha;
     double wmean;
     vpFeatureLine featureline ;
     //! Polygon describing the line
