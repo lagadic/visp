@@ -534,13 +534,12 @@ void vpImageTools::flip(const vpImage<Type> &I,
                         vpImage<Type> &newI)
 {
     unsigned int height = 0, width = 0;
-    int i = 0;
 
     height = I.getHeight();
     width = I.getWidth();
     newI.resize(height, width);
 
-    for ( i = 0; i < height; i++)
+    for (unsigned int i = 0; i < height; i++)
     {
       memcpy(newI.bitmap+i*width, I.bitmap+(height-1-i)*width,
 	     width*sizeof(Type));
