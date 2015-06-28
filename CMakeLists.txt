@@ -74,7 +74,6 @@ set(VISP_DOC_DIR "${VISP_BINARY_DIR}/doc")
 
 # The location in which to install VISP libraries.
 set(LIBRARY_OUTPUT_PATH ${VISP_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
-message("${CMAKE_INSTALL_LIBDIR} ${${CMAKE_INSTALL_LIBDIR}}")
 # The location in which to install some VISP binaries.
 set(BINARY_OUTPUT_PATH ${VISP_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 
