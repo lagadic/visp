@@ -158,7 +158,6 @@ private:
   Colormap	lut ;
   GC		context ;
   int      	screen ;
-  int		planes;
   XEvent	event;
   Pixmap	pixmap;
   unsigned long	*x_color; // Array of predefined colors
@@ -166,7 +165,6 @@ private:
   unsigned short  colortable[256];
   XColor        xcolor;
   XGCValues     values;
-  int size ;
   bool ximage_data_init;
   unsigned int RMask, GMask, BMask;
   int RShift, GShift, BShift;

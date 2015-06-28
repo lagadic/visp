@@ -81,8 +81,8 @@ vpDisplayX::vpDisplayX ( vpImage<unsigned char> &I,
                          int y,
                          const char *title )
   : display(NULL), window(), Ximage(NULL), lut(), context(),
-    screen(0), planes(0), event(), pixmap(), x_color(NULL),
-    screen_depth(8), xcolor(), values(), size(0), ximage_data_init(false),
+    screen(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), ximage_data_init(false),
     RMask(0), GMask(0), BMask(0), RShift(0), GShift(0), BShift(0)
 {
   init ( I, x, y, title ) ;
@@ -103,8 +103,8 @@ vpDisplayX::vpDisplayX ( vpImage<vpRGBa> &I,
                          int y,
                          const char *title )
   : display(NULL), window(), Ximage(NULL), lut(), context(),
-    screen(0), planes(0), event(), pixmap(), x_color(NULL),
-    screen_depth(8), xcolor(), values(), size(0), ximage_data_init(false),
+    screen(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), ximage_data_init(false),
     RMask(0), GMask(0), BMask(0), RShift(0), GShift(0), BShift(0)
 {
   init ( I, x, y, title ) ;
@@ -134,8 +134,8 @@ int main()
 */
 vpDisplayX::vpDisplayX ( int x, int y, const char *title )
   : display(NULL), window(), Ximage(NULL), lut(), context(),
-    screen(0), planes(0), event(), pixmap(), x_color(NULL),
-    screen_depth(8), xcolor(), values(), size(0), ximage_data_init(false),
+    screen(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), ximage_data_init(false),
     RMask(0), GMask(0), BMask(0), RShift(0), GShift(0), BShift(0)
 {
   windowXPosition = x ;
@@ -168,8 +168,8 @@ int main()
 */
 vpDisplayX::vpDisplayX()
   : display(NULL), window(), Ximage(NULL), lut(), context(),
-    screen(0), planes(0), event(), pixmap(), x_color(NULL),
-    screen_depth(8), xcolor(), values(), size(0), ximage_data_init(false),
+    screen(0), event(), pixmap(), x_color(NULL),
+    screen_depth(8), xcolor(), values(), ximage_data_init(false),
     RMask(0), GMask(0), BMask(0), RShift(0), GShift(0), BShift(0)
 {
 }
