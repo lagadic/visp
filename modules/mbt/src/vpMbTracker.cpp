@@ -1125,6 +1125,8 @@ void vpMbTracker::removeComment(std::ifstream& fileId) {
 		fileId.ignore(256, '\n');
 		fileId.get(c);
 	}
+    if (fileId.fail())
+        throw(vpException(vpException::ioError, "Reached end of file"));
 	fileId.unget();
 }
 

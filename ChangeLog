@@ -6,7 +6,7 @@
                     http://team.inria.fr/lagadic
 
 
-ViSP 2.11.0 (under development)
+ViSP 3.0.0 (under development)
   - New features
   - Tutorials
   - Bug fixed
@@ -14,6 +14,8 @@ ViSP 2.11.0 (under development)
     . [18823] vpMatrix::kernel method returns false result if matrix has
       less rows than columns
     . [18939] vpParseArgv::ARGV_CONSTANT segfault
+    . [19312] Model-based tracker unable to initialize the number of cylinder
+      or circle from cao file
 
 ----------------------------------------------
 ViSP 2.10.0 (released February 13th, 2015)
