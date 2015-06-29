@@ -59,7 +59,7 @@
 #include <iostream>
 #include <cmath>
 // List of allowed command line options
-#define GETOPTARGS	"n:i:pf:r:c:vh"
+#define GETOPTARGS	"cdn:i:pf:R:C:vh"
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv,
@@ -86,7 +86,7 @@ Outputs a comparison of these methods.\n\
 \n\
 SYNOPSIS\n\
   %s [-n <number of matrices>] [-f <plot filename>]\n\
-     [-r <number of rows>] [-c <number of columns>]\n\
+     [-R <number of rows>] [-C <number of columns>]\n\
      [-i <number of iterations>] [-p] [-h]\n", name);
 
   fprintf(stdout, "\n\
@@ -103,11 +103,11 @@ OPTIONS:                                               Default\n\
      the different inversion methods: \n\
      QR,LU,Cholesky and Pseudo-inverse.\n\
 \n\
-  -r <number of rows>\n\
+  -R <number of rows>\n\
      Number of rows of the automatically generated matrices  \n\
      we test on.\n\
 \n\
-  -c <number of columns>\n\
+  -C <number of columns>\n\
      Number of colums of the automatically generated matrices  \n\
      we test on.\n\
 \n\
@@ -156,15 +156,20 @@ bool getOptions(int argc, const char **argv,
     case 'p':
       use_plot_file = true;
       break;
-    case 'r':
+    case 'R':
       nbrows = (unsigned int)atoi(optarg_);
       break;
-    case 'c':
+    case 'C':
       nbcols = (unsigned int)atoi(optarg_);
       break;
     case 'v':
       verbose = true;
       break;
+      // add default options -c -d
+    case 'c':
+        break;
+    case 'd':
+        break;
     default:
       usage(argv[0], optarg_);
       return false; break;
