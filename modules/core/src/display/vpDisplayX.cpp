@@ -1114,6 +1114,10 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const char *title )
 */
 void vpDisplayX::init ( unsigned int w, unsigned int h, int x, int y, const char *title )
 {
+  if (x_color == NULL) {
+    // id_unknown = number of predefined colors
+    x_color= new unsigned long [vpColor::id_unknown];
+  }
   /* setup X11 ------------------------------------------------------------- */
   this->width  = w;
   this->height = h;

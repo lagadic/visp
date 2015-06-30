@@ -558,6 +558,57 @@ class VISP_EXPORT vpDisplay
     \param width, height : Width and height of the window.
     \param x, y : The window is set at position x,y (column index, row index).
     \param title : Window title.
+
+    The following example shows how to use this function
+    \code
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayX.h>
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayD3D.h>
+#include <visp/vpImageIo.h>
+
+int main()
+{
+#ifdef VISP_HAVE_DISPLAY
+  vpImage<unsigned char> I;
+  vpImageIo::read(I, "lena.pgm");
+
+  vpDisplay *d;
+
+#if defined(VISP_HAVE_X11)
+  d = new vpDisplayX;
+#elif defined(VISP_HAVE_GTK)
+  d = new vpDisplayGTK;
+#elif defined(VISP_HAVE_GDI)
+  d = new vpDisplayGDI;
+#elif defined(VISP_HAVE_D3D9)
+  d = new vpDisplayD3D;
+#elif defined(VISP_HAVE_OPENCV)
+  d = new vpDisplayOpenCV;
+#else
+  std::cout << "Sorry, no video device is available" << std::endl;
+  return -1;
+#endif
+
+  d->init(I.getWidth(), I.getHeight(), 10, 20, "viewer");
+
+  // Now associate the display to the image
+  I.display = d;
+
+  // Set the display background with image I content
+  vpDisplay::display(I);
+
+  // Flush the foreground and background display
+  vpDisplay::flush(I);
+
+  // wait for a mouse clink in the display to exit
+  vpDisplay::getClick(I);
+
+  delete d;
+#endif
+}
+    \endcode
   */
   virtual void init(unsigned int width, unsigned int height,
                     int x=-1, int y=-1 ,
