@@ -213,7 +213,7 @@ int main()
     vpDisplay::flush(I);
   }
   
-#endif
+#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeKltTracker::loadConfigFile()
   vpXmlParser::cleanup();
 #endif

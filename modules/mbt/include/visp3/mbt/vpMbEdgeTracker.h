@@ -145,8 +145,10 @@ int main()
     vpDisplay::flush(I);
   }
 
+#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
   vpXmlParser::cleanup();
+#endif
 
   return 0;
 }
@@ -169,8 +171,10 @@ int main()
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
   ...
+#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
   vpXmlParser::cleanup();
+#endif
 \endcode
 
   The tracker can also be used without display, in that case the initial pose
@@ -205,9 +209,10 @@ int main()
     tracker.getPose(cMo); // get the pose 
   }
   
+#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
   vpXmlParser::cleanup();
-
+#endif
   return 0;
 }
 \endcode
@@ -252,9 +257,10 @@ int main()
     vpDisplay::flush(I);
   }
   
+#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
   vpXmlParser::cleanup();
-
+#endif
   return 0;
 }
 \endcode
