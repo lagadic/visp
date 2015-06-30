@@ -286,4 +286,4 @@ if(MOMENTS_COMBINE_MATRICES)
   set(BUILDNAME "${BUILDNAME}-Moment")
 endif()
 
-message("BUILDNAME=${BUILDNAME}")
+#message("BUILDNAME=${BUILDNAME}")
