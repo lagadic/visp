@@ -77,12 +77,14 @@ else(WIN32)
     "$ENV{XML2_HOME}/include/libxml2"
     /usr/include/libxml2
     /usr/local/include/libxml2
+    /usr/local/opt/libxml2/include/libxml2
     )
   find_library(XML2_LIBRARY xml2
     "$ENV{XML2_DIR}/lib"
     "$ENV{XML2_HOME}/lib"
     /usr/lib
     /usr/local/lib
+    /usr/local/opt/libxml2/lib
     )
 endif(WIN32)
 #MESSAGE("DBG XML2_INCLUDE_DIR=${XML2_INCLUDE_DIR}")  
