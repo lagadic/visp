@@ -3,17 +3,7 @@
   \page tutorial-getting-started Tutorial: How to create and build a CMake project that uses ViSP on Unix or Windows 
   \tableofcontents
 
-\note We assume in this tutorial that you have successfully installed ViSP. Information on ViSP installation is provided in:
-- \ref tutorial-install-ubuntu
-- \ref tutorial-install-fedora
-- \ref tutorial-install-opensuse
-- \ref tutorial-install-raspberry
-- \ref tutorial-install-win7
-- \ref tutorial-install-win81-msvc
-- \ref tutorial-install-win81-mingw64
-- \ref tutorial-install-iOS
-- \ref tutorial-install-ubuntu-package
-- or on <a href="http://www.irisa.fr/lagadic/visp/install.html">Install from source page</a>
+\note We assume in this tutorial that you have successfully installed ViSP either with an \ref tuto_install_sdk or with an \ref tuto_install_src.
 
 In this tutorial you will learn how to use ViSP either on Unix-like systems (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
 
