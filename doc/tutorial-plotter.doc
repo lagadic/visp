@@ -17,7 +17,7 @@ The last image of the drawing is the following:
 Now we describe the new lines that were introduced:
 
 \code
-#include <visp/vpPlot.h>
+#include <visp3/core/vpPlot.h>
 \endcode
 
 Include the header of the vpPlot class that allows curves drawing.

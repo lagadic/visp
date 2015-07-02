@@ -64,7 +64,7 @@ If you develop a project that uses ViSP library as a 3rd party, there are differ
 #define VP_TRACE
 #define VP_DEBUG
 
-#include <visp/vpDebug.h>
+#include <visp3/core/vpDebug.h>
 \endcode 
 either by modifying your \c CMakeLists.txt file by adding an option as in ViSP:
 \code 
@@ -84,15 +84,15 @@ The following example also available in tutorial-trace.cpp shows how to use the 
 \note In the previous example it is important to notice that the following lines have to be put prior to any other ViSP includes:
 \code
 #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
-#include <visp/vpDebug.h>
+#include <visp3/core/vpDebug.h>
 \endcode
-For example, if you modify the previous example just by including <visp/vpImage.h> on the top of the file, you will get the following warnings:
+For example, if you modify the previous example just by including <visp3/core/vpImage.h> on the top of the file, you will get the following warnings:
 \code 
 Building CXX object tutorial/trace/CMakeFiles/tutorial-trace.dir/tutorial-trace.cpp.o
 .../ViSP-code/tutorial/trace/tutorial-trace.cpp:5:1: warning: "VP_DEBUG_MODE" redefined
-In file included from .../ViSP-build-debug/include/visp/vpImage.h:52,
+In file included from .../ViSP-build-debug/include/visp3/core/vpImage.h:52,
                  from .../ViSP-code/tutorial/trace/tutorial-trace.cpp:2:
-.../ViSP-build-debug/include/visp/vpDebug.h:67:1: warning: this is the location of the previous definition
+.../ViSP-build-debug/include/visp3/core/vpDebug.h:67:1: warning: this is the location of the previous definition
 \endcode 
 
 

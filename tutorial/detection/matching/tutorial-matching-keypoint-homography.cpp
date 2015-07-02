@@ -1,9 +1,9 @@
 //! \example tutorial-matching-keypoint-homography.cpp
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpHomography.h>
-#include <visp/vpKeyPoint.h>
-#include <visp/vpPixelMeterConversion.h>
-#include <visp/vpVideoReader.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/vision/vpHomography.h>
+#include <visp3/vision/vpKeyPoint.h>
+#include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpVideoReader.h>
 
 int main(int argc, const char **argv)
 {  

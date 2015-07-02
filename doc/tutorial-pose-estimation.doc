@@ -26,8 +26,8 @@ And here is the detailed explanation of the new lines introduced in the source c
 First we include the headers of the vpPixelMeterConversion class that contains static functions able to convert coordinates of a point expressed in pixels in the image into meter in the image plane thanks to the camera intrinsic parameters. We also include the header of the vpPose class that is able to estimate a pose from points.
 
 \code
-#include <visp/vpPixelMeterConversion.h>
-#include <visp/vpPose.h>
+#include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/vision/vpPose.h>
 \endcode
 
 Here we introduce the computePose() function that does the pose estimation. This function uses as input two vectors. The first one is a vpPoint that contains the 3D coordinates in meters of a point, while the second one is a vpDot2 that contains the 2D coordinates in pixels of a blob center of gravity. The 3D and 2D coordinates of the points need to be matched. That means that \c point[i] and \c dot[i] should refer to the same physical point. Other inputs are \c cam that corresponds to the camera intrinsic parameters, and \c init that indicates if the pose needs to be initialized the first time. We have \c cMo parameter that will contain the resulting pose estimated from the input points.

@@ -561,12 +561,12 @@ class VISP_EXPORT vpDisplay
 
     The following example shows how to use this function
     \code
-#include <visp/vpDisplayOpenCV.h>
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGTK.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayD3D.h>
-#include <visp/vpImageIo.h>
+#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/core/vpImageIo.h>
 
 int main()
 {

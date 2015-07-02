@@ -20,16 +20,16 @@ Here after we explain line by line the program.
 Images that are processed could be acquired from a firewire camera on Unix or Windows, of from an usb camera under Unix. That is allowed by including the grabber headers.
 
 \code
-#include <visp/vp1394CMUGrabber.h>
-#include <visp/vp1394TwoGrabber.h>
-#include <visp/vpV4l2Grabber.h>
+#include <visp3/sensor/vp1394CMUGrabber.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
 \endcode
 
 To display these images we then include the headers of the viewers.
 
 \code
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpDisplayX.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayX.h>
 \endcode
 
 The Graphical Display Interface (GDI) allows to display images under Windows, while X11 allows this feature under unix-like systems. 
@@ -37,7 +37,7 @@ The Graphical Display Interface (GDI) allows to display images under Windows, wh
 Finally, to track a line with the moving edges, we include the header of the vpMeLine class.
 
 \code
-#include <visp/vpMeLine.h>
+#include <visp3/core/vpMeLine.h>
 \endcode
  
 In the main() function, The source code is build only if one of the grabbers and one of the viewers is available.

@@ -56,19 +56,19 @@ The following example available in tutorial-ibvs-4pts.cpp shows how to use ViSP 
 Now we give a line by line description of the source:
 
 \code
-#include <visp/vpFeatureBuilder.h>
+#include <visp3/core/vpFeatureBuilder.h>
 \endcode
 
 Include a kind of common header for all the classes that implement visual features, especially in our case vpFeaturePoint that will allow us to handle \f${\bf x} = (x,y)\f$ described in the \ref ibvs_intro.
 
 \code
-#include <visp/vpServo.h>
+#include <visp3/vs/vpServo.h>
 \endcode
 
 Include the header of the vpServo class that implements the control law \f[ {\bf v}_c = -\lambda {\bf L}_{\bf x}^{+} {\bf e} \f] described in the \ref ibvs_intro.
 
 \code
-#include <visp/vpSimulatorCamera.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 \endcode
 
 Include the header of the vpSimulatorCamera class that allows to simulate a 6 dof free flying camera.
@@ -183,10 +183,10 @@ We explain now the new lines that were introduced.
 First, we add the headers of the classes that are used to introduce the viewers and some display functionality. vpProjectionDisplay is the class that allows to handle the external view from a given camera position, while vpServoDisplay allows to display in overlay the position of the current and desired features in the internal camera view.
 
 \code
-#include <visp/vpDisplayX.h>
-#include <visp/vpDisplayGDI.h>
-#include <visp/vpProjectionDisplay.h>
-#include <visp/vpServoDisplay.h>
+#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpProjectionDisplay.h>
+#include <visp3/vs/vpServoDisplay.h>
 \endcode
 
 Secondly, we introduce the function display_trajectory() that allows to display the trajectory of the current features in the image. From the 3D coordinates of the points given in the object frame, we compute their respective position in the camera frame, then we apply the perspective projection before retrieving their positions in sub-pixels in the image thanks to the camera parameters. The successive sub-pixel positions are stored in a vector named \c traj and displayed as a green trajectory.
@@ -279,7 +279,7 @@ We explain now the new lines that were introduced.
 
 First we include the header of the wireframe simulator.
 \code
-#include <visp/vpWireFrameSimulator.h>
+#include <visp3/robot/vpWireFrameSimulator.h>
 \endcode
 
 Then in the main(), we create an instance of the simulator. First we initialize the object in the scene. We recall that the target is a 20cm by 20cm square. This is exactly an object handled by the simulator and defined as a vpWireFrameSimulator::PLATE. By vpWireFrameSimulator::D_STANDARD we indicate that the object displayed at the desired position is also a PLATE. Secondly we initialize the camera position wrt to the object using \c cMo, and also the desired camera position, the one the camera has to reach at the end of the servo, using \c cdMo. Next we initialize the position of a static external camera that will observe the simulated camera during the servoing using \c cextMo. All these poses are define wrt the object frame. Finally, we set the intrinsic camera parameters used for the internal and external viewers.

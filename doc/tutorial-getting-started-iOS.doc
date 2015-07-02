@@ -43,9 +43,9 @@ Here is the detailed explanation of the source, line by line :
 
 \code
 #include <vector>
-#include <visp/vpConfig.h>
-#include <visp/vpHomography.h>
-#include <visp/vpMeterPixelConversion.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/vision/vpHomography.h>
+#include <visp3/core/vpMeterPixelConversion.h>
 \endcode
 Include all the headers for homography computation in ViewController.mm.
 
