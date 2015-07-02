@@ -83,7 +83,7 @@ double minTimeForUsleepCall = 4;
    wainting functions. When the time to wait is greater than that value, we use
    non blocking functions like usleep() instead.
  */
-double getMinTimeForUsleepCall() const
+double getMinTimeForUsleepCall()
 {
   return minTimeForUsleepCall;
 }

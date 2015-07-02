@@ -79,7 +79,7 @@ int main()
 namespace vpTime
 {
 
-VISP_EXPORT double getMinTimeForUsleepCall() const;
+VISP_EXPORT double getMinTimeForUsleepCall();
 VISP_EXPORT double measureTimeSecond() ;
 VISP_EXPORT double measureTimeMs() ;
 VISP_EXPORT double measureTimeMicros() ;
