@@ -64,8 +64,10 @@
 #  include <winbase.h>
 #endif
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace vpTime
 {
+#endif
 
 /*!
    This time is in milli-seconds. Threshold to activate usleep() in waiting
@@ -76,17 +78,23 @@ namespace vpTime
 */
 double minTimeForUsleepCall = 4;
 
-double getMinTimeForUsleepCall()
+/*!
+   \return The time during which a while loop is used to handle the time
+   wainting functions. When the time to wait is greater than that value, we use
+   non blocking functions like usleep() instead.
+ */
+double getMinTimeForUsleepCall() const
 {
   return minTimeForUsleepCall;
 }
+
 /*!
+  \fn vpTime::measureTimeMs()
   Return the time in milliseconds since January 1st 1970.
 
   \sa measureTimeMicros(), measureTimeSecond()
 */
-double
-measureTimeMs()
+double measureTimeMs()
 {
 #if defined(_WIN32)
   LARGE_INTEGER time, frequency;
@@ -105,14 +113,12 @@ measureTimeMs()
 #endif
 }
 
-
 /*!
   Return the time in microseconds since January 1st 1970.
 
   \sa measureTimeMs(), measureTimeSecond()
 */
-double
-measureTimeMicros()
+double measureTimeMicros()
 {
 #if defined(_WIN32)
   LARGE_INTEGER time, frequency;
@@ -132,8 +138,6 @@ measureTimeMicros()
 #endif
 }
 
-
-
 /*!
 
   Wait t miliseconds after t0 (in ms).
@@ -147,9 +151,7 @@ measureTimeMicros()
   \return 0 : The function did wait.
   \return 1 : The time was already over, no need to wait.
 */
-
-int
-wait(double t0, double t)
+int wait(double t0, double t)
 {
   double timeCurrent, timeToWait;
   timeCurrent = measureTimeMs();
@@ -178,7 +180,6 @@ wait(double t0, double t)
     return 0;
   }
 }
-
 
 /*!
   Wait t miliseconds from now.
@@ -245,5 +246,6 @@ void sleepMs(double t)
 #endif
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 };
-
+#endif
