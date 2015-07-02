@@ -44,7 +44,7 @@
  *****************************************************************************/
 
 /*!
-  \example servoViper850Point2DArtVelocity-jointAvoidance-gpa.cpp
+  \example servoViper850Point2DArtVelocity-jointAvoidance-large-proj-operator.cpp
 
   Joint limits avoidance using a secondary task for joint limit avoidance \cite Marey:2010b using the
   new large projection operator (see equation(24) in the paper \cite Marey:2010).
