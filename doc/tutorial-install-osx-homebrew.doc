@@ -1,0 +1,209 @@
+/**
+
+\page tutorial-install-osx-homebrew Tutorial: Installation from source on OSX with Homebrew
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP from source on OSX with Homebrew. These steps have been tested with OSX 10.10.3 Yosemite. 
+
+\note Concerning ViSP installation, we provide also other \ref tutorial.
+
+\section install_osx_brew_setup Setup Homebrew
+
+First, go to http://brew.sh to install Homebrew.
+
+Next use homebrew to install additional software.
+
+\code
+$ brew update
+$ brew install cmake
+\endcode
+
+And also add Homebrew science tap so you can get some non-standard formulae:optional third-parties like OpenCV:
+
+\code
+$ brew tap homebrew/science
+\endcode
+
+\section install_osx_brew_setup_env Setup environment
+
+You will need to add the next line to your ~/.bashrc or ~/.bash_profile to have Homebrew be at the front of the PATH. 
+\code
+export PATH=/usr/local/bin:$PATH
+\endcode
+
+In order for the above changes to take effect reopen the terminal or run this command:
+\code
+$ source ~/.bashrc
+\endcode
+
+
+\section install_osx_brew_required Install recommended packages
+
+Next use homebrew to install additional software.
+
+\subsection install_osx_brew_opencv Install OpenCV
+
+\code
+$ brew install opencv3
+\endcode
+
+You can find OpenCV at:
+
+\code
+/usr/local/opt/opencv3
+\endcode
+
+Now to indicate to CMake where OpenCV is installed you will need to add the following line in your ~/.bashrc or ~/.bash_profile
+\code
+export OpenCV_DIR=/usr/local/opt/opencv3/share/OpenCV
+\endcode
+Note that OpenCV_DIR var gives now the location of OpenCVConfig.cmake file.
+
+In order for the above changes to take effect reopen the terminal or run this command:
+\code
+$ source ~/.bashrc
+\endcode
+
+\subsection install_osx_brew_libxml2 Install libxml2
+
+Just run the following instruction:
+\code
+$ brew install libxml2
+\endcode
+
+\subsection install_osx_brew_libdc1394 Install libdc1394
+
+Just run the following instruction:
+\code
+$ brew install libdc1394
+\endcode
+
+\subsection install_osx_brew_gsl Install GSL
+
+To install the Gnu Scientific Library (GSL), just run the following instruction:
+\code
+$ brew install gsl
+\endcode
+
+
+
+\section install_osx_brew_get_source Getting ViSP source code
+
+There are different ways to get ViSP source code:
+
+- You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
+\code
+tar xvzf ViSP-2.10.0.tar.gz 
+\endcode
+or
+\code
+unzip ViSP-2.10.0.zip
+\endcode
+
+- You can also download a more <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a>. Once downloaded, uncompress the file using
+\code
+unzip ViSP-x.y.z-snapshot-2015.mm.dd.zip
+\endcode
+- Or you get the cutting-edge ViSP from Subversion repository. To this end you have first to install subversion
+\code
+$ brew install subversion
+\endcode
+and then use the following command
+\code
+$ svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-trunk
+\endcode
+
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/ViSP-2.10.0
+
+\section install_osx_brew_config Configuring ViSP from source
+
+- Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
+\code
+cd $HOME; mkdir ViSP-build-release
+\endcode
+
+- Enter the \<binary_dir\> and to configure the build type:
+\code
+cmake [<optional parameters>] <source_dir>
+\endcode
+For example:
+\code
+cd $HOME/ViSP-build-release
+cmake -D CMAKE_BUILD_TYPE=RELEASE ../ViSP-2.10.0
+\endcode
+A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
+\code
+ccmake ../ViSP-2.10.0
+\endcode
+The previous command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd party that will be used.
+Then to generate the makefiles, just press [g] key in the ccmake gui.
+Now we can build ViSP.
+
+\section install_osx_brew_build Building ViSP from source
+
+- To build ViSP proceed with:
+\code
+$ make -j4
+\endcode
+
+- To install ViSP proceed with:
+\code
+$ sudo make install
+\endcode
+
+- To build ViSP documentation, you have first to install Doxygen package:
+\code
+$ brew install doxygen
+\endcode
+Then you can proceed with:
+\code
+$ make html-doc
+\endcode
+
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+
+\section install_osx_brew_issues Kwown issues
+
+- During OpenCV installation, if you get the following errors:
+\code
+$ brew install opencv3
+Could not symlink lib/pkgconfig/isl.pc
+/usr/local/lib/pkgconfig is not writable.
+
+You can try again using:
+  brew link isl
+...
+\endcode
+it means maybe that you install other softwares without brew in /usr/local.
+A work arround is to change the owner of the corresponding folder like:
+\code
+$ sudo chown {your-user-name} /usr/local/lib/pkgconfig
+\endcode
+
+- If you enter into troubles with the packages you install with brew, a good stating is to run:
+\code
+$ brew doctor
+\endcode
+
+
+- If you encounter the following issue
+\code
+$ ./modules/vision/testKeypoint-5
+libpng warning: Application built with libpng-1.5.18 but running with 1.6.17
+error: can't create a png read structure!
+error reading png file
+\endcode
+It means that apparently there is a conflict between libpng version installed by "brew install opencv3" (1.6.17), and the one used by X11/XQuartz (1.5.18).
+A work arround is to turn off libpng usage in ViSP. To configure and build again ViSP without png support:
+\code
+$ ccmake -DUSE_PNG=OFF ../ViSP-2.10.0
+$ make -j4
+\endcode
+An other work arround option is to turn off X11 usage in ViSP. Display capabilities will be then the one from OpenCV. To this end, configure and build again ViSP without X11 support:
+\code
+$ ccmake -DUSE_X11=OFF ../ViSP-2.10.0
+$ make -j4
+\endcode
+
+*/
