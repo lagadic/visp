@@ -38,7 +38,11 @@
 #
 #############################################################################
 
-set(EXAMPLES_REQUIRED_DEPS visp_core visp_mbt visp_tt visp_vision)
+if(BUILD_MODULE_visp_tt_mi)
+  set(EXAMPLES_REQUIRED_DEPS visp_core visp_mbt visp_tt visp_tt_mi visp_vision)
+else()
+  set(EXAMPLES_REQUIRED_DEPS visp_core visp_mbt visp_tt visp_vision)
+endif()
 
 vp_check_dependencies(${EXAMPLES_REQUIRED_DEPS})
 
@@ -172,5 +176,14 @@ add_test(templateTrackerPyramidal-ZNCCInverseCompositional-Homography    templat
 add_test(templateTrackerPyramidal-ZNCCInverseCompositional-HomographySL3 templateTracker -c -l 2 -t 5 -w 2 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-ZNCCInverseCompositional-SRT           templateTracker -c -l 2 -t 5 -w 3 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-ZNCCInverseCompositional-Translation   templateTracker -c -l 2 -t 5 -w 4 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+
+if(BUILD_MODULE_visp_tt_mi)
+  add_test(templateTrackerPyramidal-MIInverseCompositional-Affine        templateTracker -c -l 2 -t 9 -w 0 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+  add_test(templateTrackerPyramidal-MIInverseCompositional-Homography    templateTracker -c -l 2 -t 9 -w 1 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+  add_test(templateTrackerPyramidal-MIInverseCompositional-HomographySL3 templateTracker -c -l 2 -t 9 -w 2 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+  add_test(templateTrackerPyramidal-MIInverseCompositional-SRT           templateTracker -c -l 2 -t 9 -w 3 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+  add_test(templateTrackerPyramidal-MIInverseCompositional-Translation   templateTracker -c -l 2 -t 9 -w 4 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+  add_test(templateTrackerPyramidal-MIInverseCompositional-RT            templateTracker -c -l 2 -t 9 -w 5 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+endif()
 
 endif()

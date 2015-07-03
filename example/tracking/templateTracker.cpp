@@ -74,8 +74,17 @@
 #include <visp3/tt/vpTemplateTrackerWarpSRT.h>
 #include <visp3/tt/vpTemplateTrackerWarpTranslation.h>
 
-#if defined (VISP_HAVE_DISPLAY)
+#include <visp3/visp_modules.h>
+#ifdef VISP_HAVE_MODULE_TT_MI
+#  include <visp3/tt_mi/vpTemplateTrackerMIESM.h>
+#  include <visp3/tt_mi/vpTemplateTrackerMIForwardAdditional.h>
+#  include <visp3/tt_mi/vpTemplateTrackerMIForwardCompositional.h>
+#  include <visp3/tt_mi/vpTemplateTrackerMIInverseCompositional.h>
 
+#  include <visp3/tt_mi/vpTemplateTrackerWarpRT.h>
+#endif
+
+#if defined (VISP_HAVE_DISPLAY)
 
 #define GETOPTARGS  "cdhi:l:pt:w:"
 
@@ -85,7 +94,11 @@ typedef enum {
   WARP_HOMOGRAPHY,
   WARP_HOMOGRAPHY_SL3,
   WARP_SRT,
-  WARP_TRANSLATION
+  WARP_TRANSLATION,
+#ifdef VISP_HAVE_MODULE_TT_MI
+  WARP_RT,
+#endif
+  WARP_LAST
 } WarpType;
 
 typedef enum {
@@ -94,7 +107,14 @@ typedef enum {
   TRACKER_SSD_FORWARD_COMPOSITIONAL,
   TRACKER_SSD_INVERSE_COMPOSITIONAL, // The most efficient
   TRACKER_ZNCC_FORWARD_ADDITIONEL,
-  TRACKER_ZNCC_INVERSE_COMPOSITIONAL
+  TRACKER_ZNCC_INVERSE_COMPOSITIONAL,
+#ifdef VISP_HAVE_MODULE_TT_MI
+  TRACKER_MI_ESM,
+  TRACKER_MI_FORWARD_ADDITIONAL,
+  TRACKER_MI_FORWARD_COMPOSITIONAL,
+  TRACKER_MI_INVERSE_COMPOSITIONAL, // The most efficient
+#endif
+  TRACKER_LAST
 } TrackerType;
 
 #endif
@@ -136,7 +156,22 @@ OPTIONS:                                                            Default\n\
   -c\n\
      Disable the mouse click. Useful to automaze the \n\
      execution of this program without humain intervention.\n\
-          \n\
+          \n", last_frame);
+
+#ifdef VISP_HAVE_MODULE_TT_MI
+  fprintf(stdout, "\n\
+  -w <warp type=[0,1,2,3,4,5]>                                        %d\n\
+     Set the model used to warp the template. \n\
+     Authorized values are:\n\
+     %d : Affine\n\
+     %d : Homography\n\
+     %d : Homography in SL3\n\
+     %d : SRT (scale, rotation, translation)\n\
+     %d : RT (rotation, translation)\n\
+     %d : Translation\n\n",
+          (int)warp_type, (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT, (int)WARP_TRANSLATION, (int)WARP_RT);
+#else
+  fprintf(stdout, "\n\
   -w <warp type=[0,1,2,3,4]>                                          %d\n\
      Set the model used to warp the template. \n\
      Authorized values are:\n\
@@ -144,9 +179,13 @@ OPTIONS:                                                            Default\n\
      %d : Homography\n\
      %d : Homography in SL3\n\
      %d : SRT (scale, rotation, translation)\n\
-     %d : Translation\n\
-                  \n\
-  -t <tracker type=[0,1,2,3,4,5]>                                     %d\n\
+     %d : Translation\n\n",
+          (int)warp_type, (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT, (int)WARP_TRANSLATION);
+#endif
+
+#ifdef VISP_HAVE_MODULE_TT_MI
+  fprintf(stdout, "\n\
+  -t <tracker type=[0,1,2,3,4,5,6,7,8,9]>                             %d\n\
      Set the tracker used to track the template. \n\
      Authorized values are:\n\
      %d : SSD ESM\n\
@@ -155,18 +194,40 @@ OPTIONS:                                                            Default\n\
      %d : SSD inverse compositional\n\
      %d : ZNCC forward additional\n\
      %d : ZNCC inverse compositional\n\
-                  \n\
-  -p\n\
-     Enable pyramidal tracking.\n\
-                  \n\
-  -h \n\
-     Print the help.\n\n",
-          last_frame, (int)warp_type,
-          (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT, (int)WARP_TRANSLATION,
+     %d : MI ESM\n\
+     %d : MI forward additional\n\
+     %d : MI forward compositional\n\
+     %d : MI inverse compositional\n\n",
+          (int)tracker_type,
+          (int)TRACKER_SSD_ESM, (int)TRACKER_SSD_FORWARD_ADDITIONAL, (int)TRACKER_SSD_FORWARD_COMPOSITIONAL,
+          (int)TRACKER_SSD_INVERSE_COMPOSITIONAL, (int)TRACKER_ZNCC_FORWARD_ADDITIONEL,
+          (int)TRACKER_ZNCC_INVERSE_COMPOSITIONAL,
+          (int)TRACKER_MI_ESM, (int)TRACKER_MI_FORWARD_ADDITIONAL, (int)TRACKER_MI_FORWARD_COMPOSITIONAL,
+          (int)TRACKER_MI_INVERSE_COMPOSITIONAL);
+#else
+  fprintf(stdout, "\n\
+  -t <tracker type=[0,1,2,3,4,5]>                                     %d\n\
+     Set the tracker used to track the template. \n\
+     Authorized values are:\n\
+     %d : SSD ESM\n\
+     %d : SSD forward additional\n\
+     %d : SSD forward compositional\n\
+     %d : SSD inverse compositional\n\
+     %d : ZNCC forward additional\n\
+     %d : ZNCC inverse compositional\n\n",
           (int)tracker_type,
           (int)TRACKER_SSD_ESM, (int)TRACKER_SSD_FORWARD_ADDITIONAL, (int)TRACKER_SSD_FORWARD_COMPOSITIONAL,
           (int)TRACKER_SSD_INVERSE_COMPOSITIONAL, (int)TRACKER_ZNCC_FORWARD_ADDITIONEL,
           (int)TRACKER_ZNCC_INVERSE_COMPOSITIONAL);
+
+#endif
+      fprintf(stdout, "\n\
+  -p\n\
+     Enable pyramidal tracking.\n\
+                  \n\
+  -h \n\
+     Print the help.\n\n");
+
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
@@ -195,13 +256,13 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
     }
   }
 
-  if (warp_type > WARP_TRANSLATION) {
+  if (warp_type >= WARP_LAST) {
     usage(argv[0], NULL, warp_type, tracker_type, last_frame);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument -w <warp type> with \"warp type\"=" << (int)warp_type << std::endl << std::endl;
     return false;
   }
-  if (tracker_type > TRACKER_ZNCC_INVERSE_COMPOSITIONAL) {
+  if (tracker_type >= TRACKER_LAST) {
     usage(argv[0], NULL, warp_type, tracker_type, last_frame);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument -t <tracker type> with \"tracker type\"=" << (int)tracker_type << std::endl << std::endl;
@@ -310,6 +371,10 @@ main(int argc, const char ** argv)
     case WARP_HOMOGRAPHY_SL3: warp = new vpTemplateTrackerWarpHomographySL3; break;
     case WARP_SRT:            warp = new vpTemplateTrackerWarpSRT; break;
     case WARP_TRANSLATION:    warp = new vpTemplateTrackerWarpTranslation;  break;
+#ifdef VISP_HAVE_MODULE_TT_MI
+    case WARP_RT:             warp = new vpTemplateTrackerWarpRT; break;
+#endif
+    default: return 0;
     }
 
     vpTemplateTracker *tracker = NULL;
@@ -320,6 +385,13 @@ main(int argc, const char ** argv)
     case TRACKER_SSD_INVERSE_COMPOSITIONAL:  tracker = new vpTemplateTrackerSSDInverseCompositional(warp); break;
     case TRACKER_ZNCC_FORWARD_ADDITIONEL:    tracker = new vpTemplateTrackerZNCCForwardAdditional(warp); break;
     case TRACKER_ZNCC_INVERSE_COMPOSITIONAL: tracker = new vpTemplateTrackerZNCCInverseCompositional(warp); break;
+#ifdef VISP_HAVE_MODULE_TT_MI
+    case TRACKER_MI_ESM:                     tracker = new vpTemplateTrackerMIESM(warp); break;
+    case TRACKER_MI_FORWARD_ADDITIONAL:      tracker = new vpTemplateTrackerMIForwardAdditional(warp); break;
+    case TRACKER_MI_FORWARD_COMPOSITIONAL:   tracker = new vpTemplateTrackerMIForwardCompositional(warp); break;
+    case TRACKER_MI_INVERSE_COMPOSITIONAL:   tracker = new vpTemplateTrackerMIInverseCompositional(warp); break;
+#endif
+    default: return 0;
     }
 
     tracker->setSampling(2,2);
