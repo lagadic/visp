@@ -874,9 +874,11 @@ private:
   std::vector<vpPoint> m_trainVpPoints;
   //! If true, use multiple affine transformations to cober the 6 affine parameters
   bool m_useAffineDetection;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   //! If true, some false matches will be eliminate by keeping only pairs (i,j) such that for i-th
   //! query descriptor the j-th descriptor in the matcher’s collection is the nearest and vice versa.
   bool m_useBruteForceCrossCheck;
+#endif
   //! Flag set if a percentage value is used to determine the number of inliers for the Ransac method.
   bool m_useConsensusPercentage;
   //! Flag set if a knn matching method must be used.

@@ -91,7 +91,11 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
-    m_trainVpPoints(), m_useAffineDetection(false), m_useBruteForceCrossCheck(true), m_useConsensusPercentage(false),
+    m_trainVpPoints(), m_useAffineDetection(false),
+    #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
+    m_useBruteForceCrossCheck(true),
+    #endif
+    m_useConsensusPercentage(false),
     m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true), m_useSingleMatchFilter(true)
 {
   //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
@@ -125,7 +129,11 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
-    m_trainVpPoints(), m_useAffineDetection(false), m_useBruteForceCrossCheck(true), m_useConsensusPercentage(false),
+    m_trainVpPoints(), m_useAffineDetection(false),
+    #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
+    m_useBruteForceCrossCheck(true),
+    #endif
+    m_useConsensusPercentage(false),
     m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true), m_useSingleMatchFilter(true)
 {
   //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
