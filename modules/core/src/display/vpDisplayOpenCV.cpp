@@ -100,7 +100,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
     #else
     background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
     #endif
-    fontHeight(10), ncol(0), nrow(0), x_move(0), y_move(0) , move(false),
+    fontHeight(10), x_move(0), y_move(0) , move(false),
     x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
     x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false),
     x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
@@ -130,7 +130,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I,
     #else
     background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
     #endif
-    fontHeight(10), ncol(0), nrow(0), x_move(0), y_move(0) , move(false),
+    fontHeight(10), x_move(0), y_move(0) , move(false),
     x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
     x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false),
     x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
@@ -170,7 +170,7 @@ vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title )
     #else
     background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
     #endif
-    fontHeight(10), ncol(0), nrow(0), x_move(0), y_move(0) , move(false),
+    fontHeight(10), x_move(0), y_move(0) , move(false),
     x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
     x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false),
     x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
@@ -234,7 +234,7 @@ vpDisplayOpenCV::vpDisplayOpenCV()
     #else
     background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
     #endif
-    fontHeight(10), ncol(0), nrow(0), x_move(0), y_move(0) , move(false),
+    fontHeight(10), x_move(0), y_move(0) , move(false),
     x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
     x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false),
     x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),

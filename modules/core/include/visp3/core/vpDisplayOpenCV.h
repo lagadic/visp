@@ -160,7 +160,6 @@ private:
   static std::vector<std::string> m_listTitles;
   static unsigned int m_nbWindows ;
   int fontHeight;  
-  int ncol, nrow ;
   int x_move;
   int y_move;
   bool move;
