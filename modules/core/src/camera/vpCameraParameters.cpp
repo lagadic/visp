@@ -439,44 +439,46 @@ vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
     fovNormals = std::vector<vpColVector>(4);
     
     isFov = true;
-    
-    double half_hFovAngle = atan((double)w / ( 2.0 * px ));
-    double half_vFovAngle = atan((double)h / ( 2.0 * py ));
+
+    double hFovAngle = atan(((double)w  - u0) * ( 1.0 / px ));
+    double vFovAngle = atan(( v0 ) * ( 1.0 / py ));
+    double minushFovAngle = atan(( u0 ) * ( 1.0 / px ));
+    double minusvFovAngle = atan(((double)h - v0) * ( 1.0 / py ));
     
     width = w;
     height = h;
-    
+
     vpColVector n(3);
     n = 0;
     n[0] = 1.0;
-    
-    vpRotationMatrix Rleft (0,-half_hFovAngle,0);
-    vpRotationMatrix Rright(0, half_hFovAngle,0);
-    
+
+    vpRotationMatrix Rleft(0,-minushFovAngle,0);
+    vpRotationMatrix Rright(0,hFovAngle,0);
+
     vpColVector nLeft, nRight;
-    
+
     nLeft = Rleft * (-n);
     fovNormals[0] = nLeft.normalize();
-    
+
     nRight = Rright * n;
     fovNormals[1] = nRight.normalize();
-    
+
     n = 0;
     n[1] = 1.0;
-  
-    vpRotationMatrix Rup  ( half_vFovAngle,0,0);
-    vpRotationMatrix Rdown(-half_vFovAngle,0,0);
-    
+
+    vpRotationMatrix Rup(vFovAngle,0,0);
+    vpRotationMatrix Rdown(-minusvFovAngle,0,0);
+
     vpColVector nUp, nDown;
-    
+
     nUp = Rup * (-n);
     fovNormals[2] = nUp.normalize();
-    
+
     nDown = Rdown * n;
     fovNormals[3] = nDown.normalize();
 
-    m_hFovAngle = 2 * half_hFovAngle;
-    m_vFovAngle = 2 * half_vFovAngle;
+    m_hFovAngle = hFovAngle + minushFovAngle;
+    m_vFovAngle = vFovAngle + minusvFovAngle;
   }
 }
 
