@@ -157,13 +157,13 @@ hashpjw (const char *str)
 	unsigned	g;
 
 	for (; *str != '\0'; str++) {
-		h = (h << 4) + *str;
-		if ((g = h & ~0xfffffff) != 0) {
+    h = (h << 4) + (unsigned)(*str);
+    if ((g = h & ~0xfffffff) != 0) {
 			h ^= g >> 24;
 			h ^= g;
 		}
 	}
-	return (h % PRIME);
+  return ((int)(h % PRIME));
 }
 
 
@@ -221,7 +221,7 @@ Index get_symbol (char *ident, int length)
 		unsigned	g;
 
 		for (; len != 0; idn++, len--) {
-			h = (h << 4) + *idn;
+      h = (h << 4) + (unsigned)(*idn);
 			if ((g = h & ~0xfffffff) != 0) {
 				h ^= g >> 24;
 				h ^= g;

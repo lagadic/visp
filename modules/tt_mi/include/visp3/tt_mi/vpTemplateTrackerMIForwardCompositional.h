@@ -53,17 +53,17 @@
 
 class VISP_EXPORT vpTemplateTrackerMIForwardCompositional: public vpTemplateTrackerMI
 {
-  protected:
-    bool CompoInitialised;
+protected:
+  bool CompoInitialised;
 
-  protected:
-    void initCompo(const vpImage<unsigned char> &I);
-    void initHessienDesired(const vpImage<unsigned char> &I);
-    void trackNoPyr(const vpImage<unsigned char> &I);
+protected:
+  void initCompo();
+  void initHessienDesired(const vpImage<unsigned char> &I);
+  void trackNoPyr(const vpImage<unsigned char> &I);
 
-	public:
-    vpTemplateTrackerMIForwardCompositional(vpTemplateTrackerWarp *_warp);
+public:
+  vpTemplateTrackerMIForwardCompositional(vpTemplateTrackerWarp *_warp);
 };
-		
+
 #endif
 

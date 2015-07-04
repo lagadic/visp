@@ -289,7 +289,7 @@ int main(int argc, const char ** argv) {
     keypoints.createImageMatching(I, IMatching);
 
     if (opt_display) {
-      display2.init(IMatching, 0, I.getHeight() + 80, "IMatching");
+      display2.init(IMatching, 0, (int)I.getHeight() + 80, "IMatching");
     }
 
     bool opt_click = false;

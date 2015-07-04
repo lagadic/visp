@@ -112,7 +112,7 @@ void vpTemplateTrackerWarpRT::dWarp(const vpColVector &X1,const vpColVector &/*X
 /*compute dw=dw/dx*dw/dp
 */
 void vpTemplateTrackerWarpRT::dWarpCompo(const vpColVector &/*X1*/,const vpColVector &/*X2*/,const vpColVector &ParamM,
-                                          const double *dwdp0,vpMatrix &dW_)
+                                         const double *dwdp0,vpMatrix &dW_)
 {
   for(unsigned int i=0;i<nbParam;i++)
   {

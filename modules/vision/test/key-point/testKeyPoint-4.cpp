@@ -191,7 +191,7 @@ int main(int argc, const char ** argv) {
       display.init(I, 0, 0, "ORB keypoints matching");
       Imatch.resize(I.getHeight(), 2*I.getWidth());
       Imatch.insert(I, vpImagePoint(0, 0));
-      display2.init(Imatch, 0, I.getHeight() + 70, "ORB keypoints matching");
+      display2.init(Imatch, 0, (int)I.getHeight() + 70, "ORB keypoints matching");
     }
 
     vpCameraParameters cam;
@@ -326,10 +326,10 @@ int main(int argc, const char ** argv) {
       vpPose estimated_pose;
       for(std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
         vpPoint pt;
-        pt.setWorldCoordinates(points3f[it->trainIdx].x, points3f[it->trainIdx].y, points3f[it->trainIdx].z);
+        pt.setWorldCoordinates(points3f[(size_t)(it->trainIdx)].x, points3f[(size_t)(it->trainIdx)].y, points3f[(size_t)(it->trainIdx)].z);
 
         double x = 0.0, y = 0.0;
-        vpPixelMeterConversion::convertPoint(cam, queryKeyPoints[it->queryIdx].pt.x, queryKeyPoints[it->queryIdx].pt.y, x, y);
+        vpPixelMeterConversion::convertPoint(cam, queryKeyPoints[(size_t)(it->queryIdx)].pt.x, queryKeyPoints[(size_t)(it->queryIdx)].pt.y, x, y);
         pt.set_x(x);
         pt.set_y(y);
 

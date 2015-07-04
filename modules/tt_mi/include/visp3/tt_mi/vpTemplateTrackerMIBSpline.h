@@ -89,8 +89,8 @@ public:
   static void PutTotPVBspline4PrtTout(double *Prt, int &cr, double &er, int &ct, double &et,int &Nc, unsigned int &NbParam);
 
   static void PutTotPVBsplinePrt(double *Prt, int &cr, double &er, int &ct, double &et,int &Ncb, unsigned int &NbParam, int &degree);
-  static void PutTotPVBspline3Prt(double *Prt, int &cr, double &er, int &ct, double &et,int &Ncb, unsigned int &NbParam);
-  static void PutTotPVBspline4Prt(double *Prt, int &cr, double &er, int &ct, double &et,int &Ncb, unsigned int &NbParam);
+  static void PutTotPVBspline3Prt(double *Prt, int &cr, double &er, int &ct, double &et,int &Ncb);
+  static void PutTotPVBspline4Prt(double *Prt, int &cr, double &er, int &ct, double &et,int &Ncb);
 
   static double Bspline3(double diff);
   static double Bspline4i(double diff,int &interv);

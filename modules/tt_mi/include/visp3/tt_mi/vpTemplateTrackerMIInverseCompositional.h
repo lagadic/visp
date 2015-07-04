@@ -53,7 +53,7 @@
 
 class VISP_EXPORT vpTemplateTrackerMIInverseCompositional: public vpTemplateTrackerMI
 {
-  public:
+public:
   /*! Minimization method. */
   typedef enum {
     USE_NEWTON,
@@ -62,41 +62,41 @@ class VISP_EXPORT vpTemplateTrackerMIInverseCompositional: public vpTemplateTrac
     USE_QUASINEWTON
   } vpMinimizationTypeMIInverseCompositional;
 
-  private:
-    vpMinimizationTypeMIInverseCompositional minimizationMethod;
-    bool    CompoInitialised;
-    bool    useTemplateSelect;//use only the strong gradient pixels to compute the Jabocian
-    //pour eval evolRMS
-    double  evolRMS;
-    double  *x_pos;
-    double  *y_pos;
-    double  threshold_RMS;
-    //valeur pour calculer Quasi_Newton
-    vpColVector p_prec;
-    vpColVector G_prec;
-    vpMatrix    KQuasiNewton;
+private:
+  vpMinimizationTypeMIInverseCompositional minimizationMethod;
+  bool    CompoInitialised;
+  bool    useTemplateSelect;//use only the strong gradient pixels to compute the Jabocian
+  //pour eval evolRMS
+  double  evolRMS;
+  double  *x_pos;
+  double  *y_pos;
+  double  threshold_RMS;
+  //valeur pour calculer Quasi_Newton
+  vpColVector p_prec;
+  vpColVector G_prec;
+  vpMatrix    KQuasiNewton;
 
-    bool    useAYOptim;
-    bool    useOpenMP;
+  bool    useAYOptim;
+  bool    useOpenMP;
 
-  public: // AY Optimisation
-    void initTemplateRefBspline(unsigned int ptIndex, double &et);
+public: // AY Optimisation
+  void initTemplateRefBspline(unsigned int ptIndex, double &et);
 
-  protected:
-    void initCompInverse(const vpImage<unsigned char> &I);
-    void initHessienDesired(const vpImage<unsigned char> &I);
-    void trackNoPyr(const vpImage<unsigned char> &I);
-    void deletePosEvalRMS();
-    void computeEvalRMS(const vpColVector &p);
-    void initPosEvalRMS(vpColVector &p);
+protected:
+  void initCompInverse(const vpImage<unsigned char> &I);
+  void initHessienDesired(const vpImage<unsigned char> &I);
+  void trackNoPyr(const vpImage<unsigned char> &I);
+  void deletePosEvalRMS();
+  void computeEvalRMS(const vpColVector &p);
+  void initPosEvalRMS(vpColVector &p);
 
-	public:
-          vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp);
+public:
+  vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp);
 
-    /*! Use only the strong gradient pixels to compute the Jabobian. By default this feature is disabled. */
-    void  setUseTemplateSelect(bool b) {useTemplateSelect = b;}
-    void  setThresholdRMS(double threshold){threshold_RMS=threshold;}
-    void  setMinimizationMethod(vpMinimizationTypeMIInverseCompositional method){minimizationMethod=method;}
+  /*! Use only the strong gradient pixels to compute the Jabobian. By default this feature is disabled. */
+  void  setUseTemplateSelect(bool b) {useTemplateSelect = b;}
+  void  setThresholdRMS(double threshold){threshold_RMS=threshold;}
+  void  setMinimizationMethod(vpMinimizationTypeMIInverseCompositional method){minimizationMethod=method;}
 };
 #endif
 

@@ -74,73 +74,73 @@ public:
     BSPLINE_FOURTH_ORDER = 4
   } vpBsplineType;
 
-  protected:
-    vpHessienType              hessianComputation;
-    vpHessienApproximationType ApproxHessian;
-    double lambda;
+protected:
+  vpHessienType              hessianComputation;
+  vpHessienApproximationType ApproxHessian;
+  double lambda;
 
-    double *temp;
-    double *Prt;
-    double *dPrt;
-    double *Pt;
-    double *Pr;
-    double *d2Prt;
-    double *PrtTout;
-    double *dprtemp;
+  double *temp;
+  double *Prt;
+  double *dPrt;
+  double *Pt;
+  double *Pr;
+  double *d2Prt;
+  double *PrtTout;
+  double *dprtemp;
 
-    double *PrtD;
-    double *dPrtD;
-    int influBspline;
+  double *PrtD;
+  double *dPrtD;
+  int influBspline;
 
-    int bspline;
-    //Nombre de couleur concid�r� dans l'histogramme
-    int Nc;
-    int Ncb;
+  int bspline;
+  //Nombre de couleur concid�r� dans l'histogramme
+  int Nc;
+  int Ncb;
 
-    vpImage<double> d2Ix ;
-    vpImage<double> d2Iy ;
-    vpImage<double> d2Ixy ;
+  vpImage<double> d2Ix ;
+  vpImage<double> d2Iy ;
+  vpImage<double> d2Ixy ;
 
-    double MI_preEstimation;
-    double MI_postEstimation;
+  double MI_preEstimation;
+  double MI_postEstimation;
 
-    double NMI_preEstimation;
-    double NMI_postEstimation;
+  double NMI_preEstimation;
+  double NMI_postEstimation;
 
-    vpMatrix    covarianceMatrix;
-    bool        computeCovariance;
+  vpMatrix    covarianceMatrix;
+  bool        computeCovariance;
 
-  protected:
-            void    computeGradient();
-            void    computeHessien(vpMatrix &H);
-            void    computeHessienNormalized(vpMatrix &H);
-            void    computeMI(double &MI);
-            void    computeProba(int &nbpoint);
-            double  getCost(const vpImage<unsigned char> &I,vpColVector &tp);
-            double  getCost(vpImage<unsigned char> &I){return getCost(I,p);}
-            double  getNormalizedCost(const vpImage<unsigned char> &I,vpColVector &tp);
-            double  getNormalizedCost(vpImage<unsigned char> &I){return getNormalizedCost(I,p);}
-    virtual void    initHessienDesired(const vpImage<unsigned char> &I)=0;
-    virtual void    trackNoPyr(const vpImage<unsigned char> &I)=0;
-            void    zeroProbabilities();
+protected:
+  void    computeGradient();
+  void    computeHessien(vpMatrix &H);
+  void    computeHessienNormalized(vpMatrix &H);
+  void    computeMI(double &MI);
+  void    computeProba(int &nbpoint);
+  double  getCost(const vpImage<unsigned char> &I,vpColVector &tp);
+  double  getCost(vpImage<unsigned char> &I){return getCost(I,p);}
+  double  getNormalizedCost(const vpImage<unsigned char> &I,vpColVector &tp);
+  double  getNormalizedCost(vpImage<unsigned char> &I){return getNormalizedCost(I,p);}
+  virtual void    initHessienDesired(const vpImage<unsigned char> &I)=0;
+  virtual void    trackNoPyr(const vpImage<unsigned char> &I)=0;
+  void    zeroProbabilities();
 
-  public:
-  	//constructeur
-    vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp);
-    ~vpTemplateTrackerMI();
-    vpMatrix getCovarianceMatrix(){ return covarianceMatrix; }
-    double getMI() const {return MI_postEstimation;}
-    double getMI(vpImage<unsigned char> &I,int &nc,int &bspline,vpColVector &tp);
-    double getMI256(vpImage<unsigned char> &I,vpColVector &tp);
-    double getNMI() const {return NMI_postEstimation;}
-    //initialisation du Hessien en position desiree
-    void setApprocHessian(vpHessienApproximationType approx){ApproxHessian=approx;}
-    void setCovarianceComputation(const bool & flag){ computeCovariance = flag; }
-    void setHessianComputation(vpHessienType type){hessianComputation=type;}
-    void setBspline(const vpBsplineType &newbs);
-    void setLambda(double _l) {lambda = _l ; }
-    void setNc(int newNc);
+public:
+  //constructeur
+  vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp);
+  ~vpTemplateTrackerMI();
+  vpMatrix getCovarianceMatrix(){ return covarianceMatrix; }
+  double getMI() const {return MI_postEstimation;}
+  double getMI(vpImage<unsigned char> &I,int &nc,int &bspline,vpColVector &tp);
+  double getMI256(vpImage<unsigned char> &I,vpColVector &tp);
+  double getNMI() const {return NMI_postEstimation;}
+  //initialisation du Hessien en position desiree
+  void setApprocHessian(vpHessienApproximationType approx){ApproxHessian=approx;}
+  void setCovarianceComputation(const bool & flag){ computeCovariance = flag; }
+  void setHessianComputation(vpHessienType type){hessianComputation=type;}
+  void setBspline(const vpBsplineType &newbs);
+  void setLambda(double _l) {lambda = _l ; }
+  void setNc(int newNc);
 };
-		
+
 #endif
 

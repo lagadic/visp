@@ -511,7 +511,7 @@ comment :
     for (; isidnt((int)CURC); mysptr++) {};
     mylength = (int)(mysptr - mytext);
     if (token != get_symbol (mytext, mylength))
-      fwrite (mytext, mylength, 1, f);
+      fwrite (mytext, (size_t)mylength, 1, f);
     return (get_symbol (mytext, mylength));
     break;
   case INTT	:
@@ -526,7 +526,7 @@ float_part :
       for (; isintt((int)CURC); mysptr++) {};
       if (CURC != 'E' && CURC != 'e') {
         if (token != T_FLOAT)
-          fwrite (mytext, mysptr - mytext, 1, f);
+          fwrite (mytext, (size_t)(mysptr - mytext), 1, f);
         return (T_FLOAT);
       }
       break;
@@ -538,17 +538,17 @@ float_part :
       else {
         mysptr--;
         if (token != T_FLOAT)
-          fwrite (mytext, mysptr - mytext, 1, f);
+          fwrite (mytext, (size_t)(mysptr - mytext), 1, f);
         return (T_FLOAT);
       }
       for (; isintt((int)CURC); mysptr++) {};
       if (token != T_FLOAT)
-        fwrite (mytext, mysptr - mytext, 1, f);
+        fwrite (mytext, (size_t)(mysptr - mytext), 1, f);
       return (T_FLOAT);
       break;
     default		:
       if (token != T_INT)
-        fwrite (mytext, mysptr - mytext, 1, f);
+        fwrite (mytext, (size_t)(mysptr - mytext), 1, f);
       return (T_INT);
       break;
     }
@@ -732,7 +732,7 @@ static	void	count (void)
 
 	mycolumno = 0;
   for (str = myline; str <= mytext; str++) {
-    (*str == '\t') ? mycolumno += 8 - (mycolumno % 8u) : mycolumno++;
+    (*str == '\t') ? mycolumno += 8 - (mycolumno % 8) : mycolumno++;
   }
 }
 

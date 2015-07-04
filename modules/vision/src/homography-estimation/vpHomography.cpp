@@ -575,6 +575,7 @@ vpImagePoint vpHomography::project(const vpCameraParameters &cam, const vpHomogr
 
   return iPb;
 }
+
 /*!
   Given \c Pa a point with normalized coordinates \f$(x_a,y_a,1)\f$ in the image plane a, and the homography \c bHa that
   links image a and b, computes the normalized coordinates of the point \f$(x_b,y_b,1)\f$ in the image plane b.

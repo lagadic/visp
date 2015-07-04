@@ -48,215 +48,209 @@
 
 vpTemplateTrackerMIForwardAdditional::vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp):vpTemplateTrackerMI(_warp)
 {
-	useCompositionnal=false;
+  useCompositionnal=false;
   threshold_RMS=1e-20;
   minimizationMethod=USE_NEWTON;
 }
 
 void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsigned char> &I)
 {
-	//std::cout<<"Initialise Hessian at Desired position..."<<std::endl;
-	
-	dW=0;
-	
-	double erreur=0;
-	int Nbpoint=0;
-	
-	if(blur)
-        vpImageFilter::filter(I, BI,fgG,taillef);
-    vpImageFilter::getGradXGauss2D(I, dIx, fgG,fgdG,taillef);
-    vpImageFilter::getGradYGauss2D(I, dIy, fgG,fgdG,taillef);
+  //std::cout<<"Initialise Hessian at Desired position..."<<std::endl;
 
-	
-	double i2,j2;
-	double Tij;
-	double IW,dx,dy;
-	int cr,ct;
-    double er,et;
+  dW=0;
 
-	int i,j;			
-	
-	Nbpoint=0;
-    erreur=0;
-	
-	zeroProbabilities();
-    Warp->computeCoeff(p);
-	for(int point=0;point<templateSize;point++)
-	{
-		i=ptTemplate[point].y;
-		j=ptTemplate[point].x;
-		X1[0]=j;X1[1]=i;
-		X2[0]=j;X2[1]=i;
-			
-		Warp->computeDenom(X1,p);
-		Warp->warpX(X1,X2,p);
-						
-		j2=X2[0];i2=X2[1];
-			
-		if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
-		{
-			Nbpoint++;
-            Tij=ptTemplate[point].val;
-			if(!blur)
-				IW=I.getValue(i2,j2);
-			else
-				IW=BI.getValue(i2,j2);
-			
-			dx=1.*dIx.getValue(i2,j2)*(Nc-1)/255.;
-			dy=1.*dIy.getValue(i2,j2)*(Nc-1)/255.;
-						
-			ct=(int)((IW*(Nc-1))/255.);
-			cr=(int)((Tij*(Nc-1))/255.);
-			et=(IW*(Nc-1))/255.-ct;
-			er=((double)Tij*(Nc-1))/255.-cr;
-			//std::cout<<"test"<<std::endl;
-			Warp->dWarp(X1,X2,p,dW);
-										
-			double *tptemp=new double[nbParam];
-			for(int it=0;it<nbParam;it++)
-				tptemp[it] =dW[0][it]*dx+dW[1][it]*dy;
+  int Nbpoint=0;
 
-            if(ApproxHessian==HESSIAN_NONSECOND)
-                vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
-            else if(ApproxHessian==HESSIAN_0 || ApproxHessian==HESSIAN_NEW)
-                vpTemplateTrackerMIBSpline::vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+  if(blur)
+    vpImageFilter::filter(I, BI,fgG,taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG,fgdG,taillef);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG,fgdG,taillef);
 
-			delete[] tptemp;
-		}
-	}
-		
-	if(Nbpoint>0)
-	{
+  double i2,j2;
+  double Tij;
+  double IW,dx,dy;
+  int cr,ct;
+  double er,et;
+
+  int i,j;
+
+  Nbpoint=0;
+
+  zeroProbabilities();
+  Warp->computeCoeff(p);
+  for(unsigned int point=0;point<templateSize;point++)
+  {
+    i=ptTemplate[point].y;
+    j=ptTemplate[point].x;
+    X1[0]=j;X1[1]=i;
+    X2[0]=j;X2[1]=i;
+
+    Warp->computeDenom(X1,p);
+    Warp->warpX(X1,X2,p);
+
+    j2=X2[0];i2=X2[1];
+
+    if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
+    {
+      Nbpoint++;
+      Tij=ptTemplate[point].val;
+      if(!blur)
+        IW=I.getValue(i2,j2);
+      else
+        IW=BI.getValue(i2,j2);
+
+      dx=1.*dIx.getValue(i2,j2)*(Nc-1)/255.;
+      dy=1.*dIy.getValue(i2,j2)*(Nc-1)/255.;
+
+      ct=(int)((IW*(Nc-1))/255.);
+      cr=(int)((Tij*(Nc-1))/255.);
+      et=(IW*(Nc-1))/255.-ct;
+      er=((double)Tij*(Nc-1))/255.-cr;
+      //std::cout<<"test"<<std::endl;
+      Warp->dWarp(X1,X2,p,dW);
+
+      double *tptemp=new double[nbParam];
+      for(unsigned int it=0;it<nbParam;it++)
+        tptemp[it] =dW[0][it]*dx+dW[1][it]*dy;
+
+      if(ApproxHessian==HESSIAN_NONSECOND)
+        vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+      else if(ApproxHessian==HESSIAN_0 || ApproxHessian==HESSIAN_NEW)
+        vpTemplateTrackerMIBSpline::vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+
+      delete[] tptemp;
+    }
+  }
+
+  if(Nbpoint>0)
+  {
     double MI;
     computeProba(Nbpoint);
     computeMI(MI);
-	computeHessien(Hdesire);
-	
-	
-	//	double conditionnement=GetConditionnement(Hdesire);
-	//	std::cout<<"conditionnement : "<<conditionnement<<std::endl;
-		vpMatrix::computeHLM(Hdesire,lambda,HLMdesire);
-		try
-		{
-			HLMdesireInverse=HLMdesire.inverseByLU();
-		}
+    computeHessien(Hdesire);
+
+
+    //	double conditionnement=GetConditionnement(Hdesire);
+    //	std::cout<<"conditionnement : "<<conditionnement<<std::endl;
+    vpMatrix::computeHLM(Hdesire,lambda,HLMdesire);
+    try
+    {
+      HLMdesireInverse=HLMdesire.inverseByLU();
+    }
     catch(vpException &e)
-		{
-			//std::cerr<<"probleme inversion"<<std::endl;
+    {
+      //std::cerr<<"probleme inversion"<<std::endl;
       throw(e);
-		}	
-		//std::cout<<"Hdesire = "<<Hdesire<<std::endl;
-		//std::cout<<"\tEnd initialisation..."<<std::endl;
-	}
+    }
+    //std::cout<<"Hdesire = "<<Hdesire<<std::endl;
+    //std::cout<<"\tEnd initialisation..."<<std::endl;
+  }
 
 }
 
 void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned char> &I)
 {
-	dW=0;
-	
-	double erreur=0;
-	int Nbpoint=0;
-	if(blur)
-        vpImageFilter::filter(I, BI,fgG,taillef);
-    vpImageFilter::getGradXGauss2D(I, dIx, fgG,fgdG,taillef);
-    vpImageFilter::getGradYGauss2D(I, dIy, fgG,fgdG,taillef);
-			
-	double MI=0,MIprec=-1000;
+  dW=0;
 
-    MI_preEstimation=-getCost(I,p);
+  double erreur=0;
+  int Nbpoint=0;
+  if(blur)
+    vpImageFilter::filter(I, BI,fgG,taillef);
+  vpImageFilter::getGradXGauss2D(I, dIx, fgG,fgdG,taillef);
+  vpImageFilter::getGradYGauss2D(I, dIy, fgG,fgdG,taillef);
 
-	double i2,j2;
-	double Tij;
-	double IW,dx,dy;
-	//unsigned 
-	int cr,ct;
-    double er,et;
-	double alpha=2.;			
-				
-	int i,j;			
-    int iteration=0;
-	
-	initPosEvalRMS(p);
-    int point;
-	do
-	{
-		if(iteration%5==0)
-			initHessienDesired(I);
-		Nbpoint=0;
-		MIprec=MI;
-		MI=0;
-		erreur=0;
-		
-		double tms_i = vpTime::measureTimeMs() ;
-		tms_i = vpTime::measureTimeMs() ;
-		zeroProbabilities();
-		
-		Warp->computeCoeff(p);
+  double MI=0,MIprec=-1000;
+
+  MI_preEstimation=-getCost(I,p);
+
+  double i2,j2;
+  double Tij;
+  double IW,dx,dy;
+  //unsigned
+  int cr,ct;
+  double er,et;
+  double alpha=2.;
+
+  int i,j;
+  unsigned int iteration=0;
+
+  initPosEvalRMS(p);
+  do
+  {
+    if(iteration%5==0)
+      initHessienDesired(I);
+    Nbpoint=0;
+    MIprec=MI;
+    MI=0;
+    erreur=0;
+
+    zeroProbabilities();
+
+    Warp->computeCoeff(p);
 #ifdef DECSA_HAVE_OPENMP
     int nthreads = omp_get_num_procs() ;
     //std::cout << "file: " __FILE__ << " line: " << __LINE__ << " function: " << __FUNCTION__ << " nthread: " << nthreads << std::endl;
     omp_set_num_threads(nthreads);
 #pragma omp parallel for private(Tij,IW,i,j,i2,j2,cr,ct,er,et,dx,dy) default(shared)
 #endif
-        for(point=0;point<templateSize;point++)
-		{
-			i=ptTemplate[point].y;
-			j=ptTemplate[point].x;
-			X1[0]=j;X1[1]=i;
-			
-			Warp->computeDenom(X1,p);			
-			Warp->warpX(X1,X2,p);
-			
-			j2=X2[0];i2=X2[1];
-			
-			if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
-			{
-				Nbpoint++;
-				Tij=ptTemplate[point].val;
-				//Tij=Iterateurvecteur->val;
-				if(!blur)
-					IW=I.getValue(i2,j2);
-				else
-					IW=BI.getValue(i2,j2);
-			
-				dx=1.*dIx.getValue(i2,j2)*(Nc-1)/255.;
-				dy=1.*dIy.getValue(i2,j2)*(Nc-1)/255.;
-							
-				ct=(int)((IW*(Nc-1))/255.);
-				cr=(int)((Tij*(Nc-1))/255.);
-				et=(IW*(Nc-1))/255.-ct;
-				er=((double)Tij*(Nc-1))/255.-cr;
-				
-				//calcul de l'erreur
-                erreur+=(Tij-IW)*(Tij-IW);
-							
-				//Calcul de l'histogramme joint par interpolation bilinÃaire (Bspline ordre 1)
-				Warp->dWarp(X1,X2,p,dW);
-								
-				//double *tptemp=temp;
-				double *tptemp=new double[nbParam];;
-				for(int it=0;it<nbParam;it++)
-					tptemp[it] =(dW[0][it]*dx+dW[1][it]*dy);
-					//*tptemp++ =dW[0][it]*dIWx+dW[1][it]*dIWy;
-				//std::cout<<cr<<"   "<<ct<<"  ; ";
-                if(ApproxHessian==HESSIAN_NONSECOND||hessianComputation==vpTemplateTrackerMI::USE_HESSIEN_DESIRE)
-                    vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
-                else if(ApproxHessian==HESSIAN_0 || ApproxHessian==HESSIAN_NEW)
-                    vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+    for(unsigned int point=0;point<templateSize;point++)
+    {
+      i=ptTemplate[point].y;
+      j=ptTemplate[point].x;
+      X1[0]=j;X1[1]=i;
 
-                delete[] tptemp;
-			}
-		}
+      Warp->computeDenom(X1,p);
+      Warp->warpX(X1,X2,p);
 
-		if(Nbpoint==0)		
-		{
-			//std::cout<<"plus de point dans template suivi"<<std::endl;
-			diverge=true;
-			MI=0;
+      j2=X2[0];i2=X2[1];
+
+      if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
+      {
+        Nbpoint++;
+        Tij=ptTemplate[point].val;
+        //Tij=Iterateurvecteur->val;
+        if(!blur)
+          IW=I.getValue(i2,j2);
+        else
+          IW=BI.getValue(i2,j2);
+
+        dx=1.*dIx.getValue(i2,j2)*(Nc-1)/255.;
+        dy=1.*dIy.getValue(i2,j2)*(Nc-1)/255.;
+
+        ct=(int)((IW*(Nc-1))/255.);
+        cr=(int)((Tij*(Nc-1))/255.);
+        et=(IW*(Nc-1))/255.-ct;
+        er=((double)Tij*(Nc-1))/255.-cr;
+
+        //calcul de l'erreur
+        erreur+=(Tij-IW)*(Tij-IW);
+
+        //Calcul de l'histogramme joint par interpolation bilinÃaire (Bspline ordre 1)
+        Warp->dWarp(X1,X2,p,dW);
+
+        //double *tptemp=temp;
+        double *tptemp=new double[nbParam];;
+        for(unsigned int it=0;it<nbParam;it++)
+          tptemp[it] =(dW[0][it]*dx+dW[1][it]*dy);
+        //*tptemp++ =dW[0][it]*dIWx+dW[1][it]*dIWy;
+        //std::cout<<cr<<"   "<<ct<<"  ; ";
+        if(ApproxHessian==HESSIAN_NONSECOND||hessianComputation==vpTemplateTrackerMI::USE_HESSIEN_DESIRE)
+          vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+        else if(ApproxHessian==HESSIAN_0 || ApproxHessian==HESSIAN_NEW)
+          vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+
+        delete[] tptemp;
+      }
+    }
+
+    if(Nbpoint==0)
+    {
+      //std::cout<<"plus de point dans template suivi"<<std::endl;
+      diverge=true;
+      MI=0;
       deletePosEvalRMS();
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
-		}
+    }
     else
     {
       computeProba(Nbpoint);
@@ -368,21 +362,21 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     iteration++;
     iterationGlobale++;
 
-    }
-    while( (MI!=MIprec) &&(iteration< iterationMax)&&(evolRMS>threshold_RMS) );
-    if(Nbpoint==0) {
-      //std::cout<<"plus de point dans template suivi"<<std::endl;
-      deletePosEvalRMS();
-      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
-    }
-
-    nbIteration=iteration;
-    MI_postEstimation=-getCost(I,p);
-    if(MI_preEstimation>MI_postEstimation)
-    {
-        MI_postEstimation = -1;
-    }
+  }
+  while( (MI!=MIprec) &&(iteration< iterationMax)&&(evolRMS>threshold_RMS) );
+  if(Nbpoint==0) {
+    //std::cout<<"plus de point dans template suivi"<<std::endl;
     deletePosEvalRMS();
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
+  }
+
+  nbIteration=iteration;
+  MI_postEstimation=-getCost(I,p);
+  if(MI_preEstimation>MI_postEstimation)
+  {
+    MI_postEstimation = -1;
+  }
+  deletePosEvalRMS();
 }
 
 void vpTemplateTrackerMIForwardAdditional::initPosEvalRMS(vpColVector &p)

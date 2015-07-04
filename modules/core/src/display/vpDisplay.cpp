@@ -375,8 +375,9 @@ void
 vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
                           const vpHomogeneousMatrix &cMo,
                           const vpCameraParameters &cam,
-                          double size, 
-			  const vpColor &color, unsigned int thickness)
+                          double size, const vpColor &color,
+                          unsigned int thickness,
+                          vpImagePoint offset)
 {
   // used by display
   vpPoint o; o.setWorldCoordinates ( 0.0,0.0,0.0 ) ;
@@ -396,26 +397,26 @@ vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
     vpMeterPixelConversion::convertPoint ( cam, o.p[0], o.p[1], ipo) ;
 
     vpMeterPixelConversion::convertPoint ( cam, x.p[0], x.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo, ip1, vpColor::red, 4*thickness, 2*thickness, thickness) ;
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, vpColor::red, 4*thickness, 2*thickness, thickness) ;
 
     vpMeterPixelConversion::convertPoint ( cam, y.p[0], y.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo, ip1, vpColor::green, 4*thickness, 2*thickness, thickness) ;
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, vpColor::green, 4*thickness, 2*thickness, thickness) ;
     
     vpMeterPixelConversion::convertPoint ( cam, z.p[0], z.p[1], ip1) ;
-    vpDisplay::displayArrow ( I,ipo, ip1, vpColor::blue, 4*thickness, 2*thickness, thickness) ;
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, vpColor::blue, 4*thickness, 2*thickness, thickness) ;
   }
   else
   {
     vpMeterPixelConversion::convertPoint ( cam, o.p[0], o.p[1], ipo) ;
 
     vpMeterPixelConversion::convertPoint ( cam, x.p[0], x.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo, ip1, color, 4*thickness, 2*thickness, thickness) ;
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, color, 4*thickness, 2*thickness, thickness) ;
 
     vpMeterPixelConversion::convertPoint ( cam, y.p[0], y.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo, ip1, color, 4*thickness, 2*thickness, thickness) ;
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, color, 4*thickness, 2*thickness, thickness) ;
     
     vpMeterPixelConversion::convertPoint ( cam, z.p[0], z.p[1], ip1) ;
-    vpDisplay::displayArrow ( I,ipo, ip1, color, 4*thickness, 2*thickness, thickness) ;
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, color, 4*thickness, 2*thickness, thickness) ;
 
   }
 }
@@ -446,7 +447,8 @@ vpDisplay::displayFrame ( const vpImage<vpRGBa> &I,
                           const vpHomogeneousMatrix &cMo,
                           const vpCameraParameters &cam,
                           double size, const vpColor &color,
-                          unsigned int thickness )
+                          unsigned int thickness,
+                          vpImagePoint offset)
 {
   // used by display
   vpPoint o; o.setWorldCoordinates ( 0.0,0.0,0.0 ) ;
@@ -465,26 +467,26 @@ vpDisplay::displayFrame ( const vpImage<vpRGBa> &I,
     vpMeterPixelConversion::convertPoint ( cam, o.p[0], o.p[1], ipo) ;
 
     vpMeterPixelConversion::convertPoint ( cam, x.p[0], x.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo, ip1, vpColor::red, 4, 2, thickness) ;
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, vpColor::red, 4, 2, thickness) ;
 
     vpMeterPixelConversion::convertPoint ( cam, y.p[0], y.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo, ip1, vpColor::green, 4, 2, thickness) ;
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, vpColor::green, 4, 2, thickness) ;
     
     vpMeterPixelConversion::convertPoint ( cam, z.p[0], z.p[1], ip1) ;
-    vpDisplay::displayArrow ( I,ipo, ip1, vpColor::blue, 4, 2, thickness) ;
+    vpDisplay::displayArrow ( I,ipo+offset, ip1+offset, vpColor::blue, 4, 2, thickness) ;
   }
   else
   {
     vpMeterPixelConversion::convertPoint ( cam, o.p[0], o.p[1], ipo) ;
 
     vpMeterPixelConversion::convertPoint ( cam, x.p[0], x.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo, ip1, color, 4*thickness, 2*thickness, thickness) ;
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, color, 4*thickness, 2*thickness, thickness) ;
 
     vpMeterPixelConversion::convertPoint ( cam, y.p[0], y.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo, ip1, color, 4*thickness, 2*thickness, thickness) ;
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, color, 4*thickness, 2*thickness, thickness) ;
     
     vpMeterPixelConversion::convertPoint ( cam, z.p[0], z.p[1], ip1) ;
-    vpDisplay::displayArrow ( I,ipo, ip1, color, 4*thickness, 2*thickness, thickness) ;
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, color, 4*thickness, 2*thickness, thickness) ;
 
   }
 }

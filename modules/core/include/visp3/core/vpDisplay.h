@@ -718,7 +718,7 @@ int main()
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
          double size, const vpColor &color=vpColor::none,
-			   unsigned int thickness=1)  ;
+         unsigned int thickness=1, vpImagePoint offset=vpImagePoint(0,0))  ;
   static void displayLine(const vpImage<unsigned char> &I,
 			  const vpImagePoint &ip1, 
 			  const vpImagePoint &ip2,
@@ -872,7 +872,7 @@ int main()
 			   const vpHomogeneousMatrix &cMo,
 			   const vpCameraParameters &cam,
          double size, const vpColor &color=vpColor::none,
-			   unsigned int thickness=1)  ;
+         unsigned int thickness=1, vpImagePoint offset=vpImagePoint(0,0));
   static void displayEllipse(const vpImage<vpRGBa> &I,
                              const vpImagePoint &center,
                              const double &coef1, const double &coef2, const double &coef3,

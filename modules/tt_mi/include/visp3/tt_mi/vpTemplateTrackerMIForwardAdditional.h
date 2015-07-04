@@ -53,7 +53,7 @@
 
 class VISP_EXPORT vpTemplateTrackerMIForwardAdditional: public vpTemplateTrackerMI
 {
-  public:
+public:
   /*! Minimization method. */
   typedef enum {
     USE_NEWTON,
@@ -62,30 +62,30 @@ class VISP_EXPORT vpTemplateTrackerMIForwardAdditional: public vpTemplateTracker
     USE_QUASINEWTON
   } vpMinimizationTypeMIForwardAdditional;
 
-  private:
-    vpMinimizationTypeMIForwardAdditional minimizationMethod;
-    //pour eval evolRMS
-    double  evolRMS;
-    double  *x_pos;
-    double  *y_pos;
-    double  threshold_RMS;
-    //valeur pour calculer Quasi_Newton
-    vpColVector p_prec;
-    vpColVector G_prec;
-    vpMatrix    KQuasiNewton;
+private:
+  vpMinimizationTypeMIForwardAdditional minimizationMethod;
+  //pour eval evolRMS
+  double  evolRMS;
+  double  *x_pos;
+  double  *y_pos;
+  double  threshold_RMS;
+  //valeur pour calculer Quasi_Newton
+  vpColVector p_prec;
+  vpColVector G_prec;
+  vpMatrix    KQuasiNewton;
 
-  protected:
-    void initHessienDesired(const vpImage<unsigned char> &I);
-    void trackNoPyr(const vpImage<unsigned char> &I);
-    void deletePosEvalRMS();
-    void computeEvalRMS(const vpColVector &p);
-    void initPosEvalRMS(vpColVector &p);
+protected:
+  void initHessienDesired(const vpImage<unsigned char> &I);
+  void trackNoPyr(const vpImage<unsigned char> &I);
+  void deletePosEvalRMS();
+  void computeEvalRMS(const vpColVector &p);
+  void initPosEvalRMS(vpColVector &p);
 
-	public:
-          vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp);
-    void  setThresholdRMS(double threshold){threshold_RMS=threshold;}
-    void  setMinimizationMethod(vpMinimizationTypeMIForwardAdditional method){minimizationMethod=method;}
+public:
+  vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp);
+  void  setThresholdRMS(double threshold){threshold_RMS=threshold;}
+  void  setMinimizationMethod(vpMinimizationTypeMIForwardAdditional method){minimizationMethod=method;}
 };
-		
+
 #endif
 

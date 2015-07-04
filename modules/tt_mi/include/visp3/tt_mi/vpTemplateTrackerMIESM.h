@@ -61,26 +61,26 @@ class VISP_EXPORT vpTemplateTrackerMIESM: public vpTemplateTrackerMI
     USE_QUASINEWTON //not used => see default equivalence
   } vpMinimizationTypeMIESM;
 
-  protected:
-    vpMinimizationTypeMIESM minimizationMethod;
-    bool CompoInitialised;
-    vpMatrix HDirect;
-    vpMatrix HInverse;
-    vpMatrix HdesireDirect;
-    vpMatrix HdesireInverse;
-    vpColVector GDirect;
-    vpColVector GInverse;
+protected:
+  vpMinimizationTypeMIESM minimizationMethod;
+  bool CompoInitialised;
+  vpMatrix HDirect;
+  vpMatrix HInverse;
+  vpMatrix HdesireDirect;
+  vpMatrix HdesireInverse;
+  vpColVector GDirect;
+  vpColVector GInverse;
 
-  protected:
-    void initCompInverse(const vpImage<unsigned char> &I);
-    void initHessienDesired(const vpImage<unsigned char> &I);
-    void trackNoPyr(const vpImage<unsigned char> &I);
+protected:
+  void initCompInverse();
+  void initHessienDesired(const vpImage<unsigned char> &I);
+  void trackNoPyr(const vpImage<unsigned char> &I);
 
-	public:
-          vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp);
+public:
+  vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp);
 
-    void  setMinimizationMethod(vpMinimizationTypeMIESM method){minimizationMethod=method;}
+  void  setMinimizationMethod(vpMinimizationTypeMIESM method){minimizationMethod=method;}
 };
-		
+
 #endif
 

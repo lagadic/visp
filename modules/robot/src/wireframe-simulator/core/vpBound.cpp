@@ -163,7 +163,7 @@ void malloc_Bound (Bound *bp, Type type, int polygonal, Index fn, Index pn)
 
 	bp->type	 = type;
 	bp->is_display	 = TRUE;
-	bp->is_polygonal = polygonal;
+  bp->is_polygonal = (unsigned)polygonal;
 }
 
 /*
