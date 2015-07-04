@@ -77,7 +77,6 @@ private:
   vpMatrix    KQuasiNewton;
 
   bool    useAYOptim;
-  bool    useOpenMP;
 
 public: // AY Optimisation
   void initTemplateRefBspline(unsigned int ptIndex, double &et);
