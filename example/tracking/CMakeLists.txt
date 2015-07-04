@@ -116,6 +116,7 @@ add_test(templateTrackerPyramidal-SSDESM-Homography    templateTracker -c -l 2 -
 add_test(templateTrackerPyramidal-SSDESM-HomographySL3 templateTracker -c -l 2 -t 0 -w 2 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-SSDESM-SRT           templateTracker -c -l 2 -t 0 -w 3 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-SSDESM-Translation   templateTracker -c -l 2 -t 0 -w 4 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(templateTrackerPyramidal-SSDESM-RT            templateTracker -c -l 2 -t 0 -w 5 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 
 #add_test(templateTracker-SSDForwardAdditional-Affine        templateTracker -c -l 2 -t 1 -w 0 ${OPTION_TO_DESACTIVE_DISPLAY})
 #add_test(templateTracker-SSDForwardAdditional-Homography    templateTracker -c -l 2 -t 1 -w 1 ${OPTION_TO_DESACTIVE_DISPLAY})
@@ -128,6 +129,7 @@ add_test(templateTrackerPyramidal-SSDForwardAdditional-Homography    templateTra
 add_test(templateTrackerPyramidal-SSDForwardAdditional-HomographySL3 templateTracker -c -l 2 -t 1 -w 2 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-SSDForwardAdditional-SRT           templateTracker -c -l 2 -t 1 -w 3 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-SSDForwardAdditional-Translation   templateTracker -c -l 2 -t 1 -w 4 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(templateTrackerPyramidal-SSDForwardAdditional-RT            templateTracker -c -l 2 -t 1 -w 5 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 
 #add_test(templateTracker-SSDForwardCompositional-Affine        templateTracker -c -l 2 -t 2 -w 0 ${OPTION_TO_DESACTIVE_DISPLAY})
 #add_test(templateTracker-SSDForwardCompositional-Homography    templateTracker -c -l 2 -t 2 -w 1 ${OPTION_TO_DESACTIVE_DISPLAY})
@@ -140,6 +142,7 @@ add_test(templateTrackerPyramidal-SSDForwardCompositional-Homography    template
 add_test(templateTrackerPyramidal-SSDForwardCompositional-HomographySL3 templateTracker -c -l 2 -t 2 -w 2 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-SSDForwardCompositional-SRT           templateTracker -c -l 2 -t 2 -w 3 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-SSDForwardCompositional-Translation   templateTracker -c -l 2 -t 2 -w 4 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(templateTrackerPyramidal-SSDForwardCompositional-RT            templateTracker -c -l 2 -t 2 -w 5 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 
 #add_test(templateTracker-SSDInverseCompositional-Affine        templateTracker -c -l 2 -t 3 -w 0 ${OPTION_TO_DESACTIVE_DISPLAY})
 #add_test(templateTracker-SSDInverseCompositional-Homography    templateTracker -c -l 2 -t 3 -w 1 ${OPTION_TO_DESACTIVE_DISPLAY})
@@ -152,6 +155,7 @@ add_test(templateTrackerPyramidal-SSDInverseCompositional-Homography    template
 add_test(templateTrackerPyramidal-SSDInverseCompositional-HomographySL3 templateTracker -c -l 2 -t 3 -w 2 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-SSDInverseCompositional-SRT           templateTracker -c -l 2 -t 3 -w 3 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-SSDInverseCompositional-Translation   templateTracker -c -l 2 -t 3 -w 4 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(templateTrackerPyramidal-SSDInverseCompositional-RT            templateTracker -c -l 2 -t 3 -w 5 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 
 #add_test(templateTracker-ZNCCForwardAdditional-Affine        templateTracker -c -l 2 -t 4 -w 0 ${OPTION_TO_DESACTIVE_DISPLAY})
 #add_test(templateTracker-ZNCCForwardAdditional-Homography    templateTracker -c -l 2 -t 4 -w 1 ${OPTION_TO_DESACTIVE_DISPLAY})
@@ -164,6 +168,7 @@ add_test(templateTrackerPyramidal-ZNCCForwardAdditional-Homography    templateTr
 add_test(templateTrackerPyramidal-ZNCCForwardAdditional-HomographySL3 templateTracker -c -l 2 -t 4 -w 2 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-ZNCCForwardAdditional-SRT           templateTracker -c -l 2 -t 4 -w 3 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-ZNCCForwardAdditional-Translation   templateTracker -c -l 2 -t 4 -w 4 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(templateTrackerPyramidal-ZNCCForwardAdditional-RT            templateTracker -c -l 2 -t 4 -w 5 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 
 #add_test(templateTracker-ZNCCInverseCompositional-Affine        templateTracker -c -l 2 -t 5 -w 0 ${OPTION_TO_DESACTIVE_DISPLAY})
 #add_test(templateTracker-ZNCCInverseCompositional-Homography    templateTracker -c -l 2 -t 5 -w 1 ${OPTION_TO_DESACTIVE_DISPLAY})
@@ -176,6 +181,7 @@ add_test(templateTrackerPyramidal-ZNCCInverseCompositional-Homography    templat
 add_test(templateTrackerPyramidal-ZNCCInverseCompositional-HomographySL3 templateTracker -c -l 2 -t 5 -w 2 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-ZNCCInverseCompositional-SRT           templateTracker -c -l 2 -t 5 -w 3 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(templateTrackerPyramidal-ZNCCInverseCompositional-Translation   templateTracker -c -l 2 -t 5 -w 4 -p ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(templateTrackerPyramidal-ZNCCInverseCompositional-RT            templateTracker -c -l 2 -t 5 -w 5 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 
 if(BUILD_MODULE_visp_tt_mi)
   add_test(templateTrackerPyramidal-MIInverseCompositional-Affine        templateTracker -c -l 2 -t 9 -w 0 -p ${OPTION_TO_DESACTIVE_DISPLAY})

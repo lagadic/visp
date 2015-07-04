@@ -39,7 +39,7 @@
  * Fabien Spindler
  *
  *****************************************************************************/
-#include <visp3/tt_mi/vpTemplateTrackerWarpRT.h>
+#include <visp3/tt/vpTemplateTrackerWarpRT.h>
 
 
 vpTemplateTrackerWarpRT::vpTemplateTrackerWarpRT()

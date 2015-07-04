@@ -73,6 +73,7 @@
 #include <visp3/tt/vpTemplateTrackerWarpHomographySL3.h>
 #include <visp3/tt/vpTemplateTrackerWarpSRT.h>
 #include <visp3/tt/vpTemplateTrackerWarpTranslation.h>
+#include <visp3/tt/vpTemplateTrackerWarpRT.h>
 
 #include <visp3/visp_modules.h>
 #ifdef VISP_HAVE_MODULE_TT_MI
@@ -80,8 +81,6 @@
 #  include <visp3/tt_mi/vpTemplateTrackerMIForwardAdditional.h>
 #  include <visp3/tt_mi/vpTemplateTrackerMIForwardCompositional.h>
 #  include <visp3/tt_mi/vpTemplateTrackerMIInverseCompositional.h>
-
-#  include <visp3/tt_mi/vpTemplateTrackerWarpRT.h>
 #endif
 
 #if defined (VISP_HAVE_DISPLAY)
@@ -371,9 +370,7 @@ main(int argc, const char ** argv)
     case WARP_HOMOGRAPHY_SL3: warp = new vpTemplateTrackerWarpHomographySL3; break;
     case WARP_SRT:            warp = new vpTemplateTrackerWarpSRT; break;
     case WARP_TRANSLATION:    warp = new vpTemplateTrackerWarpTranslation;  break;
-#ifdef VISP_HAVE_MODULE_TT_MI
     case WARP_RT:             warp = new vpTemplateTrackerWarpRT; break;
-#endif
     default: return 0;
     }
 
