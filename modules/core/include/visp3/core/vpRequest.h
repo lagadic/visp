@@ -230,7 +230,7 @@ void vpRequest::addParameterObject(T * params, const int &sizeOfObject)
   if(sizeOfObject != 0){
     char *tempS = new char [sizeOfObject];
     memcpy((void*)tempS, (void*)params, sizeOfObject);
-    std::string returnVal(tempS, sizeOfObject);
+    std::string returnVal(tempS, (size_t)sizeOfObject);
   
     listOfParams.push_back(returnVal);
 
