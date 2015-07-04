@@ -42,7 +42,7 @@
 
 #include <visp3/tt_mi/vpTemplateTrackerMIForwardAdditional.h>
 
-#ifdef DECSA_HAVE_OPENMP
+#ifdef VISP_HAVE_OPENMP
 #include <omp.h>
 #endif
 
@@ -187,7 +187,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     zeroProbabilities();
 
     Warp->computeCoeff(p);
-#ifdef DECSA_HAVE_OPENMP
+#ifdef VISP_HAVE_OPENMP
     int nthreads = omp_get_num_procs() ;
     //std::cout << "file: " __FILE__ << " line: " << __LINE__ << " function: " << __FUNCTION__ << " nthread: " << nthreads << std::endl;
     omp_set_num_threads(nthreads);
