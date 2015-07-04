@@ -331,7 +331,8 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
         s_scal_y=s_quasi.t()*y_quasi;
         //if(s_scal_y!=0)//BFGS
         //	KQuasiNewton=KQuasiNewton-(s_quasi*y_quasi.t()*KQuasiNewton+KQuasiNewton*y_quasi*s_quasi.t())/s_scal_y+(1.+y_quasi.t()*(KQuasiNewton*y_quasi)/s_scal_y)*s_quasi*s_quasi.t()/s_scal_y;
-        if(s_scal_y!=0)//DFP
+        //if(s_scal_y!=0)//DFP
+        if(std::fabs(s_scal_y) > std::numeric_limits<double>::epsilon())
           KQuasiNewton=KQuasiNewton+0.001*(s_quasi*s_quasi.t()/s_scal_y-KQuasiNewton*y_quasi*y_quasi.t()*KQuasiNewton/(y_quasi.t()*KQuasiNewton*y_quasi));
       }
       dp=-KQuasiNewton*G;
@@ -363,7 +364,8 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     iterationGlobale++;
 
   }
-  while( (MI!=MIprec) &&(iteration< iterationMax)&&(evolRMS>threshold_RMS) );
+  while( (std::fabs(MI-MIprec) > std::fabs(MI)*std::numeric_limits<double>::epsilon()) &&(iteration< iterationMax)&&(evolRMS>threshold_RMS) );
+  //while( (MI!=MIprec) &&(iteration< iterationMax)&&(evolRMS>threshold_RMS) );
   if(Nbpoint==0) {
     //std::cout<<"plus de point dans template suivi"<<std::endl;
     deletePosEvalRMS();

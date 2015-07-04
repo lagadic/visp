@@ -549,7 +549,8 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
         //std::cout<<"mise a jour K"<<std::endl;
         /*if(s_scal_y!=0)//BFGS
                     KQuasiNewton=KQuasiNewton+0.01*(-(s_quasi*y_quasi.t()*KQuasiNewton+KQuasiNewton*y_quasi*s_quasi.t())/s_scal_y+(1.+y_quasi.t()*(KQuasiNewton*y_quasi)/s_scal_y)*s_quasi*s_quasi.t()/s_scal_y);*/
-        if(s_scal_y!=0)//DFP
+        //if(s_scal_y!=0)//DFP
+        if(std::fabs(s_scal_y) > std::numeric_limits<double>::epsilon())//DFP
         {
           KQuasiNewton=KQuasiNewton+0.0001*(s_quasi*s_quasi.t()/s_scal_y-KQuasiNewton*y_quasi*y_quasi.t()*KQuasiNewton/(y_quasi.t()*KQuasiNewton*y_quasi));
           //std::cout<<"mise a jour K"<<std::endl;
@@ -588,7 +589,8 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
 
     //        std::cout << p.t() << std::endl;
   }
-  while( (!diverge) && (MI!=MIprec) &&(iteration< iterationMax)&&(evolRMS>threshold_RMS) );
+  while( (!diverge) && (std::fabs(MI-MIprec) > std::fabs(MI)*std::numeric_limits<double>::epsilon()) &&(iteration< iterationMax)&&(evolRMS>threshold_RMS) );
+  //while( (!diverge) && (MI!=MIprec) &&(iteration< iterationMax)&&(evolRMS>threshold_RMS) );
 
   nbIteration=iteration;
 

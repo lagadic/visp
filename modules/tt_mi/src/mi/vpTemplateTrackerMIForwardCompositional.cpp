@@ -314,7 +314,8 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
 
 
   }
-  while( (MI!=MIprec) && (iteration< iterationMax) );
+  while( (std::fabs(MI-MIprec) > std::fabs(MI)*std::numeric_limits<double>::epsilon()) && (iteration< iterationMax) );
+  //while( (MI!=MIprec) && (iteration< iterationMax) );
   nbIteration=iteration;
 
   MI_postEstimation=-getCost(I,p);

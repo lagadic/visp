@@ -237,16 +237,19 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I,vpColVector 
       Pt[t]+=Prt[r*Ncb+t];
   }
   for(int r=0;r<Ncb;r++)
-    if(Pr[r]!=0)
+    //if(Pr[r]!=0)
+    if(std::fabs(Pr[r]) > std::numeric_limits<double>::epsilon())
       MI-=Pr[r]*log(Pr[r]);
 
   for(int t=0;t<Ncb;t++)
-    if(Pt[t]!=0)
+    //if(Pt[t]!=0)
+    if(std::fabs(Pt[t]) > std::numeric_limits<double>::epsilon())
       MI-=Pt[t]*log(Pt[t]);
 
   for(int r=0;r<Ncb;r++)
     for(int t=0;t<Ncb;t++)
-      if(Prt[r*Ncb+t]!=0)
+      //if(Prt[r*Ncb+t]!=0)
+      if(std::fabs(Prt[r*Ncb+t]) > std::numeric_limits<double>::epsilon())
         MI+=Prt[r*Ncb+t]*log(Prt[r*Ncb+t]);
 
   return -MI;
@@ -311,20 +314,24 @@ double vpTemplateTrackerMI::getNormalizedCost(const vpImage<unsigned char> &I,vp
   }
 
   for(int r=0;r<256;r++)
-    if(Pr[r]!=0)
+    //if(Pr[r]!=0)
+    if(std::fabs(Pr[r]) > std::numeric_limits<double>::epsilon())
       MI-=Pr[r]*log(Pr[r]);
 
   for(int t=0;t<256;t++)
-    if(Pt[t]!=0)
+    //if(Pt[t]!=0)
+    if(std::fabs(Pt[t]) > std::numeric_limits<double>::epsilon())
       MI-=Pt[t]*log(Pt[t]);
 
   double denom = 0;
   for(int r=0;r<256;r++)
     for(int t=0;t<256;t++)
-      if(Prt[r][t]!=0)
+      //if(Prt[r][t]!=0)
+      if(std::fabs(Prt[r][t]) > std::numeric_limits<double>::epsilon())
         denom-=(Prt[r][t]*log(Prt[r][t]));
 
-  if(denom != 0)
+  //if(denom != 0)
+  if(std::fabs(denom) > std::numeric_limits<double>::epsilon())
     MI = MI/denom;
   else MI = 0;
 
@@ -457,7 +464,8 @@ void vpTemplateTrackerMI::computeMI(double &MI)
   double entropieI=0;
   for(int r=0;r<Ncb;r++)
   {
-    if(Pr[r]!=0)
+    //if(Pr[r]!=0)
+    if(std::fabs(Pr[r]) > std::numeric_limits<double>::epsilon())
     {
       entropieI-=Pr[r]*log(Pr[r]);
       MI-=Pr[r]*log(Pr[r]);
@@ -467,7 +475,8 @@ void vpTemplateTrackerMI::computeMI(double &MI)
   double entropieT=0;
   for(int t=0;t<Ncb;t++)
   {
-    if(Pt[t]!=0)
+    //if(Pt[t]!=0)
+    if(std::fabs(Pt[t]) > std::numeric_limits<double>::epsilon())
     {
       entropieT-=Pt[t]*log(Pt[t]);
       MI-=Pt[t]*log(Pt[t]);
@@ -476,7 +485,8 @@ void vpTemplateTrackerMI::computeMI(double &MI)
 
   for(int r=0;r<Ncb;r++)
     for(int t=0;t<Ncb;t++)
-      if(Prt[r*Ncb+t]!=0)
+      //if(Prt[r*Ncb+t]!=0)
+      if(std::fabs(Prt[r*Ncb+t]) > std::numeric_limits<double>::epsilon())
         MI+=Prt[r*Ncb+t]*log(Prt[r*Ncb+t]);
 
 
@@ -781,16 +791,19 @@ double vpTemplateTrackerMI::getMI(vpImage<unsigned char> &I,int &nc,int &bspline
         tPt[t]+=tPrt[r*tNcb+t];
     }
     for(int r=0;r<tNcb;r++)
-      if(tPr[r]!=0)
+      //if(tPr[r]!=0)
+      if(std::fabs(tPr[r]) > std::numeric_limits<double>::epsilon())
         MI-=tPr[r]*log(tPr[r]);
 
     for(int t=0;t<tNcb;t++)
-      if(tPt[t]!=0)
+      //if(tPt[t]!=0)
+      if(std::fabs(tPt[t]) > std::numeric_limits<double>::epsilon())
         MI-=tPt[t]*log(tPt[t]);
 
     for(int r=0;r<tNcb;r++)
       for(int t=0;t<tNcb;t++)
-        if(tPrt[r*tNcb+t]!=0)
+        //if(tPrt[r*tNcb+t]!=0)
+        if(std::fabs(tPrt[r*tNcb+t]) > std::numeric_limits<double>::epsilon())
           MI+=tPrt[r*tNcb+t]*log(tPrt[r*tNcb+t]);
   }
 
@@ -850,12 +863,15 @@ double vpTemplateTrackerMI::getMI256(vpImage<unsigned char> &I,vpColVector &tp)
   {
     for(unsigned int r=0;r<256;r++)
     {
-      if(Prt256[r][t]!=0)
+      //if(Prt256[r][t]!=0)
+      if(std::fabs(Prt256[r][t]) > std::numeric_limits<double>::epsilon())
         MI+=Prt256[r][t]*log(Prt256[r][t]);
     }
-    if(Pt256[t]!=0)
+    //if(Pt256[t]!=0)
+    if(std::fabs(Pt256[t]) > std::numeric_limits<double>::epsilon())
       MI+=-Pt256[t]*log(Pt256[t]);
-    if(Pr256[t]!=0)
+    //if(Pr256[t]!=0)
+    if(std::fabs(Pt256[t]) > std::numeric_limits<double>::epsilon())
       MI+=-Pr256[t]*log(Pr256[t]);
 
   }
