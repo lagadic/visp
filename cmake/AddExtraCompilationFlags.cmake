@@ -45,7 +45,7 @@ macro(vp_add_extra_compilation_flags)
   endif()
 
   include(CheckCXXCompilerFlag)
-  if(CMAKE_COMPILER_IS_GNUCXX OR MINGW) #Not only UNIX but also WIN32 for MinGW
+  if(CMAKE_COMPILER_IS_GNUCXX OR MINGW OR CMAKE_CXX_COMPILER_ID MATCHES "Clang") #Not only UNIX but also WIN32 for MinGW
 
     set(WARNING_ALL "-Wall")
     CHECK_CXX_COMPILER_FLAG(${WARNING_ALL} WARNING_ALL_ALLOWED)
