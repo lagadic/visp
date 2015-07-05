@@ -573,9 +573,19 @@ void vpTemplateTrackerMI::computeHessienNormalized(vpMatrix &H)
   double seuilevitinf=1e-200;
   //double dtemp;
   double u=0,v=0,B=0;
-  double du[nbParam],dv[nbParam];
-  double A[nbParam], dB[nbParam];
-  double d2u[nbParam][nbParam], d2v[nbParam][nbParam], dA[nbParam][nbParam];
+  double *du = new double[nbParam];
+  double *dv = new double[nbParam];
+  double *A  = new double[nbParam];
+  double *dB = new double[nbParam];
+  double **d2u = new double *[nbParam];
+  double **d2v = new double *[nbParam];
+  double **dA = new double *[nbParam];
+  for (unsigned int i = 0; i < nbParam; i++) {
+    d2u[i] = new double[nbParam];
+    d2v[i] = new double[nbParam];
+    dA[i]  = new double[nbParam];
+  }
+
   for(unsigned int it=0;it<nbParam;it++){
     du[it]=0;
     dv[it]=0;
@@ -646,6 +656,20 @@ void vpTemplateTrackerMI::computeHessienNormalized(vpMatrix &H)
       H[it][jt] = (dA[it][jt] * B -A[it] * dB[it])/(B*B);
     }
   }
+
+  delete[] du;
+  delete[] dv;
+  delete[] A;
+  delete[] dB;
+  for (unsigned int i = 0; i < nbParam; i++) {
+    delete[] d2u[i];
+    delete[] d2v[i];
+    delete[] dA[i];
+  }
+  delete[] d2u;
+  delete[] d2v;
+  delete[] dA;
+
   //    std::cout<<"Hdes - compute Hessien\n"<<u<<"\n"<<v<<"\n"<<du[0]<<" "<<du[1]<<" "<<du[2]<<"\n"<<dv[2]<<"\n"<<d2u[2][2]<<"\n"<<d2v[2][2]<<"\n"<<H<<std::endl;
 }
 
@@ -700,10 +724,10 @@ double vpTemplateTrackerMI::getMI(vpImage<unsigned char> &I,int &nc,int &bspline
 {
   int tNcb=nc+bspline;
   int tinfluBspline=bspline*bspline;
-  double tPrtD[nc*nc*tinfluBspline];
-  double tPrt[tNcb*tNcb];
-  double tPr[tNcb];
-  double tPt[tNcb];
+  double *tPrtD = new double[nc*nc*tinfluBspline];
+  double *tPrt = new double[tNcb*tNcb];
+  double *tPr = new double[tNcb];
+  double *tPt = new double[tNcb];
 
   double MI=0;
   int Nbpoint=0;
@@ -767,8 +791,14 @@ double vpTemplateTrackerMI::getMI(vpImage<unsigned char> &I,int &nc,int &bspline
       }
     }
 
-  if(Nbpoint==0)
-    return 0;
+  if (Nbpoint == 0) {
+    delete[] tPrtD;
+    delete[] tPrt;
+    delete[] tPr;
+    delete[] tPt;
+
+	  return 0;
+  }
   else
   {
     for(int r=0;r<tNcb;r++)
@@ -806,6 +836,10 @@ double vpTemplateTrackerMI::getMI(vpImage<unsigned char> &I,int &nc,int &bspline
         if(std::fabs(tPrt[r*tNcb+t]) > std::numeric_limits<double>::epsilon())
           MI+=tPrt[r*tNcb+t]*log(tPrt[r*tNcb+t]);
   }
+  delete[] tPrtD;
+  delete[] tPrt;
+  delete[] tPr;
+  delete[] tPt;
 
   return MI;
 }
@@ -842,7 +876,7 @@ double vpTemplateTrackerMI::getMI256(vpImage<unsigned char> &I,vpColVector &tp)
     {
       Nbpoint++;
 
-      Tij=ptTemplate[point].val;
+      Tij=(unsigned int)ptTemplate[point].val;
       if(!blur)
         IW=(unsigned int)I.getValue(i2,j2);
       else

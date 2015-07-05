@@ -116,7 +116,7 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsi
       if(ApproxHessian==HESSIAN_NONSECOND)
         vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
       else if(ApproxHessian==HESSIAN_0 || ApproxHessian==HESSIAN_NEW)
-        vpTemplateTrackerMIBSpline::vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
+        vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);
 
       delete[] tptemp;
     }
@@ -193,7 +193,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     omp_set_num_threads(nthreads);
 #pragma omp parallel for private(Tij,IW,i,j,i2,j2,cr,ct,er,et,dx,dy) default(shared)
 #endif
-    for(unsigned int point=0;point<templateSize;point++)
+    for(int point=0;point<(int)templateSize;point++)
     {
       i=ptTemplate[point].y;
       j=ptTemplate[point].x;
