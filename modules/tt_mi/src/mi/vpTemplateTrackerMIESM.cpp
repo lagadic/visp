@@ -279,6 +279,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
 
   double erreur=0;
   int Nbpoint=0;
+  unsigned int point;
 
   MI_preEstimation=-getCost(I,p);
 
@@ -311,7 +312,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
     /////////////////////////////////////////////////////////////////////////
     // Inverse
     Warp->computeCoeff(p);
-    for(unsigned int point=0;point<templateSize;point++)
+    for(point=0;point<templateSize;point++)
     {
       i=ptTemplate[point].y;
       j=ptTemplate[point].x;
@@ -376,7 +377,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       omp_set_num_threads(nthreads);
 #pragma omp parallel for private(point, Tij,IW,i,j,i2,j2,/*cr,ct,er,et,*/dx,dy) default(shared)
 #endif
-      for(unsigned int point=0;point<templateSize;point++)
+      for(point=0;point<templateSize;point++)
       {
         i=ptTemplate[point].y;
         j=ptTemplate[point].x;
