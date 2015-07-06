@@ -64,11 +64,10 @@ The content of the xml file is the following:
       <mu1>0.5</mu1>
       <mu2>0.5</mu2>
     </contrast>
+    <sample>
+      <step>4</step>
+    </sample>
   </ecm>
-  <sample>
-    <step>4</step>
-    <nb_sample>250</nb_sample>
-  </sample>
   <camera>
     <u0>325.66776</u0> 
     <v0>243.69727</v0> 
@@ -303,11 +302,10 @@ We provide just hereafter the content of the \c teabox.xml file:
       <mu1>0.5</mu1>
       <mu2>0.5</mu2>
     </contrast>
+    <sample>
+      <step>4</step>
+    </sample>
   </ecm>
-  <sample>
-    <step>4</step>
-    <nb_sample>250</nb_sample>
-  </sample>
   <klt>
     <mask_border>5</mask_border> 
     <max_features>300</max_features> 
