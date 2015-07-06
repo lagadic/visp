@@ -1737,7 +1737,7 @@ vpSimulatorViper850::getPosition (const vpRobot::vpControlFrameType frame,
   this->getPosition(frame,posRxyz);
   
   //recupere le vecteur thetaU correspondant
-  vpThetaUVector RtuVect(posRxyz[3],posRxyz[4],posRxyz[5]);
+  vpThetaUVector RtuVect(vpRxyzVector(posRxyz[3],posRxyz[4],posRxyz[5]));
 
   //remplit le vpPoseVector avec translation et rotation ThetaU
   for(unsigned int j=0;j<3;j++)

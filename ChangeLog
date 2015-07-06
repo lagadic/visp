@@ -17,6 +17,7 @@ ViSP 3.0.0 (under development)
     . [19312] Model-based tracker unable to initialize the number of cylinder
       or circle from cao file
     . [19326] segfault when using vpDisplayX::init(unsigned int, unsigned int, ...)
+    . [19368] Invalid rotation parameters in vpSimulatorViper850::getPosition()
 
 ----------------------------------------------
 ViSP 2.10.0 (released February 13th, 2015)
