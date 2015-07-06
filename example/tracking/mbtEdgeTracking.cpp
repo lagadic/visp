@@ -342,7 +342,6 @@ main(int argc, const char ** argv)
     me.setMu1(0.5);
     me.setMu2(0.5);
     me.setSampleStep(4);
-    me.setNbTotalSample(250);
 
     tracker.setCameraParameters(cam);
     tracker.setMovingEdge(me);
@@ -431,7 +430,6 @@ main(int argc, const char ** argv)
         me.setMu1(0.5);
         me.setMu2(0.5);
         me.setSampleStep(4);
-        me.setNbTotalSample(250);
 
         tracker.setCameraParameters(cam);
         tracker.setMovingEdge(me);

@@ -340,7 +340,6 @@ main(int argc, const char ** argv)
     me.setMu1(0.5);
     me.setMu2(0.5);
     me.setSampleStep(4);
-    me.setNbTotalSample(250);
 
     vpKltOpencv klt;
     klt.setMaxFeatures(10000);
@@ -442,7 +441,6 @@ main(int argc, const char ** argv)
         me.setMu1(0.5);
         me.setMu2(0.5);
         me.setSampleStep(4);
-        me.setNbTotalSample(250);
 
         vpKltOpencv klt;
         klt.setMaxFeatures(10000);
