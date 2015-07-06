@@ -256,11 +256,10 @@ vpMbEdgeKltTracker::loadConfigFile(const std::string& configFile)
       <mu1>0.5</mu1>
       <mu2>0.5</mu2>
     </contrast>
+    <sample>
+      <step>4</step>
+    </sample>
   </ecm>
-  <sample>
-    <step>4</step>
-    <nb_sample>250</nb_sample>
-  </sample>
   <camera>
     <width>640</width>
     <height>480</height>
