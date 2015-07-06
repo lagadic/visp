@@ -80,7 +80,6 @@ vpMbtEdgeKltXmlParser::init()
   nodeMap["face"] = vpMbtEdgeKltXmlParser::face;
   nodeMap["klt"] = vpMbtEdgeKltXmlParser::klt;
   nodeMap["ecm"] = vpMbtEdgeKltXmlParser::ecm;
-  nodeMap["sample"] = vpMbtEdgeKltXmlParser::sample;
   nodeMap["lod"] = vpMbtEdgeKltXmlParser::lod;
 }
 
@@ -121,7 +120,6 @@ vpMbtEdgeKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   bool camera_node = false;
   bool face_node = false;
   bool ecm_node = false;
-  bool sample_node = false;
   bool klt_node = false;
   bool lod_node = false;
   
@@ -146,9 +144,8 @@ vpMbtEdgeKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
           this->read_ecm (doc, dataNode);
           ecm_node = true;
           }break;
-        case vpMbtEdgeKltXmlParser::sample:{
-          this->read_sample (doc, dataNode);
-          sample_node = true;
+        case sample:{
+          this->read_sample_deprecated (doc, dataNode);
           }break;
         case vpMbtEdgeKltXmlParser::lod:{
           this->read_lod(doc, dataNode);
@@ -192,11 +189,7 @@ vpMbtEdgeKltXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
     std::cout <<"ecm : contrast : threshold : " << this->m_ecm.getThreshold()<<" (default)" <<std::endl;
     std::cout <<"ecm : contrast : mu1 : " << this->m_ecm.getMu1()<<" (default)" <<std::endl;
     std::cout <<"ecm : contrast : mu2 : " << this->m_ecm.getMu2()<<" (default)" <<std::endl;
-  }
-
-  if(!sample_node) {
-    std::cout <<"sample : sample_step : "<< this->m_ecm.getSampleStep()<< " (default)" << std::endl;
-    std::cout <<"sample : n_total_sample : "<< this->m_ecm.getNbTotalSample()<< " (default)"<<std::endl;
+    std::cout <<"ecm : sample : sample_step : "<< this->m_ecm.getSampleStep()<< " (default)" << std::endl;
   }
 
   if(!lod_node) {

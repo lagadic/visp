@@ -90,7 +90,6 @@ vpMbtXmlParser::init()
   nodeMap["mu2"] = mu2;
   nodeMap["sample"] = sample;
   nodeMap["step"] = step;
-  nodeMap["nb_sample"] = nb_sample;
 }
 
 /*!
@@ -130,7 +129,6 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   bool camera_node = false;
   bool face_node = false;
   bool ecm_node = false;
-  bool sample_node = false;
   bool lod_node = false;
   
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
@@ -151,8 +149,7 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
           ecm_node = true;
           }break;
         case sample:{
-          this->read_sample (doc, dataNode);
-          sample_node = true;
+          this->read_sample_deprecated (doc, dataNode);
           }break;
         case lod:{
           this->read_lod(doc, dataNode);
@@ -185,11 +182,7 @@ vpMbtXmlParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
     std::cout <<"ecm : contrast : threshold : " << this->m_ecm.getThreshold()<<" (default)" <<std::endl;
     std::cout <<"ecm : contrast : mu1 : " << this->m_ecm.getMu1()<<" (default)" <<std::endl;
     std::cout <<"ecm : contrast : mu2 : " << this->m_ecm.getMu2()<<" (default)" <<std::endl;
-  }
-  
-  if(!sample_node) {
-    std::cout <<"sample : sample_step : "<< this->m_ecm.getSampleStep()<< " (default)" << std::endl;
-    std::cout <<"sample : n_total_sample : "<< this->m_ecm.getNbTotalSample()<< " (default)"<<std::endl;
+    std::cout <<"ecm : sample : sample_step : "<< this->m_ecm.getSampleStep()<< " (default)" << std::endl;
   }
 
   if(!lod_node) {
@@ -214,6 +207,7 @@ vpMbtXmlParser::read_ecm (xmlDocPtr doc, xmlNodePtr node)
   bool mask_node = false;
   bool range_node = false;
   bool contrast_node = false;
+  bool sample_node = false;
   
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
@@ -231,6 +225,10 @@ vpMbtXmlParser::read_ecm (xmlDocPtr doc, xmlNodePtr node)
         case contrast:{
           this->read_contrast (doc, dataNode);
           contrast_node = true;
+          }break;
+        case sample:{
+          this->read_sample (doc, dataNode);
+          sample_node = true;
           }break;
         default:{
 //          vpTRACE("unknown tag in read_ecm : %d, %s", iter_data->second, (iter_data->first).c_str());
@@ -254,6 +252,10 @@ vpMbtXmlParser::read_ecm (xmlDocPtr doc, xmlNodePtr node)
     std::cout <<"ecm : contrast : mu1 " << this->m_ecm.getMu1()<<" (default)" <<std::endl;
     std::cout <<"ecm : contrast : mu2 " << this->m_ecm.getMu2()<<" (default)" <<std::endl;
   }
+
+  if(!sample_node) {
+    std::cout <<"ecm : sample : sample_step : "<< this->m_ecm.getSampleStep()<< " (default)" << std::endl;
+  }
 }
 
 /*!
@@ -263,16 +265,15 @@ vpMbtXmlParser::read_ecm (xmlDocPtr doc, xmlNodePtr node)
   
   \param doc : Pointer to the document.
   \param node : Pointer to the node of the sample information.
+  \param displayDeprecated : Boolean to notify if the node used is deprecated or not.
 */
 void 
 vpMbtXmlParser::read_sample (xmlDocPtr doc, xmlNodePtr node)
 {
   bool step_node = false;
-  bool nb_sample_node = false;
   
-    // current data values.
-	double d_stp = this->m_ecm.getSampleStep();
-	int d_nb_sample = this->m_ecm.getNbTotalSample();
+  // current data values.
+  double d_stp = this->m_ecm.getSampleStep();
 	
   for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
     if(dataNode->type == XML_ELEMENT_NODE){
@@ -283,10 +284,6 @@ vpMbtXmlParser::read_sample (xmlDocPtr doc, xmlNodePtr node)
           d_stp = xmlReadIntChild(doc, dataNode);
           step_node = true;
           }break;
-        case nb_sample:{
-          d_nb_sample = xmlReadIntChild(doc, dataNode);
-          nb_sample_node = true;
-          }break;
         default:{
 //          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
           }break;
@@ -296,17 +293,68 @@ vpMbtXmlParser::read_sample (xmlDocPtr doc, xmlNodePtr node)
   }
   
   this->m_ecm.setSampleStep(d_stp);
-  this->m_ecm.setNbTotalSample(d_nb_sample);
+//  this->m_ecm.setNbTotalSample(d_nb_sample);
 
   if(!step_node)
-    std::cout <<"sample : sample_step : "<< this->m_ecm.getSampleStep()<< " (default)" << std::endl;
+    std::cout <<"ecm : sample : sample_step : "<< this->m_ecm.getSampleStep()<< " (default)" << std::endl;
   else
-    std::cout <<"sample : sample_step : "<< this->m_ecm.getSampleStep()<<std::endl;
-  
-  if(!nb_sample_node)
-    std::cout <<"sample : n_total_sample : "<< this->m_ecm.getNbTotalSample()<< " (default)"<<std::endl;
+    std::cout <<"ecm : sample : sample_step : "<< this->m_ecm.getSampleStep()<<std::endl;
+}
+
+/*!
+  Read sample information.
+
+  \throw vpException::fatalError if there was an unexpected number of data.
+
+  \param doc : Pointer to the document.
+  \param node : Pointer to the node of the sample information.
+*/
+void
+vpMbtXmlParser::read_sample_deprecated (xmlDocPtr doc, xmlNodePtr node)
+{
+  bool step_node = false;
+  //bool nb_sample_node = false;
+
+    // current data values.
+  double d_stp = this->m_ecm.getSampleStep();
+//  int d_nb_sample = this->m_ecm.getNbTotalSample();
+
+  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
+    if(dataNode->type == XML_ELEMENT_NODE){
+      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
+      if(iter_data != nodeMap.end()){
+        switch (iter_data->second){
+        case step:{
+          d_stp = xmlReadIntChild(doc, dataNode);
+          step_node = true;
+          }break;
+//        case nb_sample:{
+//          d_nb_sample = xmlReadIntChild(doc, dataNode);
+//          nb_sample_node = true;
+//          }break;
+        default:{
+//          vpTRACE("unknown tag in read_sample : %d, %s", iter_data->second, (iter_data->first).c_str());
+          }break;
+        }
+      }
+    }
+  }
+
+  this->m_ecm.setSampleStep(d_stp);
+//  this->m_ecm.setNbTotalSample(d_nb_sample);
+
+  if(!step_node)
+    std::cout <<"[DEPRECATED] sample : sample_step : "<< this->m_ecm.getSampleStep()<< " (default)" << std::endl;
   else
-    std::cout <<"sample : n_total_sample : "<< this->m_ecm.getNbTotalSample()<<std::endl;
+    std::cout <<"[DEPRECATED] sample : sample_step : "<< this->m_ecm.getSampleStep()<<std::endl;
+
+//  if(!nb_sample_node)
+//    std::cout <<"sample : n_total_sample : "<< this->m_ecm.getNbTotalSample()<< " (default)"<<std::endl;
+//  else
+//    std::cout <<"sample : n_total_sample : "<< this->m_ecm.getNbTotalSample()<<std::endl;
+
+  std::cout <<"  WARNING : This node (sample) is deprecated." << std::endl;
+  std::cout << "  It should be moved in the ecm node (ecm : sample)." << std::endl;
 }
 
 /*!

@@ -83,7 +83,6 @@ protected:
     mu2,
     sample,
     step,
-    nb_sample,
     last
   } dataToParseMb;
 
@@ -103,6 +102,7 @@ public:
   virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
   void read_ecm (xmlDocPtr doc, xmlNodePtr node);
   void read_sample (xmlDocPtr doc, xmlNodePtr node);
+  void read_sample_deprecated (xmlDocPtr doc, xmlNodePtr node);
   void read_mask (xmlDocPtr doc, xmlNodePtr node);
   void read_range (xmlDocPtr doc, xmlNodePtr node);
   void read_contrast (xmlDocPtr doc, xmlNodePtr node);
