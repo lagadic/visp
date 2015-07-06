@@ -72,7 +72,6 @@ int main(int argc, char** argv)
       me.setMu1(0.5);
       me.setMu2(0.5);
       me.setSampleStep(4);
-      me.setNbTotalSample(250);
       tracker.setMovingEdge(me);
       tracker.setMaskBorder(5);
       vpKltOpencv klt_settings;

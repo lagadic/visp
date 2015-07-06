@@ -85,7 +85,6 @@ int main(int argc, char** argv)
       me.setMu1(0.5);
       me.setMu2(0.5);
       me.setSampleStep(4);
-      me.setNbTotalSample(250);
       tracker.setMovingEdge(me);
       cam.initPersProjWithoutDistortion(839, 839, 325, 243);
       tracker.setCameraParameters(cam);
