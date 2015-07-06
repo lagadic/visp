@@ -52,7 +52,7 @@ double vpTemplateTrackerBSpline::getSubPixBspline4(const vpImage<double> &I, dou
   double et=(double)t-ct;
   int height=(int)I.getHeight();//r
   int width=(int)I.getWidth();//t
-  int tr,tt;
+  volatile int tr,tt;
   for(int ir=-1;ir<=2;ir++)
   {
     tr=ir+cr;

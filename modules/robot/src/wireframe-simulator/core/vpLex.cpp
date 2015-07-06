@@ -150,7 +150,7 @@ const char	*lex_errtbl[] = {	/* table des messages d'erreur		*/
 char	*mytext   = NULL;
 int	mylength  = 0;
 int	mylineno  = 1;
-int	mycolumno = 0;
+unsigned int	mycolumno = 0;
 float	myfloat   = 0.0;
 int	myint     = 0;
 

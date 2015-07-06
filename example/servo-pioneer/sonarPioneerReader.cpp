@@ -112,11 +112,13 @@ void sonarPrinter(void)
   double end_angle = 45;
   range = sonar.currentReadingPolar(start_angle, end_angle, &angle);
   printf(" front quadrant: %5.0f  ", range);
-  if (range != sonar.getMaxRange())
+  //if (range != sonar.getMaxRange())
+  if (std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon())
     printf("%3.0f ", angle);
   printf("\n");
 #if defined(VISP_HAVE_X11) || defined (VISP_HAVE_GDI)
-  if (isInitialized && range != sonar.getMaxRange())
+  //if (isInitialized && range != sonar.getMaxRange())
+  if (isInitialized && std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon())
   {
     double x = range * cos(vpMath::rad(angle)); // position of the obstacle in the sensor frame
     double y = range * sin(vpMath::rad(angle));
@@ -135,19 +137,22 @@ void sonarPrinter(void)
 
   range = sonar.currentReadingPolar(-135, -45, &angle);
   printf(" right quadrant: %5.0f ", range);
-  if (range != sonar.getMaxRange())
+  //if (range != sonar.getMaxRange())
+  if (std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon())
     printf("%3.0f ", angle);
   printf("\n");
 
   range = sonar.currentReadingPolar(45, 135, &angle);
   printf(" left quadrant: %5.0f ", range);
-  if (range != sonar.getMaxRange())
+  //if (range != sonar.getMaxRange())
+  if (std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon())
     printf("%3.0f ", angle);
   printf("\n");
 
   range = sonar.currentReadingPolar(-135, 135, &angle);
   printf(" back quadrant: %5.0f ", range);
-  if (range != sonar.getMaxRange())
+  //if (range != sonar.getMaxRange())
+  if (std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon())
     printf("%3.0f ", angle);
   printf("\n");
 
@@ -179,7 +184,8 @@ void sonarPrinter(void)
       //             reading->getSensorY(), reading->getSensorTh(), reading->getRange());
 
 #if defined(VISP_HAVE_X11) || defined (VISP_HAVE_GDI)
-      if (isInitialized && range != sonar.getMaxRange())
+      //if (isInitialized && range != sonar.getMaxRange())
+      if (isInitialized && std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon())
       {
         vpDisplay::displayLine(I, si, sj, i, j, vpColor::blue, 2);
         vpDisplay::displayCross(I, si, sj, 7, vpColor::blue);
@@ -238,7 +244,7 @@ int main(int argc, char **argv)
     // Create a display to show sensor data
     if (isInitialized == false)
     {
-      I.resize(half_size*2, half_size*2);
+      I.resize((unsigned int)half_size*2, (unsigned int)half_size*2);
       I = 255;
 
 #if defined(VISP_HAVE_X11)

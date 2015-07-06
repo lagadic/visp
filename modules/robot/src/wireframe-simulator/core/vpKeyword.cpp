@@ -222,7 +222,7 @@ Index get_symbol (char *ident, int length)
 
 		for (; len != 0; idn++, len--) {
       h = (h << 4) + (unsigned)(*idn);
-			if ((g = h & ~0xfffffff) != 0) {
+      if ((g = h & ~0xfffffff) != 0) {
 				h ^= g >> 24;
 				h ^= g;
 			}
