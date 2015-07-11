@@ -85,6 +85,8 @@
 #  endif
 #endif
 
+#include <visp3/visp_modules.h>
+
 // ViSP major version.
 #define VISP_VERSION_MAJOR ${VISP_VERSION_MAJOR}
 

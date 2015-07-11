@@ -38,44 +38,63 @@
 #
 #############################################################################
 
-# Set SRC_SUBDIRS variable to all the sub directories we want to parse during
-# the build process. 
-#
-# If you add/remove a directory, modify here
+project(ViSP-examples)
 
-set(SRC_SUBDIRS
-  calibration
-  coin-simulator
-  device
-  direct-visual-servoing
-  homography
-  image
-  key-point
-  math
-  manual
-  moments/image
-  moments/points
-  moments/polygon
-  ogre-simulator
-  parse-argv
-  pose-estimation
-  robot-simulator/afma6
-  robot-simulator/camera
-  robot-simulator/viper850
-  servo-afma4
-  servo-afma6
-  servo-biclops
-  servo-pioneer
-  servo-ptu46
-  servo-viper650
-  servo-viper850
-  tools
-  tracking
-  video
-  wireframe-simulator
-)
+cmake_minimum_required(VERSION 2.6)
 
-# Build process propagation in the sub directories
-foreach(subdir ${SRC_SUBDIRS})
-  add_subdirectory(${subdir})
-endforeach()
+find_package(VISP REQUIRED)
+
+if(MSVC)
+  if(NOT VISP_SHARED)
+    foreach(flag_var
+            CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+            CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
+            CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+            CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+      if(${flag_var} MATCHES "/MD")
+        string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+      endif()
+      if(${flag_var} MATCHES "/MDd")
+        string(REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}")
+      endif()
+    endforeach(flag_var)
+
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:atlthunk.lib /NODEFAULTLIB:msvcrt.lib /NODEFAULTLIB:msvcrtd.lib")
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:libcmt.lib")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /NODEFAULTLIB:libcmtd.lib")
+  endif()
+endif()
+
+visp_add_subdirectory(calibration              REQUIRED_DEPS visp_core visp_vision)
+visp_add_subdirectory(coin-simulator           REQUIRED_DEPS visp_core visp_robot visp_vs visp_ar)
+visp_add_subdirectory(device/display           REQUIRED_DEPS visp_core)
+visp_add_subdirectory(device/framegrabber      REQUIRED_DEPS visp_core visp_sensor)
+visp_add_subdirectory(device/kinect            REQUIRED_DEPS visp_core visp_sensor)
+visp_add_subdirectory(device/laserscanner      REQUIRED_DEPS visp_core visp_sensor)
+visp_add_subdirectory(device/light             REQUIRED_DEPS visp_core visp_robot)
+visp_add_subdirectory(direct-visual-servoing   REQUIRED_DEPS visp_core visp_robot)
+visp_add_subdirectory(homography               REQUIRED_DEPS visp_core visp_vision)
+visp_add_subdirectory(image                    REQUIRED_DEPS visp_core)
+visp_add_subdirectory(key-point                REQUIRED_DEPS visp_core visp_vision visp_sensor)
+visp_add_subdirectory(manual                   REQUIRED_DEPS visp_core visp_sensor visp_vs visp_robot visp_ar visp_vision)
+visp_add_subdirectory(math                     REQUIRED_DEPS visp_core visp_vision)
+visp_add_subdirectory(moments/image            REQUIRED_DEPS visp_core visp_vs visp_robot)
+visp_add_subdirectory(moments/points           REQUIRED_DEPS visp_core visp_vs visp_robot)
+visp_add_subdirectory(moments/polygon          REQUIRED_DEPS visp_core visp_vs visp_robot)
+visp_add_subdirectory(ogre-simulator           REQUIRED_DEPS visp_core visp_vision visp_ar)
+visp_add_subdirectory(parse-argv               REQUIRED_DEPS visp_core)
+visp_add_subdirectory(pose-estimation          REQUIRED_DEPS visp_core visp_vision)
+visp_add_subdirectory(robot-simulator/afma6    REQUIRED_DEPS visp_core visp_vs visp_robot)
+visp_add_subdirectory(robot-simulator/camera   REQUIRED_DEPS visp_core visp_vs visp_robot)
+visp_add_subdirectory(robot-simulator/viper850 REQUIRED_DEPS visp_core visp_vs visp_robot)
+visp_add_subdirectory(servo-afma4              REQUIRED_DEPS visp_core visp_vs visp_robot visp_sensor)
+visp_add_subdirectory(servo-afma6              REQUIRED_DEPS visp_core visp_vs visp_robot visp_sensor visp_vision)
+visp_add_subdirectory(servo-biclops            REQUIRED_DEPS visp_core visp_vs visp_robot visp_sensor)
+visp_add_subdirectory(servo-pioneer            REQUIRED_DEPS visp_core visp_vs visp_robot visp_sensor)
+visp_add_subdirectory(servo-ptu46              REQUIRED_DEPS visp_core visp_vs visp_robot visp_sensor)
+visp_add_subdirectory(servo-viper650           REQUIRED_DEPS visp_core visp_vs visp_robot visp_sensor visp_vision)
+visp_add_subdirectory(servo-viper850           REQUIRED_DEPS visp_core visp_vs visp_robot visp_sensor visp_vision)
+visp_add_subdirectory(tools                    REQUIRED_DEPS visp_core)
+visp_add_subdirectory(tracking)
+visp_add_subdirectory(video                    REQUIRED_DEPS visp_core)
+visp_add_subdirectory(wireframe-simulator      REQUIRED_DEPS visp_core visp_robot)

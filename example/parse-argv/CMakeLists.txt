@@ -38,40 +38,24 @@
 #
 #############################################################################
 
-set(EXAMPLES_REQUIRED_DEPS visp_core)
+project(example-parse-argv)
 
-vp_check_dependencies(${EXAMPLES_REQUIRED_DEPS})
+cmake_minimum_required(VERSION 2.6)
 
-if(VP_DEPENDENCIES_FOUND)
+find_package(VISP REQUIRED visp_core)
 
-# SOURCE variable corresponds to the list of all the sources to build binaries.
-# The generate binary comes by removing the .cpp extension to
-# the source name.
-#
-# If you want to add/remove a source, modify here
-set(SOURCE
+set(example_cpp
   parse-argv1.cpp
   parse-argv2.cpp
 )
 
-vp_include_modules_recurse(${EXAMPLES_REQUIRED_DEPS})
-
-# rule for binary build
-foreach(source ${SOURCE})
-  # Compute the name of the binary to create
-  get_filename_component(binary ${source} NAME_WE)
-
-  # From source compile the binary and add link rules
-  add_executable(${binary} ${source})
-  target_link_libraries(${binary} ${EXAMPLES_REQUIRED_DEPS})
+foreach(cpp ${example_cpp})
+  visp_add_target(${cpp})
+  if(COMMAND visp_add_dependency)
+    visp_add_dependency(${cpp} "examples")
+  endif()
 
   # Add test
-  add_test(${binary} ${binary})
-
-  add_dependencies(visp_examples ${binary})
-  if(ENABLE_SOLUTION_FOLDERS)
-    set_target_properties(${binary} PROPERTIES FOLDER "examples")
-  endif()
+  get_filename_component(target ${cpp} NAME_WE)
+  add_test(${target} ${target})
 endforeach()
-
-endif()

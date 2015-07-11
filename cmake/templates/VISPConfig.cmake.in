@@ -298,7 +298,7 @@ endmacro()
 # add subdirectory if dependencies are found
 # visp_add_subdirectory(<subdir> REQUIRED_DEPS <deps>)
 macro(visp_add_subdirectory subdir)
-  set(__condition "")
+  set(__deps "")
 
   foreach(arg ${ARGN})
     if(arg STREQUAL "REQUIRED_DEPS")
@@ -307,6 +307,8 @@ macro(visp_add_subdirectory subdir)
       list(APPEND ${__varname} ${arg})
     endif()
   endforeach()
+  unset(__varname)
+
   if(__deps STREQUAL "")
     set(VP_DEPENDENCIES_FOUND TRUE)
   else()

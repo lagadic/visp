@@ -38,36 +38,21 @@
 #
 #############################################################################
 
-set(EXAMPLES_REQUIRED_DEPS visp_core visp_vision)
+project(example-calibration)
 
-vp_check_dependencies(${EXAMPLES_REQUIRED_DEPS})
+cmake_minimum_required(VERSION 2.6)
 
-if(VP_DEPENDENCIES_FOUND)
+find_package(VISP REQUIRED visp_core visp_vision)
 
-# SOURCE variable corresponds to the list of all the sources to build binaries.
-# The generate binary comes by removing the .cpp extension to
-# the source name.
-#
-# If you want to add/remove a source, modify here
-set(SOURCE
+set(example_cpp
   camera_calibration.cpp
   calibrateTsai.cpp
 )
 
-vp_include_modules_recurse(${EXAMPLES_REQUIRED_DEPS})
-
-# rule for binary build
-foreach(source ${SOURCE})
-  # Compute the name of the binary to create
-  get_filename_component(binary ${source} NAME_WE)
-
-  # From source compile the binary and add link rules
-  add_executable(${binary} ${source})
-  target_link_libraries(${binary} ${EXAMPLES_REQUIRED_DEPS})
-
-  add_dependencies(visp_examples ${binary})
-  if(ENABLE_SOLUTION_FOLDERS)
-    set_target_properties(${binary} PROPERTIES FOLDER "examples")
+foreach(cpp ${example_cpp})
+  visp_add_target(${cpp})
+  if(COMMAND visp_add_dependency)
+    visp_add_dependency(${cpp} "examples")
   endif()
 endforeach()
 
@@ -91,25 +76,7 @@ list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-03.png" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-04.png" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-05.png" )
 
-# Since CMake 3.0.0 policy CMP0026 was introduced to disallow location property on target.
-# If CMake 3.0.0 is used, we use $<TARGET_FILE_DIR:tgt> to get the target location
-if (CMAKE_VERSION VERSION_GREATER 2.8.12)
-  foreach(data ${data2copy})
-    add_custom_command(
-      TARGET camera_calibration
-      POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy "${data}" "$<TARGET_FILE_DIR:camera_calibration"
-    )
-  endforeach()
-else()
-  get_target_property(target_location camera_calibration LOCATION)
-  get_filename_component(target_location "${target_location}" PATH)
-  foreach(data ${data2copy})
-    add_custom_command(
-      TARGET camera_calibration
-      POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy "${data}" "${target_location}"
-    )
-  endforeach()
-endif()
-endif()
+# Copy the data files to the same location than the target
+foreach(data ${data2copy})
+  visp_copy_data(camera_calibration.cpp ${data})
+endforeach()

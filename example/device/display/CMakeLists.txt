@@ -38,18 +38,13 @@
 #
 #############################################################################
 
-set(EXAMPLES_REQUIRED_DEPS visp_core)
+project(example-device-display)
 
-vp_check_dependencies(${EXAMPLES_REQUIRED_DEPS})
+cmake_minimum_required(VERSION 2.6)
 
-if(VP_DEPENDENCIES_FOUND)
+find_package(VISP REQUIRED visp_core)
 
-# SOURCE variable corresponds to the list of all the sources to build binaries.
-# The generate binary comes by removing the .cpp extension to
-# the source name.
-#
-# If you want to add/remove a source, modify here
-set(SOURCE
+set(example_cpp
   displaySequence.cpp
   displayGDI.cpp
   displayD3D.cpp
@@ -59,20 +54,10 @@ set(SOURCE
   displayXMulti.cpp
 )
 
-vp_include_modules_recurse(${EXAMPLES_REQUIRED_DEPS})
-
-# rule for binary build
-foreach(source ${SOURCE})
-  # Compute the name of the binary to create
-  get_filename_component(binary ${source} NAME_WE)
-
-  # From source compile the binary and add link rules
-  add_executable(${binary} ${source})
-  target_link_libraries(${binary} ${EXAMPLES_REQUIRED_DEPS})
-
-  add_dependencies(visp_examples ${binary})
-  if(ENABLE_SOLUTION_FOLDERS)
-    set_target_properties(${binary} PROPERTIES FOLDER "examples")
+foreach(cpp ${example_cpp})
+  visp_add_target(${cpp})
+  if(COMMAND visp_add_dependency)
+    visp_add_dependency(${cpp} "examples")
   endif()
 endforeach()
 
@@ -88,5 +73,3 @@ add_test(displayGTK displayGTK -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(displayX displayX -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(displayOpenCV displayOpenCV -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(displayXMulti displayXMulti -c ${OPTION_TO_DESACTIVE_DISPLAY})
-
-endif()

@@ -46,7 +46,11 @@
   \brief Example of template tracking.
 */
 
+#include <iostream>
 #include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_MODULE_TT) && defined (VISP_HAVE_DISPLAY)
+
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplayD3D.h>
 #include <visp3/core/vpDisplayGTK.h>
@@ -75,15 +79,12 @@
 #include <visp3/tt/vpTemplateTrackerWarpTranslation.h>
 #include <visp3/tt/vpTemplateTrackerWarpRT.h>
 
-#include <visp3/visp_modules.h>
 #ifdef VISP_HAVE_MODULE_TT_MI
 #  include <visp3/tt_mi/vpTemplateTrackerMIESM.h>
 #  include <visp3/tt_mi/vpTemplateTrackerMIForwardAdditional.h>
 #  include <visp3/tt_mi/vpTemplateTrackerMIForwardCompositional.h>
 #  include <visp3/tt_mi/vpTemplateTrackerMIInverseCompositional.h>
 #endif
-
-#if defined (VISP_HAVE_DISPLAY)
 
 #define GETOPTARGS  "cdhi:l:pt:w:"
 
@@ -370,7 +371,9 @@ main(int argc, const char ** argv)
     case WARP_HOMOGRAPHY_SL3: warp = new vpTemplateTrackerWarpHomographySL3; break;
     case WARP_SRT:            warp = new vpTemplateTrackerWarpSRT; break;
     case WARP_TRANSLATION:    warp = new vpTemplateTrackerWarpTranslation;  break;
+#ifdef VISP_HAVE_MODULE_TT_MI
     case WARP_RT:             warp = new vpTemplateTrackerWarpRT; break;
+#endif
     default: return 0;
     }
 
@@ -490,7 +493,7 @@ main(int argc, const char ** argv)
 
 int main()
 {
-  std::cout << "No display is available." << std::endl;
+  std::cout << "visp_tt module or display not available." << std::endl;
   return 0;
 }
 
