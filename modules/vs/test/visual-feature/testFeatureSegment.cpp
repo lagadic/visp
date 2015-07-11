@@ -44,11 +44,10 @@
 #include <vector>
 #include <numeric>
 
-#include <visp3/visp_modules.h>
+#include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_MODULE_ROBOT
 
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpDisplayGDI.h>

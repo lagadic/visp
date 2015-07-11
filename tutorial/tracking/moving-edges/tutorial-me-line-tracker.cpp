@@ -1,5 +1,5 @@
 /*! \example tutorial-me-line-tracker.cpp */
-#include <visp3/visp_modules.h>
+#include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_MODULE_SENSOR
 #include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>

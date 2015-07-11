@@ -1,5 +1,5 @@
 //! \example tutorial-blob-tracker-live-v4l2.cpp
-#include <visp3/visp_modules.h>
+#include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_MODULE_SENSOR
 #include <visp3/sensor/vpV4l2Grabber.h>
 #endif

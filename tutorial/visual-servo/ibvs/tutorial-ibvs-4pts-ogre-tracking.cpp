@@ -1,5 +1,5 @@
 /*! \example tutorial-ibvs-4pts-ogre-tracking.cpp */
-#include <visp3/visp_modules.h>
+#include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_MODULE_AR
 #include <visp3/ar/vpAROgre.h>
 #endif

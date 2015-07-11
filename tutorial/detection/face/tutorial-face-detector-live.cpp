@@ -1,5 +1,5 @@
 //! \example tutorial-face-detector-live.cpp
-#include <visp3/visp_modules.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplayGDI.h>
 #include <visp3/core/vpDisplayOpenCV.h>
 #include <visp3/core/vpDisplayX.h>
