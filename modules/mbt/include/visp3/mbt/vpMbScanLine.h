@@ -56,7 +56,7 @@
 
 #include <visp3/core/vpDisplayX.h>
 
-//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #define DEBUG_DISP // Uncomment to get visibility debug display
 
