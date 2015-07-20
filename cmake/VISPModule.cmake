@@ -703,6 +703,7 @@ endmacro()
 # auxiliary macro to parse arguments of vp_add_tests commands
 macro(__vp_parse_test_sources tests_type)
   set(VISP_${tests_type}_${the_module}_SOURCES "")
+  set(VISP_${tests_type}_${the_module}_SOURCES_EXCLUDE "")
   set(VISP_${tests_type}_${the_module}_DEPS "")
   set(VISP_${tests_type}_${the_module}_CTEST_EXCLUDE_FOLDER "")
   set(__file_group_name "")
@@ -722,6 +723,8 @@ macro(__vp_parse_test_sources tests_type)
       set(__file_group_name "${arg}")
     elseif(arg STREQUAL "CTEST_EXCLUDE_PATH")
       set(__currentvar "VISP_${tests_type}_${the_module}_CTEST_EXCLUDE_FOLDER")
+    elseif(arg STREQUAL "SOURCES_EXCLUDE")
+      set(__currentvar "VISP_${tests_type}_${the_module}_SOURCES_EXCLUDE")
     else()
       list(APPEND ${__currentvar} "${arg}")
     endif()
@@ -732,26 +735,40 @@ macro(__vp_parse_test_sources tests_type)
 endmacro()
 
 # this is a command for adding ViSP tests to the module
-# vp_add_tests([FILES <source group name> <list of sources>] [DEPENDS_ON] <list of extra dependencies>
+# vp_add_tests([FILES <source group name> <list of sources>]
+#              [FILES_EXCLUDE <list of sources>]
+#              [DEPENDS_ON] <list of extra dependencies>
 #              [CTEST_EXCLUDE_FOLDER] <list of folder to exclude from ctest>)
-function(vp_add_tests)
+macro(vp_add_tests)
   vp_debug_message("vp_add_tests(" ${ARGN} ")")
 
   set(test_path "${CMAKE_CURRENT_LIST_DIR}/test")
   if(BUILD_TESTS AND EXISTS "${test_path}")
     __vp_parse_test_sources(TEST ${ARGN})
 
-    set(__exclude "")
+    set(__exclude_ctest "")
     foreach(__folder ${VISP_TEST_${the_module}_CTEST_EXCLUDE_FOLDER} )
       file(GLOB_RECURSE __files "${CMAKE_CURRENT_LIST_DIR}/test/${__folder}/*.cpp")
-      list(APPEND __exclude ${__files})
+      list(APPEND __exclude_ctest ${__files})
     endforeach()
+    set(__exclude_sources "")
+    foreach(__source ${VISP_TEST_${the_module}_SOURCES_EXCLUDE} )
+      file(GLOB __files "${CMAKE_CURRENT_LIST_DIR}/test/${__source}")
+      list(APPEND __exclude_sources ${__files})
+    endforeach()
+
     set(test_deps ${the_module} ${VISP_MODULE_${the_module}_DEPS})
     foreach(d ${VISP_TEST_${the_module}_DEPS})
       set(__m ${VISP_TEST_${the_module}_DEPS})
       list(APPEND test_deps ${__m})
       list(APPEND test_deps ${VISP_MODULE_${__m}_DEPS})
+      # Work arround to be able to build the modules without INTERFACE_INCLUDE_DIRECTORIES
+      # that was only introduces since CMake 2.8.12
+      if (CMAKE_VERSION VERSION_LESS 2.8.12)
+        list(APPEND test_deps "${VISP_MODULE_${__m}_INC_DEPS}")
+      endif()
     endforeach()
+
     vp_check_dependencies(${test_deps})
     if(VP_DEPENDENCIES_FOUND)
       if(NOT VISP_TEST_${the_module}_SOURCES)
@@ -761,22 +778,26 @@ function(vp_add_tests)
       endif()
 
       foreach(t ${VISP_TEST_${the_module}_SOURCES})
-        # Compute the name of the binary to create
-        get_filename_component(the_target ${t} NAME_WE)
-        # From source compile the binary and add link rules
-        vp_add_executable(${the_target} ${t})
-        vp_target_include_modules(${the_target} ${test_deps})
-        vp_target_link_libraries(${the_target} ${test_deps} ${VISP_MODULE_${the_module}_DEPS} ${VISP_LINKER_LIBS})
+        # check if source is not in exclude list
+        list(FIND __exclude_sources ${t} __to_exclude_from_sources)
+        if(${__to_exclude_from_sources} EQUAL -1)
+          # Compute the name of the binary to create
+          get_filename_component(the_target ${t} NAME_WE)
+          # From source compile the binary and add link rules
+          vp_add_executable(${the_target} ${t})
+          vp_target_include_modules(${the_target} ${test_deps})
+          vp_target_link_libraries(${the_target} ${test_deps} ${VISP_MODULE_${the_module}_DEPS} ${VISP_LINKER_LIBS})
 
-        # ctest only if not in the exclude list
-        list(FIND __exclude ${t} __to_exclude)
-        if(${__to_exclude} EQUAL -1)
-          add_test(${the_target} ${the_target} -c ${OPTION_TO_DESACTIVE_DISPLAY})
-        endif()
-        # TODO FS add visp_test_${name} target to group all the tests
-        add_dependencies(visp_tests ${the_target})
-        if(ENABLE_SOLUTION_FOLDERS)
-          set_target_properties(${the_target} PROPERTIES FOLDER "tests")
+          # ctest only if not in the exclude list
+          list(FIND __exclude_ctest ${t} __to_exclude_from_ctest)
+          if(${__to_exclude_from_ctest} EQUAL -1)
+            add_test(${the_target} ${the_target} -c ${OPTION_TO_DESACTIVE_DISPLAY})
+          endif()
+          # TODO FS add visp_test_${name} target to group all the tests
+          add_dependencies(visp_tests ${the_target})
+          if(ENABLE_SOLUTION_FOLDERS)
+            set_target_properties(${the_target} PROPERTIES FOLDER "tests")
+          endif()
         endif()
       endforeach()
 
@@ -785,7 +806,7 @@ function(vp_add_tests)
     endif(VP_DEPENDENCIES_FOUND)
 
   endif()
-endfunction()
+endmacro()
 
 # setup include paths for the list of passed modules
 macro(vp_include_modules)
