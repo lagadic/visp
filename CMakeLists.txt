@@ -286,7 +286,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Add extra compilation flags under UNIX
 #-----------------------------------------------------------------------------
-include(cmake/AddExtraCompilationFlags.cmake)
+include(cmake/AddExtraCompilationFlags.cmake) # should be called after FindOpenMP
 vp_add_extra_compilation_flags()
 
 # ----------------------------------------------------------------------------
