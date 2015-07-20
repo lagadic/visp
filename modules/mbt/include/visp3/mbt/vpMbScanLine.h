@@ -46,6 +46,7 @@
 #include <list>
 #include <deque>
 #include <set>
+#include <map>
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpCameraParameters.h>
