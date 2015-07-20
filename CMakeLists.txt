@@ -147,12 +147,6 @@ if(UNIX)
   list(APPEND CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules")
 endif(UNIX)
 
-#-----------------------------------------------------------------------------
-# Add extra compilation flags under UNIX
-#-----------------------------------------------------------------------------
-include(cmake/AddExtraCompilationFlags.cmake)
-vp_add_extra_compilation_flags()
-
 #--------------------------------------------------------------------
 # Option management
 #--------------------------------------------------------------------
@@ -247,6 +241,220 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 # bar codes
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON)
+
+
+#----------------------------------------------------------------------
+# Try to find doxygen for documentation generation
+# Use "make visp_doc" target to generate the documentation
+#----------------------------------------------------------------------
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+  set(VISP_HAVE_DOXYGEN "yes")        # for header vpConfig.h
+  set(VISP_HAVE_DOXYGEN_FOUND "yes")  # for ViSP-third-party.txt
+  if(DOXYGEN_DOT_EXECUTABLE)
+    set(VISP_HAVE_DOT "yes")        # for header vpConfig.h
+    set(VISP_HAVE_DOT_FOUND "yes")  # for ViSP-third-party.txt
+  else()
+    set(VISP_HAVE_DOT "no")        # for header vpConfig.h
+    set(VISP_HAVE_DOT_FOUND "no")  # for ViSP-third-party.txt
+  endif()
+  ## we need latex for doxygen because of the formulas
+  find_package(LATEX)
+  if(NOT LATEX_COMPILER)
+    message(STATUS "latex command LATEX_COMPILER not found but usually required. You will probably get warnings and user interaction on doxy run.")
+  endif()
+  if(NOT MAKEINDEX_COMPILER)
+    message(STATUS "makeindex command MAKEINDEX_COMPILER not found but usually required.")
+  endif()
+  if(NOT DVIPS_CONVERTER)
+    message(STATUS "dvips command DVIPS_CONVERTER not found but usually required.")
+  endif()
+
+  configure_file(${VISP_SOURCE_DIR}/doc/config-doxygen.in
+    ${VISP_DOC_DIR}/config-doxygen
+    @ONLY )
+
+  configure_file(${VISP_SOURCE_DIR}/doc/mainpage.doc.in
+    ${VISP_DOC_DIR}/mainpage.doc
+    @ONLY )
+else()
+  set(VISP_HAVE_DOXYGEN "no")        # for header vpConfig.h
+  set(VISP_HAVE_DOXYGEN_FOUND "no")  # for ViSP-third-party.txt
+  set(VISP_HAVE_DOT_FOUND "no")      # for ViSP-third-party.txt
+endif()
+
+#-----------------------------------------------------------------------------
+# Add extra compilation flags under UNIX
+#-----------------------------------------------------------------------------
+include(cmake/AddExtraCompilationFlags.cmake)
+vp_add_extra_compilation_flags()
+
+# ----------------------------------------------------------------------------
+# Solution folders:
+# ----------------------------------------------------------------------------
+if(MSVC_IDE OR CMAKE_GENERATOR MATCHES Xcode)
+  option(ENABLE_SOLUTION_FOLDERS "Solution folder in Visual Studio or in other IDEs" ON)
+endif()
+
+if(ENABLE_SOLUTION_FOLDERS)
+  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+  set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
+endif()
+
+# Extra ViSP targets: uninstall, etc.
+include(cmake/VISPExtraTargets.cmake)
+
+include(CheckLibraryExists)
+
+# ----------------------------------------------------------------------------
+# Check for system libs
+# ----------------------------------------------------------------------------
+if(UNIX)
+  # try to found -lm requested on some platforms to link with X11
+  find_library(M_LIBRARY NAMES m)
+  mark_as_advanced(M_LIBRARY)
+  if(M_LIBRARY)
+    list(APPEND VISP_LINKER_LIBS ${M_LIBRARY})
+  endif()
+  # try to found -lsocket -lnsl requested for vpNetwork and vpSickLDMRS
+  find_library(SOCKET_LIBRARY NAMES socket)
+  find_library(NSL_LIBRARY NAMES nsl)
+  mark_as_advanced(SOCKET_LIBRARY NSL_LIBRARY)
+  if (SOCKET_LIBRARY)
+    list(APPEND VISP_LINKER_LIBS ${SOCKET_LIBRARY})
+  endif()
+  if (NSL_LIBRARY)
+    list(APPEND VISP_LINKER_LIBS ${NSL_LIBRARY})
+  endif()
+endif()
+
+#----------------------------------------------------------------------
+# For Dart server and tests
+# We use CDash set through CTestConfig.cmake file
+# Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
+#----------------------------------------------------------------------
+if(BUILD_TESTS)
+  enable_testing()
+  include(CTest)
+  mark_as_advanced(DART_ROOT)
+  mark_as_advanced(BUILD_TESTING)
+endif()
+
+#----------------------------------------------------------------------
+# Add definitions
+#----------------------------------------------------------------------
+# With Visual Studio 2005, Microsoft deprecates the standard C library, for
+# example fopen() and sprintf(), to non-portable functions fopen_s() and
+# sprintf_s(). These functions are considered by Microsoft more secure. This is
+# a worthwhile exercise ! The use of these deprecated functions causes a lot of
+# warnings. To suppress it, we add the _CRT_SECURE_NO_DEPRECATE preprocessor
+# definition
+if(WIN32 AND MSVC)
+  add_definitions("-D_CRT_SECURE_NO_DEPRECATE")
+endif()
+
+#----------------------------------------------------------------------
+# Use statically or dynamically linked CRT?
+# Default: dynamic
+#----------------------------------------------------------------------
+if(MSVC)
+   include(cmake/VISPCRTLinkage.cmake)
+endif(MSVC)
+
+#----------------------------------------------------------------------
+# Platform specific
+#----------------------------------------------------------------------
+include(cmake/VISPDetectPlatform.cmake)
+
+# Set the path where to install the lib
+if(WIN32)
+  if(DEFINED VISP_RUNTIME AND DEFINED VISP_ARCH)
+    set(VISP_INSTALL_BINARIES_PREFIX "${VISP_ARCH}/${VISP_RUNTIME}/")
+  else()
+    message(STATUS "Can't detect runtime and/or arch")
+    set(VISP_INSTALL_BINARIES_PREFIX "")
+  endif()
+else()
+  set(VISP_INSTALL_BINARIES_PREFIX "")
+endif()
+
+# where to install the library
+if(WIN32)
+  if(VISP_STATIC)
+    set(VISP_LIB_INSTALL_PATH   "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
+  else()
+    set(VISP_LIB_INSTALL_PATH   "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}")
+  endif()
+  set(VISP_BIN_INSTALL_PATH   "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_BINDIR}")
+else()
+  set(VISP_LIB_INSTALL_PATH     ${CMAKE_INSTALL_LIBDIR})
+  set(VISP_BIN_INSTALL_PATH     ${CMAKE_INSTALL_BINDIR})
+endif()
+
+
+#----------------------------------------------------------------------
+# Configure the files that depend on the build <binary dir> or
+# installation <install dir> usage. This is the case of:
+# vpConfig.h
+#----------------------------------------------------------------------
+
+# case 1: when ViSP is build with make; files are used in <binary dir>
+#--------------
+set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${VISP_BINARY_DIR}")
+
+set(VISP_SCENES_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/wireframe-simulator)
+set(VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/robot-simulator)
+    
+# case 2: when ViSP is build with make install; files are used in <install dir>
+#--------------
+IF(UNIX)
+  set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
+ELSE()
+  set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
+ENDIF()
+
+list(APPEND VISP_SCENES_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/wireframe-simulator)
+list(APPEND VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/robot-simulator)
+# Only if resources.cfg created by hand, we change the path to resources.cfg in install/vpConfig.h
+if(VISP_INSTALL_DIR_OGRE_RESOURCES)
+  list(APPEND VISP_HAVE_OGRE_RESOURCES_PATH "${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/ogre-simulator")
+endif()
+# append to VISP_HAVE_OGRE_PLUGINS_PATH the path of the installed plugins.cfg file
+# to be able to use ViSP from build tree or install tree
+if(VISP_INSTALL_DIR_OGRE_RESOURCES)
+  list(APPEND VISP_HAVE_OGRE_PLUGINS_PATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/visp/data/ogre-simulator")
+endif()
+
+#----------------------------------------------------------------------
+# Create and install visp-config.1.gz man page
+#----------------------------------------------------------------------
+if(UNIX)
+  FIND_PROGRAM(GZIP gzip)
+  file(MAKE_DIRECTORY ${VISP_BINARY_DIR}/doc/man/man1)
+  ADD_CUSTOM_COMMAND(
+    OUTPUT ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+    COMMAND ${GZIP} --best -c ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1 > ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1
+  )
+  ADD_CUSTOM_TARGET(man ALL
+    DEPENDS ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+  )
+  INSTALL(FILES
+    ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/man/man1
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+    COMPONENT dev
+  )
+  MARK_AS_ADVANCED(GZIP)
+endif()
+
+#----------------------------------------------------------------------
+# Modules
+#----------------------------------------------------------------------
+include(cmake/VISPModule.cmake)
+
+# process subdirectories
+add_subdirectory(modules)
 
 #-------------------------------------------------------------------------------
 # specific things that need to be updated in vpConfig.h and ViSP-third-party.txt
@@ -440,213 +648,6 @@ if(USE_VIPER850)
 else()
   set(VISP_HAVE_VIPER850_FOUND "no")  # for ViSP-third-party.txt
 endif()
-
-#----------------------------------------------------------------------
-# Try to find doxygen for documentation generation
-# Use "make visp_doc" target to generate the documentation
-#----------------------------------------------------------------------
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-  set(VISP_HAVE_DOXYGEN "yes")        # for header vpConfig.h
-  set(VISP_HAVE_DOXYGEN_FOUND "yes")  # for ViSP-third-party.txt
-  if(DOXYGEN_DOT_EXECUTABLE)
-    set(VISP_HAVE_DOT "yes")        # for header vpConfig.h
-    set(VISP_HAVE_DOT_FOUND "yes")  # for ViSP-third-party.txt
-  else()
-    set(VISP_HAVE_DOT "no")        # for header vpConfig.h
-    set(VISP_HAVE_DOT_FOUND "no")  # for ViSP-third-party.txt
-  endif()
-  ## we need latex for doxygen because of the formulas
-  find_package(LATEX)
-  if(NOT LATEX_COMPILER)
-    message(STATUS "latex command LATEX_COMPILER not found but usually required. You will probably get warnings and user interaction on doxy run.")
-  endif()
-  if(NOT MAKEINDEX_COMPILER)
-    message(STATUS "makeindex command MAKEINDEX_COMPILER not found but usually required.")
-  endif()
-  if(NOT DVIPS_CONVERTER)
-    message(STATUS "dvips command DVIPS_CONVERTER not found but usually required.")
-  endif()
-
-  configure_file(${VISP_SOURCE_DIR}/doc/config-doxygen.in
-    ${VISP_DOC_DIR}/config-doxygen
-    @ONLY )
-
-  configure_file(${VISP_SOURCE_DIR}/doc/mainpage.doc.in
-    ${VISP_DOC_DIR}/mainpage.doc
-    @ONLY )
-else()
-  set(VISP_HAVE_DOXYGEN "no")        # for header vpConfig.h
-  set(VISP_HAVE_DOXYGEN_FOUND "no")  # for ViSP-third-party.txt
-  set(VISP_HAVE_DOT_FOUND "no")      # for ViSP-third-party.txt
-endif()
-
-# ----------------------------------------------------------------------------
-# Solution folders:
-# ----------------------------------------------------------------------------
-if(MSVC_IDE OR CMAKE_GENERATOR MATCHES Xcode)
-  option(ENABLE_SOLUTION_FOLDERS "Solution folder in Visual Studio or in other IDEs" ON)
-endif()
-
-if(ENABLE_SOLUTION_FOLDERS)
-  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-  set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
-endif()
-
-# Extra ViSP targets: uninstall, etc.
-include(cmake/VISPExtraTargets.cmake)
-
-include(CheckLibraryExists)
-
-# ----------------------------------------------------------------------------
-# Check for system libs
-# ----------------------------------------------------------------------------
-if(UNIX)
-  # try to found -lm requested on some platforms to link with X11
-  find_library(M_LIBRARY NAMES m)
-  mark_as_advanced(M_LIBRARY)
-  if(M_LIBRARY)
-    list(APPEND VISP_LINKER_LIBS ${M_LIBRARY})
-  endif()
-  # try to found -lsocket -lnsl requested for vpNetwork and vpSickLDMRS
-  find_library(SOCKET_LIBRARY NAMES socket)
-  find_library(NSL_LIBRARY NAMES nsl)
-  mark_as_advanced(SOCKET_LIBRARY NSL_LIBRARY)
-  if (SOCKET_LIBRARY)
-    list(APPEND VISP_LINKER_LIBS ${SOCKET_LIBRARY})
-  endif()
-  if (NSL_LIBRARY)
-    list(APPEND VISP_LINKER_LIBS ${NSL_LIBRARY})
-  endif()
-endif()
-
-#----------------------------------------------------------------------
-# For Dart server and tests
-# We use CDash set through CTestConfig.cmake file
-# Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
-#----------------------------------------------------------------------
-if(BUILD_TESTS)
-  enable_testing()
-  include(CTest)
-  mark_as_advanced(DART_ROOT)
-  mark_as_advanced(BUILD_TESTING)
-endif()
-
-#----------------------------------------------------------------------
-# Add definitions
-#----------------------------------------------------------------------
-# With Visual Studio 2005, Microsoft deprecates the standard C library, for
-# example fopen() and sprintf(), to non-portable functions fopen_s() and
-# sprintf_s(). These functions are considered by Microsoft more secure. This is
-# a worthwhile exercise ! The use of these deprecated functions causes a lot of
-# warnings. To suppress it, we add the _CRT_SECURE_NO_DEPRECATE preprocessor
-# definition
-if(WIN32 AND MSVC)
-  add_definitions("-D_CRT_SECURE_NO_DEPRECATE")
-endif()
-
-#----------------------------------------------------------------------
-# Use statically or dynamically linked CRT?
-# Default: dynamic
-#----------------------------------------------------------------------
-if(MSVC)
-   include(cmake/VISPCRTLinkage.cmake)
-endif(MSVC)
-
-#----------------------------------------------------------------------
-# Platform specific
-#----------------------------------------------------------------------
-include(cmake/VISPDetectPlatform.cmake)
-
-# Set the path where to install the lib
-if(WIN32)
-  if(DEFINED VISP_RUNTIME AND DEFINED VISP_ARCH)
-    set(VISP_INSTALL_BINARIES_PREFIX "${VISP_ARCH}/${VISP_RUNTIME}/")
-  else()
-    message(STATUS "Can't detect runtime and/or arch")
-    set(VISP_INSTALL_BINARIES_PREFIX "")
-  endif()
-else()
-  set(VISP_INSTALL_BINARIES_PREFIX "")
-endif()
-
-# where to install the library
-if(WIN32)
-  if(VISP_STATIC)
-    set(VISP_LIB_INSTALL_PATH   "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
-  else()
-    set(VISP_LIB_INSTALL_PATH   "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}")
-  endif()
-  set(VISP_BIN_INSTALL_PATH   "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_BINDIR}")
-else()
-  set(VISP_LIB_INSTALL_PATH     ${CMAKE_INSTALL_LIBDIR})
-  set(VISP_BIN_INSTALL_PATH     ${CMAKE_INSTALL_BINDIR})
-endif()
-
-
-#----------------------------------------------------------------------
-# Configure the files that depend on the build <binary dir> or
-# installation <install dir> usage. This is the case of:
-# vpConfig.h
-#----------------------------------------------------------------------
-
-# case 1: when ViSP is build with make; files are used in <binary dir>
-#--------------
-set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${VISP_BINARY_DIR}")
-
-set(VISP_SCENES_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/wireframe-simulator)
-set(VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/robot-simulator)
-    
-# case 2: when ViSP is build with make install; files are used in <install dir>
-#--------------
-IF(UNIX)
-  set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
-ELSE()
-  set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
-ENDIF()
-
-list(APPEND VISP_SCENES_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/wireframe-simulator)
-list(APPEND VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/robot-simulator)
-# Only if resources.cfg created by hand, we change the path to resources.cfg in install/vpConfig.h
-if(VISP_INSTALL_DIR_OGRE_RESOURCES)
-  list(APPEND VISP_HAVE_OGRE_RESOURCES_PATH "${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/ogre-simulator")
-endif()
-# append to VISP_HAVE_OGRE_PLUGINS_PATH the path of the installed plugins.cfg file
-# to be able to use ViSP from build tree or install tree
-if(VISP_INSTALL_DIR_OGRE_RESOURCES)
-  list(APPEND VISP_HAVE_OGRE_PLUGINS_PATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/visp/data/ogre-simulator")
-endif()
-
-#----------------------------------------------------------------------
-# Create and install visp-config.1.gz man page
-#----------------------------------------------------------------------
-if(UNIX)
-  FIND_PROGRAM(GZIP gzip)
-  file(MAKE_DIRECTORY ${VISP_BINARY_DIR}/doc/man/man1)
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-    COMMAND ${GZIP} --best -c ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1 > ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1
-  )
-  ADD_CUSTOM_TARGET(man ALL
-    DEPENDS ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-  )
-  INSTALL(FILES
-    ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/man/man1
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
-    COMPONENT dev
-  )
-  MARK_AS_ADVANCED(GZIP)
-endif()
-
-#----------------------------------------------------------------------
-# Modules
-#----------------------------------------------------------------------
-include(cmake/VISPModule.cmake)
-
-# process subdirectories
-add_subdirectory(modules)
 
 # ----------------------------------------------------------------------------
 # Finalization: generate configuration-based files
