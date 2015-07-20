@@ -337,6 +337,7 @@ SET (SRC_TRACKING
   tracking/moving-edges/vpMeNurbs.cpp
 
   tracking/mbt/vpMbTracker.cpp
+  tracking/mbt/vpMbScanLine.cpp
   tracking/mbt/vpMbtPolygon.cpp
   tracking/mbt/edge/vpMbEdgeTracker.cpp
   tracking/mbt/edge/vpMbtDistanceCircle.cpp

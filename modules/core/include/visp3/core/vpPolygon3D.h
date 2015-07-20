@@ -47,11 +47,12 @@
 #ifndef vpPolygon3D_HH
 #define vpPolygon3D_HH
 
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-
 #include <vector>
+
+#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpMeterPixelConversion.h>
+
 
 /*!
   \class vpPolygon3D
@@ -83,7 +84,7 @@ public:
   //! corners in the object frame
   vpPoint *p;
   //! Region of interest clipped
-  std::vector<std::pair<vpPoint,unsigned int> > roiPointsClip;
+  std::vector<std::pair<vpPoint,unsigned int> > polyClipped;
   //! Clipping flag
   unsigned int clippingFlag;
   //! Distance for near clipping
@@ -112,7 +113,7 @@ public:
           
             void          changeFrame(const vpHomogeneousMatrix &cMo) ;
             
-            void          computeRoiClipped(const vpCameraParameters &cam = vpCameraParameters());
+            void          computePolygonClipped(const vpCameraParameters &cam = vpCameraParameters());
    
   /*!
     Get the clipping used.
@@ -157,9 +158,7 @@ public:
             
   std::vector<vpImagePoint> getRoi(const vpCameraParameters &cam);
 
-  std::vector<vpImagePoint> getRoi(const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo);
-
-            void          getRoiClipped(std::vector<vpPoint> &points);
+  std::vector<vpImagePoint> getRoi(const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo);       
 
             void          getRoiClipped(const vpCameraParameters &cam, std::vector<vpImagePoint>&roi);
 
@@ -168,6 +167,17 @@ public:
             void          getRoiClipped(const vpCameraParameters &cam, std::vector<std::pair<vpImagePoint,unsigned int> > &roi);
 
             void          getRoiClipped(const vpCameraParameters &cam, std::vector<std::pair<vpImagePoint,unsigned int> > &roi, const vpHomogeneousMatrix &cMo);
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  vp_deprecated void      getRoiClipped(std::vector<vpPoint> &points);
+#endif
+
+            void          getPolygonClipped(std::vector<std::pair<vpPoint,unsigned int> > &poly);
+
+            void          getPolygonClipped(std::vector<vpPoint> &poly);
 
             vpPolygon3D& operator=(const vpPolygon3D& mbtp) ;
 

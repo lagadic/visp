@@ -84,6 +84,8 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
   
   initPyramid(I, Ipyramid);
 
+  vpMbEdgeTracker::resetMovingEdge();
+
   unsigned int i = (unsigned int)scales.size();
   do {
     i--;
@@ -110,36 +112,13 @@ void
 vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
 {
     vpMbKltTracker::setPose(I, cdMo);
-    
-    if (! lines[scaleLevel].empty()) {
-      for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
-        if((*it)->meline != NULL){
-          delete (*it)->meline;
-          (*it)->meline = NULL;
-        }
-      }
-    }
-    
-    if (! cylinders[scaleLevel].empty()) {
-      for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
-        if((*it)->meline1 != NULL){
-          delete (*it)->meline1;
-          (*it)->meline1 = NULL;
-        }
-        if((*it)->meline2 != NULL){
-          delete (*it)->meline2;
-          (*it)->meline2 = NULL;
-        }
-      }
-    }
 
-    if (! circles[scaleLevel].empty()) {
-      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
-        if((*it)->meEllipse != NULL){
-          delete (*it)->meEllipse;
-          (*it)->meEllipse = NULL;
-        }
-      }
+    resetMovingEdge();
+
+    if(useScanLine){
+      cam.computeFov(I.getWidth(), I.getHeight());
+      faces.computeClippedPolygons(cMo,cam);
+      faces.computeScanLineRender(cam, I.getWidth(), I.getHeight());
     }
 
     initPyramid(I, Ipyramid);
@@ -184,7 +163,7 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
     l = *it;
 
     if(l->isVisible() && l->isTracked()){
-      nbrow += l->nbFeature ;
+      nbrow += l->nbFeatureTotal ;
       l->initInteractionMatrixError() ;
     }
   }
@@ -361,6 +340,10 @@ vpMbEdgeKltTracker::loadConfigFile(const char* configFile)
   tracker.setBlockSize((int)xmlp.getBlockSize());
   tracker.setPyramidLevels((int)xmlp.getPyramidLevels());
   maskBorder = xmlp.getMaskBorder();
+
+  //if(useScanLine)
+  faces.getMbScanLineRenderer().setMaskBorder(maskBorder);
+
 #else
   vpTRACE("You need the libXML2 to read the config file %s", configFile);
 #endif
@@ -404,10 +387,16 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
       }
     }
   }
-  
-  vpMbEdgeTracker::updateMovingEdge(I);
 
   bool reInit = vpMbKltTracker::postTracking(I, w_klt);
+
+  if(useScanLine){
+    cam.computeFov(I.getWidth(), I.getHeight());
+    faces.computeClippedPolygons(cMo,cam);
+    faces.computeScanLineRender(cam, I.getWidth(), I.getHeight());
+  }
+
+  vpMbEdgeTracker::updateMovingEdge(I);
   
   vpMbEdgeTracker::initMovingEdge(I, cMo) ;
   vpMbEdgeTracker::reinitMovingEdge(I, cMo);
@@ -437,30 +426,37 @@ vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
   if(lvl  >= scales.size() || !scales[lvl]){
     throw vpException(vpException::dimensionError, "_lvl not used.");
   }
+
   unsigned int n =0 ;
   vpMbtDistanceLine* l;
-  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
+  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
     if((*it)->isTracked()){
       l = *it;
+      unsigned int indexLine = 0;
       double wmean = 0 ;
-      std::list<vpMeSite>::iterator itListLine;
-      if (l->nbFeature > 0) itListLine = l->meline->getMeList().begin();
 
-      for (unsigned int i=0 ; i < l->nbFeature ; i++){
-        wmean += w[n+i] ;
-        vpMeSite p = *itListLine;
-        if (w[n+i] < 0.5){
-          p.setState(vpMeSite::M_ESTIMATOR);
+      for(unsigned int a = 0 ; a < l->meline.size() ; a++)
+      {
+        std::list<vpMeSite>::iterator itListLine;
+        if (l->nbFeature[a] > 0) itListLine = l->meline[a]->getMeList().begin();
 
-          *itListLine = p;
+        for (unsigned int i=0 ; i < l->nbFeature[a] ; i++){
+          wmean += w[n+indexLine] ;
+          vpMeSite p = *itListLine;
+          if (w[n+indexLine] < 0.5){
+            p.setState(vpMeSite::M_ESTIMATOR);
+            *itListLine = p;
+          }
+
+          ++itListLine;
+          indexLine++;
         }
-
-        ++itListLine;
       }
-      n+= l->nbFeature ;
 
-      if (l->nbFeature!=0)
-        wmean /= l->nbFeature ;
+      n+= l->nbFeatureTotal ;
+
+      if (l->nbFeatureTotal!=0)
+        wmean /= l->nbFeatureTotal ;
       else
         wmean = 1;
 
@@ -890,17 +886,23 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
         }
       }
 
-      std::list<vpMeSite>::const_iterator itListLine;
-      if (l->meline != NULL)
-        itListLine = l->meline->getMeList().begin();
+      unsigned int indexFeature = 0;
+      for(unsigned int a = 0 ; a < l->meline.size(); a++){
+        std::list<vpMeSite>::const_iterator itListLine;
+        if (l->meline[a] != NULL)
+        {
+          itListLine = l->meline[a]->getMeList().begin();
 
-      for (unsigned int i=0 ; i < l->nbFeature ; i++){
-          factor[n+i] = fac;
-          vpMeSite site = *itListLine;
-          if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
-          ++itListLine;
+          for (unsigned int i=0 ; i < l->nbFeature[a] ; i++){
+              factor[n+i] = fac;
+              vpMeSite site = *itListLine;
+              if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
+              ++itListLine;
+              indexFeature++;
+          }
+          n+= l->nbFeature[a] ;
+        }
       }
-      n+= l->nbFeature ;
     }
   }
   
@@ -973,13 +975,13 @@ vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& I,  vpMatrix &
     if((*it)->isTracked()){
       l = *it;
       l->computeInteractionMatrixError(cMo_) ;
-      for (unsigned int i=0 ; i < l->nbFeature ; i++){
+      for (unsigned int i=0 ; i < l->nbFeatureTotal ; i++){
         for (unsigned int j=0; j < 6 ; j++){
           L[n+i][j] = l->L[i][j];
           error[n+i] = l->error[i];
         }
       }
-      n+= l->nbFeature;
+      n+= l->nbFeatureTotal;
     }
   }
   
@@ -1209,7 +1211,4 @@ vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad
   vpMbEdgeTracker::reInitModel(I, cad_name, cMo_, verbose);
 }
 
-#elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_mbt.a(vpMbEdgeKltTracker.cpp.o) has no symbols
-void dummy_vpMbEdgeKltTracker() {};
 #endif //VISP_HAVE_OPENCV

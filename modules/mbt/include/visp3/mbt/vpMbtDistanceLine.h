@@ -75,14 +75,18 @@ class VISP_EXPORT vpMbtDistanceLine
     vpMe *me;
     bool isTrackedLine;
     bool isTrackedLineWithVisibility;
+    double alpha;
     double wmean;
     vpFeatureLine featureline ;
     //! Polygon describing the line
     vpMbtPolygon poly;
     
   public: 
+    //! Use scanline rendering
+    bool useScanLine;
     //! The moving edge container
-    vpMbtMeLine *meline;
+    //vpMbtMeLine *meline;
+    std::vector<vpMbtMeLine*> meline;
     //! The 3D line
     vpLine *line;
     //! The first extremity
@@ -94,7 +98,10 @@ class VISP_EXPORT vpMbtDistanceLine
     //! The error vector
     vpColVector error;
     //! The number of moving edges
-    unsigned int nbFeature;
+    //unsigned int nbFeature;
+    std::vector<unsigned int> nbFeature;
+    //! The number of moving edges
+    unsigned int nbFeatureTotal;
     //! Indicates if the line has to be reinitialized
     bool Reinit;
     //! Pointer to the list of faces

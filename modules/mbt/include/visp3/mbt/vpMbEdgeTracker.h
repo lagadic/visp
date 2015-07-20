@@ -105,13 +105,13 @@
   The following code shows the simplest way to use the tracker.
 
 \code
-#include <visp3/mbt/vpMbEdgeTracker.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp/vpMbEdgeTracker.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpException.h>
+#include <visp/vpDisplayX.h>
 
 int main()
 {
@@ -145,10 +145,8 @@ int main()
     vpDisplay::flush(I);
   }
 
-#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
   vpXmlParser::cleanup();
-#endif
 
   return 0;
 }
@@ -171,10 +169,8 @@ int main()
   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
   ...
-#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
   vpXmlParser::cleanup();
-#endif
 \endcode
 
   The tracker can also be used without display, in that case the initial pose
@@ -182,11 +178,11 @@ int main()
   using another method:
 
 \code
-#include <visp3/mbt/vpMbEdgeTracker.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp/vpMbEdgeTracker.h>
+#include <visp/vpImage.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpImageIo.h>
 
 int main()
 {
@@ -209,10 +205,9 @@ int main()
     tracker.getPose(cMo); // get the pose 
   }
   
-#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
   vpXmlParser::cleanup();
-#endif
+
   return 0;
 }
 \endcode
@@ -221,12 +216,12 @@ int main()
   given pose:
 
 \code
-#include <visp3/mbt/vpMbEdgeTracker.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp/vpMbEdgeTracker.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpDisplayX.h>
 
 int main()
 {
@@ -257,10 +252,9 @@ int main()
     vpDisplay::flush(I);
   }
   
-#if defined VISP_HAVE_XML2
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeTracker::loadConfigFile()
   vpXmlParser::cleanup();
-#endif
+
   return 0;
 }
 \endcode
@@ -420,6 +414,23 @@ public:
   }
 
   /*!
+    Use Scanline algorithm for visibility tests
+
+    \param v : True to use it, False otherwise
+  */
+  virtual void setScanLineVisibilityTest(const bool &v){
+    vpMbTracker::setScanLineVisibilityTest(v);
+
+    for (unsigned int i = 0; i < scales.size(); i += 1){
+      if(scales[i]){
+        for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
+          (*it)->useScanLine = v;
+        }
+      }
+    }
+  }
+
+  /*!
      Set the threshold value between 0 and 1 over good moving edges ratio. It allows to
      decide if the tracker has enough valid moving edges to compute a pose. 1 means that all
      moving edges should be considered as good to have a valid pose, while 0.1 means that
@@ -474,6 +485,7 @@ protected:
   void removeCircle(const std::string& name);
   void removeCylinder(const std::string& name);
   void removeLine(const std::string& name);
+  void resetMovingEdge();
   void testTracking();
   void trackMovingEdge(const vpImage<unsigned char> &I) ;
   void updateMovingEdge(const vpImage<unsigned char> &I) ;

@@ -60,9 +60,9 @@ void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L);
   Basic constructor
 */
 vpMbtDistanceLine::vpMbtDistanceLine()
-  : name(), index(0), cam(), me(NULL), isTrackedLine(true), isTrackedLineWithVisibility(true),
-    wmean(1), featureline(), poly(), meline(NULL), line(NULL), p1(NULL), p2(NULL), L(),
-    error(), nbFeature(0), Reinit(false), hiddenface(NULL), Lindex_polygon(),
+  : name(), index(0), cam(), me(NULL), isTrackedLine(true), isTrackedLineWithVisibility(true), alpha(0),
+    wmean(1), featureline(), poly(), useScanLine(false), meline(), line(NULL), p1(NULL), p2(NULL), L(),
+    error(), nbFeature(), nbFeatureTotal(0), Reinit(false), hiddenface(NULL), Lindex_polygon(),
     Lindex_polygon_tracked(), isvisible(false)
 {
 }
@@ -74,8 +74,11 @@ vpMbtDistanceLine::~vpMbtDistanceLine()
 {
 //	cout << "Deleting line " << index << endl ;
   if (line != NULL) delete line ;
-  if (meline != NULL) delete meline ;
 
+  for(unsigned int i = 0 ; i < meline.size() ; i++)
+    if (meline[i] != NULL) delete meline[i] ;
+
+  meline.clear();
 }
 
 /*!
@@ -294,11 +297,16 @@ void
 vpMbtDistanceLine::setMovingEdge(vpMe *_me)
 {
   me = _me ;
-  if (meline != NULL)
-  {
-    meline->reset();
-    meline->setMe(me) ;
-  }
+
+  for(unsigned int i = 0 ; i < meline.size() ; i++)
+    if (meline[i] != NULL)
+    {
+//      nbFeature[i] = 0;
+      meline[i]->reset();
+      meline[i]->setMe(me) ;
+    }
+
+//  nbFeatureTotal = 0;
 }
 
 
@@ -313,62 +321,104 @@ vpMbtDistanceLine::setMovingEdge(vpMe *_me)
 bool
 vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
-  if(isvisible){
+  for(unsigned int i = 0 ; i < meline.size() ; i++){
+    if (meline[i] != NULL) delete meline[i] ;
+  }
+
+  meline.clear();
+  nbFeature.clear();
+  nbFeatureTotal = 0;
+
+  if(isvisible)
+  {
     p1->changeFrame(cMo);
     p2->changeFrame(cMo);
-    
+
     if(poly.getClipping() > 3) // Contains at least one FOV constraint
       cam.computeFov(I.getWidth(), I.getHeight());
-    
-    poly.computeRoiClipped(cam);
-    
-    if(poly.roiPointsClip.size() == 2){ //Les points sont visibles.
-      vpImagePoint ip1, ip2;
-      double rho,theta;
+
+    poly.computePolygonClipped(cam);
+
+    if(poly.polyClipped.size() == 2){ //Les points sont visibles.
+
+      std::vector<std::pair<vpPoint, vpPoint> > linesLst;
+
+      if(useScanLine){
+        hiddenface->computeScanLineQuery(poly.polyClipped[0].first,poly.polyClipped[1].first,linesLst);
+      }
+      else{
+        linesLst.push_back(std::make_pair(poly.polyClipped[0].first,poly.polyClipped[1].first));
+      }
+
+      if(linesLst.size() == 0){
+//        isvisible = false;
+        return false;
+      }
+
+      // To have the exact same pose values as the old version (angle or ogre visibility test only), points should be reorganised when using scanline algorithm.
+//      if(sqrt(vpMath::sqr(poly.polyClipped[0].first.get_X() - linesLst[0].first.get_X())) > sqrt(vpMath::sqr(poly.polyClipped[0].first.get_X() - linesLst[0].second.get_X())))
+//      {
+//          std::vector<std::pair<vpPoint, vpPoint> > linesLstTmp;
+//          for(int i = linesLst.size()-1 ; i >= 0 ; i--)
+//            linesLstTmp.push_back(std::make_pair(linesLst[i].second,linesLst[i].first));
+//          linesLst = linesLstTmp;
+//      }
+
       line->changeFrame(cMo);
       line->projection();
-    
-      vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[0].first.get_x(),poly.roiPointsClip[0].first.get_y(),ip1);
-      vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[1].first.get_x(),poly.roiPointsClip[1].first.get_y(),ip2);
-      
+      double rho,theta;
       //rho theta uv
       vpMeterPixelConversion::convertLine(cam,line->getRho(),line->getTheta(),rho,theta);
-      
+
       while (theta > M_PI) { theta -= M_PI ; }
       while (theta < -M_PI) { theta += M_PI ; }
-      
+
       if (theta < -M_PI/2.0) theta = -theta - 3*M_PI/2.0;
       else theta = M_PI/2.0 - theta;
 
-      meline = new vpMbtMeLine ;
-      meline->setMe(me) ;
 
-    //    meline->setDisplay(vpMeSite::RANGE_RESULT) ;
-      meline->setInitRange(0);
-      
-      int marge = /*10*/5; //ou 5 normalement
-      if (ip1.get_j()<ip2.get_j()) { meline->jmin = (int)ip1.get_j()-marge ; meline->jmax = (int)ip2.get_j()+marge ; } else{ meline->jmin = (int)ip2.get_j()-marge ; meline->jmax = (int)ip1.get_j()+marge ; }
-      if (ip1.get_i()<ip2.get_i()) { meline->imin = (int)ip1.get_i()-marge ; meline->imax = (int)ip2.get_i()+marge ; } else{ meline->imin = (int)ip2.get_i()-marge ; meline->imax = (int)ip1.get_i()+marge ; }
-      
-      try
-      {
-        meline->initTracking(I,ip1,ip2,rho,theta);
-        nbFeature =(unsigned int) meline->getMeList().size();
-      }
-      catch(...)
-      {
-        //vpTRACE("the line can't be initialized");
-        nbFeature = 0;
-        return false;
+      for(unsigned int i = 0 ; i < linesLst.size() ; i++){
+        vpImagePoint ip1, ip2;
+
+        linesLst[i].first.project();
+        linesLst[i].second.project();
+
+        vpMeterPixelConversion::convertPoint(cam,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
+        vpMeterPixelConversion::convertPoint(cam,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
+
+        vpMbtMeLine *melinePt = new vpMbtMeLine ;
+        melinePt->setMe(me) ;
+
+        //    meline[i]->setDisplay(vpMeSite::RANGE_RESULT) ;
+        melinePt->setInitRange(0);
+
+        int marge = /*10*/5; //ou 5 normalement
+        if (ip1.get_j()<ip2.get_j()) { melinePt->jmin = (int)ip1.get_j()-marge ; melinePt->jmax = (int)ip2.get_j()+marge ; } else{ melinePt->jmin = (int)ip2.get_j()-marge ; melinePt->jmax = (int)ip1.get_j()+marge ; }
+        if (ip1.get_i()<ip2.get_i()) { melinePt->imin = (int)ip1.get_i()-marge ; melinePt->imax = (int)ip2.get_i()+marge ; } else{ melinePt->imin = (int)ip2.get_i()-marge ; melinePt->imax = (int)ip1.get_i()+marge ; }
+
+        try
+        {
+          melinePt->initTracking(I,ip1,ip2,rho,theta);
+          meline.push_back(melinePt);
+  //        nbFeature.push_back((unsigned int) melinePt->getMeList().size());
+  //        nbFeatureTotal += nbFeature.back();
+        }
+        catch(...)
+        {
+          //vpTRACE("the line can't be initialized");
+  //        if (melinePt!=NULL) delete melinePt;
+  //        melinePt=NULL;
+  //        isvisible = false;
+          return false;
+        }
       }
     }
     else{
-      if (meline!=NULL) delete meline;
-      meline=NULL;
-      nbFeature = 0;
       isvisible = false;
+//      return false;
     }
-  }   
+  }
+
 //	trackMovingEdge(I,cMo)  ;
   return true;
 }
@@ -404,16 +454,26 @@ vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomo
 //     if (ip1.get_i()<ip2.get_i()) { meline->imin = ip1.get_i()-marge ; meline->imax = ip2.get_i()+marge ; }
 //     else{ meline->imin = ip2.get_i()-marge ; meline->imax = ip1.get_i()+marge ; }
 
-    try 
+    try
     {
-      meline->track(I) ;
-      nbFeature =(unsigned int) meline->getMeList().size();
+      nbFeatureTotal = 0;
+      for(unsigned int i = 0 ; i < meline.size() ; i++){
+        meline[i]->track(I) ;
+        nbFeature.push_back((unsigned int) meline[i]->getMeList().size());
+        nbFeatureTotal += (unsigned int) meline[i]->getMeList().size();
+      }
     }
     catch(...)
     {
-      meline->reset(); // Might not be necessary
-      nbFeature = 0;
+      for(unsigned int i = 0 ; i < meline.size() ; i++){
+        if (meline[i] != NULL) delete meline[i] ;
+      }
+
+      nbFeature.clear();
+      meline.clear();
+      nbFeatureTotal = 0;
       Reinit = true;
+      isvisible = false;
     }
   }
 }
@@ -431,51 +491,100 @@ vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHom
   if(isvisible){
     p1->changeFrame(cMo);
     p2->changeFrame(cMo);
-    
+
     if(poly.getClipping() > 3) // Contains at least one FOV constraint
       cam.computeFov(I.getWidth(), I.getHeight());
-    
-    poly.computeRoiClipped(cam);
-    
-    if(poly.roiPointsClip.size() == 2){ //Les points sont visibles.
-      vpImagePoint ip1, ip2;
-      double rho,theta;
-      line->changeFrame(cMo);
-      line->projection();
-    
-      vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[0].first.get_x(),poly.roiPointsClip[0].first.get_y(),ip1);
-      vpMeterPixelConversion::convertPoint(cam,poly.roiPointsClip[1].first.get_x(),poly.roiPointsClip[1].first.get_y(),ip2);
-      
-      //rho theta uv
-      vpMeterPixelConversion::convertLine(cam,line->getRho(),line->getTheta(),rho,theta);
-      
-      while (theta > M_PI) { theta -= M_PI ; }
-      while (theta < -M_PI) { theta += M_PI ; }
-      
-      if (theta < -M_PI/2.0) theta = -theta - 3*M_PI/2.0;
-      else theta = M_PI/2.0 - theta;
 
-      int marge = /*10*/5; //ou 5 normalement
-      if (ip1.get_j()<ip2.get_j()) { meline->jmin = (int)ip1.get_j()-marge ; meline->jmax = (int)ip2.get_j()+marge ; } else{ meline->jmin = (int)ip2.get_j()-marge ; meline->jmax = (int)ip1.get_j()+marge ; }
-      if (ip1.get_i()<ip2.get_i()) { meline->imin = (int)ip1.get_i()-marge ; meline->imax = (int)ip2.get_i()+marge ; } else{ meline->imin = (int)ip2.get_i()-marge ; meline->imax = (int)ip1.get_i()+marge ; }
+    poly.computePolygonClipped(cam);
 
-      try 
-      {
-        //meline->updateParameters(I,rho,theta) ;
-        meline->updateParameters(I,ip1,ip2,rho,theta) ;
-        nbFeature = (unsigned int)meline->getMeList().size();
+    if(poly.polyClipped.size() == 2){ //Les points sont visibles.
+
+      std::vector<std::pair<vpPoint, vpPoint> > linesLst;
+
+      if(useScanLine){
+        hiddenface->computeScanLineQuery(poly.polyClipped[0].first,poly.polyClipped[1].first,linesLst);
       }
-      catch(...)
-      {
+      else{
+        linesLst.push_back(std::make_pair(poly.polyClipped[0].first,poly.polyClipped[1].first));
+      }
+
+      if(linesLst.size() != meline.size() || linesLst.size() == 0){
+        for(unsigned int i = 0 ; i < meline.size() ; i++){
+          if (meline[i] != NULL) delete meline[i] ;
+        }
+
+        meline.clear();
+        nbFeature.clear();
+        nbFeatureTotal = 0;
+        isvisible = false;
         Reinit = true;
-        nbFeature = 0;
+      }
+      else{
+
+        // To have the exact same pose values as the old version (angle or ogre visibility test only), points should be reorganised when using scanline algorithm.
+//        if(sqrt(vpMath::sqr(poly.polyClipped[0].first.get_X() - linesLst[0].first.get_X())) > sqrt(vpMath::sqr(poly.polyClipped[0].first.get_X() - linesLst[0].second.get_X())))
+//        {
+//            std::vector<std::pair<vpPoint, vpPoint> > linesLstTmp;
+//            for(int i = linesLst.size()-1 ; i >= 0 ; i--)
+//              linesLstTmp.push_back(std::make_pair(linesLst[i].second,linesLst[i].first));
+//            linesLst = linesLstTmp;
+//        }
+
+        line->changeFrame(cMo);
+        line->projection();
+        double rho,theta;
+        //rho theta uv
+        vpMeterPixelConversion::convertLine(cam,line->getRho(),line->getTheta(),rho,theta);
+
+        while (theta > M_PI) { theta -= M_PI ; }
+        while (theta < -M_PI) { theta += M_PI ; }
+
+        if (theta < -M_PI/2.0) theta = -theta - 3*M_PI/2.0;
+        else theta = M_PI/2.0 - theta;
+
+
+        try
+        {
+          for(unsigned int i = 0 ; i < linesLst.size() ; i++){
+            vpImagePoint ip1, ip2;
+
+            linesLst[i].first.project();
+            linesLst[i].second.project();
+
+            vpMeterPixelConversion::convertPoint(cam,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
+            vpMeterPixelConversion::convertPoint(cam,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
+
+            int marge = /*10*/5; //ou 5 normalement
+            if (ip1.get_j()<ip2.get_j()) { meline[i]->jmin = (int)ip1.get_j()-marge ; meline[i]->jmax = (int)ip2.get_j()+marge ; } else{ meline[i]->jmin = (int)ip2.get_j()-marge ; meline[i]->jmax = (int)ip1.get_j()+marge ; }
+            if (ip1.get_i()<ip2.get_i()) { meline[i]->imin = (int)ip1.get_i()-marge ; meline[i]->imax = (int)ip2.get_i()+marge ; } else{ meline[i]->imin = (int)ip2.get_i()-marge ; meline[i]->imax = (int)ip1.get_i()+marge ; }
+
+              meline[i]->updateParameters(I,ip1,ip2,rho,theta) ;
+              nbFeature[i] = (unsigned int)meline[i]->getMeList().size();
+              nbFeatureTotal += nbFeature[i];
+          }
+        }
+        catch(...)
+        {
+          for(unsigned int j = 0 ; j < meline.size() ; j++){
+            if (meline[j] != NULL) delete meline[j] ;
+          }
+
+          meline.clear();
+          nbFeature.clear();
+          nbFeatureTotal = 0;
+          isvisible = false;
+          Reinit = true;
+        }
       }
     }
     else{
-      if (meline!=NULL) delete meline;
-      meline=NULL;
+      for(unsigned int i = 0 ; i < meline.size() ; i++){
+        if (meline[i] != NULL) delete meline[i] ;
+      }
+      nbFeature.clear();
+      meline.clear();
+      nbFeatureTotal = 0;
       isvisible = false;
-      nbFeature = 0;
     }
   }
 }
@@ -492,9 +601,14 @@ vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHom
 void
 vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
-  if(meline!= NULL)
-    delete meline;
-  
+  for(unsigned int i = 0 ; i < meline.size() ; i++){
+    if (meline[i] != NULL) delete meline[i] ;
+  }
+
+  nbFeature.clear();
+  meline.clear();
+  nbFeatureTotal = 0;
+
   if (initMovingEdge(I,cMo) == false)
     Reinit = true;
 
@@ -525,19 +639,33 @@ vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogeneousM
     if(poly.getClipping() > 3) // Contains at least one FOV constraint
       c.computeFov(I.getWidth(), I.getHeight());
     
-    poly.computeRoiClipped(c);
+    poly.computePolygonClipped(c);
     
-    if( poly.roiPointsClip.size() == 2 && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::UP_CLIPPING) == 0) &&
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
-      vpMeterPixelConversion::convertPoint(camera,poly.roiPointsClip[0].first.get_x(),poly.roiPointsClip[0].first.get_y(),ip1);
-      vpMeterPixelConversion::convertPoint(camera,poly.roiPointsClip[1].first.get_x(),poly.roiPointsClip[1].first.get_y(),ip2);
+    if( poly.polyClipped.size() == 2 &&
+       ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
+       ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
+       ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
+       ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::UP_CLIPPING) == 0) &&
+       ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
+       ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
 
-      vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+      std::vector<std::pair<vpPoint, vpPoint> > linesLst;
+      if(useScanLine && !displayFullModel){
+        hiddenface->computeScanLineQuery(poly.polyClipped[0].first,poly.polyClipped[1].first,linesLst,true);
+      }
+      else{
+        linesLst.push_back(std::make_pair(poly.polyClipped[0].first,poly.polyClipped[1].first));
+      }
+
+      for(unsigned int i = 0 ; i < linesLst.size() ; i++){
+        linesLst[i].first.project();
+        linesLst[i].second.project();
+
+        vpMeterPixelConversion::convertPoint(camera,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
+        vpMeterPixelConversion::convertPoint(camera,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
+
+        vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+      }
     }
   }
 }
@@ -566,20 +694,34 @@ vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &
     vpCameraParameters c = camera;
     if(poly.getClipping() > 3) // Contains at least one FOV constraint
       c.computeFov(I.getWidth(), I.getHeight());
-    
-    poly.computeRoiClipped(c);
-    
-    if( poly.roiPointsClip.size() == 2 && 
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::UP_CLIPPING) == 0) &&
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
-       ((poly.roiPointsClip[1].second & poly.roiPointsClip[0].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
-      vpMeterPixelConversion::convertPoint(camera,poly.roiPointsClip[0].first.get_x(),poly.roiPointsClip[0].first.get_y(),ip1);
-      vpMeterPixelConversion::convertPoint(camera,poly.roiPointsClip[1].first.get_x(),poly.roiPointsClip[1].first.get_y(),ip2);
 
-      vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+    poly.computePolygonClipped(c);
+
+    if( poly.polyClipped.size() == 2 &&
+       ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
+       ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
+       ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
+       ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::UP_CLIPPING) == 0) &&
+       ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
+       ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
+
+      std::vector<std::pair<vpPoint, vpPoint> > linesLst;
+      if(useScanLine && !displayFullModel){
+        hiddenface->computeScanLineQuery(poly.polyClipped[0].first,poly.polyClipped[1].first,linesLst);
+      }
+      else{
+        linesLst.push_back(std::make_pair(poly.polyClipped[0].first,poly.polyClipped[1].first));
+      }
+
+      for(unsigned int i = 0 ; i < linesLst.size() ; i++){
+        linesLst[i].first.project();
+        linesLst[i].second.project();
+
+        vpMeterPixelConversion::convertPoint(camera,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
+        vpMeterPixelConversion::convertPoint(camera,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
+
+        vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+      }
     }
   }
 }
@@ -598,10 +740,11 @@ vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &
 void
 vpMbtDistanceLine::displayMovingEdges(const vpImage<unsigned char> &I)
 {
-  if (meline != NULL)
-  {
-    meline->display(I);
-  }
+  for(unsigned int i = 0 ; i < meline.size() ; i++)
+    if (meline[i] != NULL)
+    {
+      meline[i]->display(I);
+    }
 }
 
 /*!
@@ -612,12 +755,14 @@ vpMbtDistanceLine::initInteractionMatrixError()
 {
   if (isvisible == true)
   {
-    L.resize((unsigned int)meline->getMeList().size(),6) ;
-    error.resize((unsigned int)meline->getMeList().size()) ;
-    //nbFeature = (unsigned int)meline->getMeList().size() ;
+    L.resize(nbFeatureTotal,6) ;
+    error.resize(nbFeatureTotal) ;
   }
-//  else
-//    nbFeature = 0 ;
+  else{
+    for(unsigned int i = 0 ; i < meline.size() ; i++)
+      nbFeature[i] = 0;
+    nbFeatureTotal = 0 ;
+  }
 }
 
 /*!
@@ -626,7 +771,6 @@ vpMbtDistanceLine::initInteractionMatrixError()
 void
 vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
 {
-
   if (isvisible)
   {
     // feature projection
@@ -653,24 +797,27 @@ vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
     double x,y ;
     vpMeSite p ;
     unsigned int j =0 ;
-    for(std::list<vpMeSite>::const_iterator it=meline->getMeList().begin(); it!=meline->getMeList().end(); ++it){
-      x = (double)it->j ;
-      y = (double)it->i ;
 
-      x = (x-xc)*mx ;
-      y = (y-yc)*my ;
+    for(unsigned int i = 0 ; i < meline.size() ; i++){
+      for(std::list<vpMeSite>::const_iterator it=meline[i]->getMeList().begin(); it!=meline[i]->getMeList().end(); ++it){
+        x = (double)it->j ;
+        y = (double)it->i ;
 
-      alpha_ = x*si - y*co;
+        x = (x-xc)*mx ;
+        y = (y-yc)*my ;
 
-      double *Lrho = H[0] ;
-      double *Ltheta = H[1] ;
-      // Calculate interaction matrix for a distance
-      for (unsigned int k=0 ; k < 6 ; k++)
-      {
-        L[j][k] = (Lrho[k] + alpha_*Ltheta[k]);
+        alpha_ = x*si - y*co;
+
+        double *Lrho = H[0] ;
+        double *Ltheta = H[1] ;
+        // Calculate interaction matrix for a distance
+        for (unsigned int k=0 ; k < 6 ; k++)
+        {
+          L[j][k] = (Lrho[k] + alpha_*Ltheta[k]);
+        }
+        error[j] = rho - ( x*co + y*si) ;
+        j++;
       }
-      error[j] = rho - ( x*co + y*si) ;
-      j++;
     }
   }
 }
@@ -690,17 +837,19 @@ vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char>& I, const uns
   }
   if (isvisible){
 
-    for(std::list<vpMeSite>::const_iterator it=meline->getMeList().begin(); it!=meline->getMeList().end(); ++it){
-      int i = it->i ;
-      int j = it->j ;
-      
-      if(i < 0 || j < 0){ //out of image.
-        return true;
-      }
-      
-      if( ((unsigned int)i > (I.getHeight()- threshold) ) || (unsigned int)i < threshold ||
-          ((unsigned int)j > (I.getWidth ()- threshold) ) || (unsigned int)j < threshold ) {
-        return true;
+    for(unsigned int i = 0 ; i < meline.size() ; i++){
+      for(std::list<vpMeSite>::const_iterator it=meline[i]->getMeList().begin(); it!=meline[i]->getMeList().end(); ++it){
+        int i = it->i ;
+        int j = it->j ;
+
+        if(i < 0 || j < 0){ //out of image.
+          return true;
+        }
+
+        if( ((unsigned int)i > (I.getHeight()- threshold) ) || (unsigned int)i < threshold ||
+            ((unsigned int)j > (I.getWidth ()- threshold) ) || (unsigned int)j < threshold ) {
+          return true;
+        }
       }
     }
   }

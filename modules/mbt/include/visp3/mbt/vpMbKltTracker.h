@@ -60,7 +60,7 @@
 #include <visp3/core/vpSubColVector.h>
 #include <visp3/core/vpSubMatrix.h>
 #include <visp3/core/vpExponentialMap.h>
-//#include <visp3/mbt/vpMbtKltPolygon.h>
+//#include <visp/vpMbtKltPolygon.h>
 #include <visp3/mbt/vpMbtDistanceKltPoints.h>
 #include <visp3/mbt/vpMbtDistanceCircle.h>
 #include <visp3/mbt/vpMbtDistanceCylinder.h>
@@ -80,13 +80,13 @@
   The following code shows the simplest way to use the tracker. The \ref tutorial-tracking-mb is also a good starting point to use this class.
   
 \code
-#include <visp3/mbt/vpMbKltTracker.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp/vpMbKltTracker.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpException.h>
+#include <visp/vpDisplayX.h>
 
 int main()
 {
@@ -136,11 +136,11 @@ int main()
   using another method:
 
 \code
-#include <visp3/mbt/vpMbKltTracker.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp/vpMbKltTracker.h>
+#include <visp/vpImage.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpImageIo.h>
 
 int main()
 {
@@ -178,12 +178,12 @@ int main()
   given pose:
 
 \code
-#include <visp3/mbt/vpMbKltTracker.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp/vpMbKltTracker.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpDisplayX.h>
 
 int main()
 {
@@ -368,7 +368,12 @@ public:
 
             \param  e : The desired erosion.
           */
-  inline  void            setMaskBorder(const unsigned int &e){ maskBorder = e; }
+  inline  void            setMaskBorder(const unsigned int &e)
+                          {
+                            maskBorder = e;
+                            //if(useScanLine)
+                            faces.getMbScanLineRenderer().setMaskBorder(maskBorder);
+                          }
   
           /*!
             Set the maximum iteration of the virtual visual servoing stage.
@@ -389,6 +394,18 @@ public:
 #ifdef VISP_HAVE_OGRE
       faces.getOgreContext()->setWindowName("MBT Klt");
 #endif
+  }
+
+          /*!
+            Use Scanline algorithm for visibility tests
+
+            \param v : True to use it, False otherwise
+          */
+  virtual void setScanLineVisibilityTest(const bool &v){
+    vpMbTracker::setScanLineVisibilityTest(v);
+
+    for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it)
+      (*it)->useScanLine = v;
   }
   
   virtual void            setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);

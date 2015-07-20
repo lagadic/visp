@@ -120,7 +120,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
       if(clippingFlag > 3) { // Contains at least one FOV constraint
         c.computeFov(I.getWidth(), I.getHeight());
       }
-      computeRoiClipped(c);
+      computePolygonClipped(c);
       std::vector<vpImagePoint> roiImagePoints;
       getRoiClipped(c, roiImagePoints);
 
@@ -187,7 +187,7 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
       if(clippingFlag > 3) { // Contains at least one FOV constraint
         c.computeFov(I.getWidth(), I.getHeight());
       }
-      computeRoiClipped(c);
+      computePolygonClipped(c);
       std::vector<vpImagePoint> roiImagePoints;
       getRoiClipped(c, roiImagePoints);
 
@@ -236,8 +236,8 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
 
   The sample code below shows how to introduce this feature:
   \code
-#include <visp3/mbt/vpMbEdgeTracker.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp/vpMbEdgeTracker.h>
+#include <visp/vpImageIo.h>
 
 int main()
 {

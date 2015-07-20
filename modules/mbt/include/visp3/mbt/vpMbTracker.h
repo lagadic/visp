@@ -149,6 +149,8 @@ protected:
   unsigned int clippingFlag;
   //! Use Ogre3d for visibility tests
   bool useOgre;
+  //! Use Scanline for visibility tests
+  bool useScanLine;
   //! Number of points in CAO model
   unsigned int nbPoints;
   //! Number of lines in CAO model
@@ -481,6 +483,8 @@ public:
   inline void setPoseSavingFilename(const std::string& filename){
     poseSavingFilename = filename;
   }
+
+  virtual void setScanLineVisibilityTest(const bool &v){ useScanLine = v; }
 
   virtual void setOgreVisibilityTest(const bool &v);
 

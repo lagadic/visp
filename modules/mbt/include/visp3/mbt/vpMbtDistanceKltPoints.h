@@ -104,6 +104,10 @@ private:
 public:
   //! Pointer to the polygon that define a face
   vpMbtPolygon *polygon;
+  //! Pointer to the list of faces
+  vpMbHiddenFaces<vpMbtPolygon> *hiddenface;
+  //! Use scanline rendering
+  bool useScanLine;
 
 private:
 

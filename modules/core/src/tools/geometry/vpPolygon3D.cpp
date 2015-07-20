@@ -55,14 +55,14 @@
 */
 vpPolygon3D::vpPolygon3D()
   : nbpt(0), nbCornersInsidePrev(0),
-    p(NULL), roiPointsClip(), clippingFlag(vpPolygon3D::NO_CLIPPING),
+    p(NULL), polyClipped(), clippingFlag(vpPolygon3D::NO_CLIPPING),
     distNearClip(0.001), distFarClip(100.)
 {
 }
 
 vpPolygon3D::vpPolygon3D(const vpPolygon3D& mbtp)
   : nbpt(mbtp.nbpt), nbCornersInsidePrev(mbtp.nbCornersInsidePrev),
-    roiPointsClip(mbtp.roiPointsClip), clippingFlag(mbtp.clippingFlag),
+    polyClipped(mbtp.polyClipped), clippingFlag(mbtp.clippingFlag),
     distNearClip(mbtp.distNearClip), distFarClip(mbtp.distFarClip)
 {
   if (p) delete [] p;
@@ -75,7 +75,7 @@ vpPolygon3D& vpPolygon3D::operator=(const vpPolygon3D& mbtp)
 {
   nbpt = mbtp.nbpt;
   nbCornersInsidePrev = mbtp.nbCornersInsidePrev;
-  roiPointsClip = mbtp.roiPointsClip;
+  polyClipped = mbtp.polyClipped;
   clippingFlag = mbtp.clippingFlag;
   distNearClip = mbtp.distNearClip;
   distFarClip = mbtp.distFarClip;
@@ -166,19 +166,19 @@ vpPolygon3D::changeFrame(const vpHomogeneousMatrix &cMo)
   \param cam : camera parameters used to compute the field of view.
 */
 void
-vpPolygon3D::computeRoiClipped(const vpCameraParameters &cam)
+vpPolygon3D::computePolygonClipped(const vpCameraParameters &cam)
 {
-  roiPointsClip.clear();
+  polyClipped.clear();
   std::vector<vpColVector> fovNormals;
-  std::vector<std::pair<vpPoint,unsigned int> > roiPointsClipTemp;
-  std::vector<std::pair<vpPoint,unsigned int> > roiPointsClipTemp2;
+  std::vector<std::pair<vpPoint,unsigned int> > polyClippedTemp;
+  std::vector<std::pair<vpPoint,unsigned int> > polyClippedTemp2;
 
   if(cam.isFovComputed() && clippingFlag > 3)
     fovNormals = cam.getFovNormals();
 
   for(unsigned int i = 0 ; i < nbpt ; i++){
       p[i%nbpt].projection();
-      roiPointsClipTemp.push_back(std::make_pair(p[i%nbpt],vpPolygon3D::NO_CLIPPING));
+      polyClippedTemp.push_back(std::make_pair(p[i%nbpt],vpPolygon3D::NO_CLIPPING));
   }
 
   if(clippingFlag != vpPolygon3D::NO_CLIPPING)
@@ -186,14 +186,14 @@ vpPolygon3D::computeRoiClipped(const vpCameraParameters &cam)
   {
       if(((clippingFlag & i) == i) || ((clippingFlag > vpPolygon3D::FAR_CLIPPING) && (i==1)))
       {
-      for(unsigned int j = 0 ; j < roiPointsClipTemp.size() ; j++)
+      for(unsigned int j = 0 ; j < polyClippedTemp.size() ; j++)
       {
-          vpPoint p1Clipped = roiPointsClipTemp[j].first;
-          vpPoint p2Clipped = roiPointsClipTemp[(j+1)%roiPointsClipTemp.size()].first;
+          vpPoint p1Clipped = polyClippedTemp[j].first;
+          vpPoint p2Clipped = polyClippedTemp[(j+1)%polyClippedTemp.size()].first;
 
-          unsigned int p2ClippedInfoBefore = roiPointsClipTemp[(j+1)%roiPointsClipTemp.size()].second;
-          unsigned int p1ClippedInfo = roiPointsClipTemp[j].second;
-          unsigned int p2ClippedInfo = roiPointsClipTemp[(j+1)%roiPointsClipTemp.size()].second;
+          unsigned int p2ClippedInfoBefore = polyClippedTemp[(j+1)%polyClippedTemp.size()].second;
+          unsigned int p1ClippedInfo = polyClippedTemp[j].second;
+          unsigned int p2ClippedInfo = polyClippedTemp[(j+1)%polyClippedTemp.size()].second;
 
           bool problem = true;
 
@@ -227,31 +227,31 @@ vpPolygon3D::computeRoiClipped(const vpCameraParameters &cam)
           if(!problem)
           {
             p1Clipped.projection();
-            roiPointsClipTemp2.push_back(std::make_pair(p1Clipped, p1ClippedInfo));
+            polyClippedTemp2.push_back(std::make_pair(p1Clipped, p1ClippedInfo));
 
             if(p2ClippedInfo != p2ClippedInfoBefore)
             {
               p2Clipped.projection();
-              roiPointsClipTemp2.push_back(std::make_pair(p2Clipped, p2ClippedInfo));
+              polyClippedTemp2.push_back(std::make_pair(p2Clipped, p2ClippedInfo));
             }
 
             if(nbpt == 2){
               if(p2ClippedInfo == p2ClippedInfoBefore)
               {
                 p2Clipped.projection();
-                roiPointsClipTemp2.push_back(std::make_pair(p2Clipped, p2ClippedInfo));
+                polyClippedTemp2.push_back(std::make_pair(p2Clipped, p2ClippedInfo));
               }
               break;
             }
           }
       }
 
-      roiPointsClipTemp = roiPointsClipTemp2;
-      roiPointsClipTemp2.clear();
+      polyClippedTemp = polyClippedTemp2;
+      polyClippedTemp2.clear();
       }
   }
 
-  roiPointsClip = roiPointsClipTemp;
+  polyClipped = polyClippedTemp;
 }
     
 /*!
@@ -416,25 +416,55 @@ vpPolygon3D::getRoi(const vpCameraParameters &cam, const vpHomogeneousMatrix &cM
   return getRoi(cam);
 }
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
   Get the 3D points of the clipped region of interest.
 
-  \warning Suppose that changeFrame() and computeRoiClipped() have already been called.
+  \warning Suppose that changeFrame() and computePolygonClipped() have already been called.
 
   \param points : resulting points.
 */
 void
 vpPolygon3D::getRoiClipped(std::vector<vpPoint> &points)
 {
-  for(unsigned int i = 0 ; i < roiPointsClip.size() ; i++){
-    points.push_back(roiPointsClip[i].first);
+  for(unsigned int i = 0 ; i < polyClipped.size() ; i++){
+    points.push_back(polyClipped[i].first);
+  }
+}
+#endif
+
+/*!
+  Get the 3D clipped points and their clipping information.
+
+  \warning Suppose that changeFrame() and computePolygonClipped() have already been called.
+
+  \param p : resulting points plus clipping information.
+*/
+void
+vpPolygon3D::getPolygonClipped(std::vector<std::pair<vpPoint,unsigned int> > &poly)
+{
+  poly = polyClipped;
+}
+
+/*!
+  Get the 3D clipped points.
+
+  \warning Suppose that changeFrame() and computePolygonClipped() have already been called.
+
+  \param p : resulting points.
+*/
+void
+vpPolygon3D::getPolygonClipped(std::vector<vpPoint> &poly)
+{
+  for(unsigned int i = 0 ; i < polyClipped.size() ; i++){
+    poly.push_back(polyClipped[i].first);
   }
 }
 
 /*!
   Get the region of interest clipped in the image.
   
-  \warning Suppose that changeFrame() and computeRoiClipped() have already been called.
+  \warning Suppose that changeFrame() and computePolygonClipped() have already been called.
   
   \param cam : camera parameters.
   \param roi : image point corresponding to the region of interest.
@@ -442,9 +472,9 @@ vpPolygon3D::getRoiClipped(std::vector<vpPoint> &points)
 void
 vpPolygon3D::getRoiClipped(const vpCameraParameters &cam, std::vector<vpImagePoint> &roi)
 {
-  for(unsigned int i = 0 ; i < roiPointsClip.size() ; i++){
+  for(unsigned int i = 0 ; i < polyClipped.size() ; i++){
     vpImagePoint ip;
-    vpMeterPixelConversion::convertPoint(cam,roiPointsClip[i].first.get_x(),roiPointsClip[i].first.get_y(),ip);
+    vpMeterPixelConversion::convertPoint(cam,polyClipped[i].first.get_x(),polyClipped[i].first.get_y(),ip);
 //    std::cout << "## " << ip.get_j() << " - " << ip.get_i() << std::endl;
     roi.push_back(ip);
   }
@@ -461,14 +491,14 @@ void
 vpPolygon3D::getRoiClipped(const vpCameraParameters &cam, std::vector<vpImagePoint> &roi, const vpHomogeneousMatrix &cMo)
 {
   changeFrame(cMo);
-  computeRoiClipped(cam);
+  computePolygonClipped(cam);
   getRoiClipped(cam, roi);
 }
   
 /*!
   Get the region of interest clipped in the image and the information to know if it's a clipped point.
   
-  \warning Suppose that changeFrame() and computeRoiClipped() have already been called.
+  \warning Suppose that changeFrame() and computePolygonClipped() have already been called.
   
   \param cam : camera parameters.
   \param roi : image point corresponding to the region of interest with clipping information.
@@ -476,11 +506,11 @@ vpPolygon3D::getRoiClipped(const vpCameraParameters &cam, std::vector<vpImagePoi
 void
 vpPolygon3D::getRoiClipped(const vpCameraParameters &cam, std::vector<std::pair<vpImagePoint,unsigned int> > &roi)
 {
-  for(unsigned int i = 0 ; i < roiPointsClip.size() ; i++){
+  for(unsigned int i = 0 ; i < polyClipped.size() ; i++){
     vpImagePoint ip;
-    roiPointsClip[i].first.projection();
-    vpMeterPixelConversion::convertPoint(cam,roiPointsClip[i].first.get_x(),roiPointsClip[i].first.get_y(),ip);
-    roi.push_back(std::make_pair(ip, roiPointsClip[i].second));
+    polyClipped[i].first.projection();
+    vpMeterPixelConversion::convertPoint(cam,polyClipped[i].first.get_x(),polyClipped[i].first.get_y(),ip);
+    roi.push_back(std::make_pair(ip, polyClipped[i].second));
   }
 }
 
@@ -495,7 +525,7 @@ void
 vpPolygon3D::getRoiClipped(const vpCameraParameters &cam, std::vector<std::pair<vpImagePoint,unsigned int> > &roi, const vpHomogeneousMatrix &cMo)
 {
   changeFrame(cMo);
-  computeRoiClipped(cam);
+  computePolygonClipped(cam);
   getRoiClipped(cam, roi);
 }
 
@@ -561,8 +591,8 @@ vpPolygon3D::getClippedPolygon(const std::vector<vpPoint> &ptIn, std::vector<vpP
         poly.addPoint(i,ptIn[i]);
 
     poly.changeFrame(cMo);
-    poly.computeRoiClipped(cam);
-    poly.getRoiClipped(ptOut);
+    poly.computePolygonClipped(cam);
+    poly.getPolygonClipped(ptOut);
 }
 
 void                

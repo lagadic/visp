@@ -274,6 +274,7 @@ SET (HEADER_TRACKING
   tracking/moving-edges/vpMeNurbs.h
 
   tracking/mbt/vpMbTracker.h
+  tracking/mbt/vpMbScanLine.h
   tracking/mbt/vpMbHiddenFaces.h
   tracking/mbt/vpMbXmlParser.h
   tracking/mbt/vpMbtPolygon.h

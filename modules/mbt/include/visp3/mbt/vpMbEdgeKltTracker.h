@@ -78,13 +78,13 @@
   The following code shows the simplest way to use the tracker. The \ref tutorial-tracking-mb is also a good starting point to use this class.
   
 \code
-#include <visp3/mbt/vpMbEdgeKltTracker.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp/vpMbEdgeKltTracker.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpException.h>
+#include <visp/vpDisplayX.h>
 
 int main()
 {
@@ -134,11 +134,11 @@ int main()
   using another method:
 
 \code
-#include <visp3/mbt/vpMbEdgeKltTracker.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp/vpMbEdgeKltTracker.h>
+#include <visp/vpImage.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpImageIo.h>
 
 int main()
 {
@@ -176,12 +176,12 @@ int main()
   given pose:
 
 \code
-#include <visp3/mbt/vpMbEdgeKltTracker.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp/vpMbEdgeKltTracker.h>
+#include <visp/vpImage.h>
+#include <visp/vpImageIo.h>
+#include <visp/vpHomogeneousMatrix.h>
+#include <visp/vpCameraParameters.h>
+#include <visp/vpDisplayX.h>
 
 int main()
 {
@@ -213,7 +213,7 @@ int main()
     vpDisplay::flush(I);
   }
   
-#if defined VISP_HAVE_XML2
+#endif
   // Cleanup memory allocated by xml library used to parse the xml config file in vpMbEdgeKltTracker::loadConfigFile()
   vpXmlParser::cleanup();
 #endif
@@ -329,6 +329,16 @@ public:
        faces.getOgreContext()->setWindowName("MBT Hybrid");
 #endif
       }
+
+          /*!
+            Use Scanline algorithm for visibility tests
+
+            \param v : True to use it, False otherwise
+          */
+  virtual void setScanLineVisibilityTest(const bool &v){
+    vpMbEdgeTracker::setScanLineVisibilityTest(v);
+    vpMbKltTracker::setScanLineVisibilityTest(v);
+  }
 
   virtual void    setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
   /*!

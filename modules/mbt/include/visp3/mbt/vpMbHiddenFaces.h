@@ -48,6 +48,7 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/mbt/vpMbtPolygon.h>
+#include <visp3/mbt/vpMbScanLine.h>
 
 #ifdef VISP_HAVE_OGRE
   #include <visp3/ar/vpAROgre.h>
@@ -72,6 +73,7 @@ class vpMbHiddenFaces
   std::vector<PolygonType *> Lpol ;
   //! Number of visible polygon
   unsigned int nbVisiblePolygon;
+  vpMbScanLine scanlineRender;
   
 #ifdef VISP_HAVE_OGRE
   vpImage<unsigned char> ogreBackground;
@@ -101,6 +103,16 @@ class vpMbHiddenFaces
                            const vpCameraParameters &cam,
                            const vpTranslationVector &cameraPos,
                            unsigned int index);
+
+    void computeClippedPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam);
+
+    void computeScanLineRender(const vpCameraParameters &cam, const unsigned int &w, const unsigned int &h);
+
+    void computeScanLineQuery(vpPoint a,vpPoint b,
+                              std::vector<std::pair<vpPoint, vpPoint> > &lines, const bool &displayResults = false);
+
+    vpMbScanLine& getMbScanLineRenderer() { return scanlineRender; }
+
 #ifdef VISP_HAVE_OGRE
     void          displayOgre(const vpHomogeneousMatrix &cMo);
 #endif   
@@ -372,6 +384,77 @@ vpMbHiddenFaces<PolygonType>::reset()
   ogre->setShowConfigDialog(false);
   ogreBackground = vpImage<unsigned char>(480, 640);
 #endif
+}
+
+/*!
+  Compute the clipped points of the polygons that have been added via addPolygon().
+
+  \param cMo : Pose that will be used to clip the polygons.
+  \param cam : Camera parameters that will be used to clip the polygons.
+*/
+template<class PolygonType>
+void
+vpMbHiddenFaces<PolygonType>::computeClippedPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam)
+{
+  for (unsigned int i = 0; i < Lpol.size(); i++){
+    // For fast result we could just clip visible polygons.
+    // However clipping all of them gives us the possibility to return more information in the scanline visibility results
+//    if(Lpol[i]->isVisible())
+    {
+      Lpol[i]->changeFrame(cMo);
+      Lpol[i]->computePolygonClipped(cam);
+    }
+  }
+}
+
+/*!
+  Render the scene in order to perform, later via computeScanLineQuery(), visibility tests.
+
+  \param cam : Camera parameters that will be used to render the scene.
+  \param w : Width of the render window.
+  \param h : Height of the render window.
+*/
+template<class PolygonType>
+void
+vpMbHiddenFaces<PolygonType>::computeScanLineRender(const vpCameraParameters &cam, const unsigned int &w, const unsigned int &h){
+  std::vector<std::vector<std::pair<vpPoint, unsigned int> > > polyClipped(Lpol.size());
+  std::vector<std::vector<std::pair<vpPoint, unsigned int> > * > listPolyClipped;
+  std::vector<int> listPolyIndices;
+
+  for (unsigned int i = 0; i < Lpol.size(); i++){
+    // For fast result we could just use visible polygons.
+    // However using all of them gives us the possibility to return more information in the scanline visibility results
+//    if(Lpol[i]->isVisible())
+    {
+      polyClipped[i].clear();
+      Lpol[i]->getPolygonClipped(polyClipped[i]);
+      if(polyClipped[i].size() != 0)
+      {
+        listPolyClipped.push_back(&polyClipped[i]);
+        listPolyIndices.push_back(Lpol[i]->getIndex());
+      }
+    }
+  }
+
+  scanlineRender.drawScene(listPolyClipped, listPolyIndices, cam, w, h);
+}
+
+/*!
+  Compute Scanline visibility results for a line.
+
+  \warning computeScanLineRender() function has to be called before
+
+  \param a : First point of the line.
+  \param b : Second point of the line.
+  \param lines : Result of the scanline visibility. List of the visible parts of the line.
+  \param displayResults : True if the results have to be displayed. False otherwise
+*/
+template<class PolygonType>
+void
+vpMbHiddenFaces<PolygonType>::computeScanLineQuery(vpPoint a,vpPoint b,
+                          std::vector<std::pair<vpPoint, vpPoint> > &lines, const bool &displayResults)
+{
+  scanlineRender.queryLineVisibility(a,b,lines,displayResults);
 }
 
 /*!

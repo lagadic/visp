@@ -158,6 +158,11 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
   vpImageConvert::convert(I, cur);
 
   cam.computeFov(I.getWidth(), I.getHeight());
+
+  if(useScanLine){
+    faces.computeClippedPolygons(cMo,cam);
+    faces.computeScanLineRender(cam, I.getWidth(), I.getHeight());
+  }
   
   // mask
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
@@ -166,14 +171,19 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
   IplImage* mask = cvCreateImage(cvSize((int)I.getWidth(), (int)I.getHeight()), IPL_DEPTH_8U, 1);
   cvZero(mask);
 #endif
-  unsigned char val = 255/* - i*15*/;
 
   vpMbtDistanceKltPoints *kltpoly;
-  for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
-    if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
-      kltpoly->polygon->computeRoiClipped(cam);
-      kltpoly->updateMask(mask, val, maskBorder);
+  if(useScanLine){
+    vpImageConvert::convert(faces.getMbScanLineRenderer().getMask(), mask);
+  }
+  else{
+    unsigned char val = 255/* - i*15*/;
+    for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+      kltpoly = *it;
+      if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
+        kltpoly->polygon->computePolygonClipped(cam);
+        kltpoly->updateMask(mask, val, maskBorder);
+      }
     }
   }
   
@@ -270,6 +280,8 @@ vpMbKltTracker::resetTracker()
   maxIter = 200;
 
   faces.reset();
+
+  useScanLine = false;
   
 #ifdef VISP_HAVE_OGRE
   useOgre = false;
@@ -483,7 +495,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
         kltpoly = *it;
         if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
-          kltpoly->polygon->computeRoiClipped(cam);
+          kltpoly->polygon->computePolygonClipped(cam);
           kltpoly->init(tracker);
         }
       }
@@ -511,6 +523,8 @@ vpMbKltTracker::initFaceFromCorners(vpMbtPolygon &polygon)
     vpMbtDistanceKltPoints *kltPoly = new vpMbtDistanceKltPoints();
     kltPoly->setCameraParameters(cam) ;
     kltPoly->polygon = &polygon;
+    kltPoly->hiddenface = &faces ;
+    kltPoly->useScanLine = useScanLine;
     kltPolygons.push_back(kltPoly);
 }
 /*!
@@ -524,6 +538,8 @@ vpMbKltTracker::initFaceFromLines(vpMbtPolygon &polygon)
     vpMbtDistanceKltPoints *kltPoly = new vpMbtDistanceKltPoints();
     kltPoly->setCameraParameters(cam) ;
     kltPoly->polygon = &polygon;
+    kltPoly->hiddenface = &faces ;
+    kltPoly->useScanLine = useScanLine;
     kltPolygons.push_back(kltPoly);
 }
 
@@ -878,6 +894,9 @@ vpMbKltTracker::loadConfigFile(const char* configFile)
   maskBorder = xmlp.getMaskBorder();
   angleAppears = vpMath::rad(xmlp.getAngleAppear());
   angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
+
+  //if(useScanLine)
+  faces.getMbScanLineRenderer().setMaskBorder(maskBorder);
   
   if(xmlp.hasNearClippingDistance())
     setNearClippingDistance(xmlp.getNearClippingDistance());
@@ -920,21 +939,29 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
                         const vpColor& col, const unsigned int thickness, const bool displayFullModel)
 {
   vpCameraParameters c = camera;
-  
+
   if(clippingFlag > 3) // Contains at least one FOV constraint
     c.computeFov(I.getWidth(), I.getHeight());
-  
+
   vpMbtDistanceKltPoints *kltpoly;
+
+  for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    kltpoly->polygon->changeFrame(cMo_);
+    kltpoly->polygon->computePolygonClipped(c);
+  }
+
+  if(useScanLine && !displayFullModel)
+    faces.computeScanLineRender(cam,I.getWidth(), I.getHeight());
+
 //  for (unsigned int i = 0; i < faces.size(); i += 1){
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
     if(displayFullModel || kltpoly->polygon->isVisible())
     {
-      kltpoly->polygon->changeFrame(cMo_);
-      kltpoly->polygon->computeRoiClipped(c);
-      std::vector<std::pair<vpImagePoint,unsigned int> > roi;
-      kltpoly->polygon->getRoiClipped(c, roi);
-      
+      std::vector<std::pair<vpPoint,unsigned int> > roi;
+      kltpoly->polygon->getPolygonClipped(roi);
+
       for (unsigned int j = 0; j < roi.size(); j += 1){
         if(((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
            ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
@@ -943,15 +970,27 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
            ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
            ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
           vpImagePoint ip1, ip2;
-          ip1 = roi[j].first;
-          ip2 = roi[(j+1)%roi.size()].first;
-          
-          vpDisplay::displayLine (I, ip1, ip2, col, thickness);
+          std::vector<std::pair<vpPoint, vpPoint> > linesLst;
+          if(useScanLine && !displayFullModel){
+            faces.computeScanLineQuery(roi[j].first,roi[(j+1)%roi.size()].first,linesLst);
+          }
+          else{
+            linesLst.push_back(std::make_pair(roi[j].first,roi[(j+1)%roi.size()].first));
+          }
+
+          for(unsigned int i = 0 ; i < linesLst.size() ; i++){
+            linesLst[i].first.project();
+            linesLst[i].second.project();
+            vpMeterPixelConversion::convertPoint(camera,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
+            vpMeterPixelConversion::convertPoint(camera,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
+
+            vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+          }
         }
       }
     }
     if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->polygon->isVisible() && kltpoly->isTracked()) {
-        kltpoly->displayPrimitive(I);
+      kltpoly->displayPrimitive(I);
 //         faces[i]->displayNormal(I);
     }
   }
@@ -988,17 +1027,25 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
   
   if(clippingFlag > 3) // Contains at least one FOV constraint
     c.computeFov(I.getWidth(), I.getHeight());
-  
+
   vpMbtDistanceKltPoints *kltpoly;
+
+  for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    kltpoly->polygon->changeFrame(cMo_);
+    kltpoly->polygon->computePolygonClipped(c);
+  }
+
+  if(useScanLine && !displayFullModel)
+    faces.computeScanLineRender(cam,I.getWidth(), I.getHeight());
+
 //  for (unsigned int i = 0; i < faces.size(); i += 1){
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
     if(displayFullModel || kltpoly->polygon->isVisible())
     {
-      kltpoly->polygon->changeFrame(cMo_);
-      kltpoly->polygon->computeRoiClipped(c);
-      std::vector<std::pair<vpImagePoint,unsigned int> > roi;
-      kltpoly->polygon->getRoiClipped(c, roi);
+      std::vector<std::pair<vpPoint,unsigned int> > roi;
+      kltpoly->polygon->getPolygonClipped(roi);
 
       for (unsigned int j = 0; j < roi.size(); j += 1){
         if(((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
@@ -1008,15 +1055,27 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
            ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
            ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
           vpImagePoint ip1, ip2;
-          ip1 = roi[j].first;
-          ip2 = roi[(j+1)%roi.size()].first;
+          std::vector<std::pair<vpPoint, vpPoint> > linesLst;
+          if(useScanLine && !displayFullModel){
+            faces.computeScanLineQuery(roi[j].first,roi[(j+1)%roi.size()].first,linesLst);
+          }
+          else{
+            linesLst.push_back(std::make_pair(roi[j].first,roi[(j+1)%roi.size()].first));
+          }
 
-          vpDisplay::displayLine (I, ip1, ip2, col, thickness);
+          for(unsigned int i = 0 ; i < linesLst.size() ; i++){
+            linesLst[i].first.project();
+            linesLst[i].second.project();
+            vpMeterPixelConversion::convertPoint(camera,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
+            vpMeterPixelConversion::convertPoint(camera,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
+
+            vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+          }
         }
       }
     }
     if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->polygon->isVisible() && kltpoly->isTracked()) {
-        kltpoly->displayPrimitive(I);
+      kltpoly->displayPrimitive(I);
 //         faces[i]->displayNormal(I);
     }
   }
@@ -1226,7 +1285,4 @@ vpMbKltTracker::setUseKltTracking(const std::string &name, const bool &useKltTra
   }
 }
 
-#elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_mbt.a(vpMbKltTracker.cpp.o) has no symbols
-void dummy_vpMbKltTracker() {};
 #endif //VISP_HAVE_OPENCV

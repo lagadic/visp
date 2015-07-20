@@ -50,7 +50,7 @@
 vpMbtDistanceKltPoints::vpMbtDistanceKltPoints()
   : H(), N(), N_cur(), invd0(1.), cRc0_0n(), initPoints(), curPoints(), curPointsInd(),
     nbPointsCur(0), nbPointsInit(0), minNbPoint(4), enoughPoints(false), dt(1.), d0(1.),
-    cam(), isTrackedKltPoints(true), polygon(NULL)
+    cam(), isTrackedKltPoints(true), polygon(NULL), hiddenface(NULL), useScanLine(false)
 {
   initPoints = std::map<int, vpImagePoint>();
   curPoints = std::map<int, vpImagePoint>();
@@ -88,7 +88,21 @@ vpMbtDistanceKltPoints::init(const vpKltOpencv& _tracker)
     float x_tmp, y_tmp;
     _tracker.getFeature((int)i, id, x_tmp, y_tmp);
 
-    if(isInside(roi, y_tmp, x_tmp)){
+    bool add = false;
+
+    if(useScanLine)
+    {
+      if((unsigned int)y_tmp <  hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+         (unsigned int)x_tmp <  hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
+         hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[(unsigned int)y_tmp][(unsigned int)x_tmp] == polygon->getIndex())
+        add = true;
+    }
+    else if(isInside(roi, y_tmp, x_tmp))
+    {
+      add = true;
+    }
+
+    if(add){
       initPoints[id] = vpImagePoint(y_tmp, x_tmp);
       curPoints[id] = vpImagePoint(y_tmp, x_tmp);
       curPointsInd[id] = (int)i;
@@ -552,7 +566,4 @@ vpMbtDistanceKltPoints::isInside(const std::vector<vpImagePoint>& roi, const dou
   return ((nbInter%2) == 1);
 }
 
-#elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_mbt.a(vpMbtDistanceKltPoints.cpp.o) has no symbols
-void dummy_vpMbtDistanceKltPoints() {};
 #endif

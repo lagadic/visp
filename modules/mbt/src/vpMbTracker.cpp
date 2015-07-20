@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMbTracker.cpp 5441 2015-05-05 13:55:36Z strinh $
+ * $Id: vpMbTracker.cpp 5487 2015-06-29 17:34:41Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
@@ -131,7 +131,7 @@ vpMbTracker::vpMbTracker()
   poseSavingFilename(), computeCovariance(false), covarianceMatrix(), computeProjError(false),
   projectionError(90.0), displayFeatures(false), m_w(), m_error(), faces(),
   angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ), distNearClip(0.001),
-  distFarClip(100), clippingFlag(vpPolygon3D::NO_CLIPPING), useOgre(false),
+  distFarClip(100), clippingFlag(vpPolygon3D::NO_CLIPPING), useOgre(false), useScanLine(false),
   nbPoints(0), nbLines(0), nbPolygonLines(0), nbPolygonPoints(0), nbCylinders(0), nbCircles(0),
   useLodGeneral(false), applyLodSettingInConfig(false), minLineLengthThresholdGeneral(50.0),
   minPolygonAreaThresholdGeneral(2500.0), mapOfParameterNames()
