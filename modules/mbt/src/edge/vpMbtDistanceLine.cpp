@@ -60,7 +60,7 @@ void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L);
   Basic constructor
 */
 vpMbtDistanceLine::vpMbtDistanceLine()
-  : name(), index(0), cam(), me(NULL), isTrackedLine(true), isTrackedLineWithVisibility(true), alpha(0),
+  : name(), index(0), cam(), me(NULL), isTrackedLine(true), isTrackedLineWithVisibility(true),
     wmean(1), featureline(), poly(), useScanLine(false), meline(), line(NULL), p1(NULL), p2(NULL), L(),
     error(), nbFeature(), nbFeatureTotal(0), Reinit(false), hiddenface(NULL), Lindex_polygon(),
     Lindex_polygon_tracked(), isvisible(false)
