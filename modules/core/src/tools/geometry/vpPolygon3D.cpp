@@ -438,7 +438,7 @@ vpPolygon3D::getRoiClipped(std::vector<vpPoint> &points)
 
   \warning Suppose that changeFrame() and computePolygonClipped() have already been called.
 
-  \param p : resulting points plus clipping information.
+  \param poly : resulting points plus clipping information.
 */
 void
 vpPolygon3D::getPolygonClipped(std::vector<std::pair<vpPoint,unsigned int> > &poly)
@@ -451,7 +451,7 @@ vpPolygon3D::getPolygonClipped(std::vector<std::pair<vpPoint,unsigned int> > &po
 
   \warning Suppose that changeFrame() and computePolygonClipped() have already been called.
 
-  \param p : resulting points.
+  \param poly : resulting points.
 */
 void
 vpPolygon3D::getPolygonClipped(std::vector<vpPoint> &poly)

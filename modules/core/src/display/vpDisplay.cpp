@@ -368,7 +368,9 @@ vpDisplay::getImage ( const vpImage<unsigned  char> &Isrc,
 
   \param color : Color used to display the frame in the image.
   
-  \param thickness : the thickness of the line
+  \param thickness : the thickness of the line.
+
+  \param offset : Offset in pixels applied to the frame origin location in the image.
   
 */
 void
@@ -441,6 +443,7 @@ vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
   
   \param thickness : the thickness of the line
   
+  \param offset : Offset in pixels applied to the frame origin location in the image.
 */
 void
 vpDisplay::displayFrame ( const vpImage<vpRGBa> &I,

@@ -265,7 +265,6 @@ vpMbtXmlParser::read_ecm (xmlDocPtr doc, xmlNodePtr node)
   
   \param doc : Pointer to the document.
   \param node : Pointer to the node of the sample information.
-  \param displayDeprecated : Boolean to notify if the node used is deprecated or not.
 */
 void 
 vpMbtXmlParser::read_sample (xmlDocPtr doc, xmlNodePtr node)

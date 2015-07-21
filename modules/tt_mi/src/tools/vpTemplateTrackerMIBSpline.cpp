@@ -41,6 +41,7 @@
  *****************************************************************************/
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 void vpTemplateTrackerMIBSpline::PutPVBsplineD(double *Prt, int cr, double er, int ct, double et,int Nc, double val, int &degre)
 {
@@ -789,3 +790,5 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4Prt(double *Prt, int &cr, doubl
     }
   }
 }
+
+#endif
