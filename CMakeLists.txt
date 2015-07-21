@@ -329,18 +329,6 @@ if(UNIX)
 endif()
 
 #----------------------------------------------------------------------
-# For Dart server and tests
-# We use CDash set through CTestConfig.cmake file
-# Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
-#----------------------------------------------------------------------
-if(BUILD_TESTS)
-  enable_testing()
-  include(CTest)
-  mark_as_advanced(DART_ROOT)
-  mark_as_advanced(BUILD_TESTING)
-endif()
-
-#----------------------------------------------------------------------
 # Add definitions
 #----------------------------------------------------------------------
 # With Visual Studio 2005, Microsoft deprecates the standard C library, for
@@ -669,6 +657,17 @@ include(cmake/VISPGenerateHeaders.cmake)
 #   target_link_libraries(<target> ${VISP_LIBRARIES})
 include(cmake/VISPGenerateConfig.cmake)
 
+#----------------------------------------------------------------------
+# For Dart server and tests
+# We use CDash set through CTestConfig.cmake file
+# Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
+#----------------------------------------------------------------------
+if(BUILD_TESTS)
+  enable_testing()
+  include(CTest)
+  mark_as_advanced(DART_ROOT)
+  mark_as_advanced(BUILD_TESTING)
+endif()
 
 #----------------------------------------------------------------------
 # For CPack packaging tool
