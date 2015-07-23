@@ -47,6 +47,7 @@
 #include <deque>
 #include <set>
 #include <map>
+#include <limits>   // numeric_limits
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpCameraParameters.h>
@@ -92,12 +93,12 @@ public:
   {
     inline bool operator()(const vpMbScanLineEdge &l0, const vpMbScanLineEdge &l1) const
     {
-      for(int i = 0 ; i < 3 ; ++i)
+      for(unsigned int i = 0 ; i < 3 ; ++i)
         if (l0.first[i] < l1.first[i])
           return true;
         else if(l0.first[i] > l1.first[i])
           return false;
-      for(int i = 0 ; i < 3 ; ++i)
+      for(unsigned int i = 0 ; i < 3 ; ++i)
         if (l0.second[i] < l1.second[i])
           return true;
         else if(l0.second[i] > l1.second[i])
@@ -111,7 +112,8 @@ public:
   {
     inline bool operator()(const vpMbScanLineSegment &a, const vpMbScanLineSegment &b) const
     {
-      return a.p == b.p ? a.type < b.type : a.p < b.p;
+      //return a.p == b.p ? a.type < b.type : a.p < b.p;
+      return (std::fabs(a.p - b.p) <= std::numeric_limits<double>::epsilon()) ? a.type < b.type : a.p < b.p;
     }
 
     inline bool operator()(const std::pair<double,vpMbScanLineSegment> &a, const std::pair<double, vpMbScanLineSegment> &b) const
