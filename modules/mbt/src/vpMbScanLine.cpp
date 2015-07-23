@@ -41,6 +41,10 @@
 
 #include <visp3/core/vpConfig.h>
 
+#if defined _MSC_VER && _MSC_VER >= 1200
+#  define NOMINMAX
+#endif
+
 #include <cmath>
 #include <algorithm>
 #include <cstddef>
@@ -603,7 +607,7 @@ vpMbScanLine::queryLineVisibility(vpPoint a,
       return;
 
   const int _v0 = std::max(0, int(std::ceil(*v0)));
-  const int _v1 = std::min<int>(size - 1, std::ceil(*v1) - 1);
+  const int _v1 = std::min<int>(size - 1, (int)(std::ceil(*v1) - 1));
 
   const std::set<int> &visible_samples = visibility_samples[edge];
   int last = _v0;
