@@ -51,7 +51,7 @@ set(example_cpp
   servoViper850FourPointsKinect.cpp
   servoViper850Point2DArtVelocity-jointAvoidance-gpa.cpp
   servoViper850Point2DArtVelocity-jointAvoidance-basic.cpp
-  servoViper850Point2DArtVelocity-jointAvoidance-large-proj-operator.cpp
+  servoViper850Point2DArtVelocity-jointAvoidance-large.cpp
   servoViper850Point2DArtVelocity.cpp
   servoViper850Point2DCamVelocity.cpp
   servoViper850Point2DCamVelocityKalman.cpp

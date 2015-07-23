@@ -1,9 +1,7 @@
 /****************************************************************************
  *
- * $Id: servoViper850Point2DArtVelocity-jointAvoidance-gpa.cpp 4698 2014-03-26 06:55:37Z fspindle $
- *
  * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2015 by INRIA. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -44,7 +42,7 @@
  *****************************************************************************/
 
 /*!
-  \example servoViper850Point2DArtVelocity-jointAvoidance-large-proj-operator.cpp
+  \example servoViper850Point2DArtVelocity-jointAvoidance-large.cpp
 
   Joint limits avoidance using a secondary task for joint limit avoidance \cite Marey:2010b using the
   new large projection operator (see equation(24) in the paper \cite Marey:2010).
