@@ -45,7 +45,7 @@
 // FS: Sould be improved to avoid the #if preprocessor line. Not a good idea to define colors in static.
 //     See also vpColor.h where things need to be improved.
 //#if !defined(visp_EXPORTS)
-#if !defined(VISP_USE_MSVC)
+#if !defined(VISP_USE_MSVC) || (defined(VISP_USE_MSVC) && !defined(VISP_BUILD_SHARED_LIBS))
 /*!< Predefined black color with R=G=B=0 and identifier vpColor::id_black. */
 vpColor const vpColor::black  = vpColor(0, 0, 0, id_black);
 /*!< Predefined white color with R=G=B=255 and identifier vpColor::id_white. */
