@@ -643,6 +643,10 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   double residuKLT = 0;
 
   vpHomogeneousMatrix cMoPrev;
+  vpHomogeneousMatrix ctTc0_Prev;
+  vpColVector m_error_prev(2*nbInfos + nbrow);
+  vpColVector m_w_prev(2*nbInfos + nbrow);
+  double mu = 0.01;
   
   while( ((int)((residu - residu_1)*1e8) !=0 )  && (iter<maxIter) ){   
     L = new vpMatrix();
@@ -666,112 +670,173 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
         }
       }
     }
-    
-    if(iter == 0){
-      m_w.resize(nbrow + 2*nbInfos);
-      m_w=1;
 
-      if(nbrow != 0){
-        w_mbt.resize(nbrow);
-        w_mbt = 1;
-        robust_mbt.resize(nbrow);
-      }
+    bool reStartFromLastIncrement = false;
+    if(iter != 0 && m_optimizationMethod == vpMbTracker::LEVENBERG_MARQUARDT_OPT){
+      if(m_error.sumSquare()/(double)(2*nbInfos + nbrow) > m_error_prev.sumSquare()/(double)(2*nbInfos + nbrow)){
+        mu *= 10.0;
 
-      if(nbInfos != 0){
-        w_klt.resize(2*nbInfos);
-        w_klt = 1;
-        robust_klt.resize(2*nbInfos);
-      }
+        if(mu > 1.0)
+          throw vpTrackingException(vpTrackingException::fatalError, "Optimization diverged");
 
-      w_true.resize(nbrow + 2*nbInfos);
-    }
-
-      /* robust */   
-    if(nbrow > 3){
-      residuMBT = 0;
-      for(unsigned int i = 0; i < R_mbt.getRows(); i++)
-        residuMBT += fabs(R_mbt[i]);
-      residuMBT /= R_mbt.getRows();
-      
-      robust_mbt.setIteration(iter);
-      robust_mbt.setThreshold(thresholdMBT/cam.get_px());
-      robust_mbt.MEstimator( vpRobust::TUKEY, R_mbt, w_mbt);
-      L->stackMatrices(L_mbt);
-      R->stackMatrices(R_mbt);
-    }
-    
-    if(nbInfos > 3){
-      residuKLT = 0;
-      for(unsigned int i = 0; i < R_klt.getRows(); i++)
-        residuKLT += fabs(R_klt[i]);
-      residuKLT /= R_klt.getRows();
-      
-      robust_klt.setIteration(iter);
-      robust_klt.setThreshold(thresholdKLT/cam.get_px());
-      robust_klt.MEstimator( vpRobust::TUKEY, R_klt, w_klt);
-      
-      L->stackMatrices(L_klt);
-      R->stackMatrices(R_klt);
-    }
-
-    unsigned int cpt = 0;
-    while(cpt< (nbrow+2*nbInfos)){
-      if(cpt<(unsigned)nbrow){
-        m_w[cpt] = ((w_mbt[cpt] * factor[cpt]) * factorMBT) ;
-      }
-      else
-        m_w[cpt] = (w_klt[cpt-nbrow] * factorKLT);
-      cpt++;
-    }
-    
-    m_error = (*R);
-    if(computeCovariance){
-      L_true = (*L);
-      if(!isoJoIdentity){
-         vpVelocityTwistMatrix cVo;
-         cVo.buildFrom(cMo);
-         LVJ_true = ((*L)*cVo*oJo);
+        cMo = cMoPrev;
+        m_error = m_error_prev;
+        m_w = m_w_prev;
+        ctTc0 = ctTc0_Prev;
+        reStartFromLastIncrement = true;
       }
     }
 
-    residu_1 = residu;
-    residu = 0;    
-    double num = 0;
-    double den = 0;
-    for (unsigned int i = 0; i < static_cast<unsigned int>(R->getRows()); i++){
-      num += m_w[i]*vpMath::sqr((*R)[i]);
-      den += m_w[i];
-      
-      w_true[i] = m_w[i];
-      (*R)[i] *= m_w[i];
-      if(compute_interaction){
-        for (unsigned int j = 0; j < 6; j += 1){
-          (*L)[i][j] *= m_w[i];
+    if(!reStartFromLastIncrement){
+      if(iter == 0){
+        m_w.resize(nbrow + 2*nbInfos);
+        m_w=1;
+
+        if(nbrow != 0){
+          w_mbt.resize(nbrow);
+          w_mbt = 1;
+          robust_mbt.resize(nbrow);
+        }
+
+        if(nbInfos != 0){
+          w_klt.resize(2*nbInfos);
+          w_klt = 1;
+          robust_klt.resize(2*nbInfos);
+        }
+
+        w_true.resize(nbrow + 2*nbInfos);
+      }
+
+        /* robust */
+      if(nbrow > 3){
+        residuMBT = 0;
+        for(unsigned int i = 0; i < R_mbt.getRows(); i++)
+          residuMBT += fabs(R_mbt[i]);
+        residuMBT /= R_mbt.getRows();
+
+        robust_mbt.setIteration(iter);
+        robust_mbt.setThreshold(thresholdMBT/cam.get_px());
+        robust_mbt.MEstimator( vpRobust::TUKEY, R_mbt, w_mbt);
+        L->stackMatrices(L_mbt);
+        R->stackMatrices(R_mbt);
+      }
+
+      if(nbInfos > 3){
+        residuKLT = 0;
+        for(unsigned int i = 0; i < R_klt.getRows(); i++)
+          residuKLT += fabs(R_klt[i]);
+        residuKLT /= R_klt.getRows();
+
+        robust_klt.setIteration(iter);
+        robust_klt.setThreshold(thresholdKLT/cam.get_px());
+        robust_klt.MEstimator( vpRobust::TUKEY, R_klt, w_klt);
+
+        L->stackMatrices(L_klt);
+        R->stackMatrices(R_klt);
+      }
+
+      unsigned int cpt = 0;
+      while(cpt< (nbrow+2*nbInfos)){
+        if(cpt<(unsigned)nbrow){
+          m_w[cpt] = ((w_mbt[cpt] * factor[cpt]) * factorMBT) ;
+        }
+        else
+          m_w[cpt] = (w_klt[cpt-nbrow] * factorKLT);
+        cpt++;
+      }
+
+      m_error = (*R);
+      if(computeCovariance){
+        L_true = (*L);
+        if(!isoJoIdentity){
+           vpVelocityTwistMatrix cVo;
+           cVo.buildFrom(cMo);
+           LVJ_true = ((*L)*cVo*oJo);
         }
       }
-    }
 
-    residu = sqrt(num/den);
+      residu_1 = residu;
+      residu = 0;
+      double num = 0;
+      double den = 0;
+      for (unsigned int i = 0; i < static_cast<unsigned int>(R->getRows()); i++){
+        num += m_w[i]*vpMath::sqr((*R)[i]);
+        den += m_w[i];
 
-    if(isoJoIdentity){
-        LTL = L->AtA();
-        computeJTR(*L, *R, LTR);
-        v = -lambda * LTL.pseudoInverse() * LTR;
-    }
-    else{
-        vpVelocityTwistMatrix cVo;
-        cVo.buildFrom(cMo);
-        vpMatrix LVJ = ((*L)*cVo*oJo);
-        vpMatrix LVJTLVJ = (LVJ).AtA();
-        vpMatrix LVJTR;
-        computeJTR(LVJ, *R, LVJTR);
-        v = -lambda*LVJTLVJ.pseudoInverse(1e-16)*LVJTR;
-        v = cVo * v;
-    }
+        w_true[i] = m_w[i];
+        (*R)[i] *= m_w[i];
+        if(compute_interaction){
+          for (unsigned int j = 0; j < 6; j += 1){
+            (*L)[i][j] *= m_w[i];
+          }
+        }
+      }
 
-    cMoPrev = cMo;
-    cMo = vpExponentialMap::direct(v).inverse() * cMo;
-    ctTc0 = vpExponentialMap::direct(v).inverse() * ctTc0;
+      residu = sqrt(num/den);
+
+      if(isoJoIdentity){
+          LTL = L->AtA();
+          computeJTR(*L, *R, LTR);
+
+          switch(m_optimizationMethod){
+          case vpMbTracker::LEVENBERG_MARQUARDT_OPT:
+          {
+            vpMatrix LMA(LTL.getRows(), LTL.getCols());
+            LMA.setIdentity();
+            vpMatrix LTLmuI = LTL + (LMA*mu);
+            v = -lambda*LTLmuI.pseudoInverse(LTLmuI.getRows()*std::numeric_limits<double>::epsilon())*LTR;
+
+            if(iter != 0)
+              mu /= 10.0;
+
+            m_error_prev = m_error;
+            m_w_prev = m_w;
+            break;
+          }
+          case vpMbTracker::GAUSS_NEWTON_OPT:
+          default:
+            v = -lambda * LTL.pseudoInverse(LTL.getRows()*std::numeric_limits<double>::epsilon()) * LTR;
+          }
+      }
+      else{
+          vpVelocityTwistMatrix cVo;
+          cVo.buildFrom(cMo);
+          vpMatrix LVJ = ((*L)*cVo*oJo);
+          vpMatrix LVJTLVJ = (LVJ).AtA();
+          vpMatrix LVJTR;
+          computeJTR(LVJ, *R, LVJTR);
+
+          switch(m_optimizationMethod){
+          case vpMbTracker::LEVENBERG_MARQUARDT_OPT:
+          {
+            vpMatrix LMA(LVJTLVJ.getRows(), LVJTLVJ.getCols());
+            LMA.setIdentity();
+            vpMatrix LTLmuI = LVJTLVJ + (LMA*mu);
+            v = -lambda*LTLmuI.pseudoInverse(LTLmuI.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
+            v = cVo * v;
+
+            if(iter != 0)
+              mu /= 10.0;
+
+            m_error_prev = m_error;
+            m_w_prev = m_w;
+            break;
+          }
+          case vpMbTracker::GAUSS_NEWTON_OPT:
+          default:
+          {
+            v = -lambda*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
+            v = cVo * v;
+            break;
+          }
+          }
+      }
+
+      cMoPrev = cMo;
+      ctTc0_Prev = ctTc0;
+      ctTc0 = vpExponentialMap::direct(v).inverse() * ctTc0;
+      cMo = ctTc0 * c0Mo;
+    }
     
     iter++;
     

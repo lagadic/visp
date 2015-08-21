@@ -105,6 +105,12 @@
 */
 class VISP_EXPORT vpMbTracker
 {
+public:
+  typedef enum {
+    GAUSS_NEWTON_OPT = 0,
+    LEVENBERG_MARQUARDT_OPT = 1
+  } vpMbtOptimizationMethod;
+
 protected:
   //! The camera parameters.
   vpCameraParameters cam;
@@ -134,6 +140,8 @@ protected:
   vpColVector m_w;
   //! Error s-s*
   vpColVector m_error;
+  //! Optimization method used
+  vpMbtOptimizationMethod m_optimizationMethod;
 
   //! Set of faces describing the object.
   vpMbHiddenFaces<vpMbtPolygon> faces;
@@ -312,6 +320,15 @@ public:
   virtual inline double   getNearClippingDistance() const { return distNearClip; }
 
   /*!
+    Get the optimization method used during the tracking.
+    0 = Gauss-Newton approach.
+    1 = Levenberg-Marquardt approach.
+
+    \return Optimization method.
+  */
+  virtual inline vpMbtOptimizationMethod getOptimizationMethod() const { return m_optimizationMethod; }
+
+  /*!
     Return the polygon (face) "index".
 
     \exception vpException::dimensionError if index does not represent a good
@@ -428,12 +445,7 @@ public:
   */
   virtual void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
 
-  /*!
-    Set if the projection error criteria has to be computed.
-
-    \param flag : True if the projection error criteria has to be computed, false otherwise
-  */
-  virtual void setProjectionErrorComputation(const bool &flag) { computeProjError = flag; }
+  void setDisplayFeatures(const bool displayF) {displayFeatures = displayF;}
 
   virtual void setEstimatedDoF(const vpColVector& v);
 
@@ -448,7 +460,6 @@ public:
 
     \param displayF : set it to true to display the features.
   */
-  void setDisplayFeatures(const bool displayF) {displayFeatures = displayF;}
 
   virtual void setFarClippingDistance(const double &dist);
 
@@ -459,6 +470,13 @@ public:
   virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name="");
 
   virtual void setNearClippingDistance(const double &dist);
+
+  /*!
+    Set the optimization method used during the tracking.
+
+    \param opt : Optimization method to use.
+  */
+  virtual inline void setOptimizationMethod(const vpMbtOptimizationMethod &opt) { m_optimizationMethod = opt; }
   
   /*!
     Set the pose to be used in entry of the next call to the track() function.
@@ -483,6 +501,13 @@ public:
   inline void setPoseSavingFilename(const std::string& filename){
     poseSavingFilename = filename;
   }
+
+  /*!
+    Set if the projection error criteria has to be computed.
+
+    \param flag : True if the projection error criteria has to be computed, false otherwise
+  */
+  virtual void setProjectionErrorComputation(const bool &flag) { computeProjError = flag; }
 
   virtual void setScanLineVisibilityTest(const bool &v){ useScanLine = v; }
 

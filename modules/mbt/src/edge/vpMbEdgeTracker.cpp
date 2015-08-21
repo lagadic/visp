@@ -641,6 +641,10 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   vpColVector W_true;
   vpMatrix L_true;
   vpMatrix LVJ_true;
+
+  double mu = 0.01;
+  vpColVector m_error_prev(nbrow);
+  vpColVector m_w_prev(nbrow);
   
   while ( ((int)((residu_1 - r)*1e8) !=0 )  && (iter<30))
   {
@@ -698,110 +702,169 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
       }
     }
 
-    if(iter==0)
-    {
-      weighted_error.resize(nerror);
-      m_w.resize(nerror);
-      m_w = 1;
-      w_lines.resize(nberrors_lines);
-      w_lines = 1;
-      w_cylinders.resize(nberrors_cylinders);
-      w_cylinders = 1;
-      w_circles.resize(nberrors_circles);
-      w_circles = 1;
+    bool reStartFromLastIncrement = false;
+    if(iter != 0 && m_optimizationMethod == vpMbTracker::LEVENBERG_MARQUARDT_OPT){
+      if(m_error.sumSquare()/(double)nbrow > m_error_prev.sumSquare()/(double)nbrow){
+        mu *= 10.0;
 
-      robust_lines.setThreshold(2/cam.get_px());
-      robust_cylinders.setThreshold(2/cam.get_px());
-      robust_circles.setThreshold(vpMath::sqr(2/cam.get_px()));
-      if(nberrors_lines > 0)
-                robust_lines.MEstimator(vpRobust::TUKEY, error_lines,w_lines);
-      if(nberrors_cylinders > 0)
-       robust_cylinders.MEstimator(vpRobust::TUKEY, error_cylinders,w_cylinders);
-      if(nberrors_circles > 0)
-        robust_circles.MEstimator(vpRobust::TUKEY, error_circles,w_circles);
-    }
-    else
-    {
-      robust_lines.setIteration(iter);
-      robust_cylinders.setIteration(iter);
-      robust_circles.setIteration(iter);
-      if(nberrors_lines > 0)
-                robust_lines.MEstimator(vpRobust::TUKEY, error_lines, w_lines);
-      if(nberrors_cylinders > 0)
-        robust_cylinders.MEstimator(vpRobust::TUKEY, error_cylinders,w_cylinders);
-      if(nberrors_circles > 0)
-        robust_circles.MEstimator(vpRobust::TUKEY, error_circles,w_circles);
-    }
+        if(mu > 1.0)
+          throw vpTrackingException(vpTrackingException::fatalError, "Optimization diverged");
 
-    unsigned int cpt = 0;
-    while(cpt<nbrow){
-      if(cpt<nberrors_lines){
-        m_w[cpt] = w_lines[cpt];
+        cMo = cMoPrev;
+        m_error = m_error_prev;
+        m_w = m_w_prev;
+        reStartFromLastIncrement = true;
       }
-      else if (cpt<nberrors_lines+nberrors_cylinders){
-        m_w[cpt] = w_cylinders[cpt-nberrors_lines];
+    }
+
+    if(!reStartFromLastIncrement){
+      if(iter==0)
+      {
+        weighted_error.resize(nerror);
+        m_w.resize(nerror);
+        m_w = 1;
+        w_lines.resize(nberrors_lines);
+        w_lines = 1;
+        w_cylinders.resize(nberrors_cylinders);
+        w_cylinders = 1;
+        w_circles.resize(nberrors_circles);
+        w_circles = 1;
+
+        robust_lines.setThreshold(2/cam.get_px());
+        robust_cylinders.setThreshold(2/cam.get_px());
+        robust_circles.setThreshold(vpMath::sqr(2/cam.get_px()));
+        if(nberrors_lines > 0)
+                  robust_lines.MEstimator(vpRobust::TUKEY, error_lines,w_lines);
+        if(nberrors_cylinders > 0)
+         robust_cylinders.MEstimator(vpRobust::TUKEY, error_cylinders,w_cylinders);
+        if(nberrors_circles > 0)
+          robust_circles.MEstimator(vpRobust::TUKEY, error_circles,w_circles);
       }
-      else {
-        m_w[cpt] = w_circles[cpt-nberrors_lines-nberrors_cylinders];
+      else
+      {
+        robust_lines.setIteration(iter);
+        robust_cylinders.setIteration(iter);
+        robust_circles.setIteration(iter);
+        if(nberrors_lines > 0)
+                  robust_lines.MEstimator(vpRobust::TUKEY, error_lines, w_lines);
+        if(nberrors_cylinders > 0)
+          robust_cylinders.MEstimator(vpRobust::TUKEY, error_cylinders,w_cylinders);
+        if(nberrors_circles > 0)
+          robust_circles.MEstimator(vpRobust::TUKEY, error_circles,w_circles);
       }
-      cpt++;
-    }
 
-    residu_1 = r;
+      unsigned int cpt = 0;
+      while(cpt<nbrow){
+        if(cpt<nberrors_lines){
+          m_w[cpt] = w_lines[cpt];
+        }
+        else if (cpt<nberrors_lines+nberrors_cylinders){
+          m_w[cpt] = w_cylinders[cpt-nberrors_lines];
+        }
+        else {
+          m_w[cpt] = w_circles[cpt-nberrors_lines-nberrors_cylinders];
+        }
+        cpt++;
+      }
 
-    double num=0;
-    double den=0;
-    double wi;
-    double eri;
-    
-    L_true = L;
-    W_true = vpColVector(nerror);
+      double num=0;
+      double den=0;
+      double wi;
+      double eri;
 
-    if(computeCovariance){
-        L_true = L;
-       if(!isoJoIdentity_){
-         cVo.buildFrom(cMo);
-         LVJ_true = (L*cVo*oJo);
-       }
-    }
-    
-    for(unsigned int i=0; i<nerror; i++){
-      wi = m_w[i]*factor[i];
-      W_true[i] = wi;
-      eri = m_error[i];
-      num += wi*vpMath::sqr(eri);
-      den += wi;
+      L_true = L;
+      W_true = vpColVector(nerror);
 
-      weighted_error[i] =  wi*eri ;
-    }
-    
-    r = sqrt(num/den); //Le critere d'arret prend en compte le poids
+      if(computeCovariance){
+          L_true = L;
+         if(!isoJoIdentity_){
+           cVo.buildFrom(cMo);
+           LVJ_true = (L*cVo*oJo);
+         }
+      }
 
-    if((iter==0)|| compute_interaction){
-      for (unsigned int i=0 ; i < nerror ; i++){
-        for (unsigned int j=0 ; j < 6 ; j++){
-          L[i][j] = m_w[i]*factor[i]*L[i][j];
+      for(unsigned int i=0; i<nerror; i++){
+        wi = m_w[i]*factor[i];
+        W_true[i] = wi;
+        eri = m_error[i];
+        num += wi*vpMath::sqr(eri);
+        den += wi;
+
+        weighted_error[i] =  wi*eri ;
+      }
+
+      if((iter==0)|| compute_interaction){
+        for (unsigned int i=0 ; i < nerror ; i++){
+          for (unsigned int j=0 ; j < 6 ; j++){
+            L[i][j] = m_w[i]*factor[i]*L[i][j];
+          }
         }
       }
-    }
 
-    if(isoJoIdentity_){
+      if(isoJoIdentity_){
         LTL = L.AtA();
         computeJTR(L, weighted_error, LTR);
-        v = -lambda*LTL.pseudoInverse(LTL.getRows()*std::numeric_limits<double>::epsilon())*LTR;
-    }
-    else{
+
+        switch(m_optimizationMethod){
+        case vpMbTracker::LEVENBERG_MARQUARDT_OPT:
+        {
+          vpMatrix LMA(LTL.getRows(), LTL.getCols());
+          LMA.setIdentity();
+          vpMatrix LTLmuI = LTL + (LMA*mu);
+          v = -lambda*LTLmuI.pseudoInverse(LTLmuI.getRows()*std::numeric_limits<double>::epsilon())*LTR;
+
+          if(iter != 0)
+            mu /= 10.0;
+
+          m_error_prev = m_error;
+          m_w_prev = m_w;
+          break;
+        }
+        case vpMbTracker::GAUSS_NEWTON_OPT:
+        default:
+          v = -lambda*LTL.pseudoInverse(LTL.getRows()*std::numeric_limits<double>::epsilon())*LTR;
+        }
+      }
+      else{
         cVo.buildFrom(cMo);
         vpMatrix LVJ = (L*cVo*oJo);
         vpMatrix LVJTLVJ = (LVJ).AtA();
         vpMatrix LVJTR;
         computeJTR(LVJ, weighted_error, LVJTR);
-        v = -lambda*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
-        v = cVo * v;
-    }
 
-    cMoPrev = cMo;
-    cMo =  vpExponentialMap::direct(v).inverse() * cMo;
+        switch(m_optimizationMethod){
+        case vpMbTracker::LEVENBERG_MARQUARDT_OPT:
+        {
+          vpMatrix LMA(LVJTLVJ.getRows(), LVJTLVJ.getCols());
+          LMA.setIdentity();
+          vpMatrix LTLmuI = LVJTLVJ + (LMA*mu);
+          v = -lambda*LTLmuI.pseudoInverse(LTLmuI.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
+          v = cVo * v;
+
+          if(iter != 0)
+            mu /= 10.0;
+
+          m_error_prev = m_error;
+          m_w_prev = m_w;
+          break;
+        }
+        case vpMbTracker::GAUSS_NEWTON_OPT:
+        default:
+        {
+          v = -lambda*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
+          v = cVo * v;
+          break;
+        }
+        }
+      }
+
+      residu_1 = r;
+      r = sqrt(num/den); //Le critere d'arret prend en compte le poids
+
+      cMoPrev = cMo;
+      cMo =  vpExponentialMap::direct(v).inverse() * cMo;
+
+    } // endif(!restartFromLast)
 
     iter++;
   }
@@ -2303,6 +2366,8 @@ vpMbEdgeTracker::resetTracker()
   angleAppears = vpMath::rad(89);
   angleDisappears = vpMath::rad(89);
   clippingFlag = vpPolygon3D::NO_CLIPPING;
+
+  m_optimizationMethod = vpMbTracker::GAUSS_NEWTON_OPT;
 
   // reinitialization of the scales.
   this->setScales(scales);
