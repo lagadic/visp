@@ -392,8 +392,16 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
 
     capture >> frame;
     frameCount = (long) capture.get(cv::CAP_PROP_POS_FRAMES); // next index
-    if(frame.empty())
-      setLastFrameIndex(frameCount-1);
+    if(frame.empty()) {
+      // New trial that makes things working with opencv 3.0.0
+      capture >> frame;
+      if(frame.empty()) {
+        setLastFrameIndex(frameCount-1);
+      }
+      else {
+        vpImageConvert::convert(frame, I);
+      }
+    }
     else
       vpImageConvert::convert(frame, I);
 #elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
@@ -460,8 +468,16 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
     }
     capture >> frame;
     frameCount = (long) capture.get(cv::CAP_PROP_POS_FRAMES); // next index
-    if(frame.empty())
-      setLastFrameIndex(frameCount-1);
+    if(frame.empty()) {
+      // New trial that makes things working with opencv 3.0.0
+      capture >> frame;
+      if(frame.empty()) {
+        setLastFrameIndex(frameCount-1);
+      }
+      else {
+        vpImageConvert::convert(frame, I);
+      }
+    }
     else
       vpImageConvert::convert(frame, I);
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
