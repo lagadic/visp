@@ -723,7 +723,6 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char>& I, const std::strin
 	else
     sprintf(s,"%s.pos", initFile.c_str());
 	
-	std::cout << "filename " << s << std::endl ;
 	finit.open(s,std::ios::in) ;
 	if (finit.fail()){
 		std::cout << "cannot read " << s << std::endl;
