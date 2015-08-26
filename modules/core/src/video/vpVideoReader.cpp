@@ -192,6 +192,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
 
 	isOpen = true;
 	findLastFrameIndex();
+	frameCount = firstFrame; // open() should not increase the frame counter
 }
 
 
@@ -255,6 +256,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 
 	isOpen = true;
 	findLastFrameIndex();
+	frameCount = firstFrame; // open() should not increase the frame counter
 }
 
 
@@ -616,43 +618,39 @@ std::string vpVideoReader::getExtension(const std::string &filename)
 /*!
 Get the last frame index (update the lastFrame attribute).
 */
-void
-	vpVideoReader::findLastFrameIndex()
+void vpVideoReader::findLastFrameIndex()
 {
-	if (!isOpen)
-	{
-		vpERROR_TRACE("Use the open method before");
-		throw (vpException(vpException::notInitialized,"file not yet opened"));
-	}
-
-	if (imSequence != NULL)
-	{
-		if (! lastFrameIndexIsSet) {
-			char name[FILENAME_MAX];
-			int image_number = firstFrame;
-			bool failed;
-			do
-			{
-				std::fstream file;
-				sprintf(name,fileName,image_number) ;
-				file.open(name, std::ios::in);
-				failed = file.fail();
+  if (!isOpen) {
+    vpERROR_TRACE("Use the open method before");
+    throw (vpException(vpException::notInitialized,"file not yet opened"));
+  }
+  
+  if (imSequence != NULL) {
+    if (! lastFrameIndexIsSet) {
+      char name[FILENAME_MAX];
+      int image_number = firstFrame;
+      bool failed;
+      do {
+	std::fstream file;
+	sprintf(name,fileName,image_number) ;
+	file.open(name, std::ios::in);
+	failed = file.fail();
         if (!failed) {
           file.close();
           image_number++;
         }
-			}while(!failed);
-
-			lastFrame = image_number;
-		}
-	}
+      } while(!failed);
+      
+      lastFrame = image_number -1;
+    }
+  }
 
 #ifdef VISP_HAVE_FFMPEG
-	else if (ffmpeg != NULL) {
-		if (! lastFrameIndexIsSet) {
+  else if (ffmpeg != NULL) {
+    if (! lastFrameIndexIsSet) {
       lastFrame = (long)(ffmpeg->getFrameNumber());
-		}
-	}
+    }
+  }
 #elif VISP_HAVE_OPENCV_VERSION >= 0x030000
   else if (! lastFrameIndexIsSet)
   {
