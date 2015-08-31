@@ -445,10 +445,6 @@ public:
   */
   virtual void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
 
-  void setDisplayFeatures(const bool displayF) {displayFeatures = displayF;}
-
-  virtual void setEstimatedDoF(const vpColVector& v);
-
   /*!
     Enable to display the features. By features, we meant the moving edges (ME) and the klt points if used.
 
@@ -460,6 +456,9 @@ public:
 
     \param displayF : set it to true to display the features.
   */
+  void setDisplayFeatures(const bool displayF) {displayFeatures = displayF;}
+
+  virtual void setEstimatedDoF(const vpColVector& v);
 
   virtual void setFarClippingDistance(const double &dist);
 
