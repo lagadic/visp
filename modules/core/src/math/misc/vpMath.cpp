@@ -61,6 +61,7 @@ typedef int64_t int64;
 typedef uint64_t uint64;
 #  endif
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 typedef union Cv64suf
 {
   int64 i;
@@ -68,6 +69,7 @@ typedef union Cv64suf
   double f;
 }
 Cv64suf;
+#endif
 #endif
 
 const double vpMath::ang_min_sinc = 1.0e-8;
