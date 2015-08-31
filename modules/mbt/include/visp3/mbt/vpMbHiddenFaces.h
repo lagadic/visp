@@ -339,6 +339,7 @@ vpMbHiddenFaces<PolygonType>::addPolygon(PolygonType *p)
   p_new->minLineLengthThresh = p->minLineLengthThresh;
   p_new->minPolygonAreaThresh = p->minPolygonAreaThresh;
   p_new->setName(p->name);
+  p_new->hasOrientation = p->hasOrientation;
 
   for(unsigned int i = 0; i < p->nbpt; i++)
     p_new->p[i]= p->p[i];

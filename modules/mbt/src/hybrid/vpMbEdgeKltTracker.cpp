@@ -669,6 +669,24 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
           shift += 2*kltpoly->getCurrentNumberPoints();
         }
       }
+
+      vpMbtDistanceKltCylinder *kltPolyCylinder;
+      for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+        kltPolyCylinder = *it;
+
+        if(kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
+        {
+          vpSubColVector subR(R_klt, shift, 2*kltPolyCylinder->getCurrentNumberPoints());
+          vpSubMatrix subL(L_klt, shift, 0, 2*kltPolyCylinder->getCurrentNumberPoints(), 6);
+          try{
+            kltPolyCylinder->computeInteractionMatrixAndResidu(ctTc0,subR, subL);
+          }catch(...){
+            throw vpTrackingException(vpTrackingException::fatalError, "Cannot compute interaction matrix");
+          }
+
+          shift += 2*kltPolyCylinder->getCurrentNumberPoints();
+        }
+      }
     }
 
     bool reStartFromLastIncrement = false;
@@ -1149,6 +1167,7 @@ vpMbEdgeKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const dou
     const std::string &name)
 {
   vpMbEdgeTracker::initCylinder(p1, p2, radius, idFace, name);
+  vpMbKltTracker::initCylinder(p1, p2, radius, idFace, name);
 }
 
 /*!
@@ -1189,6 +1208,13 @@ vpMbEdgeKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneous
     if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
         kltpoly->displayPrimitive(I);
     }
+  }
+
+  vpMbtDistanceKltCylinder *kltPolyCylinder;
+  for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+    kltPolyCylinder = *it;
+    if(displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
+      kltPolyCylinder->displayPrimitive(I);
   }
 
 #ifdef VISP_HAVE_OGRE
@@ -1235,6 +1261,13 @@ vpMbEdgeKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix 
     if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
         kltpoly->displayPrimitive(I);
     }
+  }
+
+  vpMbtDistanceKltCylinder *kltPolyCylinder;
+  for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+    kltPolyCylinder = *it;
+    if(displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
+      kltPolyCylinder->displayPrimitive(I);
   }
 
 #ifdef VISP_HAVE_OGRE

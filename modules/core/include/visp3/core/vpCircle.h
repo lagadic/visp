@@ -109,6 +109,13 @@ public:
                const unsigned int thickness=1) ;
   vpCircle *duplicate() const ;
 
+  //###################
+  // Static Functions
+  //###################
+
+  public:
+  static void computeIntersectionPoint(const vpCircle &circle, const vpCameraParameters &cam, const double &rho, const double &theta, double &i, double &j);
+
 } ;
 
 

@@ -1659,7 +1659,11 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
     if (index ==-1) isvisible =true ;
     else
     {
-      if (cy->hiddenface->isVisible((unsigned int)index)) isvisible = true ;
+      if (cy->hiddenface->isVisible((unsigned int)index +1 ) ||
+          cy->hiddenface->isVisible((unsigned int)index +2 ) ||
+          cy->hiddenface->isVisible((unsigned int)index +3 ) ||
+          cy->hiddenface->isVisible((unsigned int)index +4 ))
+        isvisible = true ;
     }
 //    vpTRACE("cyl with index %d is visible: %d", index, isvisible);
 

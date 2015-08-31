@@ -63,7 +63,7 @@
 //#include <visp/vpMbtKltPolygon.h>
 #include <visp3/mbt/vpMbtDistanceKltPoints.h>
 #include <visp3/mbt/vpMbtDistanceCircle.h>
-#include <visp3/mbt/vpMbtDistanceCylinder.h>
+#include <visp3/mbt/vpMbtDistanceKltCylinder.h>
 
 /*!
   \class vpMbKltTracker
@@ -256,10 +256,10 @@ protected:
   vpKltOpencv tracker;
   //! First track() called
   bool firstTrack;
-  //! Vector of the cylinders used here only to display the full model.
+  //!
   std::list<vpMbtDistanceKltPoints*> kltPolygons;
-  //! Vector of the cylinders used here only to display the full model.
-  std::list<vpMbtDistanceCylinder*> cylinders_disp;
+  //!
+  std::list<vpMbtDistanceKltCylinder*> kltCylinders;
   //! Vector of the circles used here only to display the full model.
   std::list<vpMbtDistanceCircle*> circles_disp;
 
@@ -268,7 +268,6 @@ public:
   virtual   ~vpMbKltTracker();
   
             void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string &name="");
-            void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, const std::string &name="");
   virtual void            display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo,
                                   const vpCameraParameters &cam, const vpColor& col, const unsigned int thickness=1,
                                   const bool displayFullModel = false);
@@ -283,7 +282,7 @@ public:
   /*! Return the address of the circle feature list. */
   std::list<vpMbtDistanceCircle*> &getFeaturesCircle() { return circles_disp; }
   /*! Return the address of the cylinder feature list. */
-  std::list<vpMbtDistanceCylinder*> &getFeaturesCylinder() { return cylinders_disp; }
+  std::list<vpMbtDistanceKltCylinder*> &getFeaturesKltCylinder() { return kltCylinders; }
   /*! Return the address of the Klt feature list. */
   std::list<vpMbtDistanceKltPoints*> &getFeaturesKlt() { return kltPolygons; }
   virtual void            loadConfigFile(const std::string& configFile);

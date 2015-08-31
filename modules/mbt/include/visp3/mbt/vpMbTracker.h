@@ -554,6 +554,11 @@ protected:
       const std::string &polygonName="", const bool useLod=false, const double minPolygonAreaThreshold=2500.0);
   void addPolygon(const vpPoint& p1, const vpPoint &p2, const int idFace=-1, const std::string &polygonName="",
       const bool useLod=false, const double minLineLengthThreshold=50);
+  void addPolygon(const std::vector<std::vector<vpPoint> > &listFaces, const int idFace=-1, const std::string &polygonName="",
+      const bool useLod=false, const double minLineLengthThreshold=50);
+
+  void createCylinderBBox(const vpPoint& p1, const vpPoint &p2, const double &radius, std::vector<std::vector<vpPoint> > &listFaces);
+
   void computeJTR(const vpMatrix& J, const vpColVector& R, vpMatrix& JTR);
   
 #ifdef VISP_HAVE_COIN3D

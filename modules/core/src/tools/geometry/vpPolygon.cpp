@@ -410,3 +410,64 @@ vpPolygon::display(const vpImage<unsigned char>& I, const vpColor& color, unsign
     vpDisplay::displayLine(I, _corners[i], _corners[(i+1)%N], color, thickness);
   }
 }
+
+bool
+vpPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double &i_test, const double &j_test, const double &i, const double &j)
+{
+  double dx = p2.get_j() - p1.get_j();
+  double dy = p2.get_i() - p1.get_i();
+  double ex = j - j_test;
+  double ey = i - i_test;
+
+  double den = dx * ey - dy * ex;
+  double t = 0, u = 0;
+  //if(den != 0){
+  if(std::fabs(den) > std::fabs(den)*std::numeric_limits<double>::epsilon()){
+    t = -( ey * ( p1.get_j() - j_test ) + ex * ( -p1.get_i() + i_test ) ) / den;
+    u = -( dx * ( -p1.get_i() + i_test ) + dy * ( p1.get_j() - j_test ) ) / den;
+  }
+  else{
+    throw vpException(vpException::divideByZeroError, "denominator null");
+  }
+  return ( t >= std::numeric_limits<double>::epsilon() && t < 1.0 && u >= std::numeric_limits<double>::epsilon() && u < 1.0);
+}
+
+/*!
+  Test if an image point is inside a 2D polygon.
+
+  \param roi : List of the polygon corners.
+  \param i : i-coordinate of the image point to test.
+  \param j : j-coordinate of the image point to test.
+
+  \return True if the point defined by (i,j) is inside the polygon, False otherwise.
+*/
+bool
+vpPolygon::isInside(const std::vector<vpImagePoint>& roi, const double &i, const double &j)
+{
+  double i_test = 100000.;
+  double j_test = 100000.;
+  unsigned int nbInter = 0;
+  bool computeAgain = true;
+
+  if(computeAgain){
+    computeAgain = false;
+    for(unsigned int k=0; k< roi.size(); k++){
+      try{
+        if(vpPolygon::intersect(roi[k], roi[(k+1)%roi.size()], i, j, i_test, j_test)){
+          nbInter++;
+        }
+      }
+      catch(...){
+        computeAgain = true;
+        break;
+      }
+    }
+
+    if(computeAgain){
+      i_test += 100;
+      j_test -= 100;
+      nbInter = 0;
+    }
+  }
+  return ((nbInter%2) == 1);
+}

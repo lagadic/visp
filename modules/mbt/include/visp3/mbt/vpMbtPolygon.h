@@ -82,6 +82,8 @@ public:
   double minPolygonAreaThresh;
   //! Name of the polygon
   std::string name;
+  //! Boolean that specify if the polygon has an orientation or not (mainly used for cylinders)
+  bool hasOrientation;
 
 public: 
             vpMbtPolygon() ;
@@ -103,6 +105,7 @@ public:
   inline    std::string   getName() const {return name;}
 
   inline    bool          isAppearing() const {return isappearing;}
+  inline    bool          isPolygonOriented() { return hasOrientation; }
   virtual   bool          isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo = false,
 		  const vpCameraParameters &cam = vpCameraParameters(), const vpImage<unsigned char> &I = vpImage<unsigned char>());
             bool          isVisible() const {return isvisible;}
@@ -152,6 +155,15 @@ public:
    */
   inline        void        setName(const std::string &face_name) {
     this->name = face_name;
+  }
+
+  /*!
+   Set if the polygon is oriented or not.
+
+   \param oriented : True if the polygon is oriented, false otherwise.
+   */
+  inline        void        setIsPolygonOriented(const bool &oriented) {
+    this->hasOrientation = oriented;
   }
   
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS

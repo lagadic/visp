@@ -176,8 +176,16 @@ class VISP_EXPORT vpPolygon
     void updateBoundingBox();
     
   private:
-    bool testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint& ip2, const vpImagePoint& ip3, const vpImagePoint& ip4);
-    
+    bool testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint& ip2, const vpImagePoint& ip3, const vpImagePoint& ip4); 
+
+  //###################
+  // Static Functions
+  //###################
+
+  public:
+    static bool isInside(const std::vector<vpImagePoint>& roi, const double &i, const double  &j);
+  private:
+    static bool intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double  &i, const double  &j, const double  &i_test, const double  &j_test);
 };
 
 #endif

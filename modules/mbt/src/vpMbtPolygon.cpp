@@ -58,13 +58,15 @@
 */
 vpMbtPolygon::vpMbtPolygon()
   : index(-1), isvisible(false), isappearing(false),
-    useLod(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0), name("")
+    useLod(false), minLineLengthThresh(50.0), minPolygonAreaThresh(2500.0), name(""),
+    hasOrientation(true)
 {
 }
 
 vpMbtPolygon::vpMbtPolygon(const vpMbtPolygon& mbtp)
   : vpPolygon3D(mbtp), index(mbtp.index), isvisible(mbtp.isvisible), isappearing(mbtp.isappearing),
-    useLod(mbtp.useLod), minLineLengthThresh(mbtp.minLineLengthThresh), minPolygonAreaThresh(mbtp.minPolygonAreaThresh), name(mbtp.name)
+    useLod(mbtp.useLod), minLineLengthThresh(mbtp.minLineLengthThresh), minPolygonAreaThresh(mbtp.minPolygonAreaThresh), name(mbtp.name),
+    hasOrientation(mbtp.hasOrientation)
 {
   //*this = mbtp; // Should not be called by copy contructor to avoid multiple assignements.
 }
@@ -79,6 +81,7 @@ vpMbtPolygon& vpMbtPolygon::operator=(const vpMbtPolygon& mbtp)
   minLineLengthThresh = mbtp.minLineLengthThresh;
   minPolygonAreaThresh = mbtp.minPolygonAreaThresh;
   name = mbtp.name;
+  hasOrientation = mbtp.hasOrientation;
 
   return (*this);
 }
@@ -145,6 +148,15 @@ vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, cons
     isvisible = true;
     isappearing = false;
     return  true ;
+  }
+
+  // If the polygon has no orientation, the angle check visibility is always valid.
+  // Feature mainly used for cylinders.
+  if(!hasOrientation)
+  {
+    isvisible = true;
+    isappearing = false;
+    return true;
   }
 
   //Check visibility from normal

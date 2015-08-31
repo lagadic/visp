@@ -60,7 +60,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-//#define DEBUG_DISP // Uncomment to get visibility debug display
+// #define DEBUG_DISP // Uncomment to get visibility debug display
 
 class vpMbScanLine
 {

@@ -55,7 +55,7 @@ vpMbKltTracker::vpMbKltTracker()
 #endif
     c0Mo(), compute_interaction(true),
     firstInitialisation(true), maskBorder(5), lambda(0.8), maxIter(200), threshold_outlier(0.5),
-    percentGood(0.6), ctTc0(), tracker(), firstTrack(false), kltPolygons(), cylinders_disp(), circles_disp()
+    percentGood(0.6), ctTc0(), tracker(), firstTrack(false), kltPolygons(), circles_disp()
 {  
   tracker.setTrackerId(1);
   tracker.setUseHarris(1);
@@ -99,17 +99,18 @@ vpMbKltTracker::~vpMbKltTracker()
   }
   kltPolygons.clear();
 
-  // delete the structures used to display cylinders and circles
-  vpMbtDistanceCylinder *cy;
-  vpMbtDistanceCircle *ci;
-  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders_disp.begin(); it!=cylinders_disp.end(); ++it){
-    cy = *it;
-    if (cy!=NULL){
-      delete cy ;
+  vpMbtDistanceKltCylinder *kltPolyCylinder;
+  for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+    kltPolyCylinder = *it;
+    if (kltPolyCylinder!=NULL){
+      delete kltPolyCylinder ;
     }
-    cy = NULL ;
+    kltPolyCylinder = NULL ;
   }
+  kltCylinders.clear();
 
+  // delete the structures used to display circles
+  vpMbtDistanceCircle *ci;
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp.end(); ++it){
     ci = *it;
     if (ci!=NULL){
@@ -118,7 +119,6 @@ vpMbKltTracker::~vpMbKltTracker()
     ci = NULL ;
   }
 
-  cylinders_disp.clear();
   circles_disp.clear();
 }
 
@@ -173,6 +173,7 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
 #endif
 
   vpMbtDistanceKltPoints *kltpoly;
+  vpMbtDistanceKltCylinder *kltPolyCylinder;
   if(useScanLine){
     vpImageConvert::convert(faces.getMbScanLineRenderer().getMask(), mask);
   }
@@ -181,8 +182,25 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
     for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
       kltpoly = *it;
       if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
-        kltpoly->polygon->computePolygonClipped(cam);
+        kltpoly->polygon->computePolygonClipped(cam); // Might not be necessary when scanline is activated
         kltpoly->updateMask(mask, val, maskBorder);
+      }
+    }
+
+    for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+      kltPolyCylinder = *it;
+
+      if(kltPolyCylinder->isTracked())
+      {
+        for(unsigned int k = 0 ; k < kltPolyCylinder->listIndicesCylinderBBox.size() ; k++)
+        {
+          int indCylBBox = kltPolyCylinder->listIndicesCylinderBBox[k];
+          if(faces[indCylBBox]->isVisible() && faces[indCylBBox]->getNbPoint() > 2){
+            faces[indCylBBox]->computePolygonClipped(cam); // Might not be necessary when scanline is activated
+          }
+        }
+
+        kltPolyCylinder->updateMask(mask, val, maskBorder);
       }
     }
   }
@@ -197,6 +215,14 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
       kltpoly->init(tracker);
     }
   }
+
+  for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+    kltPolyCylinder = *it;
+
+    if(kltPolyCylinder->isTracked())
+      kltPolyCylinder->init(tracker, cMo);
+  }
+
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
   cvReleaseImage(&mask);
 #endif
@@ -229,17 +255,18 @@ vpMbKltTracker::resetTracker()
   }
   kltPolygons.clear();
 
-  // delete the structures used to display cylinders and circles
-  vpMbtDistanceCylinder *cy;
-  vpMbtDistanceCircle *ci;
-  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders_disp.begin(); it!=cylinders_disp.end(); ++it){
-    cy = *it;
-    if (cy!=NULL){
-      delete cy ;
+  vpMbtDistanceKltCylinder *kltPolyCylinder;
+  for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+    kltPolyCylinder = *it;
+    if (kltPolyCylinder!=NULL){
+      delete kltPolyCylinder ;
     }
-    cy = NULL ;
+    kltPolyCylinder = NULL ;
   }
+  kltCylinders.clear();
 
+  // delete the structures used to display circles
+  vpMbtDistanceCircle *ci;
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp.end(); ++it){
     ci = *it;
     if (ci!=NULL){
@@ -248,7 +275,6 @@ vpMbKltTracker::resetTracker()
     ci = NULL ;
   }
 
-  cylinders_disp.clear();
   circles_disp.clear();
 
   compute_interaction = true;
@@ -366,6 +392,12 @@ vpMbKltTracker::setCameraParameters(const vpCameraParameters& camera)
     kltpoly->setCameraParameters(camera);
   }
 
+  vpMbtDistanceKltCylinder *kltPolyCylinder;
+  for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+    kltPolyCylinder = *it;
+    kltPolyCylinder->setCameraParameters(camera);
+  }
+
   this->cam = camera;
 }
 
@@ -393,6 +425,11 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
       faces.setVisible(I, cam, cdMo, angleAppears, angleDisappears, reInitialisation);
 #endif
     }
+
+    // Temporary fix when cylinder are used
+    if(!reInitialisation && kltCylinders.size() != 0)
+      reInitialisation = true;
+
     if(reInitialisation){
       std::cout << "WARNING: Visibility changed, must reinitialize to update pose" << std::endl;
       cMo = cdMo;
@@ -576,6 +613,20 @@ vpMbKltTracker::preTracking(const vpImage<unsigned char>& I, unsigned int &nbInf
       }
     }
   }
+
+  vpMbtDistanceKltCylinder *kltPolyCylinder;
+  for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+    kltPolyCylinder = *it;
+
+    if(kltPolyCylinder->isTracked())
+    {
+      kltPolyCylinder->computeNbDetectedCurrent(tracker);
+      if(kltPolyCylinder->hasEnoughPoints()){
+        nbInfos += kltPolyCylinder->getCurrentNumberPoints();
+        nbFaceUsed++;
+      }
+    }
+  }
 }
 
 /*!
@@ -608,6 +659,23 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w)
 //         reInitialisation = true;
 //         break;
 //       }
+    }
+  }
+
+  vpMbtDistanceKltCylinder *kltPolyCylinder;
+  for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+    kltPolyCylinder = *it;
+
+    if(kltPolyCylinder->isTracked())
+    {
+      initialNumber += kltPolyCylinder->getInitialNumberPoint();
+      if(kltPolyCylinder->hasEnoughPoints()){
+        vpSubColVector sub_w(w, shift, 2*kltPolyCylinder->getCurrentNumberPoints());
+        kltPolyCylinder->removeOutliers(sub_w, threshold_outlier);
+        shift += 2*kltPolyCylinder->getCurrentNumberPoints();
+
+        currentNumber += kltPolyCylinder->getCurrentNumberPoints();
+      }
     }
   }
   
@@ -667,7 +735,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
 
   R.resize(2*nbInfos);
   L.resize(2*nbInfos, 6, 0);
-  
+
   while( ((int)((normRes - normRes_1)*1e8) != 0 )  && (iter<maxIter) ){
     
     unsigned int shift = 0;
@@ -687,6 +755,24 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
         }
 
         shift += 2*kltpoly->getCurrentNumberPoints();
+      }
+    }
+
+    vpMbtDistanceKltCylinder *kltPolyCylinder;
+    for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+      kltPolyCylinder = *it;
+
+      if(kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
+      {
+        vpSubColVector subR(R, shift, 2*kltPolyCylinder->getCurrentNumberPoints());
+        vpSubMatrix subL(L, shift, 0, 2*kltPolyCylinder->getCurrentNumberPoints(), 6);
+        try{
+          kltPolyCylinder->computeInteractionMatrixAndResidu(ctTc0,subR, subL);
+        }catch(...){
+          throw vpTrackingException(vpTrackingException::fatalError, "Cannot compute interaction matrix");
+        }
+
+        shift += 2*kltPolyCylinder->getCurrentNumberPoints();
       }
     }
 
@@ -1006,63 +1092,41 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
     c.computeFov(I.getWidth(), I.getHeight());
 
   vpMbtDistanceKltPoints *kltpoly;
+  vpMbtDistanceKltCylinder *kltPolyCylinder;
 
-  for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
-    kltpoly->polygon->changeFrame(cMo_);
-    kltpoly->polygon->computePolygonClipped(c);
-  }
+  // Previous version 12/08/2015
+//  for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+//    kltpoly = *it;
+//    kltpoly->polygon->changeFrame(cMo_);
+//    kltpoly->polygon->computePolygonClipped(c);
+//  }
+  faces.computeClippedPolygons(cMo_,c);
 
   if(useScanLine && !displayFullModel)
     faces.computeScanLineRender(cam,I.getWidth(), I.getHeight());
 
-//  for (unsigned int i = 0; i < faces.size(); i += 1){
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
-    if(displayFullModel || kltpoly->polygon->isVisible())
-    {
-      std::vector<std::pair<vpPoint,unsigned int> > roi;
-      kltpoly->polygon->getPolygonClipped(roi);
 
-      for (unsigned int j = 0; j < roi.size(); j += 1){
-        if(((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::UP_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
-          vpImagePoint ip1, ip2;
-          std::vector<std::pair<vpPoint, vpPoint> > linesLst;
-          if(useScanLine && !displayFullModel){
-            faces.computeScanLineQuery(roi[j].first,roi[(j+1)%roi.size()].first,linesLst);
-          }
-          else{
-            linesLst.push_back(std::make_pair(roi[j].first,roi[(j+1)%roi.size()].first));
-          }
+    kltpoly->display(I,cMo_,camera,col,thickness,displayFullModel);
 
-          for(unsigned int i = 0 ; i < linesLst.size() ; i++){
-            linesLst[i].first.project();
-            linesLst[i].second.project();
-            vpMeterPixelConversion::convertPoint(camera,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
-            vpMeterPixelConversion::convertPoint(camera,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
-
-            vpDisplay::displayLine(I,ip1,ip2,col, thickness);
-          }
-        }
-      }
-    }
     if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->polygon->isVisible() && kltpoly->isTracked()) {
       kltpoly->displayPrimitive(I);
 //         faces[i]->displayNormal(I);
     }
   }
 
-  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders_disp.begin(); it!=cylinders_disp.end(); ++it){
-    (*it)->display(I, cMo_, camera, col, thickness);
+  for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+    kltPolyCylinder = *it;
+
+    kltPolyCylinder->display(I,cMo_,camera,col,thickness,displayFullModel);
+
+    if(displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
+      kltPolyCylinder->displayPrimitive(I);
   }
 
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp.end(); ++it){
-    (*it)->display(I, cMo_, camera, col, thickness);
+    (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
   }
 
 #ifdef VISP_HAVE_OGRE
@@ -1091,59 +1155,37 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
     c.computeFov(I.getWidth(), I.getHeight());
 
   vpMbtDistanceKltPoints *kltpoly;
+  vpMbtDistanceKltCylinder *kltPolyCylinder;
 
-  for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
-    kltpoly->polygon->changeFrame(cMo_);
-    kltpoly->polygon->computePolygonClipped(c);
-  }
+  // Previous version 12/08/2015
+//  for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+//    kltpoly = *it;
+//    kltpoly->polygon->changeFrame(cMo_);
+//    kltpoly->polygon->computePolygonClipped(c);
+//  }
+  faces.computeClippedPolygons(cMo_,c);
 
   if(useScanLine && !displayFullModel)
     faces.computeScanLineRender(cam,I.getWidth(), I.getHeight());
 
-//  for (unsigned int i = 0; i < faces.size(); i += 1){
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
-    if(displayFullModel || kltpoly->polygon->isVisible())
-    {
-      std::vector<std::pair<vpPoint,unsigned int> > roi;
-      kltpoly->polygon->getPolygonClipped(roi);
 
-      for (unsigned int j = 0; j < roi.size(); j += 1){
-        if(((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::UP_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
-           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
-          vpImagePoint ip1, ip2;
-          std::vector<std::pair<vpPoint, vpPoint> > linesLst;
-          if(useScanLine && !displayFullModel){
-            faces.computeScanLineQuery(roi[j].first,roi[(j+1)%roi.size()].first,linesLst);
-          }
-          else{
-            linesLst.push_back(std::make_pair(roi[j].first,roi[(j+1)%roi.size()].first));
-          }
+    kltpoly->display(I,cMo_,camera,col,thickness,displayFullModel);
 
-          for(unsigned int i = 0 ; i < linesLst.size() ; i++){
-            linesLst[i].first.project();
-            linesLst[i].second.project();
-            vpMeterPixelConversion::convertPoint(camera,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
-            vpMeterPixelConversion::convertPoint(camera,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
-
-            vpDisplay::displayLine(I,ip1,ip2,col, thickness);
-          }
-        }
-      }
-    }
     if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->polygon->isVisible() && kltpoly->isTracked()) {
       kltpoly->displayPrimitive(I);
 //         faces[i]->displayNormal(I);
     }
   }
 
-  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders_disp.begin(); it!=cylinders_disp.end(); ++it){
-    (*it)->display(I, cMo_, camera, col, thickness);
+  for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+    kltPolyCylinder = *it;
+
+    kltPolyCylinder->display(I,cMo_,camera,col,thickness,displayFullModel);
+
+    if(displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
+      kltPolyCylinder->displayPrimitive(I);
   }
 
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp.end(); ++it){
@@ -1172,9 +1214,16 @@ vpMbKltTracker::testTracking()
 //  for (unsigned int i = 0; i < faces.size(); i += 1){
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
     kltpoly = *it;
-    if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
+    if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2 && kltpoly->hasEnoughPoints()){
       nbTotalPoints += kltpoly->getCurrentNumberPoints();
     }
+  }
+
+  vpMbtDistanceKltCylinder *kltPolyCylinder;
+  for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+    kltPolyCylinder = *it;
+    if(kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
+      nbTotalPoints += kltPolyCylinder->getCurrentNumberPoints();
   }
 
   if(nbTotalPoints < 10){
@@ -1191,45 +1240,27 @@ vpMbKltTracker::testTracking()
   \param p1 : First point on the axis.
   \param p2 : Second point on the axis.
   \param radius : Radius of the cylinder.
+  \param idFace : Identifier of the polygon representing the revolution axis of the cylinder.
   \param name : The optional name of the cylinder.
 */
 void
-vpMbKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const int /*idFace*/,
-    const std::string &name)
+vpMbKltTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const int idFace,
+    const std::string &/*name*/)
 {
-  addCylinder(p1, p2, radius, name);
-}
+  vpMbtDistanceKltCylinder *kltPoly = new vpMbtDistanceKltCylinder();
+  kltPoly->setCameraParameters(cam) ;
 
-/*!
-  Add a cylinder to the list of cylinders.
+  kltPoly->buildFrom(p1,p2,radius);
 
-  \param P1 : The first extremity of the axis.
-  \param P2 : The second extremity of the axis.
-  \param r : The radius of the cylinder.
-  \param name : The optional name of the cylinder.
-*/
-void
-vpMbKltTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, const std::string &name)
-{
-  bool already_here = false ;
-  vpMbtDistanceCylinder *cy ;
+  // Add the Cylinder BBox to the list of polygons
+  kltPoly->listIndicesCylinderBBox.push_back(idFace+1);
+  kltPoly->listIndicesCylinderBBox.push_back(idFace+2);
+  kltPoly->listIndicesCylinderBBox.push_back(idFace+3);
+  kltPoly->listIndicesCylinderBBox.push_back(idFace+4);
 
-//  for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders_disp.begin(); it!=cylinders_disp.end(); ++it){
-//    cy = *it;
-//    if((samePoint(*(cy->p1),P1) && samePoint(*(cy->p2),P2)) ||
-//       (samePoint(*(cy->p1),P2) && samePoint(*(cy->p2),P1)) ){
-//      already_here = (std::fabs(cy->radius - r) < std::numeric_limits<double>::epsilon() * vpMath::maximum(cy->radius, r));
-//    }
-//  }
-
-  if (!already_here){
-    cy = new vpMbtDistanceCylinder ;
-
-    cy->setCameraParameters(cam);
-    cy->setName(name);
-    cy->buildFrom(P1, P2, r);
-    cylinders_disp.push_back(cy);
-  }
+  kltPoly->hiddenface = &faces ;
+  kltPoly->useScanLine = useScanLine;
+  kltCylinders.push_back(kltPoly);
 }
 
 /*!

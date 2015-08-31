@@ -945,6 +945,39 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const int idF
     faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
+void vpMbTracker::addPolygon(const std::vector<std::vector<vpPoint> > &listFaces, const int idFace, const std::string &polygonName,
+    const bool useLod, const double minLineLengthThreshold)
+{
+    int id = idFace;
+    for(unsigned int i = 0 ; i < listFaces.size() ; i++)
+    {
+        vpMbtPolygon polygon;
+        polygon.setNbPoint(listFaces[i].size());
+        for(unsigned int j = 0 ; j < listFaces[i].size() ; j++)
+            polygon.addPoint(j, listFaces[i][j]);
+
+        polygon.setIndex(id) ;
+        polygon.setName(polygonName);
+        polygon.setIsPolygonOriented(false);
+        polygon.setLod(useLod);
+        polygon.setMinLineLengthThresh(minLineLengthThreshold);
+        polygon.setMinPolygonAreaThresh(minPolygonAreaThresholdGeneral);
+
+        faces.addPolygon(&polygon) ;
+
+        if(clippingFlag != vpPolygon3D::NO_CLIPPING)
+          faces.getPolygon().back()->setClipping(clippingFlag);
+
+        if((clippingFlag & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING)
+          faces.getPolygon().back()->setNearClippingDistance(distNearClip);
+
+        if((clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING)
+          faces.getPolygon().back()->setFarClippingDistance(distFarClip);
+
+        id++;
+    }
+}
+
 /*!
   Load a 3D model from the file in parameter. This file must either be a vrml
   file (.wrl) or a CAO file (.cao). CAO format is described in the 
@@ -1667,8 +1700,15 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
                 useLod = parseBoolean(mapOfParams["useLod"]);
               }
 
-              addPolygon(caoPoints[indexP1], caoPoints[indexP2], idFace, polygonName, useLod, minLineLengthThreshold);
-              initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius, idFace++, polygonName);
+              int idRevolutionAxis = idFace;
+              addPolygon(caoPoints[indexP1], caoPoints[indexP2], idFace++, polygonName, useLod, minLineLengthThreshold);
+
+              std::vector<std::vector<vpPoint> > listFaces;
+              createCylinderBBox(caoPoints[indexP1], caoPoints[indexP2], radius,listFaces);
+              addPolygon(listFaces, idFace, polygonName, useLod, minLineLengthThreshold);
+              idFace+=4;
+
+              initCylinder(caoPoints[indexP1], caoPoints[indexP2], radius, idRevolutionAxis, polygonName);
           }
 
       } catch (...) {
@@ -1951,6 +1991,7 @@ vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatri
 
 
   // extract all points and fill the two sets.
+
   for(int i=0; i<coords->point.getNum(); ++i){   
     pointTransformed[0]=coords->point[i].getValue()[0];
     pointTransformed[1]=coords->point[i].getValue()[1];
@@ -1986,8 +2027,18 @@ vpMbTracker::extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatri
     throw vpException(vpException::badValue, "Radius from the two circles of the cylinders are different.");
   }
 
-  addPolygon(p1, p2, idFace, polygonName);
-  initCylinder(p1, p2, radius_c1, idFace++);
+  //addPolygon(p1, p2, idFace, polygonName);
+  //initCylinder(p1, p2, radius_c1, idFace++);
+
+  int idRevolutionAxis = idFace;
+  addPolygon(p1, p2, idFace++, polygonName);
+
+  std::vector<std::vector<vpPoint> > listFaces;
+  createCylinderBBox(p1, p2, radius_c1, listFaces);
+  addPolygon(listFaces, idFace, polygonName);
+  idFace+=4;
+
+  initCylinder(p1, p2, radius_c1, idRevolutionAxis, polygonName);
 }
 
 /*!
@@ -2378,4 +2429,113 @@ vpMbTracker::setEstimatedDoF(const vpColVector& v)
     }
 }
 
+
+void
+vpMbTracker::createCylinderBBox(const vpPoint& p1, const vpPoint &p2, const double &radius, std::vector<std::vector<vpPoint> > &listFaces)
+{
+    listFaces.clear();
+    vpPoint p;
+
+//    std::vector<vpPoint> revolutionAxis;
+//    revolutionAxis.push_back(p1);
+//    revolutionAxis.push_back(p2);
+//    listFaces.push_back(revolutionAxis);
+
+    vpColVector axis(3);
+    axis[0] = p1.get_oX() - p2.get_oX();
+    axis[1] = p1.get_oY() - p2.get_oY();
+    axis[2] = p1.get_oZ() - p2.get_oZ();
+
+    vpColVector randomVec(3);
+    randomVec = 0;
+
+    vpColVector axisOrtho(3);
+
+    randomVec[0] = 1.0;
+    axisOrtho = vpColVector::crossProd(axis, randomVec);
+
+    if(axisOrtho.euclideanNorm() < std::numeric_limits<double>::epsilon())
+    {
+        randomVec = 0;
+        randomVec[1] = 1.0;
+        axisOrtho = vpColVector::crossProd(axis, randomVec);
+        if(axisOrtho.euclideanNorm() < std::numeric_limits<double>::epsilon())
+        {
+            randomVec = 0;
+            randomVec[2] = 1.0;
+            axisOrtho = vpColVector::crossProd(axis, randomVec);
+            if(axisOrtho.euclideanNorm() < std::numeric_limits<double>::epsilon())
+                throw vpMatrixException(vpMatrixException::badValue, "Problem in the cylinder definition");
+        }
+    }
+
+    axisOrtho.normalize();
+
+    vpColVector axisOrthoBis(3);
+    axisOrthoBis = vpColVector::crossProd(axis, axisOrtho);
+    axisOrthoBis.normalize();
+
+    //First circle
+    vpColVector p1Vec(3);
+    p1Vec[0] = p1.get_oX();
+    p1Vec[1] = p1.get_oY();
+    p1Vec[2] = p1.get_oZ();
+    vpColVector fc1 = p1Vec + axisOrtho*radius;
+    vpColVector fc2 = p1Vec + axisOrthoBis*radius;
+    vpColVector fc3 = p1Vec - axisOrtho*radius;
+    vpColVector fc4 = p1Vec - axisOrthoBis*radius;
+
+    vpColVector p2Vec(3);
+    p2Vec[0] = p2.get_oX();
+    p2Vec[1] = p2.get_oY();
+    p2Vec[2] = p2.get_oZ();
+    vpColVector sc1 = p2Vec + axisOrtho*radius;
+    vpColVector sc2 = p2Vec + axisOrthoBis*radius;
+    vpColVector sc3 = p2Vec - axisOrtho*radius;
+    vpColVector sc4 = p2Vec - axisOrthoBis*radius;
+
+    std::vector<vpPoint> pointsFace;
+    p.setWorldCoordinates(fc1[0], fc1[1], fc1[2]);
+    pointsFace.push_back(p);
+    p.setWorldCoordinates(sc1[0], sc1[1], sc1[2]);
+    pointsFace.push_back(p);
+    p.setWorldCoordinates(sc2[0], sc2[1], sc2[2]);
+    pointsFace.push_back(p);
+    p.setWorldCoordinates(fc2[0], fc2[1], fc2[2]);
+    pointsFace.push_back(p);
+    listFaces.push_back(pointsFace);
+
+    pointsFace.clear();
+    p.setWorldCoordinates(fc2[0], fc2[1], fc2[2]);
+    pointsFace.push_back(p);
+    p.setWorldCoordinates(sc2[0], sc2[1], sc2[2]);
+    pointsFace.push_back(p);
+    p.setWorldCoordinates(sc3[0], sc3[1], sc3[2]);
+    pointsFace.push_back(p);
+    p.setWorldCoordinates(fc3[0], fc3[1], fc3[2]);
+    pointsFace.push_back(p);
+    listFaces.push_back(pointsFace);
+
+    pointsFace.clear();
+    p.setWorldCoordinates(fc3[0], fc3[1], fc3[2]);
+    pointsFace.push_back(p);
+    p.setWorldCoordinates(sc3[0], sc3[1], sc3[2]);
+    pointsFace.push_back(p);
+    p.setWorldCoordinates(sc4[0], sc4[1], sc4[2]);
+    pointsFace.push_back(p);
+    p.setWorldCoordinates(fc4[0], fc4[1], fc4[2]);
+    pointsFace.push_back(p);
+    listFaces.push_back(pointsFace);
+
+    pointsFace.clear();
+    p.setWorldCoordinates(fc4[0], fc4[1], fc4[2]);
+    pointsFace.push_back(p);
+    p.setWorldCoordinates(sc4[0], sc4[1], sc4[2]);
+    pointsFace.push_back(p);
+    p.setWorldCoordinates(sc1[0], sc1[1], sc1[2]);
+    pointsFace.push_back(p);
+    p.setWorldCoordinates(fc1[0], fc1[1], fc1[2]);
+    pointsFace.push_back(p);
+    listFaces.push_back(pointsFace);
+}
 

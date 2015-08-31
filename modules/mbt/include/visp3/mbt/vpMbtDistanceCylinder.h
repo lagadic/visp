@@ -250,7 +250,6 @@ class VISP_EXPORT vpMbtDistanceCylinder
     void updateMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
   private:
-    void getCylinderLineExtremity(double &i, double &j,double rho, double theta, vpCircle *circle);
     void project(const vpHomogeneousMatrix &cMo);
 } ;
 

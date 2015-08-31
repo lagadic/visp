@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- * $Id: vpMbtDistanceKltPoints.h 4661 2014-02-10 19:34:58Z fspindle $
+ * $Id: vpMbtDistanceKltCylinder.h 4661 2014-02-10 19:34:58Z fspindle $
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
@@ -31,16 +31,15 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Klt polygon, containing points of interest.
+ * Klt cylinder, containing points of interest.
  *
  * Authors:
- * Romain Tallonneau
  * Aurelien Yol
  *
  *****************************************************************************/
 
-#ifndef vpMbtDistanceKltPoints_h
-#define vpMbtDistanceKltPoints_h
+#ifndef vpMbtDistanceKltCylinder_h
+#define vpMbtDistanceKltCylinder_h
 
 #include <visp3/core/vpConfig.h>
 
@@ -55,9 +54,11 @@
 #include <visp3/core/vpGEMM.h>
 #include <visp3/vision/vpHomography.h>
 #include <visp3/mbt/vpMbHiddenFaces.h>
+#include <visp3/core/vpCylinder.h>
+#include <visp3/core/vpCircle.h>
 
 /*!
-  \class vpMbtDistanceKltPoints
+  \class vpMbtDistanceKltCylinder
 
   \brief Implementation of a polygon of the model containing points of interest. It is used by the model-based tracker KLT, and hybrid.
 
@@ -65,21 +66,25 @@
 
   \ingroup ModelBasedTracking
 */
-class VISP_EXPORT vpMbtDistanceKltPoints
+class VISP_EXPORT vpMbtDistanceKltCylinder
 {
 private:
-  //! the homography in meter
-  vpMatrix H;
-  //! normal to the initial plane
-  vpColVector N;
-  //! current normal
-  vpColVector N_cur;
-  //! inverse of the distance between the plane and the camera at the initial position (speed up computation)
-  double invd0;
-  //! cRc0_0n (temporary variable to speed up the computation)
-  vpColVector cRc0_0n;
+  //! Pose at initialisation
+  vpHomogeneousMatrix c0Mo;
+  //! First extremity of the cylinder (used for display)
+  vpPoint p1Ext;
+  //! Second extremity of the cylinder (used for display)
+  vpPoint p2Ext;
+  //! Cylinder
+  vpCylinder cylinder;
+  //! The upper circle limiting the cylinder (used for display)
+  vpCircle circle1;
+  //! The lower circle limiting the cylinder (used for display)
+  vpCircle circle2;
   //! Initial points and their ID
   std::map<int, vpImagePoint> initPoints;
+  //! Initial points and their ID
+  std::map<int, vpPoint> initPoints3D;
   //! Current points and their ID
   std::map<int, vpImagePoint> curPoints;
   //! Current points ID and their indexes
@@ -92,36 +97,31 @@ private:
   unsigned int minNbPoint;
   //! Boolean to know if there is enough point to be tracked
   bool enoughPoints;
-  //! current camera to plane distance to speed up the computation
-  double dt;
-  //! distance between the plane and the camera at the initial position
-  double d0;
   //! Camera parameters
   vpCameraParameters cam;
   //! Boolean to specify if the klt points have to be tracked or not
-  bool isTrackedKltPoints;
+  bool isTrackedKltCylinder;
 
 public:
   //! Pointer to the polygon that define a face
-  vpMbtPolygon *polygon;
+  std::vector<int> listIndicesCylinderBBox;
   //! Pointer to the list of faces
   vpMbHiddenFaces<vpMbtPolygon> *hiddenface;
   //! Use scanline rendering
   bool useScanLine;
 
 private:
-
-  double              compute_1_over_Z(const double x, const double y);
-  void                computeP_mu_t(const double x_in, const double y_in, double& x_out, double& y_out, const vpMatrix& cHc0);
+  double              computeZ(const double &x, const double &y);
   bool                isTrackedFeature(const int id);
 
 public:
-                      vpMbtDistanceKltPoints();
-  virtual             ~vpMbtDistanceKltPoints();
+                      vpMbtDistanceKltCylinder();
+  virtual             ~vpMbtDistanceKltCylinder();
+
+  void                buildFrom(const vpPoint &p1, const vpPoint &p2, const double &r);
 
   unsigned int        computeNbDetectedCurrent(const vpKltOpencv& _tracker);
-  void                computeHomography(const vpHomogeneousMatrix& _cTc0, vpHomography& cHc0);
-  void                computeInteractionMatrixAndResidu(vpColVector& _R, vpMatrix& _J);
+  void                computeInteractionMatrixAndResidu(const vpHomogeneousMatrix &cMc0, vpColVector& _R, vpMatrix& _J);
 
   void                display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1, const bool displayFullModel = false);
   void                display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1, const bool displayFullModel = false);
@@ -135,8 +135,6 @@ public:
     \return cam : the camera parameters of the face.
   */
   inline vpCameraParameters& getCameraParameters(){ return cam; }
-
-  inline vpColVector  getCurrentNormal() const {return N_cur; }
 
   inline std::map<int, vpImagePoint>& getCurrentPoints() {return curPoints; }
 
@@ -164,16 +162,16 @@ public:
 
   inline  bool        hasEnoughPoints() const {return enoughPoints;}
 
-          void        init(const vpKltOpencv& _tracker);
-
   /*!
-   Return if the klt points are used for tracking.
+   Return if the klt cylinder is used for tracking.
 
    \return True if it is used, False otherwise.
   */
-  inline  bool        isTracked() const {return isTrackedKltPoints;}
+  inline  bool        isTracked() const {return isTrackedKltCylinder;}
 
-          void        removeOutliers(const vpColVector& weight, const double &threshold_outlier);
+  void                init(const vpKltOpencv& _tracker, const vpHomogeneousMatrix &cMo);
+
+  void                removeOutliers(const vpColVector& weight, const double &threshold_outlier);
 
   /*!
     Set the camera parameters
@@ -183,34 +181,16 @@ public:
   virtual inline void setCameraParameters(const vpCameraParameters& _cam){ cam = _cam; }
 
   /*!
-    Set if the klt points have to considered during tracking phase.
+    Set if the klt cylinder has to be considered during tracking phase.
 
-    \param track : True if they have to be tracked, False otherwise.
+    \param track : True if is has to be tracked, False otherwise.
   */
-  inline void setTracked(const bool& track) {this->isTrackedKltPoints = track;}
+  inline void         setTracked(const bool& track) {this->isTrackedKltCylinder = track;}
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   void updateMask(cv::Mat &mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
 #else
   void updateMask(IplImage* mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
-#endif
-
-  //###################
-  // Deprecated Functions
-  //###################
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-public:
-  /*!
-    \deprecated Use rather getCurrentNumberPoints() that does the same.
-
-    Get the number of points detected in the last image.
-
-    \warning to have the real number of points, the function computeNbDetectedCurrent()
-    must be called first.
-
-    \return the number of points detected in the current image
-  */
-  vp_deprecated inline unsigned int getNbPointsCur() const {return nbPointsCur;}
 #endif
 };
 

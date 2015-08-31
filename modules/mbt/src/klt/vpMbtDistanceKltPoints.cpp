@@ -40,6 +40,7 @@
  *****************************************************************************/
 
 #include <visp3/mbt/vpMbtDistanceKltPoints.h>
+#include <visp3/core/vpPolygon.h>
 
 #if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
@@ -97,7 +98,7 @@ vpMbtDistanceKltPoints::init(const vpKltOpencv& _tracker)
          hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[(unsigned int)y_tmp][(unsigned int)x_tmp] == polygon->getIndex())
         add = true;
     }
-    else if(isInside(roi, y_tmp, x_tmp))
+    else if(vpPolygon::isInside(roi, y_tmp, x_tmp))
     {
       add = true;
     }
@@ -370,16 +371,16 @@ vpMbtDistanceKltPoints::updateMask(
     for(int j=j_min; j< j_max; j++){
       double j_d = (double) j;
       if(shiftBorder != 0){
-        if( vpMbtDistanceKltPoints::isInside(roi, i_d, j_d)
-            && vpMbtDistanceKltPoints::isInside(roi, i_d+shiftBorder_d, j_d+shiftBorder_d)
-            && vpMbtDistanceKltPoints::isInside(roi, i_d-shiftBorder_d, j_d+shiftBorder_d)
-            && vpMbtDistanceKltPoints::isInside(roi, i_d+shiftBorder_d, j_d-shiftBorder_d)
-            && vpMbtDistanceKltPoints::isInside(roi, i_d-shiftBorder_d, j_d-shiftBorder_d) ){
+        if( vpPolygon::isInside(roi, i_d, j_d)
+            && vpPolygon::isInside(roi, i_d+shiftBorder_d, j_d+shiftBorder_d)
+            && vpPolygon::isInside(roi, i_d-shiftBorder_d, j_d+shiftBorder_d)
+            && vpPolygon::isInside(roi, i_d+shiftBorder_d, j_d-shiftBorder_d)
+            && vpPolygon::isInside(roi, i_d-shiftBorder_d, j_d-shiftBorder_d) ){
           mask.at<unsigned char>(i,j) = nb;
         }
       }
       else{
-        if(vpMbtDistanceKltPoints::isInside(roi, i, j)){
+        if(vpPolygon::isInside(roi, i, j)){
           mask.at<unsigned char>(i,j) = nb;
         }
       }
@@ -392,11 +393,11 @@ vpMbtDistanceKltPoints::updateMask(
     for(int j=j_min; j< j_max; j++){
       double j_d = (double) j;
       if(shiftBorder != 0){
-        if( vpMbtDistanceKltPoints::isInside(roi, i_d, j_d)
-            && vpMbtDistanceKltPoints::isInside(roi, i_d+shiftBorder_d, j_d+shiftBorder_d)
-            && vpMbtDistanceKltPoints::isInside(roi, i_d-shiftBorder_d, j_d+shiftBorder_d)
-            && vpMbtDistanceKltPoints::isInside(roi, i_d+shiftBorder_d, j_d-shiftBorder_d)
-            && vpMbtDistanceKltPoints::isInside(roi, i_d-shiftBorder_d, j_d-shiftBorder_d) ){
+        if( vpPolygon::isInside(roi, i_d, j_d)
+            && vpPolygon::isInside(roi, i_d+shiftBorder_d, j_d+shiftBorder_d)
+            && vpPolygon::isInside(roi, i_d-shiftBorder_d, j_d+shiftBorder_d)
+            && vpPolygon::isInside(roi, i_d+shiftBorder_d, j_d-shiftBorder_d)
+            && vpPolygon::isInside(roi, i_d-shiftBorder_d, j_d-shiftBorder_d) ){
           *(ptrData++) = nb;
         }
         else{
@@ -404,7 +405,7 @@ vpMbtDistanceKltPoints::updateMask(
         }
       }
       else{
-        if(vpMbtDistanceKltPoints::isInside(roi, i, j)){
+        if(vpPolygon::isInside(roi, i, j)){
           *(ptrData++) = nb;
         }
         else{
@@ -510,60 +511,81 @@ vpMbtDistanceKltPoints::displayPrimitive(const vpImage<vpRGBa>& _I)
   }
 }
 
-//###################################
-//      Static functions
-//###################################
-
-bool
-vpMbtDistanceKltPoints::intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double i_test, const double j_test, const double i, const double j)
+void
+vpMbtDistanceKltPoints::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &/*cMo*/, const vpCameraParameters &cam,
+                                const vpColor col, const unsigned int thickness, const bool displayFullModel)
 {
-  double dx = p2.get_j() - p1.get_j();
-  double dy = p2.get_i() - p1.get_i();
-  double ex = j - j_test;
-  double ey = i - i_test;
+    if(polygon->isVisible() || displayFullModel)
+    {
+      std::vector<std::pair<vpPoint,unsigned int> > roi;
+      polygon->getPolygonClipped(roi);
 
-  double den = dx * ey - dy * ex;
-  double t = 0, u = 0;
-  //if(den != 0){
-  if(std::fabs(den) > std::fabs(den)*std::numeric_limits<double>::epsilon()){
-    t = -( ey * ( p1.get_j() - j_test ) + ex * ( -p1.get_i() + i_test ) ) / den;
-    u = -( dx * ( -p1.get_i() + i_test ) + dy * ( p1.get_j() - j_test ) ) / den;
-  }
-  else{
-    throw vpException(vpException::divideByZeroError, "denominator null");
-  }
-  return ( t >= std::numeric_limits<double>::epsilon() && t < 1.0 && u >= std::numeric_limits<double>::epsilon() && u < 1.0);
-}
+      for (unsigned int j = 0; j < roi.size(); j += 1){
+        if(((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::UP_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
+           ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
 
-bool
-vpMbtDistanceKltPoints::isInside(const std::vector<vpImagePoint>& roi, const double i, const double j)
-{
-  double i_test = 100000.;
-  double j_test = 100000.;
-  unsigned int nbInter = 0;
-  bool computeAgain = true;
+          vpImagePoint ip1, ip2;
+          std::vector<std::pair<vpPoint, vpPoint> > linesLst;
 
-  if(computeAgain){
-    computeAgain = false;
-    for(unsigned int k=0; k< roi.size(); k++){
-      try{
-        if(vpMbtDistanceKltPoints::intersect(roi[k], roi[(k+1)%roi.size()], i, j, i_test, j_test)){
-          nbInter++;
+          if(useScanLine && !displayFullModel)
+            hiddenface->computeScanLineQuery(roi[j].first,roi[(j+1)%roi.size()].first,linesLst, true);
+          else
+            linesLst.push_back(std::make_pair(roi[j].first,roi[(j+1)%roi.size()].first));
+
+          for(unsigned int i = 0 ; i < linesLst.size() ; i++){
+            linesLst[i].first.project();
+            linesLst[i].second.project();
+            vpMeterPixelConversion::convertPoint(cam,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
+            vpMeterPixelConversion::convertPoint(cam,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
+
+            vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+          }
         }
       }
-      catch(...){
-        computeAgain = true;
-        break;
+    }
+}
+
+
+void
+vpMbtDistanceKltPoints::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &/*cMo*/, const vpCameraParameters &cam,
+                                const vpColor col, const unsigned int thickness, const bool displayFullModel)
+{
+  if(polygon->isVisible() || displayFullModel)
+  {
+    std::vector<std::pair<vpPoint,unsigned int> > roi;
+    polygon->getPolygonClipped(roi);
+
+    for (unsigned int j = 0; j < roi.size(); j += 1){
+      if(((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
+         ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
+         ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::DOWN_CLIPPING) == 0) &&
+         ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::UP_CLIPPING) == 0) &&
+         ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::LEFT_CLIPPING) == 0) &&
+         ((roi[(j+1)%roi.size()].second & roi[j].second & vpPolygon3D::RIGHT_CLIPPING) == 0)){
+
+        vpImagePoint ip1, ip2;
+        std::vector<std::pair<vpPoint, vpPoint> > linesLst;
+
+        if(useScanLine && !displayFullModel)
+          hiddenface->computeScanLineQuery(roi[j].first,roi[(j+1)%roi.size()].first,linesLst, true);
+        else
+          linesLst.push_back(std::make_pair(roi[j].first,roi[(j+1)%roi.size()].first));
+
+        for(unsigned int i = 0 ; i < linesLst.size() ; i++){
+          linesLst[i].first.project();
+          linesLst[i].second.project();
+          vpMeterPixelConversion::convertPoint(cam,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
+          vpMeterPixelConversion::convertPoint(cam,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
+
+          vpDisplay::displayLine(I,ip1,ip2,col, thickness);
+        }
       }
     }
-
-    if(computeAgain){
-      i_test += 100;
-      j_test -= 100;
-      nbInter = 0;
-    }
   }
-  return ((nbInter%2) == 1);
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
