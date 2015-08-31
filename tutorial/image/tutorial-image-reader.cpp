@@ -5,8 +5,8 @@ int main()
 {
   try {
     vpImage<vpRGBa> I;
-    vpImageIo::read(I, "lena.jpeg");
-    vpImageIo::write(I, "lena.png");
+    vpImageIo::read(I, "monkey.jpeg");
+    vpImageIo::write(I, "monkey.png");
   }
   catch(vpException e) {
     std::cout << e.getMessage() << std::endl;

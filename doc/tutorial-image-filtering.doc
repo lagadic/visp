@@ -13,21 +13,21 @@ Let us consider the following source code that comes from tutorial-image-filter.
 
 \include tutorial-image-filter.cpp
 
-Once build, you should have \c tutorial-image-filter binary. It shows how to apply different filters on an input image. Here we will consider lena.pgm as input image. 
+Once build, you should have \c tutorial-image-filter binary. It shows how to apply different filters on an input image. Here we will consider monkey.pgm as input image. 
 
-\image html img-lena-gray.png
+\image html img-monkey-gray.png
 
 To see the resulting filtered images, just run:
 
 \code 
-./tutorial-image-filter lena.pgm
+./tutorial-image-filter monkey.pgm
 \endcode 
 
 The following sections give a line by line explanation of the source code dedicated to image filtering capabilities.
  
 \section blur Gaussian blur
 
-Lena input image is read from disk and is stored in  \c I which is a gray level image declared as 
+Monkey input image is read from disk and is stored in  \c I which is a gray level image declared as 
 
 \snippet tutorial-image-filter.cpp vpImage construction
 
@@ -37,7 +37,7 @@ To apply a Gaussian blur to this image we first have to declare a resulting floa
 
 The resulting image is the following:
 
-\image html img-lena-blured-default.png
+\image html img-monkey-blured-default.png
 
 It is also possible to specify the Gaussian filter kernel size and the Gaussian standard deviation (sigma) using:
 
@@ -47,7 +47,7 @@ vpImageFilter::gaussianBlur(I, F, 7, 2); // Kernel size: 7, sigma: 2
 
 We thus obtain the following image:
 
-\image html img-lena-blured-var2.png
+\image html img-monkey-blured-var2.png
 
 \section gradient Gradients computation
 
@@ -61,7 +61,7 @@ Gradients along Y could be obtained using:
 
 The resulting floating-point images \c dIx, \c dIy are the following:
 
-\image html img-lena-dIxy.png
+\image html img-monkey-dIxy.png
 
 \section canny Canny edge detector
 
@@ -77,7 +77,7 @@ Where:
 
 The resulting image \c C is the following:
  
-\image html img-lena-canny.png
+\image html img-monkey-canny.png
 
 \section convolution Convolution 
 
@@ -103,7 +103,7 @@ After the declaration of a new floating-point image \c Gx, the convolution is ob
 
 The content of the filtered image \c Gx is the following.
 
-\image html img-lena-sobel.png
+\image html img-monkey-sobel.png
 
 \section pyramid Gaussian image pyramid
 
@@ -111,7 +111,7 @@ To construct a pyramid of Gaussian filtered images as a vector of images impleme
 \snippet tutorial-image-filter.cpp Gaussian pyramid
 
 The content of \c pyr[0], \c pyr[1], \c pyr[2] is the following:
-\image html img-lena-pyr.png
+\image html img-monkey-pyr.png
 
 You are now ready to see the next \ref tutorial-tracking-blob.
 

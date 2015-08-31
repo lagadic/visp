@@ -35,12 +35,12 @@ int main(int argc, char** argv)
     //! [vpDisplay construction]
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I);
+#elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI d(I);
 #elif defined(VISP_HAVE_OPENCV)
     vpDisplayOpenCV d(I);
 #elif defined(VISP_HAVE_GTK)
     vpDisplayGTK d(I);
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I);
 #elif defined(VISP_HAVE_D3D9)
     vpDisplayD3d d(I);
 #else

@@ -138,17 +138,17 @@ make
 By now you should have an executable called \c tutorial-viewer. You just have to run it giving an image location as an argument:
 
 \code
-./tutorial_viewer lena.ppm
+./tutorial_viewer monkey.ppm
 \endcode
 
 
 Here is a screen shot of the resulting output window :
 
-  \image html img-lena.png
+  \image html img-monkey.png
 
 \section image_win On Windows
 
-We suppose from now, that you have created a folder (let say \c C:/ViSP/ViSP-started) that contains the following files: CMakeLists.txt, tutorial_viewer.cpp and lena.ppm. These files are also provider in ViSP source code, in \c tutorial/image folder.
+We suppose from now, that you have created a folder (let say \c C:/ViSP/ViSP-started) that contains the following files: CMakeLists.txt, tutorial_viewer.cpp and monkey.ppm. These files are also provider in ViSP source code, in \c tutorial/image folder.
 
 
 \subsection image_win_config Configure your project
@@ -192,7 +192,7 @@ We suppose from now, that you have created a folder (let say \c C:/ViSP/ViSP-sta
 
 - Here is a screen shot of the resulting output window :
 
-  \image html img-lena-win.jpg
+  \image html img-monkey-win.jpg
 
 
 You are now ready to see the \ref tutorial-grabber or \ref tutorial-image-filtering.

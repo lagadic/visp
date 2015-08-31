@@ -13,11 +13,11 @@ set(tutorial_cpp
   tutorial-viewer.cpp
   tutorial-image-filter.cpp)
 
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/lena.bmp" )
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/lena.ppm" )
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm" )
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/lena.jpeg" )
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/lena.png" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.bmp" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.ppm" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.pgm" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.jpeg" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.png" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/chessboard.pgm" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/camera.xml" )
 
