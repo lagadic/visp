@@ -566,4 +566,7 @@ vpMbtDistanceKltPoints::isInside(const std::vector<vpImagePoint>& roi, const dou
   return ((nbInter%2) == 1);
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_mbt.a(vpMbtDistanceKltPoints.cpp.o) has no symbols
+void dummy_vpMbKltTracker() {};
 #endif

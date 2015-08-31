@@ -1276,4 +1276,7 @@ vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad
   vpMbEdgeTracker::reInitModel(I, cad_name, cMo_, verbose);
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_mbt.a(vpMbEdgeKltTracker.cpp.o) has no symbols
+void dummy_vpMbEdgeKltTracker() {};
 #endif //VISP_HAVE_OPENCV
