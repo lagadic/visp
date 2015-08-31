@@ -147,6 +147,18 @@ if(UNIX)
   list(APPEND CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules")
 endif(UNIX)
 
+#----------------------------------------------------------------------
+# For Dart server and tests
+# We use CDash set through CTestConfig.cmake file
+# Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
+#----------------------------------------------------------------------
+if(BUILD_TESTS)
+  enable_testing()
+  include(CTest)
+  mark_as_advanced(DART_ROOT)
+  mark_as_advanced(BUILD_TESTING)
+endif()
+
 #--------------------------------------------------------------------
 # Option management
 #--------------------------------------------------------------------
@@ -656,18 +668,6 @@ include(cmake/VISPGenerateHeaders.cmake)
 #   include_directories(${VISP_INCLUDE_DIRS})
 #   target_link_libraries(<target> ${VISP_LIBRARIES})
 include(cmake/VISPGenerateConfig.cmake)
-
-#----------------------------------------------------------------------
-# For Dart server and tests
-# We use CDash set through CTestConfig.cmake file
-# Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
-#----------------------------------------------------------------------
-if(BUILD_TESTS)
-  enable_testing()
-  include(CTest)
-  mark_as_advanced(DART_ROOT)
-  mark_as_advanced(BUILD_TESTING)
-endif()
 
 #----------------------------------------------------------------------
 # For CPack packaging tool
