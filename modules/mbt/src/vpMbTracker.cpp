@@ -952,7 +952,7 @@ void vpMbTracker::addPolygon(const std::vector<std::vector<vpPoint> > &listFaces
     for(unsigned int i = 0 ; i < listFaces.size() ; i++)
     {
         vpMbtPolygon polygon;
-        polygon.setNbPoint(listFaces[i].size());
+        polygon.setNbPoint((unsigned int)listFaces[i].size());
         for(unsigned int j = 0 ; j < listFaces[i].size() ; j++)
             polygon.addPoint(j, listFaces[i][j]);
 
