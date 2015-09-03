@@ -1387,8 +1387,6 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
   Set the pose to be used in entry of the next call to the track() function.
   This pose will be just used once.
   
-  \warning This function has to be called after the initialization of the tracker.
-  
   \param I : image corresponding to the desired pose.
   \param cdMo : Pose to affect.
 */
@@ -1396,8 +1394,6 @@ void
 vpMbEdgeTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
 {
   cMo = cdMo;
-
-  resetMovingEdge();
 
   init(I);
 }

@@ -402,7 +402,9 @@ vpMbKltTracker::setCameraParameters(const vpCameraParameters& camera)
 /*!
   Set the pose to be used in entry (as guess) of the next call to the track() function.
   This pose will be just used once.
-  
+
+  \warning This functionnality is not available when tracking cylinders.
+
   \param I : image corresponding to the desired pose.
   \param cdMo : Pose to affect.
 */
