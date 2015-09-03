@@ -459,6 +459,34 @@ vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &guess_pts)
 }
 
 /*!
+  Set the points that will be used as initial guess during the next call to track().
+  A typical usage of this function is to predict the position of the features before the
+  next call to track().
+
+  \param init_pts : Initial points (could be obtained from getPrevFeatures() or getFeatures()).
+  \param guess_pts : Prediction of the new position of the initial points. The size of this vector must be the same as the size of the vector of initial points.
+  \param fid : Identifiers of the initial points.
+
+  \sa getPrevFeatures(),getPrevFeaturesId
+  \sa getFeatures(), getFeaturesId
+  \sa initTracking()
+*/
+void
+vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &init_pts, const std::vector<cv::Point2f> &guess_pts, const std::vector<long> &fid)
+{
+  if(guess_pts.size() != init_pts.size()){
+    throw(vpException(vpException::badValue,
+                      "Cannot set initial guess: size init vector [%d] and guess vector [%d] doesn't match",
+                      init_pts.size(), guess_pts.size()));
+  }
+
+  m_points[0] = init_pts;
+  m_points[1] = guess_pts;
+  m_points_id = fid;
+  m_initial_guess = true;
+}
+
+/*!
   Set the points that will be used as initialization during the next call to track().
 
   \param I : Input image.
@@ -1104,6 +1132,44 @@ vpKltOpencv::setInitialGuess(CvPoint2D32f **guess_pts)
   
   flags |= CV_LKFLOW_INITIAL_GUESSES;
   
+  initial_guess = true;
+}
+
+/*!
+  Set the points that will be used as initial guess during the next call to track().
+  A typical usage of this function is to predict the position of the features before the
+  next call to track().
+
+  \param init_pts : Initial points (could be obtained from getPrevFeatures() or getFeatures()).
+  \param guess_pts : Prediction of the new position of the initial points. The size of this vector must be the same as the size of the vector of initial points.
+  \param fid : Identifiers of the initial points.
+  \param size : size of the vectors.
+
+  \sa getPrevFeatures(),getPrevFeaturesId
+  \sa getFeatures(), getFeaturesId
+  \sa initTracking()
+*/
+void
+vpKltOpencv::setInitialGuess(CvPoint2D32f **init_pts, CvPoint2D32f **guess_pts, long *fid, int size)
+{
+  countPrevFeatures = size;
+  countFeatures = size;
+  for (int boucle=0; boucle<size;boucle++)  {
+    prev_featuresid[boucle] = fid[boucle];
+    featuresid[boucle] = fid[boucle];
+  }
+
+  CvPoint2D32f *swap_features = NULL;
+  CvPoint2D32f *swap_features2 = NULL;
+  CV_SWAP(prev_features, *init_pts, swap_features);
+
+//  if(swap_features) cvFree(&swap_features);
+//  swap_features = NULL;
+
+  CV_SWAP(features, *guess_pts, swap_features2);
+
+  flags |= CV_LKFLOW_INITIAL_GUESSES;
+
   initial_guess = true;
 }
 

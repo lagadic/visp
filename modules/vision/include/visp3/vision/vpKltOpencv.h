@@ -143,6 +143,7 @@ public:
   void setBlockSize(const int blockSize);
   void setHarrisFreeParameter(double harris_k);
   void setInitialGuess(const std::vector<cv::Point2f> &guess_pts);
+  void setInitialGuess(const std::vector<cv::Point2f> &init_pts, const std::vector<cv::Point2f> &guess_pts, const std::vector<long> &fid);
   void setMaxFeatures(const int maxCount);
   void setMinDistance(double minDistance);
   void setMinEigThreshold(double minEigThreshold);
@@ -346,6 +347,7 @@ public:
   */
   void setHarrisFreeParameter(double input) {initialized = 0; harris_free_parameter=input;}
   void setInitialGuess(CvPoint2D32f **guess_pts);
+  void setInitialGuess(CvPoint2D32f **init_pts, CvPoint2D32f **guess_pts, long *fid, int size);
   /*!
     Is a feature valid (e.g. : test if not too close to borders) -> event(id_tracker, x, y)
     */

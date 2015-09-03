@@ -482,23 +482,23 @@ main(int argc, const char ** argv)
 
       // Test to set an initial pose
       if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 50) {
-        cMo.buildFrom(0.04371844921,  0.08438820979,  0.5382029442,  2.200417277,  0.873535825, -0.3479076844);
+        cMo.buildFrom(0.0439540832,  0.0845870108,  0.5477322481,  2.179498458,  0.8611798108, -0.3491961946);
         vpTRACE("Test set pose");
         tracker.setPose(I, cMo);
-        if (opt_display) {
-          // display the 3D model
-          tracker.display(I, cMo, cam, vpColor::darkRed);
-          // display the frame
-          vpDisplay::displayFrame (I, cMo, cam, 0.05);
-//          if (opt_click_allowed) {
-//            vpDisplay::flush(I);
-//            vpDisplay::getClick(I);
-//          }
-        }
+//        if (opt_display) {
+//          // display the 3D model
+//          tracker.display(I, cMo, cam, vpColor::darkRed);
+//          // display the frame
+//          vpDisplay::displayFrame (I, cMo, cam, 0.05);
+////          if (opt_click_allowed) {
+////            vpDisplay::flush(I);
+////            vpDisplay::getClick(I);
+////          }
+//        }
       }
 
       // track the object: stop tracking from frame 40 to 50
-      if (reader.getFrameIndex() - reader.getFirstFrameIndex() < 40 || reader.getFrameIndex() > reader.getFirstFrameIndex() + 50) {
+      if (reader.getFrameIndex() - reader.getFirstFrameIndex() < 40 || reader.getFrameIndex() >= reader.getFirstFrameIndex() + 50) {
         tracker.track(I);
         tracker.getPose(cMo);
         if (opt_display) {

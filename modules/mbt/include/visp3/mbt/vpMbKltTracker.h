@@ -254,8 +254,6 @@ protected:
   vpHomogeneousMatrix ctTc0;
   //! Points tracker.
   vpKltOpencv tracker;
-  //! First track() called
-  bool firstTrack;
   //!
   std::list<vpMbtDistanceKltPoints*> kltPolygons;
   //!
