@@ -62,9 +62,10 @@
 
   \class vpKeyboard
   \ingroup Keyboard
-  \brief Keybord management under unix.
+  \brief Keybord management under unix (Linux or OSX). This class is not available under windows.
 
-  Gets a key from the keyboard without waiting for the enter key.
+  Gets a key from the keyboard without waiting for the "Enter" key.
+  \warning The key that was pressed is only detected if the terminal where the binary was launched is active.
 
   \code
   vpKeyboard keyboard; // Turn on keyboard raw mode
