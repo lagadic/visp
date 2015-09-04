@@ -304,40 +304,6 @@ public:
     \return Value of threshold.
   */
   inline double getThreshold() const { return threshold; }
-  
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated Attributes
-  */
-public: 
-  double aberration;
-  double init_aberration;
-  
-  /*!
-    @name Deprecated Functions
-  */
-  
-  /*!
-    \deprecated since it wasn't used.\n \n
-    Set aberration value.
-    
-    \param a : new value.
-  */
-  vp_deprecated void setAberration(const double &a) { aberration = a ; }
-  
-  /*!
-    \deprecated since it wasn't used. \n \n
-    Set initial aberration value.
-    
-    \param a : new value.
-  */
-  vp_deprecated void setInitAberration(const double &a) { init_aberration = a ; }
-  
-  /*!
-    \deprecated Use setMinSampleStep() instead.
-  */
-  vp_deprecated void setMinSamplestep(const double &min) { min_samplestep = min ; } //Little mistake in the method name "step" should be "Step" 
-#endif
 };
 
 

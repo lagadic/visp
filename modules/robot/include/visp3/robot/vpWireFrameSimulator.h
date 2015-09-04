@@ -569,53 +569,6 @@ protected:
   vpImagePoint projectCameraTrajectory (const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &fMo);
   vpImagePoint projectCameraTrajectory (const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &fMo, const vpHomogeneousMatrix &cMf);
   vpImagePoint projectCameraTrajectory (const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &fMo, const vpHomogeneousMatrix &cMf);
-
-public:
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-
-  vp_deprecated void displayTrajectory(const vpImage<unsigned char> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_fMo, vpHomogeneousMatrix camMf);
-  vp_deprecated void displayTrajectory(const vpImage<vpRGBa> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_fMo, vpHomogeneousMatrix camMf);
-
-  /*!
-      \deprecated This method is deprecated. You should use
-      get_cMo_History(std::list<vpHomogeneousMatrix> &) instead. \n \n
-      Get the homogeneous matrices cMo stored to display the camera trajectory.
-
-       \return Returns the list of the homogeneous matrices cMo.
-    */
-  vp_deprecated vpList<vpHomogeneousMatrix> get_cMo_History () {
-    vpList<vpHomogeneousMatrix> list_cMo;
-    vpHomogeneousMatrix tmp_;
-    for(std::list<vpHomogeneousMatrix>::const_iterator it=poseList.begin(); it!=poseList.end(); ++it){
-      tmp_ = (rotz*(*it));
-      list_cMo.addRight(tmp_);
-    }
-    return list_cMo;}
-  /*!
-      \deprecated This method is deprecated. You should use
-      get_fMo_History(std::list<vpHomogeneousMatrix> &) instead. \n \n
-      Get the homogeneous matrices fMo stored to display the camera trajectory.
-
-      \return Returns the list of the homogeneous matrices fMo.
-    */
-  vp_deprecated vpList<vpHomogeneousMatrix> get_fMo_History () {
-    vpList<vpHomogeneousMatrix> fMoHistory;
-    for(std::list<vpHomogeneousMatrix>::const_iterator iter = fMoList.begin(); iter != fMoList.end(); ++iter){
-      fMoHistory.addRight(*iter);
-    }
-    return fMoHistory;}
-
-
-  vp_deprecated void initScene(vpSceneObject obj, vpSceneDesiredObject desiredObject, vpList<vpImageSimulator> &imObj);
-  vp_deprecated void initScene(const char* obj, const char* desiredObject, vpList<vpImageSimulator> &imObj);
-  vp_deprecated void initScene(vpSceneObject obj, vpList<vpImageSimulator> &imObj);
-  vp_deprecated void initScene(const char* obj, vpList<vpImageSimulator> &imObj);
-
-#endif
 };
 
 #endif

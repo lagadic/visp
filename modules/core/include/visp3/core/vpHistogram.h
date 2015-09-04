@@ -280,15 +280,6 @@ public:
       return histogram;
     };
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  vp_deprecated unsigned getPeaks(vpList<vpHistogramPeak> & peaks);
-  vp_deprecated unsigned getValey(vpList<vpHistogramValey> & valey);
-  vp_deprecated unsigned sort(vpList<vpHistogramPeak> & peaks);
-#endif
-
 private:
   void init(unsigned size = 256);
 

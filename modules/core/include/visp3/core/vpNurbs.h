@@ -151,41 +151,6 @@ public:
   void globalCurveApprox(const std::list<vpImagePoint>& l_crossingPoints, unsigned int n);
   void globalCurveApprox(const std::list<vpMeSite>& l_crossingPoints, unsigned int n);
   void globalCurveApprox(unsigned int n);
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-      @name Deprecated functions
-    */
-  /*!
-      \deprecated This method is deprecated. You should use get_weights(std::list<double> &) const instead. \n \n
-      Gets all the weights relative to the control points.
-
-      \return list : A list containing weights relative to the control points.
-    */
-  vp_deprecated inline vpList<double> get_weights() const {
-    vpList<double> list;
-    for (unsigned int i = 0; i < weights.size(); i++) list.addRight(*(&(weights[0])+i));
-    return list; }
-
-  /*!
-      \deprecated This method is deprecated. You should use set_weights(const std::list<double>&) instead.\n \n
-      Sets all the knots.
-
-      \param list : A list containing the value of the knots.
-    */
-  vp_deprecated inline void set_weights(vpList<double> &list) {
-    weights.clear();
-    list.front();
-    for (unsigned int i = 0; i < list.nbElements(); i++)
-    {
-      weights.push_back(list.value());
-      list.next();
-    }
-  }
-  vp_deprecated void globalCurveApprox(vpList<vpImagePoint>& l_crossingPoints, unsigned int n);
-  vp_deprecated void globalCurveInterp(vpList<vpImagePoint>& l_crossingPoints);
-
-#endif
 };
 
 #endif

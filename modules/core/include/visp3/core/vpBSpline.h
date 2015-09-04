@@ -51,10 +51,6 @@
 
 #include <vector>
 #include <list>
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#  include <visp3/core/vpList.h>
-#endif
 #include <visp3/core/vpMatrix.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -223,93 +219,6 @@ class VISP_EXPORT vpBSpline
 
     static vpImagePoint* computeCurveDers(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der, std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints);
     vpImagePoint* computeCurveDers(double u, unsigned int der);
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  /*!
-    \deprecated This method is deprecated. You should use get_controlPoints(std::list<vpImagePoint> &) const instead. \n \n
-    Gets all the control points.
-
-    \return list : A vpList containing the coordinates of the control points
-  */
-   vp_deprecated vpList<vpImagePoint> get_controlPoints() const {
-    vpList<vpImagePoint> list;
-    for (unsigned int i = 0; i < controlPoints.size(); i++) list.addRight(*(&(controlPoints[0])+i));
-    return list; }
-
-  /*!
-    \deprecated This method is deprecated. You should use get_knots(std::list<double> &) const instead. \n \n
-    Gets all the knots.
-
-    \return list : A vpList containing the value of the knots.
-  */
-  vp_deprecated inline vpList<double> get_knots() const {
-    vpList<double> list;
-    for (unsigned int i = 0; i < knots.size(); i++) list.addRight(*(&(knots[0])+i));
-    return list; }
-
-  /*!
-    \deprecated This method is deprecated. You should use get_crossingPoints(std::list<vpImagePoint> &) const instead. \n \n
-    Gets all the crossing points (used in the interpolation method)
-
-    \return list : A vpList containing the coordinates of the crossing points
-  */
-  vp_deprecated inline vpList<vpImagePoint> get_crossingPoints() const {
-    vpList<vpImagePoint> list;
-    for (unsigned int i = 0; i < crossingPoints.size(); i++) list.addRight(*(&(crossingPoints[0])+i));
-    return list; }
-
-  /*!
-    \deprecated This method is deprecated. You should use set_controlPoints(const std::list<vpImagePoint> &) instead. \n \n
-    Sets all the control points.
-
-    \param list : A vpList containing the coordinates of the control points
-  */
-  vp_deprecated inline void set_controlPoints(vpList<vpImagePoint> &list) {
-    controlPoints.clear();
-    list.front();
-    for (unsigned int i = 0; i < list.nbElements(); i++)
-    {
-      controlPoints.push_back(list.value());
-    list.next();
-    }
-  }
-
-  /*!
-    \deprecated This method is deprecated. You should use set_knots(const std::list<double> &) instead. \n \n
-    Sets all the knots.
-
-    \param list : A vpList containing the value of the knots.
-  */
-  vp_deprecated inline void set_knots(vpList<double> &list) {
-    knots.clear();
-    list.front();
-    for (unsigned int i = 0; i < list.nbElements(); i++)
-    {
-      knots.push_back(list.value());
-    list.next();
-    }
-  }
-
- /*!
-    \deprecated This method is deprecated. You should use set_crossingPoints(const std::list<vpImagePoint> &) instead. \n \n
-    Sets all the crossing points (used in the interpolation method)
-
-    \param list : A vpList containing the coordinates of the crossing points
-  */
-  vp_deprecated inline void set_crossingPoints(vpList<vpImagePoint> &list) {
-    crossingPoints.clear();
-    list.front();
-    for (unsigned int i = 0; i < list.nbElements(); i++)
-    {
-      crossingPoints.push_back(list.value());
-    list.next();
-    }
-  }
-#endif
-
 };
 
 #endif

@@ -493,11 +493,6 @@ protected:
   void visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo, bool &newvisibleline) ; 
   
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  vp_deprecated void visibleFace(const vpHomogeneousMatrix &_cMo, bool &newvisibleline);
-
 public:
   /*!
     \deprecated Since this function name is not explicit, use rather getGoodMovingEdgesRatioThreshold()

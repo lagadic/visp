@@ -165,14 +165,6 @@ public:
   inline        void        setIsPolygonOriented(const bool &oriented) {
     this->hasOrientation = oriented;
   }
-  
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-public:
-  /*!
-    @name Deprecated functions
-  */
-  bool      isVisible(const vpHomogeneousMatrix &cMo, const bool &depthTest = false) ;
-#endif
 };
 
 #endif

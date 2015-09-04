@@ -130,9 +130,6 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpPoint.h>
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#  include <visp3/core/vpList.h>
-#endif
 
 #include <vector>
 #include <list>
@@ -273,17 +270,6 @@ class VISP_EXPORT vpImageSimulator
     	setBackgroundTexture = true;
     	Ig = Iback;
     }
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-    vp_deprecated static void getImage(vpImage<unsigned char> &I,
-       vpList<vpImageSimulator> &list,
-       const vpCameraParameters &cam);
-    vp_deprecated static void getImage(vpImage<vpRGBa> &I, vpList<vpImageSimulator> &list,
-       const vpCameraParameters &cam);
-#endif
     
   private:
     void initPlan(vpColVector* X);

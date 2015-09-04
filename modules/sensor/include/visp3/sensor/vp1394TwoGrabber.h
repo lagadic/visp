@@ -186,9 +186,6 @@ int main()
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpFrameGrabber.h>
 #include <visp3/core/vpRGBa.h>
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#  include <visp3/core/vpList.h>
-#endif
 
 
 class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
@@ -426,18 +423,6 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
   static vp1394TwoColorCodingType string2colorCoding(std::string colorcoding);
 
   static std::string videoMode2string(vp1394TwoVideoModeType videomode);
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  vp_deprecated uint32_t getColorCodingSupported(vp1394TwoVideoModeType videomode,
-                                   vpList<vp1394TwoColorCodingType> & codings);
-  vp_deprecated uint32_t getFramerateSupported(vp1394TwoVideoModeType videomode,
-                                 vpList<vp1394TwoFramerateType> & fps);
-  vp_deprecated uint32_t getVideoModeSupported(vpList<vp1394TwoVideoModeType> & videomodes);
-
-#endif
 
  private:
   void open();

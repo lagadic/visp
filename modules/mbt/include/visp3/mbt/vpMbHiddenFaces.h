@@ -241,32 +241,6 @@ class vpMbHiddenFaces
     \return Size of the list.
   */
   inline unsigned int            size() const { return (unsigned int)Lpol.size(); }
-  
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  //! Boolean specifying if a polygon has to be entirely in front of the camera or not.
-  bool depthTest;
-  
-  /*!
-    @name Deprecated functions
-  */
-  /*!
-    \deprecated This method is deprecated since it is no more used since ViSP 2.7.2. \n 
-    
-    Get the depthTest value.
-
-    \return true if all the points of a polygon has to be in front of the camera, false otherwise.
-  */
-  vp_deprecated bool getDepthTest(){return depthTest;}
-  /*!
-    \deprecated This method is deprecated since it is no more used since ViSP 2.7.2. \n
-    
-    Set the depthTest value.
-
-    \param d : New value.
-  */
-  vp_deprecated void setDepthTest(const bool &d){depthTest = d;} 
-  unsigned int setVisible(const vpHomogeneousMatrix &cMo) ;
-#endif
 } ;
 
 /*!
@@ -275,10 +249,6 @@ class vpMbHiddenFaces
 template<class PolygonType>
 vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces()
   : Lpol(), nbVisiblePolygon(0)
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  , depthTest(false)
-#endif
-
 {
 #ifdef VISP_HAVE_OGRE
   ogreInitialised = false;
@@ -905,31 +875,6 @@ vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &cameraPos
   return Lpol[index]->isvisible;
 }
 #endif //VISP_HAVE_OGRE
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated This method is deprecated since it is no more used since ViSP 2.7.2. \n
-  
-  Compute the number of visible polygons.
-  
-  \param cMo : The pose of the camera
-  
-  \return Return the number of visible polygons
-*/
-template<class PolygonType>
-unsigned int
-vpMbHiddenFaces<PolygonType>::setVisible(const vpHomogeneousMatrix &cMo)
-{
-  nbVisiblePolygon = 0 ;
-  
-  for(unsigned int i = 0 ; i < Lpol.size() ; i++){
-    if (Lpol[i]->isVisible(cMo, depthTest)){
-      nbVisiblePolygon++;
-    }
-  }
-  return nbVisiblePolygon ;
-}
-#endif //VISP_BUILD_DEPRECATED_FUNCTIONS
 
 #endif // vpMbHiddenFaces
 

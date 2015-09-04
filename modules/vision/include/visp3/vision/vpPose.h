@@ -221,54 +221,6 @@ public:
                      std::vector<vpPoint> &listInliers,
                      vpHomogeneousMatrix &cMo,
                      const int &maxNbTrials = 10000);
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-private:
-  /*!
-    @name Deprecated functions
-  */
-  static void initRansac(const unsigned int n,
-        const double *x, const double *y,
-        const unsigned int m,
-        const double *X, const double *Y, const double *Z,
-        vpColVector &data) ;
-
-public:
-  static void computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M) ;
-  
-  static double computeResidual(const vpColVector &x,  const vpColVector &M, vpColVector &d) ;
-  
-  static bool degenerateConfiguration(vpColVector &x, unsigned int *ind) ;
-  
-  static void ransac(const unsigned int n,
-                     const double *x, const double *y,
-                     const unsigned int m,
-                     const double *X, const double *Y, const double *Z,
-                     const int numberOfInlierToReachAConsensus,
-                     const double threshold,
-                     unsigned int &ninliers,
-                     vpColVector &xi,  vpColVector &yi,
-                     vpColVector &Xi,  vpColVector &Yi,  vpColVector &Zi,
-                     vpHomogeneousMatrix &cMo, const int maxNbTrials = 10000) ;
-                     
-  vp_deprecated static void ransac(const unsigned int n,
-                     const vpPoint *p,
-                     const unsigned int m,
-                     const vpPoint *P,
-                     const int numberOfInlierToReachAConsensus,
-                     const double threshold,
-                     unsigned int &ninliers,
-                     std::list<vpPoint> &Pi,
-                     vpHomogeneousMatrix &cMo, const int maxNbTrials = 10000) ;
-
-  vp_deprecated static void ransac(std::list<vpPoint> &p,
-                     std::list<vpPoint> &P,
-                     const int numberOfInlierToReachAConsensus,
-                     const double threshold,
-                     unsigned int &ninliers,
-                     std::list<vpPoint> &lPi,
-                     vpHomogeneousMatrix &cMo, const int maxNbTrials = 10000) ;
-#endif
 } ;
 
 

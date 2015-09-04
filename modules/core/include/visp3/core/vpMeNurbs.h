@@ -206,14 +206,6 @@ class VISP_EXPORT vpMeNurbs : public vpMeTracker
     inline vpNurbs getNurbs() const {return nurbs; }
     
     void display(const vpImage<unsigned char>& I, vpColor col) ;
-    
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-    /*!
-      @name Deprecated functions
-    */
-    vp_deprecated void initTracking(const vpImage<unsigned char> &I,
-                                    vpList<vpImagePoint> &ptList) ;
-#endif
 
   private:
     bool computeFreemanChainElement(const vpImage<unsigned char> &I,

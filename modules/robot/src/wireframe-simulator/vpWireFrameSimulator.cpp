@@ -681,35 +681,6 @@ vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredOb
   displayImageSimulator = true;
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated This method is deprecated. You should use
-  initScene(vpSceneObject, vpSceneDesiredObject, const std::list<vpImageSimulator> &)
-  instead.
-
-  Initialize the simulator. It enables to choose the type of scene which will be used to display the object
-  at the current position and at the desired position.
-  
-  It exists several default scenes you can use. Use the vpSceneObject and the vpSceneDesiredObject attributes to use them in this method. The corresponding files are stored in the "data" folder which is in the ViSP build directory.
-  
-  It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
-
-  \param obj : Type of scene used to display the object at the current position.
-  \param desired_object : Type of scene used to display the object at the desired pose (in the internal view).
-  \param imObj : A list of vpImageSimulator instances.
-*/
-void
-vpWireFrameSimulator::initScene(vpSceneObject obj, vpSceneDesiredObject desired_object, vpList<vpImageSimulator> &imObj)
-{
-  initScene(obj, desired_object);
-  objectImage.clear();
-  for(imObj.front(); !imObj.outside(); imObj.next()){
-    objectImage.push_back(imObj.value());
-  }
-  displayImageSimulator = true;
-}
-#endif
-
 /*!
   Initialize the simulator. It enables to choose the type of scene which will be used to display the object
   at the current position and at the desired position.
@@ -804,34 +775,6 @@ vpWireFrameSimulator::initScene(const char* obj, const char* desired_object)
   displayCamera = true;
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated This method is deprecated. You should use
-  initScene(const char*, const char*, const std::list<vpImageSimulator> &) instead.
-
-  Initialize the simulator. It enables to choose the type of scene which will be used to display the object
-  at the current position and at the desired position.
-  
-  Here you can use the scene you want. You have to set the path to a .bnd or a .wrl file which is a 3D model file.
-  
-  It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
-
-  \param obj : Path to the scene file you want to use.
-  \param desired_object : Path to the scene file you want to use.
-  \param imObj : A list of vpImageSimulator instances.
-*/
-void
-vpWireFrameSimulator::initScene(const char* obj, const char* desired_object, vpList<vpImageSimulator> &imObj)
-{
-  initScene(obj, desired_object);
-  objectImage.clear();
-  for(imObj.front(); !imObj.outside(); imObj.next()){
-    objectImage.push_back(imObj.value());
-  }
-  displayImageSimulator = true;
-}
-#endif
-
 /*!
   Initialize the simulator. It enables to choose the type of scene which will be used to display the object
   at the current position and at the desired position.
@@ -916,33 +859,6 @@ vpWireFrameSimulator::initScene(const vpSceneObject &obj)
   displayImageSimulator = false;
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated This method is deprecated. You should use
-  initScene(vpSceneObject, const std::list<vpImageSimulator> &) instead.
-
-  Initialize the simulator. It enables to choose the type of object which will be used to display the object
-  at the current position. The object at the desired position is not displayed.
-  
-  It exists several default scenes you can use. Use the vpSceneObject attributes to use them in this method. The corresponding files are stored in the "data" folder which is in the ViSP build directory.
-  
-  It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
-
-  \param obj : Type of scene used to display the object at the current position.
-  \param imObj : A list of vpImageSimulator instances.
-*/
-void
-vpWireFrameSimulator::initScene(vpSceneObject obj, vpList<vpImageSimulator> &imObj)
-{
-  initScene(obj);
-  objectImage.clear();
-  for(imObj.front(); !imObj.outside(); imObj.next()){
-    objectImage.push_back(imObj.value());
-  }
-  displayImageSimulator = true;
-}
-#endif
-
 /*!
   Initialize the simulator. It enables to choose the type of object which will be used to display the object
   at the current position. The object at the desired position is not displayed.
@@ -1015,33 +931,6 @@ vpWireFrameSimulator::initScene(const char* obj)
   displayObject = true;
   displayCamera = true;
 }
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated This method is deprecated. You should use
-  initScene(const char*, const std::list<vpImageSimulator> &) instead.
-
-  Initialize the simulator. It enables to choose the type of scene which will be used to display the object
-  at the current position. The object at the desired position is not displayed.
-  
-  Here you can use the scene you want. You have to set the path to a .bnd or a .wrl file which is a 3D model file.
-  
-  It is also possible to add a list of vpImageSimulator instances. They will be automatically projected into the image. The position of the four corners have to be given in the object frame.
-
-  \param obj : Path to the scene file you want to use.
-  \param imObj : A list of vpImageSimulator instances.
-*/
-void
-vpWireFrameSimulator::initScene(const char* obj, vpList<vpImageSimulator> &imObj)
-{
-  initScene(obj);
-  objectImage.clear();
-  for(imObj.front(); !imObj.outside(); imObj.next()){
-    objectImage.push_back(imObj.value());
-  }
-  displayImageSimulator = true;
-}
-#endif
 
 /*!
   Initialize the simulator. It enables to choose the type of scene which will be used to display the object
@@ -1626,93 +1515,6 @@ vpWireFrameSimulator::getExternalImage(vpImage<unsigned char> &I, const vpHomoge
   if (displayCamera)
     display_scene(w44c,camera, I, camColor);
 }
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated This method is deprecated. You should use
-  displayTrajectory(vpImage<unsigned char> &, const std::list<vpHomogeneousMatrix> &, const std::list<vpHomogeneousMatrix> &, const vpHomogeneousMatrix &);
-  instead.
-
-  Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world reference frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
-  
-  The two lists must have the same size of homogeneous matrices must have the same size.
-
-  \param I : The image where the trajectory is displayed.
-  \param list_cMo : The homogeneous matrices list containing the position of the camera relative to the object.
-  \param list_fMo : The homogeneous matrices list containing the position of the object relative to the world reference frame.
-  \param cMf : A homogeneous matrix which gives the position of the external camera (used to project the trajectory) relative to the world reference frame.
-*/
-void
-vpWireFrameSimulator::displayTrajectory (const vpImage<unsigned char> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_fMo, vpHomogeneousMatrix cMf)
-{
-  if (list_cMo.nbElements() != list_fMo.nbElements())
-    throw(vpException(vpException::dimensionError ,"The two lists must have the same size")) ;
-  
-  list_cMo.front();
-  list_fMo.front();
-  vpImagePoint iP;
-  vpImagePoint iP_1;
-  int iter = 0;
-
-  while (!list_cMo.outside() && !list_fMo.outside())
-  {
-    iP = projectCameraTrajectory(I, rotz * list_cMo.value(), list_fMo.value(), rotz * cMf);
-    if (camTrajType == CT_LINE)
-    {
-      if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor, thickness_);
-    }
-    else if (camTrajType == CT_POINT)
-      vpDisplay::displayPoint(I,iP,camTrajColor);
-    list_cMo.next();
-    list_fMo.next();
-    iter++;
-    iP_1 = iP;
-  }
-}
-
-/*!
-  \deprecated This method is deprecated. You should use
-  displayTrajectory (vpImage<vpRGBa> &, const std::list<vpHomogeneousMatrix> &, const std::list<vpHomogeneousMatrix> &, const vpHomogeneousMatrix &);
-  instead.
-
-  Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world reference frame. The trajectory is projected into the view of an external camera whose position is given in parameter.
-  
-  The two lists must have the same size of homogeneous matrices must have the same size.
-
-  \param I : The image where the trajectory is displayed.
-  \param list_cMo : The homogeneous matrices list containing the position of the camera relative to the object.
-  \param list_fMo : The homogeneous matrices list containing the position of the object relative to the world reference frame.
-  \param cMf : A homogeneous matrix which gives the position of the external camera (used to project the trajectory) relative to the world reference frame.
-*/
-void
-vpWireFrameSimulator::displayTrajectory (const vpImage<vpRGBa> &I, vpList<vpHomogeneousMatrix> &list_cMo, vpList<vpHomogeneousMatrix> &list_fMo, vpHomogeneousMatrix cMf)
-{
-  if (list_cMo.nbElements() != list_fMo.nbElements())
-    throw(vpException(vpException::dimensionError ,"The two lists must have the same size")) ;
-  
-  list_cMo.front();
-  list_fMo.front();
-  vpImagePoint iP;
-  vpImagePoint iP_1;
-  int iter = 0;
-
-  while (!list_cMo.outside() && !list_fMo.outside())
-  {
-    iP = projectCameraTrajectory(I, rotz * list_cMo.value(), list_fMo.value(), rotz * cMf);
-    if (camTrajType == CT_LINE)
-    {
-      if (iter != 0) vpDisplay::displayLine(I,iP_1,iP,camTrajColor,thickness_);
-    }
-    else if (camTrajType == CT_POINT)
-      vpDisplay::displayPoint(I,iP,camTrajColor);
-    list_cMo.next();
-    list_fMo.next();
-    iter++;
-    iP_1 = iP;
-  }
-}
-#endif
-
 
 /*!
   Display a trajectory thanks to a list of homogeneous matrices which give the position of the camera relative to the object and the position of the object relative to the world reference frame. The trajectory is projected into the view of an external camera whose position is given in parameter.

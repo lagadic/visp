@@ -56,9 +56,6 @@
 
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpMath.h>
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#  include <visp3/vision/vpHomography.h>
-#endif
 #include <visp3/core/vpTranslationVector.h>
 
 // Exception
@@ -150,17 +147,6 @@ vpMatrix::vpMatrix(unsigned int r, unsigned int c, double val)
   resize(r, c);
   *this = val;
 }
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated Use rather vpHomography::convert()
- */
-vpMatrix::vpMatrix(const vpHomography& H)
-  : rowNum(0), colNum(0), data(NULL), rowPtrs(NULL), dsize(0), trsize(0)
-{
-  (*this) = H.convert();
-}
-#endif
 
 /*!
 \brief submatrix constructor
@@ -408,27 +394,6 @@ vpMatrix::operator=(const vpMatrix &B)
   return *this;
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated Use rather vpHomography::convert()
-  \brief Copy operator.
-  Allow operation such as A = H
-
-  \param H : homography matrix to be copied.
-*/
-vpMatrix &
-vpMatrix::operator=(const vpHomography& H)
-{
-  init() ;
-  resize(3,3);
-  for(unsigned int i=0; i<3; i++)
-    for(unsigned int j=0; j<3; j++)
-      (*this)[i][j] = H[i][j];
-
-  return *this;
-}
-#endif
-
 //! set all the element of the matrix A to x
 vpMatrix &
 vpMatrix::operator=(double x)
@@ -538,31 +503,6 @@ vpMatrix vpMatrix::operator*(const vpMatrix &B) const
 
   return C;
 }
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated Use rather vpHomography::convert() to convert the homography
-  in a vpMatrix and then multiply them by the vpMatrix.
-  Allows to multiply a matrix by an homography.
-  Operation M = K * H (H is unchanged).
-
-*/
-vpMatrix vpMatrix::operator*(const vpHomography &H) const
-{
-  if (colNum != 3)
-    throw(vpException(vpMatrixException::dimensionError, "Cannot multiply the matrix by the homography; bad matrix size"));
-  vpMatrix M(rowNum, 3);
-
-  for (unsigned int i=0;i<rowNum;i++){
-    for (unsigned int j=0;j<3;j++) {
-      double s = 0;
-      for (unsigned int k=0;k<3;k++) s += (*this)[i][k] * H[k][j];
-      M[i][j] = s;
-    }
-  }
-
-  return M;
-}
-#endif
 
 /*!
 Operation C = A*wA + B*wB 

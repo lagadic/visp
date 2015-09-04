@@ -292,34 +292,6 @@ vpMeNurbs::initTracking(const vpImage<unsigned char> &I)
     throw (vpException(vpException::notInitialized,"Not enough points to initialize the Nurbs"));
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated You should use initTracking(const vpImage<unsigned char> &, const std::list<vpImagePoint> &) instead.
-
-  Initialization of the tracking. The Nurbs is initialized thanks to the
-  list of vpImagePoint.
-
-
-  \param I : Image in which the edge appears.
-  \param ptList  : List of point to initialize the Nurbs.
-*/
-vp_deprecated void
-vpMeNurbs::initTracking(const vpImage<unsigned char> &I,
-                        vpList<vpImagePoint> &ptList)
-{
-  std::list<vpImagePoint> listStd;
-  for(ptList.front(); !ptList.outside(); ptList.next()){
-    listStd.push_back(ptList.value());
-  }
-  nurbs.globalCurveInterp(listStd);
-
-  sample(I);
-  
-  vpMeTracker::initTracking(I) ;
-  track(I);
-}
-#endif
-
 /*!
   Initialization of the tracking. The Nurbs is initialized thanks to the
   list of vpImagePoint.

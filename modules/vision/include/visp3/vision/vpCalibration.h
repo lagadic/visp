@@ -62,9 +62,6 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpCalibrationException.h>
 #include <visp3/core/vpImagePoint.h>
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#  include <visp3/core/vpList.h>
-#endif
 #include <list>
 #include <vector>
 /*!
@@ -168,26 +165,6 @@ public:
   //!set the gain for the virtual visual servoing algorithm 
   static void setLambda(const double &lambda){gain = lambda;}
   int writeData(const char *filename) ;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  static void calibrationTsai(unsigned int nbPose, vpHomogeneousMatrix cMo[],
-                              vpHomogeneousMatrix rMe[],
-                              vpHomogeneousMatrix &eMc);
-  static int computeCalibrationMulti(vpCalibrationMethodType method,unsigned int nbPose,
-                                     vpCalibration table_cal[],
-                                     vpCameraParameters &cam,
-                                     bool verbose = false) ;
-  vp_deprecated static int computeCalibrationTsai(unsigned int nbPose,
-                                                  vpCalibration table_cal[],
-                                                  vpHomogeneousMatrix &eMc,
-                                                  vpHomogeneousMatrix &eMc_dist);
-  vp_deprecated static int readGrid(const char *filename,unsigned int &n,
-                                    vpList<double> &oX,vpList<double> &oY,vpList<double> &oZ,
-                                    bool verbose = false);
-#endif
 
 private:
   void computePose(const vpCameraParameters &cam, vpHomogeneousMatrix &cMo);

@@ -61,9 +61,6 @@ tools for homography computation.
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMatrix.h>
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#  include <visp3/core/vpList.h>
-#endif
 
 /*!  
 
@@ -399,17 +396,11 @@ class VISP_EXPORT vpHomography
     /*!
     @name Deprecated functions
   */
-    vp_deprecated static void computeDisplacement(const vpMatrix H,
-                                                  const double x,
-                                                  const double y,
-                                                  vpList<vpRotationMatrix> & vR,
-                                                  vpList<vpTranslationVector> & vT,
-                                                  vpList<vpColVector> & vN);
-
     static void DLT(unsigned int n,
                     double *xb, double *yb ,
                     double *xa, double *ya,
                     vpHomography &aHb) ;
+
     vp_deprecated static void HartleyDLT(unsigned int n,
                                          double *xb, double *yb ,
                                          double *xa, double *ya,

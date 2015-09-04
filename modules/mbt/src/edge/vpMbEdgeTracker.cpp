@@ -2149,48 +2149,6 @@ vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
   }
 }
 
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated This method is deprecated since it is no more used since ViSP 2.7.0. \n
-  
-  Detect the visible faces in the image and says if a new one appeared.
-  
-  \warning If in one iteration one face appears and one disappears, then the 
-  function will not detect the new face. 
-  
-  \param _cMo : The pose of the camera used to project the 3D model into the image.
-  \param newvisibleline : This parameter is set to true if a new face appeared.
-*/
-void
-vpMbEdgeTracker::visibleFace(const vpHomogeneousMatrix &_cMo, bool &newvisibleline)
-{
-  unsigned int n ;
-
-  if(!useOgre)
-    n = faces.setVisible(_cMo) ;
-  else{
-#ifdef VISP_HAVE_OGRE   
-    bool changed = false;
-    n = faces.setVisibleOgre(_cMo, vpMath::rad(70), vpMath::rad(70), changed);
-#else
-    n = faces.setVisible(_cMo) ;
-#endif
-  } 
-  
-//  cout << "visible face " << n << endl ;
-  if (n > nbvisiblepolygone)
-  {
-    //cout << "une nouvelle face est visible " << endl ;
-    newvisibleline = true ;
-  }
-  else
-    newvisibleline = false ;
-
-  nbvisiblepolygone= n ;
-}
-#endif //VISP_BUILD_DEPRECATED_FUNCTIONS
-
 /*!
   Detect the visible faces in the image and says if a new one appeared.
   

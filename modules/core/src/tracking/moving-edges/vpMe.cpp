@@ -403,20 +403,12 @@ vpMe::print( )
   std::cout<<" Sample step......................"<<sample_step<<" pixels"<<std::endl ;
   std::cout<<" Strip............................"<<strip<<" pixels  "<<std::endl ;
   std::cout<<" Min_Samplestep..................."<<min_samplestep<<" pixels  "<<std::endl ;
-  
-  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  std::cout<<" Aberration......................."<<aberration<< std::endl ;
-  std::cout<<" init_aberration.................."<<init_aberration<<std::endl ;
-  #endif
 }
 
 vpMe::vpMe()
   : threshold(1500), mu1(0.5), mu2(0.5), min_samplestep(4), anglestep(1), mask_sign(0),
     range(4), sample_step(10), ntotal_sample(0), points_to_track(500), mask_size(5),
     n_mask(180), strip(2), mask(NULL)
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  , aberration(2), init_aberration(5.)
-#endif
 {
   //ntotal_sample = 0; // not sure that it is used
   //points_to_track = 500; // not sure that it is used
@@ -429,9 +421,6 @@ vpMe::vpMe(const vpMe &me)
   : threshold(1500), mu1(0.5), mu2(0.5), min_samplestep(4), anglestep(1), mask_sign(0),
     range(4), sample_step(10), ntotal_sample(0), points_to_track(500), mask_size(5),
     n_mask(180), strip(2), mask(NULL)
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  , aberration(2), init_aberration(5.)
-#endif
 {
   *this = me;
 }
@@ -456,11 +445,6 @@ vpMe& vpMe::operator=(const vpMe &me)
   ntotal_sample = me.ntotal_sample;
   points_to_track = me.points_to_track;
   strip = me.strip ;
-  
-  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  aberration = me.aberration ;
-  init_aberration = me.init_aberration;
-  #endif
   
   initMask() ;
   return *this;
