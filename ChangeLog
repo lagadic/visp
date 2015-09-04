@@ -8,6 +8,14 @@
 
 ViSP 3.0.0 (under development)
   - New features
+    . Model-based tracker:
+      + New visibility tests based on the scanline rendering algorithm.
+      + Improve Ogre3D visibility tests in order to use it in a probalistic 
+        approach via the setNbRayCastingAttemptsForVisibility() 
+        and setGoodNbRayCastingAttemptsRatio() functions.
+      + Introduction of cylinder tracking with the model-based trackers using key points.
+      + Improve the setPose() functionnality to use the given pose as a prediction of the
+        key points position while using vpMbKltTracker and vpMbEdgeKltTracker.
   - Tutorials
   - Bug fixed
     . [18748] Ogre and wireframe resources not found after ViSP installation
