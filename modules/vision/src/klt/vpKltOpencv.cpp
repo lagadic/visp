@@ -546,8 +546,9 @@ void vpKltOpencv::addFeature(const float &x, const float &y)
 
 /*!
 
-  \deprecated Add a keypoint at the end of the feature list.
-  This function is deprecated since it doesn't ensure that the id of the feature is unique.
+  Add a keypoint at the end of the feature list.
+
+ \warning This function doesn't ensure that the id of the feature is unique.
   You should rather use addFeature(const float &, const float &) or addFeature(const cv::Point2f &).
 
   \param id : Feature id. Should be unique
