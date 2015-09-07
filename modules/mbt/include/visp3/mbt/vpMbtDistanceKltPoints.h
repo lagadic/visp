@@ -194,24 +194,6 @@ public:
 #else
   void updateMask(IplImage* mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
 #endif
-
-  //###################
-  // Deprecated Functions
-  //###################
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-public:
-  /*!
-    \deprecated Use rather getCurrentNumberPoints() that does the same.
-
-    Get the number of points detected in the last image.
-
-    \warning to have the real number of points, the function computeNbDetectedCurrent()
-    must be called first.
-
-    \return the number of points detected in the current image
-  */
-  vp_deprecated inline unsigned int getNbPointsCur() const {return nbPointsCur;}
-#endif
 };
 
 #endif

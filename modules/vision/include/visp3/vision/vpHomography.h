@@ -391,48 +391,6 @@ class VISP_EXPORT vpHomography
                                        double xg2, double yg2, double coef2 ) ;
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-    /*!
-    @name Deprecated functions
-  */
-    static void DLT(unsigned int n,
-                    double *xb, double *yb ,
-                    double *xa, double *ya,
-                    vpHomography &aHb) ;
-
-    vp_deprecated static void HartleyDLT(unsigned int n,
-                                         double *xb, double *yb ,
-                                         double *xa, double *ya,
-                                         vpHomography &aHb) ;
-
-    static void HLM(unsigned int n,
-                    double *xb, double *yb,
-                    double *xa, double *ya ,
-                    bool isplan,
-                    vpHomography &aHb) ;
-
-    //! Print the matrix
-    vp_deprecated void print() ;
-
-    vp_deprecated static bool ransac(unsigned int n,
-                                     double *xb, double *yb,
-                                     double *xa, double *ya ,
-                                     vpHomography &aHb,
-                                     int consensus = 1000,
-                                     double threshold = 1e-6) ;
-
-    vp_deprecated static bool ransac(unsigned int n,
-                                     double *xb, double *yb,
-                                     double *xa, double *ya ,
-                                     vpHomography &aHb,
-                                     vpColVector& inliers,
-                                     double residual = 0.1, // Not used
-                                     int consensus = 1000,
-                                     double threshold = 1e-6,
-                                     double areaThreshold = 0.0);
-
-#endif // VISP_BUILD_DEPRECATED_FUNCTIONS
 };
 
 #endif

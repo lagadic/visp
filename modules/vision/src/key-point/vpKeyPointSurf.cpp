@@ -598,63 +598,6 @@ void vpKeyPointSurf::display(const vpImage<unsigned char> &Icurrent, unsigned in
   }
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-
-  \deprecated This method is deprecated, you should use
-  matchPoint(std::list<float*> , std::list<int> )
-  instead.
-
-  Computes the SURF points given by their descriptor and laplacian and try to match
-  them with the points in the reference list. Only the matched points
-  are stored. The two lists must have the same number of element while they correspond
-  the same unique list of point.
-
-  \warning The list returned contains allocated data (2 int per element). Must be deleted to avoid memory leak.
-
-  \param descriptorList : The list of the descriptor
-
-  \param laplacianList  : The list of laplacian
-
-  \return the list of the pair, the first element contains the index in the reference sequence and the second element contains the index in the list given in parameter.
-*/
-vp_deprecated vpList<int*>* vpKeyPointSurf::matchPoint(vpList<float*> descriptorList, vpList<int> laplacianList)
-{
-	vpList<int*>* pairPoints = new vpList<int*>;
-
-	if(descriptorList.nb != laplacianList.nb){
-		vpTRACE("Error, the two lists have different number of element");
-		return pairPoints;
-	}
-
-  CvSeqReader reader;
-  cvStartReadSeq( ref_descriptors, &reader );
-
-  descriptorList.front();
-  pairPoints->front();
-  laplacianList.front();
-  int indexList = 0;
-  while(!descriptorList.outside()){
-  	float* descriptor = descriptorList.value();
-
-  	int nearest_neighbor = naiveNearestNeighbor( descriptor, laplacianList.value(), ref_keypoints, ref_descriptors);
-
-		if(nearest_neighbor >= 0){
-			int* tab;
-			tab = new int[2];
-			tab[0] = nearest_neighbor;
-			tab[1] = indexList;
-			pairPoints->addRight(tab);
-		}
-		indexList++;
-		descriptorList.next();
-		laplacianList.next();
-  }
-
-  return pairPoints;
-}
-#endif
-
 std::list<int*>* vpKeyPointSurf::matchPoint(std::list<float*> descriptorList, std::list<int> laplacianList)
 {
   std::list<int*>* pairPoints = new std::list<int*>;

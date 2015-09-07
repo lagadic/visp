@@ -548,14 +548,6 @@ public:
   double infinityNorm () const;
   //@}
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  vp_deprecated vpRowVector row(const unsigned int i);
-  vp_deprecated vpColVector column(const unsigned int j);
-#endif
-
  private:
   double detByLU() const;
 

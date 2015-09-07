@@ -2289,40 +2289,6 @@ vpMatrix::pseudoInverse(vpMatrix &Ap,
   return rank ;
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated This method is deprecated. You should use getRow().
-
-  Return the i-th row of the matrix.
-  \warning notice row(1) is the 0th row.
-*/
-vpRowVector
-vpMatrix::row(const unsigned int i)
-{
-  vpRowVector c(getCols()) ;
-
-  for (unsigned int j =0 ; j < getCols() ; j++)  c[j] = (*this)[i-1][j] ;
-  return c ;
-}
-
-/*!
-  \deprecated This method is deprecated. You should use getCol().
-
-  Return the j-th columns of the matrix.
-  \warning notice column(1) is the 0-th column.
-  \param j : Index of the column to extract.
-*/
-vpColVector
-vpMatrix::column(const unsigned int j)
-{
-  vpColVector c(getRows()) ;
-
-  for (unsigned int i =0 ; i < getRows() ; i++)     c[i] = (*this)[i][j-1] ;
-  return c ;
-}
-#endif
-
-
 /*!
   Extract a column vector from a matrix.
   \warning All the indexes start from 0 in this function.

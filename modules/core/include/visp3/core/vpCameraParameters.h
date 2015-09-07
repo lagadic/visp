@@ -308,35 +308,6 @@ public :
   void printParameters() ;
   friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpCameraParameters &cam);
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    \deprecated This function is deprecated. Use rather getHorizontalFovAngle().
-    Get the horizontal angle of the field of view.
-
-    \sa computeFov()
-
-    \return AngleX computed with px and width.
-  */
-  vp_deprecated inline double getFovAngleX() const {
-    if(!isFov) vpTRACE("Warning: The FOV is not computed, getFovAngleX() won't be significant.");
-    return m_hFovAngle;
-  }
-
-  /*!
-    \deprecated This function is deprecated. Use rather getVerticalFovAngle().
-    Get the vertical angle in radian of the field of view.
-
-    \sa computeFov()
-
-    \return FOV vertical angle computed with py and height.
-  */
-  vp_deprecated inline double getFovAngleY() const {
-    if(!isFov) vpTRACE("Warning: The FOV is not computed, getFovAngleY() won't be significant.");
-    return m_hFovAngle;
-  }
-
-#endif
-
 private:
   static const double DEFAULT_U0_PARAMETER;
   static const double DEFAULT_V0_PARAMETER;

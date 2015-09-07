@@ -51,9 +51,6 @@
 */
 
 #include <visp3/vision/vpBasicKeyPoint.h>
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-#  include <visp3/core/vpList.h>
-#endif
 
 #include <list>
 #include <vector>
@@ -263,21 +260,14 @@ class VISP_EXPORT vpKeyPointSurf : public vpBasicKeyPoint
 
       \return the hessian threshold value.
     */
-    double getHessianThreshold () {return hessianThreshold;} ;
+    double getHessianThreshold () {return hessianThreshold;}
 
     /*!
       Gets the type of descriptor used.
 
       \return the type of descriptor used.
     */
-    vpDescriptorType getDescriptorType () {return descriptorType;} ;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-    /*!
-      @name Deprecated functions
-    */
-    vp_deprecated vpList<int*>* matchPoint(vpList<float*> descriptorList, vpList<int> laplacianList);
-#endif
+    vpDescriptorType getDescriptorType () {return descriptorType;}
 
   private:
     void init();

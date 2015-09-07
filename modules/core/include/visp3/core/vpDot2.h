@@ -362,14 +362,6 @@ public:
   static void trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsigned char> &I,
                               std::vector<vpImagePoint> &cogs, vpImagePoint* cogStar = NULL);
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  vp_deprecated double getSurface() const;
-  vp_deprecated void setSurface( const double & surface );
-#endif
-
 public:
   double m00; /*!< Considering the general distribution moments for \f$ N \f$
 		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}

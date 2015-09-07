@@ -461,16 +461,6 @@ vpHomography::load(std::ifstream &f)
   }
 }
 
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-//! Print the homography as a matrix.
-void
-vpHomography::print()
-{
-  std::cout <<*this << std::endl ;
-}
-#endif // #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-
 /*!
   \brief Compute aHb such that
 

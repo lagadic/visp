@@ -491,43 +491,6 @@ protected:
   void updateMovingEdge(const vpImage<unsigned char> &I) ;
   void upScale(const unsigned int _scale); 
   void visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo, bool &newvisibleline) ; 
-  
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-public:
-  /*!
-    \deprecated Since this function name is not explicit, use rather getGoodMovingEdgesRatioThreshold()
-    that does the same.
-
-    \return The threshold value between 0 and 1 that allows to decide if the tracker
-    has enough valid moving edges to compute a pose.
-   */
-  vp_deprecated inline double getFirstThreshold() const { return percentageGdPt;}
-  /*!
-    \deprecated Use vpMbTracker::setDisplayFeatures() instead.
-    Enable to display the points along the line with a color corresponding to their state.
-
-    - If green : The vpMeSite is a good point.
-    - If blue : The point is removed because of the vpMeSite tracking phase (contrast problem).
-    - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
-    - If red : The point is removed because of the robust method in the virtual visual servoing.
-
-    \param displayMe : set it to true to display the points.
-  */
-  vp_deprecated void setDisplayMovingEdges(const bool displayMe) {displayFeatures = displayMe;}
-  /*!
-    \deprecated Since this function name is not explicit, use rather setGoodMovingEdgesRatioThreshold()
-    that does the same.
-    Set the first threshold used to check if the tracking failed. It corresponds to the percentage
-    of good point which is necessary.
-
-    The condition which has to be be satisfied is the following : \f$ nbGoodPoint > threshold1 \times (nbGoodPoint + nbBadPoint)\f$.
-
-    The threshold is ideally between 0 and 1.
-
-    \param threshold1 : The new value of the threshold.
-  */
-  vp_deprecated void setFirstThreshold(const double  threshold1) {percentageGdPt = threshold1;}
-  #endif
 };
 
 #endif
