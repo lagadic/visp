@@ -143,7 +143,7 @@ The example tutorial-klt-tracker-with-reinit.cpp shows how to do that. In that e
 In this code we do the following:
 - save the features that are tracked until now
 - initialize the tracker to detect new features
-- parse all the saved features and compare them to the newly detected features. If a previous feature is close in terms of geometric distanceto a newly detected one, it is rejected (in our case less than 2 pixels). If not, it is added to the list of detected features. 
+- parse all the saved features and compare them to the newly detected features. If a previous feature is close in terms of geometric distance to a newly detected one, it is rejected (in our case less than 2 pixels). If not, it is added to the list of detected features. 
  
 You are now ready to see the next \ref tutorial-tracking-me.
 
