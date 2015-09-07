@@ -505,7 +505,6 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
           cdp[0] = (cdp[0] * cdGc[0][0] + cdp[1] * cdGc[0][1] + cdGc[0][2]) / p_mu_t_2;
           cdp[1] = (cdp[0] * cdGc[1][0] + cdp[1] * cdGc[1][1] + cdGc[1][2]) / p_mu_t_2;
 
-          vpDisplay::displayPoint(I,(float)cdp[1],(float)cdp[0],vpColor::blue,2);
           //Set value to the KLT tracker
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
           cv::Point2f p_guess((float)cdp[0], (float)cdp[1]);
