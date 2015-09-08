@@ -60,7 +60,6 @@
 #include <visp3/core/vpSubColVector.h>
 #include <visp3/core/vpSubMatrix.h>
 #include <visp3/core/vpExponentialMap.h>
-//#include <visp/vpMbtKltPolygon.h>
 #include <visp3/mbt/vpMbtDistanceKltPoints.h>
 #include <visp3/mbt/vpMbtDistanceCircle.h>
 #include <visp3/mbt/vpMbtDistanceKltCylinder.h>
