@@ -157,6 +157,7 @@ protected:
   unsigned int clippingFlag;
   //! Use Ogre3d for visibility tests
   bool useOgre;
+  bool ogreShowConfigDialog;
   //! Use Scanline for visibility tests
   bool useScanLine;
   //! Number of points in CAO model
@@ -509,6 +510,20 @@ public:
   virtual void setProjectionErrorComputation(const bool &flag) { computeProjError = flag; }
 
   virtual void setScanLineVisibilityTest(const bool &v){ useScanLine = v; }
+
+  /*!
+    Enable/Disable the appearance of Ogre config dialog on startup.
+
+    \warning This method has only effect when Ogre is used and Ogre visibility test is
+    enabled using setOgreVisibilityTest() with true parameter.
+
+    \param showConfigDialog : if true, shows Ogre dialog window (used to set Ogre
+    rendering options) when Ogre visibility is enabled. By default, this functionality
+    is turned off.
+  */
+  inline void setOgreShowConfigDialog(const bool showConfigDialog){
+    ogreShowConfigDialog = showConfigDialog;
+  }
 
   virtual void setOgreVisibilityTest(const bool &v);
 

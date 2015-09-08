@@ -131,7 +131,7 @@ vpMbTracker::vpMbTracker()
   poseSavingFilename(), computeCovariance(false), covarianceMatrix(), computeProjError(false),
   projectionError(90.0), displayFeatures(false), m_w(), m_error(), m_optimizationMethod(vpMbTracker::GAUSS_NEWTON_OPT),
   faces(), angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ), distNearClip(0.001),
-  distFarClip(100), clippingFlag(vpPolygon3D::NO_CLIPPING), useOgre(false), useScanLine(false),
+  distFarClip(100), clippingFlag(vpPolygon3D::NO_CLIPPING), useOgre(false), ogreShowConfigDialog(false), useScanLine(false),
   nbPoints(0), nbLines(0), nbPolygonLines(0), nbPolygonPoints(0), nbCylinders(0), nbCircles(0),
   useLodGeneral(false), applyLodSettingInConfig(false), minLineLengthThresholdGeneral(50.0),
   minPolygonAreaThresholdGeneral(2500.0), mapOfParameterNames()

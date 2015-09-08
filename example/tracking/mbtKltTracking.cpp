@@ -64,7 +64,7 @@
 #include <visp3/core/vpParseArgv.h>
 #include <visp3/mbt/vpMbKltTracker.h>
 
-#define GETOPTARGS  "x:m:i:n:dchtfol"
+#define GETOPTARGS  "x:m:i:n:dchtfolw"
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
@@ -79,7 +79,7 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>]\n\
-  [-t] [-c] [-d] [-h] [-f] [-o] [-l]",
+  [-t] [-c] [-d] [-h] [-f] [-o] [-w] [-l]",
   name );
 
   fprintf(stdout, "\n\
@@ -126,6 +126,9 @@ OPTIONS:                                               \n\
   -o\n\
      Use Ogre3D for visibility tests\n\
 \n\
+  -w\n\
+     When Ogre3D is enable [-o] show Ogre3D configuration dialog thatallows to set the renderer.\n\
+\n\
   -l\n\
      Use the scanline for visibility tests\n\
 \n\
@@ -139,7 +142,7 @@ OPTIONS:                                               \n\
 
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
                 std::string &initFile, bool &displayKltPoints, bool &click_allowed, bool &display,
-                bool& cao3DModel, bool &useOgre, bool &useScanline)
+                bool& cao3DModel, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline)
 {
   const char *optarg_;
   int   c;
@@ -156,6 +159,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'd': display = false; break;
     case 'o': useOgre = true; break;
     case 'l': useScanline = true; break;
+    case 'w': showOgreConfigDialog  = true; break;
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
@@ -193,6 +197,7 @@ main(int argc, const char ** argv)
     bool opt_display = true;
     bool cao3DModel = false;
     bool useOgre = false;
+    bool showOgreConfigDialog = false;
     bool useScanline = false;
     bool quit = false;
 
@@ -204,7 +209,8 @@ main(int argc, const char ** argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayKltPoints, opt_click_allowed, opt_display, cao3DModel, useOgre, useScanline)) {
+    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayKltPoints,
+                    opt_click_allowed, opt_display, cao3DModel, useOgre, showOgreConfigDialog, useScanline)) {
       return (-1);
     }
 
@@ -351,6 +357,8 @@ main(int argc, const char ** argv)
 
     // Tells if the tracker has to use Ogre3D for visibility tests
     tracker.setOgreVisibilityTest(useOgre);
+    if (useOgre)
+      tracker.setOgreShowConfigDialog(showOgreConfigDialog);
 
     // Tells if the tracker has to use the scanline visibility tests
     tracker.setScanLineVisibilityTest(useScanline);

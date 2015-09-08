@@ -136,7 +136,12 @@ vpMbKltTracker::init(const vpImage<unsigned char>& I)
 #ifdef VISP_HAVE_OGRE   
     if(!faces.isOgreInitialised()){
       faces.setBackgroundSizeOgre(I.getHeight(), I.getWidth());
+      faces.setOgreShowConfigDialog(ogreShowConfigDialog);
       faces.initOgre(cam);
+	  // Turn off Ogre config dialog display for the next call to this function
+	  // since settings are saved in the ogre.cfg file and used during the next
+	  // call 
+	  ogreShowConfigDialog = false;
     }
     
     faces.setVisibleOgre(I, cam, cMo, angleAppears, angleDisappears, reInitialisation);

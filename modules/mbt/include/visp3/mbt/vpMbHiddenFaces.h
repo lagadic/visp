@@ -82,6 +82,7 @@ class vpMbHiddenFaces
   double ratioVisibleRay;
   vpAROgre *ogre;
   std::vector< Ogre::ManualObject* > lOgrePolygons;
+  bool ogreShowConfigDialog;
 #endif
   
   unsigned int  setVisiblePrivate(const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears,
@@ -225,6 +226,19 @@ class vpMbHiddenFaces
       \param ratio : Ratio of succesful attempts that has to be considered. Value has to be between 0.0 (0%) and 1.0 (100%).
     */
     void          setGoodNbRayCastingAttemptsRatio(const double &ratio) {ratioVisibleRay = ratio; if(ratioVisibleRay > 1.0) ratioVisibleRay = 1.0; if(ratioVisibleRay < 0.0) ratioVisibleRay = 0.0;}
+    /*!
+      Enable/Disable the appearance of Ogre config dialog on startup.
+
+      \warning This method has only effect when Ogre is used and Ogre visibility test is
+      enabled using setOgreVisibilityTest() with true parameter.
+
+      \param showConfigDialog : if true, shows Ogre dialog window (used to set Ogre
+      rendering options) when Ogre visibility is enabled. By default, this functionality
+      is turned off.
+    */
+    inline void setOgreShowConfigDialog(const bool showConfigDialog){
+      ogreShowConfigDialog = showConfigDialog;
+    }
 #endif
     
     unsigned int  setVisible(const vpImage<unsigned char>& I, const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, const double &angle, bool &changed) ;
@@ -254,8 +268,8 @@ vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces()
   ogreInitialised = false;
   nbRayAttempts = 1;
   ratioVisibleRay = 1.0;
+  ogreShowConfigDialog = false;
   ogre = new vpAROgre();
-  ogre->setShowConfigDialog(false);
   ogreBackground = vpImage<unsigned char>(480, 640, 0);
 #endif
 }
@@ -352,7 +366,6 @@ vpMbHiddenFaces<PolygonType>::reset()
   nbRayAttempts = 1;
   ratioVisibleRay = 1.0;
   ogre = new vpAROgre();
-  ogre->setShowConfigDialog(false);
   ogreBackground = vpImage<unsigned char>(480, 640);
 #endif
 }
@@ -649,8 +662,9 @@ vpMbHiddenFaces<PolygonType>::initOgre(const vpCameraParameters &cam)
 {
   ogreInitialised = true;
   ogre->setCameraParameters(cam);
+  ogre->setShowConfigDialog(ogreShowConfigDialog);
   ogre->init(ogreBackground, false, true);
-  
+    
   for(unsigned int n = 0 ; n < Lpol.size(); n++){
     Ogre::ManualObject* manual = ogre->getSceneManager()->createManualObject(Ogre::StringConverter::toString(n));
 
