@@ -343,9 +343,9 @@ Then build again AROgre or open CMake GUI on ViSP, configure and generate the so
 
 \subsection known_issues_win81_msvc_ogre_mbtracker Model-based trackers are not working with Ogre visibility ckeck
 
-If you run mbEdgeTracker.exe, mbKltTracker.exe or mbEdgeKltTracker.exe enabling Ogre visibility check (using "-o" option), you may encounter the following issue:
+If you run mbtEdgeTracking.exe, mbtKltTracking.exe or mbtEdgeKltTracking.exe enabling Ogre visibility check (using "-o" option), you may encounter the following issue:
 \code
-C:\ViSP\ViSP-2.10.0-build\example\Tracking\Debug> mbEdgeTracker.exe -c -o
+C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o
 ...
 OGRE EXCEPTION(6:FileNotFoundException): Cannot locate resource VTFInstancing.cg in resource group General
 ...
@@ -354,14 +354,11 @@ OGRE EXCEPTION(6:FileNotFoundException): Cannot locate resource VTFInstancing.cg
 and then a wonderful runtime issue as in the next image:
 \image html img-win8.1-msvc-mbtracker-ogre-issue.jpg
 
-It means maybe that Ogre version is not compatible with DirectX 11. This can be checked modifying C:/ViSP/ViSP-1.10.0/src/tracking/mbt/vpMbHiddenFaces.h. Edit vpMbHiddenFaces.h and in the vpMbHiddenFaces::vpMbHiddenFaces() constructor pass true to vpAROgre::setShowConfigDialog() in order to open Ogre configuration window:
+It means maybe that Ogre version is not compatible with DirectX 11. This can be checked adding "-w" option to the command line:
 \code
-ogre = new vpAROgre();
-ogre->setShowConfigDialog(true);
+C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o -w
 \endcode
-Build and install again ViSP library.
-Now if you run again mbEdgeTracker.exe binary with "-o" option it should open the Ogre configuration window where you have to select "OpenGL Rendering Subsystem" instead of "Direct3D11 Rendering Subsystem". Press then OK to continue and start the tracking of the cube.
+Now the binary should open the Ogre configuration window where you have to select "OpenGL Rendering Subsystem" instead of "Direct3D11 Rendering Subsystem". Press then OK to continue and start the tracking of the cube.
 \image html img-win8.1-msvc-mbtracker-ogre-opengl.jpg
-
 
 */

@@ -103,6 +103,7 @@ int main(int argc, char** argv)
     }
     //! [Set ogre]
     tracker.setOgreVisibilityTest(false);
+    tracker.setOgreShowConfigDialog(false);
     //! [Set ogre]
     //! [Load cao]
     if(vpIoTools::checkFilename(objectname + ".cao"))
@@ -149,8 +150,13 @@ int main(int argc, char** argv)
     //! [Cleanup]
   }
   catch(vpException e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
+#ifdef VISP_HAVE_OGRE
+  catch(Ogre::Exception e) {
+    std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;

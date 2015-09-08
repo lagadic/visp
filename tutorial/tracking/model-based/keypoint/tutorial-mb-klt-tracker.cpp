@@ -89,6 +89,7 @@ int main(int argc, char** argv)
       //! [Set parameters]
     }
     tracker.setOgreVisibilityTest(true);
+    tracker.setOgreShowConfigDialog(false);
     tracker.loadModel(objectname + "-triangle.cao");
     tracker.setDisplayFeatures(true);
     tracker.initClick(I, objectname + ".init", true);
@@ -117,8 +118,13 @@ int main(int argc, char** argv)
 #endif
   }
   catch(vpException e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
+#ifdef VISP_HAVE_OGRE
+  catch(Ogre::Exception e) {
+    std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;

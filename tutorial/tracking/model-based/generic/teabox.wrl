@@ -1,0 +1,33 @@
+#VRML V2.0 utf8
+
+DEF fst_0 Group {
+children [
+
+# Object "teabox"
+Shape {
+
+geometry DEF cube IndexedFaceSet {
+
+coord Coordinate { 
+point [
+0     0      0   ,
+0     0     -0.08,
+0.165 0     -0.08,
+0.165 0      0   ,
+0.165 0.068  0   ,
+0.165 0.068 -0.08,
+0     0.068 -0.08,
+0     0.068  0    ]
+}
+
+coordIndex [
+ 0,1,2,3,-1,
+ 1,6,5,2,-1,
+ 4,5,6,7,-1,
+ 0,3,4,7,-1,
+ 5,4,3,2,-1,
+ 0,7,6,1,-1]}
+}
+
+]
+}

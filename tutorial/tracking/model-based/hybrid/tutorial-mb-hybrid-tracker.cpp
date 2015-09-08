@@ -73,7 +73,6 @@ int main(int argc, char** argv)
       me.setMu2(0.5);
       me.setSampleStep(4);
       tracker.setMovingEdge(me);
-      tracker.setMaskBorder(5);
       vpKltOpencv klt_settings;
       klt_settings.setMaxFeatures(300);
       klt_settings.setWindowSize(5);
@@ -83,6 +82,7 @@ int main(int argc, char** argv)
       klt_settings.setBlockSize(3);
       klt_settings.setPyramidLevels(3);
       tracker.setKltOpencv(klt_settings);
+      tracker.setMaskBorder(5);
       cam.initPersProjWithoutDistortion(839, 839, 325, 243);
       tracker.setCameraParameters(cam);
       tracker.setAngleAppear( vpMath::rad(70) );
@@ -92,6 +92,7 @@ int main(int argc, char** argv)
       tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
     }
     tracker.setOgreVisibilityTest(true);
+    tracker.setOgreShowConfigDialog(false);
     tracker.loadModel(objectname + ".cao");
     tracker.setDisplayFeatures(true);
     tracker.initClick(I, objectname + ".init", true);
@@ -120,8 +121,13 @@ int main(int argc, char** argv)
 #endif
   }
   catch(vpException e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+    std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
+#ifdef VISP_HAVE_OGRE
+  catch(Ogre::Exception e) {
+    std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
+  }
+#endif
 #else
   (void)argc;
   (void)argv;
