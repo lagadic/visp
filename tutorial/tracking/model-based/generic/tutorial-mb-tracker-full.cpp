@@ -87,6 +87,7 @@ int main(int argc, char** argv)
     if (! usexml) {
       //! [Set parameters]
       if (opt_tracker == 0 || opt_tracker == 2) {
+        //! [Set moving-edges parameters]
         vpMe me;
         me.setMaskSize(5);
         me.setMaskNumber(180);
@@ -96,9 +97,11 @@ int main(int argc, char** argv)
         me.setMu2(0.5);
         me.setSampleStep(4);
         dynamic_cast<vpMbEdgeTracker*>(tracker)->setMovingEdge(me);
+        //! [Set moving-edges parameters]
       }
 
       if (opt_tracker == 1 || opt_tracker == 2) {
+        //! [Set klt parameters]
         vpKltOpencv klt_settings;
         klt_settings.setMaxFeatures(300);
         klt_settings.setWindowSize(5);
@@ -109,12 +112,13 @@ int main(int argc, char** argv)
         klt_settings.setPyramidLevels(3);
         dynamic_cast<vpMbKltTracker*>(tracker)->setKltOpencv(klt_settings);
         dynamic_cast<vpMbKltTracker*>(tracker)->setMaskBorder(5);
+        //! [Set klt parameters]
       }
 
-      //! [Camera parameters]
-      cam.initPersProjWithoutDistortion(839, 839, 325, 243);
-      //! [Camera parameters]
+      //! [Set camera parameters]
+      cam.initPersProjWithoutDistortion(839.21470, 839.44555, 325.66776, 243.69727);
       tracker->setCameraParameters(cam);
+      //! [Set camera parameters]
 
       //! [Set angles]
       tracker->setAngleAppear( vpMath::rad(70) );

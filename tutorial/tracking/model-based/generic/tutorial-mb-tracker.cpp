@@ -96,9 +96,9 @@ int main(int argc, char** argv)
       dynamic_cast<vpMbKltTracker*>(tracker)->setMaskBorder(5);
     }
 
-    //! [Camera parameters]
+    //! [Set camera parameters]
     cam.initPersProjWithoutDistortion(839, 839, 325, 243);
-    //! [Camera parameters]
+    //! [Set camera parameters]
     tracker->setCameraParameters(cam);
     //! [Set parameters]
 
