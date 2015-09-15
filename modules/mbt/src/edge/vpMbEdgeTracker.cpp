@@ -2411,12 +2411,8 @@ vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_na
 
 /*!
   Return the number of good points (vpMeSite) tracked. A good point is a 
-<<<<<<< .mine
-  vpMeSite with its flag "suppress" equal to 0. Only these points are used
-=======
   vpMeSite with its flag "state" equal to 0. Only these points are used
->>>>>>> .r5495
-  during the virtual visual servoing stage. 
+  during the virtual visual servoing stage.
   
   \exception vpException::dimensionError if level does not represent a used
   level.
