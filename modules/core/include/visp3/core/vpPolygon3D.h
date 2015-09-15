@@ -168,6 +168,15 @@ public:
 
             void          getRoiClipped(const vpCameraParameters &cam, std::vector<std::pair<vpImagePoint,unsigned int> > &roi, const vpHomogeneousMatrix &cMo);
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  vp_deprecated void      getRoiClipped(std::vector<vpPoint> &points);
+  //@}
+#endif
+
             void          getPolygonClipped(std::vector<std::pair<vpPoint,unsigned int> > &poly);
 
             void          getPolygonClipped(std::vector<vpPoint> &poly);
@@ -205,14 +214,6 @@ public:
                                             const double &znear = 0.001, const double &zfar = 100 );
   static   void           getMinMaxRoi(const std::vector<vpImagePoint> &roi, int & i_min, int &i_max, int &j_min, int &j_max);
   static   bool           roiInsideImage(const vpImage<unsigned char>& I, const std::vector<vpImagePoint>& corners);
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  vp_deprecated void      getRoiClipped(std::vector<vpPoint> &points);
-#endif
-
 };
 
 #endif
