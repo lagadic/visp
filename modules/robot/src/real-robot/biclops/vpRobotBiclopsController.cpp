@@ -46,6 +46,7 @@
 #endif
 #include <visp3/core/vpConfig.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_BICLOPS
 
 /* Headers */
@@ -488,4 +489,6 @@ vpRobotBiclopsController::readShm()
 // Work arround to avoid warning: libvisp_robot.a(vpRobotBiclopsController.cpp.o) has no symbols
 void dummy_vpRobotBiclopsController() {};
 #endif
+
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

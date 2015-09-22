@@ -41,6 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_BICLOPS
 
 #ifndef __vpROBOT_BICLOPS_CONTROLLER_H
@@ -147,14 +148,8 @@ private:
 
 };
 
-
 #endif /* #ifndef __vpROBOT_BICLOPS_CONTROLLER_H */
 
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #endif

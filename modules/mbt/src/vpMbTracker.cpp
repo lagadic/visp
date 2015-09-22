@@ -91,6 +91,7 @@
 
 
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Structure to store info about segment in CAO model files.
@@ -120,6 +121,7 @@ struct PolygonFaceInfo {
   vpPolygon polygon;
   std::vector<vpPoint> faceCorners;
 };
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Basic constructor.
