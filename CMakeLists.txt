@@ -147,18 +147,6 @@ if(UNIX)
   list(APPEND CMAKE_MODULE_PATH "/usr/share/OGRE/cmake/modules")
 endif(UNIX)
 
-#----------------------------------------------------------------------
-# For Dart server and tests
-# We use CDash set through CTestConfig.cmake file
-# Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
-#----------------------------------------------------------------------
-if(BUILD_TESTS)
-  enable_testing()
-  include(CTest)
-  mark_as_advanced(DART_ROOT)
-  mark_as_advanced(BUILD_TESTING)
-endif()
-
 #--------------------------------------------------------------------
 # Option management
 #--------------------------------------------------------------------
@@ -254,6 +242,17 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON)
 
+#----------------------------------------------------------------------
+# For Dart server and tests
+# We use CDash set through CTestConfig.cmake file
+# Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
+#----------------------------------------------------------------------
+if(BUILD_TESTS)
+  enable_testing()
+  include(CTest)
+  mark_as_advanced(DART_ROOT)
+  mark_as_advanced(BUILD_TESTING)
+endif()
 
 #----------------------------------------------------------------------
 # Try to find doxygen for documentation generation
