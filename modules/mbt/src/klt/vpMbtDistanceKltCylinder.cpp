@@ -623,4 +623,7 @@ vpMbtDistanceKltCylinder::computeZ(const double &x, const double &y)
 
   return (B - std::sqrt(B*B - A*C))/A;
 }
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_mbt.a(vpMbtDistanceKltCylinder.cpp.o) has no symbols
+void dummy_vpMbtDistanceKltCylinder() {};
 #endif
