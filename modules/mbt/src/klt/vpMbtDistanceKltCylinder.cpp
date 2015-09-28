@@ -153,7 +153,7 @@ vpMbtDistanceKltCylinder::init(const vpKltOpencv& _tracker, const vpHomogeneousM
 
     if(add){
 
-      double xm, ym;
+      double xm=0, ym=0;
       vpPixelMeterConversion::convertPoint(cam, x_tmp, y_tmp, xm, ym);
       double Z = computeZ(xm,ym);
       if(!vpMath::isNaN(Z)){
