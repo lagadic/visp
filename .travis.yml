@@ -6,7 +6,10 @@ compiler:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq cmake
+  - sudo apt-get install -qq cmake libopencv-dev libx11-dev liblapack-dev libgsl0-dev libdc1394-22-dev libv4l-dev
+  - sudo apt-get install -qq libCoin80-dev libxml2-dev libjpeg-dev libpng12-dev 
+  - sudo apt-get install -qq libswscale-dev libavutil-dev libavformat-dev libavcodec-dev libbz2-dev
+  - sudo apt-get install -qq libogre-1.9-dev libois-dev libzbar-dev libdmtx-dev
 
 before_script:
   - mkdir build
