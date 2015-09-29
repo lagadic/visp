@@ -54,9 +54,10 @@
 vpGDIRenderer::vpGDIRenderer()
 {
   //if the screen depth is not 32bpp, throw an exception
-  if( GetDeviceCaps(GetDC(NULL),BITSPIXEL) != 32 )
+  int bpp = GetDeviceCaps(GetDC(NULL), BITSPIXEL);
+  if( bpp != 32 )
     throw vpDisplayException(vpDisplayException::depthNotSupportedError,
-			     "Only works in 32bits mode!");
+           "vpGDIRenderer supports only 32bits depth: screen is %dbits depth!", bpp);
 
   InitializeCriticalSection(&CriticalSection);
 
