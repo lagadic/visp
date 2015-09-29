@@ -507,7 +507,7 @@ main(int argc, const char ** argv)
       }
 
       // track the object: stop tracking from frame 40 to 50
-      if (reader.getFrameIndex() - reader.getFirstFrameIndex() < 40 || reader.getFrameIndex() >= reader.getFirstFrameIndex() + 50) {
+      if (reader.getFrameIndex() - reader.getFirstFrameIndex() < 40 || reader.getFrameIndex() - reader.getFirstFrameIndex() >= 50) {
         tracker.track(I);
         tracker.getPose(cMo);
         if (opt_display) {
