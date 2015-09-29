@@ -2465,33 +2465,7 @@ vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
     }
   }
 
-  if (setjmp (png_jmpbuf (png_ptr)))
-  {
-    fclose (file);
-    png_destroy_write_struct (&png_ptr, &info_ptr);
-    for(unsigned int j = 0; j < height; j++)
-      delete[] row_ptrs[j];
-
-    delete[] row_ptrs;
-    vpERROR_TRACE("Error during write image\n");
-    throw (vpImageException(vpImageException::ioError,
-           "PNG write error")) ;
-  }
-
   png_write_image(png_ptr, row_ptrs);
-
-  if (setjmp (png_jmpbuf (png_ptr)))
-  {
-    fclose (file);
-    png_destroy_write_struct (&png_ptr, &info_ptr);
-    for(unsigned int j = 0; j < height; j++)
-      delete[] row_ptrs[j];
-
-    delete[] row_ptrs;
-    vpERROR_TRACE("Error during write end\n");
-    throw (vpImageException(vpImageException::ioError,
-           "PNG write error")) ;
-  }
 
   png_write_end(png_ptr, NULL);
 
@@ -2619,33 +2593,7 @@ vpImageIo::writePNG(const vpImage<vpRGBa> &I, const char *filename)
     }
   }
 
-  if (setjmp (png_jmpbuf (png_ptr)))
-  {
-    fclose (file);
-    png_destroy_write_struct (&png_ptr, &info_ptr);
-    for(unsigned int j = 0; j < height; j++)
-      delete[] row_ptrs[j];
-
-    delete[] row_ptrs;
-    vpERROR_TRACE("Error during write image\n");
-    throw (vpImageException(vpImageException::ioError,
-           "PNG write error")) ;
-  }
-
   png_write_image(png_ptr, row_ptrs);
-
-  if (setjmp (png_jmpbuf (png_ptr)))
-  {
-    fclose (file);
-    png_destroy_write_struct (&png_ptr, &info_ptr);
-    for(unsigned int j = 0; j < height; j++)
-      delete[] row_ptrs[j];
-
-    delete[] row_ptrs;
-    vpERROR_TRACE("Error during write end\n");
-    throw (vpImageException(vpImageException::ioError,
-           "PNG write error")) ;
-  }
 
   png_write_end(png_ptr, NULL);
 
