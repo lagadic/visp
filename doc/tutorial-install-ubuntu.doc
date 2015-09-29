@@ -163,7 +163,7 @@ sudo apt-get install libv4l-dev
 \endcode
 - Coin, to be able to support vrml cad model used by the model-based trackers
 \code
-sudo apt-get install libCoin80-dev
+sudo apt-get install libcoin80-dev
 \endcode
 - libxml2 to be able to configure the model-based trackers from xml files
 \code
