@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
  *
  * $Id: templateTracker.cpp 4428 2013-09-06 13:51:34Z fspindle $
  *
@@ -445,7 +445,6 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
 
     if(Nbpoint==0)
     {
-      //std::cout << "\E[31;1mDiverge\E[m"<<std::endl;
       diverge=true;
       MI=0;
       deletePosEvalRMS();
@@ -637,7 +636,6 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
         NMI_postEstimation = -1;
         deletePosEvalRMS();
         //            throw(vpMatrixException(vpMatrixException::matrixError, "Covariance not inversible")) ;
-        //                std::cout << "\E[31;1mCovariance not inversible\E[m"<<std::endl;
       }
     }
   }
