@@ -7,36 +7,42 @@ In this tutorial you will learn how to install ViSP from source on OSX in order 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_iOS_required Required software
+\section install_iOS_required Install required software
 
-- CMake gui 2.8 for OSX or higher that could be download at : http://www.cmake.org/cmake/resources/software.html
+- CMake gui 2.8 for OSX or higher that could be download at : http://www.cmake.org
 
+\section install_iOS_3rd_party Install optional packages
 
-ViSP is interfaced with several optional <a href="http://www.irisa.fr/lagadic/visp/libraries.html">third-party libraries</a>. The installation of the corresponding packages is described in \ref install_iOS_3rdparty section.
+ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install the following:
+
+- OpenCV: get OpenCV for iOS Version 2.4.3 or later in http://opencv.org/downloads.html
+
+- liblapack, libxml2, libjpeg, libpng, ffmpeg should be already included in your OS X package
 
 \section install_iOS_get_source Getting ViSP source code
 
 There are different ways to get ViSP source code:
 
-- You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
+- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \code
-tar xvzf ViSP-2.10.0.tar.gz 
+tar xvzf visp-x.y.z.tar.gz 
 \endcode
 or
 \code
-unzip ViSP-2.10.0.zip
+unzip visp-x.y.z.zip
 \endcode
 
-- You can also download a more <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a>. Once downloaded, uncompress the file using
+- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
 \code
-unzip ViSP-2.y.z-snapshot-2015.mm.dd.zip
-\endcode
-- Or you get the cutting-edge ViSP from Subversion repository. To this end you have first to install subversion and then use the following command
-\code
-svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-trunk
+tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
 \endcode
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/ViSP-2.10.0
+- Or you get the cutting-edge ViSP from GitHub repository using the following command
+\code
+$ git clone https://github.com/lagadic/visp.git
+\endcode
+
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/visp
 
 \section install_iOS_config Configuring ViSP from source
 
@@ -52,23 +58,8 @@ We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for e
 
   \image html img-configure-options-iOS.png
 
-- Press Configure again.
-
-\subsection install_iOS_3rdparty Optional 3rd party packages
-
-As mentioned previously, ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. We recommend to install the following:
-
-- OpenCV: get OpenCV for iOS Version 2.4.3 or later in http://opencv.org/downloads.html
-
-- liblapack, libxml2, libjpeg, libpng, ffmpeg should be already included in your OS X package
-
-Once installed, if you want that ViSP exploit the new 3rd parties, you have to configure ViSP again.
-
-Now we can finish the configuration stage by generating the Xcode project.
-
-\subsection install_iOS_generate_xcode Generate Xcode project
-
-To generate the Xcode project press Generate on c-make gui. From now, c-make gui can be closed.
+- Press Configure again. Now we can finish the configuration stage by generating the Xcode project.
+- To generate the Xcode project press Generate on c-make gui. From now, c-make gui can be closed.
 
 \section install_iOS_build Building ViSP library
 \subsection getting-started-iOS-configure Open and configure ViSP Xcode project
@@ -91,6 +82,8 @@ In the Architectures group, edit the following information in this order :
 Now that you have correctly configured your project, choose the visp target  and press run.
 
 \image html img-getting-started-iOS-run.png
+
+\section install_iOS_next Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started-iOS that will show you how to use ViSP as a 3rd party to build your own project.
 

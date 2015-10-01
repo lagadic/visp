@@ -1083,7 +1083,7 @@ void vpIoTools::saveConfigFile(const bool &actuallySave)
 
 /*!
  Get ViSP images data path. ViSP images data can be installed from Debian or Ubuntu \e visp-images-data package.
- It can be also installed from ViSP-images.zip that can be found on http://team.inria.fr/lagadic/visp/download.html page.
+ It can be also installed from ViSP-images.zip that can be found on http://visp.inria.fr/download page.
 
  This function returns the path to the folder that contains the data.
  - It checks first if \e visp-images-data package is installed. In that case returns then \e /usr/share/visp-images-data".

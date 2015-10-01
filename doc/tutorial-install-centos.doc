@@ -18,127 +18,10 @@ sudo yum install gcc-c++
 sudo yum install cmake
 \endcode
 
-ViSP is interfaced with several optional <a href="http://www.irisa.fr/lagadic/visp/libraries.html">third-party libraries</a>. The installation of the corresponding packages is described in \ref install_centos_3rdparty section.
 
-\section install_centos_get_source Getting ViSP source code
+\section install_centos_3rdparty Optional optional packages
 
-There are different ways to get ViSP source code:
-
-- You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
-\code
-tar xvzf ViSP-2.10.0.tar.gz 
-\endcode
-or
-\code
-unzip ViSP-2.10.0.zip
-\endcode
-
-- You can also download a more <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a>. Once downloaded, uncompress the file using
-\code
-unzip ViSP-2.y.z-snapshot-2015.mm.dd.zip
-\endcode
-- Or you get the cutting-edge ViSP from Subversion repository. To this end you have first to install subversion
-\code
-sudo yum install subversion
-\endcode
-and then use the following command
-\code
-svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-trunk
-\endcode
-
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/ViSP-2.10.0
-
-\section install_centos_config Configuring ViSP from source
-
-- Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
-\code
-cd $HOME; mkdir ViSP-build-release
-\endcode
-
-- Enter the \<binary_dir\> and to configure the build type:
-\code
-cmake [<optional parameters>] <source_dir>
-\endcode
-For example:
-\code
-cd $HOME/ViSP-build-release
-cmake -DCMAKE_BUILD_TYPE=RELEASE -DBUILD_SHARED_LIBS=ON ../ViSP-2.10.0
-\endcode
-A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
-\code
-ccmake ../ViSP-2.10.0
-\endcode
-The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd parties that will be used.
-\image html img-ccmake-centos.png Snapshot of the ccmake \c ../ViSP-2.10.0 command used to configure ViSP.
-
-- There is an other way to see which are the 3rd parties that are found during the configuration stage and that will be used by ViSP during the build. To this end you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
-\code
-                    ViSP third-party libraries
-
-Below you will find the list of third party libraries used to 
-build ViSP on your computer.
-
-Mathematics:
-  Gnu Scientific Library      : no
-  Lapack/blas                 : no
-Simulator:
-  Ogre simulator              : no
-  \- Ogre3D                   : no
-  \- OIS                      : no
-  Coin simulator              : 
-  \- Coin3D                   : no
-  \- SoWin                    : no
-  \- SoXt                     : no
-  \- SoQt                     : no
-  \- Qt4                      : no
-  \- Qt3                      : no
-Robots
-  Afma6                       : no
-  Afma4                       : no
-  Biclops                     : no
-  Ptu46                       : no
-  Pioneer                     : no
-  Viper S650                  : no
-  Viper S850                  : no
-Video devices (display)                  
-  X11                         : no
-  GTK                         : no 
-  OpenCV                      : no 
-  GDI                         : no
-  Direct3D                    : no
-Framegrabbers
-  Firewire libdc1394-1.x      : no
-  Firewire libdc1394-2.x      : no
-  Video For Linux Two         : no
-  DirectShow                  : no
-  CMU 1394 Digital Camera SDK : no
-  OpenCV                      : no 
-Specific devices
-  Yarp                        : no
-  Kinect                      : no
-  \-libfreenect               : no
-  \-libusb-1.0                : no
-  \-pthread                   : yes
-Video and image Read/Write:
-  FFMPEG                      : no
-  libjpeg                     : no
-  libpng                      : no
-Misc:
-  XML2                        : no
-  pthread                     : yes
-  OpenMP                      : yes
-  zbar                        : no
-  dmtx                        : no
-Documentation:
-  Doxygen                     : no
-  Graphviz dot                : no
-ViSP built with C++11 features: no
-\endcode
-In our case, only \c pthread an OpenMP 3rd parties are detected.  
-
-\subsection install_centos_3rdparty Optional 3rd party packages
-
-As mentioned previously, ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. We recommend to install the following:
+ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install the following:
 
 - OpenCV
 \code
@@ -165,23 +48,118 @@ sudo yum install libxml2-devel
 sudo yum install libjpeg-devel libpng-devel
 \endcode
 
-Once installed, if you want that ViSP exploit the new 3rd parties, you have to configure ViSP again.
 
+\section install_centos_get_source Getting ViSP source code
+
+There are different ways to get ViSP source code:
+
+- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \code
-ccmake ../ViSP-2.10.0
+tar xvzf visp-x.y.z.tar.gz 
 \endcode
-The following image shows now that all the previous optional 3rd parties are detected.
-\image html img-ccmake-centos-all.png Snapshot of the ccmake \c ../ViSP-2.10.0 command used to configure ViSP after installation of optional 3rd party libraries.
+or
+\code
+unzip visp-x.y.z.zip
+\endcode
 
-\note Other <a href="http://www.irisa.fr/lagadic/visp/libraries.html">3rd party libraries</a> are interfaced with ViSP. This is for example the case of <a href="http://www.irisa.fr/lagadic/visp/librarieslist.html#Ogre">Ogre</a> that can be used to enhance the visibility computation of the faces that are tracked with the model-based tracker (see \ref tutorial-tracking-mb), or <a href="http://www.irisa.fr/lagadic/visp/librarieslist.html#Coin">Coin</a> that can be used to parse vrml files that describe the 3D model of the object to track using the same model-based tracker. It seems that these 3rd parties are not packaged on CentOS. If you want to use these 3rd parties, you have to install them from source code.
+- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
+\code
+tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
+\endcode
 
-\subsection install_centos_generate Generating Makefiles
+- Or you get the cutting-edge ViSP from GitHub repository using the following command
+\code
+$ git clone https://github.com/lagadic/visp.git
+\endcode
 
-To generate the makefiles, just press [g] key in the ccmake gui.
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/visp
 
-Now we can build ViSP.
+\section install_centos_config Configuring ViSP from source
 
-\subsection install_centos_issues Known issues
+- Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
+\code
+cd $HOME; mkdir visp-build-release
+\endcode
+
+- Enter the \<binary_dir\> and configure the build:
+\code
+cd $HOME/visp-build-release
+cmake ../visp
+\endcode
+A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
+\code
+ccmake ../visp
+\endcode
+The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
+\image html img-ccmake-centos-all.png Snapshot of the ccmake \c ../visp command used to configure ViSP.
+
+\section install_centos_build Building ViSP from source
+
+- To build ViSP proceed with:
+\code
+make -j4
+\endcode
+
+- To install ViSP proceed with:
+\code
+sudo make install
+\endcode
+
+- To build ViSP documentation, you have first to install Doxygen package:
+\code
+sudo yum install doxygen graphviz
+\endcode
+Then you can proceed with:
+\code
+make -j4 visp_doc
+\endcode
+
+\section install_centos_tips Tips and tricks
+
+- After installation, you can remove installed material using
+\code
+$ sudo make uninstall
+\endcode
+
+- If you want to build only ViSP modules libraries
+\code
+$ make -j4 visp_modules
+\endcode
+
+- If you want to build a given module and all the dependencies
+\code
+$ make -j4 visp_<module_name>
+\endcode
+For example to build the model-based tracker module named mbt, run
+\code
+$ make -j4 visp_mbt
+\endcode
+
+- Which are the targets that could be run with make ?
+\code
+$ make help | grep visp
+... visp_tests
+... visp_demos
+... visp_tutorials
+... visp_examples
+... visp_modules
+... visp_doc
+... visp_core
+... visp_detection
+... visp_robot
+... visp_sensor
+... visp_vision
+... visp_vs
+... visp_ar
+... visp_mbt
+... visp_tt
+... visp_tt_mi
+\endcode
+
+- Which are the 3rd party libraries that are used in ViSP ?
+To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>.
+
+\section install_centos_issues Known issues
 
 - On CentOS 7.0 with cmake 2.8.11, during cmake configuration you may encounter the following issue:
 \code
@@ -220,26 +198,8 @@ $ ./example/video/videoReader
 \endcode
 A work arround consists in installing a more recent OpenCV version from source. 
 
-\section install_centos_build Building ViSP from source
 
-- To build ViSP proceed with:
-\code
-make -j4
-\endcode
-
-- To install ViSP proceed with:
-\code
-sudo make install
-\endcode
-
-- To build ViSP documentation, you have first to install Doxygen package:
-\code
-sudo yum install doxygen graphviz
-\endcode
-Then you can proceed with:
-\code
-make visp_doc
-\endcode
+\section install_centos_next Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
 

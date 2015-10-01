@@ -92,117 +92,59 @@ First you need to install the following packagages (g++, CMake, Subversion) that
 sudo apt-get install build-essential cmake-curses-gui subversion
 \endcode
 
-Then you can install the following packages (X11, lapack, gsl, v4l, xml, png, jpeg, opencv), that correspond to the optional 3rd party libraries that are interfaced with ViSP:
+Then you can install the following packages (X11, lapack, gsl, v4l, xml, png, jpeg, opencv), that correspond to the optional 3rd party libraries that we recommend to install with ViSP:
 \code
 sudo apt-get install libx11-dev liblapack-dev libgsl0-dev libv4l-dev libxml2-dev libpng12-dev libjpeg-dev libopencv-dev
 \endcode
 
-The complete list of 3rd party libraries is detailed following  <a href="http://team.inria.fr/lagadic/visp/libraries.html">http://team.inria.fr/lagadic/visp/libraries.html</a> link. 
+The complete list of 3rd party libraries is detailed following  <a href="http://visp.inria.fr/software-architecture">http://visp.inria.fr/software-architecture</a> link. 
 
 \subsection get_source Getting ViSP source code
 
 There are different ways to get ViSP source code on Raspberry Pi:
 
-- You can download the <a href="http://team.inria.fr/lagadic/visp/download.html#latest">latest stable release</a> tarball. Once downloaded, uncompress the file using:
+- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \code
 mkdir /home/pi/soft; cd /home/pi/soft
-wget http://gforge.inria.fr/frs/download.php/latestfile/475/ViSP-2.10.0.tar.gz
-tar xvzf ViSP-2.10.0.tar.gz 
+tar xvzf visp-x.y.z.tar.gz 
 \endcode
-
-- You can also download the cutting-edge version of the source code from Subversion repository using:
+or
 \code
 mkdir /home/pi/soft; cd /home/pi/soft
-svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-code
+unzip visp-x.y.z.zip
 \endcode
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c /home/pi/soft/ViSP-2.10.0 or \c /home/pi/soft/ViSP-trunk
+- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
+\code
+tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
+\endcode
+
+- Or you get the cutting-edge ViSP from GitHub repository using the following command
+\code
+$ git clone https://github.com/lagadic/visp.git
+\endcode
+
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c /home/pi/soft/visp
 
 \subsection config Configuring ViSP from source
 
 - Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
 \code
-cd /home/pi/soft; mkdir ViSP-build-release
+cd /home/pi/soft; mkdir visp-build-release
 \endcode
 
-- Enter the \<binary_dir\> and configure the build type:
+- Enter \<binary_dir\> and configure the build:
 \code
-cmake [<optional parameters>] <source_dir>
-\endcode
-For example:
-\code
-cd /home/pi/soft/ViSP-build-release
-cmake -DCMAKE_BUILD_TYPE=RELEASE -DBUILD_SHARED_LIBS=ON ../ViSP-2.10.0
+cd /home/pi/soft/visp-build-release
+cmake ../visp
 \endcode
 A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 \code
-ccmake ../ViSP-2.10.0
+ccmake ../visp
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd parties that will be used. Then to generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-ccmake-raspberry-pi.png Snapshot of the ccmake \c ../ViSP-2.10.0 command used to configure ViSP. 
+\image html img-ccmake-raspberry-pi.png Snapshot of the ccmake \c ../visp command used to configure ViSP. 
 
-- There is an other way to see which are the 3rd parties that are found during the configuration stage and that will be used by ViSP during the build. To this end you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
-\code
-                    ViSP third-party libraries
-
-Below you will find the list of third party libraries used to 
-build ViSP on your computer.
-
-Mathematics:
-  Gnu Scientific Library      : yes
-  Lapack/blas                 : yes
-Simulator:
-  Ogre simulator              : no
-  \- Ogre3D                   : no
-  \- OIS                      : no
-  Coin simulator              :
-  \- Coin3D                   : no
-  \- SoWin                    : no
-  \- SoXt                     : no
-  \- SoQt                     : no
-  \- Qt4                      : no
-  \- Qt3                      : no
-Robots
-  Afma6                       : no
-  Afma4                       : no
-  Biclops                     : no
-  Ptu46                       : no
-  Pioneer                     : no
-  Viper S650                  : no
-  Viper S850                  : no
-Video devices (display)
-  X11                         : yes
-  GTK                         : no
-  OpenCV                      : yes
-  GDI                         : no
-  Direct3D                    : no
-Framegrabbers
-  Firewire libdc1394-2.x      : no
-  Video For Linux Two         : yes
-  DirectShow                  : no
-  CMU 1394 Digital Camera SDK : no
-  OpenCV                      : yes
-Specific devices
-  Yarp                        : no
-  Kinect                      : no
-  \-libfreenect               : no
-  \-libusb-1.0                : no
-  \-pthread                   : yes
-Video and image Read/Write:
-  FFMPEG                      : no
-  libjpeg                     : yes
-  libpng                      : yes
-Misc:
-  XML2                        : yes
-  pthread                     : yes
-  OpenMP                      : yes
-  zbar                        : no
-  dmtx                        : no
-Documentation:
-  Doxygen                     : no
-  Graphviz dot                : no
-ViSP built with C++11 features: no
-\endcode
 
 \subsection build Building ViSP from source
 
@@ -222,8 +164,55 @@ sudo apt-get install doxygen graphviz texlive-latex-base
 \endcode
 Then you can proceed with:
 \code
-make visp_doc
+make -j4 visp_doc
 \endcode
+
+\section install_raspberry_tips Tips and tricks
+
+- After installation, you can remove installed material using
+\code
+$ sudo make uninstall
+\endcode
+
+- If you want to build only ViSP modules libraries
+\code
+$ make -j4 visp_modules
+\endcode
+
+- If you want to build a given module and all the dependencies
+\code
+$ make -j4 visp_<module_name>
+\endcode
+For example to build the model-based tracker module named mbt, run
+\code
+$ make -j4 visp_mbt
+\endcode
+
+- Which are the targets that could be run with make ?
+\code
+$ make help | grep visp
+... visp_tests
+... visp_demos
+... visp_tutorials
+... visp_examples
+... visp_modules
+... visp_doc
+... visp_core
+... visp_detection
+... visp_robot
+... visp_sensor
+... visp_vision
+... visp_vs
+... visp_ar
+... visp_mbt
+... visp_tt
+... visp_tt_mi
+\endcode
+
+- Which are the 3rd party libraries that are used in ViSP ?
+To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>.
+
+\section install_raspberry_next Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project on Raspberry Pi or on any other system. Then if you have a Raspberry Pi camera module, you can also follow the \ref tutorial-tracking-blob especially subsection Tracking form v4l2 live cameras.
 

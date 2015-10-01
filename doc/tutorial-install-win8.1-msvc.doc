@@ -11,7 +11,7 @@ In this tutorial you will learn how to install ViSP from source on Windows 8.1 w
 
 - Visual Studio C++. Note that ViSP can also be build with Visual Studio Express that could be downloaded from  http://www.microsoft.com/visualstudio/eng/products/visual-studio-express-products In this tutorial we use Visual Studio Express 2013. 
 \note If you want to use Visual Studio Express, you have to install <b>Express 2013 for Windows Desktop</b>. The \b Desktop version is important to work with CMake.
-- CMake 2.8 or higher that could be download at : http://www.cmake.org/cmake/resources/software.html
+- CMake 2.8 or higher that could be download at : http://www.cmake.org
 
 
 \section install_win81_msvc_get_source Getting ViSP source code
@@ -272,7 +272,6 @@ displayGDI.exe -i C:\ViSP
 
 \image html img-win8.1-cmd-displayGDI.jpg 
 
-You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
 
 \section known_issues_win81_msvc Known issues
 \subsection known_issues_win81_msvc_ogre_exception AROgre example returns an exception
@@ -360,5 +359,9 @@ C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o -w
 \endcode
 Now the binary should open the Ogre configuration window where you have to select "OpenGL Rendering Subsystem" instead of "Direct3D11 Rendering Subsystem". Press then OK to continue and start the tracking of the cube.
 \image html img-win8.1-msvc-mbtracker-ogre-opengl.jpg
+
+\section install_win81_msvc_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
 
 */

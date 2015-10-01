@@ -12,19 +12,22 @@ servoing applications. ViSP is developed and maintained by the Inria
 href="http://www.inria.fr/en/centre/rennes" target="_parent">Inria Rennes</a>.</p>
 
 <p>ViSP official site is <a
-href="http://team.inria.fr/lagadic/visp" target="_parent">http://team.inria.fr/lagadic/visp</a></p>
+href="http://visp.inria.fr" target="_parent">http://visp.inria.fr</a></p>
+
+<p>ViSP source code is now available on GitHub <a
+href="http://github.org/lagadic/visp" target="_parent">http://github.org/lagadic/visp</a></p>
  
-<p>If you have any problems or find any bugs, please report them at
-<a href="http://gforge.inria.fr/tracker/?group_id=397" target="_parent">http://gforge.inria.fr/tracker/?group_id=397</a>. If you may need help, please use the available forums <a href="http://gforge.inria.fr/forum/?group_id=397" target="_parent">http://gforge.inria.fr/forum/?group_id=397</a> or mailing lists <a href="http://gforge.inria.fr/mail/?group_id=397" target="_parent">http://gforge.inria.fr/mail/?group_id=397</a>.<p> 
+<p>If you have any problems or find any bugs, please report them in 
+<a href="https://github.com/lagadic/visp/issues">the bug tracker</a>. If you may need help, please use the available <a href="http://gforge.inria.fr/forum/?group_id=397" target="_parent">forums</a>.<p> 
 
 It is also possible to contact ViSP main developers using: <a href="mailto:visp@inria.fr?subject=[visp]">visp@inria.fr</a>
 
 \section download_sec Download
 
 <p>From <a
-href="http://team.inria.fr/lagadic/visp/download.html" target="_parent">http://team.inria.fr/lagadic/visp/download.html</a>
-you can either download the latest stable release or the current
-development distribution using Subversion.</p>
+href="http://visp.inria.fr/download" target="_parent">http://visp.inria.fr/download</a>
+you can either download the latest stable release, a daily snapshot or the current
+development distribution using git.</p>
 
 \section install_sec Installation
 
@@ -35,10 +38,10 @@ href="http://www.cmake.org" target="_parent">http://www.cmake.org</a>. Furthermo
 depending on your operation system and the capabilities (framegrabber,
 display, simulation, ...) you need, prior to install ViSP you may
 install third party libraries <a
-href="http://team.inria.fr/lagadic/visp/libraries.html" target="_parent">http://team.inria.fr/lagadic/visp/libraries.html</a>.</p>
+href="http://visp.inria.fr/software-architecture" target="_parent">http://visp.inria.fr/software-architecture</a>.</p>
 
 <p>ViSP full installation procedure using CMake is detailed in the \ref tuto_install_sdk "Installation from prebuild SDK tutorials" and \ref tuto_install_src "Installation from source tutorials". \ref tuto_started "Getting started tutorials" and documents in pdf are also available from <a
-href="http://team.inria.fr/lagadic/visp/publication.html" target="_parent">http://team.inria.fr/lagadic/visp/publication.html</a>.</p>
+href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/publications</a>.</p>
  
 \section tutorial Tutorials
 
@@ -123,9 +126,8 @@ scheme, ...</p>
 
 <p>ViSP library is an open source C++ library which is developed at <a href="http://www.inria.fr/en/centre/rennes">Inria</a> by <a href="http://team.inria.fr/lagadic/welcome-eng.html">Lagadic team</a>. If you enjoy using ViSP, you may contribute to the project in different ways. This will motivate us to continue the efforts.
 
-- You can help VISP to be more widely known, by displaying a <a href="http://team.inria.fr/lagadic/visp/documentation/visp-flyers.pdf">ViSP flyer</a> at work, in your lab or school.
-- You can submit a <a href="https://gforge.inria.fr/tracker/?atid=1867&group_id=397&func=browse">bug report using the tracker</a>.
-- You can submit <a href="https://gforge.inria.fr/tracker/?func=browse&group_id=397&atid=1660">patches or new functionalities here</a>.
+- You can submit a <a href="https://github.com/lagadic/visp/issues">bug report using the tracker</a>.
+- You can submit patches or new functionalities using GitHub Pull Request mechanism.
 - You can write new tutorials, new documentations or simply improve the existing documentation.
 - If you just want to say you've been happy with the library, you can send us a postcard from your place, to the following address: <em>Inria Rennes Bretagne Atlantique, Lagadic team, Campus de Beaulieu, 35042 Rennes Cedex, FRANCE.</em>
 

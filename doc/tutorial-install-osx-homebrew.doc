@@ -3,7 +3,7 @@
 \page tutorial-install-osx-homebrew Tutorial: Installation from source on OSX with Homebrew
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on OSX with Homebrew. These steps have been tested with OSX 10.10.3 Yosemite. 
+In this tutorial you will learn how to install ViSP from source on OSX with Homebrew. These steps have been tested with Mac OS X 10.9.5 Mavericks and with 10.10.3 Yosemite. 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -16,12 +16,6 @@ Next use homebrew to install additional software.
 \code
 $ brew update
 $ brew install cmake
-\endcode
-
-And also add Homebrew science tap so you can get some non-standard formulae:optional third-parties like OpenCV:
-
-\code
-$ brew tap homebrew/science
 \endcode
 
 \section install_osx_brew_setup_env Setup environment
@@ -37,14 +31,14 @@ $ source ~/.bashrc
 \endcode
 
 
-\section install_osx_brew_required Install recommended packages
+\section install_osx_brew_required Install optional packages
 
-Next use homebrew to install additional software.
+ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install the following packages.
 
 \subsection install_osx_brew_opencv Install OpenCV
 
 \code
-$ brew install opencv3
+$ brew install homebrew/science/opencv3
 \endcode
 
 You can find OpenCV at:
@@ -85,55 +79,54 @@ To install the Gnu Scientific Library (GSL), just run the following instruction:
 $ brew install gsl
 \endcode
 
+\subsection install_osx_brew_zbar Install zbar
+
+To install the zbar library used in detection module for QR code detection, run:
+\code
+$ brew install zbar
+\endcode
+
 
 
 \section install_osx_brew_get_source Getting ViSP source code
 
 There are different ways to get ViSP source code:
 
-- You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
+- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \code
-tar xvzf ViSP-2.10.0.tar.gz 
+tar xvzf visp-x.y.z.tar.gz 
 \endcode
 or
 \code
-unzip ViSP-2.10.0.zip
+unzip visp-x.y.z.zip
 \endcode
 
-- You can also download a more <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a>. Once downloaded, uncompress the file using
+- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
 \code
-unzip ViSP-x.y.z-snapshot-2015.mm.dd.zip
-\endcode
-- Or you get the cutting-edge ViSP from Subversion repository. To this end you have first to install subversion
-\code
-$ brew install subversion
-\endcode
-and then use the following command
-\code
-$ svn checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-trunk
+tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
 \endcode
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/ViSP-2.10.0
+- Or you get the cutting-edge ViSP from GitHub repository using the following command
+\code
+$ git clone https://github.com/lagadic/visp.git
+\endcode
+
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/visp
 
 \section install_osx_brew_config Configuring ViSP from source
 
 - Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
 \code
-cd $HOME; mkdir ViSP-build-release
+cd $HOME; mkdir visp-build-release
 \endcode
 
-- Enter the \<binary_dir\> and to configure the build type:
+- Enter the \<binary_dir\> and configure the build:
 \code
-cmake [<optional parameters>] <source_dir>
-\endcode
-For example:
-\code
-cd $HOME/ViSP-build-release
-cmake -D CMAKE_BUILD_TYPE=RELEASE ../ViSP-2.10.0
+cmake ../visp
 \endcode
 A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 \code
-ccmake ../ViSP-2.10.0
+ccmake ../visp
 \endcode
 The previous command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd party that will be used.
 Then to generate the makefiles, just press [g] key in the ccmake gui.
@@ -157,11 +150,53 @@ $ brew install doxygen
 \endcode
 Then you can proceed with:
 \code
-$ make html-doc
+$ make -j4 visp_doc
 \endcode
 
+\section install_osx_brew_tips Tips and tricks
 
-You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+- After installation, you can remove installed material using
+\code
+$ sudo make uninstall
+\endcode
+
+- If you want to build only ViSP modules libraries
+\code
+$ make -j4 visp_modules
+\endcode
+
+- If you want to build a given module and all the dependencies
+\code
+$ make -j4 visp_<module_name>
+\endcode
+For example to build the model-based tracker module named mbt, run
+\code
+$ make -j4 visp_mbt
+\endcode
+
+- Which are the targets that could be run with make ?
+\code
+$ make help | grep visp
+... visp_tests
+... visp_demos
+... visp_tutorials
+... visp_examples
+... visp_modules
+... visp_doc
+... visp_core
+... visp_detection
+... visp_robot
+... visp_sensor
+... visp_vision
+... visp_vs
+... visp_ar
+... visp_mbt
+... visp_tt
+... visp_tt_mi
+\endcode
+
+- Which are the 3rd party libraries that are used in ViSP ?
+To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>.
 
 \section install_osx_brew_issues Kwown issues
 
@@ -197,13 +232,17 @@ error reading png file
 It means that apparently there is a conflict between libpng version installed by "brew install opencv3" (1.6.17), and the one used by X11/XQuartz (1.5.18).
 A work arround is to turn off libpng usage in ViSP. To configure and build again ViSP without png support:
 \code
-$ ccmake -DUSE_PNG=OFF ../ViSP-2.10.0
+$ ccmake -DUSE_PNG=OFF ../ViSP
 $ make -j4
 \endcode
 An other work arround option is to turn off X11 usage in ViSP. Display capabilities will be then the one from OpenCV. To this end, configure and build again ViSP without X11 support:
 \code
-$ ccmake -DUSE_X11=OFF ../ViSP-2.10.0
+$ ccmake -DUSE_X11=OFF ../ViSP
 $ make -j4
 \endcode
+
+\section install_osx_brew_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
 
 */

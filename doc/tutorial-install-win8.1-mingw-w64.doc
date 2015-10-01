@@ -41,7 +41,7 @@ to check that C:\\mingw\\bin was added.
 
 CMake 2.8 or higher that could be download at : http://www.cmake.org In our case we install CMake 3.1.2.
 
-- Download the latest binary distribution installer for Windows from http://www.cmake.org/download. You will find it under "Windows (Win32 Installer)".
+- Download the latest binary distribution installer for Windows from http://www.cmake.org. You will find it under "Windows (Win32 Installer)".
 - Install CMake just by double click on the binary cmake-3.1.2-win32-x86.exe you downloaded.
 
 
@@ -231,8 +231,6 @@ displayGDI.exe -i C:\ViSP
 
 \image html img-win8.1-cmd-displayGDI.jpg 
 
-You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
-
 \section issue_win81_mingw Known issues
 \subsection issue_win81_mingw_opencv_endianness OpenCV endianness failure during CMake configuration
 
@@ -314,6 +312,8 @@ To remove this warning, edit C:/mingw/mingw/include/urlmon.h and comment line 30
 //#pragma comment(lib,"uuid.lib")
 \endcode
 
+\section install_win81_mingw_next Next tutorial
 
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
 
 */

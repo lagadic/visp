@@ -10,7 +10,7 @@ In this tutorial you will learn how to install ViSP from source on Windows with 
 \section install_win7_required Required packages
 
 - Visual Studio C++. In this tutorial we use Visual Studio 2012. Note that ViSP can also be build with Visual Studio Express that could be downloaded from http://www.microsoft.com/visualstudio/eng/products/visual-studio-express-products
-- CMake 2.8 or higher that could be download at : http://www.cmake.org/cmake/resources/software.html
+- CMake 2.8 or higher that could be download at : http://www.cmake.org
 
 
 \section install_win7_get_source Getting ViSP source code
@@ -19,42 +19,42 @@ There are different ways to get ViSP source code.
 
 \subsection install_win7_get_source_release Getting the latest release
 
-You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip. 
+You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip. 
 
 \subsection install_win7_get_source_snapshot Getting the latest snapshot
 
 When significant changes or bug fixes were introduced in the current developpement version of the source code, we provide snapshots. 
 
-If available, you can download a <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a> following the link. 
+You can download a <a href="http://visp.inria.fr/download">daily snapshot</a> following the link. 
 
 \subsection install_win7_get_source_svn Getting the source from Subversion
 
-You can also get the cutting-edge ViSP version from Subversion repository svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP. 
+You can also get the cutting-edge ViSP version from GitHub repository https://github.com/lagadic/visp. 
 
-One way to do that under Windows is to install Subversion that comes with Cygwin installer that is available on https://cygwin.com/install.html
+One way to do that under Windows is to install Git that comes with Cygwin installer that is available on https://cygwin.com/install.html
 
 - From the previous link, download Cygwin installer for 32-bits or 64-bits version.
 - Double click on the setup binary to start installation. Keep the default settings and select a mirror.
-- As shown in the next image, in the window that allows to select the packages, search for "subversion" and select "subversion" package in "Devel":
+- As shown in the next image, in the window that allows to select the packages, search for "git" and select "git" package in "Devel":
 \image html img-win8.1-cygwin-svn.jpg
 - Click on Next button twice to start installation, and then on Finish button to exit installer. 
 - Now you should be able to use subversion
 \code
-C:\Users\...> C:\cygwin64\bin\svn.exe --version
-svn, version 1.7.14
+C:\Users\...> C:\cygwin64\bin\git.exe --version
+git version 2.3.8
 \endcode
 
 Once installed, to get ViSP source code run:
 \code
 C:\Users\...> cd C:\ViSP
-C:\Users\...> C:\cygwin64\bin\svn.exe checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-code
+C:\Users\...> C:\cygwin64\bin\git.exe clone https://github.com/lagadic/visp.git
 \endcode
 
 \section install_win7_config Configuring ViSP from source 
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\ViSP-2.10.0
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\visp\\visp
 
-The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:\\ViSP\\ViSP-2.10.0-build.
+The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:\\visp\\visp-build.
 
 - Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
 
@@ -64,7 +64,7 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 
 \image html img-cmake-win7-create-build-folder.jpg 
 
-- Click on "Yes" to create the \c C:\\ViSP\\ViSP-2.10.0-build folder.
+- Click on "Yes" to create the \c C:\\visp\\visp-build folder.
 - Select then your compiler, for example here Visual Studio 11 Win64, and click on "Finish" button. 
 
 \image html img-cmake-win7-msvc-version.jpg 
@@ -73,7 +73,7 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 
 \image html img-cmake-win7-msvc-config.jpg 
 
-- As given in the previous image, note also that the installation folder is set to \c C:\\ViSP\\ViSP-2.10.0-build\\install. 
+- As given in the previous image, note also that the installation folder is set to \c C:\\visp\\visp-2.10.0-build\\install. 
 \warning If you want to change the installation forder to \c C:/Program \c Files \c (x86)/ViSP, make sure that you have administrator privileges to write in that folder. 
 
 - Click then on "Configure" button. All the red lines should disappear.
@@ -82,7 +82,7 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 
 \subsection install_win7_3rdparty Optional 3rd party packages
 
-ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. 
+ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install the following:
 
 \subsubsection install_win7_3rdparty_opencv OpenCV 3rd party
 
@@ -195,6 +195,8 @@ displayGDI.exe -i C:\ViSP
 \endcode
 
 \image html img-win7-cmd-displayGDI.jpg 
+
+\section install_win7_next Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
 
