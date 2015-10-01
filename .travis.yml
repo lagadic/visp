@@ -3,12 +3,17 @@ language: cpp
 os:
   - linux
   - osx
+
+env:
+  - VISP_INPUT_IMAGE_PATH=${TRAVIS_BUILD_DIR}
   
 compiler:
   - gcc
   - clang
 
 before_install:
+  - cd ${TRAVIS_BUILD_DIR} && { curl -O http://www.irisa.fr/lagadic/visp/download/sequence/ViSP-images-2.10.0.zip ; cd -; }
+  - unzip ${TRAVIS_BUILD_DIR}/ViSP-images-2.10.0.zip -d ${TRAVIS_BUILD_DIR}
   # Get libs for OSX
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew update; fi"
   #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew tap homebrew/science; fi"
@@ -33,8 +38,12 @@ before_script:
   - mkdir build
   - cd build
   - cmake ..
+  # Show 3rd parties that are detected
+  - cat ViSP-third-party.txt
 
-script: make
+script: 
+  - make
+  - ctest
 
 notifications:
   email:
