@@ -156,7 +156,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
 
 /*!
   \brief Compute the pose using virtual visual servoing approach and
-  a robust cotrol law
+  a robust control law
 
   This approach is described in \cite Comport06b.
 
