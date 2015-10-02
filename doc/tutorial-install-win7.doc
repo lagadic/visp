@@ -7,54 +7,47 @@ In this tutorial you will learn how to install ViSP from source on Windows with 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_win7_required Required packages
+\section install_win7_required Install required packages
 
 - Visual Studio C++. In this tutorial we use Visual Studio 2012. Note that ViSP can also be build with Visual Studio Express that could be downloaded from http://www.microsoft.com/visualstudio/eng/products/visual-studio-express-products
 - CMake 2.8 or higher that could be download at : http://www.cmake.org
 
 
+\section install_win7_3rdparty Install optional packages
+
+ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install the following:
+
+\subsection install_win7_3rdparty_opencv OpenCV 3rd party
+
+- We recommend to install OpenCV. From http://opencv.org/downloads.html download the latest OpenCV for Windows version. There is an <a href="http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-install-prebuild">OpenCV tutorial: Installation Using the Pre-build Libraries</a> that may help. In our case we install \c opencv-3.0.0.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-3.0.0.exe extracted all the material in \c C:\\OpenCV\\opencv.
+
+- Now in order that ViSP detects OpenCV you have to set \c OpenCV_DIR environment variable. Start up a command window (in your "Start" menu click on "Run" and type in \c cmd.exe) and enter:
+\code
+setx OpenCV_DIR C:\OpenCV\opencv\build
+\endcode
+
+- You have also to add the location of OpenCV libraries in the PATH environment variable following the indications mentioned in \ref install_win7_env_var
+
+- Here the directory is where you have the build directory (extracted or built).  Inside this folder you should have a file named \c OpenCVConfig.cmake. 
+
 \section install_win7_get_source Getting ViSP source code
 
-There are different ways to get ViSP source code.
+There are different ways to get ViSP source code:
 
-\subsection install_win7_get_source_release Getting the latest release
+- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once visp-x.y.z.tar.gz or visp-x.y.z.zip is downloaded, uncompress the file using for example <a href="http://www.win-rar.com">WinRAR</a>
 
-You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip. 
+- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once visp-snapshot-yyyy-mm-dd.tar.gz is downloaded, uncompress the file using for example <a href="http://www.win-rar.com">WinRAR</a>
 
-\subsection install_win7_get_source_snapshot Getting the latest snapshot
-
-When significant changes or bug fixes were introduced in the current developpement version of the source code, we provide snapshots. 
-
-You can download a <a href="http://visp.inria.fr/download">daily snapshot</a> following the link. 
-
-\subsection install_win7_get_source_svn Getting the source from Subversion
-
-You can also get the cutting-edge ViSP version from GitHub repository https://github.com/lagadic/visp. 
-
-One way to do that under Windows is to install Git that comes with Cygwin installer that is available on https://cygwin.com/install.html
-
-- From the previous link, download Cygwin installer for 32-bits or 64-bits version.
-- Double click on the setup binary to start installation. Keep the default settings and select a mirror.
-- As shown in the next image, in the window that allows to select the packages, search for "git" and select "git" package in "Devel":
-\image html img-win8.1-cygwin-svn.jpg
-- Click on Next button twice to start installation, and then on Finish button to exit installer. 
-- Now you should be able to use subversion
+- Or you get the cutting-edge ViSP from GitHub repository using the git command line (see \ref install_win7_tip_git):
 \code
-C:\Users\...> C:\cygwin64\bin\git.exe --version
-git version 2.3.8
+$ git clone https://github.com/lagadic/visp.git
 \endcode
 
-Once installed, to get ViSP source code run:
-\code
-C:\Users\...> cd C:\ViSP
-C:\Users\...> C:\cygwin64\bin\git.exe clone https://github.com/lagadic/visp.git
-\endcode
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\visp
 
 \section install_win7_config Configuring ViSP from source 
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\visp\\visp
-
-The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:\\visp\\visp-build.
+The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:\\ViSP\\visp-build.
 
 - Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
 
@@ -64,60 +57,33 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 
 \image html img-cmake-win7-create-build-folder.jpg 
 
-- Click on "Yes" to create the \c C:\\visp\\visp-build folder.
+- Click on "Yes" to create the \c C:\\ViSP\\visp-build folder.
 - Select then your compiler, for example here Visual Studio 11 Win64, and click on "Finish" button. 
 
 \image html img-cmake-win7-msvc-version.jpg 
 
-- This will start CMake configuration. As shown in the next image, GDI (Graphical Device Interface) and OpenMP 3rd parties are automatically detected. 
+- This will start CMake configuration. As shown in the next image, GDI (Graphical Device Interface), OpenCV and OpenMP 3rd parties are automatically detected. 
 
 \image html img-cmake-win7-msvc-config.jpg 
 
-- As given in the previous image, note also that the installation folder is set to \c C:\\visp\\visp-2.10.0-build\\install. 
+- As given in the previous image, note also that the installation folder is set to \c C:\\ViSP\\visp-build\\install. 
 \warning If you want to change the installation forder to \c C:/Program \c Files \c (x86)/ViSP, make sure that you have administrator privileges to write in that folder. 
 
 - Click then on "Configure" button. All the red lines should disappear.
 \image html img-cmake-win7-msvc-config-end.jpg 
 \note The default configuration lead to the creation of a shared library (with \c .dll extension). This is the default configuration that is recommended. If you want to create rather a static library (with \c .lib extension) you have to uncheck the \c BUILD_SHARED_LIBS option to disable DLL creation. 
 
-\subsection install_win7_3rdparty Optional 3rd party packages
-
-ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install the following:
-
-\subsubsection install_win7_3rdparty_opencv OpenCV 3rd party
-
-- We recommend to install OpenCV. From http://opencv.org/downloads.html download the latest OpenCV for Windows version. There is an <a href="http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-install-prebuild">OpenCV tutorial: Installation Using the Pre-build Libraries</a> that may help. In our case we install \c OpenCV-3.0.0-beta.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-3.0.0-beta.exe copied all the material in \c C:\\OpenCV\\opencv.
-
-- Now in order that ViSP detects OpenCV you have to set \c OpenCV_DIR environment variable. Start up a command window (in your "Start" menu click on "Run" and type in \c cmd.exe) and enter:
-\code
-setx OpenCV_DIR C:\OpenCV\opencv-3.0.0-beta\build
-\endcode
-
-- Here the directory is where you have the build directory (extracted or built).  Inside this folder you should have a file named \c OpenCVConfig.cmake. 
-
-- Quit and restart CMake (cmake gui). <b>It is important to quit CMake</b> in order to take into account the new \c OpenCV_DIR environment variable. Click "Configure" button. As shown in the next image, a new red line indicating that OpenCV is found should appear.
-
-\image html img-cmake-win7-opencv.jpg 
-
-- As shown in the next image, if you enable the advanced view, you can see that we will use OpenCV libraries located in \c C:/OpenCV/opencv/build/x64/vc11/lib folder.
- 
-\image html img-cmake-win-opencv-advanced.jpg 
-
-- Press "Configure" button again.
-
-\subsection install_win7_gene Ending the configuration
-
 - To finish the configuration, click on "Generate" button.
 
 \image html img-cmake-win7-generate.jpg 
 
-- Once the generation is done, in \c C:/ViSP/ViSP-2.10.0-build folder you have the Visual Studio \c VISP.sln generated solution file.
+- Once the generation is done, in \c C:/ViSP/visp-build folder you have the Visual Studio \c VISP.sln generated solution file.
 
 \image html img-cmake-win7-solution.jpg 
 
 \section install_win7_build Building ViSP from source
 
-- To build ViSP just double click on \c C:/ViSP/ViSP-2.10.0-build/VISP.sln solution file. This action will open ViSP project in Visual Studio C++. As shown in the next image, by default, Visual Studio position the solution configuration to \c Debug.
+- To build ViSP just double click on \c C:/ViSP/visp-build/VISP.sln solution file. This action will open ViSP project in Visual Studio C++. As shown in the next image, by default, Visual Studio position the solution configuration to \c Debug.
 
 \image html img-win7-msvc-open.jpg 
 
@@ -137,7 +103,7 @@ setx OpenCV_DIR C:\OpenCV\opencv-3.0.0-beta\build
 
 \image html img-win7-msvc-install-succeed.jpg 
 
-- As shown in the previous image, all the headers but also the generated library are copied in \c C:/ViSP/ViSP-install folder.
+- As shown in the previous image, all the headers but also the generated library are copied in \c C:/ViSP/visp-install folder.
 
 - This ends ViSP installation with \c Debug configuration.
 
@@ -147,7 +113,7 @@ setx OpenCV_DIR C:\OpenCV\opencv-3.0.0-beta\build
 
 - Now, as previously, build and install ViSP again.
 
-- At the end, in \c C:/ViSP/ViSP-install/bin folder you have two versions of ViSP DLL library; the one suffixed by "d" with debug information, the other one optimized with release compiler options.
+- At the end, in \c C:/ViSP/visp-install/bin folder you have two versions of ViSP DLL library; the one suffixed by "d" with debug information, the other one optimized with release compiler options.
 
 \image html img-win7-msvc-install-end.jpg 
 
@@ -158,7 +124,7 @@ If you built static libraries then you are done. Otherwise, if you follow this t
 To modify the PATH var and add the path to ViSP library, open a cmd terminal and run:
 \code
 C:\Users\...> echo %PATH%
-C:\Users\...> setx PATH "%PATH%;C:\ViSP\ViSP-2.10.0-build\install\x64\vc12\bin"
+C:\Users\...> setx PATH "%PATH%;C:\ViSP\visp-build\install\x64\vc12\bin"
 \endcode
 
 Then to add the path to OpenCV 3rd party libraries, close and re-open a cmd-terminal and run:
@@ -179,7 +145,7 @@ C:\Users\...> echo %PATH%
 
 Some ViSP examples and tests require data set (images, models). These data set is provided as a compressed zip files. 
 
-- Download ViSP-images-2.10.0.zip from http://www.irisa.fr/lagadic/visp/download.html#dataDownloadForExample and uncompress it for example in \c C:/ViSP. 
+- Download ViSP-images-x.y.z.zip from http://visp.inria.fr/download and uncompress it for example in \c C:/ViSP. 
 
 \image html img-win7-ViSP-images.jpg 
 
@@ -195,6 +161,24 @@ displayGDI.exe -i C:\ViSP
 \endcode
 
 \image html img-win7-cmd-displayGDI.jpg 
+
+\section install_win7_tip Tip and tricks
+
+\subsection install_win7_tip_git How to install Git
+
+One way to install Git as a command line tool under Windows is to install Git that comes with Cygwin installer that is available on https://cygwin.com/install.html
+
+- From the previous link, download Cygwin installer for 32-bits or 64-bits version.
+- Double click on the setup binary to start installation in C:/cygwin64 as Root Directory. Keep the default settings and select a mirror.
+- As shown in the next image, in the window that allows to select the packages, search for "git" and select "git" package in "Devel":
+\image html img-win7-cygwin-git.jpg
+- Click on Next button twice to start installation, and then on Finish button to exit installer. 
+- Now you should be able to use Git
+\code
+C:\Users\...> C:\cygwin64\bin\git.exe --version
+git version 2.5.3
+\endcode
+
 
 \section install_win7_next Next tutorial
 
