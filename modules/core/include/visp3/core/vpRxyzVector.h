@@ -151,9 +151,6 @@ int main()
 
 class VISP_EXPORT vpRxyzVector : public vpRotationVector
 {
-  friend class vpRotationMatrix;
-  friend class vpThetaUVector;
-  
  public:
   /*! Default constructor that initialize all the angles to zero. */
   vpRxyzVector() {}

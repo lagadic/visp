@@ -72,9 +72,6 @@ class vpMatrix;
 */
 class VISP_EXPORT vpRowVector : public vpMatrix
 {
-  friend class vpMatrix;
-
-
 protected:
   //! Constructor  (Take line i of matrix m)
   vpRowVector(vpMatrix &m, unsigned int i);

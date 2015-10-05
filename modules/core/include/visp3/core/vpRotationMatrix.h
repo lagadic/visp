@@ -73,14 +73,6 @@
 */
 class VISP_EXPORT vpRotationMatrix : public vpMatrix
 {
-  friend class vpMatrix;
-  friend class vpHomogeneousMatrix;
-  friend class vpRxyzVector;
-  friend class vpRzyzVector;
-  friend class vpRzyxVector;
-  friend class vpThetaUVector;
-  friend class vpTranslationVector;
-  friend class vpPoseVector;
 public:
   //! Basic initialisation (identity)
   void init() ;
