@@ -258,6 +258,7 @@ public:
   // Basic construction.
   void init() ;
   // Basic constructor.
+  vpFeatureThetaU() ;
   vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r) ;
   vpFeatureThetaU(vpThetaUVector &tu,
 		  vpFeatureThetaURotationRepresentationType r) ;
@@ -276,14 +277,17 @@ public:
 
 public:
 
-
   void set_TUx(const double tu_x) ;
   void set_TUy(const double tu_y) ;
   void set_TUz(const double tu_z) ;
 
-  double get_TUx()  const ;
-  double get_TUy()   const ;
-  double get_TUz() const  ;
+  void setFeatureThetaURotationType(const vpFeatureThetaURotationRepresentationType r);
+
+  vpFeatureThetaURotationRepresentationType getFeatureThetaURotationType() const;
+
+  double get_TUx() const;
+  double get_TUy() const;
+  double get_TUz() const;
 
 
 public:
