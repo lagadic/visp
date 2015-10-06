@@ -86,8 +86,21 @@ vpFeatureTranslation::init()
 
 }
 
+/*!
+  Default constructor that builds a visual feature and initialize it to zero.
+  The type of the translation feature will be vpFeatureTranslation::cdMc
+  by default. Use the function setFeatureTranslationType() to set the
+  desired type of feature.
+*/
+vpFeatureTranslation::vpFeatureTranslation()
+  : f2Mf1(), translation(vpFeatureTranslation::cdMc)
+{
+  init() ;
+}
+
+
 /*! 
-  Default constructor that build a visual feature and initialize it to zero.
+  Default constructor that builds a visual feature and initialize it to zero specifying the type.
 
   \param r : Type of considered 3D translation feature. 
 
@@ -101,7 +114,7 @@ vpFeatureTranslation::vpFeatureTranslation(vpFeatureTranslationRepresentationTyp
 
 /*!
 
-  Constructor that build a 3D visual feature from an homogeneous
+  Constructor that builds a 3D visual feature from an homogeneous
   matrix \f$ ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$ that represent the 3D transformation between two frames \f${\cal{F}}_1\f$ and \f${\cal{F}}_2\f$.
 
   \param f2Mf1_ [in] : 3D displacement that the camera has to achieve to
@@ -133,6 +146,20 @@ vpFeatureTranslation::buildFrom(const vpHomogeneousMatrix &f2Mf1_)
   s[2] = f2Mf1[2][3] ;
 
   flags[0] = true;
+}
+
+/*!
+
+  Set the type of translation feature.
+
+  \param r : type of translation feature. It can be vpFeatureTranslation::cdMc, vpFeatureTranslation::cMcd
+             or vpFeatureTranslation::cMo.
+  \sa getFeatureTranslationType()
+
+*/
+void vpFeatureTranslation::setFeatureTranslationType(const vpFeatureTranslationRepresentationType r)
+{
+    translation = r;
 }
 
 /*!
@@ -174,6 +201,21 @@ void
 vpFeatureTranslation::set_Tz(const double t_z)
 {
     s[2] = t_z ;
+}
+
+
+/*!
+
+  Get the type of translation feature.
+
+  \return Type of translation feature. It can be vpFeatureTranslation::cdMc, vpFeatureTranslation::cMcd
+             or vpFeatureTranslation::cMo.
+  \sa setFeatureTranslationType()
+
+*/
+vpFeatureTranslation::vpFeatureTranslationRepresentationType vpFeatureTranslation::getFeatureTranslationType()  const
+{
+  return translation ;
 }
 
 /*!

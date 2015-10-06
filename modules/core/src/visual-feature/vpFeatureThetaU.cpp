@@ -84,8 +84,22 @@ vpFeatureThetaU::init()
   for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
 }
 
+/*!
+  Constructor that builds a visual feature and initialize it to zero.
+  The rotation representation of the \f$ \theta u\f$ visual feature
+  will be vpFeatureThetaU::cdRc by default. Use the function
+  setFeatureThetaURotationType() to set the desired type of feature.
+
+*/
+vpFeatureThetaU::vpFeatureThetaU()
+  : rotation(vpFeatureThetaU::cdRc)
+{
+  //vpTRACE("0x%x", this);
+  init() ;
+}
+
 /*! 
-  Default constructor that build a visual feature and initialize it to zero.
+  Constructor that builds a visual feature and initialize it to zero.
 
   \param r [in] : The rotation representation of the \f$ \theta u\f$
   visual feature.
@@ -262,6 +276,19 @@ vpFeatureThetaU::buildFrom(const vpHomogeneousMatrix &M)
 
 /*!
 
+  Set the type of rotation feature.
+
+  \param r : type of feature. It can be vpFeatureThetaU::cdRc or vpFeatureThetaU::cRcd.
+  \sa getFeatureThetaURotationType()
+
+*/
+void vpFeatureThetaU::setFeatureThetaURotationType(const vpFeatureThetaURotationRepresentationType r)
+{
+    rotation = r;
+}
+
+/*!
+
   Initialise the \f$\theta u_x \f$ subset value of the 3D
   visual feature \f$ s\f$.
 
@@ -299,6 +326,19 @@ vpFeatureThetaU::set_TUz(const double tu_z)
 {
     s[2] = tu_z ;
     flags[2] = true;
+}
+
+/*!
+
+  Get the type of rotation feature.
+
+  \return Type of rotation feature. It can be vpFeatureThetaU::cdRc or vpFeatureThetaU::cRcd.
+  \sa setFeatureThetaURotationType()
+
+*/
+vpFeatureThetaU::vpFeatureThetaURotationRepresentationType vpFeatureThetaU::getFeatureThetaURotationType() const
+{
+  return rotation;
 }
 
 /*!  
