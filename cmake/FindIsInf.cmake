@@ -52,8 +52,8 @@ int main(int argc, char ** argv)
 endmacro()
 
 check_include_files("float.h"       HAVE_FLOAT_H)
-check_math_expr("isnan(1.0)"        HAVE_FUNC_ISNAN)
-check_math_expr("std::isnan(1.0)"   HAVE_FUNC_STD_ISNAN)
+check_math_expr("isinf(1.0)"        HAVE_FUNC_ISINF)
+check_math_expr("std::isinf(1.0)"   HAVE_FUNC_STD_ISINF)
 
 if(HAVE_FLOAT_H)
     # The version that should work with MSVC
@@ -61,11 +61,11 @@ if(HAVE_FLOAT_H)
 #include <float.h>
 int main(int argc, char ** argv)
 {
-    (void)_isnan(1.0);
+    (void)_isinf(1.0);
     return 0;
 }
-" HAVE_FUNC__ISNAN)
+" HAVE_FUNC__ISINF)
 else()
-    set(HAVE_FUNC__ISNAN FALSE)
+    set(HAVE_FUNC__ISINF FALSE)
 endif()
 

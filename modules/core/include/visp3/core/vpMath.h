@@ -184,6 +184,7 @@ class VISP_EXPORT vpMath
   }
 
   static bool isNaN(const double value);
+  static bool isInf(const double value);
 
  private:
   static const double ang_min_sinc;

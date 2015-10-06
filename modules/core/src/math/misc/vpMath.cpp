@@ -48,11 +48,13 @@
 #include <stdint.h>
 #include <visp3/core/vpMath.h>
 
-#if defined(VISP_HAVE_FUNC_ISNAN) || defined(VISP_HAVE_FUNC_STD_ISNAN)
+#if defined(VISP_HAVE_FUNC_ISNAN) || defined(VISP_HAVE_FUNC_STD_ISNAN) || defined(VISP_HAVE_FUNC_ISINF) || defined(VISP_HAVE_FUNC_STD_ISINF)
 #  include <cmath>
 #elif defined(VISP_HAVE_FUNC__ISNAN)
 #  include <float.h>
-#else
+#endif
+
+#if !(defined(VISP_HAVE_FUNC_ISNAN) || defined(VISP_HAVE_FUNC_STD_ISNAN)) || !(defined(VISP_HAVE_FUNC_ISINF) || defined(VISP_HAVE_FUNC_STD_ISINF))
 #  if defined _MSC_VER || defined __BORLANDC__
 typedef __int64 int64;
 typedef unsigned __int64 uint64;
@@ -101,6 +103,25 @@ bool vpMath::isNaN(const double value)
     return (((unsigned)(ieee754.u >> 32) & 0x7fffffff) +
            ((unsigned)ieee754.u != 0) > 0x7ff00000) != 0;
   #endif
+#endif
+}
+/*!
+   Returns whether a double is an infinity value (either positive infinity or negative infinity).
+   \param value : Double number to check.
+   \return Return true if value is infinity.
+ */
+bool vpMath::isInf(const double value)
+{
+#if defined(VISP_HAVE_FUNC_ISINF)
+  return isinf(value);
+#elif defined(VISP_HAVE_FUNC_STD_ISINF)
+  return std::isinf(value);
+#else
+  //Taken from OpenCV source code CvIsInf()
+  Cv64suf ieee754;
+  ieee754.f = value;
+  return ((unsigned)(ieee754.u >> 32) & 0x7fffffff) == 0x7ff00000 &&
+         (unsigned)ieee754.u == 0;
 #endif
 }
 

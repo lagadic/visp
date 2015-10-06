@@ -300,7 +300,9 @@ public:
 
   // basic construction
   void init() ;
-  // basic constructor
+  // basic contructor
+  vpFeatureTranslation() ;
+  // basic constructor specifying the type of translation feature
   vpFeatureTranslation(vpFeatureTranslationRepresentationType r) ;
   // constructor : build from an homogeneous matrix
   // cdMc is the displacement that the camera has to realize
@@ -315,6 +317,10 @@ public:
   void set_Tx(const double t_x) ;
   void set_Ty(const double t_y) ;
   void set_Tz(const double t_z) ;
+
+  void setFeatureTranslationType(const vpFeatureTranslationRepresentationType r);
+
+  vpFeatureTranslationRepresentationType getFeatureTranslationType() const;
 
   double get_Tx() const ;
   double get_Ty() const ;
