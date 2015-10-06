@@ -739,7 +739,7 @@ vpMbScanLine::getAlpha(double x, double X0, double Z0, double X1, double Z1)
   const double N = X0 - x * Z0;
   const double D = x * (Z1 - Z0) - (X1 - X0);
   double alpha = N / D;
-  if (std::isnan(alpha) || std::isinf(alpha))
+  if (vpMath::isNaN(alpha) || vpMath::isInf(alpha))
     return 0.0;
 
   alpha = std::min(1.0,alpha);
