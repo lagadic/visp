@@ -387,6 +387,13 @@ public:  /* Methode publiques */
   void init (vpViper650::vpToolType tool,
              vpCameraParameters::vpCameraParametersProjType
              projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
+  void init (vpViper650::vpToolType tool,
+             const std::string &filename);
+  void init (vpViper650::vpToolType tool,
+             const vpHomogeneousMatrix &eMc_);
+
+  void set_eMc(const vpHomogeneousMatrix &eMc_);
+  void set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_);
 
   void move(const char *filename);
 

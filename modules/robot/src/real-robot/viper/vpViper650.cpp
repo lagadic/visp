@@ -52,10 +52,10 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpXmlParserCamera.h>
 
-#ifdef VISP_HAVE_ACCESS_TO_NAS
 static const char *opt_viper650[] = {"CAMERA", "eMc_ROT_XYZ","eMc_TRANS_XYZ",
                                      NULL};
 
+#ifdef VISP_HAVE_ACCESS_TO_NAS
 const char * const vpViper650::CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME
 #if defined(_WIN32)
 = "Z:/robot/Viper650/current/include/const_eMc_MarlinF033C_without_distortion_Viper650.cnf";
@@ -181,10 +181,7 @@ vpViper650::init (void)
 /*!
 
   Read files containing the constant parameters related to the robot
-  tools in order to set the end-effector to camera transformation.
-
-  \warning This function is only available if the macro
-  VISP_HAVE_ACCESS_TO_NAS is defined in vpConfig.h.
+  tools in order to set the end-effector to tool transformation.
 
   \param camera_extrinsic_parameters : Filename containing the camera
   extrinsic parameters.
@@ -206,11 +203,20 @@ vpViper650::init (const char *camera_extrinsic_parameters)
   Set the constant parameters related to the robot kinematics and to
   the end-effector to camera transformation (\f$^e{\bf M}c\f$)
   corresponding to the camera extrinsic parameters. These last
-  parameters depend on the camera and projection model in use.
+  parameters depend on the camera and projection model in use and are
+  loaded from predefined files or parameters.
+
+  \warning If the macro VISP_HAVE_ACCESS_TO_NAS is defined in vpConfig.h
+  this function reads the camera extrinsic parameters from the file
+  corresponding to the specified camera type and projection type.
+  Otherwise corresponding default parameters are loaded.
 
   \param tool : Camera in use.
 
   \param proj_model : Projection model of the camera.
+
+  \sa init(vpViper650::vpToolType, const std::string&),
+  init(vpViper650::vpToolType, const vpHomogeneousMatrix&)
 
 */
 void
@@ -316,6 +322,13 @@ vpViper650::init (vpViper650::vpToolType tool,
     }
     break;
   }
+  case vpViper650::TOOL_CUSTOM: {
+    vpERROR_TRACE ("No predefined file available for a custom tool"
+                   "You should use init(vpViper650::vpToolType, const std::string&) or"
+                   "init(vpViper650::vpToolType, const vpHomogeneousMatrix&) instead");
+    throw vpRobotException (vpRobotException::badValue, "No predefined file available for a custom tool");
+    break;
+  }
   default: {
     vpERROR_TRACE ("This error should not occur!");
     //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
@@ -394,6 +407,13 @@ vpViper650::init (vpViper650::vpToolType tool,
     }
     break;
   }
+  case vpViper650::TOOL_CUSTOM: {
+    vpERROR_TRACE ("No predefined parameters available for a custom tool"
+                   "You should use init(vpViper650::vpToolType, const std::string&) or"
+                   "init(vpViper650::vpToolType, const vpHomogeneousMatrix&) instead");
+    throw vpRobotException (vpRobotException::badValue, "No predefined parameters available for a custom tool");
+    break;
+  }
   }
   vpRotationMatrix eRc(erc);
   this->eMc.buildFrom(etc, eRc);
@@ -405,16 +425,73 @@ vpViper650::init (vpViper650::vpToolType tool,
 
 /*!
 
-  This function gets the robot constant parameters from a file.
+  Set the type of tool attached to the robot and transformation
+  between the end-effector and the tool (\f$^e{\bf M}c\f$).
+  This last parameter is loaded from a file.
 
-  \warning This function is only available if the macro
-  VISP_HAVE_ACCESS_TO_NAS is defined in vpConfig.h.
+  \param tool : Type of tool in use.
+
+  \param filename : Path of the configuration file containing the
+  transformation between the end-effector frame and the tool frame.
+
+  The configuration file should have the form below:
+
+  \code
+# Start with any number of consecutive lines
+# beginning with the symbol '#'
+#
+# The 3 following lines contain the name of the camera,
+# the rotation parameters of the geometric transformation
+# using the Euler angles in degrees with convention XYZ and
+# the translation parameters expressed in meters
+CAMERA CameraName
+eMc_ROT_XYZ 10.0 -90.0 20.0
+eMc_TRANS_XYZ  0.05 0.01 0.06
+    \endcode
+
+  \sa init(vpViper650::vpToolType,
+  vpCameraParameters::vpCameraParametersProjType),
+  init(vpViper650::vpToolType, const vpHomogeneousMatrix&)
+*/
+void
+vpViper650::init (vpViper650::vpToolType tool,
+                  const std::string &filename)
+{
+    this->setToolType(tool);
+    this->parseConfigFile(filename.c_str());
+}
+
+/*!
+
+  Set the type of tool attached to the robot and the transformation
+  between the end-effector and the tool (\f$^e{\bf M}c\f$).
+
+  \param tool : Type of tool in use.
+
+  \param eMc_ : Homogeneous matrix representation of the transformation
+  between the end-effector frame and the tool frame.
+
+  \sa init(vpViper650::vpToolType,
+  vpCameraParameters::vpCameraParametersProjType),
+  init(vpViper650::vpToolType, const std::string&)
+
+*/
+void
+vpViper650::init (vpViper650::vpToolType tool,
+                  const vpHomogeneousMatrix &eMc_)
+{
+    this->setToolType(tool);
+    this->set_eMc(eMc_);
+}
+
+/*!
+
+  This function gets the robot constant parameters from a file.
 
   \param filename : File name containing the robot constant
   parameters, like the hand-to-eye transformation.
 
 */
-#ifdef VISP_HAVE_ACCESS_TO_NAS
 void
 vpViper650::parseConfigFile (const char * filename)
 {
@@ -424,8 +501,8 @@ vpViper650::parseConfigFile (const char * filename)
   char              namoption[100];
   FILE *            fdtask;
   int               numLn = 0;
-  double rot_eMc[3]; // rotation
-  double trans_eMc[3]; // translation
+  vpRxyzVector rot_eMc; // rotation
+  vpTranslationVector trans_eMc; // translation
   bool get_rot_eMc = false;
   bool get_trans_eMc = false;
 
@@ -489,18 +566,17 @@ vpViper650::parseConfigFile (const char * filename)
 
   // Compute the eMc matrix from the translations and rotations
   if (get_rot_eMc && get_trans_eMc) {
-    for (unsigned int i=0; i < 3; i ++) {
-      erc[i] = rot_eMc[i];
-      etc[i] = trans_eMc[i];
-    }
-
-    vpRotationMatrix eRc(erc);
-    this->eMc.buildFrom(etc, eRc);
+    this->set_eMc(trans_eMc,rot_eMc);
+  }
+  else {
+    vpERROR_TRACE ("Could not read translation and rotation parameters from config file %s.",
+                     filename);
+    throw vpRobotException (vpRobotException::readingParametersError,
+                              "Could not read translation and rotation parameters from config file ");
   }
 
   return;
 }
-#endif
 
 
 /*!
@@ -643,6 +719,11 @@ vpViper650::getCameraParameters (vpCameraParameters &cam,
     }
     break;
   }
+  case vpViper650::TOOL_CUSTOM: {
+    vpERROR_TRACE ("No intrinsic parameters available for a custom tool");
+    throw vpRobotException (vpRobotException::badValue, "No intrinsic parameters available for a custom tool");
+    break;
+  }
   default: {
     vpERROR_TRACE ("This error should not occur!");
     //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
@@ -723,6 +804,11 @@ vpViper650::getCameraParameters (vpCameraParameters &cam,
       throw vpRobotException (vpRobotException::readingParametersError,
                               "Impossible to read the camera parameters.");
     }
+    break;
+  }
+  case vpViper650::TOOL_CUSTOM: {
+    vpERROR_TRACE ("No intrinsic parameters available for a custom tool");
+    throw vpRobotException (vpRobotException::badValue, "No intrinsic parameters available for a custom tool");
     break;
   }
   default:

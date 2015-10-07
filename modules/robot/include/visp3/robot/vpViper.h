@@ -130,6 +130,9 @@ class VISP_EXPORT vpViper
   void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
   void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
 
+  virtual void set_eMc(const vpHomogeneousMatrix &eMc_);
+  virtual void set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_);
+
   friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpViper & viper);
 
   vpColVector getJointMin() const;
