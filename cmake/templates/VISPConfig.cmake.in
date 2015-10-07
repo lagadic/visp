@@ -132,7 +132,7 @@ endforeach()
 set(VISP_SHARED @BUILD_SHARED_LIBS@)
 
 # Extract the directory where *this* file has been installed (determined at cmake run-time)
-get_filename_component(VISP_CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" PATH CACHE)
+set(VISP_CONFIG_PATH ${VISP_DIR} CACHE PATH "ViSPConfig.cmake path location" FORCE)
 mark_as_advanced(VISP_CONFIG_PATH)
 
 if(NOT WIN32)
