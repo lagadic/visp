@@ -106,7 +106,7 @@ unzip visp-x.y.z.zip
 tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
 \endcode
 
-- Or you get the cutting-edge ViSP from GitHub repository using the following command
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> repository using the following command
 \code
 $ git clone https://github.com/lagadic/visp.git
 \endcode

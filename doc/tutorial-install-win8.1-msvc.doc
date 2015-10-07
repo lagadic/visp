@@ -3,120 +3,43 @@
 \page tutorial-install-win81-msvc Tutorial: Installation from source on Windows 8.1 with Visual C++ 2013
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Windows 8.1 with Visual C++. These steps have been tested on Windows 8.1 (64 bit), with CMake 3.1.1 and Visual Studio Express 2013 but should work with any other version as well. 
+In this tutorial you will learn how to install ViSP from source on Windows 8.1 with Visual C++. These steps have been tested on Windows 8.1 (64 bit), with CMake 3.3.2 and Visual Studio Express 2013 but should work with any other version as well. 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_win81_msvc_required Required packages
+\section install_win81_msvc_required Install required packages
 
-- Visual Studio C++. Note that ViSP can also be build with Visual Studio Express that could be downloaded from  http://www.microsoft.com/visualstudio/eng/products/visual-studio-express-products In this tutorial we use Visual Studio Express 2013. 
+- Visual Studio C++. Note that ViSP can also be build with Visual Studio Express that could be downloaded from  http://www.microsoft.com/visualstudio/eng/products/visual-studio-express-products . In this tutorial we use Visual Studio Express 2013. 
 \note If you want to use Visual Studio Express, you have to install <b>Express 2013 for Windows Desktop</b>. The \b Desktop version is important to work with CMake.
-- CMake 2.8 or higher that could be download at : http://www.cmake.org
+- CMake 2.8.3 or higher that could be download at : http://www.cmake.org. To install CMake, download the latest binary distribution installer for Windows. You will find it under <a href="https://cmake.org/download/">"Windows (Win32 Installer)"</a>. Install CMake just by double clicking on the binary cmake-x.y.z-win32-x86.exe you downloaded.
+
+\section install_win81_msvc_3rdparty Install optional packages
+
+ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install the following:
+
+\subsection install_win81_msvc_3rdparty_gdi Windows Software Development Kit
+
+We recommend to install the "Windows Software Development Kit (SDK) for windows 8.1" to get the Graphical Device Interface (GDI) capabilities. The GDI is used in ViSP to display images in a window thanks to vpDisplayGDI class.
+
+- This SDK can be downloaded from https://msdn.microsoft.com/en-us/windows/desktop/bg162891.aspx
 
 
-\section install_win81_msvc_get_source Getting ViSP source code
+\subsection install_win81_msvc_3rdparty_opencv OpenCV 3rd party
 
-There are different ways to get ViSP source code.
+We recommend also to install OpenCV.
 
-\subsection install_win81_msvc_get_source_release Getting the latest release
-
-You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip. 
-
-\subsection install_win81_msvc_get_source_snapshot Getting the latest snapshot
-
-When significant changes or bug fixes were introduced in the current developpement version of the source code, we provide snapshots. 
-
-If available, you can download a <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a> following the link. 
-
-\subsection install_win81_msvc_get_source_svn Getting the source from Subversion
-
-You can also get the cutting-edge ViSP version from Subversion repository svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP. 
-
-One way to do that under Windows is to install Subversion that comes with Cygwin installer that is available on https://cygwin.com/install.html
-
-- From the previous link, download Cygwin installer for 32-bits or 64-bits version.
-- Double click on the setup binary to start installation. Keep the default settings and select a mirror.
-- As shown in the next image, in the window that allows to select the packages, search for "subversion" and select "subversion" package in "Devel":
-\image html img-win8.1-cygwin-svn.jpg
-- Click on Next button twice to start installation, and then on Finish button to exit installer. 
-- Now you should be able to use subversion
-\code
-C:\Users\...> C:\cygwin64\bin\svn.exe --version
-svn, version 1.7.14
-\endcode
-
-Once installed, to get ViSP source code run:
-\code
-C:\Users\...> cd C:\ViSP
-C:\Users\...> C:\cygwin64\bin\svn.exe checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-code
-\endcode
-
-\section install_win81_msvc_config Configuring ViSP from source 
-
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\ViSP-2.10.0
-
-The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:\\ViSP\\ViSP-2.10.0-build.
-
-- Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
-
-\image html img-cmake-win8.1-msvc-launch.jpg 
-
-- Click then on "Configure" button.
-
-\image html img-cmake-win8.1-create-build-folder.jpg 
-
-- Click on "Yes" to create the \c C:\\ViSP\\ViSP-2.10.0-build folder.
-- Select then your compiler, for example here Visual Studio Express 2013 Win64, and click on "Finish" button. 
-
-\image html img-cmake-win8.1-msvc-version.jpg 
-
-- This will start CMake configuration. As shown in the next image, only OpenMP 3rd party is automatically detected. 
-
-\image html img-cmake-win8.1-4.jpg 
-
-- As given in the previous image, note also that the installation folder is set to \c C:\\ViSP\\ViSP-2.10.0-build\\install. 
-\warning If you want to change the installation forder to \c C:/Program \c Files \c (x86)/ViSP, make sure that you have administrator privileges to write in that folder. 
-
-- Click then on "Configure" button. All the red lines should disappear.
-\image html img-cmake-win8.1-6.jpg 
-\note The default configuration lead to the creation of a shared library (with \c .dll extension). This is the default configuration that is recommended. If you want to create rather a static library (with \c .lib extension) you have to uncheck the \c BUILD_SHARED_LIBS option to disable DLL creation. 
-
-\subsection install_win81_msvc_3rdparty Optional 3rd party packages
-
-ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. 
-
-\subsubsection install_win81_msvc_3rdparty_gdi Windows Software Development Kit
-
-- We recommend to install the "Windows Software Development Kit (SDK) for windows 8.1" to get the Graphical Device Interface (GDI) capabilities. The GDI is used in ViSP to display images in a window thanks to vpDisplayGDI class. This SDK can be downloaded from https://msdn.microsoft.com/en-us/windows/desktop/bg162891.aspx
-
-- Once installed, return to CMake Gui and click on "Configure" button. As shown in the the next image, GDI should be detected.
-
-\image html img-cmake-win8.1-gdi.jpg 
-
-- Click again on "Configure" button.
-
-\subsubsection install_win81_msvc_3rdparty_opencv OpenCV 3rd party
-
-- We recommend to install OpenCV. From http://opencv.org/downloads.html download the latest OpenCV for Windows version. There is an <a href="http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-install-prebuild">OpenCV tutorial: Installation Using the Pre-build Libraries</a> that may help. In our case we install \c OpenCV-2.4.10.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-2.4.10.exe copied all the material in \c C:\\OpenCV\\opencv.
+- From http://opencv.org/downloads.html download the latest OpenCV for Windows version. In our case we install \c opencv-3.0.0.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-3.0.0.exe extracted all the material in \c C:\\OpenCV\\opencv.
+\note There is an <a href="http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-install-prebuild">OpenCV tutorial: Installation Using the Pre-build Libraries</a> that may help if you encounter some difficulties.
 
 - Now in order that ViSP detects OpenCV you have to set \c OpenCV_DIR environment variable. Start up a command window (in your "Start" menu click on "Run" and type in \c cmd.exe) and enter:
 \code
 setx OpenCV_DIR C:\OpenCV\opencv\build
 \endcode
+where \c C:\\OpenCV\\opencv\\build is where you have the build directory (extracted or built).  Inside this folder you should have a file named \c OpenCVConfig.cmake. 
 
-- Here the directory is where you have the build directory (extracted or built).  Inside this folder you should have a file named \c OpenCVConfig.cmake. 
+- You have also to add the location of OpenCV libraries in the PATH environment variable following the indications mentioned in \ref install_win81_msvc_env_var.
 
-- Quit and restart CMake (cmake gui). <b>It is important to quit CMake</b> in order to take into account the new \c OpenCV_DIR environment variable. Click "Configure" button. As shown in the next image, a new red line indicating that OpenCV is found should appear.
-
-\image html img-cmake-win8.1-opencv.jpg 
-
-- As shown in the next image, if you enable the advanced view, you can see that we will use OpenCV libraries located in \c C:/OpenCV/opencv/build/x64/vc12/lib folder.
- 
-\image html img-cmake-win8.1-opencv-advanced.jpg 
-
-- Press "Configure" button again.
-
-\subsubsection install_win81_msvc_3rdparty_ogre Ogre3D 3rd party
+\subsection install_win81_msvc_3rdparty_ogre Ogre3D 3rd party
 
 If you are interested in augmented reality (see vpAROgre), or if you want to enable advanced visibility computation during model-based tracking (see vpMbTracker::setOgreVisibilityTest() and \ref tutorial-tracking-mb) we recommend to install Ogre3D. You can check if a <a href="http://www.ogre3d.org/download/sdk">prebuild SDK</A> matches your Visual C++ version, and follow the <a href="http://www.ogre3d.org/tikiwiki/Installing+the+Ogre+SDK">SDK installation instructions</a>. You can also install the lastest release from source. Based on our experience, this is what we recommend. 
 
@@ -128,20 +51,21 @@ Ogre source code is hosted on <a href="https://bitbucket.org/sinbad/ogre">BitBuc
 
 <b>Getting Ogre dependencies</b>
 - A repository containing Ogre dependencies source code is available <a href="https://bitbucket.org/cabalistic/ogredeps">here at BitBucket</a>.
-- Open an explorer window, and enter in TortoiseHg Clone menu. Select as source https://bitbucket.org/cabalistic/ogredeps and as destination C:\\Ogre\\ogredeps as in the next image:
+- Open an explorer window, and enter in TortoiseHg Clone menu. Select as source https://bitbucket.org/cabalistic/ogredeps and as destination \c C:\\Ogre\\ogredeps as in the next image:
 \image html img-win8.1-ogredeps-tortoisehg.jpg
-- Click on Clone button to get dependencies source code in C:\\Ogre\\ogredeps
+- Click on Clone button to get dependencies source code in \c C:\\Ogre\\ogredeps
 
 <b>Building Ogre dependencies</b>
-- To build the dependencies, open CMake GUI and set source code location pointing to C:\\Ogre\\ogredeps and build location pointing to C:\\Ogre\\ogredeps\\build. Select Visual Studio 12 2013 Win64 as generator, click on "Configure" button and then on "Generate" button. You should have something similar to the next image:
+- To build the dependencies, open CMake GUI and set source code location pointing to \c C:\\Ogre\\ogredeps and build location pointing to \c C:\\Ogre\\ogredeps\\build. Select Visual Studio 12 2013 Win64 as generator, click on "Configure" button twice and then on "Generate" button. You should have something similar to the next image:
 \image html img-win8.1-cmake-ogredeps.jpg
-- Open C:\\Ogre\\ogredeps\\build\\OGREDEPS.sln solution file with Visual C++. 
+- Open \c C:\\Ogre\\ogredeps\\build\\OGREDEPS.sln solution file with Visual C++. 
 - In Visual, select Debug configuration and build INSTALL project:
 \image html img-win8.1-msvc-build-ogredeps.jpg
+\note If the build fails due to the environment variable DXSDK_DIR that is not set, see \ref known_issues_win81_msvc_ogredeps for a work arround.
 - In Visual, select also Release configuration and build again INSTALL project.
-- Now in C:\\Ogre\\ogredeps\\build\\ogredeps\\bin you will find the Cg and OIS dependencies build in Debug and Release:
+- Now in \c C:\\Ogre\\ogredeps\\build\\ogredeps\\bin you will find the Cg and OIS dependencies build in Debug and Release:
 \image html img-win8.1-ogredeps-explorer.jpg
-- To finish dependencies installation, set OGRE_DEPENDENCIES_DIR environment variable pointing to C:\\Ogre\\ogredeps\\build\\ogredeps
+- To finish dependencies installation, set OGRE_DEPENDENCIES_DIR environment variable pointing to \c C:\\Ogre\\ogredeps\\build\\ogredeps
 \code
 setx OGRE_DEPENDENCIES_DIR C:\Ogre\ogredeps\build\ogredeps
 \endcode 
@@ -149,44 +73,79 @@ setx OGRE_DEPENDENCIES_DIR C:\Ogre\ogredeps\build\ogredeps
 <b>Getting Ogre source</b>
 
 - From <a href="http://www.ogre3d.org/download/source">Ogre download page</a>, identify the last release. In our case Ogre 1.9 that is on <a href="https://bitbucket.org/sinbad/ogre/branches">BitBucket repository</a> under branch v1-9.
-- Open an explorer window, and enter in TortoiseHg Clone menu. Select as source https://bitbucket.org/sinbad/ogre, as destination C:\\Ogre\\ogre and select revision v1-9 corresponding to the branch of the latest release as presented in the next image:
+- Open an explorer window, and enter in TortoiseHg Clone menu. Select as source https://bitbucket.org/sinbad/ogre, as destination \c C:\\Ogre\\ogre and select revision v1-9 corresponding to the branch of the latest release as presented in the next image:
 \image html img-win8.1-ogre-tortoisehg.jpg
-- Click on Clone button to get Ogre source code in C:\\Ogre\\ogre
+- Click on Clone button to get Ogre source code in \c C:\\Ogre\\ogre
 
 <b>Building Ogre source</b>
 
-- Close and re-open CMake Gui. Set source code location pointing to C:\\Ogre\\ogre and build location pointing to C:\\Ogre\\ogre\\build. Select Visual Studio 12 2013 Win64 as generator, click on "Configure" button and then on "Generate" button. You should have something similar to the next image:
+- Close and re-open CMake Gui. Set source code location pointing to \c C:\\Ogre\\ogre and build location pointing to \c C:\\Ogre\\ogre\\build. Select Visual Studio 12 2013 Win64 as generator, click on "Configure" button and then on "Generate" button. You should have something similar to the next image:
 \image html img-win8.1-cmake-ogre.jpg
-\note As shown in the previous image, Ogre installation folder is set to C:\\Ogre\\ogre\\build\\sdk.
-- Open C:\\Ogre\\ogre\\build\\OGRE.sln solution file with Visual C++. 
+\note As shown in the previous image, Ogre installation folder is set to \c C:\\Ogre\\ogre\\build\\sdk.
+- Open \c C:\\Ogre\\ogre\\build\\OGRE.sln solution file with Visual C++. 
 - In Visual, select Debug configuration and build INSTALL project.
 - In Visual, select also Release configuration and build again INSTALL project.
-- Now in C:\\Ogre\\ogre\\build\\sdk\\bin you will find all the libraries in Debug and Release configuration, including Cg and OIS dependencies there where build previously.
+- Now in \c C:\\Ogre\\ogre\\build\\sdk\\bin you will find all the libraries in Debug and Release configuration, including Cg and OIS dependencies there where build previously.
 \image html img-win8.1-ogre-explorer.jpg
-- To finish Ogre installation set OGRE_HOME environment variables to C:\\Ogre\\ogre\\build\\sdk location.
+- To finish Ogre installation set OGRE_HOME environment variables to \c C:\\Ogre\\ogre\\build\\sdk location.
 \code
 setx OGRE_HOME C:\Ogre\ogre\build\sdk
 \endcode
 
-<b>Configuring ViSP with Ogre</b>
+\section install_win81_msvc_get_source Getting ViSP source code
 
-- Now quit and restart CMake to take into account the environment variables changes. Select C:\\ViSP\\ViSP-2.10.0-build as build libraries location to come back to ViSP configuration. Click on "Configure" button. Ogre should be detected.
-\image html img-cmake-win8.1-ogre-found.jpg 
-- Press "Configure" button again.
- 
-\subsection install_win81_msvc_gene Ending the configuration
+There are different ways to get ViSP source code.
+
+- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once visp-x.y.z.tar.gz or visp-x.y.z.zip is downloaded, uncompress the file using for example <a href="http://www.win-rar.com">WinRAR</a>
+
+- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once visp-snapshot-yyyy-mm-dd.tar.gz is downloaded, uncompress the file using for example <a href="http://www.win-rar.com">WinRAR</a>
+
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the git command line (see \ref install_win7_tip_git):
+\code
+C:\ViSP> git clone https://github.com/lagadic/visp.git
+\endcode
+
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\visp
+
+\section install_win81_msvc_config Configuring ViSP from source 
+
+The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:\\ViSP\\visp-build.
+
+- Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
+
+\image html img-cmake-win8.1-msvc-launch.jpg 
+
+- Click then on "Configure" button.
+
+\image html img-cmake-win8.1-create-build-folder.jpg 
+
+- Click on "Yes" to create the \c C:\\ViSP\\visp-build folder.
+- Select then your compiler, for example here Visual Studio Express 2013 Win64, and click on "Finish" button. 
+
+\image html img-cmake-win8.1-msvc-version.jpg 
+
+- This will start CMake configuration. As shown in the next image, GDI (Graphical Device Interface), OpenCV, Ogre  and OpenMP 3rd parties are automatically detected. 
+
+\image html img-cmake-win8.1-config.jpg 
+
+- As given in the previous image, note also that the installation folder is set to \c C:\\ViSP\\visp-build\\install. 
+\warning If you want to change the installation forder to \c C:/Program \c Files \c (x86)/ViSP, make sure that you have administrator privileges to write in that folder. 
+
+- Click then on "Configure" button. All the red lines should disappear.
+\image html img-cmake-win8.1-config-end.jpg 
+\note The default configuration lead to the creation of a shared library (with \c .dll extension). This is the default configuration that is recommended. If you want to create rather a static library (with \c .lib extension) you have to uncheck the \c BUILD_SHARED_LIBS option to disable DLL creation. 
 
 - To finish the configuration, click on "Generate" button.
 
 \image html img-cmake-win8.1-msvc-generate.jpg 
 
-- Once the generation is done, in \c C:/ViSP/ViSP-2.10.0-build folder you have the Visual Studio \c VISP.sln generated solution file.
+- Once the generation is done, in \c C:/ViSP/visp-build folder you have the Visual Studio \c VISP.sln generated solution file.
 
 \image html img-win8.1-msvc-solution.jpg 
 
 \section install_win81_msvc_build Building ViSP from source
 
-- To build ViSP just double click on \c C:/ViSP/ViSP-2.10.0-build/VISP.sln solution file. This action will open ViSP project in Visual Studio C++. As shown in the next image, by default, Visual Studio position the solution configuration to \c Debug.
+- To build ViSP just double click on \c C:/ViSP/visp-build/VISP.sln solution file. This action will open ViSP project in Visual Studio C++. As shown in the next image, by default, Visual Studio position the solution configuration to \c Debug.
 
 \image html img-win8.1-msvc-open.jpg 
 
@@ -206,7 +165,7 @@ setx OGRE_HOME C:\Ogre\ogre\build\sdk
 
 \image html img-win8.1-msvc-install-end.jpg
 
-- As shown in the previous image, all the headers but also the generated library are copied in \c C:/ViSP/ViSP-2.10.0-build/install folder.
+- As shown in the previous image, all the headers but also the generated library are copied in \c C:/ViSP/visp-build/install folder.
 
 - This ends ViSP installation with \c Debug configuration.
 
@@ -216,7 +175,7 @@ setx OGRE_HOME C:\Ogre\ogre\build\sdk
 
 - Now, as previously, build and install ViSP again.
 
-- At the end, in \c C:/ViSP/ViSP-2.10.0-build/install/x64/vc12/bin folder you have two versions of ViSP DLL library; the one suffixed by "d" with debug information, the other one optimized with release compiler options.
+- At the end, in \c C:/ViSP/visp-build/install/x64/vc12/bin folder you have two versions of ViSP DLL libraries corresponding to ViSP modules; the one suffixed by "d" with debug information, the other one optimized with release compiler options.
 
 \image html img-win8.1-explorer-install-end.jpg 
 
@@ -226,27 +185,27 @@ If you built static libraries then you are done. Otherwise, if you follow this t
 
 To modify the PATH var and add the path to ViSP library, open a cmd terminal and run:
 \code
-C:\Users\...> echo %PATH%
-C:\Users\...> setx PATH "%PATH%;C:\ViSP\ViSP-2.10.0-build\install\x64\vc12\bin"
+C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\ViSP\visp-build\install\x64\vc12\bin"
 \endcode
 
 Then to add the path to OpenCV 3rd party libraries location, close and re-open a cmd-terminal and run:
 \code
-C:\Users\...> echo %PATH%
-C:\Users\...> setx PATH "%PATH%;C:\OpenCV\opencv\build\x64\vc12\bin"
+C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\OpenCV\opencv\build\x64\vc12\bin"
 \endcode
 
 If installed, you have also to add the location of Ogre 3rd party libraries to the path. Close and re-open a cmd terminal to run:
 \code
-C:\Users\...> echo %PATH%
-C:\Users\...> setx PATH "%PATH%;C:\Ogre\ogre\build\sdk\bin\release"
-C:\Users\...> setx PATH "%PATH%;C:\Ogre\ogre\build\sdk\bin\debug"
+C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\Ogre\ogre\build\sdk\bin\release"
+C:\> setx PATH "%PATH%;C:\Ogre\ogre\build\sdk\bin\debug"
 \endcode
 
 Then close and re-open a cmd terminal to check if the PATH var was well positioned.
 
 \code
-C:\Users\...> echo %PATH%
+C:\> echo %PATH%
 \endcode
 
 \section install_win81_msvc_annex Appendix
@@ -254,10 +213,9 @@ C:\Users\...> echo %PATH%
 
 Some ViSP examples and tests require data set (images, models). These data set is provided as a compressed zip files. 
 
-- Download ViSP-images-2.10.0.zip from http://www.irisa.fr/lagadic/visp/download.html#dataDownloadForExample and uncompress it for example in \c C:/ViSP. 
+- Download ViSP-images-x.y.z.zip from http://visp.inria.fr/download and uncompress it for example in \c C:/ViSP. 
 
 \image html img-win8.1-visp-images.jpg 
-
 
 \subsection install_win81_msvc_annex_usage Using testing data
 - ViSP examples and tests are able to detect automatically the location of the requested data if you position an environment variable called \c VISP_INPUT_IMAGE_PATH. In our case, this variable should be set to \c C:\\ViSP.
@@ -274,64 +232,44 @@ displayGDI.exe -i C:\ViSP
 
 
 \section known_issues_win81_msvc Known issues
-\subsection known_issues_win81_msvc_ogre_exception AROgre example returns an exception
 
-When running AROgre.exe example with "OpenGL Rendering Subsystem" you may encounter the following message:
+\subsection known_issues_win81_msvc_ogredeps Unable to build ogredeps: DXSDK_DIR missing
+
+During ogredeps build as described in \ref install_win81_msvc_3rdparty_ogre installation you may get in Visual C++ the following error when building SDL2 project:
 \code
-C:\ViSP\ViSP-2.10.0-build\example\ogre-simulator\Debug> AROgre.exe -c
-...
-Unregistered ResourceManager for type Material
-Catch an exception
+error: DIRECTX requires $DXSDK_DIR environment variable to be set
 \endcode
+\image html img-win8.1-msvc-ogredeps-issue.jpg
 
-Parse C:/ViSP/ViSP-2.10.0-build/example/ogre-simulator/Debug/Ogre.log file to check what goes wrong. 
-
-To have more information on what produces this exception, you can also edit C:/ViSP/ViSP-2.10.0/example/ogre-simulator/AROgre.cpp and modify the end of the file to catch Ogre exceptions like:
-\code
-  catch(vpException e) {
-    std::cout << "Catch a ViSP exception: " << e << std::endl;
-    return 1;
-  }
-  catch(Ogre::Exception e) {
-    std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
-    return 1;
-  }
-  catch(...) {
-    std::cout << "Catch an exception " << std::endl;
-    return 1;
-  }
-\endcode
-
-Build AROgre and run again the binary. You should now see what goes wrong:
-\code
-C:\ViSP\ViSP-2.10.0-build\example\ogre-simulator\Debug> AROgre.exe -c
-...
-Unregistered ResourceManager for type Material
-Catch an Ogre exception: Cannot locate resource DualQuaternion_common.glsl in resource group General or any other group.
-\endcode
-
-See \ref known_issues_win81_msvc_ogre_dualquaternion to fix this issue.
+To fix the issue:
+- Quit Visual C++ and start again CMake over ogredeps project
+- Disable SDL2 dependency build turning \c OGREDEPS_BUILD_SDL2 option off 
+\image html img-win8.1-cmake-ogredeps-issue.jpg
+- Configure and generate again the project
+- Open C:\\Ogre\\ogredeps\\build\\OGREDEPS.sln solution file with Visual C++ and try a new build as described in \ref install_win81_msvc_3rdparty_ogre 
 
 \subsection known_issues_win81_msvc_ogre_dualquaternion AROgre example doesn't found DualQuaternion_common.glsl file
 
-If you run AROgre and if it complains like:
+If you run AROgre and if it complains with an exception like:
 \code
-C:\ViSP\ViSP-2.10.0-build\example\ogre-simulator\Debug> AROgre.exe -c
+C:\ViSP\visp-build\example\ogre-simulator\Debug> AROgre.exe -c
 ...
 Unregistered ResourceManager for type Material
 Catch an Ogre exception: Cannot locate resource DualQuaternion_common.glsl in resource group General or any other group.
 \endcode
 
-A quick fix consists in modifying C:/ViSP/ViSP-2.10.0-build/data/ogre-simulator/resources.cfg file to add the path to DualQuaternion_common.glsl file. In our case this file is in C:/Ogre/ogre/build/sdk/Media/materials/programs/GLSL. Just edit resources.cfg file and add the following line:
+\note Parse C:/ViSP/visp-build/example/ogre-simulator/Debug/Ogre.log to have more information on the what happens.
+
+A quick fix consists in modifying C:/ViSP/visp-build/data/ogre-simulator/resources.cfg file to add the path to DualQuaternion_common.glsl file. In our case this file is in C:/Ogre/ogre/build/sdk/Media/materials/programs/GLSL. Just edit resources.cfg file and add the following line:
 \code
 [General]
 ...
 FileSystem=C:/Ogre/ogre/build/sdk/Media/materials/programs/GLSL
 \endcode
 
-\note The modifications done in C:/ViSP/ViSP-2.10.0-build/data/ogre-simulator/resources.cfg will be erased when you run a new CMake configuration on ViSP project.
+\note The modifications done in C:/ViSP/visp-build/data/ogre-simulator/resources.cfg will be erased when you run a new CMake configuration on ViSP project.
 
-That is why, if the fix works, you have to introduce it permanently in ViSP source code by modifying C:/ViSP/ViSP-2.10.0/CMakeModules/resources.cfg.in adding a line:
+That is why, if the fix works, you have to introduce it permanently in ViSP source code by modifying C:/ViSP/visp/CMakeModules/resources.cfg.in adding a line:
 \code
 [General]
 ...
@@ -344,7 +282,7 @@ Then build again AROgre or open CMake GUI on ViSP, configure and generate the so
 
 If you run mbtEdgeTracking.exe, mbtKltTracking.exe or mbtEdgeKltTracking.exe enabling Ogre visibility check (using "-o" option), you may encounter the following issue:
 \code
-C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o
+C:\ViSP\visp-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o
 ...
 OGRE EXCEPTION(6:FileNotFoundException): Cannot locate resource VTFInstancing.cg in resource group General
 ...
@@ -355,7 +293,7 @@ and then a wonderful runtime issue as in the next image:
 
 It means maybe that Ogre version is not compatible with DirectX 11. This can be checked adding "-w" option to the command line:
 \code
-C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o -w
+C:\ViSP\visp-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o -w
 \endcode
 Now the binary should open the Ogre configuration window where you have to select "OpenGL Rendering Subsystem" instead of "Direct3D11 Rendering Subsystem". Press then OK to continue and start the tracking of the cube.
 \image html img-win8.1-msvc-mbtracker-ogre-opengl.jpg

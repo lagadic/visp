@@ -3,141 +3,71 @@
 \page tutorial-install-win81-mingw64 Tutorial: Installation from source on Windows 8.1 with Mingw-w64
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Windows 8.1 with Mingw-w64. These steps have been tested on Windows 8.1 (64 bit), with CMake 3.1.2 and Mingw-w64 - GCC for Windows 64 & 32 bits. 
+In this tutorial you will learn how to install ViSP from source on Windows 8.1 with Mingw-w64. These steps have been tested on Windows 8.1 (64 bit), with CMake 3.3.2 and Mingw-w64 - GCC for Windows 64 & 32 bits. 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_win81_mingw64_required Required packages
+\section install_win81_mingw64_required Install required packages
 
 \subsection install_win81_mingw64_required_mingw Mingw-w64
 
 Mingw-w64 could be found following http://mingw-w64.sourceforge.net. From that page, click on download "Win-builds" that will bring you to the page http://win-builds.org/download.html Here simply download and run the package manager, in our case we downloaded win-builds-1.5.0.exe file.
 
 - Once downloaded, double click on the the exe file. It will open an installation window. 
-- Select x86_64 and Mingw installation folder C:\\mingw as in the following image: 
+- Select x86_64 and Mingw installation folder \c C:\\mingw as in the following image: 
 \image html img-mingw64-installer-started.jpg
-\note It you want to install Mingw in an other folder, you have to set MINGW_DIR environment variable to your installation location in order to allow CMake to detect 3rd party libraries that come with Mingw installer. Fo example, if you install Mingw in C:\\folder\\mingw-w64, setting MINGW_DIR is simply done running in a cmd terminal:
+\note It you want to install Mingw in an other folder, you have to set MINGW_DIR environment variable to your installation location in order to allow CMake to detect 3rd party libraries that come with Mingw installer. Fo example, if you install Mingw in \c C:\\folder\\mingw-w64, setting \c MINGW_DIR is simply done running in a cmd terminal:
 \code
-C:\Users\...> setx MINGW_DIR "C:\mingw"
+C:> setx MINGW_DIR "C:\folder\mingw-w64"
 \endcode  
 - Click on "OK" button. It will open an other window:
 \image html img-mingw64-installer-process.jpg
 - Where you can click on "Process" button to start the installation
-- A window shows the progression of the installation. When all the packages are installed (in our case 92/92 packages, see next image) you can close all the installation windows.
-\image html img-mingw64-installer-finished.jpg
-- To finish the installation, just add C:\\mingw\\bin folder to the PATH variable. To this end open a cmd terminal and do the following:
+- A window shows the progression of the installation. When all the packages are installed you can close all the installation windows.
+- To finish the installation, just add \c C:\\mingw\\bin folder to the PATH variable. To this end open a cmd terminal and do the following:
 \code
-C:\Users\...> echo %PATH%
-C:\Users\...> setx PATH "%PATH%;C:\mingw\bin"
+C:> echo %PATH%
+C:> setx PATH "%PATH%;C:\mingw\bin"
 \endcode
 - Close and re-open a cmd terminal, then run again 
 \code
-C:\Users\...> echo %PATH%
+C:> echo %PATH%
 \endcode
 to check that C:\\mingw\\bin was added.
 
 
 \subsection install_win81_mingw64_required_cmake CMake
 
-CMake 2.8 or higher that could be download at : http://www.cmake.org In our case we install CMake 3.1.2.
+CMake 2.8.3 or higher that could be download at : http://www.cmake.org. 
+- Download the latest binary distribution installer for Windows. You will find it under <a href="https://cmake.org/download/">"Windows (Win32 Installer)"</a>.
+- Install CMake just by double clicking on the binary \c cmake-x.y.z-win32-x86.exe you downloaded.
 
-- Download the latest binary distribution installer for Windows from http://www.cmake.org. You will find it under "Windows (Win32 Installer)".
-- Install CMake just by double click on the binary cmake-3.1.2-win32-x86.exe you downloaded.
+\section install_win81_mingw64_3rdparty Install optional packages
 
+ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. Some of them are automatically detected since they are part of MinGW distribution. Other may be installed from source. We recommend to install the following:
 
-\section install_win81_mingw64_get_source Getting ViSP source code
+\subsection install_win81_mingw64_3rdparty_opencv OpenCV 3rd party
 
-There are different ways to get ViSP source code.
+We recommend to install OpenCV. 
 
-\subsection install_win81_mingw64_get_source_release Getting the latest release
-
-You can download the <a href="http://www.irisa.fr/lagadic/visp/download.html#latest">latest stable release</a> as a zip. 
-
-\subsection install_win81_mingw64_get_source_snapshot Getting the latest snapshot
-
-When significant changes or bug fixes were introduced in the current developpement version of the source code, we provide snapshots. 
-
-If available, you can download a <a href="http://www.irisa.fr/lagadic/visp/download.html#snapshot">recent snapshot</a> following the link. 
-
-\subsection install_win81_mingw64_get_source_svn Getting the source from Subversion
-
-You can also get the cutting-edge ViSP version from Subversion repository svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP. 
-
-One way to do that under Windows is to install Subversion that comes with Cygwin installer that is available on https://cygwin.com/install.html
-
-- From the previous link, download Cygwin installer for 32-bits or 64-bits version.
-- Double click on the setup binary to start installation. Keep the default settings and select a mirror.
-- As shown in the next image, in the window that allows to select the packages, search for "subversion" and select "subversion" package in "Devel":
-\image html img-win8.1-cygwin-svn.jpg
-- Click on Next button twice to start installation, and then on Finish button to exit installer. 
-- Now you should be able to use subversion
-\code
-C:\Users\...> C:\cygwin64\bin\svn.exe --version
-svn, version 1.7.14
-\endcode
-
-Once installed, to get ViSP source code run:
-\code
-C:\Users\...> cd C:\ViSP
-C:\Users\...> C:\cygwin64\bin\svn.exe checkout svn://scm.gforge.inria.fr/svn/visp/trunk/ViSP ViSP-code
-\endcode
-
-
-\section install_win81_mingw64_config Configuring ViSP from source 
-
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\ViSP-2.10.0
-
-The goal of the configuration step is now to use CMake to produce all the material requested to build ViSP with Mingw. This material will be located in \<binary_dir\>, for example \c C:\\ViSP\\ViSP-2.10.0-build.
-
-- Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
-
-\image html img-cmake-win8.1-mingw-launch.jpg 
-
-- Click then on "Configure" button.
-
-\image html img-cmake-win8.1-create-build-folder.jpg 
-
-- Click on "Yes" to create the \c C:\\ViSP\\ViSP-2.10.0-build folder.
-- Select then "MinGW Makefiles" and click on "Finish" button. 
-
-\image html img-cmake-win8.1-mingw-version.jpg 
-
-- This will start CMake configuration. As shown in the next image, ffmpeg, gdi, libjpeg, libpng, pthread and libxml2 3rd party are detected. 
-
-\image html img-cmake-win8.1-mingw-configure.jpg 
-
-- As given in the previous image, note also that the installation folder is set to \c C:\\ViSP\\ViSP-2.10.0-build\\install. 
-\warning If you want to change the installation forder to \c C:/Program \c Files \c (x86)/ViSP, make sure that you have administrator privileges to write in that folder. 
-
-- Click then on "Configure" button. All the red lines should disappear.
-\image html img-cmake-win8.1-mingw-configure-end.jpg 
-\note The default configuration lead to the creation of a shared library (with \c .dll extension). This is the default configuration that is recommended. If you want to create rather a static library (with \c .lib extension) you have to uncheck the \c BUILD_SHARED_LIBS option to disable DLL creation. 
-
-\subsection install_win81_mingw64_3rdparty Optional 3rd party packages
-
-ViSP is interfaced with some 3rd party libraries. The <a href="http://www.irisa.fr/lagadic/visp/libraries.html">complete list is provided here</a>. Some of them are automatically detected since they are part of MinGW distribution. Other may be installed from source.
-
-\subsubsection install_win81_mingw64_3rdparty_opencv OpenCV 3rd party
-
-- We recommend to install OpenCV. Since OpenCV is not package for Mingw, you have to install OpenCV from source. From http://opencv.org/downloads.html download the latest OpenCV for Windows version. In our case we install \c OpenCV-2.4.10.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-2.4.10.exe copied all the prebuilt binaries, <b>but also the source code</b> in \c C:\\OpenCV\\opencv.
-\note You can also install OpenCV 3.0.0. The principle remains the same.
+- Since OpenCV is not packaged for Mingw, you have to install OpenCV from source. From http://opencv.org/downloads.html download the latest OpenCV for Windows version. In our case we install \c opencv-3.0.0.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-3.0.0.exe extracted all the prebuilt binaries, <b>but also the source code</b> in \c C:\\OpenCV\\opencv.
 
 - Now we have to use CMake to configure OpenCV from source. As \<source_dir\> we will set \c C:\\OpenCV\\opencv\\sources and as \<binary_dir\> we set \c C:\\OpenCV\\opencv\\sources\\build-mingw.
 \image html img-win8.1-mingw-opencv-cmake-configure.jpg
 
 - Click then on "Configure" button. 
-- Click on "Yes" to create the \c C:\\OpenCV\\opencv\\sources\\build-mingw.
+- Click on "Yes" to create \c C:\\OpenCV\\opencv\\sources\\build-mingw folder.
 - Select then "MinGW Makefiles" and click on "Finish" button. 
-\note Here you should encounter a first issue \ref issue_win81_mingw_opencv_endianness.
 - Modify "CMAKE_INSTALL_PREFIX" to \c C:\\OpenCV\\opencv\\build folder. This is the location of the pre-build libraries that come with the installer. Doing that, allows to install OpenCV libraries in a same parent folder.
 \image html img-win8.1-mingw-opencv-cmake-configure-install.jpg
+- Click then on "Configure" button to remove the red lines. 
 - Click on "Generate" button to generate the Makefiles for Mingw.
 - Open a cmd terminal, enter in the \<binary_dir\> folder and start mingw32-make
 \code
-C:\Users\...> cd C:\OpenCV\opencv\sources\build-mingw
+C:\> cd C:\OpenCV\opencv\sources\build-mingw
 C:\OpenCV\opencv\sources\build-mingw> mingw32-make
 \endcode
-\note Here you may encounter an other issue \ref issue_win81_mingw_opencv_tiff and maybe the following if you try to build with OpenCV 3.0.0: \ref issue_win81_mingw_opencv_ipp and \ref issue_win81_mingw_opencv_dshow.
+\note Depending on OpenCV version you may encounter the following issues, for which we propose work arrounds;  \ref issue_win81_mingw_opencv_dtor, \ref issue_win81_mingw_opencv_tiff, or \ref issue_win81_mingw_opencv_ipp.
 
 - To install OpenCV run:
 \code
@@ -148,43 +78,72 @@ C:\OpenCV\opencv\sources\build-mingw> mingw32-make install
 \code
 setx OpenCV_DIR C:\OpenCV\opencv\build
 \endcode
+where \c C:\\OpenCV\\opencv\\build is where you have the build directory (extracted or built).  Inside this folder you should have a file named \c OpenCVConfig.cmake. 
 
 - Here the directory is the one where you have installed OpenCV. Inside this folder you should have a file named \c OpenCVConfig.cmake. 
 
-- Quit and restart CMake Gui on ViSP. <b>It is important to quit CMake</b> in order to take into account the new \c OpenCV_DIR environment variable. Click "Configure" button. As shown in the next image, a new red line indicating that OpenCV is found should appear.
-\image html img-cmake-win8.1-mingw-opencv-detected.jpg
+- You have also to add the location of OpenCV libraries in the PATH environment variable following the indications mentioned in \ref install_win81_mingw64_env_var.
+
+\section install_win81_mingw64_get_source Getting ViSP source code
+
+There are different ways to get ViSP source code.
+
+- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once visp-x.y.z.tar.gz or visp-x.y.z.zip is downloaded, uncompress the file using for example <a href="http://www.win-rar.com">WinRAR</a>
+
+- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once visp-snapshot-yyyy-mm-dd.tar.gz is downloaded, uncompress the file using for example <a href="http://www.win-rar.com">WinRAR</a>
+
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the git command line (see \ref install_win7_tip_git):
+\code
+C:\ViSP> git clone https://github.com/lagadic/visp.git
+\endcode
+
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\visp
+
+\section install_win81_mingw64_config Configuring ViSP from source 
+
+The goal of the configuration step is now to use CMake to produce all the material requested to build ViSP with Mingw. This material will be located in \<binary_dir\>, for example \c C:\\ViSP\\visp-build.
+
+- Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
+\image html img-cmake-win8.1-msvc-launch.jpg 
+
+- Click then on "Configure" button.
+\image html img-cmake-win8.1-create-build-folder.jpg 
+
+- Click on "Yes" to create the \c C:\\ViSP\\visp-build folder.
+- Select then "MinGW Makefiles" and click on "Finish" button. 
+\image html img-cmake-win8.1-mingw-version.jpg 
+
+- This will start CMake configuration. As shown in the next image, OpenCV, ffmpeg, gdi, libjpeg, libpng, pthread and libxml2 3rd party are detected. 
+\image html img-cmake-win8.1-mingw-configure.jpg 
 \note If OpenCV is not detected, you may encounter the following issue \ref issue_win81_mingw_opencv_not_detected.
 
-- If you enable the advanced view, you can see that we will use OpenCV libraries located in \c C:/OpenCV/opencv/build/x64/mingw/lib folder.
- 
-\image html img-cmake-win8.1-mingw-opencv-detected-advanced.jpg 
+- As given in the previous image, note also that the installation folder is set to \c C:\\ViSP\\visp-build\\install. 
+\warning If you want to change the installation forder to \c C:/Program \c Files \c (x86)/ViSP, make sure that you have administrator privileges to write in that folder. 
 
-- Press "Configure" button again.
-
-\subsection install_win81_mingw64_gene Ending the configuration
+- Click then on "Configure" button. All the red lines should disappear.
+\image html img-cmake-win8.1-mingw-configure-end.jpg 
+\note The default configuration lead to the creation of a shared library (with \c .dll extension). This is the default configuration that is recommended. If you want to create rather a static library (with \c .lib extension) you have to uncheck the \c BUILD_SHARED_LIBS option to disable DLL creation. 
 
 - To finish the configuration, click on "Generate" button.
-
 \image html img-cmake-win8.1-mingw-generate.jpg 
 
-- Once the generation is done, in \c C:/ViSP/ViSP-2.10.0-build folder you have the Makefile file that will be used by Mingw to build the entire project.
+- Once the generation is done, in \c C:/ViSP/visp-build folder you have the Makefile file that will be used by Mingw to build the entire project.
 
 \section install_win81_mingw64_build Building ViSP from source
 
-- To build ViSP, open a cmd terminal, change to C:\\ViSP\ViSP-2.10.0-build folder and run mingw32-make:
+- To build ViSP, open a cmd terminal, change to \c C:\\ViSP\\visp-build folder and run mingw32-make:
 \code
-C:\Users\...> cd C:\ViSP\ViSP-2.10.0-build
-C:\ViSP\ViSP-2.10.0-build> mingw32-make
+C:\> cd C:\ViSP\visp-build
+C:\ViSP\visp-build> mingw32-make
 \endcode
-\note To \ref issue_win81_mingw_warning_pragma just follow the link.
 
 - Now to install ViSP, in the same cmd terminal run:
 \code
-C:\ViSP\ViSP-2.10.0-build> mingw32-make install
+C:\ViSP\visp-build> mingw32-make install
 \endcode
 
-- At the end, in \c C:/ViSP/ViSP-2.10.0-build/install/x64/mingw/bin folder you have ViSP DLL library in libvisp-2100.dll file. 
-\note When CMAKE\_BUILD\_TYPE is set to Debug, the library name is suffixed by "d".
+- At the end, in \c C:/ViSP/visp-build/install/x64/mingw/bin folder you will find ViSP DLL libraries corresponding the build modules. 
+\note When CMAKE\_BUILD\_TYPE is set to Debug, the library names are suffixed by "d".
 
 \section install_win81_mingw64_env_var Setting up PATH variable
 
@@ -192,20 +151,20 @@ If you built static libraries then you are done. Otherwise, if you follow this t
 
 To modify the PATH var and add the path to ViSP library, open a cmd terminal and run:
 \code
-C:\Users\...> echo %PATH%
-C:\Users\...> setx PATH "%PATH%;C:\ViSP\ViSP-2.10.0-build\install\x64\mingw\bin"
+C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\ViSP\visp-build\install\x64\mingw\bin"
 \endcode
 
 Then to add the path to OpenCV 3rd party library, close and re-open a cmd-terminal and run:
 \code
-C:\Users\...> echo %PATH%
-C:\Users\...> setx PATH "%PATH%;C:\OpenCV\opencv\build\x64\mingw\bin"
+C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\OpenCV\opencv\build\x64\mingw\bin"
 \endcode
 
 Then close and re-open a cmd terminal to check if the PATH var was well positioned
 
 \code
-C:\Users\...> echo %PATH%
+C:\> echo %PATH%
 \endcode
 
 
@@ -214,7 +173,7 @@ C:\Users\...> echo %PATH%
 
 Some ViSP examples and tests require data set (images, models). These data set is provided as a compressed zip files. 
 
-- Download ViSP-images-2.10.0.zip from http://www.irisa.fr/lagadic/visp/download.html#dataDownloadForExample and uncompress it for example in \c C:/ViSP. 
+- Download ViSP-images-x.y.z.zip from http://visp.inria.fr/download and uncompress it for example in \c C:/ViSP. 
 
 \image html img-win8.1-visp-images.jpg 
 
@@ -229,9 +188,22 @@ setx VISP_INPUT_IMAGE_PATH C:\ViSP
 displayGDI.exe -i C:\ViSP
 \endcode
 
-\image html img-win8.1-cmd-displayGDI.jpg 
+\image html img-win8.1-mingw-cmd-displayGDI.jpg 
 
 \section issue_win81_mingw Known issues
+\subsection issue_win81_mingw_opencv_dtor OpenCV build error: struct has virtual functions and accessible non-virtual destructor
+
+This error that occurs with OpenCV 3.0.0 during \c cap_dshow.cpp build is known and reported as an issue in https://github.com/Itseez/opencv/pull/5282/commits.
+\image html img-win8.1-mingw-opencv-issue-dtor.jpg 
+
+- The fix consists in modifying \c modules/videoio/src/cap_dshow.cpp by adding near line 96:
+\code
+#ifdef __MINGW32__
+// MinGW does not understand COM interfaces
+#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#endif
+\endcode
+
 \subsection issue_win81_mingw_opencv_endianness OpenCV endianness failure during CMake configuration
 
 \note This issue occurs with OpenCV 2.4.10 and 2.3.0-beta.
@@ -266,7 +238,7 @@ C:\OpenCV\opencv\sources\build-mingw> mingw32-make
 
 \note This issue occurs with OpenCV 2.4.10 and 2.3.0-beta.
 
-- To fix this issue, edit C:\\OpenCV\\opencv\\sources\\cmake\\OpenCVConfig.cmake, and line 89 replace:
+- To fix this issue, edit \c C:\\OpenCV\\opencv\\sources\\cmake\\OpenCVConfig.cmake, and line 89 replace:
 \code
   if(CMAKE_OPENCV_GCC_TARGET_MACHINE MATCHES "64")
 \endcode
@@ -288,29 +260,6 @@ The following image shows the link issue that may appear when building OpenCV wi
 \image html img-opencv-issue-ipp.jpg
 
 A work arround is to configure OpenCV without ipp support turning WITH_IPP=OFF and then trying to build again.
-
-\subsection issue_win81_mingw_opencv_dshow OpenCV build error: cannot build with dshow support
-
-\note This issue occurs with OpenCV 2.3.0-beta and with OpenCV master branch.
-
-The following image shows the link issue that may appear when building OpenCV with mingw:
-\image html img-opencv-issue-dshow.jpg
-
-A work arround is to configure OpenCV without Direct Show support turning WITH_DSHOW=OFF and then trying to build again.
-
-\subsection issue_win81_mingw_warning_pragma Fix warning "ignoring #pragma comment(lib,"uuid.lib")" during build
-
-During the build of ViSP the following warning may occur:
-\code
-C:/mingw/mingw/include/urlmon.h:301:0: warning: ignoring #pragma comment [-Wunknown-pragmas]
-#pragma comment(lib,"uuid.lib")
-^
-\endcode
-
-To remove this warning, edit C:/mingw/mingw/include/urlmon.h and comment line 301:
-\code
-//#pragma comment(lib,"uuid.lib")
-\endcode
 
 \section install_win81_mingw_next Next tutorial
 
