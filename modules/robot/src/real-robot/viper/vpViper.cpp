@@ -1252,6 +1252,42 @@ vpViper::getCoupl56() const
 
 /*!
 
+  Set the geometric transformation between the end-effector frame and
+  the tool frame (commonly a camera).
+
+  \param eMc_ : Transformation between the end-effector frame
+  and the tool frame.
+*/
+void
+vpViper::set_eMc(const vpHomogeneousMatrix &eMc_)
+{
+  this->eMc = eMc_;
+  this->eMc.extract(etc);
+  vpRotationMatrix R(this->eMc);
+  this->erc.buildFrom(R);
+}
+
+/*!
+
+  Set the geometric transformation between the end-effector frame and
+  the tool frame (commonly a camera frame).
+
+  \param etc_ : Translation between the end-effector frame
+  and the tool frame.
+  \param erc_ : Rotation between the end-effector frame and the tool
+  frame using the Euler angles in radians with the XYZ convention.
+*/
+void
+vpViper::set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_)
+{
+  this->etc = etc_;
+  this->erc = erc_;
+  vpRotationMatrix eRc(erc);
+  this->eMc.buildFrom(etc,eRc);
+}
+
+/*!
+
   Print on the output stream \e os the robot parameters (joint
   min/max, coupling factor between axis 5 and 6, hand-to-eye constant
   homogeneous matrix \f$^e{\bf M}_c \f$.
