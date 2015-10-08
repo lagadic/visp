@@ -523,9 +523,9 @@ macro(vp_glob_module_copy_data src dst)
       set(__install_dst "${dst}")
     endif()
 
-    file(INSTALL ${__d}
+    install(FILES ${__d}
        DESTINATION "${__install_dst}"
-       FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+       PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
        OWNER_WRITE
     )
   endforeach()
