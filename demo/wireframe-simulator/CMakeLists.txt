@@ -1,9 +1,7 @@
 #############################################################################
 #
-# $Id$
-#
 # This file is part of the ViSP software.
-# Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
+# Copyright (C) 2005 - 2015 by INRIA. All rights reserved.
 # 
 # This software is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -55,32 +53,10 @@ set(demo_cpp
   servoSimuSphere.cpp
 )
 
-# rule for binary build
 foreach(cpp ${demo_cpp})
-  # Compute the name of the binary to create
-  get_filename_component(bin ${cpp} NAME_WE)
-
-  # From source compile the binary and add link rules
-  include_directories(${VISP_INCLUDE_DIRS})
-  add_executable(${bin} ${cpp})
-  target_link_libraries(${bin} ${VISP_LIBRARIES})
-  add_dependencies(visp_demos ${bin})
-  if(ENABLE_SOLUTION_FOLDERS)
-    set_target_properties(${bin} PROPERTIES FOLDER "demos")
-  endif()
-
-  if(UNIX)
-    install(TARGETS ${bin}
-      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/demo/wireframe-simulator
-      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-      OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-      OWNER_WRITE)
-  else()
-    install(TARGETS ${bin}
-      DESTINATION demo/wireframe-simulator
-      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-      OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
-      OWNER_WRITE)
+  visp_add_target(${cpp})
+  if(COMMAND visp_add_dependency)
+    visp_add_dependency(${cpp} "demos")
   endif()
 endforeach()
 
