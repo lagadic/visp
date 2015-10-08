@@ -407,3 +407,17 @@ macro(VP_CHECK_PACKAGE package)
     set(${ALIAS_UPPER_VISP_HAVE} 1)
   endif()
 endmacro()
+
+# Macro the get the list of subdirs from the path
+# var: returned variable name
+# path: path from witch relative subdirs are
+macro(vp_get_relative_subdirs var path)
+  set(ALIAS                 ${var})
+  file(GLOB_RECURSE rel_path_lst_ RELATIVE ${path} ${path}/*)
+    set(${ALIAS} "")
+    foreach(f ${rel_path_lst_})
+      get_filename_component(d ${f} PATH)
+      list(APPEND ${ALIAS} ${d})
+    endforeach()
+    list(REMOVE_DUPLICATES ${ALIAS})
+endmacro()

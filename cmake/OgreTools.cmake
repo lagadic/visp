@@ -83,7 +83,7 @@ macro(vp_create_ogre_plugin_config_file)
   # make the vars global
   set(VISP_HAVE_OGRE_PLUGINS_PATH ${VISP_HAVE_OGRE_PLUGINS_PATH} CACHE INTERNAL "Ogre plugins location")
 
-	# If OGRE_PLUGIN_DIR_REL and OGRE_PLUGIN_DIR_DBG are not defined we 
+  # If OGRE_PLUGIN_DIR_REL and OGRE_PLUGIN_DIR_DBG are not defined we
   # try to find them manually
   if(NOT OGRE_PLUGIN_DIR_REL AND NOT OGRE_PLUGIN_DIR_DBG)
     vp_ogre_find_plugin_lib_visp(RenderSystem_Direct3D9)
@@ -119,7 +119,7 @@ macro(vp_create_ogre_plugin_config_file)
     list(APPEND PLUGIN_REL ${OGRE_Plugin_PCZSceneManager_LIBRARY_REL})
     list(APPEND PLUGIN_REL ${OGRE_Plugin_OctreeSceneManager_LIBRARY_REL})
     if(NOT APPLE)
-	    # Since the plugin Plugin_Octree causes problems on OSX, we take 
+      # Since the plugin Plugin_Octree causes problems on OSX, we take
       # it only into account on non Apple platforms
       list(APPEND PLUGIN_REL ${OGRE_Plugin_OctreeZone_LIBRARY_REL})
     endif()
@@ -129,13 +129,13 @@ macro(vp_create_ogre_plugin_config_file)
 
     list(APPEND PLUGINS_CONTENT_REL "PluginFolder=${OGRE_PLUGIN_DIR_REL}/\n\n")
     list(APPEND PLUGINS_CONTENT_REL "# Define plugins\n")
-	  foreach(PLUGIN ${PLUGIN_REL})
-	    if(PLUGIN)
-	      GET_FILENAME_COMPONENT(PLUGIN_NAME ${PLUGIN} NAME_WE)
-  	      LIST(APPEND PLUGINS_CONTENT_REL " Plugin=${PLUGIN_NAME}\n")
-	    endif()
-	  endforeach()
-	  #MESSAGE("PLUGINS_CONTENT_REL: ${PLUGINS_CONTENT_REL}")
+    foreach(PLUGIN ${PLUGIN_REL})
+      if(PLUGIN)
+      get_filename_component(PLUGIN_NAME ${PLUGIN} NAME_WE)
+        list(APPEND PLUGINS_CONTENT_REL " Plugin=${PLUGIN_NAME}\n")
+      endif()
+    endforeach()
+    #MESSAGE("PLUGINS_CONTENT_REL: ${PLUGINS_CONTENT_REL}")
     file(WRITE "${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins.cfg" ${PLUGINS_CONTENT_REL})
   endif()
 	  
@@ -151,7 +151,7 @@ macro(vp_create_ogre_plugin_config_file)
     list(APPEND PLUGIN_DBG ${OGRE_Plugin_PCZSceneManager_LIBRARY_DBG})
     list(APPEND PLUGIN_DBG ${OGRE_Plugin_OctreeSceneManager_LIBRARY_DBG})
     if(NOT APPLE)
-	    # Since the plugin Plugin_Octree causes problems on OSX, we take 
+      # Since the plugin Plugin_Octree causes problems on OSX, we take
       # it only into account on non Apple platforms
       list(APPEND PLUGIN_DBG ${OGRE_Plugin_OctreeZone_LIBRARY_DBG})
     endif()
@@ -160,14 +160,14 @@ macro(vp_create_ogre_plugin_config_file)
     list(APPEND PLUGINS_CONTENT_DBG "# Define plugin folder\n")
     list(APPEND PLUGINS_CONTENT_DBG "PluginFolder=${OGRE_PLUGIN_DIR_DBG}/\n\n")
     list(APPEND PLUGINS_CONTENT_DBG "# Define plugins\n")
-	  foreach(PLUGIN ${PLUGIN_DBG})
-	    if(PLUGIN)
+    foreach(PLUGIN ${PLUGIN_DBG})
+      if(PLUGIN)
         get_filename_component(PLUGIN_NAME ${PLUGIN} NAME_WE)
         list(APPEND PLUGINS_CONTENT_DBG " Plugin=${PLUGIN_NAME}\n")
-	    endif()
-	  endforeach()
+      endif()
+    endforeach()
 	  
-	  #MESSAGE("PLUGINS_CONTENT_DBG: ${PLUGINS_CONTENT_DBG}")
+    #MESSAGE("PLUGINS_CONTENT_DBG: ${PLUGINS_CONTENT_DBG}")
     file(WRITE "${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins_d.cfg" ${PLUGINS_CONTENT_DBG})
   endif()
 endmacro()
@@ -205,17 +205,18 @@ function(vp_set_ogre_media)
   # path to avoid recopy of the plugins in ViSP.
   # Under Linux or OSX, we may find plugins.cfg with a PluginFolder set
   # to an absolute path in OGRE_MEDIA_DIR/..
-  find_path(VISP_HAVE_OGRE_PLUGINS_PATH
+  find_path(ogre_plugings_cfg_exists
     NAMES plugins.cfg
     PATHS ${OGRE_MEDIA_DIR}/..
     NO_SYSTEM_ENVIRONMENT_PATH
   )
+  mark_as_advanced(ogre_plugings_cfg_exists)
 
   #message("OGRE_PLUGIN_DIR_REL: ${OGRE_PLUGIN_DIR_REL}")
   #message("OGRE_PLUGIN_DIR_DBG: ${OGRE_PLUGIN_DIR_DBG}")
 
   # If no plugins.cfg file is found, we create one with absolute path
-  if(NOT VISP_HAVE_OGRE_PLUGINS_PATH)
+  if(NOT ogre_plugings_cfg_exists)
     # case 1: normal case
     #--------------
     vp_create_ogre_plugin_config_file()
@@ -262,12 +263,12 @@ function(vp_set_ogre_media)
   endif()
 
   # Try to search for an existing resources.cfg file
-  find_path(VISP_HAVE_OGRE_RESOURCES_PATH
+  find_path(ogre_resources_cfg_exists
     NAMES resources.cfg
     PATHS ${OGRE_MEDIA_DIR}/..
     NO_SYSTEM_ENVIRONMENT_PATH
   )
-
+  mark_as_advanced(ogre_resources_cfg_exists)
   # Here we copy all the minimal media files
   # - media/materials/...
   # - media/models/...
@@ -276,7 +277,7 @@ function(vp_set_ogre_media)
   endif()
 
   # Here we create a resources.cfg if it was not found
-  if(NOT VISP_HAVE_OGRE_RESOURCES_PATH)
+  if(NOT ogre_resources_cfg_exists)
     # we create a resources.cfg file for vpAROgre.cpp
     # case 1: normal case
     #         If OGRE_MEDIA_DIR is not found, we set it to VISP_HAVE_OGRE_RESOURCES_PATH in order to use
@@ -290,19 +291,13 @@ function(vp_set_ogre_media)
       set(OGRE_MEDIA_DIR ${VISP_HAVE_OGRE_RESOURCES_PATH}/media)
     endif()
 
-    # On Fedora 20 when ogre-devel and ogre-samples packages are installed, AROgre and
-    # AROgreBasic examples produce a segfault when the folowing line in resource.cf.in
-    # is commented:
-    # '#FileSystem=@OGRE_MEDIA_DIR@/materials/programs'
-    # Here we check if @OGRE_MEDIA_DIR@/materials/programs forder is empty.
-    # If empty, we comment the line to avoid lintian warnings.
-    # If not empty we remove the comment to use the available programs.
-    file(GLOB OGRE_PROGRAM_CONTENT ${OGRE_MEDIA_DIR}/materials/programs/*.*)
-    if(OGRE_PROGRAM_CONTENT)
-      set(OGRE_COMMENT_LINE "")
-    else()
-      set(OGRE_COMMENT_LINE "#")
-    endif()
+    # Here we add all the subdirs in @OGRE_MEDIA_DIR@/* as resource location.
+    vp_get_relative_subdirs(media_subdirs ${OGRE_MEDIA_DIR})
+    set(OGRE_RESOURCES_FileSystem "FileSystem=${OGRE_MEDIA_DIR}\n")
+    foreach(m ${media_subdirs})
+      set(OGRE_RESOURCES_FileSystem "${OGRE_RESOURCES_FileSystem}FileSystem=${OGRE_MEDIA_DIR}/${m}\n")
+    endforeach()
+
     configure_file(
       ${VISP_SOURCE_DIR}/cmake/templates/resources.cfg.in
       ${VISP_HAVE_OGRE_RESOURCES_PATH}/resources.cfg
@@ -325,6 +320,12 @@ function(vp_set_ogre_media)
       set(OGRE_MEDIA_DIR ${VISP_INSTALL_DIR_OGRE_RESOURCES}/media)
     endif()
 
+    # Here we add all the subdirs in @OGRE_MEDIA_DIR@/* as resource location.
+    set(OGRE_RESOURCES_FileSystem "FileSystem=${OGRE_MEDIA_DIR}\n")
+    foreach(m ${media_subdirs})
+      set(OGRE_RESOURCES_FileSystem "${OGRE_RESOURCES_FileSystem}FileSystem=${OGRE_MEDIA_DIR}/${m}\n")
+    endforeach()
+
     # install rule for resources.cfg and Ogre media if they are not available:
     if(UNIX)
       configure_file(
@@ -340,7 +341,7 @@ function(vp_set_ogre_media)
       )
       if(OGRE_MEDIA_NOT_AVAILABLE)
         install(DIRECTORY
-          data/ogre-simulator/media
+          ${VISP_BINARY_DIR}/data/ogre-simulator/media
           DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}/data/ogre-simulator
           FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT dev
@@ -360,7 +361,7 @@ function(vp_set_ogre_media)
       )
       if(OGRE_MEDIA_NOT_AVAILABLE)
         install(DIRECTORY
-          data/ogre-simulator/media
+          ${VISP_BINARY_DIR}/data/ogre-simulator/media
           DESTINATION data/ogre-simulator
           FILE_PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT dev
