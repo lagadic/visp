@@ -4,7 +4,7 @@
   \tableofcontents
 
 
-  \section grabber-camera-firewire-unix Images from firewire cameras
+\section grabber-camera-firewire-unix Images from firewire cameras
 
 
 The next example also available in tutorial-grabber-1394.cpp shows how to use a framegrabber to acquire color images from a firewire camera under Unix. The following example suppose that libX11 and libdc1394-2 3rd party are available.
@@ -102,5 +102,6 @@ To synchronize the video decoding with the video framerate, we measure the begin
 The synchronization is done by waiting from the beginning of the iteration the corresponding time expressed in milliseconds by using:
 \snippet tutorial-video-reader.cpp vpVideoReader loop rate
 
+\section grabber-next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-blob.
 */

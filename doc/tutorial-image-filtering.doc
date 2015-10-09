@@ -113,6 +113,7 @@ To construct a pyramid of Gaussian filtered images as a vector of images impleme
 The content of \c pyr[0], \c pyr[1], \c pyr[2] is the following:
 \image html img-monkey-pyr.png
 
+\section img_filtering_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-blob.
 
 */

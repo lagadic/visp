@@ -233,5 +233,6 @@ The following control law is used:
   \end{array}\right]
  = -0.2 \left( {\bf L_{s} {^c}V_e {^e}J_e}\right)^{+} ({\bf s} - {\bf s}^*) \f]
 
+\section simu_robot_pioneer_next Next tutorial
 You are now ready to see the next \ref tutorial-boost-vs. 
 */

@@ -90,6 +90,7 @@ Here \c blob_list contains the list of the blobs that are detected in the image 
 Finally, when a new image is available we do the tracking of all the blobs:
 \snippet tutorial-blob-auto-tracker.cpp Display
 
+\section tracking_blob_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-keypoint.
 
 */

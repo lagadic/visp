@@ -137,6 +137,7 @@ This example is very similar to the one presented in \ref tracking_me_line. It d
 
 Note here that the user has to initialize the tracker on image \c I by clicking on five points located on the ellipse to track. 
 
+\section tracking_me_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-mb.
 
 */

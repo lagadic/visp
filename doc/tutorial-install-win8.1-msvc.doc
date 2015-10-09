@@ -233,7 +233,7 @@ displayGDI.exe -i C:\ViSP
 
 \section known_issues_win81_msvc Known issues
 
-\subsection known_issues_win81_msvc_ogredeps Unable to build ogredeps: DXSDK_DIR missing
+\subsection known_issues_win81_msvc_ogredeps Unable to build ogredeps: \c DXSDK_DIR missing
 
 During ogredeps build as described in \ref install_win81_msvc_3rdparty_ogre installation you may get in Visual C++ the following error when building SDL2 project:
 \code
@@ -246,41 +246,11 @@ To fix the issue:
 - Disable SDL2 dependency build turning \c OGREDEPS_BUILD_SDL2 option off 
 \image html img-win8.1-cmake-ogredeps-issue.jpg
 - Configure and generate again the project
-- Open C:\\Ogre\\ogredeps\\build\\OGREDEPS.sln solution file with Visual C++ and try a new build as described in \ref install_win81_msvc_3rdparty_ogre 
-
-\subsection known_issues_win81_msvc_ogre_dualquaternion AROgre example doesn't found DualQuaternion_common.glsl file
-
-If you run AROgre and if it complains with an exception like:
-\code
-C:\ViSP\visp-build\example\ogre-simulator\Debug> AROgre.exe -c
-...
-Unregistered ResourceManager for type Material
-Catch an Ogre exception: Cannot locate resource DualQuaternion_common.glsl in resource group General or any other group.
-\endcode
-
-\note Parse C:/ViSP/visp-build/example/ogre-simulator/Debug/Ogre.log to have more information on the what happens.
-
-A quick fix consists in modifying C:/ViSP/visp-build/data/ogre-simulator/resources.cfg file to add the path to DualQuaternion_common.glsl file. In our case this file is in C:/Ogre/ogre/build/sdk/Media/materials/programs/GLSL. Just edit resources.cfg file and add the following line:
-\code
-[General]
-...
-FileSystem=C:/Ogre/ogre/build/sdk/Media/materials/programs/GLSL
-\endcode
-
-\note The modifications done in C:/ViSP/visp-build/data/ogre-simulator/resources.cfg will be erased when you run a new CMake configuration on ViSP project.
-
-That is why, if the fix works, you have to introduce it permanently in ViSP source code by modifying C:/ViSP/visp/CMakeModules/resources.cfg.in adding a line:
-\code
-[General]
-...
-FileSystem=@OGRE_MEDIA_DIR@/materials/programs/GLSL
-\endcode
-
-Then build again AROgre or open CMake GUI on ViSP, configure and generate the solution.
+- Open \c C:\\Ogre\\ogredeps\\build\\OGREDEPS.sln solution file with Visual C++ and try a new build as described in \ref install_win81_msvc_3rdparty_ogre 
 
 \subsection known_issues_win81_msvc_ogre_mbtracker Model-based trackers are not working with Ogre visibility ckeck
 
-If you run mbtEdgeTracking.exe, mbtKltTracking.exe or mbtEdgeKltTracking.exe enabling Ogre visibility check (using "-o" option), you may encounter the following issue:
+If you run \c mbtEdgeTracking.exe, \c mbtKltTracking.exe or \c mbtEdgeKltTracking.exe enabling Ogre visibility check (using "-o" option), you may encounter the following issue:
 \code
 C:\ViSP\visp-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o
 ...

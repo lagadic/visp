@@ -194,6 +194,7 @@ We suppose from now, that you have created a folder (let say \c C:/ViSP/ViSP-sta
 
   \image html img-monkey-win.jpg
 
+\subsection image_next Next tutorial
 
 You are now ready to see the \ref tutorial-grabber or \ref tutorial-image-filtering.
 */

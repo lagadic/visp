@@ -770,7 +770,7 @@ This issue is similar to \ref mb_known_issues_example_with_ogre. It may occur wi
 \image html img-win8.1-msvc-mbtracker-ogre-opengl.jpg
 - Press then OK to continue and start the tracking of the object.
 
-
+\subsection mb_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-tt.
 
 
