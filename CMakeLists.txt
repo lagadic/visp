@@ -164,7 +164,7 @@ VP_OPTION(BUILD_DEMOS  "" "" "Build ViSP demos" "" ON)
 # Build demos as an option.
 VP_OPTION(BUILD_TUTORIALS  "" "" "Build ViSP tutorials" "" ON)
 # Build deprecated functions as an option.
-VP_OPTION(BUILD_DEPRECATED_FUNCTIONS  "" "" "Build deprecated functionalities" "" OFF)
+VP_OPTION(BUILD_DEPRECATED_FUNCTIONS  "" "" "Build deprecated functionalities" "" ON)
 # Debug and trace cflags
 VP_OPTION(ACTIVATE_DEBUG_TRACE  "" "" "Enable debug and trace printings" "" ON)
 
