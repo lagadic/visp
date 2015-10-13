@@ -7,7 +7,7 @@ In this tutorial you will learn how to install ViSP from source on CentOS. These
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_centos_required Required packages
+\section install_centos_required Install prerequisities
 
 - gcc 4.4.x or later. This can be installed with:
 \code
@@ -19,9 +19,13 @@ sudo yum install cmake
 \endcode
 
 
-\section install_centos_3rdparty Optional optional packages
+\section install_centos_3rdparty Install 3rd party
 
-ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install the following:
+ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
+
+\subsection install_centos_3rdparty_recommended Recommended 3rd party
+
+We recommend to install the following:
 
 - OpenCV
 \code
@@ -31,9 +35,9 @@ sudo yum install opencv-devel
 \code
 sudo yum install libX11-devel
 \endcode
-- lapack and gsl to benefit from optimized mathematical capabilities
+- lapack to benefit from optimized mathematical capabilities
 \code
-sudo yum install lapack-devel gsl-devel
+sudo yum install lapack-devel
 \endcode
 - libv4l to grab images from usb or analogic cameras
 \code
@@ -43,7 +47,12 @@ sudo yum install libv4l-devel
 \code
 sudo yum install libxml2-devel
 \endcode
-- libjpeg, libpng to support jpeg and png images
+
+\subsection install_centos_3rdparty_other Other 3rd party
+
+We give also the way to install other 3rd party libraries to enable specific capabilities.
+
+- libjpeg and libpng to support jpeg and png images respectively 
 \code
 sudo yum install libjpeg-devel libpng-devel
 \endcode
@@ -156,7 +165,7 @@ $ make help | grep visp
 ... visp_tt_mi
 \endcode
 
-- Which are the 3rd party libraries that are used in ViSP ?
+- Which are the 3rd party libraries that are used in ViSP ?<br>
 To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>.
 
 \section install_centos_issues Known issues

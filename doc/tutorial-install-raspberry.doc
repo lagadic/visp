@@ -13,7 +13,7 @@ In a first section we give some useful instructions to start with a Raspberry PI
  
 \section install_raspberry Raspberry Pi installation
 
-\subsection raspberry Setting up Raspberry Pi
+\subsection install_raspberry_setup Setting up Raspberry Pi
 
 There are a lot of documentation and tutorial that explain different ways to setup a Raspberry Pi. A good reference is the official page <a href="http://www.raspberrypi.org/">http://www.raspberrypi.org</a>
 
@@ -28,7 +28,7 @@ We suggest to start with NOOBS (New Out Of the Box Software). Bellow we resume t
 - Your Raspberry Pi will boot, and a window will appear with a list of different operating systems that you can install. Select the "recommended Raspbian" checkbox and click on "Install" button.
 - When the install process has completed, the Raspberry Pi configuration menu (raspi-config) will load. Here you are able to set the time and date for your region and enable a Raspberry Pi camera board, or even create users. You can exit this menu by using Tab on your keyboard to move to Finish.
 
-\subsection login Logging in 
+\subsection install_raspberry_login Logging in 
 
 The default login for Raspbian is username \c pi with the password \c raspberry.
 
@@ -40,7 +40,7 @@ sudo apt-get update
 sudo apt-get upgrade
 \endcode
 
-\subsection camera Setting up a Raspberry Pi camera
+\subsection install_raspberry_camera Setting up a Raspberry Pi camera
 
 If you have a Raspberry Pi camera module see <a href="http://www.raspberrypi.org/help/camera-module-setup/">http://www.raspberrypi.org/help/camera-module-setup</a>. To resume, enable the camera using:
 \code
@@ -80,26 +80,61 @@ bcm2835-v4l2
 \endcode
 
 
-\subsection startx Start graphical user interface
+\subsection install_raspberry_startx Start graphical user interface
 
 To load the graphical user interface, type \c startx and press Enter on your keyboard. This will later allow to use ViSP vpDisplayX or vpDisplayOpenCV classes useful to display images in a X11 window.
 
-\section install_visp ViSP installation
-\subsection prerequisities Prerequisities
+\section install_raspberry_visp ViSP installation
+\subsection install_raspberry_visp_prerequisities Install prerequisities
 
-First you need to install the following packagages (g++, CMake, Subversion) that are requested to get and build ViSP:
+First you need to install the following packagages (g++, CMake, Git) that are requested to get and build ViSP:
 \code
-sudo apt-get install build-essential cmake-curses-gui subversion
+sudo apt-get install build-essential cmake-curses-gui git
 \endcode
 
-Then you can install the following packages (X11, lapack, gsl, v4l, xml, png, jpeg, opencv), that correspond to the optional 3rd party libraries that we recommend to install with ViSP:
+\subsection install_raspberry_visp_3rd_party Install 3rd party
+
+ViSP is interfaced with several optional 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
+
+\subsubsection install_raspberry_visp_3rd_party_recommended Recommended 3rd party
+
+We recommend to install the following:
+
+- OpenCV
 \code
-sudo apt-get install libx11-dev liblapack-dev libgsl0-dev libv4l-dev libxml2-dev libpng12-dev libjpeg-dev libopencv-dev
+sudo apt-get install libopencv-dev
+\endcode
+- libX11 to be able to open a window to display images
+\code
+sudo apt-get install libx11-dev
+\endcode
+- lapack to benefit from optimized mathematical capabilities
+\code
+sudo apt-get install liblapack-dev
+\endcode
+- libv4l to grab images from usb or analogic cameras
+\code
+sudo apt-get install libv4l-dev
+\endcode
+- libxml2 to be able to configure the model-based trackers from xml files
+\code
+sudo apt-get install libxml2-dev
+\endcode
+- Bar code detection
+\code
+sudo apt-get install libzbar-dev libdmtx-dev
 \endcode
 
-The complete list of 3rd party libraries is detailed following  <a href="http://visp.inria.fr/software-architecture">http://visp.inria.fr/software-architecture</a> link. 
+\subsubsection install_raspberry_visp_3rd_party_other Other 3rd party
 
-\subsection get_source Getting ViSP source code
+We give also the way to install other 3rd party libraries to enable specific capabilities.
+
+- libjpeg and libpng to support jpeg and png images respectively
+\code
+sudo apt-get install libjpeg-dev libpng12-dev
+\endcode
+
+\subsection install_raspberry_visp_get_source Getting ViSP source code
 
 There are different ways to get ViSP source code on Raspberry Pi:
 
@@ -126,7 +161,7 @@ $ git clone https://github.com/lagadic/visp.git
 
 We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c /home/pi/soft/visp
 
-\subsection config Configuring ViSP from source
+\subsection install_raspberry_visp_config Configuring ViSP from source
 
 - Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
 \code
@@ -146,7 +181,7 @@ The following image shows that this command allows to configure (just by pressin
 \image html img-ccmake-raspberry-pi.png Snapshot of the ccmake \c ../visp command used to configure ViSP. 
 
 
-\subsection build Building ViSP from source
+\subsection install_raspberry_visp_build Building ViSP from source
 
 - To build ViSP proceed with:
 \code
@@ -209,7 +244,7 @@ $ make help | grep visp
 ... visp_tt_mi
 \endcode
 
-- Which are the 3rd party libraries that are used in ViSP ?
+- Which are the 3rd party libraries that are used in ViSP ?<br>
 To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>.
 
 \section install_raspberry_next Next tutorial

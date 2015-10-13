@@ -7,7 +7,7 @@ In this tutorial you will learn how to install ViSP from source on Windows 8.1 w
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_win81_mingw64_required Install required packages
+\section install_win81_mingw64_required Install prerequisities
 
 \subsection install_win81_mingw64_required_mingw Mingw-w64
 
@@ -42,7 +42,7 @@ CMake 2.8.3 or higher that could be download at : http://www.cmake.org.
 - Download the latest binary distribution installer for Windows. You will find it under <a href="https://cmake.org/download/">"Windows (Win32 Installer)"</a>.
 - Install CMake just by double clicking on the binary \c cmake-x.y.z-win32-x86.exe you downloaded.
 
-\section install_win81_mingw64_3rdparty Install optional packages
+\section install_win81_mingw64_3rdparty Install recommended 3rd party
 
 ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. Some of them are automatically detected since they are part of MinGW distribution. Other may be installed from source. We recommend to install the following:
 

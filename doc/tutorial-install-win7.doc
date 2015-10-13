@@ -7,14 +7,14 @@ In this tutorial you will learn how to install ViSP from source on Windows with 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_win7_required Install required packages
+\section install_win7_required Install prerequisities
 
 - Visual Studio C++. In this tutorial we use Visual Studio 2012. Note that ViSP can also be build with Visual Studio Express that could be downloaded from http://www.microsoft.com/visualstudio/eng/products/visual-studio-express-products
 \note If you want to use Visual Studio Express, you have to install <b>Express 2013 for Windows Desktop</b>. The \b Desktop version is important to work with CMake.
 - CMake 2.8.3 or higher that could be download at : http://www.cmake.org. To install CMake, download the latest binary distribution installer for Windows. You will find it under <a href="https://cmake.org/download/">"Windows (Win32 Installer)"</a>. Install CMake just by double clicking on the binary cmake-x.y.z-win32-x86.exe you downloaded.
 
 
-\section install_win7_3rdparty Install optional packages
+\section install_win7_3rdparty Install recommended 3rd party
 
 ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install the following:
 
