@@ -190,6 +190,8 @@ VP_CHECK_PACKAGE(PARPORT)
 VP_CHECK_PACKAGE(IsNaN)
 # Find IsInf
 VP_CHECK_PACKAGE(IsInf)
+# Find Round
+VP_CHECK_PACKAGE(Round)
 # OpenGL
 VP_CHECK_PACKAGE(OpenGL)
 # for pioneer
@@ -604,6 +606,10 @@ VP_SET(VISP_HAVE_FUNC__ISNAN TRUE IF HAVE_FUNC__ISNAN) # for header vpConfig.h
 VP_SET(VISP_HAVE_FUNC_ISINF TRUE IF HAVE_FUNC_ISINF) # for header vpConfig.h
 # Find std::isinf function (cmath)
 VP_SET(VISP_HAVE_FUNC_STD_ISINF TRUE IF HAVE_FUNC_STD_ISINF) # for header vpConfig.h
+# Find round function (math.h)
+VP_SET(VISP_HAVE_FUNC_ROUND TRUE IF HAVE_FUNC_ROUND) # for header vpConfig.h
+# Find std::round function (cmath)
+VP_SET(VISP_HAVE_FUNC_STD_ROUND TRUE IF HAVE_FUNC_STD_ROUND) # for header vpConfig.h
 
 VP_SET(VISP_HAVE_ACCESS_TO_NAS TRUE IF NAS_FOUND) # for header vpConfig.h
 VP_SET(VISP_BUILD_DEPRECATED_FUNCTIONS TRUE IF BUILD_DEPRECATED_FUNCTIONS) # for header vpConfig.h

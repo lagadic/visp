@@ -48,9 +48,8 @@
 #include <stdint.h>
 #include <visp3/core/vpMath.h>
 
-#if defined(VISP_HAVE_FUNC_ISNAN) || defined(VISP_HAVE_FUNC_STD_ISNAN) || defined(VISP_HAVE_FUNC_ISINF) || defined(VISP_HAVE_FUNC_STD_ISINF)
-#  include <cmath>
-#elif defined(VISP_HAVE_FUNC__ISNAN)
+
+#if defined(VISP_HAVE_FUNC__ISNAN)
 #  include <float.h>
 #endif
 
