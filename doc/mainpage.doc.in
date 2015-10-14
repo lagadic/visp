@@ -107,6 +107,10 @@ href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/p
 - \ref tutorial-simu-robot-pioneer <br>This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
 - \ref tutorial-boost-vs <br>This tutorial explains how to speed up the time to convergence of a visual servo.
 
+\subsection tuto_bridge Bridges over other frameworks
+
+- \ref tutorial-bridge-opencv <br>This tutorial explicit how to convert OpenCV to/from ViSP structures such as camera parameters, images...
+
 \subsection tuto_tools Other tools
 
 - \ref tutorial-plotter <br>This tutorial explains how to plot curves in real-time during a visual servo.

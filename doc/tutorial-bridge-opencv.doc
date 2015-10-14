@@ -1,0 +1,114 @@
+/**
+
+\page tutorial-bridge-opencv Tutorial: Bridge over OpenCV
+\tableofcontents
+
+ViSP is interfaced with OpenCV third party. In this tutorial we explain how to convert data such as camera parameters or images from ViSP to OpenCV or \e vice \e versa.
+
+\section tutorial_bridge_opencv_cam Camera parameters conversions
+
+ViSP camera parameters are implemented in vpCameraParameters class. If you want to calibrate a camera with ViSP tools follow \ref tutorial-calibration.
+
+Let us recall the pinhole camera model implemented in ViSP. In this model, a scene view is formed by projecting 3D points into the image plane using a perspective transformation.
+
+
+\f[
+  \left[ \begin{array}{c}
+  u \\
+  v \\
+  1
+  \end{array}\right] =
+  \left[ \begin{array}{ccc}
+  u_0 & 0   & p_x  \\
+  0   & v_0 & p_y \\
+  0   & 0   & 1
+  \end{array}\right]
+  \left[ \begin{array}{c}
+  X_c  \\
+  Y_c \\
+  Z_c
+  \end{array}\right]
+  \f]
+
+where:
+
+- \f$(X_c,Y_c,Z_c)\f$ are the coordinates of a 3D point in the camera frame
+- \f$(u,v)\f$ are the coordinates in pixels of the projected 3D point
+- \f$(u_0,v_0)\f$ is a principal point that is usually near the image center
+- \f$(p_x,p_y)\f$ are the focal lengths expressed in pixel units.
+
+When \f$Z_c \neq 0\f$, the previous equation si equivalent to the following:
+\f[
+  \begin{array}{lcl}
+  x &=& X_c / Z_c \\
+  y &=& Y_c / Z_c \\
+  u &=& u_0 + x \; p_x \\
+  v &=& v_0 + y \; p_y  
+  \end{array}
+  \f]
+
+Real lenses usually have some radial distortion. So, the above model is extended as:
+
+\f[
+  \begin{array}{lcl}
+  x &=& X_c / Z_c \\
+  y &=& Y_c / Z_c \\
+  x^{'} &=& x (1 + k_{ud} r^2) \\
+  y^{'} &=& y (1 + k_{ud} r^2) \\
+  r^2 &=& x^2 + y^2 \\
+  u &=& u_0 + x^{'} \; p_x \\
+  v &=& v_0 + y^{'} \; p_y
+  \end{array}
+  \f]
+
+where \f$k_{ud}\f$ is the first order radial distorsion. Higher order distorsion coefficients are not considered in ViSP.
+
+\note In ViSP we introduce an extra parameter named \f$k_{du}\f$ which is the radial first order distorsion that allows to transform pixels in meters. If this parameter is unknown as in OpenCV a good approximation is to consider \f$k_{du} = - k_{ud}\f$
+
+Even if OpenCV notations are different, this model is exactly the same then the one used in OpenCV and described <a href="http://docs.opencv.org/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html">here</a> where higher order OpenCV distorsion parameters are turned to 0.
+
+The following table gives the correspondances between ViSP and OpenCV parameters:
+
+
+\f[
+  \begin{array}{l|l}
+  ViSP & OpenCV \\ \hline
+  u_0 & c_x\\
+  v_0 & c_y \\
+  p_x & f_x \\
+  p_y & f_y \\
+  k_{ud} & k_1 \\
+  k_{du} & -k_1 \\
+  & k_2 = 0 \\
+  & k_3 = 0 \\
+  & k_4 = 0 \\
+  & k_5 = 0 \\
+  & k_6 = 0 \\
+  & p_1 = 0 \\
+  & p_2 = 0 
+  \end{array}
+  \f]
+
+From a coding point of view, let us consider the following code also available in tutorial-bridge-opencv.cpp where we initialize camera parameters using ViSP:
+
+\snippet tutorial-bridge-opencv.cpp Set ViSP camera parameters
+
+These parameters could be used to initialize OpenCV camera parameters:
+
+\snippet tutorial-bridge-opencv.cpp Set OpenCV camera parameters
+
+\section tutorial_bridge_opencv_image Image conversions
+
+ViSP image is implemented in vpImage class, while OpenCV images in cv::Mat class. All the functions that allow image conversion from ViSP to OpenCV or \e vice \e versa are implemented in vpImageConvert.
+
+Some examples are available in tutorial-bridge-opencv.cpp.
+
+For example, the following code allow to read an image with ViSP:
+
+\snippet tutorial-bridge-opencv.cpp Load ViSP image
+
+and then convert the image in OpenCV using:
+
+\snippet tutorial-bridge-opencv.cpp Convert ViSP 2 OpenCV image
+
+**/

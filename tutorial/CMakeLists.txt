@@ -25,6 +25,7 @@ if(MSVC)
   endif()
 endif()
 
+visp_add_subdirectory(bridge/opencv                 REQUIRED_DEPS visp_core)
 visp_add_subdirectory(computer-vision               REQUIRED_DEPS visp_core visp_vision)
 visp_add_subdirectory(grabber                       REQUIRED_DEPS visp_core visp_sensor)
 visp_add_subdirectory(detection/barcode             REQUIRED_DEPS visp_core visp_detection)
