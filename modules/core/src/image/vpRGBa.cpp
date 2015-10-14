@@ -129,16 +129,7 @@ bool vpRGBa::operator==(const vpRGBa &v)
 */
 bool vpRGBa::operator!=(const vpRGBa &v)
 {
-  if (R == v.R)
-    return false;
-  if (G == v.G)
-    return false;
-  if (B == v.B)
-    return false;
-  if (A == v.A)
-    return false;
-
-  return true ;
+  return (R != v.R || G != v.G || B != v.B || A != v.A);
 }
 
 /*!
