@@ -53,6 +53,11 @@
 #include <visp3/core/vpConfig.h>
 
 #include <math.h>
+#include <limits>
+
+#if defined(VISP_HAVE_FUNC_ISNAN) || defined(VISP_HAVE_FUNC_STD_ISNAN) || defined(VISP_HAVE_FUNC_ISINF) || defined(VISP_HAVE_FUNC_STD_ISINF) || defined(VISP_HAVE_FUNC_STD_ROUND)
+#  include <cmath>
+#endif
 
 #if defined(_WIN32)	// Not defined in Microsoft math.h
 
@@ -230,30 +235,32 @@ long double vpMath::comb(unsigned int n, unsigned int p)
 */
 int vpMath::round(const double x)
 {
-  if (sign(x) > 0)
-    {
-      if ((x-(int)x) <= 0.5) return (int)x ;
-      else return (int)x+1 ;
-    }
-  else
-    {
-      if (fabs(x-(int)x) <= 0.5) return (int)x ;
-      else return (int)x-1 ;
-    }
+#if defined(VISP_HAVE_FUNC_ROUND)
+  //:: to design the global namespace and avoid to call recursively vpMath::round
+  return ::round(x);
+#elif defined(VISP_HAVE_FUNC_STD_ROUND)
+  return std::round(x)
+#else
+  return (x > 0.0) ? floor(x + 0.5) : ceil(x - 0.5);
+#endif
 }
 
 /*!
   Return the sign of x.
 
-  \return -1 if x is negative, +1 if positive.
+  \return -1 if x is negative, +1 if positive and 0 if zero.
 
 */
 int vpMath::sign(double x)
 {
-  if (fabs(x) < 1e-15) return 0 ;else
-    {
-      if (x<0) return -1 ; else return 1 ;
-    }
+  if (fabs(x) < std::numeric_limits<double>::epsilon())
+    return 0;
+  else {
+    if (x < 0)
+      return -1;
+    else
+      return 1;
+  }
 }
 
 /*!
