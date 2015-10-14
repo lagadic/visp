@@ -19,7 +19,8 @@ ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.in
 
 - liblapack, libxml2, libjpeg, libpng, ffmpeg should be already included in your OS X package
 
-\section install_iOS_get_source Getting ViSP source code
+\section install_iOS_install_visp Install ViSP from source code
+\subsection install_iOS_get_source Getting ViSP source code
 
 There are different ways to get ViSP source code:
 
@@ -44,7 +45,7 @@ $ git clone https://github.com/lagadic/visp.git
 
 We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/visp
 
-\section install_iOS_config Configuring ViSP from source
+\subsection install_iOS_config Configuring ViSP from source
 
 - Choose the right path for the \<source_dir\> and the \<binary_dir\> in c-make gui.
 
@@ -61,8 +62,8 @@ We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for e
 - Press Configure again. Now we can finish the configuration stage by generating the Xcode project.
 - To generate the Xcode project press Generate on c-make gui. From now, c-make gui can be closed.
 
-\section install_iOS_build Building ViSP library
-\subsection getting-started-iOS-configure Open and configure ViSP Xcode project
+\subsection install_iOS_build Building ViSP library
+\subsubsection getting-started-iOS-configure Open and configure ViSP Xcode project
 
 Launch Xcode (Version 4.6.2) and open ViSP.xcodeproj that should be in the \<binary_dir\> where you previously built ViSP sources.
 
@@ -77,7 +78,7 @@ In the Architectures group, edit the following information in this order :
 
 \image html img-getting-started-iOS-architectures.png
 
-\subsection getting-started-iOS-generate Generate ViSP library
+\subsubsection getting-started-iOS-generate Generate ViSP library
 
 Now that you have correctly configured your project, choose the visp target  and press run.
 

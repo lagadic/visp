@@ -90,7 +90,8 @@ If lapack 3rd party is not detected during CMake configuration it may be useful 
 $ brew install gsl
 \endcode
 
-\section install_osx_brew_get_source Getting ViSP source code
+\section install_osx_brew_install_visp Install ViSP from source code
+\subsection install_osx_brew_get_source Getting ViSP source code
 
 There are different ways to get ViSP source code:
 
@@ -115,7 +116,7 @@ $ git clone https://github.com/lagadic/visp.git
 
 We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/visp
 
-\section install_osx_brew_config Configuring ViSP from source
+\subsection install_osx_brew_config Configuring ViSP from source
 
 - Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
 \code
@@ -134,7 +135,7 @@ The previous command allows to configure (just by pressing [c] key) the build in
 Then to generate the makefiles, just press [g] key in the ccmake gui.
 Now we can build ViSP.
 
-\section install_osx_brew_build Building ViSP from source
+\subsection install_osx_brew_build Building ViSP from source
 
 - To build ViSP proceed with:
 \code
@@ -154,29 +155,74 @@ Then you can proceed with:
 \code
 $ make -j4 visp_doc
 \endcode
+\section install_brew_dataset Install ViSP dataset
+Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named \c ViSP-images-x.y.z.zip. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples.
 
-\section install_osx_brew_tips Tips and tricks
+\code
+cd $HOME
+unzip ViSP-images-x.y.z.zip
+\endcode
 
-- After installation, you can remove installed material using
+We suppose now that the data are located in \c $HOME/ViSP-images.
+\code
+$ ls $HOME/ViSP-images
+Klimt	     README.md    circle  ellipse    iv    mbt   mire-2
+LICENSE.txt  calibration  cube    ellipse-1  line  mire  video
+\endcode
+
+Set \c VISP_INPUT_IMAGE_PATH environment variable to help ViSP examples and tests to find the location of the data set. It's convenient if the environment variables is automatically added to your bash session every time a new shell is launched: 
+
+\code
+echo "export VISP_INPUT_IMAGE_PATH=$HOME" >> ~/.bashrc
+source ~/.bashrc
+\endcode
+
+\note For historical reasons \c VISP_INPUT_IMAGE_PATH should not contain the folder \c ViSP-images, but the parent folder.
+
+From now, you can try to run ViSP examples and tests. For example you can run \c displayX example that should open a windows with Klimt painting image and some overlay drawings:
+
+\code
+$ cd $HOME/visp-build-release
+$ ./example/device/display/displayX
+
+A click to close the windows...
+
+A click to display a cross...
+Cross position: 201, 441
+
+A click to exit the program...
+Bye
+\endcode
+
+\section install_brew_tips Tips and tricks
+
+\subsection install_brew_tips_uninstall How to uninstall ViSP
+After ViSP installation, you can remove installed material using:
 \code
 $ sudo make uninstall
 \endcode
 
-- If you want to build only ViSP modules libraries
+\subsection install_brew_tips_modules How to build only ViSP libraries
+
+If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \code
 $ make -j4 visp_modules
 \endcode
 
-- If you want to build a given module and all the dependencies
+\subsection install_brew_tips_module_once How to build a ViSP specific module
+
+If you want to build a given module and all the dependencies:
 \code
 $ make -j4 visp_<module_name>
 \endcode
-For example to build the model-based tracker module named mbt, run
+For example to build the model-based tracker module named mbt, run:
 \code
 $ make -j4 visp_mbt
 \endcode
 
-- Which are the targets that could be run with make ?
+\subsection install_brew_tips_target Which are the targets that could be run with make ?
+
+To know which are the target available with \c make:
 \code
 $ make help | grep visp
 ... visp_tests
@@ -197,10 +243,73 @@ $ make help | grep visp
 ... visp_tt_mi
 \endcode
 
-- Which are the 3rd party libraries that are used in ViSP ?<br>
-To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named ViSP-third-party.txt and located in \<binary_dir\>.
+\subsection install_brew_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
+
+To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named \c ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
+\code
+                    ViSP third-party libraries
+
+Below you will find the list of third party libraries used to 
+build ViSP on your computer.
+
+Mathematics:
+  Gnu Scientific Library      : yes
+  Lapack/blas                 : yes
+Simulator:
+  Ogre simulator              : no
+  \- Ogre3D                   : no
+  \- OIS                      : no
+  Coin simulator              : no
+  \- Coin3D                   : no
+  \- SoWin                    : no
+  \- SoXt                     : no
+  \- SoQt                     : no
+  \- Qt4                      : no
+  \- Qt3                      : no
+Robots
+  Afma6                       : no
+  Afma4                       : no
+  Biclops                     : no
+  Ptu46                       : no
+  Pioneer                     : no
+  Viper S650                  : no
+  Viper S850                  : no
+Video devices (display)
+  X11                         : no
+  GTK                         : no
+  OpenCV                      : yes 
+  GDI                         : no
+  Direct3D                    : no
+Framegrabbers
+  Firewire libdc1394-2.x      : yes
+  Video For Linux Two         : no
+  DirectShow                  : no
+  CMU 1394 Digital Camera SDK : no
+  OpenCV                      : yes 
+Specific devices
+  Yarp                        : no
+  Kinect                      : yes
+  \-libfreenect               : yes
+  \-libusb-1.0                : yes
+  \-pthread                   : yes
+Video and image Read/Write:
+  FFMPEG                      : no
+  libjpeg                     : yes
+  libpng                      : yes
+Misc:
+  XML2                        : yes
+  pthread                     : yes
+  OpenMP                      : no
+  zbar                        : no
+  dmtx                        : yes
+Documentation:
+  Doxygen                     : no
+  Graphviz dot                : no
+ViSP built with C++11 features: no
+\endcode
 
 \section install_osx_brew_issues Kwown issues
+\subsection install_osx_brew_issues_opencv3 /usr/local/lib/pkgconfig is not writable
 
 - During OpenCV installation, if you get the following errors:
 \code
@@ -223,7 +332,7 @@ $ sudo chown {your-user-name} /usr/local/lib/pkgconfig
 $ brew doctor
 \endcode
 
-
+\subsection install_osx_brew_issues_libpng Application built with libpng-1.5.18 but running with 1.6.17
 - If you encounter the following issue
 \code
 $ ./modules/vision/testKeypoint-5
