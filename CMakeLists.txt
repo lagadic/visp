@@ -118,10 +118,9 @@ if("${isSystemDir}" STREQUAL "-1")
 endif("${isSystemDir}" STREQUAL "-1")
 
 # ----------------------------------------------------------------------------
-#  Path for additional modules
+#  Path for additional contrib modules
 # ----------------------------------------------------------------------------
-set(VISP_EXTRA_MODULES_PATH "" CACHE PATH "Where to look for additional ViSP modules")
-
+set(VISP_CONTRIB_MODULES_PATH "" CACHE PATH "Where to look for additional contrib ViSP modules")
 
 # Get the OS
 set(OS ${CMAKE_SYSTEM_NAME})

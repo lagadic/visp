@@ -3,5 +3,5 @@ if(NOT VISP_MODULES_PATH)
 endif()
 
 # extra modules are outside ViSP. Useful for contrib or specific additional modules
-vp_glob_modules(${VISP_MODULES_PATH} EXTRA ${VISP_EXTRA_MODULES_PATH})
+vp_glob_modules(${VISP_MODULES_PATH} EXTRA ${VISP_CONTRIB_MODULES_PATH})
 
