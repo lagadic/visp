@@ -484,83 +484,49 @@ vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
 
 
 /*!
-  Return the calibration matrix \f$K\f$.
+  Return the camera matrix \f$K\f$ given by:
 
-  \f$K\f$ is 3x3 matrix given by:
-
-  \f$ K = \left(\begin{array}{ccc}
+  \f$ K = \left[\begin{array}{ccc}
   p_x & 0 & u_0 \\
   0 & p_y & v_0  \\
   0 & 0 & 1
-  \end{array} \right) \f$
-
-  \warning : this function is useful only in the case of perspective
-  projection without distortion.
+  \end{array} \right] \f$
 
   \sa get_K_inverse()
 */
 vpMatrix
 vpCameraParameters::get_K() const
 {
-  vpMatrix K;
-  switch(projModel){
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-      K.resize(3,3) ;
-      K = 0.0 ;
-      K[0][0] = px ;
-      K[1][1] = py ;
-      K[0][2] = u0 ;
-      K[1][2] = v0 ;
-      K[2][2] = 1.0 ;
-      break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-    default :
-      vpERROR_TRACE("\n\t getting K matrix in the case of projection \
-          with distortion has no sense");   
-      throw(vpException(vpException::notImplementedError,
-            "\n\t getting K matrix in the case of projection \
-                  with distortion has no sense"));
-  }
+  vpMatrix K(3, 3, 0.);
+  K[0][0] = px ;
+  K[1][1] = py ;
+  K[0][2] = u0 ;
+  K[1][2] = v0 ;
+  K[2][2] = 1.0 ;
+
   return K; 
 }
 /*!
-  Return the calibration matrix \f$K^{-1}\f$.
+  Return the inverted camera matrix \f$K^{-1}\f$ given by:
 
-  \f$K^{-1}\f$ is 3x3 matrix given by:
-
-  \f$ K^{-1} = \left(\begin{array}{ccc}
+  \f$ K^{-1} = \left[\begin{array}{ccc}
   1/p_x & 0 & -u_0/p_x \\
   0 & 1/p_y & -v_0/p_y  \\
   0 & 0 & 1
-  \end{array} \right) \f$
-
-  \warning : this function is useful only in the case of perspective
-  projection without distortion.
+  \end{array} \right] \f$
 
   \sa get_K()
 */
 vpMatrix
 vpCameraParameters::get_K_inverse() const
 {
-  vpMatrix K_inv;
-  switch(projModel){
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-      K_inv.resize(3,3) ;
-      K_inv = 0.0 ;
-      K_inv[0][0] = inv_px ;
-      K_inv[1][1] = inv_py ;
-      K_inv[0][2] = -u0*inv_px ;
-      K_inv[1][2] = -v0*inv_py ;
-      K_inv[2][2] = 1.0 ;
-      break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-    default :
-      vpERROR_TRACE("\n\t getting K^-1 matrix in the case of projection \
-          with distortion has no sense");
-      throw(vpException(vpException::notImplementedError,
-            "\n\t getting K matrix in the case of projection \
-                  with distortion has no sense"));
-  }
+  vpMatrix K_inv(3, 3, 0.);
+  K_inv[0][0] = inv_px ;
+  K_inv[1][1] = inv_py ;
+  K_inv[0][2] = -u0*inv_px ;
+  K_inv[1][2] = -v0*inv_py ;
+  K_inv[2][2] = 1.0 ;
+
   return K_inv;
 }
 
