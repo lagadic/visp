@@ -372,9 +372,9 @@ The \ref tutorial-calibration explains how to obtain these parameters from a cam
 
 \subsection mb_settings_visibility Visibility settings
 
-An important setting concerns the visibility test that is used to determine if a face is visible. Note that moving-edges are tracked only on visible faces. Two different visibility tests are implemented; with or without Ogre ray tracing. The default test is the one without Ogre. The function vpMbEdgeTracker::setOgreVisibilityTest() allow to select which test is to use. 
+An important setting concerns the visibility test that is used to determine if a face is visible. Note that moving-edges and keypoints are only tracked on visible faces. Three different visibility tests are implemented; with or without Ogre ray tracing and with or without scanline rendering. The default test is the one without Ogre and scanline. The function vpMbTracker::setOgreVisibilityTest() and vpMbTracker::setScanLineVisibilityTest() allow to select which test to use. 
 
-Let us now highlight how the visibility test works. As illustrated in the following figure, the angle \f$ \alpha \f$ between the normal of the face and the line going from the camera to the center of gravity of the face is used to determine if the face is visible. If we consider two parameters; the angle to determine if a face is appearing \f$ \alpha_{appear} \f$, and the angle to determine if the face is disappearing \f$ \alpha_{disappear} \f$, a face will be considered as visible if  \f$  \alpha \leq \alpha_{disappear} \f$. We consider also that a new face is appearing if \f$  \alpha \geq \alpha_{appear} \f$. These two parameters can be set either in the XML file:
+Let us now highlight how the default visibility test works. As illustrated in the following figure, the angle \f$ \alpha \f$ between the normal of the face and the line going from the camera to the center of gravity of the face is used to determine if the face is visible. If we consider two parameters; the angle to determine if a face is appearing \f$ \alpha_{appear} \f$, and the angle to determine if the face is disappearing \f$ \alpha_{disappear} \f$, a face will be considered as visible if  \f$  \alpha \leq \alpha_{disappear} \f$. We consider also that a new face is appearing if \f$  \alpha \leq \alpha_{appear} \f$. These two parameters can be set either in the XML file:
 \code
 <conf>
   ...
@@ -386,22 +386,46 @@ Let us now highlight how the visibility test works. As illustrated in the follow
 or in the code:
 \snippet tutorial-mb-tracker-full.cpp Set angles
 
-\note When these two angle parameters are not set, their default values set to 89 degrees are used.
+\note When these two angle parameters are not set, their default values set to 89 degrees are used. 
 
 \image html img-tracker-mb-visibility.jpg Principle of the visibility test used to determine if a face is visible.
 
-- When Ogre visibility test is disabled (we recall that this is the default behavior), the algorithm that computes the normal of the face is very simple. It makes the assumption that faces are convex and oriented counter clockwise. Here the face is considered as appearing if \f$ \alpha < 70\f$ degrees, and disappearing if \f$ \alpha > 80\f$ degrees. When only moving-edges are used (no keypoints) and when the object to track is simple like a single box, we suggest as here to disable Ogre visibility test.
-\snippet tutorial-mb-tracker-full.cpp Set ogre
+When no advanced visibility test is enable (we recall that this is the default behavior), the algorithm that computes the normal of the face is very simple. It makes the assumption that faces are convex and oriented counter clockwise. Here the face is considered as appearing if \f$ \alpha \leq 70\f$ degrees, and disappearing if \f$ \alpha > 80\f$ degrees.
 
-- When Ogre visibility test is enabled, the algorithm used to determine the visibility of a face is the same than previously except that once visible faces are detected thanks to their normal, we add an other test to reject faces that are partially occluded by an other one. This additional test is performed using Ogre ray-tracing capability. 
+\subsubsection mb_settings_visibility_ogre Advanced visibility via Ogre3D
+
+The Ogre3D visibility test approach is based on ray tracing. When this test is enabled, the algorithm used to determine the visibility of a face performs (in addition to the previous test based on normals) another test which sets the faces that are <b>partially occluded as non-visible</b>. It can be enabled via:
 \code
   tracker->setOgreVisibilityTest(true);
 \endcode
-Note that since ViSP 3.0.0 we have introduced vpMbTracker::setOgreShowConfigDialog() method that allows to open the Ogre configuration pannel which can be used to select the renderer. To enable this feature, use:
+\image html img-tracker-mb-visibility-ogre.png "Ogre visibility test on both polygons."
+
+When using the <b>classical version of the ogre visibility test</b> (which is the default behavior when activating this test), <b>only one ray</b> is used per polygon to test its visibility. As shown on the figure above, this only ray is sent from the camera to the center of gravity of the considered polygon. If the ray intersects another polygon before the considered one, it is set as non-visible. Intersections are computed <b>between the ray and the axis-aligned bounding-box (AABB)</b> of each polygon. In the figure above, the ray associated to the first polygon intersects first the AABB of the second polygon so it is considered as occluded. As a result only the second polygon will be used during the tracking phase. This means that when using the edges, only the blue lines will be taken into account, and when using the keypoints, they will be detected only inside the second polygon (blue area).
+
+Additionnaly, it is also possible to use a statistical approach during the ray tracing phase in order to improve the visibility results.
+\code
+  tracker->setNbRayCastingAttemptsForVisibility(4);
+  tracker->setGoodNbRayCastingAttemptsRatio(0.70);
+\endcode
+\image html img-tracker-mb-visibility-ogre-advanced.png "Ogre visibility test on the first polygon, using a statistical approach."
+
+Contrary to the classical version of this test, the <b>statistical approach uses multiple rays per polygons</b> (4 in the example above). Each ray is sent randomly toward the considered polygon. If a specified ratio of rays do not have intersected another polygon before the considered one, the polygon is set as visible. In the example above, three ray on four return the first polygon as visible. As the ratio of good matches is more than 70% (which corresponds to the chosen ratio in this example) the first polygon is considered as visible, as well as the second one. As a result, all visible blue lines will be taken into account during the tracking phase of the edges and the keypoints that are detected inside the green area will be also used. Unfortunately, this approach is a <b>polygon based approach</b> so the dashed blue lines, that are not visible, will also be used during the tracking phase. Plus, keypoints that are detected inside the overlapping area won't be well associated and can disturb the algorithm.
+
+\note Since ViSP 3.0.0 we have introduced vpMbTracker::setOgreShowConfigDialog() method that allows to open the Ogre configuration pannel which can be used to select the renderer. To enable this feature, use:
+
 \code
   tracker->setOgreShowConfigDialog(true);
 \endcode
 
+\subsubsection mb_settings_visibility_scanline Advanced visibility via Scanline Rendering
+
+Contrary to the visibility test using Ogre3D, this method does not require any additional third-party library. It is based on the scanline rendering algorithm and can be enabled via:
+\code
+  tracker->setScanLineVisibilityTest(true);
+\endcode
+\image html img-tracker-mb-visibility-scanline.png "Scanline visibility test on both polygons."
+
+Even if this approach requires a bit <b>more computing power</b>, it is a <b>pixel perfect visibility test</b>. According to the camera point of view, polygons will be <b>decomposed in order to consider only their visible parts</b>. As a result, if we consider the example above, dashed red lines won't be considered during the tracking phase and detected keypoints will be correctly matched with the closest (in term of depth) polygon.
 
 \subsection mb_settings_clipping Clipping settings
 
