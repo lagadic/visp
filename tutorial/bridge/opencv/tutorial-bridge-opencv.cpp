@@ -3,14 +3,14 @@
 #include <visp3/core/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
-#ifdef VISP_HAVE_OPENCV
+#if VISP_HAVE_OPENCV_VERSION >= 0x020300
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #endif
 
 int main()
 {
-#ifdef VISP_HAVE_OPENCV
+#if VISP_HAVE_OPENCV_VERSION >= 0x020300
   //! [Set ViSP camera parameters]
   double u0 = 326.6;
   double v0 = 215.0;
