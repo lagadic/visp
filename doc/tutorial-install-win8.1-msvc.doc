@@ -239,7 +239,7 @@ displayGDI.exe -i C:\ViSP
 
 \section known_issues_win81_msvc Known issues
 
-\subsection known_issues_win81_msvc_ogredeps Unable to build ogredeps: \c DXSDK_DIR missing
+\subsection known_issues_win81_msvc_ogredeps Unable to build ogredeps: DXSDK_DIR missing
 
 During ogredeps build as described in \ref install_win81_msvc_3rdparty_ogre installation you may get in Visual C++ the following error when building SDL2 project:
 \code
