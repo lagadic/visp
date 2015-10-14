@@ -33,7 +33,9 @@ In this model we consider the parameters \f$(u_0,v_0,p_x,p_y, k_{ud}, k_{du})\f$
 - \f$(p_x, p_y)\f$ are the ratio between the focal length and the size of a pixel;
 - \f$(k_{ud}, k_{du})\f$ are the parameters used to correct the distortion.
 
-Note that the container dedicated to camera parameters is implemented in the vpCameraParameters class. It allows to consider two kind of models; with or without distortion. 
+\note It may be useful to make a tour in \ref tutorial-bridge-opencv that makes in relation the camera model used in ViSP with the one proposed by OpenCV.
+
+\note Note also that the container dedicated to camera parameters is implemented in the vpCameraParameters class. It allows to consider two kind of models; with or without distortion. 
 
 The calibration process allows to estimate the values of these parameters. To this end, one of the following calibration grid can be used:
 - a black and white chessboard [<a href="http://www.irisa.fr/lagadic/visp/img/OpenCV_Chessboard.pdf">OpenCV_Chessboard.pdf</a>];
