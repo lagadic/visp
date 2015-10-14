@@ -66,101 +66,115 @@
 
   \brief Generic class defining intrinsic camera parameters.
 
-  Two kinds of camera modelisation are implemented:
-  - Camera parameters for a perspective projection without distortion model,
-  - Camera parameters for a perspective projection with distortion model.
+  Let us define the pinhole camera model implemented in ViSP. In this model, a scene view is formed
+  by projecting 3D points into the image plane using a perspective transformation.
 
-  The main intrinsic camera parameters are \f$(p_x, p_y)\f$ the ratio
+  \f[
+  \left[ \begin{array}{c}
+  u \\
+  v \\
+  1
+  \end{array}\right] =
+  \left[ \begin{array}{ccc}
+  u_0 & 0   & p_x  \\
+  0   & v_0 & p_y \\
+  0   & 0   & 1
+  \end{array}\right]
+  \left[ \begin{array}{c}
+  X_c  \\
+  Y_c \\
+  Z_c
+  \end{array}\right]
+  \f]
+
+  where:
+
+  - \f$(X_c,Y_c,Z_c)\f$ are the coordinates of a 3D point in the camera frame
+  - \f$(u,v)\f$ are the coordinates in pixels of the projected 3D point
+  - \f$(u_0,v_0)\f$ is a principal point that is usually near the image center
+  - \f$(p_x,p_y)\f$ are the focal lengths expressed in pixel units.
+
+  When \f$Z_c \neq 0\f$, the previous equation si equivalent to the following:
+  \f[
+  \begin{array}{lcl}
+  x &=& X_c / Z_c \\
+  y &=& Y_c / Z_c \\
+  u &=& u_0 + x \; p_x \\
+  v &=& v_0 + y \; p_y
+  \end{array}
+  \f]
+
+  Real lenses usually have some radial distortion. So, the above model is extended as:
+
+  \f[
+  \begin{array}{lcl}
+  x &=& X_c / Z_c \\
+  y &=& Y_c / Z_c \\
+  x^{'} &=& x (1 + k_{ud} r^2) \\
+  y^{'} &=& y (1 + k_{ud} r^2) \\
+  r^2 &=& x^2 + y^2 \\
+  u &=& u_0 + x^{'} \; p_x \\
+  v &=& v_0 + y^{'} \; p_y
+  \end{array}
+  \f]
+
+  where \f$k_{ud}\f$ is the first order radial distorsion. Higher order distorsion coefficients are not considered in ViSP.
+
+  Now in ViSP we consider also the inverse transformation, where from pixel coordinates we want to compute their
+  normalized coordinates in the image plane. Previous equations could be written like:
+
+  \f[
+  \begin{array}{lcl}
+  x &=& (u - u_0) / p_x \\
+  y &=& (v - v_0) / p_y
+  \end{array}
+  \f]
+
+  Considering radial distortion, the above model is extended as:
+  \f[
+  \begin{array}{lcl}
+  (u-u_0)^{'} &=& (u-u_0) (1 + k_{du} r^2) \\
+  (v-v_0)^{'} &=& (v-v_0) (1 + k_{du} r^2) \\
+  r^2 &=& ((u-u_0)/p_x)^2 + ((v-v_0)/p_y)^2 \\
+  x &=& (u - u_0)^{'} / p_x \\
+  y &=& (v - v_0)^{'} / p_y
+  \end{array}
+  \f]
+
+  Finally, in ViSP the main intrinsic camera parameters are \f$(p_x, p_y)\f$ the ratio
   between the focal length and the size of a pixel, and \f$(u_0,
   v_0)\f$ the coordinates of the principal point in pixel. The lens
   distortion can also be considered by two additional parameters
   \f$(k_{ud}, k_{du})\f$.
 
-  <b>1. Camera parameters for a perspective projection without distortion model</b>
+  \note \ref tutorial-calibration shows how to calibrate a camera
+  to estimate the parameters corresponding to the model implemented in this class.
 
-  In this modelisation, only \f$u_0,v_0,p_x,p_y\f$ parameters are
-  used.  If we denote \f$(u,v)\f$ the position of a pixel in the
-  digitized image, this position is related to the corresponding
-  coordinates \f$(x,y)\f$ in the normalized space (in meter) by:
-
-  \f[
-  \left\{ \begin{array}{l}
-  u = u_0 + p_x x  \\
-  v = v_0 + p_y y
-  \end{array}\right.
-  \f]
-
-  The initialization of such a model can be done using:
-  - initPersProjWithoutDistortion() that allows to set \f$u_0,v_0,p_x,p_y\f$ parameters;
-  - initFromFov() that computes the parameters from an image size and a camera field of view.
-
-  <b>2. Camera parameters for a perspective projection with distortion model</b>
-
-  In this modelisation, \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$
-  parameters are used.  If a model with distortion is considered, we
-  got:
-
-  \f[
-  \left\{ \begin{array}{l}
-  u = u_0 + p_x x +  \delta_u \\
-  v = v_0 + p_y y + \delta_v
-  \end{array}\right.
-  \f]
-
-  where  \f$\delta_u\f$ and \f$\delta_v\f$ are
-  geometrical distortions introduced in the camera model. These distortions are
-  due to imperfections in the lenses design and assembly there usually are some
-  positional errors that have to be taken into account.
-  \f$\delta_u\f$ and \f$\delta_v\f$  can be modeled as follow:
-  - with an undistorted to distorted model
-  \f[
-  \left\{ \begin{array}{l}
-  \delta_u(x,y) = k_{ud} \;r^2\; p_x x  \\
-  \\
-  \delta_v(x,y) = k_{ud}\; r^2\; p_y y
-  \end{array}\right.
-  \f]
-  with \f[ r^2 = x^2 + y^2 \f]
-  This model is useful to convert meter to pixel coordinates because in this
-  case :
-  \f[
-  \left\{ \begin{array}{l}
-  u = f_u(x,y) =  u_0 + p_x x\left(1+k_{ud}\left(x^2 + y^2\right)\right)  \\
-  \\
-  v = f_v(x,y) =  v_0 + p_y y\left(1+k_{ud}\left(x^2 + y^2\right)\right)
-  \end{array}\right.
-  \f]
-  The conversion from normalized coordinates \f$(x,y)\f$ into pixel
-  \f$(u,v)\f$ is implemented in vpMeterPixelConversion.
-
-  - or with a distorted to undistorted model
-  \f[
-  \left\{ \begin{array}{l}
-  \delta_u(u,v) = -k_{du} \;r^2\; \left(u-u_0\right)  \\
-  \\
-  \delta_v(u,v) = -k_{du}\; r^2\; \left(v-v_0\right)
-  \end{array}\right.
-  \f]
-  with \f[ r^2 = {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \f]
-  This model is useful to convert pixel to meter coordinates because in this
-  case :
-  \f[
-  \left\{ \begin{array}{l}
-  x = f_x(u,v) =  \frac{u-u_0}{p_x}\left(1+k_{du}\left( {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \right)\right)  \\
-  \\
-  y = f_y(u,v) =  \frac{v-v_0}{p_y}\left(1+k_{du}\left( {\left(\frac{u-u_0}{p_{x}}\right)}^2 +  {\left(\frac{v-v_0}{p_{y}}\right)}^2 \right)\right)
-  \end{array}\right.
-  \f]
-
-  The initialization of such a model can be done using:
-  - initPersProjWithDistortion() that allows to set \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$ parameters;
+  \note Note also that \ref tutorial-bridge-opencv gives the correspondance between
+  ViSP and OpenCV camera modelization.
 
   \note The conversion from pixel coordinates \f$(u,v)\f$ in the normalized
   space \f$(x,y)\f$ is implemented in vpPixelMeterConversion, whereas
   the conversion from normalized coordinates into pixel is implemented
   in vpMeterPixelConversion.
 
-  The selection of one of these modelisations is done during
+  From a practical point of view, two kinds of camera modelisation are implemented in this class:
+
+  <b>1. Camera parameters for a perspective projection without distortion model</b>
+
+  In this modelisation, only \f$u_0,v_0,p_x,p_y\f$ parameters are considered.
+
+  Initialization of such a model can be done using:
+  - initPersProjWithoutDistortion() that allows to set \f$u_0,v_0,p_x,p_y\f$ parameters;
+  - initFromFov() that computes the parameters from an image size and a camera field of view.
+
+  <b>2. Camera parameters for a perspective projection with distortion model</b>
+
+  In this modelisation, all the parameters \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$
+  are considered. Initialization of such a model can be done using:
+  - initPersProjWithDistortion() that allows to set \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$ parameters;
+
+  The selection of the camera model (without or with distorsion) is done during
   vpCameraParameters initialisation.
 
   Here an example of camera initialisation, for a model without distortion. A complete example is given in initPersProjWithoutDistortion().
@@ -204,8 +218,6 @@
 
   An XML parser for camera parameters is also provided in vpXmlParserCamera.
 
-  Note also that the \ref tutorial-calibration shows how to calibrate a camera
-  to obtain the parameters corresponding to both models implemented in this class.
 */
 class VISP_EXPORT vpCameraParameters
 {
