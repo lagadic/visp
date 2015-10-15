@@ -40,9 +40,14 @@
  *****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMath.h>
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpRobotPioneer.h>
+// Warning: vpMath.h should be included after Aria.h to avoid the build issue:
+// "/usr/include/Aria/ariaUtil.h:732:21: error: ‘isfinite’ was not declared 
+// in this scope"
+// This error is due to cmath header included from vpMath.h that makes 
+// isfinite() ambiguous between ::isfinite() and std::isfinite()
+#include <visp3/core/vpMath.h>
 
 #ifdef VISP_HAVE_PIONEER
 

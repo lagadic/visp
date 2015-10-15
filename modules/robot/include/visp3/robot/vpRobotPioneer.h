@@ -1,9 +1,7 @@
 /****************************************************************************
  *
- * $Id$
- *
  * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2015 by INRIA. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -42,12 +40,19 @@
 #define VPROBOTPIONEER_H
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpRobot.h>
-#include <visp3/robot/vpPioneer.h>
 
 #ifdef VISP_HAVE_PIONEER
 
 #include <Aria.h>
+
+// Warning: vpMath.h included from vpRobot.h or vpPioneer.h should be 
+// included after Aria.h to avoid the build issue:
+// "/usr/include/Aria/ariaUtil.h:732:21: error: ‘isfinite’ was not declared 
+// in this scope"
+// This error is due to cmath header included from vpMath.h that makes 
+// isfinite() ambiguous between ::isfinite() and std::isfinite()
+#include <visp3/robot/vpRobot.h>
+#include <visp3/robot/vpPioneer.h>
 
 /*!
 
