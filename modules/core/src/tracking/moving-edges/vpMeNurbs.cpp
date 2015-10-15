@@ -1043,6 +1043,9 @@ vpMeNurbs::track(const vpImage<unsigned char> &I)
   //Suppressions des points ejectes par le tracking
   suppressPoints();
 
+  if (list.size() == 1)
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError, "Not enough valid me to track"));
+
   //Recalcule les parametres
 //  nurbs.globalCurveInterp(list);
   nurbs.globalCurveApprox(list,nbControlPoints);
