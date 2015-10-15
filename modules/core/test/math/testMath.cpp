@@ -125,8 +125,8 @@ int main() {
     return -1;
   }
 
-  if(!vpMath::isInf(1.0/0.0)) {
-    std::cerr << "Fail: vpMath::isInf(1.0/0.0)=" << vpMath::isInf(1.0/0.0) << " / should be true" << std::endl;
+  if(!vpMath::isInf(1.0/a)) {
+    std::cerr << "Fail: vpMath::isInf(1.0/0.0)=" << vpMath::isInf(1.0/a) << " / should be true" << std::endl;
     return -1;
   }
 
