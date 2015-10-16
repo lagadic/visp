@@ -337,19 +337,19 @@ template<> inline unsigned char vpMath::saturate<unsigned char>(char v) {
 }
 
 template<> inline unsigned char vpMath::saturate<unsigned char>(unsigned short v) {
-  return (unsigned char) std::min((unsigned) v, (unsigned) UCHAR_MAX);
+  return (unsigned char) std::min((unsigned int) v, (unsigned int) UCHAR_MAX);
 }
 
 template<> inline unsigned char vpMath::saturate<unsigned char>(int v) {
-  return (unsigned char) ((unsigned) v <= UCHAR_MAX ? v : v > 0 ? UCHAR_MAX : 0);
+  return (unsigned char) ((unsigned int) v <= UCHAR_MAX ? v : v > 0 ? UCHAR_MAX : 0);
 }
 
 template<> inline unsigned char vpMath::saturate<unsigned char>(short v) {
   return saturate<unsigned char> ((int) v);
 }
 
-template<> inline unsigned char vpMath::saturate<unsigned char>(unsigned v) {
-  return (unsigned char) std::min(v, (unsigned) UCHAR_MAX);
+template<> inline unsigned char vpMath::saturate<unsigned char>(unsigned int v) {
+  return (unsigned char) std::min(v, (unsigned int) UCHAR_MAX);
 }
 
 template<> inline unsigned char vpMath::saturate<unsigned char>(float v) {
@@ -368,11 +368,11 @@ template<> inline char vpMath::saturate<char>(unsigned char v) {
 }
 
 template<> inline char vpMath::saturate<char>(unsigned short v) {
-  return (char) std::min((unsigned) v, (unsigned) SCHAR_MAX);
+  return (char) std::min((unsigned int) v, (unsigned int) SCHAR_MAX);
 }
 
 template<> inline char vpMath::saturate<char>(int v) {
-  return (char) ((unsigned) (v - SCHAR_MIN) <= (unsigned) UCHAR_MAX ? v :
+  return (char) ((unsigned int) (v - SCHAR_MIN) <= (unsigned int) UCHAR_MAX ? v :
                  v > 0 ? SCHAR_MAX : SCHAR_MIN);
 }
 
@@ -380,8 +380,8 @@ template<> inline char vpMath::saturate<char>(short v) {
   return saturate<char>((int) v);
 }
 
-template<> inline char vpMath::saturate<char>(unsigned v) {
-  return (char) std::min(v, (unsigned) SCHAR_MAX);
+template<> inline char vpMath::saturate<char>(unsigned int v) {
+  return (char) std::min(v, (unsigned int) SCHAR_MAX);
 }
 
 template<> inline char vpMath::saturate<char>(float v) {
@@ -404,12 +404,12 @@ template<> inline unsigned short vpMath::saturate<unsigned short>(short v) {
 }
 
 template<> inline unsigned short vpMath::saturate<unsigned short>(int v) {
-  return (unsigned short) ((unsigned) v <= (unsigned) USHRT_MAX ? v :
+  return (unsigned short) ((unsigned int) v <= (unsigned int) USHRT_MAX ? v :
                            v > 0 ? USHRT_MAX : 0);
 }
 
-template<> inline unsigned short vpMath::saturate<unsigned short>(unsigned v) {
-  return (unsigned short) std::min(v, (unsigned) USHRT_MAX);
+template<> inline unsigned short vpMath::saturate<unsigned short>(unsigned int v) {
+  return (unsigned short) std::min(v, (unsigned int) USHRT_MAX);
 }
 
 template<> inline unsigned short vpMath::saturate<unsigned short>(float v) {
@@ -427,11 +427,11 @@ template<> inline short vpMath::saturate<short>(unsigned short v) {
   return (short) std::min((int) v, SHRT_MAX);
 }
 template<> inline short vpMath::saturate<short>(int v) {
-  return (short) ((unsigned) (v - SHRT_MIN) <= (unsigned) USHRT_MAX ? v :
+  return (short) ((unsigned int) (v - SHRT_MIN) <= (unsigned int) USHRT_MAX ? v :
                   v > 0 ? SHRT_MAX : SHRT_MIN);
 }
-template<> inline short vpMath::saturate<short>(unsigned v) {
-  return (short) std::min(v, (unsigned) SHRT_MAX);
+template<> inline short vpMath::saturate<short>(unsigned int v) {
+  return (short) std::min(v, (unsigned int) SHRT_MAX);
 }
 template<> inline short vpMath::saturate<short>(float v) {
   int iv = vpMath::round(v);
@@ -453,12 +453,12 @@ template<> inline int vpMath::saturate<int>(double v) {
 
 //unsigned int
 // (Comment from OpenCV) we intentionally do not clip negative numbers, to make -1 become 0xffffffff etc.
-template<> inline unsigned vpMath::saturate<unsigned>(float v) {
-  return (unsigned) vpMath::round(v);
+template<> inline unsigned int vpMath::saturate<unsigned int>(float v) {
+  return (unsigned int) vpMath::round(v);
 }
 
-template<> inline unsigned vpMath::saturate<unsigned>(double v) {
-  return (unsigned) vpMath::round(v);
+template<> inline unsigned int vpMath::saturate<unsigned int>(double v) {
+  return (unsigned int) vpMath::round(v);
 }
 
 
