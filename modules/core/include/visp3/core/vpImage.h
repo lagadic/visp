@@ -312,6 +312,9 @@ public:
   void sub(const vpImage<Type> &B, vpImage<Type> &C);
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
 
+  // Perform a look-up table transformation
+  void performLut(const Type (&lut)[256]);
+
 private:
   unsigned int npixels ; //<! number of pixel in the image
   unsigned int width ;   //<! number of columns
@@ -1436,6 +1439,51 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
   for (unsigned int i=0;i<A.getWidth()*A.getHeight();i++)
   {
     *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i) ;
+  }
+}
+
+/*!
+  Modify the intensities of a grayscale image using the look-up table passed in parameter.
+
+  \param lut : Look-up table (unsigned char array of size=256) which maps each intensity to his new value.
+*/
+template<>
+inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256]) {
+  unsigned int size = getWidth()*getHeight();
+  unsigned char *ptrStart = (unsigned char*) bitmap;
+  unsigned char *ptrEnd = ptrStart + size;
+  unsigned char *ptrCurrent = ptrStart;
+
+  while(ptrCurrent != ptrEnd) {
+    *ptrCurrent = lut[*ptrCurrent];
+    ++ptrCurrent;
+  }
+}
+
+/*!
+  Modify the intensities of a color image using the look-up table passed in parameter.
+
+  \param lut : Look-up table (vpRGBa array of size=256) which maps each intensity to his new value.
+*/
+template<>
+inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256]) {
+  unsigned int size = getWidth()*getHeight();
+  unsigned char *ptrStart = (unsigned char*) bitmap;
+  unsigned char *ptrEnd = ptrStart + size*4;
+  unsigned char *ptrCurrent = ptrStart;
+
+  while(ptrCurrent != ptrEnd) {
+    *ptrCurrent = lut[*ptrCurrent].R;
+    ++ptrCurrent;
+
+    *ptrCurrent = lut[*ptrCurrent].G;
+    ++ptrCurrent;
+
+    *ptrCurrent = lut[*ptrCurrent].B;
+    ++ptrCurrent;
+
+    *ptrCurrent = lut[*ptrCurrent].A;
+    ++ptrCurrent;
   }
 }
 
