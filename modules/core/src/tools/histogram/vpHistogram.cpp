@@ -1,7 +1,5 @@
 /****************************************************************************
  *
- * $Id$
- *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
  * 
@@ -48,8 +46,11 @@
 
 */
 
-#include <visp3/core/vpHistogram.h>
 #include <stdlib.h>
+#include <visp3/core/vpHistogram.h>
+#include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpDisplayX.h>
+
 
 bool compare_vpHistogramPeak (vpHistogramPeak first, vpHistogramPeak second);
 
@@ -156,16 +157,80 @@ vpHistogram::init(unsigned size_)
   Calculate the histogram from a gray level image.
 
   \param I : Gray level image.
-
+  \param nbins : Number of bins to compute the histogram.
 */
-void vpHistogram::calculate(const vpImage<unsigned char> &I)
+void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int nbins)
 {
+  if(size != nbins) {
+    if (histogram != NULL) {
+      delete [] histogram;
+      histogram = NULL;
+    }
+
+    size = nbins > 256 ? 256 : (nbins > 0 ? nbins : 256);
+    if(nbins > 256 || nbins == 0) {
+      std::cerr << "nbins=" << nbins << " , nbins should be between ]0 ; 256] ; use by default nbins=256" << std::endl;
+    }
+    histogram = new unsigned int[size];
+  }
+
   memset(histogram, 0, size * sizeof(unsigned));
 
-  for (unsigned i=0; i < I.getHeight(); i ++) {
-    for (unsigned j=0; j < I.getWidth(); j ++) {
-      histogram[ I[i][j] ] ++;
+  unsigned int lut[256];
+  for(unsigned int i = 0; i < 256; i++) {
+    lut[i] = (unsigned int) (i * size / 256.0);
+  }
+
+  unsigned int size = I.getWidth()*I.getHeight();
+  unsigned char *ptrStart = (unsigned char*) I.bitmap;
+  unsigned char *ptrEnd = ptrStart + size;
+  unsigned char *ptrCurrent = ptrStart;
+
+  while(ptrCurrent != ptrEnd) {
+    histogram[ lut[ *ptrCurrent ] ] ++;
+    ++ptrCurrent;
+  }
+}
+
+/*!
+  Display the histogram distribution in an image, the minimal image size is 36x36 px.
+
+  \param I : Image with the histogram distribution displayed.
+  \param color : Color used for the display.
+  \param thickness : Thickness of the line.
+  \param maxValue_ : Maximum value in the histogram, if 0 it will be computed from the current histogram.
+  Useful to plot a 3 channels histogram for a RGB image for example to keep a coherent vertical scale between the channels.
+*/
+void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color, const unsigned int thickness,
+    const unsigned int maxValue_) {
+  unsigned int width = I.getWidth(), height = I.getHeight();
+  //Minimal width and height are 36 px
+  if(width < 36 || height < 36) {
+    std::cerr << "Image I must have at least width >= 36 && height >= 36 !" << std::endl;
+    return;
+  }
+
+  unsigned int maxValue = maxValue_;
+  if(maxValue == 0) {
+    for(unsigned int i = 0; i < size; i++) {
+      if(histogram[i] > maxValue) {
+        maxValue = histogram[i];
+      }
     }
+  }
+
+  //Keep 12 free pixels at the top
+  unsigned int max_height = height-12;
+  double ratio_height = max_height / (double) maxValue;
+  double ratio_width = (width-1) / (double) (size-1.0);
+
+  for(unsigned int i = 1; i < size; i++) {
+    unsigned int value1 = histogram[i-1];
+    unsigned int value2 = histogram[i];
+
+    vpImagePoint startPt((height-1)-(value1*ratio_height), (i-1)*ratio_width);
+    vpImagePoint endPt((height-1)-(value2*ratio_height), (i*ratio_width));
+    vpDisplay::displayLine(I, startPt, endPt, color, thickness);
   }
 }
 
