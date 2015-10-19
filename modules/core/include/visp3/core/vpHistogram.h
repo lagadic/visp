@@ -1,7 +1,5 @@
 /****************************************************************************
  *
- * $Id$
- *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
  * 
@@ -51,9 +49,12 @@
 #ifndef vpHistogram_h
 #define vpHistogram_h
 
+#include <sstream>
+
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpHistogramPeak.h>
 #include <visp3/core/vpHistogramValey.h>
+#include <visp3/core/vpColor.h>
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #  include <visp3/core/vpList.h>
@@ -143,10 +144,15 @@ public:
 
   */
   inline unsigned operator[](const unsigned char level) const
-    {
+  {
+    if (level < size) {
       return histogram[level];
+    }
 
-    };
+    std::stringstream ss;
+    ss << "Level is > to size (" << size << ") !";
+    throw vpException(vpException::dimensionError, ss.str().c_str());
+  };
   /*!
 
     Return the number of pixels having the gray \e level.
@@ -168,9 +174,15 @@ public:
 
   */
   inline unsigned operator()(const unsigned char level) const
-    {
+  {
+    if(level < size) {
       return histogram[level];
-    };
+    }
+
+    std::stringstream ss;
+    ss << "Level is > to size (" << size << ") !";
+    throw vpException(vpException::dimensionError, ss.str().c_str());
+  };
   /*!
 
     Return the number of pixels having the gray \e level.
@@ -192,9 +204,15 @@ public:
 
   */
   inline unsigned get(const unsigned char level) const
-    {
+  {
+    if(level < size) {
       return histogram[level];
-    };
+    }
+
+    std::stringstream ss;
+    ss << "Level is > to size (" << size << ") !";
+    throw vpException(vpException::dimensionError, ss.str().c_str());
+  };
 
   /*!
 
@@ -214,11 +232,21 @@ public:
 
   */
   inline void set(const unsigned char level, unsigned int value)
-    {
+  {
+    if(level < size) {
       histogram[level] = value;
-    };
+    } else {
+      std::stringstream ss;
+      ss << "Level is > to size (" << size << ") !";
+      throw vpException(vpException::dimensionError, ss.str().c_str());
+    }
+  };
 
-  void     calculate(const vpImage<unsigned char> &I);
+  void     calculate(const vpImage<unsigned char> &I, const unsigned int nbins=256);
+
+  void     display(const vpImage<unsigned char> &I, const vpColor &color=vpColor::white, const unsigned int thickness=2,
+                   const unsigned int maxValue_=0);
+
   void     smooth(const unsigned int fsize = 3);
   unsigned getPeaks(std::list<vpHistogramPeak> & peaks);
   unsigned getPeaks(unsigned char dist, 
@@ -249,7 +277,7 @@ public:
 
     \sa getValues()
   */
-  inline unsigned getSize()
+  inline unsigned getSize() const
     { 
       return size; 
     };
