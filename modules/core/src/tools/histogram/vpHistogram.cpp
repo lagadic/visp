@@ -167,9 +167,9 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
       histogram = NULL;
     }
 
-    size = nbins > 256 ? 256 : nbins;
-    if(nbins > 256) {
-      std::cerr << "nbins=" << nbins << " > 256 ; use by default nbins=256" << std::endl;
+    size = nbins > 256 ? 256 : (nbins > 0 ? nbins : 256);
+    if(nbins > 256 || nbins == 0) {
+      std::cerr << "nbins=" << nbins << " , nbins should be between ]0 ; 256] ; use by default nbins=256" << std::endl;
     }
     histogram = new unsigned int[size];
   }
