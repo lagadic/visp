@@ -128,12 +128,16 @@ public:
   vpImage(unsigned int height, unsigned int width) ;
   //! constructor  set the size of the image and init all the pixel
   vpImage(unsigned int height, unsigned int width, Type value) ;
+  //! constructor from an image stored as a continuous array in memory
+  vpImage(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false) ;
   //! destructor
   virtual ~vpImage() ;
   //! set the size of the image
   void init(unsigned int height, unsigned int width) ;
   //! set the size of the image
   void init(unsigned int height, unsigned int width, Type value) ;
+  //! init from an image stored as a continuous array in memory
+  void init(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false);
   //! set the size of the image without initializing it.
   void resize(const unsigned int h, const unsigned int w) ;
   //! set the size of the image and initialize it.
@@ -344,7 +348,7 @@ vpImage<Type>::init(unsigned int h, unsigned int w, Type value)
   {
     init(h,w) ;
   }
-  catch(vpException me)
+  catch(vpException &me)
   {
     vpERROR_TRACE(" ") ;
     throw ;
@@ -376,7 +380,6 @@ template<class Type>
 void
 vpImage<Type>::init(unsigned int h, unsigned int w)
 {
-
   if (h != this->height) {
     if (row != NULL)  {
       vpDEBUG_TRACE(10,"Destruction row[]");
@@ -421,6 +424,68 @@ vpImage<Type>::init(unsigned int h, unsigned int w)
   unsigned int i ;
   for ( i =0  ; i < height ; i++)
     row[i] = bitmap + i*width ;
+}
+
+/*!
+  \brief Image initialization
+
+  Init from image data stored as a continuous array in memory.
+
+  \param array : Image data stored as a continuous array in memory
+  \param h : Image height.
+  \param w : Image width.
+  \param copyData : If false (by default) only the memory address is copied, otherwise the data are copied.
+
+  \exception vpException::memoryAllocationError
+*/
+template<class Type>
+void
+vpImage<Type>::init(Type * const array, const unsigned int h, const unsigned int w, const bool copyData)
+{
+  if (h != this->height) {
+    if (row != NULL)  {
+      delete [] row;
+      row = NULL;
+    }
+  }
+
+  //Delete bitmap if copyData==false, otherwise only if the dimension differs
+  if ( (copyData && ((h != this->height) || (w != this->width))) || !copyData ) {
+    if (bitmap != NULL) {
+      delete [] bitmap;
+      bitmap = NULL;
+    }
+  }
+
+  this->width = w ;
+  this->height = h;
+
+  npixels = width*height;
+
+  if(copyData) {
+    if (bitmap == NULL)  bitmap = new  Type[npixels];
+
+    if (bitmap == NULL) {
+      throw(vpException(vpException::memoryAllocationError,
+            "cannot allocate bitmap ")) ;
+    }
+
+    //Copy the image data
+    memcpy(bitmap, array, (size_t) (npixels * sizeof(Type)));
+  } else {
+    //Copy the address of the array in the bitmap
+    bitmap = array;
+  }
+
+  if (row == NULL)  row = new Type*[height];
+  if (row == NULL) {
+    throw(vpException(vpException::memoryAllocationError,
+          "cannot allocate row ")) ;
+  }
+
+  for (unsigned int i = 0  ; i < height ; i++) {
+    row[i] = bitmap + i*width;
+  }
 }
 
 /*!
@@ -480,9 +545,37 @@ vpImage<Type>::vpImage (unsigned int h, unsigned int w, Type value)
   {
     init(h,w,value) ;
   }
-  catch(vpException me)
+  catch(vpException &me)
   {
     vpERROR_TRACE(" ") ;
+    throw ;
+  }
+}
+
+/*!
+  \brief Constructor
+
+  Construct a vpImage from a continuous array in memory.
+
+  \param array : Image data stored as a continuous array in memory.
+  \param h : Image height.
+  \param w : Image width.
+  \param copyData : If false (by default) only the memory address is copied, otherwise the data are copied.
+
+  \return MEMORY_FAULT if memory allocation is impossible, else OK
+
+  \sa vpImage::init(array, height, width)
+*/
+template<class Type>
+vpImage<Type>::vpImage (Type * const array, const unsigned int h, const unsigned int w, const bool copyData)
+  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
+{
+  try
+  {
+    init(array, h, w, copyData);
+  }
+  catch(vpException &me)
+  {
     throw ;
   }
 }
@@ -530,7 +623,7 @@ vpImage<Type>::resize(unsigned int h, unsigned int w)
   {
     init(h, w) ;
   }
-  catch(vpException me)
+  catch(vpException &me)
   {
     vpERROR_TRACE(" ") ;
     throw ;
@@ -564,7 +657,7 @@ vpImage<Type>::resize(unsigned int h, unsigned int w, const Type val)
   {
     init(h, w, val) ;
   }
-  catch(vpException me)
+  catch(vpException &me)
   {
     vpERROR_TRACE(" ") ;
     throw ;
@@ -631,7 +724,7 @@ vpImage<Type>::vpImage(const vpImage<Type>& I)
     memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type)) ;
     for (unsigned int i =0  ; i < this->height ; i++) row[i] = bitmap + i*this->width ;
   }
-  catch(vpException me)
+  catch(vpException &me)
   {
     vpERROR_TRACE(" ") ;
     throw ;
@@ -735,7 +828,7 @@ vpImage<Type> & vpImage<Type>::operator=(const vpImage<Type> &I)
       }
     }
   }
-  catch(vpException me)
+  catch(vpException &me)
   {
     vpERROR_TRACE(" ") ;
     throw ;
@@ -1380,7 +1473,7 @@ void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Type> &C)
       || (this->getWidth() != C.getWidth()))
       C.resize(this->getHeight(), this->getWidth());
   }
-  catch(vpException me)
+  catch(vpException &me)
   {
     vpERROR_TRACE("Error caught") ;
     std::cout << me << std::endl ;
@@ -1422,7 +1515,7 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
       || (A.getWidth() != C.getWidth()))
       C.resize(A.getHeight(), A.getWidth());
   }
-  catch(vpException me)
+  catch(vpException &me)
   {
     vpERROR_TRACE("Error caught") ;
     std::cout << me << std::endl ;

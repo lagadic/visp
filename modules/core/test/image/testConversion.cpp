@@ -559,9 +559,113 @@ main(int argc, const char ** argv)
     vpCTRACE << "Write " << filename << std::endl;
     vpImageIo::write(B, filename) ;
     vpCTRACE<< "Convert result in "<<std::endl<< filename << std::endl;
+
+    ////////////////////////////////////
+    // Merge 4 vpImage<unsigned char> (RGBa) to vpImage<vpRGBa>
+    ////////////////////////////////////
+    vpImageConvert::split(Ic, &R, &G, &B, &a);
+    begintime  = vpTime::measureTimeMs();
+    vpImage<vpRGBa> I_merge;
+    for(int i=0; i<1000; i++){
+      vpImageConvert::merge(&R, &G, &B, &a, I_merge);
+    }
+    endtime = vpTime::measureTimeMs();
+
+    std::cout<<"Time for 1000 merge (ms): "<< endtime - begintime <<std::endl;
+
+    filename =  vpIoTools::createFilePath(opath, "Klimt_merge.ppm");
+    /* Save the the current image */
+    vpImageIo::write(I_merge, filename) ;
+
+    ////////////////////////////////////
+    // Convert a vpImage<vpRGBa> in RGB color space to a vpImage<vpRGBa> in HSV color
+    ////////////////////////////////////
+    unsigned int size = Ic.getWidth()*Ic.getHeight();
+    unsigned int w = Ic.getWidth(), h = Ic.getHeight();
+    unsigned char *hue = new unsigned char[size];
+    unsigned char *saturation = new unsigned char[size];
+    unsigned char *value = new unsigned char[size];
+
+    vpImageConvert::RGBaToHSV((unsigned char *) Ic.bitmap, hue, saturation, value, size);
+    vpImage<unsigned char> I_hue(hue, h, w);
+    vpImage<unsigned char> I_saturation(saturation, h, w);
+    vpImage<unsigned char> I_value(value, h, w);
+    vpImage<vpRGBa> I_HSV;
+    vpImageConvert::merge(&I_hue, &I_saturation, &I_value, NULL, I_HSV);
+
+    filename =  vpIoTools::createFilePath(opath, "Klimt_HSV.ppm");
+    /* Save the the current image */
+    vpImageIo::write(I_HSV, filename);
+
+    //Check the conversion RGBa <==> HSV
+    double *hue2 = new double[size];
+    double *saturation2 = new double[size];
+    double *value2 = new double[size];
+    vpImageConvert::RGBaToHSV((unsigned char *) Ic.bitmap, hue2, saturation2, value2, size);
+
+    unsigned char *rgba = new unsigned char[size*4];
+    vpImageConvert::HSVToRGBa(hue2, saturation2, value2, rgba, size);
+
+    if(hue2 != NULL) {
+      delete[] hue2;
+      hue2 = NULL;
+    }
+
+    if(saturation2 != NULL) {
+      delete[] saturation2;
+      saturation2 = NULL;
+    }
+
+    if(value2 != NULL) {
+      delete[] value2;
+      value2 = NULL;
+    }
+
+    vpImage<vpRGBa> I_HSV2RGBa((vpRGBa *) rgba, h, w);
+    filename =  vpIoTools::createFilePath(opath, "Klimt_HSV2RGBa.ppm");
+    /* Save the the current image */
+    vpImageIo::write(I_HSV2RGBa, filename);
+
+    for(unsigned int i = 0; i < Ic.getHeight(); i++) {
+      for(unsigned int j = 0; j < Ic.getWidth(); j++) {
+        if(Ic[i][j].R != I_HSV2RGBa[i][j].R ||
+           Ic[i][j].G != I_HSV2RGBa[i][j].G ||
+           Ic[i][j].B != I_HSV2RGBa[i][j].B) {
+          std::cerr << "Ic[i][j].R=" << static_cast<unsigned>(Ic[i][j].R)
+              << " ; I_HSV2RGBa[i][j].R=" << static_cast<unsigned>(I_HSV2RGBa[i][j].R) << std::endl;
+          std::cerr << "Ic[i][j].G=" << static_cast<unsigned>(Ic[i][j].G)
+              << " ; I_HSV2RGBa[i][j].G=" << static_cast<unsigned>(I_HSV2RGBa[i][j].G) << std::endl;
+          std::cerr << "Ic[i][j].B=" << static_cast<unsigned>(Ic[i][j].B)
+              << " ; I_HSV2RGBa[i][j].B=" << static_cast<unsigned>(I_HSV2RGBa[i][j].B) << std::endl;
+          throw vpException(vpException::fatalError, "Problem with conversion between RGB <==> HSV");
+        }
+      }
+    }
+
+    ////////////////////////////////////
+    // Test construction of vpImage from an array with copyData==true
+    ////////////////////////////////////
+    unsigned char *rgba2 = new unsigned char[size*4];
+    memset(rgba2, 127, size*4);
+    vpImage<vpRGBa> I_copyData((vpRGBa *) rgba2, h, w, true);
+
+    //Delete the array
+    if(rgba2 != NULL) {
+      delete[] rgba2;
+      rgba2 = NULL;
+    }
+
+    filename =  vpIoTools::createFilePath(opath, "I_copyData.ppm");
+    /* Save the the current image */
+    vpImageIo::write(I_copyData, filename);
+
+    if(I_copyData.getSize() > 0) {
+      I_copyData[0][0].R = 10;
+    }
+
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

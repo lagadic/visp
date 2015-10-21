@@ -397,6 +397,7 @@ public:
   }
 
   static void gaussianBlur(const vpImage<unsigned char> &I, vpImage<double>& GI, unsigned int size=7, double sigma=0., bool normalize=true);
+  static void gaussianBlur(const vpImage<double> &I, vpImage<double>& GI, unsigned int size=7, double sigma=0., bool normalize=true);
   /*!
    Apply a 5x5 Gaussian filter to an image pixel.
 
