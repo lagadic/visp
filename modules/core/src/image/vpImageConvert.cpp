@@ -48,6 +48,7 @@
 
 
 #include <sstream>
+#include <map>
 
 // image
 #include <visp3/core/vpImageConvert.h>
