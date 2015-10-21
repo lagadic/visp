@@ -58,7 +58,7 @@
 /*!
   \class vpSimulatorPioneer
 
-  \ingroup RobotSimuWithoutVisu
+  \ingroup group_robot_simu
 
   \brief Class that defines the Pioneer mobile robot simulator equipped with a static camera.
 

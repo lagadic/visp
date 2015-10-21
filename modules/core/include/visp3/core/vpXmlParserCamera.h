@@ -64,7 +64,7 @@
 /*!
   \class vpXmlParserCamera
 
-  \ingroup CameraModelTransformation CameraModel
+  \ingroup group_core_camera
 
   \brief XML parser to load and save intrinsic camera parameters.
 

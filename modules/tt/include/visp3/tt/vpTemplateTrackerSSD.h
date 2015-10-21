@@ -60,6 +60,10 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/vision/vpHomography.h>
 
+/*!
+  \class vpTemplateTrackerSSD
+  \ingroup group_tt_tracker
+*/
 class VISP_EXPORT vpTemplateTrackerSSD: public vpTemplateTracker
 {
   protected:

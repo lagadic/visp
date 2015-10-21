@@ -55,7 +55,7 @@
 
 /*!
   \class vpRobust
-  \ingroup Robust
+  \ingroup group_core_robust
   \brief Contains an M-Estimator and various influence function.
 
   Supported methods: M-estimation, Tukey, Cauchy and Huber

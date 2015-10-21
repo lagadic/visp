@@ -62,7 +62,7 @@ class vpServo;
 /*!
   \class vpFeatureMomentCommon
 
-  \ingroup VsFeature2
+  \ingroup group_core_visual_features
 
   \brief This class allows to access common vpFeatureMoments in a pre-filled database.
 

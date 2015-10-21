@@ -54,7 +54,7 @@
 
   \class vpAfma4
 
-  \ingroup Afma4
+  \ingroup group_robot_real
 
   \brief Modelisation of Irisa's cylindrical robot named Afma4.
 

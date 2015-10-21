@@ -59,7 +59,7 @@ class vpMomentObject;
 /*!
   \class vpMoment
 
-  \ingroup TrackingMoments
+  \ingroup group_core_moments
 
   \brief This class defines shared methods/attributes for 2D moments.
 

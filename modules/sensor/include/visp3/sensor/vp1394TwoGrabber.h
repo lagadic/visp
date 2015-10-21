@@ -70,7 +70,7 @@
 /*!
   \class vp1394TwoGrabber
 
-  \ingroup Framegrabber CameraDriver
+  \ingroup group_sensor_camera
   
   \brief Class for firewire ieee1394 video devices using libdc1394-2.x api.
 

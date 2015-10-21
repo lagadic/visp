@@ -63,7 +63,7 @@
 /*!
   \class vpImageFilter
 
-  \ingroup ImageFiltering
+  \ingroup group_core_image
 
   \brief  Various image filter, convolution, etc...
 

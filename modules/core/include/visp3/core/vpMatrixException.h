@@ -63,7 +63,6 @@
 
 /*!
   \class vpMatrixException
-  \ingroup Exception
   \brief error that can be emited by the vpMatrix class and its derivates
  */
 class VISP_EXPORT vpMatrixException : public vpException

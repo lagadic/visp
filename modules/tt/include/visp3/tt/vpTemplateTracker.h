@@ -54,6 +54,10 @@
 #include <visp3/tt/vpTemplateTrackerWarp.h>
 #include <visp3/core/vpImageFilter.h>
 
+/*!
+  \class vpTemplateTracker
+  \ingroup group_tt_tracker
+*/
 class VISP_EXPORT vpTemplateTracker
 {
   protected:

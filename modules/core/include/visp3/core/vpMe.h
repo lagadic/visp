@@ -49,7 +49,7 @@
 // ====================================================================
 /*!
   \class vpMe
-  \ingroup TrackingImageME
+  \ingroup group_core_trackers
   
   \brief Contains predetermined masks for sites and holds moving edges
   tracking parameters.

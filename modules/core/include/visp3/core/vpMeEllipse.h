@@ -62,7 +62,7 @@
 
 /*!
   \class vpMeEllipse 
-  \ingroup TrackingImageME
+  \ingroup group_core_trackers
 
   \brief Class that tracks an ellipse moving edges.
 

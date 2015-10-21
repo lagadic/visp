@@ -52,7 +52,7 @@ class vpMomentObject;
 /*!
   \class vpMomentGravityCenter
 
-  \ingroup TrackingMoments
+  \ingroup group_core_moments
 
   \brief Class describing 2D gravity center moment.
 

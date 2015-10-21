@@ -63,7 +63,7 @@
   
   \brief Manage the line of a polygon used in the model-based tracker.
 
-  \ingroup ModelBasedTracking
+  \ingroup group_mbt_features
 
  */
 class VISP_EXPORT vpMbtDistanceLine

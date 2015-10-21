@@ -48,6 +48,10 @@
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 #include <visp3/core/vpImageFilter.h>
 
+/*!
+  \class vpTemplateTrackerMI
+  \ingroup group_tt_mi_tracker
+*/
 class VISP_EXPORT vpTemplateTrackerMI: public vpTemplateTracker
 {
 public:

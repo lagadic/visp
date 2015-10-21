@@ -52,7 +52,7 @@
 
 /*!
   \class vpSubColVector
-  \ingroup vpMath
+  \ingroup group_core_matrices
   \brief Definition of the vpSubColVector
   vpSubColVector class provides a mask on a vpColVector
   all properties of vpColVector are available with

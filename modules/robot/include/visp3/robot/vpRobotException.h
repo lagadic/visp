@@ -65,7 +65,7 @@
 /* ------------------------------------------------------------------------- */
 
 /*!
-  \ingroup Exception
+  \class vpRobotException
   \brief Error that can be emited by the vpRobot class and its derivates.
  */
 class VISP_EXPORT vpRobotException : public vpException
@@ -74,7 +74,7 @@ class VISP_EXPORT vpRobotException : public vpException
     /*!
     \brief Lists the possible error than can be emmited while calling
     vpRobot member
-   */
+    */
     enum errorRobotCodeEnum
     {
 

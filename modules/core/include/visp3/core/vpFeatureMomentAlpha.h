@@ -54,7 +54,7 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentAlpha
 
-  \ingroup VsFeature2
+  \ingroup group_core_visual_features
 
   \brief Functionality computation for in-plane rotation moment feature \f$ \alpha \f$. Computes the interaction matrix associated with vpMomentAlpha.
 
@@ -102,7 +102,7 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentAlpha
 
-  \ingroup VsFeature2
+  \ingroup group_core_visual_features
 
   \brief Functionality computation for in-plane rotation moment feature \f$ \alpha \f$: computes the interaction matrix associated with vpMomentAlpha.
 

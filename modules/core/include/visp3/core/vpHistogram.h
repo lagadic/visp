@@ -64,7 +64,7 @@
 
 /*!
   \class vpHistogram
-  \ingroup Histogram
+  \ingroup group_core_image
   \brief Class to compute a gray level image histogram.
 
 

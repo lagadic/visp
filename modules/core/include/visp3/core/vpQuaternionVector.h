@@ -62,7 +62,7 @@ class vpHomogeneousMatrix;
 /*!
   \class vpQuaternionVector
 
-  \ingroup RotTransformation
+  \ingroup group_core_transformations
   
   \brief Defines a quaternion and its basic operations.
 

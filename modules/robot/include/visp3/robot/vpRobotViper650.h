@@ -64,7 +64,7 @@ extern "C" {
 /*!
   \class vpRobotViper650
 
-  \ingroup Viper RobotDriver
+  \ingroup group_robot_real
 
   \brief Control of Irisa's Viper S650 robot named Viper650.
 

@@ -52,7 +52,7 @@
 
   \class vpColor
 
-  \ingroup ImageGUI
+  \ingroup group_core_display
 
   \brief Class to define colors available for display functionnalities.
 

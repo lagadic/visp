@@ -80,7 +80,7 @@
 
 /*!
   \class vpMath
-  \ingroup MathTools
+  \ingroup group_core_math_tools
   \brief Provides simple mathematics computation tools that are not
   available in the C mathematics library (math.h)
 

@@ -55,6 +55,7 @@
 /*!
 
   \class vpLaserScan
+  \ingroup group_sensor_laserscanner
 
   \brief Implements a laser scan data structure that contains
   especially the list of scanned points that have been recorded for

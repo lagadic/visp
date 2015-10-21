@@ -50,7 +50,7 @@
 
   \class vpUnicycle
 
-  \ingroup Pioneer
+  \ingroup group_robot_simu group_robot_simu
 
   \brief Generic functions for unicycle mobile robots.
 

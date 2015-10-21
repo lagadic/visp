@@ -54,6 +54,7 @@
 /*!
 
   \class vpLaserScanner
+  \ingroup group_sensor_laserscanner
 
   \brief Class that defines a generic laser scanner.
  */

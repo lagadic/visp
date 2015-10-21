@@ -58,7 +58,7 @@
 
 /*!
   \class vpFeaturePoint3D
-  \ingroup VsFeature3
+  \ingroup group_core_visual_features
   \brief Class that defines the 3D point visual feature.
 
   A 3D point visual feature corresponds to a 3D point with \f$

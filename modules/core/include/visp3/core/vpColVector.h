@@ -59,7 +59,7 @@ class vpRotationVector;
 
 /*!
   \class vpColVector
-  \ingroup Matrix
+  \ingroup group_core_matrices
   \brief Class that provides a data structure for the column vectors
   as well as a set of operations on these vectors.
 

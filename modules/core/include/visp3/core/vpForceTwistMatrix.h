@@ -52,7 +52,7 @@
 /*!
   \class vpForceTwistMatrix
 
-  \ingroup TwistTransformation
+  \ingroup group_core_transformations
 
   \brief Class that consider the particular case of twist
   transformation matrix that allows to transform a force/troque vector

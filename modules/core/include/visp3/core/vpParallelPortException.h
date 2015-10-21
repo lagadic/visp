@@ -71,7 +71,6 @@
 
 /*!
   \class vpParallelPortException
-  \ingroup Exception
 
   \brief Error that can be emited by the vpParallelPort class and its
   derivates.

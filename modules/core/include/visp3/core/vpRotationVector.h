@@ -62,7 +62,7 @@
 /*!
   \class vpRotationVector
 
-  \ingroup RotTransformation
+  \ingroup group_core_transformations
 
   \brief Class that consider the case of a generic rotation vector
   (cannot be used as is !) consisting in three angles.

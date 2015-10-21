@@ -63,7 +63,7 @@
 
 /*!
   \class vpScale
-  \ingroup Robust
+  \ingroup group_core_robust
 
   \brief Contains different methods for estimating the robust scale of
   an error distribution.

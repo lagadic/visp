@@ -58,7 +58,7 @@
 #include <ctime>
 /*!
   \class vpRansac
-  \ingroup Robust
+  \ingroup group_core_robust
   
   \brief This class is a generic implementation of the Ransac algorithm. It 
   cannot be used alone.

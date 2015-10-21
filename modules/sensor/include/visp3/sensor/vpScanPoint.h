@@ -58,6 +58,7 @@
 /*!
 
   \class vpScanPoint
+  \ingroup group_sensor_laserscanner
 
   \brief Class that defines a single laser scanner point.
 

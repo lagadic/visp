@@ -76,10 +76,8 @@ class vpListElement
 
 /*!
   \class vpList
-  \ingroup List
+  \ingroup group_core_tools
   \brief Provide simple list management
-
-  \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 
   \verbatim
   Data structure:

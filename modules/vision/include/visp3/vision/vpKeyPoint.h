@@ -82,6 +82,7 @@
 
 /*!
   \class vpKeyPoint
+  \ingroup group_vision_keypoints
 
   \brief Class that allows keypoints detection (and descriptors extraction) and matching thanks to OpenCV library.
   This class permits to use different types of detectors, extractors and matchers easily.
@@ -99,7 +100,6 @@
   If you supply the corresponding 3D coordinates corresponding to the 2D coordinates of the reference keypoints,
   you can also estimate the pose of the object by matching a set of detected keypoints in the current image with
   the reference keypoints.
-
 
   If you use this class, the first thing you have to do is to build
   the reference keypoints by detecting keypoints in a reference image which contains the

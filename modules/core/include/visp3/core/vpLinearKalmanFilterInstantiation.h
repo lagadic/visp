@@ -54,6 +54,7 @@
 
 /*!
   \class vpLinearKalmanFilterInstantiation
+  \ingroup group_core_kalman
   \brief This class provides an implementation of some specific linear Kalman filters.
 */
 class VISP_EXPORT vpLinearKalmanFilterInstantiation : public vpKalmanFilter

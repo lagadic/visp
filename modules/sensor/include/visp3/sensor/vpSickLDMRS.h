@@ -67,7 +67,7 @@
 
   \class vpSickLDMRS
 
-  \ingroup LaserDriver
+  \ingroup group_sensor_laserscanner
 
   \brief Driver for the Sick LD-MRS laser scanner.
 

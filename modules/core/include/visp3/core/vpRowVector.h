@@ -58,7 +58,7 @@ class vpMatrix;
 /*!
   \class vpRowVector
 
-  \ingroup Matrix
+  \ingroup group_core_matrices
   \brief Definition of the row vector class.
 
   vpRowVector class provides a data structure for the row vectors as well

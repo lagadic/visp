@@ -71,7 +71,7 @@
 /*!
   \class vpTraceOutput
 
-  \ingroup Debug
+  \ingroup group_core_debug
 
   \brief This class is used to display debug or error messages.
 
@@ -260,7 +260,7 @@ class vpTraceOutput
 #ifdef VP_TRACE        // Activate the trace mode
 
 /*!
-  \ingroup Debug
+  \ingroup group_core_debug
   Works like vpTRACE() and should be used at the beginning of a function.
 
   \code
@@ -281,7 +281,7 @@ int main()
 
 
 /*!
-  \ingroup Debug
+  \ingroup group_core_debug
   Works like vpTRACE() and should be used at the end of a function.
 
   \code
@@ -314,7 +314,7 @@ inline void vpOUT_FCT (const char * /* a */, ...){}
 #ifdef VP_TRACE
 
 /*!
-  \ingroup Debug
+  \ingroup group_core_debug
   Used to display trace messages on the standard stream (C++).
   Use like this : vpCTRACE<<"my message"<<std::endl;
 
@@ -342,7 +342,7 @@ int main()
 
 
 /*!
-  \ingroup Debug
+  \ingroup group_core_debug
   Used to display error messages on the error stream (C++).
   Use like this : vpCERROR<<"my message"<<std::endl;
 
@@ -369,7 +369,7 @@ int main()
 #define vpCERROR std::cerr << "(L0) " << "!!\t" << __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") : "
 
 /*!
-  \ingroup Debug
+  \ingroup group_core_debug
   Used to display error messages on the error stream.
   Prints the name of the file, the function name and the line where
   it was used.
@@ -395,7 +395,7 @@ int main()
 #define vpERROR_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, true))
 
 /*!
-  \ingroup Debug
+  \ingroup group_core_debug
   Used to display trace messages on the standard stream.
   Prints the name of the file, the function name and the line where
   it was used.
@@ -436,7 +436,7 @@ inline void vpTRACE (int /* level */, const char * /* a */, ...){}
 #ifdef VP_DEBUG
 
 /*!
-  \ingroup Debug
+  \ingroup group_core_debug
   vpDERROR_TRACE works like printf, but prints only if the
   tracing level is smaller than the debug level VP_DEBUG_MODE.
 
@@ -459,7 +459,7 @@ int main()
 #define vpDERROR_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, true))
 
 /*!
-  \ingroup Debug
+  \ingroup group_core_debug
   vpDEBUG_TRACE works like printf, but prints only if the
   tracing level level is greater than the debug level VP_DEBUG_MODE.
 
@@ -482,7 +482,7 @@ int main()
 #define vpDEBUG_TRACE (vpTraceOutput( __FILE__,__LINE__, __FUNCTION__, false))
 
 /*!
-  \ingroup Debug
+  \ingroup group_core_debug
   vpCDEBUG(level) work like the C++ output stream std::cout.
   \code
 #define VP_DEBUG        // Activate the debug mode
@@ -507,7 +507,7 @@ int main()
     std::cout << "(L" << level << ") "<<  __FILE__ << ": " << __FUNCTION__ << "(#" << __LINE__ << ") : "
 
 /*!
-  \ingroup Debug
+  \ingroup group_core_debug
 
   vpDEBUG_ENABLE(level) is equal to 1 if the debug level \e level is greater than
   the debug mode VP_DEBUG_MODE, 0 else.

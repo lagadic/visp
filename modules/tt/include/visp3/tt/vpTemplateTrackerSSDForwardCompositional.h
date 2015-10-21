@@ -50,7 +50,8 @@
 #include <visp3/tt/vpTemplateTrackerSSD.h>
 
 /*!
- The algorithm implemented in this class is described in \cite Baker04a.
+  \ingroup group_tt_tracker
+  The algorithm implemented in this class is described in \cite Baker04a.
  */
 class VISP_EXPORT vpTemplateTrackerSSDForwardCompositional: public vpTemplateTrackerSSD
 {

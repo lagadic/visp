@@ -62,7 +62,7 @@ class vpThetaUVector;
 /*!
   \class vpRzyzVector
 
-  \ingroup RotTransformation
+  \ingroup group_core_transformations
 
   \brief Class that consider the case of the Euler
   \f$(\varphi,\theta,\psi)\f$ angles using the z-y-z convention, where

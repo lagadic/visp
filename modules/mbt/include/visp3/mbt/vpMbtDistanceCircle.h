@@ -58,7 +58,7 @@
   
   \brief Manage a circle used in the model-based tracker.
 
-  \ingroup ModelBasedTracking
+  \ingroup group_mbt_features
 */
 class VISP_EXPORT vpMbtDistanceCircle
 {

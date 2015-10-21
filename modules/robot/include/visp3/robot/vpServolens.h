@@ -63,7 +63,7 @@
 
   \class vpServolens
 
-  \ingroup Afma4 RobotDriver
+  \ingroup group_robot_real
 
   \brief Interface for the Servolens lens attached to the camera fixed on the 
   Afma4 robot.

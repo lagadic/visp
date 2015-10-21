@@ -53,7 +53,7 @@
 /*!
   \class vpDisplayD3D
 
-  \ingroup ImageGUI
+  \ingroup group_core_display
 
   \brief Display for windows using Direct3D.
 

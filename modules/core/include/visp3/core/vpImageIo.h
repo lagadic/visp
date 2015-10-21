@@ -73,7 +73,7 @@
 /*!
   \class vpImageIo
   
-  \ingroup ImageRW
+  \ingroup group_core_image
 
   \brief Read/write images with various image format.
 

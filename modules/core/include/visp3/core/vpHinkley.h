@@ -51,7 +51,7 @@
 /*!
   \class vpHinkley
 
-  \ingroup Hinkley
+  \ingroup group_core_hinkley
   \brief This class implements the Hinkley's cumulative sum test.
 
   \author Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes

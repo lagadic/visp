@@ -72,7 +72,7 @@ class vpHomogeneousMatrix;
 
 /*!
   \class vpMatrix
-  \ingroup Matrix
+  \ingroup group_core_matrices
 
   \brief Definition of the vpMatrix class.
 

@@ -62,7 +62,7 @@
   
   \brief Implementation of the polygons management for the model-based trackers.
 
-  \ingroup ModelBasedTracking
+  \ingroup group_mbt_faces
 
  */
 template<class PolygonType = vpMbtPolygon>

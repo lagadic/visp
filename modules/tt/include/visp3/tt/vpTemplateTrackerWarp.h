@@ -54,6 +54,10 @@
 #include <visp3/tt/vpTemplateTrackerZone.h>
 #include <visp3/core/vpTrackingException.h>
 
+/*!
+  \class vpTemplateTrackerWarp
+  \ingroup group_tt_warp
+*/
 class VISP_EXPORT vpTemplateTrackerWarp
 {
   protected:

@@ -39,7 +39,7 @@
 
 /*!
   \class vpParseArgv
-  \ingroup ArgumentParser
+  \ingroup group_core_cmd_parser
   \brief Command line argument parsing.
 
   The code below shows a first way to parse command line arguments

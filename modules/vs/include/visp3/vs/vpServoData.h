@@ -56,7 +56,7 @@
 
 /*!
   \class vpServoData
-  \ingroup VsTask
+  \ingroup group_task
   \brief Save data during the task execution.
 */
 class VISP_EXPORT vpServoData

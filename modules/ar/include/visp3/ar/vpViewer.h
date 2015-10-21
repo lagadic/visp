@@ -103,6 +103,7 @@
 
 /*!
   \class vpViewer
+  \ingroup group_ar_simulator
 
   \brief Viewer used by the simulator.
 

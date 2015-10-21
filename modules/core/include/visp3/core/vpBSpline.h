@@ -75,8 +75,7 @@ typedef struct vpBasisFunction{
 
 /*!
   \class vpBSpline
-  \ingroup MathTools
-
+  \ingroup group_core_math_tools
 
   \brief Class that provides tools to compute and manipulate a B-Spline curve.
 

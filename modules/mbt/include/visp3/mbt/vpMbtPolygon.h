@@ -62,7 +62,7 @@
   
   \brief Implementation of a polygon of the model used by the model-based tracker.
 
-  \ingroup ModelBasedTracking
+  \ingroup group_mbt_faces
 
  */
 class VISP_EXPORT vpMbtPolygon : public vpPolygon3D

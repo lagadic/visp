@@ -51,6 +51,10 @@
 #include <visp3/tt_mi/vpTemplateTrackerMI.h>
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>
 
+/*!
+  \class vpTemplateTrackerMIInverseCompositional
+  \ingroup group_tt_mi_tracker
+*/
 class VISP_EXPORT vpTemplateTrackerMIInverseCompositional: public vpTemplateTrackerMI
 {
 public:

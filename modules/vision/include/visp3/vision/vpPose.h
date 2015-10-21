@@ -66,7 +66,7 @@
 
 /*!
   \class vpPose
-  \ingroup Pose
+  \ingroup group_vision_pose
   \brief Class used for pose computation from N points (pose from point only).
 
   \note It is also possible to estimate a pose from other features using vpPoseFeatures class.

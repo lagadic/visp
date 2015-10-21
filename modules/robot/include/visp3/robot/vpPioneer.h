@@ -50,7 +50,7 @@
 
   \class vpPioneer
 
-  \ingroup Pioneer
+  \ingroup group_robot_real group_robot_simu
 
   \brief Generic functions for Pioneer mobile robots.
 

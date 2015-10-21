@@ -51,7 +51,7 @@
 
 /*!
   \class vpDetectorFace
-
+  \ingroup group_detection_face
   The vpDetectorFace class is a wrapper over OpenCV Haar cascade face detection capabilities.
   To use this class ViSP should be build against OpenCV 2.2.0 or a more recent version.
 

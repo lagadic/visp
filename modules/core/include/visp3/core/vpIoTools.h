@@ -59,7 +59,7 @@
 
 /*!
   \class vpIoTools
-  \ingroup FileDirectories
+  \ingroup group_core_files_io
   \brief File and directories basic tools.
 
   The example below shows how to manipulate the functions of this

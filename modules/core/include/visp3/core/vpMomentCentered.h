@@ -54,7 +54,7 @@ class vpMomentObject;
 /*!
   \class vpMomentCentered
 
-  \ingroup TrackingMoments
+  \ingroup group_core_moments
 
   \brief This class defines the double-indexed centered moment descriptor \f$\mu_{ij}\f$.
 

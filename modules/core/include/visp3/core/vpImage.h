@@ -65,7 +65,7 @@ class vpDisplay;
 /*!
   \class vpImage
 
-  \ingroup ImageContainer ImageDataRepresentation
+  \ingroup group_core_image
 
   \brief Definition of the vpImage class member functions.
 

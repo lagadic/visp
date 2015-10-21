@@ -53,7 +53,7 @@ class vpColVector;
 /*!
   \class vpAdaptiveGain
   
-  \ingroup VsTask
+  \ingroup group_task
   
   \brief Adaptive gain computation.
   

@@ -11,11 +11,11 @@ servoing applications. ViSP is developed and maintained by the Inria
 <a href="http://team.inria.fr/lagadic" target="_parent">Lagadic</a> team located at <a
 href="http://www.inria.fr/en/centre/rennes" target="_parent">Inria Rennes</a>.</p>
 
-<p>ViSP official site is <a
-href="http://visp.inria.fr" target="_parent">http://visp.inria.fr</a></p>
+<p>ViSP official site is <a href="http://visp.inria.fr" target="_parent">http://visp.inria.fr</a></p>
 
-<p>ViSP source code is now available on GitHub <a
-href="http://github.org/lagadic/visp" target="_parent">http://github.org/lagadic/visp</a></p>
+<p>ViSP wiki is <a href="https://github.com/lagadic/visp/wiki" target="_parent">https://github.com/lagadic/visp/wiki</a></p>
+
+<p>ViSP source code is now available on GitHub <a href="http://github.org/lagadic/visp" target="_parent">http://github.org/lagadic/visp</a></p>
  
 <p>If you have any problems or find any bugs, please report them in 
 <a href="https://github.com/lagadic/visp/issues">the bug tracker</a>. If you may need help, please use the available <a href="http://gforge.inria.fr/forum/?group_id=397" target="_parent">forums</a>.<p> 
@@ -139,413 +139,328 @@ scheme, ...</p>
 
 */
 
-/*
- ******************************************
- * ViSP capabilities
- ******************************************
- */
+
+/*******************************************
+ * Module core
+ *******************************************/
 /*!
-  \defgroup Capabilities ViSP capabilities
-*/
-/*
- ******************************************
- * Data representation
- ******************************************
- */
-/*!
-  \ingroup Capabilities
-  \defgroup DataRepresentation Data representation
+  \defgroup module_core core: Core module
+  Core module content.
 */
 /*!
-  \ingroup DataRepresentation
-  \defgroup ImageDataRepresentation Image
+  \ingroup module_core
+  \defgroup group_core_display Graphical user interface
+  Graphical user interface.
 */
 /*!
-  \ingroup DataRepresentation
-  \defgroup List List
-*/
-/*
- ******************************************
- * Mathematics
- ******************************************
- */
-/*!
-  \ingroup Capabilities
-  \defgroup Math Mathematics
+  \ingroup module_core
+  \defgroup group_core_camera Camera model
+  Camera model.
 */
 /*!
-  \ingroup Math
-  \defgroup Matrix Matrices and vectors
+  \ingroup module_core
+  \defgroup group_core_image Image manipulation
+  Image manipulation, including I/O from image files or videos.
 */
 /*!
-  \ingroup Math
-  \defgroup Geometry Geometry
+  \ingroup module_core
+  \defgroup group_core_image_simu Image simulation
+  Image simulation.
 */
 /*!
-  \ingroup Geometry
-  \defgroup GeometryPlane Plane
+  \ingroup module_core
+  \defgroup group_core_bridges Bridges over other frameworks
+  Image manipulation, including I/O from image files or videos.
 */
 /*!
-  \ingroup Geometry
-  \defgroup GeometryFeature Geometric feature (3D transformation and forward projection)
+  \ingroup module_core
+  \defgroup group_core_visual_features Visual features
+  Visual features.
 */
 /*!
-  \ingroup Math
-  \defgroup Transformations Transformations
+  \ingroup module_core
+  \defgroup group_core_geometric_features Geometric features
+  Geometric features.
 */
 /*!
-  \ingroup Math
-  \defgroup Hinkley Hinkley's cumulative sum test
+  \ingroup module_core
+  \defgroup group_core_trackers Basic trackers
+  Basic trackers.
 */
 /*!
-  \ingroup Math
-  \defgroup Robust Robust estimation
+  \ingroup module_core
+  \defgroup group_core_moments Image moments
+  Image moments.
 */
 /*!
-  \ingroup Math
-  \defgroup Random Random number generator
+  \ingroup module_core
+  \defgroup group_core_math Mathematics
+  Mathematics.
 */
 /*!
-  \ingroup Math
-  \defgroup MathTools Other tools
+  \ingroup group_core_math
+  \defgroup group_core_hinkley Hinkley's cumulative sum test
+  Hinkley's cumulative sum test.
+*/
+/*!
+  \ingroup group_core_math
+  \defgroup group_core_robust Robust estimation
+  Robust estimation.
+*/
+/*!
+  \ingroup group_core_math
+  \defgroup group_core_random Random number generator
+  Random number generator.
+*/
+/*!
+  \ingroup group_core_math
+  \defgroup group_core_matrices Matrices and vectors
+  Matrices and vectors.
+*/
+/*!
+  \ingroup group_core_math
+  \defgroup group_core_transformations Tranformations
+  Transformations.
+*/
+/*!
+  \ingroup group_core_math
+  \defgroup group_core_math_tools Other tools
+  Other tools.
+*/
+/*!
+  \ingroup group_core_math
+  \defgroup group_core_kalman Kalman filter
+  Kalman filter.
+*/
+/*!
+  \ingroup module_core
+  \defgroup group_core_tools Tools
+  Tools.
+*/
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_cmd_parser Command line parsing
+  Command line parsing.
+*/
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_mutex Mutex
+  Mutex.
+*/
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_debug Debug and exceptions
+  Debug and exceptions.
+*/
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_plot Drawing of 2D or 3D graphics
+  Drawing of 2D or 3D graphics.
+*/
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_network Networking
+  Networking.
+*/
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_system System
+  System.
+*/
+/*!
+  \ingroup group_core_system
+  \defgroup group_core_files_io Files and directories
+  Files and directories.
+*/
+/*!
+  \ingroup group_core_system
+  \defgroup group_core_time Time management
+  Time management.
+*/
+/*!
+  \ingroup group_core_system
+  \defgroup group_core_parallel_port Parallel port
+  Parallel port.
+*/
+/*!
+  \ingroup group_core_system
+  \defgroup group_core_keyboard Keyboard
+  Keyboard management.
 */
 
+/*******************************************
+ * Module ar
+ *******************************************/
 /*!
-  \ingroup Transformations 
-  \defgroup Transformation 3D transformations
+  \defgroup module_ar ar: Augmented reality module
+  Augmented reality module content.
 */
 /*!
-  \ingroup Transformation 
-  \defgroup RotTransformation Rotation and their representation
+  \ingroup module_ar
+  \defgroup group_ar_renderer Renderer
+  Renderer interfaces.
 */
 /*!
-  \ingroup Transformation 
-  \defgroup TransTransformation Translation
-*/
-/*!
-  \ingroup Transformation 
-  \defgroup PoseTransformation Pose
-*/
-/*!
-  \ingroup Transformation 
-  \defgroup HomographyTransformation Homography
-*/
-/*!
-  \ingroup Transformation 
-  \defgroup TwistTransformation Twist transformation matrix
-*/
-/*!
-  \ingroup Transformation 
-  \defgroup ExpMapTransformation Exponential map
-*/
-/*!
-  \ingroup Transformations 
-  \defgroup VisionTransformation Other related transformations
-*/
-/*!
-  \ingroup VisionTransformation 
-  \defgroup CameraModelTransformation Camera models
+  \ingroup module_ar
+  \defgroup group_ar_simulator Simulator
+  Simulator interfaces.
 */
 
-/*
- ******************************************
- * Image
- ******************************************
- */
+/*******************************************
+ * Module detection
+ *******************************************/
 /*!
-  \ingroup Capabilities
-  \defgroup Image Image
+  \defgroup module_detection detection: Detection module
+  Detection module content.
 */
 /*!
-  \ingroup Image
-  \defgroup ImageManipulation Image manipulation
+  \ingroup module_detection
+  \defgroup group_detection_barcode Bar code detection
+  Bar code detection.
 */
 /*!
-  \ingroup ImageManipulation
-  \defgroup ImageContainer Image representation
-*/
-/*!
-  \ingroup ImageManipulation
-  \defgroup ImageRW Reading and writing images
-*/
-/*!
-  \ingroup ImageManipulation
-  \defgroup ImageGUI Graphical user interface
-*/
-/*!
-  \ingroup ImageManipulation
-  \defgroup ImageConversion Image conversion
-*/
-/*!
-  \ingroup ImageManipulation
-  \defgroup ImageTool Image tools
-*/
-/*!
-  \ingroup ImageManipulation
-  \defgroup Framegrabber Image acquisition
+  \ingroup module_detection
+  \defgroup group_detection_face Face detection
+  Face detection.
 */
 
-/*!
-  \ingroup Image
-  \defgroup ImageProcessing Image processing
+/*******************************************
+ * Module mbt
+ *******************************************/
+ /*!
+  \defgroup module_mbt mbt: Model-based tracker module
+  Model-based tracker module content.
 */
 /*!
-  \ingroup ImageProcessing
-  \defgroup ImageFiltering Image filtering
+  \ingroup module_mbt
+  \defgroup group_mbt_trackers Trackers
+  Model-based trackers.
 */
 /*!
-  \ingroup ImageProcessing
-  \defgroup Histogram Image histogram
+  \ingroup module_mbt
+  \defgroup group_mbt_features Features
+  Model-based trackers features.
 */
 /*!
-  \ingroup Image
-  \defgroup ImageSimulator Image simulator
-*/
-
-
-/*
- ******************************************
- * Tracking
- ******************************************
- */
-/*!
-  \ingroup Capabilities
-  \defgroup Tracking Tracking
+  \ingroup module_mbt
+  \defgroup group_mbt_faces Faces management
+  Faces management including visibility.
 */
 /*!
-  \ingroup Tracking
-  \defgroup TrackingFeature Tracking features (3D transformation and forward projection)
+  \ingroup module_mbt
+  \defgroup group_mbt_xml_parser XML parsers
+  XML parsers dedicated to model-based trackers.
+*/
+/*******************************************
+ * Module robot
+ *******************************************/
+/*!
+  \defgroup module_robot robot: Robot module
+  Robot module content. 
 */
 /*!
-  \ingroup Tracking
-  \defgroup TrackingMoments Tracking 2D image moments
+  \ingroup module_robot
+  \defgroup group_robot_real Real robots
+  Real robots interfaces.
 */
 /*!
-  \ingroup Tracking
-  \defgroup TrackingImage Tracking in image sequences
+  \ingroup module_robot
+  \defgroup group_robot_simu Simulated robots
+  Simulated robots interfaces.
+*/
+/*******************************************
+ * Module sensor
+ *******************************************/
+/*!
+  \defgroup module_sensor sensor: Sensor module
+  Sensor module content. It provides bridges over drivers to acquire data from some sensors.
 */
 /*!
-  \ingroup TrackingImage
-  \defgroup TrackingImageBasic Basic algorithms
+  \ingroup module_sensor
+  \defgroup group_sensor_laserscanner Laser scanner
+  Laser scanner interfaces.
+*/
+/*!  
+  \ingroup module_sensor
+  \defgroup group_sensor_camera Camera
+  Camera interfaces.
+*/
+/*!  
+  \ingroup module_sensor
+  \defgroup group_sensor_rgbd RGB-D sensor
+  RGB-D sensor interfaces.
+*/
+/*******************************************
+ * Module tt
+ *******************************************/
+ /*!
+  \defgroup module_tt tt: Template tracker module
+  Template tracker module content.
 */
 /*!
-  \ingroup TrackingImage
-  \defgroup TrackingImagePoint Point tracker
+  \ingroup module_tt
+  \defgroup group_tt_tracker Trackers
+  Classes dedicated to template tracking.
 */
 /*!
-  \ingroup TrackingImage
-  \defgroup TrackingImageME Moving edges tracker
+  \ingroup module_tt
+  \defgroup group_tt_warp Warping function
+  Classes that implement warping functions that are estimated by the template trackers.
 */
 /*!
-  \ingroup TrackingImage
-  \defgroup ModelBasedTracking Model based tracker
+  \ingroup module_tt
+  \defgroup group_tt_tools Tools
+  Tools used by template trackers.
 */
-
-/*
- ******************************************
- * Computer vision
- ******************************************
- */
-/*!
-  \ingroup Capabilities
-  \defgroup ComputerVision Computer Vision
-*/
-/*!
-  \ingroup  ComputerVision
-  \defgroup Calibration Calibration
+/*******************************************
+ * Module tt_mi
+ *******************************************/
+ /*!
+  \defgroup module_tt_mi tt_mi: Template tracker based on mutual information module
+  Template tracker based on mutual information module content. This module is an
+  extension of \ref module_tt where mutual information cost function is introduced. 
 */
 /*!
-  \ingroup  ComputerVision
-  \defgroup CameraModel Camera models
+  \ingroup module_tt_mi
+  \defgroup group_tt_mi_tracker Trackers
+  Classes dedicates to template tracking with mutual information cost function.
+*/
+/*******************************************
+ * Module vision
+ *******************************************/
+ /*!
+  \defgroup module_vision vision: Computer vision module
+  Computer vision module content.
 */
 /*!
-  \ingroup  ComputerVision
-  \defgroup Homography Homography estimation
+  \ingroup module_vision
+  \defgroup group_vision_calib Camera calibration
+  Camera calibration algorithms.
 */
 /*!
-  \ingroup  ComputerVision
-  \defgroup PlanarSurfaceDetector Planar surface detector
+  \ingroup module_vision
+  \defgroup group_vision_homography Homography estimation
+  Homography estimation algorithms.
 */
 /*!
-  \ingroup  ComputerVision
-  \defgroup Pose Pose estimation
-*/
-/*
- ******************************************
- * Building a visual feature task
- ******************************************
- */
-/*!
-  \ingroup Capabilities
-  \defgroup Vs Building a visual servoing task
+  \ingroup module_vision
+  \defgroup group_vision_pose Pose estimation
+  Pose estimation algorithms.
 */
 /*!
-  \ingroup Vs
-  \defgroup VsFeature Visual features
+  \ingroup module_vision
+  \defgroup group_vision_keypoints Keypoints detection, matching and classifiers
+  Keypoints detection and matching algorithms but also classifiers.
+*/
+/*******************************************
+ * Module vs
+ *******************************************/
+ /*!
+  \defgroup module_vs vs: Visual servoing module
+  Visual servoing module content.
 */
 /*!
-  \ingroup VsFeature
-  \defgroup VsFeature2 2D visual features
-*/
-/*!
-  \ingroup VsFeature
-  \defgroup VsFeature3 3D visual features
-*/
-/*!
-  \ingroup VsFeature
-  \defgroup VsFeatureGeneric Generic visual features
-*/
-/*!
-  \ingroup VsFeature
-  \defgroup VsFeatureDisplay Display of visual features
-*/
-/*!
-  \ingroup VsFeature
-  \defgroup VsFeatureBuilder Visual features builder
-*/
-/*!
-  \ingroup Vs
-  \defgroup VsTask Task and control laws
-*/
-
-/*
- ******************************************
- * Working with robots
- ******************************************
- */
-/*!
-  \ingroup Capabilities
-  \defgroup Robot Working with robots
-*/
-/*!
-  \ingroup Robot
-  \defgroup RobotSimu Robot simulation
-*/
-/*!
-  \ingroup RobotSimu
-  \defgroup RobotSimuWithVisu Simulation with 3D visualization
-*/
-/*!
-  \ingroup RobotSimu
-  \defgroup RobotSimuWithoutVisu Simulation without visualization.
-*/
-
-/*!
-  \ingroup Robot
-  \defgroup RealRobot Real robots
-*/
-/*!
-  \ingroup RealRobot
-  \defgroup Afma4 Afma4 cylindrical robot
-*/
-/*!
-  \ingroup RealRobot
-  \defgroup Afma6 Afma6 gantry robot
-*/
-/*!
-  \ingroup RealRobot
-  \defgroup Biclops Biclops pan-tilt head
-*/
-/*!
-  \ingroup RealRobot
-  \defgroup Ptu46 Ptu-46 pan-tilt head
-*/
-/*!
-  \ingroup RealRobot
-  \defgroup Viper Adept Viper 6 dof robot
-*/
-/*!
-  \ingroup RealRobot
-  \defgroup Cycab Cycab car-like mobile robot
-*/
-/*!
-  \ingroup RealRobot
-  \defgroup Pioneer Pioneer mobile robot
-*/
-/*
- ******************************************
- * Tools
- ******************************************
- */
-/*!
-  \ingroup Capabilities
-  \defgroup Tool Tools
-*/
-/*!
-  \ingroup Tool 
-  \defgroup ArgumentParser Command line parsing
-*/
-/*!
-  \ingroup Tool 
-  \defgroup Mutex Mutex
-*/
-/*!
-  \ingroup Tool 
-  \defgroup Network Network
-*/
-/*!
-  \ingroup Tool 
-  \defgroup plot Drawing of 2D or 3D graphics
-*/
-/*!
-  \ingroup Tool 
-  \defgroup System System
-*/
-/*!
-  \ingroup System 
-  \defgroup Time Time management
-*/
-/*!
-  \ingroup System 
-  \defgroup ParallelPort Parallel port
-*/
-/*!
-  \ingroup System 
-  \defgroup Keyboard Keyboard
-*/
-/*!
-  \ingroup Tool 
-  \defgroup IO Input/output
-*/
-/*!
-  \ingroup IO 
-  \defgroup FileDirectories File and directories
-*/
-/*!
-  \ingroup Tool 
-  \defgroup DebugException Debug and exceptions
-*/
-/*!
-  \ingroup DebugException
-  \defgroup Debug Debug
-*/
-/*!
-  \ingroup DebugException
-  \defgroup Exception Exceptions
-*/
-
-/*
- ******************************************
- * Drivers
- ******************************************
- */
-/*!
-  \ingroup Capabilities
-  \defgroup Driver Drivers
-*/
-/*!
-  \ingroup Driver
-  \defgroup RobotDriver Robot drivers
-*/
-/*!
-  \ingroup Driver
-  \defgroup CameraDriver Camera drivers
-*/
-/*!
-  \ingroup Driver
-  \defgroup LaserDriver Laser scanner drivers
-*/
-/*!
-  \ingroup Driver
-  \defgroup KinectDriver Kinect driver
+  \ingroup module_vs
+  \defgroup group_task Task and control laws
+  Classes used to define task and control laws.
 */

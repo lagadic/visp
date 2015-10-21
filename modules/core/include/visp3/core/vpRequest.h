@@ -53,7 +53,7 @@
 /*!
   \class vpRequest
   
-  \ingroup Network
+  \ingroup group_core_network
 
   \brief This the request that will transit on the network
 

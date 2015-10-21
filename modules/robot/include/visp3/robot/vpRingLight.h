@@ -60,7 +60,7 @@
 /*!
 
   \class vpRingLight
-  \ingroup Afma6
+  \ingroup group_robot_real
   \brief Ring light management under unix.
 
   \warning This class works only at Irisa with the Edixia's ring light system.

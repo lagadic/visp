@@ -63,9 +63,6 @@
 /*!
 
   \class vpCalibrationException
-
-  \ingroup Exception
-
   \brief Error that can be emited by the vpCalibration class.
  */
 class VISP_EXPORT vpCalibrationException : public vpException

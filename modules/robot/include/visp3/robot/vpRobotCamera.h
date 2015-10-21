@@ -56,8 +56,6 @@
 /*!
   \class vpRobotCamera
 
-  \ingroup RobotSimuWithoutVisu
-
   \brief Class that defines the simplest robot: a free flying camera.
 
   This free flying camera has 6 dof; 3 in translation and 3 in rotation.

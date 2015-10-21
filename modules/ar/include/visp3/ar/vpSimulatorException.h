@@ -66,9 +66,6 @@
 /*!
 
   \class vpSimulatorException
-
-  \ingroup Exception
-
   \brief Error that can be emited by the vpSimulator class and its derivates.
  */
 class VISP_EXPORT vpSimulatorException : public vpException

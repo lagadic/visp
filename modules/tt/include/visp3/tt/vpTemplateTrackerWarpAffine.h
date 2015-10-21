@@ -50,7 +50,10 @@
 
 #include <visp3/tt/vpTemplateTrackerWarp.h>
 
-
+/*!
+  \class vpTemplateTrackerWarpAffine
+  \ingroup group_tt_warp
+*/
 class VISP_EXPORT vpTemplateTrackerWarpAffine: public vpTemplateTrackerWarp
 {
   public:

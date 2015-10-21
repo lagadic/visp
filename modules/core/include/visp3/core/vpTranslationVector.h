@@ -56,7 +56,7 @@
 /*!
   \class vpTranslationVector
 
-  \ingroup TransTransformation
+  \ingroup group_core_transformations
   
   \brief Class that consider the case of a translation vector.
 

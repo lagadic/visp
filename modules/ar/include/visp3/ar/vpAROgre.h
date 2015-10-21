@@ -76,7 +76,7 @@
 /*!
   \class vpAROgre 
 
-  \ingroup RobotSimuWithViz
+  \ingroup group_ar_renderer
 
   \brief Implementation of an augmented reality viewer.
 

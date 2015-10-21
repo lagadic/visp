@@ -55,7 +55,7 @@
 
 /*!
   \class vpCircle
-  \ingroup TrackingFeature GeometryFeature
+  \ingroup group_core_geometric_features
   \brief Class that defines what is a circle.
 */
 class VISP_EXPORT vpCircle : public vpForwardProjection

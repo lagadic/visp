@@ -65,7 +65,7 @@ tools for homography computation.
 /*!  
 
   \class vpHomography
-  \ingroup Homography HomographyTransformation
+  \ingroup group_vision_homography
   \brief This class aims to compute the homography wrt.two images.
 
   These two images are both described by a set of points. The 2 sets (one per

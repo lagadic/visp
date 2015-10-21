@@ -56,6 +56,7 @@
 
 /*!
   \class vpTracker
+  \ingroup group_core_trackers
   \brief Class that defines what is a feature generic tracker.
 
   A tracker is able to track features with parameters expressed in:
@@ -68,8 +69,6 @@
 */
 class VISP_EXPORT vpTracker
 {
-
-
 public:
   /*!
     Feature coordinates expressed in the image plane \e p. They correspond

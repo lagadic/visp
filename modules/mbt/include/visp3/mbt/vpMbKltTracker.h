@@ -66,7 +66,7 @@
 
 /*!
   \class vpMbKltTracker
-  \ingroup ModelBasedTracking
+  \ingroup group_mbt_trackers
   \warning This class is only available if OpenCV is installed, and used.
   
   \brief Model based tracker using only KLT

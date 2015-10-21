@@ -91,7 +91,7 @@
 
 /*!
   \class vpMbEdgeTracker
-  \ingroup ModelBasedTracking 
+  \ingroup group_mbt_trackers
   \brief Make the complete tracking of an object by using its CAD model.
 
   This class allows to track an object or a scene given its 3D model. A

@@ -49,7 +49,7 @@ class vpMomentCentered;		// Required for discrete case of vpMomentObject
 /*!
   \class vpMomentArea
 
-  \ingroup TrackingMoments
+  \ingroup group_core_moments
 
   \brief Class handling the surface moment.
 

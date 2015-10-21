@@ -57,7 +57,7 @@ class vpCameraParameters;
 /*!
   \class vpMomentObject
 
-  \ingroup TrackingMoments
+  \ingroup group_core_moments
 
   \brief Class for generic objects.
 

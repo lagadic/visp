@@ -57,7 +57,7 @@
 /*!
   \class vpSimulatorViper850
 
-  \ingroup Viper RobotSimuWithVisu
+  \ingroup group_robot_simu
 
   \brief Simulator of Irisa's Viper S850 robot named Viper850.
 

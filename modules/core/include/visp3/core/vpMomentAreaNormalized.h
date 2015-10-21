@@ -53,7 +53,7 @@ class vpMomentCentered;
 /*!
   \class vpMomentAreaNormalized
 
-  \ingroup TrackingMoments
+  \ingroup group_core_moments
 
   \brief Class handling the normalized surface moment that is invariant in scale and used to estimate depth.
 

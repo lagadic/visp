@@ -77,6 +77,7 @@
 
 /*!
   \class vpBasicFeature
+  \ingroup group_core_features
   \brief class that defines what is a visual feature
 */
 class VISP_EXPORT vpBasicFeature

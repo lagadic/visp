@@ -53,7 +53,7 @@
 
 /*!
   \class vpSubRowVector
-  \ingroup vpMath
+  \ingroup group_core_matrices
   \brief Definition of the vpSubRowVector
   vpSubRowVector class provides a mask on a vpRowVector
   all properties of vpRowVector are available with

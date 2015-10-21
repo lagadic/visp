@@ -67,7 +67,7 @@
 
   \class vpPtu46
 
-  \ingroup Ptu46
+  \ingroup group_robot_real
 
   \brief Jacobian, geometric model functionnalities... for ptu46, pan, tilt
   head from Directed Perception.

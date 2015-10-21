@@ -52,7 +52,7 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentBasic
 
-  \ingroup VsFeature2
+  \ingroup group_core_visual_features
 
   \brief Functionality computation for basic moment feature. Computes the interaction matrix associated with vpMomentBasic.
 

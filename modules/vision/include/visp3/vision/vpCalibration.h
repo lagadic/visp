@@ -67,7 +67,7 @@
 /*!
   \class vpCalibration
 
-  \ingroup Calibration
+  \ingroup group_vision_calib
 
   \brief Tools for perspective camera calibration.
 
