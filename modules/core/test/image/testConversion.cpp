@@ -621,9 +621,7 @@ main(int argc, const char ** argv)
       value2 = NULL;
     }
 
-    vpRGBa *rgba2 = (vpRGBa *) rgba;
-
-    vpImage<vpRGBa> I_HSV2RGBa(rgba2, h, w);
+    vpImage<vpRGBa> I_HSV2RGBa((vpRGBa *) rgba, h, w);
     filename =  vpIoTools::createFilePath(opath, "Klimt_HSV2RGBa.ppm");
     /* Save the the current image */
     vpImageIo::write(I_HSV2RGBa, filename);
@@ -642,6 +640,26 @@ main(int argc, const char ** argv)
           throw vpException(vpException::fatalError, "Problem with conversion between RGB <==> HSV");
         }
       }
+    }
+
+    ////////////////////////////////////
+    // Test construction of vpImage from an array with copyData==true
+    ////////////////////////////////////
+    unsigned char *rgba2 = new unsigned char[size*4];
+    vpImage<vpRGBa> I_copyData((vpRGBa *) rgba2, h, w, true);
+
+    //Delete the array
+    if(rgba2 != NULL) {
+      delete[] rgba2;
+      rgba2 = NULL;
+    }
+
+    filename =  vpIoTools::createFilePath(opath, "Klimt_copyData.ppm");
+    /* Save the the current image */
+    vpImageIo::write(I_copyData, filename);
+
+    if(I_copyData.getSize() > 0) {
+      I_copyData[0][0].R = 10;
     }
 
     return 0;

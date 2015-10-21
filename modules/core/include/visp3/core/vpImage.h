@@ -128,9 +128,8 @@ public:
   vpImage(unsigned int height, unsigned int width) ;
   //! constructor  set the size of the image and init all the pixel
   vpImage(unsigned int height, unsigned int width, Type value) ;
-  //! constructor from an image stored as a continuous array in memory, there is no copy data
-  //! so the vpImage will point to the same data location in memory
-  vpImage(Type * const array, const unsigned int height, const unsigned int width) ;
+  //! constructor from an image stored as a continuous array in memory
+  vpImage(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false) ;
   //! destructor
   virtual ~vpImage() ;
   //! set the size of the image
@@ -138,7 +137,7 @@ public:
   //! set the size of the image
   void init(unsigned int height, unsigned int width, Type value) ;
   //! init from an image stored as a continuous array in memory
-  void init(Type * const array, const unsigned int height, const unsigned int width);
+  void init(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false);
   //! set the size of the image without initializing it.
   void resize(const unsigned int h, const unsigned int w) ;
   //! set the size of the image and initialize it.
@@ -381,7 +380,6 @@ template<class Type>
 void
 vpImage<Type>::init(unsigned int h, unsigned int w)
 {
-
   if (h != this->height) {
     if (row != NULL)  {
       vpDEBUG_TRACE(10,"Destruction row[]");
@@ -431,30 +429,32 @@ vpImage<Type>::init(unsigned int h, unsigned int w)
 /*!
   \brief Image initialization
 
-  Copy the address to the image array
+  Init from image data stored as a continuous array in memory.
 
   \param array : Image data stored as a continuous array in memory
   \param h : Image height.
   \param w : Image width.
-
-  There is no data copy so the vpImage will point to the same address location
-  as the input array.
+  \param copyData : If false (by default) only the memory address is copied, otherwise the data are copied.
 
   \exception vpException::memoryAllocationError
 */
 template<class Type>
 void
-vpImage<Type>::init(Type * const array, const unsigned int h, const unsigned int w)
+vpImage<Type>::init(Type * const array, const unsigned int h, const unsigned int w, const bool copyData)
 {
-  //Delete the current data
-  if (row != NULL) {
-    delete [] row;
-    row = NULL;
+  if (h != this->height) {
+    if (row != NULL)  {
+      delete [] row;
+      row = NULL;
+    }
   }
 
-  if (bitmap != NULL) {
-    delete [] bitmap;
-    bitmap = NULL;
+  //Delete bitmap if copyData==false, otherwise only if the dimension differs
+  if ( (copyData && ((h != this->height) || (w != this->width))) || !copyData ) {
+    if (bitmap != NULL) {
+      delete [] bitmap;
+      bitmap = NULL;
+    }
   }
 
   this->width = w ;
@@ -462,12 +462,23 @@ vpImage<Type>::init(Type * const array, const unsigned int h, const unsigned int
 
   npixels = width*height;
 
-  //Copy the address of the array in the bitmap
-  bitmap = array;
+  if(copyData) {
+    if (bitmap == NULL)  bitmap = new  Type[npixels];
+
+    if (bitmap == NULL) {
+      throw(vpException(vpException::memoryAllocationError,
+            "cannot allocate bitmap ")) ;
+    }
+
+    //Copy the image data
+    memcpy(bitmap, array, (size_t) (npixels * sizeof(Type)));
+  } else {
+    //Copy the address of the array in the bitmap
+    bitmap = array;
+  }
 
   if (row == NULL)  row = new Type*[height];
-  if (row == NULL)
-  {
+  if (row == NULL) {
     throw(vpException(vpException::memoryAllocationError,
           "cannot allocate row ")) ;
   }
@@ -549,20 +560,19 @@ vpImage<Type>::vpImage (unsigned int h, unsigned int w, Type value)
   \param array : Image data stored as a continuous array in memory.
   \param h : Image height.
   \param w : Image width.
-
-  There is no copy so the vpImage will point to the same data location memory than the input array.
+  \param copyData : If false (by default) only the memory address is copied, otherwise the data are copied.
 
   \return MEMORY_FAULT if memory allocation is impossible, else OK
 
   \sa vpImage::init(array, height, width)
 */
 template<class Type>
-vpImage<Type>::vpImage (Type * const array, const unsigned int h, const unsigned int w)
+vpImage<Type>::vpImage (Type * const array, const unsigned int h, const unsigned int w, const bool copyData)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
   try
   {
-    init(array, h, w) ;
+    init(array, h, w, copyData);
   }
   catch(vpException &me)
   {
