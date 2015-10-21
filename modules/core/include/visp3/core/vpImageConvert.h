@@ -177,7 +177,13 @@ public:
                     vpImage<unsigned char>* pR,
                     vpImage<unsigned char>* pG,
                     vpImage<unsigned char>* pB,
-                    vpImage<unsigned char>* pa = NULL) ;
+                    vpImage<unsigned char>* pa = NULL);
+
+  static void merge(const vpImage<unsigned char> *R,
+                    const vpImage<unsigned char> *G,
+                    const vpImage<unsigned char> *B,
+                    const vpImage<unsigned char> *a,
+                    vpImage<vpRGBa> &RGBa);
 
   /*!
     Converts a yuv pixel value in rgb format.
@@ -300,8 +306,31 @@ public:
   static void MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba,
         unsigned int size);
   
+  static void HSVToRGBa(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
+        const unsigned int size);
+  static void HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+        unsigned char *rgba, const unsigned int size);
+  static void RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value,
+        const unsigned int size);
+  static void RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation, unsigned char *value,
+        const unsigned int size);
+
+  static void HSVToRGB(const double *hue, const double *saturation, const double *value, unsigned char *rgb,
+        const unsigned int size);
+  static void HSVToRGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+        unsigned char *rgb, const unsigned int size);
+  static void RGBToHSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
+        const unsigned int size);
+  static void RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
+        const unsigned int size);
+
 private:
   static void computeYCbCrLUT();
+
+  static void HSV2RGB(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
+        const unsigned int size, const unsigned int step);
+  static void RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
+        const unsigned int size, const unsigned int step);
 
 private:
   static bool YCbCrLUTcomputed;

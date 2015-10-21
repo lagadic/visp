@@ -3499,6 +3499,70 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src,
 }
 
 /*!
+  Merge 4 channels into an RGBa image.
+  \param R : Red channel.
+  \param G : Green channel.
+  \param B : Blue channel.
+  \param a : Alpha channel.
+  \param RGBa : Destination RGBa image.
+*/
+void vpImageConvert::merge(const vpImage<unsigned char> *R,
+                    const vpImage<unsigned char> *G,
+                    const vpImage<unsigned char> *B,
+                    const vpImage<unsigned char> *a,
+                    vpImage<vpRGBa> &RGBa) {
+  //Check if the input channels have all the same dimensions
+  std::map<unsigned int, unsigned int> mapOfWidths, mapOfHeights;
+  if(R != NULL) {
+    mapOfWidths[R->getWidth()]++;
+    mapOfHeights[R->getHeight()]++;
+  }
+
+  if(G != NULL) {
+    mapOfWidths[G->getWidth()]++;
+    mapOfHeights[G->getHeight()]++;
+  }
+
+  if(B != NULL) {
+    mapOfWidths[B->getWidth()]++;
+    mapOfHeights[B->getHeight()]++;
+  }
+
+  if(a != NULL) {
+    mapOfWidths[a->getWidth()]++;
+    mapOfHeights[a->getHeight()]++;
+  }
+
+  if(mapOfWidths.size() == 1 && mapOfHeights.size() == 1) {
+    unsigned int width = mapOfWidths.begin()->first;
+    unsigned int height = mapOfHeights.begin()->first;
+
+    RGBa.resize(height, width);
+
+    unsigned int size = width*height;
+    for(unsigned int i = 0; i < size; i++) {
+      if(R != NULL) {
+        RGBa.bitmap[i].R = R->bitmap[i];
+      }
+
+      if(G != NULL) {
+        RGBa.bitmap[i].G = G->bitmap[i];
+      }
+
+      if(B != NULL) {
+        RGBa.bitmap[i].B = B->bitmap[i];
+      }
+
+      if(a != NULL) {
+        RGBa.bitmap[i].A = a->bitmap[i];
+      }
+    }
+  } else {
+    throw vpException(vpException::dimensionError, "Mismatch dimensions !");
+  }
+}
+
+/*!
 
   Converts a MONO16 grey scale image (each pixel is coded by two bytes) into a
   grey image where each pixels are coded on one byte.
@@ -3544,6 +3608,270 @@ void vpImageConvert::MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba, un
     rgba[j--] = v;
     rgba[j--] = v;
     rgba[j--] = v;
+  }
+}
+
+void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, const double *value_, unsigned char *rgb,
+        const unsigned int size, const unsigned int step) {
+  for(unsigned int i = 0; i < size; i++) {
+    double h, s, v;
+    double f, p, q, t;
+    double hue = hue_[i], saturation = saturation_[i], value = value_[i];
+
+    if (vpMath::equal(saturation, 0.0, std::numeric_limits<double>::epsilon())) {
+      hue = value;
+      saturation = value;
+    } else {
+      h = hue * 6.0;
+      s = saturation;
+      v = value;
+
+      if (vpMath::equal(h, 6.0, std::numeric_limits<double>::epsilon())) {
+        h = 0.0;
+      }
+
+      f = h - (int) h;
+      p = v * (1.0 - s);
+      q = v * (1.0 - s * f);
+      t = v * (1.0 - s * (1.0 - f));
+
+      switch ((int) h) {
+      case 0:
+        hue = v;
+        saturation = t;
+        value = p;
+        break;
+
+      case 1:
+        hue = q;
+        saturation = v;
+        value = p;
+        break;
+
+      case 2:
+        hue = p;
+        saturation = v;
+        value = t;
+        break;
+
+      case 3:
+        hue = p;
+        saturation = q;
+        value = v;
+        break;
+
+      case 4:
+        hue = t;
+        saturation = p;
+        value = v;
+        break;
+
+      default: //case 5:
+        hue = v;
+        saturation = p;
+        value = q;
+        break;
+      }
+    }
+
+    rgb[i*step] = (unsigned char) vpMath::round(hue * 255.0);
+    rgb[i*step + 1] = (unsigned char) vpMath::round(saturation * 255.0);
+    rgb[i*step + 2] = (unsigned char) vpMath::round(value * 255.0);
+  }
+}
+
+void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
+        const unsigned int size, const unsigned int step) {
+  for(unsigned int i = 0; i < size; i++) {
+    double red, green, blue;
+    double h, s, v;
+    double min, max;
+    double delta;
+
+    red = rgb[i*step] / 255.0;
+    green = rgb[i*step + 1] / 255.0;
+    blue = rgb[i*step + 2] / 255.0;
+
+    if (red > green) {
+      max = std::max(red, blue);
+      min = std::min(green, blue);
+    } else {
+      max = std::max(green, blue);
+      min = std::min(red, blue);
+    }
+
+    v = max;
+
+    if (!vpMath::equal(max, 0.0, std::numeric_limits<double>::epsilon())) {
+      s = (max - min) / max;
+    } else {
+      s = 0.0;
+    }
+
+    if (vpMath::equal(s, 0.0, std::numeric_limits<double>::epsilon())) {
+      h = 0.0;
+    } else {
+      delta = max - min;
+      if (vpMath::equal(delta, 0.0, std::numeric_limits<double>::epsilon())) {
+        delta = 1.0;
+      }
+
+      if (vpMath::equal(red, max, std::numeric_limits<double>::epsilon())) {
+        h = (green - blue) / delta;
+      } else if (vpMath::equal(green, max, std::numeric_limits<double>::epsilon())) {
+        h = 2 + (blue - red) / delta;
+      } else {
+        h = 4 + (red - green) / delta;
+      }
+
+      h /= 6.0;
+      if (h < 0.0) {
+        h += 1.0;
+      } else if (h > 1.0) {
+        h -= 1.0;
+      }
+    }
+
+    hue[i] = h;
+    saturation[i] = s;
+    value[i] = v;
+  }
+}
+
+/*!
+  Converts an array of hue, saturation and value to an array of RGBa values.
+
+  \param hue : Array of hue values (range between [0 - 1]).
+  \param saturation : Array of saturation values (range between [0 - 1]).
+  \param value : Array of value values (range between [0 - 1]).
+  \param rgba : RGBa array values (with alpha channel set to zero) converted from HSV color space.
+  \param size : The total image size or the number of pixels.
+*/
+void vpImageConvert::HSVToRGBa(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
+        const unsigned int size) {
+  vpImageConvert::HSV2RGB(hue, saturation, value, rgba, size, 4);
+}
+
+/*!
+  Converts an array of hue, saturation and value to an array of RGBa values.
+
+  \param hue : Array of hue values (range between [0 - 255]).
+  \param saturation : Array of saturation values (range between [0 - 255]).
+  \param value : Array of value values (range between [0 - 255]).
+  \param rgba : RGBa array values (with alpha channel set to zero) converted from HSV color space.
+  \param size : The total image size or the number of pixels.
+*/
+void vpImageConvert::HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+        unsigned char *rgba, const unsigned int size) {
+  for(unsigned int i = 0; i < size; i++) {
+    double h = hue[i] / 255.0, s = saturation[i] / 255.0, v = value[i] / 255.0;
+
+    vpImageConvert::HSVToRGBa(&h, &s, &v, (rgba + i*4), 1);
+  }
+}
+
+/*!
+  Converts an array of RGBa to an array of hue, saturation, value values.
+  The alpha channel is not used.
+
+  \param rgba : RGBa array values.
+  \param hue : Array of hue values converted from RGB color space (range between [0 - 1]).
+  \param saturation : Array of saturation values converted from RGB color space (range between [0 - 1]).
+  \param value : Array of value values converted from RGB color space (range between [0 - 1]).
+  \param size : The total image size or the number of pixels.
+*/
+void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value,
+        const unsigned int size) {
+  vpImageConvert::RGB2HSV(rgba, hue, saturation, value, size, 4);
+}
+
+/*!
+  Converts an array of RGBa to an array of hue, saturation, value values.
+  The alpha channel is not used.
+
+  \param rgba : RGBa array values.
+  \param hue : Array of hue values converted from RGB color space (range between [0 - 255]).
+  \param saturation : Array of saturation values converted from RGB color space (range between [0 - 255]).
+  \param value : Array of value values converted from RGB color space (range between [0 - 255]).
+  \param size : The total image size or the number of pixels.
+*/
+void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation,
+      unsigned char *value, const unsigned int size) {
+  for(unsigned int i = 0; i < size; i++) {
+    double h, s, v;
+    vpImageConvert::RGBaToHSV((rgba + i*4), &h, &s, &v, 1);
+
+    hue[i] = (unsigned char) 255.0 * h;
+    saturation[i] = (unsigned char) 255.0 * s;
+    value[i] = (unsigned char) 255.0 * v;
+  }
+}
+
+/*!
+  Converts an array of hue, saturation and value to an array of RGB values.
+
+  \param hue : Array of hue values (range between [0 - 1]).
+  \param saturation : Array of saturation values (range between [0 - 1]).
+  \param value : Array of value values (range between [0 - 1]).
+  \param rgb : RGB array values converted from RGB color space.
+  \param size : The total image size or the number of pixels.
+*/
+void vpImageConvert::HSVToRGB(const double *hue, const double *saturation, const double *value, unsigned char *rgb,
+        const unsigned int size) {
+  vpImageConvert::HSV2RGB(hue, saturation, value, rgb, size, 3);
+}
+
+/*!
+  Converts an array of hue, saturation and value to an array of RGB values.
+
+  \param hue : Array of hue values (range between [0 - 255]).
+  \param saturation : Array of saturation values (range between [0 - 255]).
+  \param value : Array of value values (range between [0 - 255]).
+  \param rgb : RGB array values converted from HSV color space.
+  \param size : The total image size or the number of pixels.
+*/
+void vpImageConvert::HSVToRGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+        unsigned char *rgb, const unsigned int size) {
+  for(unsigned int i = 0; i < size; i++) {
+    double h = hue[i] / 255.0, s = saturation[i] / 255.0, v = value[i] / 255.0;
+
+    vpImageConvert::HSVToRGB(&h, &s, &v, (rgb + i*3), 1);
+  }
+}
+
+/*!
+  Converts an array of RGB to an array of hue, saturation, value values.
+
+  \param rgb : RGB array values.
+  \param hue : Array of hue values converted from RGB color space (range between [0 - 1]).
+  \param saturation : Array of saturation values converted from RGB color space (range between [0 - 1]).
+  \param value : Array of value values converted from RGB color space (range between [0 - 1]).
+  \param size : The total image size or the number of pixels.
+*/
+void vpImageConvert::RGBToHSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
+        const unsigned int size) {
+  vpImageConvert::RGB2HSV(rgb, hue, saturation, value, size, 3);
+}
+
+/*!
+  Converts an array of RGB to an array of hue, saturation, value values.
+
+  \param rgb : RGB array values.
+  \param hue : Array of hue values converted from RGB color space (range between [0 - 255]).
+  \param saturation : Array of saturation values converted from RGB color space (range between [0 - 255]).
+  \param value : Array of value values converted from RGB color space (range between [0 - 255]).
+  \param size : The total image size or the number of pixels.
+*/
+void vpImageConvert::RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
+        const unsigned int size) {
+  for(unsigned int i = 0; i < size; i++) {
+    double h, s, v;
+
+    vpImageConvert::RGBToHSV((rgb + i*3), &h, &s, &v, 1);
+
+    hue[i] = (unsigned char) 255.0 * h;
+    saturation[i] = (unsigned char) 255.0 * s;
+    value[i] = (unsigned char) 255.0 * v;
   }
 }
 
