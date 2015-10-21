@@ -339,6 +339,26 @@ void vpImageFilter::gaussianBlur(const vpImage<unsigned char> &I, vpImage<double
 }
 
 /*!
+  Apply a Gaussian blur to a double image.
+  \param I : Input double image.
+  \param GI : Filtered image.
+  \param size : Filter size. This value should be odd.
+  \param sigma : Gaussian standard deviation. If it is equal to zero or negative, it is computed from filter size as sigma = (size-1)/6.
+  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+
+ */
+void vpImageFilter::gaussianBlur(const vpImage<double> &I, vpImage<double>& GI, unsigned int size, double sigma, bool normalize)
+{
+  double *fg=new double[(size+1)/2] ;
+  vpImageFilter::getGaussianKernel(fg, size, sigma, normalize) ;
+  vpImage<double> GIx ;
+  vpImageFilter::filterX(I, GIx,fg,size);
+  vpImageFilter::filterY(GIx, GI,fg,size);
+  GIx.destroy();
+  delete[] fg;
+}
+
+/*!
   Return the coefficients of a Gaussian filter.
 
   \param filter : Pointer to the filter kernel that should refer to a (size+1)/2 array.
