@@ -646,6 +646,7 @@ main(int argc, const char ** argv)
     // Test construction of vpImage from an array with copyData==true
     ////////////////////////////////////
     unsigned char *rgba2 = new unsigned char[size*4];
+    memset(rgba2, 127, size*4);
     vpImage<vpRGBa> I_copyData((vpRGBa *) rgba2, h, w, true);
 
     //Delete the array
@@ -654,7 +655,7 @@ main(int argc, const char ** argv)
       rgba2 = NULL;
     }
 
-    filename =  vpIoTools::createFilePath(opath, "Klimt_copyData.ppm");
+    filename =  vpIoTools::createFilePath(opath, "I_copyData.ppm");
     /* Save the the current image */
     vpImageIo::write(I_copyData, filename);
 
