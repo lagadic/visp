@@ -54,7 +54,7 @@
 
   \class vpViper650
 
-  \ingroup Viper
+  \ingroup group_robot_real
 
   \brief Modelisation of the ADEPT Viper 650 robot.
 

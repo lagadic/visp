@@ -51,7 +51,7 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentAreaNormalized
 
-  \ingroup VsFeature2
+  \ingroup group_core_visual_features
 
   \brief Functionality computation for normalized surface moment feature. Computes the interaction matrix associated with vpMomentAreaNormalized.
 
@@ -104,7 +104,7 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentAreaNormalized
 
-  \ingroup VsFeature2
+  \ingroup group_core_visual_features
 
   \brief Functionality computation for normalized surface moment feature. Computes the interaction matrix associated with vpMomentAreaNormalized.
 

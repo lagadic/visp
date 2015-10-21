@@ -62,7 +62,7 @@
 /*!
   \class vpCameraParameters
 
-  \ingroup CameraModelTransformation CameraModel
+  \ingroup group_core_camera
 
   \brief Generic class defining intrinsic camera parameters.
 

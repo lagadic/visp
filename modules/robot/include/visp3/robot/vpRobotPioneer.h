@@ -58,7 +58,7 @@
 
   \class vpRobotPioneer
 
-  \ingroup Pioneer RobotDriver
+  \ingroup group_robot_real
 
   \brief Interface for Pioneer mobile robots based on Aria 3rd party library.
 

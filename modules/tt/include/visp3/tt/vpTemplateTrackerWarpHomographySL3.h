@@ -53,6 +53,10 @@
 #include <visp3/tt/vpTemplateTrackerWarp.h>
 #include <visp3/vision/vpHomography.h>
 
+/*!
+  \class vpTemplateTrackerWarpHomographySL3
+  \ingroup group_tt_warp
+*/
 class VISP_EXPORT vpTemplateTrackerWarpHomographySL3: public vpTemplateTrackerWarp
 {
   protected:

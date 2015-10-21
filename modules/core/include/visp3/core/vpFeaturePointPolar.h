@@ -58,7 +58,7 @@
 
 /*!
   \class vpFeaturePointPolar
-  \ingroup VsFeature2
+  \ingroup group_core_visual_features
 
   \brief Class that defines 2D image point visual feature with
   polar coordinates \f$(\rho,\theta)\f$ described in \cite Corke09a.

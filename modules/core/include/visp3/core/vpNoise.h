@@ -59,7 +59,7 @@
 /*!
   \class vpUniRand
 
-  \ingroup Random
+  \ingroup group_core_random
   \brief Class for generating random numbers with uniform probability density.
 
   The algorithms and notations used are described in \cite Gentle:2004.
@@ -92,7 +92,7 @@ class VISP_EXPORT vpUniRand
 
 /*!
   \class vpGaussRand
-  \ingroup Random
+  \ingroup group_core_random
   \brief Class for generating random number with normal probability density.
 
   The algorithms and notations used are described in \cite Gentle:2004.

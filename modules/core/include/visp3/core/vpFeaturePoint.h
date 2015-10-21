@@ -58,7 +58,7 @@
 
 /*!
   \class vpFeaturePoint
-  \ingroup VsFeature2
+  \ingroup group_core_visual_features
 
   \brief Class that defines a 2D point visual feature \f$ s\f$ which
   is composed by two parameters that are the cartesian coordinates \f$

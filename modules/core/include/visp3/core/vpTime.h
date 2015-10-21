@@ -55,7 +55,7 @@
 
 /*!
   \class vpTime
-  \ingroup Time
+  \ingroup group_core_time
   \brief Time management and measurement.
 
   The example below shows how to synchronize a loop to a given framerate.

@@ -70,7 +70,7 @@ class vpPoint;
 /*!
   \class vpHomogeneousMatrix
 
-  \ingroup PoseTransformation
+  \ingroup group_core_transformations
 
   \brief  The class provides a data structure for the homogeneous matrices
   as well as a set of operations on these matrices.
@@ -78,7 +78,6 @@ class vpPoint;
   The vpHomogeneousMatrix is derived from vpMatrix.
 
   \author  Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
-
 
   An homogeneous matrix is 4x4 matrix defines as
   \f[
@@ -92,7 +91,6 @@ class vpPoint;
 
   \f$ ^a{\bf R}_b \f$ is a rotation matrix and
   \f$ ^a{\bf t}_b \f$ is a translation vector.
-
 
 */
 class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix

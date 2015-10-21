@@ -65,7 +65,7 @@ class vpRzyzVector;
 /*!
   \class vpThetaUVector
 
-  \ingroup RotTransformation
+  \ingroup group_core_transformations
 
   \brief Class that consider the case of the \f$\theta {\bf u}\f$
   parameterization for the rotation.

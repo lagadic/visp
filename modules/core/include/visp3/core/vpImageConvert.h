@@ -94,7 +94,7 @@
 /*!
   \class vpImageConvert
 
-  \ingroup ImageConversion
+  \ingroup group_core_image
 
   Convert image types.
 

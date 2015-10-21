@@ -56,7 +56,7 @@
 
 /*!
   \class vpDetectorQRCode
-
+  \ingroup group_detection_barcode
   Base class for bar code detector. This class is a wrapper over libzbar
   available from http://zbar.sourceforge.net/
 

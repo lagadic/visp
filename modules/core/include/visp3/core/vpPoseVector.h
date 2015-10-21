@@ -66,7 +66,7 @@ class vpThetaUVector;
 /*!
   \class vpPoseVector
 
-  \ingroup PoseTransformation
+  \ingroup group_core_transformations
 
   \brief The pose is a complete representation of every rigid motion in the
   euclidian space.  

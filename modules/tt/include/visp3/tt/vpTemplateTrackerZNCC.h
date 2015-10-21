@@ -61,6 +61,10 @@
 
 #define APPROX_NCC
 
+/*!
+  \class vpTemplateTrackerZNCC
+  \ingroup group_tt_tracker
+*/
 class VISP_EXPORT vpTemplateTrackerZNCC: public vpTemplateTracker
 {
   protected:

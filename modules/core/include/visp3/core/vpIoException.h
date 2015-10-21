@@ -66,7 +66,6 @@
 
 /*!
   \class vpIoException
-  \ingroup Exception
   \brief Error that can be emited by the vpIoTools class and its derivates.
  */
 class VISP_EXPORT vpIoException : public vpException

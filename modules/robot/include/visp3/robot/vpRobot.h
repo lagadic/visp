@@ -55,6 +55,7 @@
 
 /*!
   \class vpRobot
+  \ingroup group_robot_real
   \brief class that defines a generic virtual robot
 */
 class VISP_EXPORT vpRobot

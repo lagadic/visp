@@ -52,8 +52,6 @@
 #include <string>
 #include <dshow.h>
 
-
-
 class VISP_EXPORT vpDirectShowDevice
 {
 

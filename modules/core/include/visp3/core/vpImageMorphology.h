@@ -60,7 +60,7 @@
 /*!
   \class vpImageMorphology
 
-  \ingroup ImageFiltering
+  \ingroup group_core_image
 
   \brief  Various mathematical morphology tools, erosion, dilatation...
 

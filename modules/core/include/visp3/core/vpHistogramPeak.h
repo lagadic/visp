@@ -58,7 +58,7 @@
 /*!
   \class vpHistogramPeak
 
-  \ingroup Histogram
+  \ingroup group_core_image
   \brief Declaration of the peak (maximum value) in a gray level image
   histogram.
 

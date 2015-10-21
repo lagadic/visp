@@ -58,7 +58,6 @@
 
 /*!
   \class vpServoException
-  \ingroup Exception
   \brief Error that can be emited by the vpServo class and its derivates.
   \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
  */

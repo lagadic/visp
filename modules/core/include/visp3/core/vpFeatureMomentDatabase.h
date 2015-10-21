@@ -57,7 +57,7 @@ class vpMomentObject;
 /*!
   \class vpFeatureMomentDatabase
 
-  \ingroup VsFeature2
+  \ingroup group_core_visual_features
 
   \brief This class allows to register all feature moments (implemented in vpFeatureMoment... classes) so they can access each other according to their dependencies.
 

@@ -51,7 +51,7 @@
 
   \class vpPioneerPan
 
-  \ingroup Pioneer
+  \ingroup group_robot_real group_robot_simu
 
   \brief Generic functions for Pioneer mobile robots equiped with a pan head.
 

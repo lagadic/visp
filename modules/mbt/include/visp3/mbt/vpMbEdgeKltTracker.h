@@ -64,7 +64,7 @@
 
 /*!
   \class vpMbEdgeKltTracker
-  \ingroup ModelBasedTracking
+  \ingroup group_mbt_trackers
   \warning This class is only available if OpenCV is installed, and used.
   
   \brief Hybrid tracker based on moving-edges and keypoints tracked using KLT 

@@ -86,7 +86,7 @@
 /*!
   \class vpFeatureBuilder
 
-  \ingroup VsFeatureBuilder
+  \ingroup group_core_visual_features
   \brief Class that defines conversion between trackers and visual features.
 */
 class VISP_EXPORT vpFeatureBuilder

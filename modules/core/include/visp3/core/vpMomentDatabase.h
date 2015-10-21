@@ -57,7 +57,7 @@ class vpMomentObject;
 /*!
   \class vpMomentDatabase
 
-  \ingroup TrackingMoments
+  \ingroup group_core_moments
 
   \brief This class allows to register all vpMoments so they can access each other according to their dependencies.
 

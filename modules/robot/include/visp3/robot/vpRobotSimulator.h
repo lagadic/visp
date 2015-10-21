@@ -56,7 +56,7 @@
 /*!
   \class vpRobotSimulator
 
-  \ingroup RobotSimuWithVisu, RobotSimuWithoutVisu
+  \ingroup group_robot_simu
   
   \brief This class aims to be a basis used to create all the
   robot simulators.

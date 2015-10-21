@@ -62,13 +62,10 @@
 #include <visp3/core/vpFrameGrabber.h>
 #include <visp3/core/vpRGBa.h>
 
-
-
-
 /*!
   \class vpV4l2Grabber
 
-  \ingroup Framegrabber CameraDriver
+  \ingroup group_sensor_camera
 
   \brief Class for the Video4Linux2 video device.
 

@@ -67,7 +67,8 @@
 
 /*!
   \class vpPlanarObjectDetector
-  \ingroup PlanarSurfaceDetector
+  \ingroup group_vision_keypoints
+
   \brief Class used to detect a planar surface. 
 
   \deprecated This class is deprecated with OpenCV 3.0.0 or more recent.

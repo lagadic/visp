@@ -58,7 +58,7 @@
 
 /*!
   \class vpGenericFeature
-  \ingroup VsFeatureGeneric
+  \ingroup group_core_features
 
   \brief Class that enables to define a feature or a set of features which are not implemented in ViSP as a specific class. It is indeed possible to create its own features, to use the corresponding interaction matrix, and to compute an error between the current and the desired feature. Moreover the created features can be mixed with features already implemented.
 

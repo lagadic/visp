@@ -59,7 +59,7 @@
 /*!
   \class vpMeNurbs
 
-  \ingroup TrackingImageME
+  \ingroup group_core_trackers
 
   \brief Class that tracks in an image a edge defined by a Nurbs.
 

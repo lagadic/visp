@@ -59,7 +59,7 @@
 #include <visp3/core/vpRGBa.h>
 /*!
   \class vpServoDisplay
-  \ingroup VsTask
+  \ingroup group_task
   \brief Interface with the image for feature display.
 */
 class VISP_EXPORT vpServoDisplay

@@ -63,7 +63,7 @@
 
   \class vpKinect
 
-  \ingroup KinectDriver
+  \ingroup group_sensor_rgbd
 
   \brief Driver for the Kinect device.
 

@@ -64,7 +64,7 @@
 
 /*!
   \class vpMbtMeEllipse
-  \ingroup TrackingImageME
+  \ingroup group_mbt_features
 
   \brief Class that tracks an ellipse moving edges.
 

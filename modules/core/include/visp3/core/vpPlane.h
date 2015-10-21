@@ -49,7 +49,7 @@
 /*!
   \class vpPlane
 
-  \ingroup GeometryPlane
+  \ingroup group_core_geometric_features
 
   \brief This class defines the container for a plane geometrical structure.
 

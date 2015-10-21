@@ -61,6 +61,7 @@
 
 /*!
   \class vpFernClassifier
+  \ingroup group_vision_keypoints
 
   \brief Class that implements the Fern classifier and the YAPE detector thanks
   to the OpenCV library.

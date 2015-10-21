@@ -62,7 +62,7 @@
 /*!
   \class vpServo
 
-  \ingroup VsTask
+  \ingroup group_task
   Class required to compute the visual servoing control law descbribed
   in \cite Chaumette06a and \cite Chaumette07a.
 

@@ -56,7 +56,7 @@
 /*!
   \class vpHistogramValey
 
-  \ingroup Histogram
+  \ingroup group_core_image
   \brief Declaration of the valey (minimum value) in a gray level image
   histogram.
 

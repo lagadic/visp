@@ -61,7 +61,7 @@
 /*!
   \class vpRotationMatrix
 
-  \ingroup RotTransformation
+  \ingroup group_core_transformations
 
   \brief The vpRotationMatrix considers the particular case of
   a rotation matrix.

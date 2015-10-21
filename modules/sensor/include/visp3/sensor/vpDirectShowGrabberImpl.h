@@ -62,8 +62,6 @@
 	\class vpDirectShowGrabberImpl
 	\brief class for windows direct show devices - implementation
 
-	\ingroup libdevice
-
 	This class uses CComPtr which is the best way to be sure that all the interfaces
 	are released sooner or later.
 

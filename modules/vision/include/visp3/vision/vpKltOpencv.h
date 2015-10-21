@@ -64,7 +64,7 @@
 /*!
   \class vpKltOpencv
 
-  \ingroup TrackingImagePoint
+  \ingroup group_vision_keypoints
 
   \brief Wrapper for the KLT (Kanade-Lucas-Tomasi) feature tracker
   implemented in OpenCV.

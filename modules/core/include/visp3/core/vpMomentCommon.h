@@ -62,7 +62,7 @@ class vpMomentObject;
 /*!
   \class vpMomentCommon
 
-  \ingroup TrackingMoments
+  \ingroup group_core_moments
 
   \brief This class initializes and allows access to commonly used moments.
 

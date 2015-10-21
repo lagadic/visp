@@ -47,7 +47,7 @@
 /*!
   \class vpImageSimulator
 
-  \ingroup ImageSimulator
+  \ingroup group_core_image_simu
 
   \brief Class which enables to project an image in the 3D space and get the view of a virtual camera.
   

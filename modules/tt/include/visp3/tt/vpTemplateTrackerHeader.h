@@ -49,16 +49,28 @@
 
 #include <stdio.h>
 
+/*!
+  \struct vpTemplateTrackerZPoint
+  \ingroup group_tt_tools
+*/
 struct vpTemplateTrackerZPoint {
     int x,y;
 
     vpTemplateTrackerZPoint() : x(0), y(0) {}
 };
+/*!
+  \struct vpTemplateTrackerDPoint
+  \ingroup group_tt_tools
+*/
 struct vpTemplateTrackerDPoint {
     double x,y;
 
     vpTemplateTrackerDPoint() : x(0), y(0) {}
 };
+/*!
+  \struct vpTemplateTrackerPoint
+  \ingroup group_tt_tools
+*/
 struct vpTemplateTrackerPoint {
     int x,y;
     double dx,dy;
@@ -68,6 +80,10 @@ struct vpTemplateTrackerPoint {
 
     vpTemplateTrackerPoint() : x(0), y(0), dx(0), dy(0), val(0), dW(NULL), HiG(NULL) {}
 };
+/*!
+  \struct vpTemplateTrackerPointCompo
+  \ingroup group_tt_tools
+*/
 struct vpTemplateTrackerPointCompo {
     double *dW;
     vpTemplateTrackerPointCompo() : dW(NULL) {}

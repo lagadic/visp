@@ -63,10 +63,7 @@
 /* --- CLASS --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/*!
-
-  \ingroup Exception
-          
+/*!          
   \brief Error that can be emited by the vpFrameGrabber class and its derivates
  */
 class VISP_EXPORT vpFrameGrabberException : public vpException

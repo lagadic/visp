@@ -49,6 +49,10 @@
 
 #include <visp3/tt/vpTemplateTrackerSSD.h>
 
+/*!
+  \class vpTemplateTrackerSSDESM
+  \ingroup group_tt_tracker
+*/
 class VISP_EXPORT vpTemplateTrackerSSDESM: public vpTemplateTrackerSSD
 {
   protected:

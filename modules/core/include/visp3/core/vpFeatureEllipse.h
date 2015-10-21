@@ -58,7 +58,7 @@
 
 /*!
   \class vpFeatureEllipse
-  \ingroup VsFeature2
+  \ingroup group_core_visual_features
   \brief Class that defines 2D ellipse visual feature.
 */
 class VISP_EXPORT vpFeatureEllipse : public vpBasicFeature

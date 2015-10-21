@@ -60,7 +60,7 @@
 /*!
   \class vpFeatureDisplay
 
-  \ingroup VsFeatureDisplay
+  \ingroup group_core_visual_features
   \brief Interface with the image for feature display.
 */
 class VISP_EXPORT vpFeatureDisplay

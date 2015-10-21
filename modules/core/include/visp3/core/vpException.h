@@ -66,6 +66,7 @@
 
 /*!
    \class vpException
+   \ingroup group_core_debug
    \brief error that can be emited by ViSP classes.
 
    This class inherites from the standard std::exception contained in the C++

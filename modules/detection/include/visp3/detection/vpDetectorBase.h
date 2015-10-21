@@ -52,7 +52,7 @@
 
 /*!
   \class vpDetectorBase
-
+  \ingroup group_detection_barcode group_detection_face
   Base class for object detection.
 
   This class is a generic class that can be used to detect:

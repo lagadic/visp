@@ -57,7 +57,10 @@
 
 #include <visp3/core/vpXmlParser.h>
 
-
+/*!
+  \class vpXmlConfigParserKeyPoint
+  \ingroup group_vision_keypoints
+*/
 class VISP_EXPORT vpXmlConfigParserKeyPoint: public vpXmlParser
 {
 

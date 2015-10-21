@@ -66,7 +66,7 @@
 
   \class vpDisplay
 
-  \ingroup ImageGUI
+  \ingroup group_core_display
 
   \brief Class that defines generic functionnalities for display.
 

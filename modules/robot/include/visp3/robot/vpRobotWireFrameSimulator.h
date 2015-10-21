@@ -72,7 +72,7 @@
 /*!
   \class vpRobotWireFrameSimulator
 
-  \ingroup RobotSimuWithVisu
+  \ingroup group_robot_simu
 
   \brief This class aims to be a basis used to create all the
   simulators of robots.

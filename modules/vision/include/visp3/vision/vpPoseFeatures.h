@@ -298,7 +298,7 @@ void buildCurrentFeatureObjectWithTuple( objType *obj, featureType &feature,
 //#################################################
 /*!
   \class vpPoseSpecificFeature
-  \ingroup Pose
+  \ingroup group_vision_pose
   \brief Class used to define specific features that could be considered in pose estimation from visual features implemented in vpPoseFeatures.
 */
 class VISP_EXPORT vpPoseSpecificFeature
@@ -319,7 +319,7 @@ public:
 
 /*!
   \class vpPoseSpecificFeatureTemplate
-  \ingroup Pose
+  \ingroup group_vision_pose
   \brief Template class that allows to estimate a pose from all kind of specific features if the compiler support C++ 11.
 */
 template< typename featureType, typename RetType, typename ...Args >
@@ -368,7 +368,7 @@ public:
 
 /*!
   \class vpPoseSpecificFeatureTemplateObject
-  \ingroup Pose
+  \ingroup group_vision_pose
   \brief Template class that allows to estimate a pose from all kind of specific features if the compiler support C++ 11.
 */
 template< typename ObjectType, typename featureType, typename RetType, typename ...Args >
@@ -416,7 +416,7 @@ public:
 /*!
   \class vpPoseFeatures
   \brief Tools for pose computation from any feature.
-  \ingroup Pose
+  \ingroup group_vision_pose
 
   This class allows to estimate a pose by virtual visual servoing from visual features. The features that are considered are points, segments, lines, ellipses.
   If the compiler is compatible with C++ 11, it is possible to introduce specific features that are not directly implemented in ViSP.

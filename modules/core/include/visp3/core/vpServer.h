@@ -51,7 +51,7 @@
 /*!
   \class vpServer
 
-  \ingroup Network
+  \ingroup group_core_network
   
   \brief This class represents a Transmission Control Protocol (TCP) server.
   

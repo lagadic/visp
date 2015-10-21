@@ -54,7 +54,7 @@
 
   \class vpMutex
 
-  \ingroup Mutex
+  \ingroup group_core_mutex
 
   \brief Class that allows protection by mutex.
 
@@ -76,7 +76,7 @@ public:
 	  
 	  \class vpScopedLock
 	  
-	  \ingroup Mutex
+    \ingroup group_core_mutex
 	  
 	  \brief Class that allows protection by mutex.
 	  

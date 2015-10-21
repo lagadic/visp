@@ -53,7 +53,7 @@
 
 /*!
   \class vpSubMatrix
-  \ingroup vpMath
+  \ingroup group_core_matrices
   \brief Definition of the vpSubMatrix
   vpSubMatrix class provides a mask on a vpMatrix
   all properties of vpMatrix are available with

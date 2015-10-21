@@ -56,7 +56,7 @@
 
 /*!
   \class vpCylinder
-  \ingroup TrackingFeature GeometryFeature
+  \ingroup group_core_geometric_features
   \brief Class that defines what is a cylinder.
 
   A cylinder may be represented by the equation:

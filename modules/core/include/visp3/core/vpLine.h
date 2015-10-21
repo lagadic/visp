@@ -55,7 +55,7 @@
 
 /*!
   \class vpLine
-  \ingroup TrackingFeature GeometryFeature
+  \ingroup group_core_geometric_features
 
   \brief Class that defines a line in the object frame, the
   camera frame and the image plane. All the parameters

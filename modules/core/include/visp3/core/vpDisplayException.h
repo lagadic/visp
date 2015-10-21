@@ -67,8 +67,6 @@
 /*!
   \class vpDisplayException
 
-  \ingroup Exception
-
   \brief Error that can be emited by the vpDisplay class and its derivates.
  */
 class VISP_EXPORT vpDisplayException : public vpException

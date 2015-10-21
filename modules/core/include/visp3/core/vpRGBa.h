@@ -56,7 +56,7 @@
 /*!
   \class vpRGBa
 
-  \ingroup ImageContainer
+  \ingroup group_core_image
 
   \brief Class that defines a RGB 32 bits structure.
 

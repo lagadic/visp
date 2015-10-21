@@ -60,7 +60,7 @@
 /*!
   \class vpMeterPixelConversion
 
-  \ingroup CameraModelTransformation CameraModel
+  \ingroup group_core_camera
 
   \brief Conversion from normalized coordinates \f$(x,y)\f$ in meter
   to pixel coordinates \f$(u,v)\f$.

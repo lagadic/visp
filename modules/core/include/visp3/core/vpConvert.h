@@ -59,7 +59,11 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpPoint.h>
 
-
+/*!
+  \class vpConvert
+  \ingroup group_core_bridges
+  Bridges over other frameworks like OpenCV.
+ */
 class VISP_EXPORT vpConvert
 {
 

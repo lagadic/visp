@@ -52,7 +52,7 @@
 /*!
   \class vpMomentBasic
 
-  \ingroup TrackingMoments
+  \ingroup group_core_moments
 
   \brief This class defines the 2D basic moment \f$m_{ij}\f$.
     This class is a wrapper for vpMomentObject wich allows to use it as a moment.

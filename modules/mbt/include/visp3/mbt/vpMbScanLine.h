@@ -62,6 +62,12 @@
 
 // #define DEBUG_DISP // Uncomment to get visibility debug display
 
+/*!
+  \class vpMbScanLine
+
+  \ingroup group_mbt_faces
+
+ */
 class vpMbScanLine
 {
 public:

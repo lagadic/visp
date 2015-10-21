@@ -56,8 +56,6 @@
 /*!
   \class vpFrameGrabber
 
-  \ingroup Framegrabber
-
   \brief Base class for all video devices. It is designed to provide a front
   end to video sources.
 

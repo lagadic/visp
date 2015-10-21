@@ -67,7 +67,7 @@
 
   \class vpImageException
 
-  \ingroup Exception
+  \ingroup group_core_image
 
   \brief Error that can be emited by the vpImage class and its derivates.
  */

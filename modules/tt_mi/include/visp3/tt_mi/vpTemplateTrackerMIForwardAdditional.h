@@ -51,6 +51,10 @@
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>
 #include <visp3/tt_mi/vpTemplateTrackerMI.h>
 
+/*!
+  \class vpTemplateTrackerMIForwardAdditional
+  \ingroup group_tt_mi_tracker
+*/
 class VISP_EXPORT vpTemplateTrackerMIForwardAdditional: public vpTemplateTrackerMI
 {
 public:

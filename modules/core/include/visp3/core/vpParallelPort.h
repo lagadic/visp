@@ -63,7 +63,7 @@
 /*!
 
   \class vpParallelPort
-  \ingroup ParallelPort
+  \ingroup group_core_parallel_port
   \brief Parallel port management under unix.
 
   The code below shows how to send a data over the parallel port.

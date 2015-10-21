@@ -55,6 +55,7 @@
 
 /*!
   \class vpKalmanFilter
+  \ingroup group_core_kalman
   \brief This class provides a generic Kalman filtering algorithm along with
   some specific state model (constant velocity, constant acceleration)
   which are implemented in the vpLinearKalmanFilterInstantiation class.

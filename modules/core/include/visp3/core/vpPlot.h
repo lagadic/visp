@@ -53,7 +53,7 @@
 
 /*!
   \class vpPlot
-  \ingroup plot
+  \ingroup group_core_plot
 
   \brief This class enables real time drawing of 2D or 3D graphics. An
   instance of the class open a window which contains between 1 and 4

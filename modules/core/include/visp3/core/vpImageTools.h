@@ -70,7 +70,7 @@
 /*!
   \class vpImageTools
   
-  \ingroup ImageTool
+  \ingroup group_core_image
 
   \brief Various image tools; sub-image extraction, modification of
   the look up table, binarisation...

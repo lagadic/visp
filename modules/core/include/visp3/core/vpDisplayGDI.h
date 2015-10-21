@@ -52,7 +52,7 @@
 /*!
   \class vpDisplayGDI
 
-  \ingroup ImageGUI
+  \ingroup group_core_display
 
   \brief Display for windows using GDI (available on any windows 32 platform).
 

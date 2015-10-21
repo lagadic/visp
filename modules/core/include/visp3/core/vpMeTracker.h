@@ -45,17 +45,6 @@
   \brief Contains abstract elements for a Distance to Feature type feature.
 */
 
-// ===================================================================
-/*!
-  \class vpMeTracker
-  \ingroup TrackingImageME
-  \brief Contains abstract elements for a Distance to Feature type feature.
-
-  2D state = list of points, 3D state = feature
-  
- */
-// ===================================================================
-
 #ifndef vpMeTracker_HH
 #define vpMeTracker_HH
 
@@ -68,6 +57,14 @@
 #include <iostream>
 #include <list>
 
+/*!
+  \class vpMeTracker
+
+  \ingroup group_core_trackers
+  \brief Contains abstract elements for a Distance to Feature type feature.
+
+  2D state = list of points, 3D state = feature
+*/
 class VISP_EXPORT vpMeTracker : public vpTracker
 {
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS

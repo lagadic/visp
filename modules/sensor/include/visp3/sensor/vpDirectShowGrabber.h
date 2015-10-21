@@ -61,7 +61,7 @@ class vpDirectShowGrabberImpl;
   from the rest of the application. This is necessary to avoid conflicts
   between dshow's Qedit.h and Direct3D's includes.
 
-  \ingroup Framegrabber CameraDriver
+  \ingroup group_sensor_camera
 */
 
 class VISP_EXPORT vpDirectShowGrabber : public vpFrameGrabber

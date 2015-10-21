@@ -56,6 +56,10 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
 
+/*!
+  \class vpTemplateTrackerTriangle
+  \ingroup group_tt_tools
+*/
 class VISP_EXPORT vpTemplateTrackerTriangle
 {
   protected:

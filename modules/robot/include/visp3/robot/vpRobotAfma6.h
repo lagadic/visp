@@ -65,7 +65,7 @@ extern "C" {
 /*!
   \class vpRobotAfma6
 
-  \ingroup Afma6 RobotDriver
+  \ingroup group_robot_real
 
   \brief Control of Irisa's gantry robot named Afma6.
 

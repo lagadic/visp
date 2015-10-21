@@ -61,7 +61,7 @@
 /*!
   \class vpXmlParserHomogeneousMatrix
 
-  \ingroup PoseTransformation
+  \ingroup group_core_transformations
 
   \brief XML parser to load and save an homogenous matrix in a file.
 

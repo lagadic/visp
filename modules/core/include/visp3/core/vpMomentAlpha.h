@@ -52,7 +52,7 @@
 /*!
   \class vpMomentAlpha
 
-  \ingroup TrackingMoments
+  \ingroup group_core_moments
 
   \brief This class defines the orientation of the object inside the plane parallel to the object.
 

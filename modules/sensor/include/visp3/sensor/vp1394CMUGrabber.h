@@ -65,7 +65,7 @@
 /*!
   \class vp1394CMUGrabber
 
-  \ingroup Framegrabber CameraDriver
+  \ingroup group_sensor_camera
 
   \brief Firewire cameras video capture based on CMU 1394 Digital Camera SDK.
 

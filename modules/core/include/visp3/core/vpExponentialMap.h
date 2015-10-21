@@ -56,7 +56,7 @@
 /*!
   \class vpExponentialMap
 
-  \ingroup ExpMapTransformation
+  \ingroup group_core_transformations
 
   \brief Direct or inverse exponential map computation.
 

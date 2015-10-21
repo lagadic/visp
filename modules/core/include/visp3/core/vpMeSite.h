@@ -58,7 +58,7 @@
 
 /*!
   \class vpMeSite
-  \ingroup TrackingImageME
+  \ingroup group_core_trackers
 
   \brief Performs search in a given direction(normal) for a given
    distance(pixels) for a given 'site'. Gives the most likely site

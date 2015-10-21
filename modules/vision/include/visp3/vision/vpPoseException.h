@@ -62,7 +62,7 @@
 
 /*!
   \class vpPoseException
-  \ingroup Exception
+  \ingroup group_vision_pose
   \brief Error that can be emited by the vpPose class and its derivates.
  */
 class VISP_EXPORT vpPoseException : public vpException

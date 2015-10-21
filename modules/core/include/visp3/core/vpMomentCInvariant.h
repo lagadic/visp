@@ -54,7 +54,7 @@ class vpMomentBasic;
 /*!
   \class vpMomentCInvariant
 
-  \ingroup TrackingMoments
+  \ingroup group_core_moments
 
   This class defines several 2D (translation+rotation+scale) invariants for both symmetric and non-symmetric objects.
   These moment-based invariants are described in the following papers \cite Chaumette04a, \cite Tahri05z.

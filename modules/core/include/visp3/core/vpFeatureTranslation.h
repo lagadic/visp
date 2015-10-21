@@ -58,7 +58,7 @@
 
 /*!
   \class vpFeatureTranslation
-  \ingroup VsFeature3
+  \ingroup group_core_visual_features
 
   \brief Class that defines the translation visual feature
   \f$s=(t_x,t_y,t_z)\f$.

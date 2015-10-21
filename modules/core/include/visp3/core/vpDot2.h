@@ -59,7 +59,7 @@
 /*!
   \class vpDot2
 
-  \ingroup TrackingImageBasic
+  \ingroup group_core_trackers
 
   \brief This tracker is meant to track a blob (connex pixels with same
   gray level) on a vpImage.

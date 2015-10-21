@@ -84,7 +84,7 @@
 
 /*!
   \class vpMbTracker
-  \ingroup ModelBasedTracking
+  \ingroup group_mbt_trackers
   \brief Main methods for a model-based tracker. 
 
   This class provides the main methods for a model based tracker. This pure

@@ -71,6 +71,7 @@
 
 /*!
   \class vpKeyPointSurf
+  \ingroup group_vision_keypoints
 
   \brief Class that implements the SURF key points and technics thanks
   to OpenCV library.
