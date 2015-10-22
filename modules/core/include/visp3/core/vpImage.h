@@ -348,7 +348,7 @@ vpImage<Type>::init(unsigned int h, unsigned int w, Type value)
   {
     init(h,w) ;
   }
-  catch(vpException &me)
+  catch(vpException &)
   {
     vpERROR_TRACE(" ") ;
     throw ;
@@ -545,7 +545,7 @@ vpImage<Type>::vpImage (unsigned int h, unsigned int w, Type value)
   {
     init(h,w,value) ;
   }
-  catch(vpException &me)
+  catch(vpException &)
   {
     vpERROR_TRACE(" ") ;
     throw ;
@@ -574,7 +574,7 @@ vpImage<Type>::vpImage (Type * const array, const unsigned int h, const unsigned
   {
     init(array, h, w, copyData);
   }
-  catch(vpException &me)
+  catch(vpException &)
   {
     throw ;
   }
@@ -623,7 +623,7 @@ vpImage<Type>::resize(unsigned int h, unsigned int w)
   {
     init(h, w) ;
   }
-  catch(vpException &me)
+  catch(vpException &)
   {
     vpERROR_TRACE(" ") ;
     throw ;
@@ -657,7 +657,7 @@ vpImage<Type>::resize(unsigned int h, unsigned int w, const Type val)
   {
     init(h, w, val) ;
   }
-  catch(vpException &me)
+  catch(vpException &)
   {
     vpERROR_TRACE(" ") ;
     throw ;
@@ -724,7 +724,7 @@ vpImage<Type>::vpImage(const vpImage<Type>& I)
     memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type)) ;
     for (unsigned int i =0  ; i < this->height ; i++) row[i] = bitmap + i*this->width ;
   }
-  catch(vpException &me)
+  catch(vpException &)
   {
     vpERROR_TRACE(" ") ;
     throw ;
@@ -828,7 +828,7 @@ vpImage<Type> & vpImage<Type>::operator=(const vpImage<Type> &I)
       }
     }
   }
-  catch(vpException &me)
+  catch(vpException &)
   {
     vpERROR_TRACE(" ") ;
     throw ;

@@ -3694,11 +3694,11 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
     blue = rgb[i*step + 2] / 255.0;
 
     if (red > green) {
-      max = std::max(red, blue);
-      min = std::min(green, blue);
+      max = (std::max)(red, blue);
+      min = (std::min)(green, blue);
     } else {
-      max = std::max(green, blue);
-      min = std::min(red, blue);
+      max = (std::max)(green, blue);
+      min = (std::min)(red, blue);
     }
 
     v = max;
@@ -3802,9 +3802,9 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, un
     double h, s, v;
     vpImageConvert::RGBaToHSV((rgba + i*4), &h, &s, &v, 1);
 
-    hue[i] = (unsigned char) 255.0 * h;
-    saturation[i] = (unsigned char) 255.0 * s;
-    value[i] = (unsigned char) 255.0 * v;
+    hue[i] = (unsigned char) (255.0 * h);
+    saturation[i] = (unsigned char) (255.0 * s);
+    value[i] = (unsigned char) (255.0 * v);
   }
 }
 
@@ -3870,9 +3870,9 @@ void vpImageConvert::RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsi
 
     vpImageConvert::RGBToHSV((rgb + i*3), &h, &s, &v, 1);
 
-    hue[i] = (unsigned char) 255.0 * h;
-    saturation[i] = (unsigned char) 255.0 * s;
-    value[i] = (unsigned char) 255.0 * v;
+    hue[i] = (unsigned char) (255.0 * h);
+    saturation[i] = (unsigned char) (255.0 * s);
+    value[i] = (unsigned char) (255.0 * v);
   }
 }
 
