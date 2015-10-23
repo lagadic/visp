@@ -1,9 +1,7 @@
 /****************************************************************************
  *
- * $Id$
- *
  * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2015 by INRIA. All rights reserved.
  * 
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +28,6 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- *
  * Description:
  * Generation of random number with uniform and normal probability density.
  *
@@ -39,10 +36,63 @@
  *
  *****************************************************************************/
 
+#include <math.h>
+#include <visp3/core/vpUniRand.h>
 
-#ifndef vpNoise_hh
-#define vpNoise_hh
+/*!
+  Minimal random number generator of Park and Miller \cite Park:1988. Returns a
+  uniform random deviate between 0.0 and 1.0.
 
-#include <visp3/core/vpGaussRand.h>
+*/
+inline void
+vpUniRand::draw0()
+{
+  long k= x/q;//temp value for computing without overflow
+  x = a*(x-k*q)-k*r;
+  if (x < 0) x += m; //compute x without overflow
+}
 
-#endif
+/*!
+  Bays-Durham Shuffling of Park-Miller generator.
+
+  Minimal random number generator of Park and Miller with Bays-Durham
+  shuffle. Returns a uniform random deviate between 0.0 and 1.0 (exclusive of
+  the endpoint values).
+*/
+double
+vpUniRand::draw1()
+{
+  const long ntab = 33;  //we work on a 32 elements array.
+                                  //the 33rd one is actually the first value of y.
+  const long modulo = ntab-2;
+
+  static long y = 0;
+  static long T[ntab];
+
+  long j; //index of T
+
+  //step 0
+  if (!y) { //first time
+    for(j = 0; j < ntab; j++) {
+      draw0();
+      T[j]=x;
+    } //compute table T
+    y=T[ntab-1];
+  }
+
+  //step 1
+  j = y & modulo; //compute modulo ntab+1 (the first element is the 0th)
+
+  //step 3
+  y=T[j];
+  double ans = (double)y/normalizer;
+
+  //step 4
+  //generate x(k+i) and set y=x(k+i)
+  draw0();
+
+  //refresh T[j];
+  T[j]=x;
+
+  return ans;
+}
