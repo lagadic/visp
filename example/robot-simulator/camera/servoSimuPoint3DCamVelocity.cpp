@@ -166,8 +166,7 @@ main(int argc, const char ** argv)
     wMo = wMc * cMo;
 
     // sets the point coordinates in the world frame
-    vpPoint point ;
-    point.setWorldCoordinates(0,0,0) ;
+    vpPoint point(0,0,0) ;
 
     // computes the point coordinates in the camera frame
     point.track(cMo) ;

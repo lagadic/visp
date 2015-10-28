@@ -213,19 +213,16 @@ main(int argc, const char ** argv)
 
     //------------------------------------------------------------------
     // sets the point coordinates in the world frame
-    vpPoint point ;
-    // defined point coordinates in the scene frame : oP
-    point.setWorldCoordinates(0,0,0) ;
+    vpPoint point(0, 0, 0);
     // computes  the point coordinates in the camera frame and its
     // 2D coordinates cP and then p
     // computes the point coordinates in the camera frame and its 2D coordinates"  ) ;
-    point.track(cMo) ;
+    point.track(cMo);
 
     // We also defined (again by forward projection) the desired position
     // of this point according to the desired camera position
-    vpPoint pointd ;
-    pointd.setWorldCoordinates(0,0,0) ;
-    pointd.track(cdMo) ;
+    vpPoint pointd(0, 0, 0);
+    pointd.track(cdMo);
 
     // Nevertheless, a vpPoint is not a feature, this is just a "tracker"
     // from which the feature are built

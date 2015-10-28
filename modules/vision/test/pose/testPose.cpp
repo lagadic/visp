@@ -125,7 +125,6 @@ int main()
     P[2].setWorldCoordinates(L,L, 0 ) ;
     P[3].setWorldCoordinates(-2*L, 3*L, 0 ) ;
     P[4].setWorldCoordinates(-L,L, 0.01 ) ;
-    //P[3].setWorldCoordinates(-L,L, 0 ) ;
 
     int test_fail = 0, fail = 0;
     vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0,vpMath::rad(10));

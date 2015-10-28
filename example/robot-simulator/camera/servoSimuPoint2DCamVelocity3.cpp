@@ -157,32 +157,31 @@ main(int argc, const char ** argv)
     std::cout << " Simulation " << std::endl ;
     std::cout << " task : servo a point " << std::endl ;
     std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
+    std::cout << std::endl;
 
     // sets the initial camera location
-    vpHomogeneousMatrix cMo ;
-    cMo[0][3] = 0.1 ;
-    cMo[1][3] = 0.2 ;
-    cMo[2][3] = 2 ;
+    vpHomogeneousMatrix cMo;
+    cMo[0][3] = 0.1;
+    cMo[1][3] = 0.2;
+    cMo[2][3] = 2;
     // Compute the position of the object in the world frame
     vpHomogeneousMatrix wMc, wMo;
-    robot.getPosition(wMc) ;
+    robot.getPosition(wMc);
     wMo = wMc * cMo;
 
     // sets the point coordinates in the world frame
-    vpPoint point ;
-    point.setWorldCoordinates(0,0,0) ;
+    vpPoint point(0, 0, 0);
 
     // computes the point coordinates in the camera frame and its 2D coordinates
-    point.track(cMo) ;
+    point.track(cMo);
 
     // sets the current position of the visual feature
-    vpFeaturePoint p ;
-    vpFeatureBuilder::create(p,point)  ;  //retrieve x,y and Z of the vpPoint structure
+    vpFeaturePoint p;
+    vpFeatureBuilder::create(p,point);  //retrieve x,y and Z of the vpPoint structure
 
     // sets the desired position of the visual feature
-    vpFeaturePoint pd ;
-    pd.buildFrom(0,0,1) ; // buildFrom(x,y,Z) ;
+    vpFeaturePoint pd;
+    pd.buildFrom(0,0,1); // buildFrom(x,y,Z) ;
 
     // define the task
     // - we want an eye-in-hand control law

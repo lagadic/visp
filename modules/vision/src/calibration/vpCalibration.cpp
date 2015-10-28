@@ -182,8 +182,7 @@ void vpCalibration::computePose(const vpCameraParameters &camera, vpHomogeneousM
 
   for (unsigned int i =0 ; i < npt ; i++)
   {
-    vpPoint P;
-    P.setWorldCoordinates(*it_LoX, *it_LoY, *it_LoZ);
+    vpPoint P(*it_LoX, *it_LoY, *it_LoZ);
     double x=0,y=0 ;
     vpPixelMeterConversion::convertPoint(camera, *it_Lip, x,y)  ;
     P.set_x(x) ;

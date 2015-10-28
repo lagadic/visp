@@ -382,10 +382,10 @@ vpDisplay::displayFrame ( const vpImage<unsigned char> &I,
                           vpImagePoint offset)
 {
   // used by display
-  vpPoint o; o.setWorldCoordinates ( 0.0,0.0,0.0 ) ;
-  vpPoint x; x.setWorldCoordinates ( size,0.0,0.0 ) ;
-  vpPoint y; y.setWorldCoordinates ( 0.0,size,0.0 ) ;
-  vpPoint z; z.setWorldCoordinates ( 0.0,0.0,size ) ;
+  vpPoint o( 0.0,  0.0,  0.0);
+  vpPoint x(size,  0.0,  0.0);
+  vpPoint y( 0.0, size,  0.0);
+  vpPoint z( 0.0,  0.0, size);
 
   o.track ( cMo ) ;
   x.track ( cMo ) ;
@@ -454,10 +454,10 @@ vpDisplay::displayFrame ( const vpImage<vpRGBa> &I,
                           vpImagePoint offset)
 {
   // used by display
-  vpPoint o; o.setWorldCoordinates ( 0.0,0.0,0.0 ) ;
-  vpPoint x; x.setWorldCoordinates ( size,0.0,0.0 ) ;
-  vpPoint y; y.setWorldCoordinates ( 0.0,size,0.0 ) ;
-  vpPoint z; z.setWorldCoordinates ( 0.0,0.0,size ) ;
+  vpPoint o( 0.0,  0.0,  0.0);
+  vpPoint x(size,  0.0,  0.0);
+  vpPoint y( 0.0, size,  0.0);
+  vpPoint z( 0.0,  0.0, size);
 
   o.track ( cMo ) ;
   x.track ( cMo ) ;

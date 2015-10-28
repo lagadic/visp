@@ -92,12 +92,12 @@ int main()
     vpHomogeneousMatrix cMo;
 
     std::vector<vpDot2> dot(4);
-    std::vector<vpPoint> point(4);
+    std::vector<vpPoint> point;
     double L = 0.06;
-    point[0].setWorldCoordinates(-L, -L, 0);
-    point[1].setWorldCoordinates( L, -L, 0);
-    point[2].setWorldCoordinates( L,  L, 0);
-    point[3].setWorldCoordinates(-L,  L, 0);
+    point.push_back( vpPoint(-L, -L, 0) );
+    point.push_back( vpPoint( L, -L, 0) );
+    point.push_back( vpPoint( L,  L, 0) );
+    point.push_back( vpPoint(-L,  L, 0) );
 
     bool init = true;
 #if defined(VISP_HAVE_X11)

@@ -65,9 +65,12 @@ class VISP_EXPORT vpPoint : public vpForwardProjection
 
 public:
   //! Basic constructor.
-  vpPoint() ;
+  vpPoint();
+  vpPoint(double oX, double oY, double oZ);
+  vpPoint(const vpColVector &P);
+  vpPoint(const std::vector<double> &P);
   //! Destructor.
-  virtual ~vpPoint() { ; }
+  virtual ~vpPoint() {}
 
 public:
 
@@ -104,13 +107,10 @@ public:
   double get_y() const;
   double get_w() const;
 
-  //! Get the point world coordinates. We mean here the coordinates of the point in the object frame.
-  void getWorldCoordinates(double& ox,
-                           double& oy,
-                           double& oz) ;
-  //! Get the point world coordinates. We mean here the coordinates of the point in the object frame.
-  void getWorldCoordinates(vpColVector &_oP) ;
-  vpColVector getWorldCoordinates(void) ;
+  void getWorldCoordinates(double& oX, double& oY, double& oZ);
+  void getWorldCoordinates(vpColVector &P);
+  vpColVector getWorldCoordinates(void);
+  void getWorldCoordinates(std::vector<double> &P);
 
   //! Basic construction.
   void init() ;
@@ -119,7 +119,7 @@ public:
   vpPoint& operator=(const vpPoint& vpp);
 
   //! Projection onto the image plane of a point. Input: the 3D coordinates in the camera frame _cP, output : the 2D coordinates _p.
-  void projection(const vpColVector &_cP, vpColVector &_p) ;
+  void projection(const vpColVector &_cP, vpColVector &_p);
 
   void projection();
 
@@ -128,20 +128,17 @@ public:
   void set_Y(const double Y);
   void set_Z(const double Z);
   void set_W(const double W);
-  void set_oX(const double X);
-  void set_oY(const double Y);
-  void set_oZ(const double Z);
-  void set_oW(const double W);
+  void set_oX(const double oX);
+  void set_oY(const double oY);
+  void set_oZ(const double oZ);
+  void set_oW(const double oW);
   void set_x(const double x);
   void set_y(const double y);
   void set_w(const double w);
 
-  //! Set the point world coordinates. We mean here the coordinates of the point in the object frame.
-  void setWorldCoordinates(const double ox,
-                           const double oy,
-                           const double oz) ;
-  //! Set the point world coordinates. We mean here the coordinates of the point in the object frame.
-  void setWorldCoordinates(const vpColVector &_oP) ;
-} ;
+  void setWorldCoordinates(const double oX, const double oY, const double oZ);
+  void setWorldCoordinates(const vpColVector &P);
+  void setWorldCoordinates(const std::vector<double> &P);
+};
 
 #endif

@@ -335,7 +335,6 @@ main(int argc, const char ** argv)
     point[2].setWorldCoordinates(0.25,0.25,0) ;
     point[3].setWorldCoordinates(-0.25,0.25,0) ;
 
-
     for (i = 0 ; i < 4 ; i++)
       externalview.insert(point[i]) ;
 

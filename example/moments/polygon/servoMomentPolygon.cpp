@@ -164,8 +164,7 @@ void initScene(){
   int nbpoints = 4;
 
   for (int i = 0 ; i < nbpoints ; i++){
-    vpPoint p;
-    p.setWorldCoordinates(x[i],y[i],0.0);
+    vpPoint p(x[i],y[i],0.0);
     p.track(cMo) ;
     src_pts.push_back(p);
   }
@@ -173,8 +172,7 @@ void initScene(){
   src.setType(vpMomentObject::DENSE_POLYGON);
   src.fromVector(src_pts);
   for (int i = 0 ; i < nbpoints ; i++){
-    vpPoint p;
-    p.setWorldCoordinates(x[i],y[i],0.0);
+    vpPoint p(x[i],y[i],0.0);
     p.track(cdMo) ;
     dst_pts.push_back(p);
   }
@@ -190,8 +188,7 @@ void refreshScene(vpMomentObject &obj){
   vector<vpPoint> cur_pts;
 
   for (int i = 0 ; i < nbpoints ; i++){
-    vpPoint p;
-    p.setWorldCoordinates(x[i],y[i],0.0);
+    vpPoint p(x[i],y[i],0.0);
     p.track(cMo) ;
     cur_pts.push_back(p);
   }

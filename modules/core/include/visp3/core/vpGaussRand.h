@@ -55,7 +55,7 @@
 
   \code
 #include <iostream>
-#include <visp3/core/vpNoise.h>
+#include <visp3/core/vpGaussRand.h>
 
 int main()
 {
@@ -87,7 +87,7 @@ noise 9: 9.37701
 
 \code
 #include <iostream>
-#include <visp3/core/vpNoise.h>
+#include <visp3/core/vpGaussRand.h>
 #include <visp3/core/vpTime.h>
 
 int main()

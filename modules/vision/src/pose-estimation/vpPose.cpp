@@ -721,9 +721,7 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   kh1=KinvH.getCol(0);
   kh2=KinvH.getCol(1);
 
-
   double s= sqrt(kh1.sumSquare())/sqrt(kh2.sumSquare());
-
 
   vpMatrix D(3,3);
   D.setIdentity();
@@ -744,8 +742,6 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   P.addPoint(p3) ;
   P.addPoint(p4) ;
 
-
   P.computePose(vpPose::DEMENTHON_LOWE,cMo) ;
   return lx/s ;
-
 }

@@ -140,8 +140,7 @@ void initScene(const vpHomogeneousMatrix& cMo, const vpHomogeneousMatrix& cdMo,
   int nbpoints = 4;
 
   for (int i = 0 ; i < nbpoints ; i++){
-    vpPoint p;
-    p.setWorldCoordinates(x[i],y[i],0.0);
+    vpPoint p(x[i],y[i],0.0);
     p.track(cMo) ;
     src_pts.push_back(p);
   }
@@ -149,8 +148,7 @@ void initScene(const vpHomogeneousMatrix& cMo, const vpHomogeneousMatrix& cdMo,
   src.setType(vpMomentObject::DENSE_POLYGON);
   src.fromVector(src_pts);
   for (int i = 0 ; i < nbpoints ; i++){
-    vpPoint p;
-    p.setWorldCoordinates(x[i],y[i],0.0);
+    vpPoint p(x[i],y[i],0.0);
     p.track(cdMo) ;
     dst_pts.push_back(p);
   }
