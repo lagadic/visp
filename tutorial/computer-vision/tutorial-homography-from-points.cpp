@@ -9,11 +9,11 @@ int main()
 {
   //! [Set 3D points]
   double L = 0.1;
-  std::vector<vpPoint> oP(4);
-  oP[0].setWorldCoordinates( -L,-L,   0);
-  oP[1].setWorldCoordinates(2*L,-L,   0);
-  oP[2].setWorldCoordinates(  L, 3*L, 0);
-  oP[3].setWorldCoordinates( -L, 4*L, 0);
+  std::vector<vpPoint> oP;
+  oP.push_back( vpPoint( -L,-L,   0) );
+  oP.push_back( vpPoint(2*L,-L,   0) );
+  oP.push_back( vpPoint(  L, 3*L, 0) );
+  oP.push_back( vpPoint( -L, 4*L, 0) );
   //! [Set 3D points]
 
   //! [Simulation]

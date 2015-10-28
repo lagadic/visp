@@ -451,9 +451,9 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
   vpDisplay *d_help = NULL;
 
 	vpPose pose ;
-  vpPoint *P = NULL; P = new vpPoint [points3D_list.size()]  ;
+  std::vector<vpPoint> P;
 	for (unsigned int i=0 ; i < points3D_list.size() ; i++)
-		P[i].setWorldCoordinates(points3D_list[i].get_oX(),points3D_list[i].get_oY(),points3D_list[i].get_oZ()) ; 
+    P.push_back( vpPoint(points3D_list[i].get_oX(), points3D_list[i].get_oY(), points3D_list[i].get_oZ()) );
   
 	vpImage<vpRGBa> Iref ;
   //Display window creation and initialisation
@@ -530,7 +530,6 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
 		vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
     while (!vpDisplay::getClick(I, ip, button)) ;
 
-
 		if (button == vpMouseButton::button1)
 		{
 			isWellInit = true;
@@ -545,7 +544,6 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
 
   vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::red);
 
-	delete [] P;
   if(d_help != NULL) {
     delete d_help;
     d_help = NULL;
@@ -663,12 +661,12 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::ve
 		vpERROR_TRACE( "vpMbTracker::initFromPoints(), Number of 2D points different to the number of 3D points." );
 	
 	size_t size = points3D_list.size();
-	vpPoint *P = new vpPoint [size]; 
+  std::vector<vpPoint> P;
 	vpPose pose ;
 	
 	for(size_t i=0 ; i< size ; i++)
 	{
-		P[i].setWorldCoordinates(points3D_list[i].get_oX(),points3D_list[i].get_oY(),points3D_list[i].get_oZ()) ;
+    P.push_back( vpPoint(points3D_list[i].get_oX(), points3D_list[i].get_oY(), points3D_list[i].get_oZ()) );
 		double x=0,y=0;
 		vpPixelMeterConversion::convertPoint(cam, points2D_list[i], x, y);
 		P[i].set_x(x);
@@ -688,8 +686,6 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::ve
 		cMo = cMo2;
 	
 	pose.computePose(vpPose::VIRTUAL_VS, cMo);
-
-	delete [] P;
 
   init(I);
 }
@@ -2436,7 +2432,6 @@ void
 vpMbTracker::createCylinderBBox(const vpPoint& p1, const vpPoint &p2, const double &radius, std::vector<std::vector<vpPoint> > &listFaces)
 {
     listFaces.clear();
-    vpPoint p;
 
 //    std::vector<vpPoint> revolutionAxis;
 //    revolutionAxis.push_back(p1);
@@ -2497,47 +2492,31 @@ vpMbTracker::createCylinderBBox(const vpPoint& p1, const vpPoint &p2, const doub
     vpColVector sc4 = p2Vec - axisOrthoBis*radius;
 
     std::vector<vpPoint> pointsFace;
-    p.setWorldCoordinates(fc1[0], fc1[1], fc1[2]);
-    pointsFace.push_back(p);
-    p.setWorldCoordinates(sc1[0], sc1[1], sc1[2]);
-    pointsFace.push_back(p);
-    p.setWorldCoordinates(sc2[0], sc2[1], sc2[2]);
-    pointsFace.push_back(p);
-    p.setWorldCoordinates(fc2[0], fc2[1], fc2[2]);
-    pointsFace.push_back(p);
+    pointsFace.push_back( vpPoint(fc1[0], fc1[1], fc1[2]) );
+    pointsFace.push_back( vpPoint(sc1[0], sc1[1], sc1[2]) );
+    pointsFace.push_back( vpPoint(sc2[0], sc2[1], sc2[2]) );
+    pointsFace.push_back( vpPoint(fc2[0], fc2[1], fc2[2]) );
     listFaces.push_back(pointsFace);
 
     pointsFace.clear();
-    p.setWorldCoordinates(fc2[0], fc2[1], fc2[2]);
-    pointsFace.push_back(p);
-    p.setWorldCoordinates(sc2[0], sc2[1], sc2[2]);
-    pointsFace.push_back(p);
-    p.setWorldCoordinates(sc3[0], sc3[1], sc3[2]);
-    pointsFace.push_back(p);
-    p.setWorldCoordinates(fc3[0], fc3[1], fc3[2]);
-    pointsFace.push_back(p);
+    pointsFace.push_back( vpPoint(fc2[0], fc2[1], fc2[2]) );
+    pointsFace.push_back( vpPoint(sc2[0], sc2[1], sc2[2]) );
+    pointsFace.push_back( vpPoint(sc3[0], sc3[1], sc3[2]) );
+    pointsFace.push_back( vpPoint(fc3[0], fc3[1], fc3[2]) );
     listFaces.push_back(pointsFace);
 
     pointsFace.clear();
-    p.setWorldCoordinates(fc3[0], fc3[1], fc3[2]);
-    pointsFace.push_back(p);
-    p.setWorldCoordinates(sc3[0], sc3[1], sc3[2]);
-    pointsFace.push_back(p);
-    p.setWorldCoordinates(sc4[0], sc4[1], sc4[2]);
-    pointsFace.push_back(p);
-    p.setWorldCoordinates(fc4[0], fc4[1], fc4[2]);
-    pointsFace.push_back(p);
+    pointsFace.push_back( vpPoint(fc3[0], fc3[1], fc3[2]) );
+    pointsFace.push_back( vpPoint(sc3[0], sc3[1], sc3[2]) );
+    pointsFace.push_back( vpPoint(sc4[0], sc4[1], sc4[2]) );
+    pointsFace.push_back( vpPoint(fc4[0], fc4[1], fc4[2]) );
     listFaces.push_back(pointsFace);
 
     pointsFace.clear();
-    p.setWorldCoordinates(fc4[0], fc4[1], fc4[2]);
-    pointsFace.push_back(p);
-    p.setWorldCoordinates(sc4[0], sc4[1], sc4[2]);
-    pointsFace.push_back(p);
-    p.setWorldCoordinates(sc1[0], sc1[1], sc1[2]);
-    pointsFace.push_back(p);
-    p.setWorldCoordinates(fc1[0], fc1[1], fc1[2]);
-    pointsFace.push_back(p);
+    pointsFace.push_back( vpPoint(fc4[0], fc4[1], fc4[2]) );
+    pointsFace.push_back( vpPoint(sc4[0], sc4[1], sc4[2]) );
+    pointsFace.push_back( vpPoint(sc1[0], sc1[1], sc1[2]) );
+    pointsFace.push_back( vpPoint(fc1[0], fc1[1], fc1[2]) );
     listFaces.push_back(pointsFace);
 }
 

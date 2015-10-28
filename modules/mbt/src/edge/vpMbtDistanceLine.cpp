@@ -203,18 +203,14 @@ vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
       V4=vpColVector::cross(v_tmp1,v_tmp2);
     }
     
-    vpPoint P3;
-    P3.setWorldCoordinates(V3[0],V3[1],V3[2]);
-    vpPoint P4;
-    P4.setWorldCoordinates(V4[0],V4[1],V4[2]);
+    vpPoint P3(V3[0],V3[1],V3[2]);
+    vpPoint P4(V4[0],V4[1],V4[2]);
     buildLine(*p1,*p2, P3,P4, *line) ;
   }
   else
   {
-    vpPoint P3;
-    P3.setWorldCoordinates(V1[0],V1[1],V1[2]);
-    vpPoint P4;
-    P4.setWorldCoordinates(V2[0],V2[1],V2[2]);
+    vpPoint P3(V1[0],V1[1],V1[2]);
+    vpPoint P4(V2[0],V2[1],V2[2]);
     buildLine(*p1,*p2,P3,P4,*line) ;
   }
 }

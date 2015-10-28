@@ -56,11 +56,11 @@ int main()
     dot[1].initTracking(I, vpImagePoint(203, 366));
     dot[2].initTracking(I, vpImagePoint(313, 402));
     dot[3].initTracking(I, vpImagePoint(304, 133));
-    std::vector<vpPoint> point(4);
-    point[0].setWorldCoordinates(-0.06, -0.06, 0);
-    point[1].setWorldCoordinates( 0.06, -0.06, 0);
-    point[2].setWorldCoordinates( 0.06,  0.06, 0);
-    point[3].setWorldCoordinates(-0.06,  0.06, 0);
+    std::vector<vpPoint> point;
+    point.push_back( vpPoint(-0.06, -0.06, 0) );
+    point.push_back( vpPoint( 0.06, -0.06, 0) );
+    point.push_back( vpPoint( 0.06,  0.06, 0) );
+    point.push_back( vpPoint(-0.06,  0.06, 0) );
     vpHomogeneousMatrix cMo;
     bool init = true;
 

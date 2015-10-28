@@ -588,8 +588,7 @@ vpSimulatorAfma6::updateArticularPosition()
       //vpDisplay::displayFrame(I,getExternalCameraPosition ()*fMi[6],cameraParam,0.2,vpColor::none);
 
         vpImagePoint iP, iP_1;
-        vpPoint pt;
-        pt.setWorldCoordinates (0,0,0);
+        vpPoint pt(0,0,0);
       
         pt.track(getExternalCameraPosition ());
         vpMeterPixelConversion::convertPoint (cameraParam, pt.get_x(), pt.get_y(), iP_1);

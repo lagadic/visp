@@ -176,9 +176,7 @@ int main(int argc, const char ** argv)
 
     for (int i=0; i< s.boardSize.height; i++) {
       for (int j=0; j< s.boardSize.width; j++) {
-        vpPoint P;
-        P.setWorldCoordinates(j*s.squareSize, i*s.squareSize, 0);
-        model.push_back(P);
+        model.push_back( vpPoint(j*s.squareSize, i*s.squareSize, 0) );
       }
     }
 

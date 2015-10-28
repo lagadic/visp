@@ -172,25 +172,23 @@ main(int argc, const char ** argv)
     // sets the desired camera location
     vpPoseVector cd_r_o(0,0,1,
                         vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
-    vpHomogeneousMatrix cdMo(cd_r_o) ;
+    vpHomogeneousMatrix cdMo(cd_r_o);
 
     // sets the point coordinates in the world frame
-    vpPoint point ;
-    point.setWorldCoordinates(0,0,0) ;
+    vpPoint point(0, 0, 0);
     // computes the point coordinates in the camera frame and its 2D coordinates
-    point.track(cMo) ;
+    point.track(cMo);
 
-    vpPoint pointd ;
-    pointd.setWorldCoordinates(0,0,0) ;
-    pointd.track(cdMo) ;
+    vpPoint pointd(0, 0, 0);
+    pointd.track(cdMo);
     //------------------------------------------------------------------
     // 1st feature (x,y)
     // want to it at (0,0)
-    vpFeaturePoint p ;
-    vpFeatureBuilder::create(p,point)  ;
+    vpFeaturePoint p;
+    vpFeatureBuilder::create(p,point);
 
-    vpFeaturePoint pd ;
-    vpFeatureBuilder::create(pd,pointd)  ;
+    vpFeaturePoint pd;
+    vpFeatureBuilder::create(pd,pointd);
 
     //------------------------------------------------------------------
     // 2nd feature (Z)

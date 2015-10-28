@@ -64,24 +64,21 @@ main()
 {
   try {
     std::cout << "Pose computation with matched points" << std::endl;
-    int size = 8;
-    vpPoint *P = new vpPoint [size]  ;  //  Point to be tracked
+    std::vector<vpPoint> P;  //  Point to be tracked
 
-    P[0].setWorldCoordinates(-L,-L, 0 ) ;
-    P[1].setWorldCoordinates(L,-L, 0 ) ;
-    P[2].setWorldCoordinates(L,L, 0 ) ;
-    P[3].setWorldCoordinates(-L,L, 0 ) ;
+    P.push_back( vpPoint(-L,-L, 0 ) );
+    P.push_back( vpPoint(L,-L, 0 ) );
+    P.push_back( vpPoint(L,L, 0 ) );
+    P.push_back( vpPoint(-L,L, 0 ) );
     
     double L2 = L*3.0;
-    P[4].setWorldCoordinates(0,-L2, 0 ) ;
-    P[5].setWorldCoordinates(L2,0, 0 ) ;
-    P[6].setWorldCoordinates(0,L2, 0 ) ;
-    P[7].setWorldCoordinates(-L2,0, 0 ) ;
+    P.push_back( vpPoint(0,-L2, 0 ) );
+    P.push_back( vpPoint(L2,0, 0 ) );
+    P.push_back( vpPoint(0,L2, 0 ) );
+    P.push_back( vpPoint(-L2,0, 0 ) );
     
-    // P[4].setWorldCoordinates(-0,0, L ) ;
-
     vpHomogeneousMatrix cMo_ref(0, 0.2, 1, 0, 0, 0) ;
-    for(int i=0 ; i < size ; i++)
+    for(size_t i=0 ; i < P.size(); i++)
     {
       P[i].project(cMo_ref) ;
       P[i].print() ;
@@ -94,10 +91,10 @@ main()
     P[6].set_x(P[6].get_x() + error);
     
     vpPose pose;
-    for(int i=0 ; i < size ; i++)
+    for(size_t i=0 ; i < P.size() ; i++)
       pose.addPoint(P[i]);
     
-    unsigned int nbInlierToReachConsensus = (unsigned int)(75.0 * (double)size / 100.0);
+    unsigned int nbInlierToReachConsensus = (unsigned int)(75.0 * (double)(P.size()) / 100.0);
     double threshold = 0.001;
     
     pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
@@ -130,7 +127,6 @@ main()
     }
 
     std::cout << "Pose is " << (test_fail ? "badly" : "well") << " estimated" << std::endl;
-    delete [] P;
     return test_fail;
   }
   catch(vpException e) {

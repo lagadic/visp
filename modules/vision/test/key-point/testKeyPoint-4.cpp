@@ -325,8 +325,9 @@ int main(int argc, const char ** argv) {
 
       vpPose estimated_pose;
       for(std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
-        vpPoint pt;
-        pt.setWorldCoordinates(points3f[(size_t)(it->trainIdx)].x, points3f[(size_t)(it->trainIdx)].y, points3f[(size_t)(it->trainIdx)].z);
+        vpPoint pt(points3f[(size_t)(it->trainIdx)].x,
+            points3f[(size_t)(it->trainIdx)].y,
+            points3f[(size_t)(it->trainIdx)].z);
 
         double x = 0.0, y = 0.0;
         vpPixelMeterConversion::convertPoint(cam, queryKeyPoints[(size_t)(it->queryIdx)].pt.x, queryKeyPoints[(size_t)(it->queryIdx)].pt.y, x, y);

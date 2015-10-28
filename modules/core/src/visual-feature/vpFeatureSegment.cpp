@@ -158,9 +158,7 @@ vpFeatureSegment::vpFeatureSegment(bool normalized)
 int main()
 {
   // Define two 3D points in the object frame
-  vpPoint p1, p2;
-  p1.setWorldCoordinates(.1, .1, 0.);
-  p2.setWorldCoordinates(.3, .2, 0.);
+  vpPoint p1(.1, .1, 0.), p2(.3, .2, 0.);
 
   // Define the camera pose wrt the object
   vpHomogeneousMatrix cMo (0, 0, 1, 0, 0, 0); // Z=1 meter

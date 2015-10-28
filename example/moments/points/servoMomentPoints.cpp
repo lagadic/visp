@@ -165,8 +165,7 @@ void initScene(){
   int nbpoints = 8;
 
   for (int i = 0 ; i < nbpoints ; i++){
-    vpPoint p;
-    p.setWorldCoordinates(x[i]/20,y[i]/20,0.0);
+    vpPoint p(x[i]/20,y[i]/20,0.0);
     p.track(cMo) ;
     src_pts.push_back(p);
   }
@@ -174,8 +173,7 @@ void initScene(){
   src.setType(vpMomentObject::DISCRETE);
   src.fromVector(src_pts);
   for (int i = 0 ; i < nbpoints ; i++){
-    vpPoint p;
-    p.setWorldCoordinates(x[i]/20,y[i]/20,0.0);
+    vpPoint p(x[i]/20,y[i]/20,0.0);
     p.track(cdMo) ;
     dst_pts.push_back(p);
   }
@@ -239,8 +237,7 @@ void refreshScene(vpMomentObject &obj){
   std::vector<vpPoint> cur_pts;
 
   for (int i = 0 ; i < nbpoints ; i++){
-    vpPoint p;
-    p.setWorldCoordinates(x[i]/20,y[i]/20,0.0);
+    vpPoint p(x[i]/20,y[i]/20,0.0);
     p.track(cMo) ;
     cur_pts.push_back(p);
   }

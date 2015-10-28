@@ -46,8 +46,7 @@ int main()
     robot.getPosition(wMc);
     wMo = wMc * cMo;
 
-    vpPoint point;
-    point.setWorldCoordinates(0,0,0);
+    vpPoint point(0,0,0);
     point.track(cMo);
 
     vpServo task;

@@ -54,8 +54,7 @@ int main()
     wMo = wMc * cMo;
 
     // Define the target
-    vpPoint point;
-    point.setWorldCoordinates(0,0,0); // Coordinates in the object frame
+    vpPoint point(0,0,0); // Coordinates in the object frame
     point.track(cMo);
 
     vpServo task;

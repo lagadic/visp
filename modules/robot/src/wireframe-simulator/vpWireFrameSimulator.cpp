@@ -283,8 +283,7 @@ extractFaces(SoVRMLIndexedFaceSet* face_set, indexFaceSet *ifs)
     point[0]=coord->point[i].getValue()[0];
     point[1]=coord->point[i].getValue()[1];
     point[2]=coord->point[i].getValue()[2];
-    vpPoint pt;
-    pt.setWorldCoordinates(point[0],point[1],point[2]);
+    vpPoint pt(point[0],point[1],point[2]);
     ifs->pt.push_back(pt);
   }
   

@@ -98,22 +98,22 @@ int main()
 
     vpPoseFeatures pose;
 
-    vpPoint pts[6];
+    std::vector<vpPoint> pts;
     
     double val = 0.25;
     double val2 = 0.0;
 
     //2D Point Feature
-    pts[0].setWorldCoordinates(0.0,-val,val2);
-    pts[1].setWorldCoordinates(0.0,val,val2);
-    pts[2].setWorldCoordinates(-val,val,val2);
+    pts.push_back( vpPoint(0.0,-val,val2) );
+    pts.push_back( vpPoint(0.0,val,val2) );
+    pts.push_back( vpPoint(-val,val,val2) );
 
     //Segment Feature
-    pts[3].setWorldCoordinates(-val,-val/2.0,val2);
-    pts[4].setWorldCoordinates(val,val/2.0,val2);
+    pts.push_back( vpPoint(-val,-val/2.0,val2) );
+    pts.push_back( vpPoint(val,val/2.0,val2) );
 
     //3D point Feature
-    pts[5].setWorldCoordinates(0.0,0.0,-1.5);
+    pts.push_back( vpPoint(0.0,0.0,-1.5) );
 
     //Line Feature
     vpLine line;

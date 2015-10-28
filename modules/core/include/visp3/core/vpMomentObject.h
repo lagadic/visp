@@ -99,17 +99,12 @@ class vpCameraParameters;
 int main()
 {
   // Define an object as 4 clockwise points on a plane (Z=0)
-  vpPoint p;
   std::vector<vpPoint> vec_p; // vector that contains the 4 points
 
-  p.setWorldCoordinates(-0.2, 0.1, 0.0); // values in meters
-  vec_p.push_back(p);
-  p.setWorldCoordinates(+0.3, 0.1, 0.0); // values in meters
-  vec_p.push_back(p);
-  p.setWorldCoordinates(+0.2,-0.1, 0.0); // values in meters
-  vec_p.push_back(p);
-  p.setWorldCoordinates(-0.2,-0.15, 0.0); // values in meters
-  vec_p.push_back(p);
+  vec_p.push_back( vpPoint(-0.2, 0.1,  0.0) ); // values in meters
+  vec_p.push_back( vpPoint(+0.3, 0.1,  0.0) ); // values in meters
+  vec_p.push_back( vpPoint(+0.2,-0.1,  0.0) ); // values in meters
+  vec_p.push_back( vpPoint(-0.2,-0.15, 0.0) ); // values in meters
 
   // These points are observed by a camera
   vpHomogeneousMatrix cMo(0, 0, 1, 0, 0, 0); // We set the camera to be 1m far the object

@@ -113,8 +113,7 @@ int main()
   vpServo task; // Visual servoing task
 
   // Set the 3D point coordinates in the object frame: oP
-  vpPoint point;
-  point.setWorldCoordinates(0.1, -0.1, 0);
+  vpPoint point(0.1, -0.1, 0);
 
   vpHomogeneousMatrix cMo; // Pose between the camera and the object frame
   cMo.buildFrom(0, 0, 1.2, 0, 0, 0); 
@@ -182,8 +181,7 @@ int main()
 int main()
 {
   // Set the 3D point coordinates in the object frame: oP
-  vpPoint point;
-  point.setWorldCoordinates(0.1, -0.1, 0);
+  vpPoint point(0.1, -0.1, 0);
 
   vpHomogeneousMatrix cMo; // Pose between the camera and the object frame
   cMo.buildFrom(0, 0, 1.2, 0, 0, 0); 

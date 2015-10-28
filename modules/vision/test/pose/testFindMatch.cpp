@@ -64,20 +64,18 @@ main()
 {
   try {
     std::cout << "Find Matches using Ransac" << std::endl;
-    unsigned int nb3D = 5;
-    unsigned int nb2D = 5;
-    std::vector<vpPoint> P(nb3D);
-    std::vector<vpPoint> p(nb2D);
+    std::vector<vpPoint> P;
 
-    P[0].setWorldCoordinates(-L,-L, 0 ) ;
-    P[1].setWorldCoordinates(L,-L, 0 ) ;
-    P[2].setWorldCoordinates(L,L, 0 ) ;
-    P[3].setWorldCoordinates(-L,L, 0 ) ;
-    P[4].setWorldCoordinates(-0,L/2., L ) ;
+    P.push_back( vpPoint(-L,-L, 0 ) );
+    P.push_back( vpPoint(L,-L, 0 ) );
+    P.push_back( vpPoint(L,L, 0 ) );
+    P.push_back( vpPoint(-L,L, 0 ) );
+    P.push_back( vpPoint(-0,L/2., L ) );
 
     vpHomogeneousMatrix cMo_ref(0, 0.2, 1, vpMath::rad(3), vpMath::rad(-2), vpMath::rad(10)) ;
 
-    for(unsigned int i=0 ; i < nb3D ; i++)
+    std::vector<vpPoint> p( P.size() );
+    for(unsigned int i=0 ; i < P.size() ; i++)
     {
       vpPoint pt = P[i];
       pt.project(cMo_ref);
@@ -88,7 +86,7 @@ main()
     unsigned int ninliers ;
     std::vector<vpPoint> inliers;
     double threshold = 1e-6;
-    unsigned int nbInlierToReachConsensus = nb3D;
+    unsigned int nbInlierToReachConsensus = P.size();
 
     vpHomogeneousMatrix cMo ;
 

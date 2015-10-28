@@ -95,9 +95,8 @@ int main()
     cMoToABC(cdMo,Ad,Bd,Cd);
     // Define source and destination polygons
     for (int i = 0 ; i < nbpoints ; i++){
-      vpPoint p;
-      p.setWorldCoordinates(x[i],y[i],0.0);
-      p.track(cMo) ;
+      vpPoint p(x[i],y[i],0.0);
+      p.track(cMo);
       vec_p.push_back(p);
       p.track(cdMo) ;
       vec_p_d.push_back(p);
@@ -152,8 +151,7 @@ int main()
       vec_p.clear();
 
       for (int i = 0 ; i < nbpoints ; i++){
-        vpPoint p;
-        p.setWorldCoordinates(x[i],y[i],0.0);
+        vpPoint p(x[i],y[i],0.0);
         p.track(cMo) ;
         vec_p.push_back(p);
       }

@@ -60,11 +60,11 @@ int main()
     vpHomogeneousMatrix wMo(vpTranslationVector(0.40, 0, -0.15),
                             vpRotationMatrix(vpRxyzVector(-M_PI, 0, M_PI/2.)));
 
-    std::vector<vpPoint> point(4) ;
-    point[0].setWorldCoordinates(-0.1,-0.1, 0);
-    point[1].setWorldCoordinates( 0.1,-0.1, 0);
-    point[2].setWorldCoordinates( 0.1, 0.1, 0);
-    point[3].setWorldCoordinates(-0.1, 0.1, 0);
+    std::vector<vpPoint> point;
+    point.push_back( vpPoint(-0.1,-0.1, 0) );
+    point.push_back( vpPoint( 0.1,-0.1, 0) );
+    point.push_back( vpPoint( 0.1, 0.1, 0) );
+    point.push_back( vpPoint(-0.1, 0.1, 0) );
 
     vpServo task ;
     task.setServo(vpServo::EYEINHAND_CAMERA);

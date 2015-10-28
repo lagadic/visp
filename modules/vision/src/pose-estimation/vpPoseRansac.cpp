@@ -437,10 +437,9 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D,
   {
     for(unsigned int j = 0 ; j < p3D.size() ; j++)
     {
-      vpPoint pt;
+      vpPoint pt(p3D[j].getWorldCoordinates());
       pt.set_x(p2D[i].get_x());
       pt.set_y(p2D[i].get_y());
-      pt.setWorldCoordinates(p3D[j].getWorldCoordinates());
       pose.addPoint(pt);
       nbPts++;
     }
