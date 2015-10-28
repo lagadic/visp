@@ -47,7 +47,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpNoise.h>
+#include <visp3/core/vpUniRand.h>
 #include <set>
 #include <limits>
 /*!

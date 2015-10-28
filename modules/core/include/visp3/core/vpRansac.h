@@ -51,7 +51,7 @@
 
 
 
-#include <visp3/core/vpNoise.h> // random number generation
+#include <visp3/core/vpUniRand.h> // random number generation
 #include <visp3/core/vpDebug.h> // debug and trace
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMath.h>
