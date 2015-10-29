@@ -86,7 +86,7 @@ main()
     unsigned int ninliers ;
     std::vector<vpPoint> inliers;
     double threshold = 1e-6;
-    unsigned int nbInlierToReachConsensus = P.size();
+    unsigned int nbInlierToReachConsensus = (unsigned int)(P.size());
 
     vpHomogeneousMatrix cMo ;
 

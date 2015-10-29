@@ -209,7 +209,7 @@ void
 vpPoint::getWorldCoordinates(std::vector<double> &P)
 {
   P.resize(oP.size());
-  for(size_t i = 0; i < oP.size(); i++)
+  for(unsigned int i = 0; i < oP.size(); i++)
     P[i] = oP[i];
 }
 
