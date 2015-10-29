@@ -816,9 +816,8 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<u
     createImageMatching(m_mapOfImages.begin()->second, ICurrent, IMatching);
   } else {
     //Multiple training images, display them as a mosaic image
-    //round(std::sqrt((double) nbImg)); VC++ compiler does not have round so the next line is used
-    //Different implementations of round exist, here round to the closest integer but will not work for negative numbers
-    unsigned int nbImgSqrt = (unsigned int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    //(unsigned int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    unsigned int nbImgSqrt = (unsigned int) vpMath::round(std::sqrt((double) nbImg));
 
     //Number of columns in the mosaic grid
     unsigned int nbWidth = nbImgSqrt;
@@ -978,6 +977,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
                                  const std::vector<vpImagePoint> &ransacInliers, unsigned int crossSize, unsigned int lineThickness) {
   if(m_mapOfImages.empty()) {
     //No training images so return
+    std::cerr << "No training images !" << std::endl;
     return;
   }
 
@@ -989,9 +989,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
     displayMatching(m_mapOfImages.begin()->second, IMatching, crossSize);
   } else {
     //Multiple training images, display them as a mosaic image
-    //round(std::sqrt((double) nbImg)); VC++ compiler does not have round so the next line is used
-    //Different implementations of round exist, here round to the closest integer but will not work for negative numbers
-    int nbImgSqrt = (int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    int nbImgSqrt = vpMath::round(std::sqrt((double) nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
     int nbWidth = nbImgSqrt;
     int nbHeight = nbImgSqrt;
 
@@ -1057,20 +1055,20 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
 
     for(std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
       int current_class_id = 0;
-      if(mapOfImageIdIndex[m_mapOfImageId[m_queryFilteredKeyPoints[(size_t) it->queryIdx].class_id]] < medianIndex) {
-        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_queryFilteredKeyPoints[(size_t) it->queryIdx].class_id]];
+      if(mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t) it->trainIdx].class_id]] < medianIndex) {
+        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t) it->trainIdx].class_id]];
       } else {
         //Shift of one unity the index of the training images which are after the current image
-        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_queryFilteredKeyPoints[(size_t) it->queryIdx].class_id]] + 1;
+        current_class_id = mapOfImageIdIndex[m_mapOfImageId[m_trainKeyPoints[(size_t) it->trainIdx].class_id]] + 1;
       }
 
       int indexI = current_class_id / nbWidth;
       int indexJ = current_class_id - (indexI * nbWidth);
 
-      vpImagePoint end((int)maxH*indexI + m_queryFilteredKeyPoints[(size_t) it->queryIdx].pt.y,
-          (int)maxW*indexJ + m_queryFilteredKeyPoints[(size_t) it->queryIdx].pt.x);
-      vpImagePoint start((int)maxH*medianI + m_trainKeyPoints[(size_t) it->trainIdx].pt.y,
-          (int)maxW*medianJ + m_trainKeyPoints[(size_t) it->trainIdx].pt.x);
+      vpImagePoint end((int)maxH*indexI + m_trainKeyPoints[(size_t) it->trainIdx].pt.y,
+          (int)maxW*indexJ + m_trainKeyPoints[(size_t) it->trainIdx].pt.x);
+      vpImagePoint start((int)maxH*medianI + m_queryFilteredKeyPoints[(size_t) it->queryIdx].pt.y,
+          (int)maxW*medianJ + m_queryFilteredKeyPoints[(size_t) it->queryIdx].pt.x);
 
       //Draw line for matching keypoints detected in the current image and those detected
       //in the training images
@@ -1727,9 +1725,7 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent, vpI
     insertImageMatching(m_mapOfImages.begin()->second, ICurrent, IMatching);
   } else {
     //Multiple training images, display them as a mosaic image
-    //round(std::sqrt((double) nbImg)); VC++ compiler does not have round so the next line is used
-    //Different implementations of round exist, here round to the closest integer but will not work for negative numbers
-    int nbImgSqrt = (int) std::floor(std::sqrt((double) nbImg) + 0.5);
+    int nbImgSqrt = vpMath::round(std::sqrt((double) nbImg)); //(int) std::floor(std::sqrt((double) nbImg) + 0.5);
     int nbWidth = nbImgSqrt;
     int nbHeight = nbImgSqrt;
 

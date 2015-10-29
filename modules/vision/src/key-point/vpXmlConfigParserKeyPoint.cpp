@@ -236,7 +236,7 @@ vpXmlConfigParserKeyPoint::read_matcher(xmlDocPtr doc, xmlNodePtr node)
 {
   bool matcher_name_node = false;
   bool matching_method_node = false;
-  std::string matchingMethodName = "stdDistanceThreshold";
+  std::string matchingMethodName = "ratioDistanceThreshold";
   bool matching_factor_threshold_node = false;
   bool matching_ratio_threshold_node = false;
 
