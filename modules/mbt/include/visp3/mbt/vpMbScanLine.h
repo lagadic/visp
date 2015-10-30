@@ -52,11 +52,13 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 
-#include <visp3/core/vpDisplayX.h>
+//#define DEBUG_DISP // Uncomment to get visibility debug display
+
+#if defined(DEBUG_DISP)
+#include <visp3/core/vpDisplay.h>
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-// #define DEBUG_DISP // Uncomment to get visibility debug display
 
 /*!
   \class vpMbScanLine
@@ -134,13 +136,14 @@ private:
   double                  depthTreshold;
 
 public:
-#if defined(VISP_HAVE_X11) && defined(DEBUG_DISP)
-  vpDisplayX dispMaskDebug;
-  vpDisplayX dispLineDebug;
+#if defined(DEBUG_DISP)
+  vpDisplay *dispMaskDebug;
+  vpDisplay *dispLineDebug;
   vpImage<unsigned char>  linedebugImg;
 #endif
 
   vpMbScanLine();
+  ~vpMbScanLine();
 
   void drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigned int> > * > &polygons,
                  std::vector<int> listPolyIndices,

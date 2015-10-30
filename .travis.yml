@@ -11,6 +11,9 @@ compiler:
   - gcc
   - clang
 
+sudo: required
+dist: trusty
+
 before_install:
   - cd ${TRAVIS_BUILD_DIR} && { curl -O http://www.irisa.fr/lagadic/visp/download/sequence/ViSP-images-2.10.0.zip ; cd -; }
   - unzip ${TRAVIS_BUILD_DIR}/ViSP-images-2.10.0.zip -d ${TRAVIS_BUILD_DIR}
@@ -25,13 +28,13 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq cmake libopencv-dev libx11-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq liblapack-dev libgsl0-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libdc1394-22-dev libv4l-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libcoin60-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libcoin80-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libxml2-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libjpeg-dev libpng12-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libswscale-dev libavutil-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libavformat-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libavcodec-dev libbz2-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libogre-dev libois-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libogre-1.9-dev libois-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libzbar-dev libdmtx-dev; fi"
 
 before_script:
