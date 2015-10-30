@@ -1,7 +1,5 @@
 /****************************************************************************
  *
- * $Id$
- *
  * Declarations for Tk-related things that are visible
  * outside of the Tk module itself.
  *

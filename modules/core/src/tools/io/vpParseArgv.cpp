@@ -1,7 +1,5 @@
 /****************************************************************************
  *
- * $Id$
- *
  * This file contains a procedure that handles table-based
  * argv-argc parsing.
  *
@@ -14,10 +12,8 @@
  * software for any purpose.  It is provided "as is" without
  * express or implied warranty.
  *
- *
  * This file has been modified to not rely on tcl, tk or X11.
  * Based on tkArgv.c from tk2.3 :
- *
  *
  * Modifications by Peter Neelin (November 27, 1992)
  * Modifications by Fabien Spindler (June 20, 2006)

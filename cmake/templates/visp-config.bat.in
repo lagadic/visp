@@ -1,8 +1,8 @@
 @rem #############################################################################
 @rem #
 @rem # This file is part of the ViSP software.
-@rem # Copyright (C) 2005 - 2015 by INRIA. All rights reserved.
-@rem # 
+@rem # Copyright (C) 2005 - 2015 by Inria. All rights reserved.
+@rem #
 @rem # This software is free software; you can redistribute it and/or
 @rem # modify it under the terms of the GNU General Public License
 @rem # ("GPL") version 2 as published by the Free Software Foundation.
@@ -10,21 +10,20 @@
 @rem # distribution for additional information about the GNU GPL.
 @rem #
 @rem # For using ViSP with software that can not be combined with the GNU
-@rem # GPL, please contact INRIA about acquiring a ViSP Professional 
+@rem # GPL, please contact Inria about acquiring a ViSP Professional
 @rem # Edition License.
 @rem #
-@rem # See http://www.irisa.fr/lagadic/visp/visp.html for more information.
-@rem # 
+@rem # See http://visp.inria.fr for more information.
+@rem #
 @rem # This software was developed at:
-@rem # INRIA Rennes - Bretagne Atlantique
+@rem # Inria Rennes - Bretagne Atlantique
 @rem # Campus Universitaire de Beaulieu
 @rem # 35042 Rennes Cedex
 @rem # France
-@rem # http://www.irisa.fr/lagadic
 @rem #
 @rem # If you have questions regarding the use of this file, please contact
-@rem # INRIA at visp@inria.fr
-@rem # 
+@rem # Inria at visp@inria.fr
+@rem #
 @rem # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 @rem # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 @rem #
