@@ -29,7 +29,7 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq cmake libopencv-dev libx11-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq liblapack-dev libgsl0-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libdc1394-22-dev libv4l-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libcoin60-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libcoin80-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libxml2-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libjpeg-dev libpng12-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libswscale-dev libavutil-dev; fi"
