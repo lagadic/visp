@@ -69,7 +69,7 @@ public:
   /*!
      Default constructor.
    */
-  vpDetectorBase() : m_polygon(), m_message(), m_nb_objects(0) {}
+  vpDetectorBase();
   /*!
      Default destructor.
      */
@@ -92,68 +92,32 @@ public:
   /*!
     Returns ith object container box as a vector of points.
    */
-  std::vector<vpImagePoint> & getPolygon(size_t i)
-  {
-    if (i < m_polygon.size())
-      return m_polygon[i];
-    else
-      throw(vpException(vpException::badValue, "Bad index to retrieve object %d. Only %d objects are detected.", i, m_polygon.size()));
-  }
+  std::vector<vpImagePoint> & getPolygon(size_t i);
+  
   /*!
     Returns the contained message of the ith object if there is one.
    */
-  std::string & getMessage(size_t i)
-  {
-    if (i < m_polygon.size())
-      return m_message[i];
-    else
-      throw(vpException(vpException::badValue, "Bad index to retrieve object %d . Only %d objects are detected.", i, m_polygon.size()));
-  }
+  std::string & getMessage(size_t i);
+  
   /*!
     Returns the contained message of the ith object if there is one.
    */
-  std::vector< std::string > & getMessage()
-  {
-    return m_message;
-  }
+  std::vector< std::string > & getMessage() { return m_message; }
+  
   /*!
     Return the number of objects that are detected.
     */
   size_t getNbObjects() const {return m_nb_objects; }
+  
   /*!
     Return the center of gravity location of the ith object.
    */
-  vpImagePoint getCog(size_t i) const
-  {
-    vpImagePoint cog(0,0);
-    for(size_t j=0; j < m_polygon[i].size(); j++) {
-      cog += m_polygon[i][j];
-    }
-    cog /= (double)m_polygon[i].size();
-    return cog;
-  }
+  vpImagePoint getCog(size_t i) const ;
+  
   /*!
     Return the bounding box of the ith object.
    */
-  vpRect getBBox(size_t i) const
-  {
-    assert(m_polygon[i].size() > 2);
-
-    double left, right;
-    double top, bottom;
-    left = right = m_polygon[i][0].get_u();
-    top = bottom = m_polygon[i][0].get_v();
-    for(size_t j=0; j < m_polygon[i].size(); j++) {
-      double u = m_polygon[i][j].get_u();
-      double v = m_polygon[i][j].get_v();
-      if (u < left) left = u;
-      if (u > right) right = u;
-      if (v < top) top = v;
-      if (v > bottom) bottom = v;
-    }
-    vpRect roi(vpImagePoint(top, left), vpImagePoint(bottom, right));
-    return roi;
-  }
+  vpRect getBBox(size_t i) const ;
 };
 
 #endif
