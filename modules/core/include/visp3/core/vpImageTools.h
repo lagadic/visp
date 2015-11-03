@@ -86,15 +86,18 @@ public:
   static void createSubImage(const vpImage<Type> &I,
 			     const vpRect &rect,
 			     vpImage<Type> &S);
+
   template<class Type>
-  static void binarise(vpImage<Type> &I,
+  static inline void binarise(vpImage<Type> &I,
 		       Type threshold1, Type threshold2,
-		       Type value1, Type value2, Type value3);
+		       Type value1, Type value2, Type value3, const bool useLUT=false);
+
   static void changeLUT(vpImage<unsigned char>& I,
 			unsigned char A,
 			unsigned char newA,
 			unsigned char B,
 			unsigned char newB);
+
   template<class Type>
   static void undistort(const vpImage<Type> &I,
                         const vpCameraParameters &cam,
@@ -153,6 +156,7 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
       S[i-i_sub][j-j_sub] = I[i][j] ;
     }
 }
+
 /*!
   Extract a sub part of an image
 
@@ -201,6 +205,7 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
     }
   }
 }
+
 /*!
 
   Binarise an image.
@@ -214,20 +219,61 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
 
 */
 template<class Type>
-void vpImageTools::binarise(vpImage<Type> &I,
+inline void vpImageTools::binarise(vpImage<Type> &I,
 			    Type threshold1, Type threshold2,
-			    Type value1, Type value2, Type value3)
+			    Type value1, Type value2, Type value3, const bool useLUT)
 {
-  unsigned char v;
-  unsigned char *p = I.bitmap;
-  unsigned char *pend = I.bitmap + I.getWidth()*I.getHeight();
+  if(useLUT) {
+    std::cerr << "LUT not available for this type ! Will use the iteration method." << std::endl;
+  }
+
+  Type v;
+  Type *p = I.bitmap;
+  Type *pend = I.bitmap + I.getWidth()*I.getHeight();
   for (; p < pend; p ++) {
     v = *p;
     if (v < threshold1) *p = value1;
     else if (v > threshold2) *p = value3;
     else *p = value2;
   }
+}
 
+/*!
+
+  Binarise an image.
+
+  - Pixels whose values are less than \e threshold1 are set to \e value1
+
+  - Pixels whose values are greater then or equal to \e threshold1 and
+    less then or equal to \e threshold2 are set to \e value2
+
+  - Pixels whose values are greater than \e threshold2 are set to \e value3
+
+*/
+template<>
+inline void vpImageTools::binarise(vpImage<unsigned char> &I,
+    unsigned char threshold1, unsigned char threshold2,
+    unsigned char value1, unsigned char value2, unsigned char value3, const bool useLUT)
+{
+  if(useLUT) {
+    //Construct the LUT
+    unsigned char lut[256];
+    for(unsigned int i = 0; i < 256; i++) {
+      lut[i] = i < threshold1 ? value1 : (i > threshold2 ? value3 : value2);
+    }
+
+    I.performLut(lut);
+  } else {
+    unsigned char v;
+    unsigned char *p = I.bitmap;
+    unsigned char *pend = I.bitmap + I.getWidth()*I.getHeight();
+    for (; p < pend; p ++) {
+      v = *p;
+      if (v < threshold1) *p = value1;
+      else if (v > threshold2) *p = value3;
+      else *p = value2;
+    }
+  }
 }
 
 #ifdef VISP_HAVE_PTHREAD

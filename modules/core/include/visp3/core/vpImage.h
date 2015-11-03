@@ -1532,6 +1532,22 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
 }
 
 /*!
+
+  \warning This generic method is not implemented. You should rather use the
+  instantiated methods for unsigned char and vpRGBa images.
+
+  \sa vpImage<unsigned char>::performLut(const unsigned char (&)[256])
+  \sa vpImage<vpRGBa char>::performLut(const vpRGBa (&)[256])
+
+*/
+template<class Type>
+void vpImage<Type>::performLut(const Type (&)[256])
+{
+//  vpTRACE("Not implemented");
+  std::cerr << "Not implemented !" << std::endl;
+}
+
+/*!
   Modify the intensities of a grayscale image using the look-up table passed in parameter.
 
   \param lut : Look-up table (unsigned char array of size=256) which maps each intensity to his new value.
