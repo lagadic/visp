@@ -467,6 +467,56 @@ int main() {
   std::cout << "vpMath::saturate<short>() is Ok !" << std::endl;
 
 
+  //Test mean, median and standard deviation against Matlab with rng(0) and rand(10,1)*10
+  std::vector<double> vectorOfDoubles(10);
+  vectorOfDoubles[0] = 8.1472;
+  vectorOfDoubles[1] = 9.0579;
+  vectorOfDoubles[2] = 1.2699;
+  vectorOfDoubles[3] = 9.1338;
+  vectorOfDoubles[4] = 6.3236;
+  vectorOfDoubles[5] = 0.9754;
+  vectorOfDoubles[6] = 2.7850;
+  vectorOfDoubles[7] = 5.4688;
+  vectorOfDoubles[8] = 9.5751;
+  vectorOfDoubles[9] = 9.6489;
+
+
+  double res = vpMath::getMean(vectorOfDoubles);
+  if(!vpMath::equal(res, 6.2386, 0.001)) {
+    std::cerr << "Problem with vpMath::getMean()=" << res << std::endl;
+    return -1;
+  }
+  std::cout << "vpMath::getMean() is Ok !" << std::endl;
+
+  res = vpMath::getStdev(vectorOfDoubles);
+  if(!vpMath::equal(res, 3.2810, 0.001)) {
+    std::cerr << "Problem with vpMath::getStdev()=" << res << std::endl;
+    return -1;
+  }
+
+  res = vpMath::getStdev(vectorOfDoubles, true);
+  if(!vpMath::equal(res, 3.4585, 0.001)) {
+    std::cerr << "Problem with vpMath::getStdev() with Bessel correction=" << res << std::endl;
+    return -1;
+  }
+  std::cout << "vpMath::getStdev() is Ok !" << std::endl;
+
+  res = vpMath::getMedian(vectorOfDoubles);
+  if(!vpMath::equal(res, 7.2354, 0.001)) {
+    std::cerr << "Problem with vpMath::getMedian()=" << res << std::endl;
+    return -1;
+  }
+
+  //Test median with odd number of elements
+  vectorOfDoubles.push_back(1.5761);
+  res = vpMath::getMedian(vectorOfDoubles);
+  if(!vpMath::equal(res, 6.3236, 0.001)) {
+    std::cerr << "Problem with vpMath::getMedian()=" << res << std::endl;
+    return -1;
+  }
+  std::cout << "vpMath::getMedian() is Ok !" << std::endl;
+
+
   std::cout << "OK !" << std::endl;
   return 0;
 }

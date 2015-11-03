@@ -52,6 +52,7 @@
 #include <limits>
 #include <climits>
 #include <algorithm>
+#include <vector>
 
 #if defined(VISP_HAVE_FUNC_ISNAN) || defined(VISP_HAVE_FUNC_STD_ISNAN) || defined(VISP_HAVE_FUNC_ISINF) || defined(VISP_HAVE_FUNC_STD_ISINF) || defined(VISP_HAVE_FUNC_STD_ROUND)
 #  include <cmath>
@@ -197,6 +198,10 @@ class VISP_EXPORT vpMath
   template<typename _Tp> static inline _Tp saturate(int v) { return _Tp(v); }
   template<typename _Tp> static inline _Tp saturate(float v) { return _Tp(v); }
   template<typename _Tp> static inline _Tp saturate(double v) { return _Tp(v); }
+
+  static double getMean(const std::vector<double> &v);
+  static double getMedian(const std::vector<double> &v);
+  static double getStdev(const std::vector<double> &v, const bool useBesselCorrection=false);
 
  private:
   static const double ang_min_sinc;

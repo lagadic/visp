@@ -130,7 +130,7 @@ vpColVector vpColVector::operator-() const
   try {
     A.resize(rowNum)  ;
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
     throw ;
@@ -151,7 +151,7 @@ vpColVector vpColVector::operator*(double x) const
   try {
     v.resize(rowNum)  ;
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
     throw ;
@@ -179,7 +179,7 @@ vpColVector &vpColVector::operator=(const vpMatrix &m)
   try {
     resize(m.getRows());
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
     throw ;
@@ -209,7 +209,7 @@ vpColVector &vpColVector::operator=(const vpColVector &v)
     try {
       resize(k);
     }
-    catch(vpException me)
+    catch(vpException &e)
     {
       vpERROR_TRACE("Error caught") ;
       throw ;
@@ -332,7 +332,7 @@ vpRowVector vpColVector::t() const
   try {
     v.resize(rowNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
     throw ;
@@ -617,7 +617,7 @@ void vpColVector::stack(const vpColVector &A, const vpColVector &B, vpColVector 
 }
 
 /*!
-  \brief Compute the mean value of all the element of the vector
+  \brief Compute the mean value of all the elements of the vector
 */
 double vpColVector::mean(const vpColVector &v)
 {
@@ -643,7 +643,7 @@ double vpColVector::mean(const vpColVector &v)
 }
 
 /*!
-  Compute the median value of all the element of the vector
+  Compute the median value of all the elements of the vector
 */
 double
 vpColVector::median(const vpColVector &v)
@@ -654,6 +654,14 @@ vpColVector::median(const vpColVector &v)
     throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
   }
 
+  std::vector<double> vectorOfDoubles(v.size());
+  for(unsigned int i = 0; i < v.size(); i++) {
+    vectorOfDoubles[i] = v[i];
+  }
+
+  return vpMath::getMedian(vectorOfDoubles);
+
+#if 0
   unsigned int i,j;
   unsigned int inf, sup;
   unsigned int n = v.getRows() ;
@@ -661,7 +669,7 @@ vpColVector::median(const vpColVector &v)
 
   for (i=0;i<v.getRows();i++)
   {
-    // We compute the number of element gretear (sup) than the current
+    // We compute the number of element greater (sup) than the current
     // value and the number of element smaller (inf) than the current
     // value
     inf = sup = 0;
@@ -693,7 +701,33 @@ vpColVector::median(const vpColVector &v)
 
   // return the median
   return(v[imin]);
+#endif
+}
 
+/*!
+  Compute the standard deviation value of all the elements of the vector
+*/
+double
+vpColVector::stdev(const vpColVector &v, const bool useBesselCorrection)
+{
+  if (v.data==NULL)
+  {
+    vpERROR_TRACE("vpColVector v non initialized") ;
+    throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
+  }
+
+  double mean_value = mean(v);
+  double sum_squared_diff = 0.0;
+  for(unsigned int i = 0; i < v.size(); i++) {
+    sum_squared_diff += (v[i]-mean_value) * (v[i]-mean_value);
+  }
+
+  double divisor = (double) v.size();
+  if(useBesselCorrection && v.size() > 1) {
+    divisor = divisor-1;
+  }
+
+  return std::sqrt(sum_squared_diff / divisor);
 }
 
 /*!
@@ -794,10 +828,10 @@ void vpColVector::reshape(vpMatrix & m,const unsigned int &nrows,const unsigned 
   {
     if ((m.getRows() != nrows) || (m.getCols() != ncols)) m.resize(nrows,ncols);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
+    std::cout << e << std::endl ;
     throw ;
   }
 

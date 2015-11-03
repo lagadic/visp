@@ -49,17 +49,25 @@
 #include <visp3/core/vpDebug.h>
 #include <string.h>
 #include <stdlib.h>
+
 //! Copy operator.   Allow operation such as A = v
 vpRowVector & vpRowVector::operator=(const vpRowVector &v)
 {
-  if (colNum==0)
-    resize(v.getCols());
-
-  for (unsigned int i=0; i<rowNum; i++) {
-    for (unsigned int j=0; j<colNum; j++) {
-      rowPtrs[i][j] = v.rowPtrs[i][j];
+  unsigned int k = v.colNum ;
+  if (colNum != k){
+    try {
+      resize(k);
+    }
+    catch(vpException &e)
+    {
+//      vpERROR_TRACE("Error caught");
+      std::cerr << "Problem with resize(" << k << ") !" << std::endl;
+      throw;
     }
   }
+
+  memcpy(data, v.data, colNum*sizeof(double)) ;
+
   return *this;
 }
 
@@ -170,7 +178,7 @@ vpRowVector vpRowVector::operator-() const
  try {
    A.resize(colNum)  ;
  }
- catch(vpException me)
+ catch(vpException &e)
  {
    vpERROR_TRACE("Error caught") ;
    throw ;
@@ -298,9 +306,12 @@ vpRowVector &vpRowVector::normalize(vpRowVector &x) const
 */
 vpRowVector &vpRowVector::normalize()
 {
-  double sum_square = sumSquare() ;
-  *this /= sum_square ;
+  double sum_square = sumSquare();
+  if (std::fabs(sum_square) > std::numeric_limits<double>::epsilon()) {
+    *this /= sqrt(sum_square) ;
+  }
 
+  // If sum = 0, we have a nul vector. So we return just.
   return *this;
 }
 
@@ -333,10 +344,10 @@ void vpRowVector::reshape(vpMatrix & m,const unsigned int &nrows,const unsigned 
   {
     if ((m.getRows() != nrows) || (m.getCols() != ncols)) m.resize(nrows,ncols);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
+    std::cout << e << std::endl ;
     throw ;
   }
      for(unsigned int i =0; i< nrows; i++)
@@ -385,4 +396,185 @@ void vpRowVector::insert(unsigned int i, const vpRowVector &v)
     throw(vpException(vpException::dimensionError, "Unable to insert a row vector"));
   for (unsigned int j=0; j < v.size(); j++)
     (*this)[i+j] = v[j];
+}
+
+/*!
+  Stack row vector with new element.
+
+  \param b : Element to stack to the existing one.
+
+  \code
+  vpRowVector A(3);
+  double b = 3;
+  A.stack(b); // A = [A b]
+  // A is now a 4 dimension row vector
+  \endcode
+
+  \sa stack(const vpRowVector &, const vpRowVector &)
+  \sa stack(const vpRowVector &, const vpRowVector &, vpRowVector &)
+
+*/
+void vpRowVector::stack(const double &b)
+{
+  this->resize(colNum+1,false);
+  (*this)[colNum-1] = b;
+}
+
+/*!
+  Stack row vectors.
+
+  \param B : Vector to stack to the existing one.
+
+  \code
+  vpRowVector A(3);
+  vpRowVector B(5);
+  A.stack(B); // A = [A B]
+  // A is now an 8 dimension row vector
+  \endcode
+
+  \sa stack(const vpRowVector &, const double &)
+  \sa stack(const vpRowVector &, const vpRowVector &)
+  \sa stack(const vpRowVector &, const vpRowVector &, vpRowVector &)
+
+*/
+void vpRowVector::stack(const vpRowVector &B)
+{
+  *this = vpRowVector::stack(*this, B);
+}
+
+/*!
+  Stack row vectors.
+
+  \param A : Initial vector.
+  \param B : Vector to stack at the end of A.
+  \return Stacked vector \f$[A B]\f$.
+
+  \code
+  vpRowVector A(3);
+  vpRowVector B(5);
+  vpRowVector C;
+  C = vpRowVector::stack(A, B); // C = [A B]
+  // C is now an 8 dimension row vector
+  \endcode
+
+  \sa stack(const vpRowVector &)
+  \sa stack(const vpRowVector &, const vpRowVector &, vpRowVector &)
+*/
+vpRowVector vpRowVector::stack(const vpRowVector &A, const vpRowVector &B)
+{
+  vpRowVector C;
+  vpRowVector::stack(A, B, C);
+  return C;
+}
+
+/*!
+  Stack row vectors.
+
+  \param A : Initial vector.
+  \param B : Vector to stack at the end of A.
+  \param C : Resulting stacked vector \f$C = [A B]\f$.
+
+  \code
+  vpRowVector A(3);
+  vpRowVector B(5);
+  vpRowVector C;
+  vpRowVector::stack(A, B, C); // C = [A B]
+  // C is now an 8 dimension row vector
+  \endcode
+
+  \sa stack(const vpRowVector &)
+  \sa stack(const vpRowVector &, const vpRowVector &)
+*/
+void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B, vpRowVector &C)
+{
+  unsigned int nrA = A.getCols();
+  unsigned int nrB = B.getCols();
+
+  if (nrA == 0 && nrB == 0) {
+    C.resize(0);
+    return;
+  }
+
+  if (nrB == 0) {
+    C = A;
+    return;
+  }
+
+  if (nrA == 0) {
+    C = B;
+    return;
+  }
+
+  // General case
+  C.resize(nrA + nrB);
+
+  for (unsigned int i=0; i<nrA; i++)
+    C[i] = A[i];
+
+  for (unsigned int i=0; i<nrB; i++)
+    C[nrA+i] = B[i];
+}
+
+/*!
+  \brief Compute the mean value of all the elements of the vector
+*/
+double vpRowVector::mean(const vpRowVector &v)
+{
+  if (v.data == NULL) {
+    vpERROR_TRACE("vpColVector v non initialized");
+    throw(vpMatrixException(vpMatrixException::notInitializedError));
+  }
+
+  double mean = 0;
+  double *vd = v.data;
+  for (unsigned int i = 0; i < v.getCols(); i++)
+    mean += *(vd++);
+
+  return mean / v.getCols();
+}
+
+/*!
+  Compute the median value of all the elements of the vector
+*/
+double
+vpRowVector::median(const vpRowVector &v)
+{
+  if (v.data==NULL)
+  {
+    vpERROR_TRACE("vpColVector v non initialized") ;
+    throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
+  }
+
+  std::vector<double> vectorOfDoubles(v.size());
+  for(unsigned int i = 0; i < v.size(); i++) {
+    vectorOfDoubles[i] = v[i];
+  }
+
+  return vpMath::getMedian(vectorOfDoubles);
+}
+
+/*!
+  Compute the standard deviation value of all the elements of the vector
+*/
+double
+vpRowVector::stdev(const vpRowVector &v, const bool useBesselCorrection)
+{
+  if (v.data==NULL)
+  {
+    vpERROR_TRACE("vpColVector v non initialized") ;
+    throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
+  }
+
+  double mean_value = mean(v);
+  double sum_squared_diff = 0.0;
+  for(unsigned int i = 0; i < v.size(); i++) {
+    sum_squared_diff += (v[i]-mean_value) * (v[i]-mean_value);
+  }
+
+  double divisor = (double) v.size();
+  if(useBesselCorrection && v.size() > 1) {
+    divisor = divisor-1;
+  }
+
+  return std::sqrt(sum_squared_diff / divisor);
 }

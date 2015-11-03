@@ -124,6 +124,11 @@ public:
   void reshape(vpMatrix & m,const unsigned int &nrows,const unsigned int &ncols);
   vpMatrix reshape(const unsigned int &nrows,const unsigned int &ncols);
   
+  void stack(const double &b);
+  void stack(const vpRowVector &B);
+  static vpRowVector stack(const vpRowVector &A, const vpRowVector &B);
+  static void stack(const vpRowVector &A, const vpRowVector &B, vpRowVector &C);
+
   //! Transpose the vector.
   vpColVector t() const;
 
@@ -131,6 +136,13 @@ public:
   vpRowVector &normalize() ;
   //! Normalise the vector.
   vpRowVector &normalize(vpRowVector &x) const ;
+
+  //! compute the median
+  static double median(const vpRowVector &v) ;
+  //! compute the mean
+  static double mean(const vpRowVector &v)  ;
+  //! compute the standard deviation
+  static double stdev(const vpRowVector &v, const bool useBesselCorrection=false);
 
   /*!
 
