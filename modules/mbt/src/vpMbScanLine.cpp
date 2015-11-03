@@ -50,13 +50,35 @@
 #include <visp3/mbt/vpMbScanLine.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 
+#if defined(DEBUG_DISP)
+#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/core/vpDisplayX.h>
+#endif
+
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 vpMbScanLine::vpMbScanLine(): maskBorder(0), depthTreshold(1e-06)
+#if defined(DEBUG_DISP)
+  ,dispLineDebug(NULL), dispMaskDebug(NULL)
+#endif
 {
+#if defined(VISP_HAVE_X11) && defined(DEBUG_DISP)
+    dispLineDebug = new vpDisplayX();
+    dispMaskDebug = new vpDisplayX();
+#elif defined(VISP_HAVE_GDI) && defined(DEBUG_DISP)
+    dispLineDebug = new vpDisplayGDI();
+    dispMaskDebug = new vpDisplayGDI();
+#endif
 }
 
+vpMbScanLine::~vpMbScanLine()
+{
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(DEBUG_DISP)
+  if (dispLineDebug != NULL) delete dispLineDebug;
+  if (dispMaskDebug != NULL) delete dispMaskDebug;
+#endif
+}
 /*!
   Compute the intersections between Y-axis scanlines and a given line (two points polygon).
 
@@ -506,9 +528,9 @@ vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigne
         if(maskX[i][j] == 255 && maskY[i][j] == 255)
           mask[i][j] = 255;
 
-#if defined(VISP_HAVE_X11) && defined(DEBUG_DISP)
-  if(!dispMaskDebug.isInitialised()){
-    dispMaskDebug.init(mask, 800, 600);
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(DEBUG_DISP)
+  if(!dispMaskDebug->isInitialised()){
+    dispMaskDebug->init(mask, 800, 600);
   }
 
   vpDisplay::display(mask);
@@ -531,9 +553,9 @@ vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigne
   vpDisplay::flush(mask);
 
 
-  if(!dispLineDebug.isInitialised()){
+  if(!dispLineDebug->isInitialised()){
     linedebugImg.resize(h,w,0);
-    dispLineDebug.init(linedebugImg, 800, 100);
+    dispLineDebug->init(linedebugImg, 800, 100);
   }
   vpDisplay::display(linedebugImg);
 #endif
@@ -568,7 +590,7 @@ vpMbScanLine::queryLineVisibility(vpPoint a,
   lines.clear();
 
   if(displayResults){
-#if defined(VISP_HAVE_X11) && defined(DEBUG_DISP)
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(DEBUG_DISP)
     double i1(0.0), j1(0.0), i2(0.0), j2(0.0);
     a.project();
     b.project();
@@ -650,7 +672,7 @@ vpMbScanLine::queryLineVisibility(vpPoint a,
       lines.push_back(std::make_pair(line_start, line_end));
 
   if(displayResults){
-#if defined(VISP_HAVE_X11) && defined(DEBUG_DISP)
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(DEBUG_DISP)
     double i1(0.0), j1(0.0), i2(0.0), j2(0.0);
     for(unsigned int i = 0 ; i < lines.size() ; i++){
       lines[i].first.project();
