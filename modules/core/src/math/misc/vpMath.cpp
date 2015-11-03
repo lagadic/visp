@@ -42,7 +42,10 @@
 */
 
 #include <stdint.h>
+#include <numeric>
+#include <functional>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpException.h>
 
 
 #if defined(VISP_HAVE_FUNC__ISNAN)
@@ -179,4 +182,79 @@ double vpMath::sinc(double sinx, double x)
 {
   if (fabs(x) < ang_min_sinc) return 1.0 ;
   else  return (sinx/x) ;
+}
+
+/*!
+  Compute the mean value for a vector of double.
+
+  \param v : Vector of double values.
+
+  \return The mean value.
+*/
+double vpMath::getMean(const std::vector<double> &v)
+{
+  if(v.empty()) {
+    throw vpException(vpException::notInitialized, "Empty vector !");
+  }
+
+  double sum = 0.0;
+  size_t size = v.size();
+
+  sum = std::accumulate(v.begin(), v.end(), 0.0);
+
+  return sum / (double) size;
+}
+
+/*!
+  Compute the median value for a vector of double.
+
+  \param v : Vector of double values.
+
+  \return The median value.
+*/
+double vpMath::getMedian(const std::vector<double> &v) {
+  if(v.empty()) {
+    throw vpException(vpException::notInitialized, "Empty vector !");
+  }
+
+  double median = 0.0;
+  std::vector<double> v_copy = v;
+  size_t size = v_copy.size();
+
+  if(size % 2 == 0) {
+    sort(v_copy.begin(), v_copy.end());
+    median = (v_copy[size / 2 - 1] + v_copy[size / 2]) / 2.0;
+  } else {
+    std::nth_element(v_copy.begin(), v_copy.begin() + (int) (size/2), v_copy.end());
+    median = v_copy[size/2];
+  }
+
+  return median;
+}
+
+/*!
+  Compute the standard deviation value for a vector of double.
+
+  \param v : Vector of double values.
+  \param useBesselCorrection : If true, the Bessel correction is used (normalize by N-1).
+
+  \return The standard deviation value.
+*/
+double vpMath::getStdev(const std::vector<double> &v, const bool useBesselCorrection) {
+  if(v.empty()) {
+    throw vpException(vpException::notInitialized, "Empty vector !");
+  }
+
+  double mean = getMean(v);
+
+  std::vector<double> diff(v.size());
+  std::transform(v.begin(), v.end(), diff.begin(),
+     std::bind2nd(std::minus<double>(), mean));
+  double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
+  double divisor = (double) v.size();
+  if(useBesselCorrection && v.size() > 1) {
+    divisor = divisor-1;
+  }
+
+  return std::sqrt(sq_sum / divisor);
 }

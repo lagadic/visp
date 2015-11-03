@@ -168,6 +168,8 @@ public:
   static double median(const vpColVector &v) ;
   //! compute the mean
   static double mean(const vpColVector &v)  ;
+  //! compute the standard deviation
+  static double stdev(const vpColVector &v, const bool useBesselCorrection=false);
 
   /*!
 

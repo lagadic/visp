@@ -378,10 +378,10 @@ vpMatrix::operator=(const vpMatrix &B)
     // suppress by em 5/12/06
     //    *this = 0;
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
+    std::cout << e << std::endl ;
     throw ;
   }
 
@@ -454,10 +454,10 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   {
     if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
+    std::cout << e << std::endl ;
     throw ;
   }
 
@@ -515,10 +515,10 @@ void vpMatrix::add2WeightedMatrices(const vpMatrix &A, const double &wA, const v
   {
     if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
+    std::cout << e << std::endl ;
     throw ;
   }
 
@@ -555,10 +555,10 @@ void vpMatrix::add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   {
     if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
+    std::cout << e << std::endl ;
     throw ;
   }
 
@@ -624,10 +624,10 @@ void vpMatrix::sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   {
     if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
+    std::cout << e << std::endl ;
     throw ;
   }
 
@@ -771,10 +771,10 @@ void vpMatrix::negateMatrix(const vpMatrix &A, vpMatrix &C)
   {
     if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
+    std::cout << e << std::endl ;
     throw ;
   }
 
@@ -890,10 +890,10 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &b, vpColVe
   {
     if (A.rowNum != c.rowNum) c.resize(A.rowNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
+    std::cout << e << std::endl ;
     throw ;
   }
 
@@ -961,10 +961,10 @@ vpMatrix operator*(const double &x,const vpMatrix &B)
   try {
     C.resize(B.getRows(),B.getCols());
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
+    std::cout << e << std::endl ;
     throw ;
   }
   // 	double t0,t1;
@@ -1004,10 +1004,10 @@ vpMatrix vpMatrix::operator*(double x) const
   try {
     C.resize(rowNum,colNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
+    std::cout << e << std::endl ;
     throw ;
   }
   //	double t0,t1;
@@ -1039,10 +1039,10 @@ vpMatrix  vpMatrix::operator/(double x) const
   try {
     C.resize(rowNum,colNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
+    vpCERROR << e << std::endl ;
     throw ;
   }
 
@@ -1204,10 +1204,10 @@ vpMatrix::eye(unsigned int n)
   try {
     eye(n,n) ;
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
+    vpCERROR << e << std::endl ;
     throw ;
   }
 }
@@ -1224,10 +1224,10 @@ vpMatrix::eye(unsigned int m, unsigned int n)
   try {
     resize(m,n) ;
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
+    vpCERROR << e << std::endl ;
     throw ;
   }
 
@@ -1250,10 +1250,10 @@ vpMatrix vpMatrix::t() const
   try {
     At.resize(colNum,rowNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
+    vpCERROR << e << std::endl ;
     throw ;
   }
 
@@ -1290,10 +1290,10 @@ void  vpMatrix::transpose(vpMatrix & At )const{
   try {
     At.resize(colNum,rowNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
+    vpCERROR << e << std::endl ;
     throw ;
   }
 
@@ -1340,10 +1340,10 @@ void vpMatrix::AAt(vpMatrix &B)const {
   try {
     if ((B.rowNum != rowNum) || (B.colNum != rowNum)) B.resize(rowNum,rowNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
+    vpCERROR << e << std::endl ;
     throw ;
   }
 
@@ -1383,10 +1383,10 @@ void vpMatrix::AtA(vpMatrix &B) const
   try {
     if ((B.rowNum != colNum) || (B.colNum != colNum)) B.resize(colNum,colNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
+    vpCERROR << e << std::endl ;
     throw ;
   }
 
@@ -1445,10 +1445,10 @@ void vpMatrix::stackColumns(vpColVector  &out ){
   try {
     if ((out.rowNum != colNum*rowNum) || (out.colNum != 1)) out.resize(rowNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
+    vpCERROR << e << std::endl ;
     throw ;
   }
 
@@ -1480,10 +1480,10 @@ void vpMatrix::stackRows(vpRowVector  &out ){
   try {
     if ((out.rowNum != 1) || (out.colNum != colNum*rowNum)) out.resize(rowNum);
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
+    vpCERROR << e << std::endl ;
     throw ;
   }
 
@@ -2501,9 +2501,9 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B)
   try{
     stackMatrices(A,B, C) ;
   }
-  catch(vpMatrixException me)
+  catch(vpMatrixException &e)
   {
-    vpCERROR << me << std::endl;
+    vpCERROR << e << std::endl;
     throw ;
   }
 
@@ -2539,10 +2539,10 @@ vpMatrix::stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     try {
       C.resize(nra+nrb,B.getCols()  ) ;
     }
-    catch(vpException me)
+    catch(vpException &e)
     {
       vpERROR_TRACE("Error caught") ;
-      vpCERROR << me << std::endl ;
+      vpCERROR << e << std::endl ;
       throw ;
     }
 
@@ -2587,10 +2587,10 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B,
   try{
     insert(A,B, C, r, c) ;
   }
-  catch(vpMatrixException me)
+  catch(vpMatrixException &e)
   {
-    vpCERROR << me << std::endl;
-    throw me;
+    vpCERROR << e << std::endl;
+    throw e;
   }
 
   return C ;
@@ -2618,10 +2618,10 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C,
       try {
         C.resize(A.getRows(),A.getCols()  ) ;
       }
-      catch(vpException me)
+      catch(vpException &e)
       {
         vpERROR_TRACE("Error caught") ;
-        vpCERROR << me << std::endl ;
+        vpCERROR << e << std::endl ;
         throw ;
       }
       for(unsigned int i=0; i<A.getRows(); i++){
@@ -2660,9 +2660,9 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
   try{
     juxtaposeMatrices(A,B, C) ;
   }
-  catch(vpMatrixException me)
+  catch(vpMatrixException &e)
   {
-    vpCERROR << me << std::endl ;
+    vpCERROR << e << std::endl ;
     throw ;
   }
 
@@ -2698,10 +2698,10 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     try {
       C.resize(B.getRows(),nca+ncb) ;
     }
-    catch(vpException me)
+    catch(vpException &e)
     {
       vpERROR_TRACE("Error caught") ;
-      vpCERROR << me << std::endl ;
+      vpCERROR << e << std::endl ;
       throw ;
     }
 
@@ -2760,10 +2760,10 @@ vpMatrix::diag(const vpColVector &A)
   try {
     this->resize(rows,rows) ;
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
+    vpCERROR << e << std::endl ;
     throw ;
   }
   (*this) = 0 ;
@@ -2788,10 +2788,10 @@ vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
   try {
     DA.resize(rows,rows) ;
   }
-  catch(vpException me)
+  catch(vpException &e)
   {
     vpERROR_TRACE("Error caught") ;
-    vpCERROR << me << std::endl ;
+    vpCERROR << e << std::endl ;
     throw ;
   }
   DA =0 ;
