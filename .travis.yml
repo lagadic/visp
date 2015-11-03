@@ -11,6 +11,10 @@ compiler:
   - gcc
   - clang
 
+sudo: required
+dist: trusty
+osx_image: xcode7.1
+
 before_install:
   - cd ${TRAVIS_BUILD_DIR} && { curl -O http://www.irisa.fr/lagadic/visp/download/sequence/ViSP-images-2.10.0.zip ; cd -; }
   - unzip ${TRAVIS_BUILD_DIR}/ViSP-images-2.10.0.zip -d ${TRAVIS_BUILD_DIR}
