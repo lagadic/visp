@@ -18,8 +18,6 @@ before_install:
   - cd ${TRAVIS_BUILD_DIR} && { curl -O http://www.irisa.fr/lagadic/visp/download/sequence/ViSP-images-2.10.0.zip ; cd -; }
   - unzip ${TRAVIS_BUILD_DIR}/ViSP-images-2.10.0.zip -d ${TRAVIS_BUILD_DIR}
   # Get libs for OSX
-  #   There is a bug in a formula resulting in update failing if run once, but not the second time
-  #   See https://github.com/Homebrew/homebrew/issues/45616
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew update; fi"
   #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew tap homebrew/science; fi"
   #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install opencv3; fi"
