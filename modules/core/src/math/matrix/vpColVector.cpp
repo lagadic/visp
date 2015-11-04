@@ -130,7 +130,7 @@ vpColVector vpColVector::operator-() const
   try {
     A.resize(rowNum)  ;
   }
-  catch(vpException &e)
+  catch(vpException &/*e*/)
   {
     vpERROR_TRACE("Error caught") ;
     throw ;
@@ -151,7 +151,7 @@ vpColVector vpColVector::operator*(double x) const
   try {
     v.resize(rowNum)  ;
   }
-  catch(vpException &e)
+  catch(vpException &/*e*/)
   {
     vpERROR_TRACE("Error caught") ;
     throw ;
@@ -179,7 +179,7 @@ vpColVector &vpColVector::operator=(const vpMatrix &m)
   try {
     resize(m.getRows());
   }
-  catch(vpException &e)
+  catch(vpException &/*e*/)
   {
     vpERROR_TRACE("Error caught") ;
     throw ;
@@ -209,7 +209,7 @@ vpColVector &vpColVector::operator=(const vpColVector &v)
     try {
       resize(k);
     }
-    catch(vpException &e)
+    catch(vpException &/*e*/)
     {
       vpERROR_TRACE("Error caught") ;
       throw ;
@@ -332,7 +332,7 @@ vpRowVector vpColVector::t() const
   try {
     v.resize(rowNum);
   }
-  catch(vpException &e)
+  catch(vpException &/*e*/)
   {
     vpERROR_TRACE("Error caught") ;
     throw ;

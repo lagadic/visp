@@ -58,7 +58,7 @@ vpRowVector & vpRowVector::operator=(const vpRowVector &v)
     try {
       resize(k);
     }
-    catch(vpException &e)
+    catch(vpException &/*e*/)
     {
 //      vpERROR_TRACE("Error caught");
       std::cerr << "Problem with resize(" << k << ") !" << std::endl;
@@ -178,7 +178,7 @@ vpRowVector vpRowVector::operator-() const
  try {
    A.resize(colNum)  ;
  }
- catch(vpException &e)
+ catch(vpException &/*e*/)
  {
    vpERROR_TRACE("Error caught") ;
    throw ;
