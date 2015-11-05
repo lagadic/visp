@@ -8,6 +8,8 @@
 
 ViSP 3.0.0 (under development)
   - New features
+    . Compatibility with Windows 8.1
+    . Compatibility with Microsoft Visual C++ 2015 (MSCV 14)
     . Source code migrates to GitHub: http://github.org/lagadic/visp
     . Introduce Travis continuous integration
     . New website: http://visp.inria.fr
@@ -38,8 +40,11 @@ ViSP 3.0.0 (under development)
       or circle from cao file
     . [19326] segfault when using vpDisplayX::init(unsigned int, unsigned int, ...)
     . [19368] Invalid rotation parameters in vpSimulatorViper850::getPosition()
-    . [#3] Possible issue when comparing two vpRGBa
-    . [#5] Unable to get calibration matrix K when model with distorsion is used
+    . [#3]  Possible issue when comparing two vpRGBa
+    . [#5]  Unable to get calibration matrix K when model with distorsion is used
+    . [#6]  Issue with vpMath::round()
+    . [#18] Issues with vpColVector::median() + with assignment operator of vpRowVector 
+      + with vpRowVector::normalize() function
 
 ----------------------------------------------
 ViSP 2.10.0 (released February 13th, 2015)
