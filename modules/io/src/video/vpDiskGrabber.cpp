@@ -36,7 +36,7 @@
  *****************************************************************************/
 
 
-#include <visp3/core/vpDiskGrabber.h>
+#include <visp3/io/vpDiskGrabber.h>
 
 
 /*!

@@ -46,8 +46,8 @@
 
 #include <string>
 
-#include <visp3/core/vpDiskGrabber.h>
-#include <visp3/core/vpFFMPEG.h>
+#include <visp3/io/vpDiskGrabber.h>
+#include <visp3/io/vpFFMPEG.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020200
 #include "opencv2/highgui/highgui.hpp"
@@ -76,7 +76,7 @@
   \code
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
-#include <visp3/core/vpVideoReader.h>
+#include <visp3/io/vpVideoReader.h>
 
 int main()
 {
@@ -111,7 +111,7 @@ int main()
   \code
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
-#include <visp3/core/vpVideoReader.h>
+#include <visp3/io/vpVideoReader.h>
 
 int main()
 {
@@ -136,7 +136,7 @@ int main()
   \code
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
-#include <visp3/core/vpVideoReader.h>
+#include <visp3/io/vpVideoReader.h>
 
 int main()
 {

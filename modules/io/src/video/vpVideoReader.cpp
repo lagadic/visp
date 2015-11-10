@@ -42,7 +42,7 @@
 */
 
 #include <visp3/core/vpDebug.h>
-#include <visp3/core/vpVideoReader.h>
+#include <visp3/io/vpVideoReader.h>
 
 #include <iostream>
 #include <fstream>

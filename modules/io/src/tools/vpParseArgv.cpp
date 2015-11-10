@@ -26,7 +26,7 @@
 
 
 
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

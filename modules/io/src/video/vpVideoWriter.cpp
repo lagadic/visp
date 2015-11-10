@@ -42,7 +42,7 @@
 */
 
 #include <visp3/core/vpDebug.h>
-#include <visp3/core/vpVideoWriter.h>
+#include <visp3/io/vpVideoWriter.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020200
 #  include <opencv2/imgproc/imgproc.hpp>

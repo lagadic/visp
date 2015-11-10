@@ -45,7 +45,7 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
-#include <visp3/core/vpFFMPEG.h>
+#include <visp3/io/vpFFMPEG.h>
 #include <visp3/core/vpImageConvert.h>
 
 #ifdef VISP_HAVE_FFMPEG

@@ -46,7 +46,7 @@
 
   \code
 #include <stdio.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 
 // Usage : [-int <integer value>] [-float <float value>] [-double <double value>] [-h]
 int main(int argc, const char ** argv)
@@ -87,7 +87,7 @@ int main(int argc, const char ** argv)
   \code
 #include <stdio.h>
 #include <stdlib.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"d:f:i:h" // double point mean here that the preceding option request an argument

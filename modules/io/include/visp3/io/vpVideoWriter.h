@@ -45,8 +45,8 @@
 
 #include <string>
 
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpFFMPEG.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpFFMPEG.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020200
 #  include <opencv2/highgui/highgui.hpp>
@@ -71,7 +71,7 @@
   
   \code
   #include <visp3/core/vpConfig.h>
-  #include <visp3/core/vpVideoWriter.h>
+  #include <visp3/io/vpVideoWriter.h>
  
   int main()
   {
@@ -101,7 +101,7 @@
   The other following example explains how to use the class to write directly an mpeg file.
   
   \code
-#include <visp3/core/vpVideoWriter.h>
+#include <visp3/io/vpVideoWriter.h>
 
 int main()
 {

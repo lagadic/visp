@@ -43,7 +43,7 @@
 #ifndef vpDiskGrabber_hh
 #define vpDiskGrabber_hh
 
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpFrameGrabber.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpDebug.h>
@@ -66,7 +66,7 @@
 
 \code
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpDiskGrabber.h>
+#include <visp3/io/vpDiskGrabber.h>
 
 int main(){
   vpImage<unsigned char> I; // Grey level image

@@ -44,7 +44,7 @@
 #ifndef vpFFMPEG_H
 #define vpFFMPEG_H
 
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
@@ -102,7 +102,7 @@ struct SwsContext;
   
   Here an example which explains how to use the class to read a video stream.
   \code
-#include <visp3/core/vpFFMPEG.h>
+#include <visp3/io/vpFFMPEG.h>
 
 int main ()
 {
@@ -123,7 +123,7 @@ int main ()
   
   If you want to open the video as a gray scaled video, you can use the following example.
   \code
-#include <visp3/core/vpFFMPEG.h>
+#include <visp3/io/vpFFMPEG.h>
 
 int main ()
 {
