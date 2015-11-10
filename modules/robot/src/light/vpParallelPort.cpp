@@ -46,7 +46,7 @@
 #  include <sys/ioctl.h>
 #  include <unistd.h>
 
-#  include <visp3/core/vpParallelPort.h>
+#  include <visp3/robot/vpParallelPort.h>
 
 /*!
   \file vpParallelPort.cpp

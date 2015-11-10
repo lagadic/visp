@@ -54,7 +54,7 @@
 #  include <linux/parport.h>
 #  include <linux/ppdev.h>
 
-#  include <visp3/core/vpParallelPortException.h>
+#  include <visp3/robot/vpParallelPortException.h>
 
 /*!
 
@@ -65,7 +65,7 @@
   The code below shows how to send a data over the parallel port.
   \code
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpParallelPort.h>
+#include <visp3/robot/vpParallelPort.h>
 
 int main()
 {
