@@ -50,7 +50,6 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImageTools.h>
-#include <visp3/core/vpImageIo.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpImageFilter.h>
