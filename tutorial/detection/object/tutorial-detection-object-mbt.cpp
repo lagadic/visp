@@ -1,11 +1,12 @@
 //! \example tutorial-detection-object-mbt.cpp
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/mbt/vpMbEdgeTracker.h>
-#include <visp3/core/vpVideoReader.h>
+#include <visp3/io/vpVideoReader.h>
 #include <visp3/vision/vpKeyPoint.h>
+#include <visp3/core/vpIoTools.h>
 
 
 int main(int argc, char ** argv) {

@@ -2,7 +2,7 @@ project(tutorial-tracking-mb)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core visp_mbt)
+find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui)
 
 # set the list of source files
 set(tutorial_cpp

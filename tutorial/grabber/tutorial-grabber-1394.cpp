@@ -1,6 +1,6 @@
 //! \example tutorial-grabber-1394.cpp
 #include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/core/vpImage.h>
 
 int main()

@@ -1,8 +1,8 @@
 /*! \example tutorial-ibvs-4pts-plotter-continuous-gain-adaptive.cpp */
-#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/robot/vpSimulatorCamera.h>
-#include <visp3/core/vpPlot.h>
+#include <visp3/gui/vpPlot.h>
 
 int main()
 {

@@ -1,6 +1,6 @@
 //! \example tutorial-bridge-opencv.cpp
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300

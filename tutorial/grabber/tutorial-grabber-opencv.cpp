@@ -1,5 +1,5 @@
 /*! \example tutorial-grabber-opencv.cpp */
-#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/sensor/vpOpenCVGrabber.h>
 
 int main()

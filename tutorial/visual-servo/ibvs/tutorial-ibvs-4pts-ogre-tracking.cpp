@@ -3,14 +3,15 @@
 #ifdef VISP_HAVE_MODULE_AR
 #include <visp3/ar/vpAROgre.h>
 #endif
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/vision/vpPose.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 #include <visp3/robot/vpSimulatorCamera.h>
+#include <visp3/blob/vpDot2.h>
 
 void display_trajectory(const vpImage<unsigned char> &I, const std::vector<vpDot2> &dot, unsigned int thickness);
 #if defined(VISP_HAVE_OGRE)

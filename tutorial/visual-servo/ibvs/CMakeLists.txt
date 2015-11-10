@@ -2,7 +2,7 @@ project(tutorial-visual-servo-ibvs)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core visp_robot visp_vs)
+find_package(VISP REQUIRED visp_core visp_robot visp_vs visp_blob visp_vision visp_io visp_gui)
 
 # set the list of source files
 set(tutorial_cpp

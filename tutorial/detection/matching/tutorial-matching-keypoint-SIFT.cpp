@@ -1,7 +1,7 @@
 //! \example tutorial-matching-keypoint-SIFT.cpp
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpVideoReader.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/io/vpVideoReader.h>
+#include <visp3/io/vpImageIo.h>
 //! [Include]
 #include <visp3/vision/vpKeyPoint.h>
 //! [Include]

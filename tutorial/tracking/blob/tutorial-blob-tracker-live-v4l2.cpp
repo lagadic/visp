@@ -3,11 +3,11 @@
 #ifdef VISP_HAVE_MODULE_SENSOR
 #include <visp3/sensor/vpV4l2Grabber.h>
 #endif
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDot2.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/blob/vpDot2.h>
 
 int main()
 {

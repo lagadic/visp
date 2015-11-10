@@ -1,8 +1,8 @@
 /*! \example tutorial-ibvs-4pts-wireframe-robot-viper.cpp */
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/robot/vpSimulatorViper850.h>
 
