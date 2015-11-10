@@ -54,9 +54,10 @@
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpPlane.h>
 #include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpIoTools.h>
 #include <visp3/vision/vpPose.h>
-#include <visp3/core/vpImageIo.h>
+#ifdef VISP_HAVE_MODULE_IO
+#  include <visp3/io/vpImageIo.h>
+#endif
 #include <visp3/core/vpPolygon.h>
 #include <visp3/vision/vpXmlConfigParserKeyPoint.h>
 #include <visp3/core/vpConvert.h>

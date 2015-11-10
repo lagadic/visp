@@ -43,7 +43,6 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayX.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImageTools.h>
 

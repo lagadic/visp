@@ -36,6 +36,8 @@
  *****************************************************************************/
 #include <visp3/vision/vpPoseFeatures.h>
 
+#ifdef VISP_HAVE_MODULE_VISUAL_FEATURES
+
 /*!
   Default constructor.
 */
@@ -570,9 +572,4 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix & cMo)
   }
 }
 
-
-
-
-
-
-
+#endif //#ifdef VISP_HAVE_MODULE_VISUAL_FEATURES
