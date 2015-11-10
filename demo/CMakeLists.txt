@@ -39,7 +39,7 @@ project(ViSP-demo)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED)
+find_package(VISP)
 
 if(MSVC)
   if(NOT VISP_SHARED)
@@ -62,4 +62,4 @@ if(MSVC)
   endif()
 endif()
 
-visp_add_subdirectory(wireframe-simulator REQUIRED_DEPS visp_core visp_robot visp_vs)
+visp_add_subdirectory(wireframe-simulator REQUIRED_DEPS visp_core visp_robot visp_vs visp_io visp_gui)
