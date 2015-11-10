@@ -50,7 +50,7 @@
 
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/core/vpBasicFeature.h>
+#include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/vs/vpServoException.h>
 #include <visp3/vs/vpAdaptiveGain.h>
 
@@ -81,8 +81,8 @@
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpFeatureThetaU.h>
-#include <visp3/core/vpFeatureTranslation.h>
+#include <visp3/visual_features/vpFeatureThetaU.h>
+#include <visp3/visual_features/vpFeatureTranslation.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/vs/vpServo.h>

@@ -41,11 +41,11 @@
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/vs/vpServo.h>
-#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/core/vpGenericFeature.h>
-#include <visp3/core/vpFeatureBuilder.h>
-#include <visp3/core/vpFeatureThetaU.h>
-#include <visp3/core/vpDot2.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeatureThetaU.h>
+#include <visp3/blob/vpDot2.h>
 #include <visp3/core/vpCameraParameters.h>
 
 #include <iostream>
