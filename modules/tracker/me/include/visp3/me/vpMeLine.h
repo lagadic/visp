@@ -45,7 +45,7 @@
 
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/core/vpMeTracker.h>
+#include <visp3/me/vpMeTracker.h>
 
 #include <math.h>
 #include <iostream>
@@ -100,7 +100,7 @@
 \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpMeLine.h>
+#include <visp3/me/vpMeLine.h>
 #include <visp3/core/vpImagePoint.h>
 
 int main()

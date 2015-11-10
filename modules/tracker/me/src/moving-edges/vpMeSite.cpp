@@ -44,13 +44,13 @@
 
 
 
-#include <visp3/core/vpMeSite.h>
-#include <visp3/core/vpMe.h>
+#include <visp3/me/vpMeSite.h>
+#include <visp3/me/vpMe.h>
 #include <visp3/core/vpTrackingException.h>
 #include <stdlib.h>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
-#include <visp3/core/vpMeSite.h>
+#include <visp3/me/vpMeSite.h>
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

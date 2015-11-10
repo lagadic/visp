@@ -45,8 +45,8 @@
 #define vpMeTracker_HH
 
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMeSite.h>
-#include <visp3/core/vpMe.h>
+#include <visp3/me/vpMeSite.h>
+#include <visp3/me/vpMe.h>
 #include <visp3/core/vpTracker.h>
 
 #include <math.h>

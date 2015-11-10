@@ -37,9 +37,9 @@
 
 
 
-#include <visp3/core/vpMeEllipse.h>
+#include <visp3/me/vpMeEllipse.h>
 
-#include <visp3/core/vpMe.h>
+#include <visp3/me/vpMe.h>
 #include <visp3/core/vpRobust.h>
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/core/vpDebug.h>

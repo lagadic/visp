@@ -43,10 +43,10 @@
 
 
 
-#include <visp3/core/vpMeTracker.h>
-#include <visp3/core/vpMe.h>
-#include <visp3/core/vpMeSite.h>
-#include <visp3/core/vpMeLine.h>
+#include <visp3/me/vpMeTracker.h>
+#include <visp3/me/vpMe.h>
+#include <visp3/me/vpMeSite.h>
+#include <visp3/me/vpMeLine.h>
 #include <visp3/core/vpRobust.h>
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/core/vpImagePoint.h>

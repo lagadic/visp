@@ -37,7 +37,7 @@
 
 
 
-#include <visp3/core/vpNurbs.h>
+#include <visp3/me/vpNurbs.h>
 #include <visp3/core/vpColVector.h>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits

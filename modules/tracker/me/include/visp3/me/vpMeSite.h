@@ -50,7 +50,7 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpMe.h>
+#include <visp3/me/vpMe.h>
 
 /*!
   \class vpMeSite

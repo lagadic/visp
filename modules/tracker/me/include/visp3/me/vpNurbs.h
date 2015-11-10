@@ -46,7 +46,7 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/core/vpMeSite.h>
+#include <visp3/me/vpMeSite.h>
 #include <visp3/core/vpBSpline.h>
 #include <visp3/core/vpList.h>
 

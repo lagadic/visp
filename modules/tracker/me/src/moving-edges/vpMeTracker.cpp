@@ -42,7 +42,7 @@
 
 
 
-#include <visp3/core/vpMeTracker.h>
+#include <visp3/me/vpMeTracker.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpColor.h>
 

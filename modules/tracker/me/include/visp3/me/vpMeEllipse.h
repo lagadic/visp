@@ -46,8 +46,8 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpColVector.h>
 
-#include <visp3/core/vpMeTracker.h>
-#include <visp3/core/vpMeSite.h>
+#include <visp3/me/vpMeTracker.h>
+#include <visp3/me/vpMeSite.h>
 #include <visp3/core/vpImagePoint.h>
 
 #include <visp3/core/vpImage.h>
@@ -97,7 +97,7 @@
 \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpMeEllipse.h>
+#include <visp3/me/vpMeEllipse.h>
 #include <visp3/core/vpImagePoint.h>
 
 int main()

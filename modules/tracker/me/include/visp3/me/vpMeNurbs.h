@@ -45,8 +45,8 @@
 
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/core/vpMeTracker.h>
-#include <visp3/core/vpNurbs.h>
+#include <visp3/me/vpMeTracker.h>
+#include <visp3/me/vpNurbs.h>
 
 #include <math.h>
 #include <iostream>
@@ -67,7 +67,7 @@
   The code below shows how to use this class.
 \code
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpMeNurbs.h>
+#include <visp3/me/vpMeNurbs.h>
 #include <visp3/core/vpImagePoint.h>
 
 int main()
