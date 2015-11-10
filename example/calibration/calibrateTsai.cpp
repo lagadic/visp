@@ -47,7 +47,7 @@
 #include <vector>
 
 #include <visp3/core/vpDebug.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/vision/vpCalibration.h>
 #include <visp3/core/vpExponentialMap.h>

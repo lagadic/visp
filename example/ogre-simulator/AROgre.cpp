@@ -55,19 +55,19 @@
 // /usr/X11R6/include/X11/X.h:108: error: ‘Cursor’ has a previous
 // declaration as ‘typedef XID Cursor’. That's why it should not be
 // used on APPLE platforms
-#  include <visp3/core/vpDisplayX.h>
+#  include <visp3/gui/vpDisplayX.h>
 #endif
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/vision/vpPose.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpDot2.h>
+#include <visp3/blob/vpDot2.h>
 #include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpVideoReader.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpVideoReader.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/ar/vpAROgre.h>

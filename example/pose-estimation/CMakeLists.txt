@@ -39,7 +39,7 @@ project(example-pose-estimation)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core visp_vision)
+find_package(VISP REQUIRED visp_core visp_blob visp_vision visp_io visp_gui)
 
 set(example_cpp
   poseVirtualVS.cpp

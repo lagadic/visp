@@ -41,18 +41,18 @@
 #include <visp3/robot/vpRobotPioneer.h> // Include before vpDisplayX to avoid build issues
 #include <visp3/robot/vpRobotBiclops.h>
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDot2.h>
-#include <visp3/core/vpFeatureBuilder.h>
-#include <visp3/core/vpFeatureSegment.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/blob/vpDot2.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeatureSegment.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/robot/vpPioneerPan.h>
-#include <visp3/core/vpPlot.h>
+#include <visp3/gui/vpPlot.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 

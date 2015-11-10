@@ -53,15 +53,18 @@
 #include <visp3/core/vpBSpline.h>
 
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayD3D.h>
-#include <visp3/core/vpDisplayX.h> // Should be after #include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/core/vpDisplay.h>
+#ifdef VISP_HAVE_MODULE_GUI
+#  include <visp3/gui/vpDisplayGTK.h>
+#  include <visp3/gui/vpDisplayGDI.h>
+#  include <visp3/gui/vpDisplayOpenCV.h>
+#  include <visp3/gui/vpDisplayD3D.h>
+#  include <visp3/gui/vpDisplayX.h> // Should be after #include <visp3/gui/vpDisplayOpenCV.h>
+#endif
 
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
 #include <cstdlib>
 #include <stdlib.h>
@@ -167,6 +170,8 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I(540,480);
 
     // We open a window using either X11, GTK or GDI.
+
+#ifdef VISP_HAVE_MODULE_GUI
 #if defined VISP_HAVE_X11
     vpDisplayX display;
 #elif defined VISP_HAVE_GTK
@@ -185,6 +190,7 @@ main(int argc, const char ** argv)
       vpDisplay::display(I) ;
       vpDisplay::flush(I) ;
     }
+#endif
 
     vpBSpline bSpline;
     std::list<double> knots;

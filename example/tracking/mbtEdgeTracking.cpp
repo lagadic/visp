@@ -46,20 +46,20 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT) && defined (VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpDebug.h>
-#include <visp3/core/vpDisplayD3D.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/core/vpVideoReader.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpVideoReader.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/mbt/vpMbEdgeTracker.h>
 
 #define GETOPTARGS  "x:m:i:n:dchtfColw"
@@ -535,7 +535,7 @@ main(int argc, const char ** argv)
 
 int main()
 {
-  std::cout << "visp_mbt module, Display is required to run this example." << std::endl;
+  std::cout << "visp_mbt module is required to run this example." << std::endl;
   return 0;
 }
 

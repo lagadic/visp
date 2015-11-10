@@ -39,7 +39,7 @@ project(example-moments-points)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core visp_vs visp_robot)
+find_package(VISP REQUIRED visp_core visp_vs visp_robot visp_gui)
 
 set(example_cpp
   servoMomentPoints.cpp

@@ -2,7 +2,7 @@
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 
 
 int main()

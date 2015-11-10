@@ -44,9 +44,9 @@
  */
 
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpColor.h>
-#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/core/vpImagePoint.h>
 
 int main()

@@ -39,7 +39,7 @@ project(example-device-display)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core)
+find_package(VISP REQUIRED visp_core visp_gui visp_io)
 
 set(example_cpp
   displaySequence.cpp

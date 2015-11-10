@@ -39,7 +39,7 @@ project(example-coin-simulator)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core visp_robot visp_vs visp_ar)
+find_package(VISP REQUIRED visp_core visp_robot visp_vs visp_ar visp_io)
 
 set(example_cpp
   simulateFourPoints2DCartesianCamVelocity.cpp

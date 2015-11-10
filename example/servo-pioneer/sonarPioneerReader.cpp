@@ -40,11 +40,11 @@
 #include <visp3/robot/vpRobotPioneer.h> // Include before vpDisplayX to avoid build issues
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpTime.h>
 
 #ifndef VISP_HAVE_PIONEER

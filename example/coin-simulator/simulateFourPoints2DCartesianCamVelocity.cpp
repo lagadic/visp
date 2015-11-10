@@ -60,11 +60,11 @@
 #include <visp3/ar/vpSimulator.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/robot/vpRobotCamera.h>
-#include <visp3/core/vpFeatureBuilder.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
 
 #define GETOPTARGS	"di:h"

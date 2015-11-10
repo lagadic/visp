@@ -75,14 +75,14 @@
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp3/gui/vpDisplayX.h>
 
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/vs/vpServo.h>
-#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
 
 #include <visp3/robot/vpRobotPtu46.h>
 
@@ -91,7 +91,7 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/vs/vpServoDisplay.h>
 
-#include <visp3/core/vpDot2.h>
+#include <visp3/blob/vpDot2.h>
 
 
 #ifdef VISP_HAVE_PTHREAD

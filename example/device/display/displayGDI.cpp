@@ -48,11 +48,11 @@
 
 #if ( defined(_WIN32) && defined(VISP_HAVE_GDI) )
 
-#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGDI.h>
 
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
 
 /*!

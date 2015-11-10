@@ -46,7 +46,7 @@
 #include <vector> //store the polygon
 #include <visp3/core/vpMomentObject.h> //transmit the polygon to the object
 #include <visp3/core/vpMomentCommon.h> //update the common database with the object
-#include <visp3/core/vpFeatureMomentCommon.h> //init the feature database using the information about moment dependencies
+#include <visp3/visual_features/vpFeatureMomentCommon.h> //init the feature database using the information about moment dependencies
 #include <visp3/vs/vpServo.h> //visual servoing task
 #include <visp3/robot/vpRobotCamera.h>
 #include <visp3/core/vpPlane.h>

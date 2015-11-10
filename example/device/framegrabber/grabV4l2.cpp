@@ -52,12 +52,12 @@
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
 
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
 // List of allowed command line options

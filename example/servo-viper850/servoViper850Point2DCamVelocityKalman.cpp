@@ -65,23 +65,23 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/vs/vpServo.h>
-#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/vs/vpServoDisplay.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpDot2.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/blob/vpDot2.h>
 #include <visp3/vs/vpAdaptiveGain.h>
 #include <visp3/core/vpLinearKalmanFilterInstantiation.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayGTK.h>
 
 int
 main()

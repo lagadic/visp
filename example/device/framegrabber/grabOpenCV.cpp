@@ -51,9 +51,9 @@
 
 #include <visp3/sensor/vpOpenCVGrabber.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpTime.h>
 
 // List of allowed command line options

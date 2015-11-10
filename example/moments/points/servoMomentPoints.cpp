@@ -48,18 +48,18 @@
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentCommon.h>
-#include <visp3/core/vpFeatureMomentCommon.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/visual_features/vpFeatureMomentCommon.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/core/vpDebug.h>
-#include <visp3/core/vpFeatureBuilder.h>
-#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/robot/vpSimulatorAfma6.h>
 #include <visp3/core/vpPlane.h>
 

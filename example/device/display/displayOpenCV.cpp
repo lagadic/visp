@@ -50,9 +50,9 @@
 #if defined(VISP_HAVE_OPENCV)
 
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
 
 #include <visp3/core/vpTime.h>

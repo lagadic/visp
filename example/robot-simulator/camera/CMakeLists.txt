@@ -39,7 +39,7 @@ project(example-robot-simulator-camera)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core visp_vs visp_robot)
+find_package(VISP REQUIRED visp_core visp_vs visp_robot visp_io visp_gui)
 
 set(example_cpp
   servoSimu3D_cdMc_CamVelocity.cpp
