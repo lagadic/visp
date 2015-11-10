@@ -88,7 +88,7 @@
 #include <iostream>
 
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/sensor/vp1394CMUGrabber.h>
 
 int main()

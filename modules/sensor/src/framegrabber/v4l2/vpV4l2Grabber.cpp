@@ -60,7 +60,8 @@
 
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/core/vpFrameGrabberException.h>
-#include <visp3/core/vpImageIo.h>
+//#include <visp3/io/vpImageIo.h>
+#include <visp3/core/vpImageConvert.h>
 
 const unsigned int vpV4l2Grabber::DEFAULT_INPUT = 2;
 const unsigned int vpV4l2Grabber::DEFAULT_SCALE = 2;
