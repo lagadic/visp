@@ -46,17 +46,19 @@
 #include <iomanip>
 #if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDot2.h>
-#include <visp3/core/vpFeatureEllipse.h>
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpFeatureBuilder.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpParseArgv.h>
+#include <visp3/blob/vpDot2.h>
+#ifdef VISP_HAVE_MODULE_FEATURES
+#  include <visp3/visual_features/vpFeatureEllipse.h>
+#  include <visp3/visual_features/vpFeatureBuilder.h>
+#endif
 
 /*!
   \example testTrackDot.cpp
@@ -271,28 +273,32 @@ main(int argc, const char ** argv)
     }
 
     vpDot2 dot ;
-	std::cout << "debut 1\n";
-	//dot.setMaxDotSize(0.50); // dot max size = 50% of the image size
+    std::cout << "debut 1\n";
+    //dot.setMaxDotSize(0.50); // dot max size = 50% of the image size
     vpImagePoint ip;
     ip.set_i( 140 );
     ip.set_j( 140 );
-	dot.initTracking(I, ip);
+    dot.initTracking(I, ip);
     if (opt_display) {
       dot.setGraphics(true) ;
     }
     else {
       dot.setGraphics(false) ;
     }
-	dot.setComputeMoments(true);
+    dot.setComputeMoments(true);
     dot.track(I) ;
 
-    vpFeatureEllipse e ;
+    vpCameraParameters cam;
 
-    vpCameraParameters cam ;
-    vpFeatureBuilder::create(e,cam,dot) ;
+#ifdef VISP_HAVE_MODULE_FEATURES
+    vpFeatureEllipse e;
+    vpFeatureBuilder::create(e,cam,dot);
+#endif
     if (opt_display) {
+#ifdef VISP_HAVE_MODULE_FEATURES
       e.display(cam, I, vpColor::red) ;
-	  vpDisplay::flush(I);
+#endif
+      vpDisplay::flush(I);
       if (opt_click_allowed) {
         std::cout << "A click to exit..." << std::endl;
         vpDisplay::getClick(I) ;

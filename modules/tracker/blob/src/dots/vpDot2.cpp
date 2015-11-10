@@ -51,7 +51,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpIoTools.h>
 
-#include <visp3/core/vpDot2.h>
+#include <visp3/blob/vpDot2.h>
 #include <math.h>
 #include <iostream>    
 #include <cmath>    // std::fabs
@@ -2415,7 +2415,6 @@ void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char>& I)
   }
 }
 
-
 /*!
   Define a number of dots from a file.
   If the file does not exist, define it by clicking an image, the dots are then saved into the file.
@@ -2526,7 +2525,7 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::stri
 	for(i=0;i<n;++i)
 		dot[i].setGraphics(false);
 
-	return Cogs;
+  return Cogs;
 }
 
 /*!

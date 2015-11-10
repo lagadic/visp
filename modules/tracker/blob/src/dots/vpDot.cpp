@@ -42,7 +42,7 @@
   \brief Track a white dot
 */
 
-#include <visp3/core/vpDot.h>
+#include <visp3/blob/vpDot.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpTrackingException.h>

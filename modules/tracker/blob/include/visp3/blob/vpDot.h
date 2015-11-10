@@ -78,8 +78,8 @@
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDot.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/blob/vpDot.h>
 #include <visp3/core/vpImage.h>
 
 int main()
