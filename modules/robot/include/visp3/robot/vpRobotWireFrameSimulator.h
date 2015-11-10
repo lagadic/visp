@@ -45,9 +45,8 @@
 
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_HAVE_MODULE_GUI) && (defined(_WIN32) || defined(VISP_HAVE_PTHREAD))
 
-
-#if defined(_WIN32) || defined(VISP_HAVE_PTHREAD)
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #if defined(_WIN32)
@@ -59,11 +58,11 @@
 #include <visp3/robot/vpWireFrameSimulator.h>
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpRobotSimulator.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayD3D.h>
 
 /*!
   \class vpRobotWireFrameSimulator
@@ -445,5 +444,4 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 };
 
 #endif
-
 #endif

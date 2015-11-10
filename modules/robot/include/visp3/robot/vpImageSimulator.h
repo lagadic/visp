@@ -61,7 +61,7 @@
   
   \code
   #include <visp3/core/vpImage.h>
-  #include <visp3/core/vpImageSimulator.h>
+  #include <visp3/robot/vpImageSimulator.h>
   
   int main()
   {
@@ -209,10 +209,14 @@ class VISP_EXPORT vpImageSimulator
     //creation du plan a partir de ses coordonnees 3D ds repere objet et de son image texture
     void init(const vpImage<unsigned char> &I,vpColVector* X);
     void init(const vpImage<vpRGBa> &I,vpColVector* X);
+#ifdef VISP_HAVE_MODULE_IO
     void init(const char* file_image,vpColVector* X);
+#endif
     void init(const vpImage<unsigned char> &I, const std::vector<vpPoint>& X);
     void init(const vpImage<vpRGBa> &I, const std::vector<vpPoint>& X);
+#ifdef VISP_HAVE_MODULE_IO
     void init(const char* file_image, const std::vector<vpPoint>& X);
+#endif
 
     //projection du plan par cMo => creation des deux triangles definissant projection du plan sur plan image (coord en metre)
     void setCameraPosition(const vpHomogeneousMatrix &cMt);

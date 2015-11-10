@@ -37,9 +37,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-
-
-#if defined(_WIN32) || defined(VISP_HAVE_PTHREAD)
+#if defined(VISP_HAVE_MODULE_GUI) && (defined(_WIN32) || defined(VISP_HAVE_PTHREAD))
 #include <visp3/robot/vpRobotWireFrameSimulator.h>
 #include <visp3/robot/vpSimulatorViper850.h>
 

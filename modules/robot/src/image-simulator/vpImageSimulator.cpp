@@ -36,14 +36,17 @@
  *
  *****************************************************************************/
 
-#include <visp3/core/vpImageSimulator.h>
+#include <visp3/robot/vpImageSimulator.h>
 #include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpPolygon3D.h>
+
+#ifdef VISP_HAVE_MODULE_IO
+#  include <visp3/io/vpImageIo.h>
+#endif
 
 /*!
   Basic constructor.
@@ -632,7 +635,7 @@ vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam,
   \code
   #include <list>
   #include <visp3/core/vpImage.h>
-  #include <visp3/core/vpImageSimulator.h>
+  #include <visp3/robot/vpImageSimulator.h>
 
   int main()
   {
@@ -834,7 +837,7 @@ vpImageSimulator::getImage(vpImage<unsigned char> &I,
   \code
   #include <list>
   #include <visp3/core/vpImage.h>
-  #include <visp3/core/vpImageSimulator.h>
+  #include <visp3/robot/vpImageSimulator.h>
 
   int main()
   {
@@ -1184,6 +1187,7 @@ vpImageSimulator::init(const vpImage<vpRGBa> &I,vpColVector* X_)
   initPlan(X_);
 }
 
+#ifdef VISP_HAVE_MODULE_IO
 /*!
   Initialise the image thanks to an image whose adress is given by \f$ file_image \f$ and a table of vector containing the 3D coordinates of the image's corners.
   
@@ -1204,6 +1208,7 @@ vpImageSimulator::init(const char* file_image,vpColVector* X_)
   vpImageIo::read(Ic,file_image);
   initPlan(X_);
 }
+#endif
 
 /*!
   Initialise the image thanks to an image \f$ I \f$ and a table of vector containing the 3D coordinates of the image's corners.
@@ -1269,6 +1274,8 @@ vpImageSimulator::init(const vpImage<vpRGBa> &I, const std::vector<vpPoint>& X_)
   vpImageConvert::convert(I,Ig);
   initPlan(Xvec);
 }
+
+#ifdef VISP_HAVE_MODULE_IO
 /*!
   Initialise the image thanks to an image whose adress is given by \f$ file_image \f$ and a table of vector containing the 3D coordinates of the image's corners.
 
@@ -1301,6 +1308,7 @@ vpImageSimulator::init(const char* file_image, const std::vector<vpPoint>& X_)
   vpImageIo::read(Ic,file_image);
   initPlan(Xvec);
 }
+#endif
 
 bool
 vpImageSimulator::getPixel(const vpImagePoint &iP, unsigned char &Ipixelplan)

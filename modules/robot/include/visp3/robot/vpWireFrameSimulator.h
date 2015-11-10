@@ -89,7 +89,7 @@ void wireframe_Face (Face *fp, Point2i *pp);
 # include <visp3/core/vpList.h>
 #endif
 #include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpImageSimulator.h>
+#include <visp3/robot/vpImageSimulator.h>
 
 void set_scene (const char*, Bound_scene *, float);
 void vp2jlc_matrix (const vpHomogeneousMatrix, Matrix&);
