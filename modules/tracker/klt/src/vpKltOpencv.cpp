@@ -51,7 +51,7 @@
 #include <string>
 
 #include <visp3/core/vpDisplay.h>
-#include <visp3/vision/vpKltOpencv.h>
+#include <visp3/klt/vpKltOpencv.h>
 #include <visp3/core/vpTrackingException.h>
 
 /*!
@@ -591,7 +591,7 @@ void vpKltOpencv::suppressFeature(const int &index)
 
 #include <string>
 
-#include <visp3/vision/vpKltOpencv.h>
+#include <visp3/klt/vpKltOpencv.h>
 
 void vpKltOpencv::clean()
 {
