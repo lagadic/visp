@@ -47,7 +47,7 @@
  */
 
 #include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpBasicFeature.h>
+#include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/core/vpRGBa.h>
 
 #include <math.h>

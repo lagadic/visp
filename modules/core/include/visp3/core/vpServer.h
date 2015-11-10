@@ -98,8 +98,8 @@ int main(int argc,const char** argv)
   
   \code
 #include <visp3/core/vpServer.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
 
 #include "vpRequestImage.h" //See vpRequest class documentation
 

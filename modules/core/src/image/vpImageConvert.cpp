@@ -184,7 +184,7 @@ vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<double> &dest
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
 int main()
@@ -290,7 +290,7 @@ vpImageConvert::convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
 int main()
@@ -392,7 +392,7 @@ vpImageConvert::convert(const IplImage* src, vpImage<unsigned char> &dest, bool 
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
 int main()
@@ -480,7 +480,7 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src, IplImage *&dest)
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
 int main()
@@ -558,7 +558,7 @@ vpImageConvert::convert(const vpImage<unsigned char> & src, IplImage* &dest)
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
 
@@ -651,7 +651,7 @@ vpImageConvert::convert(const cv::Mat& src, vpImage<vpRGBa>& dest, const bool fl
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
 int main()
@@ -731,7 +731,7 @@ vpImageConvert::convert(const cv::Mat& src, vpImage<unsigned char>& dest, const 
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
 int main()
@@ -785,7 +785,7 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src, cv::Mat& dest)
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
 int main()
@@ -835,7 +835,7 @@ vpImageConvert::convert(const vpImage<unsigned char> & src, cv::Mat& dest, const
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
 int main()
@@ -879,7 +879,7 @@ void vpImageConvert::convert(const vpImage<unsigned char> & src,
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
 #if defined(VISP_HAVE_YARP)
@@ -925,7 +925,7 @@ void vpImageConvert::convert(const yarp::sig::ImageOf< yarp::sig::PixelMono > *s
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
 
@@ -969,7 +969,7 @@ void vpImageConvert::convert(const vpImage<vpRGBa> & src,
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
 
@@ -1015,7 +1015,7 @@ void vpImageConvert::convert(const yarp::sig::ImageOf< yarp::sig::PixelRgba > *s
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
 
@@ -1059,7 +1059,7 @@ void vpImageConvert::convert(const vpImage<vpRGBa> & src, yarp::sig::ImageOf< ya
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
 
@@ -1097,108 +1097,6 @@ void vpImageConvert::convert(const yarp::sig::ImageOf< yarp::sig::PixelRgb > *sr
 }
 
 #endif
-
-#if defined(VISP_HAVE_JPEG)
-#if JPEG_LIB_VERSION > 70
-/*!
-  Convert a vpImage\<unsigned char> to a JPEG compressed buffer
-
-  \param src : Source image in ViSP format.
-  \param dest : Destination buffer in JPEG format.
-  \param destSize : Size of the destination buffer.
-  \param quality : purcentage of the quality of the compressed image.
-*/
-void vpImageConvert::convertToJPEGBuffer(const vpImage<unsigned char> &src, 
-                                         unsigned char **dest, long unsigned int &destSize, int quality)
-{
-  struct jpeg_compress_struct cinfo;
-  struct jpeg_error_mgr jerr;
-
-  cinfo.err = jpeg_std_error(&jerr);
-  jpeg_create_compress(&cinfo);
-  
-  *dest = NULL;
-  destSize = 0;
-  
-  jpeg_mem_dest(&cinfo, dest, &destSize);
-
-  unsigned int width = src.getWidth();
-  unsigned int height = src.getHeight();
-
-  cinfo.image_width = width;
-  cinfo.image_height = height;
-  cinfo.input_components = 1;
-  cinfo.in_color_space = JCS_GRAYSCALE;
-  jpeg_set_defaults(&cinfo);
-  jpeg_set_quality(&cinfo, quality, TRUE);
-
-  jpeg_start_compress(&cinfo,TRUE);
-
-  unsigned char *line;
-  line = new unsigned char[width];
-  unsigned char* input = (unsigned char*)src.bitmap;
-  while (cinfo.next_scanline < cinfo.image_height)
-  {
-    for (unsigned int i = 0; i < width; i++)
-    {
-      line[i] = *(input);
-    input++;
-    }
-  jpeg_write_scanlines(&cinfo, &line, 1);
-  }
-
-  jpeg_finish_compress(&cinfo);
-  jpeg_destroy_compress(&cinfo);
-  delete [] line;
-}
-  
-/*!
-  Decompress a JPEG buffer in a vpImage\<unsigned char>
-
-  \param src : Source buffer in JPEG format.
-  \param srcSize : Size of the source buffer.
-  \param dest : Destination image in ViSP format.
-*/
-void vpImageConvert::convertToJPEGBuffer(unsigned char *src, long unsigned int srcSize, 
-                                         vpImage<unsigned char> &dest)
-{
-  struct jpeg_decompress_struct cinfo;
-  struct jpeg_error_mgr jerr;
-
-  cinfo.err = jpeg_std_error(&jerr);
-  jpeg_create_decompress(&cinfo);
-
-  jpeg_mem_src(&cinfo, src, srcSize);
-  jpeg_read_header(&cinfo, TRUE);
-
-  unsigned int width = cinfo.image_width;
-  unsigned int height = cinfo.image_height;
-
-  if ( (width != dest.getWidth()) || (height != dest.getHeight()) )
-    dest.resize(height,width);
-
-  jpeg_start_decompress(&cinfo);
-
-  unsigned int rowbytes = cinfo.output_width * (unsigned int)(cinfo.output_components);
-  JSAMPARRAY buf = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, rowbytes, 1);
-
-  if (cinfo.out_color_space == JCS_GRAYSCALE)
-  {
-    unsigned int row;
-    while (cinfo.output_scanline<cinfo.output_height)
-    {
-      row = cinfo.output_scanline;
-      jpeg_read_scanlines(&cinfo,buf,1);
-      memcpy(dest[row], buf[0], rowbytes);
-    }
-  }
-
-  jpeg_finish_decompress(&cinfo);
-  jpeg_destroy_decompress(&cinfo);
-}
-#endif
-#endif // defined(VISP_HAVE_JPEG)
-
 
 #define vpSAT(c) \
         if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
@@ -3418,7 +3316,7 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba, unsi
 
   \code
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
 int main()

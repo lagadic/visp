@@ -78,15 +78,6 @@
 #  include <windows.h>
 #endif
 
-#if defined(VISP_HAVE_JPEG)
-#  include <jpeglib.h>
-#  include <jerror.h>
-#endif
-
-#if defined(VISP_HAVE_PNG)
-#  include <png.h>
-#endif
-
 /*!
   \class vpImageConvert
 
@@ -159,16 +150,6 @@ public:
     vpImage<vpRGBa> & dest) ;
 #endif
     
-#ifdef VISP_HAVE_JPEG
-#if JPEG_LIB_VERSION > 70
-  static void convertToJPEGBuffer(const vpImage<unsigned char> &src, 
-                                  unsigned char **dest, long unsigned int &destSize, int quality = 100);
-  
-  static void convertToJPEGBuffer(unsigned char *src, long unsigned int srcSize, 
-                                  vpImage<unsigned char> &dest); 
-#endif
-#endif
-
   static void split(const vpImage<vpRGBa> &src,
                     vpImage<unsigned char>* pR,
                     vpImage<unsigned char>* pG,

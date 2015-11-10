@@ -47,7 +47,7 @@
 #include <stdlib.h>
 #include <visp3/core/vpHistogram.h>
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp3/core/vpDisplay.h>
 
 
 bool compare_vpHistogramPeak (vpHistogramPeak first, vpHistogramPeak second);

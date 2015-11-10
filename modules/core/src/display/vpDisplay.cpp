@@ -260,12 +260,12 @@ vpDisplay::displayROI(const vpImage<unsigned char> &I, const vpRect &roi)
   The code below shows how to use this method.
   \code
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayD3D.h>
-#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 
 int main()
 {
@@ -2211,7 +2211,7 @@ vpDisplay::displayRectangle(const vpImage<vpRGBa> &I,
 
   \code
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
@@ -2463,12 +2463,12 @@ vpDisplay::displayROI(const vpImage<vpRGBa> &I, const vpRect &roi)
   The code below shows how to use this method.
   \code
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayD3D.h>
-#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 
 int main()
 {
@@ -2553,7 +2553,7 @@ vpDisplay::getImage ( const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest )
 
   \code
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
@@ -2903,11 +2903,11 @@ bool  vpDisplay::getClickUp ( const vpImage<vpRGBa> &I,
   Below you will find an example showing how to use this method.
 \code
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayD3D.h>
 
 int main()
 {
@@ -3010,11 +3010,11 @@ vpDisplay::getKeyboardEvent(const vpImage<unsigned char> &I, bool blocking)
   Below you will find an example showing how to use this method.
 \code
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayD3D.h>
 
 int main()
 {
@@ -3319,11 +3319,11 @@ vpDisplay::getClickUp ( const vpImage<vpRGBa> &I,
   Below you will find an example showing how to use this method.
 \code
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayD3D.h>
 
 int main()
 {
@@ -3425,11 +3425,11 @@ vpDisplay::getKeyboardEvent(const vpImage<vpRGBa> &I, bool blocking)
   Below you will find an example showing how to use this method.
 \code
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayD3D.h>
 
 int main()
 {

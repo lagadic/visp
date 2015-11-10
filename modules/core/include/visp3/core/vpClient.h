@@ -98,8 +98,8 @@ int main(int argc, char **argv)
 #include <visp3/core/vpClient.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
 #include <iostream>
 
 #include "vpRequestImage.h" //See vpRequest class documentation
