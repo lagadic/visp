@@ -65,7 +65,7 @@
   The following sample code shows how to use this class to detect QR codes in an image.
   \code
 #include <visp3/detection/vpDetectorQRCode.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 
 int main()
 {
