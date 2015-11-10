@@ -50,21 +50,23 @@
 
 #include <visp3/core/vpDebug.h>
 
-#include <visp3/core/vpNurbs.h>
+#include <visp3/me/vpNurbs.h>
 
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayOpenCV.h> // Should be after #include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayD3D.h>
-#include <visp3/core/vpDisplayX.h>
+#ifdef VISP_HAVE_MODULE_GUI
+#  include <visp3/gui/vpDisplayGTK.h>
+#  include <visp3/gui/vpDisplayGDI.h>
+#  include <visp3/gui/vpDisplayOpenCV.h>
+#  include <visp3/gui/vpDisplayD3D.h>
+#  include <visp3/gui/vpDisplayX.h>
+#endif
 
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
 #include <cstdlib>
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9)
+#if defined(VISP_HAVE_DISPLAY)
 
 // List of allowed command line options
 #define GETOPTARGS	"cdh"
