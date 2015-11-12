@@ -53,10 +53,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/gui/vpDisplayX.h>
 
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
 
 /*!

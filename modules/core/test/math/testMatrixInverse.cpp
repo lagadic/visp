@@ -47,7 +47,7 @@
 
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <vector>
 #include <stdlib.h>
 #include <stdio.h>

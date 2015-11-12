@@ -50,15 +50,15 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/core/vpDot.h>
+#include <visp3/blob/vpDot.h>
 #include <visp3/vision/vpPose.h>
 #include <visp3/core/vpDebug.h>
 #include <iostream>

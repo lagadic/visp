@@ -59,7 +59,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/robot/vpRobotAfma4.h>
 
 // List of allowed command line options

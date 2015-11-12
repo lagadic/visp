@@ -46,9 +46,9 @@
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpHistogram.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
 
 #include <stdio.h>

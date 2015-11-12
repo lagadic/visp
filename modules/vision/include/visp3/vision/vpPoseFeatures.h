@@ -46,13 +46,17 @@
 #ifndef vpPoseFeatures_HH
 #define vpPoseFeatures_HH
 
+#include <visp3/core/vpConfig.h>
+
+#ifdef VISP_HAVE_MODULE_VISUAL_FEATURES
+
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpExponentialMap.h>
-#include <visp3/core/vpFeatureBuilder.h>
-#include <visp3/core/vpBasicFeature.h>
-#include <visp3/core/vpFeaturePoint.h>
-#include <visp3/core/vpFeatureEllipse.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpBasicFeature.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
+#include <visp3/visual_features/vpFeatureEllipse.h>
 #include <visp3/core/vpRobust.h>
 #include <visp3/core/vpForwardProjection.h>
 #include <visp3/core/vpPoint.h>
@@ -727,5 +731,6 @@ void vpPoseFeatures::addSpecificFeature(ObjType *obj, RetType (ObjType::*fct_ptr
 }
 #endif
 
+#endif //#ifdef VISP_HAVE_MODULE_VISUAL_FEATURES
 
 #endif

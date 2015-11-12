@@ -43,12 +43,12 @@
   \brief Class which provides a simulator for the robot Viper850..
 */
 
-
-
 #include <visp3/robot/vpRobotWireFrameSimulator.h>
-#include <visp3/robot/vpViper850.h>
+#if defined(VISP_HAVE_MODULE_GUI) && (defined(_WIN32) || defined(VISP_HAVE_PTHREAD))
+
 #include <string>
-#if defined(_WIN32) || defined(VISP_HAVE_PTHREAD)
+
+#include <visp3/robot/vpViper850.h>
 
 /*!
   \class vpSimulatorViper850

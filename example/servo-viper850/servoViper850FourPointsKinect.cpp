@@ -63,15 +63,15 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/vs/vpServo.h>
-#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/vision/vpPose.h>
@@ -82,7 +82,7 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/vs/vpServoDisplay.h>
 
-#include <visp3/core/vpDot2.h>
+#include <visp3/blob/vpDot2.h>
 #define L 0.05 // to deal with a 10cm by 10cm square
 
 

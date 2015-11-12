@@ -48,7 +48,7 @@
 */
 #include <visp3/core/vpDebug.h>
 #include <visp3/sensor/vpSickLDMRS.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))

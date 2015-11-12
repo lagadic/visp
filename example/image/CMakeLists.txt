@@ -39,7 +39,7 @@ project(example-image)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core)
+find_package(VISP REQUIRED visp_core visp_io)
 
 set(example_cpp
   imageDiskRW.cpp

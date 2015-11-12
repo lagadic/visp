@@ -39,7 +39,7 @@ project(demo-wireframe-simulator)
 
 cmake_minimum_required(VERSION 2.8)
 
-find_package(VISP REQUIRED core robot vs)
+find_package(VISP REQUIRED visp_core visp_robot visp_vs visp_io visp_gui)
 
 # SOURCE variable corresponds to the list of all the sources to build binaries.
 # The generate binary comes by removing the .cpp extension to

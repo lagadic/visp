@@ -62,11 +62,11 @@
 #include <visp3/ar/vpSimulator.h>
 
 #if defined(VISP_HAVE_X11)
-#  include <visp3/core/vpDisplayX.h>
+#  include <visp3/gui/vpDisplayX.h>
 #elif defined(VISP_HAVE_GDI)
-#  include <visp3/core/vpDisplayGDI.h>
+#  include <visp3/gui/vpDisplayGDI.h>
 #elif defined(VISP_HAVE_GTK)
-#  include <visp3/core/vpDisplayGTK.h>
+#  include <visp3/gui/vpDisplayGTK.h>
 #endif
 // You may have strange compiler issues using the simulator based on SoQt 
 // and the vpDisplayGTK. In that case prefer to use another display like
@@ -74,12 +74,12 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/vision/vpPose.h>
-#include <visp3/core/vpFeaturePoint.h>
-#include <visp3/core/vpDot2.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
+#include <visp3/blob/vpDot2.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 #include <visp3/robot/vpRobotCamera.h>
-#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/core/vpIoTools.h>
 
 static

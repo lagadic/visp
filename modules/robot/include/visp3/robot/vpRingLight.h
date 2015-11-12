@@ -51,7 +51,7 @@
 #ifdef VISP_HAVE_PARPORT
 
 #  include <visp3/robot/vpRingLight.h>
-#  include <visp3/core/vpParallelPort.h>
+#  include <visp3/robot/vpParallelPort.h>
 #include <iostream>
 /*!
 

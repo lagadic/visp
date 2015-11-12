@@ -49,7 +49,10 @@
 #include <visp3/core/vpTime.h>
 
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+
+#ifdef VISP_HAVE_MODULE_IO
+#  include <visp3/io/vpImageIo.h>
+#endif
 
 /* Objets OIV. */
 #include <Inventor/nodes/SoCone.h> /* Objet cone.                            */
@@ -1022,6 +1025,7 @@ vpSimulator::offScreenRendering(vpSimulatorViewType view, int * width, int * hei
  *   - RETURN : Code d'erreur CODE_OK si tout s'est bien passe.
  */
 
+#ifdef VISP_HAVE_MODULE_IO
 void
 vpSimulator::write (const char * fileName)
 {
@@ -1050,6 +1054,7 @@ vpSimulator::write (const char * fileName)
   // fclose (fp);
   get =1 ;
 }
+#endif
 
 void
 vpSimulator::getSizeInternalView(int& width, int& height)

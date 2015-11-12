@@ -39,7 +39,7 @@ project(example-calibration)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core visp_vision)
+find_package(VISP REQUIRED visp_core visp_vision visp_gui visp_io)
 
 set(example_cpp
   camera_calibration.cpp

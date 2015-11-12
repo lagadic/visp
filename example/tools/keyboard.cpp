@@ -49,7 +49,7 @@
 #include <iostream>
 #include <signal.h>
 
-#include <visp3/core/vpKeyboard.h>
+#include <visp3/io/vpKeyboard.h>
 
 
 int

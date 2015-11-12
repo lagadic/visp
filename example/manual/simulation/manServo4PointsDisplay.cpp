@@ -56,16 +56,16 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGTK.h>
 
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/vision/vpPose.h>
-#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 #include <visp3/robot/vpRobotCamera.h>
-#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/core/vpIoTools.h>
 
 int main()

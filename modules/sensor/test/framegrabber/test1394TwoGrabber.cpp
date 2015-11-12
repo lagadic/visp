@@ -53,7 +53,7 @@
 #if defined(VISP_HAVE_DC1394)
 
 #include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpIoTools.h>
 /*!
   \example test1394TwoGrabber.cpp

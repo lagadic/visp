@@ -57,12 +57,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <visp3/core/vpFeatureThetaU.h>
-#include <visp3/core/vpFeatureTranslation.h>
+#include <visp3/visual_features/vpFeatureThetaU.h>
+#include <visp3/visual_features/vpFeatureTranslation.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/robot/vpSimulatorCamera.h>
 

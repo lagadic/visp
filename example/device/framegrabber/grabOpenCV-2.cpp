@@ -50,7 +50,7 @@
 
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
-#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/sensor/vpOpenCVGrabber.h>

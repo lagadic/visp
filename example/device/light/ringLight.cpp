@@ -53,7 +53,7 @@
 #include <iostream>
 
 #include <visp3/robot/vpRingLight.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpTime.h>
 
 // List of allowed command line options

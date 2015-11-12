@@ -50,12 +50,12 @@
 
 
 #include <visp3/core/vpDebug.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 // For 2D image 
 #include <visp3/core/vpImage.h>
 // Video device interface
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGTK.h>
 
 // For frame transformation and projection
 #include <visp3/core/vpHomogeneousMatrix.h>

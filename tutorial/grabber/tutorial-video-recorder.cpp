@@ -1,10 +1,10 @@
 /*! \example tutorial-video-recorder.cpp */
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/core/vpVideoWriter.h>
+#include <visp3/io/vpVideoWriter.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
 /*!

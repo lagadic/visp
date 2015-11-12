@@ -38,8 +38,6 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayX.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/vision/vpPoseFeatures.h>

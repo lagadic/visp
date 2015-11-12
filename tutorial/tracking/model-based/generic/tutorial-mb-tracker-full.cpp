@@ -1,13 +1,14 @@
 //! \example tutorial-mb-tracker-full.cpp
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpIoTools.h>
 //! [Include]
+#include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/mbt/vpMbEdgeKltTracker.h>
 //! [Include]
-#include <visp3/core/vpVideoReader.h>
+#include <visp3/io/vpVideoReader.h>
 
 int main(int argc, char** argv)
 {
@@ -68,10 +69,17 @@ int main(int argc, char** argv)
     vpMbTracker *tracker;
     if (opt_tracker == 0)
      tracker = new vpMbEdgeTracker;
+#ifdef VISP_HAVE_MODULE_KLT
     else if (opt_tracker == 1)
       tracker = new vpMbKltTracker;
     else
       tracker = new vpMbEdgeKltTracker;
+#else
+    else {
+      std::cout << "klt and hybrid model-based tracker are not available since visp_klt module is missing" << std::endl;
+      return 0;
+    }
+#endif
     //! [Constructor]
 
     bool usexml = false;
@@ -100,6 +108,7 @@ int main(int argc, char** argv)
         //! [Set moving-edges parameters]
       }
 
+#ifdef VISP_HAVE_MODULE_KLT
       if (opt_tracker == 1 || opt_tracker == 2) {
         //! [Set klt parameters]
         vpKltOpencv klt_settings;
@@ -114,6 +123,7 @@ int main(int argc, char** argv)
         dynamic_cast<vpMbKltTracker*>(tracker)->setMaskBorder(5);
         //! [Set klt parameters]
       }
+#endif
 
       //! [Set camera parameters]
       cam.initPersProjWithoutDistortion(839.21470, 839.44555, 325.66776, 243.69727);

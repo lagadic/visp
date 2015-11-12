@@ -49,11 +49,11 @@
 
 #if ( defined(VISP_HAVE_D3D9) )
 
-#include <visp3/core/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayD3D.h>
 
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
 
 /*!

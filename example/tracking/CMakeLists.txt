@@ -39,12 +39,7 @@ project(example-tracking)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP)
-#if(BUILD_MODULE_visp_tt_mi)
-#  find_package(VISP REQUIRED visp_core visp_mbt visp_tt visp_tt_mi visp_vision)
-#else()
-#  find_package(VISP REQUIRED visp_core visp_mbt visp_tt visp_vision)
-#endif()
+find_package(VISP REQUIRED visp_core visp_io visp_gui)
 
 set(example_cpp
   mbtEdgeTracking.cpp

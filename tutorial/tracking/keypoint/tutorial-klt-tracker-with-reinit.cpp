@@ -1,8 +1,8 @@
 //! \example tutorial-klt-tracker-with-reinit.cpp
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/vision/vpKltOpencv.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpVideoReader.h>
+#include <visp3/klt/vpKltOpencv.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/io/vpVideoReader.h>
 
 int main()
 {

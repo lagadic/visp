@@ -18,11 +18,11 @@
   */
 #include <iostream>
 
-#include <visp3/core/vpFeatureBuilder.h>
-#include <visp3/core/vpFeatureDepth.h>
-#include <visp3/core/vpFeaturePoint.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeatureDepth.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpPlot.h>
+#include <visp3/gui/vpPlot.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/robot/vpSimulatorPioneerPan.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>

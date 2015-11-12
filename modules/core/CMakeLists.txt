@@ -180,43 +180,7 @@ if(USE_OPENCV)
 endif(USE_OPENCV)
 
 
-# Display X11, GTK, GDI, D3D9, OpenCV
-if(USE_X11)
-  list(APPEND opt_incs ${X11_INCLUDE_DIR})
-  list(APPEND opt_libs ${X11_LIBRARIES})
-endif()
-if(USE_GTK2)
-  list(APPEND opt_incs ${GTK2_INCLUDE_DIRS})
-  list(APPEND opt_libs ${GTK2_LIBRARIES})
-  # FS next lines removed until they proved to be useful
-#  if(UNIX)
-#    ## ignore gtk pedantic warnings by gcc specific -isystem :
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem ${GTK2_gtk_INCLUDE_PATH}")
-#  endif()
-endif()
-if(USE_GDI)
-  list(APPEND opt_libs ${GDI_LIBRARIES})
-endif()
-if(USE_DIRECT3D)
-  list(APPEND opt_incs ${DIRECT3D_INCLUDE_DIRS})
-  list(APPEND opt_libs ${DIRECT3D_LIBRARIES})
-endif()
 
-# Image i/o: jpeg, png, Yarp, OpenCV
-if(USE_JPEG)
-  list(APPEND opt_incs ${JPEG_INCLUDE_DIR})
-  list(APPEND opt_libs ${JPEG_LIBRARIES})
-  # If Qt3 and libjpeg are used, we add here QT_CLEAN_NAMESPACE define to
-  # handle a compilation error "conflicting declaration 'typedef long int INT32'
-  if(VISP_HAVE_QT3_FOUND)
-    add_definitions("-DQT_CLEAN_NAMESPACE")
-  endif()
-endif()
-if(USE_PNG)
-  list(APPEND opt_incs ${PNG_INCLUDE_DIR})
-  list(APPEND opt_libs ${PNG_LIBRARIES})
-  add_definitions(${PNG_DEFINITIONS})
-endif()
 if(USE_YARP)
   list(APPEND opt_incs ${YARP_INCLUDE_DIRS})
 
@@ -279,15 +243,9 @@ if(USE_ZLIB)
   list(APPEND opt_libs ${ZLIB_LIBRARIES})
 endif()
 
-# videos: ffmpeg
-if(USE_FFMPEG)
-  list(APPEND opt_incs ${FFMPEG_INCLUDE_DIRS})
-  list(APPEND opt_libs ${FFMPEG_LIBRARIES})
-endif()
-
 vp_add_module(core)
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_create_compat_headers("include/visp3/core/vpConfig.h")
-vp_add_tests(CTEST_EXCLUDE_PATH network)
+vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui)

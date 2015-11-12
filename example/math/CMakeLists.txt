@@ -39,12 +39,11 @@ project(example-math)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core visp_vision)
+find_package(VISP REQUIRED visp_core visp_io)
 
 set(example_cpp
   exponentialMap.cpp
   BSpline.cpp
-  Nurbs.cpp
 )
 
 foreach(cpp ${example_cpp})

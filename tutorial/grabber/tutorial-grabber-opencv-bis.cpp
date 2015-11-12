@@ -1,6 +1,6 @@
 /*! \example tutorial-grabber-opencv-bis.cpp */
 #include <stdlib.h>
-#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/core/vpImageConvert.h>
 
 // usage: binary <device name>

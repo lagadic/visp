@@ -1,9 +1,9 @@
 //! \example tutorial-matching-surf-homography-deprecated.cpp
-#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/vision/vpHomography.h>
 #include <visp3/vision/vpKeyPointSurf.h>
 #include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpVideoReader.h>
+#include <visp3/io/vpVideoReader.h>
 
 int main(int argc, const char **argv)
 {  

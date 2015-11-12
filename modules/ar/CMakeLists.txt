@@ -177,7 +177,7 @@ if(USE_COIN3D)
   endif()
 endif(USE_COIN3D)
 
-vp_add_module(ar visp_core)
+vp_add_module(ar visp_core OPTIONAL visp_io)
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})

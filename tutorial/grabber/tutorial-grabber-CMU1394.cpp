@@ -1,6 +1,6 @@
 /*! \example tutorial-grabber-CMU1394.cpp */
 #include <visp3/sensor/vp1394CMUGrabber.h>
-#include <visp3/core/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/core/vpImage.h>
 
 int main()

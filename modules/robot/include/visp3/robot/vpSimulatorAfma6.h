@@ -48,7 +48,7 @@
 
 #include <string>
 
-#if defined(_WIN32) || defined(VISP_HAVE_PTHREAD)
+#if defined(VISP_HAVE_MODULE_GUI) && (defined(_WIN32) || defined(VISP_HAVE_PTHREAD))
 
 /*!
   \class vpSimulatorAfma6

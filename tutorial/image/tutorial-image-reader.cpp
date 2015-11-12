@@ -1,5 +1,5 @@
 /*! \example tutorial-image-reader.cpp */
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 
 int main()
 {

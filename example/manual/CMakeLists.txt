@@ -39,7 +39,7 @@ project(example-manual)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core visp_sensor visp_vs visp_robot visp_ar visp_vision)
+find_package(VISP REQUIRED visp_core visp_sensor visp_vs visp_robot visp_ar visp_vision visp_io visp_gui)
 
 set(example_cpp
   geometric-features/manGeometricFeatures.cpp

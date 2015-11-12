@@ -5,10 +5,10 @@
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 #endif
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayOpenCV.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpMeLine.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/me/vpMeLine.h>
 
 int main()
 {

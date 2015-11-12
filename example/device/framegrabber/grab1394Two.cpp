@@ -62,11 +62,11 @@
 
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayX.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpRGBa.h>
 
 #define GRAB_CxOLOR

@@ -3,7 +3,7 @@
 #ifdef VISP_HAVE_MODULE_AR
 #include <visp3/ar/vpAROgre.h>
 #endif
-#include <visp3/core/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/robot/vpSimulatorCamera.h>
 

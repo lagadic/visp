@@ -45,7 +45,7 @@
 
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpQuaternionVector.h>
 
 #include <stdlib.h>

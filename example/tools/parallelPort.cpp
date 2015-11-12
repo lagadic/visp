@@ -50,8 +50,8 @@
 #include <iostream>
 #include <signal.h>
 
-#include <visp3/core/vpParallelPort.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/robot/vpParallelPort.h>
+#include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"d:h"

@@ -39,7 +39,7 @@ project(example-keypoint)
 
 cmake_minimum_required(VERSION 2.6)
 
-find_package(VISP REQUIRED visp_core visp_vision visp_sensor)
+find_package(VISP REQUIRED visp_core visp_vision visp_sensor visp_io visp_gui)
 
 set(example_cpp
   keyPointSurf.cpp

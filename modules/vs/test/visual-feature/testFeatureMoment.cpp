@@ -37,7 +37,7 @@
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpMomentDatabase.h>
 #include <visp3/core/vpMomentCommon.h>
-#include <visp3/core/vpFeatureMomentCommon.h>
+#include <visp3/visual_features/vpFeatureMomentCommon.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/core/vpDebug.h>

@@ -38,6 +38,7 @@
 #include <limits>
 
 #include <visp3/vision/vpKeyPoint.h>
+#include <visp3/core/vpIoTools.h>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 
@@ -1905,11 +1906,13 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
       path[length] = '\0';
 
       vpImage<unsigned char> I;
+#ifdef VISP_HAVE_MODULE_IO
       if(vpIoTools::isAbsolutePathname(std::string(path))) {
         vpImageIo::read(I, path);
       } else {
         vpImageIo::read(I, parent + path);
       }
+#endif
 
       m_mapOfImages[id + startImageId] = I;
     }
@@ -2084,6 +2087,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
             int id = std::atoi((char *) xmlGetProp(image_info_node, BAD_CAST "image_id"));
 
             vpImage<unsigned char> I;
+#ifdef VISP_HAVE_MODULE_IO
             std::string path((char *) image_info_node->children->content);
             //Read path to the training images
             if(vpIoTools::isAbsolutePathname(std::string(path))) {
@@ -2091,7 +2095,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
             } else {
               vpImageIo::read(I, parent + path);
             }
-
+#endif
             m_mapOfImages[id + startImageId] = I;
           }
         }
@@ -2955,6 +2959,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
   std::map<int, std::string> mapOfImgPath;
   if(saveTrainingImages) {
+#ifdef VISP_HAVE_MODULE_IO
     //Save the training image files in the same directory
     int cpt = 0;
 
@@ -2967,6 +2972,9 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
       mapOfImgPath[it->first] = filename_;
       vpImageIo::write(it->second, parent + (!parent.empty() ? "/" : "") + filename_);
     }
+#else
+    std::cout << "Warning: in vpKeyPoint::saveLearningData() training images are not saved; visp_io module is not available..." << std::endl;
+#endif
   }
 
   bool have3DInfo = m_trainPoints.size() > 0;

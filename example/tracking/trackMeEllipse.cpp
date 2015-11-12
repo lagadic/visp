@@ -56,19 +56,19 @@
 #include <sstream>
 #include <iomanip>
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_ME) && (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/core/vpColor.h>
 
-#include <visp3/core/vpMeEllipse.h>
-#include <visp3/core/vpParseArgv.h>
+#include <visp3/me/vpMeEllipse.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
 
 // List of allowed command line options
@@ -348,10 +348,11 @@ main(int argc, const char ** argv)
   }
 }
 #else
-int
-main()
+#include <iostream>
+
+int main()
 {
-  vpERROR_TRACE("You do not have X11, GTK, GDI or OpenCV display functionalities...");
+  std::cout << "visp_me module or X11, GTK, GDI or OpenCV display functionalities are required..." << std::endl;
 }
 
 #endif

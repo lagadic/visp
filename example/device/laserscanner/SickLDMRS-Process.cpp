@@ -61,12 +61,14 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/sensor/vpSickLDMRS.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpDisplayX.h>
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayGTK.h>
-#include <visp3/core/vpParseArgv.h>
+#ifdef VISP_HAVE_MODULE_GUI
+#  include <visp3/gui/vpDisplayX.h>
+#  include <visp3/gui/vpDisplayGDI.h>
+#  include <visp3/gui/vpDisplayGTK.h>
+#endif
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/core/vpIoTools.h>
  
@@ -109,7 +111,8 @@ void *laser_display_and_save_loop(void *)
     }
   }
 
-  vpDisplay *display;
+  vpDisplay *display = NULL;
+#ifdef VISP_HAVE_MODULE_GUI
 #if defined VISP_HAVE_X11
   display = new vpDisplayX;
 #elif defined VISP_HAVE_GDI
@@ -118,6 +121,7 @@ void *laser_display_and_save_loop(void *)
   display = new vpDisplayGTK;
 #endif
   display->init (map, 10, 10, "Laser scan");
+#endif
 
   unsigned int iter = 0;
   for ( ; ; ) {
@@ -249,7 +253,8 @@ void *camera_acq_and_display_loop(void *)
     g.acquire(I);                        // Acquire an image
     I.quarterSizeImage(Q);
 
-    vpDisplay *display;
+    vpDisplay *display = NULL;
+#ifdef VISP_HAVE_MODULE_GUI
 #if defined VISP_HAVE_X11
     display = new vpDisplayX;
 #elif defined VISP_HAVE_GDI
@@ -258,7 +263,8 @@ void *camera_acq_and_display_loop(void *)
     display = new vpDisplayGTK;
 #endif
     display->init (Q, 320, 10, "Camera");
-    
+#endif
+
     // Create a file with cameraimage time stamps
     std::ofstream fdimage_ts;
     if (save) {

@@ -268,7 +268,9 @@ public:
   void changeZoomFactor(const float zoom, const int index);
 public:
   typedef enum { INTERNAL, EXTERNAL } vpSimulatorViewType ;
+#ifdef VISP_HAVE_MODULE_IO
   void  write(const char * fileName);
+#endif
 protected:
   SbTime * realtime ;
   SoOffscreenRenderer * offScreenRenderer ;

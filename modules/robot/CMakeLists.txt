@@ -89,14 +89,14 @@ if(USE_COIN3D)
   list(APPEND opt_libs ${COIN3D_LIBRARIES})
 endif()
 
-vp_add_module(robot visp_core)
+vp_add_module(robot visp_core OPTIONAL visp_io visp_gui)
 vp_glob_module_sources()
 
 # copy robot and wireframe simulator data
-vp_glob_module_copy_data("src/simulator-robot/arms/*.bnd"      data/robot-simulator)
+vp_glob_module_copy_data("src/robot-simulator/arms/*.bnd"      data/robot-simulator)
 vp_glob_module_copy_data("src/wireframe-simulator/scene/*.bnd" data/wireframe-simulator)
 vp_glob_module_copy_data("src/wireframe-simulator/scene/*.sld" data/wireframe-simulator)
 
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests(DEPENDS_ON visp_sensor visp_vision)
+vp_add_tests(DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui)
