@@ -58,7 +58,7 @@
 /*!
   \class vpVideoReader
 
-  \ingroup group_core_image
+  \ingroup group_io_video
 
   \brief Class that enables to manipulate easily a video file or a sequence of
   images. As it inherits from the vpFrameGrabber Class, it can be used like an

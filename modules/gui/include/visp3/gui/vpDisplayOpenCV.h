@@ -65,7 +65,7 @@
 
   \class vpDisplayOpenCV
 
-  \ingroup group_core_display
+  \ingroup group_gui_display
 
   \brief The vpDisplayOpenCV allows to display image using the opencv library.
 

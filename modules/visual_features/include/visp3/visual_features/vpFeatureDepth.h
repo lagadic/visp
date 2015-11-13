@@ -53,7 +53,7 @@
 
 /*!
   \class vpFeatureDepth
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Class that defines a 3D point visual feature \f$ s\f$ which
   is composed by one parameters that is \f$ log( \frac{Z}{Z^*}) \f$

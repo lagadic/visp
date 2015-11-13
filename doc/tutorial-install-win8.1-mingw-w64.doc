@@ -42,7 +42,7 @@ CMake 2.8.3 or higher that could be download at : http://www.cmake.org.
 - Download the latest binary distribution installer for Windows. You will find it under <a href="https://cmake.org/download/">"Windows (Win32 Installer)"</a>.
 - Install CMake just by double clicking on the binary \c cmake-x.y.z-win32-x86.exe you downloaded.
 
-\section install_win81_mingw64_3rdparty Install recommended 3rd party
+\section install_win81_mingw64_3rdparty Install recommended 3rd parties
 
 ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. Some of them are automatically detected since they are part of MinGW distribution. Other may be installed from source. We recommend to install the following:
 
@@ -143,7 +143,7 @@ C:\ViSP\visp-build> mingw32-make
 C:\ViSP\visp-build> mingw32-make install
 \endcode
 
-- At the end, in \c C:/ViSP/visp-build/install/x64/mingw/bin folder you will find ViSP DLL libraries corresponding the build modules. 
+- At the end, in \c C:/ViSP/visp-build/install/x64/mingw/bin folder you will find ViSP DLL libraries corresponding to the build modules. 
 \note When CMAKE\_BUILD\_TYPE is set to Debug, the library names are suffixed by "d".
 
 \subsection install_win81_mingw64_env_var Setting up PATH variable

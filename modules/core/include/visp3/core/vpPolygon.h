@@ -40,12 +40,22 @@
 #ifndef vpPolygon_h
 #define vpPolygon_h
 
+#include <vector>
+
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpRect.h>
+#include <visp3/core/vpColor.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpCameraParameters.h>
+
 /*!
   \class vpPolygon
+  \ingroup group_core_geometry
   \brief Defines a generic 2D polygon.
-  
+
   A polygon is internally represented by N 2D points.
-  
+
   By default three coordinates in the \f$ (i,j) \f$ frame (see vpImagePoint
   class documentation for more details about the frame) are used \f$ (0,0) \f$,
  \f$ (1,0) \f$ and \f$ (0,1) \f$.
@@ -60,7 +70,7 @@ int main()
 {
   std::vector<vpImagePoint> corners;
 
-  // Initialize the corners vector with 4 points 
+  // Initialize the corners vector with 4 points
   corners.push_back( vpImagePoint( 50, 100) );
   corners.push_back( vpImagePoint( 50, 300) );
   corners.push_back( vpImagePoint(200, 300) );
@@ -79,22 +89,12 @@ int main()
 
   // Check if a point is inside the polygon
   vpImagePoint ip(550, 200);
-  std::cout << "The point " << ip << " is " << (polygon.isInside(ip) ? "inside":"outside") << " the polygon" << std::endl; 
+  std::cout << "The point " << ip << " is " << (polygon.isInside(ip) ? "inside":"outside") << " the polygon" << std::endl;
 
   return 0;
 }
 \endcode
 */
-
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpRect.h>
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpCameraParameters.h>
-
-#include <vector>
-
 class VISP_EXPORT vpPolygon
 {
   protected:

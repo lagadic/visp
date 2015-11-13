@@ -55,7 +55,7 @@
 
 /*!
   \class vpFeatureThetaU
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Class that defines a 3D visual feature \f$ s\f$ from a \f$ \theta
   u \f$ axis/angle parametrization that represent the rotation between

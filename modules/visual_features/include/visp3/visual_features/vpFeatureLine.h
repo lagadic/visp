@@ -54,7 +54,7 @@
 
 /*!
   \class vpFeatureLine
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Class that defines a 2D line visual feature \f$ s\f$ which is
   composed by two parameters that are \f$ \rho \f$ and \f$ \theta \f$,

@@ -61,7 +61,7 @@
 
 /*!
   \class vpFeatureException
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
   \brief Error that can be emited by the vpBasicFeature class and its derivates.
  */
 class VISP_EXPORT vpFeatureException : public vpException

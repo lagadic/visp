@@ -41,6 +41,7 @@
 
 /*!
   \class vpTriangle
+  \ingroup group_core_geometry
   \brief Defines a 2D triangle.
   
   A triangle is internally represented by three 2D points.

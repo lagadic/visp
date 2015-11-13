@@ -59,7 +59,7 @@
 
 /*!
   \class vpTrackingException
-  \ingroup group_core_trackers
+  \ingroup group_core_debug
   \brief Error that can be emited by the vpTracker class and its derivates.
  */
 class VISP_EXPORT vpTrackingException : public vpException

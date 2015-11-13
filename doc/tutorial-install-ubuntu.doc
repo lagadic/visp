@@ -18,11 +18,11 @@ sudo apt-get install build-essential
 sudo apt-get install cmake-curses-gui
 \endcode
 
-\section install_ubuntu_3rdparty Install 3rd party
+\section install_ubuntu_3rdparty Install 3rd parties
 
 ViSP is interfaced with several optional 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
 
-\subsection install_ubuntu_3rdparty_recommended Recommended 3rd party
+\subsection install_ubuntu_3rdparty_recommended Recommended 3rd parties
 
 We recommend to install the following:
 
@@ -50,12 +50,12 @@ sudo apt-get install libv4l-dev
 \code
 sudo apt-get install libxml2-dev
 \endcode
-- Bar code detection
+- QR code detection
 \code
-sudo apt-get install libzbar-dev libdmtx-dev
+sudo apt-get install libzbar-dev
 \endcode
 
-\subsection install_ubuntu_3rdparty_other Other 3rd party
+\subsection install_ubuntu_3rdparty_other Other optional 3rd parties
 
 We give also the way to install other 3rd party libraries to enable specific capabilities.
 
@@ -63,17 +63,21 @@ We give also the way to install other 3rd party libraries to enable specific cap
 \code
 sudo apt-get install libcoin80-dev
 \endcode
-- libjpeg and libpng to support jpeg and png images respectively
+- libjpeg and libpng to support jpeg and png images respectively (only useful if OpenCV is not installed)
 \code
 sudo apt-get install libjpeg-dev libpng12-dev
 \endcode
-- ffmpeg, to be able to read or encode compressed video streams
+- ffmpeg, to be able to read or encode compressed video streams (only useful if OpenCV is not installed)
 \code
 sudo apt-get install libswscale-dev libavutil-dev libavformat-dev libavcodec-dev libbz2-dev libbz2-1.0
 \endcode
 - Ogre 3D if you want to do augmented reality or simulation
 \code
 sudo apt-get install libogre-1.9-dev libois-dev
+\endcode
+- Datamatrix code detection
+\code
+sudo apt-get install libdmtx-dev
 \endcode
 
 \section install_ubuntu_visp Install ViSP from source code
@@ -106,12 +110,12 @@ We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for e
 
 - Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
 \code
-cd $HOME; mkdir visp-build-release
+cd $HOME; mkdir visp-build
 \endcode
 
 - Enter the \<binary_dir\> and configure the build:
 \code
-cd $HOME/visp-build-release
+cd $HOME/visp-build
 cmake ../visp
 \endcode
 A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
@@ -130,10 +134,11 @@ Now we can build ViSP.
 make -j4
 \endcode
 
-- To install ViSP proceed with:
+- To install ViSP in \c /usr/local which is the default install location, proceed with:
 \code
 sudo make install
 \endcode
+\note The default install location is set to \c /usr/local. This location could be changed modifying \c  CMAKE_INSTALL_PREFIX var. 
 
 - To build ViSP documentation, you have first to install Doxygen package:
 \code
@@ -171,7 +176,7 @@ source ~/.bashrc
 From now, you can try to run ViSP examples and tests. For example you can run \c displayX example that should open a windows with Klimt painting image and some overlay drawings:
 
 \code
-$ cd $HOME/visp-build-release
+$ cd $HOME/visp-build
 $ ./example/device/display/displayX
 
 A click to close the windows...
@@ -222,11 +227,17 @@ $ make help | grep visp
 ... visp_doc
 ... visp_core
 ... visp_detection
+... visp_gui
+... visp_io
+... visp_klt
+... visp_me
 ... visp_robot
 ... visp_sensor
-... visp_vision
-... visp_vs
 ... visp_ar
+... visp_blob
+... visp_visual_features
+... visp_vs
+... visp_vision
 ... visp_mbt
 ... visp_tt
 ... visp_tt_mi
@@ -242,7 +253,7 @@ Below you will find the list of third party libraries used to
 build ViSP on your computer.
 
 Mathematics:
-  Gnu Scientific Library      : yes
+  Gnu Scientific Library      : no
   Lapack/blas                 : yes
 Simulator:
   Ogre simulator              : no
@@ -264,33 +275,33 @@ Robots
   Viper S650                  : no
   Viper S850                  : no
 Video devices (display)
-  X11                         : no
+  X11                         : yes
   GTK                         : no
   OpenCV                      : yes 
   GDI                         : no
   Direct3D                    : no
 Framegrabbers
   Firewire libdc1394-2.x      : yes
-  Video For Linux Two         : no
+  Video For Linux Two         : yes
   DirectShow                  : no
   CMU 1394 Digital Camera SDK : no
   OpenCV                      : yes 
 Specific devices
   Yarp                        : no
-  Kinect                      : yes
-  \-libfreenect               : yes
-  \-libusb-1.0                : yes
+  Kinect                      : no
+  \-libfreenect               : no
+  \-libusb-1.0                : no
   \-pthread                   : yes
 Video and image Read/Write:
   FFMPEG                      : no
-  libjpeg                     : yes
-  libpng                      : yes
+  libjpeg                     : no
+  libpng                      : no
 Misc:
   XML2                        : yes
   pthread                     : yes
-  OpenMP                      : no
-  zbar                        : no
-  dmtx                        : yes
+  OpenMP                      : yes
+  zbar                        : yes
+  dmtx                        : no
 Documentation:
   Doxygen                     : no
   Graphviz dot                : no

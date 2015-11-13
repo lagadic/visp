@@ -62,9 +62,7 @@
 /*!
 
   \class vpImageException
-
-  \ingroup group_core_image
-
+  \ingroup group_core_debug
   \brief Error that can be emited by the vpImage class and its derivates.
  */
 class VISP_EXPORT vpImageException : public vpException

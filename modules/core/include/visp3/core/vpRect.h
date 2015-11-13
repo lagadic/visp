@@ -44,7 +44,7 @@
 
 /*!
   \class vpRect
-
+  \ingroup group_core_geometry
   \brief Defines a rectangle in the plane.
 
   A rectangle is internally represented as an upper-left corner and a

@@ -72,7 +72,6 @@ class vpListElement
 
 /*!
   \class vpList
-  \ingroup group_core_tools
   \brief Provide simple list management
 
   \verbatim

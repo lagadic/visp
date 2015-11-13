@@ -36,9 +36,9 @@
  *****************************************************************************/
 
 
-#  include <visp3/core/vpConfig.h>
+#include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_PARPORT
+#if defined(VISP_HAVE_MODULE_IO) && defined(VISP_HAVE_PARPORT)
 
 #  include <sys/types.h>
 #  include <sys/stat.h>

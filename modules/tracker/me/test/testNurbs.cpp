@@ -35,18 +35,10 @@
  *
  *****************************************************************************/
 /*!
-  \file Nurbs.cpp
+  \example testNurbs.cpp
 
   \brief Describe a curve thanks to a Nurbs.
 */
-
-/*!
-  \example Nurbs.cpp
-
-  Describe a curve thanks to a BSpline.
-*/
-
-
 
 #include <visp3/core/vpDebug.h>
 

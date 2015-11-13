@@ -18,11 +18,11 @@ sudo zypper install gcc-c++
 sudo zypper install cmake
 \endcode
 
-\section install_opensuse_3rdparty Install 3rd party
+\section install_opensuse_3rdparty Install 3rd parties
 
 ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
 
-\subsection install_opensuse_3rdparty_recommended Recommended 3rd party
+\subsection install_opensuse_3rdparty_recommended Recommended 3rd parties
 
 We recommend to install the following:
 
@@ -47,11 +47,11 @@ sudo zypper install libv4l-devel
 sudo zypper install libxml2-devel
 \endcode
 
-\subsection install_opensuse_3rdparty_other Other 3rd party
+\subsection install_opensuse_3rdparty_other Other optional 3rd parties
 
 We give also the way to install other 3rd party libraries to enable specific capabilities.
 
-- libjpeg and libpng to support jpeg and png images
+- libjpeg and libpng to support jpeg and png images (only useful if OpenCV is not installed)
 \code
 sudo zypper install libjpeg8-devel libpng-devel
 \endcode

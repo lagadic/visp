@@ -46,7 +46,7 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentCentered
 
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Functionality computation for centered moment feature. Computes the interaction matrix associated with vpMomentCentered.
 

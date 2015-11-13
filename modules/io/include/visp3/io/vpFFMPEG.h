@@ -96,7 +96,7 @@ struct SwsContext;
 
 /*!
   \class vpFFMPEG
-  \ingroup Video
+  \ingroup group_io_video
   
   \brief This class interfaces the FFmpeg library to enable video stream reading or writing.
   

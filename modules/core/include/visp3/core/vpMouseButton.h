@@ -43,7 +43,7 @@
 
 /*!
   \class vpMouseButton
-  \ingroup group_core_display
+  \ingroup group_gui_display
   \brief Class that defines mouse button identifiers.
 */
 class VISP_EXPORT vpMouseButton

@@ -58,7 +58,7 @@
 /*!
   \class vpVideoWriter
 
-  \ingroup group_core_image
+  \ingroup group_io_video
 
   \brief Class that enables to write easily a video file or a sequence of images.
  

@@ -57,7 +57,7 @@
 
 /*!
   \class vpFeatureVanishingPoint
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Class that defines 2D vanishing point visual feature (Z
   coordinate in 3D space is infinity).

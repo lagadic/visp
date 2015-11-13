@@ -52,7 +52,7 @@
 
 /*!
   \class vpPolygon3D
-  
+  \ingroup group_core_geometry
   \brief Implements a 3D polygon with render functionnalities like clipping.
 
 */

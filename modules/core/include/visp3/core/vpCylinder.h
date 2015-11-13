@@ -52,7 +52,7 @@
 
 /*!
   \class vpCylinder
-  \ingroup group_core_geometric_features
+  \ingroup group_core_geometry
   \brief Class that defines what is a cylinder.
 
   A cylinder may be represented by the equation:

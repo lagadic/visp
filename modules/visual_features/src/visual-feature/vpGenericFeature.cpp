@@ -36,7 +36,7 @@
  *****************************************************************************/
 
 
-#include <visp3/core/vpGenericFeature.h>
+#include <visp3/visual_features/vpGenericFeature.h>
 
 
 // Exception

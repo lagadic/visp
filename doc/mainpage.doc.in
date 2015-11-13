@@ -149,11 +149,6 @@ scheme, ...</p>
 */
 /*!
   \ingroup module_core
-  \defgroup group_core_display Graphical user interface
-  Graphical user interface.
-*/
-/*!
-  \ingroup module_core
   \defgroup group_core_camera Camera model
   Camera model.
 */
@@ -164,43 +159,8 @@ scheme, ...</p>
 */
 /*!
   \ingroup module_core
-  \defgroup group_core_image_simu Image simulation
-  Image simulation.
-*/
-/*!
-  \ingroup module_core
-  \defgroup group_core_bridges Bridges over other frameworks
-  Image manipulation, including I/O from image files or videos.
-*/
-/*!
-  \ingroup module_core
-  \defgroup group_core_visual_features Visual features
-  Visual features.
-*/
-/*!
-  \ingroup module_core
-  \defgroup group_core_geometric_features Geometric features
-  Geometric features.
-*/
-/*!
-  \ingroup module_core
-  \defgroup group_core_trackers Basic trackers
-  Basic trackers.
-*/
-/*!
-  \ingroup module_core
-  \defgroup group_core_moments Image moments
-  Image moments.
-*/
-/*!
-  \ingroup module_core
   \defgroup group_core_math Mathematics
   Mathematics.
-*/
-/*!
-  \ingroup group_core_math
-  \defgroup group_core_hinkley Hinkley's cumulative sum test
-  Hinkley's cumulative sum test.
 */
 /*!
   \ingroup group_core_math
@@ -229,6 +189,11 @@ scheme, ...</p>
 */
 /*!
   \ingroup group_core_math
+  \defgroup group_core_math_spline Spline
+  Spline.
+*/
+/*!
+  \ingroup group_core_math
   \defgroup group_core_kalman Kalman filter
   Kalman filter.
 */
@@ -239,8 +204,28 @@ scheme, ...</p>
 */
 /*!
   \ingroup group_core_tools
-  \defgroup group_core_cmd_parser Command line parsing
-  Command line parsing.
+  \defgroup group_core_moments Image moments
+  Image moments.
+*/
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_gui Generic GUI
+  Generic graphical user interface tools.
+*/
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_trackers Generic tracker
+  Generic tracker tools.
+*/
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_geometry 2D and 3D geometry
+  2D and 3D geometry.
+*/
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_bridges Bridges over other frameworks
+  Conversion from/to OpenCV...
 */
 /*!
   \ingroup group_core_tools
@@ -254,39 +239,99 @@ scheme, ...</p>
 */
 /*!
   \ingroup group_core_tools
-  \defgroup group_core_plot Drawing of 2D or 3D graphics
-  Drawing of 2D or 3D graphics.
-*/
-/*!
-  \ingroup group_core_tools
   \defgroup group_core_network Networking
   Networking.
 */
 /*!
   \ingroup group_core_tools
-  \defgroup group_core_system System
-  System.
+  \defgroup group_core_histogram Histogram
+  Histogram.
 */
 /*!
-  \ingroup group_core_system
+  \ingroup group_core_tools
   \defgroup group_core_files_io Files and directories
   Files and directories.
 */
 /*!
-  \ingroup group_core_system
+  \ingroup group_core_tools
   \defgroup group_core_time Time management
   Time management.
 */
+
+/*******************************************
+ * Module io
+ *******************************************/
 /*!
-  \ingroup group_core_system
-  \defgroup group_core_parallel_port Parallel port
-  Parallel port.
+  \defgroup module_io io: I/O module
+  I/O module content.
 */
 /*!
-  \ingroup group_core_system
-  \defgroup group_core_keyboard Keyboard
+  \ingroup module_io
+  \defgroup group_io_image Image I/O
+  Image reading and writing.
+*/
+/*!
+  \ingroup module_io
+  \defgroup group_io_video Video I/O
+  Video reading and writing.
+*/
+/*!
+  \ingroup module_io
+  \defgroup group_io_keyboard Keyboard I/O
   Keyboard management.
 */
+/*!
+  \ingroup module_io
+  \defgroup module_io_cmd_parser Command line parser I/O
+  Command line parser.
+*/
+/*!
+  \ingroup module_io
+  \defgroup group_io_parallel_port Parallel port I/O
+  Parallel port I/O.
+*/
+
+/*******************************************
+ * Module visual_features
+ *******************************************/
+/*!
+  \defgroup module_visual_features visual_features: Visual features module
+  Visual features module content.
+*/
+/*!
+  \ingroup module_visual_features
+  \defgroup group_visual_features Visual features
+  Visual features.
+*/
+/*!
+  \ingroup module_visual_features
+  \defgroup group_visual_features_builder Visual features builder
+  Visual features builder.
+*/
+
+/*******************************************
+ * Module gui
+ *******************************************/
+/*!
+  \defgroup module_gui gui: Graphical user interface module
+  Graphical user interface module content.
+*/
+/*!
+  \ingroup module_gui
+  \defgroup group_gui_display Display device
+  Display device interface.
+*/
+/*!
+  \ingroup module_gui
+  \defgroup group_gui_plotter Drawing of 2D or 3D graphics
+  Drawing of 2D or 3D graphics.
+*/
+/*!
+  \ingroup module_gui
+  \defgroup group_gui_projection Forward projection
+  Forward projection interface.
+*/
+
 
 /*******************************************
  * Module ar
@@ -325,9 +370,18 @@ scheme, ...</p>
 */
 
 /*******************************************
- * Module mbt
+ * Module tracker
  *******************************************/
  /*!
+   \defgroup module_tracker tracker: ViSP trackers
+   ViSP trackers.
+ */
+
+/*******************************************
+ * Module mbt
+ *******************************************/
+/*!
+  \ingroup module_tracker
   \defgroup module_mbt mbt: Model-based tracker module
   Model-based tracker module content.
 */
@@ -365,9 +419,15 @@ scheme, ...</p>
 */
 /*!
   \ingroup module_robot
-  \defgroup group_robot_simu Simulated robots
+  \defgroup group_robot_simu Robot simulation
   Simulated robots interfaces.
 */
+/*!
+  \ingroup module_robot
+  \defgroup group_robot_image_simu Image simulation
+  Image simulation.
+*/
+
 /*******************************************
  * Module sensor
  *******************************************/
@@ -393,7 +453,8 @@ scheme, ...</p>
 /*******************************************
  * Module tt
  *******************************************/
- /*!
+/*!
+  \ingroup module_tracker
   \defgroup module_tt tt: Template tracker module
   Template tracker module content.
 */
@@ -416,6 +477,7 @@ scheme, ...</p>
  * Module tt_mi
  *******************************************/
  /*!
+  \ingroup module_tracker
   \defgroup module_tt_mi tt_mi: Template tracker based on mutual information module
   Template tracker based on mutual information module content. This module is an
   extension of \ref module_tt where mutual information cost function is introduced. 
@@ -424,6 +486,30 @@ scheme, ...</p>
   \ingroup module_tt_mi
   \defgroup group_tt_mi_tracker Trackers
   Classes dedicates to template tracking with mutual information cost function.
+*/
+/*******************************************
+ * Module me
+ *******************************************/
+ /*!
+  \ingroup module_tracker
+  \defgroup module_me me: Moving-edges tracker module
+  Moving-edges tracker module.
+*/
+/*******************************************
+ * Module blob
+ *******************************************/
+ /*!
+  \ingroup module_tracker
+  \defgroup module_blob blob: Blob tracker module
+  Blob tracker module.
+*/
+/*******************************************
+ * Module klt
+ *******************************************/
+ /*!
+  \ingroup module_tracker
+  \defgroup module_klt klt: Kanade Lucas tracker module
+  Kanade Lucas tracker module.
 */
 /*******************************************
  * Module vision

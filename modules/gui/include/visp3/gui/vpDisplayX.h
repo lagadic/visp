@@ -66,7 +66,7 @@
 /*!
   \class vpDisplayX
 
-  \ingroup group_core_display
+  \ingroup group_gui_display
 
   \brief Define the X11 console to display images.
 

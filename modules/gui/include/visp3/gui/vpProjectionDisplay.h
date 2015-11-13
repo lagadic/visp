@@ -61,6 +61,7 @@
 
 /*!
   \class vpProjectionDisplay
+  \ingroup group_gui_projection
   \brief interface with the image for feature display
 */
 class VISP_EXPORT vpProjectionDisplay

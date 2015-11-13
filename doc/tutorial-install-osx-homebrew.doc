@@ -29,7 +29,7 @@ $ source ~/.bashrc
 \endcode
 
 
-\section install_osx_brew_3rdparty Install 3rd party
+\section install_osx_brew_3rdparty Install 3rd parties
 
 ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
 
@@ -120,7 +120,7 @@ We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for e
 
 - Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
 \code
-cd $HOME; mkdir visp-build-release
+cd $HOME; mkdir visp-build
 \endcode
 
 - Enter the \<binary_dir\> and configure the build:
@@ -182,7 +182,7 @@ source ~/.bashrc
 From now, you can try to run ViSP examples and tests. For example you can run \c displayX example that should open a windows with Klimt painting image and some overlay drawings:
 
 \code
-$ cd $HOME/visp-build-release
+$ cd $HOME/visp-build
 $ ./example/device/display/displayX
 
 A click to close the windows...
@@ -233,11 +233,17 @@ $ make help | grep visp
 ... visp_doc
 ... visp_core
 ... visp_detection
+... visp_gui
+... visp_io
+... visp_klt
+... visp_me
 ... visp_robot
 ... visp_sensor
-... visp_vision
-... visp_vs
 ... visp_ar
+... visp_blob
+... visp_visual_features
+... visp_vs
+... visp_vision
 ... visp_mbt
 ... visp_tt
 ... visp_tt_mi
@@ -275,7 +281,7 @@ Robots
   Viper S650                  : no
   Viper S850                  : no
 Video devices (display)
-  X11                         : no
+  X11                         : yes
   GTK                         : no
   OpenCV                      : yes 
   GDI                         : no

@@ -46,7 +46,7 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentGravityCenterNormalized
 
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Functionality computation for centered and normalized moment feature. Computes the interaction matrix associated with vpMomentGravityCenterNormalized.
 
@@ -116,7 +116,7 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentGravityCenterNormalized
 
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Functionality computation for centered and normalized moment feature. Computes the interaction matrix associated with vpMomentGravityCenterNormalized.
 

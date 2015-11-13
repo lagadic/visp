@@ -49,7 +49,7 @@
 /*!
   \class vpDisplayD3D
 
-  \ingroup group_core_display
+  \ingroup group_gui_display
 
   \brief Display for windows using Direct3D.
 

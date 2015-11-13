@@ -52,7 +52,7 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/core/vpGenericFeature.h>
+#include <visp3/visual_features/vpGenericFeature.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/io/vpImageIo.h>

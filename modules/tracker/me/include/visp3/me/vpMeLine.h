@@ -53,7 +53,7 @@
 /*!
   \class vpMeLine
 
-  \ingroup group_core_trackers
+  \ingroup module_me
 
   \brief Class that tracks in an image a line moving edges.
 

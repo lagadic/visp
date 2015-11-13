@@ -53,7 +53,7 @@ class vpHomogeneousMatrix;
 
 /*!
   \class vpPoint
-  \ingroup group_core_geometric_features
+  \ingroup group_core_geometry
   \brief Class that defines what is a point.
 */
 class VISP_EXPORT vpPoint : public vpForwardProjection

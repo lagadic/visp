@@ -46,7 +46,7 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentGravityCenter
 
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Functionality computation for gravity center moment feature. Computes the interaction matrix associated with vpMomentGravityCenter.
 
@@ -179,7 +179,7 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentGravityCenter
 
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Functionality computation for gravity center moment feature. Computes the interaction matrix associated with vpMomentGravityCenter.
 

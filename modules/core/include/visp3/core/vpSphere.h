@@ -52,7 +52,7 @@
 #include <math.h>
 /*!
   \class vpSphere
-  \ingroup group_core_geometric_features
+  \ingroup group_core_geometry
   \brief Class that defines what is a sphere.
 
   Forward projection of a sphere.

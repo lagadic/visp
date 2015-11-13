@@ -42,19 +42,6 @@
 	\brief Moving edges
 */
 
-// ====================================================================
-/*!
-  \class vpMe
-  \ingroup group_core_trackers
-  
-  \brief Contains predetermined masks for sites and holds moving edges
-  tracking parameters.
-   
-*/
-// ====================================================================
-//  Andrew Comport added functionality - replaced points_to_track with
-//  sample step.
-
 #ifndef vpMe_H
 #define vpMe_H
 
@@ -62,7 +49,13 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpImage.h>
 
+/*!
+  \class vpMe
+  \ingroup module_me
 
+  This class defines predetermined masks for sites and holds moving edges
+  tracking parameters.
+ */
 class VISP_EXPORT vpMe
 {
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS

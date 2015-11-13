@@ -45,7 +45,7 @@
 /*!
   \class vpFeatureMomentCInvariant
 
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Functionality computation for 2D rotation/translation/scale non-symmetric invariant moment feature. Computes the interaction matrix associated with vpMomentCInvariant.
 
@@ -163,7 +163,7 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentCInvariant
 
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Functionality computation for 2D rotation/translation/scale non-symmetric invariant moment feature. Computes the interaction matrix associated with vpMomentCInvariant.
 

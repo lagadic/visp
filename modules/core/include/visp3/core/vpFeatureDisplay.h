@@ -56,7 +56,7 @@
 /*!
   \class vpFeatureDisplay
 
-  \ingroup group_core_visual_features
+  \ingroup group_core_gui
   \brief Interface with the image for feature display.
 */
 class VISP_EXPORT vpFeatureDisplay

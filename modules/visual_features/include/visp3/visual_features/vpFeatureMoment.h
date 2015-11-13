@@ -56,7 +56,7 @@ class vpMoment;
 /*!
 \class vpFeatureMoment
 
-\ingroup group_core_visual_features
+\ingroup group_visual_features
 
 \brief This class defines shared system methods/attributes for 2D moment features but no functional code.
 It is used to compute interaction matrices for moment features.
@@ -209,7 +209,7 @@ public:
 /*!
 \class vpMomentGenericFeature
 
-\ingroup group_core_visual_features
+\ingroup group_visual_features
 
 \brief This class defines a generic feature used for moment feature duplication.
 

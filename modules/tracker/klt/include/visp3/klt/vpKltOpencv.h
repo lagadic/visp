@@ -60,7 +60,7 @@
 /*!
   \class vpKltOpencv
 
-  \ingroup group_vision_keypoints
+  \ingroup module_klt
 
   \brief Wrapper for the KLT (Kanade-Lucas-Tomasi) feature tracker
   implemented in OpenCV.
@@ -203,7 +203,7 @@ typedef void (*funcevent)(int);
 /*!
   \class vpKltOpencv
 
-  \ingroup TrackingImagePoint
+  \ingroup module_klt
 
   \brief Wrapper for the KLT (Kanade-Lucas-Tomasi) feature tracker
   implemented in OpenCV.
@@ -222,8 +222,6 @@ private:
 
   int maxFeatures; //Maximum number of features to track (Default 50)
   int globalcountFeatures; //Keep over time for ID
-
-  
 
   int win_size; //Size of search window for tracker (default 10)
   double quality; //Multiplier for the maxmin eigenvalue; specifies minimal accepted quality of image corners (default 0.01)

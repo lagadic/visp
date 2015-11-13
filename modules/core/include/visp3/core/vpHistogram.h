@@ -62,9 +62,8 @@
 
 /*!
   \class vpHistogram
-  \ingroup group_core_image
+  \ingroup group_core_histogram
   \brief Class to compute a gray level image histogram.
-
 
   Here are two examples showing how to use this class to determine the
   threshold which can be used to segment two objects.

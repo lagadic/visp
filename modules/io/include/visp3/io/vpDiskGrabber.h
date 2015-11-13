@@ -51,7 +51,7 @@
 /*!
   \class vpDiskGrabber
 
-  \ingroup group_core_image
+  \ingroup group_io_video
 
   \brief Class to grab (ie. read) images from the disk.
 

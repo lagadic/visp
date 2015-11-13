@@ -58,7 +58,7 @@
 
 /*!
   \class vpMeEllipse 
-  \ingroup group_core_trackers
+  \ingroup module_me
 
   \brief Class that tracks an ellipse moving edges.
 
@@ -91,50 +91,7 @@
 
   \include tutorial-me-ellipse-tracker.cpp
 
-  */
-/*
-  The code below shows how to use this class.
-\code
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/me/vpMeEllipse.h>
-#include <visp3/core/vpImagePoint.h>
-
-int main()
-{
-  vpImage<unsigned char> I;
-
-  // I is the image containing the ellipse to track
-    
-  // Set the moving-edges tracker parameters
-  vpMe me;
-  me.setRange(25);
-  me.setPointsToTrack(20);
-  me.setThreshold(15000);
-  me.setSampleStep(10);
-
-  // Initialize the moving-edges ellipse tracker parameters
-  vpMeEllipse ellipse;
-  ellipse.setMe(&me);
-
-  // Initialize the tracking. You have to click on five different points belonging to the ellipse.
-  ellipse.initTracking(I);
-
-  while ( 1 )
-  {
-    // ... Here the code to read or grab the next image.
-
-    // Track the ellipse.
-    ellipse.track(I);
-  }
-  return 0;
-}
-\endcode
-
-  \note It is possible to display the ellipse as an overlay. For that you 
-  must use the display function of the class vpMeEllipse.
 */
-
 class VISP_EXPORT vpMeEllipse : public vpMeTracker
 {
 public:

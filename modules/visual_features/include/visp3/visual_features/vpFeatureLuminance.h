@@ -72,7 +72,7 @@ class VISP_EXPORT vpLuminance
 
 /*!
   \class vpFeatureLuminance
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
   \brief Class that defines the image luminance visual feature
 
   For more details see \cite Collewet08c.

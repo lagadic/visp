@@ -54,7 +54,7 @@
 
 /*!
   \class vpNurbs
-  \ingroup group_core_math_tools
+  \ingroup module_me
 
   \brief Class that provides tools to compute and manipulate a Non Uniform Rational B-Spline curve.
   

@@ -47,7 +47,7 @@
 /*!
   \class vpHinkley
 
-  \ingroup group_core_hinkley
+  \ingroup group_core_math_tools
   \brief This class implements the Hinkley's cumulative sum test.
 
   \author Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
@@ -69,7 +69,6 @@
   \f[ M_k = \max_{0 \leq i \leq k} S_i\f]
   \f[ T_k = \sum_{t=0}^{k} (s(t) - m_0 - \frac{\delta}{2}) \f]
   \f[ N_k = \max_{0 \leq i \leq k} T_i\f]
-
 
   In which \f$m_o\f$ is computed on-line and corresponds to the mean
   of the signal \f$ s(t) \f$ we want to detect a jump. \f$m_o\f$ is

@@ -47,7 +47,7 @@ class vpMomentDatabase;
 /*!
   \class vpFeatureMomentArea
 
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Surface moment feature. Computes the interaction matrix associated with vpMomentArea.
 

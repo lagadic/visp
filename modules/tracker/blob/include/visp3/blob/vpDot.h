@@ -63,7 +63,7 @@
 /*!
   \class vpDot
 
-  \ingroup group_core_trackers
+  \ingroup module_blob
 
   \brief This tracker is meant to track a dot (connected pixels with same
   gray level) on a vpImage.

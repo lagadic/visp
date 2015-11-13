@@ -59,7 +59,7 @@
 
   \class vpDisplayGTK
 
-  \ingroup group_core_display
+  \ingroup group_gui_display
 
   \brief The vpDisplayGTK allows to display image using the GTK+ library
   version 1.2.

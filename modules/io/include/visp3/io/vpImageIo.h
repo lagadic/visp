@@ -69,7 +69,7 @@
 /*!
   \class vpImageIo
   
-  \ingroup group_core_image
+  \ingroup group_io_image
 
   \brief Read/write images with various image format.
 

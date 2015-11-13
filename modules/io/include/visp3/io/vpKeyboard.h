@@ -57,7 +57,7 @@
 /*!
 
   \class vpKeyboard
-  \ingroup group_core_keyboard
+  \ingroup group_io_keyboard
   \brief Keybord management under unix (Linux or OSX). This class is not available under windows.
 
   Gets a key from the keyboard without waiting for the "Enter" key.

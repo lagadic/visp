@@ -56,7 +56,7 @@
 /*!
   \class vpMeTracker
 
-  \ingroup group_core_trackers
+  \ingroup module_me
   \brief Contains abstract elements for a Distance to Feature type feature.
 
   2D state = list of points, 3D state = feature

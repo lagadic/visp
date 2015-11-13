@@ -142,12 +142,18 @@ STRIP_FROM_PATH        =
 STRIP_FROM_INC_PATH    = "@VISP_SOURCE_DIR@/modules/ar/include" \ 
                          "@VISP_SOURCE_DIR@/modules/core/include" \
                          "@VISP_SOURCE_DIR@/modules/detection/include" \
-                         "@VISP_SOURCE_DIR@/modules/mbt/include" \
+                         "@VISP_SOURCE_DIR@/modules/gui/include" \
+                         "@VISP_SOURCE_DIR@/modules/io/include" \
                          "@VISP_SOURCE_DIR@/modules/robot/include" \
                          "@VISP_SOURCE_DIR@/modules/sensor/include" \
-                         "@VISP_SOURCE_DIR@/modules/tt/include" \
-                         "@VISP_SOURCE_DIR@/modules/tt_mi/include" \
+                         "@VISP_SOURCE_DIR@/modules/tracker/blob/include" \
+                         "@VISP_SOURCE_DIR@/modules/tracker/klt/include" \
+                         "@VISP_SOURCE_DIR@/modules/tracker/mbt/include" \
+                         "@VISP_SOURCE_DIR@/modules/tracker/me/include" \
+                         "@VISP_SOURCE_DIR@/modules/tracker/tt/include" \
+                         "@VISP_SOURCE_DIR@/modules/tracker/tt_mi/include" \
                          "@VISP_SOURCE_DIR@/modules/vision/include" \
+                         "@VISP_SOURCE_DIR@/modules/visual_features/include"
                          "@VISP_SOURCE_DIR@/modules/vs/include"
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
@@ -1598,6 +1604,22 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_DMTX \
                          VISP_HAVE_ACCESS_TO_NAS \
                          VISP_HAVE_CPP11_COMPATIBILITY \
+                         VISP_HAVE_MODULE_AR \
+                         VISP_HAVE_MODULE_CORE \
+                         VISP_HAVE_MODULE_DETECTION \
+                         VISP_HAVE_MODULE_GUI \
+                         VISP_HAVE_MODULE_IO \
+                         VISP_HAVE_MODULE_ROBOT \
+                         VISP_HAVE_MODULE_SENSOR \
+                         VISP_HAVE_MODULE_BLOB \
+                         VISP_HAVE_MODULE_KLT \
+                         VISP_HAVE_MODULE_MBT \
+                         VISP_HAVE_MODULE_ME \
+                         VISP_HAVE_MODULE_TT \
+                         VISP_HAVE_MODULE_TT_MI \
+                         VISP_HAVE_MODULE_VISION \
+                         VISP_HAVE_MODULE_VISUAL_FEATURES \
+                         VISP_HAVE_MODULE_VS \
                          VISP_BUILD_DEPRECATED_FUNCTIONS \
                          WIN32 \
                          APPLE \

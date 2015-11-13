@@ -53,7 +53,7 @@
 
 /*!
   \class vpFeatureSegment
-  \ingroup group_core_visual_features
+  \ingroup group_visual_features
 
   \brief Class that defines a 2D segment visual features.
   This class allow to consider two sets of visual features:

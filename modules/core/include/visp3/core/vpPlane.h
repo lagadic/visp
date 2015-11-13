@@ -39,13 +39,14 @@
 #ifndef vpPlane_hh
 #define vpPlane_hh
 
-
-
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
 
 /*!
   \class vpPlane
 
-  \ingroup group_core_geometric_features
+  \ingroup group_core_geometry
 
   \brief This class defines the container for a plane geometrical structure.
 
@@ -54,12 +55,6 @@
   vector of the plane.
 
 */
-
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-
-
 class VISP_EXPORT vpPlane
 {
 
