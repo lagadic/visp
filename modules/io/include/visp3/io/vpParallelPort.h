@@ -54,7 +54,7 @@
 #  include <linux/parport.h>
 #  include <linux/ppdev.h>
 
-#  include <visp3/robot/vpParallelPortException.h>
+#  include <visp3/io/vpParallelPortException.h>
 
 /*!
 
