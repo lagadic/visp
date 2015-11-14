@@ -46,7 +46,7 @@
 
   \class vpUnicycle
 
-  \ingroup group_robot_simu group_robot_simu
+  \ingroup group_robot_simu_unicycle
 
   \brief Generic functions for unicycle mobile robots.
 

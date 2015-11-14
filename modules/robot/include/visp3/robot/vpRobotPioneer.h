@@ -56,7 +56,7 @@
 
   \class vpRobotPioneer
 
-  \ingroup group_robot_real
+  \ingroup group_robot_real_unicycle
 
   \brief Interface for Pioneer mobile robots based on Aria 3rd party library.
 

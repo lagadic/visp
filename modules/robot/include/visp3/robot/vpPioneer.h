@@ -46,7 +46,7 @@
 
   \class vpPioneer
 
-  \ingroup group_robot_real group_robot_simu
+  \ingroup group_robot_real_unicycle group_robot_simu_unicycle
 
   \brief Generic functions for Pioneer mobile robots.
 

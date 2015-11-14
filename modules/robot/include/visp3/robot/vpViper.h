@@ -57,7 +57,7 @@
 
   \class vpViper
 
-  \ingroup group_robot_real group_robot_simu
+  \ingroup group_robot_real_arm group_robot_simu_arm
 
   \brief Modelisation of the ADEPT Viper robot 
 

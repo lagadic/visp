@@ -98,8 +98,8 @@ void vp2jlc_matrix (const vpHomogeneousMatrix, Matrix&);
 /*!
   \class vpWireFrameSimulator
 
-  \ingroup group_robot_simu
-  
+  \ingroup group_robot_simu_gantry group_robot_simu_arm
+
   \brief Implementation of a wire frame simulator. Compared to the vpSimulator class, it does not
   require third party libraries to be used.
   

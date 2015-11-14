@@ -48,7 +48,7 @@
 
 /*!
   \class vpRobotTemplate
-  \ingroup group_robot_real
+  \ingroup group_robot_real_template
   \brief class that defines a robot just to show which function you must implement
 */
 

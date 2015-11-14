@@ -58,7 +58,7 @@
 
   \class vpBiclops
 
-  \ingroup group_robot_real
+  \ingroup group_robot_real_ptu
 
   \brief Jacobian, geometric model functionnalities... for biclops, pan, tilt
   head.

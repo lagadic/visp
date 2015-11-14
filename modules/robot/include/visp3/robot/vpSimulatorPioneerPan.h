@@ -55,7 +55,7 @@
 /*!
   \class vpSimulatorPioneerPan
 
-  \ingroup group_robot_simu
+  \ingroup group_robot_simu_unicycle
 
   \brief Class that defines the Pioneer mobile robot simulator equipped
   with a camera able to move in pan.

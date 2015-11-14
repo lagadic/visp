@@ -52,8 +52,9 @@
 /*!
   \class vpRobotSimulator
 
-  \ingroup group_robot_simu
-  
+  \ingroup group_robot_simu_gantry group_robot_simu_arm group_robot_simu_unicycle
+  \ingroup group_robot_simu_camera
+
   \brief This class aims to be a basis used to create all the
   robot simulators.
   

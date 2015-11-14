@@ -70,7 +70,7 @@ class VISP_EXPORT Biclops; //needed for dll creation
 
   \class vpRobotBiclopsController
 
-  \ingroup group_robot_real
+  \ingroup group_robot_real_ptu
 
   \brief Interface to Biclops, pan, tilt, verge head for computer vision
   applications.

@@ -3,7 +3,7 @@
 \page tutorial-install-opensuse Tutorial: Installation from source on Linux openSUSE
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on openSUSE. These steps have been tested for openSUSE 13.2 (x86_64) distribution, but should work with any other distribution as well. 
+In this tutorial you will learn how to install ViSP from source on openSUSE. These steps have been tested for openSUSE 14.1 (x86_64) distribution, but should work with any other distribution as well. 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -16,6 +16,10 @@ sudo zypper install gcc-c++
 - CMake 2.6 or higher that could be installed with:
 \code
 sudo zypper install cmake
+\endcode
+- Git if you want to get the source code from http://github.com/lagadic/visp
+\code
+sudo zypper install git-core
 \endcode
 
 \section install_opensuse_3rdparty Install 3rd parties
@@ -86,12 +90,12 @@ We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for e
 
 - Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
 \code
-cd $HOME; mkdir visp-build-release
+cd $HOME; mkdir visp-build
 \endcode
 
 - Enter the \<binary_dir\> and configure the build:
 \code
-cd $HOME/Vvisp-build-release
+cd $HOME/Vvisp-build
 cmake ../visp
 \endcode
 A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
@@ -99,7 +103,7 @@ A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 ccmake ../visp
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-ccmake-opensuse-all.png Snapshot of the ccmake \c ../visp command used to configure ViSP.
+\image html img-ccmake-ubuntu-all.png Snapshot of the ccmake \c ../visp command used to configure ViSP.
 
 \subsection install_opensuse_build Building ViSP from source
 
@@ -148,7 +152,7 @@ source ~/.bashrc
 From now, you can try to run ViSP examples and tests. For example you can run \c displayX example that should open a windows with Klimt painting image and some overlay drawings:
 
 \code
-$ cd $HOME/visp-build-release
+$ cd $HOME/visp-build
 $ ./example/device/display/displayX
 
 A click to close the windows...

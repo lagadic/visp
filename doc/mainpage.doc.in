@@ -418,9 +418,59 @@ scheme, ...</p>
   Real robots interfaces.
 */
 /*!
+  \ingroup group_robot_real
+  \defgroup group_robot_real_gantry Gantry robot
+  Afma6 gantry robot interfaces.
+*/
+/*!
+  \ingroup group_robot_real
+  \defgroup group_robot_real_cylindrical Cylindrical robot
+  Afma4 cylindrical robot interfaces.
+*/
+/*!
+  \ingroup group_robot_real
+  \defgroup group_robot_real_unicycle Unicycle robot
+  Pioneer P3DX unicycle robot interfaces.
+*/
+/*!
+  \ingroup group_robot_real
+  \defgroup group_robot_real_ptu Pan-tilt unit
+  Pan-tilt unit interfaces.
+*/
+/*!
+  \ingroup group_robot_real
+  \defgroup group_robot_real_arm Anthropomorphic arm
+  Anthropomorphic arm interfaces.
+*/
+/*!
+  \ingroup group_robot_real
+  \defgroup group_robot_real_template New robot interface (template)
+  Template for users that want to integrate their own real-robot.
+*/
+/*!
   \ingroup module_robot
   \defgroup group_robot_simu Robot simulation
   Simulated robots interfaces.
+*/
+/*!
+  \ingroup group_robot_simu
+  \defgroup group_robot_simu_gantry Gantry robot simulation
+  Gantry robot interfaces.
+*/
+/*!
+  \ingroup group_robot_simu
+  \defgroup group_robot_simu_arm Anthropomorphic arm simulation
+  Anthropomorphic arm interfaces.
+*/
+/*!
+  \ingroup group_robot_simu
+  \defgroup group_robot_simu_unicycle Unicycle robot simulation
+  Pioneer P3DX unicycle robot interfaces.
+*/
+/*!
+  \ingroup group_robot_simu
+  \defgroup group_robot_simu_camera Free flying camera simulation
+  Free flying camera interfaces.
 */
 /*!
   \ingroup module_robot

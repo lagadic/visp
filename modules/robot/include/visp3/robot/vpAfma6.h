@@ -50,7 +50,7 @@
 
   \class vpAfma6
 
-  \ingroup group_robot_real group_robot_simu
+  \ingroup group_robot_real_gantry group_robot_simu_gantry
 
   \brief Modelisation of Irisa's gantry robot named Afma6.
 

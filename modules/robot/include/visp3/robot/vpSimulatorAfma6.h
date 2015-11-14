@@ -53,7 +53,7 @@
 /*!
   \class vpSimulatorAfma6
 
-  \ingroup group_robot_simu
+  \ingroup group_robot_simu_gantry
 
   \brief Simulator of Irisa's gantry robot named Afma6.
 

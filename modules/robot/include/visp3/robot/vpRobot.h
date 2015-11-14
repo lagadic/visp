@@ -51,7 +51,8 @@
 
 /*!
   \class vpRobot
-  \ingroup group_robot_real
+  \ingroup group_robot_real_gantry group_robot_real_cylindrical group_robot_real_arm
+  \ingroup group_robot_real_ptu group_robot_real_unicycle group_robot_real_template
   \brief class that defines a generic virtual robot
 */
 class VISP_EXPORT vpRobot

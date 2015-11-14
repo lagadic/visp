@@ -57,7 +57,7 @@
 /*!
 
   \class vpRingLight
-  \ingroup group_robot_real
+  \ingroup group_robot_real_gantry
   \brief Ring light management under unix.
 
   \warning This class works only at Irisa with the Edixia's ring light system.

@@ -71,7 +71,7 @@
 
   \class vpRobotPtu46
 
-  \ingroup group_robot_real
+  \ingroup group_robot_real_ptu
 
   \brief Interface for the Directed Perception ptu-46 pan, tilt head .
 
