@@ -49,14 +49,17 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#ifdef VISP_HAVE_GTK
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -64,7 +67,7 @@
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
-#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/core/vpIoTools.h>
 
@@ -75,12 +78,15 @@ int main()
     // sets the initial camera location
     vpHomogeneousMatrix cMo(0.3,0.2,3,
                             vpMath::rad(0),vpMath::rad(0),vpMath::rad(40))  ;
+    vpHomogeneousMatrix wMo; // Set to identity
+    vpHomogeneousMatrix wMc; // Camera position in the world frame
 
     ///////////////////////////////////
     // initialize the robot
-    vpRobotCamera robot ;
+    vpSimulatorCamera robot ;
     robot.setSamplingTime(0.04); // 40ms
-    robot.setPosition(cMo) ;
+    wMc = wMo * cMo.inverse();
+    robot.setPosition(wMc) ;
 
     //initialize the camera parameters
     vpCameraParameters cam(800,800,240,180);
@@ -91,7 +97,15 @@ int main()
     vpImage<unsigned char> I(height,width);
 
     //Display initialization
+#if defined(VISP_HAVE_X11)
+    vpDisplayX disp;
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK disp;
+#elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI disp;
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV disp;
+#endif
     disp.init(I,100,100,"Simulation display");
 
     ////////////////////////////////////////
@@ -183,8 +197,9 @@ int main()
       vpColVector v = task.computeControlLaw() ;
 
       // Send the computed velocity to the robot and compute the new robot position
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
-      robot.getPosition(cMo) ;
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, v);
+      wMc = robot.getPosition();
+      cMo = wMc.inverse() * wMo;
 
       // Print the current information about the task
       task.print();

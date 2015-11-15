@@ -120,7 +120,7 @@ vpSimulatorCamera::get_eJe(vpMatrix &eJe_)
 }
 
 /*!
-  Get the robot position in the world frame.
+  Get the camera position in the world frame.
 
 */
 void
@@ -128,9 +128,18 @@ vpSimulatorCamera::getPosition(vpHomogeneousMatrix &wMc) const
 {
   wMc = this->wMc_ ;
 }
+/*!
+  Return the camera position in the world frame.
+
+*/
+vpHomogeneousMatrix
+vpSimulatorCamera::getPosition() const
+{
+  return(this->wMc_);
+}
 
 /*
-  Get the current position of the robot.
+  Get the current position of the camera.
 
   \param frame : Control frame type in which to get the position, either :
   - in the camera cartesien frame,

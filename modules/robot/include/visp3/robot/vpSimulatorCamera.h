@@ -116,6 +116,7 @@ public:
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
   void get_eJe(vpMatrix &eJe);
 
+  vpHomogeneousMatrix getPosition() const;
   void getPosition(vpHomogeneousMatrix &wMc) const;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
   void setPosition(const vpHomogeneousMatrix &wMc);

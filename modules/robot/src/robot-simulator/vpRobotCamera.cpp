@@ -41,12 +41,14 @@
   \brief class that defines the simplest robot : a free flying camera
 */
 
-#include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotCamera.h>
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+#include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpExponentialMap.h>
-
 
 /*!
   Constructor.
@@ -277,3 +279,7 @@ vpRobotCamera::setPosition(const vpHomogeneousMatrix &cMw)
   this->cMw_ = cMw ;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work arround to avoid warning: libvisp_robot.a(vpRobotCamera.cpp.o) has no symbols
+void dummy_vpRobotCamera() {};
+#endif

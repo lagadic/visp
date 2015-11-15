@@ -64,7 +64,7 @@
 #include <visp3/visual_features/vpFeatureEllipse.h>
 #include <visp3/core/vpCircle.h>
 #include <visp3/vs/vpServo.h>
-#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
@@ -169,7 +169,9 @@ void *mainLoop (void *_simu)
   vcMo[3] = 0 ;
   vcMo[4] = vpMath::rad(45)  ;
   vcMo[5] = vpMath::rad(40) ;
-  vpHomogeneousMatrix cMo(vcMo) ; ;
+  vpHomogeneousMatrix cMo(vcMo);
+  vpHomogeneousMatrix wMo; // Set to identity
+  vpHomogeneousMatrix wMc; // Robot (=camera) location in the world frame
 
   vpHomogeneousMatrix cMod ;
   cMod[0][3] = 0 ;
@@ -181,14 +183,15 @@ void *mainLoop (void *_simu)
   while (pos!=0)
   {
     vpServo task ;
-    vpRobotCamera robot ;
+    vpSimulatorCamera robot ;
 
     float sampling_time = 0.040f; // Sampling period in second
     robot.setSamplingTime(sampling_time);
     robot.setMaxTranslationVelocity(4.);
 
     // Sets the initial camera location
-    robot.setPosition(cMo) ;
+    wMc = wMo * cMo.inverse();
+    robot.setPosition(wMc) ;
     simu->setCameraPosition(cMo) ;
 
     if (pos==1)  cMod[2][3] = 0.32 ;
@@ -235,10 +238,11 @@ void *mainLoop (void *_simu)
       double t = vpTime::measureTimeMs();
 
       if (iter==1) std::cout << "get the robot position" << std::endl;
-      robot.getPosition(cMo) ;
+      wMc = robot.getPosition() ;
       if (iter==1) std::cout << "new circle position" << std::endl;
       //retrieve x,y and Z of the vpCircle structure
 
+      cMo = wMc.inverse() * wMo;
       circle.track(cMo) ;
       vpFeatureBuilder::create(p,circle);
 

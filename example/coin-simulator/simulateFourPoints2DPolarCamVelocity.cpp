@@ -60,7 +60,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/visual_features/vpFeaturePointPolar.h>
 #include <visp3/vs/vpServo.h>
-#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
@@ -156,7 +156,7 @@ void *mainLoop (void *_simu)
   simu->initMainApplication() ;
 
   vpServo task ;
-  vpRobotCamera robot ;
+  vpSimulatorCamera robot ;
 
   float sampling_time = 0.040f; // Sampling period in second
   robot.setSamplingTime(sampling_time);
@@ -172,12 +172,16 @@ void *mainLoop (void *_simu)
   vcMo[4] = vpMath::rad(0)  ;
   vcMo[5] = vpMath::rad(90) ;
 
-  vpHomogeneousMatrix cMo(vcMo)  ;
-  robot.setPosition(cMo) ;
+  vpHomogeneousMatrix cMo(vcMo);
+  vpHomogeneousMatrix wMo; // Set to identity
+  vpHomogeneousMatrix wMc; // Camera location in world frame
+  wMc = wMo * cMo.inverse();
+  robot.setPosition(wMc) ;
   simu->setCameraPosition(cMo) ;
 
   simu->getCameraPosition(cMo) ;
-  robot.setPosition(cMo) ;
+  wMc = wMo * cMo.inverse();
+  robot.setPosition(wMc) ;
 
   vpCameraParameters cam ;
 
@@ -269,7 +273,8 @@ void *mainLoop (void *_simu)
     robot.get_eJe(eJe) ;
     task.set_eJe(eJe) ;
 
-    robot.getPosition(cMo) ;
+    wMc = robot.getPosition();
+    cMo = wMc.inverse() * wMo;
     for (int i = 0 ; i < 4 ; i++)
     {
       point[i].track(cMo) ;

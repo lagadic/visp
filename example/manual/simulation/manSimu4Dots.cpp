@@ -78,7 +78,7 @@
 #include <visp3/blob/vpDot2.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
-#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/core/vpIoTools.h>
 
@@ -95,12 +95,15 @@ void *mainLoop (void *_simu)
   // Set the initial camera location
   vpHomogeneousMatrix cMo(0.3,0.2,3,
                           vpMath::rad(0),vpMath::rad(0),vpMath::rad(40));
+  vpHomogeneousMatrix wMo; // Set to identity
+  vpHomogeneousMatrix wMc; // Camera position in the world frame
 
   ///////////////////////////////////
   // Initialize the robot
-  vpRobotCamera robot ;
+  vpSimulatorCamera robot ;
   robot.setSamplingTime(0.04); // 40ms 
-  robot.setPosition(cMo) ;
+  wMc = wMo * cMo.inverse();
+  robot.setPosition(wMc) ;
   // Send the robot position to the visualizator
   simu->setCameraPosition(cMo) ;
   // Initialize the camera parameters
@@ -128,8 +131,6 @@ void *mainLoop (void *_simu)
   vpFeaturePoint pd[4] ;
   for (int i = 0 ; i < 4 ; i++)
     vpFeatureBuilder::create(pd[i],point[i]) ;
-
-
 
   ///////////////////////////////////////
   // Current visual features initialization
@@ -229,13 +230,13 @@ void *mainLoop (void *_simu)
     vpColVector v = task.computeControlLaw() ;
     
     // Send the computed velocity to the robot and compute the new robot position
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
-    robot.getPosition(cMo) ;
+    robot.setVelocity(vpRobot::ARTICULAR_FRAME, v);
+    wMc = robot.getPosition();
+    cMo = wMc.inverse() * wMo;
     
     // Send the robot position to the visualizator
     simu->setCameraPosition(cMo) ;
 
-    
     // Wait 40 ms
     vpTime::wait(t,40); 
   }  
@@ -266,10 +267,19 @@ main()
 
     vpTime::wait(500) ;
     // Load the scene
-    std::cout << "Load : ./4Points.iv" << std::endl
+
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    std::string ipath = vpIoTools::getViSPImagesDataPath();
+    std::string filename = "./4points.iv";
+
+    // Set the default input path
+    if (! ipath.empty())
+      filename = vpIoTools::createFilePath(ipath, "ViSP-images/iv/4points.iv");
+
+    std::cout << "Load : " << filename << std::endl
               << "This file should be in the working directory" << std::endl;
 
-    simu.load("./4points.iv") ;
+    simu.load(filename.c_str());
 
     // Run the main loop
     simu.initApplication(&mainLoop) ;

@@ -58,7 +58,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/io/vpParseArgv.h>
-#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
@@ -190,7 +190,7 @@ main(int argc, const char ** argv)
     }
 
     vpServo task;
-    vpRobotCamera robot ;
+    vpSimulatorCamera robot ;
     float sampling_time = 0.040f; // Sampling period in second
     robot.setSamplingTime(sampling_time);
 
@@ -201,9 +201,8 @@ main(int argc, const char ** argv)
     // Set initial position of the object in the world frame
     vpHomogeneousMatrix wMo(0.0,0.0,0,0,0,0);
     // Position of the camera in the world frame
-    vpHomogeneousMatrix wMc, cMw;
+    vpHomogeneousMatrix wMc;
     wMc = wMo * cMo.inverse();
-    cMw = wMc.inverse();
 
     // Create a cylinder
     vpCylinder cylinder(0,0,1,0,0,0,0.1);
@@ -284,7 +283,7 @@ main(int argc, const char ** argv)
       while (!vpDisplay::getClick(Iint,false) && !vpDisplay::getClick(Iext,false)){};
     }
 
-    robot.setPosition( cMw );
+    robot.setPosition( wMc );
 
     //Print the task
     task.print();
@@ -315,8 +314,8 @@ main(int argc, const char ** argv)
       robot.get_eJe(eJe) ;
       task.set_eJe(eJe) ;
 
-      robot.getPosition(cMw) ;
-      cMo = cMw * wMo;
+      wMc = robot.getPosition();
+      cMo = wMc.inverse() * wMo;
 
       cylinder.track(cMo) ;
       vpFeatureBuilder::create(l[0], cylinder, vpCylinder::line1);

@@ -56,7 +56,7 @@
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/gui/vpPlot.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/vs/vpServo.h> //visual servoing task
 
 /*!
@@ -124,8 +124,10 @@ int main(int argc, const char **argv)
       display->init(I);
 #endif
 
+    vpHomogeneousMatrix wMo; // Set to indentity. Robot world frame is equal to object frame
     vpHomogeneousMatrix cMo (-0.5, 0.5, 4., vpMath::rad(10), vpMath::rad(20), vpMath::rad(90));
     vpHomogeneousMatrix cdMo(0., 0., 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+    vpHomogeneousMatrix wMc; // Camera location in the robot world frame
 
     vpPoint P[4]; // 4 points in the object frame
     P[0].setWorldCoordinates( .1,  .1, 0.);
@@ -197,15 +199,17 @@ int main(int argc, const char **argv)
 #endif
 
     //param robot
-    vpRobotCamera robot ;
-    float sampling_time = 0.010f ; // Sampling period in seconds
-    robot.setSamplingTime(sampling_time) ;
-    robot.setPosition(cMo) ;
+    vpSimulatorCamera robot;
+    float sampling_time = 0.010f; // Sampling period in seconds
+    robot.setSamplingTime(sampling_time);
+    wMc = wMo * cMo.inverse();
+    robot.setPosition(wMc);
     int iter=0;
 
-    do{
+    do {
       double t = vpTime::measureTimeMs();
-      robot.getPosition(cMo);
+      wMc = robot.getPosition();
+      cMo = wMc.inverse() * wMo;
       for (int i=0; i <4; i++)
         Pc[i].project(cMo);
 

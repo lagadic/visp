@@ -48,7 +48,7 @@
 #include <visp3/core/vpMomentCommon.h> //update the common database with the object
 #include <visp3/visual_features/vpFeatureMomentCommon.h> //init the feature database using the information about moment dependencies
 #include <visp3/vs/vpServo.h> //visual servoing task
-#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/core/vpPlane.h>
 #include <visp3/core/vpException.h>
 #include <limits>
@@ -86,6 +86,8 @@ int main()
 
     vpHomogeneousMatrix cMo(0.1,0.0,1.0,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0));
     vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,1.0,vpMath::rad(0),vpMath::rad(0),-vpMath::rad(0)));
+    vpHomogeneousMatrix wMo; // Set to identity
+    vpHomogeneousMatrix wMc; // Camera position in the world frame
 
     cMoToABC(cMo,A,B,C);
     cMoToABC(cdMo,Ad,Bd,Cd);
@@ -137,13 +139,15 @@ int main()
     al->init();
     al->error(*al);
     //param robot
-    vpRobotCamera robot ;
+    vpSimulatorCamera robot ;
     float sampling_time = 0.010f; // Sampling period in seconds
     robot.setSamplingTime(sampling_time);
-    robot.setPosition(cMo);
+    wMc = wMo * cMo.inverse();
+    robot.setPosition(wMc);
 
     do{
-      robot.getPosition(cMo);
+      wMc = robot.getPosition();
+      cMo = wMc.inverse() * wMo;
       vec_p.clear();
 
       for (int i = 0 ; i < nbpoints ; i++){

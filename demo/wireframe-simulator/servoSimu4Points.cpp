@@ -222,9 +222,8 @@ main(int argc, const char ** argv)
     // Set initial position of the object in the world frame
     vpHomogeneousMatrix wMo(0.0,0.0,0.2,0,0,0);
     // Position of the camera in the world frame
-    vpHomogeneousMatrix wMc, cMw;
+    vpHomogeneousMatrix wMc;
     wMc = wMo * cMo.inverse();
-    cMw = wMc.inverse();
 
     //The four point used as visual features
     vpPoint point[4] ;
@@ -378,7 +377,7 @@ main(int argc, const char ** argv)
       robot.get_eJe(eJe) ;
       task.set_eJe(eJe) ;
 
-      robot.getPosition(wMc) ;
+      wMc = robot.getPosition() ;
       cMo = wMc.inverse() * wMo;
       for (int i = 0 ; i < 4 ; i++)
       {

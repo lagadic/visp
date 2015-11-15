@@ -44,6 +44,10 @@
   \brief class that defines the simplest robot : a free flying camera
 */
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
@@ -53,7 +57,10 @@
   \class vpRobotCamera
   \ingroup group_robot_simu_camera
 
-  \brief Class that defines the simplest robot: a free flying camera.
+  \deprecated This class is deprecated since ViSP 3.0.0.
+
+  \brief Class that defines the simplest robot: a free flying camera. We recommend to use
+  vpSimulatorCamera instead.
 
   This free flying camera has 6 dof; 3 in translation and 3 in rotation.
   It evolves as a gentry robot with respect to a world frame. This class
@@ -62,8 +69,6 @@
   the position of the camera frame evolves, this representation is less intuitive
   than the one implemented in vpSimulatorCamera where the transformation from world
   to camera frame is considered; wMc.
-
-  \note We recommend to use vpSimulatorCamera rather than vpRobotCamera.
 
   For this particular simulated robot, the end-effector and camera frame are confused.
   That means that the cMe transformation is equal to identity.
@@ -130,8 +135,4 @@ private:
 } ;
 
 #endif
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+#endif

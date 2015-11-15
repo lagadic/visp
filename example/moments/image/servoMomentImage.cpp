@@ -63,7 +63,7 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
-#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/robot/vpImageSimulator.h>
 #include <visp3/core/vpPlane.h>
 #include <visp3/core/vpPoseVector.h>
@@ -142,7 +142,7 @@ vpDisplayGTK displayInt;
 vpHomogeneousMatrix cMo;
 vpHomogeneousMatrix cdMo;
 
-vpRobotCamera robot;//robot used in this simulation
+vpSimulatorCamera robot;//robot used in this simulation
 vpImage<vpRGBa> Iint(480,640, 0);//internal image used for interface display
 vpServo task;    //servoing task
 vpCameraParameters cam;//robot camera parameters
@@ -299,7 +299,11 @@ void execute(unsigned int nbIter){
   vpDisplay::flush(Iint);
   unsigned int iter=0;
   double t=0;
-  robot.setPosition(cMo);
+
+  vpHomogeneousMatrix wMo; // Set to identity
+  vpHomogeneousMatrix wMc; // Camera position in the world frame
+  wMc = wMo * cMo.inverse();
+  robot.setPosition(wMc);
   float sampling_time = 0.010f; // Sampling period in seconds
   robot.setSamplingTime(sampling_time);
 
@@ -313,7 +317,8 @@ void execute(unsigned int nbIter){
     vpColVector v ;
     t = vpTime::measureTimeMs();
     //get the cMo
-    robot.getPosition(cMo);
+    wMc = robot.getPosition();
+    cMo = wMc.inverse() * wMo;
     currentpose.buildFrom(cMo);	// For plot
     //setup the plane in A,B,C style
     vpPlane pl;

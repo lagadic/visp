@@ -48,7 +48,7 @@
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/robot/vpRobotCamera.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -297,6 +297,8 @@ main(int argc, const char ** argv)
     //camera desired position
     vpHomogeneousMatrix cMo ;
     cMo.buildFrom(0,0,1.2,vpMath::rad(15),vpMath::rad(-5),vpMath::rad(20));
+    vpHomogeneousMatrix wMo; // Set to identity
+    vpHomogeneousMatrix wMc; // Camera position in the world frame
 
     //set the robot at the desired position
     sim.setCameraPosition(cMo) ;
@@ -335,9 +337,10 @@ main(int argc, const char ** argv)
     }
 #endif
     // create the robot (here a simulated free flying camera)
-    vpRobotCamera robot ;
+    vpSimulatorCamera robot;
     robot.setSamplingTime(0.04);
-    robot.setPosition(cMo) ;
+    wMc = wMo * cMo.inverse();
+    robot.setPosition(wMc);
 
     // ------------------------------------------------------
     // Visual feature, interaction matrix, error
@@ -455,9 +458,9 @@ main(int argc, const char ** argv)
       std::cout << " |Tc| = " << sqrt(v.sumSquare()) << std::endl;
 
       // send the robot velocity
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-      robot.getPosition(cMo) ;
-
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
+      wMc = robot.getPosition();
+      cMo = wMc.inverse() * wMo;
     }
     while(normeError > 10000 && iter < opt_niter);
 

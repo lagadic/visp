@@ -65,7 +65,6 @@
 #include <visp3/core/vpLine.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/io/vpParseArgv.h>
-#include <visp3/robot/vpRobotCamera.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 #include <visp3/robot/vpSimulatorCamera.h>
