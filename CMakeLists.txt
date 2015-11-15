@@ -263,13 +263,6 @@ find_package(Doxygen)
 if(DOXYGEN_FOUND)
   set(VISP_HAVE_DOXYGEN "yes")        # for header vpConfig.h
   set(VISP_HAVE_DOXYGEN_FOUND "yes")  # for ViSP-third-party.txt
-  if(DOXYGEN_DOT_EXECUTABLE)
-    set(VISP_HAVE_DOT "yes")        # for header vpConfig.h
-    set(VISP_HAVE_DOT_FOUND "yes")  # for ViSP-third-party.txt
-  else()
-    set(VISP_HAVE_DOT "no")        # for header vpConfig.h
-    set(VISP_HAVE_DOT_FOUND "no")  # for ViSP-third-party.txt
-  endif()
   ## we need latex for doxygen because of the formulas
   find_package(LATEX)
   if(NOT LATEX_COMPILER)
@@ -292,7 +285,6 @@ if(DOXYGEN_FOUND)
 else()
   set(VISP_HAVE_DOXYGEN "no")        # for header vpConfig.h
   set(VISP_HAVE_DOXYGEN_FOUND "no")  # for ViSP-third-party.txt
-  set(VISP_HAVE_DOT_FOUND "no")      # for ViSP-third-party.txt
 endif()
 
 #-----------------------------------------------------------------------------

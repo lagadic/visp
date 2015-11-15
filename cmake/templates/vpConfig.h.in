@@ -314,9 +314,6 @@
 // Defined if Doxygen documentation tool is found
 #cmakedefine VISP_HAVE_DOXYGEN
 
-// Defined if dot documentation tool used by Doxygen is found
-#cmakedefine VISP_HAVE_DOT
-
 // Defined if we want to compute interaction matrices by combining 
 // other interaction matrices
 #cmakedefine VISP_MOMENTS_COMBINE_MATRICES
