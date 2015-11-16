@@ -54,7 +54,7 @@
 #include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdi:h"
+#define GETOPTARGS	"cdh"
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
@@ -65,13 +65,12 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath: Input image path.
 
 */
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Test key points matching.\n\
+Test keypoints matching.\n\
 \n\
 SYNOPSIS\n\
   %s [-c] [-d] [-h]\n", name);
@@ -152,8 +151,7 @@ int main(int argc, const char ** argv) {
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
     if(env_ipath.empty()) {
-      std::cerr << "Please get the visp-images-data package path or set the VISP_INPUT_IMAGE_PATH "
-          "environment variable value." << std::endl;
+      std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment variable value." << std::endl;
       return -1;
     }
 
@@ -241,9 +239,10 @@ int main(int argc, const char ** argv) {
     keypoints.setMatcher("FlannBased");
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
       keypoints.setDetectorParameter("ORB", "nLevels", 1);
+#else
+      keypoints.setKeyPointParameter("ORB", "nlevels", 1);
 #endif
 #endif
-
 
     //Detect keypoints on the current image
     std::vector<cv::KeyPoint> trainKeyPoints;
@@ -262,7 +261,54 @@ int main(int argc, const char ** argv) {
     vpKeyPoint::compute3DForPointsInPolygons(cMo, cam, trainKeyPoints, polygons, roisPt, points3f);
 
     //Build the reference keypoints
-    keypoints.buildReference(I, trainKeyPoints, points3f);
+    keypoints.buildReference(I, trainKeyPoints, points3f, false, 1);
+
+
+    //Read image 150
+    filenameRef = vpIoTools::createFilePath(dirname, "image0150.pgm");
+    vpImageIo::read(I, filenameRef);
+
+    //Init pose at image 150
+    cMo.buildFrom(0.02651282185, -0.03713587374, 0.6873765919, 2.314744454, 0.3492296488, -0.1226054828);
+    tracker.initFromPose(I, cMo);
+
+    //Detect keypoints on the image 150
+    keypoints.detect(I, trainKeyPoints, elapsedTime);
+
+    //Keep only keypoints on the cube
+    pair = tracker.getPolygonFaces(false);
+    polygons = pair.first;
+    roisPt = pair.second;
+
+    //Compute the 3D coordinates
+    vpKeyPoint::compute3DForPointsInPolygons(cMo, cam, trainKeyPoints, polygons, roisPt, points3f);
+
+    //Build the reference keypoints
+    keypoints.buildReference(I, trainKeyPoints, points3f, true, 2);
+
+
+    //Read image 200
+    filenameRef = vpIoTools::createFilePath(dirname, "image0200.pgm");
+    vpImageIo::read(I, filenameRef);
+
+    //Init pose at image 200
+    cMo.buildFrom(0.02965448956, -0.07283091786, 0.7253526051, 2.300529617, -0.4286674806, 0.1788761025);
+    tracker.initFromPose(I, cMo);
+
+    //Detect keypoints on the image 200
+    keypoints.detect(I, trainKeyPoints, elapsedTime);
+
+    //Keep only keypoints on the cube
+    pair = tracker.getPolygonFaces(false);
+    polygons = pair.first;
+    roisPt = pair.second;
+
+    //Compute the 3D coordinates
+    vpKeyPoint::compute3DForPointsInPolygons(cMo, cam, trainKeyPoints, polygons, roisPt, points3f);
+
+    //Build the reference keypoints
+    keypoints.buildReference(I, trainKeyPoints, points3f, true, 3);
+
 
     //Init reader for getting the input image sequence
     vpVideoReader g;
@@ -319,6 +365,7 @@ int main(int argc, const char ** argv) {
             vpDisplay::displayCircle(I, *it, 4, vpColor::green);
             vpImagePoint imPt(*it);
             imPt.set_u(imPt.get_u() + I.getWidth());
+            imPt.set_v(imPt.get_v() + I.getHeight());
             vpDisplay::displayCircle(IMatching, imPt, 4, vpColor::green);
           }
 
@@ -326,14 +373,16 @@ int main(int argc, const char ** argv) {
             vpDisplay::displayCircle(I, *it, 4, vpColor::red);
             vpImagePoint imPt(*it);
             imPt.set_u(imPt.get_u() + I.getWidth());
+            imPt.set_v(imPt.get_v() + I.getHeight());
             vpDisplay::displayCircle(IMatching, imPt, 4, vpColor::red);
           }
 
           keypoints.displayMatching(I, IMatching);
 
-          //Display model in the image
+          //Display model in the correct sub-image in IMatching
           vpCameraParameters cam2;
-          cam2.initPersProjWithoutDistortion(cam.get_px(), cam.get_py(), cam.get_u0() + I.getWidth(), cam.get_v0());
+          cam2.initPersProjWithoutDistortion(cam.get_px(), cam.get_py(),
+              cam.get_u0() + I.getWidth(), cam.get_v0() + I.getHeight());
           tracker.setCameraParameters(cam2);
           tracker.setPose(IMatching, cMo);
           tracker.display(IMatching, cMo, cam2, vpColor::red, 2);
@@ -372,6 +421,7 @@ int main(int argc, const char ** argv) {
     return -1;
   }
 
+  std::cout << "testKeyPoint-2 is ok !" << std::endl;
   return 0;
 }
 #else

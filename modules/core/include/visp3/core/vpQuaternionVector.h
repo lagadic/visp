@@ -100,11 +100,17 @@ public:
   //! Returns w-component of the quaternion.
   inline double w() const {return r[3];}
 
-  vpQuaternionVector operator+( vpQuaternionVector &q)  ;
-  vpQuaternionVector operator-( vpQuaternionVector &q)  ;
-  vpQuaternionVector operator-()  ;
-  vpQuaternionVector operator*(const double l) ;
-  vpQuaternionVector operator*( vpQuaternionVector &rq) ;
+  vpQuaternionVector operator+(const vpQuaternionVector &q);
+  vpQuaternionVector operator-(const vpQuaternionVector &q);
+  vpQuaternionVector operator-();
+  vpQuaternionVector operator*(const double l) const;
+  vpQuaternionVector operator*(const vpQuaternionVector &rq) const;
+  vpQuaternionVector operator/(const double l) const;
+
+  vpQuaternionVector conjugate() const;
+  vpQuaternionVector inverse() const;
+  double magnitude() const;
+  void normalize();
 } ;
 
 #endif

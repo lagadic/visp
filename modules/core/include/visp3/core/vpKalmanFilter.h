@@ -140,7 +140,7 @@ public:
   // int init() { return init_done ; }
   void init(unsigned int size_state, unsigned int size_measure, unsigned int n_signal) ;
   void prediction() ;
-  void filtering(vpColVector &z) ;
+  void filtering(const vpColVector &z) ;
   /*!
     Return the size of the state vector \f${\bf x}_{(k)}\f$ for one signal.
   */
@@ -190,8 +190,6 @@ public:
       iterations. Only used in some specific state models implemented
       in vpLinearKalmanFilterInstantiation.*/
   double dt ;
-
-protected:
   /*!
     The state prediction covariance \f${\bf P}_{k \mid k-1} \f$ where 
     \f$ {\bf P}_{k \mid k-1} = {\bf F}_{k-1}  {\bf P}_{k-1 \mid k-1} {\bf F}^T_{k-1} 
@@ -205,6 +203,8 @@ protected:
     \right) {\bf P}_{k \mid k-1}\f$. 
   */
   vpMatrix Pest ;
+
+protected:
 
   /*!  
     Filter gain \f${\bf W}_k\f$ where \f$ {\bf W}_k = {\bf P}_{k

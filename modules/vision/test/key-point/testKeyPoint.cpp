@@ -53,7 +53,7 @@
 #include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdi:h"
+#define GETOPTARGS	"cdh"
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
@@ -64,13 +64,12 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-  \param ipath: Input image path.
 
 */
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Test key points matching.\n\
+Test keypoints matching.\n\
 \n\
 SYNOPSIS\n\
   %s [-c] [-d] [-h]\n", name);
@@ -79,8 +78,8 @@ SYNOPSIS\n\
 OPTIONS:                                               \n\
 \n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
 \n\
   -d \n\
      Turn off the display.\n\
@@ -150,12 +149,8 @@ int main(int argc, const char ** argv) {
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
-    //Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
-    env_ipath = vpIoTools::getViSPImagesDataPath();
-
     if(env_ipath.empty()) {
-      std::cerr << "Please get the visp-images-data package path or set the VISP_INPUT_IMAGE_PATH "
-          "environment variable value." << std::endl;
+      std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment variable value." << std::endl;
       return -1;
     }
 
@@ -240,6 +235,7 @@ int main(int argc, const char ** argv) {
     return -1;
   }
 
+  std::cout << "testKeyPoint is ok !" << std::endl;
   return 0;
 }
 #else
