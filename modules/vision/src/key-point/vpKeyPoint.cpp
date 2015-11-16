@@ -36,6 +36,8 @@
  *****************************************************************************/
 
 #include <limits>
+#include <iomanip>
+#include <stdint.h> //uint32_t ; works also with >= VS2010 / _MSC_VER >= 1600
 
 #include <visp3/vision/vpKeyPoint.h>
 #include <visp3/core/vpIoTools.h>
@@ -47,6 +49,7 @@
 #endif
 
 
+//TODO: test saveLearningData with little / big endian platform
 //Specific Type transformation functions
 ///*!
 //   Convert a list of cv::DMatch to a cv::DMatch (extract the first cv::DMatch, the nearest neighbor).
@@ -72,6 +75,130 @@ inline vpImagePoint matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point
   return vpImagePoint(pair.first.pt.y, pair.first.pt.x);
 }
 
+bool isBigEndian() {
+  union {
+    uint32_t i;
+    char c[4];
+  } bint = { 0x01020304 };
+
+  return bint.c[0] == 1;
+}
+
+uint16_t reverse16bits(const uint16_t n) {
+  unsigned char *np = (unsigned char *) &n;
+
+  return ((uint16_t) np[0] << 8) | (uint16_t) np[1];
+}
+
+uint32_t reverse32bits(const uint32_t n) {
+  unsigned char *np = (unsigned char *) &n;
+
+  return ((uint32_t) np[0] << 24) | ((uint32_t) np[1] << 16)
+       | ((uint32_t) np[2] << 8)  | (uint32_t) np[3];
+}
+
+float reverseFloat(const float f) {
+  union {
+    float f;
+    unsigned char b[4];
+  } dat1, dat2;
+
+  dat1.f = f;
+  dat2.b[0] = dat1.b[3];
+  dat2.b[1] = dat1.b[2];
+  dat2.b[2] = dat1.b[1];
+  dat2.b[3] = dat1.b[0];
+  return dat2.f;
+}
+
+double reverseDouble(const double d) {
+  union {
+    double d;
+    unsigned char b[8];
+  } dat1, dat2;
+
+  dat1.d = d;
+  dat2.b[0] = dat1.b[7];
+  dat2.b[1] = dat1.b[6];
+  dat2.b[2] = dat1.b[5];
+  dat2.b[3] = dat1.b[4];
+  dat2.b[4] = dat1.b[3];
+  dat2.b[5] = dat1.b[2];
+  dat2.b[6] = dat1.b[1];
+  dat2.b[7] = dat1.b[0];
+  return dat2.d;
+}
+
+void writeBinaryUShortLE(std::ofstream &file, const unsigned short ushort_value) {
+  if(isBigEndian()) {
+    //Reverse bytes order to little endian
+    uint16_t reverse_ushort = reverse16bits(ushort_value);
+    file.write((char *)(&reverse_ushort), sizeof(reverse_ushort));
+  } else {
+    file.write((char *)(&ushort_value), sizeof(ushort_value));
+  }
+}
+
+void writeBinaryShortLE(std::ofstream &file, const short short_value) {
+  if(isBigEndian()) {
+    //Reverse bytes order to little endian
+    uint16_t reverse_short = reverse16bits((uint16_t) short_value);
+    file.write((char *)(&reverse_short), sizeof(reverse_short));
+  } else {
+    file.write((char *)(&short_value), sizeof(short_value));
+  }
+}
+
+void writeBinaryUIntLE(std::ofstream &file, const unsigned int uint_value) {
+  if(isBigEndian()) {
+    //Reverse bytes order to little endian
+    if(sizeof(uint_value) == 4) {
+      uint32_t reverse_uint = reverse32bits(uint_value);
+      file.write((char *)(&reverse_uint), sizeof(reverse_uint));
+    } else {
+      uint16_t reverse_uint = reverse16bits(uint_value);
+      file.write((char *)(&reverse_uint), sizeof(reverse_uint));
+    }
+  } else {
+    file.write((char *)(&uint_value), sizeof(uint_value));
+  }
+}
+
+void writeBinaryIntLE(std::ofstream &file, const int int_value) {
+  if(isBigEndian()) {
+    //Reverse bytes order to little endian
+    if(sizeof(int_value) == 4) {
+      uint32_t reverse_int = reverse32bits((uint32_t) int_value);
+      file.write((char *)(&reverse_int), sizeof(reverse_int));
+    } else {
+      uint16_t reverse_int = reverse16bits((uint16_t) int_value);
+      file.write((char *)(&reverse_int), sizeof(reverse_int));
+    }
+  } else {
+    file.write((char *)(&int_value), sizeof(int_value));
+  }
+}
+
+void writeBinaryFloatLE(std::ofstream &file, const float float_value) {
+  if(isBigEndian()) {
+    //Reverse bytes order to little endian
+    float reverse_float = reverseFloat(float_value);
+    file.write((char *)(&reverse_float), sizeof(reverse_float));
+  } else {
+    file.write((char *)(&float_value), sizeof(float_value));
+  }
+}
+
+void writeBinaryDoubleLE(std::ofstream &file, const double double_value) {
+  if(isBigEndian()) {
+    //Reverse bytes order to little endian
+    float reverse_double = reverseDouble(double_value);
+    file.write((char *)(&reverse_double), sizeof(reverse_double));
+  } else {
+    file.write((char *)(&double_value), sizeof(double_value));
+  }
+}
+
 /*!
   Constructor to initialize specified detector, extractor, matcher and filtering method.
 
@@ -85,8 +212,12 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
   : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0), m_detectionMethod(detectionScore),
     m_detectionScore(0.15), m_detectionThreshold(100.0), m_detectionTime(0.), m_detectorNames(),
     m_detectors(), m_extractionTime(0.), m_extractorNames(), m_extractors(), m_filteredMatches(), m_filterType(filterType),
-    m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(), m_matcherName(matcherName), m_matches(),
-    m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_matchingTime(0.),
+    m_imageFormat(jpgImageFormat), m_knnMatches(), m_mapOfImageId(), m_mapOfImages(),
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    m_mapOfKeyPointParameters(),
+#endif
+    m_matcher(), m_matcherName(matcherName),
+    m_matches(), m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_matchingTime(0.),
     m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200), m_nbRansacMinInlierCount(100), m_objectFilteredPoints(),
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
@@ -107,6 +238,10 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
   m_detectorNames.push_back(detectorName);
   m_extractorNames.push_back(extractorName);
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  initKeyPointParameters();
+#endif
+
   init();
 }
 
@@ -123,8 +258,12 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
   : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0), m_detectionMethod(detectionScore),
     m_detectionScore(0.15), m_detectionThreshold(100.0), m_detectionTime(0.), m_detectorNames(detectorNames),
     m_detectors(), m_extractionTime(0.), m_extractorNames(extractorNames), m_extractors(), m_filteredMatches(),
-    m_filterType(filterType), m_knnMatches(), m_mapOfImageId(), m_mapOfImages(), m_matcher(), m_matcherName(matcherName),
-    m_matches(), m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_matchingTime(0.),
+    m_filterType(filterType), m_imageFormat(jpgImageFormat), m_knnMatches(), m_mapOfImageId(), m_mapOfImages(),
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    m_mapOfKeyPointParameters(),
+#endif
+    m_matcher(),
+    m_matcherName(matcherName), m_matches(), m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_matchingTime(0.),
     m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200), m_nbRansacMinInlierCount(100), m_objectFilteredPoints(),
     m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
@@ -141,6 +280,10 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
   if(filterType == ratioDistanceThreshold || filterType == stdAndRatioDistanceThreshold) {
     m_useKnn = true;
   }
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  initKeyPointParameters();
+#endif
 
   init();
 }
@@ -300,9 +443,10 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
    \param trainKeyPoints : List of the train keypoints.
    \param points3f : Output list of the 3D position corresponding of the keypoints locations.
    \param append : If true, append the supply train keypoints with those already present.
+   \param class_id : The class id to be set to the input cv::KeyPoint if != -1.
  */
 void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoints,
-                                std::vector<cv::Point3f> &points3f, bool append) {
+                                std::vector<cv::Point3f> &points3f, const bool append, const int class_id) {
   cv::Mat trainDescriptors;
   //Copy the input list of keypoints
   std::vector<cv::KeyPoint> trainKeyPoints_tmp = trainKeyPoints;
@@ -329,7 +473,7 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv:
     points3f = trainPoints_tmp;
   }
 
-  buildReference(I, trainKeyPoints, trainDescriptors, points3f, append);
+  buildReference(I, trainKeyPoints, trainDescriptors, points3f, append, class_id);
 }
 
 /*!
@@ -340,9 +484,11 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv:
    \param points3f : List of the 3D position corresponding of the keypoints locations.
    \param trainDescriptors : List of the train descriptors.
    \param append : If true, append the supply train keypoints with those already present.
+   \param class_id : The class id to be set to the input cv::KeyPoint if != -1.
  */
 void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoints,
-                                const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f, bool append) {
+                                const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
+                                const bool append, const int class_id) {
   if(!append) {
     m_currentImageId = 0;
     m_mapOfImageId.clear();
@@ -353,9 +499,17 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vect
 
   m_currentImageId++;
 
+  std::vector<cv::KeyPoint> trainKeyPoints_tmp = trainKeyPoints;
+  //Set class_id if != -1
+  if(class_id != -1) {
+    for(std::vector<cv::KeyPoint>::iterator it = trainKeyPoints_tmp.begin(); it != trainKeyPoints_tmp.end(); ++it) {
+      it->class_id = class_id;
+    }
+  }
+
   //Save the correspondence keypoint class_id with the training image_id in a map
   //Used to display the matching with all the training images
-  for(std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints.begin(); it != trainKeyPoints.end(); ++it) {
+  for(std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints_tmp.begin(); it != trainKeyPoints_tmp.end(); ++it) {
     m_mapOfImageId[it->class_id] = m_currentImageId;
   }
 
@@ -363,7 +517,7 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vect
   m_mapOfImages[m_currentImageId] = I;
 
   //Append reference lists
-  this->m_trainKeyPoints.insert(this->m_trainKeyPoints.end(), trainKeyPoints.begin(), trainKeyPoints.end());
+  this->m_trainKeyPoints.insert(this->m_trainKeyPoints.end(), trainKeyPoints_tmp.begin(), trainKeyPoints_tmp.end());
   if(!append) {
     trainDescriptors.copyTo(this->m_trainDescriptors);
   } else {
@@ -473,11 +627,12 @@ void vpKeyPoint::compute3D(const vpImagePoint &candidate, const std::vector<vpPo
    \param descriptors : Optional parameter, pointer to the descriptors to filter
  */
 void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-    std::vector<cv::KeyPoint> &candidates, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
-    std::vector<cv::Point3f> &points, cv::Mat *descriptors) {
+    std::vector<cv::KeyPoint> &candidates, const std::vector<vpPolygon> &polygons,
+    const std::vector<std::vector<vpPoint> > &roisPt, std::vector<cv::Point3f> &points, cv::Mat *descriptors) {
 
   std::vector<cv::KeyPoint> candidatesToCheck = candidates;
   candidates.clear();
+  points.clear();
   vpImagePoint imPt;
   cv::Point3f pt;
   cv::Mat desc;
@@ -488,7 +643,8 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
   }
 
   size_t cpt1 = 0;
-  for (std::vector<vpPolygon>::iterator it1 = polygons.begin(); it1 != polygons.end(); ++it1, cpt1++) {
+  std::vector<vpPolygon> polygons_tmp = polygons;
+  for (std::vector<vpPolygon>::iterator it1 = polygons_tmp.begin(); it1 != polygons_tmp.end(); ++it1, cpt1++) {
     std::vector<std::pair<cv::KeyPoint, size_t> >::iterator it2 = pairOfCandidatesToCheck.begin();
 
     while(it2 != pairOfCandidatesToCheck.end()) {
@@ -529,11 +685,12 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
    \param descriptors : Optional parameter, pointer to the descriptors to filter
  */
 void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-    std::vector<vpImagePoint> &candidates, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
-    std::vector<vpPoint> &points, cv::Mat *descriptors) {
+    std::vector<vpImagePoint> &candidates, const std::vector<vpPolygon> &polygons,
+    const std::vector<std::vector<vpPoint> > &roisPt, std::vector<vpPoint> &points, cv::Mat *descriptors) {
 
   std::vector<vpImagePoint> candidatesToCheck = candidates;
   candidates.clear();
+  points.clear();
   vpPoint pt;
   cv::Mat desc;
 
@@ -543,7 +700,8 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
   }
 
   size_t cpt1 = 0;
-  for (std::vector<vpPolygon>::iterator it1 = polygons.begin(); it1 != polygons.end(); ++it1, cpt1++) {
+  std::vector<vpPolygon> polygons_tmp = polygons;
+  for (std::vector<vpPolygon>::iterator it1 = polygons_tmp.begin(); it1 != polygons_tmp.end(); ++it1, cpt1++) {
     std::vector<std::pair<vpImagePoint, size_t> >::iterator it2 = pairOfCandidatesToCheck.begin();
 
     while(it2 != pairOfCandidatesToCheck.end()) {
@@ -808,6 +966,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<u
   unsigned int nbImg = (unsigned int) (m_mapOfImages.size() + 1);
 
   if(m_mapOfImages.empty()) {
+    std::cerr << "There is no training image loaded !" << std::endl;
     return;
   }
 
@@ -975,9 +1134,9 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<uns
  */
 void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching,
                                  const std::vector<vpImagePoint> &ransacInliers, unsigned int crossSize, unsigned int lineThickness) {
-  if(m_mapOfImages.empty()) {
+  if(m_mapOfImages.empty() || m_mapOfImageId.empty()) {
     //No training images so return
-    std::cerr << "No training images !" << std::endl;
+    std::cerr << "There is no training image loaded !" << std::endl;
     return;
   }
 
@@ -1045,12 +1204,12 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
         it != ransacInliers.end(); ++it) {
       //Display green circle for RANSAC inliers
       vpDisplay::displayCircle(IMatching, (int) (it->get_v() + topLeftCorner.get_i()), (int) (it->get_u() +
-                                                                                              topLeftCorner.get_j()), 4, vpColor::green);
+                               topLeftCorner.get_j()), 4, vpColor::green);
     }
     for(std::vector<vpImagePoint>::const_iterator it = m_ransacOutliers.begin(); it != m_ransacOutliers.end(); ++it) {
       //Display red circle for RANSAC outliers
       vpDisplay::displayCircle(IMatching, (int) (it->get_i() + topLeftCorner.get_i()), (int) (it->get_j() +
-                                                                                              topLeftCorner.get_j()), 4, vpColor::red);
+                               topLeftCorner.get_j()), 4, vpColor::red);
     }
 
     for(std::vector<cv::DMatch>::const_iterator it = m_filteredMatches.begin(); it != m_filteredMatches.end(); ++it) {
@@ -1253,7 +1412,8 @@ void vpKeyPoint::filterMatches() {
     }
   } else {
     double max_dist = 0;
-    //double min_dist = std::numeric_limits<double>::max(); // create an error under Windows. To fix it we have to add #undef max
+    // create an error under Windows. To fix it we have to add #undef max
+    //double min_dist = std::numeric_limits<double>::max();
     double min_dist = DBL_MAX;
     double mean = 0.0;
     std::vector<double> distance_vec(m_matches.size());
@@ -1403,7 +1563,8 @@ void vpKeyPoint::getTrainPoints(std::vector<vpPoint> &points) const {
    Initialize method for RANSAC parameters and for detectors, extractors and matcher, and for others parameters.
  */
 void vpKeyPoint::init() {
-#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require 2.4.0 <= opencv < 3.0.0
+  // Require 2.4.0 <= opencv < 3.0.0
+#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   //The following line must be called in order to use SIFT or SURF
   if (!cv::initModule_nonfree()) {
     std::cerr << "Cannot init module non free, SIFT or SURF cannot be used."
@@ -1432,7 +1593,6 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
     throw vpException(vpException::fatalError, ss_msg.str());
   }
 #else
-  //TODO: Add a pyramidal feature detection
   std::string detectorNameTmp = detectorName;
   std::string pyramid = "Pyramid";
   std::size_t pos = detectorName.find(pyramid);
@@ -1444,7 +1604,20 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
 
   if(detectorNameTmp == "SIFT") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    m_detectors[detectorNameTmp] = cv::xfeatures2d::SIFT::create();
+    cv::Ptr<cv::FeatureDetector> siftDetector = cv::xfeatures2d::SIFT::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["nfeatures"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["nOctaveLayers"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["contrastThreshold"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["edgeThreshold"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["sigma"])->get()
+        );
+
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = siftDetector;
+    } else {
+      std::cerr << "Kind of non sense to use SIFT with Pyramid !" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(siftDetector);
+    }
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the detector: SIFT. OpenCV version  "
@@ -1453,7 +1626,19 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
 #endif
   } else if(detectorNameTmp == "SURF") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    m_detectors[detectorNameTmp] = cv::xfeatures2d::SURF::create();
+    cv::Ptr<cv::FeatureDetector> surfDetector = cv::xfeatures2d::SURF::create(
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["hessianThreshold"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["nOctaves"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["nOctaveLayers"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["extended"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["upright"])->get()
+        );
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = surfDetector;
+    } else {
+      std::cerr << "Kind of non sense to use SURF with Pyramid !" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(surfDetector);
+    }
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the detector: SURF. OpenCV version  "
@@ -1461,48 +1646,173 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if(detectorNameTmp == "FAST") {
+    cv::Ptr<cv::FeatureDetector> fastDetector = cv::FastFeatureDetector::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["threshold"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["nonmaxSuppression"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["type"])->get()
+        );
     if(!usePyramid) {
-      m_detectors[detectorNameTmp] = cv::FastFeatureDetector::create();
+      m_detectors[detectorNameTmp] = fastDetector;
     } else {
 //      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::FastFeatureDetector::create());
-      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(cv::FastFeatureDetector::create());
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(fastDetector);
     }
   } else if(detectorNameTmp == "MSER") {
+    cv::Ptr<cv::FeatureDetector> fastDetector = cv::MSER::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["_delta"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["_min_area"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["_max_area"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["_max_variation"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["_min_diversity"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["_max_evolution"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["_area_threshold"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["_min_margin"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["_edge_blur_size"])->get()
+        );
     if(!usePyramid) {
-      m_detectors[detectorNameTmp] = cv::MSER::create();
+      m_detectors[detectorNameTmp] = fastDetector;
     } else {
 //      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::MSER::create());
-      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(cv::MSER::create());
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(fastDetector);
     }
   } else if(detectorNameTmp == "ORB") {
-    m_detectors[detectorNameTmp] = cv::ORB::create();
-  } else if(detectorNameTmp == "BRISK") {
-    m_detectors[detectorNameTmp] = cv::BRISK::create();
-  } else if(detectorNameTmp == "KAZE") {
-    m_detectors[detectorNameTmp] = cv::KAZE::create();
-  } else if(detectorNameTmp == "AKAZE") {
-    m_detectors[detectorNameTmp] = cv::AKAZE::create();
-  } else if(detectorNameTmp == "GFTT") {
+    cv::Ptr<cv::FeatureDetector> orbDetector = cv::ORB::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["nfeatures"])->get(),
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["scaleFactor"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["nlevels"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["edgeThreshold"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["firstLevel"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["WTA_K"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["scoreType"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["patchSize"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["fastThreshold"])->get()
+        );
     if(!usePyramid) {
-      m_detectors[detectorNameTmp] = cv::GFTTDetector::create();
+      m_detectors[detectorNameTmp] = orbDetector;
+    } else {
+      std::cerr << "Kind of non sense to use ORB with Pyramid !" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(orbDetector);
+    }
+  } else if(detectorNameTmp == "BRISK") {
+    cv::Ptr<cv::FeatureDetector> briskDetector = cv::BRISK::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["thresh"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["octaves"])->get(),
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["patternScale"])->get()
+        );
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = briskDetector;
+    } else {
+      std::cerr << "Kind of non sense to use BRISK with Pyramid !" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(briskDetector);
+    }
+  } else if(detectorNameTmp == "KAZE") {
+    cv::Ptr<cv::FeatureDetector> kazeDetector = cv::KAZE::create(
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["extended"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["upright"])->get(),
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["threshold"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["nOctaves"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["nOctaveLayers"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["diffusivity"])->get()
+        );
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = kazeDetector;
+    } else {
+      std::cerr << "Kind of non sense to use KAZE with Pyramid !" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(kazeDetector);
+    }
+  } else if(detectorNameTmp == "AKAZE") {
+    cv::Ptr<cv::FeatureDetector> akazeDetector = cv::AKAZE::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["descriptor_type"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["descriptor_size"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["descriptor_channels"])->get(),
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["threshold"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["nOctaves"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["nOctaveLayers"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["diffusivity"])->get()
+        );
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = akazeDetector;
+    } else {
+      std::cerr << "Kind of non sense to use AKAZE with Pyramid !" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(akazeDetector);
+    }
+  } else if(detectorNameTmp == "GFTT") {
+    cv::Ptr<cv::FeatureDetector> gfttDetector = cv::GFTTDetector::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["maxCorners"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["qualityLevel"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["minDistance"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["blockSize"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["useHarrisDetector"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["k"])->get()
+        );
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = gfttDetector;
     } else {
 //      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::GFTTDetector::create());
-      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(cv::GFTTDetector::create());
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(gfttDetector);
     }
   } else if(detectorNameTmp == "SimpleBlob") {
+    cv::SimpleBlobDetector::Params simpleBlobParameters;
+    simpleBlobParameters.blobColor =
+        dynamic_cast<Field<unsigned char>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["blobColor"])->get();
+    simpleBlobParameters.filterByArea =
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["filterByArea"])->get();
+    simpleBlobParameters.filterByCircularity =
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["filterByCircularity"])->get();
+    simpleBlobParameters.filterByColor =
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["filterByColor"])->get();
+    simpleBlobParameters.filterByConvexity =
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["filterByConvexity"])->get();
+    simpleBlobParameters.filterByInertia =
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["filterByInertia"])->get();
+    simpleBlobParameters.maxArea =
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["maxArea"])->get();
+    simpleBlobParameters.maxCircularity =
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["maxCircularity"])->get();
+    simpleBlobParameters.maxConvexity =
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["maxConvexity"])->get();
+    simpleBlobParameters.maxInertiaRatio =
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["maxInertiaRatio"])->get();
+    simpleBlobParameters.maxThreshold =
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["maxThreshold"])->get();
+    simpleBlobParameters.minArea =
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["minArea"])->get();
+    simpleBlobParameters.minCircularity =
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["minCircularity"])->get();
+    simpleBlobParameters.minConvexity =
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["minConvexity"])->get();
+    simpleBlobParameters.minDistBetweenBlobs =
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["minDistBetweenBlobs"])->get();
+    simpleBlobParameters.minInertiaRatio =
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["minInertiaRatio"])->get();
+    simpleBlobParameters.minRepeatability =
+        dynamic_cast<Field<size_t>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["minRepeatability"])->get();
+    simpleBlobParameters.minThreshold =
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["minThreshold"])->get();
+    simpleBlobParameters.thresholdStep =
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["thresholdStep"])->get();
+
+    cv::Ptr<cv::FeatureDetector> simpleBlobDetector = cv::SimpleBlobDetector::create(simpleBlobParameters);
     if(!usePyramid) {
-      m_detectors[detectorNameTmp] = cv::SimpleBlobDetector::create();
+      m_detectors[detectorNameTmp] = simpleBlobDetector;
     } else {
 //      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::SimpleBlobDetector::create());
-      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(cv::SimpleBlobDetector::create());
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(simpleBlobDetector);
     }
   } else if(detectorNameTmp == "STAR") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
+    cv::Ptr<cv::FeatureDetector> starDetector = cv::xfeatures2d::StarDetector::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["maxSize"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["responseThreshold"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["lineThresholdProjected"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["lineThresholdBinarized"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["suppressNonmaxSize"])->get()
+        );
     if(!usePyramid) {
-      m_detectors[detectorNameTmp] = cv::xfeatures2d::StarDetector::create();
+      m_detectors[detectorNameTmp] = starDetector;
     } else {
 //      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::xfeatures2d::StarDetector::create());
-      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(cv::xfeatures2d::StarDetector::create());
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(starDetector);
     }
 #else
     std::stringstream ss_msg;
@@ -1510,6 +1820,17 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
         << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
+  } else if(detectorNameTmp == "AGAST") {
+    cv::Ptr<cv::FeatureDetector> agastDetector = cv::AgastFeatureDetector::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["threshold"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["nonmaxSuppression"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[detectorNameTmp].m_mapOfParameters["type"])->get()
+        );
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = agastDetector;
+    } else {
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(agastDetector);
+    }
   } else {
     std::cerr << "The detector:" << detectorNameTmp << " is not available." << std::endl;
   }
@@ -1553,7 +1874,13 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
 #else
   if(extractorName == "SIFT") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    m_extractors[extractorName] = cv::xfeatures2d::SIFT::create();
+    m_extractors[extractorName] = cv::xfeatures2d::SIFT::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["nfeatures"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["nOctaveLayers"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["contrastThreshold"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["edgeThreshold"])->get(),
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["sigma"])->get()
+    );
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the extractor: SIFT. OpenCV version  "
@@ -1562,7 +1889,13 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
 #endif
   } else if(extractorName == "SURF") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    m_extractors[extractorName] = cv::xfeatures2d::SURF::create();
+    m_extractors[extractorName] = cv::xfeatures2d::SURF::create(
+        dynamic_cast<Field<double>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["hessianThreshold"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["nOctaves"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["nOctaveLayers"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["extended"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["upright"])->get()
+        );
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the extractor: SURF. OpenCV version  "
@@ -1570,12 +1903,31 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if(extractorName == "ORB") {
-    m_extractors[extractorName] = cv::ORB::create();
+    m_extractors[extractorName] = cv::ORB::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["nfeatures"])->get(),
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["scaleFactor"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["nlevels"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["edgeThreshold"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["firstLevel"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["WTA_K"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["scoreType"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["patchSize"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["fastThreshold"])->get()
+        );
   } else if(extractorName == "BRISK") {
-    m_extractors[extractorName] = cv::BRISK::create();
+    m_extractors[extractorName] = cv::BRISK::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["thresh"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["octaves"])->get(),
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["patternScale"])->get()
+        );
   } else if(extractorName == "FREAK") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    m_extractors[extractorName] = cv::xfeatures2d::FREAK::create();
+    m_extractors[extractorName] = cv::xfeatures2d::FREAK::create(
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["orientationNormalized"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["scaleNormalized"])->get(),
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["patternScale"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["nOctaves"])->get()
+    );
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the extractor: FREAK. OpenCV version  "
@@ -1584,10 +1936,75 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
 #endif
   } else if(extractorName == "BRIEF") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    m_extractors[extractorName] = cv::xfeatures2d::BriefDescriptorExtractor::create();
+    m_extractors[extractorName] = cv::xfeatures2d::BriefDescriptorExtractor::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["bytes"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["use_orientation"])->get()
+    );
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the extractor: BRIEF. OpenCV version  "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
+  } else if(extractorName == "KAZE") {
+    m_extractors[extractorName] = cv::KAZE::create(
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["extended"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["upright"])->get(),
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["threshold"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["nOctaves"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["nOctaveLayers"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["diffusivity"])->get()
+        );
+  } else if(extractorName == "AKAZE") {
+    m_extractors[extractorName] = cv::AKAZE::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["descriptor_type"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["descriptor_size"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["descriptor_channels"])->get(),
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["threshold"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["nOctaves"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["nOctaveLayers"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["diffusivity"])->get()
+        );
+  } else if(extractorName == "DAISY") {
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+    m_extractors[extractorName] = cv::xfeatures2d::DAISY::create(
+        dynamic_cast<Field<float>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["radius"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["q_radius"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["q_theta"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["q_hist"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["norm"])->get(),
+        cv::noArray(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["interpolation"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["use_orientation"])->get()
+    );
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the extractor: DAISY. OpenCV version  "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
+  } else if(extractorName == "LATCH") {
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+    m_extractors[extractorName] = cv::xfeatures2d::LATCH::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["bytes"])->get(),
+        dynamic_cast<Field<bool>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["rotationInvariance"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["half_ssd_size"])->get()
+    );
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the extractor: LATCH. OpenCV version  "
+        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
+  } else if(extractorName == "LUCID") {
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+    m_extractors[extractorName] = cv::xfeatures2d::LUCID::create(
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["lucid_kernel"])->get(),
+        dynamic_cast<Field<int>*>(m_mapOfKeyPointParameters[extractorName].m_mapOfParameters["blur_kernel"])->get()
+        );
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the extractor: LUCID. OpenCV version  "
         << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
@@ -1635,6 +2052,367 @@ void vpKeyPoint::initExtractors(const std::vector<std::string> &extractorNames) 
     }
   }
 }
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+/*!
+   Initialize the default parameters for each type of keypoints.
+ */
+  void vpKeyPoint::initKeyPointParameters() {
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+    //SIFT
+    {
+      int nfeatures = 0; int nOctaveLayers = 3;
+      double contrastThreshold = 0.04; double edgeThreshold = 10; double sigma = 1.6;
+      Field<int> *nfeatures_field = new Field<int>(nfeatures);
+      Field<int> *nOctaveLayers_field = new Field<int>(nOctaveLayers);
+      Field<double> *contrastThreshold_field = new Field<double>(contrastThreshold);
+      Field<double> *edgeThreshold_field = new Field<double>(edgeThreshold);
+      Field<double> *sigma_field = new Field<double>(sigma);
+      Parameters SIFTParameters;
+      SIFTParameters.m_mapOfParameters["nfeatures"] = nfeatures_field;
+      SIFTParameters.m_mapOfParameters["nOctaveLayers"] = nOctaveLayers_field;
+      SIFTParameters.m_mapOfParameters["contrastThreshold"] = contrastThreshold_field;
+      SIFTParameters.m_mapOfParameters["edgeThreshold"] = edgeThreshold_field;
+      SIFTParameters.m_mapOfParameters["sigma"] = sigma_field;
+
+      m_mapOfKeyPointParameters["SIFT"] = SIFTParameters;
+    }
+
+    //SURF
+    {
+      //Force the use of extended SURF
+      double hessianThreshold = 100; int nOctaves = 4; int nOctaveLayers = 3; bool extended = true; bool upright = false;
+      Field<double> *hessianThreshold_field = new Field<double>(hessianThreshold);
+      Field<int> *nOctaves_field = new Field<int>(nOctaves);
+      Field<int> *nOctaveLayers_field = new Field<int>(nOctaveLayers);
+      Field<bool> *extended_field = new Field<bool>(extended);
+      Field<bool> *upright_field = new Field<bool>(upright);
+      Parameters SURFParameters;
+      SURFParameters.m_mapOfParameters["hessianThreshold"] = hessianThreshold_field;
+      SURFParameters.m_mapOfParameters["nOctaves"] = nOctaves_field;
+      SURFParameters.m_mapOfParameters["nOctaveLayers"] = nOctaveLayers_field;
+      SURFParameters.m_mapOfParameters["extended"] = extended_field;
+      SURFParameters.m_mapOfParameters["upright"] = upright_field;
+
+      m_mapOfKeyPointParameters["SURF"] = SURFParameters;
+    }
+#endif
+
+    //FAST
+    {
+      int threshold = 10; bool nonmaxSuppression = true; int type = cv::FastFeatureDetector::TYPE_9_16;
+      Field<int> *threshold_field = new Field<int>(threshold);
+      Field<bool> *nonmaxSuppression_field = new Field<bool>(nonmaxSuppression);
+      Field<int> *type_field = new Field<int>(type);
+      Parameters FASTParameters;
+      FASTParameters.m_mapOfParameters["threshold"] = threshold_field;
+      FASTParameters.m_mapOfParameters["nonmaxSuppression"] = nonmaxSuppression_field;
+      FASTParameters.m_mapOfParameters["type"] = type_field;
+
+      m_mapOfKeyPointParameters["FAST"] = FASTParameters;
+    }
+
+    //MSER
+    {
+      int _delta = 5; int _min_area = 60; int _max_area = 14400; double _max_variation = 0.25; double _min_diversity = .2;
+      int _max_evolution = 200; double _area_threshold = 1.01; double _min_margin = 0.003; int _edge_blur_size = 5;
+      Field<int> *_delta_field = new Field<int>(_delta);
+      Field<int> *_min_area_field = new Field<int>(_min_area);
+      Field<int> *_max_area_field = new Field<int>(_max_area);
+      Field<double> *_max_variation_field = new Field<double>(_max_variation);
+      Field<double> *_min_diversity_field = new Field<double>(_min_diversity);
+      Field<int> *_max_evolution_field = new Field<int>(_max_evolution);
+      Field<double> *_area_threshold_field = new Field<double>(_area_threshold);
+      Field<double> *_min_margin_field = new Field<double>(_min_margin);
+      Field<int> *_edge_blur_size_field = new Field<int>(_edge_blur_size);
+      Parameters MSERParameters;
+      MSERParameters.m_mapOfParameters["_delta"] = _delta_field;
+      MSERParameters.m_mapOfParameters["_min_area"] = _min_area_field;
+      MSERParameters.m_mapOfParameters["_max_area"] = _max_area_field;
+      MSERParameters.m_mapOfParameters["_max_variation"] = _max_variation_field;
+      MSERParameters.m_mapOfParameters["_min_diversity"] = _min_diversity_field;
+      MSERParameters.m_mapOfParameters["_max_evolution"] = _max_evolution_field;
+      MSERParameters.m_mapOfParameters["_area_threshold"] = _area_threshold_field;
+      MSERParameters.m_mapOfParameters["_min_margin"] = _min_margin_field;
+      MSERParameters.m_mapOfParameters["_edge_blur_size"] = _edge_blur_size_field;
+
+      m_mapOfKeyPointParameters["MSER"] = MSERParameters;
+    }
+
+    //ORB
+    {
+      int nfeatures = 500; float scaleFactor = 1.2f; int nlevels = 8; int edgeThreshold = 31;
+      int firstLevel = 0; int WTA_K = 2; int scoreType = cv::ORB::HARRIS_SCORE; int patchSize = 31; int fastThreshold = 20;
+      Field<int> *nfeatures_field = new Field<int>(nfeatures);
+      Field<float> *scaleFactor_field = new Field<float>(scaleFactor);
+      Field<int> *nlevels_field = new Field<int>(nlevels);
+      Field<int> *edgeThreshold_field = new Field<int>(edgeThreshold);
+      Field<int> *firstLevel_field = new Field<int>(firstLevel);
+      Field<int> *WTA_K_field = new Field<int>(WTA_K);
+      Field<int> *scoreType_field = new Field<int>(scoreType);
+      Field<int> *patchSize_field = new Field<int>(patchSize);
+      Field<int> *fastThreshold_field = new Field<int>(fastThreshold);
+      Parameters ORBParameters;
+      ORBParameters.m_mapOfParameters["nfeatures"] = nfeatures_field;
+      ORBParameters.m_mapOfParameters["scaleFactor"] = scaleFactor_field;
+      ORBParameters.m_mapOfParameters["nlevels"] = nlevels_field;
+      ORBParameters.m_mapOfParameters["edgeThreshold"] = edgeThreshold_field;
+      ORBParameters.m_mapOfParameters["firstLevel"] = firstLevel_field;
+      ORBParameters.m_mapOfParameters["WTA_K"] = WTA_K_field;
+      ORBParameters.m_mapOfParameters["scoreType"] = scoreType_field;
+      ORBParameters.m_mapOfParameters["patchSize"] = patchSize_field;
+      ORBParameters.m_mapOfParameters["fastThreshold"] = fastThreshold_field;
+
+      m_mapOfKeyPointParameters["ORB"] = ORBParameters;
+    }
+
+    //BRISK
+    {
+      int thresh = 30; int octaves = 3; float patternScale = 1.0f;
+      Field<int> *thresh_field = new Field<int>(thresh);
+      Field<int> *octaves_field = new Field<int>(octaves);
+      Field<float> *patternScale_field = new Field<float>(patternScale);
+      Parameters BRISKParameters;
+      BRISKParameters.m_mapOfParameters["thresh"] = thresh_field;
+      BRISKParameters.m_mapOfParameters["octaves"] = octaves_field;
+      BRISKParameters.m_mapOfParameters["patternScale"] = patternScale_field;
+
+      m_mapOfKeyPointParameters["BRISK"] = BRISKParameters;
+    }
+
+    //KAZE
+    {
+      bool extended = false; bool upright = false; float threshold = 0.001f; int nOctaves = 4;
+      int nOctaveLayers = 4; int diffusivity = cv::KAZE::DIFF_PM_G2;
+      Field<bool> *extended_field = new Field<bool>(extended);
+      Field<bool> *upright_field = new Field<bool>(upright);
+      Field<float> *threshold_field = new Field<float>(threshold);
+      Field<int> *nOctaves_field = new Field<int>(nOctaves);
+      Field<int> *nOctaveLayers_field = new Field<int>(nOctaveLayers);
+      Field<int> *diffusivity_field = new Field<int>(diffusivity);
+      Parameters KAZEParameters;
+      KAZEParameters.m_mapOfParameters["extended"] = extended_field;
+      KAZEParameters.m_mapOfParameters["upright"] = upright_field;
+      KAZEParameters.m_mapOfParameters["threshold"] = threshold_field;
+      KAZEParameters.m_mapOfParameters["nOctaves"] = nOctaves_field;
+      KAZEParameters.m_mapOfParameters["nOctaveLayers"] = nOctaveLayers_field;
+      KAZEParameters.m_mapOfParameters["diffusivity"] = diffusivity_field;
+
+      m_mapOfKeyPointParameters["KAZE"] = KAZEParameters;
+    }
+
+    //AKAZE
+    {
+      int descriptor_type = cv::AKAZE::DESCRIPTOR_MLDB; int descriptor_size = 0; int descriptor_channels = 3;
+      float threshold = 0.001f; int nOctaves = 4; int nOctaveLayers = 4; int diffusivity = cv::KAZE::DIFF_PM_G2;
+      Field<int> *descriptor_type_field = new Field<int>(descriptor_type);
+      Field<int> *descriptor_size_field = new Field<int>(descriptor_size);
+      Field<int> *descriptor_channels_field = new Field<int>(descriptor_channels);
+      Field<float> *threshold_field = new Field<float>(threshold);
+      Field<int> *nOctaves_field = new Field<int>(nOctaves);
+      Field<int> *nOctaveLayers_field = new Field<int>(nOctaveLayers);
+      Field<int> *diffusivity_field = new Field<int>(diffusivity);
+      Parameters AKAZEParameters;
+      AKAZEParameters.m_mapOfParameters["descriptor_type"] = descriptor_type_field;
+      AKAZEParameters.m_mapOfParameters["descriptor_size"] = descriptor_size_field;
+      AKAZEParameters.m_mapOfParameters["descriptor_channels"] = descriptor_channels_field;
+      AKAZEParameters.m_mapOfParameters["threshold"] = threshold_field;
+      AKAZEParameters.m_mapOfParameters["nOctaves"] = nOctaves_field;
+      AKAZEParameters.m_mapOfParameters["nOctaveLayers"] = nOctaveLayers_field;
+      AKAZEParameters.m_mapOfParameters["diffusivity"] = diffusivity_field;
+
+      m_mapOfKeyPointParameters["AKAZE"] = AKAZEParameters;
+    }
+
+    //GFTT
+    {
+      int maxCorners = 1000; double qualityLevel = 0.01; double minDistance = 1;
+      int blockSize = 3; bool useHarrisDetector = false; double k = 0.04;
+      Field<int> *maxCorners_field = new Field<int>(maxCorners);
+      Field<double> *qualityLevel_field = new Field<double>(qualityLevel);
+      Field<double> *minDistance_field = new Field<double>(minDistance);
+      Field<int> *blockSize_field = new Field<int>(blockSize);
+      Field<bool> *useHarrisDetector_field = new Field<bool>(useHarrisDetector);
+      Field<double> *k_field = new Field<double>(k);
+      Parameters GFTTParameters;
+      GFTTParameters.m_mapOfParameters["maxCorners"] = maxCorners_field;
+      GFTTParameters.m_mapOfParameters["qualityLevel"] = qualityLevel_field;
+      GFTTParameters.m_mapOfParameters["minDistance"] = minDistance_field;
+      GFTTParameters.m_mapOfParameters["blockSize"] = blockSize_field;
+      GFTTParameters.m_mapOfParameters["useHarrisDetector"] = useHarrisDetector_field;
+      GFTTParameters.m_mapOfParameters["k"] = k_field;
+
+      m_mapOfKeyPointParameters["GFTT"] = GFTTParameters;
+    }
+
+    //SimpleBlob
+    {
+      float thresholdStep = 10; float minThreshold = 50; float maxThreshold = 220; size_t minRepeatability = 2;
+      float minDistBetweenBlobs = 10; bool filterByColor = true; unsigned char blobColor = 0; bool filterByArea = true;
+      float minArea = 25; float maxArea = 5000; bool filterByCircularity = false; float minCircularity = 0.8f;
+      float maxCircularity = std::numeric_limits<float>::max(); bool filterByInertia = true;
+      float minInertiaRatio = 0.1f; float maxInertiaRatio = std::numeric_limits<float>::max();
+      bool filterByConvexity = true; float minConvexity = 0.95f; float maxConvexity = std::numeric_limits<float>::max();
+      Field<float> *thresholdStep_field = new Field<float>(thresholdStep);
+      Field<float> *minThreshold_field = new Field<float>(minThreshold);
+      Field<float> *maxThreshold_field = new Field<float>(maxThreshold);
+      Field<size_t> *minRepeatability_field = new Field<size_t>(minRepeatability);
+      Field<float> *minDistBetweenBlobs_field = new Field<float>(minDistBetweenBlobs);
+      Field<bool> *filterByColor_field = new Field<bool>(filterByColor);
+      Field<unsigned char> *blobColor_field = new Field<unsigned char>(blobColor);
+      Field<bool> *filterByArea_field = new Field<bool>(filterByArea);
+      Field<float> *minArea_field = new Field<float>(minArea);
+      Field<float> *maxArea_field = new Field<float>(maxArea);
+      Field<bool> *filterByCircularity_field = new Field<bool>(filterByCircularity);
+      Field<float> *minCircularity_field = new Field<float>(minCircularity);
+      Field<float> *maxCircularity_field = new Field<float>(maxCircularity);
+      Field<bool> *filterByInertia_field = new Field<bool>(filterByInertia);
+      Field<float> *minInertiaRatio_field = new Field<float>(minInertiaRatio);
+      Field<float> *maxInertiaRatio_field = new Field<float>(maxInertiaRatio);
+      Field<bool> *filterByConvexity_field = new Field<bool>(filterByConvexity);
+      Field<float> *minConvexity_field = new Field<float>(minConvexity);
+      Field<float> *maxConvexity_field = new Field<float>(maxConvexity);
+      Parameters SimpleBlogParameters;
+      SimpleBlogParameters.m_mapOfParameters["thresholdStep"] = thresholdStep_field;
+      SimpleBlogParameters.m_mapOfParameters["minThreshold"] = minThreshold_field;
+      SimpleBlogParameters.m_mapOfParameters["maxThreshold"] = maxThreshold_field;
+      SimpleBlogParameters.m_mapOfParameters["minRepeatability"] = minRepeatability_field;
+      SimpleBlogParameters.m_mapOfParameters["minDistBetweenBlobs"] = minDistBetweenBlobs_field;
+      SimpleBlogParameters.m_mapOfParameters["filterByColor"] = filterByColor_field;
+      SimpleBlogParameters.m_mapOfParameters["blobColor"] = blobColor_field;
+      SimpleBlogParameters.m_mapOfParameters["filterByArea"] = filterByArea_field;
+      SimpleBlogParameters.m_mapOfParameters["minArea"] = minArea_field;
+      SimpleBlogParameters.m_mapOfParameters["maxArea"] = maxArea_field;
+      SimpleBlogParameters.m_mapOfParameters["filterByCircularity"] = filterByCircularity_field;
+      SimpleBlogParameters.m_mapOfParameters["minCircularity"] = minCircularity_field;
+      SimpleBlogParameters.m_mapOfParameters["maxCircularity"] = maxCircularity_field;
+      SimpleBlogParameters.m_mapOfParameters["filterByInertia"] = filterByInertia_field;
+      SimpleBlogParameters.m_mapOfParameters["minInertiaRatio"] = minInertiaRatio_field;
+      SimpleBlogParameters.m_mapOfParameters["maxInertiaRatio"] = maxInertiaRatio_field;
+      SimpleBlogParameters.m_mapOfParameters["filterByConvexity"] = filterByConvexity_field;
+      SimpleBlogParameters.m_mapOfParameters["minConvexity"] = minConvexity_field;
+      SimpleBlogParameters.m_mapOfParameters["maxConvexity"] = maxConvexity_field;
+
+      m_mapOfKeyPointParameters["SimpleBlob"] = SimpleBlogParameters;
+    }
+
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+    //STAR
+    {
+      int maxSize = 45; int responseThreshold = 30; int lineThresholdProjected = 10; int lineThresholdBinarized = 8;
+      int suppressNonmaxSize = 5;
+      Field<int> *maxSize_field = new Field<int>(maxSize);
+      Field<int> *responseThreshold_field = new Field<int>(responseThreshold);
+      Field<int> *lineThresholdProjected_field = new Field<int>(lineThresholdProjected);
+      Field<int> *lineThresholdBinarized_field = new Field<int>(lineThresholdBinarized);
+      Field<int> *suppressNonmaxSize_field = new Field<int>(suppressNonmaxSize);
+      Parameters STARParameters;
+      STARParameters.m_mapOfParameters["maxSize"] = maxSize_field;
+      STARParameters.m_mapOfParameters["responseThreshold"] = responseThreshold_field;
+      STARParameters.m_mapOfParameters["lineThresholdProjected"] = lineThresholdProjected_field;
+      STARParameters.m_mapOfParameters["lineThresholdBinarized"] = lineThresholdBinarized_field;
+      STARParameters.m_mapOfParameters["suppressNonmaxSize"] = suppressNonmaxSize_field;
+
+      m_mapOfKeyPointParameters["STAR"] = STARParameters;
+    }
+#endif
+
+    //AGAST
+    {
+      int threshold = 10; bool nonmaxSuppression = true; int type = cv::AgastFeatureDetector::OAST_9_16;
+      Field<int> *threshold_field = new Field<int>(threshold);
+      Field<bool> *nonmaxSuppression_field = new Field<bool>(nonmaxSuppression);
+      Field<int> *type_field = new Field<int>(type);
+      Parameters AGASTParameters;
+      AGASTParameters.m_mapOfParameters["threshold"] = threshold_field;
+      AGASTParameters.m_mapOfParameters["nonmaxSuppression"] = nonmaxSuppression_field;
+      AGASTParameters.m_mapOfParameters["type"] = type_field;
+
+      m_mapOfKeyPointParameters["AGAST"] = AGASTParameters;
+    }
+
+#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+  //FREAK
+  {
+    bool orientationNormalized = true; bool scaleNormalized = true; float patternScale = 22.0f; int nOctaves = 4;
+    Field<bool> *orientationNormalized_field = new Field<bool>(orientationNormalized);
+    Field<bool> *scaleNormalized_field = new Field<bool>(scaleNormalized);
+    Field<float> *patternScale_field = new Field<float>(patternScale);
+    Field<int> *nOctaves_field = new Field<int>(nOctaves);
+    Parameters FREAKParameters;
+    FREAKParameters.m_mapOfParameters["orientationNormalized"] = orientationNormalized_field;
+    FREAKParameters.m_mapOfParameters["scaleNormalized"] = scaleNormalized_field;
+    FREAKParameters.m_mapOfParameters["patternScale"] = patternScale_field;
+    FREAKParameters.m_mapOfParameters["nOctaves"] = nOctaves_field;
+
+    m_mapOfKeyPointParameters["FREAK"] = FREAKParameters;
+  }
+
+  //BRIEF
+  {
+    int bytes = 32; bool use_orientation = false;
+    Field<int> *bytes_field = new Field<int>(bytes);
+    Field<bool> *use_orientation_field = new Field<bool>(use_orientation);
+    Parameters BRIEFParameters;
+    BRIEFParameters.m_mapOfParameters["bytes"] = bytes_field;
+    BRIEFParameters.m_mapOfParameters["use_orientation"] = use_orientation_field;
+
+    m_mapOfKeyPointParameters["BRIEF"] = BRIEFParameters;
+  }
+
+  //DAISY
+  {
+    float radius = 15; int q_radius = 3; int q_theta = 8; int q_hist = 8; int norm = cv::xfeatures2d::DAISY::NRM_NONE;
+    bool interpolation = true; bool use_orientation = false;
+    Field<float> *radius_field = new Field<float>(radius);
+    Field<int> *q_radius_field = new Field<int>(q_radius);
+    Field<int> *q_theta_field = new Field<int>(q_theta);
+    Field<int> *q_hist_field = new Field<int>(q_hist);
+    Field<int> *norm_field = new Field<int>(norm);
+    Field<bool> *interpolation_field = new Field<bool>(interpolation);
+    Field<bool> *use_orientation_field = new Field<bool>(use_orientation);
+    Parameters DAISYParameters;
+    DAISYParameters.m_mapOfParameters["radius"] = radius_field;
+    DAISYParameters.m_mapOfParameters["q_radius"] = q_radius_field;
+    DAISYParameters.m_mapOfParameters["q_theta"] = q_theta_field;
+    DAISYParameters.m_mapOfParameters["q_hist"] = q_hist_field;
+    DAISYParameters.m_mapOfParameters["norm"] = norm_field;
+    DAISYParameters.m_mapOfParameters["interpolation"] = interpolation_field;
+    DAISYParameters.m_mapOfParameters["use_orientation"] = use_orientation_field;
+
+    m_mapOfKeyPointParameters["DAISY"] = DAISYParameters;
+  }
+
+  //LATCH
+  {
+    int bytes = 32; bool rotationInvariance = true; int half_ssd_size = 3;
+    Field<int> *bytes_field = new Field<int>(bytes);
+    Field<bool> *rotationInvariance_field = new Field<bool>(rotationInvariance);
+    Field<int> *half_ssd_size_field = new Field<int>(half_ssd_size);
+    Parameters LATCHParameters;
+    LATCHParameters.m_mapOfParameters["bytes"] = bytes_field;
+    LATCHParameters.m_mapOfParameters["rotationInvariance"] = rotationInvariance_field;
+    LATCHParameters.m_mapOfParameters["half_ssd_size"] = half_ssd_size_field;
+
+    m_mapOfKeyPointParameters["LATCH"] = LATCHParameters;
+  }
+
+  //LUCID
+  {
+    //lucid_kernel kernel for descriptor construction, where 1=3x3, 2=5x5, 3=7x7 and so forth
+    //blur_kernel kernel for blurring image prior to descriptor construction, where 1=3x3, 2=5x5, 3=7x7 and so forth
+    int lucid_kernel = 1; int blur_kernel = 2;
+    Field<int> *lucid_kernel_field = new Field<int>(lucid_kernel);
+    Field<int> *blur_kernel_field = new Field<int>(blur_kernel);
+    Parameters LUCIDParameters;
+    LUCIDParameters.m_mapOfParameters["lucid_kernel"] = lucid_kernel_field;
+    LUCIDParameters.m_mapOfParameters["blur_kernel"] = blur_kernel_field;
+
+    m_mapOfKeyPointParameters["LUCID"] = LUCIDParameters;
+  }
+#endif
+}
+#endif
 
 /*!
    Initialize a matcher based on its name.
@@ -1719,6 +2497,11 @@ void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &IRef, const v
 void vpKeyPoint::insertImageMatching(const vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching) {
   //Nb images in the training database + the current image we want to detect the object
   int nbImg = (int) (m_mapOfImages.size() + 1);
+
+  if(m_mapOfImages.empty()) {
+    std::cerr << "There is no training image loaded !" << std::endl;
+    return;
+  }
 
   if(nbImg == 2) {
     //Only one training image, so we display them side by side
@@ -1888,6 +2671,13 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
     int nbImgs = 0;
     file.read((char *)(&nbImgs), sizeof(nbImgs));
 
+#if !defined(VISP_HAVE_MODULE_IO)
+    if(nbImgs > 0) {
+      std::cout << "Warning: The learning file contains image data that will not be loaded as visp_io module "
+          "is not available !" << std::endl;
+    }
+#endif
+
     for(int i = 0; i < nbImgs; i++) {
       //Read image_id
       int id = 0;
@@ -1912,9 +2702,10 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
       } else {
         vpImageIo::read(I, parent + path);
       }
-#endif
 
+      //Add the image previously loaded only if VISP_HAVE_MODULE_IO
       m_mapOfImages[id + startImageId] = I;
+#endif
     }
 
     //Read if 3D point information are saved or not
@@ -1951,8 +2742,10 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
       m_trainKeyPoints.push_back(keyPoint);
 
       if(image_id != -1) {
+#ifdef VISP_HAVE_MODULE_IO
         //No training images if image_id == -1
         m_mapOfImageId[class_id] = image_id + startImageId;
+#endif
       }
 
       if(have3DInfo) {
@@ -2095,8 +2888,10 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
             } else {
               vpImageIo::read(I, parent + path);
             }
-#endif
+
+            //Add the image previously loaded only if VISP_HAVE_MODULE_IO
             m_mapOfImages[id + startImageId] = I;
+#endif
           }
         }
       } else if(first_level_node->type == XML_ELEMENT_NODE && name == "DescriptorsInfo") {
@@ -2151,8 +2946,10 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
             } else if(name == "image_id") {
               image_id = std::atoi((char *) point_node->children->content);
               if(image_id != -1) {
+#ifdef VISP_HAVE_MODULE_IO
                 //No training images if image_id == -1
                 m_mapOfImageId[m_trainKeyPoints.back().class_id] = image_id + startImageId;
+#endif
               }
             } else if (name == "oX") {
               oX = std::atof((char *) point_node->children->content);
@@ -2945,6 +3742,47 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,std::vector
 }
 
 /*!
+   Reset the instance as if we would declare another vpKeyPoint variable.
+ */
+void vpKeyPoint::reset() {
+  //vpBasicKeyPoint class
+  referenceImagePointsList.clear(); currentImagePointsList.clear(); matchedReferencePoints.clear(); _reference_computed = false;
+
+
+  m_computeCovariance = false; m_covarianceMatrix = vpMatrix(); m_currentImageId = 0; m_detectionMethod = detectionScore;
+  m_detectionScore = 0.15; m_detectionThreshold = 100.0; m_detectionTime = 0.0; m_detectorNames.clear();
+  m_detectors.clear(); m_extractionTime = 0.0; m_extractorNames.clear(); m_extractors.clear(); m_filteredMatches.clear();
+  m_filterType = ratioDistanceThreshold;
+  m_imageFormat = jpgImageFormat; m_knnMatches.clear(); m_mapOfImageId.clear(); m_mapOfImages.clear();
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  m_mapOfKeyPointParameters.clear();
+#endif
+  m_matcher = cv::Ptr<cv::DescriptorMatcher>(); m_matcherName = "BruteForce-Hamming";
+  m_matches.clear(); m_matchingFactorThreshold = 2.0; m_matchingRatioThreshold = 0.85; m_matchingTime = 0.0;
+  m_matchRansacKeyPointsToPoints.clear(); m_nbRansacIterations = 200; m_nbRansacMinInlierCount = 100;
+  m_objectFilteredPoints.clear();
+  m_poseTime = 0.0; m_queryDescriptors = cv::Mat(); m_queryFilteredKeyPoints.clear(); m_queryKeyPoints.clear();
+  m_ransacConsensusPercentage = 20.0; m_ransacInliers.clear(); m_ransacOutliers.clear(); m_ransacReprojectionError = 6.0;
+  m_ransacThreshold = 0.01; m_trainDescriptors = cv::Mat(); m_trainKeyPoints.clear(); m_trainPoints.clear();
+  m_trainVpPoints.clear(); m_useAffineDetection = false;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
+  m_useBruteForceCrossCheck = true;
+#endif
+  m_useConsensusPercentage = false;
+  m_useKnn = true; //as m_filterType == ratioDistanceThreshold
+  m_useMatchTrainToQuery = false; m_useRansacVVS = true; m_useSingleMatchFilter = true;
+
+  m_detectorNames.push_back("ORB");
+  m_extractorNames.push_back("ORB");
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  initKeyPointParameters();
+#endif
+
+  init();
+}
+
+/*!
    Save the learning data in a file in XML or binary mode.
 
    \param filename : Path of the save file
@@ -2964,16 +3802,44 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     int cpt = 0;
 
     for(std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end(); ++it, cpt++) {
+      if(cpt > 999) {
+        throw vpException(vpException::fatalError, "The number of training images to save is too big !");
+      }
+
       char buffer[4];
       sprintf(buffer, "%03d", cpt);
       std::stringstream ss;
-      ss << "train_image_" << buffer << ".jpg";
-      std::string filename_ = ss.str();
-      mapOfImgPath[it->first] = filename_;
-      vpImageIo::write(it->second, parent + (!parent.empty() ? "/" : "") + filename_);
+      ss << "train_image_" << buffer;
+
+      switch(m_imageFormat) {
+      case jpgImageFormat:
+        ss << ".jpg";
+        break;
+
+      case pngImageFormat:
+        ss << ".png";
+        break;
+
+      case ppmImageFormat:
+        ss << ".ppm";
+        break;
+
+      case pgmImageFormat:
+        ss << ".pgm";
+        break;
+
+      default:
+        ss << ".png";
+        break;
+      }
+
+      std::string imgFilename = ss.str();
+      mapOfImgPath[it->first] = imgFilename;
+      vpImageIo::write(it->second, parent + (!parent.empty() ? "/" : "") + imgFilename);
     }
 #else
-    std::cout << "Warning: in vpKeyPoint::saveLearningData() training images are not saved; visp_io module is not available..." << std::endl;
+    std::cout << "Warning: in vpKeyPoint::saveLearningData() training images are not saved because "
+        "visp_io module is not available !" << std::endl;
 #endif
   }
 
@@ -2983,6 +3849,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
   }
 
   if(binaryMode) {
+    //Save the learning data into little endian binary file.
     std::ofstream file(filename.c_str(), std::ofstream::binary);
     if(!file.is_open()) {
       throw vpException(vpException::ioError, "Cannot create the file.");
@@ -2990,26 +3857,32 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
     //Write info about training images
     int nbImgs = (int) mapOfImgPath.size();
-    file.write((char *)(&nbImgs), sizeof(nbImgs));
+//    file.write((char *)(&nbImgs), sizeof(nbImgs));
+    writeBinaryIntLE(file, nbImgs);
 
+#ifdef VISP_HAVE_MODULE_IO
     for(std::map<int, std::string>::const_iterator it = mapOfImgPath.begin(); it != mapOfImgPath.end(); ++it) {
       //Write image_id
       int id = it->first;
-      file.write((char *)(&id), sizeof(id));
+//      file.write((char *)(&id), sizeof(id));
+      writeBinaryIntLE(file, id);
 
       //Write image path
       std::string path = it->second;
       int length = (int) path.length();
-      file.write((char *)(&length), sizeof(length));
+//      file.write((char *)(&length), sizeof(length));
+      writeBinaryIntLE(file, length);
 
       for(int cpt = 0; cpt < length; cpt++) {
         file.write((char *) (&path[(size_t)cpt]), sizeof(path[(size_t)cpt]));
       }
     }
+#endif
 
     //Write if we have 3D point information
     int have3DInfoInt = have3DInfo ? 1 : 0;
-    file.write((char *)(&have3DInfoInt), sizeof(have3DInfoInt));
+//    file.write((char *)(&have3DInfoInt), sizeof(have3DInfoInt));
+    writeBinaryIntLE(file, have3DInfoInt);
 
 
     int nRows = m_trainDescriptors.rows,
@@ -3017,58 +3890,79 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     int descriptorType = m_trainDescriptors.type();
 
     //Write the number of descriptors
-    file.write((char *)(&nRows), sizeof(nRows));
+//    file.write((char *)(&nRows), sizeof(nRows));
+    writeBinaryIntLE(file, nRows);
 
     //Write the size of the descriptor
-    file.write((char *)(&nCols), sizeof(nCols));
+//    file.write((char *)(&nCols), sizeof(nCols));
+    writeBinaryIntLE(file, nCols);
 
     //Write the type of the descriptor
-    file.write((char *)(&descriptorType), sizeof(descriptorType));
+//    file.write((char *)(&descriptorType), sizeof(descriptorType));
+    writeBinaryIntLE(file, descriptorType);
 
     for (int i = 0; i < nRows; i++) {
       unsigned int i_ = (unsigned int) i;
       //Write u
       float u = m_trainKeyPoints[i_].pt.x;
-      file.write((char *)(&u), sizeof(u));
+//      file.write((char *)(&u), sizeof(u));
+      writeBinaryFloatLE(file, u);
 
       //Write v
       float v = m_trainKeyPoints[i_].pt.y;
-      file.write((char *)(&v), sizeof(v));
+//      file.write((char *)(&v), sizeof(v));
+      writeBinaryFloatLE(file, v);
 
       //Write size
       float size = m_trainKeyPoints[i_].size;
-      file.write((char *)(&size), sizeof(size));
+//      file.write((char *)(&size), sizeof(size));
+      writeBinaryFloatLE(file, size);
 
       //Write angle
       float angle = m_trainKeyPoints[i_].angle;
-      file.write((char *)(&angle), sizeof(angle));
+//      file.write((char *)(&angle), sizeof(angle));
+      writeBinaryFloatLE(file, angle);
 
       //Write response
       float response = m_trainKeyPoints[i_].response;
-      file.write((char *)(&response), sizeof(response));
+//      file.write((char *)(&response), sizeof(response));
+      writeBinaryFloatLE(file, response);
 
       //Write octave
       int octave = m_trainKeyPoints[i_].octave;
-      file.write((char *)(&octave), sizeof(octave));
+//      file.write((char *)(&octave), sizeof(octave));
+      writeBinaryIntLE(file, octave);
 
       //Write class_id
       int class_id = m_trainKeyPoints[i_].class_id;
-      file.write((char *)(&class_id), sizeof(class_id));
+//      file.write((char *)(&class_id), sizeof(class_id));
+      writeBinaryIntLE(file, class_id);
 
       //Write image_id
-      int image_id = (saveTrainingImages && m_mapOfImageId.size() > 0) ? m_mapOfImageId[m_trainKeyPoints[i_].class_id] : -1;
-      file.write((char *)(&image_id), sizeof(image_id));
+#ifdef VISP_HAVE_MODULE_IO
+      std::map<int, int>::const_iterator it_findImgId = m_mapOfImageId.find(m_trainKeyPoints[i_].class_id);
+      int image_id = (saveTrainingImages && it_findImgId != m_mapOfImageId.end()) ? it_findImgId->second : -1;
+//      file.write((char *)(&image_id), sizeof(image_id));
+      writeBinaryIntLE(file, image_id);
+#else
+      int image_id = -1;
+//      file.write((char *)(&image_id), sizeof(image_id));
+      writeBinaryIntLE(file, image_id);
+#endif
 
       if(have3DInfo) {
         float oX = m_trainPoints[i_].x, oY = m_trainPoints[i_].y, oZ = m_trainPoints[i_].z;
         //Write oX
-        file.write((char *)(&oX), sizeof(oX));
+//        file.write((char *)(&oX), sizeof(oX));
+        writeBinaryFloatLE(file, oX);
 
         //Write oY
-        file.write((char *)(&oY), sizeof(oY));
+//        file.write((char *)(&oY), sizeof(oY));
+        writeBinaryFloatLE(file, oY);
 
         //Write oZ
-        file.write((char *)(&oZ), sizeof(oZ));
+//        file.write((char *)(&oZ), sizeof(oZ));
+        writeBinaryFloatLE(file, oZ);
       }
 
       for (int j = 0; j < nCols; j++) {
@@ -3083,23 +3977,28 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
           break;
 
         case CV_16U:
-          file.write((char *)(&m_trainDescriptors.at<unsigned short int>(i, j)), sizeof(m_trainDescriptors.at<unsigned short int>(i, j)));
+//          file.write((char *)(&m_trainDescriptors.at<unsigned short int>(i, j)), sizeof(m_trainDescriptors.at<unsigned short int>(i, j)));
+          writeBinaryUShortLE(file, m_trainDescriptors.at<unsigned short int>(i, j));
           break;
 
         case CV_16S:
-          file.write((char *)(&m_trainDescriptors.at<short int>(i, j)), sizeof(m_trainDescriptors.at<short int>(i, j)));
+//          file.write((char *)(&m_trainDescriptors.at<short int>(i, j)), sizeof(m_trainDescriptors.at<short int>(i, j)));
+          writeBinaryShortLE(file, m_trainDescriptors.at<short int>(i, j));
           break;
 
         case CV_32S:
-          file.write((char *)(&m_trainDescriptors.at<int>(i, j)), sizeof(m_trainDescriptors.at<int>(i, j)));
+//          file.write((char *)(&m_trainDescriptors.at<int>(i, j)), sizeof(m_trainDescriptors.at<int>(i, j)));
+          writeBinaryIntLE(file, m_trainDescriptors.at<int>(i, j));
           break;
 
         case CV_32F:
-          file.write((char *)(&m_trainDescriptors.at<float>(i, j)), sizeof(m_trainDescriptors.at<float>(i, j)));
+//          file.write((char *)(&m_trainDescriptors.at<float>(i, j)), sizeof(m_trainDescriptors.at<float>(i, j)));
+          writeBinaryFloatLE(file, m_trainDescriptors.at<float>(i, j));
           break;
 
         case CV_64F:
-          file.write((char *)(&m_trainDescriptors.at<double>(i, j)), sizeof(m_trainDescriptors.at<double>(i, j)));
+//          file.write((char *)(&m_trainDescriptors.at<double>(i, j)), sizeof(m_trainDescriptors.at<double>(i, j)));
+          writeBinaryDoubleLE(file, m_trainDescriptors.at<double>(i, j));
           break;
 
         default:
@@ -3137,6 +4036,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     //Write the training images info
     image_node = xmlNewChild(root_node, NULL, BAD_CAST "TrainingImageInfo", NULL);
 
+#ifdef VISP_HAVE_MODULE_IO
     for(std::map<int, std::string>::const_iterator it = mapOfImgPath.begin(); it != mapOfImgPath.end(); ++it) {
       image_info_node = xmlNewChild(image_node, NULL, BAD_CAST "trainImg",
                                     BAD_CAST it->second.c_str());
@@ -3144,6 +4044,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
       ss << it->first;
       xmlNewProp(image_info_node, BAD_CAST "image_id", BAD_CAST ss.str().c_str());
     }
+#endif
 
     //Write information about descriptors
     descriptors_info_node = xmlNewChild(root_node, NULL, BAD_CAST "DescriptorsInfo", NULL);
@@ -3173,27 +4074,32 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
                                     NULL);
 
       ss.str("");
-      ss << m_trainKeyPoints[i_].pt.x;
+      //max_digits10 == 9 for float
+      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].pt.x;
       xmlNewChild(descriptor_node, NULL, BAD_CAST "u",
                                BAD_CAST ss.str().c_str());
 
       ss.str("");
-      ss << m_trainKeyPoints[i_].pt.y;
+      //max_digits10 == 9 for float
+      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].pt.y;
       xmlNewChild(descriptor_node, NULL, BAD_CAST "v",
                                BAD_CAST ss.str().c_str());
 
       ss.str("");
-      ss << m_trainKeyPoints[i_].size;
+      //max_digits10 == 9 for float
+      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].size;
       xmlNewChild(descriptor_node, NULL, BAD_CAST "size",
                                BAD_CAST ss.str().c_str());
 
       ss.str("");
-      ss << m_trainKeyPoints[i_].angle;
+      //max_digits10 == 9 for float
+      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].angle;
       xmlNewChild(descriptor_node, NULL, BAD_CAST "angle",
                                BAD_CAST ss.str().c_str());
 
       ss.str("");
-      ss << m_trainKeyPoints[i_].response;
+      //max_digits10 == 9 for float
+      ss << std::fixed << std::setprecision(9) << m_trainKeyPoints[i_].response;
       xmlNewChild(descriptor_node, NULL, BAD_CAST "response",
                                BAD_CAST ss.str().c_str());
 
@@ -3208,23 +4114,33 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
                                BAD_CAST ss.str().c_str());
 
       ss.str("");
-      ss << ((saveTrainingImages && m_mapOfImageId.size() > 0) ? m_mapOfImageId[m_trainKeyPoints[i_].class_id] : -1);
+#ifdef VISP_HAVE_MODULE_IO
+      std::map<int, int>::const_iterator it_findImgId = m_mapOfImageId.find(m_trainKeyPoints[i_].class_id);
+      ss << ((saveTrainingImages && it_findImgId != m_mapOfImageId.end()) ? it_findImgId->second : -1);
       xmlNewChild(descriptor_node, NULL, BAD_CAST "image_id",
                                BAD_CAST ss.str().c_str());
+#else
+      ss << -1;
+      xmlNewChild(descriptor_node, NULL, BAD_CAST "image_id",
+                               BAD_CAST ss.str().c_str());
+#endif
 
       if (have3DInfo) {
         ss.str("");
-        ss << m_trainPoints[i_].x;
+        //max_digits10 == 9 for float
+        ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].x;
         xmlNewChild(descriptor_node, NULL, BAD_CAST "oX",
                                  BAD_CAST ss.str().c_str());
 
         ss.str("");
-        ss << m_trainPoints[i_].y;
+        //max_digits10 == 9 for float
+        ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].y;
         xmlNewChild(descriptor_node, NULL, BAD_CAST "oY",
                                  BAD_CAST ss.str().c_str());
 
         ss.str("");
-        ss << m_trainPoints[i_].z;
+        //max_digits10 == 9 for float
+        ss << std::fixed << std::setprecision(9) << m_trainPoints[i_].z;
         xmlNewChild(descriptor_node, NULL, BAD_CAST "oZ",
                                  BAD_CAST ss.str().c_str());
       }
@@ -3270,11 +4186,13 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
             break;
 
           case CV_32F:
-            ss << m_trainDescriptors.at<float>(i, j);
+            //max_digits10 == 9 for float
+            ss << std::fixed << std::setprecision(9) << m_trainDescriptors.at<float>(i, j);
             break;
 
           case CV_64F:
-            ss << m_trainDescriptors.at<double>(i, j);
+            //max_digits10 == 17 for double
+            ss << std::fixed << std::setprecision(17) << m_trainDescriptors.at<double>(i, j);
             break;
 
           default:
@@ -3333,14 +4251,14 @@ void vpKeyPoint::KeyPointsFilter::retainBest(
     //first use nth element to partition the keypoints into the best and worst.
     std::nth_element(keypoints.begin(), keypoints.begin() + n_points,
         keypoints.end(), KeypointResponseGreater());
-    //this is the boundary response, and in the case of FAST may be ambigous
-    float ambiguous_response = keypoints[n_points - 1].response;
+    //this is the boundary response, and in the case of FAST may be ambiguous
+    float ambiguous_response = keypoints[(size_t) (n_points - 1)].response;
     //use std::partition to grab all of the keypoints with the boundary response.
     std::vector<cv::KeyPoint>::const_iterator new_end = std::partition(
         keypoints.begin() + n_points, keypoints.end(),
         KeypointResponseGreaterThanThreshold(ambiguous_response));
     //resize the keypoints, given this new end point. nth_element and partition reordered the points inplace
-    keypoints.resize(new_end - keypoints.begin());
+    keypoints.resize((size_t) (new_end - keypoints.begin()));
   }
 }
 
@@ -3425,22 +4343,35 @@ struct KeyPoint_LessThan {
       kp(&_kp) {
   }
   bool operator()(int i, int j) const {
-    const cv::KeyPoint& kp1 = (*kp)[i];
-    const cv::KeyPoint& kp2 = (*kp)[j];
-    if (kp1.pt.x != kp2.pt.x)
+    const cv::KeyPoint& kp1 = (*kp)[(size_t) i];
+    const cv::KeyPoint& kp2 = (*kp)[(size_t) j];
+    if (!vpMath::equal(kp1.pt.x, kp2.pt.x, std::numeric_limits<float>::epsilon())) { //if (kp1.pt.x != kp2.pt.x) {
       return kp1.pt.x < kp2.pt.x;
-    if (kp1.pt.y != kp2.pt.y)
+    }
+
+    if (!vpMath::equal(kp1.pt.y, kp2.pt.y, std::numeric_limits<float>::epsilon())) { //if (kp1.pt.y != kp2.pt.y) {
       return kp1.pt.y < kp2.pt.y;
-    if (kp1.size != kp2.size)
+    }
+
+    if (!vpMath::equal(kp1.size, kp2.size, std::numeric_limits<float>::epsilon())) { //if (kp1.size != kp2.size) {
       return kp1.size > kp2.size;
-    if (kp1.angle != kp2.angle)
+    }
+
+    if (!vpMath::equal(kp1.angle, kp2.angle, std::numeric_limits<float>::epsilon())) { //if (kp1.angle != kp2.angle) {
       return kp1.angle < kp2.angle;
-    if (kp1.response != kp2.response)
+    }
+
+    if (!vpMath::equal(kp1.response, kp2.response, std::numeric_limits<float>::epsilon())) { //if (kp1.response != kp2.response) {
       return kp1.response > kp2.response;
-    if (kp1.octave != kp2.octave)
+    }
+
+    if (kp1.octave != kp2.octave) {
       return kp1.octave > kp2.octave;
-    if (kp1.class_id != kp2.class_id)
+    }
+
+    if (kp1.class_id != kp2.class_id) {
       return kp1.class_id > kp2.class_id;
+    }
 
     return i < j;
   }
@@ -3449,27 +4380,33 @@ struct KeyPoint_LessThan {
 
 void vpKeyPoint::KeyPointsFilter::removeDuplicated(
     std::vector<cv::KeyPoint>& keypoints) {
-  int i, j, n = (int) keypoints.size();
-  std::vector<int> kpidx(n);
+  size_t i, j, n = keypoints.size();
+  std::vector<size_t> kpidx(n);
   std::vector<uchar> mask(n, (uchar) 1);
 
-  for (i = 0; i < n; i++)
+  for (i = 0; i < n; i++) {
     kpidx[i] = i;
+  }
   std::sort(kpidx.begin(), kpidx.end(), KeyPoint_LessThan(keypoints));
   for (i = 1, j = 0; i < n; i++) {
     cv::KeyPoint& kp1 = keypoints[kpidx[i]];
     cv::KeyPoint& kp2 = keypoints[kpidx[j]];
-    if (kp1.pt.x != kp2.pt.x || kp1.pt.y != kp2.pt.y || kp1.size != kp2.size
-        || kp1.angle != kp2.angle)
+//    if (kp1.pt.x != kp2.pt.x || kp1.pt.y != kp2.pt.y || kp1.size != kp2.size || kp1.angle != kp2.angle) {
+    if (!vpMath::equal(kp1.pt.x, kp2.pt.x, std::numeric_limits<float>::epsilon()) ||
+        !vpMath::equal(kp1.pt.y, kp2.pt.y, std::numeric_limits<float>::epsilon()) ||
+        !vpMath::equal(kp1.size, kp2.size, std::numeric_limits<float>::epsilon()) ||
+        !vpMath::equal(kp1.angle, kp2.angle, std::numeric_limits<float>::epsilon())) {
       j = i;
-    else
+    } else {
       mask[kpidx[i]] = 0;
+    }
   }
 
   for (i = j = 0; i < n; i++) {
     if (mask[i]) {
-      if (i != j)
+      if (i != j) {
         keypoints[j] = keypoints[i];
+      }
       j++;
     }
   }
@@ -3488,7 +4425,8 @@ bool vpKeyPoint::PyramidAdaptedFeatureDetector::empty() const {
   return detector.empty() || (cv::FeatureDetector*) detector->empty();
 }
 
-void vpKeyPoint::PyramidAdaptedFeatureDetector::detect( cv::InputArray image, CV_OUT std::vector<cv::KeyPoint>& keypoints, cv::InputArray mask ) {
+void vpKeyPoint::PyramidAdaptedFeatureDetector::detect( cv::InputArray image, CV_OUT std::vector<cv::KeyPoint>& keypoints,
+    cv::InputArray mask ) {
   detectImpl(image.getMat(), keypoints, mask.getMat());
 }
 
@@ -3533,9 +4471,153 @@ void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(const cv::Mat& image,
   if (!mask.empty())
     vpKeyPoint::KeyPointsFilter::runByPixelsMask(keypoints, mask);
 }
+
+void vpKeyPoint::setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
+    const bool parameterValue) {
+  std::map<std::string, Parameters>::iterator it_findKeyPoint = m_mapOfKeyPointParameters.find(keypointName);
+
+  if(it_findKeyPoint == m_mapOfKeyPointParameters.end()) {
+    std::cerr << "Cannot find keypoint=" << keypointName << std::endl;
+  } else {
+    std::map<std::string, FieldBase*>::iterator it_findParameter =
+        it_findKeyPoint->second.m_mapOfParameters.find(parameterName);
+
+    if(it_findParameter == it_findKeyPoint->second.m_mapOfParameters.end()) {
+      std::cerr << "Cannot find parameter=" << parameterName << std::endl;
+    } else if(dynamic_cast<Field<bool>*>(
+        m_mapOfKeyPointParameters[keypointName].m_mapOfParameters[parameterName]) != 0) {
+      dynamic_cast<Field<bool>*>(
+          m_mapOfKeyPointParameters[keypointName].m_mapOfParameters[parameterName])->set(parameterValue);
+    } else {
+      std::cerr << "Wrong parameter type !" << std::endl;
+    }
+  }
+
+  init();
+}
+
+void vpKeyPoint::setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
+    const unsigned char parameterValue) {
+  std::map<std::string, Parameters>::iterator it_findKeyPoint = m_mapOfKeyPointParameters.find(keypointName);
+
+  if(it_findKeyPoint == m_mapOfKeyPointParameters.end()) {
+    std::cerr << "Cannot find keypoint=" << keypointName << std::endl;
+  } else {
+    std::map<std::string, FieldBase*>::iterator it_findParameter =
+        it_findKeyPoint->second.m_mapOfParameters.find(parameterName);
+
+    if(it_findParameter == it_findKeyPoint->second.m_mapOfParameters.end()) {
+      std::cerr << "Cannot find parameter=" << parameterName << std::endl;
+    } else if(dynamic_cast<Field<unsigned char>*>(
+        m_mapOfKeyPointParameters[keypointName].m_mapOfParameters[parameterName]) != 0) {
+      dynamic_cast<Field<unsigned char>*>(
+          m_mapOfKeyPointParameters[keypointName].m_mapOfParameters[parameterName])->set(parameterValue);
+    } else {
+      std::cerr << "Wrong parameter type !" << std::endl;
+    }
+  }
+
+  init();
+}
+
+void vpKeyPoint::setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
+    const int parameterValue) {
+  std::map<std::string, Parameters>::iterator it_findKeyPoint = m_mapOfKeyPointParameters.find(keypointName);
+
+  if(it_findKeyPoint == m_mapOfKeyPointParameters.end()) {
+    std::cerr << "Cannot find keypoint=" << keypointName << std::endl;
+  } else {
+    std::map<std::string, FieldBase*>::iterator it_findParameter =
+        it_findKeyPoint->second.m_mapOfParameters.find(parameterName);
+
+    if(it_findParameter == it_findKeyPoint->second.m_mapOfParameters.end()) {
+      std::cerr << "Cannot find parameter=" << parameterName << std::endl;
+    } else if(dynamic_cast<Field<int>*>(
+        m_mapOfKeyPointParameters[keypointName].m_mapOfParameters[parameterName]) != 0) {
+      dynamic_cast<Field<int>*>(
+          m_mapOfKeyPointParameters[keypointName].m_mapOfParameters[parameterName])->set(parameterValue);
+    } else {
+      std::cerr << "Wrong parameter type !" << std::endl;
+    }
+  }
+
+  init();
+}
+
+void vpKeyPoint::setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
+    const float parameterValue) {
+  std::map<std::string, Parameters>::iterator it_findKeyPoint = m_mapOfKeyPointParameters.find(keypointName);
+
+  if(it_findKeyPoint == m_mapOfKeyPointParameters.end()) {
+    std::cerr << "Cannot find keypoint=" << keypointName << std::endl;
+  } else {
+    std::map<std::string, FieldBase*>::iterator it_findParameter =
+        it_findKeyPoint->second.m_mapOfParameters.find(parameterName);
+
+    if(it_findParameter == it_findKeyPoint->second.m_mapOfParameters.end()) {
+      std::cerr << "Cannot find parameter=" << parameterName << std::endl;
+    } else if(dynamic_cast<Field<float>*>(
+        m_mapOfKeyPointParameters[keypointName].m_mapOfParameters[parameterName]) != 0) {
+      dynamic_cast<Field<float>*>(
+          m_mapOfKeyPointParameters[keypointName].m_mapOfParameters[parameterName])->set(parameterValue);
+    } else {
+      std::cerr << "Wrong parameter type !" << std::endl;
+    }
+  }
+
+  init();
+}
+
+void vpKeyPoint::setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
+    const double parameterValue) {
+  std::map<std::string, Parameters>::iterator it_findKeyPoint = m_mapOfKeyPointParameters.find(keypointName);
+
+  if(it_findKeyPoint == m_mapOfKeyPointParameters.end()) {
+    std::cerr << "Cannot find keypoint=" << keypointName << std::endl;
+  } else {
+    std::map<std::string, FieldBase*>::iterator it_findParameter =
+        it_findKeyPoint->second.m_mapOfParameters.find(parameterName);
+
+    if(it_findParameter == it_findKeyPoint->second.m_mapOfParameters.end()) {
+      std::cerr << "Cannot find parameter=" << parameterName << std::endl;
+    } else if(dynamic_cast<Field<double>*>(
+        m_mapOfKeyPointParameters[keypointName].m_mapOfParameters[parameterName]) != 0) {
+      dynamic_cast<Field<double>*>(
+          m_mapOfKeyPointParameters[keypointName].m_mapOfParameters[parameterName])->set(parameterValue);
+    } else {
+      std::cerr << "Wrong parameter type !" << std::endl;
+    }
+  }
+
+  init();
+}
+
+void vpKeyPoint::setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
+    const size_t parameterValue) {
+  std::map<std::string, Parameters>::iterator it_findKeyPoint = m_mapOfKeyPointParameters.find(keypointName);
+
+  if(it_findKeyPoint == m_mapOfKeyPointParameters.end()) {
+    std::cerr << "Cannot find keypoint=" << keypointName << std::endl;
+  } else {
+    std::map<std::string, FieldBase*>::iterator it_findParameter =
+        it_findKeyPoint->second.m_mapOfParameters.find(parameterName);
+
+    if(it_findParameter == it_findKeyPoint->second.m_mapOfParameters.end()) {
+      std::cerr << "Cannot find parameter=" << parameterName << std::endl;
+    } else if(dynamic_cast<Field<size_t>*>(
+        m_mapOfKeyPointParameters[keypointName].m_mapOfParameters[parameterName]) != 0) {
+      dynamic_cast<Field<size_t>*>(
+          m_mapOfKeyPointParameters[keypointName].m_mapOfParameters[parameterName])->set(parameterValue);
+    } else {
+      std::cerr << "Wrong parameter type !" << std::endl;
+    }
+  }
+
+  init();
+}
 #endif
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_vision.a(vpKeyPoint.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_vision.a(vpKeyPoint.cpp.o) has no symbols
 void dummy_vpKeyPoint() {};
 #endif

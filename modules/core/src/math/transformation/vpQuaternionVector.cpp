@@ -94,7 +94,7 @@ void vpQuaternionVector::set(const double x_, const double y_,
 
   \param q : quaternion to add.
 */
-vpQuaternionVector vpQuaternionVector::operator+( vpQuaternionVector &q)  
+vpQuaternionVector vpQuaternionVector::operator+(const vpQuaternionVector &q)
 {	
   return vpQuaternionVector(x()+q.x(), y()+q.y(), z()+q.z(), w()+q.w());
 }
@@ -105,7 +105,7 @@ vpQuaternionVector vpQuaternionVector::operator+( vpQuaternionVector &q)
 
   \param q : quaternion to substract.
 */
-vpQuaternionVector vpQuaternionVector::operator-( vpQuaternionVector &q)  
+vpQuaternionVector vpQuaternionVector::operator-(const vpQuaternionVector &q)
 {
   return vpQuaternionVector(x()-q.x(), y()-q.y(), z()-q.z(), w()-q.w());
 }
@@ -117,17 +117,27 @@ vpQuaternionVector vpQuaternionVector::operator-()
 }
 
 //! Multiplication by scalar. Returns a quaternion defined by (lx,ly,lz,lw).
-vpQuaternionVector vpQuaternionVector::operator*( double l) 
+vpQuaternionVector vpQuaternionVector::operator*(const double l) const
 {
   return vpQuaternionVector(l*x(),l*y(),l*z(),l*w());
 }
 
 //! Multiply two quaternions.
-vpQuaternionVector vpQuaternionVector::operator* ( vpQuaternionVector &rq) {	
+vpQuaternionVector vpQuaternionVector::operator* (const vpQuaternionVector &rq) const {
   return vpQuaternionVector(w() * rq.x() + x() * rq.w() + y() * rq.z() - z() * rq.y(),
 			    w() * rq.y() + y() * rq.w() + z() * rq.x() - x() * rq.z(),
 			    w() * rq.z() + z() * rq.w() + x() * rq.y() - y() * rq.x(),
 			    w() * rq.w() - x() * rq.x() - y() * rq.y() - z() * rq.z());
+}
+
+//! Division by scalar. Returns a quaternion defined by (x/l,y/l,z/l,w/l).
+vpQuaternionVector vpQuaternionVector::operator/(const double l) const
+{
+  if(vpMath::nul(l, std::numeric_limits<double>::epsilon())) {
+    throw vpException(vpException::fatalError, "Division by scalar l==0 !");
+  }
+
+  return vpQuaternionVector(x()/l,y()/l,z()/l,w()/l);
 }
 
 /*! 
@@ -146,4 +156,50 @@ void vpQuaternionVector::buildFrom(const vpRotationMatrix &R)
 
   double sinTheta_2 = sin(theta);
   set( u[0] * sinTheta_2, u[1] * sinTheta_2, u[2] * sinTheta_2, cos(theta) );
+}
+
+/*!
+  Quaternion conjugate.
+
+  \return The conjugate quaternion.
+*/
+vpQuaternionVector vpQuaternionVector::conjugate() const {
+  return vpQuaternionVector( -x(), -y(), -z(), w() );
+}
+
+/*!
+  Quaternion inverse.
+
+  \return The inverse quaternion.
+*/
+vpQuaternionVector vpQuaternionVector::inverse() const {
+  vpQuaternionVector q_inv;
+
+  double mag_square = w()*w() + x()*x() + y()*y() + z()*z();
+  if(!vpMath::nul(mag_square, std::numeric_limits<double>::epsilon())) {
+    q_inv = this->conjugate() / mag_square;
+  } else {
+    std::cerr << "The current quaternion is null ! The inverse cannot be computed !" << std::endl;
+  }
+
+  return q_inv;
+}
+
+/*!
+  Quaternion magnitude or norm.
+
+  \return The magnitude or norm of the quaternion.
+*/
+double vpQuaternionVector::magnitude() const {
+  return sqrt( w()*w() + x()*x() + y()*y() + z()*z() );
+}
+
+/*!
+  Normalize the quaternion.
+*/
+void vpQuaternionVector::normalize() {
+  double mag = magnitude();
+  if(!vpMath::nul(mag, std::numeric_limits<double>::epsilon())) {
+    set( x()/mag, y()/mag, z()/mag, w()/mag );
+  }
 }

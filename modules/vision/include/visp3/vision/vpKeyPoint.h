@@ -230,6 +230,14 @@ public:
                               the object is present if the score is above the threshold. */
   } vpDetectionMethodType;
 
+  /*! Predefined constant for training image format. */
+  typedef enum {
+    jpgImageFormat,  /*!< Save training images in JPG format. */
+    pngImageFormat,  /*!< Save training images in PNG format. */
+    ppmImageFormat,  /*!< Save training images in PPM format. */
+    pgmImageFormat   /*!< Save training images in PGM format. */
+  } vpImageFormatType;
+
 
   vpKeyPoint(const std::string &detectorName="ORB", const std::string &extractorName="ORB",
              const std::string &matcherName="BruteForce-Hamming", const vpFilterMatchingType &filterType=ratioDistanceThreshold);
@@ -242,9 +250,10 @@ public:
   unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect& rectangle);
 
   void buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoint,
-                      std::vector<cv::Point3f> &points3f, bool append=false);
+                      std::vector<cv::Point3f> &points3f, const bool append=false, const int class_id=-1);
   void buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoint,
-                      const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f, bool append=false);
+                      const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
+                      const bool append=false, const int class_id=-1);
 
   static void compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi,
       const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, cv::Point3f &point);
@@ -253,12 +262,12 @@ public:
       const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, vpPoint &point);
 
   static void compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      std::vector<cv::KeyPoint> &candidate, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
-      std::vector<cv::Point3f> &points, cv::Mat *descriptors=NULL);
+      std::vector<cv::KeyPoint> &candidate, const std::vector<vpPolygon> &polygons,
+      const std::vector<std::vector<vpPoint> > &roisPt, std::vector<cv::Point3f> &points, cv::Mat *descriptors=NULL);
 
   static void compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      std::vector<vpImagePoint> &candidate, std::vector<vpPolygon> &polygons, std::vector<std::vector<vpPoint> > &roisPt,
-      std::vector<vpPoint> &points, cv::Mat *descriptors=NULL);
+      std::vector<vpImagePoint> &candidate, const std::vector<vpPolygon> &polygons,
+      const std::vector<std::vector<vpPoint> > &roisPt, std::vector<vpPoint> &points, cv::Mat *descriptors=NULL);
 
   bool computePose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
                const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
@@ -337,6 +346,15 @@ public:
   */
   inline double getExtractionTime() const {
     return m_extractionTime;
+  }
+
+  /*!
+    Get the image format to use when saving training images.
+
+    \return The image format.
+  */
+  inline vpImageFormatType getImageFormat() const {
+    return m_imageFormat;
   }
 
   /*!
@@ -471,6 +489,8 @@ public:
                   double &error, double &elapsedTime, vpRect &boundingBox, vpImagePoint &centerOfGravity,
                   bool (*func)(vpHomogeneousMatrix *)=NULL, const vpRect& rectangle=vpRect());
 
+  void reset();
+
   void saveLearningData(const std::string &filename, const bool binaryMode=false, const bool saveTrainingImages=true);
 
   /*!
@@ -575,6 +595,30 @@ public:
     m_extractors.clear();
     initExtractors(m_extractorNames);
   }
+
+  /*!
+    Set the image format to use when saving training images.
+
+    \param imageFormat : The image format.
+  */
+  inline void setImageFormat(const vpImageFormatType &imageFormat) {
+    m_imageFormat = imageFormat;
+  }
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  void setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
+      const bool parameterValue);
+  void setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
+      const unsigned char parameterValue);
+  void setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
+      const int parameterValue);
+  void setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
+      const float parameterValue);
+  void setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
+      const double parameterValue);
+  void setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
+      const size_t parameterValue);
+#endif
 
   /*!
      Set and initialize a matcher denominated by his name \p matcherName.
@@ -788,6 +832,131 @@ public:
   }
 
 private:
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  class FieldBase {
+  public:
+    virtual ~FieldBase() { }
+  };
+
+  template <typename T>
+  class Field : public FieldBase {
+  public:
+    Field() : m_value() { }
+
+    explicit Field(const T &value) : m_value(value) { }
+
+    virtual ~Field() { }
+
+    inline T get() const {
+      return m_value;
+    }
+
+    inline void set(const T &value) {
+      m_value = value;
+    }
+
+  private:
+    T m_value;
+  };
+
+  class Parameters {
+  public:
+    std::map<std::string, FieldBase*> m_mapOfParameters;
+
+    Parameters() : m_mapOfParameters() { }
+
+    Parameters(const Parameters &param) {
+      for (std::map<std::string, FieldBase*>::const_iterator it = param.m_mapOfParameters.begin();
+          it != param.m_mapOfParameters.end(); ++it) {
+        FieldBase *pFieldBase = NULL;
+
+        try {
+          pFieldBase = createFieldBase(it->second);
+          m_mapOfParameters[it->first] = pFieldBase;
+        } catch (...) {
+          delete pFieldBase;
+          throw;
+        }
+      }
+    }
+
+    ~Parameters() {
+      for (std::map<std::string, FieldBase*>::iterator it =
+          m_mapOfParameters.begin(); it != m_mapOfParameters.end(); ++it) {
+        if (it->second != NULL) {
+          delete it->second;
+          it->second = NULL;
+        }
+      }
+
+      m_mapOfParameters.clear();
+    }
+
+    Parameters& operator=(const Parameters& that) {
+      if (this != &that) {
+        m_mapOfParameters.clear();
+
+        for (std::map<std::string, FieldBase*>::const_iterator it =
+            that.m_mapOfParameters.begin(); it != that.m_mapOfParameters.end();
+            ++it) {
+          FieldBase *pFieldBase = NULL;
+
+          try {
+            pFieldBase = createFieldBase(it->second);
+            m_mapOfParameters[it->first] = pFieldBase;
+          } catch (...) {
+            delete pFieldBase;
+            throw;
+          }
+        }
+      }
+      return *this;
+    }
+
+  private:
+    FieldBase* createFieldBase(FieldBase * const pCopy) {
+      FieldBase *pFieldBase = NULL;
+
+      if( dynamic_cast<Field<bool>*>(pCopy) != 0 ) {
+        //bool
+        pFieldBase = new Field<bool>(*dynamic_cast<Field<bool>*>(pCopy));
+      } else if( dynamic_cast<Field<unsigned char>*>(pCopy) != 0 ) {
+        //unsigned char
+        pFieldBase = new Field<unsigned char>(*dynamic_cast<Field<unsigned char>*>(pCopy));
+      } else if( dynamic_cast<Field<char>*>(pCopy) != 0 ) {
+        //char
+        pFieldBase = new Field<char>(*dynamic_cast<Field<char>*>(pCopy));
+      } else if( dynamic_cast<Field<unsigned short>*>(pCopy) != 0 ) {
+        //unsigned short
+        pFieldBase = new Field<unsigned short>(*dynamic_cast<Field<unsigned short>*>(pCopy));
+      } else if( dynamic_cast<Field<short>*>(pCopy) != 0 ) {
+        //short
+        pFieldBase = new Field<short>(*dynamic_cast<Field<short>*>(pCopy));
+      } else if( dynamic_cast<Field<unsigned int>*>(pCopy) != 0 ) {
+        //unsigned int
+        pFieldBase = new Field<unsigned int>(*dynamic_cast<Field<unsigned int>*>(pCopy));
+      } else if( dynamic_cast<Field<int>*>(pCopy) != 0 ) {
+        //int
+        pFieldBase = new Field<int>(*dynamic_cast<Field<int>*>(pCopy));
+      } else if( dynamic_cast<Field<float>*>(pCopy) != 0 ) {
+        //float
+        pFieldBase = new Field<float>(*dynamic_cast<Field<float>*>(pCopy));
+      } else if( dynamic_cast<Field<double>*>(pCopy) != 0 ) {
+        //double
+        pFieldBase = new Field<double>(*dynamic_cast<Field<double>*>(pCopy));
+      } else if( dynamic_cast<Field<size_t>*>(pCopy) != 0 ) {
+        //size_t
+        pFieldBase = new Field<size_t>(*dynamic_cast<Field<size_t>*>(pCopy));
+      }
+      else {
+        throw vpException(vpException::fatalError, "Unknown type !");
+      }
+
+      return pFieldBase;
+    }
+  };
+#endif
+
   //! If true, compute covariance matrix if the user select the pose estimation method using ViSP
   bool m_computeCovariance;
   //! Covariance matrix
@@ -818,12 +987,18 @@ private:
   std::vector<cv::DMatch> m_filteredMatches;
   //! Chosen method of filtering to eliminate false matching.
   vpFilterMatchingType m_filterType;
+  //! Image format to use when saving the training images
+  vpImageFormatType m_imageFormat;
   //! List of k-nearest neighbors for each detected keypoints (if the method chosen is based upon on knn).
   std::vector<std::vector<cv::DMatch> > m_knnMatches;
   //! Map of image id to know to which training image is related a training keypoints.
   std::map<int, int> m_mapOfImageId;
   //! Map of images to have access to the image buffer according to his image id.
   std::map<int, vpImage<unsigned char> > m_mapOfImages;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  //! Map of parameters for each keypoint class.
+  std::map<std::string, Parameters> m_mapOfKeyPointParameters;
+#endif
   //! Smart reference-counting pointer (similar to shared_ptr in Boost) of descriptor matcher (e.g. BruteForce or FlannBased).
   cv::Ptr<cv::DescriptorMatcher> m_matcher;
   //! Name of the matcher.
@@ -907,6 +1082,10 @@ private:
   void initExtractor(const std::string &extractorName);
   void initExtractors(const std::vector<std::string> &extractorNames);
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+  void initKeyPointParameters();
+#endif
+
   inline size_t myKeypointHash(const cv::KeyPoint &kp) {
     size_t _Val = 2166136261U, scale = 16777619U;
     Cv32suf u;
@@ -923,8 +1102,7 @@ private:
   }
 
 
-  //TODO: Try to implement a pyramidal feature detection
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   /*
    * Adapts a detector to detect points over multiple levels of a Gaussian
    * pyramid. Useful for detectors that are not inherently scaled.

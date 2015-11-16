@@ -28,8 +28,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Test keypoints detection with OpenCV, specially the Pyramid implementation
- * feature misssing in OpenCV 3.0.
+ * Test descriptor computation.
  *
  * Authors:
  * Souriya Trinh
@@ -69,7 +68,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Test keypoints detection.\n\
+Test keypoint descriptor extraction.\n\
 \n\
 SYNOPSIS\n\
   %s [-c] [-d] [-h]\n", name);
@@ -131,10 +130,57 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 }
 
 /*!
-  \example testKeyPoint-5.cpp
+  Get the string OpenCV type.
 
-  \brief   Test keypoints detection with OpenCV, specially the Pyramid implementation
-  feature missing in OpenCV 3.0.
+  \param type : OpenCV type.
+
+  \return The string OpenCV type.
+
+*/
+std::string getOpenCVType(const int type) {
+  std::string type_string = "";
+
+  switch(type) {
+  case CV_8U:
+    type_string = "CV_8U";
+    break;
+
+  case CV_8S:
+    type_string = "CV_8S";
+    break;
+
+  case CV_16U:
+    type_string = "CV_16U";
+    break;
+
+  case CV_16S:
+    type_string = "CV_16S";
+    break;
+
+  case CV_32S:
+    type_string = "CV_32S";
+    break;
+
+  case CV_32F:
+    type_string = "CV_32F";
+    break;
+
+  case CV_64F:
+    type_string = "CV_64F";
+    break;
+
+  default:
+    type_string = "Problem with type !";
+    break;
+  }
+
+  return type_string;
+}
+
+/*!
+  \example testKeyPoint-6.cpp
+
+  \brief   Test descriptor extraction.
 */
 int main(int argc, const char ** argv) {
   try {
@@ -180,53 +226,70 @@ int main(int argc, const char ** argv) {
 
     vpKeyPoint keyPoints;
 
-    //Will test the different types of keypoints detection to see if there is a problem
-    //between OpenCV versions, modules or constructors
-    std::vector<std::string> detectorNames;
-    detectorNames.push_back("PyramidFAST");
-    detectorNames.push_back("FAST");
-    detectorNames.push_back("PyramidMSER");
-    detectorNames.push_back("MSER");
-    detectorNames.push_back("PyramidGFTT");
-    detectorNames.push_back("GFTT");
-    detectorNames.push_back("PyramidSimpleBlob");
-    detectorNames.push_back("SimpleBlob");
-    //In contrib modules
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
-    detectorNames.push_back("PyramidSTAR");
-    detectorNames.push_back("STAR");
-#endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-    detectorNames.push_back("PyramidAGAST");
-    detectorNames.push_back("AGAST");
-#endif
-    detectorNames.push_back("PyramidORB");
-    detectorNames.push_back("ORB");
-    detectorNames.push_back("PyramidBRISK");
-    detectorNames.push_back("BRISK");
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-    detectorNames.push_back("PyramidKAZE");
-    detectorNames.push_back("KAZE");
-    detectorNames.push_back("PyramidAKAZE");
-    detectorNames.push_back("AKAZE");
-#endif
-
+    std::vector<std::string> descriptorNames;
 #if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
-    detectorNames.push_back("PyramidSIFT");
-    detectorNames.push_back("SIFT");
-    detectorNames.push_back("PyramidSURF");
-    detectorNames.push_back("SURF");
+    descriptorNames.push_back("SIFT");
+    descriptorNames.push_back("SURF");
+#endif
+    descriptorNames.push_back("ORB");
+    descriptorNames.push_back("BRISK");
+    descriptorNames.push_back("BRIEF");
+#if defined(VISP_HAVE_OPENCV_XFEATURES2D) || (VISP_HAVE_OPENCV_VERSION < 0x030000)
+    descriptorNames.push_back("FREAK");
+#endif
+#if defined(VISP_HAVE_OPENCV_XFEATURES2D)
+    descriptorNames.push_back("DAISY");
+    descriptorNames.push_back("LATCH");
+//    descriptorNames.push_back("LUCID"); //Problem
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    descriptorNames.push_back("KAZE");
+    descriptorNames.push_back("AKAZE");
 #endif
 
-    for(std::vector<std::string>::const_iterator it = detectorNames.begin(); it != detectorNames.end(); ++it) {
-      keyPoints.setDetector(*it);
+    std::string detectorName = "FAST";
+    keyPoints.setDetector(detectorName);
+    std::vector<cv::KeyPoint> kpts;
+    double elapsedTime;
+    keyPoints.detect(I, kpts, elapsedTime);
+    std::cout << "Nb keypoints detected: " << kpts.size() << " for " << detectorName << " method." << std::endl;
+    if(kpts.empty()) {
+      std::cerr << "No keypoints detected with " << detectorName << " and image:" << filename << "." << std::endl;
+      return -1;
+    }
 
-      std::vector<cv::KeyPoint> kpts;
-      double elapsedTime;
-      keyPoints.detect(I, kpts, elapsedTime);
-      std::cout << "Nb keypoints detected: " << kpts.size() << " for " << *it << " method." << std::endl;
-      if(kpts.empty()) {
-        std::cerr << "No keypoints detected with " << *it << " and image: " << filename << "." << std::endl;
+    for(std::vector<std::string>::const_iterator it = descriptorNames.begin(); it != descriptorNames.end(); ++it) {
+      if(*it == "KAZE") {
+        detectorName = "KAZE";
+        keyPoints.setDetector(detectorName);
+        keyPoints.detect(I, kpts, elapsedTime);
+        std::cout << "Nb keypoints detected: " << kpts.size() << " for " << detectorName << " method." << std::endl;
+        if(kpts.empty()) {
+          std::cerr << "No keypoints detected with " << detectorName << " and image:" << filename << "." << std::endl;
+          return -1;
+        }
+      } else if(*it == "AKAZE") {
+        detectorName = "AKAZE";
+        keyPoints.setDetector(detectorName);
+        keyPoints.detect(I, kpts, elapsedTime);
+        std::cout << "Nb keypoints detected: " << kpts.size() << " for " << detectorName << " method." << std::endl;
+        if(kpts.empty()) {
+          std::cerr << "No keypoints detected with " << detectorName << " and image:" << filename << "." << std::endl;
+          return -1;
+        }
+      }
+
+      keyPoints.setExtractor(*it);
+
+      double t = vpTime::measureTimeMs();
+      cv::Mat descriptor;
+      keyPoints.extract(I, kpts, descriptor, elapsedTime);
+      t = vpTime::measureTimeMs() - t;
+
+      std::cout << "Descriptor: " << descriptor.rows << "x" << descriptor.cols << " (rows x cols) ; type=" <<
+          getOpenCVType(descriptor.type()) << " for " << *it << " method in " << t << " ms." << std::endl;
+      if(descriptor.empty()) {
+        std::cerr << "No descriptor extracted with " << *it << " and image:" << filename << "." << std::endl;
         return -1;
       }
 
@@ -253,7 +316,7 @@ int main(int argc, const char ** argv) {
     return -1;
   }
 
-  std::cout << "testKeyPoint-5 is ok !" << std::endl;
+  std::cout << "testKeyPoint-6 is ok !" << std::endl;
   return 0;
 }
 #else

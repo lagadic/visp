@@ -209,7 +209,7 @@ vpKalmanFilter::prediction()
 
 */
 void
-vpKalmanFilter::filtering(vpColVector &z)
+vpKalmanFilter::filtering(const vpColVector &z)
 {
   if (verbose_mode)
     std::cout << "z " << std::endl << z << std::endl ;
