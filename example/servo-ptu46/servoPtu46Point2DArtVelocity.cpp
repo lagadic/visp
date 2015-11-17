@@ -100,6 +100,7 @@ pthread_mutex_t mutexEndLoop = PTHREAD_MUTEX_INITIALIZER;
 
 void signalCtrC( int signumber )
 {
+  (void)(signumber);
 #ifdef VISP_HAVE_PTHREAD
   pthread_mutex_unlock( &mutexEndLoop );
 #endif
@@ -162,17 +163,15 @@ main()
       return(-1) ;
     }
 
-
     vpServo task ;
 
     vpDot2 dot ;
 
     try{
       vpERROR_TRACE("start dot.initTracking(I) ") ;
-      int x,y;
-      vpDisplay::getClick( I,y,x );
-      dot.set_u( x ) ;
-      dot.set_v( y ) ;
+      vpImagePoint germ;
+      vpDisplay::getClick( I, germ );
+      dot.setCog(germ);
       vpDEBUG_TRACE(25,"Click!");
       //dot.initTracking(I) ;
       dot.track(I);
