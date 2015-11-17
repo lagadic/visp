@@ -2706,6 +2706,9 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
       //Add the image previously loaded only if VISP_HAVE_MODULE_IO
       m_mapOfImages[id + startImageId] = I;
 #endif
+
+      //Delete path
+      delete[] path;
     }
 
     //Read if 3D point information are saved or not
@@ -2877,7 +2880,12 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 
           if(name == "trainImg") {
             //Read image_id
-            int id = std::atoi((char *) xmlGetProp(image_info_node, BAD_CAST "image_id"));
+            xmlChar *image_id_property = xmlGetProp(image_info_node, BAD_CAST "image_id");
+            int id = 0;
+            if(image_id_property) {
+              id = std::atoi((char *) image_id_property);
+            }
+            xmlFree(image_id_property);
 
             vpImage<unsigned char> I;
 #ifdef VISP_HAVE_MODULE_IO
