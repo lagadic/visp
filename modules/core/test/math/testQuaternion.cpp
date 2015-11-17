@@ -130,6 +130,21 @@ int main()
     }
 
 
+    //Test copy constructor
+    vpQuaternionVector q_copy1 = vpQuaternionVector(0, 0, 1, 1);
+    std::cout << "q_copy1=" << q_copy1 << std::endl;
+    vpQuaternionVector q_copy2 = q_copy1;
+    q_copy1.set(1, 0, 1, 10);
+    std::cout << "q_copy1 after set=" << q_copy1 << std::endl;
+    std::cout << "q_copy2=" << q_copy2 << std::endl;
+
+
+    //Test assignment operator
+    vpQuaternionVector q_copy3(10, 10, 10, 10);
+    q_copy3 = q_copy1;
+    std::cout << "q_copy3=" << q_copy3 << std::endl;
+
+
     std::cout << "vpQuaternion operations are ok !" << std::endl;
     return 0;
   }
