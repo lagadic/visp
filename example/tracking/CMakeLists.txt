@@ -50,7 +50,7 @@ set(example_cpp
   trackMeCircle.cpp
   trackMeEllipse.cpp
   trackMeLine.cpp
-  trackMeNurbs.cpp
+#  trackMeNurbs.cpp
   trackDot.cpp
   trackDot2.cpp
   trackKltOpencv.cpp
@@ -79,7 +79,7 @@ add_test(trackDot2WithAutoDetection trackDot2WithAutoDetection -c ${OPTION_TO_DE
 add_test(trackMeCircle    trackMeCircle -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(trackMeEllipse   trackMeEllipse -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(trackMeLine      trackMeLine -c ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(trackMeNurbs     trackMeNurbs -c ${OPTION_TO_DESACTIVE_DISPLAY})
+#add_test(trackMeNurbs     trackMeNurbs -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(trackDot         trackDot -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(trackDot2        trackDot2 -c ${OPTION_TO_DESACTIVE_DISPLAY})
 
