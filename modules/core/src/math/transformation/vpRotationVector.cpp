@@ -111,6 +111,10 @@ VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpRotationVector &m)
 
 
 void vpRotationVector::init(const unsigned int vector_size){
+  if(r != NULL) {
+    delete[] r;
+  }
+
   this->_size = vector_size;
 	r = new double[this->_size];
 	std::fill(r,r+this->_size,0.);
@@ -118,4 +122,5 @@ void vpRotationVector::init(const unsigned int vector_size){
 
 vpRotationVector::~vpRotationVector(){
 	delete[] r;
+	r = NULL;
 }
