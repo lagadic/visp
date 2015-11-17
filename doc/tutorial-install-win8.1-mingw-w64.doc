@@ -196,6 +196,47 @@ From now, you can try to run ViSP examples and tests. For example, if you want t
 \image html img-win8.1-mingw-cmd-displayGDI.jpg 
 
 \section issue_win81_mingw Known issues
+
+\subsection issue_win81_mingw_opencv_endianness OpenCV endianness failure during CMake configuration
+
+\note This issue occurs with OpenCV 2.4.10, 2.3.0-beta and 2.3.0 releases.
+
+If you encounter the following issue during CMake configuration
+\image html img-opencv-issue-test-big-endian.jpg
+
+Edit C:\\OpenCV\\opencv\\sources\\CMakeLists.txt file, and line 464 replace:
+\code
+test_big_endian(WORDS_BIGENDIAN)
+\endcode
+by:
+\code
+#test_big_endian(WORDS_BIGENDIAN)
+set(WORDS_BIGENDIAN 0)
+\endcode
+
+\subsection issue_win81_mingw_opencv_tiff OpenCV build error: cannot build with tiff support
+
+\note This issue occurs with OpenCV 2.4.10, 2.3.0-beta and 2.3.0 releases.
+
+If you encounter a build issue during libtiff build as given in the next image:
+\image html img-opencv-issue-tiff.jpg
+
+- Open CMake GUI on OpenCV, turn BUILD_TIFF=OFF and also WITH_TIFF=OFF
+- Click on "Configure" button, and then on "Generate" one.
+- Build again OpenCV using
+\code
+C:\OpenCV\opencv\sources\build-mingw> mingw32-make
+\endcode
+
+\subsection issue_win81_mingw_opencv_ipp OpenCV link error: cannot find -lRunTmChk
+
+\note This issue occurs with OpenCV 2.3.0-beta and 2.3.0 releases.
+
+The following image shows the link issue that may appear when building OpenCV with mingw:
+\image html img-opencv-issue-ipp.jpg
+
+A work arround is to configure OpenCV without ipp support turning WITH_IPP=OFF and then trying to build again.
+
 \subsection issue_win81_mingw_opencv_dtor OpenCV build error: struct has virtual functions and accessible non-virtual destructor
 
 This error that occurs with OpenCV 3.0.0 during \c cap_dshow.cpp build is known and reported as an issue in https://github.com/Itseez/opencv/pull/5282/commits.
@@ -207,36 +248,6 @@ This error that occurs with OpenCV 3.0.0 during \c cap_dshow.cpp build is known 
 // MinGW does not understand COM interfaces
 #pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
 #endif
-\endcode
-
-\subsection issue_win81_mingw_opencv_endianness OpenCV endianness failure during CMake configuration
-
-\note This issue occurs with OpenCV 2.4.10 and 2.3.0-beta.
-
-If you encounter the following issue during CMake configuration
-\image html img-opencv-issue-test-big-endian.jpg
-
-Edit C:\\OpenCV\\opencv\\sources\\CMakeLists.txt file, and line 464 replace:
-\code
-test_big_endian(WORDS_BIGENDIAN)
-\endcode
-by:
-\code
-set(WORDS_BIGENDIAN 0)
-\endcode
-
-\subsection issue_win81_mingw_opencv_tiff OpenCV build error: cannot build with tiff support
-
-\note This issue occurs with OpenCV 2.4.10 and 2.3.0-beta.
-
-If you encounter a build issue during libtiff build as given in the next image:
-\image html img-opencv-issue-tiff.jpg
-
-- Open CMake GUI on OpenCV, turn BUILD_TIFF=OFF and also WITH_TIFF=OFF
-- Click on "Configure" button, and then on "Generate" one.
-- Build again OpenCV using
-\code
-C:\OpenCV\opencv\sources\build-mingw> mingw32-make
 \endcode
 
 \subsection issue_win81_mingw_opencv_not_detected OpenCV not detected with Mingw build
@@ -256,15 +267,6 @@ by:
 \code
 C:\OpenCV\opencv\sources\build-mingw> mingw32-make install
 \endcode
-
-\subsection issue_win81_mingw_opencv_ipp OpenCV link error: cannot find -lRunTmChk
-
-\note This issue occurs with OpenCV 2.3.0-beta and with OpenCV master branch.
-
-The following image shows the link issue that may appear when building OpenCV with mingw:
-\image html img-opencv-issue-ipp.jpg
-
-A work arround is to configure OpenCV without ipp support turning WITH_IPP=OFF and then trying to build again.
 
 \section install_win81_mingw_next Next tutorial
 
