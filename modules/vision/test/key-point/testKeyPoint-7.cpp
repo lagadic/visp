@@ -343,7 +343,7 @@ int main(int argc, const char ** argv) {
 
     //Test with binary descriptor
     {
-      std::string keypointName = "BRISK";
+      std::string keypointName = "ORB";
       keyPoints.setDetector(keypointName);
       keyPoints.setExtractor(keypointName);
 
