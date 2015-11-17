@@ -232,7 +232,9 @@ int main(int argc, const char ** argv) {
     descriptorNames.push_back("SURF");
 #endif
     descriptorNames.push_back("ORB");
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
     descriptorNames.push_back("BRISK");
+#endif
     descriptorNames.push_back("BRIEF");
 #if defined(VISP_HAVE_OPENCV_XFEATURES2D) || (VISP_HAVE_OPENCV_VERSION < 0x030000)
     descriptorNames.push_back("FREAK");
