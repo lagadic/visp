@@ -632,7 +632,7 @@ int main(int argc, const char ** argv) {
       //Test vpKeyPoint::reset()
       vpKeyPoint keypoint_reset;
 
-      keypointName = "BRISK";
+      keypointName = "ORB";
       keypoint_reset.setDetector(keypointName);
       keypoint_reset.setExtractor(keypointName);
 

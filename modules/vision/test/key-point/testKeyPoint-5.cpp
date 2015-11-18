@@ -202,8 +202,8 @@ int main(int argc, const char ** argv) {
 #endif
     detectorNames.push_back("PyramidORB");
     detectorNames.push_back("ORB");
-    detectorNames.push_back("PyramidBRISK");
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
+    detectorNames.push_back("PyramidBRISK");
     detectorNames.push_back("BRISK");
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
