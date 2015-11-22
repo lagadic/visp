@@ -4350,9 +4350,9 @@ struct KeyPoint_LessThan {
   KeyPoint_LessThan(const std::vector<cv::KeyPoint>& _kp) :
       kp(&_kp) {
   }
-  bool operator()(int i, int j) const {
-    const cv::KeyPoint& kp1 = (*kp)[(size_t) i];
-    const cv::KeyPoint& kp2 = (*kp)[(size_t) j];
+  bool operator()(/*int i, int j*/ size_t i, size_t j) const {
+    const cv::KeyPoint& kp1 = (*kp)[/*(size_t)*/ i];
+    const cv::KeyPoint& kp2 = (*kp)[/*(size_t)*/ j];
     if (!vpMath::equal(kp1.pt.x, kp2.pt.x, std::numeric_limits<float>::epsilon())) { //if (kp1.pt.x != kp2.pt.x) {
       return kp1.pt.x < kp2.pt.x;
     }
