@@ -289,7 +289,7 @@ void vpTemplateTrackerWarpHomographySL3::getdW0(const int &i,const int &j,const 
   vpMatrix dhdx(1,3);
   dhdx=0;
   dhdx[0][0]=dx;dhdx[0][1]=dy;dhdx[0][2]=-j*dx-i*dy;
-  G.setIdentity();
+  G.eye();
 
   dGx=0;
   for(unsigned int par=0;par<3;par++)
@@ -321,7 +321,7 @@ void vpTemplateTrackerWarpHomographySL3::getdWdp0(const int &i,const int &j,doub
   vpMatrix dhdx(2,3);
   dhdx=0;
   dhdx[0][0]=1.;dhdx[1][1]=1.;dhdx[0][2]=-j;dhdx[1][2]=-i;
-  G.setIdentity();
+  G.eye();
 
   dGx=0;
   for(unsigned int par=0;par<3;par++)
@@ -350,7 +350,7 @@ void vpTemplateTrackerWarpHomographySL3::getdWdp0(const double &i,const double &
   vpMatrix dhdx(2,3);
   dhdx=0;
   dhdx[0][0]=1.;dhdx[1][1]=1.;dhdx[0][2]=-j;dhdx[1][2]=-i;
-  G.setIdentity();
+  G.eye();
 
   dGx=0;
   for(unsigned int par=0;par<3;par++)

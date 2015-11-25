@@ -93,7 +93,6 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsign
       rowPtrs[r]= m.data+col_offset+(r+row_offset)*pColNum;
     
     dsize = pRowNum*pColNum ;
-    trsize =0 ;
   }else{
     vpERROR_TRACE("Submatrix cannot be contain in parent matrix") ;
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,"Submatrix cannot be contain in parent matrix")) ;

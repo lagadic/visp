@@ -37,7 +37,6 @@
  *
  *****************************************************************************/
 #include <visp3/tt_mi/vpTemplateTrackerMIInverseCompositional.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpTrackingException.h>
 
 #ifdef VISP_HAVE_OPENMP
@@ -632,7 +631,6 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
         MI_postEstimation = -1;
         NMI_postEstimation = -1;
         deletePosEvalRMS();
-        //            throw(vpMatrixException(vpMatrixException::matrixError, "Covariance not inversible")) ;
       }
     }
   }

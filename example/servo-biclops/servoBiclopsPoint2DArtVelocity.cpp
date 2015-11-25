@@ -93,8 +93,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
-
 
 #ifdef VISP_HAVE_PTHREAD
 pthread_mutex_t mutexEndLoop = PTHREAD_MUTEX_INITIALIZER;

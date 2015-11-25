@@ -222,8 +222,8 @@ int main(int argc, char **argv)
     robot.get_eJe(eJe);
 
     vpMatrix L; // Interaction matrix
-    L.stackMatrices(L_x); // constant since build with the desired feature
-    L.stackMatrices(L_Z); // not constant since it corresponds to log(Z/Z*) that evolves at each iteration
+    L.stack(L_x); // constant since build with the desired feature
+    L.stack(L_Z); // not constant since it corresponds to log(Z/Z*) that evolves at each iteration
 
     vpColVector v; // vz, wx
 
@@ -255,8 +255,8 @@ int main(int argc, char **argv)
 
       // Update the global interaction matrix
       vpMatrix L;
-      L.stackMatrices(L_x); // constant since build with the desired feature
-      L.stackMatrices(L_Z); // not constant since it corresponds to log(Z/Z*) that evolves at each iteration
+      L.stack(L_x); // constant since build with the desired feature
+      L.stack(L_Z); // not constant since it corresponds to log(Z/Z*) that evolves at each iteration
 
       // Update the global error s-s*
       vpColVector error;

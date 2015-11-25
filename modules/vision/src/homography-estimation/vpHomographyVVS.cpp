@@ -206,8 +206,8 @@ vpHomography::computeRotation(unsigned int nbpoint,
           if (k == 0) { L = H2 ; e = e2 ; }
           else
           {
-            L = vpMatrix::stackMatrices(L,H2) ;
-            e = vpMatrix::stackMatrices(e,e2) ;
+            L = vpMatrix::stack(L,H2) ;
+            e = vpColVector::stack(e,e2) ;
           }
         }
         else
@@ -216,8 +216,8 @@ vpHomography::computeRotation(unsigned int nbpoint,
             if (k == 0) { L = H1 ; e= e1 ; }
             else
             {
-              L =  vpMatrix::stackMatrices(L,H1) ;
-              e = vpMatrix::stackMatrices(e,e1) ;
+              L =  vpMatrix::stack(L,H1) ;
+              e = vpColVector::stack(e,e1) ;
             }
           }
           else
@@ -225,11 +225,11 @@ vpHomography::computeRotation(unsigned int nbpoint,
             if (k == 0) {L = H2 ; e = e2 ; }
             else
             {
-              L =  vpMatrix::stackMatrices(L,H2) ;
-              e =  vpMatrix::stackMatrices(e,e2) ;
+              L =  vpMatrix::stack(L,H2) ;
+              e =  vpColVector::stack(e,e2) ;
             }
-            L =  vpMatrix::stackMatrices(L,H1) ;
-            e =  vpMatrix::stackMatrices(e,e1) ;
+            L =  vpMatrix::stack(L,H1) ;
+            e =  vpColVector::stack(e,e1) ;
           }
 
         k++ ;
@@ -378,8 +378,8 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
 
       vpMatrix H(3,3) ;
 
-      Hp2 = ((vpMatrix)c1Rc2 + ((vpMatrix)c1Tc2*N2.t())/d2)*p2 ;  // p2 = Hp1
-      Hp1 = ((vpMatrix)c2Rc1 + ((vpMatrix)c2Tc1*N1.t())/d1)*p1 ;  // p1 = Hp2
+      Hp2 = ((vpMatrix)c1Rc2 + (c1Tc2*N2.t())/d2)*p2 ;  // p2 = Hp1
+      Hp1 = ((vpMatrix)c2Rc1 + (c2Tc1*N1.t())/d1)*p1 ;  // p1 = Hp2
 
       Hp2 /= Hp2[2] ;  // normalisation
       Hp1 /= Hp1[2] ;
@@ -435,8 +435,8 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
         if (k == 0) { L = H2 ; e = e2 ; }
         else
         {
-          L = vpMatrix::stackMatrices(L,H2) ;
-          e = vpMatrix::stackMatrices(e,e2) ;
+          L = vpMatrix::stack(L,H2) ;
+          e = vpColVector::stack(e,e2) ;
         }
       }
       else
@@ -445,8 +445,8 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
           if (k == 0) { L = H1 ; e= e1 ; }
           else
           {
-            L = vpMatrix::stackMatrices(L,H1) ;
-            e = vpMatrix::stackMatrices(e,e1) ;
+            L = vpMatrix::stack(L,H1) ;
+            e = vpColVector::stack(e,e1) ;
           }
         }
         else
@@ -454,11 +454,11 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
           if (k == 0) {L = H2 ; e = e2 ; }
           else
           {
-            L = vpMatrix::stackMatrices(L,H2) ;
-            e = vpMatrix::stackMatrices(e,e2) ;
+            L = vpMatrix::stack(L,H2) ;
+            e = vpColVector::stack(e,e2) ;
           }
-          L = vpMatrix::stackMatrices(L,H1) ;
-          e = vpMatrix::stackMatrices(e,e1) ;
+          L = vpMatrix::stack(L,H1) ;
+          e = vpColVector::stack(e,e1) ;
         }
 
 
@@ -595,8 +595,8 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
 
       vpMatrix H(3,3) ;
 
-      Hp2 = ((vpMatrix)c1Rc2 + ((vpMatrix)c1Tc2*N2.t())/d2)*p2 ;  // p2 = Hp1
-      Hp1 = ((vpMatrix)c2Rc1 + ((vpMatrix)c2Tc1*N1.t())/d1)*p1 ;  // p1 = Hp2
+      Hp2 = ((vpMatrix)c1Rc2 + (c1Tc2*N2.t())/d2)*p2 ;  // p2 = Hp1
+      Hp1 = ((vpMatrix)c2Rc1 + (c2Tc1*N1.t())/d1)*p1 ;  // p1 = Hp2
 
       Hp2 /= Hp2[2] ;  // normalisation
       Hp1 /= Hp1[2] ;
@@ -653,8 +653,8 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
         if (k == 0) { L = H2 ; e = e2 ; }
         else
         {
-          L = vpMatrix::stackMatrices(L,H2) ;
-          e = vpMatrix::stackMatrices(e,e2) ;
+          L = vpMatrix::stack(L,H2) ;
+          e = vpColVector::stack(e,e2) ;
         }
       }
       else
@@ -663,8 +663,8 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
           if (k == 0) { L = H1 ; e= e1 ; }
           else
           {
-            L = vpMatrix::stackMatrices(L,H1) ;
-            e = vpMatrix::stackMatrices(e,e1) ;
+            L = vpMatrix::stack(L,H1) ;
+            e = vpColVector::stack(e,e1) ;
           }
         }
         else
@@ -672,11 +672,11 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
           if (k == 0) {L = H2 ; e = e2 ; }
           else
           {
-            L = vpMatrix::stackMatrices(L,H2) ;
-            e = vpMatrix::stackMatrices(e,e2) ;
+            L = vpMatrix::stack(L,H2) ;
+            e = vpColVector::stack(e,e2) ;
           }
-          L = vpMatrix::stackMatrices(L,H1) ;
-          e = vpMatrix::stackMatrices(e,e1) ;
+          L = vpMatrix::stack(L,H1) ;
+          e = vpColVector::stack(e,e1) ;
         }
 
 

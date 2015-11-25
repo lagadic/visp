@@ -47,10 +47,13 @@
 
 class vpHomogeneousMatrix;
 class vpRotationMatrix;
+class vpPoseVector;
 class vpRzyxVector;
 class vpRxyzVector;
 class vpRzyzVector;
+class vpColVector;
 
+#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -188,10 +191,3 @@ public:
 } ;
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
-

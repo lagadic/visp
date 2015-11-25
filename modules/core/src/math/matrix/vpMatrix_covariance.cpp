@@ -172,7 +172,7 @@ vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpCol
 //    vpMatrix Lthetau(3,3);
     vpMatrix LthetauInvAnalytic(3,3);
     vpMatrix I3(3,3);
-    I3.setIdentity();
+    I3.eye();
 //    Lthetau = -I3;
     LthetauInvAnalytic = -I3;
 

@@ -1192,8 +1192,8 @@ void vpCalibration::calibrationTsai(std::vector<vpHomogeneousMatrix>& cMo,
           }
           else
           {
-            A = vpMatrix::stackMatrices(A,As) ;
-            B = vpMatrix::stackMatrices(B,b) ;
+            A = vpMatrix::stack(A,As) ;
+            B = vpColVector::stack(B,b) ;
           }
           k++ ;
         }
@@ -1246,7 +1246,7 @@ void vpCalibration::calibrationTsai(std::vector<vpHomogeneousMatrix>& cMo,
     // Building of the system for the translation estimation
     // for all couples ij
     vpRotationMatrix I3 ;
-    I3.setIdentity() ;
+    I3.eye() ;
     int k = 0 ;
     for (unsigned int i=0 ; i < nbPose ; i++)
     {
@@ -1277,11 +1277,10 @@ void vpCalibration::calibrationTsai(std::vector<vpHomogeneousMatrix>& cMo,
 
           rTeij = rRej.t()*rTeij ;
 
-          vpMatrix a ;
-          a = (vpMatrix)rReij - (vpMatrix)I3 ;
+          vpMatrix a = vpMatrix(rReij) - vpMatrix(I3);
 
           vpTranslationVector b ;
-          b =  eRc*cjTo - rReij*eRc*ciTo + rTeij ;
+          b = eRc*cjTo - rReij*eRc*ciTo + rTeij ;
 
           if (k==0)
           {
@@ -1290,8 +1289,8 @@ void vpCalibration::calibrationTsai(std::vector<vpHomogeneousMatrix>& cMo,
           }
           else
           {
-            A = vpMatrix::stackMatrices(A,a) ;
-            B = vpMatrix::stackMatrices(B,b) ;
+            A = vpMatrix::stack(A,a) ;
+            B = vpColVector::stack(B,b) ;
           }
           k++ ;
         }

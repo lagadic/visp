@@ -154,7 +154,7 @@ void
 vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
 {
   c0Mo = cMo;
-  ctTc0.setIdentity();
+  ctTc0.eye();
 
   vpImageConvert::convert(I, cur);
 
@@ -236,7 +236,7 @@ vpMbKltTracker::reinit(const vpImage<unsigned char>& I)
 void            
 vpMbKltTracker::resetTracker()
 {
-  cMo.setIdentity();
+  cMo.eye();
   
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
   if(cur != NULL){
@@ -564,7 +564,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
 
     cMo = cdMo;
     c0Mo = cMo;
-    ctTc0.setIdentity();
+    ctTc0.eye();
   }
 }
 
@@ -737,7 +737,8 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
   vpColVector w_true;
   vpRobust robust(2*nbInfos);
 
-  vpMatrix LTL, LTR;
+  vpMatrix LTL;
+  vpColVector LTR;
   vpHomogeneousMatrix cMoPrev;
   vpHomogeneousMatrix ctTc0_Prev;
   vpColVector m_error_prev(2*nbInfos);
@@ -850,7 +851,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
           case vpMbTracker::LEVENBERG_MARQUARDT_OPT:
           {
             vpMatrix LMA(LTL.getRows(), LTL.getCols());
-            LMA.setIdentity();
+            LMA.eye();
             vpMatrix LTLmuI = LTL + (LMA*mu);
             v = -lambda*LTLmuI.pseudoInverse(LTLmuI.getRows()*std::numeric_limits<double>::epsilon())*LTR;
 
@@ -870,14 +871,14 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
           cVo.buildFrom(cMo);
           vpMatrix LVJ = (L*cVo*oJo);
           vpMatrix LVJTLVJ = (LVJ).AtA();
-          vpMatrix LVJTR;
+          vpColVector LVJTR;
           computeJTR(LVJ, R, LVJTR);
 
           switch(m_optimizationMethod){
           case vpMbTracker::LEVENBERG_MARQUARDT_OPT:
           {
             vpMatrix LMA(LVJTLVJ.getRows(), LVJTLVJ.getCols());
-            LMA.setIdentity();
+            LMA.eye();
             vpMatrix LTLmuI = LVJTLVJ + (LMA*mu);
             v = -lambda*LTLmuI.pseudoInverse(LTLmuI.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
             v = cVo * v;
@@ -1356,7 +1357,7 @@ void
 vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_name,
                             const vpHomogeneousMatrix& cMo_, const bool verbose)
 {
-  this->cMo.setIdentity();
+  this->cMo.eye();
 
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
   if(cur != NULL){

@@ -44,16 +44,15 @@
   (cannot be used as is !)
 */
 
-
-
+#include <iostream>
+#include <math.h>
+#include <stdio.h>
 
 #include <visp3/core/vpMath.h>
-#include <visp3/core/vpRowVector.h>
-#include <stdio.h>
-#include <iostream>
+//#include <visp3/core/vpRowVector.h>
 
-
-#include <math.h>
+class vpRowVector;
+class vpColVector; //
 
 /*!
   \class vpRotationVector
@@ -89,11 +88,11 @@ int main()
 
 class VISP_EXPORT vpRotationVector
 {  
-  friend class vpColVector;
 protected:
   double *r ;
   unsigned int _size;
   void init(const unsigned int size);
+
 public:
   //! Constructor that constructs a vector of size 3 and initialize all values to zero.
   vpRotationVector()
@@ -119,6 +118,9 @@ public:
 
   virtual ~vpRotationVector();
 
+  /** @name Common inherited functionalities  */
+  //@{
+
   /*!
     Operator that allows to set the value of an element of the rotation 
     vector: r[i] = value
@@ -142,6 +144,7 @@ public:
     }
     return *this;
   }
+  vpRotationVector operator*(double x) const;
 
   /*! Returns the size of the rotation vector
    */
@@ -151,8 +154,10 @@ public:
   vpRowVector t() const;
 
   friend VISP_EXPORT std::ostream &operator << (std::ostream &s, const vpRotationVector &m);
-
+  //@}
 } ;
+
+VISP_EXPORT vpRotationVector operator*(const double &x, const vpRotationVector &A) ;
 
 #endif
 

@@ -136,7 +136,7 @@ vpMbTracker::vpMbTracker()
   useLodGeneral(false), applyLodSettingInConfig(false), minLineLengthThresholdGeneral(50.0),
   minPolygonAreaThresholdGeneral(2500.0), mapOfParameterNames()
 {
-    oJo.setIdentity();
+    oJo.eye();
     //Map used to parse additional information in CAO model files,
     //like name of faces or LOD setting
     mapOfParameterNames["name"] = "string";
@@ -205,7 +205,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
   }
   if(finitpos.fail() ){
   	std::cout << "cannot read " << s << std::endl << "cMo set to identity" << std::endl;
-  	last_cMo.setIdentity();
+    last_cMo.eye();
   }
   else{
     for (unsigned int i = 0; i < 6; i += 1){
@@ -2364,18 +2364,18 @@ vpMbTracker::setClipping(const unsigned int &flags)
   
   \param interaction : The interaction matrix (size Nx6).
   \param error : The residu vector (size Nx1).
-  \param JTR : The resulting JTR matrix (size 6x1).
+  \param JTR : The resulting JTR column vector (size 6x1).
   
 */
 void 
-vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, vpMatrix& JTR)
+vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, vpColVector& JTR)
 {
   if(interaction.getRows() != error.getRows() || interaction.getCols() != 6 ){
     throw vpMatrixException(vpMatrixException::incorrectMatrixSizeError, 
               "Incorrect matrices size in computeJTR.");
   }
 
-  JTR.resize(6, 1);
+  JTR.resize(6);
   const unsigned int N = interaction.getRows();
 
   for (unsigned int i = 0; i < 6; i += 1){
@@ -2383,7 +2383,7 @@ vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, v
     for (unsigned int j = 0; j < N; j += 1){
       ssum += interaction[j][i] * error[j];
     }
-    JTR[i][0] = ssum;
+    JTR[i] = ssum;
   }
 }
 

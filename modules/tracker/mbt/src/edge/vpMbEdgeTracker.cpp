@@ -599,7 +599,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         cVo.buildFrom(cMo);
         vpMatrix LVJ = (L*cVo*oJo);
         vpMatrix LVJTLVJ = (LVJ).AtA();
-        vpMatrix LVJTR;
+        vpColVector LVJTR;
         computeJTR(LVJ, weighted_error, LVJTR);
         v = -0.7*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
         v = cVo * v;
@@ -801,7 +801,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         case vpMbTracker::LEVENBERG_MARQUARDT_OPT:
         {
           vpMatrix LMA(LTL.getRows(), LTL.getCols());
-          LMA.setIdentity();
+          LMA.eye();
           vpMatrix LTLmuI = LTL + (LMA*mu);
           v = -lambda*LTLmuI.pseudoInverse(LTLmuI.getRows()*std::numeric_limits<double>::epsilon())*LTR;
 
@@ -821,14 +821,14 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
         cVo.buildFrom(cMo);
         vpMatrix LVJ = (L*cVo*oJo);
         vpMatrix LVJTLVJ = (LVJ).AtA();
-        vpMatrix LVJTR;
+        vpColVector LVJTR;
         computeJTR(LVJ, weighted_error, LVJTR);
 
         switch(m_optimizationMethod){
         case vpMbTracker::LEVENBERG_MARQUARDT_OPT:
         {
           vpMatrix LMA(LVJTLVJ.getRows(), LVJTLVJ.getCols());
-          LMA.setIdentity();
+          LMA.eye();
           vpMatrix LTLmuI = LVJTLVJ + (LMA*mu);
           v = -lambda*LTLmuI.pseudoInverse(LTLmuI.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
           v = cVo * v;
@@ -2273,7 +2273,7 @@ vpMbEdgeTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double
 void
 vpMbEdgeTracker::resetTracker()
 {
-  this->cMo.setIdentity();
+  this->cMo.eye();
   vpMbtDistanceLine *l;
   vpMbtDistanceCylinder *cy;
   vpMbtDistanceCircle *ci;
@@ -2357,7 +2357,7 @@ void
 vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_name,
                              const vpHomogeneousMatrix& cMo_, const bool verbose)
 {
-  this->cMo.setIdentity();
+  this->cMo.eye();
   vpMbtDistanceLine *l;
   vpMbtDistanceCylinder *cy;
   vpMbtDistanceCircle *ci;

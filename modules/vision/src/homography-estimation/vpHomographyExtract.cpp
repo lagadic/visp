@@ -1051,7 +1051,7 @@ void vpHomography::computeDisplacement(const vpHomography &H,
 
       if (norm1ok)
       {
-        Rprim1.setIdentity();
+        Rprim1.eye();
 
         Tprim1 = Nprim1[0];
         Tprim1*= (sv[2] - sv[0]);
@@ -1059,7 +1059,7 @@ void vpHomography::computeDisplacement(const vpHomography &H,
 
       if (norm2ok)
       {
-        Rprim2.setIdentity();
+        Rprim2.eye();
 
         Tprim2 = Nprim2[1];
         Tprim2*= (sv[2] - sv[0]);
@@ -1069,7 +1069,7 @@ void vpHomography::computeDisplacement(const vpHomography &H,
     {
       if (norm1ok)
       {
-        Rprim1.setIdentity();
+        Rprim1.eye();
 
         Tprim1 = Nprim1[0];
         Tprim1*= (sv[0] - sv[1]);
@@ -1077,7 +1077,7 @@ void vpHomography::computeDisplacement(const vpHomography &H,
 
       if (norm2ok)
       {
-        Rprim2.setIdentity();
+        Rprim2.eye();
 
         Tprim2 = Nprim2[1];
         Tprim2*= (sv[0] - sv[1]);
@@ -1086,7 +1086,7 @@ void vpHomography::computeDisplacement(const vpHomography &H,
     if (cas == cas4)
     {
       // on ne connait pas la normale dans ce cas la
-      Rprim1.setIdentity();
+      Rprim1.eye();
       Tprim1 = 0.0;
     }
   }
@@ -1204,7 +1204,7 @@ void vpHomography::computeDisplacement(const vpHomography &H,
 
       if (norm1ok)
       {
-        Rprim1.setIdentity();
+        Rprim1.eye();
         Rprim1[0][0] = -1;
         Rprim1[1][1] = -1;
 
@@ -1214,7 +1214,7 @@ void vpHomography::computeDisplacement(const vpHomography &H,
 
       if (norm2ok)
       {
-        Rprim2.setIdentity();
+        Rprim2.eye();
         Rprim2[0][0] = -1;
         Rprim2[1][1] = -1;
 
@@ -1226,7 +1226,7 @@ void vpHomography::computeDisplacement(const vpHomography &H,
     {
       if (norm1ok)
       {
-        Rprim1.setIdentity();
+        Rprim1.eye();
         Rprim1[2][2] = -1;
         Rprim1[1][1] = -1;
 
@@ -1236,7 +1236,7 @@ void vpHomography::computeDisplacement(const vpHomography &H,
 
       if (norm2ok)
       {
-        Rprim2.setIdentity();
+        Rprim2.eye();
         Rprim2[2][2] = -1;
         Rprim2[1][1] = -1;
 

@@ -127,22 +127,22 @@ vpBasicFeature::getDimension(unsigned int select) const
 
 //! Get the feature vector  \f$\bf s\f$.
 vpColVector
- vpBasicFeature::get_s(const unsigned int select) const
+vpBasicFeature::get_s(const unsigned int select) const
 {
-    vpColVector state(0),stateLine(1);
-    // if s is higher than the possible selections (photometry), send back the whole vector
-    if(dim_s > 31)
-    	return s;
+  vpColVector state(0), stateLine(1);
+  // if s is higher than the possible selections (photometry), send back the whole vector
+  if(dim_s > 31)
+    return s;
 
-	for(unsigned int i=0;i<dim_s;++i)
-	{
-		if(FEATURE_LINE[i] & select)
-		{
-			stateLine[0] = s[i];
-			state.stackMatrices(stateLine);
-    	}
-	}
-    return state ;
+  for(unsigned int i=0;i<dim_s;++i)
+  {
+    if(FEATURE_LINE[i] & select)
+    {
+      stateLine[0] = s[i];
+      state.stack(stateLine);
+    }
+  }
+  return state ;
 }
 
 void vpBasicFeature::resetFlags()
@@ -175,7 +175,7 @@ vpColVector vpBasicFeature::error(const vpBasicFeature &s_star,
 			if(FEATURE_LINE[i] & select)
 			{
 				eLine[0] = s[i] - s_star[i];
-				e.stackMatrices(eLine);
+        e.stack(eLine);
 				//std::cout << "dim_s <= 31"<<std::endl;
 			}
 		}

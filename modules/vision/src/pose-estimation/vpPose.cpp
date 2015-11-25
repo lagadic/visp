@@ -710,7 +710,7 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   vpColVector kh2(3);
   vpMatrix K(3,3);
   K = cam.get_K();
-  K.setIdentity();
+  K.eye();
   vpMatrix Kinv =K.pseudoInverse();
 
   vpMatrix KinvH =Kinv*H;
@@ -720,7 +720,7 @@ vpPose::poseFromRectangle(vpPoint &p1,vpPoint &p2,
   double s= sqrt(kh1.sumSquare())/sqrt(kh2.sumSquare());
 
   vpMatrix D(3,3);
-  D.setIdentity();
+  D.eye();
   D[1][1]=1/s;
   vpMatrix cHo=H*D;
 

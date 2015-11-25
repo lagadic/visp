@@ -44,7 +44,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
 // Debug trace
@@ -360,7 +359,7 @@ vpFeatureTranslation::interaction(const unsigned int select)
 	Lx[0][i] = f2Mf1[0][i] ;
       Lx[0][3] = 0 ;    Lx[0][4] = 0 ;    Lx[0][5] = 0 ;
 
-      L = vpMatrix::stackMatrices(L,Lx) ;
+      L = vpMatrix::stack(L,Lx) ;
     }
 
     if (vpFeatureTranslation::selectTy() & select ) {
@@ -370,7 +369,7 @@ vpFeatureTranslation::interaction(const unsigned int select)
 	Ly[0][i] = f2Mf1[1][i] ;
       Ly[0][3] = 0 ;    Ly[0][4] = 0 ;    Ly[0][5] = 0 ;
 
-      L = vpMatrix::stackMatrices(L,Ly) ;
+      L = vpMatrix::stack(L,Ly) ;
     }
 
     if (vpFeatureTranslation::selectTz() & select ) {
@@ -380,7 +379,7 @@ vpFeatureTranslation::interaction(const unsigned int select)
 	Lz[0][i] = f2Mf1[2][i] ;
       Lz[0][3] = 0 ;    Lz[0][4] = 0 ;    Lz[0][5] = 0 ;
 
-      L = vpMatrix::stackMatrices(L,Lz) ;
+      L = vpMatrix::stack(L,Lz) ;
     }
   }
   if (translation == cMcd) {
@@ -390,7 +389,7 @@ vpFeatureTranslation::interaction(const unsigned int select)
       Lx[0][0] = -1 ;    Lx[0][1] = 0 ;    Lx[0][2] = 0 ;
       Lx[0][3] = 0 ;    Lx[0][4] = -s[2] ;    Lx[0][5] = s[1] ;
 
-      L = vpMatrix::stackMatrices(L,Lx) ;
+      L = vpMatrix::stack(L,Lx) ;
     }
 
     if (vpFeatureTranslation::selectTy() & select ) {
@@ -398,7 +397,7 @@ vpFeatureTranslation::interaction(const unsigned int select)
       Ly[0][0] = 0 ;    Ly[0][1] = -1 ;    Ly[0][2] = 0 ;
       Ly[0][3] = s[2] ;    Ly[0][4] = 0 ;    Ly[0][5] = -s[0] ;
 
-      L = vpMatrix::stackMatrices(L,Ly) ;
+      L = vpMatrix::stack(L,Ly) ;
     }
 
     if (vpFeatureTranslation::selectTz() & select ) {
@@ -406,7 +405,7 @@ vpFeatureTranslation::interaction(const unsigned int select)
       Lz[0][0] = 0 ;    Lz[0][1] = 0 ;    Lz[0][2] = -1 ;
       Lz[0][3] = -s[1] ;    Lz[0][4] = s[0] ;    Lz[0][5] = 0 ;
 
-      L = vpMatrix::stackMatrices(L,Lz) ;
+      L = vpMatrix::stack(L,Lz) ;
     }
   }
 
@@ -417,7 +416,7 @@ vpFeatureTranslation::interaction(const unsigned int select)
       Lx[0][0] = -1 ;    Lx[0][1] = 0 ;    Lx[0][2] = 0 ;
       Lx[0][3] = 0 ;    Lx[0][4] = -s[2] ;    Lx[0][5] = s[1] ;
 
-      L = vpMatrix::stackMatrices(L,Lx) ;
+      L = vpMatrix::stack(L,Lx) ;
     }
 
     if (vpFeatureTranslation::selectTy() & select ) {
@@ -425,7 +424,7 @@ vpFeatureTranslation::interaction(const unsigned int select)
       Ly[0][0] = 0 ;    Ly[0][1] = -1 ;    Ly[0][2] = 0 ;
       Ly[0][3] = s[2] ;    Ly[0][4] = 0 ;    Ly[0][5] = -s[0] ;
 
-      L = vpMatrix::stackMatrices(L,Ly) ;
+      L = vpMatrix::stack(L,Ly) ;
     }
 
     if (vpFeatureTranslation::selectTz() & select ) {
@@ -433,7 +432,7 @@ vpFeatureTranslation::interaction(const unsigned int select)
       Lz[0][0] = 0 ;    Lz[0][1] = 0 ;    Lz[0][2] = -1 ;
       Lz[0][3] = -s[1] ;    Lz[0][4] = s[0] ;    Lz[0][5] = 0 ;
 
-      L = vpMatrix::stackMatrices(L,Lz) ;
+      L = vpMatrix::stack(L,Lz) ;
     }
   }
 
@@ -522,21 +521,21 @@ vpFeatureTranslation::error(const vpBasicFeature &s_star,
     {
       vpColVector ex(1) ;
       ex[0] = s[0]-s_star[0]  ;
-      e = vpMatrix::stackMatrices(e,ex) ;
+      e = vpColVector::stack(e,ex) ;
     }
 
   if (vpFeatureTranslation::selectTy() & select )
     {
       vpColVector ey(1) ;
       ey[0] = s[1]-s_star[1] ;
-      e = vpMatrix::stackMatrices(e,ey) ;
+      e = vpColVector::stack(e,ey) ;
     }
 
   if (vpFeatureTranslation::selectTz() & select )
     {
       vpColVector ez(1) ;
       ez[0] = s[2]-s_star[2] ;
-      e = vpMatrix::stackMatrices(e,ez) ;
+      e = vpColVector::stack(e,ez) ;
     }
 
   return e ;

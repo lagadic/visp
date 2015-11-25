@@ -265,7 +265,7 @@ main(int argc, const char ** argv)
 
       // Create the identity matrix
       vpMatrix I(3,3);
-      I.setIdentity();
+      I.eye();
 
       // Compute the camera translational velocity
       vpColVector v(3);

@@ -47,7 +47,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
 // Debug trace
@@ -269,7 +268,7 @@ vpFeatureLine::interaction(const unsigned int select)
     Lrho[0][4]= -co*(1.0 + rho*rho);
     Lrho[0][5]= 0.0;
 
-    L = vpMatrix::stackMatrices(L,Lrho) ;
+    L = vpMatrix::stack(L,Lrho) ;
   }
 
   if (vpFeatureLine::selectTheta() & select )
@@ -283,7 +282,7 @@ vpFeatureLine::interaction(const unsigned int select)
     Ltheta[0][4] = -rho*si;
     Ltheta[0][5] = -1.0;
 
-    L = vpMatrix::stackMatrices(L,Ltheta) ;
+    L = vpMatrix::stack(L,Ltheta) ;
   }
   return L ;
 }
@@ -339,9 +338,7 @@ vpFeatureLine::error(const vpBasicFeature &s_star,
       vpColVector erho(1) ;
       erho[0] = s[0] - s_star[0] ;
 
-
-
-      e = vpMatrix::stackMatrices(e,erho) ;
+      e = vpColVector::stack(e,erho) ;
     }
 
     if (vpFeatureLine::selectTheta() & select )
@@ -353,25 +350,14 @@ vpFeatureLine::error(const vpBasicFeature &s_star,
 
       vpColVector etheta(1) ;
       etheta[0] = err ;
-      e =  vpMatrix::stackMatrices(e,etheta) ;
+      e = vpColVector::stack(e,etheta) ;
     }
   }
-  catch(vpMatrixException me)
-  {
-    vpERROR_TRACE("caught a Matric related error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
+  catch(...) {
+    throw ;
   }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("caught another error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
-  }
-
 
   return e ;
-
 }
 
 

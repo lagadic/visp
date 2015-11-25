@@ -65,7 +65,6 @@
 #include <visp3/robot/vpRobotAfma6.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/vs/vpServoDisplay.h>
 #include <visp3/blob/vpDot.h>
 #include <visp3/core/vpDisplay.h>

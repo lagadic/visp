@@ -159,7 +159,7 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
         computeOptimalBrentGain(I,p,erreur,dp,alpha);
         dp=alpha*dp;
       }
-      p+=1.*dp;
+      p += 1. * dp;
       break;
     }
 

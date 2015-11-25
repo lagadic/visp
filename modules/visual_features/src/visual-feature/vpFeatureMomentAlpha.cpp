@@ -145,16 +145,16 @@ void vpFeatureMomentAlpha::compute_interaction(){
 }
 
 vpColVector vpFeatureMomentAlpha::error (const vpBasicFeature &s_star, const unsigned int /* select */){
-	vpColVector e(0) ;
-	double err = s[0] - s_star[0] ;
+  vpColVector e(0) ;
+  double err = s[0] - s_star[0] ;
 
-    if (err < -M_PI) err += 2*M_PI ;
-    if (err > M_PI) err -= 2*M_PI ;
+  if (err < -M_PI) err += 2*M_PI ;
+  if (err > M_PI) err -= 2*M_PI ;
 
-	vpColVector ecv(1) ;
-    ecv[0] = err ;
-    e =  vpMatrix::stackMatrices(e,ecv) ;
+  vpColVector ecv(1) ;
+  ecv[0] = err ;
+  e = vpColVector::stack(e,ecv) ;
 
-	return e;
+  return e;
 }
 #endif

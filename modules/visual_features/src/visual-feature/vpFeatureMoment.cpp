@@ -42,7 +42,6 @@
 #include <visp3/core/vpMath.h>
 
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
 #include <visp3/core/vpDebug.h>
@@ -191,7 +190,7 @@ vpMatrix vpFeatureMoment::interaction (unsigned int select){
 
     for(unsigned int i=0;i<dim_s;++i){
         if(vpBasicFeature::FEATURE_LINE[i] & select){
-            L.stackMatrices(interaction_matrices[i]);
+            L.stack(interaction_matrices[i]);
         }
     }
 

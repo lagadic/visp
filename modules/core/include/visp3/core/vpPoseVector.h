@@ -53,7 +53,9 @@ class vpRotationMatrix;
 class vpHomogeneousMatrix;
 class vpTranslationVector;
 class vpThetaUVector;
+class vpRowVector;
 
+#include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -64,64 +66,63 @@ class vpThetaUVector;
 
   \ingroup group_core_transformations
 
-  \brief The pose is a complete representation of every rigid motion in the
+  The pose is a complete representation of every rigid motion in the
   euclidian space.  
 
   It is composed of a translation and a rotation
   minimaly represented by a 6 dimension pose vector as: \f[ ^{a}{\bf
-  r}_b = [^{a}{\bf t}_{b},\Theta {\bf u}]^\top \in R^6\f]
+  r}_b = [^{a}{\bf t}_{b},\theta {\bf u}]^\top \in R^6\f]
 
   where \f$ ^{a}{\bf r}_b \f$ is the pose from frame \f$ a \f$ to
   frame \f$ b \f$, with \f$ ^{a}{\bf t}_{b} \f$ being the translation
   vector between these frames along the x,y,z
-  axis and \f$\Theta \bf u \f$, the \f$\Theta \bf u \f$ representation of the
+  axis and \f$\theta \bf u \f$, the axis-angle representation of the
   rotation \f$^{a}\bf{R}_{b}\f$ between these frames.
 
-  To know more about the \f$\Theta \bf u\f$ rotation representation,
+  Translations are expressed in meters, while the angles in the \f$\theta {\bf u}\f$
+  axis-angle representation are expressed in radians.
+
+  To know more about the \f$\theta \bf u\f$ rotation representation,
   see vpThetaUVector documentation.
 
 */
-class VISP_EXPORT vpPoseVector : public vpColVector
+class VISP_EXPORT vpPoseVector : public vpArray2D<double>
 {
-
- private:
-  // initialize a size 6 vector
-  void init() ;
-
- public:
+public:
   // constructor
   vpPoseVector() ;
   // constructor from 3 angles (in radian)
   vpPoseVector(const double tx, const double ty, const double tz,
-	       const double tux, const double tuy, const double tuz) ;
+               const double tux, const double tuy, const double tuz) ;
   // constructor convert an homogeneous matrix in a pose
   vpPoseVector(const vpHomogeneousMatrix& M) ;
   // constructor  convert a translation and a "thetau" vector into a pose
   vpPoseVector(const vpTranslationVector& t,
-	       const vpThetaUVector& tu) ;
+               const vpThetaUVector& tu) ;
   // constructor  convert a translation and a rotation matrix into a pose
   vpPoseVector(const vpTranslationVector& t,
-	       const vpRotationMatrix& R) ;
+               const vpRotationMatrix& R) ;
   
-
   // convert an homogeneous matrix in a pose
   vpPoseVector buildFrom(const vpHomogeneousMatrix& M) ;
   //  convert a translation and a "thetau" vector into a pose
   vpPoseVector buildFrom(const vpTranslationVector& t,
-			 const vpThetaUVector& tu) ;
+                         const vpThetaUVector& tu) ;
   //  convert a translation and a rotation matrix into a pose
   vpPoseVector buildFrom(const vpTranslationVector& t,
-			 const vpRotationMatrix& R) ;
-    
+                         const vpRotationMatrix& R) ;
 
-  /*! 
+  // Load an homogeneous matrix from a file
+  void load(std::ifstream &f) ;
+
+  /*!
     Set the value of an element of the pose vector: r[i] = x.
 
     \param i : Pose vector element index
 
     \code
     // Create a pose vector with translation and rotation set to zero
-    vpPoseVector r; 
+    vpPoseVector r;
 
     // Initialize the pose vector
     r[0] = 1;
@@ -159,20 +160,29 @@ class VISP_EXPORT vpPoseVector : public vpColVector
   */
   inline const double &operator [](unsigned int i) const { return *(data+i);  }
 
-  // Load an homogeneous matrix from a file
-  void load(std::ifstream &f) ;
-  // Save an homogeneous matrix in a file
-  void save(std::ofstream &f) const ;
-
   // Print  a vector [T thetaU] thetaU in degree
   void print() ;
+  int print(std::ostream& s, unsigned int length, char const* intro=0) const;
+
+  /*!
+    This function is not applicable to a pose vector that is always a
+    6-by-1 column vector.
+    \exception vpException::fatalError When this function is called.
+    */
+  void resize(const unsigned int nrows, const unsigned int ncols,
+              const bool flagNullify = true)
+  {
+    (void)nrows;
+    (void)ncols;
+    (void)flagNullify;
+    throw(vpException(vpException::fatalError, "Cannot resize a pose vector"));
+  };
+
+  // Save an homogeneous matrix in a file
+  void save(std::ofstream &f) const ;
+  void set(const double tx, const double ty, const double tz,
+           const double tux, const double tuy, const double tuz);
+  vpRowVector t() const;
 } ;
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
-

@@ -41,103 +41,247 @@
   Test some vpColVector functionalities.
 */
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpDebug.h>
-
 #include <stdlib.h>
 #include <stdio.h>
+
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpColVector.h>
+
+
+bool test(const std::string &s, const vpColVector &v, const std::vector<double> &bench)
+{
+  static unsigned int cpt = 0;
+  std::cout << "** Test " << ++cpt << std::endl;
+  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v.t() << "]^T" << std::endl;
+  if(bench.size() != v.size()) {
+    std::cout << "Test fails: bad size wrt bench" << std::endl;
+    return false;
+  }
+  for (unsigned int i=0; i<v.size(); i++) {
+    if (std::fabs(v[i]-bench[i]) > std::fabs(v[i])*std::numeric_limits<double>::epsilon()) {
+      std::cout << "Test fails: bad content" << std::endl;
+      return false;
+    }
+  }
+
+  return true;
+}
+
 
 
 int main()
 {
-  try {
-    vpColVector V(4) ;
-    V = 1.0;
+  int err = 1;
 
-    vpTRACE("------------------------");
-    vpTRACE("call std::cout << V;");
-    std::cout << V << std::endl;
+  {
+    vpColVector v;
 
-    vpTRACE("------------------------");
-    vpTRACE("call V.normalize();");
-    V.normalize();
+    v.resize(4);
+    v = 3;
+    std::vector<double> bench1(4, 3);
+    if (test("v", v, bench1) == false)
+      return err;
+    std::vector<double> bench2(4, 3./6);
+    v.normalize();
+    if (test("v", v, bench2) == false)
+      return err;
+  }
 
-    vpTRACE("------------------------");
-    vpTRACE("call std::cout << V;");
-    std::cout << V << std::endl;
+  {
+    vpColVector v(4);
+    std::vector<double> bench1(4);
+    for(size_t i=0; i<v.size(); i++) {
+      v[i] = i;
+      bench1[i] = i;
+    }
+    if (test("v", v, bench1) == false)
+      return err;
 
+    vpColVector w;
+    w.init(v, 0, 2);
+    std::vector<double> bench2;
+    bench2.push_back(0);
+    bench2.push_back(1);
+    if (test("w", w, bench2) == false)
+      return err;
 
-    //Test stack
-    vpColVector col_vector1(4);
-    col_vector1 = 1.0;
-    col_vector1.stack(2.0);
-    std::cout << "col_vector1.stack(2.0)=\n" << col_vector1 << std::endl;
+    std::vector<double> bench3;
+    bench3.push_back(1);
+    bench3.push_back(2);
+    bench3.push_back(3);
 
-    vpColVector col_vector2(3);
-    col_vector2 = 5.0;
+    vpColVector r1;
+    for(size_t i=0; i<4; i++)
+      r1.stack(i);
 
-    vpColVector col_vector3;
-    col_vector3 = vpColVector::stack(col_vector1, col_vector2);
-    std::cout << "vpColVector::stack(col_vector1, col_vector2)=\n" << col_vector3 << std::endl;
+    vpColVector r2 = r1.extract(1, 3);
+    if (test("r2", r2, bench3) == false)
+      return err;
+  }
+  {
+    vpMatrix M(4, 1);
+    std::vector<double> bench(4);
+    for(unsigned int i=0; i<M.getRows(); i++) {
+      M[i][0] = i;
+      bench[i] = i;
+    }
+    if (test("M", M, bench) == false)
+      return err;
+    vpColVector v;
+    v = M;
+    if (test("v", v, bench) == false)
+      return err;
+    vpColVector w(M);
+    if (test("w", w, bench) == false)
+      return err;
+    vpColVector z1(bench);
+    if (test("z1", z1, bench) == false)
+      return err;
+    vpColVector z2 = bench;
+    if (test("z2", z2, bench) == false)
+      return err;
+  }
+  {
+    vpColVector v(3);
+    v[0] = 1;
+    v[1] = 2;
+    v[2] = 3;
+    std::vector<double> bench1;
+    bench1.push_back(3);
+    bench1.push_back(6);
+    bench1.push_back(9);
 
-    col_vector1.stack(col_vector2);
-    std::cout << "col_vector1.stack(col_vector2)=\n" << col_vector1 << std::endl;
+    vpColVector w = v * 3;
+    // v is unchanged
+    // w is now equal to : [3 6 9]
+    if (test("w", w, bench1) == false)
+      return err;
 
+    vpColVector x(w);
+    if (test("x", x, bench1) == false)
+      return err;
 
-    //Test mean, median and standard deviation against Matlab with rng(0) and rand(10,1)*10
-    vpColVector colVector(10);
-    colVector[0] = 8.1472;
-    colVector[1] = 9.0579;
-    colVector[2] = 1.2699;
-    colVector[3] = 9.1338;
-    colVector[4] = 6.3236;
-    colVector[5] = 0.9754;
-    colVector[6] = 2.7850;
-    colVector[7] = 5.4688;
-    colVector[8] = 9.5751;
-    colVector[9] = 9.6489;
+    std::vector<float> bench2;
+    bench2.push_back(3);
+    bench2.push_back(6);
+    bench2.push_back(9);
+    vpColVector y1(bench2);
+    if (test("y1", y1, bench1) == false)
+      return err;
+    vpColVector y2 = bench2;
+    if (test("y2", y2, bench1) == false)
+      return err;
+  }
+  {
+    vpColVector r1(3, 1);
+    vpColVector r2 = -r1;
+    std::vector<double> bench(3,-1);
+    // v contains [-1 -1 -1]
+    if (test("r2", r2, bench) == false)
+      return err;
+    r2.stack(-2);
+    bench.push_back(-2);
+    if (test("r2", r2, bench) == false)
+      return err;
+    vpColVector r3 = vpColVector::stack(r1, r2);
+    std::vector<double> bench3(7, 1);
+    bench3[3] = bench3[4] = bench3[5] = -1;
+    bench3[6] = -2;
+    if (test("r3", r3, bench3) == false)
+      return err;
 
+    r1.stack(r2);
+    if (test("r1", r1, bench3) == false)
+      return err;
+  }
+  {
+    vpColVector r1(3, 2);
+    vpColVector r2(3, 4);
+    std::cout << "test r1: " << r1 << std::endl;
+    std::cout << "test r2: " << r2 << std::endl;
+    vpColVector r = r1 + r2;
+    std::cout << "test r1+r2: " << r1+r2 << std::endl;
+    std::cout << "test r: " << r << std::endl;
+    std::vector<double> bench(3, 6);
+    if (test("r", r, bench) == false)
+      return err;
+    r1 += r2;
+    if (test("r1", r1, bench) == false)
+      return err;
+  }
+  {
+    vpColVector r1(3, 2);
+    vpColVector r2(3, 4);
+    vpColVector r = r1 - r2;
+    std::vector<double> bench(3, -2);
+    if (test("r", r, bench) == false)
+      return err;
+    r1 -= r2;
+    if (test("r1", r1, bench) == false)
+      return err;
+  }
+  {
+    vpColVector r(5, 1);
+    r.clear();
+    r.resize(5);
+    r = 5;
+    std::vector<double> bench(5, 5);
+    if (test("r", r, bench) == false)
+      return err;
+  }
+  {
+    // Test mean, median and standard deviation against Matlab with rng(0) and rand(10,1)*10
+    vpColVector r(10);
+    r[0] = 8.1472;
+    r[1] = 9.0579;
+    r[2] = 1.2699;
+    r[3] = 9.1338;
+    r[4] = 6.3236;
+    r[5] = 0.9754;
+    r[6] = 2.7850;
+    r[7] = 5.4688;
+    r[8] = 9.5751;
+    r[9] = 9.6489;
 
-    double res = vpColVector::mean(colVector);
+    std::cout << "** Test mean" << std::endl;
+    double res = vpColVector::mean(r);
     if(!vpMath::equal(res, 6.2386, 0.001)) {
-      std::cerr << "Problem with vpColVector::mean()=" << res << std::endl;
-      return -1;
+      std::cout << "Test fails: bad mean " << res << std::endl;
+      return err;
     }
-    std::cout << "vpColVector::mean() is Ok !" << std::endl;
 
-    res = vpColVector::stdev(colVector);
+    std::cout << "** Test stdev" << std::endl;
+    res = vpColVector::stdev(r);
     if(!vpMath::equal(res, 3.2810, 0.001)) {
-      std::cerr << "Problem with vpColVector::stdev()=" << res << std::endl;
-      return -1;
+      std::cout << "Test fails: bad stdev " << res << std::endl;
+      return err;
     }
 
-    res = vpColVector::stdev(colVector, true);
+    std::cout << "** Test stdev(bessel)" << std::endl;
+    res = vpColVector::stdev(r, true);
     if(!vpMath::equal(res, 3.4585, 0.001)) {
-      std::cerr << "Problem with vpColVector::stdev() with Bessel correction=" << res << std::endl;
-      return -1;
+      std::cout << "Test fails: bad stdev(bessel) " << res << std::endl;
+      return err;
     }
-    std::cout << "vpColVector::stdev() is Ok !" << std::endl;
 
-    res = vpColVector::median(colVector);
+    std::cout << "** Test median" << std::endl;
+    res = vpColVector::median(r);
     if(!vpMath::equal(res, 7.2354, 0.001)) {
-      std::cerr << "Problem with vpColVector::median()=" << res << std::endl;
-      return -1;
+      std::cout << "Test fails: bad median " << res << std::endl;
+      return err;
     }
 
-    //Test median with odd number of elements
-    colVector.stack(1.5761);
-    res = vpColVector::median(colVector);
+    // Test median with odd number of elements
+    std::cout << "** Test median (odd)" << std::endl;
+    r.stack(1.5761);
+    res = vpColVector::median(r);
     if(!vpMath::equal(res, 6.3236, 0.001)) {
-      std::cerr << "Problem with vpColVector::median()=" << res << std::endl;
-      return -1;
+      std::cout << "Test fails: bad median (odd) " << res << std::endl;
+      return err;
     }
-    std::cout << "vpColVector::median() is Ok !" << std::endl;
-
-    std::cout << "OK !" << std::endl;
-    return (0);
+    std::cout << "r: [" << r << "]^T" << std::endl;
+    r.print(std::cout, 8, "r");
   }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
-    return (1);
-  }
+  std::cout << "All tests succeed" << std::endl;
+  return 0;
 }

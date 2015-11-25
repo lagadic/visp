@@ -42,55 +42,112 @@
   as a set of operations on these vectors
 */
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpRotationVector.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
-#include <string.h> //EM gcc 4.3
-#include <math.h> //EM gcc 4.3
+#include <string.h>
+#include <math.h>
+#include <sstream>
+#include <assert.h>
 
-  //! operator addition of two vectors
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpRotationVector.h>
+
+
+//! Operator that allows to add two column vectors.
 vpColVector
-vpColVector::operator+(const vpColVector &m) const
+vpColVector::operator+(const vpColVector &v) const
 {
-  if (getRows() != m.getRows() ) {
+  if (getRows() != v.getRows() ) {
     throw(vpException(vpException::dimensionError,
-                      "Bad size during vpColVector (%dx1) and vpColVector (%dx1) addition",
-                      getRows(), m.getRows())) ;
+                      "Cannot add (%dx1) column vector to (%dx1) column vector",
+                      getRows(), v.getRows())) ;
   }
-  vpColVector v(rowNum);
+  vpColVector r(rowNum);
 
   for (unsigned int i=0;i<rowNum;i++)
-    v[i] = (*this)[i] + m[i];
-  return v;
+    r[i] = (*this)[i] + v[i];
+  return r;
 }
 
-//! operator dot product
+//! Operator that allows to add two column vectors.
+vpColVector &
+vpColVector::operator+=(vpColVector v)
+{
+  if (getRows() != v.getRows() ) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot add (%dx1) column vector to (%dx1) column vector",
+                      getRows(), v.getRows())) ;
+  }
+
+  for (unsigned int i=0;i<rowNum;i++)
+    (*this)[i] += v[i];
+  return (*this);
+}
+//! Operator that allows to substract two column vectors.
+vpColVector &
+vpColVector::operator-=(vpColVector v)
+{
+  if (getRows() != v.getRows() ) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot substract (%dx1) column vector to (%dx1) column vector",
+                      getRows(), v.getRows())) ;
+  }
+
+  for (unsigned int i=0;i<rowNum;i++)
+    (*this)[i] -= v[i];
+  return (*this);
+}
+
+
+/*!
+   Operator that performs the dot product between two column vectors.
+
+   \exception vpException::dimensionError If the vector dimension differ.
+
+   \sa dotProd()
+ */
 double
-vpColVector::operator*(const vpColVector &m) const
+vpColVector::operator*(const vpColVector &v) const
 {
-  double v = 0 ;
+  if (size() != v.size()) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot compute the dot product between column vectors with different dimensions (%d) and (%d)",
+                      size(), v.size()));
+  }
+  double r = 0 ;
 
   for (unsigned int i=0;i<rowNum;i++)
-      v += (*this)[i] * m[i];
-  return v;
+      r += (*this)[i] * v[i];
+  return r;
 }
 
-//! operator dot product
-vpMatrix vpColVector::operator*(const vpRowVector &m) const
+/*!
+
+  Multiply a column vector by a row vector.
+
+  \param v : Row vector.
+
+  \return The resulting matrix.
+
+*/
+vpMatrix vpColVector::operator*(const vpRowVector &v) const
 {
-
-  return (vpMatrix)*this*(vpMatrix)m;
+  vpMatrix M(rowNum, v.getCols());
+  for (unsigned int i=0; i<rowNum; i++) {
+    for (unsigned int j=0; j<v.getCols(); j++) {
+      M[i][j] = (*this)[i] * v[j];
+    }
+  }
+  return M;
 }
 
-  //! operator substraction of two vectors V = A-v
+//! operator substraction of two vectors V = A-v
 vpColVector vpColVector::operator-(const vpColVector &m) const
 {
   if (getRows() != m.getRows() ) {
@@ -105,25 +162,145 @@ vpColVector vpColVector::operator-(const vpColVector &m) const
   return v;
 }
 
-vpColVector::vpColVector (const vpColVector &m, unsigned int r, unsigned int nrows)
+/*!
+  Construct a column vector from a part of an input column vector \e v.
+
+  \param v : Input column vector used for initialization.
+  \param r : row index in \e v that corresponds to the first element of the column vector to contruct.
+  \param nrows : Number of rows of the constructed column vector.
+
+  The sub-vector starting from v[r] element and ending on v[r+nrows-1] element
+  is used to initialize the contructed column vector.
+
+  \sa init()
+*/
+vpColVector::vpColVector (const vpColVector &v, unsigned int r, unsigned int nrows)
+  : vpArray2D<double>(nrows, 1)
 {
-  if ( (r+nrows) > m.getRows() )
-  {
-    vpERROR_TRACE("\n\t\t SubvpMatrix larger than vpMatrix") ;
-    throw(vpMatrixException(vpMatrixException::subMatrixError,
-			    "\n\t\t SubvpMatrix larger than vpColVector")) ;
+  init(v, r, nrows);
+}
+
+/*!
+  Initialize the column vector from a part of an input column vector \e v.
+
+  \param v : Input column vector used for initialization.
+  \param r : row index in \e v that corresponds to the first element of the column vector to contruct.
+  \param nrows : Number of rows of the constructed column vector.
+
+  The sub-vector starting from v[r] element and ending on v[r+nrows-1] element
+  is used to initialize the contructed column vector.
+
+  The following code shows how to use this function:
+\code
+#include <visp3/core/vpColVector.h>
+
+int main()
+{
+  vpColVector v(4);
+  int val = 0;
+  for(size_t i=0; i<v.getRows(); i++) {
+    v[i] = val++;
   }
-  init(m, r, 0, nrows, 1);
+  std::cout << "v: " << v.t() << std::endl;
+
+  vpColVector w;
+  w.init(v, 0, 2);
+  std::cout << "w: " << w.t() << std::endl;
+
+}
+\endcode
+  It produces the following output:
+  \code
+v: 0 1 2 3
+w: 1 2
+  \endcode
+ */
+void
+vpColVector::init(const vpColVector &v, unsigned int r, unsigned int nrows)
+{
+  unsigned int rnrows = r+nrows ;
+
+  if (rnrows > v.getRows())
+    throw(vpException(vpException::dimensionError,
+                      "Bad row dimension (%d > %d) used to initialize vpColVector",
+                      rnrows, v.getRows()));
+  resize(nrows);
+
+  if (this->rowPtrs == NULL) // Fix coverity scan: explicit null dereferenced
+    return; // Noting to do
+  for (unsigned int i=r ; i < rnrows; i++)
+    (*this)[i-r] = v[i];
 }
 
-
-vpColVector::vpColVector (const vpRotationVector &v){
-    resize(v._size);
-    memcpy(data, v.r, v._size*sizeof(double)) ;
+vpColVector::vpColVector (const vpRotationVector &v)
+  : vpArray2D<double>(v.size(), 1)
+{
+  for (unsigned int i=0; i< v.size(); i++)
+    (*this)[i] = v[i];
 }
 
+vpColVector::vpColVector (const vpTranslationVector &v)
+  : vpArray2D<double>(v.size(), 1)
+{
+  for (unsigned int i=0; i< v.size(); i++)
+    (*this)[i] = v[i];
+}
+
+//! Constructor that take column j of matrix M.
+vpColVector::vpColVector (const vpMatrix &M, unsigned int j)
+  : vpArray2D<double>(M.getRows(), 1)
+{
+  for(unsigned int i=0; i< M.getCols(); i++)
+    (*this)[i] = M[i][j];
+}
   
- //! Operator A = -A
+/*!
+   Constructor that creates a column vector from a m-by-1 matrix \e M.
+
+   \exception vpException::dimensionError If the matrix is not a m-by-1 matrix.
+ */
+vpColVector::vpColVector (const vpMatrix &M)
+  : vpArray2D<double>(M.getRows(), 1)
+{
+  if(M.getCols()!=1) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot construct a (%dx1) row vector from a (%dx%d) matrix",
+                      M.getRows(), M.getRows(), M.getCols())) ;
+  }
+
+  for(unsigned int i=0; i< M.getRows(); i++)
+    (*this)[i] = M[i][0];
+}
+
+/*!
+   Constructor that creates a column vector from a std vector of double.
+ */
+vpColVector::vpColVector (const std::vector<double> &v)
+  : vpArray2D<double>(1, v.size())
+{
+  for(unsigned int i=0; i< v.size(); i++)
+    (*this)[i] = v[i];
+}
+/*!
+   Constructor that creates a column vector from a std vector of float.
+ */
+vpColVector::vpColVector (const std::vector<float> &v)
+  : vpArray2D<double>(1, v.size())
+{
+  for(unsigned int i=0; i< v.size(); i++)
+    (*this)[i] = (double)(v[i]);
+}
+
+/*!
+   Operator that allows to negate all the column vector elements.
+
+   \code
+   vpColVector r(3, 1);
+   // r contains [1 1 1]^T
+   vpColVector v = -r;
+   // v contains [-1 -1 -1]^T
+   \endcode
+ */
 vpColVector vpColVector::operator-() const
 {
   vpColVector A ;
@@ -144,64 +321,160 @@ vpColVector vpColVector::operator-() const
   return A;
 }
 
-//! operator multiplication by a scalar V =  A * x
+/*!
+  Operator that allows to multiply each element of a column vector by a scalar.
+
+  \param x : The scalar.
+
+  \return The column vector multiplied by the scalar. The current
+  column vector (*this) is unchanged.
+
+  \code
+  vpColVector v(3);
+  v[0] = 1;
+  v[1] = 2;
+  v[2] = 3;
+
+  vpColVector w = v * 3;
+  // v is unchanged
+  // w is now equal to : [3, 6, 9]
+  \endcode
+*/
 vpColVector vpColVector::operator*(double x) const
 {
-  vpColVector v;
-  try {
-    v.resize(rowNum)  ;
-  }
-  catch(vpException &/*e*/)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
-  }
+  vpColVector v(rowNum);
 
   double *vd = v.data ;   double *d = data ;
 
   for (unsigned int i=0;i<rowNum;i++)
-     *(vd++)=  (*d++) * x;
+    *(vd++) = (*d++) * x;
   return v;
 }
 
 /*!
-  Copy from a matrix
-  \warning  Handled with care m should be a 1 row matrix.
+  Operator that allows to multiply each element of a column vector by a scalar.
+
+  \param x : The scalar.
+
+  \return The column vector multiplied by the scalar.
+
+  \code
+  vpColVector v(3);
+  v[0] = 1;
+  v[1] = 2;
+  v[2] = 3;
+
+  v *= 3;
+  // v is now equal to : [3, 6, 9]
+  \endcode
 */
-vpColVector &vpColVector::operator=(const vpMatrix &m)
+vpColVector &vpColVector::operator*=(double x)
 {
-  if (m.getCols() !=1)
-  {
-    vpTRACE(" m should be a 1 cols matrix ") ;
-    throw (vpException(vpException::dimensionError,"m should be a 1 cols matrix "));
+  for (unsigned int i=0;i<rowNum;i++)
+    (*this)[i] *= x;
+  return (*this);
+}
+
+/*!
+  Operator that allows to divide each element of a column vector by a scalar.
+
+  \param x : The scalar.
+
+  \return The column vector divided by the scalar.
+
+  \code
+  vpColVector v(3);
+  v[0] = 8;
+  v[1] = 4;
+  v[2] = 2;
+
+  v /= 2;
+  // v is now equal to : [4, 2, 1]
+  \endcode
+*/
+vpColVector &vpColVector::operator/=(double x)
+{
+  for (unsigned int i=0;i<rowNum;i++)
+    (*this)[i] /= x;
+  return (*this);
+}
+
+/*!
+  Operator that allows to divide each element of a column vector by a scalar.
+
+  \param x : The scalar.
+
+  \return The column vector divided by the scalar. The current
+  column vector (*this) is unchanged.
+
+  \code
+  vpColVector v(3);
+  v[0] = 8;
+  v[1] = 4;
+  v[2] = 2;
+
+  vpColVector w = v / 2;
+  // v is unchanged
+  // w is now equal to : [4, 2, 1]
+  \endcode
+*/
+vpColVector vpColVector::operator/(double x) const
+{
+  vpColVector v(rowNum);
+
+  double *vd = v.data ;   double *d = data ;
+
+  for (unsigned int i=0;i<rowNum;i++)
+    *(vd++) = (*d++) / x;
+  return v;
+}
+
+/*!
+  Transform a m-by-1 matrix into a column vector.
+  \warning  Handled with care; M should be a 1 column matrix.
+  \exception vpException::dimensionError If the matrix has more than 1 column.
+*/
+vpColVector &vpColVector::operator=(const vpMatrix &M)
+{
+  if (M.getCols() !=1) {
+    throw (vpException(vpException::dimensionError,
+                       "Cannot transform a (%dx%d) matrix into a column vector",
+                       M.getRows(), M.getCols()));
   }
 
   try {
-    resize(m.getRows());
+    resize(M.getRows());
   }
-  catch(vpException &/*e*/)
-  {
-    vpERROR_TRACE("Error caught") ;
+  catch(...) {
     throw ;
   }
 
-  memcpy(data, m.data, rowNum*sizeof(double)) ;
+  memcpy(data, M.data, rowNum*sizeof(double)) ;
 
-  /*
-    double *md = m.data ;   double *d = data ;
-    for (int i=0;i<rowNum;i++)
-    *(d++)=  *(md++) ;
-    */
-  /*
-  for (int i=0; i<rowNum; i++) {
-    for (int j=0; j<colNum; j++) {
-      rowPtrs[i][j] = m.rowPtrs[i][j];
-    }
-    }*/
+  return (*this);
+}
+
+/*!
+  Initialize a row vector from a standard vector of double.
+*/
+vpColVector & vpColVector::operator=(const std::vector<double> &v)
+{
+  resize(v.size());
+  for(unsigned int i=0; i<v.size(); i++)
+    (*this)[i] = v[i];
+  return *this;
+}
+/*!
+  Initialize a row vector from a standard vector of double.
+*/
+vpColVector & vpColVector::operator=(const std::vector<float> &v)
+{
+  resize(v.size());
+  for(unsigned int i=0; i<v.size(); i++)
+    (*this)[i] = (float)v[i];
   return *this;
 }
 
- //! Copy operator.   Allow operation such as A = v
 vpColVector &vpColVector::operator=(const vpColVector &v)
 {
   unsigned int k = v.rowNum ;
@@ -209,27 +482,33 @@ vpColVector &vpColVector::operator=(const vpColVector &v)
     try {
       resize(k);
     }
-    catch(vpException &/*e*/)
+    catch(...)
     {
-      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   }
-  //
 
   memcpy(data, v.data, rowNum*sizeof(double)) ;
-  /*
-    double *vd = m.data ;   double *d = data ;
-    for (int i=0;i<rowNum;i++)
-    *(d++)=  *(vd++) ;
+  return *this;
+}
 
+/*!
+   Operator that allows to convert a translation vector into a column vector.
+ */
+vpColVector &vpColVector::operator=(const vpTranslationVector &t)
+{
+  unsigned int k = t.getRows() ;
+  if (rowNum != k){
+    try {
+      resize(k);
+    }
+    catch(...)
+    {
+      throw ;
+    }
+  }
 
-    for (int i=0; i<rowNum; i++) {
-    for (int j=0; j<colNum; j++) {
-    rowPtrs[i][j] = v.rowPtrs[i][j];
-    }
-    }
-*/
+  memcpy(data, t.data, rowNum*sizeof(double)) ;
   return *this;
 }
 
@@ -245,17 +524,12 @@ int main()
   for (unsigned int i=0; i<B.size(); i++)
     B[i] = i;
   A << B;
-  std::cout << "A: \n" << A << std::endl;
+  std::cout << "A: " << A.t() << std::endl;
 }
   \endcode
   In column vector A we get:
   \code
-A:
-0
-1
-2
-3
-4
+A: 0 1 2 3 4
   \endcode
   */
 vpColVector & vpColVector::operator<<(const vpColVector &v)
@@ -279,18 +553,13 @@ int main()
   for (unsigned int i = 0; i < n; i++)
     B[i] = i;
   A << B;
-  std::cout << "A: \n" << A << std::endl;
+  std::cout << "A: " << A.t() << std::endl;
   delete [] B;
 }
   \endcode
   It produces the following output:
   \code
-A:
-0
-1
-2
-3
-4
+A: 0 1 2 3 4
   \endcode
   */
 vpColVector & vpColVector::operator<<( double *x )
@@ -303,92 +572,60 @@ vpColVector & vpColVector::operator<<( double *x )
   return *this;
 }
 
-//! initialisation each element of the vector is x
+//! Set each element of the column vector to x.
 vpColVector & vpColVector::operator=(double x)
 {
   double *d = data ;
 
   for (unsigned int i=0;i<rowNum;i++)
     *(d++)=  x ;
-  /*
-  for (int i=0; i<rowNum; i++) {
-    for (int j=0; j<colNum; j++) {
-      rowPtrs[i][j] = x;
-    }
-    }*/
   return *this;
 }
 
 /*
-  \brief Transpose the row vector A
+  Transpose the column vector. The resulting vector becomes a row vector.
 
-  A is defined inside the class
-
-  \return  A^T
 */
 vpRowVector vpColVector::t() const
 {
-  vpRowVector v ;
-  try {
-    v.resize(rowNum);
-  }
-  catch(vpException &/*e*/)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
-  }
+  vpRowVector v(rowNum);
   memcpy(v.data, data, rowNum*sizeof(double)) ;
-  /*
-    // premiere optimisation
-    double *vd = m.data ;   double *d = data ;
-    for (int i=0;i<rowNum;i++)
-    *(d++)=  *(vd++) ;
-    */
-
-  /*
-    // solution brute
-    for (int i=0;i<rowNum;i++)
-      v[i] = (*this)[i];
-  */
   return v;
 }
+
 /*!
-  \relates vpColVector
-  \brief  multiplication by a scalar Ci = x*Bi
+  Allows to multiply a scalar by a column vector.
 */
-vpColVector operator*(const double &x,const vpColVector &B)
+vpColVector operator*(const double &x,const vpColVector &v)
 {
-  vpColVector v1 ;
-  v1 = B*x ;
-  return v1 ;
+  vpColVector vout ;
+  vout = v*x ;
+  return vout ;
 }
-
-vpColVector::vpColVector (const vpColVector &v) : vpMatrix(v)
-{
-}
-
-vpColVector::vpColVector (const vpMatrix &m, unsigned int j) : vpMatrix(m, 0, j, m.getRows(), 1)
-{
-}
-
 
 /*!
-  \relates vpColVector
-  \brief compute  the dot product of two vectors C = a.b
+  Compute end return the dot product of two column vectors:
+  \f[ a \cdot b = \sum_{i=0}^n a_i * b_i\f] where \e n is the dimension of both vectors.
+
+  \exception vpException::dimensionError If the vector dimension differ.
 */
 double
 vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
 {
-  if (a.data==NULL)
-  {
-    vpERROR_TRACE("vpColVector a non initialized") ;
-    throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
+  if (a.data==NULL) {
+    throw(vpException(vpException::fatalError,
+                      "Cannot compute the dot product: first vector empty")) ;
   }
-  if (b.data==NULL)
-  {
-    vpERROR_TRACE("vpColVector b non initialized") ;
-    throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
+  if (b.data==NULL)  {
+    throw(vpException(vpException::fatalError,
+                      "Cannot compute the dot product: second vector empty")) ;
   }
+  if (a.size() != b.size()) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot compute the dot product between column vectors with different dimensions (%d) and (%d)",
+                      a.size(), b.size()));
+  }
+
   double *ad = a.data ;   double *bd = b.data ;
 
   double c = 0 ;
@@ -400,24 +637,22 @@ vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
 }
 
 /*!
-  \relates vpColVector
-  \brief normalise the vector
+  Normalise the vector:
 
   \f[
   {\bf x}_i = \frac{{\bf x}_i}{\sqrt{\sum_{i=1}^{n}x^2_i}}
   \f]
 */
-// vpColVector &vpColVector::normalize(vpColVector &x) const
-// {
-//   x = x/sqrt(x.sumSquare());
+ vpColVector &vpColVector::normalize(vpColVector &x) const
+ {
+   x = x/sqrt(x.sumSquare());
 
-//   return x;
-// }
+   return x;
+ }
 
 
 /*!
-  \relates vpColVector
-  \brief normalise the vector
+  Normalise the vector:
 
   \f[
   {\bf x}_i = \frac{{\bf x}_i}{\sqrt{\sum_{i=1}^{n}x^2_i}}
@@ -426,7 +661,7 @@ vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
 vpColVector &vpColVector::normalize()
 {
 
-  double sum_square = sumSquare() ;
+  double sum_square = sumSquare();
 
   //if (sum != 0.0)
   if (std::fabs(sum_square) > std::numeric_limits<double>::epsilon())
@@ -436,15 +671,16 @@ vpColVector &vpColVector::normalize()
   return *this;
 }
 
-
-
+/*!
+   Return a column vector with elements of \e v that are reverse sorted.
+   \sa sort()
+ */
 vpColVector
 vpColVector::invSort(const vpColVector &v)
 {
- if (v.data==NULL)
-  {
-    vpERROR_TRACE("vpColVector v non initialized") ;
-    throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
+  if (v.data==NULL) {
+    throw(vpException(vpException::fatalError,
+                      "Cannot sort content of column vector: vector empty")) ;
   }
   vpColVector tab ;
   tab = v ;
@@ -457,10 +693,10 @@ vpColVector::invSort(const vpColVector &v)
     {
       if ((tab[j]>tab[j-1]))
       {
-	double tmp = tab[j] ;
-	tab[j] = tab[j-1] ;
-	tab[j-1] = tmp ;
-	nb_permutation++ ;
+        double tmp = tab[j] ;
+        tab[j] = tab[j-1] ;
+        tab[j-1] = tmp ;
+        nb_permutation++ ;
       }
     }
     i++ ;
@@ -469,12 +705,16 @@ vpColVector::invSort(const vpColVector &v)
   return tab ;
 }
 
+/*!
+   Return a column vector with elements of \e v that are sorted.
+   \sa invSort()
+ */
 vpColVector
 vpColVector::sort(const vpColVector &v)
 {
   if (v.data==NULL) {
-    vpERROR_TRACE("vpColVector a non initialized") ;
-    throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
+    throw(vpException(vpException::fatalError,
+                      "Cannot sort content of column vector: vector empty")) ;
   }
   vpColVector tab ;
   tab = v ;
@@ -487,10 +727,10 @@ vpColVector::sort(const vpColVector &v)
     {
       if ((tab[j]<tab[j-1]))
       {
-	double tmp = tab[j] ;
-	tab[j] = tab[j-1] ;
-	tab[j-1] = tmp ;
-	nb_permutation++ ;
+        double tmp = tab[j] ;
+        tab[j] = tab[j-1] ;
+        tab[j-1] = tmp ;
+        nb_permutation++ ;
       }
     }
     i++ ;
@@ -500,37 +740,39 @@ vpColVector::sort(const vpColVector &v)
 }
 
 /*!
-  Stack column vector with new element.
+  Stack column vector with a new element at the end of the vector.
 
-  \param b : Element to stack to the existing one.
+  \param d : Element to stack to the existing vector.
 
   \code
-  vpColVector A(3);
-  double b = 3;
-  A.stack(b); // A = [A b]T
-  // A is now an 4 dimension column vector
+  vpColVector v(3, 1);
+  // v is equal to [1 1 1]^T
+  v.stack(-2);
+  // v is equal to [1 1 1 -2]^T
   \endcode
 
   \sa stack(const vpColVector &, const vpColVector &)
   \sa stack(const vpColVector &, const vpColVector &, vpColVector &)
 
 */
-void vpColVector::stack(const double &b)
+void vpColVector::stack(const double &d)
 {
   this->resize(rowNum+1,false);
-  (*this)[rowNum-1] = b;
+  (*this)[rowNum-1] = d;
 }
 
 /*!
   Stack column vectors.
 
-  \param B : Vector to stack to the existing one.
+  \param v : Vector to stack to the existing one.
 
   \code
-  vpColVector A(3);
-  vpColVector B(5);
-  A.stack(B); // A = [A B]T
-  // A is now an 8 dimension column vector
+  vpColVector v1(3, 1);
+  // v1 is equal to [1 1 1]^T
+  vpColVector v2(2, 3);
+  // v2 is equal to [3 3]^T
+  v1.stack(v2);
+  // v1 is equal to [1 1 1 3 3]^T
   \endcode
 
   \sa stack(const vpColVector &, const double &)
@@ -538,9 +780,9 @@ void vpColVector::stack(const double &b)
   \sa stack(const vpColVector &, const vpColVector &, vpColVector &)
 
 */
-void vpColVector::stack(const vpColVector &B)
+void vpColVector::stack(const vpColVector &v)
 {
-  *this = vpColVector::stack(*this, B);
+  *this = vpColVector::stack(*this, v);
 }
 
 /*!
@@ -617,41 +859,31 @@ void vpColVector::stack(const vpColVector &A, const vpColVector &B, vpColVector 
 }
 
 /*!
-  \brief Compute the mean value of all the elements of the vector
+  Compute the mean value of all the elements of the vector.
 */
 double vpColVector::mean(const vpColVector &v)
 {
- if (v.data==NULL)
-  {
-    vpERROR_TRACE("vpColVector v non initialized") ;
-    throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
+  if (v.data==NULL) {
+    throw(vpException(vpException::fatalError,
+                      "Cannot compute column vector mean: vector empty")) ;
   }
- double mean = 0 ;
+  double mean = 0 ;
   double *vd = v.data ;
   for (unsigned int i=0 ; i < v.getRows() ; i++)
     mean += *(vd++) ;
 
-  /*
-  for (int i=0 ; i < v.getRows() ; i++)
-  {
-    mean += v[i] ;
-  }
-   mean /= v.rowNum ;
-   return mean;
-  */
   return mean/v.getRows();
 }
 
 /*!
-  Compute the median value of all the elements of the vector
+  Compute the median value of all the elements of the vector.
 */
 double
 vpColVector::median(const vpColVector &v)
 {
-  if (v.data==NULL)
-  {
-    vpERROR_TRACE("vpColVector v non initialized") ;
-    throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
+  if (v.data==NULL) {
+    throw(vpException(vpException::fatalError,
+                      "Cannot compute column vector median: vector empty")) ;
   }
 
   std::vector<double> vectorOfDoubles(v.size());
@@ -660,60 +892,17 @@ vpColVector::median(const vpColVector &v)
   }
 
   return vpMath::getMedian(vectorOfDoubles);
-
-#if 0
-  unsigned int i,j;
-  unsigned int inf, sup;
-  unsigned int n = v.getRows() ;
-  vpColVector infsup(n) ;
-
-  for (i=0;i<v.getRows();i++)
-  {
-    // We compute the number of element greater (sup) than the current
-    // value and the number of element smaller (inf) than the current
-    // value
-    inf = sup = 0;
-    for (j=0;j<v.getRows();j++)
-    {
-      if (i != j)
-      {
-        if (v[i] <= v[j]) inf++;
-        if (v[i] >= v[j]) sup++;
-      }
-    }
-    // We compute then difference between inf and sup
-    // the median should be for |inf-sup| = 0 (1 if an even number of element)
-    // which means that there are the same number of element in the array
-    // that are greater and smaller that this value.
-    infsup[i] = fabs((double)(inf-sup)); //EM gcc 4.3
-  }
-
-  // seek for the smaller value of |inf-sup| (should be 0 or 1)
-  unsigned int imin=0 ; // index of the median in the array
-  // min cannot be greater than the number of element
-  double  min = v.getRows();
-  for (i=0;i<v.getRows();i++)
-    if (infsup[i] < min)
-    {
-      min = infsup[i];
-      imin = i ;
-    }
-
-  // return the median
-  return(v[imin]);
-#endif
 }
 
 /*!
-  Compute the standard deviation value of all the elements of the vector
+  Compute the standard deviation value of all the elements of the vector.
 */
 double
 vpColVector::stdev(const vpColVector &v, const bool useBesselCorrection)
 {
-  if (v.data==NULL)
-  {
-    vpERROR_TRACE("vpColVector v non initialized") ;
-    throw(vpMatrixException(vpMatrixException::notInitializedError)) ;
+  if (v.data==NULL) {
+    throw(vpException(vpException::fatalError,
+                      "Cannot compute column vector stdev: vector empty")) ;
   }
 
   double mean_value = mean(v);
@@ -747,52 +936,36 @@ vpColVector::stdev(const vpColVector &v, const bool useBesselCorrection)
 vpMatrix
 vpColVector::skew(const vpColVector &v)
 {
-
   vpMatrix M ;
-  if (v.getRows() != 3)
-  {
-    vpERROR_TRACE("Cannot compute skew kinematic matrix,"
-		"v has not 3 rows") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			    "\n\t\t Cannot compute skew kinematic matrix"
-			    "v has not 3 rows")) ;
+  if (v.getRows() != 3) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot compute skew vector of a non 3-dimention vector (%d)",
+                      v.getRows())) ;
   }
-
 
   M.resize(3,3) ;
   M[0][0] = 0 ;     M[0][1] = -v[2] ;  M[0][2] = v[1] ;
   M[1][0] = v[2] ;  M[1][1] = 0 ;      M[1][2] = -v[0] ;
   M[2][0] = -v[1] ; M[2][1] = v[0] ;   M[2][2] = 0 ;
 
-
   return M ;
 }
 
 /*!
-  \brief Compute the cross product of two vectors C = a x b
+  Compute and return the cross product of two vectors \f$a \times b\f$.
 
-  \param a : vpColVector
-  \param b : vpColVector
+  \param a : 3-dimension column vector.
+  \param b : 3-dimension column vector.
+  \return The cross product \f$a \times b\f$.
+
+  \exception vpException::dimensionError If the vectors dimension is not equal to 3.
 */
 vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
 {
-
-  if (a.getRows() != 3)
-  {
-    vpERROR_TRACE("Cannot compute cross product,"
-		"a has not 3 rows") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			    "\n\t\t Cannot compute  cross product"
-			    "a has not 3 rows")) ;
-  }
-  if (b.getRows() != 3)
-  {
-
-    vpERROR_TRACE("Cannot compute cross product,"
-		"b has not 3 rows") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			    "\n\t\t Cannot compute  cross product"
-			    "b has not 3 rows")) ;;
+  if (a.getRows() != 3 || b.getRows() != 3) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot compute the cross product between column vector with dimension %d and %d",
+                      a.getRows(), b.getRows()));
   }
 
   return vpColVector::skew(a) * b;
@@ -800,44 +973,39 @@ vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
 
 
 /*!
-  \brief reshape the colvector in a matrix
+  Reshape the column vector in a matrix.
   \param nrows : number of rows of the matrix
   \param ncols : number of columns of the matrix
-  \return a vpMatrix
+  \return The reshaped matrix.
 */
 vpMatrix vpColVector::reshape(const unsigned int &nrows,const unsigned int &ncols){
-  vpMatrix m(nrows,ncols);
-  reshape(m,nrows,ncols);
-  return m;
+  vpMatrix M(nrows, ncols);
+  reshape(M, nrows, ncols);
+  return M;
 }
 
 /*!
-  \brief reshape the colvector in a matrix
-  \param m : the reshaped Matrix
-  \param nrows : number of rows of the matrix
-  \param ncols : number of columns of the matrix
+  Reshape the column vector in a matrix.
+  \param M : the reshaped matrix.
+  \param nrows : number of rows of the matrix.
+  \param ncols : number of columns of the matrix.
 */
-void vpColVector::reshape(vpMatrix & m,const unsigned int &nrows,const unsigned int &ncols){
-  if(dsize!=nrows*ncols)
-  {
-    vpERROR_TRACE("\n\t\t vpColVector mismatch size for reshape vpSubColVector in a vpMatrix") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-			    "\n\t\t \n\t\t vpColVector mismatch size for reshape vpSubColVector in a vpMatrix")) ;
+void vpColVector::reshape(vpMatrix & M,const unsigned int &nrows,const unsigned int &ncols){
+  if(dsize!=nrows*ncols) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot reshape (%dx1) column vector in (%dx%d) matrix",
+                      rowNum, M.getRows(), M.getCols())) ;
   }
-  try 
-  {
-    if ((m.getRows() != nrows) || (m.getCols() != ncols)) m.resize(nrows,ncols);
+  try {
+    if ((M.getRows() != nrows) || (M.getCols() != ncols)) M.resize(nrows,ncols);
   }
-  catch(vpException &e)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << e << std::endl ;
+  catch(...) {
     throw ;
   }
 
   for(unsigned int j =0; j< ncols; j++)
-     for(unsigned int i =0; i< nrows; i++)
-	  m[i][j]=data[j*ncols+i];
+    for(unsigned int i =0; i< nrows; i++)
+      M[i][j]=data[j*ncols+i];
 }
 
 /*!
@@ -854,34 +1022,22 @@ int main()
   vpColVector v(4);
   for (unsigned int i=0; i < v.size(); i++)
     v[i] = i;
-  std::cout << "v:\n" << v << std::endl;
+  std::cout << "v: " << v.t() << std::endl;
 
   vpColVector w(2);
   for (unsigned int i=0; i < w.size(); i++)
     w[i] = i+10;
-  std::cout << "w:\n" << w << std::endl;
+  std::cout << "w: " << w.t() << std::endl;
 
   v.insert(1, w);
-  std::cout << "v:\n" << v << std::endl;
+  std::cout << "v: " << v.t() << std::endl;
 }
   \endcode
   It produces the following output:
   \code
-v:
-0
-1
-2
-3
-
-w:
-10
-11
-
-v:
-0
-10
-11
-3
+v: 0 1 2 3
+w: 10 11
+v: 0 10 11 3
   \endcode
  */
 void vpColVector::insert(unsigned int i, const vpColVector &v)
@@ -890,4 +1046,165 @@ void vpColVector::insert(unsigned int i, const vpColVector &v)
     throw(vpException(vpException::dimensionError, "Unable to insert a column vector"));
   for (unsigned int j=0; j < v.size(); j++)
     (*this)[i+j] = v[j];
+}
+
+/*!
+
+  Pretty print a column vector. The data are tabulated.
+  The common widths before and after the decimal point
+  are set with respect to the parameter maxlen.
+
+  \param s Stream used for the printing.
+
+  \param length The suggested width of each vector element.
+  The actual width grows in order to accomodate the whole integral part,
+  and shrinks if the whole extent is not needed for all the numbers.
+  \param intro The introduction which is printed before the vector.
+  Can be set to zero (or omitted), in which case
+  the introduction is not printed.
+
+  \return Returns the common total width for all vector elements.
+
+  \sa std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
+*/
+int
+vpColVector::print(std::ostream& s, unsigned int length, char const* intro) const
+{
+  typedef std::string::size_type size_type;
+
+  unsigned int m = getRows();
+  unsigned int n = 1;
+
+  std::vector<std::string> values(m*n);
+  std::ostringstream oss;
+  std::ostringstream ossFixed;
+  std::ios_base::fmtflags original_flags = oss.flags();
+
+  // ossFixed <<std::fixed;
+  ossFixed.setf ( std::ios::fixed, std::ios::floatfield );
+
+  size_type maxBefore=0;  // the length of the integral part
+  size_type maxAfter=0;   // number of decimals plus
+  // one place for the decimal point
+  for (unsigned int i=0;i<m;++i) {
+    oss.str("");
+    oss << (*this)[i];
+    if (oss.str().find("e")!=std::string::npos){
+      ossFixed.str("");
+      ossFixed << (*this)[i];
+      oss.str(ossFixed.str());
+    }
+
+    values[i]=oss.str();
+    size_type thislen=values[i].size();
+    size_type p=values[i].find('.');
+
+    if (p==std::string::npos){
+      maxBefore=vpMath::maximum(maxBefore, thislen);
+      // maxAfter remains the same
+    } else{
+      maxBefore=vpMath::maximum(maxBefore, p);
+      maxAfter=vpMath::maximum(maxAfter, thislen-p-1);
+    }
+
+  }
+
+  size_type totalLength=length;
+  // increase totalLength according to maxBefore
+  totalLength=vpMath::maximum(totalLength,maxBefore);
+  // decrease maxAfter according to totalLength
+  maxAfter=std::min(maxAfter, totalLength-maxBefore);
+  if (maxAfter==1) maxAfter=0;
+
+  // the following line is useful for debugging
+  //std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
+
+  if (intro) s <<intro;
+  s <<"["<<m<<","<<n<<"]=\n";
+
+  for (unsigned int i=0;i<m;i++) {
+    s <<"  ";
+    size_type p=values[i].find('.');
+    s.setf(std::ios::right, std::ios::adjustfield);
+    s.width((std::streamsize)maxBefore);
+    s <<values[i].substr(0,p).c_str();
+
+    if (maxAfter>0){
+      s.setf(std::ios::left, std::ios::adjustfield);
+      if (p!=std::string::npos){
+        s.width((std::streamsize)maxAfter);
+        s <<values[i].substr(p,maxAfter).c_str();
+      } else{
+        assert(maxAfter>1);
+        s.width((std::streamsize)maxAfter);
+        s <<".0";
+      }
+    }
+
+    s <<' ';
+
+    s <<std::endl;
+  }
+
+  s.flags(original_flags); // restore s to standard state
+
+  return (int)(maxBefore+maxAfter);
+}
+
+/*!
+  Return the sum square of all the elements \f$v_{i}\f$ of the column vector v(m).
+
+  \return The value \f[\sum{i=0}^{m} v_i^{2}\f].
+  */
+double vpColVector::sumSquare() const
+{
+  double sum_square=0.0;
+  double x ;
+
+  for (unsigned int i=0;i<rowNum;i++) {
+    x=rowPtrs[i][0];
+    sum_square += x*x;
+  }
+
+  return sum_square;
+}
+
+/*!
+  Compute and return the Euclidean norm \f$ ||x|| = \sqrt{ \sum{v_{i}^2}} \f$.
+
+  \return The Euclidean norm if the vector is initialized, 0 otherwise.
+
+*/
+double vpColVector::euclideanNorm() const
+{
+  double norm=0.0;
+  double x ;
+  for (unsigned int i=0;i<dsize;i++) {
+    x = *(data +i); norm += x*x;
+  }
+
+  return sqrt(norm);
+}
+
+/*!
+
+  Compute and return the infinity norm \f$ {||x||}_{\infty} =
+  max\left({\mid x_{i} \mid}\right) \f$ with \f$i \in
+  \{0, ..., m-1\}\f$ where \e m is the vector size and \f$x_i\f$ an element of the vector.
+
+  \return The infinity norm if the matrix is initialized, 0 otherwise.
+
+  \sa euclideanNorm()
+*/
+double vpColVector::infinityNorm() const
+{
+  double norm=0.0;
+  double x ;
+  for (unsigned int i=0;i<rowNum;i++){
+    x =  fabs ( (*this)[i] ) ;
+    if (x > norm) {
+      norm = x;
+    }
+  }
+  return norm;
 }

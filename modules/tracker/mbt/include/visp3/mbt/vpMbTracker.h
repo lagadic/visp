@@ -573,7 +573,7 @@ protected:
 
   void createCylinderBBox(const vpPoint& p1, const vpPoint &p2, const double &radius, std::vector<std::vector<vpPoint> > &listFaces);
 
-  void computeJTR(const vpMatrix& J, const vpColVector& R, vpMatrix& JTR);
+  void computeJTR(const vpMatrix& J, const vpColVector& R, vpColVector& JTR);
   
 #ifdef VISP_HAVE_COIN3D
   virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, int &idFace);

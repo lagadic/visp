@@ -77,7 +77,7 @@
 #include <visp3/visual_features/vpFeatureLine.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/visual_features/vpFeatureDepth.h>
-#include <visp3/core/vpGenericFeature.h>
+#include <visp3/visual_features/vpGenericFeature.h>
 #include <visp3/core/vpLine.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
@@ -87,7 +87,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/vs/vpServoDisplay.h>
 
 #include <visp3/blob/vpDot2.h>

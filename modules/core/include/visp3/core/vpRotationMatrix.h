@@ -45,7 +45,7 @@
 */
 
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpRzyxVector.h>
 #include <visp3/core/vpRzyzVector.h>
@@ -59,43 +59,40 @@
 
   \ingroup group_core_transformations
 
-  \brief The vpRotationMatrix considers the particular case of
-  a rotation matrix.
-  
-  It is derived from vpMatrix. 
-
-  \author  Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
+  The vpRotationMatrix considers the particular case of
+  a rotation matrix. It is derived from vpArray2D.
 
 */
-class VISP_EXPORT vpRotationMatrix : public vpMatrix
+class VISP_EXPORT vpRotationMatrix : public vpArray2D<double>
 {
 public:
-  //! Basic initialisation (identity)
-  void init() ;
-
-  //! Basic initialisation (identity)
-  void setIdentity() ;
-  void eye();
-  //! Default constructor.
-  vpRotationMatrix()   ;
-  //! Copy constructor.
-  vpRotationMatrix(const vpRotationMatrix &R) ;
-  //! Copy constructor.
-  vpRotationMatrix(const vpHomogeneousMatrix &M) ;
-  //! Construction from rotation (theta U parameterization)
-  vpRotationMatrix(const vpThetaUVector &r) ;
-  //! Construction from a pose vector.
-  vpRotationMatrix(const vpPoseVector &p) ;
-  //! Construction from rotation (Euler parameterization)
-  vpRotationMatrix(const vpRzyzVector &r) ;
-  //! Construction from rotation Rxyz
-  vpRotationMatrix(const vpRxyzVector &r) ;
-  //! Construction from rotation Rzyx
-  vpRotationMatrix(const vpRzyxVector &r) ;
-  //! Construction from rotation (theta U parameterization)
-  vpRotationMatrix(const double tux, const  double tuy, const double tuz) ;
-
+  vpRotationMatrix();
+  vpRotationMatrix(const vpRotationMatrix &R);
+  vpRotationMatrix(const vpHomogeneousMatrix &M);
+  vpRotationMatrix(const vpThetaUVector &r);
+  vpRotationMatrix(const vpPoseVector &p);
+  vpRotationMatrix(const vpRzyzVector &r);
+  vpRotationMatrix(const vpRxyzVector &r);
+  vpRotationMatrix(const vpRzyxVector &r);
   vpRotationMatrix(const vpQuaternionVector& q);
+  vpRotationMatrix(const double tux, const  double tuy, const double tuz);
+
+  vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
+  vpRotationMatrix buildFrom(const vpThetaUVector &v) ;
+  vpRotationMatrix buildFrom(const vpPoseVector &p);
+  vpRotationMatrix buildFrom(const vpRzyzVector &v);
+  vpRotationMatrix buildFrom(const vpRxyzVector &v);
+  vpRotationMatrix buildFrom(const vpRzyxVector &v);
+  vpRotationMatrix buildFrom(const vpQuaternionVector& q);
+  vpRotationMatrix buildFrom(const double tux, const double tuy, const double tuz);
+
+  void eye();
+
+  vpRotationMatrix inverse() const;
+  void inverse(vpRotationMatrix &R) const;
+
+  bool isARotationMatrix() const  ;
+
 
 //  /*!
 //    Return the \f$\theta u\f$ vector that corresponds to tha rotation matrix.
@@ -107,66 +104,56 @@ public:
 //    return tu;
 //  }
 
-  //! copy operator from vpRotationMatrix
+  // copy operator from vpRotationMatrix
   vpRotationMatrix &operator=(const vpRotationMatrix &R);
-  //! copy operator from vpMatrix (handle with care)
-  vpRotationMatrix &operator=(const vpMatrix &m) ;
-  //! operation c = A * b (A is unchanged)
-  vpTranslationVector operator*(const vpTranslationVector &mat) const ;
-  //! operation C = A * B (A is unchanged)
-  vpRotationMatrix operator*(const vpRotationMatrix &B) const ;
-  //! operation C = A * B (A is unchanged)
-  vpMatrix operator*(const vpMatrix &B) const ;
+  // copy operator from vpMatrix (handle with care)
+  vpRotationMatrix &operator=(const vpMatrix &M);
+  // operation c = A * b (A is unchanged)
+  vpTranslationVector operator*(const vpTranslationVector &t) const;
+  // operation C = A * B (A is unchanged)
+  vpRotationMatrix operator*(const vpRotationMatrix &R) const;
+  // operation C = A * B (A is unchanged)
+  vpMatrix operator*(const vpMatrix &M) const;
   // operation v2 = A * v1 (A is unchanged)
-  vpColVector operator*(const vpColVector &v) const ;
-   //! overload + operator (to say it forbidden operation, throw exception)
-  vpRotationMatrix operator+(const vpRotationMatrix &B) const ;
-   //! overload - operator (to say it forbidden operation, throw exception)
-  vpRotationMatrix operator-(const vpRotationMatrix &B) const ;
+  vpColVector operator*(const vpColVector &v) const;
+  vpRotationMatrix operator*(const double x) const;
+  vpRotationMatrix &operator*=(const double x);
 
-  //! transpose
-  vpRotationMatrix t() const ;
-
-  //! invert the rotation matrix
-  vpRotationMatrix inverse() const ;
-  //! invert the rotation matrix
-  void inverse(vpRotationMatrix &M) const;
-
-  //! test if the  matrix is an rotation matrix
-  bool isARotationMatrix() const  ;
-
-  //! Print the matrix as a vector [T thetaU]
   void printVector() ;
-  friend VISP_EXPORT std::ostream &operator << (std::ostream &s, const vpRotationMatrix &m);
 
-  //! Build a rotation matrix from an homogeneous matrix.
-  vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M) ;
-  //! Transform a vector vpThetaUVector into a rotation matrix
-  vpRotationMatrix buildFrom(const vpThetaUVector &v) ;
-  //! Transform a pose vector into a rotation matrix
-  vpRotationMatrix buildFrom(const vpPoseVector &p) ;
-  //! Transform a vector reprensenting the euler (Rzyz) angle
-  //! into a rotation matrix
-  vpRotationMatrix buildFrom(const vpRzyzVector &v) ;
-  //! Transform a vector reprensenting the Rxyz angle into a rotation matrix
-  vpRotationMatrix buildFrom(const vpRxyzVector &v) ;
-  //! Transform a vector reprensenting the Rzyx angle into a rotation matrix
-  vpRotationMatrix buildFrom(const vpRzyxVector &v) ;
-  //! Construction from  rotation (theta U parameterization)
-  vpRotationMatrix buildFrom(const double tux,
-			     const double tuy,
-			     const double tuz) ;
-  
-  vpRotationMatrix buildFrom(const vpQuaternionVector& q);
-private:
-  static const double threshold;
-  static const double minimum; // useful only for debug
+  /*!
+    This function is not applicable to a rotation matrix that is always a
+    3-by-3 matrix.
+    \exception vpException::fatalError When this function is called.
+    */
+  void resize(const unsigned int nrows, const unsigned int ncols,
+              const bool flagNullify = true)
+  {
+    (void)nrows;
+    (void)ncols;
+    (void)flagNullify;
+    throw(vpException(vpException::fatalError, "Cannot resize a rotation matrix"));
   };
 
+  // transpose
+  vpRotationMatrix t() const;
+  
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /*!
+     \deprecated You should rather use eye().
+   */
+  vp_deprecated void setIdentity();
+  //@}
 #endif
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+private:
+  static const double threshold;
+};
+
+VISP_EXPORT vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R) ;
+
+#endif

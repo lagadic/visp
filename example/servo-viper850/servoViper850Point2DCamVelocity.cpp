@@ -71,7 +71,6 @@
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/vs/vpServoDisplay.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/blob/vpDot2.h>

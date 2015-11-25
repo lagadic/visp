@@ -41,48 +41,33 @@
   \brief Tests matrix exception
 */
 
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpDebug.h>
-
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <visp3/core/vpMatrix.h>
 
 int main()
 {
+  vpMatrix M ;
+  vpMatrix M1(2,3) ;
+  vpMatrix M2(3,3) ;
+  vpMatrix M3(2,2) ;
+
+  std::cout << "** test matrix exception during multiplication" << std::endl;
+
   try {
-    vpMatrix M ;
-    vpMatrix M1(2,3) ;
-    vpMatrix M2(3,3) ;
-    vpMatrix M3(2,2) ;
-
-    vpTRACE("test matrix size in multiply") ;
-
-    try
-    {
-      M = M1*M3 ;
-    }
-    catch (vpMatrixException me)
-    {
-      std::cout << me << std::endl ;
-    }
-
-
-    vpTRACE("test matrix size in addition") ;
-
-    try
-    {
-      M = M1+M3 ;
-    }
-    catch (vpMatrixException me)
-    {
-      std::cout << me << std::endl ;
-    }
+    M = M1*M3 ;
   }
-  catch(vpException e) {
+  catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+  }
+
+  std::cout << "** test matrix exception during addition" << std::endl;
+
+  try {
+    M = M1+M3 ;
+  }
+  catch (vpException &e)  {
+    std::cout << "Catch an exception: " << e << std::endl;
   }
 }

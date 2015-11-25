@@ -165,7 +165,7 @@ vpAfma6::vpAfma6()
   // distance between join 5 and 6
   this->_long_56  = -0.06924;
   // Camera extrinsic parameters: effector to camera frame
-  this->_eMc.setIdentity(); // Default values are initialized ...
+  this->_eMc.eye(); // Default values are initialized ...
   //  ... in init (vpAfma6::vpAfma6ToolType tool,
   //               vpCameraParameters::vpCameraParametersProjType projModel)
   // Maximal value of the joints

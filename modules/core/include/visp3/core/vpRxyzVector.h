@@ -52,8 +52,8 @@
 
 class vpRotationMatrix;
 class vpThetaUVector;
+class vpRotationVector;
 
-#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpRotationMatrix.h>
 

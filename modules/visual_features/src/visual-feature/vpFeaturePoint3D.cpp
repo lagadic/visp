@@ -42,7 +42,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
 // Debug trace
@@ -300,7 +299,7 @@ vpFeaturePoint3D::interaction(const unsigned int select)
     Lx[0][4] = -Z ;
     Lx[0][5] = Y ;
 
-    L = vpMatrix::stackMatrices(L,Lx) ;
+    L = vpMatrix::stack(L,Lx) ;
   }
 
   if (vpFeaturePoint3D::selectY() & select )
@@ -314,7 +313,7 @@ vpFeaturePoint3D::interaction(const unsigned int select)
     Ly[0][4] = 0 ;
     Ly[0][5] = -X ;
 
-    L = vpMatrix::stackMatrices(L,Ly) ;
+    L = vpMatrix::stack(L,Ly) ;
   }
   if (vpFeaturePoint3D::selectZ() & select )
   {
@@ -327,7 +326,7 @@ vpFeaturePoint3D::interaction(const unsigned int select)
     Lz[0][4] = X ;
     Lz[0][5] = 0 ;
 
-    L = vpMatrix::stackMatrices(L,Lz) ;
+    L = vpMatrix::stack(L,Lz) ;
   }
   return L ;
 }
@@ -393,34 +392,25 @@ vpFeaturePoint3D::error(const vpBasicFeature &s_star,
       vpColVector ex(1) ;
       ex[0] = s[0] - s_star[0] ;
 
-      e = vpMatrix::stackMatrices(e,ex) ;
+      e = vpColVector::stack(e,ex) ;
     }
 
     if (vpFeaturePoint3D::selectY() & select )
     {
       vpColVector ey(1) ;
       ey[0] = s[1] - s_star[1] ;
-      e =  vpMatrix::stackMatrices(e,ey) ;
+      e = vpColVector::stack(e,ey) ;
     }
 
     if (vpFeaturePoint3D::selectZ() & select )
     {
       vpColVector ez(1) ;
       ez[0] = s[2] - s_star[2] ;
-      e =  vpMatrix::stackMatrices(e,ez) ;
+      e = vpColVector::stack(e,ez) ;
     }
   }
-  catch(vpMatrixException me)
-  {
-    vpERROR_TRACE("caught a Matrix related error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("caught another error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
+  catch(...) {
+    throw ;
   }
 
   return e ;

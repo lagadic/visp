@@ -169,9 +169,9 @@ vpHomography::HartleyDenormalization(vpHomography &aHbn,
   vpMatrix T2(3,3);
   vpMatrix T2T(3,3);
 
-  T1.setIdentity();
-  T2.setIdentity();
-  T2T.setIdentity();
+  T1.eye();
+  T2.eye();
+  T2T.eye();
 
   T1[0][0]=T1[1][1]=coef1;
   T1[0][2]=-coef1*xg1 ;

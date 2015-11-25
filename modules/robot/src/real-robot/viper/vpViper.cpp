@@ -94,7 +94,7 @@ vpViper::vpViper()
   joint_max[5] = vpMath::rad(360);
 
   // End effector to camera transformation
-  eMc.setIdentity(); 
+  eMc.eye();
 }
 
 
@@ -889,7 +889,7 @@ void
 vpViper::get_wMe(vpHomogeneousMatrix & wMe) const
 {
   // Set the rotation as identity
-  wMe.setIdentity();
+  wMe.eye();
 
   // Set the translation
   wMe[2][3] = d6;

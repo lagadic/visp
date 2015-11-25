@@ -39,6 +39,7 @@
 #ifndef vpVelocityRwistMatrix_h
 #define vpVelocityRwistMatrix_h
 
+#include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -50,13 +51,12 @@
 
   \ingroup group_core_transformations
 
-  \brief Class that consider the particular case of twist
+  Class that consider the particular case of twist
   transformation matrix that allows to transform a velocity skew from
   one frame to an other.
 
-  The vpVelocityTwistMatrix is derived from vpMatrix.
-
-  A twist transformation matrix is 6x6 matrix defined as
+  A twist transformation matrix is a 6x6 matrix that express a velocity in frame <em>a</em> knowing
+  velocity in <em>b</em>. This matrix is defined as:
   \f[
   ^a{\bf V}_b = \left[\begin{array}{cc}
   ^a{\bf R}_b & [^a{\bf t}_b]_\times \; ^a{\bf R}_b\\
@@ -64,10 +64,11 @@
   \end{array}
   \right]
   \f]
-  that expressed a velocity in frame <em>a</em> knowing velocity in <em>b</em>.
 
-  \f$ ^a{\bf R}_b \f$ is a rotation matrix and
+  where \f$ ^a{\bf R}_b \f$ is a rotation matrix and
   \f$ ^a{\bf t}_b \f$ is a translation vector.
+
+  The vpVelocityTwistMatrix is derived from vpArray2D.
 
   The code belows shows for example how to convert a velocity skew
   from camera frame to a fix frame.
@@ -95,60 +96,74 @@ int main()
 }
   \endcode
 */
-class VISP_EXPORT vpVelocityTwistMatrix : public vpMatrix
+class VISP_EXPORT vpVelocityTwistMatrix : public vpArray2D<double>
 {
   friend class vpMatrix;
 
  public:
   // basic constructor
-  vpVelocityTwistMatrix()   ;
+  vpVelocityTwistMatrix();
   // copy constructor
-  vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V) ;
+  vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V);
   // constructor from an homogeneous transformation
-  vpVelocityTwistMatrix(const vpHomogeneousMatrix &M) ;
+  vpVelocityTwistMatrix(const vpHomogeneousMatrix &M);
 
   // Construction from Translation and rotation (ThetaU parameterization)
   vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau) ;
   // Construction from Translation and rotation (matrix parameterization)
-  vpVelocityTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R) ;
-  vpVelocityTwistMatrix(const double tx,   const double ty,   const double tz,
-			const double tux,  const double tuy,  const double tuz) ;
+  vpVelocityTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
+  vpVelocityTwistMatrix(const double tx,  const double ty,  const double tz,
+                        const double tux, const double tuy, const double tuz);
 
-  // Basic initialisation (identity)
-  void init() ;
 
   vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t,
-				  const vpRotationMatrix &R);
+                                  const vpRotationMatrix &R);
   vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t,
-				  const vpThetaUVector &thetau);
+                                  const vpThetaUVector &thetau);
   vpVelocityTwistMatrix buildFrom(const vpHomogeneousMatrix &M) ;
 
+  void extract( vpRotationMatrix &R) const;
+  void extract(vpTranslationVector &t) const;
+
   // Basic initialisation (identity)
-  void setIdentity() ;
+  void eye() ;
+
+  vpVelocityTwistMatrix inverse() const ;
+  void inverse(vpVelocityTwistMatrix &V) const;
 
   vpVelocityTwistMatrix operator*(const vpVelocityTwistMatrix &V) const ;
   vpMatrix operator*(const vpMatrix &M) const ;
-
   vpColVector operator*(const vpColVector &v) const ;
 
-  // copy operator from vpMatrix (handle with care)
   vpVelocityTwistMatrix &operator=(const vpVelocityTwistMatrix &V);
 
-  //! invert the twist matrix
-  vpVelocityTwistMatrix inverse() const ;
-  //! invert the twist matrix
-  void inverse(vpVelocityTwistMatrix &Wi) const;
+  int print(std::ostream& s, unsigned int length, char const* intro=0) const;
 
-  //! extract the rotational matrix from the twist matrix
-  void extract( vpRotationMatrix &R) const;
-  //! extract the translation vector from the twist matrix
-  void extract(vpTranslationVector &t) const;
+  /*!
+    This function is not applicable to a velocity twist matrix that is always a
+    6-by-6 matrix.
+    \exception vpException::fatalError When this function is called.
+    */
+  void resize(const unsigned int nrows, const unsigned int ncols,
+              const bool flagNullify = true)
+  {
+    (void)nrows;
+    (void)ncols;
+    (void)flagNullify;
+    throw(vpException(vpException::fatalError, "Cannot resize a velocity twist matrix"));
+  };
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /*!
+     \deprecated You should rather use eye().
+   */
+  vp_deprecated void setIdentity();
+  //@}
+#endif
 } ;
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
