@@ -261,14 +261,10 @@ void vpTGEMM(const vpArray2D<double> & A,const vpArray2D<double> & B, const doub
   GEMMsize<T>(A,B,Arows,Acols,Brows,Bcols);
   //   std::cout << Arows<<" " <<Acols << " "<< Brows << " "<< Bcols<<std::endl;
   
-  try
-  {
+  try  {
     if ((Arows != D.getRows()) || (Bcols != D.getCols())) D.resize(Arows,Bcols);
   }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
+  catch(...) {
     throw ;
   }
   
@@ -281,13 +277,11 @@ void vpTGEMM(const vpArray2D<double> & A,const vpArray2D<double> & B, const doub
   
   if(C.getRows()!=0 && C.getCols()!=0){
 
-    if ((Arows != C.getRows()) || (Bcols != C.getCols()))
-    {
+    if ((Arows != C.getRows()) || (Bcols != C.getCols())) {
       throw(vpException(vpException::dimensionError,
                         "In vpGEMM, cannot add resulting (%dx%d) matrix to (%dx%d) matrix",
                         Arows, Bcols, C.getRows(), C.getCols())) ;
     }
-    
     
     GEMM2<T>(Arows,Brows,Bcols,A,B,alpha,C,beta,D);
   }else{
