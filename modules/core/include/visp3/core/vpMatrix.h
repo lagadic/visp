@@ -43,6 +43,7 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/core/vpForceTwistMatrix.h>
 
@@ -119,12 +120,18 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) {};
   vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c,
            unsigned int nrows, unsigned int ncols) ;
-  vpMatrix(const vpMatrix& M);
-  vpMatrix(const vpColVector& v);
-  vpMatrix(const vpRowVector& v);
-  vpMatrix(const vpRotationMatrix& R);
-  vpMatrix(const vpVelocityTwistMatrix& V);
-  vpMatrix(const vpForceTwistMatrix& F);
+  /*!
+     Create a matrix from a 2D array that could be one of the following container that
+     inherit from vpArray2D such as vpMatrix, vpRotationMatrix, vpHomogeneousMatrix,
+     vpPoseVector, vpColVector, vpRowVector...
+
+     The following example shows how to create a matrix from an homogeneous matrix:
+     \code
+     vpRotationMatrix R;
+     vpMatrix M(R);
+     \endcode
+   */
+  vpMatrix(const vpArray2D<double>& A) : vpArray2D<double>(A) {};
 
   //! Destructor (Memory de-allocation)
   virtual ~vpMatrix() {};
@@ -166,12 +173,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Assignment operators */
   //@{
   vpMatrix &operator<<(double*);
-  vpMatrix &operator=(const vpMatrix &B);
-  vpMatrix &operator=(const vpRotationMatrix &R);
-  vpMatrix &operator=(const vpVelocityTwistMatrix &V);
-  vpMatrix &operator=(const vpForceTwistMatrix &F);
-  vpMatrix &operator=(const vpColVector &v);
-  vpMatrix &operator=(const vpRowVector &v);
+  vpMatrix &operator=(const vpArray2D<double> &A);
   vpMatrix &operator=(const double x);
   //@}
 
@@ -496,23 +498,23 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Matrix I/O with Static Public Member Functions  */
   //@{
   /*!
-    Load a matrix from a file.
+    Load a matrix from a file. This function overloads vpArray2D::load().
 
-    \param filename : absolute file name
-    \param M : matrix to be loaded
+    \param filename : absolute file name.
+    \param M : matrix to be loaded.
     \param binary :If true the matrix is loaded from a binary file, else from a text file.
-    \param Header : Header of the file is loaded in this parameter
+    \param header : Header of the file is loaded in this parameter
 
     \return Returns true if no problem appends.
   */
-  static inline bool loadMatrix(std::string filename, vpMatrix &M,
-                                const bool binary = false, char *Header = NULL)
+  static inline bool loadMatrix(const std::string &filename, vpArray2D<double> &M,
+                                const bool binary = false, char *header = NULL)
   {
-    return vpMatrix::loadMatrix(filename.c_str(), M, binary, Header);
+    return vpArray2D::load(filename, M, binary, header);
   }
-  static bool loadMatrix(const char *filename, vpMatrix &M, const bool binary = false, char *Header = NULL);
+
   /*!
-    Load a matrix from a YAML-formatted file.
+    Load a matrix from a YAML-formatted file. This function overloads vpArray2D::loadYAML().
 
     \param filename : absolute file name.
     \param M : matrix to be loaded from the file.
@@ -520,33 +522,32 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 
     \return Returns true if no problem appends.
   */
-  static inline bool loadMatrixYAML(std::string filename, vpMatrix &M, char *header = NULL)
+  static inline bool loadMatrixYAML(const std::string &filename, vpArray2D<double> &M, char *header = NULL)
   {
-    return vpMatrix::loadMatrixYAML(filename.c_str(), M, header);
+    return vpArray2D::loadYAML(filename, M, header);
   }
-  static bool loadMatrixYAML(const char *filename, vpMatrix &M, char *header = NULL);
-  /*!
-    Save a matrix to a file.
 
-    \param filename : absolute file name
-    \param M : matrix to be saved
-    \param binary :If true the matrix is save in a binary file, else a text file.
-    \param Header : optional line that will be saved at the beginning of the file
+  /*!
+    Save a matrix to a file. This function overloads vpArray2D::load().
+
+    \param filename : absolute file name.
+    \param M : matrix to be saved.
+    \param binary : If true the matrix is save in a binary file, else a text file.
+    \param header : optional line that will be saved at the beginning of the file.
 
     \return Returns true if no problem appends.
 
     Warning : If you save the matrix as in a text file the precision is less than if you save it in a binary file.
   */
-  static inline bool saveMatrix(std::string filename, const vpMatrix &M,
+  static inline bool saveMatrix(const std::string &filename, const vpArray2D<double> &M,
                                 const bool binary = false,
-                                const char *Header = "")
+                                const char *header = "")
   {
-    return vpMatrix::saveMatrix(filename.c_str(), M, binary, Header);
+    return vpArray2D::save(filename, M, binary, header);
   }
-  static bool saveMatrix(const char *filename, const vpMatrix &M, const bool binary = false, const char *Header = "");
 
   /*!
-    Save a matrix in a YAML-formatted file.
+    Save a matrix in a YAML-formatted file. This function overloads vpArray2D::saveYAML().
 
     \param filename : absolute file name.
     \param M : matrix to be saved in the file.
@@ -555,11 +556,10 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
     \return Returns true if success.
 
   */
-  static inline bool saveMatrixYAML(std::string filename, const vpMatrix &M, const char *header = "")
+  static inline bool saveMatrixYAML(const std::string &filename, const vpArray2D<double> &M, const char *header = "")
   {
-    return vpMatrix::saveMatrixYAML(filename.c_str(), M, header);
+    return vpArray2D::saveYAML(filename, M, header);
   }
-  static bool saveMatrixYAML(const char *filename, const vpMatrix &M, const char *header = "");
   //@}
 
 
@@ -568,6 +568,10 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
     @name Deprecated functions
   */
   //@{
+  /*!
+     \deprecated Only provided for compatibilty with ViSP previous releases. This function does nothing.
+   */
+  vp_deprecated void init() { };
   /*!
      \deprecated You should rather use stack(const vpMatrix &A)
    */

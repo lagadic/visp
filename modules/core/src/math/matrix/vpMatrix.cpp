@@ -89,48 +89,6 @@ vpMatrix::vpMatrix(const vpMatrix &M,
   init(M, r, c, nrows, ncols);
 }
 
-//! Copy constructor
-vpMatrix::vpMatrix(const vpMatrix& M)
-  : vpArray2D<double>(M.rowNum, M.colNum)
-{
-  memcpy(data, M.data, rowNum*colNum*sizeof(double)) ;
-}
-
-//! Create a matrix from a rotation matrix.
-vpMatrix::vpMatrix(const vpRotationMatrix& R)
-  : vpArray2D<double>(R.getRows(), R.getCols())
-{
-  memcpy(data, R.data, rowNum*colNum*sizeof(double)) ;
-}
-
-//! Create a matrix from a velocity twist matrix.
-vpMatrix::vpMatrix(const vpVelocityTwistMatrix& V)
-  : vpArray2D<double>(V.getRows(), V.getCols())
-{
-  memcpy(data, V.data, rowNum*colNum*sizeof(double)) ;
-}
-
-//! Create a matrix from a force/torque twist matrix.
-vpMatrix::vpMatrix(const vpForceTwistMatrix& F)
-  : vpArray2D<double>(F.getRows(), F.getCols())
-{
-  memcpy(data, F.data, rowNum*colNum*sizeof(double)) ;
-}
-
-//! Create a matrix from a column vector.
-vpMatrix::vpMatrix(const vpColVector& v)
-  : vpArray2D<double>(v.getRows(), v.getCols())
-{
-  memcpy(data, v.data, rowNum*colNum*sizeof(double)) ;
-}
-//! Create a matrix from a row vector.
-vpMatrix::vpMatrix(const vpRowVector& v)
-  : vpArray2D<double>(v.getRows(), v.getCols())
-{
-  memcpy(data, v.data, rowNum*colNum*sizeof(double)) ;
-}
-
-
 /*!
   Initialize the matrix from a part of an input matrix \e M.
 
@@ -206,7 +164,7 @@ vpMatrix::eye(unsigned int n)
   try {
     eye(n, n);
   }
-  catch(vpException &e) {
+  catch(...) {
     throw ;
   }
 }
@@ -221,7 +179,7 @@ vpMatrix::eye(unsigned int m, unsigned int n)
   try {
     resize(m,n) ;
   }
-  catch(vpException &e) {
+  catch(...) {
     throw ;
   }
 
@@ -440,93 +398,30 @@ vpMatrix vpMatrix::AtA() const
 }
 
 /*!
-  Copy operator.
-  Allow operation such as A = B
+  Copy operator that allows to convert on of the following container that
+  inherit from vpArray2D such as vpMatrix, vpRotationMatrix, vpHomogeneousMatrix,
+  vpPoseVector, vpColVector, vpRowVector... into a vpMatrix.
 
-  \param B : matrix to be copied.
+  \param A : 2D array to be copied.
+
+  The following example shows how to create a matrix from an homogeneous matrix:
+  \code
+  vpRotationMatrix R;
+  vpMatrix M = R;
+  \endcode
+
 */
 vpMatrix &
-vpMatrix::operator=(const vpMatrix &B)
+vpMatrix::operator=(const vpArray2D<double> &A)
 {
   try {
-    resize(B.rowNum, B.colNum) ;
+    resize(A.getRows(), A.getCols()) ;
   }
   catch(...) {
     throw ;
   }
 
-  memcpy(data, B.data, dsize*sizeof(double));
-
-  return *this;
-}
-/*!
-  Allow to set a matrix from a rotation matrix.
-
-  \param R : matrix to be copied.
-*/
-vpMatrix &
-vpMatrix::operator=(const vpRotationMatrix &R)
-{
-  resize(R.getRows(), R.getCols()) ;
-
-  memcpy(data, R.data, R.size()*sizeof(double));
-
-  return *this;
-}
-/*!
-  Allow to set a matrix from a velocity twist matrix.
-
-  \param V : matrix to be copied.
-*/
-vpMatrix &
-vpMatrix::operator=(const vpVelocityTwistMatrix &V)
-{
-  resize(V.getRows(), V.getCols()) ;
-
-  memcpy(data, V.data, V.size()*sizeof(double));
-
-  return *this;
-}
-/*!
-  Allow to set a matrix from a force/torque twist matrix.
-
-  \param V : matrix to be copied.
-*/
-vpMatrix &
-vpMatrix::operator=(const vpForceTwistMatrix &F)
-{
-  resize(F.getRows(), F.getCols()) ;
-
-  memcpy(data, F.data, F.size()*sizeof(double));
-
-  return *this;
-}
-
-/*!
-  Allow to set a matrix from a column vector.
-
-  \param v : vector to be copied.
-*/
-vpMatrix &
-vpMatrix::operator=(const vpColVector &v)
-{
-  resize(v.getRows(), v.getCols()) ;
-
-  memcpy(data, v.data, v.size()*sizeof(double));
-
-  return *this;
-}
-/*!
-  Allow to set a matrix from a row vector.
-
-  \param v : vector to be copied.
-*/
-vpMatrix &
-vpMatrix::operator=(const vpRowVector &v)
-{
-  resize(v.getRows(), v.getCols()) ;
-
-  memcpy(data, v.data, v.size()*sizeof(double));
+  memcpy(data, A.data, dsize*sizeof(double));
 
   return *this;
 }
@@ -2248,7 +2143,7 @@ vpMatrix::getRow(const unsigned int i, const unsigned int j_begin, const unsigne
 }
 
 /*!
-  Stack matrix \e B to the end of matrix \A and return the resulting matrix  [ A B ]^T
+  Stack matrix \e B to the end of matrix \e A and return the resulting matrix  [ A B ]^T
 
   \param A : Upper matrix.
   \param B : Lower matrix.
@@ -2275,10 +2170,10 @@ vpMatrix::stack(const vpMatrix &A, const vpMatrix &B)
   Stack row vector \e r to matrix \e A and return the resulting matrix [ A r ]^T
 
   \param A : Upper matrix.
-  \param B : Lower matrix.
+  \param r : Lower matrix.
   \return Stacked matrix [ A r ]^T
 
-  \warning A and r must have the same number of columns.
+  \warning \e A and \e r must have the same number of columns.
 */
 vpMatrix
 vpMatrix::stack(const vpMatrix &A, const vpRowVector &r)
@@ -2296,7 +2191,7 @@ vpMatrix::stack(const vpMatrix &A, const vpRowVector &r)
 }
 
 /*!
-  Stack matrix \e B to the end of matrix \A and return the resulting matrix in \e C.
+  Stack matrix \e B to the end of matrix \e A and return the resulting matrix in \e C.
 
   \param  A : Upper matrix.
   \param  B : Lower matrix.
@@ -2338,7 +2233,7 @@ vpMatrix::stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 }
 
 /*!
-  Stack row vector \e v to the end of matrix \A and return the resulting matrix in \e C.
+  Stack row vector \e v to the end of matrix \e A and return the resulting matrix in \e C.
 
   \param  A : Upper matrix.
   \param  r : Lower row vector.
@@ -3200,358 +3095,6 @@ double vpMatrix::det(vpDetMethod method) const
   return (det_);
 }
 
-
-/*!
-  Save a matrix to a file.
-
-  \param filename : Absolute file name.
-  \param M : Matrix to be saved.
-  \param binary : If true the matrix is saved in a binary file, else a text file.
-  \param header : Optional line that will be saved at the beginning of the file.
-
-  \return Returns true if no problem happened.
-
-  Warning : If you save the matrix as in a text file the precision is
-  less than if you save it in a binary file.
-*/
-bool
-vpMatrix::saveMatrix(const char *filename, const vpMatrix &M, 
-                     const bool binary, const char *header)
-{
-  std::fstream file;
-
-  if (!binary)
-    file.open(filename, std::fstream::out);
-  else
-    file.open(filename, std::fstream::out|std::fstream::binary);
-
-  if(!file)
-  {
-    file.close();
-    return false;
-  }
-
-  else
-  {
-    if (!binary)
-    {
-      unsigned int i = 0;
-      file << "# ";
-      while (header[i] != '\0')
-      {
-        file << header[i];
-        if (header[i] == '\n')
-          file << "# ";
-        i++;
-      }
-      file << '\0';
-      file << std::endl;
-      file << M.getRows() << "\t" << M.getCols() << std::endl;
-      file << M << std::endl;
-    }
-    else
-    {
-      int headerSize = 0;
-      while (header[headerSize] != '\0') headerSize++;
-      file.write(header,headerSize+1);
-      unsigned int matrixSize;
-      matrixSize = M.getRows();
-      file.write((char*)&matrixSize,sizeof(int));
-      matrixSize = M.getCols();
-      file.write((char*)&matrixSize,sizeof(int));
-      double value;
-      for(unsigned int i = 0; i < M.getRows(); i++)
-      {
-        for(unsigned int j = 0; j < M.getCols(); j++)
-        {
-          value = M[i][j];
-          file.write((char*)&value,sizeof(double));
-        }
-      }
-    }
-  }
-
-  file.close();
-  return true;
-}
-
-/*!
-  Save a matrix in a YAML-formatted file.
-
-  \param filename : absolute file name.
-  \param M : matrix to be saved in the file.
-  \param header : optional lines that will be saved at the beginning of the file. Should be YAML-formatted and will adapt to the indentation if any.
-
-  \return Returns true if success.
-
-  Here is an example of outputs.
-\code
-vpMatrix M(3,4);
-vpMatrix::saveMatrixYAML("matrix.yml", M, "example: a YAML-formatted header");
-vpMatrix::saveMatrixYAML("matrixIndent.yml", M, "example:\n    - a YAML-formatted header\n    - with inner indentation");
-\endcode
-Content of matrix.yml:
-\code
-example: a YAML-formatted header
-rows: 3
-cols: 4
-data:
-  - [0, 0, 0, 0]
-  - [0, 0, 0, 0]
-  - [0, 0, 0, 0]
-\endcode
-Content of matrixIndent.yml:
-\code
-example:
-    - a YAML-formatted header
-    - with inner indentation
-rows: 3
-cols: 4
-data:
-    - [0, 0, 0, 0]
-    - [0, 0, 0, 0]
-    - [0, 0, 0, 0]
-\endcode
-
-  \sa loadMatrixYAML()
-*/
-bool vpMatrix::saveMatrixYAML(const char *filename, const vpMatrix &M, const char *header)
-{
-  std::fstream file;
-
-  file.open(filename, std::fstream::out);
-
-  if(!file)
-  {
-    file.close();
-    return false;
-  }
-
-  unsigned int i = 0;
-  bool inIndent = false;
-  std::string indent = "";
-  bool checkIndent = true;
-  while (header[i] != '\0')
-  {
-    file << header[i];
-    if(checkIndent)
-    {
-      if (inIndent)
-      {
-        if(header[i] == ' ')
-          indent +=  " ";
-        else if (indent.length() > 0)
-          checkIndent = false;
-      }
-      if (header[i] == '\n' || (inIndent && header[i] == ' '))
-        inIndent = true;
-      else
-        inIndent = false;
-    }
-    i++;
-  }
-
-  if(i != 0)
-    file << std::endl;
-  file << "rows: " << M.getRows() << std::endl;
-  file << "cols: " << M.getCols() << std::endl;
-
-  if(indent.length() == 0)
-    indent = "  ";
-
-  file << "data: " << std::endl;
-  unsigned int j;
-  for(i=0;i<M.getRows();++i)
-  {
-    file << indent << "- [";
-    for(j=0;j<M.getCols()-1;++j)
-      file << M[i][j] << ", ";
-    file << M[i][j] << "]" << std::endl;
-  }
-
-  file.close();
-  return true;
-}
-
-
-/*!
-  Load a matrix from a file.
-
-  \param filename : Absolute file name.
-  \param M : Matrix to be loaded.
-  \param binary : If true the matrix is loaded from a binary file, 
-  else from a text file.
-  \param header : header of the file loaded in this parameter.
-
-  \return Returns true if no problem happened.
-*/
-bool
-vpMatrix::loadMatrix(const char *filename, vpMatrix &M, const bool binary, 
-                     char *header)
-{
-  std::fstream file;
-
-  if (!binary)
-    file.open(filename, std::fstream::in);
-  else
-    file.open(filename, std::fstream::in|std::fstream::binary);
-
-  if(!file)
-  {
-    file.close();
-    return false;
-  }
-
-  else
-  {
-    if (!binary)
-    {
-      char c='0';
-      std::string h;
-      while ((c != '\0') && (c != '\n'))
-      {
-        file.read(&c,1);
-        h+=c;
-      }
-      if (header != NULL)
-        strncpy(header, h.c_str(), h.size() + 1);
-
-      unsigned int rows, cols;
-      file >> rows;
-      file >> cols;
-
-      if (rows > std::numeric_limits<unsigned int>::max()
-          || cols > std::numeric_limits<unsigned int>::max())
-        throw vpException(vpException::badValue, "Matrix exceed the max size.");
-
-      M.resize(rows,cols);
-
-      double value;
-      for(unsigned int i = 0; i < rows; i++)
-      {
-        for(unsigned int j = 0; j < cols; j++)
-        {
-          file >> value;
-          M[i][j] = value;
-        }
-      }
-    }
-    else
-    {
-      char c='0';
-      std::string h;
-      while ((c != '\0') && (c != '\n'))
-      {
-        file.read(&c,1);
-        h+=c;
-      }
-      if (header != NULL)
-        strncpy(header, h.c_str(), h.size() + 1);
-
-      unsigned int rows, cols;
-      file.read((char*)&rows,sizeof(unsigned int));
-      file.read((char*)&cols,sizeof(unsigned int));
-      M.resize(rows,cols);
-
-      double value;
-      for(unsigned int i = 0; i < rows; i++)
-      {
-        for(unsigned int j = 0; j < cols; j++)
-        {
-          file.read((char*)&value,sizeof(double));
-          M[i][j] = value;
-        }
-      }
-    }
-  }
-
-  file.close();
-  return true;
-}
-
-
-/*!
-  Load a matrix from a YAML-formatted file.
-
-  \param filename : absolute file name.
-  \param M : matrix to be loaded from the file.
-  \param header : header of the file is loaded in this parameter.
-
-  \return Returns true on success.
-
-  \sa saveMatrixYAML()
-
-*/
-bool
-vpMatrix::loadMatrixYAML(const char *filename, vpMatrix &M, char *header)
-{
-  std::fstream file;
-
-  file.open(filename, std::fstream::in);
-
-  if(!file)
-  {
-    file.close();
-    return false;
-  }
-
-  unsigned int rows = 0,cols = 0;
-  std::string h;
-  std::string line,subs;
-  bool inheader = true;
-  unsigned int i=0, j;
-  unsigned int lineStart = 0;
-
-  while ( getline (file,line) )
-  {
-    if(inheader)
-    {
-      if(rows == 0 && line.compare(0,5,"rows:") == 0)
-      {
-        std::stringstream ss(line);
-        ss >> subs;
-        ss >> rows;
-      }
-      else if (cols == 0 && line.compare(0,5,"cols:") == 0)
-      {
-        std::stringstream ss(line);
-        ss >> subs;
-        ss >> cols;
-      }
-      else if (line.compare(0,5,"data:") == 0)
-        inheader = false;
-      else
-        h += line + "\n";
-    }
-    else
-    {
-      // if i == 0, we just got out of the header: initialize matrix dimensions
-      if(i == 0)
-      {
-        if(rows == 0 || cols == 0)
-        {
-          file.close();
-          return false;
-        }
-        M.resize(rows, cols);
-        // get indentation level which is common to all lines
-        lineStart = (unsigned int)line.find("[") + 1;
-      }
-      std::stringstream ss(line.substr(lineStart, line.find("]") - lineStart));
-      j = 0;
-      while(getline(ss, subs, ','))
-        M[i][j++] = atof(subs.c_str());
-      i++;
-    }
-  }
-
-  if (header != NULL)
-    strncpy(header, h.substr(0,h.length()-1).c_str(), h.size());
-
-  file.close();
-  return true;
-}
-
 /*!
 
   Compute the exponential matrix of a square matrix.
@@ -3590,7 +3133,7 @@ vpMatrix::expm()
     vpMatrix _expcX(rowNum, colNum);
     vpMatrix _eye(rowNum, colNum);
 
-    _eye.setIdentity();
+    _eye.eye();
     vpMatrix exp(*this);
 
     //      double f;

@@ -41,6 +41,9 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fstream>
+#include <sstream>
+#include <limits>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
@@ -231,6 +234,16 @@ public:
     return *this;
   }
 
+  /*!
+    Copy operator of a 2D array.
+  */
+  vpArray2D<Type> & operator=(const vpArray2D<Type> & A)
+  {
+    resize(A.rowNum, A.colNum);
+    memcpy(data, A.data, rowNum*colNum*sizeof(Type));
+    return *this;
+  }
+
   //! Set element \f$A_{ij} = x\f$ using A[i][j] = x
   inline Type *operator[](unsigned int i) { return rowPtrs[i]; }
   //! Get element \f$x = A_{ij}\f$ using x = A[i][j]
@@ -240,7 +253,11 @@ public:
     \relates vpArray2D
     Writes the given array to the output stream and returns a reference to the output stream.
     */
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
+  friend
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  VISP_EXPORT
+#endif
+  std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
   {
     if (A.data == NULL)
       return s;
@@ -261,6 +278,331 @@ public:
     return s;
   }
   //@}
+
+  //---------------------------------
+  // Inherited array I/O  Static Public Member Functions
+  //---------------------------------
+  /** @name Inherited array I/O with Static Public Member Functions  */
+  //@{
+  /*!
+    Load a matrix from a file.
+
+    \param filename : Absolute file name.
+    \param A : Array to be loaded
+    \param binary : If true the matrix is loaded from a binary file, else from a text file.
+    \param header : Header of the file is loaded in this parameter.
+
+    \return Returns true if success.
+
+    \sa save()
+  */
+  static bool load(const std::string &filename, vpArray2D<Type> &A,
+                   const bool binary = false, char *header = NULL)
+  {
+    std::fstream file;
+
+    if (!binary)
+      file.open(filename.c_str(), std::fstream::in);
+    else
+      file.open(filename.c_str(), std::fstream::in|std::fstream::binary);
+
+    if(!file) {
+      file.close();
+      return false;
+    }
+
+    else {
+      if (!binary) {
+        char c='0';
+        std::string h;
+        while ((c != '\0') && (c != '\n')) {
+          file.read(&c,1);
+          h+=c;
+        }
+        if (header != NULL)
+          strncpy(header, h.c_str(), h.size() + 1);
+
+        unsigned int rows, cols;
+        file >> rows;
+        file >> cols;
+
+        if (rows > std::numeric_limits<unsigned int>::max()
+            || cols > std::numeric_limits<unsigned int>::max())
+          throw vpException(vpException::badValue, "Array exceed the max size.");
+
+        A.resize(rows,cols);
+
+        Type value;
+        for(unsigned int i = 0; i < rows; i++) {
+          for(unsigned int j = 0; j < cols; j++) {
+            file >> value;
+            A[i][j] = value;
+          }
+        }
+      }
+      else {
+        char c='0';
+        std::string h;
+        while ((c != '\0') && (c != '\n')) {
+          file.read(&c,1);
+          h+=c;
+        }
+        if (header != NULL)
+          strncpy(header, h.c_str(), h.size() + 1);
+
+        unsigned int rows, cols;
+        file.read((char*)&rows,sizeof(unsigned int));
+        file.read((char*)&cols,sizeof(unsigned int));
+        A.resize(rows,cols);
+
+        Type value;
+        for(unsigned int i = 0; i < rows; i++) {
+          for(unsigned int j = 0; j < cols; j++) {
+            file.read((char*)&value,sizeof(Type));
+            A[i][j] = value;
+          }
+        }
+      }
+    }
+
+    file.close();
+    return true;
+  }
+  /*!
+    Load an array from a YAML-formatted file.
+
+    \param filename : absolute file name.
+    \param A : array to be loaded from the file.
+    \param header : header of the file is loaded in this parameter.
+
+    \return Returns true on success.
+
+    \sa saveYAML()
+
+  */
+  static bool loadYAML(const std::string &filename, vpArray2D<Type> &A, char *header = NULL)
+  {
+    std::fstream file;
+
+    file.open(filename.c_str(), std::fstream::in);
+
+    if(!file) {
+      file.close();
+      return false;
+    }
+
+    unsigned int rows = 0,cols = 0;
+    std::string h;
+    std::string line,subs;
+    bool inheader = true;
+    unsigned int i=0, j;
+    unsigned int lineStart = 0;
+
+    while ( getline (file,line) ) {
+      if(inheader) {
+        if(rows == 0 && line.compare(0,5,"rows:") == 0) {
+          std::stringstream ss(line);
+          ss >> subs;
+          ss >> rows;
+        }
+        else if (cols == 0 && line.compare(0,5,"cols:") == 0) {
+          std::stringstream ss(line);
+          ss >> subs;
+          ss >> cols;
+        }
+        else if (line.compare(0,5,"data:") == 0)
+          inheader = false;
+        else
+          h += line + "\n";
+      }
+      else {
+        // if i == 0, we just got out of the header: initialize matrix dimensions
+        if(i == 0) {
+          if(rows == 0 || cols == 0) {
+            file.close();
+            return false;
+          }
+          A.resize(rows, cols);
+          // get indentation level which is common to all lines
+          lineStart = (unsigned int)line.find("[") + 1;
+        }
+        std::stringstream ss(line.substr(lineStart, line.find("]") - lineStart));
+        j = 0;
+        while(getline(ss, subs, ','))
+          A[i][j++] = atof(subs.c_str());
+        i++;
+      }
+    }
+
+    if (header != NULL)
+      strncpy(header, h.substr(0,h.length()-1).c_str(), h.size());
+
+    file.close();
+    return true;
+  }
+
+  /*!
+    Save a matrix to a file.
+
+    \param filename : Absolute file name.
+    \param A : Array to be saved.
+    \param binary : If true the matrix is saved in a binary file, else a text file.
+    \param header : Optional line that will be saved at the beginning of the file.
+
+    \return Returns true if success.
+
+    Warning : If you save the matrix as in a text file the precision is
+    less than if you save it in a binary file.
+
+    \sa load()
+  */
+  static bool save(const std::string &filename, const vpArray2D<Type> &A,
+                   const bool binary = false, const char *header = "")
+  {
+    std::fstream file;
+
+    if (!binary)
+      file.open(filename.c_str(), std::fstream::out);
+    else
+      file.open(filename.c_str(), std::fstream::out|std::fstream::binary);
+
+    if(!file) {
+      file.close();
+      return false;
+    }
+
+    else {
+      if (!binary) {
+        unsigned int i = 0;
+        file << "# ";
+        while (header[i] != '\0') {
+          file << header[i];
+          if (header[i] == '\n')
+            file << "# ";
+          i++;
+        }
+        file << '\0';
+        file << std::endl;
+        file << A.getRows() << "\t" << A.getCols() << std::endl;
+        file << A << std::endl;
+      }
+      else {
+        int headerSize = 0;
+        while (header[headerSize] != '\0') headerSize++;
+        file.write(header,headerSize+1);
+        unsigned int matrixSize;
+        matrixSize = A.getRows();
+        file.write((char*)&matrixSize,sizeof(int));
+        matrixSize = A.getCols();
+        file.write((char*)&matrixSize,sizeof(int));
+        Type value;
+        for(unsigned int i = 0; i < A.getRows(); i++) {
+          for(unsigned int j = 0; j < A.getCols(); j++) {
+            value = A[i][j];
+            file.write((char*)&value,sizeof(Type));
+          }
+        }
+      }
+    }
+
+    file.close();
+    return true;
+  }
+  /*!
+    Save an array in a YAML-formatted file.
+
+    \param filename : absolute file name.
+    \param A : array to be saved in the file.
+    \param header : optional lines that will be saved at the beginning of the file. Should be YAML-formatted and will adapt to the indentation if any.
+
+    \return Returns true if success.
+
+    Here is an example of outputs.
+  \code
+  vpArray2D<double> M(3,4);
+  vpArray2D::saveYAML("matrix.yml", M, "example: a YAML-formatted header");
+  vpArray2D::saveYAML("matrixIndent.yml", M, "example:\n    - a YAML-formatted header\n    - with inner indentation");
+  \endcode
+  Content of matrix.yml:
+  \code
+  example: a YAML-formatted header
+  rows: 3
+  cols: 4
+  data:
+    - [0, 0, 0, 0]
+    - [0, 0, 0, 0]
+    - [0, 0, 0, 0]
+  \endcode
+  Content of matrixIndent.yml:
+  \code
+  example:
+      - a YAML-formatted header
+      - with inner indentation
+  rows: 3
+  cols: 4
+  data:
+      - [0, 0, 0, 0]
+      - [0, 0, 0, 0]
+      - [0, 0, 0, 0]
+  \endcode
+
+    \sa loadYAML()
+  */
+  static bool saveYAML(const std::string &filename, const vpArray2D<Type> &A, const char *header = "")
+  {
+    std::fstream file;
+
+    file.open(filename.c_str(), std::fstream::out);
+
+    if(!file) {
+      file.close();
+      return false;
+    }
+
+    unsigned int i = 0;
+    bool inIndent = false;
+    std::string indent = "";
+    bool checkIndent = true;
+    while (header[i] != '\0') {
+      file << header[i];
+      if(checkIndent) {
+        if (inIndent) {
+          if(header[i] == ' ')
+            indent +=  " ";
+          else if (indent.length() > 0)
+            checkIndent = false;
+        }
+        if (header[i] == '\n' || (inIndent && header[i] == ' '))
+          inIndent = true;
+        else
+          inIndent = false;
+      }
+      i++;
+    }
+
+    if(i != 0)
+      file << std::endl;
+    file << "rows: " << A.getRows() << std::endl;
+    file << "cols: " << A.getCols() << std::endl;
+
+    if(indent.length() == 0)
+      indent = "  ";
+
+    file << "data: " << std::endl;
+    unsigned int j;
+    for(i=0;i<A.getRows();++i)
+    {
+      file << indent << "- [";
+      for(j=0;j<A.getCols()-1;++j)
+        file << A[i][j] << ", ";
+      file << A[i][j] << "]" << std::endl;
+    }
+
+    file.close();
+    return true;
+  }
+  //@}
+
 };
 
 /*!

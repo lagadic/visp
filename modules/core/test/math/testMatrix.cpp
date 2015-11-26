@@ -55,6 +55,7 @@ int
 main()
 {
   try {
+    int err = 1;
     {
       vpMatrix M(4,5);
       int val = 0;
@@ -70,6 +71,40 @@ main()
       N.init(M, 0, 1, 2, 3);
       std::cout <<"N ";
       N.print (std::cout, 4);
+
+      if (vpMatrix::saveMatrix("matrix.mat", M, false, "My 4-by-5 matrix"))
+        std::cout << "Matrix saved in matrix.mat file" << std::endl;
+      else
+        return err;
+
+      vpMatrix M1;
+      if (vpMatrix::loadMatrix("matrix.mat", M1, false))
+        std::cout << "Matrix loaded from matrix.mat file: \n" << M1 << std::endl;
+      else
+        return err;
+
+      if (vpMatrix::saveMatrixYAML("matrix.yml", M, "My 4-by-5 matrix"))
+        std::cout << "Matrix saved in matrix.yml file" << std::endl;
+      else
+        return err;
+
+      vpMatrix M2;
+      if (vpMatrix::loadMatrixYAML("matrix.yml", M2))
+        std::cout << "Matrix loaded from matrix.yml file: \n" << M2 << std::endl;
+      else
+        return err;
+    }
+    {
+      vpRotationMatrix R(vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
+      std::cout << "R: \n" << R << std::endl;
+      vpMatrix M1(R);
+      std::cout << "M1: \n" << M1 << std::endl;
+      vpMatrix M2(M1);
+      std::cout << "M2: \n" << M2 << std::endl;
+      vpMatrix M3 = R;
+      std::cout << "M3: \n" << M3 << std::endl;
+      vpMatrix M4 = M1;
+      std::cout << "M4: \n" << M4 << std::endl;
     }
     {
 
