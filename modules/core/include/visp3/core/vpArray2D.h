@@ -326,8 +326,8 @@ public:
         file >> rows;
         file >> cols;
 
-        if (rows > std::numeric_limits<unsigned int>::max()
-            || cols > std::numeric_limits<unsigned int>::max())
+        if (rows > (std::numeric_limits<unsigned int>::max)()
+            || cols > (std::numeric_limits<unsigned int>::max)())
           throw vpException(vpException::badValue, "Array exceed the max size.");
 
         A.resize(rows,cols);

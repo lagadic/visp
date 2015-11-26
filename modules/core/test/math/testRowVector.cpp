@@ -88,9 +88,9 @@ int main()
   {
     vpRowVector v(4);
     std::vector<double> bench1(4);
-    for(size_t i=0; i<v.size(); i++) {
-      v[i] = i;
-      bench1[i] = i;
+    for(unsigned int i=0; i<v.size(); i++) {
+      v[i] = (double)i;
+	  bench1[i] = (double)i;
     }
     if (test("v", v, bench1) == false)
       return err;
@@ -110,7 +110,7 @@ int main()
 
     vpRowVector r1;
     for(size_t i=0; i<4; i++)
-      r1.stack(i);
+      r1.stack((double)i);
 
     vpRowVector r2 = r1.extract(1, 3);
     if (test("r2", r2, bench3) == false)

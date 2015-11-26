@@ -99,8 +99,6 @@ int main()
 */
 class VISP_EXPORT vpForceTwistMatrix : public vpArray2D<double>
 {
-  friend class vpArray2D;
-
  public:
   // basic constructor
   vpForceTwistMatrix();

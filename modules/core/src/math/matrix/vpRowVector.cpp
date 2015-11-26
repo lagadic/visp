@@ -98,7 +98,7 @@ vpRowVector & vpRowVector::operator=(const vpMatrix &M)
 */
 vpRowVector & vpRowVector::operator=(const std::vector<double> &v)
 {
-  resize(v.size());
+  resize((unsigned int)v.size());
   for(unsigned int i=0; i<v.size(); i++)
     (*this)[i] = v[i];
   return *this;
@@ -108,7 +108,7 @@ vpRowVector & vpRowVector::operator=(const std::vector<double> &v)
 */
 vpRowVector & vpRowVector::operator=(const std::vector<float> &v)
 {
-  resize(v.size());
+  resize((unsigned int)v.size());
   for(unsigned int i=0; i<v.size(); i++)
     (*this)[i] = (float)v[i];
   return *this;
@@ -466,7 +466,7 @@ vpRowVector::vpRowVector (const vpMatrix &M)
    Constructor that creates a row vector from a std vector of double.
  */
 vpRowVector::vpRowVector (const std::vector<double> &v)
-  : vpArray2D<double>(1, v.size())
+  : vpArray2D<double>(1, (unsigned int)v.size())
 {
   for(unsigned int j=0; j< v.size(); j++)
     (*this)[j] = v[j];
@@ -475,7 +475,7 @@ vpRowVector::vpRowVector (const std::vector<double> &v)
    Constructor that creates a row vector from a std vector of float.
  */
 vpRowVector::vpRowVector (const std::vector<float> &v)
-  : vpArray2D<double>(1, v.size())
+  : vpArray2D<double>(1, (unsigned int)v.size())
 {
   for(unsigned int j=0; j< v.size(); j++)
     (*this)[j] = (double)(v[j]);

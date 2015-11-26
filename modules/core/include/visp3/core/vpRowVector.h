@@ -43,6 +43,7 @@
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpMath.h>
 
 class vpMatrix;
 class vpColVector;

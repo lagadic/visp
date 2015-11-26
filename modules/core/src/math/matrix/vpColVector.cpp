@@ -276,7 +276,7 @@ vpColVector::vpColVector (const vpMatrix &M)
    Constructor that creates a column vector from a std vector of double.
  */
 vpColVector::vpColVector (const std::vector<double> &v)
-  : vpArray2D<double>(1, v.size())
+  : vpArray2D<double>(1, (unsigned int)v.size())
 {
   for(unsigned int i=0; i< v.size(); i++)
     (*this)[i] = v[i];
@@ -285,7 +285,7 @@ vpColVector::vpColVector (const std::vector<double> &v)
    Constructor that creates a column vector from a std vector of float.
  */
 vpColVector::vpColVector (const std::vector<float> &v)
-  : vpArray2D<double>(1, v.size())
+  : vpArray2D<double>(1, (unsigned int)v.size())
 {
   for(unsigned int i=0; i< v.size(); i++)
     (*this)[i] = (double)(v[i]);
@@ -459,7 +459,7 @@ vpColVector &vpColVector::operator=(const vpMatrix &M)
 */
 vpColVector & vpColVector::operator=(const std::vector<double> &v)
 {
-  resize(v.size());
+  resize((unsigned int)v.size());
   for(unsigned int i=0; i<v.size(); i++)
     (*this)[i] = v[i];
   return *this;
@@ -469,7 +469,7 @@ vpColVector & vpColVector::operator=(const std::vector<double> &v)
 */
 vpColVector & vpColVector::operator=(const std::vector<float> &v)
 {
-  resize(v.size());
+	resize((unsigned int)v.size());
   for(unsigned int i=0; i<v.size(); i++)
     (*this)[i] = (float)v[i];
   return *this;
