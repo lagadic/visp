@@ -43,7 +43,6 @@
 
 #include <iostream>
 
-#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/sensor/vp1394CMUGrabber.h>
 

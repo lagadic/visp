@@ -192,7 +192,7 @@ void writeBinaryFloatLE(std::ofstream &file, const float float_value) {
 void writeBinaryDoubleLE(std::ofstream &file, const double double_value) {
   if(isBigEndian()) {
     //Reverse bytes order to little endian
-    float reverse_double = reverseDouble(double_value);
+    double reverse_double = reverseDouble(double_value);
     file.write((char *)(&reverse_double), sizeof(reverse_double));
   } else {
     file.write((char *)(&double_value), sizeof(double_value));
@@ -757,7 +757,7 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
   //what(): Distortion coefficients must be 1x4, 4x1, 1x5, 5x1, 1x8 or 8x1 floating-point vector in function cvProjectPoints2
   //Fixed in OpenCV 2.4.0 (r7558)
 //  cv::Mat distCoeffs;
-  cv::Mat distCoeffs(1, 5, CV_32F);
+  cv::Mat distCoeffs = cv::Mat::zeros(1, 5, CV_64F);
 
   try {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
@@ -2250,9 +2250,9 @@ void vpKeyPoint::initExtractors(const std::vector<std::string> &extractorNames) 
       float thresholdStep = 10; float minThreshold = 50; float maxThreshold = 220; size_t minRepeatability = 2;
       float minDistBetweenBlobs = 10; bool filterByColor = true; unsigned char blobColor = 0; bool filterByArea = true;
       float minArea = 25; float maxArea = 5000; bool filterByCircularity = false; float minCircularity = 0.8f;
-      float maxCircularity = std::numeric_limits<float>::max(); bool filterByInertia = true;
-      float minInertiaRatio = 0.1f; float maxInertiaRatio = std::numeric_limits<float>::max();
-      bool filterByConvexity = true; float minConvexity = 0.95f; float maxConvexity = std::numeric_limits<float>::max();
+      float maxCircularity = FLT_MAX; bool filterByInertia = true;
+      float minInertiaRatio = 0.1f; float maxInertiaRatio = FLT_MAX;
+      bool filterByConvexity = true; float minConvexity = 0.95f; float maxConvexity = FLT_MAX;
       Field<float> *thresholdStep_field = new Field<float>(thresholdStep);
       Field<float> *minThreshold_field = new Field<float>(minThreshold);
       Field<float> *maxThreshold_field = new Field<float>(maxThreshold);
@@ -4350,9 +4350,9 @@ struct KeyPoint_LessThan {
   KeyPoint_LessThan(const std::vector<cv::KeyPoint>& _kp) :
       kp(&_kp) {
   }
-  bool operator()(int i, int j) const {
-    const cv::KeyPoint& kp1 = (*kp)[(size_t) i];
-    const cv::KeyPoint& kp2 = (*kp)[(size_t) j];
+  bool operator()(/*int i, int j*/ size_t i, size_t j) const {
+    const cv::KeyPoint& kp1 = (*kp)[/*(size_t)*/ i];
+    const cv::KeyPoint& kp2 = (*kp)[/*(size_t)*/ j];
     if (!vpMath::equal(kp1.pt.x, kp2.pt.x, std::numeric_limits<float>::epsilon())) { //if (kp1.pt.x != kp2.pt.x) {
       return kp1.pt.x < kp2.pt.x;
     }

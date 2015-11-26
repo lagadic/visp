@@ -816,11 +816,11 @@ bool vpIoTools::readConfigVar(const std::string &var, float &value)
       if(configVars[k] == var)
         {
           if(configValues[k].compare("PI") == 0)
-              value = M_PI;
+              value = (float) M_PI;
           else if(configValues[k].compare("PI/2") == 0)
-              value = M_PI/2;
+              value = (float) (M_PI/2.0);
           else if(configValues[k].compare("-PI/2") == 0)
-              value = -M_PI/2;
+              value = (float) (-M_PI/2.0);
           else
               value = (float) atof(configValues[k].c_str());
           found = true;
