@@ -183,6 +183,19 @@ public:
   void set(const double tx, const double ty, const double tz,
            const double tux, const double tuy, const double tuz);
   vpRowVector t() const;
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /*!
+     \deprecated Provided only for compat with previous releases.
+     This function does nothing.
+   */
+  vp_deprecated void init() {};
+  //@}
+#endif
 } ;
 
 #endif

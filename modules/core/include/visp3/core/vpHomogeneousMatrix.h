@@ -191,6 +191,11 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
   */
   //@{
   /*!
+     \deprecated Provided only for compat with previous releases.
+     This function does nothing.
+   */
+  vp_deprecated void init() {};
+  /*!
      \deprecated You should rather use eye().
    */
   vp_deprecated void setIdentity();

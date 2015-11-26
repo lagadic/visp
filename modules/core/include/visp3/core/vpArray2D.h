@@ -602,7 +602,6 @@ public:
     return true;
   }
   //@}
-
 };
 
 /*!

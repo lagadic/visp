@@ -255,13 +255,18 @@ public:
   static vpColVector stack(const vpColVector &A, const vpColVector &B);
   static void stack(const vpColVector &A, const vpColVector &B, vpColVector &C);
 
-  static double stdev(const vpColVector &v, const bool useBesselCorrection=false);
+  static double stdev(const vpColVector &v, const bool useBesselCorrection=false);  
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions
   */
   //@{
+  /*!
+     \deprecated Provided only for compat with previous releases.
+     This function does nothing.
+   */
+  vp_deprecated void init() {};
   /*!
      \deprecated You should rather use extract().
    */

@@ -232,6 +232,11 @@ public:
   */
   //@{
   /*!
+     \deprecated Provided only for compat with previous releases.
+     This function does nothing.
+   */
+  vp_deprecated void init() {};
+  /*!
      \deprecated You should rather use stack(const vpRowVector &)
    */
   vp_deprecated void stackMatrices(const vpRowVector &r) { stack(r); };
