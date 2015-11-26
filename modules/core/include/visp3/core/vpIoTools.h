@@ -193,6 +193,10 @@ public:
   static std::pair<std::string, std::string> splitDrive(const std::string& pathname);
   static std::vector<std::string> splitChain(const std::string & chain, const std::string & sep);
 
+  /*!
+    @name Configuration file parsing
+  */
+  //@{
   // read configuration file
   static bool loadConfigFile(const std::string &confFile);
   static bool readConfigVar(const std::string &var, float &value);
@@ -202,9 +206,9 @@ public:
   static bool readConfigVar(const std::string &var, bool &value);
   static bool readConfigVar(const std::string &var, std::string &value);
   static bool readConfigVar(const std::string &var, vpColor &value);
-  static bool readConfigVar(const std::string &var, vpMatrix &value, 
-			    const unsigned int &nCols = 0, 
-			    const unsigned int &nRows = 0);
+  static bool readConfigVar(const std::string &var, vpArray2D<double> &value,
+                            const unsigned int &nCols = 0,
+                            const unsigned int &nRows = 0);
   
   // construct experiment filename & path
   static void setBaseName(const std::string &s);
@@ -219,6 +223,7 @@ public:
   // write files
   static void saveConfigFile(const bool &actuallySave = true);
   static void createBaseNamePath(const bool &empty = false);
+  //@}
 
  protected:
   static std::string baseName;
