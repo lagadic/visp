@@ -506,6 +506,47 @@ vpMatrix::diag(const vpColVector &A)
 
 /*!
 
+  Set the matrix as a diagonal matrix where each element on the diagonal is set to \e val.
+  Elements that are not on the diagonal are set to 0.
+
+  \param val : Value to set.
+
+  \sa eye()
+
+\code
+#include <iostream>
+
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(3, 4);
+
+  A.diag(2);
+
+  std::cout << "A:\n" << A << std::endl;
+}
+\endcode
+
+  Matrix A is now equal to:
+\code
+2 0 0 0
+0 2 0 0
+0 0 2 0
+\endcode
+*/
+void
+vpMatrix::diag(const double &val)
+{
+  (*this) = 0;
+  unsigned int min_ = (rowNum < colNum) ? rowNum : colNum;
+  for (unsigned int i=0 ; i< min_ ; i++ )
+    (* this)[i][i] = val;
+}
+
+
+/*!
+
   Create a diagonal matrix with the element of a vector \f$ DA_{ii} = A_i \f$.
 
   \param  A : Vector which element will be put in the diagonal.
@@ -927,7 +968,7 @@ void vpMatrix::add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 void vpMatrix::add2Matrices(const vpColVector &A, const vpColVector &B, vpColVector &C)
 {
   try  {
-    if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
+    if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum);
   }
   catch(...) {
     throw ;
@@ -979,7 +1020,7 @@ vpMatrix vpMatrix::operator+(const vpMatrix &B) const
 void vpMatrix::sub2Matrices(const vpColVector &A, const vpColVector &B, vpColVector &C)
 {
   try {
-    if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
+    if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum);
   }
   catch(...) {
     throw ;

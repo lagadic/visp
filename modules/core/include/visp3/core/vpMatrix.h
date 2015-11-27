@@ -159,6 +159,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //-------------------------------------------------
   /** @name Setting a diagonal matrix  */
   //@{
+  void diag(const double &val = 1.0);
   void diag(const vpColVector &A);
   // Initialize an identity matrix n-by-n
   void eye();
@@ -607,7 +608,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   vp_deprecated static void stackMatrices(const vpColVector &A, const vpColVector &B, vpColVector &C);
 
   /*!
-     \deprecated You should rather use eye()
+     \deprecated You should rather use diag(const double &)
    */
   vp_deprecated void setIdentity(const double & val=1.0) ;
   //@}
