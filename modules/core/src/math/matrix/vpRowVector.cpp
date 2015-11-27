@@ -435,6 +435,23 @@ vpColVector vpRowVector::t() const
 }
 
 /*!
+  Transpose the row vector. The resulting vector becomes a column vector.
+  \sa t()
+*/
+vpColVector vpRowVector::transpose() const
+{
+  return t();
+}
+/*!
+  Transpose the row vector. The resulting vector \e v becomes a column vector.
+  \sa t()
+*/
+void vpRowVector::transpose(vpColVector &v) const
+{
+  v = t();
+}
+
+/*!
    Constructor that creates a row vector corresponding to row \e i
    of matrix \e M.
  */

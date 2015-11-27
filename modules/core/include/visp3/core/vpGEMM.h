@@ -42,7 +42,7 @@
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpException.h>
 
-const vpArray2D<double> vpArrayNull(0,0);
+const vpArray2D<double> null(0,0);
 
 /*!
   \brief Enumeration of the operations applied on matrices in vpGEMM function.
@@ -300,9 +300,9 @@ void vpTGEMM(const vpArray2D<double> & A,const vpArray2D<double> & B, const doub
    vpGEMM(A,B,alpha,C,beta, VP_GEMM_A_T + VP_GEMM_B_T);
    \endcode
    
-   If C is not used, vpGEMM must be called using an empty array \e vpArrayNull :
+   If C is not used, vpGEMM must be called using an empty array \e null :
    \code
-   vpGEMM(A,B,alpha,C, vpArrayNull,0);
+   vpGEMM(A,B,alpha,C, null,0);
    \endcode
    
    \throw vpArray2D<double>Exception::incorrectMatrixSizeError if the sizes of the matrices

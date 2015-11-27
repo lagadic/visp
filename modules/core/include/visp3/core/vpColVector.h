@@ -197,6 +197,7 @@ public:
     \param i : Size of the vector. This value corresponds to the vector number
     of rows.
     \param flagNullify : If true, set the data to zero.
+    \exception vpException::fatalError When \e ncols is not equal to 1.
    */
   void resize(const unsigned int i, const bool flagNullify = true)
   {
@@ -212,8 +213,7 @@ public:
     \exception vpException::fatalError When \e ncols is not equal to 1.
 
     */
-  void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify = true)
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify)
   {
     if (ncols != 1)
       throw(vpException(vpException::fatalError,
@@ -227,6 +227,8 @@ public:
 
   double sumSquare() const;
   vpRowVector t() const;
+  vpRowVector transpose() const;
+  void transpose(vpRowVector &v) const;
 
   /*!
      Compute and return the cross product of two 3-dimension vectors: \f$a \times b\f$.

@@ -2360,7 +2360,7 @@ vpMbTracker::setClipping(const unsigned int &flags)
   \throw vpMatrixException::incorrectMatrixSizeError if the sizes of the 
   matrices do not allow the computation.
   
-  \warning The JTR matrix is resized.
+  \warning The JTR vector is resized.
   
   \param interaction : The interaction matrix (size Nx6).
   \param error : The residu vector (size Nx1).

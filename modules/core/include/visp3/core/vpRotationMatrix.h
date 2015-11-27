@@ -88,21 +88,12 @@ public:
 
   void eye();
 
+  vpThetaUVector getThetaUVector();
+
   vpRotationMatrix inverse() const;
   void inverse(vpRotationMatrix &R) const;
 
   bool isARotationMatrix() const  ;
-
-
-//  /*!
-//    Return the \f$\theta u\f$ vector that corresponds to tha rotation matrix.
-//   */
-//  vpThetaUVector getThetaUVector()
-//  {
-//    vpThetaUVector tu;
-//    tu.buildFrom(*this);
-//    return tu;
-//  }
 
   // copy operator from vpRotationMatrix
   vpRotationMatrix &operator=(const vpRotationMatrix &R);

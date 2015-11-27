@@ -601,23 +601,18 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
   }
 }
 
-
-
-
-
-
 //---------------------------------
 // Matrix operations.
 //---------------------------------
 
 /*!
-Operation C = A * B. 
+  Operation C = A * B.
 
-The result is placed in the third parameter C and not returned.
-A new matrix won't be allocated for every use of the function 
-(Speed gain if used many times with the same result matrix size).
+  The result is placed in the third parameter C and not returned.
+  A new matrix won't be allocated for every use of the function
+  (speed gain if used many times with the same result matrix size).
 
-\sa operator*()
+  \sa operator*()
 */
 void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
@@ -650,6 +645,101 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
       ci[j] = s;
     }
   }
+}
+
+/*!
+  \warning This function is provided for compat with previous releases. You should
+  rather use the functionalities provided in vpRotationMatrix class.
+
+  Operation C = A * B.
+
+  The result is placed in the third parameter C and not returned.
+  A new matrix won't be allocated for every use of the function
+  (speed gain if used many times with the same result matrix size).
+
+  \exception vpException::dimensionError If matrices are not 3-by-3 dimension.
+
+*/
+void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpRotationMatrix &C)
+{
+  if (A.colNum != 3 || A.rowNum != 3 || B.colNum != 3 || B.rowNum != 3) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot multiply (%dx%d) matrix by (%dx%d) matrix as a rotation matrix",
+                      A.getRows(), A.getCols(), B.getRows(), B.getCols())) ;
+  }
+
+  // 5/12/06 some "very" simple optimization to avoid indexation
+  unsigned int BcolNum = B.colNum;
+  unsigned int BrowNum = B.rowNum;
+  unsigned int i,j,k;
+  double **BrowPtrs = B.rowPtrs;
+  for (i=0;i<A.rowNum;i++)
+  {
+    double *rowptri = A.rowPtrs[i];
+    double *ci = C[i];
+    for (j=0;j<BcolNum;j++)
+    {
+      double s = 0;
+      for (k=0;k<BrowNum;k++) s += rowptri[k] * BrowPtrs[k][j];
+      ci[j] = s;
+    }
+  }
+}
+
+/*!
+  \warning This function is provided for compat with previous releases. You should
+  rather use the functionalities provided in vpHomogeneousMatrix class.
+
+  Operation C = A * B.
+
+  The result is placed in the third parameter C and not returned.
+  A new matrix won't be allocated for every use of the function
+  (speed gain if used many times with the same result matrix size).
+
+  \exception vpException::dimensionError If matrices are not 4-by-4 dimension.
+
+*/
+void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpHomogeneousMatrix &C)
+{
+  if (A.colNum != 4 || A.rowNum != 4 || B.colNum != 4 || B.rowNum != 4) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot multiply (%dx%d) matrix by (%dx%d) matrix as a rotation matrix",
+                      A.getRows(), A.getCols(), B.getRows(), B.getCols())) ;
+  }
+
+  // 5/12/06 some "very" simple optimization to avoid indexation
+  unsigned int BcolNum = B.colNum;
+  unsigned int BrowNum = B.rowNum;
+  unsigned int i,j,k;
+  double **BrowPtrs = B.rowPtrs;
+  for (i=0;i<A.rowNum;i++)
+  {
+    double *rowptri = A.rowPtrs[i];
+    double *ci = C[i];
+    for (j=0;j<BcolNum;j++)
+    {
+      double s = 0;
+      for (k=0;k<BrowNum;k++) s += rowptri[k] * BrowPtrs[k][j];
+      ci[j] = s;
+    }
+  }
+}
+
+/*!
+  \warning This function is provided for compat with previous releases. You should
+  rather use multMatrixVector() that is more explicit.
+
+  Operation C = A * B.
+
+  The result is placed in the third parameter C and not returned.
+  A new matrix won't be allocated for every use of the function
+  (speed gain if used many times with the same result matrix size).
+
+  \sa multMatrixVector()
+*/
+void vpMatrix::mult2Matrices(const vpMatrix &A, const vpColVector &B, vpColVector &C)
+{
+  vpMatrix::multMatrixVector(A, B, C);
 }
 
 /*!
@@ -792,12 +882,50 @@ void vpMatrix::add2WeightedMatrices(const vpMatrix &A, const double &wA, const v
 
   The result is placed in the third parameter C and not returned.
   A new matrix won't be allocated for every use of the function
-  (Speed gain if used many times with the same result matrix size).
+  (speed gain if used many times with the same result matrix size).
 
   \sa operator+()
 */
 void vpMatrix::add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {  
+  try  {
+    if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
+  }
+  catch(...) {
+    throw ;
+  }
+
+  if ((A.colNum != B.getCols())||(A.rowNum != B.getRows())) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot add (%dx%d) matrix with (%dx%d) matrix",
+                      A.getRows(), A.getCols(), B.getRows(), B.getCols())) ;
+  }
+
+  double ** ArowPtrs=A.rowPtrs;
+  double ** BrowPtrs=B.rowPtrs;
+  double ** CrowPtrs=C.rowPtrs;
+
+  for (unsigned int i=0;i<A.rowNum;i++) {
+    for(unsigned int j=0;j<A.colNum;j++) {
+      CrowPtrs[i][j] = BrowPtrs[i][j]+ArowPtrs[i][j];
+    }
+  }
+}
+
+/*!
+  \warning This function is provided for compat with previous releases. You should
+  rather use the functionalities provided in vpColVector class.
+
+  Operation C = A + B.
+
+  The result is placed in the third parameter C and not returned.
+  A new vector won't be allocated for every use of the function
+  (speed gain if used many times with the same result matrix size).
+
+  \sa vpColVector::operator+()
+*/
+void vpMatrix::add2Matrices(const vpColVector &A, const vpColVector &B, vpColVector &C)
+{
   try  {
     if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
   }
@@ -835,13 +963,55 @@ vpMatrix vpMatrix::operator+(const vpMatrix &B) const
 
 
 /*!
-Operation C = A - B. 
+  \warning This function is provided for compat with previous releases. You should
+  rather use the functionalities provided in vpColVector class.
 
-The result is placed in the third parameter C and not returned.
-A new matrix won't be allocated for every use of the function 
-(Speed gain if used many times with the same result matrix size).
+  Operation C = A - B on column vectors.
 
-\sa operator-()
+  The result is placed in the third parameter C and not returned.
+  A new vector won't be allocated for every use of the function
+  (speed gain if used many times with the same result matrix size).
+
+  \exception vpException::dimensionError If A and B vectors have not the same size.
+
+  \sa vpColVector::operator-()
+*/
+void vpMatrix::sub2Matrices(const vpColVector &A, const vpColVector &B, vpColVector &C)
+{
+  try {
+    if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
+  }
+  catch(...) {
+    throw ;
+  }
+
+  if ( (A.colNum != B.getCols())||(A.rowNum != B.getRows())) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot substract (%dx%d) matrix to (%dx%d) matrix",
+                      A.getRows(), A.getCols(), B.getRows(), B.getCols())) ;
+  }
+
+  double ** ArowPtrs=A.rowPtrs;
+  double ** BrowPtrs=B.rowPtrs;
+  double ** CrowPtrs=C.rowPtrs;
+
+  for (unsigned int i=0;i<A.rowNum;i++) {
+    for(unsigned int j=0;j<A.colNum;j++) {
+      CrowPtrs[i][j] = ArowPtrs[i][j]-BrowPtrs[i][j];
+    }
+  }
+}
+
+/*!
+  Operation C = A - B.
+
+  The result is placed in the third parameter C and not returned.
+  A new matrix won't be allocated for every use of the function
+  (speed gain if used many times with the same result matrix size).
+
+  \exception vpException::dimensionError If A and B matrices have not the same size.
+
+  \sa operator-()
 */
 void vpMatrix::sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
@@ -870,8 +1040,8 @@ void vpMatrix::sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 }
 
 /*!
-Operation C = A - B (A is unchanged).
-\sa sub2Matrices() to avoid matrix allocation for each use.
+  Operation C = A - B (A is unchanged).
+  \sa sub2Matrices() to avoid matrix allocation for each use.
 */
 vpMatrix vpMatrix::operator-(const vpMatrix &B) const
 {
@@ -3339,3 +3509,26 @@ double vpMatrix::sumSquare() const
 
   return sum_square;
 }
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+vpMatrix vpMatrix::stackMatrices(const vpColVector &A, const vpColVector &B)
+{
+  return (vpMatrix)(vpColVector::stack(A, B));
+}
+
+void vpMatrix::stackMatrices(const vpColVector &A, const vpColVector &B, vpColVector &C)
+{
+  vpColVector::stack(A, B, C);
+}
+
+vpMatrix vpMatrix::stackMatrices(const vpMatrix &A, const vpRowVector &B)
+{
+  return vpMatrix::stack(A, B);
+};
+
+void vpMatrix::stackMatrices(const vpMatrix &A, const vpRowVector &B, vpMatrix &C)
+{
+  vpMatrix::stack(A, B, C);
+};
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+

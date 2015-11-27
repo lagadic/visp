@@ -461,12 +461,17 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Matrix operations with Static Public Member Functions  */
   //@{
   static void add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
+  static void add2Matrices(const vpColVector &A, const vpColVector &B, vpColVector &C);
   static void add2WeightedMatrices(const vpMatrix &A, const double &wA, const vpMatrix &B,const double &wB, vpMatrix &C);
   static void computeHLM(const vpMatrix &H, const double &alpha, vpMatrix &HLM);
   static void mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
+  static void mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpRotationMatrix &C);
+  static void mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpHomogeneousMatrix &C);
+  static void mult2Matrices(const vpMatrix &A, const vpColVector &B, vpColVector &C);
   static void multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVector &w);
   static void negateMatrix(const vpMatrix &A, vpMatrix &C);
   static void sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
+  static void sub2Matrices(const vpColVector &A, const vpColVector &B, vpColVector &C);
   //@}
 
   //---------------------------------
@@ -584,6 +589,22 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
      \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
    */
   vp_deprecated static void stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C) { vpMatrix::stack(A, B, C); };
+  /*!
+     \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix &B)
+   */
+  vp_deprecated static vpMatrix stackMatrices(const vpMatrix &A, const vpRowVector &B);
+  /*!
+     \deprecated You should rather use stack(const vpMatrix &A, const vpRowVector &B, vpMatrix &C)
+   */
+  vp_deprecated static void stackMatrices(const vpMatrix &A, const vpRowVector &B, vpMatrix &C);
+  /*!
+     \deprecated You should rather use vpColVector::stack(const vpColVector &A, const vpColVector &B)
+   */
+  vp_deprecated static vpMatrix stackMatrices(const vpColVector &A, const vpColVector &B);
+  /*!
+     \deprecated You should rather use vpColVector::stack(const vpColVector &A, const vpColVector &B, vpColVector &C)
+   */
+  vp_deprecated static void stackMatrices(const vpColVector &A, const vpColVector &B, vpColVector &C);
 
   /*!
      \deprecated You should rather use eye()
