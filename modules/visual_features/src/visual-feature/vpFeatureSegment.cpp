@@ -47,7 +47,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 
 // Debug trace
 #include <visp3/core/vpDebug.h>
@@ -251,7 +250,7 @@ vpFeatureSegment::interaction( const unsigned int select )
       Lxn[0][3] = sin_a_*cos_a_/4/ln - xn*xnalpha*sin_a_/ln;
       Lxn[0][4] = -ln*(1.+lc*lc/4.) + xn*xnalpha*cos_a_/ln ;
       Lxn[0][5] = yn ;
-      L = vpMatrix::stackMatrices(L, Lxn) ;
+      L = vpMatrix::stack(L, Lxn) ;
     }
 
     if (vpFeatureSegment::selectYc() & select ){
@@ -262,7 +261,7 @@ vpFeatureSegment::interaction( const unsigned int select )
       Lyn[0][3] = ln*(1+ls*ls/4.)-yn*xnalpha*sin_a_/ln ;
       Lyn[0][4] = -sin_a_*cos_a_/4/ln + yn*xnalpha*cos_a_/ln;
       Lyn[0][5] = -xn ;
-      L = vpMatrix::stackMatrices(L, Lyn) ;
+      L = vpMatrix::stack(L, Lyn) ;
     }
 
     if (vpFeatureSegment::selectL() & select ){
@@ -273,7 +272,7 @@ vpFeatureSegment::interaction( const unsigned int select )
       Lln[0][3] = -yn-xnalpha*sin_a_ ;
       Lln[0][4] = xn + xnalpha*cos_a_ ;
       Lln[0][5] = 0 ;
-      L = vpMatrix::stackMatrices(L, Lln) ;
+      L = vpMatrix::stack(L, Lln) ;
     }
     if (vpFeatureSegment::selectAlpha() & select ){
       // We recall that xc_ contains xc/l, yc_ contains yc/l and l_ contains 1/l
@@ -284,7 +283,7 @@ vpFeatureSegment::interaction( const unsigned int select )
         Lalpha[0][3] = (-xc_*sin_a_*sin_a_+yc_*cos_a_*sin_a_)/l_;
         Lalpha[0][4] = (xc_*cos_a_*sin_a_ - yc_*cos_a_*cos_a_)/l_ ;
         Lalpha[0][5] = -1 ;
-      L = vpMatrix::stackMatrices(L,Lalpha) ;
+      L = vpMatrix::stack(L,Lalpha) ;
     }
   }
   else
@@ -297,7 +296,7 @@ vpFeatureSegment::interaction( const unsigned int select )
       Lxc[0][3] = xc_*yc_ + l_*l_*cos_a_*sin_a_/4. ;
       Lxc[0][4] = -(1+xc_*xc_+l_*l_*cos_a_*cos_a_/4.) ;
       Lxc[0][5] = yc_ ;
-      L = vpMatrix::stackMatrices(L,Lxc) ;
+      L = vpMatrix::stack(L,Lxc) ;
     }
 
     if (vpFeatureSegment::selectYc() & select ){
@@ -308,7 +307,7 @@ vpFeatureSegment::interaction( const unsigned int select )
       Lyc[0][3] = 1+yc_*yc_+l_*l_*sin_a_*sin_a_/4. ;
       Lyc[0][4] = -xc_*yc_-l_*l_*cos_a_*sin_a_/4. ;
       Lyc[0][5] = -xc_ ;
-      L = vpMatrix::stackMatrices(L,Lyc) ;
+      L = vpMatrix::stack(L,Lyc) ;
     }
 
     if (vpFeatureSegment::selectL() & select ){
@@ -319,7 +318,7 @@ vpFeatureSegment::interaction( const unsigned int select )
       Ll[0][3] = l_*(xc_*cos_a_*sin_a_ + yc_*(1+sin_a_*sin_a_)) ;
       Ll[0][4] = -l_*(xc_*(1+cos_a_*cos_a_)+yc_*cos_a_*sin_a_) ;
       Ll[0][5] = 0 ;
-      L = vpMatrix::stackMatrices(L,Ll) ;
+      L = vpMatrix::stack(L,Ll) ;
     }
     if (vpFeatureSegment::selectAlpha() & select ){
       vpMatrix Lalpha(1,6);
@@ -329,7 +328,7 @@ vpFeatureSegment::interaction( const unsigned int select )
         Lalpha[0][3] = -xc_*sin_a_*sin_a_+yc_*cos_a_*sin_a_;
         Lalpha[0][4] = xc_*cos_a_*sin_a_ - yc_*cos_a_*cos_a_ ;
         Lalpha[0][5] = -1 ;
-      L = vpMatrix::stackMatrices(L,Lalpha) ;
+      L = vpMatrix::stack(L,Lalpha) ;
     }
   }
 
@@ -368,19 +367,19 @@ vpFeatureSegment::error( const vpBasicFeature &s_star, const unsigned int select
   if (vpFeatureSegment::selectXc() & select ){
     vpColVector exc(1) ;
     exc[0] = xc_-s_star[0];
-    e = vpMatrix::stackMatrices(e,exc) ;
+    e = vpColVector::stack(e,exc) ;
   }
 
   if (vpFeatureSegment::selectYc() & select ){
     vpColVector eyc(1) ;
     eyc[0] = yc_ - s_star[1];
-    e = vpMatrix::stackMatrices(e,eyc) ;
+    e = vpColVector::stack(e,eyc) ;
   }
 
   if (vpFeatureSegment::selectL() & select ){
     vpColVector eL(1) ;
     eL[0] = l_ - s_star[2];
-    e = vpMatrix::stackMatrices(e,eL) ;
+    e = vpColVector::stack(e,eL) ;
   }
 
   if (vpFeatureSegment::selectAlpha() & select ){
@@ -388,7 +387,7 @@ vpFeatureSegment::error( const vpBasicFeature &s_star, const unsigned int select
     eAlpha[0] = alpha_ - s_star[3];
     while (eAlpha[0] < -M_PI) eAlpha[0] += 2*M_PI ;
     while (eAlpha[0] > M_PI) eAlpha[0] -= 2*M_PI ;
-    e = vpMatrix::stackMatrices(e,eAlpha) ;
+    e = vpColVector::stack(e,eAlpha) ;
   }
   return e ;
 }

@@ -35,9 +35,12 @@
  *
  *****************************************************************************/
 
-#include <visp3/core/vpRotationVector.h>
 #include <algorithm>
 #include <math.h>
+
+#include <visp3/core/vpRotationVector.h>
+#include <visp3/core/vpRowVector.h>
+
 /*!
   \file vpRotationVector.cpp
   \brief class that consider the case of a generic rotation vector
@@ -123,4 +126,33 @@ void vpRotationVector::init(const unsigned int vector_size){
 vpRotationVector::~vpRotationVector(){
 	delete[] r;
 	r = NULL;
+}
+
+/*!
+  Operator that allows to multiply each element of a rotation vector by a scalar.
+
+  \param x : The scalar.
+
+  \return The rotation vector multiplied by the scalar. The current
+  rotation vector (*this) is unchanged.
+
+*/
+vpRotationVector vpRotationVector::operator*(double x) const
+{
+  vpRotationVector v;
+
+  for (unsigned int i=0;i<_size;i++)
+    v[i] = (*this)[i] * x;
+  return v;
+}
+
+/*!
+  \relates vpRotationVector
+  Allows to multiply a scalar by rotaion vector.
+*/
+vpRotationVector operator*(const double &x,const vpRotationVector &v)
+{
+  vpRotationVector vout ;
+  vout = v*x ;
+  return vout ;
 }

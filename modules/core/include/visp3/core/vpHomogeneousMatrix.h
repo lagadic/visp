@@ -46,6 +46,7 @@
 #ifndef VPHOMOGENEOUSMATRIX_HH
 #define VPHOMOGENEOUSMATRIX_HH
 
+class vpTranslationVector;
 class vpPoseVector;
 class vpMatrix;
 class vpRotationMatrix;
@@ -57,10 +58,10 @@ class vpPoint;
 #include <vector>
 #include <fstream>
 
-#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
-#include <visp3/core/vpTranslationVector.h>
+//#include <visp3/core/vpTranslationVector.h>
 #include <visp3/core/vpPoseVector.h>
 
 /*!
@@ -71,7 +72,7 @@ class vpPoint;
   \brief  The class provides a data structure for the homogeneous matrices
   as well as a set of operations on these matrices.
 
-  The vpHomogeneousMatrix is derived from vpMatrix.
+  The vpHomogeneousMatrix is derived from vpArray2D.
 
   \author  Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 
@@ -89,83 +90,38 @@ class vpPoint;
   \f$ ^a{\bf t}_b \f$ is a translation vector.
 
 */
-class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
+class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
 {
  public:
-  //! Basic constructor.
-  vpHomogeneousMatrix()   ;
-  //! Copy constructor.
+  vpHomogeneousMatrix();
   vpHomogeneousMatrix(const vpHomogeneousMatrix &M) ;
-  //! Construction from translation vector and rotation matrix.
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpRotationMatrix &R) ;
-  //! Construction from translation vector and theta u rotation vector.
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpThetaUVector &tu) ;
-  //! Construction from translation vector and quaternion rotation vector.
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q) ;
-  /*!
-    Construction from translation vector and theta u rotation vector 
-    defined as a pose vector.
-  */
   vpHomogeneousMatrix(const vpPoseVector &p) ;  
-
-  //! Construction from translation and rotation defined as a theta u vector.
-  vpHomogeneousMatrix(const double tx, const double ty, const double tz,
-		      const double tux, const double tuy, const double tuz) ;
   vpHomogeneousMatrix(const std::vector<float> &v);
   vpHomogeneousMatrix(const std::vector<double> &v);
+  vpHomogeneousMatrix(const double tx, const double ty, const double tz,
+                      const double tux, const double tuy, const double tuz) ;
 
-  //! Construction from translation vector and rotation matrix.
   void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R) ;
-  //! Construction from translation vector and theta u rotation vector.
   void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu) ;
-  //! Construction from translation vector and quaternion rotation vector.
   void buildFrom(const vpTranslationVector &t, const vpQuaternionVector& q) ;
+  void buildFrom(const vpPoseVector &p) ;
   void buildFrom(const std::vector<float> &v) ;
   void buildFrom(const std::vector<double> &v) ;
+  void buildFrom(const double tx, const double ty, const double tz,
+                 const double tux, const double tuy, const double tuz) ;
 
-  /*!
-    Construction from translation vector and theta u rotation vector 
-    defined as a pose vector.
-  */
-  void buildFrom(const vpPoseVector &p) ;
-
-  //! Construction from translation and rotation defined as a theta u vector.
-  void buildFrom(const double tx,const  double ty, const double tz,
-		 const double tux,const  double tuy, const double tuz  ) ;
-    
   void convert(std::vector<float> &M);
   void convert(std::vector<double> &M);
 
-  /*!
-    Return the translation vector from the homogeneous transformation matrix.
-   */
-  vpTranslationVector getTranslationVector()
-  {
-    vpTranslationVector tr;
-    this->extract(tr);
-    return tr;
-  }
-//  /*!
-//    Return the rotation matrix from the homogeneous transformation matrix.
-//   */
-//  vpThetaUVector getThetaUVector()
-//  vpRotationMatrix getRotationMatrix()
-//  {
-//    vpRotationMatrix R;
-//    this->extract(R);
-//    return R;
-//  }
+  // Set to identity
+  void eye();
 
-  //! Copy operator from vpHomogeneousMatrix.
-  vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &M);
-
-  //! Multiply two homogeneous matrices:  aMb = aMc*cMb
-  vpHomogeneousMatrix operator*(const vpHomogeneousMatrix &M) const;
-
-  //! Multiply by a vector ! size 4 !!!
-  vpColVector operator*(const vpColVector &v) const;
-  // Multiply by a point
-  vpPoint operator*(const vpPoint &bP) const;
+  vpRotationMatrix getRotationMatrix();
+  vpThetaUVector getThetaUVector();
+  vpTranslationVector getTranslationVector();
 
   // Invert the homogeneous matrix.
   vpHomogeneousMatrix inverse() const ;
@@ -180,7 +136,7 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   void insert(const vpTranslationVector &t) ;
   void insert(const vpQuaternionVector &t) ;
 
-  void extract( vpRotationMatrix &R) const;
+  void extract(vpRotationMatrix &R) const;
   void extract(vpTranslationVector &t) const;
   void extract(vpThetaUVector &tu) const;
   void extract(vpQuaternionVector& q) const;
@@ -190,15 +146,45 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpMatrix
   // Save an homogeneous matrix in a file
   void save(std::ofstream &f) const ;
 
-  // Set to identity
-  void eye();
-  //! Basic initialisation (identity).
-  void init() ;
-  // Basic initialisation (identity).
-  void setIdentity() ;
+  vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &M);
+  vpHomogeneousMatrix operator*(const vpHomogeneousMatrix &M) const;
 
-  //! Print the matrix as a vector [T thetaU]
+  vpColVector operator*(const vpColVector &v) const;
+  // Multiply by a point
+  vpPoint operator*(const vpPoint &bP) const;
+
   void print() ;
+
+  /*!
+    This function is not applicable to an homogeneous matrix that is always a
+    4-by-4 matrix.
+    \exception vpException::fatalError When this function is called.
+    */
+  void resize(const unsigned int nrows, const unsigned int ncols,
+              const bool flagNullify = true)
+  {
+    (void)nrows;
+    (void)ncols;
+    (void)flagNullify;
+    throw(vpException(vpException::fatalError, "Cannot resize an homogeneous matrix"));
+  };
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /*!
+     \deprecated Provided only for compat with previous releases.
+     This function does nothing.
+   */
+  vp_deprecated void init() {};
+  /*!
+     \deprecated You should rather use eye().
+   */
+  vp_deprecated void setIdentity();
+  //@}
+#endif
 
 } ;
 

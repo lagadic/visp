@@ -45,7 +45,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
 // Debug trace
@@ -161,7 +160,7 @@ vpFeatureVanishingPoint::interaction(const unsigned int select)
     Lx[0][4] = -(1+x*x) ;
     Lx[0][5] = y ;
 
-    L = vpMatrix::stackMatrices(L,Lx) ;
+    L = vpMatrix::stack(L,Lx) ;
   }
 
   if (vpFeatureVanishingPoint::selectY() & select )
@@ -175,7 +174,7 @@ vpFeatureVanishingPoint::interaction(const unsigned int select)
     Ly[0][4] = -x*y ;
     Ly[0][5] = -x ;
 
-    L = vpMatrix::stackMatrices(L,Ly) ;
+    L = vpMatrix::stack(L,Ly) ;
   }
   return L ;
 }
@@ -196,27 +195,18 @@ vpFeatureVanishingPoint::error(const vpBasicFeature &s_star,
       vpColVector ex(1) ;
       ex[0] = s[0] - s_star[0] ;
 
-      e = vpMatrix::stackMatrices(e,ex) ;
+      e = vpColVector::stack(e,ex) ;
     }
 
     if (vpFeatureVanishingPoint::selectY() & select )
     {
       vpColVector ey(1) ;
       ey[0] = s[1] - s_star[1] ;
-      e =  vpMatrix::stackMatrices(e,ey) ;
+      e =  vpColVector::stack(e,ey) ;
     }
   }
-  catch(vpMatrixException me)
-  {
-    vpERROR_TRACE("caught a Matrix related error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("caught another error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
+  catch(...) {
+    throw ;
   }
   return e ;
 }

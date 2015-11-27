@@ -969,36 +969,36 @@ bool vpIoTools::readConfigVar(const std::string &var, std::string &value)
 
   \return true if the parameter could be read.
 */
-bool vpIoTools::readConfigVar(const std::string &var, vpMatrix &value, const unsigned int &nCols, const unsigned int &nRows)
+bool vpIoTools::readConfigVar(const std::string &var, vpArray2D<double> &value, const unsigned int &nCols, const unsigned int &nRows)
 {
   bool found = false;
   std::string nb;
   for(unsigned int k=0;k<configVars.size() && found==false;++k)
+  {
+    if(configVars[k] == var)
     {
-      if(configVars[k] == var)
-	{
       found = true;
-	  // resize or not
-	  if(nCols != 0 && nRows != 0)
-	    value.resize(nRows, nCols);
-	  size_t ind=0,ind2;
-	  for(unsigned int i=0;i<value.getRows();++i)
+      // resize or not
+      if(nCols != 0 && nRows != 0)
+        value.resize(nRows, nCols);
+      size_t ind=0,ind2;
+      for(unsigned int i=0;i<value.getRows();++i)
         for(unsigned int j=0;j<value.getCols();++j)
-          {
-            ind2 = configValues[k].find(",",ind);
-            nb = configValues[k].substr(ind,ind2-ind);
-            if(nb.compare("PI") == 0)
-                value[i][j] = M_PI;
-            else if(nb.compare("PI/2") == 0)
-                value[i][j] = M_PI/2;
-            else if(nb.compare("-PI/2") == 0)
-                value[i][j] = -M_PI/2;
-            else
-                value[i][j] = atof(nb.c_str());
-            ind = ind2+1;
-          }
-	}
+        {
+          ind2 = configValues[k].find(",",ind);
+          nb = configValues[k].substr(ind,ind2-ind);
+          if(nb.compare("PI") == 0)
+            value[i][j] = M_PI;
+          else if(nb.compare("PI/2") == 0)
+            value[i][j] = M_PI/2;
+          else if(nb.compare("-PI/2") == 0)
+            value[i][j] = -M_PI/2;
+          else
+            value[i][j] = atof(nb.c_str());
+          ind = ind2+1;
+        }
     }
+  }
   if(found == false)
     std::cout << var << " not found in config file" << std::endl;
   return found;

@@ -35,14 +35,11 @@
  *
  *****************************************************************************/
 
+#include <sstream>
+#include <assert.h>
+
 #include <visp3/core/vpVelocityTwistMatrix.h>
-
-// Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
 
 
 /*!
@@ -55,22 +52,20 @@
 
 
 /*!
-  Copy operator.
+  Copy operator that allow to set a velocity twist matrix from an other one.
 
   \param V : Velocity twist matrix to copy.
 */
 vpVelocityTwistMatrix &
 vpVelocityTwistMatrix::operator=(const vpVelocityTwistMatrix &V)
 {
-  init() ;
-
   for (int i=0; i<6; i++)
+  {
+    for (int j=0; j<6; j++)
     {
-      for (int j=0; j<6; j++)
-	{
-	  rowPtrs[i][j] = V.rowPtrs[i][j];
-	}
+      rowPtrs[i][j] = V.rowPtrs[i][j];
     }
+  }
 
   return *this;
 }
@@ -79,35 +74,24 @@ vpVelocityTwistMatrix::operator=(const vpVelocityTwistMatrix &V)
 /*!
   Initialize a 6x6 velocity twist matrix as identity. 
 */
-
 void
-vpVelocityTwistMatrix::init()
-{
-  unsigned int i,j ;
-
-  try {
-    resize(6,6) ;
-  }
-  catch(vpException me)
-    {
-      vpERROR_TRACE("Error caught") ;
-      throw ;
-    }
-
-  for (i=0 ; i < 6 ; i++)
-    for (j=0 ; j < 6; j++)
+vpVelocityTwistMatrix::eye()
+{  
+  for (unsigned int i=0 ; i < 6 ; i++)
+    for (unsigned int j=0 ; j < 6; j++)
       if (i==j)
-	(*this)[i][j] = 1.0 ;
+        (*this)[i][j] = 1.0 ;
       else
-	(*this)[i][j] = 0.0;
+        (*this)[i][j] = 0.0;
 }
 
 /*!
   Initialize a velocity twist transformation matrix as identity.
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix() : vpMatrix()
+vpVelocityTwistMatrix::vpVelocityTwistMatrix()
+  : vpArray2D<double>(6, 6)
 {
-  init() ;
+  eye() ;
 }
 
 /*!
@@ -115,9 +99,9 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix() : vpMatrix()
 
   \param V : Velocity twist matrix used as initializer.
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V) : vpMatrix()
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V)
+  : vpArray2D<double>(6, 6)
 {
-  init() ;
   *this = V;
 }
 
@@ -131,9 +115,9 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V) : v
   transformation matrix.
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M) : vpMatrix()
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M)
+  : vpArray2D<double>(6, 6)
 {
-  init() ;
   buildFrom(M);
 }
 
@@ -142,16 +126,16 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M) : vpM
   Initialize a velocity twist transformation matrix from a translation vector
   \e t and a rotation vector with \f$\theta u \f$ parametrization.
 
-  \param tv : Translation vector.
+  \param t : Translation vector.
   
   \param thetau : \f$\theta u\f$ rotation vector.
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &tv,
-					     const vpThetaUVector &thetau) : vpMatrix()
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t,
+                                             const vpThetaUVector &thetau)
+  : vpArray2D<double>(6, 6)
 {
-  init() ;
-  buildFrom(tv, thetau) ;
+  buildFrom(t, thetau) ;
 }
 
 /*!
@@ -159,35 +143,36 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &tv,
   Initialize a velocity twist transformation matrix from a translation vector
   \e t and a rotation matrix M.
 
-  \param tv : Translation vector.
+  \param t : Translation vector.
   
   \param R : Rotation matrix.
 
 */
-vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &tv,
-					     const vpRotationMatrix &R)
+vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpTranslationVector &t,
+                                             const vpRotationMatrix &R)
+  : vpArray2D<double>(6, 6)
 {
-  init() ;
-  buildFrom(tv,R) ;
+  buildFrom(t,R) ;
 }
 
 /*!
 
   Initialize a velocity twist transformation matrix from a translation vector
-  \e t and a rotation vector with \f$\theta u \f$ parametrization.
+  \f${\bf t}=(t_x, t_y, t_z)^T\f$ and a rotation vector with \f$\theta {\bf u}=(\theta u_x, \theta u_y, \theta u_z)^T \f$
+  parametrization.
 
   \param tx,ty,tz : Translation vector in meters.
 
-  \param tux,tuy,tuz : \f$\theta u\f$ rotation vector expressed in radians.
+  \param tux,tuy,tuz : \f$\theta {\bf u}\f$ rotation vector expressed in radians.
 */
 vpVelocityTwistMatrix::vpVelocityTwistMatrix(const double tx,
 					     const double ty,
 					     const double tz,
 					     const double tux,
 					     const double tuy,
-					     const double tuz) : vpMatrix()
+               const double tuz)
+  : vpArray2D<double>(6, 6)
 {
-  init() ;
   vpTranslationVector T(tx,ty,tz) ;
   vpThetaUVector tu(tux,tuy,tuz) ;
   buildFrom(T,tu) ;  
@@ -201,7 +186,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const double tx,
 void
 vpVelocityTwistMatrix::setIdentity()
 {
-  init() ;
+  eye() ;
 }
 
 
@@ -218,12 +203,12 @@ vpVelocityTwistMatrix::operator*(const vpVelocityTwistMatrix &V) const
 
   for (unsigned int i=0;i<6;i++)
     for (unsigned int j=0;j<6;j++)
-      {
-	double s =0 ;
-	for (int k=0;k<6;k++)
-	  s +=rowPtrs[i][k] * V.rowPtrs[k][j];
-	p[i][j] = s ;
-      }
+    {
+      double s =0 ;
+      for (int k=0;k<6;k++)
+        s +=rowPtrs[i][k] * V.rowPtrs[k][j];
+      p[i][j] = s ;
+    }
   return p;
 }
 
@@ -234,16 +219,14 @@ vpVelocityTwistMatrix::operator*(const vpVelocityTwistMatrix &V) const
   camera velocity skew from the joint velocities knowing the robot jacobian.
 
   \code
-  #include <visp3/core/vpConfig.h>
-  #include <visp3/robot/vpRobotAfma6.h>
-  #include <visp3/core/vpColVector.h>
-  #include <visp3/core/vpVelocityTwistMatrix.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/robot/vpSimulatorCamera.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpVelocityTwistMatrix.h>
 
-  #ifdef VISP_HAVE_AFMA6
-
-  int main()
-  {
-  vpRobotAfma6 robot;
+int main()
+{
+  vpSimulatorCamera robot;
 
   vpColVector q_vel(6); // Joint velocity on the 6 joints
   // ... q_vel need here to be initialized
@@ -260,22 +243,19 @@ vpVelocityTwistMatrix::operator*(const vpVelocityTwistMatrix &V) const
   c_v = cVe * eJe * q_vel;
 
   return 0;
-  }
-  #endif  
+}
   \endcode
 
-  \exception vpMatrixException::incorrectMatrixSizeError If M is not a 6 rows
-  dimension matrix.
+  \exception vpException::dimensionError If M is not a 6 rows dimension matrix.
 */
 vpMatrix
 vpVelocityTwistMatrix::operator*(const vpMatrix &M) const
 {
-
-  if (6 != M.getRows())
-    {
-      vpERROR_TRACE("vpVelocityTwistMatrix mismatch in vpVelocityTwistMatrix/vpMatrix multiply") ;
-      throw(vpMatrixException::incorrectMatrixSizeError) ;
-    }
+  if (6 != M.getRows()) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot multiply a (6x6) velocity twist matrix by a (%dx%d) matrix",
+                      M.getRows(), M.getCols()));
+  }
 
   vpMatrix p(6, M.getCols()) ;
   for (unsigned int i=0;i<6;i++)
@@ -292,15 +272,11 @@ vpVelocityTwistMatrix::operator*(const vpMatrix &M) const
 /*!
 
   Operator that allows to multiply a twist transformation matrix by a
-  column vector.
-
-  Operation c = V * v (V, the velocity skew transformation matrix is unchanged,
-  c and v are 6 dimension vectors).
+  6-dimension column vector.
 
   \param v : Velocity skew vector.
 
-  \exception vpMatrixException::incorrectMatrixSizeError If v is not a 6
-  dimension vector.
+  \exception vpException::dimensionError If v is not a 6 dimension column vector.
 
 */
 vpColVector
@@ -310,9 +286,9 @@ vpVelocityTwistMatrix::operator*(const vpColVector &v) const
 
   if (6 != v.getRows())
   {
-    vpERROR_TRACE("vpVelocityTwistMatrix mismatch in vpVelocityTwistMatrix/vector multiply") ;
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-                            "Mismatch in vpVelocityTwistMatrix/vector multiply")) ;
+    throw(vpException(vpException::dimensionError,
+                      "Cannot multiply a (6x6) velocity twist matrix by a (%d) column vector",
+                      v.getRows()));
   }
 
   c = 0.0;
@@ -334,17 +310,17 @@ vpVelocityTwistMatrix::operator*(const vpColVector &v) const
   Build a velocity twist transformation matrix from a translation vector
   \e t and a rotation matrix M.
 
-  \param tv : Translation vector.
+  \param t : Translation vector.
   
   \param R : Rotation matrix.
 
 */
 vpVelocityTwistMatrix
-vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &tv,
-				 const vpRotationMatrix &R)
+vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t,
+                                 const vpRotationMatrix &R)
 {
   unsigned int i, j;
-  vpMatrix skewaR = tv.skew(tv)*R ;
+  vpMatrix skewaR = t.skew(t)*R ;
 
   for (i=0 ; i < 3 ; i++)
     for (j=0 ; j < 3 ; j++)
@@ -362,20 +338,19 @@ vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &tv,
   Initialize a velocity twist transformation matrix from a translation vector
   \e t and a rotation vector with \f$\theta u \f$ parametrization.
 
-  \param tv : Translation vector.
+  \param t : Translation vector.
   
-  \param thetau : \f$\theta u\f$ rotation vector.
+  \param thetau : \f$\theta {\bf u}\f$ rotation vector.
 
 */
 vpVelocityTwistMatrix
-vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &tv,
-				 const vpThetaUVector &thetau)
+vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t,
+                                 const vpThetaUVector &thetau)
 {
   vpRotationMatrix R ;
   R.buildFrom(thetau) ;
-  buildFrom(tv,R) ;
+  buildFrom(t,R) ;
   return (*this) ;
-
 }
 
 
@@ -402,7 +377,7 @@ vpVelocityTwistMatrix::buildFrom(const vpHomogeneousMatrix &M)
 }
 
 
-//! invert the twist matrix
+//! Invert the velocity twist matrix.
 vpVelocityTwistMatrix
 vpVelocityTwistMatrix::inverse() const
 {
@@ -417,14 +392,14 @@ vpVelocityTwistMatrix::inverse() const
 }
 
 
-//! invert the twist matrix
+//! Invert the velocity twist matrix.
 void
-vpVelocityTwistMatrix::inverse(vpVelocityTwistMatrix &Wi) const
+vpVelocityTwistMatrix::inverse(vpVelocityTwistMatrix &V) const
 {
-	Wi = inverse();
+  V = inverse();
 }
 
-//! extract the rotational matrix from the twist matrix
+//! Extract the rotation matrix from the velocity twist matrix.
 void
 vpVelocityTwistMatrix::extract( vpRotationMatrix &R) const
 {
@@ -433,7 +408,7 @@ vpVelocityTwistMatrix::extract( vpRotationMatrix &R) const
 	      R[i][j] = (*this)[i][j];
 }
 
-//! extract the translation vector from the twist matrix
+//! Extract the translation vector from the velocity twist matrix.
 void
 vpVelocityTwistMatrix::extract(vpTranslationVector &tv) const
 {
@@ -449,8 +424,107 @@ vpVelocityTwistMatrix::extract(vpTranslationVector &tv) const
   tv[2] = skT[1][0];
 }
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+/*!
+
+  Pretty print a velocity twist matrix. The data are tabulated.
+  The common widths before and after the decimal point
+  are set with respect to the parameter maxlen.
+
+  \param s Stream used for the printing.
+
+  \param length The suggested width of each matrix element.
+  The actual width grows in order to accomodate the whole integral part,
+  and shrinks if the whole extent is not needed for all the numbers.
+  \param intro The introduction which is printed before the matrix.
+  Can be set to zero (or omitted), in which case
+  the introduction is not printed.
+
+  \return Returns the common total width for all matrix elements
+
+  \sa std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
+*/
+int
+vpVelocityTwistMatrix::print(std::ostream& s, unsigned int length, char const* intro) const
+{
+  typedef std::string::size_type size_type;
+
+  unsigned int m = getRows();
+  unsigned int n = getCols();
+
+  std::vector<std::string> values(m*n);
+  std::ostringstream oss;
+  std::ostringstream ossFixed;
+  std::ios_base::fmtflags original_flags = oss.flags();
+
+  // ossFixed <<std::fixed;
+  ossFixed.setf ( std::ios::fixed, std::ios::floatfield );
+
+  size_type maxBefore=0;  // the length of the integral part
+  size_type maxAfter=0;   // number of decimals plus
+  // one place for the decimal point
+  for (unsigned int i=0;i<m;++i) {
+    for (unsigned int j=0;j<n;++j){
+      oss.str("");
+      oss << (*this)[i][j];
+      if (oss.str().find("e")!=std::string::npos){
+        ossFixed.str("");
+        ossFixed << (*this)[i][j];
+        oss.str(ossFixed.str());
+      }
+
+      values[i*n+j]=oss.str();
+      size_type thislen=values[i*n+j].size();
+      size_type p=values[i*n+j].find('.');
+
+      if (p==std::string::npos){
+        maxBefore=vpMath::maximum(maxBefore, thislen);
+        // maxAfter remains the same
+      } else{
+        maxBefore=vpMath::maximum(maxBefore, p);
+        maxAfter=vpMath::maximum(maxAfter, thislen-p-1);
+      }
+    }
+  }
+
+  size_type totalLength=length;
+  // increase totalLength according to maxBefore
+  totalLength=vpMath::maximum(totalLength,maxBefore);
+  // decrease maxAfter according to totalLength
+  maxAfter=std::min(maxAfter, totalLength-maxBefore);
+  if (maxAfter==1) maxAfter=0;
+
+  // the following line is useful for debugging
+  //std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
+
+  if (intro) s <<intro;
+  s <<"["<<m<<","<<n<<"]=\n";
+
+  for (unsigned int i=0;i<m;i++) {
+    s <<"  ";
+    for (unsigned int j=0;j<n;j++){
+      size_type p=values[i*n+j].find('.');
+      s.setf(std::ios::right, std::ios::adjustfield);
+      s.width((std::streamsize)maxBefore);
+      s <<values[i*n+j].substr(0,p).c_str();
+
+      if (maxAfter>0){
+        s.setf(std::ios::left, std::ios::adjustfield);
+        if (p!=std::string::npos){
+          s.width((std::streamsize)maxAfter);
+          s <<values[i*n+j].substr(p,maxAfter).c_str();
+        } else{
+          assert(maxAfter>1);
+          s.width((std::streamsize)maxAfter);
+          s <<".0";
+        }
+      }
+
+      s <<' ';
+    }
+    s <<std::endl;
+  }
+
+  s.flags(original_flags); // restore s to standard state
+
+  return (int)(maxBefore+maxAfter);
+}

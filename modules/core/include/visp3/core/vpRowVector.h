@@ -35,15 +35,18 @@
  *
  *****************************************************************************/
 
-
-
-
 #ifndef vpRowVector_H
 #define vpRowVector_H
 
+#include <vector>
+
+#include <visp3/core/vpArray2D.h>
+#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpMath.h>
 
 class vpMatrix;
+class vpColVector;
 
 /*!
   \file vpRowVector.h
@@ -55,113 +58,207 @@ class vpMatrix;
   \class vpRowVector
 
   \ingroup group_core_matrices
-  \brief Definition of the row vector class.
 
-  vpRowVector class provides a data structure for the row vectors as well
-  as a set of operations on these vectors
+  This class provides a data structure for a row vector that contains values of double.
+  It contains also some functions to achieve a set of operations on these vectors.
 
-  \author Eric Marchand (IRISA - INRIA Rennes)
-
-  \warning Note the vector in the class (*this) will be noted A in the comment
-
-  \ingroup libmath
+  The vpRowVector is derived from vpArray2D.
 */
-class VISP_EXPORT vpRowVector : public vpMatrix
+class VISP_EXPORT vpRowVector : public vpArray2D<double>
 {
-protected:
-  //! Constructor  (Take line i of matrix m)
-  vpRowVector(vpMatrix &m, unsigned int i);
-
 public:
-  //! Basic constructor.
-  vpRowVector() : vpMatrix() {};
-  //! Constructor of vector of size n.
-  vpRowVector(unsigned int n) : vpMatrix(1, n){};
-  //! Constructor of vector of size n. Each element is set to \e val.
-  vpRowVector(unsigned int n, double val) : vpMatrix(1, n, val){};
-  //! Copy constructor.
-  vpRowVector(const vpRowVector &v);
+  //! Basic constructor that creates an empty 0-size row vector.
+  vpRowVector() : vpArray2D<double>() {};
+  //! Construct a row vector of size n. All the elements are initialized to zero.
+  vpRowVector(unsigned int n) : vpArray2D<double>(1, n){};
+  //! Construct a row vector of size n. Each element is set to \e val.
+  vpRowVector(unsigned int n, double val) : vpArray2D<double>(1, n, val){};
+  //! Copy constructor that allows to construct a row vector from an other one.
+  vpRowVector(const vpRowVector &v) : vpArray2D<double>(v) {};
+  vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncols) ;
+  vpRowVector(const vpMatrix &M);
+  vpRowVector(const vpMatrix &M, unsigned int i);
+  vpRowVector(const std::vector<double> &v);
+  vpRowVector(const std::vector<float> &v);
 
+  /*!
+    Removes all elements from the vector (which are destroyed),
+    leaving the container with a size of 0.
+  */
+  void clear()
+  {
+    if (data != NULL ) {
+      free(data);
+      data=NULL;
+    }
+
+    if (rowPtrs!=NULL) {
+      free(rowPtrs);
+      rowPtrs=NULL ;
+    }
+    rowNum = colNum = dsize = 0;
+  }
+
+  /*!
+    Convert a column vector containing angles in degrees into radians.
+    \sa rad2deg()
+  */
+  inline void deg2rad() {
+    double d2r = M_PI/180.0;
+
+    (*this) *= d2r;
+  }
+
+  double euclideanNorm() const;
+  /*!
+     Extract a sub-row vector from a row vector.
+     \param c : Index of the column corresponding to the first element of the vector to extract.
+     \param size : Size of the vector to extract.
+     \exception vpException::fatalError If the vector to extract is not contained in the original one.
+
+     \code
+     vpRowVector r1;
+     for (unsigned int i=0; i<4; i++)
+       r1.stack(i);
+     // r1 is equal to [0 1 2 3]
+     vpRowVector r2 = r1.extract(1, 3);
+     // r2 is equal to [1 2 3]
+     \endcode
+   */
+  vpRowVector extract(unsigned int c, unsigned int size) const
+  {
+    if (c >= colNum || c+size > colNum) {
+      throw(vpException(vpException::fatalError,
+                        "Cannot extract a (1x%d) row vector from a (1x%d) row vector starting at index %d",
+                        size, colNum, c));
+    }
+
+    return vpRowVector(*this, c, size);
+  }
+
+  void init(const vpRowVector &v, unsigned int c, unsigned int ncols);
   void insert(unsigned int i, const vpRowVector &v);
 
-  /*! Set the size of the row vector.
-    \param i : Column vector size.
+  vpRowVector &normalize() ;
+  vpRowVector &normalize(vpRowVector &x) const ;
+
+  //! Operator that allows to set a value of an element \f$v_i\f$: v[i] = x
+  inline double &operator[](unsigned int n)             { return *(data+n); }
+  //! Operator that allows to get the value of an element \f$v_i\f$: x = v[i]
+  inline const double &operator[](unsigned int n) const { return *(data+n) ; }
+
+  //! Copy operator.   Allow operation such as A = v
+  vpRowVector &operator=(const vpRowVector &v);
+  vpRowVector &operator=(const vpMatrix &M);
+  vpRowVector &operator=(const std::vector<double> &v);
+  vpRowVector &operator=(const std::vector<float> &v);
+  vpRowVector &operator=(const double x);
+
+  double  operator*(const vpColVector &x) const;
+  vpRowVector operator*(const vpMatrix &M) const;
+  vpRowVector operator*(const double x) const;
+  vpRowVector &operator*=(double x);
+
+  vpRowVector operator/(const double x) const;
+  vpRowVector &operator/=(double x);
+
+  vpRowVector operator+(const vpRowVector &v) const;
+  vpRowVector &operator+=(vpRowVector v);
+
+  vpRowVector operator-(const vpRowVector &v) const;
+  vpRowVector &operator-=(vpRowVector v);
+  vpRowVector operator-() const;
+
+  vpRowVector &operator<<(const vpRowVector &v);
+
+  int print(std::ostream& s, unsigned int length, char const* intro=0) const;
+  /*!
+    Convert a column vector containing angles in radians into degrees.
+    \sa deg2rad()
+  */
+  inline void rad2deg() {
+    double r2d = 180.0/M_PI;
+
+    (*this) *= r2d;
+  }
+  void reshape(vpMatrix & M,const unsigned int &nrows,const unsigned int &ncols);
+  vpMatrix reshape(const unsigned int &nrows,const unsigned int &ncols);
+  
+  /*! Modify the size of the row vector.
+    \param i : Size of the vector. This value corresponds to the vector number
+    of columns.
     \param flagNullify : If true, set the data to zero.
    */
   inline void resize(const unsigned int i, const bool flagNullify = true)
   {
-    vpMatrix::resize(1, i, flagNullify);
+    vpArray2D::resize(1, i, flagNullify);
   }
-  //! Access  V[i] = x
-  inline double &operator [](unsigned int n)             { return *(data+n); }
-  //! Access x = V[i]
-  inline const double &operator [](unsigned int n) const { return *(data+n) ; }
-
-  //! Copy operator.   Allow operation such as A = v
-  vpRowVector &operator=(const vpRowVector &v);
-  //! copy from a matrix
-  vpRowVector & operator=(const vpMatrix &m) ;
-  //! Initialize each element of the vector to x
-  vpRowVector& operator=(const double x);
-
-  //!operator dot product
-  double  operator*(const vpColVector &x) const;
-  //!operator dot product
-  vpRowVector operator*(const vpMatrix &A) const;
-
-  //! Addition of two vectors V = A+v
-  vpRowVector operator+(const vpRowVector &v) const;
-
-  //! Substraction of two vectors V = A-v
-  vpRowVector operator-(const vpRowVector &v) const;
-
-  //! Operator A = -A
-  vpRowVector operator-() const;
-  // Copy operator.   Allow operation such as A << v
-  vpRowVector &operator<<(const vpRowVector &v);
-
-  //! Reshape methods.
-  void reshape(vpMatrix & m,const unsigned int &nrows,const unsigned int &ncols);
-  vpMatrix reshape(const unsigned int &nrows,const unsigned int &ncols);
-  
-  void stack(const double &b);
-  void stack(const vpRowVector &B);
-  static vpRowVector stack(const vpRowVector &A, const vpRowVector &B);
-  static void stack(const vpRowVector &A, const vpRowVector &B, vpRowVector &C);
-
-  //! Transpose the vector.
-  vpColVector t() const;
-
-  //! Normalise the vector.
-  vpRowVector &normalize() ;
-  //! Normalise the vector.
-  vpRowVector &normalize(vpRowVector &x) const ;
-
-  //! compute the median
-  static double median(const vpRowVector &v) ;
-  //! compute the mean
-  static double mean(const vpRowVector &v)  ;
-  //! compute the standard deviation
-  static double stdev(const vpRowVector &v, const bool useBesselCorrection=false);
 
   /*!
+    Resize the row vector to a \e ncols-dimension vector.
+    This function can only be used with \e nrows = 1.
+    \param nrows : Vector number of rows. This value should be set to 1.
+    \param ncols : Vector number of columns. This value corresponds
+    to the size of the vector.
+    \param flagNullify : If true, set the data to zero.
+    \exception vpException::fatalError When \e nrows is not equal to 1.
 
-    Return the size of the vector in term of number of columns.
-
-  */
-  inline unsigned int size() const
+    */
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify)
   {
-    return getCols();
-  }
+    if (nrows != 1)
+      throw(vpException(vpException::fatalError,
+                        "Cannot resize a row vector to a (%dx%d) dimension vector that has more than one row",
+                        nrows, ncols));
+    vpArray2D::resize(nrows, ncols, flagNullify);
+  };
+
+  void stack(const double &d);
+  void stack(const vpRowVector &v);
+
+  double sumSquare() const;
+  vpColVector t() const;
+  vpColVector transpose() const;
+  void transpose(vpColVector &v) const;
+
+  static double mean(const vpRowVector &v)  ;
+  static double median(const vpRowVector &v) ;
+  static vpRowVector stack(const vpRowVector &A, const vpRowVector &B);
+  static void stack(const vpRowVector &A, const vpRowVector &B, vpRowVector &C);
+  static double stdev(const vpRowVector &v, const bool useBesselCorrection=false);
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /*!
+     \deprecated Provided only for compat with previous releases.
+     This function does nothing.
+   */
+  vp_deprecated void init() {};
+  /*!
+     \deprecated You should rather use stack(const vpRowVector &)
+   */
+  vp_deprecated void stackMatrices(const vpRowVector &r) { stack(r); };
+  /*!
+     \deprecated You should rather use stack(const vpRowVector &A, const vpRowVector &B)
+   */
+  vp_deprecated static vpRowVector stackMatrices(const vpRowVector &A, const vpRowVector &B) { return stack(A, B); };
+  /*!
+     \deprecated You should rather use stack(const vpRowVector &A, const vpRowVector &B, vpRowVector &C)
+   */
+  vp_deprecated static void stackMatrices(const vpRowVector &A, const vpRowVector &B, vpRowVector &C) { stack(A, B, C); };
+
+  /*!
+     \deprecated You should rather use eye()
+   */
+  vp_deprecated void setIdentity(const double & val=1.0) ;
+  //@}
+#endif
 
 };
 
+VISP_EXPORT vpRowVector operator*(const double &x, const vpRowVector &v) ;
 
 #endif
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

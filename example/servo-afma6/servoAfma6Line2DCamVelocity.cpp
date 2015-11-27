@@ -79,7 +79,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/vs/vpServoDisplay.h>
 
 int

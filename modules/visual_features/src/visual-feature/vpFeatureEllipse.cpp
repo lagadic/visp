@@ -47,7 +47,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
 // Debug trace
@@ -171,7 +170,7 @@ vpFeatureEllipse::interaction(const unsigned int select)
     H[0][5] = yc;
 
 
-    L = vpMatrix::stackMatrices(L,H) ;
+    L = vpMatrix::stack(L,H) ;
   }
 
   if (vpFeatureEllipse::selectY() & select )
@@ -186,7 +185,7 @@ vpFeatureEllipse::interaction(const unsigned int select)
     H[0][4] = -xc*yc - mu11;
     H[0][5] = -xc;
 
-    L = vpMatrix::stackMatrices(L,H) ;
+    L = vpMatrix::stack(L,H) ;
   }
 
   if (vpFeatureEllipse::selectMu20() & select )
@@ -200,7 +199,7 @@ vpFeatureEllipse::interaction(const unsigned int select)
     H[0][4] = -4*mu20*xc;
     H[0][5] = 2*mu11;
 
-    L = vpMatrix::stackMatrices(L,H) ;
+    L = vpMatrix::stack(L,H) ;
   }
 
   if (vpFeatureEllipse::selectMu11() & select )
@@ -214,7 +213,7 @@ vpFeatureEllipse::interaction(const unsigned int select)
     H[0][4] = -yc*mu20-3*xc*mu11;
     H[0][5] = mu02-mu20;
 
-    L = vpMatrix::stackMatrices(L,H) ;
+    L = vpMatrix::stack(L,H) ;
   }
 
   if (vpFeatureEllipse::selectMu02() & select )
@@ -227,7 +226,7 @@ vpFeatureEllipse::interaction(const unsigned int select)
     H[0][3] = 4*yc*mu02;
     H[0][4] = -2*(yc*mu11 +xc*mu02) ;
     H[0][5] = -2*mu11 ;
-    L = vpMatrix::stackMatrices(L,H) ;
+    L = vpMatrix::stack(L,H) ;
   }
 
 
@@ -248,14 +247,14 @@ vpFeatureEllipse::error(const vpBasicFeature &s_star,
       vpColVector ex(1) ;
       ex[0] = s[0] - s_star[0] ;
 
-      e = vpMatrix::stackMatrices(e,ex) ;
+      e = vpColVector::stack(e,ex) ;
     }
 
     if (vpFeatureEllipse::selectY() & select )
     {
       vpColVector ey(1) ;
       ey[0] = s[1] - s_star[1] ;
-      e =  vpMatrix::stackMatrices(e,ey) ;
+      e = vpColVector::stack(e,ey) ;
     }
 
      if (vpFeatureEllipse::selectMu20() & select )
@@ -263,37 +262,27 @@ vpFeatureEllipse::error(const vpBasicFeature &s_star,
       vpColVector ex(1) ;
       ex[0] = s[2] - s_star[2] ;
 
-      e = vpMatrix::stackMatrices(e,ex) ;
+      e = vpColVector::stack(e,ex) ;
     }
 
     if (vpFeatureEllipse::selectMu11() & select )
     {
       vpColVector ey(1) ;
       ey[0] = s[3] - s_star[3] ;
-      e =  vpMatrix::stackMatrices(e,ey) ;
+      e = vpColVector::stack(e,ey) ;
     }
 
     if (vpFeatureEllipse::selectMu02() & select )
     {
       vpColVector ey(1) ;
       ey[0] = s[4] - s_star[4] ;
-      e =  vpMatrix::stackMatrices(e,ey) ;
+      e = vpColVector::stack(e,ey) ;
     }
 
   }
-  catch(vpMatrixException me)
-  {
-    vpERROR_TRACE("caught a Matrix related error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
+  catch(...) {
+    throw;
   }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("caught another error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
-  }
-
 
   return e ;
 

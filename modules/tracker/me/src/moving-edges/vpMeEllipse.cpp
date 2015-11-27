@@ -635,7 +635,7 @@ vpMeEllipse::leastSquare()
   r.setThreshold(2);
   r.setIteration(0) ;
   vpMatrix D(numberOfSignal(),numberOfSignal()) ;
-  D.setIdentity() ;
+  D.eye() ;
   vpMatrix DA, DAmemory ;
   vpColVector DAx ;
   vpColVector w(numberOfSignal()) ;

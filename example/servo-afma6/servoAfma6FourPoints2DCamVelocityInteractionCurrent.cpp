@@ -93,7 +93,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 
 #define L 0.05 // to deal with a 10cm by 10cm square
 

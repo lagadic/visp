@@ -147,6 +147,10 @@ class VISP_EXPORT vpPlot
 
     void plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y);
     void plot(const unsigned int graphNum, const double x, const vpColVector &v_y);
+    void plot(const unsigned int graphNum, const double x, const vpRowVector &v_y);
+    void plot(const unsigned int graphNum, const double x, const vpPoseVector &v_y);
+    void plot(const unsigned int graphNum, const double x, const vpTranslationVector &v_y);
+    void plot(const unsigned int graphNum, const double x, const vpRotationVector &v_y);
     vpMouseButton::vpMouseButtonType plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y, const double z);
     vpMouseButton::vpMouseButtonType plot(const unsigned int graphNum, const double x, const vpColVector &v_y, const vpColVector &v_z);
 

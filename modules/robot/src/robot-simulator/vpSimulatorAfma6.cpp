@@ -2594,8 +2594,8 @@ vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<unsigned
 		cdTUc.buildFrom(cdRc);
 
 		// compute v,w and velocity
-		v = -lambda*cdRc.t()*cdTc;
-		w = -lambda*cdTUc;
+    v = -lambda*cdRc.t()*cdTc;
+    w = -lambda*cdTUc;
 		for(i=0;i<3;++i)
 		{
 			vel[i] = v[i];

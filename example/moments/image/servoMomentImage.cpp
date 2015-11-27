@@ -350,19 +350,19 @@ void execute(unsigned int nbIter){
     //robot.setPosition(vpRobot::CAMERA_FRAME,0.01*v);
 
     err_features = task.error;
-	std::cout<<" || s - s* || = "<<task.error.sumSquare()<<std::endl;
+    std::cout<<" || s - s* || = "<<task.error.sumSquare()<<std::endl;
 
     robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
     vpTime::wait(t, sampling_time * 1000); // Wait 10 ms
 
     ViSP_plot.plot(0,iter, v);
-	ViSP_plot.plot(1,iter,currentpose);			// Plot the velocities
-	ViSP_plot.plot(2, iter,err_features);		//cMo as translations and theta_u
+    ViSP_plot.plot(1,iter,currentpose);			// Plot the velocities
+    ViSP_plot.plot(2, iter,err_features);		//cMo as translations and theta_u
 
-	_error = ( task.getError() ).sumSquare();
+    _error = ( task.getError() ).sumSquare();
 
-	#if defined(PRINT_CONDITION_NUMBER)
-		/*
+#if defined(PRINT_CONDITION_NUMBER)
+    /*
 		 * Condition number of interaction matrix
 		 */
 		vpMatrix Linteraction = task.L;

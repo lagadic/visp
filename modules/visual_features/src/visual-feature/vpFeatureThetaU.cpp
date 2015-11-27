@@ -43,7 +43,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
 // Debug trace
@@ -475,7 +474,7 @@ vpFeatureThetaU::interaction(const unsigned int select)
   Lw = vpColVector::skew(u) ;  /* [theta/2  u]_x */
 
   vpMatrix U2(3,3) ;
-  U2.setIdentity() ;
+  U2.eye() ;
   
   double  theta = sqrt(s.sumSquare()) ;
   if (theta >= 1e-6) {
@@ -503,7 +502,7 @@ vpFeatureThetaU::interaction(const unsigned int select)
       for (int i=0 ; i < 3 ; i++) Lx[0][i+3] = Lw[0][i] ;
 
 
-      L = vpMatrix::stackMatrices(L,Lx) ;
+      L = vpMatrix::stack(L,Lx) ;
     }
 
   if (vpFeatureThetaU::selectTUy() & select )
@@ -513,7 +512,7 @@ vpFeatureThetaU::interaction(const unsigned int select)
       Ly[0][0] = 0 ;    Ly[0][1] = 0 ;    Ly[0][2] = 0 ;
       for (int i=0 ; i < 3 ; i++) Ly[0][i+3] = Lw[1][i] ;
 
-      L = vpMatrix::stackMatrices(L,Ly) ;
+      L = vpMatrix::stack(L,Ly) ;
     }
 
   if (vpFeatureThetaU::selectTUz() & select )
@@ -523,7 +522,7 @@ vpFeatureThetaU::interaction(const unsigned int select)
       Lz[0][0] = 0 ;    Lz[0][1] = 0 ;    Lz[0][2] = 0 ;
       for (int i=0 ; i < 3 ; i++) Lz[0][i+3] = Lw[2][i] ;
 
-      L = vpMatrix::stackMatrices(L,Lz) ;
+      L = vpMatrix::stack(L,Lz) ;
     }
 
   return L ;
@@ -608,21 +607,21 @@ vpFeatureThetaU::error(const vpBasicFeature &s_star,
     {
       vpColVector ex(1) ;
       ex[0] = s[0]  ;
-      e = vpMatrix::stackMatrices(e,ex) ;
+      e = vpColVector::stack(e,ex) ;
     }
 
   if (vpFeatureThetaU::selectTUy() & select )
     {
       vpColVector ey(1) ;
       ey[0] = s[1] ;
-      e = vpMatrix::stackMatrices(e,ey) ;
+      e = vpColVector::stack(e,ey) ;
     }
 
   if (vpFeatureThetaU::selectTUz() & select )
     {
       vpColVector ez(1) ;
       ez[0] = s[2] ;
-      e = vpMatrix::stackMatrices(e,ez) ;
+      e = vpColVector::stack(e,ez) ;
     }
   return e ;
 }

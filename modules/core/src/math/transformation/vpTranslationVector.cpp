@@ -37,48 +37,34 @@
  *****************************************************************************/
 
 
-#include <visp3/core/vpTranslationVector.h>
 #include <stdio.h>
 #include <string.h>
 
-// Exception
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpTranslationVector.h>
 
 /*!
   \file vpTranslationVector.cpp
   \brief Class that consider the case of a translation vector.
 */
 
-//! initialize a size 3 vector
-void vpTranslationVector::init()
-{
-    resize(3) ;
-}
-
 /*!
-  Contruct a translation vector \f$ \bf t \f$ from 3 doubles.
+  Construct a translation vector \f$ \bf t \f$ from 3 doubles.
 
-  \param tx,ty,tz : Translation respectively along x, y and z axis.
+  \param tx,ty,tz : Translation respectively along x, y and z axis. Values are in meters.
 
 */
-vpTranslationVector::vpTranslationVector(const double tx,
-					 const double ty,
-					 const double tz)
+vpTranslationVector::vpTranslationVector(const double tx, const double ty, const double tz)
+  : vpArray2D<double>(3, 1)
 {
-    init() ;
-    (*this)[0] = tx ;
-    (*this)[1] = ty ;
-    (*this)[2] = tz ;
+  (*this)[0] = tx ;
+  (*this)[1] = ty ;
+  (*this)[2] = tz ;
 }
 
 /*!
   Copy constructor.
 
-  \param tv : Translation vector to copy.
+  \param t : Translation vector to copy.
 
   \code
   vpTranslationVector t1(1,2,3); // Create and initialize a translation vector
@@ -87,7 +73,8 @@ vpTranslationVector::vpTranslationVector(const double tx,
   \endcode
 
 */
-vpTranslationVector::vpTranslationVector (const vpTranslationVector &tv) : vpColVector(tv)
+vpTranslationVector::vpTranslationVector (const vpTranslationVector &t)
+  : vpArray2D<double>(t)
 {
 }
 
@@ -98,19 +85,17 @@ vpTranslationVector::vpTranslationVector (const vpTranslationVector &tv) : vpCol
 
 */
 void
-vpTranslationVector::set(const double tx,
-			 const double ty,
-			 const double tz)
+vpTranslationVector::set(const double tx, const double ty, const double tz)
 {
-    (*this)[0] = tx ;
-    (*this)[1] = ty ;
-    (*this)[2] = tz ;
+  (*this)[0] = tx ;
+  (*this)[1] = ty ;
+  (*this)[2] = tz ;
 }
 
 /*!
   Operator that allows to add two translation vectors.
 
-  \param tv : Translation  vector to add.
+  \param t : Translation  vector to add.
 
   \return The sum of the current translation vector (*this) and the one to add.
   \code
@@ -125,11 +110,11 @@ vpTranslationVector::set(const double tx,
 
 */
 vpTranslationVector
-vpTranslationVector::operator+(const vpTranslationVector &tv) const
+vpTranslationVector::operator+(const vpTranslationVector &t) const
 {
   vpTranslationVector s;
 
-  for (unsigned int i=0;i<3;i++)  s[i] = (*this)[i]+tv[i] ;
+  for (unsigned int i=0;i<3;i++)  s[i] = (*this)[i]+t[i] ;
 
   return s;
 }
@@ -137,7 +122,7 @@ vpTranslationVector::operator+(const vpTranslationVector &tv) const
 /*!
   Operator that allows to substract two translation vectors.
 
-  \param tv : Translation  vector to substract.
+  \param t : Translation  vector to substract.
 
   \return The substraction of the current translation vector (*this) and the one to substract.
   \code
@@ -152,13 +137,13 @@ vpTranslationVector::operator+(const vpTranslationVector &tv) const
 
 */
 vpTranslationVector
-vpTranslationVector::operator-(const vpTranslationVector &tv) const
+vpTranslationVector::operator-(const vpTranslationVector &t) const
 {
-    vpTranslationVector sub ;
+  vpTranslationVector sub ;
 
-    for (unsigned int i=0;i<3;i++)  sub[i] = (*this)[i]-tv[i] ;
+  for (unsigned int i=0;i<3;i++)  sub[i] = (*this)[i]-t[i] ;
 
-    return sub;
+  return sub;
 }
 
 
@@ -173,22 +158,22 @@ vpTranslationVector::operator-(const vpTranslationVector &tv) const
   vpTranslationVector t2; 
   t2 = -t1;
   // t1 is unchanged 
-  // t2 is now equal to : -1, -2, -3 
+  // t2 is now equal to : [-1, -2, -3]
   \endcode
 */
 vpTranslationVector vpTranslationVector::operator-() const //negate
 {
-  vpTranslationVector tv ;
+  vpTranslationVector t;
   for (unsigned int i=0;i<dsize;i++)
   {
-    *(tv.data + i) = -*(data + i) ;
+    *(t.data + i) = -*(data + i) ;
   }
 
-  return tv;
+  return t;
 }
 
 /*!
-  Operator that allows to multiply a translation vector by a scalar.
+  Operator that allows to multiply each element of a translation vector by a scalar.
 
   \param x : The scalar.
 
@@ -199,23 +184,94 @@ vpTranslationVector vpTranslationVector::operator-() const //negate
   vpTranslationVector t1(1,2,3); 
   t2 = t1 * 3;
   // t1 is unchanged 
-  // t2 is now equal to : 3, 6, 9 
+  // t2 is now equal to : [3, 6, 9]
   \endcode
 */
 vpTranslationVector vpTranslationVector::operator*(const double x) const 
 {
-  vpTranslationVector tv ;
-  for (unsigned int i=0;i<dsize;i++)
-  {
-    *(tv.data + i) = (*(data + i)) * x ;
+  vpTranslationVector t;
+  for (unsigned int i=0;i<dsize;i++) {
+    *(t.data + i) = (*(data + i)) * x ;
   }
 
-  return tv;
+  return t;
+}
+
+/*!
+
+  Multiply a 3-by-1 dimension translation vector by a 1-by-n row vector.
+
+  \param v : Row vector.
+
+  \return The resulting matrix that is 3-by-n dimension.
+
+*/
+vpMatrix vpTranslationVector::operator*(const vpRowVector &v) const
+{
+  vpMatrix M(rowNum, v.getCols());
+  for (unsigned int i=0; i<rowNum; i++) {
+    for (unsigned int j=0; j<v.getCols(); j++) {
+      M[i][j] = (*this)[i] * v[j];
+    }
+  }
+  return M;
+}
+
+/*!
+  Operator that allows to multiply each element of a translation vector by a scalar.
+
+  \param x : The scalar.
+
+  \return The translation vector multiplied by the scalar.
+*/
+vpTranslationVector &vpTranslationVector::operator*=(double x)
+{
+  for (unsigned int i=0;i<rowNum;i++)
+    (*this)[i] *= x;
+  return (*this);
+}
+/*!
+  Operator that allows to divide each element of a translation vector by a scalar.
+
+  \param x : The scalar.
+
+  \return The column vector divided by the scalar.
+*/
+vpTranslationVector &vpTranslationVector::operator/=(double x)
+{
+  for (unsigned int i=0;i<rowNum;i++)
+    (*this)[i] /= x;
+  return (*this);
+}
+
+/*!
+  Operator that allows to divide each element of a translation vector by a scalar.
+
+  \param x : The scalar.
+
+  \return The translation vector divided by the scalar. The current
+  translation vector (*this) is unchanged.
+
+  \code
+  vpTranslationVector t1(8,4,2);
+  t2 = t1 / 2;
+  // t1 is unchanged
+  // t2 is now equal to : [4, 2, 1]
+  \endcode
+*/
+vpTranslationVector vpTranslationVector::operator/(const double x) const
+{
+  vpTranslationVector t;
+  for (unsigned int i=0;i<dsize;i++) {
+    *(t.data + i) = (*(data + i)) / x ;
+  }
+
+  return t;
 }
 
 /*!
   Copy operator.  
-  \param tv : Translation vector to copy
+  \param t : Translation vector to copy
   \return A copy of t.
 
   \code
@@ -226,22 +282,20 @@ vpTranslationVector vpTranslationVector::operator*(const double x) const
   // t2 is now equal to t1 : 1, 2, 3 
   \endcode
 */
-vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &tv)
+vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &t)
 {
-
-  unsigned int k = tv.rowNum ;
+  unsigned int k = t.rowNum ;
   if (rowNum != k){
     try {
-      resize(k);
+      resize(k, 1);
     }
-    catch(vpException me)
+    catch(...)
     {
-      vpERROR_TRACE("Error caught") ;
       throw ;
     }
   }
 
-  memcpy(data, tv.data, rowNum*sizeof(double)) ;
+  memcpy(data, t.data, rowNum*sizeof(double)) ;
 
   return *this;
 }
@@ -259,7 +313,6 @@ vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &t
 */
 vpTranslationVector & vpTranslationVector::operator=(double x)
 {
-
   double *d = data ;
 
   for (int i=0;i<3;i++)
@@ -269,8 +322,6 @@ vpTranslationVector & vpTranslationVector::operator=(double x)
 }
 
 /*!
-  \relates vpMatrix
-
   Compute the skew symmetric matrix \f$M\f$ of translation vector \f$t\f$
   (matrice de pre-produit vectoriel).
 
@@ -289,18 +340,18 @@ vpTranslationVector & vpTranslationVector::operator=(double x)
   \param M : Skew symmetric matrix of translation vector \f$t\f$.
 */
 void
-vpTranslationVector::skew(const vpTranslationVector &t,vpMatrix &M)
+vpTranslationVector::skew(const vpTranslationVector &t, vpMatrix &M)
 {
-    M.resize(3,3) ;
-    M[0][0] = 0 ;     M[0][1] = -t[2] ;  M[0][2] = t[1] ;
-    M[1][0] = t[2] ;  M[1][1] = 0 ;      M[1][2] = -t[0] ;
-    M[2][0] = -t[1] ; M[2][1] = t[0] ;   M[2][2] = 0 ;
+  M.resize(3,3) ;
+  M[0][0] = 0 ;     M[0][1] = -t[2] ;  M[0][2] = t[1] ;
+  M[1][0] = t[2] ;  M[1][1] = 0 ;      M[1][2] = -t[0] ;
+  M[2][0] = -t[1] ; M[2][1] = t[0] ;   M[2][2] = 0 ;
 }
 
 /*!
 
   Compute the skew symmetric matrix \f$M\f$ of translation vector
-  \f$t\f$ (matrice de pre-produit vectoriel).
+  \f$t\f$.
 
   \f[ \mbox{if} \quad  {\bf t} =  \left( \begin{array}{c} t_x \\ t_y \\ t_z
   \end{array}\right), \quad \mbox{then} \qquad
@@ -313,16 +364,15 @@ vpTranslationVector::skew(const vpTranslationVector &t,vpMatrix &M)
 
   \param t : Translation vector in input.
 
-  \return Skew symmetric matrix \f$M\f$ of translation vector
-  \f$t\f$
+  \return Skew symmetric matrix \f$M\f$ of translation vector \f$t\f$.
 
 */
 vpMatrix
 vpTranslationVector::skew(const vpTranslationVector &t)
 {
-    vpMatrix M(3, 3);
-    skew(t,M);
-    return M;
+  vpMatrix M(3, 3);
+  skew(t,M);
+  return M;
 }
 
 /*!
@@ -346,9 +396,9 @@ vpTranslationVector::skew(const vpTranslationVector &t)
 vpMatrix
 vpTranslationVector::skew() const
 {
-    vpMatrix M(3, 3);
-    skew(*this,M);
-    return M;
+  vpMatrix M(3, 3);
+  skew(*this,M);
+  return M;
 }
 
 
@@ -363,14 +413,18 @@ vpTranslationVector::skew() const
 */
 vpTranslationVector
 vpTranslationVector::cross(const vpTranslationVector &a,
-			   const vpTranslationVector &b)
+                           const vpTranslationVector &b)
 {
   vpMatrix skew_a = vpTranslationVector::skew(a) ;
   return (vpTranslationVector)(skew_a * b);
 }
 
-/*
- * Local variables:
- * c-basic-offset: 4
- * End:
- */
+/*!
+  Transpose the translation vector. The resulting vector becomes a row vector.
+*/
+vpRowVector vpTranslationVector::t() const
+{
+  vpRowVector v(rowNum);
+  memcpy(v.data, data, rowNum*sizeof(double)) ;
+  return v;
+}

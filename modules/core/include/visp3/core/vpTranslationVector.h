@@ -46,7 +46,8 @@
   \brief Class that consider the case of a translation vector.
 */
 
-#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpArray2D.h>
+#include <visp3/core/vpMatrix.h>
 
 
 /*!
@@ -56,7 +57,7 @@
   
   \brief Class that consider the case of a translation vector.
 
-  Let be \f$^{a}{\bf t}_{b} = [t_x,t_y,t_z]^\top\f$ be a translation
+  Let us denote \f$^{a}{\bf t}_{b} = [t_x,t_y,t_z]^\top\f$ the translation
   from frame \f$ a \f$ to frame \f$ b \f$.  The representation of a
   translation is a column vector of dimension 3.
 
@@ -86,55 +87,68 @@ int main()
   vpHomogeneousMatrix M(t, R);
 }
   \endcode
-
 */
-class VISP_EXPORT vpTranslationVector : public vpColVector
+class VISP_EXPORT vpTranslationVector : public vpArray2D<double>
 {
-private:
-    //! initialize a size 3 vector
-    void init() ;
-
 public:
 
-    /*!
+  /*!
       Default constructor.
       The translation vector is initialized to zero.
     */
-    vpTranslationVector() { init() ; }
-    // constructor from double in meter
-    vpTranslationVector(const double tx, const double ty, const double tz) ;
-    // copy constructor
-    vpTranslationVector(const vpTranslationVector &t);
-    void set(const double tx, const double ty, const double tz) ;
+  vpTranslationVector() : vpArray2D<double>(3, 1) {};
+  vpTranslationVector(const double tx, const double ty, const double tz) ;
+  vpTranslationVector(const vpTranslationVector &t);
 
-    // operators
+  // operators
 
-    // translation vectors additions  c = a + b (a, b  unchanged)
-    vpTranslationVector operator+(const vpTranslationVector &t) const ;
-    // translation vectors substraction  c = a - b (a, b  unchanged)
-    vpTranslationVector operator-(const vpTranslationVector &t) const ;
-    // negate t = -a  (t is unchanged)
-    vpTranslationVector operator-() const ;
-    // b = x * a (x=scalar)
-    vpTranslationVector operator*(const double x) const;
-    // Copy operator.   Allow operation such as A = v
-    vpTranslationVector &operator=(const vpTranslationVector &t);
+  // translation vectors additions  c = a + b (a, b  unchanged)
+  vpTranslationVector operator+(const vpTranslationVector &t) const ;
+  // translation vectors substraction  c = a - b (a, b  unchanged)
+  vpTranslationVector operator-(const vpTranslationVector &t) const ;
+  // negate t = -a  (t is unchanged)
+  vpTranslationVector operator-() const ;
+  vpMatrix  operator*(const vpRowVector &v) const;
+  // b = x * a (x=scalar)
+  vpTranslationVector operator*(const double x) const;
+  vpTranslationVector & operator*=(double x);
+  vpTranslationVector operator/(const double x) const;
+  vpTranslationVector & operator/=(double x);
+  // Copy operator.   Allow operation such as A = v
+  vpTranslationVector &operator=(const vpTranslationVector &t);
 
-    vpTranslationVector &operator=(double x) ;
+  vpTranslationVector &operator=(double x) ;
 
+  //! Operator that allows to set a value of an element \f$t_i\f$: t[i] = x
+  inline double &operator [](unsigned int n) {  return *(data + n);  }
+  //! Operator that allows to get the value of an element \f$t_i\f$: x = t[i]
+  inline const double &operator [](unsigned int n) const { return *(data+n);  }
 
-    // Skew Symmetric matrix
-    vpMatrix skew() const ;
-    static vpMatrix skew(const vpTranslationVector &t) ;
-    static void skew(const  vpTranslationVector &t, vpMatrix &M) ;
-    static vpTranslationVector cross(const vpTranslationVector &a,
-				     const vpTranslationVector &b) ;
+  /*!
+    This function is not applicable to a translation vector that is always a
+    3-by-1 column vector.
+    \exception vpException::fatalError When this function is called.
+    */
+  void resize(const unsigned int nrows, const unsigned int ncols,
+              const bool flagNullify = true)
+  {
+    (void)nrows;
+    (void)ncols;
+    (void)flagNullify;
+    throw(vpException(vpException::fatalError, "Cannot resize a translation vector"));
+  };
+
+  void set(const double tx, const double ty, const double tz) ;
+
+  // Skew Symmetric matrix
+  vpMatrix skew() const ;
+
+  vpRowVector t() const;
+
+  static vpTranslationVector cross(const vpTranslationVector &a,
+                                   const vpTranslationVector &b) ;
+  static vpMatrix skew(const vpTranslationVector &t) ;
+  static void skew(const  vpTranslationVector &t, vpMatrix &M) ;
 } ;
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 4
- * End:
- */

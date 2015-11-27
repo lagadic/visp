@@ -49,52 +49,43 @@
 /*!
   \class vpSubColVector
   \ingroup group_core_matrices
-  \brief Definition of the vpSubColVector
-  vpSubColVector class provides a mask on a vpColVector
-  all properties of vpColVector are available with
-  a vpSubColVector
+  This class provides a mask on a vpColVector. It has internally a
+  pointer to the parent vpColVector.
+  All properties of vpColVector are available with
+  a vpSubColVector.
 
   \author Jean Laneurit (IRISA - INRIA Rennes)
 
   \sa vpMatrix vpColvector vpRowVector
 */
-class VISP_EXPORT vpSubColVector : public vpColVector {
+class VISP_EXPORT vpSubColVector : public vpColVector
+{
 
-  private :
-      //!Copy constructor
-      vpSubColVector(const vpSubColVector& /* m */);      
-       
-  protected :
- 
-      //!Number of row of parent vpColvector at initialization
-      unsigned int pRowNum;
-      //!Parent vpColvector
-      vpColVector *parent;
-      
-  public:
+private :
+  //! Copy constructor unavaible
+  vpSubColVector(const vpSubColVector& /* m */);
 
-    //!Default constructor
-    vpSubColVector();
-    //!Constructor
-    vpSubColVector(vpColVector &v, const unsigned int & offset,const unsigned int & nrows);
-    //!Destructor
-    ~vpSubColVector();
-    
-    //! Initialisation of vpSubColVector
-    void init(vpColVector &v, const unsigned int & offset,const unsigned int & nrows);
-    
-    //!Check is partent vpColVector has changed since initialization
-    void checkParentStatus();
-      
-    //! Operation such as subA = subB
-    vpSubColVector & operator=(const vpSubColVector &B);
-    //! Operation such as subA = B
-    vpSubColVector & operator=(const vpColVector &B);
-    //! Operation such as subA = matrix B with size of B(N,1)
-    vpSubColVector & operator=(const vpMatrix &B); 
-    //! Operation such as subA = x
-    vpSubColVector & operator=(const double &x);
-        
+protected :
+
+  //! Number of row of parent vpColvector at initialization
+  unsigned int pRowNum;
+  //! Parent vpColvector
+  vpColVector *parent;
+
+public:
+
+  vpSubColVector();
+  vpSubColVector(vpColVector &v, const unsigned int & offset,const unsigned int & nrows);
+  virtual ~vpSubColVector();
+
+  void checkParentStatus();
+
+  void init(vpColVector &v, const unsigned int & offset,const unsigned int & nrows);
+
+  vpSubColVector & operator=(const vpSubColVector &B);
+  vpSubColVector & operator=(const vpColVector &B);
+  vpSubColVector & operator=(const vpMatrix &B);
+  vpSubColVector & operator=(const double &x);
 };
 
 #endif

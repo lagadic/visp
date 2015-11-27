@@ -289,8 +289,8 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
       vpPoint p(featurePoint_Point_list[i].firstParam);
       p.track(cMo);
       vpFeatureBuilder::create(fp, p);
-      err.stackMatrices(fp.error(*(featurePoint_Point_list[i].desiredFeature)));
-      L.stackMatrices(fp.interaction());
+      err.stack(fp.error(*(featurePoint_Point_list[i].desiredFeature)));
+      L.stack(fp.interaction());
     }
     
     //--------------vpFeaturePoint3D--------------
@@ -300,8 +300,8 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
       vpPoint p(featurePoint3D_Point_list[i].firstParam);
       p.track(cMo);
       vpFeatureBuilder::create(fp3D, p);
-      err.stackMatrices(fp3D.error(*(featurePoint3D_Point_list[i].desiredFeature)));
-      L.stackMatrices(fp3D.interaction());
+      err.stack(fp3D.error(*(featurePoint3D_Point_list[i].desiredFeature)));
+      L.stack(fp3D.interaction());
     }
     
     //--------------vpFeatureVanishingPoint--------------
@@ -311,8 +311,8 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
       vpPoint p(featureVanishingPoint_Point_list[i].firstParam);
       p.track(cMo);
       vpFeatureBuilder::create(fvp, p);
-      err.stackMatrices(fvp.error(*(featureVanishingPoint_Point_list[i].desiredFeature)));
-      L.stackMatrices(fvp.interaction());
+      err.stack(fvp.error(*(featureVanishingPoint_Point_list[i].desiredFeature)));
+      L.stack(fvp.interaction());
     }
       //From Duo of vpLines
     if( i < featureVanishingPoint_DuoLine_list.size() ){
@@ -322,8 +322,8 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
       l1.track(cMo);
       l2.track(cMo);
       vpFeatureBuilder::create(fvp, l1, l2);
-      err.stackMatrices(fvp.error(*(featureVanishingPoint_DuoLine_list[i].desiredFeature)));
-      L.stackMatrices(fvp.interaction());
+      err.stack(fvp.error(*(featureVanishingPoint_DuoLine_list[i].desiredFeature)));
+      L.stack(fvp.interaction());
     }
     
     //--------------vpFeatureEllipse--------------
@@ -333,8 +333,8 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
       vpSphere s(featureEllipse_Sphere_list[i].firstParam);
       s.track(cMo);
       vpFeatureBuilder::create(fe, s);
-      err.stackMatrices(fe.error(*(featureEllipse_Sphere_list[i].desiredFeature)));
-      L.stackMatrices(fe.interaction());
+      err.stack(fe.error(*(featureEllipse_Sphere_list[i].desiredFeature)));
+      L.stack(fe.interaction());
     }
       //From vpCircle
     if( i < featureEllipse_Circle_list.size() ){
@@ -342,8 +342,8 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
       vpCircle c(featureEllipse_Circle_list[i].firstParam);
       c.track(cMo);
       vpFeatureBuilder::create(fe, c);
-      err.stackMatrices(fe.error(*(featureEllipse_Circle_list[i].desiredFeature)));
-      L.stackMatrices(fe.interaction());
+      err.stack(fe.error(*(featureEllipse_Circle_list[i].desiredFeature)));
+      L.stack(fe.interaction());
     }
     
     //--------------vpFeatureLine--------------
@@ -353,8 +353,8 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
       vpLine l(featureLine_Line_list[i].firstParam);
       l.track(cMo);
       vpFeatureBuilder::create(fl, l);
-      err.stackMatrices(fl.error(*(featureLine_Line_list[i].desiredFeature)));
-      L.stackMatrices(fl.interaction());
+      err.stack(fl.error(*(featureLine_Line_list[i].desiredFeature)));
+      L.stack(fl.interaction());
     }
       //From Duo of vpCylinder / Integer
     if( i < featureLine_DuoLineInt_List.size() ){
@@ -362,8 +362,8 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
       vpCylinder c(featureLine_DuoLineInt_List[i].firstParam);
       c.track(cMo);
       vpFeatureBuilder::create(fl, c, featureLine_DuoLineInt_List[i].secondParam);
-      err.stackMatrices(fl.error(*(featureLine_DuoLineInt_List[i].desiredFeature)));
-      L.stackMatrices(fl.interaction());
+      err.stack(fl.error(*(featureLine_DuoLineInt_List[i].desiredFeature)));
+      L.stack(fl.interaction());
     }
     
     //--------------vpFeatureSegment--------------
@@ -375,15 +375,15 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
       p1.track(cMo);
       p2.track(cMo);
       vpFeatureBuilder::create(fs, p1, p2);
-      err.stackMatrices(fs.error(*(featureSegment_DuoPoints_list[i].desiredFeature)));
-      L.stackMatrices(fs.interaction());
+      err.stack(fs.error(*(featureSegment_DuoPoints_list[i].desiredFeature)));
+      L.stack(fs.interaction());
     }
 
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
     //--------------Specific Feature--------------
     if( i < featureSpecific_list.size() ){
       featureSpecific_list[i]->createCurrent(cMo);
-      err.stackMatrices(featureSpecific_list[i]->error());
+      err.stack(featureSpecific_list[i]->error());
       L.stackMatrices(featureSpecific_list[i]->currentInteraction());
     }
 #endif

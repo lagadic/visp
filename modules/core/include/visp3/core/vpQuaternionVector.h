@@ -48,8 +48,6 @@
 
 */
 
-class vpHomogeneousMatrix;
-
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRotationVector.h>

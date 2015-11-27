@@ -86,7 +86,6 @@ main()
     vpTRACE("cVe twist matrix:");
     cVe.print (std::cout, 6);
 
-
     // Set a speed skew
     vpColVector ev(6);
 

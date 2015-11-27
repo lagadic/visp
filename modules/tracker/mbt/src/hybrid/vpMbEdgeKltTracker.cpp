@@ -620,7 +620,8 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   vpRobust robust_mbt(0), robust_klt(0);
   vpHomography H;
 
-  vpMatrix LTL, LTR;
+  vpMatrix LTL;
+  vpColVector LTR;
   
   double factorMBT = 1.0;
   double factorKLT = 1.0;
@@ -732,8 +733,8 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
         robust_mbt.setIteration(iter);
         robust_mbt.setThreshold(thresholdMBT/cam.get_px());
         robust_mbt.MEstimator( vpRobust::TUKEY, R_mbt, w_mbt);
-        L->stackMatrices(L_mbt);
-        R->stackMatrices(R_mbt);
+        L->stack(L_mbt);
+        R->stack(R_mbt);
       }
 
       if(nbInfos > 3){
@@ -746,8 +747,8 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
         robust_klt.setThreshold(thresholdKLT/cam.get_px());
         robust_klt.MEstimator( vpRobust::TUKEY, R_klt, w_klt);
 
-        L->stackMatrices(L_klt);
-        R->stackMatrices(R_klt);
+        L->stack(L_klt);
+        R->stack(R_klt);
       }
 
       unsigned int cpt = 0;
@@ -797,7 +798,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
           case vpMbTracker::LEVENBERG_MARQUARDT_OPT:
           {
             vpMatrix LMA(LTL.getRows(), LTL.getCols());
-            LMA.setIdentity();
+            LMA.eye();
             vpMatrix LTLmuI = LTL + (LMA*mu);
             v = -lambda*LTLmuI.pseudoInverse(LTLmuI.getRows()*std::numeric_limits<double>::epsilon())*LTR;
 
@@ -818,14 +819,14 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
           cVo.buildFrom(cMo);
           vpMatrix LVJ = ((*L)*cVo*oJo);
           vpMatrix LVJTLVJ = (LVJ).AtA();
-          vpMatrix LVJTR;
+          vpColVector LVJTR;
           computeJTR(LVJ, *R, LVJTR);
 
           switch(m_optimizationMethod){
           case vpMbTracker::LEVENBERG_MARQUARDT_OPT:
           {
             vpMatrix LMA(LVJTLVJ.getRows(), LVJTLVJ.getCols());
-            LMA.setIdentity();
+            LMA.eye();
             vpMatrix LTLmuI = LVJTLVJ + (LMA*mu);
             v = -lambda*LTLmuI.pseudoInverse(LTLmuI.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
             v = cVo * v;

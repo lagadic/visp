@@ -44,7 +44,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 
 // Debug trace
 #include <visp3/core/vpDebug.h>
@@ -983,8 +982,7 @@ vpColVector vpServo::computeControlLaw()
     */
       e1 = J1p*error ;// primary task
 
-      WpW.resize(J1.getCols(), J1.getCols()) ;
-      WpW.setIdentity() ;
+      WpW.eye(J1.getCols(), J1.getCols()) ;
     }
     else
     {
@@ -1013,23 +1011,13 @@ vpColVector vpServo::computeControlLaw()
 
     vpMatrix I ;
 
-    I.resize(J1.getCols(),J1.getCols()) ;
-    I.setIdentity() ;
+    I.eye(J1.getCols(),J1.getCols()) ;
 
     computeProjectionOperators();
 
   }
-  catch(vpMatrixException me)
-  {
-    vpERROR_TRACE("Caught a matrix related error") ;
-    std::cout << me << std::endl ;
-    throw me;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw me ;
+  catch(...) {
+    throw;
   }
 
   iteration++ ;
@@ -1151,8 +1139,7 @@ vpColVector vpServo::computeControlLaw(double t)
     */
       e1 = J1p*error ;// primary task
 
-      WpW.resize(J1.getCols(), J1.getCols()) ;
-      WpW.setIdentity() ;
+      WpW.eye(J1.getCols(), J1.getCols()) ;
     }
     else
     {
@@ -1190,22 +1177,12 @@ vpColVector vpServo::computeControlLaw(double t)
 
     vpMatrix I ;
 
-    I.resize(J1.getCols(), J1.getCols()) ;
-    I.setIdentity() ;
+    I.eye(J1.getCols(), J1.getCols()) ;
 
     computeProjectionOperators() ;
   }
-  catch(vpMatrixException me)
-  {
-    vpERROR_TRACE("Caught a matrix related error") ;
-    std::cout << me << std::endl ;
-    throw me;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw me ;
+  catch(...) {
+    throw;
   }
 
   iteration++ ;
@@ -1326,8 +1303,7 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
     */
       e1 = J1p*error ;// primary task
 
-      WpW.resize(J1.getCols(), J1.getCols()) ;
-      WpW.setIdentity() ;
+      WpW.eye(J1.getCols(), J1.getCols()) ;
     }
     else
     {
@@ -1365,22 +1341,12 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
 
     vpMatrix I ;
 
-    I.resize(J1.getCols(), J1.getCols()) ;
-    I.setIdentity() ;
+    I.eye(J1.getCols(), J1.getCols()) ;
 
     computeProjectionOperators();
   }
-  catch(vpMatrixException me)
-  {
-    vpERROR_TRACE("Caught a matrix related error") ;
-    std::cout << me << std::endl ;
-    throw me;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw me ;
+  catch(...) {
+    throw;
   }
 
   iteration++ ;

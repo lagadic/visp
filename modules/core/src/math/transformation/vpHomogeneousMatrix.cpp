@@ -47,91 +47,72 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpQuaternionVector.h>
 #include <visp3/core/vpPoint.h>
-
-// Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
-
-// Debug trace
-#include <visp3/core/vpDebug.h>
-
 
 /*!
-  Initialize a 4x4 momogeneous matrix as identity.
+  Construct an homogeneous matrix from a translation vector and quaternion rotation vector.
+ */
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t,
+                                         const vpQuaternionVector &q)
+  : vpArray2D<double>(4, 4)
+{
+  buildFrom(t,q);
+  (*this)[3][3] = 1.;
+}
+
+/*!
+  Default constructor that initialize an homogeneous matrix as identity.
 */
-void
-vpHomogeneousMatrix::init()
+vpHomogeneousMatrix::vpHomogeneousMatrix()
+  : vpArray2D<double>(4, 4)
 {
-  unsigned int i,j ;
-
-  try {
-    resize(4,4) ;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
-  }
-
-
-  for (i=0 ; i < 4 ; i++)
-    for (j=0 ; j < 4; j++)
-      if (i==j)
-	(*this)[i][j] = 1.0 ;
-      else
-	(*this)[i][j] = 0.0;
-
-}
-
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &tv,
-                                         const vpQuaternionVector &q) : vpMatrix()
-{
-  init();
-  buildFrom(tv,q);
+  eye() ;
 }
 
 /*!
-  Initialize an homogeneous matrix as identity.
+  Copy constructor that initialize an homogeneous matrix from another homogeneous matrix.
 */
-vpHomogeneousMatrix::vpHomogeneousMatrix() : vpMatrix()
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M)
+  : vpArray2D<double>(4, 4)
 {
-  init() ;
-}
-
-
-/*!
-  Initialize an homogeneous matrix from another homogeneous matrix.
-*/
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpMatrix()
-{
-  init() ;
-  *this = M ;
-}
-
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &tv,
-                                         const vpThetaUVector &tu) : vpMatrix()
-{
-  init() ;
-  buildFrom(tv,tu) ;
-}
-
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &tv,
-                                         const vpRotationMatrix &R) : vpMatrix()
-{
-  init() ;
-  insert(R) ;
-  insert(tv) ;
-}
-
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpMatrix()
-{
-
-  init() ;
-  buildFrom(p[0],p[1],p[2],p[3],p[4],p[5]) ;
+  *this = M;
 }
 
 /*!
-  Creates an homogeneous matrix from a vector.
+  Construct an homogeneous matrix from a translation vector and \f$\theta {\bf u}\f$ rotation vector.
+ */
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t,
+                                         const vpThetaUVector &tu)
+  : vpArray2D<double>(4, 4)
+{
+  buildFrom(t, tu);
+  (*this)[3][3] = 1.;
+}
+
+/*!
+  Construct an homogeneous matrix from a translation vector and a rotation matrix.
+ */
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t,
+                                         const vpRotationMatrix &R)
+  : vpArray2D<double>(4, 4)
+{
+  insert(R);
+  insert(t);
+  (*this)[3][3] = 1.;
+}
+
+/*!
+  Construct an homogeneous matrix from a pose vector.
+ */
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p)
+  : vpArray2D<double>(4, 4)
+{
+  buildFrom(p[0], p[1], p[2], p[3], p[4], p[5]) ;
+  (*this)[3][3] = 1.;
+}
+
+/*!
+  Construct an homogeneous matrix from a vector of float.
   \param v : Vector of 12 or 16 values corresponding to the values of the homogeneous matrix.
 
   The following example shows how to use this function:
@@ -168,14 +149,15 @@ M:
 0  0  0  1
   \endcode
   */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<float> &v) : vpMatrix()
+vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<float> &v)
+  : vpArray2D<double>(4, 4)
 {
-  init() ;
   buildFrom(v) ;
+  (*this)[3][3] = 1.;
 }
 
 /*!
-  Creates an homogeneous matrix from a vector.
+  Construct an homogeneous matrix from a vector of double.
   \param v : Vector of 12 or 16 values corresponding to the values of the homogeneous matrix.
 
   The following example shows how to use this function:
@@ -212,76 +194,98 @@ M:
 0  0  0  1
   \endcode
   */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v) : vpMatrix()
+vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v)
+  : vpArray2D<double>(4, 4)
 {
-  init() ;
   buildFrom(v) ;
+  (*this)[3][3] = 1.;
 }
 
+/*!
+  Construct an homogeneous matrix from a translation vector \f${\bf t}=(t_x, t_y, t_z)^T\f$
+  and a \f$\theta {\bf u}=(\theta u_x, \theta u_y, \theta u_z)^T\f$ rotation vector.
+ */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const double tx,
-					 const double ty,
-					 const double tz,
-					 const double tux,
-					 const double tuy,
-					 const double tuz) : vpMatrix()
+                                         const double ty,
+                                         const double tz,
+                                         const double tux,
+                                         const double tuy,
+                                         const double tuz)
+  : vpArray2D<double>(4, 4)
 {
-  init() ;
-  buildFrom(tx, ty, tz,tux, tuy, tuz) ;
+  buildFrom(tx, ty, tz, tux, tuy, tuz);
+  (*this)[3][3] = 1.;
 }
 
+/*!
+  Build an homogeneous matrix from a translation vector
+  and a \f$\theta {\bf u}\f$ rotation vector.
+ */
 void
-vpHomogeneousMatrix::buildFrom(const vpTranslationVector &tv,
+vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t,
                                const vpThetaUVector &tu)
 {
   insert(tu) ;
-  insert(tv) ;
+  insert(t) ;
 }
 
+/*!
+  Build an homogeneous matrix from a translation vector
+  and a rotation matrix.
+ */
 void
-vpHomogeneousMatrix::buildFrom(const vpTranslationVector &tv,
+vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t,
                                const vpRotationMatrix &R)
 {
-  init() ;
   insert(R) ;
-  insert(tv) ;
+  insert(t) ;
 }
 
-
+/*!
+  Build an homogeneous matrix from a pose vector.
+ */
 void
 vpHomogeneousMatrix::buildFrom(const vpPoseVector &p)
 {
-
-  vpTranslationVector tv(p[0],p[1],p[2]) ;
-  vpThetaUVector tu(p[3],p[4],p[5]) ;
+  vpTranslationVector tv(p[0], p[1], p[2]);
+  vpThetaUVector tu(p[3], p[4], p[5]);
 
   insert(tu) ;
-  insert(tv) ;
-}
-
-void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &tv,
-				    const vpQuaternionVector &q) 
-{
-  insert(tv);
-  insert(q);
-}
-
-void
-vpHomogeneousMatrix::buildFrom(const double tx,
-			       const double ty,
-			       const double tz,
-			       const double tux,
-			       const double tuy,
-			       const double tuz)
-{
-  vpRotationMatrix R(tux, tuy, tuz) ;
-  vpTranslationVector tv(tx, ty, tz) ;
-
-  insert(R) ;
   insert(tv) ;
 }
 
 /*!
-  Converts a vector to an homogeneous matrix.
+  Build an homogeneous matrix from a translation vector
+  and a quaternion rotation vector.
+ */
+void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t,
+                                    const vpQuaternionVector &q)
+{
+  insert(t);
+  insert(q);
+}
+
+/*!
+  Build an homogeneous matrix from a translation vector \f${\bf t}=(t_x, t_y, t_z)^T\f$
+  and a \f$\theta {\bf u}=(\theta u_x, \theta u_y, \theta u_z)^T\f$ rotation vector.
+ */
+void
+vpHomogeneousMatrix::buildFrom(const double tx,
+                               const double ty,
+                               const double tz,
+                               const double tux,
+                               const double tuy,
+                               const double tuz)
+{
+  vpRotationMatrix R(tux, tuy, tuz) ;
+  vpTranslationVector t(tx, ty, tz) ;
+
+  insert(R) ;
+  insert(t) ;
+}
+
+/*!
+  Build an homogeneous matrix from a vector of float.
   \param v : Vector of 12 or 16 values corresponding to the values of the homogeneous matrix.
 
   The following example shows how to use this function:
@@ -331,7 +335,7 @@ vpHomogeneousMatrix::buildFrom(const std::vector<float> &v)
 }
 
 /*!
-  Converts a vector to an homogeneous matrix.
+  Build an homogeneous matrix from a vector of double.
   \param v : Vector of 12 or 16 values corresponding to the values of the homogeneous matrix.
 
   The following example shows how to use this function:
@@ -381,20 +385,15 @@ vpHomogeneousMatrix::buildFrom(const std::vector<double> &v)
 }
 
 /*!
-  Affectation of two homogeneous matrices.
+  Copy operator that allows to set an homogeneous matrix from an other one.
 
-  \param M : *this = M
+  \param M : Matrix to copy.
 */
 vpHomogeneousMatrix &
 vpHomogeneousMatrix::operator=(const vpHomogeneousMatrix &M)
 {
-
-  if (rowPtrs != M.rowPtrs) init() ;
-
-  for (int i=0; i<4; i++)
-  {
-    for (int j=0; j<4; j++)
-    {
+  for (int i=0; i<4; i++) {
+    for (int j=0; j<4; j++) {
       rowPtrs[i][j] = M.rowPtrs[i][j];
     }
   }
@@ -402,7 +401,7 @@ vpHomogeneousMatrix::operator=(const vpHomogeneousMatrix &M)
 }
 
 /*!
-  Allow homogeneous matrix multiplication.
+  Operator that allow to multiply an homogeneous matrix by an other one.
 
   \code
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -426,7 +425,6 @@ vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &M) const
   vpRotationMatrix R1, R2, R ;
   vpTranslationVector T1, T2 , T;
 
-
   extract(T1) ;
   M.extract(T2) ;
 
@@ -443,9 +441,19 @@ vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &M) const
   return p;
 }
 
+/*!
+  Operator that allow to multiply an homogeneous matrix by a 4-dimension column vector.
+
+  \exception vpException::dimensionError : If the vector \e v is not a 4-dimension vector.
+*/
 vpColVector
 vpHomogeneousMatrix::operator*(const vpColVector &v) const
 {
+  if (v.getRows() != 4) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot multiply a (4x4) homogenous matrix by a (%dx1) column vector",
+                      v.getRows()));
+  }
   vpColVector p(rowNum);
 
   p = 0.0;
@@ -522,10 +530,8 @@ vpHomogeneousMatrix::isAnHomogeneousMatrix() const
 void
 vpHomogeneousMatrix::extract(vpRotationMatrix &R) const
 {
-  unsigned int i,j ;
-
-  for (i=0 ; i < 3 ; i++)
-    for (j=0 ; j < 3; j++)
+  for (unsigned int i=0 ; i < 3 ; i++)
+    for (unsigned int j=0 ; j < 3; j++)
       R[i][j] = (*this)[i][j] ;
 }
 
@@ -545,7 +551,6 @@ vpHomogeneousMatrix::extract(vpTranslationVector &tv) const
 void
 vpHomogeneousMatrix::extract(vpThetaUVector &tu) const
 {
-  
   vpRotationMatrix R;
   (*this).extract(R);
   tu.buildFrom(R);
@@ -568,17 +573,15 @@ vpHomogeneousMatrix::extract(vpQuaternionVector &q) const
 void
 vpHomogeneousMatrix::insert(const vpRotationMatrix &R)
 {
-  unsigned int i,j ;
-
-  for (i=0 ; i < 3 ; i++)
-    for (j=0 ; j < 3; j++)
+  for (unsigned int i=0 ; i < 3 ; i++)
+    for (unsigned int j=0 ; j < 3; j++)
       (*this)[i][j] = R[i][j] ;
 }
 
 /*!  
 
   Insert the rotational component of the homogeneous matrix from a
-  theta u rotation vector.
+  \f$theta {\bf u}\f$ rotation vector.
 
 */
 void
@@ -592,11 +595,11 @@ vpHomogeneousMatrix::insert(const vpThetaUVector &tu)
   Insert the translational component in a homogeneous matrix.
 */
 void
-vpHomogeneousMatrix::insert(const vpTranslationVector &T)
+vpHomogeneousMatrix::insert(const vpTranslationVector &t)
 {
-  (*this)[0][3] = T[0] ;
-  (*this)[1][3] = T[1] ;
-  (*this)[2][3] = T[2] ;
+  (*this)[0][3] = t[0] ;
+  (*this)[1][3] = t[1] ;
+  (*this)[2][3] = t[2] ;
 }
 
 /*!  
@@ -629,7 +632,6 @@ vpHomogeneousMatrix::inverse() const
 {
   vpHomogeneousMatrix Mi ;
 
-
   vpRotationMatrix R ;      extract(R) ;
   vpTranslationVector T ;   extract(T) ;
 
@@ -650,14 +652,12 @@ void vpHomogeneousMatrix::eye()
   (*this)[0][0] = 1 ;
   (*this)[1][1] = 1 ;
   (*this)[2][2] = 1 ;
+  (*this)[3][3] = 1 ;
 
-  (*this)[0][1] = (*this)[0][2] = 0 ;
-  (*this)[1][0] = (*this)[1][2] = 0 ;
-  (*this)[2][0] = (*this)[2][1] = 0 ;
-
-  (*this)[0][3] = 0 ;
-  (*this)[1][3] = 0 ;
-  (*this)[2][3] = 0 ;
+  (*this)[0][1] = (*this)[0][2] = (*this)[0][3] = 0 ;
+  (*this)[1][0] = (*this)[1][2] = (*this)[1][3] = 0 ;
+  (*this)[2][0] = (*this)[2][1] = (*this)[2][3] = 0 ;
+  (*this)[3][0] = (*this)[3][1] = (*this)[3][2] = 0 ;
 }
 
 /*!
@@ -706,14 +706,12 @@ vpHomogeneousMatrix::inverse(vpHomogeneousMatrix &M) const
 void
 vpHomogeneousMatrix::save(std::ofstream &f) const
 {
-  if (! f.fail())
-  {
+  if (! f.fail()) {
     f << *this ;
   }
-  else
-  {
-    vpERROR_TRACE("\t\t file not open " );
-    throw(vpException(vpException::ioError, "\t\t file not open")) ;
+  else {
+    throw(vpException(vpException::ioError,
+                      "Cannot save homogeneous matrix: ostream not open")) ;
   }
 }
 
@@ -739,33 +737,34 @@ vpHomogeneousMatrix::save(std::ofstream &f) const
 void
 vpHomogeneousMatrix::load(std::ifstream &f)
 {
-  if (! f.fail())
-  {
-    for (unsigned int i=0 ; i < 4 ; i++)
-      for (unsigned int j=0 ; j < 4 ; j++)
-      {
+  if (! f.fail()) {
+    for (unsigned int i=0 ; i < 4 ; i++) {
+      for (unsigned int j=0 ; j < 4 ; j++) {
         f >> (*this)[i][j] ;
       }
+    }
   }
-  else
-  {
-    vpERROR_TRACE("\t\t file not open " );
-    throw(vpException(vpException::ioError, "\t\t file not open")) ;
+  else {
+    throw(vpException(vpException::ioError,
+                      "Cannot laad homogeneous matrix: ifstream not open")) ;
   }
 }
 
-//! Print the matrix as a vector [T thetaU]
+//! Print the matrix as a pose vector \f$({\bf t}^T \theta {\bf u}^T)\f$
 void
 vpHomogeneousMatrix::print()
 {
   vpPoseVector r(*this) ;
   std::cout << r.t() ;
 }
-//! Basic initialisation (identity)
+/*!
+   Set homogeneous matrix to identity.
+   \sa eye()
+ */
 void
 vpHomogeneousMatrix::setIdentity()
 {
-  init() ;
+  eye() ;
 }
 
 /*!
@@ -788,4 +787,35 @@ void vpHomogeneousMatrix::convert(std::vector<double> &M)
   M.resize(12);
   for(unsigned int i=0; i < 12; i++)
     M[i] = this->data[i];
+}
+
+/*!
+  Return the translation vector from the homogeneous transformation matrix.
+ */
+vpTranslationVector vpHomogeneousMatrix::getTranslationVector()
+{
+  vpTranslationVector tr;
+  this->extract(tr);
+  return tr;
+}
+
+/*!
+  Return the rotation matrix from the homogeneous transformation matrix.
+ */
+vpRotationMatrix vpHomogeneousMatrix::getRotationMatrix()
+{
+  vpRotationMatrix R;
+  this->extract(R);
+  return R;
+}
+
+/*!
+  Return the \f$\theta {\bf u}\f$ vector that corresponds to the rotation part of the
+  homogeneous transformation.
+ */
+vpThetaUVector vpHomogeneousMatrix::getThetaUVector()
+{
+  vpThetaUVector tu;
+  this->extract(tu);
+  return tu;
 }

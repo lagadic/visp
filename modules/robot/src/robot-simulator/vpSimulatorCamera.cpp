@@ -68,8 +68,7 @@ vpSimulatorCamera::vpSimulatorCamera() : wMc_()
 void vpSimulatorCamera::init()
 {
   nDof = 6;
-  eJe.resize(6,6) ;
-  eJe.setIdentity() ;
+  eJe.eye(6,6) ;
   eJeAvailable = true;
   fJeAvailable = false;
   areJointLimitsAvailable = false;

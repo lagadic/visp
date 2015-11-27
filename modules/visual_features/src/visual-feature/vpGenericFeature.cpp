@@ -41,7 +41,6 @@
 
 // Exception
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
 #include <visp3/visual_features/vpFeatureException.h>
 
 // Debug trace
@@ -51,8 +50,8 @@
 
 /*!
   \file vpGenericFeature.cpp
-  \brief class that defines what is a generic feature (used to create new
-  feature not implemented in ViSP2
+  Class that defines what is a generic feature. This class could be used to create new
+  features not implemented in ViSP.
 */
 
 vpGenericFeature::~vpGenericFeature()
@@ -220,7 +219,7 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
 	    vpColVector ex(1) ;
 	    ex[i] = err[i] ;
 
-	    e = vpMatrix::stackMatrices(e,ex) ;
+	    e = vpColVector::stack(e,ex) ;
 	  }
       }
       else
@@ -233,22 +232,13 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
 	    vpColVector ex(1) ;
 	    ex[0] = s[i] - s_star[i] ;
 
-	    e = vpMatrix::stackMatrices(e,ex) ;
+	    e = vpColVector::stack(e,ex) ;
 	  }
 
       }
   }
-  catch(vpMatrixException me)
-  {
-    vpERROR_TRACE("caught a Matric related error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("caught another error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
+  catch(...) {
+    throw;
   }
   return e ;
 
@@ -321,7 +311,7 @@ vpGenericFeature::error( const unsigned int select)
 	    vpColVector ex(1) ;
 	    ex[i] = err[i] ;
 
-	    e = vpMatrix::stackMatrices(e,ex) ;
+	    e = vpColVector::stack(e,ex) ;
 	  }
       }
       else
@@ -333,22 +323,13 @@ vpGenericFeature::error( const unsigned int select)
 	    vpColVector ex(1) ;
 	    ex[i] = s[i]  ;
 
-	    e = vpMatrix::stackMatrices(e,ex) ;
+	    e = vpColVector::stack(e,ex) ;
 	  }
 
       }
   }
-  catch(vpMatrixException me)
-  {
-    vpERROR_TRACE("caught a Matric related error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
-  }
-  catch(vpException me)
-  {
-    vpERROR_TRACE("caught another error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
+  catch(...) {
+    throw;
   }
 
   return e ;
@@ -435,7 +416,7 @@ vpGenericFeature::interaction(const unsigned int select)
       for (int j=0 ; j < 6 ; j++)
 	Lx[0][j] = L[i][j] ;
 
-      Ls = vpMatrix::stackMatrices(Ls,Lx) ;
+      Ls = vpMatrix::stack(Ls,Lx) ;
     }
 
   return Ls ;

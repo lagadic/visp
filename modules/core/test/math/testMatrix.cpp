@@ -51,10 +51,41 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &bench)
+{
+  static unsigned int cpt = 0;
+  std::cout << "** Test " << ++cpt << std::endl;
+  std::cout << s << "(" << M.getRows() << "," << M.getCols() << ") = \n" << M << std::endl;
+  if(bench.size() != M.size()) {
+    std::cout << "Test fails: bad size wrt bench" << std::endl;
+    return false;
+  }
+  for (unsigned int i=0; i<M.size(); i++) {
+    if (std::fabs(M.data[i]-bench[i]) > std::fabs(M.data[i])*std::numeric_limits<double>::epsilon()) {
+      std::cout << "Test fails: bad content" << std::endl;
+      return false;
+    }
+  }
+
+  return true;
+}
+
 int
 main()
 {
   try {
+    int err = 1;
+    {
+      vpColVector c(6, 1);
+      vpRowVector r(6, 1);
+      std::vector<double> bench(6, 1);
+      vpMatrix M1(c);
+      if (test("M1", M1, bench) == false)
+        return err;
+      vpMatrix M2(r);
+      if (test("M2", M2, bench) == false)
+        return err;
+    }
     {
       vpMatrix M(4,5);
       int val = 0;
@@ -70,6 +101,40 @@ main()
       N.init(M, 0, 1, 2, 3);
       std::cout <<"N ";
       N.print (std::cout, 4);
+
+      if (vpMatrix::saveMatrix("matrix.mat", M, false, "My 4-by-5 matrix"))
+        std::cout << "Matrix saved in matrix.mat file" << std::endl;
+      else
+        return err;
+
+      vpMatrix M1;
+      if (vpMatrix::loadMatrix("matrix.mat", M1, false))
+        std::cout << "Matrix loaded from matrix.mat file: \n" << M1 << std::endl;
+      else
+        return err;
+
+      if (vpMatrix::saveMatrixYAML("matrix.yml", M, "My 4-by-5 matrix"))
+        std::cout << "Matrix saved in matrix.yml file" << std::endl;
+      else
+        return err;
+
+      vpMatrix M2;
+      if (vpMatrix::loadMatrixYAML("matrix.yml", M2))
+        std::cout << "Matrix loaded from matrix.yml file: \n" << M2 << std::endl;
+      else
+        return err;
+    }
+    {
+      vpRotationMatrix R(vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
+      std::cout << "R: \n" << R << std::endl;
+      vpMatrix M1(R);
+      std::cout << "M1: \n" << M1 << std::endl;
+      vpMatrix M2(M1);
+      std::cout << "M2: \n" << M2 << std::endl;
+      vpMatrix M3 = R;
+      std::cout << "M3: \n" << M3 << std::endl;
+      vpMatrix M4 = M1;
+      std::cout << "M4: \n" << M4 << std::endl;
     }
     {
 
