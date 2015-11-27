@@ -58,7 +58,7 @@ vpPolygon3D::vpPolygon3D()
 
 vpPolygon3D::vpPolygon3D(const vpPolygon3D& mbtp)
   : nbpt(mbtp.nbpt), nbCornersInsidePrev(mbtp.nbCornersInsidePrev),
-    polyClipped(mbtp.polyClipped), clippingFlag(mbtp.clippingFlag),
+    p(NULL), polyClipped(mbtp.polyClipped), clippingFlag(mbtp.clippingFlag),
     distNearClip(mbtp.distNearClip), distFarClip(mbtp.distFarClip)
 {
   if (p) delete [] p;
