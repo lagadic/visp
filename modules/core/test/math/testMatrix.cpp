@@ -51,11 +51,41 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &bench)
+{
+  static unsigned int cpt = 0;
+  std::cout << "** Test " << ++cpt << std::endl;
+  std::cout << s << "(" << M.getRows() << "," << M.getCols() << ") = \n" << M << std::endl;
+  if(bench.size() != M.size()) {
+    std::cout << "Test fails: bad size wrt bench" << std::endl;
+    return false;
+  }
+  for (unsigned int i=0; i<M.size(); i++) {
+    if (std::fabs(M.data[i]-bench[i]) > std::fabs(M.data[i])*std::numeric_limits<double>::epsilon()) {
+      std::cout << "Test fails: bad content" << std::endl;
+      return false;
+    }
+  }
+
+  return true;
+}
+
 int
 main()
 {
   try {
     int err = 1;
+    {
+      vpColVector c(6, 1);
+      vpRowVector r(6, 1);
+      std::vector<double> bench(6, 1);
+      vpMatrix M1(c);
+      if (test("M1", M1, bench) == false)
+        return err;
+      vpMatrix M2(r);
+      if (test("M2", M2, bench) == false)
+        return err;
+    }
     {
       vpMatrix M(4,5);
       int val = 0;

@@ -703,3 +703,14 @@ vpRotationMatrix operator*(const double &x,const vpRotationMatrix &R)
 
   return C ;
 }
+
+/*!
+  Return the \f$\theta {\bf u}\f$ vector that corresponds to the rotation matrix.
+ */
+vpThetaUVector vpRotationMatrix::getThetaUVector()
+{
+  vpThetaUVector tu;
+  tu.buildFrom(*this);
+  return tu;
+}
+

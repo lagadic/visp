@@ -204,8 +204,7 @@ public:
     \exception vpException::fatalError When \e nrows is not equal to 1.
 
     */
-  void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify = true)
+  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify)
   {
     if (nrows != 1)
       throw(vpException(vpException::fatalError,
@@ -219,6 +218,8 @@ public:
 
   double sumSquare() const;
   vpColVector t() const;
+  vpColVector transpose() const;
+  void transpose(vpColVector &v) const;
 
   static double mean(const vpRowVector &v)  ;
   static double median(const vpRowVector &v) ;

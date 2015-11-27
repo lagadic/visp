@@ -83,6 +83,11 @@ int main()
     v.normalize();
     if (test("v", v, bench2) == false)
       return err;
+
+    v.resize(1, 5, true);
+    std::vector<double> bench3(5, 0);
+    if (test("v", v, bench3) == false)
+      return err;
   }
 
   {

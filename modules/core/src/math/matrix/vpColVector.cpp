@@ -582,9 +582,8 @@ vpColVector & vpColVector::operator=(double x)
   return *this;
 }
 
-/*
+/*!
   Transpose the column vector. The resulting vector becomes a row vector.
-
 */
 vpRowVector vpColVector::t() const
 {
@@ -592,6 +591,25 @@ vpRowVector vpColVector::t() const
   memcpy(v.data, data, rowNum*sizeof(double)) ;
   return v;
 }
+
+/*!
+  Transpose the column vector. The resulting vector becomes a row vector.
+  \sa t()
+*/
+vpRowVector vpColVector::transpose() const
+{
+  return t();
+}
+
+/*!
+  Transpose the column vector. The resulting vector \e v becomes a row vector.
+  \sa t()
+*/
+void vpColVector::transpose(vpRowVector &v) const
+{
+  v = t();
+}
+
 
 /*!
   Allows to multiply a scalar by a column vector.

@@ -116,28 +116,12 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
   void convert(std::vector<float> &M);
   void convert(std::vector<double> &M);
 
-//  /*!
-//    Return the translation vector from the homogeneous transformation matrix.
-//   */
-//  vpTranslationVector getTranslationVector()
-//  {
-//    vpTranslationVector tr;
-//    this->extract(tr);
-//    return tr;
-//  }
-//  /*!
-//    Return the rotation matrix from the homogeneous transformation matrix.
-//   */
-//  vpThetaUVector getThetaUVector()
-//  vpRotationMatrix getRotationMatrix()
-//  {
-//    vpRotationMatrix R;
-//    this->extract(R);
-//    return R;
-//  }
-
   // Set to identity
   void eye();
+
+  vpRotationMatrix getRotationMatrix();
+  vpThetaUVector getThetaUVector();
+  vpTranslationVector getTranslationVector();
 
   // Invert the homogeneous matrix.
   vpHomogeneousMatrix inverse() const ;
@@ -152,7 +136,7 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
   void insert(const vpTranslationVector &t) ;
   void insert(const vpQuaternionVector &t) ;
 
-  void extract( vpRotationMatrix &R) const;
+  void extract(vpRotationMatrix &R) const;
   void extract(vpTranslationVector &t) const;
   void extract(vpThetaUVector &tu) const;
   void extract(vpQuaternionVector& q) const;
