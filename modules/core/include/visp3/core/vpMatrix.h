@@ -516,7 +516,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   static inline bool loadMatrix(const std::string &filename, vpArray2D<double> &M,
                                 const bool binary = false, char *header = NULL)
   {
-    return vpArray2D::load(filename, M, binary, header);
+    return vpArray2D<double>::load(filename, M, binary, header);
   }
 
   /*!
@@ -530,7 +530,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   */
   static inline bool loadMatrixYAML(const std::string &filename, vpArray2D<double> &M, char *header = NULL)
   {
-    return vpArray2D::loadYAML(filename, M, header);
+    return vpArray2D<double>::loadYAML(filename, M, header);
   }
 
   /*!
@@ -549,7 +549,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
                                 const bool binary = false,
                                 const char *header = "")
   {
-    return vpArray2D::save(filename, M, binary, header);
+    return vpArray2D<double>::save(filename, M, binary, header);
   }
 
   /*!
@@ -564,7 +564,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   */
   static inline bool saveMatrixYAML(const std::string &filename, const vpArray2D<double> &M, const char *header = "")
   {
-    return vpArray2D::saveYAML(filename, M, header);
+    return vpArray2D<double>::saveYAML(filename, M, header);
   }
   //@}
 

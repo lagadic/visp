@@ -219,7 +219,7 @@ public:
       throw(vpException(vpException::fatalError,
                         "Cannot resize a column vector to a (%dx%d) dimension vector that has more than one column",
                         nrows, ncols));
-    vpArray2D::resize(nrows, ncols, flagNullify);
+    vpArray2D<double>::resize(nrows, ncols, flagNullify);
   };
 
   void stack(const double &d);

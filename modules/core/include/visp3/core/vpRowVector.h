@@ -191,7 +191,7 @@ public:
    */
   inline void resize(const unsigned int i, const bool flagNullify = true)
   {
-    vpArray2D::resize(1, i, flagNullify);
+    vpArray2D<double>::resize(1, i, flagNullify);
   }
 
   /*!
@@ -210,7 +210,7 @@ public:
       throw(vpException(vpException::fatalError,
                         "Cannot resize a row vector to a (%dx%d) dimension vector that has more than one row",
                         nrows, ncols));
-    vpArray2D::resize(nrows, ncols, flagNullify);
+    vpArray2D<double>::resize(nrows, ncols, flagNullify);
   };
 
   void stack(const double &d);
