@@ -264,11 +264,7 @@ public:
     \relates vpArray2D
     Writes the given array to the output stream and returns a reference to the output stream.
     */
-  friend
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  VISP_EXPORT
-#endif
-  std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
+  friend std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
   {
     if (A.data == NULL)
       return s;
