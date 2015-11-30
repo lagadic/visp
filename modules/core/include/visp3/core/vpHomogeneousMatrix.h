@@ -69,12 +69,12 @@ class vpPoint;
 
   \ingroup group_core_transformations
 
-  \brief  The class provides a data structure for the homogeneous matrices
+  \brief Implementation of an homogeneous matrix and operations on such kind of matrices.
+
+  The class provides a data structure for the homogeneous matrices
   as well as a set of operations on these matrices.
 
-  The vpHomogeneousMatrix is derived from vpArray2D.
-
-  \author  Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
+  The vpHomogeneousMatrix class is derived from vpArray2D<double>.
 
   An homogeneous matrix is 4x4 matrix defines as
   \f[
@@ -103,6 +103,10 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
   vpHomogeneousMatrix(const std::vector<double> &v);
   vpHomogeneousMatrix(const double tx, const double ty, const double tz,
                       const double tux, const double tuy, const double tuz) ;
+  /*!
+    Destructor.
+  */
+  virtual ~vpHomogeneousMatrix() {};
 
   void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R) ;
   void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu) ;

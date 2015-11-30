@@ -75,10 +75,12 @@ class vpForceTwistMatrix;
   \class vpMatrix
   \ingroup group_core_matrices
 
-  \brief Definition of the vpMatrix class.
+  \brief Implementation of a matrix and operations on matrices.
 
   vpMatrix class provides a data structure for the matrices as well
-  as a set of operations on these matrices
+  as a set of operations on these matrices.
+
+  The vpMatrix class is derived from vpArray2D<double>.
 
   \warning Note the matrix in the class (*this) will be noted A in the comment
 
@@ -623,6 +625,9 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 
 //////////////////////////////////////////////////////////////////////////
 
-VISP_EXPORT vpMatrix operator*(const double &x, const vpMatrix &A) ;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+VISP_EXPORT
+#endif
+vpMatrix operator*(const double &x, const vpMatrix &A) ;
 
 #endif

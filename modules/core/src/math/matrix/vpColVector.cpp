@@ -239,6 +239,13 @@ vpColVector::vpColVector (const vpRotationVector &v)
     (*this)[i] = v[i];
 }
 
+vpColVector::vpColVector (const vpPoseVector &p)
+  : vpArray2D<double>(p.size(), 1)
+{
+  for (unsigned int i=0; i< p.size(); i++)
+    (*this)[i] = p[i];
+}
+
 vpColVector::vpColVector (const vpTranslationVector &v)
   : vpArray2D<double>(v.size(), 1)
 {
@@ -612,9 +619,10 @@ void vpColVector::transpose(vpRowVector &v) const
 
 
 /*!
+  \relates vpColVector
   Allows to multiply a scalar by a column vector.
 */
-vpColVector operator*(const double &x,const vpColVector &v)
+vpColVector operator*(const double &x, const vpColVector &v)
 {
   vpColVector vout ;
   vout = v*x ;

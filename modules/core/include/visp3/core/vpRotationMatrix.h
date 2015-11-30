@@ -59,8 +59,12 @@
 
   \ingroup group_core_transformations
 
+  \brief Implementation of a rotation matrix and operations on such kind of matrices.
+
   The vpRotationMatrix considers the particular case of
-  a rotation matrix. It is derived from vpArray2D.
+  a rotation matrix.
+
+  The vpRotationMatrix class is derived from vpArray2D<double>.
 
 */
 class VISP_EXPORT vpRotationMatrix : public vpArray2D<double>
@@ -76,6 +80,10 @@ public:
   vpRotationMatrix(const vpRzyxVector &r);
   vpRotationMatrix(const vpQuaternionVector& q);
   vpRotationMatrix(const double tux, const  double tuy, const double tuz);
+  /*!
+    Destructor.
+  */
+  virtual ~vpRotationMatrix() {};
 
   vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
   vpRotationMatrix buildFrom(const vpThetaUVector &v) ;
@@ -150,6 +158,9 @@ private:
   static const double threshold;
 };
 
-VISP_EXPORT vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R) ;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+VISP_EXPORT
+#endif
+vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R) ;
 
 #endif

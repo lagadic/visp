@@ -38,6 +38,7 @@
 #define __vpArray2D_h_
 
 #include <iostream>
+#include <ostream>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -52,8 +53,18 @@
   \class vpArray2D
   \ingroup group_core_matrices
 
-  This class implements a 2D array as a template class and all the basic functionalities common to matrices and vectors,
-  but also specific containers such as twist, homogeneous or rotation matrices.
+  \brief Implementation of a generic 2D array used as vase class of matrices and vectors.
+
+  This class implements a 2D array as a template class and all the basic functionalities
+  common to matrices and vectors.
+  More precisely:
+  - concerning matrices, vpMatrix but also specific containers such as twist
+    (vpVelocityTwistMatrix and vpForceTwistMatrix), homogeneous (vpHomogeneousMatrix),
+    rotation (vpRotationMatrix) and homography (vpHomography) matrices inherit from
+    vpArray2D<double>.
+  - concerning vectors, vpColVector, vpRowVector but also specific containers describing
+    the pose (vpPoseVector) and the rotation (vpRotationVector) inherit also from
+    vpArray2D<double>.
 */
 template<class Type>
 class vpArray2D
@@ -130,7 +141,7 @@ public:
     rowNum = colNum = dsize = 0;
   }
 
-  /** @name Common inherited functionalities  */
+  /** @name Inherited functionalities from vpArray2D */
   //@{
 
   Type getMinValue() const;
@@ -265,9 +276,11 @@ public:
 
     s.precision(10) ;
     for (unsigned int i=0;i<A.getRows();i++) {
-      for (unsigned int j=0;j<A.getCols();j++){
-        s <<  A[i][j] << "  ";
+      for (unsigned int j=0;j<A.getCols() -1;j++){
+        s << A[i][j] << "  ";
       }
+      // We don't add "  " after the last row element
+      s << A[i][A.getCols() -1];
       // We don't add a \n char on the end of the last array line
       if (i < A.getRows()-1)
         s << std::endl;
@@ -282,7 +295,7 @@ public:
   //---------------------------------
   // Inherited array I/O  Static Public Member Functions
   //---------------------------------
-  /** @name Inherited array I/O with Static Public Member Functions  */
+  /** @name Inherited I/O from vpArray2D with Static Public Member Functions  */
   //@{
   /*!
     Load a matrix from a file.

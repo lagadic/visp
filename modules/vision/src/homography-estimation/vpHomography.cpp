@@ -57,9 +57,9 @@
 /*!
   \brief initialize an homography as Identity
 */
-vpHomography::vpHomography() : data(NULL), aMb(), bP()
+vpHomography::vpHomography()
+  : vpArray2D<double>(3,3), aMb(), bP()
 {
-  data = new double [9];
   setIdentity();
 }
 
@@ -68,49 +68,41 @@ vpHomography::vpHomography() : data(NULL), aMb(), bP()
   \brief initialize an homography from another homography
 */
 
-vpHomography::vpHomography(const vpHomography &H) : data(NULL), aMb(), bP()
+vpHomography::vpHomography(const vpHomography &H)
+  : vpArray2D<double>(3,3), aMb(), bP()
 {
-  data = new double [9];
-
   *this = H;
 }
 
 /*!
   \brief initialize an homography from another homography
 */
-vpHomography::vpHomography(const vpHomogeneousMatrix &M, const vpPlane &p) : data(NULL), aMb(), bP()
+vpHomography::vpHomography(const vpHomogeneousMatrix &M, const vpPlane &p)
+  : vpArray2D<double>(3,3), aMb(), bP()
 {
-  data = new double [9];
   buildFrom(M, p) ;
 }
 
 vpHomography::vpHomography(const vpThetaUVector &tu,
                            const vpTranslationVector &atb,
-                           const vpPlane &p) : data(NULL), aMb(), bP()
+                           const vpPlane &p)
+  : vpArray2D<double>(3,3), aMb(), bP()
 {
-  data = new double [9];
   buildFrom(tu, atb, p) ;
 }
 
 vpHomography::vpHomography(const vpRotationMatrix &aRb,
                            const vpTranslationVector &atb,
-                           const vpPlane &p) : data(NULL), aMb(), bP()
+                           const vpPlane &p)
+  : vpArray2D<double>(3,3), aMb(), bP()
 {
-  data = new double [9];
   buildFrom(aRb, atb, p) ;
 }
 
-vpHomography::vpHomography(const vpPoseVector &arb, const vpPlane &p) : data(NULL), aMb(), bP()
+vpHomography::vpHomography(const vpPoseVector &arb, const vpPlane &p)
+  : vpArray2D<double>(3,3), aMb(), bP()
 {
-  data = new double [9];
   buildFrom(arb, p) ;
-}
-
-vpHomography::~vpHomography()
-{
-  if (data)
-    delete [] data;
-  data = NULL;
 }
 
 void
@@ -241,7 +233,12 @@ vpHomography::inverse(vpHomography &bHa) const
   bHa = inverse() ;
 }
 
+/*!
+   Save an homography in a file.
+   The laod() function allows then to read and set the homography from this file.
 
+   \sa load()
+ */
 void
 vpHomography::save(std::ofstream &f) const
 {
@@ -438,7 +435,9 @@ vpHomography::operator=(const vpMatrix &H)
   Read an homography in a file, verify if it is really an homogeneous
   matrix.
 
-  \param f : the file.
+  \param f : the file. This file has to be written using save().
+
+  \sa save()
 */
 void
 vpHomography::load(std::ifstream &f)
@@ -525,10 +524,11 @@ vpHomography::build(vpHomography &aHb,
 }
 
 /*!
- Set the homography as identity transformation.
+  Set the homography as identity transformation by setting the diagonal to 1
+  and all other values to 0.
 */
 void
-vpHomography::setIdentity()
+vpHomography::eye()
 {
   for (unsigned int i=0 ; i < 3 ; i++)
     for (unsigned int j=0 ; j < 3; j++)
@@ -537,6 +537,20 @@ vpHomography::setIdentity()
       else
         (*this)[i][j] = 0.0;
 }
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+/*!
+  \deprecated You should rather use eye().
+
+  Set the homography as identity transformation.
+  \sa eye()
+*/
+void
+vpHomography::setIdentity()
+{
+  eye();
+}
+#endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
 /*!
   Given \c iPa a point with coordinates \f$(u_a,v_a)\f$ expressed in pixel in image a, and the homography \c bHa that
@@ -758,28 +772,6 @@ vpHomography::robust(const std::vector<double> &xb, const std::vector<double> &y
   {
     throw(vpException(vpException::fatalError, "Cannot estimate an homography")) ;
   }
-}
-
-/*!
-\brief std::cout a matrix
-*/
-VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpHomography &H)
-{
-  std::ios_base::fmtflags original_flags = s.flags();
-
-  s.precision(10) ;
-  for (unsigned int i=0;i<H.getRows();i++) {
-    for (unsigned int j=0;j<H.getCols();j++){
-      s <<  H[i][j] << "  ";
-    }
-    // We don't add a \n char on the end of the last matrix line
-    if (i < H.getRows()-1)
-      s << std::endl;
-  }
-
-  s.flags(original_flags); // restore s to standard state
-
-  return s;
 }
 
 /*!

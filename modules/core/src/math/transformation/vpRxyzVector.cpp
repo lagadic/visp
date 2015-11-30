@@ -37,15 +37,37 @@
  *
  *****************************************************************************/
 
+#include <math.h>
 
 #include <visp3/core/vpRxyzVector.h>
-#include <math.h>
+
 /*!
   \file vpRxyzVector.cpp
   \brief class that consider the case of the  Rxyz angle parameterization for the rotation :
   Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
 */
 
+/*! Default constructor that initialize all the 3 angles to zero. */
+vpRxyzVector::vpRxyzVector()
+  : vpRotationVector(3)
+{}
+
+/*! Copy constructor. */
+vpRxyzVector::vpRxyzVector(const vpRxyzVector &rxyz)
+  : vpRotationVector(rxyz)
+{}
+
+/*!
+  Constructor from 3 angles (in radian).
+  \param phi : \f$\varphi\f$ angle around the \f$x\f$ axis.
+  \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
+  \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
+*/
+vpRxyzVector::vpRxyzVector(const double phi, const double theta, const double psi)
+  : vpRotationVector (3)
+{
+  buildFrom(phi, theta, psi);
+}
 
 /*! 
   Constructor that initialize \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler
@@ -53,17 +75,19 @@
   \param R : Rotation matrix used to initialize the Euler angles.
 */
 vpRxyzVector::vpRxyzVector(const vpRotationMatrix& R)
+  : vpRotationVector (3)
 {
   buildFrom(R) ;
 }
 
 /*!
   Constructor that initialize \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler
-  angles vector from a \f$\theta u\f$ vector.
-  \param tu : \f$\theta u\f$ representation of a rotation used here as 
+  angles vector from a \f$\theta {\bf u}\f$ vector.
+  \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as
   input to initialize the Euler angles.
 */
 vpRxyzVector::vpRxyzVector(const vpThetaUVector& tu)
+  : vpRotationVector (3)
 {
   buildFrom(tu) ;
 }
@@ -78,7 +102,6 @@ vpRxyzVector::vpRxyzVector(const vpThetaUVector& tu)
 vpRxyzVector
 vpRxyzVector::buildFrom(const vpRotationMatrix& R)
 {
-
   double COEF_MIN_ROT = 1e-6;
   double phi ;
 
@@ -90,68 +113,15 @@ vpRxyzVector::buildFrom(const vpRotationMatrix& R)
   double theta = atan2(R[0][2], -si*R[1][2] + co*R[2][2]) ;
   double psi = atan2(co*R[1][0] + si*R[2][0], co*R[1][1] + si*R[2][1]);
 
-  r[0] = phi ;
-  r[1] = theta ;
-  r[2] = psi ;
-
-  if (0)  // test new version wrt old version
-  {
-    // old version
-
-    double  v1;
-    double r2[3];  // has to be replaced by r below if good version
-
-    v1 = R[0][2];
-    if (v1 > 1.0 ) v1 = 1.0;
-    if (v1 < -1.0 ) v1 = -1.0;
-    r2[1] = asin(v1);
-    if ( fabs(fabs(r2[1]) - M_PI_2) < 0.00001)
-    {
-	r2[0] = 0.0;
-	r2[2] = atan2(R[1][0],R[1][1]);
-    }
-    else
-    {
-	r2[0] = atan2(-R[1][2],R[2][2]);
-	r2[2] = atan2(-R[0][1],R[0][0]);
-    }
-    // verification of the new version
-    int pb = 0;
-    int i;
-    for (i=0;i<3;i++)
-    {
-      if (fabs(r[i] - r2[i]) > 1e-5) pb = 1;
-    }
-    if (pb == 1)
-    {
-      printf("vpRxyzVector::buildFrom(const vpRotationMatrix& R)\n");
-      printf(" r      : %lf %lf %lf\n",r[0],r[1],r[2]);
-      printf(" r2     : %lf %lf %lf\n",r2[0],r2[1],r2[2]);
-      printf(" r - r2 : %lf %lf %lf\n",r[0]-r2[0],r[1]-r2[1],r[2]-r2[2]);
-    }
-  }
-
-    // What is below corresponds to another representation, but which one???
-  /* double phi ;
-  if ((fabs(R[1][2]) < 1e-6)&&(fabs(R[2][2]) < 1e-6)) phi = 0 ;
-  else phi = atan2(R[1][2], R[2][2]) ;
-
-  double si = sin(phi) ;
-  double co = cos(phi) ;
-  double theta = atan2(R[0][2], -si*R[1][2] + co*R[2][2]) ;
-  double psi = atan2(co*R[0][1]+si*R[0][2], co*R[1][1]+si*R[1][2]);
-
-  r[0] = phi ;
-  r[1] = theta ;
-  r[2] = psi ;*/
+  buildFrom(phi, theta, psi);
 
   return *this ;
 }
 
 /*! 
-  Convert a \f$\theta u\f$ vector into a \f$R_{xyz}=(\varphi,\theta,\psi)\f$ 
+  Convert a \f$\theta {\bf u}\f$ vector into a \f$R_{xyz}=(\varphi,\theta,\psi)\f$
   Euler angles vector.
-  \param tu : \f$\theta u\f$ representation of a rotation used here as 
+  \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as
   input.
   \return \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler angles vector.   
 */
@@ -165,8 +135,43 @@ vpRxyzVector::buildFrom(const vpThetaUVector& tu)
   return *this ;
 }
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+/*!
+  Construction from 3 angles (in radian).
+  \param phi : \f$\varphi\f$ angle around the \f$x\f$ axis.
+  \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
+  \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
+*/
+void
+vpRxyzVector::buildFrom(const double phi, const double theta, const double psi)
+{
+  data[0] = phi ;
+  data[1] = theta ;
+  data[2] = psi ;
+}
+
+/*!
+
+  Initialize each element of the vector to the same angle value \e v.
+
+  \param v : Angle value to set for each element of the vector.
+
+\code
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpRxyzVector.h>
+
+int main()
+{
+  vpRxyzVector v;
+
+  // Initialise the rotation vector
+  v = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
+}
+\endcode
+*/
+vpRxyzVector &vpRxyzVector::operator=(double v)
+{
+  for (unsigned int i=0; i< dsize; i++)
+    data[i] = v;
+
+  return *this;
+}

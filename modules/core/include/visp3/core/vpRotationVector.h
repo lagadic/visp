@@ -48,19 +48,24 @@
 #include <math.h>
 #include <stdio.h>
 
-#include <visp3/core/vpMath.h>
-//#include <visp3/core/vpRowVector.h>
+#include <visp3/core/vpArray2D.h>
 
 class vpRowVector;
-class vpColVector; //
+class vpColVector;
 
 /*!
   \class vpRotationVector
 
   \ingroup group_core_transformations
 
-  \brief Class that consider the case of a generic rotation vector
-  (cannot be used as is !) consisting in three angles.
+  \brief Implementation of a generic rotation vector.
+
+  Class that consider the case of a generic rotation vector
+  (cannot be used as is !) consisting in three or four angles.
+
+  The vpRotationVector class is derived from vpArray2D<double>.
+  The vpRotationVector class is also the base class of specific rotations vectors such as
+  vpThetaUVector, vpRxyzVector, vpRzyxVector, vpRzyzVector and vpQuaternionVector.
 
   The code below shows how this class can be used to manipulate a vpRxyzVector.
 
@@ -86,78 +91,69 @@ int main()
 
 */
 
-class VISP_EXPORT vpRotationVector
+class VISP_EXPORT vpRotationVector : public vpArray2D<double>
 {  
-protected:
-  double *r ;
-  unsigned int _size;
-  void init(const unsigned int size);
-
 public:
-  //! Constructor that constructs a vector of size 3 and initialize all values to zero.
+  //! Constructor that constructs a 0-size rotation vector.
   vpRotationVector()
-    : r(NULL), _size(0)
-  {
-    init(3);
-  }
+    : vpArray2D<double>()
+  {}
 
   //! Constructor that constructs a vector of size n and initialize all values to zero.
   vpRotationVector(const unsigned int n)
-    : r(NULL), _size(n)
-  {
-    init(n);
-  }
+    : vpArray2D<double>(n, 1)
+  {}
+
   /*!
     Copy operator.
   */
   vpRotationVector(const vpRotationVector &v)
-    : r(NULL), _size(0)
-  {
-    *this = v;
-  }
+    : vpArray2D<double>(v)
+  {}
 
-  virtual ~vpRotationVector();
+  /*!
+    Destructor.
+  */
+  virtual ~vpRotationVector() {};
 
-  /** @name Common inherited functionalities  */
+  /** @name Inherited functionalities from vpRotationVector */
   //@{
 
   /*!
-    Operator that allows to set the value of an element of the rotation 
+    Operator that allows to set the value of an element of the rotation
     vector: r[i] = value
   */
-  inline double &operator [](unsigned int n) {  return *(r + n);  }
+  inline double &operator [](unsigned int i) {  return *(data + i);  }
   /*!
-    Operator that allows to get the value of an element of the rotation 
+    Operator that allows to get the value of an element of the rotation
     vector: value = r[i]
   */
-  inline const double &operator [](unsigned int n) const { return *(r+n);  }
+  inline const double &operator [](unsigned int i) const { return *(data+i);  }
 
   /*!
     Affectation of two vectors.
   */
   vpRotationVector &operator=(const vpRotationVector &v)
   {
-    init(v.size());
-    for (unsigned int i=0; i<_size; i++)
+    resize(v.size(), 1);
+    for (unsigned int i=0; i<v.size(); i++)
     {
-      r[i] = v.r[i] ;
+      data[i] = v.data[i] ;
     }
     return *this;
   }
-  vpRotationVector operator*(double x) const;
-
-  /*! Returns the size of the rotation vector
-   */
-  unsigned int size() const;
+  vpColVector operator*(double x) const;
 
   // Transpose of the rotation vector.
   vpRowVector t() const;
 
-  friend VISP_EXPORT std::ostream &operator << (std::ostream &s, const vpRotationVector &m);
   //@}
 } ;
 
-VISP_EXPORT vpRotationVector operator*(const double &x, const vpRotationVector &A) ;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+VISP_EXPORT
+#endif
+vpColVector operator*(const double &x, const vpRotationVector &v) ;
 
 #endif
 

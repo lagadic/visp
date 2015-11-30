@@ -60,7 +60,10 @@ class vpThetaUVector;
 
   \ingroup group_core_transformations
 
-  \brief Class that consider the case of the Euler
+  \brief Implementation of a rotation vector as \f$R(z,y,x)\f$ Euler angle
+  minimal representation.
+
+  Class that consider the case of the Euler
   \f$(\varphi,\theta,\psi)\f$ angle using the z-y-x convention, where \f$(\varphi,\theta,\psi)\f$ are respectively the
   rotation angles around the \f$z\f$, \f$y\f$ and \f$x\f$ axis.
 
@@ -103,6 +106,8 @@ class vpThetaUVector;
   \end{array}
   \right)
   \f]
+
+  The vpRzyxVector class is derived from vpRotationVector.
 
   The code below shows first how to initialize this representation of
   Euler angles, than how to contruct a rotation matrix from a
@@ -147,19 +152,9 @@ int main()
 class VISP_EXPORT vpRzyxVector : public vpRotationVector
 {
 public:
-  /*! Default constructor that initialize all the angles to zero. */
-  vpRzyxVector() {}
-  /*! Copy constructor. */
-  vpRzyxVector(const vpRzyxVector &rzyx) : vpRotationVector(rzyx) {}
-
-  /*!
-    Constructor from 3 angles (in radian).
-    \param phi : \f$\varphi\f$ angle around the \f$z\f$ axis.
-    \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
-    \param psi : \f$\psi\f$ angle around the \f$x\f$ axis.
-  */
-  vpRzyxVector(const double phi, const double theta, const double psi) :
-	vpRotationVector (3) { r[0]=phi;r[1]=theta;r[2]=psi; }
+  vpRzyxVector();
+  vpRzyxVector(const vpRzyxVector &rzyx);
+  vpRzyxVector(const double phi, const double theta, const double psi);
 
   // initialize a Rzyx vector from a rotation matrix
   vpRzyxVector(const vpRotationMatrix& R) ;
@@ -167,18 +162,8 @@ public:
   // initialize a Rzyx vector from a ThetaU vector
   vpRzyxVector(const vpThetaUVector& tu) ;
 
-  /*!
-    Construction from 3 angles (in radian).
-    \param phi : \f$\varphi\f$ angle around the \f$z\f$ axis.
-    \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
-    \param psi : \f$\psi\f$ angle around the \f$x\f$ axis.
-  */
-  void buildFrom(const double phi, const double theta, const double psi)
-  {
-    r[0] = phi ;
-    r[1] = theta ;
-    r[2] = psi ;
-  }
+  //! Destructor.
+  virtual ~vpRzyxVector() {};
 
   // convert a rotation matrix into Rzyx vector
   vpRzyxVector buildFrom(const vpRotationMatrix& R) ;
@@ -186,12 +171,9 @@ public:
   // convert a ThetaU vector into a Rzyx vector
   vpRzyxVector buildFrom(const vpThetaUVector& R) ;
 
+  void buildFrom(const double phi, const double theta, const double psi);
+
+  vpRzyxVector &operator=(double x) ;
 } ;
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

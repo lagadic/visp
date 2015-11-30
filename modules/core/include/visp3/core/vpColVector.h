@@ -43,11 +43,14 @@
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpRowVector.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpRotationVector.h>
+#include <visp3/core/vpPoseVector.h>
 
 class vpMatrix;
-class vpRotationVector;
 class vpRowVector;
+class vpRotationVector;
 class vpTranslationVector;
+class vpPoseVector;
 
 /*!
   \file vpColVector.h
@@ -58,10 +61,13 @@ class vpTranslationVector;
 /*!
   \class vpColVector
   \ingroup group_core_matrices
+
+  \brief Implementation of column vector and the associated operations.
+
   This class provides a data structure for a column vector that contains values of double.
   It contains also some functions to achieve a set of operations on these vectors.
 
-  The vpColVector is derived from vpArray2D.
+  The vpColVector class is derived from vpArray2D<double>.
 */
 class VISP_EXPORT vpColVector : public vpArray2D<double>
 {
@@ -77,14 +83,21 @@ public:
   //! Copy constructor that allows to construct a column vector from an other one.
   vpColVector(const vpColVector &v) : vpArray2D<double>(v) {};
   vpColVector(const vpColVector &v, unsigned int r, unsigned int nrows) ;
-  //! Constructor that initialize a column vector from a 3-dim rotation vector.
+  //! Constructor that initialize a column vector from a 3-dim (Euler or \f$\theta {\bf u}\f$)
+  //! or 4-dim (quaternion) rotation vector.
   vpColVector(const vpRotationVector &v);
+  //! Constructor that initialize a column vector from a 6-dim pose vector.
+  vpColVector(const vpPoseVector &p);
   //! Constructor that initialize a column vector from a 3-dim translation vector.
   vpColVector(const vpTranslationVector &t);
   vpColVector(const vpMatrix &M);
   vpColVector(const vpMatrix &M, unsigned int j);
   vpColVector(const std::vector<double> &v);
   vpColVector(const std::vector<float> &v);
+  /*!
+    Destructor.
+  */
+  virtual ~vpColVector() {};
 
   /*!
     Removes all elements from the vector (which are destroyed),
@@ -297,6 +310,9 @@ public:
 #endif
 };
 
-VISP_EXPORT vpColVector operator*(const double &x, const vpColVector &v) ;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+VISP_EXPORT
+#endif
+vpColVector operator*(const double &x, const vpColVector &v) ;
 
 #endif

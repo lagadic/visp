@@ -51,9 +51,19 @@ const double vpQuaternionVector::minimum = 0.0001;
   \brief Defines a quaternion and common operations on it.
 */
 
+/*! Default constructor that initialize all the 4 angles to zero. */
+vpQuaternionVector::vpQuaternionVector()
+  : vpRotationVector(4)
+{}
+
+/*! Copy constructor. */
+vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q)
+  : vpRotationVector(q)
+{}
+
 //! Constructor from doubles.
 vpQuaternionVector::vpQuaternionVector(const double x_, const double y_,
-               const double z_,const double w_)
+                                       const double z_,const double w_)
   : vpRotationVector(4) 
 {
   set(x_, y_, z_, w_);
@@ -78,15 +88,14 @@ vpQuaternionVector::vpQuaternionVector(const vpRotationMatrix &R)
   \param w_ : w quaternion parameter.
 */
 void vpQuaternionVector::set(const double x_, const double y_,
-           const double z_,const double w_)
+                             const double z_,const double w_)
 {
-  r[0]=x_;
-  r[1]=y_;
-  r[2]=z_;
-  r[3]=w_;
+  data[0]=x_;
+  data[1]=y_;
+  data[2]=z_;
+  data[3]=w_;
 }
 
-    
 /*! 
   Quaternion addition.
 
@@ -203,3 +212,12 @@ void vpQuaternionVector::normalize() {
     set( x()/mag, y()/mag, z()/mag, w()/mag );
   }
 }
+
+//! Returns x-component of the quaternion.
+double vpQuaternionVector::x() const {return data[0];}
+//! Returns y-component of the quaternion.
+double vpQuaternionVector::y() const {return data[1];}
+//! Returns z-component of the quaternion.
+double vpQuaternionVector::z() const {return data[2];}
+//! Returns w-component of the quaternion.
+double vpQuaternionVector::w() const {return data[3];}

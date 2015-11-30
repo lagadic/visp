@@ -50,11 +50,13 @@
 
   \ingroup group_core_transformations
 
+  \brief Implementation of a force/torque twist matrix and operations on such kind of matrices.
+
   Class that consider the particular case of twist
   transformation matrix that allows to transform a force/troque vector
   from one frame to an other.
 
-  The vpForceTwistMatrix is derived from vpArray2D.
+  The vpForceTwistMatrix class is derived from vpArray2D<double>.
 
   The twist transformation matrix that allows to transform the
   force/torque vector expressed at frame \f${\cal F}_b\f$ into the
@@ -113,6 +115,10 @@ class VISP_EXPORT vpForceTwistMatrix : public vpArray2D<double>
   vpForceTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R) ;
   vpForceTwistMatrix(const double tx,  const double ty,  const double tz,
                      const double tux, const double tuy, const double tuz) ;
+  /*!
+    Destructor.
+  */
+  virtual ~vpForceTwistMatrix() {};
 
   vpForceTwistMatrix buildFrom(const vpTranslationVector &t,
                                const vpRotationMatrix &R);

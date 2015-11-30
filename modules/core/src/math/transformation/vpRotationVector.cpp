@@ -39,12 +39,13 @@
 #include <math.h>
 
 #include <visp3/core/vpRotationVector.h>
+#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpRowVector.h>
 
 /*!
   \file vpRotationVector.cpp
-  \brief class that consider the case of a generic rotation vector
-  (cannot be used as is !)
+  \brief Class that consider the case of a generic rotation vector
+  (cannot be used as is !).
 */
 
 
@@ -55,77 +56,12 @@
 */
 vpRowVector vpRotationVector::t() const
 {
-  vpRowVector v(_size);
+  vpRowVector v(dsize);
 
-  for (unsigned int i=0; i< _size; i++)
-    v[i] = r[i];
+  for (unsigned int i=0; i< dsize; i++)
+    v[i] = data[i];
 
   return v;
-}
-
-/*!
-	Size of the rotation vector: number of double values describing the rotation.
-	Common sizes are 4 for a quaternion and 3 for angle-based rotation vectors.
-*/
-unsigned int vpRotationVector::size() const {
-	return _size;
-}
-/*!
-
-  Print the values of the three angles on the output stream. Data are 
-  formatted as a column vector. 
-
-  \code
-#include <iostream>
-#include <visp3/core/vpRxyzVector.h>
-
-int main()
-{
-  vpRxyzVector r; // By default initialized to zero
-  
-  std::cout << "Rxyz rotation vector: " << std::endl << r << std::endl;
-}
-  \endcode
-
-  will lead to the following printing on the standart stream:
-
-  \code
-Rxyz rotation vector:
-0
-0
-0
-  \endcode
-*/
-VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpRotationVector &m)
-{
-  std::ios::fmtflags original_flags( s.flags() );
-  s.precision(10) ;
-
-  for (unsigned int i=0; i < m.size(); i++)
-    s <<  m.r[i] << "\n";
-
-  s << std::endl;
-
-  // Restore ostream format
-  s.flags(original_flags);
-
-  return s;
-}
-
-
-void vpRotationVector::init(const unsigned int vector_size){
-  if(r != NULL) {
-    delete[] r;
-  }
-
-  this->_size = vector_size;
-	r = new double[this->_size];
-	std::fill(r,r+this->_size,0.);
-}
-
-vpRotationVector::~vpRotationVector(){
-	delete[] r;
-	r = NULL;
 }
 
 /*!
@@ -133,15 +69,15 @@ vpRotationVector::~vpRotationVector(){
 
   \param x : The scalar.
 
-  \return The rotation vector multiplied by the scalar. The current
+  \return The rotation vector multiplied by the scalar as a column vector. The current
   rotation vector (*this) is unchanged.
 
 */
-vpRotationVector vpRotationVector::operator*(double x) const
+vpColVector vpRotationVector::operator*(double x) const
 {
-  vpRotationVector v;
+  vpColVector v(dsize);
 
-  for (unsigned int i=0;i<_size;i++)
+  for (unsigned int i=0;i<dsize;i++)
     v[i] = (*this)[i] * x;
   return v;
 }
@@ -150,9 +86,9 @@ vpRotationVector vpRotationVector::operator*(double x) const
   \relates vpRotationVector
   Allows to multiply a scalar by rotaion vector.
 */
-vpRotationVector operator*(const double &x,const vpRotationVector &v)
+vpColVector operator*(const double &x,const vpRotationVector &v)
 {
-  vpRotationVector vout ;
+  vpColVector vout ;
   vout = v*x ;
   return vout ;
 }
