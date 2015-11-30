@@ -50,8 +50,9 @@ class vpColVector;
 
 /*!
   \file vpRowVector.h
-  \brief definition of row vector class as well
-  as a set of operations on these vector
+  \brief Definition of row vector class as well
+  as a set of operations on these vectors.
+
 */
 
 /*!
@@ -59,10 +60,12 @@ class vpColVector;
 
   \ingroup group_core_matrices
 
+  \brief Implementation of row vector and the associated operations.
+
   This class provides a data structure for a row vector that contains values of double.
   It contains also some functions to achieve a set of operations on these vectors.
 
-  The vpRowVector is derived from vpArray2D.
+  The vpRowVector class is derived from vpArray2D<double>.
 */
 class VISP_EXPORT vpRowVector : public vpArray2D<double>
 {
@@ -80,6 +83,10 @@ public:
   vpRowVector(const vpMatrix &M, unsigned int i);
   vpRowVector(const std::vector<double> &v);
   vpRowVector(const std::vector<float> &v);
+  /*!
+    Destructor.
+  */
+  virtual ~vpRowVector() {};
 
   /*!
     Removes all elements from the vector (which are destroyed),

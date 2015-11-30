@@ -50,19 +50,23 @@
   Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
 */
 
-class vpRotationMatrix;
-class vpThetaUVector;
-class vpRotationVector;
 
 #include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpRotationMatrix.h>
+
+class vpRotationVector;
+class vpRotationMatrix;
+class vpThetaUVector;
 
 /*!
   \class vpRxyzVector
 
   \ingroup group_core_transformations
 
-  \brief Class that consider the case of the Euler
+  \brief Implementation of a rotation vector as \f$R(x,y,z)\f$ Euler angle
+  minimal representation.
+
+  Class that consider the case of the Euler
   \f$(\varphi,\theta,\psi)\f$ angle using the x-y-z convention, where \f$(\varphi,\theta,\psi)\f$ are respectively the
   rotation angles around the \f$x\f$, \f$y\f$ and \f$z\f$ axis.
 
@@ -103,6 +107,8 @@ class vpRotationVector;
   \end{array}
   \right)
   \f]
+
+  The vpRxyzVector class is derived from vpRotationVector.
 
   The code below shows first how to initialize this representation of
   Euler angles, than how to contruct a rotation matrix from a
@@ -148,38 +154,18 @@ int main()
 class VISP_EXPORT vpRxyzVector : public vpRotationVector
 {
  public:
-  /*! Default constructor that initialize all the angles to zero. */
-  vpRxyzVector() {}
-  /*! Copy constructor. */
-  vpRxyzVector(const vpRxyzVector &rxyz) : vpRotationVector(rxyz) {}
-
-  /*!
-    Constructor from 3 angles (in radian).
-    \param phi : \f$\varphi\f$ angle around the \f$x\f$ axis.
-    \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
-    \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
-  */
-  vpRxyzVector(const double phi, const double theta, const double psi) :
-    vpRotationVector (3) { r[0]=phi;r[1]=theta;r[2]=psi; }
+  vpRxyzVector();
+  vpRxyzVector(const vpRxyzVector &rxyz);
+  vpRxyzVector(const double phi, const double theta, const double psi);
 
   // initialize a Rxyz vector from a rotation matrix
   vpRxyzVector(const vpRotationMatrix& R) ;
 
   // initialize a Rxyz vector from a ThetaU vector
-  vpRxyzVector(const vpThetaUVector&  tu) ;
+  vpRxyzVector(const vpThetaUVector& tu) ;
 
-  /*!
-    Construction from 3 angles (in radian).
-    \param phi : \f$\varphi\f$ angle around the \f$x\f$ axis.
-    \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
-    \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
-  */
-  void buildFrom(const double phi, const double theta, const double psi)
-  {
-    r[0] = phi ;
-    r[1] = theta ;
-    r[2] = psi ;
-  }
+  //! Destructor.
+  virtual ~vpRxyzVector() {};
 
   // convert a rotation matrix into Rxyz vector
   vpRxyzVector buildFrom(const vpRotationMatrix& R) ;
@@ -187,6 +173,9 @@ class VISP_EXPORT vpRxyzVector : public vpRotationVector
   // convert a ThetaU vector into a Rxyz vector
   vpRxyzVector buildFrom(const vpThetaUVector& tu) ;
 
+  void buildFrom(const double phi, const double theta, const double psi);
+
+  vpRxyzVector &operator=(double x) ;
 } ;
 
 #endif

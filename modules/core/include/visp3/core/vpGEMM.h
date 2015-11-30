@@ -45,7 +45,7 @@
 const vpArray2D<double> null(0,0);
 
 /*!
-  \brief Enumeration of the operations applied on matrices in vpGEMM function.
+  Enumeration of the operations applied on matrices in vpGEMM() function.
   
   Operations are : 
   - VP_GEMM_A_T to use the transpose matrix of A instead of the matrix A
@@ -60,70 +60,86 @@ typedef enum {
   VP_GEMM_C_T=4, //! Use C^T instead of C
 } vpGEMMmethod;
 
+template<unsigned int>
+inline void GEMMsize(const vpArray2D<double> & /*A*/,const vpArray2D<double> & /*B*/, unsigned int &/*Arows*/,  unsigned int &/*Acols*/, unsigned int &/*Brows*/,  unsigned int &/*Bcols*/)
+{}
 
-
-
-template<unsigned int> inline void GEMMsize(const vpArray2D<double> & /*A*/,const vpArray2D<double> & /*B*/, unsigned int &/*Arows*/,  unsigned int &/*Acols*/, unsigned int &/*Brows*/,  unsigned int &/*Bcols*/){}
-
-template<> void inline GEMMsize<0>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols){
+template<>
+void inline GEMMsize<0>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols)
+{
   Arows= A.getRows();
   Acols= A.getCols();
   Brows= B.getRows();
   Bcols= B.getCols();
 }
 
-template<> inline void GEMMsize<1>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols){
+template<>
+inline void GEMMsize<1>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols)
+{
   Arows= A.getCols();
   Acols= A.getRows();
   Brows= B.getRows();
   Bcols= B.getCols();
 }
-template<> inline void GEMMsize<2>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols){
+template<>
+inline void GEMMsize<2>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols)
+{
   Arows= A.getRows();
   Acols= A.getCols();
   Brows= B.getCols();
   Bcols= B.getRows();
 }
-template<> inline void GEMMsize<3>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols){
+template<>
+inline void GEMMsize<3>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols)
+{
   Arows= A.getCols();
   Acols= A.getRows();
   Brows= B.getCols();
   Bcols= B.getRows();
 }
 
-template<> inline void GEMMsize<4>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols){
+template<>
+inline void GEMMsize<4>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols)
+{
   Arows= A.getRows();
   Acols= A.getCols();
   Brows= B.getRows();
   Bcols= B.getCols();
 }
 
-template<> inline void GEMMsize<5>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols){
+template<>
+inline void GEMMsize<5>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols)
+{
   Arows= A.getCols();
   Acols= A.getRows();
   Brows= B.getRows();
   Bcols= B.getCols();
 }
 
-template<> inline void GEMMsize<6>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols){
+template<>
+inline void GEMMsize<6>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols)
+{
   Arows= A.getRows();
   Acols= A.getCols();
   Brows= B.getCols();
   Bcols= B.getRows();
 }
 
-template<> inline void GEMMsize<7>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols){
+template<>
+inline void GEMMsize<7>(const vpArray2D<double> & A,const vpArray2D<double> & B, unsigned int &Arows, unsigned int &Acols, unsigned int &Brows, unsigned int &Bcols)
+{
   Arows= A.getCols();
   Acols= A.getRows();
   Brows= B.getCols();
   Bcols= B.getRows();
 }
 
+template<unsigned int>
+inline void GEMM1(const unsigned int &/*Arows*/,const unsigned int &/*Brows*/, const unsigned int &/*Bcols*/, const vpArray2D<double> & /*A*/, const vpArray2D<double> & /*B*/, const double & /*alpha*/,vpArray2D<double> &/*D*/){}
 
-
-template<unsigned int> inline void GEMM1(const unsigned int &/*Arows*/,const unsigned int &/*Brows*/, const unsigned int &/*Bcols*/, const vpArray2D<double> & /*A*/, const vpArray2D<double> & /*B*/, const double & /*alpha*/,vpArray2D<double> &/*D*/){}
-
-template<> inline void GEMM1<0>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A, const vpArray2D<double> & B, const double & alpha,vpArray2D<double> &D){
+template<>
+inline void GEMM1<0>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A, const vpArray2D<double> & B, const double & alpha,vpArray2D<double> &D)
+{
   for(unsigned int r=0;r<Arows;r++)
     for(unsigned int c=0;c<Bcols;c++){
       double sum=0;
@@ -133,7 +149,9 @@ template<> inline void GEMM1<0>(const unsigned int &Arows,const unsigned int &Br
     }
 }
 
-template<> inline void GEMM1<1>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A, const vpArray2D<double> & B, const double & alpha,vpArray2D<double> &D){
+template<>
+inline void GEMM1<1>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A, const vpArray2D<double> & B, const double & alpha,vpArray2D<double> &D)
+{
   for(unsigned int r=0;r<Arows;r++)
     for(unsigned int c=0;c<Bcols;c++){
       double sum=0;
@@ -143,7 +161,9 @@ template<> inline void GEMM1<1>(const unsigned int &Arows,const unsigned int &Br
     }
 }
 
-template<> inline void GEMM1<2>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha,vpArray2D<double> &D){
+template<>
+inline void GEMM1<2>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha,vpArray2D<double> &D)
+{
   for(unsigned int r=0;r<Arows;r++)
     for(unsigned int c=0;c<Bcols;c++){
       double sum=0;
@@ -153,7 +173,9 @@ template<> inline void GEMM1<2>(const unsigned int &Arows,const unsigned int &Br
     }
 }
 
-template<> inline void GEMM1<3>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha,vpArray2D<double> &D){
+template<>
+inline void GEMM1<3>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha,vpArray2D<double> &D)
+{
   for(unsigned int r=0;r<Arows;r++)
     for(unsigned int c=0;c<Bcols;c++){
       double sum=0;
@@ -163,10 +185,13 @@ template<> inline void GEMM1<3>(const unsigned int &Arows,const unsigned int &Br
     }
 }
 
-template<unsigned int> inline void GEMM2(const unsigned int &/*Arows*/,const unsigned int &/*Brows*/, const unsigned int &/*Bcols*/, const vpArray2D<double> & /*A*/,const vpArray2D<double> & /*B*/, const double & /*alpha*/, const vpArray2D<double> & /*C*/ , const double &/*beta*/, vpArray2D<double> &/*D*/){}
+template<unsigned int>
+inline void GEMM2(const unsigned int &/*Arows*/,const unsigned int &/*Brows*/, const unsigned int &/*Bcols*/, const vpArray2D<double> & /*A*/,const vpArray2D<double> & /*B*/, const double & /*alpha*/, const vpArray2D<double> & /*C*/ , const double &/*beta*/, vpArray2D<double> &/*D*/)
+{}
 
-template<> inline void GEMM2<0>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D){
-  
+template<>
+inline void GEMM2<0>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D)
+{
   for(unsigned int r=0;r<Arows;r++)
     for(unsigned int c=0;c<Bcols;c++){
       double sum=0;
@@ -176,7 +201,9 @@ template<> inline void GEMM2<0>(const unsigned int &Arows,const unsigned int &Br
     }
 }
 
-template<> inline void GEMM2<1>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D){
+template<>
+inline void GEMM2<1>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D)
+{
   for(unsigned int r=0;r<Arows;r++)
     for(unsigned int c=0;c<Bcols;c++){
       double sum=0;
@@ -186,7 +213,9 @@ template<> inline void GEMM2<1>(const unsigned int &Arows,const unsigned int &Br
     }
 }
 
-template<> inline void GEMM2<2>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D){
+template<>
+inline void GEMM2<2>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D)
+{
   for(unsigned int r=0;r<Arows;r++)
     for(unsigned int c=0;c<Bcols;c++){
       double sum=0;
@@ -196,7 +225,9 @@ template<> inline void GEMM2<2>(const unsigned int &Arows,const unsigned int &Br
     }
 }
 
-template<> inline void GEMM2<3>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D){
+template<>
+inline void GEMM2<3>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D)
+{
   for(unsigned int r=0;r<Arows;r++)
     for(unsigned int c=0;c<Bcols;c++){
       double sum=0;
@@ -207,7 +238,9 @@ template<> inline void GEMM2<3>(const unsigned int &Arows,const unsigned int &Br
 }
 
 
-template<> inline void GEMM2<4>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D){
+template<>
+inline void GEMM2<4>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D)
+{
   for(unsigned int r=0;r<Arows;r++)
     for(unsigned int c=0;c<Bcols;c++){
       double sum=0;
@@ -217,7 +250,9 @@ template<> inline void GEMM2<4>(const unsigned int &Arows,const unsigned int &Br
     }
 }
 
-template<> inline void GEMM2<5>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D){
+template<>
+inline void GEMM2<5>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D)
+{
   for(unsigned int r=0;r<Arows;r++)
     for(unsigned int c=0;c<Bcols;c++){
       double sum=0;
@@ -228,7 +263,9 @@ template<> inline void GEMM2<5>(const unsigned int &Arows,const unsigned int &Br
 
 }
 
-template<> inline void GEMM2<6>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D){
+template<>
+inline void GEMM2<6>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D)
+{
   for(unsigned int r=0;r<Arows;r++)
     for(unsigned int c=0;c<Bcols;c++){
       double sum=0;
@@ -238,8 +275,9 @@ template<> inline void GEMM2<6>(const unsigned int &Arows,const unsigned int &Br
     }
 }
 
-template<> inline void GEMM2<7>(const unsigned int &Arows,const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D){
-  //vpArray2D<double> &D = *dynamic_cast<double***>(Dptr);
+template<>
+inline void GEMM2<7>(const unsigned int &Arows, const unsigned int &Brows, const unsigned int &Bcols, const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha, const vpArray2D<double> & C , const double &beta, vpArray2D<double> &D)
+{
   for(unsigned int r=0;r<Arows;r++)
     for(unsigned int c=0;c<Bcols;c++){
       double sum=0;
@@ -249,17 +287,15 @@ template<> inline void GEMM2<7>(const unsigned int &Arows,const unsigned int &Br
     }
 }
 
-template<unsigned int T> inline
-void vpTGEMM(const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha ,const vpArray2D<double> & C, const double & beta, vpArray2D<double> & D)
+template<unsigned int T>
+inline void vpTGEMM(const vpArray2D<double> & A, const vpArray2D<double> & B, const double & alpha ,const vpArray2D<double> & C, const double & beta, vpArray2D<double> & D)
 {
   unsigned int Arows;
   unsigned int Acols;
   unsigned int Brows;
   unsigned int Bcols;
   
-  //   std::cout << T << std::endl;
   GEMMsize<T>(A,B,Arows,Acols,Brows,Bcols);
-  //   std::cout << Arows<<" " <<Acols << " "<< Brows << " "<< Bcols<<std::endl;
   
   try  {
     if ((Arows != D.getRows()) || (Bcols != D.getCols())) D.resize(Arows,Bcols);
@@ -268,15 +304,13 @@ void vpTGEMM(const vpArray2D<double> & A,const vpArray2D<double> & B, const doub
     throw ;
   }
   
-  if (Acols != Brows)
-  {
+  if (Acols != Brows) {
     throw(vpException(vpException::dimensionError,
                       "In vpGEMM, cannot multiply (%dx%d) matrix by (%dx%d) matrix",
                       Arows, Acols, Brows, Bcols)) ;
   }
   
   if(C.getRows()!=0 && C.getCols()!=0){
-
     if ((Arows != C.getRows()) || (Bcols != C.getCols())) {
       throw(vpException(vpException::dimensionError,
                         "In vpGEMM, cannot add resulting (%dx%d) matrix to (%dx%d) matrix",
@@ -291,35 +325,40 @@ void vpTGEMM(const vpArray2D<double> & A,const vpArray2D<double> & B, const doub
 }
 
 /*!
-  \brief This function performs generalized matrix multiplication:
+   This function performs generalized matrix multiplication:
    D = alpha*op(A)*op(B) + beta*op(C), where op(X) is X or X^T.
-   Operation on A, B and C matrices is described by enumeration vpGEMMmethod.
+   Operation on A, B and C matrices is described by enumeration vpGEMMmethod().
    
-   For example, to compute alpha*A^T*B^T+beta*C we need to call :
+   For example, to compute D = alpha*A^T*B^T+beta*C we need to call :
    \code
-   vpGEMM(A,B,alpha,C,beta, VP_GEMM_A_T + VP_GEMM_B_T);
+   vpGEMM(A, B, alpha, C, beta, D, VP_GEMM_A_T + VP_GEMM_B_T);
    \endcode
    
-   If C is not used, vpGEMM must be called using an empty array \e null :
+   If C is not used, vpGEMM must be called using an empty array \e null.
+   Thus to compute D = alpha*A^T*B, we have to call:
    \code
-   vpGEMM(A,B,alpha,C, null,0);
+   vpGEMM(A, B, alpha, null, 0, D, VP_GEMM_B_T);
    \endcode
    
-   \throw vpArray2D<double>Exception::incorrectMatrixSizeError if the sizes of the matrices
+   \exception vpException::incorrectMatrixSizeError if the sizes of the matrices
    do not allow the operations.
    
-   \param A : a Matrix
-   \param B : a Matrix
-   \param alpha : a scalar
-   \param C : a Matrix
-   \param beta : a scalar
-   \param D : a Matrix
-   \param ops : a scalar describing operation applied on the matrices
+   \param A : An array that could be a vpMatrix.
+   \param B : An array that could be a vpMatrix.
+   \param alpha : A scalar.
+   \param C : An array that could be a vpMatrix.
+   \param beta : A scalar.
+   \param D : The resulting array that could be a vpMatrix.
+   \param ops : A scalar describing operation applied on the matrices. Possible values
+   are the one defined in vpGEMMmethod(): VP_GEMM_A_T, VP_GEMM_B_T, VP_GEMM_C_T.
    
    \relates vpArray2D
    
 */  
-inline void vpGEMM(const vpArray2D<double> & A,const vpArray2D<double> & B, const double & alpha ,const vpArray2D<double> & C, const double & beta, vpArray2D<double> & D, const unsigned int &ops=0){
+inline void vpGEMM(const vpArray2D<double> & A, const vpArray2D<double> & B,
+                   const double & alpha, const vpArray2D<double> & C,
+                   const double & beta, vpArray2D<double> & D, const unsigned int &ops=0)
+{
   switch(ops){
   case 0 :
     vpTGEMM<0>( A, B,  alpha , C,  beta,  D);

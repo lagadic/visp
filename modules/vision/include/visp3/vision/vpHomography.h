@@ -62,7 +62,12 @@ tools for homography computation.
 
   \class vpHomography
   \ingroup group_vision_homography
-  \brief This class aims to compute the homography wrt.two images.
+
+  \brief Implementation of an homography and operations on homographies.
+
+  This class aims to compute the homography wrt. two images.
+
+  The vpHomography class is derived from vpArray2D<double>.
 
   These two images are both described by a set of points. The 2 sets (one per
   image) are sets of corresponding points : for a point in a image, there is
@@ -171,12 +176,8 @@ int main()
   \endcode
 
 */
-class VISP_EXPORT vpHomography
+class VISP_EXPORT vpHomography : public vpArray2D<double>
 {
-  public:
-    //! Data array
-    double *data;
-
   private:
     static const double sing_threshold; // = 0.0001;
     static const double threshold_rotation;
@@ -210,8 +211,7 @@ class VISP_EXPORT vpHomography
     vpHomography() ;
     vpHomography(const vpHomography &H) ;
     //! Construction from Translation and rotation and a plane
-    vpHomography(const vpHomogeneousMatrix &aMb,
-                 const vpPlane &bP) ;
+    vpHomography(const vpHomogeneousMatrix &aMb, const vpPlane &bP) ;
     //! Construction from Translation and rotation and a plane
     vpHomography(const vpRotationMatrix &aRb,
                  const vpTranslationVector &atb,
@@ -223,7 +223,7 @@ class VISP_EXPORT vpHomography
     //! Construction from Translation and rotation and a plane
     vpHomography(const vpPoseVector &arb,
                  const vpPlane &bP) ;
-    virtual ~vpHomography();
+    virtual ~vpHomography() {};
 
     //! Construction from Translation and rotation and a plane
     void buildFrom(const vpRotationMatrix &aRb,
@@ -250,10 +250,7 @@ class VISP_EXPORT vpHomography
                              vpTranslationVector &atb,
                              vpColVector &n) ;
 
-    //! Return the number of rows of the homography matrix.
-    inline unsigned int getRows() const { return 3;}
-    //! Return the number of columns of the homography matrix.
-    inline unsigned int getCols() const { return 3; }
+    void eye();
 
     //! invert the homography
     vpHomography inverse() const ;
@@ -262,11 +259,6 @@ class VISP_EXPORT vpHomography
 
     //! Load an homography from a file
     void load(std::ifstream &f) ;
-
-    //! Write elements Hij (usage : H[i][j] = x )
-    inline double *operator[](unsigned int i) { return &data[i*3]; }
-    //! Read elements Hij  (usage : x = H[i][j] )
-    inline double *operator[](unsigned int i) const {return &data[i*3];}
 
     // Multiplication by an homography
     vpHomography operator*(const vpHomography &H) const;
@@ -284,12 +276,21 @@ class VISP_EXPORT vpHomography
 
     vpImagePoint projection(const vpImagePoint &p);
 
-    //! Save an homography in a file
+    /*!
+      This function is not applicable to an homography that is always a
+      3-by-3 matrix.
+      \exception vpException::fatalError When this function is called.
+      */
+    void resize(const unsigned int nrows, const unsigned int ncols,
+                const bool flagNullify = true)
+    {
+      (void)nrows;
+      (void)ncols;
+      (void)flagNullify;
+      throw(vpException(vpException::fatalError, "Cannot resize an homography matrix"));
+    };
+
     void save(std::ofstream &f) const ;
-
-    void setIdentity();
-
-    friend VISP_EXPORT std::ostream &operator << (std::ostream &s,const vpHomography &H);
 
     static void DLT(const std::vector<double> &xb, const std::vector<double> &yb,
                     const std::vector<double> &xa, const std::vector<double> &ya ,
@@ -387,6 +388,16 @@ class VISP_EXPORT vpHomography
                                        double xg2, double yg2, double coef2 ) ;
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+    void setIdentity();
+    //@}
+#endif
+
 };
 
 #endif

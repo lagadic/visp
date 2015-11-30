@@ -41,19 +41,27 @@
 rotation
 */
 
-
-
-#include <visp3/core/vpThetaUVector.h>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
-#define vpDEBUG_LEVEL1 0
+
+#include <visp3/core/vpThetaUVector.h>
 
 const double vpThetaUVector::minimum = 0.0001;
+
+/*! Default constructor that initialize all the 3 angles to zero. */
+vpThetaUVector::vpThetaUVector()
+  : vpRotationVector(3)
+{}
+/*! Copy constructor. */
+vpThetaUVector::vpThetaUVector(const vpThetaUVector &tu)
+  : vpRotationVector(tu)
+{}
 
 /*!
 Initialize a \f$\theta {\bf u}\f$ vector from an homogeneous matrix.
 */
 vpThetaUVector::vpThetaUVector(const vpHomogeneousMatrix& M)
+  : vpRotationVector(3)
 {
   buildFrom(M) ;
 }
@@ -61,6 +69,7 @@ vpThetaUVector::vpThetaUVector(const vpHomogeneousMatrix& M)
 Initialize a \f$\theta {\bf u}\f$ vector from a pose vector.
 */
 vpThetaUVector::vpThetaUVector(const vpPoseVector& p)
+  : vpRotationVector(3)
 {
   buildFrom(p) ;
 }
@@ -68,6 +77,7 @@ vpThetaUVector::vpThetaUVector(const vpPoseVector& p)
 Initialize a \f$\theta {\bf u}\f$ vector from a rotation matrix.
 */
 vpThetaUVector::vpThetaUVector(const vpRotationMatrix& R)
+  : vpRotationVector(3)
 {
   buildFrom(R) ;
 }
@@ -77,6 +87,7 @@ Initialize a \f$\theta {\bf u}\f$ vector from an Euler z-y-x
 representation vector.
 */
 vpThetaUVector::vpThetaUVector(const vpRzyxVector& rzyx)
+  : vpRotationVector(3)
 {
   buildFrom(rzyx) ;
 } 
@@ -85,6 +96,7 @@ Initialize a \f$\theta {\bf u}\f$ vector from an Euler z-y-z
 representation vector.
 */
 vpThetaUVector::vpThetaUVector(const vpRzyzVector& rzyz)
+  : vpRotationVector(3)
 {
   buildFrom(rzyz) ;
 }
@@ -93,8 +105,27 @@ Initialize a \f$\theta {\bf u}\f$ vector from an Euler x-y-z
 representation vector.
 */
 vpThetaUVector::vpThetaUVector(const vpRxyzVector& rxyz)
+  : vpRotationVector(3)
 {
   buildFrom(rxyz) ;
+}
+/*!
+Initialize a \f$\theta {\bf u}\f$ vector from a quaternion
+representation vector.
+*/
+vpThetaUVector::vpThetaUVector(const vpQuaternionVector& q)
+  : vpRotationVector(4)
+{
+  buildFrom(q) ;
+}
+
+/*!
+  Build a \f$\theta {\bf u}\f$ vector from 3 angles in radian.
+*/
+vpThetaUVector::vpThetaUVector(const double tux, const double tuy, const double tuz)
+  : vpRotationVector (3)
+{
+  buildFrom(tux, tuy, tuz);
 }
 
 /*!
@@ -111,13 +142,14 @@ vpThetaUVector::buildFrom(const vpHomogeneousMatrix& M)
   return *this ;
 }
 /*!
-Converts a pose vector into a \f$\theta {\bf u}\f$ vector.
+Converts a pose vector into a \f$\theta {\bf u}\f$ vector copying
+the \f$\theta {\bf u}\f$ values contained in the pose vector.
 */
 vpThetaUVector
 vpThetaUVector::buildFrom(const vpPoseVector& p)
 {
   for(unsigned int i=0; i<3; i++)
-    r[i] = p[i+3];
+    data[i] = p[i+3];
 
   return *this ;
 }
@@ -142,88 +174,33 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
   {
     sinc = vpMath::sinc(s,theta);
 
-    r[0] = (R[2][1]-R[1][2])/(2*sinc);
-    r[1] = (R[0][2]-R[2][0])/(2*sinc);
-    r[2] = (R[1][0]-R[0][1])/(2*sinc);
+    data[0] = (R[2][1]-R[1][2])/(2*sinc);
+    data[1] = (R[0][2]-R[2][0])/(2*sinc);
+    data[2] = (R[1][0]-R[0][1])/(2*sinc);
   }
   else /* theta near PI */
   {
     if ( (R[0][0]-c) < std::numeric_limits<double>::epsilon() )
-      r[0] = 0.;
+      data[0] = 0.;
     else
-      r[0] = theta*(sqrt((R[0][0]-c)/(1-c)));
-    if ((R[2][1]-R[1][2]) < 0) r[0] = -r[0];
+      data[0] = theta*(sqrt((R[0][0]-c)/(1-c)));
+    if ((R[2][1]-R[1][2]) < 0) data[0] = -data[0];
 
     if ( (R[1][1]-c) < std::numeric_limits<double>::epsilon() )
-      r[1] = 0.;
+      data[1] = 0.;
     else
-      r[1] = theta*(sqrt((R[1][1]-c)/(1-c)));
+      data[1] = theta*(sqrt((R[1][1]-c)/(1-c)));
 
-    if ((R[0][2]-R[2][0]) < 0) r[1] = -r[1];
+    if ((R[0][2]-R[2][0]) < 0) data[1] = -data[1];
 
     if ( (R[2][2]-c) < std::numeric_limits<double>::epsilon() )
-      r[2] = 0.;
+      data[2] = 0.;
     else
-      r[2] = theta*(sqrt((R[2][2]-c)/(1-c)));
+      data[2] = theta*(sqrt((R[2][2]-c)/(1-c)));
 
-    if ((R[1][0]-R[0][1]) < 0) r[2] = -r[2];
+    if ((R[1][0]-R[0][1]) < 0) data[2] = -data[2];
   }
 
-#if (vpDEBUG_LEVEL1)  // test new version wrt old version
-  {
-    // old version
-    int i;
-    //    double s,c;
-    double ang;
-    double r2[3]; // has to be replaced by r below if good version
-
-    s = (R[1][0]-R[0][1])*(R[1][0]-R[0][1])
-      + (R[2][0]-R[0][2])*(R[2][0]-R[0][2])
-      + (R[2][1]-R[1][2])*(R[2][1]-R[1][2]);
-    s = sqrt(s)/2.0;
-    c = (R[0][0]+R[1][1]+R[2][2]-1)/2.0;
-    ang=atan2(s,c);
-    if (ang > minimum)
-    {
-      if (s > minimum)
-      {
-        r2[0] = (R[2][1]-R[1][2])/(2*s);
-        r2[1] = (R[0][2]-R[2][0])/(2*s);
-        r2[2] = (R[1][0]-R[0][1])/(2*s);
-      }
-      else
-      {
-        r2[0] = (sqrt((R[0][0]-c)/(1-c)));
-        if ((R[2][1]-R[1][2]) < 0) r2[0] = -r2[0];
-        r2[1] = (sqrt((R[1][1]-c)/(1-c)));
-        if ((R[0][2]-R[2][0]) < 0) r2[1] = -r2[1];
-        r2[2] = (sqrt((R[2][2]-c)/(1-c)));
-        if ((R[1][0]-R[0][1]) < 0) r2[2] = -r2[2];
-      }
-      for (i=0;i<3;i++) r2[i] = r2[i]*ang;
-    }
-    else
-    {
-      r2[0] =   r2[1] =   r2[2] = 0.0;
-    }
-    // end old version
-    // verification of the new version
-    int pb = 0;
-
-    for (i=0;i<3;i++)
-    {
-      if (fabs(r[i] - r2[i]) > 1e-5) pb = 1;
-    }
-    if (pb == 1)
-    {
-      printf("vpThetaUVector::buildFrom(const vpRotationMatrix& R)\n");
-      printf(" r      : %lf %lf %lf\n",r[0],r[1],r[2]);
-      printf(" r2     : %lf %lf %lf\n",r2[0],r2[1],r2[2]);
-      printf(" r - r2 : %lf %lf %lf\n",r[0]-r2[0],r[1]-r2[1],r[2]-r2[2]);
-    }
-    // end of the verification
-  }
-#endif
   return *this ;
 }
 /*!  
@@ -250,7 +227,7 @@ vpThetaUVector::buildFrom(const vpRzyzVector& rzyz)
   buildFrom(R) ;
   return *this ;
 }
-/*!  
+/*!
 Build a \f$\theta {\bf u}\f$ vector from an Euler x-y-z
 representation vector.
 */
@@ -264,12 +241,25 @@ vpThetaUVector::buildFrom(const vpRxyzVector& rxyz)
 }
 
 /*!
+Build a \f$\theta {\bf u}\f$ vector from a quaternion
+representation vector.
+*/
+vpThetaUVector
+vpThetaUVector::buildFrom(const vpQuaternionVector& q)
+{
+  vpRotationMatrix R(q) ;
 
-Initialize each element of the \f$\theta {\bf u}\f$ vector to the
-same angle value \e v.
+  buildFrom(R) ;
+  return *this ;
+}
 
-\param v : Angle value to set for each element of the \f$\theta {\bf
-u}\f$ vector.
+/*!
+
+  Initialize each element of the \f$\theta {\bf u}\f$ vector to the
+  same angle value \e v.
+
+  \param v : Angle value to set for each element of the \f$\theta {\bf
+  u}\f$ vector.
 
 \code
 #include <visp3/core/vpMath.h>
@@ -277,17 +267,17 @@ u}\f$ vector.
 
 int main()
 {
-vpThetaUVector tu;
+  vpThetaUVector tu;
 
-// Initialise the theta U rotation vector
-tu = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
+  // Initialise the theta U rotation vector
+  tu = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
 }
 \endcode
 */
 vpThetaUVector &vpThetaUVector::operator=(double v)
 {
-  for (int i=0; i< 3; i++)
-    r[i] = v;
+  for (unsigned int i=0; i< dsize; i++)
+    data[i] = v;
 
   return *this;
 }
@@ -308,14 +298,23 @@ vpThetaUVector::extract(double &theta, vpColVector &u) const
 {
   u.resize(3);
 
-  theta = sqrt(r[0]*r[0] + r[1]*r[1] + r[2]*r[2]);
+  theta = sqrt(data[0]*data[0] + data[1]*data[1] + data[2]*data[2]);
   //if (theta == 0) {
   if (std::fabs(theta) <= std::numeric_limits<double>::epsilon()) {
     u = 0;
     return;
   }
   for (unsigned int i=0 ; i < 3 ; i++) 
-    u[i] = r[i] / theta ;
+    u[i] = data[i] / theta ;
 }
 
-#undef vpDEBUG_LEVEL1
+/*!
+  Build a \f$\theta {\bf u}\f$ vector from 3 angles in radian.
+*/
+void
+vpThetaUVector::buildFrom(const double tux, const double tuy, const double tuz)
+{
+  data[0] = tux;
+  data[1] = tuy;
+  data[2] = tuz;
+}

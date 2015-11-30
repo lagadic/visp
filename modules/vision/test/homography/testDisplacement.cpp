@@ -53,9 +53,38 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+bool test(const std::string &s, const vpHomography &H, const std::vector<double> &bench)
+{
+  static unsigned int cpt = 0;
+  std::cout << "** Test " << ++cpt << std::endl;
+  std::cout << s << "(" << H.getRows() << "," << H.getCols() << ") = \n[" << H << "]" << std::endl;
+  if(bench.size() != H.size()) {
+    std::cout << "Test fails: bad size wrt bench" << std::endl;
+    return false;
+  }
+  for (unsigned int i=0; i<H.size(); i++) {
+    if (std::fabs(H.data[i]-bench[i]) > std::fabs(H.data[i])*std::numeric_limits<double>::epsilon()) {
+      std::cout << "Test fails: bad content" << std::endl;
+      return false;
+    }
+  }
+
+  return true;
+}
 int main()
 {
   try {
+    int err = 1;
+    {
+      vpHomography H;
+      H.eye();
+      std::vector<double> bench(9, 0);
+      bench[0] = bench[4] = bench[8] = 1.;
+      if (test("H", H, bench) == false)
+        return err;
+      if (test("H", H/H[2][2], bench) == false)
+        return err;
+    }
     {
       vpThetaUVector tu(vpMath::rad(90), vpMath::rad(120), vpMath::rad(45)) ;
 
@@ -154,6 +183,7 @@ int main()
       H.buildFrom(R,T,p1) ;
       std::cout << "H" << std::endl << H << std::endl ;
     }
+    std::cout << "All tests succeed" << std::endl;
     return 0;
   }
   catch(vpException e) {

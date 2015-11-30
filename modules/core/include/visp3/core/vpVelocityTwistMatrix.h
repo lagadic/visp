@@ -45,15 +45,21 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 
+class vpHomogeneousMatrix;
+class vpColVector;
 
 /*!
   \class vpVelocityTwistMatrix
 
   \ingroup group_core_transformations
 
+  \brief Implementation of a velocity twist matrix and operations on such kind of matrices.
+
   Class that consider the particular case of twist
   transformation matrix that allows to transform a velocity skew from
   one frame to an other.
+
+  The vpVelocityTwistMatrix class is derived from vpArray2D<double>.
 
   A twist transformation matrix is a 6x6 matrix that express a velocity in frame <em>a</em> knowing
   velocity in <em>b</em>. This matrix is defined as:
@@ -114,6 +120,10 @@ class VISP_EXPORT vpVelocityTwistMatrix : public vpArray2D<double>
   vpVelocityTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
   vpVelocityTwistMatrix(const double tx,  const double ty,  const double tz,
                         const double tux, const double tuy, const double tuz);
+  /*!
+    Destructor.
+  */
+  virtual ~vpVelocityTwistMatrix() {};
 
 
   vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t,

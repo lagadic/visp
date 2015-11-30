@@ -58,7 +58,12 @@
 
   \ingroup group_core_transformations
   
-  \brief Defines a quaternion and its basic operations.
+  \brief Implementation of a rotation vector as quaternion angle
+  minimal representation.
+
+  Defines a quaternion and its basic operations.
+
+  The vpQuaternionVector class is derived from vpRotationVector.
 
   A quaternion is defined by four values: \f${\bf q} = (x, y, z, w)\f$.
 
@@ -77,26 +82,21 @@ class VISP_EXPORT vpQuaternionVector : public vpRotationVector
 private:        
   static const double minimum;
 public:
-    
-  /*! Default constructor that initialize all the angles to zero. */
-  vpQuaternionVector() : vpRotationVector(4) {}
-  /*! Copy constructor. */
-  vpQuaternionVector(const vpQuaternionVector &q) : vpRotationVector(q) {}
+  vpQuaternionVector();
+  vpQuaternionVector(const vpQuaternionVector &q);
   vpQuaternionVector(const double x, const double y, const double z,const double w) ;    
   vpQuaternionVector(const vpRotationMatrix &R);
+  //! Destructor.
+  virtual ~vpQuaternionVector() {};
 
   void buildFrom(const vpRotationMatrix& R);
 
-  void set(const double x, const double y, const double z,const double w) ;
+  void set(const double x, const double y, const double z, const double w) ;
     
-  //! Returns x-component of the quaternion.
-  inline double x() const {return r[0];}
-  //! Returns y-component of the quaternion.
-  inline double y() const {return r[1];}
-  //! Returns z-component of the quaternion.
-  inline double z() const {return r[2];}
-  //! Returns w-component of the quaternion.
-  inline double w() const {return r[3];}
+  double x() const;
+  double y() const;
+  double z() const;
+  double w() const;
 
   vpQuaternionVector operator+(const vpQuaternionVector &q);
   vpQuaternionVector operator-(const vpQuaternionVector &q);
@@ -112,9 +112,3 @@ public:
 } ;
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 4
- * End:
- */

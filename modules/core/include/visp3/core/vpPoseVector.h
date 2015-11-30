@@ -66,10 +66,14 @@ class vpRowVector;
 
   \ingroup group_core_transformations
 
-  The pose is a complete representation of every rigid motion in the
-  euclidian space.  
+  \brief Implementation of a pose vector and operations on poses.
 
-  It is composed of a translation and a rotation
+  The vpPose class implements a complete representation of every rigid motion in the
+  euclidian space.
+
+  The vpPose class is derived from vpArray2D<double>.
+
+  The pose is composed of a translation and a rotation
   minimaly represented by a 6 dimension pose vector as: \f[ ^{a}{\bf
   r}_b = [^{a}{\bf t}_{b},\theta {\bf u}]^\top \in R^6\f]
 
@@ -102,7 +106,11 @@ public:
   // constructor  convert a translation and a rotation matrix into a pose
   vpPoseVector(const vpTranslationVector& t,
                const vpRotationMatrix& R) ;
-  
+  /*!
+    Destructor.
+  */
+  virtual ~vpPoseVector() {};
+
   // convert an homogeneous matrix in a pose
   vpPoseVector buildFrom(const vpHomogeneousMatrix& M) ;
   //  convert a translation and a "thetau" vector into a pose

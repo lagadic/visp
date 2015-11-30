@@ -52,6 +52,8 @@ class vpRzyxVector;
 class vpRxyzVector;
 class vpRzyzVector;
 class vpColVector;
+class vpRotationVector;
+class vpQuaternionVector;
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpRotationVector.h>
@@ -59,6 +61,7 @@ class vpColVector;
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpRzyxVector.h>
+#include <visp3/core/vpQuaternionVector.h>
 
 
 /*!
@@ -66,8 +69,13 @@ class vpColVector;
 
   \ingroup group_core_transformations
 
-  \brief Class that consider the case of the \f$\theta {\bf u}\f$
+  \brief Implementation of a rotation vector as \f$\theta {\bf u}\f$ axis-angle
+  minimal representation.
+
+  Class that consider the case of the \f$\theta {\bf u}\f$
   parameterization for the rotation.
+
+  The vpThetaUVector class is derived from vpRotationVector.
 
   The \f$\theta {\bf u}\f$ representation is one of the minimal
   representation of a rotation matrix, where 
@@ -138,19 +146,13 @@ int main()
 */
 class VISP_EXPORT vpThetaUVector : public vpRotationVector
 {
-
 private:
-  //! initialize a size 3 vector
-  void init() ;
 
   static const double minimum;
 
 public:
-
-  /*! Default constructor that initialize all the angles to zero. */
-  vpThetaUVector() {}
-  /*! Copy constructor. */
-  vpThetaUVector(const vpThetaUVector &tu) : vpRotationVector(tu) {}
+  vpThetaUVector();
+  vpThetaUVector(const vpThetaUVector &tu);
 
   // constructor initialize a Theta U vector from a homogeneous matrix
   vpThetaUVector(const vpHomogeneousMatrix & M) ;
@@ -164,12 +166,11 @@ public:
   vpThetaUVector(const vpRzyzVector& rzyz) ;
   // constructor initialize a Theta U vector from a RxyzVector
   vpThetaUVector(const vpRxyzVector& rxyz) ;
+  vpThetaUVector(const vpQuaternionVector& q) ;
 
-  /*!
-    Build a \f$\theta {\bf u}\f$ vector from 3 angles in radian.
-  */
-  vpThetaUVector(const double tux, const double tuy, const double tuz) :
-    vpRotationVector (3) { r[0]=tux;r[1]=tuy;r[2]=tuz; }
+  vpThetaUVector(const double tux, const double tuy, const double tuz);
+  //! Destructor.
+  virtual ~vpThetaUVector() {};
 
   // convert an homogeneous matrix into Theta U vector
   vpThetaUVector buildFrom(const vpHomogeneousMatrix& M) ;
@@ -183,6 +184,9 @@ public:
   vpThetaUVector buildFrom(const vpRzyzVector &zyz) ;
   // convert an Rxyz vector into Theta U vector
   vpThetaUVector buildFrom(const vpRxyzVector &xyz) ;
+  vpThetaUVector buildFrom(const vpQuaternionVector &q) ;
+
+  void buildFrom(const double tux, const double tuy, const double tuz);
 
   vpThetaUVector &operator=(double x) ;
 

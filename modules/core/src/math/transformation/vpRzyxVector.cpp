@@ -47,24 +47,47 @@
 
 */
 
+/*! Default constructor that initialize all the 3 angles to zero. */
+vpRzyxVector::vpRzyxVector()
+  : vpRotationVector(3)
+{}
+
+/*! Copy constructor. */
+vpRzyxVector::vpRzyxVector(const vpRzyxVector &rzyx)
+  : vpRotationVector(rzyx)
+{}
+
+/*!
+  Constructor from 3 angles (in radian).
+  \param phi : \f$\varphi\f$ angle around the \f$z\f$ axis.
+  \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
+  \param psi : \f$\psi\f$ angle around the \f$x\f$ axis.
+*/
+vpRzyxVector::vpRzyxVector(const double phi, const double theta, const double psi)
+  : vpRotationVector (3)
+{
+  buildFrom(phi, theta, psi);
+}
+
 /*! 
   Constructor that initialize \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
   angles from a rotation matrix.
   \param R : Rotation matrix used to initialize the Euler angles.
 */
 vpRzyxVector::vpRzyxVector(const vpRotationMatrix& R)
+  : vpRotationVector (3)
 {
   buildFrom(R) ;
 }
 
-
 /*!
   Constructor that initialize \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
-  angles vector from a \f$\theta u\f$ vector.
-  \param tu : \f$\theta u\f$ representation of a rotation used here as 
+  angles vector from a \f$\theta {\bf u}\f$ vector.
+  \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as
   input to initialize the Euler angles.
 */
 vpRzyxVector::vpRzyxVector(const vpThetaUVector& tu)
+  : vpRotationVector (3)
 {
   buildFrom(tu) ;
 }
@@ -99,18 +122,16 @@ vpRzyxVector::buildFrom(const vpRotationMatrix& R)
 
   double psi = atan2(si*ax-co*ay,-si*ox+co*oy);
 
-  r[0] = phi ;
-  r[1] = theta ;
-  r[2] = psi ;
+  buildFrom(phi, theta, psi);
 
   return *this ;
 }
 
 
 /*! 
-  Convert a \f$\theta u\f$ vector into a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ 
+  Convert a \f$\theta {\bf u}\f$ vector into a \f$R_{zyx}=(\varphi,\theta,\psi)\f$
   Euler angles vector.
-  \param tu : \f$\theta u\f$ representation of a rotation used here as 
+  \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as
   input.
   \return \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler angles vector.   
 */
@@ -124,9 +145,43 @@ vpRzyxVector::buildFrom(const vpThetaUVector& tu)
   return *this ;
 }
 
+/*!
+  Construction from 3 angles (in radian).
+  \param phi : \f$\varphi\f$ angle around the \f$z\f$ axis.
+  \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
+  \param psi : \f$\psi\f$ angle around the \f$x\f$ axis.
+*/
+void
+vpRzyxVector::buildFrom(const double phi, const double theta, const double psi)
+{
+  data[0] = phi ;
+  data[1] = theta ;
+  data[2] = psi ;
+}
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+/*!
+
+  Initialize each element of the vector to the same angle value \e v.
+
+  \param v : Angle value to set for each element of the vector.
+
+\code
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpRzyxVector.h>
+
+int main()
+{
+  vpRzyxVector v;
+
+  // Initialise the rotation vector
+  v = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
+}
+\endcode
+*/
+vpRzyxVector &vpRzyxVector::operator=(double v)
+{
+  for (unsigned int i=0; i< dsize; i++)
+    data[i] = v;
+
+  return *this;
+}
