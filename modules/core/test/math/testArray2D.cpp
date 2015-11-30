@@ -84,8 +84,8 @@ int main()
     std::vector<double> bench(12);
     for(unsigned int i=0; i<3; i++) {
       for(unsigned int j=0; j<4; j++) {
-        A[i][j] = i+j;
-        bench[i*4+j] = i+j;
+        A[i][j] = (double)(i+j);
+        bench[i*4+j] = (double)(i+j);
       }
     }
     if (test("A", A, bench) == false)
@@ -129,8 +129,8 @@ int main()
     std::vector<float> bench(12);
     for(unsigned int i=0; i<3; i++) {
       for(unsigned int j=0; j<4; j++) {
-        A[i][j] = i+j;
-        bench[i*4+j] = i+j;
+        A[i][j] = (float)(i+j);
+        bench[i*4+j] = (float)(i+j);
       }
     }
     if (test("A", A, bench) == false)
