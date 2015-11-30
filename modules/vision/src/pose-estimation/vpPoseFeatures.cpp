@@ -384,7 +384,7 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix & cMo, vpColVecto
     if( i < featureSpecific_list.size() ){
       featureSpecific_list[i]->createCurrent(cMo);
       err.stack(featureSpecific_list[i]->error());
-      L.stackMatrices(featureSpecific_list[i]->currentInteraction());
+      L.stack(featureSpecific_list[i]->currentInteraction());
     }
 #endif
   }
