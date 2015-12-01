@@ -328,9 +328,10 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
   only_1 = 1 ;
   only_2 = 0 ;
 
- //if ((only_1==1) || (only_2==1))  ; else n *=2 ;
-  if ( (! only_1) && (! only_2) )
-    n *=2 ;
+  //if ((only_1==1) || (only_2==1))  ; else n *=2 ;
+  // Since only_1 is initialized to 1, the next 2 lines connt be reached. We remove them
+  //if ( (! only_1) && (! only_2) )
+  //  n *=2 ;
 
   vpRobust robust(n);
   vpColVector res(n) ;

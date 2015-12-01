@@ -514,7 +514,12 @@ vpViper650::parseConfigFile (const char * filename)
   while (fgets(Ligne, FILENAME_MAX, fdtask) != NULL) {
     numLn ++;
     if ('#' == Ligne[0]) { continue; }
-    sscanf(Ligne, "%s", namoption);
+    if (sscanf(Ligne, "%s", namoption) != 1) {
+      fclose (fdtask);
+      throw(vpException(vpException::badValue,
+                        "Cannot parse configuration file %s to retrieve option name"));
+    }
+
     dim = strlen(namoption);
 
     for (code = 0;

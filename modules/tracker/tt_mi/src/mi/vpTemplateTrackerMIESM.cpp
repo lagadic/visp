@@ -321,11 +321,11 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
       {
         Nbpoint++;
-        Tij=ptTemplate[point].val;
-        if(!blur)
-          IW=I.getValue(i2,j2);
-        else
-          IW=BI.getValue(i2,j2);
+        //Tij=ptTemplate[point].val;
+        //if(!blur)
+        //  IW=I.getValue(i2,j2);
+        //else
+        //  IW=BI.getValue(i2,j2);
 
         //ct=ptTemplateSupp[point].ct;
         //et=ptTemplateSupp[point].et;
