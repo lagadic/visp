@@ -51,6 +51,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRotationVector.h>
+#include <visp3/core/vpThetaUVector.h>
 
 
 /*!
@@ -86,13 +87,16 @@ public:
   vpQuaternionVector(const vpQuaternionVector &q);
   vpQuaternionVector(const double x, const double y, const double z,const double w) ;    
   vpQuaternionVector(const vpRotationMatrix &R);
+  vpQuaternionVector(const vpThetaUVector& tu) ;
+
   //! Destructor.
   virtual ~vpQuaternionVector() {};
 
-  void buildFrom(const vpRotationMatrix& R);
-
+  vpQuaternionVector buildFrom(const double x, const double y, const double z, const double w) ;
+  vpQuaternionVector buildFrom(const vpRotationMatrix& R);
+  vpQuaternionVector buildFrom(const vpThetaUVector& tu);
   void set(const double x, const double y, const double z, const double w) ;
-    
+
   double x() const;
   double y() const;
   double z() const;

@@ -141,8 +141,8 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
   void insert(const vpQuaternionVector &t) ;
 
   void extract(vpRotationMatrix &R) const;
-  void extract(vpTranslationVector &t) const;
   void extract(vpThetaUVector &tu) const;
+  void extract(vpTranslationVector &t) const;
   void extract(vpQuaternionVector& q) const;
 
   // Load an homogeneous matrix from a file

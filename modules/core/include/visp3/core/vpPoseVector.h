@@ -111,6 +111,8 @@ public:
   */
   virtual ~vpPoseVector() {};
 
+  vpPoseVector buildFrom(const double tx, const double ty, const double tz,
+                         const double tux, const double tuy, const double tuz) ;
   // convert an homogeneous matrix in a pose
   vpPoseVector buildFrom(const vpHomogeneousMatrix& M) ;
   //  convert a translation and a "thetau" vector into a pose
@@ -119,6 +121,15 @@ public:
   //  convert a translation and a rotation matrix into a pose
   vpPoseVector buildFrom(const vpTranslationVector& t,
                          const vpRotationMatrix& R) ;
+
+  void extract(vpRotationMatrix &R) const;
+  void extract(vpThetaUVector &tu) const;
+  void extract(vpTranslationVector &t) const;
+  void extract(vpQuaternionVector& q) const;
+
+  vpRotationMatrix getRotationMatrix();
+  vpThetaUVector getThetaUVector();
+  vpTranslationVector getTranslationVector();
 
   // Load an homogeneous matrix from a file
   void load(std::ifstream &f) ;

@@ -56,9 +56,37 @@
 vpTranslationVector::vpTranslationVector(const double tx, const double ty, const double tz)
   : vpArray2D<double>(3, 1)
 {
-  (*this)[0] = tx ;
-  (*this)[1] = ty ;
-  (*this)[2] = tz ;
+  (*this)[0] = tx;
+  (*this)[1] = ty;
+  (*this)[2] = tz;
+}
+
+/*!
+  Construct a translation vector \f$ \bf t \f$ from the translation contained in
+  an homogeneous matrix.
+
+  \param M : Homogeneous matrix where translations are in meters.
+
+*/
+vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M)
+  : vpArray2D<double>(3, 1)
+{
+  M.extract( *this );
+}
+
+/*!
+  Construct a translation vector \f$ \bf t \f$ from the translation contained in
+  a pose vector.
+
+  \param p : Pose vector where translations are in meters.
+
+*/
+vpTranslationVector::vpTranslationVector(const vpPoseVector &p)
+  : vpArray2D<double>(3, 1)
+{
+  (*this)[0] = p[0];
+  (*this)[1] = p[1];
+  (*this)[2] = p[2];
 }
 
 /*!
@@ -79,9 +107,60 @@ vpTranslationVector::vpTranslationVector (const vpTranslationVector &t)
 }
 
 /*!
+  Build a 3 dimension translation vector \f$ \bf t\f$ from
+  an homogeneous matrix \f$ \bf M \f$.
+
+  \param M : Homogeneous matrix \f$ \bf M \f$ from which translation \f$
+  \bf t \f$ and \f$\theta \bf u \f$ vectors are extracted to initialize
+  the pose vector.
+
+  \return The build pose vector.
+
+*/
+vpTranslationVector
+vpTranslationVector::buildFrom(const vpHomogeneousMatrix& M)
+{
+  M.extract( *this );
+  return *this ;
+}
+
+/*!
+  Build a 3 dimension translation vector \f$ \bf t\f$ from
+  the translation contained in a pose vector.
+
+  \param p : Pose vector where translations are in meters.
+
+  \return The build pose vector.
+
+*/
+vpTranslationVector
+vpTranslationVector::buildFrom(const vpPoseVector& p)
+{
+  (*this)[0] = p[0];
+  (*this)[1] = p[1];
+  (*this)[2] = p[2];
+  return *this ;
+}
+
+/*!
+  Build a 3 dimension translation vector \f$ \bf t\f$ from 3 doubles.
+
+  \param tx,ty,tz : Translation respectively along x, y and z axis in meter.
+
+  \return The build pose vector.
+  \sa set()
+*/
+vpTranslationVector
+vpTranslationVector::buildFrom(const double tx, const double ty, const double tz)
+{
+  set(tx, ty, tz);
+  return *this ;
+}
+
+/*!
   Initialize a translation vector from 3 doubles.
 
-  \param tx,ty,tz : Translation respectively along x, y and z axis.
+  \param tx,ty,tz : Translation respectively along x, y and z axis in meter.
 
 */
 void

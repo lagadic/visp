@@ -80,22 +80,65 @@ vpQuaternionVector::vpQuaternionVector(const vpRotationMatrix &R)
   buildFrom(R);
 }
 
-/*! 
-  Manually change values of a quaternion.
-  \param x_ : x quaternion parameter.
-  \param y_ : y quaternion parameter.
-  \param z_ : z quaternion parameter.
-  \param w_ : w quaternion parameter.
+/*!
+  Constructor that initialize \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler
+  angles vector from a \f$\theta {\bf u}\f$ vector.
+  \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as
+  input to initialize the Euler angles.
 */
-void vpQuaternionVector::set(const double x_, const double y_,
-                             const double z_,const double w_)
+vpQuaternionVector::vpQuaternionVector(const vpThetaUVector& tu)
+  : vpRotationVector (4)
 {
-  data[0]=x_;
-  data[1]=y_;
-  data[2]=z_;
-  data[3]=w_;
+  buildFrom(tu) ;
 }
 
+
+/*!
+  Manually change values of a quaternion.
+  \param x : x quaternion parameter.
+  \param y : y quaternion parameter.
+  \param z : z quaternion parameter.
+  \param w : w quaternion parameter.
+*/
+void vpQuaternionVector::set(const double x, const double y,
+                             const double z, const double w)
+{
+  data[0]=x;
+  data[1]=y;
+  data[2]=z;
+  data[3]=w;
+}
+/*!
+  Manually change values of a quaternion.
+  \param x : x quaternion parameter.
+  \param y : y quaternion parameter.
+  \param z : z quaternion parameter.
+  \param w : w quaternion parameter.
+
+  \sa set()
+*/
+vpQuaternionVector
+vpQuaternionVector::buildFrom(const double x, const double y,
+                              const double z, const double w)
+{
+  set(x, y, z, w);
+  return *this;
+}
+
+/*!
+  Convert a \f$\theta {\bf u}\f$ vector into a quaternion.
+  \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as
+  input.
+  \return Quaternion vector.
+*/
+vpQuaternionVector
+vpQuaternionVector::buildFrom(const vpThetaUVector& tu)
+{
+  vpRotationMatrix R(tu) ;
+  buildFrom(R) ;
+
+  return *this ;
+}
 /*! 
   Quaternion addition.
 
@@ -154,7 +197,8 @@ vpQuaternionVector vpQuaternionVector::operator/(const double l) const
   
   \param R : Rotation matrix.
 */
-void vpQuaternionVector::buildFrom(const vpRotationMatrix &R)
+vpQuaternionVector
+vpQuaternionVector::buildFrom(const vpRotationMatrix &R)
 {
   vpThetaUVector tu(R);
   vpColVector u;
@@ -165,6 +209,7 @@ void vpQuaternionVector::buildFrom(const vpRotationMatrix &R)
 
   double sinTheta_2 = sin(theta);
   set( u[0] * sinTheta_2, u[1] * sinTheta_2, u[2] * sinTheta_2, cos(theta) );
+  return *this;
 }
 
 /*!

@@ -48,6 +48,8 @@
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpPoseVector.h>
 
 
 /*!
@@ -99,6 +101,12 @@ public:
   vpTranslationVector() : vpArray2D<double>(3, 1) {};
   vpTranslationVector(const double tx, const double ty, const double tz) ;
   vpTranslationVector(const vpTranslationVector &t);
+  vpTranslationVector(const vpHomogeneousMatrix &M);
+  vpTranslationVector(const vpPoseVector &p);
+
+  vpTranslationVector buildFrom(const double tx, const double ty, const double tz) ;
+  vpTranslationVector buildFrom(const vpHomogeneousMatrix& M) ;
+  vpTranslationVector buildFrom(const vpPoseVector& p) ;
 
   // operators
 

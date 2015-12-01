@@ -539,14 +539,14 @@ vpHomogeneousMatrix::extract(vpRotationMatrix &R) const
   Extract the translation vector from the homogeneous matrix. 
 */
 void
-vpHomogeneousMatrix::extract(vpTranslationVector &tv) const
+vpHomogeneousMatrix::extract(vpTranslationVector &t) const
 {
-  tv[0] = (*this)[0][3] ;
-  tv[1] = (*this)[1][3] ;
-  tv[2] = (*this)[2][3] ;
+  t[0] = (*this)[0][3] ;
+  t[1] = (*this)[1][3] ;
+  t[2] = (*this)[2][3] ;
 }
 /*!
-  Extract the rotation as a Theta U vector.
+  Extract the rotation as a \f$\theta \bf u\f$ vector.
 */
 void
 vpHomogeneousMatrix::extract(vpThetaUVector &tu) const

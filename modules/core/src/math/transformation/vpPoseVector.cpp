@@ -181,6 +181,36 @@ vpPoseVector::set(const double tx, const double ty, const double tz,
 }
 
 /*!
+  Build a 6 dimension pose vector \f$ [\bf t, \theta \bf u]^\top\f$
+  from 3 translations and 3 \f$ \theta \bf{u}\f$ angles.
+
+  Translations are expressed in meters, while rotations in radians.
+
+  \param tx,ty,tz : Translations \f$[t_x, t_y, t_z]^\top\f$
+  respectively along the x, y and z axis (in meters).
+
+  \param tux,tuy,tuz : Rotations \f$[\theta u_x, \theta u_y, \theta
+  u_z]^\top\f$ respectively around the x, y and z axis (in radians).
+
+  \return The build pose vector.
+
+  \sa set()
+*/
+vpPoseVector
+vpPoseVector::buildFrom(const double tx, const double ty, const double tz,
+                        const double tux, const double tuy, const double tuz)
+{
+  (*this)[0] = tx;
+  (*this)[1] = ty;
+  (*this)[2] = tz;
+
+  (*this)[3] = tux;
+  (*this)[4] = tuy;
+  (*this)[5] = tuz;
+  return *this ;
+}
+
+/*!
   Build a 6 dimension pose vector \f$ [\bf t, \theta \bf u]^\top\f$ from
   an homogeneous matrix \f$ \bf M \f$.
 
@@ -244,6 +274,74 @@ vpPoseVector::buildFrom(const vpTranslationVector& t,
 
   buildFrom(t, tu) ;
   return *this ;
+}
+
+/*!
+  Extract the translation vector from the homogeneous matrix.
+*/
+void
+vpPoseVector::extract(vpTranslationVector &t) const
+{
+  t[0] = (*this)[0];
+  t[1] = (*this)[1];
+  t[2] = (*this)[2];
+}
+
+/*!
+  Extract the rotation as a \f$\theta \bf u\f$ vector.
+*/
+void
+vpPoseVector::extract(vpThetaUVector &tu) const
+{
+  tu[0] = (*this)[3];
+  tu[1] = (*this)[4];
+  tu[2] = (*this)[5];
+}
+/*!
+  Extract the rotation as a quaternion vector.
+*/
+void
+vpPoseVector::extract(vpQuaternionVector &q) const
+{
+  vpRotationMatrix R((*this)[3], (*this)[4], (*this)[5]);
+  q.buildFrom(R);
+}
+/*!
+  Extract the rotation as a rotation matrix.
+*/
+void
+vpPoseVector::extract(vpRotationMatrix &R) const
+{
+  R.buildFrom((*this)[3], (*this)[4], (*this)[5]);
+}
+/*!
+  Return the translation vector that corresponds to the translation part of the
+  pose vector.
+ */
+vpTranslationVector vpPoseVector::getTranslationVector()
+{
+  vpTranslationVector tr((*this)[0], (*this)[1], (*this)[2]);
+  return tr;
+}
+
+/*!
+  Return the rotation matrix that corresponds to the rotation part of the
+  pose vector.
+ */
+vpRotationMatrix vpPoseVector::getRotationMatrix()
+{
+  vpRotationMatrix R((*this)[0], (*this)[1], (*this)[2]);
+  return R;
+}
+
+/*!
+  Return the \f$\theta {\bf u}\f$ vector that corresponds to the rotation part of the
+  pose vector.
+ */
+vpThetaUVector vpPoseVector::getThetaUVector()
+{
+  vpThetaUVector tu((*this)[0], (*this)[1], (*this)[2]);
+  return tu;
 }
 
 /*!
