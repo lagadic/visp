@@ -3433,7 +3433,7 @@ unsigned int vp1394TwoGrabber::getParameterValue(vp1394TwoParametersType param)
   }
   
   uint32_t value;
-  dc1394feature_t feature;// = (dc1394feature_t)param;
+  dc1394feature_t feature = DC1394_FEATURE_BRIGHTNESS;// = (dc1394feature_t)param;
   switch(param) {
   case vpFEATURE_BRIGHTNESS: feature = DC1394_FEATURE_BRIGHTNESS; break;
   case vpFEATURE_EXPOSURE: feature = DC1394_FEATURE_EXPOSURE; break;
@@ -3501,7 +3501,7 @@ void vp1394TwoGrabber::setParameterValue(vp1394TwoParametersType param,
                                    "No camera found") );
   }
   uint32_t value = (uint32_t)val;
-  dc1394feature_t feature;// = (dc1394feature_t)param;
+  dc1394feature_t feature = DC1394_FEATURE_BRIGHTNESS;// = (dc1394feature_t)param;
   switch(param) {
   case vpFEATURE_BRIGHTNESS: feature = DC1394_FEATURE_BRIGHTNESS; break;
   case vpFEATURE_EXPOSURE: feature = DC1394_FEATURE_EXPOSURE; break;
