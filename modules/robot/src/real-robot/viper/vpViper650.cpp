@@ -534,6 +534,7 @@ vpViper650::parseConfigFile (const char * filename)
     case 1:
       if (sscanf(Ligne, "%s %lf %lf %lf", namoption,
                  &rot_eMc[0], &rot_eMc[1], &rot_eMc[2]) != 4) {
+        fclose (fdtask);
         throw(vpException(vpException::badValue,
                           "Cannot parse configuration file %s to retrieve translation"));
       }
@@ -548,6 +549,7 @@ vpViper650::parseConfigFile (const char * filename)
     case 2:
       if (sscanf(Ligne, "%s %lf %lf %lf", namoption,
                  &trans_eMc[0], &trans_eMc[1], &trans_eMc[2]) != 4) {
+        fclose (fdtask);
         throw(vpException(vpException::badValue,
                           "Cannot parse configuration file %s to retrieve rotation"));
       }

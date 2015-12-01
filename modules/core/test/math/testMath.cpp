@@ -66,8 +66,8 @@ int main() {
     return -1;
   }
 
-  if(!vpMath::isNaN(sqrt(-1.0))) {
-    std::cerr << "Fail: IsNaN(sqrt(-1.0))=" << vpMath::isNaN(sqrt(-1.0)) << " / should be true" << std::endl;
+  if(!vpMath::isNaN(NAN)) {
+    std::cerr << "Fail: IsNaN(NAN)=" << vpMath::isNaN(NAN) << " / should be true" << std::endl;
     return -1;
   }
 
@@ -116,8 +116,8 @@ int main() {
 
 
   //Test isInf
-  if(vpMath::isInf(sqrt(-1.0))) {
-    std::cerr << "Fail: vpMath::isInf(sqrt(-1.0))=" << vpMath::isInf(sqrt(-1.0)) << " / should be false" << std::endl;
+  if(vpMath::isInf(NAN)) {
+    std::cerr << "Fail: vpMath::isInf(NAN)=" << vpMath::isInf(NAN) << " / should be false" << std::endl;
     return -1;
   }
 
