@@ -283,4 +283,9 @@ if(MOMENTS_COMBINE_MATRICES)
   set(BUILDNAME "${BUILDNAME}-Moment")
 endif()
 
+#---- Suffix contrib ----
+if(VISP_CONTRIB_MODULES_PATH)
+  set(BUILDNAME "${BUILDNAME}-contrib")
+endif()
+
 #message("BUILDNAME=${BUILDNAME}")
