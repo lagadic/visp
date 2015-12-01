@@ -291,12 +291,14 @@ public:
   unsigned int nthreads;
   unsigned int threadid;
 public:
-  vpUndistortInternalType() {
-    src = dst = NULL;
-    width = height = 0;
-    nthreads = threadid = 0;
-  };
+  vpUndistortInternalType()
+    : src(NULL), dst(NULL), width(0), height(0), cam(), nthreads(0), threadid(0)
+  {};
+
   vpUndistortInternalType(const vpUndistortInternalType<Type> &u) {
+    *this = u;
+  };
+  vpUndistortInternalType &operator=(const vpUndistortInternalType<Type> &u) {
     src = u.src;
     dst = u.dst;
     width = u.width;
@@ -304,7 +306,7 @@ public:
     cam = u.cam;
     nthreads = u.nthreads;
     threadid = u.threadid;
-  };
+  }
 
   static void *vpUndistort_threaded(void *arg);
 };

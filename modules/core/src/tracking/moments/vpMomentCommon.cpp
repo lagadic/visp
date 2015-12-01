@@ -47,26 +47,21 @@
   \param dstZ : destination depth.
   \param flg_sxsyfromnormalized : flag to enable calculation of sx,sy from normalized moments.
 */
-vpMomentCommon::vpMomentCommon(double dstSurface,std::vector<double> ref,double refAlpha,double dstZ, bool flg_sxsyfromnormalized):
-    momentBasic(),
-    momentGravity(),
-    momentCentered(),
-    momentGravityNormalized(),
-    momentSurfaceNormalized(dstSurface,dstZ),
-    momentCInvariant(),
-    momentAlpha(ref,refAlpha),
-	momentArea()
+vpMomentCommon::vpMomentCommon(double dstSurface,std::vector<double> ref,double refAlpha,double dstZ, bool flg_sxsyfromnormalized)
+  : vpMomentDatabase(), momentBasic(), momentGravity(), momentCentered(), momentGravityNormalized(),
+    momentSurfaceNormalized(dstSurface,dstZ), momentCInvariant(), momentAlpha(ref,refAlpha),
+    momentArea()
 {
-    momentCInvariant = new vpMomentCInvariant(flg_sxsyfromnormalized);
+  momentCInvariant = new vpMomentCInvariant(flg_sxsyfromnormalized);
 
-    momentBasic.linkTo(*this);
-    momentGravity.linkTo(*this);
-    momentCentered.linkTo(*this);
-    momentGravityNormalized.linkTo(*this);
-    momentSurfaceNormalized.linkTo(*this);
-    momentCInvariant->linkTo(*this);
-    momentAlpha.linkTo(*this);
-    momentArea.linkTo(*this);
+  momentBasic.linkTo(*this);
+  momentGravity.linkTo(*this);
+  momentCentered.linkTo(*this);
+  momentGravityNormalized.linkTo(*this);
+  momentSurfaceNormalized.linkTo(*this);
+  momentCInvariant->linkTo(*this);
+  momentAlpha.linkTo(*this);
+  momentArea.linkTo(*this);
 }
 
 /*!

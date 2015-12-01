@@ -70,22 +70,13 @@ void vpTemplateTrackerMI::setBspline(const vpBsplineType &newbs)
 }
 
 
-vpTemplateTrackerMI::vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp):vpTemplateTracker(_warp)
+vpTemplateTrackerMI::vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp)
+  : vpTemplateTracker(_warp), hessianComputation(USE_HESSIEN_NORMAL), ApproxHessian(HESSIAN_NEW), lambda(0),
+    temp(NULL), Prt(NULL), dPrt(NULL), Pt(NULL), Pr(NULL), d2Prt(NULL), PrtTout(NULL),
+    dprtemp(NULL), PrtD(NULL), dPrtD(NULL), influBspline(0), bspline(3), Nc(8), Ncb(0),
+    d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
+    NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false)
 {
-  p = 0;
-  Pt = NULL;
-  Pr = NULL;
-  Prt = NULL;
-  dPrt = NULL;
-  d2Prt = NULL;
-  PrtD = NULL;
-  dPrtD = NULL;
-  PrtTout = NULL;
-  temp = NULL;
-  dprtemp = NULL;
-
-  Nc=8;
-  bspline=3;
   Ncb=Nc+bspline;
   influBspline=bspline*bspline;
 
@@ -112,14 +103,7 @@ vpTemplateTrackerMI::vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp):vpTemplat
 
   PrtTout= new double[Nc*Nc*influBspline*(1+(int)(nbParam+nbParam*nbParam))];
 
-  ApproxHessian=HESSIAN_NEW;
   lambda=lambdaDep;
-  MI_preEstimation = MI_postEstimation = 0;
-  NMI_preEstimation = NMI_postEstimation = 0;
-
-  computeCovariance = false;
-
-  hessianComputation = USE_HESSIEN_NORMAL;
 }
 
 void vpTemplateTrackerMI::setNc(int nc)

@@ -52,7 +52,7 @@ vpMbKltTracker::vpMbKltTracker()
 #endif
     c0Mo(), compute_interaction(true),
     firstInitialisation(true), maskBorder(5), lambda(0.8), maxIter(200), threshold_outlier(0.5),
-    percentGood(0.6), ctTc0(), tracker(), kltPolygons(), circles_disp()
+    percentGood(0.6), ctTc0(), tracker(), kltPolygons(), kltCylinders(), circles_disp()
 {  
   tracker.setTrackerId(1);
   tracker.setUseHarris(1);

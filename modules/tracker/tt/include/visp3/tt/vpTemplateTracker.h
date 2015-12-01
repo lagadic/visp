@@ -134,7 +134,44 @@ class VISP_EXPORT vpTemplateTracker
     vpImage<double>             dIy ;
     vpTemplateTrackerZone       zoneRef_; // Reference zone
     
+private:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    vpTemplateTracker(const vpTemplateTracker &)
+      : nbLvlPyr(0), l0Pyr(0), pyrInitialised(false), ptTemplate(NULL), ptTemplatePyr(NULL),
+        ptTemplateInit(false), templateSize(0), templateSizePyr(NULL), ptTemplateSelect(NULL),
+        ptTemplateSelectPyr(NULL), ptTemplateSelectInit(false), templateSelectSize(0),
+        ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL), ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL),
+        zoneTracked(NULL), zoneTrackedPyr(NULL), pyr_IDes(NULL), H(), Hdesire(), HdesirePyr(NULL),
+        HLM(), HLMdesire(), HLMdesirePyr(NULL), HLMdesireInverse(), HLMdesireInversePyr(NULL),
+        G(), gain(0), thresholdGradient(0), costFunctionVerification(false),
+        blur(false), useBrent(false), nbIterBrent(0), taillef(0), fgG(NULL), fgdG(NULL),
+        ratioPixelIn(0), mod_i(0), mod_j(0), nbParam(), lambdaDep(0), iterationMax(0),
+        iterationGlobale(0), diverge(false), nbIteration(0), useCompositionnal(false),
+        useInverse(false), Warp(NULL), p(), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(), zoneRef_()
+    {
+      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+    }
+    vpTemplateTracker &operator=(const vpTemplateTracker &){
+      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+      return *this;
+    }
+#endif
+
   public:
+    //! Default constructor.
+    vpTemplateTracker()
+      : nbLvlPyr(0), l0Pyr(0), pyrInitialised(false), ptTemplate(NULL), ptTemplatePyr(NULL),
+        ptTemplateInit(false), templateSize(0), templateSizePyr(NULL), ptTemplateSelect(NULL),
+        ptTemplateSelectPyr(NULL), ptTemplateSelectInit(false), templateSelectSize(0),
+        ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL), ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL),
+        zoneTracked(NULL), zoneTrackedPyr(NULL), pyr_IDes(NULL), H(), Hdesire(), HdesirePyr(NULL),
+        HLM(), HLMdesire(), HLMdesirePyr(NULL), HLMdesireInverse(), HLMdesireInversePyr(NULL),
+        G(), gain(0), thresholdGradient(0), costFunctionVerification(false),
+        blur(false), useBrent(false), nbIterBrent(0), taillef(0), fgG(NULL), fgdG(NULL),
+        ratioPixelIn(0), mod_i(0), mod_j(0), nbParam(), lambdaDep(0), iterationMax(0),
+        iterationGlobale(0), diverge(false), nbIteration(0), useCompositionnal(false),
+        useInverse(false), Warp(NULL), p(), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(), zoneRef_()
+    {}
     vpTemplateTracker(vpTemplateTrackerWarp *_warp);
     virtual        ~vpTemplateTracker();
     

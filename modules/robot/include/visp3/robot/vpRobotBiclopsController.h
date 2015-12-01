@@ -101,6 +101,20 @@ public:
   } shmType;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
+private:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  vpRobotBiclopsController(const vpRobotBiclopsController &)
+    : biclops(), axisMask(0), panAxis(NULL), tiltAxis(NULL), vergeAxis(NULL),
+      panProfile(), tiltProfile(), vergeProfile(), shm(), stopControllerThread_(false)
+  {
+    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+  }
+  vpRobotBiclopsController &operator=(const vpRobotBiclopsController &){
+    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+    return *this;
+  }
+#endif
+
 public:
   vpRobotBiclopsController();
   virtual ~vpRobotBiclopsController();

@@ -127,9 +127,23 @@ class VISP_EXPORT vpPlot
     float factori;
     float factorj;
     
-  public:
+private:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    vpPlot(const vpPlot &)
+      : I(), display(NULL), graphNbr(0), graphList(NULL), margei(0), margej(0),
+        factori(0), factorj(0)
+    {
+      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+    }
+    vpPlot &operator=(const vpPlot &){
+      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+      return *this;
+    }
+#endif
+
+public:
     vpPlot();
-    vpPlot(const unsigned int nbGraph, 
+    vpPlot(const unsigned int nbGraph,
 	   const unsigned int height=700, 
 	   const unsigned int width=700, 
 	   const int x=-1, const int y=-1, const char *title=NULL);

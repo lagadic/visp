@@ -202,7 +202,8 @@ Centered moments (mu03, mu12, mu21, mu30): 0.003375 0.0045625 -0.00228125 -0.000
   Note that in the continuous case, the moment object \f$m_{00}\f$ corresponds to the surface \f$a\f$ of the object.
   In the discrete case, it is the number of discrete points \f$n\f$.
 */
-class VISP_EXPORT vpMomentObject{
+class VISP_EXPORT vpMomentObject
+{
 public:
 
   /*!
@@ -224,9 +225,6 @@ public:
 
   bool flg_normalize_intensity;                 // To scale the intensity of each individual pixel in the image by the maximum intensity value present in it
 
-  // Constructor helpers
-  void init(unsigned int orderinp);
-  void init(const vpMomentObject& objin);
   // Constructors
   vpMomentObject(unsigned int order);
   vpMomentObject(const vpMomentObject& srcobj);
@@ -257,11 +255,10 @@ public:
   */
   unsigned int getOrder() const {return order-1;}
 
-  /*!
-    Specifies the type of the input data.
-    \param input_type : An input type.
-  */
-  void setType(vpObjectType input_type){this->type=input_type;}
+  // Constructor helpers
+  void init(unsigned int orderinp);
+  void init(const vpMomentObject& objin);
+
   friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentObject& v);
   /*!
     Outputs raw moments in indexed form like m[1,1] = value of moment m11
@@ -269,6 +266,12 @@ public:
     \param os : Output stream.
    */
   static void printWithIndices(const vpMomentObject& momobj, std::ostream& os);
+  /*!
+    Specifies the type of the input data.
+    \param input_type : An input type.
+  */
+  void setType(vpObjectType input_type){this->type=input_type;}
+
   /*!
     Converts the raw moments contained in vpMomentObject to a vpMatrix
     \param momobj : A vpMomentObject
@@ -281,6 +284,7 @@ protected:
   std::vector<double> values;
   void set(unsigned int i, unsigned int j, const double& value_ij);
   void cacheValues(std::vector<double>& cache,double x, double y);
+
 private:
   void cacheValues(std::vector<double>& cache,double x, double y, double IntensityNormalized);
   double calc_mom_polygon(unsigned int p, unsigned int q, const std::vector<vpPoint>& points);

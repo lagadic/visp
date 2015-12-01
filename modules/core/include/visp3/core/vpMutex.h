@@ -81,14 +81,16 @@ public:
 	{
 	private:
 		vpMutex & _mutex;
-	public:
 
+  private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    void operator=(const vpScopedLock &){
+    vpScopedLock &operator=(const vpScopedLock &){
       throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+      return *this;
     }
 #endif
 
+	public:
 		vpScopedLock(vpMutex & mutex)
 			: _mutex(mutex)
 		{

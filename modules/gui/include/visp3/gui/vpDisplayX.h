@@ -165,6 +165,21 @@ private:
   unsigned int RMask, GMask, BMask;
   int RShift, GShift, BShift;
 
+private:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  vpDisplayX(const vpDisplayX &)
+    : vpDisplay(), display(NULL), window(), Ximage(NULL), lut(), context(), screen(), event(), pixmap(),
+      x_color(NULL), screen_depth(8), xcolor(), values(), ximage_data_init(false),
+      RMask(0), GMask(0), BMask(0), RShift(0), GShift(0), BShift(0)
+  {
+    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+  }
+  vpDisplayX &operator=(const vpDisplayX &){
+    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+    return *this;
+  }
+#endif
+
 public:
   vpDisplayX() ;
   vpDisplayX(int winx, int winy, const char *title=NULL) ;

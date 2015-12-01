@@ -106,7 +106,16 @@ int main() {
 */
 class VISP_EXPORT vpKinect : public Freenect::FreenectDevice
 {
- public:
+private:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  vpKinect(const vpKinect &); // Not implemented!
+  vpKinect &operator=(const vpKinect &){
+    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+    return *this;
+  }
+#endif
+
+public:
   /*! 
     Depth map resolution.
   */
@@ -117,13 +126,6 @@ class VISP_EXPORT vpKinect : public Freenect::FreenectDevice
 
   vpKinect(freenect_context *ctx, int index);
   virtual ~vpKinect();
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vpKinect(const vpKinect &); // Not implemented!
-  void operator=(const vpKinect &){
-    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-  }
-#endif
 
   void start(vpKinect::vpDMResolution res = DMAP_LOW_RES);
   void stop();

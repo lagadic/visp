@@ -71,7 +71,7 @@ vpServo::vpServo()
     interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false),
     cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false),
     errorComputed(false), interactionMatrixComputed(false), dim_task(0), taskWasKilled(false),
-    forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4.)
+    forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial()
 {
 }
 /*!
@@ -93,7 +93,7 @@ vpServo::vpServo(vpServoType servo_type)
     interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false),
     cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false),
     errorComputed(false), interactionMatrixComputed(false), dim_task(0), taskWasKilled(false),
-    forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4)
+    forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4), e1_initial()
 {
 }
 

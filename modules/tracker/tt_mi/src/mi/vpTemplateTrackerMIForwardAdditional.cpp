@@ -44,7 +44,8 @@
 #endif
 
 vpTemplateTrackerMIForwardAdditional::vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp)
-  : vpTemplateTrackerMI(_warp)
+  : vpTemplateTrackerMI(_warp), minimizationMethod(USE_NEWTON), evolRMS(0), x_pos(NULL), y_pos(NULL),
+    threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()
 {
   evolRMS = 0;
   x_pos = y_pos = NULL;

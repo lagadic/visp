@@ -76,7 +76,26 @@ protected:
   void initHessienDesired(const vpImage<unsigned char> &I);
   void trackNoPyr(const vpImage<unsigned char> &I);
 
+private:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  vpTemplateTrackerMIESM(const vpTemplateTrackerMIESM &)
+    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), CompoInitialised(false),
+      HDirect(), HInverse(), HdesireDirect(), HdesireInverse(), GDirect(), GInverse()
+  {
+    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+  }
+  vpTemplateTrackerMIESM &operator=(const vpTemplateTrackerMIESM &){
+    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+    return *this;
+  }
+#endif
+
 public:
+  //! Default constructor.
+  vpTemplateTrackerMIESM()
+    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), CompoInitialised(false),
+      HDirect(), HInverse(), HdesireDirect(), HdesireInverse(), GDirect(), GInverse()
+  {}
   vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp);
 
   void  setMinimizationMethod(vpMinimizationTypeMIESM method){minimizationMethod=method;}

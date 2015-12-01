@@ -110,20 +110,18 @@ int main()
 
 */
 vpRobotBiclops::vpRobotBiclops ()
-  : vpRobot ()
+  : vpBiclops(), vpRobot(), control_thread(), controller(),
+    positioningVelocity(defaultPositioningVelocity), q_previous(), controlThreadCreated(false)
 {
   vpDEBUG_TRACE (12, "Begin default constructor.");
 
   vpRobotBiclops::robotAlreadyCreated = false;
-  controlThreadCreated = false;
   setConfigFile("/usr/share/BiclopsDefault.cfg");
 
   // Initialize the mutex dedicated to she shm protection
   pthread_mutex_init (&vpShm_mutex, NULL);
   pthread_mutex_init (&vpEndThread_mutex, NULL);
   pthread_mutex_init (&vpMeasure_mutex, NULL);
-
-  positioningVelocity = defaultPositioningVelocity ;
 
   control_thread = 0;
 }
@@ -162,21 +160,18 @@ int main()
 
 */
 vpRobotBiclops::vpRobotBiclops (const char * filename)
-  :
-  vpRobot ()
+  : vpBiclops(), vpRobot(), control_thread(), controller(),
+    positioningVelocity(defaultPositioningVelocity), q_previous(), controlThreadCreated(false)
 {
   vpDEBUG_TRACE (12, "Begin default constructor.");
 
   vpRobotBiclops::robotAlreadyCreated = false;
-  controlThreadCreated = false;
   setConfigFile(filename);
 
   // Initialize the mutex dedicated to she shm protection
   pthread_mutex_init (&vpShm_mutex, NULL);
   pthread_mutex_init (&vpEndThread_mutex, NULL);
   pthread_mutex_init (&vpMeasure_mutex, NULL);
-
-  positioningVelocity = defaultPositioningVelocity ;
 
   init();
 

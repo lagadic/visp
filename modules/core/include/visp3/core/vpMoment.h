@@ -43,10 +43,12 @@
 #ifndef __MOMENT_H__
 #define __MOMENT_H__
 
-#include <visp3/core/vpConfig.h>
-
 #include <vector>
 #include <iostream>
+
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
+
 
 class vpMomentDatabase;
 class vpMomentObject;
@@ -101,36 +103,54 @@ class vpMomentObject;
   - vpMomentGravityCenterNormalized
 
 */
-class VISP_EXPORT vpMoment{
- private:
-        vpMomentObject* object;
-        vpMomentDatabase* moments;
-        char _name[255];
- protected:
-        std::vector<double> values;
-        /*!
-        Returns the linked moment database.
-        \return the moment database
-        */
-        inline vpMomentDatabase& getMoments() const { return *moments; }
- public:
-        inline const vpMomentObject& getObject() const { return *object;}
-        vpMoment();
-        /*!
-        Returns all values computed by the moment.
-        \return vector of values
-        */
-        const std::vector<double>& get() const { return values;}
-        void linkTo(vpMomentDatabase& moments);
-        void update(vpMomentObject& object);
-        virtual void compute()=0;
-        virtual const char* name() const = 0;
-        friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMoment& m);
-        virtual void printDependencies(std::ostream& os) const;
+class VISP_EXPORT vpMoment
+{
+private:
+  vpMomentObject* object;
+  vpMomentDatabase* moments;
+  char _name[255];
 
-        /*!
-        Virtual destructor.
-        */
-        virtual ~vpMoment() {}
+protected:
+  std::vector<double> values;
+  /*!
+     Returns the linked moment database.
+     \return the moment database
+   */
+  inline vpMomentDatabase& getMoments() const { return *moments; }
+
+private:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  vpMoment(const vpMoment &)
+    : object(NULL), moments(NULL), values()
+  {
+    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+  }
+  vpMoment &operator=(const vpMoment &){
+    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+    return *this;
+  }
+#endif
+
+public:
+  vpMoment();
+
+  /*!
+     Virtual destructor.
+   */
+  virtual ~vpMoment() {}
+
+  virtual void compute()=0;
+  inline const vpMomentObject& getObject() const { return *object;}
+  /*!
+     Returns all values computed by the moment.
+     \return vector of values
+   */
+  const std::vector<double>& get() const { return values;}
+  void linkTo(vpMomentDatabase& moments);
+  virtual const char* name() const = 0;
+  friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMoment& m);
+  virtual void printDependencies(std::ostream& os) const;
+  void update(vpMomentObject& object);
+
 };
 #endif

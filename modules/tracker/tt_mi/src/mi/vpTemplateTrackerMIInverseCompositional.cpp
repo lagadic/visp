@@ -47,14 +47,12 @@
 
 //#define USE_OPENMP_MI_INVCOMP
 
-vpTemplateTrackerMIInverseCompositional::vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp):vpTemplateTrackerMI(_warp)
+vpTemplateTrackerMIInverseCompositional::vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp)
+  : vpTemplateTrackerMI(_warp), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
+    evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(1e-20), p_prec(), G_prec(), KQuasiNewton(),
+    useAYOptim(false)
 {
-  CompoInitialised=false;
   useInverse=true;
-  useTemplateSelect=false;
-  threshold_RMS=1e-20;
-  minimizationMethod=USE_LMA;
-  useAYOptim = false;
 }
 
 void vpTemplateTrackerMIInverseCompositional::initTemplateRefBspline(unsigned int ptIndex, double &et) //AY : Optim

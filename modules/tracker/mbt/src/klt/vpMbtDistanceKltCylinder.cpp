@@ -46,8 +46,8 @@
   Basic constructor.
 
 */
-vpMbtDistanceKltCylinder::vpMbtDistanceKltCylinder():
-  c0Mo(), p1Ext(), p2Ext(), cylinder(), circle1(), circle2(),
+vpMbtDistanceKltCylinder::vpMbtDistanceKltCylinder()
+  : c0Mo(), p1Ext(), p2Ext(), cylinder(), circle1(), circle2(),
     initPoints(), initPoints3D(), curPoints(), curPointsInd(),
     nbPointsCur(0), nbPointsInit(0), minNbPoint(4), enoughPoints(false),
     cam(), isTrackedKltCylinder(true), listIndicesCylinderBBox(), hiddenface(NULL), useScanLine(false)

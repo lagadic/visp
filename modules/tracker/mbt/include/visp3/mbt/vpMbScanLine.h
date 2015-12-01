@@ -83,6 +83,7 @@ public:
   //! Structure to define a scanline intersection.
   struct vpMbScanLineSegment
   {
+    vpMbScanLineSegment() : type(START), edge(), p(0), P1(0), P2(0), Z1(0), Z2(0), ID(0), b_sample_Y(false) {};
     vpMbScanLineType type;
     vpMbScanLineEdge edge;
     double p; // This value can be either x or y-coordinate value depending if the structure is used in X or Y-axis scanlines computation.

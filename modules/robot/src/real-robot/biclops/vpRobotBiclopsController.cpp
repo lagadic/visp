@@ -65,15 +65,13 @@
    Default constructor.
 */
 vpRobotBiclopsController::vpRobotBiclopsController()
+  : biclops(), axisMask(0), panAxis(NULL), tiltAxis(NULL), vergeAxis(NULL),
+    panProfile(), tiltProfile(), vergeProfile(), shm(), stopControllerThread_(false)
 {
-  stopControllerThread_ = false;
   axisMask = Biclops::PanMask
     + Biclops::TiltMask
     /*+ Biclops::VergeMask*/; // add this if you want verge.
 
-  panAxis = NULL;
-  tiltAxis = NULL;
-  vergeAxis = NULL;
 
   // Set Debug level depending on how much info you want to see about
   // the inner workings of the API. Level 2 is highest with 0 being

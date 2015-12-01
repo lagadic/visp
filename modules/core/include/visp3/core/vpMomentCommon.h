@@ -91,24 +91,40 @@ class vpMomentObject;
     \attention Make sure your object is at least of order 5 when using this pre-filled database.
 
 */
-class VISP_EXPORT vpMomentCommon : public vpMomentDatabase{
+class VISP_EXPORT vpMomentCommon : public vpMomentDatabase
+{
 private:
-    vpMomentBasic momentBasic;
-    vpMomentGravityCenter momentGravity;
-    vpMomentCentered momentCentered;
-    vpMomentGravityCenterNormalized momentGravityNormalized;
-    vpMomentAreaNormalized momentSurfaceNormalized;
-    vpMomentCInvariant* momentCInvariant;
-    vpMomentAlpha momentAlpha;
-    vpMomentArea momentArea;
+  vpMomentBasic momentBasic;
+  vpMomentGravityCenter momentGravity;
+  vpMomentCentered momentCentered;
+  vpMomentGravityCenterNormalized momentGravityNormalized;
+  vpMomentAreaNormalized momentSurfaceNormalized;
+  vpMomentCInvariant* momentCInvariant;
+  vpMomentAlpha momentAlpha;
+  vpMomentArea momentArea;
+
+private:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  vpMomentCommon(const vpMomentCommon &)
+    : vpMomentDatabase(), momentBasic(), momentGravity(), momentCentered(), momentGravityNormalized(),
+      momentSurfaceNormalized(0, 0), momentCInvariant(), momentAlpha(), momentArea()
+  {
+    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+  }
+  vpMomentCommon &operator=(const vpMomentCommon &){
+    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+    return *this;
+  }
+#endif
+
 public:
-    vpMomentCommon(double dstSurface,std::vector<double> ref,double refAlpha,double dstZ=1.0, bool flg_sxsyfromnormalized=false);
+  vpMomentCommon(double dstSurface,std::vector<double> ref,double refAlpha,double dstZ=1.0, bool flg_sxsyfromnormalized=false);
 
-    static double getAlpha(vpMomentObject& object);
-    static std::vector<double> getMu3(vpMomentObject& object);
-    static double getSurface(vpMomentObject& object);
+  static double getAlpha(vpMomentObject& object);
+  static std::vector<double> getMu3(vpMomentObject& object);
+  static double getSurface(vpMomentObject& object);
 
-    void updateAll(vpMomentObject& object);
-    ~vpMomentCommon();
+  void updateAll(vpMomentObject& object);
+  ~vpMomentCommon();
 };
 #endif // VPCOMMONMOMENTS_H

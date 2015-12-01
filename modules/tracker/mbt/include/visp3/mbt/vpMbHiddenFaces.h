@@ -259,7 +259,7 @@ class vpMbHiddenFaces
 */
 template<class PolygonType>
 vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces()
-  : Lpol(), nbVisiblePolygon(0)
+  : Lpol(), nbVisiblePolygon(0), scanlineRender()
 {
 #ifdef VISP_HAVE_OGRE
   ogreInitialised = false;

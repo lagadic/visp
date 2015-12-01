@@ -43,12 +43,12 @@
 #include <omp.h>
 #endif
 
-vpTemplateTrackerMIESM::vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp):vpTemplateTrackerMI(_warp)
+vpTemplateTrackerMIESM::vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp)
+  : vpTemplateTrackerMI(_warp), minimizationMethod(USE_NEWTON), CompoInitialised(false),
+    HDirect(), HInverse(), HdesireDirect(), HdesireInverse(), GDirect(), GInverse()
 {
   useCompositionnal=false;
   useInverse=false;
-  CompoInitialised=false;
-  minimizationMethod=USE_NEWTON;
   if(!Warp->isESMcompatible())
     std::cerr<<"The selected warp function is not appropriate for the ESM algorithm..."<<std::endl;
 }

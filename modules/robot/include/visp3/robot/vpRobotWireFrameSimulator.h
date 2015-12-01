@@ -170,6 +170,32 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 
     bool verbose_;
     
+private:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    vpRobotWireFrameSimulator(const vpRobotWireFrameSimulator &)
+      : vpWireFrameSimulator(), vpRobotSimulator(),
+        I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL), artCoord(), artVel(), velocity(),
+    #if defined(_WIN32)
+    #elif defined(VISP_HAVE_PTHREAD)
+        thread(), attr(),
+    #endif
+        mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(), mutex_display(),
+        displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true),
+        cameraParam(),
+    #if defined(VISP_HAVE_DISPLAY)
+        display(),
+    #endif
+        displayType(MODEL_3D), displayAllowed(true), constantSamplingTimeMode(false),
+        setVelocityCalled(false), verbose_(false)
+    {
+      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+    }
+    vpRobotWireFrameSimulator &operator=(const vpRobotWireFrameSimulator &){
+      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+      return *this;
+    }
+#endif
+
   public:
     vpRobotWireFrameSimulator();
     vpRobotWireFrameSimulator(bool display);

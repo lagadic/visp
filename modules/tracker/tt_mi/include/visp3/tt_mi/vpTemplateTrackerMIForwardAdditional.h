@@ -82,7 +82,26 @@ protected:
   void computeEvalRMS(const vpColVector &p);
   void initPosEvalRMS(vpColVector &p);
 
+private:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  vpTemplateTrackerMIForwardAdditional(const vpTemplateTrackerMIForwardAdditional &)
+    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), evolRMS(0), x_pos(NULL), y_pos(NULL),
+      threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()
+  {
+    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+  }
+  vpTemplateTrackerMIForwardAdditional &operator=(const vpTemplateTrackerMIForwardAdditional &){
+    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+    return *this;
+  }
+#endif
+
 public:
+  //! Default constructor.
+  vpTemplateTrackerMIForwardAdditional()
+    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), evolRMS(0), x_pos(NULL), y_pos(NULL),
+      threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()
+  {}
   vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp);
   void  setThresholdRMS(double threshold){threshold_RMS=threshold;}
   void  setMinimizationMethod(vpMinimizationTypeMIForwardAdditional method){minimizationMethod=method;}

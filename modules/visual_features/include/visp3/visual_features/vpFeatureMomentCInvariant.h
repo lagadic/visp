@@ -206,8 +206,10 @@ class VISP_EXPORT vpFeatureMomentCInvariant : public vpFeatureMoment{
     \param featureMoments : Feature database.
 
     */
-    vpFeatureMomentCInvariant(vpMomentDatabase& data_base,double A_, double B_, double C_,vpFeatureMomentDatabase* featureMoments=NULL) :
-        vpFeatureMoment(data_base,A_,B_,C_,featureMoments,16){LI.resize(16);}
+    vpFeatureMomentCInvariant(vpMomentDatabase& data_base,double A_, double B_, double C_, vpFeatureMomentDatabase* featureMoments=NULL)
+      : vpFeatureMoment(data_base,A_,B_,C_,featureMoments,16), LI(16)
+    {}
+
     void compute_interaction();
         /*!
           associated moment name

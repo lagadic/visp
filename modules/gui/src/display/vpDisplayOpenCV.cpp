@@ -91,6 +91,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
                                  int y,
                                  const char *title)
   :
+    vpDisplay(),
     #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     background(NULL), col(NULL), cvcolor(), font(NULL),
     #else

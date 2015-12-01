@@ -48,6 +48,7 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/core/vpException.h>
 
 #include <stdio.h>
 
@@ -60,11 +61,22 @@
 template <class type>
 class vpListElement
 {
-  public:
-    vpListElement() : prev(NULL), next(NULL), val() {};
-    vpListElement<type> *prev; //<! pointer to the previous element in the list
-    vpListElement<type> *next; //<! pointer to the next element in the list
-    type val;             //<! value of the element
+private:
+  vpListElement(const vpListElement &)
+    : prev(NULL), next(NULL), val()
+  {
+    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+  }
+  vpListElement &operator=(const vpListElement &){
+    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+    return *this;
+  }
+
+public:
+  vpListElement() : prev(NULL), next(NULL), val() {};
+  vpListElement<type> *prev; //<! pointer to the previous element in the list
+  vpListElement<type> *next; //<! pointer to the next element in the list
+  type val;             //<! value of the element
 } ;
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */

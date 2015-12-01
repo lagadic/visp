@@ -139,7 +139,28 @@ class vpPlotGraph
     
     unsigned int gridThickness;
 
-  public:
+private:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    vpPlotGraph(const vpPlotGraph &)
+      : xorg(0.), yorg(0.), zoomx(1.), zoomy(1.), xmax(10), ymax(10), xmin(0), ymin(-10),
+        xdelt(1), ydelt(1), gridx(true), gridy(true), gridColor(), curveNbr(1), curveList(NULL),
+        scaleInitialized(false), firstPoint(true), nbDivisionx(10), nbDivisiony(10), topLeft(),
+        width(0), height(0), graphZone(), dTopLeft(), dWidth(0), dHeight(0), dGraphZone(),
+        dTopLeft3D(), dGraphZone3D(), cam(), cMo(), cMf(), w_xval(0), w_xsize(0), w_yval(0), w_ysize(0),
+        w_zval(0), w_zsize(0), ptXorg(0), ptYorg(0), ptZorg(0), zoomx_3D(1.), zoomy_3D(1.), zoomz_3D(1.),
+        nbDivisionz(10), zorg(1.), zoomz(1.), zmax(10), zmin(-10), zdelt(1), old_iPr(), old_iPz(),
+        blockedr(false), blockedz(false), blocked(false), epsi(5), epsj(6),
+        dispUnit(false), dispTitle(false), dispLegend(false), gridThickness(1)
+    {
+      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+    }
+    vpPlotGraph &operator=(const vpPlotGraph &){
+      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+      return *this;
+    }
+#endif
+
+public:
     vpPlotGraph();
     ~vpPlotGraph();
     
