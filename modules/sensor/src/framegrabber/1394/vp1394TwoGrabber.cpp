@@ -3433,7 +3433,32 @@ unsigned int vp1394TwoGrabber::getParameterValue(vp1394TwoParametersType param)
   }
   
   uint32_t value;
-  dc1394feature_t feature = (dc1394feature_t)param;
+  dc1394feature_t feature;// = (dc1394feature_t)param;
+  switch(param) {
+  case vpFEATURE_BRIGHTNESS: feature = DC1394_FEATURE_BRIGHTNESS; break;
+  case vpFEATURE_EXPOSURE: feature = DC1394_FEATURE_EXPOSURE; break;
+  case vpFEATURE_SHARPNESS: feature = DC1394_FEATURE_SHARPNESS; break;
+//    vpFEATURE_WHITE_BALANCE   = DC1394_FEATURE_WHITE_BALANCE,
+  case vpFEATURE_HUE: feature = DC1394_FEATURE_HUE; break;
+  case vpFEATURE_SATURATION: feature = DC1394_FEATURE_SATURATION; break;
+  case vpFEATURE_GAMMA: feature = DC1394_FEATURE_GAMMA; break;
+  case vpFEATURE_SHUTTER: feature = DC1394_FEATURE_SHUTTER; break;
+  case vpFEATURE_GAIN: feature = DC1394_FEATURE_GAIN; break;
+  case vpFEATURE_IRIS: feature = DC1394_FEATURE_IRIS; break;
+//    vpFEATURE_FOCUS           = DC1394_FEATURE_FOCUS,
+//    vpFEATURE_TEMPERATURE     = DC1394_FEATURE_TEMPERATURE,
+//    vpFEATURE_TRIGGER         = DC1394_FEATURE_TRIGGER,
+//    vpFEATURE_TRIGGER_DELAY   = DC1394_FEATURE_TRIGGER_DELAY,
+//    vpFEATURE_WHITE_SHADING   = DC1394_FEATURE_WHITE_SHADING,
+//    vpFEATURE_FRAME_RATE      = DC1394_FEATURE_FRAME_RATE,
+//    vpFEATURE_ZOOM            = DC1394_FEATURE_ZOOM,
+//    vpFEATURE_PAN             = DC1394_FEATURE_PAN,
+//    vpFEATURE_TILT            = DC1394_FEATURE_TILT,
+//    vpFEATURE_OPTICAL_FILTER  = DC1394_FEATURE_OPTICAL_FILTER,
+//    vpFEATURE_CAPTURE_SIZE    = DC1394_FEATURE_CAPTURE_SIZE,
+//    vpFEATURE_CAPTURE_QUALITY = DC1394_FEATURE_CAPTURE_QUALITY
+  }
+
   dc1394error_t err;
   err = dc1394_feature_get_value(camera, feature, &value);
   if (err != DC1394_SUCCESS) {
@@ -3476,7 +3501,32 @@ void vp1394TwoGrabber::setParameterValue(vp1394TwoParametersType param,
                                    "No camera found") );
   }
   uint32_t value = (uint32_t)val;
-  dc1394feature_t feature = (dc1394feature_t)param;
+  dc1394feature_t feature;// = (dc1394feature_t)param;
+  switch(param) {
+  case vpFEATURE_BRIGHTNESS: feature = DC1394_FEATURE_BRIGHTNESS; break;
+  case vpFEATURE_EXPOSURE: feature = DC1394_FEATURE_EXPOSURE; break;
+  case vpFEATURE_SHARPNESS: feature = DC1394_FEATURE_SHARPNESS; break;
+//    vpFEATURE_WHITE_BALANCE   = DC1394_FEATURE_WHITE_BALANCE,
+  case vpFEATURE_HUE: feature = DC1394_FEATURE_HUE; break;
+  case vpFEATURE_SATURATION: feature = DC1394_FEATURE_SATURATION; break;
+  case vpFEATURE_GAMMA: feature = DC1394_FEATURE_GAMMA; break;
+  case vpFEATURE_SHUTTER: feature = DC1394_FEATURE_SHUTTER; break;
+  case vpFEATURE_GAIN: feature = DC1394_FEATURE_GAIN; break;
+  case vpFEATURE_IRIS: feature = DC1394_FEATURE_IRIS; break;
+//    vpFEATURE_FOCUS           = DC1394_FEATURE_FOCUS,
+//    vpFEATURE_TEMPERATURE     = DC1394_FEATURE_TEMPERATURE,
+//    vpFEATURE_TRIGGER         = DC1394_FEATURE_TRIGGER,
+//    vpFEATURE_TRIGGER_DELAY   = DC1394_FEATURE_TRIGGER_DELAY,
+//    vpFEATURE_WHITE_SHADING   = DC1394_FEATURE_WHITE_SHADING,
+//    vpFEATURE_FRAME_RATE      = DC1394_FEATURE_FRAME_RATE,
+//    vpFEATURE_ZOOM            = DC1394_FEATURE_ZOOM,
+//    vpFEATURE_PAN             = DC1394_FEATURE_PAN,
+//    vpFEATURE_TILT            = DC1394_FEATURE_TILT,
+//    vpFEATURE_OPTICAL_FILTER  = DC1394_FEATURE_OPTICAL_FILTER,
+//    vpFEATURE_CAPTURE_SIZE    = DC1394_FEATURE_CAPTURE_SIZE,
+//    vpFEATURE_CAPTURE_QUALITY = DC1394_FEATURE_CAPTURE_QUALITY
+  }
+
   dc1394error_t err;
   dc1394bool_t hasManualMode = DC1394_FALSE;
   dc1394feature_modes_t modesAvailable;

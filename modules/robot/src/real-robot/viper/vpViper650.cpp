@@ -532,10 +532,11 @@ vpViper650::parseConfigFile (const char * filename)
       break; // Nothing to do: camera name
 
     case 1:
-      sscanf(Ligne, "%s %lf %lf %lf", namoption,
-             &rot_eMc[0],
-             &rot_eMc[1],
-             &rot_eMc[2]);
+      if (sscanf(Ligne, "%s %lf %lf %lf", namoption,
+                 &rot_eMc[0], &rot_eMc[1], &rot_eMc[2]) != 4) {
+        throw(vpException(vpException::badValue,
+                          "Cannot parse configuration file %s to retrieve translation"));
+      }
 
       // Convert rotation from degrees to radians
       rot_eMc[0] *= M_PI / 180.0;
@@ -545,10 +546,11 @@ vpViper650::parseConfigFile (const char * filename)
       break;
 
     case 2:
-      sscanf(Ligne, "%s %lf %lf %lf", namoption,
-             &trans_eMc[0],
-             &trans_eMc[1],
-             &trans_eMc[2]);
+      if (sscanf(Ligne, "%s %lf %lf %lf", namoption,
+                 &trans_eMc[0], &trans_eMc[1], &trans_eMc[2]) != 4) {
+        throw(vpException(vpException::badValue,
+                          "Cannot parse configuration file %s to retrieve rotation"));
+      }
       get_trans_eMc = true;
       break;
 

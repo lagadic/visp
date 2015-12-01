@@ -36,6 +36,7 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+#include <visp3/core/vpException.h>
 #include <visp3/tt_mi/vpTemplateTrackerMI.h>
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>
 
@@ -113,10 +114,14 @@ vpTemplateTrackerMI::vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp):vpTemplat
 
   ApproxHessian=HESSIAN_NEW;
   lambda=lambdaDep;
+  MI_preEstimation = MI_postEstimation = 0;
+  NMI_preEstimation = NMI_postEstimation = 0;
+
   computeCovariance = false;
 
   hessianComputation = USE_HESSIEN_NORMAL;
 }
+
 void vpTemplateTrackerMI::setNc(int nc)
 {
   Nc=nc;
@@ -887,6 +892,11 @@ double vpTemplateTrackerMI::getMI256(vpImage<unsigned char> &I,vpColVector &tp)
       Pt256[IW]++;
     }
   }
+
+  if (Nbpoint == 0){
+    throw(vpException(vpException::divideByZeroError,
+                      "Cannot get MI; number of points = 0"));
+  }
   Prt256=Prt256/Nbpoint;
   Pr256=Pr256/Nbpoint;
   Pt256=Pt256/Nbpoint;
@@ -905,7 +915,7 @@ double vpTemplateTrackerMI::getMI256(vpImage<unsigned char> &I,vpColVector &tp)
     if(std::fabs(Pt256[t]) > std::numeric_limits<double>::epsilon())
       MI+=-Pt256[t]*log(Pt256[t]);
     //if(Pr256[t]!=0)
-    if(std::fabs(Pt256[t]) > std::numeric_limits<double>::epsilon())
+    if(std::fabs(Pr256[t]) > std::numeric_limits<double>::epsilon())
       MI+=-Pr256[t]*log(Pr256[t]);
 
   }

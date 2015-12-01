@@ -217,6 +217,10 @@ void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color,
     }
   }
 
+  if (maxValue == 0) {
+    throw(vpException(vpException::divideByZeroError,
+                      "Cannot display histogram; max value=0"));
+  }
   //Keep 12 free pixels at the top
   unsigned int max_height = height-12;
   double ratio_height = max_height / (double) maxValue;

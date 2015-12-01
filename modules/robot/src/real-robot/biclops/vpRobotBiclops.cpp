@@ -110,8 +110,7 @@ int main()
 
 */
 vpRobotBiclops::vpRobotBiclops ()
-  :
-  vpRobot ()
+  : vpRobot ()
 {
   vpDEBUG_TRACE (12, "Begin default constructor.");
 
@@ -125,6 +124,8 @@ vpRobotBiclops::vpRobotBiclops ()
   pthread_mutex_init (&vpMeasure_mutex, NULL);
 
   positioningVelocity = defaultPositioningVelocity ;
+
+  control_thread = 0;
 }
 
 /*!

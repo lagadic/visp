@@ -75,7 +75,7 @@ fprintf_rfstack (FILE *fp)
 	}
 	fprintf (fp, "(");
 	if (*sp & IS_ABOVE) {
-    if (flg) fprintf (fp, " ");
+    //if (flg) fprintf (fp, " "); Removed since if (flg) cannot be true
     flg ++;
 		fprintf (fp, "above");
 	}

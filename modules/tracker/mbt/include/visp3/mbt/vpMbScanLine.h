@@ -160,9 +160,9 @@ public:
   const vpImage<unsigned char>& getMask() const  { return mask; }
   const vpImage<int>&           getPrimitiveIDs() const  { return primitive_ids; }
 
-  void                          queryLineVisibility(vpPoint a,
-                                                    vpPoint b,
-                                                    std::vector<std::pair<vpPoint, vpPoint> > &lines, const bool &displayResults = false);
+  void                          queryLineVisibility(const vpPoint &a, const vpPoint &b,
+                                                    std::vector<std::pair<vpPoint, vpPoint> > &lines,
+                                                    const bool &displayResults = false);
 
   /*!
     If there is one polygon behind another,

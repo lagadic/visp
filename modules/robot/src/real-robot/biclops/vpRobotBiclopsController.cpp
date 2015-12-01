@@ -89,6 +89,23 @@ vpRobotBiclopsController::vpRobotBiclopsController()
     shm.status[i] = STOP;
   }
 
+  panProfile.pos = 0;
+  panProfile.vel = 0;
+  panProfile.acc = 0;
+  panProfile.dec = 0;
+  panProfile.jerk = 0;
+
+  tiltProfile.pos = 0;
+  tiltProfile.vel = 0;
+  tiltProfile.acc = 0;
+  tiltProfile.dec = 0;
+  tiltProfile.jerk = 0;
+
+  vergeProfile.pos = 0;
+  vergeProfile.vel = 0;
+  vergeProfile.acc = 0;
+  vergeProfile.dec = 0;
+  vergeProfile.jerk = 0;
 }
 
 /*!

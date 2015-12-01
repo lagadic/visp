@@ -58,7 +58,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-vpMbScanLine::vpMbScanLine(): maskBorder(0), depthTreshold(1e-06)
+vpMbScanLine::vpMbScanLine()
+  : w(0), h(0), K(), maskBorder(0), mask(), primitive_ids(),
+    visibility_samples(), depthTreshold(1e-06)
 #if defined(DEBUG_DISP)
   ,dispLineDebug(NULL), dispMaskDebug(NULL)
 #endif
@@ -571,9 +573,9 @@ vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigne
   \param displayResults : True if the results have to be displayed. False otherwise.
 */
 void
-vpMbScanLine::queryLineVisibility(vpPoint a,
-                         vpPoint b,
-                         std::vector<std::pair<vpPoint, vpPoint> > &lines, const bool &displayResults)
+vpMbScanLine::queryLineVisibility(const vpPoint &a, const vpPoint &b,
+                                  std::vector<std::pair<vpPoint, vpPoint> > &lines,
+                                  const bool &displayResults)
 {
   vpColVector _a, _b;
   createVectorFromPoint(a, _a, K);
@@ -616,11 +618,24 @@ vpMbScanLine::queryLineVisibility(vpPoint a,
     size = h;
   }
 
+  // Cannot call swap(a,b) since a and b are const
+  // The fix consists in 2 new points that contain the right points
+  vpPoint a_;
+  vpPoint b_;
+
   if (*v0 > *v1)
   {
       std::swap(v0, v1);
       std::swap(w0, w1);
-      std::swap(a, b);
+      //std::swap(a, b);
+      // Cannot call swap(a,b) since a and b are const
+      // Instead of swap we set the right address of the corresponding pointers
+      a_ = b;
+      b_ = a;
+  }
+  else {
+    a_ = a;
+    b_ = b;
   }
 
   //if (*v0 >= size - 1 || *v1 < 0 || *v1 == *v0)
@@ -639,7 +654,8 @@ vpMbScanLine::queryLineVisibility(vpPoint a,
   {
       const int v = *it;
       const double alpha = getAlpha(v, (*v0) * (*w0), (*w0), (*v1) * (*w1), (*w1));
-      const vpPoint p = mix(a, b, alpha);
+      //const vpPoint p = mix(a, b, alpha);
+      const vpPoint p = mix(a_, b_, alpha);
       if (last + 1 != v)
       {
           if(b_line_started)
@@ -648,13 +664,15 @@ vpMbScanLine::queryLineVisibility(vpPoint a,
       }
       if (v == _v0)
       {
-          line_start = a;
+          //line_start = a;
+          line_start = a_;
           line_end = p;
           b_line_started = true;
       }
       else if (v == _v1)
       {
-          line_end = b;
+          //line_end = b;
+          line_end = b_;
           if (!b_line_started)
               line_start = p;
           b_line_started = true;

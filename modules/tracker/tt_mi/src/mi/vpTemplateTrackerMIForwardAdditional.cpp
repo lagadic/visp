@@ -43,8 +43,11 @@
 #include <omp.h>
 #endif
 
-vpTemplateTrackerMIForwardAdditional::vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp):vpTemplateTrackerMI(_warp)
+vpTemplateTrackerMIForwardAdditional::vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp)
+  : vpTemplateTrackerMI(_warp)
 {
+  evolRMS = 0;
+  x_pos = y_pos = NULL;
   useCompositionnal=false;
   threshold_RMS=1e-20;
   minimizationMethod=USE_NEWTON;

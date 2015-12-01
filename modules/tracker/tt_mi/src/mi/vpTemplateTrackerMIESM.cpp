@@ -93,12 +93,10 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
     if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
     {
       Nbpoint++;
-      Tij=ptTemplate[point].val;
-      //Tij=Iterateurvecteur->val;
-      if(blur)
-        IW=BI.getValue(i2,j2);
-      else
-        IW=I.getValue(i2,j2);
+//      if(blur)
+//        IW=BI.getValue(i2,j2);
+//      else
+//        IW=I.getValue(i2,j2);
 
       //ct=ptTemplateSupp[point].ct;
       //et=ptTemplateSupp[point].et;

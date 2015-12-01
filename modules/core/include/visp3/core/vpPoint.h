@@ -111,7 +111,7 @@ public:
   //! Basic construction.
   void init() ;
 
-  friend VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpPoint& vpp);
+  friend VISP_EXPORT std::ostream& operator<<(std::ostream& os, const vpPoint& vpp);
   vpPoint& operator=(const vpPoint& vpp);
 
   //! Projection onto the image plane of a point. Input: the 3D coordinates in the camera frame _cP, output : the 2D coordinates _p.

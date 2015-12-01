@@ -106,7 +106,7 @@ class vpMbHiddenFaces
 
     void computeScanLineRender(const vpCameraParameters &cam, const unsigned int &w, const unsigned int &h);
 
-    void computeScanLineQuery(vpPoint a,vpPoint b,
+    void computeScanLineQuery(const vpPoint &a, const vpPoint &b,
                               std::vector<std::pair<vpPoint, vpPoint> > &lines, const bool &displayResults = false);
 
     vpMbScanLine& getMbScanLineRenderer() { return scanlineRender; }
@@ -432,8 +432,9 @@ vpMbHiddenFaces<PolygonType>::computeScanLineRender(const vpCameraParameters &ca
 */
 template<class PolygonType>
 void
-vpMbHiddenFaces<PolygonType>::computeScanLineQuery(vpPoint a,vpPoint b,
-                          std::vector<std::pair<vpPoint, vpPoint> > &lines, const bool &displayResults)
+vpMbHiddenFaces<PolygonType>::computeScanLineQuery(const vpPoint &a, const vpPoint &b,
+                                                   std::vector<std::pair<vpPoint, vpPoint> > &lines,
+                                                   const bool &displayResults)
 {
   scanlineRender.queryLineVisibility(a,b,lines,displayResults);
 }
