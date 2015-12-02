@@ -220,15 +220,15 @@ int main(int argc, const char ** argv) {
     detectorNames.push_back("SURF");
 #endif
 
-    for(std::vector<std::string>::const_iterator it = detectorNames.begin(); it != detectorNames.end(); ++it) {
-      keyPoints.setDetector(*it);
+    for(std::vector<std::string>::const_iterator itd = detectorNames.begin(); itd != detectorNames.end(); ++itd) {
+      keyPoints.setDetector(*itd);
 
       std::vector<cv::KeyPoint> kpts;
       double elapsedTime;
       keyPoints.detect(I, kpts, elapsedTime);
-      std::cout << "Nb keypoints detected: " << kpts.size() << " for " << *it << " method." << std::endl;
+      std::cout << "Nb keypoints detected: " << kpts.size() << " for " << *itd << " method." << std::endl;
       if(kpts.empty()) {
-        std::cerr << "No keypoints detected with " << *it << " and image: " << filename << "." << std::endl;
+        std::cerr << "No keypoints detected with " << *itd << " and image: " << filename << "." << std::endl;
         return -1;
       }
 

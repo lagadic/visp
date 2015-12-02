@@ -70,7 +70,7 @@ class VISP_EXPORT vpTemplateTrackerZNCCInverseCompositional: public vpTemplateTr
     void trackNoPyr(const vpImage<unsigned char> &I);
     void deletePosEvalRMS();
     void computeEvalRMS(const vpColVector &p);
-    void initPosEvalRMS(vpColVector &p);
+    void initPosEvalRMS(const vpColVector &p);
 
   public:
           vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp);

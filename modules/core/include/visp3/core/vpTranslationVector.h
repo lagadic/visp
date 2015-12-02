@@ -100,7 +100,7 @@ public:
     */
   vpTranslationVector() : vpArray2D<double>(3, 1) {};
   vpTranslationVector(const double tx, const double ty, const double tz) ;
-  vpTranslationVector(const vpTranslationVector &t);
+  vpTranslationVector(const vpTranslationVector &tv);
   vpTranslationVector(const vpHomogeneousMatrix &M);
   vpTranslationVector(const vpPoseVector &p);
 
@@ -111,9 +111,9 @@ public:
   // operators
 
   // translation vectors additions  c = a + b (a, b  unchanged)
-  vpTranslationVector operator+(const vpTranslationVector &t) const ;
+  vpTranslationVector operator+(const vpTranslationVector &tv) const ;
   // translation vectors substraction  c = a - b (a, b  unchanged)
-  vpTranslationVector operator-(const vpTranslationVector &t) const ;
+  vpTranslationVector operator-(const vpTranslationVector &tv) const ;
   // negate t = -a  (t is unchanged)
   vpTranslationVector operator-() const ;
   vpMatrix  operator*(const vpRowVector &v) const;
@@ -123,7 +123,7 @@ public:
   vpTranslationVector operator/(const double x) const;
   vpTranslationVector & operator/=(double x);
   // Copy operator.   Allow operation such as A = v
-  vpTranslationVector &operator=(const vpTranslationVector &t);
+  vpTranslationVector &operator=(const vpTranslationVector &tv);
 
   vpTranslationVector &operator=(double x) ;
 
@@ -155,8 +155,8 @@ public:
 
   static vpTranslationVector cross(const vpTranslationVector &a,
                                    const vpTranslationVector &b) ;
-  static vpMatrix skew(const vpTranslationVector &t) ;
-  static void skew(const  vpTranslationVector &t, vpMatrix &M) ;
+  static vpMatrix skew(const vpTranslationVector &tv) ;
+  static void skew(const  vpTranslationVector &tv, vpMatrix &M) ;
 } ;
 
 #endif

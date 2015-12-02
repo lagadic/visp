@@ -179,9 +179,9 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
     lut[i] = (unsigned int) (i * size / 256.0);
   }
 
-  unsigned int size = I.getWidth()*I.getHeight();
+  unsigned int size_ = I.getWidth()*I.getHeight();
   unsigned char *ptrStart = (unsigned char*) I.bitmap;
-  unsigned char *ptrEnd = ptrStart + size;
+  unsigned char *ptrEnd = ptrStart + size_;
   unsigned char *ptrCurrent = ptrStart;
 
   while(ptrCurrent != ptrEnd) {

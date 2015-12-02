@@ -101,10 +101,10 @@ public:
   // constructor convert an homogeneous matrix in a pose
   vpPoseVector(const vpHomogeneousMatrix& M) ;
   // constructor  convert a translation and a "thetau" vector into a pose
-  vpPoseVector(const vpTranslationVector& t,
+  vpPoseVector(const vpTranslationVector& tv,
                const vpThetaUVector& tu) ;
   // constructor  convert a translation and a rotation matrix into a pose
-  vpPoseVector(const vpTranslationVector& t,
+  vpPoseVector(const vpTranslationVector& tv,
                const vpRotationMatrix& R) ;
   /*!
     Destructor.
@@ -116,15 +116,15 @@ public:
   // convert an homogeneous matrix in a pose
   vpPoseVector buildFrom(const vpHomogeneousMatrix& M) ;
   //  convert a translation and a "thetau" vector into a pose
-  vpPoseVector buildFrom(const vpTranslationVector& t,
+  vpPoseVector buildFrom(const vpTranslationVector& tv,
                          const vpThetaUVector& tu) ;
   //  convert a translation and a rotation matrix into a pose
-  vpPoseVector buildFrom(const vpTranslationVector& t,
+  vpPoseVector buildFrom(const vpTranslationVector& tv,
                          const vpRotationMatrix& R) ;
 
   void extract(vpRotationMatrix &R) const;
   void extract(vpThetaUVector &tu) const;
-  void extract(vpTranslationVector &t) const;
+  void extract(vpTranslationVector &tv) const;
   void extract(vpQuaternionVector& q) const;
 
   vpRotationMatrix getRotationMatrix();

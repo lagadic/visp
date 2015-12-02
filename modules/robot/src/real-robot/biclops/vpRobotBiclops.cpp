@@ -693,19 +693,19 @@ vpRobotBiclops::get_cMe(vpHomogeneousMatrix &cMe) const
   \warning Re is not the embedded camera frame. It corresponds to the frame
   associated to the tilt axis (see also get_cMe).
 
-  \param eJe : Jacobian between end effector frame and end effector frame (on
+  \param _eJe : Jacobian between end effector frame and end effector frame (on
   tilt axis).
 
 */
 void
-vpRobotBiclops::get_eJe(vpMatrix &eJe)
+vpRobotBiclops::get_eJe(vpMatrix &_eJe)
 {
   vpColVector q(2) ;
   getPosition(vpRobot::ARTICULAR_FRAME, q) ;
 
   try
   {
-    vpBiclops::get_eJe(q,eJe) ;
+    vpBiclops::get_eJe(q, _eJe) ;
   }
   catch(...)
   {
@@ -717,19 +717,19 @@ vpRobotBiclops::get_eJe(vpMatrix &eJe)
 /*!
   Get the robot jacobian expressed in the robot reference frame
 
-  \param fJe : Jacobian between reference frame (or fix frame) and end effector
+  \param _fJe : Jacobian between reference frame (or fix frame) and end effector
   frame (on tilt axis).
 
 */
 void
-vpRobotBiclops::get_fJe(vpMatrix &fJe)
+vpRobotBiclops::get_fJe(vpMatrix &_fJe)
 {
   vpColVector q(2) ;
   getPosition(vpRobot::ARTICULAR_FRAME, q) ;
 
   try
   {
-    vpBiclops::get_fJe(q,fJe) ;
+    vpBiclops::get_fJe(q,_fJe) ;
   }
   catch(...)
   {

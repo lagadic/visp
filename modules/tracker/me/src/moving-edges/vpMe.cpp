@@ -197,7 +197,7 @@ clipping  (point  A, point B,
 
 
    // CAS GENERAL (on sait que code_P[0 ou 1] a au moins un bit a 1
-   //   - clippe le point P[n] qui sort de la fenêtre (coupe Droite i)
+   //   - clippe le point P[n] qui sort de la fenetre (coupe Droite i)
    //   - reboucle avec le nouveau couple de points
    // ================================================================
    if(code_P[0] != 0000)

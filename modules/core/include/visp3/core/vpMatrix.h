@@ -236,7 +236,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   vpMatrix operator*(const vpVelocityTwistMatrix &V) const;
   vpMatrix operator*(const vpForceTwistMatrix &V) const;
   // operation t_out = A * t (A is unchanged, t and t_out are translation vectors)
-  vpTranslationVector operator*(const vpTranslationVector &t) const;
+  vpTranslationVector operator*(const vpTranslationVector &tv) const;
   vpColVector operator*(const vpColVector &v) const;
   vpMatrix operator+(const vpMatrix &B) const;
   vpMatrix operator-(const vpMatrix &B) const;

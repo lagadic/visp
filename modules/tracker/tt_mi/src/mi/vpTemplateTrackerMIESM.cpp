@@ -192,7 +192,7 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
   computeHessien(HdesireDirect);
   //std::cout<<"HdesireDirect"<<std::endl<<HdesireDirect<<std::endl;
 
-  double lambda=lambdaDep;
+  lambda=lambdaDep;
 
   Hdesire=HdesireDirect+HdesireInverse;
   //Hdesire=HdesireDirect;
@@ -278,7 +278,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
 
   MI_preEstimation=-getCost(I,p);
 
-  double lambda=lambdaDep;
+  lambda=lambdaDep;
   double MI=0;
   //double MIprec=-1000;
 

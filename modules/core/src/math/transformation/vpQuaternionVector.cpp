@@ -95,18 +95,18 @@ vpQuaternionVector::vpQuaternionVector(const vpThetaUVector& tu)
 
 /*!
   Manually change values of a quaternion.
-  \param x : x quaternion parameter.
-  \param y : y quaternion parameter.
-  \param z : z quaternion parameter.
-  \param w : w quaternion parameter.
+  \param qx : x quaternion parameter.
+  \param qy : y quaternion parameter.
+  \param qz : z quaternion parameter.
+  \param qw : w quaternion parameter.
 */
-void vpQuaternionVector::set(const double x, const double y,
-                             const double z, const double w)
+void vpQuaternionVector::set(const double qx, const double qy,
+                             const double qz, const double qw)
 {
-  data[0]=x;
-  data[1]=y;
-  data[2]=z;
-  data[3]=w;
+  data[0]=qx;
+  data[1]=qy;
+  data[2]=qz;
+  data[3]=qw;
 }
 /*!
   Manually change values of a quaternion.
@@ -118,10 +118,10 @@ void vpQuaternionVector::set(const double x, const double y,
   \sa set()
 */
 vpQuaternionVector
-vpQuaternionVector::buildFrom(const double x, const double y,
-                              const double z, const double w)
+vpQuaternionVector::buildFrom(const double qx, const double qy,
+                              const double qz, const double qw)
 {
-  set(x, y, z, w);
+  set(qx, qy, qz, qw);
   return *this;
 }
 

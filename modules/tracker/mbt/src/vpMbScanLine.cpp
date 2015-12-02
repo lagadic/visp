@@ -326,18 +326,18 @@ vpMbScanLine::createScanLinesFromLocals(std::vector<std::vector<vpMbScanLineSegm
 
   \param polygons : List of polygons composed by arrays of lines.
   \param listPolyIndices : List of polygons IDs (has to be know when using queries).
-  \param K : Camera parameters.
-  \param w : Width of the image (render window).
-  \param h : Height of the image (render window).
+  \param cam : Camera parameters.
+  \param width : Width of the image (render window).
+  \param height : Height of the image (render window).
 */
 void
 vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigned int> > * > &polygons,
                         std::vector<int> listPolyIndices,
-                        const vpCameraParameters &K, unsigned int w, unsigned int h)
+                        const vpCameraParameters &cam, unsigned int width, unsigned int height)
 {
-  this->w = w;
-  this->h = h;
-  this->K = K;
+  this->w = width;
+  this->h = height;
+  this->K = cam;
 
   visibility_samples.clear();
 

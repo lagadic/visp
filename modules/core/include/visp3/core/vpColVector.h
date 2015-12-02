@@ -131,7 +131,7 @@ public:
   /*!
      Extract a sub-column vector from a column vector.
      \param r : Index of the row corresponding to the first element of the vector to extract.
-     \param size : Size of the vector to extract.
+     \param colsize : Size of the vector to extract.
      \exception vpException::fatalError If the vector to extract is not contained in the original one.
 
      \code
@@ -143,15 +143,15 @@ public:
      // v2 is equal to [1 2 3]^T
      \endcode
    */
-  vpColVector extract(unsigned int r, unsigned int size) const
+  vpColVector extract(unsigned int r, unsigned int colsize) const
   {
-    if (r >= rowNum || r+size > rowNum) {
+    if (r >= rowNum || r+colsize > rowNum) {
       throw(vpException(vpException::fatalError,
                         "Cannot extract a (%dx1) column vector from a (%dx1) column vector starting at index %d",
-                        size, rowNum, r));
+                        colsize, rowNum, r));
     }
 
-    return vpColVector(*this, r, size);
+    return vpColVector(*this, r, colsize);
   }
 
   double infinityNorm() const;
@@ -167,7 +167,7 @@ public:
   inline const double &operator[](unsigned int n) const { return *(data+n);  }
   //! Copy operator.   Allow operation such as A = v
   vpColVector &operator=(const vpColVector &v);
-  vpColVector &operator=(const vpTranslationVector &t);
+  vpColVector &operator=(const vpTranslationVector &tv);
   vpColVector &operator=(const vpMatrix &M);
   vpColVector &operator=(const std::vector<double> &v);
   vpColVector &operator=(const std::vector<float> &v);

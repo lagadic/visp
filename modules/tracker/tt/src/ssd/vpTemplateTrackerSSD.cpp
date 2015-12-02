@@ -54,7 +54,7 @@ vpTemplateTrackerSSD::vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp)
   DI.resize(2);
 }
 
-double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I,vpColVector &tp)
+double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I, const vpColVector &tp)
 {
   double erreur=0;
   double IW,Tij;
@@ -91,7 +91,7 @@ double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I,vpColVector
 }
 
 
-double vpTemplateTrackerSSD::getSSD(vpImage<unsigned char> &I,vpColVector &tp)
+double vpTemplateTrackerSSD::getSSD(const vpImage<unsigned char> &I, const vpColVector &tp)
 {
   double erreur=0;
   double IW,Tij;

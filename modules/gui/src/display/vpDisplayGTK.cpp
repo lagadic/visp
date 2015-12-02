@@ -563,7 +563,7 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
                           (unsigned char *)I.bitmap,
                           (gint)(4*width));
 
-    /* Permet de fermer la fen�tre si besoin (cas des s�quences d'images) */
+    /* Permet de fermer la fenetre si besoin (cas des sequences d'images) */
     //while (g_main_iteration(FALSE));
 
     /* Le pixmap background devient le fond de la zone de dessin */
@@ -612,7 +612,7 @@ void vpDisplayGTK::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint
                           (unsigned char *)Itemp.bitmap,
                           (gint)(4*w));
 
-    /* Permet de fermer la fen�tre si besoin (cas des s�quences d'images) */
+    /* Permet de fermer la fenetre si besoin (cas des sequences d'images) */
     //while (g_main_iteration(FALSE));
 
     /* Le pixmap background devient le fond de la zone de dessin */

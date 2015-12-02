@@ -256,7 +256,7 @@ private:
   protected:
 
     void            computeOptimalBrentGain(const vpImage<unsigned char> &I,vpColVector &tp,double tMI,vpColVector &direction,double &alpha);
-    virtual double  getCost(const vpImage<unsigned char> &I, vpColVector &tp) = 0;
+    virtual double  getCost(const vpImage<unsigned char> &I, const vpColVector &tp) = 0;
     void            getGaussianBluredImage(const vpImage<unsigned char> &I){ vpImageFilter::filter(I, BI,fgG,taillef); }
     void            initCompInverse(const vpImage<unsigned char> &I);
     virtual void    initCompInversePyr(const vpImage<unsigned char> &I);

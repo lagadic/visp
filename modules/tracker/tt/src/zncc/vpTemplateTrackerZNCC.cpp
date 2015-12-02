@@ -54,7 +54,7 @@ vpTemplateTrackerZNCC::vpTemplateTrackerZNCC(vpTemplateTrackerWarp *warp)
 }
 
 
-double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I, vpColVector &tp)
+double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I, const vpColVector &tp)
 {
   double IW,Tij;
   int i,j;

@@ -85,14 +85,14 @@ private:
 public:
   vpQuaternionVector();
   vpQuaternionVector(const vpQuaternionVector &q);
-  vpQuaternionVector(const double x, const double y, const double z,const double w) ;    
+  vpQuaternionVector(const double qx, const double qy, const double qz,const double qw) ;
   vpQuaternionVector(const vpRotationMatrix &R);
   vpQuaternionVector(const vpThetaUVector& tu) ;
 
   //! Destructor.
   virtual ~vpQuaternionVector() {};
 
-  vpQuaternionVector buildFrom(const double x, const double y, const double z, const double w) ;
+  vpQuaternionVector buildFrom(const double qx, const double qy, const double qz, const double qw) ;
   vpQuaternionVector buildFrom(const vpRotationMatrix& R);
   vpQuaternionVector buildFrom(const vpThetaUVector& tu);
   void set(const double x, const double y, const double z, const double w) ;

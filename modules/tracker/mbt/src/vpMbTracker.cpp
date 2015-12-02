@@ -2138,11 +2138,6 @@ vpMbTracker::getGravityCenter(const std::vector<vpPoint>& pts)
 std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
 vpMbTracker::getPolygonFaces(const bool orderPolygons, const bool useVisibility)
 {
-  vpHomogeneousMatrix cMo;
-  vpCameraParameters cam;
-  getPose(cMo);
-  getCameraParameters(cam);
-
   //Temporary variable to permit to order polygons by distance
   std::vector<vpPolygon> polygonsTmp;
   std::vector<std::vector<vpPoint> > roisPtTmp;

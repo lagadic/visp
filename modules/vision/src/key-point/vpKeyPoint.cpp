@@ -1268,8 +1268,8 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
   double t = vpTime::measureTimeMs();
   bool first = true;
 
-  for(std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator it = m_extractors.begin();
-      it != m_extractors.end(); ++it) {
+  for(std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator itd = m_extractors.begin();
+      itd != m_extractors.end(); ++itd) {
     if(first) {
       first = false;
       //Check if we have 3D object points information
@@ -1278,7 +1278,7 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
         std::vector<cv::KeyPoint> keyPoints_tmp = keyPoints;
 
         //Extract descriptors for the given list of keypoints
-        it->second->compute(matImg, keyPoints, descriptors);
+        itd->second->compute(matImg, keyPoints, descriptors);
 
         if(keyPoints.size() != keyPoints_tmp.size()) {
           //Keypoints have been removed
@@ -1301,7 +1301,7 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
         }
       } else {
         //Extract descriptors for the given list of keypoints
-        it->second->compute(matImg, keyPoints, descriptors);
+        itd->second->compute(matImg, keyPoints, descriptors);
       }
     } else {
       //Copy the input list of keypoints, keypoints that cannot be computed are removed in the function compute
@@ -1309,7 +1309,7 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
 
       cv::Mat desc;
       //Extract descriptors for the given list of keypoints
-      it->second->compute(matImg, keyPoints, desc);
+      itd->second->compute(matImg, keyPoints, desc);
 
       if(keyPoints.size() != keyPoints_tmp.size()) {
         //Keypoints have been removed
@@ -3432,13 +3432,13 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
    \param imPts1 : Pointer to the list of reference keypoints if not null
    \param imPts2 : Pointer to the list of current keypoints if not null
    \param meanDescriptorDistance : Pointer to the value of the average distance of the descriptors if not null
-   \param detectionScore : Pointer to the value of the detection score if not null
+   \param detection_score : Pointer to the value of the detection score if not null
    \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
    \return True if the object is present, false otherwise
  */
 bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox, vpImagePoint &centerOfGravity,
     const bool isPlanarObject, std::vector<vpImagePoint> *imPts1, std::vector<vpImagePoint> *imPts2,
-    double *meanDescriptorDistance, double *detectionScore, const vpRect& rectangle) {
+    double *meanDescriptorDistance, double *detection_score, const vpRect& rectangle) {
   if(imPts1 != NULL && imPts2 != NULL) {
     imPts1->clear();
     imPts2->clear();
@@ -3457,8 +3457,8 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
   if(meanDescriptorDistance != NULL) {
     *meanDescriptorDistance = meanDescriptorDistanceTmp;
   }
-  if(detectionScore != NULL) {
-    *detectionScore = score;
+  if(detection_score != NULL) {
+    *detection_score = score;
   }
 
   if(m_filteredMatches.size() >= 4) {

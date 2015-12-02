@@ -58,7 +58,7 @@
 class VISP_EXPORT vpTemplateTrackerMIBSpline
 {
 public:
-  static void PutPVBsplineD(double *Prt, int cr, double er, int ct, double et,int Nc, double val, int &degre);
+  static void PutPVBsplineD(double *Prt, int cr, double er, int ct, double et,int Nc, double val, const int &degre);
   static void PutPVBsplineD3(double *Prt, int cr, double er, int ct, double et,int Nc, double val);
   static void PutPVBsplineD4(double *Prt, int cr, double er, int ct, double et,int Nc, double val);
 

@@ -69,7 +69,7 @@ class VISP_EXPORT vpTemplateTrackerZNCC: public vpTemplateTracker
     vpRowVector   temp;
 
   protected:
-            double getCost(const vpImage<unsigned char> &I, vpColVector &tp) ;
+            double getCost(const vpImage<unsigned char> &I, const vpColVector &tp) ;
             double getCost(const vpImage<unsigned char> &I) {vpColVector tp; return getCost(I,tp);}
     virtual void   initHessienDesired(const vpImage<unsigned char> &I)=0;
     virtual void   trackNoPyr(const vpImage<unsigned char> &I)=0;

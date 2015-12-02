@@ -214,12 +214,12 @@ vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
 /*!
   Add a polygon to the list of polygons the line belongs to.
 
-  \param index : Index of the polygon
+  \param idx : Index of the polygon
 */
 void
-vpMbtDistanceLine::addPolygon(const int &index)
+vpMbtDistanceLine::addPolygon(const int &idx)
 {
-  Lindex_polygon.push_back(index);
+  Lindex_polygon.push_back(idx);
   Lindex_polygon_tracked.push_back(true);
 }
 
@@ -227,15 +227,15 @@ vpMbtDistanceLine::addPolygon(const int &index)
   Set if the line has to considered during tracking phase.
   Line won't be considered if all of its polygons are desactivated.
 
-  \param name : name of the polygons that have to be modified.
+  \param polyname : name of the polygons that have to be modified.
   \param track : True if the polygon has to be tracked, False otherwise.
 */
 void
-vpMbtDistanceLine::setTracked(const std::string &name, const bool &track)
+vpMbtDistanceLine::setTracked(const std::string &polyname, const bool &track)
 {
   unsigned int ind = 0;
   for(std::list<int>::const_iterator itpoly=Lindex_polygon.begin(); itpoly!=Lindex_polygon.end(); ++itpoly){
-    if((*hiddenface)[(unsigned)(*itpoly)]->getName() == name){
+    if((*hiddenface)[(unsigned)(*itpoly)]->getName() == polyname){
       Lindex_polygon_tracked[ind] = track;
     }
     ind++;
@@ -831,15 +831,15 @@ vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char>& I, const uns
 
     for(unsigned int i = 0 ; i < meline.size() ; i++){
       for(std::list<vpMeSite>::const_iterator it=meline[i]->getMeList().begin(); it!=meline[i]->getMeList().end(); ++it){
-        int i = it->i ;
-        int j = it->j ;
+        int i_ = it->i ;
+        int j_ = it->j ;
 
-        if(i < 0 || j < 0){ //out of image.
+        if(i_ < 0 || j_ < 0){ //out of image.
           return true;
         }
 
-        if( ((unsigned int)i > (I.getHeight()- threshold) ) || (unsigned int)i < threshold ||
-            ((unsigned int)j > (I.getWidth ()- threshold) ) || (unsigned int)j < threshold ) {
+        if( ((unsigned int)i_ > (I.getHeight()- threshold) ) || (unsigned int)i_ < threshold ||
+            ((unsigned int)j_ > (I.getWidth ()- threshold) ) || (unsigned int)j_ < threshold ) {
           return true;
         }
       }

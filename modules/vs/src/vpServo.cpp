@@ -1366,15 +1366,15 @@ void vpServo::computeProjectionOperators()
   I_WpW = (I - WpW) ;
 
   // Compute gain depending by the task error to ensure a smooth change between the operators.
-  double e0 = 0.1;
-  double e1 = 0.7;
+  double e0_ = 0.1;
+  double e1_ = 0.7;
   double sig = 0.0;
 
   double norm_e = error.euclideanNorm() ;
-  if (norm_e > e1)
+  if (norm_e > e1_)
     sig = 1.0;
-  else if (e0 <= norm_e && norm_e <= e1 )
-    sig = 1.0 / (1.0 + exp(-12.0 * ( (norm_e-e0)/((e1-e0))) + 6.0 ) );
+  else if (e0_ <= norm_e && norm_e <= e1_ )
+    sig = 1.0 / (1.0 + exp(-12.0 * ( (norm_e-e0_)/((e1_-e0_))) + 6.0 ) );
   else
     sig = 0.0;
 

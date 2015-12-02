@@ -509,7 +509,7 @@ vpMbtDistanceKltPoints::displayPrimitive(const vpImage<vpRGBa>& _I)
 }
 
 void
-vpMbtDistanceKltPoints::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &/*cMo*/, const vpCameraParameters &cam,
+vpMbtDistanceKltPoints::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &/*cMo*/, const vpCameraParameters &camera,
                                 const vpColor col, const unsigned int thickness, const bool displayFullModel)
 {
     if(polygon->isVisible() || displayFullModel)
@@ -536,8 +536,8 @@ vpMbtDistanceKltPoints::display(const vpImage<unsigned char> &I, const vpHomogen
           for(unsigned int i = 0 ; i < linesLst.size() ; i++){
             linesLst[i].first.project();
             linesLst[i].second.project();
-            vpMeterPixelConversion::convertPoint(cam,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
-            vpMeterPixelConversion::convertPoint(cam,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
+            vpMeterPixelConversion::convertPoint(camera,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
+            vpMeterPixelConversion::convertPoint(camera,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
 
             vpDisplay::displayLine(I,ip1,ip2,col, thickness);
           }
@@ -548,7 +548,7 @@ vpMbtDistanceKltPoints::display(const vpImage<unsigned char> &I, const vpHomogen
 
 
 void
-vpMbtDistanceKltPoints::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &/*cMo*/, const vpCameraParameters &cam,
+vpMbtDistanceKltPoints::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &/*cMo*/, const vpCameraParameters &camera,
                                 const vpColor col, const unsigned int thickness, const bool displayFullModel)
 {
   if(polygon->isVisible() || displayFullModel)
@@ -575,8 +575,8 @@ vpMbtDistanceKltPoints::display(const vpImage<vpRGBa> &I, const vpHomogeneousMat
         for(unsigned int i = 0 ; i < linesLst.size() ; i++){
           linesLst[i].first.project();
           linesLst[i].second.project();
-          vpMeterPixelConversion::convertPoint(cam,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
-          vpMeterPixelConversion::convertPoint(cam,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
+          vpMeterPixelConversion::convertPoint(camera,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
+          vpMeterPixelConversion::convertPoint(camera,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
 
           vpDisplay::displayLine(I,ip1,ip2,col, thickness);
         }

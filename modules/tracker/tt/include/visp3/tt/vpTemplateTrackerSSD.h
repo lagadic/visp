@@ -67,7 +67,7 @@ class VISP_EXPORT vpTemplateTrackerSSD: public vpTemplateTracker
     vpRowVector     temp;
 
   protected:
-            double  getCost(const vpImage<unsigned char> &I, vpColVector &tp);
+            double  getCost(const vpImage<unsigned char> &I, const vpColVector &tp);
             double  getCost(const vpImage<unsigned char> &I){ return getCost(I,p); }
     virtual void    initHessienDesired(const vpImage<unsigned char> &I) = 0;
     virtual void    trackNoPyr(const vpImage<unsigned char> &I) = 0;
@@ -75,7 +75,7 @@ class VISP_EXPORT vpTemplateTrackerSSD: public vpTemplateTracker
   public:
     vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp);
 
-    double  getSSD(vpImage<unsigned char> &I,vpColVector &tp);
+    double  getSSD(const vpImage<unsigned char> &I, const vpColVector &tp);
     void    setGain(double g){ gain=g; }
 };
 

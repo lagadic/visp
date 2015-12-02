@@ -163,17 +163,17 @@ Set the program options.
 */
 bool getOptions(int argc, const char **argv, std::string& conf, std::string &debugdir, std::string& user)
 {
-  const char *optarg;
+  const char *optarg_;
   int	c;
-  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'c': conf = optarg; break;
-    case 'd': debugdir = optarg; break;
+    case 'c': conf = optarg_; break;
+    case 'd': debugdir = optarg_; break;
     case 'h': usage(argv[0], NULL, conf, debugdir, user); return false; break;
 
     default:
-      usage(argv[0], optarg, conf, debugdir, user); return false; break;
+      usage(argv[0], optarg_, conf, debugdir, user); return false; break;
     }
   }
 
@@ -181,7 +181,7 @@ bool getOptions(int argc, const char **argv, std::string& conf, std::string &deb
     // standalone param or error
     usage(argv[0], NULL, conf, debugdir, user);
     std::cerr << "ERROR: " << std::endl;
-    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
   }
 

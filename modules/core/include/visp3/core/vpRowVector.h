@@ -120,7 +120,7 @@ public:
   /*!
      Extract a sub-row vector from a row vector.
      \param c : Index of the column corresponding to the first element of the vector to extract.
-     \param size : Size of the vector to extract.
+     \param rowsize : Size of the vector to extract.
      \exception vpException::fatalError If the vector to extract is not contained in the original one.
 
      \code
@@ -132,15 +132,15 @@ public:
      // r2 is equal to [1 2 3]
      \endcode
    */
-  vpRowVector extract(unsigned int c, unsigned int size) const
+  vpRowVector extract(unsigned int c, unsigned int rowsize) const
   {
-    if (c >= colNum || c+size > colNum) {
+    if (c >= colNum || c+rowsize > colNum) {
       throw(vpException(vpException::fatalError,
                         "Cannot extract a (1x%d) row vector from a (1x%d) row vector starting at index %d",
-                        size, colNum, c));
+                        rowsize, colNum, c));
     }
 
-    return vpRowVector(*this, c, size);
+    return vpRowVector(*this, c, rowsize);
   }
 
   void init(const vpRowVector &v, unsigned int c, unsigned int ncols);

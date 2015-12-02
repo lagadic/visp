@@ -383,7 +383,7 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
   deletePosEvalRMS();
 }
 
-void vpTemplateTrackerZNCCInverseCompositional::initPosEvalRMS(vpColVector &p_)
+void vpTemplateTrackerZNCCInverseCompositional::initPosEvalRMS(const vpColVector &p_)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
   x_pos.resize(nb_corners);

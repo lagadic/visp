@@ -153,8 +153,7 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
   computeMI(MI);
   computeHessien(Hdesire);
 
-
-  double lambda=lambdaDep;
+  lambda=lambdaDep;
 
   vpMatrix::computeHLM(Hdesire,lambda,HLMdesire);
   HLMdesireInverse=HLMdesire.inverseByLU();
@@ -178,7 +177,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
   int Nbpoint=0;
 
 
-  double lambda=lambdaDep;
+  lambda=lambdaDep;
   double MI=0,MIprec=-1000;
 
   MI_preEstimation=-getCost(I,p);

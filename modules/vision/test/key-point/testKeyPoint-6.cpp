@@ -262,8 +262,8 @@ int main(int argc, const char ** argv) {
       return -1;
     }
 
-    for(std::vector<std::string>::const_iterator it = descriptorNames.begin(); it != descriptorNames.end(); ++it) {
-      if(*it == "KAZE") {
+    for(std::vector<std::string>::const_iterator itd = descriptorNames.begin(); itd != descriptorNames.end(); ++itd) {
+      if(*itd == "KAZE") {
         detectorName = "KAZE";
         keyPoints.setDetector(detectorName);
         keyPoints.detect(I, kpts, elapsedTime);
@@ -272,7 +272,7 @@ int main(int argc, const char ** argv) {
           std::cerr << "No keypoints detected with " << detectorName << " and image:" << filename << "." << std::endl;
           return -1;
         }
-      } else if(*it == "AKAZE") {
+      } else if(*itd == "AKAZE") {
         detectorName = "AKAZE";
         keyPoints.setDetector(detectorName);
         keyPoints.detect(I, kpts, elapsedTime);
@@ -283,7 +283,7 @@ int main(int argc, const char ** argv) {
         }
       }
 
-      keyPoints.setExtractor(*it);
+      keyPoints.setExtractor(*itd);
 
       double t = vpTime::measureTimeMs();
       cv::Mat descriptor;
@@ -291,9 +291,9 @@ int main(int argc, const char ** argv) {
       t = vpTime::measureTimeMs() - t;
 
       std::cout << "Descriptor: " << descriptor.rows << "x" << descriptor.cols << " (rows x cols) ; type=" <<
-          getOpenCVType(descriptor.type()) << " for " << *it << " method in " << t << " ms." << std::endl;
+          getOpenCVType(descriptor.type()) << " for " << *itd << " method in " << t << " ms." << std::endl;
       if(descriptor.empty()) {
-        std::cerr << "No descriptor extracted with " << *it << " and image:" << filename << "." << std::endl;
+        std::cerr << "No descriptor extracted with " << *itd << " and image:" << filename << "." << std::endl;
         return -1;
       }
 

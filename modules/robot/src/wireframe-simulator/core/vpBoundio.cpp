@@ -120,7 +120,7 @@ void fscanf_Face_list (Face_list *lp)
 	fp   = lp->ptr;
 	fend = fp + lp->nbr;
 	for (; fp < fend; fp++) {
-		Vertex_list	*lp = &fp->vertex;
+    Vertex_list	*vlp = &fp->vertex;
 		Index		*vp;	/* sommet courant	*/
 		Index		*vend;	/* borne de "vp"	*/
 
@@ -134,13 +134,13 @@ void fscanf_Face_list (Face_list *lp)
 
 		if (lex () != T_INT)
 		  lexerr ("start", "integer expected (number of vertices)", NULL);
-		lp->nbr = (Index) myint;
+    vlp->nbr = (Index) myint;
 
 		/* Allocation dynamique du polygone de la face.	*/
 
-		if (lp->nbr <= DEFAULT_VSIZE)
-			lp->ptr = lp->tbl;
-		else if ((lp->ptr = (Index *) malloc (lp->nbr * sizeof (Index)))
+    if (vlp->nbr <= DEFAULT_VSIZE)
+      vlp->ptr = vlp->tbl;
+    else if ((vlp->ptr = (Index *) malloc (vlp->nbr * sizeof (Index)))
 			== NULL) {
 			perror (proc_name);
 			exit (1);
@@ -148,8 +148,8 @@ void fscanf_Face_list (Face_list *lp)
 
 		/* Lecture des sommets de la face un a un.	*/
 
-		vp   = lp->ptr;
-		vend = vp + lp->nbr;
+    vp   = vlp->ptr;
+    vend = vp + vlp->nbr;
 		for (; vp < vend; *vp++ = (Index) myint)
 		if (lex () != T_INT)
 		  lexerr ("start", "integer expected (index of points 3D)", NULL);

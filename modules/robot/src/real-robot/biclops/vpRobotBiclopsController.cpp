@@ -221,7 +221,7 @@ vpRobotBiclopsController::setPosition(const vpColVector & q,
 
 #ifdef  VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION // new API
   // Get the currently defined (default) motion profiles.
-  PMDAxisControl::Profile panProfile,tiltProfile;
+  //PMDAxisControl::Profile panProfile,tiltProfile;
   panAxis->GetProfile(panProfile);
   tiltAxis->GetProfile(tiltProfile);
 
@@ -302,7 +302,7 @@ vpRobotBiclopsController::setVelocity(const vpColVector & q_dot)
 
 #ifdef  VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION // new API
   // Get the currently defined (default) motion profiles.
-  PMDAxisControl::Profile panProfile, tiltProfile;
+  //PMDAxisControl::Profile panProfile, tiltProfile;
   panAxis->GetProfile(panProfile);
   tiltAxis->GetProfile(tiltProfile);
 

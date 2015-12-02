@@ -505,7 +505,7 @@ vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<vpRGBa>& _I)
 }
 
 void
-vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &camera,
                                   const vpColor col, const unsigned int thickness, const bool /*displayFullModel*/)
 {
   //if(isvisible || displayFullModel)
@@ -530,8 +530,8 @@ vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I, const vpHomog
     double rho2,theta2;
 
     // Meters to pixels conversion
-    vpMeterPixelConversion::convertLine(cam,cylinder.getRho1(),cylinder.getTheta1(),rho1,theta1);
-    vpMeterPixelConversion::convertLine(cam,cylinder.getRho2(),cylinder.getTheta2(),rho2,theta2);
+    vpMeterPixelConversion::convertLine(camera,cylinder.getRho1(),cylinder.getTheta1(),rho1,theta1);
+    vpMeterPixelConversion::convertLine(camera,cylinder.getRho2(),cylinder.getTheta2(),rho2,theta2);
 
     // Determine intersections between circles and limbos
     double i11,i12,i21,i22,j11,j12,j21,j22;
@@ -556,7 +556,7 @@ vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I, const vpHomog
 }
 
 void
-vpMbtDistanceKltCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+vpMbtDistanceKltCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &camera,
                                   const vpColor col, const unsigned int thickness, const bool /*displayFullModel*/)
 {
   //if(isvisible || displayFullModel)
@@ -581,17 +581,17 @@ vpMbtDistanceKltCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousM
     double rho2,theta2;
 
     // Meters to pixels conversion
-    vpMeterPixelConversion::convertLine(cam,cylinder.getRho1(),cylinder.getTheta1(),rho1,theta1);
-    vpMeterPixelConversion::convertLine(cam,cylinder.getRho2(),cylinder.getTheta2(),rho2,theta2);
+    vpMeterPixelConversion::convertLine(camera,cylinder.getRho1(),cylinder.getTheta1(),rho1,theta1);
+    vpMeterPixelConversion::convertLine(camera,cylinder.getRho2(),cylinder.getTheta2(),rho2,theta2);
 
     // Determine intersections between circles and limbos
     double i11,i12,i21,i22,j11,j12,j21,j22;
 
-    vpCircle::computeIntersectionPoint(circle1, cam, rho1, theta1, i11, j11);
-    vpCircle::computeIntersectionPoint(circle2, cam, rho1, theta1, i12, j12);
+    vpCircle::computeIntersectionPoint(circle1, camera, rho1, theta1, i11, j11);
+    vpCircle::computeIntersectionPoint(circle2, camera, rho1, theta1, i12, j12);
 
-    vpCircle::computeIntersectionPoint(circle1, cam, rho2, theta2, i21, j21);
-    vpCircle::computeIntersectionPoint(circle2, cam, rho2, theta2, i22, j22);
+    vpCircle::computeIntersectionPoint(circle1, camera, rho2, theta2, i21, j21);
+    vpCircle::computeIntersectionPoint(circle2, camera, rho2, theta2, i22, j22);
 
     // Create the image points
     vpImagePoint ip11,ip12,ip21,ip22;

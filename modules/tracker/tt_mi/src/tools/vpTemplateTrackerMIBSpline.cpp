@@ -40,7 +40,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-void vpTemplateTrackerMIBSpline::PutPVBsplineD(double *Prt, int cr, double er, int ct, double et,int Nc, double val, int &degre)
+void vpTemplateTrackerMIBSpline::PutPVBsplineD(double *Prt, int cr, double er, int ct, double et,int Nc, double val, const int &degre)
 {
   switch(degre)
   {

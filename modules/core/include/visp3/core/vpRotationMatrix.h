@@ -108,7 +108,7 @@ public:
   // copy operator from vpMatrix (handle with care)
   vpRotationMatrix &operator=(const vpMatrix &M);
   // operation c = A * b (A is unchanged)
-  vpTranslationVector operator*(const vpTranslationVector &t) const;
+  vpTranslationVector operator*(const vpTranslationVector &tv) const;
   // operation C = A * B (A is unchanged)
   vpRotationMatrix operator*(const vpRotationMatrix &R) const;
   // operation C = A * B (A is unchanged)

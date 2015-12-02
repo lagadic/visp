@@ -238,7 +238,7 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
   computeMI(MI);
   computeHessien(Hdesire);
 
-  double lambda=lambdaDep;
+  lambda=lambdaDep;
 
   vpMatrix::computeHLM(Hdesire,lambda,HLMdesire);
 
@@ -258,9 +258,8 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
   int Nbpoint=0;
 
 
-  double lambda=lambdaDep;
+  lambda=lambdaDep;
   double MI=0,MIprec=-1000;
-
 
   vpColVector p_avant_estimation;p_avant_estimation=p;
   MI_preEstimation=-getCost(I,p);
@@ -634,13 +633,13 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
   }
 }
 
-void vpTemplateTrackerMIInverseCompositional::initPosEvalRMS(vpColVector &p)
+void vpTemplateTrackerMIInverseCompositional::initPosEvalRMS(const vpColVector &pw)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
   x_pos=new double[nb_corners];
   y_pos=new double[nb_corners];
 
-  Warp->computeCoeff(p);
+  Warp->computeCoeff(pw);
   vpTemplateTrackerTriangle triangle;
 
   for(unsigned int i=0;i<zoneTracked->getNbTriangle();i++)
@@ -649,7 +648,7 @@ void vpTemplateTrackerMIInverseCompositional::initPosEvalRMS(vpColVector &p)
     for (unsigned int j=0; j<3; j++) {
       triangle.getCorner(j, X1[0], X1[1]);
 
-      Warp->computeDenom(X1,p);
+      Warp->computeDenom(X1,pw);
       Warp->warpX(X1,X2,p);
       x_pos[i*3+j]=X2[0];
       y_pos[i*3+j]=X2[1];
@@ -657,11 +656,11 @@ void vpTemplateTrackerMIInverseCompositional::initPosEvalRMS(vpColVector &p)
   }
 }
 
-void vpTemplateTrackerMIInverseCompositional::computeEvalRMS(const vpColVector &p)
+void vpTemplateTrackerMIInverseCompositional::computeEvalRMS(const vpColVector &pw)
 {
   unsigned int nb_corners = zoneTracked->getNbTriangle() * 3;
 
-  Warp->computeCoeff(p);
+  Warp->computeCoeff(pw);
   evolRMS=0;
   vpTemplateTrackerTriangle triangle;
 
@@ -671,8 +670,8 @@ void vpTemplateTrackerMIInverseCompositional::computeEvalRMS(const vpColVector &
     for (unsigned int j=0; j<3; j++) {
       triangle.getCorner(j, X1[0], X1[1]);
 
-      Warp->computeDenom(X1,p);
-      Warp->warpX(X1,X2,p);
+      Warp->computeDenom(X1,pw);
+      Warp->warpX(X1,X2,pw);
       evolRMS+=(x_pos[i*3+j]-X2[0])*(x_pos[i*3+j]-X2[0])+(y_pos[i*3+j]-X2[1])*(y_pos[i*3+j]-X2[1]);
       x_pos[i*3+j]=X2[0];
       y_pos[i*3+j]=X2[1];

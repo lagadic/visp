@@ -577,20 +577,20 @@ vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
   The matrix should be of dimension (3x3)
   */
 vpTranslationVector
-vpMatrix::operator*(const vpTranslationVector &t) const
+vpMatrix::operator*(const vpTranslationVector &tv) const
 {
   vpTranslationVector t_out;
 
   if (rowNum != 3 || colNum != 3) {
     throw(vpException(vpException::dimensionError,
                       "Cannot multiply a (%dx%d) matrix by a (%dx%d) translation vector",
-                      rowNum, colNum, t.getRows(), t.getCols())) ;
+                      rowNum, colNum, tv.getRows(), tv.getCols())) ;
   }
 
   for (unsigned int j=0;j<3;j++) t_out[j]=0 ;
 
   for (unsigned int j=0;j<3;j++) {
-    double tj = t[j] ; // optimization em 5/12/2006
+    double tj = tv[j] ; // optimization em 5/12/2006
     for (unsigned int i=0;i<3;i++) {
       t_out[i]+=rowPtrs[i][j] * tj;
     }

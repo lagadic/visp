@@ -94,7 +94,7 @@ protected:
   int influBspline;
 
   int bspline;
-  //Nombre de couleur concid�r� dans l'histogramme
+  //Nombre de couleur concidere dans l'histogramme
   int Nc;
   int Ncb;
 
@@ -117,10 +117,10 @@ protected:
   void    computeHessienNormalized(vpMatrix &H);
   void    computeMI(double &MI);
   void    computeProba(int &nbpoint);
-  double  getCost(const vpImage<unsigned char> &I,vpColVector &tp);
-  double  getCost(vpImage<unsigned char> &I){return getCost(I,p);}
-  double  getNormalizedCost(const vpImage<unsigned char> &I,vpColVector &tp);
-  double  getNormalizedCost(vpImage<unsigned char> &I){return getNormalizedCost(I,p);}
+  double  getCost(const vpImage<unsigned char> &I, const vpColVector &tp);
+  double  getCost(const vpImage<unsigned char> &I){return getCost(I,p);}
+  double  getNormalizedCost(const vpImage<unsigned char> &I, const vpColVector &tp);
+  double  getNormalizedCost(const vpImage<unsigned char> &I){return getNormalizedCost(I,p);}
   virtual void    initHessienDesired(const vpImage<unsigned char> &I)=0;
   virtual void    trackNoPyr(const vpImage<unsigned char> &I)=0;
   void    zeroProbabilities();
@@ -154,10 +154,10 @@ public:
   {}
   vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp);
   ~vpTemplateTrackerMI();
-  vpMatrix getCovarianceMatrix(){ return covarianceMatrix; }
+  vpMatrix getCovarianceMatrix() const { return covarianceMatrix; }
   double getMI() const {return MI_postEstimation;}
-  double getMI(vpImage<unsigned char> &I,int &nc,int &bspline,vpColVector &tp);
-  double getMI256(vpImage<unsigned char> &I,vpColVector &tp);
+  double getMI(const vpImage<unsigned char> &I,int &nc, const int &bspline,vpColVector &tp);
+  double getMI256(const vpImage<unsigned char> &I, const vpColVector &tp);
   double getNMI() const {return NMI_postEstimation;}
   //initialisation du Hessien en position desiree
   void setApprocHessian(vpHessienApproximationType approx){ApproxHessian=approx;}

@@ -502,9 +502,9 @@ vpColVector &vpColVector::operator=(const vpColVector &v)
 /*!
    Operator that allows to convert a translation vector into a column vector.
  */
-vpColVector &vpColVector::operator=(const vpTranslationVector &t)
+vpColVector &vpColVector::operator=(const vpTranslationVector &tv)
 {
-  unsigned int k = t.getRows() ;
+  unsigned int k = tv.getRows() ;
   if (rowNum != k){
     try {
       resize(k);
@@ -515,7 +515,7 @@ vpColVector &vpColVector::operator=(const vpTranslationVector &t)
     }
   }
 
-  memcpy(data, t.data, rowNum*sizeof(double)) ;
+  memcpy(data, tv.data, rowNum*sizeof(double)) ;
   return *this;
 }
 

@@ -252,7 +252,7 @@ vpRotationMatrix::operator*(const vpColVector &v) const
   Multiply a rotation matrix by a translation vector and return the resulting translation vector.
  */
 vpTranslationVector
-vpRotationMatrix::operator*(const vpTranslationVector &t) const
+vpRotationMatrix::operator*(const vpTranslationVector &tv) const
 {
   vpTranslationVector p ;
 
@@ -261,7 +261,7 @@ vpRotationMatrix::operator*(const vpTranslationVector &t) const
 
   for (unsigned int j=0;j<3;j++) {
     for (unsigned int i=0;i<3;i++) {
-      p[i] += rowPtrs[i][j] * t[j];
+      p[i] += rowPtrs[i][j] * tv[j];
     }
   }
 
