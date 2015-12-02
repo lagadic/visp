@@ -43,6 +43,7 @@
 # one doesn't detect anything
 #########################################################
 
+
 macro(vp_ogre_find_plugin_lib_visp PLUGIN)
   # On Unix, the plugins might have no prefix
   if (CMAKE_FIND_LIBRARY_PREFIXES)
@@ -76,9 +77,7 @@ macro(vp_ogre_find_plugin_lib_visp PLUGIN)
 endmacro()
 
 macro(vp_create_ogre_plugin_config_file)
-  set(VISP_HAVE_OGRE_PLUGINS_PATH ${VISP_BINARY_DIR}/data/ogre-simulator)
-  # make the vars global
-  set(VISP_HAVE_OGRE_PLUGINS_PATH ${VISP_HAVE_OGRE_PLUGINS_PATH} CACHE INTERNAL "Ogre plugins location")
+  set(VISP_HAVE_OGRE_PLUGINS_PATH "${VISP_BINARY_DIR}/data/ogre-simulator" CACHE INTERNAL "Ogre plugins location")
 
   # If OGRE_PLUGIN_DIR_REL and OGRE_PLUGIN_DIR_DBG are not defined we
   # try to find them manually
@@ -211,9 +210,11 @@ function(vp_set_ogre_media)
 
   #message("OGRE_PLUGIN_DIR_REL: ${OGRE_PLUGIN_DIR_REL}")
   #message("OGRE_PLUGIN_DIR_DBG: ${OGRE_PLUGIN_DIR_DBG}")
+  if(ogre_plugings_cfg_exists)
+    set(VISP_HAVE_OGRE_PLUGINS_PATH "${ogre_plugings_cfg_exists}" CACHE INTERNAL "Ogre plugins location")
+  else(NOT ogre_plugings_cfg_exists)
+    # If no plugins.cfg file is found, we create one with absolute path
 
-  # If no plugins.cfg file is found, we create one with absolute path
-  if(NOT ogre_plugings_cfg_exists)
     # case 1: normal case
     #--------------
     vp_create_ogre_plugin_config_file()
@@ -273,16 +274,17 @@ function(vp_set_ogre_media)
     file(COPY modules/ar/data/ogre-simulator/media DESTINATION ${VISP_BINARY_DIR}/data/ogre-simulator)
   endif()
 
-  # Here we create a resources.cfg if it was not found
-  if(NOT ogre_resources_cfg_exists)
+  if(ogre_resources_cfg_exists)
+    set(VISP_HAVE_OGRE_RESOURCES_PATH "${ogre_resources_cfg_exists}" CACHE INTERNAL "Ogre resources location")
+  else()
+    # Here we create a resources.cfg if it was not found
+
     # we create a resources.cfg file for vpAROgre.cpp
     # case 1: normal case
     #         If OGRE_MEDIA_DIR is not found, we set it to VISP_HAVE_OGRE_RESOURCES_PATH in order to use
     #         the minimal requested media to run the examples
     #--------------
-    set(VISP_HAVE_OGRE_RESOURCES_PATH ${VISP_BINARY_DIR}/data/ogre-simulator)
-    # make the var global
-    set(VISP_HAVE_OGRE_RESOURCES_PATH ${VISP_HAVE_OGRE_RESOURCES_PATH} CACHE INTERNAL "Ogre resources location")
+    set(VISP_HAVE_OGRE_RESOURCES_PATH "${VISP_BINARY_DIR}/data/ogre-simulator" CACHE INTERNAL "Ogre resources location")
 
     if(OGRE_MEDIA_NOT_AVAILABLE)
       set(OGRE_MEDIA_DIR ${VISP_HAVE_OGRE_RESOURCES_PATH}/media)
@@ -366,7 +368,4 @@ function(vp_set_ogre_media)
       endif()
     endif()
   endif()
-
-  #mark_as_advanced(VISP_HAVE_OGRE_PLUGINS_PATH)
-  #mark_as_advanced(VISP_HAVE_OGRE_RESOURCES_PATH)
 endfunction()
