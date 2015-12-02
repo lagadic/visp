@@ -767,7 +767,7 @@ void vpAROgre::setVisibility(const std::string &sceneName, bool isVisible)
 void vpAROgre::setScale(const std::string &sceneName, const float factorx, const float factory, const float factorz)
 {
   // Reset the scale to its original value
-  mSceneMgr->getSceneNode(sceneName)->scale(Ogre::Vector3(1,1,1)/mSceneMgr->getSceneNode(name)->getScale());
+  mSceneMgr->getSceneNode(sceneName)->scale(Ogre::Vector3(1,1,1)/mSceneMgr->getSceneNode(sceneName)->getScale());
   // Apply the new scale
   mSceneMgr->getSceneNode(sceneName)->scale(Ogre::Vector3(factorx, factory, factorz));
 }
