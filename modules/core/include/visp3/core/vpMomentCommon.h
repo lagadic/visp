@@ -103,19 +103,19 @@ private:
   vpMomentAlpha momentAlpha;
   vpMomentArea momentArea;
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vpMomentCommon(const vpMomentCommon &)
-    : vpMomentDatabase(), momentBasic(), momentGravity(), momentCentered(), momentGravityNormalized(),
-      momentSurfaceNormalized(0, 0), momentCInvariant(), momentAlpha(), momentArea()
-  {
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-  }
-  vpMomentCommon &operator=(const vpMomentCommon &){
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-    return *this;
-  }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//  vpMomentCommon(const vpMomentCommon &)
+//    : vpMomentDatabase(), momentBasic(), momentGravity(), momentCentered(), momentGravityNormalized(),
+//      momentSurfaceNormalized(0, 0), momentCInvariant(), momentAlpha(), momentArea()
+//  {
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//  }
+//  vpMomentCommon &operator=(const vpMomentCommon &){
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//    return *this;
+//  }
+//#endif
 
 public:
   vpMomentCommon(double dstSurface,std::vector<double> ref,double refAlpha,double dstZ=1.0, bool flg_sxsyfromnormalized=false);

@@ -116,22 +116,22 @@ class VISP_EXPORT vpMbtDistanceCylinder
     //! Indicates if the cylinder is visible or not
     bool isvisible;
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    vpMbtDistanceCylinder(const vpMbtDistanceCylinder &)
-      : name(), index(0), cam(), me(NULL), wmean1(1), wmean2(1),
-        featureline1(), featureline2(), isTrackedCylinder(true), meline1(NULL), meline2(NULL),
-        cercle1(NULL), cercle2(NULL), radius(0), p1(NULL), p2(NULL), L(),
-        error(), nbFeature(0), nbFeaturel1(0), nbFeaturel2(0), Reinit(false),
-        c(NULL), hiddenface(NULL), index_polygon(-1), isvisible(false)
-    {
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-    }
-    vpMbtDistanceCylinder &operator=(const vpMbtDistanceCylinder &){
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-      return *this;
-    }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//    vpMbtDistanceCylinder(const vpMbtDistanceCylinder &)
+//      : name(), index(0), cam(), me(NULL), wmean1(1), wmean2(1),
+//        featureline1(), featureline2(), isTrackedCylinder(true), meline1(NULL), meline2(NULL),
+//        cercle1(NULL), cercle2(NULL), radius(0), p1(NULL), p2(NULL), L(),
+//        error(), nbFeature(0), nbFeaturel1(0), nbFeaturel2(0), Reinit(false),
+//        c(NULL), hiddenface(NULL), index_polygon(-1), isvisible(false)
+//    {
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//    }
+//    vpMbtDistanceCylinder &operator=(const vpMbtDistanceCylinder &){
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//      return *this;
+//    }
+//#endif
 
   public:
     vpMbtDistanceCylinder() ;

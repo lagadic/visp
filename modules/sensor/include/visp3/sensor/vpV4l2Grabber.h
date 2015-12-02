@@ -188,24 +188,24 @@ public:
   };
 #endif
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vpV4l2Grabber(const vpV4l2Grabber &)
-    : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
-      fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
-      waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0), streaming(false),
-      m_input(vpV4l2Grabber::DEFAULT_INPUT),
-      m_framerate(vpV4l2Grabber::framerate_25fps),
-      m_frameformat(vpV4l2Grabber::V4L2_FRAME_FORMAT),
-      m_pixelformat(vpV4l2Grabber::V4L2_YUYV_FORMAT)
-  {
-    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-  }
-  vpV4l2Grabber &operator=(const vpV4l2Grabber &){
-    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-    return *this;
-  }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//  vpV4l2Grabber(const vpV4l2Grabber &)
+//    : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
+//      fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+//      waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0), streaming(false),
+//      m_input(vpV4l2Grabber::DEFAULT_INPUT),
+//      m_framerate(vpV4l2Grabber::framerate_25fps),
+//      m_frameformat(vpV4l2Grabber::V4L2_FRAME_FORMAT),
+//      m_pixelformat(vpV4l2Grabber::V4L2_YUYV_FORMAT)
+//  {
+//    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+//  }
+//  vpV4l2Grabber &operator=(const vpV4l2Grabber &){
+//    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+//    return *this;
+//  }
+//#endif
 
 public:
   vpV4l2Grabber();

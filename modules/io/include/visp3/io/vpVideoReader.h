@@ -213,25 +213,25 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     bool firstFrameIndexIsSet;
     bool lastFrameIndexIsSet;
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    vpVideoReader(const vpVideoReader &)
-      : vpFrameGrabber(), imSequence(NULL),
-    #ifdef VISP_HAVE_FFMPEG
-        ffmpeg(NULL),
-    #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-        capture(), frame(),
-    #endif
-        formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0),
-        firstFrame(0), lastFrame(0), firstFrameIndexIsSet(false), lastFrameIndexIsSet(false)
-    {
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-    }
-    vpVideoReader &operator=(const vpVideoReader &){
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-      return *this;
-    }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//    vpVideoReader(const vpVideoReader &)
+//      : vpFrameGrabber(), imSequence(NULL),
+//    #ifdef VISP_HAVE_FFMPEG
+//        ffmpeg(NULL),
+//    #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+//        capture(), frame(),
+//    #endif
+//        formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0),
+//        firstFrame(0), lastFrame(0), firstFrameIndexIsSet(false), lastFrameIndexIsSet(false)
+//    {
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//    }
+//    vpVideoReader &operator=(const vpVideoReader &){
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//      return *this;
+//    }
+//#endif
 
   public:
     vpVideoReader();

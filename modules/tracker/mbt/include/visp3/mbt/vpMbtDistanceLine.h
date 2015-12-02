@@ -108,21 +108,21 @@ class VISP_EXPORT vpMbtDistanceLine
     //! Indicates if the line is visible or not
     bool isvisible;
     
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    vpMbtDistanceLine(const vpMbtDistanceLine &)
-      : name(), index(0), cam(), me(NULL), isTrackedLine(true), isTrackedLineWithVisibility(true),
-        wmean(1), featureline(), poly(), useScanLine(false), meline(), line(NULL), p1(NULL), p2(NULL), L(),
-        error(), nbFeature(), nbFeatureTotal(0), Reinit(false), hiddenface(NULL), Lindex_polygon(),
-        Lindex_polygon_tracked(), isvisible(false)
-    {
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-    }
-    vpMbtDistanceLine &operator=(const vpMbtDistanceLine &){
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-      return *this;
-    }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//    vpMbtDistanceLine(const vpMbtDistanceLine &)
+//      : name(), index(0), cam(), me(NULL), isTrackedLine(true), isTrackedLineWithVisibility(true),
+//        wmean(1), featureline(), poly(), useScanLine(false), meline(), line(NULL), p1(NULL), p2(NULL), L(),
+//        error(), nbFeature(), nbFeatureTotal(0), Reinit(false), hiddenface(NULL), Lindex_polygon(),
+//        Lindex_polygon_tracked(), isvisible(false)
+//    {
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//    }
+//    vpMbtDistanceLine &operator=(const vpMbtDistanceLine &){
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//      return *this;
+//    }
+//#endif
 
   public:
     vpMbtDistanceLine() ;

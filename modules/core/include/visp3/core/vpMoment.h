@@ -118,18 +118,18 @@ protected:
    */
   inline vpMomentDatabase& getMoments() const { return *moments; }
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vpMoment(const vpMoment &)
-    : object(NULL), moments(NULL), values()
-  {
-    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-  }
-  vpMoment &operator=(const vpMoment &){
-    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-    return *this;
-  }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//  vpMoment(const vpMoment &)
+//    : object(NULL), moments(NULL), values()
+//  {
+//    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+//  }
+//  vpMoment &operator=(const vpMoment &){
+//    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+//    return *this;
+//  }
+//#endif
 
 public:
   vpMoment();

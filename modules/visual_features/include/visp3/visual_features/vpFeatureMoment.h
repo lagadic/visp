@@ -150,19 +150,19 @@ protected:
   double C;
   char _name[255];
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vpFeatureMoment(const vpFeatureMoment &fm)
-    : vpBasicFeature(), moment(NULL), moments(fm.moments), featureMomentsDataBase(NULL),
-      interaction_matrices(), A(0), B(0), C(0)
-  {
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-  }
-  vpFeatureMoment &operator=(const vpFeatureMoment &){
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-    return *this;
-  }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//  vpFeatureMoment(const vpFeatureMoment &fm)
+//    : vpBasicFeature(), moment(NULL), moments(fm.moments), featureMomentsDataBase(NULL),
+//      interaction_matrices(), A(0), B(0), C(0)
+//  {
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//  }
+//  vpFeatureMoment &operator=(const vpFeatureMoment &){
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//    return *this;
+//  }
+//#endif
 
 public:
   /*!

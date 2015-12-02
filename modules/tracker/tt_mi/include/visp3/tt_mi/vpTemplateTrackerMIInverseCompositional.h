@@ -90,19 +90,19 @@ protected:
   void computeEvalRMS(const vpColVector &p);
   void initPosEvalRMS(const vpColVector &p);
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vpTemplateTrackerMIInverseCompositional(const vpTemplateTrackerMIInverseCompositional &)
-    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
-      evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()//, useAYOptim(false)
-  {
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-  }
-  vpTemplateTrackerMIInverseCompositional &operator=(const vpTemplateTrackerMIInverseCompositional &){
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-    return *this;
-  }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//  vpTemplateTrackerMIInverseCompositional(const vpTemplateTrackerMIInverseCompositional &)
+//    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
+//      evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()//, useAYOptim(false)
+//  {
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//  }
+//  vpTemplateTrackerMIInverseCompositional &operator=(const vpTemplateTrackerMIInverseCompositional &){
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//    return *this;
+//  }
+//#endif
 
 public:
   //! Default constructor.

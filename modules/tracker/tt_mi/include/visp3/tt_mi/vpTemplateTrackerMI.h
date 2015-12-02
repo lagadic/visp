@@ -125,22 +125,22 @@ protected:
   virtual void    trackNoPyr(const vpImage<unsigned char> &I)=0;
   void    zeroProbabilities();
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vpTemplateTrackerMI(const vpTemplateTrackerMI &)
-    : vpTemplateTracker(), hessianComputation(USE_HESSIEN_NORMAL), ApproxHessian(HESSIAN_0), lambda(0),
-      temp(NULL), Prt(NULL), dPrt(NULL), Pt(NULL), Pr(NULL), d2Prt(NULL), PrtTout(NULL),
-      dprtemp(NULL), PrtD(NULL), dPrtD(NULL), influBspline(0), bspline(0), Nc(0), Ncb(0),
-      d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
-      NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false)
-  {
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-  }
-    vpTemplateTrackerMI &operator=(const vpTemplateTrackerMI &){
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-      return *this;
-    }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//  vpTemplateTrackerMI(const vpTemplateTrackerMI &)
+//    : vpTemplateTracker(), hessianComputation(USE_HESSIEN_NORMAL), ApproxHessian(HESSIAN_0), lambda(0),
+//      temp(NULL), Prt(NULL), dPrt(NULL), Pt(NULL), Pr(NULL), d2Prt(NULL), PrtTout(NULL),
+//      dprtemp(NULL), PrtD(NULL), dPrtD(NULL), influBspline(0), bspline(0), Nc(0), Ncb(0),
+//      d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
+//      NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false)
+//  {
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//  }
+//    vpTemplateTrackerMI &operator=(const vpTemplateTrackerMI &){
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//      return *this;
+//    }
+//#endif
 
 public:
   //constructeur

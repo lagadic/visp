@@ -112,20 +112,20 @@ private:
   void                computeP_mu_t(const double x_in, const double y_in, double& x_out, double& y_out, const vpMatrix& cHc0);
   bool                isTrackedFeature(const int id);
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    vpMbtDistanceKltPoints(const vpMbtDistanceKltPoints &)
-      : H(), N(), N_cur(), invd0(1.), cRc0_0n(), initPoints(), curPoints(), curPointsInd(),
-        nbPointsCur(0), nbPointsInit(0), minNbPoint(4), enoughPoints(false), dt(1.), d0(1.),
-        cam(), isTrackedKltPoints(true), polygon(NULL), hiddenface(NULL), useScanLine(false)
-    {
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-    }
-    vpMbtDistanceKltPoints &operator=(const vpMbtDistanceKltPoints &){
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-      return *this;
-    }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//    vpMbtDistanceKltPoints(const vpMbtDistanceKltPoints &)
+//      : H(), N(), N_cur(), invd0(1.), cRc0_0n(), initPoints(), curPoints(), curPointsInd(),
+//        nbPointsCur(0), nbPointsInit(0), minNbPoint(4), enoughPoints(false), dt(1.), d0(1.),
+//        cam(), isTrackedKltPoints(true), polygon(NULL), hiddenface(NULL), useScanLine(false)
+//    {
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//    }
+//    vpMbtDistanceKltPoints &operator=(const vpMbtDistanceKltPoints &){
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//      return *this;
+//    }
+//#endif
 
 public:
                       vpMbtDistanceKltPoints();

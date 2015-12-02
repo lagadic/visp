@@ -106,14 +106,14 @@ int main() {
 */
 class VISP_EXPORT vpKinect : public Freenect::FreenectDevice
 {
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vpKinect(const vpKinect &); // Not implemented!
-  vpKinect &operator=(const vpKinect &){
-    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-    return *this;
-  }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//  vpKinect(const vpKinect &); // Not implemented!
+//  vpKinect &operator=(const vpKinect &){
+//    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+//    return *this;
+//  }
+//#endif
 
 public:
   /*! 

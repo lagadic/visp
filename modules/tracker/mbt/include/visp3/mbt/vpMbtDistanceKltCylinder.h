@@ -111,21 +111,21 @@ private:
   double              computeZ(const double &x, const double &y);
   bool                isTrackedFeature(const int id);
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    vpMbtDistanceKltCylinder(const vpMbtDistanceKltCylinder &)
-      : c0Mo(), p1Ext(), p2Ext(), cylinder(), circle1(), circle2(),
-        initPoints(), initPoints3D(), curPoints(), curPointsInd(),
-        nbPointsCur(0), nbPointsInit(0), minNbPoint(4), enoughPoints(false),
-        cam(), isTrackedKltCylinder(true), listIndicesCylinderBBox(), hiddenface(NULL), useScanLine(false)
-    {
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-    }
-    vpMbtDistanceKltCylinder &operator=(const vpMbtDistanceKltCylinder &){
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-      return *this;
-    }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//    vpMbtDistanceKltCylinder(const vpMbtDistanceKltCylinder &)
+//      : c0Mo(), p1Ext(), p2Ext(), cylinder(), circle1(), circle2(),
+//        initPoints(), initPoints3D(), curPoints(), curPointsInd(),
+//        nbPointsCur(0), nbPointsInit(0), minNbPoint(4), enoughPoints(false),
+//        cam(), isTrackedKltCylinder(true), listIndicesCylinderBBox(), hiddenface(NULL), useScanLine(false)
+//    {
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//    }
+//    vpMbtDistanceKltCylinder &operator=(const vpMbtDistanceKltCylinder &){
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//      return *this;
+//    }
+//#endif
 
 public:
                       vpMbtDistanceKltCylinder();

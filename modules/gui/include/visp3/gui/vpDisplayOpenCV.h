@@ -178,30 +178,30 @@ private:
   int y_rbuttonup ;
   bool rbuttonup;
   
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vpDisplayOpenCV(const vpDisplayOpenCV &)
-    : vpDisplay(),
-    #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-      background(NULL), col(NULL), cvcolor(), font(NULL),
-    #else
-      background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
-    #endif
-      fontHeight(10), x_move(0), y_move(0) , move(false),
-      x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
-      x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false),
-      x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
-      x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false),
-      x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false),
-      x_rbuttonup(0), y_rbuttonup(0), rbuttonup(false)
-  {
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-  }
-  vpDisplayOpenCV &operator=(const vpDisplayOpenCV &){
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-    return *this;
-  }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//  vpDisplayOpenCV(const vpDisplayOpenCV &)
+//    : vpDisplay(),
+//    #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+//      background(NULL), col(NULL), cvcolor(), font(NULL),
+//    #else
+//      background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+//    #endif
+//      fontHeight(10), x_move(0), y_move(0) , move(false),
+//      x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
+//      x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false),
+//      x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
+//      x_lbuttonup(0), y_lbuttonup(0), lbuttonup(false),
+//      x_mbuttonup(0), y_mbuttonup(0), mbuttonup(false),
+//      x_rbuttonup(0), y_rbuttonup(0), rbuttonup(false)
+//  {
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//  }
+//  vpDisplayOpenCV &operator=(const vpDisplayOpenCV &){
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//    return *this;
+//  }
+//#endif
 
 public:
   vpDisplayOpenCV() ;

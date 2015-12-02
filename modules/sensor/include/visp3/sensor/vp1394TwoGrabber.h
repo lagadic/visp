@@ -337,24 +337,24 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 //    uint32_t captureQuality ; 
   } vpDc1394TwoCameraParametersData;    
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vp1394TwoGrabber(const vp1394TwoGrabber &)
-    : camera(NULL), cameras(NULL), num_cameras(0), camera_id(0), verbose(false), camIsOpen(NULL),
-      num_buffers(4), // ring buffer size
-      isDataModified(NULL), initialShutterMode(NULL), dataCam(NULL)
-    #ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
-    , d(NULL),
-      list(NULL)
-    #endif
-  {
-    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-  }
-  vp1394TwoGrabber &operator=(const vp1394TwoGrabber &){
-    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-    return *this;
-  }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//  vp1394TwoGrabber(const vp1394TwoGrabber &)
+//    : camera(NULL), cameras(NULL), num_cameras(0), camera_id(0), verbose(false), camIsOpen(NULL),
+//      num_buffers(4), // ring buffer size
+//      isDataModified(NULL), initialShutterMode(NULL), dataCam(NULL)
+//    #ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
+//    , d(NULL),
+//      list(NULL)
+//    #endif
+//  {
+//    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+//  }
+//  vp1394TwoGrabber &operator=(const vp1394TwoGrabber &){
+//    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+//    return *this;
+//  }
+//#endif
 
 public:
   vp1394TwoGrabber(bool reset=true);

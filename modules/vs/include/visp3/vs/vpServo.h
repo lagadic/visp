@@ -210,23 +210,23 @@ public:
       MINIMUM             /*!< Same as vpServo::vpServoPrintType::ERROR_VECTOR. */
     } vpServoPrintType;
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  vpServo(const vpServo &)
-    : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(vpServo::NONE),
-      rankJ1(0), featureList(), desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1),
-      interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false),
-      cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false),
-      errorComputed(false), interactionMatrixComputed(false), dim_task(0), taskWasKilled(false),
-      forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial()
-  {
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-  }
-  vpServo &operator=(const vpServo &){
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-    return *this;
-  }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//  vpServo(const vpServo &)
+//    : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(vpServo::NONE),
+//      rankJ1(0), featureList(), desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1),
+//      interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false),
+//      cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false),
+//      errorComputed(false), interactionMatrixComputed(false), dim_task(0), taskWasKilled(false),
+//      forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial()
+//  {
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//  }
+//  vpServo &operator=(const vpServo &){
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//    return *this;
+//  }
+//#endif
 
 public:
   // default constructor

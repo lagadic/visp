@@ -61,16 +61,16 @@
 template <class type>
 class vpListElement
 {
-private:
-  vpListElement(const vpListElement &)
-    : prev(NULL), next(NULL), val()
-  {
-    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-  }
-  vpListElement &operator=(const vpListElement &){
-    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-    return *this;
-  }
+//private:
+//  vpListElement(const vpListElement &)
+//    : prev(NULL), next(NULL), val()
+//  {
+//    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+//  }
+//  vpListElement &operator=(const vpListElement &){
+//    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
+//    return *this;
+//  }
 
 public:
   vpListElement() : prev(NULL), next(NULL), val() {};

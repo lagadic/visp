@@ -118,20 +118,20 @@ private:
   vpColVector q_previous;
   bool controlThreadCreated;
 
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  /*! \brief No copy constructor allowed.   */
-  vpRobotBiclops(const vpRobotBiclops &)
-    : vpBiclops(), vpRobot(), control_thread(), controller(),
-      positioningVelocity(0), q_previous(), controlThreadCreated(false)
-  {
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-  }
-  vpRobotBiclops &operator=(const vpRobotBiclops &){
-    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-    return *this;
-  }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//  /*! \brief No copy constructor allowed.   */
+//  vpRobotBiclops(const vpRobotBiclops &)
+//    : vpBiclops(), vpRobot(), control_thread(), controller(),
+//      positioningVelocity(0), q_previous(), controlThreadCreated(false)
+//  {
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//  }
+//  vpRobotBiclops &operator=(const vpRobotBiclops &){
+//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//    return *this;
+//  }
+//#endif
 
 public:
 

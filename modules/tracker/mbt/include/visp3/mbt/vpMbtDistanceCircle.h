@@ -103,22 +103,22 @@ class VISP_EXPORT vpMbtDistanceCircle
     //! Indicates if the circle is visible or not
     bool isvisible;
     
-private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    vpMbtDistanceCircle(const vpMbtDistanceCircle &)
-      : name(), index(0), cam(), me(NULL), wmean(1),
-        featureEllipse(), isTrackedCircle(true), meEllipse(NULL),
-        circle(NULL), radius(0.), p1(NULL), p2(NULL), p3(NULL),
-        L(), error(), nbFeature(0), Reinit(false),
-        hiddenface(NULL), index_polygon(-1), isvisible(false)
-    {
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-    }
-    vpMbtDistanceCircle &operator=(const vpMbtDistanceCircle &){
-      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-      return *this;
-    }
-#endif
+//private:
+//#ifndef DOXYGEN_SHOULD_SKIP_THIS
+//    vpMbtDistanceCircle(const vpMbtDistanceCircle &)
+//      : name(), index(0), cam(), me(NULL), wmean(1),
+//        featureEllipse(), isTrackedCircle(true), meEllipse(NULL),
+//        circle(NULL), radius(0.), p1(NULL), p2(NULL), p3(NULL),
+//        L(), error(), nbFeature(0), Reinit(false),
+//        hiddenface(NULL), index_polygon(-1), isvisible(false)
+//    {
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//    }
+//    vpMbtDistanceCircle &operator=(const vpMbtDistanceCircle &){
+//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
+//      return *this;
+//    }
+//#endif
 
   public:
     vpMbtDistanceCircle() ;
