@@ -518,6 +518,44 @@ vpColVector &vpColVector::operator=(const vpTranslationVector &tv)
   memcpy(data, tv.data, rowNum*sizeof(double)) ;
   return *this;
 }
+/*!
+   Operator that allows to convert a rotation vector into a column vector.
+ */
+vpColVector &vpColVector::operator=(const vpRotationVector &rv)
+{
+  unsigned int k = rv.getRows() ;
+  if (rowNum != k){
+    try {
+      resize(k);
+    }
+    catch(...)
+    {
+      throw ;
+    }
+  }
+
+  memcpy(data, rv.data, rowNum*sizeof(double)) ;
+  return *this;
+}
+/*!
+   Operator that allows to convert a pose vector into a column vector.
+ */
+vpColVector &vpColVector::operator=(const vpPoseVector &p)
+{
+  unsigned int k = p.getRows() ;
+  if (rowNum != k){
+    try {
+      resize(k);
+    }
+    catch(...)
+    {
+      throw ;
+    }
+  }
+
+  memcpy(data, p.data, rowNum*sizeof(double)) ;
+  return *this;
+}
 
 /*!
   Copy operator.

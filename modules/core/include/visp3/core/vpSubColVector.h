@@ -82,10 +82,15 @@ public:
 
   void init(vpColVector &v, const unsigned int & offset,const unsigned int & nrows);
 
-  vpSubColVector & operator=(const vpSubColVector &B);
-  vpSubColVector & operator=(const vpColVector &B);
-  vpSubColVector & operator=(const vpMatrix &B);
-  vpSubColVector & operator=(const double &x);
+  vpSubColVector &operator=(const vpSubColVector &B);
+
+  vpSubColVector &operator=(const vpPoseVector &p);
+  vpSubColVector &operator=(const vpRotationVector &rv);
+  vpSubColVector &operator=(const vpTranslationVector &tv);
+
+  vpSubColVector &operator=(const vpColVector &B);
+  vpSubColVector &operator=(const vpMatrix &B);
+  vpSubColVector &operator=(const double &x);
 };
 
 #endif

@@ -167,6 +167,8 @@ public:
   inline const double &operator[](unsigned int n) const { return *(data+n);  }
   //! Copy operator.   Allow operation such as A = v
   vpColVector &operator=(const vpColVector &v);
+  vpColVector &operator=(const vpPoseVector &p);
+  vpColVector &operator=(const vpRotationVector &rv);
   vpColVector &operator=(const vpTranslationVector &tv);
   vpColVector &operator=(const vpMatrix &M);
   vpColVector &operator=(const std::vector<double> &v);
