@@ -77,7 +77,7 @@ private:
   vpColVector G_prec;
   vpMatrix    KQuasiNewton;
 
-  bool    useAYOptim;
+  //bool    useAYOptim;
 
 public: // AY Optimisation
   void initTemplateRefBspline(unsigned int ptIndex, double &et);
@@ -94,8 +94,7 @@ private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   vpTemplateTrackerMIInverseCompositional(const vpTemplateTrackerMIInverseCompositional &)
     : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
-      evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton(),
-      useAYOptim(false)
+      evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()//, useAYOptim(false)
   {
     throw vpException(vpException::functionNotImplementedError, "Not implemented!");
   }
@@ -109,8 +108,7 @@ public:
   //! Default constructor.
   vpTemplateTrackerMIInverseCompositional()
     : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
-      evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton(),
-      useAYOptim(false)
+      evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()//, useAYOptim(false)
   {}
   vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp);
 
