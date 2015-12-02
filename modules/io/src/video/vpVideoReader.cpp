@@ -52,7 +52,7 @@
 Basic constructor.
 */
 vpVideoReader::vpVideoReader()
-	: imSequence(NULL),
+  : vpFrameGrabber(), imSequence(NULL),
 #ifdef VISP_HAVE_FFMPEG
 	ffmpeg(NULL),
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
