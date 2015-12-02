@@ -658,66 +658,65 @@ void vpAROgre::setCameraParameters(const vpCameraParameters &cameraP )
 
 /*!
   Load a mesh in the 3D world.
-  \param name : Name of the Entity and SceneNode to create.
+  \param entityName : Name of the Entity and SceneNode to create.
   \param model : 3D model to load.
 */
-void vpAROgre::load(const std::string &name, const std::string &model)
+void vpAROgre::load(const std::string &entityName, const std::string &model)
 {
-  Ogre::Entity *newEntity = mSceneMgr->createEntity(name, model);
-  Ogre::SceneNode *newNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(name);
+  Ogre::Entity *newEntity = mSceneMgr->createEntity(entityName, model);
+  Ogre::SceneNode *newNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(entityName);
   newNode->attachObject(newEntity);
 }
 
 /*!
   Change position of a ScneneNode.
-  \param name : Name of the SceneNode to move.
+  \param sceneName : Name of the SceneNode to move.
   \param wTo : New position of the node (translation between object frame and
     world frame).
 */
-void vpAROgre::setPosition(const std::string &name,
-         const vpTranslationVector &wTo)
+void vpAROgre::setPosition(const std::string &sceneName,
+                           const vpTranslationVector &wTo)
 {
   // Reset the position
-  Ogre::SceneNode *node = mSceneMgr->getSceneNode(name);
+  Ogre::SceneNode *node = mSceneMgr->getSceneNode(sceneName);
   node->setPosition((Ogre::Real)wTo[0], (Ogre::Real)wTo[1], (Ogre::Real)wTo[2]);
 }
 
 /*!
   Get position of a SceneNode.
-  \param name : Name of the SceneNode in the scene graph.
+  \param sceneName : Name of the SceneNode in the scene graph.
   \return The position of the node.
 */
-vpTranslationVector vpAROgre::getPosition(const std::string &name)const
+vpTranslationVector vpAROgre::getPosition(const std::string &sceneName)const
 {
-  Ogre::Vector3 translation = mSceneMgr->getSceneNode(name)->getPosition();
+  Ogre::Vector3 translation = mSceneMgr->getSceneNode(sceneName)->getPosition();
   return vpTranslationVector((Ogre::Real)translation[0], (Ogre::Real)translation[1], (Ogre::Real)translation[2]);
 }
 
 /*!
   Set the orientation of a SceneNode.
-  \param name : Name of the SceneNode to rotate.
+  \param sceneName : Name of the SceneNode to rotate.
   \param wRo : The rotation matrix representing the rotation to apply.
 */
-void vpAROgre::setRotation(const std::string &name, const vpRotationMatrix &wRo)
+void vpAROgre::setRotation(const std::string &sceneName, const vpRotationMatrix &wRo)
 {
   // Get the node in its original position
-  mSceneMgr->getSceneNode(name)->resetOrientation();
+  mSceneMgr->getSceneNode(sceneName)->resetOrientation();
   // Apply the new rotation
   Ogre::Matrix3 rotationOgre
     = Ogre::Matrix3( (Ogre::Real)wRo[0][0], (Ogre::Real)wRo[0][1], (Ogre::Real)wRo[0][2],
          (Ogre::Real)wRo[1][0], (Ogre::Real)wRo[1][1], (Ogre::Real)wRo[1][2],
          (Ogre::Real)wRo[2][0], (Ogre::Real)wRo[2][1], (Ogre::Real)wRo[2][2]);
   Ogre::Quaternion q(rotationOgre);
-  mSceneMgr->getSceneNode(name)->rotate(q);
+  mSceneMgr->getSceneNode(sceneName)->rotate(q);
 }
 
 /*!
   Add a rotation to a SceneNode.
-  \param name : Name of the SceneNode to rotate.
+  \param sceneName : Name of the SceneNode to rotate.
   \param wRo : The rotation matrix representing the rotation to apply.
 */
-void vpAROgre::addRotation(const std::string &name,
-         const vpRotationMatrix &wRo)
+void vpAROgre::addRotation(const std::string &sceneName, const vpRotationMatrix &wRo)
 {
   // Apply the new rotation
   Ogre::Matrix3 rotationOgre
@@ -725,21 +724,18 @@ void vpAROgre::addRotation(const std::string &name,
          (Ogre::Real)wRo[1][0], (Ogre::Real)wRo[1][1], (Ogre::Real)wRo[1][2],
          (Ogre::Real)wRo[2][0], (Ogre::Real)wRo[2][1], (Ogre::Real)wRo[2][2]);
   Ogre::Quaternion q(rotationOgre);
-  mSceneMgr->getSceneNode(name)->rotate(q);
-
-
+  mSceneMgr->getSceneNode(sceneName)->rotate(q);
 }
 
 /*!
   Set the position and the orientation of a SceneNode.
-  \param name : Name of the SceneNode to rotate.
+  \param sceneName : Name of the SceneNode to rotate.
 
   \param wMo : The homogeneous matrix representing the rotation and
   translation to apply.
 
 */
-void vpAROgre::setPosition(const std::string &name,
-         const vpHomogeneousMatrix &wMo)
+void vpAROgre::setPosition(const std::string &sceneName, const vpHomogeneousMatrix &wMo)
 {
   // Extract the position and orientation data
   vpRotationMatrix rotations;
@@ -747,33 +743,33 @@ void vpAROgre::setPosition(const std::string &name,
   wMo.extract(rotations);
   wMo.extract(translation);
   // Apply them to the node
-  setPosition(name, translation);
-  setRotation(name, rotations);
+  setPosition(sceneName, translation);
+  setRotation(sceneName, rotations);
 }
 
 /*!
   Tell if a SceneNode is shown on the screen or not.
-  \param name : Name of the SceneNode.
+  \param sceneName : Name of the SceneNode.
   \param isVisible : If true we show the node, if false we don't.
 */
-void vpAROgre::setVisibility(const std::string &name, bool isVisible)
+void vpAROgre::setVisibility(const std::string &sceneName, bool isVisible)
 {
-  mSceneMgr->getSceneNode(name)->setVisible(isVisible);
+  mSceneMgr->getSceneNode(sceneName)->setVisible(isVisible);
 }
 
 /*!
   Scale a SceneNode.
-  \param name : Name of the SceneNode.
+  \param sceneName : Name of the SceneNode.
   \param factorx : Scale factor along the x-axis.
   \param factory : Scale factor along the x-axis.
   \param factorz : Scale factor along the x-axis.
 */
-void vpAROgre::setScale(const std::string &name, const float factorx, const float factory, const float factorz)
+void vpAROgre::setScale(const std::string &sceneName, const float factorx, const float factory, const float factorz)
 {
   // Reset the scale to its original value
-  mSceneMgr->getSceneNode(name)->scale(Ogre::Vector3(1,1,1)/mSceneMgr->getSceneNode(name)->getScale());
+  mSceneMgr->getSceneNode(sceneName)->scale(Ogre::Vector3(1,1,1)/mSceneMgr->getSceneNode(name)->getScale());
   // Apply the new scale
-  mSceneMgr->getSceneNode(name)->scale(Ogre::Vector3(factorx, factory, factorz));
+  mSceneMgr->getSceneNode(sceneName)->scale(Ogre::Vector3(factorx, factory, factorz));
 }
 
 /*!

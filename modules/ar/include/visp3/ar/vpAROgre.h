@@ -121,7 +121,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
     mOptionnalResourceLocation.push_back(resourceLocation);
   }
   
-  void addRotation(const std::string &name, const vpRotationMatrix &wRo);
+  void addRotation(const std::string &sceneName, const vpRotationMatrix &wRo);
   
   bool continueRendering(void);
   
@@ -151,7 +151,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
   */
   inline double getNearClippingDistance() const { return mNearClipping; }
   
-  vpTranslationVector getPosition(const std::string &name)const;
+  vpTranslationVector getPosition(const std::string &sceneName)const;
   
   void getRenderingOutput(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo);
   
@@ -178,7 +178,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
   virtual bool keyReleased( const OIS::KeyEvent & /*e*/) {  return true; }
 #endif
 
-  void load(const std::string &name, const std::string &model);
+  void load(const std::string &entityName, const std::string &model);
 
   bool renderOneFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMw);
   
@@ -219,9 +219,8 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
     mPluginsPath = pluginsPath;
   }
   
-  void setPosition(const std::string &name,
-       const vpTranslationVector &wTo);
-  void setPosition(const std::string &name, const vpHomogeneousMatrix &wMo);
+  void setPosition(const std::string &sceneName, const vpTranslationVector &wTo);
+  void setPosition(const std::string &sceneName, const vpHomogeneousMatrix &wMo);
   
   /*!
     Set the resource path used to locate the resource.cfg file.
@@ -236,9 +235,9 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
     mResourcePath = resourcePath;
   }
   
-  void setRotation(const std::string &name, const vpRotationMatrix &wRo);
+  void setRotation(const std::string &sceneName, const vpRotationMatrix &wRo);
   
-  void setScale(const std::string &name, const float factorx, const float factory, const float factorz);
+  void setScale(const std::string &sceneName, const float factorx, const float factory, const float factorz);
   
   /*!
     Enable/Disable the appearance of the config dialog on startup.
@@ -252,7 +251,7 @@ class VISP_EXPORT vpAROgre : public Ogre::FrameListener, public Ogre::WindowEven
     mshowConfigDialog = showConfigDialog;
   }
   
-  void setVisibility(const std::string &name, bool isVisible);
+  void setVisibility(const std::string &sceneName, bool isVisible);
   
   /*!
     Set the name of the window.
