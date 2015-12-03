@@ -185,7 +185,7 @@ macro(VP_OPTION variable package quiet description advanced value)
 
     if(NOT ${__first_package} STREQUAL "")
       foreach(p ${package})
-        if(quiet STREQUAL "")
+        if("${quiet}" STREQUAL "")
           find_package(${p})
         else()
           find_package(${p} ${quiet})
