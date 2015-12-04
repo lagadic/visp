@@ -144,14 +144,9 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
   double er,et;
   unsigned int Ncb_ = (unsigned int) Ncb;
 
-  for(i=0;i<Ncb*Ncb;i++)
-  {
-    Prt[i]=0;
-  }
-  for(i=0;i<Nc*Nc*influBspline;i++)
-  {
-    PrtD[i]=0;
-  }
+  memset(Prt, 0, Ncb*Ncb*sizeof(double));
+  memset(PrtD, 0, Nc*Nc*influBspline*sizeof(double));
+
   //Warp->ComputeMAtWarp(tp);
   Warp->computeCoeff(tp);
   for(unsigned int point=0;point<templateSize;point++)
@@ -209,17 +204,17 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
       //printf("%f ",Prt[r*Ncb+t]);
       Prt[r*Ncb_+t]=Prt[r*Ncb_+t]/Nbpoint;
   //calcul Pr;
+  memset(Pr, 0, Ncb_*sizeof(double));
   for(unsigned int r=0;r<Ncb_;r++)
   {
-    Pr[r]=0;
     for(unsigned int t=0;t<Ncb_;t++)
       Pr[r]+=Prt[r*Ncb_+t];
   }
 
   //calcul Pt;
+  memset(Pt, 0, Ncb_*sizeof(double));
   for(unsigned int t=0;t<Ncb_;t++)
   {
-    Pt[t]=0;
     for(unsigned int r=0;r<Ncb_;r++)
       Pt[t]+=Prt[r*Ncb_+t];
   }
@@ -257,13 +252,9 @@ double vpTemplateTrackerMI::getNormalizedCost(const vpImage<unsigned char> &I, c
   double Pt_[256];
   double Prt_[256][256];
 
-  for(int i = 0 ; i < 256 ; i++)
-  {
-    Pr_[i] = 0.0;
-    Pt_[i] = 0.0;
-    for(int j = 0 ; j < 256 ; j++)
-      Prt_[i][j] = 0.0;
-  }
+  memset(Pr_, 0, 256*sizeof(double));
+  memset(Pt_, 0, 256*sizeof(double));
+  memset(Prt_, 0, 256*256*sizeof(double));
 
   for(unsigned int point=0;point<templateSize;point++)
   {
@@ -432,17 +423,17 @@ void vpTemplateTrackerMI::computeMI(double &MI)
   unsigned int Ncb_ = (unsigned int) Ncb;
 
   //calcul Pr;
+  memset(Pr, 0, Ncb_*sizeof(double));
   for(unsigned int r=0;r<Ncb_;r++)
   {
-    Pr[r]=0;
     for(unsigned int t=0;t<Ncb_;t++)
       Pr[r]+=Prt[r*Ncb_+t];
   }
 
   //calcul Pt;
+  memset(Pt, 0, Ncb_*sizeof(double));
   for(unsigned int t=0;t<Ncb_;t++)
   {
-    Pt[t]=0;
     for(unsigned int r=0;r<Ncb_;r++)
       Pt[t]+=Prt[r*Ncb_+t];
   }
@@ -475,45 +466,6 @@ void vpTemplateTrackerMI::computeMI(double &MI)
       //if(Prt[r*Ncb+t]!=0)
       if(std::fabs(Prt[r*Ncb_+t]) > std::numeric_limits<double>::epsilon())
         MI+=Prt[r*Ncb_+t]*log(Prt[r*Ncb_+t]);
-
-
-  //    //calcul Pr;
-  //    for(int r=0;r<Ncb;r++)
-  //    {
-  //        Pr[r]=0;
-  //        for(int t=0;t<Ncb;t++)
-  //            Pr[r]+=Prt[r*Ncb+t];
-  //    }
-
-  //    //calcul Pt;
-  //    for(int t=0;t<Ncb;t++)
-  //    {
-  //        Pt[t]=0;
-  //        for(int r=0;r<Ncb;r++)
-  //            Pt[t]+=Prt[r*Ncb+t];
-  //    }
-  //    //calcul Entropies;
-  //    double entropieI=0;
-  //    double entropieT=0;
-
-  //    for(int r=0;r<Ncb;r++)
-  //    {
-  //        if(Pr[r]!=0)
-  //        {
-  //            entropieI-=Pr[r]*log(Pr[r]);
-  //      MI-=Pr[r]*log(Pr[r]);
-  //        }
-
-  //        if(Pt[r]!=0)
-  //        {
-  //            entropieT-=Pt[r]*log(Pt[r]);
-  //      MI-=Pt[r]*log(Pt[r]);
-  //        }
-
-  //        for(int t=0;t<Ncb;t++)
-  //            if(Prt[r*Ncb+t]!=0)
-  //                MI+=Prt[r*Ncb+t]*log(Prt[r*Ncb+t]);
-  //    }
 }
 
 void vpTemplateTrackerMI::computeHessien(vpMatrix &Hessian)
@@ -573,16 +525,17 @@ void vpTemplateTrackerMI::computeHessienNormalized(vpMatrix &Hessian)
     dA[i]  = new double[nbParam];
   }
 
+  memset(du, 0, nbParam*sizeof(double));
+  memset(dv, 0, nbParam*sizeof(double));
+  memset(A, 0, nbParam*sizeof(double));
+  memset(dB, 0, nbParam*sizeof(double));
+  memset(dprtemp, 0, nbParam*sizeof(double));
+
   for(unsigned int it=0;it<nbParam;it++){
-    du[it]=0;
-    dv[it]=0;
-    A[it]=0;
-    dB[it]=0;
-    dprtemp[it]=0;
     for(unsigned int jt=0;jt<nbParam;jt++){
-      d2u[it][jt]=0;
-      d2v[it][jt]=0;
-      dA[it][jt]=0;
+      memset(d2u[it], 0, nbParam*sizeof(double));
+      memset(d2v[it], 0, nbParam*sizeof(double));
+      memset(dA[it], 0, nbParam*sizeof(double));
     }
   }
 
@@ -696,10 +649,11 @@ void vpTemplateTrackerMI::zeroProbabilities()
   unsigned int Ncb_ = (unsigned int)Ncb;
   unsigned int Nc_ = (unsigned int)Nc;
   unsigned int influBspline_ = (unsigned int)influBspline;
-  for(unsigned int i=0; i < Ncb_*Ncb_; i++) Prt[i]=0;
-  for(unsigned int i=0; i < Ncb_*Ncb_*nbParam; i++) dPrt[i]=0;
-  for(unsigned int i=0; i < Ncb_*Ncb_*nbParam*nbParam; i++) d2Prt[i]=0;
-  for(unsigned int i=0; i < Nc_*Nc_*influBspline_*(1+nbParam+nbParam*nbParam); i++) PrtTout[i]=0.0;
+
+  memset(Prt, 0, Ncb_*Ncb_*sizeof(double));
+  memset(dPrt, 0, Ncb_*Ncb_*nbParam*sizeof(double));
+  memset(d2Prt, 0, Ncb_*Ncb_*nbParam*nbParam*sizeof(double));
+  memset(PrtTout, 0, Nc_*Nc_*influBspline_*(1+nbParam+nbParam*nbParam)*sizeof(double));
 
   //    std::cout << Ncb*Ncb << std::endl;
   //    std::cout << Ncb*Ncb*nbParam << std::endl;
@@ -728,8 +682,8 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I,int &nc, const
   int i,j;
   int cr,ct;
   double er,et;
-  for(i=0;i<tNcb*tNcb;i++)tPrt[i]=0;
-  for(i=0;i<nc*nc*tinfluBspline;i++)tPrtD[i]=0;
+  memset(tPrt, 0, tNcb*tNcb*sizeof(double));
+  memset(tPrtD, 0, nc*nc*tinfluBspline*sizeof(double));
 
   //Warp->ComputeMAtWarp(tp);
   Warp->computeCoeff(tp);
@@ -793,17 +747,17 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I,int &nc, const
         //printf("%f ",tPrt[r*tNcb+t]);
         tPrt[r*tNcb+t]=tPrt[r*tNcb+t]/Nbpoint;
     //calcul Pr;
+    memset(tPr, 0, tNcb*sizeof(double));
     for(int r=0;r<tNcb;r++)
     {
-      tPr[r]=0;
       for(int t=0;t<tNcb;t++)
         tPr[r]+=tPrt[r*tNcb+t];
     }
 
     //calcul Pt;
+    memset(tPt, 0, tNcb*sizeof(double));
     for(int t=0;t<tNcb;t++)
     {
-      tPt[t]=0;
       for(int r=0;r<tNcb;r++)
         tPt[t]+=tPrt[r*tNcb+t];
     }
