@@ -39,13 +39,7 @@
 #include <visp3/tt_mi/vpTemplateTrackerMIInverseCompositional.h>
 #include <visp3/core/vpTrackingException.h>
 
-#ifdef VISP_HAVE_OPENMP
-#include <omp.h>
-#endif
-
 #include <memory>
-
-//#define USE_OPENMP_MI_INVCOMP
 
 vpTemplateTrackerMIInverseCompositional::vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp)
   : vpTemplateTrackerMI(_warp), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
@@ -256,7 +250,6 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
 
   int Nbpoint=0;
 
-
   lambda=lambdaDep;
   double MI=0,MIprec=-1000;
 
@@ -277,14 +270,6 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
   //unsigned int bspline_ = (unsigned int) bspline;
   //unsigned int totParam = (bspline_ * bspline_)*(1+nbParam+nbParam*nbParam);
 
-#if defined(USE_OPENMP_MI_INVCOMP) && defined(VISP_HAVE_OPENMP)
-  int Ncb_ = (int)Ncb;
-  int nbParam_ = (int)nbParam;
-  int sizePrtBis = Ncb_*Ncb_;
-  int sizedPrtBis = Ncb_*Ncb_*nbParam_;
-  int sized2PrtBis = Ncb_*Ncb_*nbParam_*nbParam_;
-#endif
-
   vpMatrix Hnorm(nbParam,nbParam);
 
   do
@@ -293,41 +278,11 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
     MIprec=MI;
     MI=0;
 
-#ifndef USE_OPENMP_MI_INVCOMP
     zeroProbabilities();
-#endif
 
     Warp->computeCoeff(p);
 
-#if defined(USE_OPENMP_MI_INVCOMP) && defined(VISP_HAVE_OPENMP)
-#pragma omp parallel
-#endif
     {
-#if defined(USE_OPENMP_MI_INVCOMP) && defined(VISP_HAVE_OPENMP)
-      double *Prtbis = new double[sizePrtBis];
-      double *dPrtbis = new double[sizedPrtBis];
-      double *d2Prtbis = new double[sized2PrtBis];
-
-      unsigned int indd, indd2;
-      indd = indd2 = 0;
-      for(int i=0;i<Ncb_*Ncb_;i++){
-        Prtbis[i]=0.0;
-        Prt[i]=0.0;
-        for(int j=0;j<nbParam_;j++){
-          dPrtbis[indd]=0.0;
-          dPrt[indd]=0.0;
-          indd++;
-          for(int k=0;k<nbParam_;k++){
-            d2Prtbis[indd2]=0.0;
-            d2Prt[indd2]=0.0;
-            indd2++;
-          }
-        }
-      }
-
-#pragma omp barrier
-#pragma omp for reduction(+:Nbpoint)
-#endif
       for(int point=0;point<(int)templateSize;point++)
       {
         vpColVector x1(2),x2(2);
@@ -364,75 +319,24 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
 
             if( (ApproxHessian==HESSIAN_NONSECOND||hessianComputation==vpTemplateTrackerMI::USE_HESSIEN_DESIRE) && (ptTemplateSelect[point] || !useTemplateSelect) )
             {
-#if defined(USE_OPENMP_MI_INVCOMP) && defined(VISP_HAVE_OPENMP)
-              vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(Prtbis, dPrtbis, cr, er, ct, et, Ncb, ptTemplate[point].dW, nbParam, bspline);
-#else
               vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(Prt, dPrt, cr, er, ct, et, Ncb, ptTemplate[point].dW, nbParam, bspline);
-#endif
             }
             else if (ptTemplateSelect[point] || !useTemplateSelect)
             {
               if(bspline==3){
-#if defined(USE_OPENMP_MI_INVCOMP) && defined(VISP_HAVE_OPENMP)
-                vpTemplateTrackerMIBSpline::PutTotPVBspline3(Prtbis, dPrtbis, d2Prtbis, cr, er, ct, et, Ncb, ptTemplate[point].dW, nbParam);
-#else
                 vpTemplateTrackerMIBSpline::PutTotPVBspline3(Prt, dPrt, d2Prt, cr, er, ct, et, Ncb, ptTemplate[point].dW, nbParam);
-#endif
-                //                        {
-                //                            // ################### AY : Optim
-                //                            if(et>0.5){ct++;}
-                //                            if(er>0.5){cr++;}
-                //                            int index = (cr*Nc+ct)*totParam;
-                //                            double *ptb = &PrtTout[index];
-                //                            #endif
-                //                            vpTemplateTrackerMIBSpline::PutTotPVBspline3(ptb, er, ptTemplateSupp[point].BtInit, size);
-                //                            // ###################
-                //                        }
               }
               else{
-#if defined(USE_OPENMP_MI_INVCOMP) && defined(VISP_HAVE_OPENMP)
-                vpTemplateTrackerMIBSpline::PutTotPVBspline4(Prtbis, dPrtbis, d2Prtbis, cr, er, ct, et, Ncb, ptTemplate[point].dW, nbParam);
-#else
                 vpTemplateTrackerMIBSpline::PutTotPVBspline4(Prt, dPrt, d2Prt, cr, er, ct, et, Ncb, ptTemplate[point].dW, nbParam);
-#endif
               }
             }
             else{
-#if defined(USE_OPENMP_MI_INVCOMP) && defined(VISP_HAVE_OPENMP)
-              vpTemplateTrackerMIBSpline::PutTotPVBsplinePrt(Prtbis, cr, er, ct, et, Ncb ,nbParam, bspline);
-#else
               vpTemplateTrackerMIBSpline::PutTotPVBsplinePrt(Prt, cr, er, ct, et, Ncb,nbParam, bspline);
-#endif
             }
           }
 
         }
       }
-
-#if defined(USE_OPENMP_MI_INVCOMP) && defined(VISP_HAVE_OPENMP)
-#pragma omp critical
-      {
-        unsigned int indd, indd2;
-        indd = indd2 = 0;
-        for(int i=0;i<Ncb*Ncb;i++){
-          Prt[i]+=Prtbis[i]/(double)Nbpoint;
-          for(int j=0;j<nbParam_;j++){
-            dPrt[indd]+=dPrtbis[indd]/(double)Nbpoint;
-            indd++;
-            for(int k=0;k<nbParam_;k++){
-              d2Prt[indd2]+=d2Prtbis[indd2]/(double)Nbpoint;
-              indd2++;
-            }
-          }
-        }
-
-        delete [] Prtbis;
-        delete [] dPrtbis;
-        delete [] d2Prtbis;
-      }
-
-#pragma omp barrier
-#endif
     }
 
     if(Nbpoint==0)
@@ -447,7 +351,6 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
     {
       //            computeProba(Nbpoint);
 
-#ifndef USE_OPENMP_MI_INVCOMP
       unsigned int indd, indd2;
       indd = indd2 = 0;
       unsigned int Ncb_ = (unsigned int)Ncb;
@@ -462,7 +365,6 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
           }
         }
       }
-#endif
 
       computeMI(MI);
 
