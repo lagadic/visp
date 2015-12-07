@@ -885,3 +885,59 @@ macro(vp_include_modules_recurse)
     endif()
   endforeach()
 endmacro()
+
+# add module config file
+# vp_add_config_file(<external module config file>)
+# Example:
+#   vp_add_config_file(cmake/template/vpConfigModule.h.in)
+#   creates include/visp3/module_name/vpConfigModule.h
+macro(vp_add_config_file)
+  foreach(d ${ARGN})
+    # Removes first "/" if it exists
+    string(FIND ${d} "/" FIRST_SEPARATOR_POS)
+    if(${FIRST_SEPARATOR_POS} EQUAL 0)
+      string(SUBSTRING ${d} 1 -1 d)
+    endif()
+
+    # Find start of file name
+    string(FIND ${d} "/" LAST_SEPARATOR_POS REVERSE)
+    if(${LAST_SEPARATOR_POS} EQUAL -1)
+      set(START 0)
+    else()
+      math(EXPR START "${LAST_SEPARATOR_POS}+1")
+    endif()
+
+    # Save entire path
+    set(FILENAME_CONFIG ${d})
+
+    # Find file name
+    string(FIND ${d} "." EXTENSION_POS REVERSE)
+
+    if(${EXTENSION_POS} EQUAL -1)
+      string(SUBSTRING ${d} ${START} -1 FILENAME_CONFIG_SHORT)
+    else()
+      string(SUBSTRING ${d} ${EXTENSION_POS} -1 EXT_CONFIG_FILE)
+      if(EXT_CONFIG_FILE MATCHES ".cmake" OR EXT_CONFIG_FILE MATCHES ".in")
+        math(EXPR LENGTH "${EXTENSION_POS} - ${START}")
+        string(SUBSTRING ${d} ${START} ${LENGTH} FILENAME_CONFIG_SHORT)
+      else()
+        string(SUBSTRING ${d} ${START} -1 FILENAME_CONFIG_SHORT)
+      endif()
+    endif()
+
+    set(MODULE_NAME ${the_module})
+    if(MODULE_NAME MATCHES "^visp_")
+      string(REGEX REPLACE "^visp_" "" MODULE_NAME "${MODULE_NAME}")
+    endif()
+
+    configure_file("${VISP_MODULE_${the_module}_LOCATION}/${FILENAME_CONFIG}" "${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}")
+
+    vp_create_compat_headers("${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}")
+
+    install(FILES "${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}"
+      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp3/${MODULE_NAME}
+      COMPONENT dev
+    )
+
+  endforeach()
+endmacro()
