@@ -62,7 +62,7 @@ vpMbScanLine::vpMbScanLine()
   : w(0), h(0), K(), maskBorder(0), mask(), primitive_ids(),
     visibility_samples(), depthTreshold(1e-06)
 #if defined(DEBUG_DISP)
-  ,dispLineDebug(NULL), dispMaskDebug(NULL)
+  ,dispMaskDebug(NULL), dispLineDebug(NULL), linedebugImg()
 #endif
 {
 #if defined(VISP_HAVE_X11) && defined(DEBUG_DISP)
@@ -542,7 +542,7 @@ vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigne
     for(unsigned int i = 0 ; i < polygons[ID]->size() ; i++){
       vpPoint p1 = (*(polygons[ID]))[i].first;
       vpPoint p2 = (*(polygons[ID]))[(i+1)%polygons[ID]->size()].first;
-      double i1,j1,i2,j2;
+      double i1=0,j1=0,i2=0,j2=0;
       p1.project();
       p2.project();
       vpMeterPixelConversion::convertPoint(K,p1.get_x(), p1.get_y(),j1,i1);
@@ -594,10 +594,11 @@ vpMbScanLine::queryLineVisibility(const vpPoint &a, const vpPoint &b,
   if(displayResults){
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(DEBUG_DISP)
     double i1(0.0), j1(0.0), i2(0.0), j2(0.0);
-    a.project();
-    b.project();
-    vpMeterPixelConversion::convertPoint(K,a.get_x(), a.get_y(),j1,i1);
-    vpMeterPixelConversion::convertPoint(K,b.get_x(), b.get_y(),j2,i2);
+    vpPoint a_(a), b_(b);
+    a_.project();
+    b_.project();
+    vpMeterPixelConversion::convertPoint(K,a_.get_x(), a_.get_y(),j1,i1);
+    vpMeterPixelConversion::convertPoint(K,b_.get_x(), b_.get_y(),j2,i2);
 
     vpDisplay::displayLine(linedebugImg,i1,j1,i2,j2,vpColor::yellow,3);
 #endif
