@@ -1303,8 +1303,93 @@ void
 vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_name,
                                 const vpHomogeneousMatrix& cMo_, const bool verbose)
 {
-  vpMbKltTracker::reInitModel(I, cad_name, cMo_, verbose);
-  vpMbEdgeTracker::reInitModel(I, cad_name, cMo_, verbose);
+  // Reinit klt
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+  if(cur != NULL){
+    cvReleaseImage(&cur);
+    cur = NULL;
+  }
+#endif
+
+  // delete the Klt Polygon features
+  vpMbtDistanceKltPoints *kltpoly;
+  for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
+    kltpoly = *it;
+    if (kltpoly!=NULL){
+      delete kltpoly ;
+    }
+    kltpoly = NULL ;
+  }
+  kltPolygons.clear();
+
+  vpMbtDistanceKltCylinder *kltPolyCylinder;
+  for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
+    kltPolyCylinder = *it;
+    if (kltPolyCylinder!=NULL){
+      delete kltPolyCylinder ;
+    }
+    kltPolyCylinder = NULL ;
+  }
+  kltCylinders.clear();
+
+  // delete the structures used to display circles
+  vpMbtDistanceCircle *ci;
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp.end(); ++it){
+    ci = *it;
+    if (ci!=NULL){
+      delete ci ;
+    }
+    ci = NULL ;
+  }
+
+  circles_disp.clear();
+
+  firstInitialisation = true;
+
+  // Reinit edge
+  vpMbtDistanceLine *l;
+  vpMbtDistanceCylinder *cy;
+
+  for (unsigned int i = 0; i < scales.size(); i += 1){
+    if(scales[i]){
+      for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
+        l = *it;
+        if (l!=NULL) delete l ;
+        l = NULL ;
+      }
+
+      for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[i].begin(); it!=cylinders[i].end(); ++it){
+        cy = *it;
+        if (cy!=NULL) delete cy;
+        cy = NULL;
+      }
+
+      for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[i].begin(); it!=circles[i].end(); ++it){
+        ci = *it;
+        if (ci!=NULL) delete ci;
+        ci = NULL;
+      }
+
+      lines[i].clear();
+      cylinders[i].clear();
+      circles[i].clear();
+    }
+  }
+
+  //compute_interaction=1;
+  nline = 0;
+  ncylinder = 0;
+  ncircle = 0;
+  //lambda = 1;
+  nbvisiblepolygone = 0;
+
+  // Reinit common parts
+  faces.reset();
+
+  loadModel(cad_name, verbose);
+
+  this->cMo = cMo_;
+  init(I);
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
