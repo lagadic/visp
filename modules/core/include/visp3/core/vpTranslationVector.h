@@ -108,6 +108,8 @@ public:
   vpTranslationVector buildFrom(const vpHomogeneousMatrix& M) ;
   vpTranslationVector buildFrom(const vpPoseVector& p) ;
 
+  double euclideanNorm() const;
+
   // operators
 
   // translation vectors additions  c = a + b (a, b  unchanged)
@@ -150,6 +152,8 @@ public:
 
   // Skew Symmetric matrix
   vpMatrix skew() const ;
+
+  double sumSquare() const;
 
   vpRowVector t() const;
 

@@ -144,6 +144,8 @@ public:
   }
   vpColVector operator*(double x) const;
 
+  double sumSquare() const;
+
   // Transpose of the rotation vector.
   vpRowVector t() const;
 

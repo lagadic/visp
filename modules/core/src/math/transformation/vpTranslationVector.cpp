@@ -505,3 +505,39 @@ vpRowVector vpTranslationVector::t() const
   memcpy(v.data, data, rowNum*sizeof(double)) ;
   return v;
 }
+
+/*!
+  Compute and return the Euclidean norm of the translation vector
+  \f$ ||x|| = \sqrt{ \sum{t_{i}^2}} \f$.
+
+  \return The Euclidean norm if the vector is initialized, 0 otherwise.
+
+*/
+double vpTranslationVector::euclideanNorm() const
+{
+  double norm=0.0;
+  double x ;
+  for (unsigned int i=0;i<dsize;i++) {
+    x = *(data +i); norm += x*x;
+  }
+
+  return sqrt(norm);
+}
+
+/*!
+  Return the sum square of all the elements \f$t_{i}\f$ of the translation vector t(m).
+
+  \return The value \f[\sum{i=0}^{m} t_i^{2}\f].
+  */
+double vpTranslationVector::sumSquare() const
+{
+  double sum_square=0.0;
+  double x ;
+
+  for (unsigned int i=0;i<rowNum;i++) {
+    x=rowPtrs[i][0];
+    sum_square += x*x;
+  }
+
+  return sum_square;
+}
