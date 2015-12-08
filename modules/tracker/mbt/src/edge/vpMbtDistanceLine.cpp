@@ -699,7 +699,7 @@ vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &
 
       std::vector<std::pair<vpPoint, vpPoint> > linesLst;
       if(useScanLine && !displayFullModel){
-        hiddenface->computeScanLineQuery(poly.polyClipped[0].first,poly.polyClipped[1].first,linesLst);
+        hiddenface->computeScanLineQuery(poly.polyClipped[0].first,poly.polyClipped[1].first,linesLst,true);
       }
       else{
         linesLst.push_back(std::make_pair(poly.polyClipped[0].first,poly.polyClipped[1].first));
