@@ -287,12 +287,6 @@ else()
   set(VISP_HAVE_DOXYGEN_FOUND "no")  # for ViSP-third-party.txt
 endif()
 
-#-----------------------------------------------------------------------------
-# Add extra compilation flags under UNIX
-#-----------------------------------------------------------------------------
-include(cmake/AddExtraCompilationFlags.cmake) # should be called after FindOpenMP
-vp_add_extra_compilation_flags()
-
 # ----------------------------------------------------------------------------
 # Solution folders:
 # ----------------------------------------------------------------------------
@@ -447,6 +441,12 @@ include(cmake/VISPModule.cmake)
 
 # process subdirectories
 add_subdirectory(modules)
+
+#-----------------------------------------------------------------------------
+# Add extra compilation flags under UNIX
+#-----------------------------------------------------------------------------
+include(cmake/AddExtraCompilationFlags.cmake) # should be called after FindOpenMP
+vp_add_extra_compilation_flags()
 
 #-------------------------------------------------------------------------------
 # specific things that need to be updated in vpConfig.h and ViSP-third-party.txt
