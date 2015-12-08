@@ -96,6 +96,7 @@ public:
 
   void eye();
 
+  vpColVector getCol(const unsigned int j) const;
   vpThetaUVector getThetaUVector();
 
   vpRotationMatrix inverse() const;

@@ -819,3 +819,44 @@ vpThetaUVector vpHomogeneousMatrix::getThetaUVector()
   this->extract(tu);
   return tu;
 }
+
+/*!
+  Extract a column vector from an homogeneous matrix.
+  \warning All the indexes start from 0 in this function.
+  \param j : Index of the column to extract. If j=0, the first column is extracted.
+  \return The extracted column vector.
+
+  The following example shows how to use this function:
+  \code
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+
+int main()
+{
+  vpHomogeneousMatrix M;
+
+  vpColVector t = M.getCol(3);
+  std::cout << "Last column: \n" << t << std::endl;
+}
+  \endcode
+It produces the following output:
+  \code
+Last column:
+0
+0
+1
+0
+  \endcode
+ */
+vpColVector
+vpHomogeneousMatrix::getCol(const unsigned int j) const
+{
+  if (j >= getCols())
+    throw(vpException(vpException::dimensionError,
+                      "Unable to extract a column vector from the homogeneous matrix"));
+  unsigned int nb_rows = getRows();
+  vpColVector c(nb_rows);
+  for (unsigned int i=0 ; i < nb_rows ; i++)
+    c[i] = (*this)[i][j];
+  return c;
+}

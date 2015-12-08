@@ -123,6 +123,7 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
   // Set to identity
   void eye();
 
+  vpColVector getCol(const unsigned int j) const;
   vpRotationMatrix getRotationMatrix();
   vpThetaUVector getThetaUVector();
   vpTranslationVector getTranslationVector();

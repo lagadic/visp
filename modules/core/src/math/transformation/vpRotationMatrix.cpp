@@ -714,3 +714,43 @@ vpThetaUVector vpRotationMatrix::getThetaUVector()
   return tu;
 }
 
+/*!
+  Extract a column vector from a rotation matrix.
+  \warning All the indexes start from 0 in this function.
+  \param j : Index of the column to extract. If j=0, the first column is extracted.
+  \return The extracted column vector.
+
+  The following example shows how to use this function:
+  \code
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpRotationMatrix.h>
+
+int main()
+{
+  vpRotationMatrix R;
+
+  vpColVector r = R.getCol(2);
+  std::cout << "Last column: \n" << r << std::endl;
+}
+  \endcode
+It produces the following output:
+  \code
+Last column:
+0
+0
+1
+  \endcode
+ */
+vpColVector
+vpRotationMatrix::getCol(const unsigned int j) const
+{
+  if (j >= getCols())
+    throw(vpException(vpException::dimensionError,
+                      "Unable to extract a column vector from the homogeneous matrix"));
+  unsigned int nb_rows = getRows();
+  vpColVector c(nb_rows);
+  for (unsigned int i=0 ; i < nb_rows ; i++)
+    c[i] = (*this)[i][j];
+  return c;
+}
+
