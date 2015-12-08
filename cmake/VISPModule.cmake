@@ -886,8 +886,12 @@ macro(vp_include_modules_recurse)
   endforeach()
 endmacro()
 
-# add module config file
-# vp_add_config_file(<external module config file>)
+# This is a command to configure files as include headers of the corresponding module.
+# vp_add_config_file(<list of header config files>)
+#
+# If the input config filename is suffixed by .in or .cmake the suffix is removed
+# in the configured file.
+#
 # Example:
 #   vp_add_config_file(cmake/template/vpConfigModule.h.in)
 #   creates include/visp3/module_name/vpConfigModule.h
@@ -939,5 +943,24 @@ macro(vp_add_config_file)
       COMPONENT dev
     )
 
+  endforeach()
+endmacro()
+
+# This is a command to add a list of paths associated to the corresponding module
+# to the CMAKE_MODULE_PATH global var to find specific cmake material
+# vp_add_cmake_module_path(<list of cmake module paths>)
+# Example:
+#   vp_add_cmake_module_path(cmake)
+#   Appends the cmake full path to CMAKE_MODULE_PATH var.
+macro(vp_add_cmake_module_path)
+  foreach(d ${ARGN})
+    # Removes first "/" if it exists
+    string(FIND ${d} "/" FIRST_SEPARATOR_POS)
+    if(${FIRST_SEPARATOR_POS} EQUAL 0)
+      string(SUBSTRING ${d} 1 -1 d)
+    endif()
+    if(EXISTS "${VISP_MODULE_${the_module}_LOCATION}/${d}")
+      list(APPEND CMAKE_MODULE_PATH "${VISP_MODULE_${the_module}_LOCATION}/${d}")
+    endif()
   endforeach()
 endmacro()
