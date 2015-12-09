@@ -53,6 +53,15 @@
 // 4723 : potential divide by 0
 #endif
 
+#ifdef WIN32
+  #ifndef NAN
+    //https://msdn.microsoft.com/en-us/library/w22adx1s%28v=vs.120%29.aspx
+    //http://tdistler.com/2011/03/24/how-to-define-nan-not-a-number-on-windows
+    static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
+    #define NAN (*(const float *) __nan)
+  #endif
+#endif
+
 int main() {
   //Test isNaN
   if(vpMath::isNaN(0.0)) {
@@ -116,10 +125,13 @@ int main() {
 
 
   //Test isInf
+#if !defined(VISP_HAVE_FUNC__FINITE)
+  //Disable this test if using _finite as (!_finite(NAN)) returns true whereas isinf(NAN) returns false
   if(vpMath::isInf(NAN)) {
     std::cerr << "Fail: vpMath::isInf(NAN)=" << vpMath::isInf(NAN) << " / should be false" << std::endl;
     return -1;
   }
+#endif
 
   if(!vpMath::isInf(1.0/a)) {
     std::cerr << "Fail: vpMath::isInf(1.0/0.0)=" << vpMath::isInf(1.0/a) << " / should be true" << std::endl;
