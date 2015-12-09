@@ -110,10 +110,10 @@ void vpQuaternionVector::set(const double qx, const double qy,
 }
 /*!
   Manually change values of a quaternion.
-  \param x : x quaternion parameter.
-  \param y : y quaternion parameter.
-  \param z : z quaternion parameter.
-  \param w : w quaternion parameter.
+  \param qx : x quaternion parameter.
+  \param qy : y quaternion parameter.
+  \param qz : z quaternion parameter.
+  \param qw : w quaternion parameter.
 
   \sa set()
 */
