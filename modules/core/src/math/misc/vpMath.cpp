@@ -114,6 +114,8 @@ bool vpMath::isInf(const double value)
   return isinf(value);
 #elif defined(VISP_HAVE_FUNC_STD_ISINF)
   return std::isinf(value);
+#elif defined(VISP_HAVE_FUNC__FINITE)
+  return !_finite(value);
 #else
   //Taken from OpenCV source code CvIsInf()
   Cv64suf ieee754;
