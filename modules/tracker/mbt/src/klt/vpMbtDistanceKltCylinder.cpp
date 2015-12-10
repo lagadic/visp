@@ -283,10 +283,7 @@ vpMbtDistanceKltCylinder::computeInteractionMatrixAndResidu(const vpHomogeneousM
 
     double Z = computeZ(x_cur, y_cur);
 
-    if(Z < std::numeric_limits<double>::epsilon())
-      throw vpException(vpException::divideByZeroError, "Error while estimating cylinder point of interest depth");
-
-    if(vpMath::isNaN(Z)){
+    if(vpMath::isNaN(Z) || Z < std::numeric_limits<double>::epsilon()){
 //      std::cout << "Z is Nan : " << A << " , " << B << " , " << C << " | " << Z << " | " << x_cur << " , " << y_cur << std::endl;
 //      std::cout << std::sqrt(B*B - A*C) << " , " << B*B - A*C << std::endl;
 
