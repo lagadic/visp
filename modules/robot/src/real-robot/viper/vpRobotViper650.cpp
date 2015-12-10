@@ -1421,7 +1421,7 @@ void vpRobotViper650::setPosition(const char *filename)
   - in reference frame, a 6 dimension vector, the first 3 values correspond to
   the translation tx, ty, tz in meters (like a vpTranslationVector), and the
   last 3 values to the rx, ry, rz rotation (like a vpRxyzVector). The code
-  below show how to convert this position into a vpHomogenousMatrix:
+  below show how to convert this position into a vpHomogeneousMatrix:
 
   \param timestamp : Time in second since last robot power on.
 
@@ -1456,7 +1456,7 @@ int main()
   vpRotationMatrix fRc(frc); // reference frame to camera frame rotation matrix
 
   // Create the camera to fix frame transformation in terms of a
-  // homogenous matrix
+  // homogeneous matrix
   vpHomogeneousMatrix fMc(ftc, fRc);
 #endif
 }

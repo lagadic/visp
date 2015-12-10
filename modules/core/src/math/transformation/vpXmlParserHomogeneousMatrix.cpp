@@ -140,10 +140,10 @@ vpXmlParserHomogeneousMatrix::parse(vpHomogeneousMatrix &M, const std::string &f
 }
 
 /*!
-  Save an homogenous matrix in an xml file.
-  \param M : homogenous matrix to save.
+  Save an homogeneous matrix in an xml file.
+  \param M : homogeneous matrix to save.
   \param filename : name of the xml file to fill.
-  \param name : name of the homogenous matrix.
+  \param name : name of the homogeneous matrix.
 
   \return error code.
 */
@@ -488,7 +488,7 @@ write (xmlNodePtr node, const std::string& name)
 
   vpThetaUVector tu(R);
 
-  // <homogenous_transformation>
+  // <homogeneous_transformation>
   node_tmp = xmlNewComment((xmlChar*)"Homogeneous Matrix");
   xmlAddChild(node,node_tmp);
   node_matrix = xmlNewNode(NULL,(xmlChar*)LABEL_XML_M);

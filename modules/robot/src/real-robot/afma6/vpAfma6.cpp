@@ -1062,7 +1062,7 @@ vpAfma6::getLong56() const
 
   \param filename : File name containing the robot constant
   parameters, like max/min joint values, distance between 5 and 6 axis,
-  coupling factor between axis 5 and 6, and the hand-to-eye homogenous matrix.
+  coupling factor between axis 5 and 6, and the hand-to-eye homogeneous matrix.
 
 */
 #ifdef VISP_HAVE_ACCESS_TO_NAS

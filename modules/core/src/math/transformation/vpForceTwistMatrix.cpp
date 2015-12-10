@@ -112,7 +112,7 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpForceTwistMatrix &F)
 /*!
 
   Initialize a force/torque twist transformation matrix from an
-  homogeneous matrix. Given the homogenous transformation
+  homogeneous matrix. Given the homogeneous transformation
 
   \f[ ^a{\bf M}_b = \left(\begin{array}{cc} 
   ^a{\bf R}_b & ^a{\bf t}_b\\

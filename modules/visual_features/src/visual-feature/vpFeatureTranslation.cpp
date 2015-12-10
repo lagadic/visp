@@ -552,7 +552,7 @@ vpFeatureTranslation::error(const vpBasicFeature &s_star,
   corresponding function selectTx(), selectTy() or selectTz().
 
   \code
-  vpHomogeneousMatrix cdMc; // Homogenous transformation between the desired camera frame and the current camera frame.
+  vpHomogeneousMatrix cdMc; // Homogeneous transformation between the desired camera frame and the current camera frame.
   
   // Creation of the current feature s
   vpFeatureTranslation s(vpFeatureTranslation::cdMc);

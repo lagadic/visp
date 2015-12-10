@@ -77,7 +77,7 @@ void vpHomography::computeDisplacement(vpRotationMatrix &aRb,
 
   Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^a}{\bf p} \f$ is
   represented as a rotation matrix \f$ {^a}{\bf R}_b \f$ and a translation
-  vector \f$ ^a{\bf t}_b \f$ from which an homogenous matrix can be build
+  vector \f$ ^a{\bf t}_b \f$ from which an homogeneous matrix can be build
   (vpHomogeneousMatrix).
 
   \param nd : Input normal vector to the plane used to compar with the normal
@@ -107,7 +107,7 @@ void vpHomography::computeDisplacement(const vpColVector& nd,
 
   Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^b}{\bf p} \f$ is
   represented as a rotation matrix \f$ {^a}{\bf R}_b \f$ and a translation
-  vector \f$ ^a{\bf t}_b \f$ from which an homogenous matrix can be build
+  vector \f$ ^a{\bf t}_b \f$ from which an homogeneous matrix can be build
   (vpHomogeneousMatrix).
 
   \param aHb : Input homography \f$ {^a}{\bf H}_b \f$.
@@ -398,7 +398,7 @@ void
 
   Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^a}{\bf p} \f$ is
   represented as a rotation matrix \f$ {^a}{\bf R}_b \f$ and a translation
-  vector \f$ ^a{\bf t}_b \f$ from which an homogenous matrix can be build
+  vector \f$ ^a{\bf t}_b \f$ from which an homogeneous matrix can be build
   (vpHomogeneousMatrix).
 
   \param aHb : Input homography \f$ {^a}{\bf H}_b \f$.

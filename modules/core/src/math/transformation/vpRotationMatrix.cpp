@@ -356,7 +356,7 @@ vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M) : vpArray2D<double
   (*this) = M ;
 }
 /*!
-  Construct a 3-by-3 rotation matrix from an homogenous matrix.
+  Construct a 3-by-3 rotation matrix from an homogeneous matrix.
 */
 vpRotationMatrix::vpRotationMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(3,3)
 {

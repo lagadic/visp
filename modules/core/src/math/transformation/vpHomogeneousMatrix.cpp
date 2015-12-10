@@ -451,7 +451,7 @@ vpHomogeneousMatrix::operator*(const vpColVector &v) const
 {
   if (v.getRows() != 4) {
     throw(vpException(vpException::dimensionError,
-                      "Cannot multiply a (4x4) homogenous matrix by a (%dx1) column vector",
+                      "Cannot multiply a (4x4) homogeneous matrix by a (%dx1) column vector",
                       v.getRows()));
   }
   vpColVector p(rowNum);
@@ -663,7 +663,7 @@ void vpHomogeneousMatrix::eye()
 /*!
   Invert the homogeneous matrix.
 
-  \param M : The inverted homogenous matrix: \f$\left[\begin{array}{cc}
+  \param M : The inverted homogeneous matrix: \f$\left[\begin{array}{cc}
   {\bf R} & {\bf t} \\
   {\bf 0}_{1\times 3} & 1
   \end{array}
@@ -687,7 +687,7 @@ vpHomogeneousMatrix::inverse(vpHomogeneousMatrix &M) const
   \param f : Output file stream. The homogeneous matrix is saved as a
   4 by 4 matrix.
 
-  The code below shows how to save an homogenous matrix in a file.
+  The code below shows how to save an homogeneous matrix in a file.
 
   \code
   // Contruct an homogeneous matrix
@@ -723,7 +723,7 @@ vpHomogeneousMatrix::save(std::ofstream &f) const
 
   \param f : Input file stream. 
 
-  The code below shows how to get an homogenous matrix from a file.
+  The code below shows how to get an homogeneous matrix from a file.
 
   \code
   vpHomogeneousMatrix M;
@@ -768,7 +768,7 @@ vpHomogeneousMatrix::setIdentity()
 }
 
 /*!
-  Converts an homogenous matrix to a vector of 12 floats.
+  Converts an homogeneous matrix to a vector of 12 floats.
   \param M : Converted matrix.
  */
 void vpHomogeneousMatrix::convert(std::vector<float> &M)
@@ -779,7 +779,7 @@ void vpHomogeneousMatrix::convert(std::vector<float> &M)
 }
 
 /*!
-  Converts an homogenous matrix to a vector of 12 doubles.
+  Converts an homogeneous matrix to a vector of 12 doubles.
   \param M : Converted matrix.
  */
 void vpHomogeneousMatrix::convert(std::vector<double> &M)

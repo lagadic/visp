@@ -59,12 +59,12 @@
 
   \ingroup group_core_transformations
 
-  \brief XML parser to load and save an homogenous matrix in a file.
+  \brief XML parser to load and save an homogeneous matrix in a file.
 
   To have a complete description of the homogeneous matrix implemented in ViSP, see
   vpHomogeneousMatrix.
 
-  Example of an XML file "homogenous_matrixes.xml" containing a Pose vector
+  Example of an XML file "homogeneous_matrixes.xml" containing a Pose vector
   that will be converted in an homogeneous matrix:
 
   \code
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
   // Define the name of the matrix to load
   std::string name = "eMc";
 
-  if (p.parse(eMc,"homogenous_matrixes.xml", name) != vpXmlParserHomogeneousMatrix::SEQUENCE_OK) {
+  if (p.parse(eMc,"homogeneous_matrixes.xml", name) != vpXmlParserHomogeneousMatrix::SEQUENCE_OK) {
     std::cout << "Cannot found the Homogeneous matrix named " << name << "." << std::endl;
   }
   else
@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
 
   // Define name of the file xml to fill
   char filename[FILENAME_MAX];
-  sprintf(filename, "%s", "homogenous_matrixes.xml");
+  sprintf(filename, "%s", "homogeneous_matrixes.xml");
 
   if (p.save(M, filename, name_M) != vpXmlParserHomogeneousMatrix::SEQUENCE_OK) {
     std::cout << "Cannot save the Homogeneous matrix" << std::endl;
