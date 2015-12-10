@@ -664,8 +664,8 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w)
       initialNumber += kltpoly->getInitialNumberPoint();
       if(kltpoly->hasEnoughPoints()){
         vpSubColVector sub_w(w, shift, 2*kltpoly->getCurrentNumberPoints());
-        kltpoly->removeOutliers(sub_w, threshold_outlier);
         shift += 2*kltpoly->getCurrentNumberPoints();
+        kltpoly->removeOutliers(sub_w, threshold_outlier);
         
         currentNumber += kltpoly->getCurrentNumberPoints();
       }
@@ -685,8 +685,8 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w)
       initialNumber += kltPolyCylinder->getInitialNumberPoint();
       if(kltPolyCylinder->hasEnoughPoints()){
         vpSubColVector sub_w(w, shift, 2*kltPolyCylinder->getCurrentNumberPoints());
-        kltPolyCylinder->removeOutliers(sub_w, threshold_outlier);
         shift += 2*kltPolyCylinder->getCurrentNumberPoints();
+        kltPolyCylinder->removeOutliers(sub_w, threshold_outlier);
 
         currentNumber += kltPolyCylinder->getCurrentNumberPoints();
       }
