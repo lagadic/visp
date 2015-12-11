@@ -35,26 +35,12 @@
  *
  *****************************************************************************/
 
-
-
-
-
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpArit.h>
-#include	<stdio.h>
-#include	<math.h>
-#include	<string.h>
-
-#if defined(VISP_USE_MSVC)
-#  ifndef M_PI
-#    define M_PI 3.14159265358979323846
-#  endif
-#  ifndef M_PI_2
-#    define M_PI_2 M_PI / 2
-#  endif
-#endif
-
-
+#include <visp3/robot/vpMy.h>
+#include <visp3/robot/vpArit.h>
+#include <visp3/core/vpMath.h>
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*
