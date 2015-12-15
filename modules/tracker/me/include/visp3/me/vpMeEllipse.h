@@ -106,7 +106,8 @@ public:
   void track(const vpImage<unsigned char>& Im);
 
   void initTracking(const vpImage<unsigned char> &I) ;
-  void initTracking(const vpImage<unsigned char> &I, const unsigned int n, vpImagePoint* iP) ;
+  void initTracking(const vpImage<unsigned char> &I, const unsigned int n, vpImagePoint* iP);
+  void initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP);
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double a_p, double b_p, double e_p, double low_alpha, double high_alpha) ;
   void display(const vpImage<unsigned char>&I, vpColor col) ;
   void display(const vpImage<unsigned char>& I) {vpMeTracker::display(I);} //Shouldn't be here since it's already in vpMeTracker
@@ -121,21 +122,6 @@ public:
 		    unsigned *i, unsigned *j) ;
   //@}
 #endif //VISP_BUILD_DEPRECATED_FUNCTIONS
-
-  /*!
-      Set to true if you are sure to track a circle.
-
-      \warning During all the tracking, the shape must be approximatively a circle and not an ellipse with a strong difference between the majoraxis and the minoraxis.
-
-      In that case, the set of points \f$ (i,j) \f$ satisfy the implicit equation :
-
-      \f[ i^2 + j^2 + 2K_2i + 2K_3j + K4 = 0 \f]
-
-      Compared to the classical equation of an ellipse, \f$ K_0 \f$ is equal to 1 and \f$ K_1 \f$ is equal to 0.
-
-      \param is_circle : Set to true if you want to track a circle.
-  */
-  void setCircle(bool is_circle) { this->circle = is_circle ; }
   
   /*!
     Gets the 0 order moment \f$ m_{00} \f$ which represents the area of the ellipse.
@@ -254,8 +240,6 @@ public:
 		}
 	}
 
-
-
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
 #else
@@ -303,9 +287,6 @@ protected:
   double expecteddensity;
 
 private:
-  //! True if the ellipse to track is a circle
-  bool circle ;
-
   void computeAngle(vpImagePoint pt1, vpImagePoint pt2);
   void sample(const vpImage<unsigned char>&image);
   void reSample(const vpImage<unsigned char> &I) ;
@@ -325,6 +306,13 @@ private:
   void computeAngle(int ip1, int jp1,int ip2, int jp2) ;
   void computeAngle(int ip1, int jp1, double &alpha1,
 		    int ip2, int jp2, double &alpha2) ;
+  /*!
+      \deprecated This function does nothing and shouldn't be used since we modify
+      the code to detect automatically if the object to track becomes a circle
+      rather an ellipse.
+  */
+  void setCircle(bool ) { }
+
   //@}
 #endif //VISP_BUILD_DEPRECATED_FUNCTIONS
 

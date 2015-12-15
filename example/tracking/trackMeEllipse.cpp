@@ -292,15 +292,14 @@ main(int argc, const char ** argv)
       E1.initTracking(I) ;
     else {
       // Create a list of points to automate the test
-      unsigned int n=5 ;
-      vpImagePoint *ip = new vpImagePoint [n];
-      ip[0].set_i( 33 ); ip[0].set_j( 276 );
-      ip[1].set_i( 83 ); ip[1].set_j( 126 );
-      ip[2].set_i( 201 ); ip[2].set_j( 36 );
-      ip[3].set_i( 243 ); ip[3].set_j( 164 );
-      ip[4].set_i( 195 ); ip[4].set_j( 329 );
-      E1.initTracking(I, n, ip) ;
-      delete [] ip ;
+      std::vector<vpImagePoint> ip;
+      ip.push_back(vpImagePoint(33, 276));
+      ip.push_back(vpImagePoint(83, 126));
+      ip.push_back(vpImagePoint(201, 36));
+      ip.push_back(vpImagePoint(243, 164));
+      ip.push_back(vpImagePoint(195, 329));
+
+      E1.initTracking(I, ip) ;
     }
     if (opt_display) {
       E1.display(I, vpColor::green) ;

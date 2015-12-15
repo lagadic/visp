@@ -281,7 +281,6 @@ main(int argc, const char ** argv)
     me.setPointsToTrack(60) ;
     me.setThreshold(15000) ;
 
-    E1.setCircle(true) ;
     E1.setMe(&me) ;
     E1.setDisplay(vpMeSite::RANGE_RESULT) ;
     // If click is allowed, wait for a mouse click to select the points
@@ -291,15 +290,14 @@ main(int argc, const char ** argv)
     }
     else {
       // Create a list of points to automate the test
-      unsigned int n=5 ;
-      vpImagePoint *ip = new vpImagePoint [n];
-      ip[0].set_i( 39 ); ip[0].set_j( 136 );
-      ip[1].set_i( 42 ); ip[1].set_j( 83 );
-      ip[2].set_i( 86 ); ip[2].set_j( 55 );
-      ip[3].set_i( 132 ); ip[3].set_j( 72 );
-      ip[4].set_i( 145 ); ip[4].set_j( 134 );
-      E1.initTracking(I, n, ip) ;
-      delete [] ip ;
+      std::vector<vpImagePoint> ip;
+      ip.push_back(vpImagePoint(39, 136));
+      ip.push_back(vpImagePoint(42, 83));
+      ip.push_back(vpImagePoint(86, 55));
+      ip.push_back(vpImagePoint(132, 72));
+      ip.push_back(vpImagePoint(145, 134));
+
+      E1.initTracking(I, ip) ;
     }
 
     if (opt_display) {
