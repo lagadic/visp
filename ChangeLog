@@ -30,6 +30,28 @@ ViSP 3.0.0 (under development)
         vpMbEdgeKltTracker.
     . Introduce vpArray2D template class that is inherited by all matrices and
       vectors.
+    . vpKeyPoint class:
+      + Full code compatibility with OpenCV 3.0.
+      + Add support to the new Features introduce in OpenCV 3.0 and contrib 
+        module releases.
+      + Add possibility to detect keypoints on an image pyramid with OpenCV 3.0.
+      + Add possibility to change the image type (jpeg, png, ppm, pgm) when 
+        saving a learning file.
+      + Add OpenMP support for Affine SIFT.
+      + Add single matching filter (discard pairs of keypoints where multiple 
+        query keypoints are matched to the same train keypoints).
+      + Add possibility to match train keypoints to query keypoints (could be
+        useful when we learn only on one image, it allows to avoid to match
+        background keypoints with train keypoints).
+      + Optimize the FLANN matching by learning once the train descriptors
+        instead of doing it at each call of the matching function (noticeable
+        with large train descriptors).
+      + Add possibility to use the FLANN matcher with binary descriptors.
+      + Fix displayMatching function and fix small memory leak in loadLearningData.
+      + Should be possible to read / write learning files in binary mode regardless
+        of the endianness of the host (need to be tested on a real case).
+      + Save learning files in XML mode with the full precision (according to 
+        the data type).
     . and a lot of improvements and fixes
   - Tutorials
     . New tutorial: Bridge over OpenCV
@@ -46,7 +68,7 @@ ViSP 3.0.0 (under development)
       or circle from cao file
     . [19326] segfault when using vpDisplayX::init(unsigned int, unsigned int, ...)
     . [19368] Invalid rotation parameters in vpSimulatorViper850::getPosition()
-    . [#3]  Possible issue when comparing two vpRGBa
+    . [#3]  Issue when comparing two vpRGBa
     . [#5]  Unable to get calibration matrix K when model with distorsion is
       used
     . [#6]  Issue with vpMath::round()

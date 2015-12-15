@@ -240,7 +240,10 @@ int main(int argc, const char ** argv) {
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
       keypoints.setDetectorParameter("ORB", "nLevels", 1);
 #else
-      keypoints.setKeyPointParameter("ORB", "nlevels", 1);
+      cv::Ptr<cv::ORB> orb_detector = keypoints.getDetector("ORB").dynamicCast<cv::ORB>();
+      if(orb_detector != NULL) {
+        orb_detector->setNLevels(1);
+      }
 #endif
 #endif
 
