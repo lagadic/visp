@@ -340,12 +340,42 @@ public:
   }
 
   /*!
+    Get the detector pointer.
+    \param name : Name of the detector.
+
+    \return The detector or NULL if the name passed in parameter does not exist.
+  */
+  inline cv::Ptr<cv::FeatureDetector> getDetector(const std::string &name) const {
+    std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator findDetector = m_detectors.find(name);
+    if(findDetector != m_detectors.end()) {
+      return findDetector->second;
+    }
+
+    return cv::Ptr<cv::FeatureDetector>();
+  }
+
+  /*!
     Get the elapsed time to compute the keypoint extraction.
 
     \return The elapsed time.
   */
   inline double getExtractionTime() const {
     return m_extractionTime;
+  }
+
+  /*!
+    Get the extractor pointer.
+    \param name : Name of the extractor.
+
+    \return The extractor or NULL if the name passed in parameter does not exist.
+  */
+  inline cv::Ptr<cv::DescriptorExtractor> getExtractor(const std::string &name) const {
+    std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator findExtractor = m_extractors.find(name);
+    if(findExtractor != m_extractors.end()) {
+      return findExtractor->second;
+    }
+
+    return cv::Ptr<cv::DescriptorExtractor>();
   }
 
   /*!
@@ -364,6 +394,15 @@ public:
   */
   inline double getMatchingTime() const {
     return m_matchingTime;
+  }
+
+  /*!
+    Get the matcher pointer.
+
+    \return The matcher pointer.
+  */
+  inline cv::Ptr<cv::DescriptorMatcher> getMatcher() const {
+    return m_matcher;
   }
 
   /*!
@@ -605,21 +644,6 @@ public:
     m_imageFormat = imageFormat;
   }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  void setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
-      const bool parameterValue);
-  void setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
-      const unsigned char parameterValue);
-  void setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
-      const int parameterValue);
-  void setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
-      const float parameterValue);
-  void setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
-      const double parameterValue);
-  void setKeyPointParameter(const std::string &keypointName, const std::string &parameterName,
-      const size_t parameterValue);
-#endif
-
   /*!
      Set and initialize a matcher denominated by his name \p matcherName.
      The different matchers are:
@@ -832,131 +856,6 @@ public:
   }
 
 private:
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  class FieldBase {
-  public:
-    virtual ~FieldBase() { }
-  };
-
-  template <typename T>
-  class Field : public FieldBase {
-  public:
-    Field() : m_value() { }
-
-    explicit Field(const T &value) : m_value(value) { }
-
-    virtual ~Field() { }
-
-    inline T get() const {
-      return m_value;
-    }
-
-    inline void set(const T &value) {
-      m_value = value;
-    }
-
-  private:
-    T m_value;
-  };
-
-  class Parameters {
-  public:
-    std::map<std::string, FieldBase*> m_mapOfParameters;
-
-    Parameters() : m_mapOfParameters() { }
-
-    Parameters(const Parameters &param) {
-      for (std::map<std::string, FieldBase*>::const_iterator it = param.m_mapOfParameters.begin();
-          it != param.m_mapOfParameters.end(); ++it) {
-        FieldBase *pFieldBase = NULL;
-
-        try {
-          pFieldBase = createFieldBase(it->second);
-          m_mapOfParameters[it->first] = pFieldBase;
-        } catch (...) {
-          delete pFieldBase;
-          throw;
-        }
-      }
-    }
-
-    ~Parameters() {
-      for (std::map<std::string, FieldBase*>::iterator it =
-          m_mapOfParameters.begin(); it != m_mapOfParameters.end(); ++it) {
-        if (it->second != NULL) {
-          delete it->second;
-          it->second = NULL;
-        }
-      }
-
-      m_mapOfParameters.clear();
-    }
-
-    Parameters& operator=(const Parameters& that) {
-      if (this != &that) {
-        m_mapOfParameters.clear();
-
-        for (std::map<std::string, FieldBase*>::const_iterator it =
-            that.m_mapOfParameters.begin(); it != that.m_mapOfParameters.end();
-            ++it) {
-          FieldBase *pFieldBase = NULL;
-
-          try {
-            pFieldBase = createFieldBase(it->second);
-            m_mapOfParameters[it->first] = pFieldBase;
-          } catch (...) {
-            delete pFieldBase;
-            throw;
-          }
-        }
-      }
-      return *this;
-    }
-
-  private:
-    FieldBase* createFieldBase(FieldBase * const pCopy) {
-      FieldBase *pFieldBase = NULL;
-
-      if( dynamic_cast<Field<bool>*>(pCopy) != 0 ) {
-        //bool
-        pFieldBase = new Field<bool>(*dynamic_cast<Field<bool>*>(pCopy));
-      } else if( dynamic_cast<Field<unsigned char>*>(pCopy) != 0 ) {
-        //unsigned char
-        pFieldBase = new Field<unsigned char>(*dynamic_cast<Field<unsigned char>*>(pCopy));
-      } else if( dynamic_cast<Field<char>*>(pCopy) != 0 ) {
-        //char
-        pFieldBase = new Field<char>(*dynamic_cast<Field<char>*>(pCopy));
-      } else if( dynamic_cast<Field<unsigned short>*>(pCopy) != 0 ) {
-        //unsigned short
-        pFieldBase = new Field<unsigned short>(*dynamic_cast<Field<unsigned short>*>(pCopy));
-      } else if( dynamic_cast<Field<short>*>(pCopy) != 0 ) {
-        //short
-        pFieldBase = new Field<short>(*dynamic_cast<Field<short>*>(pCopy));
-      } else if( dynamic_cast<Field<unsigned int>*>(pCopy) != 0 ) {
-        //unsigned int
-        pFieldBase = new Field<unsigned int>(*dynamic_cast<Field<unsigned int>*>(pCopy));
-      } else if( dynamic_cast<Field<int>*>(pCopy) != 0 ) {
-        //int
-        pFieldBase = new Field<int>(*dynamic_cast<Field<int>*>(pCopy));
-      } else if( dynamic_cast<Field<float>*>(pCopy) != 0 ) {
-        //float
-        pFieldBase = new Field<float>(*dynamic_cast<Field<float>*>(pCopy));
-      } else if( dynamic_cast<Field<double>*>(pCopy) != 0 ) {
-        //double
-        pFieldBase = new Field<double>(*dynamic_cast<Field<double>*>(pCopy));
-      } else if( dynamic_cast<Field<size_t>*>(pCopy) != 0 ) {
-        //size_t
-        pFieldBase = new Field<size_t>(*dynamic_cast<Field<size_t>*>(pCopy));
-      }
-      else {
-        throw vpException(vpException::fatalError, "Unknown type !");
-      }
-
-      return pFieldBase;
-    }
-  };
-#endif
-
   //! If true, compute covariance matrix if the user select the pose estimation method using ViSP
   bool m_computeCovariance;
   //! Covariance matrix
@@ -995,10 +894,6 @@ private:
   std::map<int, int> m_mapOfImageId;
   //! Map of images to have access to the image buffer according to his image id.
   std::map<int, vpImage<unsigned char> > m_mapOfImages;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  //! Map of parameters for each keypoint class.
-  std::map<std::string, Parameters> m_mapOfKeyPointParameters;
-#endif
   //! Smart reference-counting pointer (similar to shared_ptr in Boost) of descriptor matcher (e.g. BruteForce or FlannBased).
   cv::Ptr<cv::DescriptorMatcher> m_matcher;
   //! Name of the matcher.
@@ -1081,10 +976,6 @@ private:
 
   void initExtractor(const std::string &extractorName);
   void initExtractors(const std::vector<std::string> &extractorNames);
-
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  void initKeyPointParameters();
-#endif
 
   inline size_t myKeypointHash(const cv::KeyPoint &kp) {
     size_t _Val = 2166136261U, scale = 16777619U;
