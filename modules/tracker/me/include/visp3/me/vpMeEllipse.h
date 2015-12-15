@@ -311,7 +311,7 @@ private:
       the code to detect automatically if the object to track becomes a circle
       rather an ellipse.
   */
-  void setCircle(bool ) { }
+  vp_deprecated void setCircle(bool ) { }
 
   //@}
 #endif //VISP_BUILD_DEPRECATED_FUNCTIONS

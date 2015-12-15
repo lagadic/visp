@@ -164,8 +164,6 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
   int height = (int)I.getHeight() ;
   int width = (int)I.getWidth() ;
 
-  double n_sample;
-
   //if (me->getSampleStep()==0)
   if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon())
   {
@@ -230,8 +228,6 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
 
   }
   vpMeTracker::initTracking(I) ;
-
-  n_sample = (unsigned int)list.size() ;
 }
 
 
@@ -286,8 +282,13 @@ vpMeEllipse::getParameters()
 
   double sq =  sqrt(vpMath::sqr(k[1]-k[0]) + 4.0*vpMath::sqr(k[2])) ;
 
-  e = (k[1] - k[0] + sq) / (2.0*k[2]);
-  e = (-1/e) ;
+  if (std::fabs(k[2]) <= std::numeric_limits<double>::epsilon()) {
+    e = 0;
+  }
+  else {
+    e = (k[1] - k[0] + sq) / (2.0*k[2]);
+    e = (-1/e) ;
+  }
 
   e = atan(e) ;
 
