@@ -318,7 +318,7 @@ vpPoseVector::extract(vpRotationMatrix &R) const
   Return the translation vector that corresponds to the translation part of the
   pose vector.
  */
-vpTranslationVector vpPoseVector::getTranslationVector()
+vpTranslationVector vpPoseVector::getTranslationVector() const
 {
   vpTranslationVector tr((*this)[0], (*this)[1], (*this)[2]);
   return tr;
@@ -328,7 +328,7 @@ vpTranslationVector vpPoseVector::getTranslationVector()
   Return the rotation matrix that corresponds to the rotation part of the
   pose vector.
  */
-vpRotationMatrix vpPoseVector::getRotationMatrix()
+vpRotationMatrix vpPoseVector::getRotationMatrix() const
 {
   vpRotationMatrix R((*this)[0], (*this)[1], (*this)[2]);
   return R;
@@ -338,7 +338,7 @@ vpRotationMatrix vpPoseVector::getRotationMatrix()
   Return the \f$\theta {\bf u}\f$ vector that corresponds to the rotation part of the
   pose vector.
  */
-vpThetaUVector vpPoseVector::getThetaUVector()
+vpThetaUVector vpPoseVector::getThetaUVector() const
 {
   vpThetaUVector tu((*this)[0], (*this)[1], (*this)[2]);
   return tu;
@@ -366,7 +366,7 @@ vpThetaUVector vpPoseVector::getThetaUVector()
   \sa std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
 */
 void
-vpPoseVector::print()
+vpPoseVector::print() const
 {
   for (unsigned int i =0  ; i < 6 ; i++)
     if (i<3) std::cout << (*this)[i] <<" " ;

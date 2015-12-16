@@ -127,9 +127,9 @@ public:
   void extract(vpTranslationVector &tv) const;
   void extract(vpQuaternionVector& q) const;
 
-  vpRotationMatrix getRotationMatrix();
-  vpThetaUVector getThetaUVector();
-  vpTranslationVector getTranslationVector();
+  vpRotationMatrix getRotationMatrix() const;
+  vpThetaUVector getThetaUVector() const;
+  vpTranslationVector getTranslationVector() const;
 
   // Load an homogeneous matrix from a file
   void load(std::ifstream &f) ;
@@ -180,7 +180,7 @@ public:
   inline const double &operator [](unsigned int i) const { return *(data+i);  }
 
   // Print  a vector [T thetaU] thetaU in degree
-  void print() ;
+  void print() const;
   int print(std::ostream& s, unsigned int length, char const* intro=0) const;
 
   /*!
