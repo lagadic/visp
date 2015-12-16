@@ -123,7 +123,7 @@ class VISP_EXPORT vpPolygon
     
     bool isInside(const vpImagePoint &iP);
 
-    void display(const vpImage<unsigned char>& I, const vpColor& color, unsigned int thickness=1);
+    void display(const vpImage<unsigned char>& I, const vpColor& color, unsigned int thickness=1) const;
     
     /*!
       Get the corners of the polygon.
