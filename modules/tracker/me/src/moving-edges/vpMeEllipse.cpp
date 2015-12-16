@@ -797,7 +797,7 @@ vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n,
 void
 vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP)
 {
-  unsigned int n = iP.size();
+  unsigned int n = (unsigned int)(iP.size());
   vpMatrix A(n,5) ;
   vpColVector b_(n) ;
   vpColVector x(5) ;
