@@ -8,7 +8,7 @@
 
 ViSP 3.0.0 (under development)
   - New features
-    . Compatibility with Windows 8.1 an 10
+    . Compatibility with Windows 8.1 and 10
     . Compatibility with Microsoft Visual C++ 2015 (MSCV 14)
     . Source code migrates to GitHub: http://github.org/lagadic/visp
     . Introduce Travis continuous integration
