@@ -399,7 +399,7 @@ vpPolygon::updateBoundingBox()
   \param thickness : The thickness of the lines used to display the polygon.
 */
 void
-vpPolygon::display(const vpImage<unsigned char>& I, const vpColor& color, unsigned int thickness)
+vpPolygon::display(const vpImage<unsigned char>& I, const vpColor& color, unsigned int thickness) const
 {
   const unsigned int N = (unsigned int)_corners.size();
   for(unsigned int i=0; i<N; ++i){
