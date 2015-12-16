@@ -1416,7 +1416,7 @@ void vpMatrix::kron(const vpMatrix &m1, const vpMatrix &m2 , vpMatrix &out)
   \param m : vpMatrix.
   \param out : If m1.kron(m2) out contains the kronecker product's result : \f$ m1 \otimes m2 \f$.
 */
-void vpMatrix::kron(const vpMatrix  &m , vpMatrix  &out)
+void vpMatrix::kron(const vpMatrix  &m , vpMatrix  &out) const
 {
   kron(*this,m,out);
 }
@@ -1458,7 +1458,7 @@ vpMatrix vpMatrix::kron(const vpMatrix &m1, const vpMatrix &m2)
   \param m : vpMatrix;
   \return m1.kron(m2) The kronecker product : \f$ m1 \otimes m2 \f$
 */
-vpMatrix vpMatrix::kron(const vpMatrix  &m)
+vpMatrix vpMatrix::kron(const vpMatrix  &m) const
 {
   return kron(*this,m);
 }
@@ -3005,7 +3005,7 @@ int main()
   \sa eigenValues(vpColVector &, vpMatrix &)
 
 */ 
-vpColVector vpMatrix::eigenValues()
+vpColVector vpMatrix::eigenValues() const
 {
   if (rowNum != colNum) {
     throw(vpException(vpException::dimensionError,
@@ -3117,9 +3117,9 @@ int main()
 
 */
 #ifdef VISP_HAVE_GSL  /* be careful of the copy below */
-void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector)
+void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
 #else
-void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
+void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */) const
 #endif
 {
   if (rowNum != colNum) {
@@ -3198,7 +3198,7 @@ void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
 */
 
 unsigned int 
-vpMatrix::kernel(vpMatrix &kerA, double svThreshold)
+vpMatrix::kernel(vpMatrix &kerA, double svThreshold) const
 {
   unsigned int i, j ;
   unsigned int nbline = getRows() ;
@@ -3314,7 +3314,7 @@ double vpMatrix::det(vpDetMethod method) const
 
 */ 
 vpMatrix
-vpMatrix::expm()
+vpMatrix::expm() const
 {
   if(colNum != rowNum) {
     throw(vpException(vpException::dimensionError,
@@ -3442,7 +3442,7 @@ vpMatrix subblock(const vpMatrix &M, unsigned int col, unsigned int row)
 /*!
    \return The condition number, the ratio of the largest singular value of the matrix to the smallest.
  */
-double vpMatrix::cond()
+double vpMatrix::cond() const
 {
   vpMatrix v;
   vpColVector w;

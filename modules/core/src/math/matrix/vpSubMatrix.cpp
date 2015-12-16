@@ -103,7 +103,7 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsign
   \brief This method can be used to detect if the parent matrix 
    always exits or its size have not changed and  throw an exception is not
 */
-void vpSubMatrix::checkParentStatus(){
+void vpSubMatrix::checkParentStatus() const {
   if(!data){
     vpERROR_TRACE("\n\t\t vpSubMatrix parent vpMatrix has been destroyed");
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,

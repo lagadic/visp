@@ -107,7 +107,7 @@ vpSubColVector::~vpSubColVector(){
   always exits or its size have not changed.
   If this not the case an exception is thrown.
 */
-void vpSubColVector::checkParentStatus(){
+void vpSubColVector::checkParentStatus() const{
   if (!data) {
     throw(vpException(vpException::fatalError,
                       "The parent of the current sub-column vector has been destroyed")) ;

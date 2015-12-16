@@ -267,7 +267,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   double det(vpDetMethod method = LU_DECOMPOSITION) const;
   
   //Compute the exponential matrix of a square matrix
-  vpMatrix expm();
+  vpMatrix expm() const;
 
   //-------------------------------------------------
   // Kronecker product
@@ -275,10 +275,10 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Kronecker product  */
   //@{  
   // Compute Kronecker product matrix 
-  void kron(const vpMatrix  &m1 , vpMatrix  &out);
+  void kron(const vpMatrix  &m1, vpMatrix  &out) const;
   
   // Compute Kronecker product matrix 
-  vpMatrix kron(const vpMatrix  &m1);
+  vpMatrix kron(const vpMatrix  &m1) const;
   //@}
   
   //-------------------------------------------------
@@ -380,8 +380,8 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   // solve Ax=B using the SVD decomposition (usage  x=A.solveBySVD(B))
   vpColVector solveBySVD(const vpColVector &B) const ;
 
-  unsigned int kernel(vpMatrix &KerA, double svThreshold=1e-6);
-  double cond();
+  unsigned int kernel(vpMatrix &KerA, double svThreshold=1e-6) const;
+  double cond() const;
   //@}
 
   //-------------------------------------------------
@@ -391,8 +391,8 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 
   //@{
   // compute the eigen values using the Gnu Scientific library
-  vpColVector eigenValues();
-  void eigenValues(vpColVector &evalue, vpMatrix &evector);
+  vpColVector eigenValues() const;
+  void eigenValues(vpColVector &evalue, vpMatrix &evector) const;
   //@}
 
   //-------------------------------------------------
@@ -414,7 +414,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   std::ostream & maplePrint(std::ostream & os) const;
   std::ostream & csvPrint(std::ostream & os) const;
   std::ostream & cppPrint(std::ostream & os, const char * matrixName = NULL, bool octet = false) const;
-  void printSize() { std::cout << getRows() <<" x " << getCols() <<"  " ; }
+  void printSize() const { std::cout << getRows() <<" x " << getCols() <<"  " ; }
   //@}
 
   //------------------------------------------------------------------
