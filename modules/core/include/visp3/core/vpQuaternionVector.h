@@ -102,9 +102,9 @@ public:
   double z() const;
   double w() const;
 
-  vpQuaternionVector operator+(const vpQuaternionVector &q);
-  vpQuaternionVector operator-(const vpQuaternionVector &q);
-  vpQuaternionVector operator-();
+  vpQuaternionVector operator+(const vpQuaternionVector &q) const;
+  vpQuaternionVector operator-(const vpQuaternionVector &q) const;
+  vpQuaternionVector operator-() const;
   vpQuaternionVector operator*(const double l) const;
   vpQuaternionVector operator*(const vpQuaternionVector &rq) const;
   vpQuaternionVector operator/(const double l) const;

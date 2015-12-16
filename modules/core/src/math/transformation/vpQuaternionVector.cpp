@@ -146,7 +146,7 @@ vpQuaternionVector::buildFrom(const vpThetaUVector& tu)
 
   \param q : quaternion to add.
 */
-vpQuaternionVector vpQuaternionVector::operator+(const vpQuaternionVector &q)
+vpQuaternionVector vpQuaternionVector::operator+(const vpQuaternionVector &q) const
 {	
   return vpQuaternionVector(x()+q.x(), y()+q.y(), z()+q.z(), w()+q.w());
 }
@@ -157,13 +157,13 @@ vpQuaternionVector vpQuaternionVector::operator+(const vpQuaternionVector &q)
 
   \param q : quaternion to substract.
 */
-vpQuaternionVector vpQuaternionVector::operator-(const vpQuaternionVector &q)
+vpQuaternionVector vpQuaternionVector::operator-(const vpQuaternionVector &q) const
 {
   return vpQuaternionVector(x()-q.x(), y()-q.y(), z()-q.z(), w()-q.w());
 }
 
 //! Negate operator. Returns a quaternion defined by (-x,-y,-z-,-w).
-vpQuaternionVector vpQuaternionVector::operator-()  
+vpQuaternionVector vpQuaternionVector::operator-() const
 {
   return vpQuaternionVector(-x(), -y(), -z(), -w());
 }

@@ -78,7 +78,7 @@ public:
   vpSubColVector(vpColVector &v, const unsigned int & offset,const unsigned int & nrows);
   virtual ~vpSubColVector();
 
-  void checkParentStatus();
+  void checkParentStatus() const;
 
   void init(vpColVector &v, const unsigned int & offset,const unsigned int & nrows);
 

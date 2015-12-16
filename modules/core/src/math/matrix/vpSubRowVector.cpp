@@ -104,7 +104,7 @@ vpSubRowVector::~vpSubRowVector(){
   always exits or its size have not changed.
   If this not the case an exception is thrown.
 */
-void vpSubRowVector::checkParentStatus()
+void vpSubRowVector::checkParentStatus() const
 {
   if(!data){
     throw(vpException(vpException::fatalError,

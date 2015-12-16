@@ -88,7 +88,7 @@ class VISP_EXPORT vpSubMatrix : public vpMatrix{
     void init(vpMatrix &m, const unsigned int & row, const unsigned int &col , const unsigned int & nrows ,  const unsigned int & ncols);
     
     //!Check is parent vpRowVector has changed since initialization
-    void checkParentStatus();
+    void checkParentStatus() const;
 	
     //! Operation such as subA = subB
     vpSubMatrix & operator=(const vpSubMatrix &B);

@@ -158,7 +158,7 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
   // Multiply by a point
   vpPoint operator*(const vpPoint &bP) const;
 
-  void print() ;
+  void print() const;
 
   /*!
     This function is not applicable to an homogeneous matrix that is always a

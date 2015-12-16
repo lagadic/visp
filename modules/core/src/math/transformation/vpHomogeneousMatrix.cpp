@@ -752,7 +752,7 @@ vpHomogeneousMatrix::load(std::ifstream &f)
 
 //! Print the matrix as a pose vector \f$({\bf t}^T \theta {\bf u}^T)\f$
 void
-vpHomogeneousMatrix::print()
+vpHomogeneousMatrix::print() const
 {
   vpPoseVector r(*this) ;
   std::cout << r.t() ;
