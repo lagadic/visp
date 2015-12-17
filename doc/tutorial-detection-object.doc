@@ -35,7 +35,12 @@ The next section presents an example of the detection and the pose estimation of
 
 \subsection detection_object_teabox_example Teabox detection and pose estimation
 
-The following example comes from tutorial-detection-object-mbt.cpp and shows the different steps to detect and get the pose of a teabox.
+The following video shows the resulting detection and localization of a teabox that is learned on the first image of the video.
+
+\htmlonly<iframe width="420" height="315" src="https://www.youtube.com/embed/3rCvq5_UJvw" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+The corresponding code is available in tutorial-detection-object-mbt.cpp. It contains the different steps to learn the teabox object on one image (the first image of the video) and then detect and get the pose of the teabox in the rest of the video.
 
 \include tutorial-detection-object-mbt.cpp
 
@@ -126,6 +131,14 @@ Below you will also find the content of detection-lconfig.xml configuration file
 
 \subsection detection_object_multiple_learning How to learn keypoints from multiple images
 
+The following video shows an extension of the previous example where here we learn a cube from 3 images and then detect an localize the cube in all the images of the video.
+
+\htmlonly
+<iframe width="420" height="315" src="https://www.youtube.com/embed/7akuCtViznE" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+The corresponding source code is given in tutorial-detection-object-mbt2.cpp. If you have a look on this file you will find the following.
+
 Before starting with the keypoints detection and learning part, we have to set the correct pose for the tracker using a predefined pose:
 
 \snippet tutorial-detection-object-mbt2.cpp Set tracker pose
@@ -148,11 +161,13 @@ And finally, we build the reference keypoints and we set the flag append to true
 
 \snippet tutorial-detection-object-mbt2.cpp Keypoints build reference
 
-The full example code showing how to learn from multiple images is:
-
-\include tutorial-detection-object-mbt2.cpp
-
 \subsection detection_object_display_multiple_images How to display the matching when the learning is done on multiple images
+
+In this section we will explain how to display the matching between keypoints detected in the current image and their correspondances in the reference images that are used during the learning stage, as given in the next video:
+
+\htmlonly
+<iframe width="420" height="315" src="https://www.youtube.com/embed/q16lXMIVDbM" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
 
 \warning If you want to load the learning data from a file, you have to use a learning file that contains training images (with the parameter saveTrainingImages vpKeyPoint::saveLearningData() set to true when saving the file, by default it is).
 
