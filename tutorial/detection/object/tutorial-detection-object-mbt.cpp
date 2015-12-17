@@ -128,7 +128,6 @@ int main(int argc, char ** argv) {
       keypoint_learning.setMatcher(matcherName);
       //! [Keypoint code config]
     }
-    //! [Keypoint declaration and initialization]
 
     //! [Keypoints reference detection]
     std::vector<cv::KeyPoint> trainKeyPoints;

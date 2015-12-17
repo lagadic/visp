@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<conf>
+	<ecm>
+		<mask>
+			<size>5</size>
+			<nb_mask>180</nb_mask>
+		</mask>
+		<range>
+			<tracking>7</tracking>
+		</range>
+		<contrast>
+			<edge_threshold>5000</edge_threshold>
+			<mu1>0.5</mu1>
+			<mu2>0.5</mu2>
+		</contrast>
+	</ecm>
+	<sample>
+		<step>4</step>
+		<nb_sample>250</nb_sample>
+	</sample>
+	<camera>
+		<width>640</width> 
+  		<height>480</height> 
+  		<u0>338.7036994</u0> 
+  		<v0>234.5083345</v0> 
+  		<px>547.7367575</px> 
+  		<py>542.0744058</py> 
+	</camera>
+	<face>
+		<angle_appear>89</angle_appear> 
+		<angle_disappear>89</angle_disappear>
+		<near_clipping>0.01</near_clipping>
+		<far_clipping>10</far_clipping>
+		<fov_clipping>1</fov_clipping>
+	</face>
+	<klt>
+		<mask_border>5</mask_border> 
+  		<max_features>10000</max_features> 
+  		<window_size>5</window_size> 
+  		<quality>0.01</quality> 
+  		<min_distance>5</min_distance> 
+  		<harris>0.01</harris>
+		<size_block>3</size_block> 
+  		<pyramid_lvl>3</pyramid_lvl> 
+	</klt>
+</conf>
+
