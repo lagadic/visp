@@ -6,10 +6,11 @@
                     http://team.inria.fr/lagadic
 
 
-ViSP 3.0.0 (under development)
+ViSP 3.0.0 (released December 18th, 2015)
   - New features
     . Compatibility with Windows 8.1 and 10
     . Compatibility with Microsoft Visual C++ 2015 (MSCV 14)
+    . Compatibility with Odroid XU4
     . Source code migrates to GitHub: http://github.org/lagadic/visp
     . Introduce Travis continuous integration
     . New website: http://visp.inria.fr
