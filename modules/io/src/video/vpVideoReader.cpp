@@ -395,6 +395,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
       capture >> frame;
       if(frame.empty()) {
         setLastFrameIndex(frameCount-1);
+        return false;
       }
       else {
         vpImageConvert::convert(frame, I);
@@ -471,6 +472,7 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
       capture >> frame;
       if(frame.empty()) {
         setLastFrameIndex(frameCount-1);
+        return false;
       }
       else {
         vpImageConvert::convert(frame, I);
