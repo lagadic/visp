@@ -247,6 +247,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I)
   double count = 0;
   
   bool isoJoIdentity_ = isoJoIdentity; // Backup since it can be modified if L is not full rank
+  if (isoJoIdentity_)
+    oJo.eye();
 
   /*** First phase ***/
 
