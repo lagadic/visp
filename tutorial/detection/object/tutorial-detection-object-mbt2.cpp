@@ -48,7 +48,7 @@ int main(int argc, char ** argv) {
 #if defined(VISP_HAVE_OPENCV) && ((VISP_HAVE_OPENCV_VERSION >= 0x020100) || defined(VISP_HAVE_FFMPEG))
   //! [MBT code]
   try {
-    std::string videoname = "cube.mp4";
+    std::string videoname = "cube.mpeg";
 
     for (int i=0; i<argc; i++) {
       if (std::string(argv[i]) == "--name")
@@ -77,23 +77,6 @@ int main(int argc, char ** argv) {
     vpHomogeneousMatrix cMo;
     vpCameraParameters cam;
 
-    vpVideoReader g;
-    g.setFileName(videoname);
-    g.open(I);
-
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display;
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display;
-#elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV display;
-#else
-    std::cout << "No image viewer is available..." << std::endl;
-    return 0;
-#endif
-
-    display.init(I, 100, 100,"Model-based edge tracker");
-
     vpMbEdgeTracker tracker;
     bool usexml = false;
 #ifdef VISP_HAVE_XML2
@@ -107,14 +90,14 @@ int main(int argc, char ** argv) {
       vpMe me;
       me.setMaskSize(5);
       me.setMaskNumber(180);
-      me.setRange(8);
-      me.setThreshold(10000);
+      me.setRange(7);
+      me.setThreshold(5000);
       me.setMu1(0.5);
       me.setMu2(0.5);
       me.setSampleStep(4);
       me.setNbTotalSample(250);
       tracker.setMovingEdge(me);
-      cam.initPersProjWithoutDistortion(839, 839, 325, 243);
+      cam.initPersProjWithoutDistortion(547, 542, 339, 235);
       tracker.setCameraParameters(cam);
       tracker.setAngleAppear( vpMath::rad(89) );
       tracker.setAngleDisappear( vpMath::rad(89) );
@@ -136,69 +119,88 @@ int main(int argc, char ** argv) {
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
       keypoint_learning.setDetectorParameter("ORB", "nLevels", 1);
 #else
-      cv::Ptr<cv::ORB> orb_detector = keypoint_learning.getDetector("ORB").dynamicCast<cv::ORB>();
-      if(orb_detector != NULL) {
-        orb_detector->setNLevels(1);
-      }
+    cv::Ptr<cv::ORB> orb_learning = keypoint_learning.getDetector("ORB").dynamicCast<cv::ORB>();
+    if(orb_learning != NULL) {
+      orb_learning->setNLevels(1);
+    }
 #endif
-      //! [Keypoint declaration]
+    //! [Keypoint declaration]
 
+#if defined(VISP_HAVE_X11)
+    vpDisplayX display;
+#elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI display;
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV display;
+#else
+    std::cout << "No image viewer is available..." << std::endl;
+    return 0;
+#endif
 
-    unsigned int imageIndexTab[] = {1, 150, 200};
+    /*
+     * Start the part of the code dedicated to object learning from 3 images
+     */
+    std::string imageName[] = {"cube0001.png", "cube0150.png", "cube0200.png"};
     vpHomogeneousMatrix initPoseTab[] = {
         vpHomogeneousMatrix(0.02143385294, 0.1098083886, 0.5127439561, 2.087159614, 1.141775176, -0.4701291124),
-        vpHomogeneousMatrix(0.02506515133, -0.03971222038, 0.686009302, 2.330405971, 0.3140691189, -0.08328254486),
-        vpHomogeneousMatrix(0.02627244911, -0.07446157132, 0.7222307844, 2.292079749, -0.4720100242, 0.2349572596)};
-    for(size_t i = 0; i < 3;) {
-      g.acquire(I);
-
-      if( (unsigned int) (g.getFrameIndex()-1) == imageIndexTab[i] ) {
-        vpDisplay::display(I);
-
-        //! [Set tracker pose]
-        tracker.setPose(I, initPoseTab[i]);
-        //! [Set tracker pose]
-
-        //! [Refine pose]
-        tracker.track(I);
-        //! [Refine pose]
-
-        //! [Display tracker pose]
-        tracker.getPose(cMo);
-        tracker.display(I, cMo, cam, vpColor::red);
-        //! [Display tracker pose]
-
-        //! [Learn cube call]
-        learnCube(I, tracker, keypoint_learning, i);
-        //! [Learn cube call]
-
-        vpDisplay::displayText(I, 10, 10, "Learning step: keypoints are detected on visible cube faces", vpColor::red);
-        if(i < 2) {
-          vpDisplay::displayText(I, 30, 10, "Click to continue the learning...", vpColor::red);
-        } else {
-          vpDisplay::displayText(I, 30, 10, "Click to continue with the detection...", vpColor::red);
-        }
-
-        vpDisplay::flush(I);
-        vpDisplay::getClick(I, true);
-
-        i++;
+        vpHomogeneousMatrix(0.02651282185, -0.03713587374, 0.6873765919, 2.314744454, 0.3492296488, -0.1226054828),
+        vpHomogeneousMatrix(0.02965448956, -0.07283091786, 0.7253526051, 2.300529617, -0.4286674806, 0.1788761025)};
+    for(size_t i = 0; i < 3; i++) {
+      vpImageIo::read(I, imageName[i]);
+      if (i==0) {
+        display.init(I, 10, 10);
       }
+      std::stringstream title;
+      title << "Learning cube on image: " << imageName[i];
+      vpDisplay::setTitle(I, title.str().c_str());
+
+      vpDisplay::display(I);
+
+      //! [Set tracker pose]
+      tracker.setPose(I, initPoseTab[i]);
+      //! [Set tracker pose]
+
+      //! [Refine pose]
+      tracker.track(I);
+      //! [Refine pose]
+
+      //! [Display tracker pose]
+      tracker.getPose(cMo);
+      tracker.display(I, cMo, cam, vpColor::red);
+      //! [Display tracker pose]
+
+      //! [Learn cube call]
+      learnCube(I, tracker, keypoint_learning, i);
+      //! [Learn cube call]
+
+      vpDisplay::displayText(I, 10, 10, "Learning step: keypoints are detected on visible cube faces", vpColor::red);
+      if(i < 2) {
+        vpDisplay::displayText(I, 30, 10, "Click to continue the learning...", vpColor::red);
+      } else {
+        vpDisplay::displayText(I, 30, 10, "Click to continue with the detection...", vpColor::red);
+      }
+
+      vpDisplay::flush(I);
+      vpDisplay::getClick(I, true);
     }
 
     //! [Save learning data]
     keypoint_learning.saveLearningData("cube_learning_data.bin", true);
     //! [Save learning data]
 
+    /*
+     * Start the part of the code dedicated to detection and localization
+     */
     //! [Init keypoint detection]
     vpKeyPoint keypoint_detection("ORB", "ORB", "BruteForce-Hamming");
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
     keypoint_detection.setDetectorParameter("ORB", "nLevels", 1);
 #else
-      cv::Ptr<cv::ORB> orb_detector = keypoint_detection.getDetector("ORB").dynamicCast<cv::ORB>();
-      if(orb_detector != NULL) {
-        orb_detector->setNLevels(1);
-      }
+    cv::Ptr<cv::ORB> orb_detector = keypoint_detection.getDetector("ORB").dynamicCast<cv::ORB>();
+    orb_detector = keypoint_detection.getDetector("ORB").dynamicCast<cv::ORB>();
+    if(orb_detector != NULL) {
+      orb_detector->setNLevels(1);
+    }
 #endif
     //! [Init keypoint detection]
 
@@ -206,27 +208,30 @@ int main(int argc, char ** argv) {
     keypoint_detection.loadLearningData("cube_learning_data.bin", true);
     //! [Load teabox learning data]
 
-
     //! [Create image matching]
     vpImage<unsigned char> IMatching;
     keypoint_detection.createImageMatching(I, IMatching);
     //! [Create image matching]
 
+    vpVideoReader g;
+    g.setFileName(videoname);
+    g.open(I);
+
 #if defined VISP_HAVE_X11
-    vpDisplayX display2(IMatching, 0, (int)I.getHeight() + 80, "IMatching");
+    vpDisplayX display2;
 #elif defined VISP_HAVE_GTK
-    vpDisplayGTK display2(IMatching, 0, (int)I.getHeight() + 80, "IMatching");
+    vpDisplayGTK display2;
 #elif defined VISP_HAVE_GDI
-    vpDisplayGDI display2(IMatching, 0, (int)I.getHeight() + 80, "IMatching");
+    vpDisplayGDI display2;
 #else
-    vpDisplayOpenCV display2(IMatching, 0, (int)I.getHeight() + 80, "IMatching");
+    vpDisplayOpenCV display2;
 #endif
+    display2.init(IMatching, 50, 50, "Display matching between learned and current images");
+    vpDisplay::setTitle(I, "Cube detection and localization");
 
     double error;
     bool click_done = false;
 
-    g.setFileName(videoname);
-    g.open(I);
     while(! g.end()) {
       g.acquire(I);
       vpDisplay::display(I);
@@ -249,7 +254,7 @@ int main(int argc, char ** argv) {
 
         //! [Display]
         tracker.display(I, cMo, cam, vpColor::red, 2);
-        vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
+        vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
         //! [Display]
 
         keypoint_detection.displayMatching(I, IMatching);
@@ -290,21 +295,26 @@ int main(int argc, char ** argv) {
         tracker.setCameraParameters(cam2);
         tracker.setPose(IMatching, cMo);
         tracker.display(IMatching, cMo, cam2, vpColor::red, 2);
-        vpDisplay::displayFrame(IMatching, cMo, cam2, 0.025, vpColor::none, 3);
+        vpDisplay::displayFrame(IMatching, cMo, cam2, 0.05, vpColor::none, 3);
         //! [Display model image matching]
       }
 
-      vpDisplay::displayText(I, 30, 10, "A click to exit.", vpColor::red);
       vpDisplay::flush(I);
+      vpDisplay::displayText(IMatching, 30, 10, "A click to exit.", vpColor::red);
       vpDisplay::flush(IMatching);
       if (vpDisplay::getClick(I, false)) {
+        click_done = true;
+        break;
+      }
+      if (vpDisplay::getClick(IMatching, false)) {
         click_done = true;
         break;
       }
     }
 
     if (! click_done)
-      vpDisplay::getClick(I);
+      vpDisplay::getClick(IMatching);
+
 #ifdef VISP_HAVE_XML2
     vpXmlParser::cleanup();
 #endif
