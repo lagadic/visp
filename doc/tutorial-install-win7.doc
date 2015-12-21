@@ -128,13 +128,13 @@ If you built static libraries then you are done. Otherwise, if you follow this t
 To modify the PATH var and add the path to ViSP library, open a cmd terminal and run:
 \code
 C:\> echo %PATH%
-C:\> setx PATH "%PATH%;C:\ViSP\visp-build\install\x64\vc12\bin"
+C:\> setx PATH "%PATH%;C:\ViSP\visp-build\install\x64\vc11\bin"
 \endcode
 
 Then to add the path to OpenCV 3rd party libraries, close and re-open a cmd-terminal and run:
 \code
 C:\> echo %PATH%
-C:\> setx PATH "%PATH%;C:\OpenCV\opencv\build\x64\vc12\bin"
+C:\> setx PATH "%PATH%;C:\OpenCV\opencv\build\x64\vc11\bin"
 \endcode
 
 Then close and re-open a cmd terminal to check if the PATH var was well positioned
