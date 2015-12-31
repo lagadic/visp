@@ -1,0 +1,174 @@
+/**
+
+\page tutorial-install-win10-msvc14 Tutorial: Installation from source on Windows 10 with Visual C++ 2015
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++. These steps have been tested on Windows 10 (64 bit), with CMake 3.3.2 and Visual Studio Community 2015. 
+
+\note Concerning ViSP installation, we provide also other \ref tutorial.
+
+\section install_win10_msvc14_required Install prerequisities
+
+- Visual C++. Visual Studio Community 2015 that includes Visual C++ could be downloaded from https://www.visualstudio.com. After the installation, start Visual Studio and create an empty C++ project to install the common tools for Visual C++ 2015.
+- CMake that could be download at : http://www.cmake.org.
+\warning We notice that CMake 3.4.1 was not able to detect Visual C++ 2015. This issue is kwown by CMake developers and registered as a bug https://cmake.org/Bug/view.php?id=15831. That is why we suggest to install CMake 3.3.2 to work with Visual C++ 2015.
+
+To install CMake 3.3.2, download the previous release binary distribution installer for Windows. You will find it under <a href="https://cmake.org/download/">"Windows (Win32 Installer)"</a>. Install CMake just by double clicking on the binary cmake-3.3.2-win32-x86.exe you downloaded.
+- Windows Software Developement Kit (SDK) for Windows 10. This SDK could be downloaded from https://dev.windows.com/en-US/downloads/windows-10-sdk. This SDK is requested by CMake and allows also to get the Graphical Device Interface (GDI) capabilities. The GDI is used in ViSP to display images in a window thanks to vpDisplayGDI class.
+
+\section install_win10_msvc14_3rdparty Install 3rd parties
+
+ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
+
+\subsection install_win10_msvc14_3rdparty_recommended Recommended 3rd parties
+We recommend to install OpenCV 3rd party. Other 3rd parties should be considered only by expert developers.
+
+\subsubsection install_win10_msvc10_3rdparty_opencv OpenCV 3rd party
+
+- From http://opencv.org/downloads.html download the latest OpenCV for Windows version. In our case we install \c opencv-3.1.0.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-3.1.0.exe extracted all the material in \c C:\\OpenCV\\opencv.
+\note OpenCV 3.1.0 windows installer contains pre-build libraries compatible with Visual C++ 2015 (in \c C:\\OpenCV\\opencv\\build\\x64\\vc14) and also libraries compatible with Visual C++ 2013 (in \c C:\\OpenCV\\opencv\\build\\x64\\vc12). With any other compiler version you need to build yourself OpenCV from source.
+
+\note There is an <a href="http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-install-prebuild">OpenCV tutorial: Installation Using the Pre-build Libraries</a> that may help if you encounter some difficulties.
+
+- Now in order that ViSP detects OpenCV you have to set \c OpenCV_DIR environment variable. Start up a command window (in your "Start" menu click on "Run" and type in \c cmd.exe) and enter:
+\code
+setx OpenCV_DIR C:\OpenCV\opencv\build
+\endcode
+where \c C:\\OpenCV\\opencv\\build is where you have the build directory (extracted or built).  Inside this folder you should have a file named \c OpenCVConfig.cmake. 
+
+- You have also to add the location of OpenCV libraries in the PATH environment variable following the indications mentioned in \ref install_win81_msvc_env_var.
+
+\section install_win10_msvc14_install_visp Install ViSP from source code
+\subsection install_win10_msvc14_get_source Getting ViSP source code
+
+There are different ways to get ViSP source code.
+
+- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once visp-x.y.z.tar.gz or visp-x.y.z.zip is downloaded, uncompress the file.
+
+- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once visp-snapshot-yyyy-mm-dd.tar.gz is downloaded, uncompress the file.
+
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the git command line (see \ref install_win7_tip_git):
+\code
+C:\ViSP> git clone https://github.com/lagadic/visp.git
+\endcode
+
+We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\visp
+
+\subsection install_win10_msvc14_config Configuring ViSP from source 
+
+The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:/ViSP/visp-build.
+
+- Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
+
+\image html img-cmake-win10-msvc-launch.png
+
+- Click then on "Configure" button.
+
+\image html img-cmake-win10-create-build-folder.png 
+
+- Click on "Yes" to create the \c C:/ViSP/visp-build folder.
+- Select then your compiler, for example here Visual Studio Express 2013 Win64, and click on "Finish" button. 
+
+\image html img-cmake-win10-msvc-version.png
+
+- This will start CMake configuration. As shown in the next image, GDI (Graphical Device Interface), OpenCV and OpenMP 3rd parties are automatically detected. 
+
+\image html img-cmake-win10-config.png 
+
+- As given in the previous image, note also that the installation folder is set to \c C:/ViSP/visp-build/install. 
+\warning If you want to change the installation forder to \c C:/Program \c Files \c (x86)/ViSP, make sure that you have administrator privileges to write in that folder. 
+
+- Click then on "Configure" button. All the red lines should disappear.
+\image html img-cmake-win10-config-end.png 
+\note The default configuration lead to the creation of a shared library (with \c .dll extension). This is the default configuration that is recommended. If you want to create rather a static library (with \c .lib extension) you have to uncheck the \c BUILD_SHARED_LIBS option to disable DLL creation. 
+
+- To finish the configuration, click on "Generate" button.
+
+\image html img-cmake-win10-msvc-generate.png 
+
+- Once the generation is done, in \c C:/ViSP/visp-build folder you have the Visual Studio \c VISP.sln generated solution file.
+
+\image html img-win8.1-msvc-solution.jpg 
+
+\subsection install_win10_msvc14_build Building ViSP from source
+
+- To build ViSP just double click on \c C:/ViSP/visp-build/VISP.sln solution file. This action will open ViSP project in Visual Studio C++. As shown in the next image, by default, Visual Studio position the solution configuration to \c Debug.
+
+\image html img-win10-msvc-open.png
+
+- Enter menu "BUILD/Build Solution" to build ViSP.
+
+\image html img-win10-msvc-build.png 
+
+- At the end of the build process you should have the following indicating that all the build succeeded.
+
+\image html img-win10-msvc-build-end.png
+
+- Now to install ViSP, build "INSTALL" project. To this end, apply a left click on "INSTALL" to select the project, then a right click to enter in the "Build" menu.
+
+\image html img-win10-msvc-install.png
+
+- At the end of the installation, you should have the following.
+
+\image html img-win10-msvc-install-end.png
+
+- As shown in the previous image, all the headers but also the generated library are copied in \c C:/ViSP/visp-build/install folder.
+
+- This ends ViSP installation with \c Debug configuration.
+
+- We recommend now to do the same with \c Release settings. As shown in the next image, select the \c Release configuration. 
+
+\image html img-win10-msvc-release.png
+
+- Now, as previously, build and install ViSP again.
+
+- At the end, in \c C:/ViSP/visp-build/install/x64/vc14/bin folder you have two versions of ViSP DLL libraries corresponding to ViSP modules; the one suffixed by "d" with debug information, the other one optimized with release compiler options.
+
+\image html img-win10-explorer-install-end.png
+
+\subsection install_win10_msvc14_env_var Setting up PATH variable
+
+If you built static libraries then you are done. Otherwise, if you follow this tutorial step by step you need to add the bin folders path to the systems path. This is because you will use ViSP and OpenCV libraries in form of "Dynamic-link libraries" (also known as DLL). Inside these are stored all the algorithms and information the libraries contains. The operating system will load them only on demand, during runtime. However, to do this he needs to know where they are. The systems \c PATH variable contains a list of folders where DLLs can be found. Add ViSP and OpenCV libraries path to this and the OS will know where to look if he ever needs the libraries. Otherwise, you will need to copy the used DLLs right beside the applications executable file (exe) for the OS to find it.
+
+To modify the PATH var and add the path to ViSP library, open a cmd terminal and run:
+\code
+C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\ViSP\visp-build\install\x64\vc14\bin"
+\endcode
+
+Then to add the path to OpenCV 3rd party libraries location, close and re-open a cmd-terminal and run:
+\code
+C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\OpenCV\opencv\build\x64\vc14\bin"
+\endcode
+
+Then close and re-open a cmd terminal to check if the PATH var was well positioned.
+
+\code
+C:\> echo %PATH%
+\endcode
+
+\section install_win10_msvc14_dataset Install ViSP dataset
+
+Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named \c ViSP-images-x.y.z.zip. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples.
+
+Download ViSP-images-x.y.z.zip from http://visp.inria.fr/download and uncompress it for example in \c C:/ViSP. 
+
+\image html img-win8.1-visp-images.jpg 
+
+ViSP examples and tests are able to detect automatically the location of the requested data if you position an environment variable called \c VISP_INPUT_IMAGE_PATH. In our case, this variable should be set to \c C:\\ViSP.
+\code
+setx VISP_INPUT_IMAGE_PATH C:\ViSP
+\endcode
+
+\note For historical reasons \c VISP_INPUT_IMAGE_PATH should not contain the folder \c ViSP-images, but the parent folder.
+
+From now, you can try to run ViSP examples and tests. For example, if you want to run \c \<binary dir\>/example/device/display/Debug/displayGDI.exe, open a command window, enter in the right folder, and run: 
+
+\image html img-win8.1-cmd-displayGDI.jpg 
+
+\section install_win10_msvc14_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+
+*/
