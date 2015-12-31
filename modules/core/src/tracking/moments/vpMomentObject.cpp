@@ -327,7 +327,7 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned cha
 
     for(register unsigned int k=0;k<order;k++){
       for(register unsigned int l=0;l<order-k;l++){
-        #pragma omp atomic
+        //#pragma omp atomic // Removed since causes a build issue with msvc14 2015
         values[k*order+l]+= curvals[k*order+l];
       }
     }
