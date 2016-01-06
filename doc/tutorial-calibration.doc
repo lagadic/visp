@@ -38,8 +38,8 @@ In this model we consider the parameters \f$(u_0,v_0,p_x,p_y, k_{ud}, k_{du})\f$
 \note Note also that the container dedicated to camera parameters is implemented in the vpCameraParameters class. It allows to consider two kind of models; with or without distortion. 
 
 The calibration process allows to estimate the values of these parameters. To this end, one of the following calibration grid can be used:
-- a black and white chessboard [<a href="http://www.irisa.fr/lagadic/visp/img/OpenCV_Chessboard.pdf">OpenCV_Chessboard.pdf</a>];
-- a symmetrical circle pattern [<a href="http://www.irisa.fr/lagadic/visp/code/grid2d.pdf">grid2d.pdf</a>]. 
+- a black and white chessboard [<a href="http://visp-doc.inria.fr/download/calib-grid/OpenCV_Chessboard.pdf" target="_blank">OpenCV_Chessboard.pdf</a>];
+- a symmetrical circle pattern [<a href="http://visp-doc.inria.fr/download/calib-grid/grid2d.pdf" target="_blank">grid2d.pdf</a>].
 
 To calibrate your camera you need to take snapshots of one of these two patterns with your camera. At least 5 good snapshots of the input pattern acquired at different positions are requested for good results.
 
