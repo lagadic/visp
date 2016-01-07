@@ -590,8 +590,8 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4NoSecond(double *Prt, int &cr, 
 {
   double Br;
 
-  double Bti[4];
-  double dBti[4];
+  double Bti[4] = {0, 0, 0, 0};
+  double dBti[4] = {0, 0, 0, 0};
 
   for(char it=-1;it<=2;it++)
   {
@@ -623,8 +623,8 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4NoSecond(double *Prt, double *d
 {
   double Br;
 
-  double Bti[4];
-  double dBti[4];
+  double Bti[4] = {0, 0, 0, 0};
+  double dBti[4] = {0, 0, 0, 0};
 
   for(char it=-1;it<=2;it++)
   {
@@ -674,7 +674,7 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline3PrtTout(double *PrtTout, int &c
 
   double Br;
 
-  double Bti[3];
+  double Bti[3] = {0, 0, 0};
 
   for(char it=-1;it<=1;it++)
   {
@@ -700,7 +700,7 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4PrtTout(double *PrtTout, int &c
 
   double Br;
 
-  double Bti[4];
+  double Bti[4] = {0, 0, 0, 0};
 
   for(char it=-1;it<=2;it++)
   {
@@ -742,7 +742,7 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline3Prt(double *Prt, int &cr, doubl
 
   double Br;
 
-  double Bti[3];
+  double Bti[3] = {0, 0, 0};
 
   for(char it=-1;it<=1;it++)
   {
@@ -768,7 +768,7 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4Prt(double *Prt, int &cr, doubl
 
   double Br;
 
-  double Bti[4];
+  double Bti[4] = {0, 0, 0, 0};
 
   for(char it=-1;it<=2;it++)
   {
