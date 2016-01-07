@@ -298,7 +298,7 @@ int main() {
 
   int_value = -70000;
   char_value = vpMath::saturate<char>(int_value);
-  if(char_value != SCHAR_MIN) {
+  if(char_value != (char)SCHAR_MIN) {
     std::cerr << "Fail: vpMath::saturate<char>(-70000)=" << char_value << " / should be " << SCHAR_MIN << std::endl;
     return -1;
   }
@@ -312,7 +312,7 @@ int main() {
 
   short_value = -30000;
   char_value = vpMath::saturate<char>(short_value);
-  if(char_value != SCHAR_MIN) {
+  if(char_value != (char)SCHAR_MIN) {
     std::cerr << "Fail: vpMath::saturate<char>(-30000)=" << char_value << " / should be " << SCHAR_MIN << std::endl;
     return -1;
   }
@@ -333,7 +333,7 @@ int main() {
 
   float_value = -10000.1f;
   char_value = vpMath::saturate<char>(float_value);
-  if(char_value != SCHAR_MIN) {
+  if(char_value != (char)SCHAR_MIN) {
     std::cerr << "Fail: vpMath::saturate<char>(-10000.1f)=" << char_value << " / should be " << SCHAR_MIN << std::endl;
     return -1;
   }
@@ -347,7 +347,7 @@ int main() {
 
   double_value = -10000.1;
   char_value = vpMath::saturate<char>(double_value);
-  if(char_value != SCHAR_MIN) {
+  if(char_value != (char)SCHAR_MIN) {
     std::cerr << "Fail: vpMath::saturate<char>(-10000.1)=" << char_value << " / should be " << SCHAR_MIN << std::endl;
     return -1;
   }
@@ -358,7 +358,7 @@ int main() {
   char_value = -127;
   ushort_value = vpMath::saturate<unsigned short>(char_value);
   if(ushort_value != 0) {
-    std::cerr << "Fail: vpMath::saturate<unsigned short>(127)=" << ushort_value << " / should be 0" << std::endl;
+    std::cerr << "Fail: vpMath::saturate<unsigned short>(-127)=" << ushort_value << " / should be 0" << std::endl;
     return -1;
   }
 

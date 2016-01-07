@@ -334,7 +334,12 @@ double vpMath::sigmoid(double x, double x0,double x1, double n)
 
 //unsigned char
 template<> inline unsigned char vpMath::saturate<unsigned char>(char v) {
-  return (unsigned char) (std::max)((int) v, 0);
+  // On big endian arch like powerpc, char implementation is unsigned
+  // with CHAR_MIN=0, CHAR_MAX=255 and SCHAR_MIN=-128, SCHAR_MAX=127
+  // leading to (int)(char -127) = 129.
+  // On little endian arch, CHAR_MIN=-127 and CHAR_MAX=128 leading to
+  // (int)(char -127) = -127.
+  return (unsigned char) ((int) v > SCHAR_MAX ? 0 : (std::max)((int) v, 0) );
 }
 
 template<> inline unsigned char vpMath::saturate<unsigned char>(unsigned short v) {
@@ -397,7 +402,12 @@ template<> inline char vpMath::saturate<char>(double v) {
 
 //unsigned short
 template<> inline unsigned short vpMath::saturate<unsigned short>(char v) {
-  return (unsigned short) (std::max)((int) v, 0);
+  // On big endian arch like powerpc, char implementation is unsigned
+  // with CHAR_MIN=0, CHAR_MAX=255 and SCHAR_MIN=-128, SCHAR_MAX=127
+  // leading to (int)(char -127) = 129.
+  // On little endian arch, CHAR_MIN=-127 and CHAR_MAX=128 leading to
+  // (int)(char -127) = -127.
+  return (unsigned char) ((int) v > SCHAR_MAX ? 0 : (std::max)((int) v, 0) );
 }
 
 template<> inline unsigned short vpMath::saturate<unsigned short>(short v) {
