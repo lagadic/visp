@@ -638,6 +638,11 @@ macro(vp_create_global_module_header module)
   set(VISP_HEADER_CONTENT_CONFIGMAKE "${VISP_HEADER_CONTENT_CONFIGMAKE}\n\n#endif\n")
   configure_file("${VISP_SOURCE_DIR}/cmake/templates/vpHeader.h.in" ${__module_header_dst})
 
+  install(FILES ${__module_header_dst}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp3/${__name}
+    COMPONENT dev
+  )
+
   unset(__h_name_we)
   unset(__h_name)
   unset(__module_header_dst)
