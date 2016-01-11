@@ -48,8 +48,6 @@
 #  include <opencv2/calib3d/calib3d.hpp>
 #endif
 
-
-//TODO: test saveLearningData with little / big endian platform
 //Specific Type transformation functions
 ///*!
 //   Convert a list of cv::DMatch to a cv::DMatch (extract the first cv::DMatch, the nearest neighbor).
@@ -65,138 +63,32 @@ inline cv::DMatch knnToDMatch(const std::vector<cv::DMatch> &knnMatches) {
   return cv::DMatch();
 }
 
-///*!
-//   Convert a cv::DMatch to an index (extract the train index).
-//
-//   \param match : Point to convert in ViSP type.
-//   \return The train index.
-// */
 inline vpImagePoint matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point3f> &pair) {
   return vpImagePoint(pair.first.pt.y, pair.first.pt.x);
 }
 
-bool isBigEndian() {
-  union {
-    uint32_t i;
-    char c[4];
-  } bint = { 0x01020304 };
-
-  return bint.c[0] == 1;
-}
-
-uint16_t reverse16bits(const uint16_t n) {
-  unsigned char *np = (unsigned char *) &n;
-
-  return ((uint16_t) np[0] << 8) | (uint16_t) np[1];
-}
-
-uint32_t reverse32bits(const uint32_t n) {
-  unsigned char *np = (unsigned char *) &n;
-
-  return ((uint32_t) np[0] << 24) | ((uint32_t) np[1] << 16)
-       | ((uint32_t) np[2] << 8)  | (uint32_t) np[3];
-}
-
-float reverseFloat(const float f) {
-  union {
-    float f;
-    unsigned char b[4];
-  } dat1, dat2;
-
-  dat1.f = f;
-  dat2.b[0] = dat1.b[3];
-  dat2.b[1] = dat1.b[2];
-  dat2.b[2] = dat1.b[1];
-  dat2.b[3] = dat1.b[0];
-  return dat2.f;
-}
-
-double reverseDouble(const double d) {
-  union {
-    double d;
-    unsigned char b[8];
-  } dat1, dat2;
-
-  dat1.d = d;
-  dat2.b[0] = dat1.b[7];
-  dat2.b[1] = dat1.b[6];
-  dat2.b[2] = dat1.b[5];
-  dat2.b[3] = dat1.b[4];
-  dat2.b[4] = dat1.b[3];
-  dat2.b[5] = dat1.b[2];
-  dat2.b[6] = dat1.b[1];
-  dat2.b[7] = dat1.b[0];
-  return dat2.d;
-}
-
 void writeBinaryUShortLE(std::ofstream &file, const unsigned short ushort_value) {
-  if(isBigEndian()) {
-    //Reverse bytes order to little endian
-    uint16_t reverse_ushort = reverse16bits(ushort_value);
-    file.write((char *)(&reverse_ushort), sizeof(reverse_ushort));
-  } else {
-    file.write((char *)(&ushort_value), sizeof(ushort_value));
-  }
+  file.write((char *)(&ushort_value), sizeof(ushort_value));
 }
 
 void writeBinaryShortLE(std::ofstream &file, const short short_value) {
-  if(isBigEndian()) {
-    //Reverse bytes order to little endian
-    uint16_t reverse_short = reverse16bits((uint16_t) short_value);
-    file.write((char *)(&reverse_short), sizeof(reverse_short));
-  } else {
-    file.write((char *)(&short_value), sizeof(short_value));
-  }
+  file.write((char *)(&short_value), sizeof(short_value));
 }
 
 void writeBinaryUIntLE(std::ofstream &file, const unsigned int uint_value) {
-  if(isBigEndian()) {
-    //Reverse bytes order to little endian
-    if(sizeof(uint_value) == 4) {
-      uint32_t reverse_uint = reverse32bits(uint_value);
-      file.write((char *)(&reverse_uint), sizeof(reverse_uint));
-    } else {
-      uint16_t reverse_uint = reverse16bits(uint_value);
-      file.write((char *)(&reverse_uint), sizeof(reverse_uint));
-    }
-  } else {
-    file.write((char *)(&uint_value), sizeof(uint_value));
-  }
+  file.write((char *)(&uint_value), sizeof(uint_value));
 }
 
 void writeBinaryIntLE(std::ofstream &file, const int int_value) {
-  if(isBigEndian()) {
-    //Reverse bytes order to little endian
-    if(sizeof(int_value) == 4) {
-      uint32_t reverse_int = reverse32bits((uint32_t) int_value);
-      file.write((char *)(&reverse_int), sizeof(reverse_int));
-    } else {
-      uint16_t reverse_int = reverse16bits((uint16_t) int_value);
-      file.write((char *)(&reverse_int), sizeof(reverse_int));
-    }
-  } else {
-    file.write((char *)(&int_value), sizeof(int_value));
-  }
+  file.write((char *)(&int_value), sizeof(int_value));
 }
 
 void writeBinaryFloatLE(std::ofstream &file, const float float_value) {
-  if(isBigEndian()) {
-    //Reverse bytes order to little endian
-    float reverse_float = reverseFloat(float_value);
-    file.write((char *)(&reverse_float), sizeof(reverse_float));
-  } else {
-    file.write((char *)(&float_value), sizeof(float_value));
-  }
+  file.write((char *)(&float_value), sizeof(float_value));
 }
 
 void writeBinaryDoubleLE(std::ofstream &file, const double double_value) {
-  if(isBigEndian()) {
-    //Reverse bytes order to little endian
-    double reverse_double = reverseDouble(double_value);
-    file.write((char *)(&reverse_double), sizeof(reverse_double));
-  } else {
-    file.write((char *)(&double_value), sizeof(double_value));
-  }
+  file.write((char *)(&double_value), sizeof(double_value));
 }
 
 /*!
