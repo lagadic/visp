@@ -62,6 +62,10 @@
 #  include <wordexp.h>
 #endif
 
+#if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
+#  include <TargetConditionals.h> // To detect OSX or IOS using TARGET_OS_IOS macro
+#endif
+
 std::string vpIoTools::baseName = "";
 std::string vpIoTools::baseDir = "";
 std::string vpIoTools::configFile = "";
@@ -719,13 +723,15 @@ vpIoTools::path(const char *pathname)
 #if defined(_WIN32)
   for(unsigned int i=0 ; i<path.length() ; i++)
     if( path[i] == '/')	path[i] = '\\';
-#else
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
   for(unsigned int i=0 ; i<path.length() ; i++)
     if( path[i] == '\\')	path[i] = '/';
+#  if TARGET_OS_IOS == 0 // The above code is not working on iOS since wordexp() is not available
   wordexp_t exp_result;
   wordexp(path.c_str(), &exp_result, 0);
   path = std::string(exp_result.we_wordv[0]);
   wordfree(&exp_result);
+#  endif
 #endif
 
   return path;

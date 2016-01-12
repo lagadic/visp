@@ -11,6 +11,7 @@ ViSP 3.0.1 (in development)
     . Create and install a meta header file in
       visp3/<module>/visp_<module>.h
   - Bug fixed
+    . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc
     . [#39] Meta header files visp_<module>.h not installed
     . [#40] vpKeyPoint fails to R/W database on big endian arch
