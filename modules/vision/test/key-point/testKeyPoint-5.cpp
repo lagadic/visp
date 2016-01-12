@@ -178,6 +178,11 @@ int main(int argc, const char ** argv) {
       display.init(I, 0, 0, "KeyPoints detection.");
     }
 
+    //Here, we want to test feature detection on a pyramid of images even for features that
+    //are scale invariant to detect potential problem in ViSP.
+    std::cout << "INFORMATION: " << std::endl;
+    std::cout << "Here, we want to test feature detection on a pyramid of images even for features "
+        "that are scale invariant to detect potential problem in ViSP." << std::endl << std::endl;
     vpKeyPoint keyPoints;
 
     //Will test the different types of keypoints detection to see if there is a problem
