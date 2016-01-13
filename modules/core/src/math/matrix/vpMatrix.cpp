@@ -3035,7 +3035,7 @@ vpColVector vpMatrix::eigenValues() const
     gsl_eigen_symmv_workspace * w =  gsl_eigen_symmv_alloc (rowNum);
     gsl_matrix *m = gsl_matrix_alloc(rowNum, colNum);
 
-    unsigned int Atda = m->tda ;
+    unsigned int Atda = (unsigned int)m->tda ;
     for (unsigned int i=0 ; i < rowNum ; i++){
       unsigned int k = i*Atda ;
       for (unsigned int j=0 ; j < colNum ; j++)
@@ -3152,7 +3152,7 @@ void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
     gsl_eigen_symmv_workspace * w =  gsl_eigen_symmv_alloc (rowNum);
     gsl_matrix *m = gsl_matrix_alloc(rowNum, colNum);
 
-    unsigned int Atda = m->tda ;
+    unsigned int Atda = (unsigned int)m->tda ;
     for (unsigned int i=0 ; i < rowNum ; i++){
       unsigned int k = i*Atda ;
       for (unsigned int j=0 ; j < colNum ; j++)
@@ -3165,7 +3165,7 @@ void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
     for (unsigned int i=0; i < rowNum; i++) {
       evalue[i] = gsl_vector_get (eval, i);
     }
-    Atda = evec->tda ;
+    Atda = (unsigned int)evec->tda ;
     for (unsigned int i=0; i < rowNum; i++) {
       unsigned int k = i*Atda ;
       for (unsigned int j=0; j < rowNum; j++) {

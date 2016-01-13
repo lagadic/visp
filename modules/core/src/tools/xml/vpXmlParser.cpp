@@ -160,7 +160,7 @@ vpXmlParser::xmlReadIntChild (xmlDocPtr doc, xmlNodePtr node)
   int val_int;
 
   val_char = (char *) xmlNodeListGetString(doc, node ->xmlChildrenNode, 1);
-  val_int = strtol ((char *)val_char, &control_convert, 10);
+  val_int = (int)strtol ((char *)val_char, &control_convert, 10);
 
   if (val_char == control_convert){
     xmlFree((xmlChar*) val_char);

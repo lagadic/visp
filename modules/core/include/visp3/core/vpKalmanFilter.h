@@ -156,7 +156,7 @@ public:
   /*!
     Return the iteration number.
   */
-  int getIteration() { return iter ; }
+  long getIteration() { return iter ; }
   /*!
     Sets the verbose mode.
     \param on : If true, activates the verbose mode which consists in printing the Kalman 
