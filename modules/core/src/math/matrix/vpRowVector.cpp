@@ -588,7 +588,7 @@ void vpRowVector::reshape(vpMatrix & M,const unsigned int &nrows,const unsigned 
   }
   for(unsigned int i =0; i< nrows; i++)
     for(unsigned int j =0; j< ncols; j++)
-      M[i][j]=data[i*nrows+j];
+      M[i][j]=data[i*ncols+j];
 }
 
 /*!
