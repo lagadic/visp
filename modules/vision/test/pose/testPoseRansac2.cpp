@@ -1738,7 +1738,7 @@ int main() {
     std::cout << "Corresponding residual: " << r_vvs << std::endl;
 
 
-    size_t nbOutliers = 0.35 * bunnyModelPoints_noisy.size();
+    size_t nbOutliers = (size_t) (0.35 * bunnyModelPoints_noisy.size());
     vpGaussRand noise(0.01, 0.008/*, time(NULL)*/);
     //Vector that indicates if the point is an outlier or not
     std::vector<bool> vectorOfOutlierFlags(bunnyModelPoints_noisy.size(), false);
@@ -1847,7 +1847,7 @@ int main() {
       }
     }
 
-    int nbTrueInlierIndex = std::count(vectorOfOutlierFlags.begin(), vectorOfOutlierFlags.end(), false);
+    int nbTrueInlierIndex = (int) std::count(vectorOfOutlierFlags.begin(), vectorOfOutlierFlags.end(), false);
     std::cout << "\nThere are " << nbInlierIndexOk << " true inliers found, " << vectorOfFoundInlierIndex.size()
         << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
 
