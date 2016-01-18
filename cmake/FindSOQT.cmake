@@ -43,7 +43,7 @@
 set(SOQT_FOUND FALSE)
 
 # detection of the SoQt headers location
-FIND_PATH(SOQT_INCLUDE_DIR Inventor/Qt/SoQt.h
+find_path(SOQT_INCLUDE_DIR Inventor/Qt/SoQt.h
   "$ENV{COIN_DIR}/include"
   "$ENV{SOQT_DIR}/include"
   "$ENV{COIN_DIR}"
@@ -51,13 +51,14 @@ FIND_PATH(SOQT_INCLUDE_DIR Inventor/Qt/SoQt.h
   "$ENV{COINDIR}/include"
   "$ENV{SOQTDIR}/include"
   /usr/include/Coin2
+  /usr/include/Coin3
   /Library/Frameworks/SoQt.framework/Headers
   )
-#MESSAGE("DBG SOQT_INCLUDE_DIR=${SOQT_INCLUDE_DIR}")
+#message("DBG SOQT_INCLUDE_DIR=${SOQT_INCLUDE_DIR}")
 
-IF(WIN32)
+if(WIN32)
   # Detection of the SoQt library on Windows
-  FIND_LIBRARY(SOQT_LIBRARY_RELEASE
+  find_library(SOQT_LIBRARY_RELEASE
     NAMES soqt1 #only shared libraries under windows
     PATHS
     "$ENV{COIN_DIR}/lib"
@@ -65,14 +66,14 @@ IF(WIN32)
     "$ENV{COINDIR}/lib"
     "$ENV{SOQTDIR}/lib"
     )
-  FIND_LIBRARY(SOQT_LIBRARY_DEBUG
+  find_library(SOQT_LIBRARY_DEBUG
     NAMES soqt1d #only shared libraries under windows
     PATHS
     "$ENV{COIN_DIR}/lib"
     "$ENV{SOQT_DIR}/lib"
     "$ENV{COINDIR}/lib"
     "$ENV{SOQTDIR}/lib"
-    )  
+    )
 
   if(SOQT_INCLUDE_DIR AND SOQT_LIBRARY_RELEASE)
     set(SOQT_INCLUDE_DIRS ${SOQT_INCLUDE_DIR})
@@ -86,16 +87,16 @@ IF(WIN32)
     set(SOQT_FOUND TRUE)
   endif()
 
-  MARK_AS_ADVANCED(
+  mark_as_advanced(
     SOQT_LIBRARIES
     SOQT_LIBRARY_DEBUG
     SOQT_LIBRARY_RELEASE
     SOQT_INCLUDE_DIR
     )
 
-ELSE(WIN32)
+else(WIN32)
   # Detection of the SoQt library on Unix
-  FIND_LIBRARY(SOQT_LIBRARY
+  find_library(SOQT_LIBRARY
     NAMES SoQt
     PATHS
     "$ENV{COIN_DIR}/lib"
@@ -114,13 +115,13 @@ ELSE(WIN32)
     set(SOQT_FOUND TRUE)
   endif()
 
-  MARK_AS_ADVANCED(
+  mark_as_advanced(
     SOQT_LIBRARIES
     SOQT_LIBRARY
     SOQT_INCLUDE_DIR
   )
-  #MESSAGE(STATUS "DBG SOQT_LIBRARY=${SOQT_LIBRARY}")
+  #message(STATUS "DBG SOQT_LIBRARY=${SOQT_LIBRARY}")
 
-ENDIF(WIN32)
-  
+endif(WIN32)
+
 #MESSAGE(STATUS "SOQT_FOUND : ${SOQT_FOUND}")
