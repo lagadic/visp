@@ -379,7 +379,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       } else {
         for(std::vector<unsigned int>::const_iterator it_index = best_consensus.begin();
             it_index != best_consensus.end(); ++it_index) {
-          ransacInlierIndex.push_back(mapOfUniquePointIndex[*it_index]);
+          ransacInlierIndex.push_back((unsigned int) mapOfUniquePointIndex[*it_index]);
         }
       }
 
