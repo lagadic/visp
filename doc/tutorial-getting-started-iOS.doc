@@ -39,13 +39,14 @@ Go to your Xcode project Settings and edit the Build Phases by adding Accelerate
 
 \image html img-getting-started-iOS-accelerate.png
 
-Here is the detailed explanation of the source, line by line :
+Here is the detailed explanation of the source (inspired from tutorial-homography-from-points.cpp), line by line :
 
 \code
-#include <vector>
-#include <visp3/core/vpConfig.h>
-#include <visp3/vision/vpHomography.h>
-#include <visp3/core/vpMeterPixelConversion.h>
+#ifdef __cplusplus
+#import <vector>
+#import <visp3/core/vpMeterPixelConversion.h>
+#import <visp3/vision/vpHomography.h>
+#endif
 \endcode
 Include all the headers for homography computation in ViewController.mm.
 
@@ -55,7 +56,6 @@ Include all the headers for homography computation in ViewController.mm.
 - (void)processTutorialHomography{
     
     std::vector<vpPoint> oP(4), aP(4), bP(4);
-
     double L = 0.1;
     
     oP[0].setWorldCoordinates( -L,-L,   0);
@@ -68,7 +68,7 @@ Include all the headers for homography computation in ViewController.mm.
     vpHomogeneousMatrix aMo = aMb*bMo ;
     
     // Normalized coordinates of points in the image frame
-    double xa[4], ya[4], xb[4], yb[4];
+    std::vector<double> xa(4), ya(4), xb(4), yb(4);
     
     for(int i=0 ; i < 4; i++){
         oP[i].project(aMo);
@@ -82,7 +82,7 @@ Include all the headers for homography computation in ViewController.mm.
     vpHomography aHb ;
     
     // Compute the homography
-    vpHomography::HartleyDLT(4, xb, yb, xa, ya, aHb);
+    vpHomography::DLT(xb, yb, xa, ya, aHb, true);
     
     std::cout << "Homography:\n" << aHb << std::endl;
     
@@ -96,22 +96,22 @@ Include all the headers for homography computation in ViewController.mm.
     std::cout << "atb: " << atb.t() << std::endl;
     
     // Compute coordinates in pixels of point 3
-    double ua, va, ub, vb;
+    vpImagePoint iPa, iPb;
     vpCameraParameters cam;
-    vpMeterPixelConversion::convertPoint(cam, xb[3], yb[3], ub, vb);
-    vpMeterPixelConversion::convertPoint(cam, xa[3], ya[3], ua, va);
+    vpMeterPixelConversion::convertPoint(cam, xb[3], yb[3], iPb);
+    vpMeterPixelConversion::convertPoint(cam, xa[3], ya[3], iPa);
     
-    std::cout << "Point 3 in pixels in frame b: " << "(" << ub << ", " << vb << ")" << std::endl;
-    std::cout << "Point 3 in pixels in frame a: " << "(" << ua << ", " << va << ")" << std::endl;
+    std::cout << "Ground truth:" << std::endl;
+    std::cout << "  Point 3 in pixels in frame b: " << iPb << std::endl;
+    std::cout << "  Point 3 in pixels in frame a: " << iPa << std::endl;
     
     // Estimate the position in pixel of point 3 from the homography
     vpMatrix H = cam.get_K() * aHb * cam.get_K_inverse();
     
-    double z = ub * H[2][0] + vb * H[2][1] + H[2][2];
-    ua = (ub * H[0][0] + vb * H[0][1] + H[0][2]) / z;
-    va = (ub * H[1][0] + vb * H[1][1] + H[1][2]) / z;
-    
-    std::cout << "Estimated pixel position of point 3 frame a: " << "(" << ua << ", " << va << ")" << std::endl;
+    // Project the position in pixel of point 3 from the homography
+    std::cout << "Estimation from homography:" << std::endl;
+    std::cout << "  Point 3 in pixels in frame a: "
+              << vpHomography::project(cam, aHb, iPb) << std::endl;
 }
 \endcode
 Create a new method with the homography computation from visp.
@@ -120,7 +120,7 @@ Create a new method with the homography computation from visp.
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    // Do any additional setup after loading the view, typically from a nib.
     [self processTutorialHomography];
 }
 \endcode
