@@ -11,11 +11,11 @@ In this tutorial you will learn how to install ViSP from source on Linux Fedora.
 
 - gcc 4.4.x or later. This can be istalled with:
 \code
-su -c "yum install gcc-c++"
+su -c "dnf install gcc-c++"
 \endcode
 - CMake 2.6 or higher that could be installed with:
 \code
-su -c "yum install cmake"
+su -c "dnf install cmake"
 \endcode
 
 \section install_fedora_3rdparty Install 3rd parties
@@ -28,31 +28,31 @@ We recommend to install the following:
 
 - OpenCV
 \code
-su -c "yum install opencv-devel"
+su -c "dnf install opencv-devel"
 \endcode
 - libX11 to be able to open a window to display images
 \code
-su -c "yum install libX11-devel"
+su -c "dnf install libX11-devel"
 \endcode
 - lapack to benefit from optimized mathematical capabilities
 \code
-su -c "yum install lapack-devel"
+su -c "dnf install lapack-devel"
 \endcode
 - libdc1394 to grab images from firewire cameras
 \code
-su -c "yum install libdc1394-devel"
+su -c "dnf install libdc1394-devel"
 \endcode
 - libv4l to grab images from usb or analogic cameras
 \code
-su -c "yum install libv4l-devel"
+su -c "dnf install libv4l-devel"
 \endcode
 - libxml2 to be able to configure the model-based trackers from xml files
 \code
-su -c "yum install libxml2-devel"
+su -c "dnf install libxml2-devel"
 \endcode
 - QR code detection
 \code
-su -c "yum install zbar-devel"
+su -c "dnf install zbar-devel"
 \endcode
 
 \subsection install_fedora_3rdparty_other Other optional 3rd parties
@@ -61,23 +61,23 @@ We give also the way to install other 3rd party libraries to enable specific cap
 
 - Coin, to be able to support vrml cad model used by the model-based trackers
 \code
-su -c "yum install Coin2-devel"
+su -c "dnf install Coin3-devel"
 \endcode
 - libjpeg, libpng to support jpeg and png images (only useful if OpenCV is not installed)
 \code
-su -c "yum install libjpeg-devel libpng-devel"
+su -c "dnf install libjpeg-devel libpng-devel"
 \endcode
 - ffmpeg, to be able to read or encode compressed video streams (only useful if OpenCV is not installed)
 \code
-su -c "yum install ffmpeg-devel"
+su -c "dnf install ffmpeg-devel"
 \endcode
 - Ogre 3D if you want to do augmented reality or simulation
 \code
-su -c "yum install ogre-devel ogre-samples ois-devel"
+su -c "dnf install ogre-devel ogre-samples ois-devel"
 \endcode
 - Datamatrix code detection 
 \code
-su -c "yum install libdmtx-devel"
+su -c "dnf install libdmtx-devel"
 \endcode
 
 \section install_fedora_install_visp Install ViSP from source code
@@ -141,7 +141,7 @@ sudo make install
 
 - To build ViSP documentation, you have first to install Doxygen package:
 \code
-su -c "yum install doxygen graphviz"
+su -c "dnf install doxygen graphviz"
 \endcode
 Then you can proceed with:
 \code
