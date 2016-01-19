@@ -16,6 +16,7 @@ ViSP 3.0.1 (in development)
     . [#39] Meta header files visp_<module>.h not installed
     . [#40] vpKeyPoint fails to R/W database on big endian arch
     . [#42] Fails to build on Fedora 23 with Coin3-devel
+    . [#44] Reshape issue with vpRowVector or vpColVector
 
 ----------------------------------------------
 ViSP 3.0.0 (released December 18th, 2015)

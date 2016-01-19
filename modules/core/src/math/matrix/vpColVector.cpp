@@ -1041,8 +1041,11 @@ vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
   \param nrows : number of rows of the matrix
   \param ncols : number of columns of the matrix
   \return The reshaped matrix.
+
+  \sa reshape(vpMatrix &, const unsigned int &, const unsigned int &)
 */
-vpMatrix vpColVector::reshape(const unsigned int &nrows,const unsigned int &ncols){
+vpMatrix vpColVector::reshape(const unsigned int &nrows, const unsigned int &ncols)
+{
   vpMatrix M(nrows, ncols);
   reshape(M, nrows, ncols);
   return M;
@@ -1053,8 +1056,57 @@ vpMatrix vpColVector::reshape(const unsigned int &nrows,const unsigned int &ncol
   \param M : the reshaped matrix.
   \param nrows : number of rows of the matrix.
   \param ncols : number of columns of the matrix.
+
+  \exception vpException::dimensionError If the matrix and the column vector have not the same size.
+
+  The following example shows how to use this method.
+  \code
+#include <visp/vpColVector.h>
+
+int main()
+{
+  int var=0;
+  vpMatrix mat(3, 4);
+  for (int i = 0; i < 3; i++)
+      for (int j = 0; j < 4; j++)
+          mat[i][j] = ++var;
+  std::cout << "mat: \n" << mat << std::endl;
+
+  vpColVector col = mat.stackColumns();
+  std::cout << "column vector: \n" << col << std::endl;
+
+  vpMatrix remat = col.reshape(3, 4);
+  std::cout << "remat: \n" << remat << std::endl;
+}
+  \endcode
+
+  If you run the previous example, you get:
+  \code
+mat:
+1  2  3  4
+5  6  7  8
+9  10  11  12
+column vector:
+1
+5
+9
+2
+6
+10
+3
+7
+11
+4
+8
+12
+remat:
+1  2  3  4
+5  6  7  8
+9  10  11  12
+  \endcode
 */
-void vpColVector::reshape(vpMatrix & M,const unsigned int &nrows,const unsigned int &ncols){
+void vpColVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols)
+{
   if(dsize!=nrows*ncols) {
     throw(vpException(vpException::dimensionError,
                       "Cannot reshape (%dx1) column vector in (%dx%d) matrix",

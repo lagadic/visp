@@ -558,8 +558,10 @@ vpRowVector &vpRowVector::normalize()
   \return The resulting matrix.
 
   \exception vpException::dimensionError If the matrix and the row vector have not the same size.
+
+  \sa reshape(vpMatrix &, const unsigned int &, const unsigned int &)
 */
-vpMatrix vpRowVector::reshape(const unsigned int &nrows,const unsigned int &ncols)
+vpMatrix vpRowVector::reshape(const unsigned int &nrows, const unsigned int &ncols)
 {
   vpMatrix M(nrows,ncols);
   reshape(M, nrows, ncols);
@@ -573,8 +575,43 @@ vpMatrix vpRowVector::reshape(const unsigned int &nrows,const unsigned int &ncol
   \param ncols : number of columns of the matrix.
 
   \exception vpException::dimensionError If the matrix and the row vector have not the same size.
+
+  The following example shows how to use this method.
+  \code
+#include <visp/vpRowVector.h>
+
+int main()
+{
+  int var=0;
+  vpMatrix mat(3, 4);
+  for (int i = 0; i < 3; i++)
+      for (int j = 0; j < 4; j++)
+          mat[i][j] = ++var;
+  std::cout << "mat: \n" << mat << std::endl;
+
+  vpRowVector row = mat.stackRows();
+  std::cout << "row vector: " << row << std::endl;
+
+  vpMatrix remat = row.reshape(3, 4);
+  std::cout << "remat: \n" << remat << std::endl;
+}
+  \endcode
+
+  If you run the previous example, you get:
+  \code
+mat:
+1  2  3  4
+5  6  7  8
+9  10  11  12
+row vector: 1  2  3  4  5  6  7  8  9  10  11  12
+remat:
+1  2  3  4
+5  6  7  8
+9  10  11  12
+  \endcode
 */
-void vpRowVector::reshape(vpMatrix & M,const unsigned int &nrows,const unsigned int &ncols){
+void vpRowVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols)
+{
   if(dsize!=nrows*ncols) {
     throw(vpException(vpException::dimensionError,
                       "Cannot reshape (1x%d) row vector in (%dx%d) matrix",
