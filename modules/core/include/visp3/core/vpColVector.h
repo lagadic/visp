@@ -240,6 +240,7 @@ public:
   void stack(const double &d);
   void stack(const vpColVector &v);
 
+  double sum() const;
   double sumSquare() const;
   vpRowVector t() const;
   vpRowVector transpose() const;

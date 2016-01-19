@@ -223,6 +223,7 @@ public:
   void stack(const double &d);
   void stack(const vpRowVector &v);
 
+  double sum() const;
   double sumSquare() const;
   vpColVector t() const;
   vpColVector transpose() const;

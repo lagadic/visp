@@ -931,6 +931,22 @@ vpRowVector operator*(const double &x,const vpRowVector &v)
 }
 
 /*!
+  Return the sum of all the elements \f$v_{i}\f$ of the row vector v(n).
+
+  \return The sum square value: \f$\sum_{j=0}^{n} v_j\f$.
+  */
+double vpRowVector::sum() const
+{
+  double sum=0.0;
+
+  for (unsigned int j=0;j<colNum;j++) {
+    sum += rowPtrs[0][j];
+  }
+
+  return sum;
+}
+
+/*!
   Return the sum square of all the elements \f$v_{i}\f$ of the row vector v(n).
 
   \return The sum square value: \f$\sum_{j=0}^{n} v_j^{2}\f$.

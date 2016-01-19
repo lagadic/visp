@@ -1216,6 +1216,22 @@ vpColVector::print(std::ostream& s, unsigned int length, char const* intro) cons
 }
 
 /*!
+  Return the sum of all the elements \f$v_{i}\f$ of the column vector v(m).
+
+  \return The value \f[\sum{i=0}^{m} v_i\f].
+  */
+double vpColVector::sum() const
+{
+  double sum=0.0;
+
+  for (unsigned int i=0;i<rowNum;i++) {
+    sum += rowPtrs[i][0];
+  }
+
+  return sum;
+}
+
+/*!
   Return the sum square of all the elements \f$v_{i}\f$ of the column vector v(m).
 
   \return The value \f[\sum{i=0}^{m} v_i^{2}\f].
