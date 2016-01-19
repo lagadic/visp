@@ -109,6 +109,8 @@ private:
   std::vector<vpPoint> ransacInliers;
   std::vector<unsigned int> ransacInlierIndex;
   double ransacThreshold;
+  double distanceToPlaneForCoplanarityTest;
+  bool removeRansacDegeneratePoints;
 
 protected:
   double computeResidualDementhon(const vpHomogeneousMatrix &cMo) ;
@@ -139,7 +141,6 @@ public:
   void displayModel(vpImage<vpRGBa> &I,
                     vpCameraParameters &cam,
                     vpColor col=vpColor::none) ;
-  double distanceToPlaneForCoplanarityTest ;
   void init() ;
   //! compute the pose using Dementhon approach (planar object)
   void poseDementhonPlan(vpHomogeneousMatrix &cMo) ;
@@ -198,6 +199,40 @@ public:
     return covarianceMatrix; 
   }
   
+  /*!
+    Get the flag if potential degenerate points must be removed or not with the RANSAC pose estimation method.
+
+    \return True if potential degenerate points must be removed, false otherwise.
+  */
+  bool getRemoveRansacDegeneratePoints() const {
+    return removeRansacDegeneratePoints;
+  }
+
+  /*!
+    Set if potential degenerate points must be removed or not with the RANSAC pose estimation method.
+
+    \param remove : True if potential degenerate points must be removed, false otherwise.
+  */
+  void setRemoveRansacDegeneratePoints(const bool remove) {
+    removeRansacDegeneratePoints = remove;
+  }
+
+  /*!
+    Get the vector of points.
+
+    \return The vector of points.
+  */
+  std::vector<vpPoint> getPoints() const {
+    std::vector<vpPoint> vectorOfPoints(listP.size());
+
+    size_t i = 0;
+    for(std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it, i++) {
+      vectorOfPoints[i] = *it;
+    }
+
+    return vectorOfPoints;
+  }
+
   static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
                       vpCameraParameters &cam, double size,
                       vpColor col=vpColor::none) ;

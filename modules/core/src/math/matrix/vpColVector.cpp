@@ -1069,7 +1069,7 @@ void vpColVector::reshape(vpMatrix & M,const unsigned int &nrows,const unsigned 
 
   for(unsigned int j =0; j< ncols; j++)
     for(unsigned int i =0; i< nrows; i++)
-      M[i][j]=data[j*ncols+i];
+      M[i][j]=data[j*nrows+i];
 }
 
 /*!
