@@ -1051,7 +1051,7 @@ vpMbTracker::loadModel(const std::string& modelFile, const bool verbose)
     if((*(it-1) == 'o' && *(it-2) == 'a' && *(it-3) == 'c' && *(it-4) == '.') ||
        (*(it-1) == 'O' && *(it-2) == 'A' && *(it-3) == 'C' && *(it-4) == '.') ){
       std::vector<std::string> vectorOfModelFilename;
-      int startIdFace = faces.size();
+      int startIdFace = (int)faces.size();
       nbPoints = 0;
       nbLines = 0;
       nbPolygonLines = 0;
@@ -1146,7 +1146,7 @@ vpMbTracker::loadVRMLModel(const std::string& modelFile)
   in.closeFile();
 
   vpHomogeneousMatrix transform;
-  int indexFace = faces.size();
+  int indexFace = (int)faces.size();
   extractGroup(sceneGraphVRML2, transform, indexFace);
   
   sceneGraphVRML2->unref();

@@ -46,12 +46,12 @@ int main()
     //! [Display]
 
     //! [Matching]
-    int nbMatch = surf.matchPoint(I);
+    unsigned int nbMatch = surf.matchPoint(I);
     //! [Matching]
 
     //! [Get matches]
     vpImagePoint iPref, iPcur;
-    for (int i = 0; i < nbMatch; i++)
+    for (unsigned int i = 0; i < nbMatch; i++)
     {
       surf.getMatchedPoints(i, iPref, iPcur);
       //! [Get matches]

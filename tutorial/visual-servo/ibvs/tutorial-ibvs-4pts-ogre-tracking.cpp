@@ -81,7 +81,7 @@ int main()
     // Create the scene that contains 4 spheres
     // Sphere.mesh contains a sphere with 1 meter radius
     std::vector<std::string> name(4);
-    for (int i=0; i<4; i++) {
+    for (unsigned int i=0; i<4; i++) {
       std::ostringstream s; s << "Sphere" <<  i; name[i] = s.str();
       ogre.load(name[i], "Sphere.mesh");
       ogre.setScale(name[i], 0.02f, 0.02f, 0.02f); // Rescale the sphere to 2 cm radius
@@ -126,7 +126,7 @@ int main()
     std::vector<vpDot2> dot(4);
     vpFeaturePoint p[4], pd[4];
 
-    for (int i = 0 ; i < 4 ; i++) {
+    for (unsigned int i = 0 ; i < 4 ; i++) {
       // Compute the desired feature at the desired position
       dot[i].setGraphics(true);
       dot[i].setGraphicsThickness(thickness);
@@ -143,7 +143,7 @@ int main()
     vpDisplay::displayText(I, 10, 10, "Click in the 4 dots to initialise the tracking and start the servo", vpColor::red);
     vpDisplay::flush(I);
 
-    for (int i = 0 ; i < 4 ; i++) {
+    for (unsigned int i = 0 ; i < 4 ; i++) {
       // We notice that if we project the scene at a given pose, the pose estimated from
       // the rendered image differs a little. That's why we cannot simply compute the desired
       // feature from the desired pose using the next two lines. We will rather compute the
@@ -158,7 +158,7 @@ int main()
       vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
     }
 
-    for (int i = 0 ; i < 4 ; i++) {
+    for (unsigned int i = 0 ; i < 4 ; i++) {
       // Set the feature Z coordinate from the pose
       vpColVector cP;
       point[i].changeFrame(cMo, cP) ;
@@ -183,12 +183,12 @@ int main()
 
       vpDisplay::display(I);
 
-      for (int i = 0 ; i < 4 ; i++) {
+      for (unsigned int i = 0 ; i < 4 ; i++) {
         dot[i].track(I);
         vpFeatureBuilder::create(p[i], cam, dot[i].getCog());
       }
 
-      for (int i = 0 ; i < 4 ; i++) {
+      for (unsigned int i = 0 ; i < 4 ; i++) {
         // Set the feature Z coordinate from the pose
         vpColVector cP;
         point[i].changeFrame(cMo, cP) ;

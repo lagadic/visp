@@ -143,9 +143,11 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
   int cr,ct;
   double er,et;
   unsigned int Ncb_ = (unsigned int) Ncb;
+  unsigned int Nc_  = (unsigned int) Nc;
+  unsigned int influBspline_  = (unsigned int) influBspline;
 
-  memset(Prt, 0, Ncb*Ncb*sizeof(double));
-  memset(PrtD, 0, Nc*Nc*influBspline*sizeof(double));
+  memset(Prt, 0, Ncb_*Ncb_*sizeof(double));
+  memset(PrtD, 0, Nc_*Nc_*influBspline_*sizeof(double));
 
   //Warp->ComputeMAtWarp(tp);
   Warp->computeCoeff(tp);
@@ -663,9 +665,10 @@ void vpTemplateTrackerMI::zeroProbabilities()
 
 double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I,int &nc, const int &bspline_,vpColVector &tp)
 {
-  int tNcb=nc+bspline_;
-  int tinfluBspline=bspline_*bspline_;
-  double *tPrtD = new double[nc*nc*tinfluBspline];
+  unsigned int tNcb = (unsigned int)(nc+bspline_);
+  unsigned int tinfluBspline = (unsigned int)(bspline_*bspline_);
+  unsigned int nc_ = (unsigned int)nc;
+  double *tPrtD = new double[nc_*nc_*tinfluBspline];
   double *tPrt = new double[tNcb*tNcb];
   double *tPr = new double[tNcb];
   double *tPt = new double[tNcb];
@@ -683,7 +686,7 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I,int &nc, const
   int cr,ct;
   double er,et;
   memset(tPrt, 0, tNcb*tNcb*sizeof(double));
-  memset(tPrtD, 0, nc*nc*tinfluBspline*sizeof(double));
+  memset(tPrtD, 0, nc_*nc_*tinfluBspline*sizeof(double));
 
   //Warp->ComputeMAtWarp(tp);
   Warp->computeCoeff(tp);
@@ -718,15 +721,17 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I,int &nc, const
     }
   }
   double *pt=tPrtD;
+  int tNcb_ = (int)tNcb;
+  int tinfluBspline_ = (int)tinfluBspline;
   for(int r=0;r<nc;r++)
     for(int t=0;t<nc;t++)
     {
-      for(i=0;i<tinfluBspline;i++)
+      for(int i=0;i<tinfluBspline_;i++)
       {
         int r2,t2;
         r2=r+i/bspline_;
         t2=t+i%bspline_;
-        tPrt[r2*tNcb+t2]+=*pt;
+        tPrt[r2*tNcb_+t2]+=*pt;
 
         pt++;
       }
@@ -742,37 +747,37 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I,int &nc, const
   }
   else
   {
-    for(int r=0;r<tNcb;r++)
-      for(int t=0;t<tNcb;t++)
+    for(unsigned int r=0;r<tNcb;r++)
+      for(unsigned int t=0;t<tNcb;t++)
         //printf("%f ",tPrt[r*tNcb+t]);
         tPrt[r*tNcb+t]=tPrt[r*tNcb+t]/Nbpoint;
     //calcul Pr;
     memset(tPr, 0, tNcb*sizeof(double));
-    for(int r=0;r<tNcb;r++)
+    for(unsigned int r=0;r<tNcb;r++)
     {
-      for(int t=0;t<tNcb;t++)
+      for(unsigned int t=0;t<tNcb;t++)
         tPr[r]+=tPrt[r*tNcb+t];
     }
 
     //calcul Pt;
-    memset(tPt, 0, tNcb*sizeof(double));
-    for(int t=0;t<tNcb;t++)
+    memset(tPt, 0, (size_t)(tNcb*sizeof(double)));
+    for(unsigned int t=0;t<tNcb;t++)
     {
-      for(int r=0;r<tNcb;r++)
+      for(unsigned int r=0;r<tNcb;r++)
         tPt[t]+=tPrt[r*tNcb+t];
     }
-    for(int r=0;r<tNcb;r++)
+    for(unsigned int r=0;r<tNcb;r++)
       //if(tPr[r]!=0)
       if(std::fabs(tPr[r]) > std::numeric_limits<double>::epsilon())
         MI-=tPr[r]*log(tPr[r]);
 
-    for(int t=0;t<tNcb;t++)
+    for(unsigned int t=0;t<tNcb;t++)
       //if(tPt[t]!=0)
       if(std::fabs(tPt[t]) > std::numeric_limits<double>::epsilon())
         MI-=tPt[t]*log(tPt[t]);
 
-    for(int r=0;r<tNcb;r++)
-      for(int t=0;t<tNcb;t++)
+    for(unsigned int r=0;r<tNcb;r++)
+      for(unsigned int t=0;t<tNcb;t++)
         //if(tPrt[r*tNcb+t]!=0)
         if(std::fabs(tPrt[r*tNcb+t]) > std::numeric_limits<double>::epsilon())
           MI+=tPrt[r*tNcb+t]*log(tPrt[r*tNcb+t]);

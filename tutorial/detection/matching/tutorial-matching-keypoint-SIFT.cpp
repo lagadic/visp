@@ -54,14 +54,14 @@ int main() {
     //! [Display]
 
     //! [Matching]
-    int nbMatch = keypoint.matchPoint(I);
+    unsigned int nbMatch = keypoint.matchPoint(I);
     //! [Matching]
 
     std::cout << "Matches=" << nbMatch << std::endl;
 
     //! [Get matches]
     vpImagePoint iPref, iPcur;
-    for (int i = 0; i < nbMatch; i++)
+    for (unsigned int i = 0; i < nbMatch; i++)
     {
       keypoint.getMatchedPoints(i, iPref, iPcur);
       //! [Get matches]

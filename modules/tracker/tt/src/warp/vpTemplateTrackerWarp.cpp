@@ -149,7 +149,7 @@ void vpTemplateTrackerWarp::findWarp(const double *ut0,const double *vt0,const d
 
     vpMatrix::computeHLM(H, lambda, HLM);
     try{
-      p+=(vpColVector)(HLM.inverseByLU()*G, 0);
+      p+=(vpColVector)(HLM.inverseByLU()*G, 0u);
     }
     catch(vpException &e) {
       //std::cout<<"Cannot inverse the matrix by LU " << std::endl;

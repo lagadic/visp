@@ -138,7 +138,7 @@ vpMbtDistanceKltCylinder::init(const vpKltOpencv& _tracker, const vpHomogeneousM
       std::vector<vpImagePoint> roi;
       for(unsigned int kc = 0 ; kc < listIndicesCylinderBBox.size() ; kc++)
       {
-        hiddenface->getPolygon()[listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
+        hiddenface->getPolygon()[(unsigned int)listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
         if(vpPolygon::isInside(roi, y_tmp, x_tmp))
         {
           add = true;
@@ -374,11 +374,11 @@ vpMbtDistanceKltCylinder::updateMask(
 
   for(unsigned int kc = 0 ; kc < listIndicesCylinderBBox.size() ; kc++)
   {
-      if((*hiddenface)[listIndicesCylinderBBox[kc]]->isVisible() && (*hiddenface)[listIndicesCylinderBBox[kc]]->getNbPoint() > 2)
+      if((*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->isVisible() && (*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->getNbPoint() > 2)
       {
           int i_min, i_max, j_min, j_max;
           std::vector<vpImagePoint> roi;
-          (*hiddenface)[listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
+          (*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
           vpPolygon3D::getMinMaxRoi(roi, i_min, i_max, j_min,j_max);
 
           /* check image boundaries */

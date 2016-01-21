@@ -39,7 +39,7 @@ int main()
     // Create the scene that contains 4 spheres
     // Sphere.mesh contains a sphere with 1 meter radius
     std::vector<std::string> name(4);
-    for (int i=0; i<4; i++) {
+    for (unsigned int i=0; i<4; i++) {
       std::ostringstream s; s << "Sphere" <<  i; name[i] = s.str();
       ogre.load(name[i], "Sphere.mesh");
       ogre.setScale(name[i], 0.02f, 0.02f, 0.02f); // Rescale the sphere to 2 cm radius
