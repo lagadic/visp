@@ -103,16 +103,19 @@ class VISP_EXPORT vpFrameGrabber
 {
 public :
   bool   init ;  //!< Set to true if the frame grabber has been initialized.
+
 protected:
   unsigned int height ;  //!< Number of rows in the image.
   unsigned int width ;  //!< Number of columns in the image.
 
-
 public:
+  /** @name Inherited functionalities from vpFramegrabber */
+  //@{
   //! Return the number of rows in the image.
   inline  unsigned int getHeight() const { return height ; }
   //! Return the number of columns in the image.
   inline  unsigned int getWidth() const { return width ; }
+  //@}
 
 public:
   vpFrameGrabber() : init(false), height(0), width(0) {};
@@ -130,7 +133,6 @@ public:
     the memory used by a specific frame grabber
   */
   virtual void close() =0 ;
-
 } ;
 
 #endif
