@@ -153,7 +153,7 @@ STRIP_FROM_INC_PATH    = "@VISP_SOURCE_DIR@/modules/ar/include" \
                          "@VISP_SOURCE_DIR@/modules/tracker/tt/include" \
                          "@VISP_SOURCE_DIR@/modules/tracker/tt_mi/include" \
                          "@VISP_SOURCE_DIR@/modules/vision/include" \
-                         "@VISP_SOURCE_DIR@/modules/visual_features/include"
+                         "@VISP_SOURCE_DIR@/modules/visual_features/include" \
                          "@VISP_SOURCE_DIR@/modules/vs/include"
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
@@ -358,7 +358,7 @@ TYPEDEF_HIDES_STRUCT   = NO
 # 2^(16+SYMBOL_CACHE_SIZE). The valid range is 0..9, the default is 0,
 # corresponding to a cache size of 2^16 = 65536 symbols.
 
-SYMBOL_CACHE_SIZE      = 0
+#SYMBOL_CACHE_SIZE      = 0
 
 # Similar to the SYMBOL_CACHE_SIZE the size of the symbol lookup cache can be
 # set using LOOKUP_CACHE_SIZE. This cache is used to resolve symbols given
@@ -753,7 +753,8 @@ EXCLUDE_SYMBOLS        =
 EXAMPLE_PATH           = "@VISP_SOURCE_DIR@/example" \
                          "@VISP_SOURCE_DIR@/tutorial" \
                          "@VISP_SOURCE_DIR@/demo" \
-                         "@VISP_SOURCE_DIR@/modules"
+                         "@VISP_SOURCE_DIR@/modules" \
+                         "@VISP_CONTRIB_MODULES_PATH@"
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
@@ -1602,6 +1603,7 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_YARP \
                          VISP_HAVE_ZBAR \
                          VISP_HAVE_DMTX \
+                         VISP_HAVE_FLYCAPTURE \
                          VISP_HAVE_ACCESS_TO_NAS \
                          VISP_HAVE_CPP11_COMPATIBILITY \
                          VISP_HAVE_MODULE_AR \
@@ -1734,7 +1736,7 @@ DOT_NUM_THREADS        = 0
 # the DOTFONTPATH environment variable or by setting DOT_FONTPATH to the
 # directory containing the font.
 
-DOT_FONTNAME           = FreeSans
+DOT_FONTNAME           =
 
 # The DOT_FONTSIZE tag can be used to set the size of the font of dot graphs.
 # The default size is 10pt.
