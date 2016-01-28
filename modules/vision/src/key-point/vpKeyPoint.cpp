@@ -879,7 +879,7 @@ void vpKeyPoint::compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, c
             point_obj = cMo.inverse() * point_cam;
             vpPoint pt;
             pt.setWorldCoordinates(point_obj);
-            points.push_back(cv::Point3f(pt.get_oX(), pt.get_oY(), pt.get_oZ()));
+            points.push_back(cv::Point3f((float) pt.get_oX(), (float) pt.get_oY(), (float) pt.get_oZ()));
 
             if(descriptors != NULL) {
               desc.push_back(descriptors->row((int) cpt_keypoint));
