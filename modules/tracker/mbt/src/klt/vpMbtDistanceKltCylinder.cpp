@@ -138,7 +138,7 @@ vpMbtDistanceKltCylinder::init(const vpKltOpencv& _tracker, const vpHomogeneousM
       std::vector<vpImagePoint> roi;
       for(unsigned int kc = 0 ; kc < listIndicesCylinderBBox.size() ; kc++)
       {
-        hiddenface->getPolygon()[(unsigned int)listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
+        hiddenface->getPolygon()[(size_t) listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
         if(vpPolygon::isInside(roi, y_tmp, x_tmp))
         {
           add = true;
@@ -374,11 +374,12 @@ vpMbtDistanceKltCylinder::updateMask(
 
   for(unsigned int kc = 0 ; kc < listIndicesCylinderBBox.size() ; kc++)
   {
-      if((*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->isVisible() && (*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->getNbPoint() > 2)
+      if((*hiddenface)[(unsigned int) listIndicesCylinderBBox[kc]]->isVisible() &&
+          (*hiddenface)[(unsigned int) listIndicesCylinderBBox[kc]]->getNbPoint() > 2)
       {
           int i_min, i_max, j_min, j_max;
           std::vector<vpImagePoint> roi;
-          (*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
+          (*hiddenface)[(unsigned int) listIndicesCylinderBBox[kc]]->getRoiClipped(cam, roi);
           vpPolygon3D::getMinMaxRoi(roi, i_min, i_max, j_min,j_max);
 
           /* check image boundaries */
@@ -611,11 +612,13 @@ vpMbtDistanceKltCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousM
 double
 vpMbtDistanceKltCylinder::computeZ(const double &x, const double &y)
 {
-  double A = x*x + y*y + 1 - ((cylinder.getA()*x+cylinder.getB()*y+cylinder.getC()) * (cylinder.getA()*x+cylinder.getB()*y+cylinder.getC()));
-  double B = (x * cylinder.getX() + y * cylinder.getY() + cylinder.getZ());
-  double C = cylinder.getX() * cylinder.getX() + cylinder.getY() * cylinder.getY() + cylinder.getZ() * cylinder.getZ() - cylinder.getR() * cylinder.getR();
+//  double A = x*x + y*y + 1 - ((cylinder.getA()*x+cylinder.getB()*y+cylinder.getC()) * (cylinder.getA()*x+cylinder.getB()*y+cylinder.getC()));
+//  double B = (x * cylinder.getX() + y * cylinder.getY() + cylinder.getZ());
+//  double C = cylinder.getX() * cylinder.getX() + cylinder.getY() * cylinder.getY() + cylinder.getZ() * cylinder.getZ() - cylinder.getR() * cylinder.getR();
+//
+//  return (B - std::sqrt(B*B - A*C))/A;
 
-  return (B - std::sqrt(B*B - A*C))/A;
+  return cylinder.computeZ(x, y);
 }
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning: libvisp_mbt.a(vpMbtDistanceKltCylinder.cpp.o) has no symbols
