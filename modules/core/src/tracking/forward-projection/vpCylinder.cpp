@@ -385,6 +385,19 @@ vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
 
 }
 
+/*!
+  Compute the Z coordinate for the given normalized coordinate in the camera frame.
+*/
+double vpCylinder::computeZ(const double x, const double y) const {
+  double A = x * x + y * y + 1 - ((getA() * x + getB() * y + getC())
+               * (getA() * x + getB() * y + getC()));
+  double B = (x * getX() + y * getY() + getZ());
+  double C = getX() * getX() + getY() * getY() + getZ() * getZ()
+      - getR() * getR();
+
+  return (B - std::sqrt(B * B - A * C)) / A;
+}
+
 //! for memory issue (used by the vpServo class only)
 vpCylinder *vpCylinder::duplicate() const
 {

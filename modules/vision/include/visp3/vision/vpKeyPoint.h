@@ -62,6 +62,7 @@
 #include <visp3/vision/vpXmlConfigParserKeyPoint.h>
 #include <visp3/core/vpConvert.h>
 #include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpCylinder.h>
 
 // Require at least OpenCV >= 2.1.1
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -262,12 +263,22 @@ public:
       const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, vpPoint &point);
 
   static void compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      std::vector<cv::KeyPoint> &candidate, const std::vector<vpPolygon> &polygons,
+      std::vector<cv::KeyPoint> &candidates, const std::vector<vpPolygon> &polygons,
       const std::vector<std::vector<vpPoint> > &roisPt, std::vector<cv::Point3f> &points, cv::Mat *descriptors=NULL);
 
   static void compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      std::vector<vpImagePoint> &candidate, const std::vector<vpPolygon> &polygons,
+      std::vector<vpImagePoint> &candidates, const std::vector<vpPolygon> &polygons,
       const std::vector<std::vector<vpPoint> > &roisPt, std::vector<vpPoint> &points, cv::Mat *descriptors=NULL);
+
+  static void compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+      std::vector<cv::KeyPoint> &candidates, const std::vector<vpCylinder> &cylinders,
+      const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
+      std::vector<cv::Point3f> &points, cv::Mat *descriptors=NULL);
+
+  static void compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+      std::vector<vpImagePoint> &candidates, const std::vector<vpCylinder> &cylinders,
+      const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
+      std::vector<vpPoint> &points, cv::Mat *descriptors=NULL);
 
   bool computePose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
                const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,

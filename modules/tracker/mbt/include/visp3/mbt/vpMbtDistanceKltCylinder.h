@@ -153,6 +153,10 @@ public:
 
   inline std::map<int, int>& getCurrentPointsInd() {return curPointsInd; }
 
+  inline vpCylinder getCylinder() const {
+    return cylinder;
+  }
+
   /*!
     Get the number of point that was belonging to the face at the initialisation
 

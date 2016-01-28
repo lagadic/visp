@@ -830,6 +830,142 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
 }
 
 /*!
+   Keep only keypoints located on cylinders and compute the 3D coordinates given the 2D image coordinates.
+
+   \param cMo : Homogeneous matrix between the world and the camera frames.
+   \param cam : Camera parameters.
+   \param candidates : In input, list of keypoints detected in the whole image, in output, list of keypoints only located
+   on cylinders.
+   \param cylinders : List of vpCylinder corresponding of the cylinder objects in the scene.
+   \param vectorOfCylinderRois : For each cylinder, the corresponding list of bounding box.
+   \param points : Output list of computed 3D coordinates for each keypoint located on a cylinder.
+   \param descriptors : Optional parameter, pointer to the descriptors to filter.
+ */
+void vpKeyPoint::compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+    std::vector<cv::KeyPoint> &candidates, const std::vector<vpCylinder> &cylinders,
+    const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
+    std::vector<cv::Point3f> &points, cv::Mat *descriptors) {
+  std::vector<cv::KeyPoint> candidatesToCheck = candidates;
+  candidates.clear();
+  points.clear();
+  cv::Mat desc;
+
+  //Keep only keypoints on cylinders
+  size_t cpt_keypoint = 0;
+  for(std::vector<cv::KeyPoint>::const_iterator it1 = candidatesToCheck.begin();
+      it1 != candidatesToCheck.end(); ++it1, cpt_keypoint++) {
+    size_t cpt_cylinder = 0;
+
+    //Iterate through the list of vpCylinders
+    for(std::vector<std::vector<std::vector<vpImagePoint> > >::const_iterator it2 = vectorOfCylinderRois.begin();
+        it2 != vectorOfCylinderRois.end(); ++it2, cpt_cylinder++) {
+      //Iterate through the list of the bounding boxes of the current vpCylinder
+      for(std::vector<std::vector<vpImagePoint> >::const_iterator it3 = it2->begin(); it3 != it2->end(); ++it3) {
+        if (vpPolygon::isInside(*it3, it1->pt.y, it1->pt.x)) {
+          candidates.push_back(*it1);
+
+          //Calculate the 3D coordinates for each keypoint located on cylinders
+          double xm = 0.0, ym = 0.0;
+          vpPixelMeterConversion::convertPoint(cam, it1->pt.x, it1->pt.y, xm, ym);
+          double Z = cylinders[cpt_cylinder].computeZ(xm, ym);
+
+          if(!vpMath::isNaN(Z) && Z > std::numeric_limits<double>::epsilon()) {
+            vpColVector point_cam(4);
+            point_cam[0] = xm * Z;
+            point_cam[1] = ym * Z;
+            point_cam[2] = Z;
+            point_cam[3] = 1;
+            vpColVector point_obj(4);
+            point_obj = cMo.inverse() * point_cam;
+            vpPoint pt;
+            pt.setWorldCoordinates(point_obj);
+            points.push_back(cv::Point3f(pt.get_oX(), pt.get_oY(), pt.get_oZ()));
+
+            if(descriptors != NULL) {
+              desc.push_back(descriptors->row((int) cpt_keypoint));
+            }
+
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  if(descriptors != NULL) {
+    desc.copyTo(*descriptors);
+  }
+}
+
+/*!
+   Keep only vpImagePoint located on cylinders and compute the 3D coordinates given the 2D image coordinates.
+
+   \param cMo : Homogeneous matrix between the world and the camera frames.
+   \param cam : Camera parameters.
+   \param candidates : In input, list of vpImagePoint located in the image, in output, list of vpImagePoint only located
+   on cylinders.
+   \param cylinders : List of vpCylinder corresponding of the cylinder objects in the scene.
+   \param vectorOfCylinderRois : For each cylinder, the corresponding list of bounding box.
+   \param points : Output list of computed 3D coordinates for each vpImagePoint located on a cylinder.
+   \param descriptors : Optional parameter, pointer to the descriptors to filter.
+ */
+void vpKeyPoint::compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+    std::vector<vpImagePoint> &candidates, const std::vector<vpCylinder> &cylinders,
+    const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
+    std::vector<vpPoint> &points, cv::Mat *descriptors) {
+  std::vector<vpImagePoint> candidatesToCheck = candidates;
+  candidates.clear();
+  points.clear();
+  cv::Mat desc;
+
+  //Keep only keypoints on cylinders
+  size_t cpt_keypoint = 0;
+  for(std::vector<vpImagePoint>::const_iterator it1 = candidatesToCheck.begin();
+      it1 != candidatesToCheck.end(); ++it1, cpt_keypoint++) {
+    size_t cpt_cylinder = 0;
+
+    //Iterate through the list of vpCylinders
+    for(std::vector<std::vector<std::vector<vpImagePoint> > >::const_iterator it2 = vectorOfCylinderRois.begin();
+        it2 != vectorOfCylinderRois.end(); ++it2, cpt_cylinder++) {
+      //Iterate through the list of the bounding boxes of the current vpCylinder
+      for(std::vector<std::vector<vpImagePoint> >::const_iterator it3 = it2->begin(); it3 != it2->end(); ++it3) {
+        if (vpPolygon::isInside(*it3, it1->get_i(), it1->get_j())) {
+          candidates.push_back(*it1);
+
+          //Calculate the 3D coordinates for each keypoint located on cylinders
+          double xm = 0.0, ym = 0.0;
+          vpPixelMeterConversion::convertPoint(cam, it1->get_u(), it1->get_v(), xm, ym);
+          double Z = cylinders[cpt_cylinder].computeZ(xm, ym);
+
+          if(!vpMath::isNaN(Z) && Z > std::numeric_limits<double>::epsilon()) {
+            vpColVector point_cam(4);
+            point_cam[0] = xm * Z;
+            point_cam[1] = ym * Z;
+            point_cam[2] = Z;
+            point_cam[3] = 1;
+            vpColVector point_obj(4);
+            point_obj = cMo.inverse() * point_cam;
+            vpPoint pt;
+            pt.setWorldCoordinates(point_obj);
+            points.push_back(pt);
+
+            if(descriptors != NULL) {
+              desc.push_back(descriptors->row((int) cpt_keypoint));
+            }
+
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  if(descriptors != NULL) {
+    desc.copyTo(*descriptors);
+  }
+}
+
+/*!
    Compute the pose using the correspondence between 2D points and 3D points using OpenCV function with RANSAC method.
 
    \param imagePoints : List of 2D points corresponding to the location of the detected keypoints.
