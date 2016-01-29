@@ -157,6 +157,7 @@ public:
   double infinityNorm() const;
   void init(const vpColVector &v, unsigned int r, unsigned int nrows);
   void insert(unsigned int i, const vpColVector &v);
+  void insert(const vpColVector &v, unsigned int i);
 
   vpColVector &normalize() ;
   vpColVector &normalize(vpColVector &x) const ;
@@ -184,6 +185,7 @@ public:
   vpColVector &operator/=(double x);
 
   vpColVector operator+(const vpColVector &v) const;
+  vpTranslationVector operator+(const vpTranslationVector &t) const;
   vpColVector &operator+=(vpColVector v);
 
   vpColVector operator-(const vpColVector &v) const;
@@ -309,6 +311,7 @@ public:
    */
   vp_deprecated static void stackMatrices(const vpColVector &A, const vpColVector &B, vpColVector &C) { stack(A, B, C); };
 
+  vp_deprecated void insert(const vpColVector &v, const unsigned int r, const unsigned int c=0);
   //@}
 #endif
 };

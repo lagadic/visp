@@ -103,10 +103,12 @@ public:
   vpTranslationVector(const vpTranslationVector &tv);
   vpTranslationVector(const vpHomogeneousMatrix &M);
   vpTranslationVector(const vpPoseVector &p);
+  vpTranslationVector(const vpColVector &v);
 
   vpTranslationVector buildFrom(const double tx, const double ty, const double tz) ;
   vpTranslationVector buildFrom(const vpHomogeneousMatrix& M) ;
   vpTranslationVector buildFrom(const vpPoseVector& p) ;
+  vpTranslationVector buildFrom(const vpColVector& v) ;
 
   double euclideanNorm() const;
 
@@ -114,6 +116,7 @@ public:
 
   // translation vectors additions  c = a + b (a, b  unchanged)
   vpTranslationVector operator+(const vpTranslationVector &tv) const ;
+  vpTranslationVector operator+(const vpColVector &v) const;
   // translation vectors substraction  c = a - b (a, b  unchanged)
   vpTranslationVector operator-(const vpTranslationVector &tv) const ;
   // negate t = -a  (t is unchanged)

@@ -74,6 +74,37 @@ vpColVector::operator+(const vpColVector &v) const
     r[i] = (*this)[i] + v[i];
   return r;
 }
+/*!
+  Operator that allows to add a column vector to a translation vector.
+
+  \param t : 3-dimension translation vector to add.
+
+  \return The sum of the current columnn vector (*this) and the translation vector to add.
+  \code
+  vpTranslationVector t1(1,2,3);
+  vpColVector v(3);
+  v[0] = 4; v[1] = 5; v[2] = 6;
+  vpTranslationVector t2;
+
+  t2 = v + t1;
+  // t1 and v leave unchanged
+  // t2 is now equal to : 5, 7, 9
+  \endcode
+
+*/
+vpTranslationVector
+vpColVector::operator+(const vpTranslationVector &t) const
+{
+  if (getRows() != 3) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot add %d-dimension column vector to a translation vector", getRows()));
+  }
+  vpTranslationVector s;
+
+  for (unsigned int i=0;i<3;i++) s[i] = (*this)[i]+t[i] ;
+
+  return s;
+}
 
 //! Operator that allows to add two column vectors.
 vpColVector &
@@ -1340,3 +1371,24 @@ double vpColVector::infinityNorm() const
   }
   return norm;
 }
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+/*!
+  \deprecated You should rather use insert(unsigned int, const vpColVector &).
+
+  Insert column vector \e v at the given position \r in the current column vector.
+
+  \warning Throw vpMatrixException::incorrectMatrixSizeError if the
+  dimensions of the matrices do not allow the operation.
+
+  \param v : The column vector to insert.
+  \param r : The index of the row to begin to insert data.
+  \param c : Not used.
+
+ */
+void vpColVector::insert(const vpColVector &v, const unsigned int r, const unsigned int c)
+{
+  (void) c;
+  insert(r, v);
+}
+#endif // defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

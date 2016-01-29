@@ -613,6 +613,10 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
      \deprecated You should rather use diag(const double &)
    */
   vp_deprecated void setIdentity(const double & val=1.0) ;
+
+  vp_deprecated vpRowVector row(const unsigned int i);
+  vp_deprecated vpColVector column(const unsigned int j);
+
   //@}
 #endif
 
