@@ -10,6 +10,8 @@ ViSP 3.0.1 (in development)
   - New features
     . Create and install a meta header file in
       visp3/<module>/visp_<module>.h
+    . Add vpMatrix, vpColVector, vpTranslationVector functions
+      to keep combat with ViSP 2.10.0
   - Bug fixed
     . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc
@@ -17,6 +19,7 @@ ViSP 3.0.1 (in development)
     . [#40] vpKeyPoint fails to R/W database on big endian arch
     . [#42] Fails to build on Fedora 23 with Coin3-devel
     . [#44] Reshape issue with vpRowVector or vpColVector
+    . [#47] Build issue in vpMath.h around vpMath::sign()
 
 ----------------------------------------------
 ViSP 3.0.0 (released December 18th, 2015)
