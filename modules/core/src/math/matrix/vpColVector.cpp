@@ -1376,7 +1376,7 @@ double vpColVector::infinityNorm() const
 /*!
   \deprecated You should rather use insert(unsigned int, const vpColVector &).
 
-  Insert column vector \e v at the given position \r in the current column vector.
+  Insert column vector \e v at the given position \e r in the current column vector.
 
   \warning Throw vpMatrixException::incorrectMatrixSizeError if the
   dimensions of the matrices do not allow the operation.
