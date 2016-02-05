@@ -19,8 +19,8 @@ Let us recall the pinhole camera model implemented in ViSP. In this model, a sce
   1
   \end{array}\right] =
   \left[ \begin{array}{ccc}
-  u_0 & 0   & p_x  \\
-  0   & v_0 & p_y \\
+  p_x & 0   & u_0  \\
+  0   & p_y & v_0 \\
   0   & 0   & 1
   \end{array}\right]
   \left[ \begin{array}{c}
