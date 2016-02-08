@@ -57,7 +57,7 @@ int main()
 #if defined(VISP_HAVE_OGRE) 
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
-	// Image to stock gathered data
+    // Image to stock gathered data
     // Here we acquire a color image. The consequence will be that
     // the background texture used in Ogre renderer will be also in color.
     vpImage<vpRGBa> I;
@@ -66,12 +66,12 @@ int main()
 #if defined(VISP_HAVE_V4L2)
     // Video for linux 2 grabber
     vpV4l2Grabber grabber;
-	grabber.open(I);
+    grabber.open(I);
     grabber.acquire(I);
 #elif defined(VISP_HAVE_DC1394)
     // libdc1394-2
     vp1394TwoGrabber grabber;
-	grabber.open(I);
+    grabber.open(I);
     grabber.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
     // OpenCV to gather images
@@ -119,11 +119,15 @@ int main()
     // Here we load the "robot.mesh" model that is found thanks to the resources locations
     // specified in the "resources.cfg" file
     ogre.load("Robot", "robot.mesh");
-    ogre.setPosition("Robot", vpTranslationVector(-0.3, 0.2, 0));
-    ogre.setScale("Robot", 0.001f,0.001f,0.001f);
-    ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI, 0, 0)));
+    // Modify robot scale and orientation
+    // - downscale the size to have something completly visible in the image
+    // - rotation of 180 deg along robot x axis to have head over feet
+    // - rotation of -90 deg along y axis to have robot facing the camera
+    ogre.setScale("Robot", 0.001f, 0.001f, 0.001f);
+    ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI, -M_PI/2, 0)));
 
-    cMo[2][3] = 1.; // Z = 1 meter
+    // Update projection matrix
+    cMo[2][3] = 0.5; // Z = 0.5 meter
 
     std::cout << "cMo:\n" << cMo << std::endl;
 
@@ -133,10 +137,10 @@ int main()
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394)
       grabber.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
-	  grabber >> frame;
+      grabber >> frame;
       vpImageConvert::convert(frame, I);
 #endif
-      //Pose computation
+      // Pose computation
       // ...
       // cMo updated
       // Display the robot at the position specified by cMo with vpAROgre

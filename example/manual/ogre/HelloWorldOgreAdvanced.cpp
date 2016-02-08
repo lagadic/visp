@@ -62,9 +62,9 @@ private:
   Ogre::AnimationState * mAnimationState;
 
 public:
-  vpAROgreAdvanced(const vpCameraParameters &cam = vpCameraParameters(), 
+  vpAROgreAdvanced(const vpCameraParameters &cam = vpCameraParameters(),
                    unsigned int width = 640, unsigned int height = 480)
-		: vpAROgre(cam, width, height)
+    : vpAROgre(cam, width, height)
   {
     mAnimationState = NULL;
   }
@@ -76,7 +76,7 @@ protected:
     Ogre::Entity* robot = mSceneMgr->createEntity("Robot", "robot.mesh");
     // Attach robot to scene graph
     Ogre::SceneNode* RobotNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Robot");
-    RobotNode->setPosition((Ogre::Real)-0.3, (Ogre::Real)0.2, (Ogre::Real)0);
+    //RobotNode->setPosition((Ogre::Real)-0.3, (Ogre::Real)0.2, (Ogre::Real)0);
     RobotNode->attachObject(robot);
     RobotNode->scale((Ogre::Real)0.001,(Ogre::Real)0.001,(Ogre::Real)0.001);
     RobotNode->pitch(Ogre::Degree(180));
@@ -109,7 +109,7 @@ int main()
 #if defined(VISP_HAVE_OGRE) 
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
-	// Image to store gathered data
+    // Image to store gathered data
     // Here we acquire a grey level image. The consequence will be that
     // the background texture used in Ogre renderer will be also in grey
     // level.
@@ -152,7 +152,7 @@ int main()
     vpCameraParameters cam(px,py,u0,v0);
     // The matrix with our pose
     vpHomogeneousMatrix cMo;
-    cMo[2][3] = 1.; // Z = 1 meter
+    cMo[2][3] = 0.5; // Z = 0.5 meter
 
     // Our object
     vpAROgreAdvanced ogre(cam, I.getWidth(), I.getHeight());
@@ -165,7 +165,7 @@ int main()
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394)
       grabber.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
-	  grabber >> frame;
+      grabber >> frame;
       vpImageConvert::convert(frame, I);
 #endif
       // Pose computation
