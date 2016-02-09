@@ -164,7 +164,10 @@ buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L)
 void
 vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
 {
-  line = new vpLine ;
+  if (line == NULL) {
+    line = new vpLine ;
+  }
+
   poly.setNbPoint(2);
   poly.addPoint(0, _p1);
   poly.addPoint(1, _p2);
@@ -398,9 +401,9 @@ vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomog
         catch(...)
         {
           //vpTRACE("the line can't be initialized");
-  //        if (melinePt!=NULL) delete melinePt;
-  //        melinePt=NULL;
-  //        isvisible = false;
+          if (melinePt!=NULL) delete melinePt;
+          melinePt=NULL;
+          isvisible = false;
           return false;
         }
       }
