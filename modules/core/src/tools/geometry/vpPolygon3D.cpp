@@ -276,11 +276,11 @@ vpPolygon3D::getClippedPointsFovGeneric(const vpPoint &p1, const vpPoint &p2,
 {    
   vpRowVector p1Vec(3);
   p1Vec[0] = p1.get_X(); p1Vec[1] = p1.get_Y(); p1Vec[2] = p1.get_Z();
-  p1Vec = p1Vec.normalize();
+  p1Vec.normalize();
   
   vpRowVector p2Vec(3);
   p2Vec[0] = p2.get_X(); p2Vec[1] = p2.get_Y(); p2Vec[2] = p2.get_Z();
-  p2Vec = p2Vec.normalize();
+  p2Vec.normalize();
   
   if((clippingFlag & flag) == flag){
     double beta1 = acos( p1Vec * normal );
