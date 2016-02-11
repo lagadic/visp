@@ -48,6 +48,7 @@ set(example_cpp
   grabV4l2.cpp
   grabDirectShow.cpp
   grabDirectShowMulti.cpp
+  grabFlyCapture.cpp
   grabOpenCV.cpp
   grabOpenCV-2.cpp
 )

@@ -4,8 +4,43 @@
   \tableofcontents
 
 
-\section grabber-camera-firewire-unix Images from firewire cameras
+\section grabber-camera-pgr Images from PointGrey cameras
 
+After ViSP 3.0.0, we introduce vpFlyCaptureGrabber class, a wrapper over PointGrey FlyCapture SDK that allows to grab images from any PointGrey camera. This grabber was tested under Ubuntu and Windows with the following cameras:
+  - Flea3 USB 3.0 cameras (FL3-U3-32S2M-CS, FL3-U3-13E4C-C)
+  - Flea2 firewire camera (FL2-03S2C)
+  - Dragonfly2 firewire camera (DR2-COL)
+  
+It should also work with GigE PGR cameras.
+
+The following example also available in tutorial-grabber-flycapture.cpp shows how to use vpFlyCaptureGrabber to capture grey level images from a PointGrey camera under Ubuntu or Windows. The following example suppose that a window renderer (libX11 on Ubuntu or GDI on Windows) and FlyCapture SDK 3rd party are available throw VISP.
+
+\include tutorial-grabber-flycapture.cpp
+
+Here after we explain the source code.
+
+First an instance of the frame grabber is created. 
+\snippet tutorial-grabber-flycapture.cpp vpFlyCaptureGrabber construction
+
+Once the grabber is created, we turn auto shutter and auto gain on and set the camera image size, color coding, and framerate. 
+These settings are enclosed in a try/catch to be able to continue if one of these settings are not supported by the camera.
+\snippet tutorial-grabber-flycapture.cpp vpFlyCaptureGrabber settings
+
+Then the grabber is initialized using:
+\snippet tutorial-grabber-flycapture.cpp vpFlyCaptureGrabber open
+
+From now the grey level image \c I is also initialized with the size corresponding to the grabber settings. 
+
+Then we enter in a while loop where image acquisition is simply done by:
+\snippet tutorial-grabber-flycapture.cpp vpFlyCaptureGrabber acquire
+
+This image is then displayed using libX11 or GDI renderer:
+\snippet tutorial-grabber-flycapture.cpp vpFlyCaptureGrabber display
+
+We are waiting for a non blocking mouse event to break the while loop before ending the program.
+\snippet tutorial-grabber-flycapture.cpp vpFlyCaptureGrabber click to exit
+
+\section grabber-camera-firewire-unix Images from firewire cameras
 
 The next example also available in tutorial-grabber-1394.cpp shows how to use a framegrabber to acquire color images from a firewire camera under Unix. The following example suppose that libX11 and libdc1394-2 3rd party are available.
 

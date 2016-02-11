@@ -274,6 +274,9 @@
 // Defined if DirectShow library is available (only under Windows).
 #cmakedefine VISP_HAVE_DIRECTSHOW
 
+// Defined if PointGrey FlyCapture SDK available.
+#cmakedefine VISP_HAVE_FLYCAPTURE
+
 // Defined if Irisa's Afma4 robot available.
 #cmakedefine VISP_HAVE_AFMA4
 

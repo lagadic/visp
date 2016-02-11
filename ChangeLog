@@ -10,8 +10,10 @@ ViSP 3.0.1 (in development)
   - New features
     . Create and install a meta header file in
       visp3/<module>/visp_<module>.h
-    . Add vpMatrix, vpColVector, vpTranslationVector functions
-      to keep combat with ViSP 2.10.0
+    . Add vpMatrix, vpColVector, vpTranslationVector member functions
+      to keep compat with ViSP 2.10.0
+    . New vpFlyCaptureGrabber class to capture images from PointGrey
+      cameras (USB-3, firewire, GigE)
   - Bug fixed
     . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc

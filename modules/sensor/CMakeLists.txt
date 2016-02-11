@@ -41,7 +41,7 @@
 set(opt_incs "")
 set(opt_libs "")
 
-# camera devices: v4l, dc1394, cmu1394, directshow ?, freenect
+# camera devices: v4l, dc1394, cmu1394, directshow ?, freenect, flycapture
 if(USE_V4L2)
   list(APPEND opt_incs ${V4L2_INCLUDE_DIRS})
   list(APPEND opt_libs ${V4L2_LIBRARIES})
@@ -66,9 +66,13 @@ if(USE_LIBUSB_1)
   list(APPEND opt_incs ${LIBUSB_1_INCLUDE_DIRS})
   list(APPEND opt_libs ${LIBUSB_1_LIBRARIES})
 endif()
+if(USE_FLYCAPTURE)
+  list(APPEND opt_incs ${FLYCAPTURE_INCLUDE_DIRS})
+  list(APPEND opt_libs ${FLYCAPTURE_LIBRARIES})
+endif()
 
 vp_add_module(sensor visp_core)
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests(CTEST_EXCLUDE_PATH framegrabber DEPENDS_ON visp_io)
+vp_add_tests(CTEST_EXCLUDE_PATH framegrabber DEPENDS_ON visp_io visp_gui)
