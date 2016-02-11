@@ -136,7 +136,7 @@ macro(vp_add_extra_compilation_flags)
     endif()
     if(MSVC80 OR MSVC90 OR MSVC10 OR MSVC11)
       # To avoid compiler warning (level 4) C4571, compile with /EHa if you still want 
-  # your catch(...) blocks to catch structured exceptions.
+      # your catch(...) blocks to catch structured exceptions.
       list(APPEND CMAKE_CXX_FLAGS "/EHa") 
     endif()
   endif()
