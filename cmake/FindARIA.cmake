@@ -61,11 +61,12 @@ if(UNIX)
     /usr/Aria/lib
     /usr/lib
     /usr/local/lib
-    "C:/Program Files/MobileRobots/Aria/lib"
   )
   #MESSAGE("DBG ARIA_LIBRARY=${ARIA_LIBRARY}")
 else()
-  if(MSVC11)
+  if(MSVC12)
+    set(ARIA_SUFFIX_NAME VC12)
+  elseif(MSVC11)
     set(ARIA_SUFFIX_NAME VC11)
   elseif(MSVC10)
     set(ARIA_SUFFIX_NAME VC10)
@@ -79,25 +80,24 @@ else()
     set(ARIA_SUFFIX_NAME "")
   endif()
   
+  set(ARIA_LIB_SEARCH_PATH "")
+  if(CMAKE_CL_64)
+    list(APPEND ARIA_LIB_SEARCH_PATH "C:/Program Files/MobileRobots/Aria/lib64")
+    list(APPEND ARIA_LIB_SEARCH_PATH $ENV{ARIA_HOME}/lib64)
+  else()
+    list(APPEND ARIA_LIB_SEARCH_PATH "C:/Program Files/MobileRobots/Aria/lib")
+    list(APPEND ARIA_LIB_SEARCH_PATH $ENV{ARIA_HOME}/lib)
+  endif()
+
   find_library(ARIA_LIBRARY_DEBUG
     NAMES AriaDebug${ARIA_SUFFIX_NAME}
     PATHS 
-    $ENV{ARIA_HOME}/lib
-    /usr/local/Aria/lib
-    /usr/Aria/lib
-    /usr/lib
-    /usr/local/lib
-    "C:/Program Files/MobileRobots/Aria/lib"
+      ${ARIA_LIB_SEARCH_PATH}
   )
   find_library(ARIA_LIBRARY_RELEASE
     NAMES Aria${ARIA_SUFFIX_NAME}
     PATHS 
-    $ENV{ARIA_HOME}/lib
-    /usr/local/Aria/lib
-    /usr/Aria/lib
-    /usr/lib
-    /usr/local/lib
-    "C:/Program Files/MobileRobots/Aria/lib"
+      ${ARIA_LIB_SEARCH_PATH}
   )
 endif()
     
@@ -129,5 +129,6 @@ mark_as_advanced(
   ARIA_LIBRARY
   ARIA_LIBRARY_DEBUG
   ARIA_LIBRARY_RELEASE
+  ARIA_LIB_SEARCH_PATH
 )
 
