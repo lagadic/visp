@@ -857,13 +857,13 @@ bool vpFlyCaptureGrabber::isVideoModeAndFrameRateSupported(FlyCapture2::VideoMod
   \param max_size : Allowed max size.
   \param step : Step.
  */
-std::pair<int, int>
-vpFlyCaptureGrabber::centerRoi(int size, int max_size, int step)
+std::pair<unsigned int, unsigned int>
+vpFlyCaptureGrabber::centerRoi(unsigned int size, unsigned int max_size, unsigned int step)
 {
   if (size == 0 || size > max_size) size = max_size;
   // size should be a multiple of step
   size = size / step * step;
-  const int offset = (max_size - size) / 2;
+  const unsigned int offset = (max_size - size) / 2;
   // Return offset for centering roi
   return std::make_pair(size, offset);
 }
@@ -900,7 +900,7 @@ int main()
  */
 void vpFlyCaptureGrabber::setFormat7VideoMode(FlyCapture2::Mode format7_mode,
                                               FlyCapture2::PixelFormat pixel_format,
-                                              int width, int height)
+                                              unsigned int width, unsigned int height)
 {
   this->connect();
 
@@ -922,8 +922,8 @@ void vpFlyCaptureGrabber::setFormat7VideoMode(FlyCapture2::Mode format7_mode,
   fmt7_settings.mode = format7_mode;
   fmt7_settings.pixelFormat = pixel_format;
   // Set centered roi
-  std::pair<int, int> roi_w = this->centerRoi(width, fmt7_info.maxWidth, fmt7_info.imageHStepSize);
-  std::pair<int, int> roi_h = this->centerRoi(height, fmt7_info.maxHeight, fmt7_info.imageVStepSize);
+  std::pair<unsigned int, unsigned int> roi_w = this->centerRoi(width, fmt7_info.maxWidth, fmt7_info.imageHStepSize);
+  std::pair<unsigned int, unsigned int> roi_h = this->centerRoi(height, fmt7_info.maxHeight, fmt7_info.imageVStepSize);
   fmt7_settings.width   = roi_w.first;
   fmt7_settings.offsetX = roi_w.second;
   fmt7_settings.height  = roi_h.first;

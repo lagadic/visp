@@ -192,7 +192,7 @@ public:
   float setGain(bool gain_auto, float gain_value=0);
   void setFormat7VideoMode(FlyCapture2::Mode format7_mode,
                            FlyCapture2::PixelFormat pixel_format,
-                           int width, int height);
+                           unsigned int width, unsigned int height);
   float setFrameRate(float frame_rate);
   unsigned int setSharpness(bool sharpness_on, bool sharpness_auto, unsigned int sharpness_value=0);
   float setShutter(bool auto_shutter, float shutter_ms=10);
@@ -207,7 +207,7 @@ protected:
     ABS_VALUE, //!< Consider FlyCapture2::Property::absValue
     VALUE_A,   //!< Consider FlyCapture2::Property::valueA
   } PropertyValue;
-  std::pair<int, int> centerRoi(int size, int max_size, int step);
+  std::pair<unsigned int, unsigned int> centerRoi(unsigned int size, unsigned int max_size, unsigned int step);
   FlyCapture2::Property getProperty(FlyCapture2::PropertyType prop_type);
   FlyCapture2::PropertyInfo getPropertyInfo(FlyCapture2::PropertyType prop_type);
   void open();
