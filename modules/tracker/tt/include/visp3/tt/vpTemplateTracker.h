@@ -54,6 +54,8 @@
 /*!
   \class vpTemplateTracker
   \ingroup group_tt_tracker
+
+  This class allows to instanciate a template tracker using image registration algorithms \cite Dame10c \cite Dame11c.
 */
 class VISP_EXPORT vpTemplateTracker
 {

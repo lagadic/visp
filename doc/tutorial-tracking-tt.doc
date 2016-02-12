@@ -3,14 +3,20 @@
 \page tutorial-tracking-tt Tutorial: Template tracking
 \tableofcontents
 
-With ViSP it is possible to track a template using image registration algorithms. Contrary to the common approaches based on visual features, this method allows to be much more robust to scene variations.
+With ViSP it is possible to track a template using image registration algorithms \cite Dame10c \cite Dame11c. Contrary to common approaches based on visual features, this method allows to be much more robust to scene variations.
 
 In the following sections, we consider the tracking of a pattern. To simplify the source code, the tracking is performed on a single image. The extension to a sequence of images or to images acquired from a camera is easy. To this end see \ref tutorial-grabber. 
 
 \section tracking_tt Track the painting
 
 The following example that comes from tutorial-template-tracker.cpp allows to track a template using vpTemplateTrackerSSDInverseCompositional class.
-Let us denote that "SSDInverseCompositional" refers to the similarity function used for the image registration. In ViSP, we have implemented, for now, two different similarity functions: the "Sum of Square Differences" (vpTemplateTrackerSSD classes \cite Baker04a) and the "Zero-mean Normalized Cross Correlation" (vpTemplateTrackerZNCC classes \cite Irani98a). Both methods can be used in different ways: Inverse Compositional, Forward Compositional, Forward Additional, or ESM.
+Let us denote that "SSDInverseCompositional" refers to the similarity function used for the image registration. In ViSP, we have implemented, for now, three different similarity functions: the "Sum of Square Differences" (vpTemplateTrackerSSD classes \cite Baker04a), the "Zero-mean Normalized Cross Correlation" (vpTemplateTrackerZNCC classes \cite Irani98a) and the "Mutual Information" (vpTemplateTrackerMI classes \cite Dame10c). All the methods can be used in different ways: Inverse Compositional, Forward Compositional, Forward Additional, or ESM.
+
+As detailed in \ref warp_tt section, the tracker is able to track a reference template (in our case a painting) and to estimate the transformation between the reference template and its current position. The estimated transformationn could be modeled as:
+- a pure 2D translation (see vpTemplateTrackerWarpTranslation)
+- a 2D translation with an additional scaling factor (see vpTemplateTrackerWarpSRT)
+- an affine transformation (see vpTemplateTrackerWarpAffine)
+- a homography (see vpTemplateTrackerWarpHomography or vpTemplateTrackerWarpHomographySL3).
 
 \include tutorial-template-tracker.cpp
 
@@ -23,7 +29,6 @@ The video below shows the result of the template tracking.
 Hereafter is the description of the new lines introduced in this example.
 
 \snippet tutorial-template-tracker.cpp Include
-
 
 Here we include the header of the vpTemplateTrackerSSDInverseCompositional class that allows to track the template. Actually, the tracker estimates the displacement of the template in the current image according to its initial pose. The computed displacement can be represented by multiple transformations, also called warps (vpTemplateTrackerWarp classes). In this example, we include the header vpTemplateTrackerWarpHomography class to define the possible transformation of the template as an homography.
 
