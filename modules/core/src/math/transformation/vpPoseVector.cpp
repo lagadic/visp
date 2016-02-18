@@ -340,7 +340,7 @@ vpRotationMatrix vpPoseVector::getRotationMatrix() const
  */
 vpThetaUVector vpPoseVector::getThetaUVector() const
 {
-  vpThetaUVector tu((*this)[0], (*this)[1], (*this)[2]);
+  vpThetaUVector tu((*this)[3], (*this)[4], (*this)[5]);
   return tu;
 }
 
