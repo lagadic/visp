@@ -223,6 +223,9 @@ int main()
 */
 class VISP_EXPORT vpMbKltTracker: virtual public vpMbTracker
 {
+  friend class vpMbKltMultiTracker;
+  friend class vpMbEdgeKltMultiTracker;
+
 protected:
   //! Temporary OpenCV image for fast conversion.
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
@@ -339,7 +342,7 @@ public:
           */
   inline  double          getThresholdAcceptation() const { return threshold_outlier;}
   
-  void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
+  virtual void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
 		  const bool verbose=false);
   void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo,
 		  const bool verbose=false);
@@ -347,7 +350,7 @@ public:
             
           void            setCameraParameters(const vpCameraParameters& cam);
 
-          void            setKltOpencv(const vpKltOpencv& t);
+          virtual void    setKltOpencv(const vpKltOpencv& t);
           
           /*!
             Set the value of the gain used to compute the control law.
@@ -426,6 +429,20 @@ public:
   
 protected:
           void            computeVVS(const unsigned int &nbInfos, vpColVector &w);
+          void            computeVVSCheckLevenbergMarquardtKlt(const unsigned int iter, const unsigned int nbInfos,
+              const vpHomogeneousMatrix &cMoPrev, const vpColVector &error_prev, const vpHomogeneousMatrix &ctTc0_Prev,
+              double &mu, bool &reStartFromLastIncrement);
+          void            computeVVSCovariance(const vpColVector &w_true, const vpHomogeneousMatrix &cMoPrev,
+              const vpMatrix &L_true, const vpMatrix &LVJ_true);
+          void            computeVVSInteractionMatrixAndResidu(unsigned int shift, vpColVector &R, vpMatrix &L, vpHomography &H,
+              std::list<vpMbtDistanceKltPoints*> &kltPolygons_, std::list<vpMbtDistanceKltCylinder*> &kltCylinders_,
+              const vpHomogeneousMatrix &ctTc0_);
+          void            computeVVSPoseEstimation(const unsigned int iter, const vpMatrix &L,
+              const vpColVector &w, vpMatrix &L_true, vpMatrix &LVJ_true, double &normRes, double &normRes_1, vpColVector &w_true,
+              vpColVector &R, vpMatrix &LTL, vpColVector &LTR, vpColVector &error_prev, vpColVector &v, double &mu,
+              vpHomogeneousMatrix &cMoPrev, vpHomogeneousMatrix &ctTc0_Prev);
+          void            computeVVSWeights(const unsigned int iter, const unsigned int nbInfos, const vpColVector &R,
+              vpColVector &w_true, vpColVector &w, vpRobust &robust);
           
           virtual void            initFaceFromCorners(vpMbtPolygon &polygon);
           virtual void            initFaceFromLines(vpMbtPolygon &polygon);

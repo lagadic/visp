@@ -268,7 +268,7 @@ public:
   }
 
   /*! Return a reference to the faces structure. */
-  inline  vpMbHiddenFaces<vpMbtPolygon>& getFaces() { return faces;}
+  virtual inline vpMbHiddenFaces<vpMbtPolygon>& getFaces() { return faces;}
 
   /*!
     Get the far distance for clipping.
@@ -353,7 +353,7 @@ public:
 
     \param cMo_ : the pose
   */
-  inline void getPose(vpHomogeneousMatrix& cMo_) const {cMo_ = this->cMo;}
+  virtual inline void getPose(vpHomogeneousMatrix& cMo_) const {cMo_ = this->cMo;}
   
   /*!
     Get the current pose between the object and the camera.
@@ -362,7 +362,7 @@ public:
 
     \return the current pose
   */
-  inline vpHomogeneousMatrix getPose() const {return this->cMo;}
+  virtual inline vpHomogeneousMatrix getPose() const {return this->cMo;}
 
   /* PURE VIRTUAL METHODS */
 
@@ -456,7 +456,7 @@ public:
 
     \param displayF : set it to true to display the features.
   */
-  void setDisplayFeatures(const bool displayF) {displayFeatures = displayF;}
+  virtual void setDisplayFeatures(const bool displayF) {displayFeatures = displayF;}
 
   virtual void setEstimatedDoF(const vpColVector& v);
 

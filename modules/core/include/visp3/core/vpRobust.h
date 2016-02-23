@@ -93,6 +93,7 @@ public:
 
   //!Default Constructor
   vpRobust(unsigned int n_data);
+  vpRobust();
   
   //!Destructor
   virtual ~vpRobust(){};

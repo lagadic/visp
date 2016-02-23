@@ -448,9 +448,6 @@ vpMbtDistanceKltPoints::removeOutliers(const vpColVector& _w, const double &thre
   }
 
   if(nbSupp != 0){
-    curPoints = std::map<int, vpImagePoint>();
-    curPointsInd = std::map<int, int>();
-
     curPoints = tmp;
     curPointsInd = tmp2;
     if(nbPointsCur >= minNbPoint) enoughPoints = true;

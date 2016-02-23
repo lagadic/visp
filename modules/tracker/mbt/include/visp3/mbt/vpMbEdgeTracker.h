@@ -53,6 +53,7 @@
 #include <visp3/mbt/vpMbtDistanceCircle.h>
 #include <visp3/mbt/vpMbtDistanceCylinder.h>
 #include <visp3/core/vpXmlParser.h>
+#include <visp3/core/vpRobust.h>
 
 #include <iostream>
 #include <fstream>
@@ -259,6 +260,9 @@ int main()
 
 class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
 {
+  friend class vpMbEdgeMultiTracker;
+  friend class vpMbEdgeKltMultiTracker;
+
   protected :
     
     /*! If this flag is true, the interaction matrix
@@ -304,6 +308,9 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
     //! Current scale level used. This attribute must not be modified outside of the downScale() and upScale() methods, as it used to specify to some methods which set of distanceLine use. 
     unsigned int scaleLevel;
 
+    //! Number of features used in the computation of the projection error
+    unsigned int nbFeaturesForProjErrorComputation;
+
 public:
   
   vpMbEdgeTracker(); 
@@ -330,15 +337,15 @@ public:
 
     \return an instance of the moving edge parameters used by the tracker.
   */
-  inline void getMovingEdge(vpMe &p_me ) const { p_me = this->me;}
+  virtual inline void getMovingEdge(vpMe &p_me ) const { p_me = this->me;}
   /*!
     Get the moving edge parameters.
 
     \return an instance of the moving edge parameters used by the tracker.
   */
-  inline vpMe getMovingEdge() const { return this->me;}
+  virtual inline vpMe getMovingEdge() const { return this->me;}
 
-  unsigned int getNbPoints(const unsigned int level=0) const;
+  virtual unsigned int getNbPoints(const unsigned int level=0) const;
   
   /*!
     Return the scales levels used for the tracking. 
@@ -358,7 +365,7 @@ public:
 
   void loadConfigFile(const std::string &configFile);
   void loadConfigFile(const char* configFile);
-  void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
+  virtual void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
 		  const bool verbose=false);
   void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo,
 		  const bool verbose=false);
@@ -463,9 +470,32 @@ protected:
   void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace = -1, const std::string& name = "");
   void addLine(vpPoint &p1, vpPoint &p2, int polygon = -1, std::string name = "");
   void addPolygon(vpMbtPolygon &p) ;
+
   void cleanPyramid(std::vector<const vpImage<unsigned char>* >& _pyramid);
   void computeProjectionError(const vpImage<unsigned char>& _I);
-  void computeVVS(const vpImage<unsigned char>& _I);
+
+  void computeVVS(const vpImage<unsigned char>& _I, const unsigned int lvl);
+  void computeVVSFirstPhase(const vpImage<unsigned char>& I, const unsigned int iter,
+      vpMatrix &L, vpColVector &factor, double &count, vpColVector &error, vpColVector &w_mbt, const unsigned int lvl = 0);
+  void computeVVSFirstPhaseFactor(const vpImage<unsigned char>& I, vpColVector &factor, const unsigned int lvl = 0);
+  void computeVVSFirstPhasePoseEstimation(const unsigned int nerror, const unsigned int iter, const vpColVector &factor,
+      vpColVector &weighted_error, vpMatrix &L, bool &isoJoIdentity_, const vpColVector &error, const vpColVector &w_mbt);
+  void computeVVSSecondPhase(const vpImage<unsigned char>& I, vpMatrix &L, vpColVector &error_lines,
+      vpColVector &error_cylinders, vpColVector &error_circles, vpColVector &error, const unsigned int lvl);
+  void computeVVSSecondPhaseCheckLevenbergMarquard(const unsigned int iter, const unsigned int nbrow,
+      const vpColVector &m_error_prev, const vpColVector &m_w_prev, const vpHomogeneousMatrix &cMoPrev,
+      double &mu, bool &reStartFromLastIncrement);
+  void computeVVSSecondPhasePoseEstimation(const unsigned int nerror, const vpMatrix &L, const vpColVector &factor,
+      const unsigned int iter, const bool isoJoIdentity_, vpColVector &weighted_error, double &mu,
+      vpColVector &m_error_prev, vpColVector &m_w_prev, vpHomogeneousMatrix &cMoPrev, double &residu_1, double &r);
+  void computeVVSSecondPhaseWeights(const unsigned int iter, const unsigned int nerror,
+      const unsigned int nbrow, vpColVector &weighted_error,
+      vpRobust &robust_lines, vpRobust &robust_cylinders, vpRobust &robust_circles,
+      vpColVector &w_lines, vpColVector &w_cylinders, vpColVector &w_circles,
+      vpColVector &error_lines, vpColVector &error_cylinders, vpColVector &error_circles,
+      const unsigned int nberrors_lines, const unsigned int nberrors_cylinders, const unsigned int nberrors_circles);
+
+  void displayFeaturesOnImage(const vpImage<unsigned char>& I, const unsigned int lvl);
   void downScale(const unsigned int _scale);
   void init(const vpImage<unsigned char>& I);
   virtual void initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
@@ -474,6 +504,7 @@ protected:
                             const std::string &name="");
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
+  unsigned int initMbtTracking(unsigned int &nberrors_lines, unsigned int &nberrors_cylinders, unsigned int &nberrors_circles);
   void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo) ;
   void initPyramid(const vpImage<unsigned char>& _I, std::vector<const vpImage<unsigned char>* >& _pyramid);
   void reInitLevel(const unsigned int _lvl);
@@ -485,6 +516,7 @@ protected:
   void testTracking();
   void trackMovingEdge(const vpImage<unsigned char> &I) ;
   void updateMovingEdge(const vpImage<unsigned char> &I) ;
+  void updateMovingEdgeWeights();
   void upScale(const unsigned int _scale); 
   void visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo, bool &newvisibleline) ; 
 };
