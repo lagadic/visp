@@ -55,6 +55,20 @@
 #include <visp3/mbt/vpMbKltTracker.h>
 
 
+/*!
+  \class vpMbKltMultiTracker
+  \ingroup group_mbt_trackers
+  \warning This class is only available if OpenCV is installed, and used.
+
+  \brief Model based stereo (or more) tracker using only KLT.
+
+  The \ref tutorial-tracking-mb-stereo is a good starting point to use this class.
+
+  The tracker requires the knowledge of the 3D model that could be provided in a vrml
+  or in a cao file. The cao format is described in loadCAOModel().
+  It may also use an xml file used to tune the behavior of the tracker and an
+  init file used to compute the pose at the very first image.
+*/
 class VISP_EXPORT vpMbKltMultiTracker: public vpMbKltTracker
 {
 protected:
@@ -67,7 +81,6 @@ protected:
   //! Name of the reference camera
   std::string m_referenceCameraName;
 
-
 public:
   vpMbKltMultiTracker();
   vpMbKltMultiTracker(const unsigned int nbCameras);
@@ -75,6 +88,8 @@ public:
 
   virtual ~vpMbKltMultiTracker();
 
+  /** @name Inherited functionalities from vpMbKltMultiTracker */
+  //@{
   virtual void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string &name="");
 
   virtual void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &cam_,
@@ -279,9 +294,11 @@ public:
   virtual void track(const vpImage<unsigned char> &I);
   virtual void track(const vpImage<unsigned char>& I1, const vpImage<unsigned char>& I2);
   virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
-
+  //@}
 
 protected:
+  /** @name Protected Member Functions Inherited from vpMbKltMultiTracker */
+  //@{
   virtual void computeVVS(std::map<std::string, unsigned int> &mapOfNbInfos, vpColVector &w);
   virtual void computeVVSWeights(const unsigned int iter, const unsigned int nbInfos,
       std::map<std::string, unsigned int> &mapOfNbInfos, vpColVector &R, vpColVector &w_true, vpColVector &w,
@@ -293,7 +310,7 @@ protected:
 
   virtual void postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
       std::map<std::string, unsigned int> &mapOfNbInfos, vpColVector &w_klt);
-
+  //@}
 };
 
 #endif // VISP_HAVE_OPENCV

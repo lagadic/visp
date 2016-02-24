@@ -390,7 +390,9 @@ scheme, ...</p>
 /*!
   \ingroup module_mbt
   \defgroup group_mbt_trackers Trackers
-  Model-based trackers.
+  Model-based trackers. Two group of classes may be used:
+  - the one that allows to track an object on a single image: vpMbEdgeTracker, vpMbKltTracker, vpMbEdgeKltTracker;
+  - the one that allows to track an object seen in two (stereo) or more images: vpMbEdgeMultiTracker, vpMbKltMultiTracker, vpMbEdgeKltMultiTracker.
 */
 /*!
   \ingroup module_mbt

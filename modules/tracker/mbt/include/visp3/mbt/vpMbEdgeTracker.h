@@ -92,7 +92,7 @@
   \brief Make the complete tracking of an object by using its CAD model.
 
   This class allows to track an object or a scene given its 3D model. A
-  video can be found in the \e http://www.irisa.fr/lagadic/visp/computer-vision.html  web page. The \ref tutorial-tracking-mb is also a good starting point to use this class.
+  video can be found on YouTube \e https://www.youtube.com/watch?v=UK10KMMJFCI . The \ref tutorial-tracking-mb is also a good starting point to use this class.
 
   The tracker requires the knowledge of the 3D model that could be provided in a vrml
   or in a cao file. The cao format is described in loadCAOModel().
@@ -316,6 +316,9 @@ public:
   vpMbEdgeTracker(); 
   virtual ~vpMbEdgeTracker();
   
+  /** @name Inherited functionalities from vpMbEdgeTracker */
+  //@{
+
   void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
   void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
@@ -463,8 +466,11 @@ public:
   void setUseEdgeTracking(const std::string &name, const bool &useEdgeTracking);
 
   void track(const vpImage<unsigned char> &I);
+  //@}
 
 protected:
+  /** @name Protected Member Functions Inherited from vpMbEdgeTracker */
+  //@{
   bool samePoint(const vpPoint &P1, const vpPoint &P2);
   void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace = -1, const std::string& name = "");
   void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace = -1, const std::string& name = "");
@@ -519,6 +525,7 @@ protected:
   void updateMovingEdgeWeights();
   void upScale(const unsigned int _scale); 
   void visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo, bool &newvisibleline) ; 
+  //@}
 };
 
 #endif

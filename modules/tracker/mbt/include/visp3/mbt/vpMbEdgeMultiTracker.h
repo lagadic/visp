@@ -50,7 +50,19 @@
 
 #include <visp3/mbt/vpMbEdgeTracker.h>
 
+/*!
+  \class vpMbEdgeMultiTracker
+  \ingroup group_mbt_trackers
+  \brief Make the complete stereo (or more) tracking of an object by using its CAD model.
 
+  This class allows to track an object or a scene given its 3D model.
+  The \ref tutorial-tracking-mb-stereo is also a good starting point to use this class.
+
+  The tracker requires the knowledge of the 3D model that could be provided in a vrml
+  or in a cao file. The cao format is described in loadCAOModel().
+  It may also use an xml file used to tune the behavior of the tracker and an
+  init file used to compute the pose at the very first image.
+*/
 class VISP_EXPORT vpMbEdgeMultiTracker: public vpMbEdgeTracker
 {
 protected:
@@ -77,6 +89,8 @@ public:
 
   virtual ~vpMbEdgeMultiTracker();
 
+  /** @name Inherited functionalities from vpMbEdgeMultiTracker */
+  //@{
   virtual void computeProjectionError();
 
   virtual void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &cam_,
@@ -295,14 +309,15 @@ public:
   virtual void track(const vpImage<unsigned char> &I);
   virtual void track(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2);
   virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
-
+  //@}
 
 protected:
   typedef enum FeatureType {
     LINE, CYLINDER, CIRCLE
   } FeatureType;
 
-
+  /** @name Protected Member Functions Inherited from vpMbEdgeMultiTracker */
+  //@{
   virtual void cleanPyramid(std::map<std::string, std::vector<const vpImage<unsigned char>* > >& pyramid);
 
   virtual void computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
@@ -328,6 +343,7 @@ protected:
 
   virtual void initPyramid(const std::map<std::string, const vpImage<unsigned char> * >& mapOfImages,
       std::map<std::string, std::vector<const vpImage<unsigned char>* > >& pyramid);
+  //@}
 };
 
 #endif

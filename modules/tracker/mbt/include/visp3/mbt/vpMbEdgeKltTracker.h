@@ -67,6 +67,8 @@
   \brief Hybrid tracker based on moving-edges and keypoints tracked using KLT 
   tracker.
   
+  The \ref tutorial-tracking-mb is a good starting point to use this class.
+
   The tracker requires the knowledge of the 3D model that could be provided in a vrml
   or in a cao file. The cao format is described in loadCAOModel().
   It may also use an xml file used to tune the behavior of the tracker and an

@@ -55,7 +55,21 @@
 #include <visp3/mbt/vpMbEdgeMultiTracker.h>
 #include <visp3/mbt/vpMbKltMultiTracker.h>
 
+/*!
+  \class vpMbEdgeKltMultiTracker
+  \ingroup group_mbt_trackers
+  \warning This class is only available if OpenCV is installed, and used.
 
+  \brief Hybrid stereo (or more) tracker based on moving-edges and keypoints tracked using KLT
+  tracker.
+
+  The \ref tutorial-tracking-mb-stereo is a good starting point to use this class.
+
+  The tracker requires the knowledge of the 3D model that could be provided in a vrml
+  or in a cao file. The cao format is described in loadCAOModel().
+  It may also use an xml file used to tune the behavior of the tracker and an
+  init file used to compute the pose at the very first image.
+*/
 class VISP_EXPORT vpMbEdgeKltMultiTracker: public vpMbEdgeMultiTracker, public vpMbKltMultiTracker
 {
 protected:
@@ -87,7 +101,7 @@ public:
   vpMbEdgeKltMultiTracker(const std::vector<std::string> &cameraNames);
 
   virtual ~vpMbEdgeKltMultiTracker();
-//
+
   virtual void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &cam_,
       const vpColor& col , const unsigned int thickness=1, const bool displayFullModel=false);
 
