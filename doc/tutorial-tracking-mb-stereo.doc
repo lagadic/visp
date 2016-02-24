@@ -170,7 +170,7 @@ Finally, do not forget to delete the pointers:
 
 \snippet tutorial-mb-tracker-stereo.cpp Cleanup
 
-\section mb_next Next tutorial
+\section mb_stereo_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-tt.
 
 */
