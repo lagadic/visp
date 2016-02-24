@@ -49,6 +49,7 @@
 #include <vector>
 
 #include <visp3/mbt/vpMbEdgeTracker.h>
+#include <visp3/core/vpRobust.h>
 
 /*!
   \class vpMbEdgeMultiTracker
@@ -119,10 +120,10 @@ public:
 
   virtual std::vector<std::string> getCameraNames() const;
 
-  virtual void getCameraParameters(vpCameraParameters &camera);
-  virtual void getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2);
-  virtual void getCameraParameters(const std::string &cameraName, vpCameraParameters &camera);
-  virtual void getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters);
+  virtual void getCameraParameters(vpCameraParameters &camera) const;
+  virtual void getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2) const;
+  virtual void getCameraParameters(const std::string &cameraName, vpCameraParameters &camera) const;
+  virtual void getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters) const;
 
   using vpMbTracker::getClipping;
   virtual unsigned int getClipping(const std::string &cameraName) const;
@@ -160,17 +161,19 @@ public:
   void init(const vpImage<unsigned char>& I);
 
 #ifdef VISP_HAVE_MODULE_GUI
+  using vpMbTracker::initClick; // Tells the compiler we want both the initClick from vpMbTracker and ours
+
   virtual void initClick(const vpImage<unsigned char>& I, const std::string& initFile, const bool displayHelp=false);
 
   virtual void initClick(const vpImage<unsigned char>& I1, const vpImage<unsigned char> &I2,
-      const std::string& initFile1, const std::string& initFile2, const bool displayHelp=false,
-      const bool firstCameraIsReference=true);
+                         const std::string& initFile1, const std::string& initFile2, const bool displayHelp=false,
+                         const bool firstCameraIsReference=true);
 
   virtual void initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-      const std::string &initFile, const bool displayHelp=false);
+                         const std::string &initFile, const bool displayHelp=false);
 
   virtual void initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-      const std::map<std::string, std::string> &mapOfInitFiles, const bool displayHelp=false);
+                         const std::map<std::string, std::string> &mapOfInitFiles, const bool displayHelp=false);
 #endif
 
   virtual void initFromPose(const vpImage<unsigned char>& I, const std::string &initFile);

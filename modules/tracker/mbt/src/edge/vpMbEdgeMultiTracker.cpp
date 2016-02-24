@@ -787,7 +787,7 @@ std::vector<std::string> vpMbEdgeMultiTracker::getCameraNames() const {
 
   \param camera : Copy of the camera parameters used by the tracker.
 */
-void vpMbEdgeMultiTracker::getCameraParameters(vpCameraParameters &camera) {
+void vpMbEdgeMultiTracker::getCameraParameters(vpCameraParameters &camera) const {
   //Get the reference camera parameters
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(m_referenceCameraName);
   if(it != m_mapOfEdgeTrackers.end()) {
@@ -803,7 +803,7 @@ void vpMbEdgeMultiTracker::getCameraParameters(vpCameraParameters &camera) {
   \param cam1 : Copy of the camera parameters for the first camera.
   \param cam2 : Copy of the camera parameters for the second camera.
 */
-void vpMbEdgeMultiTracker::getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2) {
+void vpMbEdgeMultiTracker::getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2) const {
   if(m_mapOfEdgeTrackers.size() == 2) {
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
     it->second->getCameraParameters(cam1);
@@ -822,7 +822,7 @@ void vpMbEdgeMultiTracker::getCameraParameters(vpCameraParameters &cam1, vpCamer
   \param cameraName : Name of the camera.
   \param camera : Copy of the camera parameters.
 */
-void vpMbEdgeMultiTracker::getCameraParameters(const std::string &cameraName, vpCameraParameters &camera) {
+void vpMbEdgeMultiTracker::getCameraParameters(const std::string &cameraName, vpCameraParameters &camera) const {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(cameraName);
   if(it != m_mapOfEdgeTrackers.end()) {
     it->second->getCameraParameters(camera);
@@ -836,7 +836,7 @@ void vpMbEdgeMultiTracker::getCameraParameters(const std::string &cameraName, vp
 
   \param mapOfCameraParameters : Map of camera parameters.
 */
-void vpMbEdgeMultiTracker::getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters) {
+void vpMbEdgeMultiTracker::getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters) const {
   //Clear the input map
   mapOfCameraParameters.clear();
 
