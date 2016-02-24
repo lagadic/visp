@@ -1535,7 +1535,9 @@ void vpRobotViper850::setVelocity(const vpRobot::vpControlFrameType frame,
   case vpRobot::ARTICULAR_FRAME : {
       vpColVector vel_max(6);
 
-      if (getMaxRotationVelocity() == getMaxRotationVelocityJoint6()) {
+      //if (getMaxRotationVelocity() == getMaxRotationVelocityJoint6()) {
+      if (std::fabs(getMaxRotationVelocity() - getMaxRotationVelocityJoint6()) < std::numeric_limits<double>::epsilon()) {
+
         for (unsigned int i=0; i<6; i++)
           vel_max[i] = getMaxRotationVelocity();
       }
