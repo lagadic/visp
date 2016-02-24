@@ -13,7 +13,6 @@
 int main(int argc, char** argv)
 {
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
-
   try {
     std::string opt_videoname_left = "teabox_left.mpg";
     std::string opt_videoname_right = "teabox_right.mpg";
@@ -27,7 +26,7 @@ int main(int argc, char** argv)
         opt_tracker = atoi(argv[i+1]);
       } else if (std::string(argv[i]) == "--help") {
         std::cout << "\nUsage: " << argv[0] << " [--name <video name left> <video name right>] "
-            "[--tracker <0=egde|1=klt|2=hybrid>] [--help]\n" << std::endl;
+                     "[--tracker <0=egde|1=klt|2=hybrid>] [--help]\n" << std::endl;
         return 0;
       }
     }
@@ -72,15 +71,13 @@ int main(int argc, char** argv)
 
     //! [Constructor]
     vpMbTracker *tracker;
-    if (opt_tracker == 0) {
-     tracker = new vpMbEdgeMultiTracker(2);
-    }
+    if (opt_tracker == 0)
+      tracker = new vpMbEdgeMultiTracker(2);
 #ifdef VISP_HAVE_MODULE_KLT
-    else if (opt_tracker == 1) {
+    else if (opt_tracker == 1)
       tracker = new vpMbKltMultiTracker(2);
-    } else {
+    else
       tracker = new vpMbEdgeKltMultiTracker(2);
-    }
 #else
     else {
       std::cout << "klt and hybrid model-based tracker are not available since visp_klt module is missing" << std::endl;
@@ -89,29 +86,23 @@ int main(int argc, char** argv)
 #endif
     //! [Constructor]
 
-
     //! [Load config file]
-    if(opt_tracker == 0) {
-      dynamic_cast<vpMbEdgeMultiTracker*>(tracker)->loadConfigFile(objectname_left + ".xml",
-          objectname_right + ".xml");
-    } else if(opt_tracker == 1) {
-      dynamic_cast<vpMbKltMultiTracker*>(tracker)->loadConfigFile(objectname_left + ".xml",
-          objectname_right + ".xml");
-    } else {
-      dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->loadConfigFile(objectname_left + ".xml",
-          objectname_right + ".xml");
-    }
+    if(opt_tracker == 0)
+      dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->loadConfigFile(objectname_left + ".xml", objectname_right + ".xml");
+    else if(opt_tracker == 1)
+      dynamic_cast<vpMbKltMultiTracker*>    (tracker)->loadConfigFile(objectname_left + ".xml", objectname_right + ".xml");
+    else
+      dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->loadConfigFile(objectname_left + ".xml", objectname_right + ".xml");
     //! [Load config file]
 
     //! [Get camera parameters]
     vpCameraParameters cam_left, cam_right;
-    if(opt_tracker == 0) {
-      dynamic_cast<vpMbEdgeMultiTracker*>(tracker)->getCameraParameters(cam_left, cam_right);
-    } else if(opt_tracker == 1) {
-      dynamic_cast<vpMbKltMultiTracker*>(tracker)->getCameraParameters(cam_left, cam_right);
-    } else {
+    if(opt_tracker == 0)
+      dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->getCameraParameters(cam_left, cam_right);
+    else if(opt_tracker == 1)
+      dynamic_cast<vpMbKltMultiTracker*>    (tracker)->getCameraParameters(cam_left, cam_right);
+    else
       dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->getCameraParameters(cam_left, cam_right);
-    }
     //! [Get camera parameters]
 
     //! [Load cao]
@@ -130,29 +121,30 @@ int main(int argc, char** argv)
     mapOfCameraTransformationMatrix["Camera1"] = vpHomogeneousMatrix();
     mapOfCameraTransformationMatrix["Camera2"] = cRightMcLeft;
 
-    if(opt_tracker == 0) {
-      dynamic_cast<vpMbEdgeMultiTracker*>(tracker)->setCameraTransformationMatrix(
-          mapOfCameraTransformationMatrix);
-    } else if(opt_tracker == 1) {
-      dynamic_cast<vpMbKltMultiTracker*>(tracker)->setCameraTransformationMatrix(
-          mapOfCameraTransformationMatrix);
-    } else {
-      dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->setCameraTransformationMatrix(
-          mapOfCameraTransformationMatrix);
-    }
+    if(opt_tracker == 0)
+      dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->setCameraTransformationMatrix(mapOfCameraTransformationMatrix);
+    else if(opt_tracker == 1)
+      dynamic_cast<vpMbKltMultiTracker*>    (tracker)->setCameraTransformationMatrix(mapOfCameraTransformationMatrix);
+    else
+      dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->setCameraTransformationMatrix(mapOfCameraTransformationMatrix);
     //! [Set camera transformation matrix]
 
+#ifndef VISP_HAVE_XML2
+    std::cout << "\n**********************************************************\n"
+              << "Warning: we are not able to load the tracker settings from\n"
+              << "the xml config files since ViSP is not build with libxml2\n"
+              << "3rd party. As a consequence, the tracking may fail !"
+              << "\n**********************************************************\n"
+              << std::endl;
+#endif
+
     //! [Init]
-    if(opt_tracker == 0) {
-      dynamic_cast<vpMbEdgeMultiTracker*>(tracker)->initClick(I_left, I_right,
-          objectname_left + ".init", objectname_right + ".init", true);
-    } else if(opt_tracker == 1) {
-      dynamic_cast<vpMbKltMultiTracker*>(tracker)->initClick(I_left, I_right,
-          objectname_left + ".init", objectname_right + ".init", true);
-    } else {
-      dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->initClick(I_left, I_right,
-          objectname_left + ".init", objectname_right + ".init", true);
-    }
+    if(opt_tracker == 0)
+      dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->initClick(I_left, I_right, objectname_left + ".init", objectname_right + ".init", true);
+    else if(opt_tracker == 1)
+      dynamic_cast<vpMbKltMultiTracker*>    (tracker)->initClick(I_left, I_right, objectname_left + ".init", objectname_right + ".init", true);
+    else
+      dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->initClick(I_left, I_right, objectname_left + ".init", objectname_right + ".init", true);
     //! [Init]
 
     //! [cMo]
@@ -166,36 +158,30 @@ int main(int argc, char** argv)
       vpDisplay::display(I_right);
 
       //! [Track]
-      if(opt_tracker == 0) {
-        dynamic_cast<vpMbEdgeMultiTracker*>(tracker)->track(I_left, I_right);
-      } else if(opt_tracker == 1) {
-        dynamic_cast<vpMbKltMultiTracker*>(tracker)->track(I_left, I_right);
-      } else {
+      if(opt_tracker == 0)
+        dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->track(I_left, I_right);
+      else if(opt_tracker == 1)
+        dynamic_cast<vpMbKltMultiTracker*>    (tracker)->track(I_left, I_right);
+      else
         dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->track(I_left, I_right);
-      }
       //! [Track]
 
       //! [Get pose]
-      if(opt_tracker == 0) {
-        dynamic_cast<vpMbEdgeMultiTracker*>(tracker)->getPose(cLeftMo, cRightMo);
-      } else if(opt_tracker == 1) {
-        dynamic_cast<vpMbKltMultiTracker*>(tracker)->getPose(cLeftMo, cRightMo);
-      } else {
+      if(opt_tracker == 0)
+        dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->getPose(cLeftMo, cRightMo);
+      else if(opt_tracker == 1)
+        dynamic_cast<vpMbKltMultiTracker*>    (tracker)->getPose(cLeftMo, cRightMo);
+      else
         dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->getPose(cLeftMo, cRightMo);
-      }
       //! [Get pose]
 
       //! [Display]
-      if(opt_tracker == 0) {
-        dynamic_cast<vpMbEdgeMultiTracker*>(tracker)->display(I_left, I_right, cLeftMo, cRightMo,
-            cam_left, cam_right, vpColor::red, 2);
-      } else if(opt_tracker == 1) {
-        dynamic_cast<vpMbKltMultiTracker*>(tracker)->display(I_left, I_right, cLeftMo, cRightMo,
-            cam_left, cam_right, vpColor::red, 2);
-      } else {
-        dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->display(I_left, I_right, cLeftMo, cRightMo,
-            cam_left, cam_right, vpColor::red, 2);
-      }
+      if(opt_tracker == 0)
+        dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->display(I_left, I_right, cLeftMo, cRightMo, cam_left, cam_right, vpColor::red, 2);
+      else if(opt_tracker == 1)
+        dynamic_cast<vpMbKltMultiTracker*>    (tracker)->display(I_left, I_right, cLeftMo, cRightMo, cam_left, cam_right, vpColor::red, 2);
+      else
+        dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->display(I_left, I_right, cLeftMo, cRightMo, cam_left, cam_right, vpColor::red, 2);
       //! [Display]
 
       vpDisplay::displayFrame(I_left, cLeftMo, cam_left, 0.025, vpColor::none, 3);
@@ -218,7 +204,7 @@ int main(int argc, char** argv)
     //! [Cleanup]
   }
   catch(vpException &e) {
-    std::cerr << "Catch a ViSP exception: " << e << std::endl;
+    std::cerr << "Catch a ViSP exception: " << e.getMessage() << std::endl;
   }
 #else
   (void)argc;

@@ -13,17 +13,16 @@
 int main(int argc, char** argv)
 {
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
-
   try {
     std::string opt_videoname = "teabox.mpg";
     int opt_tracker = 0;
 
     for (int i=0; i<argc; i++) {
-      if (std::string(argv[i]) == "--name" && i+1 < argc) {
+      if (std::string(argv[i]) == "--name" && i+1 < argc)
         opt_videoname = std::string(argv[i+1]);
-      } else if (std::string(argv[i]) == "--tracker" && i+1 < argc) {
+      else if (std::string(argv[i]) == "--tracker" && i+1 < argc)
         opt_tracker = atoi(argv[i+1]);
-      } else if (std::string(argv[i]) == "--help") {
+      else if (std::string(argv[i]) == "--help") {
         std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--tracker <0=egde|1=keypoint|2=hybrid>] [--help]\n" << std::endl;
         return 0;
       }
@@ -64,15 +63,13 @@ int main(int argc, char** argv)
 
     //! [Constructor]
     vpMbTracker *tracker;
-    if (opt_tracker == 0) {
+    if (opt_tracker == 0)
      tracker = new vpMbEdgeMultiTracker;
-    }
 #ifdef VISP_HAVE_MODULE_KLT
-    else if (opt_tracker == 1) {
+    else if (opt_tracker == 1)
       tracker = new vpMbKltMultiTracker;
-    } else {
+    else
       tracker = new vpMbEdgeKltMultiTracker;
-    }
 #else
     else {
       std::cout << "klt and hybrid model-based tracker are not available since visp_klt module is missing" << std::endl;
