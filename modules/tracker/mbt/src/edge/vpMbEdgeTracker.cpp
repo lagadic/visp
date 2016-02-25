@@ -2046,7 +2046,7 @@ vpMbEdgeTracker::resetMovingEdge(){
   \param P2 : The second point to compare
 */
 bool
-vpMbEdgeTracker::samePoint(const vpPoint &P1, const vpPoint &P2)
+vpMbEdgeTracker::samePoint(const vpPoint &P1, const vpPoint &P2) const
 {
   double dx = fabs(P1.get_oX() - P2.get_oX());
   double dy = fabs(P1.get_oY() - P2.get_oY());
@@ -2466,7 +2466,7 @@ vpMbEdgeTracker::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint 
 */
 void
 vpMbEdgeTracker::initCylinder(const vpPoint& p1, const vpPoint &p2, const double radius, const int idFace,
-    const std::string &name)
+                              const std::string &name)
 {
   addCylinder(p1, p2, radius, (int)idFace, name);
 }
@@ -2880,7 +2880,7 @@ vpMbEdgeTracker::cleanPyramid(std::vector< const vpImage<unsigned char>* >& _pyr
   \param linesList : The list of the lines of the model.
 */
 void
-vpMbEdgeTracker::getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int level)
+vpMbEdgeTracker::getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int level) const
 {
   if(level > scales.size() || !scales[level]){
     std::ostringstream oss;
@@ -2904,7 +2904,7 @@ vpMbEdgeTracker::getLline(std::list<vpMbtDistanceLine *>& linesList, const unsig
   \param cylindersList : The list of the cylinders of the model.
 */
 void
-vpMbEdgeTracker::getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int level)
+vpMbEdgeTracker::getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int level) const
 {
   if(level > scales.size() || !scales[level]){
     std::ostringstream oss;
@@ -2928,7 +2928,7 @@ vpMbEdgeTracker::getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList,
   \param circlesList : The list of the circles of the model.
 */
 void
-vpMbEdgeTracker::getLcircle(std::list<vpMbtDistanceCircle *>& circlesList, const unsigned int level)
+vpMbEdgeTracker::getLcircle(std::list<vpMbtDistanceCircle *>& circlesList, const unsigned int level) const
 {
   if(level > scales.size() || !scales[level]){
     std::ostringstream oss;

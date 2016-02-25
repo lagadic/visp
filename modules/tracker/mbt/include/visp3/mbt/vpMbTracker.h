@@ -224,7 +224,7 @@ public:
   */
   virtual double getProjectionError() const { return projectionError; }
 
-  virtual vpColVector getEstimatedDoF();
+  virtual vpColVector getEstimatedDoF() const;
 
   /*!
     Return the error vector \f$(s-s^*)\f$ reached after the virtual visual servoing process used to estimate the pose.
@@ -239,7 +239,7 @@ public:
 
     \sa getRobustWeights()
    */
-  virtual vpColVector getError() {
+  virtual vpColVector getError() const {
     return m_error;
   }
 
@@ -273,7 +273,7 @@ public:
 
     \sa getError()
    */
-  virtual vpColVector getRobustWeights() {
+  virtual vpColVector getRobustWeights() const {
     return m_w;
   }
 
@@ -439,7 +439,7 @@ public:
 
   virtual void setOgreVisibilityTest(const bool &v);
   
-  void savePose(const std::string &filename);
+  void savePose(const std::string &filename) const;
 
 #ifdef VISP_HAVE_OGRE
   /*!
@@ -582,7 +582,7 @@ protected:
 
   void createCylinderBBox(const vpPoint& p1, const vpPoint &p2, const double &radius, std::vector<std::vector<vpPoint> > &listFaces);
 
-  void computeJTR(const vpMatrix& J, const vpColVector& R, vpColVector& JTR);
+  void computeJTR(const vpMatrix& J, const vpColVector& R, vpColVector& JTR) const;
   
 #ifdef VISP_HAVE_COIN3D
   virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, int &idFace);
@@ -591,7 +591,7 @@ protected:
   virtual void extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace, const std::string &polygonName="");
 #endif
   
-  vpPoint getGravityCenter(const std::vector<vpPoint>& _pts);
+  vpPoint getGravityCenter(const std::vector<vpPoint>& _pts) const;
   
   /*!
     Add a circle to track from its center, 3 points (including the center) defining the plane that contain
@@ -650,17 +650,17 @@ protected:
 
   std::map<std::string, std::string> parseParameters(std::string& endLine);
 
-  inline std::string &ltrim(std::string &s) {
+  inline std::string &ltrim(std::string &s) const {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
     return s;
   }
 
-  inline std::string &rtrim(std::string &s) {
+  inline std::string &rtrim(std::string &s) const {
     s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
     return s;
   }
 
-  inline std::string &trim(std::string &s) {
+  inline std::string &trim(std::string &s) const {
     return ltrim(rtrim(s));
   }
   //@}

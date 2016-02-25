@@ -449,7 +449,7 @@ std::vector<std::string> vpMbKltMultiTracker::getCameraNames() const {
 
   \param camera : Copy of the camera parameters used by the tracker.
 */
-void vpMbKltMultiTracker::getCameraParameters(vpCameraParameters &camera) {
+void vpMbKltMultiTracker::getCameraParameters(vpCameraParameters &camera) const {
   //Get the reference camera parameters
   std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.find(m_referenceCameraName);
   if(it != m_mapOfKltTrackers.end()) {
@@ -465,7 +465,7 @@ void vpMbKltMultiTracker::getCameraParameters(vpCameraParameters &camera) {
   \param cam1 : Copy of the camera parameters for the first camera.
   \param cam2 : Copy of the camera parameters for the second camera.
 */
-void vpMbKltMultiTracker::getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2) {
+void vpMbKltMultiTracker::getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2) const {
   if(m_mapOfKltTrackers.size() == 2) {
     std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
     it->second->getCameraParameters(cam1);
@@ -484,7 +484,7 @@ void vpMbKltMultiTracker::getCameraParameters(vpCameraParameters &cam1, vpCamera
   \param cameraName : Name of the camera.
   \param camera : Copy of the camera parameters.
 */
-void vpMbKltMultiTracker::getCameraParameters(const std::string &cameraName, vpCameraParameters &camera) {
+void vpMbKltMultiTracker::getCameraParameters(const std::string &cameraName, vpCameraParameters &camera) const {
   std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.find(cameraName);
   if(it != m_mapOfKltTrackers.end()) {
     it->second->getCameraParameters(camera);
@@ -498,7 +498,7 @@ void vpMbKltMultiTracker::getCameraParameters(const std::string &cameraName, vpC
 
   \param mapOfCameraParameters : Map of camera parameters.
 */
-void vpMbKltMultiTracker::getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters) {
+void vpMbKltMultiTracker::getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters) const {
   //Clear the input map
   mapOfCameraParameters.clear();
 
@@ -672,7 +672,7 @@ std::map<std::string, vpKltOpencv> vpMbKltMultiTracker::getKltOpencv() const {
   \return The list of KLT points through vpKltOpencv.
 */
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-std::map<std::string, std::vector<cv::Point2f> > vpMbKltMultiTracker::getKltPoints() {
+std::map<std::string, std::vector<cv::Point2f> > vpMbKltMultiTracker::getKltPoints() const {
   std::map<std::string, std::vector<cv::Point2f> > mapOfFeatures;
 
   for(std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin();
@@ -747,7 +747,7 @@ std::map<std::string, unsigned int> vpMbKltMultiTracker::getMultiNbPolygon() con
   \param c1Mo : The camera pose for the first camera.
   \param c2Mo : The camera pose for the second camera.
 */
-void vpMbKltMultiTracker::getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) {
+void vpMbKltMultiTracker::getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) const {
   if(m_mapOfKltTrackers.size() == 2) {
     std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
     it->second->getPose(c1Mo);
@@ -768,7 +768,7 @@ void vpMbKltMultiTracker::getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix
   \param cameraName : The name of the camera.
   \param cMo_ : The camera pose for the specified camera.
 */
-void vpMbKltMultiTracker::getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_) {
+void vpMbKltMultiTracker::getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_) const {
   std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.find(cameraName);
   if(it != m_mapOfKltTrackers.end()) {
     it->second->getPose(cMo_);
@@ -782,7 +782,7 @@ void vpMbKltMultiTracker::getPose(const std::string &cameraName, vpHomogeneousMa
 
   \param mapOfCameraPoses : The map of camera poses for all the cameras.
 */
-void vpMbKltMultiTracker::getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) {
+void vpMbKltMultiTracker::getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const {
   //Clear the map
   mapOfCameraPoses.clear();
 

@@ -822,7 +822,7 @@ std::vector<std::string> vpMbEdgeKltMultiTracker::getCameraNames() const {
 
   \param camera : Copy of the camera parameters used by the tracker.
 */
-void vpMbEdgeKltMultiTracker::getCameraParameters(vpCameraParameters &camera) {
+void vpMbEdgeKltMultiTracker::getCameraParameters(vpCameraParameters &camera) const {
   camera = this->cam;
 }
 
@@ -832,7 +832,7 @@ void vpMbEdgeKltMultiTracker::getCameraParameters(vpCameraParameters &camera) {
   \param cam1 : Copy of the camera parameters for the first camera.
   \param cam2 : Copy of the camera parameters for the second camera.
 */
-void vpMbEdgeKltMultiTracker::getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2) {
+void vpMbEdgeKltMultiTracker::getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2) const {
   //We could use either the vpMbEdgeMultiTracker or vpMbKltMultiTracker class
   vpMbEdgeMultiTracker::getCameraParameters(cam1, cam2);
 }
@@ -843,7 +843,7 @@ void vpMbEdgeKltMultiTracker::getCameraParameters(vpCameraParameters &cam1, vpCa
   \param cameraName : Name of the camera.
   \param camera : Copy of the camera parameters.
 */
-void vpMbEdgeKltMultiTracker::getCameraParameters(const std::string &cameraName, vpCameraParameters &camera) {
+void vpMbEdgeKltMultiTracker::getCameraParameters(const std::string &cameraName, vpCameraParameters &camera) const {
   //We could use either the vpMbEdgeMultiTracker or vpMbKltMultiTracker class
   vpMbEdgeMultiTracker::getCameraParameters(cameraName, camera);
 }
@@ -853,7 +853,7 @@ void vpMbEdgeKltMultiTracker::getCameraParameters(const std::string &cameraName,
 
   \param mapOfCameraParameters : Map of camera parameters.
 */
-void vpMbEdgeKltMultiTracker::getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters) {
+void vpMbEdgeKltMultiTracker::getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters) const {
   //Clear the input map
   mapOfCameraParameters.clear();
 
@@ -966,7 +966,7 @@ std::map<std::string, vpKltOpencv> vpMbEdgeKltMultiTracker::getKltOpencv() const
   \return The list of KLT points through vpKltOpencv.
 */
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-std::map<std::string, std::vector<cv::Point2f> > vpMbEdgeKltMultiTracker::getKltPoints() {
+std::map<std::string, std::vector<cv::Point2f> > vpMbEdgeKltMultiTracker::getKltPoints() const {
   std::map<std::string, std::vector<cv::Point2f> > mapOfFeatures;
 
   for(std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin();
@@ -1035,7 +1035,7 @@ std::map<std::string, unsigned int> vpMbEdgeKltMultiTracker::getKltMultiNbPolygo
   \param c1Mo : The camera pose for the first camera.
   \param c2Mo : The camera pose for the second camera.
 */
-void vpMbEdgeKltMultiTracker::getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) {
+void vpMbEdgeKltMultiTracker::getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) const {
   //We could use either the vpMbEdgeMultiTracker or vpMbKltMultiTracker class
   vpMbEdgeMultiTracker::getPose(c1Mo, c2Mo);
 }
@@ -1048,7 +1048,7 @@ void vpMbEdgeKltMultiTracker::getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMa
   \param cameraName : The name of the camera.
   \param cMo_ : The camera pose for the specified camera.
 */
-void vpMbEdgeKltMultiTracker::getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_) {
+void vpMbEdgeKltMultiTracker::getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_) const {
   //We could use either the vpMbEdgeMultiTracker or vpMbKltMultiTracker class
   vpMbEdgeMultiTracker::getPose(cameraName, cMo_);
 }
@@ -1058,7 +1058,7 @@ void vpMbEdgeKltMultiTracker::getPose(const std::string &cameraName, vpHomogeneo
 
   \param mapOfCameraPoses : The map of camera poses for all the cameras.
 */
-void vpMbEdgeKltMultiTracker::getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) {
+void vpMbEdgeKltMultiTracker::getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const {
   //Clear the map
   mapOfCameraPoses.clear();
 

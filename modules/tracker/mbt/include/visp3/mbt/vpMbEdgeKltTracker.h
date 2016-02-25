@@ -242,9 +242,9 @@ public:
   virtual         ~vpMbEdgeKltTracker();
 
   virtual void    display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                          const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
+                          const vpColor& col, const unsigned int thickness=1, const bool displayFullModel = false);
   virtual void    display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                          const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
+                          const vpColor& col, const unsigned int thickness=1, const bool displayFullModel = false);
 
           /*!
             Get the value of the gain used to compute the control law.

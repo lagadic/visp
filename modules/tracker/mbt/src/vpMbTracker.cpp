@@ -773,7 +773,7 @@ void vpMbTracker::initFromPose (const vpImage<unsigned char>& I, const vpPoseVec
   
   \param filename : Path to the file used to save the pose. 
 */
-void vpMbTracker::savePose(const std::string &filename)
+void vpMbTracker::savePose(const std::string &filename) const
 {
 	vpPoseVector init_pos;
 	std::fstream finitpos ;
@@ -2105,7 +2105,7 @@ vpMbTracker::extractLines(SoVRMLIndexedLineSet* line_set, int &idFace, const std
   \return Center of gravity of the set.
 */
 vpPoint
-vpMbTracker::getGravityCenter(const std::vector<vpPoint>& pts)
+vpMbTracker::getGravityCenter(const std::vector<vpPoint>& pts) const
 {
   if(pts.empty()){
     std::cout << "Cannot extract center of gravity of empty set." << std::endl;
@@ -2363,7 +2363,7 @@ vpMbTracker::setClipping(const unsigned int &flags)
   
 */
 void 
-vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, vpColVector& JTR)
+vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, vpColVector& JTR) const
 {
   if(interaction.getRows() != error.getRows() || interaction.getCols() != 6 ){
     throw vpMatrixException(vpMatrixException::incorrectMatrixSizeError, 
@@ -2394,7 +2394,7 @@ vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, v
   \return 1x6 vpColVector representing the estimated degrees of freedom.
 */
 vpColVector
-vpMbTracker::getEstimatedDoF()
+vpMbTracker::getEstimatedDoF() const
 {
     vpColVector v(6);
     for(unsigned int i = 0 ; i < 6 ; i++)

@@ -103,10 +103,10 @@ public:
   virtual ~vpMbEdgeKltMultiTracker();
 
   virtual void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &cam_,
-      const vpColor& col , const unsigned int thickness=1, const bool displayFullModel=false);
+      const vpColor& col, const unsigned int thickness=1, const bool displayFullModel=false);
 
   virtual void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &cam_,
-      const vpColor& col , const unsigned int thickness=1, const bool displayFullModel=false);
+      const vpColor& col, const unsigned int thickness=1, const bool displayFullModel=false);
 
   virtual void display(const vpImage<unsigned char>& I1, const vpImage<unsigned char>& I2, const vpHomogeneousMatrix &c1Mo,
       const vpHomogeneousMatrix &c2Mo, const vpCameraParameters &cam1, const vpCameraParameters &cam2,
@@ -128,10 +128,10 @@ public:
 
   virtual std::vector<std::string> getCameraNames() const;
 
-  virtual void getCameraParameters(vpCameraParameters &camera);
-  virtual void getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2);
-  virtual void getCameraParameters(const std::string &cameraName, vpCameraParameters &cam_);
-  virtual void getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters);
+  virtual void getCameraParameters(vpCameraParameters &camera) const;
+  virtual void getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2) const;
+  virtual void getCameraParameters(const std::string &cameraName, vpCameraParameters &camera) const;
+  virtual void getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters) const;
 
   using vpMbTracker::getClipping;
   virtual unsigned int getClipping(const std::string &cameraName) const;
@@ -167,7 +167,7 @@ public:
   virtual std::map<std::string, vpKltOpencv> getKltOpencv() const;
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  virtual std::map<std::string, std::vector<cv::Point2f> > getKltPoints();
+  virtual std::map<std::string, std::vector<cv::Point2f> > getKltPoints() const;
 #else
   virtual std::map<std::string, CvPoint2D32f*> getKltPoints();
 #endif
@@ -188,10 +188,10 @@ public:
     return (unsigned int) m_mapOfKltTrackers.size();
   }
 
-  using vpMbTracker::getPose;
-  virtual void getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo);
-  virtual void getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_);
-  virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
+  using vpMbKltMultiTracker::getPose;
+  virtual void getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) const;
+  virtual void getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_) const;
+  virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const;
 
   virtual void init(const vpImage<unsigned char>& I);
 
@@ -365,6 +365,9 @@ public:
 
 
 protected:
+  using vpMbEdgeMultiTracker::computeVVS;
+  using vpMbKltMultiTracker::computeVVS;
+
   virtual void computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
       std::map<std::string, unsigned int> &mapOfNumberOfRows, std::map<std::string, unsigned int> &mapOfNbInfos,
       vpColVector &w_mbt, vpColVector &w_klt, const unsigned int lvl=0);
@@ -374,6 +377,8 @@ protected:
       std::map<std::string, unsigned int> &mapOfNumberOfLines,
       std::map<std::string, unsigned int> &mapOfNumberOfCylinders,
       std::map<std::string, unsigned int> &mapOfNumberOfCircles);
+
+  using vpMbKltMultiTracker::postTracking;
 
   virtual void postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
       vpColVector &w_mbt, vpColVector &w_klt, std::map<std::string, unsigned int> &mapOfNumberOfRows,

@@ -331,9 +331,9 @@ public:
   */
   virtual inline double getLambda() const {return lambda;}
   
-  void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int level = 0);
-  void getLcircle(std::list<vpMbtDistanceCircle *>& circlesList, const unsigned int level = 0);
-  void getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int level = 0);
+  void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int level = 0) const;
+  void getLcircle(std::list<vpMbtDistanceCircle *>& circlesList, const unsigned int level = 0) const;
+  void getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int level = 0) const;
 
   /*!
     Get the moving edge parameters.
@@ -471,7 +471,7 @@ public:
 protected:
   /** @name Protected Member Functions Inherited from vpMbEdgeTracker */
   //@{
-  bool samePoint(const vpPoint &P1, const vpPoint &P2);
+  bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
   void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace = -1, const std::string& name = "");
   void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace = -1, const std::string& name = "");
   void addLine(vpPoint &p1, vpPoint &p2, int polygon = -1, std::string name = "");

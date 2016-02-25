@@ -95,18 +95,18 @@ public:
   virtual void computeProjectionError();
 
   virtual void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &cam_,
-      const vpColor& col , const unsigned int thickness=1, const bool displayFullModel=false);
+      const vpColor& col, const unsigned int thickness=1, const bool displayFullModel=false);
 
   virtual void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &cam_,
-      const vpColor& col , const unsigned int thickness=1, const bool displayFullModel=false);
+      const vpColor& col, const unsigned int thickness=1, const bool displayFullModel=false);
 
   virtual void display(const vpImage<unsigned char>& I1, const vpImage<unsigned char>& I2, const vpHomogeneousMatrix &c1Mo,
-      const vpHomogeneousMatrix &c2Mo, const vpCameraParameters &cam1, const vpCameraParameters cam2,
-      const vpColor& col , const unsigned int thickness=1, const bool displayFullModel=false);
+      const vpHomogeneousMatrix &c2Mo, const vpCameraParameters &cam1, const vpCameraParameters &cam2,
+      const vpColor& col, const unsigned int thickness=1, const bool displayFullModel=false);
 
   virtual void display(const vpImage<vpRGBa>& I1, const vpImage<vpRGBa>& I2, const vpHomogeneousMatrix &c1Mo,
-      const vpHomogeneousMatrix &c2Mo, const vpCameraParameters &cam1, const vpCameraParameters cam2,
-      const vpColor& col , const unsigned int thickness=1, const bool displayFullModel=false);
+      const vpHomogeneousMatrix &c2Mo, const vpCameraParameters &cam1, const vpCameraParameters &cam2,
+      const vpColor& col, const unsigned int thickness=1, const bool displayFullModel=false);
 
   virtual void display(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
       const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
@@ -154,9 +154,9 @@ public:
   }
 
   using vpMbTracker::getPose;
-  virtual void getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo);
-  virtual void getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_);
-  virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
+  virtual void getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) const;
+  virtual void getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_) const;
+  virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const;
 
   void init(const vpImage<unsigned char>& I);
 
@@ -337,12 +337,12 @@ protected:
       std::map<std::string, vpRobust> &mapOfRobustCircles, double threshold);
 
   virtual void getLcircle(const std::string &cameraName, std::list<vpMbtDistanceCircle *>& circlesList,
-      const unsigned int level=0);
+      const unsigned int level=0) const;
 
   virtual void getLcylinder(const std::string &cameraName, std::list<vpMbtDistanceCylinder *>& cylindersList,
-      const unsigned int level=0);
+      const unsigned int level=0) const;
 
-  virtual void getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *>& linesList, const unsigned int level=0);
+  virtual void getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *>& linesList, const unsigned int level=0) const;
 
   virtual void initPyramid(const std::map<std::string, const vpImage<unsigned char> * >& mapOfImages,
       std::map<std::string, std::vector<const vpImage<unsigned char>* > >& pyramid);
