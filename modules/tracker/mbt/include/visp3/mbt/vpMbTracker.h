@@ -491,7 +491,6 @@ public:
   inline void setPoseSavingFilename(const std::string& filename){
     poseSavingFilename = filename;
   }
-  //@}
 
   /* PURE VIRTUAL METHODS */
 
@@ -567,6 +566,7 @@ public:
     \param I : The current image.
   */
   virtual void track(const vpImage<unsigned char>& I)=0;
+  //@}
 
 protected:
   /** @name Protected Member Functions Inherited from vpMbTracker */

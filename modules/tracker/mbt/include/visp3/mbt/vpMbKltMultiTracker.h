@@ -205,9 +205,6 @@ public:
 
   virtual void loadModel(const std::string &modelFile, const bool verbose=false);
 
-  using vpMbKltTracker::reinit; // Tells the compiler we want both the reinit from vpMbKltTracker and ours
-  virtual void reinit(/*const vpImage<unsigned char>& I*/);
-
   virtual void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
       const bool verbose=false);
   virtual void reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
@@ -313,6 +310,8 @@ protected:
 
   virtual void postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
       std::map<std::string, unsigned int> &mapOfNbInfos, vpColVector &w_klt);
+  using vpMbKltTracker::reinit;
+  virtual void reinit(/* const vpImage<unsigned char>& I */);
   //@}
 };
 

@@ -387,7 +387,7 @@ void vpMbKltMultiTracker::display(const std::map<std::string, const vpImage<unsi
 
   for(std::map<std::string, const vpImage<unsigned char> *>::const_iterator it1 = mapOfImages.begin();
       it1 != mapOfImages.end(); ++it1) {
-    std::map<std::string, vpMbKltTracker *>::iterator it2 = m_mapOfKltTrackers.find(it1->first);
+    std::map<std::string, vpMbKltTracker *>::const_iterator it2 = m_mapOfKltTrackers.find(it1->first);
     std::map<std::string, vpHomogeneousMatrix>::const_iterator it3 = mapOfCameraPoses.find(it1->first);
     std::map<std::string, vpCameraParameters>::const_iterator it4 = mapOfCameraParameters.find(it1->first);
 
@@ -416,7 +416,7 @@ void vpMbKltMultiTracker::display(const std::map<std::string, const vpImage<vpRG
 
   for(std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it1 = mapOfImages.begin();
       it1 != mapOfImages.end(); ++it1) {
-    std::map<std::string, vpMbKltTracker *>::iterator it2 = m_mapOfKltTrackers.find(it1->first);
+    std::map<std::string, vpMbKltTracker *>::const_iterator it2 = m_mapOfKltTrackers.find(it1->first);
     std::map<std::string, vpHomogeneousMatrix>::const_iterator it3 = mapOfCameraPoses.find(it1->first);
     std::map<std::string, vpCameraParameters>::const_iterator it4 = mapOfCameraParameters.find(it1->first);
 
@@ -1487,14 +1487,17 @@ void vpMbKltMultiTracker::postTracking(std::map<std::string, const vpImage<unsig
 
         //set ctTc0 to identity
         if(it->first == m_referenceCameraName) {
-          reinit(/**mapOfImages[it->first]*/);
+          reinit(/*mapOfImages[it->first]*/);
         }
       }
     }
   }
 }
 
-void vpMbKltMultiTracker::reinit(/*const vpImage<unsigned char>& I*/) {
+/*!
+ The parameter is not used.
+ */
+void vpMbKltMultiTracker::reinit(/* const vpImage<unsigned char>& I*/) {
   c0Mo = cMo;
   ctTc0.eye();
 }

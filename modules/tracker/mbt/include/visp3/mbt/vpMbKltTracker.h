@@ -282,8 +282,6 @@ public:
   std::list<vpMbtDistanceKltCylinder*> &getFeaturesKltCylinder() { return kltCylinders; }
   /*! Return the address of the Klt feature list. */
   std::list<vpMbtDistanceKltPoints*> &getFeaturesKlt() { return kltPolygons; }
-  virtual void loadConfigFile(const std::string& configFile);
-  void loadConfigFile(const char* configFile);
 
   /*!
     Get the current list of KLT points.
@@ -291,7 +289,7 @@ public:
      \return the list of KLT points through vpKltOpencv.
    */
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  inline  std::vector<cv::Point2f> getKltPoints() {return tracker.getFeatures();}
+  inline  std::vector<cv::Point2f> getKltPoints() const {return tracker.getFeatures();}
 #else
   inline  CvPoint2D32f*   getKltPoints() {return tracker.getFeatures();}
 #endif
@@ -342,6 +340,9 @@ public:
    */
   inline  double getThresholdAcceptation() const { return threshold_outlier;}
   
+  virtual void loadConfigFile(const std::string& configFile);
+  void loadConfigFile(const char* configFile);
+
   virtual void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
                            const bool verbose=false);
   void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo,

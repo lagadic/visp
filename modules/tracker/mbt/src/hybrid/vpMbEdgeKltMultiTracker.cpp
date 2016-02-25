@@ -1577,7 +1577,7 @@ void vpMbEdgeKltMultiTracker::postTracking(std::map<std::string, const vpImage<u
   }
 }
 
-void vpMbEdgeKltMultiTracker::reinit(/*const vpImage<unsigned char>& I*/) {
+void vpMbEdgeKltMultiTracker::reinit(/*const vpImage<unsigned char>& I */) {
 //  vpMbEdgeMultiTracker::reinit();
   vpMbKltMultiTracker::reinit();
 }

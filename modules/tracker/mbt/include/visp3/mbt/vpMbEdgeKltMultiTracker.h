@@ -237,8 +237,6 @@ public:
 
   virtual void loadModel(const std::string &modelFile, const bool verbose=false);
 
-  virtual void reinit(/*const vpImage<unsigned char>& I*/);
-
   virtual void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
       const bool verbose=false);
   virtual void reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
@@ -363,7 +361,6 @@ public:
   virtual void track(const vpImage<unsigned char>& I1, const vpImage<unsigned char>& I2);
   virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
 
-
 protected:
   using vpMbEdgeMultiTracker::computeVVS;
   using vpMbKltMultiTracker::computeVVS;
@@ -383,6 +380,8 @@ protected:
   virtual void postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
       vpColVector &w_mbt, vpColVector &w_klt, std::map<std::string, unsigned int> &mapOfNumberOfRows,
       std::map<std::string, unsigned int> &mapOfNbInfos, const unsigned int lvl);
+
+  virtual void reinit(/*const vpImage<unsigned char>& I*/);
 
   virtual unsigned int trackFirstLoop(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages, vpColVector &factor,
       std::vector<FeatureType> &indexOfFeatures,
