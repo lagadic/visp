@@ -77,6 +77,16 @@ vpRobust::vpRobust(unsigned int n_data)
 }
 
 /*!
+  \brief Constructor.
+
+*/
+vpRobust::vpRobust()
+  : normres(), sorted_normres(), sorted_residues(), NoiseThreshold(0.0017), sig_prev(0), it(0), swap(0), size(0)
+{
+  vpCDEBUG(2) << "vpRobust constructor with no argument reached" << std::endl;
+}
+
+/*!
   \brief Resize containers.
   \param n_data : size of input data vector.
 

@@ -133,7 +133,7 @@ bool getOptions(int argc, const char **argv, bool &display, bool &click,
     switch (c) {
     case 'c': click = false; break;
     case 'd': display = false; break;
-    case 'i': icamera = atoi(optarg_); break;
+    case 'i': icamera = (unsigned int)atoi(optarg_); break;
     case 'o':
       save = true;
       opath = optarg_; break;

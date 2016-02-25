@@ -67,6 +67,8 @@
   \brief Hybrid tracker based on moving-edges and keypoints tracked using KLT 
   tracker.
   
+  The \ref tutorial-tracking-mb is a good starting point to use this class.
+
   The tracker requires the knowledge of the 3D model that could be provided in a vrml
   or in a cao file. The cao format is described in loadCAOModel().
   It may also use an xml file used to tune the behavior of the tracker and an
@@ -237,107 +239,107 @@ protected:
 public:
   
   vpMbEdgeKltTracker();
-  virtual         ~vpMbEdgeKltTracker();
+  virtual ~vpMbEdgeKltTracker();
 
-  virtual void    display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                          const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
-  virtual void    display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                          const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
+  virtual void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor& col, const unsigned int thickness=1, const bool displayFullModel = false);
+  virtual void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor& col, const unsigned int thickness=1, const bool displayFullModel = false);
 
-          /*!
-            Get the value of the gain used to compute the control law.
+  /*!
+    Get the value of the gain used to compute the control law.
 
-            \return the value for the gain.
-          */
-  virtual inline  double  getLambda() const {return lambda;}
+    \return the value for the gain.
+   */
+  virtual inline double getLambda() const {return lambda;}
 
-          /*!
-            Get the maximum iteration of the virtual visual servoing stage.
+  /*!
+    Get the maximum iteration of the virtual visual servoing stage.
 
-            \return the number of iteration
-          */
+    \return the number of iteration
+   */
   virtual inline  unsigned int getMaxIter() const {return maxIter;}
   
-          /*!
-            Get the near distance for clipping.
+  /*!
+    Get the near distance for clipping.
             
-            \return Near clipping value.
-          */
-  virtual inline  double  getNearClippingDistance() const { return vpMbKltTracker::getNearClippingDistance(); }
+    \return Near clipping value.
+   */
+  virtual inline  double getNearClippingDistance() const { return vpMbKltTracker::getNearClippingDistance(); }
 
-          void    loadConfigFile(const char* configFile);
-  virtual void    loadConfigFile(const std::string& configFile);
+  void loadConfigFile(const char* configFile);
+  virtual void loadConfigFile(const std::string& configFile);
   
-          void    reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
-        		  const bool verbose=false);
-          void    reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo,
-        		  const bool verbose=false);
-          void    resetTracker();
+  void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
+                   const bool verbose=false);
+  void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo,
+                   const bool verbose=false);
+  void resetTracker();
 
-  virtual void    setCameraParameters(const vpCameraParameters& cam);
+  virtual void setCameraParameters(const vpCameraParameters& cam);
   
-          /*!
-            Specify which clipping to use.
+  /*!
+    Specify which clipping to use.
             
-            \sa vpMbtPolygonClipping
+    \sa vpMbtPolygonClipping
             
-            \param flags : New clipping flags.
-          */
-  virtual void    setClipping(const unsigned int &flags) {vpMbEdgeTracker::setClipping(flags); }
+    \param flags : New clipping flags.
+   */
+  virtual void setClipping(const unsigned int &flags) {vpMbEdgeTracker::setClipping(flags); }
 
-          /*!
-            Set the far distance for clipping.
+  /*!
+    Set the far distance for clipping.
 
-            \param dist : Far clipping value.
-          */
-  virtual void   setFarClippingDistance(const double &dist) { vpMbEdgeTracker::setFarClippingDistance(dist); }
+    \param dist : Far clipping value.
+   */
+  virtual void setFarClippingDistance(const double &dist) { vpMbEdgeTracker::setFarClippingDistance(dist); }
 
-          /*!
-            Set the value of the gain used to compute the control law.
+  /*!
+    Set the value of the gain used to compute the control law.
 
-            \param gain : the desired value for the gain.
-          */
+    \param gain : the desired value for the gain.
+  */
   virtual inline  void setLambda(const double gain) {this->lambda = gain; vpMbEdgeTracker::setLambda(lambda); vpMbKltTracker::setLambda(lambda);}
 
-          /*!
-            Set the maximum iteration of the virtual visual servoing stage.
+  /*!
+    Set the maximum iteration of the virtual visual servoing stage.
 
-            \param max : the desired number of iteration
-          */
+    \param max : the desired number of iteration
+   */
   virtual inline  void setMaxIter(const unsigned int max) {maxIter = max;}
   
-          /*!
-            Set the near distance for clipping.
+  /*!
+    Set the near distance for clipping.
             
-            \param dist : Near clipping value.
-          */
-  virtual void   setNearClippingDistance(const double &dist) { vpMbEdgeTracker::setNearClippingDistance(dist); }
+    \param dist : Near clipping value.
+   */
+  virtual void setNearClippingDistance(const double &dist) { vpMbEdgeTracker::setNearClippingDistance(dist); }
 
-          /*!
-            Use Ogre3D for visibility tests
+  /*!
+    Use Ogre3D for visibility tests
 
-            \warning This function has to be called before the initialization of the tracker.
+    \warning This function has to be called before the initialization of the tracker.
 
-            \param v : True to use it, False otherwise
-          */
-  virtual void   setOgreVisibilityTest(const bool &v){
-       vpMbTracker::setOgreVisibilityTest(v);
+    \param v : True to use it, False otherwise
+   */
+  virtual void setOgreVisibilityTest(const bool &v){
+    vpMbTracker::setOgreVisibilityTest(v);
 #ifdef VISP_HAVE_OGRE
-       faces.getOgreContext()->setWindowName("MBT Hybrid");
+    faces.getOgreContext()->setWindowName("MBT Hybrid");
 #endif
-      }
+  }
 
-          /*!
-            Use Scanline algorithm for visibility tests
+  /*!
+    Use Scanline algorithm for visibility tests
 
-            \param v : True to use it, False otherwise
-          */
+    \param v : True to use it, False otherwise
+  */
   virtual void setScanLineVisibilityTest(const bool &v){
     vpMbEdgeTracker::setScanLineVisibilityTest(v);
     vpMbKltTracker::setScanLineVisibilityTest(v);
   }
 
-  virtual void    setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
+  virtual void  setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
   /*!
     Set if the projection error criteria has to be computed.
 
@@ -347,30 +349,29 @@ public:
 	  vpMbEdgeTracker::setProjectionErrorComputation(flag);
   }
 
-
-  virtual void    testTracking(){};
-  virtual void    track(const vpImage<unsigned char>& I);
+  virtual void  testTracking(){};
+  virtual void  track(const vpImage<unsigned char>& I);
 
 protected:
-          void    computeVVS(const vpImage<unsigned char>& I, const unsigned int &nbInfos, vpColVector &w_mbt,
-                             vpColVector &w_klt, const unsigned int lvl=0);
+  void  computeVVS(const vpImage<unsigned char>& I, const unsigned int &nbInfos, vpColVector &w_mbt,
+                   vpColVector &w_klt, const unsigned int lvl=0);
 
-  virtual void    init(const vpImage<unsigned char>& I);
-  virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double r, const int idFace=0,
-      const std::string &name="");
-  virtual void    initCylinder(const vpPoint&, const vpPoint &, const double r, const int idFace,
-      const std::string &name="");
-          virtual void    initFaceFromCorners(vpMbtPolygon &polygon);
-          virtual void    initFaceFromLines(vpMbtPolygon &polygon);
-  unsigned int    initMbtTracking(const unsigned int level=0);
+  virtual void init(const vpImage<unsigned char>& I);
+  virtual void initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double r, const int idFace=0,
+                          const std::string &name="");
+  virtual void initCylinder(const vpPoint&, const vpPoint &, const double r, const int idFace,
+                            const std::string &name="");
+  virtual void initFaceFromCorners(vpMbtPolygon &polygon);
+  virtual void initFaceFromLines(vpMbtPolygon &polygon);
+  unsigned int initMbtTracking(const unsigned int level=0);
 
-          bool    postTracking(const vpImage<unsigned char>& I, vpColVector &w_mbt, vpColVector &w_klt,
-                               const unsigned int lvl=0);
-          void    postTrackingMbt(vpColVector &w, const unsigned int level=0);
+  bool postTracking(const vpImage<unsigned char>& I, vpColVector &w_mbt, vpColVector &w_klt,
+                    const unsigned int lvl=0);
+  void postTrackingMbt(vpColVector &w, const unsigned int level=0);
 
-  unsigned int    trackFirstLoop(const vpImage<unsigned char>& I, vpColVector &factor, const unsigned int lvl = 0);
-          void    trackSecondLoop(const vpImage<unsigned char>& I, vpMatrix &L, vpColVector &_error,
-                                  vpHomogeneousMatrix& cMo, const unsigned int lvl=0);
+  unsigned int trackFirstLoop(const vpImage<unsigned char>& I, vpColVector &factor, const unsigned int lvl = 0);
+  void trackSecondLoop(const vpImage<unsigned char>& I, vpMatrix &L, vpColVector &_error,
+                       vpHomogeneousMatrix& cMo, const unsigned int lvl=0);
 };
 
 #endif

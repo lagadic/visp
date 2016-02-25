@@ -85,7 +85,8 @@ href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/p
 - \ref tutorial-tracking-blob <br>This tutorial introduces blob tracking and detection.
 - \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
 - \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges. 
-- \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints. 
+- \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints.
+- \ref tutorial-tracking-mb-stereo <br>This tutorial focuses on model-based trackers with stereo cameras.
 - \ref tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.
 
 \subsection tuto_detection Detection 
@@ -389,7 +390,9 @@ scheme, ...</p>
 /*!
   \ingroup module_mbt
   \defgroup group_mbt_trackers Trackers
-  Model-based trackers.
+  Model-based trackers. Two group of classes may be used:
+  - the one that allows to track an object on a single image: vpMbEdgeTracker, vpMbKltTracker, vpMbEdgeKltTracker;
+  - the one that allows to track an object seen in two (stereo) or more images: vpMbEdgeMultiTracker, vpMbKltMultiTracker, vpMbEdgeKltMultiTracker.
 */
 /*!
   \ingroup module_mbt

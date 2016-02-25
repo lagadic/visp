@@ -426,7 +426,7 @@ vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
 
   unsigned int n =0 ;
   vpMbtDistanceLine* l;
-  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
+  for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
     if((*it)->isTracked()){
       l = *it;
       unsigned int indexLine = 0;
@@ -531,7 +531,7 @@ vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
 
   // Same thing with circles as with lines
   vpMbtDistanceCircle *ci;
-  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[lvl].begin(); it!=circles[lvl].end(); ++it){
     if((*it)->isTracked()){
       ci = *it;
       double wmean = 0 ;
@@ -1018,7 +1018,7 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
     }
   }
 
-  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[lvl].begin(); it!=circles[lvl].end(); ++it){
     if((*it)->isTracked()){
       ci = *it;
       ci->computeInteractionMatrixError(cMo);
@@ -1079,10 +1079,10 @@ vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& I,  vpMatrix &
       n+= cy->nbFeature ;
     }
   }
-  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
+  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[lvl].begin(); it!=circles[lvl].end(); ++it){
     if((*it)->isTracked()){
       ci = *it;
-      ci->computeInteractionMatrixError(cMo) ;
+      ci->computeInteractionMatrixError(cMo_) ;
       for(unsigned int i=0 ; i < ci->nbFeature ; i++){
         for(unsigned int j=0; j < 6 ; j++){
           L[n+i][j] = ci->L[i][j];

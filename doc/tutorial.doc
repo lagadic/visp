@@ -79,7 +79,8 @@ This page introduces the user to the way to track objects in images.
 - \subpage tutorial-tracking-blob <br>This tutorial introduces blob tracking and detection.
 - \subpage tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
 - \subpage tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges. 
-- \subpage tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints. 
+- \subpage tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints.
+- \subpage tutorial-tracking-mb-stereo <br>This tutorial focuses on model-based trackers using stereo cameras. 
 - \subpage tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.
 
 */

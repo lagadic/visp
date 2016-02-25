@@ -66,8 +66,10 @@
   \ingroup group_mbt_trackers
   \warning This class is only available if OpenCV is installed, and used.
   
-  \brief Model based tracker using only KLT
-  
+  \brief Model based tracker using only KLT.
+
+  The \ref tutorial-tracking-mb is a good starting point to use this class.
+
   The tracker requires the knowledge of the 3D model that could be provided in a vrml
   or in a cao file. The cao format is described in loadCAOModel().
   It may also use an xml file used to tune the behavior of the tracker and an
@@ -223,6 +225,9 @@ int main()
 */
 class VISP_EXPORT vpMbKltTracker: virtual public vpMbTracker
 {
+  friend class vpMbKltMultiTracker;
+  friend class vpMbEdgeKltMultiTracker;
+
 protected:
   //! Temporary OpenCV image for fast conversion.
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
@@ -238,9 +243,9 @@ protected:
   bool firstInitialisation;
   //! Erosion of the mask
   unsigned int maskBorder;
-  //! The gain of the virtual visual servoing stage. 
+  //! The gain of the virtual visual servoing stage.
   double lambda;
-  //! The maximum iteration of the virtual visual servoing stage. 
+  //! The maximum iteration of the virtual visual servoing stage.
   unsigned int  maxIter;
   //! Threshold below which the weight associated to a point to consider this one as an outlier.
   double threshold_outlier;
@@ -258,142 +263,141 @@ protected:
   std::list<vpMbtDistanceCircle*> circles_disp;
 
 public:
-            vpMbKltTracker();
-  virtual   ~vpMbKltTracker();
+  vpMbKltTracker();
+  virtual ~vpMbKltTracker();
   
-            void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string &name="");
-  virtual void            display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &cam, const vpColor& col, const unsigned int thickness=1,
-                                  const bool displayFullModel = false);
-  virtual void            display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                                  const vpColor& col, const unsigned int thickness=1, const bool displayFullModel = false);
+  /** @name Inherited functionalities from vpMbKltTracker */
+  //@{
 
-protected:
-  virtual void            init(const vpImage<unsigned char>& I);
-  virtual void            reinit(const vpImage<unsigned char>& I);
-  
-public:
+  void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string &name="");
+  virtual void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo,
+                       const vpCameraParameters &cam, const vpColor& col, const unsigned int thickness=1,
+                       const bool displayFullModel = false);
+  virtual void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor& col, const unsigned int thickness=1, const bool displayFullModel = false);
+
   /*! Return the address of the circle feature list. */
   std::list<vpMbtDistanceCircle*> &getFeaturesCircle() { return circles_disp; }
   /*! Return the address of the cylinder feature list. */
   std::list<vpMbtDistanceKltCylinder*> &getFeaturesKltCylinder() { return kltCylinders; }
   /*! Return the address of the Klt feature list. */
   std::list<vpMbtDistanceKltPoints*> &getFeaturesKlt() { return kltPolygons; }
-  virtual void            loadConfigFile(const std::string& configFile);
-          void            loadConfigFile(const char* configFile);
-          
-          /*!
-            Get the current list of KLT points.
+
+  /*!
+    Get the current list of KLT points.
             
-            \return the list of KLT points through vpKltOpencv.
-          */
+     \return the list of KLT points through vpKltOpencv.
+   */
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-          inline  std::vector<cv::Point2f> getKltPoints() {return tracker.getFeatures();}
+  inline  std::vector<cv::Point2f> getKltPoints() const {return tracker.getFeatures();}
 #else
-          inline  CvPoint2D32f*   getKltPoints() {return tracker.getFeatures();}
+  inline  CvPoint2D32f*   getKltPoints() {return tracker.getFeatures();}
 #endif
   
-          std::vector<vpImagePoint> getKltImagePoints() const;
-          
-          std::map<int, vpImagePoint> getKltImagePointsWithId() const;
-          
-          /*!
-            Get the klt tracker at the current state.
-            
-            \return klt tracker.
-          */
-  inline  vpKltOpencv     getKltOpencv() const { return tracker; }
-          
-          /*!
-            Get the value of the gain used to compute the control law.
-            
-            \return the value for the gain.
-          */
-  virtual inline  double  getLambda() const {return lambda;}
-  
-          /*!
-            Get the erosion of the mask used on the Model faces.
+  std::vector<vpImagePoint> getKltImagePoints() const;
 
-            \return The erosion.
-          */
-  inline  unsigned int    getMaskBorder() const { return maskBorder; }
-  
-          /*!
-            Get the maximum iteration of the virtual visual servoing stage.
+  std::map<int, vpImagePoint> getKltImagePointsWithId() const;
+
+  /*!
+    Get the klt tracker at the current state.
             
-            \return the number of iteration
-          */
+    \return klt tracker.
+   */
+  inline  vpKltOpencv getKltOpencv() const { return tracker; }
+
+  /*!
+    Get the value of the gain used to compute the control law.
+            
+    \return the value for the gain.
+   */
+  virtual inline  double getLambda() const {return lambda;}
+  
+  /*!
+    Get the erosion of the mask used on the Model faces.
+
+    \return The erosion.
+   */
+  inline  unsigned int getMaskBorder() const { return maskBorder; }
+  
+  /*!
+    Get the maximum iteration of the virtual visual servoing stage.
+            
+    \return the number of iteration
+   */
   virtual inline unsigned int getMaxIter() const {return maxIter;}
   
-          /*!
-            Get the current number of klt points.
+  /*!
+    Get the current number of klt points.
             
-            \return the number of features
-          */
-  inline  int             getNbKltPoints() const {return tracker.getNbFeatures();}
-        
-          /*!
-            Get the threshold for the acceptation of a point.
+    \return the number of features
+   */
+  inline  int  getNbKltPoints() const {return tracker.getNbFeatures();}
 
-            \return threshold_outlier : Threshold for the weight below which a point is rejected.
-          */
-  inline  double          getThresholdAcceptation() const { return threshold_outlier;}
+  /*!
+    Get the threshold for the acceptation of a point.
+
+    \return threshold_outlier : Threshold for the weight below which a point is rejected.
+   */
+  inline  double getThresholdAcceptation() const { return threshold_outlier;}
   
-  void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
-		  const bool verbose=false);
+  virtual void loadConfigFile(const std::string& configFile);
+  void loadConfigFile(const char* configFile);
+
+  virtual void reInitModel(const vpImage<unsigned char>& I, const std::string &cad_name, const vpHomogeneousMatrix& cMo_,
+                           const bool verbose=false);
   void reInitModel(const vpImage<unsigned char>& I, const char* cad_name, const vpHomogeneousMatrix& cMo,
-		  const bool verbose=false);
-          void            resetTracker();
-            
-          void            setCameraParameters(const vpCameraParameters& cam);
+                   const bool verbose=false);
+  void resetTracker();
 
-          void            setKltOpencv(const vpKltOpencv& t);
-          
-          /*!
-            Set the value of the gain used to compute the control law.
+  void setCameraParameters(const vpCameraParameters& cam);
+
+  virtual void setKltOpencv(const vpKltOpencv& t);
+
+  /*!
+    Set the value of the gain used to compute the control law.
             
-            \param gain : the desired value for the gain.
-          */
-  virtual inline  void    setLambda(const double gain) {this->lambda = gain;}
+    \param gain : the desired value for the gain.
+   */
+  virtual inline void setLambda(const double gain) {this->lambda = gain;}
   
-          /*!
-            Set the erosion of the mask used on the Model faces.
+  /*!
+    Set the erosion of the mask used on the Model faces.
 
-            \param  e : The desired erosion.
-          */
-  inline  void            setMaskBorder(const unsigned int &e)
-                          {
-                            maskBorder = e;
-                            //if(useScanLine)
-                            faces.getMbScanLineRenderer().setMaskBorder(maskBorder);
-                          }
+    \param  e : The desired erosion.
+   */
+  inline  void setMaskBorder(const unsigned int &e)
+  {
+    maskBorder = e;
+    //if(useScanLine)
+    faces.getMbScanLineRenderer().setMaskBorder(maskBorder);
+  }
   
-          /*!
-            Set the maximum iteration of the virtual visual servoing stage.
+  /*!
+    Set the maximum iteration of the virtual visual servoing stage.
             
-            \param max : the desired number of iteration
-          */
-  virtual inline  void    setMaxIter(const unsigned int max) {maxIter = max;}
+    \param max : the desired number of iteration
+   */
+  virtual inline void setMaxIter(const unsigned int max) {maxIter = max;}
 
-          /*!
-            Use Ogre3D for visibility tests
+  /*!
+    Use Ogre3D for visibility tests
 
-            \warning This function has to be called before the initialization of the tracker.
+    \warning This function has to be called before the initialization of the tracker.
 
-            \param v : True to use it, False otherwise
-          */
-  virtual         void    setOgreVisibilityTest(const bool &v){
-      vpMbTracker::setOgreVisibilityTest(v);
+    \param v : True to use it, False otherwise
+   */
+  virtual void setOgreVisibilityTest(const bool &v){
+    vpMbTracker::setOgreVisibilityTest(v);
 #ifdef VISP_HAVE_OGRE
-      faces.getOgreContext()->setWindowName("MBT Klt");
+    faces.getOgreContext()->setWindowName("MBT Klt");
 #endif
   }
 
-          /*!
-            Use Scanline algorithm for visibility tests
+  /*!
+    Use Scanline algorithm for visibility tests
 
-            \param v : True to use it, False otherwise
-          */
+    \param v : True to use it, False otherwise
+   */
   virtual void setScanLineVisibilityTest(const bool &v){
     vpMbTracker::setScanLineVisibilityTest(v);
 
@@ -401,41 +405,60 @@ public:
       (*it)->useScanLine = v;
   }
   
-  virtual void            setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
 
   /*!
     Set if the projection error criteria has to be computed.
 
     \param flag : True if the projection error criteria has to be computed, false otherwise
   */
-  virtual void            setProjectionErrorComputation(const bool &flag) {
-                if(flag)
-                  vpCTRACE << "This option is not yet implemented in vpMbKltTracker, projection error computation set to false." << std::endl ; }
+  virtual void setProjectionErrorComputation(const bool &flag) {
+    if(flag)
+      vpCTRACE << "This option is not yet implemented in vpMbKltTracker, projection error computation set to false." << std::endl ; }
   
-          /*!
-            Set the threshold for the acceptation of a point.
+  /*!
+    Set the threshold for the acceptation of a point.
 
-            \param th : Threshold for the weight below which a point is rejected.
-          */
-  inline  void            setThresholdAcceptation(const double th) {threshold_outlier = th;}  
+    \param th : Threshold for the weight below which a point is rejected.
+   */
+  inline  void setThresholdAcceptation(const double th) {threshold_outlier = th;}
 
-          void            setUseKltTracking(const std::string &name, const bool &useKltTracking);
+  void setUseKltTracking(const std::string &name, const bool &useKltTracking);
   
-  virtual void            testTracking();
-  virtual void            track(const vpImage<unsigned char>& I);
+  virtual void testTracking();
+  virtual void track(const vpImage<unsigned char>& I);
   
 protected:
-          void            computeVVS(const unsigned int &nbInfos, vpColVector &w);
-          
-          virtual void            initFaceFromCorners(vpMbtPolygon &polygon);
-          virtual void            initFaceFromLines(vpMbtPolygon &polygon);
-          virtual void    initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const int,
-              const std::string &name="");
-          virtual void    initCylinder(const vpPoint&, const vpPoint &, const double, const int,
-              const std::string &name="");
+  /** @name Protected Member Functions Inherited from vpMbKltTracker */
+  //@{
+  void computeVVS(const unsigned int &nbInfos, vpColVector &w);
+  void computeVVSCheckLevenbergMarquardtKlt(const unsigned int iter, const unsigned int nbInfos,
+                                            const vpHomogeneousMatrix &cMoPrev, const vpColVector &error_prev, const vpHomogeneousMatrix &ctTc0_Prev,
+                                            double &mu, bool &reStartFromLastIncrement);
+  void computeVVSCovariance(const vpColVector &w_true, const vpHomogeneousMatrix &cMoPrev,
+                            const vpMatrix &L_true, const vpMatrix &LVJ_true);
+  void computeVVSInteractionMatrixAndResidu(unsigned int shift, vpColVector &R, vpMatrix &L, vpHomography &H,
+                                            std::list<vpMbtDistanceKltPoints*> &kltPolygons_, std::list<vpMbtDistanceKltCylinder*> &kltCylinders_,
+                                            const vpHomogeneousMatrix &ctTc0_);
+  void computeVVSPoseEstimation(const unsigned int iter, const vpMatrix &L,
+                                const vpColVector &w, vpMatrix &L_true, vpMatrix &LVJ_true, double &normRes, double &normRes_1, vpColVector &w_true,
+                                vpColVector &R, vpMatrix &LTL, vpColVector &LTR, vpColVector &error_prev, vpColVector &v, double &mu,
+                                vpHomogeneousMatrix &cMoPrev, vpHomogeneousMatrix &ctTc0_Prev);
+  void computeVVSWeights(const unsigned int iter, const unsigned int nbInfos, const vpColVector &R,
+                         vpColVector &w_true, vpColVector &w, vpRobust &robust);
 
-          void            preTracking(const vpImage<unsigned char>& I, unsigned int &nbInfos, unsigned int &nbFaceUsed);
-          bool            postTracking(const vpImage<unsigned char>& I, vpColVector &w);
+  virtual void init(const vpImage<unsigned char>& I);
+  virtual void initFaceFromCorners(vpMbtPolygon &polygon);
+  virtual void initFaceFromLines(vpMbtPolygon &polygon);
+  virtual void initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const int,
+                          const std::string &name="");
+  virtual void initCylinder(const vpPoint&, const vpPoint &, const double, const int,
+                            const std::string &name="");
+
+  void preTracking(const vpImage<unsigned char>& I, unsigned int &nbInfos, unsigned int &nbFaceUsed);
+  bool postTracking(const vpImage<unsigned char>& I, vpColVector &w);
+  virtual void reinit(const vpImage<unsigned char>& I);
+  //@}
 };
 
 #endif
