@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2016 by INRIA. All rights reserved.
  * 
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -170,7 +170,8 @@ public:
   virtual void init(const vpImage<unsigned char>& I);
 
 #ifdef VISP_HAVE_MODULE_GUI
-  using vpMbTracker::initClick; // Tells the compiler we want both the initClick from vpMbTracker and ours
+  virtual void initClick(const vpImage<unsigned char>& I, const std::vector<vpPoint> &points3D_list,
+                         const std::string &displayFile="");
 
   virtual void initClick(const vpImage<unsigned char>& I, const std::string& initFile, const bool displayHelp=false);
 

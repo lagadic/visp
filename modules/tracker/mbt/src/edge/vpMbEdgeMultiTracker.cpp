@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2016 by INRIA. All rights reserved.
  * 
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1175,6 +1175,35 @@ void vpMbEdgeMultiTracker::init(const vpImage<unsigned char>& /*I*/) {
 
 #ifdef VISP_HAVE_MODULE_GUI
 /*!
+  Initialise the tracking by clicking on the image points corresponding to the
+  3D points (object frame) in the list points3D_list.
+
+  \param I : Input image
+  \param points3D_list : List of the 3D points (object frame).
+  \param displayFile : Path to the image used to display the help. This functionality
+  is only available if visp_io module is used.
+*/
+void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char>& I, const std::vector<vpPoint> &points3D_list,
+    const std::string &displayFile) {
+  if(m_mapOfEdgeTrackers.empty()) {
+    throw vpException(vpTrackingException::initializationError, "There is no camera !");
+  } else if(m_mapOfEdgeTrackers.size() > 1) {
+    throw vpException(vpTrackingException::initializationError, "There is more than one camera !");
+  } else {
+    //Get the vpMbEdgeTracker object for the reference camera name
+    std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(m_referenceCameraName);
+    if(it != m_mapOfEdgeTrackers.end()) {
+      it->second->initClick(I, points3D_list, displayFile);
+      it->second->getPose(cMo);
+    } else {
+      std::stringstream ss;
+      ss << "Cannot initClick as the reference camera: " << m_referenceCameraName << " does not exist !";
+      throw vpException(vpTrackingException::initializationError, ss.str());
+    }
+  }
+}
+
+/*!
   Initialize the tracking by clicking on the image points corresponding to the
   3D points (object frame) in the file initFile. The structure of this file
   is (without the comments):
@@ -1402,7 +1431,7 @@ void vpMbEdgeMultiTracker::initClick(const std::map<std::string, const vpImage<u
     }
   }
 }
-#endif
+#endif //#ifdef VISP_HAVE_MODULE_GUI
 
 /*!
   Initialize the tracking thanks to the pose in vpPoseVector format, and read in the file initFile.

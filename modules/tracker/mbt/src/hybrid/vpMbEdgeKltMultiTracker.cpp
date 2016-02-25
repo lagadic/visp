@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2014 by INRIA. All rights reserved.
+ * Copyright (C) 2005 - 2016 by INRIA. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -1074,6 +1074,26 @@ void vpMbEdgeKltMultiTracker::init(const vpImage<unsigned char>& /*I*/) {
 
 #ifdef VISP_HAVE_MODULE_GUI
 /*!
+  Initialise the tracking by clicking on the image points corresponding to the
+  3D points (object frame) in the list points3D_list.
+
+  \param I : Input image
+  \param points3D_list : List of the 3D points (object frame).
+  \param displayFile : Path to the image used to display the help. This functionality
+  is only available if visp_io module is used.
+*/
+void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char>& I, const std::vector<vpPoint> &points3D_list,
+                       const std::string &displayFile) {
+  //Cannot use directly set pose for KLT as it is different than for the edge case
+  //It moves the KLT points instead of detecting new KLT points
+  vpMbKltMultiTracker::initClick(I, points3D_list, displayFile);
+
+  //Set pose for Edge (setPose or initFromPose is equivalent with vpMbEdgeTracker)
+  //And it avoids to click a second time
+  vpMbEdgeMultiTracker::setPose(I, cMo);
+}
+
+/*!
   Initialize the tracking by clicking on the image points corresponding to the
   3D points (object frame) in the file initFile. The structure of this file
   is (without the comments):
@@ -1212,7 +1232,7 @@ void vpMbEdgeKltMultiTracker::initClick(const std::map<std::string, const vpImag
   //And it avoids to click a second time
   vpMbEdgeMultiTracker::setPose(mapOfImages, mapOfCameraPoses);
 }
-#endif
+#endif //#ifdef VISP_HAVE_MODULE_GUI
 
 void vpMbEdgeKltMultiTracker::initCircle(const vpPoint&, const vpPoint &, const vpPoint &, const double, const int,
     const std::string &) {

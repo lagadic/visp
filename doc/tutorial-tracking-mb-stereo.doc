@@ -13,7 +13,7 @@ In order to achieve this, the following information are required:
 - the transformation matrix between each camera and a reference camera (\f$ ^{c_{current}}{\bf M}_{c_{reference}} \f$).
 
 \note The cameras can move, but the tracking will be effective as long as the transformation matrix between the cameras and the reference camera is known and updated at each iteration.
-\note The new introduced classes are not restricted to stereo configuration. They allow the usage of multiple cameras.
+\note The new introduced classes are not restricted to stereo configuration. They allow the usage of multiple cameras (see \ref mb_stereo_moving_cameras).
 
 Next sections will highlight how to easily adapt your code to use multiple cameras with the model-based tracker. As only the new methods dedicated to multiple views tracking will be presented, 
 you are highly recommended to follow \ref tutorial-tracking-mb in order to be familiar with the model-based tracking concepts, the different trackers that are available in ViSP (the edge tracker: vpMbEdgeTracker, the klt feature points tracker: vpMbKltTracker 
@@ -169,6 +169,20 @@ To display the model with the estimated pose, we use:
 Finally, do not forget to delete the pointers:
 
 \snippet tutorial-mb-tracker-stereo.cpp Cleanup
+
+\section mb_stereo_advanced Advanced
+
+\subsection mb_stereo_moving_cameras How to deal with moving cameras
+
+The principle remains the same than with static cameras. You have to supply the camera transformation matrices to the tracker each time the cameras move and before calling the track method:
+\code
+mapOfCamTrans["Camera1"] = vpHomogeneousMatrix(); //The Camera1 is the reference camera.
+mapOfCamTrans["Camera2"] = get_c2Mc1(); //Get the new transformation between the two cameras.
+tracker.setCameraTransformationMatrix(mapOfCamTrans);
+tracker.track(mapOfImg);
+\endcode
+
+This information can be available through the robot kinematics and different kind of sensors for example.
 
 \section mb_stereo_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-tt.
