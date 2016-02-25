@@ -162,7 +162,7 @@ void vpMbEdgeMultiTracker::computeProjectionError() {
     for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
         it != m_mapOfEdgeTrackers.end(); ++it) {
       double curProjError = it->second->getProjectionError();
-      double nbFeaturesUsed = it->second->nbFeaturesForProjErrorComputation;
+      unsigned int nbFeaturesUsed = it->second->nbFeaturesForProjErrorComputation;
 
       if(nbFeaturesUsed > 0) {
         nbTotalFeaturesUsed += nbFeaturesUsed;
