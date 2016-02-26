@@ -684,6 +684,7 @@ vpRobot::vpRobotStateType
       // Start primitive STOP only if the current state is Velocity
       if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState ()) {
         Try( PrimitiveSTOP_Viper650() );
+        vpTime::sleepMs(100); // needed to ensure velocity task ends up on low level
       }
       break;
     }
