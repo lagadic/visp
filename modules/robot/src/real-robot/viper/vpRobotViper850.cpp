@@ -2263,19 +2263,17 @@ void
 }
 /*!
 
-  Open the electric two fingers Schunk gripper.
+  Open the pneumatic two fingers gripper.
 
   \sa closeGripper()
 */
-void
-    vpRobotViper850::openGripper()
+void vpRobotViper850::openGripper()
 {
   InitTry;
-  Try( PrimitiveGripper_Viper850(1) );
-  std::cout << "Open the gripper..." << std::endl; 
+  Try( PrimitivePneumaticGripper_Viper850(1) );
+  std::cout << "Open the pneumatic gripper..." << std::endl;
   CatchPrint();
   if (TryStt < 0) {
-    vpERROR_TRACE ("Cannot open the gripper");
     throw vpRobotException (vpRobotException::lowLevelError,
                             "Cannot open the gripper.");
   }
@@ -2283,7 +2281,7 @@ void
 
 /*!
 
-  Close the electric two fingers Schunk gripper.
+  Close the pneumatic two fingers gripper.
 
   \sa openGripper()
 
@@ -2291,11 +2289,10 @@ void
 void vpRobotViper850::closeGripper() const
 {
   InitTry;
-  Try( PrimitiveGripper_Viper850(0) );
-  std::cout << "Close the gripper..." << std::endl; 
+  Try( PrimitivePneumaticGripper_Viper850(0) );
+  std::cout << "Close the pneumatic gripper..." << std::endl;
   CatchPrint();
   if (TryStt < 0) {
-    vpERROR_TRACE ("Cannot close the gripper");
     throw vpRobotException (vpRobotException::lowLevelError,
                             "Cannot close the gripper.");
   }
