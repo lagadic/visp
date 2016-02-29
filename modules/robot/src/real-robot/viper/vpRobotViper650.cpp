@@ -2531,6 +2531,43 @@ vpRobotViper650::getMaxRotationVelocityJoint6() const
   return maxRotationVelocity_joint6;
 }
 
+/*!
+
+  Open the pneumatic two fingers gripper.
+
+  \sa closeGripper()
+*/
+void vpRobotViper650::openGripper()
+{
+  InitTry;
+  Try( PrimitivePneumaticGripper_Viper650(1) );
+  std::cout << "Open the pneumatic gripper..." << std::endl;
+  CatchPrint();
+  if (TryStt < 0) {
+    throw vpRobotException (vpRobotException::lowLevelError,
+                            "Cannot open the gripper.");
+  }
+}
+
+/*!
+
+  Close the pneumatic two fingers gripper.
+
+  \sa openGripper()
+
+*/
+void vpRobotViper650::closeGripper() const
+{
+  InitTry;
+  Try( PrimitivePneumaticGripper_Viper650(0) );
+  std::cout << "Close the pneumatic gripper..." << std::endl;
+  CatchPrint();
+  if (TryStt < 0) {
+    throw vpRobotException (vpRobotException::lowLevelError,
+                            "Cannot close the gripper.");
+  }
+}
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning: libvisp_robot.a(vpRobotViper650.cpp.o) has no symbols
 void dummy_vpRobotViper650() {};

@@ -334,6 +334,8 @@ public:  /* Methode publiques */
   // Force/Torque control
   void biasForceTorqueSensor() const;
 
+  void closeGripper() const;
+
   void disableJoint6Limits() const;
   void enableJoint6Limits() const;
 
@@ -392,6 +394,8 @@ public:  /* Methode publiques */
   void set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_);
 
   void move(const char *filename);
+
+  void openGripper();
 
   void powerOn();
   void powerOff();
