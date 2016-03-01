@@ -63,7 +63,7 @@ int main(int argc, char ** argv)
     (void)_finite(1.0);
     return 0;
 }
-" HAVE_FUNC__ISINF)
+" HAVE_FUNC__FINITE)
 else()
     set(HAVE_FUNC__FINITE FALSE)
 endif()

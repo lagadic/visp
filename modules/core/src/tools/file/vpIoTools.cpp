@@ -726,10 +726,19 @@ vpIoTools::path(const char *pathname)
 #elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
   for(unsigned int i=0 ; i<path.length() ; i++)
     if( path[i] == '\\')	path[i] = '/';
-#  if TARGET_OS_IOS == 0 // The above code is not working on iOS since wordexp() is not available
+#  if TARGET_OS_IOS == 0 // The following code is not working on iOS since wordexp() is not available
   wordexp_t exp_result;
+
   wordexp(path.c_str(), &exp_result, 0);
-  path = std::string(exp_result.we_wordv[0]);
+  path = "";
+  //If path contains whitespace, wordexp_t will try to expand each word separated by whitespaces
+  //This is why we need to concatenate the results
+  for(size_t i = 0; i < exp_result.we_wordc; i++) {
+    path += exp_result.we_wordv[i];
+    if(i < exp_result.we_wordc-1) {
+      path += " ";
+    }
+  }
   wordfree(&exp_result);
 #  endif
 #endif
