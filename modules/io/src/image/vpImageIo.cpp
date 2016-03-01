@@ -278,23 +278,27 @@ vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
     std::string message = "Cannot read file: \"" + std::string(filename) + "\" doesn't exist";
     throw (vpImageException(vpImageException::ioError, message));
   }
+
+  //Allows to use ~ symbol or env variables in path
+  std::string final_filename = vpIoTools::path(filename);
+
   bool try_opencv_reader = false;
 
-  switch(getFormat(filename)){
+  switch(getFormat(final_filename.c_str())){
   case FORMAT_PGM :
-    readPGM(I,filename); break;
+    readPGM(I,final_filename); break;
   case FORMAT_PPM :
-    readPPM(I,filename); break;
+    readPPM(I,final_filename); break;
   case FORMAT_JPEG :
 #ifdef VISP_HAVE_JPEG
-    readJPEG(I,filename);
+    readJPEG(I,final_filename);
 #else
     try_opencv_reader = true;
 #endif
     break;
   case FORMAT_PNG :
 #if defined(VISP_HAVE_PNG)
-    readPNG(I,filename);
+    readPNG(I,final_filename);
 #else
     try_opencv_reader = true;
 #endif
@@ -313,22 +317,22 @@ vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
   if (try_opencv_reader) {
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     //std::cout << "Use opencv to read the image" << std::endl;
-    cv::Mat cvI = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+    cv::Mat cvI = cv::imread(final_filename, cv::IMREAD_GRAYSCALE);
     if (cvI.cols == 0 && cvI.rows == 0) {
-      std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
+      std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
       throw (vpImageException(vpImageException::ioError, message)) ;
     }
     vpImageConvert::convert(cvI, I);
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
     //std::cout << "Use opencv to read the image" << std::endl;
-    cv::Mat cvI = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+    cv::Mat cvI = cv::imread(final_filename, CV_LOAD_IMAGE_GRAYSCALE);
     if (cvI.cols == 0 && cvI.rows == 0) {
-      std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
+      std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
       throw (vpImageException(vpImageException::ioError, message)) ;
     }
     vpImageConvert::convert(cvI, I);
 #else
-    std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
+    std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
     throw (vpImageException(vpImageException::ioError, message)) ;
 #endif
   }
@@ -378,24 +382,26 @@ vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
     std::string message = "Cannot read file: \"" + std::string(filename) + "\" doesn't exist";
     throw (vpImageException(vpImageException::ioError, message));
   }
+  //Allows to use ~ symbol or env variables in path
+  std::string final_filename = vpIoTools::path(filename);
 
   bool try_opencv_reader = false;
 
-  switch(getFormat(filename)){
+  switch(getFormat(final_filename.c_str())){
   case FORMAT_PGM :
-    readPGM(I,filename); break;
+    readPGM(I,final_filename); break;
   case FORMAT_PPM :
-    readPPM(I,filename); break;
+    readPPM(I,final_filename); break;
   case FORMAT_JPEG :
 #ifdef VISP_HAVE_JPEG
-    readJPEG(I,filename);
+    readJPEG(I,final_filename);
 #else
     try_opencv_reader = true;
 #endif
     break;
   case FORMAT_PNG :
 #if defined(VISP_HAVE_PNG)
-    readPNG(I,filename);
+    readPNG(I,final_filename);
 #else
     try_opencv_reader = true;
 #endif
@@ -414,22 +420,22 @@ vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
   if (try_opencv_reader) {
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     // std::cout << "Use opencv to read the image" << std::endl;
-    cv::Mat cvI = cv::imread(filename, cv::IMREAD_COLOR);
+    cv::Mat cvI = cv::imread(final_filename, cv::IMREAD_COLOR);
     if (cvI.cols == 0 && cvI.rows == 0) {
-      std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
+      std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
       throw (vpImageException(vpImageException::ioError, message)) ;
     }
     vpImageConvert::convert(cvI, I);
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
     // std::cout << "Use opencv to read the image" << std::endl;
-    cv::Mat cvI = cv::imread(filename, CV_LOAD_IMAGE_COLOR);
+    cv::Mat cvI = cv::imread(final_filename, CV_LOAD_IMAGE_COLOR);
     if (cvI.cols == 0 && cvI.rows == 0) {
-      std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
+      std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
       throw (vpImageException(vpImageException::ioError, message)) ;
     }
     vpImageConvert::convert(cvI, I);
 #else
-    std::string message = "Cannot read file \"" + std::string(filename) + "\": Image format not supported";
+    std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
     throw (vpImageException(vpImageException::ioError, message)) ;
 #endif
   }
