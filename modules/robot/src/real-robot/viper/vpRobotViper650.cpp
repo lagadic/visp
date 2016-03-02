@@ -239,18 +239,16 @@ vpRobotViper650::vpRobotViper650 (bool verbose)
   init(vpViper650::defaultCameraRobot). If you want to set the extrinsic
   camera parameters to those obtained with a camera perspective model
   including the distorsion you have to call the
-  init(vpViper650::vpToolType,
-  vpCameraParameters::vpCameraParametersProjType) method.
+  init(vpViper650::vpToolType, vpCameraParameters::vpCameraParametersProjType) method.
   If you want to set custom extrinsic camera parameters you have to call
   the init(vpViper650::vpToolType, const vpHomogeneousMatrix&) method.
 
-  \sa vpCameraParameters, init(vpViper650::vpToolType,
-  vpCameraParameters::vpCameraParametersProjType),
+  \sa vpCameraParameters, init(vpViper650::vpToolType, vpCameraParameters::vpCameraParametersProjType),
   init(vpViper650::vpToolType, const vpHomogeneousMatrix&),
   init(vpViper650::vpToolType, const std::string&)
 */
 void
-    vpRobotViper650::init (void)
+vpRobotViper650::init (void)
 {
   InitTry;
 
@@ -409,9 +407,12 @@ int main()
   init(vpViper650::vpToolType, const std::string&)
 */
 void
-    vpRobotViper650::init (vpViper650::vpToolType tool,
-                           vpCameraParameters::vpCameraParametersProjType projModel)
+vpRobotViper650::init (vpViper650::vpToolType tool,
+                       vpCameraParameters::vpCameraParametersProjType projModel)
 {
+  // Read the robot constants from files
+  // - joint [min,max], coupl_56, long_56
+  // - camera extrinsic parameters relative to eMc
   vpViper650::init(tool, projModel);
 
   InitTry;
@@ -425,6 +426,15 @@ void
   //   for (unsigned int i=0; i < njoint; i++) {
   //     printf("axis %d: joint min %lf, max %lf\n", i, joint_min[i], joint_max[i]);
   //   }
+
+  // Set the camera constant (eMc pose) in the MotionBlox
+  double eMc_pose[6];
+  for (unsigned int i=0; i < 3; i ++) {
+    eMc_pose[i] = etc[i];   // translation in meters
+    eMc_pose[i+3] = erc[i]; // rotation in rad
+  }
+  // Update the eMc pose in the low level controller
+  Try( PrimitiveCONST_Viper650(eMc_pose) );
 
   CatchPrint();
   return ;
@@ -445,7 +455,6 @@ void
   M}_c\f$ matrix, use the code below:
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper650.h>
 
 int main()
@@ -482,8 +491,7 @@ eMc_TRANS_XYZ  0.05 0.01 0.06
   init(vpViper650::vpToolType, const vpHomogeneousMatrix&)
 */
 void
-vpRobotViper650::init (vpViper650::vpToolType tool,
-                           const std::string &filename)
+vpRobotViper650::init (vpViper650::vpToolType tool, const std::string &filename)
 {
     vpViper650::init(tool, filename);
 
@@ -498,6 +506,15 @@ vpRobotViper650::init (vpViper650::vpToolType tool,
     //   for (unsigned int i=0; i < njoint; i++) {
     //     printf("axis %d: joint min %lf, max %lf\n", i, joint_min[i], joint_max[i]);
     //   }
+
+    // Set the camera constant (eMc pose) in the MotionBlox
+    double eMc_pose[6];
+    for (unsigned int i=0; i < 3; i ++) {
+      eMc_pose[i] = etc[i];   // translation in meters
+      eMc_pose[i+3] = erc[i]; // rotation in rad
+    }
+    // Update the eMc pose in the low level controller
+    Try( PrimitiveCONST_Viper650(eMc_pose) );
 
     CatchPrint();
     return ;
@@ -518,7 +535,6 @@ vpRobotViper650::init (vpViper650::vpToolType tool,
   M}_c\f$ matrix, use the code below:
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotViper650.h>
 
@@ -541,8 +557,7 @@ int main()
   init(vpViper650::vpToolType, const std::string&)
 */
 void
-vpRobotViper650::init (vpViper650::vpToolType tool,
-                           const vpHomogeneousMatrix &eMc_)
+vpRobotViper650::init (vpViper650::vpToolType tool, const vpHomogeneousMatrix &eMc_)
 {
     vpViper650::init(tool, eMc_);
 
@@ -557,6 +572,15 @@ vpRobotViper650::init (vpViper650::vpToolType tool,
     //   for (unsigned int i=0; i < njoint; i++) {
     //     printf("axis %d: joint min %lf, max %lf\n", i, joint_min[i], joint_max[i]);
     //   }
+
+    // Set the camera constant (eMc pose) in the MotionBlox
+    double eMc_pose[6];
+    for (unsigned int i=0; i < 3; i ++) {
+      eMc_pose[i] = etc[i];   // translation in meters
+      eMc_pose[i+3] = erc[i]; // rotation in rad
+    }
+    // Update the eMc pose in the low level controller
+    Try( PrimitiveCONST_Viper650(eMc_pose) );
 
     CatchPrint();
     return ;

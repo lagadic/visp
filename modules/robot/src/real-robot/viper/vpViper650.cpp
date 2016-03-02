@@ -183,7 +183,6 @@ vpViper650::init (void)
   extrinsic parameters.
 
 */
-#ifdef VISP_HAVE_ACCESS_TO_NAS
 void
 vpViper650::init (const char *camera_extrinsic_parameters)
 {
@@ -192,7 +191,6 @@ vpViper650::init (const char *camera_extrinsic_parameters)
 
   return ;
 }
-#endif
 
 /*!
 
@@ -319,10 +317,10 @@ vpViper650::init (vpViper650::vpToolType tool,
     break;
   }
   case vpViper650::TOOL_CUSTOM: {
-    vpERROR_TRACE ("No predefined file available for a custom tool"
-                   "You should use init(vpViper650::vpToolType, const std::string&) or"
-                   "init(vpViper650::vpToolType, const vpHomogeneousMatrix&) instead");
-    throw vpRobotException (vpRobotException::badValue, "No predefined file available for a custom tool");
+    throw vpRobotException (vpRobotException::badValue,
+                            "No predefined file available for a custom tool"
+                            "You should use init(vpViper650::vpToolType, const std::string&) or"
+                            "init(vpViper650::vpToolType, const vpHomogeneousMatrix&) instead");
     break;
   }
   default: {
@@ -404,10 +402,10 @@ vpViper650::init (vpViper650::vpToolType tool,
     break;
   }
   case vpViper650::TOOL_CUSTOM: {
-    vpERROR_TRACE ("No predefined parameters available for a custom tool"
-                   "You should use init(vpViper650::vpToolType, const std::string&) or"
-                   "init(vpViper650::vpToolType, const vpHomogeneousMatrix&) instead");
-    throw vpRobotException (vpRobotException::badValue, "No predefined parameters available for a custom tool");
+    throw vpRobotException (vpRobotException::badValue,
+                            "No predefined parameters available for a custom tool"
+                            "You should use init(vpViper650::vpToolType, const std::string&) or"
+                            "init(vpViper650::vpToolType, const vpHomogeneousMatrix&) instead");
     break;
   }
   }
@@ -445,13 +443,12 @@ eMc_ROT_XYZ 10.0 -90.0 20.0
 eMc_TRANS_XYZ  0.05 0.01 0.06
     \endcode
 
-  \sa init(vpViper650::vpToolType,
-  vpCameraParameters::vpCameraParametersProjType),
+  \sa init(vpViper650::vpToolType, vpCameraParameters::vpCameraParametersProjType),
   init(vpViper650::vpToolType, const vpHomogeneousMatrix&)
 */
 void
-vpViper650::init (vpViper650::vpToolType tool,
-                  const std::string &filename)
+vpViper650::init(vpViper650::vpToolType tool,
+                 const std::string &filename)
 {
     this->setToolType(tool);
     this->parseConfigFile(filename.c_str());
@@ -467,14 +464,13 @@ vpViper650::init (vpViper650::vpToolType tool,
   \param eMc_ : Homogeneous matrix representation of the transformation
   between the end-effector frame and the tool frame.
 
-  \sa init(vpViper650::vpToolType,
-  vpCameraParameters::vpCameraParametersProjType),
+  \sa init(vpViper650::vpToolType, vpCameraParameters::vpCameraParametersProjType),
   init(vpViper650::vpToolType, const std::string&)
 
 */
 void
-vpViper650::init (vpViper650::vpToolType tool,
-                  const vpHomogeneousMatrix &eMc_)
+vpViper650::init(vpViper650::vpToolType tool,
+                 const vpHomogeneousMatrix &eMc_)
 {
     this->setToolType(tool);
     this->set_eMc(eMc_);
@@ -503,12 +499,9 @@ vpViper650::parseConfigFile (const char * filename)
   bool get_trans_eMc = false;
 
   //vpTRACE("Read the config file for constant parameters %s.", filename);
-  if ((fdtask = fopen(filename, "r" )) == NULL)
-  {
-    vpERROR_TRACE ("Impossible to read the config file %s.",
-                   filename);
+  if ((fdtask = fopen(filename, "r" )) == NULL) {
     throw vpRobotException (vpRobotException::readingParametersError,
-                            "Impossible to read the config file.");
+                            "Impossible to read the config file %s.", filename);
   }
 
   while (fgets(Ligne, FILENAME_MAX, fdtask) != NULL) {
@@ -522,12 +515,8 @@ vpViper650::parseConfigFile (const char * filename)
 
     dim = strlen(namoption);
 
-    for (code = 0;
-         NULL != opt_viper650[code];
-         ++ code)
-    {
-      if (strncmp(opt_viper650[code], namoption, dim) == 0)
-      {
+    for (code = 0; NULL != opt_viper650[code]; ++ code)  {
+      if (strncmp(opt_viper650[code], namoption, dim) == 0) {
         break;
       }
     }
@@ -574,10 +563,8 @@ vpViper650::parseConfigFile (const char * filename)
     this->set_eMc(trans_eMc,rot_eMc);
   }
   else {
-    vpERROR_TRACE ("Could not read translation and rotation parameters from config file %s.",
-                     filename);
     throw vpRobotException (vpRobotException::readingParametersError,
-                              "Could not read translation and rotation parameters from config file ");
+                            "Could not read translation and rotation parameters from config file %s", filename);
   }
 
   return;
@@ -725,8 +712,8 @@ vpViper650::getCameraParameters (vpCameraParameters &cam,
     break;
   }
   case vpViper650::TOOL_CUSTOM: {
-    vpERROR_TRACE ("No intrinsic parameters available for a custom tool");
-    throw vpRobotException (vpRobotException::badValue, "No intrinsic parameters available for a custom tool");
+    throw vpRobotException (vpRobotException::badValue,
+                            "No intrinsic parameters available for a custom tool");
     break;
   }
   default: {
@@ -812,8 +799,8 @@ vpViper650::getCameraParameters (vpCameraParameters &cam,
     break;
   }
   case vpViper650::TOOL_CUSTOM: {
-    vpERROR_TRACE ("No intrinsic parameters available for a custom tool");
-    throw vpRobotException (vpRobotException::badValue, "No intrinsic parameters available for a custom tool");
+    throw vpRobotException (vpRobotException::badValue,
+                            "No intrinsic parameters available for a custom tool");
     break;
   }
   default:

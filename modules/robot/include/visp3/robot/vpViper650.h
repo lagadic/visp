@@ -98,17 +98,13 @@ class VISP_EXPORT vpViper650: public vpViper
   vpViper650();
   virtual ~vpViper650() {};
 
-  void init (void);
-#ifdef VISP_HAVE_ACCESS_TO_NAS
+  void init();
   void init(const char *camera_extrinsic_parameters);
-#endif
-  void init (vpViper650::vpToolType tool,
-	     vpCameraParameters::vpCameraParametersProjType projModel =
-	     vpCameraParameters::perspectiveProjWithoutDistortion);
-  void init (vpViper650::vpToolType tool,
-         const std::string &filename);
-  void init (vpViper650::vpToolType tool,
-         const vpHomogeneousMatrix &eMc_);
+  void init(vpViper650::vpToolType tool,
+            vpCameraParameters::vpCameraParametersProjType projModel =
+            vpCameraParameters::perspectiveProjWithoutDistortion);
+  void init(vpViper650::vpToolType tool, const std::string &filename);
+  void init(vpViper650::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 
 
   //! Get the current camera model projection type
@@ -141,7 +137,6 @@ class VISP_EXPORT vpViper650: public vpViper
   vpToolType tool_current;
   // Used projection model
   vpCameraParameters::vpCameraParametersProjType projModel;
-
 };
 
 #endif

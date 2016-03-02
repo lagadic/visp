@@ -385,13 +385,9 @@ public:  /* Methode publiques */
   void init (vpViper650::vpToolType tool,
              vpCameraParameters::vpCameraParametersProjType
              projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
-  void init (vpViper650::vpToolType tool,
-             const std::string &filename);
-  void init (vpViper650::vpToolType tool,
-             const vpHomogeneousMatrix &eMc_);
+  void init (vpViper650::vpToolType tool, const std::string &filename);
+  void init (vpViper650::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 
-  void set_eMc(const vpHomogeneousMatrix &eMc_);
-  void set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_);
 
   void move(const char *filename);
 
@@ -402,6 +398,9 @@ public:  /* Methode publiques */
 
   static bool readPosFile(const char *filename, vpColVector &q);
   static bool savePosFile(const char *filename, const vpColVector &q);
+
+  void set_eMc(const vpHomogeneousMatrix &eMc_);
+  void set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_);
 
   void setMaxRotationVelocity(double w_max);
   void setMaxRotationVelocityJoint6(double w6_max);
