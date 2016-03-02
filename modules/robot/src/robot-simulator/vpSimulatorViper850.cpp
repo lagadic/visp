@@ -292,8 +292,8 @@ vpSimulatorViper850::initDisplay()
   \sa vpCameraParameters, init()
 */
 void
-vpSimulatorViper850::init (vpViper850::vpToolType tool,
-           vpCameraParameters::vpCameraParametersProjType proj_model)
+vpSimulatorViper850::init(vpViper850::vpToolType tool,
+                          vpCameraParameters::vpCameraParametersProjType proj_model)
 {
   this->projModel = proj_model;
   
@@ -322,6 +322,7 @@ vpSimulatorViper850::init (vpViper850::vpToolType tool,
       break;
     }
   case vpViper850::TOOL_SCHUNK_GRIPPER_CAMERA:
+  case vpViper850::TOOL_CUSTOM:
   case vpViper850::TOOL_GENERIC_CAMERA: {
       std::cout << "This tool is not handled in vpSimulatorViper850.cpp" << std::endl;
       break;
@@ -347,8 +348,8 @@ vpSimulatorViper850::init (vpViper850::vpToolType tool,
 
 void
 vpSimulatorViper850::getCameraParameters (vpCameraParameters &cam,
-				 const unsigned int &image_width,
-				 const unsigned int &image_height)
+                                          const unsigned int &image_width,
+                                          const unsigned int &image_height)
 {
   if (toolCustom)
   {
@@ -358,11 +359,11 @@ vpSimulatorViper850::getCameraParameters (vpCameraParameters &cam,
   switch (getToolType()) {
   case vpViper850::TOOL_MARLIN_F033C_CAMERA: {
     // Set default intrinsic camera parameters for 640x480 images
-    if (image_width == 640 && image_height == 480) 
+    if (image_width == 640 && image_height == 480)
     {
-      std::cout << "Get default camera parameters for camera \"" 
-		<< vpViper850::CONST_MARLIN_F033C_CAMERA_NAME << "\"" << std::endl;
-	cam.initPersProjWithoutDistortion(1232.0, 1233.0, 320, 240);
+      std::cout << "Get default camera parameters for camera \""
+                << vpViper850::CONST_MARLIN_F033C_CAMERA_NAME << "\"" << std::endl;
+      cam.initPersProjWithoutDistortion(1232.0, 1233.0, 320, 240);
     }
     else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
@@ -372,9 +373,9 @@ vpSimulatorViper850::getCameraParameters (vpCameraParameters &cam,
   case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
-      std::cout << "Get default camera parameters for camera \"" 
-		<< vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME << "\"" << std::endl;
-	cam.initPersProjWithoutDistortion(868.0, 869.0, 320, 240);
+      std::cout << "Get default camera parameters for camera \""
+                << vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME << "\"" << std::endl;
+      cam.initPersProjWithoutDistortion(868.0, 869.0, 320, 240);
     }
     else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
@@ -382,10 +383,11 @@ vpSimulatorViper850::getCameraParameters (vpCameraParameters &cam,
     break;
   }
   case vpViper850::TOOL_SCHUNK_GRIPPER_CAMERA:
+  case vpViper850::TOOL_CUSTOM:
   case vpViper850::TOOL_GENERIC_CAMERA: {
-      std::cout << "This tool is not handled in vpSimulatorViper850.cpp" << std::endl;
-      break;
-    }
+    std::cout << "This tool is not handled in vpSimulatorViper850.cpp" << std::endl;
+    break;
+  }
   }
   return;
 }

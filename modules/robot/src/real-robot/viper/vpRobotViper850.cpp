@@ -166,7 +166,7 @@ int main()
 }
   \endcode
 
-  \sa vpCameraParameters, init(vpViper850::vpViper850CameraRobotType,
+  \sa vpCameraParameters, init(vpViper850::vpToolType,
   vpCameraParameters::vpCameraParametersProjType)
 
 */
@@ -239,14 +239,17 @@ vpRobotViper850::vpRobotViper850 (bool verbose)
   init(vpViper850::defaultCameraRobot). If you want to set the extrinsic
   camera parameters to those obtained with a camera perspective model
   including the distorsion you have to call the
-  init(vpViper850::vpViper850CameraRobotType,
-  vpCameraParameters::vpCameraParametersProjType) method.
+  init(vpViper850::vpViper850CameraRobotType, vpCameraParameters::vpCameraParametersProjType) method.
+  If you want to set custom extrinsic camera parameters you have to call
+  the init(vpViper850::vpToolType, const vpHomogeneousMatrix&) method.
 
-  \sa vpCameraParameters, init(vpViper850::vpViper850CameraRobotType,
-  vpCameraParameters::vpCameraParametersProjType)
+  \sa vpCameraParameters, init(vpViper850::vpToolType, vpCameraParameters::vpCameraParametersProjType),
+  init(vpViper850::vpToolType, const vpHomogeneousMatrix&),
+  init(vpViper850::vpToolType, const std::string&)
+
 */
 void
-    vpRobotViper850::init (void)
+vpRobotViper850::init (void)
 {
   InitTry;
 
@@ -360,7 +363,7 @@ void
 
   \param projModel : Projection model associated to the camera.
 
- To set the extrinsic camera parameters related to the \f$^e{\bf
+  To set the extrinsic camera parameters related to the \f$^e{\bf
   M}_c\f$ matrix obtained with a camera perspective projection model
   including the distorsion, use the code below:
 
@@ -401,27 +404,20 @@ int main()
 }
   \endcode
 
-  \sa vpCameraParameters, init()
+  \sa vpCameraParameters,
+  init(vpViper850::vpToolType, const vpHomogeneousMatrix&),
+  init(vpViper850::vpToolType, const std::string&)
 */
 void
-    vpRobotViper850::init (vpViper850::vpToolType tool,
-                           vpCameraParameters::vpCameraParametersProjType projModel)
+vpRobotViper850::init (vpViper850::vpToolType tool,
+                       vpCameraParameters::vpCameraParametersProjType projModel)
 {
-
-  InitTry;
   // Read the robot constants from files
   // - joint [min,max], coupl_56, long_56
   // - camera extrinsic parameters relative to eMc
   vpViper850::init(tool, projModel);
 
-  // Set the camera constant (eMc pose) in the MotionBlox
-  double eMc_pose[6];
-  for (unsigned int i=0; i < 3; i ++) {
-    eMc_pose[i] = etc[i];   // translation in meters
-    eMc_pose[i+3] = erc[i]; // rotation in rad
-  }
-  // Update the eMc pose in the low level controller
-  Try( PrimitiveCONST_Viper850(eMc_pose) );
+  InitTry;
 
   // get real joint min/max from the MotionBlox
   Try( PrimitiveJOINT_MINMAX_Viper850(joint_min.data, joint_max.data) );
@@ -433,9 +429,227 @@ void
   //     printf("axis %d: joint min %lf, max %lf\n", i, joint_min[i], joint_max[i]);
   //   }
 
-  setToolType(tool);
+  // Set the camera constant (eMc pose) in the MotionBlox
+  double eMc_pose[6];
+  for (unsigned int i=0; i < 3; i ++) {
+    eMc_pose[i] = etc[i];   // translation in meters
+    eMc_pose[i+3] = erc[i]; // rotation in rad
+  }
+  // Update the eMc pose in the low level controller
+  Try( PrimitiveCONST_Viper850(eMc_pose) );
 
   CatchPrint();
+  return ;
+}
+
+/*!
+
+  Initialize the robot kinematics (set the eMc homogeneous
+  parameters in the low level controller) from a file and
+  also get the joint limits from the low-level controller.
+
+  \param tool : Tool to use.
+
+  \param filename : Path of the configuration file containing the
+  transformation between the end-effector frame and the tool frame.
+
+  To set the transformation parameters related to the \f$^e{\bf
+  M}_c\f$ matrix, use the code below:
+
+  \code
+#include <visp3/robot/vpRobotViper850.h>
+
+int main()
+{
+#ifdef VISP_HAVE_VIPER850
+  vpRobotViper850 robot;
+
+  // Set the transformation between the end-effector frame
+  // and the tool frame from a file
+  std::string filename("./EffectorToolTransformation.cnf");
+
+  robot.init(vpViper850::TOOL_CUSTOM, filename);
+#endif
+}
+  \endcode
+
+  The configuration file should have the form below:
+
+  \code
+# Start with any number of consecutive lines
+# beginning with the symbol '#'
+#
+# The 3 following lines contain the name of the camera,
+# the rotation parameters of the geometric transformation
+# using the Euler angles in degrees with convention XYZ and
+# the translation parameters expressed in meters
+CAMERA CameraName
+eMc_ROT_XYZ 10.0 -90.0 20.0
+eMc_TRANS_XYZ  0.05 0.01 0.06
+    \endcode
+
+  \sa vpCameraParameters, init(), init(vpViper850::vpToolType,
+  vpCameraParameters::vpCameraParametersProjType),
+  init(vpViper850::vpToolType, const vpHomogeneousMatrix&)
+*/
+void
+vpRobotViper850::init(vpViper850::vpToolType tool, const std::string &filename)
+{
+  vpViper850::init(tool, filename);
+
+  InitTry;
+
+  // Get real joint min/max from the MotionBlox
+  Try( PrimitiveJOINT_MINMAX_Viper850(joint_min.data, joint_max.data) );
+  // Convert units from degrees to radians
+  joint_min.deg2rad();
+  joint_max.deg2rad();
+
+  //   for (unsigned int i=0; i < njoint; i++) {
+  //     printf("axis %d: joint min %lf, max %lf\n", i, joint_min[i], joint_max[i]);
+  //   }
+
+  // Set the camera constant (eMc pose) in the MotionBlox
+  double eMc_pose[6];
+  for (unsigned int i=0; i < 3; i ++) {
+    eMc_pose[i] = etc[i];   // translation in meters
+    eMc_pose[i+3] = erc[i]; // rotation in rad
+  }
+  // Update the eMc pose in the low level controller
+  Try( PrimitiveCONST_Viper850(eMc_pose) );
+
+  CatchPrint();
+  return ;
+}
+
+/*!
+
+  Initialize the robot kinematics with user defined parameters
+  (set the eMc homogeneous parameters in the low level controller)
+  and also get the joint limits from the low-level controller.
+
+  \param tool : Tool to use.
+
+  \param eMc_ : Transformation between the end-effector frame
+  and the tool frame.
+
+  To set the transformation parameters related to the \f$^e{\bf
+  M}_c\f$ matrix, use the code below:
+
+  \code
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/robot/vpRobotViper850.h>
+
+int main()
+{
+#ifdef VISP_HAVE_VIPER850
+  vpRobotViper850 robot;
+
+  // Set the transformation between the end-effector frame
+  // and the tool frame.
+  vpHomogeneousMatrix eMc(0.001, 0.0, 0.1, 0.0, 0.0, M_PI/2);
+
+  robot.init(vpViper850::TOOL_CUSTOM, eMc);
+#endif
+}
+  \endcode
+
+  \sa vpCameraParameters, init(), init(vpViper850::vpToolType,
+  vpCameraParameters::vpCameraParametersProjType),
+  init(vpViper850::vpToolType, const std::string&)
+*/
+void
+vpRobotViper850::init(vpViper850::vpToolType tool, const vpHomogeneousMatrix &eMc_)
+{
+  vpViper850::init(tool, eMc_);
+
+  InitTry;
+
+  // Get real joint min/max from the MotionBlox
+  Try( PrimitiveJOINT_MINMAX_Viper850(joint_min.data, joint_max.data) );
+  // Convert units from degrees to radians
+  joint_min.deg2rad();
+  joint_max.deg2rad();
+
+  //   for (unsigned int i=0; i < njoint; i++) {
+  //     printf("axis %d: joint min %lf, max %lf\n", i, joint_min[i], joint_max[i]);
+  //   }
+
+  // Set the camera constant (eMc pose) in the MotionBlox
+  double eMc_pose[6];
+  for (unsigned int i=0; i < 3; i ++) {
+    eMc_pose[i] = etc[i];   // translation in meters
+    eMc_pose[i+3] = erc[i]; // rotation in rad
+  }
+  // Update the eMc pose in the low level controller
+  Try( PrimitiveCONST_Viper850(eMc_pose) );
+
+  CatchPrint();
+  return ;
+}
+
+/*!
+
+  Set the geometric transformation between the end-effector frame and
+  the tool frame in the low level controller.
+
+  \warning This function overwrite the transformation parameters that were
+  potentially set using one of the init functions
+
+  \param eMc_ : Transformation between the end-effector frame
+  and the tool frame.
+*/
+void
+vpRobotViper850::set_eMc(const vpHomogeneousMatrix &eMc_)
+{
+  this->vpViper850::set_eMc(eMc_);
+
+  InitTry;
+
+  // Set the camera constant (eMc pose) in the MotionBlox
+  double eMc_pose[6];
+  for (unsigned int i=0; i < 3; i ++) {
+    eMc_pose[i] = etc[i];   // translation in meters
+    eMc_pose[i+3] = erc[i]; // rotation in rad
+  }
+  // Update the eMc pose in the low level controller
+  Try( PrimitiveCONST_Viper850(eMc_pose) );
+
+  CatchPrint();
+
+  return ;
+}
+
+/*!
+
+  Set the geometric transformation between the end-effector frame and
+  the tool frame in the low level controller.
+
+  \warning This function overwrite the transformation parameters that were
+  potentially set using one of the init functions.
+
+  \param etc_ : Translation between the end-effector frame and the tool frame.
+  \param erc_ : Rotation between the end-effector frame and the tool frame
+  using the Euler angles in radians with the XYZ convention.
+*/
+void
+vpRobotViper850::set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_)
+{
+  this->vpViper850::set_eMc(etc_,erc_);
+
+  InitTry;
+
+  // Set the camera constant (eMc pose) in the MotionBlox
+  double eMc_pose[6];
+  for (unsigned int i=0; i < 3; i ++) {
+    eMc_pose[i] = etc[i];   // translation in meters
+    eMc_pose[i+3] = erc[i]; // rotation in rad
+  }
+  // Update the eMc pose in the low level controller
+  Try( PrimitiveCONST_Viper850(eMc_pose) );
+
+  CatchPrint();
+
   return ;
 }
 
@@ -995,7 +1209,7 @@ void
         // convert rad to deg requested for the low level controller
         destination.rad2deg();
         Try( PrimitiveMOVE_J_Viper850(destination.data, positioningVelocity) );
-        Try( WaitState_Viper850(ETAT_ATTENTE_AFMA6, 1000) );
+        Try( WaitState_Viper850(ETAT_ATTENTE_VIPER850, 1000) );
       }
       else {
         // Cartesian position is out of range
@@ -1011,7 +1225,7 @@ void
 
       //std::cout << "Joint destination (deg): " << destination.t() << std::endl;
       Try( PrimitiveMOVE_J_Viper850(destination.data, positioningVelocity) );
-      Try( WaitState_Viper850(ETAT_ATTENTE_AFMA6, 1000) );
+      Try( WaitState_Viper850(ETAT_ATTENTE_VIPER850, 1000) );
       break ;
 
     }
@@ -1030,7 +1244,7 @@ void
       //std::cout << "Base frame destination Rzyz (deg): " << destination.t() << std::endl;
       Try( PrimitiveMOVE_C_Viper850(destination.data, configuration,
                                     positioningVelocity) );
-      Try( WaitState_Viper850(ETAT_ATTENTE_AFMA6, 1000) );
+      Try( WaitState_Viper850(ETAT_ATTENTE_VIPER850, 1000) );
 
       break ;
     }

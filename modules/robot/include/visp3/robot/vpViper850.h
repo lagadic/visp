@@ -88,7 +88,8 @@ class VISP_EXPORT vpViper850: public vpViper
     TOOL_MARLIN_F033C_CAMERA,   /*!< Marlin F033C camera. */
     TOOL_PTGREY_FLEA2_CAMERA,   /*!< Point Grey Flea 2 camera. */
     TOOL_SCHUNK_GRIPPER_CAMERA, /*!< Camera attached to the Schunk gripper. */
-    TOOL_GENERIC_CAMERA         /*!< A generic camera. */
+    TOOL_GENERIC_CAMERA,        /*!< A generic camera. */
+    TOOL_CUSTOM                 /*!< A user defined tool. */
   } vpToolType;
 
   //! Default tool attached to the robot end effector
@@ -97,14 +98,13 @@ class VISP_EXPORT vpViper850: public vpViper
   vpViper850();
   virtual ~vpViper850() {};
 
-  void init (void);
-#ifdef VISP_HAVE_ACCESS_TO_NAS
+  void init();
   void init(const char *camera_extrinsic_parameters);
-#endif
-  void init (vpViper850::vpToolType tool,
-	     vpCameraParameters::vpCameraParametersProjType projModel =
-	     vpCameraParameters::perspectiveProjWithoutDistortion);
-
+  void init(vpViper850::vpToolType tool,
+            vpCameraParameters::vpCameraParametersProjType projModel =
+            vpCameraParameters::perspectiveProjWithoutDistortion);
+  void init(vpViper850::vpToolType tool, const std::string &filename);
+  void init(vpViper850::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 
   //! Get the current camera model projection type
   vpCameraParameters::vpCameraParametersProjType getCameraParametersProjType() const{
@@ -123,9 +123,7 @@ class VISP_EXPORT vpViper850: public vpViper
     return tool_current;
   };
 
-#ifdef VISP_HAVE_ACCESS_TO_NAS
   void parseConfigFile (const char * filename);
-#endif
 
  protected:
   //! Set the current tool type
