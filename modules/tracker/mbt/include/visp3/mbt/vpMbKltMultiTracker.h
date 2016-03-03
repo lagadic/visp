@@ -127,13 +127,16 @@ public:
   virtual unsigned int getClipping(const std::string &cameraName) const;
 
   virtual vpMbHiddenFaces<vpMbtPolygon>& getFaces();
-
+  virtual vpMbHiddenFaces<vpMbtPolygon>& getFaces(const std::string &cameraName);
   virtual std::map<std::string, vpMbHiddenFaces<vpMbtPolygon> > getFaces() const;
 
+  virtual std::list<vpMbtDistanceCircle*>& getFeaturesCircle();
   virtual std::list<vpMbtDistanceCircle*>& getFeaturesCircle(const std::string &cameraName);
 
+  virtual std::list<vpMbtDistanceKltPoints*>& getFeaturesKlt();
   virtual std::list<vpMbtDistanceKltPoints*>& getFeaturesKlt(const std::string &cameraName);
 
+  virtual std::list<vpMbtDistanceKltCylinder*>& getFeaturesKltCylinder();
   virtual std::list<vpMbtDistanceKltCylinder*>& getFeaturesKltCylinder(const std::string &cameraName);
 
   virtual std::map<std::string, std::vector<vpImagePoint> > getKltImagePoints() const;

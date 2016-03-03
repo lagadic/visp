@@ -92,8 +92,6 @@ public:
 
   /** @name Inherited functionalities from vpMbEdgeMultiTracker */
   //@{
-  virtual void computeProjectionError();
-
   virtual void display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &cam_,
       const vpColor& col, const unsigned int thickness=1, const bool displayFullModel=false);
 
@@ -129,7 +127,20 @@ public:
   virtual unsigned int getClipping(const std::string &cameraName) const;
 
   virtual vpMbHiddenFaces<vpMbtPolygon>& getFaces();
+  virtual vpMbHiddenFaces<vpMbtPolygon>& getFaces(const std::string &cameraName);
   virtual std::map<std::string, vpMbHiddenFaces<vpMbtPolygon> > getFaces() const;
+
+  void getLcircle(std::list<vpMbtDistanceCircle *>& circlesList, const unsigned int level=0) const;
+  virtual void getLcircle(const std::string &cameraName, std::list<vpMbtDistanceCircle *>& circlesList,
+      const unsigned int level=0) const;
+
+  void getLcylinder(std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int level=0) const;
+  virtual void getLcylinder(const std::string &cameraName, std::list<vpMbtDistanceCylinder *>& cylindersList,
+      const unsigned int level=0) const;
+
+  void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int level=0) const;
+  virtual void getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *>& linesList,
+      const unsigned int level=0) const;
 
   virtual void getMovingEdge(vpMe &p_me) const;
   virtual vpMe getMovingEdge() const;
@@ -324,6 +335,8 @@ protected:
   //@{
   virtual void cleanPyramid(std::map<std::string, std::vector<const vpImage<unsigned char>* > >& pyramid);
 
+  virtual void computeProjectionError();
+
   virtual void computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
       const unsigned int lvl);
 
@@ -336,14 +349,6 @@ protected:
       std::map<std::string, vpColVector> &mapOfErrorCylinders, std::map<std::string, vpColVector> &mapOfErrorCircles,
       std::map<std::string, vpRobust> &mapOfRobustLines, std::map<std::string, vpRobust> &mapOfRobustCylinders,
       std::map<std::string, vpRobust> &mapOfRobustCircles, double threshold);
-
-  virtual void getLcircle(const std::string &cameraName, std::list<vpMbtDistanceCircle *>& circlesList,
-      const unsigned int level=0) const;
-
-  virtual void getLcylinder(const std::string &cameraName, std::list<vpMbtDistanceCylinder *>& cylindersList,
-      const unsigned int level=0) const;
-
-  virtual void getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *>& linesList, const unsigned int level=0) const;
 
   virtual void initPyramid(const std::map<std::string, const vpImage<unsigned char> * >& mapOfImages,
       std::map<std::string, std::vector<const vpImage<unsigned char>* > >& pyramid);

@@ -42,9 +42,12 @@ cmake_minimum_required(VERSION 2.6)
 find_package(VISP REQUIRED visp_core visp_io visp_gui)
 
 set(example_cpp
-  mbtEdgeTracking.cpp
   mbtEdgeKltTracking.cpp
+  mbtEdgeKltMultiTracking.cpp
+  mbtEdgeMultiTracking.cpp
+  mbtEdgeTracking.cpp
   mbtKltTracking.cpp
+  mbtKltMultiTracking.cpp
   templateTracker.cpp
   trackDot2WithAutoDetection.cpp
   trackMeCircle.cpp
@@ -74,6 +77,29 @@ add_test(mbtKltTracking-cao     mbtKltTracking -c -f ${OPTION_TO_DESACTIVE_DISPL
 
 add_test(mbtEdgeTracking-cao-nocyl    mbtEdgeTracking -c -f -C ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtEdgeKltTracking-cao-nocyl mbtEdgeKltTracking -c -f -C ${OPTION_TO_DESACTIVE_DISPLAY})
+
+add_test(mbtEdgeTracking-cao-scanline    mbtEdgeTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(mbtEdgeKltTracking-cao-scanline mbtEdgeKltTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(mbtKltTracking-cao-scanline     mbtKltTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
+
+add_test(mbtEdgeMultiTracking-cao    mbtEdgeMultiTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(mbtEdgeKltMultiTracking-cao mbtEdgeKltMultiTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(mbtKltMultiTracking-cao     mbtKltMultiTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
+
+add_test(mbtEdgeMultiTracking-cao-scanline    mbtEdgeMultiTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(mbtEdgeKltMultiTracking-cao-scanline mbtEdgeKltMultiTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(mbtKltMultiTracking-cao-scanline     mbtKltMultiTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
+
+#disable test with Ogre otherwise we get an Ogre exception with Ogre and remote access:
+#terminate called after throwing an instance of 'Ogre::RenderingAPIException'
+#what():  OGRE EXCEPTION(3:RenderingAPIException): Couldn`t open X display  in GLXGLSupport::getGLDisplay at /build/buildd/ogre-1.9-1.9.0+dfsg1/RenderSystems/GL/src/GLX/OgreGLXGLSupport.cpp (line 807)
+#add_test(mbtEdgeTracking-cao-ogre-scanline    mbtEdgeTracking -c -f -o -l ${OPTION_TO_DESACTIVE_DISPLAY})
+#add_test(mbtEdgeKltTracking-cao-ogre-scanline mbtEdgeKltTracking -c -f -o -l ${OPTION_TO_DESACTIVE_DISPLAY})
+#add_test(mbtKltTracking-cao-ogre-scanline     mbtKltTracking -c -f -o -l ${OPTION_TO_DESACTIVE_DISPLAY})
+
+#add_test(mbtEdgeMultiTracking-cao-ogre-scanline    mbtEdgeMultiTracking -c -f -o -l ${OPTION_TO_DESACTIVE_DISPLAY})
+#add_test(mbtEdgeKltMultiTracking-cao-ogre-scanline mbtEdgeKltMultiTracking -c -f -o -l ${OPTION_TO_DESACTIVE_DISPLAY})
+#add_test(mbtKltMultiTracking-cao-ogre-scanline     mbtKltMultiTracking -c -f -o -l ${OPTION_TO_DESACTIVE_DISPLAY})
 
 add_test(trackDot2WithAutoDetection trackDot2WithAutoDetection -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(trackMeCircle    trackMeCircle -c ${OPTION_TO_DESACTIVE_DISPLAY})

@@ -277,11 +277,11 @@ public:
                        const vpColor& col, const unsigned int thickness=1, const bool displayFullModel = false);
 
   /*! Return the address of the circle feature list. */
-  std::list<vpMbtDistanceCircle*> &getFeaturesCircle() { return circles_disp; }
+  virtual std::list<vpMbtDistanceCircle*> &getFeaturesCircle() { return circles_disp; }
   /*! Return the address of the cylinder feature list. */
-  std::list<vpMbtDistanceKltCylinder*> &getFeaturesKltCylinder() { return kltCylinders; }
+  virtual std::list<vpMbtDistanceKltCylinder*> &getFeaturesKltCylinder() { return kltCylinders; }
   /*! Return the address of the Klt feature list. */
-  std::list<vpMbtDistanceKltPoints*> &getFeaturesKlt() { return kltPolygons; }
+  virtual std::list<vpMbtDistanceKltPoints*> &getFeaturesKlt() { return kltPolygons; }
 
   /*!
     Get the current list of KLT points.
