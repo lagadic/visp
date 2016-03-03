@@ -46,7 +46,7 @@ before_script:
 
 script: 
   - make
-  - ctest
+  - ctest -V
 
 notifications:
   email:
