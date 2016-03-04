@@ -67,6 +67,8 @@ public:
     */
   virtual ~vpUnicycle() {};
 
+  /** @name Inherited functionalities from vpUnicycle */
+  //@{
   /*!
     Return the tranformation \f${^c}{\bf M}_e\f$ between the camera frame
     and the mobile robot end effector frame.
@@ -131,6 +133,7 @@ public:
   {
     eJe_ = eJe;
   }
+  //@}
 
 protected:
   vpHomogeneousMatrix cMe_; // Camera frame to mobile platform frame

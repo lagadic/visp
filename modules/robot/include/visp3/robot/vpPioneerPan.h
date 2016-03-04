@@ -98,7 +98,7 @@ public:
   /*!
     Create a pioneer mobile robot equiped with a pan head.
     */
-    vpPioneerPan() : mMp_(), pMe_()
+  vpPioneerPan() : mMp_(), pMe_()
   {
     double q = 0; // Initial position of the pan axis
     set_mMp();
@@ -111,6 +111,9 @@ public:
     Destructor that does nothing.
     */
   virtual ~vpPioneerPan() {};
+
+  /** @name Inherited functionalities from vpPioneerPan */
+  //@{
 
   /*!
     Set the robot jacobian expressed at point E the end effector frame located on the pan head.
@@ -156,8 +159,11 @@ public:
     eJe_[4][1] = -1;
     eJe_[4][2] = 1;
   }
+  //@}
 
 protected:
+  /** @name Protected Member Functions Inherited from vpPioneerPan */
+  //@{
   /*!
     Set the transformation between the camera frame and the pan head end effector frame.
     */
@@ -218,6 +224,7 @@ protected:
 
     pMe_.insert(pRe);
   }
+  //@}
 
 protected:
   vpHomogeneousMatrix mMp_; // constant

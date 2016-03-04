@@ -71,6 +71,8 @@ public:
   */
   virtual ~vpRobotSimulator() {};
 
+  /** @name Inherited functionalities from vpRobotSimulator */
+  //@{
   /*!
     Return the sampling time.
 
@@ -93,6 +95,7 @@ public:
   {
     this->delta_t_ = delta_t;
   }
+  //@}
 };
 
 #endif

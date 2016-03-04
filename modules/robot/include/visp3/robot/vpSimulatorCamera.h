@@ -113,6 +113,8 @@ public:
   virtual ~vpSimulatorCamera() ;
 
 public:
+  /** @name Inherited functionalities from vpSimulatorCamera */
+  //@{
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
   void get_eJe(vpMatrix &eJe);
 
@@ -122,6 +124,7 @@ public:
   void setPosition(const vpHomogeneousMatrix &wMc);
   void setVelocity(const vpRobot::vpControlFrameType frame,
                    const  vpColVector &vel)  ;
+  //@}
 
 private:
   void init() ;

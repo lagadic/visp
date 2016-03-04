@@ -286,6 +286,8 @@ public:
   vpWireFrameSimulator();
   virtual ~vpWireFrameSimulator();
 
+  /** @name Inherited functionalities from vpWireFrameSimulator */
+  //@{
   /*!
       Delete the history of the main camera position which are displayed in the external views.
     */
@@ -555,8 +557,11 @@ public:
       \param fMo_ : The pose between the object and the fixed world frame.
     */
   void set_fMo(const vpHomogeneousMatrix &fMo_) {this->fMo = fMo_;/*this->cMo = fMc.inverse()*fMo;*/}
+  //@}
 
 protected:
+  /** @name Protected Member Functions Inherited from vpWireFrameSimulator */
+  //@{
   void display_scene(Matrix mat, Bound_scene &sc, const vpImage<vpRGBa> &I, const vpColor &color);
   void display_scene(Matrix mat, Bound_scene &sc, const vpImage<unsigned char> &I, const vpColor &color);
   vpHomogeneousMatrix navigation(const vpImage<vpRGBa> &I, bool &changed);
@@ -565,6 +570,7 @@ protected:
   vpImagePoint projectCameraTrajectory (const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &fMo);
   vpImagePoint projectCameraTrajectory (const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &fMo, const vpHomogeneousMatrix &cMf);
   vpImagePoint projectCameraTrajectory (const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &fMo, const vpHomogeneousMatrix &cMf);
+  //@}
 };
 
 #endif

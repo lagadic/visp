@@ -53,7 +53,7 @@
   \class vpRobot
   \ingroup group_robot_real_gantry group_robot_real_cylindrical group_robot_real_arm
   \ingroup group_robot_real_ptu group_robot_real_unicycle group_robot_real_template
-  \brief class that defines a generic virtual robot
+  \brief Class that defines a generic virtual robot.
 */
 class VISP_EXPORT vpRobot
 {
@@ -117,6 +117,9 @@ public:
   vpRobot (const vpRobot &robot);
   virtual ~vpRobot();
 
+  /** @name Inherited functionalities from vpRobot */
+  //@{
+
   //---------- Jacobian -----------------------------
   //! Get the robot Jacobian expressed in the end-effector frame
   virtual void get_eJe(vpMatrix &_eJe) = 0 ;
@@ -155,9 +158,14 @@ public:
                            const vpColVector &vel) = 0 ;
   inline void setVerbose(bool verbose) { verbose_ = verbose; };
 
+  //@}
+
 protected:
+  /** @name Protected Member Functions Inherited from vpRobot */
+  //@{
   vpControlFrameType setRobotFrame (vpRobot::vpControlFrameType newFrame);
   vpControlFrameType getRobotFrame (void) const { return frameRobot ; }
+  //@}
 } ;
 
 #endif

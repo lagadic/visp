@@ -54,6 +54,46 @@
 
   \brief Modelisation of the ADEPT Viper 650 robot.
 
+  The model of the robot is the following:
+  \image html model-viper.png Model of the Viper 650 robot.
+
+  The non modified Denavit-Hartenberg representation of the robot is
+  given in the table below, where \f$q_1^*, \ldots, q_6^*\f$
+  are the variable joint positions.
+
+  \f[
+  \begin{tabular}{|c|c|c|c|c|}
+  \hline
+  Joint & $a_i$ & $d_i$ & $\alpha_i$ & $\theta_i$ \\
+  \hline
+  1 & $a_1$ & $d_1$ & $-\pi/2$ & $q_1^*$ \\
+  2 & $a_2$ & 0     & 0        & $q_2^*$ \\
+  3 & $a_3$ & 0     & $-\pi/2$ & $q_3^* - \pi$ \\
+  4 & 0     & $d_4$ & $\pi/2$  & $q_4^*$ \\
+  5 & 0     & 0     & $-\pi/2$ & $q_5^*$ \\
+  6 & 0     & 0     & 0        & $q_6^*-\pi$ \\
+  7 & 0     & $d_6$ & 0        & 0 \\
+  \hline
+  \end{tabular}
+  \f]
+
+  In this modelisation, different frames have to be considered.
+
+  - \f$ {\cal F}_f \f$: the reference frame, also called world frame
+
+  - \f$ {\cal F}_w \f$: the wrist frame located at the intersection of
+    the last three rotations, with \f$ ^f{\bf M}_w = ^0{\bf M}_6 \f$
+
+  - \f$ {\cal F}_e \f$: the end-effector frame located at the interface of the
+    two tool changers, with \f$^f{\bf M}_e = 0{\bf M}_7 \f$
+
+  - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
+    M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
+    a calibration stage. We can also consider a custom tool TOOL_CUSTOM and set this
+    during robot initialisation or using set_eMc().
+
+  - \f$ {\cal F}_s \f$: the force/torque sensor frame, with \f$d7=0.0666\f$.
+
 */
 
 #include <visp3/robot/vpViper.h>
@@ -98,7 +138,9 @@ class VISP_EXPORT vpViper650: public vpViper
   vpViper650();
   virtual ~vpViper650() {};
 
-  void init();
+  /** @name Inherited functionalities from vpViper650 */
+  //@{
+  void init (void);
   void init(const char *camera_extrinsic_parameters);
   void init(vpViper650::vpToolType tool,
             vpCameraParameters::vpCameraParametersProjType projModel =
@@ -125,12 +167,16 @@ class VISP_EXPORT vpViper650: public vpViper
   };
 
   void parseConfigFile (const char * filename);
+  //@}
 
  protected:
+  /** @name Protected Member Functions Inherited from vpViper650 */
+  //@{
   //! Set the current tool type
   void setToolType(vpViper650::vpToolType tool){
     tool_current = tool;
   };
+  //@}
 
  protected:
   //! Current tool in use

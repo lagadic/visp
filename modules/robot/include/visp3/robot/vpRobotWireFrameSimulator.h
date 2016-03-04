@@ -201,6 +201,8 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     vpRobotWireFrameSimulator(bool display);
     virtual ~vpRobotWireFrameSimulator();
     
+    /** @name Inherited functionalities from vpRobotWireFrameSimulator */
+    //@{
     /*!
       Get the parameters of the virtual external camera.
 
@@ -345,25 +347,28 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
       \param fMo_ : The pose between the object and the fixed world frame.
     */
     void set_fMo(const vpHomogeneousMatrix &fMo_) {this->fMo = fMo_;}
+    //@}
 
   protected:
+    /** @name Protected Member Functions Inherited from vpRobotWireFrameSimulator */
+    //@{
     /*!
       Function used to launch the thread which moves the robot.
     */
-    #if defined(_WIN32)
-	static DWORD WINAPI launcher( LPVOID lpParam ) 
-	{
-    ((vpRobotWireFrameSimulator *)lpParam)->updateArticularPosition();
-		return 0;
-	}
-    #elif defined(VISP_HAVE_PTHREAD)
+#if defined(_WIN32)
+    static DWORD WINAPI launcher( LPVOID lpParam )
+    {
+      ((vpRobotWireFrameSimulator *)lpParam)->updateArticularPosition();
+      return 0;
+    }
+#elif defined(VISP_HAVE_PTHREAD)
     static void* launcher(void *arg)
     {
       (reinterpret_cast<vpRobotWireFrameSimulator *>(arg))->updateArticularPosition();
       // pthread_exit((void*) 0);
       return NULL;
-    }    
-    #endif
+    }
+#endif
     
     /* Robot functions */
     void init() {;}
@@ -467,6 +472,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 
     /*! Get a table of poses between the reference frame and the frames you used to compute the Denavit-Hartenberg representation */
     virtual void get_fMi(vpHomogeneousMatrix *fMit) = 0;
+    //@}
 };
 
 #endif

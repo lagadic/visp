@@ -117,6 +117,8 @@ class VISP_EXPORT vpAfma6
   /*! Destructor that does nothing. */
   virtual ~vpAfma6() {};
 
+  /** @name Inherited functionalities from vpAfma6 */
+  //@{
   void init (void);
 #ifdef VISP_HAVE_ACCESS_TO_NAS
   void init (const char * paramAfma6, const char * paramCamera);
@@ -164,12 +166,17 @@ class VISP_EXPORT vpAfma6
   vpColVector getJointMax() const;
   double getCoupl56() const;
   double getLong56() const;
+  //@}
+
 
  protected:
+  /** @name Protected Member Functions Inherited from vpAfma6 */
+  //@{
   //! Set the current tool type
   void setToolType(vpAfma6::vpAfma6ToolType tool){
     tool_current = tool;
   };
+  //@}
 
  public:
 

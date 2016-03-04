@@ -61,7 +61,8 @@
 
   \brief Modelisation of the ADEPT Viper robot 
 
-  This robot has six degrees of freedom.
+  This robot has six degrees of freedom. The model of the robot is the following:
+  \image html model-viper.png Model of the Viper 850 robot.
 
   The non modified Denavit-Hartenberg representation of the robot is
   given in the table below, where \f$q_1^*, \ldots, q_6^*\f$
@@ -82,19 +83,23 @@
   \hline
   \end{tabular}
   \f]
-  
+
   In this modelisation, different frames have to be considered.
-  - \f$ {\cal F}_f \f$: the reference frame, also called world frame,
+
+  - \f$ {\cal F}_f \f$: the reference frame, also called world frame
 
   - \f$ {\cal F}_w \f$: the wrist frame located at the intersection of
-    the last three rotations, with \f$ ^f{\bf M}_w = ^0{\bf M}_6 \f$,
+    the last three rotations, with \f$ ^f{\bf M}_w = ^0{\bf M}_6 \f$
 
-  - \f$ {\cal F}_e \f$: the end-effector frame, with \f$^f{\bf M}_e =
-    0{\bf M}_7 \f$,
+  - \f$ {\cal F}_e \f$: the end-effector frame located at the interface of the
+    two tool changers, with \f$^f{\bf M}_e = 0{\bf M}_7 \f$
 
-  - \f$ {\cal F}_c \f$: the camera frame, with \f$^f{\bf M}_c = ^f{\bf
+  - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
     M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
-    a calibration stage.
+    a calibration stage. We can also consider a custom tool TOOL_CUSTOM and set this
+    during robot initialisation or using set_eMc().
+
+  - \f$ {\cal F}_s \f$: the force/torque sensor frame, with \f$d7=0.0666\f$.
   
   The forward kinematics of the robot is implemented in get_fMw(),
   get_fMe() and get_fMc().
@@ -110,6 +115,8 @@ class VISP_EXPORT vpViper
   vpViper();
   virtual ~vpViper() {};
 
+  /** @name Inherited functionalities from vpViper */
+  //@{
   vpHomogeneousMatrix getForwardKinematics(const vpColVector & q) const;
   unsigned int getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q, const bool &verbose=false) const;
   unsigned int getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q, const bool &verbose=false) const;
@@ -134,6 +141,7 @@ class VISP_EXPORT vpViper
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;
   double getCoupl56() const;
+  //@}
 
  private:
   bool convertJointPositionInLimits(unsigned int joint, const double &q, double &q_mod, const bool &verbose=false) const;

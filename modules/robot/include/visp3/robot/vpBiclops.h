@@ -139,6 +139,9 @@ public:
   /*! Destructor that does nothing. */
   virtual ~vpBiclops() {};
 
+  /** @name Inherited functionalities from vpBiclops */
+  //@{
+
   void init (void);
 
   void computeMGD (const vpColVector &q, vpHomogeneousMatrix & fMc) const;
@@ -191,6 +194,7 @@ public:
   }
 
   friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpBiclops & constant);
+  //@}
 };
 
 

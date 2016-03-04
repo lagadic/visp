@@ -1579,7 +1579,7 @@ void vpRobotViper650::getPosition(const vpRobot::vpControlFrameType frame,
 
   Similar as getPosition(const vpRobot::vpControlFrameType frame, vpColVector &, double &)
 
-  The difference is here that the position is returned using a ThetaU
+  The difference is here that the position is returned using a \f$ \theta {\bf u}\f$
   representation for the rotation.
 
   \sa getPosition(const vpRobot::vpControlFrameType frame, vpColVector &, double &)
@@ -1836,8 +1836,8 @@ void
   \param timestamp : Time in second since last robot power on.
 
   \warning In camera frame, reference frame and mixt frame, the representation
-  of the rotation is ThetaU. In that cases, \f$velocity = [\dot x, \dot y, \dot
-  z, \dot {\theta U}_x, \dot {\theta U}_y, \dot {\theta U}_z]\f$.
+  of the rotation is \f$ \theta {\bf u}\f$. In that cases, \f$velocity = [\dot x, \dot y, \dot
+  z, \dot {\theta u}_x, \dot {\theta u}_y, \dot {\theta u}_z]\f$.
 
   \warning The first time this method is called, \e velocity is set to 0. The
   first call is used to intialise the velocity computation for the next call.

@@ -92,6 +92,8 @@ public: /* Methodes publiques */
   /*! Destructor that does nothing. */
   virtual ~vpPtu46() {};
 
+  /** @name Inherited functionalities from vpPtu46 */
+  //@{
   void init (void);
 
   void  computeMGD (const vpColVector &q, vpHomogeneousMatrix & fMc) const;
@@ -104,15 +106,7 @@ public: /* Methodes publiques */
   void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
 
   friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpPtu46 & constant);
+  //@}
 };
-
-
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
 
 #endif

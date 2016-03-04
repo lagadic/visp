@@ -116,6 +116,8 @@ public:
   vpRobotCamera() ;
   virtual ~vpRobotCamera() ;
 
+  /** @name Inherited functionalities from vpRobotCamera */
+  //@{
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
   void get_eJe(vpMatrix &eJe);
 
@@ -124,6 +126,7 @@ public:
 
   void setPosition(const vpHomogeneousMatrix &cMw) ;
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v)  ;
+  //@}
 
 private:
   void init() ;

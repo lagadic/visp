@@ -117,12 +117,15 @@ public:
   virtual ~vpSimulatorPioneer();
 
 public:
+  /** @name Inherited functionalities from vpSimulatorPioneer */
+  //@{
   void get_eJe(vpMatrix &eJe);
 
   void getPosition(vpHomogeneousMatrix &wMc) const;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
   void setVelocity(const vpRobot::vpControlFrameType frame,
                    const  vpColVector &vel)  ;
+  //@}
 
 private:
   void init() ;

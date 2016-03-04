@@ -246,8 +246,9 @@ public:
 
     void stopMotion();
     
-    
 protected:
+    /** @name Protected Member Functions Inherited from vpSimulatorAfma6 */
+    //@{
     void computeArticularVelocity();
     void compute_fMi();
     void findHighestPositioningSpeed(vpColVector &q);
@@ -271,6 +272,7 @@ protected:
     int isInJointLimit (void);
     bool singularityTest(const vpColVector q, vpMatrix &J);
     void updateArticularPosition();
+    //@}
     
 private:
     void getCameraDisplacement(vpColVector &displacement);

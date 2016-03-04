@@ -275,6 +275,8 @@ class VISP_EXPORT vpSimulatorViper850 : public vpRobotWireFrameSimulator, public
     void stopMotion();
     
 protected:
+    /** @name Protected Member Functions Inherited from vpSimulatorViper850 */
+    //@{
     void computeArticularVelocity();
     void compute_fMi();
     void findHighestPositioningSpeed(vpColVector &q);
@@ -299,6 +301,7 @@ protected:
     int isInJointLimit (void);
     bool singularityTest(const vpColVector q, vpMatrix &J);
     void updateArticularPosition();
+    //@}
       
 private:
     void getArticularDisplacement(vpColVector &displacement);

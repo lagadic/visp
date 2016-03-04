@@ -112,6 +112,8 @@ class VISP_EXPORT vpAfma4
   /*! Destructor that does nothing. */
   virtual ~vpAfma4() {};
 
+  /** @name Inherited functionalities from vpAfma4 */
+  //@{
   void init (void);
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector & q) const;
@@ -132,6 +134,7 @@ class VISP_EXPORT vpAfma4
 
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;
+  //@}
 
  public:
 
