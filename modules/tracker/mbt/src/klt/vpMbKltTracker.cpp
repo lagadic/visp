@@ -858,7 +858,7 @@ vpMbKltTracker::computeVVSInteractionMatrixAndResidu(unsigned int shift, vpColVe
 }
 
 void
-vpMbKltTracker::computeVVSPoseEstimation(const unsigned int iter, const vpMatrix &L,
+vpMbKltTracker::computeVVSPoseEstimation(const unsigned int iter, vpMatrix &L,
     const vpColVector &w, vpMatrix &L_true, vpMatrix &LVJ_true, double &normRes, double &normRes_1, vpColVector &w_true,
     vpColVector &R, vpMatrix &LTL, vpColVector &LTR, vpColVector &error_prev, vpColVector &v, double &mu,
     vpHomogeneousMatrix &cMoPrev, vpHomogeneousMatrix &ctTc0_Prev) {

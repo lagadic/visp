@@ -448,8 +448,8 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
         }
       }
 
-      computeVVSSecondPhasePoseEstimation(nerror, L, factor, iter, isoJoIdentity_, weighted_error, mu, m_error_prev,
-          m_w_prev, cMoPrev, residu_1, r);
+      computeVVSSecondPhasePoseEstimation(nerror, L, L_true, LVJ_true, W_true, factor, iter, isoJoIdentity_,
+          weighted_error, mu, m_error_prev, m_w_prev, cMoPrev, residu_1, r);
     }
 
     iter++;
