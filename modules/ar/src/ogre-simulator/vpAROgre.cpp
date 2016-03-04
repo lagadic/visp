@@ -465,8 +465,14 @@ vpAROgre::~vpAROgre(void)
     Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
     windowClosed(mWindow);
   }
+
   // Delete root
-  if (mRoot) delete mRoot;
+  if(Ogre::Root::getSingletonPtr() && !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements()) {
+    if(mRoot) {
+      delete mRoot;
+    }
+  }
+  mRoot = 0;
 }
 
 /*!

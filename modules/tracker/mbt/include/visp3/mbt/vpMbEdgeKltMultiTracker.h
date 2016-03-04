@@ -137,6 +137,10 @@ public:
   virtual unsigned int getClipping(const std::string &cameraName) const;
 
   virtual vpMbHiddenFaces<vpMbtPolygon>& getFaces();
+  vpMbHiddenFaces<vpMbtPolygon>& getEdgeFaces(const std::string &cameraName);
+  std::map<std::string, vpMbHiddenFaces<vpMbtPolygon> > getEdgeFaces() const;
+  vpMbHiddenFaces<vpMbtPolygon>& getKltFaces(const std::string &cameraName);
+  std::map<std::string, vpMbHiddenFaces<vpMbtPolygon> > getKltFaces() const;
 
   /*!
     Return the factor for the KLT trackers in the VVS process.
@@ -155,24 +159,6 @@ public:
   inline double getFactorMBT() const {
     return m_factorMBT;
   }
-
-  std::map<std::string, vpMbHiddenFaces<vpMbtPolygon> > getEdgeFaces() const;
-
-  std::map<std::string, vpMbHiddenFaces<vpMbtPolygon> > getKltFaces() const;
-
-  virtual std::map<std::string, std::vector<vpImagePoint> > getKltImagePoints() const;
-
-  virtual std::map<std::string, std::map<int, vpImagePoint> > getKltImagePointsWithId() const;
-
-  virtual std::map<std::string, vpKltOpencv> getKltOpencv() const;
-
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  virtual std::map<std::string, std::vector<cv::Point2f> > getKltPoints() const;
-#else
-  virtual std::map<std::string, CvPoint2D32f*> getKltPoints();
-#endif
-
-  virtual std::map<std::string, int> getNbKltPoints() const;
 
   virtual unsigned int getNbPolygon() const;
   virtual std::map<std::string, unsigned int> getEdgeMultiNbPolygon() const;
@@ -355,8 +341,6 @@ public:
   virtual void setScanLineVisibilityTest(const bool &v);
 
   virtual void setThresholdAcceptation(const double th);
-
-  virtual void setUseKltTracking(const std::string &name, const bool &useKltTracking);
 
   virtual void testTracking();
 
