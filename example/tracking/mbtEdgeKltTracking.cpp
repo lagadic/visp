@@ -60,12 +60,13 @@
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/mbt/vpMbEdgeKltTracker.h>
 
-#define GETOPTARGS  "x:m:i:n:dchtfColw"
+#define GETOPTARGS  "x:m:i:n:dchtfColwvp"
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
-                std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display,
-                bool& cao3DModel, bool& trackCylinder, bool &useOgre, bool &useScanline);
+    std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display,
+    bool& cao3DModel, bool& trackCylinder, bool &useOgre, bool &showOgreConfigDialog,
+    bool &useScanline, bool &computeCovariance, bool &projectionError);
 
 void usage(const char *name, const char *badparam)
 {
@@ -75,7 +76,7 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>]\n\
-  [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l]",
+  [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p]",
   name );
 
   fprintf(stdout, "\n\
@@ -131,7 +132,13 @@ OPTIONS:                                               \n\
      When Ogre3D is enable [-o] show Ogre3D configuration dialog thatallows to set the renderer.\n\
 \n\
   -l\n\
-     Use the scanline for visibility tests\n\
+     Use the scanline for visibility tests.\n\
+\n\
+  -v\n\
+     Compute covariance matrix.\n\
+\n\
+  -v\n\
+     Compute gradient projection error.\n\
 \n\
   -h \n\
      Print the help.\n\n");
@@ -143,7 +150,8 @@ OPTIONS:                                               \n\
 
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
                 std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display,
-                bool& cao3DModel, bool& trackCylinder, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline)
+                bool& cao3DModel, bool& trackCylinder, bool &useOgre, bool &showOgreConfigDialog,
+                bool &useScanline, bool &computeCovariance, bool &projectionError)
 {
   const char *optarg_;
   int   c;
@@ -162,6 +170,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'o': useOgre = true; break;
     case 'l': useScanline = true; break;
     case 'w': showOgreConfigDialog  = true; break;
+    case 'v': computeCovariance  = true; break;
+    case 'p': projectionError  = true; break;
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
@@ -202,6 +212,8 @@ main(int argc, const char ** argv)
     bool useOgre = false;
     bool showOgreConfigDialog = false;
     bool useScanline = false;
+    bool computeCovariance = false;
+    bool projectionError = false;
     bool quit = false;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
@@ -214,7 +226,7 @@ main(int argc, const char ** argv)
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayFeatures,
                     opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre, showOgreConfigDialog,
-                    useScanline)) {
+                    useScanline, computeCovariance, projectionError)) {
       return (-1);
     }
 
@@ -384,6 +396,12 @@ main(int argc, const char ** argv)
     // Tells if the tracker has to use the scanline visibility tests
     tracker.setScanLineVisibilityTest(useScanline);
 
+    // Tells if the tracker has to compute the covariance matrix
+    tracker.setCovarianceComputation(computeCovariance);
+
+    // Tells if the tracker has to compute the projection error
+    tracker.setProjectionErrorComputation(projectionError);
+
     // Retrieve the camera parameters from the tracker
     tracker.getCameraParameters(cam);
 
@@ -423,9 +441,6 @@ main(int argc, const char ** argv)
 
     if (opt_display)
       vpDisplay::flush(I);
-
-    // Uncomment if you want to compute the covariance matrix.
-    // tracker.setCovarianceComputation(true); //Important if you want tracker.getCovarianceMatrix() to work.
 
     while (!reader.end())
     {
@@ -482,6 +497,8 @@ main(int argc, const char ** argv)
         tracker.setCameraParameters(cam);
         tracker.setOgreVisibilityTest(useOgre);
         tracker.setScanLineVisibilityTest(useScanline);
+        tracker.setCovarianceComputation(computeCovariance);
+        tracker.setProjectionErrorComputation(projectionError);
         tracker.initFromPose(I, cMo);
       }
 
@@ -522,9 +539,13 @@ main(int argc, const char ** argv)
         }
       }
 
-      // Uncomment if you want to print the covariance matrix.
-      // Make sure tracker.setCovarianceComputation(true) has been called (uncomment below).
-      // std::cout << tracker.getCovarianceMatrix() << std::endl << std::endl;
+      if(computeCovariance) {
+        std::cout << "Covariance matrix: \n" << tracker.getCovarianceMatrix() << std::endl << std::endl;
+      }
+
+      if(projectionError) {
+        std::cout << "Projection error: " << tracker.getProjectionError() << std::endl << std::endl;
+      }
 
       vpDisplay::flush(I) ;
     }
@@ -547,7 +568,7 @@ main(int argc, const char ** argv)
 
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

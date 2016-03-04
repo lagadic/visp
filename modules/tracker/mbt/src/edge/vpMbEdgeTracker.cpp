@@ -279,15 +279,15 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int
           w_lines, w_cylinders, w_circles, error_lines, error_cylinders, error_circles, nberrors_lines, nberrors_cylinders,
           nberrors_circles);
 
-      computeVVSSecondPhasePoseEstimation(nerror, L, factor, iter, isoJoIdentity_, weighted_error, mu, m_error_prev,
-          m_w_prev, cMoPrev, residu_1, r);
+      computeVVSSecondPhasePoseEstimation(nerror, L, L_true, LVJ_true, W_true, factor, iter, isoJoIdentity_,
+          weighted_error, mu, m_error_prev, m_w_prev, cMoPrev, residu_1, r);
 
     } // endif(!restartFromLast)
 
     iter++;
   }
 
-  // std::cout << "VVS estimate pose cMo:\n" << cMo << std::endl;
+//   std::cout << "VVS estimate pose cMo:\n" << cMo << std::endl;
   if(computeCovariance){
     vpMatrix D;
     D.diag(W_true);
@@ -850,9 +850,10 @@ vpMbEdgeTracker::computeVVSSecondPhaseCheckLevenbergMarquard(const unsigned int 
 }
 
 void
-vpMbEdgeTracker::computeVVSSecondPhasePoseEstimation(const unsigned int nerror, const vpMatrix &L, const vpColVector &factor,
-    const unsigned int iter, const bool isoJoIdentity_, vpColVector &weighted_error, double &mu,
-    vpColVector &m_error_prev, vpColVector &m_w_prev, vpHomogeneousMatrix &cMoPrev, double &residu_1, double &r) {
+vpMbEdgeTracker::computeVVSSecondPhasePoseEstimation(const unsigned int nerror, vpMatrix &L, vpMatrix &L_true,
+    vpMatrix &LVJ_true, vpColVector &W_true, const vpColVector &factor, const unsigned int iter, const bool isoJoIdentity_,
+    vpColVector &weighted_error, double &mu, vpColVector &m_error_prev, vpColVector &m_w_prev,
+    vpHomogeneousMatrix &cMoPrev, double &residu_1, double &r) {
   double num=0;
   double den=0;
   double wi;
@@ -860,9 +861,6 @@ vpMbEdgeTracker::computeVVSSecondPhasePoseEstimation(const unsigned int nerror, 
 
   vpMatrix LTL;
   vpColVector LTR;
-  vpColVector W_true;
-  vpMatrix L_true;
-  vpMatrix LVJ_true;
 
   L_true = L;
   W_true = vpColVector(nerror);

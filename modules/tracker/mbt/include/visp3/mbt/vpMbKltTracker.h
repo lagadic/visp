@@ -440,7 +440,7 @@ protected:
   void computeVVSInteractionMatrixAndResidu(unsigned int shift, vpColVector &R, vpMatrix &L, vpHomography &H,
                                             std::list<vpMbtDistanceKltPoints*> &kltPolygons_, std::list<vpMbtDistanceKltCylinder*> &kltCylinders_,
                                             const vpHomogeneousMatrix &ctTc0_);
-  void computeVVSPoseEstimation(const unsigned int iter, const vpMatrix &L,
+  void computeVVSPoseEstimation(const unsigned int iter, vpMatrix &L,
                                 const vpColVector &w, vpMatrix &L_true, vpMatrix &LVJ_true, double &normRes, double &normRes_1, vpColVector &w_true,
                                 vpColVector &R, vpMatrix &LTL, vpColVector &LTR, vpColVector &error_prev, vpColVector &v, double &mu,
                                 vpHomogeneousMatrix &cMoPrev, vpHomogeneousMatrix &ctTc0_Prev);

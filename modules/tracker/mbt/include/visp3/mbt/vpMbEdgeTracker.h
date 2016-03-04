@@ -491,9 +491,10 @@ protected:
   void computeVVSSecondPhaseCheckLevenbergMarquard(const unsigned int iter, const unsigned int nbrow,
       const vpColVector &m_error_prev, const vpColVector &m_w_prev, const vpHomogeneousMatrix &cMoPrev,
       double &mu, bool &reStartFromLastIncrement);
-  void computeVVSSecondPhasePoseEstimation(const unsigned int nerror, const vpMatrix &L, const vpColVector &factor,
-      const unsigned int iter, const bool isoJoIdentity_, vpColVector &weighted_error, double &mu,
-      vpColVector &m_error_prev, vpColVector &m_w_prev, vpHomogeneousMatrix &cMoPrev, double &residu_1, double &r);
+  void computeVVSSecondPhasePoseEstimation(const unsigned int nerror, vpMatrix &L, vpMatrix &L_true, vpMatrix &LVJ_true,
+      vpColVector &W_true, const vpColVector &factor, const unsigned int iter, const bool isoJoIdentity_,
+      vpColVector &weighted_error, double &mu, vpColVector &m_error_prev, vpColVector &m_w_prev,
+      vpHomogeneousMatrix &cMoPrev, double &residu_1, double &r);
   void computeVVSSecondPhaseWeights(const unsigned int iter, const unsigned int nerror,
       const unsigned int nbrow, vpColVector &weighted_error,
       vpRobust &robust_lines, vpRobust &robust_cylinders, vpRobust &robust_circles,
