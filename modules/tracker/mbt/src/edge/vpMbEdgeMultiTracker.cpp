@@ -179,9 +179,9 @@ void vpMbEdgeMultiTracker::computeProjectionError() {
 void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages, const unsigned int lvl) {
   //Number of moving edges
   unsigned int nbrow = 0;
-  unsigned int nberrors_lines = 0;
-  unsigned int nberrors_cylinders = 0;
-  unsigned int nberrors_circles = 0;
+  //unsigned int nberrors_lines = 0;
+  //unsigned int nberrors_cylinders = 0;
+  //unsigned int nberrors_circles = 0;
 
   std::vector<FeatureType> indexOfFeatures;
   std::map<std::string, unsigned int> mapOfNumberOfRows;
@@ -204,9 +204,9 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
     mapOfNumberOfCircles[it1->first] = ncircles;
 
     nbrow += nrows;
-    nberrors_lines += nlines;
-    nberrors_cylinders += ncylinders;
-    nberrors_circles += ncircles;
+    //nberrors_lines += nlines;
+    //nberrors_cylinders += ncylinders;
+    //nberrors_circles += ncircles;
 
     for(unsigned int i = 0; i < nlines; i++) {
       indexOfFeatures.push_back(LINE);

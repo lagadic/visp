@@ -84,7 +84,7 @@ void vpMomentAlpha::compute(){
 
 	unsigned int order = 4;
 	std::vector<double> rotMu(4);
-	std::vector<double> realMu(4);
+  //std::vector<double> realMu(4);
 
 	if (isRef)
 	{
@@ -118,7 +118,7 @@ void vpMomentAlpha::compute(){
 						}
 						r11_k *= r11;
 					}
-					realMu[idx] = momentCentered.get(i, j);
+          //realMu[idx] = momentCentered.get(i, j);
 					idx++;
 				}
 			}

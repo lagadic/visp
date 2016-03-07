@@ -60,18 +60,18 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
 
   dW=0;
 
-  double erreur=0;
+  //double erreur=0;
   int Nbpoint=0;
 
   double i2,j2;
-  double Tij;
-  double IW,dx,dy;
+  //double Tij;
+  double /*IW,*/dx,dy;
   //int cr,ct;
   //double er,et;
   int i,j;
 
   Nbpoint=0;
-  erreur=0;
+  //erreur=0;
 
   if(blur)
     vpImageFilter::filter(I, BI,fgG,taillef);
@@ -132,7 +132,7 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
   }
 
   Nbpoint=0;
-  erreur=0;
+  //erreur=0;
   zeroProbabilities();
 
   Warp->computeCoeff(p);
@@ -150,11 +150,11 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
     if((i2>=0)&&(j2>=0)&&(i2<I.getHeight())&&(j2<I.getWidth()))
     {
       Nbpoint++;
-      Tij=ptTemplate[point].val;
-      if(!blur)
-        IW=I.getValue(i2,j2);
-      else
-        IW=BI.getValue(i2,j2);
+      //Tij=ptTemplate[point].val;
+      //if(!blur)
+      //  IW=I.getValue(i2,j2);
+      //else
+      //  IW=BI.getValue(i2,j2);
 
       dx=1.*dIx.getValue(i2,j2)*(Nc-1)/255.;
       dy=1.*dIy.getValue(i2,j2)*(Nc-1)/255.;
@@ -174,7 +174,7 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
       //                vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout,cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam,bspline,ApproxHessian,
       //                                                         hessianComputation== vpTemplateTrackerMI::USE_HESSIEN_DESIRE);
       //calcul de l'erreur
-      erreur+=(Tij-IW)*(Tij-IW);
+      //erreur+=(Tij-IW)*(Tij-IW);
 
       //          if(ApproxHessian==vpTemplateTrackerMI::HESSIAN_NONSECOND) // cas à tester AY
       //              vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout,cr, er, ct, et, Nc, tptemp, nbParam, bspline);
@@ -272,7 +272,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
     getGradY(dIy, d2Iy,fgdG,taillef);
   }*/
 
-  double erreur=0;
+  //double erreur=0;
   int Nbpoint=0;
   int point;
 
@@ -283,8 +283,8 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
   //double MIprec=-1000;
 
   double i2,j2;
-  double Tij;
-  double IW;
+  //double Tij;
+  //double IW;
   //int cr,ct;
   //double er,et;
 
@@ -300,7 +300,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
     Nbpoint=0;
     //MIprec=MI;
     MI=0;
-    erreur=0;
+    //erreur=0;
 
     zeroProbabilities();
 
@@ -361,7 +361,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       Nbpoint=0;
       //MIprec=MI;
       MI=0;
-      erreur=0;
+      //erreur=0;
 
       zeroProbabilities();
 
@@ -370,7 +370,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       int nthreads = omp_get_num_procs() ;
       //std::cout << "file: " __FILE__ << " line: " << __LINE__ << " function: " << __FUNCTION__ << " nthread: " << nthreads << std::endl;
       omp_set_num_threads(nthreads);
-#pragma omp parallel for private(point, Tij,IW,i,j,i2,j2,/*cr,ct,er,et,*/dx,dy) default(shared)
+#pragma omp parallel for private(point, /*Tij,IW,*/ i,j,i2,j2,/*cr,ct,er,et,*/dx,dy) default(shared)
 #endif
       for(point=0;point<(int)templateSize;point++)
       {
@@ -385,12 +385,12 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
         if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
         {
           Nbpoint++;
-          Tij=ptTemplate[point].val;
+          //Tij=ptTemplate[point].val;
           //Tij=Iterateurvecteur->val;
-          if(!blur)
-            IW=I.getValue(i2,j2);
-          else
-            IW=BI.getValue(i2,j2);
+          //if(!blur)
+          //  IW=I.getValue(i2,j2);
+          //else
+          //  IW=BI.getValue(i2,j2);
 
           dx=1.*dIx.getValue(i2,j2)*(Nc-1)/255.;
           dy=1.*dIy.getValue(i2,j2)*(Nc-1)/255.;
@@ -408,7 +408,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
 
 
           //calcul de l'erreur
-          erreur+=(Tij-IW)*(Tij-IW);
+          //erreur+=(Tij-IW)*(Tij-IW);
           //                    if(bspline==3)
           //                        vpTemplateTrackerMIBSpline::PutTotPVBspline3NoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam);
           //                    else

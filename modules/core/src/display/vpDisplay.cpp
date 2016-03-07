@@ -3746,8 +3746,6 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I,
 
         ( I.display )->displayLine(iP11, iP22, color, thickness) ;
 
-        i1 = i2;
-        j1 = j2;
         iP11 = iP22;
 
         k += incr ;
@@ -3945,8 +3943,6 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I,
 
         ( I.display )->displayLine(iP11, iP22, color, thickness) ;
 
-        i1 = i2;
-        j1 = j2;
         iP11 = iP22;
 
         k += incr ;

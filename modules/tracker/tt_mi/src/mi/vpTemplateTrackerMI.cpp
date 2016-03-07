@@ -441,24 +441,24 @@ void vpTemplateTrackerMI::computeMI(double &MI)
   }
 
   //calcul Entropies;
-  double entropieI=0;
+  //double entropieI=0;
   for(unsigned int r=0;r<Ncb_;r++)
   {
     //if(Pr[r]!=0)
     if(std::fabs(Pr[r]) > std::numeric_limits<double>::epsilon())
     {
-      entropieI-=Pr[r]*log(Pr[r]);
+      //entropieI-=Pr[r]*log(Pr[r]);
       MI-=Pr[r]*log(Pr[r]);
     }
   }
 
-  double entropieT=0;
+  //double entropieT=0;
   for(unsigned int t=0;t<Ncb_;t++)
   {
     //if(Pt[t]!=0)
     if(std::fabs(Pt[t]) > std::numeric_limits<double>::epsilon())
     {
-      entropieT-=Pt[t]*log(Pt[t]);
+      //entropieT-=Pt[t]*log(Pt[t]);
       MI-=Pt[t]*log(Pt[t]);
     }
   }

@@ -544,8 +544,8 @@ int vpNetwork::_handleFirstRequest()
   size_t deb = indStart + beginning.size();
   std::string id = currentMessageReceived.substr((unsigned)deb, indSep - deb);
   
-  deb = indSep+separator.size();
-  std::string params = currentMessageReceived.substr((unsigned)deb, (unsigned)(indEnd - deb));
+  //deb = indSep+separator.size();
+  //std::string params = currentMessageReceived.substr((unsigned)deb, (unsigned)(indEnd - deb));
   
 //   std::cout << "Handling : " << currentMessageReceived.substr(indStart, indEnd+end.size() - indStart) << std::endl;
    

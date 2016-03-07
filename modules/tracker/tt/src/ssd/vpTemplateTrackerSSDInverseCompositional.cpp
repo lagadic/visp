@@ -86,8 +86,8 @@ void vpTemplateTrackerSSDInverseCompositional::initCompInverse(const vpImage<uns
   {
     if((!useTemplateSelect)||(ptTemplateSelect[point]))
     {
-      i=ptTemplate[point].y;
-      j=ptTemplate[point].x;
+      //i=ptTemplate[point].y;
+      //j=ptTemplate[point].x;
       for(unsigned int it=0;it<nbParam;it++)
         dWtemp[it]=ptTemplate[point].dW[it];
       

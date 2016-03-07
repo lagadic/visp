@@ -96,7 +96,7 @@ double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I, const vpC
   moyTij=moyTij/Nbpoint;
   moyIW=moyIW/Nbpoint;
 
-  double nom=0,denom=0;
+  double nom=0;//,denom=0;
   double var1=0,var2=0;
   for(unsigned int point=0;point<templateSize;point++)
   {
@@ -116,7 +116,7 @@ double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I, const vpC
         IW=BI.getValue(i2,j2);
       //IW=getSubPixBspline4(I,i2,j2);
       nom+=(Tij-moyTij)*(IW-moyIW);
-      denom+=(Tij-moyTij)*(Tij-moyTij)*(IW-moyIW)*(IW-moyIW);
+      //denom+=(Tij-moyTij)*(Tij-moyTij)*(IW-moyIW)*(IW-moyIW);
       var1+=(IW-moyIW)*(IW-moyIW);
       var2+=(Tij-moyTij)*(Tij-moyTij);
 

@@ -89,11 +89,11 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
   vpImageFilter::getGradXGauss2D(I, dIx, fgG,fgdG,taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG,fgdG,taillef);
 
-  double erreur=0;
+  //double erreur=0;
   int Nbpoint=0;
 
   double i2,j2;
-  double Tij;
+  //double Tij;
   double IW,dx,dy;
   int cr,ct;
   double er,et;
@@ -101,7 +101,7 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
   int i,j;
 
   Nbpoint=0;
-  erreur=0;
+  //erreur=0;
 
   zeroProbabilities();
 
@@ -120,7 +120,7 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
     if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
     {
       Nbpoint++;
-      Tij=ptTemplate[point].val;
+      //Tij=ptTemplate[point].val;
       if(!blur)
         IW=I.getValue(i2,j2);
       else
@@ -141,7 +141,7 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
         tptemp[it] =dW[0][it]*dx+dW[1][it]*dy;
 
       //calcul de l'erreur
-      erreur+=(Tij-IW)*(Tij-IW);
+      //erreur+=(Tij-IW)*(Tij-IW);
 
       vpTemplateTrackerMIBSpline::PutTotPVBspline(PrtTout, cr, er, ct, et, Nc,tptemp, nbParam, bspline);
 
@@ -173,7 +173,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
   vpImageFilter::getGradXGauss2D(I, dIx, fgG,fgdG,taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG,fgdG,taillef);
 
-  double erreur=0;
+  //double erreur=0;
   int Nbpoint=0;
 
 
@@ -183,7 +183,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
   MI_preEstimation=-getCost(I,p);
 
   double i2,j2;
-  double Tij;
+  //double Tij;
   double IW;
   //unsigned
   int cr,ct;
@@ -200,7 +200,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
     Nbpoint=0;
     MIprec=MI;
     MI=0;
-    erreur=0;
+    //erreur=0;
 
     zeroProbabilities();
 
@@ -218,7 +218,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
       if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
       {
         Nbpoint++;
-        Tij=ptTemplate[point].val;
+        //Tij=ptTemplate[point].val;
         if(!blur)
           IW=I.getValue(i2,j2);
         else
@@ -240,7 +240,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
 
 
         //calcul de l'erreur
-        erreur+=(Tij-IW)*(Tij-IW);
+        //erreur+=(Tij-IW)*(Tij-IW);
 
         if(ApproxHessian==HESSIAN_NONSECOND||hessianComputation==vpTemplateTrackerMI::USE_HESSIEN_DESIRE)
           vpTemplateTrackerMIBSpline::PutTotPVBsplineNoSecond(PrtTout, cr, er, ct, et, Nc, tptemp, nbParam, bspline);

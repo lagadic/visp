@@ -1147,7 +1147,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
       throw (vpImageException(vpImageException::ioError,
             "Cannot read header of file \"%s\"",  filename));
     }
-    if ((ierr = sscanf(str, "%u", &maxval)) != 1)  {
+    if ((sscanf(str, "%u", &maxval)) != 1)  {
       fclose (fd);
       throw (vpImageException(vpImageException::ioError,
             "Cannot read header of file \"%s\"",  filename));
@@ -1427,7 +1427,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
       throw (vpImageException(vpImageException::ioError,
             "Cannot read header of file \"%s\"",  filename));
     }
-    if ((ierr = sscanf(str, "%u", &maxval)) != 1)  {
+    if ((sscanf(str, "%u", &maxval)) != 1)  {
       fclose (fd);
       throw (vpImageException(vpImageException::ioError,
             "Cannot read header of file \"%s\"",  filename));

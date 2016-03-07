@@ -139,11 +139,11 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
 {
   initCompInverse(I);
 
-  double erreur=0;
+  //double erreur=0;
   int Nbpoint=0;
 
   double i2,j2;
-  double Tij;
+  //double Tij;
   double IW;
   int cr,ct;
   double er,et;
@@ -151,7 +151,7 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
   int i,j;
 
   Nbpoint=0;
-  erreur=0;
+  //erreur=0;
 
   if(blur)
     vpImageFilter::filter(I, BI,fgG,taillef);
@@ -178,7 +178,7 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
     if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
     {
       Nbpoint++;
-      Tij=ptTemplate[point].val;
+      //Tij=ptTemplate[point].val;
 
       if(blur)
         IW=BI.getValue(i2,j2);
@@ -191,7 +191,7 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
       er=((double)IW*(Nc-1))/255.-cr;
 
       //calcul de l'erreur
-      erreur+=(Tij-IW)*(Tij-IW);
+      //erreur+=(Tij-IW)*(Tij-IW);
 
       if( ApproxHessian==HESSIAN_NONSECOND && (ptTemplateSelect[point] || !useTemplateSelect) )
       {

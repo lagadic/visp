@@ -63,7 +63,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 {
   double normI = 0., normJ = 0.;
   double Z0 = 0.;
-  double seuil=1.0;
+  //double seuil=1.0;
   double f=1.;
 
   vpPoint p0 = listP.front() ;
@@ -150,12 +150,12 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 
     k = vpColVector::cross(I,J) ;
     Z0=2*f/(normI+normJ);
-    cpt=cpt+1; seuil=0.0;
+    cpt=cpt+1; //seuil=0.0;
     for (unsigned int i=0; i<npt; i++)
     {
-      double      epsi_1 = eps[i] ;
+      //double      epsi_1 = eps[i] ;
       eps[i]=(c3d[i].get_oX()*k[0]+c3d[i].get_oY()*k[1]+c3d[i].get_oZ()*k[2])/Z0;
-      seuil+=fabs(eps[i]-epsi_1);
+      //seuil+=fabs(eps[i]-epsi_1);
     }
     if (npt==0)
     {
@@ -163,7 +163,7 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
       throw(vpException(vpException::divideByZeroError,
                         "Division by zero in Dementhon pose computation: no points")) ;
     }
-    seuil/=npt;
+    //seuil/=npt;
   }
   k.normalize();
   J = vpColVector::cross(k,I) ;

@@ -151,9 +151,6 @@ main(int argc, const char ** argv)
     std::vector<vpPoint> P(nbpt);  //  Point to be tracked
     std::vector<double> xa(nbpt), ya(nbpt), xb(nbpt), yb(nbpt);
 
-    std::vector<vpPoint> aP(nbpt);  //  Point to be tracked
-    std::vector<vpPoint> bP(nbpt);  //  Point to be tracked
-
     P[0].setWorldCoordinates(-L,-L, 0 ) ;   // inlier
     P[1].setWorldCoordinates(2*L,-L, 0 ) ;  // inlier
     P[2].setWorldCoordinates(L,L, 0 ) ;  // inlier
@@ -180,7 +177,6 @@ main(int argc, const char ** argv)
     for(unsigned int i=0 ; i < nbpt ; i++)
     {
       P[i].project(aMo) ;
-      aP[i] = P[i] ;
       xa[i] = P[i].get_x() ;
       ya[i] = P[i].get_y() ;
     }
@@ -188,7 +184,6 @@ main(int argc, const char ** argv)
     for(unsigned int i=0 ; i < nbpt ; i++)
     {
       P[i].project(bMo) ;
-      bP[i] = P[i] ;
       xb[i] = P[i].get_x() ;
       yb[i] = P[i].get_y() ;
     }

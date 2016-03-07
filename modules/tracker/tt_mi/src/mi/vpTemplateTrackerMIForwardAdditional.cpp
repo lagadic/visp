@@ -153,7 +153,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
 {
   dW=0;
 
-  double erreur=0;
+  //double erreur=0;
   int Nbpoint=0;
   if(blur)
     vpImageFilter::filter(I, BI,fgG,taillef);
@@ -183,7 +183,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     Nbpoint=0;
     MIprec=MI;
     MI=0;
-    erreur=0;
+    //erreur=0;
 
     zeroProbabilities();
 
@@ -224,7 +224,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
         er=((double)Tij*(Nc-1))/255.-cr;
 
         //calcul de l'erreur
-        erreur+=(Tij-IW)*(Tij-IW);
+        //erreur+=(Tij-IW)*(Tij-IW);
 
         //Calcul de l'histogramme joint par interpolation bilinÃaire (Bspline ordre 1)
         Warp->dWarp(X1,X2,p,dW);

@@ -992,7 +992,6 @@ vpColVector vpServo::computeControlLaw()
         // image of J1 is computed to allows the computation
         // of the projection operator
         rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t) ;
-        imageComputed = true ;
       }
       WpW = imJ1t*imJ1t.t() ;
 
@@ -1149,7 +1148,6 @@ vpColVector vpServo::computeControlLaw(double t)
         // image of J1 is computed to allows the computation
         // of the projection operator
         rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t) ;
-        imageComputed = true ;
       }
       WpW = imJ1t*imJ1t.t() ;
 
@@ -1313,7 +1311,6 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
         // image of J1 is computed to allows the computation
         // of the projection operator
         rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t) ;
-        imageComputed = true ;
       }
       WpW = imJ1t*imJ1t.t() ;
 

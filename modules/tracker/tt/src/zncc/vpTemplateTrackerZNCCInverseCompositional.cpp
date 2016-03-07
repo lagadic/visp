@@ -248,7 +248,7 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
   if(blur)
     vpImageFilter::filter(I, BI,fgG,taillef);
 
-  double erreur=0;
+  //double erreur=0;
   unsigned int Nbpoint=0;
   vpColVector dpinv(nbParam);
   double Ic;
@@ -260,7 +260,7 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
   do
   {
     Nbpoint=0;
-    erreur=0;
+    //erreur=0;
     G=0;
     Warp->computeCoeff(p);
     double moyIref=0;
@@ -328,8 +328,8 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
           for(unsigned int it=0;it<nbParam;it++)
             sIrefdIref[it]+=(Iref-moyIref)*(ptTemplate[point].dW[it]-moydIrefdp[it]);
 
-          double er=(Iref-Ic);
-          erreur+=(er*er);
+          //double er=(Iref-Ic);
+          //erreur+=(er*er);
           //denom+=(Iref-moyIref)*(Iref-moyIref)*(Ic-moyIc)*(Ic-moyIc);
           covarIref+=(Iref-moyIref)*(Iref-moyIref);
           covarIc+=(Ic-moyIc)*(Ic-moyIc);
