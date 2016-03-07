@@ -1241,7 +1241,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         catch(vpException &e)
         {
           covarianceMatrix = -1;
-          throw e;
+          throw; // throw the original exception
         }
 
         try
@@ -1250,7 +1250,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         }
         catch(vpException &e)
         {
-          throw e;
+          throw; // throw the original exception
         }
 
         if (displayFeatures)
@@ -1274,7 +1274,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         }
         catch(vpException &e)
         {
-          throw e;
+          throw; // throw the original exception
         }
 
         initMovingEdge(I,cMo) ;

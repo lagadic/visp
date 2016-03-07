@@ -124,7 +124,7 @@ vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
   }
   catch(vpException &e)
   {
-    throw e;
+    throw; // throw the original exception
   }
   vpCDEBUG(1) <<" end vpMeLine::initTracking()"<<std::endl ;
 }
@@ -647,7 +647,7 @@ vpMbtMeLine::track(const vpImage<unsigned char> &I)
   }
   catch(vpException &e)
   {
-    throw e;
+    throw; // throw the original exception
   }
 
   // supression des points rejetes par les ME

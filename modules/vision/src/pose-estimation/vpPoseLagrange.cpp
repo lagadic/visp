@@ -451,7 +451,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type
   }
   catch(vpException &e)
   {
-    throw e;
+    throw; // throw the original exception
   }
 
 #if (DEBUG_LEVEL1)
@@ -590,7 +590,7 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
   }
   catch(vpException &e)
   {
-    throw e;
+    throw; // throw the original exception
   }
 
 #if (DEBUG_LEVEL1)

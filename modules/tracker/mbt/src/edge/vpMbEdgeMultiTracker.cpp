@@ -2892,7 +2892,7 @@ void vpMbEdgeMultiTracker::track(std::map<std::string, const vpImage<unsigned ch
           computeVVS(mapOfPyramidImages, lvl);
         } catch(vpException &e) {
           covarianceMatrix = -1;
-          throw e;
+          throw; // throw the original exception
         }
 
 
@@ -2948,7 +2948,7 @@ void vpMbEdgeMultiTracker::track(std::map<std::string, const vpImage<unsigned ch
             it->second->updateMovingEdge(*mapOfImages[it->first]);
           }
         } catch(vpException &e) {
-          throw e;
+          throw; // throw the original exception
         }
 
         for(std::map<std::string, vpMbEdgeTracker*>::const_iterator it = m_mapOfEdgeTrackers.begin();
