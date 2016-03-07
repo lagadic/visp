@@ -485,10 +485,10 @@ protected:
       vpMatrix &L, vpColVector &factor, double &count, vpColVector &error, vpColVector &w_mbt, const unsigned int lvl = 0);
   void computeVVSFirstPhaseFactor(const vpImage<unsigned char>& I, vpColVector &factor, const unsigned int lvl = 0);
   void computeVVSFirstPhasePoseEstimation(const unsigned int nerror, const unsigned int iter, const vpColVector &factor,
-      vpColVector &weighted_error, vpMatrix &L, bool &isoJoIdentity_, const vpColVector &error, const vpColVector &w_mbt);
+      vpColVector &weighted_error, vpMatrix &L, bool &isoJoIdentity_);
   void computeVVSSecondPhase(const vpImage<unsigned char>& I, vpMatrix &L, vpColVector &error_lines,
       vpColVector &error_cylinders, vpColVector &error_circles, vpColVector &error, const unsigned int lvl);
-  void computeVVSSecondPhaseCheckLevenbergMarquard(const unsigned int iter, const unsigned int nbrow,
+  void computeVVSSecondPhaseCheckLevenbergMarquardt(const unsigned int iter, const unsigned int nbrow,
       const vpColVector &m_error_prev, const vpColVector &m_w_prev, const vpHomogeneousMatrix &cMoPrev,
       double &mu, bool &reStartFromLastIncrement);
   void computeVVSSecondPhasePoseEstimation(const unsigned int nerror, vpMatrix &L, vpMatrix &L_true, vpMatrix &LVJ_true,

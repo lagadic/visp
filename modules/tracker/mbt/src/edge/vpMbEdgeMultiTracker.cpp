@@ -312,7 +312,7 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
       reloop = true;
     }
 
-    computeVVSFirstPhasePoseEstimation(nerror, iter, factor, weighted_error, L, isoJoIdentity_, m_error, m_w);
+    computeVVSFirstPhasePoseEstimation(nerror, iter, factor, weighted_error, L, isoJoIdentity_);
 
     iter++;
   }
@@ -408,7 +408,7 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
     }
 
     bool reStartFromLastIncrement = false;
-    computeVVSSecondPhaseCheckLevenbergMarquard(iter, nbrow, m_error_prev, m_w_prev, cMoPrev, mu, reStartFromLastIncrement);
+    computeVVSSecondPhaseCheckLevenbergMarquardt(iter, nbrow, m_error_prev, m_w_prev, cMoPrev, mu, reStartFromLastIncrement);
 
     if(!reStartFromLastIncrement) {
       w_lines.resize(0);
