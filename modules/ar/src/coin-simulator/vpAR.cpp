@@ -163,19 +163,18 @@ vpAR::setImage(vpImage<vpRGBa> &I)
 
   background = true ;
 
-  unsigned int k =0 ;
   for (unsigned int i=0 ; i <I.getHeight()  ; i++)
+  {
+    unsigned int k=0;
+    for (unsigned int j=0 ; j <I.getWidth()   ; j++)
+      //le repere image open GL est en bas a gauche donc l'image serait inverse
     {
-      k=0;
-      for (unsigned int j=0 ; j <I.getWidth()   ; j++)
-	//le repere image open GL est en bas a gauche donc l'image serait inverse
-	{
-	  image_background[i*I.getWidth()*3+k+0]=I[I.getHeight()-i-1][j].R ;
-	  image_background[i*I.getWidth()*3+k+1]=I[I.getHeight()-i-1][j].G ;
-	  image_background[i*I.getWidth()*3+k+2]=I[I.getHeight()-i-1][j].B ;
-	  k+=3;
-      }
+      image_background[i*I.getWidth()*3+k+0]=I[I.getHeight()-i-1][j].R ;
+      image_background[i*I.getWidth()*3+k+1]=I[I.getHeight()-i-1][j].G ;
+      image_background[i*I.getWidth()*3+k+2]=I[I.getHeight()-i-1][j].B ;
+      k+=3;
     }
+  }
 
 }
 

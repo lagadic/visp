@@ -100,12 +100,11 @@ int main()
 
         // Add previous features if they are not to close to detected one
         double distance, minDistance_ = tracker.getMinDistance();
-        bool is_redundant;
         for(int i = tracker.getNbFeatures() ;
             j<prev_nfeatures && i<tracker.getMaxFeatures() ;
             j++){
           // Test if a previous feature is not redundant with new the one that are newly detected
-          is_redundant = false;
+          bool is_redundant = false;
           for(int k=0; k<tracker.getNbFeatures(); k++){
             tracker.getFeature(k,id,x,y);
             //printf("curr feature %d: id %d coord: %g %g\n", k, id, x, y);

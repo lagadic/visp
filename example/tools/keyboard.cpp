@@ -55,27 +55,24 @@
 int
 main()
 {
-  int c;
-  {
-    std::cout << "Push some characters on the keyboard..." << std::endl;
-    printf("Hit 'q' or 'Q' to stop the loop ...\n");
-    vpKeyboard keyboard;
+  std::cout << "Push some characters on the keyboard..." << std::endl;
+  printf("Hit 'q' or 'Q' to stop the loop ...\n");
+  vpKeyboard keyboard;
 
-    std::cout << "Start the keyboard scrutation..." << std::endl;
-    for ( ; ; ) {
+  std::cout << "Start the keyboard scrutation..." << std::endl;
+  for ( ; ; ) {
 
-      if (keyboard.kbhit()) {
-        c = keyboard.getchar () ;
-        printf("You hit key: %d '%c'\n", c, c);
-        if (c == 'q' || c == 'Q') {
-          printf("You hit key: %d %c we stop the loop\n", c, c);
-          break ;
-        }
+    if (keyboard.kbhit()) {
+      int c = keyboard.getchar () ;
+      printf("You hit key: %d '%c'\n", c, c);
+      if (c == 'q' || c == 'Q') {
+        printf("You hit key: %d %c we stop the loop\n", c, c);
+        break ;
       }
-
-      // My job is here
-
     }
+
+    // My job is here
+
   }
 
   std::cout << "Enter an integer: ";

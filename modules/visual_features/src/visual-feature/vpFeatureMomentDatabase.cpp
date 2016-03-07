@@ -79,10 +79,9 @@ void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
   for(itr = featureMomentsDataBase.begin(); itr != featureMomentsDataBase.end(); itr++){
     values.push_back((*itr).second);
   }
-  unsigned int i_;
   #pragma omp parallel for shared(A,B,C)
   for(int i=0;i<(int)values.size();i++){
-    i_ = static_cast<unsigned int>(i);
+    unsigned int i_ = static_cast<unsigned int>(i);
     values[i_]->update(A,B,C);
   }
 #else

@@ -98,20 +98,19 @@ vpFeatureMomentCentered::compute_Lmu_pq(const unsigned int& p, const unsigned in
   double mkl = 0.0;
   vpMatrix L_mkl;
 
-  int pmk = 0; // p-k
   int qml = 0; // q-l
   double minus1pow = 0.; // (-1)^(p+q-k-l)
   double pintom = 0.;
 
   for (unsigned int k = 0; k <=p; ++k)
   {
-      pmk = (int)p-(int)k;
+      int pmk = (int)p-(int)k;
       pcombk = static_cast<double>(vpMath::comb(p,k));
       for (unsigned int l = 0; l <= q; ++l)
       {
           qml = (int)q - (int)l;
           qcombl = static_cast<double>(vpMath::comb(q,l));
-		  minus1pow = pow((double)-1, (double)(pmk + qml));
+          minus1pow = pow((double)-1, (double)(pmk + qml));
           pcombkqcombl =  pcombk * qcombl;
           mkl = m.get(k, l);
           pintom =   pcombkqcombl * mkl;

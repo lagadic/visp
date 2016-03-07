@@ -557,7 +557,6 @@ static void computeInteractionMatrixFromList  (const std::list<vpBasicFeature *>
   /* vectTmp is used to store the return values of functions get_s() and
    * error(). */
   vpMatrix matrixTmp;
-  unsigned int rowMatrixTmp, colMatrixTmp;
 
   /* The cursor are the number of the next case of the vector array to
    * be affected. A memory reallocation should be done when cursor
@@ -571,8 +570,8 @@ static void computeInteractionMatrixFromList  (const std::list<vpBasicFeature *>
   {
     /* Get s. */
     matrixTmp = (*it)->interaction( *it_select );
-    rowMatrixTmp = matrixTmp .getRows();
-    colMatrixTmp = matrixTmp .getCols();
+    unsigned int rowMatrixTmp = matrixTmp .getRows();
+    unsigned int colMatrixTmp = matrixTmp .getCols();
 
     /* Check the matrix L size, and realloc if needed. */
     while (rowMatrixTmp + cursorL > rowL) {
@@ -733,7 +732,6 @@ vpColVector vpServo::computeError()
     /* vectTmp is used to store the return values of functions get_s() and
      * error(). */
     vpColVector vectTmp;
-    unsigned int dimVectTmp;
 
     /* The cursor are the number of the next case of the vector array to
      * be affected. A memory reallocation should be done when cursor
@@ -757,7 +755,7 @@ vpColVector vpServo::computeError()
 
       /* Get s, and store it in the s vector. */
       vectTmp = current_s->get_s(select);
-      dimVectTmp = vectTmp .getRows();
+      unsigned int dimVectTmp = vectTmp .getRows();
       while (dimVectTmp + cursorS > dimS)
       { dimS *= 2; s .resize (dimS,false); vpDEBUG_TRACE(15,"Realloc!"); }
       for (unsigned int k = 0; k <  dimVectTmp; ++k) { s[cursorS++] = vectTmp[k]; }

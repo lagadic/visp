@@ -644,7 +644,7 @@ main(int argc, const char ** argv)
     // Main loop for single or multi-camera acquisition and display
     std::cout << "Capture in process..." << std::endl;
 
-    double tbegin=0, tend=0, tloop=0, ttotal=0;
+    double tbegin=0, ttotal=0;
 
     ttotal = 0;
     tbegin = vpTime::measureTimeMs();
@@ -687,8 +687,8 @@ main(int argc, const char ** argv)
           }
         }
       }
-      tend = vpTime::measureTimeMs();
-      tloop = tend - tbegin;
+      double tend = vpTime::measureTimeMs();
+      double tloop = tend - tbegin;
       tbegin = tend;
       std::cout << "loop time: " << tloop << " ms" << std::endl;
       ttotal += tloop;

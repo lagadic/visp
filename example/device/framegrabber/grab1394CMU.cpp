@@ -220,7 +220,7 @@ main(int argc, const char ** argv)
 #endif
 
   try {
-    double tbegin=0, tend=0, tloop=0, ttotal=0;
+    double tbegin=0, ttotal=0;
 
     ttotal = 0;
     tbegin = vpTime::measureTimeMs();
@@ -246,8 +246,8 @@ main(int argc, const char ** argv)
         std::cout << "Write: " << filename << std::endl;
         vpImageIo::write(I, filename);
       }
-      tend = vpTime::measureTimeMs();
-      tloop = tend - tbegin;
+      double tend = vpTime::measureTimeMs();
+      double tloop = tend - tbegin;
       tbegin = tend;
       std::cout << "loop time: " << tloop << " ms" << std::endl;
       ttotal += tloop;

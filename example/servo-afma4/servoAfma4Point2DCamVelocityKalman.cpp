@@ -371,7 +371,7 @@ main(int argc, const char ** argv)
 
     int iter = 0 ;
 
-    double t_0, t_1, Tv, Tv_0, Tv_1;
+    double t_1, Tv_0;
     vpColVector vm(6), vm_0(6);
     vpColVector v(6), v1(6), v2(6); // robot velocities
     //task error
@@ -391,9 +391,9 @@ main(int argc, const char ** argv)
     //
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
     for ( ; ; ) {
-      t_0 = vpTime::measureTimeMs(); // t_0: current time
+      double t_0 = vpTime::measureTimeMs(); // t_0: current time
       // Temps de la boucle d'asservissement
-      Tv = (double)(t_0 - t_1) / 1000.0; //temps d'une iteration en s !
+      double Tv = (double)(t_0 - t_1) / 1000.0; //temps d'une iteration en s !
       //     std::cout << "time iter : " << Tv << std::endl;
 
       // Update time for next iteration
@@ -423,7 +423,7 @@ main(int argc, const char ** argv)
       vm_0 = vm;
 
       // Update current loop time and previous one
-      Tv_1 = Tv_0;
+      double Tv_1 = Tv_0;
       Tv_0 = Tv;
 
       // Compute the visual servoing skew vector

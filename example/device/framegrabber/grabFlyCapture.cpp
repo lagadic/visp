@@ -196,10 +196,10 @@ int main(int argc, const char** argv)
     }
 
     for(;;) {
-      static unsigned int frame = 0;
       g.acquire(I); // get a new frame from camera
 
       if (opt_save) {
+        static unsigned int frame = 0;
         char buf[FILENAME_MAX];
         sprintf(buf, opt_opath.c_str(), frame++);
         std::string filename(buf);
