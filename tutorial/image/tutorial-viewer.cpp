@@ -59,7 +59,7 @@ int main(int argc, char** argv)
     vpDisplay::getClick(I);
     //! [vpDisplay get click]
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

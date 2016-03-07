@@ -324,7 +324,7 @@ main(int argc, const char ** argv)
     std::cout << "You have seen the main capabilities of the simulator. Other specific functionalities are available. Please refers to the html documentation to access the list of all functions" << std::endl;
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

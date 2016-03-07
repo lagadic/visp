@@ -98,7 +98,7 @@ int main()
       vpTime::wait(40);
     }
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

@@ -200,7 +200,7 @@ int main()
 
     return test_fail;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

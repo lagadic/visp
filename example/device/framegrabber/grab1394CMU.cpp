@@ -255,7 +255,7 @@ main(int argc, const char ** argv)
     std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
     std::cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << std::endl;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

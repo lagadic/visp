@@ -94,7 +94,7 @@ int main()
     vpDisplay::getClick(plotter.I);
 #endif
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

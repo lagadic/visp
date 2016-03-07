@@ -107,7 +107,7 @@ int main()
               << " " << vpMath::deg(rzyz[2]) << std::endl;
 
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
   return 0;

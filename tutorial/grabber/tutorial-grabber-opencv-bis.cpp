@@ -40,7 +40,7 @@ int main(int argc, char** argv)
         break;
     }
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

@@ -108,7 +108,7 @@ int main(int argc, char** argv)
     // the camera will be deinitialized automatically in VideoCapture destructor
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

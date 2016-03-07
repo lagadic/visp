@@ -326,7 +326,7 @@ main(int argc, const char ** argv)
     std::cout << "Final camera location: \n" << cMo << std::endl ;
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return 1;
   }

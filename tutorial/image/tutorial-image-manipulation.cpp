@@ -24,7 +24,7 @@ int main()
               << (int)color_image[icolor_max][jcolor_max].B
               << std::endl;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

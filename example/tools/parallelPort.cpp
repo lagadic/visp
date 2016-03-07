@@ -167,7 +167,7 @@ main(int argc, const char **argv)
 
 
   }
-  catch (vpParallelPortException e) {
+  catch (vpParallelPortException &e) {
     switch(e.getCode()) {
     case vpParallelPortException::opening:
       printf("Can't open the parallel port\n");

@@ -263,7 +263,7 @@ vpPolygon::isInside(const vpImagePoint& ip)
 
     try{
       intersection = testIntersectionSegments(ip1, ip2, ip, infPoint );
-    }catch(vpException e){
+    }catch(vpException &e){
       return isInside(ip);
     }
 

@@ -255,7 +255,7 @@ main(int argc, const char ** argv)
       std::cout << "Read image: " << filename << std::endl;
       vpImageIo::read(I, filename) ;
     }
-    catch(vpImageException e)
+    catch(vpImageException &e)
     {
       vpERROR_TRACE("at main level");
       std::cout << e << std::endl ;
@@ -267,7 +267,7 @@ main(int argc, const char ** argv)
       std::cout << "Write image: " << filename << std::endl;
       vpImageIo::write(I, filename) ;
     }
-    catch(vpException e) {
+    catch(vpException &e) {
       std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
     }
 
@@ -291,7 +291,7 @@ main(int argc, const char ** argv)
       std::cout << "Read image: " << filename << std::endl;
       vpImageIo::read(Irgba, filename) ;
     }
-    catch(vpException e) {
+    catch(vpException &e) {
       std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
     }
 
@@ -301,12 +301,12 @@ main(int argc, const char ** argv)
       std::cout << "Write image: " << filename << std::endl;
       vpImageIo::write(Irgba, filename) ;
     }
-    catch(vpException e) {
+    catch(vpException &e) {
       std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
     }
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

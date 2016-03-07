@@ -865,7 +865,7 @@ int main()
   try {
     robot.setPosition(vpRobot::REFERENCE_FRAME, pose);
   }
-  catch (vpRobotException e) {
+  catch (vpRobotException &e) {
     if (e.getCode() == vpRobotException::positionOutOfRangeError) {
       std::cout << "The position is out of range" << std::endl;
     }
@@ -969,7 +969,7 @@ int main()
   try {
     robot.setPosition(vpRobot::CAMERA_FRAME, position);
   }
-  catch (vpRobotException e) {
+  catch (vpRobotException &e) {
     if (e.getCode() == vpRobotException::positionOutOfRangeError) {
       std::cout << "The position is out of range" << std::endl;
     }

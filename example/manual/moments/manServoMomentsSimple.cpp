@@ -172,7 +172,7 @@ int main()
     std::cout << "final error=" << ( task.getError() ).sumSquare() << std::endl;
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

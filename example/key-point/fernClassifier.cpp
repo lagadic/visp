@@ -335,7 +335,7 @@ main(int argc, const char** argv)
       try{
         fern.buildReference(Iref, roi);
       }
-      catch(vpException e){
+      catch(vpException &e){
         std::cout << e.getMessage() << std::endl;
       }
       catch(...){
@@ -344,7 +344,7 @@ main(int argc, const char** argv)
       try{
         fern.record(objectName, dataFile);
       }
-      catch(vpException e){
+      catch(vpException &e){
         std::cout << e.getMessage() << std::endl;
       }
       catch(...){
@@ -406,7 +406,7 @@ main(int argc, const char** argv)
       try{
         nbpts = fern.matchPoint(I);
       }
-      catch(vpException e){
+      catch(vpException &e){
         std::cout << e.getMessage() << std::endl;
         return -1;
       }
@@ -429,7 +429,7 @@ main(int argc, const char** argv)
 
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

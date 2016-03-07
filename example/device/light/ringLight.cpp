@@ -191,7 +191,7 @@ main(int argc, const char **argv)
       light.pulse();
     }
   }
-  catch (vpParallelPortException e) {
+  catch (vpParallelPortException &e) {
     switch(e.getCode()) {
     case vpParallelPortException::opening:
       printf("Can't open the parallel port to access to the ring light device\n");

@@ -287,7 +287,7 @@ int main(int argc, char **argv)
     // wait for the thread to stop
     robot.waitForRunExit();
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

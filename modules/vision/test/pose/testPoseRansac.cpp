@@ -125,7 +125,7 @@ main()
     std::cout << "Pose is " << (test_fail ? "badly" : "well") << " estimated" << std::endl;
     return test_fail;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

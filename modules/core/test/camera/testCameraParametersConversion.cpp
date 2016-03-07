@@ -105,7 +105,7 @@ int main()
             "v1 - v2 = %.20f\n",u1 - u2,v1 - v2);
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

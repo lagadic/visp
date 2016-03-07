@@ -69,7 +69,7 @@ int main(int argc, char** argv)
       //! [vpVideoReader loop rate]
     }
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << e.getMessage() << std::endl;
   }
 #else

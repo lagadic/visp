@@ -299,7 +299,7 @@ int main(int argc, char **argv)
     task.print() ;
     task.kill();
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

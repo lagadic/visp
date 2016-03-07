@@ -51,7 +51,7 @@ int main()
       vpDisplay::flush(I);
     }
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }
 #endif

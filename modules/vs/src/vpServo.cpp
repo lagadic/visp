@@ -618,7 +618,7 @@ vpMatrix vpServo::computeInteractionMatrix()
         interactionMatrixComputed = true ;
       }
 
-      catch(vpException me)
+      catch(vpException &me)
       {
         vpERROR_TRACE("Error caught") ;
         throw ;
@@ -639,7 +639,7 @@ vpMatrix vpServo::computeInteractionMatrix()
         }
 
       }
-      catch(vpException me)
+      catch(vpException &me)
       {
         vpERROR_TRACE("Error caught") ;
         throw ;
@@ -656,7 +656,7 @@ vpMatrix vpServo::computeInteractionMatrix()
         computeInteractionMatrixFromList(this ->desiredFeatureList,
                                          this ->featureSelectionList, Lstar);
       }
-      catch(vpException me)
+      catch(vpException &me)
       {
         vpERROR_TRACE("Error caught") ;
         throw ;
@@ -674,7 +674,7 @@ vpMatrix vpServo::computeInteractionMatrix()
     }
 
   }
-  catch(vpException me)
+  catch(vpException &me)
   {
     vpERROR_TRACE("Error caught") ;
     throw ;
@@ -794,7 +794,7 @@ vpColVector vpServo::computeError()
     dim_task = error.getRows() ;
     errorComputed = true ;
   }
-  catch(vpException me)
+  catch(vpException &me)
   {
     vpERROR_TRACE("Error caught") ;
     throw ;

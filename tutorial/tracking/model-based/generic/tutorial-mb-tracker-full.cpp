@@ -197,11 +197,11 @@ int main(int argc, char** argv)
     delete tracker;
     //! [Cleanup]
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
 #ifdef VISP_HAVE_OGRE
-  catch(Ogre::Exception e) {
+  catch(Ogre::Exception &e) {
     std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
   }
 #endif

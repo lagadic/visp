@@ -148,7 +148,7 @@ int main(int argc, char** argv)
     delete tracker;
     //! [Cleanup]
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
 #else

@@ -35,7 +35,7 @@ int main()
     vpImageIo::write(Iud, "chessboard-undistort.pgm");
     //! [Create image without distorsion]
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 

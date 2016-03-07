@@ -239,7 +239,7 @@ main(int argc, const char ** argv)
     task.kill();
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return 1;
   }

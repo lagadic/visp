@@ -422,7 +422,7 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I,
       }
     }
   }
-  catch(vpException e){
+  catch(vpException &e){
     vpERROR_TRACE("Error while tracking dots") ;
     vpCTRACE << e;
     return;
@@ -694,11 +694,11 @@ int main(int argc, const char **argv)
 
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return 1;
   }
-  catch(Ogre::Exception e) {
+  catch(Ogre::Exception &e) {
     std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
     return 1;
   }

@@ -270,7 +270,7 @@ main(int argc, const char ** argv)
       filename = vpIoTools::createFilePath(ipath, "ViSP-images/image-that-does-not-exist.ppm");
       vpImageIo::read(I,filename) ;
     }
-    catch(vpException e) {
+    catch(vpException &e) {
       std::cout << "Catch an exception: " << e << std::endl;
     }
 
@@ -280,7 +280,7 @@ main(int argc, const char ** argv)
       filename = vpIoTools::createFilePath(dirname, "directory-that-does-not-exist/Klimt.ppm");
       vpImageIo::write(I,filename) ;
     }
-    catch(vpException e) {
+    catch(vpException &e) {
       std::cout << "Catch an exception: " << e << std::endl;
     }
 
@@ -305,7 +305,7 @@ main(int argc, const char ** argv)
       filename = vpIoTools::createFilePath(ipath, "ViSP-images/image-that-does-not-exist.ppm");
       vpImageIo::read(Irgba,filename) ;
     }
-    catch(vpException e) {
+    catch(vpException &e) {
       std::cout << "Catch an exception: " << e << std::endl;
     }
 
@@ -315,12 +315,12 @@ main(int argc, const char ** argv)
       vpImageIo::write(Irgba,filename) ;
     }
 
-    catch(vpException e) {
+    catch(vpException &e) {
       std::cout << "Catch an exception: " << e << std::endl;
     }
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

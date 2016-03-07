@@ -259,7 +259,7 @@ vpMatrix::inverseByLU() const
   try {
     A.LUDcmp(perm, p);
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     delete [] perm;
     throw(e);
   }

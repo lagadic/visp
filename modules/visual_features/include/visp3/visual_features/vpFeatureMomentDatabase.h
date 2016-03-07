@@ -138,7 +138,7 @@ int main()
   fci.update(0.,0.,1.);
 
   std::cout << fci.interaction(vpFeatureMomentCInvariant::selectC1()) << std::endl;
-  }catch(vpException e){
+  }catch(vpException &e){
       std::cout << e.getMessage() << std::endl;
   }
 

@@ -286,7 +286,7 @@ void vpDot2::initTracking(const vpImage<unsigned char>& I, unsigned int size)
   try {
     track( I );
   }
-  catch(vpException e)
+  catch(vpException &e)
   {
     //vpERROR_TRACE("Error caught") ;
     throw(e) ;

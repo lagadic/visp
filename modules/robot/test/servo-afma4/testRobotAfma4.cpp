@@ -61,7 +61,7 @@ int main()
 
     std::cout << afma4 << std::endl;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
   return 0;

@@ -133,7 +133,7 @@ int main()
     vpImageIo::write(Ic, "./geometricFeatures.ppm");
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

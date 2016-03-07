@@ -51,7 +51,7 @@ int main(int argc, char **)
       writer.close();
 
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else

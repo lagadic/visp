@@ -41,7 +41,7 @@ int main()
       //! [vp1394TwoGrabber click to exit]
     }
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

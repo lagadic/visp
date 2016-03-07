@@ -20,7 +20,7 @@ int main()
     vpImageIo::write(I, "monkey.png"); // Gray
 #  endif
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

@@ -350,7 +350,7 @@ main(int argc, const char ** argv)
     std::cout << cMo << std::endl ;
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return 1;
   }

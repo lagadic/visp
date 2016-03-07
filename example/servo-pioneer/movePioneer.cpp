@@ -140,7 +140,7 @@ int main(int argc, char **argv)
     ArLog::log(ArLog::Normal, "simpleMotionCommands: Exiting.");
     return 0;
   }
-  catch(vpException e) {
+  catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }
