@@ -219,6 +219,7 @@ public:
 
   /*!
     Get the error angle between the gradient direction of the model features projected at the resulting pose and their normal.
+    The error is expressed in degree between 0 and 90.
 
     \return the value for the error.
   */

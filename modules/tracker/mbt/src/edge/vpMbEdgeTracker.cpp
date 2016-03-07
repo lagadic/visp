@@ -233,7 +233,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int
       reloop = true;
     }
 
-    computeVVSFirstPhasePoseEstimation(nerror, iter, factor, weighted_error, L, isoJoIdentity_, m_error, m_w);
+    computeVVSFirstPhasePoseEstimation(nerror, iter, factor, weighted_error, L, isoJoIdentity_);
 
     iter++;
   }
@@ -272,7 +272,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int
 
     bool reStartFromLastIncrement = false;
 
-    computeVVSSecondPhaseCheckLevenbergMarquard(iter, nbrow, m_error_prev, m_w_prev, cMoPrev, mu, reStartFromLastIncrement);
+    computeVVSSecondPhaseCheckLevenbergMarquardt(iter, nbrow, m_error_prev, m_w_prev, cMoPrev, mu, reStartFromLastIncrement);
 
     if(!reStartFromLastIncrement){
       computeVVSSecondPhaseWeights(iter, nerror, nbrow, weighted_error, robust_lines, robust_cylinders, robust_circles,
@@ -701,25 +701,26 @@ vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char>& I, vpC
 
 void
 vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(const unsigned int nerror, const unsigned int iter, const vpColVector &factor,
-    vpColVector &weighted_error, vpMatrix &L, bool &isoJoIdentity_, const vpColVector &error, const vpColVector &w_mbt) {
-  double num=0;
-  double den=0;
+    vpColVector &weighted_error, vpMatrix &L, bool &isoJoIdentity_) {
 
-  double wi ; double eri ;
-  for(unsigned int i = 0; i < nerror; i++){
-    wi = w_mbt[i]*factor[i];
-    eri = error[i];
-    num += wi*vpMath::sqr(eri);
-    den += wi ;
+  double wi, eri;
+  if((iter==0) || compute_interaction) {
+    for (unsigned int i = 0; i < nerror; i++) {
+      wi = m_w[i]*factor[i];
+      eri = m_error[i];
 
-    weighted_error[i] =  wi*eri ;
-  }
+      weighted_error[i] =  wi*eri;
 
-  if((iter==0) || compute_interaction){
-    for (unsigned int i=0 ; i < nerror ; i++){
-      for (unsigned int j=0 ; j < 6 ; j++){
-        L[i][j] = w_mbt[i]*factor[i]*L[i][j] ;
+      for (unsigned int j = 0; j < 6; j++) {
+        L[i][j] = wi*L[i][j];
       }
+    }
+  } else {
+    for(unsigned int i = 0; i < nerror; i++) {
+      wi = m_w[i]*factor[i];
+      eri = m_error[i];
+
+      weighted_error[i] =  wi*eri;
     }
   }
 
@@ -831,7 +832,7 @@ vpMbEdgeTracker::computeVVSSecondPhase(const vpImage<unsigned char>& _I, vpMatri
 }
 
 void
-vpMbEdgeTracker::computeVVSSecondPhaseCheckLevenbergMarquard(const unsigned int iter, const unsigned int nbrow,
+vpMbEdgeTracker::computeVVSSecondPhaseCheckLevenbergMarquardt(const unsigned int iter, const unsigned int nbrow,
     const vpColVector &m_error_prev, const vpColVector &m_w_prev, const vpHomogeneousMatrix &cMoPrev,
     double &mu, bool &reStartFromLastIncrement) {
   if(iter != 0 && m_optimizationMethod == vpMbTracker::LEVENBERG_MARQUARDT_OPT){
@@ -874,21 +875,29 @@ vpMbEdgeTracker::computeVVSSecondPhasePoseEstimation(const unsigned int nerror, 
      }
   }
 
-  for(unsigned int i=0; i<nerror; i++){
-    wi = m_w[i]*factor[i];
-    W_true[i] = wi;
-    eri = m_error[i];
-    num += wi*vpMath::sqr(eri);
-    den += wi;
+  if((iter==0)|| compute_interaction) {
+    for (unsigned int i = 0; i < nerror; i++) {
+      wi = m_w[i]*factor[i];
+      W_true[i] = wi;
+      eri = m_error[i];
+      num += wi*vpMath::sqr(eri);
+      den += wi;
 
-    weighted_error[i] =  wi*eri ;
-  }
+      weighted_error[i] =  wi*eri ;
 
-  if((iter==0)|| compute_interaction){
-    for (unsigned int i=0 ; i < nerror ; i++){
-      for (unsigned int j=0 ; j < 6 ; j++){
-        L[i][j] = m_w[i]*factor[i]*L[i][j];
+      for (unsigned int j = 0; j < 6; j++) {
+        L[i][j] = wi*L[i][j];
       }
+    }
+  } else {
+    for(unsigned int i = 0; i < nerror; i++) {
+      wi = m_w[i]*factor[i];
+      W_true[i] = wi;
+      eri = m_error[i];
+      num += wi*vpMath::sqr(eri);
+      den += wi;
+
+      weighted_error[i] =  wi*eri ;
     }
   }
 
@@ -1017,7 +1026,7 @@ vpMbEdgeTracker::computeVVSSecondPhaseWeights(const unsigned int iter, const uns
 /*!
   Compute the projection error of the model.
   This approach compares the gradient direction around samples of each lines of the model with their direction.
-  Error is expressed in degrees between 0 and 90;
+  Error is expressed in degrees between 0 and 90.
 
   \param _I : Image in which the model appears.
 */
