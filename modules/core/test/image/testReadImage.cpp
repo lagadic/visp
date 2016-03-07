@@ -53,7 +53,7 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdi:p:h"
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath);
+void usage(const char *name, const char *badparam, std::string ipath);
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath);
 
 /*
@@ -63,11 +63,9 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
   \param name : Program name.
   \param badparam : Bad parameter name.
   \param ipath: Input image path.
-  \param opath : Personal image path.
-  \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
+void usage(const char *name, const char *badparam, std::string ipath)
 {
   fprintf(stdout, "\n\
 Read images on the disk.\n\
@@ -87,13 +85,13 @@ OPTIONS:                                               Default\n\
      variable produces the same behaviour than using\n\
      this option.\n\
 \n\
-  -p <personal image path>                               %s\n\
-     Set personal image path.\n\
-     From this path read the image \"%s\".\n\
+  -p <personal image path>                               \n\
+     Path to an image used to test image reading function.\n\
+     Example: -p /my_path_to/image.png\n\
 \n\
   -h\n\
      Print the help.\n\n",
-	  ipath.c_str(), ppath.c_str(), ppath.c_str());
+    ipath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -119,20 +117,20 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
     switch (c) {
     case 'i': ipath = optarg_; break;
     case 'p': ppath = optarg_; break;
-    case 'h': usage(argv[0], NULL, ipath, ppath); return false; break;
+    case 'h': usage(argv[0], NULL, ipath); return false; break;
 
     case 'c':
     case 'd':
       break;
 
     default:
-      usage(argv[0], optarg_, ipath, ppath); return false; break;
+      usage(argv[0], optarg_, ipath); return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, ppath);
+    usage(argv[0], NULL, ipath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -167,8 +165,6 @@ main(int argc, const char ** argv)
     // Get the option values
     if (!opt_ipath.empty())
       ipath = opt_ipath;
-    if (!opt_ppath.empty())
-      ppath = opt_ppath;
 
     // Compare ipath and env_ipath. If they differ, we take into account
     // the input path comming from the command line option
@@ -204,9 +200,6 @@ main(int argc, const char ** argv)
       filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.jpeg");
       vpImageIo::read(I,filename);
       printf("Read jpeg ok\n");
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.jpg");
-      vpImageIo::read(I,filename);
-      printf("Read jpg ok\n");
       filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.png");
       vpImageIo::read(I,filename);
       printf("Read png ok\n");
@@ -220,9 +213,6 @@ main(int argc, const char ** argv)
       filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.jpeg");
       vpImageIo::read(Irgb,filename);
       printf("Read jpeg ok\n");
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.jpg");
-      vpImageIo::read(Irgb,filename);
-      printf("Read jpg ok\n");
       filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.png");
       vpImageIo::read(Irgb,filename);
       printf("Read png ok\n");
@@ -230,12 +220,12 @@ main(int argc, const char ** argv)
     else
     {
       filename = opt_ppath;
-      vpImageIo::read(I,filename);
-      vpTRACE("image read without problem");
+      vpImageIo::read(I, filename);
+      printf("Image \"%s\" read successfully\n", filename.c_str());
     }
   }
   catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
   return 0;
 }
