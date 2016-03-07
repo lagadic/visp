@@ -785,16 +785,16 @@ vpImagePoint
 vpHomography::projection(const vpImagePoint &ipb)
 {
   vpImagePoint ipa;
-  double i = ipb.get_i();
-  double j = ipb.get_j();
+  double u = ipb.get_u();
+  double v = ipb.get_v();
 
-  double i_a = (*this)[0][0] * i + (*this)[0][1] * j + (*this)[0][2];
-  double j_a = (*this)[1][0] * i + (*this)[1][1] * j + (*this)[1][2];
-  double k_a = (*this)[2][0] * i + (*this)[2][1] * j + (*this)[2][2];
+  double u_a = (*this)[0][0] * u + (*this)[0][1] * v + (*this)[0][2];
+  double v_a = (*this)[1][0] * u + (*this)[1][1] * v + (*this)[1][2];
+  double w_a = (*this)[2][0] * u + (*this)[2][1] * v + (*this)[2][2];
 
-  if(std::fabs(k_a) > std::numeric_limits<double>::epsilon()){
-    ipa.set_i(i_a / k_a);
-    ipa.set_j(j_a / k_a);
+  if(std::fabs(w_a) > std::numeric_limits<double>::epsilon()){
+    ipa.set_u(u_a / w_a);
+    ipa.set_v(v_a / w_a);
   }
 
   return ipa;
