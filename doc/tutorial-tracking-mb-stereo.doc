@@ -12,6 +12,18 @@ In order to achieve this, the following information are required:
 - the intrinsic parameters of each camera;
 - the transformation matrix between each camera and a reference camera (\f$ ^{c_{current}}{\bf M}_{c_{reference}} \f$).
 
+The following video shows a teabox stereo tracking example done with vpMbEdgeMultiTracker. In this example images were captured by the fixed cameras located on Romeo Humanoid robot head.
+
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/aWXvvkeytp0" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+This other video shows the behavior of the hybrid tracking done with vpMbEdgeKltMultiTracker where features are the teabox edges and the keypoints on the visible faces. 
+
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/0poP7gONdMc" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
 \note The cameras can move, but the tracking will be effective as long as the transformation matrix between the cameras and the reference camera is known and updated at each iteration.
 \note The new introduced classes are not restricted to stereo configuration. They allow the usage of multiple cameras (see \ref mb_stereo_moving_cameras).
 
@@ -183,6 +195,12 @@ tracker.track(mapOfImg);
 \endcode
 
 This information can be available through the robot kinematics and different kind of sensors for example.
+
+The following video shows how the result of a stereo hybrid model-based tracking based on object edges and keypoints located on visible faces could be used to servo Romeo humanoid robot eyes to gaze the object. Here the images were captured by Romeo eyes that are moving.
+
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/IguBxf4VRUc" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
 
 \section mb_stereo_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-tt.
