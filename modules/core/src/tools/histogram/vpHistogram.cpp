@@ -958,14 +958,8 @@ vpHistogram::write(const char *filename)
   if (fd == NULL)
     return false;
   for (unsigned i=0; i < size; i ++)
-    fprintf(fd, "%d %d\n", i, histogram[i]);
+    fprintf(fd, "%u %d\n", i, histogram[i]);
   fclose(fd);
 
   return true;
 }
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

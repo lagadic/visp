@@ -262,7 +262,7 @@ void *mainLoop (void *_simu)
         sprintf(name,"/tmp/image.%04d.external.png",it) ;
         std::cout << "Save " << name << std::endl ;
         simu->write(name) ;
-        sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
+        sprintf(name,"/tmp/image.%04u.internal.png",iter) ;
         std::cout << "Save " << name << std::endl ;
         simu->write(name) ;
         it++ ;

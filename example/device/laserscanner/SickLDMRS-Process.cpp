@@ -153,7 +153,7 @@ void *laser_display_and_save_loop(void *)
 
       if (save) {
         // Set the scan data filename to store the measures
-        sprintf(filename, "%s/scan%04d-layer%d.txt",
+        sprintf(filename, "%s/scan%04u-layer%d.txt",
                 output_path.c_str(), iter, layer+1);
         fdscan.open(filename);
 

@@ -1453,7 +1453,7 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
         // 	vpTRACE("Inner cercle pixel (%d, %d) has bad level for dot (%g, %g)",
         // 		u, v, cog_u, cog_v);
 #ifdef DEBUG
-        printf("Inner cercle pixel (%d, %d) has bad level for dot (%g, %g): %d not in [%d, %d]\n",
+        printf("Inner cercle pixel (%u, %u) has bad level for dot (%g, %g): %d not in [%d, %d]\n",
                u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
 #endif
         //return false;
@@ -1503,7 +1503,7 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
         // 	vpTRACE("Outside cercle pixel (%d, %d) has bad level for dot (%g, %g)",
         // 		u, v, cog_u, cog_v);
 #ifdef DEBUG
-        printf("Outside cercle pixel (%d, %d) has bad level for dot (%g, %g): %d not in [%d, %d]\n",
+        printf("Outside cercle pixel (%u, %u) has bad level for dot (%g, %g): %d not in [%d, %d]\n",
                u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
 #endif
         nb_bad_points ++;

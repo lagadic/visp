@@ -289,10 +289,10 @@ void *mainLoop (void *_simu)
     if(SAVE==1)
     {
       char name[FILENAME_MAX];
-      sprintf(name,"/tmp/image.%04d.external.png",iter) ;
+      sprintf(name,"/tmp/image.%04u.external.png",iter) ;
       std::cout << name << std::endl ;
       simu->write(name) ;
-      sprintf(name,"/tmp/image.%04d.internal.png",iter) ;
+      sprintf(name,"/tmp/image.%04u.internal.png",iter) ;
       simu->write(name) ;
     }
 
