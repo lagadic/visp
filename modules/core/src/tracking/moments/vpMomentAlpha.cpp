@@ -59,7 +59,7 @@ vpMomentAlpha::vpMomentAlpha() : isRef(true), symmetric(false), ref(), alphaRef(
 vpMomentAlpha::vpMomentAlpha(std::vector<double>& ref_, double alpha_ref)
   : vpMoment(),isRef(false),symmetric(false),ref(ref_),alphaRef(alpha_ref)
 {
-  for (std::vector<double>::iterator it = ref_.begin(); it!=ref_.end(); it++)
+  for (std::vector<double>::iterator it = ref_.begin(); it!=ref_.end(); ++it)
     if (*it<=1e-4)
       symmetric = true;
 

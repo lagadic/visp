@@ -76,7 +76,7 @@ void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
 #ifdef VISP_HAVE_OPENMP
   std::vector<vpFeatureMoment*> values;
   values.reserve(featureMomentsDataBase.size());
-  for(itr = featureMomentsDataBase.begin(); itr != featureMomentsDataBase.end(); itr++){
+  for(itr = featureMomentsDataBase.begin(); itr != featureMomentsDataBase.end(); ++itr){
     values.push_back((*itr).second);
   }
   #pragma omp parallel for shared(A,B,C)
@@ -85,7 +85,7 @@ void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
     values[i_]->update(A,B,C);
   }
 #else
-  for(itr = featureMomentsDataBase.begin(); itr != featureMomentsDataBase.end(); itr++){
+  for(itr = featureMomentsDataBase.begin(); itr != featureMomentsDataBase.end(); ++itr){
 		(*itr).second->update(A,B,C);
 	}
 #endif

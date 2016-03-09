@@ -64,7 +64,7 @@ void vpFeatureMomentBasic::compute_interaction(){
     const vpMomentObject& m = moment->getObject();
     order = m.getOrder()+1;
     interaction_matrices.resize(order*order);
-    for(std::vector< vpMatrix >::iterator i=interaction_matrices.begin();i!=interaction_matrices.end();i++)
+    for(std::vector< vpMatrix >::iterator i=interaction_matrices.begin();i!=interaction_matrices.end();++i)
         i->resize(1,6);
     if (m.getType()==vpMomentObject::DISCRETE){
         delta=0;

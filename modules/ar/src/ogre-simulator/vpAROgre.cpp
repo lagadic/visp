@@ -368,7 +368,7 @@ void vpAROgre::init(bool
     else
       misc[leftconf] = rightconf;
 
-    it++;
+    ++it;
   }
 
   // With Ogre version >= 1.8.1 we hide the window

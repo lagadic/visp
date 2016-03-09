@@ -354,7 +354,7 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned cha
 
     //Normalisation equivalent to sampling interval/pixel size delX x delY
     double norm_factor = 1./(cam.get_px()*cam.get_py());
-    for (std::vector<double>::iterator it = values.begin(); it!=values.end(); it++) {
+    for (std::vector<double>::iterator it = values.begin(); it!=values.end(); ++it) {
         *it = (*it) * norm_factor;
     }
 }
@@ -443,7 +443,7 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, const vpCame
   if (normalize_with_pix_size){
       // Normalisation equivalent to sampling interval/pixel size delX x delY
       double norm_factor = 1./(cam.get_px()*cam.get_py());
-      for (std::vector<double>::iterator it = values.begin(); it!=values.end(); it++) {
+      for (std::vector<double>::iterator it = values.begin(); it!=values.end(); ++it) {
           *it = (*it) * norm_factor;
       }
   }

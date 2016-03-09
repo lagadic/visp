@@ -223,7 +223,7 @@ vpPose::coplanar(int &coplanar_plane_type)
       not_on_origin = true;
     }
     if (not_on_origin) {
-      it_tmp = it_i; it_tmp ++; // j = i+1
+      it_tmp = it_i; ++it_tmp; // j = i+1
       for (it_j=it_tmp; it_j != listP.end(); ++it_j) {
         if (degenerate == false) {
           //std::cout << "Found a non degenerate configuration" << std::endl;
@@ -239,7 +239,7 @@ vpPose::coplanar(int &coplanar_plane_type)
           not_on_origin = true;
         }
         if (not_on_origin) {
-          it_tmp = it_j; it_tmp ++; // k = j+1
+          it_tmp = it_j; ++it_tmp; // k = j+1
           for (it_k=it_tmp; it_k != listP.end(); ++it_k) {
             P3 = *it_k;
             if ((std::fabs(P3.get_oX()) <= std::numeric_limits<double>::epsilon())

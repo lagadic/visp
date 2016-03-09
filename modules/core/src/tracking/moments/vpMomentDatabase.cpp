@@ -74,7 +74,7 @@ const vpMoment& vpMomentDatabase::get(const char* type, bool& found) const {
 */
 void vpMomentDatabase::updateAll(vpMomentObject& object){
   std::map<const char*,vpMoment*,vpMomentDatabase::cmp_str>::const_iterator itr;
-    for(itr = moments.begin(); itr != moments.end(); itr++){
+    for(itr = moments.begin(); itr != moments.end(); ++itr){
         (*itr).second->update(object);
     }
 }
@@ -86,8 +86,8 @@ VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentDatabase&
   std::map<const char*,vpMoment*,vpMomentDatabase::cmp_str>::const_iterator itr;
     os << "{";
     
-    for(itr = m.moments.begin(); itr != m.moments.end(); itr++){
-	os << (*itr).first << ": [" << *((*itr).second) << "],";
+    for(itr = m.moments.begin(); itr != m.moments.end(); ++itr){
+      os << (*itr).first << ": [" << *((*itr).second) << "],";
     }
     os << "}";
     

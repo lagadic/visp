@@ -272,7 +272,7 @@ void vpTemplateTrackerZone::add(const vpTemplateTrackerTriangle &t)
 bool vpTemplateTrackerZone::inZone(const int &i, const int &j) const
 {
   std::vector<vpTemplateTrackerTriangle>::const_iterator Iterateurvecteur;
-  for(Iterateurvecteur=Zone.begin();Iterateurvecteur!=Zone.end();Iterateurvecteur++)
+  for(Iterateurvecteur=Zone.begin();Iterateurvecteur!=Zone.end();++Iterateurvecteur)
   {
     if(Iterateurvecteur->inTriangle(i,j))
       return true;
@@ -288,7 +288,7 @@ bool vpTemplateTrackerZone::inZone(const int &i, const int &j) const
 bool vpTemplateTrackerZone::inZone(const double &i,const double &j) const
 {
   std::vector<vpTemplateTrackerTriangle>::const_iterator Iterateurvecteur;
-  for(Iterateurvecteur=Zone.begin();Iterateurvecteur!=Zone.end();Iterateurvecteur++)
+  for(Iterateurvecteur=Zone.begin();Iterateurvecteur!=Zone.end();++Iterateurvecteur)
   {
     if(Iterateurvecteur->inTriangle(i,j))
       return true;
@@ -307,7 +307,7 @@ bool vpTemplateTrackerZone::inZone(const int &i,const int &j, unsigned int &id_t
 {
   unsigned int id=0;
   std::vector<vpTemplateTrackerTriangle>::const_iterator Iterateurvecteur;
-  for(Iterateurvecteur=Zone.begin();Iterateurvecteur!=Zone.end();Iterateurvecteur++)
+  for(Iterateurvecteur=Zone.begin();Iterateurvecteur!=Zone.end();++Iterateurvecteur)
   {
     if(Iterateurvecteur->inTriangle(i,j))
     {
@@ -330,7 +330,7 @@ bool vpTemplateTrackerZone::inZone(const double &i,const double &j, unsigned int
 {
   unsigned int id=0;
   std::vector<vpTemplateTrackerTriangle>::const_iterator Iterateurvecteur;
-  for(Iterateurvecteur=Zone.begin();Iterateurvecteur!=Zone.end();Iterateurvecteur++)
+  for(Iterateurvecteur=Zone.begin();Iterateurvecteur!=Zone.end(); ++Iterateurvecteur)
   {
     if(Iterateurvecteur->inTriangle(i,j))
     {
