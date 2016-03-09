@@ -267,7 +267,7 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
 
   do
   {
-    double Nbpoint=0;
+    int Nbpoint=0;
     MIprec=MI;
     MI=0;
 
