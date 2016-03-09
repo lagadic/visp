@@ -122,7 +122,7 @@ vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
 
     vpMeTracker::track(I);
   }
-  catch(vpException &e)
+  catch(...)
   {
     throw; // throw the original exception
   }
@@ -645,7 +645,7 @@ vpMbtMeLine::track(const vpImage<unsigned char> &I)
   {
     vpMeTracker::track(I);
   }
-  catch(vpException &e)
+  catch(...)
   {
     throw; // throw the original exception
   }

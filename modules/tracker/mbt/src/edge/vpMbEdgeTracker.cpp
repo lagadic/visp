@@ -1239,7 +1239,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         {
           computeVVS(*Ipyramid[lvl], lvl);
         }
-        catch(vpException &e)
+        catch(...)
         {
           covarianceMatrix = -1;
           throw; // throw the original exception
@@ -1249,7 +1249,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         {
           testTracking();
         }
-        catch(vpException &e)
+        catch(...)
         {
           throw; // throw the original exception
         }
@@ -1273,7 +1273,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         {
           updateMovingEdge(I);
         }
-        catch(vpException &e)
+        catch(...)
         {
           throw; // throw the original exception
         }
