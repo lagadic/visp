@@ -199,10 +199,9 @@ double vpMath::getMean(const std::vector<double> &v)
     throw vpException(vpException::notInitialized, "Empty vector !");
   }
 
-  double sum = 0.0;
   size_t size = v.size();
 
-  sum = std::accumulate(v.begin(), v.end(), 0.0);
+  double sum = std::accumulate(v.begin(), v.end(), 0.0);
 
   return sum / (double) size;
 }

@@ -1143,15 +1143,15 @@ std::string vpIoTools::getFileExtension(const std::string& pathname, const bool 
     return "";
   }
 
+#if defined(_WIN32)
+  std::string sep = "\\";
+  std::string altsep = "/";
+  std::string extsep = ".";
+#else
   //On Unix, or on the Mac
   std::string sep = "/";
   std::string altsep = "";
   std::string extsep = ".";
-
-#if defined(_WIN32)
-  sep = "\\";
-  altsep = "/";
-  extsep = ".";
 #endif
 
   //Python 2.7.8 module.

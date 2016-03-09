@@ -478,8 +478,7 @@ void vpDot2::track(const vpImage<unsigned char> &I)
   //   vpDEBUG_TRACE(0, "Previous dot: ");
   //   vpDEBUG_TRACE(0, "u: %f v: %f", get_u(), get_v());
   //   vpDEBUG_TRACE(0, "w: %f h: %f", getWidth(), getHeight());
-  bool found = false;
-  found = computeParameters(I, cog.get_u(), cog.get_v());
+  bool found = computeParameters(I, cog.get_u(), cog.get_v());
 
   if (found) {
     // test if the found dot is valid (ie similar to the previous one)

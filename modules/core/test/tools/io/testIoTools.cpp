@@ -61,12 +61,10 @@ main(int argc, const char ** argv)
 		std::cout << "The directory separator character is '" << c << "' (Unix like platform)." << std::endl;
 	}
 
-
-	std::string pathname = "";
 #if defined(_WIN32)
-	pathname = "C:\\Program Files (x86)\\Java\\jre7";
+  std::string pathname = "C:\\Program Files (x86)\\Java\\jre7";
 #else
-	pathname = "/usr/bin/java";
+  std::string pathname = "/usr/bin/java";
 #endif
 
 	std::cout << "Parent of " << pathname << " is " << vpIoTools::getParent(pathname) << std::endl;

@@ -238,10 +238,9 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp)
   //each line of a HBITMAP needs to be word aligned
   //we need padding if the width is an odd number
   bool needPad = ((w%2) == 0) ? false : true;
-  unsigned int newW = w;
 
   //in case of padding, the new width is width+1
-  newW = (needPad) ? (w+1) : w;
+  unsigned int newW = (needPad) ? (w+1) : w;
 
   //allocate the buffer
   unsigned char * imBuffer = new unsigned char[newW * h * 4];
@@ -307,10 +306,9 @@ void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP,
   //each line of a HBITMAP needs to be word aligned
   //we need padding if the width is an odd number
   bool needPad = ((w%2) == 0) ? false : true;
-  unsigned int newW = w;
 
   //in case of padding, the new width is width+1
-  newW = (needPad) ? (w+1) : w;
+  unsigned int newW = (needPad) ? (w+1) : w;
 
   //allocate the buffer
   unsigned char * imBuffer = new unsigned char[newW * h * 4];
@@ -395,10 +393,9 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP& hBmp)
   //each line of a HBITMAP needs to be word aligned
   //we need padding if the width is an odd number
   bool needPad = ((w%2) == 0) ? false : true;
-  unsigned int newW = w;
 
   //in case of padding, the new width is width+1
-  newW = (needPad) ? (w+1) : w;
+  unsigned int newW = (needPad) ? (w+1) : w;
 
   //allocate the buffer
   unsigned char * imBuffer = new unsigned char[newW * h * 4];
@@ -464,10 +461,9 @@ void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoi
   //each line of a HBITMAP needs to be word aligned
   //we need padding if the width is an odd number
   bool needPad = ((w%2) == 0) ? false : true;
-  unsigned int newW = w;
 
   //in case of padding, the new width is width+1
-  newW = (needPad) ? (w+1) : w;
+  unsigned int newW = (needPad) ? (w+1) : w;
 
   //allocate the buffer
   unsigned char * imBuffer = new unsigned char[newW * h * 4];

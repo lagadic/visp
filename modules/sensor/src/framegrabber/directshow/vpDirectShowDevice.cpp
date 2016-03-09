@@ -55,8 +55,7 @@ bool vpDirectShowDevice::init(const CComPtr<IMoniker>& pMoniker)
 
 	//Get the properties
 	CComPtr<IPropertyBag> pPropBag;
-	hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag,
-		(void**)(&pPropBag));
+  pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void**)(&pPropBag));
 
 	//get the name of the input
 	VARIANT varName;

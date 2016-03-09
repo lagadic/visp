@@ -522,7 +522,7 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix & cMo)
       if(iter == 0){
         res = vpColVector(error.getRows()/2);
         W = vpMatrix(error.getRows(),error.getRows());
-        w = vpColVector(error.getRows()/2);
+        //w = vpColVector(error.getRows()/2);
         w = 1;
       }
       
