@@ -1254,7 +1254,6 @@ void
       throw vpRobotException (vpRobotException::lowLevelError,
                               "Positionning error: "
                               "Mixt frame not implemented.");
-      break ;
     }
   }
 
@@ -1543,7 +1542,6 @@ void vpRobotViper850::getPosition(const vpRobot::vpControlFrameType frame,
       throw vpRobotException (vpRobotException::lowLevelError,
                               "Cannot get position in mixt frame: "
                               "not implemented");
-      break ;
     }
   }
 
@@ -2353,7 +2351,6 @@ void
     case vpRobot::CAMERA_FRAME: {
         std::cout << "getDisplacement() CAMERA_FRAME not implemented\n";
         return;
-        break ;
       }
 
     case vpRobot::ARTICULAR_FRAME: {
@@ -2364,13 +2361,11 @@ void
     case vpRobot::REFERENCE_FRAME: {
         std::cout << "getDisplacement() REFERENCE_FRAME not implemented\n";
         return;
-        break ;
       }
 
     case vpRobot::MIXT_FRAME: {
         std::cout << "getDisplacement() MIXT_FRAME not implemented\n";
         return;
-        break ;
       }
     }
   }

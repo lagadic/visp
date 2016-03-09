@@ -322,7 +322,6 @@ vpViper850::init (vpViper850::vpToolType tool,
                             "No predefined file available for a custom tool"
                             "You should use init(vpViper850::vpToolType, const std::string&) or"
                             "init(vpViper850::vpToolType, const vpHomogeneousMatrix&) instead");
-    break;
   }
   default: {
     vpERROR_TRACE ("This error should not occur!");
@@ -407,7 +406,6 @@ vpViper850::init (vpViper850::vpToolType tool,
                             "No predefined parameters available for a custom tool"
                             "You should use init(vpViper850::vpToolType, const std::string&) or"
                             "init(vpViper850::vpToolType, const vpHomogeneousMatrix&) instead");
-    break;
   }
   }
   vpRotationMatrix eRc(erc);
@@ -712,7 +710,6 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
   case vpViper850::TOOL_CUSTOM: {
     throw vpRobotException (vpRobotException::badValue,
                             "No intrinsic parameters available for a custom tool");
-    break;
   }
   default: {
     vpERROR_TRACE ("This error should not occur!");
@@ -726,8 +723,7 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
     //        "fonction init(camera).");
     throw vpRobotException (vpRobotException::readingParametersError,
                             "Impossible to read the camera parameters.");
-    break;
-  }
+   }
   }
 #else
   // Set default parameters
@@ -799,13 +795,11 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
   case vpViper850::TOOL_CUSTOM: {
     throw vpRobotException (vpRobotException::badValue,
                             "No intrinsic parameters available for a custom tool");
-    break;
   }
   default:
     vpERROR_TRACE ("This error should not occur!");
     throw vpRobotException (vpRobotException::readingParametersError,
                             "Impossible to read the camera parameters.");
-    break;
   }
 #endif
   return;

@@ -1084,8 +1084,7 @@ vpRobotAfma6::setPosition (const vpRobot::vpControlFrameType frame,
       vpERROR_TRACE ("Positionning error. Mixt frame not implemented");
       throw vpRobotException (vpRobotException::lowLevelError,
 			      "Positionning error: "
-			      "Mixt frame not implemented.");
-      break ;
+            "Mixt frame not implemented.");
     }
   }
 
@@ -1360,8 +1359,7 @@ vpRobotAfma6::getPosition (const vpRobot::vpControlFrameType frame,
     vpERROR_TRACE ("Cannot get position in mixt frame: not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Cannot get position in mixt frame: "
-			    "not implemented");
-    break ;
+          "not implemented");
   }
   }
 
@@ -2162,13 +2160,11 @@ vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame,
     case vpRobot::REFERENCE_FRAME: {
       std::cout << "getDisplacement() REFERENCE_FRAME not implemented\n";
       return;
-      break ;
     }
 
     case vpRobot::MIXT_FRAME: {
       std::cout << "getDisplacement() MIXT_FRAME not implemented\n";
       return;
-      break ;
     }
     }
   }

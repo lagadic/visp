@@ -1099,8 +1099,7 @@ vpRobotAfma4::getPosition (const vpRobot::vpControlFrameType frame,
     vpERROR_TRACE ("Cannot get position in mixt frame: not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
 			    "Cannot get position in mixt frame: "
-			    "not implemented");
-    break ;
+          "not implemented");
   }
   }
 
@@ -1220,7 +1219,6 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
                                 "Cannot send a velocity to the robot "
                                 "in the reference frame:"
                                 "functionality not implemented");
-        break ;
       }
     case vpRobot::MIXT_FRAME : {
         vpERROR_TRACE ("Cannot send a velocity to the robot "
@@ -1230,7 +1228,6 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
                                 "Cannot send a velocity to the robot "
                                 "in the mixt frame:"
                                 "functionality not implemented");
-        break ;
       }
     default: {
         vpERROR_TRACE ("Error in spec of vpRobot. "
@@ -1817,7 +1814,6 @@ vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame,
     case vpRobot::CAMERA_FRAME: {
       std::cout << "getDisplacement() CAMERA_FRAME not implemented\n";
       return;
-      break ;
     }
 
     case vpRobot::ARTICULAR_FRAME: {
@@ -1828,13 +1824,11 @@ vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame,
     case vpRobot::REFERENCE_FRAME: {
       std::cout << "getDisplacement() REFERENCE_FRAME not implemented\n";
       return;
-      break ;
     }
 
     case vpRobot::MIXT_FRAME: {
       std::cout << "getDisplacement() MIXT_FRAME not implemented\n";
       return;
-      break ;
     }
     }
   }

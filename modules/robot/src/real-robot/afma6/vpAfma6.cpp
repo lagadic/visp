@@ -1320,7 +1320,6 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
     //        "fonction init(camera).");
     throw vpRobotException (vpRobotException::readingParametersError,
                             "Impossible to read the camera parameters.");
-    break;
   }
   }
 #else

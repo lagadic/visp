@@ -1034,8 +1034,7 @@ vpRobotBiclops::setVelocity (const vpRobot::vpControlFrameType frame,
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot send a velocity to the robot "
 			      "in the camera frame:"
-			      "functionality not implemented");
-      break ;
+            "functionality not implemented");
     }
   case vpRobot::ARTICULAR_FRAME :
     {
@@ -1055,8 +1054,7 @@ vpRobotBiclops::setVelocity (const vpRobot::vpControlFrameType frame,
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot send a velocity to the robot "
 			      "in the reference frame:"
-			      "functionality not implemented");
-      break ;
+            "functionality not implemented");
     }
   case vpRobot::MIXT_FRAME :
     {
@@ -1066,8 +1064,7 @@ vpRobotBiclops::setVelocity (const vpRobot::vpControlFrameType frame,
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot send a velocity to the robot "
 			      "in the mixt frame:"
-			      "functionality not implemented");
-      break ;
+            "functionality not implemented");
     }
   default:
     {

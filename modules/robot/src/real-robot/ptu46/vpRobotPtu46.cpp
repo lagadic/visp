@@ -599,8 +599,7 @@ vpRobotPtu46::setVelocity (const vpRobot::vpControlFrameType frame,
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot send a velocity to the robot "
 			      "in the reference frame:"
-			      "functionality not implemented");
-      break ;
+            "functionality not implemented");
     }
   case vpRobot::MIXT_FRAME :
     {
@@ -610,8 +609,7 @@ vpRobotPtu46::setVelocity (const vpRobot::vpControlFrameType frame,
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot send a velocity to the robot "
 			      "in the mixt frame:"
-			      "functionality not implemented");
-      break ;
+            "functionality not implemented");
     }
   default:
     {
@@ -692,8 +690,7 @@ vpRobotPtu46::getVelocity (const vpRobot::vpControlFrameType frame,
 		   "functionality not implemented");
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot get a velocity in the camera frame:"
-			      "functionality not implemented");
-       break ;
+            "functionality not implemented");
     }
   case vpRobot::ARTICULAR_FRAME:
     {
@@ -706,8 +703,7 @@ vpRobotPtu46::getVelocity (const vpRobot::vpControlFrameType frame,
 		   "functionality not implemented");
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot get a velocity in the reference frame:"
-			      "functionality not implemented");
-      break ;
+            "functionality not implemented");
     }
   case vpRobot::MIXT_FRAME:
     {
@@ -716,8 +712,7 @@ vpRobotPtu46::getVelocity (const vpRobot::vpControlFrameType frame,
 		   "functionality not implemented");
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot get a velocity in the mixt frame:"
-			      "functionality not implemented");
-      break ;
+            "functionality not implemented");
     }
   }
 
@@ -907,8 +902,7 @@ vpRobotPtu46::getDisplacement(vpRobot::vpControlFrameType frame,
 		   "functionality not implemented");
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot get a displacement in the reference frame:"
-			      "functionality not implemented");
-      break ;
+            "functionality not implemented");
     }
   case vpRobot::MIXT_FRAME:
     {
@@ -916,9 +910,7 @@ vpRobotPtu46::getDisplacement(vpRobot::vpControlFrameType frame,
 		   "functionality not implemented");
       throw vpRobotException (vpRobotException::wrongStateError,
 			      "Cannot get a displacement in the reference frame:"
-			      "functionality not implemented");
-
-      break ;
+            "functionality not implemented");
     }
   }
 }
