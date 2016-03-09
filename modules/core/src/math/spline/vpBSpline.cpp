@@ -153,14 +153,13 @@ vpBasisFunction* vpBSpline::computeBasisFuns(double l_u, unsigned int l_i, unsig
 
   double *left = new double[l_p+1];
   double *right = new double[l_p+1];
-  double saved = 0.0;
   double temp = 0.0;
 
   for(unsigned int j = 1; j <= l_p; j++)
   {
     left[j] = l_u - l_knots[l_i+1-j];
     right[j] = l_knots[l_i+j] - l_u;
-    saved = 0.0;
+    double saved = 0.0;
 
     for (unsigned int r = 0; r < j; r++)
     {
@@ -239,14 +238,13 @@ vpBasisFunction** vpBSpline::computeDersBasisFuns(double l_u, unsigned int l_i, 
 
   double *left = new double[l_p+1];
   double *right = new double[l_p+1];
-  double saved = 0.0;
   double temp = 0.0;
 
   for(unsigned int j = 1; j <= l_p; j++)
   {
     left[j] = l_u - l_knots[l_i+1-j];
     right[j] = l_knots[l_i+j] - l_u;
-    saved = 0.0;
+    double saved = 0.0;
 
     for (unsigned int r = 0; r < j; r++)
     {
@@ -273,7 +271,6 @@ vpBasisFunction** vpBSpline::computeDersBasisFuns(double l_u, unsigned int l_i, 
     l_der = l_p;
   }
 
-  unsigned int s1,s2;
   double d;
   int rk;
   unsigned int pk;
@@ -281,8 +278,8 @@ vpBasisFunction** vpBSpline::computeDersBasisFuns(double l_u, unsigned int l_i, 
 
   for (unsigned int r = 0; r <= l_p; r++)
   {
-    s1 = 0;
-    s2 = 1;
+    unsigned int s1 = 0;
+    unsigned int s2 = 1;
     a[0][0] = 1.0;
     for(unsigned int k = 1; k <= l_der; k++)
     {

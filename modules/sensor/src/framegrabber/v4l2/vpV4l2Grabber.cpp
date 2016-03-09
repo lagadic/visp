@@ -1151,8 +1151,6 @@ vpV4l2Grabber::startStreaming()
 void
 vpV4l2Grabber::stopStreaming()
 {
-  unsigned int i;
-
   //nothing to do if (fd < 0) or if  (streaming == false)
   if ((fd >= 0) && (streaming == true)) {
 
@@ -1164,7 +1162,7 @@ vpV4l2Grabber::stopStreaming()
 				     "Can't stop streaming") );
     }
     /* free buffers */
-    for (i = 0; i < reqbufs.count; i++) {
+    for (unsigned int i = 0; i < reqbufs.count; i++) {
       if (m_verbose)
 	printBufInfo(buf_v4l2[i]);
       //vpTRACE("v4l2_munmap()");

@@ -89,10 +89,6 @@ void vpTemplateTrackerMIInverseCompositional::initTemplateRefBspline(unsigned in
 void vpTemplateTrackerMIInverseCompositional::initCompInverse(const vpImage<unsigned char> &I)
 {
   ptTemplateSupp=new vpTemplateTrackerPointSuppMIInv[templateSize];
-  int i,j;
-  double et;
-  int ct;
-  double Tij;
 
   vpImageFilter::getGradXGauss2D(I, dIx, fgG,fgdG,taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG,fgdG,taillef);
@@ -107,8 +103,8 @@ void vpTemplateTrackerMIInverseCompositional::initCompInverse(const vpImage<unsi
   Warp->computeCoeff(p);
   for(unsigned int point=0;point<templateSize;point++)
   {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
+    int i=ptTemplate[point].y;
+    int j=ptTemplate[point].x;
 
     X1[0]=j;X1[1]=i;
     
@@ -119,9 +115,9 @@ void vpTemplateTrackerMIInverseCompositional::initCompInverse(const vpImage<unsi
     double dy=ptTemplate[point].dy*(Nc-1)/255.;
 
     Warp->getdW0(i,j,dy,dx,ptTemplate[point].dW);
-    Tij=ptTemplate[point].val;
-    ct=(int)((Tij*(Nc-1))/255.);
-    et=(Tij*(Nc-1))/255.-ct;
+    double Tij=ptTemplate[point].val;
+    int ct=(int)((Tij*(Nc-1))/255.);
+    double et=(Tij*(Nc-1))/255.-ct;
 
     ptTemplateSupp[point].et=et;
     ptTemplateSupp[point].ct=ct;
@@ -142,13 +138,10 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
   //double erreur=0;
   int Nbpoint=0;
 
-  double i2,j2;
   //double Tij;
   double IW;
   int cr,ct;
   double er,et;
-
-  int i,j;
 
   Nbpoint=0;
   //erreur=0;
@@ -166,14 +159,16 @@ void vpTemplateTrackerMIInverseCompositional::initHessienDesired(const vpImage<u
 
   for(unsigned int point=0;point<templateSize;point++)
   {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
-    X1[0]=j;X1[1]=i;
+    int i=ptTemplate[point].y;
+    int j=ptTemplate[point].x;
+    X1[0]=j;
+    X1[1]=i;
 
     Warp->computeDenom(X1,p);
     Warp->warpX(X1,X2,p);
 
-    j2=X2[0];i2=X2[1];
+    double j2=X2[0];
+    double i2=X2[1];
 
     if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
     {
@@ -248,8 +243,6 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
   if(blur)
     vpImageFilter::filter(I, BI,fgG,taillef);
 
-  int Nbpoint=0;
-
   lambda=lambdaDep;
   double MI=0,MIprec=-1000;
 
@@ -274,7 +267,7 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
 
   do
   {
-    Nbpoint=0;
+    double Nbpoint=0;
     MIprec=MI;
     MI=0;
 
@@ -287,9 +280,6 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
       {
         vpColVector x1(2),x2(2);
         double i2,j2;
-        double IW;
-        int cr,ct;
-        double er,et;
 
         x1[0]=(double)ptTemplate[point].x;
         x1[1]=(double)ptTemplate[point].y;
@@ -302,20 +292,20 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
 
         if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
         {
-
           //if(m_ptCurrentMask == NULL ||(m_ptCurrentMask->getWidth() == I.getWidth() && m_ptCurrentMask->getHeight() == I.getHeight() && (*m_ptCurrentMask)[(unsigned int)i2][(unsigned int)j2] > 128))
           {
             Nbpoint++;
+            double IW;
             if(!blur)
               IW=(double)I.getValue(i2,j2);
             else
               IW=BI.getValue(i2,j2);
 
-            ct=ptTemplateSupp[point].ct;
-            et=ptTemplateSupp[point].et;
+            int ct=ptTemplateSupp[point].ct;
+            double et=ptTemplateSupp[point].et;
             double tmp = IW*(((double)Nc)-1.f)/255.f;
-            cr=(int)tmp;
-            er=tmp-(double)cr;
+            int cr=(int)tmp;
+            double er=tmp-(double)cr;
 
             if( (ApproxHessian==HESSIAN_NONSECOND||hessianComputation==vpTemplateTrackerMI::USE_HESSIEN_DESIRE) && (ptTemplateSelect[point] || !useTemplateSelect) )
             {
@@ -435,12 +425,11 @@ void vpTemplateTrackerMIInverseCompositional::trackNoPyr(const vpImage<unsigned 
 
     case vpTemplateTrackerMIInverseCompositional::USE_QUASINEWTON:
     {
-      double s_scal_y;
       if(iterationGlobale!=0)
       {
         vpColVector s_quasi=p-p_prec;
         vpColVector y_quasi=G-G_prec;
-        s_scal_y=s_quasi.t()*y_quasi;
+        double s_scal_y=s_quasi.t()*y_quasi;
         //std::cout<<"mise a jour K"<<std::endl;
         /*if(s_scal_y!=0)//BFGS
                     KQuasiNewton=KQuasiNewton+0.01*(-(s_quasi*y_quasi.t()*KQuasiNewton+KQuasiNewton*y_quasi*s_quasi.t())/s_scal_y+(1.+y_quasi.t()*(KQuasiNewton*y_quasi)/s_scal_y)*s_quasi*s_quasi.t()/s_scal_y);*/

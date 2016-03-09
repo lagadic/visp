@@ -557,9 +557,7 @@ void vpFFMPEG::copyBitmap(vpImage<unsigned char> &I)
   }
   I.resize((unsigned int)height, (unsigned int)width);
   
-  unsigned char* line;
   unsigned char* beginOutput = (unsigned char*)I.bitmap;
-  unsigned char* output = NULL;
 
   if (color_type == GRAY_SCALED)
   {
@@ -567,8 +565,8 @@ void vpFFMPEG::copyBitmap(vpImage<unsigned char> &I)
     int widthStep = pFrameGRAY->linesize[0];
     for(int i=0 ; i < height ; i++)
     {
-      line = input;
-      output = beginOutput + width * i;
+      unsigned char *line = input;
+      unsigned char *output = beginOutput + width * i;
       for(int j=0 ; j < width ; j++)
       {
         *(output++) = *(line);
@@ -882,14 +880,13 @@ void vpFFMPEG::writeBitmap(vpImage<vpRGBa> &I)
 {
   unsigned char* beginInput = (unsigned char*)I.bitmap;
   unsigned char* input = NULL;
-  unsigned char* output = NULL;
   unsigned char* beginOutput = (unsigned char*)pFrameRGB->data[0];
   int widthStep = pFrameRGB->linesize[0];
   
   for(int i=0 ; i < height ; i++)
   {
     input = beginInput + 4 * i * width;
-    output = beginOutput + i * widthStep;
+    unsigned char *output = beginOutput + i * widthStep;
     for(int j=0 ; j < width ; j++)
     {
       *(output++) = *(input);
@@ -908,15 +905,13 @@ void vpFFMPEG::writeBitmap(vpImage<vpRGBa> &I)
 void vpFFMPEG::writeBitmap(vpImage<unsigned char> &I)
 {
   unsigned char* beginInput = (unsigned char*)I.bitmap;
-  unsigned char* input = NULL;
-  unsigned char* output = NULL;
   unsigned char* beginOutput = (unsigned char*)pFrameRGB->data[0];
   int widthStep = pFrameRGB->linesize[0];
   
   for(int i=0 ; i < height ; i++)
   {
-    input = beginInput + i * width;
-    output = beginOutput + i * widthStep;
+    unsigned char *input = beginInput + i * width;
+    unsigned char *output = beginOutput + i * widthStep;
     for(int j=0 ; j < width ; j++)
     {
       *(output++) = *(input);

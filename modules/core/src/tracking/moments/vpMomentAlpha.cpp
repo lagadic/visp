@@ -82,7 +82,6 @@ void vpMomentAlpha::compute(){
 
 	double alpha = 0.5 * atan2(2.0 * momentCentered.get(1, 1), (momentCentered.get(2, 0) - momentCentered.get(0, 2)));
 
-	unsigned int order = 4;
 	std::vector<double> rotMu(4);
   //std::vector<double> realMu(4);
 
@@ -99,7 +98,8 @@ void vpMomentAlpha::compute(){
 			double r21 = -sin(alpha - alphaRef);
 			double r22 = cos(alpha - alphaRef);
 			unsigned int idx = 0;
-			for (register unsigned int c = 0; c < (order) * (order); c++)
+      unsigned int order = 4;
+      for (register unsigned int c = 0; c < (order) * (order); c++)
 			{
 				unsigned int i = c % order;
 				unsigned int j = c / order;

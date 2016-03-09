@@ -102,12 +102,11 @@ void close_keyword (void)
 static	void
 open_hash (void)
 {
-	static	 char	proc_name[] = "open_hash";
-
 	Bucket	**head, **bend;
 
 	if ((hash_tbl = (Bucket **) malloc (sizeof (Bucket *) * PRIME))==NULL){
-		perror (proc_name);
+    static	 char	proc_name[] = "open_hash";
+    perror (proc_name);
 		exit (1);
 	}
 	head = hash_tbl;
@@ -151,9 +150,9 @@ static	int
 hashpjw (const char *str)
 {
 	unsigned	h = 0;	/* "hash value"	*/
-	unsigned	g;
 
 	for (; *str != '\0'; str++) {
+    unsigned	g;
     h = (h << 4) + (unsigned)(*str);
     if ((g = h & ~0xfffffff) != 0) {
 			h ^= g >> 24;
@@ -175,15 +174,14 @@ hashpjw (const char *str)
 static	void
 insert_keyword (const char *str, Index token)
 {
-  static	const char	proc_name[] = "insert_keyword";
-
 	Bucket	**head = hash_tbl + hashpjw (str);
 	Bucket	*bp;
 	Byte	length;
 
 	length = (Byte)( strlen(str) ); // Warning! Overflow possible!
 	if ((bp = (Bucket *) malloc (sizeof (Bucket) + length  + 1)) == NULL) {
-		perror (proc_name);
+    static	const char	proc_name[] = "insert_keyword";
+    perror (proc_name);
 		exit (1);
 	}
 	bp->length = length;
@@ -215,9 +213,9 @@ Index get_symbol (char *ident, int length)
 
 	{	/* calcule le code de hachage (voir "hashpjw")	*/
 		unsigned	h = 0;	/* "hash value"	*/
-		unsigned	g;
 
 		for (; len != 0; idn++, len--) {
+      unsigned	g;
       h = (h << 4) + (unsigned)(*idn);
       if ((g = h & ~0xfffffff) != 0) {
 				h ^= g >> 24;

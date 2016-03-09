@@ -91,7 +91,6 @@ vpFeatureMomentCentered::compute_Lmu_pq(const unsigned int& p, const unsigned in
   double term2 =  0.0;
   vpMatrix Lterm3(1,6);
 
-  double pcombk  = 0.0;
   double qcombl  = 0.0;
   double pcombkqcombl = 0.0;
 
@@ -105,7 +104,7 @@ vpFeatureMomentCentered::compute_Lmu_pq(const unsigned int& p, const unsigned in
   for (unsigned int k = 0; k <=p; ++k)
   {
       int pmk = (int)p-(int)k;
-      pcombk = static_cast<double>(vpMath::comb(p,k));
+      double pcombk = static_cast<double>(vpMath::comb(p,k));
       for (unsigned int l = 0; l <= q; ++l)
       {
           qml = (int)q - (int)l;

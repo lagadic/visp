@@ -269,12 +269,10 @@ vpHistogram::smooth(const unsigned int fsize)
   h = *this;
 
   int hsize = (int)fsize / 2; // half filter size
-  unsigned int sum;
-  unsigned int nb;
 
   for (unsigned i=0; i < size; i ++) {
-    sum = 0;
-    nb = 0;
+    unsigned int sum = 0;
+    unsigned int nb = 0;
     for (int j=-hsize; j <= hsize; j ++) {
       // exploitation of the overflow to detect negative value...
       if ( /*(i + j) >= 0 &&*/ (i + (unsigned int)j) < size ) {
@@ -310,7 +308,6 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> & peaks)
   }
 
   int prev_slope;              // Previous histogram inclination
-  int next_slope;              // Next histogram inclination
   vpHistogramPeak p;           // An histogram peak
   unsigned nbpeaks; // Number of peaks in the histogram (ie local maxima)
 
@@ -323,7 +320,7 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> & peaks)
   prev_slope = 1;
 
   for (unsigned i = 0; i < size-1; i++) {
-    next_slope = (int)histogram[i+1] - (int)histogram[i];
+    int next_slope = (int)histogram[i+1] - (int)histogram[i]; // Next histogram inclination
 
 //     if ((prev_slope < 0) && (next_slope > 0) ) {
 //       sum_level += i;
@@ -447,7 +444,6 @@ vpHistogram::getPeaks(unsigned char dist,
 {
   unsigned char *peak;              // Local maxima values
   int prev_slope;              // Previous histogram inclination
-  int next_slope;              // Next histogram inclination
   unsigned index_highest_peak; // Index in peak[] array of the highest peak
   unsigned index_second_peak;  // Index in peak[] array of the second peak
 
@@ -468,7 +464,7 @@ vpHistogram::getPeaks(unsigned char dist,
   nbpeaks = 0;
   prev_slope = 1;
   for (unsigned i = 0; i < size-1; i++) {
-    next_slope = (int)histogram[i+1] - (int)histogram[i];
+    int next_slope = (int)histogram[i+1] - (int)histogram[i]; // Next histogram inclination
     if (next_slope == 0)
       continue;
     // Peak detection
@@ -609,7 +605,6 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> & valey)
   }
 
   int prev_slope;              // Previous histogram inclination
-  int next_slope;              // Next histogram inclination
   vpHistogramValey p;           // An histogram valey
   unsigned nbvaley; // Number of valey in the histogram (ie local minima)
 
@@ -622,7 +617,7 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> & valey)
   prev_slope = -1;
 
   for (unsigned i = 0; i < size-1; i++) {
-    next_slope = (int)histogram[i+1] - (int)histogram[i];
+    int next_slope = (int)histogram[i+1] - (int)histogram[i]; // Next histogram inclination
 
     if ((prev_slope < 0) && (next_slope == 0) ) {
       sum_level += i + 1;

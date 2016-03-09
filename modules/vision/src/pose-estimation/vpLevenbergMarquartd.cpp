@@ -86,7 +86,6 @@ double	enorm (const double *x, int n)
   double		agiant, floatn;
   double		norm_eucl = 0.0;
   double		s1 = 0.0, s2 = 0.0, s3 = 0.0;
-  double		xabs;
   double		x1max = 0.0 , x3max = 0.0;
 
   floatn = (double) n;
@@ -94,7 +93,7 @@ double	enorm (const double *x, int n)
 
   for (i = 0; i < n; i++)
   {
-    xabs = std::fabs(x[i]);
+    double xabs = std::fabs(x[i]);
     if ((xabs > rdwarf) && (xabs < agiant))
     {
       /*
@@ -232,15 +231,13 @@ double	enorm (const double *x, int n)
 int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
           double *delta, double *par, double *x, double *sdiag, double *wa1, double *wa2)
 {
-  const double	tol1 = 0.1, tol001 = 0.001;	/* tolerance a 0.1 et a 0.001	*/
+  const double	tol1 = 0.1;	/* tolerance a 0.1	*/
 
-  int		l, jm1;
-  unsigned int jp1;
+  int		l;
   unsigned int	iter;		/* compteur d'iteration */
   int		nsing;		/* nombre de singularite de la matrice */
-  double		dxnorm, fp, gnorm, parc;
-  double		parl, paru;		/* borne inf et sup de par		*/
-  double		sum, temp;
+  double		dxnorm, fp;
+  double		temp;
   double		dwarf = DBL_MIN;	/* plus petite amplitude positive	*/
 
   /*
@@ -269,7 +266,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
       int i = nsing - 1 - k;
       wa1[i] /= *MIJ(r, i, i, ldr);
       temp = wa1[i];
-      jm1 = i - 1;
+      int jm1 = i - 1;
 
       if (jm1 >= 0)
       {
@@ -306,7 +303,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
      *	Newton fournit une limite inferieure, parl pour le
      *	zero de la fonction. Sinon cette limite vaut 0.0.
      */
-    parl = 0.0;
+    double parl = 0.0;
 
     if (nsing >= n)
     {
@@ -319,7 +316,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
       for (int i = 0; i <  n; i++)
       {
         long	im1;
-        sum = 0.0;
+        double sum = 0.0;
         im1 = (i - 1L);
 
         if (im1 >= 0)
@@ -340,7 +337,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
      */
     for (int i = 0; i < n; i++)
     {
-      sum = 0.0;
+      double sum = 0.0;
 
       for (int j = 0; j <= i; j++)
         sum += *MIJ(r, i, j, ldr) * qtb[j];
@@ -349,8 +346,8 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
       wa1[i] = sum / diag[l];
     }
 
-    gnorm = enorm(wa1, n);
-    paru = gnorm / *delta;
+    double gnorm = enorm(wa1, n);
+    double paru = gnorm / *delta;
 
     //if (paru == 0.0)
     if (std::fabs(paru) <= std::numeric_limits<double>::epsilon())
@@ -380,8 +377,10 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
        *	de "par".
        */
       //if (*par == 0.0)
-      if (std::fabs(*par) <= std::numeric_limits<double>::epsilon() )
+      if (std::fabs(*par) <= std::numeric_limits<double>::epsilon() ) {
+        const double	tol001 = 0.001;	/* tolerance a 0.001	*/
         *par = vpMath::maximum(dwarf, (tol001 * paru));
+      }
 
       temp = sqrt(*par);
 
@@ -431,7 +430,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
       {
         wa1[i] = wa1[i] / sdiag[i];
         temp = wa1[i];
-        jp1 = i + 1;
+        unsigned int jp1 = i + 1;
         if (  (unsigned int) n >= jp1)
         {
           for (unsigned int j = jp1; j <  (unsigned int)n; j++)
@@ -440,7 +439,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
       }
 
       temp = enorm(wa1, n);
-      parc = ((fp / *delta) / temp) / temp;
+      double parc = ((fp / *delta) / temp) / temp;
 
       /*
        *	selon le signe de la fonction, mise a jour
@@ -484,7 +483,7 @@ int	lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
  */
 double pythag (double a, double b)
 {
-  double	pyth, p, r, s, t, u;
+  double	pyth, p, r, t;
 
   p = vpMath::maximum(std::fabs(a), std::fabs(b));
 
@@ -501,8 +500,8 @@ double pythag (double a, double b)
   //while (t != 4.0)
   while (std::fabs(t - 4.0) < std::fabs(vpMath::maximum(t,4.0)) * std::numeric_limits<double>::epsilon() )
   {
-    s = r / t;
-    u = 1.0 + 2.0 * s;
+    double s = r / t;
+    double u = 1.0 + 2.0 * s;
     p *= u;
     r *= (s / u) * (s / u);
     t = 4.0 + r;
@@ -565,7 +564,7 @@ int	qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
   const double	tolerance = 0.05;
 
   int		i, j, ip1, k, kmax, minmn;
-  double		ajnorm, epsmch;
+  double		epsmch;
   double		sum, temp, tmp;
 
   /*
@@ -601,20 +600,20 @@ int	qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
       kmax = i;
       for (k = i; k < m; k++)
       {
-	if (rdiag[k] > rdiag[kmax])
-	  kmax = k;
+        if (rdiag[k] > rdiag[kmax])
+          kmax = k;
       }
 
       if (kmax != i)
       {
-	for (j = 0; j < n; j++)
-	  SWAP(*MIJ(a, i, j, lda),
-	       *MIJ(a, kmax, j, lda), tmp);
+        for (j = 0; j < n; j++)
+          SWAP(*MIJ(a, i, j, lda),
+               *MIJ(a, kmax, j, lda), tmp);
 
-	rdiag[kmax] = rdiag[i];
-	wa[kmax] = wa[i];
+        rdiag[kmax] = rdiag[i];
+        wa[kmax] = wa[i];
 
-	SWAP( ipvt[i], ipvt[kmax], k);
+        SWAP( ipvt[i], ipvt[kmax], k);
       }
     }
 
@@ -622,16 +621,16 @@ int	qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
      *	calcul de al transformationde Householder afin de reduire
      *	la jeme ligne de "a" a un multiple du jeme vecteur unite.
      */
-    ajnorm = enorm(MIJ(a, i, i, lda), n - i);
+    double ajnorm = enorm(MIJ(a, i, i, lda), n - i);
 
     //if (ajnorm != 0.0)
     if (std::fabs(ajnorm) > std::numeric_limits<double>::epsilon() )
     {
       if (*MIJ(a, i, i, lda) < 0.0)
-	ajnorm = -ajnorm;
+        ajnorm = -ajnorm;
 
       for (j = i; j < n; j++)
-	*MIJ(a, i, j, lda) /= ajnorm;
+        *MIJ(a, i, j, lda) /= ajnorm;
       *MIJ(a, i, i, lda) += 1.0;
 
       /*
@@ -642,30 +641,30 @@ int	qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
 
       if (m >= ip1)
       {
-	for (k = ip1; k < m; k++)
-	{
-	  sum = 0.0;
-	  for (j = i; j < n; j++)
-	    sum += *MIJ(a, i, j, lda) * *MIJ(a, k, j, lda);
+        for (k = ip1; k < m; k++)
+        {
+          sum = 0.0;
+          for (j = i; j < n; j++)
+            sum += *MIJ(a, i, j, lda) * *MIJ(a, k, j, lda);
 
-	  temp = sum / *MIJ(a, i, i, lda);
+          temp = sum / *MIJ(a, i, i, lda);
 
-	  for (j = i; j < n; j++)
-	    *MIJ(a, k, j, lda) -= temp * *MIJ(a, i, j, lda);
+          for (j = i; j < n; j++)
+            *MIJ(a, k, j, lda) -= temp * *MIJ(a, i, j, lda);
 
-	  //if (pivot && rdiag[k] != 0.0)
-	  if (pivot && (std::fabs(rdiag[k]) > std::numeric_limits<double>::epsilon()) )
-	  {
-	    temp = *MIJ (a, k, i, lda) / rdiag[k];
-	    rdiag[k] *= sqrt(vpMath::maximum(0.0, (1.0 - temp * temp)));
+          //if (pivot && rdiag[k] != 0.0)
+          if (pivot && (std::fabs(rdiag[k]) > std::numeric_limits<double>::epsilon()) )
+          {
+            temp = *MIJ (a, k, i, lda) / rdiag[k];
+            rdiag[k] *= sqrt(vpMath::maximum(0.0, (1.0 - temp * temp)));
 
-	    if (tolerance * (rdiag[k] / wa[k]) * (rdiag[k] / wa[k]) <= epsmch)
-	    {
-	      rdiag[k] = enorm(MIJ(a, k, ip1, lda), (n -1 - (int) i));
-	      wa[k] = rdiag[k];
-	    }
-	  }
-	}/* fin boucle for k	*/
+            if (tolerance * (rdiag[k] / wa[k]) * (rdiag[k] / wa[k]) <= epsmch)
+            {
+              rdiag[k] = enorm(MIJ(a, k, ip1, lda), (n -1 - (int) i));
+              wa[k] = rdiag[k];
+            }
+          }
+        }/* fin boucle for k	*/
 
       }
 
@@ -736,11 +735,11 @@ int	qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
  *
  */
 int	qrsolv (int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
-		double *x, double *sdiag, double *wa)
+            double *x, double *sdiag, double *wa)
 {
-  int	i, j, jp1, k, kp1, l;	/* compteur de boucle	*/
+  int	i, j, k, kp1, l;	/* compteur de boucle	*/
   int	nsing;
-  double	cosi, cotg, qtbpj, sinu, sum, tg, temp;
+  double	cosi, cotg, qtbpj, sinu, tg, temp;
 
   /*
    *	copie de r et (q transpose) * b afin de preserver l'entree
@@ -774,7 +773,7 @@ int	qrsolv (int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
     if (std::fabs(diag[l]) > std::numeric_limits<double>::epsilon())
     {
       for (k = i; k < n; k++)
-	sdiag[k] = 0.0;
+        sdiag[k] = 0.0;
 
       sdiag[i] = diag[l];
 
@@ -789,57 +788,57 @@ int	qrsolv (int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
 
       for (k = i; k < n; k++)
       {
-	/*
-	 *	determination d'une rotation qui elimine
-	 *	les elements appropriees dans la colonne
-	 *	courante de d.
-	 */
+        /*
+   *	determination d'une rotation qui elimine
+   *	les elements appropriees dans la colonne
+   *	courante de d.
+   */
 
-	//if (sdiag[k] != 0.0)
-	if (std::fabs(sdiag[k]) > std::numeric_limits<double>::epsilon())
-	{
-	  if (std::fabs(*MIJ(r, k, k, ldr)) >= std::fabs(sdiag[k]))
-	  {
-	    tg = sdiag[k] / *MIJ(r, k, k, ldr);
-	    cosi = 0.5 / sqrt(0.25 + 0.25 * (tg * tg));
-	    sinu = cosi * tg;
-	  }
-	  else
-	  {
-	    cotg = *MIJ(r, k, k, ldr) / sdiag[k];
-	    sinu = 0.5 / sqrt(0.25 + 0.25 * (cotg * cotg));
-	    cosi = sinu * cotg;
-	  }
+        //if (sdiag[k] != 0.0)
+        if (std::fabs(sdiag[k]) > std::numeric_limits<double>::epsilon())
+        {
+          if (std::fabs(*MIJ(r, k, k, ldr)) >= std::fabs(sdiag[k]))
+          {
+            tg = sdiag[k] / *MIJ(r, k, k, ldr);
+            cosi = 0.5 / sqrt(0.25 + 0.25 * (tg * tg));
+            sinu = cosi * tg;
+          }
+          else
+          {
+            cotg = *MIJ(r, k, k, ldr) / sdiag[k];
+            sinu = 0.5 / sqrt(0.25 + 0.25 * (cotg * cotg));
+            cosi = sinu * cotg;
+          }
 
-	  /*
-	   *	calcul des elements de la diagonale modifiee
-	   *	de r et des elements modifies de
-	   *	((q transpose)*b,0).
-	   */
-	  *MIJ(r, k, k, ldr) = cosi * *MIJ(r, k, k, ldr) + sinu * sdiag[k];
-	  temp = cosi * wa[k] + sinu * qtbpj;
-	  qtbpj = -sinu * wa[k] + cosi * qtbpj;
-	  wa[k] = temp;
+          /*
+     *	calcul des elements de la diagonale modifiee
+     *	de r et des elements modifies de
+     *	((q transpose)*b,0).
+     */
+          *MIJ(r, k, k, ldr) = cosi * *MIJ(r, k, k, ldr) + sinu * sdiag[k];
+          temp = cosi * wa[k] + sinu * qtbpj;
+          qtbpj = -sinu * wa[k] + cosi * qtbpj;
+          wa[k] = temp;
 
-	  /*
-	   *	accumulation des tranformations dans
-	   *	les lignes de s.
-	   */
+          /*
+     *	accumulation des tranformations dans
+     *	les lignes de s.
+     */
 
-	  kp1 = k + 1;
+          kp1 = k + 1;
 
-	  if ( n >= kp1)
-	  {
-	    for (j = kp1; j < n; j++)
-	    {
-	      temp = cosi * *MIJ(r, k, j, ldr) +
-		sinu * sdiag[j];
-	      sdiag[j] = - sinu * *MIJ(r, k, j, ldr) +
-		cosi * sdiag[j];
-	      *MIJ(r, k, j, ldr) = temp;
-	    }
-	  }
-	}/* fin if diag[] !=0	*/
+          if ( n >= kp1)
+          {
+            for (j = kp1; j < n; j++)
+            {
+              temp = cosi * *MIJ(r, k, j, ldr) +
+                  sinu * sdiag[j];
+              sdiag[j] = - sinu * *MIJ(r, k, j, ldr) +
+                  cosi * sdiag[j];
+              *MIJ(r, k, j, ldr) = temp;
+            }
+          }
+        }/* fin if diag[] !=0	*/
       } /* fin boucle for k -> n */
     }/* fin if diag =0	*/
 
@@ -872,13 +871,13 @@ int	qrsolv (int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
     for (k = 0; k < nsing; k++)
     {
       i = nsing - 1 - k;
-      sum = 0.0;
-      jp1 = i + 1;
+      double sum = 0.0;
+      int jp1 = i + 1;
 
       if (nsing >= jp1)
       {
-	for (j = jp1; j < nsing; j++)
-	  sum += *MIJ(r, i, j, ldr) * wa[j];
+        for (j = jp1; j < nsing; j++)
+          sum += *MIJ(r, i, j, ldr) * wa[j];
       }
       wa[i] = (wa[i] - sum) / sdiag[i];
     }
@@ -1020,7 +1019,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
   int		iflag, iter;
   int count = 0;
   int		i, j, l;
-  double		actred, delta, dirder, epsmch, fnorm, fnorm1, gnorm;
+  double		actred, delta, dirder, epsmch, fnorm, fnorm1;
   double		ratio = std::numeric_limits<double>::epsilon();
   double		par, pnorm, prered;
   double		sum, temp, temp1, temp2, xnorm = 0.0;
@@ -1039,7 +1038,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
     return 0;*/
   if (m < n)
     return 0;
-  if (ldfjac < m) 
+  if (ldfjac < m)
     return 0;
   if  (ftol < 0.0)
     return 0;
@@ -1047,7 +1046,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
     return 0;
   if (gtol < 0.0)
     return 0;
-  if  (maxfev == 0) 
+  if  (maxfev == 0)
     return 0;
   if (factor <= 0.0)
     return 0;
@@ -1074,18 +1073,18 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
     {
       if (diag[j] <= 0.0)
       {
-	/*
-	 * termination, normal ou imposee par l'utilisateur.
-	 */
-	if (iflag < 0)
-	  *info = iflag;
+        /*
+   * termination, normal ou imposee par l'utilisateur.
+   */
+        if (iflag < 0)
+          *info = iflag;
 
-	iflag = 0;
+        iflag = 0;
 
-	if (nprint > 0)
-	  (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
+        if (nprint > 0)
+          (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
 
-	return (count);
+        return (count);
       }
     }
   }
@@ -1149,12 +1148,12 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
        * termination, normal ou imposee par l'utilisateur.
        */
       if (iflag < 0)
-	*info = iflag;
+        *info = iflag;
 
       iflag = 0;
 
       if (nprint > 0)
-	(*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
+        (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
 
       return (count);
     }
@@ -1166,22 +1165,22 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
     {
       iflag = 0;
       if ((iter-1) % nprint == 0)
-	(*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
+        (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
 
       if (iflag < 0)
       {
-	/*
-	 * termination, normal ou imposee par l'utilisateur.
-	 */
-	if (iflag < 0)
-	  *info = iflag;
+        /*
+   * termination, normal ou imposee par l'utilisateur.
+   */
+        if (iflag < 0)
+          *info = iflag;
 
-	iflag = 0;
+        iflag = 0;
 
-	if (nprint > 0)
-	  (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
+        if (nprint > 0)
+          (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
 
-	return (count);
+        return (count);
       }
     }
 
@@ -1199,13 +1198,13 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
     {
       if (mode != 2)
       {
-	for (j = 0; j < n; j++)
-	{
-	  diag[j] = wa2[j];
-	  //if (wa2[j] == 0.0)
-	  if (std::fabs(wa2[j]) <= std::numeric_limits<double>::epsilon())
-	    diag[j] = 1.0;
-	}
+        for (j = 0; j < n; j++)
+        {
+          diag[j] = wa2[j];
+          //if (wa2[j] == 0.0)
+          if (std::fabs(wa2[j]) <= std::numeric_limits<double>::epsilon())
+            diag[j] = 1.0;
+        }
       }
 
       /*
@@ -1215,14 +1214,14 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
        */
 
       for (j = 0; j < n; j++)
-	wa3[j] = diag[j] * x[j];
+        wa3[j] = diag[j] * x[j];
 
       xnorm = enorm (wa3, n);
       delta = factor * xnorm;
 
       //if (delta == 0.0)
       if (std::fabs(delta) <= std::numeric_limits<double>::epsilon())
-	delta = factor;
+        delta = factor;
     }
 
     /*
@@ -1238,15 +1237,15 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
       //if (*MIJ(fjac, i, i, ldfjac) != 0.0)
       if (std::fabs(*pt) > std::numeric_limits<double>::epsilon() )
       {
-	sum = 0.0;
+        sum = 0.0;
 
-	for (j = i; j < m; j++)
-	  sum += *MIJ(fjac, i, j, ldfjac) * wa4[j];
+        for (j = i; j < m; j++)
+          sum += *MIJ(fjac, i, j, ldfjac) * wa4[j];
 
-	temp = - sum / *MIJ(fjac, i, i, ldfjac);
+        temp = - sum / *MIJ(fjac, i, i, ldfjac);
 
-	for (j = i; j < m; j++)
-	  wa4[j] += *MIJ(fjac, i, j, ldfjac) * temp;
+        for (j = i; j < m; j++)
+          wa4[j] += *MIJ(fjac, i, j, ldfjac) * temp;
 
       }
 
@@ -1258,23 +1257,23 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
      *	calcul de la norme du gradient mis a l'echelle.
      */
 
-    gnorm = 0.0;
+    double gnorm = 0.0;
 
     //if (fnorm != 0.0)
     if (std::fabs(fnorm) > std::numeric_limits<double>::epsilon())
     {
       for (i = 0; i < n; i++)
       {
-	l = ipvt[i];
-	//if (wa2[l] != 0.0)
-	if (std::fabs(wa2[l]) > std::numeric_limits<double>::epsilon())
-	{
-	  sum = 0.0;
-	  for (j = 0; j <= i; j++)
-	    sum += *MIJ(fjac, i, j, ldfjac) * (qtf[j] / fnorm);
+        l = ipvt[i];
+        //if (wa2[l] != 0.0)
+        if (std::fabs(wa2[l]) > std::numeric_limits<double>::epsilon())
+        {
+          sum = 0.0;
+          for (j = 0; j <= i; j++)
+            sum += *MIJ(fjac, i, j, ldfjac) * (qtf[j] / fnorm);
 
-	  gnorm = vpMath::maximum(gnorm, std::fabs(sum / wa2[l]));
-	}
+          gnorm = vpMath::maximum(gnorm, std::fabs(sum / wa2[l]));
+        }
       }
     }
 
@@ -1291,12 +1290,12 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
        * termination, normal ou imposee par l'utilisateur.
        */
       if (iflag < 0)
-	*info = iflag;
+        *info = iflag;
 
       iflag = 0;
 
       if (nprint > 0)
-	(*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
+        (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
 
       return (count);
     }
@@ -1308,7 +1307,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
     if (mode != 2)
     {
       for (j = 0; j < n; j++)
-	diag[j] = vpMath::maximum(diag[j], wa2[j]);
+        diag[j] = vpMath::maximum(diag[j], wa2[j]);
     }
 
     /*
@@ -1322,7 +1321,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
        *	determination du parametre de Levenberg-Marquardt.
        */
       lmpar(n, fjac, ldfjac, ipvt, diag, qtf, &delta, &par, wa1,
-	    wa2, wa3, wa4);
+            wa2, wa3, wa4);
 
       /*
        *	stockage de la direction p et x + p. calcul de la norme de p.
@@ -1330,9 +1329,9 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
 
       for (j = 0; j < n; j++)
       {
-	wa1[j] = - wa1[j];
-	wa2[j] = x[j] + wa1[j];
-	wa3[j] = diag[j] * wa1[j];
+        wa1[j] = - wa1[j];
+        wa2[j] = x[j] + wa1[j];
+        wa3[j] = diag[j] * wa1[j];
       }
 
       pnorm = enorm(wa3, n);
@@ -1343,7 +1342,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
        */
 
       if (iter == 1)
-	delta = vpMath::minimum(delta, pnorm);
+        delta = vpMath::minimum(delta, pnorm);
 
       /*
        *	evaluation de la fonction en x + p et calcul de leur norme.
@@ -1356,18 +1355,16 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
 
       if (iflag < 0)
       {
-	/*
-	 * termination, normal ou imposee par l'utilisateur.
-	 */
-	if (iflag < 0)
-	  *info = iflag;
+        // termination, normal ou imposee par l'utilisateur.
+        if (iflag < 0)
+          *info = iflag;
 
-	iflag = 0;
+        iflag = 0;
 
-	if (nprint > 0)
-	  (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
+        if (nprint > 0)
+          (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
 
-	return (count);
+        return (count);
       }
 
       fnorm1 = enorm(wa4, m);
@@ -1379,7 +1376,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
       actred = - 1.0;
 
       if ((tol1 * fnorm1) < fnorm)
-	actred = 1.0 - ((fnorm1 / fnorm) * (fnorm1 / fnorm));
+        actred = 1.0 - ((fnorm1 / fnorm) * (fnorm1 / fnorm));
 
       /*
        *	calcul de la reduction predite mise a l'echelle et
@@ -1388,11 +1385,11 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
 
       for (i = 0; i < n; i++)
       {
-	wa3[i] = 0.0;
-	l = ipvt[i];
-	temp = wa1[l];
-	for (j = 0; j <= i; j++)
-	  wa3[j] += *MIJ(fjac, i, j, ldfjac) * temp;
+        wa3[i] = 0.0;
+        l = ipvt[i];
+        temp = wa1[l];
+        for (j = 0; j <= i; j++)
+          wa3[j] += *MIJ(fjac, i, j, ldfjac) * temp;
       }
 
       temp1 = enorm(wa3, n) / fnorm;
@@ -1408,7 +1405,7 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
 
       //if (prered != 0.0)
       if (std::fabs(prered) > std::numeric_limits<double>::epsilon())
-	ratio = actred / prered;
+        ratio = actred / prered;
 
       /*
        * mise a jour de la limite de l'etape.
@@ -1416,26 +1413,26 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
 
       if (ratio > tol25)
       {
-	//if ((par == 0.0) || (ratio <= tol75))
-	if ((std::fabs(par) <= std::numeric_limits<double>::epsilon()) || (ratio <= tol75))
-	{
-	  delta = pnorm / tol5;
-	  par *= tol5;
-	}
+        //if ((par == 0.0) || (ratio <= tol75))
+        if ((std::fabs(par) <= std::numeric_limits<double>::epsilon()) || (ratio <= tol75))
+        {
+          delta = pnorm / tol5;
+          par *= tol5;
+        }
       }
       else
       {
-	if (actred >= 0.0)
-	  temp = tol5;
+        if (actred >= 0.0)
+          temp = tol5;
 
-	else
-	  temp = tol5 * dirder / (dirder + tol5 * actred);
+        else
+          temp = tol5 * dirder / (dirder + tol5 * actred);
 
-	if ((tol1 * fnorm1 >= fnorm) || (temp < tol1))
-	  temp = tol1;
+        if ((tol1 * fnorm1 >= fnorm) || (temp < tol1))
+          temp = tol1;
 
-	delta = temp * vpMath::minimum(delta, (pnorm / tol1));
-	par /= temp;
+        delta = temp * vpMath::minimum(delta, (pnorm / tol1));
+        par /= temp;
       }
 
       /*
@@ -1443,23 +1440,23 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
        */
       if (ratio >= tol0001)
       {
-	/*
-	 *	iteration reussie. mise a jour de x, de fvec, et  de
-	 *	leurs normes.
-	 */
+        /*
+   *	iteration reussie. mise a jour de x, de fvec, et  de
+   *	leurs normes.
+   */
 
-	for (j = 0; j < n; j++)
-	{
-	  x[j] = wa2[j];
-	  wa2[j] = diag[j] * x[j];
-	}
+        for (j = 0; j < n; j++)
+        {
+          x[j] = wa2[j];
+          wa2[j] = diag[j] * x[j];
+        }
 
-	for (i = 0; i < m; i++)
-	  fvec[i] = wa4[i];
+        for (i = 0; i < m; i++)
+          fvec[i] = wa4[i];
 
-	xnorm = enorm(wa2, n);
-	fnorm = fnorm1;
-	iter++;
+        xnorm = enorm(wa2, n);
+        fnorm = fnorm1;
+        iter++;
       }
 
       /*
@@ -1467,29 +1464,29 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
        */
 
       if ((std::fabs(actred) <= ftol) && (prered <= ftol) && (tol5 * ratio <= 1.0))
-	*info = 1;
+        *info = 1;
 
       if (delta <= xtol * xnorm)
-	*info = 2;
+        *info = 2;
 
       if ((std::fabs(actred) <= ftol) && (prered <= ftol) && (tol5 * ratio <= 1.0)
-	  && *info == 2)
-	*info = 3;
+          && *info == 2)
+        *info = 3;
 
       if (*info != 0)
       {
-	/*
-	 * termination, normal ou imposee par l'utilisateur.
-	 */
-	if (iflag < 0)
-	  *info = iflag;
+        /*
+   * termination, normal ou imposee par l'utilisateur.
+   */
+        if (iflag < 0)
+          *info = iflag;
 
-	iflag = 0;
+        iflag = 0;
 
-	if (nprint > 0)
-	  (*ptr_fcn)(m,n,x,fvec,fjac,ldfjac, iflag);
+        if (nprint > 0)
+          (*ptr_fcn)(m,n,x,fvec,fjac,ldfjac, iflag);
 
-	return (count);
+        return (count);
       }
       /*
        *	tests pour termination et
@@ -1497,32 +1494,32 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
        */
 
       if (*nfev >= maxfev)
-	*info = 5;
+        *info = 5;
 
       if ((std::fabs(actred) <= epsmch) && (prered <= epsmch)
-	  && (tol5 * ratio <= 1.0))
-	*info = 6;
+          && (tol5 * ratio <= 1.0))
+        *info = 6;
 
       if (delta <= epsmch * xnorm)
-	*info = 7;
+        *info = 7;
 
       if (gnorm <= epsmch)
-	*info = 8;
+        *info = 8;
 
       if (*info != 0)
       {
-	/*
-	 * termination, normal ou imposee par l'utilisateur.
-	 */
-	if (iflag < 0)
-	  *info = iflag;
+        /*
+   * termination, normal ou imposee par l'utilisateur.
+   */
+        if (iflag < 0)
+          *info = iflag;
 
-	iflag = 0;
+        iflag = 0;
 
-	if (nprint > 0)
-	  (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
+        if (nprint > 0)
+          (*ptr_fcn)(m, n, x, fvec, fjac, ldfjac, iflag);
 
-	return (count);
+        return (count);
       }
     }/* fin while ratio >=tol0001	*/
   }/*fin while 1*/

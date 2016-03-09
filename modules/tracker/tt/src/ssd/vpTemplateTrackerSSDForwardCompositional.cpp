@@ -47,11 +47,10 @@ vpTemplateTrackerSSDForwardCompositional::vpTemplateTrackerSSDForwardComposition
 void vpTemplateTrackerSSDForwardCompositional::initCompo(const vpImage<unsigned char> &/*I*/)
 {
  // std::cout<<"Initialise precomputed value of Compositionnal Direct"<<std::endl;
-  int i,j;
   for(unsigned int point=0;point<templateSize;point++)
   {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
+    int i=ptTemplate[point].y;
+    int j=ptTemplate[point].x;
     ptTemplate[point].dW=new double[2*nbParam];
     X1[0]=j;X1[1]=i;
     Warp->computeDenom(X1,p);
@@ -70,8 +69,6 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
 {
   if(!compoInitialised)
     std::cout<<"Compositionnal tracking no initialised\nUse InitCompo(vpImage<unsigned char> &I) function"<<std::endl;
-  double erreur=0;
-  unsigned int Nbpoint=0;
 
   if(blur)
     vpImageFilter::filter(I, BI,fgG,taillef);
@@ -89,8 +86,8 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
   double alpha=2.;
   do
   {
-    Nbpoint=0;
-    erreur=0;
+    unsigned int Nbpoint=0;
+    double erreur=0;
     G=0;
     H=0 ;
     Warp->computeCoeff(p);

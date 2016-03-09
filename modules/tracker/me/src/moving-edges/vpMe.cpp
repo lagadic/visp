@@ -293,7 +293,6 @@ calcul_masques(vpColVector &angle, // definitions des angles theta
   unsigned int i_theta,  // indice (boucle sur les masques)
        i,j;      // indices de boucle sur M(i,j)
   double X,Y,   // point correspondant/centre du masque
-    theta, cos_theta, sin_theta, tan_theta,
     moitie = ((double)n)/2.0; // moitie REELLE du masque
   point P1,Q1,P,Q;  // clippe Droite(theta) P1,Q1 -> P,Q
   int    sgn;       // signe de M(i,j)
@@ -303,10 +302,10 @@ calcul_masques(vpColVector &angle, // definitions des angles theta
 
  for(i_theta=0; i_theta<nb_theta; i_theta++)
  {
-   theta = M_PI/180*angle[i_theta]; // indice i -> theta(i) en radians
+   double theta = M_PI/180*angle[i_theta]; // indice i -> theta(i) en radians
    																//  angle[] dans [0,180[
-   cos_theta = cos(theta);        // vecteur directeur de l'ECM
-   sin_theta = sin(theta);        //  associe au masque
+   double cos_theta = cos(theta);        // vecteur directeur de l'ECM
+   double sin_theta = sin(theta);        //  associe au masque
 
    // PRE-CALCULE 2 POINTS DE D(theta) BIEN EN DEHORS DU MASQUE
    // =========================================================
@@ -318,7 +317,7 @@ calcul_masques(vpColVector &angle, // definitions des angles theta
    }
    else
    {
-     tan_theta = sin_theta/cos_theta;       // pente de la droite D(theta)
+     double tan_theta = sin_theta/cos_theta;       // pente de la droite D(theta)
      P1.x=-(int)n; P1.y=tan_theta*(-(int)n);
      Q1.x=n;  Q1.y=tan_theta*n;
    }

@@ -166,12 +166,9 @@ static	Byte	*scantbl;	/* caracteres suivants des terminaux	*/
  */
 void open_lex (void)
 {
-	static	 char	proc_name[] = "open_lex";
-
-	int	i;
-
 	if ((chtbl   = (Byte *) malloc (CHAR_NBR * sizeof (Byte))) == NULL
 	||  (scantbl = (Byte *) malloc (CHAR_NBR * sizeof (Byte))) == NULL) {
+    static	 char	proc_name[] = "open_lex";
 		perror (proc_name);
 		exit (1);
 	}
@@ -180,7 +177,7 @@ void open_lex (void)
 
 	/* initialise les premiers caracteres des symboles terminaux	*/
 
-	for (i = 0; i < ASCII_NBR; i++) {
+  for (int i = 0; i < ASCII_NBR; i++) {
 		if (isalpha(i))		chtbl[i] = IDNT;
 		else if (isdigit(i))	chtbl[i] = INTT;
 		else if (isspace(i))	chtbl[i] = SPCT;
@@ -203,7 +200,7 @@ void open_lex (void)
 
 	/* Initialise les caracteres suivants des symboles terminaux.	*/
 
-	for (i = 0; i < ASCII_NBR; i++) {
+  for (int i = 0; i < ASCII_NBR; i++) {
 		if (isalpha(i))		scantbl[i] = _CMTT|_IDNT|_STGT;
 		else if (isdigit(i))	scantbl[i] = _CMTT|_IDNT|_INTT|_STGT;
 		else switch (i) {
@@ -645,15 +642,15 @@ void unlex (void)
  */
 void open_source (FILE *fd, const char *str)
 {
-	static	char	proc_name[] = "open_source";
-
 	if ((source = (char *) malloc((strlen(str)+1)*sizeof(char))) == NULL) {
-		perror (proc_name);
+    static	char	proc_name[] = "open_source";
+    perror (proc_name);
 		exit (1);
 	}
 	strcpy (source, str);
 	if ((botbuf = (char *) malloc (TEXTSIZE * sizeof (char))) == NULL) {
-		perror (proc_name);
+    static	char	proc_name[] = "open_source";
+    perror (proc_name);
 		exit (1);
 	}
 	fds = fd;
@@ -780,10 +777,9 @@ void lexerr (const char* path, ...)
  */
 void poperr (void)
 {
-	static	char	proc_name[] = "poperr";
-
 	if (--size_stack < 0) {
-		fprintf (stderr, "%s: error stack underflow\n", proc_name);
+    static	char	proc_name[] = "poperr";
+    fprintf (stderr, "%s: error stack underflow\n", proc_name);
 		exit (1);
 	}
 }
@@ -793,10 +789,9 @@ void poperr (void)
  */
 void popuperr (const char *str)
 {
-  static const char	proc_name[] = "popuerr";
-
 	if (size_stack <= 0) {
-		fprintf (stderr, "%s: error stack underflow\n", proc_name);
+    static const char	proc_name[] = "popuerr";
+    fprintf (stderr, "%s: error stack underflow\n", proc_name);
 		exit (1);
 	}
 	err_stack[size_stack-1] = str;
@@ -807,10 +802,9 @@ void popuperr (const char *str)
  */
 void pusherr (const char *str)
 {
-  static const char	proc_name[] = "pusherr";
-
 	if (size_stack >= ERR_STACK_MAX) {
-		fprintf (stderr, "%s: error stack overflow\n", proc_name);
+    static const char	proc_name[] = "pusherr";
+    fprintf (stderr, "%s: error stack overflow\n", proc_name);
 		exit (1);
 	}
 	err_stack[size_stack++] = str;

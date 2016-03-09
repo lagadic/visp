@@ -59,49 +59,49 @@
 
   \return moment value
 */
-double vpMomentObject::calc_mom_polygon(unsigned int p, unsigned int q, const std::vector<vpPoint>& points){
-    unsigned int i,k,l;
-    double den,mom,s;
-    double x_k;
-    double x_p_k;
-    double y_l;
-    double y_q_l;
+double vpMomentObject::calc_mom_polygon(unsigned int p, unsigned int q, const std::vector<vpPoint>& points)
+{
+  unsigned int i,k,l;
+  double den,mom;
+  double x_p_k;
+  double y_l;
+  double y_q_l;
 
-    den = static_cast<double>( (p+q+2)*(p+q+1)*vpMath::comb(p+q,p) );
+  den = static_cast<double>( (p+q+2)*(p+q+1)*vpMath::comb(p+q,p) );
 
-    mom = 0.0;
-    for (i=1;i<=points.size()-1;i++)
+  mom = 0.0;
+  for (i=1;i<=points.size()-1;i++)
+  {
+    double s = 0.0;
+    double x_k=1;
+    for (k=0;k<=p;k++)
     {
-      s = 0.0;
-        x_k=1;
-      for (k=0;k<=p;k++)
+      y_l=1;
+      x_p_k = pow(points[i-1].get_x(), (int)(p-k));
+      for (l=0;l<=q;l++)
       {
-        y_l=1;
-        x_p_k = pow(points[i-1].get_x(), (int)(p-k));
-        for (l=0;l<=q;l++)
-        {
-            y_q_l=pow(points[i-1].get_y(), (int)(q-l));
+        y_q_l=pow(points[i-1].get_y(), (int)(q-l));
 
-          s += static_cast<double>(
-            vpMath::comb(k+l,l)
-            *vpMath::comb(p+q-k-l,q-l)
-            *x_k
-            *x_p_k
-            *y_l
-            *y_q_l );
+        s += static_cast<double>(
+              vpMath::comb(k+l,l)
+              *vpMath::comb(p+q-k-l,q-l)
+              *x_k
+              *x_p_k
+              *y_l
+              *y_q_l );
 
-            y_l*=points[i].get_y();
-
-        }
-        x_k*=points[i].get_x();
+        y_l*=points[i].get_y();
 
       }
+      x_k*=points[i].get_x();
 
-      s *= ((points[i-1].get_x())*(points[i].get_y())-(points[i].get_x())*(points[i-1].get_y()));
-      mom += s;
     }
-    mom /= den;
-    return(mom);
+
+    s *= ((points[i-1].get_x())*(points[i].get_y())-(points[i].get_x())*(points[i-1].get_y()));
+    mom += s;
+  }
+  mom /= den;
+  return(mom);
 }
 
 /*!
@@ -304,10 +304,9 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned cha
           double y=0;
           vpPixelMeterConversion::convertPoint(cam,i_,j_,x,y);
 
-          double xval=1.;
           double yval=1.;
           for(register unsigned int k=0;k<order;k++){
-            xval=1.;
+            double xval=1.;
             for(register unsigned int l=0;l<order-k;l++){
               curvals[(k*order+l)]+=(xval*yval);
               xval*=x;
@@ -384,14 +383,14 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, const vpCame
   unsigned int kidx = 0;
 
   double intensity = 0;
-  double intensity_white = 0;
 
   //double Imax = static_cast<double>(image.getMaxValue());
-  double Imax = 255.;                                                     // To check the effect of gray level change. ISR Coimbra
 
   double iscale = 1.0;
-  if (flg_normalize_intensity)                                            // This makes the image a probability density function
+  if (flg_normalize_intensity) {                                            // This makes the image a probability density function
+    double Imax = 255.;                                                     // To check the effect of gray level change. ISR Coimbra
     iscale = 1.0/Imax;
+  }
 
   if (bg_type == vpMomentObject::WHITE) {
       /////////// WHITE BACKGROUND ///////////
@@ -400,7 +399,7 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, const vpCame
               x = 0;
               y = 0;
               intensity = (double)(image[j][i])*iscale;
-              intensity_white = 1. - intensity;
+              double intensity_white = 1. - intensity;
 
               vpPixelMeterConversion::convertPoint(cam,i,j,x,y);
               cacheValues(cache,x,y, intensity_white);			// Modify 'cache' which has x^p*y^q to x^p*y^q*(1 - I(x,y))

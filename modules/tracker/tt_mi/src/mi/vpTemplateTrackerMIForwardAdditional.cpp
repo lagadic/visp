@@ -67,13 +67,10 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsi
   vpImageFilter::getGradXGauss2D(I, dIx, fgG,fgdG,taillef);
   vpImageFilter::getGradYGauss2D(I, dIy, fgG,fgdG,taillef);
 
-  double i2,j2;
   double Tij;
   double IW,dx,dy;
   int cr,ct;
   double er,et;
-
-  int i,j;
 
   Nbpoint=0;
 
@@ -81,15 +78,16 @@ void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsi
   Warp->computeCoeff(p);
   for(unsigned int point=0;point<templateSize;point++)
   {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
+    int i=ptTemplate[point].y;
+    int j=ptTemplate[point].x;
     X1[0]=j;X1[1]=i;
     X2[0]=j;X2[1]=i;
 
     Warp->computeDenom(X1,p);
     Warp->warpX(X1,X2,p);
 
-    j2=X2[0];i2=X2[1];
+    double j2=X2[0];
+    double i2=X2[1];
 
     if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
     {
@@ -324,12 +322,11 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
 
     case vpTemplateTrackerMIForwardAdditional::USE_QUASINEWTON:
     {
-      double s_scal_y;
       if(iterationGlobale!=0)
       {
         vpColVector s_quasi=p-p_prec;
         vpColVector y_quasi=G-G_prec;
-        s_scal_y=s_quasi.t()*y_quasi;
+        double s_scal_y=s_quasi.t()*y_quasi;
         //if(s_scal_y!=0)//BFGS
         //	KQuasiNewton=KQuasiNewton-(s_quasi*y_quasi.t()*KQuasiNewton+KQuasiNewton*y_quasi*s_quasi.t())/s_scal_y+(1.+y_quasi.t()*(KQuasiNewton*y_quasi)/s_scal_y)*s_quasi*s_quasi.t()/s_scal_y;
         //if(s_scal_y!=0)//DFP

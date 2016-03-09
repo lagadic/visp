@@ -305,12 +305,10 @@ vpPose::coplanar(int &coplanar_plane_type)
 
   double  D = sqrt(vpMath::sqr(a)+vpMath::sqr(b)+vpMath::sqr(c)) ;
 
-  double dist;
-
   for(it=listP.begin(); it != listP.end(); ++it)
   {
     P1 = *it ;
-    dist = (a*P1.get_oX() + b*P1.get_oY()+c*P1.get_oZ()+d)/D ;
+    double dist = (a*P1.get_oX() + b*P1.get_oY()+c*P1.get_oZ()+d)/D ;
     //std::cout << "dist= " << dist << std::endl;
 
     if (fabs(dist) > distanceToPlaneForCoplanarityTest)

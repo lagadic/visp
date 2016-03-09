@@ -494,10 +494,9 @@ void vp1394CMUGrabber::setShutter(unsigned short shutter)
 void
 vp1394CMUGrabber::displayCameraDescription(int cam_id)
 {
-  char buf[512];
-
   if( camera->GetNumberCameras() > cam_id )
   {
+    char buf[512];
     camera->GetNodeDescription(cam_id,buf,512);
     std::cout << "Camera " << cam_id << ": " << buf << std::endl ;
 

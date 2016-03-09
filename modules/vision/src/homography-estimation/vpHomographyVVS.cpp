@@ -56,20 +56,17 @@ const double vpHomography::threshold_displacement = 1e-18;
 static void
 updatePoseRotation(vpColVector& dx,vpHomogeneousMatrix&  mati)
 {
-  unsigned int i,j;
-
-  double sinu,cosi,mcosi,u[3],    s;
   vpRotationMatrix rd ;
 
-
-  s = sqrt(dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2]);
+  double s = sqrt(dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2]);
   if (s > 1.e-25)
   {
+    double u[3];
 
-    for (i=0;i<3;i++) u[i] = dx[i]/s;
-    sinu = sin(s);
-    cosi = cos(s);
-    mcosi = 1-cosi;
+    for (unsigned int i=0;i<3;i++) u[i] = dx[i]/s;
+    double sinu = sin(s);
+    double cosi = cos(s);
+    double mcosi = 1-cosi;
     rd[0][0] = cosi + mcosi*u[0]*u[0];
     rd[0][1] = -sinu*u[2] + mcosi*u[0]*u[1];
     rd[0][2] = sinu*u[1] + mcosi*u[0]*u[2];
@@ -82,12 +79,11 @@ updatePoseRotation(vpColVector& dx,vpHomogeneousMatrix&  mati)
   }
   else
   {
-    for (i=0;i<3;i++)
+    for (unsigned int i=0;i<3;i++)
     {
-      for (j=0;j<3;j++) rd[i][j] = 0.0;
+      for (unsigned int j=0;j<3;j++) rd[i][j] = 0.0;
       rd[i][i] = 1.0;
     }
-
   }
 
   vpHomogeneousMatrix Delta ;

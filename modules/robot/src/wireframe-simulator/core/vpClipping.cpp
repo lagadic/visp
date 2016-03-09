@@ -117,8 +117,6 @@ static	Index		*poly_tmp;	/* polygone temporaire	*/
  */
 void open_clipping (void)
 {
-	static	char	proc_name[] = "open_clipping";
-
 	/* alloue la surface de travail	*/
 	malloc_huge_Bound (&clip);
 
@@ -128,12 +126,14 @@ void open_clipping (void)
 #ifdef	clip_opt
 	|| (poly0   = (Index *) malloc (VERTEX_NBR * sizeof (Index))) == NULL
 	|| (poly1   = (Index *) malloc (VERTEX_NBR * sizeof (Index))) == NULL) {
-		perror (proc_name);
+    static	char	proc_name[] = "open_clipping";
+    perror (proc_name);
 		exit (1);
 	}
 #else
 	|| (poly_tmp = (Index *) malloc (VERTEX_NBR * sizeof (Index))) == NULL){
-		perror (proc_name);
+    static	char	proc_name[] = "open_clipping";
+    perror (proc_name);
 		exit (1);
 	}
 #endif	/* clip_opt	*/

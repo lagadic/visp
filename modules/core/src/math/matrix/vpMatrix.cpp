@@ -355,10 +355,9 @@ void vpMatrix::AtA(vpMatrix &B) const
   unsigned int i,j,k;
   double s;
   double *ptr;
-  double *Bi;
   for (i=0;i<colNum;i++)
   {
-    Bi = B[i] ;
+    double *Bi = B[i] ;
     for (j=0;j<i;j++)
     {
       ptr=data;
@@ -3497,9 +3496,9 @@ void vpMatrix::computeHLM(const vpMatrix &H, const double &alpha, vpMatrix &HLM)
 double vpMatrix::euclideanNorm() const
 {
   double norm=0.0;
-  double x ;
   for (unsigned int i=0;i<dsize;i++) {
-    x = *(data +i); norm += x*x;
+    double x = *(data +i);
+    norm += x*x;
   }
 
   return sqrt(norm);
@@ -3518,9 +3517,8 @@ double vpMatrix::euclideanNorm() const
 double vpMatrix::infinityNorm() const
 {
   double norm=0.0;
-  double x ;
   for (unsigned int i=0;i<rowNum;i++){
-    x = 0;
+    double x = 0;
     for (unsigned int j=0; j<colNum;j++){
       x += fabs (*(*(rowPtrs + i)+j)) ;
     }

@@ -1267,12 +1267,11 @@ vpPlotGraph::replot3D (vpImage<unsigned char> &I)
     unsigned int k = 0;
     vpImagePoint iP;
     vpPoint pointPlot;
-    double x,y,z;
     while (k < (curveList+i)->nbPoint)
     {
-      x = *it_ptListx;
-      y = *it_ptListy;
-      z = *it_ptListz;
+      double x = *it_ptListx;
+      double y = *it_ptListy;
+      double z = *it_ptListz;
       pointPlot.setWorldCoordinates(ptXorg+(zoomx_3D*x),ptYorg-(zoomy_3D*y),ptZorg+(zoomz_3D*z));
       pointPlot.track(cMo);
       double u=0.0, v=0.0;
@@ -1387,9 +1386,6 @@ vpPlotGraph::navigation(const vpImage<unsigned char> &I, bool &changed, vpMouseB
 
   vpDisplay::getPointerPosition(I,iP);
 
-  double anglei = 0;
-  double anglej = 0;
-
   if (old_iPr != vpImagePoint(-1,-1) && blockedr)
   {
     double width_ = vpMath::minimum(I.getWidth(),I.getHeight());
@@ -1397,8 +1393,8 @@ vpPlotGraph::navigation(const vpImage<unsigned char> &I, bool &changed, vpMouseB
     double diffi = iP.get_i() - old_iPr.get_i();
     double diffj = iP.get_j() - old_iPr.get_j();
     
-    anglei = diffi*360/width_;
-    anglej = diffj*360/width_;
+    double anglei = diffi*360/width_;
+    double anglej = diffj*360/width_;
     mov.buildFrom(0,0,0,vpMath::rad(anglei),vpMath::rad(-anglej),0);
     changed = true;
   }

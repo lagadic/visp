@@ -71,8 +71,6 @@ static	View_parameters	*sp		= stack;
 void
 fprintf_vwstack (FILE *fp, char *argv)
 {
-	static	 char	proc_name[] = "fprintf_vwstack";
-
 	if (argv == NULL || strcmp (argv, "type") == 0) {
     const char	*typetoa;
 
@@ -120,8 +118,10 @@ fprintf_vwstack (FILE *fp, char *argv)
 			sp->depth.front, sp->depth.back);
 		if (argv != NULL) return;
 	}
-	if (argv != NULL)
-		fprintf (stderr, "%s: argument unknown\n", proc_name);
+  if (argv != NULL) {
+    static	 char	proc_name[] = "fprintf_vwstack";
+    fprintf (stderr, "%s: argument unknown\n", proc_name);
+  }
 }
 
 /*
@@ -155,10 +155,9 @@ load_vwstack (View_parameters *vp)
 void
 pop_vwstack (void)
 {
-	static	char	proc_name[] = "pop_vwstack";
-
 	if (sp == stack) {
-		fprintf (stderr, "%s: stack underflow\n", proc_name);
+    static	char	proc_name[] = "pop_vwstack";
+    fprintf (stderr, "%s: stack underflow\n", proc_name);
 		return;
 	}
 	else	sp--;
@@ -171,10 +170,9 @@ pop_vwstack (void)
 void
 push_vwstack (void)
 {
-	static	char	proc_name[] = "push_vwstack";
-
 	if (sp == stack + STACKSIZE - 1) {
-		fprintf (stderr, "%s: stack overflow\n", proc_name);
+    static	char	proc_name[] = "push_vwstack";
+    fprintf (stderr, "%s: stack overflow\n", proc_name);
 		return;
 	}
 	sp++;
@@ -206,9 +204,7 @@ add_vwstack (const char* path, ... )
 //add_vwstack (va_alist)
 // va_dcl
 {
-	static	char	proc_name[] = "add_vwstack";
-
-       	va_list	ap;
+  va_list	ap;
 	char	*argv;
 
 	va_start (ap,path);
@@ -236,9 +232,11 @@ add_vwstack (const char* path, ... )
 		float	z = (float) va_arg (ap, double);
 
 		//if (x == 0 && y == 0 && z == 0)
-    if (std::fabs(x) <= std::numeric_limits<double>::epsilon() && std::fabs(y) <= std::numeric_limits<double>::epsilon() && std::fabs(z) <= std::numeric_limits<double>::epsilon())
-			fprintf (stderr, "%s: bad vpn\n", proc_name);
-		else {
+    if (std::fabs(x) <= std::numeric_limits<double>::epsilon() && std::fabs(y) <= std::numeric_limits<double>::epsilon() && std::fabs(z) <= std::numeric_limits<double>::epsilon()) {
+      static	char	proc_name[] = "add_vwstack";
+      fprintf (stderr, "%s: bad vpn\n", proc_name);
+    }
+    else {
 			SET_COORD3(sp->vpn,x,y,z);
 		}
 	}
@@ -256,9 +254,11 @@ add_vwstack (const char* path, ... )
 		float	z = (float) va_arg (ap, double);
 
 		//if (x == 0 && y == 0 && z == 0)
-    if (std::fabs(x) <= std::numeric_limits<double>::epsilon() && std::fabs(y) <= std::numeric_limits<double>::epsilon() && std::fabs(z) <= std::numeric_limits<double>::epsilon())
-			fprintf (stderr, "%s: bad vup\n", proc_name);
-		else {
+    if (std::fabs(x) <= std::numeric_limits<double>::epsilon() && std::fabs(y) <= std::numeric_limits<double>::epsilon() && std::fabs(z) <= std::numeric_limits<double>::epsilon()) {
+      static	char	proc_name[] = "add_vwstack";
+      fprintf (stderr, "%s: bad vup\n", proc_name);
+    }
+else {
 			SET_COORD3(sp->vup,x,y,z);
 		}
 	}
@@ -269,9 +269,11 @@ add_vwstack (const char* path, ... )
 		sp->vwd.vmin = (float) va_arg (ap, double);
 		sp->vwd.vmax = (float) va_arg (ap, double);
 	}
-	else
-		fprintf (stderr, "%s: bad argument\n", proc_name);
-	va_end (ap);
+  else {
+    static	char	proc_name[] = "add_vwstack";
+    fprintf (stderr, "%s: bad argument\n", proc_name);
+    va_end (ap);
+  }
 }
 
 #endif

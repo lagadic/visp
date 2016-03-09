@@ -71,15 +71,16 @@ bool test(const std::string &s, const vpHomography &H, const std::vector<double>
 
   return true;
 }
+
 int main()
 {
   try {
-    int err = 1;
     {
       vpHomography H;
       H.eye();
       std::vector<double> bench(9, 0);
       bench[0] = bench[4] = bench[8] = 1.;
+      int err = 1;
       if (test("H", H, bench) == false)
         return err;
       if (test("H", H/H[2][2], bench) == false)

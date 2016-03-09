@@ -160,10 +160,9 @@ vpHomography::degenerateConfiguration(vpColVector &x, unsigned int *ind)
   double pa[4][3];
   double pb[4][3];
   unsigned int n2 = 2 * n;
-  unsigned int ind2;
   for(unsigned int i = 0; i < 4 ;i++)
     {
-      ind2 = 2 * ind[i];
+      unsigned int ind2 = 2 * ind[i];
       pb[i][0] = x[ind2];
       pb[i][1] = x[ind2+1];
       pb[i][2] = 1;
@@ -220,15 +219,13 @@ vpHomography::degenerateConfiguration(const std::vector<double> &xb, const std::
 void
 vpHomography::computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M)
 {
-  unsigned int i ;
   unsigned int n = x.getRows()/4 ;
   std::vector<double> xa(4), xb(4);
   std::vector<double> ya(4), yb(4);
   unsigned int n2 = n * 2;
-  unsigned int ind2;
-  for(i=0 ; i < 4 ; i++)
+  for(unsigned int i=0 ; i < 4 ; i++)
     {
-      ind2 = 2 * ind[i];
+      unsigned int ind2 = 2 * ind[i];
       xb[i] = x[ind2] ;
       yb[i] = x[ind2+1] ;
 
@@ -246,7 +243,7 @@ vpHomography::computeTransformation(vpColVector &x, unsigned int *ind, vpColVect
     }
 
   M.resize(9);
-  for (i=0 ; i <9 ; i++)
+  for (unsigned int i=0 ; i <9 ; i++)
     {
       M[i] = aHb.data[i] ;
     }
@@ -258,19 +255,17 @@ vpHomography::computeTransformation(vpColVector &x, unsigned int *ind, vpColVect
 double
 vpHomography::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
 {
-  unsigned int i ;
   unsigned int n = x.getRows()/4 ;
   unsigned int n2 = n  * 2;
-  unsigned int i2;
   vpColVector *pa;
   vpColVector *pb;
 
   pa = new vpColVector [n];
   pb = new vpColVector [n];
 
-  for( i=0 ; i < n ; i++)
+  for(unsigned int i=0 ; i < n ; i++)
     {
-      i2 = 2 * i;
+      unsigned int i2 = 2 * i;
       pb[i].resize(3) ;
       pb[i][0] = x[i2] ;
       pb[i][1] = x[i2+1] ;
@@ -284,7 +279,7 @@ vpHomography::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
 
   vpMatrix aHb(3,3) ;
 
-  for (i=0 ; i <9 ; i++)
+  for (unsigned int i=0 ; i <9 ; i++)
     {
       aHb.data[i] = M[i];
     }
@@ -294,7 +289,7 @@ vpHomography::computeResidual(vpColVector &x, vpColVector &M, vpColVector &d)
   d.resize(n);
 
   vpColVector Hpb  ;
-  for (i=0 ; i <n ; i++)
+  for (unsigned int i=0 ; i <n ; i++)
     {
       Hpb = aHb*pb[i] ;
       Hpb /= Hpb[2] ;
@@ -317,10 +312,9 @@ vpHomography::initRansac(unsigned int n,
 {
   x.resize(4*n) ;
   unsigned int n2 = n * 2;
-  unsigned int i2;
   for (unsigned int i=0 ; i < n ; i++)
   {
-    i2 = 2 * i;
+    unsigned int i2 = 2 * i;
     x[i2] = xb[i] ;
     x[i2+1] = yb[i] ;
     x[n2+i2] = xa[i] ;

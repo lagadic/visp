@@ -2058,9 +2058,8 @@ void vpDisplayOpenCV::on_mouse( int event, int x, int y, int /*flags*/, void* di
 bool
 vpDisplayOpenCV::getKeyboardEvent(bool blocking)
 {
-  int key_pressed;
-  int delay;
   if (displayHasBeenInitialized) {
+    int delay;
     flushDisplay() ;
     if (blocking) 
       delay = 0;
@@ -2068,9 +2067,9 @@ vpDisplayOpenCV::getKeyboardEvent(bool blocking)
       delay = 10;
 
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-    key_pressed = cvWaitKey(delay);
+    int key_pressed = cvWaitKey(delay);
 #else
-    key_pressed = cv::waitKey(delay);
+    int key_pressed = cv::waitKey(delay);
 #endif
 
     if (key_pressed == -1)
@@ -2106,9 +2105,8 @@ vpDisplayOpenCV::getKeyboardEvent(bool blocking)
 bool
 vpDisplayOpenCV::getKeyboardEvent(char *string, bool blocking)
 {
-  int key_pressed;
-  int delay;
   if (displayHasBeenInitialized) {
+    int delay;
     flushDisplay() ;
     if (blocking) 
       delay = 0;
@@ -2116,9 +2114,9 @@ vpDisplayOpenCV::getKeyboardEvent(char *string, bool blocking)
       delay = 10;
 
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-    key_pressed = cvWaitKey(delay);
+    int key_pressed = cvWaitKey(delay);
 #else
-    key_pressed = cv::waitKey(delay);
+    int key_pressed = cv::waitKey(delay);
 #endif
     if (key_pressed == -1)
       return false;
@@ -2155,11 +2153,10 @@ vpDisplayOpenCV::getPointerMotionEvent (vpImagePoint &ip )
 
   if (displayHasBeenInitialized) {
     //flushDisplay() ;
-    double u, v;
     if (move){
       ret = true ;
-      u = (unsigned int)x_move;
-      v = (unsigned int)y_move;
+      double u = (unsigned int)x_move;
+      double v = (unsigned int)y_move;
       ip.set_u( u );
       ip.set_v( v );
       move = false;

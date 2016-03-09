@@ -111,7 +111,6 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP,
   {
     double conv = 0.0;
     unsigned int half;
-    int index_mask;
     half = (me->getMaskSize() - 1) >> 1 ;
 
     if(outOfImage( iP , (int)half + me->getStrip() , Iheight, Iwidth))
@@ -120,23 +119,24 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP,
     }
     else
     {
+      int index_mask;
+
       if (me->getAngleStep() !=0)
         index_mask = (int)(i/(double)me->getAngleStep());
       else
-	throw (vpException(vpException::divideByZeroError,"angle step = 0"));
+        throw (vpException(vpException::divideByZeroError,"angle step = 0"));
 
       unsigned int ihalf = (unsigned int)(iP.get_i()-half) ;
       unsigned int jhalf = (unsigned int)(iP.get_j()-half) ;
-      unsigned int ihalfa ;
       unsigned int a ;
       unsigned int b ;
       for( a = 0 ; a < me->getMaskSize() ; a++ )
       {
-        ihalfa = ihalf+a ;
+        unsigned int ihalfa = ihalf+a ;
         for( b = 0 ; b < me->getMaskSize() ; b++ )
         {
-	  conv += me->getMask()[index_mask][a][b] *
-	  I(ihalfa,jhalf+b) ;
+          conv += me->getMask()[index_mask][a][b] *
+              I(ihalfa,jhalf+b) ;
         }
       }
     }
@@ -151,7 +151,6 @@ void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP,
     }
   }
 }
-
 
 //Find the point belonging to the edge of the sub image which respects the following hypotheses:
 //- the value of the pixel is upper than zero.
@@ -190,11 +189,10 @@ vpImagePoint findFirstBorder(const vpImage<unsigned char>& Isub, const vpImagePo
 vp_deprecated bool findCenterPoint(vpList<vpImagePoint> *ip_edges_list)
 {
   ip_edges_list->front();
-  double dist;
   while (!ip_edges_list->outside())
   {
     vpImagePoint iP = ip_edges_list->value();
-    dist = vpImagePoint::sqrDistance(iP,vpImagePoint(15,15));
+    double dist = vpImagePoint::sqrDistance(iP,vpImagePoint(15,15));
     if (dist <= 16)
     {
       return true;
@@ -209,10 +207,9 @@ vp_deprecated bool findCenterPoint(vpList<vpImagePoint> *ip_edges_list)
 //from the center of the sub image (ie the point (15,15).
 bool findCenterPoint(std::list<vpImagePoint> *ip_edges_list)
 {
-  double dist;
   for(std::list<vpImagePoint>::const_iterator it=ip_edges_list->begin(); it!=ip_edges_list->end(); ++it){
     vpImagePoint iP = *it;
-    dist = vpImagePoint::sqrDistance(iP, vpImagePoint(15,15));
+    double dist = vpImagePoint::sqrDistance(iP, vpImagePoint(15,15));
     if (dist <= 16)
     {
       return true;

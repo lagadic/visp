@@ -220,14 +220,10 @@ void vpTemplateTrackerMIESM::initCompInverse()
 
   ptTemplateSupp=new vpTemplateTrackerPointSuppMIInv[templateSize];
   ptTemplateCompo=new vpTemplateTrackerPointCompo[templateSize];
-  int i,j;
-  double et;
-  int ct;
-  double Tij;
   for(unsigned int point=0;point<templateSize;point++)
   {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
+    int i=ptTemplate[point].y;
+    int j=ptTemplate[point].x;
     X1[0]=j;X1[1]=i;
     Warp->computeDenom(X1,p);
 
@@ -239,9 +235,9 @@ void vpTemplateTrackerMIESM::initCompInverse()
     double dy=ptTemplate[point].dy*(Nc-1)/255.;
     Warp->getdW0(i,j,dy,dx,ptTemplate[point].dW);
 
-    Tij=ptTemplate[point].val;
-    ct=(int)((Tij*(Nc-1))/255.);
-    et=(Tij*(Nc-1))/255.-ct;
+    double Tij=ptTemplate[point].val;
+    int ct=(int)((Tij*(Nc-1))/255.);
+    double et=(Tij*(Nc-1))/255.-ct;
     ptTemplateSupp[point].et=et;
     ptTemplateSupp[point].ct=ct;
     ptTemplateSupp[point].Bt=new double[4];
@@ -273,13 +269,11 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
   }*/
 
   //double erreur=0;
-  int Nbpoint=0;
   int point;
 
   MI_preEstimation=-getCost(I,p);
 
   lambda=lambdaDep;
-  double MI=0;
   //double MIprec=-1000;
 
   double i2,j2;
@@ -297,9 +291,9 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
   unsigned int iteration=0;
   do
   {
-    Nbpoint=0;
+    int Nbpoint=0;
     //MIprec=MI;
-    MI=0;
+    double MI=0;
     //erreur=0;
 
     zeroProbabilities();

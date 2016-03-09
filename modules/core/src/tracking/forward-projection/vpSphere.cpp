@@ -108,7 +108,7 @@ vpSphere::projection(const vpColVector &cP_, vpColVector &p_)
   double E, A, B; //variables intermediaires
 
   //calcul des parametres M20, M11, M02 de l'ellipse
-  double s, a, b, r, e;  //variables intermediaires
+  double s, r;  //variables intermediaires
   r =  cP_[3];
 
   x0 = cP_[0] ;
@@ -134,9 +134,10 @@ vpSphere::projection(const vpColVector &cP_, vpColVector &p_)
   if (fabs(x0)  > 1e-6)
   {
     //   vpERROR_TRACE(" %f",r) ;
-    e = y0/x0;
-    b = r/sqrt(s);
-    if ((a = x0*x0 + y0*y0 + z0*z0 - r*r) < 0.0)
+    double e = y0/x0;
+    double b = r/sqrt(s);
+    double a = x0*x0 + y0*y0 + z0*z0 - r*r;
+    if (a < 0.0)
     {
       vpERROR_TRACE("sphere derriere le plan image\n");
     }

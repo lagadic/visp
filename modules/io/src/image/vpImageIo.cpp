@@ -1984,10 +1984,9 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
 
   else if (cinfo.out_color_space == JCS_GRAYSCALE)
   {
-    unsigned int row;
     while (cinfo.output_scanline<cinfo.output_height)
     {
-      row = cinfo.output_scanline;
+      unsigned int row = cinfo.output_scanline;
       jpeg_read_scanlines(&cinfo,buffer,1);
       memcpy(I[row], buffer[0], rowbytes);
     }
@@ -2100,10 +2099,9 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
   {
     vpImage<unsigned char> Ig(height,width);
 
-    unsigned int row;
     while (cinfo.output_scanline<cinfo.output_height)
     {
-      row = cinfo.output_scanline;
+      unsigned int row = cinfo.output_scanline;
       jpeg_read_scanlines(&cinfo,buffer,1);
       memcpy(Ig[row], buffer[0], rowbytes);
     }

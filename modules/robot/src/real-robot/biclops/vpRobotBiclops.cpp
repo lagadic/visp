@@ -195,11 +195,10 @@ vpRobotBiclops::~vpRobotBiclops (void)
   pthread_mutex_unlock(&vpEndThread_mutex);
 
   /* wait the end of the control thread */
-  int code;
   vpDEBUG_TRACE (12, "Wait end of control thread");
 
   if (controlThreadCreated == true) {
-    code = pthread_join(control_thread, NULL);
+    int code = pthread_join(control_thread, NULL);
     if (code != 0) {
       vpCERROR << "Cannot terminate the control thread: " << code
 	     << " strErr=" << strerror(errno)

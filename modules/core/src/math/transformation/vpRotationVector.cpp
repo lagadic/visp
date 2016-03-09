@@ -101,10 +101,9 @@ vpColVector operator*(const double &x,const vpRotationVector &v)
 double vpRotationVector::sumSquare() const
 {
   double sum_square=0.0;
-  double x ;
 
   for (unsigned int i=0;i<rowNum;i++) {
-    x=rowPtrs[i][0];
+    double x=rowPtrs[i][0];
     sum_square += x*x;
   }
 

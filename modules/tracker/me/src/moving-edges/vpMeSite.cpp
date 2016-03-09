@@ -228,7 +228,6 @@ vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int range)
   int   k ;
 
   int n;
-  double ii , jj ;
   vpMeSite *list_query_pixels ;
   list_query_pixels =  NULL ;
 
@@ -246,8 +245,8 @@ vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int range)
 	
   for(k = -range ; k <= range ; k++)
   {
-    ii = (ifloat+k*salpha);
-    jj = (jfloat+k*calpha);
+    double ii = (ifloat+k*salpha);
+    double jj = (jfloat+k*calpha);
 
     // Display
     if    ((selectDisplay==RANGE_RESULT)||(selectDisplay==RANGE)) {
@@ -308,7 +307,6 @@ double
 vpMeSite::convolution(const vpImage<unsigned char>&I, const  vpMe *me)
 {
   int half;
-  unsigned int index_mask ;
   int height_ = static_cast<int>(I.getHeight());
   int width_  = static_cast<int>(I.getWidth());
 
@@ -338,7 +336,7 @@ vpMeSite::convolution(const vpImage<unsigned char>&I, const  vpMe *me)
       thetadeg= 0 ;
     }
 
-    index_mask = (unsigned int)(thetadeg/(double)me->getAngleStep());
+    unsigned int index_mask = (unsigned int)(thetadeg/(double)me->getAngleStep());
 
     unsigned int i_ = static_cast<unsigned int>(i);
     unsigned int j_ = static_cast<unsigned int>(j);
@@ -346,11 +344,10 @@ vpMeSite::convolution(const vpImage<unsigned char>&I, const  vpMe *me)
 
     unsigned int ihalf = i_-half_ ;
     unsigned int jhalf = j_-half_ ;
-    unsigned int ihalfa ;
-    
+
     for(unsigned int a = 0 ; a < msize ; a++ )
     {
-      ihalfa = ihalf+a ;
+      unsigned int ihalfa = ihalf+a ;
       for(unsigned int b = 0 ; b < msize ; b++ )
       {
         conv += mask_sign* me->getMask()[index_mask][a][b] *
@@ -504,7 +501,6 @@ vpMeSite::track(const vpImage<unsigned char>& I,
   int  max_rank =-1 ;
   //   int max_rank1=-1 ;
   //   int max_rank2 = -1;
-  double  convolution_ = 0 ;
   double  max_convolution = 0 ;
   double max = 0 ;
   double contraste = 0;
@@ -537,7 +533,7 @@ vpMeSite::track(const vpImage<unsigned char>& I,
   for(unsigned int n = 0 ; n < 2 * range + 1 ; n++)
   {
     //   convolution results
-    convolution_ = list_query_pixels[n].convolution(I, me) ;
+    double convolution_ = list_query_pixels[n].convolution(I, me) ;
 
     // luminance ratio of reference pixel to potential correspondent pixel
     // the luminance must be similar, hence the ratio value should

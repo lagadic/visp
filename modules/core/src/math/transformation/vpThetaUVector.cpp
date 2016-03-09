@@ -160,7 +160,7 @@ Converts a rotation matrix into a \f$\theta {\bf u}\f$ vector.
 vpThetaUVector
 vpThetaUVector::buildFrom(const vpRotationMatrix& R)
 {
-  double s,c,theta,sinc;
+  double s,c,theta;
 
   s = (R[1][0]-R[0][1])*(R[1][0]-R[0][1])
     + (R[2][0]-R[0][2])*(R[2][0]-R[0][2])
@@ -172,7 +172,7 @@ vpThetaUVector::buildFrom(const vpRotationMatrix& R)
   // General case when theta != pi. If theta=pi, c=-1
   if ( (1+c) > minimum) // Since -1 <= c <= 1, no fabs(1+c) is required
   {
-    sinc = vpMath::sinc(s,theta);
+    double sinc = vpMath::sinc(s,theta);
 
     data[0] = (R[2][1]-R[1][2])/(2*sinc);
     data[1] = (R[0][2]-R[2][0])/(2*sinc);

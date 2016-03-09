@@ -440,12 +440,12 @@ vpPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, const doubl
 bool
 vpPolygon::isInside(const std::vector<vpImagePoint>& roi, const double &i, const double &j)
 {
-  double i_test = 100000.;
-  double j_test = 100000.;
   unsigned int nbInter = 0;
   bool computeAgain = true;
 
   if(computeAgain){
+    double i_test = 100000.;
+    double j_test = 100000.;
     computeAgain = false;
     for(unsigned int k=0; k< roi.size(); k++){
       try{

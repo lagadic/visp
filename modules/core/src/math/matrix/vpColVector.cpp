@@ -1322,10 +1322,9 @@ double vpColVector::sum() const
 double vpColVector::sumSquare() const
 {
   double sum_square=0.0;
-  double x ;
 
   for (unsigned int i=0;i<rowNum;i++) {
-    x=rowPtrs[i][0];
+    double x=rowPtrs[i][0];
     sum_square += x*x;
   }
 
@@ -1341,9 +1340,8 @@ double vpColVector::sumSquare() const
 double vpColVector::euclideanNorm() const
 {
   double norm=0.0;
-  double x ;
   for (unsigned int i=0;i<dsize;i++) {
-    x = *(data +i); norm += x*x;
+    double x = *(data +i); norm += x*x;
   }
 
   return sqrt(norm);
@@ -1362,9 +1360,8 @@ double vpColVector::euclideanNorm() const
 double vpColVector::infinityNorm() const
 {
   double norm=0.0;
-  double x ;
   for (unsigned int i=0;i<rowNum;i++){
-    x =  fabs ( (*this)[i] ) ;
+    double x =  fabs ( (*this)[i] ) ;
     if (x > norm) {
       norm = x;
     }

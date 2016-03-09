@@ -89,10 +89,9 @@ load_tmstack (Matrix m)
 void
 pop_tmstack (void)
 {
-	static	char	proc_name[] = "pop_tmstack";
-
 	if (sp == stack) {
-		fprintf (stderr, "%s: stack underflow\n", proc_name);
+    static	char	proc_name[] = "pop_tmstack";
+    fprintf (stderr, "%s: stack underflow\n", proc_name);
 		return;
 	}
 	else	sp--;
@@ -105,10 +104,9 @@ pop_tmstack (void)
 void
 push_tmstack (void)
 {
-	static	char	proc_name[] = "push_tmstack";
-
 	if (sp == stack + STACKSIZE - 1) {
-		fprintf (stderr, "%s: stack overflow\n", proc_name);
+    static	char	proc_name[] = "push_tmstack";
+    fprintf (stderr, "%s: stack overflow\n", proc_name);
 		return;
 	}
 	sp++;

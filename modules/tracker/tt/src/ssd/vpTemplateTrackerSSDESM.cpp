@@ -102,9 +102,6 @@ compoInitialised=true;
 
 void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
 {
-  double erreur=0;
-  unsigned int Nbpoint=0;
-
   if(blur)
     vpImageFilter::filter(I, BI,fgG,taillef);
   vpImageFilter::getGradXGauss2D(I, dIx, fgG,fgdG,taillef);
@@ -118,8 +115,8 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
   double alpha=2.;
   do
   {
-    Nbpoint=0;
-    erreur=0;
+    unsigned int Nbpoint=0;
+    double erreur=0;
     dp=0;
     HDir=0;
     GDir=0;

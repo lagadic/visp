@@ -175,7 +175,6 @@ void set_scene_wrl (const char* str, Bound_scene *sc, float factor)
   SoDB::init();
   SoInput in;
   SbBool ok = in.openFile(str);
-  SoSeparator  *sceneGraph;
   SoVRMLGroup  *sceneGraphVRML2;
   
   if (!ok) {
@@ -185,7 +184,7 @@ void set_scene_wrl (const char* str, Bound_scene *sc, float factor)
   
   if(!in.isFileVRML2())
   {
-    sceneGraph = SoDB::readAll(&in);
+    SoSeparator *sceneGraph = SoDB::readAll(&in);
     if (sceneGraph == NULL) { /*return -1;*/ }
     sceneGraph->ref();
 
@@ -216,10 +215,10 @@ void set_scene_wrl (const char* str, Bound_scene *sc, float factor)
   int iterShapes = 0;
   for (int i = 0; i < nbShapes; i++)
   {
-    int nbFaces = 0;
     child = sceneGraphVRML2->getChild(i);
     if (child->getTypeId() == SoVRMLShape::getClassTypeId())
     {
+      int nbFaces = 0;
       std::list<indexFaceSet*> ifs_list;
       SoChildList * child2list = child->getChildren();
       for (int j = 0; j < child2list->getLength(); j++)
@@ -1647,16 +1646,13 @@ vpWireFrameSimulator::navigation(const vpImage<vpRGBa> &I, bool &changed)
     
   vpDisplay::getPointerPosition(I,iP);
 
-  double anglei = 0;
-  double anglej = 0;
-
   if (old_iPr != vpImagePoint(-1,-1) && blockedr)
   {
     double diffi = iP.get_i() - old_iPr.get_i();
     double diffj = iP.get_j() - old_iPr.get_j();
     //cout << "delta :" << diffj << endl;;
-    anglei = diffi*360/width;
-    anglej = diffj*360/width;
+    double anglei = diffi*360/width;
+    double anglej = diffj*360/width;
     mov.buildFrom(0,0,0,vpMath::rad(-anglei),vpMath::rad(anglej),0);
     changed = true;
   }
@@ -1743,16 +1739,13 @@ vpWireFrameSimulator::navigation(const vpImage<unsigned char> &I, bool &changed)
   
   //std::cout << "point : " << iP << std::endl;
 
-  double anglei = 0;
-  double anglej = 0;
-
   if (old_iPr != vpImagePoint(-1,-1) && blockedr)
   {
     double diffi = iP.get_i() - old_iPr.get_i();
     double diffj = iP.get_j() - old_iPr.get_j();
     //cout << "delta :" << diffj << endl;;
-    anglei = diffi*360/width;
-    anglej = diffj*360/width;
+    double anglei = diffi*360/width;
+    double anglej = diffj*360/width;
     mov.buildFrom(0,0,0,vpMath::rad(-anglei),vpMath::rad(anglej),0);
     changed = true;
   }

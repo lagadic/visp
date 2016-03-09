@@ -181,7 +181,6 @@ void malloc_Bound (Bound *bp, Type type, int polygonal, Index fn, Index pn)
  */
 void malloc_huge_Bound (Bound *bp)
 {
-	static	char	proc_name[] = "malloc_Huge_Bound";
 
 #ifdef	face_normal
 	malloc_Bound (bp, (Type) BND_NULL, FALSE, FACE_NBR, POINT_NBR);
@@ -190,7 +189,8 @@ void malloc_huge_Bound (Bound *bp)
 #endif	/* face_normal */
 	if ((bp->face.ptr->vertex.ptr = 
 	   (Index *) malloc (FACE_NBR * VERTEX_NBR * sizeof (Index))) == NULL) {
-		perror (proc_name);
+    static	char	proc_name[] = "malloc_Huge_Bound";
+    perror (proc_name);
 		exit (1);
 	}
 }

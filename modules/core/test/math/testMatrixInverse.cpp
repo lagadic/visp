@@ -214,7 +214,6 @@ main(int argc, const char ** argv)
     bool use_plot_file=false;
     std::ofstream of;
 
-    double t, qr_time, lu_time,pi_time,chol_time;
     // Read the command line options
     if (getOptions(argc, argv, nb_matrices,nb_iterations,use_plot_file,plotfile,nb_rows,nb_cols,verbose) == false) {
       exit (-1);
@@ -248,18 +247,18 @@ main(int argc, const char ** argv)
 
       if(verbose)
         std::cout << "\t Inverting " << benchCholesky[0].AtA().getRows() << "x" << benchCholesky[0].AtA().getCols() << " matrix using cholesky decomposition." << std::endl;
-      t = vpTime::measureTimeMs() ;
+      double t = vpTime::measureTimeMs() ;
       for(unsigned int i=0;i<nb_matrices;i++){
         benchCholesky[i]=benchCholesky[i].AtA().inverseByCholesky()*benchCholesky[i].transpose();
       }
-      chol_time = vpTime::measureTimeMs() - t ;
+      double chol_time = vpTime::measureTimeMs() - t ;
 
       if(verbose)
         std::cout << "\t Inverting " << benchLU[0].AtA().getRows() << "x" << benchLU[0].AtA().getCols() << " matrix using LU decomposition." << std::endl;
       t = vpTime::measureTimeMs() ;
       for(unsigned int i=0;i<nb_matrices;i++)
         benchLU[i] = benchLU[i].AtA().inverseByLU()*benchLU[i].transpose();
-      lu_time = vpTime::measureTimeMs() -t ;
+      double lu_time = vpTime::measureTimeMs() -t ;
 
       if(verbose)
         std::cout << "\t Inverting " << benchQR[0].AtA().getRows() << "x" << benchQR[0].AtA().getCols() << " matrix using QR decomposition." << std::endl;
@@ -267,7 +266,7 @@ main(int argc, const char ** argv)
       for(unsigned int i=0;i<nb_matrices;i++){
         benchQR[i]=benchQR[i].AtA().inverseByQR()*benchQR[i].transpose();
       }
-      qr_time = vpTime::measureTimeMs() - t ;
+      double qr_time = vpTime::measureTimeMs() - t ;
 
       if(verbose)
         std::cout << "\t Inverting " << benchPseudoInverse[0].AtA().getRows() << "x" << benchPseudoInverse[0].AtA().getCols() << " matrix while computing pseudo-inverse." << std::endl;
@@ -275,7 +274,7 @@ main(int argc, const char ** argv)
       for(unsigned int i=0;i<nb_matrices;i++){
         benchPseudoInverse[i]=benchPseudoInverse[i].pseudoInverse();
       }
-      pi_time = vpTime::measureTimeMs() - t ;
+      double pi_time = vpTime::measureTimeMs() - t ;
 
       double avg_err_lu_qr=0.;
       double avg_err_lu_pi=0.;

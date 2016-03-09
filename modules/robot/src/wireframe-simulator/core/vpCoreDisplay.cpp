@@ -80,12 +80,11 @@ static	int	*rename_jlc  = (int *) NULL;
  */
 void open_display (void)
 {
-  static	char	proc_name[] = "open_display";
-
   if ((point2i = (Point2i *) malloc (POINT_NBR*sizeof (Point2i))) == NULL
   || (listpoint2i = (Point2i *) malloc (50*sizeof (Point2i))) == NULL
   || (rename_jlc  = (int *) malloc (POINT_NBR * sizeof (int))) == NULL)
   {
+    static	char	proc_name[] = "open_display";
     perror (proc_name);
     exit (1);
   }

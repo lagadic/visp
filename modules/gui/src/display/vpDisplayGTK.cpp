@@ -1236,20 +1236,20 @@ vpDisplayGTK::getClick(bool blocking)
 {
   bool ret = false;
 
-  int cpt =0;
   if (displayHasBeenInitialized) {
 
-//    flushDisplay() ;
-    GdkEvent *ev = NULL;
+    //    flushDisplay() ;
+    //int cpt =0;
     do {
+      GdkEvent *ev = NULL;
       while ((ev = gdk_event_get())!=NULL){
-	cpt++;
-	//	printf("event %d type %d on window %p My window %p\n", 
-	//cpt, ev->type, ev->any.window, widget->window);
-	
+        //cpt++;
+        //	printf("event %d type %d on window %p My window %p\n",
+        //cpt, ev->type, ev->any.window, widget->window);
+
         if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS){
           ret = true ;
-	  //printf("Click detection\n");
+          //printf("Click detection\n");
         }
         gdk_event_free(ev) ;
       }
@@ -1290,9 +1290,9 @@ vpDisplayGTK::getClick(vpImagePoint &ip, bool blocking)
 
   if (displayHasBeenInitialized) {
 
-    GdkEvent *ev = NULL;
     double u, v ;
     do {
+      GdkEvent *ev = NULL;
       while ((ev = gdk_event_get())!=NULL){
         if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS) {
           u = ((GdkEventButton *)ev)->x ;
@@ -1345,9 +1345,9 @@ vpDisplayGTK::getClick(vpImagePoint &ip,
   bool ret = false;
 
   if (displayHasBeenInitialized) {
-    GdkEvent *ev = NULL;
     double u, v ;
     do {
+      GdkEvent *ev = NULL;
       while ((ev = gdk_event_get())){
         if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS){
           u = ((GdkEventButton *)ev)->x ;
@@ -1415,10 +1415,10 @@ vpDisplayGTK::getClickUp(vpImagePoint &ip,
   if ( displayHasBeenInitialized ) {
 
     //flushDisplay() ;
-    GdkEvent *ev = NULL;
-    double u, v ;
+     double u, v ;
     do {
-      while ((ev = gdk_event_get())!=NULL){
+       GdkEvent *ev = NULL;
+       while ((ev = gdk_event_get())!=NULL){
         if ( ev->any.window == widget->window  
 	     && ev->type == GDK_BUTTON_RELEASE) {
           u = ((GdkEventButton *)ev)->x ;
@@ -1554,11 +1554,11 @@ vpDisplayGTK::getKeyboardEvent(bool blocking)
 {
   bool ret = false;
 
-  int cpt =0;
   if (displayHasBeenInitialized) {
 
-    GdkEvent *ev = NULL;
+    int cpt =0;
     do {
+      GdkEvent *ev = NULL;
       while ((ev = gdk_event_get())!=NULL){
 	cpt++;
 	//	printf("event %d type %d on window %p My window %p\n", 
@@ -1608,11 +1608,11 @@ vpDisplayGTK::getKeyboardEvent(char *string, bool blocking)
 {
   bool ret = false;
 
-  int cpt =0;
   if (displayHasBeenInitialized) {
 
-    GdkEvent *ev = NULL;
+    int cpt =0;
     do {
+      GdkEvent *ev = NULL;
       while ((ev = gdk_event_get())!=NULL){
 	cpt++;
 	//	printf("event %d type %d on window %p My window %p\n", 
@@ -1659,11 +1659,10 @@ vpDisplayGTK::getPointerMotionEvent ( vpImagePoint &ip)
 
   if (displayHasBeenInitialized) {
     GdkEvent *ev = NULL;
-    double u, v ;
     if ((ev = gdk_event_get())){
       if (ev->any.window == widget->window && ev->type == GDK_MOTION_NOTIFY){
-	u = ((GdkEventMotion *)ev)->x ;
-	v = ((GdkEventMotion *)ev)->y ;
+  double u = ((GdkEventMotion *)ev)->x ;
+  double v = ((GdkEventMotion *)ev)->y ;
 	ip.set_u( u );
 	ip.set_v( v );
 	

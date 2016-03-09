@@ -480,7 +480,6 @@ write (xmlNodePtr node, const std::string& name)
   xmlNodePtr node_tmp;
   xmlNodePtr node_matrix;
   xmlNodePtr node_values;
-  char str[11];
 
   // Convert from Rotational matrix to Theta-U vector
   vpRotationMatrix R;
@@ -507,6 +506,8 @@ write (xmlNodePtr node, const std::string& name)
     node_values = xmlNewNode(NULL,(xmlChar*)LABEL_XML_VALUE);
     xmlAddChild(node_matrix,node_values);
     {
+      char str[11];
+
       node_tmp = xmlNewComment((xmlChar*)"Translation vector with values in meters");
       xmlAddChild(node_values,node_tmp);
 

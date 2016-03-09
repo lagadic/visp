@@ -94,7 +94,7 @@ void	fcn (int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int 
 void eval_function(int npt,double *xc,double *f)
 {
   int i;
-  double x,y,z,u[3];
+  double u[3];
 
   u[0] = xc[3];   /* Rx   */
   u[1] = xc[4];   /* Ry   */
@@ -104,9 +104,9 @@ void eval_function(int npt,double *xc,double *f)
   //  rot_mat(u,rd);          /* matrice de rotation correspondante   */
   for (i=0;i<npt;i++)
   {
-    x = rd[0][0]*XO[i] + rd[0][1]*YO[i] + rd[0][2]*ZO[i] + xc[0];
-    y = rd[1][0]*XO[i] + rd[1][1]*YO[i] + rd[1][2]*ZO[i] + xc[1];
-    z = rd[2][0]*XO[i] + rd[2][1]*YO[i] + rd[2][2]*ZO[i] + xc[2];
+    double x = rd[0][0]*XO[i] + rd[0][1]*YO[i] + rd[0][2]*ZO[i] + xc[0];
+    double y = rd[1][0]*XO[i] + rd[1][1]*YO[i] + rd[1][2]*ZO[i] + xc[1];
+    double z = rd[2][0]*XO[i] + rd[2][1]*YO[i] + rd[2][2]*ZO[i] + xc[2];
     f[i] = x/z - XI[i];
     f[npt+i] = y/z - YI[i];
     //    std::cout << f[i] << "   " << f[i+1] << std::endl ;
@@ -142,16 +142,9 @@ void eval_function(int npt,double *xc,double *f)
 */
 void	fcn (int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int iflag)
 {
-  double	u[X3_SIZE], rx, ry, rz;// rd[X3_SIZE][X3_SIZE],
-  double	tt, mco, co, si, u1, u2, u3, x, y, z;
-  double	drxt, drxu1, drxu2, drxu3;
-  double	dryt, dryu1, dryu2, dryu3;
-  double	drzt, drzu1, drzu2, drzu3;
-  double	dxit, dxiu1, dxiu2, dxiu3;
-  double	dyit, dyiu1, dyiu2, dyiu3;
-
+  double	u[X3_SIZE];// rd[X3_SIZE][X3_SIZE],
   vpRotationMatrix rd ;
-  int	i, npt;
+  int	npt;
 
   if (m < n) printf("pas assez de points\n");
   npt = m / 2;
@@ -159,6 +152,7 @@ void	fcn (int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int 
   if (iflag == 1) eval_function (npt, xc, fvecc);
   else if (iflag == 2)
   {
+    double	u1, u2, u3;
     u[0] =xc[3];
     u[1]= xc[4];
     u[2]= xc[5];
@@ -167,7 +161,7 @@ void	fcn (int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int 
     /* a partir de l'axe de rotation, calcul de la matrice de rotation. */
     //   rot_mat(u, rd);
 
-    tt = sqrt (u[0] * u[0] + u[1] * u[1] + u[2] * u[2]); /* angle de rot */
+    double tt = sqrt (u[0] * u[0] + u[1] * u[1] + u[2] * u[2]); /* angle de rot */
     if (tt >= MINIMUM)
     {
       u1 = u[0] / tt;
@@ -175,57 +169,57 @@ void	fcn (int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int 
       u3 = u[2] / tt;
     }
     else u1 = u2 = u3 = 0.0;
-    co = cos(tt);
-    mco = 1.0 - co;
-    si = sin(tt);
+    double co = cos(tt);
+    double mco = 1.0 - co;
+    double si = sin(tt);
 
-    for (i = 0; i < npt; i++)
+    for (int i = 0; i < npt; i++)
     {
-      x = XO[i];
-      y = YO[i];     /* coordonnees du point i	*/
-      z = ZO[i];
+      double x = XO[i];
+      double y = YO[i];     /* coordonnees du point i	*/
+      double z = ZO[i];
 
       /* coordonnees du point i dans le repere camera	*/
-      rx = rd[0][0] * x + rd[0][1] * y + rd[0][2] * z + xc[0];
-      ry = rd[1][0] * x + rd[1][1] * y + rd[1][2] * z + xc[1];
-      rz = rd[2][0] * x + rd[2][1] * y + rd[2][2] * z + xc[2];
+      double rx = rd[0][0] * x + rd[0][1] * y + rd[0][2] * z + xc[0];
+      double ry = rd[1][0] * x + rd[1][1] * y + rd[1][2] * z + xc[1];
+      double rz = rd[2][0] * x + rd[2][1] * y + rd[2][2] * z + xc[2];
 
       /* derive des fonctions rx, ry et rz par rapport
       * a tt, u1, u2, u3.
       */
-      drxt = (si * u1 * u3 + co * u2) * z + (si * u1 * u2 - co * u3) * y
+      double drxt = (si * u1 * u3 + co * u2) * z + (si * u1 * u2 - co * u3) * y
         + (si * u1 * u1 - si) * x;
-      drxu1 = mco * u3 * z + mco * u2 * y + 2 * mco * u1 * x;
-      drxu2 = si * z + mco * u1 * y;
-      drxu3 = mco * u1 * z - si * y;
+      double drxu1 = mco * u3 * z + mco * u2 * y + 2 * mco * u1 * x;
+      double drxu2 = si * z + mco * u1 * y;
+      double drxu3 = mco * u1 * z - si * y;
 
-      dryt = (si * u2 * u3 - co * u1) * z + (si * u2 * u2 - si) * y
+      double dryt = (si * u2 * u3 - co * u1) * z + (si * u2 * u2 - si) * y
         + (co * u3 + si * u1 * u2) * x;
-      dryu1 = mco * u2 * x - si * z;
-      dryu2 = mco * u3 * z + 2 * mco * u2 * y + mco * u1 * x;
-      dryu3 = mco * u2 * z + si * x;
+      double dryu1 = mco * u2 * x - si * z;
+      double dryu2 = mco * u3 * z + 2 * mco * u2 * y + mco * u1 * x;
+      double dryu3 = mco * u2 * z + si * x;
 
-      drzt = (si * u3 * u3 - si) * z + (si * u2 * u3 + co * u1) * y
+      double drzt = (si * u3 * u3 - si) * z + (si * u2 * u3 + co * u1) * y
         + (si * u1 * u3 - co * u2) * x;
-      drzu1 = si * y + mco * u3 * x;
-      drzu2 = mco * u3 * y - si * x;
-      drzu3 = 2 * mco * u3 * z + mco * u2 * y + mco * u1 * x;
+      double drzu1 = si * y + mco * u3 * x;
+      double drzu2 = mco * u3 * y - si * x;
+      double drzu3 = 2 * mco * u3 * z + mco * u2 * y + mco * u1 * x;
 
       /* derive de la fonction representant le modele de la
       * camera (sans distortion) par rapport a tt, u1, u2 et u3.
       */
-      dxit =  drxt / rz -  rx * drzt / (rz * rz);
+      double dxit =  drxt / rz -  rx * drzt / (rz * rz);
 
-      dyit =  dryt / rz - ry * drzt / (rz * rz);
+      double dyit =  dryt / rz - ry * drzt / (rz * rz);
 
-      dxiu1 =  drxu1 / rz -  drzu1 * rx / (rz * rz);
-      dyiu1 =  dryu1 / rz -  drzu1 * ry / (rz * rz);
+      double dxiu1 =  drxu1 / rz -  drzu1 * rx / (rz * rz);
+      double dyiu1 =  dryu1 / rz -  drzu1 * ry / (rz * rz);
 
-      dxiu2 =  drxu2 / rz - drzu2 * rx / (rz * rz);
-      dyiu2 =  dryu2 / rz - drzu2 * ry / (rz * rz);
+      double dxiu2 =  drxu2 / rz - drzu2 * rx / (rz * rz);
+      double dyiu2 =  dryu2 / rz - drzu2 * ry / (rz * rz);
 
-      dxiu3 =  drxu3 / rz - drzu3 * rx / (rz * rz);
-      dyiu3 =  dryu3 / rz -  drzu3 * ry / (rz * rz);
+      double dxiu3 =  drxu3 / rz - drzu3 * rx / (rz * rz);
+      double dyiu3 =  dryu3 / rz -  drzu3 * ry / (rz * rz);
 
       /* calcul du jacobien : le jacobien represente la
       * derivee de la fonction representant le modele de la

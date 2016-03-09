@@ -354,7 +354,6 @@ vpRobust::simultMEstimator(vpColVector &residues)
 {
  
   double med=0;					// Median
-  double normmedian=0; 	// Normalized Median
   double sigma=0;				// Standard Deviation
 
   unsigned int n_data = residues.getRows();
@@ -377,7 +376,7 @@ vpRobust::simultMEstimator(vpColVector &residues)
   // For Others use MAD calculated on first iteration
   if(it==0)
   {
-    normmedian = select(norm_res, 0, (int)n_data-1, (int)ind_med/*(int)n_data/2*/);
+    double normmedian = select(norm_res, 0, (int)n_data-1, (int)ind_med/*(int)n_data/2*/); // Normalized Median
     // 1.48 keeps scale estimate consistent for a normal probability dist.
     sigma = 1.4826*normmedian; // Median Absolute Deviation
   }
@@ -411,12 +410,10 @@ vpRobust::scale(vpRobustEstimatorType method, vpColVector &x)
   double sigma2=0;
   /* long */ double Expectation=0;
   /* long */ double Sum_chi=0;
-  /* long*/  double chiTmp =0;
 
   for(unsigned int i=0; i<n; i++)
   {
-
-    chiTmp = constrainedChi(method, x[i]);
+    double chiTmp = constrainedChi(method, x[i]);
     Expectation += chiTmp*(1-erf(chiTmp));
     Sum_chi += chiTmp;
 
@@ -461,12 +458,11 @@ vpRobust::simultscale(vpColVector &x)
   double sigma2=0;
   /* long */ double Expectation=0;
   /* long */ double Sum_chi=0;
-  /* long */ double chiTmp =0;
 
   for(unsigned int i=0; i<n; i++)
   {
 
-    chiTmp = simult_chi_huber(x[i]);
+    double chiTmp = simult_chi_huber(x[i]);
     Expectation += chiTmp*(1-erf(chiTmp));
     Sum_chi += chiTmp;
 
@@ -524,12 +520,12 @@ double
 vpRobust::constrainedChiTukey(double x)
 {
   double sct=0;
-  double a=4.7;
   double s=sig_prev;
   //double epsillon=0.5;
 
   if(fabs(x) <= 4.7*sig_prev)
   {
+    double a=4.7;
     //sct = (vpMath::sqr(s*a-x)*vpMath::sqr(s*a+x)*vpMath::sqr(x))/(s*vpMath::sqr(vpMath::sqr(a*vpMath::sqr(s))));
     sct = (vpMath::sqr(s*a)*x-s*vpMath::sqr(s*a)-x*vpMath::sqr(x))*(vpMath::sqr(s*a)*x+s*vpMath::sqr(s*a)-x*vpMath::sqr(x))/s*vpMath::sqr(vpMath::sqr(vpMath::sqr(s)))/vpMath::sqr(vpMath::sqr(a));
   }
@@ -793,8 +789,6 @@ vpRobust::gammp(double a, double x)
 void
 vpRobust::gser(double *gamser, double a, double x, double *gln)
 {
-  double sum,del,ap;
-
   *gln=gammln(a);
   if (x <= 0.0)
   {
@@ -805,8 +799,9 @@ vpRobust::gser(double *gamser, double a, double x, double *gln)
   }
   else
   {
-    ap=a;
-    del=sum=1.0/a;
+    double ap=a;
+    double sum=1.0/a;
+    double del = sum;
     for (int n=1; n<=vpITMAX; n++)
     {
       ap += 1.0;
@@ -814,8 +809,8 @@ vpRobust::gser(double *gamser, double a, double x, double *gln)
       sum += del;
       if (fabs(del) < fabs(sum)*vpEPS)
       {
-	*gamser=sum*exp(-x+a*log(x)-(*gln));
-	return;
+        *gamser=sum*exp(-x+a*log(x)-(*gln));
+        return;
       }
     }
     std::cout << "a too large, vpITMAX too small in routine GSER";
@@ -827,17 +822,17 @@ void
 vpRobust::gcf(double *gammcf, double a, double x, double *gln)
 {
   double gold=0.0,g,fac=1.0,b1=1.0;
-  double  b0=0.0,anf,ana,an,a1,a0=1.0;
+  double  b0=0.0,a1,a0=1.0;
 
   *gln=gammln(a);
   a1=x;
   for (int n=1; n<=vpITMAX; n++)
   {
-    an=(double) n;
-    ana=an-a;
+    double an=(double) n;
+    double ana=an-a;
     a0=(a1+a0*ana)*fac;
     b0=(b1+b0*ana)*fac;
-    anf=an*fac;
+    double anf=an*fac;
     a1=x*a0+anf*a1;
     b1=x*b0+anf*b1;
     //if (a1)
@@ -847,8 +842,8 @@ vpRobust::gcf(double *gammcf, double a, double x, double *gln)
       g=b1*fac;
       if (fabs((g-gold)/g) < vpEPS)
       {
-	*gammcf=exp(-x+a*log(x)-(*gln))*g;
-	return;
+        *gammcf=exp(-x+a*log(x)-(*gln))*g;
+        return;
       }
       gold=g;
     }

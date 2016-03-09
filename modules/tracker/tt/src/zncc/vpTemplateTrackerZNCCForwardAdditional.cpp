@@ -156,9 +156,6 @@ void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(const vpImage<un
 
 void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned char> &I)
 {
-  double erreur=0;
-  int Nbpoint=0;
-
   if(blur)
     vpImageFilter::filter(I, BI,fgG,taillef);
   vpImageFilter::getGradXGauss2D(I, dIx, fgG,fgdG,taillef);
@@ -182,8 +179,8 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
   double alpha=2.;
   do
   {
-    Nbpoint=0;
-    erreur=0;
+    int Nbpoint=0;
+    double erreur=0;
     G=0;
     H=0 ;
     Warp->computeCoeff(p);

@@ -1692,12 +1692,11 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
         {
           unsigned int i = 0;
           unsigned int size_ = width * height;
-          unsigned char nivGris;
           unsigned char nivGrisMax = 255 - vpColor::id_unknown;
 
           while ( i < size_ )
           {
-            nivGris = src_8[i] ;
+            unsigned char nivGris = src_8[i] ;
             if ( nivGris > nivGrisMax )
               dst_8[i] = 255;
             else
@@ -1716,10 +1715,9 @@ void vpDisplayX::displayImage ( const vpImage<unsigned char> &I )
       case 16:
       {
         unsigned short *dst_16 = ( unsigned short* ) Ximage->data;
-        unsigned char  *dst_8  = NULL;
         unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
         for ( unsigned int i = 0; i < height ; i++ ) {
-          dst_8 =  (unsigned char*) Ximage->data + i * bytes_per_line;
+          unsigned char  *dst_8 =  (unsigned char*) Ximage->data + i * bytes_per_line;
           dst_16 = (unsigned short *) dst_8;
           for ( unsigned int j=0 ; j < width; j++ )
           {
@@ -1787,15 +1785,13 @@ void vpDisplayX::displayImage ( const vpImage<vpRGBa> &I )
     switch ( screen_depth )
     {
     case 16: {
-      unsigned short *dst_16 = NULL;
-      unsigned char  *dst_8  = NULL;
       vpRGBa* bitmap = I.bitmap;
       unsigned int r, g, b;
       unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
 
       for ( unsigned int i = 0; i < height ; i++ ) {
-        dst_8 =  (unsigned char*) Ximage->data + i * bytes_per_line;
-        dst_16 = (unsigned short *) dst_8;
+        unsigned char  *dst_8 =  (unsigned char*) Ximage->data + i * bytes_per_line;
+        unsigned short *dst_16 = (unsigned short *) dst_8;
         for ( unsigned int j=0 ; j < width; j++ )
         {
           r = bitmap->R;
@@ -1879,12 +1875,10 @@ void vpDisplayX::displayImage ( const vpImage<vpRGBa> &I )
 */  
 void vpDisplayX::displayImage ( const unsigned char *I )
 {
-  unsigned char       *dst_32 = NULL;
 
   if ( displayHasBeenInitialized )
   {
-
-    dst_32 = ( unsigned char* ) Ximage->data;
+    unsigned char *dst_32 = ( unsigned char* ) Ximage->data;
 
     for ( unsigned int i = 0; i < width * height; i++ )
     {
@@ -1979,12 +1973,10 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I,const vpImage
     }
     case 16:
     {
-      unsigned short *dst_16 = NULL;
-      unsigned char  *dst_8  = NULL;
       unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
       for ( unsigned int i = (unsigned int)iP.get_i(); i < (unsigned int)(iP.get_i()+h) ; i++ ) {
-        dst_8 =  (unsigned char  *) Ximage->data + i * bytes_per_line;
-        dst_16 = (unsigned short *) dst_8;
+        unsigned char  *dst_8 =  (unsigned char  *) Ximage->data + i * bytes_per_line;
+        unsigned short *dst_16 = (unsigned short *) dst_8;
         for ( unsigned int j=(unsigned int)iP.get_j() ; j < (unsigned int)(iP.get_j()+w); j++ )
         {
           * ( dst_16 + j ) = ( unsigned short ) colortable[I[i][j]] ;
@@ -2095,13 +2087,11 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
     switch ( screen_depth )
     {
     case 16: {
-      unsigned short *dst_16 = NULL;
-      unsigned char  *dst_8  = NULL;
       unsigned int r, g, b;
       unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
       for ( unsigned int i = (unsigned int)iP.get_i(); i < (unsigned int)(iP.get_i()+h) ; i++ ) {
-        dst_8 =  (unsigned char  *) Ximage->data + i * bytes_per_line;
-        dst_16 = (unsigned short *) dst_8;
+        unsigned char  *dst_8 =  (unsigned char  *) Ximage->data + i * bytes_per_line;
+        unsigned short *dst_16 = (unsigned short *) dst_8;
         for ( unsigned int j=(unsigned int)iP.get_j() ; j < (unsigned int)(iP.get_j()+w); j++ )
         {
           r = I[i][j].R;

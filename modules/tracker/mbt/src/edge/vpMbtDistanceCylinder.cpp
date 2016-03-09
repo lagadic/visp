@@ -661,24 +661,21 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
     double xc = cam.get_u0() ;
     double yc = cam.get_v0() ;
 
-    double alpha1 ;
     vpMatrix H1 ;
     H1 = featureline1.interaction() ;
-    double alpha2 ;
     vpMatrix H2 ;
     H2 = featureline2.interaction() ;
 
-    double x,y ;
     vpMeSite p ;
     unsigned int j =0 ;
     for(std::list<vpMeSite>::const_iterator it=meline1->getMeList().begin(); it!=meline1->getMeList().end(); ++it){
-      x = (double)it->j;
-      y = (double)it->i;
+      double x = (double)it->j;
+      double y = (double)it->i;
 
       x = (x-xc)*mx ;
       y = (y-yc)*my ;
 
-      alpha1 = x*si1 - y*co1;
+      double alpha1 = x*si1 - y*co1;
 
       double *Lrho = H1[0] ;
       double *Ltheta = H1[1] ;
@@ -694,13 +691,13 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
     }
 
     for(std::list<vpMeSite>::const_iterator it=meline2->getMeList().begin(); it!=meline2->getMeList().end(); ++it){
-      x = (double)it->j;
-      y = (double)it->i;
+      double x = (double)it->j;
+      double y = (double)it->i;
 
       x = (x-xc)*mx ;
       y = (y-yc)*my ;
 
-      alpha2 = x*si2 - y*co2;
+      double alpha2 = x*si2 - y*co2;
 
       double *Lrho = H2[0] ;
       double *Ltheta = H2[1] ;

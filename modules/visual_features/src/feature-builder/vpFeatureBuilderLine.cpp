@@ -212,15 +212,11 @@ vpFeatureBuilder::create(vpFeatureLine &s,
 			 const vpCameraParameters &cam,
 			 const vpMeLine &t)
 {
-  double rhop ;
-  double thetap ;
-
-  double rho ;
-  double theta ;
-
   try{
-    rhop = t.getRho() ;
-    thetap = t.getTheta();
+    double rhop = t.getRho() ;
+    double thetap = t.getTheta();
+    double rho ;
+    double theta ;
 
     //Gives the rho and theta coordinates in the (u,v) coordinate system.
     if (thetap >= 0 && thetap < M_PI/2)

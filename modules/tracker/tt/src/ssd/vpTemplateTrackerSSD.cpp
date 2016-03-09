@@ -57,24 +57,23 @@ vpTemplateTrackerSSD::vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp)
 double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I, const vpColVector &tp)
 {
   double erreur=0;
-  double IW,Tij;
-  int i,j;
-  double i2,j2;
+  double IW;
   int Nbpoint=0;
 
   Warp->computeCoeff(tp);
   for(unsigned int point=0;point<templateSize;point++)
   {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
+    int i=ptTemplate[point].y;
+    int j=ptTemplate[point].x;
     X1[0]=j;X1[1]=i;
     Warp->computeDenom(X1,tp);
     Warp->warpX(X1,X2,tp);
 
-    j2=X2[0];i2=X2[1];
+    double j2=X2[0];
+    double i2=X2[1];
     if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
     {
-      Tij=ptTemplate[point].val;
+      double Tij=ptTemplate[point].val;
       if(!blur)
         IW=I.getValue(i2,j2);
       else
@@ -94,9 +93,7 @@ double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I, const vpCo
 double vpTemplateTrackerSSD::getSSD(const vpImage<unsigned char> &I, const vpColVector &tp)
 {
   double erreur=0;
-  double IW,Tij;
-  int i,j;
-  double i2,j2;
+  double IW;
   unsigned int Nbpoint=0;
 
   if(pyrInitialised)
@@ -108,16 +105,17 @@ double vpTemplateTrackerSSD::getSSD(const vpImage<unsigned char> &I, const vpCol
   Warp->computeCoeff(tp);
   for(unsigned int point=0;point<templateSize;point++)
   {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
+    int i=ptTemplate[point].y;
+    int j=ptTemplate[point].x;
     X1[0]=j;X1[1]=i;
     Warp->computeDenom(X1,tp);
     Warp->warpX(X1,X2,tp);
 
-    j2=X2[0];i2=X2[1];
+    double j2=X2[0];
+    double i2=X2[1];
     if((j2<I.getWidth()-1)&&(i2<I.getHeight()-1)&&(i2>0)&&(j2>0))
     {
-      Tij=ptTemplate[point].val;
+      double Tij=ptTemplate[point].val;
       IW=I.getValue(i2,j2);
       //IW=getSubPixBspline4(I,i2,j2);
       erreur+=((double)Tij-IW)*((double)Tij-IW);

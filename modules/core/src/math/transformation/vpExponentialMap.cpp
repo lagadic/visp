@@ -127,7 +127,7 @@ vpExponentialMap::direct(const vpColVector &v, const double &delta_t)
     // old version
     unsigned int i,j;
 
-    double sinu,cosi,mcosi,s;
+    double s;
     // double u[3];
     //  vpRotationMatrix rd ;
     //  vpTranslationVector dt ;
@@ -136,9 +136,9 @@ vpExponentialMap::direct(const vpColVector &v, const double &delta_t)
     if (s > 1.e-15)
     {
       for (i=0;i<3;i++) u[i] = v_dt[3+i]/s;
-      sinu = sin(s);
-      cosi = cos(s);
-      mcosi = 1-cosi;
+      double sinu = sin(s);
+      double cosi = cos(s);
+      double mcosi = 1-cosi;
       rd[0][0] = cosi + mcosi*u[0]*u[0];
       rd[0][1] = -sinu*u[2] + mcosi*u[0]*u[1];
       rd[0][2] = sinu*u[1] + mcosi*u[0]*u[2];

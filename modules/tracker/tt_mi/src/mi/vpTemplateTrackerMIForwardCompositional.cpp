@@ -47,22 +47,18 @@ void vpTemplateTrackerMIForwardCompositional::initCompo()
 {
   std::cout<<"Initialise precomputed value of Compositionnal Direct"<<std::endl;
   ptTemplateSupp=new vpTemplateTrackerPointSuppMIInv[templateSize];
-  int i,j;
-  double et;
-  int ct;
-  double Tij;
   for(unsigned int point=0;point<templateSize;point++)
   {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
+    int i=ptTemplate[point].y;
+    int j=ptTemplate[point].x;
     X1[0]=j;X1[1]=i;
     Warp->computeDenom(X1,p);
     ptTemplate[point].dW=new double[2*nbParam];
     Warp->getdWdp0(i,j,ptTemplate[point].dW);
 
-    Tij=ptTemplate[point].val;
-    ct=(int)((Tij*(Nc-1))/255.);
-    et=(Tij*(Nc-1))/255.-ct;
+    double Tij=ptTemplate[point].val;
+    int ct=(int)((Tij*(Nc-1))/255.);
+    double et=(Tij*(Nc-1))/255.-ct;
     ptTemplateSupp[point].et=et;
     ptTemplateSupp[point].ct=ct;
     ptTemplateSupp[point].Bt=new double[4];
@@ -92,13 +88,10 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
   //double erreur=0;
   int Nbpoint=0;
 
-  double i2,j2;
   //double Tij;
   double IW,dx,dy;
   int cr,ct;
   double er,et;
-
-  int i,j;
 
   Nbpoint=0;
   //erreur=0;
@@ -108,14 +101,16 @@ void vpTemplateTrackerMIForwardCompositional::initHessienDesired(const vpImage<u
   Warp->computeCoeff(p);
   for(unsigned int point=0;point<templateSize;point++)
   {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
-    X1[0]=j;X1[1]=i;
+    int i=ptTemplate[point].y;
+    int j=ptTemplate[point].x;
+    X1[0]=j;
+    X1[1]=i;
 
     Warp->computeDenom(X1,p);
     Warp->warpX(X1,X2,p);
 
-    j2=X2[0];i2=X2[1];
+    double j2=X2[0];
+    double i2=X2[1];
 
     if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
     {
@@ -174,8 +169,6 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
   vpImageFilter::getGradYGauss2D(I, dIy, fgG,fgdG,taillef);
 
   //double erreur=0;
-  int Nbpoint=0;
-
 
   lambda=lambdaDep;
   double MI=0,MIprec=-1000;
@@ -197,7 +190,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
   unsigned int iteration=0;
   do
   {
-    Nbpoint=0;
+    int Nbpoint=0;
     MIprec=MI;
     MI=0;
     //erreur=0;

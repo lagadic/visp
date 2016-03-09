@@ -135,13 +135,8 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
 {
   double MI=0;
   int Nbpoint=0;
-  double i2,j2;
-  double Tij;
   double IW;
 
-  int i,j;
-  int cr,ct;
-  double er,et;
   unsigned int Ncb_ = (unsigned int) Ncb;
   unsigned int Nc_  = (unsigned int) Nc;
   unsigned int influBspline_  = (unsigned int) influBspline;
@@ -153,29 +148,30 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
   Warp->computeCoeff(tp);
   for(unsigned int point=0;point<templateSize;point++)
   {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
+    int i=ptTemplate[point].y;
+    int j=ptTemplate[point].x;
     X1[0]=j;X1[1]=i;
 
     Warp->computeDenom(X1,tp);
     Warp->warpX(X1,X2,tp);
-    j2=X2[0];i2=X2[1];
+    double j2=X2[0];
+    double i2=X2[1];
 
     //Tij=Templ[i-(int)Triangle->GetMiny()][j-(int)Triangle->GetMinx()];
     if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
     {
       Nbpoint++;
 
-      Tij=ptTemplate[point].val;
+      double Tij=ptTemplate[point].val;
       if(!blur)
         IW=I.getValue(i2,j2);
       else
         IW=BI.getValue(i2,j2);
 
-      cr=(int)((IW*(Nc-1))/255.);
-      ct=(int)((Tij*(Nc-1))/255.);
-      er=(IW*(Nc-1))/255.-cr;
-      et=((double)Tij*(Nc-1))/255.-ct;
+      int cr=(int)((IW*(Nc-1))/255.);
+      int ct=(int)((Tij*(Nc-1))/255.);
+      double er=(IW*(Nc-1))/255.-cr;
+      double et=((double)Tij*(Nc-1))/255.-ct;
 
       //Calcul de l'histogramme joint par interpolation bilinÃaire (Bspline ordre 1)
       vpTemplateTrackerMIBSpline::PutPVBsplineD(PrtD, cr, er, ct, et, Nc, 1.,bspline);
@@ -188,7 +184,7 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
   for(int r=0;r<Nc;r++)
     for(int t=0;t<Nc;t++)
     {
-      for(i=0;i<influBspline;i++)
+      for(int i=0;i<influBspline;i++)
       {
         int r2,t2;
         r2=r+i/bspline;
@@ -246,8 +242,6 @@ double vpTemplateTrackerMI::getNormalizedCost(const vpImage<unsigned char> &I, c
 
   double MI=0;
   double Nbpoint=0;
-  double i2,j2;
-  double Tij;
   double IW;
 
   double Pr_[256];
@@ -266,12 +260,13 @@ double vpTemplateTrackerMI::getNormalizedCost(const vpImage<unsigned char> &I, c
 
     Warp->computeDenom(X1,tp);
     Warp->warpX(X1,X2,tp);
-    j2=X2[0];i2=X2[1];
+    double j2=X2[0];
+    double i2=X2[1];
 
     if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
     {
       Nbpoint++;
-      Tij=ptTemplate[point].val;
+      double Tij=ptTemplate[point].val;
       if(!blur)
         IW=I[(int)i2][(int)j2];
       else
@@ -675,16 +670,11 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I,int &nc, const
 
   double MI=0;
   int Nbpoint=0;
-  double i2,j2;
-  double Tij;
   double IW;
 
   vpImage<double> GaussI ;
   vpImageFilter::filter(I, GaussI,fgG,taillef);
 
-  int i,j;
-  int cr,ct;
-  double er,et;
   memset(tPrt, 0, tNcb*tNcb*sizeof(double));
   memset(tPrtD, 0, nc_*nc_*tinfluBspline*sizeof(double));
 
@@ -692,29 +682,30 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I,int &nc, const
   Warp->computeCoeff(tp);
   for(unsigned int point=0;point<templateSize;point++)
   {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
+    int i=ptTemplate[point].y;
+    int j=ptTemplate[point].x;
     X1[0]=j;X1[1]=i;
 
     Warp->computeDenom(X1,tp);
     Warp->warpX(X1,X2,tp);
-    j2=X2[0];i2=X2[1];
+    double j2=X2[0];
+    double i2=X2[1];
 
     //Tij=Templ[i-(int)Triangle->GetMiny()][j-(int)Triangle->GetMinx()];
     if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth())-1)
     {
       Nbpoint++;
 
-      Tij=ptTemplate[point].val;
+      double Tij=ptTemplate[point].val;
       if(!blur)
         IW=I.getValue(i2,j2);
       else
         IW=GaussI.getValue(i2,j2);
 
-      cr=(int)((IW*(nc-1))/255.);
-      ct=(int)((Tij*(nc-1))/255.);
-      er=(IW*(nc-1))/255.-cr;
-      et=((double)Tij*(nc-1))/255.-ct;
+      int cr=(int)((IW*(nc-1))/255.);
+      int ct=(int)((Tij*(nc-1))/255.);
+      double er=(IW*(nc-1))/255.-cr;
+      double et=((double)Tij*(nc-1))/255.-ct;
 
       //Calcul de l'histogramme joint par interpolation bilineaire (Bspline_ ordre 1)
       vpTemplateTrackerMIBSpline::PutPVBsplineD(tPrtD, cr, er, ct, et, nc, 1.,bspline_);
@@ -797,10 +788,8 @@ double vpTemplateTrackerMI::getMI256(const vpImage<unsigned char> &I, const vpCo
   vpColVector Pt256(256);Pt256=0;
 
   int Nbpoint=0;
-  double i2,j2;
   unsigned int Tij,IW;
 
-  int i,j;
   vpImage<double> GaussI ;
   if(blur)
     vpImageFilter::filter(I, GaussI,fgG,taillef);
@@ -809,13 +798,14 @@ double vpTemplateTrackerMI::getMI256(const vpImage<unsigned char> &I, const vpCo
   Warp->computeCoeff(tp);
   for(unsigned int point=0;point<templateSize;point++)
   {
-    i=ptTemplate[point].y;
-    j=ptTemplate[point].x;
+    int i=ptTemplate[point].y;
+    int j=ptTemplate[point].x;
     X1[0]=j;X1[1]=i;
 
     Warp->computeDenom(X1,tp);
     Warp->warpX(X1,X2,tp);
-    j2=X2[0];i2=X2[1];
+    double j2=X2[0];
+    double i2=X2[1];
 
     //Tij=Templ[i-(int)Triangle->GetMiny()][j-(int)Triangle->GetMinx()];
     if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth())-1)

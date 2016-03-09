@@ -93,12 +93,9 @@ void fscanf_Bound (Bound *bp)
  */ 
 void fscanf_Face_list (Face_list *lp)
 {
-	static	char	proc_name[] = "fscanf_Face_list";
-
 	Face	*fp;	/* face courante	*/
 	Face	*fend;	/* borne de "fp"	*/
 
-	
 	/* Lecture du nombre de faces de la liste	*/
 
 	if (lex () != T_INT)
@@ -111,7 +108,8 @@ void fscanf_Face_list (Face_list *lp)
 		lp->ptr = NULL;
 	else if ((lp->ptr = (Face *) malloc (lp->nbr * sizeof (Face)))
 		== NULL) {
-		perror (proc_name);
+    static	char	proc_name[] = "fscanf_Face_list";
+    perror (proc_name);
 		exit (1);
 	}
 
@@ -142,7 +140,8 @@ void fscanf_Face_list (Face_list *lp)
       vlp->ptr = vlp->tbl;
     else if ((vlp->ptr = (Index *) malloc (vlp->nbr * sizeof (Index)))
 			== NULL) {
-			perror (proc_name);
+      static	char	proc_name[] = "fscanf_Face_list";
+      perror (proc_name);
 			exit (1);
 		}
 
@@ -163,12 +162,10 @@ void fscanf_Face_list (Face_list *lp)
  */
 void fscanf_Point3f_list (Point3f_list *lp)
 {
-  static const char	proc_name[] = "fscanf_Point3f_list";
-
-static const char	*err_tbl[] = {
-"float expected (coordinate ",
-" of point)"
-};
+  static const char	*err_tbl[] = {
+    "float expected (coordinate ",
+    " of point)"
+  };
 	Point3f	*pp;	/* point courant	*/
 	Point3f	*pend;	/* borne de "pp"	*/
 
@@ -184,6 +181,7 @@ static const char	*err_tbl[] = {
 		lp->ptr = NULL;
 	else if ((lp->ptr = (Point3f *) malloc (lp->nbr * sizeof (Point3f)))
 		== NULL) {
+    static const char	proc_name[] = "fscanf_Point3f_list";
 		perror (proc_name);
 		exit (1);
 	}

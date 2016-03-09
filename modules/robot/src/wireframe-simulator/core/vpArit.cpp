@@ -171,7 +171,6 @@ pretrans_matrix (Matrix m, Vector *vp)
 void
 postleft_matrix (Matrix m, char axis)
 {
-	static	 char	proc_name[] = "postleft_matrix";
 
 	int	i;
 
@@ -185,10 +184,12 @@ postleft_matrix (Matrix m, char axis)
 	case 'z' :
 		for (i = 0; i < 4; i++) m[i][2] = - m[i][2];
 		break;
-	default	:
-		fprintf (stderr, "%s: axis unknown\n", proc_name);
-		break;
-	}
+  default	: {
+    static	 char	proc_name[] = "postleft_matrix";
+    fprintf (stderr, "%s: axis unknown\n", proc_name);
+    break;
+  }
+  }
 }
 
 /*
@@ -324,7 +325,6 @@ cosin_to_lut (Index level, float *coslut, float *sinlut)
 	int	i;
 	int	i_pi_2 = TWO_POWER(level);
 	int	quad;	/* quadrant courant	*/
-	float	ca;	/* cosinus  courant	*/
 	double		a;	/* angle    courant	*/
 	double		step = M_PI_2 / (double) i_pi_2;
 
@@ -338,7 +338,7 @@ cosin_to_lut (Index level, float *coslut, float *sinlut)
 	coslut[quad] =  0.0; sinlut[quad] = -1.0;	/* 3PI/2*/
 	
 	for (i = 1, a = step; i < i_pi_2; i++, a += step) {
-		ca = (float) cos (a);
+    float ca = (float) cos (a);
 		quad = 0;
 		coslut[quad + i] =   ca;	/* cos(a)	*/
 		quad += i_pi_2;
@@ -366,8 +366,6 @@ cosin_to_lut (Index level, float *coslut, float *sinlut)
 float
 norm_vector (Vector *vp)
 {
-	static	char	proc_name[] = "norm_vector";
-
 	float	norm;	/* norme du vecteur 	*/
 
 	if ((norm = (float) sqrt ((double) DOT_PRODUCT(*vp,*vp))) > M_EPSILON) {
@@ -375,7 +373,10 @@ norm_vector (Vector *vp)
 		vp->y /= norm;
 		vp->z /= norm;
 	}
-	else 	fprintf (stderr, "%s: nul vector\n", proc_name);
+  else {
+    static	char	proc_name[] = "norm_vector";
+    fprintf (stderr, "%s: nul vector\n", proc_name);
+  }
 	return (norm);
 }
 
@@ -432,12 +433,11 @@ void
 point_3D_3D (Point3f *ip, int size, Matrix m, Point3f *op)
 {
 	Point3f	*pend = ip + size;	/* borne de ip	*/
-	float		x, y, z;		/* [xyz] = *ip	*/
 
 	for (; ip < pend; ip++, op++) {
-		x = ip->x;
-		y = ip->y;
-		z = ip->z;
+    float x = ip->x;
+    float y = ip->y;
+    float z = ip->z;
 
 		op->x = COORD3_COL(x,y,z,m,0);
 		op->y = COORD3_COL(x,y,z,m,1);
@@ -459,12 +459,11 @@ void
 point_3D_4D (Point3f *p3, int size, Matrix m, Point4f *p4)
 {
 	Point3f	*pend = p3 + size;	/* borne de p3	*/
-	float		x, y, z;		/* [xyz] = *p3	*/
 
 	for (; p3 < pend; p3++, p4++) {
-		x = p3->x;
-		y = p3->y;
-		z = p3->z;
+    float x = p3->x;
+    float y = p3->y;
+    float z = p3->z;
 
 		p4->x = COORD3_COL(x,y,z,m,0);
 		p4->y = COORD3_COL(x,y,z,m,1);
@@ -532,8 +531,6 @@ rotate_vector (Vector *vp, float a, Vector *axis)
 void
 upright_vector (Vector *vp, Vector *up)
 {
-	static	char	proc_name[] = "upright_vector";
-
 	if (FABS(vp->z) > M_EPSILON) {		/* x et y sont fixes	*/
 		 up->z = - (vp->x + vp->y) / vp->z;
 		 up->x = up->y = 1.0;
@@ -547,8 +544,9 @@ upright_vector (Vector *vp, Vector *up)
 		 up->y = up->z = 1.0;
 	}
 	else {
-		up->x = up->y = up->z = 0.0;
-		fprintf (stderr, "%s: nul vector\n", proc_name);
+    static	char	proc_name[] = "upright_vector";
+    up->x = up->y = up->z = 0.0;
+    fprintf (stderr, "%s: nul vector\n", proc_name);
 		return;
 	}
 }
@@ -598,19 +596,16 @@ Matrix_to_Position (Matrix m, AritPosition *pp)
 void
 Matrix_to_Rotate (Matrix m, Vector *vp)
 {
-	float	cx, sx;	/* cosinus et sinus de la rotation sur l'axe X	*/
-	float	cy, sy;	/* cosinus et sinus de la rotation sur l'axe Y	*/
-	float	cz, sz;	/* cosinus et sinus de la rotation sur l'axe Z	*/
-
-	sy = - m[0][2];
-	cy = (float) sqrt (1.0 - (double) (sy * sy));
+  float sy = - m[0][2];
+  float cy = (float) sqrt (1.0 - (double) (sy * sy));
+  float cx, sx;
 
 	if (FABS(cy) > M_EPSILON) {
-		sz = m[0][1] / cy;
-		cz = m[0][0] / cy;
+    float sz = m[0][1] / cy;
+    float cz = m[0][0] / cy;
 
-		sx = m[1][2] / cy;
-		cx = m[2][2] / cy;
+    sx = m[1][2] / cy;
+    cx = m[2][2] / cy;
 
 		SET_COORD3(*vp,
 			cosin_to_angle (cx, sx),

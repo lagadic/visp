@@ -308,10 +308,6 @@ vpMbtMeEllipse::sample(const vpImage<unsigned char> & I)
     //return fatalError ;
   }
 
-  double j, i;//, j11, i11;
-  vpImagePoint iP11;
-  j = i = 0.0 ;
-
   // Approximation of the circumference of an ellipse:
   // [Ramanujan, S., "Modular Equations and Approximations to ,"
   // Quart. J. Pure. Appl. Math., vol. 45 (1913-1914), pp. 350-372]
@@ -327,14 +323,13 @@ vpMbtMeEllipse::sample(const vpImage<unsigned char> & I)
 
   // sample positions
   double k = 0 ;
-  double iP_i, iP_j;
   for (int pt=0; pt < nb_points_to_track; pt++)
   {
-    j = a *cos(k) ; // equation of an ellipse
-    i = b *sin(k) ; // equation of an ellipse
+    double j = a *cos(k) ; // equation of an ellipse
+    double i = b *sin(k) ; // equation of an ellipse
 
-    iP_j = iPc.get_j() + ce *j - se *i;
-    iP_i = iPc.get_i() + se *j + ce *i;
+    double iP_j = iPc.get_j() + ce *j - se *i;
+    double iP_i = iPc.get_i() + se *j + ce *i;
 
     //vpColor col = vpColor::red ;
     //vpDisplay::displayCross(I, vpImagePoint(iP_i, iP_j),  5, col) ; //debug only
@@ -402,7 +397,6 @@ void
 vpMbtMeEllipse::updateTheta()
 {
   vpMeSite p_me;
-  double theta;
   for(std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it){
     p_me = *it;
     vpImagePoint iP;
@@ -410,7 +404,7 @@ vpMbtMeEllipse::updateTheta()
     iP.set_j(p_me.jfloat);
 
     // The tangent angle to the ellipse at a site
-    theta = atan( (-mu02*p_me.jfloat + mu02*iPc.get_j() + mu11*p_me.ifloat - mu11*iPc.get_i())
+    double theta = atan( (-mu02*p_me.jfloat + mu02*iPc.get_j() + mu11*p_me.ifloat - mu11*iPc.get_i())
                         / (mu20*p_me.ifloat - mu11*p_me.jfloat + mu11*iPc.get_j() - mu20*iPc.get_i()))
         - M_PI/2;
 

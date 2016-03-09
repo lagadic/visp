@@ -1093,16 +1093,16 @@ bool
 vpMeLine::intersection(const vpMeLine &line1, const vpMeLine &line2, 
                        vpImagePoint &ip)
 {
-  double denom = 0;
   double a1 = line1.a;
   double b1 = line1.b;
   double c1 = line1.c;
   double a2 = line2.a;
   double b2 = line2.b;
   double c2 = line2.c;
-  double i=0, j=0;
 
   try{
+    double i=0, j=0;
+    double denom = 0;
 
     if (a1 > 0.1)
     {

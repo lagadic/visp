@@ -137,9 +137,7 @@ void
   vpColVector aTbp(3), normaleEstimee(3);
   double distanceFictive;
   double sinusTheta, cosinusTheta, signeSinus= 1;
-  double cosinusDesireeEstimee, cosinusAncien;
   double s, determinantU, determinantV;
-  unsigned int	 i, j, k, w;
   unsigned int vOrdre[3];
 
   //vpColVector normaleDesiree(3) ;
@@ -158,10 +156,9 @@ void
   vpMatrix mV(3,3) ;
   vpMatrix aRbp(3,3) ;
 
-
   vpMatrix mH(3,3) ;
-  for (i=0 ; i < 3 ; i++)
-    for (j=0 ; j < 3 ; j++) mH[i][j] = aHb[i][j];
+  for (unsigned int i=0 ; i < 3 ; i++)
+    for (unsigned int j=0 ; j < 3 ; j++) mH[i][j] = aHb[i][j];
 
   /* Preparation au calcul de la SVD */
   mTempU = mH ;
@@ -202,10 +199,9 @@ void
 	hypothese : sv[0]>=sv[1]>=sv[2]>=0
   *****/
 
-
-  for (i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; i++) {
     sv[i] = svTemp[vOrdre[i]];
-    for (j = 0; j < 3; j++) {
+    for (unsigned int j = 0; j < 3; j++) {
       mU[i][j] = mTempU[i][vOrdre[j]];
       mV[i][j] = mTempV[i][vOrdre[j]];
     }
@@ -227,7 +223,6 @@ void
   printf ("s = det(U) * det(V) = %f * %f = %f\n",determinantU,determinantV,s);
 #endif
   if (s < 0) mV *=-1 ;
-
 
   /* d' = d2 */
   distanceFictive = sv[1];
@@ -282,34 +277,33 @@ void
     mX[2][1] = mX[2][0];
 
     /* Il y a 4 solutions pour n : 2 par cas => n1, -n1, n2, -n2 */
-    cosinusAncien = 0.0;
-    for (w = 0; w < 2; w++) { /* Pour les 2 cas */
-      for (k = 0; k < 2; k++) { /* Pour le signe */
+    double cosinusAncien = 0.0;
+    for (unsigned int w = 0; w < 2; w++) { /* Pour les 2 cas */
+      for (unsigned int k = 0; k < 2; k++) { /* Pour le signe */
 
         /* Calcul de la normale estimee : n = V.n' */
-        for (i = 0; i < 3; i++) {
+        for (unsigned int i = 0; i < 3; i++) {
           normaleEstimee[i] = 0.0;
-          for (j = 0; j < 3; j++) {
+          for (unsigned int j = 0; j < 3; j++) {
             normaleEstimee[i] += (2.0 * k - 1.0) * mV[i][j] * mX[j][w];
           }
         }
 
-
         /* Calcul du cosinus de l'angle entre la normale reelle et desire */
-        cosinusDesireeEstimee = 0.0;
-        for (i = 0; i < 3; i++)
+        double cosinusDesireeEstimee = 0.0;
+        for (unsigned int i = 0; i < 3; i++)
           cosinusDesireeEstimee += normaleEstimee[i] * normaleDesiree[i];
 
         /*****
 	      Si la solution est meilleur
 	      Remarque : On ne teste pas le cas oppose (cos<0)
-	*****/
+        *****/
         if (cosinusDesireeEstimee > cosinusAncien)
         {
           cosinusAncien = cosinusDesireeEstimee;
 
           /* Affectation de la normale qui est retourner */
-          for (j = 0; j < 3; j++)
+          for (unsigned int j = 0; j < 3; j++)
             n[j] = normaleEstimee[j];
 
           /* Construction du vecteur t'= +/- (d1-d3).[x1, 0, -x3] */
@@ -329,9 +323,9 @@ void
 
 
   /* Calcul du vecteur de translation qui est retourner : t = (U * t') / d */
-  for (i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; i++) {
     atb[i] = 0.0;
-    for (j = 0; j < 3; j++) {
+    for (unsigned int j = 0; j < 3; j++) {
       atb[i] += mU[i][j] * aTbp[j];
     }
     atb[i] /= distanceFictive;
@@ -343,7 +337,6 @@ void
   printf("t/d : ") ; std::cout << atb.t() ;
   printf("n : ") ; std::cout << n.t() ;
 #endif
-
 
   /* Calcul de la matrice de rotation R */
 
@@ -363,23 +356,21 @@ void
   aRbp[1][0] = 0; aRbp[1][1] = 1; aRbp[1][2] = 0;
   aRbp[2][0] = sinusTheta; aRbp[2][1] = 0; aRbp[2][2] = cosinusTheta;
 
-
-
   /* multiplication Rint = U R' */
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int j = 0; j < 3; j++) {
       aRbint[i][j] = 0.0;
-      for (k = 0; k < 3; k++) {
+      for (unsigned int k = 0; k < 3; k++) {
         aRbint[i][j] += mU[i][k] * aRbp[k][j];
       }
     }
   }
 
   /* multiplication R = Rint . V^T */
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int j = 0; j < 3; j++) {
       aRb[i][j] = 0.0;
-      for (k = 0; k < 3; k++) {
+      for (unsigned int k = 0; k < 3; k++) {
         aRb[i][j] += aRbint[i][k] * mV[j][k];
       }
     }
@@ -388,7 +379,6 @@ void
 #ifdef DEBUG_Homographie
   printf("R : %d\n",aRb.isARotationMatrix() ) ; std::cout << aRb << std::endl ;
 #endif
-
 }
 
 /*!
@@ -423,9 +413,7 @@ void
   vpColVector aTbp(3), normaleEstimee(3);
   double distanceFictive;
   double sinusTheta, cosinusTheta, signeSinus= 1;
-  double cosinusDesireeEstimee, cosinusAncien;
   double s, determinantU, determinantV;
-  unsigned int	 i, j, k, w;
   unsigned int vOrdre[3];
 
   vpColVector normaleDesiree(3) ;
@@ -445,8 +433,8 @@ void
 
 
   vpMatrix mH(3,3) ;
-  for (i=0 ; i < 3 ; i++)
-    for (j=0 ; j < 3 ; j++) mH[i][j] = aHb[i][j];
+  for (unsigned int i=0 ; i < 3 ; i++)
+    for (unsigned int j=0 ; j < 3 ; j++) mH[i][j] = aHb[i][j];
 
   /* Preparation au calcul de la SVD */
   mTempU = mH ;
@@ -487,10 +475,9 @@ void
 	hypothese : sv[0]>=sv[1]>=sv[2]>=0
   *****/
 
-
-  for (i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; i++) {
     sv[i] = svTemp[vOrdre[i]];
-    for (j = 0; j < 3; j++) {
+    for (unsigned int j = 0; j < 3; j++) {
       mU[i][j] = mTempU[i][vOrdre[j]];
       mV[i][j] = mTempV[i][vOrdre[j]];
     }
@@ -512,7 +499,6 @@ void
   printf ("s = det(U) * det(V) = %f * %f = %f\n",determinantU,determinantV,s);
 #endif
   if (s < 0) mV *=-1 ;
-
 
   /* d' = d2 */
   distanceFictive = sv[1];
@@ -567,34 +553,34 @@ void
     mX[2][1] = mX[2][0];
 
     /* Il y a 4 solutions pour n : 2 par cas => n1, -n1, n2, -n2 */
-    cosinusAncien = 0.0;
-    for (w = 0; w < 2; w++) { /* Pour les 2 cas */
-      for (k = 0; k < 2; k++) { /* Pour le signe */
+    double cosinusAncien = 0.0;
+    for (unsigned int w = 0; w < 2; w++) { /* Pour les 2 cas */
+      for (unsigned int k = 0; k < 2; k++) { /* Pour le signe */
 
         /* Calcul de la normale estimee : n = V.n' */
-        for (i = 0; i < 3; i++) {
+        for (unsigned int i = 0; i < 3; i++) {
           normaleEstimee[i] = 0.0;
-          for (j = 0; j < 3; j++) {
+          for (unsigned int j = 0; j < 3; j++) {
             normaleEstimee[i] += (2.0 * k - 1.0) * mV[i][j] * mX[j][w];
           }
         }
 
 
         /* Calcul du cosinus de l'angle entre la normale reelle et desire */
-        cosinusDesireeEstimee = 0.0;
-        for (i = 0; i < 3; i++)
+        double cosinusDesireeEstimee = 0.0;
+        for (unsigned int i = 0; i < 3; i++)
           cosinusDesireeEstimee += normaleEstimee[i] * normaleDesiree[i];
 
         /*****
 	      Si la solution est meilleur
 	      Remarque : On ne teste pas le cas oppose (cos<0)
-	*****/
+        *****/
         if (cosinusDesireeEstimee > cosinusAncien)
         {
           cosinusAncien = cosinusDesireeEstimee;
 
           /* Affectation de la normale qui est retourner */
-          for (j = 0; j < 3; j++)
+          for (unsigned int j = 0; j < 3; j++)
             n[j] = normaleEstimee[j];
 
           /* Construction du vecteur t'= +/- (d1-d3).[x1, 0, -x3] */
@@ -614,14 +600,13 @@ void
 
 
   /* Calcul du vecteur de translation qui est retourner : t = (U * t') / d */
-  for (i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; i++) {
     atb[i] = 0.0;
-    for (j = 0; j < 3; j++) {
+    for (unsigned int j = 0; j < 3; j++) {
       atb[i] += mU[i][j] * aTbp[j];
     }
     atb[i] /= distanceFictive;
   }
-
 
 #ifdef DEBUG_Homographie
   printf("t' : ") ; std::cout << aTbp.t() ;
@@ -648,23 +633,21 @@ void
   aRbp[1][0] = 0; aRbp[1][1] = 1; aRbp[1][2] = 0;
   aRbp[2][0] = sinusTheta; aRbp[2][1] = 0; aRbp[2][2] = cosinusTheta;
 
-
-
   /* multiplication Rint = U R' */
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int j = 0; j < 3; j++) {
       aRbint[i][j] = 0.0;
-      for (k = 0; k < 3; k++) {
+      for (unsigned int k = 0; k < 3; k++) {
         aRbint[i][j] += mU[i][k] * aRbp[k][j];
       }
     }
   }
 
   /* multiplication R = Rint . V^T */
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int j = 0; j < 3; j++) {
       aRb[i][j] = 0.0;
-      for (k = 0; k < 3; k++) {
+      for (unsigned int k = 0; k < 3; k++) {
         aRb[i][j] += aRbint[i][k] * mV[j][k];
       }
     }

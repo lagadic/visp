@@ -241,7 +241,6 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
 
   //Parametre pour la premiere phase d'asservissement
   bool reloop = true;
-  double count = 0;
 
   bool isoJoIdentity_ = isoJoIdentity; // Backup since it can be modified if L is not full rank
 
@@ -283,7 +282,7 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
       }
     }
 
-    count = 0;
+    double count = 0;
     reloop = false;
 
     L = vpMatrix();

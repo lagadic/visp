@@ -164,13 +164,12 @@ void vpMatrix::LUBksb(unsigned int *perm, vpColVector& b)
   unsigned int n = rowNum;
 
   unsigned int ii=0;
-  unsigned int ip;
   double sum_;
   bool flag = false;
   unsigned int i;
 
   for (i=0;i<n;i++) {
-    ip=perm[i];
+    unsigned int ip=perm[i];
     sum_=b[ip];
     b[ip]=b[i];
     if (flag) {
@@ -254,9 +253,9 @@ vpMatrix::inverseByLU() const
   A = *this;
 
   unsigned int *perm = new unsigned int[rowNum];
-  int p;
 
   try {
+    int p;
     A.LUDcmp(perm, p);
   }
   catch(vpException &e) {

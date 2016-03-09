@@ -119,10 +119,6 @@ void changeFrame(unsigned int *pts_ref,
 {
   unsigned int i,j, k ;
   unsigned int cont_pts;		/* */
-  double lamb_des[3];	/* */
-  double lamb_cour[3] ; /* */
-
-
 
   /* Construction des matrices de changement de repere */
   vpMatrix Md(3,3) ;
@@ -140,17 +136,20 @@ void changeFrame(unsigned int *pts_ref,
   Mdp = Md.pseudoInverse(1e-16) ;
 
   if (pts_ref[3] > 0) {
+    double lamb_des[3];
+    double lamb_cour[3];
+
     for (i=0;i<3;i++) {
       for (j=0;j<3;j++) {
-	lamb_cour[i] = Mp[i][j]*p[pts_ref[3]][j] ;
-	lamb_des[i]  = Mdp[i][j]*pd[pts_ref[3]][j] ;
+        lamb_cour[i] = Mp[i][j]*p[pts_ref[3]][j] ;
+        lamb_des[i]  = Mdp[i][j]*pd[pts_ref[3]][j] ;
       }
     }
 
     for (i=0;i<3;i++) {
       for (j=0;j<3;j++) {
-	M[i][j] = M[i][j]*lamb_cour[j] ;
-	Md[i][j] = Md[i][j]*lamb_des[j] ;
+        M[i][j] = M[i][j]*lamb_cour[j] ;
+        Md[i][j] = Md[i][j]*lamb_des[j] ;
       }
     }
 
@@ -165,18 +164,16 @@ void changeFrame(unsigned int *pts_ref,
   for (k=0;k<nb_pts;k++) {
     if ((pts_ref[0] != k) && (pts_ref[1] != k) && (pts_ref[2] != k)) {
       for (i=0;i<3;i++) {
-	pn[cont_pts][i] = 0.0 ;
-	pnd[cont_pts][i]  = 0.0 ;
-	for (j=0;j<3;j++) {
-	  pn[cont_pts][i] = pn[cont_pts][i] + Mp[i][j]*p[k][j] ;
-	  pnd[cont_pts][i]  = pnd[cont_pts][i]  + Mdp[i][j]*pd[k][j]   ;
-	}
+        pn[cont_pts][i] = 0.0 ;
+        pnd[cont_pts][i]  = 0.0 ;
+        for (j=0;j<3;j++) {
+          pn[cont_pts][i] = pn[cont_pts][i] + Mp[i][j]*p[k][j] ;
+          pnd[cont_pts][i]  = pnd[cont_pts][i]  + Mdp[i][j]*pd[k][j]   ;
+        }
       }
       cont_pts = cont_pts + 1;
     }
   }
-
-
 }
 
 

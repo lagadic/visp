@@ -329,8 +329,6 @@ void
 vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
 {
   getParameters() ;
-  double j1, i1, j11, i11;
-  j1 =  i1 =  0.0 ;
 
   int number_of_points = 2000 ;
   double incr = 2 * M_PI / number_of_points ; // angle increment
@@ -344,8 +342,8 @@ vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
 //     j1 = a *cos(k) ; // equation of an ellipse
 //     i1 = b *sin(k) ; // equation of an ellipse
 
-    j1 = a *sin(k) ; // equation of an ellipse
-    i1 = b *cos(k) ; // equation of an ellipse
+    double j1 = a *sin(k) ; // equation of an ellipse
+    double i1 = b *cos(k) ; // equation of an ellipse
 
     // (i1,j1) are the coordinates on the origin centered ellipse ;
     // a rotation by "e" and a translation by (xci,jc) are done
@@ -353,8 +351,8 @@ vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
 //     j11 = iPc.get_j() + ce *j1 - se *i1 ;
 //     i11 = iPc.get_i() -( se *j1 + ce *i1) ;
 
-    j11 = iPc.get_j() + ce *j1 + se *i1 ;
-    i11 = iPc.get_i() - se *j1 + ce *i1 ;
+    double j11 = iPc.get_j() + ce *j1 + se *i1 ;
+    double i11 = iPc.get_i() - se *j1 + ce *i1 ;
 
     double  d = vpMath::sqr(pt1.get_i()-i11) + vpMath::sqr(pt1.get_j()-j11) ;
     if (d < dmin1)
@@ -938,8 +936,6 @@ vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1,
                           int ip2, int jp2, double &_alpha2)
 {
   getParameters() ;
-  double j1, i1, j11, i11;
-  j1 =  i1 =  0.0 ;
 
   int number_of_points = 2000 ;
   double incr = 2 * M_PI / number_of_points ; // angle increment
@@ -950,14 +946,14 @@ vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1,
   double k =  -M_PI ;
   while(k < M_PI) {
 
-    j1 = a *cos(k) ; // equation of an ellipse
-    i1 = b *sin(k) ; // equation of an ellipse
+    double j1 = a *cos(k) ; // equation of an ellipse
+    double i1 = b *sin(k) ; // equation of an ellipse
 
     // (i1,j1) are the coordinates on the origin centered ellipse ;
     // a rotation by "e" and a translation by (xci,jc) are done
     // to get the coordinates of the point on the shifted ellipse
-    j11 = iPc.get_j() + ce *j1 - se *i1 ;
-    i11 = iPc.get_i() -( se *j1 + ce *i1) ;
+    double j11 = iPc.get_j() + ce *j1 - se *i1 ;
+    double i11 = iPc.get_i() -( se *j1 + ce *i1) ;
 
     double  d = vpMath::sqr(ip1-i11) + vpMath::sqr(jp1-j11) ;
     if (d < dmin1)

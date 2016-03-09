@@ -50,9 +50,6 @@ vpTemplateTrackerSSDForwardAdditional::vpTemplateTrackerSSDForwardAdditional(vpT
 
 void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned char> &I)
 {
-  double erreur=0;
-  unsigned int Nbpoint=0;
-
   if(blur)
     vpImageFilter::filter(I, BI,fgG,taillef);
   vpImageFilter::getGradXGauss2D(I, dIx, fgG,fgdG,taillef);
@@ -69,8 +66,8 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
   double alpha=2.;
   do
   {
-    Nbpoint=0;
-    erreur=0;
+    unsigned int Nbpoint=0;
+    double erreur=0;
     G=0;
     H=0 ;
     Warp->computeCoeff(p);
@@ -165,12 +162,11 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
 
     case vpTemplateTrackerSSDForwardAdditional::USE_QUASINEWTON:
     {
-      double s_scal_y;
       if(iterationGlobale!=0)
       {
         vpColVector s_quasi=p-p_prec;
         vpColVector y_quasi=G-G_prec;
-        s_scal_y=s_quasi.t()*y_quasi;
+        double s_scal_y=s_quasi.t()*y_quasi;
         //if(s_scal_y!=0)//BFGS
         //	KQuasiNewton=KQuasiNewton-(s_quasi*y_quasi.t()*KQuasiNewton+KQuasiNewton*y_quasi*s_quasi.t())/s_scal_y+(1.+y_quasi.t()*(KQuasiNewton*y_quasi)/s_scal_y)*s_quasi*s_quasi.t()/s_scal_y;
         //if(s_scal_y!=0.0)//DFP

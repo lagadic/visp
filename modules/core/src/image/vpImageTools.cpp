@@ -149,13 +149,11 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1,
     Idiff.resize(I1.getHeight(), I1.getWidth());
   
   unsigned int n = I1.getHeight() * I1.getWidth() ;
-  int diff ;
   for (unsigned int b = 0; b < n ; b++)
-    {
-      diff = I1.bitmap[b] - I2.bitmap[b] + 128;
-      Idiff.bitmap[b] = (unsigned char)
-	(vpMath::maximum(vpMath::minimum(diff, 255), 0));
-    }
+  {
+    int diff = I1.bitmap[b] - I2.bitmap[b] + 128;
+    Idiff.bitmap[b] = (unsigned char) (vpMath::maximum(vpMath::minimum(diff, 255), 0));
+  }
 }
 
 /*!
@@ -183,16 +181,9 @@ vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1,
     Idiff.resize(I1.getHeight(), I1.getWidth());
 
   unsigned int n = I1.getHeight() * I1.getWidth() ;
-  int diff ;
   for (unsigned int b = 0; b < n ; b++)
-    {
-      diff = I1.bitmap[b] - I2.bitmap[b];
-      Idiff.bitmap[b] = diff;
-    }
+  {
+    int diff = I1.bitmap[b] - I2.bitmap[b];
+    Idiff.bitmap[b] = diff;
+  }
 }
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

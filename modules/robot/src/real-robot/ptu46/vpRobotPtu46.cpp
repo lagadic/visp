@@ -623,28 +623,28 @@ vpRobotPtu46::setVelocity (const vpRobot::vpControlFrameType frame,
   }
 
   vpDEBUG_TRACE (12, "Velocity limitation.");
-  bool norm = false; // Flag to indicate when velocities need to be nomalized
   double ptuSpeedInterface[2];
 
   switch(frame) {
   case vpRobot::ARTICULAR_FRAME :
   case vpRobot::CAMERA_FRAME : {
     double max = this ->maxRotationVelocity;
+    bool norm = false; // Flag to indicate when velocities need to be nomalized
     for (unsigned int i = 0 ; i < 2; ++ i) // rx and ry of the camera
     {
       if (fabs (v[i]) > max)
       {
-	norm = true;
-	max = fabs (v[i]);
-	vpERROR_TRACE ("Excess velocity: ROTATION "
-		     "(axe nr.%d).", i);
+        norm = true;
+        max = fabs (v[i]);
+        vpERROR_TRACE ("Excess velocity: ROTATION "
+                       "(axe nr.%d).", i);
       }
     }
     // Rotations velocities normalisation
     if (norm == true) {
       max =  this ->maxRotationVelocity / max;
       for (unsigned int i = 0 ; i < 2; ++ i)
-	ptuSpeedInterface [i] = v[i]*max;
+        ptuSpeedInterface [i] = v[i]*max;
     }
     break;
   }

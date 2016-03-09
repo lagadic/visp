@@ -67,10 +67,10 @@ bool test(const std::string &s, const vpArray2D<double> &A, const std::vector<do
 }
 int main()
 {
-  int err = 1;
   {
     vpPoseVector p;
     std::vector<double> bench(6,0);
+    int err = 1;
     if (test("p", p, bench) == false)
       return err;
     p[0] = bench[0] = 0.1;

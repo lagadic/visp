@@ -1298,7 +1298,6 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
 {
   double size_precision = wantedDot.getSizePrecision();
   double ellipsoidShape_precision = wantedDot.getEllipsoidShapePrecision();
-  double epsilon = 0.001;
 
   //
   // First, check the width, height and surface of the dot. Those parameters
@@ -1313,87 +1312,91 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
     &&
         (std::fabs(wantedDot.getArea()) > std::numeric_limits<double>::epsilon()) )
     // if (size_precision!=0){
+  {
     if (std::fabs(size_precision) > std::numeric_limits<double>::epsilon()){
 #ifdef DEBUG
-         std::cout << "test size precision......................\n";
-         std::cout << "wanted dot: " << "w=" << wantedDot.getWidth()
-              << " h=" << wantedDot.getHeight()
-              << " s=" << wantedDot.getArea()
-              << " precision=" << size_precision
-              << " epsilon=" << epsilon << std::endl;
-         std::cout << "dot found: " << "w=" << getWidth()
-              << " h=" << getHeight()
-              << " s=" << getArea() << std::endl;
+      std::cout << "test size precision......................\n";
+      std::cout << "wanted dot: " << "w=" << wantedDot.getWidth()
+                << " h=" << wantedDot.getHeight()
+                << " s=" << wantedDot.getArea()
+                << " precision=" << size_precision
+                << " epsilon=" << epsilon << std::endl;
+      std::cout << "dot found: " << "w=" << getWidth()
+                << " h=" << getHeight()
+                << " s=" << getArea() << std::endl;
 #endif
-    if( ( wantedDot.getWidth()*size_precision-epsilon < getWidth() ) == false )
-    {
-      vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)",
-                    cog.get_u(), cog.get_v());
-#ifdef DEBUG
-      printf("Bad width > for dot (%g, %g)\n", cog.get_u(), cog.get_v());
-#endif
-      return false;
-    }
+      double epsilon = 0.001;
 
-    if( ( getWidth() < wantedDot.getWidth()/(size_precision+epsilon ) )== false )
-    {
-      vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)",
-                    cog.get_u(), cog.get_v());
+      if( ( wantedDot.getWidth()*size_precision-epsilon < getWidth() ) == false )
+      {
+        vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)",
+                      cog.get_u(), cog.get_v());
 #ifdef DEBUG
-      printf("Bad width %g > %g for dot (%g, %g)\n",
-             getWidth(), wantedDot.getWidth()/(size_precision+epsilon),
-                                               cog.get_u(), cog.get_v());
+        printf("Bad width > for dot (%g, %g)\n", cog.get_u(), cog.get_v());
 #endif
-      return false;
-    }
+        return false;
+      }
 
-    if( ( wantedDot.getHeight()*size_precision-epsilon < getHeight() ) == false )
-    {
-      vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)",
-                    cog.get_u(), cog.get_v());
+      if( ( getWidth() < wantedDot.getWidth()/(size_precision+epsilon ) )== false )
+      {
+        vpDEBUG_TRACE(3, "Bad width > for dot (%g, %g)",
+                      cog.get_u(), cog.get_v());
 #ifdef DEBUG
-      printf("Bad height %g > %g for dot (%g, %g)\n",
-             wantedDot.getHeight()*size_precision-epsilon, getHeight(),
-             cog.get_u(), cog.get_v());
+        printf("Bad width %g > %g for dot (%g, %g)\n",
+               getWidth(), wantedDot.getWidth()/(size_precision+epsilon),
+               cog.get_u(), cog.get_v());
 #endif
-      return false;
-    }
+        return false;
+      }
 
-    if( ( getHeight() < wantedDot.getHeight()/(size_precision+epsilon )) == false )
-    {
-      vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)",
-                    cog.get_u(), cog.get_v());
+      if( ( wantedDot.getHeight()*size_precision-epsilon < getHeight() ) == false )
+      {
+        vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)",
+                      cog.get_u(), cog.get_v());
 #ifdef DEBUG
-      printf("Bad height %g > %g for dot (%g, %g)\n",
-             getHeight(), wantedDot.getHeight()/(size_precision+epsilon),
-                                                 cog.get_u(), cog.get_v());
+        printf("Bad height %g > %g for dot (%g, %g)\n",
+               wantedDot.getHeight()*size_precision-epsilon, getHeight(),
+               cog.get_u(), cog.get_v());
 #endif
-      return false;
-    }
+        return false;
+      }
 
-    if( ( wantedDot.getArea()*(size_precision*size_precision)-epsilon < getArea() ) == false )
-    {
-      vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)",
-                    cog.get_u(), cog.get_v());
+      if( ( getHeight() < wantedDot.getHeight()/(size_precision+epsilon )) == false )
+      {
+        vpDEBUG_TRACE(3, "Bad height > for dot (%g, %g)",
+                      cog.get_u(), cog.get_v());
 #ifdef DEBUG
-      printf("Bad surface %g > %g for dot (%g, %g)\n",
-             wantedDot.getArea()*(size_precision*size_precision)-epsilon,
-             getArea(),
-             cog.get_u(), cog.get_v());
+        printf("Bad height %g > %g for dot (%g, %g)\n",
+               getHeight(), wantedDot.getHeight()/(size_precision+epsilon),
+               cog.get_u(), cog.get_v());
 #endif
-      return false;
-    }
+        return false;
+      }
 
-    if( ( getArea() < wantedDot.getArea()/(size_precision*size_precision+epsilon )) == false )
-    {
-      vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)",
-                    cog.get_u(), cog.get_v());
+      if( ( wantedDot.getArea()*(size_precision*size_precision)-epsilon < getArea() ) == false )
+      {
+        vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)",
+                      cog.get_u(), cog.get_v());
 #ifdef DEBUG
-      printf("Bad surface %g < %g for dot (%g, %g)\n",
-             getArea(), wantedDot.getArea()/(size_precision*size_precision+epsilon),
-                                                   cog.get_u(), cog.get_v());
+        printf("Bad surface %g > %g for dot (%g, %g)\n",
+               wantedDot.getArea()*(size_precision*size_precision)-epsilon,
+               getArea(),
+               cog.get_u(), cog.get_v());
 #endif
-      return false;
+        return false;
+      }
+
+      if( ( getArea() < wantedDot.getArea()/(size_precision*size_precision+epsilon )) == false )
+      {
+        vpDEBUG_TRACE(3, "Bad surface > for dot (%g, %g)",
+                      cog.get_u(), cog.get_v());
+#ifdef DEBUG
+        printf("Bad surface %g < %g for dot (%g, %g)\n",
+               getArea(), wantedDot.getArea()/(size_precision*size_precision+epsilon),
+               cog.get_u(), cog.get_v());
+#endif
+        return false;
+      }
     }
   }
   //
@@ -2475,10 +2478,9 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::stri
 		vpDisplay::flush(I);
 
 		// check that dots are far away ones from the other
-		double d;
-		for(i=0;i<n && fromFile;++i)
+    for(i=0;i<n && fromFile;++i)
 		{
-			d = sqrt(vpMath::sqr(dot[i].getHeight()) + vpMath::sqr(dot[i].getWidth()));
+      double d = sqrt(vpMath::sqr(dot[i].getHeight()) + vpMath::sqr(dot[i].getWidth()));
 			for(unsigned int j=0;j<n && fromFile;++j)
 				if(j!=i)
 					if(dot[i].getDistance(dot[j]) < d)

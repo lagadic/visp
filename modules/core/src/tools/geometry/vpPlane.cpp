@@ -303,13 +303,13 @@ vpPlane::rayIntersection(const vpPoint &M0,
 {
 
   double k,scal;
-  double R[3];
 
   //  if(M0.get_X()!=0 || M0.get_Y()!=0 || M0.get_Z()!=0)
   if(std::fabs(M0.get_X()) > std::numeric_limits<double>::epsilon()
      || std::fabs(M0.get_Y()) > std::numeric_limits<double>::epsilon()
      || std::fabs(M0.get_Z()) > std::numeric_limits<double>::epsilon())
   {
+    double R[3];
     R[0]= M1.get_X() - M0.get_X();
     R[1]= M1.get_Y() - M0.get_Y();
     R[2]= M1.get_Z() - M0.get_Z();

@@ -991,10 +991,9 @@ double vpRowVector::sum() const
 double vpRowVector::sumSquare() const
 {
   double sum_square=0.0;
-  double x ;
 
   for (unsigned int j=0;j<colNum;j++) {
-    x=rowPtrs[0][j];
+    double x=rowPtrs[0][j];
     sum_square += x*x;
   }
 
@@ -1009,9 +1008,8 @@ double vpRowVector::sumSquare() const
 double vpRowVector::euclideanNorm() const
 {
   double norm=0.0;
-  double x ;
   for (unsigned int i=0;i<dsize;i++) {
-    x = *(data +i); norm += x*x;
+    double x = *(data +i); norm += x*x;
   }
 
   return sqrt(norm);

@@ -1115,7 +1115,6 @@ vpMbTracker::loadVRMLModel(const std::string& modelFile)
 
   SoInput in;
   SbBool ok = in.openFile(modelFile.c_str());
-  SoSeparator  *sceneGraph;
   SoVRMLGroup  *sceneGraphVRML2;
 
   if (!ok) {
@@ -1125,7 +1124,7 @@ vpMbTracker::loadVRMLModel(const std::string& modelFile)
 
   if(!in.isFileVRML2())
   {
-    sceneGraph = SoDB::readAll(&in);
+    SoSeparator  *sceneGraph = SoDB::readAll(&in);
     if (sceneGraph == NULL) { /*return -1;*/ }
     sceneGraph->ref();
     
