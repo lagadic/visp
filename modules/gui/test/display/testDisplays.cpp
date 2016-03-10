@@ -87,8 +87,6 @@ SYNOPSIS\n\
   %s [-t <type of video device>] [-l] [-c] [-d] [-h]\n\
 ", name);
 
-  std::string display;
-
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -c\n\
@@ -124,7 +122,6 @@ bool getOptions(int argc, const char **argv, bool &list, bool &click_allowed, bo
 {
   const char *optarg_;
   int	c;
-  std::string sDisplayType;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {

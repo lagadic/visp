@@ -952,8 +952,6 @@ vpHistogram::write(const std::string &filename)
 bool
 vpHistogram::write(const char *filename)
 {
-  std::string opath;
-
   FILE *fd = fopen(filename, "w");
   if (fd == NULL)
     return false;

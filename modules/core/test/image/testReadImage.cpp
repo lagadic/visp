@@ -147,7 +147,6 @@ main(int argc, const char ** argv)
     std::string opt_ipath;
     std::string opt_ppath;
     std::string ipath;
-    std::string ppath;
     std::string filename;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
