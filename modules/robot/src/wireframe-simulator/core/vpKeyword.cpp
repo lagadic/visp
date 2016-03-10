@@ -232,8 +232,10 @@ Index get_symbol (char *ident, int length)
 			idn = ident;
 			len = length;
 			kwd = bp->ident;
-			for (; *idn == *kwd; idn++, kwd++) 
-				if (--len == 0) return (bp->token);
+      for (; *idn == *kwd; idn++, kwd++) {
+        --len;
+        if (len == 0) return (bp->token);
+      }
 		}
 	}
 	return (0);	/*  identificateur	*/
