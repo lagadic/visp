@@ -291,7 +291,6 @@ main(int argc, const char ** argv)
     std::string opt_ipath;
     std::string ipath;
     std::string filename;
-    std::string username;
     bool opt_display = true;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
