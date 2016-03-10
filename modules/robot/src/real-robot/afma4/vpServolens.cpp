@@ -708,6 +708,10 @@ vpServolens::wait() const
   do {
     r = ::read(this->remfd, &c, 1);
     c &= 0x7f;
+    if (r != 1) {
+      throw vpRobotException (vpRobotException::communicationError,
+            "Cannot read on Servolens.");
+    }
   }
   while (c != '>');
   return c;
