@@ -393,6 +393,7 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
       }
       else {
         // s5 != 0
+#if 0 // Modified 2016/03/10 since if and else are the same
         //if (c4s5 == 0) {
         if (std::fabs(c4s5) <= std::numeric_limits<double>::epsilon()) {
           // c4 = 0
@@ -403,6 +404,9 @@ vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector 
         else {
           q_sol[i][3] = atan2(s4s5, c4s5);
         }
+#else
+        q_sol[i][3] = atan2(s4s5, c4s5);
+#endif
         if (convertJointPositionInLimits(3, q_sol[i][3], q4_mod, verbose) == true) {
           q_sol[i][3] = q4_mod;
           c4[i] = cos(q4_mod);
