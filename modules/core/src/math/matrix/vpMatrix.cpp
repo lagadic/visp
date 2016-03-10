@@ -3203,10 +3203,6 @@ vpMatrix::kernel(vpMatrix &kerA, double svThreshold) const
   unsigned int nbline = getRows() ;
   unsigned int nbcol = getCols() ;
 
-  if ( (nbline <= 0) || (nbcol <= 0) ) {
-    throw( vpException(vpException::dimensionError, "Cannot compute kernel of a zero-size matrix") );
-  }
-
   vpMatrix A ; // Copy of the matrix, SVD function is destructive
   vpColVector sv(nbcol) ;   // singular values
   vpMatrix v(nbcol,nbcol) ; // V matrix of singular value decomposition
