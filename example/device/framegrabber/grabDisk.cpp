@@ -120,13 +120,13 @@ OPTIONS:                                               Default\n\
      Not taken into account for the moment. Will be a\n\
      future feature...\n\
 \n\
-  -f <first frame>                                          %u\n\
+  -f <first frame>                                          %d\n\
      First frame number of the sequence\n\
 \n\
   -n <number of images>                                     %u\n\
      Number of images to load from the sequence.\n\
 \n\
-  -s <step>                                                 %u\n\
+  -s <step>                                                 %d\n\
      Step between two images.\n\
 \n\
   -z <number of zero>                                       %u\n\
