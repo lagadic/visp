@@ -3,22 +3,30 @@
 \page tutorial-tracking-mb-stereo Tutorial: Markerless model-based tracking with stereo cameras
 \tableofcontents
 
-This tutorial explains how to use the model-based trackers implemented in vpMbEdgeMultiTracker, vpMbKltMultiTracker, vpMbEdgeKltMultiTracker with stereo cameras. These classes allow to track the same object as it is seen by two cameras or more.
-The main advantages of this configuration concern:
+This tutorial describes the model-based tracking of objects using simultaneously multiple cameras views. It allows to simultaneously track the object in the images viewed by a set of cameras while providing its 3D localization (i.e., the object pose expressed in a reference camera frame) when calibrated cameras are used.
+
+The software allows the tracking of a markerless object using the knowledge of its CAD model. Considered objects have to be modeled by segments, circles or cylinders. The model of the object could be defined in vrml format (except for circles), or in cao format.
+
+Next section highlights the different versions of the markerless multi-view model-based trackers that have been developed. The multi-view model-based tracker can consider moving-edges behind the lines of the model (thanks to vpMbEdgeMultiTracker class). It can also consider keypoints that are detected and tracked on each visible face of the model (thanks to vpMbKltMultiTracker class). The tracker can also handle moving-edges and keypoints in a hybrid scheme (thanks to vpMbEdgeKltMultiTracker class).
+
+While the multi-view model-based edges tracker implemented in vpMbEdgeMultiTracker is appropriate to track texture less objects, the multi-view model-based keypoints tracker implemented in vpMbKltMultiTracker is more designed to exploit textured objects with edges that are not really visible. The multi-view model-based hybrid tracker implemented in vpMbEdgeKltMultiTracker is appropriate to track textured objects with visible edges.
+
+These classes allow tracking the same object as two cameras or more sees it.
+The main advantages of this configuration with respect to the mono-camera case (see \ref tutorial-tracking-mb) concern:
 - the possibility to extend the application field of view;
 - a more robust tracking as the configuration of the stereo rig allows to track the object under multiple viewpoints and thus with more visual features.
 
 In order to achieve this, the following information are required:
 - the intrinsic parameters of each camera;
-- the transformation matrix between each camera and a reference camera (\f$ ^{c_{current}}{\bf M}_{c_{reference}} \f$).
+- the transformation matrix between each camera and a reference camera: \f$ ^{c_{current}}{\bf M}_{c_{reference}} \f$.
 
-The following video shows a teabox stereo tracking example done with vpMbEdgeMultiTracker. In this example images were captured by the fixed cameras located on Romeo Humanoid robot head.
+In the following sections, we consider the tracking of a tea box modeled in cao format. A stereo camera sees this object. Thus to illustrate the behavior of the tracker, the following video shows the resulting tracking performed with vpMbEdgeMultiTracker. In this example the fixed cameras located on Romeo Humanoid robot head captured the images.
 
 \htmlonly
 <iframe width="560" height="315" src="https://www.youtube.com/embed/aWXvvkeytp0" frameborder="0" allowfullscreen></iframe>
 \endhtmlonly
 
-This other video shows the behavior of the hybrid tracking done with vpMbEdgeKltMultiTracker where features are the teabox edges and the keypoints on the visible faces. 
+This other video shows the behavior of the hybrid tracking performed with vpMbEdgeKltMultiTracker where features are the teabox edges and the keypoints on the visible faces.
 
 \htmlonly
 <iframe width="560" height="315" src="https://www.youtube.com/embed/0poP7gONdMc" frameborder="0" allowfullscreen></iframe>

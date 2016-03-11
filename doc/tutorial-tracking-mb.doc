@@ -10,7 +10,7 @@ Next sections highlight how to use the differents versions of the markerless mod
 \section mb_started Getting started
 
 In ViSP, depending on the visual features that are used three trackers are available:
-- a tracker implemented in vpMbEdgeTracker that consider moving-edges behind the visible lines of the model. This tracker is appropriate to track untextured objects.
+- a tracker implemented in vpMbEdgeTracker that consider moving-edges behind the visible lines of the model. This tracker is appropriate to track texture less objects.
 - an other tracker implemented in vpMbKltTracker that consider KLT keypoints that are detected and tracked on each visible face of the model. This tracker is more designed to track textured objects with edges that are not really visible.
 - an hybrid version implemented in vpMbEdgeKltTracker that is able to consider moving-edges and KLT keypoints. This tracker is appropriate to track textured objects with visible edges.
 
