@@ -311,7 +311,7 @@ vpFeaturePoint::interaction(const unsigned int select)
 
     Ly[0][0] = 0 ;
     Ly[0][1]  = -1/Z_ ;
-    Ly[0][2] = y_/Z ;
+    Ly[0][2] = y_/Z_ ;
     Ly[0][3] = 1+y_*y_ ;
     Ly[0][4] = -x_*y_ ;
     Ly[0][5] = -x_ ;
