@@ -239,7 +239,7 @@ vpHomography::computeTransformation(vpColVector &x, unsigned int *ind, vpColVect
   }
   catch(...)
     {
-      aHb.setIdentity();
+      aHb.eye();
     }
 
   M.resize(9);

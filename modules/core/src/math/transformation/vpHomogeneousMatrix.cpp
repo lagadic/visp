@@ -757,15 +757,6 @@ vpHomogeneousMatrix::print() const
   vpPoseVector r(*this) ;
   std::cout << r.t() ;
 }
-/*!
-   Set homogeneous matrix to identity.
-   \sa eye()
- */
-void
-vpHomogeneousMatrix::setIdentity()
-{
-  eye() ;
-}
 
 /*!
   Converts an homogeneous matrix to a vector of 12 floats.
@@ -860,3 +851,19 @@ vpHomogeneousMatrix::getCol(const unsigned int j) const
     c[i] = (*this)[i][j];
   return c;
 }
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+/*!
+  \deprecated You should rather use eye().
+
+   Set homogeneous matrix to identity.
+   \sa eye()
+ */
+void
+vpHomogeneousMatrix::setIdentity()
+{
+  eye() ;
+}
+
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

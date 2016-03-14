@@ -202,20 +202,6 @@ vpMatrix::eye()
 }
 
 /*!
-  Set the matrix diagonal elements to \e val.
-  More generally set M[i][i] = val.
-*/
-void
-vpMatrix::setIdentity(const double & val)
-{
-  for (unsigned int i=0;i<rowNum;i++)
-    for (unsigned int j=0;j<colNum;j++)
-      if (i==j) (*this)[i][j] = val ;
-      else      (*this)[i][j] = 0;
-}
-
-
-/*!
   Compute and return the transpose of the matrix.
 */
 vpMatrix vpMatrix::t() const
@@ -3596,5 +3582,21 @@ vpMatrix::column(const unsigned int j)
   for (unsigned int i =0 ; i < getRows() ; i++)     c[i] = (*this)[i][j-1] ;
   return c ;
 }
+
+/*!
+  \deprecated You should rather use diag(const double &)
+
+  Set the matrix diagonal elements to \e val.
+  More generally set M[i][i] = val.
+*/
+void
+vpMatrix::setIdentity(const double & val)
+{
+  for (unsigned int i=0;i<rowNum;i++)
+    for (unsigned int j=0;j<colNum;j++)
+      if (i==j) (*this)[i][j] = val ;
+      else      (*this)[i][j] = 0;
+}
+
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
