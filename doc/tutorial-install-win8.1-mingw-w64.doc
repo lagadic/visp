@@ -11,7 +11,7 @@ In this tutorial you will learn how to install ViSP from source on Windows 8.1 w
 
 \subsection install_win81_mingw64_required_mingw Mingw-w64
 
-Mingw-w64 could be found following http://mingw-w64.sourceforge.net. From that page, click on download "Win-builds" that will bring you to the page http://win-builds.org/download.html Here simply download and run the package manager, in our case we downloaded win-builds-1.5.0.exe file.
+Mingw-w64 could be found following http://mingw-w64.org/doku.php/download From that page, click on download "Win-builds" that will bring you to the page http://mingw-w64.org/doku.php/download/win-builds from where you can access to http://win-builds.org/doku.php/download_and_installation_from_windows Here simply download and run the package manager, in our case we downloaded win-builds-1.5.0.exe file.
 
 - Once downloaded, double click on the the exe file. It will open an installation window. 
 - Select x86_64 and Mingw installation folder \c C:\\mingw as in the following image: 
