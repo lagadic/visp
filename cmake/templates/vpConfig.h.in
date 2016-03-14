@@ -300,6 +300,9 @@
 // These libraries are used to control Pioneer mobile robots.  
 #cmakedefine VISP_HAVE_PIONEER
 
+// Defined if Haption Virtuose SDK available.
+#cmakedefine VISP_HAVE_VIRTUOSE
+
 // Defined if linux/parport.h is available for parallel port usage.
 #cmakedefine VISP_HAVE_PARPORT
 
