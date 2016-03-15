@@ -44,7 +44,6 @@
 
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpVirtuose.h>
-#include <unistd.h>
 
 
 void CallBackVirtuose(VirtContext VC, void* ptr)
@@ -52,8 +51,8 @@ void CallBackVirtuose(VirtContext VC, void* ptr)
   (void) VC;
   vpVirtuose* p_virtuose=(vpVirtuose*)ptr;
 
-  float maxQ[6] = {0.7811045051,  -0.07668215036,  2.481732368,  2.819076777,  1.044736624,  2.687076807};
-  float minQ[6] ={-0.8011951447, -1.648244739, 0.7439950705, -3.022218227, -1.260564089, -2.054088593};
+  float maxQ[6] = {0.7811045051f,  -0.07668215036f,  2.481732368f,  2.819076777f,  1.044736624f,  2.687076807f};
+  float minQ[6] ={-0.8011951447f, -1.648244739f, 0.7439950705f, -3.022218227f, -1.260564089f, -2.054088593f};
   int numJoint = 6;
 
   vpColVector feedbackRegion(numJoint, 0);
@@ -107,7 +106,7 @@ int main()
     virtuose.setVerbose(true);
     virtuose.setPowerOn(1);
 
-    float period = 0.001;
+    float period = 0.001f;
     virtuose.setTimeStep(period);
 
     // setArticularForce only works in COMMAND_TYPE_ARTICULAR_IMPEDANCE.
@@ -158,9 +157,9 @@ int main()
         swtch = false;
       }
       counter++;
-      sleep(1);
+	  vpTime::sleepMs(1000);
     }
-    sleep(1);
+	vpTime::sleepMs(1000);
 
     virtuose.setPowerOn(0);
     std::cout << "The end" << std::endl;

@@ -43,7 +43,6 @@
 
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpVirtuose.h>
-#include <unistd.h>
 
 void CallBackVirtuose(VirtContext VC, void* ptr)
 {
@@ -63,7 +62,7 @@ int main()
     vpVirtuose virtuose;
     virtuose.setVerbose(true);
 
-    float period = 0.001;
+	float period = 0.001f;
     virtuose.setTimeStep(period);
 
     virtuose.setPeriodicFunction(CallBackVirtuose,period,virtuose);
@@ -80,7 +79,7 @@ int main()
       }
 
       counter++;
-      sleep(1);
+      vpTime::sleepMs(1000);
     }
 
     virtuose.setPowerOn(0);

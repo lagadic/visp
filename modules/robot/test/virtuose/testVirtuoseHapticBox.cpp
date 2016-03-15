@@ -45,8 +45,8 @@
 
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpVirtuose.h>
-#include <unistd.h>
 
+#ifdef VISP_HAVE_PTHREAD
 // Position
 pthread_mutex_t mutex_position;
 vpPoseVector position0;
@@ -279,7 +279,7 @@ int main()
         swtch = false;
       }
       counter++;
-      sleep(1);
+      vpTime::sleepMs(1000);
     }
 
     pthread_mutex_destroy(&mutex_position);
@@ -293,3 +293,10 @@ int main()
   std::cout << "You should install Virtuose SDK to use this binary..." << std::endl;
 #endif
 }
+
+#else
+int main()
+{
+	std::cout << "You should install pthread to use this binary..." << std::endl;
+}
+#endif
