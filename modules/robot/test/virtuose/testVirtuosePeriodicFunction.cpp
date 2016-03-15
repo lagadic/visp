@@ -44,6 +44,8 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpVirtuose.h>
 
+#if defined(VISP_HAVE_VIRTUOSE)
+
 void CallBackVirtuose(VirtContext VC, void* ptr)
 {
   (void) VC;
@@ -57,7 +59,6 @@ void CallBackVirtuose(VirtContext VC, void* ptr)
 
 int main()
 {
-#if defined(VISP_HAVE_VIRTUOSE)
   try {
     vpVirtuose virtuose;
     virtuose.setVerbose(true);
@@ -87,9 +88,11 @@ int main()
   catch(vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }
-
-#else
-  std::cout << "You should install Virtuose SDK to use this binary..." << std::endl;
-#endif
 }
 
+#else
+int main()
+{
+  std::cout << "You should install Virtuose API to use this binary..." << std::endl;
+}
+#endif
