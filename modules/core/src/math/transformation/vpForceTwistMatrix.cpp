@@ -192,17 +192,6 @@ vpForceTwistMatrix::vpForceTwistMatrix(const double tx, const double ty, const d
 }
 
 /*!
-  Set the twist transformation matrix to identity.
-  \sa eye()
-*/
-void
-vpForceTwistMatrix::setIdentity()
-{
-  eye() ;
-}
-
-
-/*!
 
   Operator that allows to multiply a skew transformation matrix by an
   other skew transformation matrix.
@@ -511,3 +500,19 @@ vpForceTwistMatrix::print(std::ostream& s, unsigned int length, char const* intr
 
   return (int)(maxBefore+maxAfter);
 }
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+/*!
+  \deprecated You should rather use eye().
+
+  Set the twist transformation matrix to identity.
+  \sa eye()
+*/
+void
+vpForceTwistMatrix::setIdentity()
+{
+  eye() ;
+}
+
+#endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
