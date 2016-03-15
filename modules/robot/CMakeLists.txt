@@ -39,6 +39,26 @@
 set(opt_incs "")
 set(opt_libs "")
 
+# Warning: when composing the link line, CMake sometimes end up placing multiple
+# copies of a given library. This can produce the following link error
+# /usr/local/lib/libvirtuose.a: In function `virtCallDLL':
+# (.text+0xc30): multiple definition of `virtCallDLL'
+# when VIRTUOSE_LIBRARIES is not the first library used by the module.
+
+# Haption Virtuose SDK.
+# This 3rd party should be the first used by the module (see warning below)
+if(USE_VIRTUOSE)
+  list(APPEND opt_incs ${VIRTUOSE_INCLUDE_DIRS})
+  list(APPEND opt_libs ${VIRTUOSE_LIBRARIES})
+
+  if(USE_PTHREAD AND RT_FOUND AND DL_FOUND)
+    list(APPEND opt_incs ${PTHREAD_INCLUDE_DIRS})
+    list(APPEND opt_libs ${PTHREAD_LIBRARIES})
+    list(APPEND opt_libs ${RT_LIBRARIES})
+    list(APPEND opt_libs ${DL_LIBRARIES})
+  endif()
+endif()
+
 if(USE_AFMA4 OR USE_AFMA6 OR USE_VIPER650 OR USE_VIPER850)
   list(APPEND opt_incs ${RAW1394_INCLUDE_DIRS})
   list(APPEND opt_incs ${CALINUX_INCLUDE_DIRS})

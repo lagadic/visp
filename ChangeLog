@@ -14,6 +14,8 @@ ViSP 3.0.1 (in development)
       to keep compat with ViSP 2.10.0
     . New vpFlyCaptureGrabber class to capture images from PointGrey
       cameras (USB-3, firewire, GigE)
+    . New vpVirtuose class, a wrapper over Haption Virtuose SDK that is
+      provided with their haptic devices
   - Bug fixed
     . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc

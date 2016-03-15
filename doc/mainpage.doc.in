@@ -453,6 +453,11 @@ scheme, ...</p>
 */
 /*!
   \ingroup module_robot
+  \defgroup group_robot_haptic Haptic devices
+  Haptic devices interfaces.
+*/
+/*!
+  \ingroup module_robot
   \defgroup group_robot_simu Robot simulation
   Simulated robots interfaces.
 */
