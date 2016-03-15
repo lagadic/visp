@@ -176,23 +176,7 @@ From now, you can try to run ViSP examples and tests. For example, if you want t
 
 \subsection install_win7_tip_git How to install Git
 
-One way to install Git as a command line tool under Windows is to install Git that comes with Cygwin installer that is available on https://cygwin.com/install.html
-
-- From the previous link, download Cygwin installer for 32-bits or 64-bits version.
-- Double click on the setup binary to start installation in C:/cygwin64 as Root Directory. Keep the default settings and select a mirror.
-- As shown in the next image, in the window that allows to select the packages, search for \c "git" and select \c "git" package in \c "Devel" category:
-\image html img-win7-cygwin-git.jpg
-- Click on Next button twice to start installation, and then on Finish button to exit installer.
-- To complete the installation, dont forget to add \c C:\\cygwin64\\bin to the path. Open a cmd terminal and run:
-\code
-C:\> setx PATH "%PATH%;C:\cygwin64\bin"
-\endcode
-- Close and re-open a cmd terminal to take changes done in PATH variable.
-- Now you should be able to use Git. 
-\code
-C:\> git --version
-git version 2.5.3
-\endcode
+We recommand to install Git for Windows from https://git-for-windows.github.io/. This installation allows then to use git in a cmd.exe command dos shell. 
 
 \section install_win7_next Next tutorial
 
