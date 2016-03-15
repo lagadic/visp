@@ -391,7 +391,7 @@ class VISP_EXPORT vpHomography : public vpArray2D<double>
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
-    @name Deprecated functions
+    \deprecated You should rather use eye().
   */
   //@{
     void setIdentity();

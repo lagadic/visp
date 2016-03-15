@@ -180,18 +180,6 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const double tx,
 
 /*!
 
-  Set the velocity twist transformation matrix to identity.
-
-*/
-void
-vpVelocityTwistMatrix::setIdentity()
-{
-  eye() ;
-}
-
-
-/*!
-
   Operator that allows to multiply a velocity twist transformation matrix by an
   other velocity twist transformation matrix.
 
@@ -528,3 +516,19 @@ vpVelocityTwistMatrix::print(std::ostream& s, unsigned int length, char const* i
 
   return (int)(maxBefore+maxAfter);
 }
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+/*!
+  \deprecated You should rather use eye().
+
+  Set the velocity twist transformation matrix to identity.
+
+*/
+void
+vpVelocityTwistMatrix::setIdentity()
+{
+  eye() ;
+}
+
+#endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

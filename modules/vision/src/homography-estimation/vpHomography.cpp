@@ -60,7 +60,7 @@
 vpHomography::vpHomography()
   : vpArray2D<double>(3,3), aMb(), bP()
 {
-  setIdentity();
+  eye();
 }
 
 
