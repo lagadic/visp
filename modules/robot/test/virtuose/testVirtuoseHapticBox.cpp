@@ -46,29 +46,30 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpVirtuose.h>
 
-#if defined(VISP_HAVE_PTHREAD) && defined(VISP_HAVE_VIRTUOSE)
-// Position
-pthread_mutex_t mutex_position;
-vpPoseVector position0;
+#if defined(VISP_HAVE_VIRTUOSE)
 
 void CallBackVirtuose(VirtContext VC, void* ptr)
 {
   (void) VC;
   vpVirtuose* p_virtuose=(vpVirtuose*)ptr;
 
-  vpPoseVector localPosition0;
+  static bool firstIteration = true;
+  static vpPoseVector localPosition0;
   vpPoseVector localPosition;
   vpColVector forceFeedback(6,0);
   vpColVector finalForce(6,0);
   vpColVector forceEe(6,0);
   int force_limit = 15;
   int force_increase_rate = 500;
-  float cube_size = 0.05;
+  float cube_size = 0.05f;
 
-  pthread_mutex_lock(&mutex_position);
-  localPosition0 = position0;
-  pthread_mutex_unlock(&mutex_position);
+  localPosition = p_virtuose->getPhysicalPosition();
 
+  if (firstIteration) {
+    localPosition0 = localPosition;
+    std::cout << "Initial position: " << localPosition0.t() << std::endl;
+    firstIteration = false;
+  }
 
   // Virtual spring to let the user know where the initial position is
   // Estimated Virtuose handle mass = 0.1;
@@ -209,23 +210,21 @@ void CallBackVirtuose(VirtContext VC, void* ptr)
   // ---------------
   //  Haptic Box
   // ---------------
-  vpColVector min(3,0), max(3,0);
+  vpColVector p_min(3,0), p_max(3,0);
   for (unsigned int i=0; i<3; i++) {
-    min[i] = position0[i] - cube_size/2;
-    max[i] = position0[i] + cube_size/2;
+    p_min[i] = localPosition0[i] - cube_size / 2;
+    p_max[i] = localPosition0[i] + cube_size / 2;
   }
 
-  localPosition = p_virtuose->getPosition();
-
   for (int i=0; i < 3; i++) {
-    if ((min[i] >= localPosition[i]))
+    if ((p_min[i] >= localPosition[i]))
     {
-      forceFeedback[i] = (min[i] - localPosition[i]) * force_increase_rate;
+      forceFeedback[i] = (p_min[i] - localPosition[i]) * force_increase_rate;
       if (forceFeedback[i] >= force_limit) forceFeedback[i] = force_limit;
     }
-    else if ((max[i] <= localPosition[i]))
+    else if ((p_max[i] <= localPosition[i]))
     {
-      forceFeedback[i] = (max[i] - localPosition[i]) * force_increase_rate;
+      forceFeedback[i] = (p_max[i] - localPosition[i]) * force_increase_rate;
       if (forceFeedback[i] <= -force_limit) forceFeedback[i] = -force_limit;
     }
     else
@@ -247,28 +246,16 @@ int main()
     virtuose.setIpAddress("localhost#5000");
     virtuose.setVerbose(true);
 
-    float period = 0.001;
+    float period = 0.001f;
     virtuose.setTimeStep(period);
-
-    vpPoseVector localPosition0 = virtuose.getPhysicalPosition();
-
-    // Printing initial position
-    std::cout << "Initial position: " << localPosition0.t() << std::endl;
-
-    pthread_mutex_init(&mutex_position,NULL);
-
-    pthread_mutex_lock(&mutex_position);
-    position0 = localPosition0;
-    pthread_mutex_unlock(&mutex_position);
-
     virtuose.setPowerOn(1);
-    virtuose.setPeriodicFunction(CallBackVirtuose,period,virtuose);
+    virtuose.setPeriodicFunction(CallBackVirtuose, period, virtuose);
     virtuose.startPeriodicFunction();
 
     int counter = 0;
     bool swtch = true;
 
-    while(swtch){
+    while(swtch) {
       if (counter>=10)
       {
         virtuose.stopPeriodicFunction();
@@ -278,9 +265,7 @@ int main()
       counter++;
       vpTime::sleepMs(1000);
     }
-
-    pthread_mutex_destroy(&mutex_position);
-
+    std::cout << "The end" << std::endl;
   }
   catch(vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;

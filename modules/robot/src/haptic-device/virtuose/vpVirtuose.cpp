@@ -90,7 +90,7 @@ void vpVirtuose::addForce(vpColVector &force)
 
   float virtforce[6];
   for(unsigned int i=0; i<6; i++)
-    virtforce[i] = force[i];
+    virtforce[i] = (float)force[i];
 
   if (virtAddForce(m_virtContext, virtforce)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -266,7 +266,7 @@ bool vpVirtuose::getDeadMan() const
     throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
-  int deadman virtGetDeadMan(m_virtContext, &deadman);
+  int deadman = virtGetDeadMan(m_virtContext, &deadman);
   return (deadman ? true : false);
 }
 
@@ -546,7 +546,7 @@ void vpVirtuose::setArticularForce (const vpColVector &articularForce)
 
   float articular_force[6];
   for(unsigned int i=0; i<6; i++)
-    articular_force[i] = articularForce[i];
+    articular_force[i] = (float)articularForce[i];
 
   if (virtSetArticularForce(m_virtContext, articular_force)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -572,7 +572,7 @@ void vpVirtuose::setArticularPosition (const vpColVector &articularPosition)
 
   float articular_position[6];
   for(unsigned int i=0; i<6; i++)
-    articular_position[i] = articularPosition[i];
+    articular_position[i] = (float)articularPosition[i];
 
   if (virtSetArticularPosition(m_virtContext, articular_position)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -598,7 +598,7 @@ void vpVirtuose::setArticularVelocity (const vpColVector &articularVelocity)
 
   float articular_velocity[6];
   for(unsigned int i=0; i<6; i++)
-    articular_velocity[i] = articularVelocity[i];
+    articular_velocity[i] = (float)articularVelocity[i];
 
   if (virtSetArticularSpeed(m_virtContext, articular_velocity)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -626,9 +626,9 @@ void vpVirtuose::setBaseFrame (const vpPoseVector &position)
   position.extract(quaternion);
 
   for (int i=0; i<3; i++)
-    position_[i] = translation[i];
+    position_[i] = (float)translation[i];
   for (int i=0; i<4; i++)
-    position_[3+i] = quaternion[i];
+    position_[3 + i] = (float)quaternion[i];
 
   if (virtSetBaseFrame(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -678,7 +678,7 @@ void vpVirtuose::setForce (const vpColVector &force)
 
   float virtforce[6];
   for(unsigned int i=0; i<6; i++)
-    virtforce[i] = force[i];
+    virtforce[i] = (float)force[i];
 
   if (virtSetForce(m_virtContext, virtforce)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -741,9 +741,9 @@ void vpVirtuose::setObservationFrame (const vpPoseVector &position)
   position.extract(quaternion);
 
   for (int i=0; i<3; i++)
-    position_[i] = translation[i];
+    position_[i] = (float)translation[i];
   for (int i=0; i<4; i++)
-    position_[3+i] = quaternion[i];
+    position_[3 + i] = (float)quaternion[i];
 
   if (virtSetObservationFrame(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -815,9 +815,9 @@ void vpVirtuose::setPosition (vpPoseVector &position)
   position.extract(quaternion);
 
   for (int i=0; i<3; i++)
-    position_[i] = translation[i];
+    position_[i] = (float)translation[i];
   for (int i=0; i<4; i++)
-    position_[3+i] = quaternion[i];
+    position_[3+i] = (float)quaternion[i];
 
   if (virtSetPosition(m_virtContext, position_)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -892,7 +892,7 @@ void vpVirtuose::setVelocity (vpColVector &velocity)
 
   float speed[6];
   for(unsigned int i=0; i<6; i++)
-    speed[i] = velocity[i];
+    speed[i] = (float)velocity[i];
 
   if (virtSetSpeed(m_virtContext, speed)) {
     int err = virtGetErrorCode(m_virtContext);

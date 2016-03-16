@@ -63,7 +63,7 @@ int main()
     vpVirtuose virtuose;
     virtuose.setVerbose(true);
 
-	float period = 0.001f;
+    float period = 0.001f;
     virtuose.setTimeStep(period);
 
     virtuose.setPeriodicFunction(CallBackVirtuose,period,virtuose);
@@ -84,6 +84,7 @@ int main()
     }
 
     virtuose.setPowerOn(0);
+    std::cout << "The end" << std::endl;
   }
   catch(vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
