@@ -165,7 +165,9 @@ vpColVector vpVirtuose::getArticularVelocity() const
 
 /*!
  * Return the indexed position of the end-effector, expressed in the coordinates of the environment reference frame.
- * With respect to the function getPosition(), getAvatarPosition() takes into account current offsets (indexing) and motor scale factors.
+ * With respect to the function getPosition(), getAvatarPosition() takes into account current offsets
+ * (indexing) and motor scale factors.
+ * \sa getPosition(), getPhysicalPosition()
  */
 vpPoseVector vpVirtuose::getAvatarPosition() const
 {
@@ -202,7 +204,7 @@ vpPoseVector vpVirtuose::getAvatarPosition() const
  * Return the current position of the base frame
  * with respect to the observation reference frame.
  *
- * \sa getObservationFrame()
+ * \sa setBaseFrame(), getObservationFrame()
  */
 vpPoseVector vpVirtuose::getBaseFrame() const
 {
@@ -255,7 +257,8 @@ VirtCommandType vpVirtuose::getCommandType() const
 }
 
 /*!
- * Return the status of DeadMan sensor : 1 if the sensor is ON (a user is holding the handle) and 0 if the sensor is OFF (no user detected).
+ * Return the status of DeadMan sensor : true if the sensor is ON (a user is holding the handle)
+ * and false if the sensor is OFF (no user detected).
  */
 bool vpVirtuose::getDeadMan() const
 {
@@ -263,13 +266,13 @@ bool vpVirtuose::getDeadMan() const
     throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
-  int deadman;
-  virtGetDeadMan(m_virtContext, &deadman);
+  int deadman virtGetDeadMan(m_virtContext, &deadman);
   return (deadman ? true : false);
 }
 
 /*!
- * Return force tensor to be applied to the object attached to the Virtuose, allowing the dynamic simulation of the scene.
+ * Return the 6-dimension force tensor to be applied to the object attached to the Virtuose,
+ * allowing the dynamic simulation of the scene.
  */
 vpColVector vpVirtuose::getForce() const
 {
@@ -327,10 +330,10 @@ VirtContext vpVirtuose::getHandler() {
 }
 
 /*!
- * Return the current position of the observation reference frame
+ * Return the cartesian current position of the observation reference frame
  * with respect to the environment reference frame.
  *
- * \sa getBaseFrame()
+ * \sa setObservationFrame(), getBaseFrame()
  */
 vpPoseVector vpVirtuose::getObservationFrame () const
 {
@@ -363,7 +366,8 @@ vpPoseVector vpVirtuose::getObservationFrame () const
 }
 
 /*!
- * Return the physical position of the Virtuose expressed in the coordinates of the base reference frame.
+ * Return the cartesian physical position of the Virtuose expressed in the coordinates of the base reference frame.
+ * \sa getAvatarPosition(), getPosition()
  */
 vpPoseVector vpVirtuose::getPhysicalPosition() const
 {
@@ -396,7 +400,10 @@ vpPoseVector vpVirtuose::getPhysicalPosition() const
 }
 
 /*!
- * Return the physical velocity of the Virtuose expressed in the coordinates of the base reference frame.
+ * Return the physical cartesian velocity twist of the Virtuose expressed in the coordinates of
+ * the base reference frame.
+ * \return A 6-dimension velocity twist with 3 translation velocities and 3 rotation velocities.
+ * \sa getVelocity()
  */
 vpColVector vpVirtuose::getPhysicalVelocity() const
 {
@@ -417,7 +424,9 @@ vpColVector vpVirtuose::getPhysicalVelocity() const
 }
 
 /*!
- * Return position of the virtuose (or the object attached to it, if any) expressed in the coordinates of the environment reference frame.
+ * Return the cartesian position of the virtuose (or the object attached to it, if any) expressed
+ * in the coordinates of the environment reference frame.
+ * \sa getAvatarPosition(), getPhysicalPosition()
  */
 vpPoseVector vpVirtuose::getPosition() const
 {
@@ -464,7 +473,10 @@ bool vpVirtuose::getPower () const
 }
 
 /*!
- * Return velocity of the virtuose (or the object attached to it, if any) expressed in the coordinates of the environment reference frame.
+ * Return the cartesian velocity twist of the virtuose (or the object attached to it, if any)
+ * expressed in the coordinates of the environment reference frame.
+ * \return A 6-dimension velocity twist with 3 translation velocities and 3 rotation velocities.
+ * \sa getPhysicalVelocity()
  */
 vpColVector vpVirtuose::getVelocity() const
 {
@@ -545,7 +557,7 @@ void vpVirtuose::setArticularForce (const vpColVector &articularForce)
 
 /*!
  * Send a command of articular (joint) position to the virtuose.
- * setArticularPosition only works in COMMAND_TYPE_ARTICULAR mode, to be set with setCommandType().
+ * This function works only in COMMAND_TYPE_ARTICULAR mode, to be set with setCommandType().
  * \param articularPosition : Six dimension joint position vector.
  */
 void vpVirtuose::setArticularPosition (const vpColVector &articularPosition)
@@ -571,7 +583,7 @@ void vpVirtuose::setArticularPosition (const vpColVector &articularPosition)
 
 /*!
  * Send a command of articular (joint) velocity to the virtuose.
- * setArticularVelocity only works in COMMAND_TYPE_ARTICULAR mode, to be set with setCommandType().
+ * This function works only in COMMAND_TYPE_ARTICULAR mode, to be set with setCommandType().
  * \param articularVelocity : Six dimension joint velocity vector.
  */
 void vpVirtuose::setArticularVelocity (const vpColVector &articularVelocity)
@@ -600,7 +612,7 @@ void vpVirtuose::setArticularVelocity (const vpColVector &articularVelocity)
  * It can be called at any time.
  * \param position : Position of the base frame.
  *
- * \sa setObservationFrame()
+ * \sa getBaseFrame(), setObservationFrame()
  */
 void vpVirtuose::setBaseFrame (const vpPoseVector &position)
 {
@@ -627,7 +639,7 @@ void vpVirtuose::setBaseFrame (const vpPoseVector &position)
 
 /*!
  * Set the command type.
- * \param type : Possible values are COMMAND_TYPE_NONE, COMMAND_TYPE_IMPEDANCE, COMMAND_TYPE_ARTICULAR, COMMAND_TYPE_ARTICULAR_IMPEDANCE, COMMAND_TYPE_VIRTMECH
+ * \param type : Possible values:
  * - COMMAND_TYPE_NONE : No possible movement.
  * - COMMAND_TYPE_IMPEDANCE : Force/position control.
  * - COMMAND_TYPE_VIRTMECH : Position/force control with virtual mechanism.
@@ -692,11 +704,11 @@ void vpVirtuose::setForceFactor (const float &forceFactor)
 
 /*!
  * Set indexing (offset) mode.
- * \param type : Possible choices: INDEXING_ALL, INDEXING_TRANS, INDEXING_NONE.
+ * \param type : Possible choices are:
  * - INDEXING_ALL : authorize indexing on all movements.
  * - INDEXING_TRANS : authorize indexing on translation, i.e., the orientation of the object is always identical to the orientation of the device end-effector.
  * - INDEXING_NONE : forbids indexing on all movements.
- * The following values are also implemented: INDEXING_ALL_FORCE_FEEDBACK_INHIBITION, INDEXING_TRANS_FORCE_FEEDBACK_INHIBITION.
+ * - The following values are also implemented: INDEXING_ALL_FORCE_FEEDBACK_INHIBITION, INDEXING_TRANS_FORCE_FEEDBACK_INHIBITION.
  * These values correspond to the same modes listed before, but the force feedback is inhibited during indexing.
  */
 void vpVirtuose::setIndexingMode (const VirtIndexingType &type)
@@ -715,7 +727,7 @@ void vpVirtuose::setIndexingMode (const VirtIndexingType &type)
  * It can be called at any time.
  * \param position : Position of the observation frame.
  *
- * \sa setBaseFrame()
+ * \sa getObservationFrame(), setBaseFrame()
  */
 void vpVirtuose::setObservationFrame (const vpPoseVector &position)
 {
@@ -746,15 +758,16 @@ void vpVirtuose::setObservationFrame (const vpPoseVector &position)
  * The callback function is synchronized with the Virtuose controller (messages arrive at very constant time intervals from it)
  * and generates hardware interrupts to be taken into account by the operating system.
  * In practice, this function is much more efficient for timing the simulation than common software timers.
- * This function is started using startLoop() and stopped using stopLoop().
+ * This function is started using startPeriodicFunction() and stopped using stopPeriodicFunction().
  * \param CallBackVirt : Callback function.
  * \param period : Timing period, given in seconds.
  * \param virtuose : Parameter to be used by the callback function.
  *
  * Example of the use of the periodic function:
  \code
+#include <visp3/robot/vpVirtuose.h>
 
- void CallBackVirtuose(VirtContext VC, void* ptr)
+void CallBackVirtuose(VirtContext VC, void* ptr)
 {
   (void) VC;
   vpVirtuose* p_virtuose=(vpVirtuose*)ptr;
@@ -764,14 +777,16 @@ void vpVirtuose::setObservationFrame (const vpPoseVector &position)
 
 int main()
 {
-    vpVirtuose virtuose;
-    float period = 0.001;
-    virtuose.setTimeStep(period);
-    virtuose.setPeriodicFunction(CallBackVirtuose,period,virtuose);
-    virtuose.startPeriodicFunction();
-    virtuose.stopPeriodicFunction();
+  vpVirtuose virtuose;
+  float period = 0.001;
+  virtuose.setTimeStep(period);
+  virtuose.setPeriodicFunction(CallBackVirtuose, period, virtuose);
+  virtuose.startPeriodicFunction();
+  virtuose.stopPeriodicFunction();
 }
  \endcode
+
+ \sa startPeriodicFunction(), stopPeriodicFunction()
  */
 void vpVirtuose::setPeriodicFunction(VirtPeriodicFunction CallBackVirt, float &period, vpVirtuose &virtuose)
 {
