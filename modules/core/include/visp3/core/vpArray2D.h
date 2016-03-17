@@ -320,56 +320,81 @@ public:
       return false;
     }
 
-    else {
-      if (!binary) {
-        char c='0';
-        std::string h;
-        while ((c != '\0') && (c != '\n')) {
-          file.read(&c,1);
-          h+=c;
+    if (!binary) {
+      std::string h;
+      bool headerIsDecoded = false;
+      do {
+        std::streampos pos = file.tellg();
+        char line[256];
+        file.getline(line, 256);
+        std::string prefix("# ");
+        std::string line_(line);
+        if (line_.compare(0, 2, "# ") == 0) {
+          // Line is a comment
+          // If we are not on the first line, we should add "\n" to the end of the previous line
+          if (pos)
+            h += "\n";
+          h += line_.substr(2); // Remove "# "
         }
-        if (header != NULL)
-          strncpy(header, h.c_str(), h.size() + 1);
+        else {
+          // rewind before the line
+          file.seekg (pos, file.beg);
+          headerIsDecoded = true;
+        }
+      } while(! headerIsDecoded);
 
-        unsigned int rows, cols;
-        file >> rows;
-        file >> cols;
+      if (header != NULL) {
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+        sprintf(header, "%s", h.c_str());
+#else
+        _snprintf_s(header, h.size()+1, _TRUNCATE, "%s", h.c_str());
+#endif
+      }
 
-        if (rows > (std::numeric_limits<unsigned int>::max)()
-            || cols > (std::numeric_limits<unsigned int>::max)())
-          throw vpException(vpException::badValue, "Array exceed the max size.");
+      unsigned int rows, cols;
+      file >> rows;
+      file >> cols;
 
-        A.resize(rows,cols);
+      if (rows > (std::numeric_limits<unsigned int>::max)()
+          || cols > (std::numeric_limits<unsigned int>::max)())
+        throw vpException(vpException::badValue, "Array exceed the max size.");
 
-        Type value;
-        for(unsigned int i = 0; i < rows; i++) {
-          for(unsigned int j = 0; j < cols; j++) {
-            file >> value;
-            A[i][j] = value;
-          }
+      A.resize(rows,cols);
+
+      Type value;
+      for(unsigned int i = 0; i < rows; i++) {
+        for(unsigned int j = 0; j < cols; j++) {
+          file >> value;
+          A[i][j] = value;
         }
       }
-      else {
-        char c='0';
-        std::string h;
-        while ((c != '\0') && (c != '\n')) {
-          file.read(&c,1);
-          h+=c;
-        }
-        if (header != NULL)
-          strncpy(header, h.c_str(), h.size() + 1);
+    }
+    else {
+      char c='0';
+      std::string h;
+      // Decode header until '\0' char that ends the header string
+      while ((c != '\0')) {
+        file.read(&c,1);
+        h+=c;
+      }
+      if (header != NULL) {
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+        sprintf(header, "%s", h.c_str());
+#else
+        _snprintf_s(header, h.size()+1, _TRUNCATE, "%s", h.c_str());
+#endif
+      }
 
-        unsigned int rows, cols;
-        file.read((char*)&rows,sizeof(unsigned int));
-        file.read((char*)&cols,sizeof(unsigned int));
-        A.resize(rows,cols);
+      unsigned int rows, cols;
+      file.read((char*)&rows, sizeof(unsigned int));
+      file.read((char*)&cols, sizeof(unsigned int));
+      A.resize(rows,cols);
 
-        Type value;
-        for(unsigned int i = 0; i < rows; i++) {
-          for(unsigned int j = 0; j < cols; j++) {
-            file.read((char*)&value,sizeof(Type));
-            A[i][j] = value;
-          }
+      Type value;
+      for(unsigned int i = 0; i < rows; i++) {
+        for(unsigned int j = 0; j < cols; j++) {
+          file.read((char*)&value, sizeof(Type));
+          A[i][j] = value;
         }
       }
     }
@@ -443,8 +468,14 @@ public:
       }
     }
 
-    if (header != NULL)
-      strncpy(header, h.substr(0,h.length()-1).c_str(), h.size());
+    if (header != NULL) {
+      std::string h_ = h.substr(0, h.size() - 1); // Remove last '\n' char
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+      sprintf(header, "%s", h_.c_str());
+#else
+      _snprintf_s(header, h_.size()+1, _TRUNCATE, "%s", h_.c_str());
+#endif
+    }
 
     file.close();
     return true;
@@ -480,36 +511,33 @@ public:
       return false;
     }
 
-    else {
-      if (!binary) {
-        unsigned int i = 0;
-        file << "# ";
-        while (header[i] != '\0') {
-          file << header[i];
-          if (header[i] == '\n')
-            file << "# ";
-          i++;
-        }
-        file << '\0';
-        file << std::endl;
-        file << A.getRows() << "\t" << A.getCols() << std::endl;
-        file << A << std::endl;
+    if (!binary) {
+      unsigned int i = 0;
+      file << "# ";
+      while (header[i] != '\0') {
+        file << header[i];
+        if (header[i] == '\n')
+          file << "# ";
+        i++;
       }
-      else {
-        int headerSize = 0;
-        while (header[headerSize] != '\0') headerSize++;
-        file.write(header,headerSize+1);
-        unsigned int matrixSize;
-        matrixSize = A.getRows();
-        file.write((char*)&matrixSize,sizeof(int));
-        matrixSize = A.getCols();
-        file.write((char*)&matrixSize,sizeof(int));
-        Type value;
-        for(unsigned int i = 0; i < A.getRows(); i++) {
-          for(unsigned int j = 0; j < A.getCols(); j++) {
-            value = A[i][j];
-            file.write((char*)&value,sizeof(Type));
-          }
+      file << std::endl;
+      file << A.getRows() << "\t" << A.getCols() << std::endl;
+      file << A << std::endl;
+    }
+    else {
+      int headerSize = 0;
+      while (header[headerSize] != '\0') headerSize++;
+      file.write(header, headerSize+1);
+      unsigned int matrixSize;
+      matrixSize = A.getRows();
+      file.write((char*)&matrixSize, sizeof(unsigned int));
+      matrixSize = A.getCols();
+      file.write((char*)&matrixSize, sizeof(unsigned int));
+      Type value;
+      for(unsigned int i = 0; i < A.getRows(); i++) {
+        for(unsigned int j = 0; j < A.getCols(); j++) {
+          value = A[i][j];
+          file.write((char*)&value, sizeof(Type));
         }
       }
     }
