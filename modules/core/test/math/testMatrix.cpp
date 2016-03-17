@@ -101,29 +101,60 @@ main()
       N.init(M, 0, 1, 2, 3);
       std::cout <<"N ";
       N.print (std::cout, 4);
+      std::string header("My 4-by-5 matrix\nwith a second line");
 
-      if (vpMatrix::saveMatrix("matrix.mat", M, false, "My 4-by-5 matrix"))
+      // Save matrix in text format
+      if (vpMatrix::saveMatrix("matrix.mat", M, false, header.c_str()))
         std::cout << "Matrix saved in matrix.mat file" << std::endl;
       else
         return err;
 
+      // Load matrix in text format
       vpMatrix M1;
-      if (vpMatrix::loadMatrix("matrix.mat", M1, false))
-        std::cout << "Matrix loaded from matrix.mat file: \n" << M1 << std::endl;
+      char header_[100];
+      if (vpMatrix::loadMatrix("matrix.mat", M1, false, header_))
+        std::cout << "Matrix loaded from matrix.mat file with header \"" << header_ << "\": \n" << M1 << std::endl;
+      else
+        return err;
+      if (header != std::string(header_)) {
+        std::cout << "Bad header in matrix.mat" << std::endl;
+        return err;
+      }
+
+      // Save matrix in binary format
+      if (vpMatrix::saveMatrix("matrix.bin", M, true, header.c_str()))
+        std::cout << "Matrix saved in matrix.bin file" << std::endl;
       else
         return err;
 
-      if (vpMatrix::saveMatrixYAML("matrix.yml", M, "My 4-by-5 matrix"))
+      // Load matrix in binary format
+      if (vpMatrix::loadMatrix("matrix.bin", M1, true, header_))
+        std::cout << "Matrix loaded from matrix.bin file with header \"" << header_ << "\": \n" << M1 << std::endl;
+      else
+        return err;
+      if (header != std::string(header_)) {
+        std::cout << "Bad header in matrix.bin" << std::endl;
+        return err;
+      }
+
+      // Save matrix in YAML format
+      if (vpMatrix::saveMatrixYAML("matrix.yml", M, header.c_str()))
         std::cout << "Matrix saved in matrix.yml file" << std::endl;
       else
         return err;
 
+      // Read matrix in YAML format
       vpMatrix M2;
-      if (vpMatrix::loadMatrixYAML("matrix.yml", M2))
-        std::cout << "Matrix loaded from matrix.yml file: \n" << M2 << std::endl;
+      if (vpMatrix::loadMatrixYAML("matrix.yml", M2, header_))
+        std::cout << "Matrix loaded from matrix.yml file with header \"" << header_ << "\": \n" << M2 << std::endl;
       else
         return err;
+      if (header != std::string(header_)) {
+        std::cout << "Bad header in matrix.mat" << std::endl;
+        return err;
+      }
     }
+
     {
       vpRotationMatrix R(vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
       std::cout << "R: \n" << R << std::endl;
@@ -269,6 +300,8 @@ main()
       //realise the operation D = 2 * M^T * N + 3 C
       vpGEMM(M, N, 2, C, 3, D, VP_GEMM_A_T);
       std::cout << D << std::endl;
+
+      std::cout << "All tests succeed" << std::endl;
       return 0;
     }
   }
