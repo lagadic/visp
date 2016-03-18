@@ -55,7 +55,7 @@ int main()
     vpVirtuose virtuose;
     virtuose.setVerbose(true);
     virtuose.setCommandType(COMMAND_TYPE_IMPEDANCE);
-    virtuose.setPowerOn(1);
+    virtuose.setPowerOn();
 //    virtuose.setSaturation(1.0f,0.0f);
 
     vpColVector virt_velocity;
@@ -136,6 +136,7 @@ int main()
       vpTime::wait(10);
     }
     robot.stopMotion();
+    virtuose.setPowerOff();
     std::cout << "The end" << std::endl;
   }
   catch(vpException &e) {
