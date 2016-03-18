@@ -634,7 +634,7 @@ vpPlot::resetPointList (const unsigned int graphNum, const unsigned int curveNum
 void vpPlot::saveData(const unsigned int graphNum, const std::string &dataFile, const std::string &title_prefix)
 {
   std::ofstream fichier;
-  fichier.open(dataFile);
+  fichier.open(dataFile.c_str());
 
   unsigned int ind;
   double *p = new double[3];
