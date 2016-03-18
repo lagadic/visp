@@ -43,8 +43,6 @@
   Hard springs are applied to rotations (only translations are allowed).
 */
 
-#include <unistd.h>
-
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpVirtuose.h>
 
