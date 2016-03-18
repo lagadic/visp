@@ -103,7 +103,7 @@ int main()
     virtuose.setTimeStep(period);
     virtuose.setIpAddress("localhost#5000");
     virtuose.setVerbose(true);
-    virtuose.setPowerOn(1);
+    virtuose.setPowerOn();
 
     // setArticularForce only works in COMMAND_TYPE_ARTICULAR_IMPEDANCE.
     virtuose.setCommandType(COMMAND_TYPE_ARTICULAR_IMPEDANCE);
@@ -140,7 +140,7 @@ int main()
     //  Min Joint values: -0.8011951447  -1.648244739  0.7439950705  -3.022218227  -1.260564089  -2.054088593
 */
 
-    virtuose.setPeriodicFunction(CallBackVirtuose, period, virtuose);
+    virtuose.setPeriodicFunction(CallBackVirtuose);
     virtuose.startPeriodicFunction();
 
     int counter = 0;
@@ -150,7 +150,7 @@ int main()
       if (counter>=10)
       {
         virtuose.stopPeriodicFunction();
-        virtuose.setPowerOn(0);
+        virtuose.setPowerOff();
         swtch = false;
       }
       counter++;

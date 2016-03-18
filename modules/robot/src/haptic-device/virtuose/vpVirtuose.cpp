@@ -55,7 +55,7 @@ vpVirtuose::vpVirtuose()
     m_apiMajorVersion(0), m_apiMinorVersion(0),
     m_ctrlMajorVersion(0), m_ctrlMinorVersion(0),
     m_typeCommand(COMMAND_TYPE_IMPEDANCE), m_indexType(INDEXING_ALL),
-    m_is_init(false)
+    m_is_init(false), m_period(0.001f)
 {
   virtAPIVersion(&m_apiMajorVersion, &m_apiMinorVersion);
   std::cout << "API version: " << m_apiMajorVersion << "." << m_apiMinorVersion << std::endl;
@@ -266,8 +266,32 @@ bool vpVirtuose::getDeadMan() const
     throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
-  int deadman = virtGetDeadMan(m_virtContext, &deadman);
+  int deadman;
+  if (virtGetDeadMan(m_virtContext, &deadman)) {
+    int err = virtGetErrorCode(m_virtContext);
+    throw(vpException(vpException::fatalError,
+                      "Error calling virtGetDeadMan: error code %d", err));
+  }
   return (deadman ? true : false);
+}
+
+/*!
+ * Return the status of the emergency stop button : true if the system is operational (button correctly plugged and not triggered)
+ * and false if the system is not operational (button not plugged or triggered).
+ */
+bool vpVirtuose::getEmergencyStop() const
+{
+  if (!m_is_init) {
+    throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
+  }
+
+  int emergencyStop;
+  if (virtGetEmergencyStop(m_virtContext, &emergencyStop)) {
+    int err = virtGetErrorCode(m_virtContext);
+    throw(vpException(vpException::fatalError,
+                      "Error calling virtGetEmergencyStop: error code %d", err));
+  }
+  return (emergencyStop ? true : false);
 }
 
 /*!
@@ -520,11 +544,19 @@ void vpVirtuose::init()
     if (m_verbose) {
       std::cout << "Controller version: " << m_ctrlMajorVersion << "." << m_ctrlMinorVersion << std::endl;
     }
+
     if (virtSetCommandType(m_virtContext, m_typeCommand)) {
       int err = virtGetErrorCode(m_virtContext);
       throw(vpException(vpException::fatalError, "Cannot set haptic device command type: %s",
                         virtGetErrorMessage(err)));
     }
+
+    if (virtSetTimeStep(m_virtContext, m_period)) {
+      int err = virtGetErrorCode(m_virtContext);
+      throw(vpException(vpException::fatalError,
+                        "Error calling virtSetTimeStep: error code %d", err));
+    }
+
     m_is_init = true;
   }
 }
@@ -715,10 +747,14 @@ void vpVirtuose::setIndexingMode (const VirtIndexingType &type)
 {
   init();
 
-  if (virtSetIndexingMode(m_virtContext, type)) {
-    int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling setIndexingMode: error code %d", err));
+  if (m_indexType != type){
+    m_indexType = type;
+
+    if (virtSetIndexingMode(m_virtContext, m_indexType)) {
+      int err = virtGetErrorCode(m_virtContext);
+      throw(vpException(vpException::fatalError,
+                        "Error calling setIndexingMode: error code %d", err));
+    }
   }
 }
 
@@ -760,8 +796,6 @@ void vpVirtuose::setObservationFrame (const vpPoseVector &position)
  * In practice, this function is much more efficient for timing the simulation than common software timers.
  * This function is started using startPeriodicFunction() and stopped using stopPeriodicFunction().
  * \param CallBackVirt : Callback function.
- * \param period : Timing period, given in seconds.
- * \param virtuose : Parameter to be used by the callback function.
  *
  * Example of the use of the periodic function:
  \code
@@ -788,11 +822,11 @@ int main()
 
  \sa startPeriodicFunction(), stopPeriodicFunction()
  */
-void vpVirtuose::setPeriodicFunction(VirtPeriodicFunction CallBackVirt, float &period, vpVirtuose &virtuose)
+void vpVirtuose::setPeriodicFunction(VirtPeriodicFunction CallBackVirt)
 {
   init();
 
-  if (virtSetPeriodicFunction(m_virtContext, CallBackVirt, &period, &virtuose)) {
+  if (virtSetPeriodicFunction(m_virtContext, CallBackVirt, &m_period, this)) {
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError,
                       "Error calling virtSetPeriodicFunction: error code %d", err));
@@ -826,15 +860,29 @@ void vpVirtuose::setPosition (vpPoseVector &position)
   }
 }
 
+
 /*!
- * Set the motor power.
- * \param power : When set to 1 turns the motors on. When 0 turns them off.
+ * Turn the motor power OFF.
  */
-void vpVirtuose::setPowerOn (const int &power)
+void vpVirtuose::setPowerOff ()
 {
   init();
 
-  if (virtSetPowerOn(m_virtContext, power)) {
+  if (virtSetPowerOn(m_virtContext, 0)) {
+    int err = virtGetErrorCode(m_virtContext);
+    throw(vpException(vpException::fatalError,
+                      "Error calling virtSetPowerOff: error code %d", err));
+  }
+}
+
+/*!
+ * Turn the motor power ON.
+ */
+void vpVirtuose::setPowerOn ()
+{
+  init();
+
+  if (virtSetPowerOn(m_virtContext, 1)) {
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError,
                       "Error calling virtSetPowerOn: error code %d", err));
@@ -866,12 +914,14 @@ void vpVirtuose::setTimeStep (const float &timeStep)
 {
   init();
 
-  if (virtSetTimeStep(m_virtContext, timeStep)) {
-    int err = virtGetErrorCode(m_virtContext);
-    throw(vpException(vpException::fatalError,
-                      "Error calling virtSetTimeStep: error code %d", err));
-    //    throw(vpException(vpException::fatalError,
-    //                      "Error calling virtSetTimeStep: %s", virtGetErrorMessage(err)));
+  if (m_period != timeStep){
+    m_period = timeStep;
+
+    if (virtSetTimeStep(m_virtContext, m_period)) {
+      int err = virtGetErrorCode(m_virtContext);
+      throw(vpException(vpException::fatalError,
+                        "Error calling virtSetTimeStep: error code %d", err));
+    }
   }
 }
 
