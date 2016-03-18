@@ -796,7 +796,6 @@ void vpVirtuose::setObservationFrame (const vpPoseVector &position)
  * In practice, this function is much more efficient for timing the simulation than common software timers.
  * This function is started using startPeriodicFunction() and stopped using stopPeriodicFunction().
  * \param CallBackVirt : Callback function.
- * \param virtuose : Parameter to be used by the callback function.
  *
  * Example of the use of the periodic function:
  \code
