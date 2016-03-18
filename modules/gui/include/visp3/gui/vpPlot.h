@@ -171,7 +171,7 @@ public:
     void resetPointList (const unsigned int graphNum);
     void resetPointList (const unsigned int graphNum, const unsigned int curveNum);
 
-    void saveData(const unsigned int graphNum, const char* dataFile);
+    void saveData(const unsigned int graphNum, const std::string &dataFile, const std::string &title_prefix="");
     void setColor (const unsigned int graphNum, const unsigned int curveNum, vpColor color);
     void setGraphThickness (const unsigned int graphNum, const unsigned int thickness);
     void setGridThickness (const unsigned int graphNum, const unsigned int thickness);

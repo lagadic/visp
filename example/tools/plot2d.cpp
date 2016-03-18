@@ -106,8 +106,8 @@ int main ()
     vpDisplay::getClick(plot.I);
 
     //Save the datas as text files
-    plot.saveData(0, "dataCos.txt");
-    plot.saveData(0, "dataSin.txt");
+    plot.saveData(0, "dataCos.txt", "# ");
+    plot.saveData(1, "dataSin.txt", "# ");
     return 0;
   }
   catch(vpException &e) {

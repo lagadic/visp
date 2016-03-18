@@ -613,20 +613,25 @@ vpPlot::resetPointList (const unsigned int graphNum, const unsigned int curveNum
 /*!
   This function enables to save in a text file all the plotted points of a graphic.
 
-  The first line of the text file is the graphic title. Then the points coordinates are given. If the graphic has to curves: 
-  - the first column corresponds to the x axis of the first curve
-  - the second column corresponds to the y axis of the first curve
-  - the third column corresponds to the z axis of the first curve
-  - the fourth column corresponds to the x axis of the second curve
-  - the fifth column corresponds to the y axis of the second curve
-  - the sixth column corresponds to the z axis of the second curve
+  The content of the file is the following:
+  - The first line of the text file is the graphic title prefixed by \e title_prefix.
+  - Then the successive points coordinates (x, y, z) are given for each curve. If the graphic has two curves:
+    - the first column corresponds to the x axis of the first curve
+    - the second column corresponds to the y axis of the first curve
+    - the third column corresponds to the z axis of the first curve
+    - the fourth column corresponds to the x axis of the second curve
+    - the fifth column corresponds to the y axis of the second curve
+    - the sixth column corresponds to the z axis of the second curve
 
-  The column are delimited thanks to tabultaions.
+  The columns are delimited thanks to tabulations.
 
+  \param title_prefix : Prefix introducted in the first line of the saved file. To exploit a posteriori the resulting curves:
+  - with gnuplot, set title_prefix to "# ".
+  - with Matlab, set title_prefix to "% ".
   \param graphNum : The index of the graph in the window. As the number of graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param dataFile : Name of the text file.
 */
-void vpPlot::saveData(const unsigned int graphNum, const char* dataFile)
+void vpPlot::saveData(const unsigned int graphNum, const std::string &dataFile, const std::string &title_prefix)
 {
   std::ofstream fichier;
   fichier.open(dataFile);
@@ -639,7 +644,7 @@ void vpPlot::saveData(const unsigned int graphNum, const char* dataFile)
   std::vector< std::list<double>::const_iterator > vec_iter_pointListy((graphList+graphNum)->curveNbr);
   std::vector< std::list<double>::const_iterator > vec_iter_pointListz((graphList+graphNum)->curveNbr);
 
-  fichier << (graphList+graphNum)->title << std::endl;
+  fichier << title_prefix << (graphList+graphNum)->title << std::endl;
 
   for(ind=0;ind<(graphList+graphNum)->curveNbr;ind++)
   {
