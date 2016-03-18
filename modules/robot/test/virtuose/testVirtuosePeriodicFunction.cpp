@@ -51,8 +51,10 @@ void CallBackVirtuose(VirtContext VC, void* ptr)
   (void) VC;
   vpVirtuose* p_virtuose=(vpVirtuose*)ptr;
 
-  vpPoseVector localPose = p_virtuose->getPosition();
-  std::cout << localPose.t() << std::endl;
+  vpPoseVector localPose = p_virtuose->getPhysicalPosition();
+  vpColVector  vel = p_virtuose->getPhysicalVelocity();
+  std::cout << "pose: " << localPose.t() << std::endl;
+  std::cout << "vel: " << vel.t() << std::endl;
 
   return;
 }
@@ -62,11 +64,7 @@ int main()
   try {
     vpVirtuose virtuose;
     virtuose.setVerbose(true);
-
-    float period = 0.001f;
-    virtuose.setTimeStep(period);
-
-    virtuose.setPeriodicFunction(CallBackVirtuose,period,virtuose);
+    virtuose.setPeriodicFunction(CallBackVirtuose);
     virtuose.startPeriodicFunction();
 
     int counter = 0;
@@ -78,12 +76,9 @@ int main()
         virtuose.stopPeriodicFunction();
         swtch = false;
       }
-
       counter++;
       vpTime::sleepMs(1000);
     }
-
-    virtuose.setPowerOn(0);
     std::cout << "The end" << std::endl;
   }
   catch(vpException &e) {

@@ -43,6 +43,8 @@
   Hard springs are applied to rotations (only translations are allowed).
 */
 
+#include <unistd.h>
+
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpVirtuose.h>
 
@@ -51,10 +53,10 @@
 void CallBackVirtuose(VirtContext VC, void* ptr)
 {
   (void) VC;
-  vpVirtuose* p_virtuose=(vpVirtuose*)ptr;
 
   static bool firstIteration = true;
   static vpPoseVector localPosition0;
+
   vpPoseVector localPosition;
   vpColVector forceFeedback(6,0);
   vpColVector finalForce(6,0);
@@ -62,14 +64,6 @@ void CallBackVirtuose(VirtContext VC, void* ptr)
   int force_limit = 15;
   int force_increase_rate = 500;
   float cube_size = 0.05f;
-
-  localPosition = p_virtuose->getPhysicalPosition();
-
-  if (firstIteration) {
-    localPosition0 = localPosition;
-    std::cout << "Initial position: " << localPosition0.t() << std::endl;
-    firstIteration = false;
-  }
 
   // Virtual spring to let the user know where the initial position is
   // Estimated Virtuose handle mass = 0.1;
@@ -92,34 +86,39 @@ void CallBackVirtuose(VirtContext VC, void* ptr)
   vpColVector zXZ(3,0);
   vpColVector xXY(3,0);
   vpTranslationVector tee;
-
   vpColVector omegad(3,0);
-
   vpRotationMatrix Qd;
   vpRotationMatrix Qee;
-
   vpPoseVector pee;
   vpColVector vee(6,0);
   vpColVector veed(6,0);
 
   double alpha;
 
-  vpColVector force1(3,0);
-  vpColVector force2(3,0);
-  vpColVector force3(3,0);
+  vpColVector torque1(3,0);
+  vpColVector torque2(3,0);
+  vpColVector torque3(3,0);
+
+  vpVirtuose* p_virtuose=(vpVirtuose*)ptr;
+  localPosition = p_virtuose->getPhysicalPosition();
+
+  if (firstIteration) {
+    localPosition0 = localPosition;
+    firstIteration = false;
+  }
 
   //  Position and velocity in of the ee expressed in the base frame
-  pee = p_virtuose->getPhysicalPosition();
-  vee = p_virtuose->getVelocity();
-
+  pee = localPosition;
+  vee = p_virtuose->getPhysicalVelocity();
   // Z axis = [pee_x pee_y 0]
   zd[0] = pee[0];
   zd[1] = pee[1];
-  zd = zd.normalize();
+  zd.normalize();
   // X axis = [0 0 1]
   xd[2] = 1;
   // Y axis from cross product
   yd = zd.skew(zd)*xd;
+
   // Current orientation of the ee frame
   pee.extract(Qee);
   pee.extract(tee);
@@ -131,11 +130,9 @@ void CallBackVirtuose(VirtContext VC, void* ptr)
   Qd[0][0] = xd[0];
   Qd[1][0] = xd[1];
   Qd[2][0] = xd[2];
-
   Qd[0][1] = yd[0];
   Qd[1][1] = yd[1];
   Qd[2][1] = yd[2];
-
   Qd[0][2] = zd[0];
   Qd[1][2] = zd[1];
   Qd[2][2] = zd[2];
@@ -173,7 +170,7 @@ void CallBackVirtuose(VirtContext VC, void* ptr)
   vpColVector forceDamp1= virtualDamperAng*(omegad*rotzYZ.normalize())*rotzYZ.normalize();
 
   for (unsigned int i=0; i<3; i++)
-    force1[i] = forceStiff1[i] - forceDamp1[i];
+    torque1[i] = forceStiff1[i] - forceDamp1[i];
 
   // Hard spring to keep Z axis of the ee frame pointing at the origin
   // Spring applied to the angle between the Z axis of the ee frame and its projection in the XZ (vertical) plane
@@ -183,27 +180,26 @@ void CallBackVirtuose(VirtContext VC, void* ptr)
   vpColVector forceDamp2 = virtualDamperAng*(omegad*rotzXZ.normalize())*rotzXZ.normalize();
 
   for (unsigned int i=0; i<3; i++)
-    force2[i] = forceStiff2[i] - forceDamp2[i];
+    torque2[i] = forceStiff2[i] - forceDamp2[i];
 
   // Hard spring for rotation around z axis of the ee
   xXY[0] = xeed[0];
   xXY[1] = xeed[1];
   vpColVector xdd(3,0);
   xdd[0]=1;
-
   vpColVector zdd(3,0);
   zdd[2]=1;
-
   vpColVector rotxXY(3,0);
   rotxXY = xdd.skew(xdd)*xXY.normalize();
   alpha = asin(rotxXY[2]);
+
   vpColVector forceStiff3 = virtualStiffnessAng*alpha*zdd;
   vpColVector forceDamp3 = virtualDamperAng2*(omegad*zdd)*zdd;
   for (unsigned int i=0; i<3; i++)
-    force3[i] = forceStiff3[i] - forceDamp3[i];
+    torque3[i] = forceStiff3[i] - forceDamp3[i];
 
   for (unsigned int j=0; j<3; j++)
-    forceEe[j+3] = force1[j] + force2[j]+force3[j];
+    forceEe[j+3] = torque1[j] + torque2[j]+torque3[j];
 
   forceEe = dFMb * forceEe;
 
@@ -233,11 +229,12 @@ void CallBackVirtuose(VirtContext VC, void* ptr)
 
   for (unsigned int j=0; j<6; j++)
     finalForce[j] = forceFeedback[j] + forceEe[j];
+
   // Set force feedback
   p_virtuose->setForce(finalForce);
+
   return;
 }
-
 
 int main()
 {
@@ -245,11 +242,8 @@ int main()
     vpVirtuose virtuose;
     virtuose.setIpAddress("localhost#5000");
     virtuose.setVerbose(true);
-
-    float period = 0.001f;
-    virtuose.setTimeStep(period);
-    virtuose.setPowerOn(1);
-    virtuose.setPeriodicFunction(CallBackVirtuose, period, virtuose);
+    virtuose.setPowerOn();
+    virtuose.setPeriodicFunction(CallBackVirtuose);
     virtuose.startPeriodicFunction();
 
     int counter = 0;
@@ -259,7 +253,7 @@ int main()
       if (counter>=10)
       {
         virtuose.stopPeriodicFunction();
-        virtuose.setPowerOn(0);
+        virtuose.setPowerOff();
         swtch = false;
       }
       counter++;

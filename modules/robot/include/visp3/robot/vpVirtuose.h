@@ -145,6 +145,7 @@ public:
   vpPoseVector getBaseFrame() const;
   VirtCommandType getCommandType() const;
   bool getDeadMan() const;
+  bool getEmergencyStop() const;
   vpColVector getForce() const;
   VirtContext getHandler();
   vpPoseVector getObservationFrame() const;
@@ -167,9 +168,10 @@ public:
   /*! Set haptic device ip address and port. Default value is "localhost#5000".*/
   inline void setIpAddress(const std::string &ip) {m_ip = ip;}
   void setObservationFrame (const vpPoseVector &position);
-  void setPeriodicFunction(VirtPeriodicFunction CallBackVirt, float &period, vpVirtuose &virtuose);
+  void setPeriodicFunction(VirtPeriodicFunction CallBackVirt);
   void setPosition(vpPoseVector &position);
-  void setPowerOn(const int &power);
+  void setPowerOff();
+  void setPowerOn();
   void setSaturation(const float &forceLimit, const float &torqueLimit);
   void setTimeStep(const float &timeStep);
   void setVelocity(vpColVector &velocity);
@@ -194,6 +196,7 @@ protected:
   VirtCommandType m_typeCommand;
   VirtIndexingType m_indexType;
   bool m_is_init;
+  float m_period;
 };
 
 #endif
