@@ -796,7 +796,7 @@ endmacro()
 # vp_add_tests([FILES <source group name> <list of sources>]
 #              [FILES_EXCLUDE <list of sources>]
 #              [DEPENDS_ON] <list of extra dependencies>
-#              [CTEST_EXCLUDE_FOLDER] <list of folder to exclude from ctest>)
+#              [CTEST_EXCLUDE_PATH] <list of folder to exclude from ctest>)
 macro(vp_add_tests)
   vp_debug_message("vp_add_tests(" ${ARGN} ")")
 
