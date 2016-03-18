@@ -119,4 +119,4 @@ vp_glob_module_copy_data("src/wireframe-simulator/scene/*.sld" data/wireframe-si
 
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests(DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui)
+vp_add_tests(DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui CTEST_EXCLUDE_PATH virtuose)
