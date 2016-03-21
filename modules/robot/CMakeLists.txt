@@ -57,9 +57,10 @@ if(USE_VIRTUOSE)
     list(APPEND opt_libs ${RT_LIBRARIES})
     list(APPEND opt_libs ${DL_LIBRARIES})
   endif()
-
-  # Work arround to remove warning LNK4099; PDB vc120.pdb not found with virtuoseDLL.lib
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /ignore:4099")
+  if(MSVC)
+    # Work arround to remove warning LNK4099; PDB vc120.pdb not found with virtuoseDLL.lib
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /ignore:4099")
+  endif()
 endif()
 
 if(USE_AFMA4 OR USE_AFMA6 OR USE_VIPER650 OR USE_VIPER850)
