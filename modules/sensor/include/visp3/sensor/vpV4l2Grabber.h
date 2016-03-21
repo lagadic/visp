@@ -70,7 +70,7 @@
 
   This class was tested with a Pinnacle PCTV Studio/Rave board but
   also with the following webcams (Logitech QuickCam Vision Pro 9000,
-  Logitech QuickCam Orbit AF, Dell latitude E6400 internal webcam).
+  Logitech QuickCam Orbit AF, Logitech QuickCam IM (V-USB39), Dell latitude E6400 internal webcam).
 
   If the grabbing fail with a webcam, it means probably that you don't
   have the read/write permission on the /dev/video%%d device. You can
