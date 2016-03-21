@@ -144,6 +144,11 @@ if(VISP_HAVE_PIONEER)
   set(BUILDNAME "${BUILDNAME}-aria")
 endif()
 
+# Add specific Haption Virtuose haptic device
+if(VISP_HAVE_VIRTUOSE)
+  set(BUILDNAME "${BUILDNAME}-virtuose")
+endif()
+
 #---- Framegrabers ----
 # Firewire dc1394-2.x 
 if(VISP_HAVE_DC1394)
