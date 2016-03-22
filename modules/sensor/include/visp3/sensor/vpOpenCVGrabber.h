@@ -60,8 +60,8 @@
 /*!
   \class vpOpenCVGrabber
 
-  \ingroup Framegrabber CameraDriver
-  
+  \ingroup group_sensor_camera
+
   \brief Class for cameras video capture using OpenCV library.
   \deprecated This class is deprecated can only be used with OpenCV < 2.4.8.
   
