@@ -76,7 +76,7 @@ In the previous example we use vp1394TwoGrabber class that works for firewire ca
 
 If you want to grab images from an usb camera under Unix, you may use vpV4l2Grabber class. To this end libv4l should be installed. An example is provided in tutorial-grabber-v4l2.cpp. 
 
-It is also possible to grab images using OpenCV. You may find examples in tutorial-grabber-opencv.cpp and tutorial-grabber-opencv-bis.cpp.
+It is also possible to grab images using OpenCV. You may find an example in tutorial-grabber-opencv.cpp.
 
 \section grabber-video-stream Images from a video stream
 

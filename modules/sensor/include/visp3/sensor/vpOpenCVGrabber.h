@@ -63,23 +63,47 @@
   \ingroup Framegrabber CameraDriver
   
   \brief Class for cameras video capture using OpenCV library.
+  \deprecated This class is deprecated can only be used with OpenCV < 2.4.8.
   
-  Needs OpenCV available on http://opencv.willowgarage.com/wiki/.
-  
-  The code below available in tutorial-grabber-opencv.cpp shows how to grab and
-  display images using OpenCV wrappers impremented in ViSP.
-  \include tutorial-grabber-opencv.cpp
-
-  Note that it is also possible to grab images using OpenCV library by using
+  \note Instead of using this class, it is also possible to grab images using OpenCV library by using
   directly OpenCV cv::VideoCapture class. The following code corresponding to
-  tutorial-grabber-opencv-bis.cpp shows how to grab images in a cv::Mat structure
+  tutorial-grabber-opencv.cpp shows how to grab images in a cv::Mat structure
   and then convert OpenCV images in ViSP images.
-  \include tutorial-grabber-opencv-bis.cpp
+  \include tutorial-grabber-opencv.cpp
+  The one in grabOpencv.cpp gives an other example.
 
-  An other example very close to the previous one available in grabOpenCV-2.cpp
-  shows how to grab images in OpenCV IplImage structure and then how to convert
-  OpenCV images in ViSP images.
+  The code below shows how to grab and
+  display images using this class.
+  \code
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/sensor/vpOpenCVGrabber.h>
 
+int main()
+{
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
+  try {
+    vpImage<unsigned char> I;
+
+    vpOpenCVGrabber g;
+    g.open(I);
+
+    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
+    vpDisplayOpenCV d(I);
+
+    while(1) {
+      g.acquire(I);
+      vpDisplay::display(I);
+      vpDisplay::flush(I);
+      if (vpDisplay::getClick(I, false))
+        break;
+    }
+  }
+  catch(vpException &e) {
+    std::cout << "Catch an exception: " << e << std::endl;
+  }
+#endif
+}
+  \endcode
  */
 class VISP_EXPORT vpOpenCVGrabber : public vpFrameGrabber
 {
