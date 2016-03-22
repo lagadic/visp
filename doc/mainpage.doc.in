@@ -231,8 +231,8 @@ scheme, ...</p>
 */
 /*!
   \ingroup group_core_tools
-  \defgroup group_core_mutex Mutex
-  Mutex.
+  \defgroup group_core_threading Multi threading
+  Capabilities to execute multiple threads concurrently and protect shared data thanks to mutexes.
 */
 /*!
   \ingroup group_core_tools

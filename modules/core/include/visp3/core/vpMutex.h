@@ -36,36 +36,68 @@
  *****************************************************************************/
 
 
-#ifndef __VP_MUTEX__
-#define __VP_MUTEX__
+#ifndef __vpMutex_h_
+#define __vpMutex_h_
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpException.h>
-#ifdef VISP_HAVE_PTHREAD
 
-#include <pthread.h>
+#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+
+#if defined(VISP_HAVE_PTHREAD)
+#  include <pthread.h>
+#elif defined(_WIN32)
+#  include <windows.h>
+#endif
 
 /*!
 
-  \class vpMutex
+   \class vpMutex
 
-  \ingroup group_core_mutex
+   \ingroup group_core_threading
 
-  \brief Class that allows protection by mutex.
+   Class that allows protection by mutex.
 
-  \warning This class needs the pthread third-party library.
+   This class implements native pthread functionalities if available, of native Windows threading
+   capabilities if pthread is not available under Windows.
 */
-class VISP_EXPORT vpMutex {
+class vpMutex {
 public:
   vpMutex() : m_mutex() {
-		pthread_mutex_init( &m_mutex, NULL );
-	}
+#if defined(VISP_HAVE_PTHREAD)
+    pthread_mutex_init( &m_mutex, NULL );
+#elif defined(_WIN32)
+    m_mutex = CreateMutex(
+      NULL,              // default security attributes
+      FALSE,             // initially not owned
+      NULL);             // unnamed mutex
+    if (m_mutex == NULL) {
+      printf("CreateMutex error: %d\n", GetLastError());
+      return;
+    }
+#endif
+  }
 	void lock() {
-		pthread_mutex_lock( &m_mutex );
-	}
+#if defined(VISP_HAVE_PTHREAD)
+    pthread_mutex_lock( &m_mutex );
+#elif defined(_WIN32)
+    DWORD dwWaitResult;
+    dwWaitResult = WaitForSingleObject(
+          m_mutex,    // handle to mutex
+          INFINITE);  // no time-out interval
+#endif
+  }
 	void unlock() {
-		pthread_mutex_unlock( &m_mutex );
-	}
+#if defined(VISP_HAVE_PTHREAD)
+    pthread_mutex_unlock( &m_mutex );
+#elif defined(_WIN32)
+  // Release ownership of the mutex object
+  if (!ReleaseMutex(m_mutex))
+  {
+    // Handle error.
+    printf("unlock() error: %d\n", GetLastError());
+  }
+#endif
+  }
 
 	/*!
 	  
@@ -102,9 +134,12 @@ public:
 		}
 	};
 private:
-	pthread_mutex_t m_mutex;
+#if defined(VISP_HAVE_PTHREAD)
+  pthread_mutex_t m_mutex;
+#elif defined(_WIN32)
+  HANDLE m_mutex;
+#endif
 };
 
 #endif
-
 #endif
