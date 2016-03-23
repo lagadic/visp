@@ -66,14 +66,15 @@ int main(int argc, const char* argv[])
       //! [Acquisition]
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
+      bool face_found = face_detector.detect(I);
 #else
       cap >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
+      bool face_found = face_detector.detect(frame); // We pass frame to avoid an internal image conversion
 #endif
       //! [Acquisition]
 
       vpDisplay::display(I);
-      bool face_found = face_detector.detect(I);
 
       if (face_found) {
         std::ostringstream text;
