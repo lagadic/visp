@@ -1,0 +1,155 @@
+
+/**
+  \page tutorial-multi-threading Tutorial: How to use multi-threading capabilities
+  \tableofcontents
+
+
+\section multi-threading-into Introduction
+
+After ViSP 3.0.0, we introduce a new cross-platform vpThread class that allows to execute a function in a separate thread. We also improve vpMutex class useful to protect shared data by mutexes to be cross-platform.
+
+The vpThread and vpMutex classes are wrappers over native pthread functionality when pthread is available. This is the case for all unix-like OS, including OSX and MinGW under Windows. If pthread is not available, we use Windows native functionality instead.
+
+\subsection multi-threading-into-thread Threading overview
+
+To use vpThread class you have first to include the corresponding header.
+\code
+#include <visp3/core/vpThread.h>
+\endcode
+
+With vpThread the prototype of the function that could be executed in a separate thread is the following:
+\code
+vpThread::Return myFooFunction(vpThread::Args args)
+\endcode
+where arguments passed to the function are of type vpThread::Args. This function should return a vpThread::Return type.
+
+Then to create the thread that executes this function, you have just to construct a vpThread object indicating which is the function to execute.
+- If you don't want to pass arguments to the function, just do like:
+\code
+vpThread foo(myFooFunction);
+\endcode
+
+- If you want to pass some arguments to the function, do rather like:
+\code
+int foo_arg = 3;
+vpThread foo(myFooFunction, (vpThread::Args)&foo_arg);
+\endcode
+This argument could then be exploited in myFooFunction()
+\code
+vpThread::Return myFooFunction(vpThread::Args args)
+{
+  int foo_arg = *((int *) args);
+}
+\endcode
+
+To illustrate this behavior, see testThread.cpp.
+
+\subsection multi-threading-into-mutex Mutexes overview
+
+To use vpMutex class you have first to include the corresponding header.
+\code
+#include <visp3/core/vpMutex.h>
+\endcode
+
+Then protecting a shared var from concurrent access could be done like:
+\code
+vpMutex mutex;
+int var = 0;
+
+mutex.lock();
+// var to protect from concurrent access
+var = 2;
+mutex.unlock();
+\endcode
+To illustrate this usage, see testMutex.cpp.
+
+There is also a more elegant way using vpMutex::vpScopedLock. The previous example becomes:
+\code
+vpMutex mutex;
+int var = 0;
+
+{
+  vpMutex::vpScopedLock lock(mutex);
+  // var to protect from concurrent access
+  var = 2;
+}
+\endcode
+
+Here, the vpMutex::vpScopedLock constructor locks the mutex, while the destructor unlocks. Using vpMutex::vpScopedLock, the scope of the portion of code that is protected is defined inside the brackets. To illustrate this usage, see tutorial-grabber-opencv-threaded.cpp.
+
+\section multi-threading-capture Multi-threaded capture and display
+
+The following example implemented in tutorial-grabber-opencv-threaded.cpp shows how to implement a multi-threaded application, where image capture is executed in one thread and image display in an other one. The capture is here performed thanks to OpenCV cv::VideoCapture class. It could be easily adapted to deal with other framegrabbers available in ViSP. In tutorial-grabber-v4l2-threaded.cpp you will find the same example using vpV4l2Grabber. To adapt the code to other framegrabbers see \ref tutorial-grabber.
+
+Hereafter we explain how tutorial-grabber-opencv-threaded.cpp works.
+
+\subsection multi-threading-capture-declaration Includes and declarations 
+
+First we include all ViSP headers corresponding to the classes we will use; vpImageConvert to convert OpenCV images in ViSP images, vpMutex to protect shared data between the threads, vpThread to create the threads, vpTime to handle the time, vpDisplayX to display images under unix-like OS, and vpDisplayGDI to display the images under Windows.
+
+Then if OpenCV 2.1.0 or higher is found we include OpenCV highgui.hpp header that brings cv::VideoCapture class that will be used in this example for image capture.
+
+We declare then the shared data with variable names prefixed by "s_" (\e s_frame_index, the number of the captured frame, \e s_frame_available, a boolean that will indicate if the capture thread is running ,  \e s_frame the image that is currently captured and \e s_mutex_frame, the mutex that will be used to protect from concurrent access to these shared variables).
+\snippet tutorial-grabber-opencv-threaded.cpp capture-multi-threaded declaration
+
+\subsection multi-threading-capture-function Capture thread
+
+Then we implement captureFunction(), the capture function that we want to run in a separate thread. As argument this function receives a reference over cv::VideoCapture object that was created in the \ref multi-threading-capture-main.
+
+\note We notice that cv::VideoCapture is unable to create an instance outside the \ref multi-threading-capture-main. That's why cv::VideoCapture object is passed throw the arguments of the function captureFunction(). With ViSP vp1394TwoGrabber, vp1394CMUGrabber, vpFlyCaptureGrabber, vpV4l2Grabber capture classes it would be possible to instantiate the object in the capture function.
+
+We check if the capture is able to found a camera thanks to \e cap.isOpened(), and start a 4 seconds capture loop that will fill \e frame_ with the image. Once an image is captured, we indicate that an image is available setting \e s_frame_available=true and updating other shared vars. After 4 seconds we turn \e s_frame_available=false indicating that the capture thread is ending.
+\snippet tutorial-grabber-opencv-threaded.cpp capture-multi-threaded captureFunction
+
+\subsection multi-threading-capture-display-function Display thread
+
+We implement then displayFunction() used to display the captured images. This function doesn't exploit any argument. Depending on the OS we create a display pointer over the class that we want to use (vpDisplayX or vpDisplayGDI). We enter then in a while loop that will end when no more images are available, meaning that the \ref multi-threading-capture-function is finished.
+
+In the display loop, with the mutex we create a copy of the shared variables \e s_frame_available and \e s_frame_index in order to manipulate their values later. When a new image is available we convert the OpenCV cv::mat image into a local ViSP image \e I. Since we access to the shared \e s_frame data, the conversion is protected by the mutex. Then with ViSP image \e I we initialize the display and turn \e display_initialized_ var on indicating that the display is already initialized. Next we update the display with the content of the image.
+When no new image is available, we just sleep for 2 milli-seconds.
+\snippet tutorial-grabber-opencv-threaded.cpp capture-multi-threaded displayFunction
+
+\subsection multi-threading-capture-main Main thread
+
+The main thread is the one that is implemented in the main() function.
+We manage first the command line option "--device <camera device>" to allow the user to select a specific camera when more then one camera are connected. Then as explained in \ref multi-threading-capture-function we need the create cv::VideoCapture object in the main(). Finally, captureFunction() and displayFunction() are started as two separate threads, one for the capture, an other one for the display using vpThread constructor.
+
+The call to join() is here to wait until capture and display thread ends to return from the main().  
+\snippet tutorial-grabber-opencv-threaded.cpp capture-multi-threaded mainFunction
+
+Once build, to run this tutorial just run in a terminal:
+\code
+cd <visp-build-tree>/tutorial/grabber
+./tutorial-grabber-opencv-threaded --help
+./tutorial-grabber-opencv-threaded --device 0
+\endcode
+
+where "--device 0" could be avoided since it is the default option.
+
+\section multi-threading-face-detection Extension to face detection
+
+The example given in the previous section \ref multi-threading-capture could be extended to introduce an image processing. In this section, we illustrate the case of the face detection described in \ref tutorial-detection-face and implemented in tutorial-face-detector-live.cpp as a single main thread. Now we propose to extend this example using multi-threading where face detection is achieved in a separate thread. The complete source code is given in tutorial-face-detector-live-threaded.cpp.
+
+Here after we give the changes that we introduce in tutorial-face-detector-live-threaded.cpp to add a new thread dedicated to the face detection.
+
+\subsection multi-threading-face-detection-function Face detection thread
+
+The function that does the face detection is implemented in detectionFunction().
+We first instantiate an object of type vpDetectorFace. Then in the while loop, we call the face detection function using face_detector_.detect() when a new image is available. When faces are found, we retrieve the bounding box of the first face that is the largest in the image. We update the shared \e s_face_bbox var with the bounding box. This var is then exploited in the display thread and displayed as a rectangle. 
+\snippet tutorial-face-detector-live-threaded.cpp face-detection-threaded detectionFunction
+
+\subsection multi-threading-face-detection-main Main thread
+
+The main() is modified to call the detectionFunction() in a third thread.
+\note Compared to the \ref multi-threading-capture-main used in tutorial-grabber-opencv-threaded.cpp, we modify here the main() to be able to capture images either from a webcam when Video For Linux 2 (V4L2) is available (only on Linux-like OS), or using OpenCV cv::VideoCapture when V4L2 is not available.
+
+\snippet tutorial-face-detector-live-threaded.cpp face-detection-threaded mainFunction
+
+To run the binary just open a terminal and run:
+\code
+cd <visp-build-tree>/tutorial/detection/face
+./tutorial-face-detector-live-threaded --help
+./tutorial-face-detector-live-threaded 
+\endcode
+
+*/

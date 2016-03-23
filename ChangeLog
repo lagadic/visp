@@ -16,6 +16,10 @@ ViSP 3.0.1 (in development)
       cameras (USB-3, firewire, GigE)
     . New vpVirtuose class, a wrapper over Haption Virtuose SDK that is
       provided with their haptic devices
+    . New cross platform multi-threading capabilities with vpMutex and
+      vpThread classes
+  - Tutorials
+    . New tutorial: How to use multi-threading capabilities
   - Bug fixed
     . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc
@@ -24,8 +28,10 @@ ViSP 3.0.1 (in development)
     . [#42] Fails to build on Fedora 23 with Coin3-devel
     . [#44] Reshape issue with vpRowVector or vpColVector
     . [#47] Build issue in vpMath.h around vpMath::sign()
-    . [#48] Fix vpPoseVector::getThetaUVector() to return the adequate
-            vector
+    . [#48] Fix vpPoseVector::getThetaUVector() to return the adequate vector
+    . [#54] Error in vpHomography::projection()
+    . [#59] Unable to use visp-config or visp-config.bat to build a project
+            without CMake
 
 ----------------------------------------------
 ViSP 3.0.0 (released December 18th, 2015)

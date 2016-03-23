@@ -117,6 +117,8 @@ href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/p
 
 - \ref tutorial-plotter <br>This tutorial explains how to plot curves in real-time during a visual servo.
 - \ref tutorial-trace <br>This tutorial explains how to introduce trace in the code that could be enabled for debugging or disabled.
+- \ref tutorial-multi-threading <br>This tutorial explains how to implement multi-threaded applications to capture images from a camera
+in one thread and display these images in an other thread.
 
 \section Examples_sec Using ViSP
 

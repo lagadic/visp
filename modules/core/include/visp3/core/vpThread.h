@@ -19,12 +19,14 @@
    \ingroup group_core_threading
 
    Class to represent individual threads of execution.
-   This class implements native pthread functionalities if available, of native Windows threading
+   This class implements native pthread functionalities if available, or native Windows threading
    capabilities if pthread is not available under Windows.
 
-   There are two examples implemented in testMutex.cpp and testThread.cpp to show how to use this class. The content of test-thread.cpp
-   that hightlights the main functionalities of this class is given hereafter:
+   There are two examples implemented in testMutex.cpp and testThread.cpp to show how to use this class.
+   The content of test-thread.cpp that hightlights the main functionalities of this class is given hereafter:
    \snippet testThread.cpp Code
+
+   More examples are provided in \ref tutorial-multi-threading.
  */
 class vpThread
 {
@@ -67,12 +69,12 @@ public:
   void create(vpThread::Fn fn, vpThread::Args args=NULL)
   {
     if (m_isCreated)
-      vpException::vpException(vpException::fatalError, "The thread is already created");
+      throw vpException(vpException::fatalError, "The thread is already created");
 #if defined(VISP_HAVE_PTHREAD)
     int err = pthread_create(&m_handle, NULL, fn, args);
     if (err != 0) {
-      vpException::vpException(vpException::cannotUseConstructorError,
-                               "Can't create thread : %s", strerror(err));
+      throw vpException(vpException::cannotUseConstructorError,
+                        "Can't create thread : %s", strerror(err));
     }
 #elif defined(_WIN32)
     DWORD   dwThreadIdArray;

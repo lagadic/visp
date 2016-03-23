@@ -10,6 +10,14 @@ int main()
     vpImage<unsigned char> I;
 
     vpV4l2Grabber g;
+    g.setScale(1);   // Default value is 2 in the constructor. Turn it to 1 to avoid subsampling
+    int width = g.getWidth();
+    int height = g.getHeight();
+    if (width > 640)
+      g.setWidth(width/2);
+    if (height > 480)
+      g.setHeight(height/2);
+
     g.open(I);
 
     std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;

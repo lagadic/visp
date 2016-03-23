@@ -35,7 +35,7 @@ int main(int argc, const char* argv[])
     std::ostringstream device;
     device << "/dev/video" << opt_device;
     g.setDevice(device.str());
-    g.setScale(2);
+    g.setScale(1);   // Default value is 2 in the constructor. Turn it to 1 to avoid subsampling
     g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
     cv::VideoCapture cap(opt_device); // open the default camera

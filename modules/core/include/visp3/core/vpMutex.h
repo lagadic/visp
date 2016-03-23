@@ -59,6 +59,12 @@
 
    This class implements native pthread functionalities if available, of native Windows threading
    capabilities if pthread is not available under Windows.
+
+   An example of vpMutex usage is given in testMutex.cpp.
+
+   More examples are provided in \ref tutorial-multi-threading.
+
+   \sa vpScopedLock
 */
 class vpMutex {
 public:
@@ -99,20 +105,54 @@ public:
 #endif
   }
 
-	/*!
-	  
-	  \class vpScopedLock
-	  
+  /*!
+
+    \class vpScopedLock
+
     \ingroup group_core_mutex
-	  
-	  \brief Class that allows protection by mutex.
-	  
-	  \warning This class needs the pthread third-party library.
-	*/
-	class VISP_EXPORT vpScopedLock
-	{
-	private:
-		vpMutex & _mutex;
+
+    \brief Class that allows protection by mutex.
+
+    The following example shows how to use this class to protect a portion of code from concurrent access.
+    The scope of the mutex lock/unlock is determined by the constructor/destructor.
+    \code
+#include <visp3/core/vpMutex.h>
+
+int main()
+{
+  vpMutex mutex;
+
+  {
+    vpMutex::vpScopedLock lock(mutex);
+    // shared var to protect
+  }
+}
+    \endcode
+
+    Without using vpScopedLock, the previous example would become:
+    \code
+#include <visp3/core/vpMutex.h>
+
+int main()
+{
+  vpMutex mutex;
+
+  {
+    mutex.lock();
+    // shared var to protect
+    mutex.unlock()
+  }
+}
+    \endcode
+
+    More examples are provided in \ref tutorial-multi-threading.
+
+    \sa vpMutex
+  */
+  class vpScopedLock
+  {
+  private:
+    vpMutex & _mutex;
 
 //  private:
 //#ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -122,17 +162,19 @@ public:
 //    }
 //#endif
 
-	public:
-		vpScopedLock(vpMutex & mutex)
-			: _mutex(mutex)
-		{
-			_mutex.lock();
-		}
-		~vpScopedLock()
-		{
-			_mutex.unlock();
-		}
-	};
+  public:
+    //! Constructor that locks the mutex.
+    vpScopedLock(vpMutex & mutex)
+      : _mutex(mutex)
+    {
+      _mutex.lock();
+    }
+    //! Destructor that unlocks the mutex.
+    ~vpScopedLock()
+    {
+      _mutex.unlock();
+    }
+  };
 private:
 #if defined(VISP_HAVE_PTHREAD)
   pthread_mutex_t m_mutex;
