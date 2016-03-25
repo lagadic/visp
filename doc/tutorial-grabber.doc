@@ -76,7 +76,7 @@ In the previous example we use vp1394TwoGrabber class that works for firewire ca
 
 If you want to grab images from an usb camera under Unix, you may use vpV4l2Grabber class. To this end libv4l should be installed. An example is provided in tutorial-grabber-v4l2.cpp. 
 
-It is also possible to grab images using OpenCV. You may find examples in tutorial-grabber-opencv.cpp and tutorial-grabber-opencv-bis.cpp.
+It is also possible to grab images using OpenCV. You may find an example in tutorial-grabber-opencv.cpp.
 
 \section grabber-video-stream Images from a video stream
 
@@ -138,5 +138,8 @@ The synchronization is done by waiting from the beginning of the iteration the c
 \snippet tutorial-video-reader.cpp vpVideoReader loop rate
 
 \section grabber-next Next tutorial
-You are now ready to see the next \ref tutorial-tracking-blob.
+
+You are now ready to see how to continue with:
+- \ref tutorial-multi-threading if you want to see how to extend these examples with one thread for capture and an other one for display
+- or with a simple image processing that shows how to track blobs explained in \ref tutorial-tracking-blob.
 */

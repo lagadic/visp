@@ -71,7 +71,27 @@ void vpDetectorFace::setCascadeClassifierFile(const std::string &filename)
 /*!
    Allows to detect a face in the image. When more than one face is detected, faces are sorted from largest to smallest.
 
-   \param I : Input image to process.
+   \param I : Input image to process. This ViSP image is converted internally in an OpenCV cv::Mat image.
+   If you original image is an gray level OpenCV image, we suggest rather the use of detect(const cv::Mat &).
+   \return true if one or more faces are found, false otherwise.
+
+   The number of detected faces is returned using getNbObjects().
+   If a face is found the functions getBBox(), getCog() return some information about the location of the face.
+
+   The largest face is always available using getBBox(0) or getCog(0).
+
+   \sa detect(const cv::Mat &)
+ */
+bool vpDetectorFace::detect(const vpImage<unsigned char> &I)
+{
+  vpImageConvert::convert(I, m_frame_gray);
+
+  return detect(m_frame_gray);
+}
+/*!
+   Allows to detect a face in the image. When more than one face is detected, faces are sorted from largest to smallest.
+
+   \param frame_gray : Input gray level image to process.
    \return true if one or more faces are found, false otherwise.
 
    The number of detected faces is returned using getNbObjects().
@@ -79,10 +99,8 @@ void vpDetectorFace::setCascadeClassifierFile(const std::string &filename)
 
    The largest face is always available using getBBox(0) or getCog(0).
  */
-bool vpDetectorFace::detect(const vpImage<unsigned char> &I)
+bool vpDetectorFace::detect(const cv::Mat &frame_gray)
 {
-  vpImageConvert::convert(I, m_frame_gray);
-
   bool detected = false;
   m_message.clear();
   m_polygon.clear();
@@ -90,9 +108,9 @@ bool vpDetectorFace::detect(const vpImage<unsigned char> &I)
 
   m_faces.clear();
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  m_face_cascade.detectMultiScale( m_frame_gray, m_faces, 1.1, 2, 0, cv::Size(30, 30) );
+  m_face_cascade.detectMultiScale( frame_gray, m_faces, 1.1, 2, 0, cv::Size(30, 30) );
 #else
-  m_face_cascade.detectMultiScale( m_frame_gray, m_faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cv::Size(30, 30) );
+  m_face_cascade.detectMultiScale( frame_gray, m_faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cv::Size(30, 30) );
 #endif
 
   m_nb_objects = m_faces.size();

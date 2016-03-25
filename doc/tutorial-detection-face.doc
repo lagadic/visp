@@ -100,4 +100,8 @@ Then in the while loop, at each iteration we acquire a new image
 
 This new image is then given as input to the face detector.
 
+\section face_detection_next Next tutorial
+
+You are now ready to see the \ref tutorial-multi-threading, that illustrates the case of face detection achieved in a separate thread.
+
 */

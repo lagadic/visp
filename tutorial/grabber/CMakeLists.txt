@@ -11,8 +11,9 @@ set(tutorial_cpp
   tutorial-grabber-CMU1394.cpp
   tutorial-grabber-flycapture.cpp
   tutorial-grabber-opencv.cpp
-  tutorial-grabber-opencv-bis.cpp
+  tutorial-grabber-opencv-threaded.cpp
   tutorial-grabber-v4l2.cpp
+  tutorial-grabber-v4l2-threaded.cpp
   tutorial-video-reader.cpp
   tutorial-video-recorder.cpp
 )

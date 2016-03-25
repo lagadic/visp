@@ -7,7 +7,8 @@ find_package(VISP REQUIRED visp_detection visp_io visp_gui)
 # set the list of source files
 set(tutorial_cpp
   tutorial-face-detector.cpp
-  tutorial-face-detector-live.cpp)
+  tutorial-face-detector-live.cpp
+  tutorial-face-detector-live-threaded.cpp)
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/haarcascade_frontalface_alt.xml" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/video.mpeg" )

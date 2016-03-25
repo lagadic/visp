@@ -50,7 +50,6 @@ set(example_cpp
   grabDirectShowMulti.cpp
   grabFlyCapture.cpp
   grabOpenCV.cpp
-  grabOpenCV-2.cpp
 )
 
 foreach(cpp ${example_cpp})
