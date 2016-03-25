@@ -33,7 +33,7 @@ vpThread::Return captureFunction(vpThread::Args args)
   cv::Mat frame_;
 
   double start_time = vpTime::measureTimeSecond();
-  while ((vpTime::measureTimeSecond() - start_time) < 4) {
+  while ((vpTime::measureTimeSecond() - start_time) < 10) {
     // Capture in progress
     cap >> frame_; // get a new frame from camera
 
