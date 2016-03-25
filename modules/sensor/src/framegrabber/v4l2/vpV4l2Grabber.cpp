@@ -1359,6 +1359,50 @@ vpV4l2Grabber::printBufInfo(struct v4l2_buffer buf)
 
 }
 
+/*!
+
+   Operator that allows to capture a grey level image.
+   \param I : The captured image.
+
+   \code
+#include <visp3/sensor/vpV4l2Grabber.h>
+
+int main()
+{
+  vpImage<unsigned char> I;
+  vpV4l2Grabber g;
+  g >> I;
+}
+   \endcode
+ */
+vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<unsigned char> &I)
+{
+  this->acquire(I);
+  return *this;
+}
+
+/*!
+
+   Operator that allows to capture a grey level image.
+   \param I : The captured image.
+
+   \code
+#include <visp3/sensor/vpV4l2Grabber.h>
+
+int main()
+{
+  vpImage<vpRGBa> I;
+  vpV4l2Grabber g;
+  g >> I;
+}
+   \endcode
+ */
+vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<vpRGBa> &I)
+{
+  this->acquire(I);
+  return *this;
+}
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning: libvisp_sensor.a(vpV4l2Grabber.cpp.o) has no symbols
 void dummy_vpV4l2Grabber() {};

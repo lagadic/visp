@@ -265,6 +265,9 @@ public:
   // Initialization of the grabber using a color image.
   void open(vpImage<vpRGBa> &I);
 
+  vp1394CMUGrabber & operator>>(vpImage<unsigned char> &I);
+  vp1394CMUGrabber & operator>>(vpImage<vpRGBa> &I);
+
   // Select the camera on the bus. Call it before open the grabber.
   void selectCamera(int cam_id);
 

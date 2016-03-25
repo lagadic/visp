@@ -73,11 +73,7 @@ vpThread::Return captureFunction(vpThread::Args args)
   double start_time = vpTime::measureTimeSecond();
   while ((vpTime::measureTimeSecond() - start_time) < 10) {
     // Capture in progress
-#if defined(VISP_HAVE_V4L2)
-    cap.acquire(frame_);
-#elif defined(VISP_HAVE_OPENCV)
     cap >> frame_; // get a new frame from camera
-#endif
 
     // Update shared data
     {

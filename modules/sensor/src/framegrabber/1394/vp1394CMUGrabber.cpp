@@ -724,6 +724,50 @@ vp1394CMUGrabber::getFramerate()
   return fps;
 }
 
+/*!
+
+   Operator that allows to capture a grey level image.
+   \param I : The captured image.
+
+   \code
+#include <visp3/sensor/vp1394CMUGrabber.h>
+
+int main()
+{
+  vpImage<unsigned char> I;
+  vp1394CMUGrabber g;
+  g >> I;
+}
+   \endcode
+ */
+vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<unsigned char> &I)
+{
+  this->acquire(I);
+  return *this;
+}
+
+/*!
+
+   Operator that allows to capture a grey level image.
+   \param I : The captured image.
+
+   \code
+#include <visp3/sensor/vp1394CMUGrabber.h>
+
+int main()
+{
+  vpImage<vpRGBa> I;
+  vp1394CMUGrabber g;
+  g >> I;
+}
+   \endcode
+ */
+vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<vpRGBa> &I)
+{
+  this->acquire(I);
+  return *this;
+}
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning: libvisp_sensor.a(vp1394CMUGrabber.cpp.o) has no symbols
 void dummy_vp1394CMUGrabber() {};

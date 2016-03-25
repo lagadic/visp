@@ -184,6 +184,9 @@ public:
   void open(vpImage<unsigned char> &I);
   void open(vpImage<vpRGBa> &I);
 
+  vpFlyCaptureGrabber & operator>>(vpImage<unsigned char> &I);
+  vpFlyCaptureGrabber & operator>>(vpImage<vpRGBa> &I);
+
   float setBrightness(bool brightness_auto, float brightness_value=0);
   void setCameraIndex(unsigned int index);
   void setCameraPower(bool on);
