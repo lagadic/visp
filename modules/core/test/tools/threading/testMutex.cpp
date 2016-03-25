@@ -48,6 +48,8 @@
 #include <visp3/core/vpMutex.h>
 #include <visp3/core/vpThread.h>
 
+#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+
 int thread_counter=0;
 vpMutex mutex;
 
@@ -86,3 +88,13 @@ int main(void)
   return 0;
 }
 
+#else
+int main()
+{
+#  if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
+#  else
+  std::cout << "Multi-threading seems not supported on this platform" << std::endl;
+#  endif
+}
+#endif

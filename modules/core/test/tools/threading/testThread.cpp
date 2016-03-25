@@ -43,6 +43,10 @@
 
 */
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+
 //! [Code]
 #include <iostream>
 
@@ -103,3 +107,17 @@ int main()
   return 0;
 }
 //! [Code]
+
+#else
+
+#include <iostream>
+
+int main()
+{
+#  if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
+#  else
+  std::cout << "Multi-threading seems not supported on this platform" << std::endl;
+#  endif
+}
+#endif

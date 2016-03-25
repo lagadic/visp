@@ -9,7 +9,7 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
 
 #include <opencv2/highgui/highgui.hpp>
 
@@ -152,7 +152,13 @@ int main(int argc, const char* argv[])
 #else
 int main()
 {
+#  ifndef VISP_HAVE_OPENCV
   std::cout << "You should install OpenCV to make this example working..." << std::endl;
+#  elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
+#  else
+  std::cout << "Multi-threading seems not supported on this platform" << std::endl;
+#  endif
 }
 
 #endif
