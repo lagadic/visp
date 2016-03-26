@@ -48,8 +48,8 @@ vpThread::Return captureFunction(vpThread::Args args)
   vpImage<unsigned char> frame_;
 #elif defined(VISP_HAVE_OPENCV)
 #  if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  int width  = cap.get(cv::CAP_PROP_FRAME_WIDTH);
-  int height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+  int width  = (int)cap.get(cv::CAP_PROP_FRAME_WIDTH);
+  int height = (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
   if (width > 640)
     cap.set(cv::CAP_PROP_FRAME_WIDTH, width/2);
   if (height > 480)
@@ -136,12 +136,12 @@ vpThread::Return displayFunction(vpThread::Args args)
       if (! display_initialized_) {
         // Initialize the display
 #if defined(VISP_HAVE_X11)
-        d_ = new vpDisplayX;
-#elif defined(VISP_HAVE_GDI)
-        d_ = new vpDisplayGDI;
-#endif
-        d_->init(I_);
+        d_ = new vpDisplayX(I_);
         display_initialized_ = true;
+#elif defined(VISP_HAVE_GDI)
+        d_ = new vpDisplayGDI(I_);
+        display_initialized_ = true;
+#endif
       }
 
       // Display the image
@@ -170,7 +170,9 @@ vpThread::Return displayFunction(vpThread::Args args)
     }
   } while(frame_available_ || frame_prev_index_ == 0);
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   delete d_;
+#endif
 
   std::cout << "End of display thread" << std::endl;
   return 0;

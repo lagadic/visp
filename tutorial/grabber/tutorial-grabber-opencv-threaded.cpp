@@ -89,12 +89,12 @@ vpThread::Return displayFunction(vpThread::Args args)
       if (! display_initialized_) {
         // Initialize the display
 #if defined(VISP_HAVE_X11)
-        d_ = new vpDisplayX;
-#elif defined(VISP_HAVE_GDI)
-        d_ = new vpDisplayGDI;
-#endif
-        d_->init(I_);
+        d_ = new vpDisplayX(I_);
         display_initialized_ = true;
+#elif defined(VISP_HAVE_GDI)
+        d_ = new vpDisplayGDI(I_);
+        display_initialized_ = true;
+#endif
       }
 
       // Display the image
@@ -111,7 +111,9 @@ vpThread::Return displayFunction(vpThread::Args args)
     }
   } while(frame_available_ || frame_prev_index_ == 0);
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   delete d_;
+#endif
 
   std::cout << "End of display thread" << std::endl;
   return 0;
