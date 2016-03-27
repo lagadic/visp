@@ -3644,6 +3644,50 @@ vp1394TwoGrabber::updateDataStructToCam()
   setParameterValue(vpFEATURE_IRIS, dataCam[camera_id].iris);
 }
 
+/*!
+
+   Operator that allows to capture a grey level image.
+   \param I : The captured image.
+
+   \code
+#include <visp3/sensor/vp1394TwoGrabber.h>
+
+int main()
+{
+  vpImage<unsigned char> I;
+  vp1394TwoGrabber g;
+  g >> I;
+}
+   \endcode
+ */
+vp1394TwoGrabber &vp1394TwoGrabber::operator>>(vpImage<unsigned char> &I)
+{
+  this->acquire(I);
+  return *this;
+}
+
+/*!
+
+   Operator that allows to capture a grey level image.
+   \param I : The captured image.
+
+   \code
+#include <visp3/sensor/vp1394TwoGrabber.h>
+
+int main()
+{
+  vpImage<vpRGBa> I;
+  vp1394TwoGrabber g;
+  g >> I;
+}
+   \endcode
+ */
+vp1394TwoGrabber &vp1394TwoGrabber::operator>>(vpImage<vpRGBa> &I)
+{
+  this->acquire(I);
+  return *this;
+}
+
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning: libvisp_sensor.a(vp1394TwoGrabber.cpp.o) has no symbols
 void dummy_vp1394TwoGrabber() {};

@@ -1357,6 +1357,50 @@ void vpFlyCaptureGrabber::setCameraPower(bool on)
   }
 }
 
+/*!
+
+   Operator that allows to capture a grey level image.
+   \param I : The captured image.
+
+   \code
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
+
+int main()
+{
+  vpImage<unsigned char> I;
+  vpFlyCaptureGrabber g;
+  g >> I;
+}
+   \endcode
+ */
+vpFlyCaptureGrabber &vpFlyCaptureGrabber::operator>>(vpImage<unsigned char> &I)
+{
+  this->acquire(I);
+  return *this;
+}
+
+/*!
+
+   Operator that allows to capture a grey level image.
+   \param I : The captured image.
+
+   \code
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
+
+int main()
+{
+  vpImage<vpRGBa> I;
+  vpFlyCaptureGrabber g;
+  g >> I;
+}
+   \endcode
+ */
+vpFlyCaptureGrabber &vpFlyCaptureGrabber::operator>>(vpImage<vpRGBa> &I)
+{
+  this->acquire(I);
+  return *this;
+}
+
 #else
 // Work arround to avoid warning: libvisp_flycapture.a(vpFlyCaptureGrabber.cpp.o) has no symbols
 void dummy_vpFlyCaptureGrabber() {};

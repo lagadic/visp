@@ -413,6 +413,9 @@ public:
   void open(vpImage<unsigned char> &I);
   void open(vpImage<vpRGBa> &I);
 
+  vp1394TwoGrabber & operator>>(vpImage<unsigned char> &I);
+  vp1394TwoGrabber & operator>>(vpImage<vpRGBa> &I);
+
   void printCameraInfo();
 
   void resetBus();

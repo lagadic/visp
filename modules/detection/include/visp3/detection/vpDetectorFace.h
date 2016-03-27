@@ -42,6 +42,8 @@
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020200)
 
+#include <algorithm> // needed by std::min in opencv2/objdetect/objdetect.hpp
+
 #include <opencv2/objdetect/objdetect.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>

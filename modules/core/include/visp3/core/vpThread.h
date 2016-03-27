@@ -38,7 +38,7 @@ public:
   typedef pthread_t Handle;
 #elif defined(_WIN32)
   typedef LPVOID Args;
-  typedef DWORD WINAPI Return;
+  typedef DWORD Return;
   typedef LPTHREAD_START_ROUTINE Fn;
   typedef HANDLE Handle;
 #endif

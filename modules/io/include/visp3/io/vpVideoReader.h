@@ -74,8 +74,6 @@
   the getFrame() method to position the reader in the video and then use the
   acquire() method to get the following frames one by one.
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRGBa.h>
 #include <visp3/io/vpVideoReader.h>
 
 int main()
@@ -109,8 +107,6 @@ int main()
   match the first and image images of the sequence.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRGBa.h>
 #include <visp3/io/vpVideoReader.h>
 
 int main()
@@ -134,8 +130,6 @@ int main()
   
   Note that it is also possible to access to a specific frame using getFrame().
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpRGBa.h>
 #include <visp3/io/vpVideoReader.h>
 
 int main()
@@ -276,6 +270,9 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
     inline long getLastFrameIndex() const {return lastFrame;}
     void open (vpImage< vpRGBa > &I);
     void open (vpImage< unsigned char > &I);
+
+    vpVideoReader & operator>>(vpImage<unsigned char> &I);
+    vpVideoReader & operator>>(vpImage<vpRGBa> &I);
 
     /*!
       Reset the frame counter and sets it to the first image index.

@@ -238,6 +238,10 @@ public:
   {
     return (this->m_pixelformat);
   }
+
+  vpV4l2Grabber & operator>>(vpImage<unsigned char> &I);
+  vpV4l2Grabber & operator>>(vpImage<vpRGBa> &I);
+
   /*!
     Activates the verbose mode to print additional information on stdout.
     \param verbose : If true activates the verbose mode.
@@ -333,7 +337,6 @@ private:
   int  queueBuffer();
   void queueAll();
   void printBufInfo(struct v4l2_buffer buf);
-
 
   int				fd;
   char				device[FILENAME_MAX];
