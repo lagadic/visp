@@ -250,7 +250,7 @@ vpPolygon::isInside(const vpImagePoint& ip)
   infPoint.set_i( infPoint.get_i() + 1000 * generator());
   infPoint.set_j( infPoint.get_j() + 1000 * generator());// we add random since it appears that sometimes infPoint may cause a degenerated case (so realucnch and hope that result will be different).
 
-  unsigned int nbinterscetion = 0;
+  bool oddNbIntersections = false;
   for(unsigned int i=0; i<_corners.size(); ++i){
     vpImagePoint ip1 = _corners[i];
     vpImagePoint ip2 = _corners[(i+1)%_corners.size()];
@@ -268,11 +268,11 @@ vpPolygon::isInside(const vpImagePoint& ip)
     }
 
     if(intersection){
-      ++nbinterscetion;
+      oddNbIntersections = !oddNbIntersections;
     }
   }
 
-  return ((nbinterscetion%2)==1);
+  return oddNbIntersections;
 }
 
 
@@ -440,30 +440,6 @@ vpPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, const doubl
 bool
 vpPolygon::isInside(const std::vector<vpImagePoint>& roi, const double &i, const double &j)
 {
-  unsigned int nbInter = 0;
-  bool computeAgain = true;
-
-  if(computeAgain){
-    double i_test = 100000.;
-    double j_test = 100000.;
-    computeAgain = false;
-    for(unsigned int k=0; k< roi.size(); k++){
-      try{
-        if(vpPolygon::intersect(roi[k], roi[(k+1)%roi.size()], i, j, i_test, j_test)){
-          nbInter++;
-        }
-      }
-      catch(...){
-        computeAgain = true;
-        break;
-      }
-    }
-
-    if(computeAgain){
-      i_test += 100;
-      j_test -= 100;
-      nbInter = 0;
-    }
-  }
-  return ((nbInter%2) == 1);
+  vpPolygon poly(roi);
+  return poly.isInside(vpImagePoint(i, j));
 }
