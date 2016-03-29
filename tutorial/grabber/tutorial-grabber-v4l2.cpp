@@ -55,5 +55,8 @@ int main(int argc, const char* argv[])
   catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+#else
+  (void)argc;
+  (void)argv;
 #endif
 }
