@@ -786,7 +786,7 @@ bool vpIoTools::loadConfigFile(const std::string &confFile)
     std::string stop[3] = {" ", "\t", "#"};
     while(std::getline(confContent, line))
     {
-      if((line.find("#",0,1) != 0) && (line.size() > 2))
+      if((line.compare(0,1,"#") != 0) && (line.size() > 2))
       {
         try
         {
