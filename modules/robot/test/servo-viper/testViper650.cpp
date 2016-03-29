@@ -28,7 +28,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Test for Viper850 6 dof robot.
+ * Test for Viper650 6 dof robot.
  *
  * Authors:
  * Fabien Spindler
@@ -36,7 +36,7 @@
  *****************************************************************************/
 
 /*!
-  \example testViper850.cpp
+  \example testViper650.cpp
 
   Example of a real robot control, the Viper robot (arm robot, with 6
   degrees of freedom).
@@ -45,7 +45,7 @@
 
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpViper850.h>
+#include <visp3/robot/vpViper650.h>
 #include <visp3/core/vpDebug.h>
 
 #include <iostream>
@@ -54,31 +54,31 @@ int main()
 {
   try {
 
-    std::cout << "a test for vpViper850 class..." << std::endl;
+    std::cout << "a test for vpViper650 class..." << std::endl;
 
-    vpViper850 viper850;
+    vpViper650 viper650;
     vpCameraParameters cam;
 
-    std::cout << "-- Default settings for Viper 850  ---" 
+    std::cout << "-- Default settings for Viper 650  ---"
               << std::endl;
-    std::cout << viper850 << std::endl;
-    viper850.getCameraParameters(cam, 640, 480);
+    std::cout << viper650 << std::endl;
+    viper650.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
     
     std::cout << "-- Settings associated to the Marlin F033C camera without distortion ---" 
               << std::endl;
-    viper850.init( vpViper850::TOOL_MARLIN_F033C_CAMERA);
+    viper650.init( vpViper650::TOOL_MARLIN_F033C_CAMERA);
 
-    std::cout << viper850 << std::endl;
-    viper850.getCameraParameters(cam, 640, 480);
+    std::cout << viper650 << std::endl;
+    viper650.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
 
     std::cout << "-- Settings associated to the Marlin F033C camera with distortion ------" 
               << std::endl;
-    viper850.init( vpViper850::TOOL_MARLIN_F033C_CAMERA,
+    viper650.init( vpViper650::TOOL_MARLIN_F033C_CAMERA,
                    vpCameraParameters::perspectiveProjWithDistortion);
-    std::cout << viper850 << std::endl;
-    viper850.getCameraParameters(cam, 640, 480);
+    std::cout << viper650 << std::endl;
+    viper650.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
 
     vpColVector qmotor(6);
@@ -98,7 +98,7 @@ int main()
     qmotor[5] = vpMath::rad(0);
 #endif
     vpHomogeneousMatrix fMe;
-    viper850.get_fMe(qmotor, fMe);
+    viper650.get_fMe(qmotor, fMe);
 
     vpTranslationVector t;
     fMe.extract(t);

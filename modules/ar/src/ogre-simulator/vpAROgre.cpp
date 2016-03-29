@@ -349,8 +349,10 @@ void vpAROgre::init(bool
 
     if(leftconf == "Video Mode"){
       if(canInit) {
-        int ret = sscanf(rightconf.c_str(), "%d %*s %d", &mWindowWidth, &mWindowHeight);
-        if (ret == 0)
+        std::stringstream ss(rightconf.c_str());
+        std::string dummy;
+        ss >> mWindowWidth >> dummy >> mWindowHeight;
+        if (ss.fail())
           std::cout << "Cannot read Ogre video mode" << std::endl;
       }
       else{

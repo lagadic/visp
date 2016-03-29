@@ -1875,7 +1875,6 @@ vpRobotAfma6::readPosFile(const char *filename, vpColVector &q)
     return false;
 
   char line[FILENAME_MAX];
-  char dummy[FILENAME_MAX];
   char head[] = "R:";
   bool sortie = false;
 
@@ -1900,10 +1899,9 @@ vpRobotAfma6::readPosFile(const char *filename, vpColVector &q)
 
   // Lecture des positions
   q.resize(njoint);
-  sscanf(line, "%s %lf %lf %lf %lf %lf %lf",
-	 dummy,
-	 &q[0], &q[1], &q[2],
-	 &q[3], &q[4], &q[5]);
+  std::string dummy;
+  std::stringstream ss(line);
+  ss >> dummy >> q[0] >> q[1] >> q[2] >> q[3] >> q[4] >> q[5];
 
   // converts rotations from degrees into radians
   for (unsigned int i=3; i < njoint; i ++)

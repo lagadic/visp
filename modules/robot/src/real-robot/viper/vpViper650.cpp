@@ -505,10 +505,15 @@ vpViper650::parseConfigFile (const char * filename)
   while (fgets(Ligne, FILENAME_MAX, fdtask) != NULL) {
     numLn ++;
     if ('#' == Ligne[0]) { continue; }
-    if (sscanf(Ligne, "%s", namoption) != 1) {
-      fclose (fdtask);
-      throw(vpException(vpException::badValue,
-                        "Cannot parse configuration file %s to retrieve option name"));
+    {
+      std::stringstream ss(Ligne);
+      ss >> namoption;
+
+      if (ss.fail()) {
+        fclose (fdtask);
+        throw(vpException(vpException::badValue,
+                          "Cannot parse configuration file %s to retrieve option name"));
+      }
     }
 
     dim = strlen(namoption);
@@ -523,12 +528,13 @@ vpViper650::parseConfigFile (const char * filename)
     case 0:
       break; // Nothing to do: camera name
 
-    case 1:
-      if (sscanf(Ligne, "%s %lf %lf %lf", namoption,
-                 &rot_eMc[0], &rot_eMc[1], &rot_eMc[2]) != 4) {
+    case 1: {
+      std::stringstream ss(Ligne);
+      ss >> namoption >> rot_eMc[0] >> rot_eMc[1] >> rot_eMc[2];
+      if (ss.fail()) {
         fclose (fdtask);
         throw(vpException(vpException::badValue,
-                          "Cannot parse configuration file %s to retrieve translation"));
+                          "Cannot parse configuration file %s to retrieve rotation", filename));
       }
 
       // Convert rotation from degrees to radians
@@ -537,16 +543,19 @@ vpViper650::parseConfigFile (const char * filename)
       rot_eMc[2] *= M_PI / 180.0;
       get_rot_eMc = true;
       break;
+    }
 
-    case 2:
-      if (sscanf(Ligne, "%s %lf %lf %lf", namoption,
-                 &trans_eMc[0], &trans_eMc[1], &trans_eMc[2]) != 4) {
+    case 2: {
+      std::stringstream ss(Ligne);
+      ss >> namoption >> trans_eMc[0] >> trans_eMc[1] >> trans_eMc[2];
+      if (ss.fail()) {
         fclose (fdtask);
         throw(vpException(vpException::badValue,
-                          "Cannot parse configuration file %s to retrieve rotation"));
+                          "Cannot parse configuration file %s to retrieve translation", filename));
       }
       get_trans_eMc = true;
       break;
+    }
 
     default:
       vpERROR_TRACE ("Bad configuration file %s  "
