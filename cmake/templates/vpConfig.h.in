@@ -57,6 +57,10 @@
   // 4710 : 'function' : function not inlined
   // 4820 : 'bytes' bytes padding added after construct 'member_name'
   // 4986 : undocumented
+  
+  #ifndef NOMINMAX
+    #define NOMINMAX
+  #endif
 #endif
 
 #if defined _MSC_VER && (_MSC_VER == 1500)
