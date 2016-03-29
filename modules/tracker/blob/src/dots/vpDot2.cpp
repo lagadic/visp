@@ -2516,7 +2516,7 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::stri
 		}
 	}
 
-	if (!fromFile & (dotFile != ""))
+  if (!fromFile && (dotFile != ""))
 	{
 		vpMatrix::saveMatrix(dotFile, Cogs);
 		std::cout << Cogs.getRows() << " dots written to file " << dotFile << std::endl;
