@@ -12,50 +12,45 @@
 #if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_PTHREAD)
 
 // Shared vars
-unsigned int s_frame_index = 0;
-bool s_frame_available = false;
+typedef enum {
+  capture_waiting,
+  capture_started,
+  capture_stopped
+} t_CaptureState;
+t_CaptureState s_capture_state = capture_waiting;
 vpImage<unsigned char> s_frame;
-vpMutex s_mutex_frame;
+vpMutex s_mutex_capture;
 //! [capture-multi-threaded declaration]
 
 //! [capture-multi-threaded captureFunction]
 vpThread::Return captureFunction(vpThread::Args args)
 {
-  int opt_device = *((int *) args);
+  vpV4l2Grabber cap = *((vpV4l2Grabber *) args);
   vpImage<unsigned char> frame_;
-  vpV4l2Grabber cap;
-  std::ostringstream device;
-  device << "/dev/video" << opt_device;
-  cap.setDevice(device.str());
-  cap.setScale(1);   // Default value is 2 in the constructor. Turn it to 1 to avoid subsampling
-  int width = cap.getWidth();
-  int height = cap.getHeight();
-  if (width > 640)
-    cap.setWidth(width/2);
-  if (height > 480)
-    cap.setHeight(height/2);
+  bool stop_capture_ = false;
 
   cap.open(frame_);
 
   double start_time = vpTime::measureTimeSecond();
-  while ((vpTime::measureTimeSecond() - start_time) < 4) {
+  while ((vpTime::measureTimeSecond() - start_time) < 30 && !stop_capture_) {
     // Capture in progress
     cap.acquire(frame_); // get a new frame from camera
 
     // Update shared data
     {
-      vpMutex::vpScopedLock lock(s_mutex_frame);
-      s_frame_available = true;
-      s_frame_index ++;
+      vpMutex::vpScopedLock lock(s_mutex_capture);
+      if (s_capture_state == capture_stopped)
+        stop_capture_ = true;
+      else
+        s_capture_state = capture_started;
       s_frame = frame_;
     }
   }
-  // Update the flag indicating end of capture
-  {
-    vpMutex::vpScopedLock lock(s_mutex_frame);
-    s_frame_available = false;
-  }
 
+  {
+    vpMutex::vpScopedLock lock(s_mutex_capture);
+    s_capture_state = capture_stopped;
+  }
   std::cout << "End of capture thread" << std::endl;
   return 0;
 }
@@ -67,24 +62,22 @@ vpThread::Return displayFunction(vpThread::Args args)
   (void)args; // Avoid warning: unused parameter args
   vpImage<unsigned char> I_;
 
-  bool frame_available_ = false;
-  unsigned int frame_prev_index_ = 0;
+  t_CaptureState capture_state_;
   bool display_initialized_ = false;
 #if defined(VISP_HAVE_X11)
   vpDisplayX *d_ = NULL;
 #endif
 
   do {
-    s_mutex_frame.lock();
-    frame_available_ = s_frame_available;
-    unsigned int frame_index_ = s_frame_index;
-    s_mutex_frame.unlock();
+    s_mutex_capture.lock();
+    capture_state_ = s_capture_state;
+    s_mutex_capture.unlock();
 
-    // Check if a new frame is available
-    if (frame_available_ && frame_index_ > frame_prev_index_) {
+    // Check if a frame is available
+    if (capture_state_ == capture_started) {
       // Create a copy of the captured frame
       {
-        vpMutex::vpScopedLock lock(s_mutex_frame);
+        vpMutex::vpScopedLock lock(s_mutex_capture);
         I_ = s_frame;
       }
 
@@ -100,16 +93,20 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Display the image
       vpDisplay::display(I_);
 
+      // Trigger end of acquisition with a mouse click
+      vpDisplay::displayText(I_, 10, 10, "Click to exit...", vpColor::red);
+      if (vpDisplay::getClick(I_, false)) {
+        vpMutex::vpScopedLock lock(s_mutex_capture);
+        s_capture_state = capture_stopped;
+      }
+
       // Update the display
       vpDisplay::flush(I_);
-
-      // Update the previous frame index for next iteration
-      frame_prev_index_ = frame_index_;
     }
     else {
       vpTime::wait(2); // Sleep 2ms
     }
-  } while(frame_available_ || frame_prev_index_ == 0);
+  } while(capture_state_ != capture_stopped);
 
 #if defined(VISP_HAVE_X11)
   delete d_;
@@ -123,20 +120,30 @@ vpThread::Return displayFunction(vpThread::Args args)
 //! [capture-multi-threaded mainFunction]
 int main(int argc, const char* argv[])
 {
-  int opt_device = 0;
+  unsigned int opt_device = 0; // Default is opening /dev/video0
+  unsigned int opt_scale = 2;  // Default value is 2 in the constructor. Turn it to 1 to avoid subsampling
 
   // Command line options
   for (int i=0; i<argc; i++) {
     if (std::string(argv[i]) == "--device")
-      opt_device = atoi(argv[i+1]);
+      opt_device = (unsigned int)atoi(argv[i+1]);
+    else if (std::string(argv[i]) == "--scale")
+      opt_scale = (unsigned int)atoi(argv[i+1]);
     else if (std::string(argv[i]) == "--help") {
-      std::cout << "Usage: " << argv[0] << " [--device <camera device>] [--help]" << std::endl;
+      std::cout << "Usage: " << argv[0] << " [--device <camera device>] [--scale <subsampling factor>] [--help]" << std::endl;
       return 0;
     }
   }
 
+  // Instantiate the grabber
+  vpV4l2Grabber g;
+  std::ostringstream device;
+  device << "/dev/video" << opt_device;
+  g.setDevice(device.str());
+  g.setScale(opt_scale);
+
   // Start the threads
-  vpThread thread_capture(captureFunction, (vpThread::Args)&opt_device);
+  vpThread thread_capture(captureFunction, (vpThread::Args)&g);
   vpThread thread_display(displayFunction);
 
   // Wait until thread ends up

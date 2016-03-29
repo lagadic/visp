@@ -645,11 +645,8 @@ main(int argc, const char ** argv)
     memset(rgba2, 127, size*4);
     vpImage<vpRGBa> I_copyData((vpRGBa *) rgba2, h, w, true);
 
-    //Delete the array
-    if(rgba2 != NULL) {
-      delete[] rgba2;
-      rgba2 = NULL;
-    }
+    // Delete the array
+    delete[] rgba2;
 
     filename =  vpIoTools::createFilePath(opath, "I_copyData.ppm");
     /* Save the the current image */

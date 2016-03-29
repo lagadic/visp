@@ -234,9 +234,23 @@ main(int argc, const char** argv)
           }
         }
         vpDisplay::flush(I);
+
+        std::cout << "Click to continue." << std::endl;
+        vpDisplay::getClick(I);
+        for(unsigned int i= 0; i<I.getHeight(); ++i){
+          for(unsigned int j=0; j<I.getWidth(); ++j){
+            if(vpPolygon::isInside(p4.getCorners(), i, j)){
+              vpDisplay::displayPoint(I, vpImagePoint(i, j), vpColor::green);
+            }
+          }
+        }
+        vpDisplay::flush(I);
+
         std::cout << "Click to finish." << std::endl;
 
         vpDisplay::getClick(I);
+
+
       }
     }
 

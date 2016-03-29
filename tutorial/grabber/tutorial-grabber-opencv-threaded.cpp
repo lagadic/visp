@@ -14,10 +14,14 @@
 #include <opencv2/highgui/highgui.hpp>
 
 // Shared vars
-unsigned int s_frame_index = 0;
-bool s_frame_available = false;
+typedef enum {
+  capture_waiting,
+  capture_started,
+  capture_stopped
+} t_CaptureState;
+t_CaptureState s_capture_state = capture_waiting;
 cv::Mat s_frame;
-vpMutex s_mutex_frame;
+vpMutex s_mutex_capture;
 //! [capture-multi-threaded declaration]
 
 //! [capture-multi-threaded captureFunction]
@@ -31,24 +35,27 @@ vpThread::Return captureFunction(vpThread::Args args)
   }
 
   cv::Mat frame_;
+  bool stop_capture_ = false;
 
   double start_time = vpTime::measureTimeSecond();
-  while ((vpTime::measureTimeSecond() - start_time) < 10) {
+  while ((vpTime::measureTimeSecond() - start_time) < 30 && !stop_capture_) {
     // Capture in progress
     cap >> frame_; // get a new frame from camera
 
     // Update shared data
     {
-      vpMutex::vpScopedLock lock(s_mutex_frame);
-      s_frame_available = true;
-      s_frame_index ++;
+      vpMutex::vpScopedLock lock(s_mutex_capture);
+      if (s_capture_state == capture_stopped)
+        stop_capture_ = true;
+      else
+        s_capture_state = capture_started;
       s_frame = frame_;
     }
   }
-  // Update the flag indicating end of capture
+
   {
-    vpMutex::vpScopedLock lock(s_mutex_frame);
-    s_frame_available = false;
+    vpMutex::vpScopedLock lock(s_mutex_capture);
+    s_capture_state = capture_stopped;
   }
 
   std::cout << "End of capture thread" << std::endl;
@@ -62,8 +69,7 @@ vpThread::Return displayFunction(vpThread::Args args)
   (void)args; // Avoid warning: unused parameter args
   vpImage<unsigned char> I_;
 
-  bool frame_available_ = false;
-  unsigned int frame_prev_index_ = 0;
+  t_CaptureState capture_state_;
   bool display_initialized_ = false;
 #if defined(VISP_HAVE_X11)
   vpDisplayX *d_ = NULL;
@@ -72,16 +78,15 @@ vpThread::Return displayFunction(vpThread::Args args)
 #endif
 
   do {
-    s_mutex_frame.lock();
-    frame_available_ = s_frame_available;
-    unsigned int frame_index_ = s_frame_index;
-    s_mutex_frame.unlock();
+    s_mutex_capture.lock();
+    capture_state_ = s_capture_state;
+    s_mutex_capture.unlock();
 
-    // Check if a new frame is available
-    if (frame_available_ && frame_index_ > frame_prev_index_) {
+    // Check if a frame is available
+    if (capture_state_ == capture_started) {
       // Get the frame and convert it to a ViSP image used by the display class
       {
-        vpMutex::vpScopedLock lock(s_mutex_frame);
+        vpMutex::vpScopedLock lock(s_mutex_capture);
         vpImageConvert::convert(s_frame, I_);
       }
 
@@ -100,16 +105,20 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Display the image
       vpDisplay::display(I_);
 
+      // Trigger end of acquisition with a mouse click
+      vpDisplay::displayText(I_, 10, 10, "Click to exit...", vpColor::red);
+      if (vpDisplay::getClick(I_, false)) {
+        vpMutex::vpScopedLock lock(s_mutex_capture);
+        s_capture_state = capture_stopped;
+      }
+
       // Update the display
       vpDisplay::flush(I_);
-
-      // Update the previous frame index for next iteration
-      frame_prev_index_ = frame_index_;
     }
     else {
       vpTime::wait(2); // Sleep 2ms
     }
-  } while(frame_available_ || frame_prev_index_ == 0);
+  } while(capture_state_ != capture_stopped);
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   delete d_;
