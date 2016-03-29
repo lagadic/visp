@@ -15,15 +15,19 @@
 #include <opencv2/highgui/highgui.hpp>
 
 // Shared vars
-unsigned int s_frame_index = 0;
-bool s_frame_available = false;
+typedef enum {
+  capture_waiting,
+  capture_started,
+  capture_stopped
+} t_CaptureState;
+t_CaptureState s_capture_state = capture_waiting;
 bool s_face_available = false;
 #if defined(VISP_HAVE_V4L2)
 vpImage<unsigned char> s_frame;
 #elif defined(VISP_HAVE_OPENCV)
 cv::Mat s_frame;
 #endif
-vpMutex s_mutex_frame;
+vpMutex s_mutex_capture;
 vpMutex s_mutex_face;
 vpRect s_face_bbox;
 
@@ -37,56 +41,32 @@ vpThread::Return captureFunction(vpThread::Args args)
 
   // If the image is larger than 640 by 480, we subsample
 #if defined(VISP_HAVE_V4L2)
-  cap.setScale(1);   // Default value is 2 in the constructor. Turn it to 1 to avoid subsampling
-  int width = cap.getWidth();
-  int height = cap.getHeight();
-  if (width > 640)
-    cap.setWidth(width/2);
-  if (height > 480)
-    cap.setHeight(height/2);
-
   vpImage<unsigned char> frame_;
 #elif defined(VISP_HAVE_OPENCV)
-#  if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  int width  = (int)cap.get(cv::CAP_PROP_FRAME_WIDTH);
-  int height = (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
-  if (width > 640)
-    cap.set(cv::CAP_PROP_FRAME_WIDTH, width/2);
-  if (height > 480)
-    cap.set(cv::CAP_PROP_FRAME_HEIGHT, height/2);
-#  else
-  int width  = cap.get(CV_CAP_PROP_FRAME_WIDTH);
-  int height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
-  if (width > 640)
-    cap.set(CV_CAP_PROP_FRAME_WIDTH, width/2);
-  if (height > 480)
-    cap.set(CV_CAP_PROP_FRAME_HEIGHT, height/2);
-#  endif
-  if(!cap.isOpened()) { // check if we succeeded
-    std::cout << "Unable to start capture" << std::endl;
-    return 0;
-  }
-
   cv::Mat frame_;
 #endif
+  bool stop_capture_ = false;
+
+  cap.open(frame_);
 
   double start_time = vpTime::measureTimeSecond();
-  while ((vpTime::measureTimeSecond() - start_time) < 10) {
+  while ((vpTime::measureTimeSecond() - start_time) < 30 && !stop_capture_) {
     // Capture in progress
     cap >> frame_; // get a new frame from camera
 
     // Update shared data
     {
-      vpMutex::vpScopedLock lock(s_mutex_frame);
-      s_frame_available = true;
-      s_frame_index ++;
+      vpMutex::vpScopedLock lock(s_mutex_capture);
+      if (s_capture_state == capture_stopped)
+        stop_capture_ = true;
+      else
+        s_capture_state = capture_started;
       s_frame = frame_;
     }
   }
-  // Update the flag indicating end of capture
   {
-    vpMutex::vpScopedLock lock(s_mutex_frame);
-    s_frame_available = false;
+    vpMutex::vpScopedLock lock(s_mutex_capture);
+    s_capture_state = capture_stopped;
   }
 
   std::cout << "End of capture thread" << std::endl;
@@ -98,10 +78,9 @@ vpThread::Return displayFunction(vpThread::Args args)
   (void)args; // Avoid warning: unused parameter args
   vpImage<unsigned char> I_;
 
-  bool frame_available_ = false;
-  bool face_available_ = false;
-  unsigned int frame_prev_index_ = 0, frame_index_;
+  t_CaptureState capture_state_;
   bool display_initialized_ = false;
+  bool face_available_ = false;
   vpRect face_bbox_;
 #if defined(VISP_HAVE_X11)
   vpDisplayX *d_ = NULL;
@@ -110,17 +89,15 @@ vpThread::Return displayFunction(vpThread::Args args)
 #endif
 
   do {
-    {
-      vpMutex::vpScopedLock lock(s_mutex_frame);
-      frame_available_ = s_frame_available;
-      frame_index_ = s_frame_index;
-    }
+    s_mutex_capture.lock();
+    capture_state_ = s_capture_state;
+    s_mutex_capture.unlock();
 
-    // Check if a new frame is available
-    if (frame_available_ && frame_index_ > frame_prev_index_) {
+    // Check if a frame is available
+    if (capture_state_ == capture_started) {
       // Get the frame and convert it to a ViSP image used by the display class
       {
-        vpMutex::vpScopedLock lock(s_mutex_frame);
+        vpMutex::vpScopedLock lock(s_mutex_capture);
 #if defined(VISP_HAVE_V4L2)
         I_ = s_frame;
 #elif defined(VISP_HAVE_OPENCV)
@@ -155,16 +132,20 @@ vpThread::Return displayFunction(vpThread::Args args)
         face_available_ = false;
       }
 
+      // Trigger end of acquisition with a mouse click
+      vpDisplay::displayText(I_, 10, 10, "Click to exit...", vpColor::red);
+      if (vpDisplay::getClick(I_, false)) {
+        vpMutex::vpScopedLock lock(s_mutex_capture);
+        s_capture_state = capture_stopped;
+      }
+
       // Update the display
       vpDisplay::flush(I_);
-
-      // Update the previous frame index for next iteration
-      frame_prev_index_ = frame_index_;
     }
     else {
       vpTime::wait(2); // Sleep 2ms
     }
-  } while(frame_available_ || frame_prev_index_ == 0);
+  } while(capture_state_ != capture_stopped);
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   delete d_;
@@ -182,25 +163,22 @@ vpThread::Return detectionFunction(vpThread::Args args)
   vpDetectorFace face_detector_;
   face_detector_.setCascadeClassifierFile(opt_face_cascade_name);
 
-  bool frame_available_=false;
-  unsigned int frame_prev_index_ = 0, frame_index_;
+  t_CaptureState capture_state_;
 #if defined(VISP_HAVE_V4L2)
   vpImage<unsigned char> frame_;
 #elif defined(VISP_HAVE_OPENCV)
   cv::Mat frame_;
 #endif
   do {
-    {
-      vpMutex::vpScopedLock lock(s_mutex_frame);
-      frame_available_ = s_frame_available;
-      frame_index_ = s_frame_index;
-    }
+    s_mutex_capture.lock();
+    capture_state_ = s_capture_state;
+    s_mutex_capture.unlock();
 
-    // Check if a new frame is available
-    if (frame_available_ && frame_index_ > frame_prev_index_) {
+    // Check if a frame is available
+    if (capture_state_ == capture_started) {
       // Backup the frame
       {
-        vpMutex::vpScopedLock lock(s_mutex_frame);
+        vpMutex::vpScopedLock lock(s_mutex_capture);
         frame_ = s_frame;
       }
 
@@ -211,13 +189,11 @@ vpThread::Return detectionFunction(vpThread::Args args)
         s_face_available = true;
         s_face_bbox = face_detector_.getBBox(0); // Get largest face bounding box
       }
-      // Update the previous frame index for next iteration
-      frame_prev_index_ = frame_index_;
     }
     else {
       vpTime::wait(2); // Sleep 2ms
     }
-  } while(frame_available_ || frame_prev_index_ == 0);
+  } while(capture_state_ != capture_stopped);
   std::cout << "End of face detection thread" << std::endl;
 
   return 0;
@@ -228,16 +204,18 @@ vpThread::Return detectionFunction(vpThread::Args args)
 int main(int argc, const char* argv[])
 {
   std::string opt_face_cascade_name = "./haarcascade_frontalface_alt.xml";
-  int opt_device = 0;
+  unsigned int opt_device = 0;
+  unsigned int opt_scale = 2; // Default value is 2 in the constructor. Turn it to 1 to avoid subsampling
 
-  // Command line options
   for (int i=0; i<argc; i++) {
     if (std::string(argv[i]) == "--haar")
       opt_face_cascade_name = std::string(argv[i+1]);
     else if (std::string(argv[i]) == "--device")
-      opt_device = atoi(argv[i+1]);
+      opt_device = (unsigned int)atoi(argv[i+1]);
+    else if (std::string(argv[i]) == "--scale")
+      opt_scale = (unsigned int)atoi(argv[i+1]);
     else if (std::string(argv[i]) == "--help") {
-      std::cout << "Usage: " << argv[0] << " [--haar <haarcascade xml filename>] [--device <camera device>] [--help]" << std::endl;
+      std::cout << "Usage: " << argv[0] << " [--haar <haarcascade xml filename>] [--device <camera device>] [--scale <subsampling factor>] [--help]" << std::endl;
       return 0;
     }
   }
@@ -248,9 +226,21 @@ int main(int argc, const char* argv[])
   std::ostringstream device;
   device << "/dev/video" << opt_device;
   cap.setDevice(device.str());
+  cap.setScale(opt_scale);
 #elif defined(VISP_HAVE_OPENCV)
   cv::VideoCapture cap;
   cap.open(opt_device);
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    int width  = (int)cap.get(cv::CAP_PROP_FRAME_WIDTH);
+    int height = (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, width/opt_scale);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, height/opt_scale);
+#  else
+    int width  = cap.get(CV_CAP_PROP_FRAME_WIDTH);
+    int height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+    cap.set(CV_CAP_PROP_FRAME_WIDTH, width/opt_scale);
+    cap.set(CV_CAP_PROP_FRAME_HEIGHT, height/opt_scale);
+#  endif
 #endif
 
   // Start the threads

@@ -13,16 +13,18 @@ int main(int argc, const char* argv[])
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020200)
   try {
     std::string opt_face_cascade_name = "./haarcascade_frontalface_alt.xml";
-
-    int opt_device = 0;
+    unsigned int opt_device = 0;
+    unsigned int opt_scale = 2; // Default value is 2 in the constructor. Turn it to 1 to avoid subsampling
 
     for (int i=0; i<argc; i++) {
       if (std::string(argv[i]) == "--haar")
         opt_face_cascade_name = std::string(argv[i+1]);
       else if (std::string(argv[i]) == "--device")
-        opt_device = atoi(argv[i+1]);
+        opt_device = (unsigned int)atoi(argv[i+1]);
+      else if (std::string(argv[i]) == "--scale")
+        opt_scale = (unsigned int)atoi(argv[i+1]);
       else if (std::string(argv[i]) == "--help") {
-        std::cout << "Usage: " << argv[0] << " [--haar <haarcascade xml filename>] [--device <camera device>] [--help]" << std::endl;
+        std::cout << "Usage: " << argv[0] << " [--haar <haarcascade xml filename>] [--device <camera device>] [--scale <subsampling factor>] [--help]" << std::endl;
         return 0;
       }
     }
@@ -35,10 +37,21 @@ int main(int argc, const char* argv[])
     std::ostringstream device;
     device << "/dev/video" << opt_device;
     g.setDevice(device.str());
-    g.setScale(1);   // Default value is 2 in the constructor. Turn it to 1 to avoid subsampling
+    g.setScale(opt_scale);   // Default value is 2 in the constructor. Turn it to 1 to avoid subsampling
     g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
     cv::VideoCapture cap(opt_device); // open the default camera
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    int width  = (int)cap.get(cv::CAP_PROP_FRAME_WIDTH);
+    int height = (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+    cap.set(cv::CAP_PROP_FRAME_WIDTH, width/opt_scale);
+    cap.set(cv::CAP_PROP_FRAME_HEIGHT, height/opt_scale);
+#  else
+    int width  = cap.get(CV_CAP_PROP_FRAME_WIDTH);
+    int height = cap.get(CV_CAP_PROP_FRAME_HEIGHT);
+    cap.set(CV_CAP_PROP_FRAME_WIDTH, width/opt_scale);
+    cap.set(CV_CAP_PROP_FRAME_HEIGHT, height/opt_scale);
+#  endif
     if(!cap.isOpened()) { // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
       return -1;

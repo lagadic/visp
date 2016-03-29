@@ -89,7 +89,7 @@ First we include all ViSP headers corresponding to the classes we will use; vpIm
 
 Then if OpenCV 2.1.0 or higher is found we include OpenCV highgui.hpp header that brings cv::VideoCapture class that will be used in this example for image capture.
 
-We declare then the shared data with variable names prefixed by "s_" (\e s_frame_index, the number of the captured frame, \e s_frame_available, a boolean that will indicate if the capture thread is running ,  \e s_frame the image that is currently captured and \e s_mutex_frame, the mutex that will be used to protect from concurrent access to these shared variables).
+We declare then the shared data with variable names prefixed by "s_" (\e s_capture_state, indicating if capture is in progress or is stopped, \e s_frame the image that is currently captured and \e s_mutex_capture, the mutex that will be used to protect from concurrent access to these shared variables).
 \snippet tutorial-grabber-opencv-threaded.cpp capture-multi-threaded declaration
 
 \subsection multi-threading-capture-function Capture thread
@@ -98,15 +98,15 @@ Then we implement captureFunction(), the capture function that we want to run in
 
 \note We notice that cv::VideoCapture is unable to create an instance outside the \ref multi-threading-capture-main. That's why cv::VideoCapture object is passed throw the arguments of the function captureFunction(). With ViSP vp1394TwoGrabber, vp1394CMUGrabber, vpFlyCaptureGrabber, vpV4l2Grabber capture classes it would be possible to instantiate the object in the capture function.
 
-We check if the capture is able to found a camera thanks to \e cap.isOpened(), and start a 4 seconds capture loop that will fill \e frame_ with the image. Once an image is captured, we indicate that an image is available setting \e s_frame_available=true and updating other shared vars. After 4 seconds we turn \e s_frame_available=false indicating that the capture thread is ending.
+We check if the capture is able to found a camera thanks to \e cap.isOpened(), and start a 30 seconds capture loop that will fill \e frame_ with the image from the camera. The capture could be stopped before 30 seconds if \e stop_capture_ boolean is turned to true. Once an image is captured, with the mutex we update the shared data. After the while loop, we also update the capture state to capture_stopped to finish the display thread.
 \snippet tutorial-grabber-opencv-threaded.cpp capture-multi-threaded captureFunction
 
 \subsection multi-threading-capture-display-function Display thread
 
-We implement then displayFunction() used to display the captured images. This function doesn't exploit any argument. Depending on the OS we create a display pointer over the class that we want to use (vpDisplayX or vpDisplayGDI). We enter then in a while loop that will end when no more images are available, meaning that the \ref multi-threading-capture-function is finished.
+We implement then displayFunction() used to display the captured images. This function doesn't exploit any argument. Depending on the OS we create a display pointer over the class that we want to use (vpDisplayX or vpDisplayGDI). We enter then in a while loop that will end when the capture is stopped, meaning that the \ref multi-threading-capture-function is finished.
 
-In the display loop, with the mutex we create a copy of the shared variables \e s_frame_available and \e s_frame_index in order to manipulate their values later. When a new image is available we convert the OpenCV cv::mat image into a local ViSP image \e I. Since we access to the shared \e s_frame data, the conversion is protected by the mutex. Then with ViSP image \e I we initialize the display and turn \e display_initialized_ var on indicating that the display is already initialized. Next we update the display with the content of the image.
-When no new image is available, we just sleep for 2 milli-seconds.
+In the display loop, with the mutex we create a copy of the shared variables \e s_capture_state in order to use if just after. When capture is started we convert the OpenCV cv::mat image into a local ViSP image \e I. Since we access to the shared \e s_frame data, the conversion is protected by the mutex. Then with the first available ViSP image \e I we initialize the display and turn \e display_initialized_ boolean to false indicating that the display is already initialized. Next we update the display with the content of the image.
+When we capture is not started, we just sleep for 2 milli-seconds.
 \snippet tutorial-grabber-opencv-threaded.cpp capture-multi-threaded displayFunction
 
 \subsection multi-threading-capture-main Main thread
