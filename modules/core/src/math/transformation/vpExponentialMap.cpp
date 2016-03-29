@@ -43,17 +43,15 @@
 
   Compute the exponential map. The inverse function is inverse().  The sampling
   time is here set to 1 second. To use an other value you should use
-  direct(const vpColVector &, const float &).
+  direct(const vpColVector &, const double &).
 
-  \param v : Instantaneous velocity represented by a 6 dimension
-  vector \f$ [{\bf t}, {\bf \theta u}]^t \f$ where \f$ {\bf t} \f$ is a
-  translation vector and \f$ {\bf \theta u} \f$ is a rotation vector (see
-  vpThetaUVector).  \f$ {\bf v} = [t_x, t_y, t_z, {\theta u}_x, {\theta u}_y,
-  {\theta u}_z] \f$ (see vpTranslationVector and vpThetaUVector).
+  \param v : Instantaneous velocity skew represented by a 6 dimension
+  vector \f$ {\bf v} = [v, \omega] \f$ where \f$ v \f$ is a translation velocity vector
+  and \f$ \omega \f$ is a rotation velocity vector.
 
   \return An homogeneous matrix \f$ \bf M \f$ computed from an instantaneous
-  velocity \f$ \bf v \f$. If \f$ \bf v \f$ is expressed in frame c, \f$ {\bf M}
-  = {^c}{\bf M}_{c_{new}} \f$.
+  velocity \f$ \bf v \f$, where \f${\bf M} = \exp^{({\bf v})} \f$ is the displacement
+  of the object when the velocity \f$ \bf v \f$ is applied during 1 second.
 
   \sa inverse(const vpHomogeneousMatrix &)
 */
@@ -67,20 +65,18 @@ vpExponentialMap::direct(const vpColVector &v)
 
   Compute the exponential map. The inverse function is inverse().
 
-  \param v : Instantaneous velocity represented by a 6 dimension
-  vector \f$ [{\bf t}, {\bf \theta u}]^t \f$ where \f$ {\bf t} \f$ is a
-  translation vector and \f$ {\bf \theta u} \f$ is a rotation vector (see
-  vpThetaUVector).  \f$ {\bf v} = [t_x, t_y, t_z, {\theta u}_x, {\theta u}_y,
-  {\theta u}_z] \f$ (see vpTranslationVector and vpThetaUVector).
+  \param v : Instantaneous velocity skew represented by a 6 dimension
+  vector \f$ {\bf v} = [v, \omega] \f$ where \f$ v \f$ is a translation velocity vector
+  and \f$ \omega \f$ is a rotation velocity vector.
 
   \param delta_t : Sampling time \f$ \Delta t \f$. Time during which the
-  velocity v is applied.
+  velocity \f$ \bf v \f$ is applied.
 
   \return An homogeneous matrix \f$ \bf M \f$ computed from an instantaneous
-  velocity \f$ \bf v \f$. If \f$ \bf v \f$ is expressed in frame c, \f$ {\bf M}
-  = {^c}{\bf M}_{c_{new}} \f$.
+  velocity \f$ \bf v \f$, where \f${\bf M} = \exp^{({\bf v},\Delta t)} \f$ is the displacement
+  of the object when the velocity \f$ \bf v \f$ is applied during \f$\Delta t\f$ seconds.
 
-  \sa inverse(const vpHomogeneousMatrix &, const float &)
+  \sa inverse(const vpHomogeneousMatrix &, const double &)
 */
 vpHomogeneousMatrix
 vpExponentialMap::direct(const vpColVector &v, const double &delta_t)
@@ -119,8 +115,6 @@ vpExponentialMap::direct(const vpColVector &v, const double &delta_t)
   vpHomogeneousMatrix Delta ;
   Delta.insert(rd) ;
   Delta.insert(dt) ;
-
-
 
   if (0)  // test new version wrt old version
   {
@@ -197,16 +191,15 @@ vpExponentialMap::direct(const vpColVector &v, const double &delta_t)
 
 /*!
 
-  Compute an instantaneous velocity from an homogeneous matrix. The inverse
+  Computes an instantaneous velocity skew from an homogeneous matrix. The inverse
   function is the exponential map, see direct().
 
-  \param M : An homogeneous matrix corresponding to a displacement.
+  \param M : An homogeneous matrix corresponding to the displacement of an object
+  during 1 second.
 
-  \return Instantaneous velocity \f$ \bf v \f$ represented by a 6 dimension
-  vector \f$ [{\bf t}, {\bf \theta u}]^t \f$ where \f$ {\bf \theta u} \f$ is a
-  rotation vector (see vpThetaUVector) and \f$ \bf t \f$ is a translation
-  vector:  \f$ {\bf v} = [t_x, t_y, t_z, {\theta u}_x, {\theta u}_y, {\theta
-  u}_z] \f$ (see vpTranslationVector and vpThetaUVector).
+  \return Instantaneous velocity skew \f$ \bf v \f$ represented by a 6 dimension
+  vector \f$ [v, \omega] \f$ where \f$ v \f$ is a translation velocity vector
+  and \f$ \omega \f$ is a rotation velocity vector.
 
   \sa direct(const vpColVector &)
 */
@@ -221,18 +214,17 @@ vpExponentialMap::inverse(const vpHomogeneousMatrix &M)
   Compute an instantaneous velocity from an homogeneous matrix. The inverse
   function is the exponential map, see direct().
 
-  \param M : An homogeneous matrix corresponding to a displacement.
+  \param M : An homogeneous matrix corresponding to the displacement of an object
+  during \f$\Delta t\f$ seconds.
 
   \param delta_t : Sampling time \f$ \Delta t \f$. Time during which the
   displacement is applied.
 
-  \return Instantaneous velocity \f$ \bf v \f$ represented by a 6 dimension
-  vector \f$ [{\bf t}, {\bf \theta u}]^t \f$ where \f$ {\bf \theta u} \f$ is a
-  rotation vector (see vpThetaUVector) and \f$ \bf t \f$ is a translation
-  vector:  \f$ {\bf v} = [t_x, t_y, t_z, {\theta u}_x, {\theta u}_y, {\theta
-  u}_z] \f$ (see vpTranslationVector and vpThetaUVector).
+  \return Instantaneous velocity skew \f$ \bf v \f$ represented by a 6 dimension
+  vector \f$ [v, \omega] \f$ where \f$ v \f$ is a translation velocity vector
+  and \f$ \omega \f$ is a rotation velocity vector.
 
-  \sa direct(const vpColVector &, const float &)
+  \sa direct(const vpColVector &, const double &)
 */
 vpColVector
 vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const double &delta_t)
@@ -308,10 +300,3 @@ vpExponentialMap::inverse(const vpHomogeneousMatrix &M, const double &delta_t)
 
   return(v);
 }
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
