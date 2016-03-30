@@ -47,8 +47,6 @@ vpThread::Return captureFunction(vpThread::Args args)
 #endif
   bool stop_capture_ = false;
 
-  cap.open(frame_);
-
   double start_time = vpTime::measureTimeSecond();
   while ((vpTime::measureTimeSecond() - start_time) < 30 && !stop_capture_) {
     // Capture in progress
