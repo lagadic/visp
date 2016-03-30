@@ -124,6 +124,7 @@ class VISP_EXPORT vpViper
   void get_fMw(const vpColVector & q, vpHomogeneousMatrix & fMw) const;
   void get_wMe(vpHomogeneousMatrix & wMe) const;
   void get_eMc(vpHomogeneousMatrix & eMc) const;
+  void get_eMs(vpHomogeneousMatrix & eMs) const;
   void get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe) const;
   void get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc) const;
 
@@ -161,6 +162,7 @@ class VISP_EXPORT vpViper
   double a3;     //!< for joint 3
   double d4;     //!< for joint 4
   double d6;     //!< for joint 6
+  double d7;     //!< for force/torque location
   double c56;    //!< Mechanical coupling between joint 5 and joint 6
   
   // Software joint limits in radians
