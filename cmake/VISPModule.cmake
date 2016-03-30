@@ -499,7 +499,7 @@ endmacro()
 # sets header and source files for the current module
 # NB: all files specified as headers will be installed
 # Usage:
-# ocv_set_module_sources([HEADERS] <list of files> [SOURCES] <list of files>)
+# vp_set_module_sources([HEADERS] <list of files> [SOURCES] <list of files>)
 macro(vp_set_module_sources)
   vp_debug_message("vp_set_module_sources(" ${ARGN} ")")
 
