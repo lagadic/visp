@@ -749,37 +749,6 @@ void vpTemplateTracker::initFromZone(const vpImage<unsigned char> &I, const vpTe
   }
 }
 
-void vpTemplateTracker::initCompInversePyr(const vpImage<unsigned char> &I)
-{
-  vpTRACE("initCompInversePyr");
-  templateSize=templateSizePyr[0];
-  //ptTemplateSupp=ptTemplateSuppPyr[0];
-  //ptTemplateCompo=ptTemplateCompoPyr[0];
-  ptTemplate=ptTemplatePyr[0];
-  ptTemplateSelect=ptTemplateSelectPyr[0];
-  initCompInversePyr(I);
-  ptTemplateSuppPyr[0]=ptTemplateSupp;
-  ptTemplateCompoPyr[0]=ptTemplateCompo;
-
-
-  if(nbLvlPyr>1)
-  {
-    vpImage<unsigned char> Itemp=I;
-    for(unsigned int i=1;i<nbLvlPyr;i++)
-    {
-      vpImageFilter::getGaussPyramidal(Itemp,Itemp);
-
-      templateSize=templateSizePyr[i];
-      ptTemplate=ptTemplatePyr[i];
-      ptTemplateSelect=ptTemplateSelectPyr[i];
-      initCompInversePyr(Itemp);
-      ptTemplateSuppPyr[i]=ptTemplateSupp;
-      ptTemplateCompoPyr[i]=ptTemplateCompo;
-    }
-  }
-  // 	vpTRACE("fin initCompInversePyr");
-
-}
 void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
 {
   // 	vpTRACE("initHessienDesiredPyr");

@@ -260,8 +260,6 @@ class VISP_EXPORT vpTemplateTracker
     void            computeOptimalBrentGain(const vpImage<unsigned char> &I,vpColVector &tp,double tMI,vpColVector &direction,double &alpha);
     virtual double  getCost(const vpImage<unsigned char> &I, const vpColVector &tp) = 0;
     void            getGaussianBluredImage(const vpImage<unsigned char> &I){ vpImageFilter::filter(I, BI,fgG,taillef); }
-    void            initCompInverse(const vpImage<unsigned char> &I);
-    virtual void    initCompInversePyr(const vpImage<unsigned char> &I);
     virtual void    initHessienDesired(const vpImage<unsigned char> &I)=0;
     virtual void    initHessienDesiredPyr(const vpImage<unsigned char> &I);
     virtual void    initPyramidal(unsigned int nbLvl,unsigned int l0);
