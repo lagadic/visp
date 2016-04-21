@@ -250,7 +250,7 @@ vpRobotBiclops::init ()
   if (fd == NULL) {
     vpCERROR << "Cannot open biclops config file: " << configfile << std::endl;
     throw vpRobotException (vpRobotException::constructionError,
- 			    "Cannot open connexion with biclops");
+          "Cannot open connection with biclops");
   }
   fclose(fd);
 

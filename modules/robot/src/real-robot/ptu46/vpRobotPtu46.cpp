@@ -150,9 +150,9 @@ vpRobotPtu46::init ()
   vpDEBUG_TRACE (12, "Open connection Ptu-46.");
   if (0 != ptu.init(device) )
   {
-    vpERROR_TRACE ("Cannot open connexion with ptu-46.");
+    vpERROR_TRACE ("Cannot open connection with ptu-46.");
     throw vpRobotException (vpRobotException::constructionError,
-			    "Cannot open connexion with ptu-46");
+          "Cannot open connection with ptu-46");
   }
 
   return ;

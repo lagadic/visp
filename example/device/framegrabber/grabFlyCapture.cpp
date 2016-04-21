@@ -223,7 +223,7 @@ int main(int argc, const char** argv)
     if (display)
       delete display;
 
-    // The camera connexion will be closed automatically in vpFlyCapture destructor
+    // The camera connection will be closed automatically in vpFlyCapture destructor
     return 0;
   }
   catch(vpException &e) {
