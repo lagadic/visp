@@ -98,6 +98,7 @@ vpHistogramPeak::operator==(const vpHistogramPeak &p) const
 }
 
 /*!
+  \relates vpHistogramPeak
   \brief std::cout a peak
 */
 VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpHistogramPeak &p)

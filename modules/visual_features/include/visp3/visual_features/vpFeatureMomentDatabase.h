@@ -169,7 +169,7 @@ class VISP_EXPORT vpFeatureMomentDatabase{
 
   vpFeatureMoment& get(const char* type, bool& found);
 
-  friend VISP_EXPORT std::ostream & operator<<(std::ostream& os, const vpFeatureMomentDatabase& m);
+  //friend VISP_EXPORT std::ostream & operator<<(std::ostream& os, const vpFeatureMomentDatabase& m);
   friend class vpFeatureMoment;
 };
 

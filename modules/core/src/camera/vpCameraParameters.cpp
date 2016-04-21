@@ -530,7 +530,7 @@ vpCameraParameters::get_K_inverse() const
 /*!
   Print the camera parameters on the standard output
 
-  \sa operator <<
+  \sa operator<<(std::ostream &, const vpCameraParameters &)
 */
 void
 vpCameraParameters::printParameters()
@@ -564,7 +564,7 @@ vpCameraParameters::printParameters()
   \param os : Output stream.
   \param cam : Camera parameters.
 */
-VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpCameraParameters &cam)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters &cam)
 {
   switch(cam.get_projModel()){
   case vpCameraParameters::perspectiveProjWithoutDistortion :
