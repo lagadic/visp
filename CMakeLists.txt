@@ -44,6 +44,10 @@ project(VISP C CXX)
 
 cmake_minimum_required(VERSION 2.8.3)
 
+if(POLICY CMP0022)
+  cmake_policy(SET CMP0022 NEW) # Due to sensor ATIDAQ_LIBRARIES
+endif()
+
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 include(cmake/VISPUtils.cmake)
@@ -205,6 +209,7 @@ VP_OPTION(USE_VIRTUOSE    Virtuose    "" "Include Virtuose SDK support for Hapti
 VP_OPTION(USE_DC1394      DC1394      "" "Include dc1394 support"          "" ON IF UNIX)
 VP_OPTION(USE_V4L2        V4L2        "" "Include v4l2 support"            "" ON IF UNIX)
 VP_OPTION(USE_FLYCAPTURE  FlyCapture  "" "Include FlyCapture SDK support for PointGrey cameras" "" ON)
+VP_OPTION(USE_COMEDI      Comedi      "" "Include comedi (linux control and measurement device interface) support" "" ON)
 VP_OPTION(USE_BICLOPS     BICLOPS     "" "Include biclops support"         "" ON IF UNIX)
 VP_OPTION(USE_PTU46       PTU46       "" "Include ptu-46 support"          "" ON IF UNIX)
 VP_OPTION(USE_CMU1394     CMU1394     "" "Include cmu1494 support"         "" ON IF WIN32)
@@ -245,6 +250,7 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 # bar codes
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON)
+VP_OPTION(BUILD_ATIDAQ    ""           ""    "Include atidaq-c support"     "" ON)
 
 #----------------------------------------------------------------------
 # For Dart server and tests
@@ -369,16 +375,18 @@ endif()
 # where to install the library
 if(WIN32)
   if(VISP_STATIC)
-    set(VISP_LIB_INSTALL_PATH   "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
+    set(VISP_LIB_INSTALL_PATH  "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
   else()
-    set(VISP_LIB_INSTALL_PATH   "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}")
+    set(VISP_LIB_INSTALL_PATH  "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}")
   endif()
-  set(VISP_BIN_INSTALL_PATH   "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_BINDIR}")
+  set(VISP_BIN_INSTALL_PATH    "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_BINDIR}")
+  set(VISP_3P_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
 else()
   set(VISP_LIB_INSTALL_PATH     ${CMAKE_INSTALL_LIBDIR})
   set(VISP_BIN_INSTALL_PATH     ${CMAKE_INSTALL_BINDIR})
+  set(VISP_3P_LIB_INSTALL_PATH  share/ViSP/3rdparty/${VISP_LIB_INSTALL_PATH})
 endif()
-
+set(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib")
 
 #----------------------------------------------------------------------
 # Configure the files that depend on the build <binary dir> or
@@ -435,6 +443,11 @@ if(UNIX)
   )
   MARK_AS_ADVANCED(GZIP)
 endif()
+
+#----------------------------------------------------------------------
+# Add 3rd-party libraries
+#----------------------------------------------------------------------
+include(cmake/VISP3rdParty.cmake)
 
 #----------------------------------------------------------------------
 # Modules
@@ -510,6 +523,8 @@ VP_SET(VISP_HAVE_DIRECTSHOW  TRUE IF (BUILD_MODULE_visp_sensor AND USE_DIRECTSHO
 VP_SET(VISP_HAVE_LIBFREENECT TRUE IF (BUILD_MODULE_visp_sensor AND USE_LIBFREENECT))
 VP_SET(VISP_HAVE_LIBUSB_1    TRUE IF (BUILD_MODULE_visp_sensor AND USE_LIBUSB_1))
 VP_SET(VISP_HAVE_FLYCAPTURE  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FLYCAPTURE))
+VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
+VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND BUILD_ATIDAQ))
 
 VP_SET(VISP_BUILD_SHARED_LIBS TRUE IF BUILD_SHARED_LIBS) # for header vpConfig.h
 VP_SET(VISP_HAVE_DC1394_CAMERA_ENUMERATE TRUE IF (USE_DC1394 AND DC1394_CAMERA_ENUMERATE_FOUND)) # for header vpConfig.h
@@ -657,6 +672,11 @@ if(USE_VIPER850)
   set(VISP_HAVE_VIPER850_FOUND "yes")  # for ViSP-third-party.txt
 else()
   set(VISP_HAVE_VIPER850_FOUND "no")  # for ViSP-third-party.txt
+endif()
+if(BUILD_ATIDAQ)
+  set(VISP_HAVE_ATIDAQ_FOUND "yes")  # for ViSP-third-party.txt
+else()
+  set(VISP_HAVE_ATIDAQ_FOUND "no")  # for ViSP-third-party.txt
 endif()
 
 # ----------------------------------------------------------------------------

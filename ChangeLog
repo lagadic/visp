@@ -16,6 +16,8 @@ ViSP 3.0.1 (in development)
       cameras (USB-3, firewire, GigE)
     . New vpVirtuose class, a wrapper over Haption Virtuose SDK that is
       provided with their haptic devices
+    . New vpComedi and vpForceTorqueAtiSensor classes to get synchonous
+      data from ATI F/T sensors
     . New cross platform multi-threading capabilities with vpMutex and
       vpThread classes
   - Tutorials
