@@ -38,6 +38,7 @@ Framegrabbers
   DirectShow                  : ${VISP_HAVE_DIRECTSHOW_FOUND}
   CMU 1394 Digital Camera SDK : ${VISP_HAVE_CMU1394_FOUND}
   OpenCV                      : ${VISP_HAVE_OPENCV_FOUND}
+  PointGrey Flycapture        : ${VISP_HAVE_FLYCAPTURE_FOUND}
 ATI F/T
   \-atidaq                    : ${VISP_HAVE_ATIDAQ_FOUND}
   \-comedi                    : ${VISP_HAVE_COMEDI_FOUND}

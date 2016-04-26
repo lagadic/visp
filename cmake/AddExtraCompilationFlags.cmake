@@ -141,6 +141,8 @@ macro(vp_add_extra_compilation_flags)
     endif()
   endif()
 
+  VP_OPTION(ACTIVATE_WARNING_3PARTY_MUTE  "" "" "Add flags to disable warning due to known 3rd parties" "" ON)
+
   # If compiler support symbol visibility, enable it.
   include(CheckCCompilerFlag)
   check_c_compiler_flag(-fvisibility=hidden HAS_VISIBILITY)

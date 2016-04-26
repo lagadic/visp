@@ -16,6 +16,11 @@ list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.ppm" )
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
+
+  if(VISP_HAVE_OGRE)
+    visp_set_source_file_compile_flag(${cpp} -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  endif()
+
   if(COMMAND visp_add_dependency)
     visp_add_dependency(${cpp} "tutorials")
   endif()

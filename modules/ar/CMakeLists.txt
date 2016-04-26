@@ -179,5 +179,11 @@ endif(USE_COIN3D)
 
 vp_add_module(ar visp_core OPTIONAL visp_io)
 vp_glob_module_sources()
+
+if(USE_OGRE)
+  # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
+  vp_set_source_file_compile_flag(src/ogre-simulator/vpAROgre.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+endif()
+
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})

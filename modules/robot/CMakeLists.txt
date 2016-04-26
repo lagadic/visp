@@ -116,6 +116,11 @@ endif()
 vp_add_module(robot visp_core OPTIONAL visp_io visp_gui)
 vp_glob_module_sources()
 
+if(USE_ARIA)
+  # Add specific build flag to turn off warnings coming from libaria 3rd party
+  vp_set_source_file_compile_flag(src/real-robot/pioneer/vpRobotPioneer.cpp -Wno-unused-parameter)
+endif()
+
 # copy robot and wireframe simulator data
 vp_glob_module_copy_data("src/robot-simulator/arms/*.bnd"      data/robot-simulator)
 vp_glob_module_copy_data("src/wireframe-simulator/scene/*.bnd" data/wireframe-simulator)
