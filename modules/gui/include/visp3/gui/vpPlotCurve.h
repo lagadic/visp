@@ -76,7 +76,7 @@ class vpPlotCurve
     std::list<double> pointListx;
     std::list<double> pointListy;
     std::list<double> pointListz;
-    char legend[256];
+    std::string legend;
     double xmin;
     double xmax;
     double ymin;

@@ -48,7 +48,7 @@
 #if defined(VISP_HAVE_DISPLAY)
 vpPlotCurve::vpPlotCurve() :
   color(vpColor::red), curveStyle(point), thickness(1), nbPoint(0), lastPoint(),
-  pointListx(), pointListy(), pointListz(), xmin(0), xmax(0), ymin(0), ymax(0)
+  pointListx(), pointListy(), pointListz(), legend(), xmin(0), xmax(0), ymin(0), ymax(0)
 {
 }
 

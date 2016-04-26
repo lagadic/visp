@@ -81,7 +81,7 @@ vpPlot::vpPlot() : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30),
 */
 vpPlot::vpPlot(const unsigned int graph_nbr,
 	       const unsigned int height, const unsigned int width, 
-	       const int x, const int y, const char *title)
+         const int x, const int y, const std::string &title)
   : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30), margej(40),
     factori(1.f), factorj(1.)
 {  
@@ -102,7 +102,7 @@ vpPlot::vpPlot(const unsigned int graph_nbr,
 */
 void vpPlot::init(const unsigned int graph_nbr,
 		  const unsigned int height, const unsigned int width, 
-		  const int x, const int y, const char *title)
+      const int x, const int y, const std::string &title)
 {
   I.init(height,width,255);
     
@@ -118,7 +118,7 @@ void vpPlot::init(const unsigned int graph_nbr,
   display = new vpDisplayD3D;
 #endif
 
-  display->init(I, x, y, title);
+  display->init(I, x, y, title.c_str());
   
   vpDisplay::display(I);
     
@@ -186,10 +186,10 @@ vpPlot::initNbGraph (unsigned int nbGraph)
   
   for (unsigned int i = 0; i < graphNbr; i++)
   {
-    strcpy(graphList[i].title, "");
-    strcpy(graphList[i].unitx, "");
-    strcpy(graphList[i].unity, "");
-    strcpy(graphList[i].unitz, "");
+    graphList[i].title.clear();
+    graphList[i].unitx.clear();
+    graphList[i].unity.clear();
+    graphList[i].unitz.clear();
   }
 }
 
@@ -494,7 +494,7 @@ vpPlot::getPixelValue(const bool block)
   \param title : The graphic title.
 */
 void
-vpPlot::setTitle (const unsigned int graphNum, const char *title)
+vpPlot::setTitle (const unsigned int graphNum, const std::string &title)
 {
   (graphList+graphNum)->setTitle(title);
 }
@@ -506,7 +506,7 @@ vpPlot::setTitle (const unsigned int graphNum, const char *title)
   \param unitx : The name of the unit of the x axis.
 */
 void
-vpPlot::setUnitX (const unsigned int graphNum, const char *unitx)
+vpPlot::setUnitX (const unsigned int graphNum, const std::string &unitx)
 {
   (graphList+graphNum)->setUnitX(unitx);
 }
@@ -518,7 +518,7 @@ vpPlot::setUnitX (const unsigned int graphNum, const char *unitx)
   \param unity : The name of the unit of the y axis.
 */
 void
-vpPlot::setUnitY (const unsigned int graphNum, const char *unity)
+vpPlot::setUnitY (const unsigned int graphNum, const std::string &unity)
 {
   (graphList+graphNum)->setUnitY(unity);
 }
@@ -530,7 +530,7 @@ vpPlot::setUnitY (const unsigned int graphNum, const char *unity)
   \param unitz : The name of the unit of the z axis.
 */
 void
-vpPlot::setUnitZ (const unsigned int graphNum, const char *unitz)
+vpPlot::setUnitZ (const unsigned int graphNum, const std::string &unitz)
 {
   (graphList+graphNum)->setUnitZ(unitz);
 }
@@ -543,7 +543,7 @@ vpPlot::setUnitZ (const unsigned int graphNum, const char *unitz)
   \param legend : The legend of the curve.
 */
 void
-vpPlot::setLegend (const unsigned int graphNum, const unsigned int curveNum, const char *legend)
+vpPlot::setLegend (const unsigned int graphNum, const unsigned int curveNum, const std::string &legend)
 {
   (graphList+graphNum)->setLegend(curveNum, legend);
 }
