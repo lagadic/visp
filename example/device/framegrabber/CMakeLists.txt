@@ -52,6 +52,11 @@ set(example_cpp
   grabOpenCV.cpp
 )
 
+if(VISP_HAVE_FLYCAPTURE)
+  # Add specific build flag to turn off warnings coming from PointGrey flycapture 3rd party
+  visp_set_source_file_compile_flag(grabFlyCapture.cpp -Wno-unknown-pragmas -Wno-ignored-qualifiers)
+endif()
+
 foreach(cpp ${example_cpp})
   visp_add_target(${cpp})
   if(COMMAND visp_add_dependency)

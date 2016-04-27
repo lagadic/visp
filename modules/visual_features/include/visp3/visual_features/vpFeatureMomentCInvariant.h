@@ -282,9 +282,6 @@ class VISP_EXPORT vpFeatureMomentCInvariant : public vpFeatureMoment{
          */
         void printLsofInvariants(std::ostream& os) const;
 
-        /*!
-          Print all the interaction matrices of visual features
-         */
         friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpFeatureMomentCInvariant& featcinv);
 
 };

@@ -390,7 +390,11 @@ void vpFeatureMomentCInvariant::printLsofInvariants(std::ostream& os) const{
     }
 }
 
-VISP_EXPORT std::ostream& operator<<(std::ostream & os, const vpFeatureMomentCInvariant& featcinv)
+/*!
+  \relates vpFeatureMomentCInvariant
+  Print all the interaction matrices of visual features
+ */
+std::ostream& operator<<(std::ostream & os, const vpFeatureMomentCInvariant& featcinv)
 {
     //Print L for c1 .. c10
     for (unsigned int i = 0; i < 10; ++i){

@@ -511,6 +511,11 @@ scheme, ...</p>
   \defgroup group_sensor_rgbd RGB-D sensor
   RGB-D sensor interfaces.
 */
+/*!  
+  \ingroup module_sensor
+  \defgroup group_sensor_ft Force/Torque sensor
+  Force/Torque sensor interfaces.
+*/
 /*******************************************
  * Module tt
  *******************************************/

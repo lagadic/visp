@@ -111,5 +111,22 @@ endif()
 
 vp_add_module(mbt visp_vision visp_core visp_me visp_visual_features OPTIONAL visp_ar visp_klt visp_gui)
 vp_glob_module_sources()
+
+if(USE_OGRE)
+  # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
+  vp_set_source_file_compile_flag(src/edge/vpMbEdgeMultiTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  vp_set_source_file_compile_flag(src/edge/vpMbEdgeTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  vp_set_source_file_compile_flag(src/edge/vpMbtDistanceCircle.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  vp_set_source_file_compile_flag(src/edge/vpMbtDistanceCylinder.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  vp_set_source_file_compile_flag(src/edge/vpMbtDistanceLine.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  vp_set_source_file_compile_flag(src/hybrid/vpMbEdgeKltMultiTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  vp_set_source_file_compile_flag(src/hybrid/vpMbEdgeKltTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  vp_set_source_file_compile_flag(src/klt/vpMbKltMultiTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  vp_set_source_file_compile_flag(src/klt/vpMbKltTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  vp_set_source_file_compile_flag(src/klt/vpMbtDistanceKltCylinder.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  vp_set_source_file_compile_flag(src/klt/vpMbtDistanceKltPoints.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  vp_set_source_file_compile_flag(src/vpMbTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+endif()
+
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})

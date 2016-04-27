@@ -103,7 +103,7 @@ vpPlotGraph::initGraph (unsigned int nbCurve)
     (curveList+i)->curveStyle = line;
     (curveList+i)->pointListx.clear();
     (curveList+i)->pointListy.clear();
-    strcpy((curveList+i)->legend,"");
+    (curveList+i)->legend.clear();
   }
 }
 
@@ -228,62 +228,37 @@ vpPlotGraph::setCurveColor(const unsigned int curveNum, const vpColor color)
 }
 
 void
-vpPlotGraph::setTitle (const char *title_)
+vpPlotGraph::setTitle (const std::string &title_)
 {
-  if (strlen(title_) >= 256) {
-    throw(vpException(vpException::memoryAllocationError,
-                      "Not enough memory to intialize the title"));
-  }
-
-  strcpy(this->title, title_);
+  title = title_;
   dispTitle = true;
 }
 
 void
-vpPlotGraph::setUnitX (const char *unit_x)
+vpPlotGraph::setUnitX (const std::string &unit_x)
 {
-  if (strlen(unit_x) >= 256) {
-    throw(vpException(vpException::memoryAllocationError,
-                      "Not enough memory to intialize the unit along x axis"));
-  }
-
-  strcpy(this->unitx, unit_x);
+  unitx = unit_x;
   dispUnit = true;
 }
 
 void
-vpPlotGraph::setUnitY (const char *unit_y)
+vpPlotGraph::setUnitY (const std::string &unit_y)
 {
-  if (strlen(unit_y) >= 256) {
-    throw(vpException(vpException::memoryAllocationError,
-                      "Not enough memory to intialize the unit along y axis"));
-  }
-
-  strcpy(this->unity, unit_y);
+  unity = unit_y;
   dispUnit = true;
 }
 
 void
-vpPlotGraph::setUnitZ (const char *unit_z)
+vpPlotGraph::setUnitZ (const std::string &unit_z)
 {
-  if (strlen(unit_z) >= 256) {
-    throw(vpException(vpException::memoryAllocationError,
-                      "Not enough memory to intialize the unit along z axis"));
-  }
-
-  strcpy(this->unitz, unit_z);
+  unitz = unit_z;
   dispUnit = true;
 }
 
 void
-vpPlotGraph::setLegend (const unsigned int curveNum, const char *legend)
+vpPlotGraph::setLegend (const unsigned int curveNum, const std::string &newlegend)
 {
-  if (strlen(legend) >= 256) {
-    throw(vpException(vpException::memoryAllocationError,
-                      "Not enough memory to intialize the legend"));
-  }
-
-  strcpy((curveList+curveNum)->legend,legend);
+  (curveList+curveNum)->legend = newlegend;
   dispLegend = true;
 }
 
@@ -352,9 +327,9 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
       else ttemp = t;
       sprintf(valeur, "%.2f", ttemp);
 #if defined VISP_HAVE_X11
-      vpDisplay::displayCharString(I,vpImagePoint(yorg + 3*epsi,x),valeur, vpColor::black);
+      vpDisplay::displayText(I,vpImagePoint(yorg + 3*epsi,x),valeur, vpColor::black);
 #elif defined (VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-      vpDisplay::displayCharString(I,vpImagePoint(yorg + epsi,x),valeur, vpColor::black);
+      vpDisplay::displayText(I,vpImagePoint(yorg + epsi,x),valeur, vpColor::black);
 #endif
     }
   }
@@ -362,9 +337,9 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
   {
     sprintf(valeur, "x10e%d", -power);
 #if defined VISP_HAVE_X11
-    vpDisplay::displayCharString(I,vpImagePoint(yorg+4*epsi,dTopLeft.get_j()+dWidth-6*epsj),valeur, vpColor::black);
+    vpDisplay::displayText(I,vpImagePoint(yorg+4*epsi,dTopLeft.get_j()+dWidth-6*epsj),valeur, vpColor::black);
 #elif defined (VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-    vpDisplay::displayCharString(I,vpImagePoint(yorg+4*epsi,dTopLeft.get_j()+dWidth-10*epsj),valeur, vpColor::black);
+    vpDisplay::displayText(I,vpImagePoint(yorg+4*epsi,dTopLeft.get_j()+dWidth-10*epsj),valeur, vpColor::black);
 #endif
   }
   
@@ -384,18 +359,18 @@ vpPlotGraph::displayGrid (vpImage<unsigned char> &I)
       
     sprintf(valeur, "%.2f", ttemp);
 #if defined VISP_HAVE_X11    
-    vpDisplay::displayCharString(I,vpImagePoint(y+epsi,topLeft.get_j()+epsj),valeur, vpColor::black);
+    vpDisplay::displayText(I,vpImagePoint(y+epsi,topLeft.get_j()+epsj),valeur, vpColor::black);
 #elif defined (VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-    vpDisplay::displayCharString(I,vpImagePoint(y-epsi,topLeft.get_j()+epsj),valeur, vpColor::black);
+    vpDisplay::displayText(I,vpImagePoint(y-epsi,topLeft.get_j()+epsj),valeur, vpColor::black);
 #endif
   }
   if (power != 0)
   {
     sprintf(valeur, "x10e%d", -power);
 #if defined VISP_HAVE_X11   
-    vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i()-3*epsi,dTopLeft.get_j()-6*epsj),valeur, vpColor::black);
+    vpDisplay::displayText(I,vpImagePoint(dTopLeft.get_i()-3*epsi,dTopLeft.get_j()-6*epsj),valeur, vpColor::black);
 #elif defined (VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-    vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i()-3*epsi,dTopLeft.get_j()-6*epsj),valeur, vpColor::black);
+    vpDisplay::displayText(I,vpImagePoint(dTopLeft.get_i()-3*epsi,dTopLeft.get_j()-6*epsj),valeur, vpColor::black);
 #endif
   }
 
@@ -421,26 +396,26 @@ vpPlotGraph::displayUnit (vpImage<unsigned char> &
 #endif
                           )
 { 
-	unsigned int offsetx = vpMath::minimum<unsigned int>((unsigned int)strlen(unitx), dWidth);
+  unsigned int offsetx = vpMath::minimum<unsigned int>(unitx.size(), dWidth);
 
 #if defined VISP_HAVE_X11   
-  vpDisplay::displayCharString(I,vpImagePoint(yorg-2*epsi,dTopLeft.get_j()+dWidth-offsetx*epsj),unitx, vpColor::black);
-  vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i(),dTopLeft.get_j()+epsj),unity, vpColor::black);
+  vpDisplay::displayText(I,vpImagePoint(yorg-2*epsi,dTopLeft.get_j()+dWidth-offsetx*epsj),unitx.c_str(), vpColor::black);
+  vpDisplay::displayText(I,vpImagePoint(dTopLeft.get_i(),dTopLeft.get_j()+epsj),unity.c_str(), vpColor::black);
 #elif defined (VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-  vpDisplay::displayCharString(I,vpImagePoint(yorg-5*epsi,dTopLeft.get_j()+dWidth-offsetx*epsj),unitx, vpColor::black);
-  vpDisplay::displayCharString(I,vpImagePoint(dTopLeft.get_i(),dTopLeft.get_j()+epsj),unity, vpColor::black);
+  vpDisplay::displayText(I,vpImagePoint(yorg-5*epsi,dTopLeft.get_j()+dWidth-offsetx*epsj),unitx.c_str(), vpColor::black);
+  vpDisplay::displayText(I,vpImagePoint(dTopLeft.get_i(),dTopLeft.get_j()+epsj),unity.c_str(), vpColor::black);
 #endif
 }
 
 void
 vpPlotGraph::displayTitle (vpImage<unsigned char> &I)
 {
-  double size = (double)strlen(title);
+  double size = title.size();
   size = size/2.0;
-  vpDisplay::displayCharString(I,
+  vpDisplay::displayText(I,
 			       vpImagePoint(dTopLeft.get_i()-3*epsi,
-					    dTopLeft.get_j()+dWidth/2.0-4*size),
-			       title, 
+              dTopLeft.get_j()+dWidth/2.0-4*size),
+             title.c_str(),
 			       vpColor::black);
 }
 
@@ -449,16 +424,16 @@ vpPlotGraph::displayLegend (vpImage<unsigned char> &I)
 {
   size_t offsetj = 0;
   for (unsigned int i = 0; i < curveNbr; i++) {
-    size_t offset = epsj * strlen((curveList+i)->legend);
+    size_t offset = epsj * (curveList+i)->legend.size();
     offsetj = vpMath::maximum(offset, offsetj);
   }
   if (offsetj > dWidth) offsetj = dWidth;
 
   for (unsigned int i = 0; i < curveNbr; i++) {
-    vpDisplay::displayCharString(I,
+    vpDisplay::displayText(I,
                                  vpImagePoint(dTopLeft.get_i()+i*5*epsi,
                                               dTopLeft.get_j()+dWidth-offsetj),
-                                 (curveList+i)->legend,
+                                 (curveList+i)->legend.c_str(),
                                  (curveList+i)->color);
   }
 }
@@ -637,9 +612,9 @@ vpPlotGraph::getPixelValue(vpImage<unsigned char> &I, vpImagePoint &iP)
     vpDisplay::displayROI(I,vpRect(vpImagePoint(topLeft.get_i()+height-20,topLeft.get_j()),width-1,19));
     char valeur[200];
     sprintf(valeur, " x: %f", x);
-    vpDisplay::displayCharString(I,vpImagePoint(topLeft.get_i()+height-2,topLeft.get_j()+5*epsj),valeur, vpColor::black);
+    vpDisplay::displayText(I,vpImagePoint(topLeft.get_i()+height-2,topLeft.get_j()+5*epsj),valeur, vpColor::black);
     sprintf(valeur, " y: %f", y);
-    vpDisplay::displayCharString(I,vpImagePoint(topLeft.get_i()+height-2,topLeft.get_j()+width/2.0),valeur, vpColor::black);
+    vpDisplay::displayText(I,vpImagePoint(topLeft.get_i()+height-2,topLeft.get_j()+width/2.0),valeur, vpColor::black);
 //     vpDisplay::flush(I);
     vpDisplay::flushROI(I,vpRect(vpImagePoint(topLeft.get_i()+height-20,topLeft.get_j()),width-1,19));
     return true;
@@ -1002,7 +977,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
           ttemp = t*pow(10.0,power); 
         else ttemp = t;
         sprintf(valeur, "%.1f", ttemp);
-        vpDisplay::displayCharString(I,ip3,valeur, vpColor::black);
+        vpDisplay::displayText(I,ip3,valeur, vpColor::black);
       }
     }
     count++;
@@ -1012,7 +987,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
     ip4 = iP[1] -vpImagePoint(-15,10);
     sprintf(valeur, "x10e%d", -power);
     if(check3Dpoint(ip4))
-      vpDisplay::displayCharString(I,ip4,valeur, vpColor::black);
+      vpDisplay::displayText(I,ip4,valeur, vpColor::black);
   }
   
   power = laFonctionSansNom(ydelt);
@@ -1045,7 +1020,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
           ttemp = t*pow(10.0,power); 
         else ttemp = t;
         sprintf(valeur, "%.1f", ttemp);
-        vpDisplay::displayCharString(I,ip3,valeur, vpColor::black);
+        vpDisplay::displayText(I,ip3,valeur, vpColor::black);
       }
     }
     count++;
@@ -1055,7 +1030,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
     ip4 = iP[2] -vpImagePoint(-15,10);
     sprintf(valeur, "x10e%d", -power);
     if(check3Dpoint(ip4))
-    vpDisplay::displayCharString(I,ip4,valeur, vpColor::black);
+    vpDisplay::displayText(I,ip4,valeur, vpColor::black);
   }
   
   power = laFonctionSansNom(zdelt);
@@ -1088,7 +1063,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
           ttemp = t*pow(10.0,power); 
         else ttemp = t;
         sprintf(valeur, "%.1f", ttemp);
-        vpDisplay::displayCharString(I,ip3,valeur, vpColor::black);
+        vpDisplay::displayText(I,ip3,valeur, vpColor::black);
       }
     }
     count++;
@@ -1098,7 +1073,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
     ip4 = iP[5] -vpImagePoint(-15,10);
     sprintf(valeur, "x10e%d", -power);
     if(check3Dpoint(ip4))
-      vpDisplay::displayCharString(I,ip4,valeur, vpColor::black);
+      vpDisplay::displayText(I,ip4,valeur, vpColor::black);
   }
   
   
@@ -1110,7 +1085,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
     {
       iPunit.set_ij(iP[1].get_i(),iP[1].get_j()-10*epsj);
       check3Dpoint (iPunit);
-      vpDisplay::displayCharString(I,iPunit,unitx, vpColor::black);
+      vpDisplay::displayText(I,iPunit,unitx.c_str(), vpColor::black);
     }
   }
   if (check3Dline(iP[3],iP[2]))
@@ -1120,7 +1095,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
     {
       iPunit.set_ij(iP[2].get_i(),iP[2].get_j()-10*epsj);
       check3Dpoint (iPunit);
-      vpDisplay::displayCharString(I,iPunit,unity, vpColor::black);
+      vpDisplay::displayText(I,iPunit,unity.c_str(), vpColor::black);
     }
   }
   if (check3Dline(iP[4],iP[5]))
@@ -1130,7 +1105,7 @@ vpPlotGraph::displayGrid3D (vpImage<unsigned char> &I)
     {
       iPunit.set_ij(iP[5].get_i(),iP[5].get_j()-10*epsj);
       check3Dpoint (iPunit);
-      vpDisplay::displayCharString(I,iPunit,unitz, vpColor::black);
+      vpDisplay::displayText(I,iPunit,unitz.c_str(), vpColor::black);
     }
   }
   

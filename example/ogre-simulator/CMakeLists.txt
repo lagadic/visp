@@ -48,6 +48,12 @@ set(example_cpp
 
 foreach(cpp ${example_cpp})
   visp_add_target(${cpp})
+
+  if(VISP_HAVE_OGRE)
+    # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
+    visp_set_source_file_compile_flag(${cpp} -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  endif()
+
   if(COMMAND visp_add_dependency)
     visp_add_dependency(${cpp} "examples")
   endif()

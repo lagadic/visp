@@ -281,6 +281,12 @@
 // Defined if PointGrey FlyCapture SDK available.
 #cmakedefine VISP_HAVE_FLYCAPTURE
 
+// Defined if Comedi (linux control and measurement cdevice interface) available.
+#cmakedefine VISP_HAVE_COMEDI
+
+// Defined if ATIDAQ-C is build and available.
+#cmakedefine VISP_HAVE_ATIDAQ
+
 // Defined if Irisa's Afma4 robot available.
 #cmakedefine VISP_HAVE_AFMA4
 

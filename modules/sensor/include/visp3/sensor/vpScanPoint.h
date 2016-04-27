@@ -210,6 +210,7 @@ class /* VISP_EXPORT */ vpScanPoint // Note that here VISP_EXPORT should not be 
 };
 
 /*!
+  \relates vpScanPoint
 
   Print the values of the scan point on the output stream. Data are
   separated by a white space. Data that are print are first the

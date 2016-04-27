@@ -70,9 +70,9 @@ class vpPlotGraph
     bool gridx;
     bool gridy;
     vpColor gridColor;
-    char title[256];
-    char unitx[256];
-    char unity[256];
+    std::string title;
+    std::string unitx;
+    std::string unity;
     unsigned int curveNbr;
     vpPlotCurve* curveList;
     bool scaleInitialized;
@@ -123,7 +123,7 @@ class vpPlotGraph
     double zmax;
     double zmin;
     double zdelt;
-    char unitz[256];
+    std::string unitz;
     vpImagePoint old_iPr;
     vpImagePoint old_iPz;
     bool blockedr;
@@ -204,11 +204,11 @@ public:
     void setGridThickness (const unsigned int thickness) {
       this->gridThickness = thickness;
     };
-    void setLegend (const unsigned int curveNum, const char *legend);
-    void setTitle (const char *title);
-    void setUnitX (const char *unitx);
-    void setUnitY (const char *unity);
-    void setUnitZ (const char *unitz);
+    void setLegend (const unsigned int curveNum, const std::string &legend);
+    void setTitle (const std::string &title);
+    void setUnitX (const std::string &unitx);
+    void setUnitY (const std::string &unity);
+    void setUnitZ (const std::string &unitz);
 };
 
 #endif

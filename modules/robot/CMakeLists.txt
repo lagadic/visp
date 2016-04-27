@@ -116,6 +116,16 @@ endif()
 vp_add_module(robot visp_core OPTIONAL visp_io visp_gui)
 vp_glob_module_sources()
 
+if(USE_VIRTUOSE)
+  # Add specific build flag to turn off warnings coming from VirtuoseAPI 3rd party
+  vp_set_source_file_compile_flag(src/haptic-device/virtuose/vpVirtuose.cpp -Wno-int-to-pointer-cast)
+endif()
+
+if(USE_ARIA)
+  # Add specific build flag to turn off warnings coming from libaria 3rd party
+  vp_set_source_file_compile_flag(src/real-robot/pioneer/vpRobotPioneer.cpp -Wno-unused-parameter)
+endif()
+
 # copy robot and wireframe simulator data
 vp_glob_module_copy_data("src/robot-simulator/arms/*.bnd"      data/robot-simulator)
 vp_glob_module_copy_data("src/wireframe-simulator/scene/*.bnd" data/wireframe-simulator)
@@ -124,3 +134,12 @@ vp_glob_module_copy_data("src/wireframe-simulator/scene/*.sld" data/wireframe-si
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui CTEST_EXCLUDE_PATH virtuose)
+
+if(USE_VIRTUOSE)
+  # Add specific build flag to turn off warnings coming from VirtuoseAPI 3rd party
+  vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp -Wno-int-to-pointer-cast)
+  vp_set_source_file_compile_flag(test/virtuose/testVirtuoseAfma6.cpp -Wno-int-to-pointer-cast)
+  vp_set_source_file_compile_flag(test/virtuose/testVirtuoseHapticBox.cpp -Wno-int-to-pointer-cast)
+  vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp -Wno-int-to-pointer-cast)
+  vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp -Wno-int-to-pointer-cast)
+endif()

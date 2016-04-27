@@ -294,6 +294,10 @@ void vpFeatureMomentCentered::compute_interaction() {
 }
 
 
+/*!
+  \relates vpFeatureMomentCentered
+  Print all the interaction matrices of visual features
+ */
 std::ostream& operator<<(std::ostream & os, const vpFeatureMomentCentered& mu){
   vpTRACE(" << Ls - CENTRED MOMENTS >>");
   unsigned int order_m_1 = (unsigned int)(mu.order - 1);

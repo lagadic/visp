@@ -70,9 +70,22 @@ if(USE_FLYCAPTURE)
   list(APPEND opt_incs ${FLYCAPTURE_INCLUDE_DIRS})
   list(APPEND opt_libs ${FLYCAPTURE_LIBRARIES})
 endif()
+if(USE_COMEDI)
+  list(APPEND opt_incs ${COMEDI_INCLUDE_DIRS})
+  list(APPEND opt_libs ${COMEDI_LIBRARIES})
+endif()
 
-vp_add_module(sensor visp_core)
+# atidac is private
+include_directories(${ATIDAQ_INCLUDE_DIRS})
+vp_add_module(sensor visp_core PRIVATE_OPTIONAL ${ATIDAQ_LIBRARIES})
 vp_glob_module_sources()
+
+if(USE_FLYCAPTURE)
+  # Add specific build flag to turn off warnings coming from PointGrey flycapture 3rd party
+  vp_set_source_file_compile_flag(src/framegrabber/flycapture/vpFlyCaptureGrabber.cpp -Wno-unknown-pragmas -Wno-ignored-qualifiers)
+endif()
+
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests(CTEST_EXCLUDE_PATH framegrabber DEPENDS_ON visp_io visp_gui)
+vp_add_tests(CTEST_EXCLUDE_PATH framegrabber force-torque DEPENDS_ON visp_io visp_gui)
+

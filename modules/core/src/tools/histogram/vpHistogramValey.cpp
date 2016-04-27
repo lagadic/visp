@@ -77,6 +77,7 @@ vpHistogramValey::operator==(const vpHistogramValey &v) const
 }
 
 /*!
+  \relates vpHistogramValey
   \brief std::cout a valey
 */
 VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpHistogramValey &v)

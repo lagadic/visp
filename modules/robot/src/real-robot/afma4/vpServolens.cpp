@@ -190,7 +190,7 @@ void
 vpServolens::close()
 {
   if (isinit) {
-    printf("\nClose the serial connexion with Servolens\n");
+    printf("\nClose the serial connection with Servolens\n");
     ::close(this->remfd);
     isinit = false;
   }

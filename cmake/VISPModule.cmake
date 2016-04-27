@@ -50,8 +50,8 @@
 # VISP_MODULE_${the_module}_DEPS_EXT - non-module dependencies
 # VISP_MODULE_${the_module}_REQ_DEPS
 # VISP_MODULE_${the_module}_OPT_DEPS
-# VISP_MODULE_${the_module}_PRIVATE_REQ_DEPS
-# VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS
+# VISP_MODULE_${the_module}_PRIVATE_REQ_DEPS - private module deps that are not exposed in interface
+# VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS - private module deps that are not exposed in interface
 # VISP_MODULE_${the_module}_CHILDREN - list of submodules for compound modules (cmake >= 2.8.8)
 # HAVE_${the_module} - for fast check of module availability
 
@@ -79,6 +79,8 @@ foreach(mod ${VISP_MODULES_BUILD} ${VISP_MODULES_DISABLED_USER} ${VISP_MODULES_D
   if(HAVE_${mod})
     unset(HAVE_${mod} CACHE)
   endif()
+  unset(VISP_MODULE_${mod}_DEPS CACHE)
+  unset(VISP_MODULE_${mod}_DEPS_EXT CACHE)
   unset(VISP_MODULE_${mod}_REQ_DEPS CACHE)
   unset(VISP_MODULE_${mod}_OPT_DEPS CACHE)
   unset(VISP_MODULE_${mod}_PRIVATE_REQ_DEPS CACHE)
@@ -134,7 +136,9 @@ endmacro()
 
 # declare new ViSP module in current folder
 # Usage:
-#   vp_add_module(<name> [INTERNAL|BINDINGS] [REQUIRED] [<list of dependencies>] [OPTIONAL <list of optional dependencies>])
+#   vp_add_module(<name> [INTERNAL|BINDINGS] [REQUIRED] [<list of dependencies>]
+#                        [OPTIONAL <list of optional dependencies>]
+#                        [PRIVATE_OPTIONAL|PRIVATE_REQUIRED] [<list of private dependencies>])
 # Example:
 #   vp_add_module(mymodule INTERNAL visp_core OPTIONAL visp_ar)
 macro(vp_add_module _name)
@@ -414,20 +418,20 @@ function(__vp_resolve_dependencies)
   endwhile()
 
   # process private deps
-  foreach(m ${VISP_MODULES_BUILD})
-    foreach(d ${VISP_MODULE_${m}_PRIVATE_REQ_DEPS})
-      if(NOT (";${deps_${m}};" MATCHES ";${d};"))
-        list(APPEND deps_${m} ${d})
-      endif()
-    endforeach()
-    foreach(d ${VISP_MODULE_${m}_PRIVATE_OPT_DEPS})
-      if(NOT (";${deps_${m}};" MATCHES ";${d};"))
-        if(HAVE_${d} OR TARGET ${d})
-          list(APPEND deps_${m} ${d})
-        endif()
-      endif()
-    endforeach()
-  endforeach()
+  #foreach(m ${VISP_MODULES_BUILD})
+  #  foreach(d ${VISP_MODULE_${m}_PRIVATE_REQ_DEPS})
+  #    if(NOT (";${deps_${m}};" MATCHES ";${d};"))
+  #      list(APPEND deps_${m} ${d})
+  #    endif()
+  #  endforeach()
+  #  foreach(d ${VISP_MODULE_${m}_PRIVATE_OPT_DEPS})
+  #    if(NOT (";${deps_${m}};" MATCHES ";${d};"))
+  #      if(HAVE_${d} OR TARGET ${d})
+  #        list(APPEND deps_${m} ${d})
+  #      endif()
+  #    endif()
+  #  endforeach()
+  #endforeach()
 
   vp_list_sort(VISP_MODULES_BUILD)
 
@@ -651,12 +655,12 @@ endmacro()
 # creates ViSP module in current folder
 # creates new target, configures standard dependencies, compilers flags, install rules
 # Usage:
-#   vp_create_module(<extra link dependencies>)
+#   vp_create_module(<extra link dependencies> LINK_PRIVATE <private link dependencies>)
 #   vp_create_module()
 macro(vp_create_module)
   vp_debug_message("vp_create_module(" ${ARGN} ")")
   set(VISP_MODULE_${the_module}_LINK_DEPS "${VISP_MODULE_${the_module}_LINK_DEPS};${ARGN}" CACHE INTERNAL "")
-  _vp_create_module(${ARGN})
+  _vp_create_module()
   set(the_module_target ${the_module})
 endmacro()
 
@@ -666,10 +670,15 @@ macro(_vp_create_module)
 
   vp_add_library(${the_module} ${VISP_MODULE_TYPE} ${VISP_MODULE_${the_module}_HEADERS} ${VISP_MODULE_${the_module}_SOURCES})
 
-  vp_target_link_libraries(${the_module} ${VISP_MODULE_${the_module}_DEPS_TO_LINK})
-  #vp_target_link_libraries(${the_module} LINK_INTERFACE_LIBRARIES ${VISP_MODULE_${the_module}_DEPS_TO_LINK})
-  vp_target_link_libraries(${the_module} ${VISP_MODULE_${the_module}_DEPS_EXT} ${VISP_LINKER_LIBS} ${ARGN})
-
+  vp_target_link_libraries(${the_module}
+    LINK_PUBLIC
+      ${VISP_MODULE_${the_module}_DEPS_TO_LINK}
+      ${VISP_MODULE_${the_module}_DEPS_EXT}
+      ${VISP_MODULE_${the_module}_LINK_DEPS}
+      ${VISP_LINKER_LIBS}
+    LINK_PRIVATE
+      ${VISP_MODULE_${the_module}_PRIVATE_REQ_DEPS}
+      ${VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS})
   add_dependencies(visp_modules ${the_module})
 
   if(ENABLE_SOLUTION_FOLDERS)

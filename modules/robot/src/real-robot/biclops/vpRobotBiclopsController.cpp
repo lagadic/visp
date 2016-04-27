@@ -174,7 +174,7 @@ vpRobotBiclopsController::init(const char *configfile)
   else {
     vpERROR_TRACE("Homing sequence failed. Program is stopped");
     throw vpRobotException (vpRobotException::constructionError,
-                            "Cannot open connexion with biclops");
+                            "Cannot open connection with biclops");
   }
 
   // Get the currently defined (default) motion profiles.

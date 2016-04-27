@@ -341,9 +341,9 @@ vpRobotViper650::init (void)
     // Free allocated resources
     ShutDownConnection();
 
-    std::cout << "Cannot open connexion with the motionblox..." << std::endl;
+    std::cout << "Cannot open connection with the motionblox..." << std::endl;
     throw vpRobotException (vpRobotException::constructionError,
-                            "Cannot open connexion with the motionblox");
+                            "Cannot open connection with the motionblox");
   }
   return ;
 }

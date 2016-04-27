@@ -314,7 +314,7 @@ public :
   vpMatrix get_K_inverse() const;
 
   void printParameters() ;
-  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpCameraParameters &cam);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters &cam);
 
 private:
   static const double DEFAULT_U0_PARAMETER;

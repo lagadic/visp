@@ -210,18 +210,18 @@ vpRobotAfma4::init (void)
   Try( stt = InitializeConnection(verbose_) );
 
   if (stt != SUCCESS) {
-    vpERROR_TRACE ("Cannot open connexion with the motionblox.");
+    vpERROR_TRACE ("Cannot open connection with the motionblox.");
     throw vpRobotException (vpRobotException::constructionError,
-  			  "Cannot open connexion with the motionblox");
+          "Cannot open connection with the motionblox");
   }
 
   // Connect to the servoboard using the servo board GUID
   Try( stt = InitializeNode_Afma4() );
 
   if (stt != SUCCESS) {
-    vpERROR_TRACE ("Cannot open connexion with the motionblox.");
+    vpERROR_TRACE ("Cannot open connection with the motionblox.");
     throw vpRobotException (vpRobotException::constructionError,
-  			  "Cannot open connexion with the motionblox");
+          "Cannot open connection with the motionblox");
   }
   Try( PrimitiveRESET_Afma4() );
 
@@ -276,9 +276,9 @@ vpRobotAfma4::init (void)
     // Free allocated resources
     ShutDownConnection();
 
-    std::cout << "Cannot open connexion with the motionblox..." << std::endl;
+    std::cout << "Cannot open connection with the motionblox..." << std::endl;
     throw vpRobotException (vpRobotException::constructionError,
-  			  "Cannot open connexion with the motionblox");
+          "Cannot open connection with the motionblox");
   }
   return ;
 }
