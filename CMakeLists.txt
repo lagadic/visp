@@ -250,7 +250,7 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 # bar codes
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON)
-VP_OPTION(BUILD_ATIDAQ    ""           ""    "Include atidaq-c support"     "" ON)
+VP_OPTION(BUILD_ATIDAQ    ""           ""    "Include atidaq-c support"     "" ON IF USE_COMEDI)
 
 #----------------------------------------------------------------------
 # For Dart server and tests

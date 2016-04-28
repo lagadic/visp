@@ -396,7 +396,7 @@ vpPlotGraph::displayUnit (vpImage<unsigned char> &
 #endif
                           )
 { 
-  unsigned int offsetx = vpMath::minimum<unsigned int>(unitx.size(), dWidth);
+  unsigned int offsetx = vpMath::minimum<unsigned int>((unsigned int)unitx.size(), dWidth);
 
 #if defined VISP_HAVE_X11   
   vpDisplay::displayText(I,vpImagePoint(yorg-2*epsi,dTopLeft.get_j()+dWidth-offsetx*epsj),unitx.c_str(), vpColor::black);
@@ -410,7 +410,7 @@ vpPlotGraph::displayUnit (vpImage<unsigned char> &
 void
 vpPlotGraph::displayTitle (vpImage<unsigned char> &I)
 {
-  double size = title.size();
+  double size = (double)title.size();
   size = size/2.0;
   vpDisplay::displayText(I,
 			       vpImagePoint(dTopLeft.get_i()-3*epsi,
