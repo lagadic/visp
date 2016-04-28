@@ -51,6 +51,8 @@
 #include <visp3/sensor/vpForceTorqueAtiSensor.h>
 #include <visp3/gui/vpPlot.h>
 
+#if defined(VISP_HAVE_PTHREAD)
+
 typedef enum {
   BIAS_DONE,
   UNBIAS_DONE,
@@ -221,3 +223,10 @@ int main(int argc, char** argv)
   std::cout << "You should install comedi and build atidaq to enable this test..." << std::endl;
 #endif
 }
+
+#else
+int main()
+{
+  std::cout << "You should build this test with threading capabilities..." << std::endl;
+}
+#endif
