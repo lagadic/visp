@@ -124,7 +124,7 @@ vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<float> &dest)
 }
 
 /*!
-Convert a vpImage\<double\> to a vpImage\<unsigend char\> by renormalizing between 0 and 255.
+Convert a vpImage\<double\> to a vpImage\<unsigned char\> by renormalizing between 0 and 255.
 \param src : source image
 \param dest : destination image
 */
@@ -149,6 +149,34 @@ vpImageConvert::convert(const vpImage<double> &src, vpImage<unsigned char> &dest
 }
 
 /*!
+Convert a vpImage\<u_int16_t> to a vpImage\<unsigned char\>.
+\param src : source image
+\param dest : destination image
+*/
+void
+vpImageConvert::convert(const vpImage<u_int16_t> &src, vpImage<unsigned char> &dest)
+{
+  dest.resize(src.getHeight(), src.getWidth()) ;
+
+  for (unsigned int i=0; i< src.getSize(); i++)
+    dest.bitmap[i] = (src.bitmap[i] >> 8);
+}
+
+/*!
+Convert a vpImage\<unsigned char> to a vpImage\<u_int16_t\>.
+\param src : source image
+\param dest : destination image
+*/
+void
+vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<u_int16_t> &dest)
+{
+  dest.resize(src.getHeight(), src.getWidth()) ;
+
+  for (unsigned int i=0; i< src.getSize(); i++)
+    dest.bitmap[i] = (src.bitmap[i] << 8);
+}
+
+/*!
 Convert a vpImage\<unsigned char\> to a vpImage\<double\> by basic casting.
 \param src : source image
 \param dest : destination image
@@ -159,6 +187,42 @@ vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<double> &dest
   dest.resize(src.getHeight(), src.getWidth()) ;
   for (unsigned int i = 0; i < src.getHeight()*src.getWidth(); i++)
     dest.bitmap[i] = (double)src.bitmap[i];
+}
+
+/*!
+  Create depth histogram as a color image.
+  \param src_depth : source image corresponding to depth.
+  \param dest_rgba : destination image containing the color histogram.
+*/
+void
+vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa> &dest_rgba)
+{
+  dest_rgba.resize(src_depth.getHeight(), src_depth.getWidth());
+  static uint32_t histogram[0x10000];
+  memset(histogram, 0, sizeof(histogram));
+  for(unsigned int i = 0; i < src_depth.getSize(); ++i) ++histogram[src_depth.bitmap[i]];
+  for(int i = 2; i < 0x10000; ++i) histogram[i] += histogram[i-1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
+
+  uint16_t d;
+  for(unsigned int i = 0; i < src_depth.getSize(); ++i)
+  {
+    d = src_depth.bitmap[i];
+    if(d)
+    {
+      int f = histogram[d] * 255 / histogram[0xFFFF]; // 0-255 based on histogram location
+      dest_rgba.bitmap[i].R = 255 - f;
+      dest_rgba.bitmap[i].G = 0;
+      dest_rgba.bitmap[i].B = f;
+      dest_rgba.bitmap[i].A = 0;
+    }
+    else
+    {
+      dest_rgba.bitmap[i].R = 20;
+      dest_rgba.bitmap[i].G = 5;
+      dest_rgba.bitmap[i].B = 0;
+      dest_rgba.bitmap[i].A = 0;
+    }
+  }
 }
 
 #ifdef VISP_HAVE_OPENCV
