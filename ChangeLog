@@ -18,6 +18,8 @@ ViSP 3.0.1 (in development)
       provided with their haptic devices
     . New vpComedi and vpForceTorqueAtiSensor classes to get synchonous
       data from ATI F/T sensors
+    . New vpRealSense class, a wrapper open RealSense SDK to capture
+      data from RS300, F200, R200 RGB-depth sensors
     . New cross platform multi-threading capabilities with vpMutex and
       vpThread classes
   - Tutorials

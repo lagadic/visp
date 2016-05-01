@@ -1602,6 +1602,7 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES \
                          VISP_HAVE_LIBFREENECT \
                          VISP_HAVE_LIBUSB_1 \
+                         VISP_HAVE_REALSENSE \
                          VISP_HAVE_YARP \
                          VISP_HAVE_ZBAR \
                          VISP_HAVE_DMTX \

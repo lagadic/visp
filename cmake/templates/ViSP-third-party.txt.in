@@ -32,22 +32,24 @@ Video devices (display)
   OpenCV                      : ${VISP_HAVE_OPENCV_FOUND} 
   GDI                         : ${VISP_HAVE_GDI_FOUND}
   Direct3D                    : ${VISP_HAVE_DIRECT3D_FOUND}
-Framegrabbers
+Cameras
   Firewire libdc1394-2.x      : ${VISP_HAVE_DC1394_FOUND}
   Video For Linux Two         : ${VISP_HAVE_V4L2_FOUND}
   DirectShow                  : ${VISP_HAVE_DIRECTSHOW_FOUND}
   CMU 1394 Digital Camera SDK : ${VISP_HAVE_CMU1394_FOUND}
   OpenCV                      : ${VISP_HAVE_OPENCV_FOUND}
   PointGrey Flycapture        : ${VISP_HAVE_FLYCAPTURE_FOUND}
-ATI F/T
-  \-atidaq                    : ${VISP_HAVE_ATIDAQ_FOUND}
-  \-comedi                    : ${VISP_HAVE_COMEDI_FOUND}
-Specific devices
-  Yarp                        : ${VISP_HAVE_YARP_FOUND}
+RGB-D sensors
+  RealSense                   : ${VISP_HAVE_REALSENSE_FOUND}
   Kinect                      : ${VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES_FOUND}
   \-libfreenect               : ${VISP_HAVE_LIBFREENECT_FOUND}
   \-libusb-1.0                : ${VISP_HAVE_LIBUSB_1_FOUND}
   \-pthread                   : ${VISP_HAVE_PTHREAD_FOUND}
+Force/Torque sensors
+  \-atidaq                    : ${VISP_HAVE_ATIDAQ_FOUND}
+  \-comedi                    : ${VISP_HAVE_COMEDI_FOUND}
+Frameworks
+  Yarp                        : ${VISP_HAVE_YARP_FOUND}
 Video and image Read/Write:
   FFMPEG                      : ${VISP_HAVE_FFMPEG_FOUND}
   libjpeg                     : ${VISP_HAVE_JPEG_FOUND}

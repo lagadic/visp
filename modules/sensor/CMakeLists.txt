@@ -74,6 +74,10 @@ if(USE_COMEDI)
   list(APPEND opt_incs ${COMEDI_INCLUDE_DIRS})
   list(APPEND opt_libs ${COMEDI_LIBRARIES})
 endif()
+if(USE_REALSENSE)
+  list(APPEND opt_incs ${REALSENSE_INCLUDE_DIRS})
+  list(APPEND opt_libs ${REALSENSE_LIBRARIES})
+endif()
 
 # atidac is private
 include_directories(${ATIDAQ_INCLUDE_DIRS})

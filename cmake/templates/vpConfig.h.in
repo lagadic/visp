@@ -244,6 +244,9 @@
 // Defined if libusb-1.0 library available.
 #cmakedefine VISP_HAVE_LIBUSB_1
 
+// Defined if RealSense library available.
+#cmakedefine VISP_HAVE_REALSENSE
+
 // Defined if ffmpeg library available.
 #cmakedefine VISP_HAVE_FFMPEG
 
