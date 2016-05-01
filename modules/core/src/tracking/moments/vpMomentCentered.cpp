@@ -66,14 +66,14 @@ void vpMomentCentered::compute(){
     if(!found_moment_gravity) throw vpException(vpException::notInitialized,"vpMomentGravityCenter not found");
 
     unsigned int order = getObject().getOrder()+1;
-    for(register unsigned int j=0;j<(order);j++){
-        for(register unsigned int i=0;i<order-j;i++){
+    for(unsigned int j=0;j<(order);j++){
+        for(unsigned int i=0;i<order-j;i++){
             unsigned int c = order*j+i;
             values[c]=0;
-            for(register unsigned int k=0;k<=i;k++){
+            for(unsigned int k=0;k<=i;k++){
                 double Xg_i_k = pow(-momentGravity.get()[0],(int)(i-k));
                 double comb_i_k = static_cast<double>( vpMath::comb(i,k) );
-                for(register unsigned int l=0;l<=j;l++){
+                for(unsigned int l=0;l<=j;l++){
                     values[c]+= static_cast<double>( comb_i_k*vpMath::comb(j,l)
                       *Xg_i_k
                       *pow(-momentGravity.get()[1],(int)(j-l))*getObject().get(k,l) );

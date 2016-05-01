@@ -120,14 +120,14 @@ double vpMomentObject::calc_mom_polygon(unsigned int p, unsigned int q, const st
 void vpMomentObject::cacheValues(std::vector<double>& cache,double x, double y){
     cache[0]=1;
 
-    for(register unsigned int i=1;i<order;i++)
+    for(unsigned int i=1;i<order;i++)
         cache[i]=cache[i-1]*x;
 
-    for(register unsigned int j=order;j<order*order;j+=order)
+    for(unsigned int j=order;j<order*order;j+=order)
         cache[j]=cache[j-order]*y;
 
-    for(register unsigned int j=1;j<order;j++){
-        for(register unsigned int i=1;i<order-j;i++){
+    for(unsigned int j=1;j<order;j++){
+        for(unsigned int i=1;i<order-j;i++){
             cache[j*order+i] = cache[j*order]*cache[i];
         }
     }
@@ -145,14 +145,14 @@ void vpMomentObject::cacheValues(std::vector<double>& cache,double x, double y, 
     if (std::fabs(IntensityNormalized)>=std::numeric_limits<double>::epsilon())
          invIntensityNormalized = 1.0/IntensityNormalized;
 
-    for(register unsigned int i=1;i<order;i++)
+    for(unsigned int i=1;i<order;i++)
         cache[i]=cache[i-1]*x;
 
-    for(register unsigned int j=order;j<order*order;j+=order)
+    for(unsigned int j=order;j<order*order;j+=order)
         cache[j]=cache[j-order]*y;
 
-    for(register unsigned int j=1;j<order;j++){
-        for(register unsigned int i=1;i<order-j;i++){
+    for(unsigned int j=1;j<order;j++){
+        for(unsigned int i=1;i<order-j;i++){
             cache[j*order+i] = cache[j*order]*cache[i]*invIntensityNormalized;
         }
     }
@@ -240,16 +240,16 @@ void vpMomentObject::fromVector(std::vector<vpPoint>& points){
             points.resize(points.size()+1);
             points[points.size()-1] = points[0];
         }
-        for(register unsigned int j=0;j<order*order;j++){
+        for(unsigned int j=0;j<order*order;j++){
             values[j]=calc_mom_polygon(j%order,j/order,points);
         }
     }else{
       std::vector<double> cache(order*order,0.);
         values.assign(order*order,0);
-        for(register unsigned int i=0;i<points.size();i++){
+        for(unsigned int i=0;i<points.size();i++){
             cacheValues(cache,points[i].get_x(),points[i].get_y());
-            for(register unsigned int j=0;j<order;j++){
-                for(register unsigned int k=0;k<order-j;k++){
+            for(unsigned int j=0;j<order;j++){
+                for(unsigned int k=0;k<order-j;k++){
                     values[j*order+k]+=cache[j*order+k];
                 }
             }
@@ -305,9 +305,9 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned cha
           vpPixelMeterConversion::convertPoint(cam,i_,j_,x,y);
 
           double yval=1.;
-          for(register unsigned int k=0;k<order;k++){
+          for(unsigned int k=0;k<order;k++){
             double xval=1.;
-            for(register unsigned int l=0;l<order-k;l++){
+            for(unsigned int l=0;l<order-k;l++){
               curvals[(k*order+l)]+=(xval*yval);
               xval*=x;
             }
@@ -324,8 +324,8 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned cha
 
     #pragma omp barrier
 
-    for(register unsigned int k=0;k<order;k++){
-      for(register unsigned int l=0;l<order-k;l++){
+    for(unsigned int k=0;k<order;k++){
+      for(unsigned int l=0;l<order-k;l++){
         //#pragma omp atomic // Removed since causes a build issue with msvc14 2015
         values[k*order+l]+= curvals[k*order+l];
       }
@@ -335,15 +335,15 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned cha
 #else
     std::vector<double> cache(order*order,0.);
     values.assign(order*order,0);
-    for(register unsigned int i=0;i<image.getCols();i++){
-        for(register unsigned int j=0;j<image.getRows();j++){
+    for(unsigned int i=0;i<image.getCols();i++){
+        for(unsigned int j=0;j<image.getRows();j++){
             if(image[j][i]>threshold){
                 double x=0;
                 double y=0;
                 vpPixelMeterConversion::convertPoint(cam,i,j,x,y);
                 cacheValues(cache,x,y);
-                for(register unsigned int k=0;k<order;k++){
-                    for(register unsigned int l=0;l<order-k;l++){
+                for(unsigned int k=0;k<order;k++){
+                    for(unsigned int l=0;l<order-k;l++){
                         values[k*order+l]+=cache[k*order+l];
                     }
                 }
@@ -394,8 +394,8 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, const vpCame
 
   if (bg_type == vpMomentObject::WHITE) {
       /////////// WHITE BACKGROUND ///////////
-      for(register unsigned int j=0;j<image.getRows();j++){
-          for(register unsigned int i=0;i<image.getCols();i++){
+      for(unsigned int j=0;j<image.getRows();j++){
+          for(unsigned int i=0;i<image.getCols();i++){
               x = 0;
               y = 0;
               intensity = (double)(image[j][i])*iscale;
@@ -405,9 +405,9 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, const vpCame
               cacheValues(cache,x,y, intensity_white);			// Modify 'cache' which has x^p*y^q to x^p*y^q*(1 - I(x,y))
 
               // Copy to "values"
-              for(register unsigned int k=0;k<order;k++){
+              for(unsigned int k=0;k<order;k++){
                   kidx = k*order;
-                  for(register unsigned int l=0;l<order-k;l++){
+                  for(unsigned int l=0;l<order-k;l++){
                       idx = kidx+l;
                       values[idx]+= cache[idx];
                   }
@@ -417,8 +417,8 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, const vpCame
   }
   else {
       /////////// BLACK BACKGROUND	///////////
-      for(register unsigned int j=0;j<image.getRows();j++){
-          for(register unsigned int i=0;i<image.getCols();i++){
+      for(unsigned int j=0;j<image.getRows();j++){
+          for(unsigned int i=0;i<image.getCols();i++){
               x = 0;
               y = 0;
               intensity = (double)(image[j][i])*iscale;
@@ -428,9 +428,9 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, const vpCame
               cacheValues(cache,x,y, intensity);					// Modify 'cache' which has x^p*y^q to x^p*y^q*I(x,y)
 
               // Copy to moments array 'values'
-              for(register unsigned int k=0;k<order;k++){
+              for(unsigned int k=0;k<order;k++){
                   kidx = k*order;
-                  for(register unsigned int l=0;l<order-k;l++){
+                  for(unsigned int l=0;l<order-k;l++){
                       idx = kidx+l;
                       values[idx]+= cache[idx];
                   }
