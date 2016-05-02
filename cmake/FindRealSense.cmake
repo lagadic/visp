@@ -40,20 +40,61 @@
 #
 #############################################################################
 
+set(REALSENSE_INC_SEARCH_PATH /usr/local/include)
+set(REALSENSE_LIB_SEARCH_PATH /usr/local/lib)
+
+if(MSVC)
+  list(APPEND REALSENSE_INC_SEARCH_PATH "C:/librealsense/include")
+
+  list(APPEND REALSENSE_INC_SEARCH_PATH $ENV{REALSENSE_HOME}/include)
+
+  if(CMAKE_CL_64)
+    list(APPEND REALSENSE_LIB_SEARCH_PATH "C:/librealsense/bin/x64")
+    list(APPEND REALSENSE_LIB_SEARCH_PATH $ENV{REALSENSE_HOME}/bin/x64)
+  else()
+    list(APPEND REALSENSE_LIB_SEARCH_PATH "C:/librealsense/bin/Win32")
+    list(APPEND REALSENSE_LIB_SEARCH_PATH $ENV{REALSENSE_HOME}/bin/Win32)
+  endif()
+
+else()
+  list(APPEND REALSENSE_INC_SEARCH_PATH /usr/include)
+  list(APPEND REALSENSE_LIB_SEARCH_PATH /usr/lib)
+
+  list(APPEND REALSENSE_INC_SEARCH_PATH $ENV{REALSENSE_HOME}/include)
+  list(APPEND REALSENSE_LIB_SEARCH_PATH $ENV{REALSENSE_HOME}/lib)
+endif()
+
 find_path(REALSENSE_INCLUDE_DIRS librealsense/rs.hpp
   PATHS
-    $ENV{REALSENSE_HOME}/include
-    /usr/include
-    /usr/local/include
+    ${REALSENSE_INC_SEARCH_PATH}
 )
 
-find_library(REALSENSE_LIBRARIES
-  NAMES realsense
-  PATHS 
-    $ENV{REALSENSE_HOME}/lib
-    /usr/lib
-    /usr/local/lib
-)
+if(MSVC)
+  find_library(REALSENSE_LIBRARIES_OPT
+    NAMES realsense
+    PATHS
+      ${REALSENSE_LIB_SEARCH_PATH}
+  )
+  find_library(REALSENSE_LIBRARIES_DBG
+    NAMES realsense-d
+    PATHS
+      ${REALSENSE_LIB_SEARCH_PATH}
+  )
+  if(REALSENSE_LIBRARIES_OPT)
+    set(REALSENSE_LIBRARIES optimized ${REALSENSE_LIBRARIES_OPT})
+  endif()
+  if(REALSENSE_LIBRARIES_DBG)
+    list(APPEND REALSENSE_LIBRARIES debug ${REALSENSE_LIBRARIES_DBG})
+  endif()
+
+  mark_as_advanced(REALSENSE_LIBRARIES_OPT REALSENSE_LIBRARIES_DBG)
+else()
+  find_library(REALSENSE_LIBRARIES
+    NAMES realsense
+    PATHS
+      ${REALSENSE_LIB_SEARCH_PATH}
+  )
+endif()
 
 if(REALSENSE_LIBRARIES AND REALSENSE_INCLUDE_DIRS)
   set(REALSENSE_FOUND TRUE)
@@ -64,5 +105,6 @@ endif()
 mark_as_advanced(
   REALSENSE_INCLUDE_DIRS
   REALSENSE_LIBRARIES
+  REALSENSE_INC_SEARCH_PATH
+  REALSENSE_LIB_SEARCH_PATH
 )
-
