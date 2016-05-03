@@ -314,7 +314,7 @@ vpColVector::vpColVector (const vpMatrix &M)
    Constructor that creates a column vector from a std vector of double.
  */
 vpColVector::vpColVector (const std::vector<double> &v)
-  : vpArray2D<double>(1, (unsigned int)v.size())
+  : vpArray2D<double>((unsigned int)v.size(), 1)
 {
   for(unsigned int i=0; i< v.size(); i++)
     (*this)[i] = v[i];
@@ -323,7 +323,7 @@ vpColVector::vpColVector (const std::vector<double> &v)
    Constructor that creates a column vector from a std vector of float.
  */
 vpColVector::vpColVector (const std::vector<float> &v)
-  : vpArray2D<double>(1, (unsigned int)v.size())
+  : vpArray2D<double>((unsigned int)v.size(), 1)
 {
   for(unsigned int i=0; i< v.size(); i++)
     (*this)[i] = (double)(v[i]);
