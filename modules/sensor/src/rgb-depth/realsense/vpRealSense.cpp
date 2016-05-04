@@ -43,15 +43,17 @@
 
 #ifdef VISP_HAVE_REALSENSE
 
+#include "vpRealSense_impl.h"
+
 vpRealSense::vpRealSense()
-  : m_context(), m_device(NULL), m_num_devices(0), m_serial_no(), m_intrinsics()
+  : m_context(), m_device(NULL), m_num_devices(0), m_serial_no(), m_intrinsics(), m_max_Z(8), m_enable_color(true), m_enable_depth(true), m_enable_point_cloud(true)
 {
 
 }
 
 vpRealSense::~vpRealSense()
 {
-
+  close();
 }
 
 /*!
@@ -90,13 +92,18 @@ void vpRealSense::open()
 
   std::cout << "RealSense Camera - Connecting to camera with Serial No: " << m_device->get_serial() << std::endl;
 
-  m_device->enable_stream(rs::stream::depth, rs::preset::best_quality);
-  m_device->enable_stream(rs::stream::color, rs::preset::best_quality);
-  m_device->enable_stream(rs::stream::infrared, rs::preset::best_quality);
-  try { m_device->enable_stream(rs::stream::infrared2, 0, 0, rs::format::any, 0); } catch(...) {}
+  if (m_enable_color)
+    m_device->enable_stream(rs::stream::color, rs::preset::best_quality);
+
+  if (m_enable_depth) {
+    m_device->enable_stream(rs::stream::depth, rs::preset::best_quality);
+    m_device->enable_stream(rs::stream::infrared, rs::preset::best_quality);
+    try { m_device->enable_stream(rs::stream::infrared2, 0, 0, rs::format::any, 0); } catch(...) {}
+  }
 
   // Compute field of view for each enabled stream
   m_intrinsics.clear();
+  std::streamsize ss = std::cout.precision();
   for(int i = 0; i < 4; ++i)
   {
     auto stream = rs::stream(i);
@@ -107,10 +114,10 @@ void vpRealSense::open()
 
     m_intrinsics.push_back(intrin);
   }
+  std::cout.precision(ss);
 
   // Start device
   m_device->start();
-
 }
 
 /*!
@@ -123,6 +130,7 @@ void vpRealSense::close()
       std::cout << "DBG: stop streaming" << std::endl;
       m_device->stop();
     }
+    m_device = NULL;
   }
 }
 
@@ -139,17 +147,25 @@ int main()
   rs.setDeviceBySerialNumber("541142003219");
   rs.open();
 }
+  \endcode
  */
 void vpRealSense::setDeviceBySerialNumber(const std::string &serial_no)
 {
+  if (m_serial_no.empty()) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Multiple cameras detected (%d) but no input serial number specified. Exiting!", m_num_devices);
+  }
+
   m_serial_no = serial_no;
 }
 
 /*!
   Acquire data from RealSense device.
-   \param color : Color image
+  \param color : Color image.
+  \param infrared : Infrared image.
+  \param depth : Depth image.
+  \param pointcloud : Point cloud data.
  */
-void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth)
+void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, std::vector<vpPoint3dTextured> &pointcloud)
 {
   if (m_device == NULL) {
     throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
@@ -175,31 +191,63 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
   }
 
   // Retrieve infrared image
-  if (m_device->is_stream_enabled(rs::stream::infrared)) {
-    int infrared_width = m_intrinsics[RS_STREAM_INFRARED].width;
-    int infrared_height = m_intrinsics[RS_STREAM_INFRARED].height;
-    infrared.resize(infrared_height, infrared_width);
-
-    std::cout << "DBG: infrared format: " << m_device->get_stream_format(rs::stream::infrared) << std::endl;
-
-    memcpy((unsigned char *)infrared.bitmap, (unsigned char *)m_device->get_frame_data(rs::stream::infrared), infrared_width*infrared_height*sizeof(u_int16_t));
-  }
-  else {
-    throw vpException(vpException::fatalError, "RealSense Camera - infrared stream not enabled!");
-  }
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
 
   // Retrieve depth image
-  if (m_device->is_stream_enabled(rs::stream::depth)) {
-    int depth_width = m_intrinsics[RS_STREAM_DEPTH].width;
-    int depth_height = m_intrinsics[RS_STREAM_DEPTH].height;
-    depth.resize(depth_height, depth_width);
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
 
-    std::cout << "DBG: depth format: " << m_device->get_stream_format(rs::stream::depth) << std::endl;
+  // Compute point cloud
+  if (m_enable_point_cloud) {
 
-    memcpy((unsigned char *)depth.bitmap, (unsigned char *)m_device->get_frame_data(rs::stream::depth), depth_width*depth_height*sizeof(u_int16_t));
-  }
-  else {
-    throw vpException(vpException::fatalError, "RealSense Camera - depth stream not enabled!");
+    pointcloud.clear();
+
+    if (m_enable_depth) {
+      const float depth_scale = m_device->get_depth_scale();
+
+      rs::extrinsics depth_2_color_extrinsic = m_device->get_extrinsics(rs::stream::depth, rs::stream::color);
+
+      // Fill the PointCloud2 fields.
+      vpPoint3dTextured p3d;
+      rs::float3 depth_point, color_point;
+      rs::float2 color_pixel;
+
+
+      for (int i = 0; i < m_intrinsics[RS_STREAM_DEPTH].height; i++) {
+        for (int j = 0; j < m_intrinsics[RS_STREAM_DEPTH].width; j++) {
+          float scaled_depth = depth[i][j] * depth_scale;
+
+          rs::float2 depth_pixel = { (float) j, (float) i};
+          depth_point = m_intrinsics[RS_STREAM_DEPTH].deproject(depth_pixel, scaled_depth);
+
+          if (depth_point.z <= 0 || depth_point.z > m_max_Z) {
+            depth_point.x = depth_point.y = depth_point.z = 0;
+          }
+          p3d.setXYZ(depth_point.x, depth_point.y, depth_point.z);
+
+          if (m_enable_color) {
+            color_point = depth_2_color_extrinsic.transform(depth_point);
+            color_pixel = m_intrinsics[RS_STREAM_COLOR].project(color_point);
+
+            if (color_pixel.y < 0 || color_pixel.y > color.getHeight()
+                || color_pixel.x < 0 || color_pixel.x > color.getWidth())
+            {
+              // For out of bounds color data, default to a shade of blue in order to visually distinguish holes.
+              // This color value is same as the librealsense out of bounds color value.
+              p3d.setRGB(96, 157, 198);
+            }
+            else
+            {
+              unsigned int i = (unsigned int) color_pixel.y;
+              unsigned int j = (unsigned int) color_pixel.x;
+              vpRGBa rgba = color[i][j];
+
+              p3d.setRGB(rgba.R, rgba.G, rgba.B);
+            }
+          }
+          pointcloud.push_back(p3d);
+        }
+      }
+    }
   }
 
 }
@@ -225,7 +273,7 @@ int main()
  */
 std::ostream & operator<<(std::ostream &os, const vpRealSense &rs)
 {
-  os << "Device name: " << rs.getDevice()->get_name() << std::endl;
+  os << "Device name: " << rs.getHandler()->get_name() << std::endl;
   return os;
 }
 

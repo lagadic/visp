@@ -71,7 +71,7 @@ int main()
 #ifdef VISP_HAVE_REALSENSE
   try {
     vpRealSense rs;
-    rs.setDeviceBySerialNumber("541142003219");
+    //rs.setDeviceBySerialNumber("541142003219");
     rs.open();
 
     vpImage<vpRGBa> color;
@@ -79,8 +79,9 @@ int main()
     vpImage<unsigned char> infrared_display;
     vpImage<u_int16_t> depth;
     vpImage<vpRGBa> depth_display;
+    std::vector<vpPoint3dTextured> point_cloud;
 
-    rs.acquire(color, infrared, depth);
+    rs.acquire(color, infrared, depth, point_cloud);
     vpImageConvert::convert(infrared, infrared_display);
     vpImageConvert::createDepthHistogram(depth, depth_display);
 
@@ -100,11 +101,10 @@ int main()
 #endif
 
     while(1) {
-      rs.acquire(color, infrared, depth);
+      rs.acquire(color, infrared, depth, point_cloud);
 
       vpImageConvert::convert(infrared, infrared_display);
       vpImageConvert::createDepthHistogram(depth, depth_display);
-
 
       vpDisplay::display(color);
       vpDisplay::display(infrared_display);

@@ -91,5 +91,5 @@ endif()
 
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests(CTEST_EXCLUDE_PATH framegrabber force-torque DEPENDS_ON visp_io visp_gui)
+vp_add_tests(CTEST_EXCLUDE_PATH framegrabber force-torque rgb-depth DEPENDS_ON visp_io visp_gui)
 
