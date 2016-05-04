@@ -528,7 +528,7 @@ bool vpDisplayWin32::getKeyboardEvent( bool blocking )
   - false if no key was pressed. This can occur if blocking is set
     to \e false.
 */
-bool vpDisplayWin32::getKeyboardEvent(char *string, bool blocking)
+bool vpDisplayWin32::getKeyboardEvent(std::string &key, bool blocking)
 {
   //wait if the window is not initialized
   waitForInit();
@@ -545,7 +545,9 @@ bool vpDisplayWin32::getKeyboardEvent(char *string, bool blocking)
      ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, 0));
   }
   //  printf("key: %ud\n", window.key);
-  sprintf(string, "%s", window.lpString);
+  std::stringstream ss;
+  ss << window.lpString;
+  key = ss.str();
   
   return ret;
 }
