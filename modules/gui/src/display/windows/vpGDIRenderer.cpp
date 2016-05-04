@@ -42,7 +42,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <visp3/core/vpGDIRenderer.h>
+#include <visp3/gui/vpGDIRenderer.h>
 
 /*!
   Constructor.

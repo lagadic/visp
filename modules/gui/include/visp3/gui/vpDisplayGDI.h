@@ -129,9 +129,9 @@ class VISP_EXPORT vpDisplayGDI : public vpDisplayWin32
 {
 public:
   vpDisplayGDI();
-  vpDisplayGDI(int winx, int winy, const char *title=NULL);
-  vpDisplayGDI(vpImage<vpRGBa> &I,int winx=-1, int winy=-1, const char *title=NULL);
-  vpDisplayGDI(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const char *title=NULL);
+  vpDisplayGDI(int winx, int winy, const std::string &title="");
+  vpDisplayGDI(vpImage<vpRGBa> &I,int winx=-1, int winy=-1, const std::string &title="");
+  vpDisplayGDI(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="");
 
   virtual ~vpDisplayGDI();
 };

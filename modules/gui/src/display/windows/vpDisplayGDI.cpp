@@ -60,14 +60,14 @@ vpDisplayGDI::vpDisplayGDI(): vpDisplayWin32(new vpGDIRenderer()){}
   \param title  Window's title.
 
 */
-vpDisplayGDI::vpDisplayGDI(int winx, int winy, const char *title)
+vpDisplayGDI::vpDisplayGDI(int winx, int winy, const std::string &title)
   : vpDisplayWin32(new vpGDIRenderer())
 {
   windowXPosition = winx;
   windowYPosition = winy;
 
-  if (title != NULL)
-    title_ = std::string(title);
+  if (!title.empty())
+    title_ = title;
   else
     title_ = std::string(" ");
 }
@@ -82,9 +82,7 @@ vpDisplayGDI::vpDisplayGDI(int winx, int winy, const char *title)
   \param title  Window's title.
 
 */
-vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I,
-			   int winx, int winy,
-         const char *title)
+vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I, int winx, int winy, const std::string &title)
   : vpDisplayWin32(new vpGDIRenderer())
 {
   init(I,winx,winy,title);
@@ -100,9 +98,7 @@ vpDisplayGDI::vpDisplayGDI(vpImage<vpRGBa> &I,
   \param title  Window's title.
 
 */
-vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I,
-			   int winx, int winy,
-         const char *title)
+vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I, int winx, int winy, const std::string &title)
   : vpDisplayWin32(new vpGDIRenderer())
 {
   init(I,winx,winy,title);
