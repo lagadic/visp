@@ -332,6 +332,9 @@ typedef uint32_t u_int32_t;
 // Defined if libzbar is available for bar code detection
 #cmakedefine VISP_HAVE_ZBAR
 
+// Defined if Point Cloud Library is available
+#cmakedefine VISP_HAVE_PCL
+
 // Defined if libdmtx is available for bar code detection
 #cmakedefine VISP_HAVE_DMTX
 

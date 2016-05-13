@@ -46,13 +46,18 @@
 
 #include <librealsense/rs.hpp>
 
+#ifdef VISP_HAVE_PCL
+#  include <pcl/point_types.h>
+#  include <pcl/common/projection_matrix.h>
+#endif
+
 class VISP_EXPORT vpPoint3dTextured
 {
 public:
   vpPoint3dTextured() {
     for(unsigned int i=0; i<3; i++) {
       m_xyz[i] = 0;
-      m_rgb[i] = 255; // Defaukt to white
+      m_rgb[i] = 255; // Default to white
     }
   };
   virtual ~vpPoint3dTextured() {};
@@ -102,6 +107,10 @@ public:
   virtual ~vpRealSense();
 
   void acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, std::vector<vpPoint3dTextured> &pointcloud);
+#ifdef VISP_HAVE_PCL
+  void acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
+  void acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
+#endif
 
   void close();
 

@@ -78,6 +78,10 @@ if(USE_REALSENSE)
   list(APPEND opt_incs ${REALSENSE_INCLUDE_DIRS})
   list(APPEND opt_libs ${REALSENSE_LIBRARIES})
 endif()
+if(USE_PCL)
+  list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
+  list(APPEND opt_libs ${PCL_LIBRARIES})
+endif()
 
 # atidac is private
 include_directories(${ATIDAQ_INCLUDE_DIRS})

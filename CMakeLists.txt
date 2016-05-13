@@ -251,6 +251,7 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 # bar codes
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON)
+VP_OPTION(USE_PCL         PCL          QUIET    "Include Point Cloud Library support" "" ON)
 VP_OPTION(BUILD_ATIDAQ    ""           ""    "Include atidaq-c support"     "" ON IF USE_COMEDI)
 
 #----------------------------------------------------------------------
@@ -481,6 +482,7 @@ VP_SET(VISP_HAVE_LAPACK_C    TRUE IF (BUILD_MODULE_visp_core AND USE_LAPACK))
 VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND USE_PTHREAD))
 VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
 VP_SET(VISP_HAVE_FFMPEG      TRUE IF (BUILD_MODULE_visp_core AND USE_FFMPEG))
+VP_SET(VISP_HAVE_PCL         TRUE IF (BUILD_MODULE_visp_core AND USE_PCL))
 
 VP_SET(VISP_HAVE_OGRE        TRUE IF (BUILD_MODULE_visp_ar AND USE_OGRE))
 VP_SET(VISP_HAVE_OIS         TRUE IF (BUILD_MODULE_visp_ar AND USE_OIS))

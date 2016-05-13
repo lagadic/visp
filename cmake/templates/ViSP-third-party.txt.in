@@ -50,6 +50,7 @@ Force/Torque sensors
   \-comedi                    : ${VISP_HAVE_COMEDI_FOUND}
 Frameworks
   Yarp                        : ${VISP_HAVE_YARP_FOUND}
+  Point Cloud Library         : ${VISP_HAVE_PCL_FOUND}
 Video and image Read/Write:
   FFMPEG                      : ${VISP_HAVE_FFMPEG_FOUND}
   libjpeg                     : ${VISP_HAVE_JPEG_FOUND}

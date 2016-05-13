@@ -182,9 +182,10 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
     int color_height = m_intrinsics[RS_STREAM_COLOR].height;
     color.resize(color_height, color_width);
 
-    std::cout << "DBG: color format: " << m_device->get_stream_format(rs::stream::color) << std::endl;
-    std::cout << "DBG: stream color conversion" << std::endl;
-    vpImageConvert::RGBToRGBa((unsigned char *)m_device->get_frame_data(rs::stream::color), (unsigned char *)color.bitmap, color_width, color_height);
+    if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8)
+      vpImageConvert::RGBToRGBa((unsigned char *)m_device->get_frame_data(rs::stream::color), (unsigned char *)color.bitmap, color_width, color_height);
+    else
+      throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
   }
   else {
     throw vpException(vpException::fatalError, "RealSense Camera - color stream not enabled!");
@@ -211,7 +212,6 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
       rs::float3 depth_point, color_point;
       rs::float2 color_pixel;
 
-
       for (int i = 0; i < m_intrinsics[RS_STREAM_DEPTH].height; i++) {
         for (int j = 0; j < m_intrinsics[RS_STREAM_DEPTH].width; j++) {
           float scaled_depth = depth[i][j] * depth_scale;
@@ -228,8 +228,8 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
             color_point = depth_2_color_extrinsic.transform(depth_point);
             color_pixel = m_intrinsics[RS_STREAM_COLOR].project(color_point);
 
-            if (color_pixel.y < 0 || color_pixel.y > color.getHeight()
-                || color_pixel.x < 0 || color_pixel.x > color.getWidth())
+            if (color_pixel.y < 0 || color_pixel.y >= color.getHeight()
+                || color_pixel.x < 0 || color_pixel.x >= color.getWidth())
             {
               // For out of bounds color data, default to a shade of blue in order to visually distinguish holes.
               // This color value is same as the librealsense out of bounds color value.
@@ -251,6 +251,183 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
   }
 
 }
+
+#ifdef VISP_HAVE_PCL
+/*!
+  Acquire data from RealSense device.
+  \param color : Color image.
+  \param infrared : Infrared image.
+  \param depth : Depth image.
+  \param pointcloud : Point cloud data with texture information.
+ */
+void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
+  }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve color image
+  if (m_device->is_stream_enabled(rs::stream::color)) {
+    int color_width = m_intrinsics[RS_STREAM_COLOR].width;
+    int color_height = m_intrinsics[RS_STREAM_COLOR].height;
+    color.resize(color_height, color_width);
+
+    if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8)
+      vpImageConvert::RGBToRGBa((unsigned char *)m_device->get_frame_data(rs::stream::color), (unsigned char *)color.bitmap, color_width, color_height);
+    else
+      throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
+  }
+  else {
+    throw vpException(vpException::fatalError, "RealSense Camera - color stream not enabled!");
+  }
+
+  // Retrieve infrared image
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
+
+  // Retrieve depth image
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
+
+  // Compute point cloud
+  if (m_enable_point_cloud) {
+    int width = m_intrinsics[RS_STREAM_DEPTH].width;
+    int height = m_intrinsics[RS_STREAM_DEPTH].height;
+    pointcloud->width = width;
+    pointcloud->height = height;
+    pointcloud->resize(pointcloud->width * pointcloud->height);
+
+    if (m_enable_depth) {
+      const float depth_scale = m_device->get_depth_scale();
+
+      // Fill the PointCloud2 fields.
+      rs::float3 depth_point;
+
+      for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+          float scaled_depth = depth[i][j] * depth_scale;
+
+          rs::float2 depth_pixel = { (float) j, (float) i};
+          depth_point = m_intrinsics[RS_STREAM_DEPTH].deproject(depth_pixel, scaled_depth);
+
+          if (depth_point.z <= 0 || depth_point.z > m_max_Z) {
+            depth_point.x = depth_point.y = depth_point.z = 0;
+          }
+          pointcloud->points[i*width + j].x = depth_point.x;
+          pointcloud->points[i*width + j].y = depth_point.y;
+          pointcloud->points[i*width + j].z = depth_point.z;
+        }
+      }
+    }
+  }
+}
+
+/*!
+  Acquire data from RealSense device.
+  \param color : Color image.
+  \param infrared : Infrared image.
+  \param depth : Depth image.
+  \param pointcloud : Point cloud data.
+ */
+void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
+  }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve color image
+  if (m_device->is_stream_enabled(rs::stream::color)) {
+    int color_width = m_intrinsics[RS_STREAM_COLOR].width;
+    int color_height = m_intrinsics[RS_STREAM_COLOR].height;
+    color.resize(color_height, color_width);
+
+    if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8)
+      vpImageConvert::RGBToRGBa((unsigned char *)m_device->get_frame_data(rs::stream::color), (unsigned char *)color.bitmap, color_width, color_height);
+    else
+      throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
+  }
+  else {
+    throw vpException(vpException::fatalError, "RealSense Camera - color stream not enabled!");
+  }
+
+  // Retrieve infrared image
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
+
+  // Retrieve depth image
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
+
+  // Compute point cloud
+  if (m_enable_point_cloud) {
+    int width = m_intrinsics[RS_STREAM_DEPTH].width;
+    int height = m_intrinsics[RS_STREAM_DEPTH].height;
+    pointcloud->width = width;
+    pointcloud->height = height;
+    pointcloud->resize(pointcloud->width * pointcloud->height);
+
+    if (m_enable_depth) {
+      const float depth_scale = m_device->get_depth_scale();
+
+      rs::extrinsics depth_2_color_extrinsic = m_device->get_extrinsics(rs::stream::depth, rs::stream::color);
+
+      // Fill the PointCloud2 fields.
+      rs::float3 depth_point, color_point;
+      rs::float2 color_pixel;
+
+      for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+          float scaled_depth = depth[i][j] * depth_scale;
+
+          rs::float2 depth_pixel = { (float) j, (float) i};
+          depth_point = m_intrinsics[RS_STREAM_DEPTH].deproject(depth_pixel, scaled_depth);
+
+          if (depth_point.z <= 0 || depth_point.z > m_max_Z) {
+            depth_point.x = depth_point.y = depth_point.z = 0;
+          }
+          pointcloud->points[i*width + j].x = depth_point.x;
+          pointcloud->points[i*width + j].y = depth_point.y;
+          pointcloud->points[i*width + j].z = depth_point.z;
+
+          if (m_enable_color) {
+            color_point = depth_2_color_extrinsic.transform(depth_point);
+            color_pixel = m_intrinsics[RS_STREAM_COLOR].project(color_point);
+
+            if (color_pixel.y < 0 || color_pixel.y >= color.getHeight()
+                || color_pixel.x < 0 || color_pixel.x >= color.getWidth())
+            {
+              // For out of bounds color data, default to a shade of blue in order to visually distinguish holes.
+              // This color value is same as the librealsense out of bounds color value.
+              unsigned int r = 96, g = 157, b = 198;
+              uint32_t rgb = (static_cast<uint32_t>(r) << 16 |
+                            static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
+
+              pointcloud->points[i*width + j].rgb = *reinterpret_cast<float*>(&rgb);
+            }
+            else
+            {
+              unsigned int i = (unsigned int) color_pixel.y;
+              unsigned int j = (unsigned int) color_pixel.x;
+
+              uint32_t rgb = (static_cast<uint32_t>(color[i][j].R) << 16 |
+                            static_cast<uint32_t>(color[i][j].G) << 8 | static_cast<uint32_t>(color[i][j].B));
+              pointcloud->points[i*width + j].rgb = *reinterpret_cast<float*>(&rgb);
+            }
+          }
+
+        }
+      }
+    }
+  }
+}
+
+#endif
 
 /*!
   \relates vpRealSense

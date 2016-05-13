@@ -49,44 +49,38 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 
+//#undef VISP_HAVE_PCL
+
+#ifdef VISP_HAVE_PCL
+#  include <pcl/visualization/cloud_viewer.h>
+#  include <pcl/visualization/pcl_visualizer.h>
+#endif
 
 int main()
 {
-//  u_int16_t y16;
-//  std::cout << "size y16: " << sizeof(y16) << " " << (2<<15) << std::endl;
-//  int val = 65520;
-
-//  vpImage<u_int16_t> Y16(480, 640, val);
-//  vpImage<unsigned char> Y8(480, 640);
-//  vpImageConvert::MONO16ToGrey((unsigned char*)Y16.bitmap, (unsigned char*)Y8.bitmap, Y8.getSize());
-//  vpImageIo::write(Y8, "Y8.png");
-//  for(unsigned int i=0; i< Y16.getHeight(); i++)
-//    for(unsigned int j=0; j< Y16.getWidth(); j++)
-//      Y8[i][j] = Y16[i][j] >> 8;
-//  vpImageIo::write(Y8, "Y8-new.png");
-
-//  return 0;
-
-
 #ifdef VISP_HAVE_REALSENSE
   try {
     vpRealSense rs;
     //rs.setDeviceBySerialNumber("541142003219");
     rs.open();
 
-    vpImage<vpRGBa> color;
+    vpImage<vpRGBa> color(rs.getIntrinsics()[RS_STREAM_COLOR].height, rs.getIntrinsics()[RS_STREAM_COLOR].width);
     vpImage<u_int16_t> infrared;
-    vpImage<unsigned char> infrared_display;
+    vpImage<unsigned char> infrared_display(rs.getIntrinsics()[RS_STREAM_INFRARED].height, rs.getIntrinsics()[RS_STREAM_INFRARED].width);;
     vpImage<u_int16_t> depth;
-    vpImage<vpRGBa> depth_display;
-    std::vector<vpPoint3dTextured> point_cloud;
+    vpImage<vpRGBa> depth_display(rs.getIntrinsics()[RS_STREAM_DEPTH].height, rs.getIntrinsics()[RS_STREAM_DEPTH].width);
 
-    rs.acquire(color, infrared, depth, point_cloud);
-    vpImageConvert::convert(infrared, infrared_display);
-    vpImageConvert::createDepthHistogram(depth, depth_display);
-
-    std::cout << "DBG: Infrared: " << infrared.getWidth() << " " << infrared.getHeight() << std::endl;
-    vpImageIo::write(infrared_display, "infrared.png");
+#ifdef VISP_HAVE_PCL
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
+    viewer->setBackgroundColor (0, 0, 0);
+    viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+    viewer->addCoordinateSystem (1.0);
+    viewer->initCameraParameters ();
+#else
+    std::vector<vpPoint3dTextured> pointcloud;
+#endif
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX dc(color, 10, 10, "Color image");
@@ -101,7 +95,20 @@ int main()
 #endif
 
     while(1) {
-      rs.acquire(color, infrared, depth, point_cloud);
+      rs.acquire(color, infrared, depth, pointcloud);
+
+#ifdef VISP_HAVE_PCL
+      static bool update = false;
+      if (! update) {
+        viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+        update = true;
+      }
+      else {
+        viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+      }
+
+      viewer->spinOnce (100);
+#endif
 
       vpImageConvert::convert(infrared, infrared_display);
       vpImageConvert::createDepthHistogram(depth, depth_display);
@@ -109,6 +116,77 @@ int main()
       vpDisplay::display(color);
       vpDisplay::display(infrared_display);
       vpDisplay::display(depth_display);
+
+#ifdef REMOVE
+
+#ifdef VISP_HAVE_PCL
+      //viewer.showCloud(pointcloud);
+//      std::cout << "------- Cloud size: " << pointcloud->width << " " << pointcloud->height << std::endl;
+//      for (unsigned int i=0; i< pointcloud->width*pointcloud->height; i++) {
+//        std::cout << "[" << pointcloud->points[i].x << " " << pointcloud->points[i].y << " "
+//                  << pointcloud->points[i].z << "] ";
+//      }
+//      std::cout << std::endl;
+#else
+      std::cout << "Cloud size: " << pointcloud.size() << std::endl;
+      if (1){
+        // Solve AX = b
+        vpMatrix A(pointcloud.size(), 3);
+        vpColVector X(3);
+        vpColVector b(pointcloud.size(), -1);
+        for(unsigned int i=0; i<pointcloud.size(); i++) {
+          A[i][0] = pointcloud[i].get_X();
+          A[i][1] = pointcloud[i].get_Y();
+          A[i][2] = pointcloud[i].get_Z();
+        }
+        X = A.pseudoInverse() * b;
+        vpColVector n = X.normalize();
+        std::cout << "Normal to plane: " << n << std::endl;
+
+        // Compute pose of the plane
+        vpColVector x(3);
+        x[0] = 1;
+        vpColVector ry = vpColVector::crossProd(n, x);
+        vpColVector rx = vpColVector::crossProd(ry, n);
+        vpRotationMatrix R;
+        for (unsigned int i=0; i<3; i++) {
+          R[i][0] = rx[i];
+          R[i][1] = ry[i];
+          R[i][2] = n[i];
+        }
+
+        // Compute centroid
+        vpColVector centroid(3);
+        for(unsigned int i=0; i<pointcloud.size(); i++) {
+          centroid[0] += pointcloud[i].get_X();
+          centroid[1] += pointcloud[i].get_Y();
+          centroid[2] += pointcloud[i].get_Z();
+        }
+        centroid /= pointcloud.size();
+
+        vpTranslationVector t(centroid);
+        vpHomogeneousMatrix cMp(t, R);
+
+        std::cout << "cMp:\n" << cMp << std::endl;
+
+        std::vector <rs::intrinsics> intrinsics = rs.getIntrinsics();
+        double u0 = intrinsics[(int)rs::stream::depth].ppx;
+        double v0 = intrinsics[(int)rs::stream::depth].ppy;
+        double px = intrinsics[(int)rs::stream::depth].fx;
+        double py = intrinsics[(int)rs::stream::depth].fy;
+        std::cout << "Intrinsics: "
+                  << "u0 = " << u0 << " "
+                  << "v0 = " << v0 << " "
+                  << "px = " << px << " "
+                  << "py = " << py << std::endl;
+        vpCameraParameters cam(px, py, u0, v0);
+
+
+        vpDisplay::displayFrame(depth_display, cMp, cam, 0.2);
+      }
+#endif
+#endif // #ifdef REMOVE
+
       vpDisplay::displayText(color, 15, 15, "Click to quit", vpColor::red);
       if (vpDisplay::getClick(color, false) || vpDisplay::getClick(infrared_display, false) || vpDisplay::getClick(depth_display, false))
         break;
