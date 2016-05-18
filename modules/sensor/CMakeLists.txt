@@ -97,3 +97,7 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(CTEST_EXCLUDE_PATH framegrabber force-torque rgb-depth DEPENDS_ON visp_io visp_gui)
 
+if(USE_PCL)
+  # Add specific build flag to turn off warnings coming from PCL 3rd party
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense.cpp -Wno-sign-compare)
+endif()

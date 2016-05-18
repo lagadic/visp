@@ -38,6 +38,7 @@
 #ifndef __vpRealSense_h_
 #define __vpRealSense_h_
 
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImage.h>
@@ -114,6 +115,7 @@ public:
 
   void close();
 
+  vpCameraParameters getCameraParameters(const rs::stream &rs_stream, vpCameraParameters::vpCameraParametersProjType type=vpCameraParameters::perspectiveProjWithDistortion) const;
   //! Get access to device handler
   rs::device *getHandler() const {
     return m_device;

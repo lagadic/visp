@@ -48,12 +48,64 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpMutex.h>
+#include <visp3/core/vpThread.h>
 
 //#undef VISP_HAVE_PCL
 
 #ifdef VISP_HAVE_PCL
 #  include <pcl/visualization/cloud_viewer.h>
 #  include <pcl/visualization/pcl_visualizer.h>
+#endif
+
+#ifdef VISP_HAVE_PCL
+// Shared vars
+typedef enum {
+  capture_waiting,
+  capture_started,
+  capture_stopped
+} t_CaptureState;
+t_CaptureState s_capture_state = capture_waiting;
+vpMutex s_mutex_capture;
+
+
+vpThread::Return displayPointcloudFunction(vpThread::Args args)
+{
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_ = *((pcl::PointCloud<pcl::PointXYZRGB>::Ptr *) args);
+
+  pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+  pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud_);
+  viewer->setBackgroundColor (0, 0, 0);
+  viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+  viewer->addCoordinateSystem (1.0);
+  viewer->initCameraParameters ();
+  viewer->setPosition(640+80, 480+80);
+  viewer->setCameraPosition(0,0,-0.5, 0,-1,0);
+
+  t_CaptureState capture_state_;
+
+  do {
+    s_mutex_capture.lock();
+    capture_state_ = s_capture_state;
+    s_mutex_capture.unlock();
+
+    static bool update = false;
+    if (capture_state_ == capture_started) {
+      if (! update) {
+        viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud_, rgb, "sample cloud");
+        update = true;
+      }
+      else {
+        viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud_, rgb, "sample cloud");
+      }
+
+      viewer->spinOnce (10);
+    }
+  } while(capture_state_ != capture_stopped);
+
+  std::cout << "End of point cloud display thread" << std::endl;
+  return 0;
+}
 #endif
 
 int main()
@@ -72,12 +124,8 @@ int main()
 
 #ifdef VISP_HAVE_PCL
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-    pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
-    viewer->setBackgroundColor (0, 0, 0);
-    viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
-    viewer->addCoordinateSystem (1.0);
-    viewer->initCameraParameters ();
+
+    vpThread thread_display_pointcloud(displayPointcloudFunction, (vpThread::Args)&pointcloud);
 #else
     std::vector<vpPoint3dTextured> pointcloud;
 #endif
@@ -95,20 +143,15 @@ int main()
 #endif
 
     while(1) {
+      double t = vpTime::measureTimeMs();
       rs.acquire(color, infrared, depth, pointcloud);
+      std::cout << rs.getCameraParameters(rs::stream::depth, vpCameraParameters::perspectiveProjWithoutDistortion) << std::endl;
+      std::cout << rs.getCameraParameters(rs::stream::depth, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
 
-#ifdef VISP_HAVE_PCL
-      static bool update = false;
-      if (! update) {
-        viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
-        update = true;
+      {
+        vpMutex::vpScopedLock lock(s_mutex_capture);
+        s_capture_state = capture_started;
       }
-      else {
-        viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
-      }
-
-      viewer->spinOnce (100);
-#endif
 
       vpImageConvert::convert(infrared, infrared_display);
       vpImageConvert::createDepthHistogram(depth, depth_display);
@@ -117,87 +160,26 @@ int main()
       vpDisplay::display(infrared_display);
       vpDisplay::display(depth_display);
 
-#ifdef REMOVE
-
-#ifdef VISP_HAVE_PCL
-      //viewer.showCloud(pointcloud);
-//      std::cout << "------- Cloud size: " << pointcloud->width << " " << pointcloud->height << std::endl;
-//      for (unsigned int i=0; i< pointcloud->width*pointcloud->height; i++) {
-//        std::cout << "[" << pointcloud->points[i].x << " " << pointcloud->points[i].y << " "
-//                  << pointcloud->points[i].z << "] ";
-//      }
-//      std::cout << std::endl;
-#else
-      std::cout << "Cloud size: " << pointcloud.size() << std::endl;
-      if (1){
-        // Solve AX = b
-        vpMatrix A(pointcloud.size(), 3);
-        vpColVector X(3);
-        vpColVector b(pointcloud.size(), -1);
-        for(unsigned int i=0; i<pointcloud.size(); i++) {
-          A[i][0] = pointcloud[i].get_X();
-          A[i][1] = pointcloud[i].get_Y();
-          A[i][2] = pointcloud[i].get_Z();
-        }
-        X = A.pseudoInverse() * b;
-        vpColVector n = X.normalize();
-        std::cout << "Normal to plane: " << n << std::endl;
-
-        // Compute pose of the plane
-        vpColVector x(3);
-        x[0] = 1;
-        vpColVector ry = vpColVector::crossProd(n, x);
-        vpColVector rx = vpColVector::crossProd(ry, n);
-        vpRotationMatrix R;
-        for (unsigned int i=0; i<3; i++) {
-          R[i][0] = rx[i];
-          R[i][1] = ry[i];
-          R[i][2] = n[i];
-        }
-
-        // Compute centroid
-        vpColVector centroid(3);
-        for(unsigned int i=0; i<pointcloud.size(); i++) {
-          centroid[0] += pointcloud[i].get_X();
-          centroid[1] += pointcloud[i].get_Y();
-          centroid[2] += pointcloud[i].get_Z();
-        }
-        centroid /= pointcloud.size();
-
-        vpTranslationVector t(centroid);
-        vpHomogeneousMatrix cMp(t, R);
-
-        std::cout << "cMp:\n" << cMp << std::endl;
-
-        std::vector <rs::intrinsics> intrinsics = rs.getIntrinsics();
-        double u0 = intrinsics[(int)rs::stream::depth].ppx;
-        double v0 = intrinsics[(int)rs::stream::depth].ppy;
-        double px = intrinsics[(int)rs::stream::depth].fx;
-        double py = intrinsics[(int)rs::stream::depth].fy;
-        std::cout << "Intrinsics: "
-                  << "u0 = " << u0 << " "
-                  << "v0 = " << v0 << " "
-                  << "px = " << px << " "
-                  << "py = " << py << std::endl;
-        vpCameraParameters cam(px, py, u0, v0);
-
-
-        vpDisplay::displayFrame(depth_display, cMp, cam, 0.2);
-      }
-#endif
-#endif // #ifdef REMOVE
-
       vpDisplay::displayText(color, 15, 15, "Click to quit", vpColor::red);
-      if (vpDisplay::getClick(color, false) || vpDisplay::getClick(infrared_display, false) || vpDisplay::getClick(depth_display, false))
+      if (vpDisplay::getClick(color, false) || vpDisplay::getClick(infrared_display, false) || vpDisplay::getClick(depth_display, false)) {
         break;
+      }
       vpDisplay::flush(color);
       vpDisplay::flush(infrared_display);
       vpDisplay::flush(depth_display);
+
+      std::cout << "Loop time: " << vpTime::measureTimeMs() - t << std::endl;
     }
 
     std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
 
+    {
+      vpMutex::vpScopedLock lock(s_mutex_capture);
+      s_capture_state = capture_stopped;
+    }
+
     rs.close();
+
   }
   catch(const vpException &e) {
     std::cerr << "RealSense error " << e.getStringMessage() << std::endl;

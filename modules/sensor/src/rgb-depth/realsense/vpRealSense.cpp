@@ -127,7 +127,6 @@ void vpRealSense::close()
 {
   if (m_device) {
     if(m_device->is_streaming()) {
-      std::cout << "DBG: stop streaming" << std::endl;
       m_device->stop();
     }
     m_device = NULL;
@@ -156,6 +155,31 @@ void vpRealSense::setDeviceBySerialNumber(const std::string &serial_no)
   }
 
   m_serial_no = serial_no;
+}
+
+/*!
+   Return camera parameters corresponding to a specific stream.
+   \param stream : color, depth, infrared or infrared2 stream for which camera parameters are returned.
+   \param type : Indicate if the model should include distorsion paramater or not.
+ */
+
+vpCameraParameters vpRealSense::getCameraParameters(const rs::stream &stream, vpCameraParameters::vpCameraParametersProjType type) const
+{
+  auto intrinsics = m_device->get_stream_intrinsics(stream);
+
+  vpCameraParameters cam;
+  double px = intrinsics.ppx;
+  double py = intrinsics.ppy;
+  double u0 = intrinsics.fx;
+  double v0 = intrinsics.fy;
+  if (type == vpCameraParameters::perspectiveProjWithDistortion) {
+    double kdu = intrinsics.coeffs[0];
+    cam.initPersProjWithDistortion(px, py, u0, v0, -kdu, kdu);
+  }
+  else {
+    cam.initPersProjWithoutDistortion(px, py, u0, v0);
+  }
+  return cam;
 }
 
 /*!
@@ -237,9 +261,9 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
             }
             else
             {
-              unsigned int i = (unsigned int) color_pixel.y;
-              unsigned int j = (unsigned int) color_pixel.x;
-              vpRGBa rgba = color[i][j];
+              unsigned int i_ = (unsigned int) color_pixel.y;
+              unsigned int j_ = (unsigned int) color_pixel.x;
+              vpRGBa rgba = color[i_][j_];
 
               p3d.setRGB(rgba.R, rgba.G, rgba.B);
             }
@@ -399,6 +423,7 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
             color_point = depth_2_color_extrinsic.transform(depth_point);
             color_pixel = m_intrinsics[RS_STREAM_COLOR].project(color_point);
 
+
             if (color_pixel.y < 0 || color_pixel.y >= color.getHeight()
                 || color_pixel.x < 0 || color_pixel.x >= color.getWidth())
             {
@@ -412,11 +437,11 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
             }
             else
             {
-              unsigned int i = (unsigned int) color_pixel.y;
-              unsigned int j = (unsigned int) color_pixel.x;
+              unsigned int i_ = (unsigned int) color_pixel.y;
+              unsigned int j_ = (unsigned int) color_pixel.x;
 
-              uint32_t rgb = (static_cast<uint32_t>(color[i][j].R) << 16 |
-                            static_cast<uint32_t>(color[i][j].G) << 8 | static_cast<uint32_t>(color[i][j].B));
+              uint32_t rgb = (static_cast<uint32_t>(color[i_][j_].R) << 16 |
+                            static_cast<uint32_t>(color[i_][j_].G) << 8 | static_cast<uint32_t>(color[i_][j_].B));
               pointcloud->points[i*width + j].rgb = *reinterpret_cast<float*>(&rgb);
             }
           }
