@@ -52,6 +52,11 @@
 
 //using namespace X11name ;
 
+// Work arround to use this class with Eigen3
+#ifdef Success
+#  undef Success // See http://eigen.tuxfamily.org/bz/show_bug.cgi?id=253
+#endif
+
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRect.h>
 
