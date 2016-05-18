@@ -248,8 +248,30 @@ vpRGBa operator*(const double &x, const vpRGBa  &rgb)
 	return rgb*x;
 }
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
+/*!
+
+  \relates vpRGBa
+
+  Writes the RGBA values to the stream \e os, and
+  returns a reference to the stream. The
+  coordinates are separated by a comma.
+
+  The following code prints the intensity of the pixel in the middle of the image:
+  \code
+#include <visp3/core/vpImage.h>
+
+int main()
+{
+  vpImage<vpRGBa> I(480,640);
+
+  std::cout << "RGB: " << I[240][320] << std::endl;
+
+  return 0;
+}
+  \endcode
+*/
+VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpRGBa& rgba)
+{
+  os << "(" << (int)rgba.R << "," << (int)rgba.G << "," << (int)rgba.B << "," << (int)rgba.A << ")";
+  return os;
+}
