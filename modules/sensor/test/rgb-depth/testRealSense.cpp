@@ -114,20 +114,35 @@ int main()
   try {
     vpRealSense rs;
     //rs.setDeviceBySerialNumber("541142003219");
+
     rs.open();
 
-    vpImage<vpRGBa> color(rs.getIntrinsics()[RS_STREAM_COLOR].height, rs.getIntrinsics()[RS_STREAM_COLOR].width);
+    std::cout << rs.getCameraParameters(rs::stream::color, vpCameraParameters::perspectiveProjWithoutDistortion) << std::endl;
+    std::cout << rs.getCameraParameters(rs::stream::color, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
+    std::cout << "Extrinsics cMd: \n" << rs.getTransformation(rs::stream::color, rs::stream::depth) << std::endl;
+    std::cout << "Extrinsics dMc: \n" << rs.getTransformation(rs::stream::depth, rs::stream::color) << std::endl;
+    std::cout << "Extrinsics cMi: \n" << rs.getTransformation(rs::stream::color, rs::stream::infrared) << std::endl;
+    std::cout << "Extrinsics dMi: \n" << rs.getTransformation(rs::stream::depth, rs::stream::infrared) << std::endl;
+    rs::extrinsics cEd = rs.getExtrinsics(rs::stream::color, rs::stream::depth);
+    rs::extrinsics cEi = rs.getExtrinsics(rs::stream::color, rs::stream::infrared);
+    rs::extrinsics dEi = rs.getExtrinsics(rs::stream::depth, rs::stream::infrared);
+
+    std::cout << "cEd           cEi    dEi  " << std::endl;
+    for(unsigned int i=0; i<3; i++)
+      std::cout << cEd.translation[i] << " " << cEi.translation[i] << " " << dEi.translation[i] << std::endl;
+
+    vpImage<vpRGBa> color(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
     vpImage<u_int16_t> infrared;
-    vpImage<unsigned char> infrared_display(rs.getIntrinsics()[RS_STREAM_INFRARED].height, rs.getIntrinsics()[RS_STREAM_INFRARED].width);;
+    vpImage<unsigned char> infrared_display(rs.getIntrinsics(rs::stream::infrared).height, rs.getIntrinsics(rs::stream::infrared).width);;
     vpImage<u_int16_t> depth;
-    vpImage<vpRGBa> depth_display(rs.getIntrinsics()[RS_STREAM_DEPTH].height, rs.getIntrinsics()[RS_STREAM_DEPTH].width);
+    vpImage<vpRGBa> depth_display(rs.getIntrinsics(rs::stream::depth).height, rs.getIntrinsics(rs::stream::depth).width);
 
 #ifdef VISP_HAVE_PCL
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
     vpThread thread_display_pointcloud(displayPointcloudFunction, (vpThread::Args)&pointcloud);
 #else
-    std::vector<vpPoint3dTextured> pointcloud;
+    std::vector<vpColVector> pointcloud;
 #endif
 
 #if defined(VISP_HAVE_X11)
@@ -145,8 +160,6 @@ int main()
     while(1) {
       double t = vpTime::measureTimeMs();
       rs.acquire(color, infrared, depth, pointcloud);
-      std::cout << rs.getCameraParameters(rs::stream::depth, vpCameraParameters::perspectiveProjWithoutDistortion) << std::endl;
-      std::cout << rs.getCameraParameters(rs::stream::depth, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
 
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);

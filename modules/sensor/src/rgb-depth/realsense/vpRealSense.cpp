@@ -158,14 +158,16 @@ void vpRealSense::setDeviceBySerialNumber(const std::string &serial_no)
 }
 
 /*!
-   Return camera parameters corresponding to a specific stream.
-   \param stream : color, depth, infrared or infrared2 stream for which camera parameters are returned.
+   Return camera parameters corresponding to a specific stream. This function has to be called after open().
+   \param stream : color, depth, infrared or infrared2 stream for which camera intrinsic parameters are returned.
    \param type : Indicate if the model should include distorsion paramater or not.
+
+   \sa getIntrinsics()
  */
 
 vpCameraParameters vpRealSense::getCameraParameters(const rs::stream &stream, vpCameraParameters::vpCameraParametersProjType type) const
 {
-  auto intrinsics = m_device->get_stream_intrinsics(stream);
+  auto intrinsics = this->getIntrinsics(stream);
 
   vpCameraParameters cam;
   double px = intrinsics.ppx;
@@ -183,13 +185,69 @@ vpCameraParameters vpRealSense::getCameraParameters(const rs::stream &stream, vp
 }
 
 /*!
+   Get intrinsic parameters corresponding to the stream. This function has to be called after open().
+   \param stream : color, depth, infrared or infrared2 stream for which camera intrinsic parameters are returned.
+   \sa getCameraParameters()
+  */
+rs::intrinsics vpRealSense::getIntrinsics(const rs::stream &stream) const
+{
+  if (! m_device) {
+    throw vpException(vpException::fatalError, "RealSense Camera - device handler is null. Cannot retrieve intrinsics. Exiting!");
+  }
+  if(!m_device->is_stream_enabled(stream)) {
+    throw vpException(vpException::fatalError, "RealSense Camera - stream (%d) is not enabled to retrieve intrinsics. Exiting!", (int)stream);
+  }
+  return m_intrinsics[(int)stream];
+}
+
+/*!
+   Get extrinsic transformation from one stream to an other. This function has to be called after open().
+   \param from, to : color, depth, infrared or infrared2 stream between which camera extrinsic parameters are returned.
+
+   \sa getTransformation()
+  */
+rs::extrinsics vpRealSense::getExtrinsics(const rs::stream &from, const rs::stream &to) const
+{
+  if (! m_device) {
+    throw vpException(vpException::fatalError, "RealSense Camera - device handler is null. Cannot retrieve extrinsics. Exiting!");
+  }
+  if(!m_device->is_stream_enabled(from)) {
+    throw vpException(vpException::fatalError, "RealSense Camera - stream (%d) is not enabled to retrieve extrinsics. Exiting!", (int)from);
+  }
+  if(!m_device->is_stream_enabled(to)) {
+    throw vpException(vpException::fatalError, "RealSense Camera - stream (%d) is not enabled to retrieve extrinsics. Exiting!", (int)to);
+  }
+  return m_device->get_extrinsics(from, to);
+}
+
+/*!
+   Get extrinsic transformation from one stream to an other. This function has to be called after open().
+   \param from, to : color, depth, infrared or infrared2 stream between which camera extrinsic parameters are returned.
+
+   \sa getExtrinsics()
+  */
+vpHomogeneousMatrix vpRealSense::getTransformation(const rs::stream &from, const rs::stream &to) const
+{
+  rs::extrinsics extrinsics = this->getExtrinsics(from, to);
+  vpTranslationVector t;
+  vpRotationMatrix R;
+  for(unsigned int i=0; i<3; i++) {
+    t[i] = extrinsics.translation[i];
+    for(unsigned int j=0; j<3; j++)
+      R[i][j] = extrinsics.rotation[i*3+j];
+  }
+  vpHomogeneousMatrix fMt(t, R);
+  return fMt;
+}
+
+/*!
   Acquire data from RealSense device.
   \param color : Color image.
   \param infrared : Infrared image.
   \param depth : Depth image.
-  \param pointcloud : Point cloud data.
+  \param pointcloud : Point cloud data as a vector of column vectors. Each column vector is 4-dimension and contains X,Y,Z,1 normalized coordinates of a point.
  */
-void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, std::vector<vpPoint3dTextured> &pointcloud)
+void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, std::vector<vpColVector> &pointcloud)
 {
   if (m_device == NULL) {
     throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
@@ -229,12 +287,9 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
     if (m_enable_depth) {
       const float depth_scale = m_device->get_depth_scale();
 
-      rs::extrinsics depth_2_color_extrinsic = m_device->get_extrinsics(rs::stream::depth, rs::stream::color);
-
       // Fill the PointCloud2 fields.
-      vpPoint3dTextured p3d;
-      rs::float3 depth_point, color_point;
-      rs::float2 color_pixel;
+      vpColVector p3d(4); // X,Y,Z coordinates
+      rs::float3 depth_point;
 
       for (int i = 0; i < m_intrinsics[RS_STREAM_DEPTH].height; i++) {
         for (int j = 0; j < m_intrinsics[RS_STREAM_DEPTH].width; j++) {
@@ -246,29 +301,10 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
           if (depth_point.z <= 0 || depth_point.z > m_max_Z) {
             depth_point.x = depth_point.y = depth_point.z = 0;
           }
-          p3d.setXYZ(depth_point.x, depth_point.y, depth_point.z);
-
-          if (m_enable_color) {
-            color_point = depth_2_color_extrinsic.transform(depth_point);
-            color_pixel = m_intrinsics[RS_STREAM_COLOR].project(color_point);
-
-            if (color_pixel.y < 0 || color_pixel.y >= color.getHeight()
-                || color_pixel.x < 0 || color_pixel.x >= color.getWidth())
-            {
-              // For out of bounds color data, default to a shade of blue in order to visually distinguish holes.
-              // This color value is same as the librealsense out of bounds color value.
-              p3d.setRGB(96, 157, 198);
-            }
-            else
-            {
-              unsigned int i_ = (unsigned int) color_pixel.y;
-              unsigned int j_ = (unsigned int) color_pixel.x;
-              vpRGBa rgba = color[i_][j_];
-
-              p3d.setRGB(rgba.R, rgba.G, rgba.B);
-            }
-          }
-          pointcloud.push_back(p3d);
+          p3d[0] = depth_point.x;
+          p3d[1] = depth_point.y;
+          p3d[2] = depth_point.z;
+          p3d[3] = 1;
         }
       }
     }

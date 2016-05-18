@@ -92,6 +92,10 @@ if(USE_FLYCAPTURE)
   # Add specific build flag to turn off warnings coming from PointGrey flycapture 3rd party
   vp_set_source_file_compile_flag(src/framegrabber/flycapture/vpFlyCaptureGrabber.cpp -Wno-unknown-pragmas -Wno-ignored-qualifiers)
 endif()
+if(USE_REALSENSE)
+  # Add specific build flag to turn off warnings coming from RealSense 3rd party
+  vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense.cpp -Wno-strict-aliasing)
+endif()
 
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
