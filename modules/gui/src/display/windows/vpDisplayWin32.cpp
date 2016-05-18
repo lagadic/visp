@@ -519,7 +519,7 @@ bool vpDisplayWin32::getKeyboardEvent( bool blocking )
   - When set to false, returns true only if a key is
     pressed, otherwise returns false.
 
-  \param string [out]: If possible, an ISO Latin-1 character
+  \param key [out]: If possible, an ISO Latin-1 character
   corresponding to the keyboard key.
 
   \return 
