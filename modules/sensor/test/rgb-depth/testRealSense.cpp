@@ -51,7 +51,7 @@
 #include <visp3/core/vpMutex.h>
 #include <visp3/core/vpThread.h>
 
-//#undef VISP_HAVE_PCL
+#undef VISP_HAVE_PCL
 
 #ifdef VISP_HAVE_PCL
 #  include <pcl/visualization/cloud_viewer.h>
@@ -76,7 +76,6 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
   pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
   pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud_);
   viewer->setBackgroundColor (0, 0, 0);
-  viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
   viewer->addCoordinateSystem (1.0);
   viewer->initCameraParameters ();
   viewer->setPosition(640+80, 480+80);
@@ -93,6 +92,7 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
     if (capture_state_ == capture_started) {
       if (! update) {
         viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud_, rgb, "sample cloud");
+        viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
         update = true;
       }
       else {
@@ -123,13 +123,6 @@ int main()
     std::cout << "Extrinsics dMc: \n" << rs.getTransformation(rs::stream::depth, rs::stream::color) << std::endl;
     std::cout << "Extrinsics cMi: \n" << rs.getTransformation(rs::stream::color, rs::stream::infrared) << std::endl;
     std::cout << "Extrinsics dMi: \n" << rs.getTransformation(rs::stream::depth, rs::stream::infrared) << std::endl;
-    rs::extrinsics cEd = rs.getExtrinsics(rs::stream::color, rs::stream::depth);
-    rs::extrinsics cEi = rs.getExtrinsics(rs::stream::color, rs::stream::infrared);
-    rs::extrinsics dEi = rs.getExtrinsics(rs::stream::depth, rs::stream::infrared);
-
-    std::cout << "cEd           cEi    dEi  " << std::endl;
-    for(unsigned int i=0; i<3; i++)
-      std::cout << cEd.translation[i] << " " << cEi.translation[i] << " " << dEi.translation[i] << std::endl;
 
     vpImage<vpRGBa> color(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
     vpImage<u_int16_t> infrared;
@@ -161,10 +154,12 @@ int main()
       double t = vpTime::measureTimeMs();
       rs.acquire(color, infrared, depth, pointcloud);
 
+#ifdef VISP_HAVE_PCL
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);
         s_capture_state = capture_started;
       }
+#endif
 
       vpImageConvert::convert(infrared, infrared_display);
       vpImageConvert::createDepthHistogram(depth, depth_display);
@@ -186,13 +181,14 @@ int main()
 
     std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
 
+#ifdef VISP_HAVE_PCL
     {
       vpMutex::vpScopedLock lock(s_mutex_capture);
       s_capture_state = capture_stopped;
     }
+#endif
 
     rs.close();
-
   }
   catch(const vpException &e) {
     std::cerr << "RealSense error " << e.getStringMessage() << std::endl;
