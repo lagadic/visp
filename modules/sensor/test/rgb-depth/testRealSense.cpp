@@ -51,7 +51,8 @@
 #include <visp3/core/vpMutex.h>
 #include <visp3/core/vpThread.h>
 
-#undef VISP_HAVE_PCL
+// Using a thread to display the pointcloud with PCL produces a segfault on OSX
+//#define USE_THREAD
 
 #ifdef VISP_HAVE_PCL
 #  include <pcl/visualization/cloud_viewer.h>
@@ -59,6 +60,7 @@
 #endif
 
 #ifdef VISP_HAVE_PCL
+#ifdef USE_THREAD
 // Shared vars
 typedef enum {
   capture_waiting,
@@ -107,6 +109,7 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
   return 0;
 }
 #endif
+#endif
 
 int main()
 {
@@ -133,7 +136,17 @@ int main()
 #ifdef VISP_HAVE_PCL
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
+#ifdef USE_THREAD
     vpThread thread_display_pointcloud(displayPointcloudFunction, (vpThread::Args)&pointcloud);
+#else
+    pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
+    viewer->setBackgroundColor (0, 0, 0);
+    viewer->addCoordinateSystem (1.0);
+    viewer->initCameraParameters ();
+    viewer->setCameraPosition(0,0,-0.5, 0,-1,0);
+#endif
+
 #else
     std::vector<vpColVector> pointcloud;
 #endif
@@ -155,10 +168,25 @@ int main()
       rs.acquire(color, infrared, depth, pointcloud);
 
 #ifdef VISP_HAVE_PCL
+#ifdef USE_THREAD
       {
         vpMutex::vpScopedLock lock(s_mutex_capture);
         s_capture_state = capture_started;
       }
+#else
+      static bool update = false;
+        if (! update) {
+          viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+          viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+          viewer->setPosition(color.getWidth()+80, color.getHeight()+80);
+          update = true;
+        }
+        else {
+          viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+        }
+
+        viewer->spinOnce (10);
+#endif
 #endif
 
       vpImageConvert::convert(infrared, infrared_display);
@@ -182,10 +210,12 @@ int main()
     std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
 
 #ifdef VISP_HAVE_PCL
+#ifdef USE_THREAD
     {
       vpMutex::vpScopedLock lock(s_mutex_capture);
       s_capture_state = capture_stopped;
     }
+#endif
 #endif
 
     rs.close();
