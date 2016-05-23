@@ -251,7 +251,7 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 # bar codes
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON)
-VP_OPTION(USE_PCL         PCL          QUIET    "Include Point Cloud Library support" "" ON)
+VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF USE_REALSENSE)
 VP_OPTION(BUILD_ATIDAQ    ""           ""    "Include atidaq-c support"     "" ON IF USE_COMEDI)
 
 #----------------------------------------------------------------------
@@ -612,6 +612,11 @@ endif()
 if(USE_OGRE)
   include(cmake/OgreTools.cmake)
   vp_set_ogre_media()
+endif()
+
+# PCL and 3rd party advanced vars
+if(USE_PCL)
+  include(cmake/PCLTools.cmake)
 endif()
 
 # Find isnan macro (C-style)
