@@ -35,6 +35,10 @@
 #
 #############################################################################
 
+if(WIN32)
+  mark_as_advanced(OGRE_FRAMEWORK_PATH)
+endif()
+
 #########################################################
 # Find Ogre plugins
 #
@@ -42,7 +46,6 @@
 # except that it should be used only in a desperate way when the original
 # one doesn't detect anything
 #########################################################
-
 
 macro(vp_ogre_find_plugin_lib_visp PLUGIN)
   # On Unix, the plugins might have no prefix
