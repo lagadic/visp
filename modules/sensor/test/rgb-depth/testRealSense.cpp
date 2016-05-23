@@ -52,7 +52,11 @@
 #include <visp3/core/vpThread.h>
 
 // Using a thread to display the pointcloud with PCL produces a segfault on OSX
-//#define USE_THREAD
+#if( ! defined(__APPLE__) && ! defined(__MACH__) ) // Not OSX
+#  if (defined(VISP_HAVE_PTHREAD) || defined(_WIN32)) // Threading available
+#    define USE_THREAD
+#  endif
+#endif
 
 #ifdef VISP_HAVE_PCL
 #  include <pcl/visualization/cloud_viewer.h>
