@@ -46,7 +46,7 @@
 #include "vpRealSense_impl.h"
 
 vpRealSense::vpRealSense()
-  : m_context(), m_device(NULL), m_num_devices(0), m_serial_no(), m_intrinsics(), m_max_Z(8), m_enable_color(true), m_enable_depth(true), m_enable_point_cloud(true)
+  : m_context(), m_device(NULL), m_num_devices(0), m_serial_no(), m_intrinsics(), m_max_Z(8), m_enable_color(true), m_enable_depth(true)
 {
 
 }
@@ -103,18 +103,13 @@ void vpRealSense::open()
 
   // Compute field of view for each enabled stream
   m_intrinsics.clear();
-  std::streamsize ss = std::cout.precision();
-  for(int i = 0; i < 4; ++i)
-  {
+  for(int i = 0; i < 4; ++i) {
     auto stream = rs::stream(i);
     if(!m_device->is_stream_enabled(stream)) continue;
     auto intrin = m_device->get_stream_intrinsics(stream);
-    std::cout << "Capturing " << stream << " at " << intrin.width << " x " << intrin.height;
-    std::cout << std::setprecision(1) << std::fixed << ", fov = " << intrin.hfov() << " x " << intrin.vfov() << ", distortion = " << intrin.model() << std::endl;
 
     m_intrinsics.push_back(intrin);
   }
-  std::cout.precision(ss);
 
   // Start device
   m_device->start();
@@ -242,6 +237,86 @@ vpHomogeneousMatrix vpRealSense::getTransformation(const rs::stream &from, const
 
 /*!
   Acquire data from RealSense device.
+  \param grey : Grey level image.
+ */
+void vpRealSense::acquire(vpImage<unsigned char> &grey)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
+  }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve grey image
+  vp_rs_get_grey_impl(m_device, m_intrinsics, grey);
+}
+
+/*!
+  Acquire data from RealSense device.
+  \param grey : Grey level image.
+  \param pointcloud : Point cloud data as a vector of column vectors. Each column vector is 4-dimension and contains X,Y,Z,1 normalized coordinates of a point.
+ */
+void vpRealSense::acquire(vpImage<unsigned char> &grey, std::vector<vpColVector> &pointcloud)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
+  }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve grey image
+  vp_rs_get_grey_impl(m_device, m_intrinsics, grey);
+
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
+}
+
+/*!
+  Acquire data from RealSense device.
+  \param pointcloud : Point cloud data as a vector of column vectors. Each column vector is 4-dimension and contains X,Y,Z,1 normalized coordinates of a point.
+ */
+void vpRealSense::acquire(std::vector<vpColVector> &pointcloud)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
+  }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
+}
+
+/*!
+  Acquire data from RealSense device.
+  \param color : Color image.
+ */
+void vpRealSense::acquire(vpImage<vpRGBa> &color)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
+  }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve color image
+  vp_rs_get_color_impl(m_device, m_intrinsics, color);
+}
+
+/*!
+  Acquire data from RealSense device.
   \param color : Color image.
   \param infrared : Infrared image.
   \param depth : Depth image.
@@ -259,19 +334,7 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
   m_device->wait_for_frames();
 
   // Retrieve color image
-  if (m_device->is_stream_enabled(rs::stream::color)) {
-    int color_width = m_intrinsics[RS_STREAM_COLOR].width;
-    int color_height = m_intrinsics[RS_STREAM_COLOR].height;
-    color.resize(color_height, color_width);
-
-    if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8)
-      vpImageConvert::RGBToRGBa((unsigned char *)m_device->get_frame_data(rs::stream::color), (unsigned char *)color.bitmap, color_width, color_height);
-    else
-      throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
-  }
-  else {
-    throw vpException(vpException::fatalError, "RealSense Camera - color stream not enabled!");
-  }
+  vp_rs_get_color_impl(m_device, m_intrinsics, color);
 
   // Retrieve infrared image
   vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
@@ -279,46 +342,155 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
   // Retrieve depth image
   vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
 
-  // Compute point cloud
-  if (m_enable_point_cloud) {
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
+}
 
-    pointcloud.clear();
-
-    if (m_enable_depth) {
-      const float depth_scale = m_device->get_depth_scale();
-
-      // Fill the PointCloud2 fields.
-      vpColVector p3d(4); // X,Y,Z coordinates
-      rs::float3 depth_point;
-
-      for (int i = 0; i < m_intrinsics[RS_STREAM_DEPTH].height; i++) {
-        for (int j = 0; j < m_intrinsics[RS_STREAM_DEPTH].width; j++) {
-          float scaled_depth = depth[i][j] * depth_scale;
-
-          rs::float2 depth_pixel = { (float) j, (float) i};
-          depth_point = m_intrinsics[RS_STREAM_DEPTH].deproject(depth_pixel, scaled_depth);
-
-          if (depth_point.z <= 0 || depth_point.z > m_max_Z) {
-            depth_point.x = depth_point.y = depth_point.z = 0;
-          }
-          p3d[0] = depth_point.x;
-          p3d[1] = depth_point.y;
-          p3d[2] = depth_point.z;
-          p3d[3] = 1;
-        }
-      }
-    }
+/*!
+  Acquire data from RealSense device.
+  \param grey : Grey level image.
+  \param infrared : Infrared image.
+  \param depth : Depth image.
+  \param pointcloud : Point cloud data as a vector of column vectors. Each column vector is 4-dimension and contains X,Y,Z,1 normalized coordinates of a point.
+ */
+void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, std::vector<vpColVector> &pointcloud)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
+  }
+  if (! m_device->is_streaming()) {
+    open();
   }
 
+  m_device->wait_for_frames();
+
+  // Retrieve grey image
+  vp_rs_get_grey_impl(m_device, m_intrinsics, grey);
+
+  // Retrieve infrared image
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
+
+  // Retrieve depth image
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
+
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
+}
+
+/*!
+  Acquire data from RealSense device.
+  \param color : Color image.
+  \param pointcloud : Point cloud data as a vector of column vectors. Each column vector is 4-dimension and contains X,Y,Z,1 normalized coordinates of a point.
+ */
+void vpRealSense::acquire(vpImage<vpRGBa> &color, std::vector<vpColVector> &pointcloud)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
+  }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve color image
+  vp_rs_get_color_impl(m_device, m_intrinsics, color);
+
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
 }
 
 #ifdef VISP_HAVE_PCL
 /*!
   Acquire data from RealSense device.
+  \param pointcloud : Point cloud data information.
+ */
+void vpRealSense::acquire(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
+  }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
+}
+
+/*!
+  Acquire data from RealSense device.
+  \param pointcloud : Point cloud data with texture information.
+ */
+void vpRealSense::acquire(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
+  }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
+}
+
+/*!
+  Acquire data from RealSense device.
+  \param grey : Grey level image.
+  \param pointcloud : Point cloud data information.
+ */
+void vpRealSense::acquire(vpImage<unsigned char> &grey, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
+  }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve grey image
+  vp_rs_get_grey_impl(m_device, m_intrinsics, grey);
+
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
+}
+
+/*!
+  Acquire data from RealSense device.
+  \param color : Color image.
+  \param pointcloud : Point cloud data information.
+ */
+void vpRealSense::acquire(vpImage<vpRGBa> &color, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
+  }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve color image
+  vp_rs_get_color_impl(m_device, m_intrinsics, color);
+
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
+}
+
+/*!
+  Acquire data from RealSense device.
   \param color : Color image.
   \param infrared : Infrared image.
   \param depth : Depth image.
-  \param pointcloud : Point cloud data with texture information.
+  \param pointcloud : Point cloud data information.
  */
 void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
@@ -332,19 +504,7 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
   m_device->wait_for_frames();
 
   // Retrieve color image
-  if (m_device->is_stream_enabled(rs::stream::color)) {
-    int color_width = m_intrinsics[RS_STREAM_COLOR].width;
-    int color_height = m_intrinsics[RS_STREAM_COLOR].height;
-    color.resize(color_height, color_width);
-
-    if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8)
-      vpImageConvert::RGBToRGBa((unsigned char *)m_device->get_frame_data(rs::stream::color), (unsigned char *)color.bitmap, color_width, color_height);
-    else
-      throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
-  }
-  else {
-    throw vpException(vpException::fatalError, "RealSense Camera - color stream not enabled!");
-  }
+  vp_rs_get_color_impl(m_device, m_intrinsics, color);
 
   // Retrieve infrared image
   vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
@@ -352,37 +512,39 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
   // Retrieve depth image
   vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
 
-  // Compute point cloud
-  if (m_enable_point_cloud) {
-    int width = m_intrinsics[RS_STREAM_DEPTH].width;
-    int height = m_intrinsics[RS_STREAM_DEPTH].height;
-    pointcloud->width = width;
-    pointcloud->height = height;
-    pointcloud->resize(pointcloud->width * pointcloud->height);
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
+}
 
-    if (m_enable_depth) {
-      const float depth_scale = m_device->get_depth_scale();
-
-      // Fill the PointCloud2 fields.
-      rs::float3 depth_point;
-
-      for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-          float scaled_depth = depth[i][j] * depth_scale;
-
-          rs::float2 depth_pixel = { (float) j, (float) i};
-          depth_point = m_intrinsics[RS_STREAM_DEPTH].deproject(depth_pixel, scaled_depth);
-
-          if (depth_point.z <= 0 || depth_point.z > m_max_Z) {
-            depth_point.x = depth_point.y = depth_point.z = 0;
-          }
-          pointcloud->points[i*width + j].x = depth_point.x;
-          pointcloud->points[i*width + j].y = depth_point.y;
-          pointcloud->points[i*width + j].z = depth_point.z;
-        }
-      }
-    }
+/*!
+  Acquire data from RealSense device.
+  \param grey : Grey level image.
+  \param infrared : Infrared image.
+  \param depth : Depth image.
+  \param pointcloud : Point cloud data information.
+ */
+void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve grey image
+  vp_rs_get_grey_impl(m_device, m_intrinsics, grey);
+
+  // Retrieve infrared image
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
+
+  // Retrieve depth image
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
+
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
 }
 
 /*!
@@ -390,7 +552,7 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
   \param color : Color image.
   \param infrared : Infrared image.
   \param depth : Depth image.
-  \param pointcloud : Point cloud data.
+  \param pointcloud : Point cloud data with texture information.
  */
 void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
 {
@@ -404,19 +566,7 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
   m_device->wait_for_frames();
 
   // Retrieve color image
-  if (m_device->is_stream_enabled(rs::stream::color)) {
-    int color_width = m_intrinsics[RS_STREAM_COLOR].width;
-    int color_height = m_intrinsics[RS_STREAM_COLOR].height;
-    color.resize(color_height, color_width);
-
-    if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8)
-      vpImageConvert::RGBToRGBa((unsigned char *)m_device->get_frame_data(rs::stream::color), (unsigned char *)color.bitmap, color_width, color_height);
-    else
-      throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
-  }
-  else {
-    throw vpException(vpException::fatalError, "RealSense Camera - color stream not enabled!");
-  }
+  vp_rs_get_color_impl(m_device, m_intrinsics, color);
 
   // Retrieve infrared image
   vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
@@ -424,68 +574,39 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
   // Retrieve depth image
   vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
 
-  // Compute point cloud
-  if (m_enable_point_cloud) {
-    int width = m_intrinsics[RS_STREAM_DEPTH].width;
-    int height = m_intrinsics[RS_STREAM_DEPTH].height;
-    pointcloud->width = width;
-    pointcloud->height = height;
-    pointcloud->resize(pointcloud->width * pointcloud->height);
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
+}
 
-    if (m_enable_depth) {
-      const float depth_scale = m_device->get_depth_scale();
-
-      rs::extrinsics depth_2_color_extrinsic = m_device->get_extrinsics(rs::stream::depth, rs::stream::color);
-
-      // Fill the PointCloud2 fields.
-      rs::float3 depth_point, color_point;
-      rs::float2 color_pixel;
-
-      for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-          float scaled_depth = depth[i][j] * depth_scale;
-
-          rs::float2 depth_pixel = { (float) j, (float) i};
-          depth_point = m_intrinsics[RS_STREAM_DEPTH].deproject(depth_pixel, scaled_depth);
-
-          if (depth_point.z <= 0 || depth_point.z > m_max_Z) {
-            depth_point.x = depth_point.y = depth_point.z = 0;
-          }
-          pointcloud->points[i*width + j].x = depth_point.x;
-          pointcloud->points[i*width + j].y = depth_point.y;
-          pointcloud->points[i*width + j].z = depth_point.z;
-
-          if (m_enable_color) {
-            color_point = depth_2_color_extrinsic.transform(depth_point);
-            color_pixel = m_intrinsics[RS_STREAM_COLOR].project(color_point);
-
-
-            if (color_pixel.y < 0 || color_pixel.y >= color.getHeight()
-                || color_pixel.x < 0 || color_pixel.x >= color.getWidth())
-            {
-              // For out of bounds color data, default to a shade of blue in order to visually distinguish holes.
-              // This color value is same as the librealsense out of bounds color value.
-              unsigned int r = 96, g = 157, b = 198;
-              uint32_t rgb = (static_cast<uint32_t>(r) << 16 |
-                            static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
-
-              pointcloud->points[i*width + j].rgb = *reinterpret_cast<float*>(&rgb);
-            }
-            else
-            {
-              unsigned int i_ = (unsigned int) color_pixel.y;
-              unsigned int j_ = (unsigned int) color_pixel.x;
-
-              uint32_t rgb = (static_cast<uint32_t>(color[i_][j_].R) << 16 |
-                            static_cast<uint32_t>(color[i_][j_].G) << 8 | static_cast<uint32_t>(color[i_][j_].B));
-              pointcloud->points[i*width + j].rgb = *reinterpret_cast<float*>(&rgb);
-            }
-          }
-
-        }
-      }
-    }
+/*!
+  Acquire data from RealSense device.
+  \param grey : Grey level image.
+  \param infrared : Infrared image.
+  \param depth : Depth image.
+  \param pointcloud : Point cloud data with texture information.
+ */
+void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
+{
+  if (m_device == NULL) {
+    throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
   }
+  if (! m_device->is_streaming()) {
+    open();
+  }
+
+  m_device->wait_for_frames();
+
+  // Retrieve grey image
+  vp_rs_get_grey_impl(m_device, m_intrinsics, grey);
+
+  // Retrieve infrared image
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::infrared, infrared);
+
+  // Retrieve depth image
+  vp_rs_get_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, depth);
+
+  // Retrieve point cloud
+  vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
 }
 
 #endif
@@ -512,6 +633,17 @@ int main()
 std::ostream & operator<<(std::ostream &os, const vpRealSense &rs)
 {
   os << "Device name: " << rs.getHandler()->get_name() << std::endl;
+  std::streamsize ss = std::cout.precision();
+  for(int i = 0; i < 4; ++i)
+  {
+    auto stream = rs::stream(i);
+    if(!rs.getHandler()->is_stream_enabled(stream)) continue;
+    auto intrin = rs.getHandler()->get_stream_intrinsics(stream);
+    std::cout << "Capturing " << stream << " at " << intrin.width << " x " << intrin.height;
+    std::cout << std::setprecision(1) << std::fixed << ", fov = " << intrin.hfov() << " x " << intrin.vfov() << ", distortion = " << intrin.model() << std::endl;
+  }
+  std::cout.precision(ss);
+
   return os;
 }
 

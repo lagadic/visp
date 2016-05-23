@@ -58,6 +58,64 @@
   \class vpRealSense
 
   \ingroup group_sensor_rgbd
+
+  This class is a wrapper over the Intel librealsense library https://github.com/IntelRealSense/librealsense.
+  It allows to capture data from the Intel RealSense F200, SR300 and R200 cameras.
+
+  The usage of vpRealSense class is enabled when librealsense 3rd party is successfully installed. Installation
+  instructions are provided following https://github.com/IntelRealSense/librealsense#installation-guide.
+
+  Moreover, if Point Cloud Library (PCL) 3rd party is installed we also propose interfaces to retrieve point cloud as
+  pcl::PointCloud<pcl::PointXYZ> or pcl::PointCloud<pcl::PointXYZRGB> data structures.
+
+  \warning Notice that the usage of this class requires compiler and library support for the ISO C++ 2011 standard.
+  This support must be enabled with the -std=c++11 compiler option. Hereafter we give an example of
+  a CMakeLists.txt file that allows to build sample-realsense.cpp that uses vpRealSense class.
+  \code
+project(sample)
+cmake_minimum_required(VERSION 2.6)
+
+find_package(VISP REQUIRED)
+include_directories(${VISP_INCLUDE_DIRS})
+
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-std=c++11" COMPILER_SUPPORTS_CXX11)
+if(COMPILER_SUPPORTS_CXX11)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+endif()
+
+add_executable(sample-realsense sample-realsense.cpp)
+target_link_libraries(sample-realsense ${VISP_LIBRARIES})
+  \endcode
+
+  To acquire images from the RealSense color camera and convert them into grey level images, a good starting is to use
+  the following:
+  \code
+#include <visp3/sensor/vpRealSense.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
+
+int main()
+{
+  vpRealSense rs;
+  rs.open();
+
+  vpImage<unsigned char> I(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
+#ifdef VISP_HAVE_X11
+  vpDisplayX d(I);
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI d(I);
+#endif
+
+  while (1) {
+    rs.acquire(I);
+    vpDisplay::display(I);
+    vpDisplay::flush(I);
+    if (vpDisplay::getClick(I, false))
+      break;
+  }
+}
+  \endcode
 */
 class VISP_EXPORT vpRealSense
 {
@@ -65,8 +123,25 @@ public:
   vpRealSense();
   virtual ~vpRealSense();
 
-  void acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, std::vector<vpColVector> &pointcloud);
+  void acquire(std::vector<vpColVector> &pointcloud);
+  void acquire(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
+  void acquire(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
+
+  void acquire(vpImage<unsigned char> &grey); // tested
+  void acquire(vpImage<unsigned char> &grey, std::vector<vpColVector> &pointcloud);
+  void acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, std::vector<vpColVector> &pointcloud);
 #ifdef VISP_HAVE_PCL
+  void acquire(vpImage<unsigned char> &grey, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
+  void acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
+  void acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
+#endif
+
+  void acquire(vpImage<vpRGBa> &color);  // tested
+  void acquire(vpImage<vpRGBa> &color, std::vector<vpColVector> &pointcloud);
+  void acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, std::vector<vpColVector> &pointcloud);
+
+#ifdef VISP_HAVE_PCL
+  void acquire(vpImage<vpRGBa> &color, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
   void acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
   void acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
 #endif
@@ -108,8 +183,6 @@ protected:
   float m_max_Z; //!< Maximal Z depth in meter
   bool m_enable_color;
   bool m_enable_depth;
-  bool m_enable_point_cloud;
-
 };
 
 #endif
