@@ -41,6 +41,7 @@
 #define vpPolygon_h
 
 #include <vector>
+#include <list>
 
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRect.h>
@@ -112,12 +113,14 @@ class VISP_EXPORT vpPolygon
   public:
     vpPolygon();
     vpPolygon(const std::vector<vpImagePoint>& corners);
+    vpPolygon(const std::list<vpImagePoint>& corners);
     vpPolygon(const vpPolygon &poly);
     virtual ~vpPolygon();
     
     vpPolygon &operator=(const vpPolygon& poly);
     
     void buildFrom(const std::vector<vpImagePoint>& corners);
+    void buildFrom(const std::list<vpImagePoint>& corners);
     void buildFrom(const std::vector<vpPoint>& corners, const vpCameraParameters& cam);
     void initClick(const vpImage<unsigned char>& I);
     
@@ -167,6 +170,7 @@ class VISP_EXPORT vpPolygon
 
   protected:
     void init(const std::vector<vpImagePoint>& corners);
+    void init(const std::list<vpImagePoint>& corners);
     void updateArea();
     void updateCenter();
     void updateBoundingBox();

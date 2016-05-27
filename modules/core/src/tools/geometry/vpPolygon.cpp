@@ -79,6 +79,22 @@ vpPolygon::vpPolygon(const std::vector<vpImagePoint>& corners)
 }
 
 /*!
+  Constructor which initialise the polygon thanks to the given corners.
+
+  \warning the corners must be ordered (either clockwise or counter clockwise).
+
+  \param corners : The Points defining the corners.
+*/
+vpPolygon::vpPolygon(const std::list<vpImagePoint>& corners)
+  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox()
+{
+  if(corners.size() < 3){
+    _goodPoly = false;
+  }
+  init(corners);
+}
+
+/*!
   Copy constructor
   
   \param poly : The polygon used for the initialisation.
@@ -124,6 +140,19 @@ vpPolygon::operator=(const vpPolygon& poly)
 */
 void
 vpPolygon::buildFrom(const std::vector<vpImagePoint>& corners)
+{
+  init(corners);
+}
+
+/*!
+  Initialise the polygon thanks to the collection of 2D points (in pixel).
+
+  \warning the corners must be ordered (either clockwise or counter clockwise).
+
+  \param corners : The corners of the polyon.
+*/
+void
+vpPolygon::buildFrom(const std::list<vpImagePoint>& corners)
 {
   init(corners);
 }
@@ -188,6 +217,25 @@ void
 vpPolygon::init(const std::vector<vpImagePoint>& corners)
 {
   _corners = corners;
+
+  updateBoundingBox();
+  updateArea();
+  updateCenter();
+}
+
+
+/*!
+  Intialise the polygon using the collection of image points. This method
+  compute come internal variables such as center, area, ...
+
+  \warning the corners must be ordered (either clockwise or counter clockwise).
+
+  \param corners : The corners of the polyon.
+*/
+void
+vpPolygon::init(const std::list<vpImagePoint>& corners)
+{
+  _corners.insert(_corners.begin(), corners.begin(), corners.end());
 
   updateBoundingBox();
   updateArea();
