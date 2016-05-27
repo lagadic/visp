@@ -139,6 +139,19 @@ vpRect::vpRect(const std::vector<vpImagePoint> &ip)
 
 /*!
 
+  Check if an image point belongs to the rectangle.
+
+  \param ip : the image point.
+
+  \return Returns true if the point belongs to the rectangle.
+
+*/
+bool vpRect::isInside( const vpImagePoint &ip ) const{
+  return ( ip.get_i() <= this->getBottom() && ip.get_i() >= this->getTop() && ip.get_j() <= this->getRight() && ip.get_j() >= this->getLeft());
+}
+
+/*!
+
   Set the rectangle with the \e top, \e left corner and \e width
   and \e height.
   \param l : coordinate of the top/left corner along the horizontal axis.
