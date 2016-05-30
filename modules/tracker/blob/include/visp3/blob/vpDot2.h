@@ -49,6 +49,7 @@
 #include <visp3/core/vpTracker.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpPolygon.h>
 
 #include <vector>
 #include <list>
@@ -226,6 +227,12 @@ public:
   */
   double getMeanGrayLevel() const {
     return (this->mean_gray_level);
+  };
+  /*!
+  \return a vpPolygon made from the edges of the dot.
+  */
+  vpPolygon getPolygon() const {
+    return (vpPolygon(ip_edges_list));
   };
   double getSizePrecision() const;
   double getWidth() const;

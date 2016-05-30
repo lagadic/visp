@@ -194,6 +194,11 @@ public:
   */
   inline double getWidth() const { return this->width;  };
 
+  /*!
+   Returns true if the point belongs to the rectangle.
+  */
+  bool isInside( const vpImagePoint &ip ) const;
+
   friend VISP_EXPORT bool inRectangle( const vpImagePoint &ip, const vpRect &rect );
   friend VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpRect& r);
   void set(double left, double top, double width, double height);
