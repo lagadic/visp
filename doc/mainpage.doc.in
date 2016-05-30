@@ -49,7 +49,8 @@ href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/p
 
 \subsection tuto_install_sdk Installation from prebuild SDK
 
-- \ref tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library from Ubuntu packages.
+- \ref tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt SDK from Ubuntu packages.
+- \ref tutorial-install-osx-homebrew-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK on OSX with Homebrew.
 
 \subsection tuto_install_src Installation from source
 

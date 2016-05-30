@@ -63,13 +63,29 @@ vpPolygon::vpPolygon()
 }
 
 /*!
-  Constructor which initialise the polygon thanks to the given corners.
+  Constructor which initialises the polygon thanks to the given corners.
 
   \warning the corners must be ordered (either clockwise or counter clockwise).
   
   \param corners : The Points defining the corners.
 */
 vpPolygon::vpPolygon(const std::vector<vpImagePoint>& corners)
+  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox()
+{
+  if(corners.size() < 3){
+    _goodPoly = false;
+  }
+  init(corners);
+}
+
+/*!
+  Constructor which initialises the polygon thanks to the given corners.
+
+  \warning the corners must be ordered (either clockwise or counter clockwise).
+
+  \param corners : The Points defining the corners.
+*/
+vpPolygon::vpPolygon(const std::list<vpImagePoint>& corners)
   : _corners(), _center(), _area(0.), _goodPoly(true), _bbox()
 {
   if(corners.size() < 3){
@@ -116,7 +132,7 @@ vpPolygon::operator=(const vpPolygon& poly)
 };
 
 /*!
-  Initialise the triangle thanks to the collection of 2D points (in pixel).
+  Initialises the triangle thanks to the collection of 2D points (in pixel).
 
   \warning the corners must be ordered (either clockwise or counter clockwise).
   
@@ -129,7 +145,20 @@ vpPolygon::buildFrom(const std::vector<vpImagePoint>& corners)
 }
 
 /*!
-  Initialise the triangle thanks to the collection of 2D points (in meter). The
+  Initialises the polygon thanks to the collection of 2D points (in pixel).
+
+  \warning the corners must be ordered (either clockwise or counter clockwise).
+
+  \param corners : The corners of the polyon.
+*/
+void
+vpPolygon::buildFrom(const std::list<vpImagePoint>& corners)
+{
+  init(corners);
+}
+
+/*!
+  Initialises the triangle thanks to the collection of 2D points (in meter). The
   fields \e x and \e y are used to compute the corresponding coordinates in
   pixel thanks to the camera parameters \e cam.
 
@@ -150,8 +179,8 @@ vpPolygon::buildFrom(const std::vector<vpPoint>& corners, const vpCameraParamete
 }
 
 /*!
-  Initialise the polygon by (left-)clicking to add a corners to the polygon.
-  A right click is used to stop the addition of new corner.
+  Initialises the polygon by (left-)clicking to add a corners to the polygon.
+  A right click is used to stop the addition of new corners.
 
   \param I : The image where to click to initialise the corners.
 */
@@ -177,12 +206,12 @@ vpPolygon::initClick(const vpImage<unsigned char>& I)
 
 
 /*!
-  Intialise the polygon using the collection of image points. This method
-  compute come internal variables such as center, area, ...
+  Intialises the polygon using the collection of image points. This method
+  computes some internal variables such as center, area, ...
 
   \warning the corners must be ordered (either clockwise or counter clockwise).
 
-  \param corners : The corners of the polyon.
+  \param corners : The corners of the polygon.
 */
 void
 vpPolygon::init(const std::vector<vpImagePoint>& corners)
@@ -195,12 +224,30 @@ vpPolygon::init(const std::vector<vpImagePoint>& corners)
 }
 
 
+/*!
+  Intialises the polygon using the collection of image points. This method
+  computes some internal variables such as center, area, ...
+
+  \warning the corners must be ordered (either clockwise or counter clockwise).
+
+  \param corners : The corners of the polygon.
+*/
+void
+vpPolygon::init(const std::list<vpImagePoint>& corners)
+{
+  _corners.insert(_corners.begin(), corners.begin(), corners.end());
+
+  updateBoundingBox();
+  updateArea();
+  updateCenter();
+}
+
+
 
 /*!
   Test if two segments are intersecting.
   
-  \throw vpException::divideByZeroError if the two lines are aligned (
-  denominator equal to zero).
+  \throw vpException::divideByZeroError if the two lines are aligned (denominator equal to zero).
   
   \param ip1 : The first image point of the first segment.
   \param ip2 : The second image point of the first segment.
@@ -236,7 +283,7 @@ vpPolygon::testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint&
 }
 
 /*!
-  Check if the 2D point \f$ iP \f$ is inside the polygon.
+  Check if the 2D point \f$ ip \f$ is inside the polygon.
   
   \param ip : The point which have to be tested.
   
@@ -278,7 +325,7 @@ vpPolygon::isInside(const vpImagePoint& ip)
 
 
 /*!
-  Update the _area attribute of the polygon using the corners.
+  Update the \c _area attribute of the polygon using the corners.
 
   The area is computed using the formula:
   \f[
@@ -310,9 +357,9 @@ vpPolygon::updateArea()
 
 
 /*!
-  Update the _center attribute of the polygon using the corners.
+  Update the \c _center attribute of the polygon using the corners.
 
-  The i coordinates is computed using:
+  The i coordinate is computed using:
 
   \f[
   i = \frac{1}{6{area}} \sum_{i=0}^{n-1} (i_i + i_{i+1})(i_{i+1} j_i - j_{i+1} i_i)
@@ -360,6 +407,11 @@ vpPolygon::updateCenter()
   }
 }
 
+/*!
+  Update bounding box of the polygon.
+
+  \sa getBoundingBox()
+ */
 void
 vpPolygon::updateBoundingBox()
 {
@@ -394,9 +446,9 @@ vpPolygon::updateBoundingBox()
   Display the polygon in the image (overlay, so the image is not modified).
   A call to the flush() method is necessary.
 
-  \param I : The image where is displayed the polygon.
-  \param color : The color of the lines of the polygon.
-  \param thickness : The thickness of the lines used to display the polygon.
+  \param I : The image where the polygon is displayed.
+  \param color : The color of the polygon's lines.
+  \param thickness : The thickness of the polygon's lines.
 */
 void
 vpPolygon::display(const vpImage<unsigned char>& I, const vpColor& color, unsigned int thickness) const
@@ -443,3 +495,12 @@ vpPolygon::isInside(const std::vector<vpImagePoint>& roi, const double &i, const
   vpPolygon poly(roi);
   return poly.isInside(vpImagePoint(i, j));
 }
+
+/*!
+  Return number of corners belonging to the polygon.
+ */
+unsigned int vpPolygon::getSize() const
+{
+  return ((unsigned int) _corners.size());
+}
+
