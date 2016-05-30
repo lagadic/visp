@@ -28,7 +28,8 @@ This page references all the tutorials.
 /*! \page tutorial_install_pkg Installation from packages
 This page introduces the user to the way to install ViSP from existing prebuild packages.
 
-- \subpage tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library from Ubuntu packages.
+- \subpage tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library SDK from Ubuntu packages.
+- \subpage tutorial-install-osx-homebrew-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK on OSX with Homebrew.
 
 */
 

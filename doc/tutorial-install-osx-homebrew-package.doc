@@ -1,0 +1,92 @@
+/**
+
+\page tutorial-install-osx-homebrew-package Tutorial: Installation prebuilt packages with Homebrew on OSX
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP Homebrew package on OSX. These steps have been tested with Mac OS X 10.11.5 El Capitan. 
+
+\note Concerning ViSP installation, we provide also other \ref tutorial.
+
+\section install_osx_brew_package_required Install prerequisities
+
+First, go to http://brew.sh to install Homebrew.
+
+\section install_osx_brew_visp Install ViSP with homebrew
+
+To get information on ViSP package:
+\code
+$ brew update
+$ brew info visp
+\endcode
+
+
+To install ViSP and additional dependencies (cmake, opencv3, libdc1304, libxml2, gsl, zbar, x11), just run:
+
+\code
+$ brew update
+$ brew install visp
+\endcode
+
+
+\section install_osx_brew_package_tips Tips and tricks
+\subsection install_osx_brew_package_build_from_source How to build from source
+
+To install ViSP with homebrew after building from source you may run:
+
+\code
+$ brew install visp --build-from-source
+\endcode
+
+To know which are the additional build options, run:
+\code
+$ brew options visp
+--c++11
+	Build using C++11 mode
+--without-gsl
+	Build without gsl support
+--without-libdc1394
+	Build without libdc1394 support
+--without-libxml2
+	Build without libxml2 support
+--without-opencv3
+	Build without opencv3 support
+--without-x11
+	Build without x11 support
+--without-zbar
+	Build without zbar support
+\endcode
+
+For example to disable xml support, you may run
+
+\code
+$ brew install visp --build-from-source --without-libxml2
+\endcode
+
+\subsection install_osx_brew_package_not_writable /usr/local/include/visp is not writable
+
+If during ViSP installation you get the following error
+
+\code
+$ brew install visp
+...
+==> Pouring visp-3.0.0.el_capitan.bottle.tar.gz
+Error: The `brew link` step did not complete successfully
+The formula built, but is not symlinked into /usr/local
+Could not symlink include/visp/visp_modules.h
+/usr/local/include/visp is not writable.
+
+You can try again using:
+  brew link visp
+...
+\endcode
+it means maybe that you install other softwares without brew in /usr/local.
+A work arround is to change the owner of the corresponding folder like:
+\code
+$ sudo chown {your-user-name} /usr/local/include
+\endcode
+
+\section install_osx_brew_package_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+
+*/
