@@ -116,6 +116,58 @@ int main()
   }
 }
   \endcode
+
+  If you want to acquire color images, in the previous sample replace:
+  \code
+  vpImage<unsigned char> I(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
+  \endcode
+  by
+  \code
+  vpImage<vpRGBa> I(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
+  \endcode
+
+  If you are interested in the point cloud and if ViSP is build with PCL support, you can start from the
+  following example where we use PCL library to visualize the point cloud:
+  \code
+#include <visp3/sensor/vpRealSense.h>
+
+#include <pcl/visualization/cloud_viewer.h>
+#include <pcl/visualization/pcl_visualizer.h>
+
+int main()
+{
+  vpRealSense rs;
+  rs.open();
+  std::cout << rs << std::endl;
+
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+
+  rs.acquire(pointcloud);
+
+  pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+  pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
+  viewer->setBackgroundColor (0, 0, 0);
+  viewer->addCoordinateSystem (1.0);
+  viewer->initCameraParameters ();
+  viewer->setCameraPosition(0,0,-0.5, 0,-1,0);
+
+  while (1) {
+    rs.acquire(pointcloud);
+
+    static bool update = false;
+    if (! update) {
+      viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+      viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+      update = true;
+    }
+    else {
+      viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+    }
+
+    viewer->spinOnce (100);
+  }
+}
+  \endcode
 */
 class VISP_EXPORT vpRealSense
 {

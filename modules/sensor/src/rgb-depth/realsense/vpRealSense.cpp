@@ -45,12 +45,19 @@
 
 #include "vpRealSense_impl.h"
 
+/*!
+ * Default constructor.
+ */
 vpRealSense::vpRealSense()
   : m_context(), m_device(NULL), m_num_devices(0), m_serial_no(), m_intrinsics(), m_max_Z(8), m_enable_color(true), m_enable_depth(true)
 {
 
 }
 
+/*!
+ * Default destructor that stops the streaming.
+ * \sa stop()
+ */
 vpRealSense::~vpRealSense()
 {
   close();
