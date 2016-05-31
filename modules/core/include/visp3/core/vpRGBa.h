@@ -138,6 +138,8 @@ public:
   bool operator<(const vpRGBa &v) const;
   bool operator>(const vpRGBa &v) const;
 
+  friend VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpRGBa& rgba);
+
  public:
   unsigned char R ; //!< Red component.
   unsigned char G ; //!< Green component.
@@ -150,8 +152,3 @@ public:
 
 #endif
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

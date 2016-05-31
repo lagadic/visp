@@ -76,7 +76,7 @@
 vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
                            int x,
                            int y,
-                           const char *title)
+                           const std::string &title)
   : widget(NULL), background(NULL), gc(NULL),
     blue(), red(), yellow(), green(), cyan(), orange(), white(), black(), gdkcolor(),
     lightBlue(), darkBlue(), lightRed(), darkRed(),lightGreen(), darkGreen(),
@@ -98,7 +98,7 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I,
 vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I,
                            int x,
                            int y,
-                           const char *title)
+                           const std::string &title)
   : widget(NULL), background(NULL), gc(NULL),
     blue(), red(), yellow(), green(), cyan(), orange(), white(), black(), gdkcolor(),
     lightBlue(), darkBlue(), lightRed(), darkRed(),lightGreen(), darkGreen(),
@@ -132,7 +132,7 @@ int main()
 }
   \endcode
 */
-vpDisplayGTK::vpDisplayGTK(int x, int y, const char *title)
+vpDisplayGTK::vpDisplayGTK(int x, int y, const std::string &title)
   : widget(NULL), background(NULL), gc(NULL),
     blue(), red(), yellow(), green(), cyan(), orange(), white(), black(), gdkcolor(),
     lightBlue(), darkBlue(), lightRed(), darkRed(),lightGreen(), darkGreen(),
@@ -141,19 +141,15 @@ vpDisplayGTK::vpDisplayGTK(int x, int y, const char *title)
 {
   windowXPosition = x ;
   windowYPosition = y ;
-
-  if(title != NULL)
-    title_ = std::string(title);
-  else
-    title_ = std::string(" ");
+  title_ = title;
 }
 
 /*!
   Basic constructor.
 
   To initialize the window position, title and size you may call
-  init(vpImage<unsigned char> &, int, int, const char *) or
-  init(vpImage<vpRGBa> &, int, int, const char *).
+  init(vpImage<unsigned char> &, int, int, const std::string &) or
+  init(vpImage<vpRGBa> &, int, int, const std::string &).
 
   \code
 #include <visp3/gui/vpDisplayGTK.h>
@@ -197,7 +193,7 @@ void
 vpDisplayGTK::init(vpImage<unsigned char> &I,
                    int x,
                    int y,
-                   const char *title)
+                   const std::string &title)
 {  
   if ((I.getHeight() == 0) || (I.getWidth()==0))
   {
@@ -211,7 +207,9 @@ vpDisplayGTK::init(vpImage<unsigned char> &I,
   if (y != -1)
     windowYPosition = y ;
 
-  init (I.getWidth(), I.getHeight(), windowXPosition, windowYPosition, title) ;
+  if (! title.empty())
+    title_ = title;
+  init (I.getWidth(), I.getHeight(), windowXPosition, windowYPosition, title_) ;
   I.display = this ;
   displayHasBeenInitialized = true ;
 }
@@ -229,7 +227,7 @@ void
 vpDisplayGTK::init(vpImage<vpRGBa> &I,
                    int x,
                    int y,
-                   const char *title)
+                   const std::string &title)
 {
   if ((I.getHeight() == 0) || (I.getWidth()==0))
   {
@@ -243,7 +241,10 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
   if (y != -1)
     windowYPosition = y ;
 
-  init (I.getWidth(), I.getHeight(), windowXPosition, windowYPosition, title) ;
+  if (! title.empty())
+    title_ = title;
+  init (I.getWidth(), I.getHeight(), windowXPosition, windowYPosition, title_) ;
+
   I.display = this ;
   displayHasBeenInitialized = true ;
 }
@@ -258,7 +259,7 @@ vpDisplayGTK::init(vpImage<vpRGBa> &I,
 void
 vpDisplayGTK::init(unsigned int w, unsigned int h,
                    int x, int y,
-                   const char *title)
+                   const std::string &title)
 {
   /* Initialisation of thegdk et gdk_rgb library */
   int *argc=NULL ;
@@ -378,13 +379,11 @@ vpDisplayGTK::init(unsigned int w, unsigned int h,
   if (font == NULL)
     font = gdk_font_load("-*-courier 10 pitch-medium-r-normal-*-16-*-*-*-*-*-*-*");
 
-  if(title != NULL)
-    title_ = std::string(title);
-  else
-    title_ = std::string(" ");
+  title_ = title;
+  if(!title.empty())
+    gdk_window_set_title(widget->window, title_.c_str());
 
   displayHasBeenInitialized = true ;
-  gdk_window_set_title(widget->window, title_.c_str());
 }
 
 
@@ -403,9 +402,9 @@ vpDisplayGTK::init(unsigned int w, unsigned int h,
   \sa displayCharString()
 */
 void
-vpDisplayGTK::setFont(const char *fontname)
+vpDisplayGTK::setFont(const std::string &fontname)
 {
-  font = gdk_font_load((const gchar*)fontname);
+  font = gdk_font_load((const gchar*)fontname.c_str());
 }
 
 /*!
@@ -413,15 +412,13 @@ vpDisplayGTK::setFont(const char *fontname)
   \param title : Window title.
 */
 void
-vpDisplayGTK::setTitle(const char *title)
+vpDisplayGTK::setTitle(const std::string &title)
 {
   if (displayHasBeenInitialized)
   {
-    if(title != NULL)
-      title_ = std::string(title);
-    else
-      title_ = std::string(" ");
-    gdk_window_set_title(widget->window, title_.c_str());
+    title_ = title;
+    if(!title.empty())
+      gdk_window_set_title(widget->window, title_.c_str());
   }
   else
   {
@@ -1594,7 +1591,7 @@ vpDisplayGTK::getKeyboardEvent(bool blocking)
   - When set to false, returns true only if a key is
     pressed, otherwise returns false.
 
-  \param string [out]: If possible, an ISO Latin-1 character
+  \param key [out]: If possible, an ISO Latin-1 character
   corresponding to the keyboard key.
 
   \return 
@@ -1604,7 +1601,7 @@ vpDisplayGTK::getKeyboardEvent(bool blocking)
     to \e false.
 */
 bool
-vpDisplayGTK::getKeyboardEvent(char *string, bool blocking)
+vpDisplayGTK::getKeyboardEvent(std::string &key, bool blocking)
 {
   bool ret = false;
 
@@ -1614,15 +1611,15 @@ vpDisplayGTK::getKeyboardEvent(char *string, bool blocking)
     do {
       GdkEvent *ev = NULL;
       while ((ev = gdk_event_get())!=NULL){
-	cpt++;
-	//	printf("event %d type %d on window %p My window %p\n", 
-	//cpt, ev->type, ev->any.window, widget->window);
-	
+        cpt++;
+        //	printf("event %d type %d on window %p My window %p\n",
+        //cpt, ev->type, ev->any.window, widget->window);
+
         if (ev->any.window == widget->window && ev->type == GDK_KEY_PRESS){
-	  //std::cout << "Key val: \"" << gdk_keyval_name (ev->key.keyval) /*ev->key.string*/ << "\"" << std::endl;
-	  sprintf(string, "%s", gdk_keyval_name (ev->key.keyval));
+          //std::cout << "Key val: \"" << gdk_keyval_name (ev->key.keyval) /*ev->key.string*/ << "\"" << std::endl;
+          key = gdk_keyval_name (ev->key.keyval);
           ret = true ;
-	  //printf("Key press detection\n");
+          //printf("Key press detection\n");
         }
         gdk_event_free(ev) ;
       }

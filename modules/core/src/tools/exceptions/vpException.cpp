@@ -94,12 +94,12 @@ void vpException::setMessage(const char* format, va_list args)
 /* --- ACCESSORS ---------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
-const char *vpException::getMessage (void)
+const char *vpException::getMessage (void) const
 {
     return (this->message) .c_str();
 }
 
-const std::string &vpException::getStringMessage (void)
+const std::string &vpException::getStringMessage (void) const
 {
     return this->message;
 }

@@ -89,7 +89,7 @@ unsigned int vpDisplayOpenCV::m_nbWindows = 0;
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
                                  int x,
                                  int y,
-                                 const char *title)
+                                 const std::string &title)
   :
     vpDisplay(),
     #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
@@ -110,8 +110,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
 
 
 /*!
-  Constructor. Initialize a display to visualize a RGBa level image
-  (32 bits).
+  Constructor. Initialize a display to visualize a RGBa image (32 bits).
 
   \param I : Image to be displayed (not that image has to be initialized)
   \param x, y : The window is set at position x,y (column index, row index).
@@ -120,7 +119,7 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I,
                                  int x,
                                  int y,
-                                 const char *title)
+                                 const std::string &title)
   :
     #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     background(NULL), col(NULL), cvcolor(), font(NULL),
@@ -160,7 +159,7 @@ int main()
 }
   \endcode
 */
-vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title )
+vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const std::string &title)
   :
     #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     background(NULL), col(NULL), cvcolor(), font(NULL),
@@ -178,27 +177,27 @@ vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title )
   windowXPosition = x;
   windowYPosition = y;
 
-  if(title != NULL){
-    title_ = std::string(title);
+  if(! title.empty()){
+    title_ = title;
   }
   else{
-      std::ostringstream s;
-      s << m_nbWindows++;
-      title_ = std::string("Window ") + s.str();
+    std::ostringstream s;
+    s << m_nbWindows++;
+    title_ = std::string("Window ") + s.str();
   }
 
   bool isInList;
-  do{
-      isInList = false;
-      for(size_t i = 0 ; i < m_listTitles.size() ; i++){
-          if(m_listTitles[i] == title_){
-              std::ostringstream s;
-              s << m_nbWindows++;
-              title_ = std::string("Window ") + s.str();
-              isInList = true;
-              break;
-          }
+  do {
+    isInList = false;
+    for(size_t i = 0 ; i < m_listTitles.size() ; i++){
+      if(m_listTitles[i] == title_){
+        std::ostringstream s;
+        s << m_nbWindows++;
+        title_ = std::string("Window ") + s.str();
+        isInList = true;
+        break;
       }
+    }
   }
   while(isInList);
 
@@ -209,8 +208,8 @@ vpDisplayOpenCV::vpDisplayOpenCV ( int x, int y, const char *title )
   Basic constructor.
 
   To initialize the window position, title and size you may call
-  init(vpImage<unsigned char> &, int, int, const char *) or
-  init(vpImage<vpRGBa> &, int, int, const char *).
+  init(vpImage<unsigned char> &, int, int, const std::string &) or
+  init(vpImage<vpRGBa> &, int, int, const std::string &).
 
   \code
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -264,7 +263,7 @@ void
 vpDisplayOpenCV::init(vpImage<unsigned char> &I,
                       int x,
                       int y,
-                      const char *title)
+                      const std::string &title)
 {
 
   if ((I.getHeight() == 0) || (I.getWidth()==0))
@@ -291,7 +290,7 @@ void
 vpDisplayOpenCV::init(vpImage<vpRGBa> &I,
                       int x,
                       int y,
-                      const char *title)
+                      const std::string &title)
 {
   if ((I.getHeight() == 0) || (I.getWidth()==0))
   {
@@ -318,7 +317,7 @@ vpDisplayOpenCV::init(vpImage<vpRGBa> &I,
 void
 vpDisplayOpenCV::init(unsigned int w, unsigned int h,
                       int x, int y,
-                      const char *title)
+                      const std::string &title)
 {
   this->width  = w;
   this->height = h;
@@ -334,28 +333,28 @@ vpDisplayOpenCV::init(unsigned int w, unsigned int h,
 #endif
 
   if(title_.empty()){
-    if(title != NULL){
+    if(!title.empty()){
       title_ = std::string(title);
     }
     else{
 
-        std::ostringstream s;
-        s << m_nbWindows++;
-        title_ = std::string("Window ") + s.str();
+      std::ostringstream s;
+      s << m_nbWindows++;
+      title_ = std::string("Window ") + s.str();
     }
 
     bool isInList;
     do{
-        isInList = false;
-        for(size_t i = 0 ; i < m_listTitles.size() ; i++){
-            if(m_listTitles[i] == title_){
-                std::ostringstream s;
-                s << m_nbWindows++;
-                title_ = std::string("Window ") + s.str();
-                isInList = true;
-                break;
-            }
+      isInList = false;
+      for(size_t i = 0 ; i < m_listTitles.size() ; i++){
+        if(m_listTitles[i] == title_){
+          std::ostringstream s;
+          s << m_nbWindows++;
+          title_ = std::string("Window ") + s.str();
+          isInList = true;
+          break;
         }
+      }
     }
     while(isInList);
 
@@ -465,7 +464,7 @@ vpDisplayOpenCV::init(unsigned int w, unsigned int h,
   \sa displayCharString()
 */
 void
-vpDisplayOpenCV::setFont(const char * /* font */)
+vpDisplayOpenCV::setFont(const std::string & /* font */)
 {
   vpERROR_TRACE("Not yet implemented" ) ;
 }
@@ -478,7 +477,7 @@ vpDisplayOpenCV::setFont(const char * /* font */)
   \param title : Window title.
  */
 void
-vpDisplayOpenCV::setTitle(const char * /* title */)
+vpDisplayOpenCV::setTitle(const std::string & /* title */)
 {
 //  static bool warn_displayed = false;
 //  if (! warn_displayed) {
@@ -790,7 +789,6 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePo
   }
 }
 
-
 /*!
   \warning ot implemented yet
 
@@ -981,9 +979,8 @@ void vpDisplayOpenCV::displayArrow ( const vpImagePoint &ip1,
 
   \sa setFont()
 */
-void vpDisplayOpenCV::displayCharString( const vpImagePoint &ip,
-                                     const char *text, 
-				     const vpColor &color )
+void vpDisplayOpenCV::displayCharString(const vpImagePoint &ip,
+                                     const char *text, const vpColor &color )
 {
   if (displayHasBeenInitialized)
   {
@@ -2093,7 +2090,7 @@ vpDisplayOpenCV::getKeyboardEvent(bool blocking)
   - When set to false, returns true only if a key is
     pressed, otherwise returns false.
 
-  \param string [out]: If possible, an ISO Latin-1 character
+  \param key [out]: If possible, an ISO Latin-1 character
   corresponding to the keyboard key.
 
   \return 
@@ -2103,7 +2100,7 @@ vpDisplayOpenCV::getKeyboardEvent(bool blocking)
     to \e false.
 */
 bool
-vpDisplayOpenCV::getKeyboardEvent(char *string, bool blocking)
+vpDisplayOpenCV::getKeyboardEvent(std::string &key, bool blocking)
 {
   if (displayHasBeenInitialized) {
     int delay;
@@ -2122,7 +2119,9 @@ vpDisplayOpenCV::getKeyboardEvent(char *string, bool blocking)
       return false;
     else {
       //std::cout << "Key pressed: \"" << key_pressed << "\"" << std::endl;
-      sprintf(string, "%c", key_pressed);
+      std::stringstream ss;
+      ss << key_pressed;
+      key = ss.str();
     }
     return true;
   }

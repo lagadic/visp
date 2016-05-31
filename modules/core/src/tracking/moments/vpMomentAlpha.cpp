@@ -99,7 +99,7 @@ void vpMomentAlpha::compute(){
 			double r22 = cos(alpha - alphaRef);
 			unsigned int idx = 0;
       unsigned int order = 4;
-      for (register unsigned int c = 0; c < (order) * (order); c++)
+      for (unsigned int c = 0; c < (order) * (order); c++)
 			{
 				unsigned int i = c % order;
 				unsigned int j = c / order;
@@ -107,11 +107,11 @@ void vpMomentAlpha::compute(){
 				if (i + j == 3)
 				{
 					double r11_k = 1.;
-					for (register unsigned int k = 0; k <= i; k++)
+          for (unsigned int k = 0; k <= i; k++)
 					{
 						double r12_i_k = pow(r12, (int)(i - k));
 						double comb_i_k = static_cast<double> (vpMath::comb(i, k));
-						for (register unsigned int l = 0; l <= j; l++)
+            for (unsigned int l = 0; l <= j; l++)
 						{
 							rotMu[idx] += static_cast<double> (comb_i_k * vpMath::comb(j, l) * r11_k * pow(r21, (int)l) * r12_i_k
 									* pow(r22, (int)(j - l)) * momentCentered.get(k + l, (unsigned int)(int)(i + j - k - l)));
@@ -125,7 +125,7 @@ void vpMomentAlpha::compute(){
 
 			double sum = 0.;
 			bool signChange = true;
-			for (register unsigned int i = 0; i < 4; i++)
+      for (unsigned int i = 0; i < 4; i++)
 			{
 				if (std::abs(rotMu[i]) > 1e10 * std::numeric_limits<double>::epsilon() && std::abs(ref[i]) > 1e10
 						* std::numeric_limits<double>::epsilon() && rotMu[i] * ref[i] > 0)

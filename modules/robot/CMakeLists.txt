@@ -126,6 +126,11 @@ if(USE_ARIA)
   vp_set_source_file_compile_flag(src/real-robot/pioneer/vpRobotPioneer.cpp -Wno-unused-parameter)
 endif()
 
+if(USE_COIN3D)
+  # Add specific build flag to turn off warnings coming from libcoin 3rd party
+  vp_set_source_file_compile_flag(src/wireframe-simulator/vpWireFrameSimulator.cpp -Wno-unused-parameter)
+endif()
+
 # copy robot and wireframe simulator data
 vp_glob_module_copy_data("src/robot-simulator/arms/*.bnd"      data/robot-simulator)
 vp_glob_module_copy_data("src/wireframe-simulator/scene/*.bnd" data/wireframe-simulator)

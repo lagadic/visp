@@ -124,7 +124,7 @@ vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<float> &dest)
 }
 
 /*!
-Convert a vpImage\<double\> to a vpImage\<unsigend char\> by renormalizing between 0 and 255.
+Convert a vpImage\<double\> to a vpImage\<unsigned char\> by renormalizing between 0 and 255.
 \param src : source image
 \param dest : destination image
 */
@@ -149,6 +149,34 @@ vpImageConvert::convert(const vpImage<double> &src, vpImage<unsigned char> &dest
 }
 
 /*!
+Convert a vpImage\<u_int16_t> to a vpImage\<unsigned char\>.
+\param src : source image
+\param dest : destination image
+*/
+void
+vpImageConvert::convert(const vpImage<u_int16_t> &src, vpImage<unsigned char> &dest)
+{
+  dest.resize(src.getHeight(), src.getWidth()) ;
+
+  for (unsigned int i=0; i< src.getSize(); i++)
+    dest.bitmap[i] = (src.bitmap[i] >> 8);
+}
+
+/*!
+Convert a vpImage\<unsigned char> to a vpImage\<u_int16_t\>.
+\param src : source image
+\param dest : destination image
+*/
+void
+vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<u_int16_t> &dest)
+{
+  dest.resize(src.getHeight(), src.getWidth()) ;
+
+  for (unsigned int i=0; i< src.getSize(); i++)
+    dest.bitmap[i] = (src.bitmap[i] << 8);
+}
+
+/*!
 Convert a vpImage\<unsigned char\> to a vpImage\<double\> by basic casting.
 \param src : source image
 \param dest : destination image
@@ -159,6 +187,42 @@ vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<double> &dest
   dest.resize(src.getHeight(), src.getWidth()) ;
   for (unsigned int i = 0; i < src.getHeight()*src.getWidth(); i++)
     dest.bitmap[i] = (double)src.bitmap[i];
+}
+
+/*!
+  Create depth histogram as a color image.
+  \param src_depth : source image corresponding to depth.
+  \param dest_rgba : destination image containing the color histogram.
+*/
+void
+vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa> &dest_rgba)
+{
+  dest_rgba.resize(src_depth.getHeight(), src_depth.getWidth());
+  static uint32_t histogram[0x10000];
+  memset(histogram, 0, sizeof(histogram));
+  for(unsigned int i = 0; i < src_depth.getSize(); ++i) ++histogram[src_depth.bitmap[i]];
+  for(int i = 2; i < 0x10000; ++i) histogram[i] += histogram[i-1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
+
+  uint16_t d;
+  for(unsigned int i = 0; i < src_depth.getSize(); ++i)
+  {
+    d = src_depth.bitmap[i];
+    if(d)
+    {
+      int f = histogram[d] * 255 / histogram[0xFFFF]; // 0-255 based on histogram location
+      dest_rgba.bitmap[i].R = 255 - f;
+      dest_rgba.bitmap[i].G = 0;
+      dest_rgba.bitmap[i].B = f;
+      dest_rgba.bitmap[i].A = 0;
+    }
+    else
+    {
+      dest_rgba.bitmap[i].R = 20;
+      dest_rgba.bitmap[i].G = 5;
+      dest_rgba.bitmap[i].B = 0;
+      dest_rgba.bitmap[i].A = 0;
+    }
+  }
 }
 
 #ifdef VISP_HAVE_OPENCV
@@ -1236,27 +1300,27 @@ void vpImageConvert::YUV411ToRGBa(unsigned char* yuv, unsigned char* rgba, unsig
 #if 1
   //  std::cout << "call optimized ConvertYUV411ToRGBa()" << std::endl;
   for(unsigned int i = size / 4; i; i--) {
-    register int U   = (int)((*yuv++ - 128) * 0.354);
-    register int U5  = 5*U;
-    register int Y0  = *yuv++;
-    register int Y1  = *yuv++;
-    register int V   = (int)((*yuv++ - 128) * 0.707);
-    register int V2  = 2*V;
-    register int Y2  = *yuv++;
-    register int Y3  = *yuv++;
-    register int UV  = - U - V;
+    int U   = (int)((*yuv++ - 128) * 0.354);
+    int U5  = 5*U;
+    int Y0  = *yuv++;
+    int Y1  = *yuv++;
+    int V   = (int)((*yuv++ - 128) * 0.707);
+    int V2  = 2*V;
+    int Y2  = *yuv++;
+    int Y3  = *yuv++;
+    int UV  = - U - V;
 
     // Original equations
     // R = Y           + 1.402 V
     // G = Y - 0.344 U - 0.714 V
     // B = Y + 1.772 U
-    register int R = Y0 + V2;
+    int R = Y0 + V2;
     if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-    register int G = Y0 + UV;
+    int G = Y0 + UV;
     if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-    register int B = Y0 + U5;
+    int B = Y0 + U5;
     if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
     *rgba++ = (unsigned char)R;
@@ -1362,22 +1426,22 @@ void vpImageConvert::YUV422ToRGBa(unsigned char* yuv, unsigned char* rgba, unsig
 #if 1
   //  std::cout << "call optimized convertYUV422ToRGBa()" << std::endl;
   for( unsigned int i = size / 2; i; i-- ) {
-    register int U   = (int)((*yuv++ - 128) * 0.354);
-    register int U5  = 5*U;
-    register int Y0  = *yuv++;
-    register int V   = (int)((*yuv++ - 128) * 0.707);
-    register int V2  = 2*V;
-    register int Y1  = *yuv++;
-    register int UV  = - U - V;
+    int U   = (int)((*yuv++ - 128) * 0.354);
+    int U5  = 5*U;
+    int Y0  = *yuv++;
+    int V   = (int)((*yuv++ - 128) * 0.707);
+    int V2  = 2*V;
+    int Y1  = *yuv++;
+    int UV  = - U - V;
 
     //---
-    register int R = Y0 + V2;
+    int R = Y0 + V2;
     if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-    register int G = Y0 + UV;
+    int G = Y0 + UV;
     if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-    register int B = Y0 + U5;
+    int B = Y0 + U5;
     if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
     *rgba++ = (unsigned char)R;
@@ -1464,22 +1528,22 @@ void vpImageConvert::YUV422ToRGB(unsigned char* yuv, unsigned char* rgb, unsigne
 #if 1
   //  std::cout << "call optimized convertYUV422ToRGB()" << std::endl;
   for( unsigned int i = size / 2; i; i-- ) {
-    register int U   = (int)((*yuv++ - 128) * 0.354);
-    register int U5  = 5*U;
-    register int Y0  = *yuv++;
-    register int V   = (int)((*yuv++ - 128) * 0.707);
-    register int V2  = 2*V;
-    register int Y1  = *yuv++;
-    register int UV  = - U - V;
+    int U   = (int)((*yuv++ - 128) * 0.354);
+    int U5  = 5*U;
+    int Y0  = *yuv++;
+    int V   = (int)((*yuv++ - 128) * 0.707);
+    int V2  = 2*V;
+    int Y1  = *yuv++;
+    int UV  = - U - V;
 
     //---
-    register int R = Y0 + V2;
+    int R = Y0 + V2;
     if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-    register int G = Y0 + UV;
+    int G = Y0 + UV;
     if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-    register int B = Y0 + U5;
+    int B = Y0 + U5;
     if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
     *rgb++ = (unsigned char)R;
@@ -1558,27 +1622,27 @@ void vpImageConvert::YUV411ToRGB(unsigned char* yuv, unsigned char* rgb, unsigne
 #if 1
   //  std::cout << "call optimized ConvertYUV411ToRGB()" << std::endl;
   for(unsigned int i = size / 4; i; i--) {
-    register int U   = (int)((*yuv++ - 128) * 0.354);
-    register int U5  = 5*U;
-    register int Y0  = *yuv++;
-    register int Y1  = *yuv++;
-    register int V   = (int)((*yuv++ - 128) * 0.707);
-    register int V2  = 2*V;
-    register int Y2  = *yuv++;
-    register int Y3  = *yuv++;
-    register int UV  = - U - V;
+    int U   = (int)((*yuv++ - 128) * 0.354);
+    int U5  = 5*U;
+    int Y0  = *yuv++;
+    int Y1  = *yuv++;
+    int V   = (int)((*yuv++ - 128) * 0.707);
+    int V2  = 2*V;
+    int Y2  = *yuv++;
+    int Y3  = *yuv++;
+    int UV  = - U - V;
 
     // Original equations
     // R = Y           + 1.402 V
     // G = Y - 0.344 U - 0.714 V
     // B = Y + 1.772 U
-    register int R = Y0 + V2;
+    int R = Y0 + V2;
     if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-    register int G = Y0 + UV;
+    int G = Y0 + UV;
     if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-    register int B = Y0 + U5;
+    int B = Y0 + U5;
     if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
     *rgb++ = (unsigned char)R;
@@ -1678,8 +1742,8 @@ void vpImageConvert::YUV420ToRGBa(unsigned char* yuv, unsigned char* rgba,
                                   unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYUV420ToRGBa()" << std::endl;
-  register int U, V, R, G, B, V2, U5, UV;
-  register int Y0, Y1, Y2, Y3;
+  int U, V, R, G, B, V2, U5, UV;
+  int Y0, Y1, Y2, Y3;
   unsigned int size = width*height;
   unsigned char* iU = yuv + size;
   unsigned char* iV = yuv + 5*size/4;
@@ -1779,8 +1843,8 @@ void vpImageConvert::YUV420ToRGB(unsigned char* yuv,
                                  unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYUV420ToRGB()" << std::endl;
-  register int U, V, R, G, B, V2, U5, UV;
-  register int Y0, Y1, Y2, Y3;
+  int U, V, R, G, B, V2, U5, UV;
+  int Y0, Y1, Y2, Y3;
   unsigned int size = width*height;
   unsigned char* iU = yuv + size;
   unsigned char* iV = yuv + 5*size/4;
@@ -1890,24 +1954,24 @@ void vpImageConvert::YUV444ToRGBa(unsigned char* yuv, unsigned char* rgba, unsig
 {
   for(unsigned int i = 0; i<size; i++)
   {
-    register int U   = (int)((*yuv++ - 128) * 0.354);
-    register int U5  = 5*U;
-    register int Y   = *yuv++;
-    register int V   = (int)((*yuv++ - 128) * 0.707);
-    register int V2  = 2*V;
-    register int UV  = - U - V;
+    int U   = (int)((*yuv++ - 128) * 0.354);
+    int U5  = 5*U;
+    int Y   = *yuv++;
+    int V   = (int)((*yuv++ - 128) * 0.707);
+    int V2  = 2*V;
+    int UV  = - U - V;
 
     // Original equations
     // R = Y           + 1.402 V
     // G = Y - 0.344 U - 0.714 V
     // B = Y + 1.772 U
-    register int R = Y + V2;
+    int R = Y + V2;
     if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-    register int G = Y + UV;
+    int G = Y + UV;
     if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-    register int B = Y + U5;
+    int B = Y + U5;
     if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
     *rgba++ = (unsigned char)R;
@@ -1926,24 +1990,24 @@ void vpImageConvert::YUV444ToRGB(unsigned char* yuv, unsigned char* rgb, unsigne
 {
   for(unsigned int i = 0; i<size; i++)
   {
-    register int U   = (int)((*yuv++ - 128) * 0.354);
-    register int U5  = 5*U;
-    register int Y   = *yuv++;
-    register int V   = (int)((*yuv++ - 128) * 0.707);
-    register int V2  = 2*V;
-    register int UV  = - U - V;
+    int U   = (int)((*yuv++ - 128) * 0.354);
+    int U5  = 5*U;
+    int Y   = *yuv++;
+    int V   = (int)((*yuv++ - 128) * 0.707);
+    int V2  = 2*V;
+    int UV  = - U - V;
 
     // Original equations
     // R = Y           + 1.402 V
     // G = Y - 0.344 U - 0.714 V
     // B = Y + 1.772 U
-    register int R = Y + V2;
+    int R = Y + V2;
     if ((R >> 8) > 0) R = 255; else if (R < 0) R = 0;
 
-    register int G = Y + UV;
+    int G = Y + UV;
     if ((G >> 8) > 0) G = 255; else if (G < 0) G = 0;
 
-    register int B = Y + U5;
+    int B = Y + U5;
     if ((B >> 8) > 0) B = 255; else if (B < 0) B = 0;
 
     *rgb++ = (unsigned char)R;
@@ -1978,8 +2042,8 @@ void vpImageConvert::YV12ToRGBa(unsigned char* yuv, unsigned char* rgba,
                                 unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYV12ToRGBa()" << std::endl;
-  register int U, V, R, G, B, V2, U5, UV;
-  register int Y0, Y1, Y2, Y3;
+  int U, V, R, G, B, V2, U5, UV;
+  int Y0, Y1, Y2, Y3;
   unsigned int size = width*height;
   unsigned char* iV = yuv + size;
   unsigned char* iU = yuv + 5*size/4;
@@ -2078,8 +2142,8 @@ void vpImageConvert::YV12ToRGB(unsigned char* yuv, unsigned char* rgb,
                                unsigned int height, unsigned int width)
 {
   //  std::cout << "call optimized ConvertYV12ToRGB()" << std::endl;
-  register int U, V, R, G, B, V2, U5, UV;
-  register int Y0, Y1, Y2, Y3;
+  int U, V, R, G, B, V2, U5, UV;
+  int Y0, Y1, Y2, Y3;
   unsigned int size = width*height;
   unsigned char* iV = yuv + size;
   unsigned char* iU = yuv + 5*size/4;
@@ -2175,8 +2239,8 @@ void vpImageConvert::YVU9ToRGBa(unsigned char* yuv, unsigned char* rgba,
                                 unsigned int width, unsigned int height)
 {
   //  std::cout << "call optimized ConvertYVU9ToRGBa()" << std::endl;
-  register int U, V, R, G, B, V2, U5, UV;
-  register int Y0, Y1, Y2, Y3,Y4, Y5, Y6, Y7,Y8, Y9, Y10, Y11,Y12, Y13, Y14, Y15;
+  int U, V, R, G, B, V2, U5, UV;
+  int Y0, Y1, Y2, Y3,Y4, Y5, Y6, Y7,Y8, Y9, Y10, Y11,Y12, Y13, Y14, Y15;
   unsigned int size = width*height;
   unsigned char* iV = yuv + size;
   unsigned char* iU = yuv + 17*size/16;
@@ -2468,8 +2532,8 @@ void vpImageConvert::YVU9ToRGB(unsigned char* yuv, unsigned char* rgb,
                                unsigned int height, unsigned int width)
 {
   //  std::cout << "call optimized ConvertYVU9ToRGB()" << std::endl;
-  register int U, V, R, G, B, V2, U5, UV;
-  register int Y0, Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8, Y9, Y10, Y11, Y12, Y13, Y14, Y15;
+  int U, V, R, G, B, V2, U5, UV;
+  int Y0, Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8, Y9, Y10, Y11, Y12, Y13, Y14, Y15;
   unsigned int size = width*height;
   unsigned char* iV = yuv + size;
   unsigned char* iU = yuv + 17*size/16;
@@ -3061,7 +3125,7 @@ void vpImageConvert::YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb, unsign
   int col = 0;
 
 	while (size--) {
-		register int val_r, val_g, val_b;
+    int val_r, val_g, val_b;
 		if (!(col++ % 2)) {
 			cbv = pt_ycbcr + 1;
 			crv = pt_ycbcr + 3;
@@ -3119,7 +3183,7 @@ void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba, unsi
   int col = 0;
 
   while (size--) {
-    register int val_r, val_g, val_b;
+    int val_r, val_g, val_b;
     if (!(col++ % 2)) {
       cbv = pt_ycbcr + 1;
       crv = pt_ycbcr + 3;
@@ -3204,7 +3268,7 @@ void vpImageConvert::YCrCbToRGB(unsigned char *ycrcb, unsigned char *rgb, unsign
   int col = 0;
 
   while (size--) {
-    register int val_r, val_g, val_b;
+    int val_r, val_g, val_b;
     if (!(col++ % 2)) {
       crv = pt_ycbcr + 1;
       cbv = pt_ycbcr + 3;
@@ -3260,7 +3324,7 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba, unsi
   int col = 0;
 
   while (size--) {
-    register int val_r, val_g, val_b;
+    int val_r, val_g, val_b;
     if (!(col++ % 2)) {
       crv = pt_ycbcr + 1;
       cbv = pt_ycbcr + 3;
@@ -3325,7 +3389,7 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src,
                            vpImage<unsigned char>* pB,
                            vpImage<unsigned char>* pa)
 {
-  register size_t n = src.getNumberOfPixel();
+  size_t n = src.getNumberOfPixel();
   unsigned int height = src.getHeight();
   unsigned int width  = src.getWidth();
   unsigned char* input;
@@ -3344,7 +3408,7 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src,
   tabChannel[2] = pB;
   tabChannel[3] = pa;
 
-  register size_t    i;    /* ordre    */
+  size_t    i;    /* ordre    */
   for(unsigned int j = 0;j < 4;j++){
     if(tabChannel[j]!=NULL){
       if(tabChannel[j]->getHeight() != height ||
@@ -3450,11 +3514,11 @@ void vpImageConvert::merge(const vpImage<unsigned char> *R,
 */
 void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey, unsigned int size)
 {
-  register int i = (((int)size)<<1)-1;
-  register int j = (int)size-1;
+  int i = (((int)size)<<1)-1;
+  int j = (int)size-1;
 
   while (i >= 0) {
-    register int y = grey16[i--];
+    int y = grey16[i--];
     grey[j--] = static_cast<unsigned char>( (y+(grey16[i--]<<8))>>8 );
   }
 }
@@ -3471,12 +3535,12 @@ void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey, un
 */
 void vpImageConvert::MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba, unsigned int size)
 {
-  register int i = (((int)size)<<1)-1;
-  register int j = (int)(size*4-1);
+  int i = (((int)size)<<1)-1;
+  int j = (int)(size*4-1);
 
   while (i >= 0) {
-    register int y = grey16[i--];
-    register unsigned char v = static_cast<unsigned char>( (y+(grey16[i--]<<8))>>8 );
+    int y = grey16[i--];
+    unsigned char v = static_cast<unsigned char>( (y+(grey16[i--]<<8))>>8 );
     rgba[j--] = 0;
     rgba[j--] = v;
     rgba[j--] = v;

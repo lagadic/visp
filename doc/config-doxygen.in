@@ -736,7 +736,7 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       =
+EXCLUDE_PATTERNS       = *_impl.h *_impl.cpp
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -1602,11 +1602,13 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES \
                          VISP_HAVE_LIBFREENECT \
                          VISP_HAVE_LIBUSB_1 \
+                         VISP_HAVE_REALSENSE \
                          VISP_HAVE_YARP \
                          VISP_HAVE_ZBAR \
                          VISP_HAVE_DMTX \
                          VISP_HAVE_FLYCAPTURE \
                          VISP_HAVE_VIRTUOSE \
+                         VISP_HAVE_PCL \
                          VISP_HAVE_ACCESS_TO_NAS \
                          VISP_HAVE_CPP11_COMPATIBILITY \
                          VISP_HAVE_MODULE_AR \

@@ -77,11 +77,11 @@ vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
 		   int flags)
 
 {
-   register vpArgvInfo *infoPtr;	/* Pointer to the current entry in the
+   vpArgvInfo *infoPtr;	/* Pointer to the current entry in the
 				 * table of argument descriptions. */
    vpArgvInfo *matchPtr;	        /* Descriptor that matches current argument. */
    const char *curArg;		/* Current argument */
-   register char c;		/* Second character of current arg (used for
+   char c;		/* Second character of current arg (used for
 				 * quick check for matching;  use 2nd char.
 				 * because first char. will almost always
 				 * be '-'). */
@@ -347,7 +347,7 @@ vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
 void
 vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
 {
-   register vpArgvInfo *infoPtr;
+   vpArgvInfo *infoPtr;
    int width;
    int numSpaces;
 #define NUM_SPACES 20

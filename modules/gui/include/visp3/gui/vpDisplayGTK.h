@@ -137,7 +137,6 @@ int main()
 }
   \endcode
 */
-
 class VISP_EXPORT vpDisplayGTK: public vpDisplay
 {
 private:
@@ -179,24 +178,15 @@ private:
 
 public:
   vpDisplayGTK() ;
-  vpDisplayGTK(int winx, int winy, const char *title=NULL) ;
-  vpDisplayGTK(vpImage<unsigned char> &I, int winx=-1, int winy=-1,
-	       const char *title=NULL) ;
-  vpDisplayGTK(vpImage<vpRGBa> &I, int winx=-1, int winy=-1,
-	       const char *title=NULL) ;
+  vpDisplayGTK(int winx, int winy, const std::string &title="");
+  vpDisplayGTK(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="");
+  vpDisplayGTK(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="");
 
   virtual ~vpDisplayGTK() ;
 
-  void init(vpImage<unsigned char> &I,
-	    int winx=-1, int winy=-1,
-	    const char *title=NULL)  ;
-  void init(vpImage<vpRGBa> &I,
-	    int winx=-1, int winy=-1,
-	    const char *title=NULL)  ;
-
-  void init(unsigned int width, unsigned int height,
-	    int winx=-1, int winy=-1 ,
-	    const char *title=NULL) ;
+  void init(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="");
+  void init(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="");
+  void init(unsigned int width, unsigned int height, int winx=-1, int winy=-1, const std::string &title="");
 
   unsigned int getScreenDepth();
   void getScreenSize(unsigned int &width, unsigned int &height);
@@ -204,31 +194,20 @@ public:
 
 protected:
 
-  void setFont( const char *fontname );
-  void setTitle(const char *title) ;
+  void setFont(const std::string &fontname );
+  void setTitle(const std::string &title) ;
   void setWindowPosition(int winx, int winy);
 
   void clearDisplay(const vpColor &color=vpColor::white) ;
 
   void closeDisplay() ;
 
-  void displayArrow(const vpImagePoint &ip1, 
-		    const vpImagePoint &ip2,
-		    const vpColor &color=vpColor::white,
-		    unsigned int w=4,unsigned int h=2,
-		    unsigned int thickness=1) ;
-  void displayCharString(const vpImagePoint &ip, const char *text,
-			 const vpColor &color=vpColor::green) ;
+  void displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color=vpColor::white, unsigned int w=4,unsigned int h=2, unsigned int thickness=1) ;
+  void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color=vpColor::green) ;
 
-  void displayCircle(const vpImagePoint &center, unsigned int radius,
-		     const vpColor &color,
-		     bool fill = false,
-		     unsigned int thickness=1);
-  void displayCross(const vpImagePoint &ip, unsigned int size,
-		    const vpColor &color, unsigned int thickness=1) ;
-  void displayDotLine(const vpImagePoint &ip1, 
-		      const vpImagePoint &ip2,
-		      const vpColor &color, unsigned int thickness=1) ;
+  void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false, unsigned int thickness=1);
+  void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness=1) ;
+  void displayDotLine(const vpImagePoint &ip1,  const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
 
   void displayImage(const vpImage<vpRGBa> &I) ;
   void displayImage(const vpImage<unsigned char> &I) ;
@@ -237,36 +216,22 @@ protected:
   void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height);
   void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height);
 
-  void displayLine(const vpImagePoint &ip1, 
-		   const vpImagePoint &ip2,
-		   const vpColor &color, unsigned int thickness=1) ;
+  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
 
   void displayPoint(const vpImagePoint &ip, const vpColor &color) ;
-  void displayRectangle(const vpImagePoint &topLeft,
-			unsigned int width, unsigned int height,
-			const vpColor &color, bool fill = false,
-			unsigned int thickness=1) ;
-  void displayRectangle(const vpImagePoint &topLeft,
-			const vpImagePoint &bottomRight,
-			const vpColor &color, bool fill = false,
-			unsigned int thickness=1) ;
-  void displayRectangle(const vpRect &rectangle,
-			const vpColor &color, bool fill = false,
-			unsigned int thickness=1) ;
+  void displayRectangle(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color, bool fill = false, unsigned int thickness=1) ;
+  void displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color, bool fill = false, unsigned int thickness=1) ;
+  void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness=1) ;
 
   void flushDisplay() ;
   void flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height) ;
 
   bool getClick(bool blocking=true) ;
   bool getClick(vpImagePoint &ip, bool blocking=true) ;
-  bool getClick(vpImagePoint &ip,
-		vpMouseButton::vpMouseButtonType& button,
-		bool blocking=true) ;
-  bool getClickUp(vpImagePoint &ip,
-		  vpMouseButton::vpMouseButtonType& button,
-		  bool blocking=true) ;
+  bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType& button, bool blocking=true) ;
+  bool getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType& button, bool blocking=true) ;
   bool getKeyboardEvent(bool blocking=true);
-  bool getKeyboardEvent(char *string, bool blocking=true);
+  bool getKeyboardEvent(std::string &key, bool blocking=true);
   bool getPointerMotionEvent (vpImagePoint &ip);
   bool getPointerPosition (vpImagePoint &ip);
 

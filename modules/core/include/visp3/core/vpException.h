@@ -118,10 +118,10 @@ class VISP_EXPORT vpException : public std::exception
     int getCode (void);
 
     //! send a reference (constant) related the error message (can be empty)
-    const std::string &getStringMessage (void);
+    const std::string &getStringMessage (void) const;
     //! send a pointer on the array of  \e char related to the error string.
     //!Cannot be  \e NULL.
-    const char *getMessage (void);
+    const char *getMessage (void) const;
 
     //! print the error structure
     friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpException & art);

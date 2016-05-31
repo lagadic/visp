@@ -149,7 +149,7 @@ if(VISP_HAVE_VIRTUOSE)
   set(BUILDNAME "${BUILDNAME}-virtuose")
 endif()
 
-#---- Framegrabers ----
+#---- Framegrabers/Sensors ----
 # Firewire dc1394-2.x 
 if(VISP_HAVE_DC1394)
   set(BUILDNAME "${BUILDNAME}-dc1394")
@@ -168,11 +168,20 @@ endif(VISP_HAVE_CMU1394)
 if(VISP_HAVE_LIBFREENECT)
   set(BUILDNAME "${BUILDNAME}-freenect")
 endif()
+if(VISP_HAVE_REALSENSE)
+  set(BUILDNAME "${BUILDNAME}-rs")
+endif()
 if(VISP_HAVE_LIBUSB_1)
   set(BUILDNAME "${BUILDNAME}-usb")
 endif()
 if(VISP_HAVE_FLYCAPTURE)
   set(BUILDNAME "${BUILDNAME}-flycap")
+endif()
+if(VISP_HAVE_COMEDI)
+  set(BUILDNAME "${BUILDNAME}-comedi")
+endif()
+if(VISP_HAVE_ATI)
+  set(BUILDNAME "${BUILDNAME}-ati")
 endif()
 
 #---- Video-devices ----

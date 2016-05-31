@@ -59,14 +59,14 @@ vpDisplayD3D::vpDisplayD3D(): vpDisplayWin32(new vpD3DRenderer()){}
   \param title  Window's title.
 
 */
-vpDisplayD3D::vpDisplayD3D(int winx, int winy, const char *title)
+vpDisplayD3D::vpDisplayD3D(int winx, int winy, const std::string &title)
   : vpDisplayWin32(new vpD3DRenderer())
 {
   windowXPosition = winx;
   windowYPosition = winy;
 
-  if (title != NULL)
-    title_ = std::string(title);
+  if (!title.empty())
+    title_ = title;
   else
     title_ = std::string(" ");
 }
@@ -81,9 +81,7 @@ vpDisplayD3D::vpDisplayD3D(int winx, int winy, const char *title)
 \param title : Window's title.
 
 */
-vpDisplayD3D::vpDisplayD3D(vpImage<vpRGBa> &I,
-			   int winx, int winy,
-         const char *title)
+vpDisplayD3D::vpDisplayD3D(vpImage<vpRGBa> &I, int winx, int winy, const std::string &title)
   : vpDisplayWin32(new vpD3DRenderer())
 {
   init(I,winx,winy,title);
@@ -99,9 +97,7 @@ vpDisplayD3D::vpDisplayD3D(vpImage<vpRGBa> &I,
 \param title  Window's title.
 
 */
-vpDisplayD3D::vpDisplayD3D(vpImage<unsigned char> &I,
-			   int winx, int winy,
-         const char *title)
+vpDisplayD3D::vpDisplayD3D(vpImage<unsigned char> &I, int winx, int winy, const std::string &title)
   : vpDisplayWin32(new vpD3DRenderer())
 {
   init(I,winx,winy,title);

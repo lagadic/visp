@@ -47,7 +47,7 @@
 
 #include <windows.h>
 #include <visp3/gui/vpWin32Renderer.h>
-#include <visp3/core/vpGDIRenderer.h>
+#include <visp3/gui/vpGDIRenderer.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpDisplayException.h>
 

@@ -362,7 +362,7 @@ int main()
 }
   \endcode
 
-  The previous sample code produces the output:
+  produces the output:
   \verbatim
 Image point with coordinates: 10, 11.1
   \endverbatim

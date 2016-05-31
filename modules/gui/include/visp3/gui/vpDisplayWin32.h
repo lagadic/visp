@@ -118,18 +118,14 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 
   vpDisplayWin32(vpWin32Renderer * rend = NULL);
 
-  vpDisplayWin32(vpImage<vpRGBa> &I,
-		 int winx=-1, int winy=-1,
-		 const char *title=NULL);
+  vpDisplayWin32(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="");
 
-  vpDisplayWin32(vpImage<unsigned char> &I,
-		 int winx=-1, int winy=-1,
-		 const char *title=NULL);
+  vpDisplayWin32(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="");
 
   virtual ~vpDisplayWin32();
 
-  void setTitle(const char *windowtitle);
-  void setFont( const char *fontname );
+  void setTitle(const std::string &windowtitle);
+  void setFont( const std::string &fontname );
   void setWindowPosition(int winx, int winy);
   void clearDisplay(const vpColor &color=vpColor::white);
   void closeDisplay();
@@ -142,17 +138,9 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
   void flushDisplay();
   void flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height);
 
-  void init(vpImage<unsigned char> &I,
-	    int winx=-1, int winy=-1,
-	    const char *title=NULL)  ;
-
-  void init(vpImage<vpRGBa> &I,
-	    int winx=-1, int winy=-1,
-	    const char *title=NULL)  ;
-
-  void init(unsigned int width, unsigned int height,
-	    int winx=-1, int winy=-1 ,
-	    const char *title=NULL) ;
+  void init(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="");
+  void init(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="");
+  void init(unsigned int width, unsigned int height, int winx=-1, int winy=-1, const std::string &title="");
 
   void getImage(vpImage<vpRGBa> &I);
 
@@ -209,7 +197,7 @@ class VISP_EXPORT vpDisplayWin32 : public vpDisplay
 		  vpMouseButton::vpMouseButtonType& button,
 		  bool blocking=true);
   bool getKeyboardEvent( bool blocking=true);
-  bool getKeyboardEvent(char *string, bool blocking);
+  bool getKeyboardEvent(std::string &key, bool blocking);
   bool getPointerMotionEvent (vpImagePoint &ip);
   bool getPointerPosition (vpImagePoint &ip);
 

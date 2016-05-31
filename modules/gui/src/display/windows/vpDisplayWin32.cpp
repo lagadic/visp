@@ -87,7 +87,7 @@ vpDisplayWin32::~vpDisplayWin32()
 void vpDisplayWin32::init(vpImage<unsigned char> &I,
 			  int x,
 			  int y,
-			  const char *title)
+        const std::string &title)
 {
 	if ((I.getHeight() == 0) || (I.getWidth()==0))
     {
@@ -114,7 +114,7 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I,
 void vpDisplayWin32::init(vpImage<vpRGBa> &I,
 			  int x,
 			  int y,
-			  const char *title)
+        const std::string &title)
 {
   if ((I.getHeight() == 0) || (I.getWidth()==0))
     {
@@ -140,10 +140,10 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I,
 */
 void vpDisplayWin32::init(unsigned int width, unsigned int height,
 			  int x, int y,
-			  const char *title)
+        const std::string &title)
 {
-  if (title != NULL)
-    title_ = std::string(title);
+  if (!title.empty())
+    title_ = title;
   else
     title_ = std::string(" ");
 
@@ -519,7 +519,7 @@ bool vpDisplayWin32::getKeyboardEvent( bool blocking )
   - When set to false, returns true only if a key is
     pressed, otherwise returns false.
 
-  \param string [out]: If possible, an ISO Latin-1 character
+  \param key [out]: If possible, an ISO Latin-1 character
   corresponding to the keyboard key.
 
   \return 
@@ -528,7 +528,7 @@ bool vpDisplayWin32::getKeyboardEvent( bool blocking )
   - false if no key was pressed. This can occur if blocking is set
     to \e false.
 */
-bool vpDisplayWin32::getKeyboardEvent(char *string, bool blocking)
+bool vpDisplayWin32::getKeyboardEvent(std::string &key, bool blocking)
 {
   //wait if the window is not initialized
   waitForInit();
@@ -545,7 +545,9 @@ bool vpDisplayWin32::getKeyboardEvent(char *string, bool blocking)
      ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, 0));
   }
   //  printf("key: %ud\n", window.key);
-  sprintf(string, "%s", window.lpString);
+  std::stringstream ss;
+  ss << window.lpString;
+  key = ss.str();
   
   return ret;
 }
@@ -636,11 +638,11 @@ void vpDisplayWin32::setWindowPosition(int winx, int winy)
 
   \param windowtitle : Window title.
 */
-void vpDisplayWin32::setTitle(const char *windowtitle)
+void vpDisplayWin32::setTitle(const std::string &windowtitle)
 {
   //wait if the window is not initialized
   waitForInit();
-  SetWindowText(window.hWnd, windowtitle);
+  SetWindowText(window.hWnd, windowtitle.c_str());
 }
 
 
@@ -649,7 +651,7 @@ void vpDisplayWin32::setTitle(const char *windowtitle)
   \param fontname : Name of the font.
  */
 
-void vpDisplayWin32::setFont(const char * /* fontname */)
+void vpDisplayWin32::setFont(const std::string & /* fontname */)
 {
 	vpERROR_TRACE("Not yet implemented" ) ;
 }

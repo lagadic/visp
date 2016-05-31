@@ -217,7 +217,6 @@ VP_OPTION(USE_GDI         GDI         "" "Include gdi support"             "" ON
 VP_OPTION(USE_DIRECT3D    DIRECT3D    "" "Include d3d support"             "" ON IF WIN32)
 VP_OPTION(USE_DIRECTSHOW  DIRECTSHOW  "" "Include dshow support"           "" ON IF WIN32)
 VP_OPTION(USE_OPENMP      OpenMP      "" "Include openmp support"          "" ON)
-VP_OPTION(USE_CPP11       CPP11       "" "Include c++11 support"           "" OFF)
 # Since the FindLAPACK.cmake provided with CMake is for Fortran language,
 # in CMakeModules we have added FindLAPACK_C.cmake for C language
 VP_OPTION(USE_LAPACK      LAPACK_C    "" "Include lapack support"          "" ON)
@@ -228,6 +227,8 @@ VP_OPTION(USE_OGRE        OGRE        QUIET "Include Ogre support"         "OGRE
 VP_OPTION(USE_OIS         OIS         QUIET "Include Ogre/ois support"     "OIS_DIR"  ON IF USE_OGRE)
 VP_OPTION(USE_LIBFREENECT LIBFREENECT ""    "Include libfreenect support"  "" ON)
 VP_OPTION(USE_LIBUSB_1    LIBUSB_1    ""    "Include libusb-1 support"     "" ON)
+VP_OPTION(USE_REALSENSE   RealSense   ""    "Include RealSense SDK support" "" ON)
+VP_OPTION(USE_CPP11       CPP11       "" "Include c++11 support"           "" ON IF USE_REALSENSE)
 VP_OPTION(USE_SOWIN       SOWIN       ""    "Include Coin/SoWin support"   "" OFF IF (WIN32 AND USE_COIN3D))
 VP_OPTION(USE_SOQT        SOQT        ""    "Include Coin/SoQt support"    "" OFF IF USE_COIN3D)
 VP_OPTION(USE_QT          Qt          ""    "Include Coin/SoQt/Qt support" "" ON  IF USE_SOQT)
@@ -250,6 +251,7 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 # bar codes
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON)
+VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF USE_REALSENSE)
 VP_OPTION(BUILD_ATIDAQ    ""           ""    "Include atidaq-c support"     "" ON IF USE_COMEDI)
 
 #----------------------------------------------------------------------
@@ -480,6 +482,7 @@ VP_SET(VISP_HAVE_LAPACK_C    TRUE IF (BUILD_MODULE_visp_core AND USE_LAPACK))
 VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND USE_PTHREAD))
 VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
 VP_SET(VISP_HAVE_FFMPEG      TRUE IF (BUILD_MODULE_visp_core AND USE_FFMPEG))
+VP_SET(VISP_HAVE_PCL         TRUE IF (BUILD_MODULE_visp_core AND USE_PCL))
 
 VP_SET(VISP_HAVE_OGRE        TRUE IF (BUILD_MODULE_visp_ar AND USE_OGRE))
 VP_SET(VISP_HAVE_OIS         TRUE IF (BUILD_MODULE_visp_ar AND USE_OIS))
@@ -522,6 +525,7 @@ VP_SET(VISP_HAVE_CMU1394     TRUE IF (BUILD_MODULE_visp_sensor AND USE_CMU1394))
 VP_SET(VISP_HAVE_DIRECTSHOW  TRUE IF (BUILD_MODULE_visp_sensor AND USE_DIRECTSHOW))
 VP_SET(VISP_HAVE_LIBFREENECT TRUE IF (BUILD_MODULE_visp_sensor AND USE_LIBFREENECT))
 VP_SET(VISP_HAVE_LIBUSB_1    TRUE IF (BUILD_MODULE_visp_sensor AND USE_LIBUSB_1))
+VP_SET(VISP_HAVE_REALSENSE   TRUE IF (BUILD_MODULE_visp_sensor AND USE_REALSENSE))
 VP_SET(VISP_HAVE_FLYCAPTURE  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FLYCAPTURE))
 VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND BUILD_ATIDAQ))
@@ -608,6 +612,11 @@ endif()
 if(USE_OGRE)
   include(cmake/OgreTools.cmake)
   vp_set_ogre_media()
+endif()
+
+# PCL and 3rd party advanced vars
+if(USE_PCL)
+  include(cmake/PCLTools.cmake)
 endif()
 
 # Find isnan macro (C-style)
