@@ -80,7 +80,42 @@ if(USE_REALSENSE)
 endif()
 if(USE_PCL)
   list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
-  list(APPEND opt_libs ${PCL_LIBRARIES})
+
+  # list(APPEND opt_libs ${PCL_LIBRARIES})
+  # Using PCL_LIBRARIES works to build visp library, examples, demos and test thanks to the components,
+  # but not tutorials when they are build outside ViSP as they are stand alone CMake projects that use
+  # ViSP as a 3rd party.
+  # To be clear PCL_LIBRARIES contains VTK 3rd party sucha as vtkalglib and not /usr/local/Cellar/vtk/6.3.0/lib/libvtkalglib-6.3.1.dylib
+  # full path as requested to use ViSP as 3rd party. This is the case for all VTK libraries that are PCL dependencies.
+  # The build of ViSP works with PCL_LIBRARIES since in that case thanks to vtkalglib properties, CMake
+  # is able to find the real name and location of the libraries.
+  # But when ViSP is used as a 3rd party where it should import PCL libraries, it doesn't work with
+  # PCL_LIBRARIES and especially with VTK_LIBRARIES.
+  # The solution here is to get the full location of VTK_LIBRARIES libraries thanks to the properties and link
+  # with these names.
+  # An other way could be to include PCLConfig.cmake, but in that case, visp-config and visp.pc
+  # will be not able to give the names of PCL libraries when used without CMake.
+  set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
+  foreach(lib_ ${PCL_LIBRARIES})
+    # check if ${lib_} is in VTK_LIBRARIES and is a TARGET. If this is the case, we retrieve the full location
+    list(FIND VTK_LIBRARIES ${lib_} lib_is_vtk_)
+    if(NOT ${lib_is_vtk_} EQUAL -1 AND TARGET ${lib_})
+      # The lib is a target for which LOCATION property is available
+      foreach(imp_config_ ${config_})
+        get_target_property(lib_property_${imp_config_}_ ${lib_} IMPORTED_LOCATION_${imp_config_})
+        # Under Unix, there is no specific suffix for PCL/VTK libraries.         # Under Windows, we add the "optimized", "debug" specific keywords
+        if(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "RELEASE") # also valid for RELEASEWITHDEBINFO
+          list(APPEND opt_libs optimized "${component_property_${imp_config_}_}")
+        elseif(WIN32 AND EXISTS "${lib_property_${imp_config_}_}" AND "${imp_config_}" MATCHES "DEBUG")
+          list(APPEND opt_libs debug     "${lib_property_${imp_config_}_}")
+        elseif(EXISTS "${lib_property_${imp_config_}_}")
+          list(APPEND opt_libs "${lib_property_${imp_config_}_}")
+        endif()
+      endforeach()
+    else()
+      list(APPEND opt_libs ${lib_})
+    endif()
+  endforeach()
 endif()
 
 # atidac is private
