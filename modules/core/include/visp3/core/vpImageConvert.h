@@ -45,6 +45,8 @@
 #ifndef vpIMAGECONVERT_H
 #define vpIMAGECONVERT_H
 
+#include <stdint.h>
+
 // image
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
@@ -105,8 +107,8 @@ public:
   static void convert(const vpImage<double> &src, vpImage<unsigned char> &dest);
   static void convert(const vpImage<unsigned char> &src, vpImage<double> &dest);
 
-  static void convert(const vpImage<u_int16_t> &src, vpImage<unsigned char> &dest);
-  static void convert(const vpImage<unsigned char> &src, vpImage<u_int16_t> &dest);
+  static void convert(const vpImage<uint16_t> &src, vpImage<unsigned char> &dest);
+  static void convert(const vpImage<unsigned char> &src, vpImage<uint16_t> &dest);
 
 #ifdef VISP_HAVE_OPENCV
   // Deprecated: will be removed with OpenCV transcient from C to C++ api

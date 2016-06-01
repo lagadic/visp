@@ -98,7 +98,7 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::vector <rs
 
     vpColVector p3d(4); // X,Y,Z coordinates
     rs::float3 depth_point;
-    u_int16_t * depth = (u_int16_t *)m_device->get_frame_data(rs::stream::depth);
+    uint16_t * depth = (uint16_t *)m_device->get_frame_data(rs::stream::depth);
     int width = m_intrinsics[RS_STREAM_DEPTH].width;
     int height = m_intrinsics[RS_STREAM_DEPTH].height;
     pointcloud.resize(width*height);
@@ -141,7 +141,7 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::vector <rs
 
     // Fill the PointCloud2 fields.
     rs::float3 depth_point;
-    u_int16_t * depth = (u_int16_t *)m_device->get_frame_data(rs::stream::depth);
+    uint16_t * depth = (uint16_t *)m_device->get_frame_data(rs::stream::depth);
 
     for (int i = 0; i < height; i++) {
       for (int j = 0; j < width; j++) {
@@ -181,7 +181,7 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::vector <rs
     // Fill the PointCloud2 fields.
     rs::float3 depth_point, color_point;
     rs::float2 color_pixel;
-    u_int16_t * depth = (u_int16_t *)m_device->get_frame_data(rs::stream::depth);
+    uint16_t * depth = (uint16_t *)m_device->get_frame_data(rs::stream::depth);
     unsigned char * color = (unsigned char *)m_device->get_frame_data(rs::stream::color);
     int color_width = m_intrinsics[RS_STREAM_COLOR].width;
     int color_height = m_intrinsics[RS_STREAM_COLOR].height;

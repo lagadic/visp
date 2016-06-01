@@ -132,9 +132,9 @@ int main()
     std::cout << "Extrinsics dMi: \n" << rs.getTransformation(rs::stream::depth, rs::stream::infrared) << std::endl;
 
     vpImage<vpRGBa> color(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
-    vpImage<u_int16_t> infrared;
+    vpImage<uint16_t> infrared;
     vpImage<unsigned char> infrared_display(rs.getIntrinsics(rs::stream::infrared).height, rs.getIntrinsics(rs::stream::infrared).width);;
-    vpImage<u_int16_t> depth;
+    vpImage<uint16_t> depth;
     vpImage<vpRGBa> depth_display(rs.getIntrinsics(rs::stream::depth).height, rs.getIntrinsics(rs::stream::depth).width);
 
 #ifdef VISP_HAVE_PCL

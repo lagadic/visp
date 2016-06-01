@@ -149,12 +149,12 @@ vpImageConvert::convert(const vpImage<double> &src, vpImage<unsigned char> &dest
 }
 
 /*!
-Convert a vpImage\<u_int16_t> to a vpImage\<unsigned char\>.
+Convert a vpImage\<uint16_t> to a vpImage\<unsigned char\>.
 \param src : source image
 \param dest : destination image
 */
 void
-vpImageConvert::convert(const vpImage<u_int16_t> &src, vpImage<unsigned char> &dest)
+vpImageConvert::convert(const vpImage<uint16_t> &src, vpImage<unsigned char> &dest)
 {
   dest.resize(src.getHeight(), src.getWidth()) ;
 
@@ -163,12 +163,12 @@ vpImageConvert::convert(const vpImage<u_int16_t> &src, vpImage<unsigned char> &d
 }
 
 /*!
-Convert a vpImage\<unsigned char> to a vpImage\<u_int16_t\>.
+Convert a vpImage\<unsigned char> to a vpImage\<uint16_t\>.
 \param src : source image
 \param dest : destination image
 */
 void
-vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<u_int16_t> &dest)
+vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<uint16_t> &dest)
 {
   dest.resize(src.getHeight(), src.getWidth()) ;
 

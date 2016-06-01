@@ -38,6 +38,8 @@
 #ifndef __vpRealSense_h_
 #define __vpRealSense_h_
 
+#include <stdint.h>
+
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpConfig.h>
@@ -181,21 +183,21 @@ public:
 
   void acquire(vpImage<unsigned char> &grey); // tested
   void acquire(vpImage<unsigned char> &grey, std::vector<vpColVector> &pointcloud);
-  void acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, std::vector<vpColVector> &pointcloud);
+  void acquire(vpImage<unsigned char> &grey, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, std::vector<vpColVector> &pointcloud);
 #ifdef VISP_HAVE_PCL
   void acquire(vpImage<unsigned char> &grey, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
-  void acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
-  void acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
+  void acquire(vpImage<unsigned char> &grey, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
+  void acquire(vpImage<unsigned char> &grey, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
 #endif
 
   void acquire(vpImage<vpRGBa> &color);  // tested
   void acquire(vpImage<vpRGBa> &color, std::vector<vpColVector> &pointcloud);
-  void acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, std::vector<vpColVector> &pointcloud);
+  void acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, std::vector<vpColVector> &pointcloud);
 
 #ifdef VISP_HAVE_PCL
   void acquire(vpImage<vpRGBa> &color, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
-  void acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
-  void acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
+  void acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
+  void acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
 #endif
 
   void close();

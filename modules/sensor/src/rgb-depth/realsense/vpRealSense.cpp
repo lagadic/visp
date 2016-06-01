@@ -329,7 +329,7 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color)
   \param depth : Depth image.
   \param pointcloud : Point cloud data as a vector of column vectors. Each column vector is 4-dimension and contains X,Y,Z,1 normalized coordinates of a point.
  */
-void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, std::vector<vpColVector> &pointcloud)
+void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, std::vector<vpColVector> &pointcloud)
 {
   if (m_device == NULL) {
     throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
@@ -360,7 +360,7 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
   \param depth : Depth image.
   \param pointcloud : Point cloud data as a vector of column vectors. Each column vector is 4-dimension and contains X,Y,Z,1 normalized coordinates of a point.
  */
-void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, std::vector<vpColVector> &pointcloud)
+void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, std::vector<vpColVector> &pointcloud)
 {
   if (m_device == NULL) {
     throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
@@ -499,7 +499,7 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, pcl::PointCloud<pcl::PointXYZ>
   \param depth : Depth image.
   \param pointcloud : Point cloud data information.
  */
-void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
+void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
   if (m_device == NULL) {
     throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
@@ -530,7 +530,7 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
   \param depth : Depth image.
   \param pointcloud : Point cloud data information.
  */
-void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
+void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
   if (m_device == NULL) {
     throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
@@ -561,7 +561,7 @@ void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infr
   \param depth : Depth image.
   \param pointcloud : Point cloud data with texture information.
  */
-void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
+void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
 {
   if (m_device == NULL) {
     throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
@@ -592,7 +592,7 @@ void vpRealSense::acquire(vpImage<vpRGBa> &color, vpImage<u_int16_t> &infrared, 
   \param depth : Depth image.
   \param pointcloud : Point cloud data with texture information.
  */
-void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<u_int16_t> &infrared, vpImage<u_int16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
+void vpRealSense::acquire(vpImage<unsigned char> &grey, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
 {
   if (m_device == NULL) {
     throw vpException(vpException::fatalError, "RealSense Camera - Device not opened!");
