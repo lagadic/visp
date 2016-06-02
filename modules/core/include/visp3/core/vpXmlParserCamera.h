@@ -207,7 +207,8 @@ public:
       CODE_XML_PX,
       CODE_XML_PY,
       CODE_XML_KUD,
-      CODE_XML_KDU
+      CODE_XML_KDU,
+      CODE_XML_ADDITIONAL_INFO
     } vpXmlCodeType;
 
   typedef enum 
@@ -243,7 +244,8 @@ public:
 	    const unsigned int image_width = 0, const unsigned int image_height = 0);
   int save(const vpCameraParameters &cam, const std::string &filename,
 	   const std::string &camera_name,
-	   const unsigned int image_width = 0, const unsigned int image_height = 0);
+	   const unsigned int image_width = 0, const unsigned int image_height = 0,
+	   const std::string &additionalInfo="");
 
   // get/set functions
   std::string getCameraName(){return this->camera_name;}
@@ -296,6 +298,8 @@ private:
                    const unsigned int image_height = 0,
                    const unsigned int subsampling_width = 0,
                    const unsigned int subsampling_height = 0);
+
+  xmlNodePtr find_additional_info (xmlNodePtr node);
  
   vpXmlCodeSequenceType read_camera_model (xmlDocPtr doc, xmlNodePtr node,
 					                                 vpCameraParameters &camera);
