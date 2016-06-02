@@ -35,6 +35,7 @@
  *
  *****************************************************************************/
 #include <iostream>
+#include <ctime>
 
 #include <visp3/core/vpConfig.h>
 
@@ -58,6 +59,21 @@
 #include <visp3/core/vpXmlParserCamera.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+
+std::string getDateTime() {
+  time_t rawtime;
+  struct tm * timeinfo;
+  char buffer[80];
+
+  time (&rawtime);
+  timeinfo = localtime(&rawtime);
+
+  strftime(buffer,80,"%Y/%m/%d %H:%M:%S", timeinfo);
+  std::string str(buffer);
+
+  return str;
+}
 
 class Settings
 {
@@ -282,12 +298,37 @@ int main(int argc, const char ** argv)
       return 0;
     }
 
-    std::cout << "\nCalibration without distorsion in progress on " << calibrator.size() << " images..." << std::endl;
+    std::stringstream ss_additional_info;
+    ss_additional_info << "<date>" << getDateTime() << "</date>";
+    ss_additional_info << "<nb_calibration_images>" << calibrator.size() << "</nb_calibration_images>";
+    ss_additional_info << "<calibration_pattern_type>";
+
+    switch(s.calibrationPattern) {
+    case Settings::CHESSBOARD:
+      ss_additional_info << "Chessboard";
+      break;
+
+    case Settings::CIRCLES_GRID:
+      ss_additional_info << "Circles grid";
+      break;
+
+    case Settings::UNDEFINED:
+    default:
+      ss_additional_info << "Undefined";
+      break;
+    }
+    ss_additional_info << "</calibration_pattern_type>";
+    ss_additional_info << "<board_size>" << s.boardSize.width << "x" << s.boardSize.height << "</board_size>";
+    ss_additional_info << "<square_size>" << s.squareSize << "</square_size>";
+
+    std::cout << "\nCalibration without distortion in progress on " << calibrator.size() << " images..." << std::endl;
     vpCameraParameters cam;
     double error;
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS, calibrator, cam, error, false) == 0) {
       std::cout << cam << std::endl;
       std::cout << "Global reprojection error: " << error << std::endl;
+      ss_additional_info << "<global_reprojection_error><without_distortion>" << error << "</without_distortion>";
+
 #ifdef VISP_HAVE_XML2
       vpXmlParserCamera xml;
 
@@ -302,15 +343,16 @@ int main(int argc, const char ** argv)
     else
       std::cout << "Calibration without distortion failed." << std::endl;
 
-    std::cout << "\nCalibration with distorsion in progress on " << calibrator.size() << " images..." << std::endl;
+    std::cout << "\nCalibration with distortion in progress on " << calibrator.size() << " images..." << std::endl;
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST, calibrator, cam, error, false) == 0) {
       std::cout << cam << std::endl;
       std::cout << "Global reprojection error: " << error << std::endl;
+      ss_additional_info << "<with_distortion>" << error << "</with_distortion></global_reprojection_error>";
 
 #ifdef VISP_HAVE_XML2
       vpXmlParserCamera xml;
 
-      if(xml.save(cam, outputFileName.c_str(), "Camera", I.getWidth(), I.getHeight()) == vpXmlParserCamera::SEQUENCE_OK)
+      if(xml.save(cam, outputFileName.c_str(), "Camera", I.getWidth(), I.getHeight(), ss_additional_info.str()) == vpXmlParserCamera::SEQUENCE_OK)
         std::cout << "Camera parameters without distortion successfully saved in \"" << outputFileName << "\"" << std::endl;
       else {
         std::cout << "Failed to save the camera parameters without distortion in \"" << outputFileName << "\"" << std::endl;

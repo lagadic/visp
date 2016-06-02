@@ -73,6 +73,8 @@
 
 #define LABEL_XML_MODEL_WITHOUT_DISTORTION    "perspectiveProjWithoutDistortion"
 #define LABEL_XML_MODEL_WITH_DISTORTION       "perspectiveProjWithDistortion"
+
+#define LABEL_XML_ADDITIONAL_INFO                    "additional_information"
 /*!
   Default constructor
 */
@@ -183,7 +185,8 @@ int
 vpXmlParserCamera::save(const vpCameraParameters &cam, const std::string &filename,
                         const std::string& cam_name,
                         const unsigned int im_width,
-                        const unsigned int im_height)
+                        const unsigned int im_height,
+                        const std::string &additionalInfo)
 {
   xmlDocPtr doc;
   xmlNodePtr node;
@@ -231,6 +234,37 @@ vpXmlParserCamera::save(const vpCameraParameters &cam, const std::string &filena
   }
   else{
     write_camera(nodeCamera);
+  }
+
+  if(!additionalInfo.empty()) {
+    //Get camera node pointer
+    nodeCamera = find_camera(doc, node, cam_name, im_width, im_height);
+
+    //Additional information provided by the user
+    xmlNodePtr nodeAdditionalInfo = find_additional_info(nodeCamera);
+
+    if(nodeAdditionalInfo == NULL) {
+      //Create the additional information node
+      xmlNodePtr node_comment = xmlNewComment((xmlChar*)"Additional information");
+      xmlAddChild(nodeCamera,node_comment);
+
+      nodeAdditionalInfo = xmlNewNode(NULL, (xmlChar*) LABEL_XML_ADDITIONAL_INFO);
+      xmlAddChild(nodeCamera, nodeAdditionalInfo);
+    }
+
+    if(nodeAdditionalInfo != NULL) {
+      //Add the information in this specific node
+      xmlNodePtr pNewNode = NULL;
+      xmlParseInNodeContext(nodeAdditionalInfo, additionalInfo.c_str(), (int) additionalInfo.length(), 0, &pNewNode);
+      if (pNewNode != NULL) {
+        while (pNewNode != NULL) {
+          xmlAddChild(nodeAdditionalInfo, xmlCopyNode(pNewNode, 1));
+          pNewNode = pNewNode->next;
+        }
+
+        xmlFreeNode(pNewNode);
+      }
+    }
   }
 
   xmlSaveFormatFile(filename.c_str(), doc, 1);
@@ -296,7 +330,7 @@ vpXmlParserCamera::read (xmlDocPtr doc, xmlNodePtr node,
       break;
     }
     */
-    if (prop == CODE_XML_CAMERA){
+    if (prop == CODE_XML_CAMERA) {
       if (SEQUENCE_OK == this->read_camera (doc, node, cam_name, projModel,
                                             im_width, im_height, subsampl_width, subsampl_height))
         nbCamera++;
@@ -381,6 +415,7 @@ vpXmlParserCamera::count (xmlDocPtr doc, xmlNodePtr node,
 
   return nbCamera;
 }
+
 /*!
   Read camera headers from a XML file and return the last available
   node pointeur in the xml tree corresponding with inputs.
@@ -439,6 +474,37 @@ vpXmlParserCamera::find_camera (xmlDocPtr doc, xmlNodePtr node,
         return node;
     }
   }
+  return NULL;
+}
+
+/*!
+  Read camera headers from a XML file and return the last available
+  node pointer in the xml tree corresponding with inputs.
+
+  \param doc : XML file.
+  \param node : XML tree, pointing on a marker equipment.
+
+  \return additional information node.
+ */
+xmlNodePtr
+vpXmlParserCamera::find_additional_info(xmlNodePtr node) {
+  vpXmlCodeType prop;
+
+  for (node = node->xmlChildrenNode; node != NULL; node = node->next) {
+    if (node->type != XML_ELEMENT_NODE) {
+      continue;
+    }
+
+    if (SEQUENCE_OK != str2xmlcode((char*) (node->name), prop)) {
+      prop = CODE_XML_OTHER;
+    }
+
+    if (prop == CODE_XML_ADDITIONAL_INFO) {
+      //We found the node
+      return node;
+    }
+  }
+
   return NULL;
 }
 
@@ -531,6 +597,9 @@ vpXmlParserCamera::read_camera (xmlDocPtr doc, xmlNodePtr node,
         cam_tmp = cam_tmp_model;
         projModelFound = true;
       }
+      break;
+
+    case CODE_XML_ADDITIONAL_INFO:
       break;
 
     case CODE_XML_BAD:
@@ -662,6 +731,9 @@ read_camera_header (xmlDocPtr doc, xmlNodePtr node,
     case CODE_XML_MODEL:
       break;
 
+    case CODE_XML_ADDITIONAL_INFO:
+      break;
+
     case CODE_XML_BAD:
     case CODE_XML_OTHER:
     case CODE_XML_CAMERA:
@@ -781,6 +853,7 @@ vpXmlParserCamera::read_camera_model (xmlDocPtr doc, xmlNodePtr node,
     case CODE_XML_FULL_HEIGHT:
     case CODE_XML_FULL_WIDTH:
     case CODE_XML_MODEL:
+    case CODE_XML_ADDITIONAL_INFO:
     default:
       back = SEQUENCE_ERROR;
       break;
@@ -1085,6 +1158,10 @@ vpXmlParserCamera::str2xmlcode (char * str, vpXmlCodeType & res)
   else if (! strcmp (str,  LABEL_XML_KDU))
   {
     val_int = CODE_XML_KDU;
+  }
+  else if (! strcmp (str,  LABEL_XML_ADDITIONAL_INFO))
+  {
+    val_int = CODE_XML_ADDITIONAL_INFO;
   }
   else
   {
