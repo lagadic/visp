@@ -48,6 +48,11 @@ if(USE_DMTX)
   list(APPEND opt_libs ${DMTX_LIBRARIES})
 endif()
 
+if(USE_ZBAR)
+  # Add specific build flag to turn off warnings coming from zbar 3rd party
+  vp_set_source_file_compile_flag(src/barcode/vpDetectorQRCode.cpp -Wno-unused-parameter)
+endif()
+
 vp_add_module(detection visp_core)
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})

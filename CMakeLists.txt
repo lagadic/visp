@@ -35,8 +35,14 @@
 #
 #############################################################################
 
-# Need to be befor project(VISP) to work
-if(WIN32)
+# Detect crosscompiling; need to be before project(VISP) to work
+if(NOT CMAKE_TOOLCHAIN_FILE)
+  # Modify default install prefix
+  if(WIN32)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory")
+  endif()
+else()
+  # Crosscompiling
   set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory")
 endif()
 
@@ -427,23 +433,25 @@ endif()
 # Create and install visp-config.1.gz man page
 #----------------------------------------------------------------------
 if(UNIX)
-  FIND_PROGRAM(GZIP gzip)
-  file(MAKE_DIRECTORY ${VISP_BINARY_DIR}/doc/man/man1)
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-    COMMAND ${GZIP} --best -c ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1 > ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1
-  )
-  ADD_CUSTOM_TARGET(man ALL
-    DEPENDS ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-  )
-  INSTALL(FILES
-    ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/man/man1
-    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
-    COMPONENT dev
-  )
-  MARK_AS_ADVANCED(GZIP)
+  find_host_program(GZIP gzip)
+  if(GZIP_FOUND)
+    file(MAKE_DIRECTORY ${VISP_BINARY_DIR}/doc/man/man1)
+    add_custom_command(
+      OUTPUT ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+      COMMAND ${GZIP} --best -c ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1 > ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1
+    )
+    add_custom_target(man ALL
+      DEPENDS ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+    )
+    install(FILES
+      ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+      DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/man/man1
+      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+      COMPONENT dev
+    )
+  endif()
+  mark_as_advanced(GZIP)
 endif()
 
 #----------------------------------------------------------------------
@@ -609,9 +617,11 @@ elseif(USE_SOQT AND USE_QT)
 endif()
 
 # Ogre plugins and resources
+include(cmake/OgreTools.cmake)
 if(USE_OGRE)
-  include(cmake/OgreTools.cmake)
   vp_set_ogre_media()
+elseif(CMAKE_TOOLCHAIN_FILE)
+  vp_set_ogre_advanced_var()
 endif()
 
 # PCL and 3rd party advanced vars
@@ -756,4 +766,16 @@ if(BUILD_EXAMPLES)
 endif()
 if(BUILD_TUTORIALS)
   add_subdirectory(tutorial)
+endif()
+
+#----------------------------------------------------------------------
+# Post install script
+#----------------------------------------------------------------------
+if(CMAKE_TOOLCHAIN_FILE)
+  configure_file(
+    cmake/templates/remove_rootfs.cmake.in
+    ${VISP_BINARY_DIR}/scripts/remove_rootfs.cmake
+    IMMEDIATE @ONLY
+  )
+  install(SCRIPT ${VISP_BINARY_DIR}/scripts/remove_rootfs.cmake)
 endif()

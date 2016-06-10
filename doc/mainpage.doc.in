@@ -66,6 +66,10 @@ href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/p
 - \ref tutorial-install-osx-homebrew <br>In this tutorial you will learn how to install ViSP from source on OSX with Homebrew.
 - \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 
+\subsection tuto_install_crosscompiling Installation from crosscompiling
+
+- \ref tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to crosscompile ViSP on Ubuntu host for Raspberry Pi target.
+
 \subsection tuto_started Getting started
 
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.

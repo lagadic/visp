@@ -5,6 +5,8 @@ This page references all the tutorials.
 
 - \subpage tutorial_install_src
 
+- \subpage tutorial_install_crosscompiling
+
 - \subpage tutorial_started
 
 - \subpage tutorial_image
@@ -50,6 +52,12 @@ This page introduces the user to the way to install ViSP from source code.
 
 */
 
+/*! \page tutorial_install_crosscompiling Installation from crosscompiling
+This page introduces the user to the way to crosscompile ViSP from source code.
+
+- \ref tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to crosscompile ViSP on Ubuntu host for Raspberry Pi target.
+
+*/
 /*! \page tutorial_started Getting started
 This page introduces the user to the way to start with ViSP.
 

@@ -32,6 +32,19 @@
 #
 #############################################################################
 
+if(NOT COMMAND find_host_program)
+  # macro to find programs on the host OS
+  macro( find_host_program )
+   set( CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER )
+   set( CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER )
+   set( CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER )
+   find_program( ${ARGN} )
+   set( CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ONLY )
+   set( CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY )
+   set( CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY )
+  endmacro()
+endif()
+
 # adds include directories in such way that directories from the ViSP source tree go first
 function(vp_include_directories)
   vp_debug_message("vp_include_directories( ${ARGN} )")

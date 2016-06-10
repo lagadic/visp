@@ -1,0 +1,21 @@
+# This is a script used during crosscompilation used to remove ROOTFS string
+# to all prepend includes or libraries location
+set(__path @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@)
+set(__rootfs @CMAKE_FIND_ROOT_PATH@)
+set(__files_to_process "")
+
+# files in ${install_prefix}/lib/cmake/visp/*.cmake
+file(GLOB __files ${__path}/cmake/visp/*.cmake)
+list(APPEND __files_to_process ${__files})
+# files in ${install_prefix}/lib/pkgconfig/*.pc
+file(GLOB __files ${__path}/pkgconfig/*.pc)
+list(APPEND __files_to_process ${__files})
+
+foreach(f ${__files_to_process})
+  if(EXISTS ${f})
+    file(READ "${f}" __file_content)
+    string(REGEX REPLACE "${__rootfs}/" "/" __file_content "${__file_content}")
+    file(WRITE "${f}" "${__file_content}")
+  endif()
+endforeach()
+
