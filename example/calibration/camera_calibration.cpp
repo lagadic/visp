@@ -35,7 +35,6 @@
  *
  *****************************************************************************/
 #include <iostream>
-#include <ctime>
 
 #include <visp3/core/vpConfig.h>
 
@@ -59,21 +58,6 @@
 #include <visp3/core/vpXmlParserCamera.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-
-std::string getDateTime() {
-  time_t rawtime;
-  struct tm * timeinfo;
-  char buffer[80];
-
-  time (&rawtime);
-  timeinfo = localtime(&rawtime);
-
-  strftime(buffer,80,"%Y/%m/%d %H:%M:%S", timeinfo);
-  std::string str(buffer);
-
-  return str;
-}
 
 class Settings
 {
@@ -299,7 +283,7 @@ int main(int argc, const char ** argv)
     }
 
     std::stringstream ss_additional_info;
-    ss_additional_info << "<date>" << getDateTime() << "</date>";
+    ss_additional_info << "<date>" << vpTime::getDateTime() << "</date>";
     ss_additional_info << "<nb_calibration_images>" << calibrator.size() << "</nb_calibration_images>";
     ss_additional_info << "<calibration_pattern_type>";
 

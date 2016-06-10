@@ -37,10 +37,10 @@
  *****************************************************************************/
 
 
+#include <ctime>
 
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpDebug.h>
-#include <iostream>
 
 
 /*!
@@ -240,6 +240,23 @@ void sleepMs(double t)
 #elif defined(_WIN32)
   Sleep((DWORD)(t));
 #endif
+}
+
+/*!
+ * Return a string containing date and time in the following format: "YYYY/MM/DD hh:mm:ss".
+ */
+std::string getDateTime() {
+  time_t rawtime;
+  struct tm * timeinfo;
+  char buffer[80];
+
+  time (&rawtime);
+  timeinfo = localtime(&rawtime);
+
+  strftime(buffer, 80, "%Y/%m/%d %H:%M:%S", timeinfo);
+  std::string str(buffer);
+
+  return str;
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

@@ -45,6 +45,8 @@
   \brief Time management and measurement
 
 */
+#include <string>
+#include <iostream>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
@@ -74,15 +76,14 @@ int main()
 
 namespace vpTime
 {
-
-VISP_EXPORT double getMinTimeForUsleepCall();
-VISP_EXPORT double measureTimeSecond() ;
-VISP_EXPORT double measureTimeMs() ;
-VISP_EXPORT double measureTimeMicros() ;
-VISP_EXPORT void sleepMs(double t);
-VISP_EXPORT int  wait(double t0, double t) ;
-VISP_EXPORT void wait(double t) ;
-
+  VISP_EXPORT std::string getDateTime();
+  VISP_EXPORT double getMinTimeForUsleepCall();
+  VISP_EXPORT double measureTimeSecond() ;
+  VISP_EXPORT double measureTimeMs() ;
+  VISP_EXPORT double measureTimeMicros() ;
+  VISP_EXPORT void sleepMs(double t);
+  VISP_EXPORT int  wait(double t0, double t) ;
+  VISP_EXPORT void wait(double t) ;
 };
 
 #endif
