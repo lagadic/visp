@@ -172,51 +172,64 @@
     
 */
 class VISP_EXPORT vpXmlParser
-{
+{  
 protected:
+  /** @name Protected Member Functions Inherited from vpXmlParser */
+  //@{
+  /*!
+    pure virtual method used to read the document.
+
+    As the content of the function depends on the structure of the file to read,
+    data name, data types and data values, it has to be reimplemented for every
+    type of filenam
+
+    \param doc : a pointer representing the document
+    \param node : the root node of the document
+  */
+  virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node)=0;
+
+  /*!
+    pure virtual method used to write the document.
+
+    As the content of the function depends on the structure of the file to read,
+    data name and data types, it has to be reimplemented for every
+    type of file to parse.
+
+    \param node : the root node of the document
+  */
+  virtual void writeMainClass(xmlNodePtr node)=0;
+
   std::string xmlReadStringChild (xmlDocPtr doc, xmlNodePtr node);
   char* xmlReadCharChild (xmlDocPtr doc, xmlNodePtr node);
   int xmlReadIntChild (xmlDocPtr doc, xmlNodePtr node);
   unsigned int xmlReadUnsignedIntChild (xmlDocPtr doc, xmlNodePtr node);
   double xmlReadDoubleChild (xmlDocPtr doc, xmlNodePtr node);
-  
+
 
   void xmlWriteStringChild(xmlNodePtr node, const char* label, const std::string& value);
   void xmlWriteCharChild(xmlNodePtr node, const char* label, const char* value);
   void xmlWriteIntChild(xmlNodePtr node, const char* label, const int value);
   void xmlWriteUnsignedIntChild(xmlNodePtr node, const char* label, const unsigned int value);
   void xmlWriteDoubleChild(xmlNodePtr node, const char* label, const double value);
-  
+  //@}
+
+protected:
   /*!
     The map describing the data to parse
   */
   std::map<std::string, int> nodeMap;
-  
+
   /*!
     The name of the main tag for the file to parse
   */
   std::string main_tag;
-  
+
 public:
-  
+  /** @name Public Member Functions Inherited from vpXmlParser */
+  //@{
   vpXmlParser();
   vpXmlParser(const vpXmlParser& _twin);
   virtual ~vpXmlParser();
-
-  /*!
-  As stated in http://xmlsoft.org/html/libxml-parser.html#xmlCleanupParser
-  to clean up memory allocated by the xml2 library itself, the user should call
-  xmlCleanupParser() only when the process has finished using the xml2 library.
-  In case of doubt abstain from calling this function or do it just before calling exit()
-  to avoid leak reports from valgrind ! That's why
-  in ViSP the destructor doesn't call xmlCleanupParser(). Rather we provide the static
-  function vpXmlParser::cleanup() that calls xmlCleanupParser() that could be called
-  just before exit().
-    */
-  static void cleanup()
-  {
-    xmlCleanupParser();
-  }
 
   /* virtual */ void parse(const std::string& filename);
   /* virtual */ void save(const std::string& filename, const bool append=false);
@@ -274,31 +287,26 @@ public:
     \param tag : name of the root node of the document
   */
   inline void setMainTag(const std::string& tag){ main_tag = tag;}
+  //@}
 
-protected:
+  /** @name Static Public Member Functions Inherited from vpXmlParser */
+  //@{
   /*!
-    pure virtual method used to read the document.
-    
-    As the content of the function depends on the structure of the file to read,
-    data name, data types and data values, it has to be reimplemented for every 
-    type of filenam
-    
-    \param doc : a pointer representing the document
-    \param node : the root node of the document
-  */
-  virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node)=0;
-  
-  /*!
-    pure virtual method used to write the document.
-    
-    As the content of the function depends on the structure of the file to read,
-    data name and data types, it has to be reimplemented for every 
-    type of file to parse.
-    
-    \param node : the root node of the document
-  */
-  virtual void writeMainClass(xmlNodePtr node)=0;
-   
+  As stated in http://xmlsoft.org/html/libxml-parser.html#xmlCleanupParser
+  to clean up memory allocated by the xml2 library itself, the user should call
+  xmlCleanupParser() only when the process has finished using the xml2 library.
+  In case of doubt abstain from calling this function or do it just before calling exit()
+  to avoid leak reports from valgrind ! That's why
+  in ViSP the destructor doesn't call xmlCleanupParser(). Rather we provide the static
+  function vpXmlParser::cleanup() that calls xmlCleanupParser() that could be called
+  just before exit().
+    */
+  static void cleanup()
+  {
+    xmlCleanupParser();
+  }
+  //@}
+
 };
 
 

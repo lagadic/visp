@@ -111,6 +111,8 @@ protected:
 
 public:
 
+  /** @name Public Member Functions Inherited from vpMbXmlParser */
+  //@{
     vpMbXmlParser();
     virtual ~vpMbXmlParser();
 
@@ -230,9 +232,13 @@ public:
   inline void setNearClippingDistance(const double &nclip) {nearClipping = nclip;}
 	
   void writeMainClass(xmlNodePtr node);
+  //@}
 	
 protected:
+  /** @name Protected Member Functions Inherited from vpMbXmlParser */
+  //@{
   void init();
+  //@}
 
 };
 

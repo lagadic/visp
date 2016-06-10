@@ -93,7 +93,8 @@ protected:
 
 
 public:
-
+  /** @name Public Member Functions Inherited from vpMbtKltXmlParser */
+  //@{
 	vpMbtKltXmlParser();
 	virtual ~vpMbtKltXmlParser();
 
@@ -215,9 +216,13 @@ public:
   inline void setWindowSize(const unsigned int &w) {winSize = w;}
   
   void writeMainClass(xmlNodePtr node);
-	
+  //@}
+
 protected:
+  /** @name Protected Member Functions Inherited from vpMbtKltXmlParser */
+  //@{
   void init();
+  //@}
 
 };
 

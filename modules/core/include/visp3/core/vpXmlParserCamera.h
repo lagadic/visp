@@ -235,30 +235,31 @@ public:
 
   vpXmlParserCamera();
   vpXmlParserCamera(vpXmlParserCamera& twinParser);
-  vpXmlParserCamera& operator =(const vpXmlParserCamera& twinparser);
   ~vpXmlParserCamera(){}
-
-  int parse(vpCameraParameters &cam, const std::string &filename,
-	    const std::string &camera_name,
-      const vpCameraParameters::vpCameraParametersProjType &projModel,  
-	    const unsigned int image_width = 0, const unsigned int image_height = 0);
-  int save(const vpCameraParameters &cam, const std::string &filename,
-	   const std::string &camera_name,
-	   const unsigned int image_width = 0, const unsigned int image_height = 0,
-	   const std::string &additionalInfo="");
 
   // get/set functions
   std::string getCameraName(){return this->camera_name;}
-  unsigned int getWidth(){ return this->image_width; }
+  vpCameraParameters getCameraParameters(){return this->camera;}
   unsigned int getHeight(){ return this->image_height; }
   unsigned int getSubsampling_width(){return this->subsampling_width;}
   unsigned int getSubsampling_height(){return this->subsampling_height;}
-  vpCameraParameters getCameraParameters(){return this->camera;}
+  unsigned int getWidth(){ return this->image_width; }
+
+  vpXmlParserCamera& operator =(const vpXmlParserCamera& twinparser);
+
+  int parse(vpCameraParameters &cam, const std::string &filename,
+      const std::string &camera_name,
+      const vpCameraParameters::vpCameraParametersProjType &projModel,
+      const unsigned int image_width = 0, const unsigned int image_height = 0);
+
+  int save(const vpCameraParameters &cam, const std::string &filename,
+     const std::string &camera_name,
+     const unsigned int image_width = 0, const unsigned int image_height = 0,
+     const std::string &additionalInfo="");
 
   void setCameraName(const std::string& name){
     this->camera_name = name;
   }
-  void setWidth(const unsigned int width){ this->image_width = width ; }
   void setHeight(const unsigned int height){ this->image_height = height ; }
   void setSubsampling_width(const unsigned int subsampling){
     this->subsampling_width = subsampling ;
@@ -266,6 +267,7 @@ public:
   void setSubsampling_height(const unsigned int subsampling){
     this->subsampling_height = subsampling ;
   }
+  void setWidth(const unsigned int width){ this->image_width = width ; }
 
 private:
   int read (xmlDocPtr doc, xmlNodePtr node,
@@ -351,9 +353,3 @@ private:
 };
 #endif //VISP_HAVE_XML2
 #endif
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
-

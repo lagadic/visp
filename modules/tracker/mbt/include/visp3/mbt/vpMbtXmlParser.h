@@ -87,7 +87,8 @@ protected:
 
 
 public:
-
+  /** @name Public Member Functions Inherited from vpMbtXmlParser */
+  //@{
   vpMbtXmlParser();
   virtual ~vpMbtXmlParser();
 
@@ -106,9 +107,14 @@ public:
   void setMovingEdge(const vpMe &_ecm){ m_ecm = _ecm; }
 
   void writeMainClass(xmlNodePtr node);
+  //@}
 
 protected:
+  /** @name Protected Member Functions Inherited from vpMbtXmlParser */
+  //@{
   void init();
+  //@}
+
 
 };
 

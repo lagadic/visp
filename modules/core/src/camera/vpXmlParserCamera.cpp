@@ -178,8 +178,38 @@ vpXmlParserCamera::parse(vpCameraParameters &cam, const std::string &filename,
     Set as 0 if not ambiguous.
   \param im_height : height of the image  on which camera calibration was performed.
     Set as 0 if not ambiguous.
+  \param additionalInfo : Additional information added in the saved xml file. The content
+    of this string should be in xml format.
 
   \return error code.
+
+  A typical usage would be the following:
+  \code
+#include <visp3/core/vpXmlParserCamera.h>
+#include <visp3/core/vpTime.h>
+
+int main()
+{
+  vpCameraParameters cam;
+  std::stringstream ss_additional_info;
+  ss_additional_info << "<date>" << vpTime::getDateTime() << "</date>";
+
+  vpXmlParserCamera p;
+  if (p.save(cam, "camera.xml", "myCamera", 320, 240, ss_additional_info.str()) != vpXmlParserCamera::SEQUENCE_OK) {
+    std::cout << "Cannot save camera parameters" << std::endl;
+  }
+}
+  \endcode
+  In \c camera.xml file, you will see:
+  \code
+  <camera>
+    ...
+    <!--Additional information-->
+    <additional_information>
+      <date>2016/06/10 09:15:56</date>
+    </additional_information>
+  </camera>
+  \endcode
 */
 int
 vpXmlParserCamera::save(const vpCameraParameters &cam, const std::string &filename,
