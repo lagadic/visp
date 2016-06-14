@@ -45,6 +45,7 @@
 #include <stdlib.h>
 #include <sstream>
 #include <assert.h>
+#include <cmath>
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpMatrix.h>

@@ -44,9 +44,10 @@
 #include <stdint.h>
 #include <numeric>
 #include <functional>
+#include <cmath>
+
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpException.h>
-
 
 #if defined(VISP_HAVE_FUNC__ISNAN)
 #  include <float.h>

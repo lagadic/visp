@@ -160,7 +160,7 @@ endif(UNIX)
 #--------------------------------------------------------------------
 
 # Choose static or shared libraries.
-VP_OPTION(BUILD_SHARED_LIBS  "" "" "Build ViSP shared libraries (.dll/.so) instead of static ones (.lib/.a)" "" ON)
+VP_OPTION(BUILD_SHARED_LIBS  "" "" "Build ViSP shared libraries (.dll/.so) instead of static ones (.lib/.a)" "" NOT APPLE_FRAMEWORK)
 # Build examples as an option.
 VP_OPTION(BUILD_EXAMPLES  "" "" "Build ViSP examples" "" ON)
 # Build examples as an option.
@@ -717,6 +717,11 @@ include(cmake/VISPGenerateHeaders.cmake)
 #   include_directories(${VISP_INCLUDE_DIRS})
 #   target_link_libraries(<target> ${VISP_LIBRARIES})
 include(cmake/VISPGenerateConfig.cmake)
+
+# Generate Info.plist for the IOS/OSX frameworks
+if(APPLE_FRAMEWORK)
+  include(cmake/VISPGenerateInfoPlist.cmake)
+endif()
 
 #----------------------------------------------------------------------
 # For Dart server and tests

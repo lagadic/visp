@@ -626,13 +626,13 @@ void vpVideoReader::findLastFrameIndex()
   if (imSequence != NULL) {
     if (! lastFrameIndexIsSet) {
       char name[FILENAME_MAX];
-      int image_number = firstFrame;
+      long image_number = firstFrame;
       bool failed;
       do {
-	std::fstream file;
-	sprintf(name,fileName,image_number) ;
-	file.open(name, std::ios::in);
-	failed = file.fail();
+        std::fstream file;
+        sprintf(name,fileName,image_number) ;
+        file.open(name, std::ios::in);
+        failed = file.fail();
         if (!failed) {
           file.close();
           image_number++;

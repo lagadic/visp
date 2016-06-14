@@ -23,9 +23,11 @@ ViSP 3.0.1 (in development)
     . New cross platform multi-threading capabilities with vpMutex and
       vpThread classes
     . Crosscompiling capabilities tested for Raspberry Pi target
+    . OSX/iOS framework creation
   - Tutorials
     . New tutorial: How to use multi-threading capabilities
     . New tutorial: Crosscompilation for Raspberry Pi from Ubuntu host
+    . New tutorial: Installation from source on iOS devices
   - Bug fixed
     . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc
