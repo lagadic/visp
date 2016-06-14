@@ -30,7 +30,7 @@ This page references all the tutorials.
 /*! \page tutorial_install_pkg Installation from packages
 This page introduces the user to the way to install ViSP from existing prebuild packages.
 
-- \subpage tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library SDK from Ubuntu packages.
+- \subpage tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library SDK from Ubuntu or Debian packages.
 - \subpage tutorial-install-osx-homebrew-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK on OSX with Homebrew.
 
 */
@@ -55,7 +55,7 @@ This page introduces the user to the way to install ViSP from source code.
 /*! \page tutorial_install_crosscompiling Installation from crosscompiling
 This page introduces the user to the way to crosscompile ViSP from source code.
 
-- \ref tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to crosscompile ViSP on Ubuntu host for Raspberry Pi target.
+- \subpage tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to crosscompile ViSP on Ubuntu host for Raspberry Pi target.
 
 */
 /*! \page tutorial_started Getting started
