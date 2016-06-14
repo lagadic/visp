@@ -1,55 +1,15 @@
 /**
 
-\page tutorial-install-ubuntu-package Tutorial: Installation from prebuilt packages on Linux Ubuntu
+\page tutorial-install-ubuntu-package Tutorial: Installation from prebuilt packages on Linux Ubuntu/Debian
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from prebuilt official packages on Linux Ubuntu. 
+In this tutorial you will learn how to install ViSP from prebuilt official packages on Linux Ubuntu or Debian. 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
 \section install_ubuntu_package_list ViSP official packages
 
-Since Ubuntu 14.04 LTS, ViSP library can be installed from <a href="http://packages.ubuntu.com/search?keywords=visp&searchon=names&suite=trusty&section=all">existing packages</a> on amd64 or i386 architectures. In Ubuntu 13.10, the packages are only available for amd64 architecture.
-
-The table below shows which are the packages available given the distribution and architecture.
-
-<table>
-<tr>
-  <th>Ubuntu 14.04 LTS
-  <th>Ubuntu 14.10 and 15.04
-  <th>Ubuntu 15.10
-</tr>
-<tr>
-  <th>trusty</th>
-  <th>utopic and vivid</th>
-  <th>wily</th>
-</tr>
-<tr>
-  <td>libvisp-dev</td>
-  <td>libvisp-dev</td>
-  <td>libvisp-dev</td>
-</tr>
-<tr>
-  <td>libvisp2.8</td>
-  <td>libvisp2.9</td>
-  <td>libvisp2.10</td>
-</tr>
-<tr>
-  <td>libvisp2.8-dbg</td>
-  <td>libvisp2.9-dbg</td>
-  <td>libvisp2.10-dbg</td>
-</tr>
-<tr>
-  <td>libvisp-doc</td>
-  <td>libvisp-doc</td>
-  <td>libvisp-doc</td>
-</tr>
-<tr>
-  <td>visp-images</td>
-  <td>visp-images</td>
-  <td>visp-images</td>
-</tr>
-</table>
+Since Ubuntu 14.04 LTS, ViSP library can be installed from <a href="http://packages.ubuntu.com/search?keywords=visp&searchon=names&suite=trusty&section=all">existing packages</a> on amd64 or i386 architectures. In Ubuntu 13.10, the packages were only available for amd64 architecture.
 
 To install ViSP library and headers just run:
 
