@@ -143,8 +143,8 @@ int main() {
     return -1;
   }
 
-  if(!vpMath::isInf(exp(800))) {
-    std::cerr << "Fail: vpMath::isInf(exp(800))=" << vpMath::isInf(exp(800)) << " / should be true" << std::endl;
+  if(!vpMath::isInf(exp(800.))) {
+    std::cerr << "Fail: vpMath::isInf(exp(800.))=" << vpMath::isInf(exp(800.)) << " / should be true" << std::endl;
     return -1;
   }
 
