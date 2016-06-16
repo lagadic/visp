@@ -53,7 +53,7 @@ visp
 
 - Build ViSP framework
 \code
-$ python visp/platforms/ios/build_framework.py visp
+$ python visp/platforms/ios/build_framework.py ios
 \endcode
 
 Once build, you will get ``~/<workspace_dir>/ios/visp3.framework`` that could be added to your Xcode projects.
