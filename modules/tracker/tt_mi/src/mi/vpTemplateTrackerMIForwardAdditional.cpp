@@ -162,15 +162,8 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
 
   MI_preEstimation=-getCost(I,p);
 
-  double i2,j2;
-  double Tij;
-  double IW,dx,dy;
-  //unsigned
-  int cr,ct;
-  double er,et;
   double alpha=2.;
 
-  int i,j;
   unsigned int iteration=0;
 
   initPosEvalRMS(p);
@@ -190,36 +183,37 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     int nthreads = omp_get_num_procs() ;
     //std::cout << "file: " __FILE__ << " line: " << __LINE__ << " function: " << __FUNCTION__ << " nthread: " << nthreads << std::endl;
     omp_set_num_threads(nthreads);
-#pragma omp parallel for private(Tij,IW,i,j,i2,j2,cr,ct,er,et,dx,dy) default(shared)
+#pragma omp parallel for default(shared)
 #endif
     for(int point=0;point<(int)templateSize;point++)
     {
-      i=ptTemplate[point].y;
-      j=ptTemplate[point].x;
+      int i=ptTemplate[point].y;
+      int j=ptTemplate[point].x;
       X1[0]=j;X1[1]=i;
 
       Warp->computeDenom(X1,p);
       Warp->warpX(X1,X2,p);
 
-      j2=X2[0];i2=X2[1];
+      double j2=X2[0];
+			double i2=X2[1];
 
       if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
       {
         Nbpoint++;
-        Tij=ptTemplate[point].val;
-        //Tij=Iterateurvecteur->val;
+        double Tij=ptTemplate[point].val;
+				double IW;
         if(!blur)
           IW=I.getValue(i2,j2);
         else
           IW=BI.getValue(i2,j2);
 
-        dx=1.*dIx.getValue(i2,j2)*(Nc-1)/255.;
-        dy=1.*dIy.getValue(i2,j2)*(Nc-1)/255.;
+        double dx=1.*dIx.getValue(i2,j2)*(Nc-1)/255.;
+        double dy=1.*dIy.getValue(i2,j2)*(Nc-1)/255.;
 
-        ct=(int)((IW*(Nc-1))/255.);
-        cr=(int)((Tij*(Nc-1))/255.);
-        et=(IW*(Nc-1))/255.-ct;
-        er=((double)Tij*(Nc-1))/255.-cr;
+        int ct=(int)((IW*(Nc-1))/255.);
+        int cr=(int)((Tij*(Nc-1))/255.);
+        double et=(IW*(Nc-1))/255.-ct;
+        double er=((double)Tij*(Nc-1))/255.-cr;
 
         //calcul de l'erreur
         //erreur+=(Tij-IW)*(Tij-IW);
