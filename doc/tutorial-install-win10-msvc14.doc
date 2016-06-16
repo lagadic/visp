@@ -36,7 +36,7 @@ setx OpenCV_DIR C:\OpenCV\opencv\build
 \endcode
 where \c C:\\OpenCV\\opencv\\build is where you have the build directory (extracted or built).  Inside this folder you should have a file named \c OpenCVConfig.cmake. 
 
-- You have also to add the location of OpenCV libraries in the PATH environment variable following the indications mentioned in \ref install_win81_msvc_env_var.
+- You have also to add the location of OpenCV libraries in the PATH environment variable following the indications mentioned in \ref install_win10_msvc14_env_var.
 
 \section install_win10_msvc14_install_visp Install ViSP from source code
 \subsection install_win10_msvc14_get_source Getting ViSP source code
