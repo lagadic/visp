@@ -149,8 +149,8 @@ int main(int argc, const char* argv[])
   cap.open(opt_device);
 
   // Start the threads
-  vpThread thread_capture(captureFunction, (vpThread::Args)&cap);
-  vpThread thread_display(displayFunction);
+  vpThread thread_capture((vpThread::Fn)captureFunction, (vpThread::Args)&cap);
+  vpThread thread_display((vpThread::Fn)displayFunction);
 
   // Wait until thread ends up
   thread_capture.join();

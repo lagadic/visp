@@ -79,7 +79,7 @@ int main(void)
   for(unsigned int i=0; i<nthread; i++)
   {
     thread_id[i] = i;
-    thread[i].create(&doSomeThing, (vpThread::Args)&thread_id[i]);
+    thread[i].create((vpThread::Fn)&doSomeThing, (vpThread::Args)&thread_id[i]);
   }
 
   delete [] thread;

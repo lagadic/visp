@@ -17,7 +17,7 @@ To use vpThread class you have first to include the corresponding header.
 #include <visp3/core/vpThread.h>
 \endcode
 
-With vpThread the prototype of the function that could be executed in a separate thread is the following:
+With vpThread the prototype of the function vpThread::Fn that could be executed in a separate thread is the following:
 \code
 vpThread::Return myFooFunction(vpThread::Args args)
 \endcode
@@ -26,13 +26,13 @@ where arguments passed to the function are of type vpThread::Args. This function
 Then to create the thread that executes this function, you have just to construct a vpThread object indicating which is the function to execute.
 - If you don't want to pass arguments to the function, just do like:
 \code
-vpThread foo(myFooFunction);
+vpThread foo((vpThread::Fn)myFooFunction);
 \endcode
 
 - If you want to pass some arguments to the function, do rather like:
 \code
 int foo_arg = 3;
-vpThread foo(myFooFunction, (vpThread::Args)&foo_arg);
+vpThread foo((vpThread::Fn)myFooFunction, (vpThread::Args)&foo_arg);
 \endcode
 This argument could then be exploited in myFooFunction()
 \code

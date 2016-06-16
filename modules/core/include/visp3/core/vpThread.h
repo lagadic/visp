@@ -39,8 +39,9 @@ public:
 #elif defined(_WIN32)
   typedef LPVOID Args;
   typedef DWORD Return;
-  typedef LPTHREAD_START_ROUTINE Fn;
-  typedef HANDLE Handle;
+	typedef LPTHREAD_START_ROUTINE Fn;
+	//typedef DWORD (*Fn)(Args);
+	typedef HANDLE Handle;
 #endif
   /*!
      Default constructor that does nothing. To attach a function to this thread

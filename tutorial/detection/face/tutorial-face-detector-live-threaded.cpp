@@ -242,9 +242,9 @@ int main(int argc, const char* argv[])
 #endif
 
   // Start the threads
-  vpThread thread_capture(captureFunction, (vpThread::Args)&cap);
-  vpThread thread_display(displayFunction);
-  vpThread thread_detection(detectionFunction, (vpThread::Args)&opt_face_cascade_name);
+  vpThread thread_capture((vpThread::Fn)captureFunction, (vpThread::Args)&cap);
+  vpThread thread_display((vpThread::Fn)displayFunction);
+  vpThread thread_detection((vpThread::Fn)detectionFunction, (vpThread::Args)&opt_face_cascade_name);
 
   // Wait until thread ends up
   thread_capture.join();

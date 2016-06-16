@@ -143,8 +143,8 @@ int main(int argc, const char* argv[])
   g.setScale(opt_scale);
 
   // Start the threads
-  vpThread thread_capture(captureFunction, (vpThread::Args)&g);
-  vpThread thread_display(displayFunction);
+  vpThread thread_capture((vpThread::Fn)captureFunction, (vpThread::Args)&g);
+  vpThread thread_display((vpThread::Fn)displayFunction);
 
   // Wait until thread ends up
   thread_capture.join();

@@ -79,8 +79,8 @@ int main()
 {
   unsigned int qux_arg = 12;
   vpThread foo;
-  vpThread bar(myBarFunction);
-  vpThread qux(myQuxFunction, (vpThread::Args)&qux_arg); // Pass qux_arg to myQuxFunction() function
+  vpThread bar((vpThread::Fn)myBarFunction);
+  vpThread qux((vpThread::Fn)myQuxFunction, (vpThread::Args)&qux_arg); // Pass qux_arg to myQuxFunction() function
 
   vpTime::wait(1000); // Sleep 1s to ensure myQuxFunction() internal printings
   std::cout << "Joinable after construction:" << std::endl;
@@ -88,7 +88,7 @@ int main()
   std::cout << "bar: " << bar.joinable() << std::endl;
   std::cout << "qux: " << qux.joinable() << std::endl;
 
-  foo.create(myFooFunction);
+  foo.create((vpThread::Fn)myFooFunction);
 
   std::cout << "Joinable after creation:" << std::endl;
   std::cout << "foo: " << foo.joinable() << std::endl;
