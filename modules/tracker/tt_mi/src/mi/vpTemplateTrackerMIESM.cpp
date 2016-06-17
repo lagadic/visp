@@ -284,7 +284,6 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
 
   vpColVector dpinv(nbParam);
 
-  double dx,dy;
   double alpha=2.;
 
   int i,j;
@@ -364,7 +363,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       int nthreads = omp_get_num_procs() ;
       //std::cout << "file: " __FILE__ << " line: " << __LINE__ << " function: " << __FUNCTION__ << " nthread: " << nthreads << std::endl;
       omp_set_num_threads(nthreads);
-#pragma omp parallel for private(point, /*Tij,IW,*/ i,j,i2,j2,/*cr,ct,er,et,*/dx,dy) default(shared)
+#pragma omp parallel for private(point, i,j,i2,j2) default(shared)
 #endif
       for(point=0;point<(int)templateSize;point++)
       {
@@ -386,8 +385,8 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
           //else
           //  IW=BI.getValue(i2,j2);
 
-          dx=1.*dIx.getValue(i2,j2)*(Nc-1)/255.;
-          dy=1.*dIy.getValue(i2,j2)*(Nc-1)/255.;
+          double dx=1.*dIx.getValue(i2,j2)*(Nc-1)/255.;
+          double dy=1.*dIy.getValue(i2,j2)*(Nc-1)/255.;
 
           //ct=(int)((IW*(Nc-1))/255.);
           //et=((double)IW*(Nc-1))/255.-ct;
