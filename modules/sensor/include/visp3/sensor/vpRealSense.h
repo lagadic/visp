@@ -178,9 +178,10 @@ public:
   virtual ~vpRealSense();
 
   void acquire(std::vector<vpColVector> &pointcloud);
-  void acquire(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
+#ifdef VISP_HAVE_PCL
+	void acquire(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
   void acquire(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
-
+#endif
   void acquire(vpImage<unsigned char> &grey); // tested
   void acquire(vpImage<unsigned char> &grey, std::vector<vpColVector> &pointcloud);
   void acquire(vpImage<unsigned char> &grey, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, std::vector<vpColVector> &pointcloud);

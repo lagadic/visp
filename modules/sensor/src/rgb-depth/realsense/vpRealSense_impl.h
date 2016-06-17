@@ -36,6 +36,7 @@
  *****************************************************************************/
 
 #include <librealsense/rs.hpp>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 
 template <class Type>
@@ -127,6 +128,7 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::vector <rs
   }
 }
 
+#ifdef VISP_HAVE_PCL
 // Retrieve point cloud
 void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::vector <rs::intrinsics> &m_intrinsics, float max_Z, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
 {
@@ -231,4 +233,4 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::vector <rs
     pointcloud->clear();
   }
 }
-
+#endif
