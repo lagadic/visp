@@ -124,9 +124,9 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
   void eye();
 
   vpColVector getCol(const unsigned int j) const;
-  vpRotationMatrix getRotationMatrix();
-  vpThetaUVector getThetaUVector();
-  vpTranslationVector getTranslationVector();
+  vpRotationMatrix getRotationMatrix() const;
+  vpThetaUVector getThetaUVector() const ;
+  vpTranslationVector getTranslationVector() const;
 
   // Invert the homogeneous matrix.
   vpHomogeneousMatrix inverse() const ;

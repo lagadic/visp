@@ -783,7 +783,7 @@ void vpHomogeneousMatrix::convert(std::vector<double> &M)
 /*!
   Return the translation vector from the homogeneous transformation matrix.
  */
-vpTranslationVector vpHomogeneousMatrix::getTranslationVector()
+vpTranslationVector vpHomogeneousMatrix::getTranslationVector() const
 {
   vpTranslationVector tr;
   this->extract(tr);
@@ -793,7 +793,7 @@ vpTranslationVector vpHomogeneousMatrix::getTranslationVector()
 /*!
   Return the rotation matrix from the homogeneous transformation matrix.
  */
-vpRotationMatrix vpHomogeneousMatrix::getRotationMatrix()
+vpRotationMatrix vpHomogeneousMatrix::getRotationMatrix() const
 {
   vpRotationMatrix R;
   this->extract(R);
@@ -804,7 +804,7 @@ vpRotationMatrix vpHomogeneousMatrix::getRotationMatrix()
   Return the \f$\theta {\bf u}\f$ vector that corresponds to the rotation part of the
   homogeneous transformation.
  */
-vpThetaUVector vpHomogeneousMatrix::getThetaUVector()
+vpThetaUVector vpHomogeneousMatrix::getThetaUVector() const
 {
   vpThetaUVector tu;
   this->extract(tu);
