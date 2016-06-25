@@ -423,16 +423,52 @@ vpTranslationVector vpTranslationVector::operator/(const double x) const
 }
 
 /*!
-  Copy operator.  
+  Copy operator.
   \param tv : Translation vector to copy
   \return A copy of \e tv.
 
   \code
-  vpTranslationVector t1(1,2,3); 
-  vpTranslationVector t2; 
+  vpColVector t1(3);
+  t1[0] = 1;
+  t1[1] = 2;
+  t1[2] = 3;
+  vpTranslationVector t2;
   t2 = t1;
-  // t1 is unchanged 
-  // t2 is now equal to t1 : 1, 2, 3 
+  // t1 is unchanged
+  // t2 is now equal to t1 : 1, 2, 3
+  \endcode
+*/
+vpTranslationVector &vpTranslationVector::operator=(const vpColVector &tv)
+{
+  if (tv.size() != 3) {
+    vpException::vpException(vpException::dimensionError, "Cannot initialize a translation vector from a %d-dimension col vector", tv.size());
+  }
+  unsigned int k = tv.size() ;
+  if (rowNum != k){
+    try {
+      resize(k, 1);
+    }
+    catch(...)
+    {
+      throw ;
+    }
+  }
+
+  memcpy(data, tv.data, rowNum*sizeof(double)) ;
+
+  return *this;
+}
+/*!
+  Copy operator.
+  \param tv : Translation vector to copy
+  \return A copy of \e tv.
+
+  \code
+  vpTranslationVector t1(1,2,3);
+  vpTranslationVector t2;
+  t2 = t1;
+  // t1 is unchanged
+  // t2 is now equal to t1 : 1, 2, 3
   \endcode
 */
 vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &tv)

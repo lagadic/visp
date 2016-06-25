@@ -128,6 +128,7 @@ public:
   vpTranslationVector operator/(const double x) const;
   vpTranslationVector & operator/=(double x);
   // Copy operator.   Allow operation such as A = v
+  vpTranslationVector &operator=(const vpColVector &tv);
   vpTranslationVector &operator=(const vpTranslationVector &tv);
 
   vpTranslationVector &operator=(double x) ;
