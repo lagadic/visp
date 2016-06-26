@@ -420,7 +420,7 @@ int main()
 vpHomogeneousMatrix
 vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &M) const
 {
-  vpHomogeneousMatrix p,p1 ;
+  vpHomogeneousMatrix p;
 
   vpRotationMatrix R1, R2, R ;
   vpTranslationVector T1, T2 , T;
@@ -439,6 +439,30 @@ vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &M) const
   p.insert(R) ;
 
   return p;
+}
+
+/*!
+  Operator that allow to multiply an homogeneous matrix by an other one.
+
+  \code
+#include <visp3/core/vpHomogeneousMatrix.h>
+
+int main()
+{
+  vpHomogeneousMatrix M1, M2;
+  // Initialize M1 and M2...
+
+  // Compute M1 = M1 * M2
+  M1 *= M2;
+}
+  \endcode
+
+*/
+vpHomogeneousMatrix &
+vpHomogeneousMatrix::operator*=(const vpHomogeneousMatrix &M)
+{
+  (*this) = (*this) * M;
+  return (*this);
 }
 
 /*!

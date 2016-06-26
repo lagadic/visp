@@ -153,6 +153,7 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
 
   vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &M);
   vpHomogeneousMatrix operator*(const vpHomogeneousMatrix &M) const;
+  vpHomogeneousMatrix &operator*=(const vpHomogeneousMatrix &M);
 
   vpColVector operator*(const vpColVector &v) const;
   // Multiply by a point
