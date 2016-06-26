@@ -161,6 +161,7 @@ class VISP_EXPORT vpRzyzVector : public vpRotationVector
   vpRzyzVector(const vpThetaUVector&  tu);
 
   vpRzyzVector(const double phi, const double theta, const double psi);
+  vpRzyzVector(const vpColVector &rzyz);
 
   //! Destructor.
   virtual ~vpRzyzVector() {};
@@ -173,8 +174,7 @@ class VISP_EXPORT vpRzyzVector : public vpRotationVector
 
   void buildFrom(const double phi, const double theta, const double psi);
 
-  vpRzyzVector &operator=(double x) ;
-
+  vpRzyzVector &operator=(const vpColVector &rzyz);
+  vpRzyzVector &operator=(double x);
 } ;
 #endif
-

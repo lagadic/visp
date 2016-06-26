@@ -56,6 +56,16 @@ vpThetaUVector::vpThetaUVector()
 vpThetaUVector::vpThetaUVector(const vpThetaUVector &tu)
   : vpRotationVector(tu)
 {}
+/*! Copy constructor from a 3-dimension vector. */
+vpThetaUVector::vpThetaUVector(const vpColVector &tu)
+  : vpRotationVector(3)
+{
+  if (tu.size() != 3) {
+    vpException::vpException(vpException::dimensionError, "Cannot construct a theta-u vector from a %d-dimension col vector", tu.size());
+  }
+  for (unsigned int i=0; i< 3; i++)
+    data[i] = tu[i];
+}
 
 /*!
 Initialize a \f$\theta {\bf u}\f$ vector from an homogeneous matrix.
@@ -278,6 +288,38 @@ vpThetaUVector &vpThetaUVector::operator=(double v)
 {
   for (unsigned int i=0; i< dsize; i++)
     data[i] = v;
+
+  return *this;
+}
+
+/*!
+
+  Copy operator that initializes a \f$\theta {\bf u}\f$ vector from a 3-dimension column vector \e tu.
+
+  \param tu : 3-dimension vector containing the values of the \f$\theta {\bf u}\f$  vector.
+
+\code
+#include <visp3/core/vpThetaUVector.h>
+
+int main()
+{
+  vpColVector v(3);
+  v[0] = 0.1;
+  v[1] = 0.2;
+  v[2] = 0.3;
+  vpThetaUVector tu;
+  tu = v;
+  // tu is now equal to v : 0.1, 0.2, 0.3
+}
+\endcode
+*/
+vpThetaUVector &vpThetaUVector::operator=(const vpColVector &tu)
+{
+  if (tu.size() != 3) {
+    vpException::vpException(vpException::dimensionError, "Cannot set a theta-u vector from a %d-dimension col vector", tu.size());
+  }
+  for (unsigned int i=0; i< 3; i++)
+    data[i] = tu[i];
 
   return *this;
 }

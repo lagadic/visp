@@ -169,6 +169,7 @@ public:
   vpThetaUVector(const vpQuaternionVector& q) ;
 
   vpThetaUVector(const double tux, const double tuy, const double tuz);
+  vpThetaUVector(const vpColVector &tu);
   //! Destructor.
   virtual ~vpThetaUVector() {};
 
@@ -188,6 +189,7 @@ public:
 
   void buildFrom(const double tux, const double tuy, const double tuz);
 
+  vpThetaUVector &operator=(const vpColVector &tu);
   vpThetaUVector &operator=(double x) ;
 
   // extract the angle and the axis from the ThetaU representation

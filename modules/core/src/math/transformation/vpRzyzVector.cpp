@@ -91,6 +91,17 @@ vpRzyzVector::vpRzyzVector(const vpThetaUVector& tu)
   buildFrom(tu) ;
 }
 
+/*! Copy constructor from a 3-dimension vector. */
+vpRzyzVector::vpRzyzVector(const vpColVector &rzyz)
+  : vpRotationVector (3)
+{
+  if (rzyz.size() != 3) {
+    vpException::vpException(vpException::dimensionError, "Cannot construct a R-zyz vector from a %d-dimension col vector", rzyz.size());
+  }
+  for (unsigned int i=0; i< 3; i++)
+    data[i] = rzyz[i];
+}
+
 /*! 
   Convert a rotation matrix into a \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler
   angles vector.
@@ -175,4 +186,37 @@ vpRzyzVector::buildFrom(const double phi, const double theta, const double psi)
   data[0] = phi ;
   data[1] = theta ;
   data[2] = psi ;
+}
+
+/*!
+
+  Copy operator that initializes a \f$R_{zyz}=(\varphi,\theta,\psi)\f$
+  Euler angles vector from a 3-dimension column vector.
+
+  \param rzyz : 3-dimension vector containing the values of the rotation vector.
+
+\code
+#include <visp3/core/vpRzyzVector.h>
+
+int main()
+{
+  vpColVector v(3);
+  v[0] = 0.1;
+  v[1] = 0.2;
+  v[2] = 0.3;
+  vpRzyxVector rzyz;
+  rzyz = v;
+  // rzyz is now equal to v : 0.1, 0.2, 0.3
+}
+\endcode
+*/
+vpRzyzVector &vpRzyzVector::operator=(const vpColVector &rzyz)
+{
+  if (rzyz.size() != 3) {
+    vpException::vpException(vpException::dimensionError, "Cannot set a R-zyz vector from a %d-dimension col vector", rzyz.size());
+  }
+  for (unsigned int i=0; i< 3; i++)
+    data[i] = rzyz[i];
+
+  return *this;
 }

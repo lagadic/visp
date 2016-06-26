@@ -88,6 +88,7 @@ public:
   vpQuaternionVector(const double qx, const double qy, const double qz,const double qw) ;
   vpQuaternionVector(const vpRotationMatrix &R);
   vpQuaternionVector(const vpThetaUVector& tu) ;
+  vpQuaternionVector(const vpColVector &q);
 
   //! Destructor.
   virtual ~vpQuaternionVector() {};
@@ -108,6 +109,7 @@ public:
   vpQuaternionVector operator*(const double l) const;
   vpQuaternionVector operator*(const vpQuaternionVector &rq) const;
   vpQuaternionVector operator/(const double l) const;
+  vpQuaternionVector &operator=(const vpColVector &q);
 
   vpQuaternionVector conjugate() const;
   vpQuaternionVector inverse() const;

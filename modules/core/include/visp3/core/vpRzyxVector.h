@@ -161,6 +161,7 @@ public:
 
   // initialize a Rzyx vector from a ThetaU vector
   vpRzyxVector(const vpThetaUVector& tu) ;
+  vpRzyxVector(const vpColVector &rzyx);
 
   //! Destructor.
   virtual ~vpRzyxVector() {};
@@ -173,6 +174,7 @@ public:
 
   void buildFrom(const double phi, const double theta, const double psi);
 
+  vpRzyxVector &operator=(const vpColVector &rzyx);
   vpRzyxVector &operator=(double x) ;
 } ;
 

@@ -69,6 +69,17 @@ vpQuaternionVector::vpQuaternionVector(const double x_, const double y_,
   set(x_, y_, z_, w_);
 }
 
+//! Constructor from a 4-dimension vector of doubles.
+vpQuaternionVector::vpQuaternionVector(const vpColVector &q)
+  : vpRotationVector(4)
+{
+  if (q.size() != 4) {
+    vpException::vpException(vpException::dimensionError, "Cannot construct a quaternion vector from a %d-dimension col vector", q.size());
+  }
+  for (unsigned int i=0; i<4; i++)
+    data[i] = q[i];
+}
+
 /*! 
   Constructs a quaternion from a rotation matrix.
 
@@ -190,6 +201,38 @@ vpQuaternionVector vpQuaternionVector::operator/(const double l) const
   }
 
   return vpQuaternionVector(x()/l,y()/l,z()/l,w()/l);
+}
+/*!
+
+  Copy operator that initializes a quaternion vector from a 4-dimension column vector \e q.
+
+  \param q : 4-dimension vector containing the values of the quaternion vector.
+
+\code
+#include <visp3/core/vpQuaternionVector.h>
+
+int main()
+{
+  vpColVector v(4);
+  v[0] = 0.1;
+  v[1] = 0.2;
+  v[2] = 0.3;
+  v[3] = 0.4;
+  vpQuaternionVector q;
+  q = v;
+  // q is now equal to v : 0.1, 0.2, 0.3, 0.4
+}
+\endcode
+*/
+vpQuaternionVector &vpQuaternionVector::operator=(const vpColVector &q)
+{
+  if (q.size() != 4) {
+    vpException::vpException(vpException::dimensionError, "Cannot set a quaternion vector from a %d-dimension col vector", q.size());
+  }
+  for (unsigned int i=0; i< 4; i++)
+    data[i] = q[i];
+
+  return *this;
 }
 
 /*! 
