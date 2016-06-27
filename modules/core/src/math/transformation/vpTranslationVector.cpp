@@ -441,7 +441,7 @@ vpTranslationVector vpTranslationVector::operator/(const double x) const
 vpTranslationVector &vpTranslationVector::operator=(const vpColVector &tv)
 {
   if (tv.size() != 3) {
-    vpException::vpException(vpException::dimensionError, "Cannot initialize a translation vector from a %d-dimension col vector", tv.size());
+    throw(vpException(vpException::dimensionError, "Cannot initialize a translation vector from a %d-dimension col vector", tv.size()));
   }
   unsigned int k = tv.size() ;
   if (rowNum != k){

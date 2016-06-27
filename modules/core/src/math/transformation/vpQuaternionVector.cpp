@@ -74,7 +74,7 @@ vpQuaternionVector::vpQuaternionVector(const vpColVector &q)
   : vpRotationVector(4)
 {
   if (q.size() != 4) {
-    vpException::vpException(vpException::dimensionError, "Cannot construct a quaternion vector from a %d-dimension col vector", q.size());
+    throw(vpException(vpException::dimensionError, "Cannot construct a quaternion vector from a %d-dimension col vector", q.size()));
   }
   for (unsigned int i=0; i<4; i++)
     data[i] = q[i];
@@ -227,7 +227,7 @@ int main()
 vpQuaternionVector &vpQuaternionVector::operator=(const vpColVector &q)
 {
   if (q.size() != 4) {
-    vpException::vpException(vpException::dimensionError, "Cannot set a quaternion vector from a %d-dimension col vector", q.size());
+    throw(vpException(vpException::dimensionError, "Cannot set a quaternion vector from a %d-dimension col vector", q.size()));
   }
   for (unsigned int i=0; i< 4; i++)
     data[i] = q[i];

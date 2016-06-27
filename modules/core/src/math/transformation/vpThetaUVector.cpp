@@ -61,7 +61,7 @@ vpThetaUVector::vpThetaUVector(const vpColVector &tu)
   : vpRotationVector(3)
 {
   if (tu.size() != 3) {
-    vpException::vpException(vpException::dimensionError, "Cannot construct a theta-u vector from a %d-dimension col vector", tu.size());
+    throw(vpException(vpException::dimensionError, "Cannot construct a theta-u vector from a %d-dimension col vector", tu.size()));
   }
   for (unsigned int i=0; i< 3; i++)
     data[i] = tu[i];
@@ -316,7 +316,7 @@ int main()
 vpThetaUVector &vpThetaUVector::operator=(const vpColVector &tu)
 {
   if (tu.size() != 3) {
-    vpException::vpException(vpException::dimensionError, "Cannot set a theta-u vector from a %d-dimension col vector", tu.size());
+    throw(vpException(vpException::dimensionError, "Cannot set a theta-u vector from a %d-dimension col vector", tu.size()));
   }
   for (unsigned int i=0; i< 3; i++)
     data[i] = tu[i];

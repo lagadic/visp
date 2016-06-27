@@ -96,7 +96,7 @@ vpRzyzVector::vpRzyzVector(const vpColVector &rzyz)
   : vpRotationVector (3)
 {
   if (rzyz.size() != 3) {
-    vpException::vpException(vpException::dimensionError, "Cannot construct a R-zyz vector from a %d-dimension col vector", rzyz.size());
+    throw(vpException(vpException::dimensionError, "Cannot construct a R-zyz vector from a %d-dimension col vector", rzyz.size()));
   }
   for (unsigned int i=0; i< 3; i++)
     data[i] = rzyz[i];
@@ -213,7 +213,7 @@ int main()
 vpRzyzVector &vpRzyzVector::operator=(const vpColVector &rzyz)
 {
   if (rzyz.size() != 3) {
-    vpException::vpException(vpException::dimensionError, "Cannot set a R-zyz vector from a %d-dimension col vector", rzyz.size());
+    throw(vpException(vpException::dimensionError, "Cannot set a R-zyz vector from a %d-dimension col vector", rzyz.size()));
   }
   for (unsigned int i=0; i< 3; i++)
     data[i] = rzyz[i];
