@@ -110,7 +110,7 @@ if(USE_PCL)
   find_package(VTK QUIET)
   if (VTK_FOUND AND NOT ANDROID)
     # Fix for Ubuntu 16.04 to add vtkFiltering as dependency. Note that vtkFiltering does't exists on OSX
-    list(FIND PCL_VTK_LIBRARIES "vtkFiltering" vtkFiltering_exists_)
+    list(FIND VTK_LIBRARIES "vtkFiltering" vtkFiltering_exists_)
     if(NOT ${vtkFiltering_exists_} EQUAL -1)
       list(APPEND PCL_VTK_LIBRARIES "vtkFiltering") # seems required on Ubuntu 16.04
     endif()
