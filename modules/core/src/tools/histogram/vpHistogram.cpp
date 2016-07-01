@@ -48,7 +48,86 @@
 #include <visp3/core/vpHistogram.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpThread.h>
 
+
+#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+namespace {
+  struct Histogram_Param_t {
+    unsigned int m_start_index;
+    unsigned int m_end_index;
+
+    unsigned int m_lut[256];
+    unsigned int *m_histogram;
+    const vpImage<unsigned char> *m_I;
+
+    Histogram_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_histogram(NULL), m_I(NULL) {
+    }
+
+    Histogram_Param_t(const unsigned int start_index, const unsigned int end_index,
+        const vpImage<unsigned char> * const I) :
+      m_start_index(start_index), m_end_index(end_index), m_lut(), m_histogram(NULL), m_I(I) {
+    }
+
+    ~Histogram_Param_t() {
+      if(m_histogram != NULL) {
+        delete []m_histogram;
+      }
+    }
+  };
+
+  vpThread::Return computeHistogramThread(vpThread::Args args) {
+    Histogram_Param_t *histogram_param = ( (Histogram_Param_t *) args );
+    unsigned int start_index = histogram_param->m_start_index;
+    unsigned int end_index = histogram_param->m_end_index;
+
+    const vpImage<unsigned char> *I = histogram_param->m_I;
+
+    unsigned char *ptrStart = (unsigned char*) (I->bitmap) + start_index;
+    unsigned char *ptrEnd = (unsigned char*) (I->bitmap) + end_index;;
+    unsigned char *ptrCurrent = ptrStart;
+
+
+  //  while(ptrCurrent != ptrEnd) {
+  //    histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+  //    ++ptrCurrent;
+  //  }
+
+    //Unroll loop version
+    for(; ptrCurrent < ptrEnd - 8;) {
+      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+      ptrCurrent++;
+
+      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+      ptrCurrent++;
+
+      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+      ptrCurrent++;
+
+      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+      ptrCurrent++;
+
+      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+      ptrCurrent++;
+
+      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+      ptrCurrent++;
+
+      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+      ptrCurrent++;
+
+      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+      ptrCurrent++;
+    }
+
+    for(; ptrCurrent != ptrEnd; ++ptrCurrent) {
+      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+    }
+
+    return 0;
+  }
+}
+#endif
 
 bool compare_vpHistogramPeak (vpHistogramPeak first, vpHistogramPeak second);
 
@@ -156,8 +235,9 @@ vpHistogram::init(unsigned size_)
 
   \param I : Gray level image.
   \param nbins : Number of bins to compute the histogram.
+  \param nbThreads : Number of threads to use for the computation.
 */
-void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int nbins)
+void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int nbins, const unsigned int nbThreads)
 {
   if(size != nbins) {
     if (histogram != NULL) {
@@ -174,19 +254,90 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
 
   memset(histogram, 0, size * sizeof(unsigned));
 
+
+  bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
+#if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
+  use_single_thread = true;
+#endif
+
+  if(!use_single_thread && I.getSize() <= nbThreads) {
+    use_single_thread = true;
+  }
+
+
   unsigned int lut[256];
   for(unsigned int i = 0; i < 256; i++) {
     lut[i] = (unsigned int) (i * size / 256.0);
   }
 
-  unsigned int size_ = I.getWidth()*I.getHeight();
-  unsigned char *ptrStart = (unsigned char*) I.bitmap;
-  unsigned char *ptrEnd = ptrStart + size_;
-  unsigned char *ptrCurrent = ptrStart;
+  if(use_single_thread) {
+    //Single thread
 
-  while(ptrCurrent != ptrEnd) {
-    histogram[ lut[ *ptrCurrent ] ] ++;
-    ++ptrCurrent;
+    unsigned int size_ = I.getWidth()*I.getHeight();
+    unsigned char *ptrStart = (unsigned char*) I.bitmap;
+    unsigned char *ptrEnd = ptrStart + size_;
+    unsigned char *ptrCurrent = ptrStart;
+
+    while(ptrCurrent != ptrEnd) {
+      histogram[ lut[ *ptrCurrent ] ] ++;
+      ++ptrCurrent;
+    }
+  } else {
+    //Multi-threads
+
+    std::vector<vpThread *> threadpool;
+    std::vector<Histogram_Param_t *> histogramParams;
+
+    Histogram_Param_t *histogram_param = NULL;
+    vpThread *histogram_thread = NULL;
+
+    unsigned int image_size = I.getSize();
+    unsigned int step = image_size / nbThreads;
+    unsigned int last_step = image_size - step * (nbThreads-1);
+
+    for(size_t index = 0; index < nbThreads; index++) {
+      unsigned int start_index = index*step;
+      unsigned int end_index = (index+1)*step;
+
+      if(index == nbThreads-1) {
+        end_index = start_index+last_step;
+      }
+
+      histogram_param = new Histogram_Param_t(start_index, end_index, &I);
+      histogram_param->m_histogram = new unsigned int[size];
+      memset(histogram_param->m_histogram, 0, size * sizeof(unsigned));
+      memcpy(histogram_param->m_lut, lut, 256*sizeof(unsigned int));
+
+      histogramParams.push_back(histogram_param);
+
+      // Start the threads
+      histogram_thread = new vpThread((vpThread::Fn) computeHistogramThread, (vpThread::Args) histogram_param);
+      threadpool.push_back(histogram_thread);
+    }
+
+    for(size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+      // Wait until thread ends up
+      threadpool[cpt]->join();
+    }
+
+    for(unsigned int cpt1 = 0; cpt1 < size; cpt1++) {
+      unsigned int sum = 0;
+
+      for(size_t cpt2 = 0; cpt2 < histogramParams.size(); cpt2++) {
+        sum += histogramParams[cpt2]->m_histogram[cpt1];
+      }
+
+      histogram[cpt1] = sum;
+    }
+
+    //Delete
+    for(size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+      delete threadpool[cpt];
+    }
+
+    for(size_t cpt = 0; cpt < histogramParams.size(); cpt++) {
+      delete histogramParams[cpt];
+    }
   }
 }
 
