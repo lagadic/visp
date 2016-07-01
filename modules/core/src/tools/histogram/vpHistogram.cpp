@@ -235,9 +235,9 @@ vpHistogram::init(unsigned size_)
 
   \param I : Gray level image.
   \param nbins : Number of bins to compute the histogram.
-  \param nThreads : Number of threads to use for the computation.
+  \param nbThreads : Number of threads to use for the computation.
 */
-void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int nbins, const unsigned int nThreads)
+void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int nbins, const unsigned int nbThreads)
 {
   if(size != nbins) {
     if (histogram != NULL) {
@@ -255,10 +255,14 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
   memset(histogram, 0, size * sizeof(unsigned));
 
 
-  bool use_single_thread = (nThreads == 1);
+  bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
 #if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
   use_single_thread = true;
 #endif
+
+  if(!use_single_thread && I.getSize() <= nbThreads) {
+    use_single_thread = true;
+  }
 
 
   unsigned int lut[256];
@@ -280,11 +284,6 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
     }
   } else {
     //Multi-threads
-
-    unsigned int nbThreads = nThreads;
-    if(nbThreads == 0) {
-      nbThreads = 4; //Default value
-    }
 
     std::vector<vpThread *> threadpool;
     std::vector<Histogram_Param_t *> histogramParams;
