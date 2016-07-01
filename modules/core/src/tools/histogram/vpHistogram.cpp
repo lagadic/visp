@@ -48,10 +48,11 @@
 #include <visp3/core/vpHistogram.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/core/vpThread.h>
 
 
 #if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#include <visp3/core/vpThread.h>
+
 namespace {
   struct Histogram_Param_t {
     unsigned int m_start_index;
@@ -96,28 +97,28 @@ namespace {
     //Unroll loop version
     for(; ptrCurrent < ptrEnd - 8;) {
       histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ptrCurrent++;
+      ++ptrCurrent;
 
       histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ptrCurrent++;
+      ++ptrCurrent;
 
       histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ptrCurrent++;
+      ++ptrCurrent;
 
       histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ptrCurrent++;
+      ++ptrCurrent;
 
       histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ptrCurrent++;
+      ++ptrCurrent;
 
       histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ptrCurrent++;
+      ++ptrCurrent;
 
       histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ptrCurrent++;
+      ++ptrCurrent;
 
       histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ptrCurrent++;
+      ++ptrCurrent;
     }
 
     for(; ptrCurrent != ptrEnd; ++ptrCurrent) {
@@ -283,6 +284,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
       ++ptrCurrent;
     }
   } else {
+#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
     //Multi-threads
 
     std::vector<vpThread *> threadpool;
@@ -338,6 +340,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
     for(size_t cpt = 0; cpt < histogramParams.size(); cpt++) {
       delete histogramParams[cpt];
     }
+#endif
   }
 }
 
