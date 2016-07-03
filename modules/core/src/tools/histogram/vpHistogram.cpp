@@ -297,7 +297,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
     unsigned int step = image_size / nbThreads;
     unsigned int last_step = image_size - step * (nbThreads-1);
 
-    for(size_t index = 0; index < nbThreads; index++) {
+    for(unsigned int index = 0; index < nbThreads; index++) {
       unsigned int start_index = index*step;
       unsigned int end_index = (index+1)*step;
 
