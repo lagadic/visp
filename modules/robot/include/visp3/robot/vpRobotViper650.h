@@ -414,6 +414,7 @@ public:  /* Methode publiques */
   void getDisplacement(vpRobot::vpControlFrameType frame,
                        vpColVector &displacement);
   void getForceTorque(vpColVector &H) const;
+  vpColVector getForceTorque() const;
 
   double getMaxRotationVelocityJoint6() const;
 

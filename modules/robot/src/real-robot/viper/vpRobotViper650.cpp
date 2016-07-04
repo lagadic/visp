@@ -2439,8 +2439,7 @@ int main()
   \sa biasForceTorqueSensor()
 
 */
-void
-    vpRobotViper650::getForceTorque(vpColVector &H) const
+void vpRobotViper650::getForceTorque(vpColVector &H) const
 {
   InitTry;
 
@@ -2454,6 +2453,62 @@ void
     throw vpRobotException (vpRobotException::lowLevelError,
                             "Cannot get force/torque measures.");
   }
+}
+
+/*!
+
+  Get the rough force/torque sensor measures.
+
+  \param H: [Fx, Fy, Fz, Tx, Ty, Tz] Forces/torques measured by the sensor.
+
+  The code below shows how to get the force/torque measures after a sensor bias.
+
+  \code
+#include <visp3/core/vpConfig.h>
+#include <visp3/robot/vpRobotViper650.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpTime.h>
+
+int main()
+{
+#ifdef VISP_HAVE_VIPER650
+  vpRobotViper650 robot;
+
+  // Bias the force/torque sensor
+  robot.biasForceTorqueSensor();
+
+  for (unsigned int i=0; i< 10; i++) {
+    vpColVector H = robot.getForceTorque(); // Get force/torque measures [Fx, Fy, Fz, Tx, Ty, Tz]
+    std::cout << "Measured force/torque: " << H.t() << std::endl;
+    vpTime::wait(5);
+  }
+#endif
+}
+  \endcode
+
+  \exception vpRobotException::lowLevelError : If the force/torque measures
+  cannot be get from the low level controller.
+
+  \sa biasForceTorqueSensor()
+
+*/
+vpColVector vpRobotViper650::getForceTorque() const
+{
+  InitTry;
+
+  vpColVector H(6);
+
+  Try( PrimitiveTFS_ACQ_Viper650(H.data) );
+
+  return H;
+
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot get the force/torque measures.");
+    throw vpRobotException (vpRobotException::lowLevelError,
+                            "Cannot get force/torque measures.");
+  }
+  return H; // Here to avoid a warning, but should never be called
 }
 
 /*!
