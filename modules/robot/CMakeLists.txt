@@ -113,7 +113,7 @@ if(USE_COIN3D)
   list(APPEND opt_libs ${COIN3D_LIBRARIES})
 endif()
 
-vp_add_module(robot visp_core OPTIONAL visp_io visp_gui)
+vp_add_module(robot visp_core OPTIONAL visp_io visp_gui visp_sensor)
 vp_glob_module_sources()
 
 if(USE_VIRTUOSE)

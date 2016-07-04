@@ -47,6 +47,7 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
 #include <visp3/robot/vpRobot.h>
@@ -264,6 +265,18 @@ vpRobotViper850::init (void)
   q_prev_getdis = 0;
   first_time_getdis = true;
 
+#if defined(USE_ATI_DAQ) && defined(VISP_HAVE_COMEDI)
+  std::string calibfile;
+#  ifdef VISP_HAVE_ACCESS_TO_NAS
+  calibfile = "/udd/fspindle/robot/Viper850/Viper850-code/ati/FT17824.cal";
+  if (! vpIoTools::checkFilename(calibfile))
+    throw(vpException(vpException::ioError, "ATI F/T calib file \"%s\" doesn't exist", calibfile.c_str()));
+#  else
+  throw(vpException(vpException::ioError, "You don't have access to NAS (/udd/) to retrive ATI F/T calib file"));
+#  endif
+  ati.setCalibrationFile(calibfile);
+  ati.open();
+#endif
 
   // Initialize the firewire connection
   Try( InitializeConnection(verbose_) );
@@ -665,6 +678,10 @@ vpRobotViper850::set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &er
 */
 vpRobotViper850::~vpRobotViper850 (void)
 {
+#if defined(USE_ATI_DAQ) && defined(VISP_HAVE_COMEDI)
+  ati.close();
+#endif
+
   InitTry;
 
   setRobotState(vpRobot::STATE_STOP) ;
@@ -2388,18 +2405,18 @@ void
   
   Bias the force/torque sensor.
 
-  \warning This function waits 500 ms after the bias request to be sure the
-  next measures take into account the bias.
-  
-  \exception vpRobotException::lowLevelError : If the force/torque sensor bias
-  cannot be done on the low level controller.
-
-  \sa getForceTorque()
+  \sa unbiasForceTorqueSensor(), getForceTorque()
 
 */
-void
-    vpRobotViper850::biasForceTorqueSensor() const
+void vpRobotViper850::biasForceTorqueSensor()
 {
+#if defined(USE_ATI_DAQ)
+#  if defined(VISP_HAVE_COMEDI)
+  ati.bias();
+#  else
+  throw(vpException(vpException::fatalError, "Cannot use ATI F/T if comedi is not installed. Try sudo apt-get install libcomedi-dev"));
+#  endif
+#else // Use serial link
   InitTry;
 
   Try( PrimitiveTFS_BIAS_Viper850() );
@@ -2413,6 +2430,27 @@ void
     throw vpRobotException (vpRobotException::lowLevelError,
                             "Cannot bias the force/torque sensor.");
   }
+#endif
+}
+
+/*!
+
+  Unbias the force/torque sensor.
+
+  \sa biasForceTorqueSensor(), getForceTorque()
+
+*/
+void vpRobotViper850::unbiasForceTorqueSensor()
+{
+#if defined(USE_ATI_DAQ)
+#  if defined(VISP_HAVE_COMEDI)
+  ati.unbias();
+#  else
+  throw(vpException(vpException::fatalError, "Cannot use ATI F/T if comedi is not installed. Try sudo apt-get install libcomedi-dev"));
+#  endif
+#else // Use serial link
+  // Not implemented
+#endif
 }
 
 /*!
@@ -2451,12 +2489,19 @@ int main()
   \exception vpRobotException::lowLevelError : If the force/torque measures
   cannot be get from the low level controller.
 
-  \sa biasForceTorqueSensor()
+  \sa biasForceTorqueSensor(), unbiasForceTorqueSensor()
 
 */
-void
-    vpRobotViper850::getForceTorque(vpColVector &H) const
+void vpRobotViper850::getForceTorque(vpColVector &H) const
 {
+#if defined(USE_ATI_DAQ)
+#  if defined(VISP_HAVE_COMEDI)
+  H = ati.getForceTorque();
+#  else
+  (void)H;
+  throw(vpException(vpException::fatalError, "Cannot use ATI F/T if comedi is not installed. Try sudo apt-get install libcomedi-dev"));
+#  endif
+#else // Use serial link
   InitTry;
 
   H.resize (6);
@@ -2469,7 +2514,72 @@ void
     throw vpRobotException (vpRobotException::lowLevelError,
                             "Cannot get force/torque measures.");
   }
+#endif
 }
+
+/*!
+
+  Get the rough force/torque sensor measures.
+
+  \param H: [Fx, Fy, Fz, Tx, Ty, Tz] Forces/torques measured by the sensor.
+
+  The code below shows how to get the force/torque measures after a sensor bias.
+
+  \code
+#include <visp3/core/vpConfig.h>
+#include <visp3/robot/vpRobotViper850.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpTime.h>
+
+int main()
+{
+#ifdef VISP_HAVE_VIPER850
+  vpRobotViper850 robot;
+
+  // Bias the force/torque sensor
+  robot.biasForceTorqueSensor();
+
+  for (unsigned int i=0; i< 10; i++) {
+    vpColVector H = robot.getForceTorque(); // force/torque measures [Fx, Fy, Fz, Tx, Ty, Tz]
+    std::cout << "Measured force/torque: " << H.t() << std::endl;
+    vpTime::wait(5);
+  }
+#endif
+}
+  \endcode
+
+  \exception vpRobotException::lowLevelError : If the force/torque measures
+  cannot be get from the low level controller.
+
+  \sa biasForceTorqueSensor(), unbiasForceTorqueSensor()
+
+*/
+vpColVector vpRobotViper850::getForceTorque() const
+{
+#if defined(USE_ATI_DAQ)
+#  if defined(VISP_HAVE_COMEDI)
+  vpColVector H = ati.getForceTorque();
+  return H;
+#  else
+  throw(vpException(vpException::fatalError, "Cannot use ATI F/T if comedi is not installed. Try sudo apt-get install libcomedi-dev"));
+#  endif
+#else // Use serial link
+  InitTry;
+
+  vpColVector H(6);
+
+  Try( PrimitiveTFS_ACQ_Viper850(H.data) );
+  return H;
+
+  CatchPrint();
+  if (TryStt < 0) {
+    vpERROR_TRACE ("Cannot get the force/torque measures.");
+    throw vpRobotException (vpRobotException::lowLevelError,
+                            "Cannot get force/torque measures.");
+  }
+#endif
+}
+
 /*!
 
   Open the pneumatic two fingers gripper.
