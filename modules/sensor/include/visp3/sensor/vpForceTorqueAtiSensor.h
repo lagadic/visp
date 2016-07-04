@@ -43,8 +43,6 @@
 
 #include <ostream>
 
-#include <ftconfig.h> // atidaq private library
-
 #include <visp3/core/vpColVector.h>
 #include <visp3/sensor/vpComedi.h>
 
@@ -100,14 +98,6 @@ public:
   std::string getCalibrationFile() const {
     return m_calibfile;
   }
-  /*!
-     Return information read from calibration file.
-     \sa setCalibrationFile()
-   */
-  Calibration *getCalibrationInfo() const
-  {
-    return m_calibinfo;
-  }
   vpColVector getForceTorque() const;
   vpColVector getForceTorqueAsync() const;
   std::string getForceUnits() const;
@@ -126,7 +116,6 @@ protected:
   unsigned short m_num_axes;     //!< Number of axis or gages available from the sensor
   unsigned short m_num_channels; //!< Number of channels available from the sensor
   vpColVector m_sample_bias;     //!< Sample value used for bias
-  Calibration *m_calibinfo;      //! Struct containing calibration information
 };
 
 #endif

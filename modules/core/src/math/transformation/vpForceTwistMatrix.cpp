@@ -276,12 +276,9 @@ vpForceTwistMatrix::operator*(const vpMatrix &M) const
 
 int main()
 {
-  // Get the force/torque measures from the sensor
-  vpColVector sH(6); // Force/torque measures given by the sensor
-
 #ifdef VISP_HAVE_VIPER850
   vpRobotViper850 robot;
-  robot.getForceTorque(sH); // Get the force/torque measures 
+  vpColVector sH = robot.getForceTorque(sH); // Get the force/torque measures
 #endif  
 
   // Set the transformation from sensor frame to the probe frame

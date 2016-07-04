@@ -56,6 +56,12 @@ extern "C" {
 #  include "trycatch.h"
 }
 
+// If USE_ATI_DAQ defined, use DAQ board instead of serial connexion to acquire data using comedi
+#define USE_ATI_DAQ
+
+#ifdef USE_ATI_DAQ
+#  include <visp3/sensor/vpForceTorqueAtiSensor.h>
+#endif
 
 /*!
   \class vpRobotViper850
@@ -389,6 +395,9 @@ private: /* Attributs prives. */
   bool first_time_getdis;
   vpControlModeType controlMode;
 
+#if defined(USE_ATI_DAQ) && defined(VISP_HAVE_COMEDI)
+  vpForceTorqueAtiSensor ati;
+#endif
 
 public:  /* Methode publiques */
 
@@ -396,7 +405,7 @@ public:  /* Methode publiques */
   virtual ~vpRobotViper850 (void);
 
   // Force/Torque control
-  void biasForceTorqueSensor() const;
+  void biasForceTorqueSensor();
 
   void closeGripper() const;
 
@@ -414,6 +423,7 @@ public:  /* Methode publiques */
   }
 
   void getForceTorque(vpColVector &H) const;
+  vpColVector getForceTorque() const;
 
   double getMaxRotationVelocityJoint6() const;
   void getPosition (const vpRobot::vpControlFrameType frame,
@@ -482,7 +492,8 @@ public:  /* Methode publiques */
   void setVelocity (const vpRobot::vpControlFrameType frame,
                     const vpColVector & velocity);
 
-  void stopMotion() ;
+  void stopMotion();
+  void unbiasForceTorqueSensor();
 
 private:
   void getArticularDisplacement(vpColVector &displacement);
@@ -490,16 +501,6 @@ private:
 
   double maxRotationVelocity_joint6;
 };
-
-
-
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
 
 #endif
 #endif /* #ifndef vpRobotViper850_h */

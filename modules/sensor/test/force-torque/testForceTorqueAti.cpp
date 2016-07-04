@@ -45,6 +45,7 @@
 
 #include <iostream>
 
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMutex.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpThread.h>
@@ -79,8 +80,8 @@ vpThread::Return scopeFunction(vpThread::Args args)
   vpPlot scope(2, 700, 700, 100, 200, "ATI F/T sensor data");
   scope.initGraph(0,3);
   scope.initGraph(1,3);
-  scope.setTitle(0, "Forces");
-  scope.setTitle(1, "Torques");
+  scope.setTitle(0, "Forces (N)");
+  scope.setTitle(1, "Torques (Nm)");
   scope.setLegend(0, 0, "x");
   scope.setLegend(0, 1, "y");
   scope.setLegend(0, 2, "z");
@@ -151,11 +152,22 @@ vpThread::Return scopeFunction(vpThread::Args args)
 int main(int argc, char** argv)
 {
 #if defined(VISP_HAVE_ATIDAQ) && defined(VISP_HAVE_COMEDI)
+
+#ifdef VISP_HAVE_ACCESS_TO_NAS
+  (void)argc;
+  (void)argv;
+  std::string calibfile = "/udd/fspindle/robot/Viper850/Viper850-code/ati/FT17824.cal";
+  if (! vpIoTools::checkFilename(calibfile)) {
+    std::cout << "ATI F/T calib file \"" << calibfile << "\" doesn't exist";
+    return 0;
+  }
+#else
   if(argc != 2) {
     std::cout << "Usage: " << argv[0] << " <ATI calibration file FT*.cal]>" << std::endl;
     return -1;
   }
   std::string calibfile(argv[1]);
+#endif
 
   vpForceTorqueAtiSensor ati;
   ati.setCalibrationFile(calibfile);

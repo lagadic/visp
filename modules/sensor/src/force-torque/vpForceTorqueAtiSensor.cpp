@@ -39,14 +39,19 @@
 
 #if defined(VISP_HAVE_ATIDAQ) && defined(VISP_HAVE_COMEDI)
 
+#include <ftconfig.h> // atidaq private library
+
 #include <visp3/core/vpException.h>
 #include <visp3/sensor/vpForceTorqueAtiSensor.h>
+
+static Calibration *s_calibinfo = NULL;      //!< Struct containing calibration information
+
 
 /*!
  * Default constructor.
  */
 vpForceTorqueAtiSensor::vpForceTorqueAtiSensor()
-  : m_calibfile(""), m_index(1), m_num_axes(6), m_num_channels(6), m_sample_bias(), m_calibinfo(NULL)
+  : m_calibfile(""), m_index(1), m_num_axes(6), m_num_channels(6), m_sample_bias()
 {
 }
 
@@ -79,7 +84,7 @@ void vpForceTorqueAtiSensor::bias()
   for(unsigned int i=0; i<m_num_channels; i++)
     sample_bias[i] = m_sample_bias[i];
 
-  Bias(m_calibinfo, sample_bias);
+  Bias(s_calibinfo, sample_bias);
 
   delete [] sample_bias;
 }
@@ -105,7 +110,7 @@ void vpForceTorqueAtiSensor::unbias()
   for(unsigned int i=0; i<m_num_channels; i++)
     sample_bias[i] = m_sample_bias[i];
 
-  Bias(m_calibinfo, sample_bias);
+  Bias(s_calibinfo, sample_bias);
 
   delete [] sample_bias;
 }
@@ -115,10 +120,10 @@ void vpForceTorqueAtiSensor::unbias()
  */
 void vpForceTorqueAtiSensor::close()
 {
-  if(m_calibinfo != NULL) {
+  if(s_calibinfo != NULL) {
     // free memory allocated to calibration structure
-    destroyCalibration(m_calibinfo);
-    m_calibinfo = NULL;
+    destroyCalibration(s_calibinfo);
+    s_calibinfo = NULL;
   }
   vpComedi::close();
 }
@@ -146,7 +151,7 @@ vpColVector vpForceTorqueAtiSensor::getForceTorque() const
   }
 
   // convert a loaded measurement into forces and torques
-  ConvertToFT(m_calibinfo, voltage, ft);
+  ConvertToFT(s_calibinfo, voltage, ft);
 
   vpColVector sample(m_num_axes);
   for(unsigned int i=0; i<m_num_axes; i++)
@@ -163,7 +168,7 @@ vpColVector vpForceTorqueAtiSensor::getForceTorque() const
  */
 std::string vpForceTorqueAtiSensor::getForceUnits() const
 {
-  std::string units(m_calibinfo->ForceUnits);
+  std::string units(s_calibinfo->ForceUnits);
   return units;
 }
 /*!
@@ -171,7 +176,7 @@ std::string vpForceTorqueAtiSensor::getForceUnits() const
  */
 std::string vpForceTorqueAtiSensor::getTorqueUnits() const
 {
-  std::string units(m_calibinfo->TorqueUnits);
+  std::string units(s_calibinfo->TorqueUnits);
   return units;
 }
 
@@ -194,20 +199,20 @@ void vpForceTorqueAtiSensor::setCalibrationFile(const std::string &calibfile, un
   m_calibfile = calibfile;
   m_index = index;
 
-  if (m_calibinfo)
-    destroyCalibration(m_calibinfo);
+  if (s_calibinfo)
+    destroyCalibration(s_calibinfo);
 
   char file[FILENAME_MAX];
   sprintf(file, "%s", m_calibfile.c_str());
 
   // Create calibration struct
-  m_calibinfo = createCalibration(file, m_index);
-  if (m_calibinfo==NULL) {
+  s_calibinfo = createCalibration(file, m_index);
+  if (s_calibinfo==NULL) {
     throw vpException(vpException::fatalError, "Calibration file %s couldn't be loaded", m_calibfile.c_str());
   }
 
-  m_num_channels = m_calibinfo->rt.NumChannels;
-  m_num_axes = m_calibinfo->rt.NumAxes;
+  m_num_channels = s_calibinfo->rt.NumChannels;
+  m_num_axes = s_calibinfo->rt.NumAxes;
 }
 
 /*!
@@ -231,48 +236,46 @@ int main()
  */
 std::ostream & operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati)
 {
-  Calibration *calibinfo = ati.getCalibrationInfo();
-
-  if (calibinfo==NULL) {
+  if (s_calibinfo==NULL) {
     os << "Calibration Information is not available" << std::endl;
     return os;
   }
 
   // display info from calibration file
   os << "Calibration Information for " << ati.m_calibfile << ", index #" << ati.m_index << ":" << std::endl;
-  os << "                  Serial: " << calibinfo->Serial << std::endl;
-  os << "              Body Style: " << calibinfo->BodyStyle << std::endl;
-  os << "             Calibration: " << calibinfo->PartNumber << std::endl;
-  os << "        Calibration Date: " << calibinfo->CalDate << std::endl;
-  os << "                  Family: " << calibinfo->Family << std::endl;
-  os << "              # Channels: " << calibinfo->rt.NumChannels << std::endl;
-  os << "                  # Axes: " << calibinfo->rt.NumAxes << std::endl;
-  os << "             Force Units: " << calibinfo->ForceUnits << std::endl;
-  os << "            Torque Units: " << calibinfo->TorqueUnits << std::endl;
-  os << "Temperature Compensation: " << (calibinfo->TempCompAvailable ? "Yes" : "No") << std::endl;
+  os << "                  Serial: " << s_calibinfo->Serial << std::endl;
+  os << "              Body Style: " << s_calibinfo->BodyStyle << std::endl;
+  os << "             Calibration: " << s_calibinfo->PartNumber << std::endl;
+  os << "        Calibration Date: " << s_calibinfo->CalDate << std::endl;
+  os << "                  Family: " << s_calibinfo->Family << std::endl;
+  os << "              # Channels: " << s_calibinfo->rt.NumChannels << std::endl;
+  os << "                  # Axes: " << s_calibinfo->rt.NumAxes << std::endl;
+  os << "             Force Units: " << s_calibinfo->ForceUnits << std::endl;
+  os << "            Torque Units: " << s_calibinfo->TorqueUnits << std::endl;
+  os << "Temperature Compensation: " << (s_calibinfo->TempCompAvailable ? "Yes" : "No") << std::endl;
 
   // print maximum loads of axes
   os << "\nRated Loads:" << std::endl;
-  for (unsigned short i=0;i<calibinfo->rt.NumAxes;i++) {
+  for (unsigned short i=0;i<s_calibinfo->rt.NumAxes;i++) {
     char *units;
-    if ((calibinfo->AxisNames[i])[0]=='F') {
-      units=calibinfo->ForceUnits;
-    } else units=calibinfo->TorqueUnits;
-    os << calibinfo->AxisNames[i] << ": " << calibinfo->MaxLoads[i] << " " << units << std::endl;
+    if ((s_calibinfo->AxisNames[i])[0]=='F') {
+      units=s_calibinfo->ForceUnits;
+    } else units=s_calibinfo->TorqueUnits;
+    os << s_calibinfo->AxisNames[i] << ": " << s_calibinfo->MaxLoads[i] << " " << units << std::endl;
   }
 
   // print temperature compensation information, if available
-  if (calibinfo->TempCompAvailable) {
+  if (s_calibinfo->TempCompAvailable) {
     os << "\nTemperature Compensation Information:" << std::endl;
     os << "BS: ";
-    for (unsigned short i=0;i<calibinfo->rt.NumChannels-1;i++) {
-      os << calibinfo->rt.bias_slopes[i] << " ";
+    for (unsigned short i=0;i<s_calibinfo->rt.NumChannels-1;i++) {
+      os << s_calibinfo->rt.bias_slopes[i] << " ";
     }
     os << "\nGS: ";
-    for (unsigned short i=0;i<calibinfo->rt.NumChannels-1;i++) {
-      os << calibinfo->rt.gain_slopes[i] << " ";
+    for (unsigned short i=0;i<s_calibinfo->rt.NumChannels-1;i++) {
+      os << s_calibinfo->rt.gain_slopes[i] << " ";
     }
-    os << "\nTherm: " << calibinfo->rt.thermistor << std::endl;
+    os << "\nTherm: " << s_calibinfo->rt.thermistor << std::endl;
   }
 
   return os;
