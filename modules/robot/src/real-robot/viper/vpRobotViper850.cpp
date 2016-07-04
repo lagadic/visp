@@ -2577,6 +2577,7 @@ vpColVector vpRobotViper850::getForceTorque() const
     throw vpRobotException (vpRobotException::lowLevelError,
                             "Cannot get force/torque measures.");
   }
+  return H; // Here to avoid a warning, but should never be called
 #endif
 }
 
