@@ -1687,7 +1687,7 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
 
 */
 template<class Type>
-void vpImage<Type>::performLut(const Type (&)[256], const unsigned int nbThreads)
+void vpImage<Type>::performLut(const Type (&)[256], const unsigned int)
 {
 //  vpTRACE("Not implemented");
   std::cerr << "Not implemented !" << std::endl;
