@@ -51,7 +51,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS  "cdi:h"
+#define GETOPTARGS  "cdi:t:h"
 
 
 /*
@@ -68,7 +68,7 @@ void usage(const char *name, const char *badparam, std::string ipath)
 Test histogram.\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] \n\
+  %s [-i <input image path>] [-t <nb threads>]\n\
      [-h]\n                 \
 ", name);
 
@@ -82,6 +82,8 @@ OPTIONS:                                               Default\n\
      variable produces the same behaviour than using\n\
      this option.\n\
 \n\
+  -t <nb threads>\n\
+     Set the number of threads to use for the computation.\n\
   -h\n\
      Print the help.\n\n",
     ipath.c_str());
@@ -97,10 +99,11 @@ OPTIONS:                                               Default\n\
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
   \param ipath: Input image path.
+  \param nbThreads: Number of threads to use.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath)
+bool getOptions(int argc, const char **argv, std::string &ipath, unsigned int &nbThreads)
 {
   const char *optarg_;
   int c;
@@ -108,6 +111,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath)
 
     switch (c) {
     case 'i': ipath = optarg_; break;
+    case 't': nbThreads = (unsigned int) atoi(optarg_); break;
     case 'h': usage(argv[0], NULL, ipath); return false; break;
 
     case 'c':
@@ -191,6 +195,7 @@ main(int argc, const char ** argv)
     std::string opt_ipath;
     std::string ipath;
     std::string filename;
+    unsigned int nbThreads = 4;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -201,7 +206,7 @@ main(int argc, const char ** argv)
 
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath) == false) {
+    if (getOptions(argc, argv, opt_ipath, nbThreads) == false) {
       exit (-1);
     }
 
@@ -249,7 +254,6 @@ main(int argc, const char ** argv)
     std::cout << "I=" << I.getWidth() << "x" << I.getHeight() << std::endl;
 
     int nbIterations = 100;
-    unsigned int nbThreads = 4;
     unsigned int nbBins = 256;
     unsigned int sum_single_thread = 0;
     unsigned int sum_single_multithread = 0;
@@ -283,6 +287,75 @@ main(int argc, const char ** argv)
       return -1;
     }
 
+
+    //Test histogram computation on empty image
+    vpHistogram histogram;
+    vpImage<unsigned char> I_test(0, 0);
+    histogram.calculate(I_test, 256, 4);
+    if(histogram.getSize() == 256) {
+      for(unsigned int cpt = 0; cpt < 256; cpt++) {
+        if(histogram[cpt] != 0) {
+          std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
+              << " but should be zero!" << std::endl;
+        }
+      }
+    } else {
+      std::cerr << "Bad histogram size!" << std::endl;
+      return -1;
+    }
+
+
+    //Test histogram computation on image size < nbThreads
+    I_test.init(3, 1);
+    I_test = 100;
+    histogram.calculate(I_test, 256, 4);
+    if(histogram.getSize() == 256) {
+      for(unsigned int cpt = 0; cpt < 256; cpt++) {
+        if(cpt == 100) {
+          if(histogram[cpt] != I_test.getSize()) {
+            std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
+                << " but should be: " << I_test.getSize() << std::endl;
+            return -1;
+          }
+        } else {
+          if(histogram[cpt] != 0) {
+            std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
+                << " but should be zero!" << std::endl;
+          }
+        }
+      }
+    } else {
+      std::cerr << "Bad histogram size!" << std::endl;
+      return -1;
+    }
+
+
+    //Test histogram computation on small image size
+    I_test.init(7, 1);
+    I_test = 50;
+    histogram.calculate(I_test, 256, 4);
+    if(histogram.getSize() == 256) {
+      for(unsigned int cpt = 0; cpt < 256; cpt++) {
+        if(cpt == 50) {
+          if(histogram[cpt] != I_test.getSize()) {
+            std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
+                << " but should be: " << I_test.getSize() << std::endl;
+            return -1;
+          }
+        } else {
+          if(histogram[cpt] != 0) {
+            std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
+                << " but should be zero!" << std::endl;
+          }
+        }
+      }
+    } else {
+      std::cerr << "Bad histogram size!" << std::endl;
+      return -1;
+    }
+
+
+    std::cout << "testHistogram is OK!" << std::endl;
     return 0;
   }
   catch(vpException &e) {
