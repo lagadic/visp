@@ -51,13 +51,9 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS  "cdi:o:h"
-
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user);
+#define GETOPTARGS  "cdi:o:t:h"
 
 /*
-
   Print the program options.
 
   \param name : Program name.
@@ -73,7 +69,7 @@ void usage(const char *name, const char *badparam, std::string ipath, std::strin
 Test performance between methods to iterate over pixel image.\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-o <output image path>]\n\
+  %s [-i <input image path>] [-o <output image path>] [-t <nb threads>]\n\
      [-h]\n                 \
 ", name);
 
@@ -93,6 +89,9 @@ OPTIONS:                                               Default\n\
      subdirectory depending on the username, where \n\
      Klimt_grey.pgm output image is written.\n\
 \n\
+  -t <nb threads>                               \n\
+     Set the number of threads to use for the computation.\n\
+\n\
   -h\n\
      Print the help.\n\n",
     ipath.c_str(), opath.c_str(), user.c_str());
@@ -110,10 +109,12 @@ OPTIONS:                                               Default\n\
   \param ipath: Input image path.
   \param opath : Output image path.
   \param user : Username.
+  \param nbThreads : Number of threads to use.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath,
+    std::string user, unsigned int &nbThreads)
 {
   const char *optarg_;
   int c;
@@ -122,6 +123,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     switch (c) {
     case 'i': ipath = optarg_; break;
     case 'o': opath = optarg_; break;
+    case 't': nbThreads = (unsigned int) atoi(optarg_); break;
     case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
 
     case 'c':
@@ -165,6 +167,26 @@ void iterate_method1(vpImage<vpRGBa> &I, const double alpha, const double beta) 
 }
 
 /*!
+  Iterate over pixels using raw pointer and adjust the pixel intensities with the formula:
+  new_intensity = old_intensitie * alpha + beta.
+
+  \param I : Input grayscale image.
+  \param alpha : Gain.
+  \param beta: Offset.
+*/
+void iterate_method1(vpImage<unsigned char> &I, const double alpha, const double beta) {
+  unsigned int size = I.getWidth() * I.getHeight();
+  unsigned char *ptrStart = (unsigned char*) I.bitmap;
+  unsigned char *ptrEnd = ptrStart + size;
+  unsigned char *ptrCurrent = ptrStart;
+
+  while(ptrCurrent != ptrEnd) {
+    *ptrCurrent = vpMath::saturate<unsigned char>((*ptrCurrent) * alpha + beta);
+    ++ptrCurrent;
+  }
+}
+
+/*!
   Iterate over pixels using a double for loop and adjust the pixel intensities with the formula:
   new_intensity = old_intensitie * alpha + beta.
 
@@ -183,16 +205,6 @@ void iterate_method2(vpImage<vpRGBa> &I, const double alpha, const double beta) 
   }
 }
 
-/*!
-  Using a look-up table, adjust the pixel intensities.
-
-  \param I : Input color image.
-  \param lut : Look-up table mapping for each intensity the new corresponding value.
-*/
-void lut_method(vpImage<vpRGBa> &I, const vpRGBa (&lut)[256]) {
-  I.performLut(lut);
-}
-
 int
 main(int argc, const char ** argv)
 {
@@ -204,6 +216,7 @@ main(int argc, const char ** argv)
     std::string opath;
     std::string filename;
     std::string username;
+    unsigned int nbThreads = 4;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -223,7 +236,7 @@ main(int argc, const char ** argv)
     vpIoTools::getUserName(username);
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_opath, username) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_opath, username, nbThreads) == false) {
       exit (-1);
     }
 
@@ -286,7 +299,7 @@ main(int argc, const char ** argv)
 
     // Load a grey image from the disk
     filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
-    std::cout << "Read image: " << filename << std::endl;
+    std::cout << "\nRead image: " << filename << std::endl;
     vpImageIo::read(I_iterate1, filename);
     vpImageIo::read(I_iterate2, filename);
     vpImageIo::read(I_lut, filename);
@@ -334,7 +347,7 @@ main(int argc, const char ** argv)
         lut[i].A = vpMath::saturate<unsigned char>(alpha * i + beta);
       }
 
-      lut_method(I_lut, lut);
+      I_lut.performLut(lut, nbThreads);
     }
     t_lut = vpTime::measureTimeMs() - t_lut;
     std::cout << "t_lut=" << t_lut << " ms ; t_lut/" << nbIterations << "="
@@ -342,6 +355,180 @@ main(int argc, const char ** argv)
 
     filename = vpIoTools::createFilePath(opath, "Klimt_performance_lut.ppm");
     vpImageIo::write(I_lut, filename);
+
+
+    //Check results
+    bool same = true;
+    for(unsigned int i = 0; i < I_iterate1.getHeight() && same; i++) {
+      for(unsigned int j = 0; j < I_iterate1.getWidth() && same; j++) {
+        if(I_iterate1[i][j] != I_iterate2[i][j] || I_iterate1[i][j] != I_lut[i][j]) {
+          same = false;
+        }
+      }
+    }
+
+    if(!same) {
+      std::cerr << "Color images are different!" << std::endl;
+      return -1;
+    }
+
+
+    //Test LUT on grayscale image
+    vpImage<unsigned char> I_iterate_grayscale1, I_lut_grayscale;
+
+    // Load a grayscale image from the disk
+    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
+    std::cout << "\nRead image: " << filename << std::endl;
+    vpImageIo::read(I_iterate_grayscale1, filename);
+    vpImageIo::read(I_lut_grayscale, filename);
+
+    std::cout << "I_grayscale=" << I_lut_grayscale.getWidth() << "x" << I_lut_grayscale.getHeight() << std::endl;
+
+
+    //Iterate method 1 on grayscale
+    double t_iterate_grayscale1 = vpTime::measureTimeMs();
+    for(unsigned int cpt = 0; cpt < nbIterations; cpt++) {
+      iterate_method1(I_iterate_grayscale1, alpha, beta);
+    }
+    t_iterate_grayscale1 = vpTime::measureTimeMs() - t_iterate_grayscale1;
+    std::cout << "t_iterate_grayscale1=" << t_iterate_grayscale1 << " ms ; t_iterate1/" << nbIterations << "="
+        << (t_iterate_grayscale1/nbIterations) << " ms" << std::endl;
+
+    filename = vpIoTools::createFilePath(opath, "Klimt_performance_iterate1_grayscale.pgm");
+    vpImageIo::write(I_iterate_grayscale1, filename);
+
+
+    //LUT method on grayscale
+    double t_lut_grayscale = vpTime::measureTimeMs();
+    for(unsigned int cpt = 0; cpt < nbIterations; cpt++) {
+      //Construct the LUT
+      unsigned char lut[256];
+      for(unsigned int i = 0; i < 256; i++) {
+        lut[i] = vpMath::saturate<unsigned char>(alpha * i + beta);
+      }
+
+      I_lut_grayscale.performLut(lut, nbThreads);
+    }
+    t_lut_grayscale = vpTime::measureTimeMs() - t_lut_grayscale;
+    std::cout << "t_lut_grayscale=" << t_lut_grayscale << " ms ; t_lut_grayscale/" << nbIterations << "="
+        << (t_lut_grayscale/nbIterations) << " ms" << std::endl;
+
+    filename = vpIoTools::createFilePath(opath, "Klimt_performance_lut_grayscale.pgm");
+    vpImageIo::write(I_lut_grayscale, filename);
+
+
+    //Check grayscale image
+    same = true;
+    for(unsigned int i = 0; i < I_lut_grayscale.getHeight() && same; i++) {
+      for(unsigned int j = 0; j < I_lut_grayscale.getWidth() && same; j++) {
+        if(I_lut_grayscale[i][j] != I_iterate_grayscale1[i][j]) {
+          same = false;
+        }
+      }
+    }
+
+    if(!same) {
+      std::cerr << "Grayscale images are different!" << std::endl;
+      return -1;
+    }
+
+
+    //Computation time on color image
+    vpImageIo::read(I_lut, filename);
+
+    double t_lut_multithread = vpTime::measureTimeMs();
+    for(unsigned int cpt = 0; cpt < nbIterations*10; cpt++) {
+      //Construct the LUT
+      vpRGBa lut[256];
+      for(unsigned int i = 0; i < 256; i++) {
+        lut[i].R = vpMath::saturate<unsigned char>(alpha * i + beta);
+        lut[i].G = vpMath::saturate<unsigned char>(alpha * i + beta);
+        lut[i].B = vpMath::saturate<unsigned char>(alpha * i + beta);
+        lut[i].A = vpMath::saturate<unsigned char>(alpha * i + beta);
+      }
+
+      I_lut.performLut(lut, 4);
+    }
+    t_lut_multithread = vpTime::measureTimeMs() - t_lut_multithread;
+
+
+    vpImageIo::read(I_lut, filename);
+
+    double t_lut_singlethread = vpTime::measureTimeMs();
+    for(unsigned int cpt = 0; cpt < nbIterations*10; cpt++) {
+      //Construct the LUT
+      vpRGBa lut[256];
+      for(unsigned int i = 0; i < 256; i++) {
+        lut[i].R = vpMath::saturate<unsigned char>(alpha * i + beta);
+        lut[i].G = vpMath::saturate<unsigned char>(alpha * i + beta);
+        lut[i].B = vpMath::saturate<unsigned char>(alpha * i + beta);
+        lut[i].A = vpMath::saturate<unsigned char>(alpha * i + beta);
+      }
+
+      I_lut.performLut(lut, 1);
+    }
+    t_lut_singlethread = vpTime::measureTimeMs() - t_lut_singlethread;
+
+    std::cout << "\nt_lut_singlethread/t_lut_multithread (color)="
+        << t_lut_singlethread/t_lut_multithread << "X" << std::endl;
+
+
+    //Computation time on grayscale image
+    vpImageIo::read(I_lut_grayscale, filename);
+
+    t_lut_multithread = vpTime::measureTimeMs();
+    for(unsigned int cpt = 0; cpt < nbIterations*10; cpt++) {
+      //Construct the LUT
+      unsigned char lut[256];
+      for(unsigned int i = 0; i < 256; i++) {
+        lut[i] = vpMath::saturate<unsigned char>(alpha * i + beta);
+      }
+
+      I_lut_grayscale.performLut(lut, 4);
+    }
+    t_lut_multithread = vpTime::measureTimeMs() - t_lut_multithread;
+
+
+    vpImageIo::read(I_lut_grayscale, filename);
+
+    t_lut_singlethread = vpTime::measureTimeMs();
+    for(unsigned int cpt = 0; cpt < nbIterations*10; cpt++) {
+      //Construct the LUT
+      unsigned char lut[256];
+      for(unsigned int i = 0; i < 256; i++) {
+        lut[i] = vpMath::saturate<unsigned char>(alpha * i + beta);
+      }
+
+      I_lut_grayscale.performLut(lut, 1);
+    }
+    t_lut_singlethread = vpTime::measureTimeMs() - t_lut_singlethread;
+
+    std::cout << "\nt_lut_singlethread/t_lut_multithread (grayscale)="
+        << t_lut_singlethread/t_lut_multithread << "X" << std::endl;
+
+
+
+    //Check performLut with multithreading and image size not divisible by 8
+    vpImage<unsigned char> I_test_grayscale(49, 7);
+    //Construct the LUT
+    unsigned char lut_grayscale[256];
+    for(unsigned int i = 0; i < 256; i++) {
+      lut_grayscale[i] = vpMath::saturate<unsigned char>(alpha * i + beta);
+    }
+    I_test_grayscale.performLut(lut_grayscale, nbThreads);
+
+    vpImage<vpRGBa> I_test_color(49, 7);
+    //Construct the LUT
+    vpRGBa lut_color[256];
+    for(unsigned int i = 0; i < 256; i++) {
+      lut_color[i].R = vpMath::saturate<unsigned char>(alpha * i + beta);
+      lut_color[i].G = vpMath::saturate<unsigned char>(alpha * i + beta);
+      lut_color[i].B = vpMath::saturate<unsigned char>(alpha * i + beta);
+      lut_color[i].A = vpMath::saturate<unsigned char>(alpha * i + beta);
+    }
+    I_test_color.performLut(lut_color, nbThreads);
+
+
     return 0;
   }
   catch(vpException &e) {
