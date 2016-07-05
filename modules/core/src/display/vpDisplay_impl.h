@@ -2,7 +2,7 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 
 template <class Type> void
-vp_displayX_close(vpImage<Type> &I)
+vp_display_close(vpImage<Type> &I)
 {
   try
   {
@@ -20,7 +20,7 @@ vp_displayX_close(vpImage<Type> &I)
 }
 
 template <class Type> void
-vp_displayX_display(const vpImage<Type> &I)
+vp_display_display(const vpImage<Type> &I)
 {
   try
   {
@@ -37,7 +37,7 @@ vp_displayX_display(const vpImage<Type> &I)
 }
 
 template <class Type> void
-vp_displayX_display_arrow(const vpImage<Type> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
+vp_display_display_arrow(const vpImage<Type> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                           const vpColor &color, unsigned int w,unsigned int h, unsigned int thickness )
 {
   try
@@ -55,7 +55,7 @@ vp_displayX_display_arrow(const vpImage<Type> &I, const vpImagePoint &ip1, const
 }
 
 template <class Type> void
-vp_displayX_display_arrow(const vpImage<Type> &I, int i1, int j1, int i2, int j2,
+vp_display_display_arrow(const vpImage<Type> &I, int i1, int j1, int i2, int j2,
                           const vpColor &color, unsigned int w, unsigned int h, unsigned int thickness)
 {
   try
@@ -78,7 +78,7 @@ vp_displayX_display_arrow(const vpImage<Type> &I, int i1, int j1, int i2, int j2
 }
 
 template <class Type> void
-vp_displayX_display_camera(const vpImage<Type> &I, const vpHomogeneousMatrix &cMo,
+vp_display_display_camera(const vpImage<Type> &I, const vpHomogeneousMatrix &cMo,
                            const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness)
 {
   // used by display
@@ -108,7 +108,7 @@ vp_displayX_display_camera(const vpImage<Type> &I, const vpHomogeneousMatrix &cM
 
 
 template <class Type> void
-vp_displayX_display_char_string(const vpImage<Type> &I, const vpImagePoint &ip,
+vp_display_display_char_string(const vpImage<Type> &I, const vpImagePoint &ip,
                                 const char *string, const vpColor &color )
 {
   try
@@ -126,7 +126,7 @@ vp_displayX_display_char_string(const vpImage<Type> &I, const vpImagePoint &ip,
 }
 
 template <class Type> void
-vp_displayX_display_char_string(const vpImage<Type> &I, int i, int j,
+vp_display_display_char_string(const vpImage<Type> &I, int i, int j,
                                 const char *string, const vpColor &color)
 {
   try
@@ -148,7 +148,7 @@ vp_displayX_display_char_string(const vpImage<Type> &I, int i, int j,
 }
 
 template <class Type> void
-vp_displayX_display_circle(const vpImage<Type> &I, const vpImagePoint &center, unsigned int radius,
+vp_display_display_circle(const vpImage<Type> &I, const vpImagePoint &center, unsigned int radius,
                            const vpColor &color, bool fill, unsigned int thickness)
 {
   try
@@ -166,7 +166,7 @@ vp_displayX_display_circle(const vpImage<Type> &I, const vpImagePoint &center, u
 }
 
 template <class Type> void
-vp_displayX_display_circle(const vpImage<Type> &I, int i, int j,  unsigned int radius,
+vp_display_display_circle(const vpImage<Type> &I, int i, int j,  unsigned int radius,
                            const vpColor &color, bool fill, unsigned int thickness)
 {
   try
@@ -188,7 +188,7 @@ vp_displayX_display_circle(const vpImage<Type> &I, int i, int j,  unsigned int r
 }
 
 template <class Type> void
-vp_displayX_display_cross(const vpImage<Type> &I, const vpImagePoint &ip, unsigned int size,
+vp_display_display_cross(const vpImage<Type> &I, const vpImagePoint &ip, unsigned int size,
                           const vpColor &color, unsigned int thickness)
 {
   try
@@ -206,7 +206,7 @@ vp_displayX_display_cross(const vpImage<Type> &I, const vpImagePoint &ip, unsign
 }
 
 template <class Type> void
-vp_displayX_display_cross(const vpImage<Type> &I, int i, int j, unsigned int size,
+vp_display_display_cross(const vpImage<Type> &I, int i, int j, unsigned int size,
                           const vpColor &color, unsigned int thickness)
 {
   try
@@ -228,7 +228,7 @@ vp_displayX_display_cross(const vpImage<Type> &I, int i, int j, unsigned int siz
 }
 
 template <class Type> void
-vp_displayX_display_dot_line(const vpImage<Type> &I, const vpImagePoint &ip1,
+vp_display_display_dot_line(const vpImage<Type> &I, const vpImagePoint &ip1,
                              const vpImagePoint &ip2, const vpColor &color, unsigned int thickness )
 {
   try
@@ -246,7 +246,7 @@ vp_displayX_display_dot_line(const vpImage<Type> &I, const vpImagePoint &ip1,
 }
 
 template <class Type> void
-vp_displayX_display_dot_line(const vpImage<Type> &I, int i1, int j1, int i2, int j2,
+vp_display_display_dot_line(const vpImage<Type> &I, int i1, int j1, int i2, int j2,
                              const vpColor &color, unsigned int thickness )
 {
   try
@@ -269,7 +269,7 @@ vp_displayX_display_dot_line(const vpImage<Type> &I, int i1, int j1, int i2, int
 }
 
 template <class Type> void
-vp_displayX_display_ellipse(const vpImage<Type> &I, const vpImagePoint &center,
+vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &center,
                             const double &coef1, const double &coef2, const double &coef3,
                             const double &theta1, const double &theta2, bool use_centered_moments,
                             const vpColor &color, unsigned int thickness)
@@ -361,7 +361,7 @@ vp_displayX_display_ellipse(const vpImage<Type> &I, const vpImagePoint &center,
 }
 
 template <class Type> void
-vp_displayX_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix &cMo,
+vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix &cMo,
                           const vpCameraParameters &cam, double size, const vpColor &color,
                           unsigned int thickness, vpImagePoint offset)
 {
@@ -407,7 +407,7 @@ vp_displayX_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix &cMo
 }
 
 template <class Type> void
-vp_displayX_display_line(const vpImage<Type> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
+vp_display_display_line(const vpImage<Type> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                          const vpColor &color,  unsigned int thickness )
 {
 
@@ -426,7 +426,7 @@ vp_displayX_display_line(const vpImage<Type> &I, const vpImagePoint &ip1, const 
 }
 
 template <class Type> void
-vp_displayX_display_line(const vpImage<Type> &I, int i1, int j1, int i2, int j2,
+vp_display_display_line(const vpImage<Type> &I, int i1, int j1, int i2, int j2,
                          const vpColor &color, unsigned int thickness )
 {
   try
@@ -449,7 +449,7 @@ vp_displayX_display_line(const vpImage<Type> &I, int i1, int j1, int i2, int j2,
 }
 
 template <class Type> void
-vp_displayX_display_point(const vpImage<Type> &I, const vpImagePoint &ip,
+vp_display_display_point(const vpImage<Type> &I, const vpImagePoint &ip,
                           const vpColor &color, unsigned int thickness )
 {
   try
@@ -473,7 +473,7 @@ vp_displayX_display_point(const vpImage<Type> &I, const vpImagePoint &ip,
 }
 
 template <class Type> void
-vp_displayX_display_point(const vpImage<Type> &I, int i, int j,
+vp_display_display_point(const vpImage<Type> &I, int i, int j,
                           const vpColor &color, unsigned int thickness )
 {
   try
@@ -500,7 +500,7 @@ vp_displayX_display_point(const vpImage<Type> &I, int i, int j,
 }
 
 template <class Type> void
-vp_displayX_display_polygon(const vpImage<Type> &I, const std::vector<vpImagePoint> &vip,
+vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImagePoint> &vip,
                             const vpColor &color, unsigned int thickness)
 {
   try
@@ -519,7 +519,7 @@ vp_displayX_display_polygon(const vpImage<Type> &I, const std::vector<vpImagePoi
 }
 
 template <class Type> void
-vp_displayX_display_rectangle(const vpImage<Type> &I, const vpImagePoint &topLeft,
+vp_display_display_rectangle(const vpImage<Type> &I, const vpImagePoint &topLeft,
                               unsigned int width, unsigned int height,
                               const vpColor &color, bool fill, unsigned int thickness)
 {
@@ -539,7 +539,7 @@ vp_displayX_display_rectangle(const vpImage<Type> &I, const vpImagePoint &topLef
 }
 
 template <class Type> void
-vp_displayX_display_rectangle(const vpImage<Type> &I, const vpRect &rectangle,
+vp_display_display_rectangle(const vpImage<Type> &I, const vpRect &rectangle,
                               const vpColor &color, bool fill, unsigned int thickness )
 {
   try
@@ -557,7 +557,7 @@ vp_displayX_display_rectangle(const vpImage<Type> &I, const vpRect &rectangle,
 }
 
 template <class Type> void
-vp_displayX_display_rectangle(const vpImage<Type> &I, const vpImagePoint &center,
+vp_display_display_rectangle(const vpImage<Type> &I, const vpImagePoint &center,
                               float angle, unsigned int width, unsigned int height,
                               const vpColor &color, unsigned int thickness)
 {
@@ -595,7 +595,7 @@ vp_displayX_display_rectangle(const vpImage<Type> &I, const vpImagePoint &center
 }
 
 template <class Type> void
-vp_displayX_display_rectangle(const vpImage<Type> &I,
+vp_display_display_rectangle(const vpImage<Type> &I,
                               const vpImagePoint &topLeft, const vpImagePoint &bottomRight,
                               const vpColor &color, bool fill, unsigned int thickness)
 {
@@ -615,7 +615,7 @@ vp_displayX_display_rectangle(const vpImage<Type> &I,
 }
 
 template <class Type> void
-vp_displayX_display_rectangle(const vpImage<Type> &I,
+vp_display_display_rectangle(const vpImage<Type> &I,
                               int i, int j, unsigned int width, unsigned int height,
                               const vpColor &color, bool fill, unsigned int thickness)
 {
@@ -639,7 +639,7 @@ vp_displayX_display_rectangle(const vpImage<Type> &I,
 }
 
 template <class Type> void
-vp_displayX_display_rectangle(const vpImage<Type> &I,
+vp_display_display_rectangle(const vpImage<Type> &I,
                               unsigned int i, unsigned int j, float angle, unsigned int width, unsigned int height,
                               const vpColor &color,unsigned int thickness)
 {
@@ -674,7 +674,7 @@ vp_displayX_display_rectangle(const vpImage<Type> &I,
 }
 
 template <class Type> void
-vp_displayX_display_roi(const vpImage<Type> &I, const vpRect &roi)
+vp_display_display_roi(const vpImage<Type> &I, const vpRect &roi)
 {
   vpImagePoint topLeft;
   double top = floor(roi.getTop());
@@ -705,7 +705,7 @@ vp_displayX_display_roi(const vpImage<Type> &I, const vpRect &roi)
 }
 
 template <class Type> void
-vp_displayX_flush(const vpImage<Type> &I)
+vp_display_flush(const vpImage<Type> &I)
 {
   try
   {
@@ -722,7 +722,7 @@ vp_displayX_flush(const vpImage<Type> &I)
 }
 
 template <class Type> void
-vp_displayX_flush_roi(const vpImage<Type> &I, const vpRect &roi)
+vp_display_flush_roi(const vpImage<Type> &I, const vpRect &roi)
 {
   try
   {
@@ -739,7 +739,7 @@ vp_displayX_flush_roi(const vpImage<Type> &I, const vpRect &roi)
 }
 
 template <class Type> bool
-vp_displayX_get_click(const vpImage<Type> &I, bool blocking)
+vp_display_get_click(const vpImage<Type> &I, bool blocking)
 {
   try
   {
@@ -757,7 +757,7 @@ vp_displayX_get_click(const vpImage<Type> &I, bool blocking)
 }
 
 template <class Type> bool
-vp_displayX_get_click(const vpImage<Type> &I, vpImagePoint &ip, bool blocking)
+vp_display_get_click(const vpImage<Type> &I, vpImagePoint &ip, bool blocking)
 {
   try
   {
@@ -775,7 +775,7 @@ vp_displayX_get_click(const vpImage<Type> &I, vpImagePoint &ip, bool blocking)
 }
 
 template <class Type> bool
-vp_displayX_get_click(const vpImage<Type> &I, vpImagePoint &ip,
+vp_display_get_click(const vpImage<Type> &I, vpImagePoint &ip,
                       vpMouseButton::vpMouseButtonType& button, bool blocking)
 {
   try
@@ -794,7 +794,7 @@ vp_displayX_get_click(const vpImage<Type> &I, vpImagePoint &ip,
 }
 
 template <class Type> bool
-vp_displayX_get_click_up(const vpImage<Type> &I, vpImagePoint &ip,
+vp_display_get_click_up(const vpImage<Type> &I, vpImagePoint &ip,
                          vpMouseButton::vpMouseButtonType& button, bool blocking )
 {
   try
@@ -813,7 +813,7 @@ vp_displayX_get_click_up(const vpImage<Type> &I, vpImagePoint &ip,
 }
 
 template <class Type> bool
-vp_displayX_get_keyboard_event(const vpImage<Type> &I, bool blocking)
+vp_display_get_keyboard_event(const vpImage<Type> &I, bool blocking)
 {
   try
   {
@@ -831,7 +831,7 @@ vp_displayX_get_keyboard_event(const vpImage<Type> &I, bool blocking)
 }
 
 template <class Type> bool
-vp_displayX_get_keyboard_event(const vpImage<Type> &I, std::string &key, bool blocking)
+vp_display_get_keyboard_event(const vpImage<Type> &I, std::string &key, bool blocking)
 {
   try
   {
@@ -849,7 +849,7 @@ vp_displayX_get_keyboard_event(const vpImage<Type> &I, std::string &key, bool bl
 }
 
 template <class Type> bool
-vp_displayX_get_keyboard_event(const vpImage<Type> &I, char *key, bool blocking)
+vp_display_get_keyboard_event(const vpImage<Type> &I, char *key, bool blocking)
 {
   try
   {
@@ -870,7 +870,7 @@ vp_displayX_get_keyboard_event(const vpImage<Type> &I, char *key, bool blocking)
 }
 
 template <class Type> bool
-vp_displayX_get_pointer_motion_event(const vpImage<Type> &I, vpImagePoint &ip)
+vp_display_get_pointer_motion_event(const vpImage<Type> &I, vpImagePoint &ip)
 {
   try
   {
@@ -888,7 +888,7 @@ vp_displayX_get_pointer_motion_event(const vpImage<Type> &I, vpImagePoint &ip)
 }
 
 template <class Type> bool
-vp_displayX_get_pointer_position(const vpImage<Type> &I, vpImagePoint &ip)
+vp_display_get_pointer_position(const vpImage<Type> &I, vpImagePoint &ip)
 {
   try
   {
@@ -906,7 +906,7 @@ vp_displayX_get_pointer_position(const vpImage<Type> &I, vpImagePoint &ip)
 }
 
 template <class Type> void
-vp_displayX_set_background(const vpImage<Type> &I, const vpColor &color)
+vp_display_set_background(const vpImage<Type> &I, const vpColor &color)
 {
   try
   {
@@ -923,7 +923,7 @@ vp_displayX_set_background(const vpImage<Type> &I, const vpColor &color)
 }
 
 template <class Type> void
-vp_displayX_display_text(const vpImage<Type> &I, const vpImagePoint &ip,
+vp_display_display_text(const vpImage<Type> &I, const vpImagePoint &ip,
                          const std::string &s, const vpColor &color )
 {
   try
@@ -941,7 +941,7 @@ vp_displayX_display_text(const vpImage<Type> &I, const vpImagePoint &ip,
 }
 
 template <class Type> void
-vp_displayX_display_text(const vpImage<Type> &I, int i, int j,
+vp_display_display_text(const vpImage<Type> &I, int i, int j,
                          const std::string &s, const vpColor &color)
 {
   try
@@ -963,7 +963,7 @@ vp_displayX_display_text(const vpImage<Type> &I, int i, int j,
 }
 
 template <class Type> void
-vp_displayX_set_font(const vpImage<Type> &I, const std::string &fontname )
+vp_display_set_font(const vpImage<Type> &I, const std::string &fontname )
 {
   try
   {
@@ -981,7 +981,7 @@ vp_displayX_set_font(const vpImage<Type> &I, const std::string &fontname )
 
 
 template <class Type> void
-vp_displayX_set_title(const vpImage<Type> &I, const std::string &windowtitle )
+vp_display_set_title(const vpImage<Type> &I, const std::string &windowtitle )
 {
   try
   {
@@ -998,7 +998,7 @@ vp_displayX_set_title(const vpImage<Type> &I, const std::string &windowtitle )
 }
 
 template <class Type> void
-vp_displayX_set_window_position(const vpImage<Type> &I, int winx, int winy )
+vp_display_set_window_position(const vpImage<Type> &I, int winx, int winy )
 {
   try
   {

@@ -12,7 +12,7 @@
 */
 void vpDisplay::close(vpImage<vpRGBa> &I)
 {
-  vp_displayX_close(I);
+  vp_display_close(I);
 }
 
 /*!
@@ -27,7 +27,7 @@ void
 vpDisplay::displayArrow(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                         const vpColor &color, unsigned int w, unsigned int h, unsigned int thickness )
 {
-  vp_displayX_display_arrow(I, ip1, ip2, color, w, h, thickness);
+  vp_display_display_arrow(I, ip1, ip2, color, w, h, thickness);
 }
 
 /*!
@@ -44,7 +44,7 @@ void
 vpDisplay::displayArrow(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2,
                         const vpColor &color, unsigned int w, unsigned int h, unsigned int thickness)
 {
-  vp_displayX_display_arrow(I, i1, j1, i2, j2, color, w, h, thickness);
+  vp_display_display_arrow(I, i1, j1, i2, j2, color, w, h, thickness);
 }
 
 /*!
@@ -64,7 +64,7 @@ void
 vpDisplay::displayCamera(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                          const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness)
 {
-  vp_displayX_display_camera(I, cMo, cam, size, color, thickness);
+  vp_display_display_camera(I, cMo, cam, size, color, thickness);
 }
 
 /*!
@@ -84,7 +84,7 @@ void
 vpDisplay::displayCharString(const vpImage<vpRGBa> &I, const vpImagePoint &ip,
                              const char *string, const vpColor &color )
 {
-  vp_displayX_display_char_string(I, ip, string, color);
+  vp_display_display_char_string(I, ip, string, color);
 }
 
 /*!
@@ -104,7 +104,7 @@ void
 vpDisplay::displayCharString(const vpImage<vpRGBa> &I, int i, int j,
                              const char *string, const vpColor &color)
 {
-  vp_displayX_display_char_string(I, i, j, string, color);
+  vp_display_display_char_string(I, i, j, string, color);
 }
 
 /*!
@@ -121,7 +121,7 @@ void
 vpDisplay::displayCircle(const vpImage<vpRGBa> &I, const vpImagePoint &center, unsigned int radius,
                          const vpColor &color, bool fill, unsigned int thickness)
 {
-  vp_displayX_display_circle(I, center, radius, color, fill, thickness);
+  vp_display_display_circle(I, center, radius, color, fill, thickness);
 }
 
 /*!
@@ -138,7 +138,7 @@ void
 vpDisplay::displayCircle(const vpImage<vpRGBa> &I, int i, int j,  unsigned int radius,
                          const vpColor &color, bool fill, unsigned int thickness)
 {
-  vp_displayX_display_circle(I, i, j, radius, color, fill, thickness);
+  vp_display_display_circle(I, i, j, radius, color, fill, thickness);
 }
 
 /*!
@@ -152,7 +152,7 @@ vpDisplay::displayCircle(const vpImage<vpRGBa> &I, int i, int j,  unsigned int r
 void vpDisplay::displayCross(const vpImage<vpRGBa> &I, const vpImagePoint &ip, unsigned int size,
                              const vpColor &color, unsigned int thickness)
 {
-  vp_displayX_display_cross(I, ip, size, color, thickness);
+  vp_display_display_cross(I, ip, size, color, thickness);
 }
 
 /*!
@@ -166,7 +166,7 @@ void vpDisplay::displayCross(const vpImage<vpRGBa> &I, const vpImagePoint &ip, u
 void vpDisplay::displayCross(const vpImage<vpRGBa> &I, int i, int j, unsigned int size,
                              const vpColor &color, unsigned int thickness)
 {
-  vp_displayX_display_cross(I, i, j, size, color, thickness);
+  vp_display_display_cross(I, i, j, size, color, thickness);
 }
 
 /*!
@@ -179,7 +179,7 @@ void vpDisplay::displayCross(const vpImage<vpRGBa> &I, int i, int j, unsigned in
 void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1,
                                const vpImagePoint &ip2, const vpColor &color, unsigned int thickness )
 {
-  vp_displayX_display_dot_line(I, ip1, ip2, color, thickness);
+  vp_display_display_dot_line(I, ip1, ip2, color, thickness);
 }
 
 /*!
@@ -193,7 +193,7 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1
 void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2,
                                const vpColor &color, unsigned int thickness )
 {
-  vp_displayX_display_dot_line(I, i1, j1, i2, j2, color, thickness);
+  vp_display_display_dot_line(I, i1, j1, i2, j2, color, thickness);
 }
 
 /*!
@@ -302,7 +302,7 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &cen
                                const double &theta1, const double &theta2, bool use_centered_moments,
                                const vpColor &color, unsigned int thickness)
 {
-  vp_displayX_display_ellipse(I, center, coef1, coef2, coef3, theta1, theta2, use_centered_moments, color, thickness);
+  vp_display_display_ellipse(I, center, coef1, coef2, coef3, theta1, theta2, use_centered_moments, color, thickness);
 }
 
 /*!
@@ -324,7 +324,7 @@ vpDisplay::displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo
                         const vpCameraParameters &cam, double size, const vpColor &color,
                         unsigned int thickness, vpImagePoint offset)
 {
-  vp_displayX_display_frame(I, cMo, cam, size, color, thickness, offset);
+  vp_display_display_frame(I, cMo, cam, size, color, thickness, offset);
 }
 
 /*!
@@ -337,7 +337,7 @@ vpDisplay::displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo
 void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                             const vpColor &color,  unsigned int thickness )
 {
-  vp_displayX_display_line(I, ip1, ip2, color, thickness);
+  vp_display_display_line(I, ip1, ip2, color, thickness);
 }
 
 /*!
@@ -351,7 +351,7 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, c
 void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2,
                             const vpColor &color, unsigned int thickness )
 {
-  vp_displayX_display_line(I, i1, j1, i2, j2, color, thickness);
+  vp_display_display_line(I, i1, j1, i2, j2, color, thickness);
 }
 
 /*!
@@ -364,7 +364,7 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, in
 void vpDisplay::displayPoint(const vpImage<vpRGBa> &I, const vpImagePoint &ip,
                              const vpColor &color, unsigned int thickness )
 {
-  vp_displayX_display_point(I, ip, color, thickness);
+  vp_display_display_point(I, ip, color, thickness);
 }
 
 /*!
@@ -377,7 +377,7 @@ void vpDisplay::displayPoint(const vpImage<vpRGBa> &I, const vpImagePoint &ip,
 void vpDisplay::displayPoint(const vpImage<vpRGBa> &I, int i, int j,
                              const vpColor &color, unsigned int thickness )
 {
-  vp_displayX_display_point(I, i, j, color, thickness);
+  vp_display_display_point(I, i, j, color, thickness);
 
 }
 
@@ -392,7 +392,7 @@ void
 vpDisplay::displayPolygon(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &vip,
                           const vpColor &color, unsigned int thickness)
 {
-  vp_displayX_display_polygon(I, vip, color, thickness);
+  vp_display_display_polygon(I, vip, color, thickness);
 }
 
 /*!
@@ -414,7 +414,7 @@ vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &topLef
                             unsigned int width, unsigned int height,
                             const vpColor &color, bool fill, unsigned int thickness)
 {
-  vp_displayX_display_rectangle(I, topLeft, width, height, color, fill, thickness);
+  vp_display_display_rectangle(I, topLeft, width, height, color, fill, thickness);
 }
 
 /*!
@@ -436,7 +436,7 @@ vpDisplay::displayRectangle(const vpImage<vpRGBa> &I,
                             int i, int j, unsigned int width, unsigned int height,
                             const vpColor &color, bool fill, unsigned int thickness)
 {
-  vp_displayX_display_rectangle(I, i, j, width, height, color, fill, thickness);
+  vp_display_display_rectangle(I, i, j, width, height, color, fill, thickness);
 }
 
 /*!
@@ -456,7 +456,7 @@ void
 vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, const vpRect &rectangle,
                             const vpColor &color, bool fill, unsigned int thickness )
 {
-  vp_displayX_display_rectangle(I, rectangle, color, fill, thickness);
+  vp_display_display_rectangle(I, rectangle, color, fill, thickness);
 }
 
 /*!
@@ -477,7 +477,7 @@ vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &center
                             float angle, unsigned int width, unsigned int height,
                             const vpColor &color, unsigned int thickness)
 {
-  vp_displayX_display_rectangle(I, center, angle, width, height, color, thickness);
+  vp_display_display_rectangle(I, center, angle, width, height, color, thickness);
 }
 
 /*!
@@ -499,7 +499,7 @@ vpDisplay::displayRectangle(const vpImage<vpRGBa> &I,
                             const vpImagePoint &topLeft, const vpImagePoint &bottomRight,
                             const vpColor &color, bool fill, unsigned int thickness)
 {
-  vp_displayX_display_rectangle(I, topLeft, bottomRight, color, fill, thickness);
+  vp_display_display_rectangle(I, topLeft, bottomRight, color, fill, thickness);
 }
 
 /*!
@@ -520,7 +520,7 @@ vpDisplay::displayRectangle(const vpImage<vpRGBa> &I,
                             unsigned int i, unsigned int j, float angle, unsigned int width, unsigned int height,
                             const vpColor &color, unsigned int thickness)
 {
-  vp_displayX_display_rectangle(I, i, j, angle, width, height, color, thickness);
+  vp_display_display_rectangle(I, i, j, angle, width, height, color, thickness);
 }
 
 /*!
@@ -539,7 +539,7 @@ void
 vpDisplay::displayText(const vpImage<vpRGBa> &I, const vpImagePoint &ip,
                        const std::string &s, const vpColor &color )
 {
-  vp_displayX_display_text(I, ip, s, color);
+  vp_display_display_text(I, ip, s, color);
 }
 
 /*!
@@ -558,7 +558,7 @@ void
 vpDisplay::displayText(const vpImage<vpRGBa> &I, int i, int j,
                        const std::string &s, const vpColor &color)
 {
-  vp_displayX_display_text(I, i, j, s, color);
+  vp_display_display_text(I, i, j, s, color);
 }
 
 /*!
@@ -592,7 +592,7 @@ int main() {
 */
 void vpDisplay::flush(const vpImage<vpRGBa> &I)
 {
-  vp_displayX_flush(I);
+  vp_display_flush(I);
 }
 
 /*!
@@ -606,7 +606,7 @@ void vpDisplay::flush(const vpImage<vpRGBa> &I)
 */
 void vpDisplay::flushROI(const vpImage<vpRGBa> &I, const vpRect &roi)
 {
-  vp_displayX_flush_roi(I, roi);
+  vp_display_flush_roi(I, roi);
 }
 
 /*!
@@ -623,7 +623,7 @@ void vpDisplay::flushROI(const vpImage<vpRGBa> &I, const vpRect &roi)
 void
 vpDisplay::display(const vpImage<vpRGBa> &I)
 {
-  vp_displayX_display(I);
+  vp_display_display(I);
 }
 
 /*!
@@ -634,7 +634,7 @@ vpDisplay::display(const vpImage<vpRGBa> &I)
 void
 vpDisplay::displayROI(const vpImage<vpRGBa> &I, const vpRect &roi)
 {
-  vp_displayX_display_roi(I, roi);
+  vp_display_display_roi(I, roi);
 }
 
 /*!
@@ -656,7 +656,7 @@ vpDisplay::displayROI(const vpImage<vpRGBa> &I, const vpRect &roi)
 */
 bool vpDisplay::getClick(const vpImage<vpRGBa> &I, bool blocking)
 {
-  return vp_displayX_get_click(I, blocking);
+  return vp_display_get_click(I, blocking);
 }
 
 /*!
@@ -679,7 +679,7 @@ bool vpDisplay::getClick(const vpImage<vpRGBa> &I, bool blocking)
 */
 bool vpDisplay::getClick(const vpImage<vpRGBa> &I, vpImagePoint &ip, bool blocking)
 {
-  return vp_displayX_get_click(I, ip, blocking);
+  return vp_display_get_click(I, ip, blocking);
 }
 
 /*!
@@ -705,7 +705,7 @@ bool vpDisplay::getClick(const vpImage<vpRGBa> &I, vpImagePoint &ip, bool blocki
 bool vpDisplay::getClick(const vpImage<vpRGBa> &I, vpImagePoint &ip,
                          vpMouseButton::vpMouseButtonType& button, bool blocking)
 {
-  return vp_displayX_get_click(I, ip, button, blocking);
+  return vp_display_get_click(I, ip, button, blocking);
 }
 
 /*!
@@ -756,7 +756,7 @@ bool
 vpDisplay::getClickUp(const vpImage<vpRGBa> &I, vpImagePoint &ip,
                       vpMouseButton::vpMouseButtonType& button, bool blocking )
 {
-  return vp_displayX_get_click_up(I, ip, button, blocking);
+  return vp_display_get_click_up(I, ip, button, blocking);
 }
 
 /*!
@@ -868,7 +868,7 @@ int main()
 bool
 vpDisplay::getKeyboardEvent(const vpImage<vpRGBa> &I, bool blocking)
 {
-  return vp_displayX_get_keyboard_event(I, blocking);
+  return vp_display_get_keyboard_event(I, blocking);
 }
 
 /*!
@@ -960,7 +960,7 @@ int main()
 bool
 vpDisplay::getKeyboardEvent(const vpImage<vpRGBa> &I, std::string &key, bool blocking)
 {
-  return vp_displayX_get_keyboard_event(I, key, blocking);
+  return vp_display_get_keyboard_event(I, key, blocking);
 }
 
 /*!
@@ -1052,7 +1052,7 @@ int main()
 bool
 vpDisplay::getKeyboardEvent(const vpImage<vpRGBa> &I, char *key, bool blocking)
 {
-  return vp_displayX_get_keyboard_event(I, key, blocking);
+  return vp_display_get_keyboard_event(I, key, blocking);
 }
 
 /*!
@@ -1067,7 +1067,7 @@ vpDisplay::getKeyboardEvent(const vpImage<vpRGBa> &I, char *key, bool blocking)
 bool
 vpDisplay::getPointerMotionEvent(const vpImage<vpRGBa> &I, vpImagePoint &ip)
 {
-  return vp_displayX_get_pointer_motion_event(I, ip);
+  return vp_display_get_pointer_motion_event(I, ip);
 }
 
 /*!
@@ -1082,7 +1082,7 @@ vpDisplay::getPointerMotionEvent(const vpImage<vpRGBa> &I, vpImagePoint &ip)
 bool
 vpDisplay::getPointerPosition(const vpImage<vpRGBa> &I, vpImagePoint &ip)
 {
-  return vp_displayX_get_pointer_position(I, ip);
+  return vp_display_get_pointer_position(I, ip);
 }
 
 /*!
@@ -1097,7 +1097,7 @@ vpDisplay::getPointerPosition(const vpImage<vpRGBa> &I, vpImagePoint &ip)
 void
 vpDisplay::setBackground(const vpImage<vpRGBa> &I, const vpColor &color)
 {
-  vp_displayX_set_background(I, color);
+  vp_display_set_background(I, color);
 }
 
 /*!
@@ -1116,7 +1116,7 @@ vpDisplay::setBackground(const vpImage<vpRGBa> &I, const vpColor &color)
 void
 vpDisplay::setFont(const vpImage<vpRGBa> &I, const std::string &fontname)
 {
-  vp_displayX_set_font(I, fontname);
+  vp_display_set_font(I, fontname);
 }
 
 /*!
@@ -1129,7 +1129,7 @@ vpDisplay::setFont(const vpImage<vpRGBa> &I, const std::string &fontname)
 void
 vpDisplay::setTitle(const vpImage<vpRGBa> &I, const std::string &windowtitle)
 {
-  vp_displayX_set_title(I, windowtitle);
+  vp_display_set_title(I, windowtitle);
 }
 
 /*!
@@ -1144,5 +1144,5 @@ vpDisplay::setTitle(const vpImage<vpRGBa> &I, const std::string &windowtitle)
 void
 vpDisplay::setWindowPosition(const vpImage<vpRGBa> &I, int winx, int winy )
 {
-  vp_displayX_set_window_position(I, winx, winy);
+  vp_display_set_window_position(I, winx, winy);
 }
