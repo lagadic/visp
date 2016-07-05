@@ -114,7 +114,7 @@ std::ostream &vpFlyCaptureGrabber::getCameraInfo(std::ostream & os)
 
 \code
 #include <visp3/core/vpImage.h>
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -142,7 +142,7 @@ int main()
   The following code shows how to use this function to check if a given format7
   (here MODE_0, PIXEL_FORMAT_MONO8) is supported by the camera:
   \code
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -319,7 +319,7 @@ float vpFlyCaptureGrabber::getExposure()
   The following code shows how to retrieve the serial id of all the cameras that
   are connected on the bus.
   \code
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -395,7 +395,7 @@ void vpFlyCaptureGrabber::setCameraIndex(unsigned int index)
 
    The following example shows how to capture images from a camera that has seial id 15290004.
    \code
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -489,7 +489,7 @@ void vpFlyCaptureGrabber::setProperty(const FlyCapture2::PropertyType &prop_type
   The following example shows how to use this function.
   \code
 #include <iomanip>
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -530,7 +530,7 @@ float vpFlyCaptureGrabber::setFrameRate(float frame_rate)
 
   The following example shows how to use this function:
   \code
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -573,7 +573,7 @@ float vpFlyCaptureGrabber::setShutter(bool auto_shutter, float shutter_ms)
 
   The following example shows how to use this function:
   \code
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -616,7 +616,7 @@ float vpFlyCaptureGrabber::setGain(bool gain_auto, float gain_value)
 
   The following example shows how to use this function:
   \code
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -668,7 +668,7 @@ float vpFlyCaptureGrabber::setBrightness(bool brightness_auto, float brightness_
 
   The following example shows how to use this function:
   \code
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -713,7 +713,7 @@ float vpFlyCaptureGrabber::setExposure(bool exposure_on, bool exposure_auto, flo
 
   The following example shows how to use this function:
   \code
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -799,7 +799,7 @@ vpFlyCaptureGrabber::getPropertyInfo(FlyCapture2::PropertyType prop_type)
   1280 x 960, pixel format to Y8 and capture framerate to 60 fps.
   \code
 #include <visp3/core/vpImage.h>
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -880,7 +880,7 @@ vpFlyCaptureGrabber::centerRoi(unsigned int size, unsigned int max_size, unsigne
 
   \code
 #include <iomanip>
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -1286,7 +1286,7 @@ bool vpFlyCaptureGrabber::getCameraPower()
 
   The following example shows how to turn off a camera.
   \code
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {

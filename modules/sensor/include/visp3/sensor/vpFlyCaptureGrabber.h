@@ -73,7 +73,7 @@
   \code
 #include <visp3/core/vpImage.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -107,7 +107,7 @@ int main()
   \code
 #include <visp3/core/vpImage.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/flycapture/vpFlyCaptureGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
