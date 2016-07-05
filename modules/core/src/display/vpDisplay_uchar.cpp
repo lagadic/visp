@@ -964,6 +964,98 @@ vpDisplay::getKeyboardEvent(const vpImage<vpRGBa> &I, std::string &key, bool blo
 }
 
 /*!
+  Get a keyboard event.
+
+  \param I [in] : The displayed image.
+
+  \param blocking [in] : Blocking behavior.
+  - When set to true, this method waits until a key is
+    pressed and then returns always true.
+  - When set to false, returns true only if a key is
+    pressed, otherwise returns false.
+
+  \param key [out]: If possible, an ISO Latin-1 character
+  corresponding to the keyboard key.
+
+  \return
+  - true if a key was pressed. This is always the case if blocking is set
+    to \e true.
+  - false if no key was pressed. This can occur if blocking is set
+    to \e false.
+
+  Below you will find an example showing how to use this method.
+\code
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayD3D.h>
+
+int main()
+{
+  vpImage<vpRGBa> I(240, 320); // Create a black image
+
+  vpDisplay *d;
+
+#if defined(VISP_HAVE_X11)
+  d = new vpDisplayX;
+#elif defined(VISP_HAVE_GTK)
+  d = new vpDisplayGTK;
+#elif defined(VISP_HAVE_GDI)
+  d = new vpDisplayGDI;
+#elif defined(VISP_HAVE_D3D9)
+  d = new vpDisplayD3D;
+#elif defined(VISP_HAVE_OPENCV)
+  d = new vpDisplayOpenCV;
+#else
+  std::cout << "Sorry, no video device is available" << std::endl;
+  return -1;
+#endif
+
+  // Initialize the display with the image I. Display and image are
+  // now link together.
+#ifdef VISP_HAVE_DISPLAY
+  d->init(I);
+#endif
+
+  // Set the display background with image I content
+  vpDisplay::display(I);
+
+  // Flush the foreground and background display
+  vpDisplay::flush(I);
+
+  // Wait for keyboard event
+  std::cout << "Waiting a keyboard event..." << std::endl;
+  vpDisplay::getKeyboardEvent(I, true);
+  std::cout << "A keyboard event was detected" << std::endl;
+
+  // Non blocking keyboard event loop
+  int cpt_event = 0;
+  char key[10];
+  std::cout << "Enter a non blocking keyboard event detection loop..." << std::endl;
+  do {
+    bool event = vpDisplay::getKeyboardEvent(I, &key[Ø], false);
+    if (event) {
+      std::cout << "Key detected: " << key << std::endl;
+      cpt_event ++;
+    }
+
+    vpTime::wait(5); // wait 5 ms
+  } while(cpt_event < 5);
+
+#ifdef VISP_HAVE_DISPLAY
+  delete d;
+#endif
+}
+\endcode
+*/
+bool
+vpDisplay::getKeyboardEvent(const vpImage<vpRGBa> &I, char *key, bool blocking)
+{
+  return vp_displayX_get_keyboard_event(I, key, blocking);
+}
+
+/*!
   Get the coordinates of the mouse pointer.
 
   \param I [in] : The displayed image.

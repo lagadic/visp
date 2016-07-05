@@ -667,6 +667,7 @@ int main()
   static void getImage(const vpImage<unsigned char> &Is, vpImage<vpRGBa> &Id) ;
   static bool getKeyboardEvent(const vpImage<unsigned char> &I, bool blocking=true);
   static bool getKeyboardEvent(const vpImage<unsigned char> &I, std::string &key, bool blocking=true);
+  static bool getKeyboardEvent(const vpImage<unsigned char> &I, char *key, bool blocking=true);
   static bool getPointerMotionEvent (const vpImage<unsigned char> &I, vpImagePoint &ip);
   static bool getPointerPosition (const vpImage<unsigned char> &I, vpImagePoint &ip);
 
@@ -723,6 +724,7 @@ int main()
   static void getImage(const vpImage<vpRGBa> &Is, vpImage<vpRGBa> &Id) ;
   static bool getKeyboardEvent(const vpImage<vpRGBa> &I, bool blocking=true);
   static bool getKeyboardEvent(const vpImage<vpRGBa> &I, std::string &key, bool blocking=true);
+  static bool getKeyboardEvent(const vpImage<vpRGBa> &I, char *key, bool blocking=true);
   static bool getPointerMotionEvent (const vpImage<vpRGBa> &I, vpImagePoint &ip);
   static bool getPointerPosition (const vpImage<vpRGBa> &I, vpImagePoint &ip);
 

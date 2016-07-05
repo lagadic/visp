@@ -849,6 +849,27 @@ vp_displayX_get_keyboard_event(const vpImage<Type> &I, std::string &key, bool bl
 }
 
 template <class Type> bool
+vp_displayX_get_keyboard_event(const vpImage<Type> &I, char *key, bool blocking)
+{
+  try
+  {
+    if ( I.display != NULL )
+    {
+      std::string str;
+      bool ret = ( I.display )->getKeyboardEvent ( str, blocking );
+      sprintf(key, "%s", str.c_str());
+      return ret;
+    }
+  }
+  catch ( ... )
+  {
+    vpERROR_TRACE ( "Error caught" ) ;
+    throw ;
+  }
+  return false ;
+}
+
+template <class Type> bool
 vp_displayX_get_pointer_motion_event(const vpImage<Type> &I, vpImagePoint &ip)
 {
   try
