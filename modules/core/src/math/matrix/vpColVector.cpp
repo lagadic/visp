@@ -58,6 +58,11 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpRotationVector.h>
 
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#  include <emmintrin.h>
+#  define VISP_HAVE_SSE2 1
+#endif
+
 
 //! Operator that allows to add two column vectors.
 vpColVector
@@ -962,10 +967,14 @@ double vpColVector::mean(const vpColVector &v)
     throw(vpException(vpException::fatalError,
                       "Cannot compute column vector mean: vector empty")) ;
   }
-  double mean = 0 ;
-  double *vd = v.data ;
-  for (unsigned int i=0 ; i < v.getRows() ; i++)
-    mean += *(vd++) ;
+
+  //Use directly sum() function
+  double mean = v.sum();
+
+  //Old code used
+//  double *vd = v.data ;
+//  for (unsigned int i=0 ; i < v.getRows() ; i++)
+//    mean += *(vd++) ;
 
   return mean/v.getRows();
 }
@@ -1002,7 +1011,44 @@ vpColVector::stdev(const vpColVector &v, const bool useBesselCorrection)
 
   double mean_value = mean(v);
   double sum_squared_diff = 0.0;
-  for(unsigned int i = 0; i < v.size(); i++) {
+  unsigned int i = 0;
+
+#if VISP_HAVE_SSE2
+  __m128d v_sub, v_mul, v_sum = _mm_setzero_pd();
+  //Compilation error with:
+  //clang version 3.5.0 (tags/RELEASE_350/final)
+  //Target: x86_64-unknown-linux-gnu
+  //Apple LLVM version 6.0 (clang-600.0.54) (based on LLVM 3.5svn)
+  //Target: x86_64-apple-darwin13.4.0
+  //error: use of undeclared identifier '_mm_set_pd1'; did you mean '_mm_set_ps1'?
+//  __m128d v_mean = _mm_set_pd1(mean_value);
+  __m128d v_mean = _mm_set_pd(mean_value, mean_value);
+
+  if(v.getRows() >= 4) {
+    for(; i <= v.getRows()- 4; i+=4) {
+      v_sub = _mm_sub_pd(_mm_loadu_pd(v.data + i), v_mean);
+      v_mul = _mm_mul_pd(v_sub, v_sub);
+      v_sum = _mm_add_pd(v_mul, v_sum);
+
+      v_sub = _mm_sub_pd(_mm_loadu_pd(v.data + i + 2), v_mean);
+      v_mul = _mm_mul_pd(v_sub, v_sub);
+      v_sum = _mm_add_pd(v_mul, v_sum);
+    }
+  }
+
+  double res[2];
+  _mm_storeu_pd(res, v_sum);
+
+  sum_squared_diff = res[0]+res[1];
+
+  //Old code used before SSE
+//#else
+//  for(unsigned int i = 0; i < v.size(); i++) {
+//    sum_squared_diff += (v[i]-mean_value) * (v[i]-mean_value);
+//  }
+#endif
+
+  for(; i < v.getRows(); i++) {
     sum_squared_diff += (v[i]-mean_value) * (v[i]-mean_value);
   }
 
@@ -1305,10 +1351,35 @@ vpColVector::print(std::ostream& s, unsigned int length, char const* intro) cons
   */
 double vpColVector::sum() const
 {
-  double sum=0.0;
+  double sum = 0.0;
+  unsigned int i = 0;
 
-  for (unsigned int i=0;i<rowNum;i++) {
-    sum += rowPtrs[i][0];
+#if VISP_HAVE_SSE2
+  __m128d v_sum1 = _mm_setzero_pd(), v_sum2 = _mm_setzero_pd(), v_sum;
+
+  if(rowNum >= 4) {
+    for(; i <= rowNum- 4; i+=4) {
+      v_sum1 = _mm_add_pd(_mm_loadu_pd(data + i), v_sum1);
+      v_sum2 = _mm_add_pd(_mm_loadu_pd(data + i + 2), v_sum2);
+    }
+  }
+
+  v_sum = _mm_add_pd(v_sum1, v_sum2);
+
+  double res[2];
+  _mm_storeu_pd(res, v_sum);
+
+  sum = res[0]+res[1];
+
+  //Old code used before SSE
+//#else
+//  for (unsigned int i=0;i<rowNum;i++) {
+//    sum += rowPtrs[i][0];
+//  }
+#endif
+
+  for(; i < rowNum; i++) {
+    sum += (*this)[i];
   }
 
   return sum;
@@ -1321,11 +1392,38 @@ double vpColVector::sum() const
   */
 double vpColVector::sumSquare() const
 {
-  double sum_square=0.0;
+  double sum_square = 0.0;
+  unsigned int i = 0;
 
-  for (unsigned int i=0;i<rowNum;i++) {
-    double x=rowPtrs[i][0];
-    sum_square += x*x;
+#if VISP_HAVE_SSE2
+  __m128d v_mul1, v_mul2;
+  __m128d v_sum = _mm_setzero_pd();
+
+  if(rowNum >= 4) {
+    for(; i <= rowNum- 4; i+=4) {
+      v_mul1 = _mm_mul_pd(_mm_loadu_pd(data + i), _mm_loadu_pd(data + i));
+      v_mul2 = _mm_mul_pd(_mm_loadu_pd(data + i + 2), _mm_loadu_pd(data + i + 2));
+
+      v_sum = _mm_add_pd(v_mul1, v_sum);
+      v_sum = _mm_add_pd(v_mul2, v_sum);
+    }
+  }
+
+  double res[2];
+  _mm_storeu_pd(res, v_sum);
+
+  sum_square = res[0]+res[1];
+
+  //Old code used before SSE
+//#else
+//  for (unsigned int i=0;i<rowNum;i++) {
+//    double x=rowPtrs[i][0];
+//    sum_square += x*x;
+//  }
+#endif
+
+  for(; i < rowNum; i++) {
+    sum_square += (*this)[i] * (*this)[i];
   }
 
   return sum_square;
@@ -1339,10 +1437,13 @@ double vpColVector::sumSquare() const
 */
 double vpColVector::euclideanNorm() const
 {
-  double norm=0.0;
-  for (unsigned int i=0;i<dsize;i++) {
-    double x = *(data +i); norm += x*x;
-  }
+  //Use directly sumSquare() function
+  double norm = sumSquare();
+
+  //Old code used
+//  for (unsigned int i=0;i<dsize;i++) {
+//    double x = *(data +i); norm += x*x;
+//  }
 
   return sqrt(norm);
 }
