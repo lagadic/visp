@@ -50,6 +50,9 @@
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRGBa.h>
+#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#  include <visp3/core/vpThread.h>
+#endif
 
 #include <fstream>
 #include <iostream>
@@ -313,14 +316,157 @@ public:
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
 
   // Perform a look-up table transformation
-  void performLut(const Type (&lut)[256]);
+  void performLut(const Type (&lut)[256], const unsigned int nbThreads=1);
 
 private:
   unsigned int npixels ; //<! number of pixel in the image
   unsigned int width ;   //<! number of columns
   unsigned int height ;   //<! number of rows
   Type **row ;    //!< points the row pointer array
-  } ;
+};
+
+
+#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+namespace {
+  struct ImageLut_Param_t {
+    unsigned int m_start_index;
+    unsigned int m_end_index;
+
+    unsigned char m_lut[256];
+    unsigned char *m_bitmap;
+
+    ImageLut_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) {
+    }
+
+    ImageLut_Param_t(const unsigned int start_index, const unsigned int end_index,
+        unsigned char *bitmap) :
+      m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap) {
+    }
+  };
+
+  vpThread::Return performLutThread(vpThread::Args args) {
+    ImageLut_Param_t *imageLut_param = ( (ImageLut_Param_t *) args );
+    unsigned int start_index = imageLut_param->m_start_index;
+    unsigned int end_index = imageLut_param->m_end_index;
+
+    unsigned char *bitmap = imageLut_param->m_bitmap;
+
+    unsigned char *ptrStart = bitmap + start_index;
+    unsigned char *ptrEnd = bitmap + end_index;
+    unsigned char *ptrCurrent = ptrStart;
+
+
+//    while(ptrCurrent != ptrEnd) {
+//      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+//      ++ptrCurrent;
+//    }
+
+    if(end_index - start_index >= 8) {
+      //Unroll loop version
+      for(; ptrCurrent <= ptrEnd - 8;) {
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+        ++ptrCurrent;
+
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+        ++ptrCurrent;
+
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+        ++ptrCurrent;
+
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+        ++ptrCurrent;
+
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+        ++ptrCurrent;
+
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+        ++ptrCurrent;
+
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+        ++ptrCurrent;
+
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+        ++ptrCurrent;
+      }
+    }
+
+    for(; ptrCurrent != ptrEnd; ++ptrCurrent) {
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+    }
+
+    return 0;
+  }
+
+
+  struct ImageLutRGBa_Param_t {
+    unsigned int m_start_index;
+    unsigned int m_end_index;
+
+    vpRGBa m_lut[256];
+    unsigned char *m_bitmap;
+
+    ImageLutRGBa_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) {
+    }
+
+    ImageLutRGBa_Param_t(const unsigned int start_index, const unsigned int end_index,
+        unsigned char *bitmap) :
+      m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap) {
+    }
+  };
+
+  vpThread::Return performLutRGBaThread(vpThread::Args args) {
+    ImageLutRGBa_Param_t *imageLut_param = ( (ImageLutRGBa_Param_t *) args );
+    unsigned int start_index = imageLut_param->m_start_index;
+    unsigned int end_index = imageLut_param->m_end_index;
+
+    unsigned char *bitmap = imageLut_param->m_bitmap;
+
+    unsigned char *ptrStart = bitmap + start_index*4;
+    unsigned char *ptrEnd = bitmap + end_index*4;
+    unsigned char *ptrCurrent = ptrStart;
+
+
+    if(end_index - start_index >= 4*2) {
+      //Unroll loop version
+      for(; ptrCurrent <= ptrEnd - 4*2;) {
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].R;
+        ptrCurrent++;
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].G;
+        ptrCurrent++;
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].B;
+        ptrCurrent++;
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].A;
+        ptrCurrent++;
+
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].R;
+        ptrCurrent++;
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].G;
+        ptrCurrent++;
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].B;
+        ptrCurrent++;
+        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].A;
+        ptrCurrent++;
+      }
+    }
+
+    while(ptrCurrent != ptrEnd) {
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].R;
+      ptrCurrent++;
+
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].G;
+      ptrCurrent++;
+
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].B;
+      ptrCurrent++;
+
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].A;
+      ptrCurrent++;
+    }
+
+    return 0;
+  }
+}
+#endif
 
 
 /*!
@@ -1536,12 +1682,12 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
   \warning This generic method is not implemented. You should rather use the
   instantiated methods for unsigned char and vpRGBa images.
 
-  \sa vpImage<unsigned char>::performLut(const unsigned char (&)[256])
-  \sa vpImage<vpRGBa char>::performLut(const vpRGBa (&)[256])
+  \sa vpImage<unsigned char>::performLut(const unsigned char (&)[256], const unsigned int)
+  \sa vpImage<vpRGBa char>::performLut(const vpRGBa (&)[256], const unsigned int)
 
 */
 template<class Type>
-void vpImage<Type>::performLut(const Type (&)[256])
+void vpImage<Type>::performLut(const Type (&)[256], const unsigned int)
 {
 //  vpTRACE("Not implemented");
   std::cerr << "Not implemented !" << std::endl;
@@ -1551,17 +1697,80 @@ void vpImage<Type>::performLut(const Type (&)[256])
   Modify the intensities of a grayscale image using the look-up table passed in parameter.
 
   \param lut : Look-up table (unsigned char array of size=256) which maps each intensity to his new value.
+  \param nbThreads : Number of threads to use for the computation.
 */
 template<>
-inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256]) {
+inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], const unsigned int nbThreads) {
   unsigned int size = getWidth()*getHeight();
   unsigned char *ptrStart = (unsigned char*) bitmap;
   unsigned char *ptrEnd = ptrStart + size;
   unsigned char *ptrCurrent = ptrStart;
 
-  while(ptrCurrent != ptrEnd) {
-    *ptrCurrent = lut[*ptrCurrent];
-    ++ptrCurrent;
+
+  bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
+#if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
+  use_single_thread = true;
+#endif
+
+  if(!use_single_thread && getSize() <= nbThreads) {
+    use_single_thread = true;
+  }
+
+
+  if(use_single_thread) {
+    //Single thread
+
+    while(ptrCurrent != ptrEnd) {
+      *ptrCurrent = lut[*ptrCurrent];
+      ++ptrCurrent;
+    }
+  } else {
+#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+    //Multi-threads
+
+    std::vector<vpThread *> threadpool;
+    std::vector<ImageLut_Param_t *> imageLutParams;
+
+    ImageLut_Param_t *imageLut_param = NULL;
+    vpThread *imageLut_thread = NULL;
+
+    unsigned int image_size = getSize();
+    unsigned int step = image_size / nbThreads;
+    unsigned int last_step = image_size - step * (nbThreads-1);
+
+    for(unsigned int index = 0; index < nbThreads; index++) {
+      unsigned int start_index = index*step;
+      unsigned int end_index = (index+1)*step;
+
+      if(index == nbThreads-1) {
+        end_index = start_index+last_step;
+      }
+
+      imageLut_param = new ImageLut_Param_t(start_index, end_index, bitmap);
+      memcpy(imageLut_param->m_lut, lut, 256*sizeof(unsigned char));
+
+      imageLutParams.push_back(imageLut_param);
+
+      // Start the threads
+      imageLut_thread = new vpThread((vpThread::Fn) performLutThread, (vpThread::Args) imageLut_param);
+      threadpool.push_back(imageLut_thread);
+    }
+
+    for(size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+      // Wait until thread ends up
+      threadpool[cpt]->join();
+    }
+
+
+    //Delete
+    for(size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+      delete threadpool[cpt];
+    }
+
+    for(size_t cpt = 0; cpt < imageLutParams.size(); cpt++) {
+      delete imageLutParams[cpt];
+    }
+#endif
   }
 }
 
@@ -1569,26 +1778,87 @@ inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256]) 
   Modify the intensities of a color image using the look-up table passed in parameter.
 
   \param lut : Look-up table (vpRGBa array of size=256) which maps each intensity to his new value.
+  \param nbThreads : Number of threads to use for the computation.
 */
 template<>
-inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256]) {
+inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], const unsigned int nbThreads) {
   unsigned int size = getWidth()*getHeight();
   unsigned char *ptrStart = (unsigned char*) bitmap;
   unsigned char *ptrEnd = ptrStart + size*4;
   unsigned char *ptrCurrent = ptrStart;
 
-  while(ptrCurrent != ptrEnd) {
-    *ptrCurrent = lut[*ptrCurrent].R;
-    ++ptrCurrent;
 
-    *ptrCurrent = lut[*ptrCurrent].G;
-    ++ptrCurrent;
+  bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
+#if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
+  use_single_thread = true;
+#endif
 
-    *ptrCurrent = lut[*ptrCurrent].B;
-    ++ptrCurrent;
+  if(!use_single_thread && getSize() <= nbThreads) {
+    use_single_thread = true;
+  }
 
-    *ptrCurrent = lut[*ptrCurrent].A;
-    ++ptrCurrent;
+
+  if(use_single_thread) {
+    //Single thread
+    while(ptrCurrent != ptrEnd) {
+      *ptrCurrent = lut[*ptrCurrent].R;
+      ++ptrCurrent;
+
+      *ptrCurrent = lut[*ptrCurrent].G;
+      ++ptrCurrent;
+
+      *ptrCurrent = lut[*ptrCurrent].B;
+      ++ptrCurrent;
+
+      *ptrCurrent = lut[*ptrCurrent].A;
+      ++ptrCurrent;
+    }
+  } else {
+#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+    //Multi-threads
+    std::vector<vpThread *> threadpool;
+    std::vector<ImageLutRGBa_Param_t *> imageLutParams;
+
+    ImageLutRGBa_Param_t *imageLut_param = NULL;
+    vpThread *imageLut_thread = NULL;
+
+    unsigned int image_size = getSize();
+    unsigned int step = image_size / nbThreads;
+    unsigned int last_step = image_size - step * (nbThreads-1);
+
+    for(unsigned int index = 0; index < nbThreads; index++) {
+      unsigned int start_index = index*step;
+      unsigned int end_index = (index+1)*step;
+
+      if(index == nbThreads-1) {
+        end_index = start_index+last_step;
+      }
+
+      imageLut_param = new ImageLutRGBa_Param_t(start_index, end_index, (unsigned char *) bitmap);
+      memcpy(imageLut_param->m_lut, lut, 256*sizeof(vpRGBa));
+
+      imageLutParams.push_back(imageLut_param);
+
+      // Start the threads
+      imageLut_thread = new vpThread((vpThread::Fn) performLutRGBaThread, (vpThread::Args) imageLut_param);
+      threadpool.push_back(imageLut_thread);
+    }
+
+    for(size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+      // Wait until thread ends up
+      threadpool[cpt]->join();
+    }
+
+
+    //Delete
+    for(size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+      delete threadpool[cpt];
+    }
+
+    for(size_t cpt = 0; cpt < imageLutParams.size(); cpt++) {
+      delete imageLutParams[cpt];
+    }
+#endif
   }
 }
 

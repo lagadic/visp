@@ -85,40 +85,42 @@ namespace {
     const vpImage<unsigned char> *I = histogram_param->m_I;
 
     unsigned char *ptrStart = (unsigned char*) (I->bitmap) + start_index;
-    unsigned char *ptrEnd = (unsigned char*) (I->bitmap) + end_index;;
+    unsigned char *ptrEnd = (unsigned char*) (I->bitmap) + end_index;
     unsigned char *ptrCurrent = ptrStart;
 
 
-  //  while(ptrCurrent != ptrEnd) {
-  //    histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-  //    ++ptrCurrent;
-  //  }
+//    while(ptrCurrent != ptrEnd) {
+//      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+//      ++ptrCurrent;
+//    }
 
-    //Unroll loop version
-    for(; ptrCurrent < ptrEnd - 8;) {
-      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ++ptrCurrent;
+    if(end_index - start_index >= 8) {
+      //Unroll loop version
+      for(; ptrCurrent <= ptrEnd - 8;) {
+        histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+        ++ptrCurrent;
 
-      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ++ptrCurrent;
+        histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+        ++ptrCurrent;
 
-      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ++ptrCurrent;
+        histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+        ++ptrCurrent;
 
-      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ++ptrCurrent;
+        histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+        ++ptrCurrent;
 
-      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ++ptrCurrent;
+        histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+        ++ptrCurrent;
 
-      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ++ptrCurrent;
+        histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+        ++ptrCurrent;
 
-      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ++ptrCurrent;
+        histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+        ++ptrCurrent;
 
-      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
-      ++ptrCurrent;
+        histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ] ] ++;
+        ++ptrCurrent;
+      }
     }
 
     for(; ptrCurrent != ptrEnd; ++ptrCurrent) {
@@ -253,7 +255,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
     histogram = new unsigned int[size];
   }
 
-  memset(histogram, 0, size * sizeof(unsigned));
+  memset(histogram, 0, size * sizeof(unsigned int));
 
 
   bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
@@ -307,7 +309,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
 
       histogram_param = new Histogram_Param_t(start_index, end_index, &I);
       histogram_param->m_histogram = new unsigned int[size];
-      memset(histogram_param->m_histogram, 0, size * sizeof(unsigned));
+      memset(histogram_param->m_histogram, 0, size * sizeof(unsigned int));
       memcpy(histogram_param->m_lut, lut, 256*sizeof(unsigned int));
 
       histogramParams.push_back(histogram_param);
