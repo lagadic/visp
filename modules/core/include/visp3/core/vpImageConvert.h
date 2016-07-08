@@ -99,7 +99,7 @@ class VISP_EXPORT vpImageConvert
 public:
   static void createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa> &dest_rgba);
   static void convert(const vpImage<unsigned char> &src, vpImage<vpRGBa> & dest) ;
-  static void convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> & dest) ;
+  static void convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> & dest, const bool fastConversion=false) ;
           
   static void convert(const vpImage<float> &src, vpImage<unsigned char> &dest);
   static void convert(const vpImage<unsigned char> &src, vpImage<float> &dest);
@@ -118,7 +118,7 @@ public:
   static void convert(const vpImage<unsigned char> & src, IplImage* &dest) ;
 #  if VISP_HAVE_OPENCV_VERSION >= 0x020100
   static void convert(const cv::Mat& src, vpImage<vpRGBa>& dest, const bool flip = false);
-  static void convert(const cv::Mat& src, vpImage<unsigned char>& dest, const bool flip = false);
+  static void convert(const cv::Mat& src, vpImage<unsigned char>& dest, const bool flip = false, const bool fastConversion=false);
   static void convert(const vpImage<vpRGBa> & src, cv::Mat& dest) ;
   static void convert(const vpImage<unsigned char> & src, cv::Mat& dest, const bool copyData = true) ;
 #  endif
@@ -240,9 +240,12 @@ public:
       unsigned char* rgb, unsigned int size);
 
   static void RGBToGrey(unsigned char* rgb,
-      unsigned char* grey, unsigned int size);
+      unsigned char* grey, unsigned int size,
+      const bool fastConversion=false);
   static void RGBaToGrey(unsigned char* rgba,
-      unsigned char* grey, unsigned int size);
+      unsigned char* grey, unsigned int size,
+      const bool fastConversion=false
+  );
 
   static void RGBToRGBa(unsigned char * rgb, unsigned char * rgba,
       unsigned int width, unsigned int height, bool flip = false);
@@ -258,7 +261,8 @@ public:
       unsigned int width, unsigned int height, bool flip=false);
 
   static void BGRToGrey(unsigned char * bgr, unsigned char * grey,
-      unsigned int width, unsigned int height, bool flip=false);
+      unsigned int width, unsigned int height, bool flip=false,
+      const bool fastConversion=false);
 
   static void YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
       unsigned int size);

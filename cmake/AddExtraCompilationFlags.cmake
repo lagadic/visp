@@ -179,6 +179,9 @@ macro(vp_add_extra_compilation_flags)
     endif()
   endif()
 
+  #Test SSSE3
+  list(APPEND CMAKE_CXX_FLAGS "-mssse3")
+
   if(BUILD_COVERAGE)
     # Add build options for test coverage. Currently coverage is only supported
     # on gcc compiler
