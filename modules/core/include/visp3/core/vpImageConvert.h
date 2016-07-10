@@ -58,10 +58,11 @@
 #  if (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
 #    include <opencv2/core/core.hpp>
 #    include <opencv2/highgui/highgui.hpp>
-#    include <opencv2/imgproc/imgproc_c.h>
+#    include <opencv2/imgproc/imgproc.hpp>
 #  elif (VISP_HAVE_OPENCV_VERSION >= 0x020408) // Require opencv >= 2.4.8
 #    include <opencv2/core/core.hpp>
 #    include <opencv2/highgui/highgui.hpp>
+#    include <opencv2/imgproc/imgproc.hpp>
 #  elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
 #    include <opencv2/core/core.hpp>
 #    include <opencv2/legacy/legacy.hpp>
@@ -99,7 +100,7 @@ class VISP_EXPORT vpImageConvert
 public:
   static void createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa> &dest_rgba);
   static void convert(const vpImage<unsigned char> &src, vpImage<vpRGBa> & dest) ;
-  static void convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> & dest, const bool fastConversion=false) ;
+  static void convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> & dest, const bool fastConversion=true) ;
           
   static void convert(const vpImage<float> &src, vpImage<unsigned char> &dest);
   static void convert(const vpImage<unsigned char> &src, vpImage<float> &dest);
@@ -118,7 +119,7 @@ public:
   static void convert(const vpImage<unsigned char> & src, IplImage* &dest) ;
 #  if VISP_HAVE_OPENCV_VERSION >= 0x020100
   static void convert(const cv::Mat& src, vpImage<vpRGBa>& dest, const bool flip = false);
-  static void convert(const cv::Mat& src, vpImage<unsigned char>& dest, const bool flip = false, const bool fastConversion=false);
+  static void convert(const cv::Mat& src, vpImage<unsigned char>& dest, const bool flip = false, const bool fastConversion=true);
   static void convert(const vpImage<vpRGBa> & src, cv::Mat& dest) ;
   static void convert(const vpImage<unsigned char> & src, cv::Mat& dest, const bool copyData = true) ;
 #  endif
@@ -193,7 +194,7 @@ public:
       r = (unsigned char) dr;
       g = (unsigned char) dg;
       b = (unsigned char) db;
-    };
+    }
   static void YUYVToRGBa(unsigned char* yuyv, unsigned char* rgba,
       unsigned int width, unsigned int height);
   static void YUYVToRGB(unsigned char* yuyv, unsigned char* rgb,
@@ -241,16 +242,17 @@ public:
 
   static void RGBToGrey(unsigned char* rgb,
       unsigned char* grey, unsigned int size,
-      const bool fastConversion=false);
+      const bool fastConversion=true);
   static void RGBaToGrey(unsigned char* rgba,
       unsigned char* grey, unsigned int size,
-      const bool fastConversion=false
+      const bool fastConversion=true
   );
 
   static void RGBToRGBa(unsigned char * rgb, unsigned char * rgba,
       unsigned int width, unsigned int height, bool flip = false);
   static void RGBToGrey(unsigned char * rgb, unsigned char * grey,
-      unsigned int width, unsigned int height, bool flip = false);
+      unsigned int width, unsigned int height, bool flip = false,
+      const bool fastConversion=true);
 
   static void GreyToRGBa(unsigned char* grey,
       unsigned char* rgba, unsigned int size);
@@ -262,7 +264,7 @@ public:
 
   static void BGRToGrey(unsigned char * bgr, unsigned char * grey,
       unsigned int width, unsigned int height, bool flip=false,
-      const bool fastConversion=false);
+      const bool fastConversion=true);
 
   static void YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb,
       unsigned int size);
