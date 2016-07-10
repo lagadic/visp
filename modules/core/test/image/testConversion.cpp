@@ -223,6 +223,7 @@ void computeRegularBGRToGrayscale(unsigned char * bgr, unsigned char * grey,
   }
 }
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 void computeRegularBGRToGrayscale(const cv::Mat& src, vpImage<unsigned char>& dest)
 {
   if(src.type() == CV_8UC3) {
@@ -233,6 +234,7 @@ void computeRegularBGRToGrayscale(const cv::Mat& src, vpImage<unsigned char>& de
     }
   }
 }
+#endif
 
 int
 main(int argc, const char ** argv)
