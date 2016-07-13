@@ -42,6 +42,7 @@ ViSP 3.0.1 (in development)
             without CMake
     . [#68] Visual C++ 2010 unable to build modules\core\test\math\testMath.cpp
     . [#69] Unable to build ViSP under Windows without OpenCV 3rdparty
+    . [#75] visp.pc pkgconfig file is corrupted by optimized and debug keywords
 
 ----------------------------------------------
 ViSP 3.0.0 (released December 18th, 2015)
