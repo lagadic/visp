@@ -216,7 +216,7 @@ VP_OPTION(USE_DC1394      DC1394      "" "Include dc1394 support"          "" ON
 VP_OPTION(USE_V4L2        V4L2        "" "Include v4l2 support"            "" ON IF UNIX)
 VP_OPTION(USE_FLYCAPTURE  FlyCapture  "" "Include FlyCapture SDK support for PointGrey cameras" "" ON)
 VP_OPTION(USE_COMEDI      Comedi      "" "Include comedi (linux control and measurement device interface) support" "" ON)
-VP_OPTION(USE_BICLOPS     BICLOPS     "" "Include biclops support"         "" ON IF UNIX)
+VP_OPTION(USE_BICLOPS     BICLOPS     "" "Include biclops support"         "" ON)
 VP_OPTION(USE_PTU46       PTU46       "" "Include ptu-46 support"          "" ON IF UNIX)
 VP_OPTION(USE_CMU1394     CMU1394     "" "Include cmu1494 support"         "" ON IF WIN32)
 VP_OPTION(USE_GDI         GDI         "" "Include gdi support"             "" ON IF WIN32)

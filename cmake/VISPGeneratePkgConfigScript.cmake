@@ -188,7 +188,11 @@ if(UNIX)
   foreach(m ${VISP_MODULES_BUILD})
     list(APPEND VISP_CONFIG_LIBS_PC ${VISP_MODULE_${m}_LINK_DEPS})
   endforeach()
+  vp_list_remove_item(VISP_CONFIG_LIBS_PC "optimized")
+  vp_list_remove_item(VISP_CONFIG_LIBS_PC "debug")
   vp_list_remove_separator(VISP_CONFIG_LIBS_PC)
+
+message("VISP_CONFIG_LIBS_PC: ${VISP_CONFIG_LIBS_PC}")
 
   configure_file(${FILE_VISP_CONFIG_PC_INSTALL_IN} ${FILE_VISP_CONFIG_PC_INSTALL})
 
