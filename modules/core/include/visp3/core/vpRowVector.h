@@ -106,6 +106,9 @@ public:
     rowNum = colNum = dsize = 0;
   }
 
+  std::ostream & cppPrint(std::ostream & os, const std::string &matrixName="A", bool octet = false) const;
+  std::ostream & csvPrint(std::ostream & os) const;
+
   /*!
     Convert a column vector containing angles in degrees into radians.
     \sa rad2deg()
@@ -145,6 +148,9 @@ public:
 
   void init(const vpRowVector &v, unsigned int c, unsigned int ncols);
   void insert(unsigned int i, const vpRowVector &v);
+
+  std::ostream & maplePrint(std::ostream & os) const;
+  std::ostream & matlabPrint(std::ostream & os) const;
 
   vpRowVector &normalize() ;
   vpRowVector &normalize(vpRowVector &x) const ;

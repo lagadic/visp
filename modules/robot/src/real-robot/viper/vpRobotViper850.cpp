@@ -2521,7 +2521,7 @@ void vpRobotViper850::getForceTorque(vpColVector &H) const
 
   Get the rough force/torque sensor measures.
 
-  \param H: [Fx, Fy, Fz, Tx, Ty, Tz] Forces/torques measured by the sensor.
+  \return [Fx, Fy, Fz, Tx, Ty, Tz] Forces/torques measured by the sensor.
 
   The code below shows how to get the force/torque measures after a sensor bias.
 

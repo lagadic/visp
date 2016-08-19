@@ -1065,3 +1065,167 @@ vpRowVector::init(const vpRowVector &v, unsigned int c, unsigned int ncols)
   for (unsigned int i=0 ; i < ncols; i++)
     (*this)[i] = v[i+c];
 }
+
+/*!
+  Print to be used as part of a C++ code later.
+
+  \param os : the stream to be printed in.
+  \param matrixName : name of the row vector, "A" by default.
+  \param octet : if false, print using double, if true, print byte per byte
+  each bytes of the double array.
+
+  The following code shows how to use this function:
+\code
+#include <visp3/core/vpRowVector.h>
+
+int main()
+{
+  vpRowVector r(3);
+  for (unsigned int i=0; i<r.size(); i++)
+    r[i] = i;
+
+  r.cppPrint(std::cout, "r");
+}
+\endcode
+  It produces the following output that could be copy/paste in a C++ code:
+  \code
+vpRowVector r (3);
+r[0] = 0;
+r[1] = 1;
+r[2] = 2;
+
+  \endcode
+*/
+std::ostream & vpRowVector::cppPrint(std::ostream & os, const std::string &matrixName, bool octet) const
+{
+  os << "vpRowVector " << matrixName
+     << " ("<< this ->getCols () << "); " <<std::endl;
+
+  for (unsigned int j=0; j < this ->getCols(); ++ j) {
+    if (! octet) {
+      os << matrixName << "[" << j
+         << "] = " << (*this)[j] << "; " << std::endl;
+    }
+    else {
+      for (unsigned int k = 0; k < sizeof(double); ++ k) {
+        os << "((unsigned char*)&(" << matrixName
+           << "[" << j << "]) )[" << k
+           <<"] = 0x" <<std::hex<<
+             (unsigned int)((unsigned char*)& ((*this)[j])) [k]
+             << "; " << std::endl;
+      }
+    }
+  }
+  std::cout << std::endl;
+  return os;
+};
+
+/*!
+  Print/save a row vector in csv format.
+
+  The following code
+  \code
+#include <visp3/core/vpRowVector.h>
+
+int main()
+{
+  std::ofstream ofs("log.csv", std::ofstream::out);
+  vpRowVector r(3);
+  for (unsigned int i=0; i<r.size(); i++)
+    r[i] = i;
+
+  r.csvPrint(ofs);
+
+  ofs.close();
+}
+  \endcode
+  produces log.csv file that contains:
+  \code
+0, 1, 2
+  \endcode
+*/
+std::ostream & vpRowVector::csvPrint(std::ostream & os) const
+{
+  for (unsigned int j=0; j < this->getCols(); ++ j) {
+    os <<  (*this)[j];
+    if (!(j==(this->getCols()-1)))
+      os << ", ";
+  }
+  os << std::endl;
+  return os;
+};
+
+/*!
+  Print using Maple syntax, to copy/paste in Maple later.
+
+  The following code
+  \code
+#include <visp3/core/vpRowVector.h>
+
+int main()
+{
+  vpRowVector r(3);
+  for (unsigned int i=0; i<r.size(); i++)
+    r[i] = i;
+  std::cout << "r = "; r.maplePrint(std::cout);
+}
+  \endcode
+  produces this output:
+  \code
+r = ([
+[0, 1, 2, ],
+])
+  \endcode
+  that could be copy/paste in Maple.
+*/
+std::ostream & vpRowVector::maplePrint(std::ostream & os) const
+{
+  os << "([ " << std::endl;
+  os << "[";
+  for (unsigned int j=0; j < this->getCols(); ++ j) {
+    os <<  (*this)[j] << ", ";
+  }
+  os << "]," << std::endl;
+  os << "])" << std::endl;
+  return os;
+};
+
+/*!
+  Print using Matlab syntax, to copy/paste in Matlab later.
+
+  The following code
+  \code
+#include <visp3/core/vpRowVector.h>
+
+int main()
+{
+  vpRowVector r(3);
+  for (unsigned int i=0; i<r.size(); i++)
+    r[i] = i;
+  std::cout << "r = "; r.matlabPrint(std::cout);
+}
+  \endcode
+  produces this output:
+  \code
+r = [ 0, 1, 2, ]
+  \endcode
+  that could be copy/paste in Matlab:
+  \code
+>> r = [ 0, 1, 2, ]
+
+r =
+
+    0   1   2
+
+>>
+  \endcode
+*/
+std::ostream & vpRowVector::matlabPrint(std::ostream & os) const
+{
+  os << "[ ";
+  for (unsigned int j=0; j < this ->getCols(); ++ j) {
+    os <<  (*this)[j] << ", ";
+  }
+  os << "]" << std::endl;
+  return os;
+};
