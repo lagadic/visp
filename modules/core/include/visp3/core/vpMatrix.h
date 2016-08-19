@@ -409,11 +409,11 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //---------------------------------
   /** @name Printing  */
   //@{
-  int print(std::ostream& s, unsigned int length, char const* intro=0) const;
-  std::ostream & matlabPrint(std::ostream & os) const;
-  std::ostream & maplePrint(std::ostream & os) const;
+  std::ostream & cppPrint(std::ostream & os, const std::string &matrixName = "A", bool octet = false) const;
   std::ostream & csvPrint(std::ostream & os) const;
-  std::ostream & cppPrint(std::ostream & os, const char * matrixName = NULL, bool octet = false) const;
+  std::ostream & maplePrint(std::ostream & os) const;
+  std::ostream & matlabPrint(std::ostream & os) const;
+  int print(std::ostream& s, unsigned int length, char const* intro=0) const;
   void printSize() const { std::cout << getRows() <<" x " << getCols() <<"  " ; }
   //@}
 
