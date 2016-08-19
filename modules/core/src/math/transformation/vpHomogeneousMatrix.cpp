@@ -532,6 +532,24 @@ vpPoint vpHomogeneousMatrix::operator*(const vpPoint& bP) const
   return aP ;
 }
 
+/*!
+  Since a translation vector could be seen as the origin point of a frame, this function computes
+  the new coordinates of a translation vector after applying an homogeneous transformation.
+
+  \param t : Translation vector seen as the 3D coordinates of a point.
+
+  \return A translation vector that contains the new 3D coordinates after applying the homogeneous transformation.
+*/
+vpTranslationVector vpHomogeneousMatrix::operator*(const vpTranslationVector &t) const
+{
+  vpTranslationVector t_out;
+  t_out[0] = (*this)[0][0]*t[0] + (*this)[0][1]*t[1]+ (*this)[0][2]*t[2]+ (*this)[0][3];
+  t_out[1] = (*this)[1][0]*t[0] + (*this)[1][1]*t[1]+ (*this)[1][2]*t[2]+ (*this)[1][3];
+  t_out[2] = (*this)[2][0]*t[0] + (*this)[2][1]*t[1]+ (*this)[2][2]*t[2]+ (*this)[2][3];
+
+  return t_out ;
+}
+
 /*********************************************************************/
 
 /*!
