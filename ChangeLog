@@ -28,6 +28,7 @@ ViSP 3.0.1 (in development)
     . New tutorial: How to use multi-threading capabilities
     . New tutorial: Crosscompilation for Raspberry Pi from Ubuntu host
     . New tutorial: Installation from source on iOS devices
+    . New tutorial: How to create and build a CMake project that uses ViSP on iOS
   - Bug fixed
     . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc

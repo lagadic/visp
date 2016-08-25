@@ -4,56 +4,64 @@
   \tableofcontents
 
 
-  \note We assume that you have successfully installed ViSP as described in the previous \ref tutorial-install-iOS.
+  \note We assume that you have successfully build ViSP framework as described in the previous \ref tutorial-install-iOS. Following these steps lead to \c visp3.framework creation.
 
-\section getting-started-iOS-add Add ViSP library into your project
+\section getting-started-iOS-create Create a new Xcode project
 
-Create a new single view Xcode project.
+- Launch Xcode
+- Follow <tt>"File>New>Project"</tt> menu and create a new <tt>"Single View Application"</tt>
 
 \image html img-getting-started-iOS-create.png
 
-Add \<lib_folder\> a lib folder in your project.
+- Click on <tt>"Next"</tt> button and complete the options for your new project:
 
-Copy the libvisp.a file in \<lib_folder\>. You'll find libvisp.a in the VISP.xcodeproj folder in lib --> Debug.
+\image html img-getting-started-iOS-options.png
 
-Go to your Xcode project Settings and edit the Build Phases by adding libvisp.a in "Link Binary With Libraries".
+- Click on <tt>"Next"</tt> button and select the folder where the new project will be saved. Once done click on <tt>"Create"</tt>. Now you should have something similar to:
 
-\image html img-getting-started-iOS-lib.png
+\image html img-getting-started-iOS-new.png
 
-\section getting-started-iOS-copy Copy ViSP header into your project
+\section getting-started-iOS-link-visp Linking ViSP framework 
 
-Add \<header_folder\> a header folder in your project.
+Now we need to link \c visp3.framework with the Xcode project.
 
-Go to ViSP source code in "include" folder and copy the "visp" folder in your project \<header_folder\>.
+- Select the project navigator in the left hand panel (1) and click on project name <tt>"Getting Started"</tt> (2)
 
-Go to your Xcode project Settings and edit the Build Settings by adding your \<header_folder\> path in the "Header Search Paths".
+\image html img-getting-started-iOS-navigator.png
 
-\image html img-getting-started-iOS-header.png
+- Use the Finder to drag & drop \c visp3.framework in the left hand panel containing all the project files. In the dialog box, enable check box <tt>"Copy item if needed"</tt> to ease \c visp3.framework headers location addition to the build options
 
-\section getting-started-iOS-use Use ViSP in your project
+\image html img-getting-started-iOS-drag-drop.png
 
-Because we will mix Objective C and C++ Code, rename your ViewController.m in ViewController.mm.
+- Click on <tt>"Finish"</tt>. You should now get something similar to the following image
 
-You will also have to add the Accelerate.framework in your project in order to be able to execute the specific visp code we will use.
-Go to your Xcode project Settings and edit the Build Phases by adding Accelerate.framework in "Link Binary With Libraries".
+\image html img-getting-started-iOS-link-visp.png
 
-\image html img-getting-started-iOS-accelerate.png
 
-Here is the detailed explanation of the source (inspired from tutorial-homography-from-points.cpp), line by line :
+\section getting-started-iOS-app Writing a ViSP iOS application
 
+- Because we will mix Objective C and ViSP C++ Code, rename \c ViewController.m file into \c ViewController.mm
+
+\image html img-getting-started-iOS-rename.png
+
+- Now copy/paste the following getting started sample code (inspired from tutorial-homography-from-points.cpp) into \c ViewController.mm
 \code
+#import "ViewController.h"
+
 #ifdef __cplusplus
 #import <vector>
 #import <visp3/core/vpMeterPixelConversion.h>
 #import <visp3/vision/vpHomography.h>
 #endif
-\endcode
-Include all the headers for homography computation in ViewController.mm.
 
-\code
-#pragma mark - ViSP Methods
+@interface ViewController ()
 
-- (void)processTutorialHomography{
+@end
+
+@implementation ViewController
+
+#pragma mark - Example of a function that uses ViSP
+- (void)processViSPHomography{
     
     std::vector<vpPoint> oP(4), aP(4), bP(4);
     double L = 0.1;
@@ -110,26 +118,35 @@ Include all the headers for homography computation in ViewController.mm.
     
     // Project the position in pixel of point 3 from the homography
     std::cout << "Estimation from homography:" << std::endl;
-    std::cout << "  Point 3 in pixels in frame a: "
-              << vpHomography::project(cam, aHb, iPb) << std::endl;
+    std::cout << "  Point 3 in pixels in frame a: " << vpHomography::project(cam, aHb, iPb) << std::endl;
 }
-\endcode
-Create a new method with the homography computation from visp.
 
-\code
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    [self processTutorialHomography];
+    [self processViSPHomography];
 }
-\endcode
-Call the method in the viewDidLoad of your ViewController.
 
-You can now Build and Run your code (Simulator or device does not bother because we are just executing code).
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+@end
+\endcode
+In this sample, we first import the headers to use vpHomography class. Then we create a new function called \c processViSPHomography(). This function is finally called in viewDibLoad().
+- After the previous copy/paste, you should have something similar to
+
+\image html img-getting-started-iOS-code.png
+
+
+- Before building this sample, since \c visp3.framework was created with \c libstdc++ an important step is to set GNU standard library usage. To this end, select the project navigator in the left hand panel (1), click on project name <tt>"Getting Started"</tt> (2), show the build settings pannel by a click on <tt>"Build Settings"</tt> (3), use the scroller to find <tt>"Apple LLVM 7.1 - Language - C++"</tt> settings (4) in order to modify <tt>"C++ Standard Library"</tt> to use <tt>"libstdc++ (GNU C++ standard library)"</tt> (5) 
+
+\image html img-getting-started-iOS-libstdc++.png
+
+- Now we are ready to build this simple <tt>"Getting Started"</tt> application using Xcode <tt>"Product>Build"</tt> menu.
+
+- You can now run your code using <tt>"Product>Run"</tt> menu (Simulator or device does not bother because we are just executing code). You should obtain these logs showing that visp code was correctly executed by your iOS project.
 
 \image html img-getting-started-iOS-log.png
-
-You should obtain these logs showing that visp code was correctly executed by your iOS project.
 
 */
