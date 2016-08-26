@@ -58,10 +58,11 @@
 #  if (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
 #    include <opencv2/core/core.hpp>
 #    include <opencv2/highgui/highgui.hpp>
-#    include <opencv2/imgproc/imgproc_c.h>
+#    include <opencv2/imgproc/imgproc.hpp>
 #  elif (VISP_HAVE_OPENCV_VERSION >= 0x020408) // Require opencv >= 2.4.8
 #    include <opencv2/core/core.hpp>
 #    include <opencv2/highgui/highgui.hpp>
+#    include <opencv2/imgproc/imgproc.hpp>
 #  elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
 #    include <opencv2/core/core.hpp>
 #    include <opencv2/legacy/legacy.hpp>
@@ -193,7 +194,7 @@ public:
       r = (unsigned char) dr;
       g = (unsigned char) dg;
       b = (unsigned char) db;
-    };
+    }
   static void YUYVToRGBa(unsigned char* yuyv, unsigned char* rgba,
       unsigned int width, unsigned int height);
   static void YUYVToRGB(unsigned char* yuyv, unsigned char* rgb,
@@ -239,10 +240,8 @@ public:
   static void RGBaToRGB(unsigned char* rgba,
       unsigned char* rgb, unsigned int size);
 
-  static void RGBToGrey(unsigned char* rgb,
-      unsigned char* grey, unsigned int size);
-  static void RGBaToGrey(unsigned char* rgba,
-      unsigned char* grey, unsigned int size);
+  static void RGBToGrey(unsigned char* rgb, unsigned char* grey, unsigned int size);
+  static void RGBaToGrey(unsigned char* rgba, unsigned char* grey, unsigned int size);
 
   static void RGBToRGBa(unsigned char * rgb, unsigned char * rgba,
       unsigned int width, unsigned int height, bool flip = false);

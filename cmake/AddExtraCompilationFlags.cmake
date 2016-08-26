@@ -35,169 +35,114 @@
 #
 #############################################################################
 
-macro(vp_add_extra_compilation_flags)
-  # By default set release configuration
-  if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release" CACHE String "Choose the type of build, options are: None Debug Release" FORCE)
+set(VISP_EXTRA_C_FLAGS "")
+set(VISP_EXTRA_CXX_FLAGS "")
+
+# By default set release configuration
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE String "Choose the type of build, options are: None Debug Release" FORCE)
+endif()
+
+macro(add_extra_compiler_option option)
+  if(CMAKE_BUILD_TYPE)
+    set(CMAKE_TRY_COMPILE_CONFIGURATION ${CMAKE_BUILD_TYPE})
+  endif()
+  vp_check_flag_support(CXX "${option}" _varname)
+  if(_varname)
+    list(APPEND VISP_EXTRA_CXX_FLAGS ${option})
   endif()
 
-  include(CheckCXXCompilerFlag)
-  if(CMAKE_COMPILER_IS_GNUCXX OR MINGW OR CMAKE_CXX_COMPILER_ID MATCHES "Clang") #Not only UNIX but also WIN32 for MinGW
+  vp_check_flag_support(C "${option}" _varname)
+  if(_varname)
+    list(APPEND VISP_EXTRA_C_FLAGS ${option})
+  endif()
+endmacro()
 
-    set(WARNING_ALL "-Wall")
-    CHECK_CXX_COMPILER_FLAG(${WARNING_ALL} WARNING_ALL_ALLOWED)
-    if(WARNING_ALL_ALLOWED)
-#     MESSAGE("Compiler flag ${WARNING_ALL} allowed")
-      set(ACTIVATE_WARNING_ALL "ON" CACHE BOOL "activate -Wall flag")
-    else()
-#     MESSAGE("Compiler flag ${WARNING_ALL} not allowed")
-    endif()
-  
-    set(WARNING_EXTRA "-Wextra")
-    CHECK_CXX_COMPILER_FLAG(${WARNING_EXTRA} WARNING_EXTRA_ALLOWED)
-    if(WARNING_EXTRA_ALLOWED)
-#     MESSAGE("Compiler flag ${WARNING_EXTRA} allowed")
-      set(ACTIVATE_WARNING_EXTRA "ON" CACHE BOOL "activate -Wextra flag")
-    else()
-#     MESSAGE("Compiler flag ${WARNING_EXTRA} not allowed")
-    endif()
-
-    set(WARNING_STRICT_OVERFLOW "-Wstrict-overflow=5")
-    CHECK_CXX_COMPILER_FLAG(${WARNING_STRICT_OVERFLOW} WARNING_STRICT_OVERFLOW_ALLOWED)
-    if(WARNING_STRICT_OVERFLOW_ALLOWED)
-#     MESSAGE("Compiler flag ${WARNING_STRICT_OVERFLOW} allowed")
-      set(ACTIVATE_WARNING_STRICT_OVERFLOW "OFF" CACHE BOOL "activate -Wstrict-overflow=5 flag")
-    else()
-#     MESSAGE("Compiler flag ${WARNING_STRICT_OVERFLOW} not allowed")
-    endif()
-
-    set(WARNING_FLOAT_EQUAL "-Wfloat-equal")
-    CHECK_CXX_COMPILER_FLAG(${WARNING_FLOAT_EQUAL} WARNING_FLOAT_EQUAL_ALLOWED)
-    if(WARNING_FLOAT_EQUAL_ALLOWED)
-#     MESSAGE("Compiler flag ${WARNING_FLOAT_EQUAL} allowed")
-      set(ACTIVATE_WARNING_FLOAT_EQUAL "OFF" CACHE BOOL "activate -Wfloat-equal flag")
-    else()
-#     MESSAGE("Compiler flag ${WARNING_FLOAT_EQUAL} not allowed")
-    endif()
-
-    set(WARNING_SIGN_CONVERSION "-Wsign-conversion")
-    CHECK_CXX_COMPILER_FLAG(${WARNING_SIGN_CONVERSION} WARNING_SIGN_CONVERSION_ALLOWED)
-    if(WARNING_SIGN_CONVERSION_ALLOWED)
-#     MESSAGE("Compiler flag ${WARNING_SIGN_CONVERSION} allowed")
-      set(ACTIVATE_WARNING_SIGN_CONVERSION "OFF" CACHE BOOL "activate -Wsign-conversion flag")
-    else()
-#     MESSAGE("Compiler flag ${WARNING_SIGN_CONVERSION} not allowed")
-    endif()
-
-    if(ACTIVATE_WARNING_ALL)
-      list(APPEND CMAKE_CXX_FLAGS ${WARNING_ALL})
-    else()
-      string(REPLACE ${WARNING_ALL} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    endif()
-    if(ACTIVATE_WARNING_EXTRA)
-      list(APPEND CMAKE_CXX_FLAGS ${WARNING_EXTRA})
-    else()
-      string(REPLACE ${WARNING_EXTRA} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    endif()
-    if(ACTIVATE_WARNING_STRICT_OVERFLOW)
-      list(APPEND CMAKE_CXX_FLAGS ${WARNING_STRICT_OVERFLOW})
-      list(APPEND CMAKE_C_FLAGS ${WARNING_STRICT_OVERFLOW})
-    else()
-      string(REPLACE ${WARNING_STRICT_OVERFLOW} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-      string(REPLACE ${WARNING_STRICT_OVERFLOW} "" CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-    endif()
-    if(ACTIVATE_WARNING_FLOAT_EQUAL)
-      list(APPEND CMAKE_CXX_FLAGS ${WARNING_FLOAT_EQUAL})
-    else()
-      string(REPLACE ${WARNING_FLOAT_EQUAL} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    endif()
-    if(ACTIVATE_WARNING_SIGN_CONVERSION)
-      list(APPEND CMAKE_CXX_FLAGS ${WARNING_SIGN_CONVERSION})
-    else()
-      string(REPLACE ${WARNING_SIGN_CONVERSION} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    endif()
-
-  elseif(MSVC)
-    # Add specific compilation flags for Windows Visual
-  
-    set(WARNING_ALL "/Wall")
-    CHECK_CXX_COMPILER_FLAG(${WARNING_ALL} WARNING_ALL_ALLOWED)
-    if(WARNING_ALL_ALLOWED)
-      #MESSAGE("Compiler flag ${WARNING_ALL} allowed")
-      set(ACTIVATE_WARNING_ALL "OFF" CACHE BOOL "activate /Wall flag")
-    else()
-      #MESSAGE("Compiler flag ${WARNING_ALL} not allowed")
-    endif()
-  
-    if(ACTIVATE_WARNING_ALL)
-      list(APPEND CMAKE_CXX_FLAGS ${WARNING_ALL})
-    else()
-      string(REPLACE ${WARNING_ALL} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    endif()
-    if(MSVC80 OR MSVC90 OR MSVC10 OR MSVC11)
-      # To avoid compiler warning (level 4) C4571, compile with /EHa if you still want 
-      # your catch(...) blocks to catch structured exceptions.
-      list(APPEND CMAKE_CXX_FLAGS "/EHa") 
-    endif()
+macro(add_extra_compiler_option_enabling option var_enabling flag)
+  if(CMAKE_BUILD_TYPE)
+    set(CMAKE_TRY_COMPILE_CONFIGURATION ${CMAKE_BUILD_TYPE})
   endif()
 
-  VP_OPTION(ACTIVATE_WARNING_3PARTY_MUTE  "" "" "Add flags to disable warning due to known 3rd parties" "" ON)
-
-  # If compiler support symbol visibility, enable it.
-  include(CheckCCompilerFlag)
-  check_c_compiler_flag(-fvisibility=hidden HAS_VISIBILITY)
-  if (HAS_VISIBILITY)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+  vp_check_flag_support(CXX "${option}" _cxx_varname)
+  if(_cxx_varname)
+    set(__msg "Activate ${option} compiler flag")
+    set(${var_enabling} ${flag} CACHE BOOL ${__msg})
   endif()
-
-#  FS no more needed since it is added by default by CMake when build as shared
-#  if(UNIX)
-#    if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
-#      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-#    endif()
-#  endif()
-
-  # OpenMP
-  if(USE_OPENMP)
-    set(VISP_OPENMP_FLAGS "${OpenMP_CXX_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  if(${${var_enabling}})
+    list(APPEND VISP_EXTRA_CXX_FLAGS ${option})
   else()
-    set(VISP_OPENMP_FLAGS "")
-    if(OpenMP_CXX_FLAGS)
-      string(REPLACE ${OpenMP_CXX_FLAGS} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    endif()
+    vp_list_filterout(VISP_EXTRA_CXX_FLAGS ${option})
   endif()
 
-  # C++11
-  if(USE_CPP11)
-    set(VISP_CPP11_FLAGS "${CPP11_CXX_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP11_CXX_FLAGS}")
+  vp_check_flag_support(C "${option}" _c_varname)
+  if(${${var_enabling}} AND _c_varname)
+    list(APPEND VISP_EXTRA_C_FLAGS ${option})
   else()
-    set(VISP_CPP11_FLAGS "")
-    if(CPP11_CXX_FLAGS)
-      string(REPLACE ${CPP11_CXX_FLAGS} "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-    endif()
+    vp_list_filterout(VISP_EXTRA_C_FLAGS ${option})
+  endif()
+endmacro()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR MINGW OR CMAKE_CXX_COMPILER_ID MATCHES "Clang") #Not only UNIX but also WIN32 for MinGW
+  add_extra_compiler_option_enabling(-Wall               ACTIVATE_WARNING_ALL             ON)
+  add_extra_compiler_option_enabling(-Wextra             ACTIVATE_WARNING_EXTRA           ON)
+  add_extra_compiler_option_enabling(-Wstrict-overflow=5 ACTIVATE_WARNING_STRICT_OVERFLOW OFF)
+  add_extra_compiler_option_enabling(-Wfloat-equal       ACTIVATE_WARNING_FLOAT_EQUAL     OFF)
+  add_extra_compiler_option_enabling(-Wsign-conversion   ACTIVATE_WARNING_SIGN_CONVERSION OFF)
+elseif(MSVC)
+  # Add specific compilation flags for Windows Visual
+  add_extra_compiler_option_enabling(/Wall               ACTIVATE_WARNING_ALL             ON)
+  if(MSVC80 OR MSVC90 OR MSVC10 OR MSVC11)
+    # To avoid compiler warning (level 4) C4571, compile with /EHa if you still want
+    # your catch(...) blocks to catch structured exceptions.
+    add_extra_compiler_option("/EHa")
+  endif()
+endif()
+
+VP_OPTION(ACTIVATE_WARNING_3PARTY_MUTE  "" "" "Add flags to disable warning due to known 3rd parties" "" ON)
+
+if(USE_OPENMP)
+  add_extra_compiler_option("${OpenMP_CXX_FLAGS}")
+endif()
+
+if(USE_CPP11)
+  add_extra_compiler_option("${CPP11_CXX_FLAGS}")
+endif()
+
+if(BUILD_COVERAGE)
+  add_extra_compiler_option("-ftest-coverage -fprofile-arcs")
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+  add_extra_compiler_option(-fvisibility=hidden)
+
+  if(ENABLE_SSE2)
+    add_extra_compiler_option(-msse2)
+  elseif(X86 OR X86_64)
+    add_extra_compiler_option(-mno-sse2)
   endif()
 
-  if(BUILD_COVERAGE)
-    # Add build options for test coverage. Currently coverage is only supported
-    # on gcc compiler
-    # Because using -fprofile-arcs with shared lib can cause problems like:
-    # hidden symbol `__bb_init_func', we add this option only for static
-    # library build
-    message(STATUS "Add -ftest-coverage -fprofile-arcs compiler options")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ftest-coverage -fprofile-arcs")
+  if(ENABLE_SSE3)
+    add_extra_compiler_option(-msse3)
+  elseif(X86 OR X86_64)
+    #add_extra_compiler_option(-mno-sse3)
   endif()
 
-  # Remove duplicates compilation flags
-  separate_arguments(CMAKE_CXX_FLAGS)
-  list(REMOVE_DUPLICATES CMAKE_CXX_FLAGS)
-  string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE STRING "common C++ build flags" FORCE)
-  separate_arguments(CMAKE_C_FLAGS)
-  list(REMOVE_DUPLICATES CMAKE_C_FLAGS)
-  string(REPLACE ";" " " CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "common C build flags" FORCE)
+  if(ENABLE_SSSE3)
+    add_extra_compiler_option(-mssse3)
+  elseif(X86 OR X86_64)
+    add_extra_compiler_option(-mno-ssse3)
+  endif()
+endif()
 
-  #message("CMAKE_CXX_FLAGS : ${CMAKE_CXX_FLAGS}")
-endmacro(vp_add_extra_compilation_flags)
+# Add user supplied extra options (optimization, etc...)
+vp_list_unique(VISP_EXTRA_C_FLAGS)
+vp_list_unique(VISP_EXTRA_CXX_FLAGS)
+vp_list_remove_separator(VISP_EXTRA_C_FLAGS)
+vp_list_remove_separator(VISP_EXTRA_CXX_FLAGS)
+
+set(VISP_EXTRA_C_FLAGS      "${VISP_EXTRA_C_FLAGS}"       CACHE INTERNAL "Extra compiler options for C sources")
+set(VISP_EXTRA_CXX_FLAGS    "${VISP_EXTRA_CXX_FLAGS}"     CACHE INTERNAL "Extra compiler options for C++ sources")
+
+#combine all "extra" options
+set(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS} ${VISP_EXTRA_C_FLAGS}")
+set(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} ${VISP_EXTRA_CXX_FLAGS}")

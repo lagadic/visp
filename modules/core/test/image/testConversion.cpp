@@ -36,6 +36,7 @@
  *****************************************************************************/
 
 #include <stdlib.h>
+#include <iomanip>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
@@ -46,22 +47,32 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpTime.h>
 
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#  include <emmintrin.h>
+#  define VISP_HAVE_SSE2 1
+
+#  if defined __SSE3__ || (defined _MSC_VER && _MSC_VER >= 1500)
+#    include <pmmintrin.h>
+#    define VISP_HAVE_SSE3 1
+#  endif
+#  if defined __SSSE3__  || (defined _MSC_VER && _MSC_VER >= 1500)
+#    include <tmmintrin.h>
+#    define VISP_HAVE_SSSE3 1
+#  endif
+#endif
+
 
 /*!
   \example testConversion.cpp
 
   \brief Manipulation of image conversions.
-
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"cdi:o:h"
+#define GETOPTARGS	"cdi:o:n:h"
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user);
 
 /*
-
   Print the program options.
 
   \param name : Program name.
@@ -69,15 +80,16 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
   \param ipath: Input image path.
   \param opath : Output image path.
   \param user : Username.
+  \param nbiter : Iteration number.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user, int nbiter)
 {
   fprintf(stdout, "\n\
 Test image conversions.\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-o <output image path>]\n\
+  %s [-i <input image path>] [-o <output image path>] [-n <nb benchmark iterations>]\n\
      [-h]\n						      \
 ", name);
 
@@ -98,9 +110,12 @@ OPTIONS:                                               Default\n\
      Klimt_grey.pgm and Klimt_color.ppm output images\n\
      are written.\n\
 \n\
+  -n <nb benchmark iterations>                               %d\n\
+     Set the number of benchmark iterations.\n\
+\n\
   -h\n\
      Print the help.\n\n",
-	  ipath.c_str(), opath.c_str(), user.c_str());
+    ipath.c_str(), opath.c_str(), user.c_str(), nbiter);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -115,10 +130,12 @@ OPTIONS:                                               Default\n\
   \param ipath: Input image path.
   \param opath : Output image path.
   \param user : Username.
+  \param nbIterations : Number of benchmark iterations.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user,
+                int &nbIterations)
 {
   const char *optarg_;
   int	c;
@@ -127,20 +144,21 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     switch (c) {
     case 'i': ipath = optarg_; break;
     case 'o': opath = optarg_; break;
-    case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
+    case 'n': nbIterations = atoi(optarg_); break;
+    case 'h': usage(argv[0], NULL, ipath, opath, user, nbIterations); return false; break;
 
     case 'c':
     case 'd':
       break;
 
     default:
-      usage(argv[0], optarg_, ipath, opath, user); return false; break;
+      usage(argv[0], optarg_, ipath, opath, user, nbIterations); return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, opath, user);
+    usage(argv[0], NULL, ipath, opath, user, nbIterations);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -148,6 +166,76 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
 
   return true;
 }
+
+void computeRegularRGBaToGrayscale(const unsigned char* rgba, unsigned char* grey, unsigned int size) {
+  const unsigned char *pt_input = rgba;
+  const unsigned char *pt_end = rgba + size*4;
+  unsigned char *pt_output = grey;
+
+  while(pt_input != pt_end) {
+    *pt_output = (unsigned char) (0.2126 * (*pt_input)
+      + 0.7152 * (*(pt_input + 1))
+      + 0.0722 * (*(pt_input + 2)) );
+    pt_input += 4;
+    pt_output ++;
+  }
+}
+
+void computeRegularRGBToGrayscale(const unsigned char* rgb, unsigned char* grey, unsigned int size) {
+  const unsigned char *pt_input = rgb;
+  const unsigned char* pt_end = rgb + size*3;
+  unsigned char *pt_output = grey;
+
+  while(pt_input != pt_end) {
+    *pt_output = (unsigned char) (0.2126 * (*pt_input)
+      + 0.7152 * (*(pt_input + 1))
+      + 0.0722 * (*(pt_input + 2)) );
+    pt_input += 3;
+    pt_output ++;
+  }
+}
+
+void computeRegularBGRToGrayscale(unsigned char * bgr, unsigned char * grey,
+                                  unsigned int width, unsigned int height, bool flip) {
+  //if we have to flip the image, we start from the end last scanline so the
+  //step is negative
+  int lineStep = (flip) ? -(int)(width*3) : (int)(width*3);
+
+  //starting source address = last line if we need to flip the image
+  unsigned char * src = (flip) ? bgr+(width*height*3)+lineStep : bgr;
+  unsigned char * line;
+
+  unsigned int j=0;
+  unsigned int i=0;
+
+  for(i=0 ; i < height ; i++)
+  {
+    line = src;
+    for( j=0 ; j < width ; j++)
+    {
+      *grey++ = (unsigned char)( 0.2126 * *(line+2)
+         + 0.7152 * *(line+1)
+         + 0.0722 * *(line+0)) ;
+      line+=3;
+    }
+
+    //go to the next line
+    src+=lineStep;
+  }
+}
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+void computeRegularBGRToGrayscale(const cv::Mat& src, vpImage<unsigned char>& dest)
+{
+  if(src.type() == CV_8UC3) {
+    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+
+    if(src.isContinuous()) {
+      computeRegularBGRToGrayscale((unsigned char*)src.data, (unsigned char*)dest.bitmap, (unsigned int)src.cols, (unsigned int)src.rows, false);
+    }
+  }
+}
+#endif
 
 int
 main(int argc, const char ** argv)
@@ -160,6 +248,7 @@ main(int argc, const char ** argv)
     std::string opath;
     std::string filename;
     std::string username;
+    int nbIterations = 100;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -179,7 +268,7 @@ main(int argc, const char ** argv)
     vpIoTools::getUserName(username);
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_opath, username) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_opath, username, nbIterations) == false) {
       exit (-1);
     }
 
@@ -199,7 +288,7 @@ main(int argc, const char ** argv)
         vpIoTools::makeDirectory(opath);
       }
       catch (...) {
-        usage(argv[0], NULL, ipath, opt_opath, username);
+        usage(argv[0], NULL, ipath, opt_opath, username, nbIterations);
         std::cerr << std::endl
                   << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
@@ -222,7 +311,7 @@ main(int argc, const char ** argv)
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()){
-      usage(argv[0], NULL, ipath, opt_opath, username);
+      usage(argv[0], NULL, ipath, opt_opath, username, nbIterations);
       std::cerr << std::endl
                 << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
@@ -655,6 +744,249 @@ main(int argc, const char ** argv)
     if(I_copyData.getSize() > 0) {
       I_copyData[0][0].R = 10;
     }
+
+
+    //Benchmark and test RGBa / RGB / cv::Mat to Grayscale conversion
+    {
+      //RGBa to Grayscale
+      vpImage<vpRGBa> I_color;
+      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
+      vpImageIo::read(I_color, filename);
+
+      vpImage<unsigned char> I_gray_sse(I_color.getHeight(), I_color.getWidth());
+      vpImage<unsigned char> I_gray_regular(I_color.getHeight(), I_color.getWidth());
+      unsigned char value_sse = 0, value_regular = 0;
+
+      double t_sse = vpTime::measureTimeMs();
+      for(int iteration = 0; iteration < nbIterations; iteration++) {
+        vpImageConvert::convert(I_color, I_gray_sse);
+        value_sse += I_gray_sse[0][0];
+      }
+      t_sse = vpTime::measureTimeMs() - t_sse;
+
+      double t_regular = vpTime::measureTimeMs();
+      for(int iteration = 0; iteration < nbIterations; iteration++) {
+        computeRegularRGBaToGrayscale((unsigned char *) I_color.bitmap, I_gray_regular.bitmap, I_color.getSize());
+        value_regular += I_gray_regular[0][0];
+      }
+      t_regular = vpTime::measureTimeMs() - t_regular;
+
+      //Compute the error between the SSE and regular version
+      double rmse_error = 0.0;
+      for(unsigned int i = 0; i < I_color.getHeight(); i++) {
+        for(unsigned int j = 0; j < I_color.getWidth(); j++) {
+          rmse_error += (I_gray_sse[i][j] - I_gray_regular[i][j]) * (I_gray_sse[i][j] - I_gray_regular[i][j]);
+        }
+      }
+
+      std::cout << "\nRGBa to Grayscale" << std::endl;
+      std::cout << "t_regular (" << nbIterations << " iterations)=" << t_regular << " ms"
+                << " ; t_sse (" << nbIterations << " iterations)=" << t_sse << " ms" << std::endl;
+      std::cout << "Speed-up=" << (t_regular/t_sse) << "X" << std::endl;
+      std::cout << "RMSE error between SSE and regular version: " << (std::sqrt(rmse_error/I_color.getSize())) << std::endl;
+
+      //To prevent the iteration loop to not be optimized?
+      std::cout << "value_sse=" << static_cast<unsigned>(value_sse)
+          << " ; value_regular=" << static_cast<unsigned>(value_regular) << std::endl;
+
+      filename =  vpIoTools::createFilePath(opath, "I_rgba2gray_sse.pgm");
+      vpImageIo::write(I_gray_sse, filename);
+
+      filename =  vpIoTools::createFilePath(opath, "I_rgba2gray_regular.pgm");
+      vpImageIo::write(I_gray_regular, filename);
+
+
+      //RGB to Grayscale conversion
+      unsigned char *rgb_array = new unsigned char[I_color.getSize() * 3];
+      vpImageConvert::RGBaToRGB((unsigned char *) I_color.bitmap, rgb_array, I_color.getSize());
+
+      value_sse = 0;
+      value_regular = 0;
+
+      unsigned char *rgb2gray_array_sse = new unsigned char[I_color.getSize()];
+      t_sse = vpTime::measureTimeMs();
+      for(int iteration = 0; iteration < nbIterations; iteration++) {
+        vpImageConvert::RGBToGrey(rgb_array, rgb2gray_array_sse, I_color.getWidth(), I_color.getHeight(), false);
+        value_sse += rgb2gray_array_sse[0];
+      }
+      t_sse = vpTime::measureTimeMs() - t_sse;
+
+      unsigned char *rgb2gray_array_regular = new unsigned char[I_color.getSize()];
+      t_regular = vpTime::measureTimeMs();
+      for(int iteration = 0; iteration < nbIterations; iteration++) {
+        computeRegularRGBToGrayscale(rgb_array, rgb2gray_array_regular, I_color.getSize());
+        value_regular += rgb2gray_array_regular[0];
+      }
+      t_regular = vpTime::measureTimeMs() - t_regular;
+
+      vpImage<unsigned char> I_gray2rgba_sse(rgb2gray_array_sse, I_color.getHeight(), I_color.getWidth(), false);
+      vpImage<unsigned char> I_gray2rgba_regular(rgb2gray_array_regular, I_color.getHeight(), I_color.getWidth(), false);
+
+      //Compute the error between the SSE and regular version
+      rmse_error = 0.0;
+      for(unsigned int i = 0; i < I_color.getHeight(); i++) {
+        for(unsigned int j = 0; j < I_color.getWidth(); j++) {
+          rmse_error += (I_gray2rgba_sse[i][j] - I_gray2rgba_regular[i][j]) * (I_gray2rgba_sse[i][j] - I_gray2rgba_regular[i][j]);
+        }
+      }
+
+      std::cout << "\nRGB to Grayscale" << std::endl;
+      std::cout << "t_regular (" << nbIterations << " iterations)=" << t_regular << " ms"
+                << " ; t_sse (" << nbIterations << " iterations)=" << t_sse << " ms" << std::endl;
+      std::cout << "Speed-up=" << (t_regular/t_sse) << "X" << std::endl;
+      std::cout << "RMSE error between SSE and regular version: " << (std::sqrt(rmse_error/I_color.getSize())) << std::endl;
+
+      //To prevent the iteration loop to not be optimized?
+      std::cout << "value_sse=" << static_cast<unsigned>(value_sse)
+          << " ; value_regular=" << static_cast<unsigned>(value_regular) << std::endl;
+
+      filename =  vpIoTools::createFilePath(opath, "I_rgb2gray_sse.pgm");
+      vpImageIo::write(I_gray2rgba_sse, filename);
+
+      filename =  vpIoTools::createFilePath(opath, "I_rgb2gray_regular.pgm");
+      vpImageIo::write(I_gray2rgba_regular, filename);
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+      //BGR cv::Mat to Grayscale
+      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
+      cv::Mat colorMat = cv::imread(filename);
+      std::cout << "colorMat=" << colorMat.cols << "x" << colorMat.rows << std::endl;
+
+      vpImage<unsigned char> I_mat2gray_sse, I_mat2gray_regular;
+      value_sse = 0;
+      value_regular = 0;
+
+      t_sse = vpTime::measureTimeMs();
+      for(int iteration = 0; iteration < nbIterations; iteration++) {
+        vpImageConvert::convert(colorMat, I_mat2gray_sse, false);
+        value_sse += I_mat2gray_sse[0][0];
+      }
+      t_sse = vpTime::measureTimeMs() - t_sse;
+
+      t_regular = vpTime::measureTimeMs();
+      for(int iteration = 0; iteration < nbIterations; iteration++) {
+        computeRegularBGRToGrayscale(colorMat, I_mat2gray_regular);
+        value_regular += I_mat2gray_sse[0][0];
+      }
+      t_regular = vpTime::measureTimeMs() - t_regular;
+
+      //Compute the error between the SSE and regular version
+      rmse_error = 0.0;
+      for(unsigned int i = 0; i < I_color.getHeight(); i++) {
+        for(unsigned int j = 0; j < I_color.getWidth(); j++) {
+          rmse_error += (I_mat2gray_sse[i][j] - I_mat2gray_regular[i][j]) * (I_mat2gray_sse[i][j] - I_mat2gray_regular[i][j]);
+        }
+      }
+
+      std::cout << "\nBGR Mat to Grayscale" << std::endl;
+      std::cout << "t_regular (" << nbIterations << " iterations)=" << t_regular << " ms"
+                << " ; t_sse (" << nbIterations << " iterations)=" << t_sse << " ms" << std::endl;
+      std::cout << "Speed-up=" << (t_regular/t_sse) << "X" << std::endl;
+      std::cout << "RMSE error between SSE and regular version: " << (std::sqrt(rmse_error/I_color.getSize())) << std::endl;
+
+      //To prevent the iteration loop to not be optimized?
+      std::cout << "value_sse=" << static_cast<unsigned>(value_sse)
+          << " ; value_regular=" << static_cast<unsigned>(value_regular) << std::endl;
+
+      filename =  vpIoTools::createFilePath(opath, "I_mat2gray_sse.pgm");
+      vpImageIo::write(I_mat2gray_sse, filename);
+
+      filename =  vpIoTools::createFilePath(opath, "I_mat2gray_regular.pgm");
+      vpImageIo::write(I_mat2gray_regular, filename);
+
+
+      //BGR cv::Mat to Grayscale cv::Mat
+      cv::Mat grayscaleMat(colorMat.size(), CV_8U);
+      unsigned char value_mat = 0;
+
+      double t_opencv = vpTime::measureTimeMs();
+      for(int iteration = 0; iteration < nbIterations; iteration++) {
+        cv::cvtColor(colorMat, grayscaleMat, cv::COLOR_BGR2GRAY);
+        value_mat += grayscaleMat.ptr<uchar>(0)[0];
+      }
+      t_opencv = vpTime::measureTimeMs() - t_opencv;
+
+      std::cout << "\nBGR Mat to Grayscale Mat" << std::endl;
+      std::cout << "t_opencv (" << nbIterations << " iterations)=" << t_opencv << " ms"
+                << " ; t_sse (" << nbIterations << " iterations)=" << t_sse << " ms" << std::endl;
+      std::cout << "Speed-up=" << (t_opencv/t_sse) << "X" << std::endl;
+      std::cout << "value_mat=" << static_cast<unsigned>(value_mat) << std::endl;
+
+      vpImage<unsigned char> I_grayscale_mat;
+      vpImageConvert::convert(grayscaleMat, I_grayscale_mat);
+      filename =  vpIoTools::createFilePath(opath, "grayscaleMat.pgm");
+      vpImageIo::write(I_grayscale_mat, filename);
+
+
+      //Test RGB to Grayscale + Flip
+      unsigned char *rgb2gray_flip_array_sse = new unsigned char[I_color.getSize()];
+      vpImageConvert::RGBToGrey(rgb_array, rgb2gray_flip_array_sse, I_color.getWidth(), I_color.getHeight(), true);
+      vpImage<unsigned char> I_rgb2gray_flip_sse(rgb2gray_flip_array_sse, I_color.getHeight(), I_color.getWidth());
+
+      filename =  vpIoTools::createFilePath(opath, "I_rgb2gray_flip_sse.pgm");
+      vpImageIo::write(I_rgb2gray_flip_sse, filename);
+
+
+      //Test BGR to Grayscale + Flip
+      unsigned char *bgr2gray_flip_array_sse = new unsigned char[I_color.getSize()];
+      vpImage<unsigned char> I_bgr2gray_flip_sse(bgr2gray_flip_array_sse, I_color.getHeight(), I_color.getWidth());
+      vpImageConvert::convert(colorMat, I_bgr2gray_flip_sse, true);
+
+      filename =  vpIoTools::createFilePath(opath, "I_bgr2gray_flip_sse.pgm");
+      vpImageIo::write(I_bgr2gray_flip_sse, filename);
+
+
+      //Test RGB to Grayscale + Flip + Crop
+      cv::Rect rect_roi(11, 17, 347, 449);
+      cv::Mat colorMat_crop = colorMat(rect_roi);
+      cv::Mat colorMat_crop_continous = colorMat(rect_roi).clone();
+      std::cout << "colorMat_crop: " << colorMat_crop.cols << "x" << colorMat_crop.rows <<
+                   " is continuous? " << colorMat_crop.isContinuous() << std::endl;
+      std::cout << "colorMat_crop_continous: " << colorMat_crop_continous.cols
+                << "x" << colorMat_crop_continous.rows << " is continuous? "
+                << colorMat_crop_continous.isContinuous() << std::endl;
+
+      vpImage<vpRGBa> I_color_crop( (unsigned int) (rect_roi.height-rect_roi.y), (unsigned int) (rect_roi.width-rect_roi.x) );
+      for(unsigned int i = (unsigned int) rect_roi.y; i < (unsigned int) rect_roi.height; i++) {
+        for(unsigned int j = (unsigned int) rect_roi.x; j < (unsigned int) rect_roi.width; j++) {
+          I_color_crop[(unsigned int) ((int)i-rect_roi.y)][(unsigned int) ((int)j-rect_roi.x)] = I_color[i][j];
+        }
+      }
+
+      unsigned char *rgb_array_crop = new unsigned char[I_color_crop.getSize()*3];
+      vpImageConvert::RGBaToRGB((unsigned char *) I_color_crop.bitmap, rgb_array_crop, I_color_crop.getSize());
+
+      unsigned char *rgb2gray_flip_crop_array_sse = new unsigned char[I_color_crop.getSize()];
+      vpImageConvert::RGBToGrey(rgb_array_crop, rgb2gray_flip_crop_array_sse, I_color_crop.getWidth(),
+                                I_color_crop.getHeight(), true);
+      vpImage<unsigned char> I_rgb2gray_flip_crop_sse(rgb2gray_flip_crop_array_sse, I_color_crop.getHeight(),
+                                                      I_color_crop.getWidth());
+
+      filename =  vpIoTools::createFilePath(opath, "I_rgb2gray_flip_crop_sse.pgm");
+      vpImageIo::write(I_rgb2gray_flip_crop_sse, filename);
+
+
+      //Test BGR to Grayscale + Flip + Crop
+      vpImage<unsigned char> I_bgr2gray_flip_crop_sse(I_color_crop.getHeight(), I_color_crop.getWidth());
+      vpImageConvert::convert(colorMat_crop_continous, I_bgr2gray_flip_crop_sse, true);
+
+      filename =  vpIoTools::createFilePath(opath, "I_bgr2gray_flip_crop_sse.pgm");
+      vpImageIo::write(I_bgr2gray_flip_crop_sse, filename);
+
+
+      //Test BGR to Grayscale + Flip + Crop + No continuous Mat
+      vpImage<unsigned char> I_bgr2gray_flip_crop_no_continuous_sse(I_color_crop.getHeight(),
+                                                                    I_color_crop.getWidth());
+      vpImageConvert::convert(colorMat_crop, I_bgr2gray_flip_crop_no_continuous_sse, true);
+
+      filename =  vpIoTools::createFilePath(opath, "I_bgr2gray_flip_crop_no_continuous_sse.pgm");
+      vpImageIo::write(I_bgr2gray_flip_crop_no_continuous_sse, filename);
+#endif
+
+      //Delete
+      delete[] rgb_array;
+    }
+
 
     return 0;
   }
