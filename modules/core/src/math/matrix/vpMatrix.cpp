@@ -424,7 +424,7 @@ vpMatrix::operator=(double x)
 
 
 /*!
-  Assigment from an array of double. This methos has to be used carefully since
+  Assigment from an array of double. This method has to be used carefully since
   the array allocated behind \e x pointer should have the same dimension than the matrix.
 */
 vpMatrix &
@@ -2718,13 +2718,39 @@ vpMatrix::print(std::ostream& s, unsigned int length, char const* intro) const
 
 
 /*!
-  Print using matlab syntax, to be put in matlab later.
+  Print using Matlab syntax, to copy/paste in Matlab later.
 
-  Print using the following form:
+  The following code
   \code
-[ a,b,c;
-d,e,f;
-g,h,i]
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix M(2,3);
+  int cpt = 0;
+  for (unsigned int i=0; i<M.getRows(); i++)
+    for (unsigned int j=0; j<M.getCols(); j++)
+      M[i][j] = cpt++;
+
+  std::cout << "M = "; M.matlabPrint(std::cout);
+}
+  \endcode
+  produces this output:
+  \code
+M = [ 0, 1, 2, ;
+3, 4, 5, ]
+  \endcode
+  that could be copy/paste in Matlab:
+  \code
+>> M = [ 0, 1, 2, ;
+3, 4, 5, ]
+
+M =
+
+    0    1    2
+    3    4    5
+
+>>
   \endcode
 */
 std::ostream & vpMatrix::matlabPrint(std::ostream & os) const
@@ -2741,16 +2767,32 @@ std::ostream & vpMatrix::matlabPrint(std::ostream & os) const
 };
 
 /*!
-  Print using MAPLE matrix input format.
+  Print using Maple syntax, to copy/paste in Maple later.
 
-Print using the following way so that this output can be directly copied into MAPLE:
+  The following code
   \code
-([
-[0.939846, 0.0300754, 0.340272, ],
-[0.0300788, 0.984961, -0.170136, ],
-[-0.340272, 0.170136, 0.924807, ],
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix M(2,3);
+  int cpt = 0;
+  for (unsigned int i=0; i<M.getRows(); i++)
+    for (unsigned int j=0; j<M.getCols(); j++)
+      M[i][j] = cpt++;
+
+  std::cout << "M = "; M.maplePrint(std::cout);
+}
+  \endcode
+  produces this output:
+  \code
+M = ([
+[0, 1, 2, ],
+[3, 4, 5, ],
 ])
   \endcode
+  that could be copy/paste in Maple.
+
 */
 std::ostream & vpMatrix::maplePrint(std::ostream & os) const
 {
@@ -2767,13 +2809,30 @@ std::ostream & vpMatrix::maplePrint(std::ostream & os) const
 };
 
 /*!
-  Print matrix in csv format.
+  Print/save a matrix in csv format.
 
-  Print as comma separated values so that this output can be imported into any program which has a csv data import option:
+  The following code
   \code
-0.939846, 0.0300754, 0.340272
-0.0300788, 0.984961, -0.170136
--0.340272, 0.170136, 0.924807
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  std::ofstream ofs("log.csv", std::ofstream::out);
+  vpMatrix M(2,3);
+  int cpt = 0;
+  for (unsigned int i=0; i<M.getRows(); i++)
+    for (unsigned int j=0; j<M.getCols(); j++)
+      M[i][j] = cpt++;
+
+  M.csvPrint(ofs);
+
+  ofs.close();
+}
+  \endcode
+  produces log.csv file that contains:
+  \code
+0, 1, 2
+3, 4, 5
   \endcode
 */
 std::ostream & vpMatrix::csvPrint(std::ostream & os) const
@@ -2791,31 +2850,46 @@ std::ostream & vpMatrix::csvPrint(std::ostream & os) const
 
 
 /*!
- Print to be used as part of a C++ code later.
+  Print to be used as part of a C++ code later.
 
-  Print under the following form:
-  \code
-vpMatrix A(6,4);
-A[0][0] = 1.4;
-A[0][1] = 0.6; ...
-  \endcode
-
-  \param os: the stream to be printed in.
-  \param matrixName: name of the matrix, "A" by default, to be used for
-  the line vpMatrix A(6,7) (see example).
-  \param octet: if false, print using double, if true, print byte per byte
+  \param os : the stream to be printed in.
+  \param matrixName : name of the matrix, "A" by default.
+  \param octet : if false, print using double, if true, print byte per byte
   each bytes of the double array.
-*/
-std::ostream & vpMatrix::cppPrint(std::ostream & os, const char * matrixName, bool octet) const
+
+  The following code shows how to use this function:
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
 {
-  const char defaultName [] = "A";
-  if (NULL == matrixName)
-  {
-    matrixName = defaultName;
-  }
-  os << "vpMatrix " << defaultName
-    << " (" << this ->getRows ()
-    << ", " << this ->getCols () << "); " <<std::endl;
+  vpMatrix M(2,3);
+  int cpt = 0;
+  for (unsigned int i=0; i<M.getRows(); i++)
+    for (unsigned int j=0; j<M.getCols(); j++)
+      M[i][j] = cpt++;
+
+  M.cppPrint(std::cout, "M");
+}
+  \endcode
+  It produces the following output that could be copy/paste in a C++ code:
+  \code
+vpMatrix M (2, 3);
+M[0][0] = 0;
+M[0][1] = 1;
+M[0][2] = 2;
+
+M[1][0] = 3;
+M[1][1] = 4;
+M[1][2] = 5;
+
+  \endcode
+*/
+std::ostream & vpMatrix::cppPrint(std::ostream & os, const std::string &matrixName, bool octet) const
+{
+  os << "vpMatrix " << matrixName
+     << " (" << this ->getRows ()
+     << ", " << this ->getCols () << "); " <<std::endl;
 
   for (unsigned int i=0; i < this->getRows(); ++ i)
   {
@@ -2823,18 +2897,18 @@ std::ostream & vpMatrix::cppPrint(std::ostream & os, const char * matrixName, bo
     {
       if (! octet)
       {
-        os << defaultName << "[" << i << "][" << j
-          << "] = " << (*this)[i][j] << "; " << std::endl;
+        os << matrixName << "[" << i << "][" << j
+           << "] = " << (*this)[i][j] << "; " << std::endl;
       }
       else
       {
         for (unsigned int k = 0; k < sizeof(double); ++ k)
         {
-          os << "((unsigned char*)&(" << defaultName
-            << "[" << i << "][" << j << "]) )[" << k
-            <<"] = 0x" <<std::hex<<
-            (unsigned int)((unsigned char*)& ((*this)[i][j])) [k]
-          << "; " << std::endl;
+          os << "((unsigned char*)&(" << matrixName
+             << "[" << i << "][" << j << "]) )[" << k
+             << "] = 0x" << std::hex
+             << (unsigned int)((unsigned char*)& ((*this)[i][j])) [k]
+             << "; " << std::endl;
         }
       }
     }
@@ -3249,7 +3323,7 @@ vpMatrix::kernel(vpMatrix &kerA, double svThreshold) const
   Compute the determinant of a n-by-n matrix.
 
   \param method : Method used to compute the determinant. Default LU
-  decomposition methos is faster than the method based on Gaussian
+  decomposition method is faster than the method based on Gaussian
   elimination.
 
   \return Determinant of the matrix.

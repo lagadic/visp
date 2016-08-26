@@ -66,7 +66,7 @@
   \ingroup group_mbt_faces
 
  */
-class vpMbScanLine
+class VISP_EXPORT vpMbScanLine
 {
 public:
   //! Structure to define if a scanline intersection is a starting or an ending point of a polygon, or just a single line intersection.

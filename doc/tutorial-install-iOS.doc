@@ -58,5 +58,8 @@ $ python visp/platforms/ios/build_framework.py ios
 
 Once build, you will get ``~/<workspace_dir>/ios/visp3.framework`` that could be added to your Xcode projects.
 
+\section install_iOS_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started-iOS that shows how to use ViSP as a 3rd party to build your own project for iOS devices.
 
 */

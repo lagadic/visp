@@ -318,6 +318,14 @@ endif()
 # Extra ViSP targets: uninstall, etc.
 include(cmake/VISPExtraTargets.cmake)
 
+# Ogre plugins and resources
+include(cmake/OgreTools.cmake)
+if(USE_OGRE)
+  vp_set_ogre_media()
+elseif(CMAKE_TOOLCHAIN_FILE)
+  vp_set_ogre_advanced_var()
+endif()
+
 include(CheckLibraryExists)
 
 # ----------------------------------------------------------------------------
@@ -614,14 +622,6 @@ elseif(USE_SOQT AND USE_QT)
   elseif(DESIRED_QT_VERSION MATCHES 4)
     set(VISP_HAVE_QT4_FOUND "yes")         # for ViSP-third-party.txt
   endif()
-endif()
-
-# Ogre plugins and resources
-include(cmake/OgreTools.cmake)
-if(USE_OGRE)
-  vp_set_ogre_media()
-elseif(CMAKE_TOOLCHAIN_FILE)
-  vp_set_ogre_advanced_var()
 endif()
 
 # PCL and 3rd party advanced vars
