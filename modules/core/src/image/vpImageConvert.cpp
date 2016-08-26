@@ -91,13 +91,11 @@ Convert a vpImage\<unsigned char\> to a vpImage\<vpRGBa\>
 \param dest : destination image
 */
 void
-vpImageConvert::convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> & dest, const bool fastConversion)
+vpImageConvert::convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> & dest)
 {
   dest.resize(src.getHeight(), src.getWidth()) ;
 
-  RGBaToGrey((unsigned char *)src.bitmap, dest.bitmap,
-             src.getHeight() * src.getWidth(),
-             fastConversion);
+  RGBaToGrey((unsigned char *)src.bitmap, dest.bitmap, src.getHeight() * src.getWidth());
 }
 
 
@@ -749,7 +747,7 @@ int main()
   \endcode
 */
 void
-vpImageConvert::convert(const cv::Mat& src, vpImage<unsigned char>& dest, const bool flip, const bool fastConversion)
+vpImageConvert::convert(const cv::Mat& src, vpImage<unsigned char>& dest, const bool flip)
 {
   if(src.type() == CV_8UC1){
     dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
@@ -770,23 +768,20 @@ vpImageConvert::convert(const cv::Mat& src, vpImage<unsigned char>& dest, const 
   }else if(src.type() == CV_8UC3){
     dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
     if(src.isContinuous() /*&& !flip*/){
-      BGRToGrey((unsigned char*)src.data, (unsigned char*)dest.bitmap, (unsigned int)src.cols, (unsigned int)src.rows, flip,
-                fastConversion);
+      BGRToGrey((unsigned char*)src.data, (unsigned char*)dest.bitmap, (unsigned int)src.cols, (unsigned int)src.rows, flip);
     }
     else{
       if(flip){
         for(unsigned int i=0; i<dest.getRows(); ++i){
           BGRToGrey((unsigned char*)src.data+i*src.step1(),
                     (unsigned char*)dest.bitmap+(dest.getRows()-i-1)*dest.getCols(),
-                    (unsigned int)dest.getCols(), 1, false,
-                    fastConversion);
+                    (unsigned int)dest.getCols(), 1, false);
         }
       }else{
         for(unsigned int i=0; i<dest.getRows(); ++i){
           BGRToGrey((unsigned char*)src.data+i*src.step1(),
                     (unsigned char*)dest.bitmap+i*dest.getCols(),
-                    (unsigned int)dest.getCols(), 1, false,
-                    fastConversion);
+                    (unsigned int)dest.getCols(), 1, false);
         }
       }
     }
@@ -2862,13 +2857,12 @@ void vpImageConvert::RGBaToRGB(unsigned char* rgba, unsigned char* rgb, unsigned
   http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
 
 */
-void vpImageConvert::RGBToGrey(unsigned char* rgb, unsigned char* grey, unsigned int size,
-                               const bool fastConversion)
+void vpImageConvert::RGBToGrey(unsigned char* rgb, unsigned char* grey, unsigned int size)
 {
 #if VISP_HAVE_SSSE3
   unsigned int i = 0;
 
-  if(size >= 16 && fastConversion) {
+  if(size >= 16) {
     //Mask to select R component
     const __m128i mask_R1 = _mm_set_epi8(
           -1, -1, -1, -1, 15, -1, 12, -1, 9, -1, 6, -1, 3, -1, 0, -1
@@ -2996,13 +2990,12 @@ void vpImageConvert::RGBToGrey(unsigned char* rgb, unsigned char* grey, unsigned
   http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
 
 */
-void vpImageConvert::RGBaToGrey(unsigned char* rgba, unsigned char* grey, unsigned int size,
-                                const bool fastConversion)
+void vpImageConvert::RGBaToGrey(unsigned char* rgba, unsigned char* grey, unsigned int size)
 {
 #if VISP_HAVE_SSSE3
   unsigned int i = 0;
 
-  if(size >= 16 && fastConversion) {
+  if(size >= 16) {
     //Mask to select R component
     const __m128i mask_R1 = _mm_set_epi8(
           -1, -1, -1, -1, -1, -1, -1, -1, 12, -1, 8, -1, 4, -1, 0, -1
@@ -3095,10 +3088,6 @@ void vpImageConvert::RGBaToGrey(unsigned char* rgba, unsigned char* grey, unsign
     ++grey;
   }
 #else
-  if(fastConversion) {
-    std::cout << "Fast conversion is only availabe if SSE instructions are activated!" << std::endl;
-  }
-
   unsigned char *pt_input = rgba;
   unsigned char* pt_end = rgba + size*4;
   unsigned char *pt_output = grey;
@@ -3204,8 +3193,7 @@ vpImageConvert::BGRToRGBa(unsigned char * bgr, unsigned char * rgba,
 */
 void
 vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
-                          unsigned int width, unsigned int height, bool flip,
-                          const bool fastConversion)
+                          unsigned int width, unsigned int height, bool flip)
 {
 #if VISP_HAVE_SSSE3
   //Mask to select B component
@@ -3295,7 +3283,7 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
     unsigned char *linePtr = bgr;
     unsigned char r,g,b;
 
-    if(width >= 16 && fastConversion) {
+    if(width >= 16) {
       for(; i >= 0; i--) {
         unsigned int j = 0;
 
@@ -3362,7 +3350,7 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
     unsigned int i = 0;
     unsigned int size = width * height;
 
-    if(size >= 16 && fastConversion) {
+    if(size >= 16) {
       for(; i <= size - 16; i+=16) {
         //Process 16 color pixels
         const __m128i data1 = _mm_loadu_si128((const __m128i*) bgr);
@@ -3479,8 +3467,7 @@ vpImageConvert::RGBToRGBa(unsigned char * rgb, unsigned char * rgba,
 */
 void
 vpImageConvert::RGBToGrey(unsigned char * rgb, unsigned char * grey,
-                          unsigned int width, unsigned int height, bool flip,
-                          const bool fastConversion)
+                          unsigned int width, unsigned int height, bool flip)
 {
   if(flip) {
 #if VISP_HAVE_SSSE3
@@ -3491,7 +3478,7 @@ vpImageConvert::RGBToGrey(unsigned char * rgb, unsigned char * grey,
     unsigned char *linePtr = rgb;
     unsigned char r,g,b;
 
-  if(width >= 16 && fastConversion) {
+  if(width >= 16) {
     //Mask to select R component
     const __m128i mask_R1 = _mm_set_epi8(
           -1, -1, -1, -1, 15, -1, 12, -1, 9, -1, 6, -1, 3, -1, 0, -1
@@ -3644,7 +3631,7 @@ vpImageConvert::RGBToGrey(unsigned char * rgb, unsigned char * grey,
   }
 #endif
   } else {
-    RGBToGrey(rgb, grey, width*height, fastConversion);
+    RGBToGrey(rgb, grey, width*height);
   }
 }
 

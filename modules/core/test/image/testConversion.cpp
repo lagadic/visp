@@ -80,9 +80,10 @@
   \param ipath: Input image path.
   \param opath : Output image path.
   \param user : Username.
+  \param nbiter : Iteration number.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user, int nbiter)
 {
   fprintf(stdout, "\n\
 Test image conversions.\n\
@@ -109,12 +110,12 @@ OPTIONS:                                               Default\n\
      Klimt_grey.pgm and Klimt_color.ppm output images\n\
      are written.\n\
 \n\
-  -n <nb benchmark iterations>                               %s\n\
+  -n <nb benchmark iterations>                               %d\n\
      Set the number of benchmark iterations.\n\
 \n\
   -h\n\
      Print the help.\n\n",
-	  ipath.c_str(), opath.c_str(), user.c_str());
+    ipath.c_str(), opath.c_str(), user.c_str(), nbiter);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -144,20 +145,20 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
     case 'i': ipath = optarg_; break;
     case 'o': opath = optarg_; break;
     case 'n': nbIterations = atoi(optarg_); break;
-    case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
+    case 'h': usage(argv[0], NULL, ipath, opath, user, nbIterations); return false; break;
 
     case 'c':
     case 'd':
       break;
 
     default:
-      usage(argv[0], optarg_, ipath, opath, user); return false; break;
+      usage(argv[0], optarg_, ipath, opath, user, nbIterations); return false; break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, opath, user);
+    usage(argv[0], NULL, ipath, opath, user, nbIterations);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -287,7 +288,7 @@ main(int argc, const char ** argv)
         vpIoTools::makeDirectory(opath);
       }
       catch (...) {
-        usage(argv[0], NULL, ipath, opt_opath, username);
+        usage(argv[0], NULL, ipath, opt_opath, username, nbIterations);
         std::cerr << std::endl
                   << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
@@ -310,7 +311,7 @@ main(int argc, const char ** argv)
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()){
-      usage(argv[0], NULL, ipath, opt_opath, username);
+      usage(argv[0], NULL, ipath, opt_opath, username, nbIterations);
       std::cerr << std::endl
                 << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
@@ -756,11 +757,9 @@ main(int argc, const char ** argv)
       vpImage<unsigned char> I_gray_regular(I_color.getHeight(), I_color.getWidth());
       unsigned char value_sse = 0, value_regular = 0;
 
-      bool fastConversion = true; //Say explicitly to use SSE code if available
-
       double t_sse = vpTime::measureTimeMs();
       for(int iteration = 0; iteration < nbIterations; iteration++) {
-        vpImageConvert::convert(I_color, I_gray_sse, fastConversion);
+        vpImageConvert::convert(I_color, I_gray_sse);
         value_sse += I_gray_sse[0][0];
       }
       t_sse = vpTime::measureTimeMs() - t_sse;
@@ -807,7 +806,7 @@ main(int argc, const char ** argv)
       unsigned char *rgb2gray_array_sse = new unsigned char[I_color.getSize()];
       t_sse = vpTime::measureTimeMs();
       for(int iteration = 0; iteration < nbIterations; iteration++) {
-        vpImageConvert::RGBToGrey(rgb_array, rgb2gray_array_sse, I_color.getWidth(), I_color.getHeight(), false, fastConversion);
+        vpImageConvert::RGBToGrey(rgb_array, rgb2gray_array_sse, I_color.getWidth(), I_color.getHeight(), false);
         value_sse += rgb2gray_array_sse[0];
       }
       t_sse = vpTime::measureTimeMs() - t_sse;
@@ -847,7 +846,6 @@ main(int argc, const char ** argv)
       filename =  vpIoTools::createFilePath(opath, "I_rgb2gray_regular.pgm");
       vpImageIo::write(I_gray2rgba_regular, filename);
 
-
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       //BGR cv::Mat to Grayscale
       filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
@@ -860,7 +858,7 @@ main(int argc, const char ** argv)
 
       t_sse = vpTime::measureTimeMs();
       for(int iteration = 0; iteration < nbIterations; iteration++) {
-        vpImageConvert::convert(colorMat, I_mat2gray_sse, false, fastConversion);
+        vpImageConvert::convert(colorMat, I_mat2gray_sse, false);
         value_sse += I_mat2gray_sse[0][0];
       }
       t_sse = vpTime::measureTimeMs() - t_sse;
@@ -932,7 +930,7 @@ main(int argc, const char ** argv)
       //Test BGR to Grayscale + Flip
       unsigned char *bgr2gray_flip_array_sse = new unsigned char[I_color.getSize()];
       vpImage<unsigned char> I_bgr2gray_flip_sse(bgr2gray_flip_array_sse, I_color.getHeight(), I_color.getWidth());
-      vpImageConvert::convert(colorMat, I_bgr2gray_flip_sse, true, fastConversion);
+      vpImageConvert::convert(colorMat, I_bgr2gray_flip_sse, true);
 
       filename =  vpIoTools::createFilePath(opath, "I_bgr2gray_flip_sse.pgm");
       vpImageIo::write(I_bgr2gray_flip_sse, filename);
@@ -960,7 +958,7 @@ main(int argc, const char ** argv)
 
       unsigned char *rgb2gray_flip_crop_array_sse = new unsigned char[I_color_crop.getSize()];
       vpImageConvert::RGBToGrey(rgb_array_crop, rgb2gray_flip_crop_array_sse, I_color_crop.getWidth(),
-                                I_color_crop.getHeight(), true, fastConversion);
+                                I_color_crop.getHeight(), true);
       vpImage<unsigned char> I_rgb2gray_flip_crop_sse(rgb2gray_flip_crop_array_sse, I_color_crop.getHeight(),
                                                       I_color_crop.getWidth());
 
@@ -970,7 +968,7 @@ main(int argc, const char ** argv)
 
       //Test BGR to Grayscale + Flip + Crop
       vpImage<unsigned char> I_bgr2gray_flip_crop_sse(I_color_crop.getHeight(), I_color_crop.getWidth());
-      vpImageConvert::convert(colorMat_crop_continous, I_bgr2gray_flip_crop_sse, true, fastConversion);
+      vpImageConvert::convert(colorMat_crop_continous, I_bgr2gray_flip_crop_sse, true);
 
       filename =  vpIoTools::createFilePath(opath, "I_bgr2gray_flip_crop_sse.pgm");
       vpImageIo::write(I_bgr2gray_flip_crop_sse, filename);
@@ -979,7 +977,7 @@ main(int argc, const char ** argv)
       //Test BGR to Grayscale + Flip + Crop + No continuous Mat
       vpImage<unsigned char> I_bgr2gray_flip_crop_no_continuous_sse(I_color_crop.getHeight(),
                                                                     I_color_crop.getWidth());
-      vpImageConvert::convert(colorMat_crop, I_bgr2gray_flip_crop_no_continuous_sse, true, fastConversion);
+      vpImageConvert::convert(colorMat_crop, I_bgr2gray_flip_crop_no_continuous_sse, true);
 
       filename =  vpIoTools::createFilePath(opath, "I_bgr2gray_flip_crop_no_continuous_sse.pgm");
       vpImageIo::write(I_bgr2gray_flip_crop_no_continuous_sse, filename);
