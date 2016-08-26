@@ -144,13 +144,6 @@ macro(vp_list_remove_separator __lst)
   endif()
 endmacro()
 
-# remove items in a list
-macro(vp_list_remove_item __lst __item)
-  if(${__lst})
-    list(REMOVE_ITEM ${__lst} ${__item})
-  endif()
-endmacro()
-
 # Provides an option that the user can optionally select.
 # Can accept condition to control when option is available for user.
 # Usage:
