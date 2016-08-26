@@ -178,9 +178,18 @@ VP_OPTION(ACTIVATE_DEBUG_TRACE  "" "" "Enable debug and trace printings" "" ON)
 
 VP_OPTION(BUILD_WITH_STATIC_CRT  "" "" "Enables use of staticaly linked CRT for staticaly linked ViSP" "" ON IF MSVC)
 
-# Note that it is better to set MOMENTS_COMBINE_MATRICES to OFF
-VP_OPTION(MOMENTS_COMBINE_MATRICES  "" "" "Use linear combination of matrices instead of linear combination of moments to compute interaction matrices." "MOMENTS_COMBINE_MATRICES" OFF)
-VP_OPTION(ENABLE_TEST_WITHOUT_DISPLAY  "" "" "Don't use display features when testing" "ENABLE_TEST_WITHOUT_DISPLAY" ON)
+# ----------------------------------------------------------------------------
+# Build options
+# ----------------------------------------------------------------------------
+VP_OPTION(ENABLE_SOLUTION_FOLDERS "" "" "Solution folder in Visual Studio or in other IDEs" "" (MSVC_IDE OR CMAKE_GENERATOR MATCHES Xcode))
+# Note that it is better to set ENABLE_MOMENTS_COMBINE_MATRICES to OFF
+VP_OPTION(ENABLE_MOMENTS_COMBINE_MATRICES  "" "" "Use linear combination of matrices instead of linear combination of moments to compute interaction matrices." "ENABLE_MOMENTS_COMBINE_MATRICES" OFF)
+VP_OPTION(ENABLE_TEST_WITHOUT_DISPLAY      "" "" "Don't use display feature when testing" "" ON)
+
+if(ENABLE_SOLUTION_FOLDERS)
+  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+  set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
+endif()
 
 if(ENABLE_TEST_WITHOUT_DISPLAY)
   set(OPTION_TO_DESACTIVE_DISPLAY "-d")
@@ -304,18 +313,8 @@ else()
 endif()
 
 # ----------------------------------------------------------------------------
-# Solution folders:
-# ----------------------------------------------------------------------------
-if(MSVC_IDE OR CMAKE_GENERATOR MATCHES Xcode)
-  option(ENABLE_SOLUTION_FOLDERS "Solution folder in Visual Studio or in other IDEs" ON)
-endif()
-
-if(ENABLE_SOLUTION_FOLDERS)
-  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-  set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
-endif()
-
 # Extra ViSP targets: uninstall, etc.
+# ----------------------------------------------------------------------------
 include(cmake/VISPExtraTargets.cmake)
 
 # Ogre plugins and resources
@@ -326,11 +325,11 @@ elseif(CMAKE_TOOLCHAIN_FILE)
   vp_set_ogre_advanced_var()
 endif()
 
-include(CheckLibraryExists)
-
 # ----------------------------------------------------------------------------
 # Check for system libs
 # ----------------------------------------------------------------------------
+include(CheckLibraryExists)
+
 if(UNIX)
   # try to found -lm requested on some platforms to link with X11
   find_library(M_LIBRARY NAMES m)
@@ -375,6 +374,10 @@ endif(MSVC)
 # Platform specific
 #----------------------------------------------------------------------
 include(cmake/VISPDetectPlatform.cmake)
+
+VP_OPTION(ENABLE_SSE2  "" "" "Enable SSE2 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
+VP_OPTION(ENABLE_SSE3  "" "" "Enable SSE3 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
+VP_OPTION(ENABLE_SSSE3 "" "" "Enable SSSE3 instructions" "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
 
 # Set the path where to install the lib
 if(WIN32)
@@ -468,10 +471,9 @@ endif()
 include(cmake/VISP3rdParty.cmake)
 
 #-----------------------------------------------------------------------------
-# Add extra compilation flags under UNIX
+# Add extra compilation flags
 #-----------------------------------------------------------------------------
 include(cmake/AddExtraCompilationFlags.cmake) # should be called after FindOpenMP
-vp_add_extra_compilation_flags()
 
 #----------------------------------------------------------------------
 # Modules
@@ -648,7 +650,7 @@ VP_SET(VISP_HAVE_FUNC_STD_ROUND TRUE IF HAVE_FUNC_STD_ROUND) # for header vpConf
 
 VP_SET(VISP_HAVE_ACCESS_TO_NAS TRUE IF NAS_FOUND) # for header vpConfig.h
 VP_SET(VISP_BUILD_DEPRECATED_FUNCTIONS TRUE IF BUILD_DEPRECATED_FUNCTIONS) # for header vpConfig.h
-VP_SET(MOMENTS_COMBINE_MATRICES TRUE IF VISP_MOMENTS_COMBINE_MATRICES) # for header vpConfig.h
+VP_SET(VISP_MOMENTS_COMBINE_MATRICES TRUE IF ENABLE_MOMENTS_COMBINE_MATRICES) # for header vpConfig.h
 VP_SET(VISP_USE_MSVC TRUE IF MSVC) # for header vpConfig.h
 VP_SET(VISP_HAVE_CPP11_COMPATIBILITY TRUE IF USE_CPP11) # for header vpConfig.h
 VP_SET(VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION TRUE IF (USE_BICLOPS AND BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION)) # for header vpConfig.h
