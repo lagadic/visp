@@ -90,7 +90,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR MINGW OR CMAKE_CXX_COMPILER_ID MATCHES "Clang") #
   add_extra_compiler_option_enabling(-Wsign-conversion   ACTIVATE_WARNING_SIGN_CONVERSION OFF)
 elseif(MSVC)
   # Add specific compilation flags for Windows Visual
-  add_extra_compiler_option_enabling(/Wall               ACTIVATE_WARNING_ALL             ON)
+  add_extra_compiler_option_enabling(/Wall               ACTIVATE_WARNING_ALL             OFF)
   if(MSVC80 OR MSVC90 OR MSVC10 OR MSVC11 OR MSVC14)
     # To avoid compiler warning (level 4) C4571, compile with /EHa if you still want
     # your catch(...) blocks to catch structured exceptions.
