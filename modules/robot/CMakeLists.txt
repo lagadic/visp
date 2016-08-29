@@ -60,6 +60,15 @@ if(USE_VIRTUOSE)
   if(MSVC)
     # Work arround to remove warning LNK4099; PDB vc120.pdb not found with virtuoseDLL.lib
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /ignore:4099")
+    # Disable Visual C++ C4312 warning occuring on 3rd party VirtuoseAPI.h file
+    # VirtuoseAPI.h(280): warning C4312: 'type cast': conversion from 'int' to 'char *' of greater size
+	# VirtuoseAPI.h(302): warning C4312: 'type cast': conversion from 'int' to 'VirtContext' of greater size
+    vp_set_source_file_compile_flag(src/haptic-device/virtuose/vpVirtuose.cpp /wd4312)
+    vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp /wd4312)
+    vp_set_source_file_compile_flag(test/virtuose/testVirtuoseAfma6.cpp /wd4312)
+    vp_set_source_file_compile_flag(test/virtuose/testVirtuoseHapticBox.cpp /wd4312)
+    vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp /wd4312)
+    vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp /wd4312)
   endif()
 endif()
 

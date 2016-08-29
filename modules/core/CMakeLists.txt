@@ -249,7 +249,12 @@ if(MSVC)
   # warning C4996: 'inet_ntoa': Use inet_ntop() or InetNtop() instead
   # warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead
   vp_set_source_file_compile_flag(src/tools/network/vpClient.cpp /wd4996)
+  vp_set_source_file_compile_flag(src/tools/network/vpServer.cpp /wd4996)
   vp_set_source_file_compile_flag(src/tools/network/vpNetwork.cpp /wd4996)
+  if(BUILD_TESTS)
+    vp_set_source_file_compile_flag(test/network/testClient.cpp /wd4996)
+    vp_set_source_file_compile_flag(test/network/testServer.cpp /wd4996)
+  endif()
 endif()
 
 vp_add_module(core)
