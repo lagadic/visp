@@ -243,6 +243,15 @@ if(USE_ZLIB)
   list(APPEND opt_libs ${ZLIB_LIBRARIES})
 endif()
 
+if(MSVC)
+  # Disable Visual C++ C4996 warning
+  # warning C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead
+  # warning C4996: 'inet_ntoa': Use inet_ntop() or InetNtop() instead
+  # warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead
+  vp_set_source_file_compile_flag(src/tools/network/vpClient.cpp /wd4996)
+  vp_set_source_file_compile_flag(src/tools/network/vpNetwork.cpp /wd4996)
+endif()
+
 vp_add_module(core)
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
