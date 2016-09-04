@@ -2918,7 +2918,8 @@ void vpImageConvert::RGBToGrey(unsigned char* rgb, unsigned char* grey, unsigned
           13933, 13933, 13933, 13933, 13933, 13933, 13933, 13933
           );
     const __m128i coeff_G = _mm_set_epi16(
-          46871, 46871, 46871, 46871, 46871, 46871, 46871, 46871
+          (short int) 46871, (short int) 46871, (short int) 46871, (short int) 46871,
+          (short int) 46871, (short int) 46871, (short int) 46871, (short int) 46871
           );
     const __m128i coeff_B = _mm_set_epi16(
           4732, 4732, 4732, 4732, 4732, 4732, 4732, 4732
@@ -2954,7 +2955,7 @@ void vpImageConvert::RGBToGrey(unsigned char* rgb, unsigned char* grey, unsigned
               _mm_mulhi_epu16(blue_8_15,  coeff_B)
               ));
 
-      _mm_storeu_si128( (__m128i*) grey,_mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1), _mm_shuffle_epi8(grays_8_15, mask_low2)) );
+      _mm_storeu_si128( (__m128i*) grey, _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1), _mm_shuffle_epi8(grays_8_15, mask_low2)) );
 
       rgb += 48;
       grey += 16;
@@ -3033,7 +3034,8 @@ void vpImageConvert::RGBaToGrey(unsigned char* rgba, unsigned char* grey, unsign
           13933, 13933, 13933, 13933, 13933, 13933, 13933, 13933
           );
     const __m128i coeff_G = _mm_set_epi16(
-          46871, 46871, 46871, 46871, 46871, 46871, 46871, 46871
+          (short int) 46871, (short int) 46871, (short int) 46871, (short int) 46871,
+          (short int) 46871, (short int) 46871, (short int) 46871, (short int) 46871
           );
     const __m128i coeff_B = _mm_set_epi16(
           4732, 4732, 4732, 4732, 4732, 4732, 4732, 4732
@@ -3072,7 +3074,7 @@ void vpImageConvert::RGBaToGrey(unsigned char* rgba, unsigned char* grey, unsign
               _mm_mulhi_epu16(blue_8_15,  coeff_B)
               ));
 
-      _mm_storeu_si128( (__m128i*) grey,_mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1), _mm_shuffle_epi8(grays_8_15, mask_low2)) );
+      _mm_storeu_si128( (__m128i*) grey, _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1), _mm_shuffle_epi8(grays_8_15, mask_low2)) );
 
       rgba += 64;
       grey += 16;
@@ -3269,7 +3271,8 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
         13933, 13933, 13933, 13933, 13933, 13933, 13933, 13933
         );
   const __m128i coeff_G = _mm_set_epi16(
-        46871, 46871, 46871, 46871, 46871, 46871, 46871, 46871
+        (short int) 46871, (short int) 46871, (short int) 46871, (short int) 46871,
+        (short int) 46871, (short int) 46871, (short int) 46871, (short int) 46871
         );
   const __m128i coeff_B = _mm_set_epi16(
         4732, 4732, 4732, 4732, 4732, 4732, 4732, 4732
@@ -3317,7 +3320,7 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
                   _mm_mulhi_epu16(blue_8_15,  coeff_B)
                   ));
 
-          _mm_storeu_si128( (__m128i*) grey,_mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1), _mm_shuffle_epi8(grays_8_15, mask_low2)) );
+          _mm_storeu_si128( (__m128i*) grey, _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1), _mm_shuffle_epi8(grays_8_15, mask_low2)) );
 
           bgr += 48;
           grey += 16;
@@ -3381,7 +3384,7 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
                 _mm_mulhi_epu16(blue_8_15,  coeff_B)
                 ));
 
-        _mm_storeu_si128( (__m128i*) grey,_mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1), _mm_shuffle_epi8(grays_8_15, mask_low2)) );
+        _mm_storeu_si128( (__m128i*) grey, _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1), _mm_shuffle_epi8(grays_8_15, mask_low2)) );
 
         bgr += 48;
         grey += 16;
@@ -3534,7 +3537,8 @@ vpImageConvert::RGBToGrey(unsigned char * rgb, unsigned char * grey,
           13933, 13933, 13933, 13933, 13933, 13933, 13933, 13933
           );
     const __m128i coeff_G = _mm_set_epi16(
-          46871, 46871, 46871, 46871, 46871, 46871, 46871, 46871
+          (short int) 46871, (short int) 46871, (short int) 46871, (short int) 46871,
+          (short int) 46871, (short int) 46871, (short int) 46871, (short int) 46871
           );
     const __m128i coeff_B = _mm_set_epi16(
           4732, 4732, 4732, 4732, 4732, 4732, 4732, 4732
@@ -3573,7 +3577,7 @@ vpImageConvert::RGBToGrey(unsigned char * rgb, unsigned char * grey,
                 _mm_mulhi_epu16(blue_8_15,  coeff_B)
                 ));
 
-        _mm_storeu_si128( (__m128i*) grey,_mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1), _mm_shuffle_epi8(grays_8_15, mask_low2)) );
+        _mm_storeu_si128( (__m128i*) grey, _mm_or_si128(_mm_shuffle_epi8(grays_0_7, mask_low1), _mm_shuffle_epi8(grays_8_15, mask_low2)) );
 
         rgb += 48;
         grey += 16;

@@ -340,6 +340,8 @@ int main()
       v[cpt] = rand() % 1000 + noise();
     }
 
+    std::cout << "\nv.getRows()=" << v.getRows() << std::endl;
+
     double regular_sum = 0.0;
     double t_regular = vpTime::measureTimeMs();
     for(int iteration = 0; iteration < nbIterations; iteration++) {
