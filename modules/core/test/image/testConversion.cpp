@@ -47,20 +47,6 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpTime.h>
 
-#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
-#  include <emmintrin.h>
-#  define VISP_HAVE_SSE2 1
-
-#  if defined __SSE3__ || (defined _MSC_VER && _MSC_VER >= 1500)
-#    include <pmmintrin.h>
-#    define VISP_HAVE_SSE3 1
-#  endif
-#  if defined __SSSE3__  || (defined _MSC_VER && _MSC_VER >= 1500)
-#    include <tmmintrin.h>
-#    define VISP_HAVE_SSSE3 1
-#  endif
-#endif
-
 
 /*!
   \example testConversion.cpp
@@ -937,6 +923,7 @@ main(int argc, const char ** argv)
 
 
       //Test RGB to Grayscale + Flip + Crop
+      std::cout << "\nRGB to Grayscale + flip + crop" << std::endl;
       cv::Rect rect_roi(11, 17, 347, 449);
       cv::Mat colorMat_crop = colorMat(rect_roi);
       cv::Mat colorMat_crop_continous = colorMat(rect_roi).clone();
