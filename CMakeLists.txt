@@ -778,15 +778,3 @@ endif()
 if(BUILD_TUTORIALS)
   add_subdirectory(tutorial)
 endif()
-
-#----------------------------------------------------------------------
-# Post install script
-#----------------------------------------------------------------------
-if(CMAKE_TOOLCHAIN_FILE)
-  configure_file(
-    cmake/templates/remove_rootfs.cmake.in
-    ${VISP_BINARY_DIR}/scripts/remove_rootfs.cmake
-    IMMEDIATE @ONLY
-  )
-  install(SCRIPT ${VISP_BINARY_DIR}/scripts/remove_rootfs.cmake)
-endif()
