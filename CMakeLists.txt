@@ -254,7 +254,7 @@ VP_OPTION(USE_QT          Qt          ""    "Include Coin/SoQt/Qt support" "" ON
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D)
 VP_OPTION(USE_PTHREAD     PTHREAD     ""    "Include pthread support"      "" ON)
 VP_OPTION(USE_XML2        XML2        ""    "Include xml support"          "" ON)
-VP_OPTION(USE_OPENCV      OpenCV      QUIET "Include OpenCV support" "OpenCV_DIR;OpenCV_FOUND;OPENCV_FOUND" ON)
+VP_OPTION(USE_OPENCV      "OpenCV;MyOpenCV" QUIET "Include OpenCV support" "OpenCV_DIR;OpenCV_FOUND;OPENCV_FOUND" ON)
 VP_OPTION(USE_ZLIB        "ZLIB;MyZLIB" ""  "Include zlib support"         "" ON)
 VP_OPTION(USE_X11         X11         ""    "Include X11 support"          "" ON)
 # The native FindGTK2.cmake doesn't consider libgobject-2.0 that is 
@@ -591,11 +591,11 @@ endif()
 
 # check OpenCV nonfree modules and version
 if(USE_OPENCV)
-  set(VISP_HAVE_OPENCV_VERSION "(${OpenCV_VERSION_MAJOR}*65536 + ${OpenCV_VERSION_MINOR}*256 + ${OpenCV_VERSION_PATCH})") # for vpConfig.h
+  set(VISP_HAVE_OPENCV_VERSION "(${OpenCV_VERSION_MAJOR}<<16 | ${OpenCV_VERSION_MINOR}<<8 | ${OpenCV_VERSION_PATCH})") # for vpConfig.h
   if(OpenCV_VERSION)
     if(OpenCV_VERSION VERSION_LESS "2.4.0")
       message(STATUS "opencv nonfree module found")
-       set(VISP_HAVE_OPENCV_NONFREE TRUE)  # for header vpConfig.h
+      set(VISP_HAVE_OPENCV_NONFREE TRUE)  # for header vpConfig.h
     elseif(OPENCV_NONFREE_FOUND) # OpenCV < 3.0.0
       message(STATUS "opencv xfeatures2d module found")
       set(VISP_HAVE_OPENCV_NONFREE TRUE)  # for header vpConfig.h
