@@ -98,7 +98,7 @@ public:
 
   //! Get the size of the averaging block used to track the features.
   int getBlockSize() const {return m_blockSize;}
-  void getFeature(const int &index, int &id, float &x, float &y) const;
+  void getFeature(const int &index, long &id, float &x, float &y) const;
   //! Get the list of current features.
   std::vector<cv::Point2f> getFeatures() const {return m_points[1];}
   //CvPoint2D32f* getFeatures() const {return features;}

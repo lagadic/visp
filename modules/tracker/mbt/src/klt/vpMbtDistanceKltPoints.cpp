@@ -82,7 +82,7 @@ vpMbtDistanceKltPoints::init(const vpKltOpencv& _tracker)
   polygon->getRoiClipped(cam, roi);
 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i ++){
-    int id;
+    long id;
     float x_tmp, y_tmp;
     _tracker.getFeature((int)i, id, x_tmp, y_tmp);
 
@@ -133,7 +133,7 @@ vpMbtDistanceKltPoints::init(const vpKltOpencv& _tracker)
 unsigned int
 vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv& _tracker)
 {
-  int id;
+  long id;
   float x, y;
   nbPointsCur = 0;
   curPoints = std::map<int, vpImagePoint>();
