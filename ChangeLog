@@ -8,8 +8,9 @@
 
 ViSP 3.0.1 (in development)
   - New features
-    . Create and install a meta header file in
-      visp3/<module>/visp_<module>.h
+    . Create and install meta headers files; one for each build module
+      named visp3/visp_<module>.h and a higher level one that includes
+      all the previous ones visp3/visp.h
     . Add vpMatrix, vpColVector, vpTranslationVector missing member functions
       to keep compat with ViSP 2.10.0
     . New vpFlyCaptureGrabber class to capture images from PointGrey
@@ -23,7 +24,7 @@ ViSP 3.0.1 (in development)
     . New cross platform multi-threading capabilities with vpMutex and
       vpThread classes
     . Crosscompiling capabilities tested for Raspberry Pi target
-    . OSX/iOS framework creation
+    . OSX/iOS framework creation with support of OpenCV 3rd party
     . Introduce SSE2, SSE3 and SSSE3 optimizations
   - Tutorials
     . New tutorial: How to use multi-threading capabilities

@@ -526,7 +526,6 @@ macro(vp_set_module_sources)
     list(APPEND VISP_MODULE_${the_module}_HEADERS "${VISP_INCLUDE_DIR}/visp3/visp_modules.h")
   endif()
 
-
   set(VISP_MODULE_${the_module}_HEADERS ${VISP_MODULE_${the_module}_HEADERS} CACHE INTERNAL "List of header files for ${the_module}")
   set(VISP_MODULE_${the_module}_SOURCES ${VISP_MODULE_${the_module}_SOURCES} CACHE INTERNAL "List of source files for ${the_module}")
 endmacro()
@@ -617,7 +616,7 @@ macro(vp_create_global_module_header module)
 
   set(__name ${module})
   vp_short_module_name(__name)
-  set(__module_header_dst "${VISP_INCLUDE_DIR}/visp3/${__name}/${module}.h")
+  set(__module_header_dst "${VISP_INCLUDE_DIR}/visp3/${module}.h")
   set(VISP_HEADER_CONTENT_CONFIGMAKE "#ifndef __${module}_h_\n#define __${module}_h_\n")
 
   # when core, include also vpConfig.h
@@ -629,21 +628,20 @@ macro(vp_create_global_module_header module)
   if(VISP_MODULE_${module}_REQ_DEPS)
     foreach(dep ${VISP_MODULE_${module}_REQ_DEPS})
       vp_short_module_name(dep)
-    set(VISP_HEADER_CONTENT_CONFIGMAKE "${VISP_HEADER_CONTENT_CONFIGMAKE}\n#include <visp3/${dep}/vp${dep}.h>")
+    set(VISP_HEADER_CONTENT_CONFIGMAKE "${VISP_HEADER_CONTENT_CONFIGMAKE}\n#include <visp3/visp_${dep}.h>")
     endforeach()
   endif()
 
   foreach(h ${VISP_MODULE_${module}_HEADERS})
-    get_filename_component(__h_name_we ${h} NAME_WE)
-    get_filename_component(__h_name ${h} NAME)
-    set(VISP_HEADER_CONTENT_CONFIGMAKE "${VISP_HEADER_CONTENT_CONFIGMAKE}\n#include <visp3/${__name}/${__h_name}>")
+    string(REGEX REPLACE "^.*/include/visp3" "visp3" h "${h}")
+    set(VISP_HEADER_CONTENT_CONFIGMAKE "${VISP_HEADER_CONTENT_CONFIGMAKE}\n#include <${h}>")
   endforeach()
 
   set(VISP_HEADER_CONTENT_CONFIGMAKE "${VISP_HEADER_CONTENT_CONFIGMAKE}\n\n#endif\n")
   configure_file("${VISP_SOURCE_DIR}/cmake/templates/vpHeader.h.in" ${__module_header_dst})
 
   install(FILES ${__module_header_dst}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp3/${__name}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp3
     COMPONENT dev
   )
 
