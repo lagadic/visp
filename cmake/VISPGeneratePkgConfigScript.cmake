@@ -82,6 +82,11 @@ if(UNIX)
     list(APPEND VISP_CONFIG_CFLAGS "-fprofile-arcs")
   endif()
 
+  # Propagate cxx11 compiler option if enabled during ViSP build
+  if(VISP_HAVE_CPP11_COMPATIBILITY)
+    list(APPEND VISP_CONFIG_CFLAGS ${CPP11_CXX_FLAGS})
+  endif()
+
   # include ViSP own include dir
   set(VISP_CONFIG_CFLAGS_SRC_TREE "-I$PREFIX/${CMAKE_INSTALL_INCLUDEDIR}")
 
