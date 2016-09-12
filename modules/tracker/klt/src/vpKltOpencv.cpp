@@ -1092,7 +1092,7 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
   \param y : y coordinate
 
 */
-void vpKltOpencv::getFeature(int index, int &id, float &x, float &y) const
+void vpKltOpencv::getFeature(int index, long &id, float &x, float &y) const
 {
   if (index >= countFeatures)
   {

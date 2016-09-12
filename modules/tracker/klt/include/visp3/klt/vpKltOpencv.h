@@ -283,7 +283,7 @@ public:
 
   //! Get the block size
   int getBlockSize() const {return block_size;}
-  void getFeature(int index, int &id, float &x, float &y) const;
+  void getFeature(int index, long &id, float &x, float &y) const;
   //! Get the list of features
   CvPoint2D32f* getFeatures() const {return features;}
   //! Get the list of features id
