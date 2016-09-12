@@ -83,7 +83,8 @@ int main()
         // Save of previous features
         int prev_nfeatures = tracker.getNbFeatures();
         float x,y;
-        int id, j=0;
+        long id;
+        int j=0;
 
         CvPoint2D32f *prev_features = (CvPoint2D32f*)cvAlloc(prev_nfeatures*sizeof(CvPoint2D32f));
 
