@@ -116,6 +116,24 @@ macro(vp_list_unique __lst)
   endif()
 endmacro()
 
+# list empty elements removal macro
+macro(vp_list_remove_empty __lst)
+  if(${__lst})
+    list(REMOVE_ITEM ${__lst} "")
+  endif()
+endmacro()
+
+# macro that creates a list from a string. Spaces or tab are considered as list separator
+# In other words split a string into list elements
+macro(vp_create_list_from_string STR LST)
+  if(NOT ${STR} STREQUAL "")
+    set(__lst ${STR})
+    string(REPLACE " " ";" __lst ${__lst})
+    vp_list_remove_empty(${__lst})
+    set(${LST} ${__lst})
+  endif()
+endmacro()
+
 # safe list sorting macro
 macro(vp_list_sort __lst)
   if(${__lst})

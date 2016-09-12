@@ -237,6 +237,13 @@ set(VISP_HAVE_ACCESS_TO_NAS  "@VISP_HAVE_ACCESS_TO_NAS@")
 set(VISP_HAVE_CPP11_COMPATIBILITY "@VISP_HAVE_CPP11_COMPATIBILITY@")
 
 #----------------------------------------------------------------------
+# Propagate cxx11 compiler option if enabled during ViSP build
+#----------------------------------------------------------------------
+if(VISP_HAVE_CPP11_COMPATIBILITY)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} @CPP11_CXX_FLAGS@")
+endif()
+
+#----------------------------------------------------------------------
 # Some useful macro to be able to build the tutorials along side ViSP
 #----------------------------------------------------------------------
 # Create a target from the *.cpp file, link against ViSP libraries and add a dependency to ViSP library

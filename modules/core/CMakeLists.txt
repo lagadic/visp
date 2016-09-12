@@ -166,20 +166,17 @@ if(USE_OPENCV)
       # Fix Error on non-existent target in get_target_property for 3rd party location extraction
       cmake_policy(POP)
     endif()
-
+  elseif(APPLE_FRAMEWORK)
+    # Add opencv framework
+    list(APPEND opt_libs ${OpenCV_LIBRARIES})    # see FindMyOpenCV.cmake
   else()
     # this should be an old OpenCV version that doesn't have the previous behavior
     list(APPEND opt_libs ${OpenCV_LIBS})
   endif()
-  list(APPEND opt_incs ${OpenCV_INCLUDE_DIRS})
-  #list(APPEND opt_libs ${OpenCV_LIBS})
-  #MESSAGE("OpenCV_INCLUDE_DIRS = ${OpenCV_INCLUDE_DIRS}")
-  #MESSAGE("OpenCV_LIBS = ${OpenCV_LIBS}")
-  #MESSAGE("OpenCV_LIB_DIR = ${OpenCV_LIB_DIR}")
-  #message("OpenCV_NONFREE_FOUND: ${OPENCV_NONFREE_FOUND}")
+  if(OpenCV_INCLUDE_DIRS)
+    list(APPEND opt_incs ${OpenCV_INCLUDE_DIRS})
+  endif()
 endif(USE_OPENCV)
-
-
 
 if(USE_YARP)
   list(APPEND opt_incs ${YARP_INCLUDE_DIRS})

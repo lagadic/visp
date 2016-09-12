@@ -40,12 +40,12 @@ install(FILES "${VISP_INCLUDE_DIR}/visp3/core/vpConfig.h"
 )
 
 #----------------------------------------------------------------------
-# information file
+# information file that resumes which are the used 3rd parties
 #----------------------------------------------------------------------
 configure_file(${VISP_SOURCE_DIR}/cmake/templates/ViSP-third-party.txt.in "${VISP_BINARY_DIR}/ViSP-third-party.txt")
 
 # ----------------------------------------------------------------------------
-#  visp_modules.h based on actual modules list
+# visp_modules.h that contains all the build modules defines
 # ----------------------------------------------------------------------------
 set(VISP_MODULE_DEFINITIONS_CONFIGMAKE "#ifndef __visp_modules_h__\n#define __visp_modules_h__\n\n")
 
@@ -68,7 +68,40 @@ install(FILES "${VISP_INCLUDE_DIR}/visp3/visp_modules.h"
 )
 
 # ----------------------------------------------------------------------------
-#  install old headers
+# visp.h that includes all build modules headers
+# Note: for other meta headers visp3/visp_<module>.h see vp_create_global_module_header() macro
+# ----------------------------------------------------------------------------
+set(VISP_ALL_HEADERS_CONFIGMAKE "#ifndef __visp_h__\n#define __visp_h__\n\n")
+
+set(VISP_ALL_HEADERS_CONFIGMAKE "${VISP_ALL_HEADERS_CONFIGMAKE}// File that defines which modules where included during ViSP build\n")
+set(VISP_ALL_HEADERS_CONFIGMAKE "${VISP_ALL_HEADERS_CONFIGMAKE}// It contains the defines of the correct VISP_HAVE_MODULE_<modulename> values\n")
+set(VISP_ALL_HEADERS_CONFIGMAKE "${VISP_ALL_HEADERS_CONFIGMAKE}#include <visp3/visp_modules.h>\n\n")
+set(VISP_ALL_HEADERS_CONFIGMAKE "${VISP_ALL_HEADERS_CONFIGMAKE}// Then the list of defines is checked to include the correct headers\n")
+set(VISP_MOD_LIST ${VISP_MODULES_BUILD} ${VISP_MODULES_DISABLED_USER} ${VISP_MODULES_DISABLED_AUTO} ${VISP_MODULES_DISABLED_FORCE})
+vp_list_sort(VISP_MOD_LIST)
+foreach(m ${VISP_MOD_LIST})
+  if(m MATCHES "^visp_")
+    string(REGEX REPLACE "^visp_" "" m "${m}")
+  endif()
+  string(TOUPPER "${m}" M)
+  if(m MATCHES "core")
+    set(VISP_ALL_HEADERS_CONFIGMAKE "${VISP_ALL_HEADERS_CONFIGMAKE}// Core library is always included; without no ViSP functionality available\n")
+    set(VISP_ALL_HEADERS_CONFIGMAKE "${VISP_ALL_HEADERS_CONFIGMAKE}#include <visp3/visp_${m}.h>\n\n")
+  else()
+    set(VISP_ALL_HEADERS_CONFIGMAKE "${VISP_ALL_HEADERS_CONFIGMAKE}#ifdef VISP_HAVE_MODULE_${M}\n#  include <visp3/visp_${m}.h>\n#endif\n\n")
+  endif()
+endforeach()
+
+set(VISP_ALL_HEADERS_CONFIGMAKE "${VISP_ALL_HEADERS_CONFIGMAKE}#endif\n")
+
+configure_file("${VISP_SOURCE_DIR}/cmake/templates/visp.h.in" "${VISP_INCLUDE_DIR}/visp3/visp.h")
+install(FILES "${VISP_INCLUDE_DIR}/visp3/visp.h"
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp3
+  COMPONENT dev
+)
+
+# ----------------------------------------------------------------------------
+#  install old headers to keep compat with dev based on ViSP 2.x releases
 # ----------------------------------------------------------------------------
 file(GLOB old_hdrs "${VISP_INCLUDE_DIR}/visp/*.h")
 install(FILES ${old_hdrs}

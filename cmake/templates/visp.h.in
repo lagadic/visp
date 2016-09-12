@@ -1,0 +1,8 @@
+/*
+ *      ** File generated automatically, do not modify **
+ *
+ * This file includes all the headers that are available in ViSP.
+ *
+ */
+
+@VISP_ALL_HEADERS_CONFIGMAKE@

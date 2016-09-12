@@ -114,7 +114,7 @@ vpMbtDistanceKltCylinder::init(const vpKltOpencv& _tracker, const vpHomogeneousM
   curPointsInd = std::map<int, int>();
 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i ++){
-    int id;
+    long id;
     float x_tmp, y_tmp;
     _tracker.getFeature((int)i, id, x_tmp, y_tmp);
 
@@ -185,7 +185,7 @@ vpMbtDistanceKltCylinder::init(const vpKltOpencv& _tracker, const vpHomogeneousM
 unsigned int
 vpMbtDistanceKltCylinder::computeNbDetectedCurrent(const vpKltOpencv& _tracker)
 {
-  int id;
+  long id;
   float x, y;
   nbPointsCur = 0;
   curPoints = std::map<int, vpImagePoint>();

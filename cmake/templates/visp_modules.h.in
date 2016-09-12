@@ -3,6 +3,6 @@
  *
  * This file defines the list of modules available in current build configuration
  *
-*/
+ */
 
 @VISP_MODULE_DEFINITIONS_CONFIGMAKE@
