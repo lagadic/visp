@@ -50,7 +50,8 @@
 /*!
   \class vpTemplateTrackerZNCCForwardAdditional
   \ingroup group_tt_tracker
-  The algorithm implemented in this class is described in \cite Irani98a.
+  The algorithm implemented in this class is described in \cite Irani98a and \cite Marchand16a.
+
  */
 class VISP_EXPORT vpTemplateTrackerZNCCForwardAdditional: public vpTemplateTrackerZNCC
 {

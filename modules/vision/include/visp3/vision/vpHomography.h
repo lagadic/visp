@@ -65,7 +65,7 @@ tools for homography computation.
 
   \brief Implementation of an homography and operations on homographies.
 
-  This class aims to compute the homography wrt. two images.
+  This class aims to compute the homography wrt. two images \cite Marchand16a.
 
   The vpHomography class is derived from vpArray2D<double>.
 

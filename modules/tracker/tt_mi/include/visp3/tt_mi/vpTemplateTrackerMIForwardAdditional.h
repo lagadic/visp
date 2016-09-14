@@ -51,6 +51,7 @@
 /*!
   \class vpTemplateTrackerMIForwardAdditional
   \ingroup group_tt_mi_tracker
+  The algorithm implemented in this class is described in \cite Dame12a and \cite Marchand16a.
 */
 class VISP_EXPORT vpTemplateTrackerMIForwardAdditional: public vpTemplateTrackerMI
 {
