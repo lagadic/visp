@@ -1282,26 +1282,10 @@ vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 
 /*!
 
-  \warning This generic method is not implemented. You should rather use the
-  instantiated methods for double, unsigned char and vpRGBa images.
-
-  \sa vpImage<double>::getValue(double, double)
-  \sa vpImage<unsigned char>::getValue(double, double)
-  \sa vpImage<vpRGBa>::getValue(double, double)
-
-*/
-template<class Type>
-Type vpImage<Type>::getValue(double /* i */, double /* j */) const
-{
-  vpTRACE("Not implemented");
-}
-
-/*!
-
-  Retrieves pixel value from an image of unsigned char with sub-pixel accuracy.
+  Retrieves pixel value from an image containing values of type \e Type with sub-pixel accuracy.
 
   Gets the value of a sub-pixel with coordinates (i,j) with bilinear
-  interpolation. If location is out of bounds, then return value of
+  interpolation. If location is out of bounds, then return the value of the
   closest pixel.
 
   \param i : Sub-pixel coordinate along the rows.
@@ -1313,8 +1297,8 @@ Type vpImage<Type>::getValue(double /* i */, double /* j */) const
   of the image.
 
 */
-template<>
-inline unsigned char vpImage<unsigned char>::getValue(double i, double j) const
+template<class Type>
+Type vpImage<Type>::getValue(double i, double j) const
 {
   unsigned int iround, jround;
   double rfrac, cfrac;
@@ -1344,12 +1328,10 @@ inline unsigned char vpImage<unsigned char>::getValue(double i, double j) const
   rfrac = 1.0f - rratio;
   cfrac = 1.0f - cratio;
 
-
   double value = ((double)row[iround][jround] * rfrac + (double)row[iround+1][jround] * rratio)*cfrac
              + ((double)row[iround][jround+1]*rfrac + (double)row[iround+1][jround+1] * rratio)*cratio;
-  return (unsigned char)vpMath::round(value);
+  return (Type)vpMath::round(value);
 }
-
 
 /*!
 
@@ -1447,22 +1429,22 @@ inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
 
 /*!
 
-  \warning This generic method is not implemented. You should rather use the
-  instantiated methods for double, unsigned char and vpRGBa images.
+Retrieves pixel value from an image containing values of type \e Type with sub-pixel accuracy.
 
-  \sa vpImage<double>::getValue(vpImagePoint &)
-  \sa vpImage<unsigned char>::getValue(vpImagePoint &)
-  \sa vpImage<vpRGBa>::getValue(vpImagePoint &)
+Gets the value of a sub-pixel with coordinates (i,j) with bilinear
+interpolation. If location is out of bounds, then return the value of the
+closest pixel.
+
+\param ip : Sub-pixel coordinates of a point in the image.
+
+\return Interpolated sub-pixel value from the four neighbours.
+
+\exception vpImageException::notInTheImage : If the image point \e ip is out
+of the image.
 
 */
 template<class Type>
-Type vpImage<Type>::getValue(vpImagePoint & /* ip */) const
-{
-  vpTRACE("Not implemented");
-}
-
-template<>
-inline unsigned char vpImage<unsigned char>::getValue(vpImagePoint &ip) const
+inline Type vpImage<Type>::getValue(vpImagePoint &ip) const
 {
   unsigned int iround, jround;
   double rfrac, cfrac;
@@ -1492,12 +1474,10 @@ inline unsigned char vpImage<unsigned char>::getValue(vpImagePoint &ip) const
   rfrac = 1.0f - rratio;
   cfrac = 1.0f - cratio;
 
-
   double value = ((double)row[iround][jround] * rfrac + (double)row[iround+1][jround] * rratio)*cfrac
              + ((double)row[iround][jround+1]*rfrac + (double)row[iround+1][jround+1] * rratio)*cratio;
-  return (unsigned char)vpMath::round(value);
+  return (Type)vpMath::round(value);
 }
-
 
 template<>
 inline double vpImage<double>::getValue(vpImagePoint &ip) const
