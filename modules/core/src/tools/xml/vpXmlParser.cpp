@@ -194,7 +194,7 @@ vpXmlParser::xmlReadUnsignedIntChild (xmlDocPtr doc, xmlNodePtr node)
   unsigned int val_uint;
 
   val_char = (char *) xmlNodeListGetString(doc, node ->xmlChildrenNode, 1);
-  val_uint = strtoul ((char *)val_char, &control_convert, 10);
+  val_uint = (unsigned int)strtoul ((char *)val_char, &control_convert, 10);
 
   if (val_char == control_convert){
     xmlFree((xmlChar*) val_char);

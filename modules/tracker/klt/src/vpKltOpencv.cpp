@@ -198,7 +198,7 @@ void vpKltOpencv::track(const cv::Mat &I)
   \param y : y coordinate.
 
 */
-void vpKltOpencv::getFeature(const int &index, int &id, float &x, float &y) const
+void vpKltOpencv::getFeature(const int &index, long &id, float &x, float &y) const
 {
   if ((size_t)index >= m_points[1].size()){
     throw(vpException(vpException::badValue, "Feature [%d] doesn't exist", index));
@@ -1092,7 +1092,7 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I,
   \param y : y coordinate
 
 */
-void vpKltOpencv::getFeature(int index, int &id, float &x, float &y) const
+void vpKltOpencv::getFeature(int index, long &id, float &x, float &y) const
 {
   if (index >= countFeatures)
   {

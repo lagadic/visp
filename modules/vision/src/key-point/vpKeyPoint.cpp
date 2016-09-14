@@ -62,9 +62,9 @@
 # else
 #  error Unknown machine endianness detected.
 # endif
-#elif defined(_BIG_ENDIAN)
+#elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN) || defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)
 # define VISP_BIG_ENDIAN
-#elif defined(_LITTLE_ENDIAN)
+#elif defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN) || defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)
 # define VISP_LITTLE_ENDIAN
 #elif defined(__sparc) || defined(__sparc__) \
    || defined(_POWER) || defined(__powerpc__) \

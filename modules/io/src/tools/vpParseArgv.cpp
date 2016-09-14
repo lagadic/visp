@@ -181,7 +181,7 @@ vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
                char *endPtr=NULL;
 
                *(((int *) infoPtr->dst)+i) =
-                  strtol(argv[srcIndex], &endPtr, 0);
+                  (int)strtol(argv[srcIndex], &endPtr, 0);
                if ((endPtr == argv[srcIndex]) || (*endPtr != 0)) {
                   FPRINTF(stderr,
                   "expected integer argument for \"%s\" but got \"%s\"\n",

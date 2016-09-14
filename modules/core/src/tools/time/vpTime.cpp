@@ -159,7 +159,7 @@ int wait(double t0, double t)
   else {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     if (timeToWait > vpTime::minTimeForUsleepCall) {
-      usleep((unsigned long )((timeToWait-vpTime::minTimeForUsleepCall)*1000));
+      usleep((useconds_t)((timeToWait-vpTime::minTimeForUsleepCall)*1000));
     }
 #elif defined(_WIN32)
     if (timeToWait > vpTime::minTimeForUsleepCall) {
@@ -198,7 +198,7 @@ void wait(double t)
   else {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     if (timeToWait > vpTime::minTimeForUsleepCall) {
-      usleep((unsigned long )((timeToWait-vpTime::minTimeForUsleepCall)*1000));
+      usleep((useconds_t)((timeToWait-vpTime::minTimeForUsleepCall)*1000));
     }
 #elif defined(_WIN32)
     if (timeToWait > vpTime::minTimeForUsleepCall) {
@@ -236,7 +236,7 @@ double  measureTimeSecond()
 void sleepMs(double t)
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  usleep((unsigned long )(t*1000));
+  usleep((useconds_t)(t*1000));
 #elif defined(_WIN32)
   Sleep((DWORD)(t));
 #endif

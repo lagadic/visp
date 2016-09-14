@@ -331,7 +331,7 @@ vpMbKltTracker::getKltImagePoints() const
 {
   std::vector<vpImagePoint> kltPoints;
   for (unsigned int i = 0; i < static_cast<unsigned int>(tracker.getNbFeatures()); i ++){
-    int id;
+    long id;
     float x_tmp, y_tmp;
     tracker.getFeature((int)i, id, x_tmp, y_tmp);
     kltPoints.push_back(vpImagePoint(y_tmp, x_tmp));
@@ -352,7 +352,7 @@ vpMbKltTracker::getKltImagePointsWithId() const
 {
   std::map<int, vpImagePoint> kltPoints;
   for (unsigned int i = 0; i < static_cast<unsigned int>(tracker.getNbFeatures()); i ++){
-    int id;
+    long id;
     float x_tmp, y_tmp;
     tracker.getFeature((int)i, id, x_tmp, y_tmp);
     kltPoints[id] = vpImagePoint(y_tmp, x_tmp);
