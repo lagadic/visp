@@ -204,6 +204,8 @@ protected:
   int xmlReadIntChild (xmlDocPtr doc, xmlNodePtr node);
   unsigned int xmlReadUnsignedIntChild (xmlDocPtr doc, xmlNodePtr node);
   double xmlReadDoubleChild (xmlDocPtr doc, xmlNodePtr node);
+  float xmlReadFloatChild (xmlDocPtr doc, xmlNodePtr node);
+  bool xmlReadBoolChild (xmlDocPtr doc, xmlNodePtr node);
 
 
   void xmlWriteStringChild(xmlNodePtr node, const char* label, const std::string& value);
@@ -211,6 +213,8 @@ protected:
   void xmlWriteIntChild(xmlNodePtr node, const char* label, const int value);
   void xmlWriteUnsignedIntChild(xmlNodePtr node, const char* label, const unsigned int value);
   void xmlWriteDoubleChild(xmlNodePtr node, const char* label, const double value);
+  void xmlWriteFloatChild(xmlNodePtr node, const char* label, const float value);
+  void xmlWriteBoolChild(xmlNodePtr node, const char* label, const bool value);
   //@}
 
 protected:

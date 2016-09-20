@@ -174,7 +174,7 @@ vpXmlParser::xmlReadIntChild (xmlDocPtr doc, xmlNodePtr node)
 /*!
   read an int
   
-  \warning throw a vpException::ioError if the value cannot be parsed to an integer
+  \warning throw a vpException::ioError if the value cannot be parsed to an unsigned integer
   
   \param doc : The main xml document
   \param node : a pointer to the node to read value
@@ -205,11 +205,10 @@ vpXmlParser::xmlReadUnsignedIntChild (xmlDocPtr doc, xmlNodePtr node)
   return val_uint;
 }
 
-
 /*!
   read a double
   
-  \warning throw a vpException::ioError if the value cannot be parsed to an integer
+  \warning throw a vpException::ioError if the value cannot be parsed to a double
   
   \param doc : The main xml document
   \param node : a pointer to the node to read value
@@ -237,6 +236,67 @@ vpXmlParser::xmlReadDoubleChild (xmlDocPtr doc, xmlNodePtr node)
   }
   xmlFree((xmlChar*) val_char);
   return val_double;
+}
+
+/*!
+  read a float
+
+  \warning throw a vpException::ioError if the value cannot be parsed to a float
+
+  \param doc : The main xml document
+  \param node : a pointer to the node to read value
+
+  \return the float value in the node
+*/
+float
+vpXmlParser::xmlReadFloatChild (xmlDocPtr doc, xmlNodePtr node)
+{
+  if(node ->xmlChildrenNode == NULL){
+    std::string errorMsg = "Empty node " + std::string((char*)node->name) + ", cannot read float";
+    std::cerr << errorMsg << std::endl;
+    throw vpException(vpException::fatalError, errorMsg);
+  }
+  char * val_char;
+  char * control_convert;
+  float val_float;
+
+  val_char = (char *) xmlNodeListGetString(doc, node ->xmlChildrenNode, 1);
+  val_float = strtof ((char *)val_char, &control_convert);
+
+  if (val_char == control_convert){
+    xmlFree((xmlChar*) val_char);
+    throw vpException(vpException::ioError, "cannot parse entry to float");
+  }
+  xmlFree((xmlChar*) val_char);
+  return val_float;
+}
+
+/*!
+  read a boolean
+
+  \warning throw a vpException::ioError if the value cannot be parsed to a bool
+
+  \param doc : The main xml document
+  \param node : a pointer to the node to read value
+
+  \return the bool value in the node
+*/
+bool
+vpXmlParser::xmlReadBoolChild (xmlDocPtr doc, xmlNodePtr node)
+{
+  if(node ->xmlChildrenNode == NULL){
+    std::string errorMsg = "Empty node " + std::string((char*)node->name) + ", cannot read bool";
+    std::cerr << errorMsg << std::endl;
+    throw vpException(vpException::fatalError, errorMsg);
+  }
+  char * val_char;
+  bool val_bool;
+
+  val_char = (char *) xmlNodeListGetString(doc, node ->xmlChildrenNode, 1);
+  val_bool = val_char[0] != '0'; //reading only 1st character : bool xml storage is '0' or '1'
+
+  xmlFree((xmlChar*) val_char);
+  return val_bool;
 }
 
 /*!
@@ -322,6 +382,39 @@ vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char* label, const doubl
   xmlAddChild(node, tmp); 
 }
 
+/*!
+  write a float.
+
+  \param node : a pointer to the node to read value
+  \param label : label (name of the data) of the node
+  \param value : float to write
+*/
+void
+vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char* label, const float value)
+{
+  char str[100];
+  sprintf(str, "%f", value);
+  xmlNodePtr tmp;
+  tmp = xmlNewChild(node, NULL, (xmlChar*)label, (xmlChar*)str);
+  xmlAddChild(node, tmp);
+}
+
+/*!
+  write a bool.
+
+  \param node : a pointer to the node to read value
+  \param label : label (name of the data) of the node
+  \param value : boolean to write (true or false)
+*/
+void
+vpXmlParser::xmlWriteBoolChild(xmlNodePtr node, const char* label, const bool value)
+{
+  char str[1];
+  str[0] = (value ? '1':'0');
+  xmlNodePtr tmp;
+  tmp = xmlNewChild(node, NULL, (xmlChar*)label, (xmlChar*)str);
+  xmlAddChild(node, tmp);
+}
 
 /* -------------------------------------------------------------------------- */
 /*                                MAIN METHODS                                */
