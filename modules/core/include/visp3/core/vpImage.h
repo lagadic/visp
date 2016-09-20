@@ -1029,10 +1029,10 @@ bool vpImage<Type>::operator!=(const vpImage<Type> &I)
 
   for (unsigned int i=0 ; i < npixels ; i++)
   {
-    if (bitmap[i] == I.bitmap[i])
-      return false;
+    if (bitmap[i] != I.bitmap[i])
+      return true;
   }
-  return true ;
+  return false ;
 }
 
 /*!
