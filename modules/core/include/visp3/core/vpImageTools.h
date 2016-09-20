@@ -90,7 +90,7 @@ public:
   template<class Type>
   static inline void binarise(vpImage<Type> &I,
 		       Type threshold1, Type threshold2,
-		       Type value1, Type value2, Type value3, const bool useLUT=false);
+         Type value1, Type value2, Type value3, const bool useLUT=true);
 
   static void changeLUT(vpImage<unsigned char>& I,
 			unsigned char A,
