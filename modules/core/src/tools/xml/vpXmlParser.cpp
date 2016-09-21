@@ -409,8 +409,8 @@ vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char* label, const float 
 void
 vpXmlParser::xmlWriteBoolChild(xmlNodePtr node, const char* label, const bool value)
 {
-  char str[1];
-  str[0] = (value ? '1':'0');
+  char str[2];
+  sprintf(str, "%d", (int)value);
   xmlNodePtr tmp;
   tmp = xmlNewChild(node, NULL, (xmlChar*)label, (xmlChar*)str);
   xmlAddChild(node, tmp);
