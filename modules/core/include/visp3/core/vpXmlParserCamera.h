@@ -235,7 +235,8 @@ public:
 
   vpXmlParserCamera();
   vpXmlParserCamera(vpXmlParserCamera& twinParser);
-  ~vpXmlParserCamera(){}
+  //! Default destructor.
+  virtual ~vpXmlParserCamera(){}
 
   // get/set functions
   std::string getCameraName(){return this->camera_name;}

@@ -131,6 +131,8 @@ private :
 public:
 
   vpXmlConfigParserKeyPoint();
+  //! Default destructor.
+  virtual ~vpXmlConfigParserKeyPoint() {};
 
   /*!
     Get the detector name.

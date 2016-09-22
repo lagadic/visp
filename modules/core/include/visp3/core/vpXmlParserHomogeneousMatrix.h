@@ -193,7 +193,8 @@ public:
 
   vpXmlParserHomogeneousMatrix();
   vpXmlParserHomogeneousMatrix(vpXmlParserHomogeneousMatrix& twinParser);
-  ~vpXmlParserHomogeneousMatrix(){}
+  //! Default destructor.
+  virtual ~vpXmlParserHomogeneousMatrix(){}
 
   // get/set functions
   vpHomogeneousMatrix getHomogeneousMatrix() const {return this->m_M;}
