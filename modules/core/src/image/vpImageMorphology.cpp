@@ -63,9 +63,9 @@
   \param I : Image to process.
   \param connexity : Type of connexity: 4 or 8.
 
-  \sa dilatation2()
+  \sa dilatation(vpImage<unsigned char> &, const vpConnexityType &)
 */
-void vpImageMorphology::erosion2(vpImage<unsigned char> &I, vpConnexityType connexity) {
+void vpImageMorphology::erosion(vpImage<unsigned char> &I, const vpConnexityType &connexity) {
   if(I.getSize() == 0) {
     std::cerr << "Input image is empty!" << std::endl;
     return;
@@ -81,13 +81,9 @@ void vpImageMorphology::erosion2(vpImage<unsigned char> &I, vpConnexityType conn
         J[i][j] = null_value;
       }
     } else {
-      for (unsigned int j = 0; j < J.getWidth(); j++) {
-        if (j == 0 || j == J.getWidth() - 1) {
-          J[i][j] = null_value;
-        } else {
-          J[i][j] = I[i-1][j-1];
-        }
-      }
+      J[i][0] = null_value;
+      memcpy(J[i]+1, I[i-1], sizeof(unsigned char)*I.getWidth());
+      J[i][J.getWidth() - 1] = null_value;
     }
   }
 
@@ -96,18 +92,20 @@ void vpImageMorphology::erosion2(vpImage<unsigned char> &I, vpConnexityType conn
 
     for (unsigned int i = 0; i < I.getHeight(); i++) {
       unsigned int j = 0;
+      unsigned char *ptr_curr_J = J.bitmap + i*J.getWidth();
+      unsigned char *ptr_curr_I = I.bitmap + i*I.getWidth();
 
 #if VISP_HAVE_SSE2
       if (I.getWidth() >= 16) {
 
         for (; j <= I.getWidth() - 16; j+=16) {
-          __m128i m = _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[0]) );
-          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[1])) );
-          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[2])) );
-          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[3])) );
-          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[4])) );
+          __m128i m = _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[0]) );
+          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[1])) );
+          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[2])) );
+          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[3])) );
+          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[4])) );
 
-          _mm_storeu_si128( (__m128i *) (I.bitmap + i*I.getWidth() + j), m );
+          _mm_storeu_si128( (__m128i *) (ptr_curr_I + j), m );
         }
       }
 #endif
@@ -115,10 +113,10 @@ void vpImageMorphology::erosion2(vpImage<unsigned char> &I, vpConnexityType conn
       for (; j < I.getWidth(); j++) {
         unsigned char min_value = null_value;
         for (int k = 0; k < 5; k++) {
-          min_value = std::min(min_value, J.bitmap[i*J.getWidth() + j + offset[k]]);
+          min_value = std::min(min_value, *(ptr_curr_J + j + offset[k]));
         }
 
-        I.bitmap[i*I.getWidth() + j] = min_value;
+        *(ptr_curr_I + j) = min_value;
       }
     }
   } else {
@@ -128,22 +126,24 @@ void vpImageMorphology::erosion2(vpImage<unsigned char> &I, vpConnexityType conn
 
     for (unsigned int i = 0; i < I.getHeight(); i++) {
       unsigned int j = 0;
+      unsigned char *ptr_curr_J = J.bitmap + i*J.getWidth();
+      unsigned char *ptr_curr_I = I.bitmap + i*I.getWidth();
 
 #if VISP_HAVE_SSE2
       if (I.getWidth() >= 16) {
 
         for (; j <= I.getWidth() - 16; j+=16) {
-          __m128i m = _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[0]) );
-          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[1])) );
-          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[2])) );
-          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[3])) );
-          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[4])) );
-          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[5])) );
-          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[6])) );
-          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[7])) );
-          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[8])) );
+          __m128i m = _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[0]) );
+          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[1])) );
+          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[2])) );
+          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[3])) );
+          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[4])) );
+          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[5])) );
+          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[6])) );
+          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[7])) );
+          m = _mm_min_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[8])) );
 
-          _mm_storeu_si128( (__m128i *) (I.bitmap + i*I.getWidth() + j), m );
+          _mm_storeu_si128( (__m128i *) (ptr_curr_I + j), m );
         }
       }
 #endif
@@ -151,10 +151,10 @@ void vpImageMorphology::erosion2(vpImage<unsigned char> &I, vpConnexityType conn
       for (; j < I.getWidth(); j++) {
         unsigned char min_value = null_value;
         for (int k = 0; k < 9; k++) {
-          min_value = std::min(min_value, J.bitmap[i*J.getWidth() + j + offset[k]]);
+          min_value = std::min(min_value, *(ptr_curr_J + j + offset[k]));
         }
 
-        I.bitmap[i*I.getWidth() + j] = min_value;
+        *(ptr_curr_I + j) = min_value;
       }
     }
   }
@@ -180,9 +180,9 @@ void vpImageMorphology::erosion2(vpImage<unsigned char> &I, vpConnexityType conn
   \param I : Image to process.
   \param connexity : Type of connexity: 4 or 8.
 
-  \sa erosion2()
+  \sa erosion(vpImage<unsigned char> &, const vpConnexityType &)
 */
-void vpImageMorphology::dilatation2(vpImage<unsigned char> &I, vpConnexityType connexity) {
+void vpImageMorphology::dilatation(vpImage<unsigned char> &I, const vpConnexityType &connexity) {
   if(I.getSize() == 0) {
     std::cerr << "Input image is empty!" << std::endl;
     return;
@@ -198,13 +198,9 @@ void vpImageMorphology::dilatation2(vpImage<unsigned char> &I, vpConnexityType c
         J[i][j] = null_value;
       }
     } else {
-      for (unsigned int j = 0; j < J.getWidth(); j++) {
-        if (j == 0 || j == J.getWidth() - 1) {
-          J[i][j] = null_value;
-        } else {
-          J[i][j] = I[i-1][j-1];
-        }
-      }
+      J[i][0] = null_value;
+      memcpy(J[i]+1, I[i-1], sizeof(unsigned char)*I.getWidth());
+      J[i][J.getWidth() - 1] = null_value;
     }
   }
 
@@ -213,18 +209,20 @@ void vpImageMorphology::dilatation2(vpImage<unsigned char> &I, vpConnexityType c
 
     for (unsigned int i = 0; i < I.getHeight(); i++) {
       unsigned int j = 0;
+      unsigned char *ptr_curr_J = J.bitmap + i*J.getWidth();
+      unsigned char *ptr_curr_I = I.bitmap + i*I.getWidth();
 
 #if VISP_HAVE_SSE2
       if (I.getWidth() >= 16) {
 
         for (; j <= I.getWidth() - 16; j+=16) {
-          __m128i m = _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[0]) );
-          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[1])) );
-          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[2])) );
-          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[3])) );
-          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[4])) );
+          __m128i m = _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[0]) );
+          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[1])) );
+          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[2])) );
+          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[3])) );
+          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[4])) );
 
-          _mm_storeu_si128( (__m128i *) (I.bitmap + i*I.getWidth() + j), m );
+          _mm_storeu_si128( (__m128i *) (ptr_curr_I + j), m );
         }
       }
 #endif
@@ -232,10 +230,10 @@ void vpImageMorphology::dilatation2(vpImage<unsigned char> &I, vpConnexityType c
       for (; j < I.getWidth(); j++) {
         unsigned char max_value = null_value;
         for (int k = 0; k < 5; k++) {
-          max_value = std::max(max_value, J.bitmap[i*J.getWidth() + j + offset[k]]);
+          max_value = std::max(max_value, *(ptr_curr_J + j + offset[k]));
         }
 
-        I.bitmap[i*I.getWidth() + j] = max_value;
+        *(ptr_curr_I + j) = max_value;
       }
     }
   } else {
@@ -245,22 +243,24 @@ void vpImageMorphology::dilatation2(vpImage<unsigned char> &I, vpConnexityType c
 
     for (unsigned int i = 0; i < I.getHeight(); i++) {
       unsigned int j = 0;
+      unsigned char *ptr_curr_J = J.bitmap + i*J.getWidth();
+      unsigned char *ptr_curr_I = I.bitmap + i*I.getWidth();
 
 #if VISP_HAVE_SSE2
       if (I.getWidth() >= 16) {
 
         for (; j <= I.getWidth() - 16; j+=16) {
-          __m128i m = _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[0]) );
-          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[1])) );
-          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[2])) );
-          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[3])) );
-          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[4])) );
-          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[5])) );
-          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[6])) );
-          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[7])) );
-          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (J.bitmap + i*J.getWidth() + j + offset[8])) );
+          __m128i m = _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[0]) );
+          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[1])) );
+          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[2])) );
+          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[3])) );
+          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[4])) );
+          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[5])) );
+          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[6])) );
+          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[7])) );
+          m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[8])) );
 
-          _mm_storeu_si128( (__m128i *) (I.bitmap + i*I.getWidth() + j), m );
+          _mm_storeu_si128( (__m128i *) (ptr_curr_I + j), m );
         }
       }
 #endif
@@ -268,10 +268,10 @@ void vpImageMorphology::dilatation2(vpImage<unsigned char> &I, vpConnexityType c
       for (; j < I.getWidth(); j++) {
         unsigned char max_value = null_value;
         for (int k = 0; k < 9; k++) {
-          max_value = std::max(max_value, J.bitmap[i*J.getWidth() + j + offset[k]]);
+          max_value = std::max(max_value, *(ptr_curr_J + j + offset[k]));
         }
 
-        I.bitmap[i*I.getWidth() + j] = max_value;
+        *(ptr_curr_I + j) = max_value;
       }
     }
   }

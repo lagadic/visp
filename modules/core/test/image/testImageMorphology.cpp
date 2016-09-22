@@ -138,6 +138,7 @@ void printMatrix(const vpImage<unsigned char> &I, const std::string &name) {
   }
 }
 
+// Erosion in the general case on grayscale images
 void generalErosion(vpImage<unsigned char> &I, vpImageMorphology::vpConnexityType connexity = vpImageMorphology::CONNEXITY_4) {
   if(I.getSize() == 0) {
     std::cerr << "Input image is empty!" << std::endl;
@@ -154,13 +155,9 @@ void generalErosion(vpImage<unsigned char> &I, vpImageMorphology::vpConnexityTyp
         J[i][j] = null_value;
       }
     } else {
-      for (unsigned int j = 0; j < J.getWidth(); j++) {
-        if (j == 0 || j == J.getWidth() - 1) {
-          J[i][j] = null_value;
-        } else {
-          J[i][j] = I[i-1][j-1];
-        }
-      }
+      J[i][0] = null_value;
+      memcpy(J[i]+1, I[i-1], sizeof(unsigned char)*I.getWidth());
+      J[i][J.getWidth() - 1] = null_value;
     }
   }
 
@@ -168,13 +165,16 @@ void generalErosion(vpImage<unsigned char> &I, vpImageMorphology::vpConnexityTyp
     unsigned int offset[5] = {1, J.getWidth(), J.getWidth()+1, J.getWidth()+2, J.getWidth()*2 + 1};
 
     for (unsigned int i = 0; i < I.getHeight(); i++) {
+      unsigned char *ptr_curr_J = J.bitmap + i*J.getWidth();
+      unsigned char *ptr_curr_I = I.bitmap + i*I.getWidth();
+
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         unsigned char min_value = null_value;
         for (int k = 0; k < 5; k++) {
-          min_value = std::min(min_value, J.bitmap[i*J.getWidth() + j + offset[k]]);
+          min_value = std::min(min_value, *(ptr_curr_J + j + offset[k]));
         }
 
-        I.bitmap[i*I.getWidth() + j] = min_value;
+        *(ptr_curr_I + j) = min_value;
       }
     }
   } else {
@@ -183,18 +183,22 @@ void generalErosion(vpImage<unsigned char> &I, vpImageMorphology::vpConnexityTyp
                               J.getWidth()*2, J.getWidth()*2 + 1, J.getWidth()*2 + 2};
 
     for (unsigned int i = 0; i < I.getHeight(); i++) {
+      unsigned char *ptr_curr_J = J.bitmap + i*J.getWidth();
+      unsigned char *ptr_curr_I = I.bitmap + i*I.getWidth();
+
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         unsigned char min_value = null_value;
         for (int k = 0; k < 9; k++) {
-          min_value = std::min(min_value, J.bitmap[i*J.getWidth() + j + offset[k]]);
+          min_value = std::min(min_value, *(ptr_curr_J + j + offset[k]));
         }
 
-        I.bitmap[i*I.getWidth() + j] = min_value;
+        *(ptr_curr_I + j) = min_value;
       }
     }
   }
 }
 
+//Dilatation in the general case on grayscale images
 void generalDilatation(vpImage<unsigned char> &I, vpImageMorphology::vpConnexityType connexity = vpImageMorphology::CONNEXITY_4) {
   if(I.getSize() == 0) {
     std::cerr << "Input image is empty!" << std::endl;
@@ -211,13 +215,9 @@ void generalDilatation(vpImage<unsigned char> &I, vpImageMorphology::vpConnexity
         J[i][j] = null_value;
       }
     } else {
-      for (unsigned int j = 0; j < J.getWidth(); j++) {
-        if (j == 0 || j == J.getWidth() - 1) {
-          J[i][j] = null_value;
-        } else {
-          J[i][j] = I[i-1][j-1];
-        }
-      }
+      J[i][0] = null_value;
+      memcpy(J[i]+1, I[i-1], sizeof(unsigned char)*I.getWidth());
+      J[i][J.getWidth() - 1] = null_value;
     }
   }
 
@@ -225,13 +225,16 @@ void generalDilatation(vpImage<unsigned char> &I, vpImageMorphology::vpConnexity
     unsigned int offset[5] = {1, J.getWidth(), J.getWidth()+1, J.getWidth()+2, J.getWidth()*2 + 1};
 
     for (unsigned int i = 0; i < I.getHeight(); i++) {
+      unsigned char *ptr_curr_J = J.bitmap + i*J.getWidth();
+      unsigned char *ptr_curr_I = I.bitmap + i*I.getWidth();
+
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         unsigned char max_value = null_value;
         for (int k = 0; k < 5; k++) {
-          max_value = std::max(max_value, J.bitmap[i*J.getWidth() + j + offset[k]]);
+          max_value = std::max(max_value, *(ptr_curr_J + j + offset[k]));
         }
 
-        I.bitmap[i*I.getWidth() + j] = max_value;
+        *(ptr_curr_I + j) = max_value;
       }
     }
   } else {
@@ -240,13 +243,16 @@ void generalDilatation(vpImage<unsigned char> &I, vpImageMorphology::vpConnexity
                               J.getWidth()*2, J.getWidth()*2 + 1, J.getWidth()*2 + 2};
 
     for (unsigned int i = 0; i < I.getHeight(); i++) {
+      unsigned char *ptr_curr_J = J.bitmap + i*J.getWidth();
+      unsigned char *ptr_curr_I = I.bitmap + i*I.getWidth();
+
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         unsigned char max_value = null_value;
         for (int k = 0; k < 9; k++) {
-          max_value = std::max(max_value, J.bitmap[i*J.getWidth() + j + offset[k]]);
+          max_value = std::max(max_value, *(ptr_curr_J + j + offset[k]));
         }
 
-        I.bitmap[i*I.getWidth() + j] = max_value;
+        *(ptr_curr_I + j) = max_value;
       }
     }
   }
@@ -256,6 +262,7 @@ int modulo(const int a, const int n) {
   return ((a % n) + n) % n;
 }
 
+//Generate a magic square matrix to get a consistent grayscale image
 void magicSquare(vpImage<unsigned char> &magic_square, const int N) {
   magic_square.resize((unsigned int) N, (unsigned int) N, 0);
 
@@ -370,8 +377,8 @@ int main(int argc, const char ** argv) {
     vpImage<unsigned char> I_dilatation1_sse = I;
     vpImage<unsigned char> I_dilatation2_sse = I;
 
-    vpImageMorphology::dilatation2(I_dilatation1_sse, vpImageMorphology::CONNEXITY_4);
-    vpImageMorphology::dilatation2(I_dilatation2_sse, vpImageMorphology::CONNEXITY_8);
+    vpImageMorphology::dilatation(I_dilatation1_sse, vpImageMorphology::CONNEXITY_4);
+    vpImageMorphology::dilatation(I_dilatation2_sse, vpImageMorphology::CONNEXITY_8);
 
     printMatrix(I_dilatation1_sse, "I_dilatation1_sse");
     printMatrix(I_dilatation2_sse, "I_dilatation2_sse");
@@ -391,8 +398,8 @@ int main(int argc, const char ** argv) {
     vpImage<unsigned char> I_erosion1_sse = I_dilatation1_sse;
     vpImage<unsigned char> I_erosion2_sse = I_dilatation2_sse;
 
-    vpImageMorphology::erosion2(I_erosion1_sse, vpImageMorphology::CONNEXITY_4);
-    vpImageMorphology::erosion2(I_erosion2_sse, vpImageMorphology::CONNEXITY_8);
+    vpImageMorphology::erosion(I_erosion1_sse, vpImageMorphology::CONNEXITY_4);
+    vpImageMorphology::erosion(I_erosion2_sse, vpImageMorphology::CONNEXITY_8);
 
     printMatrix(I_erosion1_sse, "I_erosion1_sse");
     printMatrix(I_erosion2_sse, "I_erosion2_sse");
@@ -492,7 +499,7 @@ int main(int argc, const char ** argv) {
     vpImage<unsigned char> I_magic_square_dilatation1_sse = I_magic_square;
 
     generalDilatation(I_magic_square_dilatation1, vpImageMorphology::CONNEXITY_4);
-    vpImageMorphology::dilatation2(I_magic_square_dilatation1_sse, vpImageMorphology::CONNEXITY_4);
+    vpImageMorphology::dilatation(I_magic_square_dilatation1_sse, vpImageMorphology::CONNEXITY_4);
 
     if ((I_magic_square_dilatation1 != I_magic_square_dilatation1_sse)) {
       throw vpException(vpException::fatalError, "(I_magic_square_dilatation1 != I_magic_square_dilatation1_sse)");
@@ -503,7 +510,7 @@ int main(int argc, const char ** argv) {
     vpImage<unsigned char> I_magic_square_dilatation2_sse = I_magic_square;
 
     generalDilatation(I_magic_square_dilatation2, vpImageMorphology::CONNEXITY_8);
-    vpImageMorphology::dilatation2(I_magic_square_dilatation2_sse, vpImageMorphology::CONNEXITY_8);
+    vpImageMorphology::dilatation(I_magic_square_dilatation2_sse, vpImageMorphology::CONNEXITY_8);
 
     if ((I_magic_square_dilatation2 != I_magic_square_dilatation2_sse)) {
       throw vpException(vpException::fatalError, "(I_magic_square_dilatation2 != I_magic_square_dilatation2_sse)");
@@ -514,7 +521,7 @@ int main(int argc, const char ** argv) {
     vpImage<unsigned char> I_magic_square_erosion1_sse = I_magic_square_dilatation1_sse;
 
     generalErosion(I_magic_square_erosion1, vpImageMorphology::CONNEXITY_4);
-    vpImageMorphology::erosion2(I_magic_square_erosion1_sse, vpImageMorphology::CONNEXITY_4);
+    vpImageMorphology::erosion(I_magic_square_erosion1_sse, vpImageMorphology::CONNEXITY_4);
 
     if ((I_magic_square_erosion1 != I_magic_square_erosion1_sse)) {
       throw vpException(vpException::fatalError, "(I_magic_square_erosion1 != I_magic_square_erosion1_sse)");
@@ -525,7 +532,7 @@ int main(int argc, const char ** argv) {
     vpImage<unsigned char> I_magic_square_erosion2_sse = I_magic_square_dilatation2_sse;
 
     generalErosion(I_magic_square_erosion2, vpImageMorphology::CONNEXITY_8);
-    vpImageMorphology::erosion2(I_magic_square_erosion2_sse, vpImageMorphology::CONNEXITY_8);
+    vpImageMorphology::erosion(I_magic_square_erosion2_sse, vpImageMorphology::CONNEXITY_8);
 
     if ((I_magic_square_erosion2 != I_magic_square_erosion2_sse)) {
       throw vpException(vpException::fatalError, "(I_magic_square_erosion2 != I_magic_square_erosion2_sse)");
@@ -670,7 +677,7 @@ int main(int argc, const char ** argv) {
 
     double t_sse = vpTime::measureTimeMs();
     for (int cpt = 0; cpt < nbIterations; cpt++) {
-      vpImageMorphology::dilatation2(I_Klimt_binarized_dilatation1_sse, vpImageMorphology::CONNEXITY_4);
+      vpImageMorphology::dilatation(I_Klimt_binarized_dilatation1_sse, vpImageMorphology::CONNEXITY_4);
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
 
@@ -692,7 +699,7 @@ int main(int argc, const char ** argv) {
 
     t_sse = vpTime::measureTimeMs();
     for (int cpt = 0; cpt < nbIterations; cpt++) {
-      vpImageMorphology::dilatation2(I_Klimt_binarized_dilatation2_sse, vpImageMorphology::CONNEXITY_8);
+      vpImageMorphology::dilatation(I_Klimt_binarized_dilatation2_sse, vpImageMorphology::CONNEXITY_8);
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
 
@@ -714,7 +721,7 @@ int main(int argc, const char ** argv) {
 
     t_sse = vpTime::measureTimeMs();
     for (int cpt = 0; cpt < nbIterations; cpt++) {
-      vpImageMorphology::erosion2(I_Klimt_binarized_erosion1_sse, vpImageMorphology::CONNEXITY_4);
+      vpImageMorphology::erosion(I_Klimt_binarized_erosion1_sse, vpImageMorphology::CONNEXITY_4);
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
 
@@ -736,7 +743,7 @@ int main(int argc, const char ** argv) {
 
     t_sse = vpTime::measureTimeMs();
     for (int cpt = 0; cpt < nbIterations; cpt++) {
-      vpImageMorphology::erosion2(I_Klimt_binarized_erosion2_sse, vpImageMorphology::CONNEXITY_8);
+      vpImageMorphology::erosion(I_Klimt_binarized_erosion2_sse, vpImageMorphology::CONNEXITY_8);
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
 
@@ -762,7 +769,7 @@ int main(int argc, const char ** argv) {
 
     t_sse = vpTime::measureTimeMs();
     for (int cpt = 0; cpt < nbIterations; cpt++) {
-      vpImageMorphology::dilatation2(I_Klimt_dilatation1_sse, vpImageMorphology::CONNEXITY_4);
+      vpImageMorphology::dilatation(I_Klimt_dilatation1_sse, vpImageMorphology::CONNEXITY_4);
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
 
@@ -784,7 +791,7 @@ int main(int argc, const char ** argv) {
 
     t_sse = vpTime::measureTimeMs();
     for (int cpt = 0; cpt < nbIterations; cpt++) {
-      vpImageMorphology::dilatation2(I_Klimt_dilatation2_sse, vpImageMorphology::CONNEXITY_8);
+      vpImageMorphology::dilatation(I_Klimt_dilatation2_sse, vpImageMorphology::CONNEXITY_8);
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
 
@@ -806,7 +813,7 @@ int main(int argc, const char ** argv) {
 
     t_sse = vpTime::measureTimeMs();
     for (int cpt = 0; cpt < nbIterations; cpt++) {
-      vpImageMorphology::erosion2(I_Klimt_erosion1_sse, vpImageMorphology::CONNEXITY_4);
+      vpImageMorphology::erosion(I_Klimt_erosion1_sse, vpImageMorphology::CONNEXITY_4);
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
 
@@ -828,7 +835,7 @@ int main(int argc, const char ** argv) {
 
     t_sse = vpTime::measureTimeMs();
     for (int cpt = 0; cpt < nbIterations; cpt++) {
-      vpImageMorphology::erosion2(I_Klimt_erosion2_sse, vpImageMorphology::CONNEXITY_8);
+      vpImageMorphology::erosion(I_Klimt_erosion2_sse, vpImageMorphology::CONNEXITY_8);
     }
     t_sse = vpTime::measureTimeMs() - t_sse;
 
@@ -836,6 +843,86 @@ int main(int argc, const char ** argv) {
               << (I_Klimt_erosion2 == I_Klimt_erosion2_sse)
               << " ; t=" << t << " ms ; t_sse="  << t_sse << " ms"
               << " ; speed-up=" << (t/t_sse) << "X" << std::endl;
+
+
+    //Compare with OpenCV
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    std::cout << std::endl;
+
+    cv::Mat cross_SE = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3,3));
+    cv::Mat rect_SE = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3));
+
+    //Dilatation CONNEXITY_4 grayscale
+    cv::Mat matImg_dilatation1;
+    vpImageConvert::convert(I_Klimt, matImg_dilatation1);
+
+    double t_opencv = vpTime::measureTimeMs();
+    for (int cpt = 0; cpt < nbIterations; cpt++) {
+      cv::morphologyEx(matImg_dilatation1, matImg_dilatation1, cv::MORPH_DILATE, cross_SE);
+    }
+    t_opencv = vpTime::measureTimeMs() - t_opencv;
+
+    vpImage<unsigned char> I_matImg_dilatation1;
+    vpImageConvert::convert(matImg_dilatation1, I_matImg_dilatation1);
+    std::cout << "(I_matImg_dilatation1 == I_Klimt_dilatation1_sse)? "
+              << (I_matImg_dilatation1 == I_Klimt_dilatation1_sse)
+              << " ; t_opencv=" << t_opencv << " ms"
+              << std::endl;
+
+
+    //Dilatation CONNEXITY_8 grayscale
+    cv::Mat matImg_dilatation2;
+    vpImageConvert::convert(I_Klimt, matImg_dilatation2);
+
+    t_opencv = vpTime::measureTimeMs();
+    for (int cpt = 0; cpt < nbIterations; cpt++) {
+      cv::morphologyEx(matImg_dilatation2, matImg_dilatation2, cv::MORPH_DILATE, rect_SE);
+    }
+    t_opencv = vpTime::measureTimeMs() - t_opencv;
+
+    vpImage<unsigned char> I_matImg_dilatation2;
+    vpImageConvert::convert(matImg_dilatation2, I_matImg_dilatation2);
+    std::cout << "(I_matImg_dilatation2 == I_Klimt_dilatation2_sse)? "
+              << (I_matImg_dilatation2 == I_Klimt_dilatation2_sse)
+              << " ; t_opencv=" << t_opencv << " ms"
+              << std::endl;
+
+    //Erosion CONNEXITY_4 grayscale
+    cv::Mat matImg_erosion1;
+    vpImageConvert::convert(I_Klimt, matImg_erosion1);
+
+    t_opencv = vpTime::measureTimeMs();
+    for (int cpt = 0; cpt < nbIterations; cpt++) {
+      cv::morphologyEx(matImg_erosion1, matImg_erosion1, cv::MORPH_ERODE, cross_SE);
+    }
+    t_opencv = vpTime::measureTimeMs() - t_opencv;
+
+    vpImage<unsigned char> I_matImg_erosion1;
+    vpImageConvert::convert(matImg_erosion1, I_matImg_erosion1);
+    std::cout << "(I_matImg_erosion1 == I_Klimt_erosion1_sse)? "
+              << (I_matImg_erosion1 == I_Klimt_erosion1_sse)
+              << " ; t_opencv=" << t_opencv << " ms"
+              << std::endl;
+
+
+    //Erosion CONNEXITY_8 grayscale
+    cv::Mat matImg_erosion2;
+    vpImageConvert::convert(I_Klimt, matImg_erosion2);
+
+    t_opencv = vpTime::measureTimeMs();
+    for (int cpt = 0; cpt < nbIterations; cpt++) {
+      cv::morphologyEx(matImg_erosion2, matImg_erosion2, cv::MORPH_ERODE, rect_SE);
+    }
+    t_opencv = vpTime::measureTimeMs() - t_opencv;
+
+    vpImage<unsigned char> I_matImg_erosion2;
+    vpImageConvert::convert(matImg_erosion2, I_matImg_erosion2);
+    std::cout << "(I_matImg_erosion2 == I_Klimt_erosion2_sse)? "
+              << (I_matImg_erosion2 == I_Klimt_erosion2_sse)
+              << " ; t_opencv=" << t_opencv << " ms"
+              << std::endl;
+
+#endif
 
   } catch(vpException &e) {
     std::cout << "\nCatch an exception: " << e << std::endl;

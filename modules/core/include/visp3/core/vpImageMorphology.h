@@ -86,8 +86,8 @@ public:
   static void dilatation(vpImage<Type> &I, Type value, Type value_out,
                          vpConnexityType connexity = CONNEXITY_4);
 
-  static void erosion2(vpImage<unsigned char> &I, vpConnexityType connexity = CONNEXITY_4);
-  static void dilatation2(vpImage<unsigned char> &I, vpConnexityType connexity = CONNEXITY_4);
+  static void erosion(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4);
+  static void dilatation(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4);
 } ;
 
 /*!
@@ -126,13 +126,9 @@ void vpImageMorphology::erosion(vpImage<Type> &I,
         J[i][j] = value;
       }
     } else {
-      for (unsigned int j = 0; j < J.getWidth(); j++) {
-        if (j == 0 || j == J.getWidth() - 1) {
-          J[i][j] = value;
-        } else {
-          J[i][j] = I[i-1][j-1];
-        }
-      }
+      J[i][0] = value;
+      memcpy(J[i]+1, I[i-1], sizeof(unsigned char)*I.getWidth());
+      J[i][J.getWidth() - 1] = value;
     }
   }
 
@@ -207,13 +203,9 @@ void vpImageMorphology::dilatation(vpImage<Type> &I,
         J[i][j] = value_out;
       }
     } else {
-      for (unsigned int j = 0; j < J.getWidth(); j++) {
-        if (j == 0 || j == J.getWidth() - 1) {
-          J[i][j] = value_out;
-        } else {
-          J[i][j] = I[i-1][j-1];
-        }
-      }
+      J[i][0] = value_out;
+      memcpy(J[i]+1, I[i-1], sizeof(unsigned char)*I.getWidth());
+      J[i][J.getWidth() - 1] = value_out;
     }
   }
 
