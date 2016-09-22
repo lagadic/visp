@@ -545,7 +545,9 @@ vpV4l2Grabber::acquire(vpImage<unsigned char> &I)
   \param I : Image data structure (8 bits image).
 
   \param timestamp : Timeval data structure providing the unix time
-  at which the frame was captured in the ringbuffer.
+  at which the frame was captured in the ringbuffer. \b Warning: some v4l2 drivers do not return
+  the time since 1970 (the one returned by gettimeofday() or vpTime) but rather a time that counts
+  from the boot time (i.e. uptime).
 
   \exception vpFrameGrabberException::initializationError : Frame grabber not
   initialized.
@@ -626,7 +628,9 @@ vpV4l2Grabber::acquire(vpImage<vpRGBa> &I)
   \param I : Image data structure (32 bits image).
 
   \param timestamp : Timeval data structure providing the unix time
-  at which the frame was captured in the ringbuffer.
+  at which the frame was captured in the ringbuffer. \b Warning: some v4l2 drivers do not return
+  the time since 1970 (the one returned by gettimeofday() or vpTime) but rather a time that counts
+  from the boot time (i.e. uptime).
 
   \exception vpFrameGrabberException::initializationError : Frame grabber not
   initialized.
