@@ -64,33 +64,22 @@
   the parameters which define the two equations of the two plans. Each
   point which belongs to the line is a solution of those two
   equations:
-
-  \par
   \f[ A1 X + B1 Y + C1 Z +D1 = 0 \f]
   \f[ A2 X + B2 Y + C2 Z +D2 = 0 \f]
   Here \f$ (X, Y, Z) \f$ are the 3D coordinates in one of the two 3D frames.
-  
-  \par
   In this class it is easily possible to compute the parameters (\e cP) of the
   line in the camera frame thanks to its parameters (\e oP) in the
   object frame. But you have to notes that four constraints are
   added in the planes equations.
-  
-  \par
   \f[ D1 = 0 \f]
   \f[ D2 > 0 \f]
   \f[ A1 A2 + B1 B2 + C1 C2 = 0 \f]
   \f[ || A2 || = 1 \f]
-  
-
-  \par 
   The line parameters \e oP corresponding to the object frame are
   located in the vpForwardProjection::oP public attribute, where \e oP
   is a vector defined as: \f[ oP = \left[\begin{array}{c}A1_o \\ B1_o
   \\ C1_o \\ D1_o \\ A2_o \\ B2_o \\ C2_o \\ D2_o \end{array}\right]
   \f]
-
-  \par 
   The line parameters corresponding to the camera frame are located
   in the vpTracker::cP public attribute, where \e cP is a vector
   defined as: \f[ cP = \left[\begin{array}{c}A1_c \\ B1_c \\ C1_c \\
@@ -106,12 +95,8 @@
   \f$ \rho \f$ can be positive or negative. The conventions used to
   choose the sign of \f$ \rho \f$ and the value of \f$ \theta \f$
   are illustrated by the following image.
-  
-  \par
   \image html vpFeatureLine.gif
   \image latex vpFeatureLine.ps  width=10cm
-
-  \par
   The line parameters corresponding to the image frame are located
   in the vpTracker::p public attribute, where \e p is a vector defined
   as: \f[ p = \left[\begin{array}{c} \rho \\ \theta \end{array}\right]

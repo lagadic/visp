@@ -229,10 +229,8 @@ public:
   inline const  Type *operator[](int i) const { return row[i];}
 
   /*!
-    Get the value of an image point.
-
-    \param i,j : Image point coordinates; i for the row position, j for the
-    column position.
+    Get the value of an image point with coordinates (i, j), with i the row position and j
+    the column position.
 
     \return Value of the image point (i, j).
 
@@ -242,12 +240,8 @@ public:
     return bitmap[i*width+j] ;
   }
   /*!
-    Set the value of an image point.
-
-    \param i, j: Image point coordinates; i for the row position, j for the
-    column position.
-
-    \param v : Value to set for image point (i, j).
+    Set the value \e v of an image point with coordinates (i, j), with i the row position and j
+    the column position.
 
   */
   inline  void  operator()(const unsigned int i, const  unsigned int j,
@@ -319,9 +313,9 @@ public:
   void performLut(const Type (&lut)[256], const unsigned int nbThreads=1);
 
 private:
-  unsigned int npixels ; //<! number of pixel in the image
-  unsigned int width ;   //<! number of columns
-  unsigned int height ;   //<! number of rows
+  unsigned int npixels ; ///! number of pixel in the image
+  unsigned int width ;   ///! number of columns
+  unsigned int height ;  ///! number of rows
   Type **row ;    //!< points the row pointer array
 };
 

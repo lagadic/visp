@@ -75,8 +75,10 @@ public:
   vpCameraParameter::get_projModel()
 
   \param cam : camera parameters.
-  \param u,v : input coordinates in pixels.
-  \param x,y : output coordinates in meter.
+  \param u : input coordinate in pixels along image horizontal axis.
+  \param v : input coordinate in pixels along image vertical axis.
+  \param x : output coordinate in meter along image plane x-axis.
+  \param y : output coordinate in meter along image plane y-axis.
 
   \f$ x = (u-u_0)/p_x \f$ and \f$ y = (v-v_0)/p_y  \f$ in the case of
   perspective projection without distortion.
@@ -111,7 +113,8 @@ convertPoint(const vpCameraParameters &cam,
 
   \param cam : camera parameters.
   \param iP : input coordinates in pixels.
-  \param x,y : output coordinates in meter.
+  \param x : output coordinate in meter along image plane x-axis.
+  \param y : output coordinate in meter along image plane y-axis.
 
   Thanks to the pixel coordinates in the frame (u,v), the meter coordinates are given by :
 
@@ -143,8 +146,10 @@ convertPoint(const vpCameraParameters &cam,
   \f$(u,v)\f$ to normalized coordinates \f$(x,y)\f$ in meter.
 
   \param cam : camera parameters.
-  \param u,v : input coordinates in pixels.
-  \param x,y : output coordinates in meter.
+  \param u : input coordinate in pixels along image horizontal axis.
+  \param v : input coordinate in pixels along image vertical axis.
+  \param x : output coordinate in meter along image plane x-axis.
+  \param y : output coordinate in meter along image plane y-axis.
 
   \f$ x = (u-u_0)/p_x \f$ and  \f$ y = (v-v_0)/p_y  \f$
 */
@@ -164,7 +169,8 @@ convertPointWithoutDistortion(
 
   \param cam : camera parameters.
   \param iP : input coordinates in pixels.
-  \param x,y : output coordinates in meter.
+  \param x : output coordinate in meter along image plane x-axis.
+  \param y : output coordinate in meter along image plane y-axis.
 
   Thanks to the pixel coordinates in the frame (u,v), the meter coordinates are given by :
 
@@ -185,8 +191,10 @@ convertPointWithoutDistortion(
   \f$(u,v)\f$ to normalized coordinates \f$(x,y)\f$ in meter.
 
   \param cam : camera parameters.
-  \param u,v : input coordinates in pixels.
-  \param x,y : output coordinates in meter.
+  \param u : input coordinate in pixels along image horizontal axis.
+  \param v : input coordinate in pixels along image vertical axis.
+  \param x : output coordinate in meter along image plane x-axis.
+  \param y : output coordinate in meter along image plane y-axis.
 
   \f$ x = (u-u_0)*(1+k_{du}*r^2)/p_x \f$ and
   \f$ y = (v-v_0)*(1+k_{du}*r^2)/p_y \f$
@@ -210,7 +218,8 @@ convertPointWithDistortion(
 
   \param cam : camera parameters.
   \param iP : input coordinates in pixels.
-  \param x,y : output coordinates in meter.
+  \param x : output coordinate in meter along image plane x-axis.
+  \param y : output coordinate in meter along image plane y-axis.
 
   Thanks to the pixel coordinates in the frame (u,v), the meter coordinates are given by :
 

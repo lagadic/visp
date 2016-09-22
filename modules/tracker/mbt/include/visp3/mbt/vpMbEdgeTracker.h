@@ -338,7 +338,7 @@ public:
   /*!
     Get the moving edge parameters.
 
-    \return an instance of the moving edge parameters used by the tracker.
+    \param p_me [out] : an instance of the moving edge parameters used by the tracker.
   */
   virtual inline void getMovingEdge(vpMe &p_me ) const { p_me = this->me;}
   /*!

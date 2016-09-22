@@ -80,7 +80,7 @@ public:
    Apply a 1x3 derivative filter to an image pixel.
 
    \param I : Image to filter
-   \param r: coordinates (row) of the pixel
+   \param r : coordinates (row) of the pixel
    \param c : coordinates (column) of the pixel
    */
   template<class T>

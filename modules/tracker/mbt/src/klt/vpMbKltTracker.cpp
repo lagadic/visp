@@ -43,6 +43,10 @@
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
+#if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
+#  include <TargetConditionals.h> // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
+#endif
+
 vpMbKltTracker::vpMbKltTracker()
   :
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
@@ -355,7 +359,11 @@ vpMbKltTracker::getKltImagePointsWithId() const
     long id;
     float x_tmp, y_tmp;
     tracker.getFeature((int)i, id, x_tmp, y_tmp);
+#if TARGET_OS_IPHONE
+    kltPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
+#else
     kltPoints[id] = vpImagePoint(y_tmp, x_tmp);
+#endif
   }
   
   return kltPoints;
@@ -492,7 +500,11 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
           cv::Point2f p((float)cdp[0], (float)cdp[1]);
           init_pts.push_back(p);
+#  if TARGET_OS_IPHONE
+          init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[(int)iter->first]);
+#  else
           init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[(size_t)iter->first]);
+#  endif
 #else
           init_pts[iter_pts].x = (float)cdp[0];
           init_pts[iter_pts].y = (float)cdp[1];

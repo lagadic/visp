@@ -126,7 +126,8 @@ class VISP_EXPORT vpTemplateTrackerTriangle
        - if i = 0, return corner 1 coordinates,
        - if i = 1, return corner 2 coordinates,
        - if i = 2, return corner 3 coordinates.
-       \param x,y : The coordinates of the corner.
+       \param x : The coordinate of the corner along horizontal axis.
+       \param y : The coordinate of the corner along vertical axis.
      */
     void getCorner(unsigned int i, double &x, double &y) const {
       assert(i<3);

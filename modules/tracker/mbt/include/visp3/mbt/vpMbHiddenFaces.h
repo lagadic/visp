@@ -84,7 +84,7 @@ class vpMbHiddenFaces
   
   unsigned int  setVisiblePrivate(const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears,
                            bool &changed, 
-                           bool useOgre = false, bool testRoi = false,
+                           bool useOgre = false, bool not_used = false,
                            const vpImage<unsigned char> &I = vpImage<unsigned char>(),
                            const vpCameraParameters &cam = vpCameraParameters()) ;
 
@@ -96,7 +96,7 @@ class vpMbHiddenFaces
 
     bool computeVisibility(const vpHomogeneousMatrix &cMo,
                            const double &angleAppears, const double &angleDisappears,
-                           bool &changed, bool useOgre, bool testRoi,
+                           bool &changed, bool useOgre, bool not_used,
                            const vpImage<unsigned char> &I,
                            const vpCameraParameters &cam,
                            const vpTranslationVector &cameraPos,
@@ -447,7 +447,7 @@ vpMbHiddenFaces<PolygonType>::computeScanLineQuery(const vpPoint &a, const vpPoi
   \param angleDisappears : Angle used to test the disappearance of a face
   \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
   \param useOgre : True if a Ogre is used to test the visibility, False otherwise
-  \param testRoi : True if a face have to be entirely in the image False otherwise
+  \param not_used : Unused parameter.
   \param I : Image used to test if a face is entirely projected in the image.
   \param cam : Camera parameters.
   
@@ -457,7 +457,7 @@ template<class PolygonType>
 unsigned int
 vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &cMo,
                                                 const double &angleAppears, const double &angleDisappears,
-                                                bool &changed, bool useOgre, bool testRoi,
+                                                bool &changed, bool useOgre, bool not_used,
                                                 const vpImage<unsigned char> &I,
                                                 const vpCameraParameters &cam)
 {  
@@ -477,7 +477,7 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &cMo,
   
   for (unsigned int i = 0; i < Lpol.size(); i++){
     //std::cout << "Calling poly: " << i << std::endl;
-    if (computeVisibility(cMo, angleAppears, angleDisappears, changed, useOgre, testRoi, I, cam, cameraPos, i))
+    if (computeVisibility(cMo, angleAppears, angleDisappears, changed, useOgre, not_used, I, cam, cameraPos, i))
       nbVisiblePolygon ++;
   }
   return nbVisiblePolygon;
@@ -490,8 +490,8 @@ vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneousMatrix &cMo,
   \param angleAppears : Angle used to test the appearance of a face
   \param angleDisappears : Angle used to test the disappearance of a face
   \param changed : True if a face appeared, disappeared or too many points have been lost. False otherwise
-  \param useOgre : True if a Ogre is used to test the visibility, False otherwise
-  \param testRoi : True if a face have to be entirely in the image False otherwise
+  \param useOgre : True if a Ogre is used to test the visibility, False otherwise.
+  \param not_used : Unused parameter.
   \param I : Image used to test if a face is entirely projected in the image.
   \param cam : Camera parameters.
   \param cameraPos : Position of the camera. Used only when Ogre is used as 3rd party.
@@ -503,16 +503,14 @@ template<class PolygonType>
 bool
 vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
                                                 const double &angleAppears, const double &angleDisappears,
-                                                bool &changed, bool useOgre, bool /* testRoi */,
+                                                bool &changed, bool useOgre, bool not_used,
                                                 const vpImage<unsigned char> & I,
                                                 const vpCameraParameters & cam,
                                                 const vpTranslationVector &
-                                                #ifdef VISP_HAVE_OGRE
-                                                cameraPos
-                                                #endif
-                                                ,
+                                                cameraPos,
                                                 unsigned int index)
 {
+  (void) not_used;
   unsigned int i = index;
   Lpol[i]->changeFrame(cMo);
   Lpol[i]->isappearing = false;
@@ -529,18 +527,15 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
     bool testDisappear = false;
     unsigned int nbCornerInsidePrev = 0;
 
-//    if(testRoi){
-//      nbCornerInsidePrev = Lpol[i]->getNbCornerInsidePrevImage();
-//      if(Lpol[i]->getNbCornerInsideImage(I, cam) == 0)
-//        testDisappear = true;
-//    }
-
     if(!testDisappear){
       if(useOgre)
 #ifdef VISP_HAVE_OGRE
         testDisappear = ((!Lpol[i]->isVisible(cMo, angleDisappears, true, cam, I)) || !isVisibleOgre(cameraPos,i));
 #else
+      {
+        (void)cameraPos; // Avoid warning
         testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam, I));
+      }
 #endif
       else
         testDisappear = (!Lpol[i]->isVisible(cMo, angleDisappears, false, cam, I));
@@ -563,9 +558,6 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
   else
   {
     bool testAppear = true;
-
-//    if(testRoi && Lpol[i]->getNbCornerInsideImage(I, cam) == 0)
-//      testAppear = false;
 
     if(testAppear){
       if(useOgre)

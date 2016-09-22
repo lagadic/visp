@@ -105,7 +105,7 @@ class VISP_EXPORT vpMath
 
   /*!
     Compute x square value.
-    \return \f$ x^2 \f$.
+    \return Square value \f$ x^2 \f$.
   */
   static inline double sqr(double x) { return x*x ; }
 
@@ -227,7 +227,7 @@ double vpMath::fact(unsigned int x)
   \param n : total number of elements.
   \param p : requested number of elements.
 
-  \return \f$ n! / ((n-p)! p!) \f$
+  \return Combination number \f$ n! / ((n-p)! p!) \f$
 */
 long double vpMath::comb(unsigned int n, unsigned int p)
 {
@@ -326,7 +326,7 @@ bool vpMath::greater(double x, double y, double s)
  \param x1 : Upper bound (default 1).
   \param n : Degree of the exponential (default 12).
 
-\return \f$1/(1+exp(-n*((x-x0)/(x1-x0)-0.5)))\f$
+\return Sigmoid value \f$1/(1+exp(-n*((x-x0)/(x1-x0)-0.5)))\f$
  */
 double vpMath::sigmoid(double x, double x0,double x1, double n)
 {

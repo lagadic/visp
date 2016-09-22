@@ -52,7 +52,6 @@
 #include <visp3/core/vpException.h>
 
 /*!
-  \class vpTime
   \ingroup group_core_time
   \brief Time management and measurement.
 

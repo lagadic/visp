@@ -45,8 +45,12 @@ vpNetwork::vpNetwork()
     verboseMode(false)
 { 
   tv.tv_sec = tv_sec;
+#if TARGET_OS_IPHONE
+  tv.tv_usec = (int)tv_usec;
+#else
   tv.tv_usec = tv_usec;
-  
+#endif
+
 #if defined(_WIN32)
   //Enable the sockets to be used
   //Note that: if we were using "winsock.h" instead of "winsock2.h" we would had to use:
@@ -215,8 +219,8 @@ int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
 #endif
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  int value = sendto(receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), message.size(), flags,
-                     (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
+  int value = (int)sendto(receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), message.size(), flags,
+                          (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
 #else
   int value = sendto((unsigned)receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), (int)message.size(), flags,
                      (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
@@ -655,8 +659,12 @@ int vpNetwork::_receiveRequestOnce()
   }
   
   tv.tv_sec = tv_sec;
+#if TARGET_OS_IPHONE
+  tv.tv_usec = (int)tv_usec;
+#else
   tv.tv_usec = tv_usec;
-  
+#endif
+
   FD_ZERO(&readFileDescriptor);        
   
   for(unsigned int i=0; i<receptor_list.size(); i++){ 
@@ -684,7 +692,7 @@ int vpNetwork::_receiveRequestOnce()
       if(FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
         char *buf = new char [max_size_message];
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-        numbytes=recv(receptor_list[i].socketFileDescriptorReceptor, buf, max_size_message, 0);
+        numbytes=(int)recv(receptor_list[i].socketFileDescriptorReceptor, buf, max_size_message, 0);
 #else
         numbytes=recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
 #endif
@@ -741,8 +749,12 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
   }
   
   tv.tv_sec = tv_sec;
+#if TARGET_OS_IPHONE
+  tv.tv_usec = (int)tv_usec;
+#else
   tv.tv_usec = tv_usec;
-  
+#endif
+
   FD_ZERO(&readFileDescriptor);        
   
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;
@@ -763,7 +775,7 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
     if(FD_ISSET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor)){
       char *buf = new char [max_size_message];
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      numbytes=recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, max_size_message, 0);
+      numbytes=(int)recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, max_size_message, 0);
 #else
       numbytes=recv((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
 #endif

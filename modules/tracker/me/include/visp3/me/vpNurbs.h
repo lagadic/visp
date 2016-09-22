@@ -101,7 +101,7 @@ public:
   /*!
       Gets all the weights relative to the control points.
 
-      \return list : A std::list containing weights relative to the control points.
+      \param list [out] : A std::list containing weights relative to the control points.
     */
   inline void get_weights(std::list<double>& list) const {
     list.clear();

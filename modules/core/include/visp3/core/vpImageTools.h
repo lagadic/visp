@@ -124,8 +124,10 @@ public:
   Extract a sub part of an image
 
   \param I : Input image from which a sub image will be extracted.
-  \param i_sub, j_sub : coordinates of the upper left point of the sub image
-  \param nrow_sub, ncol_sub : number of row, column of the sub image
+  \param i_sub : Vertical position of the upper/left corner of the sub image
+  \param j_sub : Horizontal position of the upper/left corner of the sub image
+  \param nrow_sub : Sub image height
+  \param ncol_sub : Sub image width
   \param S : Sub-image.
 */
 template<class Type>

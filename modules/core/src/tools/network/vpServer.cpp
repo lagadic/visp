@@ -37,6 +37,9 @@
 
 #include <visp3/core/vpServer.h>
 
+#if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
+#  include <TargetConditionals.h> // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
+#endif
 
 /*!
   Construct a server on the machine launching it.
@@ -199,8 +202,12 @@ bool vpServer::checkForConnections()
     }
   
   tv.tv_sec = tv_sec;
+#if TARGET_OS_IPHONE
+  tv.tv_usec = (int)tv_usec;
+#else
   tv.tv_usec = tv_usec;
-  
+#endif
+
   FD_ZERO(&readFileDescriptor);         
   
   socketMax = emitter.socketFileDescriptorEmitter;
@@ -251,12 +258,11 @@ bool vpServer::checkForConnections()
         if(FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
           char deco;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-          int numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
+          ssize_t numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
 #else //Win32
           int numbytes = recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &deco, 1, MSG_PEEK);
 #endif
           
-      
           if(numbytes == 0)
           {
             std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;

@@ -85,9 +85,11 @@ public:
   vpCameraParameter::get_projModel()
 
   \param cam : camera parameters.
-  \param x,y : input coordinates in meter.
-  \param u,v : output coordinates in pixels.
-  
+  \param x : input coordinate in meter along image plane x-axis.
+  \param y : input coordinate in meter along image plane y-axis.
+  \param u : output coordinate in pixels along image horizontal axis.
+  \param v : output coordinate in pixels along image vertical axis.
+
   \f$ u = x*p_x + u_0 \f$ and  \f$ v = y*p_y + v_0 \f$ in the case of
   perspective projection without distortion.
 
@@ -121,7 +123,8 @@ public:
   vpCameraParameter::get_projModel()
 
   \param cam : camera parameters.
-  \param x,y : input coordinates in meter.
+  \param x : input coordinate in meter along image plane x-axis.
+  \param y : input coordinate in meter along image plane y-axis.
   \param iP : output coordinates in pixels.
 
   In the frame (u,v) the result is given by:
@@ -194,8 +197,10 @@ public:
     \f$(u,v)\f$.
 
     \param cam : camera parameters.
-    \param x,y : input coordinates in meter.
-    \param u,v : output coordinates in pixels.
+    \param x : input coordinate in meter along image plane x-axis.
+    \param y : input coordinate in meter along image plane y-axis.
+    \param u : output coordinate in pixels along image horizontal axis.
+    \param v : output coordinate in pixels along image vertical axis.
 
     \f$ u = x*p_x*(1+k_{ud}*r^2)+u_0 \f$ and
     \f$ v = y*p_y*(1+k_{ud}*r^2)+v_0 \f$
@@ -217,7 +222,8 @@ public:
     normalized coordinates \f$(x,y)\f$ in meter to pixel coordinates.
 
     \param cam : camera parameters.
-    \param x,y : input coordinates in meter.
+    \param x : input coordinate in meter along image plane x-axis.
+    \param y : input coordinate in meter along image plane y-axis.
     \param iP : output coordinates in pixels.
 
     In the frame (u,v) the result is given by:

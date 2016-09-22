@@ -42,6 +42,10 @@
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
+#if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
+#  include <TargetConditionals.h> // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
+#endif
+
 /*!
   Basic constructor.
 
@@ -154,16 +158,25 @@ vpMbtDistanceKltCylinder::init(const vpKltOpencv& _tracker, const vpHomogeneousM
       vpPixelMeterConversion::convertPoint(cam, x_tmp, y_tmp, xm, ym);
       double Z = computeZ(xm,ym);
       if(!vpMath::isNaN(Z)){
+#if TARGET_OS_IPHONE
+        initPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
+        curPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
+        curPointsInd[(int)id] = (int)i;
+#else
         initPoints[id] = vpImagePoint(y_tmp, x_tmp);
         curPoints[id] = vpImagePoint(y_tmp, x_tmp);
         curPointsInd[id] = (int)i;
+#endif
         nbPointsInit++;
         nbPointsCur++;
 
-
         vpPoint p;
         p.setWorldCoordinates(xm * Z, ym * Z, Z);
+#if TARGET_OS_IPHONE
+        initPoints3D[(int)id] = p;
+#else
         initPoints3D[id] = p;
+#endif
         //std::cout << "Computed Z for : " << xm << "," << ym << " : " << computeZ(xm,ym) << std::endl;
       }
     }
@@ -193,9 +206,14 @@ vpMbtDistanceKltCylinder::computeNbDetectedCurrent(const vpKltOpencv& _tracker)
 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++){
     _tracker.getFeature((int)i, id, x, y);
-    if(isTrackedFeature(id)){
+    if(isTrackedFeature((int)id)){
+#if TARGET_OS_IPHONE
+      curPoints[(int)id] = vpImagePoint(static_cast<double>(y),static_cast<double>(x));
+      curPointsInd[(int)id] = (int)i;
+#else
       curPoints[id] = vpImagePoint(static_cast<double>(y),static_cast<double>(x));
       curPointsInd[id] = (int)i;
+#endif
       nbPointsCur++;
     }
   }

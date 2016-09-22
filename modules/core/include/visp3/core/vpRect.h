@@ -250,8 +250,10 @@ public:
     Sets the coordinates of the rectangle's top left corner to
     (left, top), and its size to (width, height).
 
-    \param l,t : (left, top) corner position.
-    \param w,h : (width, height) rectangle size.
+    \param l : horizontal position of the rectangle upper/left corner position.
+    \param t : vertical position of the rectangle upper/left corner position.
+    \param w : rectangle width.
+    \param h : rectangle height.
 
   */
   inline void setRect(double l, double t, double w, double h) {

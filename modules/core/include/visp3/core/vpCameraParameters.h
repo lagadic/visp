@@ -146,7 +146,7 @@
   distortion can also be considered by two additional parameters
   \f$(k_{ud}, k_{du})\f$.
 
-  \note \ref tutorial-calibration shows how to calibrate a camera
+  \note The \ref tutorial-calibration shows how to calibrate a camera
   to estimate the parameters corresponding to the model implemented in this class.
 
   \note Note also that \ref tutorial-bridge-opencv gives the correspondance between

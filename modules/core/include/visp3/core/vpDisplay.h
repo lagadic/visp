@@ -230,9 +230,11 @@ public:
 
   /*!
     Display an arrow from image point \e ip1 to image point \e ip2.
-    \param ip1,ip2 : Initial and final image points.
+    \param ip1 : Initial image point.
+    \param ip2 : Final image point.
     \param color : Arrow color.
-    \param w,h : Width and height of the arrow.
+    \param w : Arrow width.
+    \param h : Arrow height.
     \param thickness : Thickness of the lines used to display the arrow.
   */
   virtual void displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color=vpColor::white, unsigned int w=4, unsigned int h=2, unsigned int thickness=1) =0;
@@ -268,14 +270,16 @@ public:
   virtual void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness=1) =0;
   /*!
     Display a dashed line from image point \e ip1 to image point \e ip2.
-    \param ip1,ip2 : Initial and final image points.
+    \param ip1 : Initial image point.
+    \param ip2 : Final image point.
     \param color : Line color.
     \param thickness : Dashed line thickness.
   */
   virtual void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) =0;
   /*!
     Display a line from image point \e ip1 to image point \e ip2.
-    \param ip1,ip2 : Initial and final image points.
+    \param ip1 : Initial image point.
+    \param ip2 : Final image point.
     \param color : Line color.
     \param thickness : Line thickness.
   */
@@ -322,7 +326,8 @@ public:
     width and \e height the rectangle size.
 
     \param topLeft : Top-left corner of the rectangle.
-    \param width,height : Rectangle size.
+    \param width : Rectangle width.
+    \param height : Rectangle height.
     \param color : Rectangle color.
     \param fill : When set to true fill the rectangle.
 
@@ -517,7 +522,8 @@ public:
     Initialize the display (size, position and title) of a gray level image.
 
     \param I : Image to be displayed (not that image has to be initialized)
-    \param x, y : The window is set at position x,y (column index, row index).
+    \param x : Horizontal position of the upper/left window corner.
+    \param y : Vertical position of the upper/left window corner.
     \param title : Window title.
   */
   virtual void init(vpImage<unsigned char> &I, int x=-1, int y=-1, const std::string &title="") =0 ;
@@ -526,7 +532,8 @@ public:
     image in RGBa format.
 
     \param I : Image to be displayed (not that image has to be initialized)
-    \param x, y : The window is set at position x,y (column index, row index).
+    \param x : Horizontal position of the upper/left window corner.
+    \param y : Vertical position of the upper/left window corner.
     \param title : Window title.
   */
   virtual void init(vpImage<vpRGBa> &I, int x=-1, int y=-1, const std::string &title="") =0 ;
@@ -534,8 +541,10 @@ public:
   /*!
     Initialize the display size, position and title.
 
-    \param width, height : Width and height of the window.
-    \param x, y : The window is set at position x,y (column index, row index).
+    \param width : Window width.
+    \param height : Window height.
+    \param x : Horizontal position of the upper/left window corner.
+    \param y : Vertical position of the upper/left window corner.
     \param title : Window title.
 
     The following example shows how to use this function
@@ -613,11 +622,11 @@ int main()
   /*!
     Set the window position in the screen.
 
-    \param winx, winy : Position of the upper-left window's border in
-    the screen.
+    \param x : Horizontal position of the upper/left window corner.
+    \param y : Vertical position of the upper/left window corner.
 
   */
-  virtual void setWindowPosition(int winx, int winy) = 0 ;
+  virtual void setWindowPosition(int x, int y) = 0 ;
   //@}
 
   /*!

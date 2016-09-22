@@ -361,7 +361,7 @@ public:
     need to be computed at each iteration of the servo loop. This method allows to force the computation of
     \f${\widehat {\bf L}}\f$ in this particular case.
 
-    \param force_computation: If true it forces the interaction matrix computation even if it is already done.
+    \param force_computation : If true it forces the interaction matrix computation even if it is already done.
 
   */
   void setForceInteractionMatrixComputation(bool force_computation)

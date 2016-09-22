@@ -259,7 +259,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /*!
     Return the sum of all the \f$a_{ij}\f$ elements of the matrix.
 
-    \return \f$\sum a_{ij}\f$
+    \return Value of \f$\sum a_{ij}\f$
     */
   double sum() const;
   double sumSquare() const;

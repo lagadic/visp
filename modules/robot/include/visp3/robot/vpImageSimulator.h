@@ -261,9 +261,9 @@ class VISP_EXPORT vpImageSimulator
     }
 
     /*!
-     This function is to set the background to a texture instead of default black
-     The corresponding flag is set
-     \param Iback: Image/Texture for the background
+     This function allows to set the background to a texture instead of the default black background.
+
+     \param Iback : Image/Texture for the background
      */
     inline void
     setBackGroundTexture(const vpImage<unsigned char>& Iback) {

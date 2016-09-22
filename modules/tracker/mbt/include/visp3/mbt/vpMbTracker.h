@@ -599,8 +599,9 @@ protected:
     the circle and its radius.
 
     \param p1 : Center of the circle.
-    \param p2,p3 : Two points on the plane containing the circle. With the center of the circle we have 3 points
-    defining the plane that contains the circle.
+    \param p2 : A point on the plane containing the circle.
+    \param p3 : An other point on the plane containing the circle. With the center of the circle \e p1,
+    \e p2 and \e p3 we have 3 points defining the plane that contains the circle.
     \param radius : Radius of the circle.
     \param idFace : Id of the face associated to the circle.
     \param name : Name of the circle.

@@ -59,6 +59,9 @@
 //#  pragma comment(lib, "ws2_32.lib") // Done by CMake in main CMakeLists.txt
 #endif
 
+#if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
+#  include <TargetConditionals.h> // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
+#endif
 
 /*! 
   \class vpNetwork
@@ -282,7 +285,11 @@ int vpNetwork::receive(T* object, const unsigned int &sizeOfObject)
   }
   
   tv.tv_sec = tv_sec;
+#if TARGET_OS_IPHONE
+  tv.tv_usec = (int)tv_usec;
+#else
   tv.tv_usec = tv_usec;
+#endif
   
   FD_ZERO(&readFileDescriptor);        
   
@@ -362,8 +369,12 @@ int vpNetwork::receiveFrom(T* object, const unsigned int &receptorEmitting, cons
   }
   
   tv.tv_sec = tv_sec;
+#if TARGET_OS_IPHONE
+  tv.tv_usec = (int)tv_usec;
+#else
   tv.tv_usec = tv_usec;
-  
+#endif
+
   FD_ZERO(&readFileDescriptor);
   
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;

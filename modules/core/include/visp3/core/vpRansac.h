@@ -81,7 +81,7 @@ public:
 		      vpColVector &model,
 		      vpColVector &inliers,
 		      int consensus = 1000,
-          double areaThreshold = 0.0,
+          double not_used = 0.0,
           const int maxNbumbersOfTrials = 10000);
 };
 
@@ -108,7 +108,7 @@ public:
 
   \param consensus :  Consensus
 
-  \param areaThreshold : Not used.
+  \param not_used : Unused parameter.
 
   \param maxNbumbersOfTrials : Maximum number of trials. Even if a solution is
   not found, the method is stopped.
@@ -122,13 +122,13 @@ vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x,
 				   vpColVector &M,
 				   vpColVector &inliers,
 				   int consensus,
-           double /* areaThreshold */,
+           double not_used,
            const int maxNbumbersOfTrials)
 {
   /*   bool isplanar; */
   /*   if (s == 4) isplanar = true; */
   /*   else isplanar = false; */
-
+  (void)not_used;
   double eps = 1e-6 ;
   double p = 0.99;    // Desired probability of choosing at least one sample
   // free from outliers
