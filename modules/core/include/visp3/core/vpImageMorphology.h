@@ -64,7 +64,7 @@
 
 
 */
-class vpImageMorphology
+class VISP_EXPORT vpImageMorphology
 {
 public:
   /*! \enum vpConnexityType
@@ -72,20 +72,22 @@ public:
   */
   typedef enum {
     CONNEXITY_4, /*!< For a given pixel 4 neighbors are considered (left,
-		   right, up, down) */
+                      right, up, down) */
     CONNEXITY_8 /*!< For a given pixel 8 neighbors are considered (left,
-		  right, up, down, and the 4 pixels located on the diagonal) */
+                     right, up, down, and the 4 pixels located on the diagonal) */
   } vpConnexityType;
 
 public:
   template<class Type>
   static void erosion(vpImage<Type> &I, Type value, Type value_out,
-		      vpConnexityType connexity = CONNEXITY_4);
+                      vpConnexityType connexity = CONNEXITY_4);
 
   template<class Type>
   static void dilatation(vpImage<Type> &I, Type value, Type value_out,
-			 vpConnexityType connexity = CONNEXITY_4);
+                         vpConnexityType connexity = CONNEXITY_4);
 
+  static void erosion(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4);
+  static void dilatation(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4);
 } ;
 
 /*!
@@ -107,50 +109,62 @@ public:
 */
 template<class Type>
 void vpImageMorphology::erosion(vpImage<Type> &I,
-				Type value,
-				Type value_out,
-				vpConnexityType connexity)
+    Type value,
+    Type value_out,
+    vpConnexityType connexity)
 {
-  vpImage<Type> J(I.getHeight(), I.getWidth()) ;
-  J = I;
+  if(I.getSize() == 0) {
+    std::cerr << "Input image is empty!" << std::endl;
+    return;
+  }
+
+  vpImage<Type> J(I.getHeight()+2, I.getWidth()+2);
+  // Copy I to J and add border
+  for (unsigned int i = 0; i < J.getHeight(); i++) {
+    if (i == 0 || i == J.getHeight() - 1) {
+      for (unsigned int j = 0; j < J.getWidth(); j++) {
+        J[i][j] = value;
+      }
+    } else {
+      J[i][0] = value;
+      memcpy(J[i]+1, I[i-1], sizeof(unsigned char)*I.getWidth());
+      J[i][J.getWidth() - 1] = value;
+    }
+  }
 
   if (connexity == CONNEXITY_4) {
-    for (unsigned int i=1 ; i < I.getHeight()-1   ; i++)
-      for (unsigned int j=1 ; j < I.getWidth()-1   ; j++)
-      {
-	if (I[i][j] == value)
-	{
-	  // Consider 4 neighbors
-	  if ((I[i-1][j] == value_out) ||
-	      (I[i+1][j] == value_out) ||
-	      (I[i][j-1] == value_out) ||
-	      (I[i][j+1] == value_out))
-	    J[i][j] = value_out;
-	}
+    for (unsigned int i = 0; i < I.getHeight(); i++) {
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+        if (J[i+1][j+1] == value) {
+          // Consider 4 neighbors
+          if ((J[i][j+1] == value_out) || //Top
+              (J[i+2][j+1] == value_out) || //Bottom
+              (J[i+1][j] == value_out) || //Left
+              (J[i+1][j+2] == value_out)) { //Right
+            I[i][j] = value_out;
+          }
+        }
       }
+    }
   }
   else {
-    for (unsigned int i=1 ; i < I.getHeight()-1   ; i++)
-      for (unsigned int j=1 ; j < I.getWidth()-1   ; j++)
-      {
-	if (I[i][j] == value)
-	{
-	  // Consider 8 neighbors
-	  if ((I[i-1][j-1] == value_out) ||
-	      (I[i-1][j]   == value_out) ||
-	      (I[i-1][j+1] == value_out) ||
-	      (I[i][j-1]   == value_out) ||
-	      (I[i][j+1]   == value_out) ||
-	      (I[i+1][j+1] == value_out) ||
-	      (I[i+1][j+1] == value_out) ||
-	      (I[i+1][j+1] == value_out) )
-	    J[i][j] = value_out ;
-	}
+    for (unsigned int i = 0; i < I.getHeight(); i++) {
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+        if (J[i+1][j+1] == value) {
+          // Consider 8 neighbors
+          if ((J[i][j] == value_out) ||
+              (J[i][j+1]   == value_out) ||
+              (J[i][j+2] == value_out) ||
+              (J[i+1][j]   == value_out) ||
+              (J[i+1][j+2]   == value_out) ||
+              (J[i+2][j] == value_out) ||
+              (J[i+2][j+1] == value_out) ||
+              (J[i+2][j+2] == value_out) )
+            I[i][j] = value_out ;
+        }
       }
-
-
+    }
   }
-  I = J ;
 }
 
 /*!
@@ -172,48 +186,63 @@ void vpImageMorphology::erosion(vpImage<Type> &I,
 */
 template<class Type>
 void vpImageMorphology::dilatation(vpImage<Type> &I,
-				   Type value,
-				   Type value_out,
-				   vpConnexityType connexity)
+    Type value,
+    Type value_out,
+    vpConnexityType connexity)
 {
-  vpImage<Type> J(I.getHeight(), I.getWidth()) ;
-  J = I;
-  if (connexity == CONNEXITY_4) {
-    for (unsigned int i=1 ; i < I.getHeight()-1   ; i++)
-      for (unsigned int j=1 ; j < I.getWidth()-1   ; j++)
-      {
-	if (I[i][j] == value_out)
-	{
-	  // Consider 4 neighbors
-	  if ((I[i-1][j] == value) ||
-	      (I[i+1][j] == value) ||
-	      (I[i][j-1] == value) ||
-	      (I[i][j+1] == value))
-	    J[i][j] = value ;
-	}
-      }
-  }
-  else {
-    for (unsigned int i=1 ; i < I.getHeight()-1   ; i++)
-      for (unsigned int j=1 ; j < I.getWidth()-1   ; j++)
-      {
-	if (I[i][j] == value_out)
-	{
-	  // Consider 8 neighbors
-	  if ((I[i-1][j-1] == value) ||
-	      (I[i-1][j]   == value) ||
-	      (I[i-1][j+1] == value) ||
-	      (I[i][j-1]   == value) ||
-	      (I[i][j+1]   == value) ||
-	      (I[i+1][j+1] == value) ||
-	      (I[i+1][j+1] == value) ||
-	      (I[i+1][j+1] == value) )
-	    J[i][j] = value ;
-	}
-      }
+  if(I.getSize() == 0) {
+    std::cerr << "Input image is empty!" << std::endl;
+    return;
   }
 
-  I = J ;
+  vpImage<Type> J(I.getHeight()+2, I.getWidth()+2);
+  // Copy I to J and add border
+  for (unsigned int i = 0; i < J.getHeight(); i++) {
+    if (i == 0 || i == J.getHeight() - 1) {
+      for (unsigned int j = 0; j < J.getWidth(); j++) {
+        J[i][j] = value_out;
+      }
+    } else {
+      J[i][0] = value_out;
+      memcpy(J[i]+1, I[i-1], sizeof(unsigned char)*I.getWidth());
+      J[i][J.getWidth() - 1] = value_out;
+    }
+  }
+
+  if (connexity == CONNEXITY_4) {
+    for (unsigned int i = 0; i < I.getHeight(); i++) {
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+        if (J[i+1][j+1] == value_out) {
+          // Consider 4 neighbors
+          if ((J[i][j+1] == value) || //Top
+              (J[i+2][j+1] == value) || //Bottom
+              (J[i+1][j] == value) || //Left
+              (J[i+1][j+2] == value)) { //Right
+            I[i][j] = value;
+          }
+        }
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < I.getHeight(); i++) {
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+        if (J[i+1][j+1] == value_out) {
+          // Consider 8 neighbors
+          if ((J[i][j] == value) ||
+              (J[i][j+1]   == value) ||
+              (J[i][j+2] == value) ||
+              (J[i+1][j]   == value) ||
+              (J[i+1][j+2]   == value) ||
+              (J[i+2][j] == value) ||
+              (J[i+2][j+1] == value) ||
+              (J[i+2][j+2] == value) ) {
+            I[i][j] = value ;
+          }
+        }
+      }
+    }
+  }
 }
 #endif
 
