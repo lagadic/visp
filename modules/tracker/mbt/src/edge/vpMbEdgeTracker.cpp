@@ -264,7 +264,8 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int
   vpColVector m_error_prev(nbrow);
   vpColVector m_w_prev(nbrow);
   
-  while ( ((int)((residu_1 - r)*1e8) !=0 )  && (iter<30))
+  //while ( ((int)((residu_1 - r)*1e8) !=0 )  && (iter<30))
+  while(std::fabs((residu_1 - r)*1e8) > std::numeric_limits<double>::epsilon() && (iter<30))
   {
     computeVVSSecondPhase(_I, L, error_lines, error_cylinders, error_circles, m_error, lvl);
 

@@ -444,8 +444,9 @@ void vpPoseFeatures::computePoseVVS(vpHomogeneousMatrix & cMo)
     
     unsigned int iter = 0;
     
-    while((int)((residu_1 - r)*1e12) != 0 )
-    {         
+    //while((int)((residu_1 - r)*1e12) != 0 )
+    while(std::fabs((residu_1 - r)*1e12) > std::numeric_limits<double>::epsilon() )
+    {
       residu_1 = r ;
 
       // Compute the interaction matrix and the error
@@ -509,7 +510,8 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix & cMo)
     
     unsigned int iter = 0 ;
     
-    while((int)((residu_1 - r)*1e12) !=0)
+    //while((int)((residu_1 - r)*1e12) !=0)
+    while(std::fabs((residu_1 - r)*1e12) > std::numeric_limits<double>::epsilon())
     {     
       residu_1 = r ;
       

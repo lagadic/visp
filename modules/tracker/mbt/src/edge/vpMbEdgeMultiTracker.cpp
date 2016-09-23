@@ -365,7 +365,8 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
   double residu_1 = 1e3;
   double r =1e3-1;
 
-  while ( ((int)((residu_1 - r)*1e8) != 0 )  && (iter<30))
+  //while ( ((int)((residu_1 - r)*1e8) != 0 )  && (iter<30))
+  while(std::fabs((residu_1 - r)*1e8) > std::numeric_limits<double>::epsilon() && (iter<30))
   {
     L.resize(0,0);
     m_error.resize(0);

@@ -86,7 +86,8 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
     }
 
     vpHomogeneousMatrix cMoPrev = cMo;
-    while((int)((residu_1 - r)*1e12) !=0)
+    //while((int)((residu_1 - r)*1e12) !=0)
+    while(std::fabs((residu_1 - r)*1e12) > std::numeric_limits<double>::epsilon())
     {      
       residu_1 = r ;
 
@@ -197,7 +198,8 @@ vpPose::poseVirtualVSrobust(vpHomogeneousMatrix & cMo)
     W.resize(s.getRows(), s.getRows()) ;
     w =1 ;
 
-    while((int)((residu_1 - r)*1e12) !=0)
+    //while((int)((residu_1 - r)*1e12) !=0)
+    while(std::fabs((residu_1 - r)*1e12) > std::numeric_limits<double>::epsilon())
     {
       residu_1 = r ;
 
