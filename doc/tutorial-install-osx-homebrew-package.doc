@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-osx-homebrew-package Tutorial: Installation from prebuilt packages with Homebrew on OSX
+\page tutorial-install-osx-homebrew-package Tutorial: Installation from prebuilt packages on OSX with Homebrew
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP Homebrew package on OSX. These steps have been tested with Mac OS X 10.11.5 El Capitan. 
