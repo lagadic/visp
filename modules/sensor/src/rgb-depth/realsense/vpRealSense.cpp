@@ -41,7 +41,7 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/sensor/vpRealSense.h>
 
-#ifdef VISP_HAVE_REALSENSE
+#if defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_CPP11_COMPATIBILITY)
 
 #include "vpRealSense_impl.h"
 

@@ -47,7 +47,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 
-#ifdef VISP_HAVE_REALSENSE
+#if defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_CPP11_COMPATIBILITY)
 
 #include <librealsense/rs.hpp>
 

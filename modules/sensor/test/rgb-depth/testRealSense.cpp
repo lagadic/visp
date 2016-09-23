@@ -51,6 +51,8 @@
 #include <visp3/core/vpMutex.h>
 #include <visp3/core/vpThread.h>
 
+#if defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_CPP11_COMPATIBILITY)
+
 // Using a thread to display the pointcloud with PCL produces a segfault on OSX
 #if( ! defined(__APPLE__) && ! defined(__MACH__) ) // Not OSX
 #  if (defined(VISP_HAVE_PTHREAD) || defined(_WIN32)) // Threading available
@@ -114,10 +116,11 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
 }
 #endif
 #endif
+#endif
 
 int main()
 {
-#ifdef VISP_HAVE_REALSENSE
+#if defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_CPP11_COMPATIBILITY)
   try {
     vpRealSense rs;
     //rs.setDeviceBySerialNumber("541142003219");
