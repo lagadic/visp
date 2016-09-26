@@ -522,12 +522,12 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix & cMo)
       r = error.sumSquare() ;
       
       if(iter == 0){
-        res = vpColVector(error.getRows()/2);
-        W = vpMatrix(error.getRows(),error.getRows());
-        //w = vpColVector(error.getRows()/2);
+        res.resize(error.getRows()/2);
+        w.resize(error.getRows()/2);
+        W.resize(error.getRows(),error.getRows());
         w = 1;
       }
-      
+
       for(unsigned int k=0 ; k < error.getRows()/2 ; k++)
       {
         res[k] = vpMath::sqr(error[2*k]) + vpMath::sqr(error[2*k+1]) ;
@@ -546,7 +546,7 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix & cMo)
       vpMatrix LRank;
       (W*L).pseudoInverse(Lp,1e-6) ;
       unsigned int rank = L.pseudoInverse(LRank,1e-6) ;
-      
+
       if(rank < 6){
         if(verbose)
           vpTRACE("Rank must be at least 6 ! cMo not computed.");
