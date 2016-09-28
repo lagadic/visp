@@ -11,6 +11,11 @@ In this tutorial you will learn how to do simple image processing on iOS devices
 
 In ViSP images are carried out using vpImage class. However in iOS, image rendering has to be done using UIImage class that is part of the Core Graphics framework available in iOS. In this tutorial we provide the functions that allow to convert a vpImage to an UIImage and \e vice \e versa. 
 
+Note that all the material (source code and image) used in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedImageProc
+\endcode
 
 \section image_ios_convert Image conversion functions
 
