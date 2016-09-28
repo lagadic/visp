@@ -3,6 +3,8 @@
 \page tutorial-tracking-mb-stereo Tutorial: Markerless model-based tracking with stereo cameras
 \tableofcontents
 
+\section mb_stereo_intro Introduction
+
 This tutorial describes the model-based tracking of objects using simultaneously multiple cameras views. It allows to simultaneously track the object in the images viewed by a set of cameras while providing its 3D localization (i.e., the object pose expressed in a reference camera frame) when calibrated cameras are used.
 
 The software allows the tracking of a markerless object using the knowledge of its CAD model. Considered objects have to be modeled by segments, circles or cylinders. The model of the object could be defined in vrml format (except for circles), or in cao format.
@@ -38,6 +40,12 @@ This other video shows the behavior of the hybrid tracking performed with vpMbEd
 Next sections will highlight how to easily adapt your code to use multiple cameras with the model-based tracker. As only the new methods dedicated to multiple views tracking will be presented, 
 you are highly recommended to follow \ref tutorial-tracking-mb in order to be familiar with the model-based tracking concepts, the different trackers that are available in ViSP (the edge tracker: vpMbEdgeTracker, the klt feature points tracker: vpMbKltTracker 
 and the hybrid tracker: vpMbEdgeKltTracker) and with the configuration loading part.
+
+Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/stereo
+\endcode
 
 \section mb_stereo_started Getting started
 

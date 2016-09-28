@@ -5,7 +5,13 @@
 
 \section simu_image_intro Introduction
 
-The aim of this tutorial is to explain how to use vpImageSimulator class to project an image of a planar scene at a given camera position. For example, this capability can then be used during the simulation of a visual-servo as described in \ref tutorial-ibvs to introduce an image processing. 
+The aim of this tutorial is to explain how to use vpImageSimulator class to project an image of a planar scene at a given camera position. For example, this capability can then be used during the simulation of a visual-servo as described in \ref tutorial-ibvs to introduce an image processing.
+
+All the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/simulator/image
+\endcode
 
 \section simu_image_projection Image projection
 

@@ -15,7 +15,7 @@ href="http://www.inria.fr/en/centre/rennes" target="_parent">Inria Rennes</a>.</
 
 <p>ViSP wiki is <a href="https://github.com/lagadic/visp/wiki" target="_parent">https://github.com/lagadic/visp/wiki</a></p>
 
-<p>ViSP source code is now available on GitHub <a href="http://github.org/lagadic/visp" target="_parent">http://github.org/lagadic/visp</a></p>
+<p>ViSP source code is now available on GitHub <a href="https://github.org/lagadic/visp" target="_parent">https://github.org/lagadic/visp</a></p>
  
 <p>If you have any problems or find any bugs, please report them in 
 <a href="https://github.com/lagadic/visp/issues">the bug tracker</a>. If you may need help, please use the available <a href="http://gforge.inria.fr/forum/?group_id=397" target="_parent">forums</a>.<p> 
@@ -50,7 +50,10 @@ href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/p
 \subsection tuto_install_sdk Installation from prebuild SDK
 
 - \ref tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt SDK from Ubuntu or Debian packages.
+- \ref tutorial-install-archlinux-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for Arch Linux.
 - \ref tutorial-install-osx-homebrew-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK on OSX with Homebrew.
+- \ref tutorial-install-ros-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for ROS.
+- \ref tutorial-install-ios-package <br>In this tutorial you will learn how to install ViSP prebuilt framework for iOS devices.
 
 \subsection tuto_install_src Installation from source
 
@@ -80,6 +83,7 @@ href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/p
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
+- \ref tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices. 
 
 \subsection tuto_calib Camera calibration
 

@@ -7,6 +7,12 @@
 
 This tutorial gives some hints to boost your visual servo control law in order to speed up the time to convergence.
 
+Note that all the material (source code and image) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/visual-servoing/ibvs
+\endcode
+
 To illustrate this tutorial let us consider the example tutorial-ibvs-4pts-plotter.cpp introduced in \ref tutorial-ibvs. This example consider an image based visual servoing using four points as visual features.
 
 In the general case, considering \f$ \dot {\bf q} \f$ as the input velocities to the robot controller, the control laws provided in vpServo class lead to the following control law \f$ \dot {\bf q} = \pm \lambda {{\bf \widehat J}_e}^+ {\bf e}\f$ where the sign is negative for an eye in hand servo and positive for an eye to hand servo, \f$\lambda\f$ is a constant gain, \f$ {\bf \widehat J}_e\f$ is the task Jacobian and \f$\bf e \f$ is the error to regulate to zero. As described in \cite Chaumette06a, this control law ensure an exponential decoupled decrease of the error \f${\dot {\bf e}} =  \pm \lambda {\bf e}\f$.

@@ -3,9 +3,17 @@
 \page tutorial-detection-object Tutorial: Object detection and localization
 \tableofcontents
 
+\section object_detection_intro Introduction
+
 This tutorial will show you how to use keypoints to detect and estimate the pose of a known object using his cad model. The first step consists in detecting and learning keypoints located on the faces of an object, while the second step makes the matching between the detected keypoints in the query image with those previously learned. The pair of matches are then used to estimate the pose of the object with the knowledge of the correspondences between the 2D and 3D coordinates.
 
 The next section presents a basic example of the detection of a teabox with a detailed description of the different steps.
+
+Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/object
+\endcode
 
 \section object_detection Object detection using keypoints
 

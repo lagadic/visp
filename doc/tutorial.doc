@@ -31,7 +31,10 @@ This page references all the tutorials.
 This page introduces the user to the way to install ViSP from existing prebuild packages.
 
 - \subpage tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library SDK from Ubuntu or Debian packages.
+- \subpage tutorial-install-archlinux-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for Arch Linux.
 - \subpage tutorial-install-osx-homebrew-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK on OSX with Homebrew.
+- \subpage tutorial-install-ros-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for ROS.
+- \subpage tutorial-install-ios-package <br>In this tutorial you will learn how to install ViSP prebuilt framework for iOS devices.
 
 */
 
@@ -72,6 +75,7 @@ This page introduces the user to the way to get, to filter or to render images.
 - \subpage tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \subpage tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \subpage tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
+- \subpage tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices. 
 
 */
 

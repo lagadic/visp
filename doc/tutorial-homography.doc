@@ -10,7 +10,14 @@ This tutorial shows how to estimate an homography from points. Two cases are con
 - points are matched without possible mismatches. In that case vpHomography::DLT() or vpHomography::HLM() are used to estimate the homography,
 - points are matched with possible mismatches. In that case vpHomography::ransac() or vpHomography::robust() are used.
 
+
 \section homography Homography estimation
+
+Note that all the material (source code) described in this section is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/computer-vision
+\endcode
 
 Let us consider the following source code also available in tutorial-homography-from-points.cpp. To resume, we do the following:
 - define four 3D points \c oP in an object frame, 
@@ -69,6 +76,12 @@ Estimation from homography: Point 3 in pixels in frame a: 353.8501593, 486.18518
 
 
 \section ransac Ransac or robust homography estimation
+
+Note that all the material (source code) described in this section is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/matching
+\endcode
 
 This section follows the \ref tutorial-matching. It explains how to exploit couples of matched points obtained using SURF detector in order to estimate an homography that allows to reject mismatched couples of points. The homography is then used to track a postcard from its initial position in the reference image.
 

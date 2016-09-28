@@ -1,9 +1,9 @@
 /**
 
-\page tutorial-install-ubuntu-package Tutorial: Installation from prebuilt packages on Linux Ubuntu/Debian
+\page tutorial-install-ubuntu-package Tutorial: Installation from prebuilt packages for Linux Ubuntu/Debian
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from prebuilt official packages on Linux Ubuntu or Debian. 
+In this tutorial you will learn how to install ViSP from prebuilt official packages for Linux Ubuntu or Debian. 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -14,17 +14,19 @@ Since Ubuntu 14.04 LTS, ViSP library can be installed from <a href="http://packa
 To install ViSP library and headers just run:
 
 \code
-sudo apt-get install libvisp-dev
+$ sudo apt-get install libvisp-dev
 \endcode
+
+\note This package comes build with 3rd parties such as OpenCV, X11, xml2...
 
 To install ViSP images data set useful to run ViSP examples you can run:
 \code
-sudo apt-get install visp-images
+$ sudo apt-get install visp-images
 \endcode
 
 To install ViSP html documentation you can run:
 \code
-sudo apt-get install visp-doc
+$ sudo apt-get install visp-doc
 \endcode
 
 \section install_ubuntu_package_next Next tutorial

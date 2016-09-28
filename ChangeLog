@@ -29,8 +29,12 @@ ViSP 3.0.1 (in development)
   - Tutorials
     . New tutorial: How to use multi-threading capabilities
     . New tutorial: Crosscompilation for Raspberry Pi from Ubuntu host
-    . New tutorial: Installation from source on iOS devices
-    . New tutorial: How to create and build a CMake project that uses ViSP on iOS
+    . New tutorial: Installation from prebuilt packages for Arch Linux
+    . New tutorial: Installation from prebuilt packages for ROS
+    . New tutorial: Installation from prebuilt packages for iOS devices
+    . New tutorial: Installation from source for iOS devices
+    . New tutorial: How to create a basic iOS application that uses ViSP
+    . New tutorial: Image processing on iOS
   - Bug fixed
     . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc
@@ -48,6 +52,8 @@ ViSP 3.0.1 (in development)
     . [#75] visp.pc pkgconfig file is corrupted by optimized and debug keywords
     . [#77] vpAROgre: wrong resources / plugins default path when used from
             ROS installation
+    . [#82] Problem when comparing two vpImage (operator!=)
+    . [#84] Problem with vpImageMorphology and CONNEXITY_8 and with border pixels
 
 ----------------------------------------------
 ViSP 3.0.0 (released December 18th, 2015)

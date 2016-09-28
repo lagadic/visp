@@ -1,0 +1,27 @@
+/**
+
+\page tutorial-install-archlinux-package Tutorial: Installation from prebuilt packages for Arch Linux
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP package from Arch Linux community repository. 
+
+\note Concerning ViSP installation, we provide also other \ref tutorial.
+
+\section install_archlinux_package_list ViSP official package
+
+ViSP is available as an <a href="https://aur.archlinux.org/packages/visp">Arch User Repository (AUR) package</a> for Arch Linux.
+
+To install ViSP library and headers issue the following command:
+
+\code
+# pacman -S visp
+\endcode
+
+\note This package comes with 3rd parties such as OpenCV, X11, xml2...
+
+
+\section install_archlinux_package_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+
+*/

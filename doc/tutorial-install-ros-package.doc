@@ -1,0 +1,34 @@
+/**
+
+\page tutorial-install-ros-package Tutorial: Installation from prebuilt packages for ROS
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP from prebuilt ROS packages on Linux Ubuntu or Debian. 
+
+\note Concerning ViSP installation, we provide also other \ref tutorial.
+
+\section install_ros_package ViSP ROS package
+
+ViSP is available as a <a href="http://wiki.ros.org/visp">ROS package</a> for \e groovy, \e hydro, \e indigo, \e jade and \e kinetic distro. Under Ubuntu, to get the package simply type:
+
+\code
+$ sudo apt-get install ros-<distro>-visp
+\endcode
+
+\section install_ros_package_other Other ROS packages
+
+We provide also other ROS packages that exploit ViSP:
+
+- <a href="http://wiki.ros.org/vision_visp">vision_visp</a>: a metapackage that contains
+  -# <a href="http://wiki.ros.org/visp_bridge">visp_bridge</a>: a bunch of wrappers between ViSP and ROS data structures 
+  -# <a href="http://wiki.ros.org/visp_tracker">visp_tracker</a>: a ROS version of ViSP model-based tracker  
+  -# <a href="http://wiki.ros.org/visp_auto_tracker">visp_auto_tracker</a>: a tracker with auto-detection of a target
+- <a href="http://wiki.ros.org/visp_ros">visp_ros</a>: a ViSP extension for ROS users that makes ROS easy to use
+- <a href="http://wiki.ros.org/demo_pioneer">demo_pioneer</a>: a set of ROS visual-servoing demos using a Pioneer robot and based on ViSP
+
+
+\section install_ros_package_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+
+*/

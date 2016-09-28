@@ -3,6 +3,16 @@
 \page tutorial-tracking-me Tutorial: Moving-edges tracking
 \tableofcontents
 
+\section tracking_me_intro Introduction
+
+ViSP moving-edges tracker provide real-time tracking capabilities of points normal to the object contours. Such a tracker allow to track a line, an ellipse or more complex objects using model-based approaches.  
+
+All the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/moving-edges
+\endcode
+
 \section tracking_me_line Line tracking
 
 With ViSP you can track a line using moving edges. The following example code available in tutorial-me-line-tracker.cpp shows how to use ViSP vpMeLine class to this end.

@@ -3,9 +3,18 @@
 \page tutorial-tracking-tt Tutorial: Template tracking
 \tableofcontents
 
+\section tracking_tt_intro Introduction
+
 With ViSP it is possible to track a template using image registration algorithms \cite Dame10c \cite Dame11c. Contrary to common approaches based on visual features, this method allows to be much more robust to scene variations.
 
-In the following sections, we consider the tracking of a pattern. To simplify the source code, the tracking is performed on a single image. The extension to a sequence of images or to images acquired from a camera is easy. To this end see \ref tutorial-grabber. 
+In the following sections, we consider the tracking of a pattern. To simplify the source code, the tracking is performed on a single image. The extension to a sequence of images or to images acquired from a camera is easy. To this end see \ref tutorial-grabber.
+
+Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/template-tracker
+\endcode
+
 
 \section tracking_tt Track the painting
 

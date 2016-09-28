@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-raspberry Tutorial: Installation from source on Raspberry Pi
+\page tutorial-install-raspberry Tutorial: Installation from source for Raspberry Pi
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on <a href="http://www.raspberrypi.org/help/what-is-a-raspberry-pi">Raspberry Pi 1 or Pi 2</a> equipped with an optional HD camera module.
@@ -36,27 +36,27 @@ The default login for Raspbian is username \c pi with the password \c raspberry.
 
 If your Raspberry Pi is connected to Ethernet you can update your Raspbian distribution:
 \code
-sudo apt-get update
-sudo apt-get upgrade
+$ sudo apt-get update
+$ sudo apt-get upgrade
 \endcode
 
 \subsection install_raspberry_camera Setting up a Raspberry Pi camera
 
 If you have a Raspberry Pi camera module see <a href="http://www.raspberrypi.org/help/camera-module-setup/">http://www.raspberrypi.org/help/camera-module-setup</a>. To resume, enable the camera using:
 \code
-sudo raspi-config
+$ sudo raspi-config
 \endcode
 Enter in menu 5/ to enable the camera.
 
 Then load the camera module:
 \code
-sudo modprobe bcm2835-v4l2
+$ sudo modprobe bcm2835-v4l2
 \endcode
 
 This will add the following modules:
 
 \code
-pi@raspberrypi ~ $ lsmod
+$ lsmod
 Module Size Used by
 bcm2835_v4l2 37611 0
 videobuf2_core 30853 1 bcm2835_v4l2
@@ -66,12 +66,12 @@ videodev 121362 3 bcm2835_v4l2,v4l2_common,videobuf2_core
 
 To check if the camera is recognized and connected, run:
 \code
-v4l2-ctl --list-formats
+$ v4l2-ctl --list-formats
 \endcode
 
 After each Raspberry Pi reboot you need to relaunch the previous modprobe command. To load bcm2835-v4l2 module during reboot, you can edit \c /etc/modules file 
 \code
-sudo nano /etc/modules
+$ sudo nano /etc/modules
 \endcode
 
 and add a line with the name of the module:
@@ -89,7 +89,7 @@ To load the graphical user interface, type \c startx and press Enter on your key
 
 First you need to install the following packagages (g++, CMake, Git) that are requested to get and build ViSP:
 \code
-sudo apt-get install build-essential cmake-curses-gui git
+$ sudo apt-get install build-essential cmake-curses-gui git
 \endcode
 
 \subsection install_raspberry_visp_3rd_party Install 3rd parties
@@ -102,27 +102,27 @@ We recommend to install the following:
 
 - OpenCV
 \code
-sudo apt-get install libopencv-dev
+$ sudo apt-get install libopencv-dev
 \endcode
 - libX11 to be able to open a window to display images
 \code
-sudo apt-get install libx11-dev
+$ sudo apt-get install libx11-dev
 \endcode
 - lapack to benefit from optimized mathematical capabilities
 \code
-sudo apt-get install liblapack-dev
+$ sudo apt-get install liblapack-dev
 \endcode
 - libv4l to grab images from usb or analogic cameras
 \code
-sudo apt-get install libv4l-dev
+$ sudo apt-get install libv4l-dev
 \endcode
 - libxml2 to be able to configure the model-based trackers from xml files
 \code
-sudo apt-get install libxml2-dev
+$ sudo apt-get install libxml2-dev
 \endcode
 - QR code detection
 \code
-sudo apt-get install libzbar-dev
+$ sudo apt-get install libzbar-dev
 \endcode
 
 \subsubsection install_raspberry_visp_3rd_party_other Other optional 3rd parties
@@ -131,7 +131,7 @@ We give also the way to install other 3rd party libraries to enable specific cap
 
 - libjpeg and libpng to support jpeg and png images respectively (only useful if OpenCV is not installed)
 \code
-sudo apt-get install libjpeg-dev libpng12-dev
+$ sudo apt-get install libjpeg-dev libpng12-dev
 \endcode
 
 \subsection install_raspberry_visp_install Install ViSP from source code
@@ -141,18 +141,18 @@ There are different ways to get ViSP source code on Raspberry Pi:
 
 - You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \code
-mkdir /home/pi/soft; cd /home/pi/soft
-tar xvzf visp-x.y.z.tar.gz 
+$ mkdir /home/pi/soft; cd /home/pi/soft
+$ tar xvzf visp-x.y.z.tar.gz 
 \endcode
 or
 \code
-mkdir /home/pi/soft; cd /home/pi/soft
-unzip visp-x.y.z.zip
+$ mkdir /home/pi/soft; cd /home/pi/soft
+$ unzip visp-x.y.z.zip
 \endcode
 
 - You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
 \code
-tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
+$ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
 \endcode
 
 - Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the following command
@@ -160,23 +160,23 @@ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
 $ git clone https://github.com/lagadic/visp.git
 \endcode
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c /home/pi/soft/visp
+We suppose now that ViSP source is in a directory denoted \c \<source_dir\>, for example \c /home/pi/soft/visp
 
 \subsubsection install_raspberry_visp_config Configuring ViSP from source
 
-- Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
+- Create first a directory denoted \c \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
 \code
-cd /home/pi/soft; mkdir visp-build
+$ cd /home/pi/soft; mkdir visp-build
 \endcode
 
-- Enter \<binary_dir\> and configure the build:
+- Enter \c \<binary_dir\> and configure the build:
 \code
-cd /home/pi/soft/visp-build
-cmake ../visp
+$ cd /home/pi/soft/visp-build
+$ cmake ../visp
 \endcode
 A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 \code
-ccmake ../visp
+$ ccmake ../visp
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd parties that will be used. Then to generate the makefiles, just press [g] key in the ccmake gui.
 \image html img-ccmake-ubuntu-all.png Snapshot of the ccmake \c ../visp command used to configure ViSP. 
@@ -186,29 +186,29 @@ The following image shows that this command allows to configure (just by pressin
 
 - To build ViSP proceed with:
 \code
-make
+$ make -j
 \endcode
 
 - To install ViSP proceed with:
 \code
-sudo make install
+$ sudo make install
 \endcode
 
 - To build ViSP documentation, you have first to install Doxygen package:
 \code
-sudo apt-get install doxygen graphviz texlive-latex-base
+$ sudo apt-get install doxygen graphviz texlive-latex-base
 \endcode
 Then you can proceed with:
 \code
-make -j4 visp_doc
+$ make -j visp_doc
 \endcode
 
 \subsection install_raspberry_dataset Install ViSP dataset
 Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named \c ViSP-images-x.y.z.zip. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples.
 
 \code
-cd $HOME
-unzip ViSP-images-x.y.z.zip
+$ cd $HOME
+$ unzip ViSP-images-x.y.z.zip
 \endcode
 
 We suppose now that the data are located in \c $HOME/ViSP-images.
@@ -221,8 +221,8 @@ LICENSE.txt  calibration  cube    ellipse-1  line  mire  video
 Set \c VISP_INPUT_IMAGE_PATH environment variable to help ViSP examples and tests to find the location of the data set. It's convenient if the environment variables is automatically added to your bash session every time a new shell is launched: 
 
 \code
-echo "export VISP_INPUT_IMAGE_PATH=$HOME" >> ~/.bashrc
-source ~/.bashrc
+$ echo "export VISP_INPUT_IMAGE_PATH=$HOME" >> ~/.bashrc
+$ source ~/.bashrc
 \endcode
 
 \note For historical reasons \c VISP_INPUT_IMAGE_PATH should not contain the folder \c ViSP-images, but the parent folder.
@@ -254,18 +254,18 @@ $ sudo make uninstall
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \code
-$ make -j4 visp_modules
+$ make -j visp_modules
 \endcode
 
 \subsection install_raspberry_tips_module_once How to build a ViSP specific module
 
 If you want to build a given module and all the dependencies:
 \code
-$ make -j4 visp_<module_name>
+$ make -j visp_<module_name>
 \endcode
 For example to build the model-based tracker module named mbt, run:
 \code
-$ make -j4 visp_mbt
+$ make -j visp_mbt
 \endcode
 
 \subsection install_raspberry_tips_target Which are the targets that could be run with make ?
@@ -299,7 +299,7 @@ $ make help | grep visp
 
 \subsection install_raspberry_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
 
-To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named \c ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
+To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named \c ViSP-third-party.txt and located in \c \<binary_dir\>. We provide hereafter an example of a possible content of this file:
 \code
                     ViSP third-party libraries
 

@@ -9,6 +9,13 @@ This tutorial shows how to detect one or more faces with ViSP. Face detection is
 
 In the next sections you will find examples that show how to detect faces in a video, or in images acquired by a camera connected to your computer.
 
+Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/face
+\endcode
+
+
 \section face_detection_video Face detection in a video
 
 The following example also available in tutorial-face-detector.cpp allows to detect faces in an mpeg video located near the source code. The Haar cascade classifier file requested by OpenCV is also provided in the same folder as the source code.

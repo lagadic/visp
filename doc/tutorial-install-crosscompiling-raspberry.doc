@@ -24,27 +24,27 @@ Depending on you application or usage, you may want to install some 3rd parties 
 
 - OpenCV
 \code
-sudo apt-get install libopencv-dev
+$ sudo apt-get install libopencv-dev
 \endcode
 - libX11 to be able to open a window to display images
 \code
-sudo apt-get install libx11-dev
+$ sudo apt-get install libx11-dev
 \endcode
 - lapack to benefit from optimized mathematical capabilities
 \code
-sudo apt-get install liblapack-dev
+$ sudo apt-get install liblapack-dev
 \endcode
 - libv4l to grab images from usb or analogic cameras
 \code
-sudo apt-get install libv4l-dev
+$ sudo apt-get install libv4l-dev
 \endcode
 - libxml2 to be able to configure the model-based trackers from xml files
 \code
-sudo apt-get install libxml2-dev
+$ sudo apt-get install libxml2-dev
 \endcode
 - QR code detection
 \code
-sudo apt-get install libzbar-dev
+$ sudo apt-get install libzbar-dev
 \endcode
 
 \section cross_raspberry_host Setting up Ubuntu host computer
@@ -111,7 +111,7 @@ There are different ways to get ViSP source code on Raspberry Pi:
 
 - You can download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
 \code
-tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
+$ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
 \endcode
 
 - Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the following command
@@ -121,23 +121,23 @@ $ git clone https://github.com/lagadic/visp.git
 
 - Or you can download the <a href="http://visp.inria.fr/download">latest release</a> (should be at least 3.0.1) as a zip or a tarball. Once downloaded, uncompress the file using either
 \code
-tar xvzf visp-x.y.z.tar.gz 
+$ tar xvzf visp-x.y.z.tar.gz 
 \endcode
 or
 \code
-unzip visp-x.y.z.zip
+$ unzip visp-x.y.z.zip
 \endcode
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/soft/visp
+We suppose now that ViSP source is in a directory denoted \c \<source_dir\>, for example \c $HOME/soft/visp
 
 \subsection cross_raspberry_visp_config Crosscompiling ViSP from source
 
-- Create first a directory denoted \<binary_dir\> where you want to crosscompile ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries that could be later used on the Raspberry Pi.
+- Create first a directory denoted \c \<binary_dir\> where you want to crosscompile ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries that could be later used on the Raspberry Pi.
 \code
 $ mkdir $HOME/soft/visp-crossbuild
 \endcode
 
-- Enter \<binary_dir\> and configure the build:
+- Enter \c \<binary_dir\> and configure the build:
 \code
 $ cd $HOME/soft/visp-crossbuild
 $ cmake -DCMAKE_TOOLCHAIN_FILE=../visp/platforms/linux/arm-raspberrypi.toolchain.cmake ../visp
@@ -146,7 +146,7 @@ $ cmake -DCMAKE_TOOLCHAIN_FILE=../visp/platforms/linux/arm-raspberrypi.toolchain
 
 - Crosscompile ViSP
 \code
-$ make -j4 install
+$ make -j install
 \endcode
 At this point, depending on your Raspberry version you may encounter the following issues \ref cross_raspberry_tips_libpthread, \ref cross_raspberry_tips_libc, \ref cross_raspberry_tips_libpng, \ref cross_raspberry_tips_gcc_4_9 for which we give some hints to work arround.
 
@@ -196,7 +196,7 @@ The default toolchain used in \c arm-raspberrypi.toolchain.cmake file is the one
 $ cmake -DARM_RASPBERRY_CROSSCHAIN=$HOME/soft/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin -DCMAKE_TOOLCHAIN_FILE=../visp/platforms/linux/arm-raspberrypi.toolchain.cmake ../visp
 \endcode
 
-Don't forget to update the location of the toolchain in your PATH in ~/.bashrc file:
+Don't forget to update the location of the toolchain in your PATH in \c ~/.bashrc file:
 \code
 export PATH=$PATH:$HOME/soft/raspberrypi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
 \endcode

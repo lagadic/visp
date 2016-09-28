@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-win7 Tutorial: Installation from source on Windows 7 with Visual C++ 2012
+\page tutorial-install-win7 Tutorial: Installation from source for Windows 7 with Visual C++ 2012
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on Windows with Visual C++. These steps have been tested on Windows 7 (64 bit), with CMake 3.3.2 and Visual Studio 2012 but should work with any other version as well. 
@@ -49,13 +49,13 @@ There are different ways to get ViSP source code:
 C:\ViSP> git clone https://github.com/lagadic/visp.git
 \endcode
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\visp
+We suppose now that ViSP source is in a directory denoted \c \<source_dir\>, for example \c C:\\ViSP\\visp
 
 \subsection install_win7_config Configuring ViSP from source 
 
-The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:\\ViSP\\visp-build.
+The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \c \<binary_dir\>, for example \c C:\\ViSP\\visp-build.
 
-- Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
+- Launch CMake (cmake-gui) and complete the \c \<source_dir\> and \c \<binary_dir\> locations as in the next image.
 
 \image html img-cmake-win7-msvc-launch.jpg
 

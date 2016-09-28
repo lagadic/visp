@@ -56,6 +56,12 @@ In ViSP, before an exception is thrown, trace macro are widely used to inform th
  
 \section example Debug and trace usage in your own project
 
+Note that all the material (source code) described in this section is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/trace
+\endcode
+
 If you develop a project that uses ViSP library as a 3rd party, there are different ways to benefit from debug and trace macro described previously.
 
 - If ViSP was build with debug and trace enabled using \c cmake \c ACTIVATE_DEBUG_TRACE=ON, debug and trace are also enabled in your development.

@@ -9,6 +9,12 @@ This tutorial supposes that you have followed the \ref tutorial-getting-started.
 
 In this tutorial you will learn how to use ViSP filtering functions implemented in vpImageFilter class.
 
+All the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
+\endcode
+
 Let us consider the following source code that comes from tutorial-image-filter.cpp.
 
 \include tutorial-image-filter.cpp

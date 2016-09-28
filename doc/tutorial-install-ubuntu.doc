@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-ubuntu Tutorial: Installation from source on Linux Ubuntu
+\page tutorial-install-ubuntu Tutorial: Installation from source for Linux Ubuntu
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on Linux Ubuntu. These steps have been tested for Ubuntu 14.04 (64 bit) distribution, but should work with any other distribution as well. 
@@ -11,11 +11,11 @@ In this tutorial you will learn how to install ViSP from source on Linux Ubuntu.
 
 - gcc 4.4.x or later. This can be installed with:
 \code
-sudo apt-get install build-essential
+$ sudo apt-get install build-essential
 \endcode
 - CMake 2.6 or higher that could be installed with:
 \code
-sudo apt-get install cmake-curses-gui
+$ sudo apt-get install cmake-curses-gui
 \endcode
 
 \section install_ubuntu_3rdparty Install 3rd parties
@@ -28,31 +28,31 @@ We recommend to install the following:
 
 - OpenCV
 \code
-sudo apt-get install libopencv-dev
+$ sudo apt-get install libopencv-dev
 \endcode
 - libX11 to be able to open a window to display images
 \code
-sudo apt-get install libx11-dev
+$ sudo apt-get install libx11-dev
 \endcode
 - lapack to benefit from optimized mathematical capabilities
 \code
-sudo apt-get install liblapack-dev
+$ sudo apt-get install liblapack-dev
 \endcode
 - libdc1394 to grab images from firewire cameras
 \code
-sudo apt-get install libdc1394-22-dev
+$ sudo apt-get install libdc1394-22-dev
 \endcode
 - libv4l to grab images from usb or analogic cameras
 \code
-sudo apt-get install libv4l-dev
+$ sudo apt-get install libv4l-dev
 \endcode
 - libxml2 to be able to configure the model-based trackers from xml files
 \code
-sudo apt-get install libxml2-dev
+$ sudo apt-get install libxml2-dev
 \endcode
 - QR code detection
 \code
-sudo apt-get install libzbar-dev
+$ sudo apt-get install libzbar-dev
 \endcode
 
 \subsection install_ubuntu_3rdparty_other Other optional 3rd parties
@@ -61,23 +61,23 @@ We give also the way to install other 3rd party libraries to enable specific cap
 
 - Coin, to be able to support vrml cad model used by the model-based trackers
 \code
-sudo apt-get install libcoin80-dev
+$ sudo apt-get install libcoin80-dev
 \endcode
 - libjpeg and libpng to support jpeg and png images respectively (only useful if OpenCV is not installed)
 \code
-sudo apt-get install libjpeg-dev libpng12-dev
+$ sudo apt-get install libjpeg-dev libpng12-dev
 \endcode
 - ffmpeg, to be able to read or encode compressed video streams (only useful if OpenCV is not installed)
 \code
-sudo apt-get install libswscale-dev libavutil-dev libavformat-dev libavcodec-dev libbz2-dev libbz2-1.0
+$ sudo apt-get install libswscale-dev libavutil-dev libavformat-dev libavcodec-dev libbz2-dev libbz2-1.0
 \endcode
 - Ogre 3D if you want to do augmented reality or simulation
 \code
-sudo apt-get install libogre-1.9-dev libois-dev
+$ sudo apt-get install libogre-1.9-dev libois-dev
 \endcode
 - Datamatrix code detection
 \code
-sudo apt-get install libdmtx-dev
+$ sudo apt-get install libdmtx-dev
 \endcode
 
 \section install_ubuntu_visp Install ViSP from source code
@@ -87,16 +87,16 @@ There are different ways to get ViSP source code:
 
 - You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \code
-tar xvzf visp-x.y.z.tar.gz 
+$ tar xvzf visp-x.y.z.tar.gz 
 \endcode
 or
 \code
-unzip visp-x.y.z.zip
+$ unzip visp-x.y.z.zip
 \endcode
 
 - You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
 \code
-tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
+$ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
 \endcode
 
 - Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the following command
@@ -104,23 +104,23 @@ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
 $ git clone https://github.com/lagadic/visp.git
 \endcode
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c $HOME/visp
+We suppose now that ViSP source is in a directory denoted \c \<source_dir\>, for example \c $HOME/visp
 
 \subsection install_ubuntu_visp_config Configuring ViSP from source
 
-- Create first a directory denoted \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
+- Create first a directory denoted \c \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
 \code
-cd $HOME; mkdir visp-build
+$ cd $HOME; mkdir visp-build
 \endcode
 
-- Enter the \<binary_dir\> and configure the build:
+- Enter the \c \<binary_dir\> and configure the build:
 \code
-cd $HOME/visp-build
-cmake ../visp
+$ cd $HOME/visp-build
+$ cmake ../visp
 \endcode
 A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 \code
-ccmake ../visp
+$ ccmake ../visp
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
 \image html img-ccmake-ubuntu-all.png Snapshot of the ccmake \c ../visp command used to configure ViSP.
@@ -131,30 +131,30 @@ Now we can build ViSP.
 
 - To build ViSP proceed with:
 \code
-make -j4
+$ make -j
 \endcode
 
 - To install ViSP in \c /usr/local which is the default install location, proceed with:
 \code
-sudo make install
+$ sudo make install
 \endcode
 \note The default install location is set to \c /usr/local. This location could be changed modifying \c  CMAKE_INSTALL_PREFIX var. 
 
 - To build ViSP documentation, you have first to install Doxygen package:
 \code
-sudo apt-get install doxygen graphviz texlive-latex-base
+$ sudo apt-get install doxygen graphviz texlive-latex-base
 \endcode
 Then you can proceed with:
 \code
-make -j4 visp_doc
+$ make -j visp_doc
 \endcode
 
 \section install_ubuntu_dataset Install ViSP dataset
 Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named \c ViSP-images-x.y.z.zip. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples.
 
 \code
-cd $HOME
-unzip ViSP-images-x.y.z.zip
+$ cd $HOME
+$ unzip ViSP-images-x.y.z.zip
 \endcode
 
 We suppose now that the data are located in \c $HOME/ViSP-images.
@@ -167,8 +167,8 @@ LICENSE.txt  calibration  cube    ellipse-1  line  mire  video
 Set \c VISP_INPUT_IMAGE_PATH environment variable to help ViSP examples and tests to find the location of the data set. It's convenient if the environment variables is automatically added to your bash session every time a new shell is launched: 
 
 \code
-echo "export VISP_INPUT_IMAGE_PATH=$HOME" >> ~/.bashrc
-source ~/.bashrc
+$ echo "export VISP_INPUT_IMAGE_PATH=$HOME" >> ~/.bashrc
+$ source ~/.bashrc
 \endcode
 
 \note For historical reasons \c VISP_INPUT_IMAGE_PATH should not contain the folder \c ViSP-images, but the parent folder.
@@ -200,18 +200,18 @@ $ sudo make uninstall
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \code
-$ make -j4 visp_modules
+$ make -j visp_modules
 \endcode
 
 \subsection install_ubuntu_tips_module_once How to build a ViSP specific module
 
 If you want to build a given module and all the dependencies:
 \code
-$ make -j4 visp_<module_name>
+$ make -j visp_<module_name>
 \endcode
 For example to build the model-based tracker module named mbt, run:
 \code
-$ make -j4 visp_mbt
+$ make -j visp_mbt
 \endcode
 
 \subsection install_ubuntu_tips_target Which are the targets that could be run with make ?
@@ -245,7 +245,7 @@ $ make help | grep visp
 
 \subsection install_ubuntu_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
 
-To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named \c ViSP-third-party.txt and located in \<binary_dir\>. We provide hereafter an example of a possible content of this file:
+To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named \c ViSP-third-party.txt and located in \c \<binary_dir\>. We provide hereafter an example of a possible content of this file:
 \code
                     ViSP third-party libraries
 

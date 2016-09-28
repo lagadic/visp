@@ -47,6 +47,12 @@ controller, and if we would like for instance to try to ensure an exponential de
 
  \f[ {\bf v}_c = -\lambda {\bf L}_{\bf x}^{+} {\bf e} \f]
 
+Note that all the material (source code and image) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/visual-servo/ibvs
+\endcode
+
 \section ibvs_basic Basic IBVS simulation
 
 The following example available in tutorial-ibvs-4pts.cpp shows how to use ViSP to implement an IBVS simulation using 4 points as visual features.

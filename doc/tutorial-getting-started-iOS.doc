@@ -1,10 +1,18 @@
 
 /**
-  \page tutorial-getting-started-iOS Tutorial: How to create and build a CMake project that uses ViSP on iOS 
+  \page tutorial-getting-started-iOS Tutorial: How to create a basic iOS application that uses ViSP 
   \tableofcontents
 
 
-  \note We assume that you have successfully build ViSP framework as described in the previous \ref tutorial-install-iOS. Following these steps lead to \c visp3.framework creation.
+  \note We assume that you have \c "ViSP for iOS" either after following \ref tutorial-install-ios-package or \ref tutorial-install-iOS. Following one of these tutorial allows to exploit \c visp3.framework to build an application for iOS devices.
+
+In this tutorial we suppose that you install \c visp3.framework in a folder named \c \<framework_dir\>/ios. If \c \<framework_dir\> corresponds to \c ~/framework, you should get the following:
+
+\code
+$ ls ~/framework/ios
+opencv2.framework
+visp3.framework
+\endcode
 
 \section getting-started-iOS-create Create a new Xcode project
 
@@ -29,9 +37,12 @@ Now we need to link \c visp3.framework with the Xcode project.
 
 \image html img-getting-started-iOS-navigator.png
 
-- Use the Finder to drag & drop \c visp3.framework in the left hand panel containing all the project files. In the dialog box, enable check box <tt>"Copy item if needed"</tt> to ease \c visp3.framework headers location addition to the build options
-
+- Use the Finder to drag & drop ViSP and OpenCV frameworks located in \c \<framework_dir\>/ios folder in the left hand panel containing all the project files.
 \image html img-getting-started-iOS-drag-drop.png
+
+- In the dialog box, enable check box <tt>"Copy item if needed"</tt> to ease \c visp3.framework and \c opencv.framework headers location addition to the build options
+
+\image html img-getting-started-iOS-drag-drop-dialog.png
 
 - Click on <tt>"Finish"</tt>. You should now get something similar to the following image
 
@@ -49,9 +60,7 @@ Now we need to link \c visp3.framework with the Xcode project.
 #import "ViewController.h"
 
 #ifdef __cplusplus
-#import <vector>
-#import <visp3/core/vpMeterPixelConversion.h>
-#import <visp3/vision/vpHomography.h>
+#import <visp3/visp.h>
 #endif
 
 @interface ViewController ()
@@ -72,7 +81,7 @@ Now we need to link \c visp3.framework with the Xcode project.
     oP[3].setWorldCoordinates( -L, 4*L, 0);
     
     vpHomogeneousMatrix bMo(0,0, 1, 0, 0, 0) ;
-    vpHomogeneousMatrix aMb(0.2, 0, 0.1, 0,vpMath::rad(20), 0) ;
+    vpHomogeneousMatrix aMb(0.2, 0, 0.1, 0,vpMath::rad(20), 0);
     vpHomogeneousMatrix aMo = aMb*bMo ;
     
     // Normalized coordinates of points in the image frame
@@ -138,15 +147,14 @@ In this sample, we first import the headers to use vpHomography class. Then we c
 
 \image html img-getting-started-iOS-code.png
 
-
-- Before building this sample, since \c visp3.framework was created with \c libstdc++ an important step is to set GNU standard library usage. To this end, select the project navigator in the left hand panel (1), click on project name <tt>"Getting Started"</tt> (2), show the build settings pannel by a click on <tt>"Build Settings"</tt> (3), use the scroller to find <tt>"Apple LLVM 7.1 - Language - C++"</tt> settings (4) in order to modify <tt>"C++ Standard Library"</tt> to use <tt>"libstdc++ (GNU C++ standard library)"</tt> (5) 
-
-\image html img-getting-started-iOS-libstdc++.png
-
 - Now we are ready to build this simple <tt>"Getting Started"</tt> application using Xcode <tt>"Product>Build"</tt> menu.
 
 - You can now run your code using <tt>"Product>Run"</tt> menu (Simulator or device does not bother because we are just executing code). You should obtain these logs showing that visp code was correctly executed by your iOS project.
 
 \image html img-getting-started-iOS-log.png
+
+\subsection getting-started-iOS-next Next tutorial
+
+You are now ready to see the \ref tutorial-image-ios.
 
 */

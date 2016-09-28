@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-osx-homebrew-package Tutorial: Installation from prebuilt packages on OSX with Homebrew
+\page tutorial-install-osx-homebrew-package Tutorial: Installation from prebuilt packages for OSX with Homebrew
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP Homebrew package on OSX. These steps have been tested with Mac OS X 10.11.5 El Capitan. 
@@ -18,7 +18,6 @@ To get information on ViSP package:
 $ brew update
 $ brew info visp
 \endcode
-
 
 To install ViSP and additional dependencies (cmake, opencv3, libdc1304, libxml2, gsl, zbar, x11), just run:
 

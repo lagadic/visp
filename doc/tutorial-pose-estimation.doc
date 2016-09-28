@@ -9,6 +9,13 @@ This tutorial focuses on pose estimation from planar or non planar points. From 
 
 In this tutorial we assume that you are familiar with ViSP blob tracking. If not, see \ref tutorial-tracking-blob.
 
+Note that all the material (source code and image) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/computer-vision
+\endcode
+
+
 \section tutorial_pose_est Pose estimation from 4 planar points
 
 In this section we consider the case of four planar points. An image processing done by our blob tracker allows to extract the pixel coordinates of each blob center of gravity. Then using the camera intrinsic parameters we convert these pixel coordinates in meters in the image plane. Knowing the 3D coordinates of the points we then estimate the pose of the object.

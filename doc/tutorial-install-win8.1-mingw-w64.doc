@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-win81-mingw64 Tutorial: Installation from source on Windows 8.1 with Mingw-w64
+\page tutorial-install-win81-mingw64 Tutorial: Installation from source for Windows 8.1 with Mingw-w64
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on Windows 8.1 with Mingw-w64. These steps have been tested on Windows 8.1 (64 bit), with CMake 3.3.2 and Mingw-w64 - GCC for Windows 64 & 32 bits. 
@@ -16,7 +16,7 @@ Mingw-w64 could be found following http://mingw-w64.org/doku.php/download From t
 - Once downloaded, double click on the the exe file. It will open an installation window. 
 - Select x86_64 and Mingw installation folder \c C:\\mingw as in the following image: 
 \image html img-mingw64-installer-started.jpg
-\note It you want to install Mingw in an other folder, you have to set MINGW_DIR environment variable to your installation location in order to allow CMake to detect 3rd party libraries that come with Mingw installer. Fo example, if you install Mingw in \c C:\\folder\\mingw-w64, setting \c MINGW_DIR is simply done running in a cmd terminal:
+\note It you want to install Mingw in an other folder, you have to set \c MINGW_DIR environment variable to your installation location in order to allow CMake to detect 3rd party libraries that come with Mingw installer. Fo example, if you install Mingw in \c C:\\folder\\mingw-w64, setting \c MINGW_DIR is simply done running in a cmd terminal:
 \code
 C:> setx MINGW_DIR "C:\folder\mingw-w64"
 \endcode  
@@ -52,7 +52,7 @@ We recommend to install OpenCV.
 
 - Since OpenCV is not packaged for Mingw, you have to install OpenCV from source. From http://opencv.org/downloads.html download the latest OpenCV for Windows version. In our case we install \c opencv-3.0.0.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-3.0.0.exe extracted all the prebuilt binaries, <b>but also the source code</b> in \c C:\\OpenCV\\opencv.
 
-- Now we have to use CMake to configure OpenCV from source. As \<source_dir\> we will set \c C:\\OpenCV\\opencv\\sources and as \<binary_dir\> we set \c C:\\OpenCV\\opencv\\sources\\build-mingw.
+- Now we have to use CMake to configure OpenCV from source. As \c \<source_dir\> we will set \c C:\\OpenCV\\opencv\\sources and as \c \<binary_dir\> we set \c C:\\OpenCV\\opencv\\sources\\build-mingw.
 \image html img-win8.1-mingw-opencv-cmake-configure.jpg
 
 - Click then on "Configure" button. 
@@ -62,7 +62,7 @@ We recommend to install OpenCV.
 \image html img-win8.1-mingw-opencv-cmake-configure-install.jpg
 - Click then on "Configure" button to remove the red lines. 
 - Click on "Generate" button to generate the Makefiles for Mingw.
-- Open a cmd terminal, enter in the \<binary_dir\> folder and start mingw32-make
+- Open a cmd terminal, enter in the \c \<binary_dir\> folder and start mingw32-make
 \code
 C:\> cd C:\OpenCV\opencv\sources\build-mingw
 C:\OpenCV\opencv\sources\build-mingw> mingw32-make
@@ -98,13 +98,13 @@ There are different ways to get ViSP source code.
 C:\ViSP> git clone https://github.com/lagadic/visp.git
 \endcode
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\visp
+We suppose now that ViSP source is in a directory denoted \c \<source_dir\>, for example \c C:\\ViSP\\visp
 
 \subsection install_win81_mingw64_config Configuring ViSP from source 
 
-The goal of the configuration step is now to use CMake to produce all the material requested to build ViSP with Mingw. This material will be located in \<binary_dir\>, for example \c C:\\ViSP\\visp-build.
+The goal of the configuration step is now to use CMake to produce all the material requested to build ViSP with Mingw. This material will be located in \c \<binary_dir\>, for example \c C:\\ViSP\\visp-build.
 
-- Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
+- Launch CMake (cmake-gui) and complete the \c \<source_dir\> and \c \<binary_dir\> locations as in the next image.
 \image html img-cmake-win8.1-msvc-launch.jpg 
 
 - Click then on "Configure" button.

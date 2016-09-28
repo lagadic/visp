@@ -5,9 +5,15 @@
 
 \section intro_matching Introduction
 
-\note This tutorial is adapted if your OpenCV version is equal or greater than 2.1.1 version. 
+This tutorial focuses on keypoints detection and matching. You will learn how to detect keypoints on a reference image considered here as the first image of an mpeg video. Then in the next images of the video, keypoints that match those detected in the reference image are displayed. To leverage keypoints detection and matching capabilities ViSP should be build with OpenCV 3rd party.
 
-This tutorial focuses on keypoints detection and mathing. You will learn how to detect keypoints on a reference image considered here as the first image of an mpeg video. Then in the next images of the video, keypoints that match those detected in the reference image are displayed.
+Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/matching
+\endcode
+
+\note This tutorial is adapted if your OpenCV version is equal or greater than 2.1.1 version. 
 
 \note We assume that you are familiar with video framegrabbing described in \ref tutorial-grabber and with the way to display an image in a window described in \ref tutorial-getting-started.
 

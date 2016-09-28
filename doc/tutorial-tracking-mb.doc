@@ -3,9 +3,17 @@
 \page tutorial-tracking-mb Tutorial: Markerless model-based tracking
 \tableofcontents
 
+\section mb_intro Introduction
+
 ViSP allows simultaneously the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization (i.e., the object pose expressed in the camera frame) when a calibrated camera is used \cite Comport06b. Considered objects should be modeled by lines, circles or cylinders. The CAD model of the object could be defined in vrml format (except for circles), or in cao format. 
 
 Next sections highlight how to use the differents versions of the markerless model-based trackers that are implemented in ViSP.
+
+Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/generic
+\endcode
 
 \section mb_started Getting started
 

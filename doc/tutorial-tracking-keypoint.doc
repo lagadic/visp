@@ -3,9 +3,19 @@
 \page tutorial-tracking-keypoint Tutorial: Keypoint tracking
 \tableofcontents
 
+\section tracking_keypoint_intro Introduction
+
+With ViSP it is possible to track keypoints using OpenCV KLT tracker, an implementation of the Kanade-Lucas-Tomasi feature tracker.
+
+All the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/keypoint
+\endcode
+
 \section tracking_keypoint_klt KLT tracker
 
-With ViSP it is possible to track keypoints using OpenCV KLT tracker, an implementation of the Kanade-Lucas-Tomasi feature tracker. The following example code available in tutorial-klt-tracker.cpp shows how to use ViSP vpKltOpencv class to this end. This class is a wrapper over the OpenCV KLT tracker implementation.
+The following example code available in tutorial-klt-tracker.cpp shows how to use ViSP vpKltOpencv class to track KLT keypoints. This class is a wrapper over the OpenCV KLT tracker implementation.
 
 \include tutorial-klt-tracker.cpp
 

@@ -7,6 +7,12 @@ This tutorial focuses on visual servoing simulation on a unicycle robot. The stu
 
 We suppose here that you have at least followed the \ref tutorial-ibvs that may help to understand this tutorial.
 
+Note that all the material (source code) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/robot/pioneer
+\endcode
+
 \section simu_robot_pioneer_camera Unicycle with a fixed camera
 
 In this section we consider the following unicycle:

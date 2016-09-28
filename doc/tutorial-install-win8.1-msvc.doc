@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-win81-msvc Tutorial: Installation from source on Windows 8.1 with Visual C++ 2013
+\page tutorial-install-win81-msvc Tutorial: Installation from source for Windows 8.1 with Visual C++ 2013
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on Windows 8.1 with Visual C++. These steps have been tested on Windows 8.1 (64 bit), with CMake 3.3.2 and Visual Studio Express 2013 but should work with any other version as well. 
@@ -71,11 +71,11 @@ Ogre source code is hosted on <a href="https://bitbucket.org/sinbad/ogre">BitBuc
 - Open \c C:\\Ogre\\ogredeps\\build\\OGREDEPS.sln solution file with Visual C++. 
 - In Visual, select Debug configuration and build INSTALL project:
 \image html img-win8.1-msvc-build-ogredeps.jpg
-\note If the build fails due to the environment variable DXSDK_DIR that is not set, see \ref known_issues_win81_msvc_ogredeps for a work arround.
+\note If the build fails due to the environment variable \c DXSDK_DIR that is not set, see \ref known_issues_win81_msvc_ogredeps for a work arround.
 - In Visual, select also Release configuration and build again INSTALL project.
 - Now in \c C:\\Ogre\\ogredeps\\build\\ogredeps\\bin you will find the Cg and OIS dependencies build in Debug and Release:
 \image html img-win8.1-ogredeps-explorer.jpg
-- To finish dependencies installation, set OGRE_DEPENDENCIES_DIR environment variable pointing to \c C:\\Ogre\\ogredeps\\build\\ogredeps
+- To finish dependencies installation, set \c OGRE_DEPENDENCIES_DIR environment variable pointing to \c C:\\Ogre\\ogredeps\\build\\ogredeps
 \code
 setx OGRE_DEPENDENCIES_DIR C:\Ogre\ogredeps\build\ogredeps
 \endcode 
@@ -116,13 +116,13 @@ There are different ways to get ViSP source code.
 C:\ViSP> git clone https://github.com/lagadic/visp.git
 \endcode
 
-We suppose now that ViSP source is in a directory denoted  \<source_dir\>, for example \c C:\\ViSP\\visp
+We suppose now that ViSP source is in a directory denoted \c \<source_dir\>, for example \c C:\\ViSP\\visp
 
 \subsection install_win81_msvc_config Configuring ViSP from source 
 
-The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \<binary_dir\>, for example \c C:\\ViSP\\visp-build.
+The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution that will be located in \c \<binary_dir\>, for example \c C:\\ViSP\\visp-build.
 
-- Launch CMake (cmake-gui) and complete the \<source_dir\> and \<binary_dir\> locations as in the next image.
+- Launch CMake (cmake-gui) and complete the \c \<source_dir\> and \c \<binary_dir\> locations as in the next image.
 
 \image html img-cmake-win8.1-msvc-launch.jpg 
 

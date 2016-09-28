@@ -9,11 +9,14 @@ In this tutorial you will learn how to use ViSP either on Unix-like systems (inc
 
 The easiest way of using ViSP in your project is to use <a href="http://www.cmake.org/">CMake</a>. If you are not familiar with CMake, you can check the <a href="http://www.cmake.org/cmake/help/cmake_tutorial.html">tutorial</a>.
 
-Note also that all the material (source code and images) described in this tutorial is available in ViSP source code, in \c tutorial/image folder.
+Note also that all the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
+\endcode
  
 \section image_code Create a program using ViSP
-Let's start to write our first program to see how to read an image and
-  open a  window to display the image. This simple program is provided in tutorial-viewer.cpp example and given below:
+Let's start to write our first program to see how to read an image and open a window to display the image. This simple program is provided in tutorial-viewer.cpp example and given below:
 
 \include tutorial-viewer.cpp
 
@@ -96,7 +99,7 @@ will include the following lines to your \c CMakeFile.txt
 Proceed as with any other project using CMake:
 
 \code
-cmake .
+$ cmake .
 \endcode
 
 By default \c cmake searches \c VISPConfig.cmake file in folders like \c /usr/share or \c /usr/local/share. If ViSP was not installed in \c /usr or \c /usr/local it is possible that you get the following error:
@@ -115,22 +118,21 @@ CMake Error at CMakeLists.txt:5 (find_package):
 
 To help \c cmake to find \c VISPConfig.cmake file, just set \c VISP_DIR environment variable and call \c cmake again:
 \code
-export VISP_DIR=/home/ViSP-install-folder/lib/<multi-arch-folder>/cmake/visp
-cmake .
+$ export VISP_DIR=/home/ViSP-install-folder/lib/<multi-arch-folder>/cmake/visp
+$ cmake .
 \endcode
 or run cmake with the additional VISP_DIR definition
 \code
-cmake -DVISP_DIR=/home/ViSP-install-folder/lib/<multi-arch-folder>/cmake/visp .
+$ cmake -DVISP_DIR=/home/ViSP-install-folder/lib/<multi-arch-folder>/cmake/visp .
 \endcode
 
-Depending on the platform "<multi-arch-folder>" can be empty (OSX) or for example equal to "x86_64-linux-gnu" on Ubuntu.
+Depending on the platform \c \<multi-arch-folder\> can be empty (OSX) or for example equal to \c x86_64-linux-gnu on Ubuntu.
  
-
 \subsection image_unix_build Generate the executable
 
 Just run:
 \code
-make
+$ make
 \endcode
 
 \subsection image_unix_output Run the executable
@@ -138,7 +140,7 @@ make
 By now you should have an executable called \c tutorial-viewer. You just have to run it giving an image location as an argument:
 
 \code
-./tutorial_viewer monkey.ppm
+$ ./tutorial_viewer monkey.ppm
 \endcode
 
 

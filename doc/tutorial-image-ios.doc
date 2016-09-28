@@ -1,0 +1,74 @@
+/**
+
+\page tutorial-image-ios Tutorial: Image processing on iOS
+\tableofcontents
+
+This tutorial supposes that you have followed the \ref tutorial-getting-started-iOS.
+
+\section image_ios_intro Introduction
+
+In this tutorial you will learn how to do simple image processing on iOS devices with ViSP. This application loads a color image (<a href="https://github.com/lagadic/visp/blob/master/tutorial/ios/StartedImageProc/StartedImageProc/monkey.png">monkey.png</a>) and allows the user to visualize either this image in grey level, either the image gradients, or either canny edges on iOS simulator or devices. 
+
+In ViSP images are carried out using vpImage class. However in iOS, image rendering has to be done using UIImage class that is part of the Core Graphics framework available in iOS. In this tutorial we provide the functions that allow to convert a vpImage to an UIImage and \e vice \e versa. 
+
+
+\section image_ios_convert Image conversion functions
+
+\subsection image_ios_convert_uiimage_vpimage_color UIImage to color vpImage
+
+The following function implemented in ViewController.mm show how to convert an UIImage into a vpImage<vpRGBa> instanciated as a color image. 
+
+\snippet ViewController.mm vpImageColorFromUIImage
+
+\subsection image_ios_convert_uiimage_vpimage_gray UIImage to gray vpImage 
+
+The following function implemented in ViewController.mm show how to convert an UIImage into a vpImage<unsigned char> instanciated as a grey level image. 
+
+\snippet ViewController.mm vpImageGrayFromUIImage
+
+\subsection image_ios_convert_vpimage_color_uiimage Color vpImage to UIImage
+
+The following function implemented in ViewController.mm show how to convert a gray level vpImage<unsigned char> into an UIImage. 
+
+\snippet ViewController.mm UIImageFromVpImageColor
+
+\subsection image_ios_convert_vpimage_gray_uiimage Gray vpImage to UIImage
+
+The following function implemented in ViewController.mm show how to convert a color vpImage<vpRGBa> into an UIImage. 
+
+\snippet ViewController.mm UIImageFromVpImageGray
+
+\section image_ios_app StartedImageProc application
+
+Let us consider the Xcode project named \c StartedImageProc that is part of ViSP source code. This project is a Xcode \c "Single view application" where we renamed \c ViewController.m into \c ViewController.mm, introduced minor modifications in ViewController.h and add <a href="https://github.com/lagadic/visp/blob/master/tutorial/ios/StartedImageProc/StartedImageProc/monkey.png">monkey.png</a> image. 
+
+\image html img-started-imgproc-ios.png
+
+To download the complete \c StartedImageProc project, run the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedImageProc
+\endcode
+
+Once downloaded, you have just to drag & drop ViSP and OpenCV frameworks available following \ref tutorial-install-ios-package.
+\image html img-started-imgproc-ios-drag-drop.png
+
+In the dialog box, enable check box \c "Copy item if needed" to add \c visp3.framework and \c opencv.framework to the project.
+\image html img-started-imgproc-ios-drag-drop-dialog.png
+
+Now you should be able to build and run your application.
+
+\section image_ios_output Application output
+
+Once build, if you run \c StartedImageProc application on your device, you should be able to see the followings screen shots.
+
+- Selecting \c "load image" gives the following result:
+\image html img-started-imgproc-ios-output-color.png 
+- Selecting \c "convert to gray" gives the following result:
+\image html img-started-imgproc-ios-output-gray.png
+- Selecting \c "compute gradient" gives the following result:
+\image html img-started-imgproc-ios-output-gradient.png
+- Selecting \c "canny detector" gives the following result:
+\image html img-started-imgproc-ios-output-canny.png
+
+*/

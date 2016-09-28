@@ -5,6 +5,12 @@
 
 This tutorial focuses on real-time curves drawing. It shows how to modify tutorial-ibvs-4pts.cpp introduced in \ref tutorial-ibvs to draw the evolution of the visual features error and the camera velocity skew vector during an image-based visual servoing.
 
+Note that all the material (source code and image) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/visual-servoing/ibvs
+\endcode
+
 The modified code also available in tutorial-ibvs-4pts-plotter.cpp is the following.
 
 

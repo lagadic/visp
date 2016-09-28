@@ -79,6 +79,12 @@ Here, the vpMutex::vpScopedLock constructor locks the mutex, while the destructo
 
 \section multi-threading-capture Multi-threaded capture and display
 
+Note that all the material (source code) described in this section is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/grabber
+\endcode
+
 The following example implemented in tutorial-grabber-opencv-threaded.cpp shows how to implement a multi-threaded application, where image capture is executed in one thread and image display in an other one. The capture is here performed thanks to OpenCV cv::VideoCapture class. It could be easily adapted to deal with other framegrabbers available in ViSP. In tutorial-grabber-v4l2-threaded.cpp you will find the same example using vpV4l2Grabber. To adapt the code to other framegrabbers see \ref tutorial-grabber.
 
 Hereafter we explain how tutorial-grabber-opencv-threaded.cpp works.
@@ -127,6 +133,12 @@ cd <visp-build-tree>/tutorial/grabber
 where "--device 0" could be avoided since it is the default option.
 
 \section multi-threading-face-detection Extension to face detection
+
+Note that all the material (source code) described in this section is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/face
+\endcode
 
 The example given in the previous section \ref multi-threading-capture could be extended to introduce an image processing. In this section, we illustrate the case of the face detection described in \ref tutorial-detection-face and implemented in tutorial-face-detector-live.cpp as a single main thread. Now we propose to extend this example using multi-threading where face detection is achieved in a separate thread. The complete source code is given in tutorial-face-detector-live-threaded.cpp.
 

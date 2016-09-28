@@ -4,6 +4,16 @@
   \tableofcontents
 
 
+\section grabber-into Introduction
+
+In this tutorial you will learn how to grab images with ViSP, either from cameras or from a video stream.
+
+All the material (source code and videos) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/grabber
+\endcode
+
 \section grabber-camera-pgr Images from PointGrey cameras
 
 After ViSP 3.0.0, we introduce vpFlyCaptureGrabber class, a wrapper over PointGrey FlyCapture SDK that allows to grab images from any PointGrey camera. This grabber was tested under Ubuntu and Windows with the following cameras:
