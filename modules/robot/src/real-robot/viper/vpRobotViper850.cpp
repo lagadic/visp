@@ -826,7 +826,7 @@ void
             << "Check the emergency stop button and push the yellow button before continuing." << std::endl;
         firsttime = false;
       }
-      fprintf(stdout, "Remaining time %ds  \r", nitermax-i);
+      fprintf(stdout, "Remaining time %us  \r", nitermax-i);
       fflush(stdout);
       CAL_Wait(1);
     }
@@ -2196,12 +2196,18 @@ bool
   }
   while ( sortie != true );
 
-  // Lecture des positions
   q.resize(njoint);
-  sscanf(line, "%s %lf %lf %lf %lf %lf %lf",
-         dummy,
-         &q[0], &q[1], &q[2],
-         &q[3], &q[4], &q[5]);
+
+  // Lecture des positions
+//  sscanf(line, "%s %lf %lf %lf %lf %lf %lf",
+//         dummy,
+//         &q[0], &q[1], &q[2], &q[3], &q[4], &q[5]);
+
+  std::string str(line);
+  std::istringstream ss(str);
+  ss >> dummy;
+  for(unsigned int i=0; i<6; i++)
+    ss >> q[i];
 
   // converts rotations from degrees into radians
   q.deg2rad();

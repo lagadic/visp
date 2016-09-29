@@ -258,9 +258,11 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
   memset(histogram, 0, size * sizeof(unsigned int));
 
 
-  bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
+  bool use_single_thread;
 #if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
   use_single_thread = true;
+#else
+  use_single_thread = (nbThreads == 0 || nbThreads == 1);
 #endif
 
   if(!use_single_thread && I.getSize() <= nbThreads) {

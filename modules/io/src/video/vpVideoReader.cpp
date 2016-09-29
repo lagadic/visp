@@ -545,7 +545,7 @@ vpVideoReader::vpVideoFormatType
     return FORMAT_DIB;
   else if (ext.compare(".PBM") == 0)
     return FORMAT_PBM;
-  else if (ext.compare(".PBM") == 0)
+  else if (ext.compare(".pbm") == 0)
     return FORMAT_PBM;
   else if (ext.compare(".SR") == 0)
     return FORMAT_PBM;

@@ -65,7 +65,7 @@ vpDisplayX *d;
 vpDisplayGDI *d;
 #endif
 vpImage<unsigned char> I;
-static int isInitialized = false;
+static bool isInitialized = false;
 static int half_size = 256*2;
 
 void sonarPrinter(void)

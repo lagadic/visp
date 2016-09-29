@@ -879,13 +879,12 @@ bool vpFFMPEG::endWrite()
 void vpFFMPEG::writeBitmap(vpImage<vpRGBa> &I)
 {
   unsigned char* beginInput = (unsigned char*)I.bitmap;
-  unsigned char* input = NULL;
   unsigned char* beginOutput = (unsigned char*)pFrameRGB->data[0];
   int widthStep = pFrameRGB->linesize[0];
   
   for(int i=0 ; i < height ; i++)
   {
-    input = beginInput + 4 * i * width;
+    unsigned char *input = beginInput + 4 * i * width;
     unsigned char *output = beginOutput + i * widthStep;
     for(int j=0 ; j < width ; j++)
     {

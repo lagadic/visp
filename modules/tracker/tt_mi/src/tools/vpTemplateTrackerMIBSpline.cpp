@@ -307,14 +307,13 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline3(double *Prt, double &er, doubl
   //  }
 #define	 LSIZE	 12
 
-  const double *btend;
   double *bt0 = &bt[0];
   if(er>0.5){er=er-1.0;}
 
   for(int ir=-1;ir<=1;++ir)
   {
     double Br=Bspline3(-ir+er);
-    btend = bt0 + size;
+    const double *btend = bt0 + size;
     bt = bt0;
 
     if (size >= LSIZE) {
@@ -431,13 +430,12 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4(double *Prt, double *dPrt, dou
 void vpTemplateTrackerMIBSpline::PutTotPVBspline4(double *Prt, double &er, double *bt, unsigned int size)
 {
 #define	 LSIZE	 12
-  const double *btend;
   double *bt0 = &bt[0];
 
   for(int ir=-1;ir<=2;++ir)
   {
     double Br=vpTemplateTrackerBSpline::Bspline4(-ir+er);
-    btend = bt0 + size;
+    const double *btend = bt0 + size;
     bt = bt0;
 
     if (size >= LSIZE) {

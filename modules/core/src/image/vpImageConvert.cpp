@@ -217,10 +217,9 @@ vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage
   for(unsigned int i = 0; i < src_depth.getSize(); ++i) ++histogram[src_depth.bitmap[i]];
   for(int i = 2; i < 0x10000; ++i) histogram[i] += histogram[i-1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
 
-  uint16_t d;
   for(unsigned int i = 0; i < src_depth.getSize(); ++i)
   {
-    d = src_depth.bitmap[i];
+    uint16_t d = src_depth.bitmap[i];
     if(d)
     {
       int f = histogram[d] * 255 / histogram[0xFFFF]; // 0-255 based on histogram location
@@ -299,12 +298,11 @@ vpImageConvert::convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
 
     //starting source address
     unsigned char* input = (unsigned char*)src->imageData;
-    unsigned char* line;
     unsigned char* beginOutput = (unsigned char*)dest.bitmap;
 
     for(int i=0 ; i < height ; i++)
     {
-      line = input;
+      unsigned char *line = input;
       unsigned char *output = beginOutput + lineStep * ( 4 * width * ( height - 1 - i ) ) + (1-lineStep) * 4 * width * i;
       for(int j=0 ; j < width ; j++)
         {
@@ -322,8 +320,8 @@ vpImageConvert::convert(const IplImage* src, vpImage<vpRGBa> & dest, bool flip)
   else if(nChannel == 1 && depth == 8 ){
     dest.resize((unsigned int)height, (unsigned int)width);
     //starting source address
-    unsigned char * input = (unsigned char*)src->imageData;
-    unsigned char* beginOutput = (unsigned char*)dest.bitmap;
+    unsigned char *input = (unsigned char*)src->imageData;
+    unsigned char *beginOutput = (unsigned char*)dest.bitmap;
 
     for(int i=0 ; i < height ; i++)
     {
@@ -511,7 +509,6 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src, IplImage *&dest)
 
   //starting source address
   unsigned char * input = (unsigned char*)src.bitmap;//rgba image
-  unsigned char * line;
   unsigned char * output = (unsigned char*)dest->imageData;//bgr image
 
   int j=0;
@@ -521,7 +518,7 @@ vpImageConvert::convert(const vpImage<vpRGBa> & src, IplImage *&dest)
   for(i=0 ; i < height ; i++)
   {
     output = (unsigned char*)dest->imageData + i*widthStep;
-    line = input;
+    unsigned char *line = input;
     for( j=0 ; j < width ; j++)
       {
         *output++ = *(line+2);  //B
@@ -3165,15 +3162,11 @@ vpImageConvert::BGRToRGBa(unsigned char * bgr, unsigned char * rgba,
 
   //starting source address = last line if we need to flip the image
   unsigned char * src = (flip) ? (bgr+(width*height*3)+lineStep) : bgr;
-  unsigned char * line;
 
-  unsigned int j=0;
-  unsigned int i=0;
-
-  for(i=0 ; i < height ; i++)
+  for(unsigned int i=0 ; i < height ; i++)
   {
-    line = src;
-    for( j=0 ; j < width ; j++)
+    unsigned char *line = src;
+    for(unsigned int j=0 ; j < width ; j++)
     {
       *rgba++ = *(line+2);
       *rgba++ = *(line+1);
@@ -3185,7 +3178,6 @@ vpImageConvert::BGRToRGBa(unsigned char * bgr, unsigned char * rgba,
     //go to the next line
     src+=lineStep;
   }
-
 }
 
 /*!
@@ -3407,15 +3399,11 @@ vpImageConvert::BGRToGrey(unsigned char * bgr, unsigned char * grey,
 
   //starting source address = last line if we need to flip the image
   unsigned char * src = (flip) ? bgr+(width*height*3)+lineStep : bgr;
-  unsigned char * line;
 
-  unsigned int j=0;
-  unsigned int i=0;
-
-  for(i=0 ; i < height ; i++)
+  for(unsigned int i=0 ; i < height ; i++)
   {
-    line = src;
-    for( j=0 ; j < width ; j++)
+    unsigned char *line = src;
+    for(unsigned int j=0 ; j < width ; j++)
     {
       *grey++ = (unsigned char)( 0.2126 * *(line+2)
          + 0.7152 * *(line+1)

@@ -897,7 +897,7 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
   } while ((str[0] == '#') || (str[0] == '\n'));
 
   // Extract image size
-  ierr = sscanf(str, "%d %d", &w, &h);
+  ierr = sscanf(str, "%u %u", &w, &h);
   if (w > 100000 || h>100000) {
     fclose (fd);
     throw(vpException(vpException::badValue, "Bad image size"));
@@ -914,7 +914,7 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
                                 "Cannot read content of PFM file")) ;
       }
     } while ((str[0] == '#') || (str[0] == '\n'));
-    ierr = sscanf(str, "%d", &h);
+    ierr = sscanf(str, "%u", &h);
   }
   if (ierr == EOF)
   {

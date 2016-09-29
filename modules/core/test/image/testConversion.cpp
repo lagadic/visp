@@ -189,14 +189,13 @@ void computeRegularBGRToGrayscale(unsigned char * bgr, unsigned char * grey,
 
   //starting source address = last line if we need to flip the image
   unsigned char * src = (flip) ? bgr+(width*height*3)+lineStep : bgr;
-  unsigned char * line;
 
   unsigned int j=0;
   unsigned int i=0;
 
   for(i=0 ; i < height ; i++)
   {
-    line = src;
+    unsigned char *line = src;
     for( j=0 ; j < width ; j++)
     {
       *grey++ = (unsigned char)( 0.2126 * *(line+2)

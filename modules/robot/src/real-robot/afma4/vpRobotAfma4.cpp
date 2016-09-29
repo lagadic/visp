@@ -433,7 +433,7 @@ vpRobotAfma4::powerOn(void)
             << "Check the emergency stop button and push the yellow button before continuing." << std::endl;
         firsttime = false;
       }
-      fprintf(stdout, "Remaining time %ds  \r", nitermax-i);
+      fprintf(stdout, "Remaining time %us  \r", nitermax-i);
       fflush(stdout);
       CAL_Wait(1);
     }
@@ -930,9 +930,6 @@ void vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
     throw ;
   }
 }
-
-
-
 
 /*!
 

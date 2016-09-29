@@ -113,8 +113,8 @@ vpHomography::computeRotation(unsigned int nbpoint,
   vpMatrix H1(2,3) ;
   vpColVector e1(2) ;
 
-  int only_1 = 0 ;
-  int only_2 = 0 ;
+  bool only_1 = false;
+  bool only_2 = false;
   int iter = 0 ;
 
   unsigned int n=0 ;
@@ -127,7 +127,6 @@ vpHomography::computeRotation(unsigned int nbpoint,
       n++ ;
     }
   }
-  //if ((only_1==1) || (only_2==1))  ; else n *=2 ;
   if ( (! only_1) && (! only_2) )
     n *=2 ;
 
@@ -197,7 +196,7 @@ vpHomography::computeRotation(unsigned int nbpoint,
         e1[0] = Hp1[0] - c2P[i].get_x() ;
         e1[1] = Hp1[1] - c2P[i].get_y() ;
 
-        if (only_2==1)
+        if (only_2)
         {
           if (k == 0) { L = H2 ; e = e2 ; }
           else
@@ -207,7 +206,7 @@ vpHomography::computeRotation(unsigned int nbpoint,
           }
         }
         else
-          if (only_1==1)
+          if (only_1)
           {
             if (k == 0) { L = H1 ; e= e1 ; }
             else
@@ -316,18 +315,16 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
   vpMatrix H1(2,6) ;
   vpColVector e1(2) ;
 
-  int only_1;
-  int only_2;
+  bool only_1 = true;
+  bool only_2 = false;
   int iter = 0 ;
   unsigned int n=0 ;
   n = nbpoint ;
-  only_1 = 1 ;
-  only_2 = 0 ;
 
   //if ((only_1==1) || (only_2==1))  ; else n *=2 ;
   // Since only_1 is initialized to 1, the next 2 lines connt be reached. We remove them
-  //if ( (! only_1) && (! only_2) )
-  //  n *=2 ;
+  if ( (! only_1) && (! only_2) )
+    n *=2 ;
 
   vpRobust robust(n);
   vpColVector res(n) ;
@@ -427,7 +424,7 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
       e1[0] = Hp1[0] - c2P[i].get_x() ;
       e1[1] = Hp1[1] - c2P[i].get_y() ;
 
-      if (only_2==1)
+      if (only_2)
       {
         if (k == 0) { L = H2 ; e = e2 ; }
         else
@@ -437,7 +434,7 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
         }
       }
       else
-        if (only_1==1)
+        if (only_1)
         {
           if (k == 0) { L = H1 ; e= e1 ; }
           else
@@ -531,18 +528,15 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
   vpColVector e1(2) ;
 
 
-  int only_1;
-  int only_2;
+  bool only_1 = true;
+  bool only_2 = false;
   int iter = 0 ;
   unsigned int i ;
   unsigned int n=0 ;
-  only_1 = 1 ;
-  only_2 = 0 ;
   n = nbpoint ;
 
-  // Remove next 2 lines, since when only_1 is initialized to 1 (as it is), we cannot reach the code
-  //if ( (! only_1) && (! only_2) )
-  //  n *=2 ;
+  if ( (! only_1) && (! only_2) )
+    n *=2 ;
 
   vpRobust robust(n);
   vpColVector res(n) ;
@@ -559,10 +553,8 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
   iter =0 ;
   while (vpMath::equal(r_1,r,threshold_displacement) == false )
   {
-
     r_1 =r ;
     // compute current position
-
 
     //Change frame (current)
     vpHomogeneousMatrix c1Mc2, c2Mo ;
@@ -575,8 +567,6 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
     c1Mc2.extract(c1Tc2) ;
 
     c2Mo = c2Mc1*c1Mo ;
-
-
 
     vpMatrix L(2,3), Lp ;
     int k =0 ;
@@ -599,14 +589,12 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
       Hp2 /= Hp2[2] ;  // normalisation
       Hp1 /= Hp1[2] ;
 
-
       // set up the interaction matrix
       double x = Hp2[0] ;
       double y = Hp2[1] ;
       double Z1  ;
 
       Z1 = (N1[0]*x+N1[1]*y+N1[2])/d1 ;        // 1/z
-
 
       H2[0][0] = -Z1 ;  H2[0][1] = 0  ;       H2[0][2] = x*Z1 ;
       H2[1][0] = 0 ;     H2[1][1] = -Z1 ;     H2[1][2] = y*Z1 ;
@@ -646,7 +634,7 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
       e1[1] = Hp1[1] - c2P[i].get_y() ;
 
 
-      if (only_2==1)
+      if (only_2)
       {
         if (k == 0) { L = H2 ; e = e2 ; }
         else
@@ -656,7 +644,7 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
         }
       }
       else
-        if (only_1==1)
+        if (only_1)
         {
           if (k == 0) { L = H1 ; e= e1 ; }
           else
@@ -713,7 +701,6 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
     c2Mc1 = vpExponentialMap::direct(c2Tcc1).inverse()*c2Mc1 ; ;
     //   UpdatePose2(c2Tcc1, c2Mc1) ;
     r =(W*e).sumSquare() ;
-
 
 
   if (r < 1e-15)  {break ; }

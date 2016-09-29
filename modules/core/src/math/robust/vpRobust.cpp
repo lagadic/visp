@@ -414,17 +414,17 @@ vpRobust::scale(vpRobustEstimatorType method, vpColVector &x)
   for(unsigned int i=0; i<n; i++)
   {
     double chiTmp = constrainedChi(method, x[i]);
-    Expectation += chiTmp*(1-erf(chiTmp));
+    Expectation += chiTmp*erfc(chiTmp);
     Sum_chi += chiTmp;
 
 #ifdef VP_DEBUG
 #if VP_DEBUG_MODE == 3
     {
-      std::cout << "erf = " << 1-erf(chiTmp) << std::endl;
+      std::cout << "erf = " << erfc(chiTmp) << std::endl;
       std::cout << "x[i] = " << x[i] <<std::endl;
       std::cout << "chi = " << chiTmp << std::endl;
       std::cout << "Sum chi = " << chiTmp*vpMath::sqr(sig_prev) << std::endl;
-      std::cout << "Expectation = " << chiTmp*(1-erf(chiTmp)) << std::endl;
+      std::cout << "Expectation = " << chiTmp*erfc(chiTmp) << std::endl;
       //getchar();
     }
 #endif
@@ -463,17 +463,17 @@ vpRobust::simultscale(vpColVector &x)
   {
 
     double chiTmp = simult_chi_huber(x[i]);
-    Expectation += chiTmp*(1-erf(chiTmp));
+    Expectation += chiTmp*erfc(chiTmp);
     Sum_chi += chiTmp;
 
 #ifdef VP_DEBUG
 #if VP_DEBUG_MODE == 3
     {
-      std::cout << "erf = " << 1-erf(chiTmp) << std::endl;
+      std::cout << "erf = " << erfc(chiTmp) << std::endl;
       std::cout << "x[i] = " << x[i] <<std::endl;
       std::cout << "chi = " << chiTmp << std::endl;
       std::cout << "Sum chi = " << chiTmp*vpMath::sqr(sig_prev) << std::endl;
-      std::cout << "Expectation = " << chiTmp*(1-erf(chiTmp)) << std::endl;
+      std::cout << "Expectation = " << chiTmp*erfc(chiTmp) << std::endl;
       //getchar();
     }
 #endif
