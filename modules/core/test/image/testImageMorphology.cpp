@@ -258,10 +258,6 @@ void generalDilatation(vpImage<unsigned char> &I, vpImageMorphology::vpConnexity
   }
 }
 
-int modulo(const int a, const int n) {
-  return ((a % n) + n) % n;
-}
-
 //Generate a magic square matrix to get a consistent grayscale image
 void magicSquare(vpImage<unsigned char> &magic_square, const int N) {
   magic_square.resize((unsigned int) N, (unsigned int) N, 0);
@@ -273,7 +269,7 @@ void magicSquare(vpImage<unsigned char> &magic_square, const int N) {
     magic_square[i][j] = vpMath::saturate<unsigned char>(n);
     n++;
 
-    int newi = modulo((i-1), N), newj = modulo((j+1), N);
+    int newi = vpMath::modulo((i-1), N), newj = vpMath::modulo((j+1), N);
 
     if (magic_square[newi][newj]) {
       i++;
