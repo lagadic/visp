@@ -65,7 +65,7 @@ typedef uint64_t uint64;
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 typedef union Cv64suf
 {
-  int64 i;
+//  int64 i; //Unused variable, should be harmless to comment it
   uint64 u;
   double f;
 }
@@ -259,4 +259,18 @@ double vpMath::getStdev(const std::vector<double> &v, const bool useBesselCorrec
   }
 
   return std::sqrt(sq_sum / divisor);
+}
+
+/*!
+  Compute the modified modulo:
+    - modulo(11, 10) == 1 == 11 % 10
+    - modulo(-1, 10) == 9
+
+  \param a : The dividend.
+  \param n : The divisor.
+
+  \return The modified modulo of a mod n.
+*/
+int vpMath::modulo(const int a, const int n) {
+  return ((a % n) + n) % n;
 }

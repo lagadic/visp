@@ -202,6 +202,8 @@ class VISP_EXPORT vpMath
   static double getMedian(const std::vector<double> &v);
   static double getStdev(const std::vector<double> &v, const bool useBesselCorrection=false);
 
+  static int modulo(const int a, const int n);
+
  private:
   static const double ang_min_sinc;
   static const double ang_min_mc;
