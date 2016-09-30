@@ -47,21 +47,8 @@
 #include "vpLex.h"
 #include "vpParser.h"
 
-//Inventor includes
-#if defined(VISP_HAVE_COIN3D)
-#include <Inventor/nodes/SoSeparator.h>
-#include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
-#include <Inventor/VRMLnodes/SoVRMLIndexedLineSet.h>
-#include <Inventor/VRMLnodes/SoVRMLCoordinate.h>
-#include <Inventor/actions/SoWriteAction.h>
-#include <Inventor/actions/SoSearchAction.h>
-#include <Inventor/misc/SoChildList.h>
-#include <Inventor/actions/SoGetMatrixAction.h>
-#include <Inventor/actions/SoGetPrimitiveCountAction.h>
-#include <Inventor/actions/SoToVRML2Action.h>
-#include <Inventor/VRMLnodes/SoVRMLGroup.h>
-#include <Inventor/VRMLnodes/SoVRMLShape.h>
-#endif
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpPoint.h>
 
 /*
   Get the extension of the file and return it
@@ -134,17 +121,6 @@ void set_scene (const char* str, Bound_scene *sc, float factor)
 
 #if defined(VISP_HAVE_COIN3D)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-typedef struct indexFaceSet
-{
-  indexFaceSet() : nbPt(0), pt(), nbIndex(0), index() {};
-  int nbPt;
-  std::vector<vpPoint> pt;
-  int nbIndex;
-  std::vector<int> index;
-} indexFaceSet;
-#endif // DOXYGEN_SHOULD_SKIP_THIS
-
 void set_scene_wrl (const char* str, Bound_scene *sc, float factor)
 {
   //Load the sceneGraph
@@ -154,8 +130,7 @@ void set_scene_wrl (const char* str, Bound_scene *sc, float factor)
   SoVRMLGroup  *sceneGraphVRML2;
 
   if (!ok) {
-    vpERROR_TRACE("can't open file \"%s\" \n Please check the Marker_Less.ini file", str);
-    exit(1);
+    throw(vpException(vpException::fatalError, "Can't open file \"%s\". Please check the Marker_Less.ini file", str));
   }
 
   if(!in.isFileVRML2())
@@ -239,8 +214,7 @@ void set_scene_wrl (const char* str, Bound_scene *sc, float factor)
 }
 
 
-void
-extractFaces(SoVRMLIndexedFaceSet* face_set, indexFaceSet *ifs)
+void extractFaces(SoVRMLIndexedFaceSet* face_set, indexFaceSet *ifs)
 {
 //   vpList<vpPoint> pointList;
 //   pointList.kill();

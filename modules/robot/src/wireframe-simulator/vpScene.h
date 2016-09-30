@@ -45,6 +45,35 @@
 #include <visp3/robot/vpWireFrameSimulatorTypes.h>
 #include "vpBound.h"
 
+//Inventor includes
+#if defined(VISP_HAVE_COIN3D)
+#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
+#include <Inventor/VRMLnodes/SoVRMLIndexedLineSet.h>
+#include <Inventor/VRMLnodes/SoVRMLCoordinate.h>
+#include <Inventor/actions/SoWriteAction.h>
+#include <Inventor/actions/SoSearchAction.h>
+#include <Inventor/misc/SoChildList.h>
+#include <Inventor/actions/SoGetMatrixAction.h>
+#include <Inventor/actions/SoGetPrimitiveCountAction.h>
+#include <Inventor/actions/SoToVRML2Action.h>
+#include <Inventor/VRMLnodes/SoVRMLGroup.h>
+#include <Inventor/VRMLnodes/SoVRMLShape.h>
+
+#include <vector>
+#include <list>
+
+typedef struct indexFaceSet
+{
+  indexFaceSet() : nbPt(0), pt(), nbIndex(0), index() {};
+  int nbPt;
+  std::vector<vpPoint> pt;
+  int nbIndex;
+  std::vector<int> index;
+} indexFaceSet;
+
+#endif
+
 typedef enum
 {
   BND_MODEL,
@@ -58,7 +87,7 @@ void set_scene (const char*, Bound_scene *, float);
 void vp2jlc_matrix (const vpHomogeneousMatrix, Matrix&);
 
 #if defined(VISP_HAVE_COIN3D)
-void extractFaces(SoVRMLIndexedFaceSet*, indexFaceSet *ifs);
+void extractFaces(SoVRMLIndexedFaceSet* face_set, indexFaceSet *ifs);
 void ifsToBound (Bound*, std::list<indexFaceSet*> &);
 void destroyIfs(std::list<indexFaceSet*> &);
 #endif
