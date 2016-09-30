@@ -32,14 +32,12 @@ $ unzip ~/Downloads/opencv2.framework.zip -d ~/framework/ios
 \endcode
 - Add \c opencv2.framework to iPhoneOS existing frameworks
 \code
-$ cd /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/
-$ sudo mkdir PrivateFrameworks
-$ cd PrivateFrameworks
+$ cd `xcrun --sdk iphoneos --show-sdk-platform-path`/Developer/Library/Frameworks
 $ sudo ln -s ~/framework/ios/opencv2.framework
 \endcode
 - Add \c opencv2.framework to iPhoneSimulator existing frameworks
 \code
-$ cd /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/PrivateFrameworks
+$ cd `xcrun --sdk iphonesimulator --show-sdk-platform-path`/Developer/Library/Frameworks
 $ sudo ln -s ~/framework/ios/opencv2.framework
 \endcode
 
