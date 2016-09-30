@@ -39,6 +39,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include <cmath>
+#include <limits>
+
 #include "vpScene.h"
 #include "vpKeyword.h"
 #include "vpLex.h"

@@ -42,6 +42,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>
 #include "vpBound.h"
 
 typedef enum
