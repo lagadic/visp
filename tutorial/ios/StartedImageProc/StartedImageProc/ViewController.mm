@@ -3,9 +3,9 @@
 #import <visp3/visp.h>
 #endif
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 @interface ViewController ()
 @end
-
 
 @implementation ViewController
 
@@ -17,6 +17,7 @@ NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to g
                     nil];
 
 @synthesize myImageView;
+#endif
 
 - (void)viewDidLoad {
     

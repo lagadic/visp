@@ -50,6 +50,7 @@
   For more details see \cite Collewet08c.
 */
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   \class vpLuminance
@@ -57,8 +58,6 @@
 
   \sa vpFeatureLuminance
 */
-
-
 class VISP_EXPORT vpLuminance
 {
  public:
@@ -68,7 +67,7 @@ class VISP_EXPORT vpLuminance
   double Z; // pixel depth
 
 };
-
+#endif
 
 /*!
   \class vpFeatureLuminance

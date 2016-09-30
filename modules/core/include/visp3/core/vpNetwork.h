@@ -82,7 +82,7 @@
 class VISP_EXPORT vpNetwork
 {
 protected:
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   struct vpReceptor{
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     int                   socketFileDescriptorReceptor;
@@ -112,7 +112,8 @@ protected:
       socketFileDescriptorEmitter = 0;
     }
   };
-  
+#endif
+
   //######## PARAMETERS ########
   //#                          #
   //############################

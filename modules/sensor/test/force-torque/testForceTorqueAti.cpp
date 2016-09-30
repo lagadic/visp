@@ -62,11 +62,15 @@ typedef enum {
 } BiasState;
 
 vpMutex s_mutex_data;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 typedef struct {
   vpColVector ft;
   double timestamp;
   BiasState bias_state;
 } t_shared_data;
+#endif
+
 t_shared_data s_shared_data;
 
 vpMutex s_mutex_state;
