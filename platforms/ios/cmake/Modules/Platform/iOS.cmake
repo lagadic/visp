@@ -67,11 +67,15 @@ if (NOT DEFINED CMAKE_INSTALL_NAME_TOOL)
 endif (NOT DEFINED CMAKE_INSTALL_NAME_TOOL)
 
 # Setup iOS developer location
+# Note: Since /Developer was a link to /Applications/Xcode.app/Contents/Developer on old
+# OS X versions, and seems no more existing by default on OS X 10.12, we introduce
+# XCODE_ROOT var. 
+set(XCODE_ROOT "/Applications/Xcode.app/Contents")
 if (IPHONEOS)
-    set (_CMAKE_IOS_DEVELOPER_ROOT "/Developer/Platforms/iPhoneOS.platform/Developer")
+    set (_CMAKE_IOS_DEVELOPER_ROOT "${XCODE_ROOT}/Developer/Platforms/iPhoneOS.platform/Developer")
 else ()
     if (IPHONESIMULATOR)
-        set (_CMAKE_IOS_DEVELOPER_ROOT "/Developer/Platforms/iPhoneSimulator.platform/Developer")
+        set (_CMAKE_IOS_DEVELOPER_ROOT "${XCODE_ROOT}/Developer/Platforms/iPhoneSimulator.platform/Developer")
     endif ()
 endif ()
 # Find installed iOS SDKs

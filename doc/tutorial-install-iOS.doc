@@ -30,23 +30,16 @@ or if the download was either performed with Firefox, do the following
 \code
 $ unzip ~/Downloads/opencv2.framework.zip -d ~/framework/ios
 \endcode
-- Create \c /Developer short cut if it doesn't exist
-\code
-$ ls /Developer
-ls: /Developer: No such file or directory
-$ cd /
-$ sudo ln -s /Applications/Xcode.app/Contents/Developer
-\endcode
 - Add \c opencv2.framework to iPhoneOS existing frameworks
 \code
-$ cd /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/
+$ cd /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/
 $ sudo mkdir PrivateFrameworks
 $ cd PrivateFrameworks
 $ sudo ln -s ~/framework/ios/opencv2.framework
 \endcode
 - Add \c opencv2.framework to iPhoneSimulator existing frameworks
 \code
-$ cd /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/PrivateFrameworks
+$ cd /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/System/Library/PrivateFrameworks
 $ sudo ln -s ~/framework/ios/opencv2.framework
 \endcode
 
