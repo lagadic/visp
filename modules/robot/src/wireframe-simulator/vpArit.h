@@ -38,6 +38,7 @@
 #define vpArit_h
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>
 #include <stdio.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -118,10 +119,6 @@ typedef	struct	{
 } Point3i;
 
 typedef	struct	{
-	float	x, y, z;
-} Point3f;
-
-typedef	struct	{
 	float	x,y,z,w;
 } Point4f;
 
@@ -129,17 +126,6 @@ typedef	struct	{
 	float	x,y,z;
 } Vector;
 
-/*
- *				MATRIX
- *				______
- *
- * Matrice homogene ou non.
- *				|   Rotation  | 0 |
- * Matrice non homogene = 	|     3x3     | 0 |
- *				|-------------| 0 |
- *				| Translation | 1 |
- */
-typedef	float	Matrix[4][4];
 
 #define	IDENTITY_MATRIX		{	{1.0,	0.0,	0.0,	0.0},\
 					{0.0,	1.0,	0.0,	0.0},\

@@ -40,12 +40,12 @@
 
 
 
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpArit.h>
-#include	<visp3/robot/vpTmstack.h>
-#include	<math.h>
-#include	<stdio.h>
-#include	<string.h>
+#include "vpMy.h"
+#include "vpArit.h"
+#include "vpTmstack.h"
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

@@ -45,12 +45,12 @@
 
 #include	<stdio.h>
 
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpArit.h>
-#include	<visp3/robot/vpView.h>
-#include	<visp3/robot/vpToken.h>
-#include	<visp3/robot/vpLex.h>
-#include	<visp3/robot/vpSkipio.h>
+#include "vpMyio.h"
+#include "vpArit.h"
+#include "vpViewio.h"
+#include "vpToken.h"
+#include "vpLex.h"
+#include "vpSkipio.h"
 
 
 /*

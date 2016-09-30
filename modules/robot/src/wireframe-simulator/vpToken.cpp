@@ -28,23 +28,47 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Le module "keyword.c" contient les procedures de gestion
- * des mots cles retournes par l'analyseur lexical "lex".
+ * Le module "token.c" contient la declaration des mots cles.
+ * de l'analyseur lexical "lex".
  *
  * Authors:
  * Jean-Luc CORRE
  *
  *****************************************************************************/
 
-#ifndef vpKeyword_H
-#define vpKeyword_H
+
+#include "vpMy.h"
+#include "vpToken.h"
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpMy.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-extern Index get_symbol (char *ident, int length);
 
-#endif
+Keyword	keyword_tbl[] = {	/* tableau des mots cles termine par NULL*/
+	{ "above",	T_ABOVE		},
+	{ "back",	T_BACK		},
+	{ "below",	T_BELOW		},
+	{ "bound",	T_BOUND		},
+	{ "cop",	T_COP		},
+	{ "depth",	T_DEPTH		},
+	{ "exit",	T_EXIT		},
+	{ "face_list",	T_FACE_LIST	},
+	{ "front",	T_FRONT		},
+	{ "left",	T_LEFT		},
+	{ "none",	T_NONE		},
+	{ "parallel",	T_PARALLEL	},
+	{ "perspective",T_PERSPECTIVE	},
+	{ "point_list",	T_POINT_LIST	},
+	{ "remove",	T_REMOVE	},
+	{ "right",	T_RIGHT		},
+	{ "type",	T_TYPE		},
+	{ "view",	T_VIEW		},
+	{ "vpn",	T_VPN		},
+	{ "vrp",	T_VRP		},
+	{ "vup",	T_VUP		},
+	{ "window",	T_WINDOW	},
+	{ NULL,		NULL		}
+};
+
 #endif

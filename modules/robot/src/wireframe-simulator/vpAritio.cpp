@@ -41,13 +41,13 @@
 
 
 
-#include "visp3/core/vpConfig.h"
+#include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpArit.h>
-#include	<visp3/robot/vpToken.h>
-#include	<visp3/robot/vpLex.h>
+#include "vpMy.h"
+#include "vpArit.h"
+#include "vpToken.h"
+#include "vpLex.h"
 
 #include	<stdio.h>
 /*

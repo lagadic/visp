@@ -43,6 +43,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include "vpMy.h"
+#include "vpArit.h"
+
 /*
  * Macros de numerotation des 6 plans de decoupage :
  * - Les 6 plans de clipping definissent le volume canonique 

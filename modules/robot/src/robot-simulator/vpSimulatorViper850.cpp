@@ -50,6 +50,11 @@
 #include <limits>   // numeric_limits
 #include <string>
 
+#include "../wireframe-simulator/vpBound.h"
+#include "../wireframe-simulator/vpVwstack.h"
+#include "../wireframe-simulator/vpRfstack.h"
+#include "../wireframe-simulator/vpScene.h"
+
 const double vpSimulatorViper850::defaultPositioningVelocity = 25.0;
 
 /*!

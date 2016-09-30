@@ -40,10 +40,12 @@
 #define vpBound_H
  
 #include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpMy.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include "vpMy.h"
+#include "vpArit.h"
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>
 
 #define	START_ARG	0
 #define	NEXT_ARG	1
@@ -90,27 +92,6 @@ typedef	struct	{
 } Edge_list;
 #endif	//face_edge
 
-#define	DEFAULT_VSIZE	4
-
-/*
- * Vertex_list :
- * Pour optimiser l'allocation et la liberation memoire d'une liste de sommets:
- * si (nbr > DEFAULT_VSIZE)
- * |	alors ptr est alloue et libere dynamiquement
- * |	sinon ptr = tbl
- * fsi;
- */
-typedef	struct	{
-	Index		nbr;		/* nombre de sommets	*/
-	Index		*ptr;		/* liste  dynamique	*/
-	Index		tbl[DEFAULT_VSIZE];
-} Vertex_list;
-
-typedef	struct	{
-	Index		nbr;		/* nombre de points	*/
-	Point3f		*ptr;		/* liste  dynamique	*/
-} Point3f_list;
-
 #ifdef	face_normal
 typedef	struct	{
 	Index		nbr;		/* nombre de vecteurs	*/
@@ -119,60 +100,22 @@ typedef	struct	{
 #endif	//face_normal
 
 typedef	struct	{
-	unsigned	is_polygonal:1;	/* face polygonale	*/
-	unsigned	is_visible  :1;	/* face affichable	*/
-#ifdef	face_edge
-	Edge_list	edge;		/* liste d'aretes	*/
-#endif	//face_edge
-	Vertex_list	vertex;		/* liste de sommets	*/
-#ifdef	face_normal
-	Vector		normal;		/* vecteur normal	*/
-#endif	//face_normal
-} Face;
-
-typedef	struct	{
-	Index		nbr;		/* nombre de faces	*/
-	Face		*ptr;		/* liste  dynamique	*/
-} Face_list;
-
-typedef	struct	{
-	unsigned	is_display  :1;	/* surface affichable	*/
-	unsigned	is_polygonal:1;	/* surface polyedrique	*/	
-	Type		type;		/* type de la primitive	*/
-#ifdef	face_edge
-	Edge_list	edge;		/* liste d'aretes	*/
-#endif	//face_edge
-	Face_list	face;		/* liste de faces	*/
-	Point3f_list	point;		/* points aux sommets	*/
-#ifdef	face_normal
-	Vector_list	normal;		/* normales aux sommets	*/
-#endif	//face_normal
-} Bound;
-
-typedef	struct	{
-	Index		nbr;		/* nombre de surfaces	*/
-	Bound		*ptr;		/* liste  dynamique	*/
-} Bound_list;
-
-typedef	struct	{
 	float		xmin, xmax;	/* bornes sur l'axe x	*/
 	float		ymin, ymax;	/* bornes sur l'axe y	*/
 	float		zmin, zmax;	/* bornes sur l'axe z	*/
 } Bounding_box;
 
 typedef	struct	{
-	char		*name;		/* nom de la scene	*/
-	Bound_list	bound;		/* liste de surfaces	*/
-} Bound_scene;
-
-typedef	struct	{
 	Index		nbr;		/* nombre de scenes	*/
 	Bound_scene	*ptr;		/* liste  dynamique	*/
 } Bound_scene_list;
 
-extern void malloc_huge_Bound (Bound *bp);
-extern void free_huge_Bound (Bound *bp);
-extern void fscanf_Bound (Bound *bp);
+void free_Bound (Bound *bp);
+void free_huge_Bound (Bound *bp);
+void free_Bound_scene (Bound_scene *bsp);
+void malloc_Bound (Bound *bp, Type type, int polygonal, Index fn, Index pn);
+void malloc_huge_Bound (Bound *bp);
+void malloc_Bound_scene (Bound_scene *bsp, const char *name, Index bn);
 
 #endif
 #endif

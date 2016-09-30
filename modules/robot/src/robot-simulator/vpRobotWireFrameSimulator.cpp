@@ -41,6 +41,10 @@
 #include <visp3/robot/vpRobotWireFrameSimulator.h>
 #include <visp3/robot/vpSimulatorViper850.h>
 
+#include "../wireframe-simulator/vpBound.h"
+#include "../wireframe-simulator/vpVwstack.h"
+#include "../wireframe-simulator/vpScene.h"
+
 /*!
   Basic constructor
 */

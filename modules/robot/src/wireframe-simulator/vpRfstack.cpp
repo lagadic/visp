@@ -44,14 +44,13 @@
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpArit.h>
-#include	<visp3/robot/vpView.h>
-#include	<visp3/robot/vpRfstack.h>
-#include	<stdio.h>
-#include	<string.h>
+#include "vpMy.h"
+#include "vpArit.h"
+#include "vpView.h"
+#include "vpRfstack.h"
+#include <stdio.h>
+#include <string.h>
 #define	STACKSIZE	32
-
 
 static	int	stack[STACKSIZE] = {vpDEFAULT_REMOVE};	/* pile		*/
 static	int	*sp		 = stack;		/* sommet 	*/

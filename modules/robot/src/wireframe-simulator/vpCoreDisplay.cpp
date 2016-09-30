@@ -44,22 +44,14 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include	<stdio.h>
 #include	<stdlib.h>
-/*
-#include	<suntool/sunview.h>
-*/
-#ifdef	suncgi
-#include	"cgidefs.h"
-#endif	/* suncgi	*/
 
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpArit.h>
-//#include	"graph.h"
 
-#include	<visp3/robot/vpBound.h>
-#include	<visp3/robot/vpView.h>
-#include	<visp3/robot/vpImstack.h>
-#include	<visp3/robot/vpRfstack.h>
-#include	<visp3/robot/vpVwstack.h>
+#include "vpMy.h"
+#include "vpCoreDisplay.h"
+#include "vpView.h"
+#include "vpImstack.h"
+#include "vpRfstack.h"
+#include "vpVwstack.h"
 
 
 /*

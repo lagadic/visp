@@ -35,20 +35,17 @@
  *
  *****************************************************************************/
 
-
-
-
-#include "visp3/core/vpConfig.h"
+#include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpArit.h>
-#include	<visp3/robot/vpBound.h>
-#include	<errno.h>
-#include	<math.h>
-#include	<stdio.h>
-#include	<stdlib.h>
-#include	<string.h>
+#include "vpMy.h"
+#include "vpArit.h"
+#include "vpBound.h"
+#include <errno.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /*
  * La procedure "free_Bound" libere la memoire d'une surface.

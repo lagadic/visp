@@ -42,15 +42,15 @@
 
 
 
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpToken.h>
-#include	<visp3/robot/vpLex.h>
+#include "vpMyio.h"
+#include "vpToken.h"
+#include "vpLex.h"
 
-#include	<stdio.h>
-#include	<stdlib.h>
-#include	<string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 
 extern	char	*mytext;	/* chaine du symbole courant	*/
 

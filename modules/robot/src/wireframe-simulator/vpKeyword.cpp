@@ -39,20 +39,19 @@
 
 
 
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpToken.h>
+#include "vpMy.h"
+#include "vpToken.h"
+#include "vpKeyword.h"
 
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<string.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-void open_keyword (Keyword *kwp);
 static	void	open_hash (void);
 static	void	close_hash (void);
 static	int hashpjw (const char *str);
 static	void insert_keyword (const char *str, Index token);
-Index get_symbol (char *ident, int length);
 
 #ifdef	debug
 static	void	delete_keyword (void);

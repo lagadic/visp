@@ -44,8 +44,10 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include "vpView.h"
+
 void		fprintf_vwstack (FILE *fp, char *argv);
-extern	View_parameters	*get_vwstack (void);
+View_parameters	*get_vwstack (void);
 void		load_vwstack (View_parameters *vp);
 void		pop_vwstack (void);
 void		push_vwstack (void);

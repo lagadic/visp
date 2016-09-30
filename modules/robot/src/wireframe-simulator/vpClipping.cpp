@@ -41,32 +41,19 @@
  *
  *****************************************************************************/
 
-
-
-
-
-
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include <visp3/robot/vpMy.h>
-#include <visp3/robot/vpArit.h>
-#include <visp3/robot/vpBound.h>
-#include <visp3/robot/vpView.h>
+#include "vpClipping.h"
+#include "vpView.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits>
 #include <cmath>
 
-void open_clipping (void);
-void close_clipping (void);
-static Index clipping (Byte mask, Index vni, Index *pi, Index *po);
-static Index clipping_Face (Face *fi, Face *fo);
-static Index clipping_Face (Face *fi, Face *fo);
-static	void	inter (Byte mask, Index v0, Index v1);
-static	void	point_4D_3D (Point4f *p4, int size, Byte *cp, Point3f *p3);
-void set_Point4f_code (Point4f *p4, int size, Byte *cp);
-Byte where_is_Point4f (Point4f *p4);
+static	void inter (Byte mask, Index v0, Index v1);
+static	void point_4D_3D (Point4f *p4, int size, Byte *cp, Point3f *p3);
 
 /*
  * Variables utilisees par le decoupage :
@@ -263,8 +250,7 @@ clipping_Face (Face *fi, Face *fo)
  * 		Pointeur de la surface resultat "clip" si elle est visible,
  *		NULL sinon.
  */
-Bound
-*clipping_Bound (Bound *bp, Matrix m)
+Bound *clipping_Bound (Bound *bp, Matrix m)
 {
 	Face	*fi   = bp->face.ptr;		/* 1ere face	*/
 	Face	*fend = fi + bp->face.nbr;	/* borne de "fi"*/

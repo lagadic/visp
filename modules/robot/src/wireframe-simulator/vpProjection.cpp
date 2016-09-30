@@ -37,22 +37,12 @@
  *****************************************************************************/
 
 
-
-
-
-
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpArit.h>
-#include	<visp3/robot/vpView.h>
-#include	<stdio.h>
-#include	<math.h>
-void set_parallel (View_parameters*, Matrix);
-void set_perspective (View_parameters*, Matrix);
-
-
+#include "vpProjection.h"
+#include <stdio.h>
+#include <math.h>
 
 /*
  * La procedure "View_to_Matrix" constuit la matrice homogene de projection

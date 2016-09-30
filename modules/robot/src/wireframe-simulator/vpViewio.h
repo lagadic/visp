@@ -28,47 +28,29 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Le module "token.c" contient la declaration des mots cles.
- * de l'analyseur lexical "lex".
+ * Le module "viewio.c" contient les procedures d'entree/sortie
+ * des types definis dans le module "view.h".
+ * Les entrees non specifiees sont effectuees
+ * sur le fichier source de "lex.c".
+ * Pour les mots cles des "fprintf_..." voir "token.c".
  *
  * Authors:
  * Jean-Luc CORRE
  *
  *****************************************************************************/
 
-
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpToken.h>
+#ifndef vpViewio_h
+#define vpViewio_h
 
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include "vpMy.h"
+#include "vpView.h"
 
-Keyword	keyword_tbl[] = {	/* tableau des mots cles termine par NULL*/
-	{ "above",	T_ABOVE		},
-	{ "back",	T_BACK		},
-	{ "below",	T_BELOW		},
-	{ "bound",	T_BOUND		},
-	{ "cop",	T_COP		},
-	{ "depth",	T_DEPTH		},
-	{ "exit",	T_EXIT		},
-	{ "face_list",	T_FACE_LIST	},
-	{ "front",	T_FRONT		},
-	{ "left",	T_LEFT		},
-	{ "none",	T_NONE		},
-	{ "parallel",	T_PARALLEL	},
-	{ "perspective",T_PERSPECTIVE	},
-	{ "point_list",	T_POINT_LIST	},
-	{ "remove",	T_REMOVE	},
-	{ "right",	T_RIGHT		},
-	{ "type",	T_TYPE		},
-	{ "view",	T_VIEW		},
-	{ "vpn",	T_VPN		},
-	{ "vrp",	T_VRP		},
-	{ "vup",	T_VUP		},
-	{ "window",	T_WINDOW	},
-	{ NULL,		NULL		}
-};
+void fscanf_Remove (Byte *bp);
+void fscanf_View_parameters (View_parameters *vp);
 
+#endif
 #endif

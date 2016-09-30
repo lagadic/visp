@@ -49,8 +49,13 @@
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #include <string>
-const double vpSimulatorAfma6::defaultPositioningVelocity = 25.0;
 
+#include "../wireframe-simulator/vpBound.h"
+#include "../wireframe-simulator/vpVwstack.h"
+#include "../wireframe-simulator/vpRfstack.h"
+#include "../wireframe-simulator/vpScene.h"
+
+const double vpSimulatorAfma6::defaultPositioningVelocity = 25.0;
 
 /*!
   Basic constructor

@@ -28,63 +28,36 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Module de Macros et de Types de bases en langage "C".
+ * Le module "clipping.c" contient les procedures de decoupage
+ * d'une scene 3D par l'algorithme de Sutherland et Hodgman.
+ * Pour plus de reseignements, voir :
+ * I. Sutherland, E. Hodgman, W. Gary.
+ * "Reentrant Polygon Clipping".
+ * Communications of the ACM,
+ * Junary 1974, Volume 17, Number 1, pp 32-44.
  *
  * Authors:
  * Jean-Luc CORRE
  *
  *****************************************************************************/
-#ifndef vpMy_H
-#define vpMy_H
+
+#ifndef vpClipping_h
+#define vpClipping_h
 
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#ifndef	NULL
-#define	NULL		0
-#endif
-#ifndef	FALSE
-#define	FALSE		0
-#endif
-#ifndef	TRUE
-#define	TRUE		1
-#endif
+#include "vpMy.h"
+#include "vpArit.h"
+#include "vpBound.h"
 
-#ifndef	STDIN
-#define	STDIN		0
-#endif
-#ifndef	STDOUT
-#define	STDOUT		1
-#endif
-#ifndef	STDERR
-#define	STDERR		2
-#endif
-
-#define	NAMESIZE	80
-#define	LINESIZE	256
-
-
-#define	M_EPSILON	1E-06
-
-//#define	ABS(X)		(((X) < 0)   ? -(X) : (X))
-#define	FABS(X)		(((X) < 0.0) ? -(X) : (X))
-//#define	MAX(A,B)	(((A) > (B)) ? (A) : (B))
-//#define	MAX3(A,B,C)	(MAX(MAX(A,B),C))
-//#define	MIN(A,B)	(((A) < (B)) ? (A) : (B))
-//#define	MIN3(A,B,C)	(MIN(MIN(A,B),C))
-
-#define	MIN_MAX(M,MIN,MAX)	if ((M) < (MIN)) (MIN) = (M);\
-			 	else if ((M) > (MAX)) (MAX) = (M) 
-
-#define	TWO_POWER(P)	(((P) > 0) ? 1 << (P) : 1)
-#define	SWAP(A,B,T)	{ (T) = (A); (A) = (B); (B) = (T); }
-
-typedef	unsigned char	Byte;
-typedef	unsigned short	Index;
-typedef	char		Type;
-
-void fscanf_float (float *fp);
+void open_clipping (void);
+void open_clipping (void);
+void close_clipping (void);
+Bound *clipping_Bound (Bound *bp, Matrix m);
+void set_Point4f_code (Point4f *p4, int size, Byte *cp);
+Byte where_is_Point4f (Point4f *p4);
 
 #endif
 #endif

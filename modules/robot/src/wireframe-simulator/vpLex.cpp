@@ -41,24 +41,18 @@
 
 
 
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpToken.h>
-#include	<visp3/robot/vpKeyword.h>
+#include "vpMy.h"
+#include "vpToken.h"
+#include "vpKeyword.h"
 
-#include	<ctype.h>
-#include	<math.h>
-#include	<stdio.h>
-//#include	<unistd.h>
-#include  <fcntl.h>
-
-
-// #include	<varargs.h> /* modif pour Fedora */
+#include <ctype.h>
+#include <math.h>
+#include <stdio.h>
+#include <fcntl.h>
 #include <stdarg.h>
-
-#include	<stdlib.h>
-#include	<string.h>
+#include <stdlib.h>
+#include <string.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 
 static	void	count (void);
 static	void	next_source (void);

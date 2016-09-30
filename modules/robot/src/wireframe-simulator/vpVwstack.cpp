@@ -44,14 +44,12 @@
 #include	<string.h>
 #include	<limits>
 #include	<cmath> // std::fabs()
-
-// #include	<varargs.h> /* modif Fedora
 #include	<stdarg.h>
 
-#include	<visp3/robot/vpMy.h>
-#include	<visp3/robot/vpArit.h>
-#include	<visp3/robot/vpView.h>
-#include	<visp3/robot/vpVwstack.h>
+#include "vpMy.h"
+#include "vpArit.h"
+#include "vpView.h"
+#include "vpVwstack.h"
 
 
 #define	STACKSIZE	4

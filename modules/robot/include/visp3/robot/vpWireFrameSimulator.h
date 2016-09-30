@@ -51,36 +51,6 @@
 #include <list>
 #include <string>
 
-#include <visp3/robot/vpMy.h>
-#include <visp3/robot/vpArit.h>
-#include <visp3/robot/vpBound.h>
-#include <visp3/robot/vpView.h>
-#include <visp3/robot/vpToken.h>
-#include <visp3/robot/vpTmstack.h>
-#include <visp3/robot/vpVwstack.h>
-#include <visp3/robot/vpRfstack.h>
-#include <visp3/robot/vpArit.h>
-
-void open_display();
-void close_display();
-void open_clipping();
-void close_clipping();
-void open_keyword (Keyword *kwp);
-void open_lex (void);
-void open_source (FILE *fd, const char *str);
-void malloc_Bound_scene (Bound_scene *bsp, const char *name,Index bn);
-void free_Bound_scene (Bound_scene *bsp);
-void parser (Bound_scene *bsp);
-void close_source (void);
-void close_lex (void);
-void close_keyword (void);
-void display_scene(Matrix mat, Bound_scene sc);
-void View_to_Matrix (View_parameters *vp, Matrix m);
-Bound *clipping_Bound (Bound *bp, Matrix m);
-void set_Bound_face_display (Bound *bp, Byte b);
-void point_3D_2D (Point3f *p3, Index size, int xsize, int ysize, Point2i *p2);
-void wireframe_Face (Face *fp, Point2i *pp);
-
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -90,10 +60,7 @@ void wireframe_Face (Face *fp, Point2i *pp);
 #endif
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/robot/vpImageSimulator.h>
-
-void set_scene (const char*, Bound_scene *, float);
-void vp2jlc_matrix (const vpHomogeneousMatrix, Matrix&);
-
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>
 
 /*!
   \class vpWireFrameSimulator

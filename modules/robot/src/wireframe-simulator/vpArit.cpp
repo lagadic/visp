@@ -35,8 +35,8 @@
  *
  *****************************************************************************/
 
-#include <visp3/robot/vpMy.h>
-#include <visp3/robot/vpArit.h>
+#include "vpMy.h"
+#include "vpArit.h"
 #include <visp3/core/vpMath.h>
 #include <stdio.h>
 #include <math.h>
