@@ -37,9 +37,13 @@
 
 #include <visp3/core/vpImageTools.h>
 
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#  include <emmintrin.h>
+#  define VISP_HAVE_SSE2 1
+#endif
+
 
 /*!
-
   Change the look up table (LUT) of an image. Considering pixel gray
   level values \f$ l \f$ in the range \f$[A, B]\f$, this method allows
   to rescale these values in \f$[A^*, B^*]\f$ by linear interpolation:
@@ -49,16 +53,16 @@
   l \in ]-\infty, A] \mbox{, } &  l = A^* \\
   l \in  [B, \infty[ \mbox{, } &  l = B^* \\
   l \in ]A, B[ \mbox{, }       &  l = A^* + (l-A) * \frac{B^*-A^*}{B-A}
-  \end{array} 
+  \end{array}
   \right.
   \f$
 
   \param I : Image to process.
   \param A : Low gray level value of the range to consider.
-  \param A_star : New gray level value \f$ A^*\f$ to attribute to pixel 
+  \param A_star : New gray level value \f$ A^*\f$ to attribute to pixel
   who's value was A
   \param B : Height gray level value of the range to consider.
-  \param B_star : New gray level value \f$ B^*\f$ to attribute to pixel 
+  \param B_star : New gray level value \f$ B^*\f$ to attribute to pixel
   who's value was B
   \return The modified image.
 
@@ -83,29 +87,29 @@ int main()
 #endif
 
   // Read an image from the disk
-  vpImageIo::read(I, filename); 
+  vpImageIo::read(I, filename);
 
   // Binarize image I:
   // - gray level values less than or equal to 127 are set to 0,
   // - gray level values greater than 128 are set to 255
   vpImageTools::changeLUT(I, 127, 0, 128, 255);
-  
-  vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format 
+
+  vpImageIo::write(I, "Klimt.pgm"); // Write the image in a PGM P5 image file format
 }
   \endcode
 
 */
 void vpImageTools::changeLUT(vpImage<unsigned char>& I,
-			     unsigned char A,
-			     unsigned char A_star,
-			     unsigned char B,
-			     unsigned char B_star)
+                             unsigned char A,
+                             unsigned char A_star,
+                             unsigned char B,
+                             unsigned char B_star)
 {
   // Test if input values are valid
   if (B <= A) {
     vpERROR_TRACE("Bad gray levels") ;
     throw (vpImageException(vpImageException::incorrectInitializationError ,
-			    "Bad gray levels")) ;
+                            "Bad gray levels"));
   }
   unsigned char v;
 
@@ -125,29 +129,29 @@ void vpImageTools::changeLUT(vpImage<unsigned char>& I,
 }
 
 /*!
-  Compute the signed difference between the two images I1 and I2 for 
+  Compute the signed difference between the two images I1 and I2 for
   visualization issue : Idiff = I1-I2
 
-  - pixels with a null difference are set to 128. 
+  - pixels with a null difference are set to 128.
   - A negative difference implies a pixel value < 128
   - A positive difference implies a pixel value > 128
-  
+
   \param I1 : The first image.
   \param I2 : The second image.
   \param Idiff : The result of the difference.
 */
 void vpImageTools::imageDifference(const vpImage<unsigned char> &I1,
-				   const vpImage<unsigned char> &I2,
-				   vpImage<unsigned char> &Idiff)
+                                   const vpImage<unsigned char> &I2,
+                                   vpImage<unsigned char> &Idiff)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth()))
   {
     throw (vpException(vpException::dimensionError, "The two images have not the same size"));
   }
-  
+
   if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
     Idiff.resize(I1.getHeight(), I1.getWidth());
-  
+
   unsigned int n = I1.getHeight() * I1.getWidth() ;
   for (unsigned int b = 0; b < n ; b++)
   {
@@ -169,8 +173,8 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1,
 
 void
 vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1,
-				   const vpImage<unsigned char> &I2,
-				   vpImage<unsigned char> &Idiff)
+                                      const vpImage<unsigned char> &I2,
+                                      vpImage<unsigned char> &Idiff)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth()))
   {
@@ -185,5 +189,93 @@ vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1,
   {
     int diff = I1.bitmap[b] - I2.bitmap[b];
     Idiff.bitmap[b] = diff;
+  }
+}
+
+/*!
+  Compute the image addition: \f$ Ires = I1 + I2 \f$.
+
+  \param I1 : The first image.
+  \param I2 : The second image.
+  \param Ires : \f$ Ires = I1 + I2 \f$
+  \param saturate : If true, saturate the result to [0 ; 255] using vpMath::saturate, otherwise overflow may occur.
+*/
+void
+vpImageTools::imageAdd(const vpImage<unsigned char> &I1,
+                       const vpImage<unsigned char> &I2,
+                       vpImage<unsigned char> &Ires,
+                       const bool saturate)
+{
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
+    throw (vpException(vpException::dimensionError, "The two images do not have the same size"));
+  }
+
+  if ((I1.getHeight() != Ires.getHeight()) || (I1.getWidth() != Ires.getWidth())) {
+    Ires.resize(I1.getHeight(), I1.getWidth());
+  }
+
+  unsigned char *ptr_I1   = I1.bitmap;
+  unsigned char *ptr_I2   = I2.bitmap;
+  unsigned char *ptr_Ires = Ires.bitmap;
+  unsigned int cpt = 0;
+
+#if VISP_HAVE_SSE2
+  if (Ires.getSize() >= 16) {
+    for (; cpt <= Ires.getSize() - 16 ; cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
+      const __m128i v1   = _mm_loadu_si128( (const __m128i*) ptr_I1);
+      const __m128i v2   = _mm_loadu_si128( (const __m128i*) ptr_I2);
+      const __m128i vres = saturate ? _mm_adds_epu8(v1, v2) : _mm_add_epi8(v1, v2);
+
+      _mm_storeu_si128( (__m128i*) ptr_Ires, vres );
+    }
+  }
+#endif
+
+  for (; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
+    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>( (short int) *ptr_I1 + (short int) *ptr_I2 ) : *ptr_I1 + *ptr_I2;
+  }
+}
+
+/*!
+  Compute the image addition: \f$ Ires = I1 - I2 \f$.
+
+  \param I1 : The first image.
+  \param I2 : The second image.
+  \param Ires : \f$ Ires = I1 - I2 \f$
+  \param saturate : If true, saturate the result to [0 ; 255] using vpMath::saturate, otherwise overflow may occur.
+*/
+void
+vpImageTools::imageSubtract(const vpImage<unsigned char> &I1,
+                            const vpImage<unsigned char> &I2,
+                            vpImage<unsigned char> &Ires,
+                            const bool saturate)
+{
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
+    throw (vpException(vpException::dimensionError, "The two images do not have the same size"));
+  }
+
+  if ((I1.getHeight() != Ires.getHeight()) || (I1.getWidth() != Ires.getWidth())) {
+    Ires.resize(I1.getHeight(), I1.getWidth());
+  }
+
+  unsigned char *ptr_I1   = I1.bitmap;
+  unsigned char *ptr_I2   = I2.bitmap;
+  unsigned char *ptr_Ires = Ires.bitmap;
+  unsigned int cpt = 0;
+
+#if VISP_HAVE_SSE2
+  if (Ires.getSize() >= 16) {
+    for (; cpt <= Ires.getSize() - 16 ; cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
+      const __m128i v1   = _mm_loadu_si128( (const __m128i*) ptr_I1);
+      const __m128i v2   = _mm_loadu_si128( (const __m128i*) ptr_I2);
+      const __m128i vres = saturate ? _mm_subs_epu8(v1, v2) : _mm_sub_epi8(v1, v2);
+
+      _mm_storeu_si128( (__m128i*) ptr_Ires, vres );
+    }
+  }
+#endif
+
+  for (; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
+    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>( (short int) *ptr_I1 - (short int) *ptr_I2 ) : *ptr_I1 - *ptr_I2;
   }
 }
