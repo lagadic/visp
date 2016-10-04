@@ -131,19 +131,24 @@ public:
   vpImage(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false) ;
   //! destructor
   virtual ~vpImage() ;
-  //! set the size of the image
-  void init(unsigned int height, unsigned int width) ;
-  //! set the size of the image
-  void init(unsigned int height, unsigned int width, Type value) ;
-  //! init from an image stored as a continuous array in memory
-  void init(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false);
-  //! set the size of the image without initializing it.
-  void resize(const unsigned int h, const unsigned int w) ;
-  //! set the size of the image and initialize it.
-  void resize(const unsigned int h, const unsigned int w, const Type val) ;
-  //! destructor
-  void destroy() ;
 
+  /** @name Inherited functionalities from vpImage */
+  //@{
+
+  // destructor
+  void destroy();
+
+  // Returns a new image that's double size of the current image
+  void doubleSizeImage(vpImage<Type> &res);
+
+  /*!
+    Get the number of columns in the image.
+
+    \return The image number of column, or image width.
+
+    \sa getWidth()
+   */
+  inline  unsigned int getCols() const { return width ; }
   /*!
     Get the image height.
 
@@ -153,44 +158,6 @@ public:
 
   */
   inline  unsigned int getHeight() const { return height; }
-  /*!
-    Get the image width.
-
-    \return The image width.
-
-    \sa getHeight()
-
-  */
-  inline  unsigned int getWidth() const { return width; }
-
- /*!
-
-    Get the number of rows in the image.
-
-    \return The image number of rows, or image height.
-
-    \sa getHeight()
-  */
-  inline  unsigned int getRows() const { return height ; }
-
-  /*!
-    Get the number of columns in the image.
-
-    \return The image number of column, or image width.
-
-    \sa getWidth()
-   */
-   inline  unsigned int getCols() const { return width ; }
-
-  /*!
-    Get the image size.
-
-    \return The image size = width * height.
-
-    \sa getWidth(), getHeight()
-   */
-   inline  unsigned int getSize() const { return width*height ; }
-
 
   // Return the maximum value within the bitmap
   Type getMaxValue() const ;
@@ -198,11 +165,6 @@ public:
   Type getMinValue() const ;
   //Look for the minumum and the maximum value within the bitmap
   void getMinMaxValue(Type &min, Type &max) const;
-
-  // Gets the value of a pixel at a location with bilinear interpolation.
-  Type getValue(double i, double j) const;
-  // Gets the value of a pixel at a location with bilinear interpolation.
-  Type getValue(vpImagePoint &ip) const;
 
   /*!
 
@@ -216,17 +178,59 @@ public:
    */
   inline unsigned int getNumberOfPixel() const{ return npixels; }
 
+  /*!
+
+    Get the number of rows in the image.
+
+    \return The image number of rows, or image height.
+
+    \sa getHeight()
+  */
+  inline  unsigned int getRows() const { return height ; }
+  /*!
+    Get the image size.
+
+    \return The image size = width * height.
+
+    \sa getWidth(), getHeight()
+   */
+  inline unsigned int getSize() const { return width*height ; }
+
+  // Gets the value of a pixel at a location with bilinear interpolation.
+  Type getValue(double i, double j) const;
+  // Gets the value of a pixel at a location with bilinear interpolation.
+  Type getValue(vpImagePoint &ip) const;
+  /*!
+    Get the image width.
+
+    \return The image width.
+
+    \sa getHeight()
+
+  */
+  inline  unsigned int getWidth() const { return width; }
+
+  // Returns a new image that's half size of the current image
+  void halfSizeImage(vpImage<Type> &res);
+
+  //! Set the size of the image
+  void init(unsigned int height, unsigned int width) ;
+  //! Set the size of the image
+  void init(unsigned int height, unsigned int width, Type value) ;
+  //! init from an image stored as a continuous array in memory
+  void init(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false);
+  void insert(const vpImage<Type> &src, const vpImagePoint topLeft);
+
   //------------------------------------------------------------------
   //         Acces to the image
-
 
   //! operator[] allows operation like I[i] = x.
   inline Type *operator[]( const unsigned int i)   { return row[i];}
   inline Type *operator[]( const int i)   { return row[i];}
 
   //! operator[] allows operation like x = I[i]
-  inline const  Type *operator[](unsigned int i) const { return row[i];}
-  inline const  Type *operator[](int i) const { return row[i];}
+  inline const Type *operator[](unsigned int i) const { return row[i];}
+  inline const Type *operator[](int i) const { return row[i];}
 
   /*!
     Get the value of an image point with coordinates (i, j), with i the row position and j
@@ -235,7 +239,7 @@ public:
     \return Value of the image point (i, j).
 
   */
-  inline  Type operator()(const unsigned int i, const  unsigned int j) const
+  inline Type operator()(const unsigned int i, const  unsigned int j) const
   {
     return bitmap[i*width+j] ;
   }
@@ -244,7 +248,7 @@ public:
     the column position.
 
   */
-  inline  void  operator()(const unsigned int i, const  unsigned int j,
+  inline void  operator()(const unsigned int i, const  unsigned int j,
          const Type &v)
   {
     bitmap[i*width+j] = v ;
@@ -253,14 +257,14 @@ public:
     Get the value of an image point.
 
     \param ip : An image point with sub-pixel coordinates. Sub-pixel
-  coordinates are roughly transformed to insigned int coordinates by cast.
+    coordinates are roughly transformed to insigned int coordinates by cast.
 
     \return Value of the image point \e ip.
 
     \sa getValue(const vpImagePoint &)
 
   */
-  inline  Type operator()(const vpImagePoint &ip) const
+  inline Type operator()(const vpImagePoint &ip) const
   {
     unsigned int i = (unsigned int) ip.get_i();
     unsigned int j = (unsigned int) ip.get_j();
@@ -271,13 +275,12 @@ public:
     Set the value of an image point.
 
     \param ip : An image point with sub-pixel coordinates. Sub-pixel
-  coordinates are roughly transformed to insigned int coordinates by cast.
+    coordinates are roughly transformed to insigned int coordinates by cast.
 
     \param v : Value to set for the image point.
 
   */
-  inline  void  operator()(const vpImagePoint &ip,
-         const Type &v)
+  inline void operator()(const vpImagePoint &ip, const Type &v)
   {
     unsigned int i = (unsigned int) ip.get_i();
     unsigned int j = (unsigned int) ip.get_j();
@@ -288,29 +291,27 @@ public:
   vpImage<Type> operator-(const vpImage<Type> &B);
 
   //! Copy operator
-  vpImage<Type>&  operator=(const vpImage<Type> &I) ;
+  vpImage<Type>& operator=(const vpImage<Type> &I);
 
   vpImage<Type>& operator=(const Type &v);
   bool operator==(const vpImage<Type> &I);
   bool operator!=(const vpImage<Type> &I);
 
-  void insert(const vpImage<Type> &src, const vpImagePoint topLeft);
-
-
-  // Returns a new image that's half size of the current image
-  void halfSizeImage(vpImage<Type> &res);
+  // Perform a look-up table transformation
+  void performLut(const Type (&lut)[256], const unsigned int nbThreads=1);
 
   // Returns a new image that's a quarter size of the current image
   void quarterSizeImage(vpImage<Type> &res);
 
-  // Returns a new image that's double size of the current image
-  void doubleSizeImage(vpImage<Type> &res);
+  // set the size of the image without initializing it.
+  void resize(const unsigned int h, const unsigned int w);
+  // set the size of the image and initialize it.
+  void resize(const unsigned int h, const unsigned int w, const Type val);
 
   void sub(const vpImage<Type> &B, vpImage<Type> &C);
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
 
-  // Perform a look-up table transformation
-  void performLut(const Type (&lut)[256], const unsigned int nbThreads=1);
+  //@}
 
 private:
   unsigned int npixels ; ///! number of pixel in the image
