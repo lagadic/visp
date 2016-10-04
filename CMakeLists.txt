@@ -204,12 +204,6 @@ VP_CHECK_PACKAGE(IRISA)
 VP_CHECK_PACKAGE(NAS)
 # check for linux/parport.h
 VP_CHECK_PACKAGE(PARPORT)
-# Find IsNaN
-VP_CHECK_PACKAGE(IsNaN)
-# Find IsInf
-VP_CHECK_PACKAGE(IsInf)
-# Find Round
-VP_CHECK_PACKAGE(Round)
 # OpenGL
 VP_CHECK_PACKAGE(OpenGL)
 # for pioneer
@@ -272,6 +266,13 @@ VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" O
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON)
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF USE_REALSENSE)
 VP_OPTION(BUILD_ATIDAQ    ""           ""    "Include atidaq-c support"     "" ON IF USE_COMEDI)
+
+# Find IsNaN (should be after USE_CPP11)
+VP_CHECK_PACKAGE(IsNaN)
+# Find IsInf (should be after USE_CPP11)
+VP_CHECK_PACKAGE(IsInf)
+# Find Round (should be after USE_CPP11)
+VP_CHECK_PACKAGE(Round)
 
 #----------------------------------------------------------------------
 # For Dart server and tests

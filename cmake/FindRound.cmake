@@ -40,6 +40,9 @@ include(CheckIncludeFiles)
 include(CheckCXXSourceCompiles)
 
 macro(check_math_expr1 _expr _var)
+    if(CPP11_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CPP11_CXX_FLAGS})
+    endif()
     check_cxx_source_compiles("
 #include <math.h>
 int main(int argc, char ** argv)
@@ -51,6 +54,9 @@ int main(int argc, char ** argv)
 endmacro()
 
 macro(check_math_expr2 _expr _var)
+    if(CPP11_CXX_FLAGS)
+      set(CMAKE_REQUIRED_FLAGS ${CPP11_CXX_FLAGS})
+    endif()
     check_cxx_source_compiles("
 #include <cmath>
 int main(int argc, char ** argv)
