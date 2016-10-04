@@ -3,3 +3,5 @@
 CMakeCache.txt
 .DS_Store
 CMakeLists.txt.user*
+platforms/ios/build_framework.pyc
+
