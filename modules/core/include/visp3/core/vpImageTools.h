@@ -65,7 +65,7 @@
 
 /*!
   \class vpImageTools
-  
+
   \ingroup group_core_image
 
   \brief Various image tools; sub-image extraction, modification of
@@ -78,25 +78,25 @@ class VISP_EXPORT vpImageTools
 public:
   template<class Type>
   static void createSubImage(const vpImage<Type> &I,
-			     unsigned int i_sub, unsigned int j_sub,
-			     unsigned int nrow_sub, unsigned int ncol_sub,
-			     vpImage<Type> &S);
+                             unsigned int i_sub, unsigned int j_sub,
+                             unsigned int nrow_sub, unsigned int ncol_sub,
+                             vpImage<Type> &S);
 
   template<class Type>
   static void createSubImage(const vpImage<Type> &I,
-			     const vpRect &rect,
-			     vpImage<Type> &S);
+                             const vpRect &rect,
+                             vpImage<Type> &S);
 
   template<class Type>
   static inline void binarise(vpImage<Type> &I,
-		       Type threshold1, Type threshold2,
-         Type value1, Type value2, Type value3, const bool useLUT=true);
+                              Type threshold1, Type threshold2,
+                              Type value1, Type value2, Type value3, const bool useLUT=true);
 
   static void changeLUT(vpImage<unsigned char>& I,
-			unsigned char A,
-			unsigned char newA,
-			unsigned char B,
-			unsigned char newB);
+                        unsigned char A,
+                        unsigned char newA,
+                        unsigned char B,
+                        unsigned char newB);
 
   template<class Type>
   static void undistort(const vpImage<Type> &I,
@@ -105,19 +105,29 @@ public:
 
   template<class Type>
   static void flip(const vpImage<Type> &I,
-                        vpImage<Type> &newI);
+                   vpImage<Type> &newI);
 
   template<class Type>
   static void flip(vpImage<Type> &I);
 
 
   static void imageDifference(const vpImage<unsigned char> &I1,
-			      const vpImage<unsigned char> &I2,
-			      vpImage<unsigned char> &Idiff) ;
+                              const vpImage<unsigned char> &I2,
+                              vpImage<unsigned char> &Idiff);
 
   static void imageDifferenceAbsolute(const vpImage<unsigned char> &I1,
-  				   const vpImage<unsigned char> &I2,
-  				   vpImage<unsigned char> &Idiff);
+                                      const vpImage<unsigned char> &I2,
+                                      vpImage<unsigned char> &Idiff);
+
+  static void imageAdd(const vpImage<unsigned char> &I1,
+                       const vpImage<unsigned char> &I2,
+                       vpImage<unsigned char> &Ires,
+                       const bool saturate=false);
+
+  static void imageSubtract(const vpImage<unsigned char> &I1,
+                            const vpImage<unsigned char> &I2,
+                            vpImage<unsigned char> &Ires,
+                            const bool saturate=false);
 } ;
 
 /*!
@@ -132,9 +142,9 @@ public:
 */
 template<class Type>
 void vpImageTools::createSubImage(const vpImage<Type> &I,
-				  unsigned int i_sub, unsigned int j_sub,
-				  unsigned int nrow_sub, unsigned int ncol_sub,
-				  vpImage<Type> &S)
+                                  unsigned int i_sub, unsigned int j_sub,
+                                  unsigned int nrow_sub, unsigned int ncol_sub,
+                                  vpImage<Type> &S)
 {
   unsigned int i,j ;
   unsigned int imax = i_sub + nrow_sub ;
@@ -171,8 +181,8 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
 */
 template<class Type>
 void vpImageTools::createSubImage(const vpImage<Type> &I,
-				  const vpRect &rect,
-				  vpImage<Type> &S)
+                                  const vpRect &rect,
+                                  vpImage<Type> &S)
 {
   double dleft   = rect.getLeft();
   double dtop    = rect.getTop();
@@ -222,8 +232,8 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
 */
 template<class Type>
 inline void vpImageTools::binarise(vpImage<Type> &I,
-			    Type threshold1, Type threshold2,
-			    Type value1, Type value2, Type value3, const bool useLUT)
+                                   Type threshold1, Type threshold2,
+                                   Type value1, Type value2, Type value3, const bool useLUT)
 {
   if(useLUT) {
     std::cerr << "LUT not available for this type ! Will use the iteration method." << std::endl;
@@ -254,8 +264,8 @@ inline void vpImageTools::binarise(vpImage<Type> &I,
 */
 template<>
 inline void vpImageTools::binarise(vpImage<unsigned char> &I,
-    unsigned char threshold1, unsigned char threshold2,
-    unsigned char value1, unsigned char value2, unsigned char value3, const bool useLUT)
+                                   unsigned char threshold1, unsigned char threshold2,
+                                   unsigned char value1, unsigned char value2, unsigned char value3, const bool useLUT)
 {
   if(useLUT) {
     //Construct the LUT
@@ -364,16 +374,16 @@ void *vpUndistortInternalType<Type>::vpUndistort_threaded(void *arg)
       Type v01;
       Type v23;
       if ( (0 <= u_round) && (0 <= v_round) &&
-	   (u_round < ((width) - 1)) && (v_round < ((height) - 1)) ) {
-	//process interpolation
-	const Type* _mp = &src[v_round*width+u_round];
-	v01 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
-	_mp += width;
-	v23 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
-	*dst = (Type)(v01 + ((v23 - v01) * dv_double));
+           (u_round < ((width) - 1)) && (v_round < ((height) - 1)) ) {
+        //process interpolation
+        const Type* _mp = &src[v_round*width+u_round];
+        v01 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
+        _mp += width;
+        v23 = (Type)(_mp[0] + ((_mp[1] - _mp[0]) * du_double));
+        *dst = (Type)(v01 + ((v23 - v01) * dv_double));
       }
       else {
-	*dst = 0;
+        *dst = 0;
       }
       dst++;
     }
@@ -447,8 +457,8 @@ void vpImageTools::undistort(const vpImage<Type> &I,
     undistortSharedData[i].nthreads = nthreads;
     undistortSharedData[i].threadid = i;
     pthread_create( &callThd[i], &attr,
-		    &vpUndistortInternalType<Type>::vpUndistort_threaded,
-		    &undistortSharedData[i]);
+                    &vpUndistortInternalType<Type>::vpUndistort_threaded,
+                    &undistortSharedData[i]);
   }
   pthread_attr_destroy(&attr);
   /* Wait on the other threads */
@@ -559,7 +569,7 @@ void vpImageTools::undistort(const vpImage<Type> &I,
   for(int v = 0 ; v < height; v++){
     for(int u = 0; u < height; u++){
       double r2 = vpMath::sqr(((double)u - u0)/px) +
-	vpMath::sqr(((double)v-v0)/py);
+                  vpMath::sqr(((double)v-v0)/py);
       double u_double = ((double)u - u0)*(1.0+kd*r2) + u0;
       double v_double = ((double)v - v0)*(1.0+kd*r2) + v0;
       undistI[v][u] = I.getPixelBI((float)u_double,(float)v_double);
@@ -588,7 +598,7 @@ void vpImageTools::flip(const vpImage<Type> &I,
     for (unsigned int i = 0; i < height; i++)
     {
       memcpy(newI.bitmap+i*width, I.bitmap+(height-1-i)*width,
-	     width*sizeof(Type));
+             width*sizeof(Type));
     }
 }
 
@@ -637,12 +647,12 @@ void vpImageTools::flip(vpImage<Type> &I)
     for ( i = 0; i < height/2; i++)
     {
       memcpy(Ibuf.bitmap, I.bitmap+i*width,
-  	            width*sizeof(Type));
+             width*sizeof(Type));
 
       memcpy(I.bitmap+i*width, I.bitmap+(height-1-i)*width,
-  	            width*sizeof(Type));
+             width*sizeof(Type));
       memcpy(I.bitmap+(height-1-i)*width, Ibuf.bitmap,
-  	            width*sizeof(Type));
+             width*sizeof(Type));
     }
 }
 
