@@ -75,7 +75,7 @@ int main()
 
 namespace vpTime
 {
-  VISP_EXPORT std::string getDateTime();
+  VISP_EXPORT std::string getDateTime(const std::string &format="%Y/%m/%d %H:%M:%S");
   VISP_EXPORT double getMinTimeForUsleepCall();
   VISP_EXPORT double measureTimeSecond() ;
   VISP_EXPORT double measureTimeMs() ;
