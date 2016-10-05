@@ -20,6 +20,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/io/vpParseArgv.h>
@@ -34,18 +35,21 @@ namespace {
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-    Capture multiple camera streams and save the stream without slowing down the acquisition.\n\
+SYNOPSIS:\n\
+  %s [-d <device count>] [-o] [-h]\n\
+\n\
+DESCRIPTION:\n\
+  Capture multiple camera streams and save the stream without slowing down the acquisition.\n\
     \n\
-    %s\
-    OPTIONS:                                               \n\
-    -d <device count>                                 \n\
-    Open the specified number of camera streams.\n\
+OPTIONS:                                               \n\
+  -d <device count>                                 \n\
+     Open the specified number of camera streams.\n\
     \n\
-    -o                                 \n\
-    Save each stream in a dedicated folder.\n\
+  -o                                 \n\
+     Save each stream in a dedicated folder.\n\
     \n\
-    -h \n\
-    Print the help.\n\n",
+  -h \n\
+     Print the help.\n\n",
     name);
 
   if (badparam)
@@ -81,20 +85,6 @@ bool getOptions(int argc, char **argv,
   }
 
   return true;
-}
-
-std::string getDateTimeStr() {
-  time_t rawtime;
-  struct tm * timeinfo;
-  char buffer[80];
-
-  time (&rawtime);
-  timeinfo = localtime(&rawtime);
-
-  strftime(buffer, 80, "%Y-%m-%d_%H.%M.%S", timeinfo);
-  std::string str(buffer);
-
-  return str;
 }
 
 //Code adapted from the original author Dan Mašek to be compatible with ViSP image
@@ -300,9 +290,9 @@ void display(const unsigned int width, const unsigned int height, const int win_
   vpImage<vpRGBa> local_img(height, width);
 
 #if defined VISP_HAVE_X11
-    vpDisplayX display;
+  vpDisplayX display;
 #elif defined VISP_HAVE_GTK
-    vpDisplayGTK display;
+  vpDisplayGTK display;
 #endif
 
   //Init Display
@@ -380,7 +370,8 @@ void display(const unsigned int width, const unsigned int height, const int win_
 } //Namespace
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   unsigned int deviceCount = 1;
   unsigned int cameraScale = 1; //640x480
   bool saveVideo = false;
@@ -418,7 +409,7 @@ int main(int argc, char *argv[]) {
   std::vector<StorageWorker> storages;
   std::vector<std::thread> storage_threads;
 
-  std::string parent_directory = getDateTimeStr();
+  std::string parent_directory = vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   if(saveVideo) {
     std::cout << "Create parent_directory: " << parent_directory << std::endl;
     vpIoTools::makeDirectory(parent_directory);
@@ -485,7 +476,11 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 #else
-int main() {
+#include <iostream>
+
+int main()
+{
+  std::cout << "Warning: This example need to be build with cxx11 compiler flags, v4l2 and x11 or gtk 3rd partiess. " << std::endl;
   return 0;
 }
 #endif
