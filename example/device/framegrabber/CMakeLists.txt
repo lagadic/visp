@@ -50,6 +50,7 @@ set(example_cpp
   grabDirectShowMulti.cpp
   grabFlyCapture.cpp
   grabOpenCV.cpp
+  grabV4l2MultiCpp11Thread.cpp
 )
 
 if(VISP_HAVE_FLYCAPTURE)
