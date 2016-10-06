@@ -139,22 +139,7 @@ STRIP_FROM_PATH        =
 # definition is used. Otherwise one should specify the include paths that
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    = "@VISP_SOURCE_DIR@/modules/ar/include" \ 
-                         "@VISP_SOURCE_DIR@/modules/core/include" \
-                         "@VISP_SOURCE_DIR@/modules/detection/include" \
-                         "@VISP_SOURCE_DIR@/modules/gui/include" \
-                         "@VISP_SOURCE_DIR@/modules/io/include" \
-                         "@VISP_SOURCE_DIR@/modules/robot/include" \
-                         "@VISP_SOURCE_DIR@/modules/sensor/include" \
-                         "@VISP_SOURCE_DIR@/modules/tracker/blob/include" \
-                         "@VISP_SOURCE_DIR@/modules/tracker/klt/include" \
-                         "@VISP_SOURCE_DIR@/modules/tracker/mbt/include" \
-                         "@VISP_SOURCE_DIR@/modules/tracker/me/include" \
-                         "@VISP_SOURCE_DIR@/modules/tracker/tt/include" \
-                         "@VISP_SOURCE_DIR@/modules/tracker/tt_mi/include" \
-                         "@VISP_SOURCE_DIR@/modules/vision/include" \
-                         "@VISP_SOURCE_DIR@/modules/visual_features/include" \
-                         "@VISP_SOURCE_DIR@/modules/vs/include"
+STRIP_FROM_INC_PATH    = @DOXYGEN_STRIP_FROM_INC_PATH@
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
 # (but less readable) file names. This can be useful if your file system
