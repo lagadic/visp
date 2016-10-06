@@ -273,7 +273,7 @@ void sleepMs(double t)
    | %%r       | 12-hour clock time *	                                | 02:55:02 pm              |
    | %%R       | 24-hour HH:MM time, equivalent to %H:%M              | 14:55                    |
    | %%S       | Second (00-61)                                       | 02                       |
-   | %%t       | Horizontal-tab character ('\t')                      |                          |
+   | %%t       | Horizontal-tab character ('\\t')                     |                          |
    | %%T       | ISO 8601 time format (HH:MM:SS), equivalent to %H:%M:%S | 14:55:02              |
    | %%u       | ISO 8601 weekday as number with Monday as 1 (1-7)    | 4                        |
    | %%U       | Week number with the first Sunday as the first day of week one (00-53) | 33     |
