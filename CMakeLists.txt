@@ -318,6 +318,19 @@ if(DOXYGEN_FOUND)
     ${VISP_DOC_DIR}/config-doxygen
     @ONLY )
 
+  # set vars used in mainpage.doc.in
+  # - VISP_MAINPAGE_EXTENSION
+  set(VISP_MAINPAGE_EXTENSION "")
+  if(VISP_CONTRIB_MODULES_PATH)
+    foreach(contrib ${VISP_CONTRIB_MODULES_PATH})
+      set(mainpage_ext_file_ "${contrib}/doc/mainpage_extension.doc")
+      if(EXISTS ${mainpage_ext_file_})
+        file(READ ${mainpage_ext_file_} mainpage_ext_content_)
+        set(VISP_MAINPAGE_EXTENSION "${VISP_MAINPAGE_EXTENSION}\n${mainpage_ext_content_}")
+      endif()
+    endforeach()
+  endif()
+
   configure_file(${VISP_SOURCE_DIR}/doc/mainpage.doc.in
     ${VISP_DOC_DIR}/mainpage.doc
     @ONLY )

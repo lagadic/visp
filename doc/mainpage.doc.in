@@ -129,6 +129,8 @@ href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/p
 - \ref tutorial-multi-threading <br>This tutorial explains how to implement multi-threaded applications to capture images from a camera
 in one thread and display these images in an other thread.
 
+@VISP_MAINPAGE_EXTENSION@
+
 \section Examples_sec Using ViSP
 
 <p>ViSP C++ classes are organized in <a href="modules.html">modules</a> that may help the user during his project implementation.</p>
