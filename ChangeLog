@@ -29,6 +29,8 @@ ViSP 3.0.1 (in development)
       headers of a given module in one line
     . When using cxx11 support (USE_CPP11=ON), the corresponding compiler
       flag is propagated to the project that use ViSP as 3rd party
+    . In vpServo introduce setCameraDoF() that allows to turn off the usage
+      of some dof
   - Tutorials
     . New tutorial: How to use multi-threading capabilities
     . New tutorial: Crosscompilation for Raspberry Pi from Ubuntu host

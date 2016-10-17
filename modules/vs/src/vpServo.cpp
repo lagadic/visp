@@ -71,9 +71,12 @@ vpServo::vpServo()
     interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false),
     cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false),
     errorComputed(false), interactionMatrixComputed(false), dim_task(0), taskWasKilled(false),
-    forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial()
+    forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial(),
+    iscJcIdentity(true), cJc(6,6)
 {
+  cJc.eye();
 }
+
 /*!
   Constructor that allows to choose the visual servoing control law.
   \param servo_type : Visual servoing control law.
@@ -93,8 +96,10 @@ vpServo::vpServo(vpServoType servo_type)
     interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false),
     cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false),
     errorComputed(false), interactionMatrixComputed(false), dim_task(0), taskWasKilled(false),
-    forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4), e1_initial()
+    forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4), e1_initial(),
+    iscJcIdentity(true), cJc(6,6)
 {
+  cJc.eye();
 }
 
 /*!
@@ -233,6 +238,66 @@ void vpServo::setServo(const vpServoType &servo_type)
     _eJe.eye(6) ;
     set_eJe(_eJe) ;
   };
+}
+
+/*!
+  Set a 6-dim column vector representing the degrees of freedom that are controlled
+  in the camera frame. When set to 1, all the 6 dof are controlled.
+
+  Below we give the correspondance between the index of the vector and the considered dof:
+  - v[0] = 1 if translation along X is controled, 0 otherwise;
+  - v[1] = 1 if translation along Y is controled, 0 otherwise;
+  - v[2] = 1 if translation along Z is controled, 0 otherwise;
+  - v[3] = 1 if rotation along X is controled, 0 otherwise;
+  - v[4] = 1 if rotation along Y is controled, 0 otherwise;
+  - v[5] = 1 if rotation along Z is controled, 0 otherwise;
+
+  The following example shows how to use this function to control only wx, wy like a pan/tilt:
+  \code
+#include <visp3/visual_features/vpFeaturePoint.h>
+#include <visp3/vs/vpServo.h>
+
+int main()
+{
+  vpServo servo;
+  servo.setServo(vpServo::EYEINHAND_CAMERA);
+  vpFeaturePoint s, sd;
+  servo.addFeature(s, sd);
+
+  vpColVector dof(6, 1);
+  dof[0] = 0; // turn off vx
+  dof[1] = 0; // turn off vy
+  dof[2] = 0; // turn off vz
+  dof[5] = 0; // turn off wz
+  servo.setCameraDoF(dof);
+
+  while(1) {
+    // vpFeatureBuilder::create(s, ...);       // update current feature
+
+    vpColVector v = servo.computeControlLaw(); // compute control law
+    // only v[3] and v[4] corresponding to wx and wy are different from 0
+  }
+
+  servo.kill();
+}
+  \endcode
+*/
+void
+vpServo::setCameraDoF(const vpColVector& v)
+{
+  if(v.getRows() == 6)
+  {
+    iscJcIdentity = true;
+    for(unsigned int i = 0 ; i < 6 ; i++) {
+      if(std::fabs(v[i]) > std::numeric_limits<double>::epsilon()){
+        cJc[i][i] = 1.0;
+      }
+      else{
+        cJc[i][i] = 0.0;
+        iscJcIdentity = false;
+      }
+    }
+  }
 }
 
 
@@ -943,7 +1008,10 @@ vpColVector vpServo::computeControlLaw()
     computeError() ;
 
     // compute  task Jacobian
-    J1 = L*cVa*aJe ;
+    if(iscJcIdentity)
+      J1 = L*cVa*aJe ;
+    else
+      J1 = L*cJc*cVa*aJe ;
 
     // handle the eye-in-hand eye-to-hand case
     J1 *= signInteractionMatrix ;

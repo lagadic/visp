@@ -351,6 +351,7 @@ public:
   vpColVector secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq, const vpColVector & jointMin,
                                                const vpColVector & jointMax, const double &rho=0.1, const double &rho1=0.3, const double &lambda_tune=0.7) const;
 
+  void setCameraDoF(const vpColVector& v);
 
   /*!
     Set a variable which enables to compute the interaction matrix at each iteration.
@@ -598,8 +599,6 @@ public:
    */
   vpMatrix P;
 
-
-
   //! Singular values from the pseudo inverse.
   vpColVector sv ;
 
@@ -607,6 +606,11 @@ public:
 
   vpColVector e1_initial;
 
+  //! Boolean to know if cJc is identity (for fast computation)
+  bool iscJcIdentity;
+
+  //! A diag matrix used to determine which are the degrees of freedom that are controlled in the camera frame
+  vpMatrix cJc;
 } ;
 
 #endif
