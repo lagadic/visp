@@ -2402,13 +2402,16 @@ vpMbTracker::getEstimatedDoF() const
 }
 
 /*!
-  Set a 1x6 vpColVector representing the estimated degrees of freedom. The vector has to be this form:
-  vpColVector[0] = 1 if translation on X is estimated, 0 otherwise;
-  vpColVector[1] = 1 if translation on Y is estimated, 0 otherwise;
-  vpColVector[2] = 1 if translation on Z is estimated, 0 otherwise;
-  vpColVector[3] = 1 if rotation on X is estimated, 0 otherwise;
-  vpColVector[4] = 1 if rotation on Y is estimated, 0 otherwise;
-  vpColVector[5] = 1 if rotation on Z is estimated, 0 otherwise;
+  Set a 6-dim column vector representing the degrees of freedom in the object frame
+  that are estimated by the tracker. When set to 1, all the 6 dof are estimated.
+
+  Below we give the correspondance between the index of the vector and the considered dof:
+  - v[0] = 1 if translation along X is estimated, 0 otherwise;
+  - v[1] = 1 if translation along Y is estimated, 0 otherwise;
+  - v[2] = 1 if translation along Z is estimated, 0 otherwise;
+  - v[3] = 1 if rotation along X is estimated, 0 otherwise;
+  - v[4] = 1 if rotation along Y is estimated, 0 otherwise;
+  - v[5] = 1 if rotation along Z is estimated, 0 otherwise;
 
 */
 void
