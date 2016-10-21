@@ -1,0 +1,129 @@
+/**
+
+\page tutorial-install-crosscompiling-naoqi Tutorial: Cross-compilation for NAOqi OS from Ubuntu host
+\tableofcontents
+
+This tutorial summarizes how to cross-compile ViSP from source using NAOqi atom cross toolchain provided by SoftBank Robotics for Nao, Romeo or Pepper robots. The aim of this cross-compilation is then to use the cross-build resulting ViSP libraries on these robots. 
+
+This tutorial was tested on an Ubuntu 14.04 LTS host computer with:
+- Cross Toolchain 2.3.1 Linux 64 (\c ctc-linux32-atom-2.3.1.23) on Romeo robot 
+- Cross Toolchain 2.4.3 Linux 64 (\c ctc-linux64-atom-2.4.3.28) on Pepper robot
+
+\section cross_naoqi_toolchain Install cross toolchain
+
+Download the cross-toolchain that is compatible with your robot from <a href="https://developer.softbankrobotics.com/">https://developer.softbankrobotics.com/</a>. Depending on the robot the version of the cross toolchain might change. 
+
+In this tutorial we will illustrate how to build ViSP for Pepper with \c ctc-linux64-atom-2.4.3.28 cross toolchain.
+
+Create a workspace that contains the cross toolchain:
+\code
+$ mkdir $HOME/softbank
+\endcode 
+
+and unzip the toolchain:
+
+\code
+$ cd $HOME/softbank
+$ unzip ctc-linux64-atom-2.4.3.28.zip
+\endcode 
+
+\section cross_naoqi_visp_src Get ViSP source code
+
+Cross-compilation capabilities are fully supported since ViSP 3.0.1 release.
+
+Create first a workspace dedicated to ViSP:
+
+\code
+$ mkdir $HOME/soft
+\endcode
+
+There are different ways to get ViSP source code in this workspace:
+
+- You can download a ViSP sources <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
+\code
+$ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz --directory $HOME/soft
+\endcode
+
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the following command
+\code
+$ cd $HOME/soft
+$ git clone https://github.com/lagadic/visp.git
+\endcode
+
+- Or you can download the <a href="http://visp.inria.fr/download">latest release</a> (should be at least 3.0.1) as a zip or a tarball. Once downloaded, uncompress the file using either
+\code
+$ tar xvzf visp-x.y.z.tar.gz --directory $HOME/soft
+\endcode
+or
+\code
+$ unzip visp-x.y.z.zip -d $HOME/soft
+\endcode
+
+We suppose now that ViSP source is in a directory denoted \c \<source_dir\>, for example \c $HOME/soft/visp
+
+\section cross_naoqi_visp_config Cross-compiling ViSP from source
+
+- Create first a directory denoted \c \<binary_dir\> where you want to cross-compile ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries that could be later used on the Raspberry Pi.
+\code
+$ mkdir $HOME/soft/visp-build-ctc-linux64-atom-2.4.3.28
+\endcode
+
+- Enter \c \<binary_dir\> and configure the build:
+\code
+$ cd $HOME/soft/visp-build-ctc-linux64-atom-2.4.3.28
+$ cmake -DCMAKE_TOOLCHAIN_FILE=$HOME/softbank/ctc-linux64-atom-2.4.3.28/toolchain.cmake ../visp 
+\endcode
+\note To speed up the cross-compilation build step, you can turn off the build of the demos, examples, tests and tutorials using the following command:
+\code
+$ cmake -DCMAKE_TOOLCHAIN_FILE=$HOME/softbank/ctc-linux64-atom-2.4.3.28/toolchain.cmake ../visp -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DQI_WITH_TESTS=OFF
+\endcode 
+
+- At this step, the following third-parties should be found: \c OpenCV, \c v4l2, \c libjpeg, \c libpng, \c libxml2, \c pthread, \c zbar. This could be checked in \c ViSP-third-party.txt file where the you should find something similar to:
+\code
+$ more ViSP-third-party.txt
+  OpenCV                      : yes 
+  Video For Linux Two         : yes
+  libjpeg                     : yes
+  libpng                      : yes
+  XML2                        : yes
+  pthread                     : yes
+  zbar                        : yes
+\endcode
+\note \c zbar third-party is available with Cross Toolchain 2.3.1 Linux 64 (\c ctc-linux32-atom-2.3.1.23). This library is not present in Cross Toolchain 2.4.3 Linux 64 (\c ctc-linux64-atom-2.4.3.28).
+
+- Cross-compile ViSP
+\code
+$ make -j4 install
+\endcode
+
+The resulting installation is available in \c $HOME/soft/visp-build-ctc-linux64-atom-2.4.3.28.
+
+\section cross_naoqi_visp_install Install ViSP on NAOqi OS
+
+The result of the cross-compilation could then be installed on Nao, Romeo or Pepper robot running NAOqi OS.
+
+- Copy the cross-build installation to Nao, Romeo or Pepper target:
+\code
+$ tar cvzf install.tar.gz install
+$ scp -r install.tar.gz nao@<your_robot_ip>:
+\endcode
+
+- Install ViSP:
+First move the libraries that were cross-build to a more friend location like \c $HOME/visp.
+\code
+$ ssh nao@<your_robot_ip>
+nao~ $ tar xvzf ~/install.tar.gz
+nao~ $ mv install visp
+nao~ $ rm ~/install.tar.gz
+\endcode
+
+- Add to \c LD_LIBRARY_PATH environment var the path to ViSP libraries:
+\code
+nao~ $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/visp/lib
+\endcode 
+
+\section cross_naoqi_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started-naoqi that explains how to use ViSP as a 3rd party to build your own project on NAOqi OS for Nao, Romeo or Pepper robots.
+
+*/

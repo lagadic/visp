@@ -1,15 +1,15 @@
 /**
 
-\page tutorial-install-crosscompiling-raspberry Tutorial: Crosscompilation for Raspberry Pi from Ubuntu host
+\page tutorial-install-crosscompiling-raspberry Tutorial: Cross-compilation for Raspberry Pi from Ubuntu host
 \tableofcontents
 
 Compiling ViSP directly on your Raspberry Pi will take a lot of time. 
-In this tutorial you will learn how to crosscompile ViSP from source on an Ubuntu 14.04 host for a <a href="http://www.raspberrypi.org/help/what-is-a-raspberry-pi">Raspberry Pi 1, 2 or 3</a> target.
+In this tutorial you will learn how to cross-compile ViSP from source on an Ubuntu 14.04 host for a <a href="http://www.raspberrypi.org/help/what-is-a-raspberry-pi">Raspberry Pi 1, 2 or 3</a> target.
 
 Adapting this tutorial for other linux hosts (Fedora, Linux Mint, Debian...) should not be too complicated.
 
 The material that is here involved is the following:
-- a \b host computer running Ubuntu 14.04 where we will crosscompile ViSP that will then be used on your Raspberry Pi
+- a \b host computer running Ubuntu 14.04 where we will cross-compile ViSP that will then be used on your Raspberry Pi
 - a Raspberry Pi board that will the \b target.
 
 \note Concerning ViSP installation on Raspberry Pi, we provide also this other \ref tutorial-install-raspberry.
@@ -88,7 +88,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 \subsection cross_raspberry_host_rsync Install Raspberry Pi sysroot
 
-This step is mandatory to crosscompile ViSP with the 3rd parties that are already installed on the Raspberry target.
+This step is mandatory to cross-compile ViSP with the 3rd parties that are already installed on the Raspberry target.
 
 In your raspberrypi folder, make a folder called \c rootfs.
 
@@ -105,11 +105,11 @@ where \c 192.168.1.PI is replaced by the IP of your Raspberry Pi.
 
 \subsection cross_raspberry_visp_src Get ViSP source code
 
-Crosscompilation capabilities are fully supported since ViSP 3.0.1 release.
+Cross-compilation capabilities are fully supported since ViSP 3.0.1 release.
 
 There are different ways to get ViSP source code on Raspberry Pi:
 
-- You can download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
+- You can download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
 \code
 $ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
 \endcode
@@ -130,9 +130,9 @@ $ unzip visp-x.y.z.zip
 
 We suppose now that ViSP source is in a directory denoted \c \<source_dir\>, for example \c $HOME/soft/visp
 
-\subsection cross_raspberry_visp_config Crosscompiling ViSP from source
+\subsection cross_raspberry_visp_config Cross-compiling ViSP from source
 
-- Create first a directory denoted \c \<binary_dir\> where you want to crosscompile ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries that could be later used on the Raspberry Pi.
+- Create first a directory denoted \c \<binary_dir\> where you want to cross-compile ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries that could be later used on the Raspberry Pi.
 \code
 $ mkdir $HOME/soft/visp-crossbuild
 \endcode
@@ -144,24 +144,26 @@ $ cmake -DCMAKE_TOOLCHAIN_FILE=../visp/platforms/linux/arm-raspberrypi.toolchain
 \endcode
 \note See also \ref cross_raspberry_tips_howto_other_toolchain and \ref cross_raspberry_tips_howto_other_rootfs.
 
-- Crosscompile ViSP
+- Cross-compile ViSP
 \code
-$ make -j install
+$ make -j4 install
 \endcode
 At this point, depending on your Raspberry version you may encounter the following issues \ref cross_raspberry_tips_libpthread, \ref cross_raspberry_tips_libc, \ref cross_raspberry_tips_libpng, \ref cross_raspberry_tips_gcc_4_9 for which we give some hints to work arround.
 
-\subsection cross_raspberry_visp_usage Using ViSP crosscompilation result on Raspberry
+At the end, the resulting installation is available in\c $HOME/soft/visp-crossbuild
 
-The result of the crosscompilation could then be used on the Raspberry. We give a brief summary of the steps:
+\subsection cross_raspberry_visp_usage Using ViSP cross-compilation result on Raspberry
 
-- Copy the crossbuild installation to Raspberry Pi target
+The result of the cross-compilation could then be used on the Raspberry. We give a brief summary of the steps:
+
+- Copy the cross-build installation to Raspberry Pi target
 \code
 $ tar cvzf install.tar.gz install
 $ scp -r install.tar.gz pi@192.168.1.PI:
 \endcode
 
 - Usage on Raspberry Pi
-First move the libraries that were crossbuild to a more friend location
+First move the libraries that were cross-build to a more friend location
 \code
 $ ssh pi@192.168.1.PI
 pi@raspberrypi:~ $ tar xvzf install.tar.gz
@@ -210,7 +212,7 @@ $ cmake -DARM_RASPBERRY_ROOTFS=$HOME/soft/raspberrypi/root-fs-pi3 -DCMAKE_TOOLCH
 
 \subsection cross_raspberry_tips_libpthread Linker cannot find libpthread.so
 
-During the crosscompilation, if you get the following error:
+During the cross-compilation, if you get the following error:
 
 \code
 Linking CXX shared library ../../lib/libvisp_core.so
@@ -235,7 +237,7 @@ GROUP ( ../../../lib/arm-linux-gnueabihf/libpthread.so.0 ../../../usr/lib/arm-li
 
 \subsection cross_raspberry_tips_libc Linker cannot find libc.so
 
-During the crosscompilation, if you get the following error:
+During the cross-compilation, if you get the following error:
 \code
 .../tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/../lib/gcc/arm-linux-gnueabihf/4.8.3/../../../../arm-linux-gnueabihf/bin/ld: cannot find /lib/arm-linux-gnueabihf/libc.so.6
 .../tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/../lib/gcc/arm-linux-gnueabihf/4.8.3/../../../../arm-linux-gnueabihf/bin/ld: cannot find /usr/lib/arm-linux-gnueabihf/libc_nonshared.a
@@ -258,7 +260,7 @@ GROUP ( ../../../lib/arm-linux-gnueabihf/libc.so.6 ../../../usr/lib/arm-linux-gn
 
 \subsection cross_raspberry_tips_libpng No rule to make target libpng.so
 
-If during crosscompilation, you get the error:
+If during cross-compilation, you get the error:
 \code
 make[3]: *** No rule to make target `.../raspberrypi/rootfs/usr/lib/arm-linux-gnueabihf/libpng.so', needed by `lib/libvisp_io.so.3.0.1'
 \endcode
@@ -279,12 +281,12 @@ $ ln -s ../../../lib/arm-linux-gnueabihf/libpng12.so.0 libpng12.so
 
 \subsection cross_raspberry_tips_gcc_4_9 Undefined reference to __throw_out_of_range_fmt
 
-This error occurs when crosscompiling for Raspberry Pi 3 Model B.
+This error occurs when cross-compiling for Raspberry Pi 3 Model B.
 \code
 Linking CXX executable testArray2D
 /home/fspindle/sThis is unfortunately due to the OpenCV core library (for Jessie) being built with a newer version of gcc/g++ oft/raspberrypi/rootfs/usr/lib/arm-linux-gnueabihf/libopencv_ts.so.2.4.9: undefined reference to `std::__throw_out_of_range_fmt(char const*, ...)@GLIBCXX_3.4.20'
 \endcode
-This error is due to the fact that OpenCV was built with gcc-4.9 on Raspberry Pi Jessy distro, while the crosscompiler uses gcc-4.8 version. 
+This error is due to the fact that OpenCV was built with gcc-4.9 on Raspberry Pi Jessy distro, while the cross-compiler uses gcc-4.8 version.
 
 There exists different work arround depending on your use case:
 - if you are just interested to build ViSP libraries, a simple workarround is to turn off the build of the tests, demos, tutorials and examples:
@@ -303,7 +305,7 @@ $ cmake -DCMAKE_TOOLCHAIN_FILE=../visp/platforms/linux/arm-raspberrypi.toolchain
 
 \subsection cross_raspberry_tips_cmake_version CMake 2.8.12 or greater requested
 
-The following error may occur on Raspberry Pi 1 when you are trying to build a project with the resulting crossbuild material:
+The following error may occur on Raspberry Pi 1 when you are trying to build a project with the resulting cross-build material:
 \code
 pi@raspberrypi:~ $ cmake .. -DVISP_DIR=/home/pi/visp-crossbuild/lib/cmake/visp
 -- The C compiler identification is GNU 4.6.3

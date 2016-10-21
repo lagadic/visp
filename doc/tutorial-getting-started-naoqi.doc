@@ -1,0 +1,84 @@
+
+/**
+  \page tutorial-getting-started-naoqi Tutorial: How to create an application that uses ViSP on NAOqi OS 
+  \tableofcontents
+
+We assume in this tutorial that you have successfully cross-compiled ViSP following \ref tutorial-install-crosscompiling-naoqi.
+The aim of this tutorial is to explain how to create an application that uses ViSP cross-build for NAOqi OS as third-party and how to run this application on Nao, Romeo or Pepper robots.
+
+To illustrate this tutorial, we will consider all the examples that are provided in the tutorial dedicated to images (ie. the one located in \c visp/tutorial/image folder). If you are not familiar with ViSP read first \ref tutorial-getting-started.
+
+This tutorial was tested on an Ubuntu 14.04 LTS host computer with:
+- Cross Toolchain 2.3.1 Linux 64 (\c ctc-linux32-atom-2.3.1.23) on Romeo robot 
+- Cross Toolchain 2.4.3 Linux 64 (\c ctc-linux64-atom-2.4.3.28) on Pepper robot
+
+
+\section started_naoqi_code Create a workspace for your project
+
+We assume that as described in \ref tutorial-install-crosscompiling-naoqi, your workspace dedicated to visp contains the following folders:
+\code
+$ ls $HOME/soft
+visp
+visp-build-ctc-linux64-atom-2.4.3.28
+\endcode
+
+Create a new folder to host the project you want to run on NAOqi OS
+\code
+$ mkdir $HOME/soft/tutorial
+\endcode
+
+Get existing tutorial/image folder from ViSP source code
+
+\code
+$ cd $HOME/soft/tutorial
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
+\endcode
+
+\section started_naoqi_build Cross-build your project
+
+Create first a build folder associated to your Cross Toolchain like:
+\code
+$ cd $HOME/soft/tutorial
+$ mkdir image-build-ctc-linux64-atom-2.4.3.28
+\endcode 
+
+Configure your project setting \c VISP_DIR and \c CMAKE_TOOLCHAIN_FILE respectively to ViSP and Cross Toolchain location:
+\code
+$ cd image-build-ctc-linux64-atom-2.4.3.28
+$ cmake ../image -DVISP_DIR=$HOME/soft/visp-build-ctc-linux64-atom-2.4.3.28/install/lib/cmake/visp -DCMAKE_TOOLCHAIN_FILE=$HOME/softbank/ctc-linux64-atom-2.4.3.28/toolchain.cmake
+\endcode
+
+Cross-build your project:
+\code
+$ make -j4
+\endcode
+
+\section started_naoqi_install Install the binaries on NAOqi
+
+First create an archive for the binaries:
+\code
+$ tar cvzf binary.tar.gz --exclude "*Make*" --exclude "cmake*" *
+\endcode
+
+Then copy the binaries to NAOqi OS:
+\code
+$ scp binary.tar.gz nao@<your_robot_ip>:
+\endcode
+
+Move the binaries to a more friend location like \c $HOME/tutorial:
+\code
+$ ssh nao@<your_robot_ip>
+nao~ $ mkdir tutorial
+nao~ $ tar xvzf binary.tar.gz --directory tutorial
+nao~ $ rm binary.tar.gz
+\endcode
+
+Run the binaries:
+\code
+nao~ $ cd tutorial
+nao~ $ ./tutorial-image-manipulation
+nao~ $ ./tutorial-undistort
+\endcode
+
+You are now ready to create your own project for Nao, Romeo or Pepper robots.
+*/

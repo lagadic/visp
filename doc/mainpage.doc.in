@@ -69,14 +69,16 @@ href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/p
 - \ref tutorial-install-osx-homebrew <br>In this tutorial you will learn how to install ViSP from source on OSX with Homebrew.
 - \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 
-\subsection tuto_install_crosscompiling Installation from crosscompiling
+\subsection tuto_install_crosscompiling Installation from cross-compiling
 
-- \ref tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to crosscompile ViSP on Ubuntu host for Raspberry Pi target.
+- \ref tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to cross-compile ViSP on Ubuntu host for Raspberry Pi target.
+- \ref tutorial-install-crosscompiling-naoqi <br>In this tutorial you will learn how to cross-compile ViSP on Ubuntu host for NAOqi targets (NAO, Romeo, Pepper).
 
 \subsection tuto_started Getting started
 
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
+- \ref tutorial-getting-started-naoqi <br>This tutorial shows how to build a project that uses ViSP on NAOqi OS running on NAO, Romeo or Pepper humanoid robots.
 
 \subsection tuto_image Image manipulation
 

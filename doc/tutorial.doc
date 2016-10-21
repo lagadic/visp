@@ -55,10 +55,11 @@ This page introduces the user to the way to install ViSP from source code.
 
 */
 
-/*! \page tutorial_install_crosscompiling Installation from crosscompiling
-This page introduces the user to the way to crosscompile ViSP from source code.
+/*! \page tutorial_install_crosscompiling Installation from cross-compiling
+This page introduces the user to the way to cross-compile ViSP from source code.
 
-- \subpage tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to crosscompile ViSP on Ubuntu host for Raspberry Pi target.
+- \subpage tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to cross-compile ViSP on Ubuntu host for Raspberry Pi target.
+- \subpage tutorial-install-crosscompiling-naoqi <br>In this tutorial you will learn how to cross-compile ViSP on Ubuntu host for NAOqi targets (NAO, Romeo, Pepper).
 
 */
 /*! \page tutorial_started Getting started
@@ -66,6 +67,7 @@ This page introduces the user to the way to start with ViSP.
 
 - \subpage tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \subpage tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
+- \subpage tutorial-getting-started-naoqi <br>This tutorial shows how to build a project that uses ViSP on NAOqi OS running on NAO, Romeo or Pepper humanoid robots.
 
 */
 

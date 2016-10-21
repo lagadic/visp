@@ -21,6 +21,7 @@ ViSP 3.0.1 (in development)
     . New cross platform multi-threading capabilities with vpMutex and
       vpThread classes
     . Crosscompiling capabilities tested for Raspberry Pi target
+    . Crosscompiling capabilities tested for Nao, Romeo and Pepper robots
     . OSX/iOS framework creation with support of OpenCV 3rd party
     . Introduce SSE2, SSE3 and SSSE3 optimizations
     . New meta-header visp3/visp.h that allows to include all ViSP headers
@@ -40,6 +41,8 @@ ViSP 3.0.1 (in development)
     . New tutorial: Installation from source for iOS devices
     . New tutorial: How to create a basic iOS application that uses ViSP
     . New tutorial: Image processing on iOS
+    . New tutorial: Cross-compilation for NAOqi OS from Ubuntu host
+    . New tutorial: How to create an application that uses ViSP on NAOqi OS
   - Bug fixed
     . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc
