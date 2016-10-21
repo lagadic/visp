@@ -319,9 +319,19 @@ if(DOXYGEN_FOUND)
   set(DOXYGEN_STRIP_FROM_INC_PATH "")
   foreach(m ${VISP_MODULES_BUILD} ${VISP_MODULES_DISABLED_USER} ${VISP_MODULES_DISABLED_AUTO} ${VISP_MODULES_DISABLED_FORCE})
     if(m MATCHES "^visp_")
-      set(DOXYGEN_STRIP_FROM_INC_PATH "${DOXYGEN_STRIP_FROM_INC_PATH} \\ \n\"${VISP_MODULE_${m}_LOCATION}/include\" ")
+      set(DOXYGEN_STRIP_FROM_INC_PATH "${DOXYGEN_STRIP_FROM_INC_PATH} \\ \n\t\t\t \"${VISP_MODULE_${m}_LOCATION}/include\"")
     endif()
   endforeach()
+  # - DOXYGEN_IMAGE_PATH corresponding to IMAGE_PATH in the doxy file
+  set(DOXYGEN_IMAGE_PATH "\"${VISP_SOURCE_DIR}/doc/image\"")
+  if(VISP_CONTRIB_MODULES_PATH)
+    foreach(contrib ${VISP_CONTRIB_MODULES_PATH})
+      set(image_path_ "${VISP_CONTRIB_MODULES_PATH}/doc/image")
+      if(EXISTS ${image_path_})
+        set(DOXYGEN_IMAGE_PATH "${DOXYGEN_IMAGE_PATH} \\ \n\t\t\t \"${image_path_}\"")
+      endif()
+    endforeach()
+  endif()
 
   configure_file(${VISP_SOURCE_DIR}/doc/config-doxygen.in
     ${VISP_DOC_DIR}/config-doxygen
