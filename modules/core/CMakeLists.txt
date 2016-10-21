@@ -169,6 +169,9 @@ if(USE_OPENCV)
   elseif(APPLE_FRAMEWORK)
     # Add opencv framework
     list(APPEND opt_libs ${OpenCV_LIBRARIES})    # see FindMyOpenCV.cmake
+  elseif(CMAKE_TOOLCHAIN_FILE AND I_AM_A_ROBOT)
+    # Add opencv framework from naoqi atom toolchain
+    list(APPEND opt_libs ${OpenCV_LIBRARIES})    # see FindMyOpenCV.cmake
   else()
     # this should be an old OpenCV version that doesn't have the previous behavior
     list(APPEND opt_libs ${OpenCV_LIBS})

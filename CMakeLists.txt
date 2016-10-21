@@ -48,6 +48,11 @@ endif()
 
 project(VISP C CXX)
 
+# Detect if the toolchain is for Aldebaran naoqi
+if(CMAKE_TOOLCHAIN_FILE AND I_AM_A_ROBOT)
+  include(platforms/naoqi/cmake/extra.cmake)
+endif()
+
 cmake_minimum_required(VERSION 2.8.3)
 
 if(POLICY CMP0022)
@@ -248,7 +253,11 @@ VP_OPTION(USE_QT          Qt          ""    "Include Coin/SoQt/Qt support" "" ON
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D)
 VP_OPTION(USE_PTHREAD     PTHREAD     ""    "Include pthread support"      "" ON)
 VP_OPTION(USE_XML2        XML2        ""    "Include xml support"          "" ON)
-VP_OPTION(USE_OPENCV      "OpenCV;MyOpenCV" QUIET "Include OpenCV support" "OpenCV_DIR;OpenCV_FOUND;OPENCV_FOUND" ON)
+if(CMAKE_TOOLCHAIN_FILE AND I_AM_A_ROBOT)
+  VP_OPTION(USE_OPENCV      "MyOpenCV" QUIET "Include OpenCV support" "OpenCV_DIR;OpenCV_FOUND;OPENCV_FOUND" ON)
+else()
+  VP_OPTION(USE_OPENCV      "OpenCV;MyOpenCV" QUIET "Include OpenCV support" "OpenCV_DIR;OpenCV_FOUND;OPENCV_FOUND" ON)
+endif()
 VP_OPTION(USE_ZLIB        "ZLIB;MyZLIB" ""  "Include zlib support"         "" ON)
 VP_OPTION(USE_X11         X11         ""    "Include X11 support"          "" ON)
 # The native FindGTK2.cmake doesn't consider libgobject-2.0 that is 
@@ -616,7 +625,7 @@ endif()
 if(USE_OPENCV)
   set(VISP_HAVE_OPENCV_VERSION "(${OpenCV_VERSION_MAJOR}<<16 | ${OpenCV_VERSION_MINOR}<<8 | ${OpenCV_VERSION_PATCH})") # for vpConfig.h
   if(OpenCV_VERSION)
-    if(OpenCV_VERSION VERSION_LESS "2.4.0")
+    if(OpenCV_VERSION VERSION_LESS "2.5.0")
       message(STATUS "opencv nonfree module found")
       set(VISP_HAVE_OPENCV_NONFREE TRUE)  # for header vpConfig.h
     elseif(OPENCV_NONFREE_FOUND) # OpenCV < 3.0.0

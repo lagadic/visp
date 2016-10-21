@@ -232,21 +232,13 @@ else(MINGW)
 endif(MINGW)
 
   # FFMpeg depend son Zlib
-  FIND_PACKAGE(ZLIB)
+  find_package(ZLIB)
   if(NOT ZLIB_FOUND)
-    FIND_PACKAGE(MyZLIB)    
+    find_package(MyZLIB)
   endif()
 
   # FFMpeg depend son BZip2
-  # with CMake 2.6, the CMake bzip2 package material is named FindBZip2.cmake
-  # while with CMake 2.8, the name is FindBZIP2.cmake
-  # that is why we need to call FIND_PACKAGE(BZip2) and FIND_PACKAGE(BZIP2) 
-  FIND_PACKAGE(BZIP2 QUIET)
-  # MESSAGE("BZIP2_FOUND: ${BZIP2_FOUND}")
-  if(NOT BZIP2_FOUND)
-    FIND_PACKAGE(BZip2 QUIET)
-    # MESSAGE("BZIP2_FOUND: ${BZIP2_FOUND}")
-  endif()
+  find_package(BZip2 QUIET)
 
   # FFMpeg may depend also on iconv since probably version 1.1.3 where if detected,
   # iconv usage is enabled by default

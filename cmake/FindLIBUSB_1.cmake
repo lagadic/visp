@@ -42,12 +42,16 @@ IF(WIN32)
   FIND_LIBRARY(LIBUSB_1_LIBRARY libusb
     $ENV{LIBUSB_1_HOME}
     $ENV{LIBUSB_1_HOME}/lib
+    $ENV{LIBUSB_1_DIR}
+    $ENV{LIBUSB_1_DIR}/lib
     "c:/libusb/lib"
     )
 ELSE(WIN32) 
   FIND_LIBRARY(LIBUSB_1_LIBRARY usb-1.0
     $ENV{LIBUSB_1_HOME}/lib
     $ENV{LIBUSB_1_HOME}/build/lib
+    $ENV{LIBUSB_1_DIR}/lib
+    $ENV{LIBUSB_1_DIR}/build/lib
     /lib/
     /lib64/
     /usr/lib
@@ -56,6 +60,8 @@ ELSE(WIN32)
   FIND_PATH(LIBUSB_1_INCLUDE_DIR libusb.h
     $ENV{LIBUSB_1_HOME}/include/libusb-1.0
     $ENV{LIBUSB_1_HOME}/build/include/libusb-1.0
+    $ENV{LIBUSB_1_DIR}/include/libusb-1.0
+    $ENV{LIBUSB_1_DIR}/build/include/libusb-1.0
     /usr/include/libusb-1.0
     /usr/local/include/libusb-1.0
     )
