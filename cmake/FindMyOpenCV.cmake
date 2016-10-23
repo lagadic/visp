@@ -192,6 +192,15 @@ if(CMAKE_TOOLCHAIN_FILE AND I_AM_A_ROBOT)
       vp_get_opencv_version_from_hpp(${opencv_version_file} "CV_VERSION_MINOR" OpenCV_VERSION_PATCH)
     endif()
     set(OpenCV_VERSION "${OpenCV_VERSION_MAJOR}.${OpenCV_VERSION_MINOR}.${OpenCV_VERSION_PATCH}")
+
+    # check if nonfree module exists
+    foreach(__l ${OpenCV_LIBRARIES})
+      string(REGEX MATCH "^.*opencv_nonfree" has_nonfree ${__l})
+      if(has_nonfree)
+        set(OPENCV_NONFREE_FOUND TRUE)
+        break()
+      endif()
+    endforeach()
   endif()
 endif()
 

@@ -635,7 +635,7 @@ endif()
 if(USE_OPENCV)
   set(VISP_HAVE_OPENCV_VERSION "(${OpenCV_VERSION_MAJOR}<<16 | ${OpenCV_VERSION_MINOR}<<8 | ${OpenCV_VERSION_PATCH})") # for vpConfig.h
   if(OpenCV_VERSION)
-    if(OpenCV_VERSION VERSION_LESS "2.5.0")
+    if(OpenCV_VERSION VERSION_LESS "2.4.0")
       message(STATUS "opencv nonfree module found")
       set(VISP_HAVE_OPENCV_NONFREE TRUE)  # for header vpConfig.h
     elseif(OPENCV_NONFREE_FOUND) # OpenCV < 3.0.0
