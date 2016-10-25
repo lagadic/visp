@@ -39,6 +39,7 @@
 #define __vpRealSense_h_
 
 #include <stdint.h>
+#include <map>
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColVector.h>
@@ -170,6 +171,70 @@ int main()
   }
 }
   \endcode
+
+  If you want to change the default stream parameters, you can use \p setEnableStream() to enable only the desired stream
+  and \p setStreamSettings() to set the stream settings. The following code allows to capture the color stream in 1920x1080
+  also with the infrared stream:
+  \code
+#include <visp3/sensor/vpRealSense.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
+
+int main() {
+  vpRealSense rs;
+  rs.setEnableStream(rs::stream::color, true);
+  rs.setEnableStream(rs::stream::depth, false);
+  rs.setEnableStream(rs::stream::infrared, true);
+  rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(1920, 1080, rs::format::rgba8, 30));
+  rs.setStreamSettings(rs::stream::infrared, vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 30));
+  rs.open();
+
+  vpImage<vpRGBa> Ic(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
+  vpImage<unsigned char> Ii(rs.getIntrinsics(rs::stream::infrared).height, rs.getIntrinsics(rs::stream::infrared).width);
+
+#ifdef VISP_HAVE_X11
+  vpDisplayX dc(Ic);
+  vpDisplayX di(Ii);
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI dc(Ic);
+  vpDisplayGDI di(Ii);
+#endif
+
+  while (1) {
+    rs.acquire((unsigned char *) Ic.bitmap, NULL, NULL, Ii.bitmap);
+    vpDisplay::display(Ic);
+    vpDisplay::display(Ii);
+    vpDisplay::flush(Ic);
+    vpDisplay::flush(Ii);
+    if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Ii, false))
+      break;
+  }
+  return 0;
+}
+  \endcode
+
+  Useful information can be retrieved using \p getHandler():
+  \code
+#include <visp3/sensor/vpRealSense.h>
+#include <librealsense/rs.hpp>
+
+int main() {
+  vpRealSense rs;
+  rs.open();
+
+  rs::device *device = rs.getHandler();
+  std::cout << "Stream width: " << device->get_stream_width(rs::stream::color) << std::endl;
+  std::cout << "Stream height: " << device->get_stream_height(rs::stream::color) << std::endl;
+  std::cout << "Stream format: " << device->get_stream_format(rs::stream::color) << std::endl;
+  std::cout << "Stream framerate: " << device->get_stream_framerate(rs::stream::color) << std::endl;
+
+  std::cout << "API version: " << rs_get_api_version(nullptr) << std::endl;
+  std::cout << "Firmware: " << rs_get_device_firmware_version((const rs_device *) device, nullptr) << std::endl;
+  std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
+
+  return 0;
+}
+  \endcode
 */
 class VISP_EXPORT vpRealSense
 {
@@ -179,7 +244,7 @@ public:
 
   void acquire(std::vector<vpColVector> &pointcloud);
 #ifdef VISP_HAVE_PCL
-	void acquire(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
+  void acquire(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
   void acquire(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
 #endif
   void acquire(vpImage<unsigned char> &grey); // tested
@@ -195,10 +260,18 @@ public:
   void acquire(vpImage<vpRGBa> &color, std::vector<vpColVector> &pointcloud);
   void acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, std::vector<vpColVector> &pointcloud);
 
+  void acquire(unsigned char * const data_image, unsigned char * const data_depth, std::vector<vpColVector> * const data_pointCloud, unsigned char * const data_infrared,
+               unsigned char * const data_infrared2=NULL);
+
 #ifdef VISP_HAVE_PCL
   void acquire(vpImage<vpRGBa> &color, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
   void acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
   void acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
+
+  void acquire(unsigned char * const data_image, unsigned char * const data_depth, std::vector<vpColVector> * const data_pointCloud,
+               pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud, unsigned char * const data_infrared, unsigned char * const data_infrared2=NULL);
+  void acquire(unsigned char * const data_image, unsigned char * const data_depth, std::vector<vpColVector> * const data_pointCloud,
+               pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud, unsigned char * const data_infrared, unsigned char * const data_infrared2=NULL);
 #endif
 
   void close();
@@ -229,15 +302,39 @@ public:
 
   friend VISP_EXPORT std::ostream & operator<< (std::ostream &os, const vpRealSense &rs);
 
+
+  struct vpRsStreamParams {
+    int m_streamWidth;
+    int m_streamHeight;
+    rs::format m_streamFormat;
+    int m_streamFramerate;
+
+    vpRsStreamParams() : m_streamWidth(640), m_streamHeight(480), m_streamFormat(rs::format::rgba8), m_streamFramerate(30) {
+    }
+
+    vpRsStreamParams(const int streamWidth, const int streamHeight, const rs::format &streamFormat, const int streamFramerate)
+      : m_streamWidth(streamWidth), m_streamHeight(streamHeight), m_streamFormat(streamFormat), m_streamFramerate(streamFramerate) {
+    }
+  };
+
+  void setEnableStream(const rs::stream &stream, const bool status);
+
+  void setStreamSettings(const rs::stream &stream, const rs::preset &preset);
+  void setStreamSettings(const rs::stream &stream, const vpRsStreamParams &params);
+
 protected:
   rs::context m_context;
   rs::device *m_device;
   int m_num_devices;
   std::string m_serial_no;
-  std::vector <rs::intrinsics> m_intrinsics;
+  std::map <rs::stream, rs::intrinsics> m_intrinsics;
   float m_max_Z; //!< Maximal Z depth in meter
-  bool m_enable_color;
-  bool m_enable_depth;
+  std::map<rs::stream, bool> m_enableStreams;
+  std::map<rs::stream, bool> m_useStreamPresets;
+  std::map<rs::stream, rs::preset> m_streamPresets;
+  std::map<rs::stream, vpRsStreamParams> m_streamParams;
+
+  void initStream();
 };
 
 #endif
