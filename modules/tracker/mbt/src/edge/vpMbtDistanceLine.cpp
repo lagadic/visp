@@ -625,7 +625,7 @@ void
 vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                            const vpCameraParameters &camera, const vpColor col, const unsigned int thickness, const bool displayFullModel)
 {
-  if(isvisible || displayFullModel){
+  if( (isvisible && isTrackedLine) || displayFullModel){
     p1->changeFrame(cMo);
     p2->changeFrame(cMo);
 
@@ -681,7 +681,7 @@ vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &
                            const vpCameraParameters &camera, const vpColor col,
                            const unsigned int thickness, const bool displayFullModel)
 {
-  if(isvisible || displayFullModel){
+  if( (isvisible && isTrackedLine) || displayFullModel){
     p1->changeFrame(cMo);
     p2->changeFrame(cMo);
 

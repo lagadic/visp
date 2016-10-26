@@ -460,7 +460,7 @@ vpMbtDistanceCylinder::display(const vpImage<unsigned char>&I, const vpHomogeneo
                                const vpCameraParameters&camera, const vpColor col, const unsigned int thickness,
                                const bool displayFullModel)
 {
-  if(isvisible || displayFullModel){
+  if( (isvisible && isTrackedCylinder) || displayFullModel){
     // Perspective projection
     p1->changeFrame(cMo);
     p2->changeFrame(cMo);
@@ -524,7 +524,7 @@ vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatr
                                const vpCameraParameters &camera, const vpColor col, const unsigned int thickness,
                                const bool displayFullModel)
 {
-  if(isvisible || displayFullModel){
+  if( (isvisible && isTrackedCylinder) || displayFullModel){
     // Perspective projection
     p1->changeFrame(cMo);
     p2->changeFrame(cMo);

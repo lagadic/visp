@@ -524,7 +524,7 @@ void
 vpMbtDistanceKltPoints::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &/*cMo*/, const vpCameraParameters &camera,
                                 const vpColor col, const unsigned int thickness, const bool displayFullModel)
 {
-    if(polygon->isVisible() || displayFullModel)
+    if( (polygon->isVisible() && isTrackedKltPoints) || displayFullModel)
     {
       std::vector<std::pair<vpPoint,unsigned int> > roi;
       polygon->getPolygonClipped(roi);
@@ -563,7 +563,7 @@ void
 vpMbtDistanceKltPoints::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &/*cMo*/, const vpCameraParameters &camera,
                                 const vpColor col, const unsigned int thickness, const bool displayFullModel)
 {
-  if(polygon->isVisible() || displayFullModel)
+  if( (polygon->isVisible() && isTrackedKltPoints) || displayFullModel)
   {
     std::vector<std::pair<vpPoint,unsigned int> > roi;
     polygon->getPolygonClipped(roi);
