@@ -2774,6 +2774,11 @@ void vpMbEdgeMultiTracker::setScales(const std::vector<bool>& scale) {
   }
 }
 
+/*!
+  Use Scanline algorithm for visibility tests
+
+  \param v : True to use it, False otherwise
+*/
 void vpMbEdgeMultiTracker::setScanLineVisibilityTest(const bool &v) {
   //Set general setScanLineVisibilityTest
   vpMbTracker::setScanLineVisibilityTest(v);
@@ -2781,6 +2786,19 @@ void vpMbEdgeMultiTracker::setScanLineVisibilityTest(const bool &v) {
   for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
       it != m_mapOfEdgeTrackers.end(); ++it) {
     it->second->setScanLineVisibilityTest(v);
+  }
+}
+
+/*!
+  Set if the polygons that have the given name have to be considered during the tracking phase.
+
+  \param name : name of the polygon(s).
+  \param useEdgeTracking : True if it has to be considered, false otherwise.
+*/
+void vpMbEdgeMultiTracker::setUseEdgeTracking(const std::string &name, const bool &useEdgeTracking) {
+  for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
+      it != m_mapOfEdgeTrackers.end(); ++it) {
+    it->second->setUseEdgeTracking(name, useEdgeTracking);
   }
 }
 

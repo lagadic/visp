@@ -321,6 +321,8 @@ public:
 
   virtual void setScanLineVisibilityTest(const bool &v);
 
+  virtual void setUseEdgeTracking(const std::string &name, const bool &useEdgeTracking);
+
   virtual void track(const vpImage<unsigned char> &I);
   virtual void track(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2);
   virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);

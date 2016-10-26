@@ -287,7 +287,7 @@ vpMbtDistanceCircle::display(const vpImage<unsigned char>&I, const vpHomogeneous
                              const vpCameraParameters &camera, const vpColor col, const unsigned int thickness,
                              const bool displayFullModel )
 {
-  if(isvisible || displayFullModel){
+  if( (isvisible && isTrackedCircle) || displayFullModel){
     // Perspective projection
     circle->changeFrame(cMo);
 
@@ -319,7 +319,7 @@ vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix
                              const vpCameraParameters &camera, const vpColor col,
                              const unsigned int thickness, const bool displayFullModel)
 {
-  if(isvisible || displayFullModel){
+  if( (isvisible && isTrackedCircle) || displayFullModel){
     // Perspective projection
     circle->changeFrame(cMo);
 

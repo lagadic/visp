@@ -349,6 +349,8 @@ public:
   virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
 
 protected:
+  //Current computeVVS function hides the base computeVVS but it is intended.
+  //The two following lines should have been added to remove compiler warning.
   using vpMbEdgeMultiTracker::computeVVS;
   using vpMbKltMultiTracker::computeVVS;
 
@@ -362,6 +364,7 @@ protected:
       std::map<std::string, unsigned int> &mapOfNumberOfCylinders,
       std::map<std::string, unsigned int> &mapOfNumberOfCircles);
 
+  //Same thing as computeVVS
   using vpMbKltMultiTracker::postTracking;
 
   virtual void postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
