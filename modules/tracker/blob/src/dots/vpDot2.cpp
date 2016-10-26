@@ -1185,6 +1185,7 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char>& I,
       dotToTest->setComputeMoments( true );
       dotToTest->setArea( area );
       dotToTest->setEllipsoidShapePrecision( ellipsoidShapePrecision );
+      dotToTest->setEllipsoidBadPointsPercentage( allowedBadPointsPercentage_ );
 
       // first compute the parameters of the dot.
       // if for some reasons this caused an error tracking
@@ -1313,6 +1314,7 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
     // if (size_precision!=0){
   {
     if (std::fabs(size_precision) > std::numeric_limits<double>::epsilon()){
+      double epsilon = 0.001;
 #ifdef DEBUG
       std::cout << "test size precision......................\n";
       std::cout << "wanted dot: " << "w=" << wantedDot.getWidth()
@@ -1324,7 +1326,6 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
                 << " h=" << getHeight()
                 << " s=" << getArea() << std::endl;
 #endif
-      double epsilon = 0.001;
 
       if( ( wantedDot.getWidth()*size_precision-epsilon < getWidth() ) == false )
       {
@@ -1491,7 +1492,7 @@ bool vpDot2::isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot )
       v = (unsigned int) (cog_v + outCoef*(a1*sin(alpha)*cos(theta)+a2*cos(alpha)*sin(theta)));
 #ifdef DEBUG
       //vpDisplay::displayRectangle(I, area, vpColor::yellow);
-      vpDisplay::displayCross( I, v, u, 7, vpColor::purple ) ;
+      vpDisplay::displayCross( I, (int) v, (int) u, 7, vpColor::purple ) ;
       vpDisplay::flush(I);
 #endif
       // If outside the area, continue
@@ -1934,7 +1935,7 @@ bool
       return false;
     }
 #ifdef DEBUG
-    vpDisplay::displayPoint(I, border_v, border_u+1, vpColor::green);
+    vpDisplay::displayPoint(I, (int) border_v, (int) border_u+1, vpColor::green);
     vpDisplay::flush(I);
 #endif
 
