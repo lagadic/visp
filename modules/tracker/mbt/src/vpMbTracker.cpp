@@ -1324,38 +1324,35 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
           if(!line.compare(0, prefix.size(), prefix)) {
 
               //Get the loaded model pathname
-              std::string headerPathname = line.substr(6);
-              size_t firstIndex = headerPathname.find_first_of("\")");
-              headerPathname = headerPathname.substr(0, firstIndex);
+              std::string headerPathRead = line.substr(6);
+              size_t firstIndex = headerPathRead.find_first_of("\")");
+              headerPathRead = headerPathRead.substr(0, firstIndex);
 
-              std::string headerPath = headerPathname;
-              if(!vpIoTools::isAbsolutePathname(headerPathname)) {
+              std::string headerPath = headerPathRead;
+              if(!vpIoTools::isAbsolutePathname(headerPathRead)) {
                   std::string parentDirectory = vpIoTools::getParent(modelFile);
-                  headerPath = vpIoTools::createFilePath(parentDirectory, headerPathname);
+                  headerPath = vpIoTools::createFilePath(parentDirectory, headerPathRead);
               }
+
+              //Normalize path
+              headerPath = vpIoTools::path(headerPath);
+
+              //Get real path
+              headerPath = vpIoTools::getRealPath(headerPath);
 
               bool cyclic = false;
-              std::string headerModelFilename = vpIoTools::getName(headerPath);
-              if (!headerModelFilename.compare(vpIoTools::getName(modelFile))) {
+              for (std::vector<std::string>::const_iterator it = vectorOfModelFilename.begin();
+                   it != vectorOfModelFilename.end() && !cyclic; ++it) {
+                if (headerPath == *it) {
                   cyclic = true;
-              }
-
-              for (std::vector<std::string>::const_iterator it =
-                      vectorOfModelFilename.begin();
-                      it != vectorOfModelFilename.end() - 1 && !cyclic;
-                      ++it) {
-                  std::string loadedModelFilename = vpIoTools::getName(*it);
-                  if (!headerModelFilename.compare(loadedModelFilename)) {
-                      cyclic = true;
-                  }
+                }
               }
 
               if (!cyclic) {
-                  if (vpIoTools::checkFilename(modelFile)) {
+                  if (vpIoTools::checkFilename(headerPath)) {
                       loadCAOModel(headerPath, vectorOfModelFilename, startIdFace, verbose, false);
                   } else {
-                      throw vpException(vpException::ioError,
-                              "file cannot be open");
+                      throw vpException(vpException::ioError, "file cannot be open");
                   }
               } else {
                   std::cout << "WARNING Cyclic dependency detected with file "
