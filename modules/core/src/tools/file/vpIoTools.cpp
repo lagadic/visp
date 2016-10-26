@@ -1268,6 +1268,26 @@ std::string vpIoTools::getParent(const std::string& pathname)
 }
 
 /*!
+  Returns the real path using realpath on Unix systems, otherwise returns the same path.
+  \return Returns an absolute pathname that names the same file,
+  whose resolution does not involve '.', '..', or symbolic links.
+ */
+std::string vpIoTools::getRealPath(const std::string &pathname) {
+  std::string real_path_str = pathname;
+
+#if defined(__unix__)
+  char *real_path = realpath(pathname.c_str(), NULL);
+
+  if (real_path != NULL) {
+    real_path_str = real_path;
+    delete real_path;
+  }
+#endif
+
+  return real_path_str;
+}
+
+/*!
   Return the file path that corresponds to the concatenated
   \e parent and \e child string files
   by adding the corresponding separator for unix or windows.

@@ -188,6 +188,7 @@ public:
   static std::string getName(const std::string &pathname);
   static std::string getNameWE(const std::string &pathname);
   static std::string getParent(const std::string& pathname);
+  static std::string getRealPath(const std::string &pathname);
   static std::string createFilePath(const std::string& parent, const std::string child);
   static bool isAbsolutePathname(const std::string& pathname);
   static std::pair<std::string, std::string> splitDrive(const std::string& pathname);
