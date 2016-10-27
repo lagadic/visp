@@ -54,6 +54,17 @@
 
   \brief Modelisation of Irisa's gantry robot named Afma6.
 
+  In this modelisation, different frames have to be considered.
+
+  - \f$ {\cal F}_f \f$: the reference frame, also called world frame
+
+  - \f$ {\cal F}_e \f$: the end-effector frame located at the intersection of the 3 rotations.
+
+  - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
+    M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
+    a calibration stage. We can also consider a custom tool TOOL_CUSTOM and set this
+    tool during robot initialisation or using set_eMc().
+
 */
 
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -103,10 +114,11 @@ class VISP_EXPORT vpAfma6
   //! List of possible tools that can be attached to the robot end-effector.
   typedef enum
     {
-      TOOL_CCMOP,         /*!< Pneumatic CCMOP gripper. */
-      TOOL_GRIPPER,       /*!< Pneumatic gripper with 2 fingers. */
-      TOOL_VACUUM,        /*!< Pneumatic vaccum gripper. */
-      TOOL_GENERIC_CAMERA /*!< A generic camera. */
+      TOOL_CCMOP,          /*!< Pneumatic CCMOP gripper. */
+      TOOL_GRIPPER,        /*!< Pneumatic gripper with 2 fingers. */
+      TOOL_VACUUM,         /*!< Pneumatic vaccum gripper. */
+      TOOL_GENERIC_CAMERA, /*!< A generic camera. */
+      TOOL_CUSTOM          /*!< A user defined tool. */
     } vpAfma6ToolType;
 
   //! Default tool attached to the robot end effector
@@ -119,19 +131,21 @@ class VISP_EXPORT vpAfma6
 
   /** @name Inherited functionalities from vpAfma6 */
   //@{
-  void init (void);
-#ifdef VISP_HAVE_ACCESS_TO_NAS
-  void init (const char * paramAfma6, const char * paramCamera);
-#endif
+  void init(void);
+  void init (const std::string &camera_extrinsic_parameters);
+  void init(const std::string &camera_extrinsic_parameters, const std::string &camera_intrinsic_parameters);
+  void init(vpAfma6::vpAfma6ToolType tool, const std::string &filename);
+  void init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc_);
   void init (vpAfma6::vpAfma6ToolType tool,
-	     vpCameraParameters::vpCameraParametersProjType projModel =
-	     vpCameraParameters::perspectiveProjWithoutDistortion);
+             vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector & q) const;
   int getInverseKinematics(const vpHomogeneousMatrix & fMc,
                            vpColVector & q, const bool &nearest=true,
                            const bool &verbose=false) const;
-  vpHomogeneousMatrix get_fMc (const vpColVector & q) const;
+
+  vpHomogeneousMatrix get_eMc() const;
+  vpHomogeneousMatrix get_fMc(const vpColVector & q) const;
   void get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe) const;
   void get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc) const;
 
@@ -139,10 +153,6 @@ class VISP_EXPORT vpAfma6
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
   void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
   void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
-
-#ifdef VISP_HAVE_ACCESS_TO_NAS
-  void parseConfigFile (const char * filename);
-#endif
 
   //! Get the current tool type
   vpAfma6ToolType getToolType() const {
@@ -160,14 +170,17 @@ class VISP_EXPORT vpAfma6
                            const vpImage<unsigned char> &I) const;
   void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I) const;
 
-  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpAfma6 & afma6);
-
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;
   double getCoupl56() const;
   double getLong56() const;
+
+  void parseConfigFile (const std::string &filename);
+
+  virtual void set_eMc(const vpHomogeneousMatrix &eMc);
   //@}
 
+  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpAfma6 & afma6);
 
  protected:
   /** @name Protected Member Functions Inherited from vpAfma6 */
@@ -201,12 +214,6 @@ class VISP_EXPORT vpAfma6
   vpCameraParameters::vpCameraParametersProjType projModel;
 
 };
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
 
 #endif
 

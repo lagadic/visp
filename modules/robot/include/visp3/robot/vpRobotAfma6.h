@@ -295,21 +295,23 @@ public:  /* Methode publiques */
   void get_eJe(vpMatrix &_eJe);
   void get_fJe(vpMatrix &_fJe);
 
-  void init (void);
-  void init (vpAfma6::vpAfma6ToolType tool,
-             vpCameraParameters::vpCameraParametersProjType
-             projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
+  void init(void);
+  void init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc);
+  void init(vpAfma6::vpAfma6ToolType tool, const std::string &filename);
+  void init(vpAfma6::vpAfma6ToolType tool,
+            vpCameraParameters::vpCameraParametersProjType
+            projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
-  void move(const char *filename) ;
-  void move(const char *filename, const double velocity) ;
+  void move(const std::string &filename) ;
+  void move(const std::string &filename, const double velocity) ;
 
   void openGripper() ;
 
   void powerOn() ;
   void powerOff() ;
 
-  static bool readPosFile(const char *filename, vpColVector &q)  ;
-  static bool savePosFile(const char *filename, const vpColVector &q)  ;
+  static bool readPosFile(const std::string &filename, vpColVector &q)  ;
+  static bool savePosFile(const std::string &filename, const vpColVector &q)  ;
 
   /* --- POSITIONNEMENT --------------------------------------------------- */
   void setPosition (const vpRobot::vpControlFrameType frame,
@@ -319,8 +321,9 @@ public:  /* Methode publiques */
   void setPosition (const vpRobot::vpControlFrameType frame,
                     const double pos1, const double pos2, const double pos3,
                     const double pos4, const double pos5, const double pos6) ;
-  void setPosition(const char *filename) ;
+  void setPosition(const std::string &filename) ;
   void setPositioningVelocity (const double velocity);
+  void set_eMc(const vpHomogeneousMatrix &eMc);
 
   /* --- ETAT ------------------------------------------------------------- */
 

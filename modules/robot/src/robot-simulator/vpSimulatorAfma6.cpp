@@ -296,7 +296,7 @@ vpSimulatorAfma6::initDisplay()
 */
 void
 vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
-           vpCameraParameters::vpCameraParametersProjType proj_model)
+                        vpCameraParameters::vpCameraParametersProjType proj_model)
 {
   this->projModel = proj_model;
   unsigned int name_length = 30; // the size of this kind of string "/afma6_tool_vacuum.bnd"
@@ -379,6 +379,7 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
       }
       break;
     }
+  case vpAfma6::TOOL_CUSTOM:
   case vpAfma6::TOOL_GENERIC_CAMERA: {
       std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
     }
@@ -403,8 +404,8 @@ vpSimulatorAfma6::init (vpAfma6::vpAfma6ToolType tool,
 
 void
 vpSimulatorAfma6::getCameraParameters (vpCameraParameters &cam,
-				 const unsigned int &image_width,
-				 const unsigned int &image_height)
+                                       const unsigned int &image_width,
+                                       const unsigned int &image_height)
 {
   if (toolCustom)
   {
@@ -437,6 +438,7 @@ vpSimulatorAfma6::getCameraParameters (vpCameraParameters &cam,
     }
     break;
   }
+  case vpAfma6::TOOL_CUSTOM:
   case vpAfma6::TOOL_GENERIC_CAMERA:
   case vpAfma6::TOOL_VACUUM: {
       std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
@@ -2379,6 +2381,10 @@ vpSimulatorAfma6::initArms()
       strcat(name_arm,"/afma6_tool_vacuum.bnd");
       break;
     }
+  case vpAfma6::TOOL_CUSTOM: {
+    std::cout << "The custom tool is not handled in vpSimulatorAfma6.cpp" << std::endl;
+    break;
+  }
   case vpAfma6::TOOL_GENERIC_CAMERA: {
       std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
       break;

@@ -203,29 +203,92 @@ vpAfma6::init (void)
   Read files containing the constant parameters related to the robot
   kinematics and to the end-effector to camera transformation.
 
-  \warning This function is only available if the macro
-  VISP_HAVE_ACCESS_TO_NAS is defined in vpConfig.h.
+  \param camera_extrinsic_parameters : Filename containing the constant parameters of
+  the robot kinematics \f$^e{\bf M}_c \f$ transformation.
 
-  \param paramAfma6 : Filename containing the constant parameters of
-  the robot kinematics.
-
-  \param paramCamera : Filename containing the camera extrinsic parameters.
+  \param camera_intrinsic_parameters : Filename containing the camera extrinsic parameters.
 
 */
-#ifdef VISP_HAVE_ACCESS_TO_NAS
 void
-vpAfma6::init (const char * paramAfma6,
-               const char * paramCamera)
+vpAfma6::init (const std::string &camera_extrinsic_parameters,
+               const std::string &camera_intrinsic_parameters)
 {
-  //  vpTRACE ("Parsage fichier robot.");
-  this->parseConfigFile (paramAfma6);
+  this->parseConfigFile (camera_extrinsic_parameters);
 
-  //vpTRACE ("Parsage fichier camera.");
-  this->parseConfigFile (paramCamera);
-
-  return ;
+  this->parseConfigFile (camera_intrinsic_parameters);
 }
-#endif
+
+/*!
+
+  Set the type of tool attached to the robot and transformation
+  between the end-effector and the tool (\f$^e{\bf M}c\f$).
+  This last parameter is loaded from a file.
+
+  \param tool : Type of tool in use.
+
+  \param filename : Path of the configuration file containing the
+  transformation between the end-effector frame and the tool frame.
+
+  The configuration file should have the form below:
+
+  \code
+# Start with any number of consecutive lines
+# beginning with the symbol '#'
+#
+# The 3 following lines contain the name of the camera,
+# the rotation parameters of the geometric transformation
+# using the Euler angles in degrees with convention XYZ and
+# the translation parameters expressed in meters
+CAMERA CameraName
+eMc_ROT_XYZ 10.0 -90.0 20.0
+eMc_TRANS_XYZ  0.05 0.01 0.06
+    \endcode
+
+  \sa init(vpAfma6::vpToolType, vpCameraParameters::vpCameraParametersProjType),
+  init(vpAfma6::vpToolType, const vpHomogeneousMatrix&)
+*/
+void
+vpAfma6::init(vpAfma6::vpAfma6ToolType tool, const std::string &filename)
+{
+  this->setToolType(tool);
+  this->parseConfigFile(filename.c_str());
+}
+
+/*!
+
+  Read files containing the constant parameters related to the robot
+  tools in order to set the end-effector to tool transformation.
+
+  \param camera_extrinsic_parameters : Filename containing the camera
+  extrinsic parameters.
+
+*/
+void
+vpAfma6::init (const std::string &camera_extrinsic_parameters)
+{
+  this->parseConfigFile (camera_extrinsic_parameters);
+}
+
+/*!
+
+  Set the type of tool attached to the robot and the transformation
+  between the end-effector and the tool (\f$^e{\bf M}c\f$).
+
+  \param tool : Type of tool in use.
+
+  \param eMc : Homogeneous matrix representation of the transformation
+  between the end-effector frame and the tool frame.
+
+  \sa init(vpAfma6::vpAfma6ToolType, vpCameraParameters::vpCameraParametersProjType),
+  init(vpAfma6::vpAfma6ToolType, const std::string&)
+
+*/
+void
+vpAfma6::init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc)
+{
+    this->setToolType(tool);
+    this->set_eMc(eMc);
+}
 
 /*!
 
@@ -858,6 +921,21 @@ vpAfma6::get_cMe(vpHomogeneousMatrix &cMe) const
 {
   cMe = this->_eMc.inverse();
 }
+/*!
+
+  Get the geometric transformation between the end-effector frame and the
+  camera or tool frame. This transformation is constant and correspond
+  to the extrinsic camera parameters estimated by calibration.
+
+  \return Transformation between the end-effector frame and the
+  camera frame.
+
+*/
+vpHomogeneousMatrix
+vpAfma6::get_eMc() const
+{
+  return(this->_eMc);
+}
 
 /*!
 
@@ -1057,17 +1135,13 @@ vpAfma6::getLong56() const
 
   This function gets the robot constant parameters from a file.
 
-  \warning This function is only available if the macro
-  VISP_HAVE_ACCESS_TO_NAS is defined in vpConfig.h.
-
   \param filename : File name containing the robot constant
   parameters, like max/min joint values, distance between 5 and 6 axis,
   coupling factor between axis 5 and 6, and the hand-to-eye homogeneous matrix.
 
 */
-#ifdef VISP_HAVE_ACCESS_TO_NAS
 void
-vpAfma6::parseConfigFile (const char * filename)
+vpAfma6::parseConfigFile (const std::string &filename)
 {
   size_t            dim;
   int               code;
@@ -1080,11 +1154,10 @@ vpAfma6::parseConfigFile (const char * filename)
   bool get_rot_eMc = false;
   bool get_trans_eMc = false;
 
-  //vpTRACE("Read the config file for constant parameters %s.", filename);
-  if ((fdtask = fopen(filename, "r" )) == NULL)
+  //vpTRACE("Read the config file for constant parameters %s.", filename.c_str());
+  if ((fdtask = fopen(filename.c_str(), "r" )) == NULL)
   {
-    vpERROR_TRACE ("Impossible to read the config file %s.",
-                   filename);
+    vpERROR_TRACE ("Impossible to read the config file %s.", filename.c_str());
     throw vpRobotException (vpRobotException::readingParametersError,
                             "Impossible to read the config file.");
   }
@@ -1156,7 +1229,7 @@ vpAfma6::parseConfigFile (const char * filename)
 
     default:
       vpERROR_TRACE ("Bad configuration file %s  "
-                     "ligne #%d.", filename, numLn);
+                     "line #%d.", filename.c_str(), numLn);
     } /* SWITCH */
   } /* WHILE */
 
@@ -1175,7 +1248,24 @@ vpAfma6::parseConfigFile (const char * filename)
 
   return;
 }
-#endif
+
+/*!
+
+  Set the geometric transformation between the end-effector frame and
+  the tool frame (commonly a camera).
+
+  \param eMc : Transformation between the end-effector frame
+  and the tool frame.
+*/
+void
+vpAfma6::set_eMc(const vpHomogeneousMatrix &eMc)
+{
+  this->_eMc = eMc;
+  this->_etc = eMc.getTranslationVector();
+
+  vpRotationMatrix R(eMc);
+  this->_erc.buildFrom(R);
+}
 
 /*!
   Get the current intrinsic camera parameters obtained by calibration.
