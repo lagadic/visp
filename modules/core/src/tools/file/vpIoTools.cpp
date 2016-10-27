@@ -1268,19 +1268,30 @@ std::string vpIoTools::getParent(const std::string& pathname)
 }
 
 /*!
-  Returns the real path using realpath on Unix systems, otherwise returns the same path.
-  \return Returns an absolute pathname that names the same file,
-  whose resolution does not involve '.', '..', or symbolic links.
+  Returns the absolute path using realpath on Unix systems or \GetFullPathName on Windows systems.
+  \return According to realpath manual, returns an absolute pathname that names the same file,
+  whose resolution does not involve '.', '..', or symbolic links for Unix systems.
+  According to GetFullPathName documentation, retrieves the full path of the specified file for
+  Windows systems.
  */
-std::string vpIoTools::getRealPath(const std::string &pathname) {
+std::string vpIoTools::getAbsolutePathname(const std::string &pathname) {
   std::string real_path_str = pathname;
 
-#if defined(__unix__)
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   char *real_path = realpath(pathname.c_str(), NULL);
 
   if (real_path != NULL) {
     real_path_str = real_path;
     delete real_path;
+  }
+#elif defined(_WIN32)
+#define BUFSIZE 4096
+  DWORD retval = 0;
+  TCHAR buffer[BUFSIZE] = TEXT("");
+
+  retval = GetFullPathName(pathname.c_str(), BUFSIZE, buffer, 0);
+  if (retval != 0) {
+    real_path_str = buffer;
   }
 #endif
 
@@ -1358,6 +1369,24 @@ bool vpIoTools::isAbsolutePathname(const std::string& pathname)
 	//    return s != '' and s[:1] in '/\\'
 	std::string path = splitDrive(pathname).second;
 	return path.size() > 0 && (path.substr(0, 1) == "/" || path.substr(0, 1) == "\\");
+}
+
+/*!
+   Return true if the two pathnames are identical.
+
+   \return true if the two pathnames are identical, false otherwise.
+   \note It uses path() to normalize the path and getAbsolutePathname() to get the absolute pathname.
+ */
+bool vpIoTools::isSamePathname(const std::string& pathname1, const std::string& pathname2) {
+  //Normalize path
+  std::string path1_normalize = vpIoTools::path(pathname1);
+  std::string path2_normalize = vpIoTools::path(pathname2);
+
+  //Get absolute path
+  path1_normalize = vpIoTools::getAbsolutePathname(path1_normalize);
+  path2_normalize = vpIoTools::getAbsolutePathname(path2_normalize);
+
+  return (path1_normalize == path2_normalize);
 }
 
 /*!

@@ -1338,7 +1338,7 @@ vpMbTracker::loadCAOModel(const std::string& modelFile,
         headerPath = vpIoTools::path(headerPath);
 
         //Get real path
-        headerPath = vpIoTools::getRealPath(headerPath);
+        headerPath = vpIoTools::getAbsolutePathname(headerPath);
 
         bool cyclic = false;
         for (std::vector<std::string>::const_iterator it = vectorOfModelFilename.begin();
