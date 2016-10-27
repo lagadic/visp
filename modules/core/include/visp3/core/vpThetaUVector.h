@@ -189,11 +189,13 @@ public:
 
   void buildFrom(const double tux, const double tuy, const double tuz);
 
-  vpThetaUVector &operator=(const vpColVector &tu);
-  vpThetaUVector &operator=(double x) ;
-
   // extract the angle and the axis from the ThetaU representation
   void extract( double &theta, vpColVector &u) const;
+  double getTheta() const;
+  vpColVector getU() const;
+
+  vpThetaUVector &operator=(const vpColVector &tu);
+  vpThetaUVector &operator=(double x) ;
 } ;
 
 #endif
