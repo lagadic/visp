@@ -305,7 +305,7 @@ vpServo::setCameraDoF(const vpColVector& v)
 
   Prints on \e os stream information about the task:
 
-  \param displayLevel : Indicates which are the task informations to print. See vpServo::vpServoPrintType for more details.
+  \param displayLevel : Indicates which are the task information to print. See vpServo::vpServoPrintType for more details.
 
   \param os : Output stream.
 */
