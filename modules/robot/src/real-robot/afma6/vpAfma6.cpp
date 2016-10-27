@@ -58,11 +58,11 @@
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
-#ifdef VISP_HAVE_ACCESS_TO_NAS
 static const char *opt_Afma6[] = {"JOINT_MAX","JOINT_MIN","LONG_56","COUPL_56",
                                   "CAMERA", "eMc_ROT_XYZ","eMc_TRANS_XYZ",
                                   NULL};
 
+#ifdef VISP_HAVE_ACCESS_TO_NAS
 const char * const vpAfma6::CONST_AFMA6_FILENAME
 #if defined(_WIN32)
 = "Z:/robot/Afma6/current/include/const_Afma6.cnf";
@@ -488,6 +488,7 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
     }
     break;
   }
+  case vpAfma6::TOOL_CUSTOM:
   case vpAfma6::TOOL_GENERIC_CAMERA: {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
