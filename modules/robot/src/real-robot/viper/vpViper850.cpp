@@ -185,7 +185,7 @@ vpViper850::init (void)
 
 */
 void
-vpViper850::init (const char *camera_extrinsic_parameters)
+vpViper850::init (const std::string &camera_extrinsic_parameters)
 {
   //vpTRACE ("Parse camera file \""%s\"".", camera_filename);
   this->parseConfigFile (camera_extrinsic_parameters);
@@ -482,7 +482,7 @@ vpViper850::init(vpViper850::vpToolType tool, const vpHomogeneousMatrix &eMc_)
 
 */
 void
-vpViper850::parseConfigFile (const char * filename)
+vpViper850::parseConfigFile (const std::string &filename)
 {
   size_t            dim;
   int               code;
@@ -495,10 +495,10 @@ vpViper850::parseConfigFile (const char * filename)
   bool get_rot_eMc = false;
   bool get_trans_eMc = false;
 
-  //vpTRACE("Read the config file for constant parameters %s.", filename);
-  if ((fdtask = fopen(filename, "r" )) == NULL) {
+  //vpTRACE("Read the config file for constant parameters %s.", filename.c_str());
+  if ((fdtask = fopen(filename.c_str(), "r" )) == NULL) {
     throw vpRobotException (vpRobotException::readingParametersError,
-                            "Impossible to read the config file %s.", filename);
+                            "Impossible to read the config file %s.", filename.c_str());
   }
 
 
@@ -512,7 +512,7 @@ vpViper850::parseConfigFile (const char * filename)
       if (ss.fail()) {
         fclose (fdtask);
         throw(vpException(vpException::badValue,
-                          "Cannot parse configuration file %s to retrieve option name", filename));
+                          "Cannot parse configuration file %s to retrieve option name", filename.c_str()));
       }
     }
 
@@ -534,7 +534,7 @@ vpViper850::parseConfigFile (const char * filename)
       if (ss.fail()) {
         fclose (fdtask);
         throw(vpException(vpException::badValue,
-                          "Cannot parse configuration file %s to retrieve rotation", filename));
+                          "Cannot parse configuration file %s to retrieve rotation", filename.c_str()));
       }
 
       // Convert rotation from degrees to radians
@@ -551,14 +551,14 @@ vpViper850::parseConfigFile (const char * filename)
       if (ss.fail()) {
         fclose (fdtask);
         throw(vpException(vpException::badValue,
-                          "Cannot parse configuration file %s to retrieve translation", filename));
+                          "Cannot parse configuration file %s to retrieve translation", filename.c_str()));
       }
       get_trans_eMc = true;
       break;
     }
     default:
       vpERROR_TRACE ("Bad configuration file %s  "
-                     "ligne #%d.", filename, numLn);
+                     "ligne #%d.", filename.c_str(), numLn);
     } /* SWITCH */
   } /* WHILE */
 
@@ -570,7 +570,7 @@ vpViper850::parseConfigFile (const char * filename)
   }
   else {
     throw vpRobotException (vpRobotException::readingParametersError,
-                            "Could not read translation and rotation parameters from config file %s", filename);
+                            "Could not read translation and rotation parameters from config file %s", filename.c_str());
   }
 
   return;

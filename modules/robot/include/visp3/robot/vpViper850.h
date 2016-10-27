@@ -141,7 +141,7 @@ class VISP_EXPORT vpViper850: public vpViper
   /** @name Inherited functionalities from vpViper850 */
   //@{
   void init (void);
-  void init(const char *camera_extrinsic_parameters);
+  void init(const std::string &camera_extrinsic_parameters);
   void init(vpViper850::vpToolType tool,
             vpCameraParameters::vpCameraParametersProjType projModel =
             vpCameraParameters::perspectiveProjWithoutDistortion);
@@ -165,7 +165,7 @@ class VISP_EXPORT vpViper850: public vpViper
     return tool_current;
   };
 
-  void parseConfigFile (const char * filename);
+  void parseConfigFile (const std::string &filename);
   //@}
 
  protected:

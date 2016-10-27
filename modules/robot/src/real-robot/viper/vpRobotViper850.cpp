@@ -501,7 +501,7 @@ eMc_ROT_XYZ 10.0 -90.0 20.0
 eMc_TRANS_XYZ  0.05 0.01 0.06
     \endcode
 
-  \sa vpCameraParameters, init(), init(vpViper850::vpToolType,
+  \sa init(), init(vpViper850::vpToolType,
   vpCameraParameters::vpCameraParametersProjType),
   init(vpViper850::vpToolType, const vpHomogeneousMatrix&)
 */
@@ -1427,7 +1427,7 @@ int main()
   \sa setPositioningVelocity()
 
 */
-void vpRobotViper850::setPosition(const char *filename)
+void vpRobotViper850::setPosition(const std::string &filename)
 {
   vpColVector q;
   bool ret;
@@ -1435,7 +1435,7 @@ void vpRobotViper850::setPosition(const char *filename)
   ret = this->readPosFile(filename, q);
 
   if (ret == false) {
-    vpERROR_TRACE ("Bad position in \"%s\"", filename);
+    vpERROR_TRACE ("Bad position in \"%s\"", filename.c_str());
     throw vpRobotException (vpRobotException::lowLevelError,
                             "Bad position in filename.");
   }
@@ -2164,11 +2164,11 @@ int main()
 */
 
 bool
-    vpRobotViper850::readPosFile(const char *filename, vpColVector &q)
+    vpRobotViper850::readPosFile(const std::string &filename, vpColVector &q)
 {
 
   FILE * fd ;
-  fd = fopen(filename, "r") ;
+  fd = fopen(filename.c_str(), "r") ;
   if (fd == NULL)
     return false;
 
@@ -2240,11 +2240,11 @@ bool
 */
 
 bool
-    vpRobotViper850::savePosFile(const char *filename, const vpColVector &q)
+    vpRobotViper850::savePosFile(const std::string &filename, const vpColVector &q)
 {
 
   FILE * fd ;
-  fd = fopen(filename, "w") ;
+  fd = fopen(filename.c_str(), "w") ;
   if (fd == NULL)
     return false;
 
@@ -2256,14 +2256,14 @@ bool
 #\n\
 #\n\n");
 
-          // Save positions in mm and deg
-          fprintf(fd, "R: %lf %lf %lf %lf %lf %lf\n",
-                  vpMath::deg(q[0]),
-                  vpMath::deg(q[1]),
-                  vpMath::deg(q[2]),
-                  vpMath::deg(q[3]),
-                  vpMath::deg(q[4]),
-                  vpMath::deg(q[5]));
+  // Save positions in mm and deg
+  fprintf(fd, "R: %lf %lf %lf %lf %lf %lf\n",
+          vpMath::deg(q[0]),
+          vpMath::deg(q[1]),
+          vpMath::deg(q[2]),
+          vpMath::deg(q[3]),
+          vpMath::deg(q[4]),
+          vpMath::deg(q[5]));
 
   fclose(fd) ;
   return (true);
@@ -2280,7 +2280,7 @@ bool
 
 */
 void
-    vpRobotViper850::move(const char *filename)
+    vpRobotViper850::move(const std::string &filename)
 {
   vpColVector q;
 

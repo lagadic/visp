@@ -90,7 +90,7 @@
   - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
     M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
     a calibration stage. We can also consider a custom tool TOOL_CUSTOM and set this
-    during robot initialisation or using set_eMc().
+    tool during robot initialisation or using set_eMc().
 
   - \f$ {\cal F}_s \f$: the force/torque sensor frame, with \f$d7=0.0666\f$.
 
@@ -141,7 +141,7 @@ class VISP_EXPORT vpViper650: public vpViper
   /** @name Inherited functionalities from vpViper650 */
   //@{
   void init (void);
-  void init(const char *camera_extrinsic_parameters);
+  void init(const std::string &camera_extrinsic_parameters);
   void init(vpViper650::vpToolType tool,
             vpCameraParameters::vpCameraParametersProjType projModel =
             vpCameraParameters::perspectiveProjWithoutDistortion);
@@ -166,7 +166,7 @@ class VISP_EXPORT vpViper650: public vpViper
     return tool_current;
   };
 
-  void parseConfigFile (const char * filename);
+  void parseConfigFile (const std::string &filename);
   //@}
 
  protected:

@@ -137,12 +137,12 @@ class VISP_EXPORT vpViper
   virtual void set_eMc(const vpHomogeneousMatrix &eMc_);
   virtual void set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_);
 
-  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpViper & viper);
-
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;
   double getCoupl56() const;
   //@}
+
+  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpViper & viper);
 
  private:
   bool convertJointPositionInLimits(unsigned int joint, const double &q, double &q_mod, const bool &verbose=false) const;

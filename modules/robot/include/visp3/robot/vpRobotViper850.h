@@ -460,15 +460,15 @@ public:  /* Methode publiques */
   void init(vpViper850::vpToolType tool, const std::string &filename);
   void init(vpViper850::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 
-  void move(const char *filename) ;
+  void move(const std::string &filename) ;
 
   void openGripper();
 
   void powerOn() ;
   void powerOff() ;
 
-  static bool readPosFile(const char *filename, vpColVector &q)  ;
-  static bool savePosFile(const char *filename, const vpColVector &q)  ;
+  static bool readPosFile(const std::string &filename, vpColVector &q)  ;
+  static bool savePosFile(const std::string &filename, const vpColVector &q)  ;
 
   void set_eMc(const vpHomogeneousMatrix &eMc_);
   void set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_);
@@ -482,7 +482,7 @@ public:  /* Methode publiques */
   void setPosition (const vpRobot::vpControlFrameType frame,
                     const double pos1, const double pos2, const double pos3,
                     const double pos4, const double pos5, const double pos6) ;
-  void setPosition(const char *filename) ;
+  void setPosition(const std::string &filename) ;
   void setPositioningVelocity (const double velocity);
 
   // State
