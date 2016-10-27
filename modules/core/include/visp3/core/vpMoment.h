@@ -139,6 +139,8 @@ public:
    */
   virtual ~vpMoment() {}
 
+  /** @name Inherited functionalities from vpMoment */
+  //@{
   virtual void compute()=0;
   inline const vpMomentObject& getObject() const { return *object;}
   /*!
@@ -148,9 +150,9 @@ public:
   const std::vector<double>& get() const { return values;}
   void linkTo(vpMomentDatabase& moments);
   virtual const char* name() const = 0;
-  friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMoment& m);
   virtual void printDependencies(std::ostream& os) const;
   void update(vpMomentObject& object);
-
+  //@}
+  friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMoment& m);
 };
 #endif

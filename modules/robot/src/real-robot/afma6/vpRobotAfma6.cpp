@@ -499,7 +499,7 @@ int main()
   // and the tool frame from a file
   std::string filename("./EffectorToolTransformation.cnf");
 
-  robot.init(vpViper650::TOOL_CUSTOM, filename);
+  robot.init(vpAfma6::TOOL_CUSTOM, filename);
 #endif
 }
   \endcode

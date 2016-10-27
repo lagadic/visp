@@ -76,6 +76,7 @@ class VISP_EXPORT vpMomentCentered : public vpMoment {
 public:
 
   vpMomentCentered();
+  virtual ~vpMomentCentered() {};
 
   void compute();
   double get(unsigned int i,unsigned int j) const;

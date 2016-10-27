@@ -212,8 +212,6 @@ class VISP_EXPORT vpFeaturePoint3D : public vpBasicFeature
 {
 
 public:
-  // basic construction
-  void init() ;
   // basic constructor
   vpFeaturePoint3D() ;
   //! Destructor. Does nothing.
@@ -228,43 +226,6 @@ public:
   // set the point XY and Z-coordinates
   void buildFrom(const double X, const double Y, const double Z) ;
 
-  // set the point X-coordinates
-  void set_X(const double X) ;
-  // set the point Y-coordinates
-  void set_Y(const double Y) ;
-  // set the point depth (camera frame)
-  void set_Z(const double Z) ;
-  // set the point XY and Z-coordinates
-  void set_XYZ(const double X, const double Y, const double Z) ;
-
-  // get the point X-coordinates
-  double get_X()  const ;
-  // get the point Y-coordinates
-  double get_Y()   const ;
-  // get the point depth (camera frame)
-  double get_Z() const  ;
-
-
-  /*
-    vpBasicFeature method instantiation
-  */
-
-  static unsigned int selectX();
-  static unsigned int selectY();
-  static unsigned int selectZ();
-
-  // compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
-  // compute the error between two visual features from a subset
-  // a the possible features
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL)  ;
-  // print the name of the feature
-  void print(const unsigned int select=FEATURE_ALL ) const ;
-
-  // feature duplication
-  vpFeaturePoint3D *duplicate() const ;
-
   void display(const vpCameraParameters &cam,
                const vpImage<unsigned char> &I,
                const vpColor &color=vpColor::green,
@@ -274,14 +235,43 @@ public:
                const vpColor &color=vpColor::green,
                unsigned int thickness=1) const ;
 
+  // feature duplication
+  vpFeaturePoint3D *duplicate() const ;
+
+  // compute the error between two visual features from a subset
+  // a the possible features
+  vpColVector error(const vpBasicFeature &s_star,
+                    const unsigned int select = FEATURE_ALL)  ;
+
+  // get the point X-coordinates
+  double get_X()  const ;
+  // get the point Y-coordinates
+  double get_Y()   const ;
+  // get the point depth (camera frame)
+  double get_Z() const  ;
+
+  // basic construction
+  void init() ;
+  // compute the interaction matrix from a subset a the possible features
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+
+  // print the name of the feature
+  void print(const unsigned int select=FEATURE_ALL ) const ;
+
+  // set the point X-coordinates
+  void set_X(const double X) ;
+  // set the point Y-coordinates
+  void set_Y(const double Y) ;
+  // set the point depth (camera frame)
+  void set_Z(const double Z) ;
+  // set the point XY and Z-coordinates
+  void set_XYZ(const double X, const double Y, const double Z) ;
+
+  static unsigned int selectX();
+  static unsigned int selectY();
+  static unsigned int selectZ();
 } ;
 
 
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

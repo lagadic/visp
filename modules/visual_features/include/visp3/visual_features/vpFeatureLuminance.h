@@ -96,49 +96,12 @@ class VISP_EXPORT vpFeatureLuminance : public vpBasicFeature
   int  firstTimeIn  ;
 
  public:
-  void buildFrom(vpImage<unsigned char> &I) ;
-
-public: 
-
-  void init() ;
-  void init(unsigned int _nbr, unsigned int _nbc, double _Z) ;
-
   vpFeatureLuminance() ;
   vpFeatureLuminance(const vpFeatureLuminance& f) ;
-  vpFeatureLuminance &operator=(const vpFeatureLuminance& f) ;
-
   //! Destructor.
   virtual ~vpFeatureLuminance()  ;
 
- public:
-  vpCameraParameters cam ;
-  void setCameraParameters(vpCameraParameters &_cam)  ;
-  /*
-    section Set/get Z
-  */
-
-
-  void set_Z(const double Z) ;
-  double get_Z() const  ;
-
-
-  /*
-    vpBasicFeature method instantiation
-  */
-
- 
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
-  void      interaction(vpMatrix &L);
-
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL)  ;
-  void error(const vpBasicFeature &s_star,
-             vpColVector &e)  ;
-
-  void print(const unsigned int select = FEATURE_ALL ) const ;
-
-  vpFeatureLuminance *duplicate() const ;
-
+  void buildFrom(vpImage<unsigned char> &I) ;
 
   void display(const vpCameraParameters &cam,
                const vpImage<unsigned char> &I,
@@ -147,10 +110,33 @@ public:
                const vpImage<vpRGBa> &I,
                const vpColor &color=vpColor::green, unsigned int thickness=1) const ;
 
+  vpFeatureLuminance *duplicate() const ;
+
+  vpColVector error(const vpBasicFeature &s_star,
+                    const unsigned int select = FEATURE_ALL)  ;
+  void error(const vpBasicFeature &s_star,
+             vpColVector &e)  ;
   //! Compute the error between a visual features and zero
   vpColVector error(const unsigned int select = FEATURE_ALL)  ;
+
+
+  double get_Z() const  ;
+
+  void init() ;
+  void init(unsigned int _nbr, unsigned int _nbc, double _Z) ;
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+  void      interaction(vpMatrix &L);
+
+  vpFeatureLuminance &operator=(const vpFeatureLuminance& f) ;
+
+  void print(const unsigned int select = FEATURE_ALL ) const ;
+
+  void setCameraParameters(vpCameraParameters &_cam)  ;
+  void set_Z(const double Z) ;
+
+
+ public:
+  vpCameraParameters cam ;
 } ;
-
-
 
 #endif

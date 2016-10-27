@@ -130,7 +130,8 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
 
  public:	
 	
-        vpMomentCInvariant(bool flg_sxsynormalization = false);
+   vpMomentCInvariant(bool flg_sxsynormalization = false);
+   virtual ~vpMomentCInvariant() {};
 
         /*!
           Shorcut for getting the value of \f$C_1\f$.

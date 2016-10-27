@@ -199,7 +199,8 @@ class VISP_EXPORT vpMomentAlpha : public vpMoment {
     double alphaRef;
  public:	
 	
-        vpMomentAlpha();
+    vpMomentAlpha();
+    virtual ~vpMomentAlpha() {};
         vpMomentAlpha(std::vector<double>& ref,double alphaRef);
 
         void compute();

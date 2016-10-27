@@ -206,23 +206,31 @@ private:
   double A,B,C,D ;
 
 public:
-  void init() ;
   vpFeatureLine() ;
   //! Destructor.
   virtual ~vpFeatureLine() {}
 
-public:
-
-  void setRhoTheta(const double rho, const double theta) ;
-  void setABCD(const double A, const double B,
-	       const double C, const double D) ;
 
   //  void buildFrom(const vpLine &l) ;
   //  void buildFrom(const vpCylinder &c, const int l) ;
   void buildFrom(const double rho, const double theta) ;
   void buildFrom(const double rho, const double theta,
-		 const double A, const double B,
-		 const double C, const double D) ;
+                 const double A, const double B,
+                 const double C, const double D) ;
+
+  void display(const vpCameraParameters &cam,
+               const vpImage<unsigned char> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
+  void display(const vpCameraParameters &cam,
+               const vpImage<vpRGBa> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
+  vpFeatureLine *duplicate() const ;
+
+  vpColVector error(const vpBasicFeature &s_star,
+                    const unsigned int select = FEATURE_ALL)  ;
+  //vpColVector error(const int select = FEATURE_ALL)  ;
 
 
   /*!
@@ -235,40 +243,20 @@ public:
   */
   double getTheta() const { return s[1] ; }
 
+  void init() ;
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+
+  void print(const unsigned int select= FEATURE_ALL) const ;
+
+  void setRhoTheta(const double rho, const double theta) ;
+  void setABCD(const double A, const double B,
+               const double C, const double D) ;
+
 
 public:
 
   static unsigned int selectRho();
   static unsigned int selectTheta();
-
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
-
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL)  ;
-
-  //vpColVector error(const int select = FEATURE_ALL)  ;
-
-  void print(const unsigned int select= FEATURE_ALL) const ;
-
-  vpFeatureLine *duplicate() const ;
-
-  void display(const vpCameraParameters &cam,
-               const vpImage<unsigned char> &I,
-               const vpColor &color=vpColor::green,
-               unsigned int thickness=1) const ;
-  void display(const vpCameraParameters &cam,
-               const vpImage<vpRGBa> &I,
-               const vpColor &color=vpColor::green,
-               unsigned int thickness=1) const ;
-
 } ;
 
-
-
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

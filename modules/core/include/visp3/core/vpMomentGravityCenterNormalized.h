@@ -59,14 +59,13 @@ class vpMomentObject;
 */
 class VISP_EXPORT vpMomentGravityCenterNormalized : public vpMomentGravityCenter {
  public:	
-        vpMomentGravityCenterNormalized();
-	void compute();
-        /*!
-          Moment name.
-          */
-        const char* name() const {return "vpMomentGravityCenterNormalized";}
-        friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentGravityCenterNormalized& v);
-        void  printDependencies(std::ostream& os) const;
+  vpMomentGravityCenterNormalized();
+  virtual ~vpMomentGravityCenterNormalized() {};
+  void compute();
+  //! Moment name.
+  const char* name() const {return "vpMomentGravityCenterNormalized";}
+  void  printDependencies(std::ostream& os) const;
+  friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentGravityCenterNormalized& v);
 };
 
 #endif

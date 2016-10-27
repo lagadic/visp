@@ -185,6 +185,8 @@ public:
 
   virtual ~vpFeatureMoment();
 
+  /** @name Inherited functionalities from vpFeatureMoment */
+  //@{
   virtual void 	compute_interaction (void);
   vpBasicFeature* duplicate ()  const;
   void 	display (const vpCameraParameters &cam, const vpImage< unsigned char > &I,
@@ -207,11 +209,12 @@ public:
       */
   virtual const char* name() const = 0;
   void 	print (const unsigned int select=FEATURE_ALL) const ;
+  virtual void printDependencies(std::ostream& os) const;
 
   void update (double A, double B, double C);
 
+  //@}
   friend VISP_EXPORT std::ostream& operator<<(std::ostream & os, const vpFeatureMoment& featM);
-  virtual void printDependencies(std::ostream& os) const;
 };
 
 /*!

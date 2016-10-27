@@ -130,7 +130,8 @@ class VISP_EXPORT vpMomentAreaNormalized : public vpMoment {
 	double desiredSurface;
 	double desiredDepth;
  public:
-        vpMomentAreaNormalized(double desiredSurface, double desiredDepth);
+  vpMomentAreaNormalized(double desiredSurface, double desiredDepth);
+  virtual ~vpMomentAreaNormalized() {};
         void compute();
         /*!
         Retrieves the desired depth \e Z* as specified in the constructor.

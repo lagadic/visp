@@ -171,7 +171,6 @@ private:
   double Z;
 
 public:
-  void init() ;
   vpFeatureDepth() ;
   //! Destructor.
   virtual ~vpFeatureDepth() {}
@@ -182,15 +181,16 @@ public:
 
   void buildFrom(const double x, const double y, const double Z, const double LogZoverZstar) ;
 
-  void set_x(const double x) ;
-
-  void set_y(const double y) ;
-
-  void set_Z(const double Z) ;
-
-  void set_LogZoverZstar(const double LogZoverZstar);
-
-  void set_xyZLogZoverZstar(const double x, const double y, const double Z, const double logZZs) ;
+  void display(const vpCameraParameters &cam,
+               const vpImage<unsigned char> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
+  void display(const vpCameraParameters &cam,
+               const vpImage<vpRGBa> &I,
+               const vpColor &color=vpColor::green,
+               unsigned int thickness=1) const ;
+  vpFeatureDepth *duplicate() const ;
+  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL)  ;
 
   double get_x()  const ;
 
@@ -200,31 +200,19 @@ public:
 
   double get_LogZoverZstar() const  ;
 
-
-  /*
-    vpBasicFeature method instantiation
-  */
-
-
+  void init() ;
   vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
 
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL)  ;
-
   void print(const unsigned int select = FEATURE_ALL ) const ;
+  void set_x(const double x) ;
 
-  vpFeatureDepth *duplicate() const ;
+  void set_y(const double y) ;
 
+  void set_Z(const double Z) ;
 
-  void display(const vpCameraParameters &cam,
-               const vpImage<unsigned char> &I,
-               const vpColor &color=vpColor::green,
-               unsigned int thickness=1) const ;
-  void display(const vpCameraParameters &cam,
-               const vpImage<vpRGBa> &I,
-               const vpColor &color=vpColor::green,
-               unsigned int thickness=1) const ;
+  void set_LogZoverZstar(const double LogZoverZstar);
 
+  void set_xyZLogZoverZstar(const double x, const double y, const double Z, const double logZZs) ;
 } ;
 
 

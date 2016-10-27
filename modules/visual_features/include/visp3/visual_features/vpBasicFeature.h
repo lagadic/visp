@@ -84,6 +84,16 @@ public: // Public constantes
   enum {
     FEATURE_ALL = 0xffff
   };
+  /*!
+    \enum vpBasicFeatureDeallocatorType
+    Indicates who should deallocate the feature.
+
+  */
+  typedef enum
+  {
+    user,
+    vpServo
+  } vpBasicFeatureDeallocatorType;
 
 protected:
   //! State of the visual feature.
@@ -97,38 +107,15 @@ protected:
   unsigned int nbParameters;
 
 public:
+  vpBasicFeature() ;
+  vpBasicFeature(const vpBasicFeature &f) ;
+  virtual ~vpBasicFeature();
+
+  /** @name Inherited functionalities from vpBasicFeature */
+  //@{
   /*! Return the dimension of the feature vector \f$\bf s\f$. */
   unsigned int dimension_s() { return dim_s ; }
 
-public:
-
-  virtual void init() = 0 ;
-
-  vpBasicFeature() ;
-  vpBasicFeature(const vpBasicFeature &f) ;
-  vpBasicFeature &operator=(const vpBasicFeature &f) ;
-  virtual ~vpBasicFeature();
-  //! Return element \e i in the state vector  (usage : x = s[i] )
-  virtual inline double operator[](const unsigned int i) const {  return s[i]; }
-
-  //! Select all the features.
-  static  unsigned int selectAll()  { return FEATURE_ALL ; }
-
-  // Get the feature vector.
-  vpColVector get_s(unsigned int select=FEATURE_ALL) const;
-
-  // Get the feature vector dimension.
-  unsigned int getDimension(const unsigned int select=FEATURE_ALL) const;
-  //! Compute the interaction matrix from a subset of the possible features.
-  virtual vpMatrix interaction(const unsigned int select = FEATURE_ALL) = 0;
-  virtual vpColVector error(const vpBasicFeature &s_star,
-                            const unsigned int select= FEATURE_ALL);
-  //! Print the name of the feature.
-  virtual void print(const unsigned int select= FEATURE_ALL) const = 0 ;
-
-  virtual vpBasicFeature *duplicate() const = 0 ;
-
-public:
   virtual void display(const vpCameraParameters &cam,
                        const vpImage<unsigned char> &I,
                        const vpColor &color=vpColor::green,
@@ -138,29 +125,39 @@ public:
                        const vpColor &color=vpColor::green,
                        unsigned int thickness=1) const = 0;
 
+  virtual void init() = 0 ;
+
+  virtual vpColVector error(const vpBasicFeature &s_star,
+                            const unsigned int select= FEATURE_ALL);
+
+  // Get the feature vector.
+  vpColVector get_s(unsigned int select=FEATURE_ALL) const;
+  vpBasicFeatureDeallocatorType getDeallocate() { return deallocate ; }
+
+  // Get the feature vector dimension.
+  unsigned int getDimension(const unsigned int select=FEATURE_ALL) const;
+  //! Compute the interaction matrix from a subset of the possible features.
+  virtual vpMatrix interaction(const unsigned int select = FEATURE_ALL) = 0;
+  //! Return element \e i in the state vector  (usage : x = s[i] )
+  virtual inline double operator[](const unsigned int i) const {  return s[i]; }
+  vpBasicFeature &operator=(const vpBasicFeature &f) ;
+  //! Print the name of the feature.
+  virtual void print(const unsigned int select= FEATURE_ALL) const = 0 ;
+
+  virtual vpBasicFeature *duplicate() const = 0 ;
+
+  void setDeallocate(vpBasicFeatureDeallocatorType d) { deallocate = d ; }
   void setFlags();
+  //@}
+
+  //! Select all the features.
+  static  unsigned int selectAll()  { return FEATURE_ALL ; }
 
 protected:
   void resetFlags();
-  // memory issue (used by the vpServo class)
-public:
-
-  /*!
-    \enum vpBasicFeatureDeallocatorType
-    Indicates who should deallocate the feature.
-
-  */
-  typedef enum
-  {
-    user,
-    vpServo
-  } vpBasicFeatureDeallocatorType;
 
 protected:
   vpBasicFeatureDeallocatorType deallocate ;
-public:
-  void setDeallocate(vpBasicFeatureDeallocatorType d) { deallocate = d ; }
-  vpBasicFeatureDeallocatorType getDeallocate() { return deallocate ; }
 } ;
 
 #endif

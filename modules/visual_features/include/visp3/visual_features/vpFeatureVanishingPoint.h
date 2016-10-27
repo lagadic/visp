@@ -78,59 +78,14 @@ public:
   //no Z required
 
 public:
-  //! Default initialization.
-  void init() ;
   //! Default constructor.
   vpFeatureVanishingPoint() ;
   //! Destructor.
   virtual ~vpFeatureVanishingPoint() {}
 
-
-public:
-  /*
-    /section Set coordinates
-  */
-
-
-   //! set the point x-coordinates
-  void set_x(const double _x) ;
-  //! get the point x-coordinates
-  double get_x()  const ;
-  //! set the point y-coordinates
-  void set_y(const double _y) ;
-  //! get the point y-coordinates
-  double get_y()   const ;
-  //! set the point xy coordinates
-  void set_xy(const double _x, const double _y) ;
-   // void buildFrom(const vpPoint &p) ;
+  // void buildFrom(const vpPoint &p) ;
   void buildFrom(const double _x, const double _y) ;
 
-
-
-  public:
-  /*
-    vpBasicFeature method instantiation
-  */
-  // feature selection
-  static unsigned int selectX();
-  static unsigned int selectY();
-
-
-    //! compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
-  //! compute the error between two visual features from a subset
-  //! a the possible features
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL)  ;
-  //! compute the error between a visual features and zero
-  vpColVector error(const unsigned int select = FEATURE_ALL)  ;
-  //! print the name of the feature
-  void print(const unsigned int select = FEATURE_ALL ) const ;
-
-  //! feature duplication
-  vpFeatureVanishingPoint *duplicate() const ;
-
-public:
   void display(const vpCameraParameters &cam,
                const vpImage<unsigned char> &I,
                const vpColor &color=vpColor::green,
@@ -140,8 +95,45 @@ public:
                const vpColor &color=vpColor::green,
                unsigned int thickness=1) const;
 
+  //! feature duplication
+  vpFeatureVanishingPoint *duplicate() const ;
+
+  //! compute the error between two visual features from a subset
+  //! a the possible features
+  vpColVector error(const vpBasicFeature &s_star,
+                    const unsigned int select = FEATURE_ALL)  ;
+  //! compute the error between a visual features and zero
+  vpColVector error(const unsigned int select = FEATURE_ALL)  ;
+
+  //! get the point x-coordinates
+  double get_x()  const ;
+  //! get the point y-coordinates
+  double get_y()   const ;
+
+  //! Default initialization.
+  void init() ;
+  //! compute the interaction matrix from a subset a the possible features
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+
+  //! print the name of the feature
+  void print(const unsigned int select = FEATURE_ALL ) const ;
+
+  //! Set the point x-coordinates
+  void set_x(const double _x) ;
+  //! Set the point y-coordinates
+  void set_y(const double _y) ;
+  //! Set the point xy coordinates
+  void set_xy(const double _x, const double _y) ;
+
+
+
+public:
+  /*
+    vpBasicFeature method instantiation
+  */
+  // feature selection
+  static unsigned int selectX();
+  static unsigned int selectY();
 } ;
-
-
 
 #endif

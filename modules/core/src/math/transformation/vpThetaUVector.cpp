@@ -371,7 +371,7 @@ vpThetaUVector::extract(double &theta, vpColVector &u) const
 
   Get the rotation angle \f$ \theta \f$ from the \f$ \theta {\bf u} \f$ representation.
 
-  \param theta : Rotation angle \f$ \theta \f$ in rad.
+  \return Rotation angle \f$ \theta \f$ in rad.
 
   The following example shows how to use this function:
   \code
@@ -397,7 +397,7 @@ double vpThetaUVector::getTheta() const
 
   Get the unit vector \f$\bf u \f$ from the \f$ \theta {\bf u} \f$ representation.
 
-  \param u : 3-dim unit vector \f${\bf u} = (u_{x},u_{y},u_{z})^{\top} \f$
+  \return 3-dim unit vector \f${\bf u} = (u_{x},u_{y},u_{z})^{\top} \f$
   representing the rotation axis.
 
   The following example shows how to use this function:

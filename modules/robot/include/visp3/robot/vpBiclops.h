@@ -193,8 +193,8 @@ public:
     dh_model_ = m;
   }
 
-  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpBiclops & constant);
   //@}
+  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpBiclops & constant);
 };
 
 

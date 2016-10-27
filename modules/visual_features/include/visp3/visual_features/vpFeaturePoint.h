@@ -188,52 +188,11 @@ private:
   double Z ;
 
 public:
-
-  void init() ;
-
   vpFeaturePoint() ;
   //! Destructor.
   virtual ~vpFeaturePoint() {}
 
-
-  /*
-    section Set coordinates
-  */
-
   void buildFrom(const double x, const double y, const double Z) ;
-
-  void set_x(const double x) ;
-
-  void set_y(const double y) ;
-
-  void set_Z(const double Z) ;
-
-  void set_xyZ(const double x, const double y, const double Z) ;
-
-  double get_x()  const ;
-
-  double get_y()   const ;
-
-  double get_Z() const  ;
-
-
-  /*
-    vpBasicFeature method instantiation
-  */
-
-  // feature selection
-  static unsigned int selectX();
-  static unsigned int selectY();
-
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
-
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL)  ;
-
-  void print(const unsigned int select = FEATURE_ALL ) const ;
-
-  vpFeaturePoint *duplicate() const ;
-
 
   void display(const vpCameraParameters &cam,
                const vpImage<unsigned char> &I,
@@ -244,26 +203,46 @@ public:
                const vpColor &color=vpColor::green,
                unsigned int thickness=1) const ;
 
+  vpFeaturePoint *duplicate() const ;
+
+  vpColVector error(const vpBasicFeature &s_star,
+                    const unsigned int select = FEATURE_ALL)  ;
+  //! Compute the error between a visual features and zero
+  vpColVector error(const unsigned int select = FEATURE_ALL)  ;
+
+  double get_x()  const ;
+
+  double get_y()   const ;
+
+  double get_Z() const  ;
+
+  void init() ;
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+
+  void print(const unsigned int select = FEATURE_ALL ) const ;
+
+  void set_x(const double x) ;
+
+  void set_y(const double y) ;
+
+  void set_Z(const double Z) ;
+
+  void set_xyZ(const double x, const double y, const double Z) ;
+
+
+  // feature selection
+  static unsigned int selectX();
+  static unsigned int selectY();
 
   /*!
     @name Deprecated functions
   */
   typedef enum
-    {
-      X = 1,   // x coordinates
-      Y = 2    // y coordinates
-    } vpFeaturePointType;
-  //! Compute the error between a visual features and zero
-  vpColVector error(const unsigned int select = FEATURE_ALL)  ;
+  {
+    X = 1,   // x coordinates
+    Y = 2    // y coordinates
+  } vpFeaturePointType;
 
 } ;
 
-
-
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

@@ -173,50 +173,11 @@ class VISP_EXPORT vpGenericFeature : public vpBasicFeature
 {
 private:
   vpGenericFeature() ;
+
 public:
-  void init() ;
   vpGenericFeature(unsigned int dim) ;
   virtual ~vpGenericFeature() ;
-public:
 
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
-
-  vpColVector error(const vpBasicFeature &s_star,
-		    const unsigned int select = FEATURE_ALL)  ;
-
-  vpColVector error(const unsigned int select = FEATURE_ALL)  ;
-
-  void print(const unsigned int select = FEATURE_ALL ) const ;
-
-  vpGenericFeature *duplicate() const ;
-
-private:
-  typedef enum
-    {
-      errorNotInitalized,
-      errorInitialized,
-      errorHasToBeUpdated
-    } vpGenericFeatureErrorType;
-
-  vpMatrix L ;
-  vpColVector err ;
-  vpGenericFeatureErrorType errorStatus ;
-
-public:
-  void setInteractionMatrix(const vpMatrix &L) ;
-  vpMatrix getInteractionMatrix() const { return L ; }
-  void setError(const vpColVector &error_vector)  ;
-  void set_s(const vpColVector &s) ;
-  void set_s(const double s0) ;
-  void set_s(const double s0, const double s1) ;
-  void set_s(const double s0, const double s1, const double s2) ;
-  
-  void get_s(vpColVector &s) const;
-  void get_s(double &s0) const;
-  void get_s(double &s0, double &s1) const;
-  void get_s(double &s0, double &s1, double &s2) const;
-
-public:
   void display(const vpCameraParameters &cam,
                const vpImage<unsigned char> &I,
                const vpColor &color=vpColor::green,
@@ -226,13 +187,44 @@ public:
                const vpColor &color=vpColor::green,
                unsigned int thickness=1) const ;
 
+  vpGenericFeature *duplicate() const ;
 
+
+  vpColVector error(const vpBasicFeature &s_star,
+                    const unsigned int select = FEATURE_ALL)  ;
+
+  vpColVector error(const unsigned int select = FEATURE_ALL)  ;
+
+  vpMatrix getInteractionMatrix() const { return L ; }
+  void get_s(vpColVector &s) const;
+  void get_s(double &s0) const;
+  void get_s(double &s0, double &s1) const;
+  void get_s(double &s0, double &s1, double &s2) const;
+
+  void init() ;
+
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+
+  void print(const unsigned int select = FEATURE_ALL ) const ;
+  void setInteractionMatrix(const vpMatrix &L) ;
+  void setError(const vpColVector &error_vector)  ;
+  void set_s(const vpColVector &s) ;
+  void set_s(const double s0) ;
+  void set_s(const double s0, const double s1) ;
+  void set_s(const double s0, const double s1, const double s2) ;
+
+
+private:
+  typedef enum
+  {
+    errorNotInitalized,
+    errorInitialized,
+    errorHasToBeUpdated
+  } vpGenericFeatureErrorType;
+
+  vpMatrix L ;
+  vpColVector err ;
+  vpGenericFeatureErrorType errorStatus ;
 } ;
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

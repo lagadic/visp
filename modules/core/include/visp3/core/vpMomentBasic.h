@@ -69,7 +69,8 @@
 
 class VISP_EXPORT vpMomentBasic : public vpMoment {
  public:	
-        vpMomentBasic();	
+  vpMomentBasic();
+  virtual ~vpMomentBasic(){};
 
         void compute();
         const std::vector<double>& get() const;

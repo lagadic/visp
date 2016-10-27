@@ -251,61 +251,24 @@ public:
   */
 
 public:
-  // Basic construction.
-  void init() ;
   // Basic constructor.
   vpFeatureThetaU() ;
   vpFeatureThetaU(vpFeatureThetaURotationRepresentationType r) ;
   vpFeatureThetaU(vpThetaUVector &tu,
-		  vpFeatureThetaURotationRepresentationType r) ;
+                  vpFeatureThetaURotationRepresentationType r) ;
   vpFeatureThetaU(vpRotationMatrix &R,
-		  vpFeatureThetaURotationRepresentationType r) ;
-  vpFeatureThetaU(vpHomogeneousMatrix &M, 
-		  vpFeatureThetaURotationRepresentationType r) ;
+                  vpFeatureThetaURotationRepresentationType r) ;
+  vpFeatureThetaU(vpHomogeneousMatrix &M,
+                  vpFeatureThetaURotationRepresentationType r) ;
+  //! Destructor. Does nothing.
+  virtual ~vpFeatureThetaU() {}
+
   void buildFrom(vpThetaUVector &tu) ;
   // build from a rotation matrix
   void buildFrom(const vpRotationMatrix &R) ;
   // build from an homogeneous  matrix
   void buildFrom(const vpHomogeneousMatrix &M) ;
 
-  //! Destructor. Does nothing.
-  virtual ~vpFeatureThetaU() {}
-
-public:
-
-  void set_TUx(const double tu_x) ;
-  void set_TUy(const double tu_y) ;
-  void set_TUz(const double tu_z) ;
-
-  void setFeatureThetaURotationType(const vpFeatureThetaURotationRepresentationType r);
-
-  vpFeatureThetaURotationRepresentationType getFeatureThetaURotationType() const;
-
-  double get_TUx() const;
-  double get_TUy() const;
-  double get_TUz() const;
-
-
-public:
-  /*
-    vpBasicFeature method instantiation
-  */
-  static unsigned int selectTUx();
-  static unsigned int selectTUy();
-  static unsigned int selectTUz();
-
-  // compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
-  // compute the error between two visual features from a subset
-  // a the possible features
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL)  ;
-  void print(const unsigned int select= FEATURE_ALL) const ;
-
-  //! Feature duplication.
-  vpFeatureThetaU *duplicate() const ;
-
-public:
   void display(const vpCameraParameters &cam,
                const vpImage<unsigned char> &I,
                const vpColor &color=vpColor::green,
@@ -315,15 +278,44 @@ public:
                const vpColor &color=vpColor::green,
                unsigned int thickness=1) const ;
 
- private:
+  //! Feature duplication.
+  vpFeatureThetaU *duplicate() const ;
+
+  // compute the error between two visual features from a subset
+  // a the possible features
+  vpColVector error(const vpBasicFeature &s_star,
+                    const unsigned int select = FEATURE_ALL)  ;
+
+  vpFeatureThetaURotationRepresentationType getFeatureThetaURotationType() const;
+
+  double get_TUx() const;
+  double get_TUy() const;
+  double get_TUz() const;
+
+  // Basic construction.
+  void init() ;
+  // compute the interaction matrix from a subset a the possible features
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+
+  void print(const unsigned int select= FEATURE_ALL) const ;
+
+  void set_TUx(const double tu_x) ;
+  void set_TUy(const double tu_y) ;
+  void set_TUz(const double tu_z) ;
+
+  void setFeatureThetaURotationType(const vpFeatureThetaURotationRepresentationType r);
+
+public:
+  /*
+    vpBasicFeature method instantiation
+  */
+  static unsigned int selectTUx();
+  static unsigned int selectTUy();
+  static unsigned int selectTUz();
+
+private:
   vpFeatureThetaURotationRepresentationType rotation;
 } ;
 
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

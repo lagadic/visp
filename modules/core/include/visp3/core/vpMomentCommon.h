@@ -119,12 +119,12 @@ private:
 
 public:
   vpMomentCommon(double dstSurface,std::vector<double> ref,double refAlpha,double dstZ=1.0, bool flg_sxsyfromnormalized=false);
+  virtual ~vpMomentCommon();
 
   static double getAlpha(vpMomentObject& object);
   static std::vector<double> getMu3(vpMomentObject& object);
   static double getSurface(vpMomentObject& object);
 
   void updateAll(vpMomentObject& object);
-  ~vpMomentCommon();
 };
 #endif // VPCOMMONMOMENTS_H

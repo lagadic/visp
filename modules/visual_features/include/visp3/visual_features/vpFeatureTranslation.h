@@ -294,8 +294,6 @@ public:
     cMo 
   } vpFeatureTranslationRepresentationType;
 
-  // basic construction
-  void init() ;
   // basic contructor
   vpFeatureTranslation() ;
   // basic constructor specifying the type of translation feature
@@ -310,35 +308,6 @@ public:
   // cdMc is the displacement that the camera has to realize
   void buildFrom(const vpHomogeneousMatrix &f2Mf1) ;
 
-  void set_Tx(const double t_x) ;
-  void set_Ty(const double t_y) ;
-  void set_Tz(const double t_z) ;
-
-  void setFeatureTranslationType(const vpFeatureTranslationRepresentationType r);
-
-  vpFeatureTranslationRepresentationType getFeatureTranslationType() const;
-
-  double get_Tx() const ;
-  double get_Ty() const ;
-  double get_Tz() const ;
-
-  // feature selection
-  static unsigned int selectTx();
-  static unsigned int selectTy();
-  static unsigned int selectTz();
-
-  // compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
-  // compute the error between two visual features from a subset
-  // a the possible features
-  vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL)  ;
-  // print the name of the feature
-  void print(const unsigned int select= FEATURE_ALL) const ;
-
-  //! Feature duplication
-  vpFeatureTranslation *duplicate() const ;
-
   void display(const vpCameraParameters &cam,
                const vpImage<unsigned char> &I,
                const vpColor &color=vpColor::green,
@@ -348,6 +317,40 @@ public:
                const vpColor &color=vpColor::green,
                unsigned int thickness=1) const ;
 
+  //! Feature duplication
+  vpFeatureTranslation *duplicate() const ;
+
+  // compute the error between two visual features from a subset
+  // a the possible features
+  vpColVector error(const vpBasicFeature &s_star,
+                    const unsigned int select = FEATURE_ALL)  ;
+
+  vpFeatureTranslationRepresentationType getFeatureTranslationType() const;
+
+  double get_Tx() const ;
+  double get_Ty() const ;
+  double get_Tz() const ;
+
+  // basic construction
+  void init() ;
+  // compute the interaction matrix from a subset a the possible features
+  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+
+  // print the name of the feature
+  void print(const unsigned int select= FEATURE_ALL) const ;
+
+  void set_Tx(const double t_x) ;
+  void set_Ty(const double t_y) ;
+  void set_Tz(const double t_z) ;
+
+  void setFeatureTranslationType(const vpFeatureTranslationRepresentationType r);
+
+
+  // feature selection
+  static unsigned int selectTx();
+  static unsigned int selectTy();
+  static unsigned int selectTz();
+
 private:
   //! displacement that the camera has to realize
   vpHomogeneousMatrix f2Mf1;
@@ -356,9 +359,3 @@ private:
 
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
