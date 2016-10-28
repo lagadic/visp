@@ -144,8 +144,6 @@ public:
 
   vpRobot & operator=(const vpRobot &robot);
 
-  static vpColVector saturateVelocities(const vpColVector &v_in, const vpColVector &v_max, bool verbose=false);
-
   void setMaxRotationVelocity (const double maxVr);
   void setMaxTranslationVelocity (const double maxVt);
   //! Set a displacement (frame has to be specified) in position control.
@@ -158,6 +156,11 @@ public:
                            const vpColVector &vel) = 0 ;
   inline void setVerbose(bool verbose) { verbose_ = verbose; };
 
+  //@}
+
+  /** @name Static Public Member Functions inherited from vpRobot */
+  //@{
+  static vpColVector saturateVelocities(const vpColVector &v_in, const vpColVector &v_max, bool verbose=false);
   //@}
 
 protected:
