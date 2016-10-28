@@ -935,7 +935,6 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
     int  end = false ;
     int incr = 10 ;
 
-
     int i1=0,i2=0,j1=0,j2=0 ;
     unsigned char v1=0,v2=0 ;
 
@@ -973,13 +972,12 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
       v2=I[i2_][j2_];
       if (abs(v1-v2) < 1)
       {
-
         incr-- ;
         end = false ;
         if (incr==1)
         {
-          std::cout << "In CStraightLine::GetParameters() " ;
-          std::cout << " Error Tracking " << abs(v1-v2) << std::endl ;
+          throw(vpException(vpException::fatalError,
+                            "In vpMeLine cannot determine rho sign, since there is no gray level difference between both sides of the line"));
         }
       }
       update_indices(theta,i,j,incr,i1,i2,j1,j2);
