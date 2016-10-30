@@ -370,6 +370,15 @@
 // Defined if std::round function is available
 #cmakedefine VISP_HAVE_FUNC_STD_ROUND
 
+// Defined if erfc function is available
+#cmakedefine VISP_HAVE_FUNC_ERFC
+
+// Defined if std::erfc function is available
+#cmakedefine VISP_HAVE_FUNC_STD_ERFC
+
+// Defined if strtof function is available
+#cmakedefine VISP_HAVE_FUNC_STRTOF
+
 // Handle portable symbol export.
 // Defining manually which symbol should be exported is required
 // under Windows whether MinGW or MSVC is used.

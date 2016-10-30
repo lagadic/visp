@@ -261,7 +261,11 @@ vpXmlParser::xmlReadFloatChild (xmlDocPtr doc, xmlNodePtr node)
   float val_float;
 
   val_char = (char *) xmlNodeListGetString(doc, node ->xmlChildrenNode, 1);
+#if defined(VISP_HAVE_FUNC_STRTOF)
   val_float = strtof ((char *)val_char, &control_convert);
+#else
+  val_float = (float) strtod ((char *)val_char, &control_convert);
+#endif
 
   if (val_char == control_convert){
     xmlFree((xmlChar*) val_char);
