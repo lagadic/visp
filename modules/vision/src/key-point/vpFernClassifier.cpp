@@ -243,7 +243,7 @@ vpFernClassifier::buildReference(const vpImage<unsigned char> &_I,
   }
     
   vpImage<unsigned char> subImage;
-  vpImageTools::createSubImage(_I,
+  vpImageTools::crop(_I,
 			       (unsigned int)_iP.get_i(),
 			       (unsigned int)_iP.get_j(),
 			       _height, _width, subImage);
@@ -394,7 +394,7 @@ vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I,
 
   vpImage<unsigned char> subImage;
 
-  vpImageTools::createSubImage(_I,
+  vpImageTools::crop(_I,
 			       (unsigned int)_iP.get_i(),
 			       (unsigned int)_iP.get_j(),
 			       _height, _width, subImage);

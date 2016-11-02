@@ -512,7 +512,7 @@ void vpDisplayGTK::displayImageROI ( const vpImage<unsigned char> &I,const vpIma
   if (displayHasBeenInitialized)
   {
     vpImage<unsigned char> Itemp;
-    vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(), h, w,Itemp);
+    vpImageTools::crop(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(), h, w,Itemp);
     /* Copie de l'image dans le pixmap fond */
     gdk_draw_gray_image(background,
                         gc, (gint)iP.get_u(), (gint)iP.get_v(), (gint)w, (gint)h,
@@ -601,7 +601,7 @@ void vpDisplayGTK::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint
   if (displayHasBeenInitialized)
   {
     vpImage<vpRGBa> Itemp;
-    vpImageTools::createSubImage(I,(unsigned int)iP.get_i(), (unsigned int)iP.get_j(), h, w, Itemp);
+    vpImageTools::crop(I,(unsigned int)iP.get_i(), (unsigned int)iP.get_j(), h, w, Itemp);
     /* Copie de l'image dans le pixmap fond */
     gdk_draw_rgb_32_image(background,
                           gc, (gint)iP.get_u(), (gint)iP.get_v(), (gint)w, (gint)h,

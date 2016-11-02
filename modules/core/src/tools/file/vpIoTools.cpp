@@ -1268,10 +1268,10 @@ std::string vpIoTools::getParent(const std::string& pathname)
 }
 
 /*!
-  Returns the absolute path using realpath on Unix systems or \GetFullPathName on Windows systems.
-  \return According to realpath manual, returns an absolute pathname that names the same file,
+  Returns the absolute path using realpath() on Unix systems or GetFullPathName() on Windows systems.
+  \return According to realpath() manual, returns an absolute pathname that names the same file,
   whose resolution does not involve '.', '..', or symbolic links for Unix systems.
-  According to GetFullPathName documentation, retrieves the full path of the specified file for
+  According to GetFullPathName() documentation, retrieves the full path of the specified file for
   Windows systems.
  */
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname) {

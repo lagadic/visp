@@ -338,7 +338,7 @@ vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I,
 
   vpImage<unsigned char> subImage;
 
-  vpImageTools::createSubImage(I,
+  vpImageTools::crop(I,
 			       (unsigned int)iP.get_i(),
 			       (unsigned int)iP.get_j(),
 			       height, width, subImage);

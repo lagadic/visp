@@ -282,6 +282,10 @@ VP_CHECK_PACKAGE(IsNaN)
 VP_CHECK_PACKAGE(IsInf)
 # Find Round (should be after USE_CPP11)
 VP_CHECK_PACKAGE(Round)
+# Find Erfc
+VP_CHECK_PACKAGE(Erfc)
+# Find Strtof
+VP_CHECK_PACKAGE(Strtof)
 
 #----------------------------------------------------------------------
 # For Dart server and tests
@@ -693,6 +697,12 @@ VP_SET(VISP_HAVE_FUNC__FINITE TRUE IF HAVE_FUNC__FINITE) # for header vpConfig.h
 VP_SET(VISP_HAVE_FUNC_ROUND TRUE IF HAVE_FUNC_ROUND) # for header vpConfig.h
 # Find std::round function (cmath)
 VP_SET(VISP_HAVE_FUNC_STD_ROUND TRUE IF HAVE_FUNC_STD_ROUND) # for header vpConfig.h
+# Find erfc function (math.h)
+VP_SET(VISP_HAVE_FUNC_ERFC TRUE IF HAVE_FUNC_ERFC) # for header vpConfig.h
+# Find std::erfc function (cmath)
+VP_SET(VISP_HAVE_FUNC_STD_ERFC TRUE IF HAVE_FUNC_STD_ERFC) # for header vpConfig.h
+# Find strtof function (stdlib.h)
+VP_SET(VISP_HAVE_FUNC_STRTOF TRUE IF HAVE_FUNC_STRTOF) # for header vpConfig.h
 
 VP_SET(VISP_HAVE_ACCESS_TO_NAS TRUE IF NAS_FOUND) # for header vpConfig.h
 VP_SET(VISP_BUILD_DEPRECATED_FUNCTIONS TRUE IF BUILD_DEPRECATED_FUNCTIONS) # for header vpConfig.h

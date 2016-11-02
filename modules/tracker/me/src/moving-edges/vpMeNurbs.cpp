@@ -564,7 +564,7 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
     
     vpDisplay::displayRectangle(I,rect,vpColor::green);
     
-    vpImageTools::createSubImage(I,rect,Isub);
+    vpImageTools::crop(I,rect,Isub);
     
     vpImagePoint lastPtInSubIm(begin[0]);
     double u = 0.0;
@@ -701,7 +701,7 @@ vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
     
     vpDisplay::displayRectangle(I,rect,vpColor::green);
     
-    vpImageTools::createSubImage(I,rect,Isub);
+    vpImageTools::crop(I,rect,Isub);
     
     vpImagePoint lastPtInSubIm(end[0]);
     double u = 1.0;
