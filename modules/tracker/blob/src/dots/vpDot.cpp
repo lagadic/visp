@@ -178,13 +178,13 @@ vpDot::operator=(const vpDot& d)
 }
 
 bool
-vpDot::operator!=(const vpDot& d)
+vpDot::operator!=(const vpDot& d) const
 {
   return ( cog != d.getCog() );
 }
 
 bool
-vpDot::operator==(const vpDot& d)
+vpDot::operator==(const vpDot& d) const
 {
   return ( cog == d.getCog() );
 }

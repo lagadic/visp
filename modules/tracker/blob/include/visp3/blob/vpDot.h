@@ -301,8 +301,8 @@ public :
 		    unsigned int gray_level_min, unsigned int gray_level_max);
 
   vpDot& operator =(const vpDot& d) ;
-  bool operator ==(const vpDot& d);
-  bool operator !=(const vpDot& d);
+  bool operator ==(const vpDot& d) const;
+  bool operator !=(const vpDot& d) const;
   friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpDot& d);
 
   void print(std::ostream& os) { os << *this << std::endl ; }
