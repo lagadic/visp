@@ -485,7 +485,7 @@ main(int argc, const char ** argv)
     if (I.getWidth() >= 411 && I.getHeight() >= 507) {
       vpRect r_crop(0, 0, 411, 507);
       vpImage<unsigned char> I_crop;
-      vpImageTools::createSubImage(I, r_crop, I_crop);
+      vpImageTools::crop(I, r_crop, I_crop);
       std::cout << "\nI_crop=" << I_crop.getWidth() << "x" << I_crop.getHeight() << std::endl;
 
       vpImage<unsigned char> I_invert(I_crop.getHeight(), I_crop.getWidth(), 255);

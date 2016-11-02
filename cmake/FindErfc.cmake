@@ -28,15 +28,13 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find isnan macro, std::isnan function or _isnan function.
+# Try to find erfc function.
 #
 # Authors:
 # Souriya Trinh
 #
 #############################################################################
 
-include(CheckIncludeFile)
-include(CheckIncludeFiles)
 include(CheckCXXSourceCompiles)
 
 macro(check_math_expr _expr _var)
@@ -53,24 +51,5 @@ int main(int argc, char ** argv)
 " ${_var})
 endmacro()
 
-check_include_files("float.h"       HAVE_FLOAT_H)
-check_math_expr("isinf(1.0)"        HAVE_FUNC_ISINF)
-check_math_expr("std::isinf(1.0)"   HAVE_FUNC_STD_ISINF)
-
-if(HAVE_FLOAT_H)
-    if(USE_CPP11)
-      set(CMAKE_REQUIRED_FLAGS ${CPP11_CXX_FLAGS})
-    endif()
-    # The version that should work with MSVC
-    check_cxx_source_compiles("
-#include <float.h>
-int main(int argc, char ** argv)
-{
-    (void)_finite(1.0);
-    return 0;
-}
-" HAVE_FUNC__FINITE)
-else()
-    set(HAVE_FUNC__FINITE FALSE)
-endif()
-
+check_math_expr("erfc(1.0)"        HAVE_FUNC_ERFC)
+check_math_expr("std::erfc(1.0)"   HAVE_FUNC_STD_ERFC)

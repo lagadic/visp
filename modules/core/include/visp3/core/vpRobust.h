@@ -45,6 +45,7 @@
 #ifndef CROBUST_HH
 #define CROBUST_HH
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMath.h>
 
@@ -181,6 +182,7 @@ public:
   double constrainedChiHuber(double x);
   //@}
   
+#if !defined(VISP_HAVE_FUNC_ERFC) && !defined(VISP_HAVE_FUNC_STD_ERFC)
   //---------------------------------
   // Mathematic functions used to calculate the Expectation
   //---------------------------------
@@ -192,6 +194,7 @@ public:
   void gcf(double *gammcf, double a, double x, double *gln);
   double gammln(double xx);
   //@}
+#endif
   
   /** @name Sort function  */
   //@{
