@@ -40,7 +40,7 @@ include(CheckIncludeFiles)
 include(CheckCXXSourceCompiles)
 
 macro(check_math_expr1 _expr _var)
-    if(CPP11_CXX_FLAGS)
+    if(USE_CPP11)
       set(CMAKE_REQUIRED_FLAGS ${CPP11_CXX_FLAGS})
     endif()
     check_cxx_source_compiles("
@@ -54,7 +54,7 @@ int main(int argc, char ** argv)
 endmacro()
 
 macro(check_math_expr2 _expr _var)
-    if(CPP11_CXX_FLAGS)
+    if(USE_CPP11)
       set(CMAKE_REQUIRED_FLAGS ${CPP11_CXX_FLAGS})
     endif()
     check_cxx_source_compiles("

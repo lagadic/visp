@@ -414,17 +414,36 @@ vpRobust::scale(vpRobustEstimatorType method, vpColVector &x)
   for(unsigned int i=0; i<n; i++)
   {
     double chiTmp = constrainedChi(method, x[i]);
+#if defined(VISP_HAVE_FUNC_STD_ERFC)
+    Expectation += chiTmp*std::erfc(chiTmp);
+#elif defined(VISP_HAVE_FUNC_ERFC)
     Expectation += chiTmp*erfc(chiTmp);
+#else
+    Expectation += chiTmp*(1-erf(chiTmp));
+#endif
+
     Sum_chi += chiTmp;
 
 #ifdef VP_DEBUG
 #if VP_DEBUG_MODE == 3
     {
+#if defined(VISP_HAVE_FUNC_STD_ERFC)
+      std::cout << "erf = " << std::erfc(chiTmp) << std::endl;
+#elif defined(VISP_HAVE_FUNC_ERFC)
       std::cout << "erf = " << erfc(chiTmp) << std::endl;
+#else
+      std::cout << "erf = " << (1-erf(chiTmp)) << std::endl;
+#endif
       std::cout << "x[i] = " << x[i] <<std::endl;
       std::cout << "chi = " << chiTmp << std::endl;
       std::cout << "Sum chi = " << chiTmp*vpMath::sqr(sig_prev) << std::endl;
+#if defined(VISP_HAVE_FUNC_STD_ERFC)
+      std::cout << "Expectation = " << chiTmp*std::erfc(chiTmp) << std::endl;
+#elif defined(VISP_HAVE_FUNC_ERFC)
       std::cout << "Expectation = " << chiTmp*erfc(chiTmp) << std::endl;
+#else
+      std::cout << "Expectation = " << chiTmp*(1-erf(chiTmp)) << std::endl;
+#endif
       //getchar();
     }
 #endif
@@ -463,17 +482,35 @@ vpRobust::simultscale(vpColVector &x)
   {
 
     double chiTmp = simult_chi_huber(x[i]);
+#if defined(VISP_HAVE_FUNC_STD_ERFC)
+    Expectation += chiTmp*std::erfc(chiTmp);
+#elif defined(VISP_HAVE_FUNC_ERFC)
     Expectation += chiTmp*erfc(chiTmp);
+#else
+    Expectation += chiTmp*(1-erf(chiTmp));
+#endif
     Sum_chi += chiTmp;
 
 #ifdef VP_DEBUG
 #if VP_DEBUG_MODE == 3
     {
+#if defined(VISP_HAVE_FUNC_STD_ERFC)
+      std::cout << "erf = " << std::erfc(chiTmp) << std::endl;
+#elif defined(VISP_HAVE_FUNC_ERFC)
       std::cout << "erf = " << erfc(chiTmp) << std::endl;
+#else
+      std::cout << "erf = " << (1-erf(chiTmp)) << std::endl;
+#endif
       std::cout << "x[i] = " << x[i] <<std::endl;
       std::cout << "chi = " << chiTmp << std::endl;
       std::cout << "Sum chi = " << chiTmp*vpMath::sqr(sig_prev) << std::endl;
+#if defined(VISP_HAVE_FUNC_STD_ERFC)
+      std::cout << "Expectation = " << chiTmp*std::erfc(chiTmp) << std::endl;
+#elif defined(VISP_HAVE_FUNC_ERFC)
       std::cout << "Expectation = " << chiTmp*erfc(chiTmp) << std::endl;
+#else
+      std::cout << "Expectation = " << chiTmp*(1-erf(chiTmp)) << std::endl;
+#endif
       //getchar();
     }
 #endif
@@ -761,6 +798,7 @@ vpRobust::select(vpColVector &a, int l, int r, int k)
 }
 
 
+#if !defined(VISP_HAVE_FUNC_ERFC) && !defined(VISP_HAVE_FUNC_STD_ERFC)
 double
 vpRobust::erf(double x)
 {
@@ -869,6 +907,7 @@ vpRobust::gammln(double xx)
   }
   return -tmp+log(2.50662827465*ser);
 }
+#endif
 
 
 
