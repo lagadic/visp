@@ -38,6 +38,9 @@
 include(CheckCXXSourceCompiles)
 
 macro(check_math_expr _expr _var)
+    if(USE_CPP11)
+      set(CMAKE_REQUIRED_FLAGS ${CPP11_CXX_FLAGS})
+    endif()
     check_cxx_source_compiles("
 #include <cmath>
 int main(int argc, char ** argv)
