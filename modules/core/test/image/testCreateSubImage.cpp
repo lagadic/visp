@@ -46,7 +46,7 @@
 #include <stdlib.h>
 
 /*!
-  \example testCreateSubImage.cpp
+  \example testCrop.cpp
 
   \brief Create a sub-image from an image by cropping a rectangular area.
 
@@ -245,14 +245,14 @@ main(int argc, const char ** argv)
     vpImageIo::read(I, filename) ;
 
     // Specify the cropping area
-    vpRect crop;
-    crop.setLeft(-10.2);
-    crop.setTop(10.0);
-    crop.setWidth(I.getWidth());
-    crop.setHeight(20.0);
+    vpRect roi;
+    roi.setLeft(-10.2);
+    roi.setTop(10.0);
+    roi.setWidth(I.getWidth());
+    roi.setHeight(20.0);
 
     // Create the cropped image
-    vpImageTools::createSubImage(I, crop, C);
+    vpImageTools::crop(I, roi, C);
 
     // Write the cropped image on the disk
     filename = vpIoTools::createFilePath(opath, "Klimt_crop.pgm");

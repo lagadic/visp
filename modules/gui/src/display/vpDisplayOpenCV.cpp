@@ -565,7 +565,7 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
   if (displayHasBeenInitialized)
   { 
     vpImage<unsigned char> Itemp;
-    vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),h,w,Itemp);
+    vpImageTools::crop(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),h,w,Itemp);
     vpImage<vpRGBa> Ic;
     vpImageConvert::convert(Itemp,Ic); 
 
@@ -704,7 +704,7 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePo
   if (displayHasBeenInitialized)
   { 
     vpImage<vpRGBa> Ic;
-    vpImageTools::createSubImage(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),h,w,Ic);
+    vpImageTools::crop(I,(unsigned int)iP.get_i(),(unsigned int)iP.get_j(),h,w,Ic);
     
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     CvSize size = cvSize((int)this->width, (int)this->height);

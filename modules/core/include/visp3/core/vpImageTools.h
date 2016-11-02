@@ -77,21 +77,9 @@ class VISP_EXPORT vpImageTools
 
 public:
   template<class Type>
-  static void createSubImage(const vpImage<Type> &I,
-                             unsigned int i_sub, unsigned int j_sub,
-                             unsigned int nrow_sub, unsigned int ncol_sub,
-                             vpImage<Type> &S);
-
-  template<class Type>
-  static void createSubImage(const vpImage<Type> &I,
-                             const vpRect &rect,
-                             vpImage<Type> &S);
-
-  template<class Type>
   static inline void binarise(vpImage<Type> &I,
                               Type threshold1, Type threshold2,
                               Type value1, Type value2, Type value3, const bool useLUT=true);
-
   static void changeLUT(vpImage<unsigned char>& I,
                         unsigned char A,
                         unsigned char newA,
@@ -99,9 +87,13 @@ public:
                         unsigned char newB);
 
   template<class Type>
-  static void undistort(const vpImage<Type> &I,
-                        const vpCameraParameters &cam,
-                        vpImage<Type> &newI);
+  static void crop(const vpImage<Type> &I,
+                   unsigned int roi_top, unsigned int roi_left,
+                   unsigned int roi_height, unsigned int roi_width,
+                   vpImage<Type> &crop);
+
+  template<class Type>
+  static void crop(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop);
 
   template<class Type>
   static void flip(const vpImage<Type> &I,
@@ -128,66 +120,139 @@ public:
                             const vpImage<unsigned char> &I2,
                             vpImage<unsigned char> &Ires,
                             const bool saturate=false);
+
+  template<class Type>
+  static void undistort(const vpImage<Type> &I,
+                        const vpCameraParameters &cam,
+                        vpImage<Type> &newI);
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  template<class Type>
+  vp_deprecated static void createSubImage(const vpImage<Type> &I,
+                             unsigned int i_sub, unsigned int j_sub,
+                             unsigned int nrow_sub, unsigned int ncol_sub,
+                             vpImage<Type> &S);
+
+  template<class Type>
+  vp_deprecated static void createSubImage(const vpImage<Type> &I, const vpRect &rect, vpImage<Type> &S);
+  //@}
+#endif
 } ;
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 /*!
-  Extract a sub part of an image
+  Crop a region of interest (ROI) in an image.
+
+  \deprecated This fonction is deprecated. You should rather use
+  crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int, unsigned int, vpImage<Type> &).
 
   \param I : Input image from which a sub image will be extracted.
-  \param i_sub : Vertical position of the upper/left corner of the sub image
-  \param j_sub : Horizontal position of the upper/left corner of the sub image
-  \param nrow_sub : Sub image height
-  \param ncol_sub : Sub image width
-  \param S : Sub-image.
+  \param roi_top : ROI vertical position of the upper/left corner in the input image.
+  \param roi_left : ROI  horizontal position of the upper/left corner in the input image.
+  \param roi_height : Cropped image height corresponding to the ROI height.
+  \param roi_width : Cropped image width corresponding to the ROI height.
+  \param crop : Cropped image.
+
+  \sa crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int, unsigned int, vpImage<Type> &)
+*/
+
+template<class Type>
+void vpImageTools::createSubImage(const vpImage<Type> &I,
+                                  unsigned int roi_top, unsigned int roi_left,
+                                  unsigned int roi_height, unsigned int roi_width,
+                                  vpImage<Type> &crop)
+{
+  vpImageTools::crop(I, roi_top, roi_left, roi_height, roi_width, crop);
+}
+
+/*!
+  Crop an image region of interest.
+
+  \deprecated This fonction is deprecated. You should rather use
+  crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &).
+
+  \param I : Input image from which a sub image will be extracted.
+
+  \param roi : Region of interest in image \e I corresponding to the
+  cropped part of the image.
+
+  \param crop : Cropped image.
+
+  \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
 */
 template<class Type>
 void vpImageTools::createSubImage(const vpImage<Type> &I,
-                                  unsigned int i_sub, unsigned int j_sub,
-                                  unsigned int nrow_sub, unsigned int ncol_sub,
-                                  vpImage<Type> &S)
+                                  const vpRect &roi,
+                                  vpImage<Type> &crop)
+{
+  vpImageTools::crop(I, roi, crop);
+}
+
+#endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+/*!
+  Crop a region of interest (ROI) in an image.
+
+  \param I : Input image from which a sub image will be extracted.
+  \param roi_top : ROI vertical position of the upper/left corner in the input image.
+  \param roi_left : ROI  horizontal position of the upper/left corner in the input image.
+  \param roi_height : Cropped image height corresponding to the ROI height.
+  \param roi_width : Cropped image width corresponding to the ROI height.
+  \param crop : Cropped image.
+
+  \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
+
+*/
+template<class Type>
+void vpImageTools::crop(const vpImage<Type> &I,
+                        unsigned int roi_top, unsigned int roi_left,
+                        unsigned int roi_height, unsigned int roi_width,
+                        vpImage<Type> &crop)
 {
   unsigned int i,j ;
-  unsigned int imax = i_sub + nrow_sub ;
-  unsigned int jmax = j_sub + ncol_sub ;
+  unsigned int imax = roi_top + roi_height ;
+  unsigned int jmax = roi_left + roi_width ;
 
   if (imax > I.getHeight())
   {
     imax = I.getHeight() -1 ;
-    nrow_sub = imax-i_sub ;
+    roi_height = imax - roi_top ;
   }
   if (jmax > I.getWidth())
   {
     jmax = I.getWidth() -1 ;
-    ncol_sub = jmax -j_sub ;
+    roi_width = jmax - roi_left ;
   }
 
-  S.resize(nrow_sub, ncol_sub) ;
-  for (i=i_sub ; i < imax ; i++)
-    for (j=j_sub ; j < jmax ; j++)
-    {
-      S[i-i_sub][j-j_sub] = I[i][j] ;
-    }
+  crop.resize(roi_height, roi_width) ;
+  for (unsigned int i=0 ; i < roi_height ; i++) {
+    Type *src = (Type *)I[i+roi_top]+roi_left*sizeof(Type);
+    Type *dst = (Type *)crop[i];
+    memcpy(dst, src, roi_width*sizeof(Type));
+  }
 }
 
 /*!
-  Extract a sub part of an image
+  Crop a region of interest (ROI) in an image.
 
   \param I : Input image from which a sub image will be extracted.
 
-  \param rect : Rectangle area in the image \e I corresponding to the
-  sub part of the image to extract.
+  \param roi : Region of interest in image \e I corresponding to the
+  cropped part of the image.
 
-  \param S : Sub-image.
+  \param crop : Cropped image.
 */
 template<class Type>
-void vpImageTools::createSubImage(const vpImage<Type> &I,
-                                  const vpRect &rect,
-                                  vpImage<Type> &S)
+void vpImageTools::crop(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop)
 {
-  double dleft   = rect.getLeft();
-  double dtop    = rect.getTop();
-  double dright  = ceil( rect.getRight() );
-  double dbottom = ceil( rect.getBottom() );
+  double dleft   = roi.getLeft();
+  double dtop    = roi.getTop();
+  double dright  = ceil( roi.getRight() );
+  double dbottom = ceil( roi.getBottom() );
 
   if (dleft < 0.0)                   dleft = 0.0;
   else if (dleft >= I.getWidth())    dleft = I.getWidth() - 1;
@@ -207,14 +272,14 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
   unsigned int bottom = (unsigned int) dbottom;
   unsigned int right  = (unsigned int) dright;
 
-  unsigned int width  = right - left + 1;;
+  unsigned int width  = right - left + 1;
   unsigned int height = bottom - top + 1;
 
-  S.resize(height, width) ;
-  for (unsigned int i=top ; i <= bottom ; i++) {
-    for (unsigned int j=left ; j <= right ; j++) {
-      S[i-top][j-left] = I[i][j] ;
-    }
+  crop.resize(height, width);
+  for (unsigned int i=0 ; i < height ; i++) {
+    Type *src = (Type *)I[i+top]+left*sizeof(Type);
+    Type *dst = (Type *)crop[i];
+    memcpy(dst, src, width*sizeof(Type));
   }
 }
 
