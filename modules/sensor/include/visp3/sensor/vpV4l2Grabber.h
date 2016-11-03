@@ -191,7 +191,7 @@ public:
 //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 //  vpV4l2Grabber(const vpV4l2Grabber &)
 //    : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
-//      fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+//      fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
 //      waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0), streaming(false),
 //      m_input(vpV4l2Grabber::DEFAULT_INPUT),
 //      m_framerate(vpV4l2Grabber::framerate_25fps),
@@ -350,7 +350,6 @@ private:
   struct v4l2_queryctrl		*ctl; //[vpV4l2Grabber::MAX_CTRL*2];
 
   /* capture */
-  int                           fps;
   struct v4l2_format            fmt_v4l2;
   struct ng_video_fmt           fmt_me;
   struct v4l2_requestbuffers    reqbufs;

@@ -148,7 +148,7 @@ int main()
 */
 vpV4l2Grabber::vpV4l2Grabber()
   : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
-    fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+    fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
     waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0), streaming(false),
     m_input(vpV4l2Grabber::DEFAULT_INPUT),
     m_framerate(vpV4l2Grabber::framerate_25fps),
@@ -207,7 +207,7 @@ vpV4l2Grabber::vpV4l2Grabber()
 */
 vpV4l2Grabber::vpV4l2Grabber(bool verbose)
   : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
-    fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+    fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
     waiton_cpt(0), index_buffer(0), m_verbose(verbose), m_nbuffers(3), field(0), streaming(false),
     m_input(vpV4l2Grabber::DEFAULT_INPUT),
     m_framerate(vpV4l2Grabber::framerate_25fps),
@@ -257,7 +257,7 @@ vpV4l2Grabber::vpV4l2Grabber(bool verbose)
 */
 vpV4l2Grabber::vpV4l2Grabber(unsigned input, unsigned scale)
   : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
-    fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+    fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
     waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0), streaming(false),
     m_input(vpV4l2Grabber::DEFAULT_INPUT),
     m_framerate(vpV4l2Grabber::framerate_25fps),
@@ -306,7 +306,7 @@ vpV4l2Grabber::vpV4l2Grabber(unsigned input, unsigned scale)
 */
 vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I, unsigned input, unsigned scale )
   : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
-    fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+    fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
     waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0), streaming(false),
     m_input(vpV4l2Grabber::DEFAULT_INPUT),
     m_framerate(vpV4l2Grabber::framerate_25fps),
@@ -358,7 +358,7 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I, unsigned input, unsigned
 */
 vpV4l2Grabber::vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned input, unsigned scale )
   : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
-    fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+    fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
     waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0), streaming(false),
     m_input(vpV4l2Grabber::DEFAULT_INPUT),
     m_framerate(vpV4l2Grabber::framerate_25fps),
