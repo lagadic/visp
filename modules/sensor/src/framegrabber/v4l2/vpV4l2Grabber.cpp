@@ -62,6 +62,7 @@
 #include <visp3/core/vpFrameGrabberException.h>
 //#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpImageTools.h>
 
 const unsigned int vpV4l2Grabber::DEFAULT_INPUT = 2;
 const unsigned int vpV4l2Grabber::DEFAULT_SCALE = 2;
@@ -94,7 +95,7 @@ const unsigned int vpV4l2Grabber::FRAME_SIZE    = 288;
     to change it.
 
   - Image size acquisition: vpV4l2Grabber::DEFAULT_SCALE. Use either setScale()
-    or setWidth() and setHeight to change it.
+    or setWidth() and setHeight() to change it.
 
     \code
     vpImage<unsigned char> I; // Grey level image
@@ -107,8 +108,42 @@ const unsigned int vpV4l2Grabber::FRAME_SIZE    = 288;
     g.open(I);        // Open the grabber
 
     g.acquire(I);     // Acquire a 768x576 grey image
-
     \endcode
+
+  The grabber allows also to grab a portion of an image using a region of interest.
+  The following example shows how to grab a 320x240 region located on the top/left
+  corner of the image that has a higher resolution (ie 640x480).
+
+  \code
+#include <visp3/sensor/vpV4l2Grabber.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/gui/vpDisplayX.h>
+
+int main()
+{
+#if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_X11)
+  vpDisplayX *d;
+  vpImage<vpRGBa> I;
+  vpRect roi(0, 0, 320, 240); // specify the region to crop
+
+  vpV4l2Grabber g;
+
+  bool first = true;
+  while (1) {
+    g.acquire(I, roi);
+    if(first) {
+      d = new vpDisplayX(I);
+      first = false;
+    }
+    vpDisplay::display(I);
+    vpDisplay::flush(I);
+    if (vpDisplay::getClick(I, false))
+      break;
+  }
+  vpImageIo::write(I, "image.pgm"); // Save the last image
+  delete d;
+#endif
+  \endcode
 
 */
 vpV4l2Grabber::vpV4l2Grabber()
@@ -519,8 +554,6 @@ vpV4l2Grabber::open(vpImage<vpRGBa> &I)
   init = true;
 }
 
-
-
 /*!
   Acquire a grey level image.
 
@@ -535,8 +568,28 @@ void
 vpV4l2Grabber::acquire(vpImage<unsigned char> &I)
 {
   struct timeval timestamp;
+  vpRect roi;
 
-  acquire(I, timestamp);
+  acquire(I, timestamp, roi);
+}
+
+/*!
+  Acquire a grey level image.
+
+  \param I : Image data structure (8 bits image)
+  \param roi : Region of interest to grab from the full resolution image.
+
+  \exception vpFrameGrabberException::initializationError : Frame grabber not
+  initialized.
+
+  \sa getField()
+*/
+void
+vpV4l2Grabber::acquire(vpImage<unsigned char> &I, const vpRect &roi)
+{
+  struct timeval timestamp;
+
+  acquire(I, timestamp, roi);
 }
 
 /*!
@@ -549,13 +602,15 @@ vpV4l2Grabber::acquire(vpImage<unsigned char> &I)
   the time since 1970 (the one returned by gettimeofday() or vpTime) but rather a time that counts
   from the boot time (i.e. uptime).
 
+  \param roi : Region of interest to grab from the full resolution image. By default acquire the whole image.
+
   \exception vpFrameGrabberException::initializationError : Frame grabber not
   initialized.
 
   \sa getField()
 */
 void
-vpV4l2Grabber::acquire(vpImage<unsigned char> &I, struct timeval &timestamp)
+vpV4l2Grabber::acquire(vpImage<unsigned char> &I, struct timeval &timestamp, const vpRect &roi)
 {
   if (init==false)
   {
@@ -570,31 +625,56 @@ vpV4l2Grabber::acquire(vpImage<unsigned char> &I, struct timeval &timestamp)
                                    "V4l2 frame grabber not initialized") );
   }
 
-  unsigned  char *bitmap ;
+  unsigned char *bitmap ;
   bitmap = waiton(index_buffer, timestamp);
 
-  if ((I.getWidth() != width)||(I.getHeight() != height))
-    I.resize(height, width) ;
-
+  if (roi == vpRect())
+    I.resize(height, width);
+  else
+    I.resize((unsigned int)roi.getHeight(), (unsigned int)roi.getWidth());
   switch(m_pixelformat) {
   case V4L2_GREY_FORMAT:
-    memcpy(I.bitmap, bitmap, height * width*sizeof(unsigned char));
+    if (roi == vpRect())
+      memcpy(I.bitmap, bitmap, height * width*sizeof(unsigned char));
+    else
+      vpImageTools::crop(bitmap, width, height, roi, I);
     break;
-  case V4L2_RGB24_FORMAT:
-    vpImageConvert::RGBToGrey((unsigned char *) bitmap, I.bitmap, width*height);
-
+  case V4L2_RGB24_FORMAT: // tested
+    if (roi == vpRect())
+      vpImageConvert::RGBToGrey((unsigned char *) bitmap, I.bitmap, width*height);
+    else {
+      vpImage<unsigned char> tmp(height, width);
+      vpImageConvert::RGBToGrey((unsigned char *) bitmap, tmp.bitmap, width*height);
+      vpImageTools::crop(tmp, roi, I);
+    }
     break;
   case V4L2_RGB32_FORMAT:
-    vpImageConvert::RGBaToGrey((unsigned char *) bitmap, I.bitmap, width*height);
+    if (roi == vpRect())
+      vpImageConvert::RGBaToGrey((unsigned char *) bitmap, I.bitmap, width*height);
+    else {
+      vpImage<unsigned char> tmp(height, width);
+      vpImageConvert::RGBaToGrey((unsigned char *) bitmap, tmp.bitmap, width*height);
+      vpImageTools::crop(tmp, roi, I);
+    }
 
     break;
-  case V4L2_BGR24_FORMAT:
-    vpImageConvert::BGRToGrey( (unsigned char *) bitmap, I.bitmap, width, height, false);
-
+  case V4L2_BGR24_FORMAT: // tested
+    if (roi == vpRect())
+      vpImageConvert::BGRToGrey( (unsigned char *) bitmap, I.bitmap, width, height, false);
+    else {
+      vpImage<unsigned char> tmp(height, width);
+      vpImageConvert::BGRToGrey( (unsigned char *) bitmap, tmp.bitmap, width, height, false);
+      vpImageTools::crop(tmp, roi, I);
+    }
     break;
-  case V4L2_YUYV_FORMAT:
-    vpImageConvert::YUYVToGrey( (unsigned char *) bitmap, I.bitmap, width*height);
-
+  case V4L2_YUYV_FORMAT: // tested
+    if (roi == vpRect())
+      vpImageConvert::YUYVToGrey( (unsigned char *) bitmap, I.bitmap, width*height);
+    else {
+      vpImage<unsigned char> tmp(height, width);
+      vpImageConvert::YUYVToGrey( (unsigned char *) bitmap, tmp.bitmap, width*height);
+      vpImageTools::crop(tmp, roi, I);
+    }
     break;
   default:
     std::cout << "V4L2 conversion not handled" << std::endl;
@@ -618,8 +698,28 @@ void
 vpV4l2Grabber::acquire(vpImage<vpRGBa> &I)
 {
   struct timeval timestamp;
+  vpRect roi;
 
-  acquire(I, timestamp);
+  acquire(I, timestamp, roi);
+}
+
+/*!
+  Acquire a color image.
+
+  \param I : Image data structure (32 bits image)
+  \param roi : Region of interest to grab from the full resolution image.
+
+  \exception vpFrameGrabberException::initializationError : Frame grabber not
+  initialized.
+
+  \sa getField()
+*/
+void
+vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, const vpRect &roi)
+{
+  struct timeval timestamp;
+
+  acquire(I, timestamp, roi);
 }
 
 /*!
@@ -632,13 +732,15 @@ vpV4l2Grabber::acquire(vpImage<vpRGBa> &I)
   the time since 1970 (the one returned by gettimeofday() or vpTime) but rather a time that counts
   from the boot time (i.e. uptime).
 
+  \param roi : Region of interest to grab from the full resolution image. By default acquire the whole image.
+
   \exception vpFrameGrabberException::initializationError : Frame grabber not
   initialized.
 
   \sa getField()
 */
 void
-vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp)
+vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp, const vpRect &roi)
 {
   if (init==false)
   {
@@ -656,30 +758,60 @@ vpV4l2Grabber::acquire(vpImage<vpRGBa> &I, struct timeval &timestamp)
   unsigned  char *bitmap ;
   bitmap = waiton(index_buffer, timestamp);
 
-  if ((I.getWidth() != width)||(I.getHeight() != height))
-    I.resize(height, width) ;
+  if (roi == vpRect())
+    I.resize(height, width);
+  else
+    I.resize((unsigned int)roi.getHeight(), (unsigned int)roi.getWidth());
 
   // The framegrabber acquire aRGB format. We just shift the data from 1 byte all the data and initialize the last byte
 
   switch(m_pixelformat) {
   case V4L2_GREY_FORMAT:
-    vpImageConvert::GreyToRGBa((unsigned char *) bitmap, (unsigned char *) I.bitmap, width*height);
+    if (roi == vpRect())
+      vpImageConvert::GreyToRGBa((unsigned char *) bitmap, (unsigned char *) I.bitmap, width*height);
+    else
+      vpImageTools::crop(bitmap, width, height, roi, I);
     break;
-  case V4L2_RGB24_FORMAT:
-    vpImageConvert::RGBToRGBa((unsigned char *) bitmap, (unsigned char *) I.bitmap, width*height);
-
+  case V4L2_RGB24_FORMAT: // tested
+    if (roi == vpRect())
+      vpImageConvert::RGBToRGBa((unsigned char *) bitmap, (unsigned char *) I.bitmap, width*height);
+    else {
+      vpImage<vpRGBa> tmp(height, width);
+      vpImageConvert::RGBToRGBa((unsigned char *) bitmap, (unsigned char *) tmp.bitmap, width*height);
+      vpImageTools::crop(tmp, roi, I);
+    }
     break;
   case V4L2_RGB32_FORMAT:
-    // The framegrabber acquire aRGB format. We just shift the data
-    // from 1 byte all the data and initialize the last byte
-    memcpy(I.bitmap, bitmap + 1, height * width * sizeof(vpRGBa) - 1);
-    I[height-1][width-1].A = 0;
+    if (roi == vpRect()) {
+      // The framegrabber acquire aRGB format. We just shift the data
+      // from 1 byte all the data and initialize the last byte
+      memcpy(I.bitmap, bitmap + 1, height * width * sizeof(vpRGBa) - 1);
+      I[height-1][width-1].A = 0;
+    }
+    else {
+      for(unsigned int i=0; i<I.getHeight(); i++) {
+        memcpy(I.bitmap, bitmap + 1 + (unsigned int)(roi.getTop()*width + roi.getLeft()), I.getWidth() * sizeof(vpRGBa) - 1);
+        I[i][I.getWidth()-1].A = 0;
+      }
+    }
     break;
-  case V4L2_BGR24_FORMAT:
-    vpImageConvert::BGRToRGBa((unsigned char *) bitmap, (unsigned char *) I.bitmap, width, height, false);
+  case V4L2_BGR24_FORMAT: // tested
+    if (roi == vpRect())
+      vpImageConvert::BGRToRGBa((unsigned char *) bitmap, (unsigned char *) I.bitmap, width, height, false);
+    else {
+      vpImage<vpRGBa> tmp(height, width);
+      vpImageConvert::BGRToRGBa((unsigned char *) bitmap, (unsigned char *) tmp.bitmap, width, height, false);
+      vpImageTools::crop(tmp, roi, I);
+    }
     break;
-  case V4L2_YUYV_FORMAT:
-    vpImageConvert::YUYVToRGBa( (unsigned char *) bitmap, (unsigned char *) I.bitmap, width, height);
+  case V4L2_YUYV_FORMAT: // tested
+    if (roi == vpRect())
+      vpImageConvert::YUYVToRGBa( (unsigned char *) bitmap, (unsigned char *) I.bitmap, width, height);
+    else {
+      vpImage<vpRGBa> tmp(height, width);
+      vpImageConvert::YUYVToRGBa((unsigned char *) bitmap, (unsigned char *) tmp.bitmap, width, height);
+      vpImageTools::crop(tmp, roi, I);
+    }
     break;
   default:
     std::cout << "V4l2 conversion not handled" << std::endl;

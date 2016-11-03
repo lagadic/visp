@@ -57,6 +57,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpFrameGrabber.h>
 #include <visp3/core/vpRGBa.h>
+#include <visp3/core/vpRect.h>
 
 /*!
   \class vpV4l2Grabber
@@ -100,8 +101,6 @@
   This other example shows how to use this grabber with an analogic camera
   attached to a bttv PCI card.
   \code
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImage.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/io/vpImageIo.h>
 
@@ -221,10 +220,12 @@ public:
   void open(vpImage<unsigned char> &I) ;
   void open(vpImage<vpRGBa> &I) ;
 
-  void acquire(vpImage<unsigned char> &I) ;
-  void acquire(vpImage<unsigned char> &I, struct timeval &timestamp) ;
-  void acquire(vpImage<vpRGBa> &I) ;
-  void acquire(vpImage<vpRGBa> &I, struct timeval &timestamp) ;
+  void acquire(vpImage<unsigned char> &I);
+  void acquire(vpImage<unsigned char> &I, const vpRect &roi);
+  void acquire(vpImage<unsigned char> &I, struct timeval &timestamp, const vpRect &roi=vpRect());
+  void acquire(vpImage<vpRGBa> &I);
+  void acquire(vpImage<vpRGBa> &I, const vpRect &roi);
+  void acquire(vpImage<vpRGBa> &I, struct timeval &timestamp, const vpRect &roi=vpRect());
   bool getField();
   vpV4l2FramerateType getFramerate();
   /*!
