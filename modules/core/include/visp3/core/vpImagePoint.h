@@ -293,9 +293,11 @@ class VISP_EXPORT vpImagePoint
   friend VISP_EXPORT vpImagePoint operator+=( const vpImagePoint &ip1, const vpImagePoint &ip2 );
   friend VISP_EXPORT vpImagePoint operator+( const vpImagePoint &ip1, const vpImagePoint &ip2 );
   friend VISP_EXPORT vpImagePoint operator+( const vpImagePoint &ip1, const int offset );
+  friend VISP_EXPORT vpImagePoint operator+( const vpImagePoint &ip1, const unsigned int offset );
   friend VISP_EXPORT vpImagePoint operator+( const vpImagePoint &ip1, const double offset );
   friend VISP_EXPORT vpImagePoint operator-( const vpImagePoint &ip1, const vpImagePoint &ip2 );
   friend VISP_EXPORT vpImagePoint operator-( const vpImagePoint &ip1, const int offset );
+  friend VISP_EXPORT vpImagePoint operator-( const vpImagePoint &ip1, const unsigned int offset );
   friend VISP_EXPORT vpImagePoint operator-( const vpImagePoint &ip1, const double offset );
   friend VISP_EXPORT vpImagePoint operator*( const vpImagePoint &ip1, const double scale );
   friend VISP_EXPORT vpImagePoint operator/( const vpImagePoint &ip1, const double scale );

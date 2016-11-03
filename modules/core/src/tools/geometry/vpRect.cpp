@@ -245,6 +245,24 @@ void vpRect::set(const vpRect& r)
 };
 
 /*!
+ Operator to compare two rectangles.
+ \return true if both objects are similar, false otherwise.
+ */
+bool vpRect::operator==(const vpRect &r) const
+{
+  return (top == r.top && left == r.left && width == r.width && height == r.height);
+}
+
+/*!
+ Operator to compare two rectangles.
+ \return true if both objects differ, false otherwise.
+ */
+bool vpRect::operator!=(const vpRect &r) const
+{
+  return (top != r.top || left != r.left || width != r.width || height != r.height);
+}
+
+/*!
 
   Check if an image point belongs to a rectangle.
 

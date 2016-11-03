@@ -57,6 +57,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpFrameGrabber.h>
 #include <visp3/core/vpRGBa.h>
+#include <visp3/core/vpRect.h>
 
 /*!
   \class vpV4l2Grabber
@@ -100,8 +101,6 @@
   This other example shows how to use this grabber with an analogic camera
   attached to a bttv PCI card.
   \code
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImage.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/io/vpImageIo.h>
 
@@ -192,7 +191,7 @@ public:
 //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 //  vpV4l2Grabber(const vpV4l2Grabber &)
 //    : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL),
-//      fps(0), fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
+//      fmt_v4l2(), fmt_me(), reqbufs(), buf_v4l2(NULL), buf_me(NULL), queue(0),
 //      waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0), streaming(false),
 //      m_input(vpV4l2Grabber::DEFAULT_INPUT),
 //      m_framerate(vpV4l2Grabber::framerate_25fps),
@@ -221,10 +220,12 @@ public:
   void open(vpImage<unsigned char> &I) ;
   void open(vpImage<vpRGBa> &I) ;
 
-  void acquire(vpImage<unsigned char> &I) ;
-  void acquire(vpImage<unsigned char> &I, struct timeval &timestamp) ;
-  void acquire(vpImage<vpRGBa> &I) ;
-  void acquire(vpImage<vpRGBa> &I, struct timeval &timestamp) ;
+  void acquire(vpImage<unsigned char> &I);
+  void acquire(vpImage<unsigned char> &I, const vpRect &roi);
+  void acquire(vpImage<unsigned char> &I, struct timeval &timestamp, const vpRect &roi=vpRect());
+  void acquire(vpImage<vpRGBa> &I);
+  void acquire(vpImage<vpRGBa> &I, const vpRect &roi);
+  void acquire(vpImage<vpRGBa> &I, struct timeval &timestamp, const vpRect &roi=vpRect());
   bool getField();
   vpV4l2FramerateType getFramerate();
   /*!
@@ -349,7 +350,6 @@ private:
   struct v4l2_queryctrl		*ctl; //[vpV4l2Grabber::MAX_CTRL*2];
 
   /* capture */
-  int                           fps;
   struct v4l2_format            fmt_v4l2;
   struct ng_video_fmt           fmt_me;
   struct v4l2_requestbuffers    reqbufs;

@@ -94,6 +94,8 @@ public:
 
   template<class Type>
   static void crop(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop);
+  template<class Type>
+  static void crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi, vpImage<Type> &crop);
 
   template<class Type>
   static void flip(const vpImage<Type> &I,
@@ -277,6 +279,53 @@ void vpImageTools::crop(const vpImage<Type> &I, const vpRect &roi, vpImage<Type>
   crop.resize(height, width);
   for (unsigned int i=0 ; i < height ; i++) {
     Type *src = (Type *)I[i+top]+left*sizeof(Type);
+    Type *dst = (Type *)crop[i];
+    memcpy(dst, src, width*sizeof(Type));
+  }
+}
+
+/*!
+  Crop a region of interest (ROI) in an image.
+
+  \param bitmap : Pointer to the input image from which a sub image will be extracted.
+  \param width, height : Size of the input image.
+
+  \param roi : Region of interest corresponding to the cropped part of the image.
+
+  \param crop : Cropped image.
+*/
+template<class Type>
+void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi, vpImage<Type> &crop)
+{
+  double roi_dleft   = roi.getLeft();
+  double roi_dtop    = roi.getTop();
+  double roi_dright  = ceil( roi.getRight() );
+  double roi_dbottom = ceil( roi.getBottom() );
+
+  if (roi_dleft < 0.0)              roi_dleft = 0.0;
+  else if (roi_dleft >= width)    roi_dleft = width - 1;
+
+  if (roi_dright < 0.0)             roi_dright = 0.0;
+  else if (roi_dright >= width)   roi_dright = width - 1;
+
+  if (roi_dtop < 0.0)               roi_dtop = 0.0;
+  else if (roi_dtop >= height)    roi_dtop = height - 1;
+
+  if (roi_dbottom < 0.0)            roi_dbottom = 0.0;
+  else if (roi_dbottom >= height) roi_dbottom = height - 1;
+
+  // Convert the double-precision rectangle coordinates into integer positions
+  unsigned int roi_left   = (unsigned int) roi_dleft;
+  unsigned int roi_top    = (unsigned int) roi_dtop;
+  unsigned int roi_bottom = (unsigned int) roi_dbottom;
+  unsigned int roi_right  = (unsigned int) roi_dright;
+
+  unsigned int roi_width  = roi_right - roi_left + 1;
+  unsigned int roi_height = roi_bottom - roi_top + 1;
+
+  crop.resize(roi_height, roi_width);
+  for (unsigned int i=0 ; i < roi_height ; i++) {
+    Type *src = (Type *)bitmap + ( (i+roi_top)*width + roi_left ) * sizeof(Type);
     Type *dst = (Type *)crop[i];
     memcpy(dst, src, width*sizeof(Type));
   }

@@ -199,6 +199,9 @@ public:
   */
   bool isInside( const vpImagePoint &ip ) const;
 
+  bool operator==(const vpRect &r) const;
+  bool operator!=(const vpRect &r) const ;
+
   friend VISP_EXPORT bool inRectangle( const vpImagePoint &ip, const vpRect &rect );
   friend VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpRect& r);
   void set(double left, double top, double width, double height);
