@@ -32,6 +32,10 @@ ViSP 3.0.1 (in development)
       flag is propagated to the project that use ViSP as 3rd party
     . In vpServo introduce setCameraDoF() that allows to turn off the usage
       of some dof
+    . Model-based tracker:
+      + Introduce stereo as well as more generic multi camera tracking capabilties
+      + New classes vpMbEdgeMultiTracker, vpMbKltMultiTracker, and
+        vpMbEdgeKltMultiTracker for the hybrid version
   - Tutorials
     . New tutorial: How to use multi-threading capabilities
     . New tutorial: Crosscompilation for Raspberry Pi from Ubuntu host
@@ -43,6 +47,7 @@ ViSP 3.0.1 (in development)
     . New tutorial: Image processing on iOS
     . New tutorial: Cross-compilation for NAOqi OS from Ubuntu host
     . New tutorial: How to create an application that uses ViSP on NAOqi OS
+    . New Tutorial: Markerless model-based tracking with stereo cameras
   - Bug fixed
     . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc
