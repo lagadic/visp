@@ -213,7 +213,6 @@ void vpImageTools::crop(const vpImage<Type> &I,
                         unsigned int roi_height, unsigned int roi_width,
                         vpImage<Type> &crop)
 {
-  unsigned int i,j ;
   unsigned int imax = roi_top + roi_height ;
   unsigned int jmax = roi_left + roi_width ;
 
