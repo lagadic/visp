@@ -241,18 +241,23 @@ macro(vp_glob_modules)
 
     file(GLOB __vpmodules RELATIVE "${__path}" "${__path}/*")
 
+    if(VISP_PROCESSING_EXTRA_MODULES)
+      # Remove tutorial, example, demo from potential contrib module list
+      # They will be processed in visp/CMakeLists.txt
+      vp_list_remove_item(__vpmodules "tutorial")
+      vp_list_remove_item(__vpmodules "example")
+      vp_list_remove_item(__vpmodules "demo")
+    endif()
     if(__vpmodules)
       list(SORT __vpmodules)
       foreach(mod ${__vpmodules})
         get_filename_component(__modpath "${__path}/${mod}" ABSOLUTE)
         if(EXISTS "${__modpath}/CMakeLists.txt")
-
           list(FIND __directories_observed "${__modpath}" __pathIdx)
           if(__pathIdx GREATER -1)
             message(FATAL_ERROR "The module from ${__modpath} is already loaded.")
           endif()
           list(APPEND __directories_observed "${__modpath}")
-
           add_subdirectory("${__modpath}" "${CMAKE_CURRENT_BINARY_DIR}/${mod}/.${mod}")
         else()
           # modules in tracker

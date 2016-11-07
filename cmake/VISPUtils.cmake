@@ -123,6 +123,13 @@ macro(vp_list_remove_empty __lst)
   endif()
 endmacro()
 
+# list elements removal macro
+macro(vp_list_remove_item __lst __item)
+  if(${__lst})
+    list(REMOVE_ITEM ${__lst} ${__item})
+  endif()
+endmacro()
+
 # macro that creates a list from a string. Spaces or tab are considered as list separator
 # In other words split a string into list elements
 macro(vp_create_list_from_string STR LST)
@@ -627,3 +634,17 @@ macro(vp_set_source_file_compile_flag file)
   endif()
 endmacro()
 
+macro(vp_add_subdirectories lst subdir)
+  if(${lst})
+    foreach(__path ${${lst}})
+      if(EXISTS ${__path}/${subdir})
+        file(GLOB __subdirs RELATIVE "${__path}/${subdir}" "${__path}/${subdir}/*")
+        foreach(__s ${__subdirs})
+          if(EXISTS "${__path}/${subdir}/${__s}/CMakeLists.txt")
+            add_subdirectory("${__path}/${subdir}/${__s}" "${CMAKE_BINARY_DIR}/${subdir}/${__s}")
+          endif()
+        endforeach()
+      endif()
+    endforeach()
+  endif()
+endmacro()
