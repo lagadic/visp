@@ -88,6 +88,7 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
   viewer->initCameraParameters ();
   viewer->setPosition(640+80, 480+80);
   viewer->setCameraPosition(0,0,-0.5, 0,-1,0);
+  viewer->setSize(640, 480);
 
   t_CaptureState capture_state_;
 
@@ -134,11 +135,11 @@ int main()
     std::cout << "Extrinsics cMi: \n" << rs.getTransformation(rs::stream::color, rs::stream::infrared) << std::endl;
     std::cout << "Extrinsics dMi: \n" << rs.getTransformation(rs::stream::depth, rs::stream::infrared) << std::endl;
 
-    vpImage<vpRGBa> color(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
+    vpImage<vpRGBa> color((unsigned int) rs.getIntrinsics(rs::stream::color).height, (unsigned int) rs.getIntrinsics(rs::stream::color).width);
     vpImage<uint16_t> infrared;
-    vpImage<unsigned char> infrared_display(rs.getIntrinsics(rs::stream::infrared).height, rs.getIntrinsics(rs::stream::infrared).width);;
+    vpImage<unsigned char> infrared_display((unsigned int) rs.getIntrinsics(rs::stream::infrared).height, (unsigned int) rs.getIntrinsics(rs::stream::infrared).width);;
     vpImage<uint16_t> depth;
-    vpImage<vpRGBa> depth_display(rs.getIntrinsics(rs::stream::depth).height, rs.getIntrinsics(rs::stream::depth).width);
+    vpImage<vpRGBa> depth_display((unsigned int) rs.getIntrinsics(rs::stream::depth).height, (unsigned int) rs.getIntrinsics(rs::stream::depth).width);
 
 #ifdef VISP_HAVE_PCL
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -160,8 +161,8 @@ int main()
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX dc(color, 10, 10, "Color image");
-    vpDisplayX di(infrared_display, color.getWidth()+80, 10, "Infrared image");
-    vpDisplayX dd(depth_display, 10, color.getHeight()+80, "Depth image");
+    vpDisplayX di(infrared_display, (int) color.getWidth()+80, 10, "Infrared image");
+    vpDisplayX dd(depth_display, 10, (int) color.getHeight()+80, "Depth image");
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI dc(color, 10, 10, "Color image");
     vpDisplayGDI di(infrared_display, color.getWidth()+80, 10, "Infrared image");
