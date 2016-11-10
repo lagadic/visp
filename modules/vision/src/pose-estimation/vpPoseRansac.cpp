@@ -206,13 +206,13 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
 
   vpHomogeneousMatrix cMo_lagrange, cMo_dementhon;
 
-  if (listP.size() < 4) {
+  if (listOfPoints.size() < 4) {
     //vpERROR_TRACE("Not enough point to compute the pose");
     throw(vpPoseException(vpPoseException::notInitializedError,
                           "Not enough point to compute the pose")) ;
   }
 
-  std::list<vpPoint> listOfUniquePoints;
+  std::vector<vpPoint> listOfUniquePoints;
   std::map<size_t, size_t> mapOfUniquePointIndex;
 
   //Get RANSAC flags
@@ -227,7 +227,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
 #if defined (VISP_HAVE_CPP11_COMPATIBILITY)
       std::unordered_map<vpPoint, size_t, HashDuplicate, ComparePointDuplicateUnorderedMap> filterMap;
       size_t index_pt = 0;
-      for (std::list<vpPoint>::const_iterator it_pt = listP.begin(); it_pt != listP.end(); ++it_pt, index_pt++) {
+      for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listOfPoints.end(); ++it_pt, index_pt++) {
         if (filterMap.find(*it_pt) == filterMap.end()) {
           filterMap[*it_pt] = index_pt;
 
@@ -250,7 +250,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
     } else if (prefilterAlmostDuplicatePoints) {
       std::map<vpPoint, size_t, ComparePointAlmostDuplicate> filterMap;
       size_t index_pt = 0;
-      for (std::list<vpPoint>::const_iterator it_pt = listP.begin(); it_pt != listP.end(); ++it_pt, index_pt++) {
+      for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listOfPoints.end(); ++it_pt, index_pt++) {
         if (filterMap.find(*it_pt) == filterMap.end()) {
           filterMap[*it_pt] = index_pt;
 
@@ -262,7 +262,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       //Remove other degenerate object points
       std::map<vpPoint, size_t, CompareObjectPointDegenerate> filterObjectPointMap;
       size_t index_pt = 0;
-      for (std::list<vpPoint>::const_iterator it_pt = listP.begin(); it_pt != listP.end(); ++it_pt, index_pt++) {
+      for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listOfPoints.end(); ++it_pt, index_pt++) {
         if (filterObjectPointMap.find(*it_pt) == filterObjectPointMap.end()) {
           filterObjectPointMap[*it_pt] = index_pt;
         }
@@ -280,10 +280,10 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
     }
   } else {
     //No prefiltering
-    listOfUniquePoints = listP;
+    listOfUniquePoints = listOfPoints;
 
     size_t index_pt = 0;
-    for (std::list<vpPoint>::const_iterator it_pt = listP.begin(); it_pt != listP.end(); ++it_pt, index_pt++) {
+    for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listOfPoints.end(); ++it_pt, index_pt++) {
       mapOfUniquePointIndex[index_pt] = index_pt;
     }
   }
@@ -332,14 +332,11 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       }
       //Mark this point as already picked
       usedPt[r_] = true;
-
-      std::list<vpPoint>::const_iterator iter = listOfUniquePoints.begin();
-      std::advance(iter, r_);
-      vpPoint pt = *iter;
+      vpPoint pt = listOfUniquePoints[r_];
 
       bool degenerate = false;
       if (checkDegeneratePoints) {
-        if ( std::find_if(poseMin.listP.begin(), poseMin.listP.end(), FindDegeneratePoint(pt)) !=  poseMin.listP.end()) {
+        if ( std::find_if(poseMin.listOfPoints.begin(), poseMin.listOfPoints.end(), FindDegeneratePoint(pt)) !=  poseMin.listOfPoints.end()) {
           degenerate = true;
         }
 
@@ -440,7 +437,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       {
         unsigned int nbInliersCur = 0;
         unsigned int iter = 0;
-        for (std::list<vpPoint>::const_iterator it = listOfUniquePoints.begin(); it != listOfUniquePoints.end(); ++it)
+        for (std::vector<vpPoint>::const_iterator it = listOfUniquePoints.begin(); it != listOfUniquePoints.end(); ++it)
         {
           vpPoint pt = *it;
           vpPoint p(pt) ;
@@ -558,9 +555,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       vpPose pose ;
       for(unsigned i = 0 ; i < best_consensus.size(); i++)
       {
-        std::list<vpPoint>::const_iterator iter = listOfUniquePoints.begin();
-        std::advance(iter, best_consensus[i]);
-        vpPoint pt = *iter;
+        vpPoint pt = listOfUniquePoints[best_consensus[i]];
 
         pose.addPoint(pt) ;
         ransacInliers.push_back(pt);
@@ -732,11 +727,11 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D,
     }
   }
 
-  if (pose.listP.size() < 4)
+  if (pose.listOfPoints.size() < 4)
   {
     vpERROR_TRACE("Ransac method cannot be used in that case ") ;
     vpERROR_TRACE("(at least 4 points are required)") ;
-    vpERROR_TRACE("Not enough point (%d) to compute the pose  ",pose.listP.size()) ;
+    vpERROR_TRACE("Not enough point (%d) to compute the pose  ",pose.listOfPoints.size()) ;
     throw(vpPoseException(vpPoseException::notEnoughPointError,
       "Not enough points ")) ;
   }

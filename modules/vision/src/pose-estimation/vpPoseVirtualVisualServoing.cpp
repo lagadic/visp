@@ -65,7 +65,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
 
     int iter = 0 ;
 
-    unsigned int nb = (unsigned int)listP.size() ;
+    unsigned int nb = (unsigned int) listOfPoints.size() ;
     vpMatrix L(2*nb,6) ;
     vpColVector err(2*nb) ;
     vpColVector sd(2*nb),s(2*nb) ;
@@ -76,7 +76,7 @@ vpPose::poseVirtualVS(vpHomogeneousMatrix & cMo)
 
     // create sd
     unsigned int k =0 ;
-    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+    for (std::vector<vpPoint>::const_iterator it = listOfPoints.begin(); it != listOfPoints.end(); ++it)
     {
       P = *it;
       sd[2*k] = P.get_x() ;
@@ -168,23 +168,23 @@ vpPose::poseVirtualVSrobust(vpHomogeneousMatrix & cMo)
 
     // we stop the minimization when the error is bellow 1e-8
     vpMatrix W ;
-    vpRobust robust((unsigned int)(2*listP.size())) ;
+    vpRobust robust((unsigned int)(2*listOfPoints.size())) ;
     robust.setThreshold(0.0000) ;
     vpColVector w,res ;
 
-    unsigned int nb = (unsigned int)listP.size() ;
+    unsigned int nb = (unsigned int) listOfPoints.size() ;
     vpMatrix L(2*nb,6) ;
     vpColVector error(2*nb) ;
     vpColVector sd(2*nb),s(2*nb) ;
     vpColVector v ;
 
-    listP.front() ;
+    listOfPoints.front() ;
     vpPoint P;
     std::list<vpPoint> lP ;
 
     // create sd
     unsigned int k_ =0 ;
-    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+    for (std::vector<vpPoint>::const_iterator it = listOfPoints.begin(); it != listOfPoints.end(); ++it)
     {
       P = *it;
       sd[2*k_] = P.get_x() ;

@@ -66,7 +66,8 @@ vpPose::init()
   std::cout << "begin vpPose::Init() " << std::endl ;
 #endif
   npt = 0 ;
-  listP.clear() ;
+  listP.clear();
+  listOfPoints.clear() ;
   c3d.clear();
 
   lambda = 0.25 ;
@@ -88,12 +89,12 @@ vpPose::init()
 
 }
 
-/*! Defaukt constructor. */
+/*! Default constructor. */
 vpPose::vpPose()
   : npt(0), listP(), residual(0), lambda(0.25), vvsIterMax(200), c3d(),
     computeCovariance(false), covarianceMatrix(),
     ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
-    distanceToPlaneForCoplanarityTest(0.001), ransacFlags(PREFILTER_DUPLICATE_POINTS + CHECK_DEGENERATE_POINTS)
+    distanceToPlaneForCoplanarityTest(0.001), ransacFlags(PREFILTER_DUPLICATE_POINTS + CHECK_DEGENERATE_POINTS), listOfPoints()
 {
 #if (DEBUG_LEVEL1)
   std::cout << "begin vpPose::vpPose() " << std::endl ;
@@ -116,7 +117,8 @@ vpPose::~vpPose()
   std::cout << "begin vpPose::~vpPose() " << std::endl ;
 #endif
 
-  listP.clear() ;
+  listP.clear();
+  listOfPoints.clear() ;
 
 #if (DEBUG_LEVEL1)
   std::cout << "end vpPose::~vpPose() " << std::endl ;
@@ -132,7 +134,8 @@ vpPose::clearPoint()
   std::cout << "begin vpPose::ClearPoint() " << std::endl ;
 #endif
 
-  listP.clear() ;
+  listP.clear();
+  listOfPoints.clear() ;
   npt = 0 ;
 
 #if (DEBUG_LEVEL1)
@@ -156,7 +159,8 @@ vpPose::addPoint(const vpPoint& newP)
 #endif
 
   listP.push_back(newP);
-  npt ++ ;
+  listOfPoints.push_back(newP);
+  npt++ ;
 
 #if (DEBUG_LEVEL1)
   std::cout << "end vpPose::AddPoint(Dot) " << std::endl ;
@@ -197,17 +201,17 @@ vpPose::coplanar(int &coplanar_plane_type)
 
   double x1=0,x2=0,x3=0,y1=0,y2=0,y3=0,z1=0,z2=0,z3=0 ;
 
-  std::list<vpPoint>::const_iterator it = listP.begin();
+  std::vector<vpPoint>::const_iterator it = listOfPoints.begin();
 
   vpPoint P1, P2, P3 ;
 
   // Get three 3D points that are not collinear and that is not at origin
   bool degenerate = true;
   bool not_on_origin = true;
-  std::list<vpPoint>::const_iterator it_tmp;
+  std::vector<vpPoint>::const_iterator it_tmp;
 
-  std::list<vpPoint>::const_iterator it_i, it_j, it_k;
-  for (it_i=listP.begin(); it_i != listP.end(); ++it_i) {
+  std::vector<vpPoint>::const_iterator it_i, it_j, it_k;
+  for (it_i=listOfPoints.begin(); it_i != listOfPoints.end(); ++it_i) {
     if (degenerate == false) {
       //std::cout << "Found a non degenerate configuration" << std::endl;
       break;
@@ -224,7 +228,7 @@ vpPose::coplanar(int &coplanar_plane_type)
     }
     if (not_on_origin) {
       it_tmp = it_i; ++it_tmp; // j = i+1
-      for (it_j=it_tmp; it_j != listP.end(); ++it_j) {
+      for (it_j=it_tmp; it_j != listOfPoints.end(); ++it_j) {
         if (degenerate == false) {
           //std::cout << "Found a non degenerate configuration" << std::endl;
           break;
@@ -240,7 +244,7 @@ vpPose::coplanar(int &coplanar_plane_type)
         }
         if (not_on_origin) {
           it_tmp = it_j; ++it_tmp; // k = j+1
-          for (it_k=it_tmp; it_k != listP.end(); ++it_k) {
+          for (it_k=it_tmp; it_k != listOfPoints.end(); ++it_k) {
             P3 = *it_k;
             if ((std::fabs(P3.get_oX()) <= std::numeric_limits<double>::epsilon())
                 && (std::fabs(P3.get_oY()) <= std::numeric_limits<double>::epsilon())
@@ -305,7 +309,7 @@ vpPose::coplanar(int &coplanar_plane_type)
 
   double  D = sqrt(vpMath::sqr(a)+vpMath::sqr(b)+vpMath::sqr(c)) ;
 
-  for(it=listP.begin(); it != listP.end(); ++it)
+  for(it=listOfPoints.begin(); it != listOfPoints.end(); ++it)
   {
     P1 = *it ;
     double dist = (a*P1.get_oX() + b*P1.get_oY()+c*P1.get_oZ()+d)/D ;
@@ -339,7 +343,7 @@ vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 {
   double residual_ = 0 ;
   vpPoint P ;
-  for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
+  for(std::vector<vpPoint>::const_iterator it=listOfPoints.begin(); it != listOfPoints.end(); ++it)
   {
     P = *it;
     double x = P.get_x() ;
@@ -568,7 +572,7 @@ void
 vpPose::printPoint()
 {
   vpPoint P;
-  for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
+  for(std::vector<vpPoint>::const_iterator it=listOfPoints.begin(); it != listOfPoints.end(); ++it)
   {
     P = *it ;
 
@@ -612,7 +616,7 @@ vpPose::displayModel(vpImage<unsigned char> &I,
 { 
   vpPoint P ;
   vpImagePoint ip;
-  for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
+  for(std::vector<vpPoint>::const_iterator it=listOfPoints.begin(); it != listOfPoints.end(); ++it)
   {
     P = *it;
     vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip) ;
@@ -635,7 +639,7 @@ vpPose::displayModel(vpImage<vpRGBa> &I,
 { 
   vpPoint P ;
   vpImagePoint ip;
-  for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
+  for(std::vector<vpPoint>::const_iterator it=listOfPoints.begin(); it != listOfPoints.end(); ++it)
   {
     P = *it;
     vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip) ;

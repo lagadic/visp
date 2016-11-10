@@ -66,11 +66,11 @@ vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   //double seuil=1.0;
   double f=1.;
 
-  vpPoint p0 = listP.front() ;
+  vpPoint p0 = listOfPoints.front() ;
 
   c3d.clear();
   vpPoint P;
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+  for (std::vector<vpPoint>::const_iterator it = listOfPoints.begin(); it != listOfPoints.end(); ++it)
   {
     P = (*it);
     P.set_oX(P.get_oX()-p0.get_oX()) ;
@@ -474,11 +474,11 @@ vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   unsigned int i,j,k ;
 
-  vpPoint p0 = listP.front() ;
+  vpPoint p0 = listOfPoints.front() ;
 
   vpPoint P ;
   c3d.clear();
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+  for (std::vector<vpPoint>::const_iterator it = listOfPoints.begin(); it != listOfPoints.end(); ++it)
   {
     P = *it;
     P.set_oX(P.get_oX()-p0.get_oX()) ;

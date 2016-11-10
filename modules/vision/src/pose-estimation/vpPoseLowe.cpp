@@ -311,7 +311,7 @@ vpPose::poseLowe(vpHomogeneousMatrix & cMo)
 
   vpPoint P ;
   unsigned int i_=0;
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
+  for (std::vector<vpPoint>::const_iterator it = listOfPoints.begin(); it != listOfPoints.end(); ++it)
   {
     P = *it;
     XI[i_] = P.get_x();//*cam.px + cam.xc ;

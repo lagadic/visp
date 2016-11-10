@@ -119,6 +119,7 @@ private:
   double ransacThreshold;
   double distanceToPlaneForCoplanarityTest;
   int ransacFlags;
+  std::vector<vpPoint> listOfPoints;
 
 protected:
   double computeResidualDementhon(const vpHomogeneousMatrix &cMo) ;
@@ -223,14 +224,7 @@ public:
     \return The vector of points.
   */
   std::vector<vpPoint> getPoints() const {
-    std::vector<vpPoint> vectorOfPoints(listP.size());
-
-    size_t i = 0;
-    for(std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it, i++) {
-      vectorOfPoints[i] = *it;
-    }
-
-    return vectorOfPoints;
+    return listOfPoints;
   }
 
   static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo,
