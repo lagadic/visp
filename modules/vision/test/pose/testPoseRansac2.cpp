@@ -35,8 +35,10 @@
  *
  *****************************************************************************/
 
+#include <iomanip>
 #include <sstream>
 #include <algorithm>
+#include <map>
 #include <visp3/vision/vpPose.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpMath.h>
@@ -1678,12 +1680,65 @@ bool samePoints(const vpPoint &pt1, const vpPoint &pt2) {
       vpMath::equal(pt1.get_y(), pt2.get_y(), std::numeric_limits<double>::epsilon());
 }
 
+int checkInlierIndex(const std::vector<unsigned int> &vectorOfFoundInlierIndex, const std::vector<bool> &vectorOfOutlierFlags) {
+  int nbInlierIndexOk = 0;
+
+  for(std::vector<unsigned int>::const_iterator it = vectorOfFoundInlierIndex.begin();
+      it != vectorOfFoundInlierIndex.end(); ++it) {
+    if(!vectorOfOutlierFlags[*it]) {
+      nbInlierIndexOk++;
+    }
+  }
+
+  return nbInlierIndexOk;
+}
+
+bool checkInlierPoints(const std::vector<vpPoint> &vectorOfFoundInlierPoints, const std::vector<unsigned int> &vectorOfFoundInlierIndex,
+                       const std::vector<vpPoint> &bunnyModelPoints_noisy) {  
+  for(size_t i = 0; i < vectorOfFoundInlierPoints.size(); i++) {
+    if(!samePoints(vectorOfFoundInlierPoints[i], bunnyModelPoints_noisy[vectorOfFoundInlierIndex[i]])) {
+      std::cerr << "Problem with the inlier index and the corresponding inlier point !" << std::endl;
+      return false;
+    }
+  }
+
+  return true;
+}
+
 /*!
   \example testPoseRansac2.cpp
 
   Compute the pose of a 3D object using the Ransac method.
 */
 int main() {
+  //vpPose::computeRansacIterations
+  int sample_sizes[] = {2, 3, 4, 5, 6, 7, 8};
+  double epsilon[] = {0.05, 0.1, 0.2, 0.25, 0.3, 0.4, 0.5};
+
+  //Format output
+  std::cout << "       ";
+  for (int cpt2 = 0; cpt2 < 7; cpt2++) {
+    std::cout << std::setfill(' ') << std::setw(5) << epsilon[cpt2] << " ";
+  }
+  std::cout << std::endl;
+
+  std::cout << std::setfill(' ') << std::setw(7) << "+";
+  for (int cpt2 = 0; cpt2 < 6; cpt2++) {
+    std::cout << std::setw(7) << "-------";
+  }
+  std::cout << std::endl;
+
+  for (int cpt1 = 0; cpt1 < 7; cpt1++) {
+    std::cout << std::setfill(' ') << std::setw(6) << sample_sizes[cpt1] << "|";
+
+    for (int cpt2 = 0; cpt2 < 7; cpt2++) {
+      int ransac_iters = vpPose::computeRansacIterations(0.99, epsilon[cpt2], sample_sizes[cpt1], -1);
+      std::cout << std::setfill(' ') << std::setw(6) << ransac_iters;
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+
   try {
     //Read the string
     std::istringstream iss_file_content(file_content);
@@ -1749,26 +1804,46 @@ int main() {
       vectorOfOutlierFlags[i] = true;
     }
 
-    //Add some duplicate points
-    size_t nbDuplicatePoints = 100;
-    for(size_t i = 0; i < nbDuplicatePoints; i++) {
+//    //Add some duplicate points
+//    size_t nbDuplicatePoints = 100;
+//    for (size_t i = 0; i < nbDuplicatePoints; i++) {
+//      size_t index = (size_t) rand() % bunnyModelPoints_noisy.size();
+//      vpPoint duplicatePoint = bunnyModelPoints_noisy[index];
+//      bunnyModelPoints_noisy.push_back(duplicatePoint);
+//      vectorOfOutlierFlags.push_back(true);
+//    }
+
+    //Add some degenerate points
+    size_t nbDegeneratePoints = 100;
+    double degenerate_tolerence = 9.999e-7; //1e-6 is used in the code to detect if a point is degenerate or not
+    std::vector<vpPoint> listOfDegeneratePoints;
+    for(size_t i = 0; i < nbDegeneratePoints; i++) {
       size_t index = (size_t) rand() % bunnyModelPoints_noisy.size();
-      vpPoint duplicatePoint = bunnyModelPoints_noisy[index];
-      duplicatePoint.set_x(duplicatePoint.get_x() + noise());
-      duplicatePoint.set_x(duplicatePoint.get_x() + noise());
+      vpPoint degeneratePoint = bunnyModelPoints_noisy[index];
+
+      //Object point is degenerate
+      degeneratePoint.set_oX(degeneratePoint.get_oX() + degenerate_tolerence);
+      degeneratePoint.set_oY(degeneratePoint.get_oY() + degenerate_tolerence);
+      degeneratePoint.set_oZ(degeneratePoint.get_oZ() - degenerate_tolerence);
 
       //Add duplicate 3D points
-      bunnyModelPoints_noisy.push_back(duplicatePoint);
-      vectorOfOutlierFlags.push_back(true);
+      listOfDegeneratePoints.push_back(degeneratePoint);
 
+
+      //Image point is degenerate
       index = (size_t) rand() % bunnyModelPoints_noisy.size();
-      duplicatePoint = bunnyModelPoints_noisy[index];
-      duplicatePoint.set_oX(duplicatePoint.get_oX() + noise());
-      duplicatePoint.set_oX(duplicatePoint.get_oY() + noise());
-      duplicatePoint.set_oX(duplicatePoint.get_oZ() + noise());
+      degeneratePoint = bunnyModelPoints_noisy[index];
+
+      degeneratePoint.set_x(degeneratePoint.get_x() + degenerate_tolerence);
+      degeneratePoint.set_y(degeneratePoint.get_y() - degenerate_tolerence);
 
       //Add duplicate 2D points
-      bunnyModelPoints_noisy.push_back(duplicatePoint);
+      listOfDegeneratePoints.push_back(degeneratePoint);
+    }
+
+    for (std::vector<vpPoint>::const_iterator it_degenerate = listOfDegeneratePoints.begin();
+         it_degenerate != listOfDegeneratePoints.end(); ++it_degenerate) {
+      bunnyModelPoints_noisy.push_back(*it_degenerate);
       vectorOfOutlierFlags.push_back(true);
     }
 
@@ -1790,34 +1865,57 @@ int main() {
 
     //Add data to vpPose
     vpPose pose;
-    vpPose pose_ransac;
+    vpPose pose_ransac, pose_ransac2;
+    pose_ransac.setRansacFilterFlags(vpPose::PREFILTER_DUPLICATE_POINTS + vpPose::CHECK_DEGENERATE_POINTS);
+    pose_ransac2.setRansacFilterFlags(vpPose::PREFILTER_DUPLICATE_POINTS + vpPose::CHECK_DEGENERATE_POINTS);
     for(std::vector<vpPoint>::const_iterator it = bunnyModelPoints_noisy.begin();
         it != bunnyModelPoints_noisy.end(); ++it) {
       pose_ransac.addPoint(*it);
+      pose_ransac2.addPoint(*it);
       pose.addPoint(*it);
     }
 
     //Print the number of points in the final data vector
     std::cout << "\nNumber of model points in the noisy data vector: "
-        << bunnyModelPoints_noisy.size() << " points." << std::endl << std::endl;
+              << bunnyModelPoints_noisy.size() << " points." << std::endl << std::endl;
 
     unsigned int nbInlierToReachConsensus = (unsigned int)(60.0 * (double)(bunnyModelPoints_noisy.size()) / 100.0);
     double threshold = 0.001;
 
+    //RANSAC with 1000 iterations
     pose_ransac.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
     pose_ransac.setRansacThreshold(threshold);
     pose_ransac.setRansacMaxTrials(1000);
+
+    //RANSAC with p=0.99, epsilon=0.4
+    pose_ransac2.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
+    pose_ransac2.setRansacThreshold(threshold);
+    int ransac_iterations = vpPose::computeRansacIterations(0.99, 0.4, 4, -1);
+    pose_ransac2.setRansacMaxTrials(ransac_iterations);
+    std::cout << "Number of RANSAC iterations to ensure p=0.99 and epsilon=0.4: " << ransac_iterations << std::endl;
 
     vpHomogeneousMatrix cMo_estimated_RANSAC;
     double t_RANSAC = vpTime::measureTimeMs();
     pose_ransac.computePose(vpPose::RANSAC, cMo_estimated_RANSAC);
     t_RANSAC = vpTime::measureTimeMs() - t_RANSAC;
 
-    std::cout << "\ncMo estimated with RANSAC on noisy data:\n" << cMo_estimated_RANSAC << std::endl;
+    std::cout << "\ncMo estimated with RANSAC (1000 iterations) on noisy data:\n" << cMo_estimated_RANSAC << std::endl;
     std::cout << "Computation time: " << t_RANSAC << " ms" << std::endl;
 
     double r_RANSAC_estimated = ground_truth_pose.computeResidual(cMo_estimated_RANSAC);
-    std::cout << "Corresponding residual: " << r_RANSAC_estimated << std::endl;
+    std::cout << "Corresponding residual (1000 iterations): " << r_RANSAC_estimated << std::endl;
+
+    vpHomogeneousMatrix cMo_estimated_RANSAC_2;
+    t_RANSAC = vpTime::measureTimeMs();
+    pose_ransac2.computePose(vpPose::RANSAC, cMo_estimated_RANSAC_2);
+    t_RANSAC = vpTime::measureTimeMs() - t_RANSAC;
+
+    std::cout << "\ncMo estimated with RANSAC (" << ransac_iterations << " iterations) on noisy data:\n"
+              << cMo_estimated_RANSAC_2 << std::endl;
+    std::cout << "Computation time: " << t_RANSAC << " ms" << std::endl;
+
+    double r_RANSAC_estimated_2 = ground_truth_pose.computeResidual(cMo_estimated_RANSAC_2);
+    std::cout << "Corresponding residual (" << ransac_iterations << " iterations): " << r_RANSAC_estimated_2 << std::endl;
 
 
     pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
@@ -1837,44 +1935,61 @@ int main() {
     double r_estimated = ground_truth_pose.computeResidual(cMo_estimated);
     std::cout << "Corresponding residual: " << r_estimated << std::endl;
 
+
     //Check inlier index
     std::vector<unsigned int> vectorOfFoundInlierIndex = pose_ransac.getRansacInlierIndex();
-    int nbInlierIndexOk = 0;
-    for(std::vector<unsigned int>::const_iterator it = vectorOfFoundInlierIndex.begin();
-        it != vectorOfFoundInlierIndex.end(); ++it) {
-      if(!vectorOfOutlierFlags[*it]) {
-        nbInlierIndexOk++;
-      }
-    }
+    int nbInlierIndexOk = checkInlierIndex(vectorOfFoundInlierIndex, vectorOfOutlierFlags);
 
     int nbTrueInlierIndex = (int) std::count(vectorOfOutlierFlags.begin(), vectorOfOutlierFlags.end(), false);
     std::cout << "\nThere are " << nbInlierIndexOk << " true inliers found, " << vectorOfFoundInlierIndex.size()
-        << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
+              << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
 
     //Check inlier points returned
     std::vector<vpPoint> vectorOfFoundInlierPoints = pose_ransac.getRansacInliers();
+
     if(vectorOfFoundInlierPoints.size() != vectorOfFoundInlierIndex.size()) {
       std::cerr << "The number of inlier index is different with the number of inlier points !" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
-    for(size_t i = 0; i < vectorOfFoundInlierPoints.size(); i++) {
-      if(!samePoints(vectorOfFoundInlierPoints[i], bunnyModelPoints_noisy[vectorOfFoundInlierIndex[i]])) {
-        std::cerr << "Problem with the inlier index and the corresponding inlier point !" << std::endl;
-        return -1;
-      }
+    if (!checkInlierPoints(vectorOfFoundInlierPoints, vectorOfFoundInlierIndex, bunnyModelPoints_noisy)) {
+      return EXIT_FAILURE;
     }
 
-    if(r_RANSAC_estimated > threshold) {
-      std::cerr << "The pose estimated with the RANSAC method is bad estimated !" << std::endl;
-      return -1;
+
+    //Check for RANSAC with p=0.99, epsilon=0.4
+    //Check inlier index
+    std::cout << "\nCheck for RANSAC iterations: " << ransac_iterations;
+    std::vector<unsigned int> vectorOfFoundInlierIndex_2 = pose_ransac2.getRansacInlierIndex();
+    nbInlierIndexOk = checkInlierIndex(vectorOfFoundInlierIndex_2, vectorOfOutlierFlags);
+
+    std::cout << "\nThere are " << nbInlierIndexOk << " true inliers found, " << vectorOfFoundInlierIndex_2.size()
+              << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
+
+    //Check inlier points returned
+    std::vector<vpPoint> vectorOfFoundInlierPoints_2 = pose_ransac2.getRansacInliers();
+    if(vectorOfFoundInlierPoints_2.size() != vectorOfFoundInlierIndex_2.size()) {
+      std::cerr << "The number of inlier index is different with the number of inlier points !" << std::endl;
+      return EXIT_FAILURE;
+    }
+    if (!checkInlierPoints(vectorOfFoundInlierPoints_2, vectorOfFoundInlierIndex_2, bunnyModelPoints_noisy)) {
+      return EXIT_FAILURE;
+    }
+
+
+    if(r_RANSAC_estimated > threshold || r_RANSAC_estimated_2 > threshold) {
+      std::cerr << "The pose estimated with the RANSAC method is bad estimated!" << std::endl;
+      std::cerr << "r_RANSAC_estimated=" << r_RANSAC_estimated << " ; r_RANSAC_estimated_2="
+                << r_RANSAC_estimated_2 << " ; threshold=" << threshold << std::endl;
+      return EXIT_FAILURE;
     } else {
-      std::cout << "The pose estimated with the RANSAC method is well estimated !" << std::endl;
+      std::cout << "The pose estimated with the RANSAC method is well estimated!" << std::endl;
     }
 
-    return 0;
+    std::cout << "\ntestPoseRansac2 is ok!" << std::endl;
+    return EXIT_SUCCESS;
   }
   catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

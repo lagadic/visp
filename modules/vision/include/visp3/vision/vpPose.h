@@ -88,6 +88,13 @@ public:
       LAGRANGE_VIRTUAL_VS
     } vpPoseMethodType;
 
+  enum FILTERING_RANSAC_FLAGS {
+    PREFILTER_DUPLICATE_POINTS        = 0x1,  /*!< Remove duplicate points before the RANSAC. */
+    PREFILTER_ALMOST_DUPLICATE_POINTS = 0x2,  /*!< Remove almost duplicate points (up to a tolerance) before the RANSAC. */
+    PREFILTER_DEGENERATE_POINTS       = 0x4,  /*!< Remove degenerate points (same 3D or 2D coordinates) before the RANSAC. */
+    CHECK_DEGENERATE_POINTS           = 0x8   /*!< Do not consider during the RANSAC degenerate points. */
+  };
+
   unsigned int npt ;       //!< number of point used in pose computation
   std::list<vpPoint> listP ;     //!< array of point (use here class vpPoint)
 
@@ -111,7 +118,7 @@ private:
   std::vector<unsigned int> ransacInlierIndex;
   double ransacThreshold;
   double distanceToPlaneForCoplanarityTest;
-  bool removeRansacDegeneratePoints;
+  int ransacFlags;
 
 protected:
   double computeResidualDementhon(const vpHomogeneousMatrix &cMo) ;
@@ -199,23 +206,15 @@ public:
     
     return covarianceMatrix; 
   }
-  
-  /*!
-    Get the flag if potential degenerate points must be removed or not with the RANSAC pose estimation method.
-
-    \return True if potential degenerate points must be removed, false otherwise.
-  */
-  bool getRemoveRansacDegeneratePoints() const {
-    return removeRansacDegeneratePoints;
-  }
 
   /*!
-    Set if potential degenerate points must be removed or not with the RANSAC pose estimation method.
+    Set RANSAC filtering flags.
 
-    \param remove : True if potential degenerate points must be removed, false otherwise.
+    \param flags : Flags to use, e.g. \e setRansacFilterFlags(PREFILTER_DUPLICATE_POINTS + CHECK_DEGENERATE_POINTS).
+    \sa FILTERING_RANSAC_FLAGS
   */
-  void setRemoveRansacDegeneratePoints(const bool remove) {
-    removeRansacDegeneratePoints = remove;
+  inline void setRansacFilterFlags(const int flags) {
+    ransacFlags = flags;
   }
 
   /*!
@@ -244,6 +243,9 @@ public:
                                   vpPoint &p3,vpPoint &p4,
                                   double lx, vpCameraParameters & cam,
                                   vpHomogeneousMatrix & cMo) ;
+
+  static int computeRansacIterations(double probability, double epsilon,
+                                     const int sampleSize=4, int maxIterations=2000);
                      
   static void findMatch(std::vector<vpPoint> &p2D, 
                      std::vector<vpPoint> &p3D, 
