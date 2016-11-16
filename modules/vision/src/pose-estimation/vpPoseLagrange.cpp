@@ -264,7 +264,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type
     i=0 ;
 
     if (coplanar_plane_type == 1) { // plane ax=d
-      for (std::vector<vpPoint>::const_iterator it = listOfPoints.begin(); it != listOfPoints.end(); ++it)
+      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
       {
         P = *it ;
         a[k][0]   = -P.get_oY();
@@ -294,7 +294,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type
 
     }
     else if (coplanar_plane_type == 2) {  // plane by=d
-      for (std::vector<vpPoint>::const_iterator it = listOfPoints.begin(); it != listOfPoints.end(); ++it)
+      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
       {
         P = *it ;
         a[k][0]   = -P.get_oX();
@@ -325,7 +325,7 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type
     }
     else { // plane cz=d or any other
 
-      for (std::vector<vpPoint>::const_iterator it = listOfPoints.begin(); it != listOfPoints.end(); ++it)
+      for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
       {
         P = *it ;
         a[k][0]   = -P.get_oX();
@@ -481,7 +481,7 @@ vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
     vpPoint P ;
     i=0 ;
-    for (std::vector<vpPoint>::const_iterator it = listOfPoints.begin(); it != listOfPoints.end(); ++it)
+    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it)
     {
       P = *it;
       a[k][0]   = -P.get_oX();

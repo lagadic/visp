@@ -67,7 +67,6 @@ vpPose::init()
 #endif
   npt = 0 ;
   listP.clear();
-  listOfPoints.clear() ;
   c3d.clear();
 
   lambda = 0.25 ;
@@ -94,7 +93,8 @@ vpPose::vpPose()
   : npt(0), listP(), residual(0), lambda(0.25), vvsIterMax(200), c3d(),
     computeCovariance(false), covarianceMatrix(),
     ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
-    distanceToPlaneForCoplanarityTest(0.001), ransacFlags(PREFILTER_DUPLICATE_POINTS + CHECK_DEGENERATE_POINTS), listOfPoints()
+    distanceToPlaneForCoplanarityTest(0.001), ransacFlags(PREFILTER_DUPLICATE_POINTS + CHECK_DEGENERATE_POINTS),
+    listOfPoints(), useParallelRansac(false), nbParallelRansacThreads(0) //0 means that OpenMP is used to get the number of CPU threads
 {
 #if (DEBUG_LEVEL1)
   std::cout << "begin vpPose::vpPose() " << std::endl ;
@@ -118,7 +118,6 @@ vpPose::~vpPose()
 #endif
 
   listP.clear();
-  listOfPoints.clear() ;
 
 #if (DEBUG_LEVEL1)
   std::cout << "end vpPose::~vpPose() " << std::endl ;
@@ -135,7 +134,6 @@ vpPose::clearPoint()
 #endif
 
   listP.clear();
-  listOfPoints.clear() ;
   npt = 0 ;
 
 #if (DEBUG_LEVEL1)
@@ -144,9 +142,9 @@ vpPose::clearPoint()
 }
 
 /*!
-\brief  Add a new point in the array of point.
-\param  newP : New point to add  in the array of point.
-\warning Considering a point from the class vpPoint, X, Y, and Z will
+  Add a new point in the array of points.
+  \param  newP : New point to add  in the array of point.
+  \warning Considering a point from the class vpPoint, X, Y, and Z will
 represent the 3D information and x and y its 2D information.
 These 5 fields must be initialized to be used within this library
 */
@@ -167,6 +165,19 @@ vpPose::addPoint(const vpPoint& newP)
 #endif
 }
 
+/*!
+  Add (append) a list of points in the array of points.
+  \param  lP : List of points to add (append).
+  \warning Considering a point from the class vpPoint, X, Y, and Z will
+represent the 3D information and x and y its 2D information.
+These 5 fields must be initialized to be used within this library
+*/
+void
+vpPose::addPoints(const std::vector<vpPoint> &lP) {
+  listP.insert(listP.end(), lP.begin(), lP.end());
+  listOfPoints.insert(listOfPoints.end(), lP.begin(), lP.end());
+  npt = (unsigned int) listP.size();
+}
 
 void 
 vpPose::setDistanceToPlaneForCoplanarityTest(double d)
@@ -201,17 +212,17 @@ vpPose::coplanar(int &coplanar_plane_type)
 
   double x1=0,x2=0,x3=0,y1=0,y2=0,y3=0,z1=0,z2=0,z3=0 ;
 
-  std::vector<vpPoint>::const_iterator it = listOfPoints.begin();
+  std::list<vpPoint>::const_iterator it = listP.begin();
 
   vpPoint P1, P2, P3 ;
 
   // Get three 3D points that are not collinear and that is not at origin
   bool degenerate = true;
   bool not_on_origin = true;
-  std::vector<vpPoint>::const_iterator it_tmp;
+  std::list<vpPoint>::const_iterator it_tmp;
 
-  std::vector<vpPoint>::const_iterator it_i, it_j, it_k;
-  for (it_i=listOfPoints.begin(); it_i != listOfPoints.end(); ++it_i) {
+  std::list<vpPoint>::const_iterator it_i, it_j, it_k;
+  for (it_i=listP.begin(); it_i != listP.end(); ++it_i) {
     if (degenerate == false) {
       //std::cout << "Found a non degenerate configuration" << std::endl;
       break;
@@ -228,7 +239,7 @@ vpPose::coplanar(int &coplanar_plane_type)
     }
     if (not_on_origin) {
       it_tmp = it_i; ++it_tmp; // j = i+1
-      for (it_j=it_tmp; it_j != listOfPoints.end(); ++it_j) {
+      for (it_j=it_tmp; it_j != listP.end(); ++it_j) {
         if (degenerate == false) {
           //std::cout << "Found a non degenerate configuration" << std::endl;
           break;
@@ -244,7 +255,7 @@ vpPose::coplanar(int &coplanar_plane_type)
         }
         if (not_on_origin) {
           it_tmp = it_j; ++it_tmp; // k = j+1
-          for (it_k=it_tmp; it_k != listOfPoints.end(); ++it_k) {
+          for (it_k=it_tmp; it_k != listP.end(); ++it_k) {
             P3 = *it_k;
             if ((std::fabs(P3.get_oX()) <= std::numeric_limits<double>::epsilon())
                 && (std::fabs(P3.get_oY()) <= std::numeric_limits<double>::epsilon())
@@ -309,7 +320,7 @@ vpPose::coplanar(int &coplanar_plane_type)
 
   double  D = sqrt(vpMath::sqr(a)+vpMath::sqr(b)+vpMath::sqr(c)) ;
 
-  for(it=listOfPoints.begin(); it != listOfPoints.end(); ++it)
+  for(it=listP.begin(); it != listP.end(); ++it)
   {
     P1 = *it ;
     double dist = (a*P1.get_oX() + b*P1.get_oY()+c*P1.get_oZ()+d)/D ;
@@ -343,7 +354,7 @@ vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 {
   double residual_ = 0 ;
   vpPoint P ;
-  for(std::vector<vpPoint>::const_iterator it=listOfPoints.begin(); it != listOfPoints.end(); ++it)
+  for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
   {
     P = *it;
     double x = P.get_x() ;
@@ -572,7 +583,7 @@ void
 vpPose::printPoint()
 {
   vpPoint P;
-  for(std::vector<vpPoint>::const_iterator it=listOfPoints.begin(); it != listOfPoints.end(); ++it)
+  for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
   {
     P = *it ;
 
@@ -616,7 +627,7 @@ vpPose::displayModel(vpImage<unsigned char> &I,
 { 
   vpPoint P ;
   vpImagePoint ip;
-  for(std::vector<vpPoint>::const_iterator it=listOfPoints.begin(); it != listOfPoints.end(); ++it)
+  for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
   {
     P = *it;
     vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip) ;
@@ -639,7 +650,7 @@ vpPose::displayModel(vpImage<vpRGBa> &I,
 { 
   vpPoint P ;
   vpImagePoint ip;
-  for(std::vector<vpPoint>::const_iterator it=listOfPoints.begin(); it != listOfPoints.end(); ++it)
+  for(std::list<vpPoint>::const_iterator it=listP.begin(); it != listP.end(); ++it)
   {
     P = *it;
     vpMeterPixelConversion::convertPoint(cam, P.p[0], P.p[1], ip) ;
