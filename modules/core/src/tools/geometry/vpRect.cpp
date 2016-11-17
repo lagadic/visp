@@ -250,7 +250,11 @@ void vpRect::set(const vpRect& r)
  */
 bool vpRect::operator==(const vpRect &r) const
 {
-  return (top == r.top && left == r.left && width == r.width && height == r.height);
+  //return (top == r.top && left == r.left && width == r.width && height == r.height);
+  return (std::fabs(top-r.top) <= std::fabs(top)*std::numeric_limits<double>::epsilon()
+          && std::fabs(left-r.left) <= std::fabs(left)*std::numeric_limits<double>::epsilon()
+          && std::fabs(width-r.width) <= std::fabs(width)*std::numeric_limits<double>::epsilon()
+          && std::fabs(height-r.height) <= std::fabs(height)*std::numeric_limits<double>::epsilon());
 }
 
 /*!
@@ -259,7 +263,11 @@ bool vpRect::operator==(const vpRect &r) const
  */
 bool vpRect::operator!=(const vpRect &r) const
 {
-  return (top != r.top || left != r.left || width != r.width || height != r.height);
+  //return (top != r.top || left != r.left || width != r.width || height != r.height);
+  return (std::fabs(top-r.top) > std::fabs(top)*std::numeric_limits<double>::epsilon()
+          || std::fabs(left-r.left) > std::fabs(left)*std::numeric_limits<double>::epsilon()
+          || std::fabs(width-r.width) > std::fabs(width)*std::numeric_limits<double>::epsilon()
+          || std::fabs(height-r.height) > std::fabs(height)*std::numeric_limits<double>::epsilon());
 }
 
 /*!
