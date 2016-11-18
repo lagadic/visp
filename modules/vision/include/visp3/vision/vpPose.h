@@ -130,7 +130,7 @@ private:
     RansacFunctor(const vpHomogeneousMatrix &cMo_,
                   const unsigned int ransacNbInlierConsensus_, const int ransacMaxTrials_,
                   const double ransacThreshold_, const unsigned int initial_seed_,
-                  const int checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
+                  const bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
                   bool (*func_)(vpHomogeneousMatrix *)) :
       m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
       m_func(func_), m_initial_seed(initial_seed_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
@@ -166,7 +166,7 @@ private:
 
   private:
     std::vector<unsigned int> m_best_consensus;
-    int m_checkDegeneratePoints;
+    bool m_checkDegeneratePoints;
     vpHomogeneousMatrix m_cMo;
     bool m_foundSolution;
     bool (*m_func)(vpHomogeneousMatrix *);
@@ -180,7 +180,7 @@ private:
     bool poseRansacImpl();
   };
 
-  static void* poseRansacImplThread(void* arg);
+  static vpThread::Return poseRansacImplThread(vpThread::Args arg);
 
 
 protected:
@@ -312,7 +312,7 @@ public:
   }
 
   /*!
-    Set if parallel RANSAC should be used.
+    Set if parallel RANSAC version should be used or not.
 
     \note Need Pthread.
   */
@@ -326,7 +326,7 @@ public:
     \return The vector of points.
   */
   std::vector<vpPoint> getPoints() const {
-    std::vector<vpPoint> vectorOfPoints { std::begin(listP), std::end(listP) };
+    std::vector<vpPoint> vectorOfPoints(listP.begin(), listP.end());
     return vectorOfPoints;
   }
 
