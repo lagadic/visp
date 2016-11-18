@@ -49,7 +49,7 @@ public:
    */
   vpThread() : m_handle(), m_isCreated(false), m_isJoinable(false)
   {
-  };
+  }
 
   /*!
      Construct a thread object that represents a new joinable thread of execution.
@@ -60,7 +60,7 @@ public:
   vpThread(vpThread::Fn fn, vpThread::Args args=NULL) : m_handle(), m_isCreated(false), m_isJoinable(false)
   {
     create(fn, args);
-  };
+  }
 
   /*!
      Creates a thread object that represents a new joinable thread of execution.
@@ -90,7 +90,7 @@ public:
 #endif
 
     m_isJoinable = true;
-  };
+  }
 
   /*!
      Destroy the thread.
@@ -102,7 +102,7 @@ public:
 #elif defined(_WIN32)
     CloseHandle(m_handle);
 #endif
-  };
+  }
 
 
   /*!
@@ -124,7 +124,7 @@ public:
 #endif
       m_isJoinable = false;
     }
-  };
+  }
 
   /*!
      Returns a value used to access implementation-specific information associated to the thread.
