@@ -1,4 +1,3 @@
-
 /**
   \page tutorial-multi-threading Tutorial: How to use multi-threading capabilities
   \tableofcontents
@@ -76,6 +75,48 @@ int var = 0;
 \endcode
 
 Here, the vpMutex::vpScopedLock constructor locks the mutex, while the destructor unlocks. Using vpMutex::vpScopedLock, the scope of the portion of code that is protected is defined inside the brackets. To illustrate this usage, see tutorial-grabber-opencv-threaded.cpp.
+
+\section pass-multiple-arguments-return-values Pass multiple arguments and / or retrieve multiple return values
+
+This section will show you one convenient way to pass multiple arguments to a vpThread and retrieve multiple return values at the end of the computation. This example (testThread2.cpp) uses a functor class to do that.
+
+Basically, you declare a class that will act like a function by defining the \p operator() that will do the computation in a dedicated thread. In the following toy example, we want to compute the element-wise addition (\f$ v_{add}\left [ i \right ] = v_1 \left [ i \right ] + v_2 \left [ i \right ] \f$) and the element-wise multiplication (\f$ v_{mul}\left [ i \right ] = v_1 \left [ i \right ] \times v_2 \left [ i \right ] \f$) of two vectors.
+
+Each thread will process a subset of the input vectors and the partial results will be stored in two vectors (one for the addition and the other one for the multiplication).
+
+\snippet testThread2.cpp functor-thread-example declaration
+
+The required arguments needed by the constructor are the two input vectors, the start index and the end index that will define the portion of the vector to be processed by the current thread. Two getters are used to retrieve the results at the end of the computation.
+
+Let's see now how to create and initialize the threads:
+
+\snippet testThread2.cpp functor-thread-example threadCreation
+
+The pointer to the routine \p arithmThread() called by the thread is defined as the following:
+
+\snippet testThread2.cpp functor-thread-example threadFunction
+
+This routine is called by the threading library. We cast the argument passed to the \p thread routine and we call the function that needs to be executed by the thread.
+
+To get the results:
+
+\snippet testThread2.cpp functor-thread-example getResults
+
+After joining the threads, the partial results from one thread can be obtained by a call to the appropriate getter function.
+
+\warning You cannot create directly the thread as the following:
+
+\code
+threads[i] = vpThread((vpThread::Fn) arithmThread, (vpThread::Args) &functors[i]);
+\endcode
+
+nor as the following:
+
+\code
+threads.push_back(vpThread((vpThread::Fn) arithmThread, (vpThread::Args) &functors[i]));
+\endcode
+
+as theses lines of code create a temporary vpThread object that will be copied to the vector and after destructed. The destructor of the \p vpThread calls automatically the \p join() function and thus it will result that the threads will be created, started and joined sequentially as soon as the temporary \p vpThread object will be destructed.
 
 \section multi-threading-capture Multi-threaded capture and display
 

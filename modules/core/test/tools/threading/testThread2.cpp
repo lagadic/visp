@@ -51,6 +51,7 @@
 
 
 namespace {
+  //! [functor-thread-example declaration]
   class ArithmFunctor {
   public:
     ArithmFunctor(const vpColVector &v1, const vpColVector &v2, const unsigned int start, const unsigned int end) :
@@ -93,12 +94,15 @@ namespace {
       }
     }
   };
+  //! [functor-thread-example declaration]
 
+  //! [functor-thread-example threadFunction]
   vpThread::Return arithmThread(vpThread::Args args) {
-    ArithmFunctor* f = reinterpret_cast<ArithmFunctor*>(args);
+    ArithmFunctor* f = static_cast<ArithmFunctor*>(args);
     (*f)();
     return 0;
   }
+  //! [functor-thread-example threadFunction]
 
   void insert(vpColVector &v1, const vpColVector &v2) {
     unsigned int size = v1.size();
@@ -147,7 +151,8 @@ int main() {
     v2[i] = rand() % 101;
   }
 
-  std::vector<vpThread *> threads(nb_threads);
+  //! [functor-thread-example threadCreation]
+  std::vector<vpThread> threads(nb_threads);
   std::vector<ArithmFunctor> functors(nb_threads);
   unsigned int split = size / nb_threads;
   for (size_t i = 0; i < nb_threads; i++) {
@@ -157,20 +162,19 @@ int main() {
       functors[i] = ArithmFunctor(v1, v2, i*split, size);
     }
 
-    threads[i] = new vpThread((vpThread::Fn) arithmThread, (vpThread::Args) &functors[i]);
+    threads[i].create((vpThread::Fn) arithmThread, (vpThread::Args) &functors[i]);
   }
+  //! [functor-thread-example threadCreation]
 
+  //! [functor-thread-example getResults]
   vpColVector res_add, res_mul;
   for (size_t i = 0; i < nb_threads; i++) {
-    threads[i]->join();
+    threads[i].join();
 
     insert(res_add, functors[i].getVectorAdd());
     insert(res_mul, functors[i].getVectorMul());
   }
-
-  for (size_t i = 0; i < nb_threads; i++) {
-    delete threads[i];
-  }
+  //! [functor-thread-example getResults]
 
   if (!check(v1, v2, res_add, res_mul)) {
     return EXIT_FAILURE;
