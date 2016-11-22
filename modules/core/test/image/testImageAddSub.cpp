@@ -505,10 +505,9 @@ main(int argc, const char ** argv)
       vpImageIo::write(I_invert, filename);
     }
 
-
     return EXIT_SUCCESS;
   }
-  catch(vpException &e) {
+  catch(const vpException &e) {
     std::cerr << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
