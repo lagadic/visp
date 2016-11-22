@@ -289,9 +289,10 @@ int main(int argc, char **argv)
 #endif
 
     vpColVector v; // vz, wx
-    unsigned int iter = 0;
+
     try
     {
+      unsigned int iter = 0;
       while(1)
       {
 #ifdef USE_REAL_ROBOT

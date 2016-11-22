@@ -449,7 +449,7 @@ main(int argc, const char ** argv)
 
   nbOk = 0;
   nbFail = 0;
-  bool res = false;
+  bool res;
 
   res = vpIoTools::isSamePathname(path1, path2); //True
   std::cout << "vpIoTools::isSamePathname(" << path1 << ", " << path2 << ")? " << res << std::endl;
@@ -499,7 +499,7 @@ main(int argc, const char ** argv)
 
   nbOk = 0;
   nbFail = 0;
-  bool res = false;
+  bool res;
 
   res = vpIoTools::isSamePathname(path1, path2); //True
   std::cout << "vpIoTools::isSamePathname(" << path1 << ", " << path2 << ")? " << res << std::endl;

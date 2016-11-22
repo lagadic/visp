@@ -169,11 +169,10 @@ clipping (Byte mask, Index vni, Index *pi, Index *po)
 	Index	vs  = pi[vni-1];	/* premier sommet	*/
 	Index	vp;			/* second  sommet	*/
 	Byte	ins = code[vs] & mask;	/* code de "vs"		*/
-	Byte	inp;			/* code de "vp"		*/
 
 	while (vni--) {	/* pour tous les sommets	*/
 		vp  = *pi++;			/* second sommet	*/
-		inp = code[vp] & mask;		/* code du plan courant	*/
+    Byte inp = code[vp] & mask;		/* code du plan courant	*/
 
 		if (ins == IS_INSIDE) {
 			if (inp == IS_INSIDE) { /* arete interieure	*/

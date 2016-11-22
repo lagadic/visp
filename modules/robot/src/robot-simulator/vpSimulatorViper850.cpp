@@ -467,7 +467,6 @@ vpSimulatorViper850::updateArticularPosition()
       }
       
       vpColVector articularCoordinates = get_artCoord();
-      articularCoordinates = get_artCoord();
       vpColVector articularVelocities = get_artVel();
       
       if (jointLimit)
@@ -842,8 +841,6 @@ vpSimulatorViper850::setVelocity (const vpRobot::vpControlFrameType frame, const
   
   vpColVector vel_sat(6);
 
-  double scale_trans_sat = 1;
-  double scale_rot_sat   = 1;
   double scale_sat       = 1;
   double vel_trans_max = getMaxTranslationVelocity();
   double vel_rot_max   = getMaxRotationVelocity();
@@ -859,65 +856,68 @@ vpSimulatorViper850::setVelocity (const vpRobot::vpControlFrameType frame, const
     {
       if (vel.getRows() != 6)
       {
-	vpERROR_TRACE ("The velocity vector must have a size of 6 !!!!");
-	throw;
+        vpERROR_TRACE ("The velocity vector must have a size of 6 !!!!");
+        throw;
       }
-      
+
       for (unsigned int i = 0 ; i < 3; ++ i)
       {
         vel_abs = fabs (vel[i]);
         if (vel_abs > vel_trans_max && !jointLimit)
         {
-	  vel_trans_max = vel_abs;
-	  vpERROR_TRACE ("Excess velocity %g m/s in TRANSLATION "
-		         "(axis nr. %d).", vel[i], i+1);
+          vel_trans_max = vel_abs;
+          vpERROR_TRACE ("Excess velocity %g m/s in TRANSLATION "
+                         "(axis nr. %d).", vel[i], i+1);
         }
-      
+
         vel_abs = fabs (vel[i+3]);
         if (vel_abs > vel_rot_max && !jointLimit) {
-	  vel_rot_max = vel_abs;
-	  vpERROR_TRACE ("Excess velocity %g rad/s in ROTATION "
-		       "(axis nr. %d).", vel[i+3], i+4);
+          vel_rot_max = vel_abs;
+          vpERROR_TRACE ("Excess velocity %g rad/s in ROTATION "
+                         "(axis nr. %d).", vel[i+3], i+4);
         }
       }
-    
-      if (vel_trans_max > getMaxTranslationVelocity())                     
+
+      double scale_trans_sat = 1;
+      double scale_rot_sat   = 1;
+      if (vel_trans_max > getMaxTranslationVelocity())
         scale_trans_sat = getMaxTranslationVelocity() / vel_trans_max;
-    
+
       if (vel_rot_max > getMaxRotationVelocity())
-        scale_rot_sat = getMaxRotationVelocity() / vel_rot_max; 
-    
+        scale_rot_sat = getMaxRotationVelocity() / vel_rot_max;
+
       if ( (scale_trans_sat < 1) || (scale_rot_sat < 1) )
       {
-        if (scale_trans_sat < scale_rot_sat)  
-	  scale_sat = scale_trans_sat;                    
-        else                        
-	  scale_sat = scale_rot_sat;
+        if (scale_trans_sat < scale_rot_sat)
+          scale_sat = scale_trans_sat;
+        else
+          scale_sat = scale_rot_sat;
       }
       break;
     }
-    
-    // saturation in joint space
+
+      // saturation in joint space
     case vpRobot::ARTICULAR_FRAME :
     {
       if (vel.getRows() != 6)
       {
-	vpERROR_TRACE ("The velocity vector must have a size of 6 !!!!");
-	throw;
+        vpERROR_TRACE ("The velocity vector must have a size of 6 !!!!");
+        throw;
       }
       for (unsigned int i = 0 ; i < 6; ++ i)
       {
         vel_abs = fabs (vel[i]);
         if (vel_abs > vel_rot_max && !jointLimit)
         {
-	  vel_rot_max = vel_abs;
-	  vpERROR_TRACE ("Excess velocity %g rad/s in ROTATION "
-		       "(axis nr. %d).", vel[i], i+1);
+          vel_rot_max = vel_abs;
+          vpERROR_TRACE ("Excess velocity %g rad/s in ROTATION "
+                         "(axis nr. %d).", vel[i], i+1);
         }
       }
+      double scale_rot_sat   = 1;
       if (vel_rot_max > getMaxRotationVelocity())
-        scale_rot_sat = getMaxRotationVelocity() / vel_rot_max; 
-      if ( scale_rot_sat < 1 ) 
+        scale_rot_sat = getMaxRotationVelocity() / vel_rot_max;
+      if ( scale_rot_sat < 1 )
         scale_sat = scale_rot_sat;
       break;
     }
@@ -941,10 +941,7 @@ vpSimulatorViper850::computeArticularVelocity()
 {
   vpRobot::vpControlFrameType frame = getRobotFrame();
   
-  double scale_rot_sat   = 1;
-  double scale_sat       = 1;
   double vel_rot_max   = getMaxRotationVelocity();
-  double vel_abs;
   
   vpColVector articularCoordinates = get_artCoord();
   vpColVector velocityframe = get_velocity();
@@ -987,8 +984,6 @@ vpSimulatorViper850::computeArticularVelocity()
     }
   }
   
-  
-  
   switch(frame)
   {
     case vpRobot::CAMERA_FRAME :
@@ -996,7 +991,7 @@ vpSimulatorViper850::computeArticularVelocity()
     {
       for (unsigned int i = 0 ; i < 6; ++ i)
       {
-        vel_abs = fabs (articularVelocity[i]);
+        double vel_abs = fabs (articularVelocity[i]);
         if (vel_abs > vel_rot_max && !jointLimit)
         {
           vel_rot_max = vel_abs;
@@ -1004,6 +999,9 @@ vpSimulatorViper850::computeArticularVelocity()
              "(axis nr. %d).", articularVelocity[i], i+1);
         }
       }
+      double scale_rot_sat = 1;
+      double scale_sat     = 1;
+
       if (vel_rot_max > getMaxRotationVelocity())
         scale_rot_sat = getMaxRotationVelocity() / vel_rot_max; 
       if ( scale_rot_sat < 1 ) 
@@ -1434,7 +1432,6 @@ vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame,const v
       throw vpRobotException (vpRobotException::lowLevelError,
 			      "Positionning error: "
 			      "Mixt frame not implemented.");
-      break ;
     }
   }
 }
@@ -1683,7 +1680,6 @@ vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, vpColV
       throw vpRobotException (vpRobotException::lowLevelError,
 			      "Positionning error: "
 			      "Mixt frame not implemented.");
-      break ;
     }
   }
 }
@@ -1969,7 +1965,6 @@ vpSimulatorViper850::getDisplacement(vpRobot::vpControlFrameType frame,
       {
         std::cout << "getDisplacement() CAMERA_FRAME not implemented\n";
         return;
-        break ;
       }
 
       case vpRobot::ARTICULAR_FRAME: 
@@ -1982,14 +1977,12 @@ vpSimulatorViper850::getDisplacement(vpRobot::vpControlFrameType frame,
       {
         std::cout << "getDisplacement() REFERENCE_FRAME not implemented\n";
         return;
-        break ;
       }
 
       case vpRobot::MIXT_FRAME: 
       {
         std::cout << "getDisplacement() MIXT_FRAME not implemented\n";
         return;
-        break ;
       }
     }
   }

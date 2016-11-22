@@ -283,6 +283,7 @@ main(int argc, const char ** argv)
 				std::cout << "Disable -m command line option, or connect an other " << std::endl;
 				std::cout << "cameras on the bus." << std::endl;
 				g->close();
+        delete g;
 				return(0);
 			}
 		}
@@ -292,12 +293,13 @@ main(int argc, const char ** argv)
 			std::cout << "It is not possible to select camera " << camera << std::endl;
 			std::cout << "Check your -c <camera> command line option." << std::endl;
 			g->close();
+      delete g;
 			return(0);
 		}
 		if (multi) {
 			camera = 0; // to over write a bad option usage
 			//reinitialize the grabbers with the right number of devices (one grabber per device)
-			delete g;
+      delete [] g;
 			g = new vpDirectShowGrabber[ncameras];
 			for(unsigned int i=0; i<ncameras ; i++)
 			{
@@ -307,7 +309,7 @@ main(int argc, const char ** argv)
 		}
 		else {
 			ncameras = 1; // acquisition from only one camera
-			delete g;
+      delete [] g;
 			g = new vpDirectShowGrabber[1];
 			g[0].open();
 			g[0].setDevice(camera);
@@ -332,10 +334,7 @@ main(int argc, const char ** argv)
 		if (mediatype_is_set) {
 			g[0].setMediaType(mediatypeID);
 		}
-		else {
-			// get The actual video mode
-			mediatypeID = g[0].getMediaType();
-		}
+
 		if (framerate_is_set) {
 			for(unsigned int i=0; i<ncameras ; i++)
 			{
@@ -348,9 +347,6 @@ main(int argc, const char ** argv)
 			}
 		}
 
-
-		unsigned int width;
-		unsigned int height;
 		// Display information for each camera
 		if (verbose_info || verbose_settings) {
 
@@ -364,7 +360,8 @@ main(int argc, const char ** argv)
 				else c = camera;
 
         if (verbose_info){
-					g[i].getFormat(width, height, framerate);
+          unsigned int width, height;
+          g[i].getFormat(width, height, framerate);
 					std::cout << "----------------------------------------------------------"
                     << std::endl
                     << "---- MediaType and framerate currently used by device " << std::endl
@@ -387,6 +384,11 @@ main(int argc, const char ** argv)
 				}
 
 			}
+      delete [] g;
+      delete [] I;
+      if (display)
+        delete [] d;
+
 			return 0;
 		}
 
@@ -413,7 +415,7 @@ main(int argc, const char ** argv)
 		// Main loop for single or multi-camera acquisition and display
 		std::cout << "Capture in process..." << std::endl;
 
-		double tbegin=0, tend=0, tloop=0, ttotal=0;
+    double tbegin=0, ttotal=0;
 
 		ttotal = 0;
 		tbegin = vpTime::measureTimeMs();
@@ -434,8 +436,8 @@ main(int argc, const char ** argv)
           vpImageIo::write(I[c], filename);
 				}
 			}
-			tend = vpTime::measureTimeMs();
-			tloop = tend - tbegin;
+      double tend = vpTime::measureTimeMs();
+      double tloop = tend - tbegin;
 			tbegin = tend;
 			std::cout << "loop time: " << tloop << " ms" << std::endl;
 			ttotal += tloop;

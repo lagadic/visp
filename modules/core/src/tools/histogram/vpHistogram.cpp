@@ -78,7 +78,7 @@ namespace {
   };
 
   vpThread::Return computeHistogramThread(vpThread::Args args) {
-    Histogram_Param_t *histogram_param = ( (Histogram_Param_t *) args );
+    Histogram_Param_t *histogram_param = static_cast<Histogram_Param_t *>(args);
     unsigned int start_index = histogram_param->m_start_index;
     unsigned int end_index = histogram_param->m_end_index;
 
@@ -294,9 +294,6 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
     std::vector<vpThread *> threadpool;
     std::vector<Histogram_Param_t *> histogramParams;
 
-    Histogram_Param_t *histogram_param = NULL;
-    vpThread *histogram_thread = NULL;
-
     unsigned int image_size = I.getSize();
     unsigned int step = image_size / nbThreads;
     unsigned int last_step = image_size - step * (nbThreads-1);
@@ -309,7 +306,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
         end_index = start_index+last_step;
       }
 
-      histogram_param = new Histogram_Param_t(start_index, end_index, &I);
+      Histogram_Param_t *histogram_param = new Histogram_Param_t(start_index, end_index, &I);
       histogram_param->m_histogram = new unsigned int[size];
       memset(histogram_param->m_histogram, 0, size * sizeof(unsigned int));
       memcpy(histogram_param->m_lut, lut, 256*sizeof(unsigned int));
@@ -317,7 +314,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
       histogramParams.push_back(histogram_param);
 
       // Start the threads
-      histogram_thread = new vpThread((vpThread::Fn) computeHistogramThread, (vpThread::Args) histogram_param);
+      vpThread *histogram_thread = new vpThread((vpThread::Fn) computeHistogramThread, (vpThread::Args) histogram_param);
       threadpool.push_back(histogram_thread);
     }
 

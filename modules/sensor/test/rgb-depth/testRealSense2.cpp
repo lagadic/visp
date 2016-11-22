@@ -94,8 +94,8 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
     capture_state_ = s_capture_state;
     s_mutex_capture.unlock();
 
-    static bool update = false;
     if (capture_state_ == capture_started) {
+      static bool update = false;
       if (! update) {
         viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud_, rgb, "sample cloud");
         viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
@@ -147,8 +147,6 @@ int main()
     vpImage<uint16_t> depth((unsigned int) rs.getIntrinsics(rs::stream::depth).height, (unsigned int) rs.getIntrinsics(rs::stream::depth).width);
     vpImage<vpRGBa> I_display_depth(depth.getHeight(), depth.getWidth());
 
-
-    double t_begin = 0.0;
     std::vector<double> time_vector;
 
 #if defined(VISP_HAVE_X11)
@@ -158,7 +156,7 @@ int main()
 #endif
 
     //Test depth stream during 10 s
-    t_begin = vpTime::measureTimeMs();
+    double t_begin = vpTime::measureTimeMs();
     while (true) {
       double t = vpTime::measureTimeMs();
       rs.acquire( NULL, (unsigned char *) depth.bitmap, NULL, NULL );

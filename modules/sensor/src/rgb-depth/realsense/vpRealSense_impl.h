@@ -49,7 +49,6 @@ void vp_rs_get_frame_data_impl(const rs::device *m_device, const std::map <rs::s
       std::stringstream ss;
       ss << "Cannot find intrinsics for " << stream << "  stream!";
       throw vpException(vpException::fatalError, ss.str());
-      return;
     }
 
     unsigned int width = (unsigned int) it_intrinsics->second.width;
@@ -72,7 +71,6 @@ void vp_rs_get_native_frame_data_impl(const rs::device *m_device, const std::map
       std::stringstream ss;
       ss << "Cannot find intrinsics for " << stream << "  stream!";
       throw vpException(vpException::fatalError, ss.str());
-      return;
     }
 
     size_t size = (size_t) (it_intrinsics->second.width * it_intrinsics->second.height);
@@ -140,9 +138,7 @@ void vp_rs_get_color_impl(const rs::device *m_device, const std::map <rs::stream
   if (m_device->is_stream_enabled(rs::stream::color)) {
     std::map<rs::stream, rs::intrinsics>::const_iterator it_intrinsics = m_intrinsics.find(rs::stream::color);
     if (it_intrinsics == m_intrinsics.end()) {
-      std::stringstream ss;
       throw vpException(vpException::fatalError, "Cannot find intrinsics for color stream!");
-      return;
     }
 
     unsigned int width = (unsigned int) it_intrinsics->second.width;
@@ -168,7 +164,6 @@ void vp_rs_get_grey_impl(const rs::device *m_device, const std::map <rs::stream,
     std::map<rs::stream, rs::intrinsics>::const_iterator it_intrinsics = m_intrinsics.find(rs::stream::color);
     if (it_intrinsics == m_intrinsics.end()) {
       throw vpException(vpException::fatalError, "Cannot find intrinsics for color stream!");
-      return;
     }
 
     unsigned int width = (unsigned int) it_intrinsics->second.width;
@@ -194,7 +189,6 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map <rs::s
     std::map<rs::stream, rs::intrinsics>::const_iterator it_intrinsics = m_intrinsics.find(rs::stream::color);
     if (it_intrinsics == m_intrinsics.end()) {
       throw vpException(vpException::fatalError, "Cannot find intrinsics for depth stream!");
-      return;
     }
 
     const float depth_scale = m_device->get_depth_scale();
@@ -238,7 +232,6 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map<rs::st
     std::map<rs::stream, rs::intrinsics>::const_iterator it_intrinsics = m_intrinsics.find(rs::stream::depth);
     if (it_intrinsics == m_intrinsics.end()) {
       throw vpException(vpException::fatalError, "Cannot find intrinsics for depth stream!");
-      return;
     }
 
     int width = it_intrinsics->second.width;
@@ -281,13 +274,11 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map <rs::s
     std::map<rs::stream, rs::intrinsics>::const_iterator it_intrinsics_depth = m_intrinsics.find(rs::stream::depth);
     if (it_intrinsics_depth == m_intrinsics.end()) {
       throw vpException(vpException::fatalError, "Cannot find intrinsics for depth stream!");
-      return;
     }
 
     std::map<rs::stream, rs::intrinsics>::const_iterator it_intrinsics_color = m_intrinsics.find(rs::stream::color);
     if (it_intrinsics_color == m_intrinsics.end()) {
       throw vpException(vpException::fatalError, "Cannot find intrinsics for color stream!");
-      return;
     }
 
     int depth_width = it_intrinsics_depth->second.width;

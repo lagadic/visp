@@ -168,10 +168,12 @@ push_rfstack (void)
 void
 swap_rfstack (void)
 {
-	int	*ip, tmp;
+  int	*ip;
 
 	ip = (sp == stack) ? sp + 1 : sp - 1; 
-	SWAP(*sp, *ip, tmp);
+  int tmp;
+  // SWAP(*sp, *ip, tmp); // produce a cppcheck warning
+  tmp = *sp; *sp = *ip; *ip = tmp;
 }
 
 /*

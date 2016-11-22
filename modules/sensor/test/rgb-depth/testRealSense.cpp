@@ -97,8 +97,8 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
     capture_state_ = s_capture_state;
     s_mutex_capture.unlock();
 
-    static bool update = false;
     if (capture_state_ == capture_started) {
+      static bool update = false;
       if (! update) {
         viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud_, rgb, "sample cloud");
         viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
