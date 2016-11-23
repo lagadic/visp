@@ -41,7 +41,7 @@ include(FindPackageHandleStandardArgs)
 
 set(CPP11_CXX_FLAG_CANDIDATES
   "-std=c++11"
-  "-std=c++0x"
+  "-std=gnu++11"
 )
 
 # check CXX c++11 compiler flag
