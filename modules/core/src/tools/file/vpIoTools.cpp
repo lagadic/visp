@@ -1282,7 +1282,7 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname) {
 
   if (real_path != NULL) {
     real_path_str = real_path;
-    delete real_path;
+    free(real_path);
   }
 #elif defined(_WIN32)
 #define BUFSIZE 4096
