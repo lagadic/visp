@@ -88,18 +88,23 @@ public:
 
   template<class Type>
   static void crop(const vpImage<Type> &I,
-                   unsigned int roi_top, unsigned int roi_left,
+                   double roi_top,  double roi_left,
+                   int roi_height,  int roi_width,
+                   vpImage<Type> &crop, unsigned int v_scale=1, unsigned int h_scale=1);
+
+  template<class Type>
+  static void crop(const vpImage<Type> &I,
+                   const vpImagePoint &topLeft,
                    unsigned int roi_height, unsigned int roi_width,
-                   vpImage<Type> &crop);
+                   vpImage<Type> &crop, unsigned int v_scale=1, unsigned int h_scale=1);
+  template<class Type>
+  static void crop(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop, unsigned int v_scale=1, unsigned int h_scale=1);
+  template<class Type>
+  static void crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi, vpImage<Type> &crop,
+                   unsigned int v_scale=1, unsigned int h_scale=1);
 
   template<class Type>
-  static void crop(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop);
-  template<class Type>
-  static void crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi, vpImage<Type> &crop);
-
-  template<class Type>
-  static void flip(const vpImage<Type> &I,
-                   vpImage<Type> &newI);
+  static void flip(const vpImage<Type> &I, vpImage<Type> &newI);
 
   template<class Type>
   static void flip(vpImage<Type> &I);
@@ -108,10 +113,16 @@ public:
   static void imageDifference(const vpImage<unsigned char> &I1,
                               const vpImage<unsigned char> &I2,
                               vpImage<unsigned char> &Idiff);
+  static void imageDifference(const vpImage<vpRGBa> &I1,
+                              const vpImage<vpRGBa> &I2,
+                              vpImage<vpRGBa> &Idiff);
 
   static void imageDifferenceAbsolute(const vpImage<unsigned char> &I1,
                                       const vpImage<unsigned char> &I2,
                                       vpImage<unsigned char> &Idiff);
+  static void imageDifferenceAbsolute(const vpImage<vpRGBa> &I1,
+                                      const vpImage<vpRGBa> &I2,
+                                      vpImage<vpRGBa> &Idiff);
 
   static void imageAdd(const vpImage<unsigned char> &I1,
                        const vpImage<unsigned char> &I2,
@@ -197,7 +208,9 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
 #endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
 /*!
-  Crop a region of interest (ROI) in an image.
+  Crop a region of interest (ROI) in an image. The ROI coordinates and dimension are defined in the original image.
+
+  Setting \e v_scale and \e h_scale to values different from 1 allows also to subsample the cropped image.
 
   \param I : Input image from which a sub image will be extracted.
   \param roi_top : ROI vertical position of the upper/left corner in the input image.
@@ -205,40 +218,80 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
   \param roi_height : Cropped image height corresponding to the ROI height.
   \param roi_width : Cropped image width corresponding to the ROI height.
   \param crop : Cropped image.
+  \param v_scale [in] : Vertical subsampling factor applied to the ROI.
+  \param h_scale [in] : Horizontal subsampling factor applied to the ROI.
 
   \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
 
 */
 template<class Type>
 void vpImageTools::crop(const vpImage<Type> &I,
-                        unsigned int roi_top, unsigned int roi_left,
-                        unsigned int roi_height, unsigned int roi_width,
-                        vpImage<Type> &crop)
+                        double roi_top,  double roi_left,
+                        int roi_height,  int roi_width,
+                        vpImage<Type> &crop, unsigned int v_scale, unsigned int h_scale)
 {
-  unsigned int imax = roi_top + roi_height ;
-  unsigned int jmax = roi_left + roi_width ;
+  int i_min = std::max((int)(ceil(roi_top/v_scale)), 0);
+  int j_min = std::max((int)(ceil(roi_left/h_scale)), 0);
+  int i_max = std::min((int)(ceil((roi_top + roi_height))/v_scale), (int)(I.getHeight()/v_scale));
+  int j_max = std::min((int)(ceil((roi_left + roi_width)/h_scale)), (int)(I.getWidth()/h_scale));
 
-  if (imax > I.getHeight())
-  {
-    imax = I.getHeight() -1 ;
-    roi_height = imax - roi_top ;
-  }
-  if (jmax > I.getWidth())
-  {
-    jmax = I.getWidth() -1 ;
-    roi_width = jmax - roi_left ;
-  }
+  unsigned int r_width  = (unsigned int)(j_max-j_min);
+  unsigned int r_height = (unsigned int)(i_max-i_min);
 
-  crop.resize(roi_height, roi_width) ;
-  for (unsigned int i=0 ; i < roi_height ; i++) {
-    Type *src = (Type *)I[i+roi_top]+roi_left*sizeof(Type);
-    Type *dst = (Type *)crop[i];
-    memcpy(dst, src, roi_width*sizeof(Type));
+  crop.resize(r_height, r_width) ;
+
+  if (v_scale == 1 && h_scale == 1) {
+    for (unsigned int i=0 ; i < r_height ; i++) {
+      void *src = (void *)(I[i+i_min] + j_min);
+      void *dst = (void *)crop[i];
+      memcpy(dst, src, r_width*sizeof(Type));
+    }
+  }
+  else if (h_scale == 1) {
+    for (unsigned int i=0 ; i < r_height ; i++) {
+      void *src = (void *)(I[(i + i_min)*v_scale]+j_min);
+      void *dst = (void *)crop[i];
+      memcpy(dst, src, r_width*sizeof(Type));
+    }
+  }
+  else {
+    for (unsigned int i=0 ; i < r_height ; i++) {
+      for (unsigned int j=0 ; j < r_width ; j++) {
+        crop[i][j] = I[(i + i_min)*v_scale][(j + j_min)*h_scale];
+      }
+    }
   }
 }
 
 /*!
-  Crop a region of interest (ROI) in an image.
+  Crop a region of interest (ROI) in an image. The ROI coordinates and dimension are defined in the original image.
+
+  Setting \e v_scale and \e h_scale to values different from 1 allows also to subsample the cropped image.
+
+  \param I : Input image from which a sub image will be extracted.
+  \param topLeft : ROI position of the upper/left corner in the input image.
+  \param roi_height : Cropped image height corresponding to the ROI height.
+  \param roi_width : Cropped image width corresponding to the ROI height.
+  \param crop : Cropped image.
+  \param v_scale [in] : Vertical subsampling factor applied to the ROI.
+  \param h_scale [in] : Horizontal subsampling factor applied to the ROI.
+
+  \sa crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &)
+
+*/
+template<class Type>
+void vpImageTools::crop(const vpImage<Type> &I,
+                        const vpImagePoint &topLeft,
+                        unsigned int roi_height, unsigned int roi_width,
+                        vpImage<Type> &crop, unsigned int v_scale, unsigned int h_scale)
+{
+  vpImageTools::crop(I, topLeft.get_i(), topLeft.get_j(), roi_height, roi_width, crop, v_scale, h_scale);
+}
+
+/*!
+  Crop a region of interest (ROI) in an image. The ROI coordinates and dimension are defined in the original image.
+
+  Setting \e v_scale and \e h_scale to values different from 1 allows also to subsample the cropped image.
 
   \param I : Input image from which a sub image will be extracted.
 
@@ -246,46 +299,20 @@ void vpImageTools::crop(const vpImage<Type> &I,
   cropped part of the image.
 
   \param crop : Cropped image.
+  \param v_scale [in] : Vertical subsampling factor applied to the ROI.
+  \param h_scale [in] : Horizontal subsampling factor applied to the ROI.
+
 */
 template<class Type>
-void vpImageTools::crop(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop)
+void vpImageTools::crop(const vpImage<Type> &I, const vpRect &roi, vpImage<Type> &crop, unsigned int v_scale, unsigned int h_scale)
 {
-  double dleft   = roi.getLeft();
-  double dtop    = roi.getTop();
-  double dright  = ceil( roi.getRight() );
-  double dbottom = ceil( roi.getBottom() );
-
-  if (dleft < 0.0)                   dleft = 0.0;
-  else if (dleft >= I.getWidth())    dleft = I.getWidth() - 1;
-
-  if (dright < 0.0)                  dright = 0.0;
-  else if (dright >= I.getWidth())   dright = I.getWidth() - 1;
-
-  if (dtop < 0.0)                    dtop = 0.0;
-  else if (dtop >= I.getHeight())    dtop = I.getHeight() - 1;
-
-  if (dbottom < 0.0)                 dbottom = 0.0;
-  else if (dbottom >= I.getHeight()) dbottom = I.getHeight() - 1;
-
-  // Convert the double-precision rectangle coordinates into integer positions
-  unsigned int left   = (unsigned int) dleft;
-  unsigned int top    = (unsigned int) dtop;
-  unsigned int bottom = (unsigned int) dbottom;
-  unsigned int right  = (unsigned int) dright;
-
-  unsigned int width  = right - left + 1;
-  unsigned int height = bottom - top + 1;
-
-  crop.resize(height, width);
-  for (unsigned int i=0 ; i < height ; i++) {
-    Type *src = (Type *)I[i+top]+left*sizeof(Type);
-    Type *dst = (Type *)crop[i];
-    memcpy(dst, src, width*sizeof(Type));
-  }
+  vpImageTools::crop(I, roi.getTop(), roi.getLeft(), (unsigned int)roi.getHeight(), (unsigned int)roi.getWidth(), crop, v_scale, h_scale);
 }
 
 /*!
-  Crop a region of interest (ROI) in an image.
+  Crop a region of interest (ROI) in an image. The ROI coordinates and dimension are defined in the original image.
+
+  Setting \e v_scale and \e h_scale to values different from 1 allows also to subsample the cropped image.
 
   \param bitmap : Pointer to the input image from which a sub image will be extracted.
   \param width, height : Size of the input image.
@@ -293,41 +320,46 @@ void vpImageTools::crop(const vpImage<Type> &I, const vpRect &roi, vpImage<Type>
   \param roi : Region of interest corresponding to the cropped part of the image.
 
   \param crop : Cropped image.
+  \param v_scale [in] : Vertical subsampling factor applied to the ROI.
+  \param h_scale [in] : Horizontal subsampling factor applied to the ROI.
 */
 template<class Type>
-void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi, vpImage<Type> &crop)
+void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi, vpImage<Type> &crop,
+                        unsigned int v_scale, unsigned int h_scale)
 {
-  double roi_dleft   = roi.getLeft();
-  double roi_dtop    = roi.getTop();
-  double roi_dright  = ceil( roi.getRight() );
-  double roi_dbottom = ceil( roi.getBottom() );
+  int i_min = std::max((int)(ceil(roi.getTop()/v_scale)), 0);
+  int j_min = std::max((int)(ceil(roi.getLeft()/h_scale)), 0);
+  int i_max = std::min((int)(ceil((roi.getTop() + roi.getHeight()))/v_scale), (int)(height/v_scale));
+  int j_max = std::min((int)(ceil((roi.getLeft() + roi.getWidth())/h_scale)), (int)(width/h_scale));
 
-  if (roi_dleft < 0.0)              roi_dleft = 0.0;
-  else if (roi_dleft >= width)    roi_dleft = width - 1;
+  unsigned int r_width  = (unsigned int)(j_max-j_min);
+  unsigned int r_height = (unsigned int)(i_max-i_min);
 
-  if (roi_dright < 0.0)             roi_dright = 0.0;
-  else if (roi_dright >= width)   roi_dright = width - 1;
+  crop.resize(r_height, r_width) ;
 
-  if (roi_dtop < 0.0)               roi_dtop = 0.0;
-  else if (roi_dtop >= height)    roi_dtop = height - 1;
-
-  if (roi_dbottom < 0.0)            roi_dbottom = 0.0;
-  else if (roi_dbottom >= height) roi_dbottom = height - 1;
-
-  // Convert the double-precision rectangle coordinates into integer positions
-  unsigned int roi_left   = (unsigned int) roi_dleft;
-  unsigned int roi_top    = (unsigned int) roi_dtop;
-  unsigned int roi_bottom = (unsigned int) roi_dbottom;
-  unsigned int roi_right  = (unsigned int) roi_dright;
-
-  unsigned int roi_width  = roi_right - roi_left + 1;
-  unsigned int roi_height = roi_bottom - roi_top + 1;
-
-  crop.resize(roi_height, roi_width);
-  for (unsigned int i=0 ; i < roi_height ; i++) {
-    Type *src = (Type *)bitmap + ( (i+roi_top)*width + roi_left ) * sizeof(Type);
-    Type *dst = (Type *)crop[i];
-    memcpy(dst, src, width*sizeof(Type));
+  if (v_scale == 1 && h_scale == 1) {
+    for (unsigned int i=0 ; i < r_height ; i++) {
+      void *src = (void *)(bitmap + ( (i+i_min)*width + j_min ) * sizeof(Type));
+      void *dst = (void *)crop[i];
+      memcpy(dst, src, r_width*sizeof(Type));
+    }
+  }
+  else if (h_scale == 1) {
+    for (unsigned int i=0 ; i < r_height ; i++) {
+      void *src = (void *)(bitmap + ( (i+i_min)*width*v_scale + j_min ) * sizeof(Type) );
+      void *dst = (void *)crop[i];
+      memcpy(dst, src, r_width*sizeof(Type));
+    }
+  }
+  else {
+    for (unsigned int i=0 ; i < r_height ; i++) {
+      unsigned int i_src = (i+i_min)*width*v_scale + j_min*h_scale;
+      for (unsigned int j=0 ; j < r_width ; j++) {
+        void *src = (void *)(bitmap + (i_src + j*h_scale)*sizeof(Type));
+        void *dst = (void *)&crop[i][j];
+        memcpy(dst, src, sizeof(Type));
+      }
+    }
   }
 }
 
