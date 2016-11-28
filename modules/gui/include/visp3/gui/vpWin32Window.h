@@ -90,10 +90,10 @@ private :
   
   //! X coordinate of the click
   int clickX;
-  int clickXUp; 
+  int clickXUp;
   //! Y coordinate of the click
   int clickY;
-  int clickYUp; 
+  int clickYUp;
   //! X coordinate of the mouse
   int coordX;
   //! Y coordinate of the mouse
@@ -110,17 +110,11 @@ private :
   //! The renderer used by the window
   vpWin32Renderer * renderer;
 
-
- public:
+public:
 
   vpWin32Window(vpWin32Renderer * rend = NULL);
   virtual ~vpWin32Window();
 
-  //! Returns the displayed image's width
-  unsigned int getImageWidth(){ return renderer->getImageWidth(); }
-  //! Returns the displayed image's height
-  unsigned int getImageHeight(){ return renderer->getImageHeight(); }
-  //! Returns the window's handle
   HWND getHWnd(){ return hWnd;}
 
   //! Returns true if the window is initialized
@@ -129,6 +123,8 @@ private :
   //! Initialize the window
   void initWindow(const char* title, int posx, int posy, unsigned int w, unsigned int h);
 
+  void setScale(unsigned int scale) { renderer->setScale(scale); };
+
   // Friend classes
   friend class vpDisplayWin32;
   friend class vpDisplayD3D;
@@ -136,7 +132,7 @@ private :
 
   //! The message loop
   friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
-				  WPARAM wParam, LPARAM lParam);
+                                  WPARAM wParam, LPARAM lParam);
 };
 
 #endif

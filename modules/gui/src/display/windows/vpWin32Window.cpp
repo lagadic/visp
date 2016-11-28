@@ -76,135 +76,135 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     if (!window->isInitialized())
     {
       window->initialized = true;
-      vpReleaseSemaphore(window->semaInit,1,NULL);      
+      vpReleaseSemaphore(window->semaInit,1,NULL);
     }
   }
   switch (message)
   {
-    case vpWM_DISPLAY:
-      //redraw the whole window
-      InvalidateRect(window->getHWnd(), NULL, TRUE);
-      UpdateWindow(window->getHWnd());
-      break;
+  case vpWM_DISPLAY:
+    //redraw the whole window
+    InvalidateRect(window->getHWnd(), NULL, TRUE);
+    UpdateWindow(window->getHWnd());
+    break;
 
-    case vpWM_DISPLAY_ROI:
-	{
-      RECT rect;
+  case vpWM_DISPLAY_ROI:
+  {
+    RECT rect;
 
-      rect.left = LOWORD(wParam);
-      rect.right = HIWORD(wParam);
+    rect.left = LOWORD(wParam);
+    rect.right = HIWORD(wParam);
 
-      rect.top = LOWORD(lParam);
-      rect.bottom = HIWORD(lParam);
+    rect.top = LOWORD(lParam);
+    rect.bottom = HIWORD(lParam);
 
-      InvalidateRect(window->getHWnd(), &rect, TRUE);
-      UpdateWindow(window->getHWnd());
-	}
-      break;
+    InvalidateRect(window->getHWnd(), &rect, TRUE);
+    UpdateWindow(window->getHWnd());
+  }
+    break;
 
-    case WM_LBUTTONDOWN:
-     {
-        window->clickX = GET_X_LPARAM(lParam);
-        window->clickY = GET_Y_LPARAM(lParam);
+  case WM_LBUTTONDOWN:
+  {
+    window->clickX = GET_X_LPARAM(lParam);
+    window->clickY = GET_Y_LPARAM(lParam);
 
-        window->clickButton = vpMouseButton::button1;
-        vpReleaseSemaphore(window->semaClick,1,NULL);
-      }
-      break;
+    window->clickButton = vpMouseButton::button1;
+    vpReleaseSemaphore(window->semaClick,1,NULL);
+  }
+    break;
 
-    case WM_MBUTTONDOWN:
-      {
-        window->clickX = GET_X_LPARAM(lParam);
-        window->clickY = GET_Y_LPARAM(lParam);
+  case WM_MBUTTONDOWN:
+  {
+    window->clickX = GET_X_LPARAM(lParam);
+    window->clickY = GET_Y_LPARAM(lParam);
 
-        window->clickButton = vpMouseButton::button2;
-        vpReleaseSemaphore(window->semaClick,1,NULL);
-      }
-      break;
+    window->clickButton = vpMouseButton::button2;
+    vpReleaseSemaphore(window->semaClick,1,NULL);
+  }
+    break;
 
-    case WM_RBUTTONDOWN:
-      {
-        window->clickX = GET_X_LPARAM(lParam);
-        window->clickY = GET_Y_LPARAM(lParam);
+  case WM_RBUTTONDOWN:
+  {
+    window->clickX = GET_X_LPARAM(lParam);
+    window->clickY = GET_Y_LPARAM(lParam);
 
-        window->clickButton = vpMouseButton::button3;
-        vpReleaseSemaphore(window->semaClick,1,NULL);
-       }
-      break;
+    window->clickButton = vpMouseButton::button3;
+    vpReleaseSemaphore(window->semaClick,1,NULL);
+  }
+    break;
 
-    case WM_LBUTTONUP:
-      {
-        window->clickXUp = GET_X_LPARAM(lParam);
-        window->clickYUp = GET_Y_LPARAM(lParam);
+  case WM_LBUTTONUP:
+  {
+    window->clickXUp = GET_X_LPARAM(lParam);
+    window->clickYUp = GET_Y_LPARAM(lParam);
 
-        window->clickButtonUp = vpMouseButton::button1;
-        vpReleaseSemaphore(window->semaClickUp,1,NULL);
-      }
-      break;
+    window->clickButtonUp = vpMouseButton::button1;
+    vpReleaseSemaphore(window->semaClickUp,1,NULL);
+  }
+    break;
 
-    case WM_MBUTTONUP:
-      {
-        window->clickXUp = GET_X_LPARAM(lParam);
-        window->clickYUp = GET_Y_LPARAM(lParam);
+  case WM_MBUTTONUP:
+  {
+    window->clickXUp = GET_X_LPARAM(lParam);
+    window->clickYUp = GET_Y_LPARAM(lParam);
 
-        window->clickButtonUp = vpMouseButton::button2;
-        vpReleaseSemaphore(window->semaClickUp,1,NULL);
-      }
-      break;
+    window->clickButtonUp = vpMouseButton::button2;
+    vpReleaseSemaphore(window->semaClickUp,1,NULL);
+  }
+    break;
 
-    case WM_RBUTTONUP:
-      {
-        window->clickXUp = GET_X_LPARAM(lParam);
-        window->clickYUp = GET_Y_LPARAM(lParam);
+  case WM_RBUTTONUP:
+  {
+    window->clickXUp = GET_X_LPARAM(lParam);
+    window->clickYUp = GET_Y_LPARAM(lParam);
 
-        window->clickButtonUp = vpMouseButton::button3;
-        vpReleaseSemaphore(window->semaClickUp,1,NULL);
-      }
-      break;
-    case WM_MOUSEMOVE:
-      {        
-        window->coordX = GET_X_LPARAM(lParam);
-        window->coordY = GET_Y_LPARAM(lParam);        
-		    vpReleaseSemaphore(window->semaMove,1,NULL);        
-      }
-      break;
+    window->clickButtonUp = vpMouseButton::button3;
+    vpReleaseSemaphore(window->semaClickUp,1,NULL);
+  }
+    break;
+  case WM_MOUSEMOVE:
+  {
+    window->coordX = GET_X_LPARAM(lParam);
+    window->coordY = GET_Y_LPARAM(lParam);
+    vpReleaseSemaphore(window->semaMove,1,NULL);
+  }
+    break;
 
-    case WM_SYSKEYDOWN: 
-      // case WM_SYSKEYUP:
-    case WM_KEYDOWN: 
-      //case WM_KEYUP: 
-      {
+  case WM_SYSKEYDOWN:
+    // case WM_SYSKEYUP:
+  case WM_KEYDOWN:
+    //case WM_KEYUP:
+  {
     GetKeyNameText((LONG)lParam, window->lpString, 10); // 10 is the size of lpString
-	//window->key = MapVirtualKey(wParam, MAPVK_VK_TO_CHAR);
-	vpReleaseSemaphore(window->semaKey,1,NULL);
-	break;
-      }
+    //window->key = MapVirtualKey(wParam, MAPVK_VK_TO_CHAR);
+    vpReleaseSemaphore(window->semaKey,1,NULL);
+    break;
+  }
 
-    case WM_COMMAND:
+  case WM_COMMAND:
 
-      break;
+    break;
 
-      //we must prevent the window from erasing the background each time a
-      //repaint is needed
-    case WM_ERASEBKGND:
-      return (LRESULT)1;
+    //we must prevent the window from erasing the background each time a
+    //repaint is needed
+  case WM_ERASEBKGND:
+    return (LRESULT)1;
 
-    case WM_PAINT:
-      //render the display
-      window->renderer->render();
-      break;
+  case WM_PAINT:
+    //render the display
+    window->renderer->render();
+    break;
 
-    case vpWM_CLOSEDISPLAY:
-      //cleanup code here, if needed
-      //destroys the window
-      DestroyWindow(hWnd);
-      break;
+  case vpWM_CLOSEDISPLAY:
+    //cleanup code here, if needed
+    //destroys the window
+    DestroyWindow(hWnd);
+    break;
 
-    case WM_DESTROY:
-      PostQuitMessage(0);
-      break;
-    default:
-      return DefWindowProc(hWnd, message, wParam, lParam);
+  case WM_DESTROY:
+    PostQuitMessage(0);
+    break;
+  default:
+    return DefWindowProc(hWnd, message, wParam, lParam);
   }
   return 0;
 }
@@ -224,7 +224,6 @@ vpWin32Window::vpWin32Window(vpWin32Renderer * rend): initialized(false)
   semaClickUp = CreateSemaphore(NULL,0,MAX_SEM_COUNT,NULL);
   semaKey = CreateSemaphore(NULL,0,MAX_SEM_COUNT,NULL);
   semaMove = CreateSemaphore(NULL,0,MAX_SEM_COUNT,NULL);
-
 }
 
 /*!
@@ -290,12 +289,12 @@ void vpWin32Window::initWindow(const char* title, int posx, int posy, unsigned i
                         posx, posy, rect.right-rect.left, rect.bottom-rect.top, NULL, NULL, hInst, NULL);
   if (hWnd == NULL)
   {
-	  DWORD err= GetLastError();
-	  std::cout << "err CreateWindowEx=" << err << std::endl;
+    DWORD err= GetLastError();
+    std::cout << "err CreateWindowEx=" << err << std::endl;
     throw vpDisplayException(vpDisplayException::cannotOpenWindowError,
                              "Can't create the window!");
   }
-  SetWindowPos(hWnd, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOMOVE);     
+  SetWindowPos(hWnd, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOMOVE);
 
   //needed if we want to access it from the callback method (message handler)
   window = this;
@@ -317,12 +316,12 @@ void vpWin32Window::initWindow(const char* title, int posx, int posy, unsigned i
     if(val==-1){
       std::cout << "GetMessage error:" << GetLastError() << std::endl;
       break;
-    }else if(val==0){      
+    }else if(val==0){
       break;
     }else{
       if (!TranslateAccelerator(msg.hwnd, NULL, &msg))
-      {        
-        TranslateMessage(&msg);        
+      {
+        TranslateMessage(&msg);
         DispatchMessage(&msg);
       }
     }

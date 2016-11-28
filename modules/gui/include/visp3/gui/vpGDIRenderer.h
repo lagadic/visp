@@ -56,21 +56,24 @@
 class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 {
   //the handle of the associated window
-  HWND hWnd;
+  HWND m_hWnd;
 
   //the bitmap object to display
-  HBITMAP bmp;
+  HBITMAP m_bmp;
 
   //colors for overlay
-  COLORREF colors[vpColor::id_unknown];
+  COLORREF m_colors[vpColor::id_unknown];
 
   //font used to draw text
-  HFONT hFont;
+  HFONT m_hFont;
 
   //used to ensure that only one thread at a time is accessing bmp
-  CRITICAL_SECTION CriticalSection;
+  CRITICAL_SECTION m_criticalSection;
 
- public:
+  unsigned int m_bmp_width;
+  unsigned int m_bmp_height;
+
+public:
   double timelost;
   vpGDIRenderer();
   virtual ~vpGDIRenderer();
@@ -79,12 +82,6 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 
   bool render();
 
-  // gets the image's width.
-  unsigned int getImageWidth(){ return nbCols; }
-
-  // gets the image's height.
-  unsigned int getImageHeight(){ return nbRows; }
-
   void setImg(const vpImage<vpRGBa>& I);
   void setImg(const vpImage<unsigned char>& I);
   void setImgROI(const vpImage<vpRGBa>& I, const vpImagePoint &iP, const unsigned int width, const unsigned int height );
@@ -92,41 +89,39 @@ class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 
   void setPixel(const vpImagePoint &iP, const vpColor &color);
 
-  void drawLine(const vpImagePoint &ip1, 
-		const vpImagePoint &ip2,
-		const vpColor &color, unsigned int thickness, int style=PS_SOLID);
+  void drawLine(const vpImagePoint &ip1,
+                const vpImagePoint &ip2,
+                const vpColor &color, unsigned int thickness, int style=PS_SOLID);
 
   void drawRect(const vpImagePoint &topLeft,
-		unsigned int width, unsigned int height,
-		const vpColor &color, bool fill=false,
-		unsigned int thickness=1);
+                unsigned int width, unsigned int height,
+                const vpColor &color, bool fill=false,
+                unsigned int thickness=1);
 
   void clear(const vpColor &color);
 
   void drawCircle(const vpImagePoint &center, unsigned int radius,
-		  const vpColor &color, bool fill=false, unsigned int thickness=1);
+                  const vpColor &color, bool fill=false, unsigned int thickness=1);
 
   void drawText(const vpImagePoint &ip, const char * text,
-		const vpColor &color);
+                const vpColor &color);
 
   void drawCross(const vpImagePoint &ip, unsigned int size,
-		 const vpColor &color, unsigned int thickness=1);
+                 const vpColor &color, unsigned int thickness=1);
 
-  void drawArrow(const vpImagePoint &ip1, 
-		 const vpImagePoint &ip2,
-		 const vpColor &color, unsigned int w,unsigned int h, unsigned int thickness=1);
+  void drawArrow(const vpImagePoint &ip1,
+                 const vpImagePoint &ip2,
+                 const vpColor &color, unsigned int w,unsigned int h, unsigned int thickness=1);
 
   void getImage(vpImage<vpRGBa> &I);
 
- private:
+private:
 
   //updates the renderer hbitmaps.
   bool updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
-		    unsigned int w, unsigned int h);
+                    unsigned int w, unsigned int h);
   //updates the renderer hbitmaps.
-  bool updateBitmapROI(unsigned char * imBuffer, const vpImagePoint &iP,
-		    unsigned int w, unsigned int h);
-
+  bool updateBitmapROI(unsigned char * imBuffer, int i_min, int j_min, int w, int h);
 
   //converts a vpImage<vpRGBa> into a HBITMAP .
   void convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp);

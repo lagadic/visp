@@ -1883,11 +1883,11 @@ vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const char *filename)
     for (unsigned int i = 0; i < width; i++)
     {
       line[i*3] = *(input); input++;
-    line[i*3+1] = *(input); input++;
-    line[i*3+2] = *(input); input++;
-    input++;
+      line[i*3+1] = *(input); input++;
+      line[i*3+2] = *(input); input++;
+      input++;
     }
-  jpeg_write_scanlines(&cinfo, &line, 1);
+    jpeg_write_scanlines(&cinfo, &line, 1);
   }
 
   jpeg_finish_compress(&cinfo);
@@ -1976,7 +1976,7 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
         *(output++) = buffer[0][i*3];
         *(output++) = buffer[0][i*3+1];
         *(output++) = buffer[0][i*3+2];
-	*(output++) = 0;
+        *(output++) = vpRGBa::alpha_default;
       }
     }
     vpImageConvert::convert(Ic,I) ;
@@ -2090,7 +2090,7 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
         *(output++) = buffer[0][i*3];
         *(output++) = buffer[0][i*3+1];
         *(output++) = buffer[0][i*3+2];
-	*(output++) = 0;
+        *(output++) = vpRGBa::alpha_default;
       }
     }
   }
@@ -2789,7 +2789,7 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
         *(output++) = data[i*3];
         *(output++) = data[i*3+1];
         *(output++) = data[i*3+2];
-        *(output++) = 0;
+        *(output++) = vpRGBa::alpha_default;
       }
     vpImageConvert::convert(Ic,I) ;
     break;
@@ -3010,7 +3010,7 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
         *(output++) = data[i*3];
         *(output++) = data[i*3+1];
         *(output++) = data[i*3+2];
-        *(output++) = 0;
+        *(output++) = vpRGBa::alpha_default;
       }
     break;
   case 4:

@@ -142,12 +142,12 @@ class VISP_EXPORT vpDisplayOpenCV: public vpDisplay
 private:
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
   //! true if OpenCV display is ready to use
-  IplImage* background;
+  IplImage* m_background;
   CvScalar *col ;
   CvScalar cvcolor;
   CvFont *font;
 #else
-  cv::Mat background;
+  cv::Mat m_background;
   cv::Scalar *col ;
   cv::Scalar cvcolor;
   int font;
@@ -206,16 +206,21 @@ private:
 public:
   vpDisplayOpenCV() ;
   vpDisplayOpenCV(int winx, int winy, const std::string &title="") ;
-  vpDisplayOpenCV(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="") ;
-  vpDisplayOpenCV(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="") ;
+  vpDisplayOpenCV(vpImage<unsigned char> &I, vpScaleType type);
+  vpDisplayOpenCV(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="", vpScaleType type=SCALE_DEFAULT) ;
+  vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType type);
+  vpDisplayOpenCV(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="", vpScaleType type=SCALE_DEFAULT) ;
 
   virtual ~vpDisplayOpenCV() ;
 
+  void getImage(vpImage<vpRGBa> &I);
+  unsigned int getScreenHeight();
+  void getScreenSize(unsigned int &width, unsigned int &height);
+  unsigned int getScreenWidth();
+
   void init(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="") ;
   void init(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="") ;
-
   void init(unsigned int width, unsigned int height, int winx=-1, int winy=-1, const std::string &title="") ;
-  void getImage(vpImage<vpRGBa> &I) ;
 
 protected:
   void setFont( const std::string &font );
@@ -242,7 +247,7 @@ protected:
   void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height);
 
   void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
-  void displayPoint(const vpImagePoint &ip, const vpColor &color) ;
+  void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1) ;
 
   void displayRectangle(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color, bool fill = false, unsigned int thickness=1) ;
   void displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color, bool fill = false, unsigned int thickness=1) ;
@@ -255,9 +260,6 @@ protected:
   bool getClick(vpImagePoint &ip, bool blocking=true) ;
   bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType& button, bool blocking=true) ;
   bool getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType& button, bool blocking=true) ;
-
-  inline  unsigned int getWidth() const  { return width ; }
-  inline  unsigned int getHeight() const { return height ; }
 
   bool getKeyboardEvent(bool blocking=true);
   bool getKeyboardEvent(std::string &key, bool blocking=true);
