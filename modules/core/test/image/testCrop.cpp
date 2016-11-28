@@ -260,8 +260,8 @@ main(int argc, const char ** argv)
     vpImageIo::write(C, filename) ;
     return 0;
   }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return 1;
   }
 }
