@@ -165,8 +165,6 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I,
   Constructor. Initialize a display to visualize a RGBa image (32 bits).
 
   \param I : Image to be displayed (not that image has to be initialized)
-  \param x, y : The window is set at position x,y (column index, row index).
-  \param title : Window title.
   \param scaleType : If this parameter is set to:
   - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
     is fully displayed in the screen;

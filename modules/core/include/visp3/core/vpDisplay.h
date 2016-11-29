@@ -169,14 +169,15 @@ int main()
 class VISP_EXPORT vpDisplay
 {
 public:
+  //! Values that could be applied to a display to down scale the size of the display.
   typedef enum {
-    SCALE_AUTO,
-    SCALE_1,
-    SCALE_2,
-    SCALE_3,
-    SCALE_4,
-    SCALE_5,
-    SCALE_DEFAULT
+    SCALE_AUTO, /*!< Auto down scaling factor computed fom the screen resolution. */
+    SCALE_1,    /*!< Display and image have the same size. */
+    SCALE_2,    /*!< Display width and height is down scaled by 2 wrt the image size. */
+    SCALE_3,    /*!< Display width and height is down scaled by 3 wrt the image size. */
+    SCALE_4,    /*!< Display width and height is down scaled by 4 wrt the image size. */
+    SCALE_5,    /*!< Display width and height is down scaled by 5 wrt the image size. */
+    SCALE_DEFAULT /*!< Display and image have the same size. Similar to vpDisplay::SCALE_1. */
   } vpScaleType;
 
 protected :

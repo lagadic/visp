@@ -74,6 +74,7 @@ This page introduces the user to the way to start with ViSP.
 /*! \page tutorial_image Image manipulation
 This page introduces the user to the way to get, to filter or to render images.
 
+- \subpage tutorial-image-display <br>In this tutorial you will learn how to display an image in a window and how to down scale the window size to be able to display images that are larger than the screen resolution.
 - \subpage tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \subpage tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \subpage tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 

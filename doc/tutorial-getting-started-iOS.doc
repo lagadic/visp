@@ -153,7 +153,7 @@ In this sample, we first import the headers to use vpHomography class. Then we c
 
 \image html img-getting-started-iOS-log.png
 
-\subsection getting-started-iOS-next Next tutorial
+\section getting-started-iOS-next Next tutorial
 
 You are now ready to see the \ref tutorial-image-ios.
 

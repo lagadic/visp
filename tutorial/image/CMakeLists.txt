@@ -11,7 +11,10 @@ set(tutorial_cpp
   tutorial-image-viewer.cpp
   tutorial-undistort.cpp
   tutorial-viewer.cpp
-  tutorial-image-filter.cpp)
+  tutorial-image-filter.cpp
+  tutorial-image-display.cpp
+  tutorial-image-display-scaled-manu.cpp
+  tutorial-image-display-scaled-auto.cpp)
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.bmp" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.ppm" )

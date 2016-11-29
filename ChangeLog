@@ -36,6 +36,9 @@ ViSP 3.0.1 (in development)
       + Introduce stereo as well as more generic multi camera tracking capabilties
       + New classes vpMbEdgeMultiTracker, vpMbKltMultiTracker, and
         vpMbEdgeKltMultiTracker for the hybrid version
+    . Set vpRGBa images alpha channel default value to 255
+    . Allow to resize the display in order to display image that are larger than
+      the screen resolution
   - Tutorials
     . New tutorial: How to use multi-threading capabilities
     . New tutorial: Crosscompilation for Raspberry Pi from Ubuntu host
@@ -48,6 +51,7 @@ ViSP 3.0.1 (in development)
     . New tutorial: Cross-compilation for NAOqi OS from Ubuntu host
     . New tutorial: How to create an application that uses ViSP on NAOqi OS
     . New Tutorial: Markerless model-based tracking with stereo cameras
+    . New Tutorial: How to display an image
   - Bug fixed
     . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc
@@ -67,6 +71,10 @@ ViSP 3.0.1 (in development)
             ROS installation
     . [#82] Problem when comparing two vpImage (operator!=)
     . [#84] Problem with vpImageMorphology and CONNEXITY_8 and with border pixels
+    . [#90] Fix potential build issue with isnan() and isinf() usage when cxx11 flags are used
+    . [#91] vpMeLine::computeRhoTheta should throw exception
+    . [#92] Is there any interface to resize display window?
+    . [#95] setEllipsoidBadPointsPercentage in vpDot2 not completly being taken into account
 
 ----------------------------------------------
 ViSP 3.0.0 (released December 18th, 2015)
