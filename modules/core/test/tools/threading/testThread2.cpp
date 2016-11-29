@@ -141,7 +141,7 @@ namespace {
 }
 
 int main() {
-  size_t nb_threads = 4;
+  unsigned int nb_threads = 4;
   unsigned int size = 10000007;
   srand((unsigned int) time(NULL));
 
@@ -155,7 +155,7 @@ int main() {
   std::vector<vpThread> threads(nb_threads);
   std::vector<ArithmFunctor> functors(nb_threads);
   unsigned int split = size / nb_threads;
-  for (size_t i = 0; i < nb_threads; i++) {
+  for (unsigned int i = 0; i < nb_threads; i++) {
     if (i < nb_threads-1) {
       functors[i] = ArithmFunctor(v1, v2, i*split, (i+1)*split);
     } else {
