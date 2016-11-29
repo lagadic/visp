@@ -275,7 +275,7 @@ void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP,
     unsigned int iwidth = I.getWidth();
     bitmap = bitmap + (int)(i_min*iwidth + j_min);
 
-    unsigned int k = 0;
+    int k = 0;
     for (int i=0 ; i < w * h * 4 ; i+=4)
     {
       imBuffer[i+0] = (bitmap+k)->B;
