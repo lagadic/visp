@@ -168,18 +168,32 @@ int main()
 */
 class VISP_EXPORT vpDisplay
 {
- protected :
-  //! display has been initialized
-  bool displayHasBeenInitialized ;
-  //! display position
-  int windowXPosition ;
-  //! display position
-  int windowYPosition ;
-  unsigned int width ;
-  unsigned int height ;
-  std::string title_;
-
 public:
+  //! Values that could be applied to a display to down scale the size of the display.
+  typedef enum {
+    SCALE_AUTO, /*!< Auto down scaling factor computed fom the screen resolution. */
+    SCALE_1,    /*!< Display and image have the same size. */
+    SCALE_2,    /*!< Display width and height is down scaled by 2 wrt the image size. */
+    SCALE_3,    /*!< Display width and height is down scaled by 3 wrt the image size. */
+    SCALE_4,    /*!< Display width and height is down scaled by 4 wrt the image size. */
+    SCALE_5,    /*!< Display width and height is down scaled by 5 wrt the image size. */
+    SCALE_DEFAULT /*!< Display and image have the same size. Similar to vpDisplay::SCALE_1. */
+  } vpScaleType;
+
+protected :
+  //! display has been initialized
+  bool m_displayHasBeenInitialized ;
+  //! display position
+  int m_windowXPosition ;
+  //! display position
+  int m_windowYPosition ;
+  unsigned int m_width ;
+  unsigned int m_height ;
+  std::string m_title;
+  unsigned int m_scale;
+
+  void setScale(vpScaleType scaleType, unsigned int width, unsigned int height);
+
 public:
   vpDisplay() ;
   vpDisplay(const vpDisplay& d) ;
@@ -187,35 +201,43 @@ public:
 
   /** @name Inherited functionalities from vpDisplay */
   //@{
+  unsigned int computeAutoScale(unsigned int width, unsigned int height);
+  /*!
+    Return the value of the down scale factor applied to the image in order to reduce the display size.
+   */
+  unsigned int getDownScalingFactor() { return m_scale; };
   /*!
     Return the display height.
     \sa getWidth()
   */
-  inline  unsigned int getHeight() const { return height ; }
+  inline unsigned int getHeight() const { return m_height ; }
   /*!
     Return the display width.
     \sa getHeight()
   */
-  inline  unsigned int getWidth() const  { return width ; }
+  inline unsigned int getWidth() const  { return m_width ; }
+
   /*!
     Return the position (along the horizontal axis) on the screen of the display window.
     \sa getWindowYPosition()
    */
-  int getWindowXPosition() const { return windowXPosition; };
+  int getWindowXPosition() const { return m_windowXPosition; };
   /*!
     Return the position (along the vertical axis) on the screen of the display window.
     \sa getWindowXPosition()
    */
-  int getWindowYPosition() const { return windowYPosition; };
+  int getWindowYPosition() const { return m_windowYPosition; };
 
   /*!
     Check if the display has been initialised
 
     \return True if the display has been initialised, otherwise False
   */
-  inline bool isInitialised() { return displayHasBeenInitialized; }
+  inline bool isInitialised() { return m_displayHasBeenInitialized; }
+  virtual void setDownScalingFactor(unsigned int scale);
   //@}
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   /** @name vpDisplay pure virtual functions */
   //@{
   /*!
@@ -318,8 +340,9 @@ public:
     Display a point at the image point \e ip location.
     \param ip : Point location.
     \param color : Point color.
+    \param thickness : Point thickness.
   */
-  virtual void displayPoint(const vpImagePoint &ip, const vpColor &color) =0;
+  virtual void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1) =0;
 
   /*!
     Display a rectangle with \e topLeft as the top-left corner and \e
@@ -519,6 +542,20 @@ public:
   virtual bool getPointerPosition (vpImagePoint &ip) =0;
 
   /*!
+    Gets the screen vertical resolution in pixel.
+   */
+  virtual unsigned int getScreenHeight() =0;
+  /*!
+    Gets the screen resolution in pixel.
+    \param width, height : Screen resolution in pixels.
+   */
+  virtual void getScreenSize(unsigned int &width, unsigned int &height) =0;
+  /*!
+    Gets the screen horizontal resolution in pixel.
+   */
+  virtual unsigned int getScreenWidth() =0;
+
+  /*!
     Initialize the display (size, position and title) of a gray level image.
 
     \param I : Image to be displayed (not that image has to be initialized)
@@ -628,6 +665,8 @@ int main()
   */
   virtual void setWindowPosition(int x, int y) = 0 ;
   //@}
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 
   /*!
     @name Static public vpDisplay functionalities on gray level images.

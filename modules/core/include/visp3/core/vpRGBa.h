@@ -48,29 +48,35 @@
 
 #include <visp3/core/vpColVector.h>
 
-
 /*!
   \class vpRGBa
 
   \ingroup group_core_image
 
-  \brief Class that defines a RGB 32 bits structure.
+  Class that defines a RGBa 32 bits structure that is used to build color
+  images. RGBa stands for red green blue alpha color space.
 
-  Define the object vpRGBa that is used to build color
-  images (it define a RGB 32 bits structure, fourth byte is not used)
+  The alpha channel is normally used as an opacity channel. If a pixel has a value
+  of 0 in its alpha channel, it is fully transparent, whereas a value of 255 in the alpha
+  channel gives a fully opaque pixel.
 
+  By default the alpha channel is set to vpRGBa::alpha_default.
   \sa vpImage
 */
 class VISP_EXPORT vpRGBa
 {
 public:
+  enum AlphaDefault {
+    alpha_default = 255
+  };
+
   /*!
     Basic constructor.
     
     Build a black value.
     
   */
-  inline vpRGBa() : R(0), G(0), B(0), A(0) {};
+  inline vpRGBa() : R(0), G(0), B(0), A(vpRGBa::alpha_default) {};
   
   /*!
     Constructor.
@@ -113,7 +119,7 @@ public:
     A=v[3]
     
   */
-  inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(0)
+  inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(vpRGBa::alpha_default)
   {
     *this = v;
   };

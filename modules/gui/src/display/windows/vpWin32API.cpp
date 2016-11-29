@@ -46,7 +46,7 @@ DWORD vpProcessErrors(const std::string &api_name){
   DWORD err = GetLastError();
   
   FormatMessage(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
         FORMAT_MESSAGE_FROM_SYSTEM |
         FORMAT_MESSAGE_IGNORE_INSERTS,
         NULL,
@@ -80,7 +80,7 @@ BOOL vpBitBlt(HDC hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, HDC 
 }
 
 BOOL vpInvalidateRect(HWND hWnd, const RECT *lpRect, BOOL bErase){
-  BOOL ret = InvalidateRect(hWnd,lpRect,bErase);  
+  BOOL ret = InvalidateRect(hWnd,lpRect,bErase);
   if(ret == 0)
     vpProcessErrors("InvalidateRect");
   return ret;
@@ -88,10 +88,10 @@ BOOL vpInvalidateRect(HWND hWnd, const RECT *lpRect, BOOL bErase){
 
 void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h){
   
-  HGDIOBJ ret = SelectObject(hDCMem,h);  
+  HGDIOBJ ret = SelectObject(hDCMem,h);
   if(ret==NULL){
     vpProcessErrors("SelectObject");
-        
+
     double ms = vpTime::measureTimeMs();
 
     while(ret==NULL && vpTime::measureTimeMs()-ms<5000){
@@ -99,7 +99,7 @@ void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h){
       DeleteDC(hDCMem);
       ReleaseDC(hWnd, hDC);
     }
-  }    
+  }
 }
 
 BOOL vpReleaseSemaphore(HANDLE hSemaphore,LONG IReleaseCount,LPLONG lpPreviousCount){

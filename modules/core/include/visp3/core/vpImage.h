@@ -211,7 +211,7 @@ public:
   inline  unsigned int getWidth() const { return width; }
 
   // Returns a new image that's half size of the current image
-  void halfSizeImage(vpImage<Type> &res);
+  void halfSizeImage(vpImage<Type> &res) const;
 
   //! Set the size of the image
   void init(unsigned int height, unsigned int width) ;
@@ -301,7 +301,7 @@ public:
   void performLut(const Type (&lut)[256], const unsigned int nbThreads=1);
 
   // Returns a new image that's a quarter size of the current image
-  void quarterSizeImage(vpImage<Type> &res);
+  void quarterSizeImage(vpImage<Type> &res) const;
 
   // set the size of the image without initializing it.
   void resize(const unsigned int h, const unsigned int w);
@@ -310,6 +310,7 @@ public:
 
   void sub(const vpImage<Type> &B, vpImage<Type> &C);
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
+  void subsample(unsigned int v_scale, unsigned int h_scale, vpImage<Type> &sampled) const;
 
   //@}
 
@@ -1073,11 +1074,10 @@ vpImage<Type> vpImage<Type>::operator-(const vpImage<Type> &B)
   You can set the point in the destination image where the top left corner of the \f$ src \f$ image will belocated.
 
   \param src : Image to insert
-  \param topLeft : Coordinates of the \f$ src \f$ image's top left corner in the destination image.
+  \param topLeft : Upper/left coordinates in the image where the image \e src is inserted in the destination image.
 */
 template<class Type>
-void vpImage<Type>::insert(const vpImage<Type> &src,
-      const vpImagePoint topLeft)
+void vpImage<Type>::insert(const vpImage<Type> &src, const vpImagePoint topLeft)
 {
   Type* srcBitmap;
   Type* destBitmap;
@@ -1124,7 +1124,7 @@ void vpImage<Type>::insert(const vpImage<Type> &src,
     srcBitmap = src.bitmap + ((src_ibegin+i)*src_w+src_jbegin);
     destBitmap = this->bitmap + ((dest_ibegin+i)*dest_w+dest_jbegin);
 
-    memcpy(destBitmap,srcBitmap,wsize*sizeof(Type));
+    memcpy(destBitmap, srcBitmap, wsize*sizeof(Type));
   }
 }
 
@@ -1156,10 +1156,11 @@ void vpImage<Type>::insert(const vpImage<Type> &src,
   I5[1].quarterSizeImage(I5[3]); // quarter size image at level 3
   \endcode
 
+  \sa subsample()
 */
 template<class Type>
 void
-vpImage<Type>::halfSizeImage(vpImage<Type> &res)
+vpImage<Type>::halfSizeImage(vpImage<Type> &res) const
 {
   unsigned int h = height/2;
   unsigned int w = width/2;
@@ -1167,6 +1168,35 @@ vpImage<Type>::halfSizeImage(vpImage<Type> &res)
   for(unsigned int i = 0; i < h; i++)
     for(unsigned int j = 0; j < w; j++)
       res[i][j] = (*this)[i<<1][j<<1];
+}
+
+/*!
+  Computes a subsampled image.
+  No filtering is used during the sub sampling.
+
+  \param v_scale [in] : Vertical subsampling factor.
+  \param h_scale [in] : Horizontal subsampling factor.
+  \param sampled [out] : Subsampled image.
+
+  The example below shows how to use this method:
+  \code
+  vpImage<unsigned char> I; // original image
+  vpImageIo::read(I, "myImage.pgm");
+  vpImage<unsigned char> I2; // half size image
+  I.subsample(2, 2, I2);
+  vpImageIo::write(I2, "myHalfSizeImage.pgm");
+  \endcode
+*/
+template<class Type>
+void
+vpImage<Type>::subsample(unsigned int v_scale, unsigned int h_scale, vpImage<Type> &sampled) const
+{
+  unsigned int h = height/v_scale;
+  unsigned int w = width/h_scale;
+  sampled.resize(h, w);
+  for(unsigned int i = 0; i < h; i++)
+    for(unsigned int j = 0; j < w; j++)
+      sampled[i][j] = (*this)[i*v_scale][j*h_scale];
 }
 
 /*!
@@ -1189,11 +1219,13 @@ vpImage<Type>::halfSizeImage(vpImage<Type> &res)
 
   See halfSizeImage(vpImage<Type> &) for an example of pyramid construction.
 
+  \sa subsample()
+
 */
 
 template<class Type>
 void
-vpImage<Type>::quarterSizeImage(vpImage<Type> &res)
+vpImage<Type>::quarterSizeImage(vpImage<Type> &res) const
 {
   unsigned int h = height/4;
   unsigned int w = width/4;

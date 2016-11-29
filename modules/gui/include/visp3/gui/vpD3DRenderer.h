@@ -93,7 +93,7 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
   //Font used for text drawing.
   HFONT hFont;
 
- public:
+public:
 
   bool init(HWND hwnd, unsigned int width, unsigned int height);
   bool render();
@@ -108,35 +108,35 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 
   void setPixel(const vpImagePoint &iP, const vpColor &color);
 
-  void drawLine(const vpImagePoint &ip1, 
-		const vpImagePoint &ip2,
-		const vpColor &color, unsigned int thickness, int style=PS_SOLID);
+  void drawLine(const vpImagePoint &ip1,
+                const vpImagePoint &ip2,
+                const vpColor &color, unsigned int thickness, int style=PS_SOLID);
 
   void drawRect(const vpImagePoint &topLeft,
-		unsigned int width, unsigned int height,
-		const vpColor &color, bool fill=false,
-		unsigned int thickness=1);
+                unsigned int width, unsigned int height,
+                const vpColor &color, bool fill=false,
+                unsigned int thickness=1);
 
   void clear(const vpColor &color);
 
   void drawCircle(const vpImagePoint &center, unsigned int radius,
-		  const vpColor &color, bool fill=false, unsigned int thickness=1);
+                  const vpColor &color, bool fill=false, unsigned int thickness=1);
 
   void drawText(const vpImagePoint &ip, const char * text,
-		const vpColor &color);
+                const vpColor &color);
 
   void drawCross(const vpImagePoint &ip, unsigned int size,
-		 const vpColor &color, unsigned int thickness=1);
+                 const vpColor &color, unsigned int thickness=1);
 
-  void drawArrow(const vpImagePoint &ip1, 
-		 const vpImagePoint &ip2,
-		 const vpColor &color, unsigned int w,unsigned int h, unsigned int thickness=1);
+  void drawArrow(const vpImagePoint &ip1,
+                 const vpImagePoint &ip2,
+                 const vpColor &color, unsigned int w,unsigned int h, unsigned int thickness=1);
 
   void getImage(vpImage<vpRGBa> &I);
 
 
 
- private:
+private:
 
   void initView(float, float);
 
@@ -145,10 +145,16 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
     Circle drawing is based on Bresenham 's circle algorithm.
   */
   void subDrawCircle(int i, int j,
-		     int x, int y,
-		     vpColor col, unsigned char* buf,
-		     unsigned int pitch, unsigned int maxX, unsigned int maxY);
+                     int x, int y,
+                     vpColor col, unsigned char* buf,
+                     unsigned int pitch, unsigned int maxX, unsigned int maxY);
 
+  void convert(const vpImage<vpRGBa>& I, unsigned char * imBuffer, unsigned int pitch);
+  void convert(const vpImage<unsigned char>& I, unsigned char * imBuffer, unsigned int pitch);
+  void convertROI(const vpImage<vpRGBa>& I, unsigned char * imBuffer, unsigned int pitch,
+    int i_min, int j_min, int i_max, int j_max);
+  void convertROI(const vpImage<unsigned char>& I, unsigned char * imBuffer, unsigned int pitch,
+    int i_min, int j_min, int i_max, int j_max);
 
   /*!
     Safe useful inline function to set a pixel in a texture buffer.
@@ -162,20 +168,20 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 
   */
   inline void setBufferPixel(unsigned char* buf, unsigned int pitch,
-			     int x, int y,
-			     const vpColor &color,
-			     unsigned int maxX, unsigned int maxY)
-    {
-      unsigned long c;
-      if (color.id < vpColor::id_unknown)
-		c = colors[color.id];
-      else {
-		c = D3DCOLOR_ARGB(0xFF, color.R, color.G, color.B);
-	  }
-
-      if(x>=0 && y>=0 && x<= (int)maxX && y<= (int)maxY)
-	  *(unsigned long*)(buf + (y*pitch) + (x<<2)) = c; //colors[color];
+                             int x, int y,
+                             const vpColor &color,
+                             unsigned int maxX, unsigned int maxY)
+  {
+    unsigned long c;
+    if (color.id < vpColor::id_unknown)
+      c = colors[color.id];
+    else {
+      c = D3DCOLOR_ARGB(0xFF, color.R, color.G, color.B);
     }
+
+    if(x>=0 && y>=0 && x<= (int)maxX && y<= (int)maxY)
+      *(unsigned long*)(buf + (y*pitch) + (x<<2)) = c; //colors[color];
+  }
   /*!
     Unsafe useful inline function to set a pixel in a texture buffer.
     \param buf The texture's buffer.
@@ -189,14 +195,14 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
                              int x, int y,
                              const vpColor &color)
   {
-      unsigned long c;
-      if (color.id < vpColor::id_unknown)
-		c = colors[color.id];
-      else {
-		c = D3DCOLOR_ARGB(0xFF, color.R, color.G, color.B);
-	  }
+    unsigned long c;
+    if (color.id < vpColor::id_unknown)
+      c = colors[color.id];
+    else {
+      c = D3DCOLOR_ARGB(0xFF, color.R, color.G, color.B);
+    }
 
-	  *(unsigned long*)(buf + (y*pitch) + (x<<2)) = c; //colors[color];
+    *(unsigned long*)(buf + (y*pitch) + (x<<2)) = c; //colors[color];
   }
 
   unsigned int supPowerOf2(unsigned int n);

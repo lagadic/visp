@@ -188,25 +188,24 @@ private:
 public:
   vpDisplayX() ;
   vpDisplayX(int winx, int winy, const std::string &title="") ;
-  vpDisplayX(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="") ;
-  vpDisplayX(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="") ;
+  vpDisplayX(vpImage<unsigned char> &I, vpScaleType type);
+  vpDisplayX(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="", vpScaleType type=SCALE_DEFAULT) ;
+  vpDisplayX(vpImage<vpRGBa> &I, vpScaleType type);
+  vpDisplayX(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="", vpScaleType type=SCALE_DEFAULT) ;
 
   virtual ~vpDisplayX() ;
+  
+  void getImage(vpImage<vpRGBa> &I) ;
+  unsigned int getScreenDepth();
+  unsigned int getScreenHeight();
+  void getScreenSize(unsigned int &width, unsigned int &height);
+  unsigned int getScreenWidth();
 
   void init(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="") ;
   void init(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="") ;
   void init(unsigned int width, unsigned int height, int winx=-1, int winy=-1, const std::string &title="") ;
-  
-  unsigned int getScreenDepth();
-  void getScreenSize(unsigned int &width, unsigned int &height);
-  void getImage(vpImage<vpRGBa> &I) ;
 
 protected:
-
-  void setFont( const std::string &font );
-  void setTitle(const std::string &title) ;
-  void setWindowPosition(int winx, int winy);
-
   void clearDisplay(const vpColor &color=vpColor::white) ;
 
   void closeDisplay() ;
@@ -228,13 +227,13 @@ protected:
   void displayImage(const vpImage<unsigned char> &I) ;
   void displayImage(const vpImage<vpRGBa> &I) ;
   void displayImage(const unsigned char *I) ;
-  
+
   void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height);
   void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height);
 
   void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
                    const vpColor &color, unsigned int thickness=1) ;
-  void displayPoint(const vpImagePoint &ip, const vpColor &color) ;
+  void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1) ;
 
   void displayRectangle(const vpImagePoint &topLeft, unsigned int width, unsigned int height,
                         const vpColor &color, bool fill = false, unsigned int thickness=1) ;
@@ -258,8 +257,9 @@ protected:
   bool getPointerMotionEvent (vpImagePoint &ip);
   bool getPointerPosition (vpImagePoint &ip);
 
-  inline  unsigned int getWidth() const  { return width ; }
-  inline  unsigned int getHeight() const { return height ; }
+  void setFont(const std::string &font);
+  void setTitle(const std::string &title) ;
+  void setWindowPosition(int winx, int winy);
 } ; 
 
 #endif

@@ -82,6 +82,7 @@ href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/p
 
 \subsection tuto_image Image manipulation
 
+- \ref tutorial-image-display <br>In this tutorial you will learn how to display an image in a window and how to down scale the window size to be able to display images that are larger than the screen resolution.
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 

@@ -101,7 +101,7 @@ public:
   static void createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa> &dest_rgba);
   static void convert(const vpImage<unsigned char> &src, vpImage<vpRGBa> & dest) ;
   static void convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> & dest) ;
-          
+
   static void convert(const vpImage<float> &src, vpImage<unsigned char> &dest);
   static void convert(const vpImage<unsigned char> &src, vpImage<float> &dest);
   
@@ -110,6 +110,17 @@ public:
 
   static void convert(const vpImage<uint16_t> &src, vpImage<unsigned char> &dest);
   static void convert(const vpImage<unsigned char> &src, vpImage<uint16_t> &dest);
+
+  /*!
+    Make a copy of an image.
+    \param src : source image.
+    \param dest : destination image.
+  */
+  template< typename Type>
+  static void convert(const vpImage<Type> &src, vpImage<Type> & dest)
+  {
+    dest = src;
+  }
 
 #ifdef VISP_HAVE_OPENCV
   // Deprecated: will be removed with OpenCV transcient from C to C++ api

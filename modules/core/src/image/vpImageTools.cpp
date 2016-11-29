@@ -161,6 +161,46 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1,
 }
 
 /*!
+  Compute the signed difference between the two images I1 and I2 RGB components for
+  visualization issue : Idiff = I1-I2. The fourth component named A is not compared.
+  It is set to 0 in the resulting difference image.
+
+  - pixels with a null difference are set to R=128, G=128, B=128.
+  - A negative difference implies a pixel R, G, B value < 128
+  - A positive difference implies a pixel R, G, B value > 128
+
+  \param I1 : The first image.
+  \param I2 : The second image.
+  \param Idiff : The result of the difference between RGB components.
+*/
+void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1,
+                                   const vpImage<vpRGBa> &I2,
+                                   vpImage<vpRGBa> &Idiff)
+{
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth()))
+  {
+    throw (vpException(vpException::dimensionError, "Cannot compute image difference. The two images (%ux%u) and (%ux%u) have not the same size",
+      I1.getWidth(), I1.getHeight(), I2.getWidth(), I2.getHeight()));
+  }
+
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
+    Idiff.resize(I1.getHeight(), I1.getWidth());
+
+  unsigned int n = I1.getHeight() * I1.getWidth() ;
+  for (unsigned int b = 0; b < n ; b++)
+  {
+    int diffR = I1.bitmap[b].R - I2.bitmap[b].R + 128;
+    int diffG = I1.bitmap[b].G - I2.bitmap[b].G + 128;
+    int diffB = I1.bitmap[b].B - I2.bitmap[b].B + 128;
+    int diffA = I1.bitmap[b].A - I2.bitmap[b].A + 128;
+    Idiff.bitmap[b].R = (unsigned char) (vpMath::maximum(vpMath::minimum(diffR, 255), 0));
+    Idiff.bitmap[b].G = (unsigned char) (vpMath::maximum(vpMath::minimum(diffG, 255), 0));
+    Idiff.bitmap[b].B = (unsigned char) (vpMath::maximum(vpMath::minimum(diffB, 255), 0));
+    Idiff.bitmap[b].A = (unsigned char) (vpMath::maximum(vpMath::minimum(diffA, 255), 0));
+  }
+}
+
+/*!
   Compute the difference between the two images I1 and I2
   \warning : This is NOT for visualization
   If you want to visualize difference images during servo, please use
@@ -170,7 +210,6 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1,
   \param I2 : The second image.
   \param Idiff : The result of the difference.
 */
-
 void
 vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1,
                                       const vpImage<unsigned char> &I2,
@@ -189,6 +228,47 @@ vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1,
   {
     int diff = I1.bitmap[b] - I2.bitmap[b];
     Idiff.bitmap[b] = diff;
+  }
+}
+
+/*!
+  Compute the difference between the two images I1 and I2 RGB components.
+  The fourth component named A is not compared.
+  It is set to 0 in the resulting difference image.
+
+  \warning : This is NOT for visualization.
+  If you want to visualize difference images during servo, please use
+  vpImageTools::imageDifference(..,..,..) function.
+
+  \param I1 : The first image.
+  \param I2 : The second image.
+  \param Idiff : The result of the difference between RGB components.
+*/
+void
+vpImageTools::imageDifferenceAbsolute(const vpImage<vpRGBa> &I1,
+                                      const vpImage<vpRGBa> &I2,
+                                      vpImage<vpRGBa> &Idiff)
+{
+  if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth()))
+  {
+    throw (vpException(vpException::dimensionError, "The two images do not have the same size"));
+  }
+
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
+    Idiff.resize(I1.getHeight(), I1.getWidth());
+
+  unsigned int n = I1.getHeight() * I1.getWidth() ;
+  for (unsigned int b = 0; b < n ; b++)
+  {
+    int diffR = I1.bitmap[b].R - I2.bitmap[b].R;
+    int diffG = I1.bitmap[b].G - I2.bitmap[b].G;
+    int diffB = I1.bitmap[b].B - I2.bitmap[b].B;
+    //int diffA = I1.bitmap[b].A - I2.bitmap[b].A;
+    Idiff.bitmap[b].R = diffR;
+    Idiff.bitmap[b].G = diffG;
+    Idiff.bitmap[b].B = diffB;
+    //Idiff.bitmap[b].A = diffA;
+    Idiff.bitmap[b].A = 0;
   }
 }
 

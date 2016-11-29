@@ -380,6 +380,9 @@
 // Defined if strtof function is available
 #cmakedefine VISP_HAVE_FUNC_STRTOF
 
+// Defined if xrandr program available
+#cmakedefine VISP_HAVE_XRANDR
+
 // Handle portable symbol export.
 // Defining manually which symbol should be exported is required
 // under Windows whether MinGW or MSVC is used.

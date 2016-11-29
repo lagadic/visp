@@ -54,7 +54,6 @@
   \brief Define the GTK console to display images.
 */
 
-
 /*!
 
   \class vpDisplayGTK
@@ -142,11 +141,11 @@ class VISP_EXPORT vpDisplayGTK: public vpDisplay
 private:
   //! true if GTK display is ready to use
   GtkWidget *widget;
-  GdkPixmap *background;
-  GdkGC *gc;
+  GdkPixmap *m_background;
+  GdkGC *m_gc;
   GdkColor blue,red,yellow,green,cyan,orange,white, black, gdkcolor,
-           lightBlue, darkBlue, lightRed, darkRed,lightGreen, darkGreen,
-	   purple, lightGray, gray, darkGray;
+  lightBlue, darkBlue, lightRed, darkRed,lightGreen, darkGreen,
+  purple, lightGray, gray, darkGray;
   GdkColormap  *colormap;
 
   GdkFont *font;
@@ -179,18 +178,22 @@ private:
 public:
   vpDisplayGTK() ;
   vpDisplayGTK(int winx, int winy, const std::string &title="");
-  vpDisplayGTK(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="");
-  vpDisplayGTK(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="");
+  vpDisplayGTK(vpImage<unsigned char> &I, vpScaleType type);
+  vpDisplayGTK(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="", vpScaleType type=SCALE_DEFAULT) ;
+  vpDisplayGTK(vpImage<vpRGBa> &I, vpScaleType type);
+  vpDisplayGTK(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="", vpScaleType type=SCALE_DEFAULT) ;
 
   virtual ~vpDisplayGTK() ;
+
+  void getImage(vpImage<vpRGBa> &I) ;
+  unsigned int getScreenDepth();
+  unsigned int getScreenHeight();
+  void getScreenSize(unsigned int &width, unsigned int &height);
+  unsigned int getScreenWidth();
 
   void init(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="");
   void init(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="");
   void init(unsigned int width, unsigned int height, int winx=-1, int winy=-1, const std::string &title="");
-
-  unsigned int getScreenDepth();
-  void getScreenSize(unsigned int &width, unsigned int &height);
-  void getImage(vpImage<vpRGBa> &I) ;
 
 protected:
 
@@ -218,7 +221,7 @@ protected:
 
   void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
 
-  void displayPoint(const vpImagePoint &ip, const vpColor &color) ;
+  void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1) ;
   void displayRectangle(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color, bool fill = false, unsigned int thickness=1) ;
   void displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color, bool fill = false, unsigned int thickness=1) ;
   void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness=1) ;
@@ -234,9 +237,6 @@ protected:
   bool getKeyboardEvent(std::string &key, bool blocking=true);
   bool getPointerMotionEvent (vpImagePoint &ip);
   bool getPointerPosition (vpImagePoint &ip);
-
-  inline  unsigned int getWidth() const  { return width ; }
-  inline  unsigned int getHeight() const { return height ; }
 } ;
 
 #endif

@@ -55,20 +55,24 @@
   Default constructor.
 */
 vpDisplay::vpDisplay()
-  : displayHasBeenInitialized(false), windowXPosition(0), windowYPosition(0), width(0), height(0), title_() {}
+  : m_displayHasBeenInitialized(false), m_windowXPosition(0), m_windowYPosition(0),
+    m_width(0), m_height(0), m_title(), m_scale(1)
+{
+}
 
 /*!
   Copy constructor.
 */
 vpDisplay::vpDisplay(const vpDisplay &d)
-  : displayHasBeenInitialized(false), windowXPosition(0), windowYPosition(0), width(0), height(0), title_()
+  : m_displayHasBeenInitialized(false), m_windowXPosition(0), m_windowYPosition(0),
+    m_width(0), m_height(0), m_title(), m_scale(1)
 {
-  displayHasBeenInitialized = d.displayHasBeenInitialized;
-  windowXPosition = d.windowXPosition;
-  windowYPosition = d.windowYPosition;
+  m_displayHasBeenInitialized = d.m_displayHasBeenInitialized;
+  m_windowXPosition = d.m_windowXPosition;
+  m_windowYPosition = d.m_windowYPosition;
 
-  width  = d.width;
-  height = d.height;
+  m_width  = d.m_width;
+  m_height = d.m_height;
 }
 
 /*!
@@ -76,7 +80,7 @@ vpDisplay::vpDisplay(const vpDisplay &d)
 */
 vpDisplay::~vpDisplay()
 {
-  displayHasBeenInitialized = false ;
+  m_displayHasBeenInitialized = false ;
 }
 
 /*!
@@ -147,24 +151,13 @@ int main()
 void
 vpDisplay::getImage(const vpImage<unsigned  char> &Isrc, vpImage<vpRGBa> &Idest )
 {
-  try
+  if ( Isrc.display != NULL )
   {
-    if ( Isrc.display != NULL )
-    {
-      ( Isrc.display )->getImage ( Idest ) ;
-    }
-    else
-    {
-      vpImageConvert::convert(Isrc, Idest);
-//      vpERROR_TRACE ( "Display not initialized" ) ;
-//      throw ( vpDisplayException ( vpDisplayException::notInitializedError,
-//                                   "Display not initialized" ) ) ;
-    }
+    ( Isrc.display )->getImage ( Idest ) ;
   }
-  catch ( ... )
+  else
   {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
+    vpImageConvert::convert(Isrc, Idest);
   }
 }
 
@@ -236,20 +229,67 @@ int main()
 void
 vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
 {
-
-  try
+  if ( Isrc.display != NULL )
   {
-    if ( Isrc.display != NULL )
-    {
-      ( Isrc.display )->getImage ( Idest ) ;
-    }
-    else {
-      Idest = Isrc;
-    }
+    ( Isrc.display )->getImage ( Idest ) ;
   }
-  catch ( ... )
-  {
-    vpERROR_TRACE ( "Error caught" ) ;
-    throw ;
+  else {
+    Idest = Isrc;
+  }
+}
+
+/*!
+  Set the down scale factor applied to the image in order to reduce the display size.
+  \param scale : Scale factor applied to display a rescaled image.
+ */
+void vpDisplay::setDownScalingFactor(unsigned int scale)
+{
+  if (! m_displayHasBeenInitialized)
+    m_scale = scale;
+  else {
+    std::cout << "Warning: Cannot apply the down scaling factor " << scale << " to the display window since the display is initialized yet..." << std::endl;
+  }
+}
+
+/*!
+ * Computes the down scaling factor that should be applied to the window size to display
+ * the image given the resolution of the screen.
+ * \param width, height : Image size.
+ * \return
+ */
+unsigned int vpDisplay::computeAutoScale(unsigned int width, unsigned int height)
+{
+  unsigned int screen_width, screen_height;
+  getScreenSize(screen_width, screen_height);
+  unsigned int wscale = std::max(1u, (unsigned int)floor(2.*width / screen_width));
+  unsigned int hscale = std::max(1u, (unsigned int) floor(2.*height / screen_height));
+  unsigned int scale = std::max(1u, std::max(wscale, hscale));
+  return scale;
+}
+
+/*!
+ * Set the down scaling factor either in auto mode or set manually.
+ */
+void vpDisplay::setScale(vpScaleType scaleType, unsigned int width, unsigned int height)
+{
+  switch (scaleType) {
+  case vpDisplay::SCALE_AUTO:
+    setDownScalingFactor( computeAutoScale(width, height) );
+    break;
+  case vpDisplay::SCALE_DEFAULT:
+  case vpDisplay::SCALE_1:
+    break;
+  case vpDisplay::SCALE_2:
+    setDownScalingFactor(2);
+    break;
+  case vpDisplay::SCALE_3:
+    setDownScalingFactor(3);
+    break;
+  case vpDisplay::SCALE_4:
+    setDownScalingFactor(4);
+    break;
+  case vpDisplay::SCALE_5:
+    setDownScalingFactor(5);
+    break;
   }
 }

@@ -34,18 +34,19 @@ int main(int argc, char** argv)
   try {
     //! [vpDisplay construction]
 #if defined(VISP_HAVE_X11)
-    vpDisplayX d(I);
+    vpDisplayX d(I, vpDisplay::SCALE_AUTO);
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I);
+    vpDisplayGDI d(I, vpDisplay::SCALE_AUTO);
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV d(I);
+    vpDisplayOpenCV d(I, vpDisplay::SCALE_AUTO);
 #elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK d(I);
+    vpDisplayGTK d(I, vpDisplay::SCALE_AUTO);
 #elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3d d(I);
+    vpDisplayD3d d(I, vpDisplay::SCALE_AUTO);
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
+
     //! [vpDisplay construction]
     //! [vpDisplay set title]
     vpDisplay::setTitle(I, "My image");

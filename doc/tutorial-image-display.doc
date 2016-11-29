@@ -1,0 +1,50 @@
+
+/**
+  \page tutorial-image-display Tutorial: How to display an image 
+  \tableofcontents
+
+\section image_display_intro Introduction
+
+\note We assume in this tutorial that you have successfully build your first project using ViSP as 3rd party as explained in one of the \ref tutorial_started tutorials.
+
+In this tutorial you will learn how to display images with ViSP either on Unix-like systems (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
+
+Note that all the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
+\endcode
+
+\section image_display_default How to display an image 
+
+ViSP <a href="https://visp.inria.fr/gui/">gui module</a> provides Graphical User Interfaces capabilities. This module may use several optional third-party libraries which are: <a href="http://visp.inria.fr/3rdparty_gui/">OpenCV, X11, GTK, GDI, Direct3D</a>. We recommand to use X11 on unix-like systems thanks to vpDisplayX class and GDI on Windows thanks to vpDisplayGDI. 
+
+The following example also available in tutorial-image-display.cpp shows how to create a gray level 3840x2160 image with all the pixels set to 128, and display a red circle with 200 pixel radius in the middle of the image. 
+
+\include tutorial-image-display.cpp
+
+Depending on your screen resolution you may just see a part of the image, and certainly not the full red circle.
+
+\section image_display_scaled How to display an image that is larger than the screen resolution
+
+\subsection image_display_scaled_manu Setting a manual down scaling factor
+
+This other example available in tutorial-image-display-scaled-manu.cpp shows how to modify the previous example in order to introduce a down scaling factor to reduce the size of the display by 5 along the lines and the columns. This feature may be useful to display images that are larger than the screen resolution.
+
+To down scale the display size, just modify the previous example adding the vpDisplay::vpScaleType parameter to the constructor.
+
+\snippet tutorial-image-display-scaled-manu.cpp vpDisplay scale manu
+
+\subsection image_display_scaled_auto Setting an auto down scaling factor
+
+This other example available in tutorial-image-display-scaled-auto.cpp shows now how to modify the previous example in order to introduce an auto down scaling factor that is automatically computed from the screen resolution in order that two images could be displayed given the screen resolution.
+
+To consider an auto down scaling factor, modify the previous example adding the vpDisplay::SCALE_AUTO parameter to the constructor.
+
+\snippet tutorial-image-display-scaled-manu.cpp vpDisplay scale manu
+
+
+\section image_display_next Next tutorial
+
+You are now ready to see the \ref tutorial-grabber or \ref tutorial-image-filtering.
+*/

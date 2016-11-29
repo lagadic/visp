@@ -215,6 +215,8 @@ VP_CHECK_PACKAGE(OpenGL)
 VP_CHECK_PACKAGE(RT)
 VP_CHECK_PACKAGE(DL)
 
+find_host_program(XRANDR xrandr)
+
 VP_OPTION(USE_AFMA4    "" "" "Include Afma4 robot support"      "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND))
 VP_OPTION(USE_AFMA6    "" "" "Include Afma6 robot support"      "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND))
 VP_OPTION(USE_VIPER650 "" "" "Include Viper s650 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND))
@@ -495,7 +497,7 @@ endif()
 #----------------------------------------------------------------------
 if(UNIX)
   find_host_program(GZIP gzip)
-  if(GZIP_FOUND)
+  if(GZIP)
     file(MAKE_DIRECTORY ${VISP_BINARY_DIR}/doc/man/man1)
     add_custom_command(
       OUTPUT ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
@@ -512,7 +514,6 @@ if(UNIX)
       COMPONENT dev
     )
   endif()
-  mark_as_advanced(GZIP)
 endif()
 
 #----------------------------------------------------------------------
@@ -602,7 +603,8 @@ VP_SET(VISP_BUILD_SHARED_LIBS TRUE IF BUILD_SHARED_LIBS) # for header vpConfig.h
 VP_SET(VISP_HAVE_DC1394_CAMERA_ENUMERATE TRUE IF (USE_DC1394 AND DC1394_CAMERA_ENUMERATE_FOUND)) # for header vpConfig.h
 VP_SET(VISP_HAVE_DC1394_FIND_CAMERAS     TRUE IF (USE_DC1394 AND DC1394_FIND_CAMERAS_FOUND)) # for header vpConfig.h
 VP_SET(VISP_HAVE_D3D9     TRUE IF USE_DIRECT3D) # for header vpConfig.h
-VP_SET(VISP_HAVE_GTK     TRUE IF USE_GTK2) # for header vpConfig.h
+VP_SET(VISP_HAVE_GTK      TRUE IF USE_GTK2) # for header vpConfig.h
+VP_SET(VISP_HAVE_XRANDR   TRUE IF XRANDR) # for header vpConfig.h
 
 # Check if libfreenect dependencies (ie libusb-1.0 and libpthread) are available
 if(USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_PTHREAD)

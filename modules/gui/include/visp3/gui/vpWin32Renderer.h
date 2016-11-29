@@ -52,27 +52,22 @@
 class VISP_EXPORT vpWin32Renderer
 {
 
- protected:
+protected:
   //the size of the display
-  unsigned int nbCols;
-  unsigned int nbRows;
+  unsigned int m_rwidth;
+  unsigned int m_rheight;
+  unsigned int m_rscale;
 
- public:
+public:
+  vpWin32Renderer() : m_rwidth(0), m_rheight(0), m_rscale(1) {};
   //! Destructor.
   virtual ~vpWin32Renderer() {};
-
-  //! Returns the image dimensions.
-  unsigned int getImageWidth(){ return nbCols; }
-  unsigned int getImageHeight(){ return nbRows; }
-
-
 
   //! Inits the display .
   virtual bool init(HWND hWnd, unsigned int w, unsigned int h) =0;
 
   //! Renders the image.
   virtual bool render() =0;
-
 
   /*!
     Sets the image to display.
@@ -91,6 +86,8 @@ class VISP_EXPORT vpWin32Renderer
   */
   virtual void setPixel(const vpImagePoint &iP, const vpColor &color) =0;
 
+  void setScale(unsigned int scale) { m_rscale = scale; }
+
   /*!
     Draws a line.
     \param i1 its starting point's first coordinate
@@ -101,9 +98,9 @@ class VISP_EXPORT vpWin32Renderer
     \param col the line's color
     \param style style of the line
   */
-  virtual void drawLine(const vpImagePoint &ip1, 
-		const vpImagePoint &ip2,
-		const vpColor &color, unsigned int thickness, int style=PS_SOLID) =0;
+  virtual void drawLine(const vpImagePoint &ip1,
+                        const vpImagePoint &ip2,
+                        const vpColor &color, unsigned int thickness, int style=PS_SOLID) =0;
 
   /*!
     Draws a rectangle.
@@ -116,9 +113,9 @@ class VISP_EXPORT vpWin32Renderer
     \param e line thickness
   */
   virtual void drawRect(const vpImagePoint &topLeft,
-		unsigned int width, unsigned int height,
-		const vpColor &color, bool fill=false,
-		unsigned int thickness=1) =0;
+                        unsigned int width, unsigned int height,
+                        const vpColor &color, bool fill=false,
+                        unsigned int thickness=1) =0;
 
   /*!
     Clears the image to color c.
@@ -134,7 +131,7 @@ class VISP_EXPORT vpWin32Renderer
     \param col The circle's color
   */
   virtual void drawCircle(const vpImagePoint &center, unsigned int radius,
-		  const vpColor &color, bool fill, unsigned int thickness=1) =0;
+                          const vpColor &color, bool fill, unsigned int thickness=1) =0;
 
   /*!
     Draws some text.
@@ -144,7 +141,7 @@ class VISP_EXPORT vpWin32Renderer
     \param col The text's color
   */
   virtual void drawText(const vpImagePoint &ip, const char * text,
-		const vpColor &color) =0;
+                        const vpColor &color) =0;
 
   /*!
     Draws a cross.
@@ -155,7 +152,7 @@ class VISP_EXPORT vpWin32Renderer
     \param e width of the cross
   */
   virtual void drawCross(const vpImagePoint &ip, unsigned int size,
-		 const vpColor &color, unsigned int thickness=1) =0;
+                         const vpColor &color, unsigned int thickness=1) =0;
 
   /*!
     Draws an arrow.
@@ -167,9 +164,9 @@ class VISP_EXPORT vpWin32Renderer
     \param L ...
     \param l ...
   */
-  virtual void drawArrow(const vpImagePoint &ip1, 
-		 const vpImagePoint &ip2,
-		 const vpColor &color, unsigned int w,unsigned int h, unsigned int thickness) =0;
+  virtual void drawArrow(const vpImagePoint &ip1,
+                         const vpImagePoint &ip2,
+                         const vpColor &color, unsigned int w,unsigned int h, unsigned int thickness) =0;
 
   /*!
     Gets the currently displayed image.
