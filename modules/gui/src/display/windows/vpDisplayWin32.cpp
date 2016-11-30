@@ -96,9 +96,8 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I,
                              "Image not initialized")) ;
   }
 
+  init(I.getWidth(), I.getHeight(), x, y, title);
   window.renderer->setImg(I);
-
-  init (I.getWidth(), I.getHeight(), x, y, title) ;
 
   I.display = this ;
 }
