@@ -321,7 +321,7 @@ public:
   }
 
   virtual std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > > getPolygonFaces(const bool orderPolygons=true,
-      const bool useVisibility=true);
+      const bool useVisibility=true, const bool clipPolygon=false);
 
   /*!
     Get the current pose between the object and the camera.
