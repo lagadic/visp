@@ -91,34 +91,36 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-/*!
-  Structure to store info about segment in CAO model files.
- */
-struct SegmentInfo {
-  SegmentInfo() : extremities(), name(), useLod(false), minLineLengthThresh(0.) {}
+namespace {
+  /*!
+    Structure to store info about segment in CAO model files.
+   */
+  struct SegmentInfo {
+    SegmentInfo() : extremities(), name(), useLod(false), minLineLengthThresh(0.) {}
 
-  std::vector<vpPoint> extremities;
-  std::string name;
-  bool useLod;
-  double minLineLengthThresh;
-};
+    std::vector<vpPoint> extremities;
+    std::string name;
+    bool useLod;
+    double minLineLengthThresh;
+  };
 
-/*!
-  Structure to store info about a polygon face represented by a vpPolygon and by a list of vpPoint
-  representing the corners of the polygon face in 3D.
- */
-struct PolygonFaceInfo {
-  PolygonFaceInfo(const double dist, const vpPolygon &poly, const std::vector<vpPoint> &corners)
-: distanceToCamera(dist), polygon(poly), faceCorners(corners) {}
+  /*!
+    Structure to store info about a polygon face represented by a vpPolygon and by a list of vpPoint
+    representing the corners of the polygon face in 3D.
+   */
+  struct PolygonFaceInfo {
+    PolygonFaceInfo(const double dist, const vpPolygon &poly, const std::vector<vpPoint> &corners)
+      : distanceToCamera(dist), polygon(poly), faceCorners(corners) {}
 
-  bool operator<(const PolygonFaceInfo &pfi) const {
-    return distanceToCamera < pfi.distanceToCamera;
-  }
+    bool operator<(const PolygonFaceInfo &pfi) const {
+      return distanceToCamera < pfi.distanceToCamera;
+    }
 
-  double distanceToCamera;
-  vpPolygon polygon;
-  std::vector<vpPoint> faceCorners;
-};
+    double distanceToCamera;
+    vpPolygon polygon;
+    std::vector<vpPoint> faceCorners;
+  };
+}
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
@@ -2115,10 +2117,11 @@ vpMbTracker::getGravityCenter(const std::vector<vpPoint>& pts) const
 
   \param orderPolygons : If true, the resulting list is ordered from the nearest polygon faces to the farther.
   \param useVisibility : If true, only visible faces will be retrieved.
+  \param clipPolygon : If true, the polygons will be clipped according to the clipping flags set in vpMbTracker.
   \return A pair object containing the list of vpPolygon and the list of face corners.
  */
 std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
-vpMbTracker::getPolygonFaces(const bool orderPolygons, const bool useVisibility)
+vpMbTracker::getPolygonFaces(const bool orderPolygons, const bool useVisibility, const bool clipPolygon)
 {
   //Temporary variable to permit to order polygons by distance
   std::vector<vpPolygon> polygonsTmp;
@@ -2127,23 +2130,33 @@ vpMbTracker::getPolygonFaces(const bool orderPolygons, const bool useVisibility)
   //Pair containing the list of vpPolygon and the list of face corners
   std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > > pairOfPolygonFaces;
 
-  for (unsigned int i = 0; i < getNbPolygon(); i++) {
-    std::vector<vpImagePoint> roi;
-    std::vector<vpPoint> roiPt;
-    //A face has at least three points
-    if (getPolygon(i)->nbpt >= 3) {
-      if((useVisibility && getPolygon(i)->isvisible) || !useVisibility) {
-        for (unsigned int j = 0; j < getPolygon(i)->nbpt; j++) {
-          vpPoint pt(getPolygon(i)->p[j]);
-          pt.project(cMo);
-          double u = 0, v = 0;
-          vpMeterPixelConversion::convertPoint(cam, pt.get_x(), pt.get_y(), u, v);
-          roi.push_back(vpImagePoint(v, u));
-          roiPt.push_back(pt);
+  for (unsigned int i = 0; i < faces.getPolygon().size(); i++) {
+    //A face has at least 3 points
+    if (faces.getPolygon()[i]->nbpt > 2) {
+      if ( (useVisibility && faces.getPolygon()[i]->isvisible) || !useVisibility ) {
+        std::vector<vpImagePoint> roiPts;
+
+        if (clipPolygon) {
+          faces.getPolygon()[i]->getRoiClipped(cam, roiPts, cMo);
+        } else {
+          roiPts = faces.getPolygon()[i]->getRoi(cam, cMo);
         }
 
-        polygonsTmp.push_back(vpPolygon(roi));
-        roisPtTmp.push_back(roiPt);
+        if (roiPts.size() <= 2) {
+          continue;
+        }
+
+        polygonsTmp.push_back(vpPolygon(roiPts));
+
+        std::vector<vpPoint> polyPts;
+        if (clipPolygon) {
+          faces.getPolygon()[i]->getPolygonClipped(polyPts);
+        } else {
+          for (unsigned int j = 0; j < faces.getPolygon()[i]->nbpt; j++) {
+            polyPts.push_back(faces.getPolygon()[i]->p[j]);
+          }
+        }
+        roisPtTmp.push_back(polyPts);
       }
     }
   }

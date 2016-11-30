@@ -1333,6 +1333,8 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
   }
 #endif
   
+  if(clippingFlag > 2)
+    cam.computeFov(I.getWidth(), I.getHeight());
   
   initPyramid(I, Ipyramid);
   visibleFace(I, cMo, a);
@@ -1341,7 +1343,9 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
   resetMovingEdge();
 
   if(useScanLine){
-    cam.computeFov(I.getWidth(), I.getHeight());
+    if(clippingFlag <= 2)
+      cam.computeFov(I.getWidth(), I.getHeight());
+
     faces.computeClippedPolygons(cMo,cam);
     faces.computeScanLineRender(cam, I.getWidth(), I.getHeight());
   }

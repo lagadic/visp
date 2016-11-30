@@ -255,7 +255,7 @@ int main(int argc, const char ** argv) {
     //Keep only keypoints on the cube
     std::vector<vpPolygon> polygons;
     std::vector<std::vector<vpPoint> > roisPt;
-    std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > > pair = tracker.getPolygonFaces(false);
+    std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > > pair = tracker.getPolygonFaces(true); //To detect an issue with CI
     polygons = pair.first;
     roisPt = pair.second;
 
@@ -279,7 +279,7 @@ int main(int argc, const char ** argv) {
     keypoints.detect(I, trainKeyPoints, elapsedTime);
 
     //Keep only keypoints on the cube
-    pair = tracker.getPolygonFaces(false);
+    pair = tracker.getPolygonFaces(true, true, true); //To detect an issue with CI
     polygons = pair.first;
     roisPt = pair.second;
 
@@ -302,7 +302,7 @@ int main(int argc, const char ** argv) {
     keypoints.detect(I, trainKeyPoints, elapsedTime);
 
     //Keep only keypoints on the cube
-    pair = tracker.getPolygonFaces(false);
+    pair = tracker.getPolygonFaces(false); //To detect an issue with CI
     polygons = pair.first;
     roisPt = pair.second;
 
