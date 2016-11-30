@@ -261,9 +261,9 @@ unsigned int vpDisplay::computeAutoScale(unsigned int width, unsigned int height
 {
   unsigned int screen_width, screen_height;
   getScreenSize(screen_width, screen_height);
-  unsigned int wscale = std::max(1u, (unsigned int)floor(2.*width / screen_width));
-  unsigned int hscale = std::max(1u, (unsigned int) floor(2.*height / screen_height));
-  unsigned int scale = std::max(1u, std::max(wscale, hscale));
+  unsigned int wscale = std::max(1u, (unsigned int)floor(2u*width / screen_width));
+  unsigned int hscale = std::max(1u, (unsigned int) floor(2u*height / screen_height));
+  unsigned int scale = (unsigned int)std::max(1u, std::max(wscale, hscale));
   return scale;
 }
 

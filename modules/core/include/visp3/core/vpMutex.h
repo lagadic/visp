@@ -77,7 +77,7 @@ public:
       FALSE,             // initially not owned
       NULL);             // unnamed mutex
     if (m_mutex == NULL) {
-      printf("CreateMutex error: %d\n", GetLastError());
+      std::cout << "CreateMutex error: " << GetLastError() << std::endl;
       return;
     }
 #endif
@@ -90,6 +90,8 @@ public:
     dwWaitResult = WaitForSingleObject(
           m_mutex,    // handle to mutex
           INFINITE);  // no time-out interval
+    if (dwWaitResult == WAIT_FAILED)
+	  std::cout << "lock() error: " << GetLastError() << std::endl;
 #endif
   }
 	void unlock() {
@@ -100,7 +102,7 @@ public:
   if (!ReleaseMutex(m_mutex))
   {
     // Handle error.
-    printf("unlock() error: %d\n", GetLastError());
+    std::cout << "unlock() error: " << GetLastError() << std::endl;
   }
 #endif
   }
