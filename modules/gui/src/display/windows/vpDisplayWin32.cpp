@@ -97,6 +97,8 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I,
   }
 
   init(I.getWidth(), I.getHeight(), x, y, title);
+  window.renderer->setWidth(I.getWidth()/m_scale);
+  window.renderer->setHeight(I.getHeight()/m_scale);
   window.renderer->setImg(I);
 
   I.display = this ;
@@ -124,6 +126,8 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I,
   }
 
   init (I.getWidth(), I.getHeight(), x, y, title) ;
+  window.renderer->setWidth(I.getWidth()/m_scale);
+  window.renderer->setHeight(I.getHeight()/m_scale);
   window.renderer->setImg(I);
 
   I.display = this ;

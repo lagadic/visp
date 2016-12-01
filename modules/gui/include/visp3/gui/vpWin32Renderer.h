@@ -87,6 +87,8 @@ public:
   virtual void setPixel(const vpImagePoint &iP, const vpColor &color) =0;
 
   void setScale(unsigned int scale) { m_rscale = scale; }
+  void setHeight(unsigned int height) { m_rheight = height; }
+  void setWidth(unsigned int width) { m_rwidth = width; }
 
   /*!
     Draws a line.

@@ -429,7 +429,7 @@ bool vpGDIRenderer::updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
   EnterCriticalSection(&m_criticalSection);
 
   //if the existing bitmap object is of the right size
-  if( (m_bmp_width == w) && (m_bmp_height == h) )
+  if( (m_bmp_width == w) && (m_bmp_height == h) && w != 0 && h != 0)
   {
     //just replace the content
     SetBitmapBits(hBmp, w * h * 4, imBuffer);
