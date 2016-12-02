@@ -41,7 +41,7 @@ This other example available in tutorial-image-display-scaled-auto.cpp shows now
 
 To consider an auto down scaling factor, modify the previous example adding the vpDisplay::SCALE_AUTO parameter to the constructor.
 
-\snippet tutorial-image-display-scaled-manu.cpp vpDisplay scale manu
+\snippet tutorial-image-display-scaled-auto.cpp vpDisplay scale auto
 
 
 \section image_display_next Next tutorial
