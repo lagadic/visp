@@ -1359,6 +1359,7 @@ vpPlotGraph::navigation(const vpImage<unsigned char> &I, bool &changed, vpMouseB
     }
   }
 
+  vpTime::sleepMs(1);
   vpDisplay::getPointerPosition(I,iP);
 
   if (old_iPr != vpImagePoint(-1,-1) && blockedr)
