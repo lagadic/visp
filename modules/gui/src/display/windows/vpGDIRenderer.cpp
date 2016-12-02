@@ -593,7 +593,6 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1,
   //get the window's DC
   hDCScreen = GetDC(m_hWnd);
   hDCMem = CreateCompatibleDC(hDCScreen);
-
   //create the pen
   if (color.id < vpColor::id_unknown)
     hPen = CreatePen(style, static_cast<int>(thickness), m_colors[color.id]);
@@ -610,26 +609,35 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1,
   //select the pen
   SelectObject(hDCMem, hPen);
 #endif
-  //move to the starting point
-  MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), NULL);
-  //Draw the line
-  LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale));
-
-  //computes the coordinates of the rectangle to blit
-  //   int x = (j2 >= j1) ? j1 : j2;
-  //   int y = (i2 >= i1) ? i1 : i2;
-  //   int w = (j2 >= j1) ? j2-j1 : j1-j2;
-  //   int h = (i2 >= i1) ? i2-i1 : i1-i2;
-
-  //display the result (flush)
-  // BitBlt(hDCScreen, x, y, w, h, hDCMem, x, y, SRCCOPY);
+  // Warning: When thickness > 1 and pen style is PS_DASHDOT, the drawing displays a solid line
+  // That's why in that case we implement the dashdot line manually drawing multiple small lines
+  if (thickness != 1 && style != PS_SOLID) {
+    double size = 10.*m_rscale;
+    double length = sqrt(vpMath::sqr(ip2.get_i() - ip1.get_i()) + vpMath::sqr(ip2.get_j() - ip1.get_j()));
+    double deltaj = size / length*(ip2.get_j() - ip1.get_j());
+    double deltai = size / length*(ip2.get_i() - ip1.get_i());
+    double slope = (ip2.get_i() - ip1.get_i()) / (ip2.get_j() - ip1.get_j());
+    double orig = ip1.get_i() - slope*ip1.get_j();
+    for (unsigned int j = (unsigned int)ip1.get_j(); j < ip2.get_j(); j += (unsigned int)(2 * deltaj)) {
+      double i = slope*j + orig;
+      //move to the starting point
+      MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
+      //Draw the line
+      LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
+    }
+  }
+  else {
+    //move to the starting point
+    MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), NULL);
+    //Draw the line
+    LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale));
+  }
 
   LeaveCriticalSection(&m_criticalSection);
 
   DeleteObject(hPen);
   DeleteDC(hDCMem);
   ReleaseDC(m_hWnd, hDCScreen);
-
 }
 
 /*!

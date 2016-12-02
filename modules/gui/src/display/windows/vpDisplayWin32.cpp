@@ -755,19 +755,7 @@ void vpDisplayWin32::displayDotLine(const vpImagePoint &ip1,
 {
   //wait if the window is not initialized
   waitForInit();
-  // passing PS_DASHDOT is not working
-  //window.renderer->drawLine(ip1,ip2,color,thickness,PS_DASHDOT);
-  // Create the dash dot line manually
-  double size = 10.*m_scale;
-  double length = sqrt(vpMath::sqr(ip2.get_i() - ip1.get_i()) + vpMath::sqr(ip2.get_j() - ip1.get_j()));
-  double deltaj = size/length*(ip2.get_j() - ip1.get_j());
-  double deltai = size/length*(ip2.get_i() - ip1.get_i());
-  double slope = (ip2.get_i() - ip1.get_i()) / (ip2.get_j() - ip1.get_j());
-  double orig = ip1.get_i() - slope*ip1.get_j();
-  for(unsigned int j=(unsigned int)ip1.get_j(); j< ip2.get_j(); j+=(unsigned int)(2*deltaj)) {
-    double i = slope*j+orig;
-    displayLine(vpImagePoint(i, j), vpImagePoint(i+deltai, j+deltaj), color, thickness);
-  }
+  window.renderer->drawLine(ip1, ip2, color, thickness, PS_DASHDOT);
 }
 
 /*!  

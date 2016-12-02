@@ -751,10 +751,29 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1,
     //select the pen
     SelectObject(hDCMem, hPen);
 
-    //move to the starting point
-    MoveToEx(hDCMem, vpMath::round(ip1.get_u()/m_rscale), vpMath::round(ip1.get_v() / m_rscale), NULL);
-    //Draw the line
-    LineTo(hDCMem, vpMath::round(ip2.get_u()/m_rscale), vpMath::round(ip2.get_v() / m_rscale));
+    // Warning: When thickness > 1 and pen style is PS_DASHDOT, the drawing displays a solid line
+    // That's why in that case we implement the dashdot line manually drawing multiple small lines
+    if (thickness != 1 && style != PS_SOLID) {
+      double size = 10.*m_rscale;
+      double length = sqrt(vpMath::sqr(ip2.get_i() - ip1.get_i()) + vpMath::sqr(ip2.get_j() - ip1.get_j()));
+      double deltaj = size / length*(ip2.get_j() - ip1.get_j());
+      double deltai = size / length*(ip2.get_i() - ip1.get_i());
+      double slope = (ip2.get_i() - ip1.get_i()) / (ip2.get_j() - ip1.get_j());
+      double orig = ip1.get_i() - slope*ip1.get_j();
+      for (unsigned int j = (unsigned int)ip1.get_j(); j < ip2.get_j(); j += (unsigned int)(2 * deltaj)) {
+        double i = slope*j + orig;
+        //move to the starting point
+        MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
+        //Draw the line
+        LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
+      }
+    }
+    else {
+      //move to the starting point
+      MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), NULL);
+      //Draw the line
+      LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale));
+    }
 
     //Releases the DC
     pd3dSurf->ReleaseDC(hDCMem);
