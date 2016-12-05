@@ -241,13 +241,18 @@ macro(vp_glob_modules)
 
     file(GLOB __vpmodules RELATIVE "${__path}" "${__path}/*")
 
+    vp_list_remove_item(__vpmodules ".git")
+
     if(VISP_PROCESSING_EXTRA_MODULES)
       # Remove tutorial, example, demo from potential contrib module list
       # They will be processed in visp/CMakeLists.txt
       vp_list_remove_item(__vpmodules "tutorial")
       vp_list_remove_item(__vpmodules "example")
       vp_list_remove_item(__vpmodules "demo")
+      vp_list_remove_item(__vpmodules "doc")
     endif()
+    # TODO: Improve the following if to put a macro instead of manually copying the code
+    #       Here we have 3 internal loops. The depth of the loop (3) could be a var
     if(__vpmodules)
       list(SORT __vpmodules)
       foreach(mod ${__vpmodules})
@@ -260,9 +265,10 @@ macro(vp_glob_modules)
           list(APPEND __directories_observed "${__modpath}")
           add_subdirectory("${__modpath}" "${CMAKE_CURRENT_BINARY_DIR}/${mod}/.${mod}")
         else()
-          # modules in tracker
+          # modules in visp/tracker
           get_filename_component(__subpath "${__path}/${mod}" ABSOLUTE)
           file(GLOB __vpsubmodules RELATIVE "${__subpath}" "${__subpath}/*")
+
           if(__vpsubmodules)
             list(SORT __vpsubmodules)
             foreach(submod ${__vpsubmodules})
@@ -274,6 +280,46 @@ macro(vp_glob_modules)
                 endif()
                 list(APPEND __directories_observed "${__submodpath}")
                 add_subdirectory("${__submodpath}" "${CMAKE_CURRENT_BINARY_DIR}/${submod}/.${submod}")
+
+              else()
+                # modules in ustk/image_processing
+                get_filename_component(__subsubpath "${__subpath}/${submod}" ABSOLUTE)
+                file(GLOB __vpsubsubmodules RELATIVE "${__subsubpath}" "${__subsubpath}/*")
+
+                if(__vpsubsubmodules)
+                  list(SORT __vpsubsubmodules)
+                  foreach(subsubmod ${__vpsubsubmodules})
+                    get_filename_component(__subsubmodpath "${__subsubpath}/${subsubmod}" ABSOLUTE)
+                    if(EXISTS "${__subsubmodpath}/CMakeLists.txt")
+                      list(FIND __directories_observed "${__subsubmodpath}" __pathIdx)
+                      if(__pathIdx GREATER -1)
+                        message(FATAL_ERROR "The module from ${__subsubmodpath} is already loaded.")
+                      endif()
+                      list(APPEND __directories_observed "${__subsubmodpath}")
+                      add_subdirectory("${__subsubmodpath}" "${CMAKE_CURRENT_BINARY_DIR}/${subsubmod}/.${subsubmod}")
+
+                    else()
+                      # modules in ustk/image_processing/tracking
+                      get_filename_component(__subsubsubpath "${__subsubpath}/${subsubmod}" ABSOLUTE)
+                      file(GLOB __vpsubsubsubmodules RELATIVE "${__subsubsubpath}" "${__subsubsubpath}/*")
+
+                      if(__vpsubsubsubmodules)
+                        list(SORT __vpsubsubsubmodules)
+                        foreach(subsubsubmod ${__vpsubsubsubmodules})
+                          get_filename_component(__subsubsubmodpath "${__subsubsubpath}/${subsubsubmod}" ABSOLUTE)
+                          if(EXISTS "${__subsubsubmodpath}/CMakeLists.txt")
+                            list(FIND __directories_observed "${__subsubsubmodpath}" __pathIdx)
+                            if(__pathIdx GREATER -1)
+                              message(FATAL_ERROR "The module from ${__subsubsubmodpath} is already loaded.")
+                            endif()
+                            list(APPEND __directories_observed "${__subsubsubmodpath}")
+                            add_subdirectory("${__subsubsubmodpath}" "${CMAKE_CURRENT_BINARY_DIR}/${subsubsubmod}/.${subsubsubmod}")
+                          endif()
+                        endforeach()
+                      endif()
+                    endif()
+                  endforeach()
+                endif()
               endif()
             endforeach()
           endif()
