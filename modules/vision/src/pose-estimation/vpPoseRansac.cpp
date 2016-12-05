@@ -195,6 +195,10 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
   int nbTrials = 0;
   unsigned int nbMinRandom = 4;
 
+#if defined(_WIN32) && defined(_MSC_VER)
+  srand(m_initial_seed);
+#endif
+
   bool foundSolution = false;
   while (nbTrials < m_ransacMaxTrials && m_nbInliers < (unsigned int) m_ransacNbInlierConsensus)
   {
@@ -226,11 +230,19 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
       }
 
       //Pick a point randomly
+#if defined(_WIN32) && defined(_MSC_VER)
+      unsigned int r_ = (unsigned int) rand() % size;
+#else
       unsigned int r_ = (unsigned int) rand_r(&m_initial_seed) % size;
+#endif
 
       while(usedPt[r_]) {
         //If already picked, pick another point randomly
-        r_ = (unsigned int) rand_r(&m_initial_seed) % size;
+#if defined(_WIN32) && defined(_MSC_VER)
+      r_ = (unsigned int) rand() % size;
+#else
+      r_ = (unsigned int) rand_r(&m_initial_seed) % size;
+#endif
       }
       //Mark this point as already picked
       usedPt[r_] = true;
@@ -413,10 +425,10 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
   std::map<size_t, size_t> mapOfUniquePointIndex;
 
   //Get RANSAC flags
-  bool prefilterDuplicatePoints = ransacFlags & PREFILTER_DUPLICATE_POINTS;
-  bool prefilterAlmostDuplicatePoints = ransacFlags & PREFILTER_ALMOST_DUPLICATE_POINTS;
-  bool prefilterDegeneratePoints = ransacFlags & PREFILTER_DEGENERATE_POINTS;
-  bool checkDegeneratePoints = ransacFlags & CHECK_DEGENERATE_POINTS;
+  bool prefilterDuplicatePoints = (ransacFlags & PREFILTER_DUPLICATE_POINTS) != 0;
+  bool prefilterAlmostDuplicatePoints = (ransacFlags & PREFILTER_ALMOST_DUPLICATE_POINTS) != 0;
+  bool prefilterDegeneratePoints = (ransacFlags & PREFILTER_DEGENERATE_POINTS) != 0;
+  bool checkDegeneratePoints = (ransacFlags & CHECK_DEGENERATE_POINTS) != 0;
 
   if (prefilterDuplicatePoints || prefilterAlmostDuplicatePoints || prefilterDegeneratePoints) {
     //Prefiltering
@@ -554,6 +566,10 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
   #else
       unsigned int initial_seed = 0;
   #endif
+  
+      #if defined(_WIN32) && defined(_MSC_VER)
+        srand(initial_seed);
+      #endif
 
       #pragma omp for
       for(int nbTrials = 0; nbTrials < ransacMaxTrials; nbTrials++) {
@@ -583,11 +599,19 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
             }
 
             //Pick a point randomly
-            unsigned int r_ = (unsigned int) rand_r(&initial_seed) % size;
+            #if defined(_WIN32) && defined(_MSC_VER)
+              unsigned int r_ = (unsigned int) rand() % size;
+            #else
+              unsigned int r_ = (unsigned int) rand_r(&initial_seed) % size;
+            #endif
 
             while(usedPt[r_]) {
               //If already picked, pick another point randomly
-              r_ = (unsigned int) rand_r(&initial_seed) % size;
+              #if defined(_WIN32) && defined(_MSC_VER)
+                r_ = (unsigned int) rand() % size;
+              #else
+                r_ = (unsigned int) rand_r(&initial_seed) % size;
+              #endif
             }
             //Mark this point as already picked
             usedPt[r_] = true;
@@ -718,7 +742,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
 
     int splitTrials = ransacMaxTrials / nbThreads;
     for(size_t i = 0; i < (size_t) nbThreads; i++) {
-      unsigned int initial_seed = i; //((unsigned int) time(NULL) ^ i);
+      unsigned int initial_seed = (unsigned int) i; //((unsigned int) time(NULL) ^ i);
       if(i < (size_t) nbThreads-1) {
         ransac_func[i] = RansacFunctor(cMo, ransacNbInlierConsensus, splitTrials, ransacThreshold,
                                        initial_seed, checkDegeneratePoints, listOfUniquePoints, func);
