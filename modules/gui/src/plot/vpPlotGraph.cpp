@@ -1194,8 +1194,6 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const unsigned int curveNb, const 
   iP.set_uv(u,v);
   iP = iP + dTopLeft3D;
   
-  (curveList+curveNb)->pointListx.end();
-  (curveList+curveNb)->pointListy.end();
   (curveList+curveNb)->pointListz.end();
   if((curveList+curveNb)->nbPoint)
   {

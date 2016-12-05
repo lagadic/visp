@@ -91,19 +91,103 @@ public:
   virtual ~vpMe() ;
   
   const vpMe& operator=(const vpMe &me);
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  const vpMe& operator=(const vpMe &&me);
+#endif
 
-
-  void initMask() ;// convolution masks - offset computation
   void checkSamplestep(double &a) { if(a < min_samplestep) a = min_samplestep ; }
-  void print( ) ;
-  
+  /*!
+    Return the angle step.
+
+    \return Value of anglestep.
+  */
+  inline unsigned int getAngleStep() const { return anglestep; }
   /*!
     Get the matrix of the mask.
 
     \return the value of mask.
   */
   inline vpMatrix* getMask() const { return mask; }
+  /*!
+    Return the number of mask  applied to determine the object contour. The number of mask determines the precision of
+    the normal of the edge for every sample. If precision is 2deg, then there
+    are 360/2 = 180 masks.
 
+    \return the current number of mask.
+  */
+  inline unsigned int getMaskNumber() const { return n_mask; }
+  /*!
+    Return the mask sign.
+
+    \return Value of mask_sign.
+  */
+  inline int getMaskSign() const { return mask_sign; }
+  /*!
+    Return the actual mask size (in pixel) used to compute the image gradient and determine the object contour.
+    The mask size defines the size of the convolution mask used to detect an edge.
+
+    \return the current mask size.
+  */
+  inline unsigned int getMaskSize() const { return mask_size; }
+  /*!
+    Get the minimum allowed sample step. Useful to specify a lower bound when the sample step is changed.
+
+    \return Value of min_samplestep.
+  */
+  inline double getMinSampleStep() const { return min_samplestep; }
+  /*!
+    Get the minimum image contrast allowed to detect a contour.
+
+    \return Value of mu1.
+  */
+  inline double getMu1() const { return mu1; }
+  /*!
+    Get the maximum image contrast allowed to detect a contour.
+
+    \return Value of mu2.
+  */
+  inline double getMu2() const { return mu2; }
+  /*!
+    Get how many discretizied points are used to track the feature.
+
+    \return Value of ntotal_sample.
+  */
+  inline int getNbTotalSample() const { return ntotal_sample; }
+  /*!
+    Return the number of points to track.
+
+    \return Value of points_to_track.
+  */
+  inline int getPointsToTrack() const { return points_to_track ; }
+  /*!
+    Return the seek range on both sides of the reference pixel.
+
+    \return Value of range.
+  */
+  inline unsigned int getRange() const { return range; }
+  /*!
+    Get the number of pixels that are ignored around the image borders.
+
+    \return the value of strip.
+  */
+  inline int getStrip() const { return strip; }
+
+  /*!
+    Return the likelihood threshold used to determined if the moving edge is valid or not.
+
+    \return Value of threshold.
+  */
+  inline double getThreshold() const { return threshold; }
+
+  void initMask() ;// convolution masks - offset computation
+  void print( ) ;
+  
+  /*!
+    Set the angle step.
+
+    \param a : new angle step.
+  */
+  void setAngleStep(const unsigned int &a) { anglestep = a ; }
   /*!
     Set the number of mask applied to determine the object contour. The number of mask determines the precision of
     the normal of the edge for every sample. If precision is 2deg, then there
@@ -114,28 +198,12 @@ public:
   void setMaskNumber(const unsigned int &a) ;
   
   /*!
-    Return the number of mask  applied to determine the object contour. The number of mask determines the precision of
-    the normal of the edge for every sample. If precision is 2deg, then there
-    are 360/2 = 180 masks.
-
-    \return the current number of mask.
-  */
-  inline unsigned int getMaskNumber() const { return n_mask; }
-  
-  /*!
     Set the mask sign.
     
     \param a : new mask sign.
   */
   void setMaskSign(const int &a){ mask_sign = a ; }
-  
-  /*!
-    Return the mask sign.
-
-    \return Value of mask_sign.
-  */
-  inline int getMaskSign() const { return mask_sign; }
-  
+    
   /*!
     Set the mask size (in pixel) used to compute the image gradient and determine the object contour. 
     The mask size defines the size of the convolution mask used to detect an edge.
@@ -143,15 +211,13 @@ public:
     \param a : new mask size.
   */
   void setMaskSize(const unsigned int &a);
-  
   /*!
-    Return the actual mask size (in pixel) used to compute the image gradient and determine the object contour. 
-    The mask size defines the size of the convolution mask used to detect an edge.
+    Set the minimum allowed sample step. Useful to specify a lower bound when the sample step is changed.
 
-    \return the current mask size.
+    \param min : new minimum sample step.
   */
-  inline unsigned int getMaskSize() const { return mask_size; }
-  
+  void setMinSampleStep(const double &min) { min_samplestep = min ; }
+
   /*!
     Set the minimum image contrast allowed to detect a contour.
     
@@ -160,40 +226,19 @@ public:
   void setMu1(const double &mu_1) { this->mu1 = mu_1  ; }
   
   /*!
-    Get the minimum image contrast allowed to detect a contour.
-
-    \return Value of mu1.
-  */
-  inline double getMu1() const { return mu1; }
-  
-  /*!
     Set the maximum image contrast allowed to detect a contour.
     
     \param mu_2 : new mu2.
   */
   void setMu2(const double &mu_2) { this->mu2 = mu_2  ; }
-  
-  /*!
-    Get the maximum image contrast allowed to detect a contour.
-
-    \return Value of mu2.
-  */
-  inline double getMu2() const { return mu2; }
-  
+    
   /*!
     Set how many discretizied points are used to track the feature.
     
     \param nb : new total number of sample.
   */
   void setNbTotalSample(const int &nb) { ntotal_sample = nb; }
-  
-  /*!
-    Get how many discretizied points are used to track the feature.
-
-    \return Value of ntotal_sample.
-  */
-  inline int getNbTotalSample() const { return ntotal_sample; }
-  
+    
   /*! 
     Set the number of points to track.
     
@@ -202,56 +247,14 @@ public:
     \warning This method is useful only for the vpMeNurbsTracker.  
   */
   void setPointsToTrack(const int &n) { points_to_track = n; }
-  
-  /*!
-    Return the number of points to track.
-
-    \return Value of points_to_track.
-  */
-  inline int getPointsToTrack() const { return points_to_track ; }
-  
+    
   /*!
     Set the seek range on both sides of the reference pixel.
     
     \param r : new range.
   */
   void setRange(const unsigned int &r) { range = r  ; }
-  
-  /*!
-    Return the seek range on both sides of the reference pixel.
-
-    \return Value of range.
-  */
-  inline unsigned int getRange() const { return range; }
-  
-  /*!
-    Set the angle step.
-    
-    \param a : new angle step.
-  */
-  void setAngleStep(const unsigned int &a) { anglestep = a ; }
-  
-  /*!
-    Return the angle step.
-
-    \return Value of anglestep.
-  */
-  inline unsigned int getAngleStep() const { return anglestep; }
-  
-  /*!
-    Set the minimum allowed sample step. Useful to specify a lower bound when the sample step is changed.
-    
-    \param min : new minimum sample step.
-  */
-  void setMinSampleStep(const double &min) { min_samplestep = min ; }
-  
-  /*!
-    Get the minimum allowed sample step. Useful to specify a lower bound when the sample step is changed.
-
-    \return Value of min_samplestep.
-  */
-  inline double getMinSampleStep() const { return min_samplestep; }
-  
+          
   /*!
     Set the minimum distance in pixel between two discretized points.
     
@@ -272,28 +275,14 @@ public:
     \param a : new strip.
   */
   void setStrip(const int &a) { strip = a ; }
-  
-  /*!
-    Get the number of pixels that are ignored around the image borders.
-
-    \return the value of strip.
-  */
-  inline int getStrip() const { return strip; }
-  
+    
   /*!
     Set the likelihood threshold used to determined if the moving edge is valid or not.
     
     \param t : new threshold.
   */
   void setThreshold(const double &t) { threshold = t ; }
-  
-  /*!
-    Return the likelihood threshold used to determined if the moving edge is valid or not.
-
-    \return Value of threshold.
-  */
-  inline double getThreshold() const { return threshold; }
-};
+  };
 
 
 #endif

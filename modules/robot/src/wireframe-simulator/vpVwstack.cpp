@@ -270,8 +270,8 @@ else {
   else {
     static	char	proc_name[] = "add_vwstack";
     fprintf (stderr, "%s: bad argument\n", proc_name);
-    va_end (ap);
   }
+  va_end (ap);
 }
 
 #endif

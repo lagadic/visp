@@ -713,9 +713,10 @@ void vpNurbs::globalCurveInterp(std::vector<vpImagePoint> &l_crossingPoints, uns
   //Compute ubar
   std::vector<double> ubar;
   ubar.push_back(0.0);
-  for(unsigned int k=1; k<n; k++)
+  for(unsigned int k=1; k<n; k++) {
     ubar.push_back(ubar[k-1]+distance(l_crossingPoints[k],1,l_crossingPoints[k-1],1)/d);
-    ubar.push_back(1.0);
+  }
+  ubar.push_back(1.0);
 
   //Compute the knot vector
   for(unsigned int k = 0; k <= l_p; k++)

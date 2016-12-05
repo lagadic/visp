@@ -110,16 +110,25 @@ class VISP_EXPORT vpImagePoint
   inline virtual ~vpImagePoint() { ; }
 
   /*!
-
     Copy operator.
-
   */
   inline const vpImagePoint& operator=(const vpImagePoint &ip) {
     this->i = ip.i;
     this->j = ip.j;
     return *this;
   }
-   vpImagePoint& operator+=(const vpImagePoint &ip);
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  /*!
+    Move operator.
+  */
+  inline const vpImagePoint& operator=(const vpImagePoint &&ip) {
+    this->i = std::move(ip.i);
+    this->j = std::move(ip.j);
+    return *this;
+  }
+#endif
+
+  vpImagePoint& operator+=(const vpImagePoint &ip);
 
   /*!
 

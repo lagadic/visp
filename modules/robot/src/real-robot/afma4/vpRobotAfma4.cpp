@@ -1386,6 +1386,7 @@ vpRobotAfma4::getVelocity (const vpRobot::vpControlFrameType frame,
   switch (frame) {
   case vpRobot::ARTICULAR_FRAME: 
     velocity.resize (this->njoint);
+    break;
   default:
     velocity.resize (6);
   }
@@ -1635,6 +1636,7 @@ vpRobotAfma4::readPosFile(const char *filename, vpColVector &q)
       }
     }
     else {
+      fclose(fd);
       return (false);		/* fin fichier 	*/
     }
 
@@ -1651,7 +1653,6 @@ vpRobotAfma4::readPosFile(const char *filename, vpColVector &q)
   q[0] = vpMath::rad(q[0]);
   q[2] = vpMath::rad(q[2]);
   q[3] = vpMath::rad(q[3]);
-
 
   fclose(fd) ;
   return (true);

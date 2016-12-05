@@ -420,6 +420,7 @@ vpMe::vpMe(const vpMe &me)
   *this = me;
 }
 
+//! Copy operator.
 const
 vpMe& vpMe::operator=(const vpMe &me)
 {
@@ -444,6 +445,34 @@ vpMe& vpMe::operator=(const vpMe &me)
   initMask() ;
   return *this;
 }
+
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+//! Move operator.
+const
+vpMe& vpMe::operator=(const vpMe &&me)
+{
+  if (mask != NULL) {
+    delete [] mask;
+    mask = NULL ;
+  }
+  threshold = std::move(me.threshold);
+  mu1 = std::move(me.mu1);
+  mu2 = std::move(me.mu2);
+  min_samplestep = std::move(me.min_samplestep);
+  anglestep = std::move(me.anglestep);
+  mask_size = std::move(me.mask_size);
+  n_mask = std::move(me.n_mask);
+  mask_sign = std::move(me.mask_sign);
+  range = std::move(me.range);
+  sample_step = std::move(me.sample_step);
+  ntotal_sample = std::move(me.ntotal_sample);
+  points_to_track = std::move(me.points_to_track);
+  strip = std::move(me.strip);
+
+  initMask() ;
+  return *this;
+}
+#endif
 
 vpMe::~vpMe()
 {

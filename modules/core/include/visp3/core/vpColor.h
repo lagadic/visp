@@ -188,6 +188,13 @@ class VISP_EXPORT vpColor : public vpRGBa
     : vpRGBa(), id(id_unknown)
   {};
   /*!
+    Copy constructor.
+
+  */
+  inline vpColor(const vpColor &color)
+    : vpRGBa(color.R, color.G, color.B, color.A), id(color.id)
+  {};
+  /*!
     Construct a color from its RGB values.
     
     \param r : Red component.
@@ -204,6 +211,24 @@ class VISP_EXPORT vpColor : public vpRGBa
   /*! Default destructor. */
   inline virtual ~vpColor() {};
 
+  /*!
+    Copy operator.
+  */
+  inline vpColor &operator=(const vpColor &color)
+  {
+    this->id = color.id;
+    return *this;
+  }
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  /*!
+    Move operator.
+  */
+  inline vpColor &operator=(const vpColor &&color)
+  {
+    this->id = std::move(color.id);
+    return *this;
+  }
+#endif
   friend VISP_EXPORT bool operator==( const vpColor &c1, const vpColor &c2 );
   friend VISP_EXPORT bool operator!=( const vpColor &c1, const vpColor &c2 );
   /*!

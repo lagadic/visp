@@ -401,8 +401,7 @@ vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomog
         catch(...)
         {
           //vpTRACE("the line can't be initialized");
-          if (melinePt!=NULL) delete melinePt;
-          melinePt=NULL;
+          delete melinePt;
           isvisible = false;
           return false;
         }

@@ -321,10 +321,9 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
   unsigned int n=0 ;
   n = nbpoint ;
 
-  //if ((only_1==1) || (only_2==1))  ; else n *=2 ;
-  // Since only_1 is initialized to 1, the next 2 lines connt be reached. We remove them
-  if ( (! only_1) && (! only_2) )
-    n *=2 ;
+  // next 2 lines are useless (detected by Coverity Scan)
+  //if ( (! only_1) && (! only_2) )
+  //  n *=2 ;
 
   vpRobust robust(n);
   vpColVector res(n) ;
@@ -527,7 +526,6 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
   vpMatrix H1(2,6) ;
   vpColVector e1(2) ;
 
-
   bool only_1 = true;
   bool only_2 = false;
   int iter = 0 ;
@@ -535,8 +533,9 @@ vpHomography::computeDisplacement(unsigned int nbpoint,
   unsigned int n=0 ;
   n = nbpoint ;
 
-  if ( (! only_1) && (! only_2) )
-    n *=2 ;
+  // next 2 lines are useless (detected by Coverity Scan)
+  //if ( (! only_1) && (! only_2) )
+  //  n *=2 ;
 
   vpRobust robust(n);
   vpColVector res(n) ;

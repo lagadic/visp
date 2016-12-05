@@ -77,6 +77,21 @@ vpRGBa::operator=(const vpRGBa &v)
   return *this;
 }
 
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+/*!
+  Move operator.
+*/
+vpRGBa &
+vpRGBa::operator=(const vpRGBa &&v)
+{
+  this->R = std::move(v.R);
+  this->G = std::move(v.G);
+  this->B = std::move(v.B);
+  this->A = std::move(v.A);
+  return *this;
+}
+#endif
+
 /*!
   Cast a vpColVector in a vpRGBa
 
