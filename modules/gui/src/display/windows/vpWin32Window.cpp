@@ -59,9 +59,9 @@
 //declares the window as thread local
 //allows multiple displays
 #ifdef __MINGW32__
-vpWin32Window * window;
+__thread vpWin32Window * window;
 #else
-_declspec(thread) vpWin32Window * window;
+__declspec(thread) vpWin32Window * window;
 #endif
 
 bool vpWin32Window::registered = false; 
