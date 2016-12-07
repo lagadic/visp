@@ -144,7 +144,7 @@ int main(int argc, const char ** argv) {
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      exit (-1);
+      exit (EXIT_FAILURE);
     }
 
     //Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
@@ -152,7 +152,7 @@ int main(int argc, const char ** argv) {
 
     if(env_ipath.empty()) {
       std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment variable value." << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     vpImage<unsigned char> I;
@@ -229,12 +229,12 @@ int main(int argc, const char ** argv) {
       keyPoints.setDetector(*itd);
 
       std::vector<cv::KeyPoint> kpts;
-      double elapsedTime;
-      keyPoints.detect(I, kpts, elapsedTime);
+
+      keyPoints.detect(I, kpts);
       std::cout << "Nb keypoints detected: " << kpts.size() << " for " << *itd << " method." << std::endl;
       if(kpts.empty()) {
         std::cerr << "No keypoints detected with " << *itd << " and image: " << filename << "." << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
 
       if (opt_display) {
@@ -249,7 +249,40 @@ int main(int argc, const char ** argv) {
 
         vpDisplay::flush(I);
 
-        if(opt_click_allowed) {
+        if (opt_click_allowed) {
+          vpDisplay::getClick(I);
+        }
+      }
+    }
+
+    std::cout << "\n\n";
+
+    std::map<vpKeyPoint::vpFeatureDetectorType, std::string> mapOfDetectorNames = keyPoints.getDetectorNames();
+    for (int i = 0; i < vpKeyPoint::DETECTOR_TYPE_SIZE; i++) {
+      keyPoints.setDetector( (vpKeyPoint::vpFeatureDetectorType) i );
+
+      std::vector<cv::KeyPoint> kpts;
+
+      keyPoints.detect(I, kpts);
+      std::cout << "Nb keypoints detected: " << kpts.size() << " for " << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType) i] << " method." << std::endl;
+      if (kpts.empty()) {
+        std::cerr << "No keypoints detected with " << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType) i] << " method  and image: " << filename << "." << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      if (opt_display) {
+        vpDisplay::display(I);
+
+        for(std::vector<cv::KeyPoint>::const_iterator it = kpts.begin(); it != kpts.end(); ++it) {
+          vpImagePoint imPt;
+          imPt.set_uv(it->pt.x, it->pt.y);
+
+          vpDisplay::displayCross(I, imPt, 4, vpColor::red);
+        }
+
+        vpDisplay::flush(I);
+
+        if (opt_click_allowed) {
           vpDisplay::getClick(I);
         }
       }
@@ -257,17 +290,19 @@ int main(int argc, const char ** argv) {
 
   } catch(vpException &e) {
     std::cerr << e.what() << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   std::cout << "testKeyPoint-5 is ok !" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
+#include <cstdlib>
+
 int main() {
   std::cerr << "You need OpenCV library." << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif
