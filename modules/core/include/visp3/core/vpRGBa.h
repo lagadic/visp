@@ -76,7 +76,7 @@ public:
     Build a black value.
     
   */
-  inline vpRGBa() : R(0), G(0), B(0), A(vpRGBa::alpha_default) {};
+  inline vpRGBa() : R(0), G(0), B(0), A(vpRGBa::alpha_default) {}
   
   /*!
     Constructor.
@@ -91,7 +91,7 @@ public:
   */
   inline vpRGBa(const unsigned char &r, const unsigned char &g,
     const unsigned char &b, const unsigned char &a=0)
-    : R(r), G(g), B(b), A(a) {};
+    : R(r), G(g), B(b), A(a) {}
 
 
   /*!
@@ -102,13 +102,13 @@ public:
     \param v : Value to set.
     
   */
-  inline vpRGBa(const unsigned char &v) : R(v), G(v), B(v), A(v) {};
+  inline vpRGBa(const unsigned char &v) : R(v), G(v), B(v), A(v) {}
 
 
   /*!
     Copy constructor.
   */
-  inline vpRGBa(const vpRGBa &v) : R(v.R), G(v.G), B(v.B), A(v.A) {};
+  inline vpRGBa(const vpRGBa &v) : R(v.R), G(v.G), B(v.B), A(v.A) {}
 
   /*!
     Create a RGBa value from a 4 dimension column vector.
@@ -122,7 +122,7 @@ public:
   inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(vpRGBa::alpha_default)
   {
     *this = v;
-  };
+  }
 
   // We cannot add here the following destructor without changing the hypothesis that the size of this class is 4.
   // With the destructor it becomes 16 that does break a lot of things arround image conversions

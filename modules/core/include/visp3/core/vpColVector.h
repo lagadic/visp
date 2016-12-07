@@ -75,13 +75,13 @@ class VISP_EXPORT vpColVector : public vpArray2D<double>
 public:
 
    //! Basic constructor that creates an empty 0-size column vector.
-  vpColVector() : vpArray2D<double>() {};
+  vpColVector() : vpArray2D<double>() {}
   //! Construct a column vector of size n. All the elements are initialized to zero.
-  vpColVector(unsigned int n) : vpArray2D<double>(n,1){};
+  vpColVector(unsigned int n) : vpArray2D<double>(n,1){}
   //! Construct a column vector of size n. Each element is set to \e val.
-  vpColVector(unsigned int n, double val) : vpArray2D<double>(n, 1, val){};
+  vpColVector(unsigned int n, double val) : vpArray2D<double>(n, 1, val){}
   //! Copy constructor that allows to construct a column vector from an other one.
-  vpColVector(const vpColVector &v) : vpArray2D<double>(v) {};
+  vpColVector(const vpColVector &v) : vpArray2D<double>(v) {}
   vpColVector(const vpColVector &v, unsigned int r, unsigned int nrows) ;
   //! Constructor that initialize a column vector from a 3-dim (Euler or \f$\theta {\bf u}\f$)
   //! or 4-dim (quaternion) rotation vector.
@@ -97,7 +97,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpColVector() {};
+  virtual ~vpColVector() {}
 
   /*!
     Removes all elements from the vector (which are destroyed),
@@ -243,7 +243,7 @@ public:
                         "Cannot resize a column vector to a (%dx%d) dimension vector that has more than one column",
                         nrows, ncols));
     vpArray2D<double>::resize(nrows, ncols, flagNullify);
-  };
+  }
 
   void stack(const double &d);
   void stack(const vpColVector &v);
@@ -292,7 +292,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {};
+  vp_deprecated void init() {}
   /*!
      \deprecated You should rather use extract().
    */
@@ -307,15 +307,15 @@ public:
   /*!
      \deprecated You should rather use stack(const vpColVector &)
    */
-  vp_deprecated void stackMatrices(const vpColVector &r) { stack(r); };
+  vp_deprecated void stackMatrices(const vpColVector &r) { stack(r); }
   /*!
      \deprecated You should rather use stack(const vpColVector &A, const vpColVector &B)
    */
-  vp_deprecated static vpColVector stackMatrices(const vpColVector &A, const vpColVector &B) { return stack(A, B); };
+  vp_deprecated static vpColVector stackMatrices(const vpColVector &A, const vpColVector &B) { return stack(A, B); }
   /*!
      \deprecated You should rather use stack(const vpColVector &A, const vpColVector &B, vpColVector &C)
    */
-  vp_deprecated static void stackMatrices(const vpColVector &A, const vpColVector &B, vpColVector &C) { stack(A, B, C); };
+  vp_deprecated static void stackMatrices(const vpColVector &A, const vpColVector &B, vpColVector &C) { stack(A, B, C); }
 
   vp_deprecated void insert(const vpColVector &v, const unsigned int r, const unsigned int c=0);
   //@}
