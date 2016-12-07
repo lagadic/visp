@@ -87,240 +87,277 @@
 #endif
 
 
-//Specific Type transformation functions
-///*!
-//   Convert a list of cv::DMatch to a cv::DMatch (extract the first cv::DMatch, the nearest neighbor).
-//
-//   \param knnMatches : List of cv::DMatch.
-//   \return The nearest neighbor.
-// */
-inline cv::DMatch knnToDMatch(const std::vector<cv::DMatch> &knnMatches) {
-  if(knnMatches.size() > 0) {
-    return knnMatches[0];
+namespace {
+  //Specific Type transformation functions
+  ///*!
+  //   Convert a list of cv::DMatch to a cv::DMatch (extract the first cv::DMatch, the nearest neighbor).
+  //
+  //   \param knnMatches : List of cv::DMatch.
+  //   \return The nearest neighbor.
+  // */
+  inline cv::DMatch knnToDMatch(const std::vector<cv::DMatch> &knnMatches) {
+    if(knnMatches.size() > 0) {
+      return knnMatches[0];
+    }
+
+    return cv::DMatch();
   }
 
-  return cv::DMatch();
-}
-
-///*!
-//   Convert a cv::DMatch to an index (extract the train index).
-//
-//   \param match : Point to convert in ViSP type.
-//   \return The train index.
-// */
-inline vpImagePoint matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point3f> &pair) {
-  return vpImagePoint(pair.first.pt.y, pair.first.pt.x);
-}
-
-//Keep this function to know how to detect big endian with code
-//bool isBigEndian() {
-//  union {
-//    uint32_t i;
-//    char c[4];
-//  } bint = { 0x01020304 };
-//
-//  return bint.c[0] == 1;
-//}
-
-//Swap 16 bits by shifting to the right the first byte and by shifting to the left the second byte
-uint16_t swap16bits(const uint16_t val) {
-  return ( ((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00) );
-}
-
-//Swap 32 bits by shifting to the right the first 2 bytes and by shifting to the left the last 2 bytes
-uint32_t swap32bits(const uint32_t val) {
-  return ( ((val >> 24) & 0x000000FF) | ((val >>  8) & 0x0000FF00) |
-      ((val <<  8) & 0x00FF0000) | ((val << 24) & 0xFF000000) );
-}
-
-//Swap a float, the union is necessary because of the representation of a float in memory in IEEE 754.
-float swapFloat(const float f) {
-  union {
-    float f;
-    unsigned char b[4];
-  } dat1, dat2;
-
-  dat1.f = f;
-  dat2.b[0] = dat1.b[3];
-  dat2.b[1] = dat1.b[2];
-  dat2.b[2] = dat1.b[1];
-  dat2.b[3] = dat1.b[0];
-  return dat2.f;
-}
-
-//Swap a double, the union is necessary because of the representation of a double in memory in IEEE 754.
-double swapDouble(const double d) {
-  union {
-    double d;
-    unsigned char b[8];
-  } dat1, dat2;
-
-  dat1.d = d;
-  dat2.b[0] = dat1.b[7];
-  dat2.b[1] = dat1.b[6];
-  dat2.b[2] = dat1.b[5];
-  dat2.b[3] = dat1.b[4];
-  dat2.b[4] = dat1.b[3];
-  dat2.b[5] = dat1.b[2];
-  dat2.b[6] = dat1.b[1];
-  dat2.b[7] = dat1.b[0];
-  return dat2.d;
-}
-
-//Read an unsigned short int stored in little endian
-void readBinaryUShortLE(std::ifstream &file, unsigned short &ushort_value) {
-  //Read
-  file.read((char *)(&ushort_value), sizeof(ushort_value));
-
-#ifdef VISP_BIG_ENDIAN
-  //Swap bytes order from little endian to big endian
-  ushort_value = swap16bits(ushort_value);
-#endif
-}
-
-//Read a short int stored in little endian
-void readBinaryShortLE(std::ifstream &file, short &short_value) {
-  //Read
-  file.read((char *)(&short_value), sizeof(short_value));
-
-#ifdef VISP_BIG_ENDIAN
-  //Swap bytes order from little endian to big endian
-  short_value = (short) swap16bits((uint16_t) short_value);
-#endif
-}
-
-//Read an unsigned int stored in little endian
-void readBinaryUIntLE(std::ifstream &file, unsigned int &uint_value) {
-  //Read
-  file.read((char *)(&uint_value), sizeof(uint_value));
-
-#ifdef VISP_BIG_ENDIAN
-  //Swap bytes order from little endian to big endian
-  if(sizeof(uint_value) == 4) {
-    uint_value = swap32bits(uint_value);
-  } else {
-    uint_value = swap16bits(uint_value);
+  ///*!
+  //   Convert a cv::DMatch to an index (extract the train index).
+  //
+  //   \param match : Point to convert in ViSP type.
+  //   \return The train index.
+  // */
+  inline vpImagePoint matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point3f> &pair) {
+    return vpImagePoint(pair.first.pt.y, pair.first.pt.x);
   }
-#endif
-}
 
-//Read an int stored in little endian
-void readBinaryIntLE(std::ifstream &file, int &int_value) {
-  //Read
-  file.read((char *)(&int_value), sizeof(int_value));
+  //Keep this function to know how to detect big endian with code
+  //bool isBigEndian() {
+  //  union {
+  //    uint32_t i;
+  //    char c[4];
+  //  } bint = { 0x01020304 };
+  //
+  //  return bint.c[0] == 1;
+  //}
 
-#ifdef VISP_BIG_ENDIAN
-  //Swap bytes order from little endian to big endian
-  if(sizeof(int_value) == 4) {
-    int_value = (int) swap32bits((uint32_t) int_value);
-  } else {
-    int_value = swap16bits((uint16_t) int_value);
+  //Swap 16 bits by shifting to the right the first byte and by shifting to the left the second byte
+  uint16_t swap16bits(const uint16_t val) {
+    return ( ((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00) );
   }
-#endif
-}
 
-//Read a float stored in little endian
-void readBinaryFloatLE(std::ifstream &file, float &float_value) {
-  //Read
-  file.read((char *)(&float_value), sizeof(float_value));
-
-#ifdef VISP_BIG_ENDIAN
-  //Swap bytes order from little endian to big endian
-  float_value = swapFloat(float_value);
-#endif
-}
-
-//Read a double stored in little endian
-void readBinaryDoubleLE(std::ifstream &file, double &double_value) {
-  //Read
-  file.read((char *)(&double_value), sizeof(double_value));
-
-#ifdef VISP_BIG_ENDIAN
-  //Swap bytes order from little endian to big endian
-  double_value = swapDouble(double_value);
-#endif
-}
-
-//Write an unsigned short in little endian
-void writeBinaryUShortLE(std::ofstream &file, const unsigned short ushort_value) {
-#ifdef VISP_BIG_ENDIAN
-  //Swap bytes order to little endian
-  uint16_t swap_ushort = swap16bits(ushort_value);
-  file.write((char *)(&swap_ushort), sizeof(swap_ushort));
-#else
-  file.write((char *)(&ushort_value), sizeof(ushort_value));
-#endif
-}
-
-//Write a short in little endian
-void writeBinaryShortLE(std::ofstream &file, const short short_value) {
-#ifdef VISP_BIG_ENDIAN
-  //Swap bytes order to little endian
-  uint16_t swap_short = swap16bits((uint16_t) short_value);
-  file.write((char *)(&swap_short), sizeof(swap_short));
-#else
-  file.write((char *)(&short_value), sizeof(short_value));
-#endif
-}
-
-//Write an unsigned int in little endian
-void writeBinaryUIntLE(std::ofstream &file, const unsigned int uint_value) {
-#ifdef VISP_BIG_ENDIAN
-  //Swap bytes order to little endian
-  //More info on data type: http://en.cppreference.com/w/cpp/language/types
-  if(sizeof(uint_value) == 4) {
-    uint32_t swap_uint = swap32bits(uint_value);
-    file.write((char *)(&swap_uint), sizeof(swap_uint));
-  } else {
-    uint16_t swap_uint = swap16bits(uint_value);
-    file.write((char *)(&swap_uint), sizeof(swap_uint));
+  //Swap 32 bits by shifting to the right the first 2 bytes and by shifting to the left the last 2 bytes
+  uint32_t swap32bits(const uint32_t val) {
+    return ( ((val >> 24) & 0x000000FF) | ((val >>  8) & 0x0000FF00) |
+             ((val <<  8) & 0x00FF0000) | ((val << 24) & 0xFF000000) );
   }
-#else
-  file.write((char *)(&uint_value), sizeof(uint_value));
-#endif
-}
 
-//Write an int in little endian
-void writeBinaryIntLE(std::ofstream &file, const int int_value) {
-#ifdef VISP_BIG_ENDIAN
-  //Swap bytes order to little endian
-  //More info on data type: http://en.cppreference.com/w/cpp/language/types
-  if(sizeof(int_value) == 4) {
-    uint32_t swap_int = swap32bits((uint32_t) int_value);
-    file.write((char *)(&swap_int), sizeof(swap_int));
-  } else {
-    uint16_t swap_int = swap16bits((uint16_t) int_value);
-    file.write((char *)(&swap_int), sizeof(swap_int));
+  //Swap a float, the union is necessary because of the representation of a float in memory in IEEE 754.
+  float swapFloat(const float f) {
+    union {
+      float f;
+      unsigned char b[4];
+    } dat1, dat2;
+
+    dat1.f = f;
+    dat2.b[0] = dat1.b[3];
+    dat2.b[1] = dat1.b[2];
+    dat2.b[2] = dat1.b[1];
+    dat2.b[3] = dat1.b[0];
+    return dat2.f;
   }
-#else
-  file.write((char *)(&int_value), sizeof(int_value));
-#endif
-}
 
-//Write a float in little endian
-void writeBinaryFloatLE(std::ofstream &file, const float float_value) {
-#ifdef VISP_BIG_ENDIAN
-  //Swap bytes order to little endian
-  float swap_float = swapFloat(float_value);
-  file.write((char *)(&swap_float), sizeof(swap_float));
-#else
-  file.write((char *)(&float_value), sizeof(float_value));
-#endif
-}
+  //Swap a double, the union is necessary because of the representation of a double in memory in IEEE 754.
+  double swapDouble(const double d) {
+    union {
+      double d;
+      unsigned char b[8];
+    } dat1, dat2;
 
-//Write a double in little endian
-void writeBinaryDoubleLE(std::ofstream &file, const double double_value) {
-#ifdef VISP_BIG_ENDIAN
-  //Swap bytes order to little endian
-  double swap_double = swapDouble(double_value);
-  file.write((char *)(&swap_double), sizeof(swap_double));
-#else
-  file.write((char *)(&double_value), sizeof(double_value));
-#endif
+    dat1.d = d;
+    dat2.b[0] = dat1.b[7];
+    dat2.b[1] = dat1.b[6];
+    dat2.b[2] = dat1.b[5];
+    dat2.b[3] = dat1.b[4];
+    dat2.b[4] = dat1.b[3];
+    dat2.b[5] = dat1.b[2];
+    dat2.b[6] = dat1.b[1];
+    dat2.b[7] = dat1.b[0];
+    return dat2.d;
+  }
+
+  //Read an unsigned short int stored in little endian
+  void readBinaryUShortLE(std::ifstream &file, unsigned short &ushort_value) {
+    //Read
+    file.read((char *)(&ushort_value), sizeof(ushort_value));
+
+  #ifdef VISP_BIG_ENDIAN
+    //Swap bytes order from little endian to big endian
+    ushort_value = swap16bits(ushort_value);
+  #endif
+  }
+
+  //Read a short int stored in little endian
+  void readBinaryShortLE(std::ifstream &file, short &short_value) {
+    //Read
+    file.read((char *)(&short_value), sizeof(short_value));
+
+  #ifdef VISP_BIG_ENDIAN
+    //Swap bytes order from little endian to big endian
+    short_value = (short) swap16bits((uint16_t) short_value);
+  #endif
+  }
+
+  //Read an unsigned int stored in little endian
+  void readBinaryUIntLE(std::ifstream &file, unsigned int &uint_value) {
+    //Read
+    file.read((char *)(&uint_value), sizeof(uint_value));
+
+  #ifdef VISP_BIG_ENDIAN
+    //Swap bytes order from little endian to big endian
+    if(sizeof(uint_value) == 4) {
+      uint_value = swap32bits(uint_value);
+    } else {
+      uint_value = swap16bits(uint_value);
+    }
+  #endif
+  }
+
+  //Read an int stored in little endian
+  void readBinaryIntLE(std::ifstream &file, int &int_value) {
+    //Read
+    file.read((char *)(&int_value), sizeof(int_value));
+
+  #ifdef VISP_BIG_ENDIAN
+    //Swap bytes order from little endian to big endian
+    if(sizeof(int_value) == 4) {
+      int_value = (int) swap32bits((uint32_t) int_value);
+    } else {
+      int_value = swap16bits((uint16_t) int_value);
+    }
+  #endif
+  }
+
+  //Read a float stored in little endian
+  void readBinaryFloatLE(std::ifstream &file, float &float_value) {
+    //Read
+    file.read((char *)(&float_value), sizeof(float_value));
+
+  #ifdef VISP_BIG_ENDIAN
+    //Swap bytes order from little endian to big endian
+    float_value = swapFloat(float_value);
+  #endif
+  }
+
+  //Read a double stored in little endian
+  void readBinaryDoubleLE(std::ifstream &file, double &double_value) {
+    //Read
+    file.read((char *)(&double_value), sizeof(double_value));
+
+  #ifdef VISP_BIG_ENDIAN
+    //Swap bytes order from little endian to big endian
+    double_value = swapDouble(double_value);
+  #endif
+  }
+
+  //Write an unsigned short in little endian
+  void writeBinaryUShortLE(std::ofstream &file, const unsigned short ushort_value) {
+  #ifdef VISP_BIG_ENDIAN
+    //Swap bytes order to little endian
+    uint16_t swap_ushort = swap16bits(ushort_value);
+    file.write((char *)(&swap_ushort), sizeof(swap_ushort));
+  #else
+    file.write((char *)(&ushort_value), sizeof(ushort_value));
+  #endif
+  }
+
+  //Write a short in little endian
+  void writeBinaryShortLE(std::ofstream &file, const short short_value) {
+  #ifdef VISP_BIG_ENDIAN
+    //Swap bytes order to little endian
+    uint16_t swap_short = swap16bits((uint16_t) short_value);
+    file.write((char *)(&swap_short), sizeof(swap_short));
+  #else
+    file.write((char *)(&short_value), sizeof(short_value));
+  #endif
+  }
+
+  //Write an unsigned int in little endian
+  void writeBinaryUIntLE(std::ofstream &file, const unsigned int uint_value) {
+  #ifdef VISP_BIG_ENDIAN
+    //Swap bytes order to little endian
+    //More info on data type: http://en.cppreference.com/w/cpp/language/types
+    if(sizeof(uint_value) == 4) {
+      uint32_t swap_uint = swap32bits(uint_value);
+      file.write((char *)(&swap_uint), sizeof(swap_uint));
+    } else {
+      uint16_t swap_uint = swap16bits(uint_value);
+      file.write((char *)(&swap_uint), sizeof(swap_uint));
+    }
+  #else
+    file.write((char *)(&uint_value), sizeof(uint_value));
+  #endif
+  }
+
+  //Write an int in little endian
+  void writeBinaryIntLE(std::ofstream &file, const int int_value) {
+  #ifdef VISP_BIG_ENDIAN
+    //Swap bytes order to little endian
+    //More info on data type: http://en.cppreference.com/w/cpp/language/types
+    if(sizeof(int_value) == 4) {
+      uint32_t swap_int = swap32bits((uint32_t) int_value);
+      file.write((char *)(&swap_int), sizeof(swap_int));
+    } else {
+      uint16_t swap_int = swap16bits((uint16_t) int_value);
+      file.write((char *)(&swap_int), sizeof(swap_int));
+    }
+  #else
+    file.write((char *)(&int_value), sizeof(int_value));
+  #endif
+  }
+
+  //Write a float in little endian
+  void writeBinaryFloatLE(std::ofstream &file, const float float_value) {
+  #ifdef VISP_BIG_ENDIAN
+    //Swap bytes order to little endian
+    float swap_float = swapFloat(float_value);
+    file.write((char *)(&swap_float), sizeof(swap_float));
+  #else
+    file.write((char *)(&float_value), sizeof(float_value));
+  #endif
+  }
+
+  //Write a double in little endian
+  void writeBinaryDoubleLE(std::ofstream &file, const double double_value) {
+  #ifdef VISP_BIG_ENDIAN
+    //Swap bytes order to little endian
+    double swap_double = swapDouble(double_value);
+    file.write((char *)(&swap_double), sizeof(swap_double));
+  #else
+    file.write((char *)(&double_value), sizeof(double_value));
+  #endif
+  }
 }
 
 /*!
-  Constructor to initialize specified detector, extractor, matcher and filtering method.
+  Constructor to initialize the specified detector, descriptor, matcher and filtering method.
+
+  \param detectorType : Type of feature detector.
+  \param descriptorType : Type of the descriptor extractor.
+  \param matcherName : Name of the matcher.
+  \param filterType : Filtering matching method chosen.
+ */
+vpKeyPoint::vpKeyPoint(const vpFeatureDetectorType &detectorType, const vpFeatureDescriptorType &descriptorType,
+                       const std::string &matcherName, const vpFilterMatchingType &filterType)
+  : m_computeCovariance(false), m_covarianceMatrix(), m_currentImageId(0), m_detectionMethod(detectionScore),
+    m_detectionScore(0.15), m_detectionThreshold(100.0), m_detectionTime(0.), m_detectorNames(),
+    m_detectors(), m_extractionTime(0.), m_extractorNames(), m_extractors(), m_filteredMatches(), m_filterType(filterType),
+    m_imageFormat(jpgImageFormat), m_knnMatches(), m_mapOfImageId(), m_mapOfImages(),
+    m_matcher(), m_matcherName(matcherName),
+    m_matches(), m_matchingFactorThreshold(2.0), m_matchingRatioThreshold(0.85), m_matchingTime(0.),
+    m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200), m_nbRansacMinInlierCount(100), m_objectFilteredPoints(),
+    m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
+    m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
+    m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
+    m_trainVpPoints(), m_useAffineDetection(false),
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
+    m_useBruteForceCrossCheck(true),
+#endif
+    m_useConsensusPercentage(false),
+    m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true), m_useSingleMatchFilter(true)
+{
+  initFeatureNames();
+
+  m_detectorNames.push_back(m_mapOfDetectorNames[detectorType]);
+  m_extractorNames.push_back(m_mapOfDescriptorNames[descriptorType]);
+
+  init();
+}
+
+/*!
+  Constructor to initialize the specified detector, descriptor, matcher and filtering method.
 
   \param detectorName : Name of the detector.
   \param extractorName : Name of the extractor.
@@ -340,17 +377,13 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
     m_trainVpPoints(), m_useAffineDetection(false),
-    #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     m_useBruteForceCrossCheck(true),
-    #endif
+#endif
     m_useConsensusPercentage(false),
     m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true), m_useSingleMatchFilter(true)
 {
-  //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
-  //So this is useful only for ratioDistanceThreshold method
-  if(filterType == ratioDistanceThreshold || filterType == stdAndRatioDistanceThreshold) {
-    m_useKnn = true;
-  }
+  initFeatureNames();
 
   m_detectorNames.push_back(detectorName);
   m_extractorNames.push_back(extractorName);
@@ -379,18 +412,13 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
     m_ransacConsensusPercentage(20.0), m_ransacInliers(), m_ransacOutliers(), m_ransacReprojectionError(6.0),
     m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(),
     m_trainVpPoints(), m_useAffineDetection(false),
-    #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     m_useBruteForceCrossCheck(true),
-    #endif
+#endif
     m_useConsensusPercentage(false),
     m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true), m_useSingleMatchFilter(true)
 {
-  //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
-  //So this is useful only for ratioDistanceThreshold method
-  if(filterType == ratioDistanceThreshold || filterType == stdAndRatioDistanceThreshold) {
-    m_useKnn = true;
-  }
-
+  initFeatureNames();
   init();
 }
 
@@ -1251,6 +1279,30 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<u
 
    \param I : Input image.
    \param keyPoints : Output list of the detected keypoints.
+   \param rectangle : Optional rectangle of the region of interest.
+ */
+void vpKeyPoint::detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, const vpRect &rectangle) {
+  double elapsedTime;
+  detect(I, keyPoints, elapsedTime, rectangle);
+}
+
+/*!
+   Detect keypoints in the image.
+
+   \param matImg : Input image.
+   \param keyPoints : Output list of the detected keypoints.
+   \param mask : Optional mask to detect only where mask[i][j] == 1.
+ */
+void vpKeyPoint::detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, const cv::Mat &mask) {
+  double elapsedTime;
+  detect(matImg, keyPoints, elapsedTime, mask);
+}
+
+/*!
+   Detect keypoints in the image.
+
+   \param I : Input image.
+   \param keyPoints : Output list of the detected keypoints.
    \param elapsedTime : Elapsed time.
    \param rectangle : Optional rectangle of the region of interest.
  */
@@ -1476,6 +1528,36 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
       vpDisplay::displayLine(IMatching, start, end, vpColor::green, lineThickness);
     }
   }
+}
+
+/*!
+   Extract the descriptors for each keypoints of the list.
+
+   \param I : Input image.
+   \param keyPoints : List of keypoints we want to extract their descriptors.
+   \param descriptors : Descriptors matrix with at each row the descriptors values for each keypoint.
+   \param trainPoints : Pointer to the list of 3D train points, when a keypoint cannot be extracted, we need to remove
+   the corresponding 3D point.
+ */
+void vpKeyPoint::extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
+                         std::vector<cv::Point3f> *trainPoints) {
+  double elapsedTime;
+  extract(I, keyPoints, descriptors, elapsedTime, trainPoints);
+}
+
+/*!
+   Extract the descriptors for each keypoints of the list.
+
+   \param matImg : Input image.
+   \param keyPoints : List of keypoints we want to extract their descriptors.
+   \param descriptors : Descriptors matrix with at each row the descriptors values for each keypoint.
+   \param trainPoints : Pointer to the list of 3D train points, when a keypoint cannot be extracted, we need to remove
+   the corresponding 3D point.
+ */
+void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
+                         std::vector<cv::Point3f> *trainPoints) {
+  double elapsedTime;
+  extract(matImg, keyPoints, descriptors, elapsedTime, trainPoints);
 }
 
 /*!
@@ -1810,9 +1892,15 @@ void vpKeyPoint::init() {
   //The following line must be called in order to use SIFT or SURF
   if (!cv::initModule_nonfree()) {
     std::cerr << "Cannot init module non free, SIFT or SURF cannot be used."
-        << std::endl;
+              << std::endl;
   }
 #endif
+
+  //Use k-nearest neighbors (knn) to retrieve the two best matches for a keypoint
+  //So this is useful only for ratioDistanceThreshold method
+  if(m_filterType == ratioDistanceThreshold || m_filterType == stdAndRatioDistanceThreshold) {
+    m_useKnn = true;
+  }
 
   initDetectors(m_detectorNames);
   initExtractors(m_extractorNames);
@@ -1831,7 +1919,7 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   if(m_detectors[detectorName] == NULL) {
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the detector: " << detectorName << " or it is not available in OpenCV version: "
-        << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
+           << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
     throw vpException(vpException::fatalError, ss_msg.str());
   }
 #else
@@ -1839,7 +1927,7 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   std::string pyramid = "Pyramid";
   std::size_t pos = detectorName.find(pyramid);
   bool usePyramid = false;
-  if(pos != std::string::npos) {
+  if (pos != std::string::npos) {
     detectorNameTmp = detectorName.substr(pos + pyramid.size());
     usePyramid = true;
   }
@@ -1847,120 +1935,130 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   if(detectorNameTmp == "SIFT") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
     cv::Ptr<cv::FeatureDetector> siftDetector = cv::xfeatures2d::SIFT::create();
-    if(!usePyramid) {
+    if (!usePyramid) {
       m_detectors[detectorNameTmp] = siftDetector;
     } else {
-      std::cerr << "Kind of non sense to use SIFT with Pyramid !" << std::endl;
+      std::cerr << "You should not use SIFT with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(siftDetector);
     }
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the detector: SIFT. OpenCV version  "
-        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
-  } else if(detectorNameTmp == "SURF") {
+  } else if (detectorNameTmp == "SURF") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
     cv::Ptr<cv::FeatureDetector> surfDetector = cv::xfeatures2d::SURF::create();
-    if(!usePyramid) {
+    if (!usePyramid) {
       m_detectors[detectorNameTmp] = surfDetector;
     } else {
-      std::cerr << "Kind of non sense to use SURF with Pyramid !" << std::endl;
+      std::cerr << "You should not use SURF with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(surfDetector);
     }
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the detector: SURF. OpenCV version  "
-        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
-  } else if(detectorNameTmp == "FAST") {
+  } else if (detectorNameTmp == "FAST") {
     cv::Ptr<cv::FeatureDetector> fastDetector = cv::FastFeatureDetector::create();
-    if(!usePyramid) {
+    if (!usePyramid) {
       m_detectors[detectorNameTmp] = fastDetector;
     } else {
-//      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::FastFeatureDetector::create());
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(fastDetector);
     }
-  } else if(detectorNameTmp == "MSER") {
+  } else if (detectorNameTmp == "MSER") {
     cv::Ptr<cv::FeatureDetector> fastDetector = cv::MSER::create();
-    if(!usePyramid) {
+    if (!usePyramid) {
       m_detectors[detectorNameTmp] = fastDetector;
     } else {
-//      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::MSER::create());
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(fastDetector);
     }
-  } else if(detectorNameTmp == "ORB") {
+  } else if (detectorNameTmp == "ORB") {
     cv::Ptr<cv::FeatureDetector> orbDetector = cv::ORB::create();
-    if(!usePyramid) {
+    if (!usePyramid) {
       m_detectors[detectorNameTmp] = orbDetector;
     } else {
-      std::cerr << "Kind of non sense to use ORB with Pyramid !" << std::endl;
+      std::cerr << "You should not use ORB with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(orbDetector);
     }
-  } else if(detectorNameTmp == "BRISK") {
+  } else if (detectorNameTmp == "BRISK") {
     cv::Ptr<cv::FeatureDetector> briskDetector = cv::BRISK::create();
-    if(!usePyramid) {
+    if (!usePyramid) {
       m_detectors[detectorNameTmp] = briskDetector;
     } else {
-      std::cerr << "Kind of non sense to use BRISK with Pyramid !" << std::endl;
+      std::cerr << "You should not use BRISK with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(briskDetector);
     }
-  } else if(detectorNameTmp == "KAZE") {
+  } else if (detectorNameTmp == "KAZE") {
     cv::Ptr<cv::FeatureDetector> kazeDetector = cv::KAZE::create();
-    if(!usePyramid) {
+    if (!usePyramid) {
       m_detectors[detectorNameTmp] = kazeDetector;
     } else {
-      std::cerr << "Kind of non sense to use KAZE with Pyramid !" << std::endl;
+      std::cerr << "You should not use KAZE with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(kazeDetector);
     }
-  } else if(detectorNameTmp == "AKAZE") {
+  } else if (detectorNameTmp == "AKAZE") {
     cv::Ptr<cv::FeatureDetector> akazeDetector = cv::AKAZE::create();
-    if(!usePyramid) {
+    if (!usePyramid) {
       m_detectors[detectorNameTmp] = akazeDetector;
     } else {
-      std::cerr << "Kind of non sense to use AKAZE with Pyramid !" << std::endl;
+      std::cerr << "You should not use AKAZE with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(akazeDetector);
     }
-  } else if(detectorNameTmp == "GFTT") {
+  } else if (detectorNameTmp == "GFTT") {
     cv::Ptr<cv::FeatureDetector> gfttDetector = cv::GFTTDetector::create();
-    if(!usePyramid) {
+    if (!usePyramid) {
       m_detectors[detectorNameTmp] = gfttDetector;
     } else {
-//      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::GFTTDetector::create());
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(gfttDetector);
     }
-  } else if(detectorNameTmp == "SimpleBlob") {
+  } else if (detectorNameTmp == "SimpleBlob") {
     cv::Ptr<cv::FeatureDetector> simpleBlobDetector = cv::SimpleBlobDetector::create();
-    if(!usePyramid) {
+    if (!usePyramid) {
       m_detectors[detectorNameTmp] = simpleBlobDetector;
     } else {
-//      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::SimpleBlobDetector::create());
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(simpleBlobDetector);
     }
-  } else if(detectorNameTmp == "STAR") {
+  } else if (detectorNameTmp == "STAR") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
     cv::Ptr<cv::FeatureDetector> starDetector = cv::xfeatures2d::StarDetector::create();
-    if(!usePyramid) {
+    if (!usePyramid) {
       m_detectors[detectorNameTmp] = starDetector;
     } else {
-//      m_detectors[detectorName] = new PyramidAdaptedFeatureDetector(cv::xfeatures2d::StarDetector::create());
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(starDetector);
     }
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the detector: STAR. OpenCV version  "
-        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
-  } else if(detectorNameTmp == "AGAST") {
+  } else if (detectorNameTmp == "AGAST") {
     cv::Ptr<cv::FeatureDetector> agastDetector = cv::AgastFeatureDetector::create();
     if(!usePyramid) {
       m_detectors[detectorNameTmp] = agastDetector;
     } else {
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(agastDetector);
     }
-  } else {
+  } else if (detectorNameTmp == "MSD") {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030100)
+    cv::Ptr<cv::FeatureDetector> msdDetector = cv::xfeatures2d::MSDDetector::create();
+    if(!usePyramid) {
+      m_detectors[detectorNameTmp] = msdDetector;
+    } else {
+      std::cerr << "You should not use MSD with Pyramid feature detection!" << std::endl;
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(msdDetector);
+    }
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Feature " << detectorName << " is not available in OpenCV version: "
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " (require >= OpenCV 3.1).";
+#endif
+  }
+  else {
     std::cerr << "The detector:" << detectorNameTmp << " is not available." << std::endl;
   }
 
@@ -1974,7 +2072,7 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
   if(!detectorInitialized) {
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the detector: " << detectorNameTmp << " or it is not available in OpenCV version: "
-        << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
+           << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
     throw vpException(vpException::fatalError, ss_msg.str());
   }
 
@@ -2007,7 +2105,7 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the extractor: SIFT. OpenCV version  "
-        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if(extractorName == "SURF") {
@@ -2017,7 +2115,7 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the extractor: SURF. OpenCV version  "
-        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if(extractorName == "ORB") {
@@ -2029,8 +2127,8 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
     m_extractors[extractorName] = cv::xfeatures2d::FREAK::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: FREAK. OpenCV version  "
-        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version "
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if(extractorName == "BRIEF") {
@@ -2038,7 +2136,7 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
     m_extractors[extractorName] = cv::xfeatures2d::BriefDescriptorExtractor::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: BRIEF. OpenCV version  "
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version "
         << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
@@ -2051,8 +2149,8 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
     m_extractors[extractorName] = cv::xfeatures2d::DAISY::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: DAISY. OpenCV version  "
-        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version "
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if(extractorName == "LATCH") {
@@ -2060,20 +2158,55 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
     m_extractors[extractorName] = cv::xfeatures2d::LATCH::create();
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: LATCH. OpenCV version  "
-        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version "
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
   } else if(extractorName == "LUCID") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    m_extractors[extractorName] = cv::xfeatures2d::LUCID::create(1, 2);
+//    m_extractors[extractorName] = cv::xfeatures2d::LUCID::create(1, 2);
+    //Not possible currently, need a color image
+    throw vpException(vpException::badValue, "Not possible currently as it needs a color image.");
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the extractor: LUCID. OpenCV version  "
-        << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version "
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
 #endif
-  } else {
+  } else if (extractorName == "VGG") {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
+  #if defined (VISP_HAVE_OPENCV_XFEATURES2D)
+      m_extractors[extractorName] = cv::xfeatures2d::VGG::create();
+  #else
+      std::stringstream ss_msg;
+      ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version "
+             << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+      throw vpException(vpException::fatalError, ss_msg.str());
+  #endif
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version "
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " but requires at least OpenCV 3.2.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
+  } else if (extractorName == "BoostDesc") {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
+  #if defined (VISP_HAVE_OPENCV_XFEATURES2D)
+    m_extractors[extractorName] = cv::xfeatures2d::BoostDesc::create();
+  #else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version "
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+  #endif
+#else
+    std::stringstream ss_msg;
+    ss_msg << "Fail to initialize the extractor: " << extractorName << ". OpenCV version "
+           << std::hex << VISP_HAVE_OPENCV_VERSION << " but requires at least OpenCV 3.2.";
+    throw vpException(vpException::fatalError, ss_msg.str());
+#endif
+  }
+  else {
     std::cerr << "The extractor:" << extractorName << " is not available." << std::endl;
   }
 #endif
@@ -2081,7 +2214,7 @@ void vpKeyPoint::initExtractor(const std::string &extractorName) {
   if(m_extractors[extractorName] == NULL) {
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the extractor: " << extractorName << " or it is not available in OpenCV version: "
-        << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
+           << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
     throw vpException(vpException::fatalError, ss_msg.str());
   }
 
@@ -2116,6 +2249,58 @@ void vpKeyPoint::initExtractors(const std::vector<std::string> &extractorNames) 
       }
     }
   }
+}
+
+void vpKeyPoint::initFeatureNames() {
+  //Create map enum to string
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
+    m_mapOfDetectorNames[DETECTOR_FAST] = "FAST";
+    m_mapOfDetectorNames[DETECTOR_MSER] = "MSER";
+    m_mapOfDetectorNames[DETECTOR_ORB] = "ORB";
+    m_mapOfDetectorNames[DETECTOR_BRISK] = "BRISK";
+    m_mapOfDetectorNames[DETECTOR_GFTT] = "GFTT";
+    m_mapOfDetectorNames[DETECTOR_SimpleBlob] = "SimpleBlob";
+  #if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined (VISP_HAVE_OPENCV_XFEATURES2D))
+    m_mapOfDetectorNames[DETECTOR_STAR] = "STAR";
+  #endif
+  #if (VISP_HAVE_OPENCV_NONFREE) || defined (VISP_HAVE_OPENCV_XFEATURES2D)
+    m_mapOfDetectorNames[DETECTOR_SIFT] = "SIFT";
+    m_mapOfDetectorNames[DETECTOR_SURF] = "SURF";
+  #endif
+  #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    m_mapOfDetectorNames[DETECTOR_KAZE] = "KAZE";
+    m_mapOfDetectorNames[DETECTOR_AKAZE] = "AKAZE";
+    m_mapOfDetectorNames[DETECTOR_AGAST] = "AGAST";
+  #endif
+  #if (VISP_HAVE_OPENCV_VERSION >= 0x030100)
+    m_mapOfDetectorNames[DETECTOR_MSD] = "MSD";
+  #endif
+#endif
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
+    m_mapOfDescriptorNames[DESCRIPTOR_ORB] = "ORB";
+    m_mapOfDescriptorNames[DESCRIPTOR_BRISK] = "BRISK";
+  #if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined (VISP_HAVE_OPENCV_XFEATURES2D))
+    m_mapOfDescriptorNames[DESCRIPTOR_FREAK] = "FREAK";
+    m_mapOfDescriptorNames[DESCRIPTOR_BRIEF] = "BRIEF";
+#endif
+  #if (VISP_HAVE_OPENCV_NONFREE) || defined (VISP_HAVE_OPENCV_XFEATURES2D)
+    m_mapOfDescriptorNames[DESCRIPTOR_SIFT] = "SIFT";
+    m_mapOfDescriptorNames[DESCRIPTOR_SURF] = "SURF";
+  #endif
+  #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    m_mapOfDescriptorNames[DESCRIPTOR_KAZE] = "KAZE";
+    m_mapOfDescriptorNames[DESCRIPTOR_AKAZE] = "AKAZE";
+    #if defined (VISP_HAVE_OPENCV_XFEATURES2D)
+    m_mapOfDescriptorNames[DESCRIPTOR_DAISY] = "DAISY";
+    m_mapOfDescriptorNames[DESCRIPTOR_LATCH] = "LATCH";
+    #endif
+  #endif
+  #if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
+    m_mapOfDescriptorNames[DESCRIPTOR_VGG] = "VGG";
+    m_mapOfDescriptorNames[DESCRIPTOR_BoostDesc] = "BoostDesc";
+  #endif
+#endif
 }
 
 /*!
@@ -2965,6 +3150,23 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I,
   vpConvert::convertFromOpenCV(m_filteredMatches, matchedReferencePoints);
 
   return static_cast<unsigned int>(m_filteredMatches.size());
+}
+
+/*!
+   Match keypoints detected in the image with those built in the reference list and compute the pose.
+
+   \param I : Input image
+   \param cam : Camera parameters
+   \param cMo : Homogeneous matrix between the object frame and the camera frame
+   \param func : Function pointer to filter the pose in Ransac pose estimation, if we want to eliminate
+   the poses which do not respect some criterion
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
+   \return True if the matching and the pose estimation are OK, false otherwise
+ */
+bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                            bool (*func)(vpHomogeneousMatrix *), const vpRect& rectangle) {
+  double error, elapsedTime;
+  return matchPoint(I, cam, cMo, error, elapsedTime, func, rectangle);
 }
 
 /*!

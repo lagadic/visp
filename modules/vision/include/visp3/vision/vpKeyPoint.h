@@ -216,20 +216,20 @@ class VISP_EXPORT vpKeyPoint : public vpBasicKeyPoint {
 public:
 
   /*! Predefined filtering method identifier. */
-  typedef enum {
+  enum vpFilterMatchingType {
     constantFactorDistanceThreshold,  /*!< Keep all the points below a constant factor threshold. */
     stdDistanceThreshold,             /*!< Keep all the points below a minimal distance + the standard deviation. */
     ratioDistanceThreshold,           /*!< Keep all the points enough discriminated (the ratio distance between the two best matches is below the threshold). */
     stdAndRatioDistanceThreshold,     /*!< Keep all the points which fall with the two conditions above. */
     noFilterMatching                  /*!< No filtering. */
-  } vpFilterMatchingType;
+  };
 
   /*! Predefined detection method identifier. */
-  typedef enum {
+  enum vpDetectionMethodType {
     detectionThreshold,  /*!< The object is present if the average of the descriptor distances is below the threshold. */
     detectionScore       /*!< Same condition than the previous but with a formula taking into account the number of matches,
                               the object is present if the score is above the threshold. */
-  } vpDetectionMethodType;
+  };
 
   /*! Predefined constant for training image format. */
   typedef enum {
@@ -239,7 +239,66 @@ public:
     pgmImageFormat   /*!< Save training images in PGM format. */
   } vpImageFormatType;
 
+  /*! Predefined constant for feature detection type. */
+  enum vpFeatureDetectorType {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
+    DETECTOR_FAST,
+    DETECTOR_MSER,
+    DETECTOR_ORB,
+    DETECTOR_BRISK,
+    DETECTOR_GFTT,
+    DETECTOR_SimpleBlob,
+  #if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined (VISP_HAVE_OPENCV_XFEATURES2D))
+    DETECTOR_STAR,
+  #endif
+  #if (VISP_HAVE_OPENCV_NONFREE) || defined (VISP_HAVE_OPENCV_XFEATURES2D)
+    DETECTOR_SIFT,
+    DETECTOR_SURF,
+  #endif
+  #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    DETECTOR_KAZE,
+    DETECTOR_AKAZE,
+    DETECTOR_AGAST,
+  #endif
+  #if (VISP_HAVE_OPENCV_VERSION >= 0x030100)
+    DETECTOR_MSD,
+  #endif
+#endif
+    DETECTOR_TYPE_SIZE
+  };
 
+  /*! Predefined constant for descriptor extraction type. */
+  enum vpFeatureDescriptorType {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
+    DESCRIPTOR_ORB,
+    DESCRIPTOR_BRISK,
+  #if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined (VISP_HAVE_OPENCV_XFEATURES2D))
+    DESCRIPTOR_FREAK,
+    DESCRIPTOR_BRIEF,
+#endif
+  #if (VISP_HAVE_OPENCV_NONFREE) || defined (VISP_HAVE_OPENCV_XFEATURES2D)
+    DESCRIPTOR_SIFT,
+    DESCRIPTOR_SURF,
+  #endif
+  #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+    DESCRIPTOR_KAZE,
+    DESCRIPTOR_AKAZE,
+    #if defined (VISP_HAVE_OPENCV_XFEATURES2D)
+    DESCRIPTOR_DAISY,
+    DESCRIPTOR_LATCH,
+    #endif
+  #endif
+  #if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
+    DESCRIPTOR_VGG,
+    DESCRIPTOR_BoostDesc,
+  #endif
+#endif
+    DESCRIPTOR_TYPE_SIZE
+  };
+
+
+  vpKeyPoint(const vpFeatureDetectorType &detectorType, const vpFeatureDescriptorType &descriptorType,
+             const std::string &matcherName="BruteForce-Hamming", const vpFilterMatchingType &filterType=ratioDistanceThreshold);
   vpKeyPoint(const std::string &detectorName="ORB", const std::string &extractorName="ORB",
              const std::string &matcherName="BruteForce-Hamming", const vpFilterMatchingType &filterType=ratioDistanceThreshold);
   vpKeyPoint(const std::vector<std::string> &detectorNames, const std::vector<std::string> &extractorNames,
@@ -257,43 +316,45 @@ public:
                       const bool append=false, const int class_id=-1);
 
   static void compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi,
-      const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, cv::Point3f &point);
+                        const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, cv::Point3f &point);
 
   static void compute3D(const vpImagePoint &candidate, const std::vector<vpPoint> &roi,
-      const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, vpPoint &point);
+                        const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, vpPoint &point);
 
   static void compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      std::vector<cv::KeyPoint> &candidates, const std::vector<vpPolygon> &polygons,
-      const std::vector<std::vector<vpPoint> > &roisPt, std::vector<cv::Point3f> &points, cv::Mat *descriptors=NULL);
+                                           std::vector<cv::KeyPoint> &candidates, const std::vector<vpPolygon> &polygons,
+                                           const std::vector<std::vector<vpPoint> > &roisPt, std::vector<cv::Point3f> &points, cv::Mat *descriptors=NULL);
 
   static void compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      std::vector<vpImagePoint> &candidates, const std::vector<vpPolygon> &polygons,
-      const std::vector<std::vector<vpPoint> > &roisPt, std::vector<vpPoint> &points, cv::Mat *descriptors=NULL);
+                                           std::vector<vpImagePoint> &candidates, const std::vector<vpPolygon> &polygons,
+                                           const std::vector<std::vector<vpPoint> > &roisPt, std::vector<vpPoint> &points, cv::Mat *descriptors=NULL);
 
   static void compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      std::vector<cv::KeyPoint> &candidates, const std::vector<vpCylinder> &cylinders,
-      const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
-      std::vector<cv::Point3f> &points, cv::Mat *descriptors=NULL);
+                                            std::vector<cv::KeyPoint> &candidates, const std::vector<vpCylinder> &cylinders,
+                                            const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
+                                            std::vector<cv::Point3f> &points, cv::Mat *descriptors=NULL);
 
   static void compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      std::vector<vpImagePoint> &candidates, const std::vector<vpCylinder> &cylinders,
-      const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
-      std::vector<vpPoint> &points, cv::Mat *descriptors=NULL);
+                                            std::vector<vpImagePoint> &candidates, const std::vector<vpCylinder> &cylinders,
+                                            const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
+                                            std::vector<vpPoint> &points, cv::Mat *descriptors=NULL);
 
   bool computePose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
-               const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
-               double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
+                   const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
+                   double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
 
   bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
-               std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
+                   std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
 
   bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
-               std::vector<vpPoint> &inliers, std::vector<unsigned int> &inlierIndex,
-               double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
+                   std::vector<vpPoint> &inliers, std::vector<unsigned int> &inlierIndex,
+                   double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL);
 
   void createImageMatching(vpImage<unsigned char> &IRef, vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching);
   void createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching);
 
+  void detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, const vpRect& rectangle=vpRect());
+  void detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, const cv::Mat &mask=cv::Mat());
   void detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
               const vpRect& rectangle=vpRect());
   void detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
@@ -313,6 +374,8 @@ public:
                        const std::vector<vpImagePoint> &ransacInliers=std::vector<vpImagePoint>(), unsigned int crossSize=3,
                        unsigned int lineThickness=1);
 
+  void extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors, std::vector<cv::Point3f> *trainPoints=NULL);
+  void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors, std::vector<cv::Point3f> *trainPoints=NULL);
   void extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
                double &elapsedTime, std::vector<cv::Point3f> *trainPoints=NULL);
   void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
@@ -352,6 +415,27 @@ public:
 
   /*!
     Get the detector pointer.
+    \param type : Type of the detector.
+
+    \return The detector or NULL if the type passed in parameter does not exist.
+  */
+  inline cv::Ptr<cv::FeatureDetector> getDetector(const vpFeatureDetectorType &type) const {
+    std::map<vpFeatureDetectorType, std::string>::const_iterator it_name = m_mapOfDetectorNames.find(type);
+    if (it_name == m_mapOfDetectorNames.end()) {
+      std::cerr << "Internal problem with the feature type and the corresponding name!" << std::endl;
+    }
+
+    std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator findDetector = m_detectors.find(it_name->second);
+    if(findDetector != m_detectors.end()) {
+      return findDetector->second;
+    }
+
+    std::cerr << "Cannot find: " << it_name->second << std::endl;
+    return cv::Ptr<cv::FeatureDetector>();
+  }
+
+  /*!
+    Get the detector pointer.
     \param name : Name of the detector.
 
     \return The detector or NULL if the name passed in parameter does not exist.
@@ -362,7 +446,15 @@ public:
       return findDetector->second;
     }
 
+    std::cerr << "Cannot find: " << name << std::endl;
     return cv::Ptr<cv::FeatureDetector>();
+  }
+
+  /*!
+    Get the feature detector name associated to the type.
+  */
+  inline std::map<vpFeatureDetectorType, std::string> getDetectorNames() const {
+    return m_mapOfDetectorNames;
   }
 
   /*!
@@ -376,9 +468,30 @@ public:
 
   /*!
     Get the extractor pointer.
-    \param name : Name of the extractor.
+    \param type : Type of the descriptor extractor.
 
-    \return The extractor or NULL if the name passed in parameter does not exist.
+    \return The descriptor extractor or NULL if the name passed in parameter does not exist.
+  */
+  inline cv::Ptr<cv::DescriptorExtractor> getExtractor(const vpFeatureDescriptorType &type) const {
+    std::map<vpFeatureDescriptorType, std::string>::const_iterator it_name = m_mapOfDescriptorNames.find(type);
+    if (it_name == m_mapOfDescriptorNames.end()) {
+      std::cerr << "Internal problem with the feature type and the corresponding name!" << std::endl;
+    }
+
+    std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator findExtractor = m_extractors.find(it_name->second);
+    if(findExtractor != m_extractors.end()) {
+      return findExtractor->second;
+    }
+
+    std::cerr << "Cannot find: " << it_name->second << std::endl;
+    return cv::Ptr<cv::DescriptorExtractor>();
+  }
+
+  /*!
+    Get the extractor pointer.
+    \param name : Name of the descriptor extractor.
+
+    \return The descriptor extractor or NULL if the name passed in parameter does not exist.
   */
   inline cv::Ptr<cv::DescriptorExtractor> getExtractor(const std::string &name) const {
     std::map<std::string, cv::Ptr<cv::DescriptorExtractor> >::const_iterator findExtractor = m_extractors.find(name);
@@ -386,7 +499,15 @@ public:
       return findExtractor->second;
     }
 
+    std::cerr << "Cannot find: " << name << std::endl;
     return cv::Ptr<cv::DescriptorExtractor>();
+  }
+
+  /*!
+    Get the feature descriptor extractor name associated to the type.
+  */
+  inline std::map<vpFeatureDescriptorType, std::string> getExtractorNames() const {
+    return m_mapOfDescriptorNames;
   }
 
   /*!
@@ -434,8 +555,8 @@ public:
     std::vector<std::pair<cv::KeyPoint, cv::KeyPoint> > matchQueryToTrainKeyPoints(m_filteredMatches.size());
     for (size_t i = 0; i < m_filteredMatches.size(); i++) {
       matchQueryToTrainKeyPoints.push_back(std::pair<cv::KeyPoint, cv::KeyPoint>(
-                                            m_queryFilteredKeyPoints[(size_t) m_filteredMatches[i].queryIdx],
-                                            m_trainKeyPoints[(size_t) m_filteredMatches[i].trainIdx]));
+                                           m_queryFilteredKeyPoints[(size_t) m_filteredMatches[i].queryIdx],
+                                           m_trainKeyPoints[(size_t) m_filteredMatches[i].trainIdx]));
     }
     return matchQueryToTrainKeyPoints;
   }
@@ -527,6 +648,8 @@ public:
   unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect& rectangle);
 
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+                  bool (*func)(vpHomogeneousMatrix *)=NULL, const vpRect& rectangle=vpRect());
+  bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                   double &error, double &elapsedTime, bool (*func)(vpHomogeneousMatrix *)=NULL,
                   const vpRect& rectangle=vpRect());
 
@@ -536,8 +659,8 @@ public:
                            double *detectionScore=NULL, const vpRect& rectangle=vpRect());
 
   bool matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  double &error, double &elapsedTime, vpRect &boundingBox, vpImagePoint &centerOfGravity,
-                  bool (*func)(vpHomogeneousMatrix *)=NULL, const vpRect& rectangle=vpRect());
+                           double &error, double &elapsedTime, vpRect &boundingBox, vpImagePoint &centerOfGravity,
+                           bool (*func)(vpHomogeneousMatrix *)=NULL, const vpRect& rectangle=vpRect());
 
   void reset();
 
@@ -564,6 +687,18 @@ public:
    */
   inline void setDetectionMethod(const vpDetectionMethodType &method) {
     m_detectionMethod = method;
+  }
+
+  /*!
+     Set and initialize a detector.
+
+     \param detectorType : Type of the detector.
+   */
+  inline void setDetector(const vpFeatureDetectorType &detectorType) {
+    m_detectorNames.clear();
+    m_detectorNames.push_back(m_mapOfDetectorNames[detectorType]);
+    m_detectors.clear();
+    initDetector(m_mapOfDetectorNames[detectorType]);
   }
 
   /*!
@@ -607,7 +742,19 @@ public:
   }
 
   /*!
-     Set and initialize an extractor denominated by his name \p extractorName.
+     Set and initialize a descriptor extractor.
+
+     \param extractorType : Type of the descriptor extractor.
+   */
+  inline void setExtractor(const vpFeatureDescriptorType &extractorType) {
+    m_extractorNames.clear();
+    m_extractorNames.push_back(m_mapOfDescriptorNames[extractorType]);
+    m_extractors.clear();
+    initExtractor(m_mapOfDescriptorNames[extractorType]);
+  }
+
+  /*!
+     Set and initialize a descriptor extractor denominated by his name \p extractorName.
 
      \param extractorName : Name of the extractor.
    */
@@ -901,6 +1048,10 @@ private:
   vpImageFormatType m_imageFormat;
   //! List of k-nearest neighbors for each detected keypoints (if the method chosen is based upon on knn).
   std::vector<std::vector<cv::DMatch> > m_knnMatches;
+  //! Map descriptor enum type to string.
+  std::map<vpFeatureDescriptorType, std::string> m_mapOfDescriptorNames;
+  //! Map detector enum type to string.
+  std::map<vpFeatureDetectorType, std::string> m_mapOfDetectorNames;
   //! Map of image id to know to which training image is related a training keypoints.
   std::map<int, int> m_mapOfImageId;
   //! Map of images to have access to the image buffer according to his image id.
@@ -987,6 +1138,8 @@ private:
 
   void initExtractor(const std::string &extractorName);
   void initExtractors(const std::vector<std::string> &extractorNames);
+
+  void initFeatureNames();
 
   inline size_t myKeypointHash(const cv::KeyPoint &kp) {
     size_t _Val = 2166136261U, scale = 16777619U;
