@@ -88,7 +88,14 @@ public:
       LAGRANGE_VIRTUAL_VS
     } vpPoseMethodType;
 
-  unsigned int npt ;       //!< number of point used in pose computation
+  enum FILTERING_RANSAC_FLAGS {
+    PREFILTER_DUPLICATE_POINTS        = 0x1,  /*!< Remove duplicate points before the RANSAC. */
+    PREFILTER_ALMOST_DUPLICATE_POINTS = 0x2,  /*!< Remove almost duplicate points (up to a tolerance) before the RANSAC. */
+    PREFILTER_DEGENERATE_POINTS       = 0x4,  /*!< Remove degenerate points (same 3D or 2D coordinates) before the RANSAC. */
+    CHECK_DEGENERATE_POINTS           = 0x8   /*!< Check for degenerate points during the RANSAC. */
+  };
+
+  unsigned int npt ;             //!< number of point used in pose computation
   std::list<vpPoint> listP ;     //!< array of point (use here class vpPoint)
 
   double residual ;     //!< compute the residual in meter
@@ -111,7 +118,70 @@ private:
   std::vector<unsigned int> ransacInlierIndex;
   double ransacThreshold;
   double distanceToPlaneForCoplanarityTest;
-  bool removeRansacDegeneratePoints;
+  int ransacFlags;
+  std::vector<vpPoint> listOfPoints;
+  bool useParallelRansac;
+  int nbParallelRansacThreads;
+
+
+  //For parallel RANSAC
+  class RansacFunctor {
+  public:
+    RansacFunctor(const vpHomogeneousMatrix &cMo_,
+                  const unsigned int ransacNbInlierConsensus_, const int ransacMaxTrials_,
+                  const double ransacThreshold_, const unsigned int initial_seed_,
+                  const bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
+                  bool (*func_)(vpHomogeneousMatrix *)) :
+      m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
+      m_func(func_), m_initial_seed(initial_seed_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
+      m_ransacMaxTrials(ransacMaxTrials_), m_ransacNbInlierConsensus(ransacNbInlierConsensus_), m_ransacThreshold(ransacThreshold_) {
+    }
+
+    RansacFunctor() :
+      m_best_consensus(),m_checkDegeneratePoints(false), m_cMo(), m_foundSolution(false), m_func(NULL),
+      m_initial_seed(0), m_listOfUniquePoints(), m_nbInliers(0), m_ransacMaxTrials(), m_ransacNbInlierConsensus(),
+      m_ransacThreshold() {
+    }
+
+    void operator()() {
+      m_foundSolution = poseRansacImpl();
+    }
+
+    // Access the return value.
+    bool getResult() const {
+      return m_foundSolution;
+    }
+
+    std::vector<unsigned int> getBestConsensus() const {
+      return m_best_consensus;
+    }
+
+    vpHomogeneousMatrix getEstimatedPose() const {
+      return m_cMo;
+    }
+
+    unsigned int getNbInliers() const {
+      return m_nbInliers;
+    }
+
+  private:
+    std::vector<unsigned int> m_best_consensus;
+    bool m_checkDegeneratePoints;
+    vpHomogeneousMatrix m_cMo;
+    bool m_foundSolution;
+    bool (*m_func)(vpHomogeneousMatrix *);
+    unsigned int m_initial_seed;
+    std::vector<vpPoint> m_listOfUniquePoints;
+    unsigned int m_nbInliers;
+    int m_ransacMaxTrials;
+    unsigned int m_ransacNbInlierConsensus;
+    double m_ransacThreshold;
+
+    bool poseRansacImpl();
+  };
+
+  static vpThread::Return poseRansacImplThread(vpThread::Args arg);
+
 
 protected:
   double computeResidualDementhon(const vpHomogeneousMatrix &cMo) ;
@@ -126,6 +196,8 @@ public:
   virtual ~vpPose() ;
   //! Add a new point in this array
   void addPoint(const vpPoint& P) ;
+  //! Add a list of points
+  void addPoints(const std::vector<vpPoint>& lP);
   //! suppress all the point in the array of point
   void clearPoint() ;
 
@@ -199,23 +271,53 @@ public:
     
     return covarianceMatrix; 
   }
-  
-  /*!
-    Get the flag if potential degenerate points must be removed or not with the RANSAC pose estimation method.
 
-    \return True if potential degenerate points must be removed, false otherwise.
+  /*!
+    Set RANSAC filtering flags.
+
+    \param flags : Flags to use, e.g. \e setRansacFilterFlags(PREFILTER_DUPLICATE_POINTS + CHECK_DEGENERATE_POINTS).
+    \sa FILTERING_RANSAC_FLAGS
   */
-  bool getRemoveRansacDegeneratePoints() const {
-    return removeRansacDegeneratePoints;
+  inline void setRansacFilterFlags(const int flags) {
+    ransacFlags = flags;
   }
 
   /*!
-    Set if potential degenerate points must be removed or not with the RANSAC pose estimation method.
+    Get the number of threads for the parallel RANSAC implementation.
 
-    \param remove : True if potential degenerate points must be removed, false otherwise.
+    \sa setNbParallelRansacThreads
   */
-  void setRemoveRansacDegeneratePoints(const bool remove) {
-    removeRansacDegeneratePoints = remove;
+  inline int getNbParallelRansacThreads() const {
+    return nbParallelRansacThreads;
+  }
+
+  /*!
+    Set the number of threads for the parallel RANSAC implementation.
+
+    \note You have to enable the parallel version with setUseParallelRansac().
+    If the number of threads is 0, the number of threads to use is automatically determined with OpenMP.
+    \sa setUseParallelRansac
+  */
+  inline void setNbParallelRansacThreads(const int nb) {
+    nbParallelRansacThreads = nb;
+  }
+
+  /*!
+    \return True if the parallel RANSAC version should be used.
+
+    \sa setUseParallelRansac
+  */
+  inline bool getUseParallelRansac() const {
+    return useParallelRansac;
+  }
+
+  /*!
+    Set if parallel RANSAC version should be used or not.
+
+    \note Need Pthread.
+  */
+  inline void setUseParallelRansac(const bool use) {
+    useParallelRansac = use;
   }
 
   /*!
@@ -224,13 +326,7 @@ public:
     \return The vector of points.
   */
   std::vector<vpPoint> getPoints() const {
-    std::vector<vpPoint> vectorOfPoints(listP.size());
-
-    size_t i = 0;
-    for(std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it, i++) {
-      vectorOfPoints[i] = *it;
-    }
-
+    std::vector<vpPoint> vectorOfPoints(listP.begin(), listP.end());
     return vectorOfPoints;
   }
 
@@ -244,6 +340,9 @@ public:
                                   vpPoint &p3,vpPoint &p4,
                                   double lx, vpCameraParameters & cam,
                                   vpHomogeneousMatrix & cMo) ;
+
+  static int computeRansacIterations(double probability, double epsilon,
+                                     const int sampleSize=4, int maxIterations=2000);
                      
   static void findMatch(std::vector<vpPoint> &p2D, 
                      std::vector<vpPoint> &p3D, 

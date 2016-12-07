@@ -66,7 +66,7 @@ vpPose::init()
   std::cout << "begin vpPose::Init() " << std::endl ;
 #endif
   npt = 0 ;
-  listP.clear() ;
+  listP.clear();
   c3d.clear();
 
   lambda = 0.25 ;
@@ -88,12 +88,13 @@ vpPose::init()
 
 }
 
-/*! Defaukt constructor. */
+/*! Default constructor. */
 vpPose::vpPose()
   : npt(0), listP(), residual(0), lambda(0.25), vvsIterMax(200), c3d(),
     computeCovariance(false), covarianceMatrix(),
     ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
-    distanceToPlaneForCoplanarityTest(0.001), removeRansacDegeneratePoints(false)
+    distanceToPlaneForCoplanarityTest(0.001), ransacFlags(PREFILTER_DUPLICATE_POINTS),
+    listOfPoints(), useParallelRansac(false), nbParallelRansacThreads(0) //0 means that OpenMP is used to get the number of CPU threads
 {
 #if (DEBUG_LEVEL1)
   std::cout << "begin vpPose::vpPose() " << std::endl ;
@@ -116,7 +117,7 @@ vpPose::~vpPose()
   std::cout << "begin vpPose::~vpPose() " << std::endl ;
 #endif
 
-  listP.clear() ;
+  listP.clear();
 
 #if (DEBUG_LEVEL1)
   std::cout << "end vpPose::~vpPose() " << std::endl ;
@@ -132,7 +133,7 @@ vpPose::clearPoint()
   std::cout << "begin vpPose::ClearPoint() " << std::endl ;
 #endif
 
-  listP.clear() ;
+  listP.clear();
   npt = 0 ;
 
 #if (DEBUG_LEVEL1)
@@ -141,9 +142,9 @@ vpPose::clearPoint()
 }
 
 /*!
-\brief  Add a new point in the array of point.
-\param  newP : New point to add  in the array of point.
-\warning Considering a point from the class vpPoint, X, Y, and Z will
+  Add a new point in the array of points.
+  \param  newP : New point to add  in the array of point.
+  \warning Considering a point from the class vpPoint, X, Y, and Z will
 represent the 3D information and x and y its 2D information.
 These 5 fields must be initialized to be used within this library
 */
@@ -156,13 +157,27 @@ vpPose::addPoint(const vpPoint& newP)
 #endif
 
   listP.push_back(newP);
-  npt ++ ;
+  listOfPoints.push_back(newP);
+  npt++ ;
 
 #if (DEBUG_LEVEL1)
   std::cout << "end vpPose::AddPoint(Dot) " << std::endl ;
 #endif
 }
 
+/*!
+  Add (append) a list of points in the array of points.
+  \param  lP : List of points to add (append).
+  \warning Considering a point from the class vpPoint, X, Y, and Z will
+represent the 3D information and x and y its 2D information.
+These 5 fields must be initialized to be used within this library
+*/
+void
+vpPose::addPoints(const std::vector<vpPoint> &lP) {
+  listP.insert(listP.end(), lP.begin(), lP.end());
+  listOfPoints.insert(listOfPoints.end(), lP.begin(), lP.end());
+  npt = (unsigned int) listP.size();
+}
 
 void 
 vpPose::setDistanceToPlaneForCoplanarityTest(double d)
