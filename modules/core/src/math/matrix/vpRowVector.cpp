@@ -1118,7 +1118,7 @@ std::ostream & vpRowVector::cppPrint(std::ostream & os, const std::string &matri
   }
   std::cout << std::endl;
   return os;
-};
+}
 
 /*!
   Print/save a row vector in csv format.
@@ -1153,7 +1153,7 @@ std::ostream & vpRowVector::csvPrint(std::ostream & os) const
   }
   os << std::endl;
   return os;
-};
+}
 
 /*!
   Print using Maple syntax, to copy/paste in Maple later.
@@ -1188,7 +1188,7 @@ std::ostream & vpRowVector::maplePrint(std::ostream & os) const
   os << "]," << std::endl;
   os << "])" << std::endl;
   return os;
-};
+}
 
 /*!
   Print using Matlab syntax, to copy/paste in Matlab later.
@@ -1228,4 +1228,4 @@ std::ostream & vpRowVector::matlabPrint(std::ostream & os) const
   }
   os << "]" << std::endl;
   return os;
-};
+}
