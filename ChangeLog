@@ -75,6 +75,8 @@ ViSP 3.0.1 (in development)
     . [#91] vpMeLine::computeRhoTheta should throw exception
     . [#92] Is there any interface to resize display window?
     . [#95] setEllipsoidBadPointsPercentage in vpDot2 not completly being taken into account
+	. [#104] vpMomentAlpha: Results are not repeatable
+	. [#105] vpMomentAlpha: Question about symmetric judgement based on centered moments
     . [#106] Freeze when more than one GDI display is opened with mingw
 
 ----------------------------------------------

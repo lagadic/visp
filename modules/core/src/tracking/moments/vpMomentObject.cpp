@@ -292,13 +292,12 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned cha
   {
     std::vector<double> curvals(order*order);
     curvals.assign(order*order,0.);
-    unsigned int i_, j_;
 
     #pragma omp for nowait//automatically organize loop counter between threads
     for(int i=0;i<(int)image.getCols();i++){
       for(int j=0;j<(int)image.getRows();j++){
-        i_ = static_cast<unsigned int>(i);
-        j_ = static_cast<unsigned int>(j);
+        unsigned int i_ = static_cast<unsigned int>(i);
+        unsigned int j_ = static_cast<unsigned int>(j);
         if(image[j_][i_]>threshold){
           double x=0;
           double y=0;
@@ -323,10 +322,9 @@ void vpMomentObject::fromImage(const vpImage<unsigned char>& image, unsigned cha
     }
 
     #pragma omp barrier
-
     for(unsigned int k=0;k<order;k++){
       for(unsigned int l=0;l<order-k;l++){
-        //#pragma omp atomic // Removed since causes a build issue with msvc14 2015
+        #pragma omp atomic
         values[k*order+l]+= curvals[k*order+l];
       }
     }
