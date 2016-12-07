@@ -53,14 +53,14 @@ vpMomentAlpha::vpMomentAlpha() : isRef(true), symmetric(false), ref(), alphaRef(
   Common constructor. Initializes alpha moment as a non-reference alpha. A default-constructed alpha moment must be used as a reference for other this alpha.
   A reference alpha is class harbouring an alpha value computed for a \f$[0..\pi]\f$ portion of the circle. Not having a reference alpha will prevent you
   from doing more than 180deg rotation with moments.
-  \param ref_ : vector of 3rd order centered moments corresponding to the reference alpha in the following order: \f$\mu_{03},\mu_{12},\mu_{21},\mu_{30}\f$.
+  \param ref_ : vector of 3rd order centered moments corresponding to the reference alpha in the following order: \f$\mu_{30},\mu_{21},\mu_{12},\mu_{03}\f$.
   \param alpha_ref : value of the reference alpha.
 */
 vpMomentAlpha::vpMomentAlpha(std::vector<double>& ref_, double alpha_ref)
   : vpMoment(),isRef(false),symmetric(false),ref(ref_),alphaRef(alpha_ref)
 {
   for (std::vector<double>::iterator it = ref_.begin(); it!=ref_.end(); ++it)
-    if (*it<=1e-4)
+    if (std::fabs(*it)<=1e-4)
       symmetric = true;
 
   values.resize(1);
