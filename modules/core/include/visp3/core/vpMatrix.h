@@ -104,14 +104,14 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /*!
     Basic constructor of a matrix of double. Number of columns and rows are zero.
   */
-  vpMatrix() : vpArray2D<double>(0, 0) {};
+  vpMatrix() : vpArray2D<double>(0, 0) {}
   /*!
     Constructor that initialize a matrix of double with 0.
 
     \param r : Matrix number of rows.
     \param c : Matrix number of columns.
   */
-  vpMatrix(unsigned int r, unsigned int c) : vpArray2D<double>(r, c) {};
+  vpMatrix(unsigned int r, unsigned int c) : vpArray2D<double>(r, c) {}
   /*!
     Constructor that initialize a matrix of double with \e val.
 
@@ -119,7 +119,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
     \param c : Matrix number of columns.
     \param val : Each element of the matrix is set to \e val.
   */
-  vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) {};
+  vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) {}
   vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c,
            unsigned int nrows, unsigned int ncols) ;
   /*!
@@ -133,10 +133,10 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
      vpMatrix M(R);
      \endcode
    */
-  vpMatrix(const vpArray2D<double>& A) : vpArray2D<double>(A) {};
+  vpMatrix(const vpArray2D<double>& A) : vpArray2D<double>(A) {}
 
   //! Destructor (Memory de-allocation)
-  virtual ~vpMatrix() {};
+  virtual ~vpMatrix() {}
 
   /*!
     Removes all elements from the matrix (which are destroyed),
@@ -579,19 +579,19 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /*!
      \deprecated Only provided for compatibilty with ViSP previous releases. This function does nothing.
    */
-  vp_deprecated void init() { };
+  vp_deprecated void init() { }
   /*!
      \deprecated You should rather use stack(const vpMatrix &A)
    */
-  vp_deprecated void stackMatrices(const vpMatrix &A) { stack(A); };
+  vp_deprecated void stackMatrices(const vpMatrix &A) { stack(A); }
   /*!
      \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix &B)
    */
-  vp_deprecated static vpMatrix stackMatrices(const vpMatrix &A, const vpMatrix &B) { return vpMatrix::stack(A, B); };
+  vp_deprecated static vpMatrix stackMatrices(const vpMatrix &A, const vpMatrix &B) { return vpMatrix::stack(A, B); }
   /*!
      \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
    */
-  vp_deprecated static void stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C) { vpMatrix::stack(A, B, C); };
+  vp_deprecated static void stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C) { vpMatrix::stack(A, B, C); }
   /*!
      \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix &B)
    */

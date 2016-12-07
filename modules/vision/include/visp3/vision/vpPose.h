@@ -55,6 +55,7 @@
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #  include <visp3/core/vpList.h>
 #endif
+#include <visp3/core/vpThread.h>
 
 #include <math.h>
 #include <list>
