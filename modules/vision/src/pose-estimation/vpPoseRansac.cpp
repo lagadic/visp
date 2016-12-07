@@ -506,13 +506,13 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
 
 
   bool executeParallelVersion = useParallelRansac;
-  int nbThreads = 1;
 
-  if (executeParallelVersion) {
 #if defined (VISP_HAVE_PTHREAD) || defined (_WIN32)
 #  define VP_THREAD_OK
+  int nbThreads = 1;
 #endif
 
+  if (executeParallelVersion) {
 #if !defined (VP_THREAD_OK) && !defined (VISP_HAVE_OPENMP)
     executeParallelVersion = false;
     std::cerr << "Pthread or WIN32 API or OpenMP is needed to use the parallel RANSAC version." << std::endl;
@@ -738,7 +738,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
 
       nbInliers = best_consensus.size();
     }
-#elif defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#elif defined(VP_THREAD_OK)
     std::vector<vpThread *> threads((size_t) nbThreads);
     std::vector<RansacFunctor> ransac_func((size_t) nbThreads);
 
