@@ -382,11 +382,13 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
   return foundSolution;
 }
 
+#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
 vpThread::Return vpPose::poseRansacImplThread(vpThread::Args arg) {
   vpPose::RansacFunctor* f = reinterpret_cast<vpPose::RansacFunctor*>(arg);
   (*f)();
   return 0;
 }
+#endif
 
 /*!
   Compute the pose using the Ransac approach.
@@ -736,7 +738,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
 
       nbInliers = best_consensus.size();
     }
-#else
+#elif defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
     std::vector<vpThread *> threads((size_t) nbThreads);
     std::vector<RansacFunctor> ransac_func((size_t) nbThreads);
 

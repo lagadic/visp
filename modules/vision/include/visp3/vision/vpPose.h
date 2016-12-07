@@ -181,7 +181,9 @@ private:
     bool poseRansacImpl();
   };
 
+#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
   static vpThread::Return poseRansacImplThread(vpThread::Args arg);
+#endif
 
 
 protected:
