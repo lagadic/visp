@@ -648,7 +648,7 @@ void vpPoseFeatures::addSpecificFeature(RetType (*fct_ptr)(ArgsFunc ...), Args &
   
   totalSize++;
   if(featureSpecific_list.size() > maxSize)
-    maxSize = featureSpecific_list.size();
+    maxSize = (unsigned int)featureSpecific_list.size();
 }
 
 /*!
@@ -727,7 +727,7 @@ void vpPoseFeatures::addSpecificFeature(ObjType *obj, RetType (ObjType::*fct_ptr
   
   totalSize++;
   if(featureSpecific_list.size() > maxSize)
-    maxSize = featureSpecific_list.size();
+    maxSize = (unsigned int)featureSpecific_list.size();
 }
 #endif
 
