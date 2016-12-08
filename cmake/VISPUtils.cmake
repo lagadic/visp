@@ -201,6 +201,9 @@ macro(VP_OPTION variable package quiet description advanced value)
     #list(GET ${package} 0 ${__package})
     string(TOLOWER "${__first_package}" __package_lower)
     string(TOUPPER "${__first_package}" __package_upper) # useful for Qt -> QT_FOUND
+
+    # make var <package>_DIR advanced
+    mark_as_advanced(${__first_package}_DIR)
   endif()
 
   # set VISP_HAVE_<package>_FOUND="no"
