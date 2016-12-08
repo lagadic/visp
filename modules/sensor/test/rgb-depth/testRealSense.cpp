@@ -238,8 +238,10 @@ int main()
     std::cerr << e.what() << std::endl;
   }
 
-#else
+#elif !defined(VISP_HAVE_REALSENSE)
   std::cout << "Install RealSense SDK to make this test working" << std::endl;
+#elif !defined(VISP_HAVE_CPP11_COMPATIBILITY)
+  std::cout << "Build ViSP with c++11 compiler flag (cmake -DUSE_CPP11=ON) to make this test working" << std::endl;
 #endif
   return 0;
 }
