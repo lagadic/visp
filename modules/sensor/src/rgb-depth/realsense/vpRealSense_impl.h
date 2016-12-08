@@ -35,8 +35,11 @@
  *
  *****************************************************************************/
 
-#include <librealsense/rs.hpp>
 #include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_REALSENSE)
+
+#include <librealsense/rs.hpp>
 #include <visp3/core/vpImage.h>
 
 template <class Type>
@@ -353,4 +356,5 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map <rs::s
     pointcloud->clear();
   }
 }
+#endif
 #endif
