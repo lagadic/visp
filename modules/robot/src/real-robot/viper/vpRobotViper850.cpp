@@ -2190,6 +2190,7 @@ bool
       }
     }
     else {
+      fclose(fd);
       return (false);		/* fin fichier 	*/
     }
 

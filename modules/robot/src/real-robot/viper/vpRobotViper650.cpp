@@ -2158,6 +2158,7 @@ bool vpRobotViper650::readPosFile(const std::string &filename, vpColVector &q)
       }
     }
     else {
+      fclose(fd);
       return (false);		/* fin fichier 	*/
     }
 

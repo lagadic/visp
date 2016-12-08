@@ -100,6 +100,8 @@ void vp_rs_get_native_frame_data_impl(const rs::device *m_device, const std::map
 
       case rs::format::disparity16:
         std::cout << "Stream: disparity16 not tested!" << std::endl;
+        memcpy( data, (unsigned char *) m_device->get_frame_data(stream), size*2 );
+        break;
       case rs::format::y16:
       case rs::format::z16:
         memcpy( data, (unsigned char *) m_device->get_frame_data(stream), size*2 );
@@ -114,6 +116,8 @@ void vp_rs_get_native_frame_data_impl(const rs::device *m_device, const std::map
       //32 bits
       case rs::format::yuyv:
         std::cout << "Stream: yuyv not tested!" << std::endl;
+        memcpy( data, (unsigned char *) m_device->get_frame_data(stream), size*4 );
+        break;
       case rs::format::bgra8:
       case rs::format::rgba8:
         memcpy( data, (unsigned char *) m_device->get_frame_data(stream), size*4 );

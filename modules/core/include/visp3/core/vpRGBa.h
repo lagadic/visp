@@ -130,6 +130,9 @@ public:
 
   vpRGBa & operator=(const unsigned char &v) ;
   vpRGBa & operator=(const vpRGBa &v) ;
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  vpRGBa & operator=(const vpRGBa &&v);
+#endif
   vpRGBa & operator=(const vpColVector &v) ;
   bool operator==(const vpRGBa &v);
   bool operator!=(const vpRGBa &v);

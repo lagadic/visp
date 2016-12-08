@@ -648,30 +648,29 @@ vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char>& I, vpC
     if((*it)->isTracked()){
       cy = *it;
       cy->computeInteractionMatrixError(cMo, I);
-      double fac = 1.0;
 
       std::list<vpMeSite>::const_iterator itCyl1;
       std::list<vpMeSite>::const_iterator itCyl2;
       if ((cy->meline1 != NULL || cy->meline2 != NULL)){
         itCyl1 = cy->meline1->getMeList().begin();
         itCyl2 = cy->meline2->getMeList().begin();
-      }
 
-      for(unsigned int i=0 ; i < cy->nbFeature ; i++){
-        factor[n+i] = fac;
-        vpMeSite site;
-        if(i<cy->nbFeaturel1) {
-          site= *itCyl1;
-          ++itCyl1;
+        double fac = 1.0;
+        for(unsigned int i=0 ; i < cy->nbFeature ; i++){
+          factor[n+i] = fac;
+          vpMeSite site;
+          if(i<cy->nbFeaturel1) {
+            site= *itCyl1;
+            ++itCyl1;
+          }
+          else{
+            site= *itCyl2;
+            ++itCyl2;
+          }
+          if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
         }
-        else{
-          site= *itCyl2;
-          ++itCyl2;
-        }
-        if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
+        n+= cy->nbFeature ;
       }
-
-      n+= cy->nbFeature ;
     }
   }
 
@@ -679,21 +678,20 @@ vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char>& I, vpC
     if((*it)->isTracked()){
       ci = *it;
       ci->computeInteractionMatrixError(cMo);
-      double fac = 1.0;
 
       std::list<vpMeSite>::const_iterator itCir;
       if (ci->meEllipse != NULL) {
         itCir = ci->meEllipse->getMeList().begin();
-      }
+        double fac = 1.0;
 
-      for(unsigned int i=0 ; i < ci->nbFeature ; i++){
-        factor[n+i] = fac;
-        vpMeSite site = *itCir;
-        if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
-        ++itCir;
+        for(unsigned int i=0 ; i < ci->nbFeature ; i++){
+          factor[n+i] = fac;
+          vpMeSite site = *itCir;
+          if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
+          ++itCir;
+        }
+        n+= ci->nbFeature ;
       }
-
-      n+= ci->nbFeature ;
     }
   }
 }
@@ -1812,20 +1810,22 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
       double wmean = 0 ;
       for(unsigned int a = 0 ; a < l->meline.size() ; a++)
       {
-        std::list<vpMeSite>::iterator itListLine;
-        if (l->nbFeature[a] > 0) itListLine = l->meline[a]->getMeList().begin();
+        if (l->nbFeature[a] > 0) {
+          std::list<vpMeSite>::iterator itListLine;
+          itListLine = l->meline[a]->getMeList().begin();
 
-        for (unsigned int i=0 ; i < l->nbFeature[a] ; i++){
-          wmean += m_w[n+indexLine] ;
-          vpMeSite p = *itListLine;
-          if (m_w[n+indexLine] < 0.5){
-            p.setState(vpMeSite::M_ESTIMATOR);
+          for (unsigned int i=0 ; i < l->nbFeature[a] ; i++){
+            wmean += m_w[n+indexLine] ;
+            vpMeSite p = *itListLine;
+            if (m_w[n+indexLine] < 0.5){
+              p.setState(vpMeSite::M_ESTIMATOR);
 
-            *itListLine = p;
+              *itListLine = p;
+            }
+
+            ++itListLine;
+            indexLine++;
           }
-
-          ++itListLine;
-          indexLine++;
         }
       }
       n+= l->nbFeatureTotal ;
@@ -1854,19 +1854,18 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
       if (cy->nbFeature > 0){
         itListCyl1 = cy->meline1->getMeList().begin();
         itListCyl2 = cy->meline2->getMeList().begin();
-      }
 
-      wmean = 0;
-      for(unsigned int i=0 ; i < cy->nbFeaturel1 ; i++){
-        wmean += m_w[n+i] ;
-        vpMeSite p = *itListCyl1;
-        if (m_w[n+i] < 0.5){
-          p.setState(vpMeSite::M_ESTIMATOR);
+        for(unsigned int i=0 ; i < cy->nbFeaturel1 ; i++){
+          wmean += m_w[n+i] ;
+          vpMeSite p = *itListCyl1;
+          if (m_w[n+i] < 0.5){
+            p.setState(vpMeSite::M_ESTIMATOR);
 
-          *itListCyl1 = p;
+            *itListCyl1 = p;
+          }
+
+          ++itListCyl1;
         }
-
-        ++itListCyl1;
       }
 
       if (cy->nbFeaturel1!=0)

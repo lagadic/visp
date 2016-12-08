@@ -95,12 +95,10 @@ public:
   //!Default Constructor
   vpRobust(unsigned int n_data);
   vpRobust();
-  
+  vpRobust(const vpRobust &other);
+
   //!Destructor
   virtual ~vpRobust(){};
-
-  //!Resize containers for sort methods
-  void resize(unsigned int n_data);
   
   //! Compute the weights according a residue vector and a PsiFunction
   void MEstimator(const vpRobustEstimatorType method,
@@ -113,8 +111,13 @@ public:
 		 const vpColVector& all_residues,
 		 vpColVector &weights);
 
-  //! Simult Mestimator 
-  vpColVector simultMEstimator(vpColVector &residues);
+  vpRobust & operator=(const vpRobust &other);
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  vpRobust & operator=(const vpRobust &&other);
+#endif
+
+  //!Resize containers for sort methods
+  void resize(unsigned int n_data);
 
   //! Set iteration 
   void setIteration(const unsigned int iter){it=iter;}
@@ -126,6 +129,9 @@ public:
   inline void setThreshold(const double noise_threshold) {
     NoiseThreshold=noise_threshold;
   }
+
+  //! Simult Mestimator
+  vpColVector simultMEstimator(vpColVector &residues);
 
 //public :
 //double residualMedian ;

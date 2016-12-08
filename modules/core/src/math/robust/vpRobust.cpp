@@ -77,14 +77,54 @@ vpRobust::vpRobust(unsigned int n_data)
 }
 
 /*!
-  \brief Constructor.
-
+  Default constructor.
 */
 vpRobust::vpRobust()
   : normres(), sorted_normres(), sorted_residues(), NoiseThreshold(0.0017), sig_prev(0), it(0), swap(0), size(0)
 {
-  vpCDEBUG(2) << "vpRobust constructor with no argument reached" << std::endl;
 }
+
+/*!
+  Copy constructor.
+*/
+vpRobust::vpRobust(const vpRobust &other)
+{
+  *this = other;
+}
+
+/*!
+  Copy operator.
+ */
+vpRobust & vpRobust::operator=(const vpRobust &other)
+{
+  normres = other.normres;
+  sorted_normres = other.sorted_normres;
+  sorted_residues = other.sorted_residues;
+  NoiseThreshold = other.NoiseThreshold;
+  sig_prev = other.sig_prev;
+  it = other.it;
+  swap = other.swap;
+  size = other.size;
+  return *this;
+}
+
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+/*!
+  Move operator.
+ */
+vpRobust & vpRobust::operator=(const vpRobust &&other)
+{
+  normres = std::move(other.normres);
+  sorted_normres = std::move(other.sorted_normres);
+  sorted_residues = std::move(other.sorted_residues);
+  NoiseThreshold = std::move(other.NoiseThreshold);
+  sig_prev = std::move(other.sig_prev);
+  it = std::move(other.it);
+  swap = std::move(other.swap);
+  size = std::move(other.size);
+  return *this;
+}
+#endif
 
 /*!
   \brief Resize containers.
