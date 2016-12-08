@@ -351,7 +351,7 @@ public:
   vpColVector secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq, const vpColVector & jointMin,
                                                const vpColVector & jointMax, const double &rho=0.1, const double &rho1=0.3, const double &lambda_tune=0.7) const;
 
-  void setCameraDoF(const vpColVector& v);
+  void setCameraDoF(const vpColVector& dof);
 
   /*!
     Set a variable which enables to compute the interaction matrix at each iteration.

@@ -2045,7 +2045,6 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
     {
       // Correction de l'image de facon a liberer les niveaux de gris
       // ROUGE, VERT, BLEU, JAUNE
-      unsigned char nivGris;
       unsigned char nivGrisMax = 255 - vpColor::id_unknown;
       if (m_scale == 1) {
         unsigned char *src_8 = ( unsigned char * ) I.bitmap;
@@ -2061,7 +2060,7 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
           unsigned int j = 0;
           while (j < w)
           {
-            nivGris = *(src_8+j);
+            unsigned char nivGris = *(src_8+j);
             if ( nivGris > nivGrisMax )
               *(dst_8+j) = 255;
             else
@@ -2102,7 +2101,6 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
     }
     case 16:
     {
-      unsigned short *dst_16 = ( unsigned short* ) Ximage->data;
       unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
       if(m_scale == 1) {
         for ( unsigned int i = (unsigned int)iP.get_i(); i < (unsigned int)(iP.get_i()+h) ; i++ ) {
@@ -2124,7 +2122,7 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
 
         for (int i=i_min; i<i_max; i++) {
           unsigned char  *dst_8 =  (unsigned char*) Ximage->data + i * bytes_per_line;
-          dst_16 = (unsigned short *) dst_8;
+          unsigned short *dst_16 = (unsigned short *) dst_8;
           for (int j=j_min; j<j_max; j++) {
             * ( dst_16 + j ) = ( unsigned short ) colortable[I[i*m_scale][j*m_scale]] ;
           }
@@ -2140,11 +2138,10 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
     case 24:
     default:
     {
-      unsigned char *dst_32 = ( unsigned char* ) Ximage->data;
       if (m_scale == 1) {
         unsigned int iwidth = I.getWidth();
         unsigned char *src_8 = I.bitmap + (int)(iP.get_i()*iwidth+ iP.get_j());
-        dst_32 = dst_32 + (int)(iP.get_i()*4*m_width+ iP.get_j()*4);
+        unsigned char *dst_32 = ( unsigned char* ) Ximage->data + (int)(iP.get_i()*4*m_width+ iP.get_j()*4);
 
         unsigned int i = 0;
         while (i < h)

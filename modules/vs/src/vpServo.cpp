@@ -244,13 +244,14 @@ void vpServo::setServo(const vpServoType &servo_type)
   Set a 6-dim column vector representing the degrees of freedom that are controlled
   in the camera frame. When set to 1, all the 6 dof are controlled.
 
+  \param dof : Degrees of freedom to control in the camera frame.
   Below we give the correspondance between the index of the vector and the considered dof:
-  - v[0] = 1 if translation along X is controled, 0 otherwise;
-  - v[1] = 1 if translation along Y is controled, 0 otherwise;
-  - v[2] = 1 if translation along Z is controled, 0 otherwise;
-  - v[3] = 1 if rotation along X is controled, 0 otherwise;
-  - v[4] = 1 if rotation along Y is controled, 0 otherwise;
-  - v[5] = 1 if rotation along Z is controled, 0 otherwise;
+  - dof[0] = 1 if translation along X is controled, 0 otherwise;
+  - dof[1] = 1 if translation along Y is controled, 0 otherwise;
+  - dof[2] = 1 if translation along Z is controled, 0 otherwise;
+  - dof[3] = 1 if rotation along X is controled, 0 otherwise;
+  - dof[4] = 1 if rotation along Y is controled, 0 otherwise;
+  - dof[5] = 1 if rotation along Z is controled, 0 otherwise;
 
   The following example shows how to use this function to control only wx, wy like a pan/tilt:
   \code
@@ -283,13 +284,13 @@ int main()
   \endcode
 */
 void
-vpServo::setCameraDoF(const vpColVector& v)
+vpServo::setCameraDoF(const vpColVector& dof)
 {
-  if(v.getRows() == 6)
+  if(dof.size() == 6)
   {
     iscJcIdentity = true;
     for(unsigned int i = 0 ; i < 6 ; i++) {
-      if(std::fabs(v[i]) > std::numeric_limits<double>::epsilon()){
+      if(std::fabs(dof[i]) > std::numeric_limits<double>::epsilon()){
         cJc[i][i] = 1.0;
       }
       else{
