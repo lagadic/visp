@@ -142,7 +142,7 @@ namespace {
 
 int main() {
   unsigned int nb_threads = 4;
-  unsigned int size = 10000007;
+  unsigned int size = 1000007;
   srand((unsigned int) time(NULL));
 
   vpColVector v1(size), v2(size);
