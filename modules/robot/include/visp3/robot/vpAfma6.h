@@ -76,20 +76,20 @@
 class VISP_EXPORT vpAfma6
 {
  public:
-#ifdef VISP_HAVE_ACCESS_TO_NAS
+#ifdef VISP_HAVE_AFMA6_DATA
   //! File where constant parameters in relation with the robot are stored:
   //! joint max, min, coupling factor between 4 ant 5 joint, distance between 5
   //! and 6 joint, tranformation eMc between end-effector and camera frame.
-  static const char * const CONST_AFMA6_FILENAME;
-  static const char * const CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_GRIPPER_WITHOUT_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
-  static const char * const CONST_CAMERA_AFMA6_FILENAME;
+  static const std::string CONST_AFMA6_FILENAME;
+  static const std::string CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_GRIPPER_WITHOUT_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
+  static const std::string CONST_CAMERA_AFMA6_FILENAME;
 #endif
   /*!
     Name of the camera attached to the CCMOP tool (vpAfma6ToolType::TOOL_CCMOP).
