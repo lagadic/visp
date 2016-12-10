@@ -221,6 +221,13 @@ if(VIPER850_DATA_FOUND)
 else()
   set(VISP_VIPER850_DATA_PATH "")
 endif()
+# for Viper650 calibration data
+VP_CHECK_PACKAGE(Viper650_data)
+if(VIPER650_DATA_FOUND)
+  set(VISP_VIPER650_DATA_PATH ${VIPER650_DATA_PATH})
+else()
+  set(VISP_VIPER650_DATA_PATH "")
+endif()
 
 find_host_program(XRANDR xrandr)
 
