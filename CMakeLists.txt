@@ -214,6 +214,13 @@ VP_CHECK_PACKAGE(OpenGL)
 # for pioneer
 VP_CHECK_PACKAGE(RT)
 VP_CHECK_PACKAGE(DL)
+# for Viper850 calibration data
+VP_CHECK_PACKAGE(Viper850_data)
+if(VIPER850_DATA_FOUND)
+  set(VISP_VIPER850_DATA_PATH ${VIPER850_DATA_PATH})
+else()
+  set(VISP_VIPER850_DATA_PATH "")
+endif()
 
 find_host_program(XRANDR xrandr)
 
