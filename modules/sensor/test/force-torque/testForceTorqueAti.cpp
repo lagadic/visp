@@ -157,10 +157,10 @@ int main(int argc, char** argv)
 {
 #if defined(VISP_HAVE_ATIDAQ) && defined(VISP_HAVE_COMEDI)
 
-#ifdef VISP_HAVE_ACCESS_TO_NAS
+#ifdef VISP_HAVE_VIPER850_DATA
   (void)argc;
   (void)argv;
-  std::string calibfile = "/udd/fspindle/robot/Viper850/Viper850-code/ati/FT17824.cal";
+  std::string calibfile = std::string(VISP_VIPER850_DATA_PATH) + std::string("/ati/FT17824.cal");
   if (! vpIoTools::checkFilename(calibfile)) {
     std::cout << "ATI F/T calib file \"" << calibfile << "\" doesn't exist";
     return 0;

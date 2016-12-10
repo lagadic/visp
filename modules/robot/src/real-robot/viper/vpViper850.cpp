@@ -51,73 +51,35 @@
 static const char *opt_viper850[] = {"CAMERA", "eMc_ROT_XYZ","eMc_TRANS_XYZ",
                                      NULL};
 
-#ifdef VISP_HAVE_ACCESS_TO_NAS
-const char * const vpViper850::CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME
-#if defined(_WIN32)
-= "Z:/robot/Viper850/current/include/const_eMc_MarlinF033C_without_distortion_Viper850.cnf";
-#else
-= "/udd/fspindle/robot/Viper850/current/include/const_eMc_MarlinF033C_without_distortion_Viper850.cnf";
-#endif
+#ifdef VISP_HAVE_VIPER850_DATA
+const std::string vpViper850::CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME =
+    std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_eMc_MarlinF033C_without_distortion_Viper850.cnf");
 
-const char * const vpViper850::CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME
-#if defined(_WIN32) 
-= "Z:/robot/Viper850/current/include/const_eMc_MarlinF033C_with_distortion_Viper850.cnf";
-#else
-= "/udd/fspindle/robot/Viper850/current/include/const_eMc_MarlinF033C_with_distortion_Viper850.cnf";
-#endif
+const std::string vpViper850::CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME =
+    std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_eMc_MarlinF033C_with_distortion_Viper850.cnf");
 
-const char * const vpViper850::CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME
-#if defined(_WIN32)
-= "Z:/robot/Viper850/current/include/const_eMc_PTGreyFlea2_without_distortion_Viper850.cnf";
-#else
-= "/udd/fspindle/robot/Viper850/current/include/const_eMc_PTGreyFlea2_without_distortion_Viper850.cnf";
-#endif
+const std::string vpViper850::CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME =
+    std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_eMc_PTGreyFlea2_without_distortion_Viper850.cnf");
 
-const char * const vpViper850::CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME
-#if defined(_WIN32) 
-= "Z:/robot/Viper850/current/include/const_eMc_PTGreyFlea2_with_distortion_Viper850.cnf";
-#else
-= "/udd/fspindle/robot/Viper850/current/include/const_eMc_PTGreyFlea2_with_distortion_Viper850.cnf";
-#endif
+const std::string vpViper850::CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME =
+    std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_eMc_PTGreyFlea2_with_distortion_Viper850.cnf");
 
-const char * const vpViper850::CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME
-#if defined(_WIN32)
-= "Z:/robot/Viper850/current/include/const_eMc_schunk_gripper_without_distortion_Viper850.cnf";
-#else
-= "/udd/fspindle/robot/Viper850/current/include/const_eMc_schunk_gripper_without_distortion_Viper850.cnf";
-#endif
+const std::string vpViper850::CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME =
+    std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_eMc_schunk_gripper_without_distortion_Viper850.cnf");
 
-const char * const vpViper850::CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME
-#if defined(_WIN32)
-= "Z:/robot/Viper850/current/include/const_eMc_schunk_gripper_with_distortion_Viper850.cnf";
-#else
-= "/udd/fspindle/robot/Viper850/current/include/const_eMc_schunk_gripper_with_distortion_Viper850.cnf";
-#endif
+const std::string vpViper850::CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME =
+    std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_eMc_schunk_gripper_with_distortion_Viper850.cnf");
 
-const char * const vpViper850::CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME
-#if defined(_WIN32)
-= "Z:/robot/Viper850/current/include/const_eMc_generic_without_distortion_Viper850.cnf";
-#else
-= "/udd/fspindle/robot/Viper850/current/include/const_eMc_generic_without_distortion_Viper850.cnf";
-#endif
+const std::string vpViper850::CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME =
+    std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_eMc_generic_without_distortion_Viper850.cnf");
 
-const char * const vpViper850::CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME
-#if defined(_WIN32)
-= "Z:/robot/Viper850/current/include/const_eMc_generic_with_distortion_Viper850.cnf";
-#else
-= "/udd/fspindle/robot/Viper850/current/include/const_eMc_generic_with_distortion_Viper850.cnf";
-#endif
+const std::string vpViper850::CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME =
+    std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_eMc_generic_with_distortion_Viper850.cnf");
 
+const std::string vpViper850::CONST_CAMERA_FILENAME =
+    std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_camera_Viper850.xml");
 
-const char * const vpViper850::CONST_CAMERA_FILENAME
-#if defined(_WIN32) 
-= "Z:/robot/Viper850/current/include/const_camera_Viper850.xml";
-#else
-= "/udd/fspindle/robot/Viper850/current/include/const_camera_Viper850.xml";
-#endif
-
-
-#endif // VISP_HAVE_ACCESS_TO_NAS
+#endif // VISP_HAVE_VIPER850_DATA
 
 const char * const vpViper850::CONST_MARLIN_F033C_CAMERA_NAME = "Marlin-F033C-12mm";
 const char * const vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME = "PTGrey-Flea2-6mm";
@@ -201,7 +163,7 @@ vpViper850::init (const std::string &camera_extrinsic_parameters)
   parameters depend on the camera and projection model in use and are
   loaded from predefined files or parameters.
 
-  \warning If the macro VISP_HAVE_ACCESS_TO_NAS is defined in vpConfig.h
+  \warning If the macro VISP_HAVE_VIPER850_DATA is defined in vpConfig.h
   this function reads the camera extrinsic parameters from the file
   corresponding to the specified camera type and projection type.
   Otherwise corresponding default parameters are loaded.
@@ -221,29 +183,17 @@ vpViper850::init (vpViper850::vpToolType tool,
   
   this->projModel = proj_model;
   
-#ifdef VISP_HAVE_ACCESS_TO_NAS
+#ifdef VISP_HAVE_VIPER850_DATA
   // Read the robot parameters from files
-  char filename_eMc [FILENAME_MAX];
+  std::string filename_eMc;
   switch (tool) {
   case vpViper850::TOOL_MARLIN_F033C_CAMERA: {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      snprintf(filename_eMc, FILENAME_MAX, "%s",
-               CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME);
-#else // _WIN32
-      _snprintf(filename_eMc, FILENAME_MAX, "%s",
-                CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME);
-#endif
+        filename_eMc = CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME;
       break;
     case vpCameraParameters::perspectiveProjWithDistortion :
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      snprintf(filename_eMc, FILENAME_MAX, "%s",
-               CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME);
-#else // _WIN32
-      _snprintf(filename_eMc, FILENAME_MAX, "%s",
-                CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME);
-#endif
+        filename_eMc = CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME;
       break;
     }
     break;
@@ -251,22 +201,10 @@ vpViper850::init (vpViper850::vpToolType tool,
   case vpViper850::TOOL_PTGREY_FLEA2_CAMERA: {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      snprintf(filename_eMc, FILENAME_MAX, "%s",
-               CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME);
-#else // _WIN32
-      _snprintf(filename_eMc, FILENAME_MAX, "%s",
-                CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME);
-#endif
+        filename_eMc = CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME;
       break;
     case vpCameraParameters::perspectiveProjWithDistortion :
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      snprintf(filename_eMc, FILENAME_MAX, "%s",
-               CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME);
-#else // _WIN32
-      _snprintf(filename_eMc, FILENAME_MAX, "%s",
-                CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME);
-#endif
+        filename_eMc = CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME;
       break;
     }
     break;
@@ -274,22 +212,10 @@ vpViper850::init (vpViper850::vpToolType tool,
   case vpViper850::TOOL_SCHUNK_GRIPPER_CAMERA: {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      snprintf(filename_eMc, FILENAME_MAX, "%s",
-               CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME);
-#else // _WIN32
-      _snprintf(filename_eMc, FILENAME_MAX, "%s",
-                CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME);
-#endif
+        filename_eMc = CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME;
       break;
     case vpCameraParameters::perspectiveProjWithDistortion :
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      snprintf(filename_eMc, FILENAME_MAX, "%s",
-               CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME);
-#else // _WIN32
-      _snprintf(filename_eMc, FILENAME_MAX, "%s",
-                CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME);
-#endif
+        filename_eMc = CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME;
       break;
     }
     break;
@@ -297,22 +223,10 @@ vpViper850::init (vpViper850::vpToolType tool,
   case vpViper850::TOOL_GENERIC_CAMERA: {
     switch(projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion :
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      snprintf(filename_eMc, FILENAME_MAX, "%s",
-               CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME);
-#else // _WIN32
-      _snprintf(filename_eMc, FILENAME_MAX, "%s",
-                CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME);
-#endif
+        filename_eMc = CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
       break;
     case vpCameraParameters::perspectiveProjWithDistortion :
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      snprintf(filename_eMc, FILENAME_MAX, "%s",
-               CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME);
-#else // _WIN32
-      _snprintf(filename_eMc, FILENAME_MAX, "%s",
-                CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME);
-#endif
+        filename_eMc = CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
       break;
     }
     break;
@@ -339,7 +253,7 @@ vpViper850::init (vpViper850::vpToolType tool,
   
   this->init (filename_eMc);
 
-#else // VISP_HAVE_ACCESS_TO_NAS
+#else // VISP_HAVE_VIPER850_DATA
 
   // Use here default values of the robot constant parameters.
   switch (tool) {
@@ -410,7 +324,7 @@ vpViper850::init (vpViper850::vpToolType tool,
   }
   vpRotationMatrix eRc(erc);
   this->eMc.buildFrom(etc, eRc);
-#endif // VISP_HAVE_ACCESS_TO_NAS
+#endif // VISP_HAVE_VIPER850_DATA
 
   setToolType(tool);
   return ;
@@ -584,14 +498,12 @@ vpViper850::parseConfigFile (const std::string &filename)
   parameters. If XML is detected by ViSP, VISP_HAVE_XML2 macro is
   defined in include/visp3/core/vpConfig.h file.
 
-  \warning Thid method needs also an access to the file located on
-  Inria's NAS server and containing the camera parameters in XML
-  format. This access is available if VISP_HAVE_ACCESS_TO_NAS macro is
-  defined in include/visp3/core/vpConfig.h file.
+  \warning Thid method needs also an access to the files containing the
+  camera parameters in XML format. This access is available if
+  VISP_HAVE_VIPER850_DATA macro is defined in include/visp3/core/vpConfig.h file.
 
-  - If VISP_HAVE_ACCESS_TO_NAS and VISP_HAVE_XML2 macros are defined,
-  this method gets the camera parameters from
-  /udd/fspindle/robot/Viper850/current/include/const_camera_Viper850.xml
+  - If VISP_HAVE_VIPER850_DATA and VISP_HAVE_XML2 macros are defined,
+  this method gets the camera parameters from const_camera_Viper850.xml
   config file.
 
   - If these two macros are not defined, this method set the camera parameters
@@ -632,7 +544,7 @@ int main()
   // Get the intrinsic camera parameters depending on the image size
   // Camera parameters are read from
   // /udd/fspindle/robot/Viper850/current/include/const_camera_Viper850.xml
-  // if VISP_HAVE_ACCESS_TO_NAS and VISP_HAVE_XML2 macros are defined
+  // if VISP_HAVE_VIPER850_DATA and VISP_HAVE_XML2 macros are defined
   // in vpConfig.h file
   try {
     robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
@@ -653,7 +565,7 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
                                  const unsigned int &image_width,
                                  const unsigned int &image_height) const
 {
-#if defined(VISP_HAVE_XML2) && defined (VISP_HAVE_ACCESS_TO_NAS)
+#if defined(VISP_HAVE_XML2) && defined (VISP_HAVE_VIPER850_DATA)
   vpXmlParserCamera parser;
   switch (getToolType()) {
   case vpViper850::TOOL_MARLIN_F033C_CAMERA: {
@@ -822,14 +734,12 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
   parameters. If XML is detected by ViSP, VISP_HAVE_XML2 macro is
   defined in include/visp3/core/vpConfig.h file.
 
-  \warning Thid method needs also an access to the file located on
-  Inria's NAS server and containing the camera parameters in XML
-  format. This access is available if VISP_HAVE_ACCESS_TO_NAS macro is
-  defined in include/visp3/core/vpConfig.h file.
+  \warning Thid method needs also an access to the files containing the
+  camera parameters in XML format. This access is available if
+  VISP_HAVE_VIPER850_DATA macro is defined in include/visp3/core/vpConfig.h file.
 
-  - If VISP_HAVE_ACCESS_TO_NAS and VISP_HAVE_XML2 macros are defined,
-  this method gets the camera parameters from
-  /udd/fspindle/robot/Viper850/current/include/const_camera_Viper850.xml
+  - If VISP_HAVE_VIPER850_DATA and VISP_HAVE_XML2 macros are defined,
+  this method gets the camera parameters from const_camera_Viper850.xml
   config file.
 
   - If these two macros are not defined, this method set the camera parameters
@@ -886,19 +796,17 @@ vpViper850::getCameraParameters (vpCameraParameters &cam,
 /*!
   \brief Get the current intrinsic camera parameters obtained by calibration.
 
-    \warning This method needs XML library to parse the file defined in
+  \warning This method needs XML library to parse the file defined in
   vpViper850::CONST_CAMERA_FILENAME and containing the camera
   parameters. If XML is detected by ViSP, VISP_HAVE_XML2 macro is
   defined in include/visp3/core/vpConfig.h file.
 
-  \warning Thid method needs also an access to the file located on
-  Inria's NAS server and containing the camera parameters in XML
-  format. This access is available if VISP_HAVE_ACCESS_TO_NAS macro is
-  defined in include/visp3/core/vpConfig.h file.
+  \warning Thid method needs also an access to the files containing the camera
+  parameters in XML format. This access is available if VISP_HAVE_VIPER850_DATA
+  macro is defined in include/visp3/core/vpConfig.h file.
 
-  - If VISP_HAVE_ACCESS_TO_NAS and VISP_HAVE_XML2 macros are defined,
-  this method gets the camera parameters from
-  /udd/fspindle/robot/Viper850/current/include/const_camera_Viper850.xml
+  - If VISP_HAVE_VIPER850_DATA and VISP_HAVE_XML2 macros are defined,
+  this method gets the camera parameters from const_camera_Viper850.xml
   config file.
 
   - If these two macros are not defined, this method set the camera parameters

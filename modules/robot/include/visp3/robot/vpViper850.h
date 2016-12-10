@@ -96,24 +96,25 @@
 
 */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpViper.h>
 
 
 class VISP_EXPORT vpViper850: public vpViper
 {
  public:
-#ifdef VISP_HAVE_ACCESS_TO_NAS
+#ifdef VISP_HAVE_VIPER850_DATA
   //! Files where constant tranformation between end-effector and camera frame
   //! are stored.
-  static const char * const CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
-  static const char * const CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
-  static const char * const CONST_CAMERA_FILENAME;
+  static const std::string CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
+  static const std::string CONST_CAMERA_FILENAME;
 #endif
   /*!
     Name of the camera attached to the end-effector.
