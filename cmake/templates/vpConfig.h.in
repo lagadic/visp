@@ -307,6 +307,10 @@
 // Defined if Irisa's Viper S650 robot available.
 #cmakedefine VISP_HAVE_VIPER650
 
+// Defined if Inria's Viper650 data files (camera intrinsic/extrinsic parameters) are available
+#cmakedefine VISP_HAVE_VIPER650_DATA
+#define VISP_VIPER650_DATA_PATH "${VISP_VIPER650_DATA_PATH}"
+
 // Defined if Irisa's Viper S850 robot available.
 #cmakedefine VISP_HAVE_VIPER850
 
