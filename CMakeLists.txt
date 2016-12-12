@@ -214,6 +214,27 @@ VP_CHECK_PACKAGE(OpenGL)
 # for pioneer
 VP_CHECK_PACKAGE(RT)
 VP_CHECK_PACKAGE(DL)
+# for Afma6 calibration data
+VP_CHECK_PACKAGE(Afma6_data)
+if(AFMA6_DATA_FOUND)
+  set(VISP_AFMA6_DATA_PATH ${AFMA6_DATA_PATH})
+else()
+  set(VISP_AFMA6_DATA_PATH "")
+endif()
+# for Viper850 calibration data
+VP_CHECK_PACKAGE(Viper850_data)
+if(VIPER850_DATA_FOUND)
+  set(VISP_VIPER850_DATA_PATH ${VIPER850_DATA_PATH})
+else()
+  set(VISP_VIPER850_DATA_PATH "")
+endif()
+# for Viper650 calibration data
+VP_CHECK_PACKAGE(Viper650_data)
+if(VIPER650_DATA_FOUND)
+  set(VISP_VIPER650_DATA_PATH ${VIPER650_DATA_PATH})
+else()
+  set(VISP_VIPER650_DATA_PATH "")
+endif()
 
 find_host_program(XRANDR xrandr)
 

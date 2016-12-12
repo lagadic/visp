@@ -297,6 +297,10 @@
 // Defined if Irisa's Afma6 robot available.
 #cmakedefine VISP_HAVE_AFMA6
 
+// Defined if Irisa's Afma6 data files (camera intrinsic/extrinsic parameters) are available
+#cmakedefine VISP_HAVE_AFMA6_DATA
+#define VISP_AFMA6_DATA_PATH "${VISP_AFMA6_DATA_PATH}"
+
 // Defined if Biclops pan-tilt head available.
 #cmakedefine VISP_HAVE_BICLOPS
 #cmakedefine VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION
@@ -307,8 +311,16 @@
 // Defined if Irisa's Viper S650 robot available.
 #cmakedefine VISP_HAVE_VIPER650
 
+// Defined if Inria's Viper650 data files (camera intrinsic/extrinsic parameters) are available
+#cmakedefine VISP_HAVE_VIPER650_DATA
+#define VISP_VIPER650_DATA_PATH "${VISP_VIPER650_DATA_PATH}"
+
 // Defined if Irisa's Viper S850 robot available.
 #cmakedefine VISP_HAVE_VIPER850
+
+// Defined if Inria's Viper850 data files (camera intrinsic/extrinsic parameters) are available
+#cmakedefine VISP_HAVE_VIPER850_DATA
+#define VISP_VIPER850_DATA_PATH "${VISP_VIPER850_DATA_PATH}"
 
 // Defined if the Aria library and (pthread, rt, dl libraries under Unix) is found. 
 // These libraries are used to control Pioneer mobile robots.  

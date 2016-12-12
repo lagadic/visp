@@ -267,12 +267,12 @@ vpRobotViper850::init (void)
 
 #if defined(USE_ATI_DAQ) && defined(VISP_HAVE_COMEDI)
   std::string calibfile;
-#  ifdef VISP_HAVE_ACCESS_TO_NAS
-  calibfile = "/udd/fspindle/robot/Viper850/Viper850-code/ati/FT17824.cal";
+#  ifdef VISP_HAVE_VIPER850_DATA
+  calibfile = std::string(VISP_VIPER850_DATA_PATH) + std::string("/ati/FT17824.cal");
   if (! vpIoTools::checkFilename(calibfile))
     throw(vpException(vpException::ioError, "ATI F/T calib file \"%s\" doesn't exist", calibfile.c_str()));
 #  else
-  throw(vpException(vpException::ioError, "You don't have access to NAS (/udd/) to retrive ATI F/T calib file"));
+  throw(vpException(vpException::ioError, "You don't have access to Viper850 data to retrive ATI F/T calib file"));
 #  endif
   ati.setCalibrationFile(calibfile);
   ati.open();

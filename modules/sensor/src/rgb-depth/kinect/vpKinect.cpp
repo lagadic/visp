@@ -100,10 +100,9 @@ void vpKinect::start(vpKinect::vpDMResolution res)
 		wd = 640;
 	}
 
-#if defined(VISP_HAVE_ACCESS_TO_NAS) && defined(VISP_HAVE_XML2)
+#if defined(VISP_HAVE_VIPER850_DATA) && defined(VISP_HAVE_XML2)
   	vpXmlParserCamera cameraParser;
-  	char cameraXmlFile[FILENAME_MAX];
-    sprintf(cameraXmlFile, "/udd/fspindle/robot/Viper850/Viper850-code/include/const_camera_Viper850.xml");
+    std::string cameraXmlFile = std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_camera_Viper850.xml");
   	cameraParser.parse(RGBcam, cameraXmlFile, "Generic-camera", vpCameraParameters::perspectiveProjWithDistortion, width, height);
 #else
 //  RGBcam.initPersProjWithoutDistortion(525.53, 524.94, 309.9, 282.8);//old
