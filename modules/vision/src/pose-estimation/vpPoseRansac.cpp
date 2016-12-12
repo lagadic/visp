@@ -69,124 +69,124 @@
 
 
 namespace {
-  //For std::map<vpPoint>
-  struct ComparePointDuplicate {
-    bool operator()( const vpPoint &point1, const vpPoint &point2 ) const {
-      if (point1.oP[0] < point2.oP[0]) return true;
-      if (point1.oP[0] > point2.oP[0]) return false;
+//For std::map<vpPoint>
+struct ComparePointDuplicate {
+  bool operator()( const vpPoint &point1, const vpPoint &point2 ) const {
+    if (point1.oP[0] < point2.oP[0]) return true;
+    if (point1.oP[0] > point2.oP[0]) return false;
 
-      if (point1.oP[1] < point2.oP[1]) return true;
-      if (point1.oP[1] > point2.oP[1]) return false;
+    if (point1.oP[1] < point2.oP[1]) return true;
+    if (point1.oP[1] > point2.oP[1]) return false;
 
-      if (point1.oP[2] < point2.oP[2]) return true;
-      if (point1.oP[2] > point2.oP[2]) return false;
+    if (point1.oP[2] < point2.oP[2]) return true;
+    if (point1.oP[2] > point2.oP[2]) return false;
 
-      if (point1.p[0] < point2.p[0]) return true;
-      if (point1.p[0] > point2.p[0]) return false;
+    if (point1.p[0] < point2.p[0]) return true;
+    if (point1.p[0] > point2.p[0]) return false;
 
-      if (point1.p[1] < point2.p[1]) return true;
-      if (point1.p[1] > point2.p[1]) return false;
+    if (point1.p[1] < point2.p[1]) return true;
+    if (point1.p[1] > point2.p[1]) return false;
 
-      return false;
-    }
-  };
+    return false;
+  }
+};
 
-  //For std::map<vpPoint>
-  struct ComparePointAlmostDuplicate {
-    bool operator()( const vpPoint &point1, const vpPoint &point2 ) const {
-      if (point1.oP[0] - point2.oP[0] < -eps) return true;
-      if (point1.oP[0] - point2.oP[0] > eps) return false;
+//For std::map<vpPoint>
+struct ComparePointAlmostDuplicate {
+  bool operator()( const vpPoint &point1, const vpPoint &point2 ) const {
+    if (point1.oP[0] - point2.oP[0] < -eps) return true;
+    if (point1.oP[0] - point2.oP[0] > eps) return false;
 
-      if (point1.oP[1] - point2.oP[1] < -eps) return true;
-      if (point1.oP[1] - point2.oP[1] > eps) return false;
+    if (point1.oP[1] - point2.oP[1] < -eps) return true;
+    if (point1.oP[1] - point2.oP[1] > eps) return false;
 
-      if (point1.oP[2] - point2.oP[2] < -eps) return true;
-      if (point1.oP[2] - point2.oP[2] > eps) return false;
+    if (point1.oP[2] - point2.oP[2] < -eps) return true;
+    if (point1.oP[2] - point2.oP[2] > eps) return false;
 
-      if (point1.p[0] - point2.p[0] < -eps) return true;
-      if (point1.p[0] - point2.p[0] > eps) return false;
+    if (point1.p[0] - point2.p[0] < -eps) return true;
+    if (point1.p[0] - point2.p[0] > eps) return false;
 
-      if (point1.p[1] - point2.p[1] < -eps) return true;
-      if (point1.p[1] - point2.p[1] > eps) return false;
+    if (point1.p[1] - point2.p[1] < -eps) return true;
+    if (point1.p[1] - point2.p[1] > eps) return false;
 
-      return false;
-    }
-  };
+    return false;
+  }
+};
 
-  //For std::map<vpPoint>
-  struct CompareObjectPointDegenerate {
-    bool operator()( const vpPoint &point1, const vpPoint &point2 ) const {
-      if (point1.oP[0] - point2.oP[0] < -eps) return true;
-      if (point1.oP[0] - point2.oP[0] > eps) return false;
+//For std::map<vpPoint>
+struct CompareObjectPointDegenerate {
+  bool operator()( const vpPoint &point1, const vpPoint &point2 ) const {
+    if (point1.oP[0] - point2.oP[0] < -eps) return true;
+    if (point1.oP[0] - point2.oP[0] > eps) return false;
 
-      if (point1.oP[1] - point2.oP[1] < -eps) return true;
-      if (point1.oP[1] - point2.oP[1] > eps) return false;
+    if (point1.oP[1] - point2.oP[1] < -eps) return true;
+    if (point1.oP[1] - point2.oP[1] > eps) return false;
 
-      if (point1.oP[2] - point2.oP[2] < -eps) return true;
-      if (point1.oP[2] - point2.oP[2] > eps) return false;
+    if (point1.oP[2] - point2.oP[2] < -eps) return true;
+    if (point1.oP[2] - point2.oP[2] > eps) return false;
 
-      return false;
-    }
-  };
+    return false;
+  }
+};
 
-  //For std::map<vpPoint>
-  struct CompareImagePointDegenerate {
-    bool operator()( const vpPoint &point1, const vpPoint &point2 ) const {
-      if (point1.p[0] - point2.p[0] < -eps) return true;
-      if (point1.p[0] - point2.p[0] > eps) return false;
+//For std::map<vpPoint>
+struct CompareImagePointDegenerate {
+  bool operator()( const vpPoint &point1, const vpPoint &point2 ) const {
+    if (point1.p[0] - point2.p[0] < -eps) return true;
+    if (point1.p[0] - point2.p[0] > eps) return false;
 
-      if (point1.p[1] - point2.p[1] < -eps) return true;
-      if (point1.p[1] - point2.p[1] > eps) return false;
+    if (point1.p[1] - point2.p[1] < -eps) return true;
+    if (point1.p[1] - point2.p[1] > eps) return false;
 
-      return false;
-    }
-  };
+    return false;
+  }
+};
 
-  //std::find_if
-  struct FindDegeneratePoint {
-    FindDegeneratePoint( const vpPoint &pt ) : m_pt(pt) { }
+//std::find_if
+struct FindDegeneratePoint {
+  FindDegeneratePoint( const vpPoint &pt ) : m_pt(pt) { }
 
-    bool operator() (const vpPoint &pt) {
-      return ( (std::fabs(m_pt.oP[0] - pt.oP[0]) < eps &&
-                std::fabs(m_pt.oP[1] - pt.oP[1]) < eps &&
-                std::fabs(m_pt.oP[2] - pt.oP[2]) < eps) ||
-               (std::fabs(m_pt.p[0] - pt.p[0]) < eps &&
-                std::fabs(m_pt.p[1] - pt.p[1]) < eps) );
-    }
+  bool operator() (const vpPoint &pt) {
+    return ( (std::fabs(m_pt.oP[0] - pt.oP[0]) < eps &&
+        std::fabs(m_pt.oP[1] - pt.oP[1]) < eps &&
+        std::fabs(m_pt.oP[2] - pt.oP[2]) < eps) ||
+        (std::fabs(m_pt.p[0] - pt.p[0]) < eps &&
+        std::fabs(m_pt.p[1] - pt.p[1]) < eps) );
+  }
 
-    vpPoint m_pt;
-  };
+  vpPoint m_pt;
+};
 
 #if defined (VISP_HAVE_CPP11_COMPATIBILITY)
-  //For unordered_map<vpPoint>
-  struct HashDuplicate {
-    std::size_t operator()(const vpPoint &point) const {
-      using std::size_t;
-      using std::hash;
+//For unordered_map<vpPoint>
+struct HashDuplicate {
+  std::size_t operator()(const vpPoint &point) const {
+    using std::size_t;
+    using std::hash;
 
-      size_t res = 17;
-      res = res * 31 + hash<double>()( point.oP[0] );
-      res = res * 31 + hash<double>()( point.oP[1] );
-      res = res * 31 + hash<double>()( point.oP[2] );
-      res = res * 31 + hash<double>()( point.p[0] );
-      res = res * 31 + hash<double>()( point.p[1] );
+    size_t res = 17;
+    res = res * 31 + hash<double>()( point.oP[0] );
+    res = res * 31 + hash<double>()( point.oP[1] );
+    res = res * 31 + hash<double>()( point.oP[2] );
+    res = res * 31 + hash<double>()( point.p[0] );
+    res = res * 31 + hash<double>()( point.p[1] );
 
-      return res;
-    }
-  };
+    return res;
+  }
+};
 
-  //For unordered_map<vpPoint>
-  struct ComparePointDuplicateUnorderedMap {
-    bool operator()( const vpPoint &point1, const vpPoint &point2 ) const {
-      return (
-              std::fabs(point1.oP[0] - point2.oP[0]) < std::numeric_limits<double>::epsilon() &&
-              std::fabs(point1.oP[1] - point2.oP[1]) < std::numeric_limits<double>::epsilon() &&
-              std::fabs(point1.oP[2] - point2.oP[2]) < std::numeric_limits<double>::epsilon() &&
-              std::fabs(point1.p[0] - point2.p[0]) < std::numeric_limits<double>::epsilon() &&
-              std::fabs(point1.p[1] - point2.p[1]) < std::numeric_limits<double>::epsilon()
-            );
-    }
-  };
+//For unordered_map<vpPoint>
+struct ComparePointDuplicateUnorderedMap {
+  bool operator()( const vpPoint &point1, const vpPoint &point2 ) const {
+    return (
+          std::fabs(point1.oP[0] - point2.oP[0]) < std::numeric_limits<double>::epsilon() &&
+        std::fabs(point1.oP[1] - point2.oP[1]) < std::numeric_limits<double>::epsilon() &&
+        std::fabs(point1.oP[2] - point2.oP[2]) < std::numeric_limits<double>::epsilon() &&
+        std::fabs(point1.p[0] - point2.p[0]) < std::numeric_limits<double>::epsilon() &&
+        std::fabs(point1.p[1] - point2.p[1]) < std::numeric_limits<double>::epsilon()
+        );
+  }
+};
 #endif
 }
 
@@ -211,7 +211,6 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
     //Hold the list of the current inliers points to avoid to add a degenerate point if the flag is set
     std::vector<vpPoint> cur_inliers;
 
-    double r, r_lagrange, r_dementhon;
     vpHomogeneousMatrix cMo_lagrange, cMo_dementhon;
     //Use a temporary variable because if not, the cMo passed in parameters will be modified when
     // we compute the pose for the minimal sample sets but if the pose is not correct when we pass
@@ -239,9 +238,9 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
       while(usedPt[r_]) {
         //If already picked, pick another point randomly
 #if defined(_WIN32) && defined(_MSC_VER)
-      r_ = (unsigned int) rand() % size;
+        r_ = (unsigned int) rand() % size;
 #else
-      r_ = (unsigned int) rand_r(&m_initial_seed) % size;
+        r_ = (unsigned int) rand_r(&m_initial_seed) % size;
 #endif
       }
       //Mark this point as already picked
@@ -273,8 +272,8 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
     bool is_valid_dementhon = false;
 
     //Set maximum value for residuals
-    r_lagrange = DBL_MAX;
-    r_dementhon = DBL_MAX;
+    double r_lagrange = DBL_MAX;
+    double r_dementhon = DBL_MAX;
 
     try {
       poseMin.computePose(vpPose::LAGRANGE, cMo_lagrange);
@@ -302,6 +301,7 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
     //If at least one pose computation is OK,
     //we can continue, otherwise pick another random set
     if(is_valid_lagrange || is_valid_dementhon) {
+      double r;
       if (r_lagrange < r_dementhon) {
         r = r_lagrange;
         cMo_tmp = cMo_lagrange;
@@ -411,9 +411,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
   ransacInlierIndex.clear();
 
   std::vector<unsigned int> best_consensus;
-  unsigned int nbMinRandom = 4;
   unsigned int nbInliers = 0;
-  double r_lagrange, r_dementhon;
 
   vpHomogeneousMatrix cMo_lagrange, cMo_dementhon;
 
@@ -518,7 +516,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
     std::cerr << "Pthread or WIN32 API or OpenMP is needed to use the parallel RANSAC version." << std::endl;
 #elif !defined (VP_THREAD_OK)
     //Use OpenMP
-    #define PARALLEL_RANSAC_OPEN_MP
+#define PARALLEL_RANSAC_OPEN_MP
 #elif !defined (VISP_HAVE_OPENMP)
     if(nbParallelRansacThreads <= 0) {
       //Cannot get the number of CPU threads so use the sequential mode
@@ -546,34 +544,38 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
 
   if(executeParallelVersion) {
 #if defined (PARALLEL_RANSAC_OPEN_MP)
-    //True if we found a consensus set with a size > ransacNbInlierConsensus
-    bool foundSolutionWithConsensus = false;
     //List of points picked randomly (minimal sample set, MSS)
-    std::vector<unsigned int> best_randoms;
-    //Numbers of points in the best consensus set
-    unsigned int nb_best_inliers = 0;
+    //std::vector<unsigned int> best_randoms; // never used
 
     //Section of code run in parallel
     //All variables declared before the parallel keyword are shared between the team of threads (if private keyword is not used)
     //Code in parallel section are duplicated between the team of threads
-    #pragma omp parallel
+#pragma omp parallel
     {
-  #if defined(VISP_HAVE_OPENMP)
+#if defined(VISP_HAVE_OPENMP)
       //Set different seeds for each thread in the team, rand() is not thread safe
       unsigned int initial_seed = (unsigned int) omp_get_thread_num(); //same seed each time
       //(unsigned int) (int(time(NULL)) ^ omp_get_thread_num());
       if(omp_get_num_threads() == 1) {
         initial_seed = 0; //Same seed at each run
       }
-  #else
+#else
       unsigned int initial_seed = 0;
-  #endif
-  
-      #if defined(_WIN32) && defined(_MSC_VER)
-        srand(initial_seed);
-      #endif
+#endif
 
-      #pragma omp for
+#if defined(_WIN32) && defined(_MSC_VER)
+      srand(initial_seed);
+#endif
+
+      unsigned int nbMinRandom = 4;
+
+      //Numbers of points in the best consensus set
+      unsigned int nb_best_inliers = 0;
+
+      //True if we found a consensus set with a size > ransacNbInlierConsensus
+      bool foundSolutionWithConsensus = false;
+
+#pragma omp for
       for(int nbTrials = 0; nbTrials < ransacMaxTrials; nbTrials++) {
         //Flag to check if a solution has been founded, used to "cancel" the threads
         if(!foundSolutionWithConsensus) {
@@ -586,7 +588,6 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
           //Hold the list of the current inliers points to avoid to add a degenerate point if the flag is set
           std::vector<vpPoint> cur_inliers;
 
-          double r, r_lagrange, r_dementhon;
           vpHomogeneousMatrix cMo_lagrange, cMo_dementhon;
           vpHomogeneousMatrix cMo_tmp;
 
@@ -594,6 +595,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
           std::vector<bool> usedPt(size, false);
 
           vpPose poseMin;
+
           for(unsigned int i = 0; i < nbMinRandom;) {
             if((size_t) std::count(usedPt.begin(), usedPt.end(), true) == usedPt.size()) {
               //All points was picked once, break otherwise we stay in an infinite loop
@@ -601,19 +603,19 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
             }
 
             //Pick a point randomly
-            #if defined(_WIN32) && defined(_MSC_VER)
-              unsigned int r_ = (unsigned int) rand() % size;
-            #else
-              unsigned int r_ = (unsigned int) rand_r(&initial_seed) % size;
-            #endif
+#if defined(_WIN32) && defined(_MSC_VER)
+            unsigned int r_ = (unsigned int) rand() % size;
+#else
+            unsigned int r_ = (unsigned int) rand_r(&initial_seed) % size;
+#endif
 
             while(usedPt[r_]) {
               //If already picked, pick another point randomly
-              #if defined(_WIN32) && defined(_MSC_VER)
-                r_ = (unsigned int) rand() % size;
-              #else
-                r_ = (unsigned int) rand_r(&initial_seed) % size;
-              #endif
+#if defined(_WIN32) && defined(_MSC_VER)
+              r_ = (unsigned int) rand() % size;
+#else
+              r_ = (unsigned int) rand_r(&initial_seed) % size;
+#endif
             }
             //Mark this point as already picked
             usedPt[r_] = true;
@@ -640,9 +642,9 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
             bool is_valid_dementhon = false;
 
             //Set maximum value for residuals
-            r = DBL_MAX;
-            r_lagrange = DBL_MAX;
-            r_dementhon = DBL_MAX;
+            double r = DBL_MAX;
+            double r_lagrange = DBL_MAX;
+            double r_dementhon = DBL_MAX;
 
             try {
               poseMin.computePose(vpPose::LAGRANGE, cMo_lagrange);
@@ -717,12 +719,12 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
                   }
                 }
 
-                #pragma omp critical (update_best_consensus_set)
+#pragma omp critical (update_best_consensus_set)
                 {
                   if(nbInliersCur > nb_best_inliers) {
                     foundSolution = true;
                     best_consensus = cur_consensus;
-                    best_randoms = cur_randoms;
+                    //best_randoms = cur_randoms; // never used
                     nb_best_inliers = nbInliersCur;
 
                     if(nbInliersCur >= ransacNbInlierConsensus) {
@@ -798,7 +800,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
   }
 
   if(foundSolution) {
-//    std::cout << "Nombre d'inliers " << nbInliers << std::endl ;
+    unsigned int nbMinRandom = 4;
+    //    std::cout << "Nombre d'inliers " << nbInliers << std::endl ;
 
     //Display the random picked points
     /*
@@ -842,8 +845,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       bool is_valid_dementhon = false;
 
       //Set maximum value for residuals
-      r_lagrange = DBL_MAX;
-      r_dementhon = DBL_MAX;
+      double r_lagrange = DBL_MAX;
+      double r_dementhon = DBL_MAX;
 
       try {
         pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
@@ -967,13 +970,13 @@ int vpPose::computeRansacIterations(double probability, double epsilon, const in
   cannot be found.
 */
 void vpPose::findMatch(std::vector<vpPoint> &p2D,
-            std::vector<vpPoint> &p3D,
-            const unsigned int &numberOfInlierToReachAConsensus,
-            const double &threshold,
-            unsigned int &ninliers,
-            std::vector<vpPoint> &listInliers,
-            vpHomogeneousMatrix &cMo,
-            const int &maxNbTrials )
+                       std::vector<vpPoint> &p3D,
+                       const unsigned int &numberOfInlierToReachAConsensus,
+                       const double &threshold,
+                       unsigned int &ninliers,
+                       std::vector<vpPoint> &listInliers,
+                       vpHomogeneousMatrix &cMo,
+                       const int &maxNbTrials )
 {
   vpPose pose;
 
@@ -996,7 +999,7 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D,
     vpERROR_TRACE("(at least 4 points are required)") ;
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ",pose.listP.size()) ;
     throw(vpPoseException(vpPoseException::notEnoughPointError,
-      "Not enough points ")) ;
+                          "Not enough point (%d) to compute the pose by ransac",pose.listP.size())) ;
   }
   else
   {
@@ -1008,9 +1011,3 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D,
     listInliers = pose.getRansacInliers();
   }
 }
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

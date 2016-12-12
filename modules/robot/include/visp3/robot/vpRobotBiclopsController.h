@@ -118,7 +118,7 @@ public:
 public:
   vpRobotBiclopsController();
   virtual ~vpRobotBiclopsController();
-  void init(const char *configfile);
+  void init(const std::string &configfile);
   void setPosition(const vpColVector & q, const double percentVelocity);
   void setVelocity(const vpColVector & q_dot);
   vpColVector getPosition();

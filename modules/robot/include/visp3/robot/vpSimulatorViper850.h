@@ -253,8 +253,8 @@ class VISP_EXPORT vpSimulatorViper850 : public vpRobotWireFrameSimulator, public
 
     void move(const char *filename) ;
 
-    static bool readPosFile(const char *filename, vpColVector &q);
-    static bool savePosFile(const char *filename, const vpColVector &q);
+    static bool readPosFile(const std::string &filename, vpColVector &q);
+    static bool savePosFile(const std::string &filename, const vpColVector &q);
 
     void setCameraParameters(const vpCameraParameters &cam) ;
     void setJointLimit(const vpColVector &limitMin, const vpColVector &limitMax);

@@ -67,8 +67,7 @@ const unsigned int vpAfma4::njoint = 4;
 vpAfma4::vpAfma4()
   : _a1(0), _d3(0), _d4(0), _etc(), _erc(), _eMc()
 {
-  // Set the default parameters in case of the config files on the NAS
-  // at Inria are not available.
+  // Set the default parameters in case of the config files are not available.
 
   //
   // Geometric model constant parameters

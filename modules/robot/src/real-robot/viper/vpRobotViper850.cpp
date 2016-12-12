@@ -2163,58 +2163,62 @@ int main()
 \sa savePosFile()
 */
 
-bool
-    vpRobotViper850::readPosFile(const std::string &filename, vpColVector &q)
+bool vpRobotViper850::readPosFile(const std::string &filename, vpColVector &q)
 {
+  std::ifstream fd(filename.c_str(), std::ios::in);
 
-  FILE * fd ;
-  fd = fopen(filename.c_str(), "r") ;
-  if (fd == NULL)
+  if(! fd.is_open()) {
     return false;
-
-  char line[FILENAME_MAX];
-  char dummy[FILENAME_MAX];
-  char head[] = "R:";
-  bool sortie = false;
-
-  do {
-    // Saut des lignes commencant par #
-    if (fgets (line, FILENAME_MAX, fd) != NULL) {
-      if ( strncmp (line, "#", 1) != 0) {
-        // La ligne n'est pas un commentaire
-        if ( strncmp (line, head, sizeof(head)-1) == 0) {
-          sortie = true; 	// Position robot trouvee.
-        }
-        // 	else
-        // 	  return (false); // fin fichier sans position robot.
-      }
-    }
-    else {
-      fclose(fd);
-      return (false);		/* fin fichier 	*/
-    }
-
   }
-  while ( sortie != true );
+
+  std::string line;
+  std::string key("R:");
+  std::string id("#Viper850 - Position");
+  bool pos_found = false;
+  int lineNum = 0;
 
   q.resize(njoint);
 
-  // Lecture des positions
-//  sscanf(line, "%s %lf %lf %lf %lf %lf %lf",
-//         dummy,
-//         &q[0], &q[1], &q[2], &q[3], &q[4], &q[5]);
+  while(std::getline(fd, line)) {
+    lineNum ++;
+    if (lineNum == 1) {
+      if(! (line.compare(0, id.size(), id) == 0)) { // check if Viper850 position file
+        std::cout << "Error: this position file " << filename << " is not for Viper850 robot" << std::endl;
+        return false;
+      }
+    }
+    if((line.compare(0, 1, "#") == 0)) { // skip comment
+      continue;
+    }
+    if((line.compare(0, key.size(), key) == 0)) { // decode position
+      // check if there are at least njoint values in the line
+      std::vector<std::string> chain = vpIoTools::splitChain(line, std::string(" "));
+      if (chain.size() < njoint+1) // try to split with tab separator
+        chain = vpIoTools::splitChain(line, std::string("\t"));
+      if(chain.size() < njoint+1)
+        continue;
 
-  std::string str(line);
-  std::istringstream ss(str);
-  ss >> dummy;
-  for(unsigned int i=0; i<6; i++)
-    ss >> q[i];
+      std::istringstream ss(line);
+      std::string key_;
+      ss >> key_;
+      for (size_t i=0; i< njoint; i++)
+        ss >> q[i];
+      pos_found = true;
+      break;
+    }
+  }
 
   // converts rotations from degrees into radians
   q.deg2rad();
 
-  fclose(fd) ;
-  return (true);
+  fd.close();
+
+  if (!pos_found) {
+    std::cout << "Error: unable to find a position for Viper850 robot in " << filename << std::endl;
+    return false;
+  }
+
+  return true;
 }
 
 /*!

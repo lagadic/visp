@@ -260,8 +260,8 @@ public:  /* Methode publiques */
   void powerOn() ;
   void powerOff() ;
 
-  static bool readPosFile(const char *filename, vpColVector &q)  ;
-  static bool savePosFile(const char *filename, const vpColVector &q)  ;
+  static bool readPosFile(const std::string &filename, vpColVector &q)  ;
+  static bool savePosFile(const std::string &filename, const vpColVector &q)  ;
 
   /* --- POSITIONNEMENT --------------------------------------------------- */
   void setPosition(const vpRobot::vpControlFrameType frame,

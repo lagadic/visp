@@ -49,6 +49,7 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/robot/vpRobotAfma4.h>
 
 /* ---------------------------------------------------------------------- */
@@ -1611,51 +1612,64 @@ robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
 */
 
 bool
-vpRobotAfma4::readPosFile(const char *filename, vpColVector &q)
+vpRobotAfma4::readPosFile(const std::string &filename, vpColVector &q)
 {
+  std::ifstream fd(filename.c_str(), std::ios::in);
 
-  FILE * fd ;
-  fd = fopen(filename, "r") ;
-  if (fd == NULL)
+  if(! fd.is_open()) {
     return false;
+  }
 
-  char line[FILENAME_MAX];
-  char head[] = "R:";
-  bool sortie = false;
+  std::string line;
+  std::string key("R:");
+  std::string id("#AFMA4 - Position");
+  bool pos_found = false;
+  int lineNum = 0;
 
-  do {
-    // Saut des lignes commencant par #
-    if (fgets (line, FILENAME_MAX, fd) != NULL) {
-      if ( strncmp (line, "#", 1) != 0) {
-	// La ligne n'est pas un commentaire
-	if ( strncmp (line, head, sizeof(head)-1) == 0) {
-	  sortie = true; 	// Position robot trouvee.
-	}
-// 	else
-// 	  return (false); // fin fichier sans position robot.
+  q.resize(njoint);
+
+  while(std::getline(fd, line)) {
+    lineNum ++;
+    if (lineNum == 1) {
+      if(! (line.compare(0, id.size(), id) == 0)) { // check if Afma4 position file
+        std::cout << "Error: this position file " << filename << " is not for Afma4 robot" << std::endl;
+        return false;
       }
     }
-    else {
-      fclose(fd);
-      return (false);		/* fin fichier 	*/
+    if((line.compare(0, 1, "#") == 0)) { // skip comment
+      continue;
     }
+    if((line.compare(0, key.size(), key) == 0)) { // decode position
+      // check if there are at least njoint values in the line
+      std::vector<std::string> chain = vpIoTools::splitChain(line, std::string(" "));
+      if (chain.size() < njoint+1) // try to split with tab separator
+        chain = vpIoTools::splitChain(line, std::string("\t"));
+      if(chain.size() < njoint+1)
+        continue;
 
+      std::istringstream ss(line);
+      std::string key_;
+      ss >> key_;
+      for (size_t i=0; i< njoint; i++)
+        ss >> q[i];
+      pos_found = true;
+      break;
+    }
   }
-  while ( sortie != true );
-
-  // Lecture des positions
-  q.resize(4);
-  std::string dummy;
-  std::stringstream ss(line);
-  ss >> dummy >> q[0] >> q[1] >> q[2] >> q[3];
 
   // converts rotations from degrees into radians
   q[0] = vpMath::rad(q[0]);
   q[2] = vpMath::rad(q[2]);
   q[3] = vpMath::rad(q[3]);
 
-  fclose(fd) ;
-  return (true);
+  fd.close();
+
+  if (!pos_found) {
+    std::cout << "Error: unable to find a position for Afma4 robot in " << filename << std::endl;
+    return false;
+  }
+
+  return true;
 }
 
 /*!
@@ -1682,11 +1696,11 @@ vpRobotAfma4::readPosFile(const char *filename, vpColVector &q)
 */
 
 bool
-vpRobotAfma4::savePosFile(const char *filename, const vpColVector &q)
+vpRobotAfma4::savePosFile(const std::string &filename, const vpColVector &q)
 {
 
   FILE * fd ;
-  fd = fopen(filename, "w") ;
+  fd = fopen(filename.c_str(), "w") ;
   if (fd == NULL)
     return false;
 

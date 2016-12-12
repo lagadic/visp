@@ -571,13 +571,10 @@ vpDisplayWin32::getPointerMotionEvent (vpImagePoint &ip)
   //wait if the window is not initialized
   waitForInit();
 
-  bool ret = false;
-
-  ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaMove, 0));
+  bool ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaMove, 0));
   if (ret)
   {
     double u, v;
-    std::cout << "toto";
     //tells the window there has been a getclick demand
     //PostMessage(window.getHWnd(), vpWM_GETPOINTERMOTIONEVENT, 0,0);
 

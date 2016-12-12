@@ -110,7 +110,7 @@ private:
   static bool robotAlreadyCreated;
   pthread_t control_thread;
 
-  char configfile[FILENAME_MAX]; // Biclops config file
+  std::string configfile; // Biclops config file
 
   vpRobotBiclopsController controller;
 
@@ -138,7 +138,7 @@ public:
   static const double       defaultPositioningVelocity;
 
   vpRobotBiclops (void);
-  vpRobotBiclops (const char * filename);
+  vpRobotBiclops (const std::string &filename);
   virtual ~vpRobotBiclops (void);
 
   void init (void);
@@ -154,9 +154,9 @@ public:
   void getVelocity (const vpRobot::vpControlFrameType frame, vpColVector & q_dot);
   vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
 
-  bool readPositionFile(const char *filename, vpColVector &q)  ;
+  bool readPositionFile(const std::string &filename, vpColVector &q)  ;
 
-  void setConfigFile (const char * filename="/usr/share/BiclopsDefault.cfg");
+  void setConfigFile (const std::string &filename="/usr/share/BiclopsDefault.cfg");
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) ;
   void setPosition (const vpRobot::vpControlFrameType frame, const double &q1, const double &q2) ;
   void setPosition(const char *filename) ;
@@ -172,12 +172,5 @@ public:
 
 
 #endif /* #ifndef __vpROBOT_BICLOPS_H */
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
 
 #endif

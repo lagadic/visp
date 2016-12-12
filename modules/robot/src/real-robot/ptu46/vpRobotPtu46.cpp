@@ -46,6 +46,7 @@
 #include <visp3/robot/vpRobotPtu46.h>
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/core/vpIoTools.h>
 
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
@@ -767,50 +768,62 @@ vpRobotPtu46::getVelocity (vpRobot::vpControlFrameType frame)
 
 */
 bool
-vpRobotPtu46::readPositionFile(const char *filename, vpColVector &q)
+vpRobotPtu46::readPositionFile(const std::string &filename, vpColVector &q)
 {
-  FILE * pt_f ;
-  pt_f = fopen(filename,"r") ;
+  std::ifstream fd(filename.c_str(), std::ios::in);
 
-  if (pt_f == NULL) {
-    vpERROR_TRACE ("Can not open ptu-46 position file %s", filename);
+  if(! fd.is_open()) {
     return false;
   }
 
-  char line[FILENAME_MAX];
-  char head[] = "R:";
-  bool end = false;
+  std::string line;
+  std::string key("R:");
+  std::string id("#PTU-EVI - Position");
+  bool pos_found = false;
+  int lineNum = 0;
 
-  do {
-    // skip lines begining with # for comments
-    if (fgets (line, 100, pt_f) != NULL) {
-      if ( strncmp (line, "#", 1) != 0) {
-	// this line is not a comment
-	if ( fscanf (pt_f, "%s", line) != EOF)   {
-	  if ( strcmp (line, head) == 0)
-	    end = true; 	// robot position was found
-	}
-	else
-	  return (false); // end of file without position
+  q.resize(vpPtu46::ndof);
+
+  while(std::getline(fd, line)) {
+    lineNum ++;
+    if (lineNum == 1) {
+      if(! (line.compare(0, id.size(), id) == 0)) { // check if Ptu-46 position file
+        std::cout << "Error: this position file " << filename << " is not for Ptu-46 robot" << std::endl;
+        return false;
       }
     }
-    else {
-      return (false);// end of file
+    if((line.compare(0, 1, "#") == 0)) { // skip comment
+      continue;
     }
+    if((line.compare(0, key.size(), key) == 0)) { // decode position
+      // check if there are at least njoint values in the line
+      std::vector<std::string> chain = vpIoTools::splitChain(line, std::string(" "));
+      if (chain.size() < vpPtu46::ndof+1) // try to split with tab separator
+        chain = vpIoTools::splitChain(line, std::string("\t"));
+      if(chain.size() < vpPtu46::ndof+1)
+        continue;
 
+      std::istringstream ss(line);
+      std::string key_;
+      ss >> key_;
+      for (size_t i=0; i< vpPtu46::ndof; i++)
+        ss >> q[i];
+      pos_found = true;
+      break;
+    }
   }
-  while ( end != true );
 
-  double q1,q2;
-  // Read positions
-  fscanf(pt_f, "%lf %lf", &q1, &q2);
-  q.resize(vpPtu46::ndof) ;
+  // converts rotations from degrees into radians
+  q.deg2rad();
 
-  q[0] = vpMath::rad(q1) ; // Rot tourelle
-  q[1] = vpMath::rad(q2) ;
+  fd.close();
 
-  fclose(pt_f) ;
-  return (true);
+  if (!pos_found) {
+    std::cout << "Error: unable to find a position for Ptu-46 robot in " << filename << std::endl;
+    return false;
+  }
+
+  return true;
 }
 
 /*!
