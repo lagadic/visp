@@ -43,6 +43,8 @@
 
 */
 
+#include <sstream>
+#include <iostream>
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
@@ -114,8 +116,7 @@ vpAfma6::vpAfma6()
     tool_current(vpAfma6::defaultTool),
     projModel(vpCameraParameters::perspectiveProjWithoutDistortion)
 {
-  // Set the default parameters in case of the config files on the NAS
-  // at Inria are not available.
+  // Set the default parameters in case of the config files are not available.
 
   //
   // Geometric model constant parameters
@@ -1061,95 +1062,81 @@ vpAfma6::getLong56() const
 void
 vpAfma6::parseConfigFile (const std::string &filename)
 {
-  size_t            dim;
-  int               code;
-  char              Ligne[FILENAME_MAX];
-  char              namoption[100];
-  FILE *            fdtask;
-  int               numLn = 0;
   double rot_eMc[3]; // rotation
   double trans_eMc[3]; // translation
-  bool get_rot_eMc = false;
-  bool get_trans_eMc = false;
 
-  if ((fdtask = fopen(filename.c_str(), "r" )) == NULL)
-  {
+  std::ifstream fdconfig(filename.c_str(), std::ios::in);
+
+  if(! fdconfig.is_open()) {
     throw vpRobotException (vpRobotException::readingParametersError,
                             "Impossible to read the config file: %s", filename.c_str());
   }
 
-  while (fgets(Ligne, FILENAME_MAX, fdtask) != NULL) {
-    numLn ++;
-    if ('#' == Ligne[0]) { continue; }
-    sscanf(Ligne, "%s", namoption);
-    dim = strlen(namoption);
+  std::string line;
+  int lineNum = 0;
+  bool get_rot_eMc = false;
+  bool get_trans_eMc = false;
+  int code;
 
-    for (code = 0;
-         NULL != opt_Afma6[code];
-         ++ code)
-    {
-      if (strncmp(opt_Afma6[code], namoption, dim) == 0)
-      {
+  while(std::getline(fdconfig, line)) {
+    lineNum ++;
+    if((line.compare(0, 1, "#") == 0)) { // skip comment
+      continue;
+    }
+    std::istringstream ss(line);
+    std::string key;
+    ss >> key;
+
+    for (code = 0; NULL != opt_Afma6[code]; ++ code) {
+      if (key.compare(opt_Afma6[code]) == 0) {
         break;
       }
     }
 
     switch(code)
     {
-    case 0:
-      sscanf(Ligne, "%s %lf %lf %lf %lf %lf %lf",
-             namoption,
-             &this->_joint_max[0], &this->_joint_max[1],
-             &this->_joint_max[2], &this->_joint_max[3],
-             &this->_joint_max[4], &this->_joint_max[5]);
-      break;
+      case 0:
+        ss >> this->_joint_max[0] >> this->_joint_max[1] >> this->_joint_max[2]
+            >> this->_joint_max[3] >> this->_joint_max[4] >> this->_joint_max[5];
+        break;
 
-    case 1:
-      sscanf(Ligne, "%s %lf %lf %lf %lf %lf %lf", namoption,
-             &this->_joint_min[0], &this->_joint_min[1],
-             &this->_joint_min[2], &this->_joint_min[3],
-             &this->_joint_min[4], &this->_joint_min[5]);
-      break;
+      case 1:
+        ss >> this->_joint_min[0] >> this->_joint_min[1] >> this->_joint_min[2]
+            >> this->_joint_min[3] >> this->_joint_min[4] >> this->_joint_min[5];
+        break;
 
-    case 2:
-      sscanf(Ligne, "%s %lf", namoption, &this->_long_56);
-      break;
+      case 2:
+        ss >> this->_long_56;
+        break;
 
-    case 3:
-      sscanf(Ligne, "%s %lf", namoption, &this->_coupl_56);
-      break;
+      case 3:
+        ss >> this->_coupl_56;
+        break;
 
-    case 4:
-      break; // Nothing to do: camera name
+      case 4:
+        break; // Nothing to do: camera name
 
-    case 5:
-      sscanf(Ligne, "%s %lf %lf %lf", namoption,
-             &rot_eMc[0],
-             &rot_eMc[1],
-             &rot_eMc[2]);
+      case 5:
+        ss >> rot_eMc[0] >> rot_eMc[1] >> rot_eMc[2];
 
-      // Convert rotation from degrees to radians
-      rot_eMc[0] *= M_PI / 180.0;
-      rot_eMc[1] *= M_PI / 180.0;
-      rot_eMc[2] *= M_PI / 180.0;
-      get_rot_eMc = true;
-      break;
+        // Convert rotation from degrees to radians
+        rot_eMc[0] *= M_PI / 180.0;
+        rot_eMc[1] *= M_PI / 180.0;
+        rot_eMc[2] *= M_PI / 180.0;
+        get_rot_eMc = true;
+        break;
 
-    case 6:
-      sscanf(Ligne, "%s %lf %lf %lf", namoption,
-             &trans_eMc[0],
-             &trans_eMc[1],
-             &trans_eMc[2]);
-      get_trans_eMc = true;
-      break;
+      case 6:
+        ss >> trans_eMc[0] >> trans_eMc[1] >> trans_eMc[2];
+        get_trans_eMc = true;
+        break;
 
-    default:
-      vpERROR_TRACE ("Bad configuration file %s  "
-                     "line #%d.", filename.c_str(), numLn);
+      default:
+        throw(vpRobotException(vpRobotException::readingParametersError,
+                               "Bad configuration file %s line #%d",
+                               filename.c_str(), lineNum));
     } /* SWITCH */
   } /* WHILE */
-
-  fclose (fdtask);
 
   // Compute the eMc matrix from the translations and rotations
   if (get_rot_eMc && get_trans_eMc) {
@@ -1162,7 +1149,7 @@ vpAfma6::parseConfigFile (const std::string &filename)
     this->_eMc.buildFrom(_etc, eRc);
   }
 
-  return;
+  fdconfig.close();
 }
 
 /*!

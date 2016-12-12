@@ -121,7 +121,7 @@ public:
 
   void init (void);
 
-  bool readPositionFile(const char *filename, vpColVector &q);
+  bool readPositionFile(const std::string &filename, vpColVector &q);
 
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) ;
   void setPosition (const vpRobot::vpControlFrameType frame, const double &q1, const double &q2) ;

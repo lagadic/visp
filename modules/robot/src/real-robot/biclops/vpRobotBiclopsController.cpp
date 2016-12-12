@@ -111,14 +111,14 @@ vpRobotBiclopsController::~vpRobotBiclopsController()
     which is the used serial port.
 */
 void
-vpRobotBiclopsController::init(const char *configfile)
+vpRobotBiclopsController::init(const std::string &configfile)
 {
   vpDEBUG_TRACE (12, "Initialize biclops.");
   bool binit = false;
   for (int i=0; i<1; i++) {
     try {
       std::cout << "Try to initialize biclops head " << std::endl;
-      binit = biclops.Initialize(configfile);
+      binit = biclops.Initialize(configfile.c_str());
       usleep(100000);
       if (binit) {
         // Initialization completed successfully. Close the config file.
