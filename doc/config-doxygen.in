@@ -1563,10 +1563,13 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_ATIDAQ \
                          VISP_HAVE_AFMA4 \
                          VISP_HAVE_AFMA6 \
+                         VISP_HAVE_AFMA6_DATA \
                          VISP_HAVE_BICLOPS \
                          VISP_HAVE_PTU46 \
                          VISP_HAVE_VIPER650 \
+                         VISP_HAVE_VIPER650_DATA \
                          VISP_HAVE_VIPER850 \
+                         VISP_HAVE_VIPER850_DATA \
                          VISP_HAVE_PIONEER \
                          VISP_HAVE_PARPORT \
                          VISP_HAVE_XML2 \
@@ -1583,7 +1586,6 @@ PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
                          VISP_HAVE_FLYCAPTURE \
                          VISP_HAVE_VIRTUOSE \
                          VISP_HAVE_PCL \
-                         VISP_HAVE_ACCESS_TO_NAS \
                          VISP_HAVE_CPP11_COMPATIBILITY \
                          VISP_HAVE_MODULE_AR \
                          VISP_HAVE_MODULE_CORE \

@@ -341,11 +341,6 @@
 // Defined if libdmtx is available for bar code detection
 #cmakedefine VISP_HAVE_DMTX
 
-// Defined if Inria's NAS server hosting /udd/ is available
-// Used for the moment in vpAfma6 class to check if config files are
-// available in /udd/fspindle/robot/Afma6/current/include/
-#cmakedefine VISP_HAVE_ACCESS_TO_NAS
-
 // Defined if Doxygen documentation tool is found
 #cmakedefine VISP_HAVE_DOXYGEN
 
