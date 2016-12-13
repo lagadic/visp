@@ -84,7 +84,7 @@ void usage(const char *name, const char *badparam)
 Test video devices or display.\n\
 \n\
 SYNOPSIS\n\
-  %s [-t <type of video device>] [-l] [-c] [-d] [-h]\n\
+  %s [-l] [-c] [-d] [-h]\n\
 ", name);
 
   fprintf(stdout, "\n\
@@ -239,7 +239,6 @@ main(int argc, const char ** argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
-
     // Read the command line options
     if (getOptions(argc, argv, opt_list,
                    opt_click_allowed, opt_display) == false) {
@@ -363,8 +362,6 @@ main(int argc, const char ** argv)
     }
 #endif
 
-
-
 #if defined VISP_HAVE_X11
     delete displayX;
 #endif
@@ -385,9 +382,9 @@ main(int argc, const char ** argv)
     delete displayD3d;
 #endif
   }
-  catch(...) {
-    vpERROR_TRACE("Error while displaying the image") ;
-    exit(-1);
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
+    return(-1);
   }
 }
 
@@ -395,7 +392,7 @@ main(int argc, const char ** argv)
 int
 main()
 {
-  vpERROR_TRACE("You do not have display functionalities...");
+  std::cout << "You do not have display functionalities..." << std::endl;
 }
 
 #endif
