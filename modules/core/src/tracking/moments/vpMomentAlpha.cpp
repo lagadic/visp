@@ -127,10 +127,10 @@ void vpMomentAlpha::compute(){
 			bool signChange = true;
       for (unsigned int i = 0; i < 4; i++)
 			{
-				if (std::abs(rotMu[i]) > 1e10 * std::numeric_limits<double>::epsilon() && std::abs(ref[i]) > 1e10
+        if (std::fabs(rotMu[i]) > 1e10 * std::numeric_limits<double>::epsilon() && std::fabs(ref[i]) > 1e10
 						* std::numeric_limits<double>::epsilon() && rotMu[i] * ref[i] > 0)
 					signChange = false;
-				sum += std::abs(rotMu[i] * ref[i]);
+        sum += std::fabs(rotMu[i] * ref[i]);
 			}
 
 			if (sum < 1e4 * std::numeric_limits<double>::epsilon())

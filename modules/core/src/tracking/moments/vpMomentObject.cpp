@@ -232,29 +232,27 @@ int main()
   \endcode
 */
 void vpMomentObject::fromVector(std::vector<vpPoint>& points){
-    if(type==vpMomentObject::DENSE_POLYGON){
-        if(
-                std::abs(points.rbegin()->get_x()-points.begin()->get_x())>std::numeric_limits<double>::epsilon() ||
-                std::abs(points.rbegin()->get_y()-points.begin()->get_y())>std::numeric_limits<double>::epsilon()
-                ){
-            points.resize(points.size()+1);
-            points[points.size()-1] = points[0];
-        }
-        for(unsigned int j=0;j<order*order;j++){
-            values[j]=calc_mom_polygon(j%order,j/order,points);
-        }
-    }else{
-      std::vector<double> cache(order*order,0.);
-        values.assign(order*order,0);
-        for(unsigned int i=0;i<points.size();i++){
-            cacheValues(cache,points[i].get_x(),points[i].get_y());
-            for(unsigned int j=0;j<order;j++){
-                for(unsigned int k=0;k<order-j;k++){
-                    values[j*order+k]+=cache[j*order+k];
-                }
-            }
-        }
+  if(type==vpMomentObject::DENSE_POLYGON){
+    if(std::fabs(points.rbegin()->get_x()-points.begin()->get_x())>std::numeric_limits<double>::epsilon() ||
+       std::fabs(points.rbegin()->get_y()-points.begin()->get_y())>std::numeric_limits<double>::epsilon()){
+      points.resize(points.size()+1);
+      points[points.size()-1] = points[0];
     }
+    for(unsigned int j=0;j<order*order;j++){
+      values[j]=calc_mom_polygon(j%order,j/order,points);
+    }
+  } else {
+    std::vector<double> cache(order*order,0.);
+    values.assign(order*order,0);
+    for(unsigned int i=0;i<points.size();i++){
+      cacheValues(cache,points[i].get_x(),points[i].get_y());
+      for(unsigned int j=0;j<order;j++){
+        for(unsigned int k=0;k<order-j;k++){
+          values[j*order+k]+=cache[j*order+k];
+        }
+      }
+    }
+  }
 }
 
 /*!

@@ -147,7 +147,7 @@ void vpMomentCInvariant::computeI(const vpMomentCentered& momentCentered, std::v
     II[2]=c[2]*c[2]+s[2]*s[2];
     II[3]=momentCentered.get(2,0)+momentCentered.get(0,2);
 
-    K=(II[1]*(II[3]*sqrt(std::abs(II[3]))))/sqrt(std::abs(a));
+    K=(II[1]*(II[3]*sqrt(std::fabs(II[3]))))/sqrt(std::fabs(a));
 
     /*
      * Intermediate quantities required for calculation of normalized version of Sx and Sy
@@ -157,7 +157,7 @@ void vpMomentCInvariant::computeI(const vpMomentCentered& momentCentered, std::v
     double p11 = momentCentered.get(1,1)/II[3];
     double p02 = momentCentered.get(0,2)/II[3];
 
-    double d = sqrt(std::abs(a))/(II[3]*sqrt(std::abs(II[3])));         // d is the normalization factor for 3rd order moments
+    double d = sqrt(std::fabs(a))/(II[3]*sqrt(std::fabs(II[3])));         // d is the normalization factor for 3rd order moments
     double p30 = momentCentered.get(3,0)*d;
     double p21 = momentCentered.get(2,1)*d;
     double p12 = momentCentered.get(1,2)*d;

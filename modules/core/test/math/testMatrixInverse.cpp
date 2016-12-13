@@ -234,7 +234,7 @@ main(int argc, const char ** argv)
         vpMatrix cur;
         double det=0.;
         //don't put singular matrices in the benchmark
-        for(cur=makeRandomMatrix(nb_rows,nb_cols);std::abs(det=cur.AtA().det())<.01;cur = makeRandomMatrix(nb_rows,nb_cols))
+        for(cur=makeRandomMatrix(nb_rows,nb_cols); std::fabs(det=cur.AtA().det())<.01; cur = makeRandomMatrix(nb_rows,nb_cols))
           if(verbose){
             std::cout << "Generated random matrix A*tA=" << std::endl << cur.AtA() << std::endl;
             std::cout << "generated random matrix not invertibleL: det="<<det<< ". Retrying..." << std::endl;
