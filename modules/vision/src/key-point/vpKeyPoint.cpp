@@ -2263,7 +2263,7 @@ void vpKeyPoint::initFeatureNames() {
   #if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined (VISP_HAVE_OPENCV_XFEATURES2D))
     m_mapOfDetectorNames[DETECTOR_STAR] = "STAR";
   #endif
-  #if (VISP_HAVE_OPENCV_NONFREE) || defined (VISP_HAVE_OPENCV_XFEATURES2D)
+  #if defined(VISP_HAVE_OPENCV_NONFREE) || defined (VISP_HAVE_OPENCV_XFEATURES2D)
     m_mapOfDetectorNames[DETECTOR_SIFT] = "SIFT";
     m_mapOfDetectorNames[DETECTOR_SURF] = "SURF";
   #endif
@@ -2284,7 +2284,7 @@ void vpKeyPoint::initFeatureNames() {
     m_mapOfDescriptorNames[DESCRIPTOR_FREAK] = "FREAK";
     m_mapOfDescriptorNames[DESCRIPTOR_BRIEF] = "BRIEF";
 #endif
-  #if (VISP_HAVE_OPENCV_NONFREE) || defined (VISP_HAVE_OPENCV_XFEATURES2D)
+  #if defined(VISP_HAVE_OPENCV_NONFREE) || defined (VISP_HAVE_OPENCV_XFEATURES2D)
     m_mapOfDescriptorNames[DESCRIPTOR_SIFT] = "SIFT";
     m_mapOfDescriptorNames[DESCRIPTOR_SURF] = "SURF";
   #endif
