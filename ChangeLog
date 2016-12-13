@@ -80,6 +80,7 @@ ViSP 3.0.1 (in development)
     . [#105] vpMomentAlpha: Question about symmetric judgement based on centered moments
     . [#106] Freeze when more than one GDI display is opened with mingw
     . [#109] Link errors with undefined reference to TIFF
+    . [#112] vpPose: Possible ambiguity or misunderstanding in doxygen message
 
 ----------------------------------------------
 ViSP 3.0.0 (released December 18th, 2015)

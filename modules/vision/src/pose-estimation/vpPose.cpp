@@ -57,7 +57,7 @@ pour faire du calcul de pose par difference methode
 
 #define DEBUG_LEVEL1 0
 /*!
-\brief   basic initialisation (called by the constructors)
+  Basic initialisation that is called by the constructors.
 */
 void
 vpPose::init()
@@ -129,48 +129,33 @@ vpPose::~vpPose()
 void
 vpPose::clearPoint()
 {
-#if (DEBUG_LEVEL1)
-  std::cout << "begin vpPose::ClearPoint() " << std::endl ;
-#endif
-
   listP.clear();
   npt = 0 ;
-
-#if (DEBUG_LEVEL1)
-  std::cout << "end vpPose::ClearPoint() " << std::endl ;
-#endif
 }
 
 /*!
   Add a new point in the array of points.
   \param  newP : New point to add  in the array of point.
-  \warning Considering a point from the class vpPoint, X, Y, and Z will
-represent the 3D information and x and y its 2D information.
-These 5 fields must be initialized to be used within this library
+  \warning Considering a point from the class vpPoint, oX, oY, and oZ will
+  represent the 3D coordinates of the point in the object frame and x and y
+  its 2D coordinates in the image plane. These 5 fields must be initialized
+  to be used within this function.
 */
 void
 vpPose::addPoint(const vpPoint& newP)
 {
-
-#if (DEBUG_LEVEL1)
-  std::cout << "begin vpPose::AddPoint(Dot) " << std::endl ;
-#endif
-
   listP.push_back(newP);
   listOfPoints.push_back(newP);
   npt++ ;
-
-#if (DEBUG_LEVEL1)
-  std::cout << "end vpPose::AddPoint(Dot) " << std::endl ;
-#endif
 }
 
 /*!
   Add (append) a list of points in the array of points.
   \param  lP : List of points to add (append).
-  \warning Considering a point from the class vpPoint, X, Y, and Z will
-represent the 3D information and x and y its 2D information.
-These 5 fields must be initialized to be used within this library
+  \warning Considering a point from the class vpPoint, oX, oY, and oZ will
+  represent the 3D coordinates of the point in the object frame and x and y
+  its 2D coordinates in the image plane. These 5 fields must be initialized
+  to be used within this function.
 */
 void
 vpPose::addPoints(const std::vector<vpPoint> &lP) {
@@ -186,16 +171,15 @@ vpPose::setDistanceToPlaneForCoplanarityTest(double d)
 }
 
 /*!
-\brief test the coplanarity of the set of points
+  Test the coplanarity of the set of points
 
-\param coplanar_plane_type:
+  \param coplanar_plane_type:
    1: if plane x=cst
    2: if plane y=cst
    3: if plane z=cst
    4: if the points are collinear.
    0: any other plane
-\return true if points are coplanar
-false if not
+  \return true if points are coplanar false otherwise.
 */
 bool
 vpPose::coplanar(int &coplanar_plane_type)
@@ -370,34 +354,23 @@ vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 
 
 /*!
-\brief Compute the pose according to the desired method
-
-the different method are
-
-LAGRANGE         Lagrange approach
-(test is done to switch between planar and
-non planar algorithm)
-
-DEMENTHON        Dementhon approach
-(test is done to switch between planar and
-non planar algorithm)
-
-VIRTUAL_VS       Virtual visual servoing approach
-
-DEMENTHON_VIRTUAL_VS Virtual visual servoing approach initialized using
-Dementhon approach
-
-LAGRANGE_VIRTUAL_VS  Virtual visual servoing initialized using
-Lagrange approach
+  Compute the pose according to the desired method which are:
+  - vpPose::LAGRANGE: Linear Lagrange approach (test is done to switch between planar and
+    non planar algorithm)
+  - vpPose::DEMENTHON: Linear Dementhon approach (test is done to switch between planar and
+    non planar algorithm)
+  - vpPose::LOWE: Lowe aproach based on a Levenberg Marquartd non linear minimization scheme that needs an initialization from Lagrange or Dementhon aproach
+  - vpPose::LAGRANGE_LOWE: Non linear Lowe aproach initialized by Lagrange approach
+  - vpPose::DEMENTHON_LOWE: Non linear Lowe aproach initialized by Dementhon approach
+  - vpPose::VIRTUAL_VS: Non linear virtual visual servoing approach that needs an initialization from Lagrange or Dementhon aproach
+  - vpPose::DEMENTHON_VIRTUAL_VS: Non linear virtual visual servoing approach initialized by Dementhon approach
+  - vpPose::LAGRANGE_VIRTUAL_VS: Non linear virtual visual servoing approach initialized by Lagrange approach
+  - vpPose::RANSAC: Robust Ransac aproach (does't need an initialization)
 
 */
 bool
-vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*func)(vpHomogeneousMatrix *))
+vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix& cMo, bool (*func)(vpHomogeneousMatrix *))
 {
-#if (DEBUG_LEVEL1)
-  std::cout << "begin vpPose::ComputePose()" << std::endl ;
-#endif
-
   if (npt <4)
   {
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ",npt) ;
@@ -405,13 +378,12 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
       "No enough point ")) ;
   }
 
-  switch (methode)
+  switch (method)
   {
   case DEMENTHON :
   case DEMENTHON_VIRTUAL_VS :
   case DEMENTHON_LOWE :
     {
-
       if (npt <4)
       {
         vpERROR_TRACE("Dementhon method cannot be used in that case ") ;
@@ -531,7 +503,7 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
     break ;
   }
 
-  switch (methode)
+  switch (method)
   {
   case LAGRANGE :
   case DEMENTHON :
@@ -569,10 +541,6 @@ vpPose::computePose(vpPoseMethodType methode, vpHomogeneousMatrix& cMo, bool (*f
     break ;
   }
 
-#if (DEBUG_LEVEL1)
-  std::cout << "end vpPose::ComputePose()" << std::endl ;
-#endif
-
   //If here, there was no exception thrown so return true
   return true;
 }
@@ -593,7 +561,15 @@ vpPose::printPoint()
   }
 }
 
-
+/*!
+   Display in the image \e I the pose represented by its homogenous transformation \e cMo as a 3 axis frame.
+   \param I: Image where the pose is displayed in overlay.
+   \param cMo: Considered pose to display.
+   \param cam: Camera parameters associated to image \e I.
+   \param size: length in meter of the axis that will be displayed
+   \param col: Color used to display the 3 axis. If vpColor::none, red, green and blue will represent
+   x-axiw, y-axis and z-axis respectively.
+ */
 void
 vpPose::display(vpImage<unsigned char> &I,
                 vpHomogeneousMatrix &cMo,
@@ -604,7 +580,15 @@ vpPose::display(vpImage<unsigned char> &I,
   vpDisplay::displayFrame(I, cMo, cam, size, col);
 }
 
-
+/*!
+   Display in the image \e I the pose represented by its homogenous transformation \e cMo as a 3 axis frame.
+   \param I: Image where the pose is displayed in overlay.
+   \param cMo: Considered pose to display.
+   \param cam: Camera parameters associated to image \e I.
+   \param size: length in meter of the axis that will be displayed
+   \param col: Color used to display the 3 axis. If vpColor::none, red, green and blue will represent
+   x-axiw, y-axis and z-axis respectively.
+ */
 void
 vpPose::display(vpImage<vpRGBa> &I,
                 vpHomogeneousMatrix &cMo,
@@ -615,10 +599,8 @@ vpPose::display(vpImage<vpRGBa> &I,
   vpDisplay::displayFrame(I,cMo,cam, size,col);
 }
 
-/*
-\brief display the 3D model in image I
-\warning the 2D coordinate of the point have to be initialized
-(lispP has to be modified)
+/*!
+  Display the coordinates of the points in the image plane that are used to compute the pose in image I.
 */
 void
 vpPose::displayModel(vpImage<unsigned char> &I,
@@ -638,10 +620,8 @@ vpPose::displayModel(vpImage<unsigned char> &I,
   }
 }
 
-/*
-\brief display the 3D model in image I
-\warning the 2D coordinate of the point have to be initialized
-(lispP has to be modified)
+/*!
+  Display the coordinates of the points in the image plane that are used to compute the pose in image I.
 */
 void
 vpPose::displayModel(vpImage<vpRGBa> &I,

@@ -76,17 +76,18 @@
 class VISP_EXPORT vpPose
 {  
 public:
+  //! Methods that could be used to estimate the pose from points.
   typedef enum
     {
-      LAGRANGE         ,
-      DEMENTHON        ,
-      LOWE             ,
-      RANSAC           ,
-      LAGRANGE_LOWE    ,
-      DEMENTHON_LOWE   ,
-      VIRTUAL_VS       ,
-      DEMENTHON_VIRTUAL_VS,
-      LAGRANGE_VIRTUAL_VS
+      LAGRANGE         , /*!< Linear Lagrange approach (does't need an initialization) */
+      DEMENTHON        , /*!< Linear Dementhon aproach (does't need an initialization) */
+      LOWE             , /*!< Lowe aproach based on a Levenberg Marquartd non linear minimization scheme that needs an initialization from Lagrange or Dementhon aproach */
+      RANSAC           , /*!< Robust Ransac aproach (does't need an initialization) */
+      LAGRANGE_LOWE    , /*!< Non linear Lowe aproach initialized by Lagrange approach */
+      DEMENTHON_LOWE   , /*!< Non linear Lowe aproach initialized by Dementhon approach */
+      VIRTUAL_VS       , /*!< Non linear virtual visual servoing approach that needs an initialization from Lagrange or Dementhon aproach */
+      DEMENTHON_VIRTUAL_VS, /*!< Non linear virtual visual servoing approach initialized by Dementhon approach */
+      LAGRANGE_VIRTUAL_VS   /*!< Non linear virtual visual servoing approach initialized by Lagrange approach */
     } vpPoseMethodType;
 
   enum FILTERING_RANSAC_FLAGS {
@@ -96,10 +97,10 @@ public:
     CHECK_DEGENERATE_POINTS           = 0x8   /*!< Check for degenerate points during the RANSAC. */
   };
 
-  unsigned int npt ;             //!< number of point used in pose computation
-  std::list<vpPoint> listP ;     //!< array of point (use here class vpPoint)
+  unsigned int npt ;             //!< Number of point used in pose computation
+  std::list<vpPoint> listP ;     //!< Array of point (use here class vpPoint)
 
-  double residual ;     //!< compute the residual in meter
+  double residual ;     //!< Residual in meter
 
 protected :
   double lambda ;//!< parameters use for the virtual visual servoing approach
@@ -193,23 +194,14 @@ protected:
   int calculArbreDementhon(vpMatrix &b, vpColVector &U, vpHomogeneousMatrix &cMo) ;
 
 public:
-  // constructor
   vpPose() ;
-  //! destructor
   virtual ~vpPose() ;
-  //! Add a new point in this array
   void addPoint(const vpPoint& P) ;
-  //! Add a list of points
   void addPoints(const std::vector<vpPoint>& lP);
-  //! suppress all the point in the array of point
   void clearPoint() ;
 
-  //! compute the pose for a given method
-  bool computePose(vpPoseMethodType methode, vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *)=NULL) ;
-  //! compute the residual (i.e., the quality of the result)
-  //! compute the residual (in meter for pose M)
+  bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(vpHomogeneousMatrix *)=NULL) ;
   double computeResidual(const vpHomogeneousMatrix &cMo) const ;
-  //! test the coplanarity of the points
   bool coplanar(int &coplanar_plane_type) ;
   void displayModel(vpImage<unsigned char> &I,
                     vpCameraParameters &cam,
@@ -218,22 +210,13 @@ public:
                     vpCameraParameters &cam,
                     vpColor col=vpColor::none) ;
   void init() ;
-  //! compute the pose using Dementhon approach (planar object)
   void poseDementhonPlan(vpHomogeneousMatrix &cMo) ;
-  //! compute the pose using Dementhon approach (non planar object)
   void poseDementhonNonPlan(vpHomogeneousMatrix &cMo) ;
-  //! compute the pose using Lagrange approach (planar object)
   void poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type=0) ;
-  //! compute the pose using Lagrange approach (non planar object)
   void poseLagrangeNonPlan(vpHomogeneousMatrix &cMo) ;
-  //! compute the pose using the Lowe approach (i.e., using the
-  //! Levenberg Marquartd non linear minimization approach)
   void poseLowe(vpHomogeneousMatrix & cMo) ;
-  //! compute the pose using the Ransac approach 
   bool poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMatrix *)=NULL) ;
-  //! compute the pose using a robust virtual visual servoing approach
   void poseVirtualVSrobust(vpHomogeneousMatrix & cMo) ;
-  //! compute the pose using virtual visual servoing approach
   void poseVirtualVS(vpHomogeneousMatrix & cMo) ;
   void printPoint() ; 
   void setDistanceToPlaneForCoplanarityTest(double d) ;
