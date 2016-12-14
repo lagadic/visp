@@ -260,7 +260,7 @@ public:
     DETECTOR_AKAZE,
     DETECTOR_AGAST,
   #endif
-  #if (VISP_HAVE_OPENCV_VERSION >= 0x030100)
+  #if (VISP_HAVE_OPENCV_VERSION >= 0x030100) && defined (VISP_HAVE_OPENCV_XFEATURES2D)
     DETECTOR_MSD,
   #endif
 #endif
@@ -288,7 +288,7 @@ public:
     DESCRIPTOR_LATCH,
     #endif
   #endif
-  #if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
+  #if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined (VISP_HAVE_OPENCV_XFEATURES2D)
     DESCRIPTOR_VGG,
     DESCRIPTOR_BoostDesc,
   #endif

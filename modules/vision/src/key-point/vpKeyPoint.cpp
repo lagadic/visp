@@ -672,16 +672,16 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vect
 }
 
 /*!
-   Compute the 3D coordinate given the 2D image coordinate and under the assumption that the point is located on a plane
+   Compute the 3D coordinate in the world/object frame given the 2D image coordinate and under the assumption that the point is located on a plane
    whose the plane equation is known in the camera frame.
-   The Z-coordinate is retrieved according to the proportional relation between the plane equation expressed in the
+   The Z-coordinate is retrieved according to the proportional relationship between the plane equation expressed in the
    normalized camera frame (derived from the image coordinate) and the same plane equation expressed in the camera frame.
 
    \param candidate : Keypoint we want to compute the 3D coordinate.
-   \param roi : List of 3D points representing a planar face.
+   \param roi : List of 3D points in the camera frame representing a planar face.
    \param cam : Camera parameters.
    \param cMo : Homogeneous matrix between the world and the camera frames.
-   \param point : 3D coordinate computed.
+   \param point : 3D coordinate in the world/object frame computed.
  */
 void vpKeyPoint::compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi,
     const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, cv::Point3f &point) {
@@ -710,16 +710,16 @@ void vpKeyPoint::compute3D(const cv::KeyPoint &candidate, const std::vector<vpPo
 }
 
 /*!
-   Compute the 3D coordinate given the 2D image coordinate and under the assumption that the point is located on a plane
+   Compute the 3D coordinate in the world/object frame given the 2D image coordinate and under the assumption that the point is located on a plane
    whose the plane equation is known in the camera frame.
-   The Z-coordinate is retrieved according to the proportional relation between the plane equation expressed in the
+   The Z-coordinate is retrieved according to the proportional relationship between the plane equation expressed in the
    normalized camera frame (derived from the image coordinate) and the same plane equation expressed in the camera frame.
 
    \param candidate : vpImagePoint we want to compute the 3D coordinate.
-   \param roi : List of 3D points representing a planar face.
+   \param roi : List of 3D points in the camera frame representing a planar face.
    \param cam : Camera parameters.
    \param cMo : Homogeneous matrix between the world and the camera frames.
-   \param point : 3D coordinate computed.
+   \param point : 3D coordinate in the world/object frame computed.
  */
 void vpKeyPoint::compute3D(const vpImagePoint &candidate, const std::vector<vpPoint> &roi,
     const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, vpPoint &point) {
@@ -748,7 +748,7 @@ void vpKeyPoint::compute3D(const vpImagePoint &candidate, const std::vector<vpPo
 }
 
 /*!
-   Keep only keypoints located on faces and compute for those keypoints the 3D coordinate given the 2D image coordinate
+   Keep only keypoints located on faces and compute for those keypoints the 3D coordinate in the world/object frame given the 2D image coordinate
    and under the assumption that the point is located on a plane.
 
    \param cMo : Homogeneous matrix between the world and the camera frames.
@@ -756,9 +756,9 @@ void vpKeyPoint::compute3D(const vpImagePoint &candidate, const std::vector<vpPo
    \param candidates : In input, list of keypoints detected in the whole image, in output, list of keypoints only located
    on planes.
    \param polygons : List of 2D polygons representing the projection of the faces in the image plane.
-   \param  roisPt : List of faces.
-   \param points : Output list of computed 3D coordinates of keypoints located only on faces.
-   \param descriptors : Optional parameter, pointer to the descriptors to filter
+   \param  roisPt : List of faces, with the 3D coordinates known in the camera frame.
+   \param points : Output list of computed 3D coordinates (in the world/object frame) of keypoints located only on faces.
+   \param descriptors : Optional parameter, pointer to the descriptors to filter.
  */
 void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
     std::vector<cv::KeyPoint> &candidates, const std::vector<vpPolygon> &polygons,
@@ -806,7 +806,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
 }
 
 /*!
-   Keep only keypoints located on faces and compute for those keypoints the 3D coordinate given the 2D image coordinate
+   Keep only keypoints located on faces and compute for those keypoints the 3D coordinate in the world/object frame given the 2D image coordinate
    and under the assumption that the point is located on a plane.
 
    \param cMo : Homogeneous matrix between the world and the camera frames.
@@ -814,8 +814,8 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
    \param candidates : In input, list of vpImagePoint located in the whole image, in output, list of vpImagePoint only located
    on planes.
    \param polygons : List of 2D polygons representing the projection of the faces in the image plane.
-   \param  roisPt : List of faces.
-   \param points : Output list of computed 3D coordinates of vpImagePoint located only on faces.
+   \param  roisPt : List of faces, with the 3D coordinates known in the camera frame.
+   \param points : Output list of computed 3D coordinates (in the world/object frame) of vpImagePoint located only on faces.
    \param descriptors : Optional parameter, pointer to the descriptors to filter
  */
 void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
@@ -858,15 +858,15 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
 }
 
 /*!
-   Keep only keypoints located on cylinders and compute the 3D coordinates given the 2D image coordinates.
+   Keep only keypoints located on cylinders and compute the 3D coordinates in the world/object frame given the 2D image coordinates.
 
    \param cMo : Homogeneous matrix between the world and the camera frames.
    \param cam : Camera parameters.
    \param candidates : In input, list of keypoints detected in the whole image, in output, list of keypoints only located
    on cylinders.
-   \param cylinders : List of vpCylinder corresponding of the cylinder objects in the scene.
+   \param cylinders : List of vpCylinder corresponding of the cylinder objects in the scene, projected in the camera frame.
    \param vectorOfCylinderRois : For each cylinder, the corresponding list of bounding box.
-   \param points : Output list of computed 3D coordinates for each keypoint located on a cylinder.
+   \param points : Output list of computed 3D coordinates in the world/object frame for each keypoint located on a cylinder.
    \param descriptors : Optional parameter, pointer to the descriptors to filter.
  */
 void vpKeyPoint::compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
@@ -926,15 +926,15 @@ void vpKeyPoint::compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, c
 }
 
 /*!
-   Keep only vpImagePoint located on cylinders and compute the 3D coordinates given the 2D image coordinates.
+   Keep only vpImagePoint located on cylinders and compute the 3D coordinates in the world/object frame given the 2D image coordinates.
 
    \param cMo : Homogeneous matrix between the world and the camera frames.
    \param cam : Camera parameters.
    \param candidates : In input, list of vpImagePoint located in the image, in output, list of vpImagePoint only located
    on cylinders.
-   \param cylinders : List of vpCylinder corresponding of the cylinder objects in the scene.
+   \param cylinders : List of vpCylinder corresponding of the cylinder objects in the scene, projected in the camera frame.
    \param vectorOfCylinderRois : For each cylinder, the corresponding list of bounding box.
-   \param points : Output list of computed 3D coordinates for each vpImagePoint located on a cylinder.
+   \param points : Output list of computed 3D coordinates in the world/object frame for each vpImagePoint located on a cylinder.
    \param descriptors : Optional parameter, pointer to the descriptors to filter.
  */
 void vpKeyPoint::compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
