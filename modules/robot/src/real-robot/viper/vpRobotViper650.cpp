@@ -2171,7 +2171,7 @@ bool vpRobotViper650::readPosFile(const std::string &filename, vpColVector &q)
       std::istringstream ss(line);
       std::string key_;
       ss >> key_;
-      for (size_t i=0; i< njoint; i++)
+      for (unsigned int i=0; i< njoint; i++)
         ss >> q[i];
       pos_found = true;
       break;
