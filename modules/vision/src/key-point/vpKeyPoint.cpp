@@ -2045,6 +2045,7 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
     }
   } else if (detectorNameTmp == "MSD") {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030100)
+  #if defined (VISP_HAVE_OPENCV_XFEATURES2D)
     cv::Ptr<cv::FeatureDetector> msdDetector = cv::xfeatures2d::MSDDetector::create();
     if(!usePyramid) {
       m_detectors[detectorNameTmp] = msdDetector;
@@ -2052,6 +2053,12 @@ void vpKeyPoint::initDetector(const std::string &detectorName) {
       std::cerr << "You should not use MSD with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(msdDetector);
     }
+  #else
+        std::stringstream ss_msg;
+        ss_msg << "Fail to initialize the detector: MSD. OpenCV version "
+               << std::hex << VISP_HAVE_OPENCV_VERSION << " was not build with xFeatures2d module.";
+        throw vpException(vpException::fatalError, ss_msg.str());
+  #endif
 #else
     std::stringstream ss_msg;
     ss_msg << "Feature " << detectorName << " is not available in OpenCV version: "
@@ -2272,7 +2279,7 @@ void vpKeyPoint::initFeatureNames() {
     m_mapOfDetectorNames[DETECTOR_AKAZE] = "AKAZE";
     m_mapOfDetectorNames[DETECTOR_AGAST] = "AGAST";
   #endif
-  #if (VISP_HAVE_OPENCV_VERSION >= 0x030100)
+  #if (VISP_HAVE_OPENCV_VERSION >= 0x030100) && defined (VISP_HAVE_OPENCV_XFEATURES2D)
     m_mapOfDetectorNames[DETECTOR_MSD] = "MSD";
   #endif
 #endif
@@ -2296,7 +2303,7 @@ void vpKeyPoint::initFeatureNames() {
     m_mapOfDescriptorNames[DESCRIPTOR_LATCH] = "LATCH";
     #endif
   #endif
-  #if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
+  #if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined (VISP_HAVE_OPENCV_XFEATURES2D)
     m_mapOfDescriptorNames[DESCRIPTOR_VGG] = "VGG";
     m_mapOfDescriptorNames[DESCRIPTOR_BoostDesc] = "BoostDesc";
   #endif
