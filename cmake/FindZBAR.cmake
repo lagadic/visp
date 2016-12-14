@@ -40,21 +40,73 @@
 #
 #############################################################################
 
+set(ZBAR_INC_SEARCH_PATH "")
+set(ZBAR_LIB_SEARCH_PATH "")
+
+if(MSVC)
+  list(APPEND ZBAR_INC_SEARCH_PATH $ENV{ZBAR_DIR}/include)
+  list(APPEND ZBAR_INC_SEARCH_PATH "C:/ZBarWin64/include")
+  list(APPEND ZBAR_INC_SEARCH_PATH "C:/zbar/ZBarWin64/include")
   
+  if(CMAKE_CL_64)
+    list(APPEND ZBAR_LIB_SEARCH_PATH $ENV{ZBAR_DIR}/x64)
+    list(APPEND ZBAR_LIB_SEARCH_PATH "C:/ZBarWin64/x64")
+    list(APPEND ZBAR_LIB_SEARCH_PATH "C:/zbar/ZBarWin64/x64")
+  else()
+    list(APPEND ZBAR_LIB_SEARCH_PATH $ENV{ZBAR_DIR})
+    list(APPEND ZBAR_LIB_SEARCH_PATH "C:/ZBarWin64")
+    list(APPEND ZBAR_LIB_SEARCH_PATH "C:/zbar/ZBarWin64")
+  endif()
+
+else()
+  list(APPEND ZBAR_INC_SEARCH_PATH $ENV{ZBAR_DIR}/include)
+  list(APPEND ZBAR_INC_SEARCH_PATH /usr/include)
+  list(APPEND ZBAR_INC_SEARCH_PATH /usr/local/include)
+
+  list(APPEND ZBAR_LIB_SEARCH_PATH /usr/lib)
+  list(APPEND ZBAR_LIB_SEARCH_PATH /usr/local/lib)
+endif()
+
 find_path(ZBAR_INCLUDE_DIRS zbar.h
-  $ENV{ZBAR_DIR}/include
-  /usr/include 
-  /usr/local/include 
+  PATHS
+    ${ZBAR_INC_SEARCH_PATH}
 )
 
-find_library(ZBAR_LIBRARIES
-  NAMES zbar
-  PATHS 
-    $ENV{ZBAR_DIR}/lib
-    /usr/lib
-    /usr/local/lib
-)
+if(MSVC)
+  set(ZBAR_LIB_SEARCH_PATH_OPT ${ZBAR_LIB_SEARCH_PATH})
+  set(ZBAR_LIB_SEARCH_PATH_DBG ${ZBAR_LIB_SEARCH_PATH})
+  foreach(p ${ZBAR_LIB_SEARCH_PATH})
+    list(APPEND ZBAR_LIB_SEARCH_PATH_OPT ${p}/Release)
+    list(APPEND ZBAR_LIB_SEARCH_PATH_DBG ${p}/Debug)
+  endforeach()
+  find_library(ZBAR_LIBRARIES_OPT
+    NAMES libzbar64-0
+    PATHS
+      ${ZBAR_LIB_SEARCH_PATH_OPT}
+  )
+  find_library(ZBAR_LIBRARIES_DBG
+    NAMES libzbar64-0
+    PATHS
+      ${ZBAR_LIB_SEARCH_PATH_DBG}
+  )
+  if(ZBAR_LIBRARIES_OPT)
+    set(ZBAR_LIBRARIES optimized ${ZBAR_LIBRARIES_OPT})
+  endif()
+  if(ZBAR_LIBRARIES_DBG)
+    list(APPEND ZBAR_LIBRARIES debug ${ZBAR_LIBRARIES_DBG})
+  endif()
 
+  mark_as_advanced(ZBAR_LIBRARIES_OPT ZBAR_LIBRARIES_DBG)
+else()
+  find_library(ZBAR_LIBRARIES
+    NAMES zbar
+    PATHS
+      ${ZBAR_LIB_SEARCH_PATH}
+  )
+endif()
+
+#message("ZBAR_INCLUDE_DIRS: ${ZBAR_INCLUDE_DIRS}")
+#message("ZBAR_LIBRARIES: ${ZBAR_LIBRARIES}")
 if(ZBAR_INCLUDE_DIRS AND ZBAR_LIBRARIES)
   set(ZBAR_FOUND TRUE)
 else()
