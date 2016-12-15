@@ -123,6 +123,7 @@ namespace {
   //  return bint.c[0] == 1;
   //}
 
+#ifdef VISP_BIG_ENDIAN
   //Swap 16 bits by shifting to the right the first byte and by shifting to the left the second byte
   uint16_t swap16bits(const uint16_t val) {
     return ( ((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00) );
@@ -167,6 +168,7 @@ namespace {
     dat2.b[7] = dat1.b[0];
     return dat2.d;
   }
+#endif
 
   //Read an unsigned short int stored in little endian
   void readBinaryUShortLE(std::ifstream &file, unsigned short &ushort_value) {
