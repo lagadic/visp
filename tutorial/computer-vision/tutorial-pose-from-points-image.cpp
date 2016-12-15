@@ -8,9 +8,6 @@
 #include <visp3/vision/vpPose.h>
 
 void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
-                 const vpCameraParameters &cam, bool init, vpHomogeneousMatrix &cMo);
-
-void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
                  const vpCameraParameters &cam, bool init, vpHomogeneousMatrix &cMo)
 {
   vpPose pose;     double x=0, y=0;
@@ -22,16 +19,16 @@ void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
   }
 
   if (init == true) {
-	  vpHomogeneousMatrix cMo_dem;
-	  vpHomogeneousMatrix cMo_lag;
+    vpHomogeneousMatrix cMo_dem;
+    vpHomogeneousMatrix cMo_lag;
     pose.computePose(vpPose::DEMENTHON, cMo_dem);
     pose.computePose(vpPose::LAGRANGE, cMo_lag);
     double residual_dem = pose.computeResidual(cMo_dem);
-	  double residual_lag = pose.computeResidual(cMo_lag);
-	  if (residual_dem < residual_lag)
-		  cMo = cMo_dem;
-	  else
-		  cMo = cMo_lag;
+    double residual_lag = pose.computeResidual(cMo_lag);
+    if (residual_dem < residual_lag)
+      cMo = cMo_dem;
+    else
+      cMo = cMo_lag;
   }
   pose.computePose(vpPose::VIRTUAL_VS, cMo);
 }
@@ -64,7 +61,7 @@ int main()
     vpHomogeneousMatrix cMo;
     bool init = true;
 
-    while(1){
+    while(1) {
       vpImageIo::read(I, "square.pgm");
       vpDisplay::display(I);
       for (unsigned int i=0; i < dot.size(); i ++) {
@@ -82,7 +79,7 @@ int main()
       vpTime::wait(40);
     }
   }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
 }

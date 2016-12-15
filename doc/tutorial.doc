@@ -104,18 +104,19 @@ This page introduces the user to the way to track objects in images.
 /*! \page tutorial_detection Detection 
 This page introduces the user to the way to detect features or objects in images.
 
-- \subpage tutorial-matching <br>This tutorial shows how to detect and match keypoints. New since ViSP 2.10.0.
+- \subpage tutorial-matching <br>This tutorial shows how to detect and match keypoints.
 - \subpage tutorial-matching-deprecated <br>This tutorial shows how to detect and match SURF keypoints. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
-- \subpage tutorial-detection-barcode <br>This tutorial focuses on bar code (QR code, Data Matrix code) detection. New since ViSP 2.10.0.
-- \subpage tutorial-detection-face <br>This tutorial focuses on face detection thanks to OpenCV Haar cascade classifier. New since ViSP 2.10.0.
-- \subpage tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object. New since ViSP 2.10.0.
+- \subpage tutorial-detection-barcode <br>This tutorial focuses on bar code (QR code, Data Matrix code) detection.
+- \subpage tutorial-detection-face <br>This tutorial focuses on face detection thanks to OpenCV Haar cascade classifier.
+- \subpage tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object.
 
 */
 
 /*! \page tutorial_computer_vision Computer vision
 This page introduces the user to the way to estimate a pose or an homography.
 
-- \subpage tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points. New since ViSP 2.10.0.
+- \subpage tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
+- \subpage tutorial-pose-estimation-qrcode <br>This tutorial focuses on pose estimation of a QRcode using it's four corners location.
 - \subpage tutorial-homography <br>Here we explain how to estimate an homography from couples of matched points.
 - \subpage tutorial-homography-deprecated <br>Here we explain how to estimate an homography from couples of matched points. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
 

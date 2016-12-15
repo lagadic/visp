@@ -53,6 +53,7 @@ ViSP 3.0.1 (in development)
     . New tutorial: How to create an application that uses ViSP on NAOqi OS
     . New Tutorial: Markerless model-based tracking with stereo cameras
     . New Tutorial: How to display an image
+    . New Tutorial: Pose estimation from QRcode
   - Bug fixed
     . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc

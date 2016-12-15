@@ -1,0 +1,48 @@
+/**
+
+\page tutorial-pose-estimation-qrcode Tutorial: Pose estimation from QRcode
+\tableofcontents
+
+\section tutorial_pose_qrcode_intro Introduction
+
+This tutorial shows how to use \ref tutorial-detection-barcode and \ref tutorial-pose-estimation in order to estimate the pose of a QRcode. After a first step that enables QRcode detection, the pose estimation process is achieved from the location of the four QRcode corners. The 3D coordinates of the corners are set knowing the size of the QRcode while their 2D coordinates are extracted from the image and transformed in the image plane thanks to camera intrinsic parameters. 
+
+Note that all the material (source code and image) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/computer-vision
+\endcode
+
+Note also that ViSP has to be built with zbar 3rd party library that enables barcode detection. See <a href="https://visp.inria.fr/3rd_zbar">zbar quick installation guide</a>.
+
+\section tutorial_pose_qrcode_est Pose estimation of a QRcode
+
+In this section we consider the case of an image that may contain a 12 by 12 cm square QRcode. The camera should be calibrated (see \ref tutorial-calibration). For each QRcode that is detected thanks to vpDetectorQRCode class, we update the coordinates of the four corners as a vpPoint object and compute the pose from the four points thanks to vpPose class. This process is replicated in a while loop. The end of the loop is reached when the user click in the image that is displayed.
+
+The corresponding source code also provided in tutorial-pose-from-qrcode-image.cpp is the following.
+
+\include tutorial-pose-from-qrcode-image.cpp
+
+Here is a screen shot of the resulting program:
+
+\image html img-pose-qrcode.jpg
+
+More source code explanations could be found in \ref tutorial-detection-barcode and \ref tutorial-pose-estimation.
+
+Note that adapting this tutorial to process images coming from a camera live stream consists in replacing the lines
+\code
+vpImageIo::read(I, "bar-code.pgm");
+\endcode
+by
+\code
+g.aquire(I);
+\endcode
+where \tt g is nothing more than a grabber instantiated as a vp1394TwoGrabber, vpFlyCaptureGrabber, vpV4l2Grabber or vpRealSense. How to implement framegrabbing is explained in \ref tutorial-grabber.
+
+
+\section tutorial_pose_qrcode_next Next tutorial
+
+You are now ready to see the next \ref tutorial-homography that shows how to estimate an homography from points.
+
+
+*/

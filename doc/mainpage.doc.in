@@ -11,7 +11,7 @@ servoing applications. ViSP is developed and maintained by the Inria
 <a href="http://team.inria.fr/lagadic" target="_parent">Lagadic</a> team located at <a
 href="http://www.inria.fr/en/centre/rennes" target="_parent">Inria Rennes</a>.</p>
 
-<p>ViSP official site is <a href="http://visp.inria.fr" target="_parent">http://visp.inria.fr</a></p>
+<p>ViSP official site is <a href="https://visp.inria.fr" target="_parent">https://visp.inria.fr</a></p>
 
 <p>ViSP wiki is <a href="https://github.com/lagadic/visp/wiki" target="_parent">https://github.com/lagadic/visp/wiki</a></p>
 
@@ -25,7 +25,7 @@ It is also possible to contact ViSP main developers using: <a href="mailto:visp@
 \section download_sec Download
 
 <p>From <a
-href="http://visp.inria.fr/download" target="_parent">http://visp.inria.fr/download</a>
+href="https://visp.inria.fr/download" target="_parent">https://visp.inria.fr/download</a>
 you can either download the latest stable release, a daily snapshot or the current
 development distribution using git.</p>
 
@@ -38,10 +38,10 @@ href="http://www.cmake.org" target="_parent">http://www.cmake.org</a>. Furthermo
 depending on your operation system and the capabilities (framegrabber,
 display, simulation, ...) you need, prior to install ViSP you may
 install third party libraries <a
-href="http://visp.inria.fr/software-architecture" target="_parent">http://visp.inria.fr/software-architecture</a>.</p>
+href="https://visp.inria.fr/software-architecture" target="_parent">https://visp.inria.fr/software-architecture</a>.</p>
 
 <p>ViSP full installation procedure using CMake is detailed in the \ref tuto_install_sdk "Installation from prebuild SDK tutorials" and \ref tuto_install_src "Installation from source tutorials". \ref tuto_started "Getting started tutorials" and documents in pdf are also available from <a
-href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/publications</a>.</p>
+href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr/publications</a>.</p>
  
 \section tutorial Tutorials
 
@@ -103,15 +103,16 @@ href="http://visp.inria.fr/publications" target="_parent">http://visp.inria.fr/p
 
 \subsection tuto_detection Detection 
 
-- \ref tutorial-matching <br>This tutorial shows how to detect and match keypoints. New since ViSP 2.10.0.
+- \ref tutorial-matching <br>This tutorial shows how to detect and match keypoints.
 - \ref tutorial-matching-deprecated <br>This tutorial shows how to detect and match SURF keypoints. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
-- \ref tutorial-detection-barcode <br>This tutorial focuses on bar code (QR code, Data Matrix code) detection. New since ViSP 2.10.0.
-- \ref tutorial-detection-face <br>This tutorial focuses on face detection thanks to OpenCV Haar cascade classifier. New since ViSP 2.10.0.
-- \ref tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object. New since ViSP 2.10.0.
+- \ref tutorial-detection-barcode <br>This tutorial focuses on bar code (QR code, Data Matrix code) detection.
+- \ref tutorial-detection-face <br>This tutorial focuses on face detection thanks to OpenCV Haar cascade classifier.
+- \ref tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object.
 
 \subsection tuto_computer_vision Computer vision
 
-- \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points. New since ViSP 2.10.0.
+- \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
+- \ref tutorial-pose-estimation-qrcode <br>This tutorial focuses on pose estimation of a QRcode using it's four corners location.
 - \ref tutorial-homography <br>Here we explain how to estimate an homography from couples of matched points.
 - \ref tutorial-homography-deprecated <br>Here we explain how to estimate an homography from couples of matched points. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
 

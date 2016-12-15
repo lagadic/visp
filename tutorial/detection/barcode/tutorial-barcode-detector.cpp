@@ -85,7 +85,7 @@ int main(int argc, const char** argv)
           vpDisplay::displayCross(I, p[j], 14, vpColor::red, 3);
           std::ostringstream number;
           number << j;
-          vpDisplay::displayText(I, p[j]+vpImagePoint(10,0), number.str(), vpColor::blue);
+          vpDisplay::displayText(I, p[j]+vpImagePoint(15,5), number.str(), vpColor::blue);
         }
       }
 
@@ -95,8 +95,8 @@ int main(int argc, const char** argv)
     }
     delete detector;
   }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
 #else
   (void)argc;

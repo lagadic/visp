@@ -6,8 +6,8 @@
 \section intro_barcode Introduction
 
 This tutorial shows how to detect one or more barcodes with ViSP. To this end we provide two classes that are wrapper over 3rd party libraries:
-- vpDetectorQRCode that is a wrappers over zbar library <http://zbar.sourceforge.net>. It allows to detect QR codes
-- vpDetectorDataMatrix this is a wrapper over dmtx library <http://www.libdmtx.org>. It allows to detect Data Matrix codes.
+- vpDetectorQRCode that is a wrappers over zbar library <http://zbar.sourceforge.net>. It allows to detect QR codes. See <a href="https://visp.inria.fr/3rd_zbar">zbar quick installation guide</a>.
+- vpDetectorDataMatrix this is a wrapper over dmtx library <http://www.libdmtx.org>. It allows to detect Data Matrix codes. See <a href="https://visp.inria.fr/3rd_dmtx">dmtx quick installation guide</a>.
 
 These classes inherit from vpDetectorBase class, a generic class dedicated to detection. For each detected bar code, it allows to retrieve some characteristics such as the bar code message if it exists, and in the image the polygon that contains the bar code, the bounding box or the center of gravity of the bar code.
 

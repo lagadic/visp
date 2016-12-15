@@ -132,4 +132,8 @@ We also introduce a 40 milliseconds sleep to slow down the loop and relax the CP
 
 We provide also an other example in tutorial-pose-from-points-tracking.cpp that shows how to estimate the pose from a tracking performed on images acquired by a firewire camera.
 
+\section tutorial_pose_next Next tutorial
+
+You are now ready to see the next \ref tutorial-pose-estimation-qrcode that gives a use case.
+
 */
