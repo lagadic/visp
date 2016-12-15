@@ -192,20 +192,20 @@ namespace {
   #endif
   }
 
-  //Read an unsigned int stored in little endian
-  void readBinaryUIntLE(std::ifstream &file, unsigned int &uint_value) {
-    //Read
-    file.read((char *)(&uint_value), sizeof(uint_value));
+//  //Read an unsigned int stored in little endian
+//  void readBinaryUIntLE(std::ifstream &file, unsigned int &uint_value) {
+//    //Read
+//    file.read((char *)(&uint_value), sizeof(uint_value));
 
-  #ifdef VISP_BIG_ENDIAN
-    //Swap bytes order from little endian to big endian
-    if(sizeof(uint_value) == 4) {
-      uint_value = swap32bits(uint_value);
-    } else {
-      uint_value = swap16bits(uint_value);
-    }
-  #endif
-  }
+//  #ifdef VISP_BIG_ENDIAN
+//    //Swap bytes order from little endian to big endian
+//    if(sizeof(uint_value) == 4) {
+//      uint_value = swap32bits(uint_value);
+//    } else {
+//      uint_value = swap16bits(uint_value);
+//    }
+//  #endif
+//  }
 
   //Read an int stored in little endian
   void readBinaryIntLE(std::ifstream &file, int &int_value) {
@@ -267,21 +267,21 @@ namespace {
   }
 
   //Write an unsigned int in little endian
-  void writeBinaryUIntLE(std::ofstream &file, const unsigned int uint_value) {
-  #ifdef VISP_BIG_ENDIAN
-    //Swap bytes order to little endian
-    //More info on data type: http://en.cppreference.com/w/cpp/language/types
-    if(sizeof(uint_value) == 4) {
-      uint32_t swap_uint = swap32bits(uint_value);
-      file.write((char *)(&swap_uint), sizeof(swap_uint));
-    } else {
-      uint16_t swap_uint = swap16bits(uint_value);
-      file.write((char *)(&swap_uint), sizeof(swap_uint));
-    }
-  #else
-    file.write((char *)(&uint_value), sizeof(uint_value));
-  #endif
-  }
+//  void writeBinaryUIntLE(std::ofstream &file, const unsigned int uint_value) {
+//  #ifdef VISP_BIG_ENDIAN
+//    //Swap bytes order to little endian
+//    //More info on data type: http://en.cppreference.com/w/cpp/language/types
+//    if(sizeof(uint_value) == 4) {
+//      uint32_t swap_uint = swap32bits(uint_value);
+//      file.write((char *)(&swap_uint), sizeof(swap_uint));
+//    } else {
+//      uint16_t swap_uint = swap16bits(uint_value);
+//      file.write((char *)(&swap_uint), sizeof(swap_uint));
+//    }
+//  #else
+//    file.write((char *)(&uint_value), sizeof(uint_value));
+//  #endif
+//  }
 
   //Write an int in little endian
   void writeBinaryIntLE(std::ofstream &file, const int int_value) {
