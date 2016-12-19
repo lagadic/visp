@@ -492,7 +492,7 @@ bool vpGDIRenderer::updateBitmapROI(unsigned char * imBuffer, int i_min, int j_m
 /*!
   Sets a pixel to color at position (j,i).
 
-  \param ip : The pixel coordinates.
+  \param iP : The pixel coordinates.
   \param color : the color of the point.
 */
 void vpGDIRenderer::setPixel(const vpImagePoint &iP,

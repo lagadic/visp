@@ -127,18 +127,21 @@ The following image shows that this command allows to configure (just by pressin
 
 Now we can build ViSP.
 
-\subsection install_ubuntu_visp_build Building ViSP from source
+\subsection install_ubuntu_visp_build Building ViSP libraries
 
-- To build ViSP proceed with:
+- To build ViSP libraries proceed with:
 \code
-$ make -j
+$ make -j4
 \endcode
 
 - To install ViSP in \c /usr/local which is the default install location, proceed with:
 \code
 $ sudo make install
 \endcode
-\note The default install location is set to \c /usr/local. This location could be changed modifying \c  CMAKE_INSTALL_PREFIX var. 
+\note This stage is optional, since ViSP could be used as a 3rd party without installation. 
+\note The default install location is set to \c /usr/local. This location could be changed modifying \c CMAKE_INSTALL_PREFIX var. 
+
+\subsection install_ubuntu_visp_doc Building ViSP documentation
 
 - To build ViSP documentation, you have first to install Doxygen package:
 \code
@@ -146,7 +149,14 @@ $ sudo apt-get install doxygen graphviz texlive-latex-base
 \endcode
 Then you can proceed with:
 \code
-$ make -j visp_doc
+$ make -j4 visp_doc
+\endcode
+The generated documentation is then available in \c \<binary_dir\>/doc/html/index\.html
+
+- It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var \c ENABLE\_FULL\_DOC=ON like:
+\code
+$ cmake ../visp -DENABLE_FULL_DOC=ON
+$ make -j4 visp_doc
 \endcode
 
 \section install_ubuntu_dataset Install ViSP dataset
@@ -200,18 +210,18 @@ $ sudo make uninstall
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \code
-$ make -j visp_modules
+$ make -j4 visp_modules
 \endcode
 
 \subsection install_ubuntu_tips_module_once How to build a ViSP specific module
 
 If you want to build a given module and all the dependencies:
 \code
-$ make -j visp_<module_name>
+$ make -j4 visp_<module_name>
 \endcode
 For example to build the model-based tracker module named mbt, run:
 \code
-$ make -j visp_mbt
+$ make -j4 visp_mbt
 \endcode
 
 \subsection install_ubuntu_tips_target Which are the targets that could be run with make ?

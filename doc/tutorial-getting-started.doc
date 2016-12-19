@@ -127,6 +127,8 @@ $ cmake -DVISP_DIR=/home/ViSP-install-folder/lib/<multi-arch-folder>/cmake/visp 
 \endcode
 
 Depending on the platform \c \<multi-arch-folder\> can be empty (OSX) or for example equal to \c x86_64-linux-gnu on Ubuntu.
+
+\note If you build ViSP from source following one of the tutorials \ref tutorial_install_src, you can avoid the \c make \c install step and set \c VISP_DIR to the build location instead of the install location.
  
 \subsection image_unix_build Generate the executable
 

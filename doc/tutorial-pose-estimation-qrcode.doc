@@ -37,7 +37,7 @@ by
 \code
 g.aquire(I);
 \endcode
-where \tt g is nothing more than a grabber instantiated as a vp1394TwoGrabber, vpFlyCaptureGrabber, vpV4l2Grabber or vpRealSense. How to implement framegrabbing is explained in \ref tutorial-grabber.
+where \c g is nothing more than a grabber instantiated as a vp1394TwoGrabber, vpFlyCaptureGrabber, vpV4l2Grabber or vpRealSense. How to implement framegrabbing is explained in \ref tutorial-grabber.
 
 
 \section tutorial_pose_qrcode_next Next tutorial

@@ -75,8 +75,8 @@
   An ellipse is also defined thanks to three other parameter which are \f$ a \f$, \f$ b \f$ and \f$ e \f$. \f$ a \f$ represents the semiminor axis and \f$ b \f$ is the semimajor axis. Here \f$ e \f$ is the angle made by the
   major axis and the i axis of the image frame \f$ (i,j) \f$. The following figure shows better meaning of those parameters.
 
-  \image html vpMbtMeEllipse.gif
-  \image latex vpMbtMeEllipse.ps  width=10cm
+  \image html vpMeEllipse.gif
+  \image latex vpMeEllipse.ps  width=10cm
 
   It is possible to compute the coordinates \f$ (i,j) \f$ of a point which belongs to the ellipse thanks to the following equations :
 
@@ -85,8 +85,8 @@
 
   Here the coordinates \f$ (i_c,j_c) \f$ are the coordinates of the ellipse center in the image frame and \f$ \alpha \f$ is an angle beetween \f$ [0,2\pi] \f$ and which enables to describe all the points of the ellipse.
 
-  \image html vpMbtMeEllipse2.gif
-  \image latex vpMbtMeEllipse2.ps  width=10cm
+  \image html vpMeEllipse2.gif
+  \image latex vpMeEllipse2.ps  width=10cm
 
   The example below available in tutorial-me-ellipse-tracker.cpp and described
   in \ref tutorial-tracking-me, section \ref tracking_me_ellipse shows how to use this class.

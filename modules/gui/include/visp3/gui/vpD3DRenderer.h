@@ -56,7 +56,7 @@
   \class vpD3DRenderer.h
 
   \brief Display under windows using Direct3D9.
-  Is used by vpD3DDisplay to do the drawing.
+  Is used by vpDisplayD3D to do the drawing.
 
 */
 class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer

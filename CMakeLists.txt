@@ -190,6 +190,7 @@ VP_OPTION(ENABLE_SOLUTION_FOLDERS "" "" "Solution folder in Visual Studio or in 
 # Note that it is better to set ENABLE_MOMENTS_COMBINE_MATRICES to OFF
 VP_OPTION(ENABLE_MOMENTS_COMBINE_MATRICES  "" "" "Use linear combination of matrices instead of linear combination of moments to compute interaction matrices." "ENABLE_MOMENTS_COMBINE_MATRICES" OFF)
 VP_OPTION(ENABLE_TEST_WITHOUT_DISPLAY      "" "" "Don't use display feature when testing" "" ON)
+VP_OPTION(ENABLE_FULL_DOC      "" "" "Build doc with internal classes that are by default not part of the doc" "" OFF)
 
 if(ENABLE_SOLUTION_FOLDERS)
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -360,6 +361,12 @@ if(DOXYGEN_FOUND)
         set(DOXYGEN_IMAGE_PATH "${DOXYGEN_IMAGE_PATH} \\ \n\t\t\t \"${image_path_}\"")
       endif()
     endforeach()
+  endif()
+  # - DOXYGEN_SHOULD_SKIP_THIS var
+  if (ENABLE_FULL_DOC)
+    set(DOXYGEN_SHOULD_SKIP_THIS "")
+  else()
+    set(DOXYGEN_SHOULD_SKIP_THIS "DOXYGEN_SHOULD_SKIP_THIS")
   endif()
 
   configure_file(${VISP_SOURCE_DIR}/doc/config-doxygen.in

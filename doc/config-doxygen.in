@@ -1532,7 +1532,7 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator
 # instead of the = operator.
 
-PREDEFINED             = DOXYGEN_SHOULD_SKIP_THIS \
+PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_X11 \
                          VISP_HAVE_PTHREAD \
                          VISP_HAVE_GTK \

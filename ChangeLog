@@ -40,6 +40,8 @@ ViSP 3.0.1 (in development)
     . Set vpRGBa images alpha channel default value to 255
     . Allow to resize the display in order to display image that are larger than
       the screen resolution
+    . Introduce new CMake ENABLE_FULL_DOC var: when turned ON allows to build
+      doxygen documentation with all classes including internal ones
   - Tutorials
     . New tutorial: How to use multi-threading capabilities
     . New tutorial: Crosscompilation for Raspberry Pi from Ubuntu host
