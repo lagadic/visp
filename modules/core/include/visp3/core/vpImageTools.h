@@ -463,6 +463,8 @@ public:
     cam = u.cam;
     nthreads = u.nthreads;
     threadid = u.threadid;
+
+    return *this;
   }
 
   static void *vpUndistort_threaded(void *arg);
