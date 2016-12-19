@@ -84,6 +84,7 @@ ViSP 3.0.1 (in development)
     . [#111] vpColor doesn't work in mb-hybrid
     . [#112] vpPose: Possible ambiguity or misunderstanding in doxygen message
     . [#114] vpMomentAlpha: wrong abs() function using
+    . [#116] Link errors related to openmp
 
 ----------------------------------------------
 ViSP 3.0.0 (released December 18th, 2015)

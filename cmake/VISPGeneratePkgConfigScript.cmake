@@ -86,6 +86,10 @@ if(UNIX)
   if(VISP_HAVE_CPP11_COMPATIBILITY)
     list(APPEND VISP_CONFIG_CFLAGS ${CPP11_CXX_FLAGS})
   endif()
+  # Propagate openmp compiler option if enabled during ViSP build
+  if(VISP_HAVE_OPENMP)
+    list(APPEND VISP_CONFIG_CFLAGS ${OpenMP_CXX_FLAGS})
+  endif()
 
   # include ViSP own include dir
   set(VISP_CONFIG_CFLAGS_SRC_TREE "-I$PREFIX/${CMAKE_INSTALL_INCLUDEDIR}")
@@ -223,12 +227,12 @@ else()
   #----------------------------------------------------------------------
   set(VISP_CONFIG_SCRIPT_DEFS "")
   set(VISP_OPENMP_SUPPORT "no")
-  if(NOT ${VISP_OPENMP_FLAGS} STREQUAL "")
-    set(VISP_CONFIG_SCRIPT_DEFS "${VISP_OPENMP_FLAGS}")
+  if(VISP_HAVE_OPENMP)
+    set(VISP_CONFIG_SCRIPT_DEFS "${OpenMP_CXX_FLAGS}")
     set(VISP_OPENMP_SUPPORT "yes")
   endif()
-  if(NOT ${VISP_CPP11_FLAGS} STREQUAL "")
-    set(VISP_CONFIG_SCRIPT_DEFS "${VISP_CPP11_FLAGS}, ${VISP_CONFIG_SCRIPT_DEFS}")
+  if(VISP_HAVE_CPP11_COMPATIBILITY)
+    set(VISP_CONFIG_SCRIPT_DEFS "${CPP11_CXX_FLAGS}, ${VISP_CONFIG_SCRIPT_DEFS}")
   endif()
 
   #---------------------------------------------------------------------
