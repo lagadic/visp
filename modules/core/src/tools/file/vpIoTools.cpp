@@ -232,7 +232,7 @@ int main()
 std::string
 vpIoTools::getenv(const char *env)
 {
-#if defined(_WIN32) && ( defined(WINAPI_FAMILY) && ! WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) )
+#if defined(_WIN32) && defined(WINRT)
   throw(vpIoException(vpIoException::cantGetenv, "Cannot get the environment variable value: not implemented on Universal Windows Platform"));
 #else
   std::string value;
@@ -566,48 +566,50 @@ vpIoTools::copy(const char *src, const char *dst)
   if ( vpIoTools::checkFilename(src) ) {
     //std::cout << "copy file: " << src << " in " << dst << std::endl;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-	char cmd[FILENAME_MAX];
-	int ret;
-	sprintf(cmd, "cp -p %s %s", src, dst);
-	ret = system(cmd);
-	//std::cout << cmd << " return value: " << ret << std::endl;
-	return true;
+    char cmd[FILENAME_MAX];
+    int ret;
+    sprintf(cmd, "cp -p %s %s", src, dst);
+    ret = system(cmd);
+    //std::cout << cmd << " return value: " << ret << std::endl;
+    return true;
 #elif defined(_WIN32)
 #  if ( ! defined(WINAPI_FAMILY) ) || ( defined(WINAPI_FAMILY) && WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) )
-	char cmd[FILENAME_MAX];
-	int ret;
-	std::string src_ = vpIoTools::path(src);
-	std::string dst_ = vpIoTools::path(dst);
+    char cmd[FILENAME_MAX];
+    int ret;
+    std::string src_ = vpIoTools::path(src);
+    std::string dst_ = vpIoTools::path(dst);
     sprintf(cmd, "copy %s %s", src_.c_str(), dst_.c_str());
-	ret = system(cmd);
-	//std::cout << cmd << " return value: " << ret << std::endl;
-	return true;
+    ret = system(cmd);
+    //std::cout << cmd << " return value: " << ret << std::endl;
+    return true;
 #  elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-	throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform", src, dst));
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform", src, dst));
 #  endif
 #endif
   }
   else if ( vpIoTools::checkDirectory(src) ) {
     //std::cout << "copy directory: " << src << " in " << dst << std::endl;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+    char cmd[FILENAME_MAX];
+    int ret;
     sprintf(cmd, "cp -p -r %s %s", src, dst);
-	ret = system(cmd);
-	if (ret) {}; // to avoid a warning
-				 //std::cout << cmd << " return value: " << ret << std::endl;
-	return true;
+    ret = system(cmd);
+    if (ret) {}; // to avoid a warning
+    //std::cout << cmd << " return value: " << ret << std::endl;
+    return true;
 #elif defined(_WIN32)
 #  if ( ! defined(WINAPI_FAMILY) ) || ( defined(WINAPI_FAMILY) && WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) )
-	char cmd[FILENAME_MAX];
-	int ret;
-	std::string src_ = vpIoTools::path(src);
-	std::string dst_ = vpIoTools::path(dst);
+    char cmd[FILENAME_MAX];
+    int ret;
+    std::string src_ = vpIoTools::path(src);
+    std::string dst_ = vpIoTools::path(dst);
     sprintf(cmd, "copy %s %s", src_.c_str(), dst_.c_str());
-	ret = system(cmd);
-	if (ret) {}; // to avoid a warning
-				 //std::cout << cmd << " return value: " << ret << std::endl;
-	return true;
+    ret = system(cmd);
+    if (ret) {}; // to avoid a warning
+    //std::cout << cmd << " return value: " << ret << std::endl;
+    return true;
 #  elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-	throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform", src, dst));
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform", src, dst));
 #  endif
 #endif
   }
