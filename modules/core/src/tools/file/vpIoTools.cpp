@@ -570,6 +570,7 @@ vpIoTools::copy(const char *src, const char *dst)
     int ret;
     sprintf(cmd, "cp -p %s %s", src, dst);
     ret = system(cmd);
+    if (ret) {}; // to avoid a warning
     //std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #elif defined(_WIN32)
