@@ -1328,7 +1328,7 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname) {
   DWORD retval = 0;
   TCHAR buffer[4096] = TEXT("");
 
-  retval = GetFullPathName(pathname.c_str(), BUFSIZE, buffer, 0);
+  retval = GetFullPathName(pathname.c_str(), 4096, buffer, 0);
   if (retval != 0) {
     real_path_str = buffer;
   }
