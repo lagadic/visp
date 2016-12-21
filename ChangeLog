@@ -2,13 +2,15 @@
                      Visual Servoing Platform
                      Resume of the change log
 
-     Copyright Projet Lagadic / IRISA-INRIA Rennes, 2005 - 2015
-                    http://team.inria.fr/lagadic
+     Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+                      https://visp.inria.fr
 
 
 ViSP 3.0.1 (in development)
   - New features
     . Compatibility with Microsoft Visual C++ 2017 (MSCV 15)
+    . Compatibility with Universal Windows Platform (UWP), Windows Phone
+      and Windows Store
     . Add vpMatrix, vpColVector, vpTranslationVector missing member functions
       to keep compat with ViSP 2.10.0
     . New vpFlyCaptureGrabber class to capture images from PointGrey
@@ -75,12 +77,15 @@ ViSP 3.0.1 (in development)
             ROS installation
     . [#82] Problem when comparing two vpImage (operator!=)
     . [#84] Problem with vpImageMorphology and CONNEXITY_8 and with border pixels
-    . [#90] Fix potential build issue with isnan() and isinf() usage when cxx11 flags are used
+    . [#90] Fix potential build issue with isnan() and isinf() usage when cxx11
+            flags are used
     . [#91] vpMeLine::computeRhoTheta should throw exception
     . [#92] Is there any interface to resize display window?
-    . [#95] setEllipsoidBadPointsPercentage in vpDot2 not completly being taken into account
+    . [#95] setEllipsoidBadPointsPercentage in vpDot2 not completly being taken
+            into account
     . [#104] vpMomentAlpha: Results are not repeatable
-    . [#105] vpMomentAlpha: Question about symmetric judgement based on centered moments
+    . [#105] vpMomentAlpha: Question about symmetric judgement based on centered
+             moments
     . [#106] Freeze when more than one GDI display is opened with mingw
     . [#109] Link errors with undefined reference to TIFF
     . [#111] vpColor doesn't work in mb-hybrid

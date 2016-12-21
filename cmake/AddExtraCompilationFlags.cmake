@@ -134,6 +134,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   endif()
 endif()
 
+if(DEFINED WINRT)
+  add_extra_compiler_option(/ZW)
+endif()
+
 # Add user supplied extra options (optimization, etc...)
 vp_list_unique(VISP_EXTRA_C_FLAGS)
 vp_list_unique(VISP_EXTRA_CXX_FLAGS)

@@ -46,12 +46,16 @@
   #if _MSC_VER > 1500 // 1500 = MSVC 9 2008
     #pragma warning( disable: 4986 )
   #endif
+  #ifdef WINRT
+    #pragma warning(disable:4447)
+  #endif
 
   // 4100 : undocumented ("unreferenced formal parameter")
   // 4127 : conditional expression is constant
   // 4251 : 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2', ie. disable warnings related to inline functions
   // 4275 : non – DLL-interface classkey 'identifier' used as base for DLL-interface classkey 'identifier'
   // 4351 : new behavior: elements of array will be default initialized
+  // 4447 : Disable warning 'main' signature found without threading model
   // 4514 : 'function' : unreferenced inline function has been removed
   // 4548 : expression before comma has no effect
   // 4668 : 'symbol' is not defined as a preprocessor macro, replacing with '0' for 'directives'
