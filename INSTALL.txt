@@ -1,8 +1,8 @@
                                ViSP
                      Visual Servoing Platform
 
-      Copyright (C) 2005 - 2015 by Inria. All rights reserved.
-                       http://visp.inria.fr
+      Copyright (C) 2005 - 2017 by Inria. All rights reserved.
+                       https://visp.inria.fr
 
 
 
