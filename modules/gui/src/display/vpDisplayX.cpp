@@ -253,6 +253,8 @@ vpDisplayX::~vpDisplayX()
 void
 vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const std::string &title )
 {
+  setScale(m_scaleType, I.getWidth(), I.getHeight());
+
   if (x_color == NULL) {
     // id_unknown = number of predefined colors
     x_color= new unsigned long [vpColor::id_unknown];
@@ -709,6 +711,7 @@ vpDisplayX::init ( vpImage<unsigned char> &I, int x, int y, const std::string &t
 void
 vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const std::string &title)
 {
+  setScale(m_scaleType, I.getWidth(), I.getHeight());
 
   XSizeHints  hints;
   if (x != -1)
@@ -1168,13 +1171,15 @@ vpDisplayX::init ( vpImage<vpRGBa> &I, int x, int y, const std::string &title)
 */
 void vpDisplayX::init ( unsigned int w, unsigned int h, int x, int y, const std::string &title)
 {
+  setScale(m_scaleType, w, h);
+
   if (x_color == NULL) {
     // id_unknown = number of predefined colors
     x_color= new unsigned long [vpColor::id_unknown];
   }
   /* setup X11 ------------------------------------------------------------- */
-  this->m_width  = w / m_width;
-  this->m_height = h / m_width;
+  this->m_width  = w / m_scale;
+  this->m_height = h / m_scale;
 
   XSizeHints  hints;
 

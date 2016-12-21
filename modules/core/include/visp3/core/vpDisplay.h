@@ -177,6 +177,11 @@ public:
     SCALE_3,    /*!< Display width and height is down scaled by 3 wrt the image size. */
     SCALE_4,    /*!< Display width and height is down scaled by 4 wrt the image size. */
     SCALE_5,    /*!< Display width and height is down scaled by 5 wrt the image size. */
+    SCALE_6,    /*!< Display width and height is down scaled by 6 wrt the image size. */
+    SCALE_7,    /*!< Display width and height is down scaled by 7 wrt the image size. */
+    SCALE_8,    /*!< Display width and height is down scaled by 8 wrt the image size. */
+    SCALE_9,    /*!< Display width and height is down scaled by 9 wrt the image size. */
+    SCALE_10,   /*!< Display width and height is down scaled by 10 wrt the image size. */
     SCALE_DEFAULT /*!< Display and image have the same size. Similar to vpDisplay::SCALE_1. */
   } vpScaleType;
 
@@ -191,6 +196,7 @@ protected :
   unsigned int m_height ;
   std::string m_title;
   unsigned int m_scale;
+  vpScaleType m_scaleType;
 
   void setScale(vpScaleType scaleType, unsigned int width, unsigned int height);
 
@@ -203,7 +209,7 @@ public:
   //@{
   unsigned int computeAutoScale(unsigned int width, unsigned int height);
   /*!
-    Return the value of the down scale factor applied to the image in order to reduce the display size.
+    Return the value of the down scale factor applied to the image in order to reduce the size of the window used to display the image.
    */
   unsigned int getDownScalingFactor() { return m_scale; };
   /*!
@@ -235,6 +241,7 @@ public:
   */
   inline bool isInitialised() { return m_displayHasBeenInitialized; }
   virtual void setDownScalingFactor(unsigned int scale);
+  void setDownScalingFactor(vpScaleType scaleType);
   //@}
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -712,12 +719,13 @@ int main()
   static bool getClick(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
   static bool getClickUp(const vpImage<unsigned char> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
   static bool getClickUp(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
+  static unsigned int getDownScalingFactor(const vpImage<unsigned char> &I);
   static void getImage(const vpImage<unsigned char> &Is, vpImage<vpRGBa> &Id) ;
   static bool getKeyboardEvent(const vpImage<unsigned char> &I, bool blocking=true);
   static bool getKeyboardEvent(const vpImage<unsigned char> &I, std::string &key, bool blocking=true);
   static bool getKeyboardEvent(const vpImage<unsigned char> &I, char *key, bool blocking=true);
   static bool getPointerMotionEvent (const vpImage<unsigned char> &I, vpImagePoint &ip);
-  static bool getPointerPosition (const vpImage<unsigned char> &I, vpImagePoint &ip);
+  static bool getPointerPosition(const vpImage<unsigned char> &I, vpImagePoint &ip);
 
   static void setBackground(const vpImage<unsigned char> &I, const vpColor &color);
   static void setFont(const vpImage<unsigned char> &I, const std::string &font);
@@ -769,6 +777,7 @@ int main()
   static bool getClick(const vpImage<vpRGBa> &I, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
   static bool getClickUp(const vpImage<vpRGBa> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
   static bool getClickUp(const vpImage<vpRGBa> &I, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
+  static unsigned int getDownScalingFactor(const vpImage<vpRGBa> &I);
   static void getImage(const vpImage<vpRGBa> &Is, vpImage<vpRGBa> &Id) ;
   static bool getKeyboardEvent(const vpImage<vpRGBa> &I, bool blocking=true);
   static bool getKeyboardEvent(const vpImage<vpRGBa> &I, std::string &key, bool blocking=true);

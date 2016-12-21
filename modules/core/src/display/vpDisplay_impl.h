@@ -650,7 +650,7 @@ vp_display_set_font(const vpImage<Type> &I, const std::string &fontname )
 
 
 template <class Type> void
-vp_display_set_title(const vpImage<Type> &I, const std::string &windowtitle )
+vp_display_set_title(const vpImage<Type> &I, const std::string &windowtitle)
 {
   if ( I.display != NULL )
   {
@@ -659,10 +659,22 @@ vp_display_set_title(const vpImage<Type> &I, const std::string &windowtitle )
 }
 
 template <class Type> void
-vp_display_set_window_position(const vpImage<Type> &I, int winx, int winy )
+vp_display_set_window_position(const vpImage<Type> &I, int winx, int winy)
 {
   if ( I.display != NULL )
   {
     ( I.display )->setWindowPosition ( winx, winy ) ;
+  }
+}
+
+template <class Type> unsigned int
+vp_display_get_down_scaling_factor(const vpImage<Type> &I)
+{
+  if ( I.display != NULL )
+  {
+    return ( I.display )->getDownScalingFactor() ;
+  }
+  else {
+    throw(vpException(vpException::fatalError,"Cannot get the down scaling factor: Display is not initialized"));
   }
 }

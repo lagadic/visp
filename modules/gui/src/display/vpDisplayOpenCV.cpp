@@ -358,12 +358,12 @@ vpDisplayOpenCV::init(vpImage<unsigned char> &I,
                       int y,
                       const std::string &title)
 {
-
   if ((I.getHeight() == 0) || (I.getWidth()==0))
   {
     throw(vpDisplayException(vpDisplayException::notInitializedError,
                              "Image not initialized")) ;
   }
+  setScale(m_scaleType, I.getWidth(), I.getHeight());
   init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
   m_displayHasBeenInitialized = true ;
@@ -390,6 +390,7 @@ vpDisplayOpenCV::init(vpImage<vpRGBa> &I,
                              "Image not initialized")) ;
   }
 
+  setScale(m_scaleType, I.getWidth(), I.getHeight());
   init (I.getWidth(), I.getHeight(), x, y, title) ;
   I.display = this ;
   m_displayHasBeenInitialized = true ;
@@ -410,6 +411,8 @@ vpDisplayOpenCV::init(unsigned int w, unsigned int h,
                       int x, int y,
                       const std::string &title)
 {
+  setScale(m_scaleType, w, h);
+
   this->m_width  = w / m_scale;
   this->m_height = h / m_scale;
 

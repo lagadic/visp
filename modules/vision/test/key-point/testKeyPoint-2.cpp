@@ -176,6 +176,7 @@ int main(int argc, const char ** argv) {
 #endif
 
     if (opt_display) {
+      display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display.init(I, 0, 0, "ORB keypoints matching and pose estimation");
     }
 
@@ -334,7 +335,8 @@ int main(int argc, const char ** argv) {
     keypoints.createImageMatching(I, IMatching);
 
     if (opt_display) {
-      display2.init(IMatching, 0, (int)I.getHeight() + 80, "IMatching");
+      display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
+      display2.init(IMatching, 0, (int)I.getHeight()/vpDisplay::getDownScalingFactor(I) + 80, "IMatching");
     }
 
     bool opt_click = false;

@@ -35,6 +35,18 @@ To down scale the display size, just modify the previous example adding the vpDi
 
 \snippet tutorial-image-display-scaled-manu.cpp vpDisplay scale manu
 
+It is also possible to do the same using the default constructor:
+\code
+#if defined(VISP_HAVE_X11)
+  vpDisplayX d;
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI d;
+#endif
+  d.setDownScalingFactor(vpDisplay::SCALE_5);
+  d.init(I);
+}
+\endcode
+
 \subsection image_display_scaled_auto Setting an auto down scaling factor
 
 This other example available in tutorial-image-display-scaled-auto.cpp shows now how to modify the previous example in order to introduce an auto down scaling factor that is automatically computed from the screen resolution in order that two images could be displayed given the screen resolution.
@@ -43,6 +55,17 @@ To consider an auto down scaling factor, modify the previous example adding the 
 
 \snippet tutorial-image-display-scaled-auto.cpp vpDisplay scale auto
 
+It is also possible to do the same using the default constructor:
+\code
+#if defined(VISP_HAVE_X11)
+  vpDisplayX d;
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI d;
+#endif
+  d.setDownScalingFactor(vpDisplay::SCALE_AUTO);
+  d.init(I);
+}
+\endcode
 
 \section image_display_next Next tutorial
 

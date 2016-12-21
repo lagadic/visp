@@ -96,6 +96,7 @@ void vpDisplayWin32::init(vpImage<unsigned char> &I,
                              "Image not initialized")) ;
   }
 
+  setScale(m_scaleType, I.getWidth(), I.getHeight());
   init(I.getWidth(), I.getHeight(), x, y, title);
   window.renderer->setWidth(I.getWidth()/m_scale);
   window.renderer->setHeight(I.getHeight()/m_scale);
@@ -125,6 +126,7 @@ void vpDisplayWin32::init(vpImage<vpRGBa> &I,
                              "Image not initialized")) ;
   }
 
+  setScale(m_scaleType, I.getWidth(), I.getHeight());
   init (I.getWidth(), I.getHeight(), x, y, title) ;
   window.renderer->setWidth(I.getWidth()/m_scale);
   window.renderer->setHeight(I.getHeight()/m_scale);
@@ -157,6 +159,7 @@ void vpDisplayWin32::init(unsigned int width, unsigned int height,
     m_windowYPosition = y;
 
   //we prepare the window's thread creation
+  setScale(m_scaleType, width, height);
   threadParam * param = new threadParam;
   param->x = m_windowXPosition;
   param->y = m_windowYPosition;

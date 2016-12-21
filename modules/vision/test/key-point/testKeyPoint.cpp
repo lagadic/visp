@@ -187,6 +187,7 @@ int main(int argc, const char ** argv) {
 #endif
 
     if (opt_display) {
+      display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display.init(Imatch, 0, 0, "ORB keypoints matching");
     }
 

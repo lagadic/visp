@@ -1146,3 +1146,18 @@ vpDisplay::setWindowPosition(const vpImage<unsigned char> &I, int winx, int winy
 {
   vp_display_set_window_position(I, winx, winy);
 }
+
+/*!
+  Return the value of the down scale factor applied to the image in order to reduce
+  the size of the window used to display the image.
+
+  \param I : Image associated to the display window.
+
+  \exception vpDisplayException::notInitializedError : If the video
+  device is not initialized.
+*/
+unsigned int
+vpDisplay::getDownScalingFactor(const vpImage<unsigned char> &I)
+{
+  return vp_display_get_down_scaling_factor(I);
+}

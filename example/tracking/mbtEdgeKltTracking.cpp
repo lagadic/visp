@@ -411,7 +411,8 @@ main(int argc, const char ** argv)
       while(!vpDisplay::getClick(I,false)){
         vpDisplay::display(I);
         vpDisplay::displayText(I, 15, 10, "click after positioning the object", vpColor::red);
-        vpDisplay::flush(I) ;
+        vpDisplay::flush(I);
+        vpTime::wait(100);
       }
     }
 

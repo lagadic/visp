@@ -66,8 +66,10 @@ int main(int argc, char** argv)
     display_left = new vpDisplayOpenCV;
     display_right = new vpDisplayOpenCV;
 #endif
+    display_left->setDownScalingFactor(vpDisplay::SCALE_AUTO);
+    display_right->setDownScalingFactor(vpDisplay::SCALE_AUTO);
     display_left->init(I_left, 100, 100, "Model-based tracker (Left)");
-    display_right->init(I_right, 100 + (int) I_left.getWidth(), 100, "Model-based tracker (Right)");
+    display_right->init(I_right, 110 + (int) I_left.getWidth(), 100, "Model-based tracker (Right)");
 
     //! [Constructor]
     vpMbTracker *tracker;

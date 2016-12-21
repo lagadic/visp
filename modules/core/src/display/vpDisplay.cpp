@@ -261,9 +261,9 @@ unsigned int vpDisplay::computeAutoScale(unsigned int width, unsigned int height
 {
   unsigned int screen_width, screen_height;
   getScreenSize(screen_width, screen_height);
-  unsigned int wscale = std::max(1u, (unsigned int)floor(2u*width / screen_width));
-  unsigned int hscale = std::max(1u, (unsigned int) floor(2u*height / screen_height));
-  unsigned int scale = (unsigned int)std::max(1u, std::max(wscale, hscale));
+  double wscale = std::max(1., ceil(2.*(double)width / (double)screen_width));
+  double hscale = std::max(1., ceil(2.*(double)height / (double)screen_height));
+  unsigned int scale = (unsigned int)std::max(1u, std::max((unsigned int)wscale, (unsigned int)hscale));
   return scale;
 }
 
@@ -291,5 +291,51 @@ void vpDisplay::setScale(vpScaleType scaleType, unsigned int width, unsigned int
   case vpDisplay::SCALE_5:
     setDownScalingFactor(5);
     break;
+  case vpDisplay::SCALE_6:
+    setDownScalingFactor(6);
+    break;
+  case vpDisplay::SCALE_7:
+    setDownScalingFactor(7);
+    break;
+  case vpDisplay::SCALE_8:
+    setDownScalingFactor(8);
+    break;
+  case vpDisplay::SCALE_9:
+    setDownScalingFactor(9);
+    break;
+  case vpDisplay::SCALE_10:
+    setDownScalingFactor(10);
+    break;
   }
+}
+
+/*!
+   Set the down scaling factor either in auto mode or set manually.
+
+   This method has to be called before display initialization.
+
+   \code
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
+
+int main()
+{
+  vpImage<unsigned char> I(480, 640); // Black 640 by 480 image
+#ifdef VISP_HAVE_X11
+  vpDisplayX d;
+#elif defined VISP_HAVE_GDI
+  vpDisplayGDI d;
+#endif
+  d.setDownScalingFactor(vpDisplay::SCALE_4); // Display in a 160 by 120 windows size
+  d.init(I);
+  vpDisplay::display(I);
+  vpDisplay::flush(I);
+  vpDisplay::getClick(I); // wait for a click to quit
+}
+   \endcode
+ */
+void vpDisplay::setDownScalingFactor(vpScaleType scaleType)
+{
+  if (! m_displayHasBeenInitialized)
+    m_scaleType = scaleType;
 }

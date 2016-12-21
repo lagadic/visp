@@ -336,8 +336,10 @@ main(int argc, const char ** argv)
     if (opt_display)
     {
 #if (defined VISP_HAVE_DISPLAY)
+      display1.setDownScalingFactor(vpDisplay::SCALE_AUTO);
+      display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display1.init(I1, 100, 100, "Test tracking (Left)");
-      display2.init(I2, (int) I1.getWidth()+100, 100, "Test tracking (Right)");
+      display2.init(I2, (int) I1.getWidth()/vpDisplay::getDownScalingFactor(I1)+110, 100, "Test tracking (Right)");
 #endif
       vpDisplay::display(I1);
       vpDisplay::display(I2);
@@ -410,6 +412,7 @@ main(int argc, const char ** argv)
         vpDisplay::display(I1);
         vpDisplay::displayText(I1, 15, 10, "click after positioning the object", vpColor::red);
         vpDisplay::flush(I1) ;
+        vpTime::wait(100);
       }
     }
 
