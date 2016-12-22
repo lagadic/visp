@@ -581,6 +581,7 @@ vpIoTools::copy(const char *src, const char *dst)
     std::string dst_ = vpIoTools::path(dst);
     sprintf(cmd, "copy %s %s", src_.c_str(), dst_.c_str());
     ret = system(cmd);
+    if (ret) {}; // to avoid a warning
     //std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #  elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
