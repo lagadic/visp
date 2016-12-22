@@ -129,7 +129,7 @@ vpIoTools::getUserName(std::string &username)
   }
   username = _username;
 #elif defined(_WIN32)
-#  if ( ! defined(WINAPI_FAMILY) ) || ( defined(WINAPI_FAMILY) && WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) )
+#  if ( ! defined(WINRT) )
   unsigned int info_buffer_size = 1024;
   TCHAR  *infoBuf = new TCHAR [info_buffer_size];
   DWORD  bufCharCount = (DWORD) info_buffer_size;
@@ -140,7 +140,7 @@ vpIoTools::getUserName(std::string &username)
   }
   username = infoBuf;
   delete [] infoBuf;
-#  elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+#  else
 	throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username: not implemented on Universal Windows Platform"));
 #  endif
 #endif
@@ -177,7 +177,7 @@ vpIoTools::getUserName()
   }
   username = _username;
 #elif defined(_WIN32)
-#  if ( ! defined(WINAPI_FAMILY) ) || ( defined(WINAPI_FAMILY) && WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) )
+#  if ( ! defined(WINRT) )
   unsigned int info_buffer_size = 1024;
   TCHAR  *infoBuf = new TCHAR [info_buffer_size];
   DWORD  bufCharCount = (DWORD) info_buffer_size;
@@ -191,7 +191,7 @@ vpIoTools::getUserName()
   }
   username = infoBuf;
   delete [] infoBuf;
-#  elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+#  else
   throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username: not implemented on Universal Windows Platform"));
 #  endif
 #endif
@@ -574,7 +574,7 @@ vpIoTools::copy(const char *src, const char *dst)
     //std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #elif defined(_WIN32)
-#  if ( ! defined(WINAPI_FAMILY) ) || ( defined(WINAPI_FAMILY) && WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) )
+#  if ( ! defined(WINRT) )
     char cmd[FILENAME_MAX];
     int ret;
     std::string src_ = vpIoTools::path(src);
@@ -584,7 +584,7 @@ vpIoTools::copy(const char *src, const char *dst)
     if (ret) {}; // to avoid a warning
     //std::cout << cmd << " return value: " << ret << std::endl;
     return true;
-#  elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+#  else
     throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform", src, dst));
 #  endif
 #endif
@@ -600,7 +600,7 @@ vpIoTools::copy(const char *src, const char *dst)
     //std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #elif defined(_WIN32)
-#  if ( ! defined(WINAPI_FAMILY) ) || ( defined(WINAPI_FAMILY) && WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) )
+#  if ( ! defined(WINRT) )
     char cmd[FILENAME_MAX];
     int ret;
     std::string src_ = vpIoTools::path(src);
@@ -610,7 +610,7 @@ vpIoTools::copy(const char *src, const char *dst)
     if (ret) {}; // to avoid a warning
     //std::cout << cmd << " return value: " << ret << std::endl;
     return true;
-#  elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+#  else
     throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform", src, dst));
 #  endif
 #endif
@@ -669,7 +669,7 @@ vpIoTools::remove(const char *file_or_dir)
 	//std::cout << cmd << " return value: " << ret << std::endl;
 	return true;
 #elif defined(_WIN32)
-#  if ( ! defined(WINAPI_FAMILY) ) || ( defined(WINAPI_FAMILY) && WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) )
+#  if ( ! defined(WINRT) )
 	char cmd[FILENAME_MAX];  
 	std::string file_or_dir_ = vpIoTools::path(file_or_dir);
     sprintf(cmd, "rmdir /S /Q %s", file_or_dir_.c_str());
@@ -677,7 +677,7 @@ vpIoTools::remove(const char *file_or_dir)
 	if (ret) {}; // to avoid a warning
     //std::cout << cmd << " return value: " << ret << std::endl;
 	return true;
-#  elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+#  else
 	throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on Universal Windows Platform", file_or_dir));
 #  endif
 #endif
@@ -1326,7 +1326,7 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname) {
   }
   return real_path_str;
 #elif defined(_WIN32)
-#  if ( ! defined(WINAPI_FAMILY) ) || ( defined(WINAPI_FAMILY) && WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP) )
+#  if ( ! defined(WINRT) )
   DWORD retval = 0;
   TCHAR buffer[4096] = TEXT("");
 
@@ -1335,7 +1335,7 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname) {
     real_path_str = buffer;
   }
   return real_path_str;
-#  elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+#  else
   throw(vpIoException(vpException::fatalError, "Cannot get absolute path of %s: not implemented on Universal Windows Platform", pathname.c_str()));
 #  endif
 #endif

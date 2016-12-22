@@ -93,7 +93,7 @@ double getMinTimeForUsleepCall()
 double measureTimeMs()
 {
 #if defined(_WIN32)
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(WINRT)
 	LARGE_INTEGER time, frequency;
   QueryPerformanceFrequency(&frequency);
   if(frequency.QuadPart == 0){
@@ -103,7 +103,7 @@ double measureTimeMs()
     QueryPerformanceCounter(&time);
     return (double)(1000.0*time.QuadPart/frequency.QuadPart);
   }
-#  elif WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+#  else
 	throw(vpException(vpException::fatalError, "Cannot get time: not implemented on Universal Windows Platform"));
 #  endif
 #elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
