@@ -97,7 +97,7 @@ int main(int argc, const char** argv)
           std::vector<vpImagePoint> p = detector->getPolygon(i);
           vpRect bbox = detector->getBBox(i);
           vpDisplay::displayRectangle(I, bbox, vpColor::green);
-          vpDisplay::displayText(I, bbox.getTop()-20, bbox.getLeft(), "Message: \"" + detector->getMessage(i) + "\"", vpColor::red);
+          vpDisplay::displayText(I, (int)bbox.getTop()-20, (int)bbox.getLeft(), "Message: \"" + detector->getMessage(i) + "\"", vpColor::red);
           for(size_t j=0; j < p.size(); j++) {
             vpDisplay::displayCross(I, p[j], 14, vpColor::red, 3);
             std::ostringstream number;
