@@ -45,147 +45,78 @@
 #include <visp3/core/vpImageConvert.h> //image  conversion
 #include <visp3/core/vpIoTools.h>
 
-const int vpImageIo::vpMAX_LEN = 100;
+void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic,
+                     unsigned int &w, unsigned int &h, unsigned int &maxval);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
-
-  Open a file with read access.
-
-  \param filename : Name of the file to open.
-
-  \return File descriptor.
-*/
-FILE *
-vpImageIo::openFileRead(const char *filename)
+ * Decode the PNM image header.
+ * \param filename[in] : File name.
+ * \param fd[in] : File desdcriptor.
+ * \param magic[in] : Magic number for identifying the file type.
+ * \param w[out] : Image width.
+ * \param h[out] : Image height.
+ * \param maxval[out] : Maximum pixel value.
+ */
+void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w, unsigned int &h, unsigned int &maxval)
 {
+  std::string line;
+  unsigned int nb_elt = 4, cpt_elt=0;
+  while(cpt_elt != nb_elt) {
+    // Skip empty lines or lines starting with # (comment)
+    while (std::getline(fd, line) && (line.compare(0, 1, "#") == 0 || line.size() == 0)) {};
 
-  FILE *fd ;
+    if (fd.eof()) {
+      fd.close();
+      throw (vpImageException(vpImageException::ioError,
+            "Cannot read header of file \"%s\"",  filename.c_str()));
+    }
 
-  // Lecture du nom du fichier image.
-  if (!filename || *filename == '\0')   {
-    vpERROR_TRACE("filename empty ") ;
-    throw (vpImageException(vpImageException::noFileNameError,
-			    "filename empty ")) ;
+    std::vector<std::string> header = vpIoTools::splitChain(line, std::string(" "));
+
+    if(header.size() == 0) {
+      fd.close();
+      throw (vpImageException(vpImageException::ioError,
+                              "Cannot read header of file \"%s\"",  filename.c_str()));
+    }
+
+    if (cpt_elt == 0) { // decode magic
+      if (header[0].compare(0, magic.size(), magic) != 0) {
+        fd.close();
+        throw (vpImageException(vpImageException::ioError,
+                                "\"%s\" is not a PNM file with magic number %s", filename.c_str(), magic.c_str()));
+      }
+      cpt_elt ++;
+      header.erase(header.begin(), header.begin()+1); // erase first element that is processed
+    }
+    while(header.size()) {
+      if (cpt_elt == 1) { // decode width
+        std::istringstream ss(header[0]);
+        ss >> w;
+        cpt_elt ++;
+        header.erase(header.begin(), header.begin()+1); // erase first element that is processed
+      }
+      else if (cpt_elt == 2) { // decode height
+        std::istringstream ss(header[0]);
+        ss >> h;
+        cpt_elt ++;
+        header.erase(header.begin(), header.begin()+1); // erase first element that is processed
+      }
+      else if (cpt_elt == 3) { // decode maxval
+        std::istringstream ss(header[0]);
+        ss >> maxval;
+        cpt_elt ++;
+        header.erase(header.begin(), header.begin()+1); // erase first element that is processed
+      }
+    }
   }
-
-  // Ouverture de l'image.
-  if ((fd = fopen(filename, "r")) == NULL)
-  {
-    vpERROR_TRACE("cannot open file") ;
-    throw (vpImageException(vpImageException::ioError,
-			    "cannot open file")) ;
-  }
-  return fd ;
 }
-
-/*!
-
-  Open a file with write access.
-
-  \param filename : Name of the file to open.
-
-  \param mode : Access mode. By default set to "w" for write
-  access. Could be changed to set for example the access mode to "wa"
-  to append data in the file.
-
-  \return File descriptor.
-*/
-FILE *
-vpImageIo::openFileWrite(const char *filename, const char *mode)
-{
-  FILE *fd ;
-
- // Lecture du nom du fichier image.
-  if (!filename || *filename == '\0')
-  {
-    vpERROR_TRACE("filename empty ") ;
-    throw (vpImageException(vpImageException::noFileNameError,
-			    "filename empty ")) ;
-  }
-
-  // Ouverture de l'image.
-  if ((fd = fopen(filename, mode)) == NULL)
-  {
-    vpERROR_TRACE("cannot open file") ;
-    throw (vpImageException(vpImageException::ioError,
-			    "cannot open file")) ;
-  }
-  return fd ;
-}
-
-/*!
-
-  Open a file with read access.
-
-  \param filename : Name of the file to open.
-
-  \return File descriptor.
-*/
-FILE *
-vpImageIo::openFileRead(const std::string filename)
-{
-
-  FILE *fd ;
-
-  // Lecture du nom du fichier image.
-  if (filename.empty()) {
-    vpERROR_TRACE("filename empty ") ;
-    throw (vpImageException(vpImageException::noFileNameError,
-			    "filename empty ")) ;
-  }
-  
-  // Ouverture de l'image.
-  if ((fd = fopen(filename.c_str(), "r")) == NULL)
-  {
-    vpERROR_TRACE("cannot open file") ;
-    throw (vpImageException(vpImageException::ioError,
-			    "cannot open file")) ;
-  }
-  return fd ;
-}
-
-/*!
-
-  Open a file with write access.
-
-  \param filename : Name of the file to open.
-
-  \param mode : Access mode. By default set to "w" for write
-  access. Could be changed to set for example the access mode to "wa"
-  to append data in the file.
-
-  \return File descriptor.
-*/
-FILE *
-vpImageIo::openFileWrite(const std::string filename,
-			 const std::string mode)
-{
-  FILE *fd ;
-
- // Lecture du nom du fichier image.
-  if (filename.empty())
-  {
-    vpERROR_TRACE("filename empty ") ;
-    throw (vpImageException(vpImageException::noFileNameError,
-			    "filename empty ")) ;
-  }
-
-  // Ouverture de l'image.
-  if ((fd = fopen(filename.c_str(), mode.c_str())) == NULL)
-  {
-    vpERROR_TRACE("cannot open file") ;
-    throw (vpImageException(vpImageException::ioError,
-			    "cannot open file")) ;
-  }
-  return fd ;
-}
+#endif
 
 vpImageIo::vpImageFormatType
-vpImageIo::getFormat(const char *filename)
+vpImageIo::getFormat(const std::string &filename)
 {
-  std::string sfilename(filename);
-
-  std::string ext = vpImageIo::getExtension(sfilename);
+  std::string ext = vpImageIo::getExtension(filename);
 
   if (ext.compare(".PGM") == 0)
     return FORMAT_PGM;
@@ -271,7 +202,7 @@ std::string vpImageIo::getExtension(const std::string &filename)
   \param filename : Name of the file containing the image.
  */
 void
-vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename)
 {
   bool exist = vpIoTools::checkFilename(filename);
   if (!exist) {
@@ -337,27 +268,7 @@ vpImageIo::read(vpImage<unsigned char> &I, const char *filename)
 #endif
   }
 }
-/*!
-  Read the contents of the image filename, allocate memory for the corresponding
-  greyscale image, update its content, and return a reference to the image.
 
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  Always supported formats are *.pgm and *.ppm.
-  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
-  If \c libpng 3rd party is used, we support also *.png files.
-  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras, *.tiff, *.tif, *.png, *.bmp, *.pbm files.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
- */
-void
-vpImageIo::read(vpImage<unsigned char> &I, const std::string filename)
-{
-  read(I,filename.c_str());
-}
 /*!
   Read the contents of the image filename, allocate memory for the corresponding
   color image, update its content, and return a reference to the image.
@@ -375,7 +286,7 @@ vpImageIo::read(vpImage<unsigned char> &I, const std::string filename)
   \param filename : Name of the file containing the image.
  */
 void
-vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename)
 {
   bool exist = vpIoTools::checkFilename(filename);
   if (!exist) {
@@ -440,27 +351,6 @@ vpImageIo::read(vpImage<vpRGBa> &I, const char *filename)
 #endif
   }
 }
-/*!
-  Read the contents of the image filename, allocate memory for the corresponding
-  color image, update its content, and return a reference to the image.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  Always supported formats are *.pgm and *.ppm.
-  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
-  If \c libpng 3rd party is used, we support also *.png files.
-  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras, *.tiff, *.tif, *.png, *.bmp, *.pbm files.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
- */
-void
-vpImageIo::read(vpImage<vpRGBa> &I, const std::string filename)
-{
-  read(I,filename.c_str());
-}
 
 /*!
   Write the content of the image in the file which name is given by \e
@@ -475,7 +365,7 @@ vpImageIo::read(vpImage<vpRGBa> &I, const std::string filename)
   \param filename : Name of the file containing the image.
  */
 void
-vpImageIo::write(const vpImage<unsigned char> &I, const char *filename)
+vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filename)
 {
   bool try_opencv_writer = false;
 
@@ -522,6 +412,7 @@ vpImageIo::write(const vpImage<unsigned char> &I, const char *filename)
 #endif
   }
 }
+
 /*!
   Write the content of the image in the file which name is given by \e
   filename.
@@ -535,24 +426,7 @@ vpImageIo::write(const vpImage<unsigned char> &I, const char *filename)
   \param filename : Name of the file containing the image.
  */
 void
-vpImageIo::write(const vpImage<unsigned char> &I, const std::string filename)
-{
-  write(I,filename.c_str());
-}
-/*!
-  Write the content of the image in the file which name is given by \e
-  filename.
-
-  Always supported formats are *.pgm and *.ppm.
-  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
-  If \c libpng 3rd party is used, we support also *.png files.
-  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras, *.tiff, *.tif, *.png, *.bmp, *.pbm files.
-
-  \param I : Image to write.
-  \param filename : Name of the file containing the image.
- */
-void
-vpImageIo::write(const vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename)
 {
   bool try_opencv_writer = false;
 
@@ -599,23 +473,7 @@ vpImageIo::write(const vpImage<vpRGBa> &I, const char *filename)
 #endif
   }
 }
-/*!
-  Write the content of the image in the file which name is given by \e
-  filename.
 
-  Always supported formats are *.pgm and *.ppm.
-  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
-  If \c libpng 3rd party is used, we support also *.png files.
-  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras, *.tiff, *.tif, *.png, *.bmp, *.pbm files.
-
-  \param I : Image to write.
-  \param filename : Name of the file containing the image.
- */
-void
-vpImageIo::write(const vpImage<vpRGBa> &I, const std::string filename)
-{
-  write(I,filename.c_str());
-}
 //--------------------------------------------------------------------------
 // PFM
 //--------------------------------------------------------------------------
@@ -630,25 +488,21 @@ vpImageIo::write(const vpImage<vpRGBa> &I, const std::string filename)
 */
 
 void
-vpImageIo::writePFM(const vpImage<float> &I,
-        const char *filename)
+vpImageIo::writePFM(const vpImage<float> &I, const std::string &filename)
 {
-
   FILE* fd;
 
   // Test the filename
-  if (!filename || *filename == '\0')   {
-     vpERROR_TRACE("no filename\n");
+  if (filename.empty())   {
     throw (vpImageException(vpImageException::ioError,
-           "no filename")) ;
+           "Cannot write PFM image: filename empty")) ;
   }
 
-  fd = fopen(filename, "wb");
+  fd = fopen(filename.c_str(), "wb");
 
   if (fd == NULL) {
-     vpERROR_TRACE("couldn't write to file \"%s\"\n",  filename);
     throw (vpImageException(vpImageException::ioError,
-           "cannot write file")) ;
+           "Cannot create PFM file \"%s\"", filename.c_str())) ;
   }
 
   // Write the head
@@ -663,10 +517,8 @@ vpImageIo::writePFM(const vpImage<float> &I,
   ierr = fwrite(I.bitmap, sizeof(float), nbyte, fd) ;
   if (ierr != nbyte) {
     fclose(fd);
-    vpERROR_TRACE("couldn't write %d bytes to file \"%s\"\n",
-      nbyte, filename) ;
     throw (vpImageException(vpImageException::ioError,
-           "cannot write file")) ;
+           "Cannot save PFM file \"%s\": only %d bytes over %d saved ", filename.c_str(), ierr, nbyte)) ;
   }
 
   fflush(fd);
@@ -686,25 +538,22 @@ vpImageIo::writePFM(const vpImage<float> &I,
 */
 
 void
-vpImageIo::writePGM(const vpImage<unsigned char> &I,
-        const char *filename)
+vpImageIo::writePGM(const vpImage<unsigned char> &I, const std::string &filename)
 {
 
   FILE* fd;
 
   // Test the filename
-  if (!filename || *filename == '\0')   {
-     vpERROR_TRACE("no filename\n");
+  if (filename.empty())   {
     throw (vpImageException(vpImageException::ioError,
-           "no filename")) ;
+           "Cannot create PGM file: filename empty")) ;
   }
 
-  fd = fopen(filename, "wb");
+  fd = fopen(filename.c_str(), "wb");
 
   if (fd == NULL) {
-     vpERROR_TRACE("couldn't write to file \"%s\"\n",  filename);
-    throw (vpImageException(vpImageException::ioError,
-           "cannot write file")) ;
+     throw (vpImageException(vpImageException::ioError,
+           "Cannot create PGM file \"%s\"", filename.c_str())) ;
   }
 
   // Write the head
@@ -719,16 +568,14 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
   ierr = fwrite(I.bitmap, sizeof(unsigned char), nbyte, fd) ;
   if (ierr != nbyte) {
     fclose(fd);
-    vpERROR_TRACE("couldn't write %d bytes to file \"%s\"\n",
-      nbyte, filename) ;
     throw (vpImageException(vpImageException::ioError,
-           "cannot write file")) ;
+           "Cannot save PGM file \"%s\": only %d over %d bytes saved", filename.c_str(), ierr, nbyte)) ;
   }
 
   fflush(fd);
   fclose(fd);
-
 }
+
 /*!
   Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a portable gray pixmap (PGM P5) file.
@@ -737,7 +584,7 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I,
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePGM(const vpImage<short> &I, const char *filename)
+vpImageIo::writePGM(const vpImage<short> &I, const std::string &filename)
 {
   vpImage<unsigned char> Iuc ;
   unsigned int nrows = I.getHeight();
@@ -749,8 +596,6 @@ vpImageIo::writePGM(const vpImage<short> &I, const char *filename)
     Iuc.bitmap[i] =  (unsigned char)I.bitmap[i] ;
 
   vpImageIo::writePGM(Iuc, filename) ;
-
-
 }
 /*!
   Write the content of the image bitmap in the file which name is given by \e
@@ -762,24 +607,22 @@ vpImageIo::writePGM(const vpImage<short> &I, const char *filename)
 */
 
 void
-vpImageIo::writePGM(const vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::writePGM(const vpImage<vpRGBa> &I, const std::string &filename)
 {
 
   FILE* fd;
 
   // Test the filename
-  if (!filename || *filename == '\0')   {
-     vpERROR_TRACE("no filename\n");
+  if (filename.empty())   {
     throw (vpImageException(vpImageException::ioError,
-           "no filename")) ;
+           "Cannot create PGM file: filename empty")) ;
   }
 
-  fd = fopen(filename, "wb");
+  fd = fopen(filename.c_str(), "wb");
 
   if (fd == NULL) {
-     vpERROR_TRACE("couldn't write to file \"%s\"\n",  filename);
-    throw (vpImageException(vpImageException::ioError,
-           "cannot write file")) ;
+     throw (vpImageException(vpImageException::ioError,
+           "Cannot create PGM file \"%s\"", filename.c_str())) ;
   }
 
   // Write the head
@@ -791,22 +634,18 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I, const char *filename)
   size_t ierr;
   size_t nbyte = I.getWidth()*I.getHeight();
 
-
   vpImage<unsigned char> Itmp ;
   vpImageConvert::convert(I,Itmp) ;
 
   ierr = fwrite(Itmp.bitmap, sizeof(unsigned char), nbyte, fd) ;
   if (ierr != nbyte) {
     fclose(fd);
-    vpERROR_TRACE("couldn't write %d bytes to file \"%s\"\n",
-      nbyte, filename) ;
     throw (vpImageException(vpImageException::ioError,
-           "cannot write file")) ;
+                            "Cannot save PGM file \"%s\": only %d over %d bytes saved", filename.c_str(), ierr, nbyte)) ;
   }
 
   fflush(fd);
   fclose(fd);
-
 }
 
 /*!
@@ -826,156 +665,46 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I, const char *filename)
 */
 
 void
-vpImageIo::readPFM(vpImage<float> &I, const char *filename)
+vpImageIo::readPFM(vpImage<float> &I, const std::string &filename)
 {
-  FILE* fd = NULL; // File descriptor
-  int   ierr;
-  int   line;
-  int   is255;
-  char* err ;
-  char  str[vpMAX_LEN];
-  unsigned int   w, h;
+  unsigned int w=0, h=0, maxval=0;
+  unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
+  std::string magic("P8");
 
-  // Test the filename
-  if (!filename || *filename == '\0')
-  {
-    vpERROR_TRACE("no filename") ;
-    throw (vpImageException(vpImageException::ioError,
-          " no filename")) ;
-
-  }
+  std::ifstream fd(filename.c_str(), std::ios::in);
 
   // Open the filename
-  fd = fopen(filename, "rb");
-  if (fd == NULL)
+  if(! fd.is_open()) {
+    throw (vpImageException(vpImageException::ioError, "Cannot open file \"%s\"", filename.c_str())) ;
+  }
+
+  vp_decodeHeaderPNM(filename, fd, magic, w, h, maxval);
+
+  if (w > w_max || h > h_max) {
+    fd.close();
+    throw(vpException(vpException::badValue, "Bad image size in \"%s\"",  filename.c_str()));
+  }
+  if (maxval > maxval_max)
   {
-    vpERROR_TRACE("couldn't read file \"%s\"", filename) ;
+    fd.close();
     throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
+                            "Bad maxval in \"%s\"",  filename.c_str()));
   }
 
-  // Read the first line with magic number P8
-  line = 0;
-
-  err = fgets(str, vpMAX_LEN - 1, fd);
-  line++;
-  if (err == NULL)
-  {
-    fclose (fd);
-    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",  line, filename) ;
-    throw (vpImageException(vpImageException::ioError,
-          "couldn't read file")) ;
-  }
-
-  if (strlen(str) < 3)
-  {
-    fclose (fd);
-    vpERROR_TRACE("\"%s\" is not a PFM file\n", filename) ;
-    throw (vpImageException(vpImageException::ioError,
-          "this is not a PFM file")) ;
-  }
-
-  str[2] = '\0';
-  if (strcmp(str, "P8") != 0)
-  {
-    fclose (fd);
-    vpERROR_TRACE("\"%s\" is not a PFM file\n", filename) ;
-    throw (vpImageException(vpImageException::ioError,
-          "this is not a PFM file")) ;
-  }
-
-  // Jump the possible comment, or empty line and read the following line
-  do {
-    err = fgets(str, vpMAX_LEN - 1, fd);
-    line++;
-    if (err == NULL) {
-      fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-                              "Cannot read content of PFM file")) ;
-    }
-  } while ((str[0] == '#') || (str[0] == '\n'));
-
-  // Extract image size
-  ierr = sscanf(str, "%u %u", &w, &h);
-  if (w > 100000 || h>100000) {
-    fclose (fd);
-    throw(vpException(vpException::badValue, "Bad image size"));
-  }
-
-  if(ierr == 1){// the norm allows to have the two values on two separated lines.
-    do {
-      err = fgets(str, vpMAX_LEN - 1, fd);
-      line++;
-      if (err == NULL) {
-        fprintf(stderr, "couldn't read line %d of file \"%s\"\n", line, filename);
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-                                "Cannot read content of PFM file")) ;
-      }
-    } while ((str[0] == '#') || (str[0] == '\n'));
-    ierr = sscanf(str, "%u", &h);
-  }
-  if (ierr == EOF)
-  {
-    fclose (fd);
-    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
-    throw (vpImageException(vpImageException::ioError,
-                            "Cannot read content of PFM file")) ;
-  }
-
-  if ((h != I.getHeight())||( w != I.getWidth()))
-  {
-    try
-    {
-      I.resize(h,w) ;
-    }
-    catch(...)
-    {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-                              "Cannot read content of PFM file")) ;
-    }
-  }
-
-  // Read 255
-  err = fgets(str, vpMAX_LEN - 1, fd);
-  line++;
-  if (err == NULL) {
-    fclose (fd);
-    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n",line, filename) ;
-    throw (vpImageException(vpImageException::ioError,
-                            "Cannot read content of PFM file")) ;
-  }
-
-  ierr = sscanf(str, "%d", &is255);
-  if (ierr == EOF) {
-    fclose (fd);
-    vpERROR_TRACE("couldn't read line %d of file \"%s\"\n", line, filename) ;
-    throw (vpImageException(vpImageException::ioError,
-                            "Cannot read content of PFM file")) ;
-  }
-
-  if (is255 != 255)
-  {
-    fclose (fd);
-    vpERROR_TRACE("MAX_VAL is not 255 in file \"%s\"\n", filename) ;
-    throw (vpImageException(vpImageException::ioError,
-                            "Cannot read content of PFM file")) ;
+  if ((h != I.getHeight())||( w != I.getWidth())) {
+    I.resize(h,w) ;
   }
 
   unsigned int nbyte = I.getHeight()*I.getWidth();
-  if (fread (I.bitmap, sizeof(float), nbyte, fd ) != nbyte)
-  {
-    fclose (fd);
-    vpERROR_TRACE("couldn't read %d bytes in file \"%s\"\n", nbyte, filename) ;
+  fd.read ((char *)I.bitmap, sizeof(float) * nbyte);
+  if (! fd) {
+    fd.close();
     throw (vpImageException(vpImageException::ioError,
-                            "Cannot read content of PFM file")) ;
+                            "Read only %d of %d bytes in file \"%s\"", fd.gcount(), nbyte, filename.c_str()));
   }
 
-  fclose (fd);
+  fd.close();
 }
-
 
 
 /*!
@@ -991,182 +720,33 @@ vpImageIo::readPFM(vpImage<float> &I, const char *filename)
 
   \param I : Image to set with the \e filename content.
   \param filename : Name of the file containing the image.
-
 */
 
 void
-vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::readPGM(vpImage<unsigned char> &I, const std::string &filename)
 {
-  FILE* fd = NULL; // File descriptor
-  int   ierr;
-  char* err ;
-  char  str[vpMAX_LEN];
-  unsigned int magic=5, w=0, h=0, maxval=255;
+  unsigned int w=0, h=0, maxval=0;
+  unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
+  std::string magic("P5");
 
-  // Test the filename
-  if (!filename || *filename == '\0') {
-    throw (vpImageException(vpImageException::ioError,
-          "No filename")) ;
-  }
+  std::ifstream fd(filename.c_str(), std::ios::in);
 
   // Open the filename
-  if ((fd = fopen(filename, "rb")) == NULL) {
-    throw (vpImageException(vpImageException::ioError,
-          "Cannot read file \"%s\"", filename)) ;
+  if(! fd.is_open()) {
+    throw (vpImageException(vpImageException::ioError, "Cannot open file \"%s\"", filename.c_str())) ;
   }
 
-  while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-  if (err == NULL) {
-    fclose (fd);
-    throw (vpImageException(vpImageException::ioError,
-          "Cannot read header of file \"%s\"",  filename));
-  }
-  if ((ierr = sscanf(str, "P%u %u %u %u", &magic, &w, &h, &maxval)) == 0) {
-    fclose (fd);
-    throw (vpImageException(vpImageException::ioError,
-          "Cannot read header of file \"%s\"",  filename));
-  }
+  vp_decodeHeaderPNM(filename, fd, magic, w, h, maxval);
 
-  if (magic != 5) {
-    fclose (fd);
-    throw (vpImageException(vpImageException::ioError,
-                            "\"%s\" is not a PGM P5 file", filename));
+  if (w > w_max || h > h_max) {
+    fd.close();
+    throw(vpException(vpException::badValue, "Bad image size in \"%s\"",  filename.c_str()));
   }
-
-  // Depending on ierr the line may contain:
-  // 1 : P5
-  // 2 : P5 w
-  // 3 : P5 w h
-  // 4 : P5 w h maxval
-
-  if (ierr == 1) {
-//    std::cout << "magic: " << magic << std::endl;
-    while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-    if (err == NULL) {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "Cannot read header of file \"%s\"",  filename));
-    }
-    if (((ierr = sscanf(str, "%u %u %u", &w, &h, &maxval)) == 0) || (ierr != 1 && ierr != 2 && ierr != 3)) {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "Cannot read header of file \"%s\"",  filename));
-    }
-    // Depending on ierr the line may contain:
-    // 1 : w
-    // 2 : w h
-    // 3 : w h maxval
-    if (ierr == 1) {
-//      std::cout << "w: " << w << std::endl;
-      while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-      if (err == NULL) {
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "Cannot read header of file \"%s\"",  filename));
-      }
-      if (((ierr = sscanf(str, "%u %u", &h, &maxval)) == 0) || (ierr != 1 && ierr != 2)) {
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "Cannot read header of file \"%s\"",  filename));
-      }
-      if (ierr == 1) {
-//        std::cout << "h: " << h << std::endl;
-        while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-        if (err == NULL) {
-          fclose (fd);
-          throw (vpImageException(vpImageException::ioError,
-                "Cannot read header of file \"%s\"",  filename));
-        }
-        if ((ierr = sscanf(str, "%u", &maxval)) != 1) {
-          fclose (fd);
-          throw (vpImageException(vpImageException::ioError,
-                "Cannot read header of file \"%s\"",  filename));
-        }
-      }
-//      else {
-//        std::cout << "h: " << h << " maxval: " << maxval << std::endl;
-//      }
-    }
-    else if (ierr == 2) {
-//      std::cout << "w: " << w << " h: " << h << std::endl;
-
-      while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-      if (err == NULL) {
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "Cannot read header of file \"%s\"",  filename));
-      }
-      if ((ierr = sscanf(str, "%u", &maxval)) != 1)  {
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "Cannot read header of file \"%s\"",  filename));
-      }
-//      std::cout << "maxval: " << maxval << std::endl;
-    }
-//    else {
-//      std::cout << "w: " << w << " h: " << h << " maxval: " << maxval << std::endl;
-//    }
-  }
-  else if (ierr == 2) {
-//    std::cout << "magic: " << magic << " w: " << w << std::endl;
-    while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-    if (err == NULL) {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "Cannot read header of file \"%s\"",  filename));
-    }
-    if (((ierr = sscanf(str, "%u %u", &h, &maxval)) == 0) || (ierr != 1 && ierr != 2)) {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "Cannot read header of file \"%s\"",  filename));
-    }
-    if (ierr == 1) {
-//      std::cout << "h: " << h << std::endl;
-      while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-      if (err == NULL) {
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "Cannot read header of file \"%s\"",  filename));
-      }
-      if ((ierr = sscanf(str, "%u", &maxval)) != 1) {
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "Cannot read header of file \"%s\"",  filename));
-      }
-//      std::cout << "maxval: " << maxval << std::endl;
-    }
-//    else {
-//      std::cout << "h: " << h << " maxval: " << maxval << std::endl;
-//    }
-  }
-  else if (ierr == 3) {
-//    std::cout << "magic: " << magic << " w: " << w << " h: " << h << std::endl;
-    while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-    if (err == NULL) {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "Cannot read header of file \"%s\"",  filename));
-    }
-    if ((sscanf(str, "%u", &maxval)) != 1)  {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "Cannot read header of file \"%s\"",  filename));
-    }
-//    std::cout << "maxval: " << maxval << std::endl;
-  }
-//  else if (ierr == 4) {
-//    std::cout << "magic: " << magic << " w: " << w << " h: " << h << " maxval: " << maxval << std::endl;
-//  }
-
-  if (w > 100000 || h>100000) {
-    fclose (fd);
-    throw(vpException(vpException::badValue, "Bad image size in \"%s\"",  filename));
-  }
-  if (maxval != 255)
+  if (maxval > maxval_max)
   {
-    fclose (fd);
+    fd.close();
     throw (vpImageException(vpImageException::ioError,
-          "Bad maxval in \"%s\"",  filename));
+                            "Bad maxval in \"%s\"",  filename.c_str()));
   }
 
   if ((h != I.getHeight())||( w != I.getWidth())) {
@@ -1174,16 +754,15 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
   }
 
   unsigned int nbyte = I.getHeight()*I.getWidth();
-  size_t n;
-  if ((n = fread (I.bitmap, sizeof(unsigned char), nbyte, fd)) != nbyte) {
-    fclose (fd);
+  fd.read ((char *)I.bitmap, sizeof(unsigned char) * nbyte);
+  if (! fd) {
+    fd.close();
     throw (vpImageException(vpImageException::ioError,
-          "Read only %d of %d bytes in file \"%s\"", n, nbyte, filename));
+                            "Read only %d of %d bytes in file \"%s\"", fd.gcount(), nbyte, filename.c_str()));
   }
 
-  fclose (fd);
+  fd.close();
 }
-
 
 /*!
   Read a PGM P5 file and initialize a scalar image.
@@ -1204,22 +783,13 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const char *filename)
 */
 
 void
-vpImageIo::readPGM(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::readPGM(vpImage<vpRGBa> &I, const std::string &filename)
 {
-  try
-  {
-    vpImage<unsigned char> Itmp ;
+  vpImage<unsigned char> Itmp ;
 
-    vpImageIo::readPGM(Itmp, filename) ;
+  vpImageIo::readPGM(Itmp, filename) ;
 
-    vpImageConvert::convert(Itmp, I) ;
-
-  }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+  vpImageConvert::convert(Itmp, I) ;
 }
 
 
@@ -1244,22 +814,13 @@ vpImageIo::readPGM(vpImage<vpRGBa> &I, const char *filename)
 
 */
 void
-vpImageIo::readPPM(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::readPPM(vpImage<unsigned char> &I, const std::string &filename)
 {
+  vpImage<vpRGBa> Itmp ;
 
-  try
-  {
-    vpImage<vpRGBa> Itmp ;
+  vpImageIo::readPPM(Itmp, filename) ;
 
-    vpImageIo::readPPM(Itmp, filename) ;
-
-    vpImageConvert::convert(Itmp, I) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+  vpImageConvert::convert(Itmp, I) ;
 }
 
 
@@ -1275,203 +836,56 @@ vpImageIo::readPPM(vpImage<unsigned char> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::readPPM(vpImage<vpRGBa> &I, const std::string &filename)
 {
-  FILE* fd = NULL; // File descriptor
-  int   ierr;
-  char* err ;
-  char  str[vpMAX_LEN];
-  unsigned int magic=5, w=0, h=0, maxval=255;
+  unsigned int w=0, h=0, maxval=0;
+  unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
+  std::string magic("P6");
 
-  // Test the filename
-  if (!filename || *filename == '\0') {
-    throw (vpImageException(vpImageException::ioError,
-          "No filename")) ;
-  }
+  std::ifstream fd(filename.c_str(), std::ios::in);
 
   // Open the filename
-  if ((fd = fopen(filename, "rb")) == NULL) {
-    throw (vpImageException(vpImageException::ioError,
-          "Cannot read file \"%s\"", filename)) ;
+  if(! fd.is_open()) {
+    throw (vpImageException(vpImageException::ioError, "Cannot open file \"%s\"", filename.c_str())) ;
   }
 
-  while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-  if (err == NULL) {
-    fclose (fd);
-    throw (vpImageException(vpImageException::ioError,
-          "Cannot read header of file \"%s\"",  filename));
-  }
-  if ((ierr = sscanf(str, "P%u %u %u %u", &magic, &w, &h, &maxval)) == 0) {
-    fclose (fd);
-    throw (vpImageException(vpImageException::ioError,
-          "Cannot read header of file \"%s\"",  filename));
-  }
+  vp_decodeHeaderPNM(filename, fd, magic, w, h, maxval);
 
-  if (magic != 6) {
-    fclose (fd);
-    throw (vpImageException(vpImageException::ioError,
-                            "\"%s\" is not a PGM P6 file", filename));
+  if (w > w_max || h > h_max) {
+    fd.close();
+    throw(vpException(vpException::badValue, "Bad image size in \"%s\"",  filename.c_str()));
   }
-
-  // Depending on ierr the line may contain:
-  // 1 : P6
-  // 2 : P6 w
-  // 3 : P6 w h
-  // 4 : P6 w h maxval
-
-  if (ierr == 1) {
-//    std::cout << "magic: " << magic << std::endl;
-    while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-    if (err == NULL) {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "Cannot read header of file \"%s\"",  filename));
-    }
-    if (((ierr = sscanf(str, "%u %u %u", &w, &h, &maxval)) == 0) || (ierr != 1 && ierr != 2 && ierr != 3)) {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "Cannot read header of file \"%s\"",  filename));
-    }
-    // Depending on ierr the line may contain:
-    // 1 : w
-    // 2 : w h
-    // 3 : w h maxval
-    if (ierr == 1) {
-//      std::cout << "w: " << w << std::endl;
-      while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-      if (err == NULL) {
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "Cannot read header of file \"%s\"",  filename));
-      }
-      if (((ierr = sscanf(str, "%u %u", &h, &maxval)) == 0) || (ierr != 1 && ierr != 2)) {
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "Cannot read header of file \"%s\"",  filename));
-      }
-      if (ierr == 1) {
-//        std::cout << "h: " << h << std::endl;
-        while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-        if (err == NULL) {
-          fclose (fd);
-          throw (vpImageException(vpImageException::ioError,
-                "Cannot read header of file \"%s\"",  filename));
-        }
-        if ((ierr = sscanf(str, "%u", &maxval)) != 1) {
-          fclose (fd);
-          throw (vpImageException(vpImageException::ioError,
-                "Cannot read header of file \"%s\"",  filename));
-        }
-      }
-//      else {
-//        std::cout << "h: " << h << " maxval: " << maxval << std::endl;
-//      }
-    }
-    else if (ierr == 2) {
-//      std::cout << "w: " << w << " h: " << h << std::endl;
-
-      while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-      if (err == NULL) {
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "Cannot read header of file \"%s\"",  filename));
-      }
-      if ((ierr = sscanf(str, "%u", &maxval)) != 1)  {
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "Cannot read header of file \"%s\"",  filename));
-      }
-//      std::cout << "maxval: " << maxval << std::endl;
-    }
-//    else {
-//      std::cout << "w: " << w << " h: " << h << " maxval: " << maxval << std::endl;
-//    }
-  }
-  else if (ierr == 2) {
-//    std::cout << "magic: " << magic << " w: " << w << std::endl;
-    while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-    if (err == NULL) {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "Cannot read header of file \"%s\"",  filename));
-    }
-    if (((ierr = sscanf(str, "%u %u", &h, &maxval)) == 0) || (ierr != 1 && ierr != 2)) {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "Cannot read header of file \"%s\"",  filename));
-    }
-    if (ierr == 1) {
-//      std::cout << "h: " << h << std::endl;
-      while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-      if (err == NULL) {
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "Cannot read header of file \"%s\"",  filename));
-      }
-      if ((ierr = sscanf(str, "%u", &maxval)) != 1) {
-        fclose (fd);
-        throw (vpImageException(vpImageException::ioError,
-              "Cannot read header of file \"%s\"",  filename));
-      }
-//      std::cout << "maxval: " << maxval << std::endl;
-    }
-//    else {
-//      std::cout << "h: " << h << " maxval: " << maxval << std::endl;
-//    }
-  }
-  else if (ierr == 3) {
-//    std::cout << "magic: " << magic << " w: " << w << " h: " << h << std::endl;
-    while ((err = fgets(str, vpMAX_LEN - 1, fd)) != NULL && ((str[0] == '#') || (str[0] == '\n'))) {};
-    if (err == NULL) {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "Cannot read header of file \"%s\"",  filename));
-    }
-    if ((sscanf(str, "%u", &maxval)) != 1)  {
-      fclose (fd);
-      throw (vpImageException(vpImageException::ioError,
-            "Cannot read header of file \"%s\"",  filename));
-    }
-//    std::cout << "maxval: " << maxval << std::endl;
-  }
-//  else if (ierr == 4) {
-//    std::cout << "magic: " << magic << " w: " << w << " h: " << h << " maxval: " << maxval << std::endl;
-//  }
-
-  if (w > 100000 || h>100000) {
-    fclose (fd);
-    throw(vpException(vpException::badValue, "Bad image size in \"%s\"",  filename));
-  }
-  if (maxval != 255)
+  if (maxval > maxval_max)
   {
-    fclose (fd);
+    fd.close();
     throw (vpImageException(vpImageException::ioError,
-          "Bad maxval in \"%s\"",  filename));
+                            "Bad maxval in \"%s\"",  filename.c_str()));
   }
 
   if ((h != I.getHeight())||( w != I.getWidth())) {
     I.resize(h,w) ;
   }
 
-  for(unsigned int i=0;i<I.getHeight();i++)
-  {
-    for(unsigned int j=0;j<I.getWidth();j++)
-    {
-      vpRGBa v ;
-      size_t res = fread(&v.R,sizeof(v.R),1,fd) ;
-      res |= fread(&v.G,sizeof(v.G),1,fd) ;
-      res |= fread(&v.B,sizeof(v.B),1,fd) ;
-      if (res==0)
-      {
-        fclose (fd);
+  for(unsigned int i=0;i<I.getHeight();i++) {
+    for(unsigned int j=0;j<I.getWidth();j++) {
+      unsigned char rgb[3];
+      fd.read((char *)&rgb, 3);
+
+      if (! fd) {
+        fd.close();
         throw (vpImageException(vpImageException::ioError,
-              "Cannot read bytes in file \"%s\"\n", filename));
+                                "Read only %d of %d bytes in file \"%s\"",
+                                (i*I.getWidth() + j)*3 + fd.gcount(), I.getSize()*3, filename.c_str()));
       }
-      I[i][j] = v ;
+
+      I[i][j].R = rgb[0];
+      I[i][j].G = rgb[1];
+      I[i][j].B = rgb[2];
+      I[i][j].A = vpRGBa::alpha_default;
     }
   }
 
-  fclose (fd);
+  fd.close();
 }
 
 /*!
@@ -1485,22 +899,13 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const char *filename)
 */
 
 void
-vpImageIo::writePPM(const vpImage<unsigned char> &I, const char *filename)
+vpImageIo::writePPM(const vpImage<unsigned char> &I, const std::string &filename)
 {
+  vpImage<vpRGBa> Itmp ;
 
-  try
-  {
-    vpImage<vpRGBa> Itmp ;
+  vpImageConvert::convert(I, Itmp) ;
 
-    vpImageConvert::convert(I, Itmp) ;
-
-    vpImageIo::writePPM(Itmp, filename) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+  vpImageIo::writePPM(Itmp, filename) ;
 }
 
 
@@ -1512,67 +917,42 @@ vpImageIo::writePPM(const vpImage<unsigned char> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string &filename)
 {
-
   FILE* f;
 
-
   // Test the filename
-  if (!filename || *filename == '\0')   {
-     vpERROR_TRACE("no filename\n");
+  if (filename.empty())   {
     throw (vpImageException(vpImageException::ioError,
-           "no filename")) ;
+           "Cannot create PPM file: filename empty")) ;
   }
 
-  f = fopen(filename, "wb");
+  f = fopen(filename.c_str(), "wb");
 
   if (f == NULL) {
-     vpERROR_TRACE("couldn't write to file \"%s\"\n",  filename);
      throw (vpImageException(vpImageException::ioError,
-           "cannot write file")) ;
+           "Cannot create PPM file \"%s\"", filename.c_str())) ;
   }
-
-
 
   fprintf(f,"P6\n");			         // Magic number
   fprintf(f,"%d %d\n", I.getWidth(), I.getHeight());	// Image size
-  fprintf(f,"%d\n",255);	        	// Max level
+  fprintf(f,"%d\n", 255);	        	// Max level
 
   for(unsigned int i=0;i<I.getHeight();i++)
   {
     for(unsigned int j=0;j<I.getWidth();j++)
     {
-      vpRGBa P ;
-      size_t res ;
-      P = I[i][j] ;
-      unsigned char   tmp ;
-      tmp = P.R ;
-      res = fwrite(&tmp,sizeof(tmp),1,f) ;
-      if (res==0)
-      {
-  fclose(f);
-  vpERROR_TRACE("couldn't write file") ;
-  throw (vpImageException(vpImageException::ioError,
-        "cannot write file")) ;
-      }
-      tmp = P.G;
-      res = fwrite(&tmp,sizeof(tmp),1,f) ;
-      if (res==0)
-      {
-  fclose(f);
-  vpERROR_TRACE("couldn't write file") ;
-  throw (vpImageException(vpImageException::ioError,
-        "cannot write file")) ;
-      }
-      tmp = P.B ;
-      res = fwrite(&tmp,sizeof(tmp),1,f) ;
-      if (res==0)
-      {
-  fclose(f);
-  vpERROR_TRACE("couldn't write file") ;
-  throw (vpImageException(vpImageException::ioError,
-        "cannot write file")) ;
+      vpRGBa v = I[i][j];
+      unsigned char rgb[3];
+      rgb[0] = v.R;
+      rgb[1] = v.G;
+      rgb[2] = v.B;
+
+      size_t res = fwrite(&rgb, 1, 3, f);
+      if (res != 3) {
+        fclose(f);
+        throw (vpImageException(vpImageException::ioError,
+                                "cannot write file \"%s\"", filename.c_str())) ;
       }
     }
   }
@@ -1580,170 +960,6 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const char *filename)
   fflush(f);
   fclose(f);
 }
-
-
-/*!
-  Read a PGM P5 file and initialize a scalar image.
-
-  Read the contents of the portable gray pixmap (PGM P5) filename, allocate
-  memory for the corresponding image, and set the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
-
-void
-vpImageIo::readPGM(vpImage<unsigned char> &I, const std::string filename)
-{
-  vpImageIo::readPGM(I, filename.c_str());
-}
-
-/*!
-  Read a PGM P5 file and initialize a scalar image.
-
-  Read the contents of the portable gray pixmap (PGM P5) filename, allocate
-  memory for the corresponding image, and set the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
-
-void
-vpImageIo::readPGM(vpImage<vpRGBa> &I, const  std::string filename)
-{
-  vpImageIo::readPGM(I, filename.c_str());
-}
-
-/*!
-  Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a portable gray pixmap (PGM P5) file.
-
-  \param I : Image to save as a (PGM P5) file.
-  \param filename : Name of the file containing the image.
-
-*/
-
-void
-vpImageIo::writePGM(const vpImage<unsigned char> &I,
-        const std::string filename)
-{
-  vpImageIo::writePGM(I, filename.c_str());
-}
-
-/*!
-  Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a portable gray pixmap (PGM P5) file.
-
-  \param I : Image to save as a (PGM P5) file.
-  \param filename : Name of the file containing the image.
-*/
-
-void
-vpImageIo::writePGM(const vpImage<short> &I, const std::string filename)
-{
-
-  vpImageIo::writePGM(I, filename.c_str());
-}
-
-/*!
-  Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a portable gray pixmap (PGM P5) file.
-  Color image is converted into a grayscale image.
-
-  \param I : Image to save as a (PGM P5) file.
-  \param filename : Name of the file containing the image.
-
-*/
-
-void
-vpImageIo::writePGM(const vpImage<vpRGBa> &I, const std::string filename)
-{
-  vpImageIo::writePGM(I, filename.c_str());
-}
-
-//--------------------------------------------------------------------------
-// PPM
-//--------------------------------------------------------------------------
-
-/*!
-  Read the contents of the portable pixmap (PPM P6) filename, allocate memory
-  for the corresponding gray level image, convert the data in gray level, and
-  set the bitmap whith the gray level data. That means that the image \e I is a
-  "black and white" rendering of the original image in \e filename, as in a
-  black and white photograph. The quantization formula used is \f$0,299 r +
-  0,587 g + 0,114 b\f$.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-
-*/
-void
-vpImageIo::readPPM(vpImage<unsigned char> &I, const std::string filename)
-{
-  vpImageIo::readPPM(I, filename.c_str());
-}
-
-/*!
-  Read the contents of the portable pixmap (PPM P6) filename,
-  allocate memory for the corresponding vpRGBa image.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::readPPM(vpImage<vpRGBa> &I, const std::string filename)
-{
-  vpImageIo::readPPM(I, filename.c_str());
-}
-
-/*!
-  Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a portable gray pixmap (PPM P6) file.
-  grayscale image is converted into a color image vpRGBa.
-
-  \param I : Image to save as a (PPM P6) file.
-  \param filename : Name of the file containing the image.
-
-*/
-
-void
-vpImageIo::writePPM(const vpImage<unsigned char> &I, const std::string filename)
-{
-  vpImageIo::writePPM(I, filename.c_str());
-}
-
-/*!
-  Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a portable gray pixmap (PPM P6) file.
-
-  \param I : Image to save as a (PPM P6) file.
-  \param filename : Name of the file containing the image.
-
-*/
-void
-vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string filename)
-{
-  vpImageIo::writePPM(I, filename.c_str());
-}
-
 
 //--------------------------------------------------------------------------
 // JPEG
@@ -1759,7 +975,7 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const char *filename)
+vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename)
 {
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
@@ -1769,18 +985,16 @@ vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const char *filename)
   jpeg_create_compress(&cinfo);
 
   // Test the filename
-  if (!filename || *filename == '\0')   {
-     vpERROR_TRACE("no filename\n");
-    throw (vpImageException(vpImageException::ioError,
-           "no filename")) ;
+  if (filename.empty())   {
+     throw (vpImageException(vpImageException::ioError,
+           "Cannot create JPEG file: filename empty")) ;
   }
 
-  file = fopen(filename, "wb");
+  file = fopen(filename.c_str(), "wb");
 
   if (file == NULL) {
-     vpERROR_TRACE("couldn't write file \"%s\"\n",  filename);
-     throw (vpImageException(vpImageException::ioError,
-           "cannot write file")) ;
+    throw (vpImageException(vpImageException::ioError,
+                            "Cannot create JPEG file \"%s\"", filename.c_str())) ;
   }
 
   unsigned int width = I.getWidth();
@@ -1804,9 +1018,9 @@ vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const char *filename)
     for (unsigned int i = 0; i < width; i++)
     {
       line[i] = *(input);
-    input++;
+      input++;
     }
-  jpeg_write_scanlines(&cinfo, &line, 1);
+    jpeg_write_scanlines(&cinfo, &line, 1);
   }
 
   jpeg_finish_compress(&cinfo);
@@ -1815,7 +1029,6 @@ vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const char *filename)
   fclose(file);
 }
 
-
 /*!
   Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a JPEG file.
@@ -1824,21 +1037,7 @@ vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string filename)
-{
-  vpImageIo::writeJPEG(I, filename.c_str());
-}
-
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a JPEG file.
-
-  \param I : Image to save as a JPEG file.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename)
 {
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
@@ -1848,18 +1047,16 @@ vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const char *filename)
   jpeg_create_compress(&cinfo);
 
   // Test the filename
-  if (!filename || *filename == '\0')   {
-     vpERROR_TRACE("no filename\n");
-    throw (vpImageException(vpImageException::ioError,
-           "no filename")) ;
+  if (filename.empty())   {
+     throw (vpImageException(vpImageException::ioError,
+           "Cannot create JPEG file: filename empty")) ;
   }
 
-  file = fopen(filename, "wb");
+  file = fopen(filename.c_str(), "wb");
 
   if (file == NULL) {
-     vpERROR_TRACE("couldn't write file \"%s\"\n",  filename);
-     throw (vpImageException(vpImageException::ioError,
-           "cannot write file")) ;
+    throw (vpImageException(vpImageException::ioError,
+                            "Cannot create JPEG file \"%s\"", filename.c_str())) ;
   }
 
   unsigned int width = I.getWidth();
@@ -1896,21 +1093,6 @@ vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const char *filename)
   fclose(file);
 }
 
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a JPEG file.
-
-  \param I : Image to save as a JPEG file.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string filename)
-{
-  vpImageIo::writeJPEG(I, filename.c_str());
-}
-
-
 /*!
   Read the contents of the JPEG file, allocate memory
   for the corresponding gray level image, if necessary convert the data in gray level, and
@@ -1928,7 +1110,7 @@ vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string filename)
 
 */
 void
-vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename)
 {
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr jerr;
@@ -1938,18 +1120,16 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
   jpeg_create_decompress(&cinfo);
 
   // Test the filename
-  if (!filename || *filename == '\0')   {
-     vpERROR_TRACE("no filename\n");
-    throw (vpImageException(vpImageException::ioError,
-           "no filename")) ;
+  if (filename.empty())   {
+     throw (vpImageException(vpImageException::ioError,
+           "Cannot read JPEG image: filename empty")) ;
   }
 
-  file = fopen(filename, "rb");
+  file = fopen(filename.c_str(), "rb");
 
   if (file == NULL) {
-     vpERROR_TRACE("couldn't read file \"%s\"\n",  filename);
      throw (vpImageException(vpImageException::ioError,
-           "cannot read file")) ;
+           "Cannot read JPEG file \"%s\"", filename.c_str())) ;
   }
 
   jpeg_stdio_src(&cinfo, file);
@@ -1997,30 +1177,6 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
   fclose(file);
 }
 
-
-/*!
-  Read the contents of the JPEG file, allocate memory
-  for the corresponding gray level image, if necessary convert the data in gray level, and
-  set the bitmap whith the gray level data. That means that the image \e I is a
-  "black and white" rendering of the original image in \e filename, as in a
-  black and white photograph. If necessary, the quantization formula used is \f$0,299 r +
-  0,587 g + 0,114 b\f$.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-
-*/
-void
-vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string filename)
-{
-  vpImageIo::readJPEG(I, filename.c_str());
-}
-
-
 /*!
   Read a JPEG file and initialize a scalar image.
 
@@ -2040,7 +1196,7 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename)
 {
   struct jpeg_decompress_struct cinfo;
   struct jpeg_error_mgr jerr;
@@ -2050,18 +1206,16 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
   jpeg_create_decompress(&cinfo);
 
   // Test the filename
-  if (!filename || *filename == '\0')   {
-     vpERROR_TRACE("no filename\n");
-    throw (vpImageException(vpImageException::ioError,
-           "no filename")) ;
+  if (filename.empty())   {
+     throw (vpImageException(vpImageException::ioError,
+           "Cannot read JPEG image: filename empty")) ;
   }
 
-  file = fopen(filename, "rb");
+  file = fopen(filename.c_str(), "rb");
 
   if (file == NULL) {
-     vpERROR_TRACE("couldn't read file \"%s\"\n",  filename);
      throw (vpImageException(vpImageException::ioError,
-           "cannot read file")) ;
+           "Cannot read JPEG file \"%s\"", filename.c_str())) ;
   }
 
   jpeg_stdio_src(&cinfo, file);
@@ -2112,31 +1266,6 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
   jpeg_finish_decompress(&cinfo);
   jpeg_destroy_decompress(&cinfo);
   fclose(file);
-}
-
-
-/*!
-  Read a JPEG file and initialize a scalar image.
-
-  Read the contents of the JPEG file, allocate
-  memory for the corresponding image, and set
-  the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  If the file corresponds to a grayscaled image, a conversion is done to deal
-  with \e I which is a color image.
-
-  \param I : Color image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string filename)
-{
-  vpImageIo::readJPEG(I, filename.c_str());
 }
 
 #elif defined(VISP_HAVE_OPENCV)
@@ -2376,23 +1505,21 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
+vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &filename)
 {
   FILE *file;
 
   // Test the filename
-  if (!filename || *filename == '\0')   {
-     vpERROR_TRACE("no filename\n");
-    throw (vpImageException(vpImageException::ioError,
-           "no filename")) ;
+  if (filename.empty())   {
+     throw (vpImageException(vpImageException::ioError,
+           "Cannot create PNG file: filename empty")) ;
   }
 
-  file = fopen(filename, "wb");
+  file = fopen(filename.c_str(), "wb");
 
   if (file == NULL) {
-     vpERROR_TRACE("couldn't write file \"%s\"\n",  filename);
-     throw (vpImageException(vpImageException::ioError,
-           "cannot write file")) ;
+    throw (vpImageException(vpImageException::ioError,
+                            "Cannot create PNG file \"%s\"", filename.c_str())) ;
   }
 
   /* create a png info struct */
@@ -2479,7 +1606,6 @@ vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
   fclose(file);
 }
 
-
 /*!
   Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a PNG file.
@@ -2488,37 +1614,21 @@ vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string filename)
-{
-  vpImageIo::writePNG(I, filename.c_str());
-}
-
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a PNG file.
-
-  \param I : Image to save as a PNG file.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::writePNG(const vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename)
 {
   FILE *file;
 
   // Test the filename
-  if (!filename || *filename == '\0')   {
-     vpERROR_TRACE("no filename\n");
-    throw (vpImageException(vpImageException::ioError,
-           "no filename")) ;
+  if (filename.empty())   {
+     throw (vpImageException(vpImageException::ioError,
+           "Cannot create PNG file: filename empty")) ;
   }
 
-  file = fopen(filename, "wb");
+  file = fopen(filename.c_str(), "wb");
 
   if (file == NULL) {
-     vpERROR_TRACE("couldn't write file \"%s\"\n",  filename);
-     throw (vpImageException(vpImageException::ioError,
-           "cannot write file")) ;
+    throw (vpImageException(vpImageException::ioError,
+                            "Cannot create PNG file \"%s\"", filename.c_str())) ;
   }
 
   /* create a png info struct */
@@ -2607,20 +1717,6 @@ vpImageIo::writePNG(const vpImage<vpRGBa> &I, const char *filename)
   fclose(file);
 }
 
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a PNG file.
-
-  \param I : Image to save as a PNG file.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string filename)
-{
-  vpImageIo::writePNG(I, filename.c_str());
-}
-
 /*!
   Read the contents of the PNG file, allocate memory
   for the corresponding gray level image, if necessary convert the data in gray level, and
@@ -2638,41 +1734,37 @@ vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string filename)
 
 */
 void
-vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
 {
   FILE *file;
   png_byte magic[8];
   // Test the filename
-  if (!filename || *filename == '\0')   {
-     vpERROR_TRACE("no filename\n");
+  if (filename.empty())   {
     throw (vpImageException(vpImageException::ioError,
-           "no filename")) ;
+           "Cannot read PNG image: filename empty")) ;
   }
 
-  file = fopen(filename, "rb");
+  file = fopen(filename.c_str(), "rb");
 
   if (file == NULL) {
-     vpERROR_TRACE("couldn't read file \"%s\"\n",  filename);
      throw (vpImageException(vpImageException::ioError,
-           "cannot read file")) ;
+           "Cannot read file \"%s\"", filename.c_str())) ;
   }
 
   /* read magic number */
   if (fread (magic, 1, sizeof (magic), file) != sizeof (magic))
   {
     fclose (file);
-    vpERROR_TRACE("couldn't read magic number in file \"%s\"\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "error reading png file")) ;
+          "Cannot read magic number in file \"%s\"", filename.c_str())) ;
   }
 
   /* check for valid magic number */
   if (png_sig_cmp (magic,0, sizeof (magic)))
   {
-    fprintf (stderr, "error: \"%s\" is not a valid PNG image!\n",filename);
     fclose (file);
     throw (vpImageException(vpImageException::ioError,
-          "error reading png file")) ;
+          "Cannot read PNG file: \"%s\" is not a valid PNG image", filename.c_str())) ;
   }
 
   /* create a png read struct */
@@ -2813,30 +1905,6 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
   fclose(file);
 }
 
-
-/*!
-  Read the contents of the PNG file, allocate memory
-  for the corresponding gray level image, if necessary convert the data in gray level, and
-  set the bitmap whith the gray level data. That means that the image \e I is a
-  "black and white" rendering of the original image in \e filename, as in a
-  black and white photograph. If necessary, the quantization formula used is \f$0,299 r +
-  0,587 g + 0,114 b\f$.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-
-*/
-void
-vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string filename)
-{
-  vpImageIo::readPNG(I, filename.c_str());
-}
-
-
 /*!
   Read a PNG file and initialize a scalar image.
 
@@ -2856,42 +1924,38 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
 {
   FILE *file;
   png_byte magic[8];
 
   // Test the filename
-  if (!filename || *filename == '\0')   {
-     vpERROR_TRACE("no filename\n");
+  if (filename.empty())   {
     throw (vpImageException(vpImageException::ioError,
-           "no filename")) ;
+           "Cannot read PNG image: filename empty")) ;
   }
 
-  file = fopen(filename, "rb");
+  file = fopen(filename.c_str(), "rb");
 
   if (file == NULL) {
-     vpERROR_TRACE("couldn't read file \"%s\"\n",  filename);
      throw (vpImageException(vpImageException::ioError,
-           "cannot read file")) ;
+           "Cannot read file \"%s\"", filename.c_str())) ;
   }
 
   /* read magic number */
   if (fread (magic, 1, sizeof (magic), file) != sizeof (magic))
   {
     fclose (file);
-    vpERROR_TRACE("couldn't read magic number in file \"%s\"\n", filename) ;
     throw (vpImageException(vpImageException::ioError,
-          "error reading pgm file")) ;
+          "Cannot read magic number in file \"%s\"", filename.c_str())) ;
   }
 
   /* check for valid magic number */
   if (png_sig_cmp (magic,0, sizeof (magic)))
   {
     fclose (file);
-    vpERROR_TRACE("error: \"%s\" is not a valid PNG image!\n",filename);
     throw (vpImageException(vpImageException::ioError,
-           "PNG read error")) ;
+          "Cannot read PNG file: \"%s\" is not a valid PNG image", filename.c_str())) ;
   }
 
   /* create a png read struct */
@@ -3030,31 +2094,6 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
   png_read_end (png_ptr, NULL);
   png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
   fclose(file);
-}
-
-
-/*!
-  Read a PNG file and initialize a scalar image.
-
-  Read the contents of the PNG file, allocate
-  memory for the corresponding image, and set
-  the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  If the file corresponds to a grayscaled image, a conversion is done to deal
-  with \e I which is a color image.
-
-  \param I : Color image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string filename)
-{
-  vpImageIo::readPNG(I, filename.c_str());
 }
 
 #elif defined(VISP_HAVE_OPENCV)
