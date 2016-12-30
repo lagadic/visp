@@ -1293,7 +1293,7 @@ void vpKeyPoint::detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoin
 
    \param matImg : Input image.
    \param keyPoints : Output list of the detected keypoints.
-   \param mask : Optional mask to detect only where mask[i][j] == 1.
+   \param mask : Optional 8-bit integer mask to detect only where mask[i][j] != 0.
  */
 void vpKeyPoint::detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, const cv::Mat &mask) {
   double elapsedTime;
@@ -1331,7 +1331,7 @@ void vpKeyPoint::detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoin
    \param matImg : Input image.
    \param keyPoints : Output list of the detected keypoints.
    \param elapsedTime : Elapsed time.
-   \param mask : Optional mask to detect only where mask[i][j] == 1.
+   \param mask : Optional 8-bit integer mask to detect only where mask[i][j] != 0.
  */
 void vpKeyPoint::detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
                         const cv::Mat &mask) {
