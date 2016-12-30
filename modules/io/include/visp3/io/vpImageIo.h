@@ -122,129 +122,52 @@ private:
     FORMAT_UNKNOWN
   } vpImageFormatType;
   
-  static const int vpMAX_LEN;
-
-  static FILE * openFileRead(const char *filename) ;
-  static FILE * openFileWrite(const char *filename, const char *mode="w") ;
-
-  static FILE * openFileRead(const std::string filename) ;
-  static FILE * openFileWrite(const std::string filename, 
-			      const std::string mode="w") ;
-
-  static vpImageFormatType getFormat(const char *filename) ;
+  static vpImageFormatType getFormat(const std::string &filename) ;
   static std::string getExtension(const std::string &filename);
 
 public:
 
-  static
-  void read(vpImage<unsigned char> &I, const char *filename) ;
-  static
-  void read(vpImage<unsigned char> &I, const std::string filename) ;
-  static
-  void read(vpImage<vpRGBa> &I, const char *filename) ;
-  static
-  void read(vpImage<vpRGBa> &I, const std::string filename) ;
+  static void read(vpImage<unsigned char> &I, const std::string &filename) ;
+  static void read(vpImage<vpRGBa> &I, const std::string &filename) ;
   
-  static
-  void write(const vpImage<unsigned char> &I, const char *filename) ;
-  static
-  void write(const vpImage<unsigned char> &I, const std::string filename) ;
-  static
-  void write(const vpImage<vpRGBa> &I, const char *filename) ;
-  static
-  void write(const vpImage<vpRGBa> &I, const std::string filename) ;
+  static void write(const vpImage<unsigned char> &I, const std::string &filename) ;
+  static void write(const vpImage<vpRGBa> &I, const std::string &filename) ;
 
- static
-  void readPFM(vpImage<float> &I, const char *filename) ;
+  static void readPFM(vpImage<float> &I, const std::string &filename) ;
 
+  static void readPGM(vpImage<unsigned char> &I, const std::string &filename) ;
+  static void readPGM(vpImage<vpRGBa> &I, const std::string &filename) ;
 
-  static
-  void readPGM(vpImage<unsigned char> &I, const char *filename) ;
-  static
-  void readPGM(vpImage<unsigned char> &I, const std::string filename) ;
-  static
-  void readPGM(vpImage<vpRGBa> &I, const char *filename) ;
-  static
-  void readPGM(vpImage<vpRGBa> &I, const std::string filename) ;
-
-  static
-  void readPPM(vpImage<unsigned char> &I, const char *filename) ;
-  static
-  void readPPM(vpImage<unsigned char> &I, const std::string filename) ;
-  static
-  void readPPM(vpImage<vpRGBa> &I, const char *filename) ;
-  static
-  void readPPM(vpImage<vpRGBa> &I, const std::string filename) ;
+  static void readPPM(vpImage<unsigned char> &I, const std::string &filename) ;
+  static void readPPM(vpImage<vpRGBa> &I, const std::string &filename) ;
 
 #if (defined(VISP_HAVE_JPEG) || defined(VISP_HAVE_OPENCV))
-  static
-  void readJPEG(vpImage<unsigned char> &I, const char *filename) ;
-  static
-  void readJPEG(vpImage<unsigned char> &I, const std::string filename) ;
-  static
-  void readJPEG(vpImage<vpRGBa> &I, const char *filename) ;
-  static
-  void readJPEG(vpImage<vpRGBa> &I, const std::string filename) ;
+  static void readJPEG(vpImage<unsigned char> &I, const std::string &filename) ;
+  static void readJPEG(vpImage<vpRGBa> &I, const std::string &filename) ;
 #endif
 
 #if (defined(VISP_HAVE_PNG) || defined(VISP_HAVE_OPENCV))
-  static
-  void readPNG(vpImage<unsigned char> &I, const char *filename) ;
-  static
-  void readPNG(vpImage<unsigned char> &I, const std::string filename) ;
-  static
-  void readPNG(vpImage<vpRGBa> &I, const char *filename) ;
-  static
-  void readPNG(vpImage<vpRGBa> &I, const std::string filename) ;
+  static void readPNG(vpImage<unsigned char> &I, const std::string &filename) ;
+  static void readPNG(vpImage<vpRGBa> &I, const std::string &filename) ;
 #endif
 
-  static
-  void writePFM(const vpImage<float> &I, const char *filename) ;
- 
+  static void writePFM(const vpImage<float> &I, const std::string &filename) ;
 
+  static void writePGM(const vpImage<unsigned char> &I, const std::string &filename) ;
+  static void writePGM(const vpImage<short> &I, const std::string &filename) ;
+  static void writePGM(const vpImage<vpRGBa> &I, const std::string &filename) ;
 
-  static
-  void writePGM(const vpImage<unsigned char> &I, const char *filename) ;
-  static
-  void writePGM(const vpImage<unsigned char> &I, const std::string filename) ;
-  static
-  void writePGM(const vpImage<short> &I, const char *filename) ;
-  static
-  void writePGM(const vpImage<short> &I, const std::string filename) ;
-  static
-  void writePGM(const vpImage<vpRGBa> &I, const char *filename) ;
-  static
-  void writePGM(const vpImage<vpRGBa> &I, const std::string filename) ;
-
-  static
-  void writePPM(const vpImage<unsigned char> &I, const char *filename) ;
-  static
-  void writePPM(const vpImage<unsigned char> &I, const std::string filename) ;
-  static
-  void writePPM(const vpImage<vpRGBa> &I, const char *filename) ;
-  static
-  void writePPM(const vpImage<vpRGBa> &I, const std::string filename) ;
+  static void writePPM(const vpImage<unsigned char> &I, const std::string &filename) ;
+  static void writePPM(const vpImage<vpRGBa> &I, const std::string &filename) ;
 
 #if (defined(VISP_HAVE_JPEG) || defined(VISP_HAVE_OPENCV))
-  static
-  void writeJPEG(const vpImage<unsigned char> &I, const char *filename) ;
-  static
-  void writeJPEG(const vpImage<unsigned char> &I, const std::string filename) ;
-  static
-  void writeJPEG(const vpImage<vpRGBa> &I, const char *filename) ;
-  static
-  void writeJPEG(const vpImage<vpRGBa> &I, const std::string filename) ;
+  static void writeJPEG(const vpImage<unsigned char> &I, const std::string &filename) ;
+  static void writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename) ;
 #endif
 
 #if (defined(VISP_HAVE_PNG) || defined(VISP_HAVE_OPENCV))
-  static
-  void writePNG(const vpImage<unsigned char> &I, const char *filename) ;
-  static
-  void writePNG(const vpImage<unsigned char> &I, const std::string filename) ;
-  static
-  void writePNG(const vpImage<vpRGBa> &I, const char *filename) ;
-  static
-  void writePNG(const vpImage<vpRGBa> &I, const std::string filename) ;
+  static void writePNG(const vpImage<unsigned char> &I, const std::string &filename) ;
+  static void writePNG(const vpImage<vpRGBa> &I, const std::string &filename) ;
 #endif
 
   } ;
