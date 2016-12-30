@@ -92,6 +92,7 @@ ViSP 3.0.1 (in development)
     . [#112] vpPose: Possible ambiguity or misunderstanding in doxygen message
     . [#114] vpMomentAlpha: wrong abs() function using
     . [#116] Link errors related to openmp
+    . [#118] vpKeyPoint: perhaps misleading in document
 
 ----------------------------------------------
 ViSP 3.0.0 (released December 18th, 2015)
