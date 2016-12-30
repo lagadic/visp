@@ -1278,23 +1278,22 @@ vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const char *filename)
+vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename)
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   cv::Mat Ip;
   vpImageConvert::convert(I, Ip);
-  cv::imwrite(filename, Ip);
+  cv::imwrite(filename.c_str(), Ip);
 #else
   IplImage* Ip = NULL;
   vpImageConvert::convert(I, Ip);
 
-  cvSaveImage(filename, Ip);
+  cvSaveImage(filename.c_str(), Ip);
 
   cvReleaseImage(&Ip);
 #endif
 }
 
-
 /*!
   Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a JPEG file.
@@ -1303,50 +1302,21 @@ vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string filename)
-{
-  vpImageIo::writeJPEG(I, filename.c_str());
-}
-
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a JPEG file.
-
-  \param I : Image to save as a JPEG file.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename)
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   cv::Mat Ip;
   vpImageConvert::convert(I, Ip);
-  cv::imwrite(filename, Ip);
+  cv::imwrite(filename.c_str(), Ip);
 #else
   IplImage* Ip = NULL;
   vpImageConvert::convert(I, Ip);
 
-  cvSaveImage(filename, Ip);
+  cvSaveImage(filename.c_str(), Ip);
 
   cvReleaseImage(&Ip);
 #endif
 }
-
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a JPEG file.
-
-  \param I : Image to save as a JPEG file.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string filename)
-{
-  vpImageIo::writeJPEG(I, filename.c_str());
-}
-
 
 /*!
   Read the contents of the JPEG file, allocate memory
@@ -1365,23 +1335,23 @@ vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string filename)
 
 */
 void
-vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename)
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  cv::Mat Ip = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+  cv::Mat Ip = cv::imread(filename.c_str(), cv::IMREAD_GRAYSCALE);
   if ( ! Ip.empty())
     vpImageConvert::convert(Ip, I);
   else
     throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  cv::Mat Ip = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+  cv::Mat Ip = cv::imread(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
   if ( ! Ip.empty())
     vpImageConvert::convert(Ip, I);
   else
     throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
 #else
   IplImage* Ip = NULL;
-  Ip = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
+  Ip = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
   if (Ip != NULL)
     vpImageConvert::convert(Ip, I);
   else
@@ -1391,30 +1361,6 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const char *filename)
 #endif
 }
 
-
-/*!
-  Read the contents of the JPEG file, allocate memory
-  for the corresponding gray level image, if necessary convert the data in gray level, and
-  set the bitmap whith the gray level data. That means that the image \e I is a
-  "black and white" rendering of the original image in \e filename, as in a
-  black and white photograph. If necessary, the quantization formula used is \f$0,299 r +
-  0,587 g + 0,114 b\f$.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-
-*/
-void
-vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string filename)
-{
-  vpImageIo::readJPEG(I, filename.c_str());
-}
-
-
 /*!
   Read a JPEG file and initialize a scalar image.
 
@@ -1434,54 +1380,29 @@ vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::readJPEG(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename)
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  cv::Mat Ip = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+  cv::Mat Ip = cv::imread(filename.c_str(), cv::IMREAD_GRAYSCALE);
   if ( ! Ip.empty())
     vpImageConvert::convert(Ip, I);
   else
     throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  cv::Mat Ip = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+  cv::Mat Ip = cv::imread(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
   if ( ! Ip.empty())
     vpImageConvert::convert(Ip, I);
   else
     throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
 #else
   IplImage* Ip = NULL;
-  Ip = cvLoadImage(filename, CV_LOAD_IMAGE_COLOR);
+  Ip = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR);
   if (Ip != NULL)
     vpImageConvert::convert(Ip, I);
   else
     throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
   cvReleaseImage(&Ip);
 #endif
-}
-
-
-/*!
-  Read a JPEG file and initialize a scalar image.
-
-  Read the contents of the JPEG file, allocate
-  memory for the corresponding image, and set
-  the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  If the file corresponds to a grayscaled image, a conversion is done to deal
-  with \e I which is a color image.
-
-  \param I : Color image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string filename)
-{
-  vpImageIo::readJPEG(I, filename.c_str());
 }
 
 #endif
@@ -2106,23 +2027,22 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
+vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &filename)
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   cv::Mat Ip;
   vpImageConvert::convert(I, Ip);
-  cv::imwrite(filename, Ip);
+  cv::imwrite(filename.c_str(), Ip);
 #else
   IplImage* Ip = NULL;
   vpImageConvert::convert(I, Ip);
 
-  cvSaveImage(filename, Ip);
+  cvSaveImage(filename.c_str(), Ip);
 
   cvReleaseImage(&Ip);
 #endif
 }
 
-
 /*!
   Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a PNG file.
@@ -2131,50 +2051,21 @@ vpImageIo::writePNG(const vpImage<unsigned char> &I, const char *filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string filename)
-{
-  vpImageIo::writePNG(I, filename.c_str());
-}
-
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a PNG file.
-
-  \param I : Image to save as a PNG file.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::writePNG(const vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename)
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   cv::Mat Ip;
   vpImageConvert::convert(I, Ip);
-  cv::imwrite(filename, Ip);
+  cv::imwrite(filename.c_str(), Ip);
 #else
   IplImage* Ip = NULL;
   vpImageConvert::convert(I, Ip);
 
-  cvSaveImage(filename, Ip);
+  cvSaveImage(filename.c_str(), Ip);
 
   cvReleaseImage(&Ip);
 #endif
 }
-
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a PNG file.
-
-  \param I : Image to save as a PNG file.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string filename)
-{
-  vpImageIo::writePNG(I, filename.c_str());
-}
-
 
 /*!
   Read the contents of the PNG file, allocate memory
@@ -2193,23 +2084,23 @@ vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string filename)
 
 */
 void
-vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
+vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  cv::Mat Ip = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+  cv::Mat Ip = cv::imread(filename.c_str(), cv::IMREAD_GRAYSCALE);
   if ( ! Ip.empty())
     vpImageConvert::convert(Ip, I);
   else
     throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  cv::Mat Ip = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+  cv::Mat Ip = cv::imread(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
   if ( ! Ip.empty())
     vpImageConvert::convert(Ip, I);
   else
     throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
 #else
   IplImage* Ip = NULL;
-  Ip = cvLoadImage(filename, CV_LOAD_IMAGE_GRAYSCALE);
+  Ip = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
   if (Ip != NULL)
     vpImageConvert::convert(Ip, I);
   else
@@ -2218,30 +2109,6 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const char *filename)
   cvReleaseImage(&Ip);
 #endif
 }
-
-
-/*!
-  Read the contents of the PNG file, allocate memory
-  for the corresponding gray level image, if necessary convert the data in gray level, and
-  set the bitmap whith the gray level data. That means that the image \e I is a
-  "black and white" rendering of the original image in \e filename, as in a
-  black and white photograph. If necessary, the quantization formula used is \f$0,299 r +
-  0,587 g + 0,114 b\f$.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-
-*/
-void
-vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string filename)
-{
-  vpImageIo::readPNG(I, filename.c_str());
-}
-
 
 /*!
   Read a PNG file and initialize a scalar image.
@@ -2262,23 +2129,23 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string filename)
   \param filename : Name of the file containing the image.
 */
 void
-vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
+vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  cv::Mat Ip = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+  cv::Mat Ip = cv::imread(filename.c_str(), cv::IMREAD_GRAYSCALE);
   if ( ! Ip.empty())
     vpImageConvert::convert(Ip, I);
   else
     throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  cv::Mat Ip = cv::imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+  cv::Mat Ip = cv::imread(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
   if ( ! Ip.empty())
     vpImageConvert::convert(Ip, I);
   else
     throw (vpImageException(vpImageException::ioError, "Can't read the image")) ;
 #else
   IplImage* Ip = NULL;
-  Ip = cvLoadImage(filename, CV_LOAD_IMAGE_COLOR);
+  Ip = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR);
   if (Ip != NULL)
     vpImageConvert::convert(Ip, I);
   else
@@ -2286,31 +2153,6 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const char *filename)
            "Can't read the image")) ;
   cvReleaseImage(&Ip);
 #endif
-}
-
-
-/*!
-  Read a PNG file and initialize a scalar image.
-
-  Read the contents of the PNG file, allocate
-  memory for the corresponding image, and set
-  the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  If the file corresponds to a grayscaled image, a conversion is done to deal
-  with \e I which is a color image.
-
-  \param I : Color image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
-void
-vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string filename)
-{
-  vpImageIo::readPNG(I, filename.c_str());
 }
 
 #endif
