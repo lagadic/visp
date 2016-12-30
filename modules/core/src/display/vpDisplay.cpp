@@ -56,7 +56,7 @@
 */
 vpDisplay::vpDisplay()
   : m_displayHasBeenInitialized(false), m_windowXPosition(0), m_windowYPosition(0),
-    m_width(0), m_height(0), m_title(), m_scale(1)
+    m_width(0), m_height(0), m_title(), m_scale(1), m_scaleType(SCALE_DEFAULT)
 {
 }
 
@@ -73,6 +73,9 @@ vpDisplay::vpDisplay(const vpDisplay &d)
 
   m_width  = d.m_width;
   m_height = d.m_height;
+  m_title = d.m_title;
+  m_scale = d.m_scale;
+  m_scaleType = d.m_scaleType;
 }
 
 /*!
