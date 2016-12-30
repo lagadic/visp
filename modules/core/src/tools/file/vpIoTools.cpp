@@ -1315,9 +1315,9 @@ std::string vpIoTools::getParent(const std::string& pathname)
   Windows systems.
  */
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname) {
-  std::string real_path_str = pathname;
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::string real_path_str = pathname;
   char *real_path = realpath(pathname.c_str(), NULL);
 
   if (real_path != NULL) {
@@ -1327,6 +1327,7 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname) {
   return real_path_str;
 #elif defined(_WIN32)
 #  if ( ! defined(WINRT) )
+  std::string real_path_str = pathname;
   DWORD retval = 0;
   TCHAR buffer[4096] = TEXT("");
 
@@ -1590,13 +1591,15 @@ std::vector<std::string> vpIoTools::splitChain(const std::string & chain, const 
   size_t sepIndex = chainToSplit.find(sep);
 
   while(sepIndex != std::string::npos) {
-
-    subChain.push_back( chainToSplit.substr(startIndex, sepIndex) );
+    std::string sub = chainToSplit.substr(startIndex, sepIndex);
+    if (! sub.empty())
+      subChain.push_back( sub );
     chainToSplit = chainToSplit.substr(sepIndex+1, chain.size()-1);
 
     sepIndex = chainToSplit.find(sep);
   }
-  subChain.push_back(chainToSplit);
+  if (!chainToSplit.empty())
+    subChain.push_back(chainToSplit);
 
   return subChain;
 }
