@@ -671,7 +671,7 @@ vpImageIo::readPFM(vpImage<float> &I, const std::string &filename)
   unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
   std::string magic("P8");
 
-  std::ifstream fd(filename.c_str(), std::ios::in);
+  std::ifstream fd(filename.c_str(), std::ios::binary);
 
   // Open the filename
   if(! fd.is_open()) {
@@ -729,7 +729,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const std::string &filename)
   unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
   std::string magic("P5");
 
-  std::ifstream fd(filename.c_str(), std::ios::in);
+  std::ifstream fd(filename.c_str(), std::ios::binary);
 
   // Open the filename
   if(! fd.is_open()) {
@@ -754,7 +754,7 @@ vpImageIo::readPGM(vpImage<unsigned char> &I, const std::string &filename)
   }
 
   unsigned int nbyte = I.getHeight()*I.getWidth();
-  fd.read ((char *)I.bitmap, sizeof(unsigned char) * nbyte);
+  fd.read ((char *)I.bitmap, nbyte);
   if (! fd) {
     fd.close();
     throw (vpImageException(vpImageException::ioError,
@@ -842,7 +842,7 @@ vpImageIo::readPPM(vpImage<vpRGBa> &I, const std::string &filename)
   unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
   std::string magic("P6");
 
-  std::ifstream fd(filename.c_str(), std::ios::in);
+  std::ifstream fd(filename.c_str(), std::ios::binary);
 
   // Open the filename
   if(! fd.is_open()) {
