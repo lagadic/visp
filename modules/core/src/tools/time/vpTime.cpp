@@ -168,6 +168,13 @@ int wait(double t0, double t)
     if (timeToWait > vpTime::minTimeForUsleepCall) {
       usleep((useconds_t)((timeToWait-vpTime::minTimeForUsleepCall)*1000));
     }
+    // Blocking loop to have an accurate waiting
+    do {
+      timeCurrent = measureTimeMs();
+      timeToWait = t0 + t - timeCurrent;
+
+    } while (timeToWait > 0.);
+
     return 0;
 #elif defined(_WIN32)
 #  if !defined(WINRT_8_0) 
@@ -212,6 +219,14 @@ void wait(double t)
     if (timeToWait > vpTime::minTimeForUsleepCall) {
       usleep((useconds_t)((timeToWait-vpTime::minTimeForUsleepCall)*1000));
     }
+    // Blocking loop to have an accurate waiting
+    do {
+      timeCurrent = measureTimeMs();
+      timeToWait = t0 + t - timeCurrent;
+
+    } while (timeToWait > 0.);
+
+    return;
 #elif defined(_WIN32)
 #  if !defined(WINRT_8_0) 
     if (timeToWait > vpTime::minTimeForUsleepCall) {
