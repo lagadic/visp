@@ -2412,8 +2412,12 @@ void vpDisplayOpenCV::getScreenSize ( unsigned int &w, unsigned int &h )
   }
   pclose(fpipe);
 #elif defined(_WIN32)
+#  if !defined(WINRT)
   w = GetSystemMetrics(SM_CXSCREEN);
   h = GetSystemMetrics(SM_CYSCREEN);
+#  else
+  throw(vpException(vpException::functionNotImplementedError, "The function vpDisplayOpenCV::getScreenSize() is not implemented on winrt"));
+#  endif
 #endif
 }
 

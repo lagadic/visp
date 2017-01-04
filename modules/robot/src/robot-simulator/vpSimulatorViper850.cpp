@@ -39,7 +39,7 @@
 
 #include <visp3/robot/vpSimulatorViper850.h>
 
-#if defined(VISP_HAVE_MODULE_GUI) && (defined(_WIN32) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
 
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpImagePoint.h>
@@ -71,11 +71,19 @@ vpSimulatorViper850::vpSimulatorViper850()
   tcur = vpTime::measureTimeMs();
 
   #if defined(_WIN32)
-  mutex_fMi = CreateMutex(NULL,FALSE,NULL);
-  mutex_artVel = CreateMutex(NULL,FALSE,NULL);
-  mutex_artCoord = CreateMutex(NULL,FALSE,NULL);
-  mutex_velocity = CreateMutex(NULL,FALSE,NULL);
-  mutex_display = CreateMutex(NULL,FALSE,NULL);
+#  ifdef WINRT_8_1
+  mutex_fMi = CreateMutexEx(NULL, NULL, 0, NULL);
+  mutex_artVel = CreateMutexEx(NULL, NULL, 0, NULL);
+  mutex_artCoord = CreateMutexEx(NULL, NULL, 0, NULL);
+  mutex_velocity = CreateMutexEx(NULL, NULL, 0, NULL);
+  mutex_display = CreateMutexEx(NULL, NULL, 0, NULL);
+#  else
+  mutex_fMi = CreateMutex(NULL, FALSE, NULL);
+  mutex_artVel = CreateMutex(NULL, FALSE, NULL);
+  mutex_artCoord = CreateMutex(NULL, FALSE, NULL);
+  mutex_velocity = CreateMutex(NULL, FALSE, NULL);
+  mutex_display = CreateMutex(NULL, FALSE, NULL);
+#  endif
 
 
   DWORD   dwThreadIdArray;
@@ -119,12 +127,19 @@ vpSimulatorViper850::vpSimulatorViper850(bool do_display)
   tcur = vpTime::measureTimeMs();
   
     #if defined(_WIN32)
+#  ifdef WINRT_8_1
+  mutex_fMi = CreateMutexEx(NULL, NULL, 0, NULL);
+  mutex_artVel = CreateMutexEx(NULL, NULL, 0, NULL);
+  mutex_artCoord = CreateMutexEx(NULL, NULL, 0, NULL);
+  mutex_velocity = CreateMutexEx(NULL, NULL, 0, NULL);
+  mutex_display = CreateMutexEx(NULL, NULL, 0, NULL);
+#  else
   mutex_fMi = CreateMutex(NULL,FALSE,NULL);
   mutex_artVel = CreateMutex(NULL,FALSE,NULL);
   mutex_artCoord = CreateMutex(NULL,FALSE,NULL);
   mutex_velocity = CreateMutex(NULL,FALSE,NULL);
   mutex_display = CreateMutex(NULL,FALSE,NULL);
-
+#  endif
 
   DWORD   dwThreadIdArray;
   hThread = CreateThread( 
@@ -158,7 +173,11 @@ vpSimulatorViper850::~vpSimulatorViper850()
   robotStop = true;
   
   #if defined(_WIN32)
-  WaitForSingleObject(hThread,INFINITE);
+#  if defined(WINRT_8_1)
+  WaitForSingleObjectEx(hThread, INFINITE, FALSE);
+#  else // pure win32
+  WaitForSingleObject(hThread, INFINITE);
+#  endif
   CloseHandle(hThread);
   CloseHandle(mutex_fMi);
   CloseHandle(mutex_artVel);
@@ -706,7 +725,11 @@ vpSimulatorViper850::compute_fMi()
   vpViper::get_fMc(q,fMit[7]);
   
   #if defined(_WIN32)
-  WaitForSingleObject(mutex_fMi,INFINITE);
+#  if defined(WINRT_8_1)
+  WaitForSingleObjectEx(mutex_fMi, INFINITE, FALSE);
+#  else // pure win32
+  WaitForSingleObject(mutex_fMi, INFINITE);
+#  endif
   for (int i = 0; i < 8; i++)
     fMi[i] = fMit[i];
   ReleaseMutex(mutex_fMi);

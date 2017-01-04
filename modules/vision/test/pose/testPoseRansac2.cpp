@@ -1848,7 +1848,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original, const std
   vpPose pose;
   vpPose pose_ransac, pose_ransac2;
 
-#if defined (VISP_HAVE_PTHREAD) || defined (_WIN32) || defined (VISP_HAVE_OPENMP)
+#if defined (VISP_HAVE_PTHREAD) || (defined (_WIN32) && !defined(WINRT_8_0)) || defined (VISP_HAVE_OPENMP)
 #  define TEST_PARALLEL_RANSAC
 #endif
 

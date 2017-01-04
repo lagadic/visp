@@ -48,7 +48,7 @@
 #include <visp3/core/vpMutex.h>
 #include <visp3/core/vpThread.h>
 
-#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 
 int thread_counter=0;
 vpMutex mutex;

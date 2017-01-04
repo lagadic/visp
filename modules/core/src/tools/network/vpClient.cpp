@@ -37,7 +37,6 @@
 
 #include <visp3/core/vpClient.h>
 
-
 vpClient::vpClient() :  vpNetwork(), numberOfAttempts(0)
 {
 }

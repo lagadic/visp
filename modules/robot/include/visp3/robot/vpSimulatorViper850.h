@@ -44,7 +44,7 @@
 */
 
 #include <visp3/robot/vpRobotWireFrameSimulator.h>
-#if defined(VISP_HAVE_MODULE_GUI) && (defined(_WIN32) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
 
 #include <string>
 
@@ -284,7 +284,11 @@ protected:
 
     inline void get_fMi(vpHomogeneousMatrix *fMit) {
 #if defined(_WIN32)
-      WaitForSingleObject(mutex_fMi,INFINITE);
+#  if defined(WINRT_8_1)
+      WaitForSingleObjectEx(mutex_fMi, INFINITE, FALSE);
+#  else // pure win32
+      WaitForSingleObject(mutex_fMi, INFINITE);
+#  endif
       for (int i = 0; i < 8; i++)
         fMit[i] = fMi[i];
       ReleaseMutex(mutex_fMi);

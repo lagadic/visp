@@ -4,7 +4,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 
 #if defined(VISP_HAVE_PTHREAD)
 #  include <pthread.h>
@@ -86,7 +86,6 @@ public:
           args,                   // argument to thread function
           0,                      // use default creation flags
           &dwThreadIdArray);      // returns the thread identifier
-
 #endif
 
     m_isJoinable = true;
@@ -120,7 +119,11 @@ public:
 #if defined(VISP_HAVE_PTHREAD)
       pthread_join(m_handle, NULL);
 #elif defined(_WIN32)
+#  if defined(WINRT_8_1)
+      WaitForSingleObjectEx(m_handle, INFINITE, FALSE);
+#  else
       WaitForSingleObject(m_handle, INFINITE);
+#  endif
 #endif
       m_isJoinable = false;
     }

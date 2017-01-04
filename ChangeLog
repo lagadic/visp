@@ -9,8 +9,8 @@
 ViSP 3.0.1 (in development)
   - New features
     . Compatibility with Microsoft Visual C++ 2017 (MSCV 15)
-    . Compatibility with Universal Windows Platform (UWP), Windows Phone
-      and Windows Store
+    . Compatibility with Universal Windows Platform (UWP); Windows Phone
+      and Windows Store 8.x and 10.0
     . Add vpMatrix, vpColVector, vpTranslationVector missing member functions
       to keep compat with ViSP 2.10.0
     . New vpFlyCaptureGrabber class to capture images from PointGrey

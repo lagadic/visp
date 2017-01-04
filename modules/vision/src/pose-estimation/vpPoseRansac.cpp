@@ -382,7 +382,7 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
   return foundSolution;
 }
 
-#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 vpThread::Return vpPose::poseRansacImplThread(vpThread::Args arg) {
   vpPose::RansacFunctor* f = reinterpret_cast<vpPose::RansacFunctor*>(arg);
   (*f)();
@@ -505,7 +505,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
 
   bool executeParallelVersion = useParallelRansac;
 
-#if defined (VISP_HAVE_PTHREAD) || defined (_WIN32)
+#if defined (VISP_HAVE_PTHREAD) || (defined (_WIN32) && !defined(WINRT_8_0))
 #  define VP_THREAD_OK
   int nbThreads = 1;
 #endif

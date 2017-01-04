@@ -182,7 +182,7 @@ private:
     bool poseRansacImpl();
   };
 
-#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
   static vpThread::Return poseRansacImplThread(vpThread::Args arg);
 #endif
 

@@ -40,8 +40,9 @@
 #define __vpMutex_h_
 
 #include <visp3/core/vpConfig.h>
+#include <iostream>
 
-#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 
 #if defined(VISP_HAVE_PTHREAD)
 #  include <pthread.h>
@@ -72,10 +73,14 @@ public:
 #if defined(VISP_HAVE_PTHREAD)
     pthread_mutex_init( &m_mutex, NULL );
 #elif defined(_WIN32)
+#  ifdef WINRT_8_1
+    m_mutex = CreateMutexEx(NULL, NULL, 0, NULL);
+#  else
     m_mutex = CreateMutex(
       NULL,              // default security attributes
       FALSE,             // initially not owned
       NULL);             // unnamed mutex
+#endif
     if (m_mutex == NULL) {
       std::cout << "CreateMutex error: " << GetLastError() << std::endl;
       return;
@@ -87,9 +92,13 @@ public:
     pthread_mutex_lock( &m_mutex );
 #elif defined(_WIN32)
     DWORD dwWaitResult;
+#  ifdef WINRT_8_1
+    dwWaitResult = WaitForSingleObjectEx(m_mutex, INFINITE, FALSE);
+#  else
     dwWaitResult = WaitForSingleObject(
           m_mutex,    // handle to mutex
           INFINITE);  // no time-out interval
+#  endif
     if (dwWaitResult == WAIT_FAILED)
 	  std::cout << "lock() error: " << GetLastError() << std::endl;
 #endif

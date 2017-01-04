@@ -39,13 +39,38 @@ project(example-servo-afma6)
 
 cmake_minimum_required(VERSION 2.6)
 
+if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES WindowsStore)
+  set(WINRT TRUE)
+endif(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES WindowsStore)
+
+if(WINRT)
+  add_definitions(-DWINRT)
+  
+  if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone)
+    set(WINRT_PHONE TRUE)
+    add_definitions(-DWINRT_PHONE)
+  elseif(CMAKE_SYSTEM_NAME MATCHES WindowsStore)
+    set(WINRT_STORE TRUE)
+    add_definitions(-DWINRT_STORE)
+  endif()
+
+  if(CMAKE_SYSTEM_VERSION MATCHES 10 OR CMAKE_SYSTEM_VERSION MATCHES 10.0)
+    set(WINRT_10 TRUE)
+    add_definitions(-DWINRT_10)
+  elseif(CMAKE_SYSTEM_VERSION MATCHES 8.1)
+    set(WINRT_8_1 TRUE)
+    add_definitions(-DWINRT_8_1)
+  elseif(CMAKE_SYSTEM_VERSION MATCHES 8.0)
+    set(WINRT_8_0 TRUE)
+    add_definitions(-DWINRT_8_0)
+  endif()
+endif()
+
 find_package(VISP REQUIRED visp_core visp_blob visp_vs visp_robot visp_sensor visp_vision visp_gui)
 
 set(example_cpp
   servoAfma6Ellipse2DCamVelocity.cpp
   servoAfma6FourPoints2DArtVelocity.cpp
-  servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp
-  servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp
   servoAfma6Line2DCamVelocity.cpp
   servoAfma6Point2DArtVelocity.cpp
   servoAfma6Point2DCamVelocity.cpp
@@ -54,9 +79,14 @@ set(example_cpp
   servoAfma6TwoLines2DCamVelocity.cpp
   servoAfma62DhalfCamVelocity.cpp
   servoAfma6Cylinder2DCamVelocity.cpp
-  servoAfma6Cylinder2DCamVelocitySecondaryTask.cpp
   servoAfma6Segment2DCamVelocity.cpp
 )
+
+if(NOT DEFINED WINRT_8_1)
+  list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityInteractionDesired.cpp)
+  list(APPEND example_cpp servoAfma6FourPoints2DCamVelocityInteractionCurrent.cpp)
+  list(APPEND example_cpp servoAfma6Cylinder2DCamVelocitySecondaryTask.cpp)
+endif()
 
 foreach(cpp ${example_cpp})
   visp_add_target(${cpp})

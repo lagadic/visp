@@ -50,7 +50,7 @@
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRGBa.h>
-#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 #  include <visp3/core/vpThread.h>
 #endif
 
@@ -322,7 +322,7 @@ private:
 };
 
 
-#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 namespace {
   struct ImageLut_Param_t {
     unsigned int m_start_index;
@@ -1735,7 +1735,7 @@ inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], 
       ++ptrCurrent;
     }
   } else {
-#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
     //Multi-threads
 
     std::vector<vpThread *> threadpool;
@@ -1824,7 +1824,7 @@ inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], const unsigned
       ++ptrCurrent;
     }
   } else {
-#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
     //Multi-threads
     std::vector<vpThread *> threadpool;
     std::vector<ImageLutRGBa_Param_t *> imageLutParams;

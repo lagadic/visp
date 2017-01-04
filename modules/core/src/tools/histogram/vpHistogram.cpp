@@ -50,7 +50,7 @@
 #include <visp3/core/vpDisplay.h>
 
 
-#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 #include <visp3/core/vpThread.h>
 
 namespace {
@@ -288,7 +288,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
       ++ptrCurrent;
     }
   } else {
-#if defined(VISP_HAVE_PTHREAD) || defined(_WIN32)
+#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
     //Multi-threads
 
     std::vector<vpThread *> threadpool;

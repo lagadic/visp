@@ -134,8 +134,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   endif()
 endif()
 
-if(DEFINED WINRT)
-  add_extra_compiler_option(/ZW)
+if(DEFINED WINRT_8_1)
+  add_extra_compiler_option(/ZW) # do not use with 8.0
 endif()
 
 # Add user supplied extra options (optimization, etc...)

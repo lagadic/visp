@@ -63,6 +63,9 @@ if(WIN32 AND NOT CYGWIN)
         list(APPEND opt_libs "${WS2_32_LIBRARY}")
       endif()
     endif()
+  elseif(WINRT)
+    # Since check_library_exists() and find_library() does't work to detect ws2_32.lib we add the lib that is part of Windows SDK
+    list(APPEND opt_libs "ws2_32.lib")
   else() # pure WIN32
     CHECK_LIBRARY_EXISTS("ws2_32.lib" getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
     if(HAVE_LIBWS2_32)

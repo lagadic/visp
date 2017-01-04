@@ -45,7 +45,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_GUI) && (defined(_WIN32) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
 
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
@@ -385,42 +385,74 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 
 	#if defined(_WIN32)
     vpColVector get_artCoord() const {
+#  if defined(WINRT_8_1)
+      WaitForSingleObjectEx(mutex_artCoord, INFINITE, FALSE);
+#  else // pure win32
       WaitForSingleObject(mutex_artCoord,INFINITE);
+#  endif
       vpColVector artCoordTmp (6);
       artCoordTmp = artCoord;
       ReleaseMutex(mutex_artCoord);
       return artCoordTmp;}
     void set_artCoord(const vpColVector &coord) {
-      WaitForSingleObject(mutex_artCoord,INFINITE);
+#  if defined(WINRT_8_1)
+      WaitForSingleObjectEx(mutex_artCoord, INFINITE, FALSE);
+#  else // pure win32
+      WaitForSingleObject(mutex_artCoord, INFINITE);
+#  endif
       artCoord = coord;
       ReleaseMutex(mutex_artCoord);}
     
     vpColVector get_artVel() const {
-      WaitForSingleObject(mutex_artVel,INFINITE);
+#  if defined(WINRT_8_1)
+      WaitForSingleObjectEx(mutex_artVel, INFINITE, FALSE);
+#  else // pure win32
+      WaitForSingleObject(mutex_artVel, INFINITE);
+#  endif
       vpColVector artVelTmp (artVel);
       ReleaseMutex(mutex_artVel);
       return artVelTmp;}
     void set_artVel(const vpColVector &vel) {
-      WaitForSingleObject(mutex_artVel,INFINITE);
+#  if defined(WINRT_8_1)
+      WaitForSingleObjectEx(mutex_artVel, INFINITE, FALSE);
+#  else // pure win32
+      WaitForSingleObject(mutex_artVel, INFINITE);
+#  endif
       artVel = vel;
       ReleaseMutex(mutex_artVel);}
     
     vpColVector get_velocity() {
-      WaitForSingleObject(mutex_velocity,INFINITE);
+#  if defined(WINRT_8_1)
+      WaitForSingleObjectEx(mutex_velocity, INFINITE, FALSE);
+#  else // pure win32
+      WaitForSingleObject(mutex_velocity, INFINITE);
+#  endif
       vpColVector velocityTmp = velocity;
       ReleaseMutex(mutex_velocity);
       return velocityTmp;}
     void set_velocity(const vpColVector &vel) {
-      WaitForSingleObject(mutex_velocity,INFINITE);
+#  if defined(WINRT_8_1)
+      WaitForSingleObjectEx(mutex_velocity, INFINITE, FALSE);
+#  else // pure win32
+      WaitForSingleObject(mutex_velocity, INFINITE);
+#  endif
       velocity = vel;
       ReleaseMutex(mutex_velocity);}
       
     void set_displayBusy (const bool &status) {
-      WaitForSingleObject(mutex_display,INFINITE);
+#  if defined(WINRT_8_1)
+      WaitForSingleObjectEx(mutex_display, INFINITE, FALSE);
+#  else // pure win32
+      WaitForSingleObject(mutex_display, INFINITE);
+#  endif
       displayBusy = status;
       ReleaseMutex(mutex_display);}
     bool get_displayBusy () {
-      WaitForSingleObject(mutex_display,INFINITE);
+#  if defined(WINRT_8_1)
+      WaitForSingleObjectEx(mutex_display, INFINITE, FALSE);
+#  else // pure win32
+      WaitForSingleObject(mutex_display, INFINITE);
+#  endif
       bool status = displayBusy;
       if (!displayBusy) displayBusy = true;
       ReleaseMutex(mutex_display);
