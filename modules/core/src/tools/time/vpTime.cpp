@@ -168,6 +168,7 @@ int wait(double t0, double t)
     if (timeToWait > vpTime::minTimeForUsleepCall) {
       usleep((useconds_t)((timeToWait-vpTime::minTimeForUsleepCall)*1000));
     }
+    return 0;
 #elif defined(_WIN32)
 #  if !defined(WINRT_8_0) 
     if (timeToWait > vpTime::minTimeForUsleepCall) {
