@@ -983,7 +983,7 @@ void vpFlyCaptureGrabber::startCapture()
     if (error != FlyCapture2::PGRERROR_OK) {
       error.PrintErrorTrace();
       throw (vpException(vpException::fatalError,
-                         "Cannot start capture for camera with guid 0x%lx", m_guid));
+                         "Cannot start capture for camera with serial %u", getCameraSerial(m_index)));
     }
     m_capture = true;
   }
@@ -1044,7 +1044,7 @@ void vpFlyCaptureGrabber::connect()
     if (error != FlyCapture2::PGRERROR_OK) {
       error.PrintErrorTrace();
       throw (vpException(vpException::fatalError,
-                         "Cannot connect to camera with guid 0x%lx", m_guid));
+                         "Cannot connect to camera with serial %u", getCameraSerial(m_index)));
     }
     m_connected = true;
   }
@@ -1124,8 +1124,7 @@ void vpFlyCaptureGrabber::acquire(vpImage<unsigned char> &I, FlyCapture2::TimeSt
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
     throw (vpException(vpException::fatalError,
-                       "Cannot retrieve image for camera with guid 0x%lx",
-                       m_guid) );
+                       "Cannot retrieve image from camera with serial %u", getCameraSerial(m_index)));
   }
   timestamp = m_rawImage.GetTimeStamp();
 
@@ -1137,8 +1136,7 @@ void vpFlyCaptureGrabber::acquire(vpImage<unsigned char> &I, FlyCapture2::TimeSt
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
     throw (vpException(vpException::fatalError,
-                       "Cannot convert image for camera with guid 0x%lx",
-                       m_guid) );
+                       "Cannot convert image from camera with serial %u", getCameraSerial(m_index)));
   }
   height = convertedImage.GetRows();
   width = convertedImage.GetCols();
@@ -1175,8 +1173,7 @@ void vpFlyCaptureGrabber::acquire(vpImage<vpRGBa> &I, FlyCapture2::TimeStamp &ti
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
     throw (vpException(vpException::fatalError,
-                       "Cannot retrieve image for camera with guid 0x%lx",
-                       m_guid) );
+                       "Cannot retrieve image from camera with serial %u", getCameraSerial(m_index)));
   }
   timestamp = m_rawImage.GetTimeStamp();
 
@@ -1188,8 +1185,7 @@ void vpFlyCaptureGrabber::acquire(vpImage<vpRGBa> &I, FlyCapture2::TimeStamp &ti
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
     throw (vpException(vpException::fatalError,
-                       "Cannot convert image for camera with guid 0x%lx",
-                       m_guid) );
+                       "Cannot convert image from camera with serial %u", getCameraSerial(m_index)));
   }
   height = convertedImage.GetRows();
   width = convertedImage.GetCols();

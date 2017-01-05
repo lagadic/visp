@@ -176,11 +176,12 @@ int main(int argc, const char** argv)
       return 0;
     }
 
-    std::cout << "Use device: " << opt_icamera << std::endl;
+    std::cout << "Use device   : " << opt_icamera << std::endl;
     vpFlyCaptureGrabber g;
     g.setCameraIndex(opt_icamera); // open the default camera
     g.open(I);
-    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
+    std::cout << "Camera serial: " << g.getCameraSerial( g.getCameraIndex() ) << std::endl;
+    std::cout << "Image size   : " << I.getWidth() << " " << I.getHeight() << std::endl;
 
     vpDisplay *display = NULL;
     if (opt_display) {
