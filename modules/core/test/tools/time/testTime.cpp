@@ -58,6 +58,7 @@
 
 int main()
 {
+#if !defined(WINRT)
   try {
     double v = 0;
 
@@ -120,4 +121,7 @@ int main()
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }
+#  else
+  std::cout << "vpTime is not implemented on Universal Windows Platform" << std::endl;
+#  endif
 }
