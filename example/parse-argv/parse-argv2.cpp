@@ -48,65 +48,68 @@
   Example of command line parsing.
 */
 
-
-
-#include <visp3/core/vpDebug.h>
-#include <visp3/io/vpParseArgv.h>
 #include <stdio.h>
 #include <sstream>
 #include <iomanip>
 
-int
-main(int argc, const char ** argv)
+#include <visp3/core/vpDebug.h>
+#include <visp3/io/vpParseArgv.h>
+
+int main(int argc, const char ** argv)
 {
   try {
     using ::std::cout;
     using ::std::endl;
 
-    int    i_val = 3;
-    float  f_val = 3.14f;
-    double d_val = 3.1415;
-    int    flag = 0;
+    bool   bool_val = false;
+    int    int_val = 3;
+    long   long_val = 33333333;
+    float  float_val = 3.14f;
+    double double_val = 3.1415;
+    char   *string_val;
 
     vpParseArgv::vpArgvInfo argTable[] =
     {
-      {"-flag", vpParseArgv::ARGV_CONSTANT, 0, (char *) &flag,
-       "Flag enabled."},
-      {"-integer", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &i_val,
+      {"-bool", vpParseArgv::ARGV_CONSTANT, 0, (char *) &bool_val,
+       "Bool enabled."},
+      {"-integer", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &int_val,
        "An integer value."},
-      {"-float", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &f_val,
+      {"-long", vpParseArgv::ARGV_LONG, (char*) NULL, (char *) &long_val,
+       "A long value."},
+      {"-float", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &float_val,
        "A float value."},
-      {"-double", vpParseArgv::ARGV_DOUBLE, (char*) NULL, (char *) &d_val,
+      {"-double", vpParseArgv::ARGV_DOUBLE, (char*) NULL, (char *) &double_val,
        "A double value."},
+      {"-string", vpParseArgv::ARGV_STRING, (char*) NULL, (char *) &string_val,
+          "A chain value."},
+      {"-h", vpParseArgv::ARGV_HELP, (char*) NULL, (char *) NULL,
+          "Print the help."},
       {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL}
     } ;
 
     // Read the command line options
-    if(vpParseArgv::parse(&argc, argv, argTable, 0)) {
+    if(vpParseArgv::parse(&argc, argv, argTable, vpParseArgv::ARGV_NO_DEFAULTS)) {
       return (-1);
     }
 
     cout << "Your parameters: " << endl;
-    cout << "  Integer value: " << i_val << endl;
-    cout << "  Float   value: " << f_val << endl;
-    cout << "  Double  value: " << d_val << endl << endl;
-    cout << "  Flag         : " << flag << endl << endl;
+    cout << "  Bool    value: " << bool_val << endl;
+    cout << "  Integer value: " << int_val << endl;
+    cout << "  Long    value: " << long_val << endl;
+    cout << "  Float   value: " << float_val << endl;
+    cout << "  Double  value: " << double_val << endl;
+    if (string_val != NULL)
+      cout << "  String  value: " << string_val << endl;
+    else
+      cout << "  String  value: \"\"" << endl << endl;
 
     cout << "Call  " << argv[0]
          << " -h to see how to change these parameters." << endl;
 
     return 0;
   }
-  catch(vpException &e) {
-    std::cout << "Catch a ViSP exception: " << e << std::endl;
+  catch(const vpException &e) {
+    std::cout << "Catch a ViSP exception: " << e.getStringMessage() << std::endl;
     return 1;
   }
 }
-
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
