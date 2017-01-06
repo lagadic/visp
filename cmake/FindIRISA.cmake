@@ -45,7 +45,7 @@ IF(NOT UNIX)
 ELSE(NOT UNIX)
   
   FIND_PATH(IRISA_INCLUDE_DIR irisa_Afma6.h
-    $ENV{IRISA_HOME}/include
+    $ENV{IRISA_HOME}/src
     /local/soft/Cerebellum/Irisa/current/src
     /home/soft/Cerebellum/Irisa/current/src
     )
@@ -54,7 +54,7 @@ ELSE(NOT UNIX)
   FIND_LIBRARY(IRISA_LIBRARY
     NAMES irisa
     PATHS 
-    $ENV{IRISA_HOME}/lib
+    $ENV{IRISA_HOME}/src
     /local/soft/Cerebellum/Irisa/current/src
     /home/soft/Cerebellum/Irisa/current/src
     )
