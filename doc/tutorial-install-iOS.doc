@@ -44,7 +44,7 @@ $ sudo ln -s ~/framework/ios/opencv2.framework
 
 \section install_iOS_get_source Getting ViSP source code
 
-\note The folowing steps are only working with ViSP 3.0.1 or higher.
+\note The following steps are only working with ViSP 3.0.1 or higher.
 
 Here the goal is to get ViSP source code in a directory denoted \c \<framework_dir\>. If \c \<framework_dir\> is for example the following folder \c ~/framework there are different ways to get ViSP:
 

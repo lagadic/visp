@@ -58,6 +58,7 @@ ViSP 3.0.1 (in development)
     . New Tutorial: Markerless model-based tracking with stereo cameras
     . New Tutorial: How to display an image
     . New Tutorial: Pose estimation from QRcode
+    . New Tutorial: Installation from source for Universal Windows Platform (UWP)
   - Bug fixed
     . [#37] How to build for ios? build failed
     . [#38] Wrong urls in visp/doc/tutorial-calibration.doc
