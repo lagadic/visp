@@ -66,7 +66,7 @@ int main(int argc, const char ** argv)
     long   long_val = 33333333;
     float  float_val = 3.14f;
     double double_val = 3.1415;
-    char   *string_val;
+    char   *string_val = NULL;
 
     vpParseArgv::vpArgvInfo argTable[] =
     {

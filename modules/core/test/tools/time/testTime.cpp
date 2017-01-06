@@ -52,8 +52,10 @@
 #endif
 #include <stdlib.h>
 #include <stdio.h>
-#include <iostream>
 #include <time.h>
+#include <cmath>
+#include <iostream>
+
 #include <visp3/core/vpTime.h>
 
 int main()
@@ -107,6 +109,7 @@ int main()
     double t8 = vpTime::measureTimeMs();
 
     std::cout << "t1-t0: computation time: " << t1 - t0 << std::endl;
+
     std::cout << "t2-t1: wait(t1, 40 ms): " << t2 - t1 << std::endl;
     std::cout << "t3-t2: sleep(10 ms): " << t3 - t2 << std::endl;
     std::cout << "t4-t3: sleep(2 ms): " << t4 - t3 << std::endl;
