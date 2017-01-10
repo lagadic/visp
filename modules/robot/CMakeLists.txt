@@ -145,6 +145,7 @@ if(USE_COIN3D)
   vp_set_source_file_compile_flag(src/robot-simulator/vpSimulatorViper850.cpp -Wno-unused-parameter)
   vp_set_source_file_compile_flag(src/robot-simulator/vpSimulatorAfma6.cpp -Wno-unused-parameter)
   vp_set_source_file_compile_flag(src/robot-simulator/vpRobotWireFrameSimulator.cpp -Wno-unused-parameter)
+
   if(USE_VIPER850)
     vp_set_source_file_compile_flag(src/real-robot/viper/vpRobotViper850.cpp -Wno-unused-parameter)
   endif()
