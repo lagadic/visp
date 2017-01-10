@@ -283,7 +283,7 @@ int main(int argc, const char ** argv) {
           return EXIT_FAILURE;
         }
       } else if (*itd == "BoostDesc") {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
         cv::Ptr<cv::Feature2D> boostDesc = keyPoints.getExtractor("BoostDesc");
         boostDesc = cv::xfeatures2d::BoostDesc::create(cv::xfeatures2d::BoostDesc::BINBOOST_256, true, 5.0f);
 #endif
@@ -345,7 +345,7 @@ int main(int argc, const char ** argv) {
           return EXIT_FAILURE;
         }
       } else if (mapOfDescriptorNames[(vpKeyPoint::vpFeatureDescriptorType) i] == "BoostDesc") {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
         cv::Ptr<cv::Feature2D> boostDesc = keyPoints.getExtractor("BoostDesc");
         boostDesc = cv::xfeatures2d::BoostDesc::create(cv::xfeatures2d::BoostDesc::BINBOOST_256, true, 5.0f);
 #endif
