@@ -38,6 +38,7 @@
 include(CheckCXXSourceCompiles)
 
 macro(check_math_expr _expr _var)
+    unset(${_var} CACHE)
     if(USE_CPP11)
       set(CMAKE_REQUIRED_FLAGS ${CPP11_CXX_FLAGS})
     endif()
