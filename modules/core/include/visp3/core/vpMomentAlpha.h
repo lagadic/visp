@@ -52,18 +52,20 @@
 
   \brief This class defines the orientation of the object inside the plane parallel to the object.
 
-  The value of the moment is computed in radians in a \f$ [-\pi/2 .. \pi/2] \f$ interval at most by the formula \f$ \alpha = \frac{1}{2} arctan(\frac{2\mu_{11}}{\mu_{20}-\mu_{02}}) \f$.
+  In general the value of the moment is computed in \f$ [-\pi/2 .. \pi/2] \f$ interval by the
+  formula \f$ \alpha = \frac{1}{2} arctan(\frac{2\mu_{11}}{\mu_{20}-\mu_{02}}) \f$.
 
-  To obtain the \f$ [-\pi .. \pi] \f$ precision, you have to specify reference information. This reference information
-  describes an object with 0 rad orientation or at least an orientation between \f$ -\pi/2 \f$ and \f$ \pi/2 \f$ rad.
-  The nature of this information are third-order centered moments and a reference value of alpha.
-  Reference centered moments are obtained with vpMomentCentered and reference alpha is obtained with vpMomentAlpha using the reference constructor.
+  To obtain a \f$ [-\pi .. \pi] \f$ precision for non symetric object, you have to specify a
+  reference information. This reference information is an alpha computed using the previous
+  formula in \f$ [-\pi/2 .. \pi/2] \f$. Obtaining this precision comes from third-order centered
+  moments and this reference information.
 
   Therefore there are two modes for vpMomentAlpha and one constructor per mode:
-  - Reference mode (using the empty constructor):
-  The vpMomentAlpha doesn't need any additionnal information, it will compute its values from a reference object.
-  - Relative mode (using non-empty constructor):
-  The vpMomentAlpha is computed relative a reference alpha.
+  - Reference mode (using the empty constructor vpMomentAlpha()):
+  The vpMomentAlpha doesn't need any additionnal information, it will compute its values from
+  available moments in \f$ [-\pi/2 .. \pi/2] \f$.
+  - Relative mode (using non-empty constructor vpMomentAlpha(std::vector<double>&, double)):
+  The vpMomentAlpha is computed in \f$ [-\pi .. \pi] \f$ from the available moments and the reference information.
   By knowing the reference, it may distinguish in-plane rotations of \f$ \alpha \f$ from rotations of \f$ \alpha + \pi \f$.
 
   The following code demonstrates a calculation of a reference alpha and then uses this alpha to estimate the orientation
@@ -192,42 +194,42 @@ Shortcuts for quickly getting those references exist in vpMomentCommon.
 This moment depends on vpMomentCentered.
 */
 class VISP_EXPORT vpMomentAlpha : public vpMoment {
- private:	
-    bool isRef;
-    bool symmetric;
-    std::vector<double> ref;
-    double alphaRef;
- public:	
-	
-    vpMomentAlpha();
-    virtual ~vpMomentAlpha() {};
-        vpMomentAlpha(std::vector<double>& ref,double alphaRef);
+private:
+  bool isRef;
+  bool symmetric;
+  std::vector<double> ref;
+  double alphaRef;
+public:
 
-        void compute();
-        /*!
+  vpMomentAlpha();
+  vpMomentAlpha(std::vector<double>& ref, double alphaRef);
+  virtual ~vpMomentAlpha() {};
+
+  void compute();
+  /*!
           Retrieve the orientation of the object as a single double value.
           */
-        double get() const { return values[0]; }
-        /*!
+  double get() const { return values[0]; }
+  /*!
           Moment name.
           */
-        const char* name() const {return "vpMomentAlpha";}
+  const char* name() const {return "vpMomentAlpha";}
 
-        inline bool is_ref() const
-        {
-          if (isRef)
-            return true;
-          else
-            return false;
-        }
+  inline bool is_ref() const
+  {
+    if (isRef)
+      return true;
+    else
+      return false;
+  }
 
-        inline bool is_symmetric() const
-        {
-          if (symmetric)
-            return true;
-          else
-            return false;
-        }
+  inline bool is_symmetric() const
+  {
+    if (symmetric)
+      return true;
+    else
+      return false;
+  }
 
   friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentAlpha& v);
   void  printDependencies(std::ostream& os) const;

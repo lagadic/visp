@@ -93,6 +93,7 @@ ViSP 3.0.1 (in development)
     . [#112] vpPose: Possible ambiguity or misunderstanding in doxygen message
     . [#114] vpMomentAlpha: wrong abs() function using
     . [#116] Link errors related to openmp
+    . [#117] vpMomentAlpha: out of range of [-Pi, Pi] in relative mode 
     . [#118] vpKeyPoint: perhaps misleading in document
     . [#120] Build failed with clang/llvm
 

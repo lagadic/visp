@@ -41,19 +41,18 @@
 #include <cmath>
 
 /*!
-  Empty constructor. Initializes alpha moment as a reference alpha. A default-constructed alpha moment may be used as a reference for other alphas.
-  A reference alpha is class harbouring an alpha value computed for a \f$[-\pi/2..\pi/2]\f$ portion of the circle. Not setting a reference alpha will prevent you
-  from doing more than 180deg rotation with moments.
+  Empty constructor. Initializes alpha moment as a reference alpha with a value in \f$[-\pi/2..\pi/2]\f$.
+  A default-constructed alpha moment may be used as a reference information for other alphas. A reference
+  alpha is a class harbouring an alpha value computed for a \f$[-\pi/2..\pi/2]\f$ portion of the circle.
  */
 vpMomentAlpha::vpMomentAlpha() : isRef(true), symmetric(false), ref(), alphaRef(0.) {
     values.resize(1);
 }
 
 /*!
-  Common constructor. Initializes alpha moment as a non-reference alpha. A default-constructed alpha moment must be used as a reference for other this alpha.
-  A reference alpha is class harbouring an alpha value computed for a \f$[0..\pi]\f$ portion of the circle. Not having a reference alpha will prevent you
-  from doing more than 180deg rotation with moments.
-  \param ref_ : vector of 3rd order centered moments corresponding to the reference alpha in the following order: \f$\mu_{30},\mu_{21},\mu_{12},\mu_{03}\f$.
+  Common constructor. Initializes alpha moment as a non-reference alpha with a value computed in \f$[-\pi..\pi]\f$.
+  \param ref_ : vector of 3rd order centered moments corresponding to the reference alpha in
+  the following order: \f$\mu_{30},\mu_{21},\mu_{12},\mu_{03}\f$.
   \param alpha_ref : value of the reference alpha.
 */
 vpMomentAlpha::vpMomentAlpha(std::vector<double>& ref_, double alpha_ref)
@@ -80,7 +79,9 @@ void vpMomentAlpha::compute(){
 	if (!found_moment_centered)
 		throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
-	double alpha = 0.5 * atan2(2.0 * momentCentered.get(1, 1), (momentCentered.get(2, 0) - momentCentered.get(0, 2)));
+  double t = 2.0 * momentCentered.get(1, 1) / (momentCentered.get(2, 0) - momentCentered.get(0, 2));
+  //double alpha = 0.5 * atan2(2.0 * momentCentered.get(1, 1), (momentCentered.get(2, 0) - momentCentered.get(0, 2)));
+  double alpha = 0.5 * atan(t);
 
 	std::vector<double> rotMu(4);
   //std::vector<double> realMu(4);
@@ -95,8 +96,8 @@ void vpMomentAlpha::compute(){
 		{
 			double r11 = cos(alpha - alphaRef);
 			double r12 = sin(alpha - alphaRef);
-			double r21 = -sin(alpha - alphaRef);
-			double r22 = cos(alpha - alphaRef);
+      double r21 = -r12;
+      double r22 =  r11;
 			unsigned int idx = 0;
       unsigned int order = 4;
       for (unsigned int c = 0; c < (order) * (order); c++)
@@ -135,8 +136,13 @@ void vpMomentAlpha::compute(){
 
 			if (sum < 1e4 * std::numeric_limits<double>::epsilon())
 				signChange = false;
-			if (signChange)
-				alpha = alpha + M_PI;
+      if (signChange) {
+        // alpha = alpha + M_PI;
+        if (alpha < 0)
+          alpha += M_PI;
+        else
+          alpha -= M_PI;
+      }
 		}
 	}
 	values[0] = alpha;
