@@ -282,8 +282,8 @@ VP_OPTION(USE_DIRECTSHOW  DIRECTSHOW  "" "Include dshow support"           "" ON
 VP_OPTION(USE_OPENMP      OpenMP      "" "Include openmp support"          "" ON)
 # Since the FindLAPACK.cmake provided with CMake is for Fortran language,
 # in CMakeModules we have added FindLAPACK_C.cmake for C language
-VP_OPTION(USE_LAPACK      LAPACK_C    "" "Include lapack support"          "" ON AND NOT WINRT)
-VP_OPTION(USE_GSL         GSL         "" "Include gsl support"             "" ON AND NOT WINRT)
+VP_OPTION(USE_LAPACK      LAPACK_C    "" "Include lapack support"          "" ON IF NOT WINRT)
+VP_OPTION(USE_GSL         GSL         "" "Include gsl support"             "" ON IF NOT WINRT)
 VP_OPTION(USE_COIN3D      "Coin3D;MyCoin3D" "" "Include coin3d support"    "" ON IF OPENGL_FOUND AND NOT WINRT)
 VP_OPTION(USE_YARP        YARP        QUIET "Include yarp support"         "YARP_DIR" ON IF NOT WINRT)
 VP_OPTION(USE_OGRE        OGRE        QUIET "Include Ogre support"         "OGRE_DIR" ON IF NOT WINRT)
