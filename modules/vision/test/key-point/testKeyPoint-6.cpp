@@ -243,7 +243,7 @@ int main(int argc, const char ** argv) {
     descriptorNames.push_back("DAISY");
     descriptorNames.push_back("LATCH");
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
     descriptorNames.push_back("VGG");
     descriptorNames.push_back("BoostDesc");
 #endif
@@ -264,6 +264,8 @@ int main(int argc, const char ** argv) {
     }
 
     for(std::vector<std::string>::const_iterator itd = descriptorNames.begin(); itd != descriptorNames.end(); ++itd) {
+      keyPoints.setExtractor(*itd);
+
       if (*itd == "KAZE") {
         detectorName = "KAZE";
         keyPoints.setDetector(detectorName);
@@ -285,11 +287,10 @@ int main(int argc, const char ** argv) {
       } else if (*itd == "BoostDesc") {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
         cv::Ptr<cv::Feature2D> boostDesc = keyPoints.getExtractor("BoostDesc");
+        //Init BIN BOOST descriptor for FAST keypoints
         boostDesc = cv::xfeatures2d::BoostDesc::create(cv::xfeatures2d::BoostDesc::BINBOOST_256, true, 5.0f);
 #endif
       }
-
-      keyPoints.setExtractor(*itd);
 
       double t = vpTime::measureTimeMs();
       cv::Mat descriptor;
@@ -326,6 +327,8 @@ int main(int argc, const char ** argv) {
     std::map<vpKeyPoint::vpFeatureDescriptorType, std::string> mapOfDescriptorNames = keyPoints.getExtractorNames();
 
     for (int i = 0; i < vpKeyPoint::DESCRIPTOR_TYPE_SIZE; i++) {
+      keyPoints.setExtractor( (vpKeyPoint::vpFeatureDescriptorType) i );
+
       if (mapOfDescriptorNames[(vpKeyPoint::vpFeatureDescriptorType) i] == "KAZE") {
         detectorName = "KAZE";
         keyPoints.setDetector(detectorName);
@@ -346,12 +349,20 @@ int main(int argc, const char ** argv) {
         }
       } else if (mapOfDescriptorNames[(vpKeyPoint::vpFeatureDescriptorType) i] == "BoostDesc") {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030200) && defined(VISP_HAVE_OPENCV_XFEATURES2D)
+        detectorName = "FAST";
+        keyPoints.setDetector(detectorName);
+        keyPoints.detect(I, kpts);
+        std::cout << "Nb keypoints detected: " << kpts.size() << " for " << detectorName << " method." << std::endl;
+        if (kpts.empty()) {
+          std::cerr << "No keypoints detected with " << detectorName << " and image:" << filename << "." << std::endl;
+          return EXIT_FAILURE;
+        }
+
         cv::Ptr<cv::Feature2D> boostDesc = keyPoints.getExtractor("BoostDesc");
+        //Init BIN BOOST descriptor for FAST keypoints
         boostDesc = cv::xfeatures2d::BoostDesc::create(cv::xfeatures2d::BoostDesc::BINBOOST_256, true, 5.0f);
 #endif
       }
-
-      keyPoints.setExtractor( (vpKeyPoint::vpFeatureDescriptorType) i );
 
       double t = vpTime::measureTimeMs();
       cv::Mat descriptor;

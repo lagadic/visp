@@ -298,7 +298,7 @@ public:
 
 
   vpKeyPoint(const vpFeatureDetectorType &detectorType, const vpFeatureDescriptorType &descriptorType,
-             const std::string &matcherName="BruteForce-Hamming", const vpFilterMatchingType &filterType=ratioDistanceThreshold);
+             const std::string &matcherName, const vpFilterMatchingType &filterType=ratioDistanceThreshold);
   vpKeyPoint(const std::string &detectorName="ORB", const std::string &extractorName="ORB",
              const std::string &matcherName="BruteForce-Hamming", const vpFilterMatchingType &filterType=ratioDistanceThreshold);
   vpKeyPoint(const std::vector<std::string> &detectorNames, const std::vector<std::string> &extractorNames,
