@@ -179,16 +179,33 @@ endmacro()
 #             "help string describing the option"
 #             "advanced list of vars separated by ;"
 #             <initial value or boolean expression> [IF <condition>])
+#
+# Example:
+#   VP_OPTION(USE_VTK "VTK" "QUIET" "Include vtk support" "" ON)
+#   VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources" "" "Include vtk support" "" ON)
+
 macro(VP_OPTION variable package quiet description advanced value)
   set(__option TRUE)
   set(__value ${value})
   set(__condition "")
   set(__varname "__value")
-  set(__p ${package})
+
+  set(__components "")
+  set(__eltIsComponent FALSE)
+  set(__package "") # without components
+  foreach(p ${package})
+    if(${p} MATCHES "COMPONENTS")
+      set(__eltIsComponent TRUE)
+    elseif(__eltIsComponent)
+      list(APPEND __components ${p})
+    else()
+      list(APPEND __package ${p})
+    endif()
+  endforeach()
 
   # get the first package considered as the main package from a list: ie "Zlib;MyZlib"
   set(__first_package "")
-  foreach(p ${package})
+  foreach(p ${__package})
     if(${p} MATCHES "^My")
       string(REGEX REPLACE "^My" "" p "${p}")
     endif()
@@ -197,8 +214,6 @@ macro(VP_OPTION variable package quiet description advanced value)
   endforeach()
 
   if(NOT ${__first_package} STREQUAL "")
-    # get the first package name from the list
-    #list(GET ${package} 0 ${__package})
     string(TOLOWER "${__first_package}" __package_lower)
     string(TOUPPER "${__first_package}" __package_upper) # useful for Qt -> QT_FOUND
 
@@ -224,11 +239,19 @@ macro(VP_OPTION variable package quiet description advanced value)
   if(${__condition})
 
     if(NOT ${__first_package} STREQUAL "")
-      foreach(p ${package})
+      foreach(p ${__package})
         if("${quiet}" STREQUAL "")
-          find_package(${p})
+          if(__components)
+            find_package(${p} COMPONENTS ${__components})
+          else()
+            find_package(${p})
+          endif()
         else()
-          find_package(${p} ${quiet})
+          if(__components)
+            find_package(${p} ${quiet} COMPONENTS ${__components})
+          else()
+            find_package(${p} ${quiet})
+          endif()
         endif()
         if(${__package_upper}_FOUND OR ${__first_package}_FOUND)
           set(__option TRUE)
