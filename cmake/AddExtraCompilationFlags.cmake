@@ -134,6 +134,12 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   endif()
 endif()
 
+if(UNIX)
+  if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
+    add_extra_compiler_option(-fPIC)
+  endif()
+endif()
+
 if(DEFINED WINRT_8_1)
   add_extra_compiler_option(/ZW) # do not use with 8.0
 endif()
