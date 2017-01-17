@@ -122,7 +122,7 @@ if(UNIX)
       get_target_property(m_libpath ${m} LOCATION_Release)
     endif()
     get_filename_component(m_libname "${m_libpath}" NAME)
-    list(APPEND VISP_CONFIG_LIBS_SCRIPT "$PREFIX/${CMAKE_INSTALL_LIBDIR}/${m_libname}")
+    list(APPEND VISP_CONFIG_LIBS_SCRIPT "$PREFIX/${VISP_LIB_INSTALL_PATH}/${m_libname}")
   endforeach()
   # append deps
   foreach(m ${VISP_MODULES_BUILD})
@@ -168,7 +168,7 @@ if(UNIX)
   #----------------------------------------------------------------------
   set(exec_prefix "\${prefix}")
   set(includedir  "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
-  set(libdir  "\${prefix}/${CMAKE_INSTALL_LIBDIR}")
+  set(libdir  "\${prefix}/${VISP_LIB_INSTALL_PATH}")
  
   # prepend with ViSP own include dir
   set(VISP_CONFIG_CFLAGS_PC "-I\${includedir}")
@@ -371,7 +371,7 @@ install(FILES ${FILE_VISP_CONFIG_SCRIPT_INSTALL}
 # install rule for visp.pc pkg-config file
 if(UNIX)
   install(FILES ${FILE_VISP_CONFIG_PC_INSTALL}
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+    DESTINATION ${VISP_LIB_INSTALL_PATH}/pkgconfig
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
     OWNER_WRITE
     COMPONENT dev

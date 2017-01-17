@@ -229,7 +229,7 @@ function(vp_set_ogre_media)
       if(OGRE_PLUGIN_DIR_REL)
         install(FILES
           ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins.cfg
-          DESTINATION ${CMAKE_INSTALL_LIBDIR}/visp/data/ogre-simulator
+          DESTINATION ${VISP_LIB_INSTALL_PATH}/visp/data/ogre-simulator
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT dev
         )
@@ -237,7 +237,7 @@ function(vp_set_ogre_media)
       if(OGRE_PLUGIN_DIR_DBG)
         install(FILES
           ${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins_d.cfg
-          DESTINATION ${CMAKE_INSTALL_LIBDIR}/visp/data/ogre-simulator
+          DESTINATION ${VISP_LIB_INSTALL_PATH}/visp/data/ogre-simulator
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
           COMPONENT dev
         )

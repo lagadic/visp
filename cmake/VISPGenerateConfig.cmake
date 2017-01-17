@@ -53,10 +53,10 @@ macro(get_path_to_parent path_to_child path_to_parent)
   endwhile(input_)
 endmacro()
 
-# Here we determine the relative path from ./${CMAKE_INSTALL_LIBDIR} to its parent folder
-# if CMAKE_INSTALL_LIBDIR=lib, then VISP_INSTALL_LIBDIR_TO_PARENT=../
-# if CMAKE_INSTALL_LIBDIR=lib/x86_64-linux-gnu, then VISP_INSTALL_LIBDIR_TO_PARENT=../..
-get_path_to_parent(${CMAKE_INSTALL_LIBDIR} VISP_INSTALL_LIBDIR_TO_PARENT)
+# Here we determine the relative path from ./${VISP_LIB_INSTALL_PATH} to its parent folder
+# if VISP_LIB_INSTALL_PATH=lib, then VISP_INSTALL_LIBDIR_TO_PARENT=../
+# if VISP_LIB_INSTALL_PATH=lib/x86_64-linux-gnu, then VISP_INSTALL_LIBDIR_TO_PARENT=../..
+get_path_to_parent(${VISP_LIB_INSTALL_PATH} VISP_INSTALL_LIBDIR_TO_PARENT)
 
 #build list of modules available for the ViSP user
 set(VISP_LIB_COMPONENTS "")
@@ -112,7 +112,7 @@ configure_file(
 # -------------------------------------------------------------------------------------------
 
 if(UNIX)
-  set(VISP_INCLUDE_DIRS_CONFIGCMAKE "\${VISP_INSTALL_PATH}/${CMAKE_INSTALL_INCLUDEDIR}")
+  set(VISP_INCLUDE_DIRS_CONFIGCMAKE "\${VISP_INSTALL_PATH}/${VISP_INC_INSTALL_PATH}")
   foreach(m ${VISP_MODULES_BUILD})
     list(APPEND VISP_INCLUDE_DIRS_CONFIGCMAKE ${VISP_MODULE_${m}_INC_DEPS})
   endforeach()
@@ -140,7 +140,7 @@ if(UNIX)
     ${VISP_BINARY_DIR}/unix-install/VISPConfig.cmake
     ${VISP_BINARY_DIR}/unix-install/VISPConfigVersion.cmake
     ${VISP_BINARY_DIR}/unix-install/VISPUse.cmake
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/visp"
+    DESTINATION "${VISP_LIB_INSTALL_PATH}/cmake/visp"
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
     COMPONENT dev
   )
@@ -148,7 +148,7 @@ if(UNIX)
   # Install the export set for use with the install-tree
   install(EXPORT VISPModules
     FILE VISPModules.cmake
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/visp"
+    DESTINATION "${VISP_LIB_INSTALL_PATH}/cmake/visp"
     COMPONENT dev
   )
 endif()

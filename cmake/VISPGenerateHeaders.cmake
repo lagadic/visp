@@ -35,7 +35,7 @@
 # platform-specific config file
 configure_file("${VISP_SOURCE_DIR}/cmake/templates/vpConfig.h.in" "${VISP_INCLUDE_DIR}/visp3/core/vpConfig.h")
 install(FILES "${VISP_INCLUDE_DIR}/visp3/core/vpConfig.h"
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp3/core
+  DESTINATION ${VISP_INC_INSTALL_PATH}/visp3/core
   COMPONENT dev
 )
 
@@ -63,7 +63,7 @@ set(VISP_MODULE_DEFINITIONS_CONFIGMAKE "${VISP_MODULE_DEFINITIONS_CONFIGMAKE}\n#
 
 configure_file("${VISP_SOURCE_DIR}/cmake/templates/visp_modules.h.in" "${VISP_INCLUDE_DIR}/visp3/visp_modules.h")
 install(FILES "${VISP_INCLUDE_DIR}/visp3/visp_modules.h"
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp3
+  DESTINATION ${VISP_INC_INSTALL_PATH}/visp3
   COMPONENT dev
 )
 
@@ -96,7 +96,7 @@ set(VISP_ALL_HEADERS_CONFIGMAKE "${VISP_ALL_HEADERS_CONFIGMAKE}#endif\n")
 
 configure_file("${VISP_SOURCE_DIR}/cmake/templates/visp.h.in" "${VISP_INCLUDE_DIR}/visp3/visp.h")
 install(FILES "${VISP_INCLUDE_DIR}/visp3/visp.h"
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp3
+  DESTINATION ${VISP_INC_INSTALL_PATH}/visp3
   COMPONENT dev
 )
 
@@ -105,6 +105,6 @@ install(FILES "${VISP_INCLUDE_DIR}/visp3/visp.h"
 # ----------------------------------------------------------------------------
 file(GLOB old_hdrs "${VISP_INCLUDE_DIR}/visp/*.h")
 install(FILES ${old_hdrs}
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp
+  DESTINATION ${VISP_INC_INSTALL_PATH}/visp
   COMPONENT dev
 )

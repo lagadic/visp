@@ -113,12 +113,56 @@ endif()
 set(VISP_INCLUDE_DIR ${VISP_BINARY_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
 set(VISP_DOC_DIR "${VISP_BINARY_DIR}/doc")
 
-# The location in which to install VISP libraries.
+# The location where includes and libraries will be build
 set(LIBRARY_OUTPUT_PATH ${VISP_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
-# The location in which to install some VISP binaries.
 set(BINARY_OUTPUT_PATH ${VISP_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 
 include_directories(${VISP_BINARY_DIR}/include)
+
+#----------------------------------------------------------------------
+# Platform specific
+#----------------------------------------------------------------------
+include(cmake/VISPDetectPlatform.cmake)
+
+VP_OPTION(ENABLE_SSE2  "" "" "Enable SSE2 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
+VP_OPTION(ENABLE_SSE3  "" "" "Enable SSE3 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
+VP_OPTION(ENABLE_SSSE3 "" "" "Enable SSSE3 instructions" "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
+
+# Set the path where to install the lib
+if(WIN32)
+  if(DEFINED VISP_RUNTIME AND DEFINED VISP_ARCH)
+    set(VISP_INSTALL_BINARIES_PREFIX "${VISP_ARCH}/${VISP_RUNTIME}/")
+  else()
+    message(STATUS "Can't detect runtime and/or arch")
+    set(VISP_INSTALL_BINARIES_PREFIX "")
+  endif()
+else()
+  set(VISP_INSTALL_BINARIES_PREFIX "")
+endif()
+
+# where to install the library and headers
+if(WIN32)
+  set(VISP_INC_INSTALL_PATH     ${CMAKE_INSTALL_INCLUDEDIR})
+  if(VISP_STATIC)
+    set(VISP_LIB_INSTALL_PATH  "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
+  else()
+    set(VISP_LIB_INSTALL_PATH  "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}")
+  endif()
+  set(VISP_BIN_INSTALL_PATH    "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_BINDIR}")
+  set(VISP_3P_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
+else()
+  # The location where includes and libraries will be installed
+
+  # The 2 following commented lines should be used to enable multi-arch support.
+  # Since catkin doesn't support multi-arch we keep these 2 lines commented for the moment.
+  # set(VISP_INC_INSTALL_PATH     ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
+  # set(VISP_LIB_INSTALL_PATH     ${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE})
+  set(VISP_INC_INSTALL_PATH     ${CMAKE_INSTALL_INCLUDEDIR})
+  set(VISP_LIB_INSTALL_PATH     ${CMAKE_INSTALL_LIBDIR})
+  set(VISP_BIN_INSTALL_PATH     ${CMAKE_INSTALL_BINDIR})
+  set(VISP_3P_LIB_INSTALL_PATH  share/ViSP/3rdparty/${VISP_LIB_INSTALL_PATH})
+endif()
+set(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib")
 
 if(WIN32)
   # Postfix of .lib and .dll
@@ -153,9 +197,9 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # the RPATH to be used when installing, but only if it's not a system directory
-list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}" isSystemDir)
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}" isSystemDir)
 if("${isSystemDir}" STREQUAL "-1")
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}")
 endif("${isSystemDir}" STREQUAL "-1")
 
 # ----------------------------------------------------------------------------
@@ -478,43 +522,6 @@ endif()
 if(MSVC)
    include(cmake/VISPCRTLinkage.cmake)
 endif(MSVC)
-
-#----------------------------------------------------------------------
-# Platform specific
-#----------------------------------------------------------------------
-include(cmake/VISPDetectPlatform.cmake)
-
-VP_OPTION(ENABLE_SSE2  "" "" "Enable SSE2 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
-VP_OPTION(ENABLE_SSE3  "" "" "Enable SSE3 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
-VP_OPTION(ENABLE_SSSE3 "" "" "Enable SSSE3 instructions" "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
-
-# Set the path where to install the lib
-if(WIN32)
-  if(DEFINED VISP_RUNTIME AND DEFINED VISP_ARCH)
-    set(VISP_INSTALL_BINARIES_PREFIX "${VISP_ARCH}/${VISP_RUNTIME}/")
-  else()
-    message(STATUS "Can't detect runtime and/or arch")
-    set(VISP_INSTALL_BINARIES_PREFIX "")
-  endif()
-else()
-  set(VISP_INSTALL_BINARIES_PREFIX "")
-endif()
-
-# where to install the library
-if(WIN32)
-  if(VISP_STATIC)
-    set(VISP_LIB_INSTALL_PATH  "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
-  else()
-    set(VISP_LIB_INSTALL_PATH  "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}")
-  endif()
-  set(VISP_BIN_INSTALL_PATH    "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_BINDIR}")
-  set(VISP_3P_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}")
-else()
-  set(VISP_LIB_INSTALL_PATH     ${CMAKE_INSTALL_LIBDIR})
-  set(VISP_BIN_INSTALL_PATH     ${CMAKE_INSTALL_BINDIR})
-  set(VISP_3P_LIB_INSTALL_PATH  share/ViSP/3rdparty/${VISP_LIB_INSTALL_PATH})
-endif()
-set(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib")
 
 #----------------------------------------------------------------------
 # Configure the files that depend on the build <binary dir> or

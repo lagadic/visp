@@ -692,7 +692,7 @@ macro(vp_create_global_module_header module)
   configure_file("${VISP_SOURCE_DIR}/cmake/templates/vpHeader.h.in" ${__module_header_dst})
 
   install(FILES ${__module_header_dst}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp3
+    DESTINATION ${VISP_INC_INSTALL_PATH}/visp3
     COMPONENT dev
   )
 
@@ -781,7 +781,7 @@ macro(_vp_create_module)
       foreach(hdr ${VISP_MODULE_${m}_HEADERS})
         string(REGEX REPLACE "^.*visp3/" "visp3/" hdr2 "${hdr}")
         if(NOT hdr2 MATCHES "visp3/${m}/private.*" AND hdr2 MATCHES "^(visp3/?.*)/[^/]+.h(..)?$" )
-          install(FILES ${hdr} OPTIONAL DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_MATCH_1}" COMPONENT dev)
+          install(FILES ${hdr} OPTIONAL DESTINATION "${VISP_INC_INSTALL_PATH}/${CMAKE_MATCH_1}" COMPONENT dev)
         endif()
       endforeach()
     endif()
@@ -1011,7 +1011,7 @@ macro(vp_add_config_file)
     vp_create_compat_headers("${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}")
 
     install(FILES "${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}"
-      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/visp3/${MODULE_NAME}
+      DESTINATION ${VISP_INC_INSTALL_PATH}/visp3/${MODULE_NAME}
       COMPONENT dev
     )
 
