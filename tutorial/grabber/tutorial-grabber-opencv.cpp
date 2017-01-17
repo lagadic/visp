@@ -21,7 +21,9 @@ int main(int argc, char** argv)
       return -1;
     }
     cv::Mat frame;
-    cap >> frame; // get a new frame from camera
+    int i=0;
+    while ((i++ < 100) && !cap.read(frame)) {}; // warm up camera by skiping unread frames
+
     std::cout << "Image size: " << frame.rows << " " << frame.cols << std::endl;
 
     //vpImage<vpRGBa> I; // for color images

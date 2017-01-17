@@ -35,6 +35,9 @@ vpThread::Return captureFunction(vpThread::Args args)
   }
 
   cv::Mat frame_;
+  int i=0;
+  while ((i++ < 100) && !cap.read(frame_)) {}; // warm up camera by skiping unread frames
+
   bool stop_capture_ = false;
 
   double start_time = vpTime::measureTimeSecond();
