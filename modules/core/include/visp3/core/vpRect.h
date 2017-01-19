@@ -74,6 +74,7 @@
 */
 
 #include <vector>
+#include <cassert>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 
@@ -96,7 +97,7 @@ public:
     Returns the bottom coordinate of the rectangle. 
     \sa getRight()
   */
-  inline double getBottom() const { return (this->top + this->height - 1.0); };
+  inline double getBottom() const { return (this->top + this->height - 1.0); }
   /*!
     Returns the bottom-right coordinate of the rectangle. 
     \sa getTopLeft(), getBottom(), getRight()
@@ -107,9 +108,9 @@ public:
     bottomRight.set_v( getBottom() );
 
     return bottomRight;
-  };
-  /*!
+  }
 
+  /*!
     Returns the center point of the rectangle. The center point
     coordinates are (\e x, \e y)
 
@@ -122,9 +123,9 @@ public:
   inline void getCenter(double & x, double & y) const { 
     x = this->left + this->width  / 2.0 - 0.5; 
     y = this->top  + this->height / 2.0 - 0.5; 
-  };
-  /*!
+  }
 
+  /*!
     Returns the center point of the rectangle. The center point
     coordinates are (\e x, \e y)
 
@@ -139,41 +140,43 @@ public:
     center.set_u( this->left + this->width  / 2.0 - 0.5 ); 
     center.set_v( this->top  + this->height / 2.0 - 0.5 ); 
     return center;
-  };
-  /*!
- 
+  }
+
+  /*! 
    Returns the height of the rectangle. The height includes both the
    top and bottom edges, i.e. height = bottom - top + 1.
 
    \sa getWidth()
 
   */
-  inline double getHeight() const { return this->height; };
+  inline double getHeight() const { return this->height; }
+
   /*!
     Returns the left coordinate of the rectangle. 
 
     \sa getTopLeft(), getRight()
   */
-  inline double getLeft() const { return this->left;   };
+  inline double getLeft() const { return this->left;   }
 
   /*!
     Returns the right coordinate of the rectangle. 
     \sa getLeft()
   */
-  inline double getRight() const { return (this->left + this->width - 1.0); };
+  inline double getRight() const { return (this->left + this->width - 1.0); }
 
   /*!
     Returns the size of the rectangle.
     \sa getWidth(), getHeight()
   */
-  inline double getSize() const { return (this->width * this->height); };
+  inline double getSize() const { return (this->width * this->height); }
 
   /*!
     Returns the top coordinate of the rectangle. 
 
     \sa getTopLeft(), getBottom()
   */
-  inline double getTop() const { return this->top;  };
+  inline double getTop() const { return this->top;  }
+
   /*!
     Returns the top-left position of the rectangle. 
 
@@ -184,7 +187,8 @@ public:
     topLeft.set_u( this->left );
     topLeft.set_v( this->top );
     return topLeft; 
-  };
+  }
+
   /*!
    Returns the width of the rectangle. The width includes both the
    left and right edges, i.e. width = right - left + 1.
@@ -192,7 +196,7 @@ public:
    \sa getHeight()
 
   */
-  inline double getWidth() const { return this->width;  };
+  inline double getWidth() const { return this->width;  }
 
   /*!
    Returns true if the point belongs to the rectangle.
@@ -200,7 +204,9 @@ public:
   bool isInside( const vpImagePoint &ip ) const;
 
   bool operator==(const vpRect &r) const;
-  bool operator!=(const vpRect &r) const ;
+  bool operator!=(const vpRect &r) const;
+  vpRect& operator&=(const vpRect &r);
+  vpRect operator&(const vpRect &r) const;
 
   friend VISP_EXPORT bool inRectangle( const vpImagePoint &ip, const vpRect &rect );
   friend VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpRect& r);
@@ -211,16 +217,15 @@ public:
   void set(const std::vector<vpImagePoint> &ip);
 
   /*!
-
     Sets the bottom edge position of the rectangle to pos. May change
     the height of the rectangle, but will never change the top edge
     position the rectangle.
 
     \sa setTop()
   */
-  inline void setBottom(double pos) { this->height = pos - this->top + 1.0; };
-  /*!
+  inline void setBottom(double pos) { this->height = pos - this->top + 1.0; }
 
+  /*!
     Sets the bottom-right position of the rectangle. Will never change
     the top-left position the rectangle.
 
@@ -229,27 +234,29 @@ public:
   inline void setBottomRight(const vpImagePoint &bottomRight) {
     this->height = bottomRight.get_v() - this->top + 1.0; 
     this->width = bottomRight.get_u() - this->left + 1.0;
-  };
-  /*!
+  }
 
+  /*!
     Sets the height of the rectangle to \e h. The top edge is not moved,
     but the bottom edge may be moved.
 
     \sa setWidth()
   */
-  inline void setHeight(double h) { this->height = h; };
-  /*!
+  inline void setHeight(double h) {
+    assert(h > 0);
+    this->height = h;
+  }
 
+  /*!
     Sets the left edge position of the rectangle to pos. May change the right
     edge  position of the rectangle, but will never change the width of the
     rectangle.
 
     \sa setRight()
-
   */
-  inline void setLeft(double pos) { this->left = pos; };
-  /*!
+  inline void setLeft(double pos) { this->left = pos; }
 
+  /*!
     Sets the coordinates of the rectangle's top left corner to
     (left, top), and its size to (width, height).
 
@@ -264,28 +271,27 @@ public:
      this->top    = t;
      this->width  = w;
      this->height = h;
-  };
-  /*!
+  }
 
+  /*!
     Sets the right edge position of the rectangle to pos. May change
     the width of the rectangle, but will never change the left edge
     position of the rectangle.
 
     \sa setLeft()
-
   */
-  inline void setRight(double pos) { this->width = pos - this->left + 1.0; };
-  /*!
+  inline void setRight(double pos) { this->width = pos - this->left + 1.0; }
 
+  /*!
     Sets the top edge position of the rectangle to pos. May change the bottom
     edge position of the rectangle, but will never change the height of the
     rectangle.
 
     \sa setBottom()
   */
-  inline void setTop(double pos) { this->top = pos; };
-  /*!
+  inline void setTop(double pos) { this->top = pos; }
 
+  /*!
     Sets the top-left position of the rectangle. May change the bottom
     edge position of the rectangle, but will never change the height of the
     rectangle.
@@ -295,41 +301,40 @@ public:
   inline void setTopLeft(const vpImagePoint &topLeft) { 
     this->left = topLeft.get_u(); 
     this->top  = topLeft.get_v(); 
-  };
-  /*!
+  }
 
+  /*!
     Sets the width of the rectangle to \e w. The right edge is changed,
     but not the left edge.
 
     \sa setHeight()
   */
-  inline void setWidth(double w) { this->width = w; }
+  inline void setWidth(double w) {
+    assert(w > 0);
+    this->width = w;
+  }
  
   /*!
-
     Sets the center point of the rectangle to (\e x, \e y), leaving
     the size unchanged.
 
     \sa getCenter()
-
   */
   inline void moveCenter(double x, double y) {
     this->left = x - this->width/2  + 0.5;
     this->top  = y - this->height/2 + 0.5;
-  };
+  }
   
   /*!
-
     Center the rectangle to the image point given as parameter, leaving
     the size unchanged.
 
     \sa getCenter()
-
   */
   inline void moveCenter(const vpImagePoint &center) {
     this->left = center.get_u() - this->width/2  + 0.5;
     this->top  = center.get_v() - this->height/2 + 0.5;
-  };
+  }
 
 private:
   double left;   // Upper left corner position along the columns axis
