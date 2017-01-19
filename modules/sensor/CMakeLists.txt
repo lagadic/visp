@@ -95,13 +95,12 @@ if(USE_PCL)
   # with these names.
   # An other way could be to include PCLConfig.cmake, but in that case, visp-config and visp.pc
   # will be not able to give the names of PCL libraries when used without CMake.
-
   foreach(lib_ ${PCL_LIBRARIES})
     # check if ${lib_} is in VTK_LIBRARIES and is a TARGET. If this is the case, we retrieve the full location
     list(FIND VTK_LIBRARIES ${lib_} lib_is_vtk_)
     if(NOT ${lib_is_vtk_} EQUAL -1 AND TARGET ${lib_})
-       # This is a VTK library
-       list(APPEND PCL_VTK_LIBRARIES ${lib_})
+      # This is a VTK library
+      list(APPEND PCL_VTK_LIBRARIES ${lib_})
     else()
       list(APPEND opt_libs ${lib_})
     endif()
@@ -113,6 +112,12 @@ if(USE_PCL)
     list(FIND VTK_LIBRARIES "vtkFiltering" vtkFiltering_exists_)
     if(NOT ${vtkFiltering_exists_} EQUAL -1)
       list(APPEND PCL_VTK_LIBRARIES "vtkFiltering") # seems required on Ubuntu 16.04
+    endif()
+    if(VTK_VERSION VERSION_EQUAL 6.2.0)
+      # Work arround to avoid build issue on ubuntu 16.04 with libvtk6-dev package
+      # cannot find -lvtkproj4
+      # See https://bugs.launchpad.net/ubuntu/+source/vtk6/+bug/1573234
+      list(REMOVE_ITEM opt_libs "vtkproj4")
     endif()
     set(config_ "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
     foreach(lib_ ${PCL_VTK_LIBRARIES})
@@ -129,6 +134,9 @@ if(USE_PCL)
         endif()
       endforeach()
     endforeach()
+    if(VTK_VERSION VERSION_EQUAL 6.2.0)
+      mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Network_DIR Qt5WebKit_DIR Qt5Widgets_DIR)
+    endif()
   endif()
 endif()
 
