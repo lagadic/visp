@@ -193,11 +193,11 @@ int main() {
   vpImage<unsigned char> Ii(rs.getIntrinsics(rs::stream::infrared).height, rs.getIntrinsics(rs::stream::infrared).width);
 
 #ifdef VISP_HAVE_X11
-  vpDisplayX dc(Ic);
-  vpDisplayX di(Ii);
+  vpDisplayX dc(Ic, 0, 0, "Color");
+  vpDisplayX di(Ii, 100, 100, "Infrared");
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI dc(Ic);
-  vpDisplayGDI di(Ii);
+  vpDisplayGDI dc(Ic, 0, 0, "Color");
+  vpDisplayGDI di(Ii, 100, 100, "Infrared");
 #endif
 
   while (1) {
@@ -209,6 +209,69 @@ int main() {
     if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Ii, false))
       break;
   }
+  return 0;
+}
+  \endcode
+
+  This example shows how to get depth stream aligned on color stream:
+  \code
+#include <visp3/core/vpImageConvert.h>
+#include <visp3/sensor/vpRealSense.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
+
+int main() {
+  vpRealSense rs;
+  rs.setEnableStream(rs::stream::color, true);
+  rs.setEnableStream(rs::stream::depth, true);
+  rs.setEnableStream(rs::stream::infrared, false);
+  rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
+  rs.setStreamSettings(rs::stream::depth, vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 30));
+  rs.open();
+
+  vpImage<vpRGBa> Ic(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
+  vpImage<uint16_t> Id_raw(rs.getIntrinsics(rs::stream::depth).height, rs.getIntrinsics(rs::stream::depth).width);
+  vpImage<vpRGBa> Id(rs.getIntrinsics(rs::stream::depth).height, rs.getIntrinsics(rs::stream::depth).width);
+
+#ifdef VISP_HAVE_X11
+  vpDisplayX dc(Ic, 0, 0, "Color");
+  vpDisplayX dd(Id, 100, 100, "Depth aligned to color");
+#elif defined(VISP_HAVE_GDI)
+  vpDisplayGDI dc(Ic, 0, 0, "Color");
+  vpDisplayGDI dd(Id, 100, 100, "Depth aligned to color");
+#endif
+
+  while (1) {
+    rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, NULL, NULL, NULL, rs::stream::color, rs::stream::depth_aligned_to_color);
+    vpImageConvert::createDepthHistogram(Id_raw, Id);
+    vpDisplay::display(Ic);
+    vpDisplay::display(Id);
+    vpDisplay::flush(Ic);
+    vpDisplay::flush(Id);
+    if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Id, false))
+      break;
+  }
+  return 0;
+}
+  \endcode
+
+  This is how you get intrinsics for non native stream (the native stream has to be enabled!):
+  \code
+#include <visp3/sensor/vpRealSense.h>
+
+int main() {
+  vpRealSense rs;
+  rs.setEnableStream(rs::stream::color, true);
+  rs.setEnableStream(rs::stream::depth, true);
+  rs.setEnableStream(rs::stream::infrared, false);
+  rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
+  rs.setStreamSettings(rs::stream::depth, vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 30));
+  rs.open();
+
+  rs::device * dev = rs.getHandler();
+  rs::intrinsics depth_aligned_intrinsic = dev->get_stream_intrinsics(rs::stream::depth_aligned_to_color);
+  std::cout << "Intrinsics [fx, fy, ppx, ppy]: " << depth_aligned_intrinsic.fx << " ; " << depth_aligned_intrinsic.fy
+            << " ; " << depth_aligned_intrinsic.ppx << " ; " << depth_aligned_intrinsic.ppy << std::endl;
   return 0;
 }
   \endcode
@@ -235,6 +298,12 @@ int main() {
   return 0;
 }
   \endcode
+
+  \note This class has been tested with the Intel RealSense SR300. The following streams are enabled by default:
+  - Color stream with preset: best quality
+  - Depth stream with preset: best quality
+  - Infrared stream with preset: best quality
+  - Infrared2 if supported with preset: best quality
 */
 class VISP_EXPORT vpRealSense
 {
@@ -261,7 +330,8 @@ public:
   void acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, std::vector<vpColVector> &pointcloud);
 
   void acquire(unsigned char * const data_image, unsigned char * const data_depth, std::vector<vpColVector> * const data_pointCloud, unsigned char * const data_infrared,
-               unsigned char * const data_infrared2=NULL);
+               unsigned char * const data_infrared2=NULL, const rs::stream &stream_color=rs::stream::color, const rs::stream &stream_depth=rs::stream::depth,
+               const rs::stream &stream_infrared=rs::stream::infrared, const rs::stream &stream_infrared2=rs::stream::infrared2);
 
 #ifdef VISP_HAVE_PCL
   void acquire(vpImage<vpRGBa> &color, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
@@ -269,9 +339,13 @@ public:
   void acquire(vpImage<vpRGBa> &color, vpImage<uint16_t> &infrared, vpImage<uint16_t> &depth, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
 
   void acquire(unsigned char * const data_image, unsigned char * const data_depth, std::vector<vpColVector> * const data_pointCloud,
-               pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud, unsigned char * const data_infrared, unsigned char * const data_infrared2=NULL);
+               pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud, unsigned char * const data_infrared, unsigned char * const data_infrared2=NULL,
+               const rs::stream &stream_color=rs::stream::color, const rs::stream &stream_depth=rs::stream::depth, const rs::stream &stream_infrared=rs::stream::infrared,
+               const rs::stream &stream_infrared2=rs::stream::infrared2);
   void acquire(unsigned char * const data_image, unsigned char * const data_depth, std::vector<vpColVector> * const data_pointCloud,
-               pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud, unsigned char * const data_infrared, unsigned char * const data_infrared2=NULL);
+               pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud, unsigned char * const data_infrared, unsigned char * const data_infrared2=NULL,
+               const rs::stream &stream_color=rs::stream::color, const rs::stream &stream_depth=rs::stream::depth,
+               const rs::stream &stream_infrared=rs::stream::infrared, const rs::stream &stream_infrared2=rs::stream::infrared2);
 #endif
 
   void close();

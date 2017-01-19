@@ -447,6 +447,71 @@ int main()
 #endif
 
 
+    //Color stream aligned to depth
+    rs.setEnableStream(rs::stream::color, true);
+    rs.setEnableStream(rs::stream::depth, true);
+    rs.setEnableStream(rs::stream::infrared, false);
+    rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
+    rs.setStreamSettings(rs::stream::depth, vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 30));
+    rs.open();
+
+    dc.init(I_color, 0, 0, "Color aligned to depth");
+    di.init(I_display_depth, (int) I_color.getWidth(), 0, "Depth image");
+
+    t_begin = vpTime::measureTimeMs();
+    while (true) {
+      double t = vpTime::measureTimeMs();
+      rs.acquire( (unsigned char *) I_color.bitmap, (unsigned char *) depth.bitmap, NULL, NULL, NULL, rs::stream::color_aligned_to_depth );
+      vpImageConvert::createDepthHistogram(depth, I_display_depth);
+
+      vpDisplay::display(I_color);
+      vpDisplay::display(I_display_depth);
+      vpDisplay::flush(I_color);
+      vpDisplay::flush(I_display_depth);
+
+      if (vpDisplay::getClick(I_color, false) || vpDisplay::getClick(I_display_depth, false)) {
+        break;
+      }
+
+      time_vector.push_back(vpTime::measureTimeMs() - t);
+      if (vpTime::measureTimeMs() - t_begin >= 10000) {
+        break;
+      }
+    }
+
+    dc.close(I_color);
+    dd.close(I_display_depth);
+
+
+    //Depth stream aligned to color
+    dc.init(I_color, 0, 0, "Color image");
+    di.init(I_display_depth, (int) I_color.getWidth(), 0, "Depth aligned to color");
+
+    t_begin = vpTime::measureTimeMs();
+    while (true) {
+      double t = vpTime::measureTimeMs();
+      rs.acquire( (unsigned char *) I_color.bitmap, (unsigned char *) depth.bitmap, NULL, NULL, NULL, rs::stream::color, rs::stream::depth_aligned_to_color );
+      vpImageConvert::createDepthHistogram(depth, I_display_depth);
+
+      vpDisplay::display(I_color);
+      vpDisplay::display(I_display_depth);
+      vpDisplay::flush(I_color);
+      vpDisplay::flush(I_display_depth);
+
+      if (vpDisplay::getClick(I_color, false) || vpDisplay::getClick(I_display_depth, false)) {
+        break;
+      }
+
+      time_vector.push_back(vpTime::measureTimeMs() - t);
+      if (vpTime::measureTimeMs() - t_begin >= 10000) {
+        break;
+      }
+    }
+
+    dc.close(I_color);
+    dd.close(I_display_depth);
+
+
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020409
     rs.setEnableStream(rs::stream::color, true);

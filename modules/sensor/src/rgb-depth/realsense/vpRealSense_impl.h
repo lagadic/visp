@@ -66,19 +66,20 @@ void vp_rs_get_frame_data_impl(const rs::device *m_device, const std::map <rs::s
 }
 
 // Retrieve data from native stream
-void vp_rs_get_native_frame_data_impl(const rs::device *m_device, const std::map <rs::stream, rs::intrinsics> &m_intrinsics, const rs::stream &stream, unsigned char * const data)
+void vp_rs_get_native_frame_data_impl(const rs::device *m_device, const std::map <rs::stream, rs::intrinsics> &m_intrinsics, const rs::stream &native_stream,
+                                      unsigned char * const data, const rs::stream &stream)
 {
-  if (m_device->is_stream_enabled(stream)) {
-    std::map<rs::stream, rs::intrinsics>::const_iterator it_intrinsics = m_intrinsics.find(stream);
+  if (m_device->is_stream_enabled(native_stream)) {
+    std::map<rs::stream, rs::intrinsics>::const_iterator it_intrinsics = m_intrinsics.find(native_stream);
     if (it_intrinsics == m_intrinsics.end()) {
       std::stringstream ss;
-      ss << "Cannot find intrinsics for " << stream << "  stream!";
+      ss << "Cannot find intrinsics for " << native_stream << "  stream!";
       throw vpException(vpException::fatalError, ss.str());
     }
 
     size_t size = (size_t) (it_intrinsics->second.width * it_intrinsics->second.height);
 
-    switch (m_device->get_stream_format(stream)) {
+    switch (m_device->get_stream_format(native_stream)) {
       //8 bits
       case rs::format::raw8:
         std::cout << "Stream: raw8 not tested!" << std::endl;
@@ -135,7 +136,7 @@ void vp_rs_get_native_frame_data_impl(const rs::device *m_device, const std::map
     }
   }
   else {
-    throw vpException(vpException::fatalError, "RealSense Camera - stream %d not enabled!", (rs_stream) stream);
+    throw vpException(vpException::fatalError, "RealSense Camera - stream %d not enabled!", (rs_stream) native_stream);
   }
 }
 
