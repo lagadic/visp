@@ -29,7 +29,7 @@ if(WINRT)
   endif()
 endif()
 
-find_package(VISP REQUIRED visp_core visp_robot visp_vs visp_blob visp_vision visp_io visp_gui)
+find_package(VISP REQUIRED visp_core visp_robot visp_vs visp_blob visp_vision visp_io visp_gui visp_ar)
 
 # set the list of source files
 set(tutorial_cpp
