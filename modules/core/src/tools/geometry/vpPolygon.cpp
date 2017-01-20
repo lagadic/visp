@@ -342,7 +342,7 @@ vpPolygon::isInside(const vpImagePoint& ip, const PointInPolygonMethod &method) 
       {
         bool oddNodes = false;
         for (size_t i = 0, j = _corners.size()-1; i < _corners.size(); i++) {
-          if ((_corners[i].get_v() < ip.get_v() && _corners[j].get_v() >= ip.get_v() || _corners[j].get_v() < ip.get_v() && _corners[i].get_v() >= ip.get_v())) {
+          if ((_corners[i].get_v() < ip.get_v() && _corners[j].get_v() >= ip.get_v()) || (_corners[j].get_v() < ip.get_v() && _corners[i].get_v() >= ip.get_v())) {
             oddNodes ^= (ip.get_v()*m_PnPolyMultiples[i] + m_PnPolyConstants[i] < ip.get_u());
           }
 
