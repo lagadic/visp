@@ -238,7 +238,7 @@ IF(UNIX OR WIN32)
                         ${GTK2_glib_LIBRARY} 
 			${GTK2_gobject_LIBRARY})
 
-    get_filename_component(GTK2_LIB_DIR ${GTK2_gtk_LIBRARY} DIRECTORY)
+    get_filename_component(GTK2_LIB_DIR ${GTK2_gtk_LIBRARY} PATH)
     vp_get_version_from_pkg("gtk+-2.0" "${GTK2_LIB_DIR}/pkgconfig" GTK2_VERSION)
 
     IF(GTK2_gmodule_LIBRARY)

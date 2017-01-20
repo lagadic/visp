@@ -76,7 +76,7 @@ if(LIBUSB_1_LIBRARY AND LIBUSB_1_INCLUDE_DIR)
   set(LIBUSB_1_LIBRARIES ${LIBUSB_1_LIBRARY})
   set(LIBUSB_1_FOUND TRUE)
 
-  get_filename_component(LIBUSB_1_LIB_DIR ${LIBUSB_1_LIBRARY} DIRECTORY)
+  get_filename_component(LIBUSB_1_LIB_DIR ${LIBUSB_1_LIBRARY} PATH)
   vp_get_version_from_pkg("libusb" "${LIBUSB_1_LIB_DIR}/pkgconfig" LIBUSB_1_VERSION)
   if(NOT LIBUSB_1_VERSION)
     vp_get_version_from_pkg("libusb-1.0" "${LIBUSB_1_LIB_DIR}/pkgconfig" LIBUSB_1_VERSION)

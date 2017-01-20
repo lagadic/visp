@@ -59,7 +59,7 @@ find_library(DMTX_LIBRARIES
 if(DMTX_INCLUDE_DIRS AND DMTX_LIBRARIES)
   set(DMTX_FOUND TRUE)
 
-  get_filename_component(DMTX_LIB_DIR ${DMTX_LIBRARIES} DIRECTORY)
+  get_filename_component(DMTX_LIB_DIR ${DMTX_LIBRARIES} PATH)
   vp_get_version_from_pkg("libdmtx" "${DMTX_LIB_DIR}/pkgconfig" DMTX_VERSION)
 
 else()

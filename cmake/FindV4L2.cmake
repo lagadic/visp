@@ -91,7 +91,7 @@ else(NOT UNIX)
     set(V4L2_LIBRARIES ${V4L2_LIBRARY_LIBV4L2} ${V4L2_LIBRARY_LIBV4LCONVERT})
     set(V4L2_FOUND TRUE)
 
-    get_filename_component(V4L2_LIB_DIR ${V4L2_LIBRARY_LIBV4L2} DIRECTORY)
+    get_filename_component(V4L2_LIB_DIR ${V4L2_LIBRARY_LIBV4L2} PATH)
     vp_get_version_from_pkg("libv4l2" "${V4L2_LIB_DIR}/pkgconfig" V4L2_VERSION)
   else()
     set(V4L2_FOUND FALSE)

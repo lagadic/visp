@@ -150,7 +150,7 @@ else()
     if(BUILD_SUCCEED1)
       set(GSL_FOUND TRUE)
 
-      get_filename_component(GSL_LIB_DIR ${GSL_gsl_LIBRARY} DIRECTORY)
+      get_filename_component(GSL_LIB_DIR ${GSL_gsl_LIBRARY} PATH)
       vp_get_version_from_pkg("gsl" "${GSL_LIB_DIR}/pkgconfig" GSL_VERSION)
 
     else()
@@ -168,7 +168,7 @@ else()
         if(BUILD_SUCCEED2)
           set(GSL_FOUND TRUE)
 
-          get_filename_component(GSL_LIB_DIR ${GSL_gsl_LIBRARY} DIRECTORY)
+          get_filename_component(GSL_LIB_DIR ${GSL_gsl_LIBRARY} PATH)
           vp_get_version_from_pkg("gsl" "${GSL_LIB_DIR}/pkgconfig" GSL_VERSION)
 
         else()

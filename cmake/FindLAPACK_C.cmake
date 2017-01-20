@@ -131,7 +131,7 @@ else(WIN32)
     set(LAPACK_C_LIBRARIES ${LAPACK_C_LIBRARY_LAPACK} ${LAPACK_C_LIBRARY_BLAS})
     set(LAPACK_C_FOUND TRUE)
 
-    get_filename_component(LAPACK_C_LIB_DIR ${LAPACK_C_LIBRARY_LAPACK} DIRECTORY)
+    get_filename_component(LAPACK_C_LIB_DIR ${LAPACK_C_LIBRARY_LAPACK} PATH)
     vp_get_version_from_pkg("lapack" "${LAPACK_C_LIB_DIR}/pkgconfig" LAPACK_C_VERSION)
 
   endif()

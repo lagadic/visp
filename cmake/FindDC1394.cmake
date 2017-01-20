@@ -132,7 +132,7 @@ else(NOT UNIX)
 
     endif()
 
-    get_filename_component(DC1394_LIB_DIR ${DC1394_LIBRARY} DIRECTORY)
+    get_filename_component(DC1394_LIB_DIR ${DC1394_LIBRARY} PATH)
     vp_get_version_from_pkg("libdc1394-2" "${DC1394_LIB_DIR}/pkgconfig" DC1394_VERSION)
 
   endif()
