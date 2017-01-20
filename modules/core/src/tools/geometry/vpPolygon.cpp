@@ -130,6 +130,7 @@ vpPolygon::operator=(const vpPolygon& poly)
   _center = poly._center;
   _area = poly._area;
   _goodPoly = poly._goodPoly;
+  _bbox = poly._bbox;
   m_PnPolyConstants = poly.m_PnPolyConstants;
   m_PnPolyMultiples = poly.m_PnPolyMultiples;
   return *this;
