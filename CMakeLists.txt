@@ -1020,6 +1020,13 @@ if(WIN32)
   endif()
 endif()
 
+# ============================ Options ===========================
+status("")
+status("  Build options: ")
+status("    Build deprecated:"           BUILD_DEPRECATED_FUNCTIONS      THEN "yes" ELSE "no")
+status("    Build with moment combine:"  ENABLE_MOMENTS_COMBINE_MATRICES THEN "yes" ELSE "no")
+
+
 # ===================== Optional 3rd parties =====================
 status("")
 status("  Mathematics: ")
