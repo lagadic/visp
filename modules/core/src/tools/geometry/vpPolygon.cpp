@@ -363,7 +363,7 @@ vpPolygon::precalcValuesPnPoly() {
   m_PnPolyMultiples.resize(_corners.size());
 
   for (size_t i = 0, j = _corners.size()-1; i < _corners.size(); i++) {
-    if(_corners[j].get_v() == _corners[i].get_v()) {
+    if( vpMath::equal(_corners[j].get_v(), _corners[i].get_v(), std::numeric_limits<double>::epsilon())) {
       m_PnPolyConstants[i] = _corners[i].get_u();
       m_PnPolyMultiples[i] = 0.0;
     } else {
