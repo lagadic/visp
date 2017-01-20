@@ -35,6 +35,7 @@
 #
 # LAPACK_C_FOUND
 # LAPACK_C_LIBRARIES
+# LAPACK_C_VERSION
 #
 # Authors:
 # Filip Novotny
@@ -44,6 +45,7 @@
 
 set(LAPACK_C_FOUND FALSE)
 set(LAPACK_C_LIBRARIES "")
+set(LAPACK_C_VERSION "na")
 if(WIN32)
   set(LAPACK_C_LIB_SEARCH_PATH
     $ENV{LAPACK_C_HOME}
@@ -128,6 +130,10 @@ else(WIN32)
   if((LAPACK_C_LIBRARY_LAPACK AND LAPACK_C_LIBRARY_BLAS))
     set(LAPACK_C_LIBRARIES ${LAPACK_C_LIBRARY_LAPACK} ${LAPACK_C_LIBRARY_BLAS})
     set(LAPACK_C_FOUND TRUE)
+
+    get_filename_component(LAPACK_C_LIB_DIR ${LAPACK_C_LIBRARY_LAPACK} DIRECTORY)
+    vp_get_version_from_pkg("lapack" "${LAPACK_C_LIB_DIR}/pkgconfig" LAPACK_C_VERSION)
+
   endif()
 endif(WIN32)
 

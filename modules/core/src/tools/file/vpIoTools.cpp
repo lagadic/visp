@@ -73,6 +73,17 @@ std::vector<std::string> vpIoTools::configVars = std::vector<std::string>();
 std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 
 /*!
+  Return build informations (OS, compiler, build flags, used 3rd parties...).
+ */
+const std::string& vpIoTools::getBuildInformation()
+{
+  static std::string build_info =
+#include "version_string.inc"
+  ;
+  return build_info;
+}
+
+/*!
   Sets the base name (prefix) of the experiment files.
     
   \param s : Prefix of the experiment files.

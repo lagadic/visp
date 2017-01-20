@@ -33,21 +33,23 @@
 # LIBUSB_1_FOUND
 # LIBUSB_1_LIBRARIES
 # LIBUSB_1_INCLUDE_DIRS
+# LIBUSB_1_VERSION
 #
 # Authors:
 # Celine Teuliere
 # Fabien Spindler
+#############################################################################
 
-IF(WIN32)
-  FIND_LIBRARY(LIBUSB_1_LIBRARY libusb
+if(WIN32)
+  find_library(LIBUSB_1_LIBRARY libusb
     $ENV{LIBUSB_1_HOME}
     $ENV{LIBUSB_1_HOME}/lib
     $ENV{LIBUSB_1_DIR}
     $ENV{LIBUSB_1_DIR}/lib
     "c:/libusb/lib"
     )
-ELSE(WIN32) 
-  FIND_LIBRARY(LIBUSB_1_LIBRARY usb-1.0
+else()
+  find_library(LIBUSB_1_LIBRARY usb-1.0
     $ENV{LIBUSB_1_HOME}/lib
     $ENV{LIBUSB_1_HOME}/build/lib
     $ENV{LIBUSB_1_DIR}/lib
@@ -57,7 +59,7 @@ ELSE(WIN32)
     /usr/lib
     /usr/local/lib
     )
-  FIND_PATH(LIBUSB_1_INCLUDE_DIR libusb.h
+  find_path(LIBUSB_1_INCLUDE_DIR libusb.h
     $ENV{LIBUSB_1_HOME}/include/libusb-1.0
     $ENV{LIBUSB_1_HOME}/build/include/libusb-1.0
     $ENV{LIBUSB_1_DIR}/include/libusb-1.0
@@ -65,19 +67,25 @@ ELSE(WIN32)
     /usr/include/libusb-1.0
     /usr/local/include/libusb-1.0
     )
-ENDIF(WIN32)
+endif()
 
 ## --------------------------------
 
-IF(LIBUSB_1_LIBRARY AND LIBUSB_1_INCLUDE_DIR)
-  SET(LIBUSB_1_INCLUDE_DIRS ${LIBUSB_1_INCLUDE_DIR})
-  SET(LIBUSB_1_LIBRARIES ${LIBUSB_1_LIBRARY})
-  SET(LIBUSB_1_FOUND TRUE)
-ELSE()
-  SET(LIBUSB_1_FOUND FALSE)
-ENDIF()
+if(LIBUSB_1_LIBRARY AND LIBUSB_1_INCLUDE_DIR)
+  set(LIBUSB_1_INCLUDE_DIRS ${LIBUSB_1_INCLUDE_DIR})
+  set(LIBUSB_1_LIBRARIES ${LIBUSB_1_LIBRARY})
+  set(LIBUSB_1_FOUND TRUE)
 
-MARK_AS_ADVANCED(
+  get_filename_component(LIBUSB_1_LIB_DIR ${LIBUSB_1_LIBRARY} DIRECTORY)
+  vp_get_version_from_pkg("libusb" "${LIBUSB_1_LIB_DIR}/pkgconfig" LIBUSB_1_VERSION)
+  if(NOT LIBUSB_1_VERSION)
+    vp_get_version_from_pkg("libusb-1.0" "${LIBUSB_1_LIB_DIR}/pkgconfig" LIBUSB_1_VERSION)
+  endif()
+else()
+  set(LIBUSB_1_FOUND FALSE)
+endif()
+
+mark_as_advanced(
   LIBUSB_1_INCLUDE_DIRS
   LIBUSB_1_INCLUDE_DIR
   LIBUSB_1_LIBRARIES

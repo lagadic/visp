@@ -40,7 +40,6 @@
 #
 #############################################################################
 
-
 # detection of the Libjpeg headers location
 if(MINGW)
   find_path(JPEG_INCLUDE_DIR 

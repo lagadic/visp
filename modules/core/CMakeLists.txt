@@ -261,7 +261,10 @@ if(MSVC)
 endif()
 
 vp_add_module(core)
-vp_glob_module_sources()
+
+vp_source_group("Src" FILES "${VISP_MODULE_visp_core_BINARY_DIR}/version_string.inc")
+
+vp_glob_module_sources(SOURCES "${VISP_MODULE_visp_core_BINARY_DIR}/version_string.inc")
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_create_compat_headers("include/visp3/core/vpConfig.h")

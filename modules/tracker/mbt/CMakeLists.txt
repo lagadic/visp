@@ -73,12 +73,10 @@ if(USE_COIN3D AND NOT HAVE_visp_ar)
     # We manage QT libraries
     if(DESIRED_QT_VERSION MATCHES 3)
       #Add Qt3 libraries
-      set(VISP_HAVE_QT3_FOUND "yes")       # for ViSP-third-party.txt
       #message("QT_QT_LIBRARY ${QT_QT_LIBRARY}")
       list(APPEND opt_libs ${QT_QT_LIBRARY})
     elseif(DESIRED_QT_VERSION MATCHES 4)
       #Add Qt4 libraries
-      set(VISP_HAVE_QT4_FOUND "yes")       # for ViSP-third-party.txt
       #message("QT_QTGUI_LIBRARY ${QT_QTGUI_LIBRARY}")
       #message("QT_QTGUI_LIBRARY_RELEASE ${QT_QTGUI_LIBRARY_RELEASE}")
       #message("QT_QTGUI_LIBRARY_DEBUG ${QT_QTGUI_LIBRARY_DEBUG}")

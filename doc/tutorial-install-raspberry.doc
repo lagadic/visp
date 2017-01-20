@@ -46,9 +46,14 @@ If you have a Raspberry Pi camera module see <a href="http://www.raspberrypi.org
 \code
 $ sudo raspi-config
 \endcode
-Enter in menu 5/ to enable the camera.
+Enter in menu "5/ Interfacing Options" to enable the camera.
 
-Then load the camera module:
+Do a rebooot 
+\code
+$ sudo reboot
+\endcode
+
+Connect again and load the camera module:
 \code
 $ sudo modprobe bcm2835-v4l2
 \endcode

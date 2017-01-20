@@ -44,6 +44,10 @@ ViSP 3.0.1 (in development)
       the screen resolution
     . Introduce new CMake ENABLE_FULL_DOC var: when turned ON allows to build
       doxygen documentation with all classes including internal ones
+    . Build information available in ViSP-third-party.txt is now more
+      complete, including OS, compiler, flags and 3rd party versions.
+      This information is also embedded in visp_core library and could
+      be obtained using vpIoTools::getBuildInformation()
   - Tutorials
     . New tutorial: How to use multi-threading capabilities
     . New tutorial: Crosscompilation for Raspberry Pi from Ubuntu host

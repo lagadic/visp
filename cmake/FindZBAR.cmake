@@ -34,6 +34,7 @@
 # ZBAR_FOUND
 # ZBAR_INCLUDE_DIRS
 # ZBAR_LIBRARIES
+# ZBAR_VERSION
 #
 # Authors:
 # Fabien Spindler
@@ -112,7 +113,17 @@ if(ZBAR_INCLUDE_DIRS AND ZBAR_LIBRARIES)
 else()
   set(ZBAR_FOUND FALSE)
 endif()
-  
+
+if(ZBAR_FOUND)
+  if(MSVC)
+    vp_parse_header("${ZBAR_INCLUDE_DIRS}/config.h" ZBAR_VERSION_LINES LIB_VERSION_MAJOR LIB_VERSION_MINOR LIB_VERSION_REVISION)
+    set(ZBAR_VERSION "${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_REVISION}")
+  else()
+    get_filename_component(ZBAR_LIB_DIR ${ZBAR_LIBRARIES} DIRECTORY)
+    vp_get_version_from_pkg("zbar" "${ZBAR_LIB_DIR}/pkgconfig" ZBAR_VERSION)
+  endif()
+endif()
+
 mark_as_advanced(
   ZBAR_INCLUDE_DIRS
   ZBAR_LIBRARIES

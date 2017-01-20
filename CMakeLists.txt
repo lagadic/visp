@@ -73,6 +73,11 @@ if(WINRT)
   endif()
 endif()
 
+# By default set release configuration
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE String "Choose the type of build, options are: None Debug Release" FORCE)
+endif()
+
 project(VISP C CXX)
 
 # Detect if the toolchain is for Aldebaran naoqi
@@ -402,7 +407,6 @@ endif()
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
   set(VISP_HAVE_DOXYGEN "yes")        # for header vpConfig.h
-  set(VISP_HAVE_DOXYGEN_FOUND "yes")  # for ViSP-third-party.txt
   ## we need latex for doxygen because of the formulas
   find_package(LATEX)
   if(NOT LATEX_COMPILER)
@@ -462,7 +466,6 @@ if(DOXYGEN_FOUND)
     @ONLY )
 else()
   set(VISP_HAVE_DOXYGEN "no")        # for header vpConfig.h
-  set(VISP_HAVE_DOXYGEN_FOUND "no")  # for ViSP-third-party.txt
 endif()
 
 # ----------------------------------------------------------------------------
@@ -599,7 +602,7 @@ include(cmake/VISPModule.cmake)
 add_subdirectory(modules)
 
 #-------------------------------------------------------------------------------
-# specific things that need to be updated in vpConfig.h and ViSP-third-party.txt
+# specific things that need to be updated in vpConfig.h
 #-------------------------------------------------------------------------------
 VP_SET(VISP_HAVE_OPENMP      TRUE IF USE_OPENMP)
 VP_SET(VISP_HAVE_OPENCV      TRUE IF (BUILD_MODULE_visp_core AND USE_OPENCV))
@@ -674,7 +677,6 @@ VP_SET(VISP_HAVE_XRANDR   TRUE IF XRANDR) # for header vpConfig.h
 if(USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_PTHREAD)
   if(LIBFREENECT_FOUND AND LIBUSB_1_FOUND AND PTHREAD_FOUND)
     set(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES TRUE)
-    set(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES_FOUND "yes")  # for ViSP-third-party.txt
 
     # The material is found. Check if libfreenect is an old version
     include(CheckCXXSourceCompiles)
@@ -723,23 +725,8 @@ if(USE_OPENCV)
 endif()
 
 # coin and gui
-set(VISP_HAVE_COIN3D_AND_GUI_FOUND "no")     # for ViSP-third-party.txt
-set(VISP_HAVE_QT3_FOUND "no")              # for ViSP-third-party.txt
-set(VISP_HAVE_QT4_FOUND "no")              # for ViSP-third-party.txt
-if(USE_SOWIN)
+if(USE_SOWIN OR USE_SOXT OR (USE_SOQT AND USE_QT))
   set(VISP_HAVE_COIN3D_AND_GUI TRUE)         # for header vpConfig.h
-  set(VISP_HAVE_COIN3D_AND_GUI_FOUND "yes")  # for ViSP-third-party.txt
-elseif(USE_SOXT)
-  set(VISP_HAVE_COIN3D_AND_GUI TRUE)         # for header vpConfig.h
-  set(VISP_HAVE_COIN3D_AND_GUI_FOUND "yes")  # for ViSP-third-party.txt
-elseif(USE_SOQT AND USE_QT)
-  set(VISP_HAVE_COIN3D_AND_GUI TRUE)         # for header vpConfig.h
-  set(VISP_HAVE_COIN3D_AND_GUI_FOUND "yes")  # for ViSP-third-party.txt
-  if(DESIRED_QT_VERSION MATCHES 3)
-    set(VISP_HAVE_QT3_FOUND "yes")         # for ViSP-third-party.txt
-  elseif(DESIRED_QT_VERSION MATCHES 4)
-    set(VISP_HAVE_QT4_FOUND "yes")         # for ViSP-third-party.txt
-  endif()
 endif()
 
 # PCL and 3rd party advanced vars
@@ -776,49 +763,13 @@ VP_SET(VISP_USE_MSVC TRUE IF MSVC) # for header vpConfig.h
 VP_SET(VISP_HAVE_CPP11_COMPATIBILITY TRUE IF USE_CPP11) # for header vpConfig.h
 VP_SET(VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION TRUE IF (USE_BICLOPS AND BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION)) # for header vpConfig.h
 
-if(USE_CPP11)
-  set(VISP_HAVE_CPP11_COMPATIBILITY_FOUND "yes")  # for ViSP-third-party.txt
-else()
-  set(VISP_HAVE_CPP11_COMPATIBILITY_FOUND "no")  # for ViSP-third-party.txt
-endif()
-
 # libraries for Pioneer mobile robots
 if(USE_ARIA AND UNIX)
   if(ARIA_FOUND AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
     set(VISP_HAVE_PIONEER TRUE) # for header vpConfig.h
-    set(VISP_HAVE_PIONEER_FOUND "yes")  # for ViSP-third-party.txt
   endif()
 elseif(USE_ARIA AND NOT UNIX)
   set(VISP_HAVE_PIONEER TRUE) # for header vpConfig.h
-  set(VISP_HAVE_PIONEER_FOUND "yes")  # for ViSP-third-party.txt
-else()
-  set(VISP_HAVE_PIONEER_FOUND "no")  # for ViSP-third-party.txt
-endif()
-
-if(USE_AFMA4)
-  set(VISP_HAVE_AFMA4_FOUND "yes")  # for ViSP-third-party.txt
-else()
-  set(VISP_HAVE_AFMA4_FOUND "no")  # for ViSP-third-party.txt
-endif()
-if(USE_AFMA6)
-  set(VISP_HAVE_AFMA6_FOUND "yes")  # for ViSP-third-party.txt
-else()
-  set(VISP_HAVE_AFMA6_FOUND "no")  # for ViSP-third-party.txt
-endif()
-if(USE_VIPER650)
-  set(VISP_HAVE_VIPER650_FOUND "yes")  # for ViSP-third-party.txt
-else()
-  set(VISP_HAVE_VIPER650_FOUND "no")  # for ViSP-third-party.txt
-endif()
-if(USE_VIPER850)
-  set(VISP_HAVE_VIPER850_FOUND "yes")  # for ViSP-third-party.txt
-else()
-  set(VISP_HAVE_VIPER850_FOUND "no")  # for ViSP-third-party.txt
-endif()
-if(BUILD_ATIDAQ)
-  set(VISP_HAVE_ATIDAQ_FOUND "yes")  # for ViSP-third-party.txt
-else()
-  set(VISP_HAVE_ATIDAQ_FOUND "no")  # for ViSP-third-party.txt
 endif()
 
 # ----------------------------------------------------------------------------
@@ -898,3 +849,269 @@ if(BUILD_TUTORIALS)
   add_subdirectory(tutorial)
   vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH tutorial)
 endif()
+
+# ----------------------------------------------------------------------------
+#  Update version of 3rd party for which info is missing
+# ----------------------------------------------------------------------------
+if(USE_JPEG)
+  if(NOT JPEG_LIB_VERSION)
+    vp_parse_header("${JPEG_INCLUDE_DIR}/jpeglib.h" JPEG_VERSION_LINES JPEG_LIB_VERSION)
+  endif()
+  if(NOT JPEG_LIB_VERSION)
+    get_filename_component(JPEG_LIB_DIR ${JPEG_LIBRARIES} DIRECTORY)
+    string(REPLACE "lib" "include" JPEG_INC_DIR ${JPEG_LIB_DIR})
+    vp_parse_header("${JPEG_INC_DIR}/jconfig.h" JPEG_VERSION_LINES JPEG_LIB_VERSION)
+  endif()
+endif()
+
+# ----------------------------------------------------------------------------
+#  Autodetect if we are in a GIT repository
+# ----------------------------------------------------------------------------
+find_host_package(Git QUIET)
+
+if(NOT DEFINED VISP_VCSVERSION AND GIT_FOUND)
+  execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty --match "[0-9].[0-9].[0-9]*"
+    WORKING_DIRECTORY "${VISP_SOURCE_DIR}"
+    OUTPUT_VARIABLE VISP_VCSVERSION
+    RESULT_VARIABLE GIT_RESULT
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  if(NOT GIT_RESULT EQUAL 0)
+    set(VISP_VCSVERSION "unknown")
+  endif()
+elseif(NOT DEFINED VISP_VCSVERSION)
+  # We don't have git:
+  set(VISP_VCSVERSION "unknown")
+endif()
+
+# ----------------------------------------------------------------------------
+# Summary:
+# ----------------------------------------------------------------------------
+status("")
+status("==========================================================")
+status("General configuration information for ViSP ${VISP_VERSION}")
+status("")
+if(VISP_VCSVERSION)
+  status("  Version control:" ${VISP_VCSVERSION})
+endif()
+
+if(VISP_CONTRIB_MODULES_PATH)
+  set(__dump_extra_header OFF)
+  foreach(p ${VISP_CONTRIB_MODULES_PATH})
+    if(EXISTS ${p})
+      if(NOT __dump_extra_header)
+        set(__dump_extra_header ON)
+        status("")
+        status("  Extra modules:")
+      else()
+        status("")
+      endif()
+      set(EXTRA_MODULES_VCSVERSION "unknown")
+      if(GIT_FOUND)
+        execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty --match "[0-9].[0-9].[0-9]*"
+          WORKING_DIRECTORY "${p}"
+          OUTPUT_VARIABLE EXTRA_MODULES_VCSVERSION
+          RESULT_VARIABLE GIT_RESULT
+          ERROR_QUIET
+          OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+        if(NOT GIT_RESULT EQUAL 0)
+          set(EXTRA_MODULES_VCSVERSION "unknown")
+        endif()
+      endif()
+      status("    Location (extra):" ${p})
+      status("    Version control (extra):" ${EXTRA_MODULES_VCSVERSION})
+    endif()
+  endforeach()
+  unset(__dump_extra_header)
+endif()
+
+# ========================== build platform ==========================
+status("")
+status("  Platform:")
+if(NOT CMAKE_VERSION VERSION_LESS 2.8.11)
+  string(TIMESTAMP TIMESTAMP "" UTC)
+  if(TIMESTAMP)
+    status("    Timestamp:"    ${TIMESTAMP})
+  endif()
+endif()
+status("    Host:"             ${CMAKE_HOST_SYSTEM_NAME} ${CMAKE_HOST_SYSTEM_VERSION} ${CMAKE_HOST_SYSTEM_PROCESSOR})
+if(CMAKE_CROSSCOMPILING)
+  status("    Target:"         ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_VERSION} ${CMAKE_SYSTEM_PROCESSOR})
+endif()
+status("    CMake:"            ${CMAKE_VERSION})
+status("    CMake generator:"  ${CMAKE_GENERATOR})
+status("    CMake build tool:" ${CMAKE_BUILD_TOOL})
+if(MSVC)
+  status("    MSVC:"           ${MSVC_VERSION})
+endif()
+if(CMAKE_GENERATOR MATCHES Xcode)
+  status("    Xcode:"          ${XCODE_VERSION})
+endif()
+if(NOT CMAKE_GENERATOR MATCHES "Xcode|Visual Studio")
+  status("    Configuration:"  ${CMAKE_BUILD_TYPE})
+endif()
+
+# ========================== C/C++ options ==========================
+if(CMAKE_CXX_COMPILER_VERSION)
+  set(VISP_COMPILER_STR "${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1} (ver ${CMAKE_CXX_COMPILER_VERSION})")
+elseif(CMAKE_COMPILER_IS_CLANGCXX)
+  set(VISP_COMPILER_STR "${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1} (ver ${CMAKE_CLANG_REGEX_VERSION})")
+elseif(CMAKE_COMPILER_IS_GNUCXX)
+  set(VISP_COMPILER_STR "${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1} (ver ${CMAKE_GCC_REGEX_VERSION})")
+else()
+  set(VISP_COMPILER_STR "${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1}")
+endif()
+string(STRIP "${VISP_COMPILER_STR}" VISP_COMPILER_STR)
+
+status("")
+status("  C/C++:")
+status("    Built as dynamic libs?:" BUILD_SHARED_LIBS THEN "yes" ELSE "no")
+status("    C++ Compiler:"           ${VISP_COMPILER_STR})
+status("    C++ flags (Release):"    ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE})
+status("    C++ flags (Debug):"      ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG})
+status("    C Compiler:"             ${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1})
+status("    C flags (Release):"      ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE})
+status("    C flags (Debug):"        ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG})
+if(WIN32)
+  status("    Linker flags (Release):" ${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE})
+  status("    Linker flags (Debug):"   ${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
+else()
+  status("    Linker flags (Release):" ${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS_RELEASE})
+  status("    Linker flags (Debug):"   ${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS_DEBUG})
+endif()
+
+# ========================== ViSP modules ==========================
+status("")
+status("  ViSP modules:")
+string(REPLACE "visp_" "" VISP_MODULES_BUILD_ST          "${VISP_MODULES_BUILD}")
+string(REPLACE "visp_" "" VISP_MODULES_DISABLED_USER_ST  "${VISP_MODULES_DISABLED_USER}")
+string(REPLACE "visp_" "" VISP_MODULES_DISABLED_FORCE_ST "${VISP_MODULES_DISABLED_FORCE}")
+set(VISP_MODULES_DISABLED_AUTO_ST "")
+foreach(m ${VISP_MODULES_DISABLED_AUTO})
+  set(__mdeps "")
+  foreach(d ${VISP_MODULE_${m}_DEPS})
+    if(d MATCHES "^visp_" AND NOT USE_${d})
+      list(APPEND __mdeps ${d})
+    endif()
+  endforeach()
+  if(__mdeps)
+    list(APPEND VISP_MODULES_DISABLED_AUTO_ST "${m}(deps: ${__mdeps})")
+  else()
+    list(APPEND VISP_MODULES_DISABLED_AUTO_ST "${m}")
+  endif()
+endforeach()
+string(REPLACE "visp_" "" VISP_MODULES_DISABLED_AUTO_ST  "${VISP_MODULES_DISABLED_AUTO_ST}")
+
+status("    To be built:"            VISP_MODULES_BUILD          THEN ${VISP_MODULES_BUILD_ST}          ELSE "-")
+status("    Disabled:"               VISP_MODULES_DISABLED_USER  THEN ${VISP_MODULES_DISABLED_USER_ST}  ELSE "-")
+status("    Disabled by dependency:" VISP_MODULES_DISABLED_AUTO  THEN ${VISP_MODULES_DISABLED_AUTO_ST}  ELSE "-")
+status("    Unavailable:"            VISP_MODULES_DISABLED_FORCE THEN ${VISP_MODULES_DISABLED_FORCE_ST} ELSE "-")
+
+# ================== Windows RT features ==================
+if(WIN32)
+  status("")
+  status("  Windows RT support:" WINRT THEN "yes" ELSE "no")
+  if(WINRT)
+    status("    Building for Microsoft platform: " ${CMAKE_SYSTEM_NAME})
+    status("    Building for architectures: " ${CMAKE_VS_EFFECTIVE_PLATFORMS})
+    status("    Building for version: " ${CMAKE_SYSTEM_VERSION})
+  endif()
+endif()
+
+# ===================== Optional 3rd parties =====================
+status("")
+status("  Mathematics: ")
+status("    Use GSL:"             USE_GSL          THEN "yes (ver ${GSL_VERSION})" ELSE "no")
+status("    Use Lapack/blas:"     USE_LAPACK       THEN "yes (ver ${LAPACK_C_VERSION})" ELSE "no")
+status("")
+status("  Simulator: ")
+status("    Ogre simulator: ")
+status("    \\- Use Ogre3D:"      USE_OGRE         THEN "yes" ELSE "no")
+status("    \\- Use OIS:"         USE_OIS          THEN "yes" ELSE "no")
+status("    Coin simulator: ")
+status("    \\- Use Coin3D:"      USE_OGRE         THEN "yes" ELSE "no")
+status("    \\- Use SoWin:"       USE_SOWIN        THEN "yes" ELSE "no")
+status("    \\- Use SoXt:"        USE_SOXT         THEN "yes" ELSE "no")
+status("    \\- Use SoQt:"        USE_SOQT         THEN "yes" ELSE "no")
+status("    \\- Use Qt4:"         USE_QT AND DESIRED_QT_VERSION MATCHES 4  THEN "yes" ELSE "no")
+status("    \\- Use Qt3:"         USE_QT AND DESIRED_QT_VERSION MATCHES 3  THEN "yes" ELSE "no")
+status("")
+status("  Media I/O: ")
+status("    Use JPEG:"            USE_JPEG         THEN "yes (ver ${JPEG_LIB_VERSION})" ELSE "no")
+status("    Use PNG:"             USE_PNG          THEN "yes (ver ${PNG_VERSION_STRING})" ELSE "no")
+status("    \\- Use ZLIB:"        USE_ZLIB         THEN "yes (ver ${ZLIB_VERSION_STRING})" ELSE "no")
+status("    Use FFMPEG:"          USE_FFMPEG       THEN "yes" ELSE "no")
+status("    Use OpenCV:"          USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
+status("")
+status("  Real robots: ")
+status("    Use Afma4:"           USE_AFMA4        THEN "yes" ELSE "no")
+status("    Use Afma6:"           USE_AFMA6        THEN "yes" ELSE "no")
+status("    Use Viper650:"        USE_VIPER850     THEN "yes" ELSE "no")
+status("    Use Viper850:"        USE_VIPER850     THEN "yes" ELSE "no")
+status("    Use aria (Pioneer):"  USE_ARIA         THEN "yes" ELSE "no")
+status("    Use PTU46:"           USE_PTU46        THEN "yes" ELSE "no")
+status("    Use Biclops PT:"      USE_BICLOPS      THEN "yes" ELSE "no")
+status("")
+status("  GUI: ")
+status("    Use X11:"             USE_X11          THEN "yes" ELSE "no")
+status("    Use GTK:"             USE_GTK2         THEN "yes (ver ${GTK2_VERSION})" ELSE "no")
+status("    Use OpenCV:"          USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
+status("    Use GDI:"             USE_GDI          THEN "yes" ELSE "no")
+status("    Use Direct3D:"        USE_DIRECT3D     THEN "yes" ELSE "no")
+status("")
+status("  Cameras: ")
+status("    Use DC1394-2.x:"      USE_DC1394       THEN "yes (ver ${DC1394_VERSION})" ELSE "no")
+status("    Use CMU 1394:"        USE_CMU1394      THEN "yes" ELSE "no")
+status("    Use V4L2:"            USE_V4L2         THEN "yes (ver ${V4L2_VERSION})" ELSE "no")
+status("    Use directshow:"      USE_DIRECTSHOW   THEN "yes" ELSE "no")
+status("    Use OpenCV:"          USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
+status("    Use Flycapture:"      USE_FLYCAPTURE   THEN "yes (ver ${FLYCAPTURE_VERSION})" ELSE "no")
+status("")
+status("  RGB-D sensors: ")
+status("    Use Realsense:"       USE_REALSENSE    THEN "yes (ver ${REALSENSE_VERSION})" ELSE "no")
+status("    \\- Use PCL:"         USE_PCL          THEN "yes (ver ${PCL_VERSION})" ELSE "no")
+status("       \\- Use VTK:"      VTK_FOUND        THEN "yes (ver ${VTK_VERSION})" ELSE "no")
+status("    Use Kinect:"          USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_PTHREAD THEN "yes" ELSE "no")
+status("    \\- Use libfreenect:" USE_LIBFREENECT  THEN "yes (ver ${LIBFREENECT_VERSION})" ELSE "no")
+status("    \\- Use libusb-1:"    USE_LIBUSB_1     THEN "yes (ver ${LIBUSB_1_VERSION})" ELSE "no")
+status("    \\- Use pthread:"     USE_PTHREAD      THEN "yes" ELSE "no")
+status("")
+status("  F/T sensors: ")
+status("    Use atidaq:"          BUILD_ATIDAQ     THEN "yes (build)" ELSE "no")
+status("    Use comedi:"          USE_COMEDI       THEN "yes (ver ${COMEDI_VERSION})" ELSE "no")
+status("")
+status("  Detection: ")
+status("    Use zbar:"            USE_ZBAR         THEN "yes (ver ${ZBAR_VERSION})" ELSE "no")
+status("    Use dmtx:"            USE_DMTX         THEN "yes (ver ${DMTX_VERSION})" ELSE "no")
+status("")
+status("  Misc: ")
+status("    Use XML2:"            USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
+status("")
+status("  Optimization: ")
+status("    Use OpenMP:"          USE_OPENMP       THEN "yes" ELSE "no")
+status("    Use pthread:"         USE_PTHREAD      THEN "yes" ELSE "no")
+status("    Use cxx11:"           USE_CPP11        THEN "yes" ELSE "no")
+
+# ========================== documentation ==========================
+status("")
+status("  Documentation: ")
+status("    Use doxygen:"         DOXYGEN_FOUND    THEN "yes" ELSE "no")
+
+# ========================== samples and tests ==========================
+status("")
+status("  Tests and samples:")
+status("    Tests:"               BUILD_TESTS      THEN "yes" ELSE "no")
+status("    Demos:"               BUILD_DEMOS      THEN "yes" ELSE "no")
+status("    Examples:"            BUILD_EXAMPLES   THEN "yes" ELSE "no")
+status("    Tutorials:"           BUILD_TUTORIALS  THEN "yes" ELSE "no")
+
+# ========================== auxiliary ==========================
+status("")
+status("  Install path:" "${CMAKE_INSTALL_PREFIX}")
+status("")
+
+status("==========================================================")
+
+vp_finalize_status()

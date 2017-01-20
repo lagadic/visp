@@ -21,7 +21,7 @@
 # 35042 Rennes Cedex
 # France
 #
-# If you have questions regarding the use of this file, please contact
+# if you have questions regarding the use of this file, please contact
 # Inria at visp@inria.fr
 #
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
@@ -35,12 +35,12 @@
 # PNG_FOUND
 # PNG_INCLUDE_DIR
 # PNG_LIBRARIES
+# PNG_VERSION_STRING
 #
 # Authors:
 # Nicolas Melchior
 #
 #############################################################################
-
 
 # detection of the Libpng headers location
 if(MINGW)
@@ -64,7 +64,7 @@ else()
       "C:/Program Files/libpng/include"
   )
 endif()
-#MESSAGE("PNG_INCLUDE_DIR=${PNG_INCLUDE_DIR}")
+#message("PNG_INCLUDE_DIR=${PNG_INCLUDE_DIR}")
 
 if(UNIX)
   # Detection of the Libpng library on Unix
@@ -90,9 +90,9 @@ elseif(MINGW)
       "C:/mingw/lib64"
       "$ENV{MINGW_DIR}/lib64"
     )
-  #MESSAGE("PNG_LIBRARY=${PNG_LIBRARY}")
+  #message("PNG_LIBRARY=${PNG_LIBRARY}")
 else()
-  FIND_LIBRARY(PNG_LIBRARY_RELEASE
+  find_library(PNG_LIBRARY_RELEASE
     NAMES
       png15 libpng15 png12 libpng12 png libpng
     PATHS
@@ -105,7 +105,7 @@ else()
       /lib
       "C:/Program Files/libpng/lib"
     )
-  FIND_LIBRARY(PNG_LIBRARY_DEBUG
+  find_library(PNG_LIBRARY_DEBUG
     NAMES
       png15d libpng15d png12d libpng12d pngd libpngd
     PATHS
@@ -118,70 +118,78 @@ else()
       /lib
       "C:/Program Files/libpng/lib"
     )
-  #MESSAGE("PNG_LIBRARY_RELEASE=${PNG_LIBRARY_RELEASE}")
-  #MESSAGE("PNG_LIBRARY_DEBUG=${PNG_LIBRARY_DEBUG}")
-ENDIF(UNIX)
+  #message("PNG_LIBRARY_RELEASE=${PNG_LIBRARY_RELEASE}")
+  #message("PNG_LIBRARY_DEBUG=${PNG_LIBRARY_DEBUG}")
+endif(UNIX)
 ## --------------------------------
 
-SET(PNG_FOUND FALSE)
+set(PNG_FOUND FALSE)
 
-FIND_PACKAGE(ZLIB)
+find_package(ZLIB)
 if(NOT ZLIB_FOUND)
-  FIND_PACKAGE(MyZLIB)    
+  find_package(MyZLIB)    
 endif()
 
-IF(UNIX)
-  IF(PNG_LIBRARY AND PNG_INCLUDE_DIR)
-    SET(PNG_INCLUDE_DIRS ${PNG_INCLUDE_DIR})
-    SET(PNG_LIBRARIES ${PNG_LIBRARY})
-    SET(PNG_FOUND TRUE)
-  ENDIF()
-ELSE(UNIX)
-  SET(PNG_LIBRARIES "")
-  IF(PNG_LIBRARY_RELEASE AND PNG_INCLUDE_DIR)
-    SET(PNG_INCLUDE_DIRS ${PNG_INCLUDE_DIR})
-    LIST(APPEND PNG_LIBRARIES optimized ${PNG_LIBRARY_RELEASE})
-    SET(PNG_FOUND TRUE)
-  ENDIF()
-  IF(PNG_LIBRARY_DEBUG AND PNG_INCLUDE_DIR)
-    SET(PNG_INCLUDE_DIRS ${PNG_INCLUDE_DIR})
-    LIST(APPEND PNG_LIBRARIES debug ${PNG_LIBRARY_DEBUG})
-    SET(PNG_FOUND TRUE)
-  ENDIF()
-ENDIF(UNIX)	  
+if(UNIX)
+  if(PNG_LIBRARY AND PNG_INCLUDE_DIR)
+    set(PNG_INCLUDE_DIRS ${PNG_INCLUDE_DIR})
+    set(PNG_LIBRARIES ${PNG_LIBRARY})
 
-IF(ZLIB_FOUND)
- IF(PNG_FOUND)
-  # The material is found. Check if it works on the requested architecture
-  include(CheckCXXSourceCompiles)
+    get_filename_component(PNG_LIB_DIR ${PNG_LIBRARY} DIRECTORY)
+    vp_get_version_from_pkg("libpng" "${PNG_LIB_DIR}/pkgconfig" PNG_VERSION_STRING)
+
+    set(PNG_FOUND TRUE)
 	
-  #MESSAGE(PNG_LIBRARIES: ${PNG_LIBRARIES})
-  #MESSAGE(ZLIB_LIBRARIES: ${ZLIB_LIBRARIES})
+  endif()
+else(UNIX)
+  set(PNG_LIBRARIES "")
+  if(PNG_LIBRARY_RELEASE AND PNG_INCLUDE_DIR)
+    set(PNG_INCLUDE_DIRS ${PNG_INCLUDE_DIR})
+    list(APPEND PNG_LIBRARIES optimized ${PNG_LIBRARY_RELEASE})
+    set(PNG_FOUND TRUE)
+  endif()
+  if(PNG_LIBRARY_DEBUG AND PNG_INCLUDE_DIR)
+    set(PNG_INCLUDE_DIRS ${PNG_INCLUDE_DIR})
+    list(APPEND PNG_LIBRARIES debug ${PNG_LIBRARY_DEBUG})
+    set(PNG_FOUND TRUE)
+  endif()
+endif(UNIX)	  
 
-  SET(CMAKE_REQUIRED_LIBRARIES ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
-  SET(CMAKE_REQUIRED_INCLUDES ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS}) 
-  CHECK_CXX_SOURCE_COMPILES("
-    #include <png.h> // Contrib for png image io
-    int main()
-    {
-      /* create a png read struct */
-      png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    }
-    " PNG_BUILD_TEST) 
-  #MESSAGE("PNG_BUILD_TEST: ${PNG_BUILD_TEST}")
-  IF(PNG_BUILD_TEST)
-    SET(PNG_FOUND TRUE)
-  ELSE()
-    SET(PNG_FOUND FALSE)
-    MESSAGE("libpng library found but not compatible with architecture.")
-  ENDIF()
- ELSEIF(PNG_FOUND)
-  MESSAGE("To use libpng library, you should also install zlib library")
- ENDIF()
-ENDIF()
+if(PNG_FOUND)
+  vp_parse_header2(PNG "${PNG_INCLUDE_DIR}/png.h" PNG_LIBPNG_VER_STRING)
+endif()
 
+if(ZLIB_FOUND)
+  if(PNG_FOUND)
+    # The material is found. Check if it works on the requested architecture
+    include(CheckCXXSourceCompiles)
+	
+    #message(PNG_LIBRARIES: ${PNG_LIBRARIES})
+    #message(ZLIB_LIBRARIES: ${ZLIB_LIBRARIES})
 
-MARK_AS_ADVANCED(
+    set(CMAKE_REQUIRED_LIBRARIES ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
+    set(CMAKE_REQUIRED_INCLUDES ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS}) 
+    CHECK_CXX_SOURCE_COMPILES("
+      #include <png.h> // Contrib for png image io
+      int main()
+      {
+        /* create a png read struct */
+        png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+      }
+      " PNG_BUILD_TEST) 
+    #message("PNG_BUILD_TEST: ${PNG_BUILD_TEST}")
+    if(PNG_BUILD_TEST)
+      set(PNG_FOUND TRUE)
+    else()
+      set(PNG_FOUND FALSE)
+      message("libpng library found but not compatible with architecture.")
+    endif()
+  elseif(PNG_FOUND)
+    message("To use libpng library, you should also install zlib library")
+  endif()
+endif()
+
+mark_as_advanced(
   PNG_LIBRARY
   PNG_LIBRARY_DEBUG
   PNG_LIBRARY_RELEASE

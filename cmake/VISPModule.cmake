@@ -547,6 +547,7 @@ macro(vp_module_include_directories)
   vp_target_include_directories(${the_module}
       "${VISP_MODULE_${the_module}_LOCATION}/include"
       "${VISP_MODULE_${the_module}_LOCATION}/src"
+      "${CMAKE_CURRENT_BINARY_DIR}" # for precompiled headers
       )
   vp_target_include_modules(${the_module} ${VISP_MODULE_${the_module}_DEPS} ${ARGN})
 endmacro()

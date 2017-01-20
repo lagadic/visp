@@ -35,6 +35,7 @@
 # GSL_FOUND        : system has GSL lib
 # GSL_LIBRARIES    : full path to the libraries
 # GSL_INCLUDE_DIRS : where to find headers
+# GSL_VERSION      : which version
 #
 # Authors:
 # Fabien Spindler
@@ -82,6 +83,8 @@ macro(CheckCompilation_gsl1 MY_INCLUDE_DIR MY_LIBRARY MY_BUILD_SUCCEED)
     #message("BUILD_SUCCEED: ${BUILD_SUCCEED}")
     set(${MY_BUILD_SUCCEED} ${BUILD_SUCCEED})
 endmacro()
+
+set(GSL_VERSION "na")
 
 set(GSL_LIB_SEARCH_PATH
   "$ENV{GSL_HOME}/lib"
@@ -146,6 +149,10 @@ else()
     #message("BUILD_STATUS 1: ${BUILD_SUCCEED1}")
     if(BUILD_SUCCEED1)
       set(GSL_FOUND TRUE)
+
+      get_filename_component(GSL_LIB_DIR ${GSL_gsl_LIBRARY} DIRECTORY)
+      vp_get_version_from_pkg("gsl" "${GSL_LIB_DIR}/pkgconfig" GSL_VERSION)
+
     else()
       # Try to add gslcblas library if requested
 
@@ -160,6 +167,10 @@ else()
         #message("BUILD_STATUS 2: ${BUILD_SUCCEED2}")
         if(BUILD_SUCCEED2)
           set(GSL_FOUND TRUE)
+
+          get_filename_component(GSL_LIB_DIR ${GSL_gsl_LIBRARY} DIRECTORY)
+          vp_get_version_from_pkg("gsl" "${GSL_LIB_DIR}/pkgconfig" GSL_VERSION)
+
         else()
           set(GSL_FOUND FALSE)
         endif()

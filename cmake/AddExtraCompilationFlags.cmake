@@ -38,11 +38,6 @@
 set(VISP_EXTRA_C_FLAGS "")
 set(VISP_EXTRA_CXX_FLAGS "")
 
-# By default set release configuration
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE String "Choose the type of build, options are: None Debug Release" FORCE)
-endif()
-
 macro(add_extra_compiler_option option)
   if(CMAKE_BUILD_TYPE)
     set(CMAKE_TRY_COMPILE_CONFIGURATION ${CMAKE_BUILD_TYPE})

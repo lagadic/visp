@@ -39,11 +39,6 @@ install(FILES "${VISP_INCLUDE_DIR}/visp3/core/vpConfig.h"
   COMPONENT dev
 )
 
-#----------------------------------------------------------------------
-# information file that resumes which are the used 3rd parties
-#----------------------------------------------------------------------
-configure_file(${VISP_SOURCE_DIR}/cmake/templates/ViSP-third-party.txt.in "${VISP_BINARY_DIR}/ViSP-third-party.txt")
-
 # ----------------------------------------------------------------------------
 # visp_modules.h that contains all the build modules defines
 # ----------------------------------------------------------------------------

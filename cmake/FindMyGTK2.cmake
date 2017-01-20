@@ -35,6 +35,7 @@
 # GTK2_LIBRARIES     - Files to link against to use GTK
 # GTK2_FOUND         - If false, don't try to use GTK
 # GTK2_GL_FOUND      - If false, don't try to use GTK's GL features
+# GTK2_VERSION
 #
 # Authors:
 # Fabien Spindler
@@ -232,10 +233,13 @@ IF(UNIX OR WIN32)
       LIST(APPEND GTK2_INCLUDE_DIRS  ${GTK2_gdkconfig_INCLUDE_PATH} )
     ENDIF(GTK2_gdkconfig_INCLUDE_PATH)
    
-    SET( GTK2_LIBRARIES  ${GTK2_gtk_LIBRARY}
+    SET( GTK2_LIBRARIES ${GTK2_gtk_LIBRARY}
                         ${GTK2_gdk_LIBRARY}
                         ${GTK2_glib_LIBRARY} 
 			${GTK2_gobject_LIBRARY})
+
+    get_filename_component(GTK2_LIB_DIR ${GTK2_gtk_LIBRARY} DIRECTORY)
+    vp_get_version_from_pkg("gtk+-2.0" "${GTK2_LIB_DIR}/pkgconfig" GTK2_VERSION)
 
     IF(GTK2_gmodule_LIBRARY)
       LIST(APPEND GTK2_LIBRARIES ${GTK2_gmodule_LIBRARY})
