@@ -34,8 +34,6 @@
  * Romain Tallonneau
  *
  *****************************************************************************/
-
-
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPolygon.h>
 #include <visp3/io/vpParseArgv.h>
@@ -54,10 +52,10 @@
 #include <vector>
 
 //! List of allowed command line options
-#define GETOPTARGS	"cdh"
+#define GETOPTARGS "cdm:h"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool& opt_display, bool& opt_click);
+bool getOptions(int argc, const char **argv, bool& opt_display, bool& opt_click, int &method);
 
 /*!
 
@@ -84,6 +82,9 @@ OPTIONS: \n\
   -d \n\
      Turn off display.\n\
 \n\
+  -m \n\
+     Point in polygon test method.\n\
+\n\
   -h\n\
      Print the help.\n\n");
 
@@ -102,7 +103,7 @@ OPTIONS: \n\
   \param opt_click : activates the mouse click.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, bool& opt_display, bool& opt_click)
+bool getOptions(int argc, const char **argv, bool& opt_display, bool& opt_click, int &method)
 {
   const char *optarg_;
   int	c;
@@ -111,6 +112,7 @@ bool getOptions(int argc, const char **argv, bool& opt_display, bool& opt_click)
     switch (c) {
     case 'c': opt_click = false; break;
     case 'd': opt_display = false; break;
+    case 'm': method = atoi(optarg_); break;
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
@@ -129,8 +131,6 @@ bool getOptions(int argc, const char **argv, bool& opt_display, bool& opt_click)
   return true;
 }
 
-
-
 /* -------------------------------------------------------------------------- */
 /*                               MAIN FUNCTION                                */
 /* -------------------------------------------------------------------------- */
@@ -141,10 +141,11 @@ main(int argc, const char** argv)
   try {
     bool opt_display = true;
     bool opt_click = true;
+    int method = vpPolygon::PnPolySegmentIntersection;
     vpImage<unsigned char> I(480, 640, 255);
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_display, opt_click) == false) {
+    if (getOptions(argc, argv, opt_display, opt_click, method) == false) {
       return (-1);
     }
 
@@ -191,7 +192,7 @@ main(int argc, const char** argv)
     std::cout << " center : " << p3.getCenter() << std::endl;
 
 
-    if(opt_display){
+    if(opt_display) {
 #if (defined VISP_HAVE_X11) || (defined VISP_HAVE_GTK) || (defined VISP_HAVE_GDI)
       display.init(I, 10, 10, "Test vpPolygon");
 #endif
@@ -228,7 +229,7 @@ main(int argc, const char** argv)
         vpRect bbox = p4.getBoundingBox();
         for(unsigned int i= (unsigned int)floor(bbox.getTop()); i<(unsigned int)ceil(bbox.getBottom()); ++i){
           for(unsigned int j=(unsigned int)floor(bbox.getLeft()); j<(unsigned int)ceil(bbox.getRight()); ++j){
-            if(p4.isInside(vpImagePoint(i, j))){
+            if(p4.isInside(vpImagePoint(i, j), (vpPolygon::PointInPolygonMethod) method)){
               vpDisplay::displayPoint(I, vpImagePoint(i, j), vpColor::orange);
             }
           }
@@ -239,7 +240,7 @@ main(int argc, const char** argv)
         vpDisplay::getClick(I);
         for(unsigned int i= 0; i<I.getHeight(); ++i){
           for(unsigned int j=0; j<I.getWidth(); ++j){
-            if(vpPolygon::isInside(p4.getCorners(), i, j)){
+            if(vpPolygon::isInside(p4.getCorners(), i, j, (vpPolygon::PointInPolygonMethod) method)){
               vpDisplay::displayPoint(I, vpImagePoint(i, j), vpColor::green);
             }
           }
@@ -249,8 +250,58 @@ main(int argc, const char** argv)
         std::cout << "Click to finish." << std::endl;
 
         vpDisplay::getClick(I);
+        vpDisplay::close(I);
 
+        //Benchmark Point In Polygon test method
+        std::vector<vpImagePoint> corners = p4.getCorners();
+        std::cout << "Nb polygon corners=" << corners.size() << std::endl;
 
+        vpPolygon polygon_benchmark(corners);
+        vpImage<unsigned char> I_segmentIntersection(480, 640, 0);
+        vpImage<unsigned char> I_rayCasting(480, 640, 0);
+
+        double t_benchmark = vpTime::measureTimeMs();
+        for (unsigned int i = 0; i < I_segmentIntersection.getHeight(); i++) {
+          for (unsigned int j = 0; j < I_segmentIntersection.getWidth(); j++) {
+            if (polygon_benchmark.isInside(vpImagePoint(i, j), vpPolygon::PnPolySegmentIntersection)) {
+              I_segmentIntersection[i][j] = 255;
+            }
+          }
+        }
+        t_benchmark = vpTime::measureTimeMs() - t_benchmark;
+        std::cout << "PnPolySegmentIntersection: " << t_benchmark << " ms" << std::endl;
+
+        t_benchmark = vpTime::measureTimeMs();
+        for (unsigned int i = 0; i < I_rayCasting.getHeight(); i++) {
+          for (unsigned int j = 0; j < I_rayCasting.getWidth(); j++) {
+            if (polygon_benchmark.isInside(vpImagePoint(i, j), vpPolygon::PnPolyRayCasting)) {
+              I_rayCasting[i][j] = 255;
+            }
+          }
+        }
+        t_benchmark = vpTime::measureTimeMs() - t_benchmark;
+        std::cout << "PnPolyRayCasting: " << t_benchmark << " ms" << std::endl;
+
+#if defined VISP_HAVE_X11
+        vpDisplayX display1, display2;
+#elif defined VISP_HAVE_GTK
+        vpDisplayGTK display1, display2;
+#elif defined VISP_HAVE_GDI
+        vpDisplayGDI display1, display2;
+#endif
+
+#if (defined VISP_HAVE_X11) || (defined VISP_HAVE_GTK) || (defined VISP_HAVE_GDI)
+        display1.init(I_segmentIntersection, 10, 10, "Segment Intersection test");
+        display2.init(I_rayCasting, I_segmentIntersection.getWidth() + 10, 10, "Ray Casting test");
+#endif
+
+        vpDisplay::display(I_segmentIntersection);
+        vpDisplay::display(I_rayCasting);
+        vpDisplay::displayText(I_rayCasting, 20, 20, "Click to quit.", vpColor::red);
+        vpDisplay::flush(I_segmentIntersection);
+        vpDisplay::flush(I_rayCasting);
+
+        vpDisplay::getClick(I_rayCasting);
       }
     }
 
