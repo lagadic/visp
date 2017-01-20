@@ -111,6 +111,11 @@ class VISP_EXPORT vpPolygon
     vpRect _bbox;
     
   public:
+    enum PointInPolygonMethod {
+      PnPolySegmentIntersection,  /*!< Legacy Point In Polygon test. */
+      PnPolyRayCasting            /*!< Point In Polygon test using ray casting method (faster). */
+    };
+
     vpPolygon();
     vpPolygon(const std::vector<vpImagePoint>& corners);
     vpPolygon(const std::list<vpImagePoint>& corners);
@@ -126,7 +131,7 @@ class VISP_EXPORT vpPolygon
     unsigned int getSize() const;
     void initClick(const vpImage<unsigned char>& I);
     
-    bool isInside(const vpImagePoint &iP);
+    bool isInside(const vpImagePoint &iP, const PointInPolygonMethod &method=PnPolyRayCasting) const;
 
     void display(const vpImage<unsigned char>& I, const vpColor& color, unsigned int thickness=1) const;
     
@@ -178,14 +183,18 @@ class VISP_EXPORT vpPolygon
     void updateBoundingBox();
     
   private:
-    bool testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint& ip2, const vpImagePoint& ip3, const vpImagePoint& ip4); 
+    bool testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint& ip2, const vpImagePoint& ip3, const vpImagePoint& ip4) const;
+    void precalcValuesPnPoly();
+
+    std::vector<double> m_PnPolyConstants;
+    std::vector<double> m_PnPolyMultiples;
 
   //###################
   // Static Functions
   //###################
 
   public:
-    static bool isInside(const std::vector<vpImagePoint>& roi, const double &i, const double  &j);
+    static bool isInside(const std::vector<vpImagePoint>& roi, const double &i, const double  &j, const PointInPolygonMethod &method=PnPolyRayCasting);
   private:
     static bool intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double  &i, const double  &j, const double  &i_test, const double  &j_test);
 };

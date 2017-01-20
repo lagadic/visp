@@ -53,7 +53,7 @@
   \f$ (0,0) \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
 */
 vpPolygon::vpPolygon()
-  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox()
+  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(), m_PnPolyConstants(), m_PnPolyMultiples()
 {
   std::vector<vpImagePoint> corners;
   corners.push_back(vpImagePoint(0,0));
@@ -70,7 +70,7 @@ vpPolygon::vpPolygon()
   \param corners : The Points defining the corners.
 */
 vpPolygon::vpPolygon(const std::vector<vpImagePoint>& corners)
-  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox()
+  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(), m_PnPolyConstants(), m_PnPolyMultiples()
 {
   if(corners.size() < 3){
     _goodPoly = false;
@@ -86,7 +86,7 @@ vpPolygon::vpPolygon(const std::vector<vpImagePoint>& corners)
   \param corners : The Points defining the corners.
 */
 vpPolygon::vpPolygon(const std::list<vpImagePoint>& corners)
-  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox()
+  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(), m_PnPolyConstants(), m_PnPolyMultiples()
 {
   if(corners.size() < 3){
     _goodPoly = false;
@@ -107,6 +107,8 @@ vpPolygon::vpPolygon(const vpPolygon &poly)
   _area = poly._area;
   _goodPoly = poly._goodPoly;
   _bbox = poly._bbox;
+  m_PnPolyConstants = poly.m_PnPolyConstants;
+  m_PnPolyMultiples = poly.m_PnPolyMultiples;
 }
 
 /*!
@@ -128,8 +130,10 @@ vpPolygon::operator=(const vpPolygon& poly)
   _center = poly._center;
   _area = poly._area;
   _goodPoly = poly._goodPoly;
+  m_PnPolyConstants = poly.m_PnPolyConstants;
+  m_PnPolyMultiples = poly.m_PnPolyMultiples;
   return *this;
-};
+}
 
 /*!
   Initialises the triangle thanks to the collection of 2D points (in pixel).
@@ -221,6 +225,8 @@ vpPolygon::init(const std::vector<vpImagePoint>& corners)
   updateBoundingBox();
   updateArea();
   updateCenter();
+
+  precalcValuesPnPoly();
 }
 
 
@@ -240,6 +246,8 @@ vpPolygon::init(const std::list<vpImagePoint>& corners)
   updateBoundingBox();
   updateArea();
   updateCenter();
+
+  precalcValuesPnPoly();
 }
 
 
@@ -255,7 +263,7 @@ vpPolygon::init(const std::list<vpImagePoint>& corners)
   \param ip4 : The second image point of the second segment.
 */
 bool 
-vpPolygon::testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint& ip2, const vpImagePoint& ip3, const vpImagePoint& ip4)
+vpPolygon::testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint& ip2, const vpImagePoint& ip3, const vpImagePoint& ip4) const
 {
   double di1 = ip2.get_i() - ip1.get_i();
   double dj1 = ip2.get_j() - ip1.get_j();
@@ -286,43 +294,87 @@ vpPolygon::testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint&
   Check if the 2D point \f$ ip \f$ is inside the polygon.
   
   \param ip : The point which have to be tested.
+  \param method : Method to use for Point In Polygon test.
   
   \return Returns true if the point is inside the triangle, false otherwise.
 */
 bool 
-vpPolygon::isInside(const vpImagePoint& ip)
+vpPolygon::isInside(const vpImagePoint& ip, const PointInPolygonMethod &method) const
 {
-  vpImagePoint infPoint(100000, 100000); // take a point at 'inifinity'
-  vpUniRand generator;
-  infPoint.set_i( infPoint.get_i() + 1000 * generator());
-  infPoint.set_j( infPoint.get_j() + 1000 * generator());// we add random since it appears that sometimes infPoint may cause a degenerated case (so realucnch and hope that result will be different).
+  bool test = false;
+  switch (method) {
+    case PnPolySegmentIntersection:
+      {
+        vpImagePoint infPoint(100000, 100000); // take a point at 'inifinity'
+        vpUniRand generator;
+        infPoint.set_i( infPoint.get_i() + 1000 * generator());
+        infPoint.set_j( infPoint.get_j() + 1000 * generator());// we add random since it appears that sometimes infPoint may cause a degenerated case (so realucnch and hope that result will be different).
 
-  bool oddNbIntersections = false;
-  for(unsigned int i=0; i<_corners.size(); ++i){
-    vpImagePoint ip1 = _corners[i];
-    vpImagePoint ip2 = _corners[(i+1)%_corners.size()];
-    bool intersection = false;    
+        bool oddNbIntersections = false;
+        for(unsigned int i=0; i<_corners.size(); ++i){
+          vpImagePoint ip1 = _corners[i];
+          vpImagePoint ip2 = _corners[(i+1)%_corners.size()];
+          bool intersection = false;
 
-    // If the points are the same we continue without trying to found
-    // an intersection
-    if (ip1 == ip2)
-      continue;
+          // If the points are the same we continue without trying to found
+          // an intersection
+          if (ip1 == ip2)
+            continue;
 
-    try{
-      intersection = testIntersectionSegments(ip1, ip2, ip, infPoint );
-    } catch(...){
-      return isInside(ip);
-    }
+          try{
+            intersection = testIntersectionSegments(ip1, ip2, ip, infPoint );
+          } catch(...){
+            return isInside(ip);
+          }
 
-    if(intersection){
-      oddNbIntersections = !oddNbIntersections;
-    }
+          if(intersection){
+            oddNbIntersections = !oddNbIntersections;
+          }
+        }
+
+        test = oddNbIntersections;
+      }
+      break;
+
+    //Reference: http://alienryderflex.com/polygon/
+    case PnPolyRayCasting:
+    default:
+      {
+        bool oddNodes = false;
+        for (size_t i = 0, j = _corners.size()-1; i < _corners.size(); i++) {
+          if ((_corners[i].get_v() < ip.get_v() && _corners[j].get_v() >= ip.get_v() || _corners[j].get_v() < ip.get_v() && _corners[i].get_v() >= ip.get_v())) {
+            oddNodes ^= (ip.get_v()*m_PnPolyMultiples[i] + m_PnPolyConstants[i] < ip.get_u());
+          }
+
+          j=i;
+        }
+
+        test = oddNodes;
+      }
+      break;
   }
 
-  return oddNbIntersections;
+  return test;
 }
 
+void
+vpPolygon::precalcValuesPnPoly() {
+  m_PnPolyConstants.resize(_corners.size());
+  m_PnPolyMultiples.resize(_corners.size());
 
+  for (size_t i = 0, j = _corners.size()-1; i < _corners.size(); i++) {
+    if(_corners[j].get_v() == _corners[i].get_v()) {
+      m_PnPolyConstants[i] = _corners[i].get_u();
+      m_PnPolyMultiples[i] = 0.0;
+    } else {
+      m_PnPolyConstants[i] = _corners[i].get_u() - (_corners[i].get_v()*_corners[j].get_u()) / (_corners[j].get_v()-_corners[i].get_v()) + (_corners[i].get_v()*_corners[i].get_u())
+                              / (_corners[j].get_v()-_corners[i].get_v());
+      m_PnPolyMultiples[i] = (_corners[j].get_u()-_corners[i].get_u()) / (_corners[j].get_v()-_corners[i].get_v());
+    }
+
+    j = i;
+  }
+}
 
 /*!
   Update the \c _area attribute of the polygon using the corners.
@@ -486,14 +538,15 @@ vpPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, const doubl
   \param roi : List of the polygon corners.
   \param i : i-coordinate of the image point to test.
   \param j : j-coordinate of the image point to test.
+  \param method : Method to use for Point In Polygon test.
 
   \return True if the point defined by (i,j) is inside the polygon, False otherwise.
 */
 bool
-vpPolygon::isInside(const std::vector<vpImagePoint>& roi, const double &i, const double &j)
+vpPolygon::isInside(const std::vector<vpImagePoint>& roi, const double &i, const double &j, const PointInPolygonMethod &method)
 {
   vpPolygon poly(roi);
-  return poly.isInside(vpImagePoint(i, j));
+  return poly.isInside(vpImagePoint(i, j), method);
 }
 
 /*!
