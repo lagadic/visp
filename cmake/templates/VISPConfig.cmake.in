@@ -235,6 +235,22 @@ set(VISP_HAVE_PCL            "@VISP_HAVE_PCL@")
 set(VISP_HAVE_OPENMP         "@VISP_HAVE_OPENMP@")
 set(VISP_HAVE_CPP11_COMPATIBILITY "@VISP_HAVE_CPP11_COMPATIBILITY@")
 
+set(VISP_COMPILER_FAIL_REGEX
+    "command line option .* is valid for .* but not for C\\+\\+" # GNU
+    "command line option .* is valid for .* but not for C" # GNU
+    "unrecognized .*option"                     # GNU
+    "unknown .*option"                          # Clang
+    "ignoring unknown option"                   # MSVC
+    "warning D9002"                             # MSVC, any lang
+    "option .*not supported"                    # Intel
+    "[Uu]nknown option"                         # HP
+    "[Ww]arning: [Oo]ption"                     # SunPro
+    "command option .* is not recognized"       # XL
+    "not supported in this configuration; ignored"       # AIX
+    "File with unknown suffix passed to linker" # PGI
+    "WARNING: unknown flag:"                    # Open64
+  )
+
 #----------------------------------------------------------------------
 # Propagate cxx11 compiler option if enabled during ViSP build
 #----------------------------------------------------------------------
@@ -338,11 +354,11 @@ endmacro()
 
 # add specific compile flag useful to turn warning coming from 3rdparty
 macro(visp_set_source_file_compile_flag file)
-  if(DEFINED ACTIVATE_WARNING_3PARTY_MUTE)
-    if(ACTIVATE_WARNING_3PARTY_MUTE)
+#  if(DEFINED ACTIVATE_WARNING_3PARTY_MUTE)
+#    if(ACTIVATE_WARNING_3PARTY_MUTE)
       set(__cxxflags "")
       foreach(cxxflag ${ARGN})
-        vp_check_flag_support(CXX ${cxxflag} __support_flag)
+        visp_check_flag_support(CXX ${cxxflag} __support_flag)
         if(${__support_flag})
           set(__cxxflags "${__cxxflags} ${cxxflag}")
         endif()
@@ -350,6 +366,86 @@ macro(visp_set_source_file_compile_flag file)
       if(NOT ${__cxxflags} STREQUAL "")
         set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/${file} PROPERTIES COMPILE_FLAGS ${__cxxflags})
       endif()
+#    endif()
+#  endif()
+endmacro()
+
+# check if a compiler flag is supported
+macro(visp_check_flag_support lang flag varname)
+  if("_${lang}_" MATCHES "_CXX_")
+    set(_lang CXX)
+  elseif("_${lang}_" MATCHES "_C_")
+    set(_lang C)
+  else()
+    set(_lang ${lang})
+  endif()
+
+  string(TOUPPER "${flag}" ${varname})
+  string(REGEX REPLACE "^(/|-)" "HAVE_${_lang}_" ${varname} "${${varname}}")
+  string(REGEX REPLACE " -|-|=| |\\." "_" ${varname} "${${varname}}")
+
+  visp_check_compiler_flag("${_lang}" "${ARGN} ${flag}" ${${varname}})
+endmacro()
+
+# test if a compiler flag is supported
+macro(visp_check_compiler_flag LANG FLAG RESULT)
+  if(NOT DEFINED ${RESULT})
+
+    if("_${LANG}_" MATCHES "_CXX_")
+      set(_fname "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.cxx")
+      #if("${CMAKE_CXX_FLAGS} ${FLAG} " MATCHES "-Werror " OR "${CMAKE_CXX_FLAGS} ${FLAG} " MATCHES "-Werror=unknown-pragmas ")
+        file(WRITE "${_fname}" "int main() { return 0; }\n")
+      #else()
+      #  file(WRITE "${_fname}" "#pragma\nint main() { return 0; }\n")
+      #endif()
+    elseif("_${LANG}_" MATCHES "_C_")
+      set(_fname "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.c")
+      #if("${CMAKE_C_FLAGS} ${FLAG} " MATCHES "-Werror " OR "${CMAKE_C_FLAGS} ${FLAG} " MATCHES "-Werror=unknown-pragmas ")
+        file(WRITE "${_fname}" "int main(void) { return 0; }\n")
+      #else()
+      #  file(WRITE "${_fname}" "#pragma\nint main(void) { return 0; }\n")
+      #endif()
+    elseif("_${LANG}_" MATCHES "_OBJCXX_")
+      set(_fname "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/src.mm")
+      #if("${CMAKE_CXX_FLAGS} ${FLAG} " MATCHES "-Werror " OR "${CMAKE_CXX_FLAGS} ${FLAG} " MATCHES "-Werror=unknown-pragmas ")
+        file(WRITE "${_fname}" "int main() { return 0; }\n")
+      #else()
+      #  file(WRITE "${_fname}" "#pragma\nint main() { return 0; }\n")
+      #endif()
+    else()
+      unset(_fname)
+    endif()
+    if(_fname)
+      message(STATUS "Performing Test ${RESULT}")
+      try_compile(${RESULT}
+        "${CMAKE_BINARY_DIR}"
+        "${_fname}"
+        COMPILE_DEFINITIONS "${FLAG}"
+        OUTPUT_VARIABLE OUTPUT)
+
+      foreach(_regex ${VISP_COMPILER_FAIL_REGEX})
+        if("${OUTPUT}" MATCHES "${_regex}")
+          set(${RESULT} 0)
+          break()
+        endif()
+      endforeach()
+
+      if(${RESULT})
+        set(${RESULT} 1 CACHE INTERNAL "Test ${RESULT}")
+        message(STATUS "Performing Test ${RESULT} - Success")
+      else()
+        message(STATUS "Performing Test ${RESULT} - Failed")
+        set(${RESULT} "" CACHE INTERNAL "Test ${RESULT}")
+        file(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeError.log
+            "Compilation failed:\n"
+            "    source file: '${_fname}'\n"
+            "    check option: '${FLAG}'\n"
+            "===== BUILD LOG =====\n"
+            "${OUTPUT}\n"
+            "===== END =====\n\n")
+      endif()
+    else()
+      set(${RESULT} 0)
     endif()
   endif()
 endmacro()
