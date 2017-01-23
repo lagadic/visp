@@ -33,7 +33,7 @@
  *****************************************************************************/
 
 /*!
-  \example testRealSense2.cpp
+  \example testRealSense.cpp
   Test SR300 Intel RealSense acquisition.
 */
 
