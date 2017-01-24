@@ -25,7 +25,7 @@ You are advised to read the following tutorials \ref tutorial-tracking-mb and \r
 
 A quick overview of the principle is summed-up in the following diagrams.
 
-\image html img-learning-step.png Learning step.
+\image html img-learning-step.jpeg Learning step.
 
 The first part of the process consists in learning the characteristics of the considered object by extracting the keypoints detected on the different faces.
 We use here the model-based tracker initialized given a known initial pose to have access to the cad model of the object. The cad model is then used to select only keypoints on faces that are visible and to calculate the 3D coordinates of keypoints.
@@ -34,7 +34,7 @@ We use here the model-based tracker initialized given a known initial pose to ha
 
 In this example the learned data (the list of 3D coordinates and the corresponding descriptors) are saved in a file and will be used later in the detection part.
 
-\image html img-detection-step.png Detection step.
+\image html img-detection-step.jpeg Detection step.
 
 In a query image where we want to detect the object, we find the matches between the keypoints detected in the current image with those previously learned.
 The estimation of the pose of the object can then be computed with the 3D/2D information.

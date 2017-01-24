@@ -58,7 +58,7 @@ The model-based trackers available for multiple views tracking rely on the same 
 
 The following class diagram offers an overview of the hierarchy between the different classes:
 
-\image html img-mbt-multi-class-diagram-resize.png Simplified class diagram.
+\image html img-mbt-multi-class-diagram-resize.jpeg Simplified class diagram.
 
 The vpMbEdgeMultiTracker class inherits from the vpMbEdgeTracker class, the vpMbKltMultiTracker inherits from the vpMbKltTracker class and the vpMbEdgeKltMultiTracker class inherits from the 
 vpMbEdgeMultiTracker and vpMbKltMultiTracker classes.

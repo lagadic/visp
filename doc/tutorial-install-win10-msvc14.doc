@@ -98,7 +98,7 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 
 - Enter menu "BUILD/Build Solution" to build ViSP.
 
-\image html img-win10-msvc-build.png 
+\image html img-win10-msvc-build.jpeg
 
 - At the end of the build process you should have the following indicating that all the build succeeded.
 
@@ -106,7 +106,7 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 
 - Now to install ViSP, build "INSTALL" project. To this end, apply a left click on "INSTALL" to select the project, then a right click to enter in the "Build" menu.
 
-\image html img-win10-msvc-install.png
+\image html img-win10-msvc-install.jpeg
 
 - At the end of the installation, you should have the following.
 
@@ -118,7 +118,7 @@ The goal of the configuration step is now to use CMake to produce a Visual Studi
 
 - We recommend now to do the same with \c Release settings. As shown in the next image, select the \c Release configuration. 
 
-\image html img-win10-msvc-release.png
+\image html img-win10-msvc-release.jpeg
 
 - Now, as previously, build and install ViSP again.
 

@@ -47,7 +47,7 @@ The following function implemented in ViewController.mm show how to convert a co
 
 Let us consider the Xcode project named \c StartedImageProc that is part of ViSP source code. This project is a Xcode \c "Single view application" where we renamed \c ViewController.m into \c ViewController.mm, introduced minor modifications in ViewController.h and add <a href="https://github.com/lagadic/visp/blob/master/tutorial/ios/StartedImageProc/StartedImageProc/monkey.png">monkey.png</a> image. 
 
-\image html img-started-imgproc-ios.png
+\image html img-started-imgproc-ios.jpeg
 
 To download the complete \c StartedImageProc project, run the following command:
 
@@ -56,7 +56,7 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedImage
 \endcode
 
 Once downloaded, you have just to drag & drop ViSP and OpenCV frameworks available following \ref tutorial-install-ios-package.
-\image html img-started-imgproc-ios-drag-drop.png
+\image html img-started-imgproc-ios-drag-drop.jpeg
 
 In the dialog box, enable check box \c "Copy item if needed" to add \c visp3.framework and \c opencv.framework to the project.
 \image html img-started-imgproc-ios-drag-drop-dialog.png
@@ -68,12 +68,12 @@ Now you should be able to build and run your application.
 Once build, if you run \c StartedImageProc application on your device, you should be able to see the followings screen shots.
 
 - Selecting \c "load image" gives the following result:
-\image html img-started-imgproc-ios-output-color.png 
+\image html img-started-imgproc-ios-output-color.jpeg 
 - Selecting \c "convert to gray" gives the following result:
-\image html img-started-imgproc-ios-output-gray.png
+\image html img-started-imgproc-ios-output-gray.jpeg
 - Selecting \c "compute gradient" gives the following result:
-\image html img-started-imgproc-ios-output-gradient.png
+\image html img-started-imgproc-ios-output-gradient.jpeg
 - Selecting \c "canny detector" gives the following result:
-\image html img-started-imgproc-ios-output-canny.png
+\image html img-started-imgproc-ios-output-canny.jpeg
 
 */

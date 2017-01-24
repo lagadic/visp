@@ -145,14 +145,13 @@ Now we need to link \c visp3.framework with the Xcode project.
 In this sample, we first import the headers to use vpHomography class. Then we create a new function called \c processViSPHomography(). This function is finally called in viewDibLoad().
 - After the previous copy/paste, you should have something similar to
 
-\image html img-getting-started-iOS-code.png
+\image html img-getting-started-iOS-code.jpeg
 
 - Now we are ready to build this simple <tt>"Getting Started"</tt> application using Xcode <tt>"Product>Build"</tt> menu.
 
 - You can now run your code using <tt>"Product>Run"</tt> menu (Simulator or device does not bother because we are just executing code). You should obtain these logs showing that visp code was correctly executed by your iOS project.
 
-\image html img-getting-started-iOS-log.png
-
+\image html img-getting-started-iOS-log.jpeg
 \section getting-started-iOS-next Next tutorial
 
 You are now ready to see the \ref tutorial-image-ios.
