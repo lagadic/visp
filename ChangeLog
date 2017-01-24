@@ -36,7 +36,7 @@ ViSP 3.0.1 (in development)
     . In vpServo introduce setCameraDoF() that allows to turn off the usage
       of some dof
     . Model-based tracker:
-      + Introduce stereo as well as more generic multi camera tracking capabilties
+      + Introduce stereo as well as more generic multi camera tracking capabilities
       + New classes vpMbEdgeMultiTracker, vpMbKltMultiTracker, and
         vpMbEdgeKltMultiTracker for the hybrid version
     . Set vpRGBa images alpha channel default value to 255
