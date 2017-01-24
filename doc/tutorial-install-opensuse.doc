@@ -103,7 +103,7 @@ A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 $ ccmake ../visp
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-ccmake-ubuntu-all.png Snapshot of the ccmake \c ../visp command used to configure ViSP.
+\image html img-ccmake-ubuntu-all.jpeg Snapshot of the ccmake \c ../visp command used to configure ViSP.
 
 \subsection install_opensuse_build Building ViSP libraries
 
