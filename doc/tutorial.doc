@@ -50,7 +50,7 @@ This page introduces the user to the way to install ViSP from source code.
 - \subpage tutorial-install-win81-msvc <br>In this tutorial you will learn how to install ViSP from source on Windows 8.1 with Visual C++ 2013.
 - \subpage tutorial-install-win10-msvc14 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2015.
 - \subpage tutorial-install-win10-msvc14-uwp <br>In this tutorial you will learn how to install ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2015.
-- \subpage tutorial-install-win81-mingw64 <br>In this tutorial you will learn how to install ViSP from source on Windows 8.1 with Mingw-w64.
+- \subpage tutorial-install-win81-mingw64 <br>In this tutorial you will learn how to install ViSP from source on Windows 8.1 or Windows 10 with Mingw-w64.
 - \subpage tutorial-install-osx-homebrew <br>In this tutorial you will learn how to install ViSP from source on OSX with Homebrew.
 - \subpage tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 

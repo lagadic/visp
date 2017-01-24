@@ -1,9 +1,9 @@
 /**
 
-\page tutorial-install-win81-mingw64 Tutorial: Installation from source for Windows 8.1 with Mingw-w64
+\page tutorial-install-win81-mingw64 Tutorial: Installation from source for Windows 8.1 or Windows 10 with Mingw-w64
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Windows 8.1 with Mingw-w64. These steps have been tested on Windows 8.1 (64 bit), with CMake 3.3.2 and Mingw-w64 - GCC for Windows 64 & 32 bits. 
+In this tutorial you will learn how to install ViSP from source on Windows 8.1 with Mingw-w64. These steps have been tested on Windows 8.1 (64 bit), with CMake 3.3.2 and Mingw-w64 - GCC for Windows 64 & 32 bits. It should also work under Windows 10.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -252,7 +252,7 @@ This error that occurs with OpenCV 3.0.0 during \c cap_dshow.cpp build is known 
 
 \subsection issue_win81_mingw_opencv_not_detected OpenCV not detected with Mingw build
 
-\note This issue occurs with OpenCV 2.4.10 and 2.3.0-beta.
+\note This issue occurs with OpenCV 2.4.9, 2.4.10 and 2.3.0-beta.
 
 - To fix this issue, edit \c C:\\OpenCV\\opencv\\sources\\cmake\\OpenCVConfig.cmake, and line 89 replace:
 \code
