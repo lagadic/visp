@@ -1134,11 +1134,11 @@ bool vpImage<Type>::operator==(const vpImage<Type> &I)
   if (this->height != I.getHeight())
     return false;
 
-  printf("wxh: %dx%d bitmap: %p I.bitmap %p\n", width, height, bitmap, I.bitmap);
+//  printf("wxh: %dx%d bitmap: %p I.bitmap %p\n", width, height, bitmap, I.bitmap);
   for (unsigned int i=0 ; i < npixels ; i++)
   {
     if (bitmap[i] != I.bitmap[i]) {
-      std::cout << "differ for pixel " << i << " (" << i%this->height << ", " << i - i%this->height << ")" << std::endl;
+//      std::cout << "differ for pixel " << i << " (" << i%this->height << ", " << i - i%this->height << ")" << std::endl;
       return false;
     }
   }
@@ -1152,17 +1152,18 @@ bool vpImage<Type>::operator==(const vpImage<Type> &I)
 template<class Type>
 bool vpImage<Type>::operator!=(const vpImage<Type> &I)
 {
-  if (this->width != I.getWidth())
-    return true;
-  if (this->height != I.getHeight())
-    return true;
+//  if (this->width != I.getWidth())
+//    return true;
+//  if (this->height != I.getHeight())
+//    return true;
 
-  for (unsigned int i=0 ; i < npixels ; i++)
-  {
-    if (bitmap[i] != I.bitmap[i])
-      return true;
-  }
-  return false ;
+//  for (unsigned int i=0 ; i < npixels ; i++)
+//  {
+//    if (bitmap[i] != I.bitmap[i])
+//      return true;
+//  }
+//  return false ;
+  return !(*this == I);
 }
 
 /*!
