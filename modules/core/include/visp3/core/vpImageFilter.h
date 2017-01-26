@@ -66,7 +66,6 @@
 */
 class VISP_EXPORT vpImageFilter
 {
-
 public:
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   static void canny(const vpImage<unsigned char>& I,
@@ -170,13 +169,18 @@ public:
   static void filter(const vpImage<double> &I,
                      vpImage<double>& Iu,
                      vpImage<double>& Iv,
-                     const vpMatrix& M) ;
-
+                     const vpMatrix& M,
+                     const bool convolve=false);
 
   static void filter(const vpImage<unsigned char> &I,
                      vpImage<double>& If,
-                     const vpMatrix& M) ;
+                     const vpMatrix& M,
+                     const bool convolve=false);
 
+  static void sepFilter(const vpImage<unsigned char> &I,
+                        vpImage<double>& If,
+                        const vpColVector& kernelH,
+                        const vpColVector& kernelV);
 
   static void filter(const vpImage<unsigned char> &I, vpImage<double>& GI, const double *filter,unsigned  int size);
   static void filter(const vpImage<double> &I, vpImage<double>& GI, const double *filter,unsigned  int size);
@@ -438,8 +442,7 @@ public:
   static void getGradY(const vpImage<double> &I, vpImage<double>& dIy, const double *filter, unsigned int size);
   static void getGradYGauss2D(const vpImage<unsigned char> &I, vpImage<double>& dIy, const double *gaussianKernel,
                               const double *gaussianDerivativeKernel,unsigned  int size);
-
-} ;
+};
 
 
 #endif

@@ -45,88 +45,216 @@
 #  include <cv.h>
 #endif
 
+
 /*!
   Apply a filter to an image.
-
   \param I : Image to filter
   \param If : Filtered image.
-  \param M : Filter coefficients.
+  \param M : Filter kernel.
+  \param convolve : If true, perform a convolution otherwise a correlation.
 
+  \note By default it performs a correlation:
+  \f[
+    \textbf{I\_filtered} \left( u,v \right) =
+    \sum_{y=0}^{\textbf{kernel\_h}}
+    \sum_{x=0}^{\textbf{kernel\_w}}
+    \textbf{M} \left( x,y \right ) \times
+    \textbf{I} \left( u-\frac{\textbf{kernel\_w}}{2}+x,v-\frac{\textbf{kernel\_h}}{2}+y \right)
+  \f]
+  The convolution is almost the same operation:
+  \f[
+    \textbf{I\_filtered} \left( u,v \right) =
+    \sum_{y=0}^{\textbf{kernel\_h}}
+    \sum_{x=0}^{\textbf{kernel\_w}}
+    \textbf{M} \left( x,y \right ) \times
+    \textbf{I} \left( u+\frac{\textbf{kernel\_w}}{2}-x,v+\frac{\textbf{kernel\_h}}{2}-y \right)
+  \f]
+  Only pixels in the input image fully covered by the kernel are considered.
 */
 void
 vpImageFilter::filter(const vpImage<unsigned char> &I,
-		      vpImage<double>& If,
-		      const vpMatrix& M)
-{
+                      vpImage<double>& If,
+                      const vpMatrix& M,
+                      const bool convolve) {
+  unsigned int size_y = M.getRows(), size_x = M.getCols();
+  unsigned int half_size_y = size_y/2, half_size_x = size_x/2;
 
-  unsigned int size = M.getRows() ;
-  unsigned int half_size = size/2 ;
+  If.resize(I.getHeight(),I.getWidth(), 0.0);
 
-  If.resize(I.getHeight(),I.getWidth()) ;
+  if (convolve) {
+    for (unsigned int i = half_size_y; i < I.getHeight()-half_size_y; i++) {
+      for (unsigned int j = half_size_x; j < I.getWidth()-half_size_x; j++) {
+        double conv = 0;
 
-  If = 0 ;
+        for(unsigned int a = 0 ; a < size_y ; a++ ) {
+          for(unsigned int b = 0 ; b < size_x ; b++ ) {
+            double val =  I[i+half_size_y-a][j+half_size_x-b]; //Convolution
+            conv += M[a][b] * val;
+          }
+        }
+        If[i][j] = conv;
+      }
+    }
+  } else {
+    for (unsigned int i = half_size_y; i < I.getHeight()-half_size_y; i++) {
+      for (unsigned int j = half_size_x; j < I.getWidth()-half_size_x; j++) {
+        double corr = 0;
 
-  for (unsigned int i=half_size ; i < I.getHeight()-half_size ; i++)
-  {
-    for (unsigned int j=half_size ; j < I.getWidth()-half_size ; j++)
-    {
-      double   conv_x = 0 ;
-
-      for(unsigned int a = 0 ; a < size ; a++ )
-        for(unsigned int b = 0 ; b < size ; b++ )
-	{
-	  double val =  I[i-half_size+a][j-half_size+b] ;
-	  conv_x += M[a][b] * val ;
-	}
-      If[i][j] = conv_x ;
+        for(unsigned int a = 0 ; a < size_y ; a++ ) {
+          for(unsigned int b = 0 ; b < size_x ; b++ ) {
+            double val =  I[i-half_size_y+a][j-half_size_x+b]; //Correlation
+            corr += M[a][b] * val;
+          }
+        }
+        If[i][j] = corr;
+      }
     }
   }
-
 }
 
 /*!
-  Apply a filter to an image.
+  Apply a filter to an image:
+  \f[
+    \textbf{I}_u = \textbf{M} \ast \textbf{I} \textbf{ and } \textbf{I}_v = \textbf{M}^t \ast \textbf{I}
+  \f]
 
   \param I : Image to filter
   \param Iu : Filtered image along the horizontal axis (u = columns).
   \param Iv : Filtered image along the vertical axis (v = rows).
-  \param M : Separate filter coefficients
-
+  \param M : Filter kernel.
+  \param convolve : If true, perform a convolution otherwise a correlation.
 */
 void
 vpImageFilter::filter(const vpImage<double> &I,
-		      vpImage<double>& Iu,
-		      vpImage<double>& Iv,
-		      const vpMatrix& M)
-{
+                      vpImage<double>& Iu,
+                      vpImage<double>& Iv,
+                      const vpMatrix& M,
+                      const bool convolve) {
+  unsigned int size = M.getRows();
+  unsigned int half_size = size/2;
 
-  unsigned int size = M.getRows() ;
-  unsigned int half_size = size/2 ;
+  Iu.resize(I.getHeight(),I.getWidth(), 0.0);
+  Iv.resize(I.getHeight(),I.getWidth(), 0.0);
 
-  Iu.resize(I.getHeight(),I.getWidth()) ;
-  Iv.resize(I.getHeight(),I.getWidth()) ;
+  if (convolve) {
+    for (unsigned int v = half_size ; v < I.getHeight()-half_size ; v++) {
+      for (unsigned int u = half_size ; u < I.getWidth()-half_size ; u++) {
+        double conv_u = 0;
+        double conv_v = 0;
 
-  Iu = 0 ;
-  Iv = 0 ;
-  for (unsigned int v=half_size ; v < I.getHeight()-half_size ; v++)
-  {
-    for (unsigned int u=half_size ; u < I.getWidth()-half_size ; u++)
-    {
-      double   conv_u = 0 ;
-      double   conv_v = 0 ;
+        for(unsigned int a = 0 ; a < size ; a++ ) {
+          for(unsigned int b = 0 ; b < size ; b++ ) {
+            double val =  I[v+half_size-a][u+half_size-b]; //Convolution
+            conv_u += M[a][b] * val;
+            conv_v += M[b][a] * val;
+          }
+        }
+        Iu[v][u] = conv_u;
+        Iv[v][u] = conv_v;
+      }
+    }
+  } else {
+    for (unsigned int v = half_size ; v < I.getHeight()-half_size ; v++) {
+      for (unsigned int u = half_size ; u < I.getWidth()-half_size ; u++) {
+        double conv_u = 0;
+        double conv_v = 0;
 
-      for(unsigned int a = 0 ; a < size ; a++ )
-        for(unsigned int b = 0 ; b < size ; b++ )
-	{
-	  double val =  I[v-half_size+a][u-half_size+b] ;
-	  conv_u += M[a][b] * val ;
-	  conv_v += M[b][a] * val  ;
-	}
-      Iu[v][u] = conv_u ;
-      Iv[v][u] = conv_v ;
+        for(unsigned int a = 0 ; a < size ; a++ ) {
+          for(unsigned int b = 0 ; b < size ; b++ ) {
+            double val =  I[v-half_size+a][u-half_size+b]; //Correlation
+            conv_u += M[a][b] * val;
+            conv_v += M[b][a] * val;
+          }
+        }
+        Iu[v][u] = conv_u;
+        Iv[v][u] = conv_v;
+      }
+    }
+  }
+}
+
+/*!
+  Apply a filter to an image using two separable kernels. For instance,
+  the Sobel kernel can be decomposed to:
+  \f[
+    \left [
+    \begin{matrix}
+    1 & 0 & -1 \\
+    2 & 0 & -2 \\
+    1 & 0 & -1
+    \end{matrix}
+    \right ] =
+    \left [
+    \begin{matrix}
+    1 \\
+    2 \\
+    1
+    \end{matrix}
+    \right ] \ast
+    \left [
+    \begin{matrix}
+    1 && 0 && -1
+    \end{matrix}
+    \right ]
+  \f]
+  Thus, the convolution operation can be performed as:
+  \f[
+    G_x =
+    \left [
+    \begin{matrix}
+    1 \\
+    2 \\
+    1
+    \end{matrix}
+    \right ] \ast
+    \left (
+    \left [
+    \begin{matrix}
+    1 && 0 && -1
+    \end{matrix}
+    \right ] \ast I
+    \right )
+  \f]
+  Using two separable kernels reduce the number of operations and can be faster for large kernels.
+
+  \param I : Image to filter
+  \param If : Filtered image.
+  \param kernelH : Separable kernel (performed first).
+  \param kernelV : Separable kernel (performed last).
+  \note Only pixels in the input image fully covered by the kernel are considered.
+*/
+void
+vpImageFilter::sepFilter(const vpImage<unsigned char> &I,
+                         vpImage<double>& If,
+                         const vpColVector& kernelH,
+                         const vpColVector &kernelV) {
+  unsigned int size = kernelH.size();
+  unsigned int half_size = size/2;
+
+  If.resize(I.getHeight(),I.getWidth(), 0.0);
+  vpImage<double> I_filter(I.getHeight(),I.getWidth(), 0.0);
+
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = half_size; j < I.getWidth()-half_size; j++) {
+      double conv = 0.0;
+      for (unsigned int a = 0; a < kernelH.size(); a++) {
+        conv += kernelH[a] * I[i][j+half_size-a];
+      }
+
+      I_filter[i][j] = conv;
     }
   }
 
+  for (unsigned int i = half_size; i < I.getHeight()-half_size; i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      double conv = 0.0;
+      for (unsigned int a = 0; a < kernelV.size(); a++) {
+        conv += kernelV[a] * I_filter[i+half_size-a][j];
+      }
+
+      If[i][j] = conv;
+    }
+  }
 }
 
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
