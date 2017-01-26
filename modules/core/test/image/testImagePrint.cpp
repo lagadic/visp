@@ -58,11 +58,13 @@ int main() {
   size = 5;
   vpImage<float> I_float(size, size);
   vpImage<double> I_double(size, size);
+  vpImage<vpRGBa> I_rgba(size, size);
 
   for (unsigned int i = 0, cpt = 0; i < size; i++) {
     for (unsigned int j = 0; j < size; j++, cpt++) {
       I_float[i][j] = (float) sqrt((double) cpt);
       I_double[i][j] = sqrt((double) cpt);
+      I_rgba[i][j] = vpRGBa( (unsigned char) cpt);
     }
   }
 
@@ -71,6 +73,7 @@ int main() {
   std::cout << "\nI_char:\n" << I_char << std::endl;
   std::cout << "\nI_float:\n" << I_float << std::endl;
   std::cout << "\nI_double:\n" << I_double << std::endl;
+  std::cout << "\nI_rgba:\n" << I_rgba << std::endl;
 
   return EXIT_SUCCESS;
 }
