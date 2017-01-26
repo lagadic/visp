@@ -56,6 +56,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <iomanip>      // std::setw
 #include <math.h>
 #include <string.h>
 
@@ -296,6 +297,7 @@ public:
   vpImage<Type>& operator=(const Type &v);
   bool operator==(const vpImage<Type> &I);
   bool operator!=(const vpImage<Type> &I);
+  template <class T> friend std::ostream& operator<<(std::ostream &s, const vpImage<T> &I);
 
   // Perform a look-up table transformation
   void performLut(const Type (&lut)[256], const unsigned int nbThreads=1);
@@ -320,6 +322,135 @@ private:
   unsigned int height ;  ///! number of rows
   Type **row ;    //!< points the row pointer array
 };
+
+template <class Type>
+std::ostream& operator<<(std::ostream &s, const vpImage<Type> &I) {
+  if (I.bitmap == NULL) {
+    return s;
+  }
+
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < I.getWidth()-1; j++) {
+      s << I[i][j] << " ";
+    }
+
+    // We don't add "  " after the last column element
+    s << I[i][I.getWidth() -1];
+
+    // We don't add a \n character at the end of the last row line
+    if (i < I.getHeight()-1) {
+      s << std::endl;
+    }
+  }
+
+  return s;
+}
+
+template <>
+inline std::ostream& operator<<(std::ostream &s, const vpImage<unsigned char> &I) {
+  if (I.bitmap == NULL) {
+    return s;
+  }
+
+  std::ios_base::fmtflags original_flags = s.flags();
+
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < I.getWidth()-1; j++) {
+      s << std::setw(3) << static_cast<unsigned>(I[i][j]) << " ";
+    }
+
+    // We don't add "  " after the last column element
+    s << std::setw(3) << static_cast<unsigned>(I[i][I.getWidth() -1]);
+
+    // We don't add a \n character at the end of the last row line
+    if (i < I.getHeight()-1) {
+      s << std::endl;
+    }
+  }
+
+  s.flags(original_flags); // restore s to standard state
+  return s;
+}
+
+template <>
+inline std::ostream& operator<<(std::ostream &s, const vpImage<char> &I) {
+  if (I.bitmap == NULL) {
+    return s;
+  }
+
+  std::ios_base::fmtflags original_flags = s.flags();
+
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < I.getWidth()-1; j++) {
+      s <<std::setw(4) << static_cast<int>(I[i][j]) << " ";
+    }
+
+    // We don't add "  " after the last column element
+    s << std::setw(4) << static_cast<int>(I[i][I.getWidth() -1]);
+
+    // We don't add a \n character at the end of the last row line
+    if (i < I.getHeight()-1) {
+      s << std::endl;
+    }
+  }
+
+  s.flags(original_flags); // restore s to standard state
+  return s;
+}
+
+template <>
+inline std::ostream& operator<<(std::ostream &s, const vpImage<float> &I) {
+  if (I.bitmap == NULL) {
+    return s;
+  }
+
+  std::ios_base::fmtflags original_flags = s.flags();
+  s.precision(9); //http://en.cppreference.com/w/cpp/types/numeric_limits/max_digits10
+
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < I.getWidth()-1; j++) {
+      s << I[i][j] << " ";
+    }
+
+    // We don't add "  " after the last column element
+    s << I[i][I.getWidth() -1];
+
+    // We don't add a \n character at the end of the last row line
+    if (i < I.getHeight()-1) {
+      s << std::endl;
+    }
+  }
+
+  s.flags(original_flags); // restore s to standard state
+  return s;
+}
+
+template <>
+inline std::ostream& operator<<(std::ostream &s, const vpImage<double> &I) {
+  if (I.bitmap == NULL) {
+    return s;
+  }
+
+  std::ios_base::fmtflags original_flags = s.flags();
+  s.precision(17); //http://en.cppreference.com/w/cpp/types/numeric_limits/max_digits10
+
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < I.getWidth()-1; j++) {
+      s << I[i][j] << " ";
+    }
+
+    // We don't add "  " after the last column element
+    s << I[i][I.getWidth() -1];
+
+    // We don't add a \n character at the end of the last row line
+    if (i < I.getHeight()-1) {
+      s << std::endl;
+    }
+  }
+
+  s.flags(original_flags); // restore s to standard state
+  return s;
+}
 
 
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
@@ -1003,11 +1134,11 @@ bool vpImage<Type>::operator==(const vpImage<Type> &I)
   if (this->height != I.getHeight())
     return false;
 
-  printf("wxh: %dx%d bitmap: %p I.bitmap %p\n", width, height, bitmap, I.bitmap);
+//  printf("wxh: %dx%d bitmap: %p I.bitmap %p\n", width, height, bitmap, I.bitmap);
   for (unsigned int i=0 ; i < npixels ; i++)
   {
     if (bitmap[i] != I.bitmap[i]) {
-      std::cout << "differ for pixel " << i << " (" << i%this->height << ", " << i - i%this->height << ")" << std::endl;
+//      std::cout << "differ for pixel " << i << " (" << i%this->height << ", " << i - i%this->height << ")" << std::endl;
       return false;
     }
   }
@@ -1021,17 +1152,18 @@ bool vpImage<Type>::operator==(const vpImage<Type> &I)
 template<class Type>
 bool vpImage<Type>::operator!=(const vpImage<Type> &I)
 {
-  if (this->width != I.getWidth())
-    return true;
-  if (this->height != I.getHeight())
-    return true;
+//  if (this->width != I.getWidth())
+//    return true;
+//  if (this->height != I.getHeight())
+//    return true;
 
-  for (unsigned int i=0 ; i < npixels ; i++)
-  {
-    if (bitmap[i] != I.bitmap[i])
-      return true;
-  }
-  return false ;
+//  for (unsigned int i=0 ; i < npixels ; i++)
+//  {
+//    if (bitmap[i] != I.bitmap[i])
+//      return true;
+//  }
+//  return false ;
+  return !(*this == I);
 }
 
 /*!
