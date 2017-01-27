@@ -92,7 +92,7 @@ if(UNIX)
   endif()
 
   # include ViSP own include dir
-  set(VISP_CONFIG_CFLAGS_SRC_TREE "-I$PREFIX/${CMAKE_INSTALL_INCLUDEDIR}")
+  set(VISP_CONFIG_CFLAGS_SRC_TREE "-I$PREFIX/${VISP_INC_INSTALL_PATH}")
 
   foreach(m ${VISP_MODULES_BUILD})
     if(EXISTS "${VISP_MODULE_${m}_LOCATION}/include")
@@ -167,7 +167,7 @@ if(UNIX)
   # Updates VISP_CONFIG_LIBS_PC (for libvisp.pc used by pkg-config)
   #----------------------------------------------------------------------
   set(exec_prefix "\${prefix}")
-  set(includedir  "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+  set(includedir  "\${prefix}/${VISP_INC_INSTALL_PATH}")
   set(libdir  "\${prefix}/${VISP_LIB_INSTALL_PATH}")
  
   # prepend with ViSP own include dir
@@ -242,7 +242,7 @@ else()
   # 2/ For usage with the install tree
   #    VISP_CONFIG_SCRIPT_INC = VISP_CONFIG_SCRIPT_INC_BUILD + VISP_CONFIG_SCRIPT_INC_SRC_TREE + VISP_CONFIG_SCRIPT_INC_DEPS
   #----------------------------------------------------------------------
-  set(VISP_CONFIG_SCRIPT_INC_BUILD "%PREFIX%/${CMAKE_INSTALL_INCLUDEDIR}")
+  set(VISP_CONFIG_SCRIPT_INC_BUILD "%PREFIX%/${VISP_INC_INSTALL_PATH}")
   set(VISP_CONFIG_SCRIPT_INC_SRC_TREE "")
   foreach(m ${VISP_MODULES_BUILD})
     if(EXISTS "${VISP_MODULE_${m}_LOCATION}/include")
@@ -361,7 +361,7 @@ endif()
 #----------------------------------------------------------------------
 # install rule for visp-config shell script
 install(FILES ${FILE_VISP_CONFIG_SCRIPT_INSTALL}
-  DESTINATION ${CMAKE_INSTALL_BINDIR}
+  DESTINATION ${VISP_BIN_INSTALL_PATH}
   PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
   OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
   OWNER_WRITE

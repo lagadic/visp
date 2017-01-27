@@ -80,7 +80,7 @@ endif()
 export(TARGETS ${VISPModules_TARGETS} FILE "${PROJECT_BINARY_DIR}/VISPModules.cmake")
 
 ## Update include dirs
-set(VISP_INCLUDE_DIRS_CONFIGCMAKE "${VISP_BINARY_DIR}/${CMAKE_INSTALL_INCLUDEDIR}")
+set(VISP_INCLUDE_DIRS_CONFIGCMAKE "${VISP_INCLUDE_DIR}")
 foreach(m ${VISP_MODULES_BUILD})
   if(EXISTS "${VISP_MODULE_${m}_LOCATION}/include")
     list(APPEND VISP_INCLUDE_DIRS_CONFIGCMAKE "${VISP_MODULE_${m}_LOCATION}/include")
@@ -157,7 +157,7 @@ endif()
 #  Part 3/3: ${BIN_DIR}/win-install/VISPConfig.cmake  -> For use within binary installers/packages
 # --------------------------------------------------------------------------------------------
 if(WIN32)
-  set(VISP_INCLUDE_DIRS_CONFIGCMAKE "\${VISP_CONFIG_PATH}/${CMAKE_INSTALL_INCLUDEDIR}")
+  set(VISP_INCLUDE_DIRS_CONFIGCMAKE "\${VISP_CONFIG_PATH}/${VISP_INC_INSTALL_PATH}")
   foreach(m ${VISP_MODULES_BUILD})
     list(APPEND VISP_INCLUDE_DIRS_CONFIGCMAKE ${VISP_MODULE_${m}_INC_DEPS})
   endforeach()
@@ -185,20 +185,20 @@ if(WIN32)
     install(FILES
       "${CMAKE_BINARY_DIR}/win-install/ViSPConfig.cmake"
       "${CMAKE_BINARY_DIR}/win-install/ViSPUse.cmake"
-      DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}"
+      DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}${VISP_LIB_INSTALL_PATH}"
       COMPONENT dev)
     install(EXPORT VISPModules 
-      DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}${CMAKE_INSTALL_LIBDIR}"
+      DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}${VISP_LIB_INSTALL_PATH}"
       FILE VISPModules.cmake 
       COMPONENT dev)
   else()
     install(FILES
       "${CMAKE_BINARY_DIR}/win-install/ViSPConfig.cmake"
       "${CMAKE_BINARY_DIR}/win-install/ViSPUse.cmake"
-      DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}"
+      DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}static${VISP_LIB_INSTALL_PATH}"
       COMPONENT dev)
     install(EXPORT VISPModules 
-      DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}static${CMAKE_INSTALL_LIBDIR}"
+      DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}static${VISP_LIB_INSTALL_PATH}"
       FILE VISPModules.cmake 
       COMPONENT dev)
   endif()
