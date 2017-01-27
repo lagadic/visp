@@ -252,7 +252,7 @@ int vpMath::round(const double x)
   //:: to design the global namespace and avoid to call recursively vpMath::round
   return (int)::round(x);
 #elif defined(VISP_HAVE_FUNC_STD_ROUND)
-  return (int)std::round(x)
+  return (int)std::round(x);
 #else
   return (x > 0.0) ? ((int) floor(x + 0.5)) : ((int) ceil(x - 0.5));
 #endif
