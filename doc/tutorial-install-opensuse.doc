@@ -127,6 +127,7 @@ $ sudo zypper install doxygen graphviz
 \endcode
 Then you can proceed with:
 \code
+$ cmake ../visp
 $ make -j4 visp_doc
 \endcode
 The generated documentation is then available in \c \<binary_dir\>/doc/html/index\.html

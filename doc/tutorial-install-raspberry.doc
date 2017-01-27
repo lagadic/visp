@@ -209,6 +209,7 @@ $ sudo apt-get install doxygen graphviz texlive-latex-base
 \endcode
 Then you can proceed with:
 \code
+$ cmake ../visp
 $ make -j4 visp_doc
 \endcode
 The generated documentation is then available in \c \<binary_dir\>/doc/html/index\.html
