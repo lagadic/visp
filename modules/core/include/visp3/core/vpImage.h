@@ -111,6 +111,20 @@ value = I[i][j]; // Here we will get the pixel value at position (101, 80)
 \endcode
 
 */
+
+//Ref: http://en.cppreference.com/w/cpp/language/friend#Template_friends
+template<class Type>
+class vpImage; // forward declare to make function declaration possible
+
+// declarations
+template<class Type>
+std::ostream& operator<<(std::ostream&, const vpImage<Type>&);
+
+std::ostream& operator<<(std::ostream&, const vpImage<unsigned char>&);
+std::ostream& operator<<(std::ostream&, const vpImage<char>&);
+std::ostream& operator<<(std::ostream&, const vpImage<float>&);
+std::ostream& operator<<(std::ostream&, const vpImage<double>&);
+
 template<class Type>
 class vpImage
 {
@@ -297,7 +311,11 @@ public:
   vpImage<Type>& operator=(const Type &v);
   bool operator==(const vpImage<Type> &I);
   bool operator!=(const vpImage<Type> &I);
-  template <class T> friend std::ostream& operator<<(std::ostream &s, const vpImage<T> &I);
+  friend std::ostream& operator<< <> (std::ostream &s, const vpImage<Type> &I);
+  friend std::ostream& operator<<(std::ostream &s, const vpImage<unsigned char> &I);
+  friend std::ostream& operator<<(std::ostream &s, const vpImage<char> &I);
+  friend std::ostream& operator<<(std::ostream &s, const vpImage<float> &I);
+  friend std::ostream& operator<<(std::ostream &s, const vpImage<double> &I);
 
   // Perform a look-up table transformation
   void performLut(const Type (&lut)[256], const unsigned int nbThreads=1);
@@ -323,7 +341,7 @@ private:
   Type **row ;    //!< points the row pointer array
 };
 
-template <class Type>
+template<class Type>
 std::ostream& operator<<(std::ostream &s, const vpImage<Type> &I) {
   if (I.bitmap == NULL) {
     return s;
@@ -346,7 +364,6 @@ std::ostream& operator<<(std::ostream &s, const vpImage<Type> &I) {
   return s;
 }
 
-template <>
 inline std::ostream& operator<<(std::ostream &s, const vpImage<unsigned char> &I) {
   if (I.bitmap == NULL) {
     return s;
@@ -372,7 +389,6 @@ inline std::ostream& operator<<(std::ostream &s, const vpImage<unsigned char> &I
   return s;
 }
 
-template <>
 inline std::ostream& operator<<(std::ostream &s, const vpImage<char> &I) {
   if (I.bitmap == NULL) {
     return s;
@@ -398,7 +414,6 @@ inline std::ostream& operator<<(std::ostream &s, const vpImage<char> &I) {
   return s;
 }
 
-template <>
 inline std::ostream& operator<<(std::ostream &s, const vpImage<float> &I) {
   if (I.bitmap == NULL) {
     return s;
@@ -425,7 +440,6 @@ inline std::ostream& operator<<(std::ostream &s, const vpImage<float> &I) {
   return s;
 }
 
-template <>
 inline std::ostream& operator<<(std::ostream &s, const vpImage<double> &I) {
   if (I.bitmap == NULL) {
     return s;
