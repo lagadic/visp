@@ -145,7 +145,6 @@ void vpRealSense::open()
     }
   }
 
-
   if (m_enableStreams[rs::stream::color]) {
     if (m_useStreamPresets[rs::stream::color]) {
       m_device->enable_stream(rs::stream::color, m_streamPresets[rs::stream::color]);
@@ -190,6 +189,22 @@ void vpRealSense::open()
     auto intrin = m_device->get_stream_intrinsics(stream);
 
     m_intrinsics[stream] = intrin;
+  }
+
+  // Add synthetic stream intrinsics
+  if (m_enableStreams[rs::stream::color]) {
+    m_intrinsics[rs::stream::rectified_color] = m_device->get_stream_intrinsics(rs::stream::rectified_color);
+
+    if (m_enableStreams[rs::stream::depth]) {
+      m_intrinsics[rs::stream::color_aligned_to_depth] = m_device->get_stream_intrinsics(rs::stream::color_aligned_to_depth);
+      m_intrinsics[rs::stream::depth_aligned_to_color] = m_device->get_stream_intrinsics(rs::stream::depth_aligned_to_color);
+      m_intrinsics[rs::stream::depth_aligned_to_rectified_color] = m_device->get_stream_intrinsics(rs::stream::depth_aligned_to_rectified_color);
+    }
+  }
+
+  if (m_enableStreams[rs::stream::depth] && m_enableStreams[rs::stream::infrared2]) {
+    m_intrinsics[rs::stream::depth_aligned_to_infrared2] = m_device->get_stream_intrinsics(rs::stream::depth_aligned_to_infrared2);
+    m_intrinsics[rs::stream::infrared2_aligned_to_depth] = m_device->get_stream_intrinsics(rs::stream::infrared2_aligned_to_depth);
   }
 
   // Start device
@@ -520,7 +535,7 @@ void vpRealSense::acquire(unsigned char * const data_image, unsigned char * cons
     vp_rs_get_native_frame_data_impl(m_device, m_intrinsics, rs::stream::depth, data_depth, stream_depth);
 
     if (data_pointCloud != NULL) {
-      vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, *data_pointCloud);
+      vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, *data_pointCloud, stream_depth);
     }
   }
 
@@ -847,11 +862,11 @@ void vpRealSense::acquire(unsigned char * const data_image, unsigned char * cons
   }
 
   if (data_pointCloud != NULL) {
-    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, *data_pointCloud);
+    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, *data_pointCloud, stream_depth);
   }
 
   if (pointcloud != NULL) {
-    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
+    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, stream_depth);
   }
 
   if (data_infrared != NULL) {
@@ -899,11 +914,11 @@ void vpRealSense::acquire(unsigned char * const data_image, unsigned char * cons
   }
 
   if (data_pointCloud != NULL) {
-    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, *data_pointCloud);
+    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, *data_pointCloud, stream_depth);
   }
 
   if (pointcloud != NULL) {
-    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud);
+    vp_rs_get_pointcloud_impl(m_device, m_intrinsics, m_max_Z, pointcloud, stream_color, stream_depth);
   }
 
   if (data_infrared != NULL) {
