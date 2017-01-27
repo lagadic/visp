@@ -102,7 +102,15 @@ if(USE_PCL)
       # This is a VTK library
       list(APPEND PCL_VTK_LIBRARIES ${lib_})
     else()
-      list(APPEND opt_libs ${lib_})
+      # Other libraries sqlite3, boost..., optimized, debug
+      if(EXISTS ${lib_} OR ${lib_} MATCHES "optimized" OR ${lib_} MATCHES "debug")
+        list(APPEND opt_libs ${lib_})
+      else()
+        find_library(lib_extra_ lib_ QUIET)
+        if(lib_extra_)
+          list(APPEND opt_libs ${lib_extra_})
+        endif()
+      endif()
     endif()
   endforeach()
 
