@@ -177,5 +177,5 @@ vp_add_tests(CTEST_EXCLUDE_PATH framegrabber force-torque rgb-depth DEPENDS_ON v
 
 if(USE_PCL)
   # Add specific build flag to turn off warnings coming from PCL 3rd party
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal)
 endif()
