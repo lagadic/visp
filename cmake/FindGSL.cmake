@@ -84,7 +84,7 @@ macro(CheckCompilation_gsl1 MY_INCLUDE_DIR MY_LIBRARY MY_BUILD_SUCCEED)
     set(${MY_BUILD_SUCCEED} ${BUILD_SUCCEED})
 endmacro()
 
-set(GSL_VERSION "na")
+set(GSL_VERSION "n/a")
 
 set(GSL_LIB_SEARCH_PATH
   "$ENV{GSL_HOME}/lib"

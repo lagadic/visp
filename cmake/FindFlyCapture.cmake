@@ -43,7 +43,7 @@
 set(FLYCAPTURE_INC_SEARCH_PATH /usr/include/flycapture)
 set(FLYCAPTURE_LIB_SEARCH_PATH /usr/lib)
 
-set(FLYCAPTURE_VERSION "na")
+set(FLYCAPTURE_VERSION "n/a")
 
 if(MSVC)
   if(CMAKE_CL_64)
