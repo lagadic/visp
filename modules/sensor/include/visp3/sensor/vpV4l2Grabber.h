@@ -64,7 +64,10 @@
 
   \ingroup group_sensor_camera
 
-  \brief Class for the Video4Linux2 video device.
+  \brief Class that is a wrapper over the Video4Linux2 (V4L2) driver.
+
+  Thus to be enabled, this class needs the optional V4L2 3rd party. Installation instruction
+  are provided here https://visp.inria.fr/3rd_v4l2.
 
   Information about Video4Linux can be found on
   http://linuxtv.org/v4lwiki/index.php/Main_Page

@@ -54,7 +54,8 @@
   \class vpDetectorFace
   \ingroup group_detection_face
   The vpDetectorFace class is a wrapper over OpenCV Haar cascade face detection capabilities.
-  To use this class ViSP should be build against OpenCV 2.2.0 or a more recent version.
+  To use this class ViSP should be build against OpenCV 2.2.0 or a more recent version. Installation
+  instructions are provided here https://visp.inria.fr/3rd_opencv.
 
   The following sample code shows how to use this class to detect the largest face in the image.
   The cascade classifier file "haarcascade_frontalface_alt.xml" can be found in ViSP source code or in OpenCV.

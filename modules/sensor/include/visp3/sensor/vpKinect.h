@@ -60,7 +60,10 @@
 
   \ingroup group_sensor_rgbd
 
-  \brief Driver for the Kinect device.
+  \brief Driver for the Kinect-1 device.
+
+  To be enabled this class requires libfreenect 3rd party. Installation instructions are provided here
+  https://visp.inria.fr/3rd_freenect.
 
   The following example shows how to use this class to acquire data
   (depth map and color image) from a Kinect.

@@ -73,6 +73,18 @@
 
   \brief Read/write images with various image format.
 
+  This class has its own implementation of PGM and PPM images read/write.
+
+  This class may benefit from optional 3rd parties:
+  - libpng: If installed this optional 3rd party is used to read/write PNG images.
+    Installation instructions are provided here https://visp.inria.fr/3rd_png.
+  - libjpeg: If installed this optional 3rd party is used to read/write JPEG images.
+    Installation instructions are provided here https://visp.inria.fr/3rd_jpeg.
+  - OpenCV: If installed this optional 3rd party is used to read/write other image
+    formats TIFF, BMP, DIB, PBM, RASTER, JPEG2000. If libpng or libjpeg is not installed
+    OpenCV is also used to consider these image formats. Installation instructions are
+    provided here https://visp.inria.fr/3rd_opencv.
+
   The code below shows how to convert an PPM P6 image file format into
   a PGM P5 image file format. The extension of the filename is here
   used in read() and write() functions to set the image file format

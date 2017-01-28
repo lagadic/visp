@@ -51,7 +51,9 @@
 
   \ingroup group_gui_display
 
-  \brief Display for windows using Direct3D.
+  \brief Display for windows using Direct3D 3rd party. Thus to enable this class
+  Direct3D should be installed. Installation instructions are provided here
+  https://visp.inria.fr/3rd_d3d/
 
   Direct3D is part of the DirectX API available under Windows
   operating systems.

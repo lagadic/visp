@@ -64,6 +64,9 @@
 
   \brief XML parser to load and save intrinsic camera parameters.
 
+  \warning This class is only available if libxml2 is installed and detected by ViSP.
+  Installation instructions are provided here https://visp.inria.fr/3rd_xml2.
+
   To have a complete description of the camera parameters and the
   corresponding projection model implemented in ViSP, see
   vpCameraParameters.

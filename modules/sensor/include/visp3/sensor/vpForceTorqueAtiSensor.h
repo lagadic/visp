@@ -52,8 +52,9 @@
   \ingroup group_sensor_ft
 
   Interface for ATI force/torque sensor. This class works only under linux-like OS.
-  It requires Comedi 3rd party. Comedi is the linux control and
-  measurement device interface. For more information see http://www.comedi.org.
+  It requires Comedi 3rd party. Installation instructions are provided here https://visp.inria.fr/3rd_comedi.
+
+  Comedi is the linux control and measurement device interface. For more information see http://www.comedi.org.
 
   This class was tested with ATI Gamma 65-SI FT sensor connected to a
   National Instrument NI DAQmx PCI-6220 board.

@@ -61,6 +61,9 @@
 
   \brief XML parser to load and save an homogeneous matrix in a file.
 
+  \warning This class is only available if libxml2 is installed and detected by ViSP.
+  Installation instructions are provided here https://visp.inria.fr/3rd_xml2.
+
   To have a complete description of the homogeneous matrix implemented in ViSP, see
   vpHomogeneousMatrix.
 

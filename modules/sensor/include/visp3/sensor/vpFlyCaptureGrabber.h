@@ -57,8 +57,10 @@
   Allows to grab images from a PointGrey camera using FlyCapture SDK.
 
   To use this class install first FlyCapture SDK https://www.ptgrey.com/flycapture-sdk.
+  Installation instructions are provide here https://visp.inria.fr/3rd_flycapture.
   \note To install FlyCapture SDK on linux follow https://www.ptgrey.com/tan/10548.
-  \note For specific details about using FlyCapture and Linux with a USB 3.0 camera, see http://www.ptgrey.com/KB/10685.
+  \note For specific details about using FlyCapture and Linux with a USB 3.0 camera,
+  see http://www.ptgrey.com/KB/10685.
 
   Once installed configure ViSP using cmake to detect FlyCapture SDK and build ViSP to include
   FlyCapture SDK support.

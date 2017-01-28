@@ -63,7 +63,8 @@
   \ingroup module_klt
 
   \brief Wrapper for the KLT (Kanade-Lucas-Tomasi) feature tracker
-  implemented in OpenCV.
+  implemented in OpenCV. Thus to enable this class OpenCV should be installed. Installation
+  instructions are provided here https://visp.inria.fr/3rd_opencv.
 
   The following example available in tutorial-klt-tracker.cpp shows how to use
   the main functions of the class.

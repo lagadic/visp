@@ -74,7 +74,10 @@
 
   \ingroup group_ar_renderer
   
-  \brief Implementation of an augmented reality viewer.
+  \brief Implementation of an augmented reality viewer using Coin3D 3rd party.
+
+  Thus to be enabled this class requires Coin3D 3rd party installation.
+  Installation instructions are provided here https://visp.inria.fr/3rd_coin.
 
   This class can be used to display an image behind the internal view
   of the simulator used for augmented reality application.

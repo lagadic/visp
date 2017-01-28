@@ -55,7 +55,8 @@
   \class vpDetectorQRCode
   \ingroup group_detection_barcode
   Base class for bar code detector. This class is a wrapper over libzbar
-  available from http://zbar.sourceforge.net/
+  available from http://zbar.sourceforge.net. Installation instructions are provided
+  here https://visp.inria.fr/3rd_zbar.
 
   The detect() function allows to detect multiple QR codes in an image. Once detected,
   for each QR code it is possible to retrieve the location of the corners using getPolygon(),

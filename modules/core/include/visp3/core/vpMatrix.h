@@ -77,6 +77,11 @@ class vpForceTwistMatrix;
 
   \brief Implementation of a matrix and operations on matrices.
 
+  This class may benefit from Lapack or GSL optional 3rd parties that are used especially
+  for pseudo-inverse. Concerning Lapack optional 3rd party, installation instructions are provide
+  here https://visp.inria.fr/3rd_lapack. For optional GSL, installation instructions are provide
+  here https://visp.inria.fr/3rd_gsl.
+
   vpMatrix class provides a data structure for the matrices as well
   as a set of operations on these matrices.
 

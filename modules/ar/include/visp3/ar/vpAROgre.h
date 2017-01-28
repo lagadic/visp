@@ -74,7 +74,10 @@
 
   \ingroup group_ar_renderer
 
-  \brief Implementation of an augmented reality viewer.
+  \brief Implementation of an augmented reality viewer using Ogre3D 3rd party.
+
+  Thus to be enabled this class requires Ogre3D 3rd party installation.
+  Installation instructions are provided here https://visp.inria.fr/3rd_ogre.
 
   This class provides methods to show a 3D scene in a real world. To do that
   you will need to initialise it with the parameters of your camera, then each

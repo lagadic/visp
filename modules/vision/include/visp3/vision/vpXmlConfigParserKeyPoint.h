@@ -59,6 +59,10 @@
 /*!
   \class vpXmlConfigParserKeyPoint
   \ingroup group_vision_keypoints
+
+  \warning This class is only available if libxml2 is installed and detected by ViSP.
+  Installation instructions are provided here https://visp.inria.fr/3rd_xml2.
+
 */
 class VISP_EXPORT vpXmlConfigParserKeyPoint: public vpXmlParser
 {

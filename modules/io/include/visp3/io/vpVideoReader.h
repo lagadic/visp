@@ -63,6 +63,23 @@
   \brief Class that enables to manipulate easily a video file or a sequence of
   images. As it inherits from the vpFrameGrabber Class, it can be used like an
   other frame grabber class.
+
+  This class has its own implementation to read a sequence of PGM and PPM images.
+
+  This class may benefit from optional 3rd parties:
+  - libpng: If installed this optional 3rd party is used to read a sequence of PNG images.
+    Installation instructions are provided here https://visp.inria.fr/3rd_png.
+  - libjpeg: If installed this optional 3rd party is used to read a sequence of JPEG images.
+    Installation instructions are provided here https://visp.inria.fr/3rd_jpeg.
+  - OpenCV: If installed this optional 3rd party is used to read a sequence of images
+    where images could be in TIFF, BMP, DIB, PBM, RASTER, JPEG2000 format. If libpng or
+    libjpeg is not installed, OpenCV is also used to consider these image formats. OpenCV
+    allows also to consider AVI, MPEG, MPEG4, MOV, OGV, WMV, FLV, MKV video formats.
+    Installation instructions are provided here https://visp.inria.fr/3rd_opencv.
+  - ffmpeg: If installed and enabled this optional 3rd party is used to read
+    AVI, MPEG, MPEG4, MOV, OGV, WMV, FLV, MKV video formats. It means that if OpenCV is
+    also installed, that OpenCV is not used to read a video. Installation instructions
+    are provided here https://visp.inria.fr/3rd_ffmpeg.
   
   The following example available in tutorial-video-reader.cpp shows how this
   class is really easy to use. It enables to read a video file named video.mpeg.

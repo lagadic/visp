@@ -73,9 +73,9 @@
 
   \ingroup group_gui_display
 
-  \brief Define the X11 console to display images.
-
-  \note Ready to use with a Unix System (tested for Linux and SunOS)
+  \brief Use the X11 console to display images on unix-like OS.
+  Thus to enable this class X11 should be installed. Installation
+  instructions are provided here https://visp.inria.fr/3rd_x11.
 
   This class define the X11 console to display  images
   It also define method to display some geometric feature (point, line, circle)

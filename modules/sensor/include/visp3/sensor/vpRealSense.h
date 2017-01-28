@@ -91,8 +91,8 @@ add_executable(sample-realsense sample-realsense.cpp)
 target_link_libraries(sample-realsense ${VISP_LIBRARIES})
   \endcode
 
-  To acquire images from the RealSense color camera and convert them into grey level images, a good starting is to use
-  the following:
+  To acquire images from the RealSense color camera and convert them into grey level images,
+  a good starting is to use the following code that corresponds to the content of sample-realsense.cpp:
   \code
 #include <visp3/sensor/vpRealSense.h>
 #include <visp3/gui/vpDisplayGDI.h>

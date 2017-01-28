@@ -69,6 +69,7 @@
   configuration of an experiment, ...).
 
   \warning This class is only available if libxml2 is installed and detected by ViSP.
+  Installation instructions are provided here https://visp.inria.fr/3rd_xml2.
 
   In order to use this class, you have to create a new class inheriting from this one.
   In the child class, you have to implement the methods:

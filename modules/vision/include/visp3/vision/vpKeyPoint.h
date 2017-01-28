@@ -86,6 +86,9 @@
   \ingroup group_vision_keypoints
 
   \brief Class that allows keypoints detection (and descriptors extraction) and matching thanks to OpenCV library.
+  Thus to enable this class OpenCV should be installed. Installation
+  instructions are provided here https://visp.inria.fr/3rd_opencv.
+
   This class permits to use different types of detectors, extractors and matchers easily.
   So, the classical SIFT and SURF keypoints could be used, as well as ORB, FAST, (etc.) keypoints,
   depending of the version of OpenCV you use.

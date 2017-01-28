@@ -39,16 +39,14 @@
   \file vp1394TwoGrabber.h
   \brief class for firewire cameras video capture using libdc1394-2.x api
 
-  \warning This class needs libdc1394-2 and
-  libraw1394 (version greater than 1.1.0). These libraries are available from
-  http://sourceforge.net/projects/libdc1394 and
-  http://sourceforge.net/projects/libraw1394 .
+  \warning This class is a wrapper over libdc1394-2 optional 3rd party.
 
-  vp1394TwoGrabber was tested with libdc1394-2.0.0 (svn version) and
-  with the following cameras:
-  - Marlin F033C
-  - Marlin F131B
-  - PointGrey Dragonfly 2
+  Thus to be enabled, this class needs the optional libdc1394-2 3rd party. Installation instruction
+  are provided here https://visp.inria.fr/3rd_dc1394.
+
+  vp1394TwoGrabber was tested with the following cameras:
+  - Marlin F033C, F131B
+  - PointGrey Dragonfly 2, Flea 2
   - APPLE iSight extern webcam
 
 */

@@ -67,7 +67,9 @@
 
   \ingroup group_gui_display
 
-  \brief The vpDisplayOpenCV allows to display image using the opencv library.
+  \brief The vpDisplayOpenCV allows to display image using the OpenCV library.
+  Thus to enable this class OpenCV should be installed. Installation
+  instructions are provided here https://visp.inria.fr/3rd_opencv.
 
   The example below shows how to display an image with this video device.
   \code

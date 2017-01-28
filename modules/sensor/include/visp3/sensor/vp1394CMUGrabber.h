@@ -65,6 +65,9 @@
 
   \brief Firewire cameras video capture based on CMU 1394 Digital Camera SDK.
 
+  Thus to be enabled, this class needs the optional CMU 1394 3rd party. Installation instruction
+  are provided here https://visp.inria.fr/3rd_cmu1394.
+
    This block is based on the CMU 1394 Digital Camera SDK. The CMU 1394 Digital
    Camera Driver must be installed (go to http://www.cs.cmu.edu/~iwan/1394/index.html
    to download it).
