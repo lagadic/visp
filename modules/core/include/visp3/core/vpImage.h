@@ -1270,7 +1270,7 @@ void vpImage<Type>::insert(const vpImage<Type> &src, const vpImagePoint topLeft)
     srcBitmap = src.bitmap + ((src_ibegin+i)*src_w+src_jbegin);
     destBitmap = this->bitmap + ((dest_ibegin+i)*dest_w+dest_jbegin);
 
-    memcpy(destBitmap, srcBitmap, wsize*sizeof(Type));
+    memcpy(destBitmap, srcBitmap, (size_t)wsize*sizeof(Type));
   }
 }
 

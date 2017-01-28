@@ -61,7 +61,7 @@ endif()
 
 if(VISP_HAVE_PCL)
   # Add specific build flag to turn off warnings coming from PCL 3rd party
-  visp_set_source_file_compile_flag(grabRealSense.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override)
+  visp_set_source_file_compile_flag(grabRealSense.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion)
 endif()
 
 foreach(cpp ${example_cpp})

@@ -13,13 +13,15 @@ template<typename Type>
 bool test(const std::string &display, vpImage<Type> &I, unsigned int scale, bool click)
 {
   bool success = true;
-  int radius(I.getHeight()/4);
+  unsigned int radius(I.getHeight()/4);
+  int scale_ = (int)scale;
+  int radius_ = (int)radius;
   unsigned int thickness = 2;
   vpImagePoint center(I.getHeight()/2, I.getWidth()/2);
   vpImagePoint offset(30, 160);
   vpImagePoint v_offset(radius, 0);
   vpImagePoint h_offset(0, radius);
-  vpRect roi(center, radius+scale, radius);
+  vpRect roi(center, radius_+scale_, radius_);
   std::string itype;
 
   // backup the input image
@@ -180,14 +182,14 @@ bool test(const std::string &display, vpImage<Type> &I, unsigned int scale, bool
   vpDisplay::displayLine   (I, center+v_offset-h_offset, center-v_offset+h_offset, vpColor::cyan, thickness);
   int nbpoints = (int)(radius*sqrt(2.)/8/scale);
   for (int i=0; i< nbpoints; i++) {
-    vpDisplay::displayPoint  (I, center-h_offset/2.+vpImagePoint(-i*radius/(nbpoints*2), i*radius/(nbpoints*2)), vpColor::cyan);
-    vpDisplay::displayPoint  (I, center-h_offset+vpImagePoint(-i*radius/nbpoints, i*radius/nbpoints), vpColor::cyan, thickness);
+    vpDisplay::displayPoint(I, center-h_offset/2.+vpImagePoint(-i*radius_/(nbpoints*2), i*radius_/(nbpoints*2)), vpColor::cyan);
+    vpDisplay::displayPoint(I, center-h_offset+vpImagePoint(-i*radius_/nbpoints, i*radius_/nbpoints), vpColor::cyan, thickness);
   }
 
   if (click)
-    vpDisplay::displayText(I, 10*scale, 10*scale, "A click to continue", vpColor::red);
+    vpDisplay::displayText(I, 10*scale_, 10*scale_, "A click to continue", vpColor::red);
   else
-    vpDisplay::displayText(I, 10*scale, 10*scale, "This is an image", vpColor::red);
+    vpDisplay::displayText(I, 10*scale_, 10*scale_, "This is an image", vpColor::red);
 
   vpDisplay::flush(I);
 

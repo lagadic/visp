@@ -125,6 +125,8 @@ endif()
 vp_add_module(robot visp_core OPTIONAL visp_io visp_gui visp_sensor)
 vp_glob_module_sources()
 
+vp_set_source_file_compile_flag(src/wireframe-simulator/vpKeyword.cpp -Wno-sign-conversion)
+
 if(USE_VIRTUOSE)
   # Add specific build flag to turn off warnings coming from VirtuoseAPI 3rd party
   vp_set_source_file_compile_flag(src/haptic-device/virtuose/vpVirtuose.cpp -Wno-int-to-pointer-cast)

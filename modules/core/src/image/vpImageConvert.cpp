@@ -223,7 +223,7 @@ vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage
     uint16_t d = src_depth.bitmap[i];
     if(d)
     {
-      int f = histogram[d] * 255 / histogram[0xFFFF]; // 0-255 based on histogram location
+      int f = (int)(histogram[d] * 255 / histogram[0xFFFF]); // 0-255 based on histogram location
       dest_rgba.bitmap[i].R = 255 - f;
       dest_rgba.bitmap[i].G = 0;
       dest_rgba.bitmap[i].B = f;

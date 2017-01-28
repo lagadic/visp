@@ -89,7 +89,7 @@ public:
   template<class Type>
   static void crop(const vpImage<Type> &I,
                    double roi_top,  double roi_left,
-                   int roi_height,  int roi_width,
+                   unsigned int roi_height, unsigned int roi_width,
                    vpImage<Type> &crop, unsigned int v_scale=1, unsigned int h_scale=1);
 
   template<class Type>
@@ -227,13 +227,16 @@ void vpImageTools::createSubImage(const vpImage<Type> &I,
 template<class Type>
 void vpImageTools::crop(const vpImage<Type> &I,
                         double roi_top,  double roi_left,
-                        int roi_height,  int roi_width,
+                        unsigned int roi_height, unsigned int roi_width,
                         vpImage<Type> &crop, unsigned int v_scale, unsigned int h_scale)
 {
   int i_min = std::max((int)(ceil(roi_top/v_scale)), 0);
   int j_min = std::max((int)(ceil(roi_left/h_scale)), 0);
   int i_max = std::min((int)(ceil((roi_top + roi_height))/v_scale), (int)(I.getHeight()/v_scale));
   int j_max = std::min((int)(ceil((roi_left + roi_width)/h_scale)), (int)(I.getWidth()/h_scale));
+
+  unsigned int i_min_u = (unsigned int)i_min;
+  unsigned int j_min_u = (unsigned int)j_min;
 
   unsigned int r_width  = (unsigned int)(j_max-j_min);
   unsigned int r_height = (unsigned int)(i_max-i_min);
@@ -242,14 +245,14 @@ void vpImageTools::crop(const vpImage<Type> &I,
 
   if (v_scale == 1 && h_scale == 1) {
     for (unsigned int i=0 ; i < r_height ; i++) {
-      void *src = (void *)(I[i+i_min] + j_min);
+      void *src = (void *)(I[i+i_min_u] + j_min_u);
       void *dst = (void *)crop[i];
       memcpy(dst, src, r_width*sizeof(Type));
     }
   }
   else if (h_scale == 1) {
     for (unsigned int i=0 ; i < r_height ; i++) {
-      void *src = (void *)(I[(i + i_min)*v_scale]+j_min);
+      void *src = (void *)(I[(i + i_min_u)*v_scale]+j_min_u);
       void *dst = (void *)crop[i];
       memcpy(dst, src, r_width*sizeof(Type));
     }
@@ -257,7 +260,7 @@ void vpImageTools::crop(const vpImage<Type> &I,
   else {
     for (unsigned int i=0 ; i < r_height ; i++) {
       for (unsigned int j=0 ; j < r_width ; j++) {
-        crop[i][j] = I[(i + i_min)*v_scale][(j + j_min)*h_scale];
+        crop[i][j] = I[(i + i_min_u)*v_scale][(j + j_min_u)*h_scale];
       }
     }
   }
@@ -332,6 +335,9 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
   int i_max = std::min((int)(ceil((roi.getTop() + roi.getHeight()))/v_scale), (int)(height/v_scale));
   int j_max = std::min((int)(ceil((roi.getLeft() + roi.getWidth())/h_scale)), (int)(width/h_scale));
 
+  unsigned int i_min_u = (unsigned int)i_min;
+  unsigned int j_min_u = (unsigned int)j_min;
+
   unsigned int r_width  = (unsigned int)(j_max-j_min);
   unsigned int r_height = (unsigned int)(i_max-i_min);
 
@@ -339,21 +345,21 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
 
   if (v_scale == 1 && h_scale == 1) {
     for (unsigned int i=0 ; i < r_height ; i++) {
-      void *src = (void *)(bitmap + ( (i+i_min)*width + j_min ) * sizeof(Type));
+      void *src = (void *)(bitmap + ( (i+i_min_u)*width + j_min_u ) * sizeof(Type));
       void *dst = (void *)crop[i];
       memcpy(dst, src, r_width*sizeof(Type));
     }
   }
   else if (h_scale == 1) {
     for (unsigned int i=0 ; i < r_height ; i++) {
-      void *src = (void *)(bitmap + ( (i+i_min)*width*v_scale + j_min ) * sizeof(Type) );
+      void *src = (void *)(bitmap + ( (i+i_min_u)*width*v_scale + j_min_u ) * sizeof(Type) );
       void *dst = (void *)crop[i];
       memcpy(dst, src, r_width*sizeof(Type));
     }
   }
   else {
     for (unsigned int i=0 ; i < r_height ; i++) {
-      unsigned int i_src = (i+i_min)*width*v_scale + j_min*h_scale;
+      unsigned int i_src = (i+i_min_u)*width*v_scale + j_min_u*h_scale;
       for (unsigned int j=0 ; j < r_width ; j++) {
         void *src = (void *)(bitmap + (i_src + j*h_scale)*sizeof(Type));
         void *dst = (void *)&crop[i][j];

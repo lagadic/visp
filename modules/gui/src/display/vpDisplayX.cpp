@@ -2116,9 +2116,14 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
         int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
         int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
 
-        for (int i=i_min; i<i_max; i++) {
+        unsigned int i_min_ = (unsigned int)i_min;
+        unsigned int i_max_ = (unsigned int)i_max;
+        unsigned int j_min_ = (unsigned int)j_min;
+        unsigned int j_max_ = (unsigned int)j_max;
+
+        for (unsigned int i=i_min_; i<i_max_; i++) {
           unsigned char *dst_8  = ( unsigned char * ) Ximage->data + i*m_width;
-          for (int j=j_min; j<j_max; j++) {
+          for (unsigned int j=j_min_; j<j_max_; j++) {
             unsigned char nivGris = I[i*m_scale][j*m_scale];
             if ( nivGris > nivGrisMax )
               dst_8[j] = 255;
@@ -2126,7 +2131,7 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
               dst_8[j] = nivGris;
           }
         }
-        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max-j_min, i_max-i_min);
+        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max_-j_min_, i_max_-i_min_);
       }
 
       // Affichage de l'image dans la Pixmap.
@@ -2154,15 +2159,20 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
         int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
         int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
 
-        for (int i=i_min; i<i_max; i++) {
+        unsigned int i_min_ = (unsigned int)i_min;
+        unsigned int i_max_ = (unsigned int)i_max;
+        unsigned int j_min_ = (unsigned int)j_min;
+        unsigned int j_max_ = (unsigned int)j_max;
+
+        for (unsigned int i=i_min_; i<i_max_; i++) {
           unsigned char  *dst_8 =  (unsigned char*) Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *) dst_8;
-          for (int j=j_min; j<j_max; j++) {
+          for (unsigned int j=j_min_; j<j_max_; j++) {
             * ( dst_16 + j ) = ( unsigned short ) colortable[I[i*m_scale][j*m_scale]] ;
           }
         }
 
-        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max-j_min, i_max-i_min);
+        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max_-j_min_, i_max_-i_min_);
       }
 
       XSetWindowBackgroundPixmap ( display, window, pixmap );
@@ -2226,11 +2236,16 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
         int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
         int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
 
+        unsigned int i_min_ = (unsigned int)i_min;
+        unsigned int i_max_ = (unsigned int)i_max;
+        unsigned int j_min_ = (unsigned int)j_min;
+        unsigned int j_max_ = (unsigned int)j_max;
+
         if (XImageByteOrder(display) == 1) {
           // big endian
-          for (int i=i_min; i<i_max; i++) {
-            unsigned char *dst_32 = ( unsigned char* ) Ximage->data + (int)(i*4*m_width + j_min*4);
-            for (int j=j_min; j<j_max; j++) {
+          for (unsigned int i=i_min_; i<i_max_; i++) {
+            unsigned char *dst_32 = ( unsigned char* ) Ximage->data + (int)(i*4*m_width + j_min_*4);
+            for (unsigned int j=j_min_; j<j_max_; j++) {
               unsigned char val = I[i*m_scale][j*m_scale];
               * ( dst_32 ++ ) = vpRGBa::alpha_default;
               * ( dst_32 ++ ) = val;
@@ -2241,9 +2256,9 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
         }
         else {
           // little endian
-          for (int i=i_min; i<i_max; i++) {
-            unsigned char *dst_32 = ( unsigned char* ) Ximage->data + (int)(i*4*m_width + j_min*4);
-            for (int j=j_min; j<j_max; j++) {
+          for (unsigned int i=i_min_; i<i_max_; i++) {
+            unsigned char *dst_32 = ( unsigned char* ) Ximage->data + (int)(i*4*m_width + j_min_*4);
+            for (unsigned int j=j_min_; j<j_max_; j++) {
               unsigned char val = I[i*m_scale][j*m_scale];
               * ( dst_32 ++ ) = val;
               * ( dst_32 ++ ) = val;
@@ -2253,7 +2268,7 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
           }
         }
 
-        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max-j_min, i_max-i_min);
+        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max_-j_min_, i_max_-i_min_);
       }
 
       XSetWindowBackgroundPixmap ( display, window, pixmap );
@@ -2316,10 +2331,16 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
         int j_min = std::max((int)ceil(iP.get_j()/m_scale), 0);
         int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
         int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
-        for (int i=i_min; i<i_max; i++) {
+
+        unsigned int i_min_ = (unsigned int)i_min;
+        unsigned int i_max_ = (unsigned int)i_max;
+        unsigned int j_min_ = (unsigned int)j_min;
+        unsigned int j_max_ = (unsigned int)j_max;
+
+        for (unsigned int i=i_min_; i<i_max_; i++) {
           unsigned char *dst_8 = ( unsigned char* ) Ximage->data + i * bytes_per_line;
           unsigned short *dst_16 = (unsigned short *) dst_8;
-          for (int j=j_min ; j < j_max; j++)
+          for (unsigned int j=j_min_; j < j_max_; j++)
           {
             vpRGBa val = I[i*m_scale][j*m_scale];
             unsigned int r = val.R;
@@ -2330,7 +2351,7 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
                 (((b << 8) >> BShift) & BMask);
           }
         }
-        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max-j_min, i_max-i_min);
+        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max_-j_min_, i_max_-i_min_);
       }
 
       XSetWindowBackgroundPixmap ( display, window, pixmap );
@@ -2399,11 +2420,16 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
         int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
         int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
 
+        unsigned int i_min_ = (unsigned int)i_min;
+        unsigned int i_max_ = (unsigned int)i_max;
+        unsigned int j_min_ = (unsigned int)j_min;
+        unsigned int j_max_ = (unsigned int)j_max;
+
         if (XImageByteOrder(display) == 1) {
           // big endian
-          for (int i=i_min; i<i_max; i++) {
-            unsigned char *dst_32 = ( unsigned char* ) Ximage->data + (int)(i*4*m_width + j_min*4);
-            for (int j=j_min; j<j_max; j++) {
+          for (unsigned int i=i_min_; i<i_max_; i++) {
+            unsigned char *dst_32 = ( unsigned char* ) Ximage->data + (int)(i*4*m_width + j_min_*4);
+            for (unsigned int j=j_min_; j<j_max_; j++) {
               vpRGBa val = I[i*m_scale][j*m_scale];
               *(dst_32++) = val.A;
               *(dst_32++) = val.R;
@@ -2414,9 +2440,9 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
         }
         else {
           // little endian
-          for (int i=i_min; i<i_max; i++) {
-            unsigned char *dst_32 = ( unsigned char* ) Ximage->data + (int)(i*4*m_width + j_min*4);
-            for (int j=j_min; j<j_max; j++) {
+          for (unsigned int i=i_min_; i<i_max_; i++) {
+            unsigned char *dst_32 = ( unsigned char* ) Ximage->data + (int)(i*4*m_width + j_min_*4);
+            for (unsigned int j=j_min_; j<j_max_; j++) {
               vpRGBa val = I[i*m_scale][j*m_scale];
               *(dst_32++) = val.B;
               *(dst_32++) = val.G;
@@ -2425,7 +2451,7 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
             }
           }
         }
-        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max-j_min, i_max-i_min);
+        XPutImage(display, pixmap, context, Ximage, j_min, i_min, j_min, i_min, j_max_-j_min_, i_max_-i_min_);
       }
 
       XSetWindowBackgroundPixmap ( display, window, pixmap );
@@ -2507,7 +2533,7 @@ void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, const unsigned int w, c
 {
   if ( m_displayHasBeenInitialized )
   {
-    XClearArea ( display, window,(int)iP.get_u()/m_scale,(int)iP.get_v()/m_scale, w/m_scale, h/m_scale, 0 );
+    XClearArea ( display, window, (int)(iP.get_u()/m_scale),(int)(iP.get_v()/m_scale), w/m_scale, h/m_scale, 0 );
     XFlush ( display );
   }
   else
@@ -2635,7 +2661,7 @@ void vpDisplayX::displayCharString ( const vpImagePoint &ip,
       XSetForeground ( display, context, xcolor.pixel );
     }
     XDrawString ( display, pixmap, context,
-                  (int)ip.get_u()/m_scale, (int)ip.get_v()/m_scale,
+                  (int)(ip.get_u()/m_scale), (int)(ip.get_v()/m_scale),
                   text, (int)strlen ( text ) );
   }
   else

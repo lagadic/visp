@@ -292,7 +292,7 @@ main(int argc, const char** argv)
 
 #if (defined VISP_HAVE_X11) || (defined VISP_HAVE_GTK) || (defined VISP_HAVE_GDI)
         display1.init(I_segmentIntersection, 10, 10, "Segment Intersection test");
-        display2.init(I_rayCasting, I_segmentIntersection.getWidth() + 10, 10, "Ray Casting test");
+        display2.init(I_rayCasting, (int)I_segmentIntersection.getWidth() + 10, 10, "Ray Casting test");
 #endif
 
         vpDisplay::display(I_segmentIntersection);
