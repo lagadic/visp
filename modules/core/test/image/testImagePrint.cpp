@@ -36,7 +36,7 @@
 #include <visp3/core/vpImage.h>
 
 /*!
-  \example testImagePrinting.cpp
+  \example testImagePrint.cpp
 
   \brief Test image printing.
 */
