@@ -365,18 +365,12 @@ vpImageTools::imageSubtract(const vpImage<unsigned char> &I1,
 // when t is 0, this will return B.  When t is 1, this will return C. In between values will return an interpolation
 // between B and C. A and B are used to calculate the slopes at the edges.
 float vpImageTools::cubicHermite (const float A, const float B, const float C, const float D, const float t) {
-#if 0
-  float a = -A / 2.0f + (3.0f*B) / 2.0f - (3.0f*C) / 2.0f + D / 2.0f;
-  float b = A - (5.0f*B) / 2.0f + 2.0f*C - D / 2.0f;
-  float c = -A / 2.0f + C / 2.0f;
-#else
-    float a = (-A + 3.0f*B - 3.0f*C + D) / 2.0f;
-    float b = A + 2.0f*C - (5.0f*B + D) / 2.0f;
-    float c = (-A + C) / 2.0f;
-#endif
-    float d = B;
+  float a = (-A + 3.0f*B - 3.0f*C + D) / 2.0f;
+  float b = A + 2.0f*C - (5.0f*B + D) / 2.0f;
+  float c = (-A + C) / 2.0f;
+  float d = B;
 
-    return a*t*t*t + b*t*t + c*t + d;
+  return a*t*t*t + b*t*t + c*t + d;
 }
 
 float vpImageTools::lerp(const float A, const float B, const float t) {

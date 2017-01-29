@@ -50,7 +50,6 @@
 
   \brief Test image resize.
 */
-
 // List of allowed command line options
 #define GETOPTARGS "cdi:W:H:m:h"
 
@@ -96,11 +95,11 @@ namespace {
        Set resize interpolation method.\n\
   \n\
     -c                                   \n\
-       Click.\n\
+       Disable mouse click.\n\
   \n\
     -d                                   \n\
-       Display.\n\
-    \n\
+       Disable image display.\n\
+  \n\
     -h\n\
        Print the help.\n\n",
       ipath.c_str(), w, h, m);
@@ -118,8 +117,8 @@ namespace {
     \param w : Resize width.
     \param h : Resize height.
     \param m : Resize interpolation method.
-    \param opt_display : Display if true.
-    \param opt_click : Get click if true.
+    \param opt_display : Do not display if set.
+    \param opt_click : Do not need click if set.
     \return false if the program has to be stopped, true otherwise.
   */
   bool getOptions(int argc, const char **argv, std::string &ipath, unsigned int &w, unsigned int &h, int &method,
@@ -136,8 +135,8 @@ namespace {
       case 'm': method = atoi(optarg_); break;
       case 'h': usage(argv[0], NULL, ipath, w, h, method); return false; break;
 
-      case 'c': opt_click = true; break;
-      case 'd': opt_display = true; break;
+      case 'c': opt_click = false; break;
+      case 'd': opt_display = false; break;
         break;
 
       default:
@@ -168,8 +167,8 @@ main(int argc, const char ** argv)
     unsigned int width = 101;
     unsigned int height = 207;
     int method = 0;
-    bool opt_display = false;
-    bool opt_click = false;
+    bool opt_display = true;
+    bool opt_click = true;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -221,9 +220,9 @@ main(int argc, const char ** argv)
       for (unsigned int cpt = 0; cpt < Itest.getSize(); cpt++) {
         Itest.bitmap[cpt] = cpt;
       }
-      vpImage<unsigned char> Itest_resize, Itest_resize2;
-      vpImageTools::resize(Itest, Itest_resize, Itest.getWidth()*2, Itest.getHeight()*2, (vpImageTools::vpImageInterpolationType) m);
-      vpImageTools::resize(Itest_resize, Itest_resize2, Itest.getWidth(), Itest.getHeight(), (vpImageTools::vpImageInterpolationType) m);
+      vpImage<unsigned char> Itest_resize(Itest.getHeight()*2, Itest.getWidth()*2), Itest_resize2(Itest.getHeight(), Itest.getWidth());
+      vpImageTools::resize(Itest, Itest_resize, (vpImageTools::vpImageInterpolationType) m);
+      vpImageTools::resize(Itest_resize, Itest_resize2, (vpImageTools::vpImageInterpolationType) m);
       std::cout << "Itest:\n" << Itest << std::endl;
       std::cout << "Itest_resize:\n" << Itest_resize << std::endl;
       std::cout << "Itest_resize2:\n" << Itest_resize2 << std::endl;
@@ -241,14 +240,12 @@ main(int argc, const char ** argv)
       std::cout << "(Itest ==Itest_resize2)? " << (Itest == Itest_resize2) << std::endl << std::endl;
     }
 
-
-
     //Grayscale image
     vpImage<unsigned char> I; // Input image
 
     // Read the input grey image from the disk
     filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
-    std::cout << "Read image: " << filename << std::endl << std::endl;
+    std::cout << "Read image: " << filename << std::endl;
     vpImageIo::read(I, filename);
 
     vpImage<unsigned char> I_resize;
@@ -269,7 +266,7 @@ main(int argc, const char ** argv)
     VISP_HAVE_D3D9 *d1 = new VISP_HAVE_D3D9, *d2 = new VISP_HAVE_D3D9;
 #else
     std::cerr << "No display available!" << std::endl;
-    return EXIT_SUCCESS;
+    opt_display = false;
 #endif
 
     if (opt_display) {
@@ -295,7 +292,7 @@ main(int argc, const char ** argv)
 
     // Read the input grey image from the disk
     filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
-    std::cout << "Read image: " << filename << std::endl << std::endl;
+    std::cout << "\nRead image: " << filename << std::endl;
     vpImageIo::read(I_color, filename);
 
     vpImage<vpRGBa> I_color_resize;
@@ -316,7 +313,7 @@ main(int argc, const char ** argv)
     VISP_HAVE_D3D9 *d3 = new VISP_HAVE_D3D9, *d4 = new VISP_HAVE_D3D9;
 #else
     std::cerr << "No display available!" << std::endl;
-    return EXIT_SUCCESS;
+    opt_display = false;
 #endif
 
     if (opt_display) {
@@ -336,18 +333,24 @@ main(int argc, const char ** argv)
     }
 
 
+#if defined (VISP_HAVE_X11) || defined (VISP_HAVE_OPENCV) || defined (VISP_HAVE_GTK) || defined (VISP_HAVE_GDI) || defined (VISP_HAVE_D3D9)
+    delete d1;
+    delete d2;
+    delete d3;
+    delete d4;
+#endif
+
+
     vpImage<vpRGBa> I_color_double, I_color_double_half;
     vpImageTools::resize(I_color, I_color_double, I_color.getWidth()*2, I_color.getHeight()*2, (vpImageTools::vpImageInterpolationType) method);
     vpImageTools::resize(I_color_double, I_color_double_half, I_color.getWidth(), I_color.getHeight(), (vpImageTools::vpImageInterpolationType) method);
-    std::cout << "(I_color == I_color_double_half)? " << (I_color == I_color_double_half) << std::endl;
+    std::cout << "\n(I_color == I_color_double_half)? " << (I_color == I_color_double_half) << std::endl;
 
-    float root_mean_square_error = 0.0;
+    double root_mean_square_error = 0.0;
     for (unsigned int i = 0; i < I_color.getHeight(); i++) {
       for (unsigned int j = 0; j < I_color.getWidth(); j++) {
         vpColVector c_error = I_color[i][j] - I_color_double_half[i][j];
-        for (int c = 0; c < 3; c++) {
-          root_mean_square_error += c_error.sumSquare();
-        }
+        root_mean_square_error += c_error.sumSquare();
       }
     }
     std::cout << "Root Mean Square Error: " << sqrt(root_mean_square_error / (I_color.getSize()*3)) << std::endl;
@@ -355,26 +358,16 @@ main(int argc, const char ** argv)
     vpImage<vpRGBa> I_color_half, I_color_half_double;
     vpImageTools::resize(I_color, I_color_half, I_color.getWidth()/2, I_color.getHeight()/2, (vpImageTools::vpImageInterpolationType) method);
     vpImageTools::resize(I_color_half, I_color_half_double, I_color.getWidth(), I_color.getHeight(), (vpImageTools::vpImageInterpolationType) method);
-    std::cout << "(\nI_color == I_color_half_double)? " << (I_color == I_color_half_double) << std::endl;
+    std::cout << "\n(I_color == I_color_half_double)? " << (I_color == I_color_half_double) << std::endl;
 
     root_mean_square_error = 0.0;
     for (unsigned int i = 0; i < I_color.getHeight(); i++) {
       for (unsigned int j = 0; j < I_color.getWidth(); j++) {
         vpColVector c_error = I_color[i][j] - I_color_half_double[i][j];
-        for (int c = 0; c < 3; c++) {
-          root_mean_square_error += c_error.sumSquare();
-        }
+        root_mean_square_error += c_error.sumSquare();
       }
     }
     std::cout << "Root Mean Square Error: " << sqrt(root_mean_square_error / (I_color.getSize()*3)) << std::endl;
-
-
-#if defined (VISP_HAVE_X11) || defined (VISP_HAVE_OPENCV) || defined (VISP_HAVE_GTK) || defined (VISP_HAVE_GDI) || defined (VISP_HAVE_D3D9)
-    delete d1;
-    delete d2;
-    delete d3;
-    delete d4;
-#endif
 
 
     return EXIT_SUCCESS;
