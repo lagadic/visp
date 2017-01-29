@@ -74,8 +74,13 @@
 */
 class VISP_EXPORT vpImageTools
 {
-
 public:
+  enum vpImageInterpolationType {
+    INTERPOLATION_NEAREST, /*!< Nearest neighbor interpolation (fastest). */
+    INTERPOLATION_LINEAR,  /*!< Bi-linear interpolation. */
+    INTERPOLATION_CUBIC    /*!< Bi-cubic interpolation. */
+  };
+
   template<class Type>
   static inline void binarise(vpImage<Type> &I,
                               Type threshold1, Type threshold2,
@@ -135,6 +140,12 @@ public:
                             const bool saturate=false);
 
   template<class Type>
+  static void resize(const vpImage<Type> &I,
+                     vpImage<Type> &Ires,
+                     const unsigned int width, const unsigned int height,
+                     const vpImageInterpolationType &method=INTERPOLATION_NEAREST);
+
+  template<class Type>
   static void undistort(const vpImage<Type> &I,
                         const vpCameraParameters &cam,
                         vpImage<Type> &newI);
@@ -154,6 +165,25 @@ public:
   vp_deprecated static void createSubImage(const vpImage<Type> &I, const vpRect &rect, vpImage<Type> &S);
   //@}
 #endif
+
+private:
+  static float cubicHermite (const float A, const float B, const float C, const float D, const float t);
+
+  template<class Type>
+  static Type getPixelClamped(const vpImage<Type> &I, unsigned int u, unsigned int v);
+
+  //Linear interpolation
+  static float lerp(const float A, const float B, const float t);
+
+  template<class Type>
+  static void resizeBicubic(const vpImage<Type> &I, vpImage<Type> &Ires);
+
+  template<class Type>
+  static void resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires);
+
+  template<class Type>
+  static void resizeNearest(const vpImage<Type> &I,
+                     vpImage<Type> &Ires);
 } ;
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -807,6 +837,245 @@ void vpImageTools::flip(vpImage<Type> &I)
       memcpy(I.bitmap+(height-1-i)*width, Ibuf.bitmap,
              width*sizeof(Type));
     }
+}
+
+template<class Type>
+Type vpImageTools::getPixelClamped(const vpImage<Type> &I, unsigned int u, unsigned int v) {
+  u = std::min(std::max(0u, u), I.getWidth()-1u);
+  v = std::min(std::max(0u, v), I.getHeight()-1u);
+
+  return I[v][u];
+}
+
+// Reference: http://blog.demofox.org/2015/08/15/resizing-images-with-bicubic-interpolation/
+template<class Type> void
+vpImageTools::resizeBicubic(const vpImage<Type> &I, vpImage<Type> &Ires) {
+  float scaleY = (I.getHeight() - 1) / (float) (Ires.getHeight() - 1);
+  float scaleX = (I.getWidth() - 1) / (float) (Ires.getWidth() - 1);
+
+  for (unsigned int i = 0; i < Ires.getHeight(); i++) {
+    float v = i * scaleY;
+    float yFrac = v - (int) v;
+
+    for (unsigned int j = 0; j < Ires.getWidth(); j++) {
+      float u = j * scaleX;
+      float xFrac = u - (int) u;
+
+      // 1st row
+      Type p00 = getPixelClamped(I, u-1, v-1);
+      Type p01 = getPixelClamped(I, u+0, v-1);
+      Type p02 = getPixelClamped(I, u+1, v-1);
+      Type p03 = getPixelClamped(I, u+2, v-1);
+
+      // 2nd row
+      Type p10 = getPixelClamped(I, u-1, v+0);
+      Type p11 = getPixelClamped(I, u+0, v+0);
+      Type p12 = getPixelClamped(I, u+1, v+0);
+      Type p13 = getPixelClamped(I, u+2, v+0);
+
+      // 3rd row
+      Type p20 = getPixelClamped(I, u-1, v+1);
+      Type p21 = getPixelClamped(I, u+0, v+1);
+      Type p22 = getPixelClamped(I, u+1, v+1);
+      Type p23 = getPixelClamped(I, u+2, v+1);
+
+      // 4th row
+      Type p30 = getPixelClamped(I, u-1, v+2);
+      Type p31 = getPixelClamped(I, u+0, v+2);
+      Type p32 = getPixelClamped(I, u+1, v+2);
+      Type p33 = getPixelClamped(I, u+2, v+2);
+
+      float col0 = cubicHermite(p00, p01, p02, p03, xFrac);
+      float col1 = cubicHermite(p10, p11, p12, p13, xFrac);
+      float col2 = cubicHermite(p20, p21, p22, p23, xFrac);
+      float col3 = cubicHermite(p30, p31, p32, p33, xFrac);
+      float value = cubicHermite(col0, col1, col2, col3, yFrac);
+      Ires[i][j] = vpMath::saturate<Type>(value);
+    }
+  }
+}
+
+template<> inline void
+vpImageTools::resizeBicubic(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires) {
+  float scaleY = (I.getHeight() - 1) / (float) (Ires.getHeight() - 1);
+  float scaleX = (I.getWidth() - 1) / (float) (Ires.getWidth() - 1);
+
+  for (unsigned int i = 0; i < Ires.getHeight(); i++) {
+    float v = i * scaleY;
+    float yFrac = v - (int) v;
+
+    for (unsigned int j = 0; j < Ires.getWidth(); j++) {
+      float u = j * scaleX;
+      float xFrac = u - (int) u;
+
+      // 1st row
+      vpRGBa p00 = getPixelClamped(I, u-1, v-1);
+      vpRGBa p01 = getPixelClamped(I, u+0, v-1);
+      vpRGBa p02 = getPixelClamped(I, u+1, v-1);
+      vpRGBa p03 = getPixelClamped(I, u+2, v-1);
+
+      // 2nd row
+      vpRGBa p10 = getPixelClamped(I, u-1, v+0);
+      vpRGBa p11 = getPixelClamped(I, u+0, v+0);
+      vpRGBa p12 = getPixelClamped(I, u+1, v+0);
+      vpRGBa p13 = getPixelClamped(I, u+2, v+0);
+
+      // 3rd row
+      vpRGBa p20 = getPixelClamped(I, u-1, v+1);
+      vpRGBa p21 = getPixelClamped(I, u+0, v+1);
+      vpRGBa p22 = getPixelClamped(I, u+1, v+1);
+      vpRGBa p23 = getPixelClamped(I, u+2, v+1);
+
+      // 4th row
+      vpRGBa p30 = getPixelClamped(I, u-1, v+2);
+      vpRGBa p31 = getPixelClamped(I, u+0, v+2);
+      vpRGBa p32 = getPixelClamped(I, u+1, v+2);
+      vpRGBa p33 = getPixelClamped(I, u+2, v+2);
+
+      for (int c = 0; c < 3; c++) {
+        float col0 = cubicHermite( ((unsigned char *) &p00)[c], ((unsigned char *) &p01)[c], ((unsigned char *) &p02)[c], ((unsigned char *) &p03)[c], xFrac );
+        float col1 = cubicHermite( ((unsigned char *) &p10)[c], ((unsigned char *) &p11)[c], ((unsigned char *) &p12)[c], ((unsigned char *) &p13)[c], xFrac );
+        float col2 = cubicHermite( ((unsigned char *) &p20)[c], ((unsigned char *) &p21)[c], ((unsigned char *) &p22)[c], ((unsigned char *) &p23)[c], xFrac );
+        float col3 = cubicHermite( ((unsigned char *) &p30)[c], ((unsigned char *) &p31)[c], ((unsigned char *) &p32)[c], ((unsigned char *) &p33)[c], xFrac );
+        float value = cubicHermite(col0, col1, col2, col3, yFrac);
+
+        ((unsigned char *) &Ires[i][j])[c] = vpMath::saturate<unsigned char>(value);
+      }
+    }
+  }
+}
+
+template<class Type> void
+vpImageTools::resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires) {
+  float scaleY = (I.getHeight() - 1) / (float) (Ires.getHeight() - 1);
+  float scaleX = (I.getWidth() - 1) / (float) (Ires.getWidth() - 1);
+
+  for (unsigned int i = 0; i < Ires.getHeight(); i++) {
+    float v = i * scaleY;
+    float yFrac = v - (int) v;
+
+    for (unsigned int j = 0; j < Ires.getWidth(); j++) {
+      float u = j * scaleX;
+      float xFrac = u - (int) u;
+
+#if 1
+      unsigned int u0 = (unsigned int) u;
+      unsigned int v0 = (unsigned int) v;
+
+      unsigned int u1 = std::min(I.getWidth()-1, (unsigned int) u+1);
+      unsigned int v1 = v0;
+
+      unsigned int u2 = u0;
+      unsigned int v2 = std::min(I.getHeight()-1, (unsigned int) v+1);
+
+      unsigned int u3 = std::min(I.getWidth()-1, (unsigned int) u+1);
+      unsigned int v3 = std::min(I.getHeight()-1, (unsigned int) v+1);
+
+      float col0 = lerp(I[v0][u0], I[v1][u1], xFrac);
+      float col1 = lerp(I[v2][u2], I[v3][u3], xFrac);
+      float value = lerp(col0, col1, yFrac);
+#else
+      Type p0 = getPixelClamped(I, u, v);
+      Type p1 = getPixelClamped(I, u+1, v);
+      Type p2 = getPixelClamped(I, u, v+1);
+      Type p3 = getPixelClamped(I, u+1, v+1);
+
+      float col0 = lerp(p0, p1, xFrac);
+      float col1 = lerp(p2, p3, xFrac);
+      float value = lerp(col0, col1, yFrac);
+#endif
+
+      Ires[i][j] = vpMath::saturate<Type>(value);
+    }
+  }
+}
+
+template<> inline void
+vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires) {
+  float scaleY = (I.getHeight() - 1) / (float) (Ires.getHeight() - 1);
+  float scaleX = (I.getWidth() - 1) / (float) (Ires.getWidth() - 1);
+
+  for (unsigned int i = 0; i < Ires.getHeight(); i++) {
+    float v = i * scaleY;
+    float yFrac = v - (int) v;
+
+    for (unsigned int j = 0; j < Ires.getWidth(); j++) {
+      float u = j * scaleX;
+      float xFrac = u - (int) u;
+
+      unsigned int u0 = (unsigned int) u;
+      unsigned int v0 = (unsigned int) v;
+
+      unsigned int u1 = std::min(I.getWidth()-1, (unsigned int) u+1);
+      unsigned int v1 = v0;
+
+      unsigned int u2 = u0;
+      unsigned int v2 = std::min(I.getHeight()-1, (unsigned int) v+1);
+
+      unsigned int u3 = std::min(I.getWidth()-1, (unsigned int) u+1);
+      unsigned int v3 = std::min(I.getHeight()-1, (unsigned int) v+1);
+
+      for (int c = 0; c < 3; c++) {
+        float col0 = lerp( ((unsigned char *) &I[v0][u0])[c], ((unsigned char *) &I[v1][u1])[c], xFrac );
+        float col1 = lerp( ((unsigned char *) &I[v2][u2])[c], ((unsigned char *) &I[v3][u3])[c], xFrac );
+        float value = lerp(col0, col1, yFrac);
+
+        ((unsigned char *) &Ires[i][j])[c] = vpMath::saturate<unsigned char>(value);
+      }
+    }
+  }
+}
+
+template<class Type> void
+vpImageTools::resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires) {
+  float scaleY = I.getHeight() / (float) (Ires.getHeight() - 1);
+  float scaleX = I.getWidth() / (float) (Ires.getWidth() - 1);
+
+  for (unsigned int i = 0; i < Ires.getHeight(); i++) {
+    float v = i * scaleY;
+
+    for (unsigned int j = 0; j < Ires.getWidth(); j++) {
+      float u = j * scaleX;
+
+      Ires[i][j] = getPixelClamped(I, u, v);
+    }
+  }
+}
+
+/*!
+  Resize the image using one interpolation method (by default it uses the nearest neighbor interpolation).
+
+  \param I : Input image.
+  \param Ires : Output image resized.
+  \param width : Resize width.
+  \param height : Resize height.
+  \param method : Interpolation method.
+*/
+template<class Type> void
+vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width, const unsigned int height, const vpImageInterpolationType &method) {
+  Ires.resize(height, width);
+
+  if (I.getWidth() < 2 || I.getHeight() < 2 || width < 2 || height < 2) {
+    std::cerr << "Input or output image is too small!" << std::endl;
+    return;
+  }
+
+  switch (method) {
+    case INTERPOLATION_NEAREST:
+      resizeNearest(I, Ires);
+      break;
+
+    case INTERPOLATION_LINEAR:
+      resizeBilinear(I, Ires);
+      break;
+
+    case INTERPOLATION_CUBIC:
+      resizeBicubic(I, Ires);
+      break;
+
+    default:
+      break;
+  }
 }
 
 #endif
