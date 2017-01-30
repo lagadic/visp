@@ -28,7 +28,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Test image printing.
+ * Test image print.
  *
  *****************************************************************************/
 
@@ -36,11 +36,10 @@
 #include <visp3/core/vpImage.h>
 
 /*!
-  \example testImagePrinting.cpp
+  \example testImagePrint.cpp
 
-  \brief Test image printing.
+  \brief Test image print.
 */
-
 int main() {
   unsigned int size = 16;
   vpImage<int> I_int(size, size);
