@@ -192,7 +192,7 @@ void vp_rs_get_grey_impl(const rs::device *m_device, const std::map <rs::stream,
 
 // Retrieve point cloud
 void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map <rs::stream, rs::intrinsics> &m_intrinsics, float max_Z, std::vector<vpColVector> &pointcloud,
-                              const rs::stream &stream_depth=rs::stream::depth)
+                               const float invalidDepthValue=0.0f, const rs::stream &stream_depth=rs::stream::depth)
 {
   if (m_device->is_stream_enabled(rs::stream::depth)) {
     std::map<rs::stream, rs::intrinsics>::const_iterator it_intrinsics = m_intrinsics.find(stream_depth);
@@ -217,7 +217,7 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map <rs::s
         depth_point = it_intrinsics->second.deproject(depth_pixel, scaled_depth);
 
         if (depth_point.z <= 0 || depth_point.z > max_Z) {
-          depth_point.x = depth_point.y = depth_point.z = 0;
+          depth_point.x = depth_point.y = depth_point.z = invalidDepthValue;
         }
         p3d[0] = depth_point.x;
         p3d[1] = depth_point.y;
@@ -236,7 +236,7 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map <rs::s
 #ifdef VISP_HAVE_PCL
 // Retrieve point cloud
 void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map<rs::stream, rs::intrinsics> &m_intrinsics, float max_Z, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
-                               const rs::stream &stream_depth=rs::stream::depth)
+                               const float invalidDepthValue=0.0f, const rs::stream &stream_depth=rs::stream::depth)
 {
   if (m_device->is_stream_enabled(rs::stream::depth)) {
     std::map<rs::stream, rs::intrinsics>::const_iterator it_intrinsics = m_intrinsics.find(stream_depth);
@@ -264,7 +264,7 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map<rs::st
         depth_point = it_intrinsics->second.deproject(depth_pixel, scaled_depth);
 
         if (depth_point.z <= 0 || depth_point.z > max_Z) {
-          depth_point.x = depth_point.y = depth_point.z = 0;
+          depth_point.x = depth_point.y = depth_point.z = invalidDepthValue;
         }
         pointcloud->points[(size_t) (i*width + j)].x = depth_point.x;
         pointcloud->points[(size_t) (i*width + j)].y = depth_point.y;
@@ -279,7 +279,7 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map<rs::st
 
 // Retrieve point cloud
 void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map <rs::stream, rs::intrinsics> &m_intrinsics, float max_Z, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
-                               const rs::stream &stream_color=rs::stream::color, const rs::stream &stream_depth=rs::stream::depth)
+                               const float invalidDepthValue=0.0f, const rs::stream &stream_color=rs::stream::color, const rs::stream &stream_depth=rs::stream::depth)
 {
   if (m_device->is_stream_enabled(rs::stream::depth) && m_device->is_stream_enabled(rs::stream::color)) {
     std::map<rs::stream, rs::intrinsics>::const_iterator it_intrinsics_depth = m_intrinsics.find(stream_depth);
@@ -319,7 +319,7 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map <rs::s
         depth_point = it_intrinsics_depth->second.deproject(depth_pixel, scaled_depth);
 
         if (depth_point.z <= 0 || depth_point.z > max_Z) {
-          depth_point.x = depth_point.y = depth_point.z = 0;
+          depth_point.x = depth_point.y = depth_point.z = invalidDepthValue;
         }
         pointcloud->points[(size_t) (i*depth_width + j)].x = depth_point.x;
         pointcloud->points[(size_t) (i*depth_width + j)].y = depth_point.y;

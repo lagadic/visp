@@ -359,6 +359,12 @@ public:
   rs::extrinsics getExtrinsics(const rs::stream &from, const rs::stream &to) const;
   rs::intrinsics getIntrinsics(const rs::stream &stream) const;
 
+  //! Get the value used when the pixel value (u, v) in the depth map is invalid for the point cloud.
+  //! For instance, the Point Cloud Library (PCL) uses NAN values for points where the depth is invalid.
+  inline float getInvalidDepthValue() const {
+    return m_invalidDepthValue;
+  }
+
   //! Get number of devices that are detected
   int getNumDevices() const {
     return m_context.get_device_count();
@@ -393,6 +399,12 @@ public:
 
   void setEnableStream(const rs::stream &stream, const bool status);
 
+  //! Set the value used when the pixel value (u, v) in the depth map is invalid for the point cloud.
+  //! For instance, the Point Cloud Library (PCL) uses NAN values for points where the depth is invalid.
+  inline void setInvalidDepthValue(const float value) {
+    m_invalidDepthValue = value;
+  }
+
   void setStreamSettings(const rs::stream &stream, const rs::preset &preset);
   void setStreamSettings(const rs::stream &stream, const vpRsStreamParams &params);
 
@@ -407,6 +419,7 @@ protected:
   std::map<rs::stream, bool> m_useStreamPresets;
   std::map<rs::stream, rs::preset> m_streamPresets;
   std::map<rs::stream, vpRsStreamParams> m_streamParams;
+  float m_invalidDepthValue;
 
   void initStream();
 };
