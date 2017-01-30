@@ -114,6 +114,23 @@ else()
   include(cmake/GNUInstallDirs.cmake)
 endif()
 
+#----------------------------------------------------------------------
+# Platform specific
+#----------------------------------------------------------------------
+include(cmake/VISPDetectPlatform.cmake)
+
+# Set the path where to install the lib
+if(WIN32)
+  if(DEFINED VISP_RUNTIME AND DEFINED VISP_ARCH)
+    set(VISP_INSTALL_BINARIES_PREFIX "${VISP_ARCH}/${VISP_RUNTIME}/")
+  else()
+    message(STATUS "Can't detect runtime and/or arch")
+    set(VISP_INSTALL_BINARIES_PREFIX "")
+  endif()
+else()
+  set(VISP_INSTALL_BINARIES_PREFIX "")
+endif()
+
 # where to install the library and headers
 if(WIN32)
   set(VISP_INC_INSTALL_PATH     ${CMAKE_INSTALL_INCLUDEDIR})
@@ -146,29 +163,6 @@ set(VISP_DOC_DIR "${VISP_BINARY_DIR}/doc")
 set(LIBRARY_OUTPUT_PATH ${VISP_BINARY_DIR}/${VISP_LIB_INSTALL_PATH})
 set(BINARY_OUTPUT_PATH ${VISP_BINARY_DIR}/${VISP_BIN_INSTALL_PATH})
 
-include_directories(${VISP_INCLUDE_DIR})
-
-#----------------------------------------------------------------------
-# Platform specific
-#----------------------------------------------------------------------
-include(cmake/VISPDetectPlatform.cmake)
-
-VP_OPTION(ENABLE_SSE2  "" "" "Enable SSE2 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
-VP_OPTION(ENABLE_SSE3  "" "" "Enable SSE3 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
-VP_OPTION(ENABLE_SSSE3 "" "" "Enable SSSE3 instructions" "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
-
-# Set the path where to install the lib
-if(WIN32)
-  if(DEFINED VISP_RUNTIME AND DEFINED VISP_ARCH)
-    set(VISP_INSTALL_BINARIES_PREFIX "${VISP_ARCH}/${VISP_RUNTIME}/")
-  else()
-    message(STATUS "Can't detect runtime and/or arch")
-    set(VISP_INSTALL_BINARIES_PREFIX "")
-  endif()
-else()
-  set(VISP_INSTALL_BINARIES_PREFIX "")
-endif()
-
 if(WIN32)
   # Postfix of .lib and .dll
   set(VISP_DEBUG_POSTFIX "d")
@@ -177,6 +171,15 @@ else()
   set(VISP_DEBUG_POSTFIX "")
   set(VISP_DLLVERSION "")
 endif()
+
+include_directories(${VISP_INCLUDE_DIR})
+
+#----------------------------------------------------------------------
+# SSE optimization
+#----------------------------------------------------------------------
+VP_OPTION(ENABLE_SSE2  "" "" "Enable SSE2 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
+VP_OPTION(ENABLE_SSE3  "" "" "Enable SSE3 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
+VP_OPTION(ENABLE_SSSE3 "" "" "Enable SSSE3 instructions" "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
 
 # ----------------------------------------------------------------------------
 # Handle always full RPATH

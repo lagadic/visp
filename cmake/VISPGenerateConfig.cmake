@@ -181,27 +181,15 @@ if(WIN32)
     IMMEDIATE @ONLY
   )
 
-  if(BUILD_SHARED_LIBS)
-    install(FILES
-      "${CMAKE_BINARY_DIR}/win-install/ViSPConfig.cmake"
-      "${CMAKE_BINARY_DIR}/win-install/ViSPUse.cmake"
-      DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}${VISP_LIB_INSTALL_PATH}"
-      COMPONENT dev)
-    install(EXPORT VISPModules 
-      DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}${VISP_LIB_INSTALL_PATH}"
-      FILE VISPModules.cmake 
-      COMPONENT dev)
-  else()
-    install(FILES
-      "${CMAKE_BINARY_DIR}/win-install/ViSPConfig.cmake"
-      "${CMAKE_BINARY_DIR}/win-install/ViSPUse.cmake"
-      DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}static${VISP_LIB_INSTALL_PATH}"
-      COMPONENT dev)
-    install(EXPORT VISPModules 
-      DESTINATION "${VISP_INSTALL_BINARIES_PREFIX}static${VISP_LIB_INSTALL_PATH}"
-      FILE VISPModules.cmake 
-      COMPONENT dev)
-  endif()
+  install(FILES
+    "${CMAKE_BINARY_DIR}/win-install/ViSPConfig.cmake"
+    "${CMAKE_BINARY_DIR}/win-install/ViSPUse.cmake"
+    DESTINATION "${VISP_LIB_INSTALL_PATH}"
+    COMPONENT dev)
+  install(EXPORT VISPModules
+    DESTINATION "${VISP_LIB_INSTALL_PATH}"
+    FILE VISPModules.cmake
+    COMPONENT dev)
 
   install(FILES
     "cmake/VISPConfig.cmake"
