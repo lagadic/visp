@@ -81,9 +81,9 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
   pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
   pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud_);
   viewer->setBackgroundColor (0, 0, 0);
-  viewer->addCoordinateSystem (1.0);
+  viewer->addCoordinateSystem (0.1);
   viewer->initCameraParameters ();
-  viewer->setPosition(640+80, 480+80);
+  viewer->setPosition(2*640+80, 480+80);
   viewer->setCameraPosition(0,0,-0.5, 0,-1,0);
   viewer->setSize(640, 480);
 
@@ -118,7 +118,11 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
 #endif
 
 
-int main()
+int main(
+#if defined(VISP_HAVE_PCL)
+    int argc, char *argv[]
+#endif
+    )
 {
 #if defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_CPP11_COMPATIBILITY) && ( defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) )
   try {
@@ -358,6 +362,7 @@ int main()
     viewer->setBackgroundColor (0, 0, 0);
     viewer->addCoordinateSystem (1.0);
     viewer->initCameraParameters ();
+    viewer->setPosition(2*640+80, 480+80);
     viewer->setCameraPosition(0,0,-0.5, 0,-1,0);
     viewer->setSize(640, 480);
 #endif
@@ -382,12 +387,21 @@ int main()
     di.init(I_display_infrared, (int) I_display_depth.getWidth(), 0, "Infrared image");
 #endif
 
+    //depth == 0 ; color == 1 ; rectified_color == 6 ; color_aligned_to_depth == 7 ; depth_aligned_to_color == 9 ; depth_aligned_to_rectified_color == 10
+    //argv[1] <==> color stream
+    rs::stream color_stream = argc > 1 ? (rs::stream) atoi(argv[1]) : rs::stream::color;
+    std::cout << "color_stream: " << color_stream << std::endl;
+    //argv[2] <==> depth stream
+    rs::stream depth_stream = argc > 2 ? (rs::stream) atoi(argv[2]) : rs::stream::depth;
+    std::cout << "depth_stream: " << depth_stream << std::endl;
+
     time_vector.clear();
     //Test depth stream during 10 s
     t_begin = vpTime::measureTimeMs();
     while (true) {
       double t = vpTime::measureTimeMs();
-      rs.acquire( (unsigned char *) I_color.bitmap, (unsigned char *) depth.bitmap, NULL, pointcloud, (unsigned char *) I_display_infrared.bitmap );
+      rs.acquire( (unsigned char *) I_color.bitmap, (unsigned char *) depth.bitmap, NULL, pointcloud, (unsigned char *) I_display_infrared.bitmap,
+                  NULL, color_stream, depth_stream);
       vpImageConvert::createDepthHistogram(depth, I_display_depth);
 
 #ifdef VISP_HAVE_PCL
