@@ -176,7 +176,7 @@ private:
   static float cubicHermite (const float A, const float B, const float C, const float D, const float t);
 
   template<class Type>
-  static Type getPixelClamped(const vpImage<Type> &I, unsigned int u, unsigned int v);
+  static Type getPixelClamped(const vpImage<Type> &I, const float u, const float v);
 
   //Linear interpolation
   static float lerp(const float A, const float B, const float t);
@@ -848,11 +848,11 @@ void vpImageTools::flip(vpImage<Type> &I)
 }
 
 template<class Type>
-Type vpImageTools::getPixelClamped(const vpImage<Type> &I, unsigned int u, unsigned int v) {
-  u = std::min(std::max(0u, u), I.getWidth()-1u);
-  v = std::min(std::max(0u, v), I.getHeight()-1u);
+Type vpImageTools::getPixelClamped(const vpImage<Type> &I, const float u, const float v) {
+  unsigned int j = std::min(std::max(0u, (unsigned int) u), I.getWidth()-1);
+  unsigned int i = std::min(std::max(0u, (unsigned int) v), I.getHeight()-1);
 
-  return I[v][u];
+  return I[i][j];
 }
 
 // Reference: http://blog.demofox.org/2015/08/15/resizing-images-with-bicubic-interpolation/
