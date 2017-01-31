@@ -170,8 +170,6 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int
 {
   double residu_1 = 1e3;
   double r = 1e3-1;
-  vpMatrix LTL;
-  vpColVector LTR;
 
   //vpColVector w;
   vpColVector factor;
