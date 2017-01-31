@@ -261,9 +261,9 @@ main(int argc, const char ** argv)
 #elif defined (VISP_HAVE_GTK)
     vpDisplayGTK *d1 = new vpDisplayGTK, *d2 = new vpDisplayGTK;
 #elif defined (VISP_HAVE_GDI)
-    VISP_HAVE_GDI *d1 = new VISP_HAVE_GDI, *d2 = new VISP_HAVE_GDI;
+    vpDisplayGDI *d1 = new vpDisplayGDI, *d2 = new vpDisplayGDI;
 #elif defined (VISP_HAVE_D3D9)
-    VISP_HAVE_D3D9 *d1 = new VISP_HAVE_D3D9, *d2 = new VISP_HAVE_D3D9;
+    vpDisplayD3D *d1 = new vpDisplayD3D, *d2 = new vpDisplayD3D;
 #else
     std::cerr << "No display available!" << std::endl;
     opt_display = false;
@@ -308,9 +308,9 @@ main(int argc, const char ** argv)
 #elif defined (VISP_HAVE_GTK)
     vpDisplayGTK *d3 = new vpDisplayGTK, *d4 = new vpDisplayGTK;
 #elif defined (VISP_HAVE_GDI)
-    VISP_HAVE_GDI *d3 = new VISP_HAVE_GDI, *d4 = new VISP_HAVE_GDI;
+    vpDisplayGDI *d3 = new vpDisplayGDI, *d4 = new vpDisplayGDI;
 #elif defined (VISP_HAVE_D3D9)
-    VISP_HAVE_D3D9 *d3 = new VISP_HAVE_D3D9, *d4 = new VISP_HAVE_D3D9;
+    vpDisplayD3D *d3 = new vpDisplayD3D, *d4 = new vpDisplayD3D;
 #else
     std::cerr << "No display available!" << std::endl;
     opt_display = false;
