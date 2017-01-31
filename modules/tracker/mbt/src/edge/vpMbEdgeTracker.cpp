@@ -175,7 +175,6 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int
   vpColVector factor;
   //vpColVector error; // s-s*
   vpColVector weighted_error; // Weighted error vector wi(s-s)*
-  vpVelocityTwistMatrix cVo;
 
   unsigned int iter = 0;
 
@@ -191,12 +190,11 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int
     throw vpTrackingException(vpTrackingException::notEnoughPointError, "No data found to compute the interaction matrix...");
   }
   
-  vpMatrix L(nbrow,6), Lp;
+  vpMatrix L(nbrow,6);
 
   // compute the error vector
   m_error.resize(nbrow);
   unsigned int nerror = m_error.getRows();
-  vpColVector v ;
 
   bool reloop = true;
   
@@ -210,7 +208,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int
   {
     if(iter==0)
     {
-      weighted_error.resize(nerror) ;
+      weighted_error.resize(nerror);
       m_w.resize(nerror);
       m_w = 0;
       factor.resize(nerror);
@@ -219,7 +217,6 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int
     
     double count = 0;
 
-//    unsigned int n = 0;
     reloop = false;
 
     computeVVSFirstPhase(_I, iter, L, factor, count, m_error, m_w, lvl);
@@ -242,9 +239,9 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int
   vpRobust robust_lines(nberrors_lines);
   vpRobust robust_cylinders(nberrors_cylinders);
   vpRobust robust_circles(nberrors_circles);
-  robust_lines.setIteration(0) ;
-  robust_cylinders.setIteration(0) ;
-  robust_circles.setIteration(0) ;
+  robust_lines.setIteration(0);
+  robust_cylinders.setIteration(0);
+  robust_circles.setIteration(0);
   iter = 0;
   vpColVector w_lines(nberrors_lines);
   vpColVector w_cylinders(nberrors_cylinders);
