@@ -297,11 +297,16 @@ vpPolygon::testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint&
   \param ip : The point which have to be tested.
   \param method : Method to use for Point In Polygon test.
   
-  \return Returns true if the point is inside the triangle, false otherwise.
+  \return Returns true if the point is inside the polygon, false otherwise.
 */
 bool 
 vpPolygon::isInside(const vpImagePoint& ip, const PointInPolygonMethod &method) const
 {
+  if (_corners.size() < 3) {
+    std::cerr << "It is not a polygon (_corners.size() < 3)!" << std::endl;
+    return false;
+  }
+
   bool test = false;
   switch (method) {
     case PnPolySegmentIntersection:
@@ -360,6 +365,11 @@ vpPolygon::isInside(const vpImagePoint& ip, const PointInPolygonMethod &method) 
 
 void
 vpPolygon::precalcValuesPnPoly() {
+  if (_corners.size() < 3) {
+    std::cerr << "It is not a polygon (_corners.size() < 3)!" << std::endl;
+    return;
+  }
+
   m_PnPolyConstants.resize(_corners.size());
   m_PnPolyMultiples.resize(_corners.size());
 
