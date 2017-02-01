@@ -599,5 +599,5 @@ vpMbtDistanceKltPoints::display(const vpImage<vpRGBa> &I, const vpHomogeneousMat
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning: libvisp_mbt.a(vpMbtDistanceKltPoints.cpp.o) has no symbols
-void dummy_vpMbKltTracker() {};
+void dummy_vpMbtDistanceKltPoints() {};
 #endif
