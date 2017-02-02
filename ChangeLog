@@ -19,8 +19,12 @@ ViSP 3.0.1 (in development)
       provided with their haptic devices
     . New vpComedi and vpForceTorqueAtiSensor classes to get synchonous
       data from ATI F/T sensors
-    . New vpRealSense class, a wrapper open RealSense SDK to capture
-      data from RS300, F200, R200 RGB-depth sensors
+    . New vpRealSense class, a wrapper over RealSense SDK to capture
+      data from SR300, F200, R200 RGB-depth sensors:
+      + Acquisition of the color / depth / infrared streams + the associated
+        point cloud
+      + Possibility to set the stream parameters (resolution, FPS, ...)
+      + Possibility to retrieve stream aligned (e.g. color stream aligned to depth)
     . New cross platform multi-threading capabilities with vpMutex and
       vpThread classes
     . Crosscompiling capabilities tested for Raspberry Pi target
@@ -48,6 +52,23 @@ ViSP 3.0.1 (in development)
       complete, including OS, compiler, flags and 3rd party versions.
       This information is also embedded in visp_core library and could
       be obtained using vpIoTools::getBuildInformation()
+    . Improve RANSAC pose estimation computation time (noticeable with large data)
+    . vpKeyPoint class:
+      + Support for little / big endian architecture when writing learning data
+        into binary file
+      + Add possibility to learn keypoints on cylinders
+      + Add support of the new keypoint methods in OpenCV 3.1 and 3.2
+      + Add possibility to use enum type to select the keypoint
+    . Add possibility to save extra information (time, reprojection error, ...)
+      for the camera calibration process (e.g. in camera_calibration.cpp)
+    . Improve image morphology operations for grayscale images
+    . Add optimized image addition / subtraction for grayscale images
+    . Add possibility to load recursive CAO model with identical filenames
+    . Add possibility to retrieve clipped polygons for the model-based tracker
+    . Improve vpPolygon::isInside() computation time
+    . Add separable filter and switch between correlation / convolution in vpImageFilter
+    . Add possibility to print vpImage class in the terminal
+    . Add basic image resizing (nearest neighbor / bilinear / bicubic interpolation)
   - Tutorials
     . New tutorial: How to use multi-threading capabilities
     . New tutorial: Crosscompilation for Raspberry Pi from Ubuntu host
