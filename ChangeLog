@@ -6,7 +6,7 @@
                       https://visp.inria.fr
 
 
-ViSP 3.0.1 (in development)
+ViSP 3.0.1 (released February 3rd, 2017)
   - New features
     . Compatibility with Microsoft Visual C++ 2017 (MSCV 15)
     . Compatibility with Universal Windows Platform (UWP); Windows Phone
