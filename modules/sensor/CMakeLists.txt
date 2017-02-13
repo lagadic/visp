@@ -168,7 +168,7 @@ if(USE_FLYCAPTURE)
 endif()
 if(USE_REALSENSE)
   # Add specific build flag to turn off warnings coming from RealSense 3rd party
-  vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense.cpp -Wno-strict-aliasing)
+  vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense.cpp -Wno-strict-aliasing -Wno-pessimizing-move -Wno-unused-parameter)
 endif()
 
 vp_module_include_directories(${opt_incs})
@@ -177,5 +177,5 @@ vp_add_tests(CTEST_EXCLUDE_PATH framegrabber force-torque rgb-depth DEPENDS_ON v
 
 if(USE_PCL)
   # Add specific build flag to turn off warnings coming from PCL 3rd party
-  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter)
 endif()
