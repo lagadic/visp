@@ -76,7 +76,8 @@ public:
 
    //! Basic constructor that creates an empty 0-size column vector.
   vpColVector() : vpArray2D<double>() {}
-  //! Construct a column vector of size n. All the elements are initialized to zero.
+  //! Construct a column vector of size n. \warning Elements are not initialized. If you want to set
+  //! an initial value use vpColVector(unsigned int, double).
   vpColVector(unsigned int n) : vpArray2D<double>(n,1){}
   //! Construct a column vector of size n. Each element is set to \e val.
   vpColVector(unsigned int n, double val) : vpArray2D<double>(n, 1, val){}
