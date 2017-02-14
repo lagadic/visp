@@ -21,7 +21,7 @@ $ sudo apt-get install libvisp-dev
 
 To install ViSP images data set useful to run ViSP examples you can run:
 \code
-$ sudo apt-get install visp-images
+$ sudo apt-get install visp-images-data
 \endcode
 
 To install ViSP html documentation you can run:
