@@ -129,11 +129,12 @@ vpSubMatrix & vpSubMatrix::operator=(const vpMatrix &B){
 			    "\n\t\t \n\t\t vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix")) ;
   }
   
-  for (unsigned int i=0;i<rowNum;i++)
+  for (unsigned int i=0;i<rowNum;i++) {
     for(unsigned int j=0;j<colNum;j++)
       rowPtrs[i][j] = B[i][j];
+  }
     
-    return *this;
+  return *this;
 }
 
 /*!
@@ -149,14 +150,14 @@ vpSubMatrix & vpSubMatrix::operator=(const vpSubMatrix &B){
 			    "\n\t\t \n\t\t vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix")) ;
   }
   
-  
   double ** BrowPtrs=B.rowPtrs;
   
-  for (unsigned int i=0;i<rowNum;i++)
+  for (unsigned int i=0;i<rowNum;i++) {
     for(unsigned int j=0;j<colNum;j++)
       rowPtrs[i][j] = BrowPtrs[i][j];
+  }
     
-    return *this;
+  return *this;
 }
 
 /*!
@@ -164,11 +165,12 @@ vpSubMatrix & vpSubMatrix::operator=(const vpSubMatrix &B){
   \param x : a scalar
 */
 vpSubMatrix & vpSubMatrix::operator=(const double &x){
-  for (unsigned int i=0;i<rowNum;i++)
+  for (unsigned int i=0;i<rowNum;i++) {
     for(unsigned int j=0;j<colNum;j++)
       rowPtrs[i][j] = x;
+  }
     
-    return *this;
+  return *this;
 }
 
 

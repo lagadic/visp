@@ -538,7 +538,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
     vpDisplay::flush(I) ;
 
 		vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
-    while (!vpDisplay::getClick(I, ip, button)) ;
+    while (!vpDisplay::getClick(I, ip, button)) {};
 
 		if (button == vpMouseButton::button1)
 		{
@@ -1160,13 +1160,14 @@ vpMbTracker::loadVRMLModel(const std::string& modelFile)
 void vpMbTracker::removeComment(std::ifstream& fileId) {
 	char c;
 
-	fileId.get(c);
-	while (!fileId.fail() && (c == '#')) {
-		fileId.ignore(256, '\n');
-		fileId.get(c);
-	}
-    if (fileId.fail())
-        throw(vpException(vpException::ioError, "Reached end of file"));
+  fileId.get(c);
+  while (!fileId.fail() && (c == '#')) {
+    fileId.ignore(256, '\n');
+    fileId.get(c);
+  }
+  if (fileId.fail()) {
+    throw(vpException(vpException::ioError, "Reached end of file"));
+  }
 	fileId.unget();
 }
 

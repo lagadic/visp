@@ -403,11 +403,12 @@ std::vector<int> vpNetwork::receiveAndDecodeRequest()
 std::vector<int> vpNetwork::receiveAndDecodeRequestFrom(const unsigned int &receptorEmitting)
 {
   std::vector<int> res = receiveRequestFrom(receptorEmitting);
-  for(unsigned int i = 0 ; i < res.size() ; i++)
+  for(unsigned int i = 0 ; i < res.size() ; i++) {
     if(res[i] != -1)
       request_list[(unsigned)res[i]]->decode();
+  }
   
-    return res;
+  return res;
 }
 
 /*!

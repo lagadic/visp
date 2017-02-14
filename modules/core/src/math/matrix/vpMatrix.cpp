@@ -2581,29 +2581,26 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   unsigned int nca = A.getCols() ;
   unsigned int ncb = B.getCols() ;
 
-  if (nca !=0)
+  if (nca !=0) {
     if (A.getRows() != B.getRows()) {
       throw(vpException(vpException::dimensionError,
                         "Cannot juxtapose (%dx%d) matrix with (%dx%d) matrix",
                         A.getRows(), A.getCols(), B.getRows(), B.getCols())) ;
     }
+  }
 
-    try {
-      C.resize(B.getRows(),nca+ncb) ;
+  C.resize(B.getRows(),nca+ncb);
+
+  unsigned int i,j ;
+  for (i=0 ; i < C.getRows(); i++)
+    for (j=0 ; j < nca ; j++)
+      C[i][j] = A[i][j] ;
+
+  for (i=0 ; i < C.getRows() ; i++) {
+    for (j=0 ; j < ncb ; j++) {
+      C[i][nca+j] = B[i][j] ;
     }
-    catch(...) {
-      throw ;
-    }
-
-    unsigned int i,j ;
-    for (i=0 ; i < C.getRows(); i++)
-      for (j=0 ; j < nca ; j++)
-        C[i][j] = A[i][j] ;
-
-    for (i=0 ; i < C.getRows() ; i++)
-      for (j=0 ; j < ncb ; j++){
-        C[i][nca+j] = B[i][j] ;
-      }
+  }
 }
 
 
