@@ -24,3 +24,8 @@ endforeach()
 foreach(data ${tutorial_data})
   visp_copy_data(tutorial-pose-from-points-image.cpp ${data})
 endforeach()
+
+if(VISP_HAVE_ZBAR)
+  # Add specific build flag to turn off warnings coming from zbar 3rd party
+  visp_set_source_file_compile_flag(tutorial-pose-from-qrcode-image.cpp -Wno-unused-parameter)
+endif()
