@@ -130,7 +130,7 @@ void vpRealSense::open()
   std::cout << "RealSense Camera - Connecting to camera with Serial No: " << m_device->get_serial() << std::endl;
 
   //Enable only infrared2 stream if supported
-  m_enableStreams[rs::stream::infrared2] = m_device->supports(rs::capabilities::infrared2);
+  m_enableStreams[rs::stream::infrared2] = m_enableStreams[rs::stream::infrared2] ? m_device->supports(rs::capabilities::infrared2) : m_enableStreams[rs::stream::infrared2];
 
 
   if (m_device->is_streaming()) {

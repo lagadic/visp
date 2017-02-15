@@ -153,12 +153,15 @@ void vp_rs_get_color_impl(const rs::device *m_device, const std::map <rs::stream
     unsigned int height = (unsigned int) it_intrinsics->second.height;
     color.resize(height, width);
 
-    if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8)
+    if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8) {
       vpImageConvert::RGBToRGBa( (unsigned char *) m_device->get_frame_data(rs::stream::color), (unsigned char *) color.bitmap, width, height );
-    else if (m_device->get_stream_format(rs::stream::color) == rs::format::rgba8)
+    } else if (m_device->get_stream_format(rs::stream::color) == rs::format::rgba8) {
       memcpy( (unsigned char *) color.bitmap, (unsigned char *) m_device->get_frame_data(rs::stream::color), width*height*sizeof(vpRGBa) );
-    else
+    } else if (m_device->get_stream_format(rs::stream::color) == rs::format::bgr8) {
+      vpImageConvert::BGRToRGBa( (unsigned char *) m_device->get_frame_data(rs::stream::color), (unsigned char *) color.bitmap, width, height );
+    } else {
       throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
+    }
   }
   else {
     throw vpException(vpException::fatalError, "RealSense Camera - color stream not enabled!");
@@ -178,12 +181,15 @@ void vp_rs_get_grey_impl(const rs::device *m_device, const std::map <rs::stream,
     unsigned int height = (unsigned int) it_intrinsics->second.height;
     grey.resize(height, width);
 
-    if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8)
+    if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8) {
       vpImageConvert::RGBToGrey( (unsigned char *) m_device->get_frame_data(rs::stream::color), (unsigned char *) grey.bitmap, width, height );
-    else if (m_device->get_stream_format(rs::stream::color) == rs::format::rgba8)
+    } else if (m_device->get_stream_format(rs::stream::color) == rs::format::rgba8) {
       vpImageConvert::RGBaToGrey( (unsigned char *) m_device->get_frame_data(rs::stream::color), (unsigned char *) grey.bitmap, width*height );
-    else
+    } else if (m_device->get_stream_format(rs::stream::color) == rs::format::bgr8) {
+      vpImageConvert::BGRToGrey( (unsigned char *) m_device->get_frame_data(rs::stream::color), (unsigned char *) grey.bitmap, width, height );
+    } else {
       throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
+    }
   }
   else {
     throw vpException(vpException::fatalError, "RealSense Camera - color stream not enabled!");
