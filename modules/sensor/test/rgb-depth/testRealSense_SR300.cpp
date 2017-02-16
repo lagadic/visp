@@ -46,8 +46,8 @@
 #include <visp3/core/vpImageConvert.h>
 
 #if defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_CPP11_COMPATIBILITY) && ( defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) )
-#  include <mutex>
 #  include <thread>
+#  include <atomic>
 
 #ifdef VISP_HAVE_PCL
 #  include <pcl/visualization/cloud_viewer.h>
@@ -81,12 +81,12 @@ namespace {
   //Global variables
   pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
-  bool cancelled = false, update_pointcloud = false;
+  std::atomic<bool> cancelled(false), update_pointcloud(false);
 
   class ViewerWorker {
   public:
-    ViewerWorker(std::mutex &mutex, const bool color_mode) :
-      m_mutex(mutex), m_cancelled(false), m_colorMode(color_mode) { }
+    ViewerWorker(const bool color_mode) :
+      m_cancelled(false), m_colorMode(color_mode) { }
 
     bool local_update = false, local_cancelled = false;
     void run() {
@@ -102,12 +102,9 @@ namespace {
 
       bool init = true;
       while (!local_cancelled) {
-        {
-          std::lock_guard<std::mutex> lock(m_mutex);
-          local_update = update_pointcloud;
-          local_cancelled = cancelled;
-          update_pointcloud = false;
-        }
+        local_update = update_pointcloud;
+        update_pointcloud = false;
+        local_cancelled = cancelled;
 
         if (local_update && !local_cancelled) {
           local_update = false;
@@ -137,7 +134,6 @@ namespace {
     }
 
   private:
-    std::mutex &m_mutex;
     bool m_cancelled;
     bool m_colorMode;
   };
@@ -225,7 +221,7 @@ namespace {
             break;
 
           case rs::stream::infrared:
-            di.init( I_infrared, 0, (int) I_color.getHeight() + 80, "Infrared frame" );
+            di.init( I_infrared, 0, (int) std::max(I_color.getHeight(), I_depth.getHeight()) + 30, "Infrared frame" );
             break;
 
           default:
@@ -234,11 +230,12 @@ namespace {
       }
     }
 
-    std::cout << "direct_infrared_conversion=" << direct_infrared_conversion << std::endl;
+    if (rs.getHandler()->is_stream_enabled(rs::stream::infrared)) {
+      std::cout << "direct_infrared_conversion=" << direct_infrared_conversion << std::endl;
+    }
 
 #ifdef VISP_HAVE_PCL
-    std::mutex mutex;
-    ViewerWorker viewer(mutex, pcl_color);
+    ViewerWorker viewer(pcl_color);
     std::thread viewer_thread;
 
     if (display_pcl) {
@@ -276,10 +273,7 @@ namespace {
           vpImageConvert::convert(infrared, I_infrared);
         }
 
-        {
-          std::lock_guard<std::mutex> lock(mutex);
-          update_pointcloud = true;
-        }
+        update_pointcloud = true; //atomic variable
 #endif
       } else {
         if (direct_infrared_conversion) {
@@ -325,10 +319,7 @@ namespace {
 
     if (display_pcl) {
 #ifdef VISP_HAVE_PCL
-      {
-        std::lock_guard<std::mutex> lock(mutex);
-        cancelled = true;
-      }
+      cancelled = true; //atomic variable
 
       viewer_thread.join();
 #endif

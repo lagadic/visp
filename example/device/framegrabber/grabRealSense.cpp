@@ -124,7 +124,6 @@ int main()
 #if defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_CPP11_COMPATIBILITY)
   try {
     vpRealSense rs;
-    //rs.setDeviceBySerialNumber("541142003219");
 
     rs.open();
 
@@ -136,10 +135,24 @@ int main()
     std::cout << "Extrinsics dMi: \n" << rs.getTransformation(rs::stream::depth, rs::stream::infrared) << std::endl;
 
     vpImage<vpRGBa> color((unsigned int) rs.getIntrinsics(rs::stream::color).height, (unsigned int) rs.getIntrinsics(rs::stream::color).width);
-    vpImage<uint16_t> infrared;
-    vpImage<unsigned char> infrared_display((unsigned int) rs.getIntrinsics(rs::stream::infrared).height, (unsigned int) rs.getIntrinsics(rs::stream::infrared).width);;
-    vpImage<uint16_t> depth;
+
+    vpImage<unsigned char> infrared_display((unsigned int) rs.getIntrinsics(rs::stream::infrared).height, (unsigned int) rs.getIntrinsics(rs::stream::infrared).width);
+    vpImage<uint16_t> infrared_y16;
+    vpImage<unsigned char> infrared_y8;
+    rs::device * dev = rs.getHandler();
+    bool use_infrared_y16 = false;
+    if (dev->get_stream_format(rs::stream::infrared) == rs::format::y16) {
+      use_infrared_y16 = true;
+    } else {
+      rs.close();
+      rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
+      rs.open();
+      color.resize(480, 640);
+      infrared_y8.init(infrared_display.getHeight(), infrared_display.getWidth());
+    }
+
     vpImage<vpRGBa> depth_display((unsigned int) rs.getIntrinsics(rs::stream::depth).height, (unsigned int) rs.getIntrinsics(rs::stream::depth).width);
+    vpImage<uint16_t> depth(depth_display.getHeight(), depth_display.getWidth());
 
 #ifdef VISP_HAVE_PCL
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -173,7 +186,15 @@ int main()
 
     while(1) {
       double t = vpTime::measureTimeMs();
-      rs.acquire(color, infrared, depth, pointcloud);
+
+      if (use_infrared_y16) {
+        rs.acquire(color, infrared_y16, depth, pointcloud);
+        vpImageConvert::convert(infrared_y16, infrared_display);
+      } else {
+        rs.acquire( (unsigned char *) color.bitmap, (unsigned char *) depth.bitmap, NULL, pointcloud, (unsigned char *) infrared_y8.bitmap );
+        vpImageConvert::convert(infrared_y8, infrared_display);
+      }
+
 
 #ifdef VISP_HAVE_PCL
 #ifdef USE_THREAD
@@ -197,7 +218,6 @@ int main()
 #endif
 #endif
 
-      vpImageConvert::convert(infrared, infrared_display);
       vpImageConvert::createDepthHistogram(depth, depth_display);
 
       vpDisplay::display(color);

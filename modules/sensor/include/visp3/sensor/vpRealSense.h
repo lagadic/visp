@@ -63,7 +63,7 @@
   \ingroup group_sensor_rgbd
 
   This class is a wrapper over the Intel librealsense library https://github.com/IntelRealSense/librealsense.
-  It allows to capture data from the Intel RealSense F200, SR300 and R200 cameras.
+  It allows to capture data from the Intel RealSense cameras.
 
   The usage of vpRealSense class is enabled when librealsense 3rd party is successfully installed. Installation
   instructions are provided following https://github.com/IntelRealSense/librealsense#installation-guide.
@@ -185,6 +185,7 @@ int main() {
   rs.setEnableStream(rs::stream::color, true);
   rs.setEnableStream(rs::stream::depth, false);
   rs.setEnableStream(rs::stream::infrared, true);
+  rs.setEnableStream(rs::stream::infrared2, false);
   rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(1920, 1080, rs::format::rgba8, 30));
   rs.setStreamSettings(rs::stream::infrared, vpRealSense::vpRsStreamParams(640, 480, rs::format::y8, 30));
   rs.open();
@@ -225,6 +226,7 @@ int main() {
   rs.setEnableStream(rs::stream::color, true);
   rs.setEnableStream(rs::stream::depth, true);
   rs.setEnableStream(rs::stream::infrared, false);
+  rs.setEnableStream(rs::stream::infrared2, false);
   rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
   rs.setStreamSettings(rs::stream::depth, vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 30));
   rs.open();
@@ -264,6 +266,7 @@ int main() {
   rs.setEnableStream(rs::stream::color, true);
   rs.setEnableStream(rs::stream::depth, true);
   rs.setEnableStream(rs::stream::infrared, false);
+  rs.setEnableStream(rs::stream::infrared2, false);
   rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
   rs.setStreamSettings(rs::stream::depth, vpRealSense::vpRsStreamParams(640, 480, rs::format::z16, 30));
   rs.open();
@@ -299,7 +302,15 @@ int main() {
 }
   \endcode
 
-  \note This class has been tested with the Intel RealSense SR300. The following streams are enabled by default:
+  Camera parameters can be set in the following manner:
+  \code
+  rs::device * dev = rs.getHandler();
+  dev->set_option(rs::option::r200_lr_auto_exposure_enabled, 1); //enable lr auto exposure for the R200
+  \endcode
+
+  \note This class has been tested with the Intel RealSense SR300 (Firmware: 3.15.0.0) and R200 (Firmware: 1.0.71.06)
+  using librealsense (API version: 1.12.01).
+  The following streams are enabled by default:
   - Color stream with preset: best quality
   - Depth stream with preset: best quality
   - Infrared stream with preset: best quality
