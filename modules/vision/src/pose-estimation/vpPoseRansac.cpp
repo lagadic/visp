@@ -199,6 +199,8 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
   srand(m_initial_seed);
 #endif
 
+  vpPoint p; //Point used to project using the estimated pose
+
   bool foundSolution = false;
   while (nbTrials < m_ransacMaxTrials && m_nbInliers < (unsigned int) m_ransacNbInlierConsensus)
   {
@@ -330,16 +332,15 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
         unsigned int iter = 0;
         for (std::vector<vpPoint>::const_iterator it = m_listOfUniquePoints.begin(); it != m_listOfUniquePoints.end(); ++it, iter++)
         {
-          vpPoint pt = *it;
-          vpPoint p(pt) ;
-          p.track(m_cMo) ;
+          p.setWorldCoordinates(it->get_oX(), it->get_oY(), it->get_oZ());
+          p.track(m_cMo);
 
-          double d = vpMath::sqr(p.get_x() - pt.get_x()) + vpMath::sqr(p.get_y() - pt.get_y());
+          double d = vpMath::sqr(p.get_x() - it->get_x()) + vpMath::sqr(p.get_y() - it->get_y());
           double error = sqrt(d);
           if(error < m_ransacThreshold) {
             bool degenerate = false;
             if (m_checkDegeneratePoints) {
-              if ( std::find_if(cur_inliers.begin(), cur_inliers.end(), FindDegeneratePoint(pt)) != cur_inliers.end() ) {
+              if ( std::find_if(cur_inliers.begin(), cur_inliers.end(), FindDegeneratePoint(*it)) != cur_inliers.end() ) {
                 degenerate = true;
               }
             }
@@ -575,6 +576,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       //True if we found a consensus set with a size > ransacNbInlierConsensus
       bool foundSolutionWithConsensus = false;
 
+      vpPoint p; //Point used to project using the estimated pose
+
 #pragma omp for
       for(int nbTrials = 0; nbTrials < ransacMaxTrials; nbTrials++) {
         //Flag to check if a solution has been founded, used to "cancel" the threads
@@ -692,16 +695,15 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
                 unsigned int nbInliersCur = 0;
                 unsigned int iter = 0;
                 for (std::vector<vpPoint>::const_iterator it = listOfUniquePoints.begin(); it != listOfUniquePoints.end(); ++it, iter++) {
-                  vpPoint pt = *it;
-                  vpPoint p(pt) ;
-                  p.track(cMo_tmp) ;
+                  p.setWorldCoordinates(it->get_oX(), it->get_oY(), it->get_oZ());
+                  p.track(cMo_tmp);
 
-                  double d = vpMath::sqr(p.get_x() - pt.get_x()) + vpMath::sqr(p.get_y() - pt.get_y()) ;
+                  double d = vpMath::sqr(p.get_x() - it->get_x()) + vpMath::sqr(p.get_y() - it->get_y()) ;
                   double error = sqrt(d) ;
                   if(error < ransacThreshold) {
                     bool degenerate = false;
                     if (checkDegeneratePoints) {
-                      if ( std::find_if(cur_inliers.begin(), cur_inliers.end(), FindDegeneratePoint(pt)) != cur_inliers.end() ) {
+                      if ( std::find_if(cur_inliers.begin(), cur_inliers.end(), FindDegeneratePoint(*it)) != cur_inliers.end() ) {
                         degenerate = true;
                       }
                     }
