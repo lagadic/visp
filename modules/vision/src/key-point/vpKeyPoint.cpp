@@ -192,21 +192,6 @@ namespace {
   #endif
   }
 
-//  //Read an unsigned int stored in little endian
-//  void readBinaryUIntLE(std::ifstream &file, unsigned int &uint_value) {
-//    //Read
-//    file.read((char *)(&uint_value), sizeof(uint_value));
-
-//  #ifdef VISP_BIG_ENDIAN
-//    //Swap bytes order from little endian to big endian
-//    if(sizeof(uint_value) == 4) {
-//      uint_value = swap32bits(uint_value);
-//    } else {
-//      uint_value = swap16bits(uint_value);
-//    }
-//  #endif
-//  }
-
   //Read an int stored in little endian
   void readBinaryIntLE(std::ifstream &file, int &int_value) {
     //Read
@@ -265,23 +250,6 @@ namespace {
     file.write((char *)(&short_value), sizeof(short_value));
   #endif
   }
-
-  //Write an unsigned int in little endian
-//  void writeBinaryUIntLE(std::ofstream &file, const unsigned int uint_value) {
-//  #ifdef VISP_BIG_ENDIAN
-//    //Swap bytes order to little endian
-//    //More info on data type: http://en.cppreference.com/w/cpp/language/types
-//    if(sizeof(uint_value) == 4) {
-//      uint32_t swap_uint = swap32bits(uint_value);
-//      file.write((char *)(&swap_uint), sizeof(swap_uint));
-//    } else {
-//      uint16_t swap_uint = swap16bits(uint_value);
-//      file.write((char *)(&swap_uint), sizeof(swap_uint));
-//    }
-//  #else
-//    file.write((char *)(&uint_value), sizeof(uint_value));
-//  #endif
-//  }
 
   //Write an int in little endian
   void writeBinaryIntLE(std::ofstream &file, const int int_value) {
@@ -1467,7 +1435,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &ICurrent, vpImage
       }
     }
 
-    //Indexes of the current image in the grid made in order to the image is in the center square in the mosaic grid
+    //Indexes of the current image in the grid computed to put preferably the image in the center of the mosaic grid
     int medianI = nbHeight / 2;
     int medianJ = nbWidth / 2;
     int medianIndex = medianI * nbWidth + medianJ;
@@ -2567,7 +2535,6 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 
     //Read info about training images
     int nbImgs = 0;
-//    file.read((char *)(&nbImgs), sizeof(nbImgs));
     readBinaryIntLE(file, nbImgs);
 
 #if !defined(VISP_HAVE_MODULE_IO)
@@ -2580,11 +2547,9 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
     for(int i = 0; i < nbImgs; i++) {
       //Read image_id
       int id = 0;
-//      file.read((char *)(&id), sizeof(id));
       readBinaryIntLE(file, id);
 
       int length = 0;
-//      file.read((char *)(&length), sizeof(length));
       readBinaryIntLE(file, length);
       //Will contain the path to the training images
       char* path = new char[length + 1];//char path[length + 1];
@@ -2614,23 +2579,19 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
 
     //Read if 3D point information are saved or not
     int have3DInfoInt = 0;
-//    file.read((char *)(&have3DInfoInt), sizeof(have3DInfoInt));
     readBinaryIntLE(file, have3DInfoInt);
     bool have3DInfo = have3DInfoInt != 0;
 
     //Read the number of descriptors
     int nRows = 0;
-//    file.read((char *)(&nRows), sizeof(nRows));
     readBinaryIntLE(file, nRows);
 
     //Read the size of the descriptor
     int nCols = 0;
-//    file.read((char *)(&nCols), sizeof(nCols));
     readBinaryIntLE(file, nCols);
 
     //Read the type of the descriptor
     int descriptorType = 5; //CV_32F
-//    file.read((char *)(&descriptorType), sizeof(descriptorType));
     readBinaryIntLE(file, descriptorType);
 
     cv::Mat trainDescriptorsTmp = cv::Mat(nRows, nCols, descriptorType);
@@ -2638,21 +2599,13 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
       //Read information about keyPoint
       float u, v, size, angle, response;
       int octave, class_id, image_id;
-//      file.read((char *)(&u), sizeof(u));
       readBinaryFloatLE(file, u);
-//      file.read((char *)(&v), sizeof(v));
       readBinaryFloatLE(file, v);
-//      file.read((char *)(&size), sizeof(size));
       readBinaryFloatLE(file, size);
-//      file.read((char *)(&angle), sizeof(angle));
       readBinaryFloatLE(file, angle);
-//      file.read((char *)(&response), sizeof(response));
       readBinaryFloatLE(file, response);
-//      file.read((char *)(&octave), sizeof(octave));
       readBinaryIntLE(file, octave);
-//      file.read((char *)(&class_id), sizeof(class_id));
       readBinaryIntLE(file, class_id);
-//      file.read((char *)(&image_id), sizeof(image_id));
       readBinaryIntLE(file, image_id);
       cv::KeyPoint keyPoint(cv::Point2f(u, v), size, angle, response, octave, (class_id + startClassId));
       m_trainKeyPoints.push_back(keyPoint);
@@ -2660,18 +2613,15 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
       if(image_id != -1) {
 #ifdef VISP_HAVE_MODULE_IO
         //No training images if image_id == -1
-        m_mapOfImageId[class_id] = image_id + startImageId;
+        m_mapOfImageId[m_trainKeyPoints.back().class_id] = image_id + startImageId;
 #endif
       }
 
       if(have3DInfo) {
         //Read oX, oY, oZ
         float oX, oY, oZ;
-//        file.read((char *)(&oX), sizeof(oX));
         readBinaryFloatLE(file, oX);
-//        file.read((char *)(&oY), sizeof(oY));
         readBinaryFloatLE(file, oY);
-//        file.read((char *)(&oZ), sizeof(oZ));
         readBinaryFloatLE(file, oZ);
         m_trainPoints.push_back(cv::Point3f(oX, oY, oZ));
       }
@@ -2698,7 +2648,6 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
           case CV_16U:
           {
             unsigned short int value;
-//            file.read((char *)(&value), sizeof(value));
             readBinaryUShortLE(file, value);
             trainDescriptorsTmp.at<unsigned short int>(i, j) = value;
           }
@@ -2707,7 +2656,6 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
           case CV_16S:
           {
             short int value;
-//            file.read((char *)(&value), sizeof(value));
             readBinaryShortLE(file, value);
             trainDescriptorsTmp.at<short int>(i, j) = value;
           }
@@ -2716,7 +2664,6 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
           case CV_32S:
           {
             int value;
-//            file.read((char *)(&value), sizeof(value));
             readBinaryIntLE(file, value);
             trainDescriptorsTmp.at<int>(i, j) = value;
           }
@@ -2725,7 +2672,6 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
           case CV_32F:
           {
             float value;
-//            file.read((char *)(&value), sizeof(value));
             readBinaryFloatLE(file, value);
             trainDescriptorsTmp.at<float>(i, j) = value;
           }
@@ -2734,7 +2680,6 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
           case CV_64F:
           {
             double value;
-//            file.read((char *)(&value), sizeof(value));
             readBinaryDoubleLE(file, value);
             trainDescriptorsTmp.at<double>(i, j) = value;
           }
@@ -2743,7 +2688,6 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
           default:
           {
             float value;
-//            file.read((char *)(&value), sizeof(value));
             readBinaryFloatLE(file, value);
             trainDescriptorsTmp.at<float>(i, j) = value;
           }
@@ -2985,8 +2929,11 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
   m_matcher->clear();
   m_matcher->add(std::vector<cv::Mat>(1, m_trainDescriptors));
 
-  //Set _reference_computed to true as we load learning file
+  //Set _reference_computed to true as we load a learning file
   _reference_computed = true;
+
+  //Set m_currentImageId
+   m_currentImageId = m_mapOfImages.size();
 }
 
 /*!
