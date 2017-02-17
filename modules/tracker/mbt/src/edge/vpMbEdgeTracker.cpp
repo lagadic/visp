@@ -2679,27 +2679,36 @@ void
 vpMbEdgeTracker::setScales(const std::vector<bool>& scale)
 {
   unsigned int nbActivatedLevels = 0;
-  for (unsigned int i = 0; i < scale.size(); i += 1){
+  for (unsigned int i = 0; i < scale.size(); i++){
     if(scale[i]){
       nbActivatedLevels++;
     }
   }
-  if((scale.size() < 1) || (nbActivatedLevels == 0)){
+  if((scale.empty()) || (nbActivatedLevels == 0)){
     vpERROR_TRACE(" !! WARNING : must use at least one level for the tracking. Use the global one");
     this->scales.resize(0);
     this->scales.push_back(true);
+
     lines.resize(1);
     lines[0].clear();
+
     cylinders.resize(1);
     cylinders[0].clear();
+
+    circles.resize(1);
+    circles[0].clear();
   }
   else{
     this->scales = scale;
+
     lines.resize(scale.size());
     cylinders.resize(scale.size());
-    for (unsigned int i = 0; i < lines.size(); i += 1){
+    circles.resize(scale.size());
+
+    for (unsigned int i = 0; i < lines.size(); i++){
       lines[i].clear();
       cylinders[i].clear();
+      circles[i].clear();
     }
   }
 }
