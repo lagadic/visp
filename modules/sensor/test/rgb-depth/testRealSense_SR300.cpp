@@ -448,7 +448,6 @@ int main(int argc, char *argv[]) {
 
     double t_begin = vpTime::measureTimeMs();
     while (true) {
-      double t = vpTime::measureTimeMs();
       rs.acquire( color_mat.data, NULL, NULL, infrared_mat.data );
 
       cv::imshow("Color mat", color_mat);
