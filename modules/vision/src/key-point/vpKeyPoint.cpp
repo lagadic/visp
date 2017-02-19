@@ -2933,7 +2933,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename, const bool binary
   _reference_computed = true;
 
   //Set m_currentImageId
-   m_currentImageId = m_mapOfImages.size();
+   m_currentImageId = (int) m_mapOfImages.size();
 }
 
 /*!

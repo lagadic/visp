@@ -2684,7 +2684,7 @@ vpMbEdgeTracker::setScales(const std::vector<bool>& scale)
       nbActivatedLevels++;
     }
   }
-  if((scale.empty()) || (nbActivatedLevels == 0)){
+  if(scale.empty() || (nbActivatedLevels == 0)){
     vpERROR_TRACE(" !! WARNING : must use at least one level for the tracking. Use the global one");
     this->scales.resize(0);
     this->scales.push_back(true);
