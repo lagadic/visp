@@ -65,7 +65,7 @@ namespace {
   class ViewerWorker {
   public:
     ViewerWorker(const bool color_mode) :
-      m_cancelled(false), m_colorMode(color_mode) { }
+      m_colorMode(color_mode) { }
 
     bool local_update = false, local_cancelled = false;
     void run() {
@@ -111,7 +111,6 @@ namespace {
     }
 
   private:
-    bool m_cancelled;
     bool m_colorMode;
   };
 #endif //#ifdef VISP_HAVE_PCL
@@ -443,7 +442,6 @@ int main(int argc, char *argv[]) {
     enables[rs::stream::infrared2] = false;
 
     params[rs::stream::color] = vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 60);
-
     test_R200(rs, enables, params, options, "R200_COLOR_RGBA8_640x480_60FPS");
 
 
