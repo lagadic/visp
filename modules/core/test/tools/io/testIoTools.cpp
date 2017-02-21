@@ -240,7 +240,7 @@ main(int argc, const char ** argv)
 
   std::cout << "Test vpIoTools::splitDrive (Win32) - passed: " << nbOk << "/" << (nbOk+nbFail) << std::endl;
 
-  if (nbFail > 0) {
+  if (nbFail) {
     std::cerr << "Failed test: vpIoTools::splitDrive (Win32)" << std::endl;
     return EXIT_FAILURE;
   }
@@ -334,7 +334,7 @@ main(int argc, const char ** argv)
 
   std::cout << "Test vpIoTools::getFileExtension (WIN32 platform) - passed: " << nbOk << "/" << (nbOk+nbFail) << std::endl;
 
-  if (nbFail > 0) {
+  if (nbFail) {
     std::cerr << "Failed test: vpIoTools::getFileExtension (WIN32 platform)" << std::endl;
     return EXIT_FAILURE;
   }
@@ -475,7 +475,7 @@ main(int argc, const char ** argv)
   nbFail = res ? nbFail+1 : nbFail;
 
   std::cout << "Test vpIoTools::isSamePathname (WIN32 platform) - passed: " << nbOk << "/" << (nbOk+nbFail) << std::endl;
-  if (nbFail > 0) {
+  if (nbFail) {
     std::cerr << "Failed test: vpIoTools::isSamePathname (WIN32 platform)" << std::endl;
     return EXIT_FAILURE;
   }
@@ -531,7 +531,7 @@ main(int argc, const char ** argv)
   nbFail = res ? nbFail : nbFail+1;
 
   std::cout << "Test vpIoTools::isSamePathname (Unix platform) - passed: " << nbOk << "/" << (nbOk+nbFail) << std::endl;
-  if (nbFail > 0) {
+  if (nbFail) {
     std::cerr << "Failed test: vpIoTools::isSamePathname (Unix platform)" << std::endl;
     return EXIT_FAILURE;
   }

@@ -85,7 +85,7 @@ namespace {
 
   class ViewerWorker {
   public:
-    ViewerWorker(const bool color_mode) :
+    explicit ViewerWorker(const bool color_mode) :
       m_colorMode(color_mode) { }
 
     bool local_update = false, local_cancelled = false;

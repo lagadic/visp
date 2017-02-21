@@ -85,13 +85,13 @@ namespace {
        variable produces the same behaviour than using\n\
        this option.\n\
   \n\
-    -W <width>                                   %d\n\
+    -W <width>                                           %u\n\
        Set the new image width.\n\
   \n\
-    -H <height>                                   %d\n\
+    -H <height>                                          %u\n\
        Set the new image height.\n\
   \n\
-    -m <method>                                   %d\n\
+    -m <method>                                          %d\n\
        Set resize interpolation method.\n\
   \n\
     -c                                   \n\
@@ -137,7 +137,6 @@ namespace {
 
       case 'c': opt_click = false; break;
       case 'd': opt_display = false; break;
-        break;
 
       default:
         usage(argv[0], optarg_, ipath, w, h, method); return false; break;

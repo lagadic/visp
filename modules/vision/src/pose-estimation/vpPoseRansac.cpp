@@ -144,7 +144,7 @@ struct CompareImagePointDegenerate {
 
 //std::find_if
 struct FindDegeneratePoint {
-  FindDegeneratePoint( const vpPoint &pt ) : m_pt(pt) { }
+  explicit FindDegeneratePoint( const vpPoint &pt ) : m_pt(pt) { }
 
   bool operator() (const vpPoint &pt) {
     return ( (std::fabs(m_pt.oP[0] - pt.oP[0]) < eps &&
