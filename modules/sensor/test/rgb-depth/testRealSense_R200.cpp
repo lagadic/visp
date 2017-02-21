@@ -67,8 +67,8 @@ namespace {
     explicit ViewerWorker(const bool color_mode) :
       m_colorMode(color_mode) { }
 
-    bool local_update = false, local_cancelled = false;
     void run() {
+      bool local_update = false, local_cancelled = false;
       std::string date = vpTime::getDateTime();
       pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer " + date));
       pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud_color);
@@ -472,6 +472,8 @@ int main(int argc, char *argv[]) {
               true, color_stream, depth_stream, infrared2_stream);
 
 
+#if( ! defined(__APPLE__) && ! defined(__MACH__) ) // Not OSX, since viewer->spinOnce (10); produces a segfault on OSX
+
     enables[rs::stream::color] = true;
     enables[rs::stream::depth] = true;
     enables[rs::stream::infrared] = true;
@@ -484,8 +486,8 @@ int main(int argc, char *argv[]) {
 
     //Cannot render two pcl::visualization::PCLVisualizer so use an arg option to switch between B&W and color point cloud rendering until a solution is found
     test_R200(rs, enables, params, options, "R200_COLOR_RGBA8_640x480_60FPS + R200_DEPTH_Z16_640x480_60FPS + R200_INFRARED_Y8_640x480_60FPS + R200_INFRARED2_Y8_640x480_60FPS",
-              false, rs::stream::color, rs::stream::depth, rs::stream::infrared2, true, (argc > 1 ? argv[1] : false));
-
+              false, rs::stream::color, rs::stream::depth, rs::stream::infrared2, true, (argc > 1 ? (bool)atoi(argv[1]) : false));
+#endif
   } catch(const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
   } catch(const rs::error & e)  {

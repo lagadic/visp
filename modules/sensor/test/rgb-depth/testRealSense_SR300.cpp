@@ -88,8 +88,8 @@ namespace {
     explicit ViewerWorker(const bool color_mode) :
       m_colorMode(color_mode) { }
 
-    bool local_update = false, local_cancelled = false;
     void run() {
+      bool local_update = false, local_cancelled = false;
       std::string date = vpTime::getDateTime();
       pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer " + date));
       pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud_color);
@@ -398,6 +398,7 @@ int main(int argc, char *argv[]) {
 
     test_SR300(rs, enables, params, "SR300_DEPTH_Z16_640x480_60FPS + SR300_INFRARED_Y8_640x480_60FPS", true);
 
+#if( ! defined(__APPLE__) && ! defined(__MACH__) ) // Not OSX, since viewer->spinOnce (10); produces a segfault on OSX
 
     enables[rs::stream::color] = true;
     enables[rs::stream::depth] = true;
@@ -417,6 +418,7 @@ int main(int argc, char *argv[]) {
 
     test_SR300(rs, enables, params, "SR300_COLOR_RGBA8_640x480_60FPS + SR300_DEPTH_Z16_640x480_60FPS + SR300_INFRARED_Y8_640x480_60FPS",
                true, color_stream, depth_stream, true, true);
+#endif
 
 
     //Color stream aligned to depth
