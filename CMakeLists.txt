@@ -839,6 +839,10 @@ if(USE_JPEG)
     vp_parse_header("${JPEG_INC_DIR}/jconfig.h" JPEG_VERSION_LINES JPEG_LIB_VERSION)
   endif()
 endif()
+if(USE_OIS)
+  vp_parse_header("${OIS_INCLUDE_DIR}/OISPrereqs.h" OIS_VERSION_LINES OIS_VERSION_MAJOR OIS_VERSION_MINOR OIS_VERSION_PATCH)
+  set(OIS_VERSION "${OIS_VERSION_MAJOR}.${OIS_VERSION_MINOR}.${OIS_VERSION_PATCH}")
+endif()
 
 # ----------------------------------------------------------------------------
 #  Autodetect if we are in a GIT repository
@@ -1011,8 +1015,8 @@ status("    Use Lapack/blas:"     USE_LAPACK       THEN "yes (ver ${LAPACK_C_VER
 status("")
 status("  Simulator: ")
 status("    Ogre simulator: ")
-status("    \\- Use Ogre3D:"      USE_OGRE         THEN "yes" ELSE "no")
-status("    \\- Use OIS:"         USE_OIS          THEN "yes" ELSE "no")
+status("    \\- Use Ogre3D:"      USE_OGRE         THEN "yes (ver ${OGRE_VERSION})" ELSE "no")
+status("    \\- Use OIS:"         USE_OIS          THEN "yes (ver ${OIS_VERSION})" ELSE "no")
 status("    Coin simulator: ")
 status("    \\- Use Coin3D:"      USE_OGRE         THEN "yes" ELSE "no")
 status("    \\- Use SoWin:"       USE_SOWIN        THEN "yes" ELSE "no")
