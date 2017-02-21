@@ -932,7 +932,11 @@ int vpPose::computeRansacIterations(double probability, double epsilon, const in
 
   double logarg, logval, N;
   logarg = -std::pow(1.0 - epsilon, sampleSize);
+#ifdef VISP_HAVE_FUNC_LOG1P
+  logval = log(logarg);
+#else
   logval = log(1.0 + logarg);
+#endif
   if (vpMath::nul(logval, std::numeric_limits<double>::epsilon())) {
     std::cerr << "vpMath::nul(log(1.0 - std::pow(1.0 - epsilon, sampleSize)), std::numeric_limits<double>::epsilon())"
               << std::endl;

@@ -391,6 +391,9 @@
 // Defined if strtof function is available
 #cmakedefine VISP_HAVE_FUNC_STRTOF
 
+// Defined if log1p function is available
+#cmakedefine VISP_HAVE_FUNC_LOG1P
+
 // Defined if xrandr program available
 #cmakedefine VISP_HAVE_XRANDR
 

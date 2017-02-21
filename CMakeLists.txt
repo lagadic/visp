@@ -393,6 +393,8 @@ VP_CHECK_PACKAGE(Round)
 VP_CHECK_PACKAGE(Erfc)
 # Find Strtof
 VP_CHECK_PACKAGE(Strtof)
+# Find Log1p
+VP_CHECK_PACKAGE(Log1p)
 
 #----------------------------------------------------------------------
 # For Dart server and tests
@@ -728,6 +730,8 @@ VP_SET(VISP_HAVE_FUNC_ERFC TRUE IF HAVE_FUNC_ERFC) # for header vpConfig.h
 VP_SET(VISP_HAVE_FUNC_STD_ERFC TRUE IF HAVE_FUNC_STD_ERFC) # for header vpConfig.h
 # Find strtof function (stdlib.h)
 VP_SET(VISP_HAVE_FUNC_STRTOF TRUE IF HAVE_FUNC_STRTOF) # for header vpConfig.h
+# Find log1p function (math.h)
+VP_SET(VISP_HAVE_FUNC_LOG1P TRUE IF HAVE_FUNC_LOG1P) # for header vpConfig.h
 
 VP_SET(VISP_BUILD_DEPRECATED_FUNCTIONS TRUE IF BUILD_DEPRECATED_FUNCTIONS) # for header vpConfig.h
 VP_SET(VISP_MOMENTS_COMBINE_MATRICES TRUE IF ENABLE_MOMENTS_COMBINE_MATRICES) # for header vpConfig.h
