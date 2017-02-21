@@ -532,39 +532,6 @@ if(MSVC)
 endif(MSVC)
 
 #----------------------------------------------------------------------
-# Configure the files that depend on the build <binary dir> or
-# installation <install dir> usage. This is the case of:
-# vpConfig.h
-#----------------------------------------------------------------------
-
-# case 1: when ViSP is build with make; files are used in <binary dir>
-#--------------
-set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${VISP_BINARY_DIR}")
-
-set(VISP_SCENES_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/wireframe-simulator)
-set(VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/robot-simulator)
-    
-# case 2: when ViSP is build with make install; files are used in <install dir>
-#--------------
-IF(UNIX)
-  set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
-ELSE()
-  set(VISP_ROOT_DIR_DATA_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}")
-ENDIF()
-
-list(APPEND VISP_SCENES_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/wireframe-simulator)
-list(APPEND VISP_ROBOT_ARMS_DIR ${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/robot-simulator)
-# Only if resources.cfg created by hand, we change the path to resources.cfg in install/vpConfig.h
-if(VISP_INSTALL_DIR_OGRE_RESOURCES)
-  list(APPEND VISP_HAVE_OGRE_RESOURCES_PATH "${VISP_ROOT_DIR_DATA_CONFIGCMAKE}/data/ogre-simulator")
-endif()
-# append to VISP_HAVE_OGRE_PLUGINS_PATH the path of the installed plugins.cfg file
-# to be able to use ViSP from build tree or install tree
-if(VISP_INSTALL_DIR_OGRE_RESOURCES)
-  list(APPEND VISP_HAVE_OGRE_PLUGINS_PATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}/visp/data/ogre-simulator")
-endif()
-
-#----------------------------------------------------------------------
 # Create and install visp-config.1.gz man page
 #----------------------------------------------------------------------
 if(UNIX)
