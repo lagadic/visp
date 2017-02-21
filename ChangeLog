@@ -5,7 +5,14 @@
      Copyright (C) 2005 - 2017 by Inria. All rights reserved.
                       https://visp.inria.fr
 
+ViSP 3.0.2 (under development)
+  - New features
+    . Improve vpRealSense to better support R200 device
+    . Improve vpConfig.h header content to remove path to build tree when installed
+  - Tutorials
+  - Bug fixed
 
+----------------------------------------------
 ViSP 3.0.1 (released February 3rd, 2017)
   - New features
     . Compatibility with Microsoft Visual C++ 2017 (MSCV 15)
