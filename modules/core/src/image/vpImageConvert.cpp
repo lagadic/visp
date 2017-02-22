@@ -204,10 +204,11 @@ vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<double> &dest
 }
 
 /*!
-  Create depth histogram as a color image.
+  Convert the input 16-bits depth image to a color depth image. The input depth value is assigned a color value
+  proportional to its frequency.
   Tha alpha component of the resulting image is set to vpRGBa::alpha_default.
-  \param src_depth : source image corresponding to depth.
-  \param dest_rgba : destination image containing the color histogram.
+  \param src_depth : input 16-bits depth image.
+  \param dest_rgba : output color depth image.
 */
 void
 vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa> &dest_rgba)
@@ -215,6 +216,7 @@ vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage
   dest_rgba.resize(src_depth.getHeight(), src_depth.getWidth());
   static uint32_t histogram[0x10000];
   memset(histogram, 0, sizeof(histogram));
+
   for(unsigned int i = 0; i < src_depth.getSize(); ++i) ++histogram[src_depth.bitmap[i]];
   for(int i = 2; i < 0x10000; ++i) histogram[i] += histogram[i-1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
 
@@ -235,6 +237,37 @@ vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage
       dest_rgba.bitmap[i].G = 5;
       dest_rgba.bitmap[i].B = 0;
       dest_rgba.bitmap[i].A = vpRGBa::alpha_default;
+    }
+  }
+}
+
+/*!
+  Convert the input 16-bits depth image to a 8-bits depth image. The input depth value is assigned a value
+  proportional to its frequency.
+  \param src_depth : input 16-bits depth image.
+  \param dest_depth : output grayscale depth image.
+*/
+void
+vpImageConvert::createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigned char> &dest_depth)
+{
+  dest_depth.resize(src_depth.getHeight(), src_depth.getWidth());
+  static uint32_t histogram2[0x10000];
+  memset(histogram2, 0, sizeof(histogram2));
+
+  for(unsigned int i = 0; i < src_depth.getSize(); ++i) ++histogram2[src_depth.bitmap[i]];
+  for(int i = 2; i < 0x10000; ++i) histogram2[i] += histogram2[i-1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
+
+  for(unsigned int i = 0; i < src_depth.getSize(); ++i)
+  {
+    uint16_t d = src_depth.bitmap[i];
+    if(d)
+    {
+      int f = (int)(histogram2[d] * 255 / histogram2[0xFFFF]); // 0-255 based on histogram location
+      dest_depth.bitmap[i] = f;
+    }
+    else
+    {
+      dest_depth.bitmap[i] = 0;
     }
   }
 }
