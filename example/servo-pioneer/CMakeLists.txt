@@ -55,6 +55,7 @@ foreach(cpp ${example_cpp})
   if(VISP_HAVE_PIONEER)
     # Add specific build flag to turn off warnings coming from libaria 3rd party
     visp_set_source_file_compile_flag(${cpp} -Wno-unused-parameter)
+    visp_set_source_file_compile_flag(${cpp} -Wno-type-limits)
   endif()
 
   if(COMMAND visp_add_dependency)
