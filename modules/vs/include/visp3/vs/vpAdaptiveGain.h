@@ -52,71 +52,100 @@ class vpColVector;
   \ingroup group_task
   
   \brief Adaptive gain computation.
-  
-  The formula used to compute the gain is the following :
-  
-  \f[ \lambda (x) = a * exp (-b*x) + c \f]
-  
-  where \f$ a \f$, \f$ b \f$ and \f$ c \f$ are constant parameters and \f$ x \f$ is the entry to consider.
-  
-  The parameters \f$a,b,c\f$ are not set directly. They are computed from three other parameters
-  \f$\lambda(0), \lambda(\infty), {\dot \lambda}(0)\f$ that are more intuitive to tune:
-  \f[ a = \lambda(0) - \lambda(\infty) \f]
-  \f[ b = {\dot \lambda}(0) / a \f]
-  \f[ c = \lambda(\infty) \f]
-  
-  where \f$ \lambda(0)\f$ represents the gain when \f$x=0\f$, \f$ \lambda(\infty)\f$ represents the gain when \f$x=\infty\f$
-  and \f$ {\dot \lambda}(0)\f$ represents the slope of \f$\lambda(x)\f$ when \f$x=0\f$.
-  
+
+  As described in \cite Kermorgant14a, a varying gain \f$ \lambda \f$ could be used in the visual servoing
+  control law \f[{\bf v}_c = -\lambda {\bf L}^{+}_{e} {\bf e}\f] with
+
+  \f[ \lambda (|| {\bf e}||) = (\lambda_0 - \lambda_\infty) e^{ -\frac{ \lambda'_0}{\lambda_0 - \lambda_\infty}||{\bf e}||} + \lambda_\infty \f]
+
+  where:
+
+  - \f$\lambda_0 = \lambda(0)\f$ is the gain in 0, that is for very small values of \f$||{\bf e}||\f$
+  - \f$\lambda_\infty = \lambda_{||{\bf e}|| \rightarrow \infty}\lambda(||{\bf e}||)\f$ is the gain
+    to infinity, that is for very high values of \f$||{\bf e}||\f$
+  - \f$\lambda'_0\f$ is the slope of \f$\lambda\f$ at \f$||{\bf e}|| = 0\f$
+
+  As described in \ref tutorial-boost-vs, the interest of \ref adaptive_gain is to reduce the time to convergence
+  in order to speed up the servo.
+
+  The following example shows how to use this class in order to use an adaptive gain with the following
+  parameters \f$\lambda_0 = 4\f$, \f$\lambda_\infty = 0.4 \f$ and \f$\lambda'_0 = 30\f$.
+  \code
+#include <visp3/vs/vpAdaptiveGain.h>
+#include <visp3/vs/vpServo.h>
+
+int main()
+{
+  vpAdaptiveGain lambda(4, 0.4, 30);   // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
+
+  vpServo servo;
+  servo.setLambda(lambda);
+
+  while(1) {
+
+    vpColVector v = servo.computeControlLaw();
+  }
+}
+  \endcode
+
+  This other example shows how to use this class in order to set a constant gain \f$\lambda = 0.5\f$ that
+  will ensure an exponential decrease of the task error.
+  \code
+#include <visp3/vs/vpAdaptiveGain.h>
+#include <visp3/vs/vpServo.h>
+
+int main()
+{
+  vpAdaptiveGain lambda(0.5);
+
+  vpServo servo;
+  servo.setLambda(lambda);
+
+  while(1) {
+
+    vpColVector v = servo.computeControlLaw();
+  }
+}
+  \endcode
 */
 
 class VISP_EXPORT vpAdaptiveGain
 {
+public:
 
-public: /* constantes */
+  static const double DEFAULT_LAMBDA_ZERO;
+  static const double DEFAULT_LAMBDA_INFINITY;
+  static const double DEFAULT_LAMBDA_SLOPE;
 
-    static const double DEFAULT_LAMBDA_ZERO;
-    static const double DEFAULT_LAMBDA_INFINITY;
-    static const double DEFAULT_LAMBDA_SLOPE;
+private:
+  // Coefficient such as lambda (x) = a * exp (-b*x) + c
+  double                      coeff_a; // \f$ a = \lambda(0) - \lambda(\infty) \f$
+  double                      coeff_b; // \f$ b = {\dot \lambda}(0) / a \f$
+  double                      coeff_c; // \f$ c = \lambda(\infty) \f$
 
+  // Last computed value
+  mutable double              lambda;
 
-private: /* Attributs*/
-    /* Coefficient de la fonction de calcul de lambda.
-     * lambda (x) = a * exp (-b*x) + c. */
-    double                      coeff_a;
-    double                      coeff_b;
-    double                      coeff_c;
+public:
 
-    /* Derniere valeur calculee.  */
-    mutable double              lambda;
+  /* --- CONSTRUCTOR -------------------------------------------------------- */
 
+  vpAdaptiveGain ();
+  vpAdaptiveGain (double c);
+  vpAdaptiveGain (double gain_at_zero,
+                  double gain_at_infinity,
+                  double slope_at_zero);
 
+  /* --- INIT --------------------------------------------------------------- */
+  void initFromConstant (double c);
+  void initFromVoid (void);
+  void initStandard (double gain_at_zero, double gain_at_infinity, double slope_at_zero);
 
-public:  /* Methodes*/
+  /* --- MODIFIORS ---------------------------------------------------------- */
+  double setConstant (void);
 
-    /* --- CONSTRUCTOR -------------------------------------------------------- */
-
-    vpAdaptiveGain ();
-    vpAdaptiveGain (double c);
-    vpAdaptiveGain (double gain_at_zero,
-                    double gain_at_infinity,
-                    double slope_at_zero);
-
-
-    /* --- INIT --------------------------------------------------------------- */
-    void                        initFromConstant (double c);
-    void                        initFromVoid (void);
-    void                        initStandard (double gain_at_zero,
-                                              double gain_at_infinity,
-                                              double slope_at_zero);
-
-
-    /* --- MODIFIORS ---------------------------------------------------------- */
-    double                      setConstant (void);
-
-
-    /* --- COMPUTE ------------------------------------------------------------ */
-    /* \brief Calcule la valeur de lambda au point courrant.
+  /* --- COMPUTE ------------------------------------------------------------ */
+  /* \brief Calcule la valeur de lambda au point courrant.
      *
      * Determine la valeur du lambda adaptatif en fonction de la valeur
      * de la norme de la fonction de tache e par extrapolation exponentielle.
@@ -128,9 +157,9 @@ public:  /* Methodes*/
      * \param val_e: valeur de la norme de l'erreur.
      * \return: valeur de gain au point courrant.
      */
-    double                      value_const (double x) const;
+  double value_const (double x) const;
 
-    /* \brief Calcule la valeur de lambda au point courrant et stockage du
+  /* \brief Calcule la valeur de lambda au point courrant et stockage du
      * resultat.
      *
      * La fonction calcule la valeur de lambda d'apres la valeur de la norme
@@ -139,33 +168,31 @@ public:  /* Methodes*/
      * \param val_e: valeur de la norme de l'erreur.
      * \return: valeur de gain au point courrant.
      */
-    double                      value (double x) const;
+  double value (double x) const;
 
-    double                      limitValue_const (void) const;
+  double limitValue_const (void) const;
 
-    double                      limitValue (void) const;
+  double limitValue (void) const;
 
-    /* --- ACCESSORS ---------------------------------------------------------- */
+  /* --- ACCESSORS ---------------------------------------------------------- */
 
-    /*!
+  /*!
       Gets the last adaptive gain value which was stored in the class.
-  
+
       \return It returns the last adaptive gain value which was stored in the class.
     */
-    inline double               getLastValue (void) const {return this ->lambda;}
-   
-    double                      operator() (double x) const;
+  inline double getLastValue (void) const {return this ->lambda;}
 
-    /* \brief Lance la fonction valeur avec la norme INFINIE du vecteur. */
-    double                      operator()  (const vpColVector & x) const;
+  double operator() (double x) const;
 
-    /* \brief Idem function limitValue. */
-    double                      operator() (void) const;
+  /* \brief Lance la fonction valeur avec la norme INFINIE du vecteur. */
+  double operator()  (const vpColVector & x) const;
 
+  /* \brief Idem function limitValue. */
+  double operator() (void) const;
 
-    /* --- IOSTREAM ----------------------------------------------------------- */
-
-    friend VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpAdaptiveGain& lambda);
+  /* --- IOSTREAM ----------------------------------------------------------- */
+  friend VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpAdaptiveGain& lambda);
 };
 
-#endif /*  __VP_ADAPTIVE_GAIN_H	*/
+#endif

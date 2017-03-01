@@ -44,20 +44,16 @@ This behavior can be reproduced running tutorial-ibvs-4pts-plotter.cpp example. 
 
 \section adaptive_gain Using an adaptive gain
 
-As implemented in tutorial-ibvs-4pts-plotter-gain-adaptive.cpp it is possible to adapt the gain  \f$ \lambda \f$ in order to depend on the infinity norm of the task Jacobian. The usage of an adaptive gain rather than a constant gain allows to reduce the convergence time. In that case the gain becomes:
+As implemented in tutorial-ibvs-4pts-plotter-gain-adaptive.cpp it is possible to adapt the gain \f$ \lambda \f$ in order to depend on the infinity norm of the task Jacobian. The usage of an adaptive gain rather than a constant gain allows to reduce the convergence time. In that case the gain becomes:
 
-  \f[ \lambda (x) = a * exp (-b*x) + c \f]
+  \f[ \lambda (x) = (\lambda_0 - \lambda_\infty) e^{ -\frac{ \lambda'_0}{\lambda_0 - \lambda_\infty}x} + \lambda_\infty \f]
   
-  where \f$ a \f$, \f$ b \f$ and \f$ c \f$ are constant parameters and \f$ x \f$ is the infinity norm of the task Jacobian to consider.
-  
-  The parameters \f$a,b,c\f$ are not set directly. They are computed from three other parameters
-  \f$\lambda(0), \lambda(\infty), {\dot \lambda}(0)\f$ that are more intuitive to tune:
-  \f[ a = \lambda(0) - \lambda(\infty) \f]
-  \f[ b = {\dot \lambda}(0) / a \f]
-  \f[ c = \lambda(\infty) \f]
-  
-  Here \f$ \lambda(0)\f$ represents the gain when \f$x=0\f$, \f$ \lambda(\infty)\f$ represents the gain when \f$x=\infty\f$
-  and \f$ {\dot \lambda}(0)\f$ represents the slope of \f$\lambda(x)\f$ when \f$x=0\f$.
+  where:
+  - \f$ x = ||{\bf e}||_{\infty} \f$ is the infinity norm of the task Jacobian to consider.
+  - \f$\lambda_0 = \lambda(0)\f$ is the gain in 0, that is for very small values of \f$||{\bf e}||\f$
+  - \f$\lambda_\infty = \lambda_{||{\bf e}|| \rightarrow \infty}\lambda(||{\bf e}||)\f$ is the gain
+    to infinity, that is for very high values of \f$||{\bf e}||\f$
+  - \f$\lambda'_0\f$ is the slope of \f$\lambda\f$ at \f$||{\bf e}|| = 0\f$
 
 The impact of the adaptive gain is illustrated in the next figure. During the servo, velocities applied to the controller are higher, especially when the visual error \f${\bf e}\f$ is small. But as in the previous section, using an adaptive gain doesn't insure continuous velocities especially at the first iteration.
 
@@ -66,7 +62,7 @@ The impact of the adaptive gain is illustrated in the next figure. During the se
 This behavior can be reproduced running tutorial-ibvs-4pts-plotter-gain-adaptive.cpp example. Compared to the previous code given in \ref intro and available in tutorial-ibvs-4pts-plotter.cpp, here after we give the new lines of code that were introduced to use an adaptive gain:
 
 \code
-    vpAdaptiveGain lambda(4, 0.4, 30);   // lambda(0)=4, lambda(oo)=0.4 and lambda_dot(0)=30
+    vpAdaptiveGain lambda(4, 0.4, 30);   // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
     task.setLambda(lambda);
 \endcode
 
