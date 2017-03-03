@@ -11,6 +11,8 @@ ViSP 3.0.2 (under development)
     . Improve vpConfig.h header content to remove path to build tree when installed
   - Tutorials
   - Bug fixed
+    . [#137] Fix bug in extration of vpRotationMatrix from vpPoseVector using
+             vpPoseVector::getRotationMatrix()
 
 ----------------------------------------------
 ViSP 3.0.1 (released February 3rd, 2017)
