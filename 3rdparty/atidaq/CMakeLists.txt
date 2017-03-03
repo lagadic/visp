@@ -22,10 +22,6 @@ endif()
 
 vp_warnings_disable(CMAKE_C_FLAGS -Wunused-parameter)
 
-if(ENABLE_SOLUTION_FOLDERS)
-  set_target_properties(${ATIDAQ_LIBRARY} PROPERTIES FOLDER "3rdparty")
-endif()
-
 set_target_properties(${ATIDAQ_LIBRARY}
   PROPERTIES OUTPUT_NAME ${ATIDAQ_LIBRARY}
   DEBUG_POSTFIX "${VISP_DEBUG_POSTFIX}"
