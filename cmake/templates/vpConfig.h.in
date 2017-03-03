@@ -121,6 +121,9 @@
 // Defined if MSVC is the compiler
 #cmakedefine VISP_USE_MSVC
 
+// Defined if ATIDAQ-C is build and available.
+#cmakedefine VISP_HAVE_CLIPPER
+
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11
 

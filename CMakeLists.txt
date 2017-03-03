@@ -382,6 +382,7 @@ VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" O
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF USE_REALSENSE AND NOT WINRT)
 VP_OPTION(BUILD_ATIDAQ    ""           ""    "Include atidaq-c support"     "" ON IF USE_COMEDI AND NOT WINRT)
+VP_OPTION(BUILD_CLIPPER   ""           ""    "Include clipper support"      "" ON IF USE_OPENCV)
 
 # Find IsNaN (should be after USE_CPP11)
 VP_CHECK_PACKAGE(IsNaN)
@@ -639,6 +640,7 @@ VP_SET(VISP_HAVE_REALSENSE   TRUE IF (BUILD_MODULE_visp_sensor AND USE_REALSENSE
 VP_SET(VISP_HAVE_FLYCAPTURE  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FLYCAPTURE))
 VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND BUILD_ATIDAQ))
+VP_SET(VISP_HAVE_CLIPPER     TRUE IF (BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_klt AND BUILD_CLIPPER))
 
 VP_SET(VISP_BUILD_SHARED_LIBS TRUE IF BUILD_SHARED_LIBS) # for header vpConfig.h
 VP_SET(VISP_HAVE_DC1394_CAMERA_ENUMERATE TRUE IF (USE_DC1394 AND DC1394_CAMERA_ENUMERATE_FOUND)) # for header vpConfig.h
@@ -1074,6 +1076,7 @@ status("    Use zbar:"            USE_ZBAR         THEN "yes (ver ${ZBAR_VERSION
 status("    Use dmtx:"            USE_DMTX         THEN "yes (ver ${DMTX_VERSION})" ELSE "no")
 status("")
 status("  Misc: ")
+status("    Use clipper:"         USE_CLIPPER      THEN "yes" ELSE "no")
 status("    Use XML2:"            USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
 status("")
 status("  Optimization: ")

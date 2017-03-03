@@ -2065,6 +2065,7 @@ INCLUDE_FILE_PATTERNS  =
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
 PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
+                         VISP_HAVE_CLIPPER \
                          VISP_HAVE_X11 \
                          VISP_HAVE_PTHREAD \
                          VISP_HAVE_GTK \

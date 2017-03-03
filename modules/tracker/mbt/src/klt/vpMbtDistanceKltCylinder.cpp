@@ -42,6 +42,10 @@
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
+#if defined(VISP_HAVE_CLIPPER)
+#  include <clipper.hpp> // clipper private library
+#endif
+
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
 #  include <TargetConditionals.h> // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif

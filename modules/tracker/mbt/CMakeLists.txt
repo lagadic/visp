@@ -39,7 +39,6 @@
 set(opt_incs "")
 set(opt_libs "")
 
-# If
 if(USE_COIN3D AND NOT HAVE_visp_ar)
   if(WIN32)
     add_definitions("-DCOIN_DLL")
@@ -107,7 +106,10 @@ if(USE_COIN3D AND NOT HAVE_visp_ar)
   endif()
 endif()
 
-vp_add_module(mbt visp_vision visp_core visp_me visp_visual_features OPTIONAL visp_ar visp_klt visp_gui)
+# clipper is private
+include_directories(${CLIPPER_INCLUDE_DIRS})
+
+vp_add_module(mbt visp_vision visp_core visp_me visp_visual_features OPTIONAL visp_ar visp_klt visp_gui PRIVATE_OPTIONAL ${CLIPPER_LIBRARIES})
 vp_glob_module_sources()
 
 if(USE_OGRE)
