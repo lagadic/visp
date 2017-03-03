@@ -1076,7 +1076,7 @@ status("    Use zbar:"            USE_ZBAR         THEN "yes (ver ${ZBAR_VERSION
 status("    Use dmtx:"            USE_DMTX         THEN "yes (ver ${DMTX_VERSION})" ELSE "no")
 status("")
 status("  Misc: ")
-status("    Use clipper:"         USE_CLIPPER      THEN "yes" ELSE "no")
+status("    Use clipper:"         BUILD_CLIPPER    THEN "yes" ELSE "no")
 status("    Use XML2:"            USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
 status("")
 status("  Optimization: ")
