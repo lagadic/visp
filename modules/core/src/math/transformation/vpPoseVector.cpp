@@ -330,7 +330,7 @@ vpTranslationVector vpPoseVector::getTranslationVector() const
  */
 vpRotationMatrix vpPoseVector::getRotationMatrix() const
 {
-  vpRotationMatrix R((*this)[0], (*this)[1], (*this)[2]);
+  vpRotationMatrix R((*this)[3], (*this)[4], (*this)[5]);
   return R;
 }
 
