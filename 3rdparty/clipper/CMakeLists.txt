@@ -7,8 +7,10 @@ file(GLOB lib_hdrs *.hpp)
 
 add_library(${CLIPPER_LIBRARY} STATIC ${lib_srcs} ${lib_hdrs})
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+if(UNIX)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+  endif()
 endif()
 
 if(ENABLE_SOLUTION_FOLDERS)
