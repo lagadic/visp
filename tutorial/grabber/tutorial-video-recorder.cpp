@@ -11,7 +11,13 @@
  This example allows to record a video from a camera.
  It only requires that ViSP is build with OpenCV.
 
- Example: ./tutorial-video-recorder --device 0 --name myvideo.mpeg
+ Example to save an mpeg video:
+
+    ./tutorial-video-recorder --device 0 --name myvideo.mpeg
+
+ Example to save a sequence of png images:
+
+    ./tutorial-video-recorder --device 0 --name image%04d.png
  */
 int main(int argc, const char *argv[])
 {
