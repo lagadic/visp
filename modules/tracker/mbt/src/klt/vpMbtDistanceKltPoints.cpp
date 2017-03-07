@@ -364,7 +364,61 @@ vpMbtDistanceKltPoints::updateMask(
   int i_min, i_max, j_min, j_max;
   std::vector<vpImagePoint> roi;
   polygon->getRoiClipped(cam, roi);
-  vpPolygon3D::getMinMaxRoi(roi, i_min, i_max, j_min,j_max);
+
+  double shiftBorder_d = (double) shiftBorder;
+
+#if defined (VISP_HAVE_CLIPPER)
+  std::vector<vpImagePoint> roi_offset;
+
+  ClipperLib::Path path;
+  for (std::vector<vpImagePoint>::const_iterator it = roi.begin(); it != roi.end(); ++it) {
+    path.push_back( ClipperLib::IntPoint(it->get_u(), it->get_v()) );
+  }
+
+  ClipperLib::Paths solution;
+  ClipperLib::ClipperOffset co;
+  co.AddPath(path, ClipperLib::jtRound, ClipperLib::etClosedPolygon);
+  co.Execute(solution, -shiftBorder_d);
+
+  //Keep biggest polygon by area
+  if (!solution.empty()) {
+    size_t index_max = 0;
+
+    if (solution.size() > 1) {
+      double max_area = 0;
+      vpPolygon polygon_area;
+
+      for (size_t i = 0; i < solution.size(); i++) {
+        std::vector<vpImagePoint> corners;
+
+        for (size_t j = 0; j < solution[i].size(); j++) {
+          corners.push_back( vpImagePoint(solution[i][j].Y, solution[i][j].X) );
+        }
+
+        polygon_area.buildFrom(corners);
+        if (polygon_area.getArea() > max_area) {
+          max_area = polygon_area.getArea();
+          index_max = i;
+        }
+      }
+    }
+
+    for (size_t i = 0; i < solution[index_max].size(); i++) {
+      roi_offset.push_back( vpImagePoint(solution[index_max][i].Y, solution[index_max][i].X) );
+    }
+  } else {
+    roi_offset = roi;
+  }
+
+  vpPolygon polygon_test(roi_offset);
+  vpImagePoint imPt;
+#endif
+
+#if defined (VISP_HAVE_CLIPPER)
+  vpPolygon3D::getMinMaxRoi(roi_offset, i_min, i_max, j_min, j_max);
+#else
+  vpPolygon3D::getMinMaxRoi(roi, i_min, i_max, j_min, j_max);
+#endif
 
   /* check image boundaries */
   if(i_min > height){ //underflow
@@ -380,13 +434,20 @@ vpMbtDistanceKltPoints::updateMask(
     j_max = width;
   }
 
-  double shiftBorder_d = (double) shiftBorder;
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  for(int i=i_min; i< i_max; i++){
+  for (int i = i_min; i< i_max; i++) {
     double i_d = (double) i;
-    for(int j=j_min; j< j_max; j++){
+
+    for (int j = j_min; j< j_max; j++) {
       double j_d = (double) j;
-      if(shiftBorder != 0){
+
+#if defined (VISP_HAVE_CLIPPER)
+      imPt.set_ij(i_d, j_d);
+      if (polygon_test.isInside(imPt)) {
+        mask.ptr<uchar>(i)[j] = nb;
+      }
+#else
+      if (shiftBorder != 0) {
         if( vpPolygon::isInside(roi, i_d, j_d)
             && vpPolygon::isInside(roi, i_d+shiftBorder_d, j_d+shiftBorder_d)
             && vpPolygon::isInside(roi, i_d-shiftBorder_d, j_d+shiftBorder_d)
@@ -400,6 +461,7 @@ vpMbtDistanceKltPoints::updateMask(
           mask.at<unsigned char>(i,j) = nb;
         }
       }
+#endif
     }
   }
 #else
