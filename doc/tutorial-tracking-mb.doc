@@ -7,6 +7,12 @@
 
 ViSP allows simultaneously the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization (i.e., the object pose expressed in the camera frame) when a calibrated camera is used \cite Comport06b. Considered objects should be modeled by lines, circles or cylinders. The CAD model of the object could be defined in vrml format (except for circles), or in cao format. 
 
+To follow this tutorial depending on your interest you should be sure that ViSP was build with the following third-parties:
+- \c OpenCV: Useful if you want to investigate the KLT keypoint tracker implemented in vpMbKltTracker or its hybrid version vpMbEdgeKltTracker. We recommend to install \c OpenCV. This 3rd party may be also useful to consider input videos (mpeg, png, jpeg...).
+- \c libxml: This 3rd party is optional but recommended to read the tracker settings as well as the camera settings from an xml file. More information is given in \ref mb_settings_xml.
+- \c Ogre \c 3D: This 3rd party is optional and could be difficult to instal on OSX and Windows. To begin with the tracker we don't recomend to istall it. \c Ogre \c 3D allows to enable \ref mb_settings_visibility_ogre.
+- \c Coin \c 3D: This 3rd party is also optional and difficult to install. That's why we don't recommend to install \c Coin \c 3D to begin with the tracker. \c Coin \c 3D allows only to consider \ref mb_advanced_wrml  instead of the home-made \ref mb_advanced_cao.
+
 Next sections highlight how to use the differents versions of the markerless model-based trackers that are implemented in ViSP.
 
 Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
@@ -35,7 +41,7 @@ The following example that comes from tutorial-mb-tracker.cpp allows to track a 
 
 The previous example uses the following data as input:
 - a video file; "teabox.mpg" is the default video.
-- a cad model that describes the object to track. In our case the file "teabox.cao" is the default one. See \ref mb_model section to learn how the teabox is modelled and section \ref mb_advanced_cao to learn how to model an other object.
+- a cad model that describes the object to track. In our case the file \c "teabox.cao" is the default one. See \ref mb_model section to learn how the teabox is modelled and section \ref mb_advanced_cao to learn how to model an other object.
 - a file with extension "*.init" that contains the 3D coordinates of some points used to compute an initial pose which serves to initialize the tracker. The user has than to click in the image on the corresponding 2D points. The default file is named "teabox.init". The content of this file is detailed in \ref mb_started_src_explained section.
 - an optional image with extension "*.ppm" that may help the user to remember the location of the corresponding 3D points specified in "*.init" file.
 
@@ -45,9 +51,9 @@ The previous example uses the following data as input:
 Once build, to see the options that are available in the previous source code, just run:
 \code
 $ ./tutorial-mb-tracker --help
-Usage: ./tutorial-mb-tracker [--name <video name>] [--tracker <0=egde|1=keypoint|2=hybrid>] [--help]
+Usage: ./tutorial-mb-tracker-full [--video <video name>] [--model <model name>] [--tracker <0=egde|1=keypoint|2=hybrid>] [--help]
 \endcode
-By default, teabox.mpg video is used as input. Using "--tracker" option, you can specify which tracker has to be used:
+By default, \c teabox.mpg video and \c teabox.cao model are used as input. Using \c "--tracker" option, you can specify which tracker has to be used:
 - Using vpMbEdgeTracker to track only moving-edges:
 \code
 $ ./tutorial-mb-tracker --tracker 0
@@ -76,19 +82,27 @@ will produce results similar to:
 <iframe width="420" height="315" src="http://www.youtube.com/embed/a-RX9NPF2k0?rel=0" frameborder="0" allowfullscreen></iframe>
 \endhtmlonly
 
-With this example it is also possible to work on an other data set using "--name" command line option. For example, if you run:
+With this example it is also possible to work on an other data set using "--video" and "--model" command line options. For example, if you run:
 \code
-$ ./tutorial-mb-tracker --name myobject
+$ ./tutorial-mb-tracker --video <path1>/myvideo%04.png --model <path2>/myobject.cao.
 \endcode
-you have to put the following data in the same folder than the binary:
-- myobject.mpg: A video that contains the object to track.
-- myobject.init: The coordinates of at least four 3D points used for the initialization.
-- myobject.cao: The CAD model of the object to track.
-
-Since the video myobject.mpg was acquired by an other camera, you have to set the camera intrinsic parameters in the source code modifying the line:
+it means that the following images will be used as input:
+\code
+<path1>/myvideo0001.png
+<path1>/myvideo0002.png
+...
+<path1>/myvideo0009.png
+<path1>/myvideo0010.png
+...
+\endcode
+and that in \c \<path2\> you have the following data:
+- \c myobject.init: The coordinates of at least four 3D points used for the initialization.
+- \c myobject.cao: The CAD model of the object to track.
+- \c myobject.ppm: An optional image that shows where the user has to click the points defined in \c myobject.init.
+- \c myobject.xml: An optional files that contains the tracker parameters that are specific to the image sequence and that contains also the camera intrinsic parameters obtained by calibration (see \ref tutorial-calibration). This file is handled in tutorial-mb-tracker-full.cpp but not in tutorial-mb-tracker.cpp. That's why since the video \c teabox.mpg was acquired by an other camera than yours, you have to set the camera intrinsic parameters in tutorial-mb-tracker.cpp source code modifying the line:
 \snippet tutorial-mb-tracker.cpp Set camera parameters
 
-and build again before using "--name" command line option.
+and build again before using \c "--model" command line option.
 
 \subsection mb_started_src_explained Source code explained
 
@@ -103,16 +117,16 @@ The tracker uses image \c I and the intrinsic camera parameters \c cam as input.
 As output, it estimates \c cMo, the pose of the object in the camera frame.
 \snippet tutorial-mb-tracker.cpp cMo
 
-Once input image \c teabox.pgm is loaded in \c I, a window is created and initialized with image \c I. Then we create an instance of the tracker depending on "--tracker" command line option.
+Once input image \c teabox.pgm is loaded in \c I, a window is created and initialized with image \c I. Then we create an instance of the tracker depending on \c "--tracker" command line option.
 \snippet tutorial-mb-tracker.cpp Constructor
 
 Then the corresponding tracker settings are initialized. More details are given in \ref mb_settings section.
 \snippet tutorial-mb-tracker.cpp Set parameters
 
-Now we are ready to load the cad model of the object. ViSP supports cad model in cao format or in vrml format. The cao format is a particular format only supported by ViSP. It doesn't require an additional 3rd party rather then vrml format that require Coin 3rd party. We load the cad model in cao format from teabox.cao file which complete description is provided in \ref mb_teabox_cao with:
+Now we are ready to load the cad model of the object. ViSP supports cad model in cao format or in vrml format. The cao format is a particular format only supported by ViSP. It doesn't require an additional 3rd party rather then vrml format that require Coin 3rd party. We load the cad model in cao format from \c teabox.cao file which complete description is provided in \ref mb_teabox_cao with:
 \snippet tutorial-mb-tracker.cpp Load cao
 
-It is also possible to modify the code to load the cad model in vrml format from teabox.wrl file described in \ref mb_teabox_vrml. To this end modify the previous line with:
+It is also possible to modify the code to load the cad model in vrml format from \c teabox.wrl file described in \ref mb_teabox_vrml. To this end modify the previous line with:
 \code
 tracker->loadModel(objectname + ".wrl");
 \endcode
@@ -123,11 +137,11 @@ Once the model of the object to track is loaded, with the next line the display 
 Now we have to initialize the tracker. With the next line we choose to use a user interaction. 
 \snippet tutorial-mb-tracker.cpp Init
 
-The user has to click in the image on four vertices with their 3D coordinates defined in the "teabox.init" file. The following image shows where the user has to click.
+The user has to click in the image on four vertices with their 3D coordinates defined in the \c "teabox.init" file. The following image shows where the user has to click.
 
-\image html img-teabox-click.jpg Image "teabox.ppm" used to help the user to initialize the tracker. 
+\image html img-teabox-click.jpg Image \c "teabox.ppm" used to help the user to initialize the tracker. 
 
-Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker. Note also that the third optional argument "true" is used here to enable the display of an image that may help the user for the initialization. The name of this image is the same as the "*.init" file except the extension that sould be ".ppm". In our case it will be "teabox.ppm".
+Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker. Note also that the third optional argument "true" is used here to enable the display of an image that may help the user for the initialization. The name of this image is the same as the \c "*.init" file except the extension that sould be \c ".ppm". In our case it will be \c "teabox.ppm".
 
 The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user intialization is provided hereafter. Note that all the characters after character '#' are considered as comments. 
 
@@ -203,7 +217,7 @@ Until line 15, the content of this file is similar to the one described in
 
 \subsection mb_teabox_vrml teabox.wrl example
 
-The content of the teabox.wrl file used in tutorial-mb-tracker-full.cpp and tutorial-mb-edge-tracker.cpp when teabox.cao is missing is given hereafter. This content is to make into relation with teabox.cao described in \ref mb_teabox_cao. As for the cao format, teabox.wrl describes first the vertices of the box, then the edges that corresponds to the faces. 
+The content of the \c teabox.wrl file used in tutorial-mb-tracker-full.cpp and tutorial-mb-edge-tracker.cpp when \c teabox.cao is missing is given hereafter. This content is to make into relation with \c teabox.cao described in \ref mb_teabox_cao. As for the cao format, \c teabox.wrl describes first the vertices of the box, then the edges that corresponds to the faces. 
 
 \includelineno teabox.wrl
 
@@ -272,9 +286,9 @@ The content of the XML file teabox.xml that is considered by default is the foll
 \endcode
 
 Depending on the tracker all the XML tags are not useful:
-- \<ecm\> tag corresponds to the moving-edges settings. This tag is used by vpMbEdgeTracker and vpMbEdgeKltTracker.
-- \<klt\> tag corresponds to the keypoint settings. This tag is used by vpMbKltTracker and vpMbEdgeKltTracker.
-- \<camera\> and \<face\> tags are used by all the trackers.
+- \c \<ecm\> tag corresponds to the moving-edges settings. This tag is used by vpMbEdgeTracker and vpMbEdgeKltTracker.
+- \c \<klt\> tag corresponds to the keypoint settings. This tag is used by vpMbKltTracker and vpMbEdgeKltTracker.
+- \c \<camera\> and \c \<face\> tags are used by all the trackers.
 
 \subsection mb_settings_ecm Moving-edges settings
 Moving-edges settings affect the way the visible edges of an object are tracked.
@@ -307,7 +321,7 @@ These settings could be tuned either from XML using \<ecm\> tag as:
 of from source code using vpMbEdgeTracker::setMovingEdge() method:
 \snippet tutorial-mb-tracker-full.cpp Set moving-edges parameters
 
-With the previous parameters you can set:
+Either from xml or from the previous source code you can set:
 - mask_size: defines the size of the convolution mask used to detect an edge.
 - nb_mask: number of mask applied to determine the object contour. The number of mask determines the precision of the normal of the edge for every sample. If precision is 2deg, then there are 360/2 = 180 masks.
 - range_tracking: range on both sides of the reference pixel along the normal of the contour used to track a moving-edge. If the displacement of the tracked object in two successive images is large, you have to increase this parameter. 
@@ -496,8 +510,8 @@ Here for simplicity, the user just has the possibility to either activate all th
 
 The following code shows how to access to the CAD model
 - to check if a face is visible, 
-- to get the name of the face (only with models in .cao format for the moment)
-- to check if the level of detail is enable/disable (only with models in .cao format for the moment)
+- to get the name of the face (only with models in \c .cao format for the moment)
+- to check if the level of detail is enable/disable (only with models in \c .cao format for the moment)
 - to access to the coordinates of the 3D points used to model a face
 - from the pose \e cMo estimated by the tracker to compute the coordinates of the 3D points in the image 
 
@@ -833,6 +847,38 @@ As for the edge tracking, the same functionnality is also available when using k
 \code
 vpMbKltTracker::setUseKltTracking("name of the face", boolean);
 \endcode
+
+\section mb_use_case Use case
+
+Hereafter we provide the information to test the tracker on more complex objects. Data-set could be found browsing http://visp-doc.inria.fr/download/mbt-model/
+
+\subsection mb_use_case_cubesat CubeSAT satellite model
+
+In http://visp-doc.inria.fr/download/mbt-model/cubesat.zip you will find the model data set (.obj, .cao, .init, .xml, .ppm) and a video to test the \c CubeSAT object tracking. After unzip in a folder (let say \c /your-path-to-model) you may run the tracker with something similar to:
+
+\code
+$ ./tutorial-mb-tracker-full --video /your-path-to-model/cubesat/video/00%2d.png --model /your-path-to-model/cubesat/cubesat1b.cao
+\endcode
+
+You should be able to obtain these kind of results:
+
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/i1zRGhZGpLk" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
+
+\subsection mb_use_case_mmicro mmicro model
+
+In http://visp-doc.inria.fr/download/mbt-model/mmicro.zip you will find the model data set (.cao, .wrl, .init, .xml, .ppm) and a video to track the \c mmicro object. After unzip in a folder (let say \c /your-path-to-model) you may run the tracker with something similar to:
+
+\code
+$ ./tutorial-mb-tracker-full --video /your-path-to-model/mmicro/video/mmicro00%2d.png --model /your-path-to-model/mmicro/mmicro.cao
+\endcode
+
+You should be able to obtain these kind of results:
+
+\htmlonly
+<iframe width="560" height="315" src="https://www.youtube.com/embed/UK10KMMJFCI" frameborder="0" allowfullscreen></iframe>
+\endhtmlonly
 
 \section mb_known_issues Known issues
 \subsection mb_known_issues_example_with_ogre Model-based trackers examples are not working with Ogre visibility ckeck

@@ -16,20 +16,23 @@ int main(int argc, char** argv)
 
   try {
     std::string opt_videoname = "teabox.mpg";
+    std::string opt_modelname = "teabox.cao";
     int opt_tracker = 0;
 
     for (int i=0; i<argc; i++) {
-      if (std::string(argv[i]) == "--name")
+      if (std::string(argv[i]) == "--video")
         opt_videoname = std::string(argv[i+1]);
-      if (std::string(argv[i]) == "--tracker")
+      else if (std::string(argv[i]) == "--model")
+        opt_modelname = std::string(argv[i+1]);
+      else if (std::string(argv[i]) == "--tracker")
         opt_tracker = atoi(argv[i+1]);
       else if (std::string(argv[i]) == "--help") {
-        std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--tracker <0=egde|1=keypoint|2=hybrid>] [--help]\n" << std::endl;
+        std::cout << "\nUsage: " << argv[0] << " [--video <video name>] [--model <model name>] [--tracker <0=egde|1=keypoint|2=hybrid>] [--help]\n" << std::endl;
         return 0;
       }
     }
-    std::string parentname = vpIoTools::getParent(opt_videoname);
-    std::string objectname = vpIoTools::getNameWE(opt_videoname);
+    std::string parentname = vpIoTools::getParent(opt_modelname);
+    std::string objectname = vpIoTools::getNameWE(opt_modelname);
 
     if(! parentname.empty())
        objectname = parentname + "/" + objectname;
@@ -141,14 +144,17 @@ int main(int argc, char** argv)
       //! [Set clipping fov]
       tracker->setClipping(tracker->getClipping() | vpMbtPolygon::FOV_CLIPPING);
       //! [Set clipping fov]
-
-      //! [Set ogre]
-      tracker->setOgreVisibilityTest(false);
-      tracker->setOgreShowConfigDialog(false);
-      //! [Set ogre]
-
       //! [Set parameters]
     }
+    //! [Set visibility parameters]
+    //! [Set ogre visibility]
+    tracker->setOgreVisibilityTest(false);
+    tracker->setOgreShowConfigDialog(false);
+    //! [Set ogre visibility]
+    //! [Set scanline visibility]
+    tracker->setScanLineVisibilityTest(true);
+    //! [Set scanline visibility]
+    //! [Set visibility parameters]
 
     //! [Load cao]
     if(vpIoTools::checkFilename(objectname + ".cao"))
@@ -176,7 +182,7 @@ int main(int argc, char** argv)
       //! [Get pose]
       //! [Display]
       tracker->getCameraParameters(cam);
-      tracker->display(I, cMo, cam, vpColor::red, 2, true);
+      tracker->display(I, cMo, cam, vpColor::red, 2);
       //! [Display]
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
       vpDisplay::displayText(I, 10, 10, "A click to exit...", vpColor::red);
