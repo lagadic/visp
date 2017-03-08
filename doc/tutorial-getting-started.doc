@@ -152,7 +152,7 @@ Here is a screen shot of the resulting output window :
 
 \section image_win On Windows
 
-We suppose from now, that you have created a folder (let say \c C:/ViSP/ViSP-started) that contains the following files: CMakeLists.txt, tutorial-viewer.cpp and monkey.ppm. These files are also provider in ViSP source code, in \c tutorial/image folder.
+We suppose from now, that you have created a folder (let say \c C:/ViSP/ViSP-started) that contains the following files: CMakeLists.txt, tutorial-viewer.cpp and monkey.ppm. These files are also provided in ViSP source code, in \c tutorial/image folder.
 
 
 \subsection image_win_config Configure your project
