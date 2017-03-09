@@ -409,7 +409,7 @@ vpMbtDistanceKltCylinder::updateMask(
 
           ClipperLib::Path path;
           for (std::vector<vpImagePoint>::const_iterator it = roi.begin(); it != roi.end(); ++it) {
-            path.push_back( ClipperLib::IntPoint(it->get_u(), it->get_v()) );
+            path.push_back( ClipperLib::IntPoint((ClipperLib::cInt) it->get_u(), (ClipperLib::cInt)it->get_v()) );
           }
 
           ClipperLib::Paths solution;
@@ -429,7 +429,7 @@ vpMbtDistanceKltCylinder::updateMask(
                 std::vector<vpImagePoint> corners;
 
                 for (size_t j = 0; j < solution[i].size(); j++) {
-                  corners.push_back( vpImagePoint(solution[i][j].Y, solution[i][j].X) );
+                  corners.push_back( vpImagePoint((double)(solution[i][j].Y), (double)(solution[i][j].X)) );
                 }
 
                 polygon_area.buildFrom(corners);
@@ -441,7 +441,7 @@ vpMbtDistanceKltCylinder::updateMask(
             }
 
             for (size_t i = 0; i < solution[index_max].size(); i++) {
-              roi_offset.push_back( vpImagePoint(solution[index_max][i].Y, solution[index_max][i].X) );
+              roi_offset.push_back( vpImagePoint((double)(solution[index_max][i].Y), (double)(solution[index_max][i].X)) );
             }
           } else {
             roi_offset = roi;
