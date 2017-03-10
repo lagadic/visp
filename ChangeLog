@@ -14,6 +14,7 @@ ViSP 3.0.2 (under development)
   - Bug fixed
     . [#137] Fix bug in extration of vpRotationMatrix from vpPoseVector using
              vpPoseVector::getRotationMatrix()
+    . [#149] Bug in vpTime::measureTimeMicros() (OS detection was done wrong)
 
 ----------------------------------------------
 ViSP 3.0.1 (released February 3rd, 2017)
