@@ -134,7 +134,7 @@ double measureTimeMicros()
 #  else
 	throw(vpException(vpException::fatalError, "Cannot get time: not implemented on Universal Windows Platform"));
 #  endif
-#else
+#elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   struct timeval tp;
   gettimeofday(&tp,0);
   return(1000000.0*tp.tv_sec + tp.tv_usec);
