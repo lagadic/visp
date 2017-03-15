@@ -57,7 +57,7 @@
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_GSL
-#include <gsl/gsl_linalg.h>
+#  include <gsl/gsl_linalg.h>
 #endif
 
 #include <visp3/core/vpMatrix.h>
@@ -1567,21 +1567,26 @@ vpColVector vpMatrix::solveBySVD(const vpColVector &B) const
 
   Singular value decomposition (SVD).
 
+  This function calls the first following function that is available:
+  - svdLapack() if Lapack 3rd party is installed
+  - svdOpenCV() if OpenCV 3rd party is installed
+  - svdGsl() if GSL 3rd party is installed
+
+  Given matrix \f$M\f$, this function computes it singular value decomposition such as
+
   \f[ M = U \Sigma V^{\top} \f]
 
-  \warning Destructive method wrt. to the matrix \f$ M \f$ to
-  decompose. You should make a COPY of that matrix if needed not to
-  CHANGE.
+  \warning This method is destructive wrt. to the matrix \f$ M \f$ to
+  decompose. You should make a COPY of that matrix if needed.
 
-  \param w : Vector of singular values. \f$ \Sigma = diag(w) \f$.
+  \param w : Vector of singular values: \f$ \Sigma = diag(w) \f$.
 
-  \param v : Matrix \f$ V \f$.
+  \param V : Matrix \f$ V \f$.
 
   \return Matrix \f$ U \f$.
 
-  \warning If the GNU Scientific Library (GSL) third party library is used to compute the SVD
-  decomposition, the singular values \f$ \Sigma_{i,i} \f$ are ordered in decreasing
-  fashion in \e w. This is not the case, if the GSL is not detected by ViSP.
+  \note The singular values are ordered in decreasing
+  fashion in \e w. It means that the highest singular value is in \e w[0].
 
   Here an example of SVD decomposition of a non square Matrix M.
 
@@ -1600,19 +1605,19 @@ int main()
   M[1][1] = 8 ;
   M[2][1] = 9 ;
 
-  vpMatrix v;
+  vpMatrix V;
   vpColVector w;
   vpMatrix Mrec;
   vpMatrix Sigma;
 
-  M.svd(w, v);
+  M.svd(w, V);
   // Here M is modified and is now equal to U
 
   // Construct the diagonal matrix from the singular values
   Sigma.diag(w);
 
   // Reconstruct the initial matrix M using the decomposition
-  Mrec =  M * Sigma * v.t();
+  Mrec =  M * Sigma * V.t();
 
   // Here, Mrec is obtained equal to the initial value of M
   // Mrec[0][0] = 1;
@@ -1624,72 +1629,24 @@ int main()
 
   std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
 }
-\endcode
+  \endcode
 
+  \sa svdLapack(), svdOpenCV(), svdGsl()
 */
 void
-vpMatrix::svd(vpColVector& w, vpMatrix& v)
+vpMatrix::svd(vpColVector &w, vpMatrix &V)
 {
-#if 1 /* no verification */
-  {
-    w.resize( this->getCols() );
-    v.resize( this->getCols(), this->getCols() );
-
 #if defined (VISP_HAVE_LAPACK_C)
-    svdLapack(w,v);
+  svdLapack(w, V);
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
-    svdOpenCV(w,v);
+  svdOpenCV(w, V);
 #elif defined (VISP_HAVE_GSL)  /* be careful of the copy below */
-    svdGsl(w,v) ;
+  svdGsl(w, V) ;
 #else
-    svdNr(w,v) ;
-#endif
-
-    //svdNr(w,v) ;
-  }
-#else  /* verification of the SVD */
-  {
-    int pb = 0;
-    unsigned int i,j,k,nrows,ncols;
-    vpMatrix A, Asvd;
-
-    A = (*this);        /* copy because svd is destructive */
-
-    w.resize( this->getCols() );
-    v.resize( this->getCols(), this->getCols() );
-#ifdef VISP_HAVE_GSL  /* be careful of the copy above */
-    svdGsl(w,v) ;
-#else
-    svdNr(w,v) ;
-#endif
-    //svdNr(w,v) ;
-
-    nrows = A.getRows();
-    ncols = A.getCols();
-    Asvd.resize(nrows,ncols);
-
-    for (i = 0 ; i < nrows ; i++)
-    {
-      for (j = 0 ; j < ncols ; j++)
-      {
-        Asvd[i][j] = 0.0;
-        for (k=0 ; k < ncols ; k++) Asvd[i][j] += (*this)[i][k]*w[k]*v[j][k];
-      }
-    }
-    for (i=0;i<nrows;i++)
-    {
-      for (j=0;j<ncols;j++) if (fabs(A[i][j]-Asvd[i][j]) > 1e-6) pb = 1;
-    }
-    if (pb == 1)
-    {
-      printf("pb in SVD\n");
-      std::cout << " A : " << std::endl << A << std::endl;
-      std::cout << " Asvd : " << std::endl << Asvd << std::endl;
-    }
-    //    else printf("SVD ok ;-)\n");  /* It's so good... */
-  }
+  throw(vpException(vpException::fatalError, "Cannot compute SVD. Install Lapack, OpenCV or GSL 3rd party"));
 #endif
 }
+
 /*!
   Compute the pseudo inverse of the matrix \f$Ap = A^+\f$
   \param Ap : The pseudo inverse \f$ A^+ \f$.
@@ -2915,53 +2872,6 @@ std::ostream & vpMatrix::cppPrint(std::ostream & os, const std::string &matrixNa
 };
 
 /*!
-  Compute the determinant of the matrix using the LU Decomposition.
-
-  \return The determinant of the matrix if the matrix is square, 0 otherwise.
-
-  See the Numerical Recipes in C page 43 for further explanations.
-*/
-
-double vpMatrix::detByLU() const
-{
-  double det_ = 0;
-
-  // Test wether the matrix is squred
-  if (rowNum == colNum)
-  {
-    // create a temporary matrix that will be modified by LUDcmp
-    vpMatrix tmp(*this);
-
-    // using th LUdcmp based on NR codes
-    // it modified the tmp matrix in a special structure of type :
-    //  b11 b12 b13 b14
-    //  a21 b22 b23 b24
-    //  a21 a32 b33 b34
-    //  a31 a42 a43 b44 
-
-    unsigned int  * perm = new unsigned int[rowNum];  // stores the permutations
-    int d;   // +- 1 fi the number of column interchange is even or odd
-    tmp.LUDcmp(perm,  d);
-    delete[]perm;
-
-    // compute the determinant that is the product of the eigen values
-    det_ = (double) d;
-    for(unsigned int i=0;i<rowNum;i++)
-    {
-      det_*=tmp[i][i];
-    }
-  }
-  else {
-    throw(vpException(vpException::fatalError,
-                      "Cannot compute LU decomposition on a non square matrix (%dx%d)",
-                      rowNum, colNum)) ;
-  }
-  return det_ ;
-}
-
-
-
-/*!
   Stack A at the end of the current matrix, or copy if the matrix has no dimensions : this = [ this A ]^T.
 
   Here an example for a robot velocity log :
@@ -3339,23 +3249,23 @@ int main()
   std::cout << "Initial matrix: \n" << A << std::endl;
 
   // Compute the determinant
-  std:: cout << "Determinant by default method  : " <<
-  A.det() << std::endl;
-  std:: cout << "Determinant by LU decomposition: " <<
-  A.det(vpMatrix::LU_DECOMPOSITION ) << std::endl;
+  std:: cout << "Determinant by default method           : " << A.det() << std::endl;
+  std:: cout << "Determinant by LU decomposition         : " << A.detByLU() << std::endl;
+  std:: cout << "Determinant by LU decomposition (Lapack): " << A.detByLULapack() << std::endl;
+  std:: cout << "Determinant by LU decomposition (OpenCV): " << A.detByLUOpenCV() << std::endl;
+  std:: cout << "Determinant by LU decomposition (GSL)   : " << A.detByLUGsl() << std::endl;
 }
 \endcode
 */
 double vpMatrix::det(vpDetMethod method) const
 {
-  double det_ = 0;
+  double det = 0.;
 
-  if ( method == LU_DECOMPOSITION )
-  {
-    det_ = this->detByLU();
+  if (method == LU_DECOMPOSITION) {
+    det = this->detByLU();
   }
 
-  return (det_);
+  return (det);
 }
 
 /*!

@@ -49,8 +49,7 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-int allocate_work(double** work);
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_LAPACK_C
 extern "C" int dgeqrf_(int *m, int *n, double*a, int *lda, double *tau, double *work, int *lwork, int *info);
 extern "C" int dormqr_(char *side, char *trans, int *m, int *n,
@@ -59,7 +58,8 @@ extern "C" int dormqr_(char *side, char *trans, int *m, int *n,
 extern "C" int dorgqr_(int *, int *, int *, double *, int *,
                        double *, double *, int *, int *);
 extern "C" int dtrtri_(char *uplo, char *diag, int *n, double *a, int *lda, int *info);
-#endif
+
+int allocate_work(double** work);
 
 int allocate_work(double** work)
 {
@@ -68,8 +68,44 @@ int allocate_work(double** work)
   *work = new double[dimWork];
   return (int)dimWork;
 }
+#endif
+
 #ifdef VISP_HAVE_LAPACK_C
-vpMatrix vpMatrix::inverseByQRLapack() const{
+/*!
+  Compute the inverse of a n-by-n matrix using the QR decomposition with Lapack 3rd party.
+
+  \return The inverse matrix.
+
+  Here an example:
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(4,4);
+
+  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+
+  // Compute the inverse
+  vpMatrix A_1 = A.inverseByQRLapack();
+  std::cout << "Inverse by QR: \n" << A_1 << std::endl;
+
+  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+}
+  \endcode
+
+  \sa inverseByQR()
+*/
+vpMatrix vpMatrix::inverseByQRLapack() const
+{
+  if ( rowNum != colNum) {
+    throw(vpMatrixException(vpMatrixException::matrixError,
+                            "Cannot inverse a non-square matrix (%ux%u) by QR", rowNum, colNum)) ;
+  }
+
   int rowNum_ = (int)this->getRows();
   int colNum_ = (int)this->getCols();
   int lda = (int)rowNum_; //lda is the number of rows because we don't use a submatrix
@@ -177,20 +213,20 @@ vpMatrix vpMatrix::inverseByQRLapack() const{
     }
     delete[] tau;
     delete[] work;
-  }catch(vpMatrixException&){
+  } catch(vpMatrixException&) {
     delete[] tau;
     delete[] work;
     throw;
   }
 
   return C;
-
 }
 #endif
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Compute the inverse of a n-by-n matrix using the QR decomposition.
-  Only available if lapack is installed.
+  Only available if lapack 3rd party is installed.
 
   \return The inverse matrix.
 
@@ -208,31 +244,21 @@ int main()
   A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
 
   // Compute the inverse
-  vpMatrix A_1; // A^-1
-  A_1 = A.inverseByQR();
+  vpMatrix A_1 = A.inverseByQR();
   std::cout << "Inverse by QR: \n" << A_1 << std::endl;
 
   std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
 }
   \endcode
 
-  \sa pseudoInverse()
+  \sa inverseByLU(), inverseByCholesky()
 */
-
-#if defined(VISP_HAVE_LAPACK_C)
 vpMatrix
 vpMatrix::inverseByQR() const
 {
-
-  if ( rowNum != colNum)
-  {
-    vpERROR_TRACE("\n\t\tCannot invert a non-square vpMatrix") ;
-    throw(vpMatrixException(vpMatrixException::matrixError,
-                            "Cannot invert a non-square vpMatrix")) ;
-  }
 #ifdef VISP_HAVE_LAPACK_C
   return inverseByQRLapack();
+#else
+  throw(vpException(vpException::fatalError, "Cannot inverse matrix by QR. Install Lapack 3rd party"));
 #endif
 }
-
-#endif

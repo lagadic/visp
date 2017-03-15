@@ -48,38 +48,22 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#  include <opencv2/core/core.hpp>
+#endif
+
 #ifdef VISP_HAVE_LAPACK_C
 extern "C" void dpotrf_ (char *uplo, int *n, double *a, int *lda, int *info);
 extern "C" int dpotri_(char *uplo, int *n, double *a, int *lda, int *info);
-
-vpMatrix vpMatrix::inverseByCholeskyLapack() const{
-  int rowNum_ = (int)this->getRows();
-  int lda = (int)rowNum_; //lda is the number of rows because we don't use a submatrix
-  int info;
-
-  vpMatrix A = *this;
-  dpotrf_((char*)"L",&rowNum_,A.data,&lda,&info);
-
-  if(info!=0)
-    std::cout << "cholesky:dpotrf_:error" << std::endl;
-
-  dpotri_((char*)"L",&rowNum_,A.data,&lda,&info);
-  if(info!=0){
-    std::cout << "cholesky:dpotri_:error" << std::endl;
-    throw vpMatrixException::badValue;
-  }
-
-  for(unsigned int i=0;i<A.getRows();i++)
-    for(unsigned int j=0;j<A.getCols();j++)
-      if(i>j) A[i][j] = A[j][i];
-
-  return A;
-}
+#endif
 
 /*!
   Compute the inverse of a n-by-n matrix using the Cholesky decomposition.
-  The matrix must be real and symmetric.
-  Only available if lapack is installed.
+  The matrix must be real symmetric positive defined.
+
+  This function calls the first following function that is available:
+  - inverseByCholeskyLapack() if Lapack 3rd party is installed
+  - inverseByLUOpenCV() if OpenCV 3rd party is installed
 
   \return The inverse matrix.
 
@@ -112,17 +96,137 @@ int main()
 vpMatrix
 vpMatrix::inverseByCholesky() const
 {
-
-  if ( rowNum != colNum)
-  {
-    vpERROR_TRACE("\n\t\tCannot invert a non-square vpMatrix") ;
-    throw(vpMatrixException(vpMatrixException::matrixError,
-                            "Cannot invert a non-square vpMatrix")) ;
-  }
+#ifdef VISP_HAVE_LAPACK_C
   return inverseByCholeskyLapack();
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+  return inverseByCholeskyOpenCV();
+#else
+  throw(vpException(vpException::fatalError, "Cannot inverse matrix by Cholesky. Install Lapack or OpenCV 3rd party"));
+#endif
 }
 
-#elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpMatrixLapack.cpp.o) has no symbols
-void dummy_vpMatrixLapack() {};
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#ifdef VISP_HAVE_LAPACK_C
+/*!
+  Compute the inverse of a n-by-n matrix using the Cholesky decomposition with Lapack 3rd party.
+  The matrix must be real symmetric positive defined.
+
+  \return The inverse matrix.
+
+  Here an example:
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  unsigned int n = 4;
+  vpMatrix A(n, n);
+  vpMatrix I;
+  I.eye(4);
+
+  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+
+  // Make matrix symmetric positive
+  A = 0.5*(A+A.t());
+  A = A + n*I;
+
+  // Compute the inverse
+  vpMatrix A_1 = A.inverseByCholeskyLapack();
+  std::cout << "Inverse by Cholesky (Lapack): \n" << A_1 << std::endl;
+
+  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+}
+  \endcode
+
+  \sa inverseByCholesky(), inverseByCholeskyOpenCV()
+*/
+vpMatrix vpMatrix::inverseByCholeskyLapack() const
+{
+  if ( rowNum != colNum) {
+    throw(vpMatrixException(vpMatrixException::matrixError,
+                            "Cannot inverse a non-square matrix (%ux%u) by Cholesky", rowNum, colNum)) ;
+  }
+
+  int rowNum_ = (int)this->getRows();
+  int lda = (int)rowNum_; //lda is the number of rows because we don't use a submatrix
+  int info;
+
+  vpMatrix A = *this;
+  dpotrf_((char*)"L",&rowNum_,A.data,&lda,&info);
+
+  if(info!=0)
+    std::cout << "cholesky:dpotrf_:error" << std::endl;
+
+  dpotri_((char*)"L",&rowNum_,A.data,&lda,&info);
+  if(info!=0){
+    std::cout << "cholesky:dpotri_:error" << std::endl;
+    throw vpMatrixException::badValue;
+  }
+
+  for(unsigned int i=0;i<A.getRows();i++)
+    for(unsigned int j=0;j<A.getCols();j++)
+      if(i>j) A[i][j] = A[j][i];
+
+  return A;
+}
 #endif
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+/*!
+  Compute the inverse of a n-by-n matrix using the Cholesky decomposition with OpenCV 3rd party.
+  The matrix must be real symmetric positive defined.
+
+  \return The inverse matrix.
+
+  Here an example:
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  unsigned int n = 4;
+  vpMatrix A(n, n);
+  vpMatrix I;
+  I.eye(4);
+
+  A[0][0] = 1/1.; A[0][1] = 1/2.; A[0][2] = 1/3.; A[0][3] = 1/4.;
+  A[1][0] = 1/5.; A[1][1] = 1/3.; A[1][2] = 1/3.; A[1][3] = 1/5.;
+  A[2][0] = 1/6.; A[2][1] = 1/4.; A[2][2] = 1/2.; A[2][3] = 1/6.;
+  A[3][0] = 1/7.; A[3][1] = 1/5.; A[3][2] = 1/6.; A[3][3] = 1/7.;
+
+  // Make matrix symmetric positive
+  A = 0.5*(A+A.t());
+  A = A + n*I;
+
+  // Compute the inverse
+  vpMatrix A_1 = A.inverseByCholeskyOpenCV();
+  std::cout << "Inverse by Cholesky (OpenCV): \n" << A_1 << std::endl;
+
+  std::cout << "A*A^-1: \n" << A * A_1 << std::endl;
+}
+  \endcode
+
+  \sa inverseByCholesky(), inverseByCholeskyLapack()
+*/
+vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
+{
+  if (rowNum != colNum) {
+    throw(vpException(vpException::fatalError,
+                      "Cannot inverse a non square matrix (%ux%u) by Cholesky", rowNum, colNum)) ;
+  }
+
+  cv::Mat M(rowNum, colNum, CV_64F, this->data);
+  cv::Mat Minv = M.inv(cv::DECOMP_CHOLESKY);
+
+  vpMatrix A(rowNum, colNum);
+  memcpy(A.data, Minv.data, (size_t)(8*Minv.rows*Minv.cols));
+
+  return A;
+}
+#endif
+
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
