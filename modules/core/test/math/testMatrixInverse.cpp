@@ -31,39 +31,30 @@
  * Test various inversions.
  *
  * Authors:
- * Filip Novotny
+ * Fabien Spindler
  *
  *****************************************************************************/
-
 
 /*!
   \example testMatrixInverse.cpp
   \brief Test various matrix inversions.
 */
 
-
-
-#include <visp3/core/vpTime.h>
-
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/io/vpParseArgv.h>
 #include <vector>
 #include <stdlib.h>
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
 #include <cmath>
+
+#include <visp3/core/vpTime.h>
+#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/io/vpParseArgv.h>
+
 // List of allowed command line options
 #define GETOPTARGS	"cdn:i:pf:R:C:vh"
 
-void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv,
-                unsigned int& nb_matrices, unsigned int& nb_iterations,
-                bool& use_plot_file, std::string& plotfile,
-                unsigned int& nbrows, unsigned int& nbcols, bool& verbose);
-void writeTime(const char *name, double time);
-vpMatrix makeRandomMatrix(unsigned int nbrows, unsigned int nbcols);
 
 /*!
 
@@ -119,8 +110,8 @@ OPTIONS:                                               Default\n\
     fprintf(stderr, "ERROR: \n" );
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
-
 }
+
 /*!
 
   Set the program options.
@@ -163,9 +154,9 @@ bool getOptions(int argc, const char **argv,
       break;
       // add default options -c -d
     case 'c':
-        break;
+      break;
     case 'd':
-        break;
+      break;
     default:
       usage(argv[0], optarg_);
       return false; break;
@@ -183,141 +174,369 @@ bool getOptions(int argc, const char **argv,
   return true;
 }
 
-void writeTime(const char *name, double time)
-{
-  std::cout << name << " time=" << time << " ms." << std::endl;
-}
-
-vpMatrix makeRandomMatrix(unsigned int nbrows, unsigned int nbcols)
+vpMatrix make_random_matrix(unsigned int nbrows, unsigned int nbcols)
 {
   vpMatrix A;
-  A.resize(nbrows,nbcols);
+  A.resize(nbrows, nbcols);
 
-  for (unsigned int i=0 ; i < A.getRows() ; i++)
-    for  (unsigned int j=0 ; j < A.getCols() ; j++)
+  for (unsigned int i=0 ; i < A.getRows(); i++)
+    for  (unsigned int j=0 ; j < A.getCols(); j++)
       A[i][j] =  (double)rand()/(double)RAND_MAX;
   return A;
 }
 
+vpMatrix make_random_symmetric_positive_matrix(unsigned int n)
+{
+  vpMatrix A;
+  A.resize(n, n);
+  vpMatrix I;
+  I.eye(n);
+
+  for (unsigned int i=0 ; i < A.getRows(); i++)
+    for  (unsigned int j=0 ; j < A.getCols(); j++)
+      A[i][j] =  (double)rand()/(double)RAND_MAX;
+
+  A = 0.5*(A+A.t());
+  A = A + n*I;
+  return A;
+}
+
+void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, unsigned int nb_cols, bool verbose,
+                                std::vector<vpMatrix> &bench)
+{
+  if (verbose)
+    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_cols << " matrices" << std::endl;
+  bench.clear();
+  for(unsigned int i = 0; i < nb_matrices; i++) {
+    vpMatrix M;
+#if defined(VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+    double det = 0.;
+    // don't put singular matrices in the benchmark
+    for(M = make_random_matrix(nb_rows, nb_cols); std::fabs(det=M.AtA().det())<.01; M = make_random_matrix(nb_rows, nb_cols)) {
+      if(verbose) {
+        std::cout << "  Generated random matrix AtA=" << std::endl << M.AtA() << std::endl;
+        std::cout << "  Generated random matrix not invertible: det=" << det << ". Retrying..." << std::endl;
+      }
+    }
+#else
+    M = make_random_matrix(nb_rows, nb_cols);
+#endif
+    bench.push_back(M);
+  }
+}
+
+void create_bench_symmetric_positive_matrix(unsigned int nb_matrices, unsigned int n, bool verbose,
+                                            std::vector<vpMatrix> &bench)
+{
+  if (verbose)
+    std::cout << "Create a bench of " << nb_matrices << " " << n << " by " << n << " symmetric positive matrices" << std::endl;
+  bench.clear();
+  for(unsigned int i = 0; i < nb_matrices; i++) {
+    vpMatrix M;
+#if defined(VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+    double det = 0.;
+    // don't put singular matrices in the benchmark
+    for(M = make_random_symmetric_positive_matrix(n); std::fabs(det=M.det())<.01; M = make_random_symmetric_positive_matrix(n)) {
+      if(verbose) {
+        std::cout << "  Generated random symmetric positive matrix A=" << std::endl << M << std::endl;
+        std::cout << "  Generated random symmetric positive matrix not invertibleL: det=" << det << ". Retrying..." << std::endl;
+      }
+    }
+#else
+    M = make_random_symmetric_positive_matrix(n);
+#endif
+    bench.push_back(M);
+  }
+}
+
+int test_inverse(const std::vector<vpMatrix> &bench, const std::vector<vpMatrix> &result)
+{
+  for(unsigned int i = 0; i < bench.size(); i++) {
+    vpMatrix I = bench[i] * result[i];
+    if (std::fabs(I.euclideanNorm() - sqrt(bench[0].AtA().getRows())) > 1e-10) {
+      std::cout << "Bad inverse[" << i << "]: " << I.euclideanNorm()  << " "<< sqrt(bench[0].AtA().getRows()) << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+  return EXIT_SUCCESS;
+}
+
+#if defined(VISP_HAVE_LAPACK_C)
+int test_inverse_lu_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test inverse by LU using Lapack 3rd party" << std::endl;
+  // Compute inverse
+  if(verbose)
+    std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
+              << " matrix using LU decomposition (Lapack)." << std::endl;
+  std::vector<vpMatrix> result(bench.size());
+  double t = vpTime::measureTimeMs() ;
+  for(unsigned int i = 0; i < bench.size(); i++) {
+    result[i] = bench[i].AtA().inverseByLULapack()*bench[i].transpose();
+  }
+  time = vpTime::measureTimeMs() - t;
+
+  // Test inverse
+  return test_inverse(bench, result);
+}
+
+int test_inverse_cholesky_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test inverse by Cholesky using Lapack 3rd party" << std::endl;
+  // Compute inverse
+  if(verbose)
+    std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
+              << " matrix using cholesky decomposition (Lapack)." << std::endl;
+  std::vector<vpMatrix> result(bench.size());
+  double t = vpTime::measureTimeMs() ;
+  for(unsigned int i = 0; i < bench.size(); i++) {
+    result[i] = bench[i].AtA().inverseByCholeskyLapack()*bench[i].transpose();
+  }
+  time = vpTime::measureTimeMs() - t;
+
+  // Test inverse
+  return test_inverse(bench, result);
+}
+
+int test_inverse_qr_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test inverse by QR using Lapack 3rd party" << std::endl;
+  // Compute inverse
+  if(verbose)
+    std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
+              << " matrix using QR decomposition (Lapack)" << std::endl;
+  std::vector<vpMatrix> result(bench.size());
+  double t = vpTime::measureTimeMs() ;
+  for(unsigned int i = 0; i < bench.size(); i++) {
+    result[i] = bench[i].AtA().inverseByQRLapack()*bench[i].transpose();
+  }
+  time = vpTime::measureTimeMs() - t;
+
+  // Test inverse
+  return test_inverse(bench, result);
+}
+#endif
+
+#if defined(VISP_HAVE_GSL)
+int test_inverse_lu_gsl(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test inverse by LU using GSL 3rd party" << std::endl;
+  // Compute inverse
+  if(verbose)
+    std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
+              << " matrix using LU decomposition (GSL)" << std::endl;
+  std::vector<vpMatrix> result(bench.size());
+  double t = vpTime::measureTimeMs() ;
+  for(unsigned int i = 0; i < bench.size(); i++) {
+    result[i] = bench[i].AtA().inverseByLUGsl()*bench[i].transpose();
+  }
+  time = vpTime::measureTimeMs() - t;
+
+  // Test inverse
+  return test_inverse(bench, result);
+}
+#endif
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+int test_inverse_lu_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test inverse by LU using OpenCV 3rd party" << std::endl;
+  // Compute inverse
+  if(verbose)
+    std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
+              << " matrix using LU decomposition (OpenCV)" << std::endl;
+  std::vector<vpMatrix> result(bench.size());
+  double t = vpTime::measureTimeMs() ;
+  for(unsigned int i = 0; i < bench.size(); i++) {
+    result[i] = bench[i].AtA().inverseByLUOpenCV()*bench[i].transpose();
+  }
+  time = vpTime::measureTimeMs() - t;
+
+  // Test inverse
+  return test_inverse(bench, result);
+}
+
+int test_inverse_cholesky_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test inverse by Cholesky using OpenCV 3rd party" << std::endl;
+  // Compute inverse
+  if(verbose)
+    std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
+              << " matrix using Cholesky decomposition (OpenCV)" << std::endl;
+  std::vector<vpMatrix> result(bench.size());
+  double t = vpTime::measureTimeMs() ;
+  for(unsigned int i = 0; i < bench.size(); i++) {
+    result[i] = bench[i].AtA().inverseByCholeskyOpenCV()*bench[i].transpose();
+  }
+  time = vpTime::measureTimeMs() - t;
+
+  // Test inverse
+  return test_inverse(bench, result);
+}
+#endif
+
+#if defined (VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined (VISP_HAVE_GSL)
+// SVD is only available for these 3rd parties
+int test_pseudo_inverse(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test pseudo inverse using either Lapack, OpenCV or GSL 3rd party" << std::endl;
+  // Compute inverse
+  if(verbose)
+    std::cout << "  Pseudo inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << " matrix" << std::endl;
+  std::vector<vpMatrix> result(bench.size());
+  double t = vpTime::measureTimeMs() ;
+  for(unsigned int i = 0; i < bench.size(); i++) {
+    result[i] = bench[i].AtA().pseudoInverse()*bench[i].transpose();
+  }
+  time = vpTime::measureTimeMs() - t;
+
+  // Test inverse
+  return test_inverse(bench, result);
+}
+#endif
+
+void save_time(const std::string &method, bool verbose, bool use_plot_file, std::ofstream &of, double time)
+{
+  if(use_plot_file)
+    of << time << "\t";
+  if(verbose || !use_plot_file) {
+    std::cout << method << time << std::endl;
+  }
+}
 
 int
-main(int argc, const char ** argv)
+main(int argc, const char *argv[])
 {
-#ifdef VISP_HAVE_LAPACK_C
   try {
-    unsigned int nb_matrices=1000;
-    unsigned int nb_iterations=10;
+#if defined(VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+    unsigned int nb_matrices = 1000;
+    unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
     unsigned int nb_cols = 6;
     bool verbose = false;
-    std::string plotfile("plot.txt");
+    std::string plotfile("plot-inv.csv");
     bool use_plot_file=false;
     std::ofstream of;
 
     // Read the command line options
-    if (getOptions(argc, argv, nb_matrices,nb_iterations,use_plot_file,plotfile,nb_rows,nb_cols,verbose) == false) {
+    if (getOptions(argc, argv, nb_matrices, nb_iterations, use_plot_file, plotfile, nb_rows, nb_cols, verbose) == false) {
       exit (-1);
     }
 
     if(use_plot_file){
       of.open(plotfile.c_str());
+      of << "iter" << "\t";
+
+#if defined(VISP_HAVE_LAPACK_C)
+      of << "\"LU Lapack\"" << "\t";
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+      of << "\"LU OpenCV\"" << "\t";
+#endif
+#if defined(VISP_HAVE_GSL)
+      of << "\"LU GSL\"" << "\t";
+#endif
+
+#if defined(VISP_HAVE_LAPACK_C)
+      of << "\"Cholesky Lapack\"" << "\t";
+#endif
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+      of << "\"Cholesky OpenCV\"" << "\t";
+#endif
+
+#if defined(VISP_HAVE_LAPACK_C)
+      of << "\"QR Lapack\"" << "\t";
+#endif
+
+#if defined (VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined (VISP_HAVE_GSL)
+      of << "\"Pseudo inverse (Lapack, OpenCV, GSL)\"" << "\t";
+#endif
+      of << std::endl;
     }
 
-    for(unsigned int iter=0;iter<nb_iterations;iter++){
-      std::vector<vpMatrix> benchQR;
-      std::vector<vpMatrix> benchLU;
-      std::vector<vpMatrix> benchCholesky;
-      std::vector<vpMatrix> benchPseudoInverse;
-      if(verbose)
-        std::cout << "********* generating matrices for iteration " << iter << "." << std::endl;
-      for(unsigned int i=0;i<nb_matrices;i++){
-        vpMatrix cur;
-        double det=0.;
-        //don't put singular matrices in the benchmark
-        for(cur=makeRandomMatrix(nb_rows,nb_cols); std::fabs(det=cur.AtA().det())<.01; cur = makeRandomMatrix(nb_rows,nb_cols))
-          if(verbose){
-            std::cout << "Generated random matrix A*tA=" << std::endl << cur.AtA() << std::endl;
-            std::cout << "generated random matrix not invertibleL: det="<<det<< ". Retrying..." << std::endl;
-          }
-        benchCholesky.push_back(cur);
-        benchQR.push_back(cur);
-        benchLU.push_back(cur);
-        benchPseudoInverse.push_back(cur);
-      }
+    int ret = EXIT_SUCCESS;
+    for(unsigned int iter = 0; iter < nb_iterations; iter++) {
+      std::vector<vpMatrix> bench_random_matrices;
+      create_bench_random_matrix(nb_matrices, nb_rows, nb_cols, verbose, bench_random_matrices);
+      std::vector<vpMatrix> bench_symmetric_positive_matrices;
+      create_bench_symmetric_positive_matrix(nb_matrices, nb_rows, verbose, bench_symmetric_positive_matrices);
 
-      if(verbose)
-        std::cout << "\t Inverting " << benchCholesky[0].AtA().getRows() << "x" << benchCholesky[0].AtA().getCols() << " matrix using cholesky decomposition." << std::endl;
-      double t = vpTime::measureTimeMs() ;
-      for(unsigned int i=0;i<nb_matrices;i++){
-        benchCholesky[i]=benchCholesky[i].AtA().inverseByCholesky()*benchCholesky[i].transpose();
-      }
-      double chol_time = vpTime::measureTimeMs() - t ;
+      if(use_plot_file)
+        of << iter << "\t";
 
-      if(verbose)
-        std::cout << "\t Inverting " << benchLU[0].AtA().getRows() << "x" << benchLU[0].AtA().getCols() << " matrix using LU decomposition." << std::endl;
-      t = vpTime::measureTimeMs() ;
-      for(unsigned int i=0;i<nb_matrices;i++)
-        benchLU[i] = benchLU[i].AtA().inverseByLU()*benchLU[i].transpose();
-      double lu_time = vpTime::measureTimeMs() -t ;
+      double time;
+      // LU decomposition
+#if defined(VISP_HAVE_LAPACK_C)
+      ret += test_inverse_lu_lapack(verbose, bench_random_matrices, time);
+      save_time("Inverse by LU (Lapack): ", verbose, use_plot_file, of, time);
+#endif
 
-      if(verbose)
-        std::cout << "\t Inverting " << benchQR[0].AtA().getRows() << "x" << benchQR[0].AtA().getCols() << " matrix using QR decomposition." << std::endl;
-      t = vpTime::measureTimeMs() ;
-      for(unsigned int i=0;i<nb_matrices;i++){
-        benchQR[i]=benchQR[i].AtA().inverseByQR()*benchQR[i].transpose();
-      }
-      double qr_time = vpTime::measureTimeMs() - t ;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+      ret += test_inverse_lu_opencv(verbose, bench_random_matrices, time);
+      save_time("Inverse by LU (OpenCV): ", verbose, use_plot_file, of, time);
+#endif
 
-      if(verbose)
-        std::cout << "\t Inverting " << benchPseudoInverse[0].AtA().getRows() << "x" << benchPseudoInverse[0].AtA().getCols() << " matrix while computing pseudo-inverse." << std::endl;
-      t = vpTime::measureTimeMs() ;
-      for(unsigned int i=0;i<nb_matrices;i++){
-        benchPseudoInverse[i]=benchPseudoInverse[i].pseudoInverse();
-      }
-      double pi_time = vpTime::measureTimeMs() - t ;
+#if defined(VISP_HAVE_GSL)
+      ret += test_inverse_lu_gsl(verbose, bench_random_matrices, time);
+      save_time("Inverse by LU (GSL): ", verbose, use_plot_file, of, time);
+#endif
 
-      double avg_err_lu_qr=0.;
-      double avg_err_lu_pi=0.;
-      double avg_err_lu_chol=0.;
-      double avg_err_qr_pi=0.;
-      double avg_err_qr_chol=0.;
-      double avg_err_pi_chol=0.;
+      // Cholesky for symmetric positive matrices
+#if defined(VISP_HAVE_LAPACK_C)
+      ret += test_inverse_cholesky_lapack(verbose, bench_symmetric_positive_matrices, time);
+      save_time("Inverse by Cholesly (Lapack): ", verbose, use_plot_file, of, time);
+#endif
 
-      for(unsigned int i=0;i<nb_matrices;i++){
-        avg_err_lu_qr+= (benchQR[i]-benchLU[i]).euclideanNorm();
-        avg_err_lu_pi+= (benchPseudoInverse[i]-benchLU[i]).euclideanNorm();
-        avg_err_qr_pi+= (benchPseudoInverse[i]-benchQR[i]).euclideanNorm();
-        avg_err_qr_chol+= (benchCholesky[i]-benchQR[i]).euclideanNorm();
-        avg_err_lu_chol+= (benchCholesky[i]-benchLU[i]).euclideanNorm();
-        avg_err_pi_chol+= (benchCholesky[i]-benchPseudoInverse[i]).euclideanNorm();
-      }
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+      ret += test_inverse_cholesky_opencv(verbose, bench_symmetric_positive_matrices, time);
+      save_time("Inverse by Cholesky (OpenCV): ", verbose, use_plot_file, of, time);
+#endif
 
-      avg_err_lu_qr/=nb_matrices;
-      avg_err_lu_pi/=nb_matrices;
-      avg_err_qr_pi/=nb_matrices;
+      // QR decomposition
+#if defined(VISP_HAVE_LAPACK_C)
+      ret += test_inverse_qr_lapack(verbose, bench_random_matrices, time);
+      save_time("Inverse by QR (Lapack): ", verbose, use_plot_file, of, time);
+#endif
 
-      if(use_plot_file){
-        of << iter << "\t" << lu_time << "\t" << qr_time << "\t" << pi_time << "\t" << chol_time << "\t" << avg_err_lu_qr << "\t" << avg_err_qr_pi << "\t" << avg_err_lu_pi << "\t" << avg_err_qr_chol << "\t" << avg_err_lu_chol << "\t" <<  avg_err_pi_chol << std::endl;
-      }
-      if(verbose || !use_plot_file){
-        writeTime("LU",lu_time);
-        writeTime("QR",qr_time);
-        writeTime("Pseudo-inverse",pi_time);
-        writeTime("Cholesky",chol_time);
-      }
+      // Pseudo-inverse with SVD
+#if defined (VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined (VISP_HAVE_GSL)
+      ret += test_pseudo_inverse(verbose, bench_random_matrices, time);
+      save_time("Pseudo inverse (Lapack, OpenCV or GSL): ", verbose, use_plot_file, of, time);
+#endif
+
+      if(use_plot_file)
+        of << std::endl;
     }
-    return 0;
-  }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
-  }
+    if(use_plot_file) {
+      of.close();
+      std::cout << "Result saved in " << plotfile << std::endl;
+    }
 
+    if(ret == EXIT_SUCCESS) {
+      std::cout << "Test succeed" << std::endl;
+    }
+    else {
+      std::cout << "Test failed" << std::endl;
+    }
+
+    return ret;
+  }
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
+    return EXIT_FAILURE;
+  }
 #else
   (void)argc;
   (void)argv;
-  std::cout << "You don't have lapack installed" << std::endl;
-  return 0;
+  std::cout << "Test does nothing since you dont't have Lapack, OpenCV or GSL 3rd party" << std::endl;
+  return EXIT_SUCCESS;
 #endif
 }
-

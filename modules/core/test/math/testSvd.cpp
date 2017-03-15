@@ -42,161 +42,355 @@
   \brief Test various svd decompositions.
 */
 
-#include <visp3/core/vpTime.h>
-
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpColVector.h>
 #include <vector>
 #include <algorithm>
 #include <stdlib.h>
 #include <stdio.h>
 
-bool testSvdOpenCvGSLCoherence(double epsilon);
-#ifdef VISP_HAVE_GSL
-bool testRandom(double epsilon);
-#endif
+#include <visp3/core/vpTime.h>
+#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/io/vpParseArgv.h>
+
+// List of allowed command line options
+#define GETOPTARGS	"cdn:i:pf:R:C:vh"
 
 
-#define abs(x) ((x) < 0 ? - (x) : (x))
-#ifdef VISP_HAVE_GSL
+/*!
 
-bool testRandom(double epsilon)
+  Print the program options.
+
+  \param name : Program name.
+  \param badparam : Bad parameter name.
+
+ */
+void usage(const char *name, const char *badparam)
 {
-  vpMatrix L0(6,6);
-  vpMatrix L1(6,6);
+  fprintf(stdout, "\n\
+Test matrix inversions\n\
+using LU, QR and Cholesky methods as well as Pseudo-inverse.\n\
+Outputs a comparison of these methods.\n\
+\n\
+SYNOPSIS\n\
+  %s [-n <number of matrices>] [-f <plot filename>]\n\
+     [-R <number of rows>] [-C <number of columns>]\n\
+     [-i <number of iterations>] [-p] [-h]\n", name);
 
-  for (unsigned int i=0 ; i < L0.getRows() ; i++)
-    for  (unsigned int j=0 ; j < L0.getCols() ; j++)
-	    L1[i][j] = L0[i][j] = (double)rand()/(double)RAND_MAX;
+  fprintf(stdout, "\n\
+OPTIONS:                                               Default\n\
+  -n <number of matrices>                               \n\
+     Number of matrices inverted during each test loop.\n\
+\n\
+  -i <number of iterations>                               \n\
+     Number of iterations of the test.\n\
+\n\
+  -f <plot filename>                               \n\
+     Set output path for plot output.\n\
+     The plot logs the times of \n\
+     the different inversion methods: \n\
+     QR,LU,Cholesky and Pseudo-inverse.\n\
+\n\
+  -R <number of rows>\n\
+     Number of rows of the automatically generated matrices  \n\
+     we test on.\n\
+\n\
+  -C <number of columns>\n\
+     Number of colums of the automatically generated matrices  \n\
+     we test on.\n\
+\n\
+  -p                                             \n\
+     Plot into filename in the gnuplot format. \n\
+     If this option is used, tests results will be logged \n\
+     into a filename specified with -f.\n\
+\n\
+  -h\n\
+     Print the help.\n\n");
 
-  vpColVector W0(L0.getCols()) ;
-  vpMatrix V0(L0.getCols(), L0.getCols()) ;
-  vpColVector W1(L1.getCols()) ;
-  vpMatrix V1(L1.getCols(), L1.getCols()) ;
-
-  L0.svdNr(W0,V0);
-  L1.svdGsl(W1,V1);
-
-  vpColVector _W0 = vpColVector::sort(W0);
-  vpColVector _W1 = vpColVector::sort(W1);
-
-  vpColVector diff = _W0-_W1;
-  double error=-1.0;
-
-  for(unsigned int i=0;i<6;i++)
-    error=std::max(abs(diff[i]),error);
-
-  return error<epsilon;
-
+  if (badparam) {
+    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "\nBad parameter [%s]\n", badparam);
+  }
 }
 
-#endif
+/*!
 
-bool testSvdOpenCvGSLCoherence(double epsilon)
+  Set the program options.
+
+  \return false if the program has to be stopped, true otherwise.
+
+*/
+bool getOptions(int argc, const char **argv,
+                unsigned int& nb_matrices, unsigned int& nb_iterations,
+                bool& use_plot_file, std::string& plotfile,
+                unsigned int& nbrows, unsigned int& nbcols, bool& verbose)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) && defined (VISP_HAVE_GSL) // Require opencv >= 2.1.1
-  vpMatrix A;
-  vpMatrix vA;
-  vpColVector wA;
-  vpMatrix B;
-  vpMatrix vB;
-  vpColVector wB;
-  A.resize(6,6);
-  B.resize(6,6);
-  vA.resize(6,6);
-  vB.resize(6,6);
-  wA.resize(6);
-  wB.resize(6);
+  const char *optarg_;
+  int	c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
-  for (unsigned int i=0 ; i < A.getRows() ; i++)
-    for  (unsigned int j=0 ; j < A.getCols() ; j++)
-      B[i][j] = A[i][j] =  (double)rand()/(double)RAND_MAX;
-
-  A.svdOpenCV(wA,vA);
-  B.svdGsl(wB,vB);
-
-  bool error=false;
-  for (unsigned int i=0 ; i < A.getRows() ; i++){
-    error = error | (abs(wA[i]-wB[i])>epsilon);
+    switch (c) {
+    case 'h': usage(argv[0], NULL); return false; break;
+    case 'n':
+      nb_matrices = (unsigned int)atoi(optarg_);
+      break;
+    case 'i':
+      nb_iterations = (unsigned int)atoi(optarg_);
+      break;
+    case 'f':
+      plotfile = optarg_;
+      use_plot_file = true;
+      break;
+    case 'p':
+      use_plot_file = true;
+      break;
+    case 'R':
+      nbrows = (unsigned int)atoi(optarg_);
+      break;
+    case 'C':
+      nbcols = (unsigned int)atoi(optarg_);
+      break;
+    case 'v':
+      verbose = true;
+      break;
+      // add default options -c -d
+    case 'c':
+      break;
+    case 'd':
+      break;
+    default:
+      usage(argv[0], optarg_);
+      return false; break;
+    }
   }
 
-  return !error;
-#else
-  (void)epsilon;
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
+    return false;
+  }
+
   return true;
+}
+
+vpMatrix make_random_matrix(unsigned int nbrows, unsigned int nbcols)
+{
+  vpMatrix A;
+  A.resize(nbrows, nbcols);
+
+  for (unsigned int i=0 ; i < A.getRows(); i++) {
+    for  (unsigned int j=0 ; j < A.getCols(); j++) {
+      A[i][j] =  (double)rand()/(double)RAND_MAX;
+    }
+  }
+
+  return A;
+}
+
+void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, unsigned int nb_cols, bool verbose,
+                                std::vector<vpMatrix> &bench)
+{
+  if (verbose)
+    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_cols << " matrices" << std::endl;
+  bench.clear();
+  for(unsigned int i = 0; i < nb_matrices; i++) {
+    vpMatrix M;
+//#if defined(VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+//    double det = 0.;
+//    // don't put singular matrices in the benchmark
+//    for(M = make_random_matrix(nb_rows, nb_cols); std::fabs(det=M.AtA().det())<.01; M = make_random_matrix(nb_rows, nb_cols)) {
+//      if(verbose) {
+//        std::cout << "  Generated random matrix AtA=" << std::endl << M.AtA() << std::endl;
+//        std::cout << "  Generated random matrix not invertible: det=" << det << ". Retrying..." << std::endl;
+//      }
+//    }
+//#else
+    M = make_random_matrix(nb_rows, nb_cols);
+//#endif
+    bench.push_back(M);
+  }
+}
+
+int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U, std::vector<vpColVector> s, std::vector<vpMatrix> V)
+{
+  for (unsigned int i = 0; i < M.size(); i++) {
+    vpMatrix S;
+    S.diag(s[i]);
+    vpMatrix U_S_V = U[i] * S * V[i].t();
+    vpMatrix D = M[i] - U_S_V;
+    if (D.euclideanNorm() > 1e-6) {
+      std::cout << "SVD decomposition failed" << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+  return EXIT_SUCCESS;
+}
+
+#if defined (VISP_HAVE_LAPACK_C)
+// SVD is only available for these 3rd parties
+int test_svd_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test SVD using Lapack 3rd party" << std::endl;
+  // Compute inverse
+  if(verbose)
+    std::cout << "  SVD on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
+
+  std::vector<vpMatrix> U = bench;
+  std::vector<vpMatrix> V(bench.size());
+  std::vector<vpColVector> s(bench.size());
+
+  double t = vpTime::measureTimeMs();
+  for(unsigned int i = 0; i < bench.size(); i++) {
+    U[i].svdLapack(s[i], V[i]);
+  }
+  time = vpTime::measureTimeMs() - t;
+
+  return test_svd(bench, U, s, V);
+}
 #endif
+
+#if defined (VISP_HAVE_GSL)
+int test_svd_gsl(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test SVD using GSL 3rd party" << std::endl;
+  // Compute inverse
+  if(verbose)
+    std::cout << "  SVD on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
+
+  std::vector<vpMatrix> U = bench;
+  std::vector<vpMatrix> V(bench.size());
+  std::vector<vpColVector> s(bench.size());
+
+  double t = vpTime::measureTimeMs();
+  for(unsigned int i = 0; i < bench.size(); i++) {
+    U[i].svdGsl(s[i], V[i]);
+  }
+
+  time = vpTime::measureTimeMs() - t;
+
+  return EXIT_SUCCESS;
+}
+#endif
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+int test_svd_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test SVD using OpenCV 3rd party" << std::endl;
+  // Compute inverse
+  if(verbose)
+    std::cout << "  SVD on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
+
+  std::vector<vpMatrix> U = bench;
+  std::vector<vpMatrix> V(bench.size());
+  std::vector<vpColVector> s(bench.size());
+
+  double t = vpTime::measureTimeMs();
+  for(unsigned int i = 0; i < bench.size(); i++) {
+    U[i].svdOpenCV(s[i], V[i]);
+  }
+  time = vpTime::measureTimeMs() - t;
+
+  return EXIT_SUCCESS;
+}
+#endif
+
+void save_time(const std::string &method, bool verbose, bool use_plot_file, std::ofstream &of, double time)
+{
+  if(use_plot_file)
+    of << time << "\t";
+  if(verbose || !use_plot_file) {
+    std::cout << method << time << std::endl;
+  }
 }
 
 int
-main()
+main(int argc, const char *argv[])
 {
   try {
-    vpMatrix L(60000,6), Ls ;
-    for (unsigned int i=0 ; i < L.getRows() ; i++)
-      for  (unsigned int j=0 ; j < L.getCols() ; j++)
-        L[i][j] = 2*i+j + cos((double)(i+j))+((double)(i)) ;
-    //  std::cout << L << std::endl ;
-    Ls = L ;
-    std::cout << "--------------------------------------"<<std::endl ;
+#if defined(VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+    unsigned int nb_matrices = 1000;
+    unsigned int nb_iterations = 10;
+    unsigned int nb_rows = 6;
+    unsigned int nb_cols = 6;
+    bool verbose = false;
+    std::string plotfile("plot-svd.csv");
+    bool use_plot_file=false;
+    std::ofstream of;
 
-    vpColVector W(L.getCols()) ;
-    vpMatrix V(L.getCols(), L.getCols()) ;
+    // Read the command line options
+    if (getOptions(argc, argv, nb_matrices, nb_iterations, use_plot_file, plotfile, nb_rows, nb_cols, verbose) == false) {
+      exit (-1);
+    }
 
-    double t = vpTime::measureTimeMs() ;
-    L.svdNr(W,V) ;
-    t = vpTime::measureTimeMs() -t ;
+    if(use_plot_file){
+      of.open(plotfile.c_str());
+      of << "iter" << "\t";
 
-    std::cout <<"svdNr Numerical recipes \n time " <<t << std::endl;
-    std::cout << W.t() ;
-    std::cout << "--------------------------------------"<<std::endl ;
+#if defined(VISP_HAVE_LAPACK_C)
+      of << "\"SVD Lapack\"" << "\t";
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+      of << "\"SVD OpenCV\"" << "\t";
+#endif
+#if defined(VISP_HAVE_GSL)
+      of << "\"SVD GSL\"" << "\t";
+#endif
+      of << std::endl;
+    }
 
+    int ret = EXIT_SUCCESS;
+    for(unsigned int iter = 0; iter < nb_iterations; iter++) {
+      std::vector<vpMatrix> bench_random_matrices;
+      create_bench_random_matrix(nb_matrices, nb_rows, nb_cols, verbose, bench_random_matrices);
 
-#ifdef VISP_HAVE_GSL
-    L = Ls ;
-    t = vpTime::measureTimeMs() ;
-    L.svdGsl(W,V) ;
-    t = vpTime::measureTimeMs() -t ;
-    std::cout <<"svdGsl_mod \n time " <<t << std::endl;
-    std::cout << W.t() ;
+      if(use_plot_file)
+        of << iter << "\t";
+      double time;
 
-    std::cout << "--------------------------------------"<<std::endl ;
-    std::cout << "TESTING RANDOM MATRICES:" ;
-
-    bool ret = true;
-    for(unsigned int  i=0;i<2000;i++)
-      ret = ret & testRandom(0.00001);
-    if(ret)
-      std:: cout << "Success"<< std:: endl;
-    else
-      std:: cout << "Fail"<< std:: endl;
-
-    std::cout << "--------------------------------------"<<std::endl ;
+#if defined (VISP_HAVE_LAPACK_C)
+      ret += test_svd_lapack(verbose, bench_random_matrices, time);
+      save_time("SVD (Lapack): ", verbose, use_plot_file, of, time);
 #endif
 
-    std::cout << "--------------------------------------"<<std::endl ;
-    std::cout << "TESTING OPENCV-GSL coherence:" ;
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+      ret += test_svd_opencv(verbose, bench_random_matrices, time);
+      save_time("SVD (OpenCV): ", verbose, use_plot_file, of, time);
+#endif
 
-    bool ret2 = true;
-    for(unsigned int i=0;i<1;i++)
-      ret2 = ret2 & testSvdOpenCvGSLCoherence(0.00001);
-    if(ret2)
-      std:: cout << "Success"<< std:: endl;
-    else
-      std:: cout << "Fail"<< std:: endl;
+#if defined (VISP_HAVE_GSL)
+      ret += test_svd_gsl(verbose, bench_random_matrices, time);
+      save_time("SVD (GSL): ", verbose, use_plot_file, of, time);
+#endif
+      if(use_plot_file)
+        of << std::endl;
+    }
+    if(use_plot_file) {
+      of.close();
+      std::cout << "Result saved in " << plotfile << std::endl;
+    }
 
-    std::cout << "--------------------------------------"<<std::endl ;
+    if(ret == EXIT_SUCCESS) {
+      std::cout << "Test succeed" << std::endl;
+    }
+    else {
+      std::cout << "Test failed" << std::endl;
+    }
 
-    L = Ls ;
-    t = vpTime::measureTimeMs() ;
-    L.svdFlake(W,V) ;
-    t = vpTime::measureTimeMs() -t ;
-    std::cout <<"svdFlake\n time " <<t << std::endl;
-    std::cout << W.t() ;
-    return 0;
+    return ret;
   }
-  catch(vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+  catch(const vpException &e) {
+    std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
+    return EXIT_FAILURE;
   }
+#else
+  (void)argc;
+  (void)argv;
+  std::cout << "Test does nothing since you dont't have Lapack, OpenCV or GSL 3rd party" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }
 
