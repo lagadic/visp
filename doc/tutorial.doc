@@ -1,4 +1,4 @@
-/*! \page tutorial_mainpage Tutorials
+﻿/*! \page tutorial_mainpage Tutorials
 This page references all the tutorials.
 
 - \subpage tutorial_install_pkg
@@ -146,5 +146,5 @@ This page introduces the user to other tools that may be useful.
 - \subpage tutorial-trace <br>This tutorial explains how to introduce trace in the code that could be enabled for debugging or disabled.
 - \subpage tutorial-multi-threading <br>This tutorial explains how to implement multi-threaded applications to capture images from a camera
 in one thread and display these images in an other thread.
-
+- \subpage tutorial-import-visp-into-EclipseIDE <br>This tutorial explains how to import a CMake project in Eclipse IDE.
 */
