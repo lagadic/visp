@@ -57,11 +57,14 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRect.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpColVector.h>
 
 #include <fstream>
 #include <iostream>
 #include <math.h>
 #include <string.h>
+
 
 /*!
   \class vpImageTools
@@ -154,6 +157,11 @@ public:
   static void undistort(const vpImage<Type> &I,
                         const vpCameraParameters &cam,
                         vpImage<Type> &newI);
+
+  template<class Type>
+  static void warpAffine(vpImage<Type> &I,
+                        vpMatrix &transform_matrix);
+
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -407,6 +415,97 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
   }
 }
 
+/*
+  Warp an Image
+    - Takes Image and transform matrix as input.
+    - Return transformed image.
+*/
+template<class Type>
+void vpImageTools::warpAffine(vpImage<Type> &I,
+                              vpMatrix &transform_matrix)
+{
+
+  vpMatrix transcp(3,5);
+  transcp[0][0] = 1; transcp[0][1] = 1;  transcp[0][2] = 1;             transcp[0][3] = I.getWidth();  transcp[0][4] = I.getWidth();
+  transcp[1][0] = 1; transcp[1][1] = 1;  transcp[1][2] = I.getWidth(); transcp[1][3] = I.getWidth();  transcp[1][4] = 1;
+  transcp[2][0] = 1; transcp[2][1] = 1;  transcp[2][2] = 1;             transcp[2][3] = 1;              transcp[2][4] = 1;
+
+  transcp = transform_matrix * transcp;
+
+  float max_1 = std::max(transcp[0][0],std::max(transcp[0][1],std::max(transcp[0][2],std::max(transcp[0][3],transcp[0][4]))));
+  float min_1 = std::min(transcp[0][0],std::min(transcp[0][1],std::min(transcp[0][2],std::min(transcp[0][3],transcp[0][4]))));
+
+  float max_2 = std::max(transcp[1][0],std::max(transcp[1][1],std::max(transcp[1][2],std::max(transcp[1][3],transcp[1][4]))));
+  float min_2 = std::min(transcp[1][0],std::min(transcp[1][1],std::min(transcp[1][2],std::min(transcp[1][3],transcp[1][4]))));
+
+
+  vpMatrix imgy(floor(max_1 - min_1 + 1), floor(max_2 - min_2 + 1));
+  vpMatrix imgx(floor(max_2 - min_2 + 1), floor(max_1 - min_1 + 1));
+
+  // Initialize Inverse Mapping matrix
+  vpMatrix X(3, imgx.getRows()*imgx.getCols());
+  vpColVector B(3), X_row_1(imgx.getRows()*imgx.getCols()), X_row_2(imgx.getRows()*imgx.getCols());
+
+  // meshgrid(min_2:max_2,min_1:min_1)
+  for(unsigned int i = 0; i < imgy.getRows(); i++) {
+    for(unsigned int j = 0; j < imgy.getCols(); j++) {
+      imgy[i][j] = min_2 + j;
+    }
+  }
+
+  // meshgrid(min_1:max_1,min_2:min_2)
+  for(unsigned int i = 0; i < imgx.getRows(); i++) {
+    for(unsigned int j = 0; j < imgx.getCols(); j++) {
+      imgx[i][j] = min_1 + j;
+    }
+  }
+
+  imgx = imgx.t();
+
+  //Backwards Transform (inverse mapping)
+
+  for(unsigned int i = 0; i < X.getRows(); i++) {
+    for(unsigned int j = 0; j < X.getCols(); j++) {
+      if (i == 0)  X[i][j] = imgx[j % imgx.getRows()][j / imgx.getRows()];
+      if (i == 1)  X[i][j] = imgy[j % imgy.getRows()][j / imgy.getRows()];
+      if (i == 2)  X[i][j] = 1;
+    }
+  }
+
+  for(unsigned int j = 0; j < X.getCols(); j++) {
+      B[0] = X[0][j];
+      B[1] = X[1][j];
+      B[2] = X[2][j];
+      transform_matrix.solveBySVD(B, B); // Converted Columns of X to a ColVector for Linear Solver
+      X[0][j] = B[0];
+      X[1][j] = B[1];
+      X[2][j] = B[2];
+      X_row_1[j] = X[0][j];
+      X_row_2[j] = X[1][j];
+  }
+
+  // reshape
+  for(unsigned int j =0; j< imgx.getCols(); j++)
+    for(unsigned int i =0; i< imgx.getRows(); i++) {
+      imgx[i][j]= X_row_1[j*imgx.getRows()+i];      
+      imgy[i][j]= X_row_2[j*imgx.getRows()+i];      
+    }
+    
+  imgx = imgx.t();
+  imgy = imgy.t();
+
+  // Use nearest neighbour interpolation , similar to interp2(I, imgx, imgy, 'nearest')
+  vpImage<Type> Ires(imgx.getRows(),imgx.getCols());
+  for (unsigned int i = 0; i < imgx.getRows(); i++) {
+    for (unsigned int j = 0; j < imgx.getCols(); j++) {
+        Ires[i][j] = getPixelClamped(I, imgx[i][j], imgy[i][j]);
+    }
+  }
+
+  I = Ires;
+}
+
+
 /*!
 
   Binarise an image.
@@ -439,7 +538,7 @@ inline void vpImageTools::binarise(vpImage<Type> &I,
   }
 }
 
-/*!
+/*!k
 
   Binarise an image.
 
