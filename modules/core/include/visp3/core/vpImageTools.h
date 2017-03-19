@@ -490,7 +490,7 @@ void vpImageTools::warpAffine(vpImage<Type> &I,
       imgx[i][j]= X_row_1[j*imgx.getRows()+i];      
       imgy[i][j]= X_row_2[j*imgx.getRows()+i];      
     }
-    
+
   imgx = imgx.t();
   imgy = imgy.t();
 
@@ -538,7 +538,7 @@ inline void vpImageTools::binarise(vpImage<Type> &I,
   }
 }
 
-/*!k
+/*!
 
   Binarise an image.
 
