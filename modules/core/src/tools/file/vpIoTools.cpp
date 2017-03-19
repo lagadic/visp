@@ -1623,8 +1623,11 @@ std::vector<std::string> vpIoTools::splitChain(const std::string & chain, const 
    \return list of files in directory
  */
 std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
+
   std::string dirName = path(pathname);
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+
   struct dirent **list = NULL;
   int filesCount = scandir(dirName.c_str(), &list, NULL, NULL);
   if (filesCount == -1) {
@@ -1633,10 +1636,30 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
   std::vector<std::string> files;
   for (int i = 0; i < filesCount; i++) {
     files.push_back(std::string(list[i]->d_name));
+    free(list[i]);
   }
+  free(list);
   return files;
+
 #elif defined(_WIN32)
 #  if ( ! defined(WINRT) )
+
+  dirName.push_back('\\');
+  dirName.push_back('*');
+  std::vector<std::string> files;
+  WIN32_FIND_DATA FindFileData;
+  HANDLE hFind;
+  hFind = FindFirstFile(dirName, &FindFileData);
+  if (hFind == ERROR_FILE_NOT_FOUND || hFind == INVALID_HANDLE_VALUE) {
+    throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
+  }
+  do
+  {
+    files.push_back(std::string(FindFileData.cFileName))
+  }
+  while (FindNextFile(hFind, &ffd));
+  FindClose(hFind);
+  return files;
 
 #  else
   throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s: not implemented on Universal Windows Platform", dirName.c_str()));
