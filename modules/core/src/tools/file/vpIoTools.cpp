@@ -1624,10 +1624,9 @@ std::vector<std::string> vpIoTools::splitChain(const std::string & chain, const 
  */
 std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
 
-  std::string dirName = path(pathname);
-
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
+  std::string dirName = path(pathname);
   struct dirent **list = NULL;
   int filesCount = scandir(dirName.c_str(), &list, NULL, NULL);
   if (filesCount == -1) {
@@ -1644,12 +1643,12 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
 #elif defined(_WIN32)
 #  if ( ! defined(WINRT) )
 
-  dirName.push_back('\\');
-  dirName.push_back('*');
+  std::string fileMask = path(pathname);
+  fileMask.append("\\*");
   std::vector<std::string> files;
   WIN32_FIND_DATA FindFileData;
   HANDLE hFind;
-  hFind = FindFirstFile(dirName, &FindFileData);
+  hFind = FindFirstFile(fileMask, &FindFileData);
   if (hFind == ERROR_FILE_NOT_FOUND || hFind == INVALID_HANDLE_VALUE) {
     throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
   }
