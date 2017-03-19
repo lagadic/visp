@@ -54,6 +54,7 @@
 #include <algorithm>
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #  include <unistd.h>
+#  include <dirent.h>
 #elif defined(_WIN32)
 #  include <windows.h>
 #  include <direct.h>
@@ -1613,4 +1614,32 @@ std::vector<std::string> vpIoTools::splitChain(const std::string & chain, const 
     subChain.push_back(chainToSplit);
 
   return subChain;
+}
+
+
+/*!
+   Returns list of files in directory
+   \param dirname directory
+   \return list of files in directory
+ */
+std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
+  std::string dirName = path(pathname);
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  struct dirent **list = NULL;
+  int filesCount = scandir(dirName.c_str(), &list, NULL, NULL);
+  if (filesCount == -1) {
+    throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
+  }
+  std::vector<std::string> files;
+  for (int i = 0; i < filesCount; i++) {
+    files.push_back(std::string(list[i]->d_name));
+  }
+  return files;
+#elif defined(_WIN32)
+#  if ( ! defined(WINRT) )
+
+#  else
+  throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s: not implemented on Universal Windows Platform", dirName.c_str()));
+#  endif
+#endif
 }
