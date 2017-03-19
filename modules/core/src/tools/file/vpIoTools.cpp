@@ -1618,9 +1618,9 @@ std::vector<std::string> vpIoTools::splitChain(const std::string & chain, const 
 
 
 /*!
-   Returns list of files in directory
-   \param dirname directory
-   \return list of files in directory
+   List of files in directory
+   \param pathname : path to directory
+   \return A vector of files' names in that directory
  */
 std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
 

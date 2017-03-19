@@ -43,6 +43,7 @@
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/io/vpVideoReader.h>
+#include <visp3/core/vpIoTools.h>
 
 #include <iostream>
 #include <fstream>
@@ -625,21 +626,21 @@ void vpVideoReader::findLastFrameIndex()
   
   if (imSequence != NULL) {
     if (! lastFrameIndexIsSet) {
-      char name[FILENAME_MAX];
-      long image_number = firstFrame;
-      bool failed;
-      do {
-        std::fstream file;
-        sprintf(name,fileName,image_number) ;
-        file.open(name, std::ios::in);
-        failed = file.fail();
-        if (!failed) {
-          file.close();
-          image_number++;
+      std::string genericImageName = vpIoTools::getName(std::string(fileName));
+      std::string dirName = vpIoTools::getParent(std::string(fileName));
+      if (dirName == "") {
+        dirName = ".";
+      }
+      std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
+      lastFrame = 0;
+      for (size_t i = 0; i < files.size(); i++) {
+        int imageIndex = 0;
+        // Checking that file name satisfies image format, specified by genericImageName, and extracting imageIndex
+        int argsRead = sscanf(files[i].c_str(), genericImageName.c_str(), &imageIndex);
+        if (argsRead == 1 && imageIndex > lastFrame) {
+          lastFrame = imageIndex;
         }
-      } while(!failed);
-      
-      lastFrame = image_number -1;
+      }
     }
   }
 
@@ -673,28 +674,30 @@ void vpVideoReader::findLastFrameIndex()
   }
 #endif
 }
+
 /*!
 Get the first frame index (update the firstFrame attribute).
 */
-void
-	vpVideoReader::findFirstFrameIndex()
+void vpVideoReader::findFirstFrameIndex()
 {
 	if (imSequence != NULL)
 	{
 		if (! firstFrameIndexIsSet) {
-			char name[FILENAME_MAX];
-			int image_number = 0;
-			bool failed;
-			do {
-				std::fstream file;
-				sprintf(name, fileName, image_number) ;
-				file.open(name, std::ios::in);
-				failed = file.fail();
-				if (!failed) file.close();
-				image_number++;
-			} while(failed);
-
-			firstFrame = image_number - 1;
+      std::string genericImageName = vpIoTools::getName(std::string(fileName));
+      std::string dirName = vpIoTools::getParent(std::string(fileName));
+      if (dirName == "") {
+        dirName = ".";
+      }
+      std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
+      firstFrame = -1;
+      for (size_t i = 0; i < files.size(); i++) {
+        int imageIndex = 0;
+        // Checking that file name satisfies image format, specified by genericImageName, and extracting imageIndex
+        int argsRead = sscanf(files[i].c_str(), genericImageName.c_str(), &imageIndex);
+        if (argsRead == 1 && (imageIndex < firstFrame || firstFrame == -1)) {
+          firstFrame = imageIndex;
+        }
+      }
 			imSequence->setImageNumber(firstFrame);
 		}
 	}
@@ -706,7 +709,7 @@ void
 	}
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	else if (! firstFrameIndexIsSet)
-	{		
+	{
 		firstFrame = (long) (0);		
 	}
 #endif
