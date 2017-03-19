@@ -683,21 +683,21 @@ void vpVideoReader::findFirstFrameIndex()
 	if (imSequence != NULL)
 	{
 		if (! firstFrameIndexIsSet) {
-      std::string genericImageName = vpIoTools::getName(std::string(fileName));
-      std::string dirName = vpIoTools::getParent(std::string(fileName));
-      if (dirName == "") {
-        dirName = ".";
-      }
-      std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
-      firstFrame = -1;
-      for (size_t i = 0; i < files.size(); i++) {
-        int imageIndex = 0;
-        // Checking that file name satisfies image format, specified by genericImageName, and extracting imageIndex
-        int argsRead = sscanf(files[i].c_str(), genericImageName.c_str(), &imageIndex);
-        if (argsRead == 1 && (imageIndex < firstFrame || firstFrame == -1)) {
-          firstFrame = imageIndex;
-        }
-      }
+			std::string genericImageName = vpIoTools::getName(std::string(fileName));
+			std::string dirName = vpIoTools::getParent(std::string(fileName));
+			if (dirName == "") {
+				dirName = ".";
+			}
+			std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
+			firstFrame = -1;
+			for (size_t i = 0; i < files.size(); i++) {
+				int imageIndex = 0;
+				// Checking that file name satisfies image format, specified by genericImageName, and extracting imageIndex
+				int argsRead = sscanf(files[i].c_str(), genericImageName.c_str(), &imageIndex);
+				if (argsRead == 1 && (imageIndex < firstFrame || firstFrame == -1)) {
+					firstFrame = imageIndex;
+				}
+			}
 			imSequence->setImageNumber(firstFrame);
 		}
 	}
