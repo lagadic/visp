@@ -1643,6 +1643,8 @@ vpMatrix::svd(vpColVector &w, vpMatrix &V)
 #elif defined (VISP_HAVE_GSL)  /* be careful of the copy below */
   svdGsl(w, V) ;
 #else
+  (void)w;
+  (void)V;
   throw(vpException(vpException::fatalError, "Cannot compute SVD. Install Lapack, OpenCV or GSL 3rd party"));
 #endif
 }
