@@ -1619,13 +1619,18 @@ std::vector<std::string> vpIoTools::splitChain(const std::string & chain, const 
 
 /*!
    List of files in directory
+   There is no difference if pathname contains terminating backslash or not
    \param pathname : path to directory
    \return A vector of files' names in that directory
  */
 std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
 
+  if (!checkDirectory(pathname)) {
+    throw(vpIoException(vpException::fatalError, "Directory %s doesn't exist'", pathname.c_str()));
+  }
   std::string dirName = path(pathname);
-  
+  std::vector<std::string> files;
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
   struct dirent **list = NULL;
@@ -1633,7 +1638,6 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
   if (filesCount == -1) {
     throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
   }
-  std::vector<std::string> files;
   for (int i = 0; i < filesCount; i++) {
     files.push_back(std::string(list[i]->d_name));
     free(list[i]);
@@ -1643,13 +1647,16 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
 
 #elif defined(_WIN32)
 #  if ( ! defined(WINRT) )
+
   std::string fileMask = dirName;
   fileMask.append("\\*");
-  std::vector<std::string> files;
   WIN32_FIND_DATA FindFileData;
-  HANDLE hFind = LongToHandle(ERROR_FILE_NOT_FOUND);
-  hFind = FindFirstFile(fileMask.c_str(), &FindFileData);
-  if (HandleToLong(&hFind) == ERROR_FILE_NOT_FOUND || hFind == INVALID_HANDLE_VALUE) {
+  HANDLE hFind = FindFirstFile(fileMask.c_str(), &FindFileData);
+  // Directory is empty
+  if (HandleToLong(&hFind) == ERROR_FILE_NOT_FOUND) {
+    return files;
+  }
+  if (hFind == INVALID_HANDLE_VALUE) {
     throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
   }
   do
