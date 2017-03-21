@@ -613,7 +613,6 @@ std::string vpVideoReader::getExtension(const std::string &filename)
 	return ext;
 }
 
-
 /*!
 Get the last frame index (update the lastFrame attribute).
 */
@@ -626,7 +625,7 @@ void vpVideoReader::findLastFrameIndex()
   
   if (imSequence != NULL) {
     if (! lastFrameIndexIsSet) {
-      std::string genericImageName = vpIoTools::getName(std::string(fileName));
+      std::string imageNameFormat = vpIoTools::getName(std::string(fileName));
       std::string dirName = vpIoTools::getParent(std::string(fileName));
       if (dirName == "") {
         dirName = ".";
@@ -634,10 +633,9 @@ void vpVideoReader::findLastFrameIndex()
       std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
       lastFrame = 0;
       for (size_t i = 0; i < files.size(); i++) {
-        int imageIndex = 0;
-        // Checking that file name satisfies image format, specified by genericImageName, and extracting imageIndex
-        int argsRead = sscanf(files[i].c_str(), genericImageName.c_str(), &imageIndex);
-        if (argsRead == 1 && imageIndex > lastFrame) {
+        // Checking that file name satisfies image format, specified by imageNameFormat, and extracting imageIndex
+        long imageIndex = extractImageIndex(files[i], imageNameFormat);
+        if (imageIndex != -1 && imageIndex > lastFrame) {
           lastFrame = imageIndex;
         }
       }
@@ -683,7 +681,7 @@ void vpVideoReader::findFirstFrameIndex()
 	if (imSequence != NULL)
 	{
 		if (! firstFrameIndexIsSet) {
-			std::string genericImageName = vpIoTools::getName(std::string(fileName));
+			std::string imageNameFormat = vpIoTools::getName(std::string(fileName));
 			std::string dirName = vpIoTools::getParent(std::string(fileName));
 			if (dirName == "") {
 				dirName = ".";
@@ -691,10 +689,9 @@ void vpVideoReader::findFirstFrameIndex()
 			std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
 			firstFrame = -1;
 			for (size_t i = 0; i < files.size(); i++) {
-				int imageIndex = 0;
-				// Checking that file name satisfies image format, specified by genericImageName, and extracting imageIndex
-				int argsRead = sscanf(files[i].c_str(), genericImageName.c_str(), &imageIndex);
-				if (argsRead == 1 && (imageIndex < firstFrame || firstFrame == -1)) {
+				// Checking that file name satisfies image format, specified by imageNameFormat, and extracting imageIndex
+				long imageIndex = extractImageIndex(files[i], imageNameFormat);
+				if (imageIndex != -1 && (imageIndex < firstFrame || firstFrame == -1)) {
 					firstFrame = imageIndex;
 				}
 			}
@@ -837,4 +834,50 @@ vpVideoReader &vpVideoReader::operator>>(vpImage<vpRGBa> &I)
 {
   this->acquire(I);
   return *this;
+}
+
+/*!
+    Checks imageName format and extracts its index.
+
+    Format must contain substring "%0xd", defining the lenth of image index.
+    For example, format can be "img%04d.jpg". Then "img0001.jpg" and "img0000.jpg" 
+    satisfy it, while "picture001.jpg" and "img001.jpg" don't.
+
+    \param imageName : name from which to extract
+    \param format : format of image name
+    \return extracted index on success, -1 otherwise.
+*/
+long vpVideoReader::extractImageIndex(const std::string &imageName, const std::string &format) {
+  size_t indexStart = format.find_last_of('%');
+
+  // Checking whether format contains "%0xd"
+  if (indexStart == std::string::npos ||
+      indexStart + 3 >= format.length() ||
+      format[indexStart + 1] != '0' ||
+      !std::isdigit(format[indexStart + 2]) ||
+      format[indexStart + 3] != 'd')
+  {
+    throw(vpException(vpException::badValue, "Format of image name wasn't recognized: %s", format.c_str()));
+  }
+
+  int imageIndexLength = format[indexStart + 2] - '0';
+  if (imageName.length() != format.length() - 4 + imageIndexLength) {
+    return -1;
+  }
+  // Extracting index
+  std::string index_substr = imageName.substr(indexStart, imageIndexLength);
+  std::istringstream ss(index_substr);
+  long index = 0;
+  ss >> index;
+  if (ss.fail() || index < 0 || !ss.eof()) {
+    return -1;
+  }
+
+  // Checking that format with inserted index equals imageName
+  std::string withIndex = format;
+  withIndex.replace(indexStart, 4, index_substr);
+  if (withIndex != imageName) {
+    return -1;
+  }
+  return index;
 }
