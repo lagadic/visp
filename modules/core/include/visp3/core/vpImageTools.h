@@ -420,7 +420,7 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
   Apply Affine transformations on an image.
 
   \param I : Input image to be transformed.
-  \param  transform_matrix: 3x3 matrix that contains all possible geometric transformations, also called affine mapping.
+  \param transform_matrix : 3x3 matrix that contains all possible geometric transformations, also called affine mapping.
 
     - Equation of warping pixel (u,v) to (x,y) :
       
@@ -451,26 +451,26 @@ void vpImageTools::warpAffine(vpImage<Type> &I,
 
   transcp = transform_matrix * transcp;
 
-  float max_1 = std::max(transcp[0][0],std::max(transcp[0][1],std::max(transcp[0][2],std::max(transcp[0][3],transcp[0][4])))); /*!< max(transcp(0,:)) */
-  float min_1 = std::min(transcp[0][0],std::min(transcp[0][1],std::min(transcp[0][2],std::min(transcp[0][3],transcp[0][4])))); /*!< min(transcp(0,:)) */
+  float max_1 = std::max(transcp[0][0],std::max(transcp[0][1],std::max(transcp[0][2],std::max(transcp[0][3],transcp[0][4])))); ///< max(transcp(0,:)) 
+  float min_1 = std::min(transcp[0][0],std::min(transcp[0][1],std::min(transcp[0][2],std::min(transcp[0][3],transcp[0][4])))); ///< min(transcp(0,:)) 
 
-  float max_2 = std::max(transcp[1][0],std::max(transcp[1][1],std::max(transcp[1][2],std::max(transcp[1][3],transcp[1][4])))); /*!< max(transcp(1,:)) */
-  float min_2 = std::min(transcp[1][0],std::min(transcp[1][1],std::min(transcp[1][2],std::min(transcp[1][3],transcp[1][4])))); /*!< min(transcp(1,:)) */
+  float max_2 = std::max(transcp[1][0],std::max(transcp[1][1],std::max(transcp[1][2],std::max(transcp[1][3],transcp[1][4])))); ///< max(transcp(1,:)) 
+  float min_2 = std::min(transcp[1][0],std::min(transcp[1][1],std::min(transcp[1][2],std::min(transcp[1][3],transcp[1][4])))); ///< min(transcp(1,:)) 
 
 
   vpMatrix imgy(floor(max_1 - min_1 + 1), floor(max_2 - min_2 + 1));
   vpMatrix imgx(floor(max_2 - min_2 + 1), floor(max_1 - min_1 + 1));
 
   // meshgrid(min_2:max_2,min_1:min_1)
-  for(unsigned int i = 0; i < imgy.getRows(); i++) {
-    for(unsigned int j = 0; j < imgy.getCols(); j++) {
+  for (unsigned int i = 0; i < imgy.getRows(); i++) {
+    for (unsigned int j = 0; j < imgy.getCols(); j++) {
       imgy[i][j] = min_2 + j;
     }
   }
 
   // meshgrid(min_1:max_1,min_2:min_2)
-  for(unsigned int i = 0; i < imgx.getRows(); i++) {
-    for(unsigned int j = 0; j < imgx.getCols(); j++) {
+  for (unsigned int i = 0; i < imgx.getRows(); i++) {
+    for (unsigned int j = 0; j < imgx.getCols(); j++) {
       imgx[i][j] = min_1 + j;
     }
   }
@@ -481,11 +481,12 @@ void vpImageTools::warpAffine(vpImage<Type> &I,
 
   // Initialize Inverse Mapping matrix
   vpMatrix X(3, imgx.getRows()*imgx.getCols());
-  vpColVector B(3), X_row_1(imgx.getRows()*imgx.getCols()), X_row_2(imgx.getRows()*imgx.getCols());
 
-  /*!< X = [ imgx(:) , imgy(:) , ones(imgx.getRows() * imgx.getCols(), 1) ]' */
-  for(unsigned int i = 0; i < X.getRows(); i++) {
-    for(unsigned int j = 0; j < X.getCols(); j++) {
+  vpColVector B(3);
+
+  // X = [ imgx(:) , imgy(:) , ones(imgx.getRows() * imgx.getCols(), 1) ]'
+  for (unsigned int i = 0; i < X.getRows(); i++) {
+    for (unsigned int j = 0; j < X.getCols(); j++) {
       if (i == 0)  X[i][j] = imgx[j % imgx.getRows()][j / imgx.getRows()];
       if (i == 1)  X[i][j] = imgy[j % imgy.getRows()][j / imgy.getRows()];
       if (i == 2)  X[i][j] = 1;
@@ -493,24 +494,23 @@ void vpImageTools::warpAffine(vpImage<Type> &I,
   }
 
   // perform transform_matrix \ X
-  for(unsigned int j = 0; j < X.getCols(); j++) {
-      B[0] = X[0][j];
-      B[1] = X[1][j];
-      B[2] = X[2][j];
-      transform_matrix.solveBySVD(B, B); // Converted Columns of X to a ColVector for Linear Solver
-      X[0][j] = B[0];
-      X[1][j] = B[1];
-      X[2][j] = B[2];
-      X_row_1[j] = X[0][j];
-      X_row_2[j] = X[1][j];
+  for (unsigned int j = 0; j < X.getCols(); j++) {
+    B[0] = X[0][j];
+    B[1] = X[1][j];
+    B[2] = X[2][j];
+    transform_matrix.solveBySVD(B, B); // Converted Columns of X to a ColVector for Linear Solver
+    X[0][j] = B[0];
+    X[1][j] = B[1];
+    X[2][j] = B[2];
   }
 
-  // reshape X_row_1 and X_row_2
-  for(unsigned int j =0; j< imgx.getCols(); j++)
-    for(unsigned int i =0; i< imgx.getRows(); i++) {
-      imgx[i][j]= X_row_1[j*imgx.getRows()+i];      
-      imgy[i][j]= X_row_2[j*imgx.getRows()+i];      
+  // reshape row 1 and row 2 of X into imgx and imgy respectively
+  for (unsigned int j =0; j< imgx.getCols(); j++) {
+    for (unsigned int i =0; i< imgx.getRows(); i++) {
+      imgx[i][j]= X[0][j*imgx.getRows()+i];      
+      imgy[i][j]= X[1][j*imgx.getRows()+i];      
     }
+  }
 
   imgx = imgx.t();
   imgy = imgy.t();
