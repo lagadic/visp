@@ -43,8 +43,6 @@
 #include <visp3/io/vpImageIo.h>
 
 #include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpImageTools.h>
 
 
@@ -100,7 +98,7 @@ int main()
 
     vpImageTools::warpAffine(I_warped_Klimt, transform_matrix);
 
-    std::cout << "Final Image size() : " <<  I_warped_Klimt.getRows() << " " << I_warped_Klimt.getCols() << std::endl;    
+    std::cout << "Final Image size() : " <<  I_warped_Klimt.getRows() << " x " << I_warped_Klimt.getCols() << std::endl;    
 
     I = I_warped_Klimt;
     #if defined(VISP_HAVE_X11)

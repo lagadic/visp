@@ -415,10 +415,29 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
   }
 }
 
-/*
-  Warp an Image
-    - Takes Image and transform matrix as input.
-    - Return transformed image.
+/*!
+
+  Apply Affine transformations on an image.
+
+  \param I : Input image to be transformed.
+  \param  transform_matrix: 3x3 matrix that contains all possible geometric transformations, also called affine mapping.
+
+    - Equation of warping pixel (u,v) to (x,y) :
+      
+      * \f$ x = a_0 + a_1 * u + a_2 * v \f$;
+      * \f$ y = b_0 + b_1 * u + b_2 * v \f$; 
+      
+      Let X = [x y]' and U = [u v]' . Therefore equation in matrix form : \f$ X = A * U + B \f$,
+      where A = [ a_1 a_2 ; b_1 b_2 ] and B = [a_0 b_0]'
+
+    - Transformation matrix T = [A' 0 ; B' 1] = [a_1 b_1 0 ; a_2 b_2 0 ; a_0 b_0 1]
+  
+  - Inverse Mapping is used over other methods like Forward mapping as warping points are often non-integer samples.
+  - For each point (x,y) in the transformed image to be obtained, find its corresponding point (u,v) in the original image.
+  - If the mapped point (u,v) is not an integer sample, apply interpolation. In warpAffine nearest neighbour interpolation is used.
+  
+  \todo Set remaining pixels around the transformed image to Nan.
+
 */
 template<class Type>
 void vpImageTools::warpAffine(vpImage<Type> &I,
@@ -432,19 +451,15 @@ void vpImageTools::warpAffine(vpImage<Type> &I,
 
   transcp = transform_matrix * transcp;
 
-  float max_1 = std::max(transcp[0][0],std::max(transcp[0][1],std::max(transcp[0][2],std::max(transcp[0][3],transcp[0][4]))));
-  float min_1 = std::min(transcp[0][0],std::min(transcp[0][1],std::min(transcp[0][2],std::min(transcp[0][3],transcp[0][4]))));
+  float max_1 = std::max(transcp[0][0],std::max(transcp[0][1],std::max(transcp[0][2],std::max(transcp[0][3],transcp[0][4])))); /*!< max(transcp(0,:)) */
+  float min_1 = std::min(transcp[0][0],std::min(transcp[0][1],std::min(transcp[0][2],std::min(transcp[0][3],transcp[0][4])))); /*!< min(transcp(0,:)) */
 
-  float max_2 = std::max(transcp[1][0],std::max(transcp[1][1],std::max(transcp[1][2],std::max(transcp[1][3],transcp[1][4]))));
-  float min_2 = std::min(transcp[1][0],std::min(transcp[1][1],std::min(transcp[1][2],std::min(transcp[1][3],transcp[1][4]))));
+  float max_2 = std::max(transcp[1][0],std::max(transcp[1][1],std::max(transcp[1][2],std::max(transcp[1][3],transcp[1][4])))); /*!< max(transcp(1,:)) */
+  float min_2 = std::min(transcp[1][0],std::min(transcp[1][1],std::min(transcp[1][2],std::min(transcp[1][3],transcp[1][4])))); /*!< min(transcp(1,:)) */
 
 
   vpMatrix imgy(floor(max_1 - min_1 + 1), floor(max_2 - min_2 + 1));
   vpMatrix imgx(floor(max_2 - min_2 + 1), floor(max_1 - min_1 + 1));
-
-  // Initialize Inverse Mapping matrix
-  vpMatrix X(3, imgx.getRows()*imgx.getCols());
-  vpColVector B(3), X_row_1(imgx.getRows()*imgx.getCols()), X_row_2(imgx.getRows()*imgx.getCols());
 
   // meshgrid(min_2:max_2,min_1:min_1)
   for(unsigned int i = 0; i < imgy.getRows(); i++) {
@@ -464,6 +479,11 @@ void vpImageTools::warpAffine(vpImage<Type> &I,
 
   //Backwards Transform (inverse mapping)
 
+  // Initialize Inverse Mapping matrix
+  vpMatrix X(3, imgx.getRows()*imgx.getCols());
+  vpColVector B(3), X_row_1(imgx.getRows()*imgx.getCols()), X_row_2(imgx.getRows()*imgx.getCols());
+
+  /*!< X = [ imgx(:) , imgy(:) , ones(imgx.getRows() * imgx.getCols(), 1) ]' */
   for(unsigned int i = 0; i < X.getRows(); i++) {
     for(unsigned int j = 0; j < X.getCols(); j++) {
       if (i == 0)  X[i][j] = imgx[j % imgx.getRows()][j / imgx.getRows()];
@@ -472,6 +492,7 @@ void vpImageTools::warpAffine(vpImage<Type> &I,
     }
   }
 
+  // perform transform_matrix \ X
   for(unsigned int j = 0; j < X.getCols(); j++) {
       B[0] = X[0][j];
       B[1] = X[1][j];
@@ -484,7 +505,7 @@ void vpImageTools::warpAffine(vpImage<Type> &I,
       X_row_2[j] = X[1][j];
   }
 
-  // reshape
+  // reshape X_row_1 and X_row_2
   for(unsigned int j =0; j< imgx.getCols(); j++)
     for(unsigned int i =0; i< imgx.getRows(); i++) {
       imgx[i][j]= X_row_1[j*imgx.getRows()+i];      
@@ -494,15 +515,16 @@ void vpImageTools::warpAffine(vpImage<Type> &I,
   imgx = imgx.t();
   imgy = imgy.t();
 
-  // Use nearest neighbour interpolation , similar to interp2(I, imgx, imgy, 'nearest')
-  vpImage<Type> Ires(imgx.getRows(),imgx.getCols());
-  for (unsigned int i = 0; i < imgx.getRows(); i++) {
-    for (unsigned int j = 0; j < imgx.getCols(); j++) {
-        Ires[i][j] = getPixelClamped(I, imgx[i][j], imgy[i][j]);
+  // Use nearest neighbour interpolation
+  vpImage<Type> Iwarp(imgx.getRows(),imgx.getCols());
+
+  for (unsigned int i = 0; i < Iwarp.getRows(); i++) {
+    for (unsigned int j = 0; j < Iwarp.getCols(); j++) {
+        Iwarp[i][j] = getPixelClamped(I, imgx[i][j], imgy[i][j]);
     }
   }
 
-  I = Ires;
+  I = Iwarp;
 }
 
 
