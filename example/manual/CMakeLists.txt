@@ -59,8 +59,8 @@ set(example_cpp
 
 if(VISP_HAVE_OGRE)
   # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
-  visp_set_source_file_compile_flag(ogre/HelloWorldOgre.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
-  visp_set_source_file_compile_flag(ogre/HelloWorldOgreAdvanced.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter)
+  visp_set_source_file_compile_flag(ogre/HelloWorldOgre.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
+  visp_set_source_file_compile_flag(ogre/HelloWorldOgreAdvanced.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
 endif()
 
 foreach(cpp ${example_cpp})
