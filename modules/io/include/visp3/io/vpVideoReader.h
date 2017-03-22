@@ -333,6 +333,7 @@ private:
     bool isImageExtensionSupported();
     bool isVideoExtensionSupported();
     long extractImageIndex(const std::string &imageName, const std::string &format);
+    bool checkImageNameFormat(const std::string &format);
 };
 
 #endif

@@ -112,6 +112,14 @@ void vpVideoReader::setFileName(const char *filename)
     throw(vpException(vpException::badValue, "Filename extension not supported"));
   }
 
+  // checking image name format
+  if (isImageExtensionSupported()) {
+    std::string format = vpIoTools::getName(fileName);
+    if (!checkImageNameFormat(format)) {
+      throw(vpException(vpException::badValue, "Format of image name wasn't recognized: %s", format.c_str()));
+    }
+  }
+
 	initFileName = true;
 }
 
@@ -839,7 +847,7 @@ vpVideoReader &vpVideoReader::operator>>(vpImage<vpRGBa> &I)
 /*!
     Checks imageName format and extracts its index.
 
-    Format must contain substring "%0xd", defining the lenth of image index.
+    Format must contain substring "%0xd", defining the length of image index.
     For example, format can be "img%04d.jpg". Then "img0001.jpg" and "img0000.jpg" 
     satisfy it, while "picture001.jpg" and "img001.jpg" don't.
 
@@ -848,25 +856,17 @@ vpVideoReader &vpVideoReader::operator>>(vpImage<vpRGBa> &I)
     \return extracted index on success, -1 otherwise.
 */
 long vpVideoReader::extractImageIndex(const std::string &imageName, const std::string &format) {
-  size_t indexStart = format.find_last_of('%');
+  size_t indexBegin = format.find_last_of('%');
+  size_t indexEnd = format.find_first_of('d', indexBegin);
+  size_t suffixLength = format.length() - indexEnd - 1;
 
-  // Checking whether format contains "%0xd"
-  if (indexStart == std::string::npos ||
-      indexStart + 3 >= format.length() ||
-      format[indexStart + 1] != '0' ||
-      !std::isdigit(format[indexStart + 2]) ||
-      format[indexStart + 3] != 'd')
-  {
-    throw(vpException(vpException::badValue, "Format of image name wasn't recognized: %s", format.c_str()));
-  }
-
-  int imageIndexLength = format[indexStart + 2] - '0';
-  if (imageName.length() != format.length() - 4 + imageIndexLength) {
+  // Extracting index
+  if (imageName.length() <= suffixLength + indexBegin) {
     return -1;
   }
-  // Extracting index
-  std::string index_substr = imageName.substr(indexStart, imageIndexLength);
-  std::istringstream ss(index_substr);
+  size_t indexLength = imageName.length() - suffixLength - indexBegin;
+  std::string indexSubstr = imageName.substr(indexBegin, indexLength);
+  std::istringstream ss(indexSubstr);
   long index = 0;
   ss >> index;
   if (ss.fail() || index < 0 || !ss.eof()) {
@@ -874,10 +874,28 @@ long vpVideoReader::extractImageIndex(const std::string &imageName, const std::s
   }
 
   // Checking that format with inserted index equals imageName
-  std::string withIndex = format;
-  withIndex.replace(indexStart, 4, index_substr);
-  if (withIndex != imageName) {
+  char nameByFormat[FILENAME_MAX];
+  sprintf(nameByFormat, format.c_str(), index);
+  if (std::string(nameByFormat) != imageName) {
     return -1;
   }
   return index;
+}
+
+/*!
+    Checks image name template, for example "img%04d.jpg"
+    \return true if it is correct, false otherwise
+*/
+bool vpVideoReader::checkImageNameFormat(const std::string &format) {
+  size_t indexBegin = format.find_last_of('%');
+  size_t indexEnd = format.find_first_of('d', indexBegin);
+  if (indexBegin == std::string::npos || indexEnd == std::string::npos) {
+    return false;
+  }
+  for (size_t i = indexBegin + 1; i < indexEnd; i++) {
+    if (!std::isdigit(format[i])) {
+      return false;
+    }
+  }
+  return true;
 }
