@@ -154,26 +154,24 @@ else()
       vp_get_version_from_pkg("gsl" "${GSL_LIB_DIR}/pkgconfig" GSL_VERSION)
 
     else()
-      # Try to add gslcblas library if requested
+      set(GSL_FOUND FALSE)
+    endif()
 
-      find_library(GSL_cblas_LIBRARY
-        NAMES gslcblas
-        PATHS ${GSL_LIB_SEARCH_PATH}
-      )
-      if(GSL_cblas_LIBRARY)
-        list(APPEND GSL_LIBRARIES ${GSL_cblas_LIBRARY})
-        #message("add cblas to GSL_LIBRARIES: ${GSL_LIBRARIES}")
-        CheckCompilation_gsl2(${GSL_INCLUDE_DIRS} ${GSL_gsl_LIBRARY} ${GSL_cblas_LIBRARY} BUILD_SUCCEED2)
-        #message("BUILD_STATUS 2: ${BUILD_SUCCEED2}")
-        if(BUILD_SUCCEED2)
-          set(GSL_FOUND TRUE)
+    # Try to add gslcblas library if requested
+    find_library(GSL_cblas_LIBRARY
+      NAMES gslcblas
+      PATHS ${GSL_LIB_SEARCH_PATH}
+    )
+    if(GSL_cblas_LIBRARY)
+      list(APPEND GSL_LIBRARIES ${GSL_cblas_LIBRARY})
+      #message("add cblas to GSL_LIBRARIES: ${GSL_LIBRARIES}")
+      CheckCompilation_gsl2(${GSL_INCLUDE_DIRS} ${GSL_gsl_LIBRARY} ${GSL_cblas_LIBRARY} BUILD_SUCCEED2)
+      #message("BUILD_STATUS 2: ${BUILD_SUCCEED2}")
+      if(BUILD_SUCCEED2)
+        set(GSL_FOUND TRUE)
 
-          get_filename_component(GSL_LIB_DIR ${GSL_gsl_LIBRARY} PATH)
-          vp_get_version_from_pkg("gsl" "${GSL_LIB_DIR}/pkgconfig" GSL_VERSION)
-
-        else()
-          set(GSL_FOUND FALSE)
-        endif()
+        get_filename_component(GSL_LIB_DIR ${GSL_gsl_LIBRARY} PATH)
+        vp_get_version_from_pkg("gsl" "${GSL_LIB_DIR}/pkgconfig" GSL_VERSION)
       else()
         set(GSL_FOUND FALSE)
       endif()

@@ -144,14 +144,21 @@ public:
   /** @name Inherited functionalities from vpArray2D */
   //@{
 
-  Type getMinValue() const;
+  /*!
+   * Return the number of columns of the 2D array.
+   * \sa getRows(), size()
+   */
+  inline unsigned int getCols() const { return colNum; }
 
   Type getMaxValue() const;
 
-  //! Return the number of rows of the 2D array
+  Type getMinValue() const;
+
+  /*!
+   * Return the number of rows of the 2D array.
+   * \sa getCols(), size()
+   */
   inline unsigned int getRows() const { return rowNum ;}
-  //! Return the number of columns of the 2D array
-  inline unsigned int getCols() const { return colNum; }
   //! Return the number of elements of the 2D array.
   inline unsigned int size() const { return colNum*rowNum; }
   /*!

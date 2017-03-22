@@ -69,30 +69,27 @@ class vpForceTwistMatrix;
   these matrices.
 */
 
-
-
 /*!
   \class vpMatrix
   \ingroup group_core_matrices
 
   \brief Implementation of a matrix and operations on matrices.
 
-  This class may benefit from Lapack or GSL optional 3rd parties that are used especially
-  for pseudo-inverse. Concerning Lapack optional 3rd party, installation instructions are provide
-  here https://visp.inria.fr/3rd_lapack. For optional GSL, installation instructions are provide
-  here https://visp.inria.fr/3rd_gsl.
+  This class needs one of the following third-party to compute matrix inverse, pseudo-inverse, singular value decomposition, determinant...
+  - If Lapack is installed and detected by ViSP, this 3rd party is used by vpMatrix.
+    Installation instructions are provided here https://visp.inria.fr/3rd_lapack.
+  - else if OpenCV is installed and detected by ViSP, this 3rd party is used,
+    Installation instructions are provided here https://visp.inria.fr/3rd_opencv.
+  - else if GSL is installed and detected by ViSP, we use this other 3rd party.
+    Installation instructions are provided here https://visp.inria.fr/3rd_gsl.
 
   vpMatrix class provides a data structure for the matrices as well
   as a set of operations on these matrices.
 
   The vpMatrix class is derived from vpArray2D<double>.
 
-  \warning Note the matrix in the class (*this) will be noted A in the comment
-
-  \ingroup libmath
-
-  \sa vpRowVector, vpColVector, vpHomogeneousMatrix, vpRotationMatrix,
-  vpTwistMatrix, vpHomography
+  \sa vpArray2D, vpRowVector, vpColVector, vpHomogeneousMatrix, vpRotationMatrix,
+  vpVelocityTwistMatrix, vpForceTwistMatrix, vpHomography
 */
 class VISP_EXPORT vpMatrix : public vpArray2D<double>
 {
@@ -220,10 +217,10 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //-------------------------------------------------
   /** @name Columns, rows, sub-matrices extraction */
   //@{
-  vpRowVector getRow(const unsigned int i) const;
-  vpRowVector getRow(const unsigned int i, const unsigned int j_begin, const unsigned int size) const;
   vpColVector getCol(const unsigned int j) const;
   vpColVector getCol(const unsigned int j, const unsigned int i_begin, const unsigned int size) const;
+  vpRowVector getRow(const unsigned int i) const;
+  vpRowVector getRow(const unsigned int i, const unsigned int j_begin, const unsigned int size) const;
   void init(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols);
   //@}
 
@@ -232,6 +229,24 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //---------------------------------
   /** @name Matrix operations  */
   //@{
+  // return the determinant of the matrix.
+  double det(vpDetMethod method = LU_DECOMPOSITION) const;
+  double detByLU() const;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#  ifdef VISP_HAVE_GSL
+  double detByLUGsl() const;
+#  endif
+#  ifdef VISP_HAVE_LAPACK_C
+  double detByLULapack() const;
+#  endif
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+  double detByLUOpenCV() const;
+#  endif
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+  //Compute the exponential matrix of a square matrix
+  vpMatrix expm() const;
+
   // operation A = A + B
   vpMatrix &operator+=(const vpMatrix &B);
   // operation A = A - B
@@ -268,11 +283,6 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
     */
   double sum() const;
   double sumSquare() const;
-  // return the determinant of the matrix.
-  double det(vpDetMethod method = LU_DECOMPOSITION) const;
-  
-  //Compute the exponential matrix of a square matrix
-  vpMatrix expm() const;
 
   //-------------------------------------------------
   // Kronecker product
@@ -310,25 +320,42 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //-------------------------------------------------
   /** @name Matrix inversion  */
   //@{
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //! LU Decomposition
-  void LUDcmp(unsigned int* perm, int& d);
-  //! solve AX = B using the LU Decomposition
-  void LUBksb(unsigned int* perm, vpColVector& b);
-
-#endif // doxygen should skip this
   // inverse matrix A using the LU decomposition 
   vpMatrix inverseByLU() const;
-#if defined(VISP_HAVE_LAPACK_C)
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#  if defined(VISP_HAVE_GSL)
+  vpMatrix inverseByLUGsl() const;
+#  endif
+#  if defined(VISP_HAVE_LAPACK_C)
+  vpMatrix inverseByLULapack() const;
+#  endif
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+  vpMatrix inverseByLUOpenCV() const;
+#  endif
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
   // inverse matrix A using the Cholesky decomposition (only for real symmetric matrices)
   vpMatrix inverseByCholesky() const;
-  //lapack implementation of inverse by Cholesky
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#  if defined(VISP_HAVE_LAPACK_C)
   vpMatrix inverseByCholeskyLapack() const;
+#  endif
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+  vpMatrix inverseByCholeskyOpenCV() const;
+#  endif
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
   // inverse matrix A using the QR decomposition
   vpMatrix inverseByQR() const;
-  //lapack implementation of inverse by QR
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#  if defined(VISP_HAVE_LAPACK_C)
   vpMatrix inverseByQRLapack() const;
-#endif
+#  endif
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
   //! Compute the pseudo inverse of the matrix using the SVD.
   vpMatrix pseudoInverse(double svThreshold=1e-6)  const;
   //! Compute the pseudo inverse of the matrix using the SVD.
@@ -356,37 +383,29 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   // SVD decomposition
   //-------------------------------------------------
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  void svdFlake(vpColVector& w, vpMatrix& v);
-  void svdNr(vpColVector& w, vpMatrix& v);
-#ifdef VISP_HAVE_GSL
-  void svdGsl(vpColVector& w, vpMatrix& v);
-#endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
-  void svdOpenCV(vpColVector& w, vpMatrix& v);
-#endif
-#ifdef VISP_HAVE_LAPACK_C
-  void svdLapack(vpColVector& W, vpMatrix& V);
-#endif
-  //! solve AX=B using the SVD decomposition
-  void SVBksb(const vpColVector& w,
-  	      const vpMatrix& v,
-  	      const vpColVector& b, vpColVector& x);
-#endif
-
   /** @name SVD decomposition  */
   //@{
-  // singular value decomposition SVD
-
-  void svd(vpColVector& w, vpMatrix& v);
+  double cond() const;
+  unsigned int kernel(vpMatrix &KerA, double svThreshold=1e-6) const;
 
   // solve Ax=B using the SVD decomposition (usage A = solveBySVD(B,x) )
   void solveBySVD(const vpColVector &B, vpColVector &x) const ;
   // solve Ax=B using the SVD decomposition (usage  x=A.solveBySVD(B))
   vpColVector solveBySVD(const vpColVector &B) const ;
 
-  unsigned int kernel(vpMatrix &KerA, double svThreshold=1e-6) const;
-  double cond() const;
+  // singular value decomposition SVD
+  void svd(vpColVector &w, vpMatrix &V);
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#  ifdef VISP_HAVE_GSL
+  void svdGsl(vpColVector &w, vpMatrix &V);
+#  endif
+#  ifdef VISP_HAVE_LAPACK_C
+  void svdLapack(vpColVector &w, vpMatrix &V);
+#  endif
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+  void svdOpenCV(vpColVector &w, vpMatrix &V);
+#  endif
+#endif
   //@}
 
   //-------------------------------------------------
@@ -626,9 +645,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 #endif
 
  private:
-  double detByLU() const;
   static void computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls, vpMatrix &Js, vpColVector &deltaP);
-
 };
 
 

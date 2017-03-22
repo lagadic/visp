@@ -160,8 +160,33 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 
     vpMatrix btb1 ;  // (B^T B)^(-1)
 
-    if (b.getRows() >= b.getCols()) btb1 = btb.inverseByLU() ;
-    else btb1 = btb.pseudoInverse();
+    /* Warning:
+       when using btb.inverseByLU() that call cv::inv(cv::DECOMP_LU) with OpenCV 3.1.0 and 3.2.0 we notice
+       that OpenCV is not able to compute the inverse of the following matrix:
+
+       btb[9,9]=
+       0.015925   0.0        0.0030866  0.00035    0.0        0.000041   0.105      0.0        0.0346242
+       0.0        0.015925  -0.0050979  0.0        0.00035   -0.000063   0.0        0.105     -0.0637464
+       0.0030866 -0.0050979  0.0032301  0.000041  -0.000063   0.000016   0.0346242 -0.0637464  0.0311185
+       0.00035    0.0        0.000041   0.0001     0.0        0.000012   0.01       0.0        0.0011594
+       0.0        0.00035   -0.000063   0.0        0.0001    -0.000018   0.0        0.01      -0.0018040
+       0.000041  -0.000063   0.000016   0.000012  -0.000018   0.000005   0.0011594 -0.0018040  0.0004599
+       0.105      0.0        0.0346242  0.01       0.0        0.0011594  5.0        0.0        0.13287
+       0.0        0.105     -0.0637464  0.0        0.01      -0.0018040  0.0        5.0       -0.731499
+       0.0346242 -0.0637464  0.0311185  0.0011594 -0.0018040  0.0004599  0.13287   -0.731499   0.454006
+
+       That's why instead of using inverseByLU() we are now using pseudoInverse()
+       */
+#if 0
+    if (b.getRows() >= b.getCols()) {
+      btb1 = btb.inverseByLU();
+    }
+    else {
+      btb1 = btb.pseudoInverse();
+    }
+#else
+    btb1 = btb.pseudoInverse();
+#endif
 
 #if (DEBUG_LEVEL1)
     {
@@ -188,7 +213,6 @@ lagrange (vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
     //    vpMatrix v ;
     e.svd(x1,ata) ;// destructif sur e
     // calcul du vecteur propre de E correspondant a la valeur propre min.
-
     /* calcul de SVmax	*/
     imin = 0;
     // FC : Pourquoi calculer SVmax ??????
