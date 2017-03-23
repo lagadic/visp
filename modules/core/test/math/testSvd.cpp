@@ -381,16 +381,16 @@ main(int argc, const char *argv[])
     }
 
     return ret;
+#else
+    (void)argc;
+    (void)argv;
+    std::cout << "Test does nothing since you dont't have Lapack, OpenCV or GSL 3rd party" << std::endl;
+    return EXIT_SUCCESS;
+#endif
   }
   catch(const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }
-#else
-  (void)argc;
-  (void)argv;
-  std::cout << "Test does nothing since you dont't have Lapack, OpenCV or GSL 3rd party" << std::endl;
-  return EXIT_SUCCESS;
-#endif
 }
 
