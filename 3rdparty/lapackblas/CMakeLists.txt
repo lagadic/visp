@@ -1,7 +1,13 @@
-project(${LAPACK_LIBRARY} Fortran)
+project(${LAPACK_LIBRARY} CXX)
 
+enable_language(Fortran OPTIONAL)
 if(CMAKE_Fortran_COMPILER)
+  set(VISP_Fortran_COMPILER_WORKS ON PARENT_SCOPE)
+else()
+  set(VISP_Fortran_COMPILER_WORKS OFF PARENT_SCOPE)
+endif()
 
+if(VISP_Fortran_COMPILER_WORKS)
   if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fPIC")
   endif()
@@ -49,6 +55,5 @@ if(CMAKE_Fortran_COMPILER)
   endforeach()
 
 else()
-  set(LAPACK_IS_BUILD FALSE PARENT_SCOPE)
   message(STATUS "Fortran compiler not found. Cannot build lapack/blas in 3rdparty folder")
 endif()
