@@ -260,7 +260,7 @@ if(MSVC)
   endif()
 endif()
 
-vp_add_module(core)
+vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES})
 
 vp_source_group("Src" FILES "${VISP_MODULE_visp_core_BINARY_DIR}/version_string.inc")
 
