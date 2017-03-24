@@ -1,12 +1,12 @@
 ﻿/**
-  \page tutorial-import-visp-into-EclipseIDE Tutorial: How to import a CMake project in Eclipse IDE
+  \page tutorial-import-visp-into-EclipseIDE Tutorial: How to import a CMake project that uses ViSP in Eclipse IDE
   \tableofcontents
 
 \note We assume in this tutorial that you have successfully installed ViSP either with an \ref tuto_install_sdk or with an \ref tuto_install_src.
 
-In this tutorial you will learn how to import a CMake project into Eclipse IDE.
+In this tutorial you will learn how to import a CMake project that uses ViSP into Eclipse IDE.
 
-This tutorial uses Cmake to build projects. If you are not familiar with CMake, you can check the <a href="http://www.cmake.org/cmake/help/cmake_tutorial.html">tutorial</a>.
+This tutorial uses CMake to build projects. If you are not familiar with CMake, you can check the <a href="http://www.cmake.org/cmake/help/cmake_tutorial.html">tutorial</a>.
 
 \section image_adjust Adjust Eclipse settings 
 
@@ -17,63 +17,67 @@ This tutorial uses Cmake to build projects. If you are not familiar with CMake, 
 $ tar -zxvf eclipse-***.tar.gz -C {target directory} (For Linux)
 \endcode
 
-3)  Create a CMake project or take the project from \ref tutorial-getting-started which uses in this tutorial
+3)  Create a CMake project or take the project from \ref tutorial-getting-started which is used in this tutorial
 
 4)  Open Eclipse
 
-\image html tutorial-import-visp-into-eclipseide-4.png
+\image html img-visp-into-eclipse-4.png
 
 5)  File > New > Makefile Project with Existing Code
-\image html tutorial-import-visp-into-eclipseide-5.png 
+\image html img-visp-into-eclipse-5.png 
 
 6)  Browse > Select directory to the CMake project > Press "Finish"
-\image html tutorial-import-visp-into-eclipseide-6.png
+\image html img-visp-into-eclipse-6.png
 
-7)  Goto to the Project directory and execute "cmake . " in console
-\image html tutorial-import-visp-into-eclipseide-8.png
+7)  Goto to the Project directory and execute "cmake . " in console in order to \ref tutorial-getting-started.html#image_unix_config
+\image html img-visp-into-eclipse-7.png
 
-8)  Right click on the ViSP Project > Press "Properties" > C/C++ Build > Builder Settings
+8)  Right click on Project > Press "Properties" > C/C++ Build > Builder Settings
 
-	Make sure that "Build command" contains "make"	
-	Make sure that "Build directory" contains path to the folder which contains MakeFile of the project
-\image html tutorial-import-visp-into-eclipseide-9.png
+- Make sure that "Build command" contains "make"	
+- Make sure that "Build directory" contains path to the folder which contains MakeFile of the project
+\image html img-visp-into-eclipse-8.png
 
 9) Project > Build all 
 
-	 Make sure that Project builds
-\image html tutorial-import-visp-into-eclipseide-10.png
+- Make sure that Project builds
+\image html img-visp-into-eclipse-9.png
 
-10) Right click on the ViSP Project > Run As > Run Configurations > C/C++ Application > "Project" Default
-\image html tutorial-import-visp-into-eclipseide-11.png
+10) Right click on Project > Run As > Run Configurations > C/C++ Application > "Project" Default
+\image html img-visp-into-eclipse-10.png
 
 11) C/C++ Application > Browse > Browse path to the executable file of your project > Apply
-\image html tutorial-import-visp-into-eclipseide-12.png
+\image html img-visp-into-eclipse-11.png
 
 12) Now run the Project from Eclipse as usual
-\image html tutorial-import-visp-into-eclipseide-14.png
+\image html img-visp-into-eclipse-12.png
 
 \section image_unresolved Unresolved inclusion
 1)  If you see issues such as "Unresolved inclusion"
 You need to perform next steps to solve it
-\image html tutorial-import-visp-into-eclipseide-7.png
+\image html img-visp-into-eclipse-unr-1.png
 
-2) Right click on the ViSP Project > Press "Properties"
-\image html tutorial-import-visp-into-eclipseide-7.1.png
+2) Right click on Project > Press "Properties"
+\image html img-visp-into-eclipse-unr-2.png
 
 3) C/C++ General > Preprocessor Include Path etc. > Providers > Enable "CDT GCC Built-in Compiler Settings"
-\image html tutorial-import-visp-into-eclipseide-7.2.png
+\image html img-visp-into-eclipse-unr-3.png
 
 4) Wait until C++ indexer finished his work
-\image html tutorial-import-visp-into-eclipseide-7.3.png
+\image html img-visp-into-eclipse-unr-4.png
 
 \section image_arg Program arguments
 For some projects you need to specified input variables
-\image html tutorial-import-visp-into-eclipseide-13.png
+\image html img-visp-into-eclipse-arg-1.png
 
-Right click on the ViSP Project > Run As > Run Configurations > C/C++ Application > "Project" Default > Arguments
+Right click on Project > Run As > Run Configurations > C/C++ Application > "Project" Default > Arguments
 
-	Write arguments to "Program arguments"
-\image html tutorial-import-visp-into-eclipseide-13.1.png
+- Write arguments to "Program arguments"
+\image html img-visp-into-eclipse-arg-2.png
+
+\section image_next Next tutorial
+
+You are now ready to see the \ref tutorial-image-display
 
 */
 
