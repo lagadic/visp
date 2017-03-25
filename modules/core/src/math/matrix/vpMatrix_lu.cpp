@@ -351,6 +351,8 @@ vpMatrix vpMatrix::inverseByLULapack() const
 
   dgetrf_(&dim, &dim, A.data, &lda, &ipiv[1], &info);
   if(info) {
+    delete [] ipiv;
+    delete [] work;
     throw(vpException(vpException::fatalError, "Lapack LU decomposition failed; info=%d", info));
   }
 
@@ -403,6 +405,7 @@ double vpMatrix::detByLULapack() const
 
   dgetrf_(&dim, &dim, A.data, &lda, &ipiv[1], &info);
   if(info) {
+    delete [] ipiv;
     throw(vpException(vpException::fatalError, "Lapack LU decomposition failed; info=%d", info));
   }
 
