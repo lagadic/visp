@@ -88,7 +88,7 @@ It enables to set the path and the name of the file(s) which as/have to be read.
 
 If you want to read a video file, \f$ filename \f$ corresponds to the path to the file (example : /local/video.mpeg).
 
-If you want to read a sequence of images, \f$ filename \f$ corresponds to the path followed by the image name template. For exemple, if you want to read different images named image0001.jpeg, image0002.jpg, ... and located in the folder /local/image, \f$ filename \f$ will be "/local/image/image%04d.jpg". 
+If you want to read a sequence of images, \f$ filename \f$ corresponds to the path followed by the image name template. For example, if you want to read different images named image0001.jpeg, image0002.jpg, ... and located in the folder /local/image, \f$ filename \f$ will be "/local/image/image%04d.jpg".
 
 \param filename : Path to a video file or file name template of a image sequence.
 */
@@ -102,7 +102,7 @@ void vpVideoReader::setFileName(const char *filename)
 
 	if (strlen( filename ) >= FILENAME_MAX) {
 		throw(vpException(vpException::memoryAllocationError,
-			"Not enough memory to intialize the file name"));
+			"Not enough memory to initialize the file name"));
 	}
 
 	strcpy(this->fileName,filename);
@@ -129,7 +129,7 @@ It enables to set the path and the name of the file(s) which as/have to be read.
 
 If you want to read a video file, \f$ filename \f$ corresponds to the path to the file (example : /local/video.mpeg).
 
-If you want to read a sequence of images, \f$ filename \f$ corresponds to the path followed by the image name template. For exemple, if you want to read different images named image0001.jpeg, image0002.jpg, ... and located in the folder /local/image, \f$ filename \f$ will be "/local/image/image%04d.jpg".
+If you want to read a sequence of images, \f$ filename \f$ corresponds to the path followed by the image name template. For example, if you want to read different images named image0001.jpeg, image0002.jpg, ... and located in the folder /local/image, \f$ filename \f$ will be "/local/image/image%04d.jpg".
 
 \param filename : Path to a video file or file name template of a image sequence.
 */
@@ -722,7 +722,7 @@ void vpVideoReader::findFirstFrameIndex()
 }
 
 /*!
-Return the framerate in Hz used to encode the video stream.
+Return the frame rate in Hz used to encode the video stream.
 
 If the video is a sequence of images, return -1.
 */
