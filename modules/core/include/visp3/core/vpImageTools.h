@@ -65,7 +65,6 @@
 #include <math.h>
 #include <string.h>
 
-
 /*!
   \class vpImageTools
 
@@ -160,7 +159,7 @@ public:
 
   template<class Type>
   static void warpAffine(vpImage<Type> &I,
-                        vpMatrix &transform_matrix);
+                        const vpMatrix &T);
 
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -417,46 +416,77 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
 
 /*!
 
-  Apply Affine transformations on an image.
+  Apply an affine transformation to an image.
 
-  \param I : Input image to be transformed.
-  \param transform_matrix : 3x3 matrix that contains all possible geometric transformations, also called affine mapping.
+  The equation to warp pixel \f$(u,v)\f$ to \f$(x,y)\f$ using an affine
+  transformation is the following:
 
-    - Equation of warping pixel (u,v) to (x,y) :
-      
-      * \f$ x = a_0 + a_1 * u + a_2 * v \f$;
-      * \f$ y = b_0 + b_1 * u + b_2 * v \f$; 
-      
-      Let X = [x y]' and U = [u v]' . Therefore equation in matrix form : \f$ X = A * U + B \f$,
-      where A = [ a_1 a_2 ; b_1 b_2 ] and B = [a_0 b_0]'
+  \f[
+  \left\{
+  \begin{array}{ccccccc}
+  x & = & a_0 & + & a_1 \; u & + & a_2 \; v\\
+  y & = & b_0 & + & b_1 \; u & + & b_2 \; v
+  \end{array}
+  \right.
+  \f]
 
-    - Transformation matrix T = [A' 0 ; B' 1] = [a_1 b_1 0 ; a_2 b_2 0 ; a_0 b_0 1]
-  
-  - Inverse Mapping is used over other methods like Forward mapping as warping points are often non-integer samples.
-  - For each point (x,y) in the transformed image to be obtained, find its corresponding point (u,v) in the original image.
-  - If the mapped point (u,v) is not an integer sample, apply interpolation. In warpAffine nearest neighbour interpolation is used.
-  
-  \todo Set remaining pixels around the transformed image to Nan.
+  where \f$a_0, a_1, a_2, b_0, b_1, b_2\f$ are the affine parameters.
 
+  Let \f${\bf X} = [x \; y]^T\f$ and \f${\bf U} = [u \; v]^T\f$. Therefore the
+  previous equation could be written in matrix form : \f[ {\bf X} = {\bf B} + {\bf A} \; {\bf U} \f]
+  where \f${\bf A} = [ a_1 \; a_2 ; b_1 \; b_2 ]\f$ and \f${\bf B} = [a_0 \; b_0]^T\f$
+
+  Thus the transformation matrix that is given as parameter \e T should be filled such as:
+
+  \f[
+  {\bf T} =
+  \left[
+  \begin{array}{cc}
+  {\bf A}^T & 0 \\
+  {\bf B}^T & 1
+  \end{array}
+  \right]
+  =
+  \left[
+  \begin{array}{ccc}
+  a_1 & b_1 & 0 \\
+  a_2 & b_2 & 0 \\
+  a_0 & b_0 & 1
+  \end{array}
+  \right]
+  \f]
+
+  To compute the transformed image inverse mapping is used over other methods like forward mapping
+  as warping points are often non-integer samples:
+  - For each point \f$(x,y)\f$ in the transformed image to be obtained, find its corresponding
+    point \f$(u,v)\f$ in the original image.
+  - If the mapped point \f$(u,v)\f$ is not an integer sample, apply interpolation using nearest
+    neighbour interpolation.
+
+  \param I : Input image to be transformed. 
+  \param T : 3x3 matrix corresponding to \f${\bf T}\f$ that contains all possible geometric
+  transformations, also called affine mapping.
+  \param Iwarp : Resulting warped image. 
+
+  An example that uses warpAffine() is given in testImageWarpAffine.cpp
 */
 template<class Type>
 void vpImageTools::warpAffine(vpImage<Type> &I,
-                              vpMatrix &transform_matrix)
+                              const vpMatrix &T)
 {
 
   vpMatrix transcp(3,5);
-  transcp[0][0] = 1; transcp[0][1] = 1;  transcp[0][2] = 1;             transcp[0][3] = I.getWidth();  transcp[0][4] = I.getWidth();
-  transcp[1][0] = 1; transcp[1][1] = 1;  transcp[1][2] = I.getWidth(); transcp[1][3] = I.getWidth();  transcp[1][4] = 1;
-  transcp[2][0] = 1; transcp[2][1] = 1;  transcp[2][2] = 1;             transcp[2][3] = 1;              transcp[2][4] = 1;
+  transcp[0][0] = 1; transcp[0][1] = 1; transcp[0][2] = 1;            transcp[0][3] = I.getWidth(); transcp[0][4] = I.getWidth();
+  transcp[1][0] = 1; transcp[1][1] = 1; transcp[1][2] = I.getWidth(); transcp[1][3] = I.getWidth(); transcp[1][4] = 1;
+  transcp[2][0] = 1; transcp[2][1] = 1; transcp[2][2] = 1;            transcp[2][3] = 1;            transcp[2][4] = 1;
 
-  transcp = transform_matrix * transcp;
+  transcp = T * transcp;
 
-  float max_1 = std::max(transcp[0][0],std::max(transcp[0][1],std::max(transcp[0][2],std::max(transcp[0][3],transcp[0][4])))); ///< max(transcp(0,:)) 
-  float min_1 = std::min(transcp[0][0],std::min(transcp[0][1],std::min(transcp[0][2],std::min(transcp[0][3],transcp[0][4])))); ///< min(transcp(0,:)) 
+  float max_1 = std::max(transcp[0][0], std::max(transcp[0][1], std::max(transcp[0][2], std::max(transcp[0][3], transcp[0][4])))); ///< max(transcp(0,:)) 
+  float min_1 = std::min(transcp[0][0], std::min(transcp[0][1], std::min(transcp[0][2], std::min(transcp[0][3], transcp[0][4])))); ///< min(transcp(0,:)) 
 
-  float max_2 = std::max(transcp[1][0],std::max(transcp[1][1],std::max(transcp[1][2],std::max(transcp[1][3],transcp[1][4])))); ///< max(transcp(1,:)) 
-  float min_2 = std::min(transcp[1][0],std::min(transcp[1][1],std::min(transcp[1][2],std::min(transcp[1][3],transcp[1][4])))); ///< min(transcp(1,:)) 
-
+  float max_2 = std::max(transcp[1][0], std::max(transcp[1][1], std::max(transcp[1][2], std::max(transcp[1][3], transcp[1][4])))); ///< max(transcp(1,:)) 
+  float min_2 = std::min(transcp[1][0], std::min(transcp[1][1], std::min(transcp[1][2], std::min(transcp[1][3], transcp[1][4])))); ///< min(transcp(1,:)) 
 
   vpMatrix imgy(floor(max_1 - min_1 + 1), floor(max_2 - min_2 + 1));
   vpMatrix imgx(floor(max_2 - min_2 + 1), floor(max_1 - min_1 + 1));
@@ -493,12 +523,12 @@ void vpImageTools::warpAffine(vpImage<Type> &I,
     }
   }
 
-  // perform transform_matrix \ X
+  // perform T \ X
   for (unsigned int j = 0; j < X.getCols(); j++) {
     B[0] = X[0][j];
     B[1] = X[1][j];
     B[2] = X[2][j];
-    transform_matrix.solveBySVD(B, B); // Converted Columns of X to a ColVector for Linear Solver
+    T.solveBySVD(B, B); // Converted Columns of X to a ColVector for Linear Solver
     X[0][j] = B[0];
     X[1][j] = B[1];
     X[2][j] = B[2];
