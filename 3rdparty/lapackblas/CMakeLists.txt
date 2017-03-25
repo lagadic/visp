@@ -7,7 +7,7 @@ else()
   set(VISP_Fortran_COMPILER_WORKS OFF PARENT_SCOPE)
 endif()
 
-if(VISP_Fortran_COMPILER_WORKS)
+if(CMAKE_Fortran_COMPILER)
   if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fPIC")
   endif()
