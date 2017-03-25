@@ -62,14 +62,15 @@ namespace {
     \param name : Program name.
     \param badparam : Bad parameter name.
     \param ipath: Input image path.
+    \param ppath: Personal image path.
    */
-  void usage(const char *name, const char *badparam, std::string ipath)
+  void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
   {
     fprintf(stdout, "\n\
-  Test image resize.\n\
+  Test image warping.\n\
   \n\
   SYNOPSIS\n\
-    %s [-i <input image path>] [-c] [-d]\n\
+    %s [-i <input image path>] [-p <personal image path>] [-c] [-d]\n\
        [-h]\n                 \
   ", name);
 
@@ -83,7 +84,7 @@ namespace {
        variable produces the same behaviour than using\n\
        this option.\n\
   \n\
-    -p <personal image path>                               \n\
+    -p <personal image path>                               %s\n\
        Path to an image used to test image warping.\n\
        Example: -p /my_path_to/image.png\n\
   \n\
@@ -95,7 +96,8 @@ namespace {
   \n\
     -h\n\
        Print the help.\n\n",
-      ipath.c_str());
+      ipath.c_str(),
+      ppath.c_str());
 
     if (badparam)
       fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -107,11 +109,12 @@ namespace {
     \param argc : Command line number of parameters.
     \param argv : Array of command line parameters.
     \param ipath: Input image path.
+    \param ppath: Personal image path.
     \param opt_display : Do not display if set.
     \param opt_click : Do not need click if set.
     \return false if the program has to be stopped, true otherwise.
   */
-  bool getOptions(int argc, const char **argv, std::string &ipath,
+  bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath,
                   bool &opt_display, bool &opt_click)
   {
     const char *optarg_;
@@ -119,21 +122,21 @@ namespace {
     while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
       switch (c) {
-      case 'i': ipath = optarg_; break;
-      case 'p': ipath = optarg_; break;
-      case 'h': usage(argv[0], NULL, ipath); return false; break;
+      // case 'i': ipath = optarg_; break;
+      case 'p': ppath = optarg_; break;
+      case 'h': usage(argv[0], NULL, ipath, ppath); return false; break;
 
       case 'c': opt_click = false; break;
       case 'd': opt_display = false; break;
 
       default:
-        usage(argv[0], optarg_, ipath); return false; break;
+        usage(argv[0], optarg_, ipath, ppath); return false; break;
       }
     }
 
     if ((c == 1) || (c == -1)) {
       // standalone param or error
-      usage(argv[0], NULL, ipath);
+      usage(argv[0], NULL, ipath, ppath);
       std::cerr << "ERROR: " << std::endl;
       std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
       return false;
@@ -148,6 +151,8 @@ int main(int argc, const char ** argv) {
     std::string env_ipath;
     std::string opt_ipath;
     std::string ipath;
+    std::string opt_ppath;
+    std::string ppath;
     std::string filename;
     bool opt_display = true;
     bool opt_click = true;
@@ -156,17 +161,20 @@ int main(int argc, const char ** argv) {
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
-    if (! env_ipath.empty())
+    if (!env_ipath.empty())
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_display, opt_click) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_display, opt_click) == false) {
       exit (EXIT_FAILURE);
     }
 
     // Get the option values
     if (!opt_ipath.empty())
       ipath = opt_ipath;
+    
+    if (!opt_ppath.empty()) 
+      ppath = opt_ppath;    
 
     // Compare ipath and env_ipath. If they differ, we take into account
     // the input path comming from the command line option
@@ -182,7 +190,7 @@ int main(int argc, const char ** argv) {
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()){
-      usage(argv[0], NULL, ipath);
+      usage(argv[0], NULL, ipath, ppath);
       std::cerr << std::endl
                 << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
@@ -194,46 +202,54 @@ int main(int argc, const char ** argv) {
 
     std::cout << "Testing vpImageTools::warpAffine() ..." << std::endl;
 
+    //
+    // Test starts from here
+    //
     //Initialize transformation matrix
-    vpMatrix transform_matrix(3,3);
+    vpMatrix T(3,3);
 
-    // Test Vertical Sheer
-    transform_matrix[0][0] = 1;   transform_matrix[0][1] = 0;  transform_matrix[0][2] = 0;
-    transform_matrix[1][0] = 0.5; transform_matrix[1][1] = 1;  transform_matrix[1][2] = 0;
-    transform_matrix[2][0] = 0;   transform_matrix[2][1] = 0;  transform_matrix[2][2] = 1;
+    // Scale (Sx,Sy), Rotation (angle), Translation (tx,ty)
+    float scale_x, scale_y, angle;
+    signed int a_0, b_0;
+
+    // Test Scale along Y
+    // scale_x = 1; scale_y = 1.5; angle = 0; a_0 = b_0 = 0;
 
     // Test Rotation
-    // transform_matrix[0][0]= 0.50; transform_matrix[0][1] =  0.86; transform_matrix[0][2] =  0.2;
-    // transform_matrix[1][0]= -0.86; transform_matrix[1][1] =  0.50; transform_matrix[1][2] =  0;
-    // transform_matrix[2][0]= 1; transform_matrix[2][1] =  1; transform_matrix[2][2] =  1;
+    // scale_x = 1; scale_y = 1; angle = 90; a_0 = b_0 = 0;
     
     // Test Translation
-    // transform_matrix[0][0]= 0; transform_matrix[0][1] =  0; transform_matrix[0][2] =  0;
-    // transform_matrix[1][0]= 0; transform_matrix[1][1] =  0; transform_matrix[1][2] =  0;
-    // transform_matrix[2][0]= 0.5; transform_matrix[2][1] =  0.5; transform_matrix[2][2] =  1;
+    // scale_x = 1; scale_y = 1; angle = 0; a_0 = 10; b_0 = 20;
 
-    //Load grayscale Klimt
-    std::cout << ipath << std::endl;
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
+    // Make Tansformation Matrix
+    T[0][0] = scale_x * cos(vpMath::rad(angle));  T[0][1] = scale_x * sin(vpMath::rad(angle));  T[0][2] = 0;
+    T[1][0] = -scale_y * sin(vpMath::rad(angle)); T[1][1] = scale_y * cos(vpMath::rad(angle));  T[1][2] = 0;
+    T[2][0] = a_0;                                T[2][1] = b_0;                                T[2][2] = 1;
 
+    //Load Image (default Klimt.pgm)
     vpImage<vpRGBa> I_image, I_warped_image;
-    vpImageIo::read(I_image, filename);
-    I_warped_image = I_image;
 
-    vpImageTools::warpAffine(I_warped_image, transform_matrix);
+    if (!opt_ppath.empty())    
+        filename = ppath;
+    else
+        filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
+
+    vpImageIo::read(I_image, filename);
+
+    vpImageTools::warpAffine(I_image, T, I_warped_image);
 
     std::cout << "Final Image size() : " <<  I_warped_image.getRows() << " x " << I_warped_image.getCols() << std::endl;    
 
 #if defined (VISP_HAVE_X11)
-    vpDisplayX *d3 = new vpDisplayX, *d4 = new vpDisplayX;
+    vpDisplayX *d1 = new vpDisplayX, *d2 = new vpDisplayX;
 #elif defined (VISP_HAVE_OPENCV)
-    vpDisplayOpenCV *d3 = new vpDisplayOpenCV, *d4 = new vpDisplayOpenCV;
+    vpDisplayOpenCV *d1 = new vpDisplayOpenCV, *d2 = new vpDisplayOpenCV;
 #elif defined (VISP_HAVE_GTK)
-    vpDisplayGTK *d3 = new vpDisplayGTK, *d4 = new vpDisplayGTK;
+    vpDisplayGTK *d1 = new vpDisplayGTK, *d2 = new vpDisplayGTK;
 #elif defined (VISP_HAVE_GDI)
-    vpDisplayGDI *d3 = new vpDisplayGDI, *d4 = new vpDisplayGDI;
+    vpDisplayGDI *d1 = new vpDisplayGDI, *d2 = new vpDisplayGDI;
 #elif defined (VISP_HAVE_D3D9)
-    vpDisplayD3D *d3 = new vpDisplayD3D, *d4 = new vpDisplayD3D;
+    vpDisplayD3D *d1 = new vpDisplayD3D, *d2 = new vpDisplayD3D;
 #else
     std::cerr << "No display available!" << std::endl;
     opt_display = false;
@@ -241,8 +257,8 @@ int main(int argc, const char ** argv) {
 
     if (opt_display) {
 #if defined (VISP_HAVE_X11) || defined (VISP_HAVE_OPENCV) || defined (VISP_HAVE_GTK) || defined (VISP_HAVE_GDI) || defined (VISP_HAVE_D3D9)
-      d3->init(I_image, 0, 0, "Original image");
-      d4->init(I_warped_image, (int) I_image.getWidth()+50, 0, "Warped image");
+      d1->init(I_image, 0, 0, "Original image");
+      d2->init(I_warped_image, (int) I_image.getWidth()+50, 0, "Warped image");
 #endif
 
       vpDisplay::display(I_image);
@@ -255,10 +271,9 @@ int main(int argc, const char ** argv) {
       }
     }
 
-
 #if defined (VISP_HAVE_X11) || defined (VISP_HAVE_OPENCV) || defined (VISP_HAVE_GTK) || defined (VISP_HAVE_GDI) || defined (VISP_HAVE_D3D9)
-    delete d3;
-    delete d4;
+    delete d1;
+    delete d2;
 #endif
   } catch(vpException &e) {
     std::cerr << "\nCatch an exception: " << e << std::endl;

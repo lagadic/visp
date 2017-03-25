@@ -158,8 +158,9 @@ public:
                         vpImage<Type> &newI);
 
   template<class Type>
-  static void warpAffine(vpImage<Type> &I,
-                        const vpMatrix &T);
+  static void warpAffine(const vpImage<Type> &I,
+                        const vpMatrix &T,
+                        vpImage<Type> &Iwarp);
 
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -471,8 +472,9 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
   An example that uses warpAffine() is given in testImageWarpAffine.cpp
 */
 template<class Type>
-void vpImageTools::warpAffine(vpImage<Type> &I,
-                              const vpMatrix &T)
+void vpImageTools::warpAffine(const vpImage<Type> &I,
+                              const vpMatrix &T,
+                              vpImage<Type> &Iwarp)
 {
 
   vpMatrix transcp(3,5);
@@ -546,15 +548,36 @@ void vpImageTools::warpAffine(vpImage<Type> &I,
   imgy = imgy.t();
 
   // Use nearest neighbour interpolation
-  vpImage<Type> Iwarp(imgx.getRows(),imgx.getCols());
+  Iwarp.resize(imgx.getRows(),imgx.getCols());
 
   for (unsigned int i = 0; i < Iwarp.getRows(); i++) {
     for (unsigned int j = 0; j < Iwarp.getCols(); j++) {
-        Iwarp[i][j] = getPixelClamped(I, imgx[i][j], imgy[i][j]);
+
+        float yFrac = imgy[i][j] - (int) imgy[i][j];
+        float xFrac = imgx[i][j] - (int) imgx[i][j];
+        resizeBicubic(I, Iwarp, i, j, imgx[i][j], imgy[i][j], xFrac, yFrac);
+        // Iwarp[i][j] = getPixelClamped(I, imgx[i][j], imgy[i][j]);
     }
   }
 
-  I = Iwarp;
+  if (T[2][0] != 0 || T[2][1] != 0) {
+    vpImage<Type> Iwarp_temp = Iwarp;
+    signed int iSign = -1 * ((T[2][1] > 0) - (T[2][1] < 0)), jSign = -1 * ((T[2][0] > 0) - (T[2][0] < 0));
+
+    for (unsigned int i =  0; i < Iwarp.getRows(); i++) {
+      for (unsigned int j = 0; j < Iwarp.getCols(); j++) {
+
+        if (floor((i - T[2][1]) / Iwarp.getRows()) == 0 && floor((j - T[2][0]) / Iwarp.getCols()) == 0)
+          Iwarp[i][j] =  Iwarp_temp[i - (int)T[2][1]][j - (int)T[2][0]];
+
+        if (iSign == -1 && i < T[2][1]) Iwarp[i][j] = static_cast<Type>(0);
+        else if (iSign == 1 && i >= Iwarp.getRows() + T[2][1]) Iwarp[i][j] = static_cast<Type>(0);
+
+        if (jSign == -1 && j < T[2][0]) Iwarp[i][j] = static_cast<Type>(0);
+        else if (jSign == 1 && j >= Iwarp.getCols() + T[2][0]) Iwarp[i][j] = static_cast<Type>(0);
+      }
+    }
+  }
 }
 
 
