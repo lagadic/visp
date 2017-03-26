@@ -1620,6 +1620,7 @@ std::vector<std::string> vpIoTools::splitChain(const std::string & chain, const 
 /*!
    List of files in directory
    There is no difference if pathname contains terminating backslash or not
+   Does not return "." and ".." under Unix, unlike scandir()
    \param pathname : path to directory
    \return A vector of files' names in that directory
  */
@@ -1639,7 +1640,10 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
     throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
   }
   for (int i = 0; i < filesCount; i++) {
-    files.push_back(std::string(list[i]->d_name));
+    std::string fileName = list[i]->d_name;
+    if (fileName != "." && fileName != "..") {
+      files.push_back(fileName);
+    }
     free(list[i]);
   }
   free(list);
