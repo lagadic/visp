@@ -1,4 +1,4 @@
-/*! \page tutorial_mainpage Tutorials
+﻿/*! \page tutorial_mainpage Tutorials
 This page references all the tutorials.
 
 - \subpage tutorial_install_pkg
@@ -69,6 +69,7 @@ This page introduces the user to the way to start with ViSP.
 - \subpage tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \subpage tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \subpage tutorial-getting-started-naoqi <br>This tutorial shows how to build a project that uses ViSP on NAOqi OS running on NAO, Romeo or Pepper humanoid robots.
+- \subpage tutorial-import-visp-into-EclipseIDE <br>This tutorial explains how to import a CMake project in Eclipse IDE.
 
 */
 
