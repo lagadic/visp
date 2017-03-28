@@ -1,5 +1,9 @@
 project(${ATIDAQ_LIBRARY})
 
+set(ATIDAQ_MAJOR_VERSION 1 PARENT_SCOPE)
+set(ATIDAQ_MINOR_VERSION 0 PARENT_SCOPE)
+set(ATIDAQ_PATCH_VERSION 6 PARENT_SCOPE)
+
 vp_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 file(GLOB lib_srcs *.c)
@@ -12,7 +16,7 @@ vp_list_filterout(lib_srcs events.c)
 
 add_library(${ATIDAQ_LIBRARY} STATIC ${lib_srcs} ${lib_hdrs})
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(CMAKE_COMPILER_IS_GNUCXX AND UNIX)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 endif()
 

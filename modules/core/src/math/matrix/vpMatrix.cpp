@@ -1636,7 +1636,7 @@ int main()
 void
 vpMatrix::svd(vpColVector &w, vpMatrix &V)
 {
-#if defined (VISP_HAVE_LAPACK_C)
+#if defined (VISP_HAVE_LAPACK)
   svdLapack(w, V);
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
   svdOpenCV(w, V);

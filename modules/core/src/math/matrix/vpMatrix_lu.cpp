@@ -46,9 +46,15 @@
 #  include <gsl/gsl_linalg.h>
 #endif
 
-#ifdef VISP_HAVE_LAPACK_C
-extern "C" int dgetrf_(int *m, int *n, double*a, int *lda, int *ipiv, int *info);
-extern "C" void dgetri_(int *n, double *a, int *lda, int *ipiv, double *work, int *lwork, int *info);
+#ifdef VISP_HAVE_LAPACK
+#  ifdef VISP_HAVE_LAPACK_BUILT_IN
+typedef long int integer;
+#  else
+typedef int integer;
+#  endif
+
+extern "C" int dgetrf_(integer *m, integer *n, double*a, integer *lda, integer *ipiv, integer *info);
+extern "C" void dgetri_(integer *n, double *a, integer *lda, integer *ipiv, double *work, integer *lwork, integer *info);
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
@@ -93,7 +99,7 @@ int main()
   vpMatrix A_1 = A.inverseByLU();
 
   std::cout << "Inverse by LU ";
-#if defined(VISP_HAVE_LAPACK_C)
+#if defined(VISP_HAVE_LAPACK)
   std::cout << "(using Lapack)";
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   std::cout << "(using OpenCV)";
@@ -110,7 +116,7 @@ int main()
 */
 vpMatrix vpMatrix::inverseByLU() const
 {
-#ifdef VISP_HAVE_LAPACK_C
+#ifdef VISP_HAVE_LAPACK
   return inverseByLULapack();
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   return inverseByLUOpenCV();
@@ -162,7 +168,7 @@ double vpMatrix::detByLU() const
         (*this)[0][2]*((*this)[1][0]*(*this)[2][1] - (*this)[1][1]*(*this)[2][0]) );
   }
   else {
-#ifdef VISP_HAVE_LAPACK_C
+#ifdef VISP_HAVE_LAPACK
     return detByLULapack();
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     return detByLUOpenCV();
@@ -303,7 +309,7 @@ double vpMatrix::detByLUGsl() const
 }
 #endif
 
-#ifdef VISP_HAVE_LAPACK_C
+#ifdef VISP_HAVE_LAPACK
 /*!
   Compute the inverse of a n-by-n matrix using the LU decomposition with Lapack 3rd party.
 
@@ -340,11 +346,11 @@ vpMatrix vpMatrix::inverseByLULapack() const
                       "Cannot inverse a non square matrix (%ux%u) by LU", rowNum, colNum)) ;
   }
 
-  int dim = (int) rowNum;
-  int lda = dim;
-  int info;
-  int lwork = dim*dim;
-  int *ipiv = new int [dim+1];
+  integer dim = (integer) rowNum;
+  integer lda = dim;
+  integer info;
+  integer lwork = dim*dim;
+  integer *ipiv = new integer [dim+1];
   double *work = new double [lwork];
 
   vpMatrix A = *this;
@@ -396,10 +402,10 @@ double vpMatrix::detByLULapack() const
                       rowNum, colNum)) ;
   }
 
-  int dim = (int) rowNum;
-  int lda = dim;
-  int info;
-  int *ipiv = new int [dim+1];
+  integer dim = (integer) rowNum;
+  integer lda = dim;
+  integer info;
+  integer *ipiv = new integer [dim+1];
 
   vpMatrix A = *this;
 
