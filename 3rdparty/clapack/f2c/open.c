@@ -57,14 +57,16 @@ f__bufadj(int n, int c)
 	len = (unsigned int)f__buflen;
 	if (len != f__buflen || !(nbuf = (char*)malloc(len)))
 		f__fatal(113, "malloc failure");
-	s = nbuf;
-	t = f__buf;
-	te = t + c;
-	while(t < te)
-		*s++ = *t++;
-	if (f__buf != f__buf0)
-		free(f__buf);
-	f__buf = nbuf;
+  else {
+    s = nbuf;
+    t = f__buf;
+    te = t + c;
+    while (t < te)
+      *s++ = *t++;
+    if (f__buf != f__buf0)
+      free(f__buf);
+    f__buf = nbuf;
+  }
 	}
 
  int
@@ -204,7 +206,11 @@ integer f_open(olist *a)
 			opnerr(a->oerr,errno,"open")
 		fclose(tf);
 #else
-		if (access(buf,0))
+#  ifdef _WIN32
+		if (_access(buf,0))
+#else
+    if (access(buf, 0))
+#endif
 			opnerr(a->oerr,errno,"open")
 #endif
 		break;
@@ -234,7 +240,11 @@ integer f_open(olist *a)
 			opnerr(a->oerr,128,"open")
 			}
 #else
+#ifdef _WIN32
+    if (!_access(buf, 0))
+#else
 		if (!access(buf,0))
+#endif
 			opnerr(a->oerr,128,"open")
 #endif
 		/* no break */
