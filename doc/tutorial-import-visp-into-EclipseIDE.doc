@@ -8,7 +8,7 @@ In this tutorial you will learn how to import a CMake project that uses ViSP int
 
 This tutorial uses CMake to build projects. If you are not familiar with CMake, you can check the <a href="http://www.cmake.org/cmake/help/cmake_tutorial.html">tutorial</a>.
 
-\section image_adjust Adjust Eclipse settings 
+\section image_adjust_eclipse Adjust Eclipse settings 
 
 1) You need to download Eclipse IDE <a href="https://eclipse.org/downloads">archive</a>.
 
@@ -29,7 +29,8 @@ $ tar -zxvf eclipse-***.tar.gz -C {target directory} (For Linux)
 6)  Browse > Select directory to the CMake project > Press "Finish"
 \image html img-visp-into-eclipse-6.png
 
-7)  Goto to the Project directory and execute "cmake . " in console in order to \ref tutorial-getting-started.html#image_unix_config
+7)  Goto to the Project directory and execute "cmake . " in console in order to \ref image_unix_config
+
 \image html img-visp-into-eclipse-7.png
 
 8)  Right click on Project > Press "Properties" > C/C++ Build > Builder Settings
@@ -52,7 +53,7 @@ $ tar -zxvf eclipse-***.tar.gz -C {target directory} (For Linux)
 12) Now run the Project from Eclipse as usual
 \image html img-visp-into-eclipse-12.png
 
-\section image_unresolved Unresolved inclusion
+\section image_unresolved_inclusion Unresolved inclusion
 1)  If you see issues such as "Unresolved inclusion"
 You need to perform next steps to solve it
 \image html img-visp-into-eclipse-unr-1.png
@@ -66,8 +67,8 @@ You need to perform next steps to solve it
 4) Wait until C++ indexer finished his work
 \image html img-visp-into-eclipse-unr-4.png
 
-\section image_arg Program arguments
-For some projects you need to specified input variables
+\section image_eclipse_arguments Program arguments
+For some projects you need to specified input arguments
 \image html img-visp-into-eclipse-arg-1.png
 
 Right click on Project > Run As > Run Configurations > C/C++ Application > "Project" Default > Arguments
