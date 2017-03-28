@@ -76,7 +76,7 @@ Right click on Project > Run As > Run Configurations > C/C++ Application > "Proj
 - Write arguments to "Program arguments"
 \image html img-visp-into-eclipse-arg-2.png
 
-\section image_next Next tutorial
+\section eclipse_image_next Next tutorial
 
 You are now ready to see the \ref tutorial-image-display
 

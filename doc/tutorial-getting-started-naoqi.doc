@@ -82,7 +82,7 @@ nao~ $ ./tutorial-undistort
 
 You are now ready to create your own project for Nao, Romeo or Pepper robots.
 
-\section image_next Next tutorial
+\section naoqi_image_next Next tutorial
 
 You are now ready to see the \ref tutorial-import-visp-into-EclipseIDE.
 */
