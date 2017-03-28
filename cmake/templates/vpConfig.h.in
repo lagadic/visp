@@ -168,7 +168,14 @@
 #cmakedefine VISP_HAVE_GSL
 
 // Defined if lapack/blas libraries are available (-lblas -llapack).
-#cmakedefine VISP_HAVE_LAPACK_C
+#cmakedefine VISP_HAVE_LAPACK
+// To keep compat with previous versions
+#ifdef VISP_HAVE_LAPACK
+#  define VISP_HAVE_LAPACK_C
+#endif
+
+// Defined if clapack built-in
+#cmakedefine VISP_HAVE_LAPACK_BUILT_IN
 
 // Defined the path to the basic scenes used by the simulator
 #cmakedefine VISP_SCENES_DIR "${VISP_SCENES_DIR}"

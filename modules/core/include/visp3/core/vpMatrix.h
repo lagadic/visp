@@ -236,7 +236,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 #  ifdef VISP_HAVE_GSL
   double detByLUGsl() const;
 #  endif
-#  ifdef VISP_HAVE_LAPACK_C
+#  ifdef VISP_HAVE_LAPACK
   double detByLULapack() const;
 #  endif
 #  if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -327,7 +327,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 #  if defined(VISP_HAVE_GSL)
   vpMatrix inverseByLUGsl() const;
 #  endif
-#  if defined(VISP_HAVE_LAPACK_C)
+#  if defined(VISP_HAVE_LAPACK)
   vpMatrix inverseByLULapack() const;
 #  endif
 #  if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -339,7 +339,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   vpMatrix inverseByCholesky() const;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#  if defined(VISP_HAVE_LAPACK_C)
+#  if defined(VISP_HAVE_LAPACK)
   vpMatrix inverseByCholeskyLapack() const;
 #  endif
 #  if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -351,7 +351,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   vpMatrix inverseByQR() const;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#  if defined(VISP_HAVE_LAPACK_C)
+#  if defined(VISP_HAVE_LAPACK)
   vpMatrix inverseByQRLapack() const;
 #  endif
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -399,7 +399,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 #  ifdef VISP_HAVE_GSL
   void svdGsl(vpColVector &w, vpMatrix &V);
 #  endif
-#  ifdef VISP_HAVE_LAPACK_C
+#  ifdef VISP_HAVE_LAPACK
   void svdLapack(vpColVector &w, vpMatrix &V);
 #  endif
 #  if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1

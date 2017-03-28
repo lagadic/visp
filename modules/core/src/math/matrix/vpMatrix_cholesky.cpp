@@ -52,9 +52,15 @@
 #  include <opencv2/core/core.hpp>
 #endif
 
-#ifdef VISP_HAVE_LAPACK_C
-extern "C" void dpotrf_ (char *uplo, int *n, double *a, int *lda, int *info);
-extern "C" int dpotri_(char *uplo, int *n, double *a, int *lda, int *info);
+#ifdef VISP_HAVE_LAPACK
+#  ifdef VISP_HAVE_LAPACK_BUILT_IN
+typedef long int integer;
+#  else
+typedef int integer;
+#  endif
+
+extern "C" void dpotrf_(char *uplo, integer *n, double *a, integer *lda, integer *info);
+extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda, integer *info);
 #endif
 
 /*!
@@ -96,7 +102,7 @@ int main()
 vpMatrix
 vpMatrix::inverseByCholesky() const
 {
-#ifdef VISP_HAVE_LAPACK_C
+#ifdef VISP_HAVE_LAPACK
   return inverseByCholeskyLapack();
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   return inverseByCholeskyOpenCV();
@@ -107,7 +113,7 @@ vpMatrix::inverseByCholesky() const
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#ifdef VISP_HAVE_LAPACK_C
+#ifdef VISP_HAVE_LAPACK
 /*!
   Compute the inverse of a n-by-n matrix using the Cholesky decomposition with Lapack 3rd party.
   The matrix must be real symmetric positive defined.
@@ -151,25 +157,25 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
                             "Cannot inverse a non-square matrix (%ux%u) by Cholesky", rowNum, colNum)) ;
   }
 
-  int rowNum_ = (int)this->getRows();
-  int lda = (int)rowNum_; //lda is the number of rows because we don't use a submatrix
-  int info;
+  integer rowNum_ = (integer)this->getRows();
+  integer lda = (integer)rowNum_; //lda is the number of rows because we don't use a submatrix
+  integer info;
 
   vpMatrix A = *this;
-  dpotrf_((char*)"L",&rowNum_,A.data,&lda,&info);
+  dpotrf_((char*)"L", &rowNum_, A.data, &lda, &info);
 
   if(info!=0)
-    std::cout << "cholesky:dpotrf_:error" << std::endl;
+    throw(vpException(vpException::fatalError, "Cannot inverse by Cholesky with Lapack: error in dpotrf_()"));
 
-  dpotri_((char*)"L",&rowNum_,A.data,&lda,&info);
+  dpotri_((char*)"L", &rowNum_, A.data, &lda, &info);
   if(info!=0){
     std::cout << "cholesky:dpotri_:error" << std::endl;
     throw vpMatrixException::badValue;
   }
 
-  for(unsigned int i=0;i<A.getRows();i++)
-    for(unsigned int j=0;j<A.getCols();j++)
-      if(i>j) A[i][j] = A[j][i];
+  for(unsigned int i=0; i<A.getRows(); i++)
+    for(unsigned int j=0; j<A.getCols(); j++)
+      if(i > j) A[i][j] = A[j][i];
 
   return A;
 }
