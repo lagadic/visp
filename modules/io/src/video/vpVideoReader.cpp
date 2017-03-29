@@ -48,6 +48,7 @@
 #include <iostream>
 #include <fstream>
 #include <limits>   // numeric_limits
+#include <cctype>
 
 /*!
 Basic constructor.
