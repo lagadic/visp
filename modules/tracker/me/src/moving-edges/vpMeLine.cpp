@@ -54,7 +54,7 @@
 #include <stdlib.h>
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
-#include <algorithm>    // std::min
+#include <algorithm>    // (std::min)
 
 #define INCR_MIN 1
 
@@ -950,9 +950,9 @@ vpMeLine::computeRhoTheta(const vpImage<unsigned char>& I)
       double co_rho_lim1 = fabs(((double)(height_-i))/cos(theta));
       double co_rho_lim2 = fabs(((double)(width_-j))/sin(theta));
 
-			double rho_lim = std::min(rho_lim1,rho_lim2);
-			double co_rho_lim = std::min(co_rho_lim1,co_rho_lim2);
-			incr = (int)std::floor(std::min(rho_lim,co_rho_lim));
+			double rho_lim = (std::min)(rho_lim1,rho_lim2);
+			double co_rho_lim = (std::min)(co_rho_lim1,co_rho_lim2);
+			incr = (int)std::floor((std::min)(rho_lim,co_rho_lim));
 			if(incr<INCR_MIN){
 				vpERROR_TRACE("increment is too small") ;
 				throw(vpTrackingException(vpTrackingException::fatalError,

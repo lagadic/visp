@@ -45,7 +45,7 @@
 */
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
-#include <algorithm>    // std::min
+#include <algorithm>    // (std::min)
 
 #include <visp3/mbt/vpMbtMeLine.h>
 #include <visp3/core/vpTrackingException.h>
@@ -521,7 +521,7 @@ vpMbtMeLine::computeProjectionError(const vpImage<unsigned char>& _I, double &_s
 //      double angle1 = sqrt(vpMath::sqr(deltaNormalized-angle));
 //      double angle2 = sqrt(vpMath::sqr(deltaNormalized- (angle-M_PI)));
 
-      _sumErrorRad += std::min(angle1,angle2);
+      _sumErrorRad += (std::min)(angle1,angle2);
 
 //      if(std::fabs(deltaNormalized-angle) > M_PI / 2)
 //      {

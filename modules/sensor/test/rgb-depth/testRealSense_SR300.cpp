@@ -214,7 +214,7 @@ namespace {
             break;
 
           case rs::stream::infrared:
-            di.init( I_infrared, 0, (int) std::max(I_color.getHeight(), I_depth.getHeight()) + 30, "Infrared frame" );
+            di.init( I_infrared, 0, (int) (std::max)(I_color.getHeight(), I_depth.getHeight()) + 30, "Infrared frame" );
             break;
 
           default:

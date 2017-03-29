@@ -737,8 +737,8 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
     if (m_scale == 1) {
       unsigned int i_min = (unsigned int)iP.get_i();
       unsigned int j_min = (unsigned int)iP.get_j();
-      unsigned int i_max = std::min(i_min + h, m_height);
-      unsigned int j_max = std::min(j_min + w, m_width);
+      unsigned int i_max = (std::min)(i_min + h, m_height);
+      unsigned int j_max = (std::min)(j_min + w, m_width);
       for (unsigned int i=i_min; i<i_max; i++) {
         unsigned char *dst_24 = ( unsigned char* ) m_background->imageData + (int)(i*m_background->widthStep + j_min*3);
         for (unsigned int j=j_min; j<j_max; j++) {
@@ -750,10 +750,10 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
       }
     }
     else {
-      int i_min = std::max((int)ceil(iP.get_i()/m_scale), 0);
-      int j_min = std::max((int)ceil(iP.get_j()/m_scale), 0);
-      int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
-      int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
+      int i_min = (std::max)((int)ceil(iP.get_i()/m_scale), 0);
+      int j_min = (std::max)((int)ceil(iP.get_j()/m_scale), 0);
+      int i_max = (std::min)((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
+      int j_max = (std::min)((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
       for (int i=i_min; i<i_max; i++) {
         unsigned char *dst_24 = ( unsigned char* ) m_background->imageData + (int)(i*m_background->widthStep + j_min*3);
         for (int j=j_min; j<j_max; j++) {
@@ -777,8 +777,8 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
     if (m_scale == 1) {
       unsigned int i_min = (unsigned int)iP.get_i();
       unsigned int j_min = (unsigned int)iP.get_j();
-      unsigned int i_max = std::min(i_min + h, m_height);
-      unsigned int j_max = std::min(j_min + w, m_width);
+      unsigned int i_max = (std::min)(i_min + h, m_height);
+      unsigned int j_max = (std::min)(j_min + w, m_width);
       for (unsigned int i=i_min; i<i_max; i++) {
         unsigned char *dst_24 = ( unsigned char* ) m_background.data + (int)(i*3*m_width + j_min*3);
         for (unsigned int j=j_min; j<j_max; j++) {
@@ -790,10 +790,10 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<unsigned char> &I,const vp
       }
     }
     else {
-      int i_min = std::max((int)ceil(iP.get_i()/m_scale), 0);
-      int j_min = std::max((int)ceil(iP.get_j()/m_scale), 0);
-      int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
-      int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
+      int i_min = (std::max)((int)ceil(iP.get_i()/m_scale), 0);
+      int j_min = (std::max)((int)ceil(iP.get_j()/m_scale), 0);
+      int i_max = (std::min)((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
+      int j_max = (std::min)((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
       for (int i=i_min; i<i_max; i++) {
         unsigned char *dst_24 = ( unsigned char* ) m_background.data + (int)(i*3*m_width + j_min*3);
         for (int j=j_min; j<j_max; j++) {
@@ -945,8 +945,8 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePo
     if (m_scale == 1) {
       unsigned int i_min = (unsigned int)iP.get_i();
       unsigned int j_min = (unsigned int)iP.get_j();
-      unsigned int i_max = std::min(i_min + h, m_height);
-      unsigned int j_max = std::min(j_min + w, m_width);
+      unsigned int i_max = (std::min)(i_min + h, m_height);
+      unsigned int j_max = (std::min)(j_min + w, m_width);
       for (unsigned int i=i_min; i<i_max; i++) {
         unsigned char *dst_24 = ( unsigned char* ) m_background->imageData + (int)(i*m_background->widthStep + j_min*3);
         for (unsigned int j=j_min; j<j_max; j++) {
@@ -958,10 +958,10 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePo
       }
     }
     else {
-      int i_min = std::max((int)ceil(iP.get_i()/m_scale), 0);
-      int j_min = std::max((int)ceil(iP.get_j()/m_scale), 0);
-      int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
-      int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
+      int i_min = (std::max)((int)ceil(iP.get_i()/m_scale), 0);
+      int j_min = (std::max)((int)ceil(iP.get_j()/m_scale), 0);
+      int i_max = (std::min)((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
+      int j_max = (std::min)((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
       for (int i=i_min; i<i_max; i++) {
         unsigned char *dst_24 = ( unsigned char* ) m_background->imageData + (int)(i*m_background->widthStep + j_min*3);
         for (int j=j_min; j<j_max; j++) {
@@ -984,8 +984,8 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePo
     if (m_scale == 1) {
       unsigned int i_min = (unsigned int)iP.get_i();
       unsigned int j_min = (unsigned int)iP.get_j();
-      unsigned int i_max = std::min(i_min + h, m_height);
-      unsigned int j_max = std::min(j_min + w, m_width);
+      unsigned int i_max = (std::min)(i_min + h, m_height);
+      unsigned int j_max = (std::min)(j_min + w, m_width);
       for (unsigned int i=i_min; i<i_max; i++) {
         unsigned char *dst_24 = ( unsigned char* ) m_background.data + (int)(i*3*m_width + j_min*3);
         for (unsigned int j=j_min; j<j_max; j++) {
@@ -997,10 +997,10 @@ void vpDisplayOpenCV::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePo
       }
     }
     else {
-      int i_min = std::max((int)ceil(iP.get_i()/m_scale), 0);
-      int j_min = std::max((int)ceil(iP.get_j()/m_scale), 0);
-      int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
-      int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
+      int i_min = (std::max)((int)ceil(iP.get_i()/m_scale), 0);
+      int j_min = (std::max)((int)ceil(iP.get_j()/m_scale), 0);
+      int i_max = (std::min)((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
+      int j_max = (std::min)((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
       for (int i=i_min; i<i_max; i++) {
         unsigned char *dst_24 = ( unsigned char* ) m_background.data + (int)(i*3*m_width + j_min*3);
         for (int j=j_min; j<j_max; j++) {

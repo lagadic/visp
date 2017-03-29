@@ -512,10 +512,10 @@ void vpD3DRenderer::setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint &iP,
   {
     D3DLOCKED_RECT d3dLRect;
 
-    int i_min = std::max((int)ceil(iP.get_i() / m_rscale), 0);
-    int j_min = std::max((int)ceil(iP.get_j() / m_rscale), 0);
-    int i_max = std::min((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-    int j_max = std::min((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+    int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
+    int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
+    int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
+    int j_max = (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
 
     RECT r;
     r.top = (LONG)i_min; r.left = (LONG)j_min;
@@ -591,10 +591,10 @@ void vpD3DRenderer::setImgROI(const vpImage<unsigned char>& im, const vpImagePoi
   {
     D3DLOCKED_RECT d3dLRect;
 
-    int i_min = std::max((int)ceil(iP.get_i() / m_rscale), 0);
-    int j_min = std::max((int)ceil(iP.get_j() / m_rscale), 0);
-    int i_max = std::min((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-    int j_max = std::min((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+    int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
+    int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
+    int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
+    int j_max = (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
 
     RECT r;
     r.top=(LONG)i_min; r.left= (LONG)j_min;
