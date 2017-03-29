@@ -45,6 +45,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+// Include WinSock2.h before windows.h to ensure that winsock.h is not included by windows.h 
+// since winsock.h and winsock2.h are incompatible
+#include <WinSock2.h> 
 #include <windows.h>
 #include <visp3/gui/vpWin32Renderer.h>
 #include <visp3/gui/vpGDIRenderer.h>
