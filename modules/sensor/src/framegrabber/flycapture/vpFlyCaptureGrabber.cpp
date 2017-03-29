@@ -459,12 +459,12 @@ void vpFlyCaptureGrabber::setProperty(const FlyCapture2::PropertyType &prop_type
     prop.absControl = propInfo.absValSupported;
     switch(prop_value) {
     case ABS_VALUE: {
-      float value_ = std::max<float>(std::min<float>(value, propInfo.absMax), propInfo.absMin);
+      float value_ = (std::max)<float>((std::min)<float>(value, propInfo.absMax), propInfo.absMin);
       prop.absValue = value_;
       break;
     }
     case VALUE_A: {
-      unsigned int value_ = std::max<unsigned int>(std::min<unsigned int>((unsigned int)value, propInfo.max), propInfo.min);
+      unsigned int value_ = (std::max)<unsigned int>((std::min)<unsigned int>((unsigned int)value, propInfo.max), propInfo.min);
       prop.valueA = value_;
       break;
     }

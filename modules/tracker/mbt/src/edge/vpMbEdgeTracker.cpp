@@ -1154,7 +1154,7 @@ vpMbEdgeTracker::testTracking()
   // Compare the number of good points with the min between the number of expected points and
   // number of points that are tracked
   int nb_min = (int)vpMath::minimum(percentageGdPt *nbExpectedPoint, percentageGdPt *(nbGoodPoint + nbBadPoint) );
-  //int nb_min = std::min(val1, val2);
+  //int nb_min = (std::min)(val1, val2);
   if (nbGoodPoint < nb_min || nbExpectedPoint < 2) {
     std::ostringstream oss;
     oss << "Not enough moving edges ("

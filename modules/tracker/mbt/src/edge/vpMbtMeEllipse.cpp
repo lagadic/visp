@@ -47,7 +47,7 @@
 
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
-#include <algorithm>    // std::min
+#include <algorithm>    // (std::min)
 
 
 /*!
@@ -271,7 +271,7 @@ vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char>& _I, double 
       double angle1 = acos(vecSite * vecGrad);
       double angle2 = acos(vecSite * (-vecGrad));
 
-      _sumErrorRad += std::min(angle1,angle2);
+      _sumErrorRad += (std::min)(angle1,angle2);
 
       _nbFeatures++;
     }

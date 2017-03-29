@@ -1238,7 +1238,7 @@ std::string vpIoTools::getFileExtension(const std::string& pathname, const bool 
   int sepIndex = (int)pathname.rfind(sep);
   if(!altsep.empty()) {
     int altsepIndex = (int)pathname.rfind(altsep);
-    sepIndex = (std::max)(sepIndex, altsepIndex);
+    sepIndex = ((std::max))(sepIndex, altsepIndex);
   }
 
   size_t dotIndex = pathname.rfind(extsep);

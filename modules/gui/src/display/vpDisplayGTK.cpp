@@ -592,8 +592,8 @@ void vpDisplayGTK::displayImageROI ( const vpImage<unsigned char> &I,const vpIma
     vpImageTools::crop(I, iP.get_i(), iP.get_j(), h, w, Itemp, m_scale, m_scale);
 
     /* Copie de l'image dans le pixmap fond */
-    int i_min = std::max((int)ceil(iP.get_i()/m_scale), 0);
-    int j_min = std::max((int)ceil(iP.get_j()/m_scale), 0);
+    int i_min = (std::max)((int)ceil(iP.get_i()/m_scale), 0);
+    int j_min = (std::max)((int)ceil(iP.get_j()/m_scale), 0);
 
     gdk_draw_gray_image(m_background,
                         m_gc, (gint)j_min, (gint)i_min, (gint)Itemp.getWidth(), (gint)Itemp.getHeight(),
@@ -683,8 +683,8 @@ void vpDisplayGTK::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint
     vpImageTools::crop(I, iP.get_i(), iP.get_j(), h, w, Itemp, m_scale, m_scale);
 
     /* Copie de l'image dans le pixmap fond */
-    int i_min = std::max((int)ceil(iP.get_i()/m_scale), 0);
-    int j_min = std::max((int)ceil(iP.get_j()/m_scale), 0);
+    int i_min = (std::max)((int)ceil(iP.get_i()/m_scale), 0);
+    int j_min = (std::max)((int)ceil(iP.get_j()/m_scale), 0);
 
     gdk_draw_rgb_32_image(m_background,
                           m_gc, (gint)j_min, (gint)i_min, (gint)Itemp.getWidth(), (gint)Itemp.getHeight(),

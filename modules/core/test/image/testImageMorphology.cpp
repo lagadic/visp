@@ -171,7 +171,7 @@ void generalErosion(vpImage<unsigned char> &I, vpImageMorphology::vpConnexityTyp
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         unsigned char min_value = null_value;
         for (int k = 0; k < 5; k++) {
-          min_value = std::min(min_value, *(ptr_curr_J + j + offset[k]));
+          min_value = (std::min)(min_value, *(ptr_curr_J + j + offset[k]));
         }
 
         *(ptr_curr_I + j) = min_value;
@@ -189,7 +189,7 @@ void generalErosion(vpImage<unsigned char> &I, vpImageMorphology::vpConnexityTyp
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         unsigned char min_value = null_value;
         for (int k = 0; k < 9; k++) {
-          min_value = std::min(min_value, *(ptr_curr_J + j + offset[k]));
+          min_value = (std::min)(min_value, *(ptr_curr_J + j + offset[k]));
         }
 
         *(ptr_curr_I + j) = min_value;
@@ -231,7 +231,7 @@ void generalDilatation(vpImage<unsigned char> &I, vpImageMorphology::vpConnexity
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         unsigned char max_value = null_value;
         for (int k = 0; k < 5; k++) {
-          max_value = std::max(max_value, *(ptr_curr_J + j + offset[k]));
+          max_value = (std::max)(max_value, *(ptr_curr_J + j + offset[k]));
         }
 
         *(ptr_curr_I + j) = max_value;
@@ -249,7 +249,7 @@ void generalDilatation(vpImage<unsigned char> &I, vpImageMorphology::vpConnexity
       for (unsigned int j = 0; j < I.getWidth(); j++) {
         unsigned char max_value = null_value;
         for (int k = 0; k < 9; k++) {
-          max_value = std::max(max_value, *(ptr_curr_J + j + offset[k]));
+          max_value = (std::max)(max_value, *(ptr_curr_J + j + offset[k]));
         }
 
         *(ptr_curr_I + j) = max_value;

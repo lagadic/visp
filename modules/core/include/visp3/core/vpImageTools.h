@@ -268,10 +268,10 @@ void vpImageTools::crop(const vpImage<Type> &I,
                         unsigned int roi_height, unsigned int roi_width,
                         vpImage<Type> &crop, unsigned int v_scale, unsigned int h_scale)
 {
-  int i_min = std::max((int)(ceil(roi_top/v_scale)), 0);
-  int j_min = std::max((int)(ceil(roi_left/h_scale)), 0);
-  int i_max = std::min((int)(ceil((roi_top + roi_height))/v_scale), (int)(I.getHeight()/v_scale));
-  int j_max = std::min((int)(ceil((roi_left + roi_width)/h_scale)), (int)(I.getWidth()/h_scale));
+  int i_min = (std::max)((int)(ceil(roi_top/v_scale)), 0);
+  int j_min = (std::max)((int)(ceil(roi_left/h_scale)), 0);
+  int i_max = (std::min)((int)(ceil((roi_top + roi_height))/v_scale), (int)(I.getHeight()/v_scale));
+  int j_max = (std::min)((int)(ceil((roi_left + roi_width)/h_scale)), (int)(I.getWidth()/h_scale));
 
   unsigned int i_min_u = (unsigned int)i_min;
   unsigned int j_min_u = (unsigned int)j_min;
@@ -368,10 +368,10 @@ template<class Type>
 void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi, vpImage<Type> &crop,
                         unsigned int v_scale, unsigned int h_scale)
 {
-  int i_min = std::max((int)(ceil(roi.getTop()/v_scale)), 0);
-  int j_min = std::max((int)(ceil(roi.getLeft()/h_scale)), 0);
-  int i_max = std::min((int)(ceil((roi.getTop() + roi.getHeight()))/v_scale), (int)(height/v_scale));
-  int j_max = std::min((int)(ceil((roi.getLeft() + roi.getWidth())/h_scale)), (int)(width/h_scale));
+  int i_min = (std::max)((int)(ceil(roi.getTop()/v_scale)), 0);
+  int j_min = (std::max)((int)(ceil(roi.getLeft()/h_scale)), 0);
+  int i_max = (std::min)((int)(ceil((roi.getTop() + roi.getHeight()))/v_scale), (int)(height/v_scale));
+  int j_max = (std::min)((int)(ceil((roi.getLeft() + roi.getWidth())/h_scale)), (int)(width/h_scale));
 
   unsigned int i_min_u = (unsigned int)i_min;
   unsigned int j_min_u = (unsigned int)j_min;
@@ -849,8 +849,8 @@ void vpImageTools::flip(vpImage<Type> &I)
 
 template<class Type>
 Type vpImageTools::getPixelClamped(const vpImage<Type> &I, const float u, const float v) {
-  unsigned int j = std::min(std::max(0u, (unsigned int) u), I.getWidth()-1);
-  unsigned int i = std::min(std::max(0u, (unsigned int) v), I.getHeight()-1);
+  unsigned int j = (std::min)((std::max)(0u, (unsigned int) u), I.getWidth()-1);
+  unsigned int i = (std::min)((std::max)(0u, (unsigned int) v), I.getHeight()-1);
 
   return I[i][j];
 }
@@ -935,14 +935,14 @@ vpImageTools::resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, const 
   unsigned int u0 = (unsigned int) u;
   unsigned int v0 = (unsigned int) v;
 
-  unsigned int u1 = std::min(I.getWidth()-1, (unsigned int) u+1);
+  unsigned int u1 = (std::min)(I.getWidth()-1, (unsigned int) u+1);
   unsigned int v1 = v0;
 
   unsigned int u2 = u0;
-  unsigned int v2 = std::min(I.getHeight()-1, (unsigned int) v+1);
+  unsigned int v2 = (std::min)(I.getHeight()-1, (unsigned int) v+1);
 
-  unsigned int u3 = std::min(I.getWidth()-1, (unsigned int) u+1);
-  unsigned int v3 = std::min(I.getHeight()-1, (unsigned int) v+1);
+  unsigned int u3 = (std::min)(I.getWidth()-1, (unsigned int) u+1);
+  unsigned int v3 = (std::min)(I.getHeight()-1, (unsigned int) v+1);
 
   float col0 = lerp(I[v0][u0], I[v1][u1], xFrac);
   float col1 = lerp(I[v2][u2], I[v3][u3], xFrac);
@@ -957,14 +957,14 @@ vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, co
   unsigned int u0 = (unsigned int) u;
   unsigned int v0 = (unsigned int) v;
 
-  unsigned int u1 = std::min(I.getWidth()-1, (unsigned int) u+1);
+  unsigned int u1 = (std::min)(I.getWidth()-1, (unsigned int) u+1);
   unsigned int v1 = v0;
 
   unsigned int u2 = u0;
-  unsigned int v2 = std::min(I.getHeight()-1, (unsigned int) v+1);
+  unsigned int v2 = (std::min)(I.getHeight()-1, (unsigned int) v+1);
 
-  unsigned int u3 = std::min(I.getWidth()-1, (unsigned int) u+1);
-  unsigned int v3 = std::min(I.getHeight()-1, (unsigned int) v+1);
+  unsigned int u3 = (std::min)(I.getWidth()-1, (unsigned int) u+1);
+  unsigned int v3 = (std::min)(I.getHeight()-1, (unsigned int) v+1);
 
   for (int c = 0; c < 3; c++) {
     float col0 = lerp( ((unsigned char *) &I[v0][u0])[c], ((unsigned char *) &I[v1][u1])[c], xFrac );

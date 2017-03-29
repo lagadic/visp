@@ -35,7 +35,7 @@
  *
  *****************************************************************************/
 
-#include <algorithm> // for std::min and std::max
+#include <algorithm> // for (std::min) and (std::max)
 #include <visp3/core/vpConfig.h>
 
 #include <visp3/core/vpMatrix.h>
@@ -115,7 +115,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
   integer rowNum_ = (integer)this->getRows();
   integer colNum_ = (integer)this->getCols();
   integer lda = (integer)rowNum_; //lda is the number of rows because we don't use a submatrix
-  integer dimTau = std::min(rowNum_,colNum_);
+  integer dimTau = (std::min)(rowNum_,colNum_);
   integer dimWork = -1;
   double *tau = new double[dimTau];
   double *work = new double[1];

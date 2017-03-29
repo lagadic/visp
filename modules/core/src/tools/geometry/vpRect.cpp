@@ -255,10 +255,10 @@ bool vpRect::operator!=(const vpRect &r) const
  \return Intersection rectangle or null rectangle if the two rectangles do not intersect.
  */
 vpRect& vpRect::operator&=(const vpRect &r) {
-  double x1 = std::max(left, r.left);
-  double y1 = std::max(top, r.top);
-  width  = std::min(left + width, r.left + r.width) - x1;
-  height = std::min(top + height, r.top + r.height) - y1;
+  double x1 = (std::max)(left, r.left);
+  double y1 = (std::max)(top, r.top);
+  width  = (std::min)(left + width, r.left + r.width) - x1;
+  height = (std::min)(top + height, r.top + r.height) - y1;
   left = x1;
   top = y1;
 
