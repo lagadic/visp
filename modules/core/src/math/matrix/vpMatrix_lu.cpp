@@ -304,6 +304,7 @@ double vpMatrix::detByLUGsl() const
   det = gsl_linalg_LU_det (A, s);
 
   gsl_permutation_free(p);
+  gsl_matrix_free(A);
 
   return det;
 }
