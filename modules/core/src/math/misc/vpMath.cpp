@@ -219,19 +219,19 @@ double vpMath::getMedian(const std::vector<double> &v) {
     throw vpException(vpException::notInitialized, "Empty vector !");
   }
 
-  double median = 0.0;
   std::vector<double> v_copy = v;
   size_t size = v_copy.size();
 
-  if(size % 2 == 0) {
-    sort(v_copy.begin(), v_copy.end());
-    median = (v_copy[size / 2 - 1] + v_copy[size / 2]) / 2.0;
-  } else {
-    std::nth_element(v_copy.begin(), v_copy.begin() + (int) (size/2), v_copy.end());
-    median = v_copy[size/2];
-  }
+  size_t n = size / 2;
+  std::nth_element(v_copy.begin(), v_copy.begin()+n, v_copy.end());
+  double val_n = v_copy[n];
 
-  return median;
+  if (size % 2 == 1) {
+    return val_n;
+  } else {
+    std::nth_element(v_copy.begin(), v_copy.begin()+n-1, v_copy.end());
+    return 0.5*(val_n + v_copy[n-1]);
+  }
 }
 
 /*!

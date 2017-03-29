@@ -4419,7 +4419,7 @@ std::ostream & vpMatrix::cppPrint(std::ostream & os, const std::string &matrixNa
     os << std::endl;
   }
   return os;
-};
+}
 
 /*!
   Stack A at the end of the current matrix, or copy if the matrix has no dimensions : this = [ this A ]^T.
@@ -4454,7 +4454,6 @@ void vpMatrix::stack(const vpRowVector &r)
     *this = vpMatrix::stack(*this, r);
 }
 
-
 /*!
   Insert matrix A at the given position in the current matrix.
 
@@ -4469,10 +4468,14 @@ void vpMatrix::insert(const vpMatrix&A, const unsigned int r,
                       const unsigned int c)
 {
   if( (r + A.getRows() ) <= rowNum && (c + A.getCols() ) <= colNum ){
-    // recopy matrix A in the current one, does not call static function to avoid initialisation and recopy of matrix
-    for(unsigned int i=r; i<(r+A.getRows()); i++){
-      for(unsigned int j=c; j<(c+A.getCols()); j++){
-        (*this)[i][j] = A[i-r][j-c];
+    if (A.colNum == colNum && data != NULL && A.data != NULL && A.size() > 0) {
+      memcpy(data+r*colNum, A.data, sizeof(double)*A.size());
+    } else {
+      // recopy matrix A in the current one, does not call static function to avoid initialisation and recopy of matrix
+      for(unsigned int i=r; i<(r+A.getRows()); i++){
+        for(unsigned int j=c; j<(c+A.getCols()); j++){
+          (*this)[i][j] = A[i-r][j-c];
+        }
       }
     }
   }
@@ -4482,7 +4485,6 @@ void vpMatrix::insert(const vpMatrix&A, const unsigned int r,
                       A.getRows(), A.getCols(), rowNum, colNum, r, c);
   }
 }
-
 
 /*!
   Compute the eigenvalues of a n-by-n real symmetric matrix.

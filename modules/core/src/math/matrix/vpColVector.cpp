@@ -990,10 +990,7 @@ vpColVector::median(const vpColVector &v)
                       "Cannot compute column vector median: vector empty")) ;
   }
 
-  std::vector<double> vectorOfDoubles(v.size());
-  for(unsigned int i = 0; i < v.size(); i++) {
-    vectorOfDoubles[i] = v[i];
-  }
+  std::vector<double> vectorOfDoubles(v.data, v.data + v.rowNum);
 
   return vpMath::getMedian(vectorOfDoubles);
 }
@@ -1237,8 +1234,10 @@ void vpColVector::insert(unsigned int i, const vpColVector &v)
 {
   if (i+v.size() > this->size())
     throw(vpException(vpException::dimensionError, "Unable to insert a column vector"));
-  for (unsigned int j=0; j < v.size(); j++)
-    (*this)[i+j] = v[j];
+
+  if (data != NULL && v.data != NULL && v.rowNum > 0) {
+    memcpy(data+i, v.data, sizeof(double)*v.rowNum);
+  }
 }
 
 /*!

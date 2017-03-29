@@ -51,24 +51,32 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &bench)
-{
-  static unsigned int cpt = 0;
-  std::cout << "** Test " << ++cpt << std::endl;
-  std::cout << s << "(" << M.getRows() << "," << M.getCols() << ") = \n" << M << std::endl;
-  if(bench.size() != M.size()) {
-    std::cout << "Test fails: bad size wrt bench" << std::endl;
-    return false;
-  }
-  for (unsigned int i=0; i<M.size(); i++) {
-    if (std::fabs(M.data[i]-bench[i]) > std::fabs(M.data[i])*std::numeric_limits<double>::epsilon()) {
-      std::cout << "Test fails: bad content" << std::endl;
+
+namespace {
+  bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &bench)
+  {
+    static unsigned int cpt = 0;
+    std::cout << "** Test " << ++cpt << std::endl;
+    std::cout << s << "(" << M.getRows() << "," << M.getCols() << ") = \n" << M << std::endl;
+    if(bench.size() != M.size()) {
+      std::cout << "Test fails: bad size wrt bench" << std::endl;
       return false;
     }
+    for (unsigned int i=0; i<M.size(); i++) {
+      if (std::fabs(M.data[i]-bench[i]) > std::fabs(M.data[i])*std::numeric_limits<double>::epsilon()) {
+        std::cout << "Test fails: bad content" << std::endl;
+        return false;
+      }
+    }
+
+    return true;
   }
 
-  return true;
+  double getRandomValues(const double min, const double max) {
+    return (max - min) * ( (double) rand() / (double) RAND_MAX ) + min;
+  }
 }
+
 
 int
 main()
@@ -300,14 +308,64 @@ main()
       //realise the operation D = 2 * M^T * N + 3 C
       vpGEMM(M, N, 2, C, 3, D, VP_GEMM_A_T);
       std::cout << D << std::endl;
-
-      std::cout << "All tests succeed" << std::endl;
-      return 0;
     }
+
+    {
+      std::cout << "------------------------" << std::endl;
+      std::cout << "--- TEST vpMatrix insert() with same colNum " << std::endl;
+      std::cout << "------------------------" << std::endl;
+      const unsigned int nb = 10000;
+      const unsigned int size = 100;
+
+      vpMatrix m_big(nb*size, 6);
+      std::vector<vpMatrix> submatrices(nb);
+      for (size_t cpt = 0; cpt < submatrices.size(); cpt++) {
+        vpMatrix m(size, 6);
+
+        for (unsigned int i = 0; i < m.getRows(); i++) {
+          for (unsigned int j = 0; j < m.getCols(); j++) {
+            m[i][j] = getRandomValues(-100.0, 100.0);
+          }
+        }
+
+        submatrices[cpt] = m;
+      }
+
+      double t = vpTime::measureTimeMs();
+      for (unsigned int i = 0; i < nb; i++) {
+        m_big.insert(submatrices[(size_t) i], i*size, 0);
+      }
+      t = vpTime::measureTimeMs() - t;
+      std::cout << "Matrix insert: " << t << " ms" << std::endl;
+
+      for (unsigned int cpt = 0; cpt < nb; cpt++) {
+        for (unsigned int i = 0; i <size; i++) {
+          for (unsigned int j = 0; j < 6; j++) {
+            if ( !vpMath::equal(m_big[cpt*size+i][j], submatrices[(size_t) cpt][i][j], std::numeric_limits<double>::epsilon()) ) {
+              std::cerr << "Problem with vpMatrix insert()!" << std::endl;
+              return EXIT_FAILURE;
+            }
+          }
+        }
+      }
+
+      //Try to insert empty matrices
+      vpMatrix m1(2,3), m2, m3;
+      m1.insert(m2, 0, 0);
+      m3.insert(m2, 0, 0);
+
+      std::cout << "Insert empty matrices:" << std::endl;
+      std::cout << "m1:\n" << m1 << std::endl;
+      std::cout << "m2:\n" << m2 << std::endl;
+      std::cout << "m3:\n" << m3 << std::endl;
+    }
+
+    std::cout << "All tests succeed" << std::endl;
+    return EXIT_SUCCESS;
   }
   catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 

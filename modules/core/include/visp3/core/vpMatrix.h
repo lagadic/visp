@@ -208,7 +208,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //@}
 
   //---------------------------------
-  // Matrix insertion with Static Public Member Functions
+  // Matrix insertion
   //---------------------------------
   /** @name Matrix insertion */
   //@{
