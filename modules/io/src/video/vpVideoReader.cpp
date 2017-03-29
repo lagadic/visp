@@ -43,10 +43,12 @@
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/io/vpVideoReader.h>
+#include <visp3/core/vpIoTools.h>
 
 #include <iostream>
 #include <fstream>
 #include <limits>   // numeric_limits
+#include <cctype>
 
 /*!
 Basic constructor.
@@ -109,6 +111,14 @@ void vpVideoReader::setFileName(const char *filename)
 
   if (formatType == FORMAT_UNKNOWN) {
     throw(vpException(vpException::badValue, "Filename extension not supported"));
+  }
+
+  // checking image name format
+  if (isImageExtensionSupported()) {
+    std::string format = vpIoTools::getName(fileName);
+    if (!checkImageNameFormat(format)) {
+      throw(vpException(vpException::badValue, "Format of image name wasn't recognized: %s", format.c_str()));
+    }
   }
 
 	initFileName = true;
@@ -612,7 +622,6 @@ std::string vpVideoReader::getExtension(const std::string &filename)
 	return ext;
 }
 
-
 /*!
 Get the last frame index (update the lastFrame attribute).
 */
@@ -625,21 +634,20 @@ void vpVideoReader::findLastFrameIndex()
   
   if (imSequence != NULL) {
     if (! lastFrameIndexIsSet) {
-      char name[FILENAME_MAX];
-      long image_number = firstFrame;
-      bool failed;
-      do {
-        std::fstream file;
-        sprintf(name,fileName,image_number) ;
-        file.open(name, std::ios::in);
-        failed = file.fail();
-        if (!failed) {
-          file.close();
-          image_number++;
+      std::string imageNameFormat = vpIoTools::getName(std::string(fileName));
+      std::string dirName = vpIoTools::getParent(std::string(fileName));
+      if (dirName == "") {
+        dirName = ".";
+      }
+      std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
+      lastFrame = 0;
+      for (size_t i = 0; i < files.size(); i++) {
+        // Checking that file name satisfies image format, specified by imageNameFormat, and extracting imageIndex
+        long imageIndex = extractImageIndex(files[i], imageNameFormat);
+        if (imageIndex != -1 && imageIndex > lastFrame) {
+          lastFrame = imageIndex;
         }
-      } while(!failed);
-      
-      lastFrame = image_number -1;
+      }
     }
   }
 
@@ -673,28 +681,29 @@ void vpVideoReader::findLastFrameIndex()
   }
 #endif
 }
+
 /*!
 Get the first frame index (update the firstFrame attribute).
 */
-void
-	vpVideoReader::findFirstFrameIndex()
+void vpVideoReader::findFirstFrameIndex()
 {
 	if (imSequence != NULL)
 	{
 		if (! firstFrameIndexIsSet) {
-			char name[FILENAME_MAX];
-			int image_number = 0;
-			bool failed;
-			do {
-				std::fstream file;
-				sprintf(name, fileName, image_number) ;
-				file.open(name, std::ios::in);
-				failed = file.fail();
-				if (!failed) file.close();
-				image_number++;
-			} while(failed);
-
-			firstFrame = image_number - 1;
+			std::string imageNameFormat = vpIoTools::getName(std::string(fileName));
+			std::string dirName = vpIoTools::getParent(std::string(fileName));
+			if (dirName == "") {
+				dirName = ".";
+			}
+			std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
+			firstFrame = -1;
+			for (size_t i = 0; i < files.size(); i++) {
+				// Checking that file name satisfies image format, specified by imageNameFormat, and extracting imageIndex
+				long imageIndex = extractImageIndex(files[i], imageNameFormat);
+				if (imageIndex != -1 && (imageIndex < firstFrame || firstFrame == -1)) {
+					firstFrame = imageIndex;
+				}
+			}
 			imSequence->setImageNumber(firstFrame);
 		}
 	}
@@ -706,7 +715,7 @@ void
 	}
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	else if (! firstFrameIndexIsSet)
-	{		
+	{
 		firstFrame = (long) (0);		
 	}
 #endif
@@ -834,4 +843,60 @@ vpVideoReader &vpVideoReader::operator>>(vpImage<vpRGBa> &I)
 {
   this->acquire(I);
   return *this;
+}
+
+/*!
+    Checks imageName format and extracts its index.
+
+    Format must contain substring "%0xd", defining the length of image index.
+    For example, format can be "img%04d.jpg". Then "img0001.jpg" and "img0000.jpg" 
+    satisfy it, while "picture001.jpg" and "img001.jpg" don't.
+
+    \param imageName : name from which to extract
+    \param format : format of image name
+    \return extracted index on success, -1 otherwise.
+*/
+long vpVideoReader::extractImageIndex(const std::string &imageName, const std::string &format) {
+  size_t indexBegin = format.find_last_of('%');
+  size_t indexEnd = format.find_first_of('d', indexBegin);
+  size_t suffixLength = format.length() - indexEnd - 1;
+
+  // Extracting index
+  if (imageName.length() <= suffixLength + indexBegin) {
+    return -1;
+  }
+  size_t indexLength = imageName.length() - suffixLength - indexBegin;
+  std::string indexSubstr = imageName.substr(indexBegin, indexLength);
+  std::istringstream ss(indexSubstr);
+  long index = 0;
+  ss >> index;
+  if (ss.fail() || index < 0 || !ss.eof()) {
+    return -1;
+  }
+
+  // Checking that format with inserted index equals imageName
+  char nameByFormat[FILENAME_MAX];
+  sprintf(nameByFormat, format.c_str(), index);
+  if (std::string(nameByFormat) != imageName) {
+    return -1;
+  }
+  return index;
+}
+
+/*!
+    Checks image name template, for example "img%04d.jpg"
+    \return true if it is correct, false otherwise
+*/
+bool vpVideoReader::checkImageNameFormat(const std::string &format) {
+  size_t indexBegin = format.find_last_of('%');
+  size_t indexEnd = format.find_first_of('d', indexBegin);
+  if (indexBegin == std::string::npos || indexEnd == std::string::npos) {
+    return false;
+  }
+  for (size_t i = indexBegin + 1; i < indexEnd; i++) {
+    if (!std::isdigit(format[i])) {
+      return false;
+    }
+  }
+  return true;
 }

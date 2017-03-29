@@ -169,7 +169,7 @@ int main()
 
 class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 {    
-  private:
+private:
     //!To read sequences of images
     vpDiskGrabber *imSequence;
 #ifdef VISP_HAVE_FFMPEG
@@ -244,7 +244,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 //    }
 //#endif
 
-  public:
+public:
     vpVideoReader();
     ~vpVideoReader();
     
@@ -325,13 +325,15 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
       this->lastFrame = last_frame;
     }
 
-  private:
+private:
     vpVideoFormatType getFormat(const char *filename);
     static std::string getExtension(const std::string &filename);
     void findFirstFrameIndex();
     void findLastFrameIndex();
-	bool isImageExtensionSupported();
-	bool isVideoExtensionSupported();
+    bool isImageExtensionSupported();
+    bool isVideoExtensionSupported();
+    long extractImageIndex(const std::string &imageName, const std::string &format);
+    bool checkImageNameFormat(const std::string &format);
 };
 
 #endif

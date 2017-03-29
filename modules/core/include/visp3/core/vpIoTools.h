@@ -195,6 +195,7 @@ public:
   static bool isSamePathname(const std::string& pathname1, const std::string& pathname2);
   static std::pair<std::string, std::string> splitDrive(const std::string& pathname);
   static std::vector<std::string> splitChain(const std::string & chain, const std::string & sep);
+  static std::vector<std::string> getDirFiles(const std::string &dirname);
 
   /*!
     @name Configuration file parsing
