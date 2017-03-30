@@ -1630,10 +1630,10 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
     throw(vpIoException(vpException::fatalError, "Directory %s doesn't exist'", pathname.c_str()));
   }
   std::string dirName = path(pathname);
-  std::vector<std::string> files;
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
+  std::vector<std::string> files;
   struct dirent **list = NULL;
   int filesCount = scandir(dirName.c_str(), &list, NULL, NULL);
   if (filesCount == -1) {
@@ -1652,6 +1652,7 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
 #elif defined(_WIN32)
 #  if ( ! defined(WINRT) )
 
+  std::vector<std::string> files;
   std::string fileMask = dirName;
   fileMask.append("\\*");
   WIN32_FIND_DATA FindFileData;
