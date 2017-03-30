@@ -984,6 +984,8 @@ main(int argc, const char ** argv)
       filename =  vpIoTools::createFilePath(opath, "I_bgr2gray_flip_crop_no_continuous_sse.pgm");
       std::cout << "   Resulting image saved in: " << filename << std::endl;
       vpImageIo::write(I_bgr2gray_flip_crop_no_continuous_sse, filename);
+
+      delete [] rgb_array_crop;
 #endif
       delete [] rgb_array;
       std::cout << "Test succeed" << std::endl;
