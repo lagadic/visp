@@ -76,7 +76,7 @@ vpMatrix subblock(const vpMatrix &, unsigned int, unsigned int);
   \sa init(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols)
 */
 vpMatrix::vpMatrix(const vpMatrix &M,
-                   unsigned int r, unsigned int c, 
+                   unsigned int r, unsigned int c,
                    unsigned int nrows, unsigned int ncols)
   : vpArray2D<double>()
 {
@@ -870,17 +870,17 @@ vpMatrix vpMatrix::operator*(const vpForceTwistMatrix &V) const
 }
 
 /*!
-Operation C = A*wA + B*wB 
+Operation C = A*wA + B*wB
 
 The result is placed in the third parameter C and not returned.
-A new matrix won't be allocated for every use of the function 
+A new matrix won't be allocated for every use of the function
 (Speed gain if used many times with the same result matrix size).
 
 \sa operator+()
 */
 
 void vpMatrix::add2WeightedMatrices(const vpMatrix &A, const double &wA, const vpMatrix &B,const double &wB, vpMatrix &C){
-  try 
+  try
   {
     if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
   }
@@ -899,7 +899,7 @@ void vpMatrix::add2WeightedMatrices(const vpMatrix &A, const double &wA, const v
   double ** CrowPtrs=C.rowPtrs;
 
   for (unsigned int i=0;i<A.rowNum;i++)
-    for(unsigned int j=0;j<A.colNum;j++)	 
+    for(unsigned int j=0;j<A.colNum;j++)
       CrowPtrs[i][j] = wB*BrowPtrs[i][j]+wA*ArowPtrs[i][j];
 }
 
@@ -913,7 +913,7 @@ void vpMatrix::add2WeightedMatrices(const vpMatrix &A, const double &wA, const v
   \sa operator+()
 */
 void vpMatrix::add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
-{  
+{
   try  {
     if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
   }
@@ -1089,7 +1089,7 @@ vpMatrix &vpMatrix::operator+=(const vpMatrix &B)
   double ** BrowPtrs=B.rowPtrs;
 
   for (unsigned int i=0;i<rowNum;i++)
-    for(unsigned int j=0;j<colNum;j++)	
+    for(unsigned int j=0;j<colNum;j++)
       rowPtrs[i][j] += BrowPtrs[i][j];
 
   return *this;
@@ -1276,7 +1276,7 @@ vpMatrix & vpMatrix::operator*=(double x)
 vpMatrix & vpMatrix::operator/=(double x)
 {
   //if (x == 0)
-  if (std::fabs(x) <= std::numeric_limits<double>::epsilon()) 
+  if (std::fabs(x) <= std::numeric_limits<double>::epsilon())
     throw vpException(vpException::divideByZeroError, "Divide matrix by zero scalar");
 
   double xinv = 1/x ;
@@ -1298,7 +1298,7 @@ vpMatrix & vpMatrix::operator/=(double x)
 
 
 
-/*! 
+/*!
   Stacks columns of a matrix in a vector.
   \param out : a vpColVector.
 */
@@ -1321,7 +1321,7 @@ void vpMatrix::stackColumns(vpColVector  &out ){
 
 /*!
   Stacks columns of a matrix in a vector.
-  \return a vpColVector. 
+  \return a vpColVector.
 */
 vpColVector vpMatrix::stackColumns()
 {
@@ -1330,7 +1330,7 @@ vpColVector vpMatrix::stackColumns()
   return out;
 }
 
-/*! 
+/*!
   Stacks rows of a matrix in a vector
   \param out : a vpRowVector.
 */
@@ -1349,7 +1349,7 @@ void vpMatrix::stackRows(vpRowVector &out)
     *(optr++)=*(mdata++);
   }
 }
-/*! 
+/*!
   Stacks rows of a matrix in a vector.
  \return a vpRowVector.
 */
@@ -1357,7 +1357,7 @@ vpRowVector vpMatrix::stackRows()
 {
   vpRowVector out(colNum*rowNum);
   stackRows(out );
-  return out; 
+  return out;
 }
 
 /*!
@@ -1468,17 +1468,17 @@ int main()
 {
 vpMatrix A(3,3);
 
-A[0][0] = 4.64; 
-A[0][1] = 0.288; 
-A[0][2] = -0.384; 
+A[0][0] = 4.64;
+A[0][1] = 0.288;
+A[0][2] = -0.384;
 
-A[1][0] = 0.288; 
-A[1][1] = 7.3296; 
-A[1][2] = 2.2272; 
+A[1][0] = 0.288;
+A[1][1] = 7.3296;
+A[1][2] = 2.2272;
 
-A[2][0] = -0.384; 
-A[2][1] = 2.2272; 
-A[2][2] = 6.0304; 
+A[2][0] = -0.384;
+A[2][1] = 2.2272;
+A[2][2] = 6.0304;
 
 vpColVector X(3), B(3);
 B[0] = 1;
@@ -1488,9 +1488,9 @@ B[2] = 3;
 A.solveBySVD(B, X);
 
 // Obtained values of X
-// X[0] = 0.2468; 
-// X[1] = 0.120782; 
-// X[2] = 0.468587; 
+// X[0] = 0.2468;
+// X[1] = 0.120782;
+// X[2] = 0.468587;
 
 std::cout << "X:\n" << X << std::endl;
 }
@@ -1525,17 +1525,17 @@ int main()
 {
 vpMatrix A(3,3);
 
-A[0][0] = 4.64; 
-A[0][1] = 0.288; 
-A[0][2] = -0.384; 
+A[0][0] = 4.64;
+A[0][1] = 0.288;
+A[0][2] = -0.384;
 
-A[1][0] = 0.288; 
-A[1][1] = 7.3296; 
-A[1][2] = 2.2272; 
+A[1][0] = 0.288;
+A[1][1] = 7.3296;
+A[1][2] = 2.2272;
 
-A[2][0] = -0.384; 
-A[2][1] = 2.2272; 
-A[2][2] = 6.0304; 
+A[2][0] = -0.384;
+A[2][1] = 2.2272;
+A[2][2] = 6.0304;
 
 vpColVector X(3), B(3);
 B[0] = 1;
@@ -1544,9 +1544,9 @@ B[2] = 3;
 
 X = A.solveBySVD(B);
 // Obtained values of X
-// X[0] = 0.2468; 
-// X[1] = 0.120782; 
-// X[2] = 0.468587; 
+// X[0] = 0.2468;
+// X[1] = 0.120782;
+// X[2] = 0.468587;
 
 std::cout << "X:\n" << X << std::endl;
 }
@@ -1568,6 +1568,7 @@ vpColVector vpMatrix::solveBySVD(const vpColVector &B) const
   Singular value decomposition (SVD).
 
   This function calls the first following function that is available:
+  - svdEigen3() if Eigen3 3rd party is installed
   - svdLapack() if Lapack 3rd party is installed
   - svdOpenCV() if OpenCV 3rd party is installed
   - svdGsl() if GSL 3rd party is installed
@@ -1631,12 +1632,14 @@ int main()
 }
   \endcode
 
-  \sa svdLapack(), svdOpenCV(), svdGsl()
+  \sa svdEigen3(), svdLapack(), svdOpenCV(), svdGsl()
 */
 void
 vpMatrix::svd(vpColVector &w, vpMatrix &V)
 {
-#if defined (VISP_HAVE_LAPACK)
+#if defined (VISP_HAVE_EIGEN3)
+  svdEigen3(w, V);
+#elif defined (VISP_HAVE_LAPACK)
   svdLapack(w, V);
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
   svdOpenCV(w, V);
@@ -1645,7 +1648,7 @@ vpMatrix::svd(vpColVector &w, vpMatrix &V)
 #else
   (void)w;
   (void)V;
-  throw(vpException(vpException::fatalError, "Cannot compute SVD. Install Lapack, OpenCV or GSL 3rd party"));
+  throw(vpException(vpException::fatalError, "Cannot compute SVD. Install Eigen3, Lapack, OpenCV or GSL 3rd party"));
 #endif
 }
 
@@ -1750,7 +1753,7 @@ vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold) const
   \return Return the rank of the matrix A
 
 */
-unsigned int 
+unsigned int
 vpMatrix::pseudoInverse(vpMatrix &Ap,
                         vpColVector &sv, double svThreshold,
                         vpMatrix &imA,
@@ -1926,7 +1929,7 @@ Im(A^T) is an r x n matrix
   \return Return the rank of the matrix A
 
 */
-unsigned int 
+unsigned int
 vpMatrix::pseudoInverse(vpMatrix &Ap,
                         vpColVector &sv, double svThreshold,
                         vpMatrix &imA,
@@ -2438,7 +2441,7 @@ vpMatrix::stack(const vpMatrix &A, const vpRowVector &r, vpMatrix &C)
   \warning Throw exception if the sizes of the matrices do not allow the insertion.
 */
 vpMatrix
-vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, 
+vpMatrix::insert(const vpMatrix &A, const vpMatrix &B,
                  const unsigned int r, const unsigned int c)
 {
   vpMatrix C ;
@@ -2467,10 +2470,10 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B,
   allow the insertion.
 */
 void
-vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C, 
+vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C,
                  const unsigned int r, const unsigned int c)
 {
-  if( ( (r + B.getRows()) <= A.getRows() ) && 
+  if( ( (r + B.getRows()) <= A.getRows() ) &&
     ( (c + B.getCols()) <= A.getCols() ) ){
       try {
         C.resize(A.getRows(),A.getCols()  ) ;
@@ -2917,7 +2920,7 @@ void vpMatrix::stack(const vpRowVector &r)
   \param r : The index of the row to begin to insert data.
   \param c : The index of the column to begin to insert data.
 */
-void vpMatrix::insert(const vpMatrix&A, const unsigned int r, 
+void vpMatrix::insert(const vpMatrix&A, const unsigned int r,
                       const unsigned int c)
 {
   if( (r + A.getRows() ) <= rowNum && (c + A.getCols() ) <= colNum ){
@@ -2972,7 +2975,7 @@ int main()
 
   \sa eigenValues(vpColVector &, vpMatrix &)
 
-*/ 
+*/
 vpColVector vpMatrix::eigenValues() const
 {
   if (rowNum != colNum) {
@@ -3029,7 +3032,7 @@ vpColVector vpMatrix::eigenValues() const
     throw(vpException(vpException::functionNotImplementedError,
                       "Eigen values computation is not implemented. You should install GSL rd party")) ;
   }
-#endif  
+#endif
 }
 
 /*!
@@ -3151,7 +3154,7 @@ void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
     throw(vpException(vpException::functionNotImplementedError,
                       "Eigen values computation is not implemented. You should install GSL rd party")) ;
   }
-#endif  
+#endif
 }
 
 
@@ -3165,7 +3168,7 @@ void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
   \return the rank of the matrix.
 */
 
-unsigned int 
+unsigned int
 vpMatrix::kernel(vpMatrix &kerA, double svThreshold) const
 {
   unsigned int i, j ;
@@ -3276,7 +3279,7 @@ double vpMatrix::det(vpDetMethod method) const
 
   \return Return the exponential matrix.
 
-*/ 
+*/
 vpMatrix
 vpMatrix::expm() const
 {
@@ -3373,7 +3376,7 @@ vpMatrix::expm() const
 input:: matrix M(nCols,nRows), nCols > 3, nRows > 3 , nCols == nRows.
 
 output:: the complement matrix of the element (rowNo,colNo).
-This is the matrix obtained from M after elimenating the row rowNo and column colNo 
+This is the matrix obtained from M after elimenating the row rowNo and column colNo
 
 example:
 1 2 3

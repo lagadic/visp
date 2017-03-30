@@ -223,7 +223,10 @@ if(USE_YARP)
   add_definitions(${YARP_DEFINES})
 endif(USE_YARP)
 
-# Math: gsl, lapack, OpenCV
+# Math: eigen3, gsl, lapack, OpenCV
+if(USE_EIGEN3)
+  list(APPEND opt_incs ${EIGEN3_INCLUDE_DIRS})
+endif()
 if(USE_GSL)
   list(APPEND opt_incs ${GSL_INCLUDE_DIRS})
   list(APPEND opt_libs ${GSL_LIBRARIES})

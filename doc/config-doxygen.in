@@ -2071,6 +2071,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_GTK \
                          VISP_HAVE_GDI \
                          VISP_HAVE_D3D9 \
+                         VISP_HAVE_EIGEN3 \
                          VISP_HAVE_GSL \
                          VISP_HAVE_DISPLAY \
                          VISP_HAVE_LAPACK \

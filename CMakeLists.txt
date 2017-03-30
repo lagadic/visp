@@ -52,7 +52,7 @@ endif(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES Window
 
 if(WINRT)
   add_definitions(-DWINRT)
-  
+
   if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone)
     set(WINRT_PHONE TRUE)
     add_definitions(-DWINRT_PHONE)
@@ -221,14 +221,14 @@ set(OS ${CMAKE_SYSTEM_NAME})
 set(OGRE_HOME $ENV{OGRE_HOME})
 if(OGRE_HOME)
   # replace \ with / especially for windows
-  STRING(REGEX REPLACE "\\\\" "/" OGRE_HOME ${OGRE_HOME}) 
+  STRING(REGEX REPLACE "\\\\" "/" OGRE_HOME ${OGRE_HOME})
 endif()
 
 # add the path to detect Ogre3D
 if(WIN32)
   list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/CMake")
 endif(WIN32)
- 
+
 if(UNIX)
   list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/cmake")
   list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/CMake")
@@ -332,6 +332,7 @@ VP_OPTION(USE_GDI         GDI         "" "Include gdi support"             "" ON
 VP_OPTION(USE_DIRECT3D    DIRECT3D    "" "Include d3d support"             "" ON IF WIN32 AND NOT WINRT)
 VP_OPTION(USE_DIRECTSHOW  DIRECTSHOW  "" "Include dshow support"           "" ON IF WIN32 AND NOT WINRT)
 VP_OPTION(USE_OPENMP      OpenMP      "" "Include openmp support"          "" ON)
+VP_OPTION(USE_EIGEN3      Eigen3      "" "Include eigen3 support"          "" ON IF NOT WINRT)
 # Since the FindLAPACK.cmake provided with CMake is for Fortran language,
 # in CMakeModules we have added FindLAPACK_C.cmake for C language
 VP_OPTION(USE_LAPACK      LAPACK_C    "" "Include lapack support"          "" ON IF NOT WINRT)
@@ -367,8 +368,8 @@ else()
 endif()
 VP_OPTION(USE_ZLIB        "ZLIB;MyZLIB" ""  "Include zlib support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_X11         X11         ""    "Include X11 support"          "" ON IF NOT WINRT)
-# The native FindGTK2.cmake doesn't consider libgobject-2.0 that is 
-# requested by ViSP. That's why we use our FindMyGTK2.cmake 
+# The native FindGTK2.cmake doesn't consider libgobject-2.0 that is
+# requested by ViSP. That's why we use our FindMyGTK2.cmake
 VP_OPTION(USE_GTK2        MyGTK2       ""    "Include gtk2 support"         "" OFF IF NOT WINRT)
 VP_OPTION(USE_JPEG       "JPEG;MyJPEG" ""    "Include jpeg support"         "" ON)
 VP_OPTION(USE_PNG        "PNG;MyPNG"   ""    "Include png support"          "" ON)
@@ -589,6 +590,7 @@ VP_SET(VISP_HAVE_D3D9        TRUE IF (BUILD_MODULE_visp_core AND USE_DIRECT3D))
 VP_SET(VISP_HAVE_JPEG        TRUE IF (BUILD_MODULE_visp_core AND USE_JPEG))
 VP_SET(VISP_HAVE_PNG         TRUE IF (BUILD_MODULE_visp_core AND USE_PNG))
 VP_SET(VISP_HAVE_YARP        TRUE IF (BUILD_MODULE_visp_core AND USE_YARP))
+VP_SET(VISP_HAVE_EIGEN3      TRUE IF (BUILD_MODULE_visp_core AND USE_EIGEN3))
 VP_SET(VISP_HAVE_GSL         TRUE IF (BUILD_MODULE_visp_core AND USE_GSL))
 VP_SET(VISP_HAVE_LAPACK      TRUE IF (BUILD_MODULE_visp_core AND (USE_LAPACK OR WITH_LAPACK)))
 VP_SET(VISP_HAVE_LAPACK_BUILT_IN TRUE IF (BUILD_MODULE_visp_core AND WITH_LAPACK))
@@ -1014,6 +1016,7 @@ status("    Build with moment combine:"  ENABLE_MOMENTS_COMBINE_MATRICES THEN "y
 # ===================== Optional 3rd parties =====================
 status("")
 status("  Mathematics: ")
+status("    Use Eigen3:"             USE_EIGEN3       THEN "yes (ver ${EIGEN3_VERSION})" ELSE "no")
 status("    Use Lapack/blas:"        USE_LAPACK       THEN "yes (ver ${LAPACK_C_VERSION})" ELSE "no")
 status("    Use Lapack (built-in):"  WITH_LAPACK      THEN "yes (ver ${LAPACK_VERSION})" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")

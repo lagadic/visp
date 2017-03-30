@@ -62,7 +62,7 @@
   // 4710 : 'function' : function not inlined
   // 4820 : 'bytes' bytes padding added after construct 'member_name'
   // 4986 : undocumented
-  
+
   #ifndef NOMINMAX
     #define NOMINMAX
   #endif
@@ -164,10 +164,13 @@
 #  define VISP_HAVE_DISPLAY
 #endif
 
-// Defined if GSL library available (-lgsl -lgslcblas).
+// Defined if Eigen3 library available
+#cmakedefine VISP_HAVE_EIGEN3
+
+// Defined if GSL library available (-lgsl -lgslcblas)
 #cmakedefine VISP_HAVE_GSL
 
-// Defined if lapack/blas libraries are available (-lblas -llapack).
+// Defined if lapack/blas libraries are available (-lblas -llapack)
 #cmakedefine VISP_HAVE_LAPACK
 // To keep compat with previous versions
 #ifdef VISP_HAVE_LAPACK
@@ -195,7 +198,7 @@
 // Defined if OIS (Object Oriented Input System) library available.
 #cmakedefine VISP_HAVE_OIS
 
-// Defined if Coin3D and one of the GUI (SoXt, SoWin, SoQt + Qt) 
+// Defined if Coin3D and one of the GUI (SoXt, SoWin, SoQt + Qt)
 // libraries are available.
 #cmakedefine VISP_HAVE_COIN3D_AND_GUI
 // provided for compat with previous releases
@@ -243,9 +246,9 @@
 // Defined if libfreenect library available.
 #cmakedefine VISP_HAVE_LIBFREENECT
 
-// Defined if libfreenect library in an old version package for 
+// Defined if libfreenect library in an old version package for
 // ubuntu 10.04 lucid is available.
-// This is a workaround useful to initialise vpKinect depending on the 
+// This is a workaround useful to initialise vpKinect depending on the
 // libfreenect version
 //#ifdef VISP_HAVE_LIBFREENECT_OLD
 //  Freenect::Freenect<vpKinect> freenect;
@@ -336,8 +339,8 @@
 #cmakedefine VISP_HAVE_VIPER850_DATA
 #define VISP_VIPER850_DATA_PATH "${VISP_VIPER850_DATA_PATH}"
 
-// Defined if the Aria library and (pthread, rt, dl libraries under Unix) is found. 
-// These libraries are used to control Pioneer mobile robots.  
+// Defined if the Aria library and (pthread, rt, dl libraries under Unix) is found.
+// These libraries are used to control Pioneer mobile robots.
 #cmakedefine VISP_HAVE_PIONEER
 
 // Defined if Haption Virtuose SDK available.
@@ -358,7 +361,7 @@
 // Defined if Doxygen documentation tool is found
 #cmakedefine VISP_HAVE_DOXYGEN
 
-// Defined if we want to compute interaction matrices by combining 
+// Defined if we want to compute interaction matrices by combining
 // other interaction matrices
 #cmakedefine VISP_MOMENTS_COMBINE_MATRICES
 
@@ -438,16 +441,16 @@
 
 // Under Windows, for shared libraries (DLL) we need to define export on
 // compilation or import on use (like a third party project).
-// We exploit here the fact that cmake auto set xxx_EXPORTS (with S) on 
+// We exploit here the fact that cmake auto set xxx_EXPORTS (with S) on
 // compilation.
 #if defined(VISP_BUILD_SHARED_LIBS)
 // Depending on whether one is building or using the
 // library define VISP_EXPORT to import or export.
 #  ifdef visp_EXPORTS
 #    define VISP_EXPORT VISP_DLLEXPORT
-#  else  
+#  else
 #    define VISP_EXPORT VISP_DLLIMPORT
-#  endif 
+#  endif
 #  define VISP_LOCAL VISP_DLLLOCAL
 #else
 // If one is using the library statically, get rid of

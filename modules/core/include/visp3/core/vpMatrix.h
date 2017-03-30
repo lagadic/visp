@@ -76,6 +76,8 @@ class vpForceTwistMatrix;
   \brief Implementation of a matrix and operations on matrices.
 
   This class needs one of the following third-party to compute matrix inverse, pseudo-inverse, singular value decomposition, determinant...
+  - If Eigen3 is installed and detected by ViSP, this 3rd party is used by vpMatrix.
+    Installation instructions are provided here https://visp.inria.fr/3rd_eigen.
   - If Lapack is installed and detected by ViSP, this 3rd party is used by vpMatrix.
     Installation instructions are provided here https://visp.inria.fr/3rd_lapack.
   - else if OpenCV is installed and detected by ViSP, this 3rd party is used,
@@ -171,7 +173,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   // Initialize an identity matrix m-by-n
   void eye(unsigned int m, unsigned int n) ;
   //@}
-  
+
   //---------------------------------
   // Assignment
   //---------------------------------
@@ -233,6 +235,9 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   double det(vpDetMethod method = LU_DECOMPOSITION) const;
   double detByLU() const;
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+#  ifdef VISP_HAVE_EIGEN3
+  double detByLUEigen3() const;
+#  endif
 #  ifdef VISP_HAVE_GSL
   double detByLUGsl() const;
 #  endif
@@ -288,14 +293,14 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   // Kronecker product
   //-------------------------------------------------
   /** @name Kronecker product  */
-  //@{  
-  // Compute Kronecker product matrix 
+  //@{
+  // Compute Kronecker product matrix
   void kron(const vpMatrix  &m1, vpMatrix  &out) const;
-  
-  // Compute Kronecker product matrix 
+
+  // Compute Kronecker product matrix
   vpMatrix kron(const vpMatrix  &m1) const;
   //@}
-  
+
   //-------------------------------------------------
   // Transpose
   //-------------------------------------------------
@@ -320,10 +325,13 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //-------------------------------------------------
   /** @name Matrix inversion  */
   //@{
-  // inverse matrix A using the LU decomposition 
+  // inverse matrix A using the LU decomposition
   vpMatrix inverseByLU() const;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+#  if defined(VISP_HAVE_EIGEN3)
+  vpMatrix inverseByLUEigen3() const;
+#  endif
 #  if defined(VISP_HAVE_GSL)
   vpMatrix inverseByLUGsl() const;
 #  endif
@@ -396,6 +404,9 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   // singular value decomposition SVD
   void svd(vpColVector &w, vpMatrix &V);
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+#  ifdef VISP_HAVE_EIGEN3
+  void svdEigen3(vpColVector &w, vpMatrix &V);
+#  endif
 #  ifdef VISP_HAVE_GSL
   void svdGsl(vpColVector &w, vpMatrix &V);
 #  endif
