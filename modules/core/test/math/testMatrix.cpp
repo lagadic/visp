@@ -360,6 +360,51 @@ main()
       std::cout << "m3:\n" << m3 << std::endl;
     }
 
+    {
+      vpMatrix m1(11,9), m2(3,4);
+      for (unsigned int i = 0; i < m2.getRows(); i++) {
+        for (unsigned int j = 0; j < m2.getCols(); j++) {
+          m2[i][j] = getRandomValues(-100.0, 100.0);
+        }
+      }
+
+      unsigned int offset_i = 4, offset_j = 3;
+      m1.insert(m2, offset_i, offset_j);
+
+      for (unsigned int i = 0; i < m2.getRows(); i++) {
+        for (unsigned int j = 0; j < m2.getCols(); j++) {
+          if ( !vpMath::equal(m1[i+offset_i][j+offset_j], m2[i][j], std::numeric_limits<double>::epsilon()) ) {
+            std::cerr << "Problem with vpMatrix insert()!" << std::endl;
+            return EXIT_FAILURE;
+          }
+        }
+      }
+
+      offset_i = 4, offset_j = 5;
+      m1.insert(m2, offset_i, offset_j);
+
+      for (unsigned int i = 0; i < m2.getRows(); i++) {
+        for (unsigned int j = 0; j < m2.getCols(); j++) {
+          if ( !vpMath::equal(m1[i+offset_i][j+offset_j], m2[i][j], std::numeric_limits<double>::epsilon()) ) {
+            std::cerr << "Problem with vpMatrix insert()!" << std::endl;
+            return EXIT_FAILURE;
+          }
+        }
+      }
+
+      offset_i = 8, offset_j = 5;
+      m1.insert(m2, offset_i, offset_j);
+
+      for (unsigned int i = 0; i < m2.getRows(); i++) {
+        for (unsigned int j = 0; j < m2.getCols(); j++) {
+          if ( !vpMath::equal(m1[i+offset_i][j+offset_j], m2[i][j], std::numeric_limits<double>::epsilon()) ) {
+            std::cerr << "Problem with vpMatrix insert()!" << std::endl;
+            return EXIT_FAILURE;
+          }
+        }
+      }
+    }
+
     std::cout << "All tests succeed" << std::endl;
     return EXIT_SUCCESS;
   }

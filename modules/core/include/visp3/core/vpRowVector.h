@@ -224,7 +224,7 @@ public:
                         "Cannot resize a row vector to a (%dx%d) dimension vector that has more than one row",
                         nrows, ncols));
     vpArray2D<double>::resize(nrows, ncols, flagNullify);
-  };
+  }
 
   void stack(const double &d);
   void stack(const vpRowVector &v);

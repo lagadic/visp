@@ -4470,12 +4470,10 @@ void vpMatrix::insert(const vpMatrix&A, const unsigned int r,
   if( (r + A.getRows() ) <= rowNum && (c + A.getCols() ) <= colNum ){
     if (A.colNum == colNum && data != NULL && A.data != NULL && A.size() > 0) {
       memcpy(data+r*colNum, A.data, sizeof(double)*A.size());
-    } else {
+    } else if(data != NULL && A.data != NULL && A.colNum > 0) {
       // recopy matrix A in the current one, does not call static function to avoid initialisation and recopy of matrix
       for(unsigned int i=r; i<(r+A.getRows()); i++){
-        for(unsigned int j=c; j<(c+A.getCols()); j++){
-          (*this)[i][j] = A[i-r][j-c];
-        }
+        memcpy(data+i*colNum+c, A.data+(i-r)*A.colNum, sizeof(double)*A.colNum);
       }
     }
   }

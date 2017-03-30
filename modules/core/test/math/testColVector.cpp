@@ -457,10 +457,10 @@ int main()
     v1.insert(0, v2);
     v3.insert(0, v2);
 
-//    std::cout << "Insert empty vectors:" << std::endl;
-//    std::cout << "v1: " << v1.t() << std::endl;
-//    std::cout << "v2: " << v2.t() << std::endl;
-//    std::cout << "v3: " << v3.t() << std::endl;
+    std::cout << "Insert empty vectors:" << std::endl;
+    std::cout << "v1: " << v1.t() << std::endl;
+    std::cout << "v2: " << v2.t() << std::endl;
+    std::cout << "v3: " << v3.t() << std::endl;
   }
 
 
