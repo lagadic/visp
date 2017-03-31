@@ -849,6 +849,12 @@ if(USE_OIS)
   vp_parse_header("${OIS_INCLUDE_DIR}/OISPrereqs.h" OIS_VERSION_LINES OIS_VERSION_MAJOR OIS_VERSION_MINOR OIS_VERSION_PATCH)
   set(OIS_VERSION "${OIS_VERSION_MAJOR}.${OIS_VERSION_MINOR}.${OIS_VERSION_PATCH}")
 endif()
+if(USE_EIGEN3)
+  if(NOT EIGEN3_VERSION)
+    vp_parse_header("${EIGEN3_INCLUDE_DIR}/Eigen/src/Core/util/Macros.h" EIGEN3_VERSION_LINES EIGEN_MAJOR_VERSION EIGEN_MINOR_VERSION)
+    set(EIGEN3_VERSION "${EIGEN_MAJOR_VERSION}.${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}")
+  endif()
+endif()
 
 # ----------------------------------------------------------------------------
 #  Autodetect if we are in a GIT repository
