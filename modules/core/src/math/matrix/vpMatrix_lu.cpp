@@ -42,7 +42,7 @@
 #include <visp3/core/vpColVector.h>
 
 #ifdef VISP_HAVE_EIGEN3
-#  include <eigen3/Eigen/LU>
+#  include <Eigen/LU>
 #endif
 
 #ifdef VISP_HAVE_GSL

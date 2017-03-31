@@ -50,7 +50,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef VISP_HAVE_EIGEN3
-#  include <eigen3/Eigen/SVD>
+#  include <Eigen/SVD>
 #endif
 
 #ifdef VISP_HAVE_GSL
