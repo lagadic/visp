@@ -76,10 +76,10 @@ class vpForceTwistMatrix;
   \brief Implementation of a matrix and operations on matrices.
 
   This class needs one of the following third-party to compute matrix inverse, pseudo-inverse, singular value decomposition, determinant...
-  - If Eigen3 is installed and detected by ViSP, this 3rd party is used by vpMatrix.
-    Installation instructions are provided here https://visp.inria.fr/3rd_eigen.
   - If Lapack is installed and detected by ViSP, this 3rd party is used by vpMatrix.
     Installation instructions are provided here https://visp.inria.fr/3rd_lapack.
+  - else if Eigen3 is installed and detected by ViSP, this 3rd party is used by vpMatrix.
+    Installation instructions are provided here https://visp.inria.fr/3rd_eigen.
   - else if OpenCV is installed and detected by ViSP, this 3rd party is used,
     Installation instructions are provided here https://visp.inria.fr/3rd_opencv.
   - else if GSL is installed and detected by ViSP, we use this other 3rd party.

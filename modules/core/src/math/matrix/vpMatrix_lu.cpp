@@ -80,8 +80,8 @@ extern "C" void dgetri_(integer *n, double *a, integer *lda, integer *ipiv, doub
   Compute the inverse of a n-by-n matrix using the LU decomposition.
 
   This function calls the first following function that is available:
-  - inverseByLUEigen3() if Eigen3 3rd party is installed
   - inverseByLULapack() if Lapack 3rd party is installed
+  - inverseByLUEigen3() if Eigen3 3rd party is installed
   - inverseByLUOpenCV() if OpenCV 3rd party is installed
   - inverseByLUGsl() if GSL 3rd party is installed
 
@@ -104,10 +104,10 @@ int main()
   vpMatrix A_1 = A.inverseByLU();
 
   std::cout << "Inverse by LU ";
-#if defined(VISP_HAVE_EIGEN3)
-  std::cout << "(using Eigen3)";
-#elif defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK)
   std::cout << "(using Lapack)";
+#elif defined(VISP_HAVE_EIGEN3)
+  std::cout << "(using Eigen3)";
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   std::cout << "(using OpenCV)";
 #elif defined (VISP_HAVE_GSL)
@@ -119,13 +119,13 @@ int main()
 }
   \endcode
 
-  \sa inverseByLUEigen3(), inverseByLULapack(), inverseByLUOpenCV(), inverseByLUGsl(), pseudoInverse()
+  \sa inverseByLULapack(), inverseByLUEigen3(), inverseByLUOpenCV(), inverseByLUGsl(), pseudoInverse()
 */
 vpMatrix vpMatrix::inverseByLU() const
 {
-#if defined(VISP_HAVE_EIGEN3)
+#if defined(VISP_HAVE_LAPACK)
   return inverseByLULapack();
-#elif defined(VISP_HAVE_LAPACK)
+#elif defined(VISP_HAVE_EIGEN3)
   return inverseByLULapack();
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   return inverseByLUOpenCV();
@@ -140,8 +140,8 @@ vpMatrix vpMatrix::inverseByLU() const
   Compute the determinant of a square matrix using the LU decomposition.
 
   This function calls the first following function that is available:
-  - detByLUEigen3() if Eigen3 3rd party is installed
   - detByLULapack() if Lapack 3rd party is installed
+  - detByLUEigen3() if Eigen3 3rd party is installed
   - detByLUOpenCV() if OpenCV 3rd party is installed
   - detByLUGsl() if GSL 3rd party is installed
 
@@ -165,7 +165,7 @@ int main()
   std:: cout << "Determinant by LU decomposition         : " << A.detByLU() << std::endl;
 }
   \endcode
-  \sa detByLUEigen3(), detByLULapack(), detByLUOpenCV(), detByLUGsl()
+  \sa detByLULapack(), detByLUEigen3(), detByLUOpenCV(), detByLUGsl()
 */
 double vpMatrix::detByLU() const
 {
@@ -178,16 +178,16 @@ double vpMatrix::detByLU() const
         (*this)[0][2]*((*this)[1][0]*(*this)[2][1] - (*this)[1][1]*(*this)[2][0]) );
   }
   else {
-#if defined(VISP_HAVE_EIGEN3)
-    return detByLUEigen3();
-#elif defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK)
     return detByLULapack();
+#elif defined(VISP_HAVE_EIGEN3)
+    return detByLUEigen3();
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     return detByLUOpenCV();
 #elif defined(VISP_HAVE_GSL)
     return detByLUGsl();
 #else
-    throw(vpException(vpException::fatalError, "Cannot compute matrix determinant. Install Eigen3, Lapack, OpenCV or GSL 3rd party"));
+    throw(vpException(vpException::fatalError, "Cannot compute matrix determinant. Install Lapack, Eigen3, OpenCV or GSL 3rd party"));
 #endif
   }
 }

@@ -455,11 +455,11 @@ main(int argc, const char *argv[])
       of.open(plotfile.c_str());
       of << "iter" << "\t";
 
-#if defined(VISP_HAVE_EIGEN3)
-      of << "\"LU Eigen3\"" << "\t";
-#endif
 #if defined(VISP_HAVE_LAPACK)
       of << "\"LU Lapack\"" << "\t";
+#endif
+#if defined(VISP_HAVE_EIGEN3)
+      of << "\"LU Eigen3\"" << "\t";
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       of << "\"LU OpenCV\"" << "\t";
@@ -498,14 +498,14 @@ main(int argc, const char *argv[])
 
       double time;
       // LU decomposition
-#if defined(VISP_HAVE_EIGEN3)
-      ret += test_inverse_lu_eigen3(verbose, bench_random_matrices, time);
-      save_time("Inverse by LU (Eigen3): ", verbose, use_plot_file, of, time);
-#endif
-
 #if defined(VISP_HAVE_LAPACK)
       ret += test_inverse_lu_lapack(verbose, bench_random_matrices, time);
       save_time("Inverse by LU (Lapack): ", verbose, use_plot_file, of, time);
+#endif
+
+#if defined(VISP_HAVE_EIGEN3)
+      ret += test_inverse_lu_eigen3(verbose, bench_random_matrices, time);
+      save_time("Inverse by LU (Eigen3): ", verbose, use_plot_file, of, time);
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -538,7 +538,7 @@ main(int argc, const char *argv[])
       // Pseudo-inverse with SVD
 #if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined (VISP_HAVE_GSL)
       ret += test_pseudo_inverse(verbose, bench_random_matrices, time);
-      save_time("Pseudo inverse (Lapack, OpenCV or GSL): ", verbose, use_plot_file, of, time);
+      save_time("Pseudo inverse (Lapack, Eigen3, OpenCV or GSL): ", verbose, use_plot_file, of, time);
 #endif
 
       if(use_plot_file)

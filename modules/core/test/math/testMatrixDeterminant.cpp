@@ -312,11 +312,11 @@ main(int argc, const char *argv[])
 
       of << "\"Determinant default\"" << "\t";
 
-#if defined(VISP_HAVE_EIGEN3)
-      of << "\"Determinant Eigen3\"" << "\t";
-#endif
 #if defined(VISP_HAVE_LAPACK)
       of << "\"Determinant Lapack\"" << "\t";
+#endif
+#if defined(VISP_HAVE_EIGEN3)
+      of << "\"Determinant Eigen3\"" << "\t";
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       of << "\"Determinant OpenCV\"" << "\t";
@@ -341,16 +341,16 @@ main(int argc, const char *argv[])
       test_det_default(verbose, bench, time, result_default);
       save_time("Determinant default: ", verbose, use_plot_file, of, time);
 
-#if defined(VISP_HAVE_EIGEN3)
-      std::vector<double> result_eigen3;
-      test_det_eigen3(verbose, bench, time, result_eigen3);
-      save_time("Determinant by Eigen3: ", verbose, use_plot_file, of, time);
-#endif
-
 #if defined(VISP_HAVE_LAPACK)
       std::vector<double> result_lapack;
       test_det_lapack(verbose, bench, time, result_lapack);
       save_time("Determinant by Lapack: ", verbose, use_plot_file, of, time);
+#endif
+
+#if defined(VISP_HAVE_EIGEN3)
+      std::vector<double> result_eigen3;
+      test_det_eigen3(verbose, bench, time, result_eigen3);
+      save_time("Determinant by Eigen3: ", verbose, use_plot_file, of, time);
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)

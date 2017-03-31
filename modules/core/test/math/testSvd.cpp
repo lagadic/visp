@@ -353,11 +353,11 @@ main(int argc, const char *argv[])
       of.open(plotfile.c_str());
       of << "iter" << "\t";
 
-#if defined(VISP_HAVE_EIGEN3)
-      of << "\"SVD Eigen3\"" << "\t";
-#endif
 #if defined(VISP_HAVE_LAPACK)
       of << "\"SVD Lapack\"" << "\t";
+#endif
+#if defined(VISP_HAVE_EIGEN3)
+      of << "\"SVD Eigen3\"" << "\t";
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       of << "\"SVD OpenCV\"" << "\t";
@@ -377,14 +377,14 @@ main(int argc, const char *argv[])
         of << iter << "\t";
       double time;
 
-#if defined (VISP_HAVE_EIGEN3)
-      ret += test_svd_eigen3(verbose, bench_random_matrices, time);
-      save_time("SVD (Eigen3): ", verbose, use_plot_file, of, time);
-#endif
-
 #if defined (VISP_HAVE_LAPACK)
       ret += test_svd_lapack(verbose, bench_random_matrices, time);
       save_time("SVD (Lapack): ", verbose, use_plot_file, of, time);
+#endif
+
+#if defined (VISP_HAVE_EIGEN3)
+      ret += test_svd_eigen3(verbose, bench_random_matrices, time);
+      save_time("SVD (Eigen3): ", verbose, use_plot_file, of, time);
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)

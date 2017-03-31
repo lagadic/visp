@@ -1568,8 +1568,8 @@ vpColVector vpMatrix::solveBySVD(const vpColVector &B) const
   Singular value decomposition (SVD).
 
   This function calls the first following function that is available:
-  - svdEigen3() if Eigen3 3rd party is installed
   - svdLapack() if Lapack 3rd party is installed
+  - svdEigen3() if Eigen3 3rd party is installed
   - svdOpenCV() if OpenCV 3rd party is installed
   - svdGsl() if GSL 3rd party is installed
 
@@ -1632,15 +1632,15 @@ int main()
 }
   \endcode
 
-  \sa svdEigen3(), svdLapack(), svdOpenCV(), svdGsl()
+  \sa svdLapack(), svdEigen3(), svdOpenCV(), svdGsl()
 */
 void
 vpMatrix::svd(vpColVector &w, vpMatrix &V)
 {
-#if defined (VISP_HAVE_EIGEN3)
-  svdEigen3(w, V);
-#elif defined (VISP_HAVE_LAPACK)
+#if defined (VISP_HAVE_LAPACK)
   svdLapack(w, V);
+#elif defined (VISP_HAVE_EIGEN3)
+  svdEigen3(w, V);
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
   svdOpenCV(w, V);
 #elif defined (VISP_HAVE_GSL)  /* be careful of the copy below */
@@ -1648,7 +1648,7 @@ vpMatrix::svd(vpColVector &w, vpMatrix &V)
 #else
   (void)w;
   (void)V;
-  throw(vpException(vpException::fatalError, "Cannot compute SVD. Install Eigen3, Lapack, OpenCV or GSL 3rd party"));
+  throw(vpException(vpException::fatalError, "Cannot compute SVD. Install Lapack, Eigen3, OpenCV or GSL 3rd party"));
 #endif
 }
 
