@@ -963,8 +963,8 @@ void vpColVector::stack(const vpColVector &A, const vpColVector &B, vpColVector 
 */
 double vpColVector::mean(const vpColVector &v)
 {
-  if (v.data==NULL) {
-    throw(vpException(vpException::fatalError,
+  if (v.data == NULL || v.size() == 0) {
+    throw(vpException(vpException::dimensionError,
                       "Cannot compute column vector mean: vector empty")) ;
   }
 
@@ -985,8 +985,8 @@ double vpColVector::mean(const vpColVector &v)
 double
 vpColVector::median(const vpColVector &v)
 {
-  if (v.data==NULL) {
-    throw(vpException(vpException::fatalError,
+  if (v.data == NULL || v.size() == 0) {
+    throw(vpException(vpException::dimensionError,
                       "Cannot compute column vector median: vector empty")) ;
   }
 
@@ -1001,8 +1001,8 @@ vpColVector::median(const vpColVector &v)
 double
 vpColVector::stdev(const vpColVector &v, const bool useBesselCorrection)
 {
-  if (v.data==NULL) {
-    throw(vpException(vpException::fatalError,
+  if (v.data == NULL || v.size() == 0) {
+    throw(vpException(vpException::dimensionError,
                       "Cannot compute column vector stdev: vector empty")) ;
   }
 

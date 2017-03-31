@@ -520,6 +520,27 @@ main()
       }
     }
 
+    {
+      std::cout << "------------------------" << std::endl;
+      std::cout << "--- TEST vpMatrix::juxtaposeMatrices()" << std::endl;
+      std::cout << "------------------------" << std::endl;
+
+      vpMatrix A(5, 6), B(5, 4);
+      for (unsigned int i = 0; i < A.getRows(); i++) {
+        for (unsigned int j = 0; j < A.getCols(); j++) {
+          A[i][j] = i*A.getCols()+j;
+
+          if (j < B.getCols()) {
+            B[i][j] = (i*B.getCols()+j)*10;
+          }
+        }
+      }
+
+      vpMatrix juxtaposeM;
+      vpMatrix::juxtaposeMatrices(A, B, juxtaposeM);
+      std::cout << "juxtaposeM:\n" << juxtaposeM << std::endl;
+    }
+
     std::cout << "All tests succeed" << std::endl;
     return EXIT_SUCCESS;
   }

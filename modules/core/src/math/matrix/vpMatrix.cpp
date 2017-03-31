@@ -3684,10 +3684,14 @@ vpMatrix::getRow(const unsigned int i) const
 {
   if (i >= getRows())
     throw(vpException(vpException::dimensionError, "Unable to extract a row vector from the matrix"));
-  unsigned int nb_cols = getCols();
-  vpRowVector r( nb_cols );
-  for (unsigned int j=0 ; j < nb_cols ; j++)
-    r[j] = (*this)[i][j];
+
+  vpRowVector r;
+  r.resize(colNum, false);
+
+  if (r.data != NULL && data != NULL && colNum > 0) {
+    memcpy(r.data, data+i*colNum, sizeof(double)*colNum);
+  }
+
   return r;
 }
 
@@ -3810,7 +3814,7 @@ vpMatrix::stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     return;
   }
 
-  C.resize(nra+nrb, B.getCols());
+  C.resize(nra+nrb, B.getCols(), false);
 
   if (C.data != NULL && A.data != NULL && A.size() > 0) {
       //Copy A in C
@@ -3855,7 +3859,7 @@ vpMatrix::stack(const vpMatrix &A, const vpRowVector &r, vpMatrix &C)
     return;
   }
 
-  C.resize(nra+1, r.getCols());
+  C.resize(nra+1, r.getCols(), false);
 
   if (C.data != NULL && A.data != NULL && A.size() > 0) {
     //Copy A in C
@@ -3938,16 +3942,16 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C,
   \param B : Right matrix.
   \return Juxtaposed matrix C = [ A B ]
 
-  \warning A and B must have the same number of column
+  \warning A and B must have the same number of rows.
 */
 vpMatrix
 vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
 {
-  vpMatrix C ;
+  vpMatrix C;
 
-  juxtaposeMatrices(A,B, C);
+  juxtaposeMatrices(A, B, C);
 
-  return C ;
+  return C;
 }
 
 /*!
@@ -3965,29 +3969,26 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
 void
 vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
-  unsigned int nca = A.getCols() ;
-  unsigned int ncb = B.getCols() ;
+  unsigned int nca = A.getCols();
+  unsigned int ncb = B.getCols();
 
-  if (nca !=0) {
+  if (nca != 0) {
     if (A.getRows() != B.getRows()) {
       throw(vpException(vpException::dimensionError,
                         "Cannot juxtapose (%dx%d) matrix with (%dx%d) matrix",
-                        A.getRows(), A.getCols(), B.getRows(), B.getCols())) ;
+                        A.getRows(), A.getCols(), B.getRows(), B.getCols()));
     }
   }
 
-  C.resize(B.getRows(),nca+ncb);
-
-  unsigned int i,j ;
-  for (i=0 ; i < C.getRows(); i++)
-    for (j=0 ; j < nca ; j++)
-      C[i][j] = A[i][j] ;
-
-  for (i=0 ; i < C.getRows() ; i++) {
-    for (j=0 ; j < ncb ; j++) {
-      C[i][nca+j] = B[i][j] ;
-    }
+  if (B.getRows() == 0 || nca+ncb == 0) {
+    std::cerr << "B.getRows() == 0 || nca+ncb == 0" << std::endl;
+    return;
   }
+
+  C.resize(B.getRows(), nca+ncb, false);
+
+  C.insert(A, 0, 0);
+  C.insert(B, 0, nca);
 }
 
 

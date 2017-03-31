@@ -257,7 +257,7 @@ public:
   */
   vpArray2D<Type> & operator=(const vpArray2D<Type> & A)
   {
-    resize(A.rowNum, A.colNum);
+    resize(A.rowNum, A.colNum, false);
     memcpy(data, A.data, rowNum*colNum*sizeof(Type));
     return *this;
   }
