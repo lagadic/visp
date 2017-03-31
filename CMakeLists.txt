@@ -332,7 +332,7 @@ VP_OPTION(USE_GDI         GDI         "" "Include gdi support"             "" ON
 VP_OPTION(USE_DIRECT3D    DIRECT3D    "" "Include d3d support"             "" ON IF WIN32 AND NOT WINRT)
 VP_OPTION(USE_DIRECTSHOW  DIRECTSHOW  "" "Include dshow support"           "" ON IF WIN32 AND NOT WINRT)
 VP_OPTION(USE_OPENMP      OpenMP      "" "Include openmp support"          "" ON)
-VP_OPTION(USE_EIGEN3      Eigen3      "" "Include eigen3 support"          "" ON IF NOT WINRT)
+VP_OPTION(USE_EIGEN3      Eigen3      QUIET "Include eigen3 support"       "" ON IF NOT WINRT)
 # Since the FindLAPACK.cmake provided with CMake is for Fortran language,
 # in CMakeModules we have added FindLAPACK_C.cmake for C language
 VP_OPTION(USE_LAPACK      LAPACK_C    "" "Include lapack support"          "" ON IF NOT WINRT)
