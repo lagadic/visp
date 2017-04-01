@@ -162,6 +162,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
 	{
 		imSequence = new vpDiskGrabber;
 		imSequence->setGenericName(fileName);
+		imSequence->setStep(frameStep);
 		if (firstFrameIndexIsSet)
 		{
 			imSequence->setImageNumber(firstFrame);
@@ -232,6 +233,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 	{
 		imSequence = new vpDiskGrabber;
 		imSequence->setGenericName(fileName);
+    imSequence->setStep(frameStep);
 		if (firstFrameIndexIsSet)
 		{
 			imSequence->setImageNumber(firstFrame);
@@ -303,7 +305,7 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
 	if (imSequence != NULL)
 	{
 		imSequence->acquire(I);
-		frameCount++; // next index
+		frameCount += frameStep; // next index
 	}
 #ifdef VISP_HAVE_FFMPEG
 	else if (ffmpeg != NULL)
@@ -346,7 +348,7 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
 	if (imSequence != NULL)
 	{
 		imSequence->acquire(I);
-		frameCount++; // next index
+		frameCount += frameStep; // next index
 	}
 #ifdef VISP_HAVE_FFMPEG
 	else if (ffmpeg != NULL)
@@ -392,7 +394,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
 		try
 		{
       imSequence->acquire(I, frame_index);
-      frameCount = frame_index + 1; // next index
+      frameCount = frame_index + frameStep; // next index
 		}
 		catch(...)
 		{
@@ -471,7 +473,7 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
 		try
 		{
       imSequence->acquire(I, frame_index);
-      frameCount = frame_index + 1;
+      frameCount = frame_index + frameStep;
     }
 		catch(...)
 		{
