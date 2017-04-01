@@ -61,7 +61,8 @@ vpVideoReader::vpVideoReader()
   capture(), frame(),
 #endif
 	formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0),
-	firstFrame(0), lastFrame(0), firstFrameIndexIsSet(false), lastFrameIndexIsSet(false)
+	firstFrame(0), lastFrame(0), firstFrameIndexIsSet(false), lastFrameIndexIsSet(false),
+	frameStep(1)
 {
 }
 
