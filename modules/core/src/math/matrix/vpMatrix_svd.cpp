@@ -57,9 +57,15 @@
 #    include <opencv2/core/core.hpp>
 #endif
 
-#ifdef VISP_HAVE_LAPACK_C
-extern "C" int dgesdd_(char *jobz, int *m, int *n, double *a, int *lda, double *s, double *u, int *ldu, double *vt,
-                       int *ldvt, double *work, int *lwork, int *iwork, int *info);
+#ifdef VISP_HAVE_LAPACK
+#  ifdef VISP_HAVE_LAPACK_BUILT_IN
+typedef long int integer;
+#  else
+typedef int integer;
+#  endif
+
+extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a, integer *lda, double *s, double *u, integer *ldu, double *vt,
+                       integer *ldvt, double *work, integer *lwork, integer *iwork, integer *info);
 
 #  include <stdio.h>
 #  include <string.h>
@@ -157,7 +163,7 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
 
 #endif
 
-#ifdef VISP_HAVE_LAPACK_C
+#ifdef VISP_HAVE_LAPACK
 /*!
 
   Singular value decomposition (SVD) using Lapack 3rd party.
@@ -228,13 +234,17 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
   w.resize( this->getCols() );
   V.resize( this->getCols(), this->getCols() );
 
-  /* unsigned */ int m = static_cast<int>(this->getCols()), n = static_cast<int>(this->getRows()), lda = m, ldu = m, ldvt = std::min(m,n);
-  int info, lwork;
+  integer m = (integer)(this->getCols());
+  integer n = (integer)(this->getRows());
+  integer lda = m;
+  integer ldu = m;
+  integer ldvt = (std::min)(m,n);
+  integer info, lwork;
 
   double wkopt;
   double *work;
 
-  int* iwork = new int[8*static_cast<unsigned int>(std::min(n,m))];
+  integer* iwork = new integer[8*static_cast<integer>((std::min)(n,m))];
 
   double *s = w.data;
   double *a = new double[static_cast<unsigned int>(lda*n)];
@@ -252,7 +262,6 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
   if( info > 0 ) {
    throw(vpMatrixException(vpMatrixException::fatalError,
          "The algorithm computing SVD failed to converge.")) ;
-
   }
 
   V = V.transpose();

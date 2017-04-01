@@ -2111,10 +2111,10 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
       else {
         // Correction de l'image de facon a liberer les niveaux de gris
         // ROUGE, VERT, BLEU, JAUNE
-        int i_min = std::max((int)ceil(iP.get_i()/m_scale), 0);
-        int j_min = std::max((int)ceil(iP.get_j()/m_scale), 0);
-        int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
-        int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
+        int i_min = (std::max)((int)ceil(iP.get_i()/m_scale), 0);
+        int j_min = (std::max)((int)ceil(iP.get_j()/m_scale), 0);
+        int i_max = (std::min)((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
+        int j_max = (std::min)((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -2154,10 +2154,10 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
         XPutImage ( display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(), w, h );
       }
       else {
-        int i_min = std::max((int)ceil(iP.get_i()/m_scale), 0);
-        int j_min = std::max((int)ceil(iP.get_j()/m_scale), 0);
-        int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
-        int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
+        int i_min = (std::max)((int)ceil(iP.get_i()/m_scale), 0);
+        int j_min = (std::max)((int)ceil(iP.get_j()/m_scale), 0);
+        int i_max = (std::min)((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
+        int j_max = (std::min)((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -2231,10 +2231,10 @@ void vpDisplayX::displayImageROI ( const vpImage<unsigned char> &I, const vpImag
         XPutImage ( display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(), w, h );
       }
       else {
-        int i_min = std::max((int)ceil(iP.get_i()/m_scale), 0);
-        int j_min = std::max((int)ceil(iP.get_j()/m_scale), 0);
-        int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
-        int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
+        int i_min = (std::max)((int)ceil(iP.get_i()/m_scale), 0);
+        int j_min = (std::max)((int)ceil(iP.get_j()/m_scale), 0);
+        int i_max = (std::min)((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
+        int j_max = (std::min)((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -2327,10 +2327,10 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
       }
       else {
         unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
-        int i_min = std::max((int)ceil(iP.get_i()/m_scale), 0);
-        int j_min = std::max((int)ceil(iP.get_j()/m_scale), 0);
-        int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
-        int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
+        int i_min = (std::max)((int)ceil(iP.get_i()/m_scale), 0);
+        int j_min = (std::max)((int)ceil(iP.get_j()/m_scale), 0);
+        int i_max = (std::min)((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
+        int j_max = (std::min)((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -2415,10 +2415,10 @@ void vpDisplayX::displayImageROI ( const vpImage<vpRGBa> &I,const vpImagePoint &
         XPutImage ( display, pixmap, context, Ximage, (int)iP.get_u(), (int)iP.get_v(), (int)iP.get_u(), (int)iP.get_v(), w, h );
       }
       else {
-        int i_min = std::max((int)ceil(iP.get_i()/m_scale), 0);
-        int j_min = std::max((int)ceil(iP.get_j()/m_scale), 0);
-        int i_max = std::min((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
-        int j_max = std::min((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
+        int i_min = (std::max)((int)ceil(iP.get_i()/m_scale), 0);
+        int j_min = (std::max)((int)ceil(iP.get_j()/m_scale), 0);
+        int i_max = (std::min)((int)ceil((iP.get_i() + h)/m_scale), (int)m_height);
+        int j_max = (std::min)((int)ceil((iP.get_j() + w)/m_scale), (int)m_width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;

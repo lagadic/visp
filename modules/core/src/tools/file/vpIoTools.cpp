@@ -54,6 +54,7 @@
 #include <algorithm>
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #  include <unistd.h>
+#  include <dirent.h>
 #elif defined(_WIN32)
 #  include <windows.h>
 #  include <direct.h>
@@ -1238,7 +1239,7 @@ std::string vpIoTools::getFileExtension(const std::string& pathname, const bool 
   int sepIndex = (int)pathname.rfind(sep);
   if(!altsep.empty()) {
     int altsepIndex = (int)pathname.rfind(altsep);
-    sepIndex = (std::max)(sepIndex, altsepIndex);
+    sepIndex = ((std::max))(sepIndex, altsepIndex);
   }
 
   size_t dotIndex = pathname.rfind(extsep);
@@ -1613,4 +1614,69 @@ std::vector<std::string> vpIoTools::splitChain(const std::string & chain, const 
     subChain.push_back(chainToSplit);
 
   return subChain;
+}
+
+
+/*!
+   List of files in directory
+   There is no difference if pathname contains terminating backslash or not
+   Unlike scandir(), does not return "." and ".."
+   \param pathname : path to directory
+   \return A vector of files' names in that directory
+ */
+std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
+
+  if (!checkDirectory(pathname)) {
+    throw(vpIoException(vpException::fatalError, "Directory %s doesn't exist'", pathname.c_str()));
+  }
+  std::string dirName = path(pathname);
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+
+  std::vector<std::string> files;
+  struct dirent **list = NULL;
+  int filesCount = scandir(dirName.c_str(), &list, NULL, NULL);
+  if (filesCount == -1) {
+    throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
+  }
+  for (int i = 0; i < filesCount; i++) {
+    std::string fileName = list[i]->d_name;
+    if (fileName != "." && fileName != "..") {
+      files.push_back(fileName);
+    }
+    free(list[i]);
+  }
+  free(list);
+  return files;
+
+#elif defined(_WIN32)
+#  if ( ! defined(WINRT) )
+
+  std::vector<std::string> files;
+  std::string fileMask = dirName;
+  fileMask.append("\\*");
+  WIN32_FIND_DATA FindFileData;
+  HANDLE hFind = FindFirstFile(fileMask.c_str(), &FindFileData);
+  // Directory is empty
+  if (HandleToLong(&hFind) == ERROR_FILE_NOT_FOUND) {
+    return files;
+  }
+  if (hFind == INVALID_HANDLE_VALUE) {
+    throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
+  }
+  do
+  {
+    std::string fileName = FindFileData.cFileName;
+    if (fileName != "." && fileName != "..") {
+      files.push_back(fileName);
+    }
+  }
+  while (FindNextFile(hFind, &FindFileData));
+  FindClose(hFind);
+  return files;
+
+#  else
+  throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s: not implemented on Universal Windows Platform", dirName.c_str()));
+#  endif
+#endif
 }

@@ -80,6 +80,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-getting-started-naoqi <br>This tutorial shows how to build a project that uses ViSP on NAOqi OS running on NAO, Romeo or Pepper humanoid robots.
+- \ref tutorial-import-visp-into-EclipseIDE <br>This tutorial shows how to import a CMake project that uses ViSP in Eclipse IDE.
 
 \subsection tuto_image Image manipulation
 

@@ -209,7 +209,7 @@ void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, 
   bench.clear();
   for(unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
-#if defined(VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
     double det = 0.;
     // don't put singular matrices in the benchmark
     for(M = make_random_matrix(nb_rows, nb_cols); std::fabs(det=M.AtA().det())<.01; M = make_random_matrix(nb_rows, nb_cols)) {
@@ -233,7 +233,7 @@ void create_bench_symmetric_positive_matrix(unsigned int nb_matrices, unsigned i
   bench.clear();
   for(unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
-#if defined(VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
     double det = 0.;
     // don't put singular matrices in the benchmark
     for(M = make_random_symmetric_positive_matrix(n); std::fabs(det=M.det())<.01; M = make_random_symmetric_positive_matrix(n)) {
@@ -261,7 +261,7 @@ int test_inverse(const std::vector<vpMatrix> &bench, const std::vector<vpMatrix>
   return EXIT_SUCCESS;
 }
 
-#if defined(VISP_HAVE_LAPACK_C)
+#if defined(VISP_HAVE_LAPACK)
 int test_inverse_lu_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
   if (verbose)
@@ -381,7 +381,7 @@ int test_inverse_cholesky_opencv(bool verbose, const std::vector<vpMatrix> &benc
 }
 #endif
 
-#if defined (VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined (VISP_HAVE_GSL)
+#if defined (VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined (VISP_HAVE_GSL)
 // SVD is only available for these 3rd parties
 int test_pseudo_inverse(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
@@ -415,7 +415,7 @@ int
 main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
@@ -434,7 +434,7 @@ main(int argc, const char *argv[])
       of.open(plotfile.c_str());
       of << "iter" << "\t";
 
-#if defined(VISP_HAVE_LAPACK_C)
+#if defined(VISP_HAVE_LAPACK)
       of << "\"LU Lapack\"" << "\t";
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -444,7 +444,7 @@ main(int argc, const char *argv[])
       of << "\"LU GSL\"" << "\t";
 #endif
 
-#if defined(VISP_HAVE_LAPACK_C)
+#if defined(VISP_HAVE_LAPACK)
       of << "\"Cholesky Lapack\"" << "\t";
 #endif
 
@@ -452,11 +452,11 @@ main(int argc, const char *argv[])
       of << "\"Cholesky OpenCV\"" << "\t";
 #endif
 
-#if defined(VISP_HAVE_LAPACK_C)
+#if defined(VISP_HAVE_LAPACK)
       of << "\"QR Lapack\"" << "\t";
 #endif
 
-#if defined (VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined (VISP_HAVE_GSL)
+#if defined (VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined (VISP_HAVE_GSL)
       of << "\"Pseudo inverse (Lapack, OpenCV, GSL)\"" << "\t";
 #endif
       of << std::endl;
@@ -474,7 +474,7 @@ main(int argc, const char *argv[])
 
       double time;
       // LU decomposition
-#if defined(VISP_HAVE_LAPACK_C)
+#if defined(VISP_HAVE_LAPACK)
       ret += test_inverse_lu_lapack(verbose, bench_random_matrices, time);
       save_time("Inverse by LU (Lapack): ", verbose, use_plot_file, of, time);
 #endif
@@ -490,7 +490,7 @@ main(int argc, const char *argv[])
 #endif
 
       // Cholesky for symmetric positive matrices
-#if defined(VISP_HAVE_LAPACK_C)
+#if defined(VISP_HAVE_LAPACK)
       ret += test_inverse_cholesky_lapack(verbose, bench_symmetric_positive_matrices, time);
       save_time("Inverse by Cholesly (Lapack): ", verbose, use_plot_file, of, time);
 #endif
@@ -501,13 +501,13 @@ main(int argc, const char *argv[])
 #endif
 
       // QR decomposition
-#if defined(VISP_HAVE_LAPACK_C)
+#if defined(VISP_HAVE_LAPACK)
       ret += test_inverse_qr_lapack(verbose, bench_random_matrices, time);
       save_time("Inverse by QR (Lapack): ", verbose, use_plot_file, of, time);
 #endif
 
       // Pseudo-inverse with SVD
-#if defined (VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined (VISP_HAVE_GSL)
+#if defined (VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined (VISP_HAVE_GSL)
       ret += test_pseudo_inverse(verbose, bench_random_matrices, time);
       save_time("Pseudo inverse (Lapack, OpenCV or GSL): ", verbose, use_plot_file, of, time);
 #endif

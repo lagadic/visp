@@ -196,7 +196,7 @@ void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, 
   bench.clear();
   for(unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
-//#if defined(VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+//#if defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
 //    double det = 0.;
 //    // don't put singular matrices in the benchmark
 //    for(M = make_random_matrix(nb_rows, nb_cols); std::fabs(det=M.AtA().det())<.01; M = make_random_matrix(nb_rows, nb_cols)) {
@@ -227,7 +227,7 @@ int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U, std::vector<vpCol
   return EXIT_SUCCESS;
 }
 
-#if defined (VISP_HAVE_LAPACK_C)
+#if defined (VISP_HAVE_LAPACK)
 // SVD is only available for these 3rd parties
 int test_svd_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
@@ -311,7 +311,7 @@ int
 main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
@@ -330,7 +330,7 @@ main(int argc, const char *argv[])
       of.open(plotfile.c_str());
       of << "iter" << "\t";
 
-#if defined(VISP_HAVE_LAPACK_C)
+#if defined(VISP_HAVE_LAPACK)
       of << "\"SVD Lapack\"" << "\t";
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -351,7 +351,7 @@ main(int argc, const char *argv[])
         of << iter << "\t";
       double time;
 
-#if defined (VISP_HAVE_LAPACK_C)
+#if defined (VISP_HAVE_LAPACK)
       ret += test_svd_lapack(verbose, bench_random_matrices, time);
       save_time("SVD (Lapack): ", verbose, use_plot_file, of, time);
 #endif

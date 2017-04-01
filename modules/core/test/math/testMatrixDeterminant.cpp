@@ -224,7 +224,7 @@ void test_det_gsl(bool verbose, const std::vector<vpMatrix> &bench, double &time
 }
 #endif
 
-#if defined (VISP_HAVE_LAPACK_C)
+#if defined (VISP_HAVE_LAPACK)
 void test_det_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
 {
   if (verbose)
@@ -273,7 +273,7 @@ int
 main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_GSL) || defined(VISP_HAVE_LAPACK_C) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_GSL) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
@@ -297,7 +297,7 @@ main(int argc, const char *argv[])
 #if defined(VISP_HAVE_GSL)
       of << "\"Determinant GSL\"" << "\t";
 #endif
-#if defined(VISP_HAVE_LAPACK_C)
+#if defined(VISP_HAVE_LAPACK)
       of << "\"Determinant Lapack\"" << "\t";
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -326,7 +326,7 @@ main(int argc, const char *argv[])
       save_time("Determinant by GSL: ", verbose, use_plot_file, of, time);
 #endif
 
-#if defined(VISP_HAVE_LAPACK_C)
+#if defined(VISP_HAVE_LAPACK)
       std::vector<double> result_lapack;
       test_det_lapack(verbose, bench, time, result_lapack);
       save_time("Determinant by Lapack: ", verbose, use_plot_file, of, time);
@@ -350,7 +350,7 @@ main(int argc, const char *argv[])
         }
       }
 #endif
-#if defined(VISP_HAVE_GSL) && defined(VISP_HAVE_LAPACK_C)
+#if defined(VISP_HAVE_GSL) && defined(VISP_HAVE_LAPACK)
       // Compare results
       for(unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_gsl[i] - result_lapack[i]) > 1e-6) {
@@ -359,7 +359,7 @@ main(int argc, const char *argv[])
         }
       }
 #endif
-#if defined(VISP_HAVE_LAPACK_C) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_LAPACK) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       // Compare results
       for(unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_lapack[i] - result_opencv[i]) > 1e-6) {

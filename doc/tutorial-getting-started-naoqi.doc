@@ -1,4 +1,4 @@
-
+﻿
 /**
   \page tutorial-getting-started-naoqi Tutorial: How to create an application that uses ViSP on NAOqi OS 
   \tableofcontents
@@ -81,4 +81,8 @@ nao~ $ ./tutorial-undistort
 \endcode
 
 You are now ready to create your own project for Nao, Romeo or Pepper robots.
+
+\section naoqi_image_next Next tutorial
+
+You are now ready to see the \ref tutorial-import-visp-into-EclipseIDE.
 */

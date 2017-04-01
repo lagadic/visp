@@ -39,7 +39,7 @@
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #include <iostream>
-#include <algorithm>    // std::min
+#include <algorithm>    // (std::min)
 
 #include <visp3/vision/vpLevenbergMarquartd.h>
 #include <visp3/core/vpMath.h>
@@ -494,7 +494,7 @@ double pythag (double a, double b)
     return (pyth);
   }
 
-  r = (std::min(std::fabs(a), std::fabs(b)) / p) * (std::min(std::fabs(a), std::fabs(b)) / p);
+  r = ((std::min)(std::fabs(a), std::fabs(b)) / p) * ((std::min)(std::fabs(a), std::fabs(b)) / p);
   t = 4.0 + r;
 
   //while (t != 4.0)

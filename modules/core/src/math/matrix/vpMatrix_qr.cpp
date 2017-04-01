@@ -35,7 +35,7 @@
  *
  *****************************************************************************/
 
-#include <algorithm> // for std::min and std::max
+#include <algorithm> // for (std::min) and (std::max)
 #include <visp3/core/vpConfig.h>
 
 #include <visp3/core/vpMatrix.h>
@@ -50,14 +50,20 @@
 #include <visp3/core/vpDebug.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#ifdef VISP_HAVE_LAPACK_C
-extern "C" int dgeqrf_(int *m, int *n, double*a, int *lda, double *tau, double *work, int *lwork, int *info);
-extern "C" int dormqr_(char *side, char *trans, int *m, int *n,
-        int *k, double *a, int *lda, double *tau, double *c__,
-        int *ldc, double *work, int *lwork, int *info);
-extern "C" int dorgqr_(int *, int *, int *, double *, int *,
-                       double *, double *, int *, int *);
-extern "C" int dtrtri_(char *uplo, char *diag, int *n, double *a, int *lda, int *info);
+#ifdef VISP_HAVE_LAPACK
+#  ifdef VISP_HAVE_LAPACK_BUILT_IN
+typedef long int integer;
+#  else
+typedef int integer;
+#  endif
+
+extern "C" int dgeqrf_(integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *lwork, integer *info);
+extern "C" int dormqr_(char *side, char *trans, integer *m, integer *n,
+                       integer *k, double *a, integer *lda, double *tau, double *c__,
+                       integer *ldc, double *work, integer *lwork, integer *info);
+extern "C" int dorgqr_(integer *, integer *, integer *, double *, integer *,
+                       double *, double *, integer *, integer *);
+extern "C" int dtrtri_(char *uplo, char *diag, integer *n, double *a, integer *lda, integer *info);
 
 int allocate_work(double** work);
 
@@ -70,7 +76,7 @@ int allocate_work(double** work)
 }
 #endif
 
-#ifdef VISP_HAVE_LAPACK_C
+#ifdef VISP_HAVE_LAPACK
 /*!
   Compute the inverse of a n-by-n matrix using the QR decomposition with Lapack 3rd party.
 
@@ -106,14 +112,14 @@ vpMatrix vpMatrix::inverseByQRLapack() const
                             "Cannot inverse a non-square matrix (%ux%u) by QR", rowNum, colNum)) ;
   }
 
-  int rowNum_ = (int)this->getRows();
-  int colNum_ = (int)this->getCols();
-  int lda = (int)rowNum_; //lda is the number of rows because we don't use a submatrix
-  int dimTau = std::min(rowNum_,colNum_);
-  int dimWork = -1;
+  integer rowNum_ = (integer)this->getRows();
+  integer colNum_ = (integer)this->getCols();
+  integer lda = (integer)rowNum_; //lda is the number of rows because we don't use a submatrix
+  integer dimTau = (std::min)(rowNum_,colNum_);
+  integer dimWork = -1;
   double *tau = new double[dimTau];
   double *work = new double[1];
-  int info;
+  integer info;
   vpMatrix C;
   vpMatrix A = *this;
 
@@ -192,7 +198,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
         if(j>i) C[i][j] = 0.;
 
     dimWork = -1;
-    int ldc = lda;
+    integer ldc = lda;
 
     //4) Transpose Q and left-multiply it by R^-1
     //get R^-1*tQ
@@ -256,7 +262,7 @@ int main()
 vpMatrix
 vpMatrix::inverseByQR() const
 {
-#ifdef VISP_HAVE_LAPACK_C
+#ifdef VISP_HAVE_LAPACK
   return inverseByQRLapack();
 #else
   throw(vpException(vpException::fatalError, "Cannot inverse matrix by QR. Install Lapack 3rd party"));

@@ -2046,7 +2046,7 @@ SEARCH_INCLUDES        = YES
 # preprocessor.
 # This tag requires that the tag SEARCH_INCLUDES is set to YES.
 
-INCLUDE_PATH           =
+INCLUDE_PATH           = "@VISP_BINARY_DIR@/modules/core"
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the
@@ -2073,7 +2073,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_D3D9 \
                          VISP_HAVE_GSL \
                          VISP_HAVE_DISPLAY \
-                         VISP_HAVE_LAPACK_C \
+                         VISP_HAVE_LAPACK \
                          VISP_HAVE_OPENCV \
                          VISP_HAVE_OPENCV_NONFREE \
                          VISP_HAVE_OPENCV_VERSION=0x020408 \

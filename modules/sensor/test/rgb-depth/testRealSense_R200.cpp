@@ -225,11 +225,11 @@ namespace {
             break;
 
           case rs::stream::infrared:
-            di.init( I_infrared, 0, (int) std::max(I_color.getHeight(), I_depth.getHeight()) + 30, "Infrared frame" );
+            di.init( I_infrared, 0, (int) (std::max)(I_color.getHeight(), I_depth.getHeight()) + 30, "Infrared frame" );
             break;
 
           case rs::stream::infrared2:
-            di2.init( I_infrared2, (int) I_infrared.getWidth(), (int) std::max(I_color.getHeight(), I_depth.getHeight()) + 30, "Infrared2 frame" );
+            di2.init( I_infrared2, (int) I_infrared.getWidth(), (int) (std::max)(I_color.getHeight(), I_depth.getHeight()) + 30, "Infrared2 frame" );
             break;
 
           default:

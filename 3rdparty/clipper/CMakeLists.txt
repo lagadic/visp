@@ -1,5 +1,9 @@
 project(${CLIPPER_LIBRARY})
 
+set(CLIPPER_MAJOR_VERSION 6 PARENT_SCOPE)
+set(CLIPPER_MINOR_VERSION 4 PARENT_SCOPE)
+set(CLIPPER_PATCH_VERSION 2 PARENT_SCOPE)
+
 vp_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 file(GLOB lib_srcs *.cpp)
@@ -7,10 +11,8 @@ file(GLOB lib_hdrs *.hpp)
 
 add_library(${CLIPPER_LIBRARY} STATIC ${lib_srcs} ${lib_hdrs})
 
-if(UNIX)
-  if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-  endif()
+if(CMAKE_COMPILER_IS_GNUCXX AND UNIX)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif()
 
 if(ENABLE_SOLUTION_FOLDERS)

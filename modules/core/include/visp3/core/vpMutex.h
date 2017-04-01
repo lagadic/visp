@@ -47,6 +47,9 @@
 #if defined(VISP_HAVE_PTHREAD)
 #  include <pthread.h>
 #elif defined(_WIN32)
+// Include WinSock2.h before windows.h to ensure that winsock.h is not included by windows.h 
+// since winsock.h and winsock2.h are incompatible
+#  include <WinSock2.h> 
 #  include <windows.h>
 #endif
 

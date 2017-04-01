@@ -191,7 +191,11 @@ int main()
         rs.acquire(color, infrared_y16, depth, pointcloud);
         vpImageConvert::convert(infrared_y16, infrared_display);
       } else {
+#ifdef VISP_HAVE_PCL
         rs.acquire( (unsigned char *) color.bitmap, (unsigned char *) depth.bitmap, NULL, pointcloud, (unsigned char *) infrared_y8.bitmap );
+#else
+        rs.acquire( (unsigned char *) color.bitmap, (unsigned char *) depth.bitmap, NULL, (unsigned char *) infrared_y8.bitmap );
+#endif
         vpImageConvert::convert(infrared_y8, infrared_display);
       }
 
