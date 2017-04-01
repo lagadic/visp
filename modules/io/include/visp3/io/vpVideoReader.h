@@ -338,7 +338,8 @@ public:
 	*/
 	inline void setFrameStep(const long frame_step) { // important change
 		if (frame_step < 1) {
-			throw std::invalid_argument("The frame step should be more than 0");
+			throw(vpException(vpException::badValue,
+			    "The frame step should be more than 0"));
 		}
 		this->frameStep = frame_step;
 	}
