@@ -224,7 +224,7 @@ private:
     bool firstFrameIndexIsSet;
     bool lastFrameIndexIsSet;
     //!The frame step
-    long frameStep;
+    long frameStep; // important change
 
 //private:
 //#ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -258,7 +258,7 @@ public:
       \return true if the end of the sequence is reached.
     */
     inline bool end() {
-      if (frameCount + frameStep > lastFrame )
+      if (frameCount + frameStep > lastFrame ) // important change
         return true;
       return false;
     }
@@ -336,7 +336,7 @@ public:
 
 	  \sa setFrameStep()
 	*/
-	inline void setFrameStep(const long frame_step) {
+	inline void setFrameStep(const long frame_step) { // important change
 		if (frame_step < 1) {
 			throw std::invalid_argument("The frame step should be more than 0");
 		}
