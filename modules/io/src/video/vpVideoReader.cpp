@@ -56,13 +56,13 @@ Basic constructor.
 vpVideoReader::vpVideoReader()
   : vpFrameGrabber(), imSequence(NULL),
 #ifdef VISP_HAVE_FFMPEG
-	ffmpeg(NULL),
+  ffmpeg(NULL),
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
   capture(), frame(),
 #endif
-	formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0),
-	firstFrame(0), lastFrame(0), firstFrameIndexIsSet(false), lastFrameIndexIsSet(false),
-	frameStep(1)
+  formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0),
+  firstFrame(0), lastFrame(0), firstFrameIndexIsSet(false), lastFrameIndexIsSet(false),
+  frameStep(1)
 {
 }
 
@@ -71,15 +71,15 @@ Basic destructor.
 */
 vpVideoReader::~vpVideoReader()
 {
-	if (imSequence != NULL)
-	{
-		delete imSequence;
-	}
+  if (imSequence != NULL)
+  {
+    delete imSequence;
+  }
 #ifdef VISP_HAVE_FFMPEG
-	if (ffmpeg != NULL)
-	{
-		delete ffmpeg;
-	}
+  if (ffmpeg != NULL)
+  {
+    delete ffmpeg;
+  }
 #endif
 }
 
@@ -95,38 +95,38 @@ If you want to read a sequence of images, \f$ filename \f$ corresponds to the pa
 */
 void vpVideoReader::setFileName(const char *filename)
 {
-	if ((!filename) || (*filename == '\0'))
-	{
-		vpERROR_TRACE("filename empty ");
-		throw (vpImageException(vpImageException::noFileNameError, "filename empty "));
-	}
+  if ((!filename) || (*filename == '\0'))
+  {
+    vpERROR_TRACE("filename empty ");
+    throw (vpImageException(vpImageException::noFileNameError, "filename empty "));
+  }
 
-	if (strlen( filename ) >= FILENAME_MAX) {
-		throw(vpException(vpException::memoryAllocationError,
-			"Not enough memory to initialize the file name"));
-	}
+  if (strlen( filename ) >= FILENAME_MAX) {
+    throw(vpException(vpException::memoryAllocationError,
+      "Not enough memory to initialize the file name"));
+  }
 
-	strcpy(this->fileName, filename);
+  strcpy(this->fileName, filename);
 
-	formatType = getFormat(fileName);
+  formatType = getFormat(fileName);
 
-	if (formatType == FORMAT_UNKNOWN)
-	{
-		throw(vpException(vpException::badValue, "Filename extension not supported"));
-	}
+  if (formatType == FORMAT_UNKNOWN)
+  {
+    throw(vpException(vpException::badValue, "Filename extension not supported"));
+  }
 
-	// checking image name format
-	if (isImageExtensionSupported())
-	{
-		std::string format = vpIoTools::getName(fileName);
-		if (!checkImageNameFormat(format))
-		{
-		  throw(vpException(vpException::badValue,
-				  "Format of image name wasn't recognized: %s", format.c_str()));
-		}
-	}
+  // checking image name format
+  if (isImageExtensionSupported())
+  {
+    std::string format = vpIoTools::getName(fileName);
+    if (!checkImageNameFormat(format))
+    {
+      throw(vpException(vpException::badValue,
+          "Format of image name wasn't recognized: %s", format.c_str()));
+    }
+  }
 
-	initFileName = true;
+  initFileName = true;
 }
 
 /*!
@@ -140,7 +140,7 @@ If you want to read a sequence of images, \f$ filename \f$ corresponds to the pa
 */
 void vpVideoReader::setFileName(const std::string &filename)
 {
-	setFileName(filename.c_str());
+  setFileName(filename.c_str());
 }
 
 /*!
@@ -152,65 +152,65 @@ Grab the first frame and stores it in the image \f$ I \f$.
 */
 void vpVideoReader::open(vpImage< vpRGBa > &I)
 {
-	if (!initFileName)
-	{
-		vpERROR_TRACE("The generic filename has to be set");
-		throw (vpImageException(vpImageException::noFileNameError, "filename empty"));
-	}
+  if (!initFileName)
+  {
+    vpERROR_TRACE("The generic filename has to be set");
+    throw (vpImageException(vpImageException::noFileNameError, "filename empty"));
+  }
 
-	if (isImageExtensionSupported())
-	{
-		imSequence = new vpDiskGrabber;
-		imSequence->setGenericName(fileName);
-		imSequence->setStep(frameStep);
-		if (firstFrameIndexIsSet)
-		{
-			imSequence->setImageNumber(firstFrame);
-		}
-	}
-	else if (isVideoExtensionSupported())
-	{
+  if (isImageExtensionSupported())
+  {
+    imSequence = new vpDiskGrabber;
+    imSequence->setGenericName(fileName);
+    imSequence->setStep(frameStep);
+    if (firstFrameIndexIsSet)
+    {
+      imSequence->setImageNumber(firstFrame);
+    }
+  }
+  else if (isVideoExtensionSupported())
+  {
 #ifdef VISP_HAVE_FFMPEG
-		ffmpeg = new vpFFMPEG;
-		if (!ffmpeg->openStream(fileName, vpFFMPEG::COLORED))
-		{
-			throw (vpException(vpException::ioError, "Could not open the video with ffmpeg"));
-		}
-		ffmpeg->initStream();
+    ffmpeg = new vpFFMPEG;
+    if (!ffmpeg->openStream(fileName, vpFFMPEG::COLORED))
+    {
+      throw (vpException(vpException::ioError, "Could not open the video with ffmpeg"));
+    }
+    ffmpeg->initStream();
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-		capture.open(fileName);
+    capture.open(fileName);
 
-		if(!capture.isOpened())
-		{
-			throw (vpException(vpException::ioError, "Could not open the video with opencv"));
-		}
+    if(!capture.isOpened())
+    {
+      throw (vpException(vpException::ioError, "Could not open the video with opencv"));
+    }
 #else
-    //vpERROR_TRACE("To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
-    throw (vpException(vpException::fatalError,
-    		"To read video files ViSP should be build with ffmpeg or opencv 3rd >= 2.1.0 party libraries."));
+  //vpERROR_TRACE("To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
+  throw (vpException(vpException::fatalError,
+      "To read video files ViSP should be build with ffmpeg or opencv 3rd >= 2.1.0 party libraries."));
 #endif
-	}
-	else if (formatType == FORMAT_UNKNOWN)
-	{
-		//vpERROR_TRACE("The format of the file does not correspond to a readable format.");
-		throw (vpException(vpException::fatalError,
-				"The format of the file does not correspond to a readable format supported by ViSP."));
-	}
+  }
+  else if (formatType == FORMAT_UNKNOWN)
+  {
+    //vpERROR_TRACE("The format of the file does not correspond to a readable format.");
+    throw (vpException(vpException::fatalError,
+        "The format of the file does not correspond to a readable format supported by ViSP."));
+  }
 
-	findFirstFrameIndex();
-	frameCount = firstFrame;
-	if (!getFrame(I, firstFrame))
-	{
-		//vpERROR_TRACE("Could not read the video first frame");
-		throw (vpException(vpException::ioError, "Could not read the video first frame"));
-	}
+  findFirstFrameIndex();
+  frameCount = firstFrame;
+  if (!getFrame(I, firstFrame))
+  {
+    //vpERROR_TRACE("Could not read the video first frame");
+    throw (vpException(vpException::ioError, "Could not read the video first frame"));
+  }
 
-	height = I.getHeight();
-	width = I.getWidth();
+  height = I.getHeight();
+  width = I.getWidth();
 
-	isOpen = true;
-	findLastFrameIndex();
-	frameCount = firstFrame; // open() should not increase the frame counter
+  isOpen = true;
+  findLastFrameIndex();
+  frameCount = firstFrame; // open() should not increase the frame counter
 }
 
 
@@ -223,65 +223,65 @@ Grab the first frame and stores it in the image \f$ I \f$.
 */
 void vpVideoReader::open(vpImage<unsigned char> &I)
 {
-	if (!initFileName)
-	{
-		vpERROR_TRACE("The generic filename has to be set");
-		throw (vpImageException(vpImageException::noFileNameError, "filename empty"));
-	}
+  if (!initFileName)
+  {
+    vpERROR_TRACE("The generic filename has to be set");
+    throw (vpImageException(vpImageException::noFileNameError, "filename empty"));
+  }
 
-	if (isImageExtensionSupported())
-	{
-		imSequence = new vpDiskGrabber;
-		imSequence->setGenericName(fileName);
-    imSequence->setStep(frameStep);
-		if (firstFrameIndexIsSet)
-		{
-			imSequence->setImageNumber(firstFrame);
-		}
-	}
-	else if (isVideoExtensionSupported())
-	{
+  if (isImageExtensionSupported())
+  {
+    imSequence = new vpDiskGrabber;
+    imSequence->setGenericName(fileName);
+  imSequence->setStep(frameStep);
+    if (firstFrameIndexIsSet)
+    {
+      imSequence->setImageNumber(firstFrame);
+    }
+  }
+  else if (isVideoExtensionSupported())
+  {
 #ifdef VISP_HAVE_FFMPEG
-		ffmpeg = new vpFFMPEG;
-		if (!ffmpeg->openStream(fileName, vpFFMPEG::GRAY_SCALED))
-		{
-			throw (vpException(vpException::ioError, "Could not open the video with ffmpeg"));
-		}
-		ffmpeg->initStream();
+    ffmpeg = new vpFFMPEG;
+    if (!ffmpeg->openStream(fileName, vpFFMPEG::GRAY_SCALED))
+    {
+      throw (vpException(vpException::ioError, "Could not open the video with ffmpeg"));
+    }
+    ffmpeg->initStream();
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-		capture.open(fileName);
+    capture.open(fileName);
 
-		if(!capture.isOpened())
-		{
-			throw (vpException(vpException::ioError, "Could not open the video with opencv"));
-		}
+    if(!capture.isOpened())
+    {
+      throw (vpException(vpException::ioError, "Could not open the video with opencv"));
+    }
 #else
-    //vpERROR_TRACE("To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
-    throw (vpException(vpException::fatalError,
-    		"To read video files ViSP should be build with ffmpeg or opencv >= 2.1.0 3rd party libraries."));
+  //vpERROR_TRACE("To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
+  throw (vpException(vpException::fatalError,
+      "To read video files ViSP should be build with ffmpeg or opencv >= 2.1.0 3rd party libraries."));
 #endif
-	}
-	else if (formatType == FORMAT_UNKNOWN)
-	{
-		//vpERROR_TRACE("The format of the file does not correspond to a readable format.");
-		throw (vpException(vpException::fatalError,
-				"The format of the file does not correspond to a readable format supported by ViSP."));
-	}
+  }
+  else if (formatType == FORMAT_UNKNOWN)
+  {
+    //vpERROR_TRACE("The format of the file does not correspond to a readable format.");
+    throw (vpException(vpException::fatalError,
+        "The format of the file does not correspond to a readable format supported by ViSP."));
+  }
 
-	findFirstFrameIndex();
-	frameCount = firstFrame;
-	if (!getFrame(I,firstFrame))
-	{
-		//vpERROR_TRACE("Could not read the video first frame");
-		throw (vpException(vpException::ioError, "Could not read the video first frame"));
-	}
+  findFirstFrameIndex();
+  frameCount = firstFrame;
+  if (!getFrame(I,firstFrame))
+  {
+    //vpERROR_TRACE("Could not read the video first frame");
+    throw (vpException(vpException::ioError, "Could not read the video first frame"));
+  }
 
-	height = I.getHeight();
-	width = I.getWidth();
+  height = I.getHeight();
+  width = I.getWidth();
 
-	isOpen = true;
-	findLastFrameIndex();
-	frameCount = firstFrame; // open() should not increase the frame counter
+  isOpen = true;
+  findLastFrameIndex();
+  frameCount = firstFrame; // open() should not increase the frame counter
 }
 
 
@@ -296,26 +296,26 @@ This method enables to use the class as frame grabber.
 */
 void vpVideoReader::acquire(vpImage< vpRGBa > &I)
 {
-	if (!isOpen)
-	{
-		open(I);
-	}
+  if (!isOpen)
+  {
+    open(I);
+  }
 
-	//getFrame(I,frameCount);
-	if (imSequence != NULL)
-	{
-		imSequence->acquire(I);
-		frameCount += frameStep; // next index
-	}
-#ifdef VISP_HAVE_FFMPEG
-	else if (ffmpeg != NULL)
-	{
-		ffmpeg->acquire(I);
+  //getFrame(I,frameCount);
+  if (imSequence != NULL)
+  {
+    imSequence->acquire(I);
     frameCount += frameStep; // next index
-	}
+  }
+#ifdef VISP_HAVE_FFMPEG
+  else if (ffmpeg != NULL)
+  {
+    ffmpeg->acquire(I);
+    frameCount += frameStep; // next index
+  }
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-	else
-	{
+  else
+  {
     capture >> frame;
     frameCount = frameCount + frameStep; // next index
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
@@ -328,7 +328,7 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
       setLastFrameIndex(frameCount - frameStep);
     else
       vpImageConvert::convert(frame, I);
-	}
+  }
 #endif
 }
 
@@ -342,37 +342,37 @@ This method enables to use the class as frame grabber.
 */
 void vpVideoReader::acquire(vpImage< unsigned char > &I)
 {
-	if (!isOpen) {
-		open(I);
-	}
+  if (!isOpen) {
+    open(I);
+  }
 
-	if (imSequence != NULL)
-	{
-		imSequence->acquire(I);
-		frameCount += frameStep; // next index
-	}
+  if (imSequence != NULL)
+  {
+    imSequence->acquire(I);
+    frameCount += frameStep; // next index
+  }
 #ifdef VISP_HAVE_FFMPEG
-	else if (ffmpeg != NULL)
-	{
-		ffmpeg->acquire(I);
-		frameCount += frameStep; // next index
-	}
+  else if (ffmpeg != NULL)
+  {
+    ffmpeg->acquire(I);
+    frameCount += frameStep; // next index
+  }
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-	else
-	{
-	  capture >> frame;
-	  frameCount += frameStep; // next index
+  else
+  {
+    capture >> frame;
+    frameCount += frameStep; // next index
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
-	  capture.set(cv::CAP_PROP_POS_FRAMES, frameCount);
+    capture.set(cv::CAP_PROP_POS_FRAMES, frameCount);
 #else
-	  capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
+    capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
 #endif
 
     if (frame.empty())
       setLastFrameIndex(frameCount - frameStep);
     else
       vpImageConvert::convert(frame, I);
-	}
+  }
 #endif
 }
 
@@ -391,21 +391,21 @@ one after one.
 */
 bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
 {
-	if (imSequence != NULL)
-	{
-		try
-		{
+  if (imSequence != NULL)
+  {
+    try
+    {
       imSequence->acquire(I, frame_index);
       frameCount = frame_index + frameStep; // next index
-		}
-		catch(...)
-		{
-		  vpERROR_TRACE("Couldn't find the %u th frame", frame_index);
-			return false;
-		}
-	}
-	else
-	{
+    }
+    catch(...)
+    {
+      vpERROR_TRACE("Couldn't find the %u th frame", frame_index);
+      return false;
+    }
+  }
+  else
+  {
 #ifdef VISP_HAVE_FFMPEG
     if (!ffmpeg->getFrame(I, (unsigned int)frame_index))
     {
@@ -425,36 +425,36 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
     capture.set(cv::CAP_PROP_POS_FRAMES, frameCount);
     if (frame.empty())
     {
-      // New trial that makes things working with opencv 3.0.0
+    // New trial that makes things working with opencv 3.0.0
       capture >> frame;
       if (frame.empty()) {
-          setLastFrameIndex(frameCount - frameStep);
-          return false;
+        setLastFrameIndex(frameCount - frameStep);
+        return false;
       }
       else
       {
         vpImageConvert::convert(frame, I);
       }
     }
-	  else
-	    vpImageConvert::convert(frame, I);
+    else
+      vpImageConvert::convert(frame, I);
 #elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
-	    if (!capture.set(CV_CAP_PROP_POS_FRAMES, frame_index))
-	    {
-        vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
-        return false;
-	    }
+    if (!capture.set(CV_CAP_PROP_POS_FRAMES, frame_index))
+    {
+      vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
+      return false;
+    }
 
-	    capture >> frame;
-	    frameCount = frame_index + frameStep;  // next index
-	    capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
-	    if (frame.empty())
-	        setLastFrameIndex(frameCount - frameStep);
-	    else
-	        vpImageConvert::convert(frame, I);
+    capture >> frame;
+    frameCount = frame_index + frameStep;  // next index
+    capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
+    if (frame.empty())
+      setLastFrameIndex(frameCount - frameStep);
+    else
+      vpImageConvert::convert(frame, I);
 #endif
-	}
-	return true;
+  }
+  return true;
 }
 
 
@@ -473,18 +473,18 @@ one after one.
 bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
 {
   if (imSequence != NULL)
-	{
-		try
-		{
+  {
+    try
+    {
       imSequence->acquire(I, frame_index);
       frameCount = frame_index + frameStep;
     }
-		catch(...)
-		{
+    catch(...)
+    {
       vpERROR_TRACE("Couldn't find the %u th frame", frame_index);
-			return false;
-		}
-	}
+      return false;
+    }
+  }
   else
   {
 #ifdef VISP_HAVE_FFMPEG
@@ -493,50 +493,50 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
       vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
       return false;
     }
-    frameCount = frame_index + frameStep;  // next index
+  frameCount = frame_index + frameStep;  // next index
 #elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-    if (!capture.set(cv::CAP_PROP_POS_FRAMES, frame_index))
-    {
-      vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
-      return false;
-    }
+  if (!capture.set(cv::CAP_PROP_POS_FRAMES, frame_index))
+  {
+    vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
+    return false;
+  }
+  capture >> frame;
+  frameCount = frame_index + frameStep;  // next index
+  capture.set(cv::CAP_PROP_POS_FRAMES, frameCount);
+  if(frame.empty())
+  {
+    // New trial that makes things working with opencv 3.0.0
     capture >> frame;
-    frameCount = frame_index + frameStep;  // next index
-    capture.set(cv::CAP_PROP_POS_FRAMES, frameCount);
     if(frame.empty())
     {
-      // New trial that makes things working with opencv 3.0.0
-      capture >> frame;
-      if(frame.empty())
-      {
-        setLastFrameIndex(frameCount - frameStep);
-        return false;
-      }
-      else
-      {
-        vpImageConvert::convert(frame, I);
-      }
-    }
-    else
-    {
-      vpImageConvert::convert(frame, I);
-    }
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    if (!capture.set(CV_CAP_PROP_POS_FRAMES, frame_index))
-    {
-      vpERROR_TRACE("Couldn't find the %ld th frame", frame_index); // next index
+      setLastFrameIndex(frameCount - frameStep);
       return false;
     }
-    capture >> frame;
-    frameCount += frameStep; // next index
-    capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
-    if (frame.empty())
-      setLastFrameIndex(frameCount - frameStep);
     else
+    {
       vpImageConvert::convert(frame, I);
+    }
+  }
+  else
+  {
+    vpImageConvert::convert(frame, I);
+  }
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+  if (!capture.set(CV_CAP_PROP_POS_FRAMES, frame_index))
+  {
+    vpERROR_TRACE("Couldn't find the %ld th frame", frame_index); // next index
+    return false;
+  }
+  capture >> frame;
+  frameCount += frameStep; // next index
+  capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
+  if (frame.empty())
+    setLastFrameIndex(frameCount - frameStep);
+  else
+    vpImageConvert::convert(frame, I);
 #endif
   }
-	return true;
+  return true;
 }
 
 
@@ -546,111 +546,111 @@ Gets the format of the file(s) which has/have to be read.
 \return Returns the format.
 */
 vpVideoReader::vpVideoFormatType
-	vpVideoReader::getFormat(const char *filename)
+  vpVideoReader::getFormat(const char *filename)
 {  
-	std::string sfilename(filename);
+  std::string sfilename(filename);
 
-	std::string ext = vpVideoReader::getExtension(sfilename);
+  std::string ext = vpVideoReader::getExtension(sfilename);
 
-	if (ext.compare(".PGM") == 0)
-		return FORMAT_PGM;
-	else if (ext.compare(".pgm") == 0)
-		return FORMAT_PGM;
-	else if (ext.compare(".PPM") == 0)
-		return FORMAT_PPM;
-	else if (ext.compare(".ppm") == 0)
-		return FORMAT_PPM;
-	else if (ext.compare(".JPG") == 0)
-		return FORMAT_JPEG;
-	else if (ext.compare(".jpg") == 0)
-		return FORMAT_JPEG;
-	else if (ext.compare(".JPEG") == 0)
-		return FORMAT_JPEG;
-	else if (ext.compare(".jpeg") == 0)
-		return FORMAT_JPEG;
-	else if (ext.compare(".PNG") == 0)
-		return FORMAT_PNG;
-	else if (ext.compare(".png") == 0)
-		return FORMAT_PNG;
+  if (ext.compare(".PGM") == 0)
+    return FORMAT_PGM;
+  else if (ext.compare(".pgm") == 0)
+    return FORMAT_PGM;
+  else if (ext.compare(".PPM") == 0)
+    return FORMAT_PPM;
+  else if (ext.compare(".ppm") == 0)
+    return FORMAT_PPM;
+  else if (ext.compare(".JPG") == 0)
+    return FORMAT_JPEG;
+  else if (ext.compare(".jpg") == 0)
+    return FORMAT_JPEG;
+  else if (ext.compare(".JPEG") == 0)
+    return FORMAT_JPEG;
+  else if (ext.compare(".jpeg") == 0)
+    return FORMAT_JPEG;
+  else if (ext.compare(".PNG") == 0)
+    return FORMAT_PNG;
+  else if (ext.compare(".png") == 0)
+    return FORMAT_PNG;
   else if (ext.compare(".TIFF") == 0)
-    return FORMAT_TIFF;
+  return FORMAT_TIFF;
   else if (ext.compare(".tiff") == 0)
-    return FORMAT_TIFF;
+  return FORMAT_TIFF;
   else if (ext.compare(".BMP") == 0)
-    return FORMAT_BMP;
+  return FORMAT_BMP;
   else if (ext.compare(".bmp") == 0)
-    return FORMAT_BMP;
+  return FORMAT_BMP;
   else if (ext.compare(".DIB") == 0)
-    return FORMAT_DIB;
+  return FORMAT_DIB;
   else if (ext.compare(".dib") == 0)
-    return FORMAT_DIB;
+  return FORMAT_DIB;
   else if (ext.compare(".PBM") == 0)
-    return FORMAT_PBM;
+  return FORMAT_PBM;
   else if (ext.compare(".pbm") == 0)
-    return FORMAT_PBM;
+  return FORMAT_PBM;
   else if (ext.compare(".SR") == 0)
-    return FORMAT_PBM;
+  return FORMAT_PBM;
   else if (ext.compare(".sr") == 0)
-    return FORMAT_PBM;
+  return FORMAT_PBM;
   else if (ext.compare(".RAS") == 0)
-    return FORMAT_RASTER;
+  return FORMAT_RASTER;
   else if (ext.compare(".ras") == 0)
-    return FORMAT_RASTER;
+  return FORMAT_RASTER;
   else if (ext.compare(".JP2") == 0)
-    return FORMAT_JPEG2000;
+  return FORMAT_JPEG2000;
   else if (ext.compare(".jp2") == 0)
-    return FORMAT_JPEG2000;
+  return FORMAT_JPEG2000;
   else if (ext.compare(".AVI") == 0)
-		return FORMAT_AVI;
-	else if (ext.compare(".avi") == 0)
-		return FORMAT_AVI;
-	else if (ext.compare(".MPEG") == 0)
-		return FORMAT_MPEG;
-	else if (ext.compare(".mpeg") == 0)
-		return FORMAT_MPEG;
-	else if (ext.compare(".MPG") == 0)
-		return FORMAT_MPEG;
-	else if (ext.compare(".mpg") == 0)
-		return FORMAT_MPEG;
-	else if (ext.compare(".MPEG4") == 0)
-		return FORMAT_MPEG4;
-	else if (ext.compare(".mpeg4") == 0)
-		return FORMAT_MPEG4;
-	else if (ext.compare(".MP4") == 0)
-		return FORMAT_MPEG4;
-	else if (ext.compare(".mp4") == 0)
-		return FORMAT_MPEG4;
-	else if (ext.compare(".MOV") == 0)
-		return FORMAT_MOV;
-	else if (ext.compare(".mov") == 0)
-		return FORMAT_MOV;
-	else if (ext.compare(".OGV") == 0)
-		return FORMAT_OGV;
-	else if (ext.compare(".ogv") == 0)
-		return FORMAT_OGV;
-	else if (ext.compare(".WMV") == 0)
-		return FORMAT_WMV;
-	else if (ext.compare(".wmv") == 0)
-		return FORMAT_WMV;
-	else if (ext.compare(".FLV") == 0)
-		return FORMAT_FLV;
-	else if (ext.compare(".flv") == 0)
-		return FORMAT_FLV;
-	else if (ext.compare(".MKV") == 0)
-		return FORMAT_MKV;
-	else if (ext.compare(".mkv") == 0)
-		return FORMAT_MKV;
-	else
-		return FORMAT_UNKNOWN;
+    return FORMAT_AVI;
+  else if (ext.compare(".avi") == 0)
+    return FORMAT_AVI;
+  else if (ext.compare(".MPEG") == 0)
+    return FORMAT_MPEG;
+  else if (ext.compare(".mpeg") == 0)
+    return FORMAT_MPEG;
+  else if (ext.compare(".MPG") == 0)
+    return FORMAT_MPEG;
+  else if (ext.compare(".mpg") == 0)
+    return FORMAT_MPEG;
+  else if (ext.compare(".MPEG4") == 0)
+    return FORMAT_MPEG4;
+  else if (ext.compare(".mpeg4") == 0)
+    return FORMAT_MPEG4;
+  else if (ext.compare(".MP4") == 0)
+    return FORMAT_MPEG4;
+  else if (ext.compare(".mp4") == 0)
+    return FORMAT_MPEG4;
+  else if (ext.compare(".MOV") == 0)
+    return FORMAT_MOV;
+  else if (ext.compare(".mov") == 0)
+    return FORMAT_MOV;
+  else if (ext.compare(".OGV") == 0)
+    return FORMAT_OGV;
+  else if (ext.compare(".ogv") == 0)
+    return FORMAT_OGV;
+  else if (ext.compare(".WMV") == 0)
+    return FORMAT_WMV;
+  else if (ext.compare(".wmv") == 0)
+    return FORMAT_WMV;
+  else if (ext.compare(".FLV") == 0)
+    return FORMAT_FLV;
+  else if (ext.compare(".flv") == 0)
+    return FORMAT_FLV;
+  else if (ext.compare(".MKV") == 0)
+    return FORMAT_MKV;
+  else if (ext.compare(".mkv") == 0)
+    return FORMAT_MKV;
+  else
+    return FORMAT_UNKNOWN;
 }
 
 // return the extension of the file including the dot
 std::string vpVideoReader::getExtension(const std::string &filename)
 {
-	// extract the extension
-	size_t dot = filename.find_last_of(".");
-	std::string ext = filename.substr(dot, filename.size() - 1);
-	return ext;
+  // extract the extension
+  size_t dot = filename.find_last_of(".");
+  std::string ext = filename.substr(dot, filename.size() - 1);
+  return ext;
 }
 
 /*!
@@ -663,8 +663,10 @@ void vpVideoReader::findLastFrameIndex()
     throw (vpException(vpException::notInitialized, "file not yet opened"));
   }
   
-  if (imSequence != NULL) {
-    if (! lastFrameIndexIsSet) {
+  if (imSequence != NULL)
+  {
+    if (! lastFrameIndexIsSet)
+    {
       std::string imageNameFormat = vpIoTools::getName(std::string(fileName));
       std::string dirName = vpIoTools::getParent(std::string(fileName));
       if (dirName == "")
@@ -686,8 +688,10 @@ void vpVideoReader::findLastFrameIndex()
   }
 
 #ifdef VISP_HAVE_FFMPEG
-  else if (ffmpeg != NULL) {
-    if (!lastFrameIndexIsSet) {
+  else if (ffmpeg != NULL)
+  {
+    if (!lastFrameIndexIsSet)
+    {
       lastFrame = (long)(ffmpeg->getFrameNumber());
     }
   }
@@ -721,41 +725,41 @@ Get the first frame index (update the firstFrame attribute).
 */
 void vpVideoReader::findFirstFrameIndex()
 {
-	if (imSequence != NULL)
-	{
-		if (!firstFrameIndexIsSet) {
-			std::string imageNameFormat = vpIoTools::getName(std::string(fileName));
-			std::string dirName = vpIoTools::getParent(std::string(fileName));
-			if (dirName == "")
-			{
-				dirName = ".";
-			}
-			std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
-			firstFrame = -1;
-			for (size_t i = 0 ; i < files.size(); i++) {
-				// Checking that file name satisfies image format, specified by imageNameFormat, and extracting imageIndex
-				long imageIndex = extractImageIndex(files[i], imageNameFormat);
-				if ((imageIndex != -1) && (imageIndex < firstFrame || firstFrame == -1))
-				{
-					firstFrame = imageIndex;
-				}
-			}
-			imSequence->setImageNumber(firstFrame);
-		}
-	}
+  if (imSequence != NULL)
+  {
+    if (!firstFrameIndexIsSet) {
+      std::string imageNameFormat = vpIoTools::getName(std::string(fileName));
+      std::string dirName = vpIoTools::getParent(std::string(fileName));
+      if (dirName == "")
+      {
+        dirName = ".";
+      }
+      std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
+      firstFrame = -1;
+      for (size_t i = 0 ; i < files.size(); i++) {
+        // Checking that file name satisfies image format, specified by imageNameFormat, and extracting imageIndex
+        long imageIndex = extractImageIndex(files[i], imageNameFormat);
+        if ((imageIndex != -1) && (imageIndex < firstFrame || firstFrame == -1))
+        {
+          firstFrame = imageIndex;
+        }
+      }
+      imSequence->setImageNumber(firstFrame);
+    }
+  }
 #ifdef VISP_HAVE_FFMPEG
-	else if (ffmpeg != NULL)
-	{
-		if (!firstFrameIndexIsSet)
-		{
-			firstFrame = 0L;
-		}
-	}
+  else if (ffmpeg != NULL)
+  {
+    if (!firstFrameIndexIsSet)
+    {
+      firstFrame = 0L;
+    }
+  }
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-	else if (!firstFrameIndexIsSet)
-	{
-		firstFrame = 0L;
-	}
+  else if (!firstFrameIndexIsSet)
+  {
+    firstFrame = 0L;
+  }
 #endif
 }
 
@@ -766,13 +770,13 @@ If the video is a sequence of images, return -1.
 */
 double vpVideoReader::getFramerate()
 {
-	double framerate = -1.;
+  double framerate = -1.;
 
 #ifdef VISP_HAVE_FFMPEG
-	if (ffmpeg != NULL)
-	{
-		framerate = ffmpeg->getFramerate();
-	}
+  if (ffmpeg != NULL)
+  {
+    framerate = ffmpeg->getFramerate();
+  }
 #elif VISP_HAVE_OPENCV_VERSION >= 0x030000
    framerate = capture.get(cv::CAP_PROP_FPS);
    // if(framerate == 0)
@@ -788,7 +792,7 @@ double vpVideoReader::getFramerate()
      vpERROR_TRACE("Problem with CV_CAP_PROP_FPS");
    }
 #endif
-	return framerate;
+  return framerate;
 }
 
 /*!
@@ -797,15 +801,15 @@ Return true if the image file extension is supported, false otherwise.
 bool vpVideoReader::isImageExtensionSupported()
 {
   return (formatType == FORMAT_PGM ||
-          formatType == FORMAT_PPM ||
-          formatType == FORMAT_JPEG ||
-          formatType == FORMAT_PNG ||
-          formatType == FORMAT_TIFF ||
-          formatType == FORMAT_BMP ||
-          formatType == FORMAT_DIB ||
-          formatType == FORMAT_PBM ||
-          formatType == FORMAT_RASTER ||
-          formatType == FORMAT_JPEG2000);
+      formatType == FORMAT_PPM ||
+      formatType == FORMAT_JPEG ||
+      formatType == FORMAT_PNG ||
+      formatType == FORMAT_TIFF ||
+      formatType == FORMAT_BMP ||
+      formatType == FORMAT_DIB ||
+      formatType == FORMAT_PBM ||
+      formatType == FORMAT_RASTER ||
+      formatType == FORMAT_JPEG2000);
 }
 
 /*!
@@ -813,14 +817,14 @@ Return true if the video file extension is supported, false otherwise.
 */
 bool vpVideoReader::isVideoExtensionSupported()
 {
-	return (formatType == FORMAT_AVI ||
-		formatType == FORMAT_MPEG ||
-		formatType == FORMAT_MPEG4 ||
-		formatType == FORMAT_MOV ||
-		formatType == FORMAT_OGV || 
-		formatType == FORMAT_WMV ||
-		formatType == FORMAT_FLV ||
-		formatType == FORMAT_MKV);
+  return (formatType == FORMAT_AVI ||
+    formatType == FORMAT_MPEG ||
+    formatType == FORMAT_MPEG4 ||
+    formatType == FORMAT_MOV ||
+    formatType == FORMAT_OGV || 
+    formatType == FORMAT_WMV ||
+    formatType == FORMAT_FLV ||
+    formatType == FORMAT_MKV);
 }
 
 /*!
@@ -843,7 +847,7 @@ int main()
   reader.open(I);
 
   while (! reader.end() )
-    reader >> I;
+  reader >> I;
 }
    \endcode
  */
@@ -873,7 +877,7 @@ int main()
   reader.open(I);
 
   while (! reader.end() )
-    reader >> I;
+  reader >> I;
 }
    \endcode
  */
@@ -884,15 +888,15 @@ vpVideoReader &vpVideoReader::operator>>(vpImage<vpRGBa> &I)
 }
 
 /*!
-    Checks imageName format and extracts its index.
+  Checks imageName format and extracts its index.
 
-    Format must contain substring "%0xd", defining the length of image index.
-    For example, format can be "img%04d.jpg". Then "img0001.jpg" and "img0000.jpg" 
-    satisfy it, while "picture001.jpg" and "img001.jpg" don't.
+  Format must contain substring "%0xd", defining the length of image index.
+  For example, format can be "img%04d.jpg". Then "img0001.jpg" and "img0000.jpg" 
+  satisfy it, while "picture001.jpg" and "img001.jpg" don't.
 
-    \param imageName : name from which to extract
-    \param format : format of image name
-    \return extracted index on success, -1 otherwise.
+  \param imageName : name from which to extract
+  \param format : format of image name
+  \return extracted index on success, -1 otherwise.
 */
 long vpVideoReader::extractImageIndex(const std::string &imageName, const std::string &format)
 {
@@ -926,8 +930,8 @@ long vpVideoReader::extractImageIndex(const std::string &imageName, const std::s
 }
 
 /*!
-    Checks image name template, for example "img%04d.jpg"
-    \return true if it is correct, false otherwise
+  Checks image name template, for example "img%04d.jpg"
+  \return true if it is correct, false otherwise
 */
 bool vpVideoReader::checkImageNameFormat(const std::string &format)
 {
