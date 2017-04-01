@@ -258,7 +258,7 @@ public:
       \return true if the end of the sequence is reached.
     */
     inline bool end() {
-      if (frameCount > lastFrame )
+      if (frameCount + frameStep > lastFrame )
         return true;
       return false;
     }
