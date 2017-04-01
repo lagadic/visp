@@ -223,6 +223,8 @@ private:
     long lastFrame;
     bool firstFrameIndexIsSet;
     bool lastFrameIndexIsSet;
+    //!The frame step
+    long frameStep;
 
 //private:
 //#ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -324,6 +326,22 @@ public:
       this->lastFrameIndexIsSet = true;
       this->lastFrame = last_frame;
     }
+
+    /*!
+      Sets the frame step index.
+	  Throws exception if the input step is less than 1.
+	  The default frame step is 1
+
+	  \param frame_step : The frame index step.
+
+	  \sa setFrameStep()
+	*/
+	inline void setFrameStep(const long frame_step) {
+		if (frame_step < 1) {
+			throw std::invalid_argument("The frame step should be more than 0");
+		}
+		this->frameStep = frame_step;
+	}
 
 private:
     vpVideoFormatType getFormat(const char *filename);
