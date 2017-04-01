@@ -311,20 +311,21 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
 	else if (ffmpeg != NULL)
 	{
 		ffmpeg->acquire(I);
-    frameCount++; // next index
+    frameCount += frameStep; // next index
 	}
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	else
 	{
     capture >> frame;
+    frameCount = frameCount + frameStep; // next index
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
-    frameCount = (long) capture.get(cv::CAP_PROP_POS_FRAMES); // next index
+    capture.set(cv::CAP_PROP_POS_FRAMES, frameCount);
 #else
-    frameCount = (long) capture.get(CV_CAP_PROP_POS_FRAMES); // next index
+    capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
 #endif
 
     if(frame.empty())
-      setLastFrameIndex(frameCount - 1);
+      setLastFrameIndex(frameCount - frameStep);
     else
       vpImageConvert::convert(frame, I);
 	}
@@ -354,20 +355,21 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
 	else if (ffmpeg != NULL)
 	{
 		ffmpeg->acquire(I);
-		frameCount++; // next index
+		frameCount += frameStep; // next index
 	}
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
 	else
 	{
 	  capture >> frame;
+	  frameCount += frameStep; // next index
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
-	  frameCount = (long) capture.get(cv::CAP_PROP_POS_FRAMES); // next index
+	  capture.set(cv::CAP_PROP_POS_FRAMES, frameCount);
 #else
-	  frameCount = (long) capture.get(CV_CAP_PROP_POS_FRAMES); // next index
+	  capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
 #endif
 
     if (frame.empty())
-      setLastFrameIndex(frameCount - 1);
+      setLastFrameIndex(frameCount - frameStep);
     else
       vpImageConvert::convert(frame, I);
 	}
@@ -410,7 +412,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
       vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
       return false;
     }
-    frameCount = frame_index + 1;  // next index
+    frameCount = frame_index + frameStep;  // next index
 #elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     if (!capture.set(cv::CAP_PROP_POS_FRAMES, frame_index))
     {
@@ -419,13 +421,14 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
     }
 
     capture >> frame;
-    frameCount = (long) capture.get(cv::CAP_PROP_POS_FRAMES); // next index
+    frameCount = frame_index + frameStep;  // next index
+    capture.set(cv::CAP_PROP_POS_FRAMES, frameCount);
     if (frame.empty())
     {
       // New trial that makes things working with opencv 3.0.0
       capture >> frame;
       if (frame.empty()) {
-          setLastFrameIndex(frameCount - 1);
+          setLastFrameIndex(frameCount - frameStep);
           return false;
       }
       else
@@ -443,9 +446,10 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
 	    }
 
 	    capture >> frame;
-	    frameCount = (long) capture.get(CV_CAP_PROP_POS_FRAMES); // next index
+	    frameCount = frame_index + frameStep;  // next index
+	    capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
 	    if (frame.empty())
-	        setLastFrameIndex(frameCount - 1);
+	        setLastFrameIndex(frameCount - frameStep);
 	    else
 	        vpImageConvert::convert(frame, I);
 #endif
@@ -489,7 +493,7 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
       vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
       return false;
     }
-    frameCount = frame_index + 1;  // next index
+    frameCount = frame_index + frameStep;  // next index
 #elif VISP_HAVE_OPENCV_VERSION >= 0x030000
     if (!capture.set(cv::CAP_PROP_POS_FRAMES, frame_index))
     {
@@ -497,14 +501,15 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
       return false;
     }
     capture >> frame;
-    frameCount = (long) capture.get(cv::CAP_PROP_POS_FRAMES); // next index
+    frameCount = frame_index + frameStep;  // next index
+    capture.set(cv::CAP_PROP_POS_FRAMES, frameCount);
     if(frame.empty())
     {
       // New trial that makes things working with opencv 3.0.0
       capture >> frame;
       if(frame.empty())
       {
-        setLastFrameIndex(frameCount - 1);
+        setLastFrameIndex(frameCount - frameStep);
         return false;
       }
       else
@@ -523,9 +528,10 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
       return false;
     }
     capture >> frame;
-    frameCount = (long)capture.get(CV_CAP_PROP_POS_FRAMES);
+    frameCount += frameStep; // next index
+    capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
     if (frame.empty())
-      setLastFrameIndex(frameCount - 1);
+      setLastFrameIndex(frameCount - frameStep);
     else
       vpImageConvert::convert(frame, I);
 #endif
