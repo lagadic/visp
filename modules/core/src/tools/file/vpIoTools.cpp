@@ -78,9 +78,7 @@ std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
  */
 const std::string& vpIoTools::getBuildInformation()
 {
-  static std::string build_info =
-#include "version_string.inc"
-  ;
+  static std::string build_info = "version_string.inc";
   return build_info;
 }
 
