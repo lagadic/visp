@@ -186,6 +186,9 @@ private:
   template<class Type>
   static Type getPixelClamped(const vpImage<Type> &I, const float u, const float v);
 
+  template<class Type>
+  static Type getPixelClampedWarp(const vpImage<Type> &I, const float u, const float v);
+
   //Linear interpolation
   static float lerp(const float A, const float B, const float t);
 
@@ -547,16 +550,12 @@ void vpImageTools::warpAffine(const vpImage<Type> &I,
   imgx = imgx.t();
   imgy = imgy.t();
 
-  // Use nearest neighbour interpolation
   Iwarp.resize(imgx.getRows(),imgx.getCols());
 
+  // Use nearest neighbour interpolation
   for (unsigned int i = 0; i < Iwarp.getRows(); i++) {
     for (unsigned int j = 0; j < Iwarp.getCols(); j++) {
-
-        float yFrac = imgy[i][j] - (int) imgy[i][j];
-        float xFrac = imgx[i][j] - (int) imgx[i][j];
-        resizeBicubic(I, Iwarp, i, j, imgx[i][j], imgy[i][j], xFrac, yFrac);
-        // Iwarp[i][j] = getPixelClamped(I, imgx[i][j], imgy[i][j]);
+      Iwarp[i][j] = getPixelClampedWarp(I, imgx[i][j], imgy[i][j]);
     }
   }
 
@@ -1025,6 +1024,16 @@ template<class Type>
 Type vpImageTools::getPixelClamped(const vpImage<Type> &I, const float u, const float v) {
   unsigned int j = std::min(std::max(0u, (unsigned int) u), I.getWidth()-1);
   unsigned int i = std::min(std::max(0u, (unsigned int) v), I.getHeight()-1);
+
+  return I[i][j];
+}
+
+template<class Type>
+Type vpImageTools::getPixelClampedWarp(const vpImage<Type> &I, const float u, const float v) {
+  unsigned int j = std::min(std::max(0u, (unsigned int) u), I.getWidth()-1);
+  unsigned int i = std::min(std::max(0u, (unsigned int) v), I.getHeight()-1);
+  if (j == I.getWidth()-1 || i == I.getHeight()-1)
+    return static_cast<Type>(0);
 
   return I[i][j];
 }
