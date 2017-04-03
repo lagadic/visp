@@ -97,33 +97,45 @@ public:
     CHECK_DEGENERATE_POINTS           = 0x8   /*!< Check for degenerate points during the RANSAC. */
   };
 
-  unsigned int npt ;             //!< Number of point used in pose computation
-  std::list<vpPoint> listP ;     //!< Array of point (use here class vpPoint)
+  unsigned int npt;             //!< Number of point used in pose computation
+  std::list<vpPoint> listP;     //!< Array of point (use here class vpPoint)
 
-  double residual ;     //!< Residual in meter
+  double residual;     //!< Residual in meter
 
 protected :
   double lambda ;//!< parameters use for the virtual visual servoing approach
 
 private:
-  int vvsIterMax ; //! define the maximum number of iteration in VVS
+  //! define the maximum number of iteration in VVS
+  int vvsIterMax;
   //! variable used in the Dementhon approach
-  std::vector<vpPoint> c3d ;
+  std::vector<vpPoint> c3d;
   //! Flag used to specify if the covariance matrix has to be computed or not.
   bool computeCovariance;
   //! Covariance matrix
   vpMatrix covarianceMatrix;
-  
+  //! Found a solution when there are at least a minimum number of points in the consensus set
   unsigned int ransacNbInlierConsensus;
+  //! Maximum number of iterations for the RANSAC
   int ransacMaxTrials;
+  //! List of inlier points
   std::vector<vpPoint> ransacInliers;
+  //! List of inlier point indexes (from the input list)
   std::vector<unsigned int> ransacInlierIndex;
+  //! RANSAC threshold to consider a sample inlier or not
   double ransacThreshold;
+  //! Minimal distance point to plane to consider if the point belongs or not to the plane
   double distanceToPlaneForCoplanarityTest;
+  //! RANSAC flags to remove or not degenerate points
   int ransacFlags;
+  //! List of points used for the RANSAC (std::vector is contiguous whereas std::list is a linked list)
   std::vector<vpPoint> listOfPoints;
+  //! If true, use a parallel RANSAC implementation
   bool useParallelRansac;
+  //! Number of threads to spawn for the parallel RANSAC implementation
   int nbParallelRansacThreads;
+  //! Stop the optimization loop when the residual change (|r-r_prec|) <= epsilon
+  double vvsEpsilon;
 
 
   //For parallel RANSAC
@@ -221,12 +233,19 @@ public:
   void printPoint() ; 
   void setDistanceToPlaneForCoplanarityTest(double d) ;
   void setLambda(double a) { lambda = a ; }
+  void setVvsEpsilon(const double eps) {
+    if (eps >= 0) {
+      vvsEpsilon = eps;
+    } else {
+      throw vpException(vpException::badValue, "Epsilon value must be >= 0.");
+    }
+  }
   void setVvsIterMax(int nb) { vvsIterMax = nb ; }
   
   void setRansacNbInliersToReachConsensus(const unsigned int &nbC){ ransacNbInlierConsensus = nbC; }
   void setRansacThreshold(const double &t) {
     //Test whether or not t is > 0
-    if(t > 0) {
+    if(t > std::numeric_limits<double>::epsilon()) {
       ransacThreshold = t;
     } else {
       throw vpException(vpException::badValue, "The Ransac threshold must be positive as we deal with distance.");
