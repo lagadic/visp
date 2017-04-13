@@ -83,7 +83,10 @@ extern "C" void dgetri_(integer *n, double *a, integer *lda, integer *ipiv, doub
   - inverseByLULapack() if Lapack 3rd party is installed
   - inverseByLUEigen3() if Eigen3 3rd party is installed
   - inverseByLUOpenCV() if OpenCV 3rd party is installed
-  - inverseByLUGsl() if GSL 3rd party is installed
+  - inverseByLUGsl() if GSL 3rd party is installed.
+
+  If none of these previous 3rd parties is installed, we use by default inverseByLULapack()
+  with a Lapack built-in version.
 
   \return The inverse matrix.
 
@@ -126,7 +129,7 @@ vpMatrix vpMatrix::inverseByLU() const
 #if defined(VISP_HAVE_LAPACK)
   return inverseByLULapack();
 #elif defined(VISP_HAVE_EIGEN3)
-  return inverseByLULapack();
+  return inverseByLUEigen3();
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   return inverseByLUOpenCV();
 #elif defined(VISP_HAVE_GSL)
@@ -143,7 +146,10 @@ vpMatrix vpMatrix::inverseByLU() const
   - detByLULapack() if Lapack 3rd party is installed
   - detByLUEigen3() if Eigen3 3rd party is installed
   - detByLUOpenCV() if OpenCV 3rd party is installed
-  - detByLUGsl() if GSL 3rd party is installed
+  - detByLUGsl() if GSL 3rd party is installed.
+
+  If none of these previous 3rd parties is installed, we use by default detByLULapack()
+  with a Lapack built-in version.
 
   \return The determinant of the matrix if the matrix is square.
 
