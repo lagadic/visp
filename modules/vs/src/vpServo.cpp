@@ -65,7 +65,7 @@
     allows to use the transpose instead.
 
 */
-vpServo::vpServo() 
+vpServo::vpServo()
   : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(vpServo::NONE),
     rankJ1(0), featureList(), desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1),
     interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false),
@@ -743,7 +743,7 @@ vpMatrix vpServo::computeInteractionMatrix()
   return L ;
 }
 
-/*! 
+/*!
 
   Compute the error \f$\bf e =(s - s^*)\f$ between the current set of visual
   features \f$\bf s\f$ and the desired set of visual features \f$\bf s^*\f$.
@@ -1054,13 +1054,13 @@ vpColVector vpServo::computeControlLaw()
       WpW = imJ1t*imJ1t.t() ;
 
 #ifdef DEBUG
-      std::cout << "rank J1 " << rankJ1 <<std::endl ;
-      std::cout << "imJ1t"<<std::endl  << imJ1t ;
-      std::cout << "imJ1"<<std::endl  << imJ1 ;
+      std::cout << "rank J1: " << rankJ1 << std::endl;
+      imJ1t.print(std::cout, 10, "imJ1t");
+      imJ1.print(std::cout, 10, "imJ1");
 
-      std::cout << "WpW" <<std::endl <<WpW  ;
-      std::cout << "J1" <<std::endl <<J1  ;
-      std::cout << "J1p" <<std::endl <<J1p  ;
+      WpW.print(std::cout, 10, "WpW");
+      J1.print(std::cout, 10, "J1");
+      J1p.print(std::cout, 10, "J1p");
 #endif
       e1 = WpW*J1p*error ;
     }

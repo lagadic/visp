@@ -75,13 +75,17 @@ class vpForceTwistMatrix;
 
   \brief Implementation of a matrix and operations on matrices.
 
-  This class needs one of the following third-party to compute matrix inverse, pseudo-inverse, singular value decomposition, determinant...
+  This class needs one of the following third-party to compute matrix inverse, pseudo-inverse,
+  singular value decomposition, determinant:
   - If Lapack is installed and detected by ViSP, this 3rd party is used by vpMatrix.
-    Installation instructions are provided here https://visp.inria.fr/3rd_lapack.
+    Installation instructions are provided here https://visp.inria.fr/3rd_lapack;
+  - else if Eigen3 is installed and detected by ViSP, this 3rd party is used by vpMatrix.
+    Installation instructions are provided here https://visp.inria.fr/3rd_eigen;
   - else if OpenCV is installed and detected by ViSP, this 3rd party is used,
-    Installation instructions are provided here https://visp.inria.fr/3rd_opencv.
+    Installation instructions are provided here https://visp.inria.fr/3rd_opencv;
   - else if GSL is installed and detected by ViSP, we use this other 3rd party.
     Installation instructions are provided here https://visp.inria.fr/3rd_gsl.
+  - If none of these previous 3rd parties is installed, we use by default a Lapack built-in version.
 
   vpMatrix class provides a data structure for the matrices as well
   as a set of operations on these matrices.
@@ -171,7 +175,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   // Initialize an identity matrix m-by-n
   void eye(unsigned int m, unsigned int n) ;
   //@}
-  
+
   //---------------------------------
   // Assignment
   //---------------------------------
@@ -217,6 +221,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //-------------------------------------------------
   /** @name Columns, rows, sub-matrices extraction */
   //@{
+  vpMatrix extract(unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols) const;
   vpColVector getCol(const unsigned int j) const;
   vpColVector getCol(const unsigned int j, const unsigned int i_begin, const unsigned int size) const;
   vpRowVector getRow(const unsigned int i) const;
@@ -233,6 +238,9 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   double det(vpDetMethod method = LU_DECOMPOSITION) const;
   double detByLU() const;
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+#  ifdef VISP_HAVE_EIGEN3
+  double detByLUEigen3() const;
+#  endif
 #  ifdef VISP_HAVE_GSL
   double detByLUGsl() const;
 #  endif
@@ -288,14 +296,14 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   // Kronecker product
   //-------------------------------------------------
   /** @name Kronecker product  */
-  //@{  
-  // Compute Kronecker product matrix 
+  //@{
+  // Compute Kronecker product matrix
   void kron(const vpMatrix  &m1, vpMatrix  &out) const;
-  
-  // Compute Kronecker product matrix 
+
+  // Compute Kronecker product matrix
   vpMatrix kron(const vpMatrix  &m1) const;
   //@}
-  
+
   //-------------------------------------------------
   // Transpose
   //-------------------------------------------------
@@ -320,10 +328,13 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //-------------------------------------------------
   /** @name Matrix inversion  */
   //@{
-  // inverse matrix A using the LU decomposition 
+  // inverse matrix A using the LU decomposition
   vpMatrix inverseByLU() const;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+#  if defined(VISP_HAVE_EIGEN3)
+  vpMatrix inverseByLUEigen3() const;
+#  endif
 #  if defined(VISP_HAVE_GSL)
   vpMatrix inverseByLUGsl() const;
 #  endif
@@ -356,27 +367,39 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 #  endif
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-  //! Compute the pseudo inverse of the matrix using the SVD.
-  vpMatrix pseudoInverse(double svThreshold=1e-6)  const;
-  //! Compute the pseudo inverse of the matrix using the SVD.
-  //! return the rank
-  unsigned int pseudoInverse(vpMatrix &Ap, double svThreshold=1e-6)  const;
-  //! Compute the pseudo inverse of the matrix using the SVD.
-  //! return the rank and the singular value
-  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const ;
-  //! Compute the pseudo inverse of the matrix using the SVD.
-  //! return the rank and the singular value, image
-  unsigned int pseudoInverse(vpMatrix &Ap,
-                             vpColVector &sv, double svThreshold,
-                             vpMatrix &ImA,
-                             vpMatrix &ImAt) const ;
-  //! Compute the pseudo inverse of the matrix using the SVD.
-  //! return the rank and the singular value, image, kernel.
-  unsigned int pseudoInverse(vpMatrix &Ap,
-                             vpColVector &sv, double svThreshold,
-                             vpMatrix &ImA,
-                             vpMatrix &ImAt,
-                             vpMatrix &kerA) const ;
+  vpMatrix pseudoInverse(double svThreshold=1e-6) const;
+  unsigned int pseudoInverse(vpMatrix &Ap, double svThreshold=1e-6) const;
+  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const;
+  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt) const;
+  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#  if defined(VISP_HAVE_LAPACK)
+  vpMatrix pseudoInverseLapack(double svThreshold=1e-6) const;
+  unsigned int pseudoInverseLapack(vpMatrix &Ap, double svThreshold=1e-6) const;
+  unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const;
+  unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+#  endif
+#  if defined(VISP_HAVE_EIGEN3)
+  vpMatrix pseudoInverseEigen3(double svThreshold=1e-6) const;
+  unsigned int pseudoInverseEigen3(vpMatrix &Ap, double svThreshold=1e-6) const;
+  unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const;
+  unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+#  endif
+#  if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+  vpMatrix pseudoInverseOpenCV(double svThreshold=1e-6) const;
+  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, double svThreshold=1e-6) const;
+  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const;
+  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+#  endif
+#  if defined(VISP_HAVE_GSL)
+  vpMatrix pseudoInverseGsl(double svThreshold=1e-6) const;
+  unsigned int pseudoInverseGsl(vpMatrix &Ap, double svThreshold=1e-6) const;
+  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const;
+  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+#  endif
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
   //@}
 
   //-------------------------------------------------
@@ -386,7 +409,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name SVD decomposition  */
   //@{
   double cond() const;
-  unsigned int kernel(vpMatrix &KerA, double svThreshold=1e-6) const;
+  unsigned int kernel(vpMatrix &kerAt, double svThreshold=1e-6) const;
 
   // solve Ax=B using the SVD decomposition (usage A = solveBySVD(B,x) )
   void solveBySVD(const vpColVector &B, vpColVector &x) const ;
@@ -396,6 +419,9 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   // singular value decomposition SVD
   void svd(vpColVector &w, vpMatrix &V);
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+#  ifdef VISP_HAVE_EIGEN3
+  void svdEigen3(vpColVector &w, vpMatrix &V);
+#  endif
 #  ifdef VISP_HAVE_GSL
   void svdGsl(vpColVector &w, vpMatrix &V);
 #  endif
@@ -604,6 +630,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
      \deprecated Only provided for compatibilty with ViSP previous releases. This function does nothing.
    */
   vp_deprecated void init() { }
+
   /*!
      \deprecated You should rather use stack(const vpMatrix &A)
    */

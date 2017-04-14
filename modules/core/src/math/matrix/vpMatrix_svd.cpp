@@ -49,6 +49,10 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#ifdef VISP_HAVE_EIGEN3
+#  include <Eigen/SVD>
+#endif
+
 #ifdef VISP_HAVE_GSL
 #  include <gsl/gsl_linalg.h>
 #endif
@@ -141,7 +145,7 @@ int main()
 }
   \endcode
 
-  \sa svd(), svdLapack(), svdGsl()
+  \sa svd(), svdEigen3(), svdLapack(), svdGsl()
 */
 void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
 {
@@ -153,7 +157,7 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
   cv::Mat opencvW = opencvSVD.w;
   V.resize((unsigned int)opencvV.rows, (unsigned int)opencvV.cols);
   w.resize((unsigned int)(opencvW.rows*opencvW.cols));
-  
+
   memcpy(V.data, opencvV.data, (size_t)(8*opencvV.rows*opencvV.cols));
   V=V.transpose();
   memcpy(w.data, opencvW.data, (size_t)(8*opencvW.rows*opencvW.cols));
@@ -227,7 +231,7 @@ int main()
 }
   \endcode
 
-  \sa svd(), svdOpenCV(), svdGsl()
+  \sa svd(), svdEigen3(), svdOpenCV(), svdGsl()
 */
 void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
 {
@@ -336,7 +340,7 @@ int main()
 }
   \endcode
 
-  \sa svd(), svdOpenCV(), svdLapack()
+  \sa svd(), svdEigen3(), svdOpenCV(), svdLapack()
 */
 void
 vpMatrix::svdGsl(vpColVector &w, vpMatrix &V)
@@ -355,7 +359,7 @@ vpMatrix::svdGsl(vpColVector &w, vpMatrix &V)
   A.data = this->data;
   A.owner = 0;
   A.block = 0;
-  
+
   gsl_matrix V_;
   V_.size1 = nc;
   V_.size2 = nc;
@@ -363,18 +367,102 @@ vpMatrix::svdGsl(vpColVector &w, vpMatrix &V)
   V_.data = V.data;
   V_.owner = 0;
   V_.block = 0;
-  
+
   gsl_vector S;
   S.size = nc;
   S.stride = 1;
   S.data = w.data;
   S.owner = 0;
   S.block = 0;
-  
+
   gsl_linalg_SV_decomp(&A, &V_, &S, work) ;
-  
+
   gsl_vector_free(work) ;
 }
 #endif // # #GSL
+
+#ifdef VISP_HAVE_EIGEN3
+/*!
+
+  Singular value decomposition (SVD) using Eigen3 3rd party.
+
+  Given matrix \f$M\f$, this function computes it singular value decomposition such as
+
+  \f[ M = U \Sigma V^{\top} \f]
+
+  \warning This method is destructive wrt. to the matrix \f$ M \f$ to
+  decompose. You should make a COPY of that matrix if needed.
+
+  \param w : Vector of singular values: \f$ \Sigma = diag(w) \f$.
+
+  \param V : Matrix \f$ V \f$.
+
+  \return Matrix \f$ U \f$.
+
+  \note The singular values are ordered in decreasing
+  fashion in \e w. It means that the highest singular value is in \e w[0].
+
+  Here an example of SVD decomposition of a non square Matrix M.
+
+\code
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix M(3,2);
+  M[0][0] = 1;
+  M[1][0] = 2;
+  M[2][0] = 0.5;
+
+  M[0][1] = 6;
+  M[1][1] = 8 ;
+  M[2][1] = 9 ;
+
+  vpMatrix V;
+  vpColVector w;
+  vpMatrix Mrec;
+  vpMatrix Sigma;
+
+  M.svdEigen3(w, V);
+  // Here M is modified and is now equal to U
+
+  // Construct the diagonal matrix from the singular values
+  Sigma.diag(w);
+
+  // Reconstruct the initial matrix M using the decomposition
+  Mrec =  M * Sigma * V.t();
+
+  // Here, Mrec is obtained equal to the initial value of M
+  // Mrec[0][0] = 1;
+  // Mrec[1][0] = 2;
+  // Mrec[2][0] = 0.5;
+  // Mrec[0][1] = 6;
+  // Mrec[1][1] = 8 ;
+  // Mrec[2][1] = 9 ;
+
+  std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
+}
+  \endcode
+
+  \sa svd(), svdLapack(), svdOpenCV(), svdGsl()
+*/
+void vpMatrix::svdEigen3(vpColVector &w, vpMatrix &V)
+{
+  w.resize( this->getCols() );
+  V.resize( this->getCols(), this->getCols() );
+
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > M(this->data, this->getRows(), this->getCols());
+
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(M, Eigen::ComputeThinU | Eigen::ComputeThinV);
+
+  Eigen::Map<Eigen::VectorXd> w_(w.data, w.size());
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > V_(V.data, V.getRows(), V.getCols());
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > U_(this->data, this->getRows(), this->getCols());
+  w_ = svd.singularValues();
+  V_ = svd.matrixV();
+  U_ = svd.matrixU();
+}
+#endif
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

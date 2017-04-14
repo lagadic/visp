@@ -69,7 +69,9 @@ extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda, integer 
 
   This function calls the first following function that is available:
   - inverseByCholeskyLapack() if Lapack 3rd party is installed
-  - inverseByLUOpenCV() if OpenCV 3rd party is installed
+  - inverseByLUOpenCV() if OpenCV 3rd party is installed.
+
+  If none of these 3rd parties is installed we use a Lapack built-in version.
 
   \return The inverse matrix.
 

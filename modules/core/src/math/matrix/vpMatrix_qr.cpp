@@ -232,7 +232,8 @@ vpMatrix vpMatrix::inverseByQRLapack() const
 
 /*!
   Compute the inverse of a n-by-n matrix using the QR decomposition.
-  Only available if lapack 3rd party is installed.
+  Only available if Lapack 3rd party is installed. If Lapack is not installed we use a
+  Lapack built-in version.
 
   \return The inverse matrix.
 

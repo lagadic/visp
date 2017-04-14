@@ -196,7 +196,7 @@ void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, 
   bench.clear();
   for(unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
-//#if defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+//#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
 //    double det = 0.;
 //    // don't put singular matrices in the benchmark
 //    for(M = make_random_matrix(nb_rows, nb_cols); std::fabs(det=M.AtA().det())<.01; M = make_random_matrix(nb_rows, nb_cols)) {
@@ -227,8 +227,31 @@ int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U, std::vector<vpCol
   return EXIT_SUCCESS;
 }
 
+#if defined (VISP_HAVE_EIGEN3)
+int test_svd_eigen3(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test SVD using Eigen3 3rd party" << std::endl;
+  // Compute inverse
+  if(verbose)
+    std::cout << "  SVD on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
+
+  std::vector<vpMatrix> U = bench;
+  std::vector<vpMatrix> V(bench.size());
+  std::vector<vpColVector> s(bench.size());
+
+  double t = vpTime::measureTimeMs();
+  for(unsigned int i = 0; i < bench.size(); i++) {
+    U[i].svdEigen3(s[i], V[i]);
+  }
+
+  time = vpTime::measureTimeMs() - t;
+
+  return test_svd(bench, U, s, V);
+}
+#endif
+
 #if defined (VISP_HAVE_LAPACK)
-// SVD is only available for these 3rd parties
 int test_svd_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
   if (verbose)
@@ -271,7 +294,7 @@ int test_svd_gsl(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 
   time = vpTime::measureTimeMs() - t;
 
-  return EXIT_SUCCESS;
+  return test_svd(bench, U, s, V);
 }
 #endif
 
@@ -294,7 +317,7 @@ int test_svd_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &ti
   }
   time = vpTime::measureTimeMs() - t;
 
-  return EXIT_SUCCESS;
+  return test_svd(bench, U, s, V);
 }
 #endif
 
@@ -311,7 +334,7 @@ int
 main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
@@ -332,6 +355,9 @@ main(int argc, const char *argv[])
 
 #if defined(VISP_HAVE_LAPACK)
       of << "\"SVD Lapack\"" << "\t";
+#endif
+#if defined(VISP_HAVE_EIGEN3)
+      of << "\"SVD Eigen3\"" << "\t";
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       of << "\"SVD OpenCV\"" << "\t";
@@ -354,6 +380,11 @@ main(int argc, const char *argv[])
 #if defined (VISP_HAVE_LAPACK)
       ret += test_svd_lapack(verbose, bench_random_matrices, time);
       save_time("SVD (Lapack): ", verbose, use_plot_file, of, time);
+#endif
+
+#if defined (VISP_HAVE_EIGEN3)
+      ret += test_svd_eigen3(verbose, bench_random_matrices, time);
+      save_time("SVD (Eigen3): ", verbose, use_plot_file, of, time);
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -384,7 +415,7 @@ main(int argc, const char *argv[])
 #else
     (void)argc;
     (void)argv;
-    std::cout << "Test does nothing since you dont't have Lapack, OpenCV or GSL 3rd party" << std::endl;
+    std::cout << "Test does nothing since you dont't have Eigen3, Lapack, OpenCV or GSL 3rd party" << std::endl;
     return EXIT_SUCCESS;
 #endif
   }

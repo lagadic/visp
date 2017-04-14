@@ -52,7 +52,7 @@ endif(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES Window
 
 if(WINRT)
   add_definitions(-DWINRT)
-  
+
   if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone)
     set(WINRT_PHONE TRUE)
     add_definitions(-DWINRT_PHONE)
@@ -221,14 +221,14 @@ set(OS ${CMAKE_SYSTEM_NAME})
 set(OGRE_HOME $ENV{OGRE_HOME})
 if(OGRE_HOME)
   # replace \ with / especially for windows
-  STRING(REGEX REPLACE "\\\\" "/" OGRE_HOME ${OGRE_HOME}) 
+  STRING(REGEX REPLACE "\\\\" "/" OGRE_HOME ${OGRE_HOME})
 endif()
 
 # add the path to detect Ogre3D
 if(WIN32)
   list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/CMake")
 endif(WIN32)
- 
+
 if(UNIX)
   list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/cmake")
   list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/CMake")
@@ -332,6 +332,7 @@ VP_OPTION(USE_GDI         GDI         "" "Include gdi support"             "" ON
 VP_OPTION(USE_DIRECT3D    DIRECT3D    "" "Include d3d support"             "" ON IF WIN32 AND NOT WINRT)
 VP_OPTION(USE_DIRECTSHOW  DIRECTSHOW  "" "Include dshow support"           "" ON IF WIN32 AND NOT WINRT)
 VP_OPTION(USE_OPENMP      OpenMP      "" "Include openmp support"          "" ON)
+VP_OPTION(USE_EIGEN3      Eigen3      QUIET "Include eigen3 support"       "" ON IF NOT WINRT)
 # Since the FindLAPACK.cmake provided with CMake is for Fortran language,
 # in CMakeModules we have added FindLAPACK_C.cmake for C language
 VP_OPTION(USE_LAPACK      LAPACK_C    "" "Include lapack support"          "" ON IF NOT WINRT)
@@ -367,8 +368,8 @@ else()
 endif()
 VP_OPTION(USE_ZLIB        "ZLIB;MyZLIB" ""  "Include zlib support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_X11         X11         ""    "Include X11 support"          "" ON IF NOT WINRT)
-# The native FindGTK2.cmake doesn't consider libgobject-2.0 that is 
-# requested by ViSP. That's why we use our FindMyGTK2.cmake 
+# The native FindGTK2.cmake doesn't consider libgobject-2.0 that is
+# requested by ViSP. That's why we use our FindMyGTK2.cmake
 VP_OPTION(USE_GTK2        MyGTK2       ""    "Include gtk2 support"         "" OFF IF NOT WINRT)
 VP_OPTION(USE_JPEG       "JPEG;MyJPEG" ""    "Include jpeg support"         "" ON)
 VP_OPTION(USE_PNG        "PNG;MyPNG"   ""    "Include png support"          "" ON)
@@ -589,6 +590,7 @@ VP_SET(VISP_HAVE_D3D9        TRUE IF (BUILD_MODULE_visp_core AND USE_DIRECT3D))
 VP_SET(VISP_HAVE_JPEG        TRUE IF (BUILD_MODULE_visp_core AND USE_JPEG))
 VP_SET(VISP_HAVE_PNG         TRUE IF (BUILD_MODULE_visp_core AND USE_PNG))
 VP_SET(VISP_HAVE_YARP        TRUE IF (BUILD_MODULE_visp_core AND USE_YARP))
+VP_SET(VISP_HAVE_EIGEN3      TRUE IF (BUILD_MODULE_visp_core AND USE_EIGEN3))
 VP_SET(VISP_HAVE_GSL         TRUE IF (BUILD_MODULE_visp_core AND USE_GSL))
 VP_SET(VISP_HAVE_LAPACK      TRUE IF (BUILD_MODULE_visp_core AND (USE_LAPACK OR WITH_LAPACK)))
 VP_SET(VISP_HAVE_LAPACK_BUILT_IN TRUE IF (BUILD_MODULE_visp_core AND WITH_LAPACK))
@@ -847,6 +849,20 @@ if(USE_OIS)
   vp_parse_header("${OIS_INCLUDE_DIR}/OISPrereqs.h" OIS_VERSION_LINES OIS_VERSION_MAJOR OIS_VERSION_MINOR OIS_VERSION_PATCH)
   set(OIS_VERSION "${OIS_VERSION_MAJOR}.${OIS_VERSION_MINOR}.${OIS_VERSION_PATCH}")
 endif()
+if(USE_EIGEN3)
+  # Additionnal check to be sure that Eigen3 include dir os well detected
+  if(NOT EXISTS ${EIGEN3_INCLUDE_DIR})
+    message(WARNING "Eigen3 config file is detected in ${Eigen3_DIR}. Using ${Eigen3_DIR}/Eigen3Config.cmake doesn't allow to use a valid Eigen3 include dir: ${EIGEN3_INCLUDE_DIR}. Modify Eigen3_DIR to point to Eigen3Config.cmake file located in Eigen3 installation folder or turn USE_EIGEN3 OFF.")
+  endif()
+  if(NOT EIGEN3_VERSION_STRING)
+    vp_parse_header("${EIGEN3_INCLUDE_DIR}/Eigen/src/Core/util/Macros.h" EIGEN3_VERSION_LINES EIGEN_WORLD_VERSION EIGEN_MAJOR_VERSION EIGEN_MINOR_VERSION)
+    set(EIGEN3_VERSION_STRING "${EIGEN_WORLD_VERSION}.${EIGEN_MAJOR_VERSION}.${EIGEN_MINOR_VERSION}")
+  endif()
+endif()
+if(USE_COIN3D)
+  vp_parse_header("${COIN3D_INCLUDE_DIRS}/Inventor/C/basic.h" COIN_VERSION_LINES COIN_MAJOR_VERSION COIN_MINOR_VERSION COIN_MICRO_VERSION)
+  set(COIN3D_VERSION "${COIN_MAJOR_VERSION}.${COIN_MINOR_VERSION}.${COIN_MICRO_VERSION}")
+endif()
 
 # ----------------------------------------------------------------------------
 #  Autodetect if we are in a GIT repository
@@ -1014,6 +1030,7 @@ status("    Build with moment combine:"  ENABLE_MOMENTS_COMBINE_MATRICES THEN "y
 # ===================== Optional 3rd parties =====================
 status("")
 status("  Mathematics: ")
+status("    Use Eigen3:"             USE_EIGEN3       THEN "yes (ver ${EIGEN3_VERSION_STRING})" ELSE "no")
 status("    Use Lapack/blas:"        USE_LAPACK       THEN "yes (ver ${LAPACK_C_VERSION})" ELSE "no")
 status("    Use Lapack (built-in):"  WITH_LAPACK      THEN "yes (ver ${LAPACK_VERSION})" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
@@ -1024,7 +1041,7 @@ status("    Ogre simulator: ")
 status("    \\- Use Ogre3D:"         USE_OGRE         THEN "yes (ver ${OGRE_VERSION})" ELSE "no")
 status("    \\- Use OIS:"            USE_OIS          THEN "yes (ver ${OIS_VERSION})" ELSE "no")
 status("    Coin simulator: ")
-status("    \\- Use Coin3D:"         USE_OGRE         THEN "yes" ELSE "no")
+status("    \\- Use Coin3D:"         USE_OGRE         THEN "yes (ver ${COIN3D_VERSION})" ELSE "no")
 status("    \\- Use SoWin:"          USE_SOWIN        THEN "yes" ELSE "no")
 status("    \\- Use SoXt:"           USE_SOXT         THEN "yes" ELSE "no")
 status("    \\- Use SoQt:"           USE_SOQT         THEN "yes" ELSE "no")
