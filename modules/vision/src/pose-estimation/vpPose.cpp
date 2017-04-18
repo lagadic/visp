@@ -65,23 +65,27 @@ vpPose::init()
 #if (DEBUG_LEVEL1)
   std::cout << "begin vpPose::Init() " << std::endl ;
 #endif
-  npt = 0 ;
+
+  npt = 0;
   listP.clear();
-  c3d.clear();
-
-  lambda = 0.25 ;
-
-  vvsIterMax = 200 ;
-
-  distanceToPlaneForCoplanarityTest = 0.001 ;
-  
-  computeCovariance = false;
-  
-  ransacMaxTrials = 1000;
-  ransacThreshold = 0.0001;
-  ransacNbInlierConsensus = 4;
-
   residual = 0;
+  lambda = 0.25;
+  vvsIterMax = 200;
+  c3d.clear();
+  computeCovariance = false;
+  covarianceMatrix.clear();
+  ransacNbInlierConsensus = 4;
+  ransacMaxTrials = 1000;
+  ransacInliers.clear();
+  ransacInlierIndex.clear();
+  ransacThreshold = 0.0001;
+  distanceToPlaneForCoplanarityTest = 0.001;
+  ransacFlags = PREFILTER_DUPLICATE_POINTS;
+  listOfPoints.clear();
+  useParallelRansac = false;
+  nbParallelRansacThreads = 0;
+  vvsEpsilon = 1e-8;
+
 #if (DEBUG_LEVEL1)
   std::cout << "end vpPose::Init() " << std::endl ;
 #endif
@@ -94,18 +98,9 @@ vpPose::vpPose()
     computeCovariance(false), covarianceMatrix(),
     ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
     distanceToPlaneForCoplanarityTest(0.001), ransacFlags(PREFILTER_DUPLICATE_POINTS),
-    listOfPoints(), useParallelRansac(false), nbParallelRansacThreads(0) //0 means that OpenMP is used to get the number of CPU threads
+    listOfPoints(), useParallelRansac(false), nbParallelRansacThreads(0), //0 means that OpenMP is used to get the number of CPU threads
+    vvsEpsilon(1e-8)
 {
-#if (DEBUG_LEVEL1)
-  std::cout << "begin vpPose::vpPose() " << std::endl ;
-#endif
-
-  init() ;
-
-#if (DEBUG_LEVEL1)
-  std::cout << "end vpPose::vpPose() " << std::endl ;
-#endif
-
 }
 
 /*!
@@ -130,6 +125,7 @@ void
 vpPose::clearPoint()
 {
   listP.clear();
+  listOfPoints.clear();
   npt = 0 ;
 }
 
