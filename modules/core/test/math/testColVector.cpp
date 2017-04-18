@@ -49,56 +49,62 @@
 #include <visp3/core/vpGaussRand.h>
 
 
-bool test(const std::string &s, const vpColVector &v, const std::vector<double> &bench)
-{
-  static unsigned int cpt = 0;
-  std::cout << "** Test " << ++cpt << std::endl;
-  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v.t() << "]^T" << std::endl;
-  if(bench.size() != v.size()) {
-    std::cout << "Test fails: bad size wrt bench" << std::endl;
-    return false;
-  }
-  for (unsigned int i=0; i<v.size(); i++) {
-    if (std::fabs(v[i]-bench[i]) > std::fabs(v[i])*std::numeric_limits<double>::epsilon()) {
-      std::cout << "Test fails: bad content" << std::endl;
+namespace {
+  bool test(const std::string &s, const vpColVector &v, const std::vector<double> &bench)
+  {
+    static unsigned int cpt = 0;
+    std::cout << "** Test " << ++cpt << std::endl;
+    std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v.t() << "]^T" << std::endl;
+    if(bench.size() != v.size()) {
+      std::cout << "Test fails: bad size wrt bench" << std::endl;
       return false;
     }
+    for (unsigned int i=0; i<v.size(); i++) {
+      if (std::fabs(v[i]-bench[i]) > std::fabs(v[i])*std::numeric_limits<double>::epsilon()) {
+        std::cout << "Test fails: bad content" << std::endl;
+        return false;
+      }
+    }
+
+    return true;
   }
 
-  return true;
-}
+  double computeRegularSum(const vpColVector &v) {
+    double sum = 0.0;
 
-double computeRegularSum(const vpColVector &v) {
-  double sum = 0.0;
+    for(unsigned int i = 0; i < v.getRows(); i++) {
+      sum += v[i];
+    }
 
-  for(unsigned int i = 0; i < v.getRows(); i++) {
-    sum += v[i];
+    return sum;
   }
 
-  return sum;
-}
+  double computeRegularSumSquare(const vpColVector &v) {
+    double sum_square = 0.0;
 
-double computeRegularSumSquare(const vpColVector &v) {
-  double sum_square = 0.0;
+    for(unsigned int i = 0; i < v.getRows(); i++) {
+      sum_square += v[i] * v[i];
+    }
 
-  for(unsigned int i = 0; i < v.getRows(); i++) {
-    sum_square += v[i] * v[i];
+    return sum_square;
   }
 
-  return sum_square;
-}
+  double computeRegularStdev(const vpColVector &v) {
+    double mean_value = computeRegularSum(v) / v.getRows();
+    double sum_squared_diff = 0.0;
 
-double computeRegularStdev(const vpColVector &v) {
-  double mean_value = computeRegularSum(v) / v.getRows();
-  double sum_squared_diff = 0.0;
+    for(unsigned int i = 0; i < v.size(); i++) {
+      sum_squared_diff += (v[i]-mean_value) * (v[i]-mean_value);
+    }
 
-  for(unsigned int i = 0; i < v.size(); i++) {
-    sum_squared_diff += (v[i]-mean_value) * (v[i]-mean_value);
+    double divisor = (double) v.size();
+
+    return std::sqrt(sum_squared_diff / divisor);
   }
 
-  double divisor = (double) v.size();
-
-  return std::sqrt(sum_squared_diff / divisor);
+  double getRandomValues(const double min, const double max) {
+    return (max - min) * ( (double) rand() / (double) RAND_MAX ) + min;
+  }
 }
 
 int main()
@@ -129,7 +135,7 @@ int main()
     std::vector<double> bench1(4);
     for(unsigned int i=0; i<v.size(); i++) {
       v[i] = (double)i;
-	  bench1[i] = (double)i;
+   bench1[i] = (double)i;
     }
     if (test("v", v, bench1) == false)
       return err;
@@ -362,7 +368,7 @@ int main()
 
     if( !vpMath::equal(regular_sum, sse_sum, std::numeric_limits<double>::epsilon()) ) {
       std::cerr << "Problem when computing v.sum()!" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
 
@@ -386,7 +392,7 @@ int main()
 
     if( !vpMath::equal(regular_sumSquare, sse_sumSquare, std::numeric_limits<double>::epsilon()) ) {
       std::cerr << "Problem when computing v.sumSquare()!" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
 
@@ -410,10 +416,54 @@ int main()
 
     if( !vpMath::equal(regular_stdev, sse_stdev, std::numeric_limits<double>::epsilon()) ) {
       std::cerr << "Problem when computing vpColVector::stdev()!" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
   }
 
+
+  {
+    //Test insert with big vector
+    const unsigned int nb = 1000;
+    const unsigned int size = 10000;
+    std::vector<vpColVector> vec(nb);
+
+    for (size_t i = 0; i < nb; i++) {
+      vpColVector v(size);
+      for (unsigned int j = 0; j < size; j++) {
+        v[j] = getRandomValues(-100.0, 100.0);
+      }
+      vec[i] = v;
+    }
+
+    vpColVector v_big(nb*size);
+    double t = vpTime::measureTimeMs();
+    for (unsigned int i = 0; i < nb; i++) {
+      v_big.insert(i*size, vec[(size_t) i]);
+    }
+    t = vpTime::measureTimeMs() - t;
+    std::cout << "\nBig insert: " << t << " ms" << std::endl;
+
+    for (unsigned int i = 0; i < nb; i++) {
+      for (unsigned int j = 0; j < size; j++) {
+        if ( !vpMath::equal( v_big[i*size+j], vec[(size_t) i][j], std::numeric_limits<double>::epsilon() ) ) {
+          std::cerr << "Problem in vpColVector insert()!" << std::endl;
+          return EXIT_FAILURE;
+        }
+      }
+    }
+
+    //Try to insert empty vpColVector
+    vpColVector v1(2), v2, v3;
+    v1.insert(0, v2);
+    v3.insert(0, v2);
+
+    std::cout << "Insert empty vectors:" << std::endl;
+    std::cout << "v1: " << v1.t() << std::endl;
+    std::cout << "v2: " << v2.t() << std::endl;
+    std::cout << "v3: " << v3.t() << std::endl;
+  }
+
+
   std::cout << "\nAll tests succeed" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -798,8 +798,8 @@ void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B, vpRowVector 
 */
 double vpRowVector::mean(const vpRowVector &v)
 {
-  if (v.data == NULL) {
-    throw(vpException(vpException::fatalError,
+  if (v.data == NULL || v.size() == 0) {
+    throw(vpException(vpException::dimensionError,
                       "Cannot compute mean value of an empty row vector"));
   }
 
@@ -817,15 +817,12 @@ double vpRowVector::mean(const vpRowVector &v)
 double
 vpRowVector::median(const vpRowVector &v)
 {
-  if (v.data==NULL) {
-    throw(vpException(vpException::fatalError,
+  if (v.data==NULL || v.size() == 0) {
+    throw(vpException(vpException::dimensionError,
                       "Cannot compute mean value of an empty row vector"));
   }
 
-  std::vector<double> vectorOfDoubles(v.size());
-  for(unsigned int i = 0; i < v.size(); i++) {
-    vectorOfDoubles[i] = v[i];
-  }
+  std::vector<double> vectorOfDoubles(v.data, v.data + v.colNum);
 
   return vpMath::getMedian(vectorOfDoubles);
 }
@@ -836,8 +833,8 @@ vpRowVector::median(const vpRowVector &v)
 double
 vpRowVector::stdev(const vpRowVector &v, const bool useBesselCorrection)
 {
-  if (v.data==NULL) {
-    throw(vpException(vpException::fatalError,
+  if (v.data==NULL || v.size() == 0) {
+    throw(vpException(vpException::dimensionError,
                       "Cannot compute mean value of an empty row vector"));
   }
 

@@ -257,7 +257,7 @@ public:
   */
   vpArray2D<Type> & operator=(const vpArray2D<Type> & A)
   {
-    resize(A.rowNum, A.colNum);
+    resize(A.rowNum, A.colNum, false);
     memcpy(data, A.data, rowNum*colNum*sizeof(Type));
     return *this;
   }
@@ -273,13 +273,13 @@ public:
     */
   friend std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
   {
-    if (A.data == NULL)
+    if (A.data == NULL || A.size() == 0)
       return s;
     std::ios_base::fmtflags original_flags = s.flags();
 
     s.precision(10) ;
     for (unsigned int i=0;i<A.getRows();i++) {
-      for (unsigned int j=0;j<A.getCols() -1;j++){
+      for (unsigned int j=0;j<A.getCols()-1;j++){
         s << A[i][j] << "  ";
       }
       // We don't add "  " after the last row element

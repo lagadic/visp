@@ -71,14 +71,14 @@ class VISP_EXPORT vpRowVector : public vpArray2D<double>
 {
 public:
   //! Basic constructor that creates an empty 0-size row vector.
-  vpRowVector() : vpArray2D<double>() {};
+  vpRowVector() : vpArray2D<double>() {}
   //! Construct a row vector of size n. All the elements are initialized to zero.
-  vpRowVector(unsigned int n) : vpArray2D<double>(1, n){};
+  vpRowVector(unsigned int n) : vpArray2D<double>(1, n){}
   //! Construct a row vector of size n. Each element is set to \e val.
-  vpRowVector(unsigned int n, double val) : vpArray2D<double>(1, n, val){};
+  vpRowVector(unsigned int n, double val) : vpArray2D<double>(1, n, val){}
   //! Copy constructor that allows to construct a row vector from an other one.
-  vpRowVector(const vpRowVector &v) : vpArray2D<double>(v) {};
-  vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncols) ;
+  vpRowVector(const vpRowVector &v) : vpArray2D<double>(v) {}
+  vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncols);
   vpRowVector(const vpMatrix &M);
   vpRowVector(const vpMatrix &M, unsigned int i);
   vpRowVector(const std::vector<double> &v);
@@ -86,7 +86,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpRowVector() {};
+  virtual ~vpRowVector() {}
 
   /*!
     Removes all elements from the vector (which are destroyed),
@@ -224,7 +224,7 @@ public:
                         "Cannot resize a row vector to a (%dx%d) dimension vector that has more than one row",
                         nrows, ncols));
     vpArray2D<double>::resize(nrows, ncols, flagNullify);
-  };
+  }
 
   void stack(const double &d);
   void stack(const vpRowVector &v);
@@ -250,19 +250,19 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {};
+  vp_deprecated void init() {}
   /*!
      \deprecated You should rather use stack(const vpRowVector &)
    */
-  vp_deprecated void stackMatrices(const vpRowVector &r) { stack(r); };
+  vp_deprecated void stackMatrices(const vpRowVector &r) { stack(r); }
   /*!
      \deprecated You should rather use stack(const vpRowVector &A, const vpRowVector &B)
    */
-  vp_deprecated static vpRowVector stackMatrices(const vpRowVector &A, const vpRowVector &B) { return stack(A, B); };
+  vp_deprecated static vpRowVector stackMatrices(const vpRowVector &A, const vpRowVector &B) { return stack(A, B); }
   /*!
      \deprecated You should rather use stack(const vpRowVector &A, const vpRowVector &B, vpRowVector &C)
    */
-  vp_deprecated static void stackMatrices(const vpRowVector &A, const vpRowVector &B, vpRowVector &C) { stack(A, B, C); };
+  vp_deprecated static void stackMatrices(const vpRowVector &A, const vpRowVector &B, vpRowVector &C) { stack(A, B, C); }
 
   /*!
      \deprecated You should rather use eye()

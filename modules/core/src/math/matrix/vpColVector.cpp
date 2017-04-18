@@ -963,8 +963,8 @@ void vpColVector::stack(const vpColVector &A, const vpColVector &B, vpColVector 
 */
 double vpColVector::mean(const vpColVector &v)
 {
-  if (v.data==NULL) {
-    throw(vpException(vpException::fatalError,
+  if (v.data == NULL || v.size() == 0) {
+    throw(vpException(vpException::dimensionError,
                       "Cannot compute column vector mean: vector empty")) ;
   }
 
@@ -985,15 +985,12 @@ double vpColVector::mean(const vpColVector &v)
 double
 vpColVector::median(const vpColVector &v)
 {
-  if (v.data==NULL) {
-    throw(vpException(vpException::fatalError,
+  if (v.data == NULL || v.size() == 0) {
+    throw(vpException(vpException::dimensionError,
                       "Cannot compute column vector median: vector empty")) ;
   }
 
-  std::vector<double> vectorOfDoubles(v.size());
-  for(unsigned int i = 0; i < v.size(); i++) {
-    vectorOfDoubles[i] = v[i];
-  }
+  std::vector<double> vectorOfDoubles(v.data, v.data + v.rowNum);
 
   return vpMath::getMedian(vectorOfDoubles);
 }
@@ -1004,8 +1001,8 @@ vpColVector::median(const vpColVector &v)
 double
 vpColVector::stdev(const vpColVector &v, const bool useBesselCorrection)
 {
-  if (v.data==NULL) {
-    throw(vpException(vpException::fatalError,
+  if (v.data == NULL || v.size() == 0) {
+    throw(vpException(vpException::dimensionError,
                       "Cannot compute column vector stdev: vector empty")) ;
   }
 
@@ -1237,8 +1234,10 @@ void vpColVector::insert(unsigned int i, const vpColVector &v)
 {
   if (i+v.size() > this->size())
     throw(vpException(vpException::dimensionError, "Unable to insert a column vector"));
-  for (unsigned int j=0; j < v.size(); j++)
-    (*this)[i+j] = v[j];
+
+  if (data != NULL && v.data != NULL && v.rowNum > 0) {
+    memcpy(data+i, v.data, sizeof(double)*v.rowNum);
+  }
 }
 
 /*!

@@ -317,12 +317,7 @@ vpMatrix vpMatrix::extract(unsigned int r, unsigned int c, unsigned int nrows, u
 void
 vpMatrix::eye(unsigned int n)
 {
-  try {
-    eye(n, n);
-  }
-  catch(...) {
-    throw ;
-  }
+  eye(n, n);
 }
 
 /*!
@@ -332,12 +327,7 @@ vpMatrix::eye(unsigned int n)
 void
 vpMatrix::eye(unsigned int m, unsigned int n)
 {
-  try {
-    resize(m,n) ;
-  }
-  catch(...) {
-    throw ;
-  }
+  resize(m,n);
 
   eye();
 }
@@ -364,13 +354,7 @@ vpMatrix vpMatrix::t() const
 {
   vpMatrix At ;
 
-  try {
-    At.resize(colNum, rowNum);
-  }
-  catch(...)
-  {
-    throw ;
-  }
+  At.resize(colNum, rowNum);
 
   for (unsigned int i=0;i<rowNum;i++) {
     double *coli = (*this)[i] ;
@@ -400,13 +384,7 @@ vpMatrix vpMatrix::transpose()const
 */
 void vpMatrix::transpose(vpMatrix & At ) const
 {
-  try {
-    At.resize(colNum,rowNum);
-  }
-  catch(...)
-  {
-    throw ;
-  }
+  At.resize(colNum,rowNum);
 
   size_t A_step = colNum;
   double ** AtRowPtrs = At.rowPtrs;
@@ -447,13 +425,7 @@ vpMatrix vpMatrix::AAt() const
 */
 void vpMatrix::AAt(vpMatrix &B) const
 {
-  try {
-    if ((B.rowNum != rowNum) || (B.colNum != rowNum)) B.resize(rowNum,rowNum);
-  }
-  catch(...)
-  {
-    throw ;
-  }
+  if ((B.rowNum != rowNum) || (B.colNum != rowNum)) B.resize(rowNum,rowNum);
 
   // compute A*A^T
   for(unsigned int i=0;i<rowNum;i++){
@@ -486,13 +458,7 @@ void vpMatrix::AAt(vpMatrix &B) const
 */
 void vpMatrix::AtA(vpMatrix &B) const
 {
-  try {
-    if ((B.rowNum != colNum) || (B.colNum != colNum)) B.resize(colNum,colNum);
-  }
-  catch(...)
-  {
-    throw ;
-  }
+  if ((B.rowNum != colNum) || (B.colNum != colNum)) B.resize(colNum,colNum);
 
   unsigned int i,j,k;
   double s;
@@ -555,12 +521,7 @@ vpMatrix vpMatrix::AtA() const
 vpMatrix &
 vpMatrix::operator=(const vpArray2D<double> &A)
 {
-  try {
-    resize(A.getRows(), A.getCols()) ;
-  }
-  catch(...) {
-    throw ;
-  }
+  resize(A.getRows(), A.getCols());
 
   memcpy(data, A.data, dsize*sizeof(double));
 
@@ -633,20 +594,15 @@ int main()
 void
 vpMatrix::diag(const vpColVector &A)
 {
-  unsigned int rows = A.getRows() ;
-  try {
-    this->resize(rows,rows) ;
-  }
-  catch(...) {
-    throw ;
-  }
+  unsigned int rows = A.getRows();
+  this->resize(rows,rows);
+
   (*this) = 0 ;
   for (unsigned int i=0 ; i< rows ; i++ )
-    (* this)[i][i] = A[i] ;
+    (* this)[i][i] = A[i];
 }
 
 /*!
-
   Set the matrix as a diagonal matrix where each element on the diagonal is set to \e val.
   Elements that are not on the diagonal are set to 0.
 
@@ -701,13 +657,8 @@ void
 vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
 {
   unsigned int rows = A.getRows() ;
-  try {
-    DA.resize(rows,rows) ;
-  }
-  catch(...)
-  {
-    throw ;
-  }
+  DA.resize(rows, rows);
+
   DA =0 ;
   for (unsigned int i=0 ; i< rows ; i++ )
     DA[i][i] = A[i] ;
@@ -767,12 +718,7 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
                       A.getRows(), A.getCols(), v.getRows())) ;
   }
 
-  try {
-    if (A.rowNum != w.rowNum) w.resize(A.rowNum);
-  }
-  catch(...) {
-    throw ;
-  }
+  if (A.rowNum != w.rowNum) w.resize(A.rowNum);
 
   w = 0.0;
   for (unsigned int j=0;j<A.colNum;j++) {
@@ -798,17 +744,12 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
 */
 void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
-  try {
-    if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
-  }
-  catch(...) {
-    throw ;
-  }
+  if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
 
   if (A.colNum != B.rowNum) {
     throw(vpException(vpException::dimensionError,
                       "Cannot multiply (%dx%d) matrix by (%dx%d) matrix",
-                      A.getRows(), A.getCols(), B.getRows(), B.getCols())) ;
+                      A.getRows(), A.getCols(), B.getRows(), B.getCols()));
   }
 
   // 5/12/06 some "very" simple optimization to avoid indexation
@@ -1036,13 +977,7 @@ A new matrix won't be allocated for every use of the function
 */
 
 void vpMatrix::add2WeightedMatrices(const vpMatrix &A, const double &wA, const vpMatrix &B,const double &wB, vpMatrix &C){
-  try
-  {
-    if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
-  }
-  catch(...) {
-    throw ;
-  }
+  if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
 
   if ((A.colNum != B.getCols())||(A.rowNum != B.getRows())) {
     throw(vpException(vpException::dimensionError,
@@ -1069,13 +1004,8 @@ void vpMatrix::add2WeightedMatrices(const vpMatrix &A, const double &wA, const v
   \sa operator+()
 */
 void vpMatrix::add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
-{
-  try  {
-    if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
-  }
-  catch(...) {
-    throw ;
-  }
+{  
+  if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
 
   if ((A.colNum != B.getCols())||(A.rowNum != B.getRows())) {
     throw(vpException(vpException::dimensionError,
@@ -1108,12 +1038,7 @@ void vpMatrix::add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 */
 void vpMatrix::add2Matrices(const vpColVector &A, const vpColVector &B, vpColVector &C)
 {
-  try  {
-    if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum);
-  }
-  catch(...) {
-    throw ;
-  }
+  if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum);
 
   if ((A.colNum != B.getCols())||(A.rowNum != B.getRows())) {
     throw(vpException(vpException::dimensionError,
@@ -1160,12 +1085,7 @@ vpMatrix vpMatrix::operator+(const vpMatrix &B) const
 */
 void vpMatrix::sub2Matrices(const vpColVector &A, const vpColVector &B, vpColVector &C)
 {
-  try {
-    if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum);
-  }
-  catch(...) {
-    throw ;
-  }
+  if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum);
 
   if ( (A.colNum != B.getCols())||(A.rowNum != B.getRows())) {
     throw(vpException(vpException::dimensionError,
@@ -1197,12 +1117,7 @@ void vpMatrix::sub2Matrices(const vpColVector &A, const vpColVector &B, vpColVec
 */
 void vpMatrix::sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
-  try {
-    if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
-  }
-  catch(...) {
-    throw ;
-  }
+  if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
 
   if ( (A.colNum != B.getCols())||(A.rowNum != B.getRows())) {
     throw(vpException(vpException::dimensionError,
@@ -1279,12 +1194,7 @@ vpMatrix & vpMatrix::operator-=(const vpMatrix &B)
 */
 void vpMatrix::negateMatrix(const vpMatrix &A, vpMatrix &C)
 {
-  try {
-    if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
-  }
-  catch(...) {
-    throw ;
-  }
+  if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
 
   double ** ArowPtrs=A.rowPtrs;
   double ** CrowPtrs=C.rowPtrs;
@@ -1372,12 +1282,7 @@ vpMatrix  vpMatrix::operator/(double x) const
 {
   vpMatrix C;
 
-  try {
-    C.resize(rowNum,colNum);
-  }
-  catch(...) {
-    throw ;
-  }
+  C.resize(rowNum,colNum);
 
   //if (x == 0) {
   if (std::fabs(x) <= std::numeric_limits<double>::epsilon()) {
@@ -1459,13 +1364,7 @@ vpMatrix & vpMatrix::operator/=(double x)
   \param out : a vpColVector.
 */
 void vpMatrix::stackColumns(vpColVector  &out ){
-
-  try {
-    if ((out.rowNum != colNum*rowNum) || (out.colNum != 1)) out.resize(rowNum);
-  }
-  catch(...) {
-    throw ;
-  }
+  if ((out.rowNum != colNum*rowNum) || (out.colNum != 1)) out.resize(rowNum);
 
   double *optr=out.data;
   for(unsigned int j =0;j<colNum ; j++){
@@ -1492,12 +1391,7 @@ vpColVector vpMatrix::stackColumns()
 */
 void vpMatrix::stackRows(vpRowVector &out)
 {
-  try {
-    if ((out.getRows() != 1) || (out.getCols() != colNum*rowNum)) out.resize(rowNum);
-  }
-  catch(...) {
-    throw ;
-  }
+  if ((out.getRows() != 1) || (out.getCols() != colNum*rowNum)) out.resize(rowNum);
 
   double *mdata=data;
   double *optr=out.data;
@@ -3790,10 +3684,14 @@ vpMatrix::getRow(const unsigned int i) const
 {
   if (i >= getRows())
     throw(vpException(vpException::dimensionError, "Unable to extract a row vector from the matrix"));
-  unsigned int nb_cols = getCols();
-  vpRowVector r( nb_cols );
-  for (unsigned int j=0 ; j < nb_cols ; j++)
-    r[j] = (*this)[i][j];
+
+  vpRowVector r;
+  r.resize(colNum, false);
+
+  if (r.data != NULL && data != NULL && colNum > 0) {
+    memcpy(r.data, data+i*colNum, sizeof(double)*colNum);
+  }
+
   return r;
 }
 
@@ -3857,16 +3755,11 @@ vpMatrix::getRow(const unsigned int i, const unsigned int j_begin, const unsigne
 vpMatrix
 vpMatrix::stack(const vpMatrix &A, const vpMatrix &B)
 {
-  vpMatrix C ;
+  vpMatrix C;
 
-  try{
-    vpMatrix::stack(A, B, C) ;
-  }
-  catch(...) {
-    throw ;
-  }
+  vpMatrix::stack(A, B, C);
 
-  return C ;
+  return C;
 }
 
 /*!
@@ -3881,16 +3774,11 @@ vpMatrix::stack(const vpMatrix &A, const vpMatrix &B)
 vpMatrix
 vpMatrix::stack(const vpMatrix &A, const vpRowVector &r)
 {
-  vpMatrix C ;
+  vpMatrix C;
 
-  try{
-    vpMatrix::stack(A, r, C) ;
-  }
-  catch(...) {
-    throw ;
-  }
+  vpMatrix::stack(A, r, C);
 
-  return C ;
+  return C;
 }
 
 /*!
@@ -3900,38 +3788,42 @@ vpMatrix::stack(const vpMatrix &A, const vpRowVector &r)
   \param  B : Lower matrix.
   \param  C : Stacked matrix C = [ A B ]^T
 
-  \warning A and B must have the same number of columns.
+  \warning A and B must have the same number of columns. A and C, B and C must be two different objects.
 */
 void
 vpMatrix::stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
-  unsigned int nra = A.getRows() ;
-  unsigned int nrb = B.getRows() ;
+  unsigned int nra = A.getRows();
+  unsigned int nrb = B.getRows();
 
-  if (nra !=0)
+  if (nra != 0) {
     if (A.getCols() != B.getCols()) {
       throw(vpException(vpException::dimensionError,
                         "Cannot stack (%dx%d) matrix with (%dx%d) matrix",
                         A.getRows(), A.getCols(), B.getRows(), B.getCols())) ;
     }
-
-  try {
-    C.resize(nra+nrb,B.getCols()  ) ;
-  }
-  catch(...) {
-    throw ;
   }
 
-  unsigned int i,j ;
-  for (i=0 ; i < nra ; i++) {
-    for (j=0 ; j < A.getCols() ; j++)
-      C[i][j] = A[i][j] ;
+  if (A.data != NULL && A.data == C.data) {
+    std::cerr << "A and C must be two different objects!" << std::endl;
+    return;
   }
 
-  for (i=0 ; i < nrb ; i++) {
-    for (j=0 ; j < B.getCols() ; j++) {
-      C[i+nra][j] = B[i][j] ;
-    }
+  if (B.data != NULL && B.data == C.data) {
+    std::cerr << "B and C must be two different objects!" << std::endl;
+    return;
+  }
+
+  C.resize(nra+nrb, B.getCols(), false);
+
+  if (C.data != NULL && A.data != NULL && A.size() > 0) {
+      //Copy A in C
+      memcpy(C.data, A.data, sizeof(double)*A.size());
+  }
+
+  if (C.data != NULL && B.data != NULL && B.size() > 0) {
+    //Copy B in C
+    memcpy(C.data+A.size(), B.data, sizeof(double)*B.size());
   }
 }
 
@@ -3942,35 +3834,41 @@ vpMatrix::stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   \param  r : Lower row vector.
   \param  C : Stacked matrix C = [ A r ]^T
 
-  \warning A and r must have the same number of columns.
+  \warning A and r must have the same number of columns. A and C must be two different objects.
 */
 void
 vpMatrix::stack(const vpMatrix &A, const vpRowVector &r, vpMatrix &C)
 {
-  unsigned int nra = A.getRows() ;
+  unsigned int nra = A.getRows();
 
-  if (nra !=0)
+  if (nra != 0) {
     if (A.getCols() != r.getCols()) {
       throw(vpException(vpException::dimensionError,
                         "Cannot stack (%dx%d) matrix with (1x%d) row vector",
                         A.getRows(), A.getCols(), r.getCols())) ;
     }
-
-  try {
-    C.resize(nra+1,r.getCols()  ) ;
-  }
-  catch(...) {
-    throw ;
   }
 
-  unsigned int i,j ;
-  for (i=0 ; i < nra ; i++) {
-    for (j=0 ; j < A.getCols() ; j++)
-      C[i][j] = A[i][j] ;
+  if (A.data != NULL && A.data == C.data) {
+    std::cerr << "A and C must be two different objects!" << std::endl;
+    return;
   }
 
-  for (j=0 ; j < r.getCols() ; j++) {
-    C[nra][j] = r[j] ;
+  if (r.size() == 0) {
+    C = A;
+    return;
+  }
+
+  C.resize(nra+1, r.getCols(), false);
+
+  if (C.data != NULL && A.data != NULL && A.size() > 0) {
+    //Copy A in C
+    memcpy(C.data, A.data, sizeof(double)*A.size());
+  }
+
+  if (C.data != NULL && r.data != NULL && r.size() > 0) {
+    //Copy r in C
+    memcpy(C.data+A.size(), r.data, sizeof(double)*r.size());
   }
 }
 
@@ -3991,12 +3889,7 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B,
 {
   vpMatrix C ;
 
-  try{
-    insert(A,B, C, r, c) ;
-  }
-  catch(...) {
-    throw;
-  }
+  insert(A, B, C, r, c);
 
   return C ;
 }
@@ -4020,12 +3913,8 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C,
 {
   if( ( (r + B.getRows()) <= A.getRows() ) &&
     ( (c + B.getCols()) <= A.getCols() ) ){
-      try {
-        C.resize(A.getRows(),A.getCols()  ) ;
-      }
-      catch(...)  {
-        throw ;
-      }
+      C.resize(A.getRows(),A.getCols()  );
+
       for(unsigned int i=0; i<A.getRows(); i++){
         for(unsigned int j=0; j<A.getCols(); j++){
           if(i >= r && i < (r + B.getRows()) && j >= c && j < (c+B.getCols())){
@@ -4053,21 +3942,16 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C,
   \param B : Right matrix.
   \return Juxtaposed matrix C = [ A B ]
 
-  \warning A and B must have the same number of column
+  \warning A and B must have the same number of rows.
 */
 vpMatrix
 vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
 {
-  vpMatrix C ;
+  vpMatrix C;
 
-  try{
-    juxtaposeMatrices(A,B, C) ;
-  }
-  catch(...) {
-    throw ;
-  }
+  juxtaposeMatrices(A, B, C);
 
-  return C ;
+  return C;
 }
 
 /*!
@@ -4085,29 +3969,26 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B)
 void
 vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
-  unsigned int nca = A.getCols() ;
-  unsigned int ncb = B.getCols() ;
+  unsigned int nca = A.getCols();
+  unsigned int ncb = B.getCols();
 
-  if (nca !=0) {
+  if (nca != 0) {
     if (A.getRows() != B.getRows()) {
       throw(vpException(vpException::dimensionError,
                         "Cannot juxtapose (%dx%d) matrix with (%dx%d) matrix",
-                        A.getRows(), A.getCols(), B.getRows(), B.getCols())) ;
+                        A.getRows(), A.getCols(), B.getRows(), B.getCols()));
     }
   }
 
-  C.resize(B.getRows(),nca+ncb);
-
-  unsigned int i,j ;
-  for (i=0 ; i < C.getRows(); i++)
-    for (j=0 ; j < nca ; j++)
-      C[i][j] = A[i][j] ;
-
-  for (i=0 ; i < C.getRows() ; i++) {
-    for (j=0 ; j < ncb ; j++) {
-      C[i][nca+j] = B[i][j] ;
-    }
+  if (B.getRows() == 0 || nca+ncb == 0) {
+    std::cerr << "B.getRows() == 0 || nca+ncb == 0" << std::endl;
+    return;
   }
+
+  C.resize(B.getRows(), nca+ncb, false);
+
+  C.insert(A, 0, 0);
+  C.insert(B, 0, nca);
 }
 
 
@@ -4268,7 +4149,7 @@ std::ostream & vpMatrix::matlabPrint(std::ostream & os) const
     else { os << "]" << std::endl; }
   }
   return os;
-};
+}
 
 /*!
   Print using Maple syntax, to copy/paste in Maple later.
@@ -4310,7 +4191,7 @@ std::ostream & vpMatrix::maplePrint(std::ostream & os) const
   }
   os << "])" << std::endl;
   return os;
-};
+}
 
 /*!
   Print/save a matrix in csv format.
@@ -4350,7 +4231,7 @@ std::ostream & vpMatrix::csvPrint(std::ostream & os) const
     os << std::endl;
   }
   return os;
-};
+}
 
 
 /*!
@@ -4419,10 +4300,30 @@ std::ostream & vpMatrix::cppPrint(std::ostream & os, const std::string &matrixNa
     os << std::endl;
   }
   return os;
-};
+}
 
 /*!
   Stack A at the end of the current matrix, or copy if the matrix has no dimensions : this = [ this A ]^T.
+*/
+void vpMatrix::stack(const vpMatrix &A)
+{
+  if(rowNum == 0) {
+    *this = A;
+  } else if (A.getRows() > 0) {
+    if (colNum != A.getCols()) {
+      throw(vpException(vpException::dimensionError,
+                        "Cannot stack (%dx%d) matrix with (%dx%d) matrix",
+                        rowNum, colNum, A.getRows(), A.getCols()));
+    }
+
+    unsigned int rowNumOld = rowNum;
+    resize(rowNum+A.getRows(), colNum, false);
+    insert(A, rowNumOld, 0);
+  }
+}
+
+/*!
+  Stack row vector \e r at the end of the current matrix, or copy if the matrix has no dimensions : this = [ this r ]^T.
 
   Here an example for a robot velocity log :
 \code
@@ -4435,25 +4336,30 @@ for(unsigned int i = 0;i<100;i++)
 }
 \endcode
 */
-void vpMatrix::stack(const vpMatrix &A)
-{
-  if(rowNum == 0)
-    *this = A;
-  else
-    *this = vpMatrix::stack(*this, A);
-}
-
-/*!
-  Stack row vector \e r at the end of the current matrix, or copy if the matrix has no dimensions : this = [ this r ]^T.
-*/
 void vpMatrix::stack(const vpRowVector &r)
 {
-  if(rowNum == 0)
+  if(rowNum == 0) {
     *this = r;
-  else
-    *this = vpMatrix::stack(*this, r);
-}
+  } else {
+    if (colNum != r.getCols()) {
+      throw(vpException(vpException::dimensionError,
+                        "Cannot stack (%dx%d) matrix with (1x%d) row vector",
+                        rowNum, colNum, r.getCols())) ;
+    }
 
+    if (r.size() == 0) {
+      return;
+    }
+
+    unsigned int oldSize = size();
+    resize(rowNum+1, colNum, false);
+
+    if (data != NULL && r.data != NULL && r.size() > 0) {
+      //Copy r in data
+      memcpy(data+oldSize, r.data, sizeof(double)*r.size());
+    }
+  }
+}
 
 /*!
   Insert matrix A at the given position in the current matrix.
@@ -4468,11 +4374,12 @@ void vpMatrix::stack(const vpRowVector &r)
 void vpMatrix::insert(const vpMatrix&A, const unsigned int r,
                       const unsigned int c)
 {
-  if( (r + A.getRows() ) <= rowNum && (c + A.getCols() ) <= colNum ){
-    // recopy matrix A in the current one, does not call static function to avoid initialisation and recopy of matrix
-    for(unsigned int i=r; i<(r+A.getRows()); i++){
-      for(unsigned int j=c; j<(c+A.getCols()); j++){
-        (*this)[i][j] = A[i-r][j-c];
+  if( (r + A.getRows() ) <= rowNum && (c + A.getCols() ) <= colNum ) {
+    if (A.colNum == colNum && data != NULL && A.data != NULL && A.size() > 0) {
+      memcpy(data+r*colNum, A.data, sizeof(double)*A.size());
+    } else if (data != NULL && A.data != NULL && A.colNum > 0) {
+      for (unsigned int i = r; i < (r+A.getRows()); i++){
+        memcpy(data+i*colNum+c, A.data+(i-r)*A.colNum, sizeof(double)*A.colNum);
       }
     }
   }
@@ -4482,7 +4389,6 @@ void vpMatrix::insert(const vpMatrix&A, const unsigned int r,
                       A.getRows(), A.getCols(), rowNum, colNum, r, c);
   }
 }
-
 
 /*!
   Compute the eigenvalues of a n-by-n real symmetric matrix.
@@ -5072,12 +4978,12 @@ void vpMatrix::stackMatrices(const vpColVector &A, const vpColVector &B, vpColVe
 vpMatrix vpMatrix::stackMatrices(const vpMatrix &A, const vpRowVector &B)
 {
   return vpMatrix::stack(A, B);
-};
+}
 
 void vpMatrix::stackMatrices(const vpMatrix &A, const vpRowVector &B, vpMatrix &C)
 {
   vpMatrix::stack(A, B, C);
-};
+}
 
 /*!
   \deprecated This method is deprecated. You should use getRow().
