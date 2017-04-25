@@ -225,7 +225,7 @@ void vpMbKltMultiTracker::computeVVS(std::map<std::string, unsigned int> &mapOfN
     }
 
     bool reStartFromLastIncrement = false;
-    computeVVSCheckLevenbergMarquardtKlt(iter, nbInfos, cMoPrev, error_prev, ctTc0_Prev, mu, reStartFromLastIncrement);
+    computeVVSCheckLevenbergMarquardtKlt(iter, nbInfos, cMoPrev, R, error_prev, ctTc0_Prev, mu, reStartFromLastIncrement);
 
     if(!reStartFromLastIncrement) {
       vpMbKltMultiTracker::computeVVSWeights(iter, nbInfos, mapOfNbInfos, R, w_true, w, mapOfRobusts, 2.0);

@@ -646,9 +646,10 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   vpColVector m_w_prev(2*nbInfos + nbrow);
   double mu = 0.01;
   
-  while( ((int)((residu - residu_1)*1e8) !=0 )  && (iter<maxIter) ){   
+  while( ((int)((residu - residu_1)*1e8) !=0 )  && (iter<maxIter) ){
     L = new vpMatrix();
     R = new vpColVector();
+    m_error.resize(0);
     
     if(nbrow >= 4)
       trackSecondLoop(I,L_mbt,R_mbt,cMo,lvl);
@@ -685,6 +686,13 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
           shift += 2*kltPolyCylinder->getCurrentNumberPoints();
         }
       }
+    }
+
+    if(nbrow > 3){
+      m_error.stack(R_mbt);
+    }
+    if(nbInfos > 3){
+      m_error.stack(R_klt);
     }
 
     bool reStartFromLastIncrement = false;
@@ -761,7 +769,6 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
         cpt++;
       }
 
-      m_error = (*R);
       if(computeCovariance){
         L_true = (*L);
         if(!isoJoIdentity){

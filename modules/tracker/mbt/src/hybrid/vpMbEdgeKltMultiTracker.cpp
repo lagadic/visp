@@ -246,6 +246,7 @@ void vpMbEdgeKltMultiTracker::computeVVS(std::map<std::string, const vpImage<uns
   while( ((int)((residu - residu_1)*1e8) !=0 )  && (iter<maxIter) ){
     L = new vpMatrix();
     R = new vpColVector();
+    m_error.resize(0);
 
     //MBT
     error_lines.resize(0);
@@ -328,6 +329,13 @@ void vpMbEdgeKltMultiTracker::computeVVS(std::map<std::string, const vpImage<uns
       }
     }
 
+    if(nbrow > 3) {
+      m_error.stack(R_mbt);
+    }
+
+    if(nbInfos > 3) {
+      m_error.stack(R_klt);
+    }
 
     bool reStartFromLastIncrement = false;
     if(iter != 0 && m_optimizationMethod == vpMbTracker::LEVENBERG_MARQUARDT_OPT) {
@@ -420,7 +428,6 @@ void vpMbEdgeKltMultiTracker::computeVVS(std::map<std::string, const vpImage<uns
         cpt++;
       }
 
-      m_error = (*R);
       if(computeCovariance) {
         L_true = (*L);
         if(!isoJoIdentity) {
