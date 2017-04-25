@@ -570,7 +570,7 @@ int test_pseudo_inverse_opencv(bool verbose, const std::vector<vpMatrix> &bench,
 }
 #endif
 
-void save_time(const std::string &method, unsigned int nrows, unsigned int ncols, bool verbose, bool use_plot_file, std::ofstream &of, const std::vector<double> time)
+void save_time(const std::string &method, unsigned int nrows, unsigned int ncols, bool verbose, bool use_plot_file, std::ofstream &of, const std::vector<double> &time)
 {
   for (size_t i = 0; i < time.size(); i++) {
     if(use_plot_file)
