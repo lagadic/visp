@@ -381,7 +381,8 @@ vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigne
               for(size_t j = 0 ; j < stack.size() ; ++j)
                   if (stack[j].second.ID == s.ID)
                   {
-                      stack[j] = stack.back();
+                      if (j != stack.size()-1)
+                          stack[j] = stack.back();
                       stack.pop_back();
                       break;
                   }
@@ -465,7 +466,8 @@ vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, unsigne
               for(size_t j = 0 ; j < stack.size() ; ++j)
                   if (stack[j].second.ID == s.ID)
                   {
-                      stack[j] = stack.back();
+                      if (j != stack.size()-1)
+                          stack[j] = stack.back();
                       stack.pop_back();
                       break;
                   }
