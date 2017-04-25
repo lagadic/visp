@@ -450,9 +450,10 @@ vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomo
 
     try
     {
+      nbFeature.clear();
       nbFeatureTotal = 0;
       for(unsigned int i = 0 ; i < meline.size() ; i++){
-        meline[i]->track(I) ;
+        meline[i]->track(I);
         nbFeature.push_back((unsigned int) meline[i]->getMeList().size());
         nbFeatureTotal += (unsigned int) meline[i]->getMeList().size();
       }
@@ -460,7 +461,7 @@ vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomo
     catch(...)
     {
       for(unsigned int i = 0 ; i < meline.size() ; i++){
-        if (meline[i] != NULL) delete meline[i] ;
+        if (meline[i] != NULL) delete meline[i];
       }
 
       nbFeature.clear();
@@ -749,13 +750,17 @@ vpMbtDistanceLine::initInteractionMatrixError()
 {
   if (isvisible == true)
   {
-    L.resize(nbFeatureTotal,6) ;
-    error.resize(nbFeatureTotal) ;
+    L.resize(nbFeatureTotal,6);
+    error.resize(nbFeatureTotal);
   }
   else{
-    for(unsigned int i = 0 ; i < meline.size() ; i++)
+    for(unsigned int i = 0 ; i < meline.size() ; i++) {
       nbFeature[i] = 0;
-    nbFeatureTotal = 0 ;
+      //To be consistent with nbFeature[i] = 0
+      std::list<vpMeSite>& me_site_list = meline[i]->getMeList();
+      me_site_list.clear();
+    }
+    nbFeatureTotal = 0;
   }
 }
 

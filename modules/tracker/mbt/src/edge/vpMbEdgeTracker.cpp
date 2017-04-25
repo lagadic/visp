@@ -2380,8 +2380,7 @@ vpMbEdgeTracker::initFaceFromLines(vpMbtPolygon &polygon)
 }
 
 unsigned int
-vpMbEdgeTracker::initMbtTracking(unsigned int &nberrors_lines,
-    unsigned int &nberrors_cylinders, unsigned int &nberrors_circles) {
+vpMbEdgeTracker::initMbtTracking(unsigned int &nberrors_lines, unsigned int &nberrors_cylinders, unsigned int &nberrors_circles) {
   unsigned int nbrow = 0;
   nberrors_lines = 0;
   nberrors_cylinders = 0;
@@ -2391,33 +2390,33 @@ vpMbEdgeTracker::initMbtTracking(unsigned int &nberrors_lines,
 
     vpMbtDistanceLine *l = *it;
 
-    if(l->isVisible() && l->isTracked())
+    if(l->isTracked())
     {
+      l->initInteractionMatrixError();
       nbrow += l->nbFeatureTotal;
       nberrors_lines+=l->nbFeatureTotal;
-      l->initInteractionMatrixError();
     }
   }
 
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
     vpMbtDistanceCylinder *cy = *it;
 
-    if(cy->isVisible() && cy->isTracked())
+    if(cy->isTracked())
     {
-      nbrow += cy->nbFeature ;
-      nberrors_cylinders += cy->nbFeature ;
-      cy->initInteractionMatrixError() ;
+      cy->initInteractionMatrixError();
+      nbrow += cy->nbFeature;
+      nberrors_cylinders += cy->nbFeature;
     }
   }
 
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
     vpMbtDistanceCircle *ci = *it;
 
-    if(ci->isVisible() && ci->isTracked())
+    if(ci->isTracked())
     {
-      nbrow += ci->nbFeature ;
-      nberrors_circles += ci->nbFeature ;
-      ci->initInteractionMatrixError() ;
+      ci->initInteractionMatrixError();
+      nbrow += ci->nbFeature;
+      nberrors_circles += ci->nbFeature;
     }
   }
 

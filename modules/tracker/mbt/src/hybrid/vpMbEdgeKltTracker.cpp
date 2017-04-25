@@ -147,9 +147,9 @@ vpMbEdgeKltTracker::resetTracker()
 unsigned int
 vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
 {
-  vpMbtDistanceLine *l ;
-  vpMbtDistanceCylinder *cy ;
-  vpMbtDistanceCircle *ci ;
+  vpMbtDistanceLine *l;
+  vpMbtDistanceCylinder *cy;
+  vpMbtDistanceCircle *ci;
 
   if(lvl  >= scales.size() || !scales[lvl]){
     throw vpException(vpException::dimensionError, "lvl not used.");
@@ -159,31 +159,31 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
   for(std::list<vpMbtDistanceLine*>::iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
     l = *it;
 
-    if(l->isVisible() && l->isTracked()){
-      nbrow += l->nbFeatureTotal ;
-      l->initInteractionMatrixError() ;
+    if(l->isTracked()){
+      l->initInteractionMatrixError();
+      nbrow += l->nbFeatureTotal;
     }
   }
   
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
     cy = *it;
 
-    if(cy->isVisible() && cy->isTracked()){
-      nbrow += cy->nbFeature ;
-      cy->initInteractionMatrixError() ;
+    if(cy->isTracked()){
+      cy->initInteractionMatrixError();
+      nbrow += cy->nbFeature;
     }
   }
 
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[lvl].begin(); it!=circles[lvl].end(); ++it){
     ci = *it;
 
-    if(ci->isVisible() && ci ->isTracked()){
-      nbrow += ci->nbFeature ;
-      ci->initInteractionMatrixError() ;
+    if(ci ->isTracked()){
+      ci->initInteractionMatrixError();
+      nbrow += ci->nbFeature;
     }
   }
 
-  return nbrow;  
+  return nbrow;
 }
 
 /*!
@@ -929,15 +929,15 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
 unsigned int
 vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector &factor, const unsigned int lvl)
 {
-  vpMbtDistanceLine *l ;
-  vpMbtDistanceCylinder *cy ;
-  vpMbtDistanceCircle *ci ;
+  vpMbtDistanceLine *l;
+  vpMbtDistanceCylinder *cy;
+  vpMbtDistanceCircle *ci;
 
-  if(lvl  >= scales.size() || !scales[lvl]){
+  if(lvl >= scales.size() || !scales[lvl]){
     throw vpException(vpException::dimensionError, "_lvl not used.");
   }
 
-  unsigned int nbrow  = initMbtTracking(lvl);
+  unsigned int nbrow = initMbtTracking(lvl);
   
   if (nbrow==0){
 //     vpERROR_TRACE("\n\t\t Error-> not enough data in the interaction matrix...") ;
@@ -981,7 +981,7 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
               ++itListLine;
               indexFeature++;
           }
-          n+= l->nbFeature[a] ;
+          n+= l->nbFeature[a];
         }
       }
     }
@@ -1014,7 +1014,7 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
         if (site.getState() != vpMeSite::NO_SUPPRESSION) factor[n+i] = 0.2;
       }
 
-      n+= cy->nbFeature ;
+      n+= cy->nbFeature;
     }
   }
 
@@ -1036,7 +1036,7 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
         ++itCir;
       }
 
-      n+= ci->nbFeature ;
+      n+= ci->nbFeature;
     }
   }
   
