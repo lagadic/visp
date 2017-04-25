@@ -16,7 +16,7 @@ file(GLOB lib_srcs src/*.c blas/*.c install/*.c f2c/*.c)
 file(GLOB lib_incs include/*.h)
 
 add_library(${LAPACK_LIBRARY} STATIC ${lib_srcs} ${lib_incs})
-target_include_directories(${LAPACK_LIBRARY} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+vp_target_include_directories(${LAPACK_LIBRARY} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 if(ENABLE_SOLUTION_FOLDERS)
   set_target_properties(${LAPACK_LIBRARY} PROPERTIES FOLDER "3rdparty")
