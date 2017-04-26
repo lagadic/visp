@@ -774,7 +774,7 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
 
     bool reStartFromLastIncrement = false;
 
-    computeVVSCheckLevenbergMarquardtKlt(iter, nbInfos, cMoPrev, error_prev, ctTc0_Prev, mu, reStartFromLastIncrement);
+    computeVVSCheckLevenbergMarquardtKlt(iter, nbInfos, cMoPrev, R, error_prev, ctTc0_Prev, mu, reStartFromLastIncrement);
 
     if(!reStartFromLastIncrement){
       computeVVSWeights(iter, nbInfos, R, w_true, w, robust);
@@ -793,10 +793,10 @@ vpMbKltTracker::computeVVS(const unsigned int &nbInfos, vpColVector &w)
 
 void
 vpMbKltTracker::computeVVSCheckLevenbergMarquardtKlt(const unsigned int iter, const unsigned int nbInfos,
-    const vpHomogeneousMatrix &cMoPrev, const vpColVector &error_prev, const vpHomogeneousMatrix &ctTc0_Prev,
-    double &mu, bool &reStartFromLastIncrement) {
+    const vpHomogeneousMatrix &cMoPrev, const vpColVector &error, const vpColVector &error_prev,
+    const vpHomogeneousMatrix &ctTc0_Prev, double &mu, bool &reStartFromLastIncrement) {
   if(iter != 0 && m_optimizationMethod == vpMbTracker::LEVENBERG_MARQUARDT_OPT){
-    if(m_error.sumSquare()/(double)(2*nbInfos) > error_prev.sumSquare()/(double)(2*nbInfos)){
+    if(error.sumSquare()/(double)(2*nbInfos) > error_prev.sumSquare()/(double)(2*nbInfos)){
       mu *= 10.0;
 
       if(mu > 1.0)

@@ -433,8 +433,8 @@ protected:
   //@{
   void computeVVS(const unsigned int &nbInfos, vpColVector &w);
   void computeVVSCheckLevenbergMarquardtKlt(const unsigned int iter, const unsigned int nbInfos,
-                                            const vpHomogeneousMatrix &cMoPrev, const vpColVector &error_prev, const vpHomogeneousMatrix &ctTc0_Prev,
-                                            double &mu, bool &reStartFromLastIncrement);
+                                            const vpHomogeneousMatrix &cMoPrev, const vpColVector &error, const vpColVector &error_prev,
+                                            const vpHomogeneousMatrix &ctTc0_Prev, double &mu, bool &reStartFromLastIncrement);
   void computeVVSCovariance(const vpColVector &w_true, const vpHomogeneousMatrix &cMoPrev,
                             const vpMatrix &L_true, const vpMatrix &LVJ_true);
   void computeVVSInteractionMatrixAndResidu(unsigned int shift, vpColVector &R, vpMatrix &L, vpHomography &H,
