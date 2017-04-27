@@ -245,8 +245,9 @@ vpMeEllipse::reSample(const vpImage<unsigned char>  &I)
 
   unsigned int n = numberOfSignal();
   expecteddensity = (alpha2-alpha1) / vpMath::rad((double)me->getSampleStep());
-  if ((double)n < 0.9*expecteddensity){
+  if ((double)n < 0.5*expecteddensity){
     sample(I);
+    vpMeTracker::track(I);
   }
 }
 
