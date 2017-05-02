@@ -224,7 +224,7 @@ private:
     bool firstFrameIndexIsSet;
     bool lastFrameIndexIsSet;
     //!The frame step
-    long frameStep; // important change
+    long frameStep;
 
 //private:
 //#ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -258,8 +258,14 @@ public:
       \return true if the end of the sequence is reached.
     */
     inline bool end() {
-      if (frameCount + frameStep > lastFrame ) // important change
-        return true;
+      if (frameStep > 0) {
+        if (frameCount + frameStep > lastFrame )
+          return true;
+      }
+      else if (frameStep < 0) {
+        if (frameCount + frameStep < firstFrame )
+          return true;
+      }
       return false;
     }
     bool getFrame(vpImage<vpRGBa> &I, long frame);
@@ -287,6 +293,12 @@ public:
       \return Returns the last frame index.
     */
     inline long getLastFrameIndex() const {return lastFrame;}
+    /*!
+      Gets the frame step.
+
+      \return Returns the frame step value.
+    */
+    inline long getFrameStep() const { return frameStep;}
     void open (vpImage< vpRGBa > &I);
     void open (vpImage< unsigned char > &I);
 
@@ -329,19 +341,14 @@ public:
 
     /*!
       Sets the frame step index.
-	  Throws exception if the input step is less than 1.
 	  The default frame step is 1
 
 	  \param frame_step : The frame index step.
 
 	  \sa setFrameStep()
 	*/
-	inline void setFrameStep(const long frame_step) { // important change
-		if (frame_step < 1) {
-			throw(vpException(vpException::badValue,
-			    "The frame step should be more than 0"));
-		}
-		this->frameStep = frame_step;
+	inline void setFrameStep(const long frame_step) {
+	  this->frameStep = frame_step;
 	}
 
 private:
