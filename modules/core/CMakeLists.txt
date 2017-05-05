@@ -225,7 +225,11 @@ endif(USE_YARP)
 
 # Math: eigen3, gsl, lapack, OpenCV
 if(USE_EIGEN3)
-  list(APPEND opt_incs ${EIGEN3_INCLUDE_DIRS})
+  if(EIGEN3_INCLUDE_DIRS)
+    list(APPEND opt_incs ${EIGEN3_INCLUDE_DIRS})
+  else()
+    list(APPEND opt_incs ${EIGEN3_INCLUDE_DIR})
+  endif()
 endif()
 if(USE_GSL)
   list(APPEND opt_incs ${GSL_INCLUDE_DIRS})
