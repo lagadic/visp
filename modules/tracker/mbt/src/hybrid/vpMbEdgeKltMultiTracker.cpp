@@ -1000,13 +1000,13 @@ void vpMbEdgeKltMultiTracker::init(const vpImage<unsigned char>& /*I*/) {
 
 #ifdef VISP_HAVE_MODULE_GUI
 /*!
-  Initialise the tracking by clicking on the image points corresponding to the
-  3D points (object frame) in the list points3D_list.
+  Initialise the tracker by clicking in the image on the pixels that correspond to the
+  3D points whose coordinates are given in \e points3D_list.
 
-  \param I : Input image
-  \param points3D_list : List of the 3D points (object frame).
-  \param displayFile : Path to the image used to display the help. This functionality
-  is only available if visp_io module is used.
+  \param I : Input image where the user has to click.
+  \param points3D_list : List of at least 4 3D points with coordinates expressed in meters in the object frame.
+  \param displayFile : Path to the image used to display the help. This image may be used to show where to click.
+  This functionality is only available if visp_io module is used.
 */
 void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char>& I, const std::vector<vpPoint> &points3D_list,
                        const std::string &displayFile) {
@@ -1020,24 +1020,29 @@ void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char>& I, const s
 }
 
 /*!
-  Initialize the tracking by clicking on the image points corresponding to the
-  3D points (object frame) in the file initFile. The structure of this file
-  is (without the comments):
+  Initialise the tracker by clicking in the image on the pixels that correspond to the
+  3D points whose coordinates are extracted from a file. In this file, comments starting
+  with # character are allowed. Notice that 3D point coordinates are expressed in meter
+  in the object frame with their X, Y and Z values.
+
+  The structure of this file is the following:
+
   \code
-  4 // Number of points in the file (minimum is four)
-  0.01 0.01 0.01    //  \
-  ...               //  | 3D coordinates in the object basis
-  0.01 -0.01 -0.01  // /
+  # 3D point coordinates
+  4                 # Number of points in the file (minimum is four)
+  0.01 0.01 0.01    # \
+  ...               #  | 3D coordinates in the object frame (X, Y, Z)
+  0.01 -0.01 -0.01  # /
   \endcode
 
-  \param I : Input image.
-  \param initFile : File containing the points where to click.
-  \param displayHelp : Optional display of an image ( 'initFile.ppm' ). This
-    image may be used to show where to click.
+  \param I : Input image where the user has to click.
+  \param initFile : File containing the coordinates of at least 4 3D points the user has
+  to click in the image. This file should have .init extension (ie teabox.init).
+  \param displayHelp : Optionnal display of an image that should have the same generic name
+  as the init file (ie teabox.ppm). This image may be used to show where to click. This
+  functionality is only available if visp_io module is used.
 
-  \exception vpException::ioError : The file specified in initFile doesn't exist.
-
-  \sa setPathNamePoseSaving()
+  \exception vpException::ioError : The file specified in \e initFile doesn't exist.
 */
 void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char>& I, const std::string& initFile, const bool displayHelp) {
   //Cannot use directly set pose for KLT as it is different than for the edge case
@@ -1050,27 +1055,34 @@ void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char>& I, const s
 }
 
 /*!
-  Initialize the tracking by clicking on the image points corresponding to the
-  3D points (object frame) in the file initFile. The structure of this file
-  is (without the comments):
+  Initialise the tracker by clicking in the reference image on the pixels that correspond to the
+  3D points whose coordinates are extracted from a file. In this file, comments starting
+  with # character are allowed. Notice that 3D point coordinates are expressed in meter
+  in the object frame with their X, Y and Z values.
+
+  The structure of this file is the following:
+
   \code
-  4 // Number of points in the file (minimum is four)
-  0.01 0.01 0.01    //  \
-  ...               //  | 3D coordinates in the object basis
-  0.01 -0.01 -0.01  // /
+  # 3D point coordinates
+  4                 # Number of points in the file (minimum is four)
+  0.01 0.01 0.01    # \
+  ...               #  | 3D coordinates in the object frame (X, Y, Z)
+  0.01 -0.01 -0.01  # /
   \endcode
 
   \param I1 : Input image for the first camera.
   \param I2 : Input image for the second camera.
-  \param initFile1 : File containing the points where to click for the first camera.
-  \param initFile2 : File containing the points where to click for the second camera.
-  \param displayHelp : Optional display of an image ( 'initFile.ppm' ). This
-    image may be used to show where to click.
+  \param initFile1 : File containing the coordinates of at least 4 3D points the user has
+  to click in the image acquired by the first camera. This file should have .init extension (ie teabox.init).
+  \param initFile2 : File containing the coordinates of at least 4 3D points the user has
+  to click in the image acquired by the second camera. This file should have .init extension.
+  \param displayHelp : Optionnal display of an image that should have the same generic name
+  as the init file (ie teabox.ppm). This image may be used to show where to click. This
+  functionality is only available if visp_io module is used.
+
   \param firstCameraIsReference : If true, the first camera is the reference, otherwise it is the second one.
 
-  \exception vpException::ioError : The file specified in initFile doesn't exist.
-
-  \sa setPathNamePoseSaving()
+  \exception vpException::ioError : The file specified in \e initFile doesn't exist.
 */
 void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char>& I1, const vpImage<unsigned char> &I2,
     const std::string& initFile1, const std::string& initFile2, const bool displayHelp, const bool firstCameraIsReference) {
@@ -1091,25 +1103,29 @@ void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char>& I1, const 
 }
 
 /*!
-  Initialize the tracking by clicking on the image points corresponding to the
-  3D points (object frame) in the file initFile for the reference camera.
-  The other cameras will be automatically initialized and the camera transformation matrices have to be set before.
-  The structure of this file is (without the comments):
+  Initialise the tracker by clicking in the reference image on the pixels that correspond to the
+  3D points whose coordinates are extracted from a file. In this file, comments starting
+  with # character are allowed. Notice that 3D point coordinates are expressed in meter
+  in the object frame with their X, Y and Z values.
+
+  The structure of this file is the following:
+
   \code
-  4 // Number of points in the file (minimum is four)
-  0.01 0.01 0.01    //  \
-  ...               //  | 3D coordinates in the object basis
-  0.01 -0.01 -0.01  // /
+  # 3D point coordinates
+  4                 # Number of points in the file (minimum is four)
+  0.01 0.01 0.01    # \
+  ...               #  | 3D coordinates in the object frame (X, Y, Z)
+  0.01 -0.01 -0.01  # /
   \endcode
 
   \param mapOfImages : Map of images.
   \param initFile : File containing the points where to click for the reference camera.
-  \param displayHelp : Optional display of an image ( 'initFile.ppm' ). This
-    image may be used to show where to click.
+  \param displayHelp : Optionnal display of an image that should have the same generic name
+  as the init file (ie teabox.ppm). This image may be used to show where to click. This
+  functionality is only available if visp_io module is used.
 
-  \exception vpException::ioError : The file specified in initFile doesn't exist.
+  \exception vpException::ioError : The file specified in \e initFile doesn't exist.
 
-  \sa setPathNamePoseSaving()
 */
 void vpMbEdgeKltMultiTracker::initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
       const std::string &initFile, const bool displayHelp) {
@@ -1125,26 +1141,30 @@ void vpMbEdgeKltMultiTracker::initClick(const std::map<std::string, const vpImag
 }
 
 /*!
-  Initialize the tracking by clicking on the image points corresponding to the
-  3D points (object frame) in the file initFile.
+  Initialise the tracker by clicking in the reference image on the pixels that correspond to the
+  3D points whose coordinates are extracted from a file. In this file, comments starting
+  with # character are allowed. Notice that 3D point coordinates are expressed in meter
+  in the object frame with their X, Y and Z values.
+
+  The structure of this file is the following:
+
+  \code
+  # 3D point coordinates
+  4                 # Number of points in the file (minimum is four)
+  0.01 0.01 0.01    # \
+  ...               #  | 3D coordinates in the object frame (X, Y, Z)
+  0.01 -0.01 -0.01  # /
+  \endcode
+
   The cameras that have not an init file will be automatically initialized but
   the camera transformation matrices have to be set before.
-  The structure of this file is (without the comments):
-  \code
-  4 // Number of points in the file (minimum is four)
-  0.01 0.01 0.01    //  \
-  ...               //  | 3D coordinates in the object basis
-  0.01 -0.01 -0.01  // /
-  \endcode
 
   \param mapOfImages : Map of images.
   \param mapOfInitFiles : map of files containing the points where to click for each camera.
-  \param displayHelp : Optional display of an image ( 'initFile.ppm' ). This
-    image may be used to show where to click.
+  \param displayHelp : Optional display of an image (ie teabox.ppm). This
+  image may be used to show where to click.
 
-  \exception vpException::ioError : The file specified in initFile doesn't exist.
-
-  \sa setPathNamePoseSaving()
+  \exception vpException::ioError : The file specified in \e initFile doesn't exist.
 */
 void vpMbEdgeKltMultiTracker::initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
       const std::map<std::string, std::string> &mapOfInitFiles, const bool displayHelp) {
