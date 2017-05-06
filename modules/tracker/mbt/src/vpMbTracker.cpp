@@ -675,7 +675,7 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::st
       finit.get(c);
     }
     finit.unget();
-    double u, v, x, y;
+    double u, v, x=0, y=0;
     finit >> v;
     finit >> u;
     finit.ignore(256, '\n'); // skip the rest of the line
