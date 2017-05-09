@@ -279,8 +279,9 @@ macro(vp_glob_modules)
                 math(EXPR __count "${__count} + 1")
               endif()
             endif()
+          else()
+            set(__propagate TRUE)
           endif()
-
           if(__propagate)
             # modules in visp/tracker
             get_filename_component(__subpath "${__path}/${mod}" ABSOLUTE)
