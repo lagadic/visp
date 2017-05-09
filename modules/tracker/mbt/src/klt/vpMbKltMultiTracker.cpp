@@ -54,8 +54,10 @@
 /*!
   Basic constructor
 */
-vpMbKltMultiTracker::vpMbKltMultiTracker() : m_mapOfCameraTransformationMatrix(), m_mapOfKltTrackers(),
-    m_referenceCameraName("Camera") {
+vpMbKltMultiTracker::vpMbKltMultiTracker() :
+    m_mapOfCameraTransformationMatrix(), m_mapOfKltTrackers(), m_referenceCameraName("Camera"),
+    m_L_kltMulti(), m_error_kltMulti(), m_w_kltMulti(), m_weightedError_kltMulti()
+{
   m_mapOfKltTrackers["Camera"] = new vpMbKltTracker();
 
   //Add default camera transformation matrix
@@ -67,8 +69,10 @@ vpMbKltMultiTracker::vpMbKltMultiTracker() : m_mapOfCameraTransformationMatrix()
 
   \param nbCameras : Number of cameras to use.
 */
-vpMbKltMultiTracker::vpMbKltMultiTracker(const unsigned int nbCameras) : m_mapOfCameraTransformationMatrix(),
-    m_mapOfKltTrackers(), m_referenceCameraName("Camera") {
+vpMbKltMultiTracker::vpMbKltMultiTracker(const unsigned int nbCameras) :
+    m_mapOfCameraTransformationMatrix(), m_mapOfKltTrackers(), m_referenceCameraName("Camera"),
+    m_L_kltMulti(), m_error_kltMulti(), m_w_kltMulti(), m_weightedError_kltMulti()
+{
 
   if(nbCameras == 0) {
     throw vpException(vpTrackingException::fatalError, "Cannot construct a vpMbkltMultiTracker with no camera !");
@@ -107,8 +111,10 @@ vpMbKltMultiTracker::vpMbKltMultiTracker(const unsigned int nbCameras) : m_mapOf
 
   \param cameraNames : List of camera names.
 */
-vpMbKltMultiTracker::vpMbKltMultiTracker(const std::vector<std::string> &cameraNames) : m_mapOfCameraTransformationMatrix(),
-    m_mapOfKltTrackers(), m_referenceCameraName("Camera") {
+vpMbKltMultiTracker::vpMbKltMultiTracker(const std::vector<std::string> &cameraNames) :
+    m_mapOfCameraTransformationMatrix(), m_mapOfKltTrackers(), m_referenceCameraName("Camera"),
+    m_L_kltMulti(), m_error_kltMulti(), m_w_kltMulti(), m_weightedError_kltMulti()
+{
   if(cameraNames.empty()) {
     throw vpException(vpTrackingException::fatalError, "Cannot construct a vpMbKltMultiTracker with no camera !");
   }
@@ -149,126 +155,136 @@ vpMbKltMultiTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoi
   }
 }
 
-void vpMbKltMultiTracker::computeVVS(std::map<std::string, unsigned int> &mapOfNbInfos, vpColVector &w) {
-  vpMatrix L;     // interaction matrix
-  vpColVector R;  // residu
-  vpMatrix L_true;     // interaction matrix
+void vpMbKltMultiTracker::computeVVS() {
+  vpMatrix L_true;
   vpMatrix LVJ_true;
-  //vpColVector R_true;  // residu
-  vpColVector w_true;
-  vpColVector v;  // "speed" for VVS
-
-  unsigned int nbInfos = 0;
-  for(std::map<std::string, unsigned int>::const_iterator it = mapOfNbInfos.begin(); it != mapOfNbInfos.end(); ++it) {
-    nbInfos += it->second;
-  }
-
-  std::map<std::string, vpRobust> mapOfRobusts;
-
-  for(std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin();
-      it != m_mapOfKltTrackers.end(); ++it) {
-    mapOfRobusts[it->first] = vpRobust(2*mapOfNbInfos[it->first]);
-  }
+  vpColVector v;
 
   vpMatrix LTL;
   vpColVector LTR;
   vpHomogeneousMatrix cMoPrev;
   vpHomogeneousMatrix ctTc0_Prev;
-  vpColVector error_prev(2*nbInfos);
-  double mu = 0.01;
+  vpColVector error_prev;
+  double mu = m_initialMu;
 
   double normRes = 0;
   double normRes_1 = -1;
   unsigned int iter = 0;
 
+  computeVVSInit();
+  vpMbKltTracker *klt;
+  for (std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
+    klt = it->second;
+    klt->computeVVSInit();
+  }
+
   std::map<std::string, vpVelocityTwistMatrix> mapOfVelocityTwist;
-  for(std::map<std::string, vpHomogeneousMatrix>::const_iterator it = m_mapOfCameraTransformationMatrix.begin();
+  for (std::map<std::string, vpHomogeneousMatrix>::const_iterator it = m_mapOfCameraTransformationMatrix.begin();
       it != m_mapOfCameraTransformationMatrix.end(); ++it) {
     vpVelocityTwistMatrix cVo;
     cVo.buildFrom(it->second);
     mapOfVelocityTwist[it->first] = cVo;
   }
 
-  while( ((int)((normRes - normRes_1)*1e8) != 0 )  && (iter<maxIter) ) {
-    L.resize(0,0);
-    R.resize(0);
-
-    for(std::map<std::string, vpMbKltTracker*>::const_iterator it1 = m_mapOfKltTrackers.begin();
-        it1 != m_mapOfKltTrackers.end(); ++it1) {
-      unsigned int shift = 0;
-      vpColVector R_current;  // residu
-      vpMatrix L_current;     // interaction matrix
-      vpHomography H_current;
-
-      R_current.resize(2 * mapOfNbInfos[it1->first]);
-      L_current.resize(2 * mapOfNbInfos[it1->first], 6, 0);
-
-      //Use the ctTc0 variable instead of the formula in the monocular case
-      //to ensure that we have the same result than vpMbKltTracker
-      //as some slight differences can occur due to numerical imprecision
-      if(m_mapOfKltTrackers.size() == 1) {
-        computeVVSInteractionMatrixAndResidu(shift, R_current, L_current, H_current,
-            it1->second->kltPolygons, it1->second->kltCylinders, ctTc0);
-      } else {
-        vpHomogeneousMatrix c_curr_tTc_curr0 = m_mapOfCameraTransformationMatrix[it1->first] *
-            cMo * it1->second->c0Mo.inverse();
-        computeVVSInteractionMatrixAndResidu(shift, R_current, L_current, H_current,
-            it1->second->kltPolygons, it1->second->kltCylinders, c_curr_tTc_curr0);
-      }
-
-      //VelocityTwistMatrix
-      L_current = L_current*mapOfVelocityTwist[it1->first];
-
-      //Stack residu and interaction matrix
-      R.stack(R_current);
-      L.stack(L_current);
-    }
+  while ( ((int)((normRes - normRes_1)*1e8) != 0 )  && (iter < m_maxIter) ) {
+    computeVVSInteractionMatrixAndResidu(mapOfVelocityTwist);
 
     bool reStartFromLastIncrement = false;
-    computeVVSCheckLevenbergMarquardtKlt(iter, nbInfos, cMoPrev, R, error_prev, ctTc0_Prev, mu, reStartFromLastIncrement);
+    computeVVSCheckLevenbergMarquardt(iter, m_error_kltMulti, error_prev, cMoPrev, mu, reStartFromLastIncrement);
+    if (reStartFromLastIncrement) {
+      ctTc0 = ctTc0_Prev;
+    }
 
     if(!reStartFromLastIncrement) {
-      vpMbKltMultiTracker::computeVVSWeights(iter, nbInfos, mapOfNbInfos, R, w_true, w, mapOfRobusts, 2.0);
+      vpMbKltMultiTracker::computeVVSWeights();
 
-      computeVVSPoseEstimation(iter, L, w, L_true, LVJ_true, normRes, normRes_1, w_true, R, LTL, LTR,
-          error_prev, v, mu, cMoPrev, ctTc0_Prev);
+      if (computeCovariance) {
+        L_true = m_L_kltMulti;
+        if (!isoJoIdentity) {
+           vpVelocityTwistMatrix cVo;
+           cVo.buildFrom(cMo);
+           LVJ_true = (m_L_kltMulti*cVo*oJo);
+        }
+      }
+
+      normRes_1 = normRes;
+      normRes = 0.0;
+
+      for (unsigned int i = 0; i < m_weightedError_kltMulti.getRows(); i ++) {
+        m_weightedError_kltMulti[i] = m_error_kltMulti[i] * m_w_kltMulti[i];
+        normRes += m_weightedError_kltMulti[i];
+      }
+
+      if ((iter == 0) || m_computeInteraction) {
+        for (unsigned int i = 0; i < m_L_kltMulti.getRows(); i++) {
+          for (unsigned int j = 0; j < 6; j++) {
+            m_L_kltMulti[i][j] *= m_w_kltMulti[i];
+          }
+        }
+      }
+
+      computeVVSPoseEstimation(isoJoIdentity, iter, m_L_kltMulti, LTL, m_weightedError_kltMulti, m_error_kltMulti, error_prev, LTR, mu, v);
+
+      cMoPrev = cMo;
+      ctTc0_Prev = ctTc0;
+      ctTc0 = vpExponentialMap::direct(v).inverse() * ctTc0;
+      cMo = ctTc0 * c0Mo;
     } // endif(!reStartFromLastIncrement)
 
     iter++;
   }
 
-  computeVVSCovariance(w_true, cMoPrev, L_true, LVJ_true);
+  computeCovarianceMatrixVVS(isoJoIdentity, m_w_kltMulti, cMoPrev, L_true, LVJ_true, m_error_kltMulti);
 }
 
-void vpMbKltMultiTracker::computeVVSWeights(const unsigned int iter, const unsigned int nbInfos,
-    std::map<std::string, unsigned int> &mapOfNbInfos, vpColVector &R, vpColVector &w_true, vpColVector &w,
-    std::map<std::string, vpRobust> &mapOfRobusts, double threshold) {
-  /* robust */
-  if(iter == 0) {
-    w_true.resize(2*nbInfos);
-    w.resize(2*nbInfos);
-    w = 1;
-    w_true = 1;
+void vpMbKltMultiTracker::computeVVSInit() {
+  unsigned int nbFeatures = 2*m_nbInfos;
 
-    for(std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin();
-        it != m_mapOfKltTrackers.end(); ++it) {
-      vpCameraParameters camTmp;
-      it->second->getCameraParameters(camTmp);
-      mapOfRobusts[it->first].setThreshold(threshold / camTmp.get_px());
+  m_L_kltMulti.resize(nbFeatures, 6, false);
+  m_w_kltMulti.resize(nbFeatures, false);
+  m_error_kltMulti.resize(nbFeatures, false);
+  m_weightedError_kltMulti.resize(nbFeatures, false);
+}
+
+void vpMbKltMultiTracker::computeVVSInteractionMatrixAndResidu() {
+  throw vpException(vpException::fatalError, "vpMbKltMultiTracker::computeVVSInteractionMatrixAndResidu() should not be called!");
+}
+
+void vpMbKltMultiTracker::computeVVSInteractionMatrixAndResidu(std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist) {
+  unsigned int startIdx = 0;
+
+  vpMbKltTracker *klt;
+  for(std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
+    klt = it->second;
+
+    //Use the ctTc0 variable instead of the formula in the monocular case
+    //to ensure that we have the same result than vpMbKltTracker
+    //as some slight differences can occur due to numerical imprecision
+    if(m_mapOfKltTrackers.size() == 1) {
+      klt->ctTc0 = ctTc0;
+      klt->computeVVSInteractionMatrixAndResidu();
+    } else {
+      vpHomogeneousMatrix c_curr_tTc_curr0 = m_mapOfCameraTransformationMatrix[it->first] * cMo * it->second->c0Mo.inverse();
+      klt->ctTc0 = c_curr_tTc_curr0;
+      klt->computeVVSInteractionMatrixAndResidu();
     }
+
+    m_error_kltMulti.insert(startIdx, klt->m_error_klt);
+    m_L_kltMulti.insert(klt->m_L_klt*mapOfVelocityTwist[it->first], startIdx, 0);
+
+    startIdx += klt->m_error_klt.getRows();
   }
+}
 
-  unsigned int shift = 0;
-  for(std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin();
-      it != m_mapOfKltTrackers.end(); ++it) {
-    if(mapOfNbInfos[it->first] > 0) {
-      vpSubColVector sub_w(w, shift, 2*mapOfNbInfos[it->first]);
-      vpSubColVector sub_r(R, shift, 2*mapOfNbInfos[it->first]);
-      shift += 2*mapOfNbInfos[it->first];
+void vpMbKltMultiTracker::computeVVSWeights() {
+  vpMbKltTracker *klt;
+  unsigned int startIdx = 0;
+  for(std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
+    klt = it->second;
+    klt->computeVVSWeights(klt->m_robust_klt, klt->m_error_klt, klt->m_w_klt);
 
-      mapOfRobusts[it->first].setIteration(iter);
-      mapOfRobusts[it->first].MEstimator(vpRobust::TUKEY, sub_r, sub_w);
-    }
+    m_w_kltMulti.insert(startIdx, klt->m_w_klt);
+    startIdx += klt->m_w_klt.getRows();
   }
 }
 
@@ -1576,43 +1592,37 @@ void vpMbKltMultiTracker::loadModel(const std::string &modelFile, const bool ver
   modelInitialised = true;
 }
 
-void vpMbKltMultiTracker::preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-    std::map<std::string, unsigned int> &mapOfNbInfos,
-    std::map<std::string, unsigned int> &mapOfNbFaceUsed) {
-  for(std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin();
-      it != m_mapOfKltTrackers.end(); ++it) {
-    mapOfNbInfos[it->first] = 0;
-    mapOfNbFaceUsed[it->first] = 0;
-  }
+void vpMbKltMultiTracker::preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages) {
+  m_nbInfos = 0;
+  m_nbFaceUsed = 0;
 
-  for (std::map<std::string, vpMbKltTracker*>::const_iterator it =
-      m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
+  vpMbKltTracker *klt;
+  for (std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
+    klt = it->second;
+
     try {
-      it->second->preTracking(*mapOfImages[it->first], mapOfNbInfos[it->first], mapOfNbFaceUsed[it->first]);
-    } catch (/*vpException &e*/...) {
-//      throw e;
-    }
+      klt->preTracking(*mapOfImages[it->first]);
+      m_nbInfos += klt->m_nbInfos;
+      m_nbFaceUsed += klt->m_nbFaceUsed;
+    } catch (...) {  }
   }
 }
 
-void vpMbKltMultiTracker::postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-    std::map<std::string, unsigned int> &mapOfNbInfos, vpColVector &w_klt) {
-  unsigned int shift = 0;
-  for(std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
-      it != m_mapOfKltTrackers.end(); ++it) {
+void vpMbKltMultiTracker::postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages) {
+  vpMbKltTracker *klt;
+
+  for(std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
+    klt = it->second;
+
     //Set the camera pose
     it->second->cMo = m_mapOfCameraTransformationMatrix[it->first]*cMo;
 
-    if(mapOfNbInfos[it->first] > 0) {
-      vpSubColVector sub_w(w_klt, shift, 2*mapOfNbInfos[it->first]);
-      shift += 2*mapOfNbInfos[it->first];
-      if(it->second->postTracking(*mapOfImages[it->first], sub_w)) {
-        it->second->reinit(*mapOfImages[it->first]);
+    if (klt->m_nbInfos > 0 && klt->postTracking(*mapOfImages[it->first], klt->m_w_klt)) {
+      klt->reinit(*mapOfImages[it->first]);
 
-        //set ctTc0 to identity
-        if(it->first == m_referenceCameraName) {
-          reinit(/*mapOfImages[it->first]*/);
-        }
+      //set ctTc0 to identity
+      if(it->first == m_referenceCameraName) {
+        reinit(/*mapOfImages[it->first]*/);
       }
     }
   }
@@ -1770,7 +1780,7 @@ void vpMbKltMultiTracker::resetTracker() {
     it->second->resetTracker();
   }
 
-  compute_interaction = true;
+  m_computeInteraction = true;
   firstInitialisation = true;
   computeCovariance = false;
 
@@ -1783,8 +1793,8 @@ void vpMbKltMultiTracker::resetTracker() {
   threshold_outlier = 0.5;
   percentGood = 0.7;
 
-  lambda = 0.8;
-  maxIter = 200;
+  m_lambda = 0.8;
+  m_maxIter = 200;
 
   m_optimizationMethod = vpMbTracker::GAUSS_NEWTON_OPT;
 
@@ -2591,27 +2601,16 @@ void vpMbKltMultiTracker::track(std::map<std::string, const vpImage<unsigned cha
     }
   }
 
-  std::map<std::string, unsigned int> mapOfNbInfos;
-  std::map<std::string, unsigned int> mapOfNbFaceUsed;
+  preTracking(mapOfImages);
 
-  preTracking(mapOfImages, mapOfNbInfos, mapOfNbFaceUsed);
-
-  bool atLeastOneTrackerOk = false;
-  for(std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin();
-        it != m_mapOfKltTrackers.end(); ++it) {
-    if(mapOfNbInfos[it->first] >= 4 && mapOfNbFaceUsed[it->first] != 0) {
-      atLeastOneTrackerOk = true;
-    }
-  }
-
-  if(!atLeastOneTrackerOk) {
+  if (m_nbInfos < 4 || m_nbFaceUsed == 0) {
     vpERROR_TRACE("\n\t\t Error-> not enough data") ;
     throw vpTrackingException(vpTrackingException::notEnoughPointError, "\n\t\t Error-> not enough data");
   }
 
-  computeVVS(mapOfNbInfos, m_w);
+  computeVVS();
 
-  postTracking(mapOfImages, mapOfNbInfos, m_w);
+  postTracking(mapOfImages);
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

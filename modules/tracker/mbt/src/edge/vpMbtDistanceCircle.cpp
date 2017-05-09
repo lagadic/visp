@@ -363,14 +363,14 @@ vpMbtDistanceCircle::displayMovingEdges(const vpImage<unsigned char> &I)
 void
 vpMbtDistanceCircle::initInteractionMatrixError()
 {
-  if (isvisible == true)
+  if (isvisible)
   {
     nbFeature = (unsigned int)meEllipse->getMeList().size();
     L.resize(nbFeature, 6);
     error.resize(nbFeature);
   }
   else
-    nbFeature = 0 ;
+    nbFeature = 0;
 }
 
 /*!

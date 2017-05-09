@@ -108,7 +108,7 @@ vpMbtDistanceKltPoints::init(const vpKltOpencv& _tracker)
       add = true;
     }
 
-    if(add){      
+    if(add){
 #if TARGET_OS_IPHONE
       initPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
       curPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);

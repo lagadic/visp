@@ -69,6 +69,7 @@
 #include <visp3/mbt/vpMbTracker.h>
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpTrackingException.h>
 
 #ifdef VISP_HAVE_COIN3D
 //Inventor includes
@@ -131,12 +132,12 @@ namespace {
 vpMbTracker::vpMbTracker()
 : cam(), cMo(), oJo(6,6), isoJoIdentity(true), modelFileName(), modelInitialised(false),
   poseSavingFilename(), computeCovariance(false), covarianceMatrix(), computeProjError(false),
-  projectionError(90.0), displayFeatures(false), m_w(), m_error(), m_optimizationMethod(vpMbTracker::GAUSS_NEWTON_OPT),
+  projectionError(90.0), displayFeatures(false), m_optimizationMethod(vpMbTracker::GAUSS_NEWTON_OPT),
   faces(), angleAppears( vpMath::rad(89) ), angleDisappears( vpMath::rad(89) ), distNearClip(0.001),
   distFarClip(100), clippingFlag(vpPolygon3D::NO_CLIPPING), useOgre(false), ogreShowConfigDialog(false), useScanLine(false),
   nbPoints(0), nbLines(0), nbPolygonLines(0), nbPolygonPoints(0), nbCylinders(0), nbCircles(0),
-  useLodGeneral(false), applyLodSettingInConfig(false), minLineLengthThresholdGeneral(50.0),
-  minPolygonAreaThresholdGeneral(2500.0), mapOfParameterNames()
+  useLodGeneral(false), applyLodSettingInConfig(false), minLineLengthThresholdGeneral(50.0), minPolygonAreaThresholdGeneral(2500.0),
+  mapOfParameterNames(), m_computeInteraction(true), m_lambda(1.0), m_maxIter(30), m_stopCriteriaEpsilon(1e-8), m_initialMu(0.01)
 {
     oJo.eye();
     //Map used to parse additional information in CAO model files,
@@ -1272,10 +1273,6 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string& end
     }
   }
 
-//  for(std::map<std::string, std::string>::const_iterator it = mapOfParams.begin(); it != mapOfParams.end(); ++it) {
-//    std::cout << it->first << "=" << it->second << std::endl;
-//  }
-
   return mapOfParams;
 }
 
@@ -2395,6 +2392,22 @@ vpMbTracker::setClipping(const unsigned int &flags)
     faces[i]->setClipping(clippingFlag);
 }
 
+void
+vpMbTracker::computeCovarianceMatrixVVS(const bool isoJoIdentity_, const vpColVector &w_true, const vpHomogeneousMatrix &cMoPrev,
+                                        const vpMatrix &L_true, const vpMatrix &LVJ_true, const vpColVector &error) {
+  if (computeCovariance) {
+    vpMatrix D;
+    D.diag(w_true);
+
+    // Note that here the covariance is computed on cMoPrev for time computation efficiency
+    if (isoJoIdentity_) {
+      covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev, error, L_true, D);
+    } else{
+      covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev, error, LVJ_true, D);
+    }
+  }
+}
+
 /*!
   Compute \f$ J^T R \f$, with J the interaction matrix and R the vector of
   residu.
@@ -2427,6 +2440,97 @@ vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, v
     }
     JTR[i] = ssum;
   }
+}
+
+void
+vpMbTracker::computeVVSCheckLevenbergMarquardt(const unsigned int iter, vpColVector &error, const vpColVector &m_error_prev, const vpHomogeneousMatrix &cMoPrev,
+                                               double &mu, bool &reStartFromLastIncrement, vpColVector * const w, const vpColVector * const m_w_prev) {
+  if (iter != 0 && m_optimizationMethod == vpMbTracker::LEVENBERG_MARQUARDT_OPT) {
+    if (error.sumSquare() / (double) error.getRows() > m_error_prev.sumSquare() / (double) m_error_prev.getRows()){
+      mu *= 10.0;
+
+      if(mu > 1.0)
+        throw vpTrackingException(vpTrackingException::fatalError, "Optimization diverged");
+
+      cMo = cMoPrev;
+      error = m_error_prev;
+      if (w != NULL && m_w_prev != NULL) {
+        *w = *m_w_prev;
+      }
+      reStartFromLastIncrement = true;
+    }
+  }
+}
+
+void
+vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity_, const unsigned int iter, vpMatrix &L, vpMatrix &LTL, vpColVector &R,
+                                      const vpColVector &error, vpColVector &error_prev, vpColVector &LTR, double &mu, vpColVector &v,
+                                      const vpColVector * const w, vpColVector * const m_w_prev) {
+  if (isoJoIdentity_) {
+      LTL = L.AtA();
+      computeJTR(L, R, LTR);
+
+      switch (m_optimizationMethod) {
+        case vpMbTracker::LEVENBERG_MARQUARDT_OPT:
+          {
+            vpMatrix LMA(LTL.getRows(), LTL.getCols());
+            LMA.eye();
+            vpMatrix LTLmuI = LTL + (LMA*mu);
+            v = -m_lambda*LTLmuI.pseudoInverse(LTLmuI.getRows()*std::numeric_limits<double>::epsilon())*LTR;
+
+            if(iter != 0)
+              mu /= 10.0;
+
+            error_prev = error;
+            if (w != NULL && m_w_prev != NULL)
+              *m_w_prev = *w;
+            break;
+          }
+
+        case vpMbTracker::GAUSS_NEWTON_OPT:
+        default:
+          v = -m_lambda * LTL.pseudoInverse(LTL.getRows()*std::numeric_limits<double>::epsilon()) * LTR;
+      }
+  } else {
+      vpVelocityTwistMatrix cVo;
+      cVo.buildFrom(cMo);
+      vpMatrix LVJ = (L*cVo*oJo);
+      vpMatrix LVJTLVJ = (LVJ).AtA();
+      vpColVector LVJTR;
+      computeJTR(LVJ, R, LVJTR);
+
+      switch (m_optimizationMethod) {
+        case vpMbTracker::LEVENBERG_MARQUARDT_OPT:
+          {
+            vpMatrix LMA(LVJTLVJ.getRows(), LVJTLVJ.getCols());
+            LMA.eye();
+            vpMatrix LTLmuI = LVJTLVJ + (LMA*mu);
+            v = -m_lambda*LTLmuI.pseudoInverse(LTLmuI.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
+            v = cVo * v;
+
+            if(iter != 0)
+              mu /= 10.0;
+
+            error_prev = error;
+            if (w != NULL && m_w_prev != NULL)
+              *m_w_prev = *w;
+            break;
+          }
+        case vpMbTracker::GAUSS_NEWTON_OPT:
+        default:
+          {
+            v = -m_lambda*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
+            v = cVo * v;
+            break;
+          }
+      }
+  }
+}
+
+void
+vpMbTracker::computeVVSWeights(vpRobust &robust, const vpColVector &error, vpColVector &w) {
+  if (error.getRows() > 0)
+    robust.MEstimator(vpRobust::TUKEY, error, w);
 }
 
 /*!

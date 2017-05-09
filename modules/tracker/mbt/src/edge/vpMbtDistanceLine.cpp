@@ -68,31 +68,31 @@ vpMbtDistanceLine::vpMbtDistanceLine()
 */
 vpMbtDistanceLine::~vpMbtDistanceLine()
 {
-//	cout << "Deleting line " << index << endl ;
-  if (line != NULL) delete line ;
+//	cout << "Deleting line " << index << endl;
+  if (line != NULL) delete line;
 
   for(unsigned int i = 0 ; i < meline.size() ; i++)
-    if (meline[i] != NULL) delete meline[i] ;
+    if (meline[i] != NULL) delete meline[i];
 
   meline.clear();
 }
 
 /*!
   Project the line and the two points corresponding to its extremities into the image.
-  
+
   \param cMo : The pose of the camera used to project the line into the image.
 */
 void
 vpMbtDistanceLine::project(const vpHomogeneousMatrix &cMo)
 {
-  line->project(cMo) ;
-  p1->project(cMo) ;
-  p2->project(cMo) ;
+  line->project(cMo);
+  p1->project(cMo);
+  p2->project(cMo);
 }
 
 /*!
   Build a 3D plane thanks to 3 points and stores it in \f$ plane \f$.
-  
+
   \param P : The first point to define the plane
   \param Q : The second point to define the plane
   \param R : The third point to define the plane
@@ -123,19 +123,19 @@ buildPlane(vpPoint &P, vpPoint &Q, vpPoint &R, vpPlane &plane)
   double C = n[2];
   double D=-(A*P.get_oX()+B*P.get_oY()+C*P.get_oZ());
 
-  double norm =  sqrt(A*A+B*B+C*C) ;
-  plane.setA(A/norm) ;
-  plane.setB(B/norm) ;
-  plane.setC(C/norm) ;
-  plane.setD(D/norm) ;
+  double norm =  sqrt(A*A+B*B+C*C);
+  plane.setA(A/norm);
+  plane.setB(B/norm);
+  plane.setC(C/norm);
+  plane.setD(D/norm);
 }
 
 
 /*!
   Build a line thanks to 4 points.
-  
+
   The method is the following : Two plane are computed thanks to (P1,P2,P3) and (P1,P2,P4) (see the buildPlane method). Then the line equation is computed thanks to the intersection between the two planes.
-  
+
   \param P1 : The first point to compute the line.
   \param P2 : The second point to compute the line.
   \param P3 : The third point to compute the line.
@@ -146,18 +146,18 @@ void
 buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L)
 {
   vpPlane plane1;
-  vpPlane plane2 ;
-  buildPlane(P1,P2,P3,plane1) ;
-  buildPlane(P1,P2,P4,plane2) ;
+  vpPlane plane2;
+  buildPlane(P1,P2,P3,plane1);
+  buildPlane(P1,P2,P4,plane2);
 
   L.setWorldCoordinates(plane1.getA(),plane1.getB(), plane1.getC(),plane1.getD(),
-			plane2.getA(),plane2.getB(), plane2.getC(),plane2.getD()) ;
+   plane2.getA(),plane2.getB(), plane2.getC(),plane2.getD());
 }
 
 
 /*!
   Build a vpMbtDistanceLine thanks to two points corresponding to the extremities.
-  
+
   \param _p1 : The first extremity.
   \param _p2 : The second extremity.
 */
@@ -165,13 +165,13 @@ void
 vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
 {
   if (line == NULL) {
-    line = new vpLine ;
+    line = new vpLine;
   }
 
   poly.setNbPoint(2);
   poly.addPoint(0, _p1);
   poly.addPoint(1, _p2);
-  
+
   p1 = &poly.p[0];
   p2 = &poly.p[1];
 
@@ -201,16 +201,16 @@ vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
       v_tmp2 = V3-V1;
       V4=vpColVector::cross(v_tmp1,v_tmp2);
     }
-    
+
     vpPoint P3(V3[0],V3[1],V3[2]);
     vpPoint P4(V4[0],V4[1],V4[2]);
-    buildLine(*p1,*p2, P3,P4, *line) ;
+    buildLine(*p1,*p2, P3,P4, *line);
   }
   else
   {
     vpPoint P3(V1[0],V1[1],V1[2]);
     vpPoint P4(V2[0],V2[1],V2[2]);
-    buildLine(*p1,*p2,P3,P4,*line) ;
+    buildLine(*p1,*p2,P3,P4,*line);
   }
 }
 
@@ -283,22 +283,22 @@ vpMbtDistanceLine::updateTracked()
   }
 }
 
-/*! 
+/*!
   Set the moving edge parameters.
-  
+
   \param _me : an instance of vpMe containing all the desired parameters
 */
 void
 vpMbtDistanceLine::setMovingEdge(vpMe *_me)
 {
-  me = _me ;
+  me = _me;
 
   for(unsigned int i = 0 ; i < meline.size() ; i++)
     if (meline[i] != NULL)
     {
 //      nbFeature[i] = 0;
       meline[i]->reset();
-      meline[i]->setMe(me) ;
+      meline[i]->setMe(me);
     }
 
 //  nbFeatureTotal = 0;
@@ -306,9 +306,9 @@ vpMbtDistanceLine::setMovingEdge(vpMe *_me)
 
 
 /*!
-  Initialize the moving edge thanks to a given pose of the camera.                          
+  Initialize the moving edge thanks to a given pose of the camera.
   The 3D model is projected into the image to create moving edges along the line.
-  
+
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \return false if an error occur, true otherwise.
@@ -317,7 +317,7 @@ bool
 vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   for(unsigned int i = 0 ; i < meline.size() ; i++){
-    if (meline[i] != NULL) delete meline[i] ;
+    if (meline[i] != NULL) delete meline[i];
   }
 
   meline.clear();
@@ -381,10 +381,10 @@ vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomog
         vpMeterPixelConversion::convertPoint(cam,linesLst[i].first.get_x(),linesLst[i].first.get_y(),ip1);
         vpMeterPixelConversion::convertPoint(cam,linesLst[i].second.get_x(),linesLst[i].second.get_y(),ip2);
 
-        vpMbtMeLine *melinePt = new vpMbtMeLine ;
-        melinePt->setMe(me) ;
+        vpMbtMeLine *melinePt = new vpMbtMeLine;
+        melinePt->setMe(me);
 
-        //    meline[i]->setDisplay(vpMeSite::RANGE_RESULT) ;
+        //    meline[i]->setDisplay(vpMeSite::RANGE_RESULT);
         melinePt->setInitRange(0);
 
         int marge = /*10*/5; //ou 5 normalement
@@ -413,7 +413,7 @@ vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomog
     }
   }
 
-//	trackMovingEdge(I,cMo)  ;
+//	trackMovingEdge(I,cMo);
   return true;
 }
 
@@ -421,7 +421,7 @@ vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomog
 
 /*!
   Track the moving edges in the image.
-  
+
   \param I : the image.
   \param cMo : The pose of the camera.
 */
@@ -431,17 +431,17 @@ vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomo
 
   if (isvisible)
   {
-//     p1->changeFrame(cMo) ;
-//     p2->changeFrame(cMo) ;
-// 
-//     p1->projection() ;
-//     p2->projection() ;
-//     
+//     p1->changeFrame(cMo);
+//     p2->changeFrame(cMo);
+//
+//     p1->projection();
+//     p2->projection();
+//
 //     vpImagePoint ip1, ip2;
-// 
-//     vpMeterPixelConversion::convertPoint(*cam,p1->get_x(),p1->get_y(),ip1) ;
-//     vpMeterPixelConversion::convertPoint(*cam,p2->get_x(),p2->get_y(),ip2) ;
-// 
+//
+//     vpMeterPixelConversion::convertPoint(*cam,p1->get_x(),p1->get_y(),ip1);
+//     vpMeterPixelConversion::convertPoint(*cam,p2->get_x(),p2->get_y(),ip2);
+//
 //     int marge = /*10*/5; //ou 5 normalement
 //     if (ip1.get_j()<ip2.get_j()) { meline->jmin = ip1.get_j()-marge ; meline->jmax = ip2.get_j()+marge ; }
 //     else{ meline->jmin = ip2.get_j()-marge ; meline->jmax = ip1.get_j()+marge ; }
@@ -476,7 +476,7 @@ vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I, const vpHomo
 
 /*!
   Update the moving edges internal parameters.
-  
+
   \param I : the image.
   \param cMo : The pose of the camera.
 */
@@ -505,7 +505,7 @@ vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHom
 
       if(linesLst.size() != meline.size() || linesLst.size() == 0){
         for(unsigned int i = 0 ; i < meline.size() ; i++){
-          if (meline[i] != NULL) delete meline[i] ;
+          if (meline[i] != NULL) delete meline[i];
         }
 
         meline.clear();
@@ -553,7 +553,7 @@ vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHom
             if (ip1.get_j()<ip2.get_j()) { meline[i]->jmin = (int)ip1.get_j()-marge ; meline[i]->jmax = (int)ip2.get_j()+marge ; } else{ meline[i]->jmin = (int)ip2.get_j()-marge ; meline[i]->jmax = (int)ip1.get_j()+marge ; }
             if (ip1.get_i()<ip2.get_i()) { meline[i]->imin = (int)ip1.get_i()-marge ; meline[i]->imax = (int)ip2.get_i()+marge ; } else{ meline[i]->imin = (int)ip2.get_i()-marge ; meline[i]->imax = (int)ip1.get_i()+marge ; }
 
-              meline[i]->updateParameters(I,ip1,ip2,rho,theta) ;
+              meline[i]->updateParameters(I,ip1,ip2,rho,theta);
               nbFeature[i] = (unsigned int)meline[i]->getMeList().size();
               nbFeatureTotal += nbFeature[i];
           }
@@ -561,7 +561,7 @@ vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHom
         catch(...)
         {
           for(unsigned int j = 0 ; j < meline.size() ; j++){
-            if (meline[j] != NULL) delete meline[j] ;
+            if (meline[j] != NULL) delete meline[j];
           }
 
           meline.clear();
@@ -574,7 +574,7 @@ vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHom
     }
     else{
       for(unsigned int i = 0 ; i < meline.size() ; i++){
-        if (meline[i] != NULL) delete meline[i] ;
+        if (meline[i] != NULL) delete meline[i];
       }
       nbFeature.clear();
       meline.clear();
@@ -587,9 +587,9 @@ vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const vpHom
 
 /*!
   Reinitialize the line if it is required.
-  
+
   A line is reinitialized if the 2D line do not match enough with the projected 3D line.
-  
+
   \param I : the image.
   \param cMo : The pose of the camera.
 */
@@ -597,7 +597,7 @@ void
 vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo)
 {
   for(unsigned int i = 0 ; i < meline.size() ; i++){
-    if (meline[i] != NULL) delete meline[i] ;
+    if (meline[i] != NULL) delete meline[i];
   }
 
   nbFeature.clear();
@@ -633,9 +633,9 @@ vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogeneousM
     vpCameraParameters c = camera;
     if(poly.getClipping() > 3) // Contains at least one FOV constraint
       c.computeFov(I.getWidth(), I.getHeight());
-    
+
     poly.computePolygonClipped(c);
-    
+
     if( poly.polyClipped.size() == 2 &&
        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::NEAR_CLIPPING) == 0) &&
        ((poly.polyClipped[1].second & poly.polyClipped[0].second & vpPolygon3D::FAR_CLIPPING) == 0) &&
@@ -724,12 +724,12 @@ vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &
 
 /*!
     Enable to display the points along the line with a color corresponding to their state.
-    
+
     - If green : The vpMeSite is a good point.
     - If blue : The point is removed because of the vpMeSite tracking phase (constrast problem).
     - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
     - If blue : The point is removed because of the robust method in the virtual visual servoing.
-    
+
     \param I : The image.
 */
 void
@@ -773,48 +773,48 @@ vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
   if (isvisible)
   {
     // feature projection
-    line->changeFrame(cMo) ;
-    line->projection() ;
+    line->changeFrame(cMo);
+    line->projection();
 
-    vpFeatureBuilder::create(featureline,*line) ;
+    vpFeatureBuilder::create(featureline,*line);
 
-    double rho = featureline.getRho() ;
-    double theta = featureline.getTheta() ;
+    double rho = featureline.getRho();
+    double theta = featureline.getTheta();
 
     double co = cos(theta);
     double si = sin(theta);
 
-    double mx = 1.0/cam.get_px() ;
-    double my = 1.0/cam.get_py() ;
-    double xc = cam.get_u0() ;
-    double yc = cam.get_v0() ;
+    double mx = 1.0/cam.get_px();
+    double my = 1.0/cam.get_py();
+    double xc = cam.get_u0();
+    double yc = cam.get_v0();
 
-    double alpha_ ;
-    vpMatrix H ;
-    H = featureline.interaction() ;
+    double alpha_;
+    vpMatrix H;
+    H = featureline.interaction();
 
-    double x,y ;
-    vpMeSite p ;
-    unsigned int j =0 ;
+    double x,y;
+    vpMeSite p;
+    unsigned int j =0;
 
     for(unsigned int i = 0 ; i < meline.size() ; i++){
       for(std::list<vpMeSite>::const_iterator it=meline[i]->getMeList().begin(); it!=meline[i]->getMeList().end(); ++it){
-        x = (double)it->j ;
-        y = (double)it->i ;
+        x = (double)it->j;
+        y = (double)it->i;
 
-        x = (x-xc)*mx ;
-        y = (y-yc)*my ;
+        x = (x-xc)*mx;
+        y = (y-yc)*my;
 
         alpha_ = x*si - y*co;
 
-        double *Lrho = H[0] ;
-        double *Ltheta = H[1] ;
+        double *Lrho = H[0];
+        double *Ltheta = H[1];
         // Calculate interaction matrix for a distance
         for (unsigned int k=0 ; k < 6 ; k++)
         {
           L[j][k] = (Lrho[k] + alpha_*Ltheta[k]);
         }
-        error[j] = rho - ( x*co + y*si) ;
+        error[j] = rho - ( x*co + y*si);
         j++;
       }
     }
@@ -823,12 +823,12 @@ vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
 
 /*!
   Test wether the line is close to the border of the image (at a given threshold)
-  
+
   \param I : the input image (to know its size)
-  \param threshold : the threshold in pixel 
+  \param threshold : the threshold in pixel
   \return true if the line is near the border of the image
 */
-bool 
+bool
 vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char>& I, const unsigned int threshold)
 {
   if(threshold > I.getWidth() || threshold > I.getHeight()){
@@ -838,8 +838,8 @@ vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char>& I, const uns
 
     for(unsigned int i = 0 ; i < meline.size() ; i++){
       for(std::list<vpMeSite>::const_iterator it=meline[i]->getMeList().begin(); it!=meline[i]->getMeList().end(); ++it){
-        int i_ = it->i ;
-        int j_ = it->j ;
+        int i_ = it->i;
+        int j_ = it->j;
 
         if(i_ < 0 || j_ < 0){ //out of image.
           return true;

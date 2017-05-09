@@ -66,6 +66,7 @@
 #include <visp3/mbt/vpMbtPolygon.h>
 #include <visp3/mbt/vpMbHiddenFaces.h>
 #include <visp3/core/vpPolygon.h>
+#include <visp3/core/vpRobust.h>
 
 #ifdef VISP_HAVE_COIN3D
 //Work around to avoid type redefinition int8_t with Coin
@@ -120,7 +121,7 @@ protected:
   //! The name of the file containing the model (it is used to create a file name.0.pos used to store the compute pose in the initClick method).
   std::string modelFileName;
   //! Flag used to ensure that the CAD model is loaded before the initialisation.
-  bool modelInitialised;   
+  bool modelInitialised;
   //! Filename used to save the initial pose computed using the initClick() method. It is also used to read a previous pose in the same method.
   std::string poseSavingFilename;
   //! Flag used to specify if the covariance matrix has to be computed or not.
@@ -133,10 +134,6 @@ protected:
   double projectionError;
   //! If true, the features are displayed. 
   bool displayFeatures;
-  //! Weights used in the robust scheme
-  vpColVector m_w;
-  //! Error s-s*
-  vpColVector m_error;
   //! Optimization method used
   vpMbtOptimizationMethod m_optimizationMethod;
 
@@ -179,6 +176,16 @@ protected:
   double minPolygonAreaThresholdGeneral;
   //! Map with [map.first]=parameter_names and [map.second]=type (string, number or boolean)
   std::map<std::string, std::string> mapOfParameterNames;
+  //! If true, compute the interaction matrix at each iteration of the minimization. Otherwise, compute it only on the first iteration
+  bool m_computeInteraction;
+  //! Gain of the virtual visual servoing stage
+  double m_lambda;
+  //! Maximum number of iterations of the virtual visual servoing stage
+  unsigned int m_maxIter;
+  //! Epsilon threshold to stop the VVS optimization loop
+  double m_stopCriteriaEpsilon;
+  //! Initial Mu for Levenberg Marquardt optimization loop
+  double m_initialMu;
 
 public:
   vpMbTracker();
@@ -211,11 +218,34 @@ public:
     Get the covariance matrix.
   */
   virtual vpMatrix getCovarianceMatrix() const { 
-    if(!computeCovariance)
-      vpTRACE("Warning : The covariance matrix has not been computed. See setCovarianceComputation() to do it.");
+    if(!computeCovariance) {
+//      vpTRACE("Warning : The covariance matrix has not been computed. See setCovarianceComputation() to do it.");
+      std::cerr << "Warning : The covariance matrix has not been computed. See setCovarianceComputation() to do it." << std::endl;
+    }
     
     return covarianceMatrix; 
   }
+
+  /*!
+    Get the initial value of mu used in the Levenberg Marquardt optimization loop.
+
+    \return the initial mu value.
+  */
+  virtual inline double getInitialMu() const { return m_initialMu; }
+
+  /*!
+    Get the value of the gain used to compute the control law.
+
+    \return the value for the gain.
+  */
+  virtual inline double getLambda() const {return m_lambda;}
+
+  /*!
+    Get the maximum number of iterations of the virtual visual servoing stage.
+
+    \return the number of iteration
+   */
+  virtual inline unsigned int getMaxIter() const {return m_maxIter;}
 
   /*!
     Get the error angle between the gradient direction of the model features projected at the resulting pose and their normal.
@@ -240,9 +270,7 @@ public:
 
     \sa getRobustWeights()
    */
-  virtual vpColVector getError() const {
-    return m_error;
-  }
+  virtual vpColVector getError() const = 0;
 
   /*! Return a reference to the faces structure. */
   virtual inline vpMbHiddenFaces<vpMbtPolygon>& getFaces() { return faces;}
@@ -274,9 +302,7 @@ public:
 
     \sa getError()
    */
-  virtual vpColVector getRobustWeights() const {
-    return m_w;
-  }
+  virtual vpColVector getRobustWeights() const = 0;
 
   /*!
     Get the number of polygons (faces) representing the object to track.
@@ -340,6 +366,8 @@ public:
     \return the current pose
   */
   virtual inline vpHomogeneousMatrix getPose() const {return this->cMo;}
+
+  virtual inline double getStopCriteriaEpsilon() const { return m_stopCriteriaEpsilon; }
 
   // Intializer
 
@@ -414,7 +442,28 @@ public:
 
   virtual void setFarClippingDistance(const double &dist);
 
+  /*!
+    Set the initial value of mu for the Levenberg Marquardt optimization loop.
+
+    \param mu : initial mu.
+  */
+  virtual inline void setInitialMu(const double mu) { m_initialMu = mu; }
+
+  /*!
+    Set the value of the gain used to compute the control law.
+
+    \param gain : the desired value for the gain.
+  */
+  virtual inline void setLambda(const double gain) {m_lambda = gain;}
+
   virtual void setLod(const bool useLod, const std::string &name="");
+
+  /*!
+    Set the maximum iteration of the virtual visual servoing stage.
+
+    \param max : the desired number of iteration
+   */
+  virtual inline void setMaxIter(const unsigned int max) {m_maxIter = max;}
 
   virtual void setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name="");
 
@@ -428,6 +477,13 @@ public:
     \param opt : Optimization method to use.
   */
   virtual inline void setOptimizationMethod(const vpMbtOptimizationMethod &opt) { m_optimizationMethod = opt; }
+
+  /*!
+    Set the minimal error (previous / current estimation) to determine if there is convergence or not.
+
+    \param eps : Epsilon threshold.
+  */
+  virtual inline void setStopCriteriaEpsilon(const double eps) { m_stopCriteriaEpsilon = eps; }
     
   /*!
     Set if the projection error criteria has to be computed.
@@ -583,7 +639,18 @@ protected:
 
   void createCylinderBBox(const vpPoint& p1, const vpPoint &p2, const double &radius, std::vector<std::vector<vpPoint> > &listFaces);
 
+  virtual void computeCovarianceMatrixVVS(const bool isoJoIdentity_, const vpColVector &w_true, const vpHomogeneousMatrix &cMoPrev,
+                                          const vpMatrix &L_true, const vpMatrix &LVJ_true, const vpColVector &error);
+
   void computeJTR(const vpMatrix& J, const vpColVector& R, vpColVector& JTR) const;
+
+  virtual void computeVVSCheckLevenbergMarquardt(const unsigned int iter, vpColVector &error, const vpColVector &m_error_prev, const vpHomogeneousMatrix &cMoPrev,
+                                                 double &mu, bool &reStartFromLastIncrement, vpColVector * const w=NULL, const vpColVector * const m_w_prev=NULL);
+  virtual void computeVVSInit()=0;
+  virtual void computeVVSInteractionMatrixAndResidu()=0;
+  virtual void computeVVSPoseEstimation(const bool isoJoIdentity_, const unsigned int iter, vpMatrix &L, vpMatrix &LTL, vpColVector &R, const vpColVector &error,
+                                        vpColVector &error_prev, vpColVector &LTR, double &mu, vpColVector &v, const vpColVector * const w=NULL, vpColVector * const m_w_prev=NULL);
+  virtual void computeVVSWeights(vpRobust &robust, const vpColVector &error, vpColVector &w);
   
 #ifdef VISP_HAVE_COIN3D
   virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, int &idFace);
