@@ -146,7 +146,7 @@ macro(vp_add_module _name)
   string(TOLOWER "${_name}" name)
   set(the_module visp_${name})
   #message("Found module: ${the_module}")
-  
+
   # the first pass - collect modules info, the second pass - create targets
   if(VISP_INITIAL_PASS)
     #guard agains redefinition
@@ -167,7 +167,7 @@ macro(vp_add_module _name)
 
     # create option to enable/disable this module
     option(BUILD_MODULE_${the_module} "Include ${the_module} module into ViSP build" ${BUILD_${the_module}_INIT})
-    
+
     # remember the module details
     set(VISP_MODULE_${the_module}_DESCRIPTION "${the_description}" CACHE INTERNAL "Brief description of ${the_module} module")
     set(VISP_MODULE_${the_module}_LOCATION    "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "Location of ${the_module} module sources")
@@ -250,6 +250,10 @@ macro(vp_glob_modules)
         vp_list_remove_item(__vpmodules "example")
         vp_list_remove_item(__vpmodules "demo")
         vp_list_remove_item(__vpmodules "doc")
+        vp_list_remove_item(__vpmodules ".gitignore")
+        vp_list_remove_item(__vpmodules ".travis.yml")
+        vp_list_remove_item(__vpmodules "LICENSE")
+        vp_list_remove_item(__vpmodules "README.md")
       endif()
       # TODO: Improve the following if to put a macro instead of manually copying the code
       #       Here we have 3 internal loops. The depth of the loop (3) could be a var
@@ -258,18 +262,26 @@ macro(vp_glob_modules)
         list(SORT __vpmodules)
         foreach(mod ${__vpmodules})
           get_filename_component(__modpath "${__path}/${mod}" ABSOLUTE)
-
+          set(__propagate FALSE) # Indicate if we should check for subdirs that may contain a CMakeLists.txt file
           if(EXISTS "${__modpath}/CMakeLists.txt")
-            list(FIND __directories_observed "${__modpath}" __pathIdx)
-            if(__pathIdx GREATER -1)
-              message(FATAL_ERROR "The module from ${__modpath} is already loaded.")
+            if(${mod} STREQUAL "modules")
+              # Process specific case where there is a <contrib>/modules/CMakeLists.txt file common to all <contrib> modules
+              include(${__modpath}/CMakeLists.txt)
+              set(__propagate TRUE)
+            else()
+              list(FIND __directories_observed "${__modpath}" __pathIdx)
+              if(__pathIdx GREATER -1)
+                message(FATAL_ERROR "The module from ${__modpath} is already loaded.")
+              endif()
+              list(APPEND __directories_observed "${__modpath}")
+              add_subdirectory("${__modpath}" "${CMAKE_CURRENT_BINARY_DIR}/${mod}/.${mod}")
+              if (DEFINED VISP_MODULE_visp_${mod}_LOCATION)
+                math(EXPR __count "${__count} + 1")
+              endif()
             endif()
-            list(APPEND __directories_observed "${__modpath}")
-            add_subdirectory("${__modpath}" "${CMAKE_CURRENT_BINARY_DIR}/${mod}/.${mod}")
-            if (DEFINED VISP_MODULE_visp_${mod}_LOCATION)
-              math(EXPR __count "${__count} + 1")
-            endif()
-          else()
+          endif()
+
+          if(__propagate)
             # modules in visp/tracker
             get_filename_component(__subpath "${__path}/${mod}" ABSOLUTE)
             file(GLOB __vpsubmodules RELATIVE "${__subpath}" "${__subpath}/*")
@@ -984,9 +996,12 @@ endmacro()
 # If the input config filename is suffixed by .in or .cmake the suffix is removed
 # in the configured file.
 #
+# Warning: Should be called after add_module()
+#
 # Example:
-#   vp_add_config_file(cmake/template/vpConfigModule.h.in)
-#   creates include/visp3/module_name/vpConfigModule.h
+#   add_module(my_module visp_core)
+#   vp_add_config_file(cmake/template/vpConfigMyModule.h.in)
+#   creates include/visp3/my_module/vpConfigMyModule.h
 macro(vp_add_config_file)
   foreach(d ${ARGN})
     # Removes first "/" if it exists
@@ -1025,7 +1040,6 @@ macro(vp_add_config_file)
     if(MODULE_NAME MATCHES "^visp_")
       string(REGEX REPLACE "^visp_" "" MODULE_NAME "${MODULE_NAME}")
     endif()
-
     configure_file("${VISP_MODULE_${the_module}_LOCATION}/${FILENAME_CONFIG}" "${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}")
 
     vp_create_compat_headers("${VISP_INCLUDE_DIR}/visp3/${MODULE_NAME}/${FILENAME_CONFIG_SHORT}")
