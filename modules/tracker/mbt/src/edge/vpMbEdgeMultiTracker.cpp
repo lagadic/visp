@@ -52,8 +52,10 @@
 /*!
   Basic constructor
 */
-vpMbEdgeMultiTracker::vpMbEdgeMultiTracker() : m_mapOfCameraTransformationMatrix(), m_mapOfEdgeTrackers(),
-    m_mapOfPyramidalImages(), m_referenceCameraName("Camera") {
+vpMbEdgeMultiTracker::vpMbEdgeMultiTracker() :
+    m_mapOfCameraTransformationMatrix(), m_mapOfEdgeTrackers(), m_mapOfPyramidalImages(), m_referenceCameraName("Camera"),
+    m_L_edgeMulti(), m_error_edgeMulti(), m_w_edgeMulti(), m_weightedError_edgeMulti(), m_factor()
+{
   m_mapOfEdgeTrackers["Camera"] = new vpMbEdgeTracker();
 
   //Add default camera transformation matrix
@@ -65,8 +67,10 @@ vpMbEdgeMultiTracker::vpMbEdgeMultiTracker() : m_mapOfCameraTransformationMatrix
 
   \param nbCameras : Number of cameras to use.
 */
-vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const unsigned int nbCameras) : m_mapOfCameraTransformationMatrix(),
-    m_mapOfEdgeTrackers(), m_mapOfPyramidalImages(), m_referenceCameraName("Camera") {
+vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const unsigned int nbCameras) :
+    m_mapOfCameraTransformationMatrix(), m_mapOfEdgeTrackers(), m_mapOfPyramidalImages(), m_referenceCameraName("Camera"),
+    m_L_edgeMulti(), m_error_edgeMulti(), m_w_edgeMulti(), m_weightedError_edgeMulti(), m_factor()
+{
 
   if(nbCameras == 0) {
     throw vpException(vpTrackingException::fatalError, "Cannot construct a vpMbEdgeMultiTracker with no camera !");
@@ -106,8 +110,10 @@ vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const unsigned int nbCameras) : m_map
 
   \param cameraNames : List of camera names.
 */
-vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const std::vector<std::string> &cameraNames) : m_mapOfCameraTransformationMatrix(),
-    m_mapOfEdgeTrackers(), m_mapOfPyramidalImages(), m_referenceCameraName("Camera") {
+vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const std::vector<std::string> &cameraNames) :
+    m_mapOfCameraTransformationMatrix(), m_mapOfEdgeTrackers(), m_mapOfPyramidalImages(), m_referenceCameraName("Camera"),
+    m_L_edgeMulti(), m_error_edgeMulti(), m_w_edgeMulti(), m_weightedError_edgeMulti(), m_factor()
+{
 
   if(cameraNames.empty()) {
     throw vpException(vpTrackingException::fatalError, "Cannot construct a vpMbEdgeMultiTracker with no camera !");
@@ -177,68 +183,10 @@ void vpMbEdgeMultiTracker::computeProjectionError() {
 }
 
 void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages, const unsigned int lvl) {
-  //Number of moving edges
-  unsigned int nbrow = 0;
-  //unsigned int nberrors_lines = 0;
-  //unsigned int nberrors_cylinders = 0;
-  //unsigned int nberrors_circles = 0;
+  computeVVSInit();
+  unsigned int nbrow = m_error_edgeMulti.getRows();
 
-  std::vector<FeatureType> indexOfFeatures;
-  std::map<std::string, unsigned int> mapOfNumberOfRows;
-  std::map<std::string, unsigned int> mapOfNumberOfLines;
-  std::map<std::string, unsigned int> mapOfNumberOfCylinders;
-  std::map<std::string, unsigned int> mapOfNumberOfCircles;
-
-  for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it1 = m_mapOfEdgeTrackers.begin();
-      it1 != m_mapOfEdgeTrackers.end(); ++it1) {
-    unsigned int nrows = 0;
-    unsigned int nlines = 0;
-    unsigned int ncylinders = 0;
-    unsigned int ncircles = 0;
-
-    nrows = it1->second->initMbtTracking(nlines, ncylinders, ncircles);
-
-    mapOfNumberOfRows[it1->first] = nrows;
-    mapOfNumberOfLines[it1->first] = nlines;
-    mapOfNumberOfCylinders[it1->first] = ncylinders;
-    mapOfNumberOfCircles[it1->first] = ncircles;
-
-    nbrow += nrows;
-    //nberrors_lines += nlines;
-    //nberrors_cylinders += ncylinders;
-    //nberrors_circles += ncircles;
-
-    for(unsigned int i = 0; i < nlines; i++) {
-      indexOfFeatures.push_back(LINE);
-    }
-
-    for(unsigned int i = 0; i < ncylinders; i++) {
-      indexOfFeatures.push_back(CYLINDER);
-    }
-
-    for(unsigned int i = 0; i < ncircles; i++) {
-      indexOfFeatures.push_back(CIRCLE);
-    }
-  }
-
-  if(nbrow < 4) {
-    throw vpTrackingException(vpTrackingException::notEnoughPointError, "No data found to compute the interaction matrix...");
-  }
-
-  vpMatrix L;
-
-  // compute the error vector
-  m_error.resize(nbrow);
-  unsigned int nerror = m_error.getRows();
-  vpColVector v;
-
-//  double limite = 3; //Une limite de 3 pixels
-//  limite = limite / cam.get_px(); //Transformation limite pixel en limite metre.
   unsigned int iter = 0;
-  vpColVector weighted_error;
-  vpColVector factor;
-  std::map<std::string, vpColVector> mapOfFactors;
-
   //Parametre pour la premiere phase d'asservissement
   bool reloop = true;
 
@@ -256,54 +204,29 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
 
   /*** First phase ***/
 
-  while(reloop == true && iter < 10)
-  {
-    m_w.resize(0);
-    m_error.resize(0);
-
-    for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
+  vpMbEdgeTracker *edge;
+  while(reloop == true && iter < 10) {
+    for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
         it != m_mapOfEdgeTrackers.end(); ++it) {
       it->second->cMo = m_mapOfCameraTransformationMatrix[it->first] * cMo;
-    }
-
-    if(iter == 0)
-    {
-      weighted_error.resize(nerror);
-
-      for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
-          it != m_mapOfEdgeTrackers.end(); ++it) {
-        it->second->m_w.resize(mapOfNumberOfRows[it->first]);
-        it->second->m_w = 0;
-
-        it->second->m_error.resize(mapOfNumberOfRows[it->first]);
-
-        mapOfFactors[it->first].resize(mapOfNumberOfRows[it->first]);
-        mapOfFactors[it->first] = 1;
-      }
     }
 
     double count = 0;
     reloop = false;
 
-    L = vpMatrix();
-    factor = vpColVector();
-
-
-    for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
-        it != m_mapOfEdgeTrackers.end(); ++it) {
-      vpMatrix L_tmp(mapOfNumberOfRows[it->first], 6);
-
+    unsigned int start_idx = 0;
+    for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
       double count_tmp = 0.0;
-      it->second->computeVVSFirstPhase(*mapOfImages[it->first], iter, L_tmp, mapOfFactors[it->first], count_tmp,
-          it->second->m_error, it->second->m_w, lvl);
+      edge = it->second;
+      edge->computeVVSFirstPhase(*mapOfImages[it->first], iter, count_tmp, lvl);
       count += count_tmp;
 
-      L_tmp = L_tmp*mapOfVelocityTwist[it->first];
+      m_L_edgeMulti.insert(edge->m_L_edge*mapOfVelocityTwist[it->first], start_idx, 0);
+      m_factor.insert(start_idx, edge->m_factor);
+      m_w_edgeMulti.insert(start_idx, edge->m_w_edge);
+      m_error_edgeMulti.insert(start_idx, edge->m_error_edge);
 
-      L.stack(L_tmp);
-      factor.stack(mapOfFactors[it->first]);
-      m_w.stack(it->second->m_w);
-      m_error.stack(it->second->m_error);
+      start_idx += edge->m_error_edge.getRows();
     }
 
     count = count / (double) nbrow;
@@ -311,7 +234,7 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
       reloop = true;
     }
 
-    computeVVSFirstPhasePoseEstimation(nerror, iter, factor, weighted_error, L, isoJoIdentity_);
+    computeVVSFirstPhasePoseEstimation(iter, isoJoIdentity_);
 
     iter++;
   }
@@ -322,134 +245,89 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
 
   /*** Second phase ***/
 
-  //Variables for individual weights
-  std::map<std::string, vpRobust> mapOfRobustLines;
-  std::map<std::string, vpRobust> mapOfRobustCylinders;
-  std::map<std::string, vpRobust> mapOfRobustCircles;
-  //Init map of robust
-  for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
-      it != m_mapOfEdgeTrackers.end(); ++it) {
-    mapOfRobustLines[it->first] = vpRobust(mapOfNumberOfLines[it->first]);
-    mapOfRobustLines[it->first].setIteration(0);
-
-    mapOfRobustCylinders[it->first] = vpRobust(mapOfNumberOfCylinders[it->first]);
-    mapOfRobustCylinders[it->first].setIteration(0);
-
-    mapOfRobustCircles[it->first] = vpRobust(mapOfNumberOfCircles[it->first]);
-    mapOfRobustCircles[it->first].setIteration(0);
+  for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
+    edge = it->second;
+    edge->m_w_edge = 1;
   }
-
-  vpColVector w_lines;
-  vpColVector w_cylinders;
-  vpColVector w_circles;
-
-  std::map<std::string, vpColVector> mapOfWeightLines;
-  std::map<std::string, vpColVector> mapOfWeightCylinders;
-  std::map<std::string, vpColVector> mapOfWeightCircles;
 
   iter = 0;
 
-  vpColVector error_lines;
-  vpColVector error_cylinders;
-  vpColVector error_circles;
-
   vpHomogeneousMatrix cMoPrev;
-  vpColVector W_true;
+  vpColVector W_true(nbrow);
   vpMatrix L_true;
   vpMatrix LVJ_true;
 
-  double mu = 0.01;
-  vpColVector m_error_prev(nbrow);
-  vpColVector m_w_prev(nbrow);
+  double mu = m_initialMu;
+  vpColVector m_error_prev;
+  vpColVector m_w_prev;
 
   double residu_1 = 1e3;
   double r =1e3-1;
 
+
+  //For computeVVSPoseEstimation
+  vpColVector LTR;
+  vpColVector v;
+  vpMatrix LTL;
+
+
   //while ( ((int)((residu_1 - r)*1e8) != 0 )  && (iter<30))
-  while(std::fabs((residu_1 - r)*1e8) > std::numeric_limits<double>::epsilon() && (iter<30))
-  {
-    L.resize(0,0);
-    m_error.resize(0);
-
-    error_lines.resize(0);
-    error_cylinders.resize(0);
-    error_circles.resize(0);
-
-    std::map<std::string, vpColVector> mapOfErrorLines;
-    std::map<std::string, vpColVector> mapOfErrorCylinders;
-    std::map<std::string, vpColVector> mapOfErrorCircles;
-
-    for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
-        it != m_mapOfEdgeTrackers.end(); ++it) {
-      vpMatrix L_tmp(mapOfNumberOfRows[it->first], 6);
-      vpColVector error_lines_tmp(mapOfNumberOfLines[it->first]);
-      vpColVector error_cylinders_tmp(mapOfNumberOfCylinders[it->first]);
-      vpColVector error_circles_tmp(mapOfNumberOfCircles[it->first]);
-
-      it->second->cMo = m_mapOfCameraTransformationMatrix[it->first]*cMo;
-
-      vpColVector error_tmp;
-      error_tmp.resize(mapOfNumberOfRows[it->first]);
-
-      it->second->computeVVSSecondPhase(*mapOfImages[it->first], L_tmp, error_lines_tmp,
-          error_cylinders_tmp, error_circles_tmp, error_tmp, lvl);
-      L_tmp = L_tmp*mapOfVelocityTwist[it->first];
-
-      L.stack(L_tmp);
-      m_error.stack(error_tmp);
-
-      error_lines.stack(error_lines_tmp);
-      error_cylinders.stack(error_cylinders_tmp);
-      error_circles.stack(error_circles_tmp);
-
-      mapOfErrorLines[it->first] = error_lines_tmp;
-      mapOfErrorCylinders[it->first] = error_cylinders_tmp;
-      mapOfErrorCircles[it->first] = error_circles_tmp;
-    }
+  while (std::fabs((residu_1 - r)*1e8) > std::numeric_limits<double>::epsilon() && (iter < m_maxIter)) {
+    computeVVSInteractionMatrixAndResidu(mapOfImages, mapOfVelocityTwist);
 
     bool reStartFromLastIncrement = false;
-    computeVVSSecondPhaseCheckLevenbergMarquardt(iter, nbrow, m_error_prev, m_w_prev, cMoPrev, mu, reStartFromLastIncrement);
+    computeVVSCheckLevenbergMarquardt(iter, m_error_edgeMulti, m_error_prev, cMoPrev, mu, reStartFromLastIncrement, &m_w_prev);
 
-    if(!reStartFromLastIncrement) {
-      w_lines.resize(0);
-      w_cylinders.resize(0);
-      w_circles.resize(0);
+    if (!reStartFromLastIncrement) {
+      computeVVSWeights();
 
-      computeVVSSecondPhaseWeights(iter, nerror, weighted_error, w_lines, w_cylinders, w_circles, mapOfNumberOfLines,
-          mapOfNumberOfCylinders, mapOfNumberOfCircles, mapOfWeightLines, mapOfWeightCylinders, mapOfWeightCircles,
-          mapOfErrorLines, mapOfErrorCylinders, mapOfErrorCircles, mapOfRobustLines, mapOfRobustCylinders,
-          mapOfRobustCircles, 2.0);
+      L_true = m_L_edgeMulti;
+      vpVelocityTwistMatrix cVo;
 
-      if(iter == 0) {
-        m_w.resize(nerror);
-        m_w = 1;
+      if (computeCovariance) {
+          L_true = m_L_edgeMulti;
+         if (!isoJoIdentity_) {
+           cVo.buildFrom(cMo);
+           LVJ_true = (m_L_edgeMulti*cVo*oJo);
+         }
       }
 
-      for(unsigned int cpt = 0, cpt_lines = 0, cpt_cylinders = 0, cpt_circles = 0; cpt < nbrow; cpt++) {
-        switch(indexOfFeatures[cpt]) {
-        case LINE:
-          m_w[cpt] = w_lines[cpt_lines];
-          cpt_lines++;
-          break;
+      double wi = 0.0, eri = 0.0;
+      double num = 0.0, den = 0.0;
+      if ((iter==0) || m_computeInteraction) {
+        for (unsigned int i = 0; i < nbrow; i++) {
+          wi = m_w_edgeMulti[i]*m_factor[i];
+          W_true[i] = wi;
+          eri = m_error_edgeMulti[i];
+          num += wi*vpMath::sqr(eri);
+          den += wi;
 
-        case CYLINDER:
-          m_w[cpt] = w_cylinders[cpt_cylinders];
-          cpt_cylinders++;
-          break;
+          m_weightedError_edgeMulti[i] =  wi*eri ;
 
-        case CIRCLE:
-          m_w[cpt] = w_circles[cpt_circles];
-          cpt_circles++;
-          break;
+          for (unsigned int j = 0; j < 6; j++) {
+            m_L_edgeMulti[i][j] = wi*m_L_edgeMulti[i][j];
+          }
+        }
+      } else {
+        for (unsigned int i = 0; i < nbrow; i++) {
+          wi = m_w_edgeMulti[i]*m_factor[i];
+          W_true[i] = wi;
+          eri = m_error_edgeMulti[i];
+          num += wi*vpMath::sqr(eri);
+          den += wi;
 
-        default:
-          std::cerr << "Problem with feature type !" << std::endl;
-          break;
+          m_weightedError_edgeMulti[i] =  wi*eri ;
         }
       }
 
-      computeVVSSecondPhasePoseEstimation(nerror, L, L_true, LVJ_true, W_true, factor, iter, isoJoIdentity_,
-          weighted_error, mu, m_error_prev, m_w_prev, cMoPrev, residu_1, r);
+      residu_1 = r;
+      r = sqrt(num/den); //Le critere d'arret prend en compte le poids
+
+      computeVVSPoseEstimation(isoJoIdentity_, iter, m_L_edgeMulti, LTL, m_weightedError_edgeMulti, m_error_edgeMulti, m_error_prev, LTR, mu, v, &m_w_edgeMulti, &m_w_prev);
+
+
+      cMoPrev = cMo;
+      cMo =  vpExponentialMap::direct(v).inverse() * cMo;
     }
 
     iter++;
@@ -457,150 +335,140 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
 
 // std::cout << "VVS estimate pose cMo:\n" << cMo << std::endl;
 
-  if(computeCovariance){
-    vpMatrix D;
-    D.diag(W_true);
+  computeCovarianceMatrixVVS(isoJoIdentity_, W_true, cMoPrev, L_true, LVJ_true, m_error_edgeMulti);
 
-    // Note that here the covariance is computed on cMoPrev for time computation efficiency
-    if(isoJoIdentity_){
-        covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev, m_error, L_true, D);
-    }
-    else{
-        covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev, m_error, LVJ_true, D);
-    }
-  }
-
-  unsigned int cpt = 0;
-  for(std::map<std::string, unsigned int>::const_iterator it = mapOfNumberOfRows.begin(); it != mapOfNumberOfRows.end(); ++it) {
-    for(unsigned int i = 0; i < mapOfNumberOfRows[it->first]; i++) {
-      m_mapOfEdgeTrackers[it->first]->m_w[i] = m_w[i+cpt];
-    }
-    m_mapOfEdgeTrackers[it->first]->updateMovingEdgeWeights();
-    cpt += mapOfNumberOfRows[it->first];
+  for (std::map<std::string, vpMbEdgeTracker*>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
+    edge = it->second;
+    edge->updateMovingEdgeWeights();
   }
 }
 
-void vpMbEdgeMultiTracker::computeVVSSecondPhaseWeights(const unsigned int iter, const unsigned int nerror,
-    vpColVector &weighted_error, vpColVector &w_lines, vpColVector &w_cylinders, vpColVector &w_circles,
-    std::map<std::string, unsigned int> &mapOfNumberOfLines,
-    std::map<std::string, unsigned int> &mapOfNumberOfCylinders, std::map<std::string, unsigned int> &mapOfNumberOfCircles,
-    std::map<std::string, vpColVector> &mapOfWeightLines, std::map<std::string, vpColVector> &mapOfWeightCylinders,
-    std::map<std::string, vpColVector> &mapOfWeightCircles, std::map<std::string, vpColVector> &mapOfErrorLines,
-    std::map<std::string, vpColVector> &mapOfErrorCylinders, std::map<std::string, vpColVector> &mapOfErrorCircles,
-    std::map<std::string, vpRobust> &mapOfRobustLines, std::map<std::string, vpRobust> &mapOfRobustCylinders,
-    std::map<std::string, vpRobust> &mapOfRobustCircles, double threshold) {
-  if(iter == 0)
-  {
-    weighted_error.resize(nerror);
+void vpMbEdgeMultiTracker::computeVVSFirstPhasePoseEstimation(const unsigned int iter, bool &isoJoIdentity_) {
+  unsigned int nerror = m_weightedError_edgeMulti.getRows();
 
-    //Init weight size
-    for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
-        it != m_mapOfEdgeTrackers.end(); ++it) {
-      mapOfWeightLines[it->first].resize(mapOfNumberOfLines[it->first]);
-      mapOfWeightLines[it->first] = 1;
+  double wi, eri;
+  if((iter==0) || m_computeInteraction) {
+    for (unsigned int i = 0; i < nerror; i++) {
+      wi = m_w_edgeMulti[i]*m_factor[i];
+      eri = m_error_edgeMulti[i];
 
-      mapOfWeightCylinders[it->first].resize(mapOfNumberOfCylinders[it->first]);
-      mapOfWeightCylinders[it->first] = 1;
+      m_weightedError_edgeMulti[i] =  wi*eri;
 
-      mapOfWeightCircles[it->first].resize(mapOfNumberOfCircles[it->first]);
-      mapOfWeightCircles[it->first] = 1;
-    }
-
-    //Set threshold for each robust
-    for(std::map<std::string, vpRobust>::iterator it = mapOfRobustLines.begin(); it != mapOfRobustLines.end(); ++it) {
-      vpCameraParameters current_cam;
-      m_mapOfEdgeTrackers[it->first]->getCameraParameters(current_cam);
-      it->second.setThreshold(threshold / current_cam.get_px());
-    }
-
-    for(std::map<std::string, vpRobust>::iterator it = mapOfRobustCylinders.begin(); it != mapOfRobustCylinders.end(); ++it) {
-      vpCameraParameters current_cam;
-      m_mapOfEdgeTrackers[it->first]->getCameraParameters(current_cam);
-      it->second.setThreshold(threshold / current_cam.get_px());
-    }
-
-    for(std::map<std::string, vpRobust>::iterator it = mapOfRobustCircles.begin(); it != mapOfRobustCircles.end(); ++it) {
-      vpCameraParameters current_cam;
-      m_mapOfEdgeTrackers[it->first]->getCameraParameters(current_cam);
-      it->second.setThreshold( vpMath::sqr(threshold / current_cam.get_px()) );
-    }
-
-    //Compute weights
-    for(std::map<std::string, vpColVector>::const_iterator it = mapOfErrorLines.begin();
-        it != mapOfErrorLines.end(); ++it) {
-      if(mapOfNumberOfLines[it->first] > 0) {
-        mapOfRobustLines[it->first].MEstimator(vpRobust::TUKEY, it->second, mapOfWeightLines[it->first]);
-
-        //Stack weights
-        w_lines.stack(mapOfWeightLines[it->first]);
+      for (unsigned int j = 0; j < 6; j++) {
+        m_L_edgeMulti[i][j] = wi*m_L_edgeMulti[i][j];
       }
     }
+  } else {
+    for(unsigned int i = 0; i < nerror; i++) {
+      wi = m_w_edgeMulti[i]*m_factor[i];
+      eri = m_error_edgeMulti[i];
 
-    for(std::map<std::string, vpColVector>::const_iterator it = mapOfErrorCylinders.begin();
-        it != mapOfErrorCylinders.end(); ++it) {
-      if(mapOfNumberOfCylinders[it->first] > 0) {
-        mapOfRobustCylinders[it->first].MEstimator(vpRobust::TUKEY, it->second, mapOfWeightCylinders[it->first]);
-
-        //Stack weights
-        w_cylinders.stack(mapOfWeightCylinders[it->first]);
-      }
-    }
-
-    for(std::map<std::string, vpColVector>::const_iterator it = mapOfErrorCircles.begin();
-        it != mapOfErrorCircles.end(); ++it) {
-      if(mapOfNumberOfCircles[it->first] > 0) {
-        mapOfRobustCircles[it->first].MEstimator(vpRobust::TUKEY, it->second, mapOfWeightCircles[it->first]);
-
-        //Stack weights
-        w_circles.stack(mapOfWeightCircles[it->first]);
-      }
+      m_weightedError_edgeMulti[i] =  wi*eri;
     }
   }
-  else
-  {
-    //Set iteration for each robust
-    for(std::map<std::string, vpRobust>::iterator it = mapOfRobustLines.begin(); it != mapOfRobustLines.end(); ++it) {
-      it->second.setIteration(iter);
-    }
 
-    for(std::map<std::string, vpRobust>::iterator it = mapOfRobustCylinders.begin(); it != mapOfRobustCylinders.end(); ++it) {
-      it->second.setIteration(iter);
-    }
+  vpVelocityTwistMatrix cVo;
 
-    for(std::map<std::string, vpRobust>::iterator it = mapOfRobustCircles.begin(); it != mapOfRobustCircles.end(); ++it) {
-      it->second.setIteration(iter);
+  // If all the 6 dof should be estimated, we check if the interaction matrix is full rank.
+  // If not we remove automatically the dof that cannot be estimated
+  // This is particularly useful when consering circles (rank 5) and cylinders (rank 4)
+  if (isoJoIdentity_) {
+    cVo.buildFrom(cMo);
+
+    vpMatrix K; // kernel
+    unsigned int rank = (m_L_edgeMulti*cVo).kernel(K);
+    if(rank == 0) {
+      throw vpException(vpException::fatalError, "Rank=0, cannot estimate the pose !");
     }
+    if (rank != 6) {
+      vpMatrix I; // Identity
+      I.eye(6);
+      oJo = I-K.AtA();
+
+      isoJoIdentity_ = false;
+    }
+  }
+
+  vpColVector v;
+  vpMatrix LTL;
+  vpColVector LTR;
+
+  if(isoJoIdentity_){
+      LTL = m_L_edgeMulti.AtA();
+      computeJTR(m_L_edgeMulti, m_weightedError_edgeMulti, LTR);
+      v = -0.7*LTL.pseudoInverse(LTL.getRows()*std::numeric_limits<double>::epsilon())*LTR;
+  }
+  else{
+      cVo.buildFrom(cMo);
+      vpMatrix LVJ = (m_L_edgeMulti*cVo*oJo);
+      vpMatrix LVJTLVJ = (LVJ).AtA();
+      vpColVector LVJTR;
+      computeJTR(LVJ, m_weightedError_edgeMulti, LVJTR);
+      v = -0.7*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
+      v = cVo * v;
+  }
+
+  cMo =  vpExponentialMap::direct(v).inverse() * cMo;
+}
+
+void vpMbEdgeMultiTracker::computeVVSInit() {
+  unsigned int nbrow = 0;
+
+  vpMbEdgeTracker *edge = NULL;
+  for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
+    edge = it->second;
+
+    try {
+      edge->computeVVSInit();
+      nbrow += edge->m_error_edge.getRows();
+    } catch (...) {  }
+  }
+
+  if (nbrow < 4) {
+    throw vpTrackingException(vpTrackingException::notEnoughPointError, "No data found to compute the interaction matrix...");
+  }
+
+  //Initialize with correct size
+  m_L_edgeMulti.resize(nbrow, 6, false);
+  m_w_edgeMulti.resize(nbrow, false);
+  m_error_edgeMulti.resize(nbrow, false);
+  m_weightedError_edgeMulti.resize(nbrow, false);
+  m_factor.resize(nbrow, false);
+}
+
+void vpMbEdgeMultiTracker::computeVVSInteractionMatrixAndResidu() {
+  throw vpException(vpException::fatalError, "vpMbEdgeMultiTracker::computeVVSInteractionMatrixAndResidu() should not be called!");
+}
+
+void vpMbEdgeMultiTracker::computeVVSInteractionMatrixAndResidu(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+                                                                std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist) {
+  unsigned int start_idx = 0;
+
+  vpMbEdgeTracker *edge;
+  for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
+    edge = it->second;
+    edge->cMo = m_mapOfCameraTransformationMatrix[it->first]*cMo;
+
+    edge->computeVVSInteractionMatrixAndResidu(*mapOfImages[it->first]);
+
+    m_L_edgeMulti.insert(edge->m_L_edge*mapOfVelocityTwist[it->first], start_idx, 0);
+    m_error_edgeMulti.insert(start_idx, edge->m_error_edge);
+
+    start_idx += edge->m_error_edge.getRows();
+  }
+}
+
+void vpMbEdgeMultiTracker::computeVVSWeights() {
+  unsigned int start_idx = 0;
+  vpMbEdgeTracker *edge = NULL;
+  for (std::map<std::string, vpMbEdgeTracker*>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
+    edge = it->second;
 
     //Compute weights
-    for(std::map<std::string, vpColVector>::const_iterator it = mapOfErrorLines.begin();
-        it != mapOfErrorLines.end(); ++it) {
-      if(mapOfNumberOfLines[it->first] > 0) {
-        mapOfRobustLines[it->first].MEstimator(vpRobust::TUKEY, it->second, mapOfWeightLines[it->first]);
+    edge->computeVVSWeights();
 
-        //Stack weights
-        w_lines.stack(mapOfWeightLines[it->first]);
-      }
-    }
-
-    for(std::map<std::string, vpColVector>::const_iterator it = mapOfErrorCylinders.begin();
-        it != mapOfErrorCylinders.end(); ++it) {
-      if(mapOfNumberOfCylinders[it->first] > 0) {
-        mapOfRobustCylinders[it->first].MEstimator(vpRobust::TUKEY, it->second, mapOfWeightCylinders[it->first]);
-
-        //Stack weights
-        w_cylinders.stack(mapOfWeightCylinders[it->first]);
-      }
-    }
-
-    for(std::map<std::string, vpColVector>::const_iterator it = mapOfErrorCircles.begin();
-        it != mapOfErrorCircles.end(); ++it) {
-      if(mapOfNumberOfCircles[it->first] > 0) {
-        mapOfRobustCircles[it->first].MEstimator(vpRobust::TUKEY, it->second, mapOfWeightCircles[it->first]);
-
-        //Stack weights
-        w_circles.stack(mapOfWeightCircles[it->first]);
-      }
-    }
+    m_w_edgeMulti.insert(start_idx, edge->m_w_edge);
+    start_idx += edge->m_w_edge.getRows();
   }
 }
 
@@ -2015,10 +1883,10 @@ void vpMbEdgeMultiTracker::resetTracker() {
   useOgre = false;
 #endif
 
-  compute_interaction = 1;
+  m_computeInteraction = true;
 //  nline = 0; //Not used in vpMbEdgeMultiTracker class
 //  ncylinder = 0; //Not used in vpMbEdgeMultiTracker class
-  lambda = 1;
+  m_lambda = 1.0;
 //  nbvisiblepolygone = 0; //Not used in vpMbEdgeMultiTracker class
   percentageGdPt = 0.4;
 

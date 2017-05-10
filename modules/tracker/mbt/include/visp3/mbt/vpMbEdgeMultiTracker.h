@@ -49,7 +49,6 @@
 #include <vector>
 
 #include <visp3/mbt/vpMbEdgeTracker.h>
-#include <visp3/core/vpRobust.h>
 
 /*!
   \class vpMbEdgeMultiTracker
@@ -78,6 +77,16 @@ protected:
 
   //! Name of the reference camera
   std::string m_referenceCameraName;
+  //! Interaction matrix
+  vpMatrix m_L_edgeMulti;
+  //! (s - s*)
+  vpColVector m_error_edgeMulti;
+  //! Robust weights
+  vpColVector m_w_edgeMulti;
+  //! Weighted error
+  vpColVector m_weightedError_edgeMulti;
+  //! Moving Edge factor
+  vpColVector m_factor;
 
 
 public:
@@ -168,6 +177,14 @@ public:
   virtual void getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) const;
   virtual void getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_) const;
   virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const;
+
+  virtual inline vpColVector getError() const {
+    return m_error_edgeMulti;
+  }
+
+  virtual inline vpColVector getRobustWeights() const {
+    return m_w_edgeMulti;
+  }
 
   void init(const vpImage<unsigned char>& I);
 
@@ -329,9 +346,9 @@ public:
   //@}
 
 protected:
-  typedef enum FeatureType {
+  enum FeatureType {
     LINE, CYLINDER, CIRCLE
-  } FeatureType;
+  };
 
   /** @name Protected Member Functions Inherited from vpMbEdgeMultiTracker */
   //@{
@@ -339,18 +356,15 @@ protected:
 
   virtual void computeProjectionError();
 
-  virtual void computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-      const unsigned int lvl);
-
-  virtual void computeVVSSecondPhaseWeights(const unsigned int iter, const unsigned int nerror,
-      vpColVector &weighted_error, vpColVector &w_lines, vpColVector &w_cylinders, vpColVector &w_circles,
-      std::map<std::string, unsigned int> &mapOfNumberOfLines,
-      std::map<std::string, unsigned int> &mapOfNumberOfCylinders, std::map<std::string, unsigned int> &mapOfNumberOfCircles,
-      std::map<std::string, vpColVector> &mapOfWeightLines, std::map<std::string, vpColVector> &mapOfWeightCylinders,
-      std::map<std::string, vpColVector> &mapOfWeightCircles, std::map<std::string, vpColVector> &mapOfErrorLines,
-      std::map<std::string, vpColVector> &mapOfErrorCylinders, std::map<std::string, vpColVector> &mapOfErrorCircles,
-      std::map<std::string, vpRobust> &mapOfRobustLines, std::map<std::string, vpRobust> &mapOfRobustCylinders,
-      std::map<std::string, vpRobust> &mapOfRobustCircles, double threshold);
+  virtual void computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages, const unsigned int lvl);
+  virtual void computeVVSFirstPhasePoseEstimation(const unsigned int iter, bool &isoJoIdentity_);
+  virtual void computeVVSInit();
+  virtual void computeVVSInteractionMatrixAndResidu();
+  using vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu;
+  virtual void computeVVSInteractionMatrixAndResidu(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+                                                    std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist);
+  virtual void computeVVSWeights();
+  using vpMbTracker::computeVVSWeights;
 
   virtual void initPyramid(const std::map<std::string, const vpImage<unsigned char> * >& mapOfImages,
       std::map<std::string, std::vector<const vpImage<unsigned char>* > >& pyramid);

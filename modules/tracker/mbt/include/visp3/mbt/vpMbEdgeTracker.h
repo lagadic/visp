@@ -53,7 +53,6 @@
 #include <visp3/mbt/vpMbtDistanceCircle.h>
 #include <visp3/mbt/vpMbtDistanceCylinder.h>
 #include <visp3/core/vpXmlParser.h>
-#include <visp3/core/vpRobust.h>
 
 #include <iostream>
 #include <fstream>
@@ -258,22 +257,14 @@ int main()
 
 */
 
-class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
+class VISP_EXPORT vpMbEdgeTracker: public virtual vpMbTracker
 {
   friend class vpMbEdgeMultiTracker;
   friend class vpMbEdgeKltMultiTracker;
 
-  protected :
-    
-    /*! If this flag is true, the interaction matrix
-     extracted from the feature set is computed at each
-     iteration in the visual servoing loop.
-    */
-    int compute_interaction;
-    //! The gain of the virtual visual servoing stage. 
-    double lambda;
-    
-    //! The moving edges parameters. 
+  protected:
+
+    //! The moving edges parameters.
     vpMe me;
     //! Vector of list of all the lines tracked (each line is linked to a list of moving edges). Each element of the vector is for a scale (element 0 = level 0 = no subsampling).
     std::vector< std::list< vpMbtDistanceLine*> > lines;
@@ -311,8 +302,30 @@ class VISP_EXPORT vpMbEdgeTracker: virtual public vpMbTracker
     //! Number of features used in the computation of the projection error
     unsigned int nbFeaturesForProjErrorComputation;
 
+    /// Edge VVS variables
+    vpColVector m_factor;
+    vpRobust m_robustLines;
+    vpRobust m_robustCylinders;
+    vpRobust m_robustCircles;
+    vpColVector m_wLines;
+    vpColVector m_wCylinders;
+    vpColVector m_wCircles;
+    vpColVector m_errorLines;
+    vpColVector m_errorCylinders;
+    vpColVector m_errorCircles;
+    //! Interaction matrix
+    vpMatrix m_L_edge;
+    //! (s - s*)
+    vpColVector m_error_edge;
+    //! Robust weights
+    vpColVector m_w_edge;
+    //! Weighted error
+    vpColVector m_weightedError_edge;
+    //! Robust
+    vpRobust m_robust_edge;
+
+
 public:
-  
   vpMbEdgeTracker(); 
   virtual ~vpMbEdgeTracker();
   
@@ -323,13 +336,6 @@ public:
                const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
   void display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor& col , const unsigned int thickness=1, const bool displayFullModel = false);
-
-  /*!
-    Get the value of the gain used to compute the control law.
-    
-    \return the value for the gain.
-  */
-  virtual inline double getLambda() const {return lambda;}
   
   void getLline(std::list<vpMbtDistanceLine *>& linesList, const unsigned int level = 0) const;
   void getLcircle(std::list<vpMbtDistanceCircle *>& circlesList, const unsigned int level = 0) const;
@@ -365,6 +371,14 @@ public:
      \sa setGoodMovingEdgesRatioThreshold()
    */
   inline double getGoodMovingEdgesRatioThreshold() const { return percentageGdPt;}
+
+  virtual inline vpColVector getError() const {
+    return m_error_edge;
+  }
+
+  virtual inline vpColVector getRobustWeights() const {
+    return m_w_edge;
+  }
 
   void loadConfigFile(const std::string &configFile);
   void loadConfigFile(const char* configFile);
@@ -449,13 +463,6 @@ public:
      \sa getGoodMovingEdgesRatioThreshold()
    */
   void setGoodMovingEdgesRatioThreshold(const double  threshold) {percentageGdPt = threshold;}
-
-  /*!
-    Set the value of the gain used to compute the control law.
-    
-    \param gain : the desired value for the gain.
-  */
-  virtual inline void setLambda(const double gain) {this->lambda = gain;}
   
   void setMovingEdge(const vpMe &me);
 
@@ -481,26 +488,14 @@ protected:
   void computeProjectionError(const vpImage<unsigned char>& _I);
 
   void computeVVS(const vpImage<unsigned char>& _I, const unsigned int lvl);
-  void computeVVSFirstPhase(const vpImage<unsigned char>& I, const unsigned int iter,
-      vpMatrix &L, vpColVector &factor, double &count, vpColVector &error, vpColVector &w_mbt, const unsigned int lvl = 0);
-  void computeVVSFirstPhaseFactor(const vpImage<unsigned char>& I, vpColVector &factor, const unsigned int lvl = 0);
-  void computeVVSFirstPhasePoseEstimation(const unsigned int nerror, const unsigned int iter, const vpColVector &factor,
-      vpColVector &weighted_error, vpMatrix &L, bool &isoJoIdentity_);
-  void computeVVSSecondPhase(const vpImage<unsigned char>& I, vpMatrix &L, vpColVector &error_lines,
-      vpColVector &error_cylinders, vpColVector &error_circles, vpColVector &error, const unsigned int lvl);
-  void computeVVSSecondPhaseCheckLevenbergMarquardt(const unsigned int iter, const unsigned int nbrow,
-      const vpColVector &m_error_prev, const vpColVector &m_w_prev, const vpHomogeneousMatrix &cMoPrev,
-      double &mu, bool &reStartFromLastIncrement);
-  void computeVVSSecondPhasePoseEstimation(const unsigned int nerror, vpMatrix &L, vpMatrix &L_true, vpMatrix &LVJ_true,
-      vpColVector &W_true, const vpColVector &factor, const unsigned int iter, const bool isoJoIdentity_,
-      vpColVector &weighted_error, double &mu, vpColVector &m_error_prev, vpColVector &m_w_prev,
-      vpHomogeneousMatrix &cMoPrev, double &residu_1, double &r);
-  void computeVVSSecondPhaseWeights(const unsigned int iter, const unsigned int nerror,
-      const unsigned int nbrow, vpColVector &weighted_error,
-      vpRobust &robust_lines, vpRobust &robust_cylinders, vpRobust &robust_circles,
-      vpColVector &w_lines, vpColVector &w_cylinders, vpColVector &w_circles,
-      vpColVector &error_lines, vpColVector &error_cylinders, vpColVector &error_circles,
-      const unsigned int nberrors_lines, const unsigned int nberrors_cylinders, const unsigned int nberrors_circles);
+  void computeVVSFirstPhase(const vpImage<unsigned char>& I, const unsigned int iter, double &count, const unsigned int lvl = 0);
+  void computeVVSFirstPhaseFactor(const vpImage<unsigned char>& I, const unsigned int lvl = 0);
+  void computeVVSFirstPhasePoseEstimation(const unsigned int iter, bool &isoJoIdentity_);
+  virtual void computeVVSInit();
+  virtual void computeVVSInteractionMatrixAndResidu();
+  virtual void computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> &I);
+  virtual void computeVVSWeights();
+  using vpMbTracker::computeVVSWeights;
 
   void displayFeaturesOnImage(const vpImage<unsigned char>& I, const unsigned int lvl);
   void downScale(const unsigned int _scale);

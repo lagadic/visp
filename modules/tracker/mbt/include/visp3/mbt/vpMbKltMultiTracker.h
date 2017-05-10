@@ -80,6 +80,14 @@ protected:
 
   //! Name of the reference camera
   std::string m_referenceCameraName;
+  //! Interaction matrix
+  vpMatrix m_L_kltMulti;
+  //! (s - s*)
+  vpColVector m_error_kltMulti;
+  //! Robust weights
+  vpColVector m_w_kltMulti;
+  //! Weighted error
+  vpColVector m_weightedError_kltMulti;
 
 public:
   vpMbKltMultiTracker();
@@ -169,6 +177,14 @@ public:
   virtual void getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) const;
   virtual void getPose(const std::string &cameraName, vpHomogeneousMatrix &cMo_) const;
   virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const;
+
+  virtual inline vpColVector getError() const {
+    return m_error_kltMulti;
+  }
+
+  virtual inline vpColVector getRobustWeights() const {
+    return m_w_kltMulti;
+  }
 
   virtual void init(const vpImage<unsigned char>& I);
 
@@ -303,17 +319,17 @@ public:
 protected:
   /** @name Protected Member Functions Inherited from vpMbKltMultiTracker */
   //@{
-  virtual void computeVVS(std::map<std::string, unsigned int> &mapOfNbInfos, vpColVector &w);
-  virtual void computeVVSWeights(const unsigned int iter, const unsigned int nbInfos,
-      std::map<std::string, unsigned int> &mapOfNbInfos, vpColVector &R, vpColVector &w_true, vpColVector &w,
-      std::map<std::string, vpRobust> &mapOfRobusts, double threshold);
+  virtual void computeVVS();
+  virtual void computeVVSInit();
+  virtual void computeVVSInteractionMatrixAndResidu();
+  virtual void computeVVSInteractionMatrixAndResidu(std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist);
+  virtual void computeVVSWeights();
+  using vpMbTracker::computeVVSWeights;
 
-  virtual void preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-      std::map<std::string, unsigned int> &mapOfNbInfos,
-      std::map<std::string, unsigned int> &mapOfNbFaceUsed);
+  virtual void postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
 
-  virtual void postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-      std::map<std::string, unsigned int> &mapOfNbInfos, vpColVector &w_klt);
+  virtual void preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
+
   using vpMbKltTracker::reinit;
   virtual void reinit(/* const vpImage<unsigned char>& I */);
   //@}

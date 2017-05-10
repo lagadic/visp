@@ -603,7 +603,7 @@ vpMbtDistanceCylinder::displayMovingEdges(const vpImage<unsigned char> &I)
 void
 vpMbtDistanceCylinder::initInteractionMatrixError()
 {
-  if (isvisible == true) {
+  if (isvisible) {
     nbFeaturel1 = (unsigned int)meline1->getMeList().size();
     nbFeaturel2 = (unsigned int)meline2->getMeList().size();
     nbFeature = nbFeaturel1 + nbFeaturel2;
@@ -611,7 +611,7 @@ vpMbtDistanceCylinder::initInteractionMatrixError()
     error.resize(nbFeature);
   }
   else {
-    nbFeature = 0 ;
+    nbFeature = 0;
     nbFeaturel1 = 0;
     nbFeaturel2 = 0;
   }
