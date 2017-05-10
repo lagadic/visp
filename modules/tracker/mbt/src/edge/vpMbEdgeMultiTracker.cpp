@@ -214,7 +214,7 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
     double count = 0;
     reloop = false;
 
-    size_t start_idx = 0;
+    unsigned int start_idx = 0;
     for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
       double count_tmp = 0.0;
       edge = it->second;
