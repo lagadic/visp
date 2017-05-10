@@ -74,7 +74,7 @@
 
 
 class VISP_EXPORT vpPose
-{  
+{
 public:
   //! Methods that could be used to estimate the pose from points.
   typedef enum
@@ -230,7 +230,7 @@ public:
   bool poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMatrix *)=NULL) ;
   void poseVirtualVSrobust(vpHomogeneousMatrix & cMo) ;
   void poseVirtualVS(vpHomogeneousMatrix & cMo) ;
-  void printPoint() ; 
+  void printPoint() ;
   void setDistanceToPlaneForCoplanarityTest(double d) ;
   void setLambda(double a) { lambda = a ; }
   void setVvsEpsilon(const double eps) {
@@ -241,7 +241,7 @@ public:
     }
   }
   void setVvsIterMax(int nb) { vvsIterMax = nb ; }
-  
+
   void setRansacNbInliersToReachConsensus(const unsigned int &nbC){ ransacNbInlierConsensus = nbC; }
   void setRansacThreshold(const double &t) {
     //Test whether or not t is > 0
@@ -255,26 +255,26 @@ public:
   unsigned int getRansacNbInliers() const { return (unsigned int) ransacInliers.size(); }
   std::vector<unsigned int> getRansacInlierIndex() const{ return ransacInlierIndex; }
   std::vector<vpPoint> getRansacInliers() const{ return ransacInliers; }
-  
+
   /*!
-    Set if the covaraince matrix has to be computed in the Virtual Visual Servoing approach.
+    Set if the covariance matrix has to be computed in the Virtual Visual Servoing approach.
 
     \param flag : True if the covariance has to be computed, false otherwise.
   */
   void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
-  
+
   /*!
     Get the covariance matrix computed in the Virtual Visual Servoing approach.
-    
+
     \warning The compute covariance flag has to be true if you want to compute the covariance matrix.
-    
+
     \sa setCovarianceComputation
   */
-  vpMatrix getCovarianceMatrix() const { 
+  vpMatrix getCovarianceMatrix() const {
     if(!computeCovariance)
       vpTRACE("Warning : The covariance matrix has not been computed. See setCovarianceComputation() to do it.");
-    
-    return covarianceMatrix; 
+
+    return covarianceMatrix;
   }
 
   /*!
@@ -348,9 +348,9 @@ public:
 
   static int computeRansacIterations(double probability, double epsilon,
                                      const int sampleSize=4, int maxIterations=2000);
-                     
-  static void findMatch(std::vector<vpPoint> &p2D, 
-                     std::vector<vpPoint> &p3D, 
+
+  static void findMatch(std::vector<vpPoint> &p2D,
+                     std::vector<vpPoint> &p3D,
                      const unsigned int &numberOfInlierToReachAConsensus,
                      const double &threshold,
                      unsigned int &ninliers,

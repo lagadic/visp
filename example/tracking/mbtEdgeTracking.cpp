@@ -78,7 +78,7 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>]\n\
-  [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p]",
+  [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p]\n",
   name );
 
   fprintf(stdout, "\n\
@@ -115,7 +115,7 @@ OPTIONS:                                               \n\
   -n <initialisation file base name>                                            \n\
      Base name of the initialisation file. The file will be 'base_name'.init .\n\
      This base name is also used for the optionnal picture specifying where to \n\
-     click (a .ppm picture).\
+     click (a .ppm picture).\n\
 \n\
   -t \n\
      Turn off the display of the the moving edges. \n\
@@ -139,7 +139,7 @@ OPTIONS:                                               \n\
   -v\n\
      Compute covariance matrix.\n\
 \n\
-  -v\n\
+  -p\n\
      Compute gradient projection error.\n\
 \n\
   -h \n\
@@ -346,7 +346,7 @@ main(int argc, const char ** argv)
 
     vpMbEdgeTracker tracker;
     vpHomogeneousMatrix cMo;
-    
+
     // Initialise the tracker: camera parameters, moving edge and KLT settings
     vpCameraParameters cam;
 #if defined (VISP_HAVE_XML2)
@@ -543,7 +543,7 @@ main(int argc, const char ** argv)
     if(! cao3DModel)
       SoDB::finish();
 #endif
-  
+
     return 0;
   }
   catch(vpException &e) {

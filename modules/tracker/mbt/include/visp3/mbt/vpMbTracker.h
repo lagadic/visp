@@ -28,8 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Generic model based tracker. This class declares the methods to implement in 
- * order to have a model based tracker. 
+ * Generic model based tracker. This class declares the methods to implement in
+ * order to have a model based tracker.
  *
  * Authors:
  * Romain Tallonneau
@@ -39,7 +39,7 @@
 
 /*!
   \file vpMbTracker.h
-  \brief Generic model based tracker. 
+  \brief Generic model based tracker.
 */
 #ifndef vpMbTracker_hh
 #define vpMbTracker_hh
@@ -83,7 +83,7 @@
 /*!
   \class vpMbTracker
   \ingroup group_mbt_trackers
-  \brief Main methods for a model-based tracker. 
+  \brief Main methods for a model-based tracker.
 
   This class provides the main methods for a model based tracker. This pure
   virtual class must be used in inheritance for a tracker that compute the
@@ -96,8 +96,8 @@
     method is called at the end of the initClick() method.
   - initFaceFromCorners() : Initialisation of the lines that has to be tracked.
   - track() : Tracking on the current image
-  - testTracking() : Test the tracking. This method throws exception if the 
-    tracking failed. 
+  - testTracking() : Test the tracking. This method throws exception if the
+    tracking failed.
   - display() : Display the model and eventually other information.
 
 */
@@ -132,7 +132,7 @@ protected:
   bool computeProjError;
   //! Error angle between the gradient direction of the model features projected at the resulting pose and their normal.
   double projectionError;
-  //! If true, the features are displayed. 
+  //! If true, the features are displayed.
   bool displayFeatures;
   //! Optimization method used
   vpMbtOptimizationMethod m_optimizationMethod;
@@ -190,7 +190,7 @@ protected:
 public:
   vpMbTracker();
   virtual ~vpMbTracker();
-  
+
   /** @name Inherited functionalities from vpMbTracker */
   //@{
 
@@ -206,7 +206,7 @@ public:
     \param camera : copy of the camera parameters used by the tracker.
   */
   virtual void getCameraParameters(vpCameraParameters& camera) const { camera = this->cam;}
-  
+
   /*!
     Get the clipping used and defined in vpPolygon3D::vpMbtPolygonClippingType.
 
@@ -215,8 +215,11 @@ public:
   virtual inline  unsigned int getClipping() const { return clippingFlag; }
 
   /*!
-    Get the covariance matrix.
+    Get the covariance matrix. This matrix is only computed if setCovarianceComputation() is turned on.
+
+    \sa setCovarianceComputation()
   */
+
   virtual vpMatrix getCovarianceMatrix() const { 
     if(!computeCovariance) {
 //      vpTRACE("Warning : The covariance matrix has not been computed. See setCovarianceComputation() to do it.");
@@ -249,9 +252,11 @@ public:
 
   /*!
     Get the error angle between the gradient direction of the model features projected at the resulting pose and their normal.
-    The error is expressed in degree between 0 and 90.
+    The error is expressed in degree between 0 and 90. This value is computed if setProjectionErrorComputation() is turned on.
 
     \return the value for the error.
+
+    \sa setProjectionErrorComputation()
   */
   virtual double getProjectionError() const { return projectionError; }
 
@@ -351,16 +356,16 @@ public:
 
   /*!
     Get the current pose between the object and the camera.
-    cMo is the matrix which can be used to express 
+    cMo is the matrix which can be used to express
     coordinates from the object frame to camera frame.
 
     \param cMo_ : the pose
   */
   virtual inline void getPose(vpHomogeneousMatrix& cMo_) const {cMo_ = this->cMo;}
-  
+
   /*!
     Get the current pose between the object and the camera.
-    cMo is the matrix which can be used to express 
+    cMo is the matrix which can be used to express
     coordinates from the object frame to camera frame.
 
     \return the current pose
@@ -408,7 +413,7 @@ public:
     \param a : new angle in radian.
   */
   virtual inline void setAngleDisappear(const double &a) { angleDisappears = a; }
-  
+
   /*!
     Set the camera parameters.
 
@@ -417,11 +422,14 @@ public:
   virtual void setCameraParameters(const vpCameraParameters& camera) {this->cam = camera;}
 
   virtual void setClipping(const unsigned int &flags);
-  
-  /*!
-    Set if the covaraince matrix has to be computed.
 
-    \param flag : True if the covariance has to be computed, false otherwise
+  /*!
+    Set if the covariance matrix has to be computed.
+
+    \param flag : True if the covariance has to be computed, false otherwise.
+    If computed its value is available with getCovarianceMatrix()
+
+    \sa getCovarianceMatrix()
   */
   virtual void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
 
@@ -484,18 +492,22 @@ public:
     \param eps : Epsilon threshold.
   */
   virtual inline void setStopCriteriaEpsilon(const double eps) { m_stopCriteriaEpsilon = eps; }
-    
-  /*!
-    Set if the projection error criteria has to be computed.
 
-    \param flag : True if the projection error criteria has to be computed, false otherwise
+  /*!
+    Set if the projection error criteria has to be computed. This criteria could be used to
+    detect the quality of the tracking. It computes an angle between 0 and 90 degrees that is
+    available with getProjectionError(). Closer to 0 is the value, better is the tracking.
+
+    \param flag : True if the projection error criteria has to be computed, false otherwise.
+
+    \sa getProjectionError()
   */
   virtual void setProjectionErrorComputation(const bool &flag) { computeProjError = flag; }
 
   virtual void setScanLineVisibilityTest(const bool &v){ useScanLine = v; }
 
   virtual void setOgreVisibilityTest(const bool &v);
-  
+
   void savePose(const std::string &filename) const;
 
 #ifdef VISP_HAVE_OGRE
@@ -658,9 +670,9 @@ protected:
   virtual void extractLines(SoVRMLIndexedLineSet* line_set, int &idFace, const std::string &polygonName="");
   virtual void extractCylinders(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace, const std::string &polygonName="");
 #endif
-  
+
   vpPoint getGravityCenter(const std::vector<vpPoint>& _pts) const;
-  
+
   /*!
     Add a circle to track from its center, 3 points (including the center) defining the plane that contain
     the circle and its radius.
