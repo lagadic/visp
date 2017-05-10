@@ -208,7 +208,9 @@ public:
   virtual inline  unsigned int getClipping() const { return clippingFlag; }
 
   /*!
-    Get the covariance matrix.
+    Get the covariance matrix. This matrix is only computed if setCovarianceComputation() is turned on.
+
+    \sa setCovarianceComputation()
   */
   virtual vpMatrix getCovarianceMatrix() const {
     if(!computeCovariance)
@@ -393,9 +395,12 @@ public:
   virtual void setClipping(const unsigned int &flags);
 
   /*!
-    Set if the covaraince matrix has to be computed.
+    Set if the covariance matrix has to be computed.
 
-    \param flag : True if the covariance has to be computed, false otherwise
+    \param flag : True if the covariance has to be computed, false otherwise.
+    If computed its value is available with getCovarianceMatrix()
+
+    \sa getCovarianceMatrix()
   */
   virtual void setCovarianceComputation(const bool& flag) { computeCovariance = flag; }
 
