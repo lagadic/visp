@@ -72,7 +72,7 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>]\n\
-  [-t] [-c] [-d] [-h] [-f] [-o] [-w] [-l] [-v]",
+  [-t] [-c] [-d] [-h] [-f] [-o] [-w] [-l] [-v]\n",
   name );
 
   fprintf(stdout, "\n\
@@ -104,7 +104,7 @@ OPTIONS:                                               \n\
   -n <initialisation file base name>                                            \n\
      Base name of the initialisation file. The file will be 'base_name'.init .\n\
      This base name is also used for the optional picture specifying where to \n\
-     click (a .ppm picture).\
+     click (a .ppm picture).\n\
 \n\
   -t \n\
      Turn off the display of the the klt points. \n\
@@ -540,7 +540,7 @@ int main()
 {
   std::cout << "visp_mbt, visp_gui modules and OpenCV are required to run this example." << std::endl;
   return 0;
-  
+
 }
 
 #endif
