@@ -2242,7 +2242,7 @@ void vpMbEdgeMultiTracker::setClipping(const std::string &cameraName, const unsi
 }
 
 /*!
-  Set if the covaraince matrix has to be computed.
+  Set if the covariance matrix has to be computed.
 
   \param flag : True if the covariance has to be computed, false otherwise
 */
