@@ -495,6 +495,7 @@ protected:
   virtual void computeVVSInteractionMatrixAndResidu();
   virtual void computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> &I);
   virtual void computeVVSWeights();
+  using vpMbTracker::computeVVSWeights;
 
   void displayFeaturesOnImage(const vpImage<unsigned char>& I, const unsigned int lvl);
   void downScale(const unsigned int _scale);

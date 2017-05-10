@@ -46,7 +46,6 @@
 #include <visp3/vision/vpPose.h>
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpRobust.h>
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpException.h>

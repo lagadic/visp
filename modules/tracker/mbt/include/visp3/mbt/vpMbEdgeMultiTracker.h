@@ -49,7 +49,6 @@
 #include <vector>
 
 #include <visp3/mbt/vpMbEdgeTracker.h>
-#include <visp3/core/vpRobust.h>
 
 /*!
   \class vpMbEdgeMultiTracker
@@ -361,9 +360,11 @@ protected:
   virtual void computeVVSFirstPhasePoseEstimation(const unsigned int iter, bool &isoJoIdentity_);
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
+  using vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu;
   virtual void computeVVSInteractionMatrixAndResidu(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                                     std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist);
   virtual void computeVVSWeights();
+  using vpMbTracker::computeVVSWeights;
 
   virtual void initPyramid(const std::map<std::string, const vpImage<unsigned char> * >& mapOfImages,
       std::map<std::string, std::vector<const vpImage<unsigned char>* > >& pyramid);

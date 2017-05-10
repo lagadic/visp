@@ -367,11 +367,14 @@ protected:
   using vpMbKltMultiTracker::computeVVS;
 
   virtual void computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages, const unsigned int lvl=0);
-  virtual void computeVVSWeights();
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
+  using vpMbEdgeMultiTracker::computeVVSInteractionMatrixAndResidu;
+  using vpMbKltMultiTracker::computeVVSInteractionMatrixAndResidu;
   virtual void computeVVSInteractionMatrixAndResidu(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                                     std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist);
+  virtual void computeVVSWeights();
+  using vpMbTracker::computeVVSWeights;
 
   virtual unsigned int initMbtTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages, unsigned int lvl);
 

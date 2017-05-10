@@ -324,12 +324,11 @@ protected:
   virtual void computeVVSInteractionMatrixAndResidu();
   virtual void computeVVSInteractionMatrixAndResidu(std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist);
   virtual void computeVVSWeights();
-  using vpMbTracker::computeCovarianceMatrixVVS;
-  using vpMbTracker::computeVVSPoseEstimation;
-
-  virtual void preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
+  using vpMbTracker::computeVVSWeights;
 
   virtual void postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
+
+  virtual void preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
 
   using vpMbKltTracker::reinit;
   virtual void reinit(/* const vpImage<unsigned char>& I */);
