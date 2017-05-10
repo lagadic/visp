@@ -137,7 +137,7 @@ OPTIONS:                                               \n\
   -v\n\
      Compute covariance matrix.\n\
 \n\
-  -v\n\
+  -p\n\
      Compute gradient projection error.\n\
 \n\
   -h \n\

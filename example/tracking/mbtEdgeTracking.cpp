@@ -139,7 +139,7 @@ OPTIONS:                                               \n\
   -v\n\
      Compute covariance matrix.\n\
 \n\
-  -v\n\
+  -p\n\
      Compute gradient projection error.\n\
 \n\
   -h \n\
@@ -346,7 +346,7 @@ main(int argc, const char ** argv)
 
     vpMbEdgeTracker tracker;
     vpHomogeneousMatrix cMo;
-    
+
     // Initialise the tracker: camera parameters, moving edge and KLT settings
     vpCameraParameters cam;
 #if defined (VISP_HAVE_XML2)
@@ -543,7 +543,7 @@ main(int argc, const char ** argv)
     if(! cao3DModel)
       SoDB::finish();
 #endif
-  
+
     return 0;
   }
   catch(vpException &e) {
