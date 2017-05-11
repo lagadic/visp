@@ -106,7 +106,8 @@ int main(){
 class VISP_EXPORT vpDiskGrabber  : public vpFrameGrabber
 {
 private:
-  long image_number ; //!< id of the next image to be read
+  long image_number ; //!< id of the current image to be read
+  long image_number_next ; //!< id of the next image to be read
   int image_step ;    //!< increment between two image id
   unsigned int number_of_zero ; //!< number of zero in the image name (image.00000.pgm)
 
