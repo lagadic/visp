@@ -257,10 +257,13 @@ vpDiskGrabber::acquire(vpImage<unsigned char> &I, long img_number)
 
   char name[FILENAME_MAX] ;
 
+  image_number = image_number_next;
   if(useGenericName)
     sprintf(name,genericName,img_number) ;
   else
     sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,img_number,extension) ;
+
+  image_number_next += image_step ;
 
   vpDEBUG_TRACE(2, "load: %s\n", name);
 
@@ -283,10 +286,13 @@ vpDiskGrabber::acquire(vpImage<vpRGBa> &I, long img_number)
 
   char name[FILENAME_MAX] ;
 
+  image_number = img_number;
   if(useGenericName)
     sprintf(name,genericName,img_number) ;
   else
     sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,img_number,extension) ;
+
+  image_number_next += image_step ;
 
   vpDEBUG_TRACE(2, "load: %s\n", name);
 
@@ -311,6 +317,7 @@ vpDiskGrabber::acquire(vpImage<float> &I, long img_number)
 
   char name[FILENAME_MAX] ;
 
+  image_number = img_number;
   if(useGenericName)
     sprintf(name,genericName,img_number) ;
   else

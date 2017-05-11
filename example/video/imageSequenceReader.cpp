@@ -251,6 +251,7 @@ main(int argc, const char ** argv)
     reader.setFileName(filename);
     reader.setFirstFrameIndex(opt_first);
     reader.open(I);
+    std::cout << "Current image number: " << reader.getFrameIndex() << std::endl;
 
     // We open a window using either X11, GTK, GDI or OpenCV.
 #if defined VISP_HAVE_X11
@@ -272,11 +273,12 @@ main(int argc, const char ** argv)
 
     if (opt_display && opt_click_allowed)
     {
-      std::cout << "Click on the image to read and display the second frame" << std::endl;
+      std::cout << "Click in the image to read and display the second frame" << std::endl;
       vpDisplay::getClick(I);
     }
 
     reader.getFrame(I,opt_first+1);
+    std::cout << "Current image number (should be " << opt_first+1 << "): " << reader.getFrameIndex() << std::endl;
 
     if (opt_display)
     {
@@ -291,6 +293,7 @@ main(int argc, const char ** argv)
     }
 
     reader.getFrame(I,reader.getLastFrameIndex());
+    std::cout << "Current image number (should be " << reader.getLastFrameIndex() << "): " <<  reader.getFrameIndex() << std::endl;
 
     if (opt_display)
     {
@@ -309,6 +312,7 @@ main(int argc, const char ** argv)
     for (int i = opt_first; i <= lastFrame; i++)
     {
       reader.getFrame(I,i);
+      std::cout << "Current image number: " << reader.getFrameIndex() << std::endl;
       if (opt_display)
       {
         vpDisplay::display(I) ;
