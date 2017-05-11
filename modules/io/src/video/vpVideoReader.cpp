@@ -831,7 +831,6 @@ void vpVideoReader::findLastFrameIndex()
       //std::cout << "Warning: Problem with cv::CAP_PROP_FRAME_COUNT. We set video last frame to an arbitrary value (1000)." << std::endl;
       lastFrame = 100000; // Set lastFrame to an arbitrary value
     }
-    lastFrame--; //Last frame index = total frame count - 1
   }
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
   else if (!lastFrameIndexIsSet)
@@ -842,7 +841,6 @@ void vpVideoReader::findLastFrameIndex()
       //std::cout << "Warning: Problem with CV_CAP_PROP_FRAME_COUNT. We set video last frame to an arbitrary value (1000)." << std::endl;
       lastFrame = 100000; // Set lastFrame to an arbitrary value
     }
-    lastFrame--; //Last frame index = total frame count - 1
   }
 #endif
 }
@@ -885,7 +883,7 @@ void vpVideoReader::findFirstFrameIndex()
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
   else if (!firstFrameIndexIsSet)
   {
-    firstFrame = 0L;
+    firstFrame = 1L;
   }
 #endif
 }
