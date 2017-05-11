@@ -273,11 +273,13 @@ public:
     double getFramerate();
 
     /*!
-      Get the frame index of the next image. This index is updated at each call of the
+      Get the frame index of the current image. This index is updated at each call of the
       acquire method. It can be used to detect the end of a file (comparison
       with getLastFrameIndex()).
 
       \return Returns the current frame index.
+
+      \sa end()
     */
     inline long getFrameIndex() const { return frameCount;}
 

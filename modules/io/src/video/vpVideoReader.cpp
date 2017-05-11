@@ -154,8 +154,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
 {
   if (!initFileName)
   {
-    vpERROR_TRACE("The generic filename has to be set");
-    throw (vpImageException(vpImageException::noFileNameError, "filename empty"));
+    throw (vpImageException(vpImageException::noFileNameError, "The generic filename has to be set"));
   }
 
   if (isImageExtensionSupported())
@@ -174,7 +173,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
     ffmpeg = new vpFFMPEG;
     if (!ffmpeg->openStream(fileName, vpFFMPEG::COLORED))
     {
-      throw (vpException(vpException::ioError, "Could not open the video with ffmpeg"));
+      throw (vpException(vpException::ioError, "Could not open the video %s with ffmpeg", fileName));
     }
     ffmpeg->initStream();
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
@@ -182,10 +181,18 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
 
     if(!capture.isOpened())
     {
-      throw (vpException(vpException::ioError, "Could not open the video with opencv"));
+      throw (vpException(vpException::ioError, "Could not open the video %s with OpenCV", fileName));
     }
+#  if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    width = capture.get(cv::CAP_PROP_FRAME_WIDTH);
+    height = capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+#  else
+    width = capture.get(CV_CAP_PROP_FRAME_WIDTH);
+    height = capture.get(CV_CAP_PROP_FRAME_HEIGHT);
+#  endif
+
+    I.resize(height, width, 0);
 #else
-  //vpERROR_TRACE("To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
   throw (vpException(vpException::fatalError,
       "To read video files ViSP should be build with ffmpeg or opencv 3rd >= 2.1.0 party libraries."));
 #endif
@@ -210,7 +217,23 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
 
   isOpen = true;
   findLastFrameIndex();
-  frameCount = firstFrame; // open() should not increase the frame counter
+
+  // Rewind to the first frame since open() should not increase the frame counter
+  frameCount = firstFrame;
+
+  if (isVideoExtensionSupported())
+  {
+#ifdef VISP_HAVE_FFMPEG
+    // DEBUG FABIEN TO IMPLEMENT
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+
+#  if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    capture.set(cv::CAP_PROP_POS_FRAMES, firstFrame -1);
+#  else
+    capture.set(CV_CAP_PROP_POS_FRAMES, firstFrame -1);
+#endif
+#endif
+  }
 }
 
 
@@ -225,8 +248,8 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 {
   if (!initFileName)
   {
-    vpERROR_TRACE("The generic filename has to be set");
-    throw (vpImageException(vpImageException::noFileNameError, "filename empty"));
+    throw (vpImageException(vpImageException::noFileNameError,
+                            "The generic video filename has to be set"));
   }
 
   if (isImageExtensionSupported())
@@ -245,7 +268,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
     ffmpeg = new vpFFMPEG;
     if (!ffmpeg->openStream(fileName, vpFFMPEG::GRAY_SCALED))
     {
-      throw (vpException(vpException::ioError, "Could not open the video with ffmpeg"));
+      throw (vpException(vpException::ioError, "Could not open the video %s with ffmpeg", fileName));
     }
     ffmpeg->initStream();
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
@@ -253,12 +276,21 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 
     if(!capture.isOpened())
     {
-      throw (vpException(vpException::ioError, "Could not open the video with opencv"));
+      throw (vpException(vpException::ioError, "Could not open the video %s with OpenCV", fileName));
     }
+#  if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    width = capture.get(cv::CAP_PROP_FRAME_WIDTH);
+    height = capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+#  else
+    width = capture.get(CV_CAP_PROP_FRAME_WIDTH);
+    height = capture.get(CV_CAP_PROP_FRAME_HEIGHT);
+#  endif
+
+    I.resize(height, width, 0);
 #else
   //vpERROR_TRACE("To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
   throw (vpException(vpException::fatalError,
-      "To read video files ViSP should be build with ffmpeg or opencv >= 2.1.0 3rd party libraries."));
+                     "To read video files ViSP should be build with ffmpeg or opencv >= 2.1.0 3rd party libraries."));
 #endif
   }
   else if (formatType == FORMAT_UNKNOWN)
@@ -267,13 +299,11 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
     throw (vpException(vpException::fatalError,
         "The format of the file does not correspond to a readable format supported by ViSP."));
   }
-
   findFirstFrameIndex();
   frameCount = firstFrame;
   if (!getFrame(I, firstFrame))
   {
-    //vpERROR_TRACE("Could not read the video first frame");
-    throw (vpException(vpException::ioError, "Could not read the video first frame"));
+    throw (vpException(vpException::ioError, "Could not read the video %s first frame", fileName));
   }
 
   height = I.getHeight();
@@ -281,7 +311,23 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 
   isOpen = true;
   findLastFrameIndex();
-  frameCount = firstFrame; // open() should not increase the frame counter
+
+  // Rewind to the first frame since open() should not increase the frame counter
+  frameCount = firstFrame;
+
+  if (isVideoExtensionSupported())
+  {
+#ifdef VISP_HAVE_FFMPEG
+    // DEBUG FABIEN TO IMPLEMENT
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+
+#  if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    capture.set(cv::CAP_PROP_POS_FRAMES, firstFrame -1);
+#  else
+    capture.set(CV_CAP_PROP_POS_FRAMES, firstFrame -1);
+#  endif
+#endif
+  }
 }
 
 
@@ -307,12 +353,10 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
     imSequence->setStep(frameStep);
     imSequence->acquire(I);
     frameCount = imSequence->getImageNumber();
-    if (frameCount > lastFrame) {
-      frameCount = lastFrame;
+    if (frameCount + frameStep > lastFrame) {
       imSequence->setImageNumber(frameCount);
     }
-    else if (frameCount < firstFrame) {
-      frameCount = firstFrame;
+    else if (frameCount + frameStep < firstFrame) {
       imSequence->setImageNumber(frameCount);
     }
   }
@@ -326,11 +370,42 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
   else
   {
     capture >> frame;
-    frameCount = frameCount + frameStep; // next index
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
-    capture.set(cv::CAP_PROP_POS_FRAMES, frameCount);
+    frameCount = (long)capture.get(cv::CAP_PROP_POS_FRAMES);
+    if (frameStep > 0) {
+      if (frameCount + frameStep -1 < lastFrame) {
+        capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+      }
+      else {
+        capture.set(cv::CAP_PROP_POS_FRAMES, frameCount - 1);
+      }
+    }
+    else if (frameStep < 0) {
+      if (frameCount + frameStep - 1 >= firstFrame -1) {
+        capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+      }
+      else {
+        capture.set(cv::CAP_PROP_POS_FRAMES, firstFrame -1);
+      }
+    }
 #else
-    capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
+    frameCount = (long)capture.get(CV_CAP_PROP_POS_FRAMES);
+    if (frameStep > 0) {
+      if (frameCount + frameStep -1 < lastFrame) {
+        capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+      }
+      else {
+        capture.set(CV_CAP_PROP_POS_FRAMES, frameCount - 1);
+      }
+    }
+    else if (frameStep < 0) {
+      if (frameCount + frameStep - 1 >= firstFrame -1) {
+        capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+      }
+      else {
+        capture.set(CV_CAP_PROP_POS_FRAMES, firstFrame -1);
+      }
+    }
 #endif
 
     if(frame.empty())
@@ -351,8 +426,7 @@ This method enables to use the class as frame grabber.
 */
 void vpVideoReader::acquire(vpImage< unsigned char > &I)
 {
-  if (!isOpen)
-  {
+  if (!isOpen) {
     open(I);
   }
 
@@ -361,12 +435,10 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
     imSequence->setStep(frameStep);
     imSequence->acquire(I);
     frameCount = imSequence->getImageNumber();
-    if (frameCount > lastFrame) {
-      frameCount = lastFrame;
+    if (frameCount + frameStep > lastFrame) {
       imSequence->setImageNumber(frameCount);
     }
-    else if (frameCount < firstFrame) {
-      frameCount = firstFrame;
+    else if (frameCount + frameStep < firstFrame) {
       imSequence->setImageNumber(frameCount);
     }
   }
@@ -380,11 +452,42 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
   else
   {
     capture >> frame;
-    frameCount += frameStep; // next index
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
-    capture.set(cv::CAP_PROP_POS_FRAMES, frameCount);
+    frameCount = (long)capture.get(cv::CAP_PROP_POS_FRAMES);
+    if (frameStep > 0) {
+      if (frameCount + frameStep -1 < lastFrame) {
+        capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+      }
+      else {
+        capture.set(cv::CAP_PROP_POS_FRAMES, frameCount - 1);
+      }
+    }
+    else if (frameStep < 0) {
+      if (frameCount + frameStep - 1 >= firstFrame -1) {
+        capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+      }
+      else {
+        capture.set(cv::CAP_PROP_POS_FRAMES, firstFrame -1);
+      }
+    }
 #else
-    capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
+    frameCount = (long)capture.get(CV_CAP_PROP_POS_FRAMES);
+    if (frameStep > 0) {
+      if (frameCount + frameStep -1 < lastFrame) {
+        capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+      }
+      else {
+        capture.set(CV_CAP_PROP_POS_FRAMES, frameCount - 1);
+      }
+    }
+    else if (frameStep < 0) {
+      if (frameCount + frameStep - 1 >= firstFrame -1) {
+        capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+      }
+      else {
+        capture.set(CV_CAP_PROP_POS_FRAMES, firstFrame -1);
+      }
+    }
 #endif
 
     if (frame.empty())
@@ -520,8 +623,6 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
     return false;
   }
   capture >> frame;
-  frameCount = frame_index + frameStep;  // next index
-  capture.set(cv::CAP_PROP_POS_FRAMES, frameCount);
   if(frame.empty())
   {
     // New trial that makes things working with opencv 3.0.0
@@ -547,8 +648,15 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
     return false;
   }
   capture >> frame;
-  frameCount += frameStep; // next index
-  capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
+  frameCount = (long)capture.get(CV_CAP_PROP_POS_FRAMES);
+  if (frameStep > 1) {
+    frameCount += frameStep - 1; // next index
+    capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
+  }
+  else if (frameStep < -1) {
+    frameCount += frameStep - 1; // next index
+    capture.set(CV_CAP_PROP_POS_FRAMES, frameCount);
+  }
   if (frame.empty())
     setLastFrameIndex(frameCount - frameStep);
   else

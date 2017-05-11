@@ -178,8 +178,8 @@ int main(int argc, const char ** argv)
 
     long frame_index;
     while(! reader.end()) {
-      frame_index = reader.getFrameIndex();
       reader.acquire(I);
+      frame_index = reader.getFrameIndex();
       vpDisplay::display(I);
 
       cv::Mat cvI;

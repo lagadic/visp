@@ -286,8 +286,8 @@ main(int argc, const char ** argv)
     }
 
     while (! reader.end() ) {
-      std::cout << "Read frame: " << reader.getFrameIndex() << std::endl;
       reader.acquire(I);
+      std::cout << "Display frame: " << reader.getFrameIndex() << std::endl;
       if (opt_display)
       {
         vpDisplay::display(I) ;
