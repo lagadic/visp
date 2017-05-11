@@ -518,7 +518,13 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
     try
     {
       imSequence->acquire(I, frame_index);
-      frameCount = frame_index + frameStep; // next index
+      frameCount = imSequence->getImageNumber();
+      if (frameCount + frameStep > lastFrame) {
+        imSequence->setImageNumber(frameCount);
+      }
+      else if (frameCount + frameStep < firstFrame) {
+        imSequence->setImageNumber(frameCount);
+      }
     }
     catch(...)
     {
@@ -599,7 +605,13 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
     try
     {
       imSequence->acquire(I, frame_index);
-      frameCount = frame_index + frameStep;
+      frameCount = imSequence->getImageNumber();
+      if (frameCount + frameStep > lastFrame) {
+        imSequence->setImageNumber(frameCount);
+      }
+      else if (frameCount + frameStep < firstFrame) {
+        imSequence->setImageNumber(frameCount);
+      }
     }
     catch(...)
     {
