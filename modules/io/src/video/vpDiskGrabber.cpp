@@ -43,7 +43,7 @@
   Elementary constructor.
 */
 vpDiskGrabber::vpDiskGrabber()
-  : image_number(0), image_step(1), number_of_zero(0), useGenericName(false)
+  : image_number(0), image_number_next(0), image_step(1), number_of_zero(0), useGenericName(false)
 {
   setDirectory("/tmp");
   setBaseName("I");
@@ -54,7 +54,7 @@ vpDiskGrabber::vpDiskGrabber()
 
 
 vpDiskGrabber::vpDiskGrabber(const char *generic_name)
-  : image_number(0), image_step(1), number_of_zero(0), useGenericName(false)
+  : image_number(0), image_number_next(0), image_step(1), number_of_zero(0), useGenericName(false)
 {
   setDirectory("/tmp");
   setBaseName("I");
@@ -86,7 +86,7 @@ vpDiskGrabber::vpDiskGrabber(const char *dir, const char *basename,
                              long number,
                              int step, unsigned int noz,
                              const char *ext)
-  : image_number(number), image_step(step), number_of_zero(noz), useGenericName(false)
+  : image_number(number), image_number_next(number), image_step(step), number_of_zero(noz), useGenericName(false)
 {
   setDirectory(dir);
   setBaseName(basename);
@@ -170,12 +170,13 @@ vpDiskGrabber::acquire(vpImage<unsigned char> &I)
 
   char name[FILENAME_MAX] ;
 
+  image_number = image_number_next;
   if(useGenericName)
     sprintf(name,genericName,image_number) ;
   else
     sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
 
-  image_number += image_step ;
+  image_number_next += image_step ;
 
   vpDEBUG_TRACE(2, "load: %s\n", name);
 
@@ -197,12 +198,13 @@ vpDiskGrabber::acquire(vpImage<vpRGBa> &I)
 
   char name[FILENAME_MAX] ;
 
+  image_number = image_number_next;
   if(useGenericName)
     sprintf(name,genericName,image_number) ;
   else
     sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
 
-  image_number += image_step ;
+  image_number_next += image_step ;
 
   vpDEBUG_TRACE(2, "load: %s\n", name);
 
@@ -225,12 +227,13 @@ vpDiskGrabber::acquire(vpImage<float> &I)
 
   char name[FILENAME_MAX] ;
 
+  image_number = image_number_next;
   if(useGenericName)
     sprintf(name,genericName,image_number) ;
   else
     sprintf(name,"%s/%s%0*ld.%s",directory,base_name,number_of_zero,image_number,extension) ;
 
-  image_number += image_step ;
+  image_number_next += image_step ;
 
   vpDEBUG_TRACE(2, "load: %s\n", name);
 
@@ -378,6 +381,7 @@ void
 vpDiskGrabber::setImageNumber(long number)
 {
   image_number = number ;
+  image_number_next = number ;
   vpDEBUG_TRACE(2, "image number %ld", image_number);
 
 }
