@@ -43,7 +43,7 @@ int main()
     while ( ! reader.end() )
     {
       reader.acquire(I);
-      std::cout << "acquire image " << reader.getFrameIndex() << std::endl;
+      std::cout << "Process image " << reader.getFrameIndex() << std::endl;
       vpDisplay::display(I);
 
       vpImageConvert::convert(I, cvI);

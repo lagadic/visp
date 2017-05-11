@@ -416,9 +416,9 @@ main(int argc, const char ** argv)
 
     while (! reader.end())
     {
-      std::cout << "Process image number " << reader.getFrameIndex() << std::endl;
       // Acquire a new image
       reader.acquire(I);
+      std::cout << "Process image number " << reader.getFrameIndex() << std::endl;
       // Display the image
       vpDisplay::display(I);
       // Track the template
