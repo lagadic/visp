@@ -261,10 +261,10 @@ vpCameraParameters vpRealSense::getCameraParameters(const rs::stream &stream, vp
   auto intrinsics = this->getIntrinsics(stream);
 
   vpCameraParameters cam;
-  double px = intrinsics.ppx;
-  double py = intrinsics.ppy;
-  double u0 = intrinsics.fx;
-  double v0 = intrinsics.fy;
+  double u0 = intrinsics.ppx;
+  double v0 = intrinsics.ppy;
+  double px = intrinsics.fx;
+  double py = intrinsics.fy;
   if (type == vpCameraParameters::perspectiveProjWithDistortion) {
     double kdu = intrinsics.coeffs[0];
     cam.initPersProjWithDistortion(px, py, u0, v0, -kdu, kdu);
