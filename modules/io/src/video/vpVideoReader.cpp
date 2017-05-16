@@ -370,43 +370,48 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
   else
   {
     capture >> frame;
+    if (frameStep == 1) {
+      frameCount ++;
+    }
+    else{
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
-    frameCount = (long)capture.get(cv::CAP_PROP_POS_FRAMES);
-    if (frameStep > 0) {
-      if (frameCount + frameStep -1 < lastFrame) {
-        capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+      frameCount = (long)capture.get(cv::CAP_PROP_POS_FRAMES);
+      if (frameStep > 0) {
+        if (frameCount + frameStep -1 < lastFrame) {
+          capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+        }
+        else {
+          capture.set(cv::CAP_PROP_POS_FRAMES, frameCount - 1);
+        }
       }
-      else {
-        capture.set(cv::CAP_PROP_POS_FRAMES, frameCount - 1);
+      else if (frameStep < 0) {
+        if (frameCount + frameStep - 1 >= firstFrame -1) {
+          capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+        }
+        else {
+          capture.set(cv::CAP_PROP_POS_FRAMES, firstFrame -1);
+        }
       }
-    }
-    else if (frameStep < 0) {
-      if (frameCount + frameStep - 1 >= firstFrame -1) {
-        capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
-      }
-      else {
-        capture.set(cv::CAP_PROP_POS_FRAMES, firstFrame -1);
-      }
-    }
 #else
-    frameCount = (long)capture.get(CV_CAP_PROP_POS_FRAMES);
-    if (frameStep > 0) {
-      if (frameCount + frameStep -1 < lastFrame) {
-        capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+      frameCount = (long)capture.get(CV_CAP_PROP_POS_FRAMES);
+      if (frameStep > 0) {
+        if (frameCount + frameStep -1 < lastFrame) {
+          capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+        }
+        else {
+          capture.set(CV_CAP_PROP_POS_FRAMES, frameCount - 1);
+        }
       }
-      else {
-        capture.set(CV_CAP_PROP_POS_FRAMES, frameCount - 1);
+      else if (frameStep < 0) {
+        if (frameCount + frameStep - 1 >= firstFrame -1) {
+          capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+        }
+        else {
+          capture.set(CV_CAP_PROP_POS_FRAMES, firstFrame -1);
+        }
       }
-    }
-    else if (frameStep < 0) {
-      if (frameCount + frameStep - 1 >= firstFrame -1) {
-        capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
-      }
-      else {
-        capture.set(CV_CAP_PROP_POS_FRAMES, firstFrame -1);
-      }
-    }
 #endif
+    }
 
     if(frame.empty())
       setLastFrameIndex(frameCount - frameStep);
@@ -452,43 +457,48 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
   else
   {
     capture >> frame;
+    if (frameStep == 1) {
+      frameCount ++;
+    }
+    else{
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
-    frameCount = (long)capture.get(cv::CAP_PROP_POS_FRAMES);
-    if (frameStep > 0) {
-      if (frameCount + frameStep -1 < lastFrame) {
-        capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+      frameCount = (long)capture.get(cv::CAP_PROP_POS_FRAMES);
+      if (frameStep > 0) {
+        if (frameCount + frameStep -1 < lastFrame) {
+          capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+        }
+        else {
+          capture.set(cv::CAP_PROP_POS_FRAMES, frameCount - 1);
+        }
       }
-      else {
-        capture.set(cv::CAP_PROP_POS_FRAMES, frameCount - 1);
+      else if (frameStep < 0) {
+        if (frameCount + frameStep - 1 >= firstFrame -1) {
+          capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+        }
+        else {
+          capture.set(cv::CAP_PROP_POS_FRAMES, firstFrame -1);
+        }
       }
-    }
-    else if (frameStep < 0) {
-      if (frameCount + frameStep - 1 >= firstFrame -1) {
-        capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
-      }
-      else {
-        capture.set(cv::CAP_PROP_POS_FRAMES, firstFrame -1);
-      }
-    }
 #else
-    frameCount = (long)capture.get(CV_CAP_PROP_POS_FRAMES);
-    if (frameStep > 0) {
-      if (frameCount + frameStep -1 < lastFrame) {
-        capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+      frameCount = (long)capture.get(CV_CAP_PROP_POS_FRAMES);
+      if (frameStep > 0) {
+        if (frameCount + frameStep -1 < lastFrame) {
+          capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+        }
+        else {
+          capture.set(CV_CAP_PROP_POS_FRAMES, frameCount - 1);
+        }
       }
-      else {
-        capture.set(CV_CAP_PROP_POS_FRAMES, frameCount - 1);
+      else if (frameStep < 0) {
+        if (frameCount + frameStep - 1 >= firstFrame -1) {
+          capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
+        }
+        else {
+          capture.set(CV_CAP_PROP_POS_FRAMES, firstFrame -1);
+        }
       }
-    }
-    else if (frameStep < 0) {
-      if (frameCount + frameStep - 1 >= firstFrame -1) {
-        capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
-      }
-      else {
-        capture.set(CV_CAP_PROP_POS_FRAMES, firstFrame -1);
-      }
-    }
 #endif
+    }
 
     if (frame.empty())
       setLastFrameIndex(frameCount - frameStep);
