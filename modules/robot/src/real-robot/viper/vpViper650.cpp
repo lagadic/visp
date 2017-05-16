@@ -398,41 +398,33 @@ vpViper650::init(vpViper650::vpToolType tool,
 void
 vpViper650::parseConfigFile (const std::string &filename)
 {
-  size_t            dim;
-  int               code;
-  char              Ligne[FILENAME_MAX];
-  char              namoption[100];
-  FILE *            fdtask;
-  int               numLn = 0;
-  vpRxyzVector rot_eMc; // rotation
-  vpTranslationVector trans_eMc; // translation
-  bool get_rot_eMc = false;
-  bool get_trans_eMc = false;
+  vpRxyzVector erc;        // eMc rotation
+  vpTranslationVector etc; // eMc translation
 
-  //vpTRACE("Read the config file for constant parameters %s.", filename.c_str());
-  if ((fdtask = fopen(filename.c_str(), "r" )) == NULL) {
+  std::ifstream fdconfig(filename.c_str(), std::ios::in);
+
+  if(! fdconfig.is_open()) {
     throw vpRobotException (vpRobotException::readingParametersError,
-                            "Impossible to read the config file %s.", filename.c_str());
+                            "Impossible to read the config file: %s", filename.c_str());
   }
 
-  while (fgets(Ligne, FILENAME_MAX, fdtask) != NULL) {
-    numLn ++;
-    if ('#' == Ligne[0]) { continue; }
-    {
-      std::stringstream ss(Ligne);
-      ss >> namoption;
+  std::string line;
+  int lineNum = 0;
+  bool get_erc = false;
+  bool get_etc = false;
+  int code;
 
-      if (ss.fail()) {
-        fclose (fdtask);
-        throw(vpException(vpException::badValue,
-                          "Cannot parse configuration file %s to retrieve option name"));
-      }
+  while(std::getline(fdconfig, line)) {
+    lineNum ++;
+    if((line.compare(0, 1, "#") == 0) || line.empty()) { // skip comment or empty line
+      continue;
     }
-
-    dim = strlen(namoption);
+    std::istringstream ss(line);
+    std::string key;
+    ss >> key;
 
     for (code = 0; NULL != opt_viper650[code]; ++ code)  {
-      if (strncmp(opt_viper650[code], namoption, dim) == 0) {
+      if (key.compare(opt_viper650[code]) == 0) {
         break;
       }
     }
@@ -442,52 +434,37 @@ vpViper650::parseConfigFile (const std::string &filename)
       break; // Nothing to do: camera name
 
     case 1: {
-      std::stringstream ss(Ligne);
-      ss >> namoption >> rot_eMc[0] >> rot_eMc[1] >> rot_eMc[2];
-      if (ss.fail()) {
-        fclose (fdtask);
-        throw(vpException(vpException::badValue,
-                          "Cannot parse configuration file %s to retrieve rotation", filename.c_str()));
-      }
+      ss >> erc[0] >> erc[1] >> erc[2];
 
       // Convert rotation from degrees to radians
-      rot_eMc[0] *= M_PI / 180.0;
-      rot_eMc[1] *= M_PI / 180.0;
-      rot_eMc[2] *= M_PI / 180.0;
-      get_rot_eMc = true;
+      erc = erc * M_PI / 180.0;
+      get_erc = true;
       break;
     }
 
     case 2: {
-      std::stringstream ss(Ligne);
-      ss >> namoption >> trans_eMc[0] >> trans_eMc[1] >> trans_eMc[2];
-      if (ss.fail()) {
-        fclose (fdtask);
-        throw(vpException(vpException::badValue,
-                          "Cannot parse configuration file %s to retrieve translation", filename.c_str()));
-      }
-      get_trans_eMc = true;
+      ss >> etc[0] >> etc[1] >> etc[2];
+      get_etc = true;
       break;
     }
 
     default:
-      vpERROR_TRACE ("Bad configuration file %s  "
-                     "line #%d.", filename.c_str(), numLn);
-    } /* SWITCH */
-  } /* WHILE */
+      throw(vpRobotException(vpRobotException::readingParametersError,
+                             "Bad configuration file %s line #%d",
+                             filename.c_str(), lineNum));
+    }
+  }
 
-  fclose (fdtask);
+  fdconfig.close();
 
   // Compute the eMc matrix from the translations and rotations
-  if (get_rot_eMc && get_trans_eMc) {
-    this->set_eMc(trans_eMc,rot_eMc);
+  if (get_etc && get_erc) {
+    this->set_eMc(etc, erc);
   }
   else {
     throw vpRobotException (vpRobotException::readingParametersError,
                             "Could not read translation and rotation parameters from config file %s", filename.c_str());
   }
-
-  return;
 }
 
 

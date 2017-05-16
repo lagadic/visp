@@ -1062,8 +1062,8 @@ vpAfma6::getLong56() const
 void
 vpAfma6::parseConfigFile (const std::string &filename)
 {
-  double rot_eMc[3]; // rotation
-  double trans_eMc[3]; // translation
+  vpRxyzVector erc;        // eMc rotation
+  vpTranslationVector etc; // eMc translation
 
   std::ifstream fdconfig(filename.c_str(), std::ios::in);
 
@@ -1074,13 +1074,13 @@ vpAfma6::parseConfigFile (const std::string &filename)
 
   std::string line;
   int lineNum = 0;
-  bool get_rot_eMc = false;
-  bool get_trans_eMc = false;
+  bool get_erc = false;
+  bool get_etc = false;
   int code;
 
   while(std::getline(fdconfig, line)) {
     lineNum ++;
-    if((line.compare(0, 1, "#") == 0)) { // skip comment
+    if((line.compare(0, 1, "#") == 0) || line.empty()) { // skip comment or empty line
       continue;
     }
     std::istringstream ss(line);
@@ -1117,39 +1117,36 @@ vpAfma6::parseConfigFile (const std::string &filename)
         break; // Nothing to do: camera name
 
       case 5:
-        ss >> rot_eMc[0] >> rot_eMc[1] >> rot_eMc[2];
+        ss >> erc[0] >> erc[1] >> erc[2];
 
         // Convert rotation from degrees to radians
-        rot_eMc[0] *= M_PI / 180.0;
-        rot_eMc[1] *= M_PI / 180.0;
-        rot_eMc[2] *= M_PI / 180.0;
-        get_rot_eMc = true;
+        erc = erc * M_PI / 180.0;
+        get_erc = true;
         break;
 
       case 6:
-        ss >> trans_eMc[0] >> trans_eMc[1] >> trans_eMc[2];
-        get_trans_eMc = true;
+        ss >> etc[0] >> etc[1] >> etc[2];
+        get_etc = true;
         break;
 
       default:
         throw(vpRobotException(vpRobotException::readingParametersError,
                                "Bad configuration file %s line #%d",
                                filename.c_str(), lineNum));
-    } /* SWITCH */
-  } /* WHILE */
+    }
+  }
+
+  fdconfig.close();
 
   // Compute the eMc matrix from the translations and rotations
-  if (get_rot_eMc && get_trans_eMc) {
-    for (unsigned int i=0; i < 3; i ++) {
-      _erc[i] = rot_eMc[i];
-      _etc[i] = trans_eMc[i];
-    }
+  if (get_etc && get_erc) {
+    _erc = erc;
+    _etc = etc;
 
     vpRotationMatrix eRc(_erc);
     this->_eMc.buildFrom(_etc, eRc);
   }
 
-  fdconfig.close();
 }
 
 /*!
