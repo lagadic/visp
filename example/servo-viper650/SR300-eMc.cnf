@@ -1,0 +1,11 @@
+# Start with any number of consecutive lines
+# beginning with the symbol '#'
+#
+# The 3 following lines contain the name of the camera,
+# the rotation parameters of the geometric transformation
+# using the Euler angles in degrees with convention XYZ and
+# the translation parameters expressed in meters
+CAMERA SR300
+eMc_ROT_XYZ -1.094521437 -0.8733872716 -87.95535141 
+eMc_TRANS_XYZ  -0.03321048274 0.00218700917 0.02981391035
+
