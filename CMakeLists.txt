@@ -1030,9 +1030,9 @@ status("    Build with moment combine:"  ENABLE_MOMENTS_COMBINE_MATRICES THEN "y
 # ===================== Optional 3rd parties =====================
 status("")
 status("  Mathematics: ")
-status("    Use Eigen3:"             USE_EIGEN3       THEN "yes (ver ${EIGEN3_VERSION_STRING})" ELSE "no")
 status("    Use Lapack/blas:"        USE_LAPACK       THEN "yes (ver ${LAPACK_C_VERSION})" ELSE "no")
 status("    Use Lapack (built-in):"  WITH_LAPACK      THEN "yes (ver ${LAPACK_VERSION})" ELSE "no")
+status("    Use Eigen3:"             USE_EIGEN3       THEN "yes (ver ${EIGEN3_VERSION_STRING})" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
 status("    Use GSL:"                USE_GSL          THEN "yes (ver ${GSL_VERSION})" ELSE "no")
 status("")
