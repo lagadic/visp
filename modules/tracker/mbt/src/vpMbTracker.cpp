@@ -659,10 +659,12 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::st
   finit.ignore(256, '\n'); // skip the rest of the line
   std::cout << "Number of 2D points  " << n2d << std::endl;
   if (n2d > 100000) {
+    delete [] P;
     throw vpException(vpException::badValue, "In %s file, the number of 2D points exceed the max allowed", s);
   }
 
   if(n3d != n2d) {
+    delete [] P;
     throw vpException(vpException::badValue, "In %s file, number of 2D points %d and number of 3D points %d are not equal", s, n2d, n3d);
   }
 
