@@ -1194,7 +1194,6 @@ vpPlotGraph::plot (vpImage<unsigned char> &I, const unsigned int curveNb, const 
   iP.set_uv(u,v);
   iP = iP + dTopLeft3D;
   
-  (curveList+curveNb)->pointListz.end();
   if((curveList+curveNb)->nbPoint)
   {
     if (check3Dline((curveList+curveNb)->lastPoint,iP))
