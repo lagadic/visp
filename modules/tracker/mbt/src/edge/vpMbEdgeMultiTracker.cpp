@@ -414,9 +414,8 @@ void vpMbEdgeMultiTracker::computeVVSFirstPhasePoseEstimation(const unsigned int
 void vpMbEdgeMultiTracker::computeVVSInit() {
   unsigned int nbrow = 0;
 
-  vpMbEdgeTracker *edge = NULL;
   for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
-    edge = it->second;
+    vpMbEdgeTracker *edge = it->second;
 
     try {
       edge->computeVVSInit();
@@ -444,9 +443,8 @@ void vpMbEdgeMultiTracker::computeVVSInteractionMatrixAndResidu(std::map<std::st
                                                                 std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist) {
   unsigned int start_idx = 0;
 
-  vpMbEdgeTracker *edge;
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
-    edge = it->second;
+    vpMbEdgeTracker *edge = it->second;
     edge->cMo = m_mapOfCameraTransformationMatrix[it->first]*cMo;
 
     edge->computeVVSInteractionMatrixAndResidu(*mapOfImages[it->first]);
@@ -460,9 +458,9 @@ void vpMbEdgeMultiTracker::computeVVSInteractionMatrixAndResidu(std::map<std::st
 
 void vpMbEdgeMultiTracker::computeVVSWeights() {
   unsigned int start_idx = 0;
-  vpMbEdgeTracker *edge = NULL;
+
   for (std::map<std::string, vpMbEdgeTracker*>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
-    edge = it->second;
+    vpMbEdgeTracker *edge = it->second;
 
     //Compute weights
     edge->computeVVSWeights();

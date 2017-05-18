@@ -169,7 +169,6 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
     //return fatalError;
   }
 
-  double j = 0.0, i = 0.0;
   vpImagePoint iP11;
 
   double incr = vpMath::rad(me->getSampleStep()); // angle increment en degree
@@ -185,8 +184,8 @@ vpMeEllipse::sample(const vpImage<unsigned char> & I)
   double k = alpha1;
   while (k<alpha2)
   {
-    j = a *sin(k); // equation of an ellipse
-    i = b *cos(k); // equation of an ellipse
+    double j = a *sin(k); // equation of an ellipse
+    double i = b *cos(k); // equation of an ellipse
 
     // (i,j) are the coordinates on the origin centered ellipse;
     // a rotation by "e" and a translation by (xci,jc) are done
