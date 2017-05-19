@@ -216,13 +216,13 @@ int main(int argc, const char ** argv) {
     // scale_x = 1; scale_y = 1.5; angle = 0; a_0 = b_0 = 0;
 
     // Test Rotation
-    scale_x = 1; scale_y = 1; angle = 60; a_0 = b_0 = 0;
+    // scale_x = 1; scale_y = 1; angle = 60; a_0 = b_0 = 0;
     
     // Test Translation
     // scale_x = 1; scale_y = 1; angle = 0; a_0 = 10; b_0 = 20;
 
     // Test Rotation, Scale and Translation
-    // scale_x = 0.6; scale_y = 1.3; angle = 45; a_0 = 100; b_0 = 77;
+    scale_x = 0.6; scale_y = 1.3; angle = 45; a_0 = 100; b_0 = 77;
 
     // Make Tansformation Matrix
     T[0][0] = scale_x * cos(vpMath::rad(angle));  T[0][1] = scale_x * sin(vpMath::rad(angle));  T[0][2] = 0;

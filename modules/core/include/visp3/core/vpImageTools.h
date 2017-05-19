@@ -487,30 +487,22 @@ void vpImageTools::warpAffine(const vpImage<Type> &I,
 
   transcp = T * transcp;
 
-  float max_1 = std::max(transcp[0][0], std::max(transcp[0][1], std::max(transcp[0][2], std::max(transcp[0][3], transcp[0][4])))); ///< max(transcp(0,:)) 
-  float min_1 = std::min(transcp[0][0], std::min(transcp[0][1], std::min(transcp[0][2], std::min(transcp[0][3], transcp[0][4])))); ///< min(transcp(0,:)) 
+  float max_1 = std::max(transcp[0][0], std::max(transcp[0][1], std::max(transcp[0][2], std::max(transcp[0][3], transcp[0][4])))); // max(transcp(0,:)) 
+  float min_1 = std::min(transcp[0][0], std::min(transcp[0][1], std::min(transcp[0][2], std::min(transcp[0][3], transcp[0][4])))); // min(transcp(0,:)) 
 
-  float max_2 = std::max(transcp[1][0], std::max(transcp[1][1], std::max(transcp[1][2], std::max(transcp[1][3], transcp[1][4])))); ///< max(transcp(1,:)) 
-  float min_2 = std::min(transcp[1][0], std::min(transcp[1][1], std::min(transcp[1][2], std::min(transcp[1][3], transcp[1][4])))); ///< min(transcp(1,:)) 
+  float max_2 = std::max(transcp[1][0], std::max(transcp[1][1], std::max(transcp[1][2], std::max(transcp[1][3], transcp[1][4])))); // max(transcp(1,:)) 
+  float min_2 = std::min(transcp[1][0], std::min(transcp[1][1], std::min(transcp[1][2], std::min(transcp[1][3], transcp[1][4])))); // min(transcp(1,:)) 
 
   vpMatrix imgy(floor(max_1 - min_1 + 1), floor(max_2 - min_2 + 1));
-  vpMatrix imgx(floor(max_2 - min_2 + 1), floor(max_1 - min_1 + 1));
+  vpMatrix imgx(floor(max_1 - min_1 + 1), floor(max_2 - min_2 + 1));
 
-  // meshgrid(min_2:max_2,min_1:min_1)
+  // meshgrid()
   for (unsigned int i = 0; i < imgy.getRows(); i++) {
     for (unsigned int j = 0; j < imgy.getCols(); j++) {
       imgy[i][j] = min_2 + j;
+      imgx[i][j] = min_1 + i;
     }
   }
-
-  // meshgrid(min_1:max_1,min_2:min_2)
-  for (unsigned int i = 0; i < imgx.getRows(); i++) {
-    for (unsigned int j = 0; j < imgx.getCols(); j++) {
-      imgx[i][j] = min_1 + j;
-    }
-  }
-
-  imgx = imgx.t();
 
   //Backwards Transform (inverse mapping)
 
@@ -523,17 +515,19 @@ void vpImageTools::warpAffine(const vpImage<Type> &I,
   for (unsigned int i = 0; i < X.getRows(); i++) {
     for (unsigned int j = 0; j < X.getCols(); j++) {
       if (i == 0)  X[i][j] = imgx[j % imgx.getRows()][j / imgx.getRows()];
-      if (i == 1)  X[i][j] = imgy[j % imgy.getRows()][j / imgy.getRows()];
-      if (i == 2)  X[i][j] = 1;
+      else if (i == 1)  X[i][j] = imgy[j % imgy.getRows()][j / imgy.getRows()];
+      else if (i == 2)  X[i][j] = 1;
     }
   }
 
   // perform T \ X
+  vpMatrix Tinv = T.inverseByLU();
+
   for (unsigned int j = 0; j < X.getCols(); j++) {
     B[0] = X[0][j];
     B[1] = X[1][j];
     B[2] = X[2][j];
-    T.solveBySVD(B, B); // Converted Columns of X to a ColVector for Linear Solver
+    B = Tinv * B;
     X[0][j] = B[0];
     X[1][j] = B[1];
     X[2][j] = B[2];
@@ -541,9 +535,11 @@ void vpImageTools::warpAffine(const vpImage<Type> &I,
 
   // reshape row 1 and row 2 of X into imgx and imgy respectively
   for (unsigned int j =0; j< imgx.getCols(); j++) {
+    unsigned int jp = j*imgx.getRows();
     for (unsigned int i =0; i< imgx.getRows(); i++) {
-      imgx[i][j]= X[0][j*imgx.getRows()+i];      
-      imgy[i][j]= X[1][j*imgx.getRows()+i];      
+      unsigned int jpi = jp + i;
+      imgx[i][j]= X[0][jpi];
+      imgy[i][j]= X[1][jpi];
     }
   }
 
@@ -564,9 +560,10 @@ void vpImageTools::warpAffine(const vpImage<Type> &I,
     signed int iSign = -1 * ((T[2][1] > 0) - (T[2][1] < 0)), jSign = -1 * ((T[2][0] > 0) - (T[2][0] < 0));
 
     for (unsigned int i =  0; i < Iwarp.getRows(); i++) {
+      double rl = floor((i - T[2][1]) / Iwarp.getRows());
       for (unsigned int j = 0; j < Iwarp.getCols(); j++) {
-
-        if (floor((i - T[2][1]) / Iwarp.getRows()) == 0 && floor((j - T[2][0]) / Iwarp.getCols()) == 0)
+        double cl = floor((j - T[2][0]) / Iwarp.getCols());
+        if (!rl && !cl)
           Iwarp[i][j] =  Iwarp_temp[i - (int)T[2][1]][j - (int)T[2][0]];
 
         if (iSign == -1 && i < T[2][1]) Iwarp[i][j] = static_cast<Type>(0);
