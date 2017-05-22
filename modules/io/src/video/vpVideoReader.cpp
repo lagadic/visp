@@ -377,7 +377,7 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
       frameCount = (long)capture.get(cv::CAP_PROP_POS_FRAMES);
       if (frameStep > 0) {
-        if (frameCount + frameStep -1 < lastFrame) {
+        if (frameCount + frameStep <= lastFrame) {
           capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
         }
         else {
@@ -385,7 +385,7 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
         }
       }
       else if (frameStep < 0) {
-        if (frameCount + frameStep - 1 >= firstFrame -1) {
+        if (frameCount + frameStep >= firstFrame) {
           capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
         }
         else {
@@ -395,7 +395,7 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
 #else
       frameCount = (long)capture.get(CV_CAP_PROP_POS_FRAMES);
       if (frameStep > 0) {
-        if (frameCount + frameStep -1 < lastFrame) {
+        if (frameCount + frameStep <= lastFrame) {
           capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
         }
         else {
@@ -403,7 +403,7 @@ void vpVideoReader::acquire(vpImage< vpRGBa > &I)
         }
       }
       else if (frameStep < 0) {
-        if (frameCount + frameStep - 1 >= firstFrame -1) {
+        if (frameCount + frameStep >= firstFrame) {
           capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
         }
         else {
@@ -464,7 +464,7 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
       frameCount = (long)capture.get(cv::CAP_PROP_POS_FRAMES);
       if (frameStep > 0) {
-        if (frameCount + frameStep -1 < lastFrame) {
+        if (frameCount + frameStep <= lastFrame) {
           capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
         }
         else {
@@ -472,7 +472,7 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
         }
       }
       else if (frameStep < 0) {
-        if (frameCount + frameStep - 1 >= firstFrame -1) {
+        if (frameCount + frameStep >= firstFrame) {
           capture.set(cv::CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
         }
         else {
@@ -482,7 +482,7 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
 #else
       frameCount = (long)capture.get(CV_CAP_PROP_POS_FRAMES);
       if (frameStep > 0) {
-        if (frameCount + frameStep -1 < lastFrame) {
+        if (frameCount + frameStep <= lastFrame) {
           capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
         }
         else {
@@ -490,7 +490,7 @@ void vpVideoReader::acquire(vpImage< unsigned char > &I)
         }
       }
       else if (frameStep < 0) {
-        if (frameCount + frameStep - 1 >= firstFrame -1) {
+        if (frameCount + frameStep >= firstFrame) {
           capture.set(CV_CAP_PROP_POS_FRAMES, frameCount + frameStep - 1);
         }
         else {
