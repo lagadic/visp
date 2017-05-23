@@ -5,6 +5,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpIoTools.h>
 //! [Include]
+#include <visp3/mbt/vpMbEdgeMultiTracker.h>
 #include <visp3/mbt/vpMbEdgeKltMultiTracker.h>
 //! [Include]
 #include <visp3/io/vpVideoReader.h>
@@ -91,20 +92,24 @@ int main(int argc, char** argv)
     //! [Load config file]
     if(opt_tracker == 0)
       dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->loadConfigFile(objectname_left + ".xml", objectname_right + ".xml");
-    else if(opt_tracker == 1)
+#if defined(VISP_HAVE_MODULE_KLT)
+    else if (opt_tracker == 1)
       dynamic_cast<vpMbKltMultiTracker*>    (tracker)->loadConfigFile(objectname_left + ".xml", objectname_right + ".xml");
     else
       dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->loadConfigFile(objectname_left + ".xml", objectname_right + ".xml");
+#endif
     //! [Load config file]
 
     //! [Get camera parameters]
     vpCameraParameters cam_left, cam_right;
     if(opt_tracker == 0)
       dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->getCameraParameters(cam_left, cam_right);
+#if defined(VISP_HAVE_MODULE_KLT)
     else if(opt_tracker == 1)
       dynamic_cast<vpMbKltMultiTracker*>    (tracker)->getCameraParameters(cam_left, cam_right);
     else
       dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->getCameraParameters(cam_left, cam_right);
+#endif
     //! [Get camera parameters]
 
     //! [Load cao]
@@ -125,10 +130,12 @@ int main(int argc, char** argv)
 
     if(opt_tracker == 0)
       dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->setCameraTransformationMatrix(mapOfCameraTransformationMatrix);
+#if defined (VISP_HAVE_MODULE_KLT)
     else if(opt_tracker == 1)
       dynamic_cast<vpMbKltMultiTracker*>    (tracker)->setCameraTransformationMatrix(mapOfCameraTransformationMatrix);
     else
       dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->setCameraTransformationMatrix(mapOfCameraTransformationMatrix);
+#endif
     //! [Set camera transformation matrix]
 
 #ifndef VISP_HAVE_XML2
@@ -143,10 +150,12 @@ int main(int argc, char** argv)
     //! [Init]
     if(opt_tracker == 0)
       dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->initClick(I_left, I_right, objectname_left + ".init", objectname_right + ".init", true);
+#if defined (VISP_HAVE_MODULE_KLT)
     else if(opt_tracker == 1)
       dynamic_cast<vpMbKltMultiTracker*>    (tracker)->initClick(I_left, I_right, objectname_left + ".init", objectname_right + ".init", true);
     else
       dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->initClick(I_left, I_right, objectname_left + ".init", objectname_right + ".init", true);
+#endif
     //! [Init]
 
     //! [cMo]
@@ -162,28 +171,34 @@ int main(int argc, char** argv)
       //! [Track]
       if(opt_tracker == 0)
         dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->track(I_left, I_right);
+#if defined (VISP_HAVE_MODULE_KLT)
       else if(opt_tracker == 1)
         dynamic_cast<vpMbKltMultiTracker*>    (tracker)->track(I_left, I_right);
       else
         dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->track(I_left, I_right);
+#endif
       //! [Track]
 
       //! [Get pose]
       if(opt_tracker == 0)
         dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->getPose(cLeftMo, cRightMo);
+#if defined (VISP_HAVE_MODULE_KLT)
       else if(opt_tracker == 1)
         dynamic_cast<vpMbKltMultiTracker*>    (tracker)->getPose(cLeftMo, cRightMo);
       else
         dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->getPose(cLeftMo, cRightMo);
+#endif
       //! [Get pose]
 
       //! [Display]
       if(opt_tracker == 0)
         dynamic_cast<vpMbEdgeMultiTracker*>   (tracker)->display(I_left, I_right, cLeftMo, cRightMo, cam_left, cam_right, vpColor::red, 2);
+#if defined (VISP_HAVE_MODULE_KLT)
       else if(opt_tracker == 1)
         dynamic_cast<vpMbKltMultiTracker*>    (tracker)->display(I_left, I_right, cLeftMo, cRightMo, cam_left, cam_right, vpColor::red, 2);
       else
         dynamic_cast<vpMbEdgeKltMultiTracker*>(tracker)->display(I_left, I_right, cLeftMo, cRightMo, cam_left, cam_right, vpColor::red, 2);
+#endif
       //! [Display]
 
       vpDisplay::displayFrame(I_left, cLeftMo, cam_left, 0.025, vpColor::none, 3);

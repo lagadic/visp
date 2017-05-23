@@ -343,9 +343,9 @@ main(int argc, const char ** argv)
 
     tracker.setCameraParameters(cam);
     tracker.setKltOpencv(klt);
+    tracker.setKltMaskBorder(5);
     tracker.setAngleAppear( vpMath::rad(65) );
     tracker.setAngleDisappear( vpMath::rad(75) );
-    tracker.setMaskBorder(5);
 
     // Specify the clipping to use
     tracker.setNearClippingDistance(0.01);
@@ -439,9 +439,9 @@ main(int argc, const char ** argv)
 
         tracker.setCameraParameters(cam);
         tracker.setKltOpencv(klt);
+        tracker.setKltMaskBorder(5);
         tracker.setAngleAppear( vpMath::rad(65) );
         tracker.setAngleDisappear( vpMath::rad(75) );
-        tracker.setMaskBorder(5);
 
         // Specify the clipping to use
         tracker.setNearClippingDistance(0.01);
