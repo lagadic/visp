@@ -729,7 +729,7 @@ std::list<vpMbtDistanceCircle*>& vpMbGenericTracker::getFeaturesCircle() {
     TrackerWrapper *tracker = it->second;
     return tracker->getFeaturesCircle();
   } else {
-    throw vpException(vpTrackingException::badValue, "Cannot find the reference camera:  %s!", m_referenceCameraName);
+    throw vpException(vpTrackingException::badValue, "Cannot find the reference camera:  %s!", m_referenceCameraName.c_str());
   }
 }
 
@@ -742,7 +742,7 @@ std::list<vpMbtDistanceKltCylinder*>& vpMbGenericTracker::getFeaturesKltCylinder
     TrackerWrapper *tracker = it->second;
     return tracker->getFeaturesKltCylinder();
   } else {
-    throw vpException(vpTrackingException::badValue, "Cannot find the reference camera:  %s!", m_referenceCameraName);
+    throw vpException(vpTrackingException::badValue, "Cannot find the reference camera:  %s!", m_referenceCameraName.c_str());
   }
 }
 
@@ -755,7 +755,7 @@ std::list<vpMbtDistanceKltPoints*>& vpMbGenericTracker::getFeaturesKlt() {
     TrackerWrapper *tracker = it->second;
     return tracker->getFeaturesKlt();
   } else {
-    throw vpException(vpTrackingException::badValue, "Cannot find the reference camera:  %s!", m_referenceCameraName);
+    throw vpException(vpTrackingException::badValue, "Cannot find the reference camera:  %s!", m_referenceCameraName.c_str());
   }
 }
 #endif
@@ -1396,7 +1396,7 @@ void vpMbGenericTracker::initClick(const std::map<std::string, const vpImage<uns
       m_mapOfTrackers[*it]->cMo = cCurrentMo;
       m_mapOfTrackers[*it]->init(*it_img->second);
     } else {
-      throw vpException(vpTrackingException::initializationError, "Missing image or missing camera transformation matrix! Cannot set the pose for camera: %s!", *it);
+      throw vpException(vpTrackingException::initializationError, "Missing image or missing camera transformation matrix! Cannot set the pose for camera: %s!", it->c_str());
     }
   }
 }
@@ -1504,7 +1504,7 @@ void vpMbGenericTracker::initFromPoints(const std::map<std::string, const vpImag
       vpHomogeneousMatrix cCurrentMo = it_camTrans->second * cMo;
       m_mapOfTrackers[*it]->initFromPose(*it_img->second, cCurrentMo);
     } else {
-      throw vpException(vpTrackingException::initializationError, "Missing image or missing camera transformation matrix! Cannot init the pose for camera: %s!", *it);
+      throw vpException(vpTrackingException::initializationError, "Missing image or missing camera transformation matrix! Cannot init the pose for camera: %s!", it->c_str());
     }
   }
 }
@@ -1594,7 +1594,7 @@ void vpMbGenericTracker::initFromPose(const std::map<std::string, const vpImage<
       vpHomogeneousMatrix cCurrentMo = it_camTrans->second * cMo;
       m_mapOfTrackers[*it]->initFromPose(*it_img->second, cCurrentMo);
     } else {
-      throw vpException(vpTrackingException::initializationError, "Missing image or missing camera transformation matrix! Cannot init the pose for camera: %s!", *it);
+      throw vpException(vpTrackingException::initializationError, "Missing image or missing camera transformation matrix! Cannot init the pose for camera: %s!", it->c_str());
     }
   }
 }
@@ -1673,7 +1673,7 @@ void vpMbGenericTracker::initFromPose(const std::map<std::string, const vpImage<
       vpHomogeneousMatrix cCurrentMo = it_camTrans->second * cMo;
       m_mapOfTrackers[*it]->initFromPose(*it_img->second, cCurrentMo);
     } else {
-      throw vpException(vpTrackingException::initializationError, "Missing image or missing camera transformation matrix! Cannot set the pose for camera: %s!", *it);
+      throw vpException(vpTrackingException::initializationError, "Missing image or missing camera transformation matrix! Cannot set the pose for camera: %s!", it->c_str());
     }
   }
 }
@@ -1699,7 +1699,7 @@ void vpMbGenericTracker::loadConfigFile(const std::string& configFile) {
   }
 
   if (m_mapOfTrackers.find(m_referenceCameraName) == m_mapOfTrackers.end()) {
-    throw vpException(vpException::fatalError, "Cannot find the reference camera:  %s!", m_referenceCameraName);
+    throw vpException(vpException::fatalError, "Cannot find the reference camera:  %s!", m_referenceCameraName.c_str());
   }
 
   m_mapOfTrackers[m_referenceCameraName]->getCameraParameters(this->cam);
@@ -1736,7 +1736,7 @@ void vpMbGenericTracker::loadConfigFile(const std::string& configFile1, const st
   tracker->loadConfigFile(configFile2);
 
   if (m_mapOfTrackers.find(m_referenceCameraName) == m_mapOfTrackers.end()) {
-    throw vpException(vpException::fatalError, "Cannot find the reference camera:  %s!", m_referenceCameraName);
+    throw vpException(vpException::fatalError, "Cannot find the reference camera:  %s!", m_referenceCameraName.c_str());
   }
 
   m_mapOfTrackers[m_referenceCameraName]->getCameraParameters(this->cam);
@@ -1766,7 +1766,7 @@ void vpMbGenericTracker::loadConfigFile(const std::map<std::string, std::string>
     if (it_config != mapOfConfigFiles.end()) {
       tracker->loadConfigFile(it_config->second);
     } else {
-      throw vpException(vpTrackingException::initializationError, "Missing configuration file for camera: %s!", it_tracker->first);
+      throw vpException(vpTrackingException::initializationError, "Missing configuration file for camera: %s!", it_tracker->first.c_str());
     }
   }
 
@@ -1781,7 +1781,7 @@ void vpMbGenericTracker::loadConfigFile(const std::map<std::string, std::string>
     this->angleAppears = tracker->getAngleAppear();
     this->angleDisappears = tracker->getAngleDisappear();
   } else {
-    throw vpException(vpTrackingException::initializationError, "The reference camera: %s does not exist!", m_referenceCameraName);
+    throw vpException(vpTrackingException::initializationError, "The reference camera: %s does not exist!", m_referenceCameraName.c_str());
   }
 }
 
@@ -1897,7 +1897,7 @@ void vpMbGenericTracker::loadModel(const std::map<std::string, std::string> &map
       TrackerWrapper *tracker = it_tracker->second;
       tracker->loadModel(it_model->second, verbose);
     } else {
-      throw vpException(vpTrackingException::initializationError, "Cannot load model for camera: %s", it_tracker->first);
+      throw vpException(vpTrackingException::initializationError, "Cannot load model for camera: %s", it_tracker->first.c_str());
     }
   }
 }
@@ -2297,7 +2297,7 @@ void vpMbGenericTracker::setCameraTransformationMatrix(const std::string &camera
   if (it != m_mapOfCameraTransformationMatrix.end()) {
     it->second = cameraTransformationMatrix;
   } else {
-    throw vpException(vpTrackingException::fatalError, "Cannot find camera: %s!", cameraName);
+    throw vpException(vpTrackingException::fatalError, "Cannot find camera: %s!", cameraName.c_str());
   }
 }
 
@@ -2315,7 +2315,7 @@ void vpMbGenericTracker::setCameraTransformationMatrix(const std::map<std::strin
     std::map<std::string, vpHomogeneousMatrix>::const_iterator it_camTrans = mapOfTransformationMatrix.find(it_tracker->first);
 
     if (it_camTrans == mapOfTransformationMatrix.end()) {
-      throw vpException(vpTrackingException::initializationError, "Missing transformation matrix for camera: %s", it_tracker->first);
+      throw vpException(vpTrackingException::initializationError, "Missing transformation matrix for camera: %s", it_tracker->first.c_str());
     }
   }
 
@@ -2921,7 +2921,7 @@ void vpMbGenericTracker::setPose(const vpImage<unsigned char> &I, const vpHomoge
     TrackerWrapper *tracker = it->second;
     tracker->setPose(I, cdMo);
   } else {
-    throw vpException(vpTrackingException::initializationError, "The reference camera: %s does not exist!", m_referenceCameraName);
+    throw vpException(vpTrackingException::initializationError, "The reference camera: %s does not exist!", m_referenceCameraName.c_str());
   }
 }
 
@@ -2950,7 +2950,7 @@ void vpMbGenericTracker::setPose(const vpImage<unsigned char> &I1, const vpImage
       //Set reference pose
       it->second->getPose(cMo);
     } else {
-      throw vpException(vpTrackingException::fatalError, "The reference camera: %s does not exist!", m_referenceCameraName);
+      throw vpException(vpTrackingException::fatalError, "The reference camera: %s does not exist!", m_referenceCameraName.c_str());
     }
   } else {
     throw vpException(vpTrackingException::fatalError, "Require two cameras! There are %d cameras!", m_mapOfTrackers.size());
@@ -3011,7 +3011,7 @@ void vpMbGenericTracker::setPose(const std::map<std::string, const vpImage<unsig
       vpHomogeneousMatrix cCurrentMo = it_camTrans->second * cMo;
       m_mapOfTrackers[*it]->setPose(*it_img->second, cCurrentMo);
     } else {
-      throw vpException(vpTrackingException::fatalError, "Missing image or missing camera transformation matrix! Cannot set pose for camera: %s!", *it);
+      throw vpException(vpTrackingException::fatalError, "Missing image or missing camera transformation matrix! Cannot set pose for camera: %s!", it->c_str());
     }
   }
 }
