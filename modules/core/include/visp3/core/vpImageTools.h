@@ -481,9 +481,9 @@ void vpImageTools::warpAffine(const vpImage<Type> &I,
 {
 
   vpMatrix transcp(3,5);
-  transcp[0][0] = 1; transcp[0][1] = 1; transcp[0][2] = 1;            transcp[0][3] = I.getWidth(); transcp[0][4] = I.getWidth();
-  transcp[1][0] = 1; transcp[1][1] = 1; transcp[1][2] = I.getWidth(); transcp[1][3] = I.getWidth(); transcp[1][4] = 1;
-  transcp[2][0] = 1; transcp[2][1] = 1; transcp[2][2] = 1;            transcp[2][3] = 1;            transcp[2][4] = 1;
+  transcp[0][0] = 1; transcp[0][1] = 1; transcp[0][2] = 1;             transcp[0][3] = I.getWidth();  transcp[0][4] = I.getWidth();
+  transcp[1][0] = 1; transcp[1][1] = 1; transcp[1][2] = I.getHeight(); transcp[1][3] = I.getHeight(); transcp[1][4] = 1;
+  transcp[2][0] = 1; transcp[2][1] = 1; transcp[2][2] = 1;             transcp[2][3] = 1;             transcp[2][4] = 1;
 
   transcp = T * transcp;
 
