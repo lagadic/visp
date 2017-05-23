@@ -51,57 +51,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImageTools.h>
 
-// List of allowed command line options
-#define GETOPTARGS "cdip:h"
-
-
 namespace {
-  /*
-    Print the program options.
-
-    \param name : Program name.
-    \param badparam : Bad parameter name.
-    \param ipath: Input image path.
-    \param ppath: Personal image path.
-   */
-  void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
-  {
-    fprintf(stdout, "\n\
-  Test image warping.\n\
-  \n\
-  SYNOPSIS\n\
-    %s [-i <input image path>] [-p <personal image path>] [-c] [-d]\n\
-       [-h]\n                 \
-  ", name);
-
-    fprintf(stdout, "\n\
-  OPTIONS:                                               Default\n\
-    -i <input image path>                                %s\n\
-       Set image input path.\n\
-       From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
-       image.\n\
-       Setting the VISP_INPUT_IMAGE_PATH environment\n\
-       variable produces the same behaviour than using\n\
-       this option.\n\
-  \n\
-    -p <personal image path>                               %s\n\
-       Path to an image used to test image warping.\n\
-       Example: -p /my_path_to/image.png\n\
-  \n\
-    -c                                   \n\
-       Disable mouse click.\n\
-  \n\
-    -d                                   \n\
-       Disable image display.\n\
-  \n\
-    -h\n\
-       Print the help.\n\n",
-      ipath.c_str(),
-      ppath.c_str());
-
-    if (badparam)
-      fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
-  }
 
   /*!
     Set the program options.
@@ -110,40 +60,62 @@ namespace {
     \param argv : Array of command line parameters.
     \param ipath: Input image path.
     \param ppath: Personal image path.
-    \param opt_display : Do not display if set.
-    \param opt_click : Do not need click if set.
+    \param opt_no_display : Do not display if set.
+    \param opt_no_click : Do not need click if set.
+    \param opt_angle : Affine transformation angle of rotation.
+    \param opt_scale_x : Affine transformation scale along x-axis.
+    \param opt_scale_y : Affine transformation scale along y-axis.
+    \param opt_translation_x : Affine transformation translation along x-axis.
+    \param opt_translation_y : Affine transformation translation along y-axis.
     \return false if the program has to be stopped, true otherwise.
   */
-  bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath,
-                  bool &opt_display, bool &opt_click)
+  bool getOptions(int argc, const char **argv, std::string &opt_ipath, std::string &opt_ppath,
+                  bool &opt_no_display, bool &opt_no_click, float &opt_angle,
+                  float &opt_scale_x, float &opt_scale_y,
+                  float &opt_translation_x, float &opt_translation_y)
   {
-    const char *optarg_;
-    int c;
-    while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
+    char *opt_ipath_ = NULL;
+    char *opt_ppath_ = NULL;
 
-      switch (c) {
-      // case 'i': ipath = optarg_; break;
-      case 'p': ppath = optarg_; break;
-      case 'h': usage(argv[0], NULL, ipath, ppath); return false; break;
-
-      case 'c': opt_click = false; break;
-      case 'd': opt_display = false; break;
-
-      default:
-        usage(argv[0], optarg_, ipath, ppath); return false; break;
-      }
+    vpParseArgv::vpArgvInfo argTable[] =
+    {
+      {"-i", vpParseArgv::ARGV_STRING, (char*) NULL, (char *) &opt_ipath_,
+       "Set image input path. From this path read \"ViSP-images/Klimt/Klimt.pgm\""},
+      {"-p", vpParseArgv::ARGV_STRING, (char*) NULL, (char *) &opt_ppath_,
+       "Path to an image used to test image warping."},
+      {"-c", vpParseArgv::ARGV_CONSTANT, 0, (char *) &opt_no_click,
+       "Disable mouse click."},
+      {"-d", vpParseArgv::ARGV_CONSTANT, 0, (char *) &opt_no_display,
+       "Disable display."},
+      {"-angle", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &opt_angle,
+       "Angle in degrees."},
+      {"-scale_x", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &opt_scale_x,
+       "Scale factor along x."},
+      {"-scale_y", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &opt_scale_y,
+       "Scale factor along y."},
+      {"-trans_x", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &opt_translation_x,
+       "Translation along x."},
+      {"-trans_y", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &opt_translation_y,
+       "Translation along y."},
+      {"-h", vpParseArgv::ARGV_HELP, (char*) NULL, (char *) NULL,
+       "Print the help."},
+      {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL}
+    };
+    // Read the command line options
+    if(vpParseArgv::parse(&argc, argv, argTable,
+                          vpParseArgv::ARGV_NO_LEFTOVERS |
+                          vpParseArgv::ARGV_NO_ABBREV |
+                          vpParseArgv::ARGV_NO_DEFAULTS)) {
+      return (false);
     }
 
-    if ((c == 1) || (c == -1)) {
-      // standalone param or error
-      usage(argv[0], NULL, ipath, ppath);
-      std::cerr << "ERROR: " << std::endl;
-      std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
-      return false;
-    }
+    if (opt_ipath_)
+      opt_ipath = std::string(opt_ipath_);
+    if (opt_ppath_)
+      opt_ppath = std::string(opt_ppath_);
 
     return true;
-  }
+  } 
 }
 
 int main(int argc, const char ** argv) {
@@ -154,8 +126,14 @@ int main(int argc, const char ** argv) {
     std::string opt_ppath;
     std::string ppath;
     std::string filename;
-    bool opt_display = true;
-    bool opt_click = true;
+    bool opt_no_display = false;
+    bool opt_no_click = false;
+    // Scale (Sx,Sy), Rotation (angle), Translation (tx,ty)
+    float opt_angle = 0;
+    float opt_scale_x = 1;
+    float opt_scale_y = 1;
+    float opt_translation_x = 0;
+    float opt_translation_y = 0;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -165,7 +143,8 @@ int main(int argc, const char ** argv) {
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_display, opt_click) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_no_display, opt_no_click,
+                   opt_angle, opt_scale_x, opt_scale_y, opt_translation_x, opt_translation_y) == false) {
       exit (EXIT_FAILURE);
     }
 
@@ -190,7 +169,6 @@ int main(int argc, const char ** argv) {
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()){
-      usage(argv[0], NULL, ipath, ppath);
       std::cerr << std::endl
                 << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
@@ -205,31 +183,15 @@ int main(int argc, const char ** argv) {
     //
     // Test starts from here
     //
-    //Initialize transformation matrix
+    // Initialize transformation matrix
     vpMatrix T(3,3);
 
-    // Scale (Sx,Sy), Rotation (angle), Translation (tx,ty)
-    float scale_x, scale_y, angle;
-    signed int a_0, b_0;
-
-    // Test Scale along Y
-    // scale_x = 1; scale_y = 1.5; angle = 0; a_0 = b_0 = 0;
-
-    // Test Rotation
-    // scale_x = 1; scale_y = 1; angle = 60; a_0 = b_0 = 0;
-    
-    // Test Translation
-    // scale_x = 1; scale_y = 1; angle = 0; a_0 = 10; b_0 = 20;
-
-    // Test Rotation, Scale and Translation
-    scale_x = 0.6; scale_y = 1.3; angle = 45; a_0 = 100; b_0 = 77;
-
     // Make Tansformation Matrix
-    T[0][0] = scale_x * cos(vpMath::rad(angle));  T[0][1] = scale_x * sin(vpMath::rad(angle));  T[0][2] = 0;
-    T[1][0] = -scale_y * sin(vpMath::rad(angle)); T[1][1] = scale_y * cos(vpMath::rad(angle));  T[1][2] = 0;
-    T[2][0] = a_0;                                T[2][1] = b_0;                                T[2][2] = 1;
+    T[0][0] =  opt_scale_x * cos(vpMath::rad(opt_angle)); T[0][1] = opt_scale_x * sin(vpMath::rad(opt_angle));  T[0][2] = 0;
+    T[1][0] = -opt_scale_y * sin(vpMath::rad(opt_angle)); T[1][1] = opt_scale_y * cos(vpMath::rad(opt_angle));  T[1][2] = 0;
+    T[2][0] =  opt_translation_x;                         T[2][1] = opt_translation_y;                          T[2][2] = 1;
 
-    //Load Image (default Klimt.pgm)
+    // Load Image (default Klimt.pgm)
     vpImage<vpRGBa> I_image, I_warped_image;
 
     if (!opt_ppath.empty())    
@@ -255,10 +217,10 @@ int main(int argc, const char ** argv) {
     vpDisplayD3D *d1 = new vpDisplayD3D, *d2 = new vpDisplayD3D;
 #else
     std::cerr << "No display available!" << std::endl;
-    opt_display = false;
+    opt_no_display = true;
 #endif
 
-    if (opt_display) {
+    if (!opt_no_display) {
 #if defined (VISP_HAVE_X11) || defined (VISP_HAVE_OPENCV) || defined (VISP_HAVE_GTK) || defined (VISP_HAVE_GDI) || defined (VISP_HAVE_D3D9)
       d1->init(I_image, 0, 0, "Original image");
       d2->init(I_warped_image, (int) I_image.getWidth()+50, 0, "Warped image");
@@ -269,7 +231,7 @@ int main(int argc, const char ** argv) {
       vpDisplay::displayText(I_warped_image, 20, 20, "Click to quit.", vpColor::red);
       vpDisplay::flush(I_image);
       vpDisplay::flush(I_warped_image);
-      if (opt_click) {
+      if (!opt_no_click) {
         vpDisplay::getClick(I_warped_image);
       }
     }
