@@ -53,7 +53,7 @@ vpMbEdgeKltTracker::vpMbEdgeKltTracker()
 
   angleAppears = vpMath::rad(65);
   angleDisappears = vpMath::rad(75);
-  
+
 #ifdef VISP_HAVE_OGRE
   faces.getOgreContext()->setWindowName("MBT Hybrid");
 #endif
@@ -76,11 +76,11 @@ vpMbEdgeKltTracker::~vpMbEdgeKltTracker()
 
   \param I : Input image.
 */
-void 
+void
 vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
 {
   vpMbKltTracker::init(I);
-  
+
   initPyramid(I, Ipyramid);
 
   vpMbEdgeTracker::resetMovingEdge();
@@ -94,7 +94,7 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
       upScale(i);
     }
   } while(i != 0);
-  
+
   cleanPyramid(Ipyramid);
 }
 
@@ -107,7 +107,7 @@ vpMbEdgeKltTracker::init(const vpImage<unsigned char>& I)
   \param I : image corresponding to the desired pose.
   \param cdMo : Pose to affect.
 */
-void           
+void
 vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
 {
     vpMbKltTracker::setPose(I, cdMo);
@@ -131,15 +131,15 @@ vpMbEdgeKltTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneou
         upScale(i);
       }
     } while(i != 0);
-    
+
     cleanPyramid(Ipyramid);
 }
 
 /*!
   Reset the tracker. The model is removed and the pose is set to identity.
-  The tracker needs to be initialized with a new model and a new pose. 
+  The tracker needs to be initialized with a new model and a new pose.
 */
-void    
+void
 vpMbEdgeKltTracker::resetTracker()
 {
   vpMbEdgeTracker::resetTracker();
@@ -166,7 +166,7 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
       nbrow += l->nbFeatureTotal;
     }
   }
-  
+
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
     cy = *it;
 
@@ -199,7 +199,7 @@ vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
 
   \sa loadConfigFile(const char*), vpXmlParser::cleanup()
 */
-void 
+void
 vpMbEdgeKltTracker::loadConfigFile(const std::string& configFile)
 {
   vpMbEdgeKltTracker::loadConfigFile(configFile.c_str());
@@ -213,7 +213,7 @@ vpMbEdgeKltTracker::loadConfigFile(const std::string& configFile)
   vpXmlParser::cleanup() before the exit().
 
   \throw vpException::ioError if the file has not been properly parsed (file not
-  found or wrong format for the data). 
+  found or wrong format for the data).
 
   \param configFile : full name of the xml file.
 
@@ -355,7 +355,7 @@ bool
 vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w_mbt, vpColVector &w_klt,
                                  const unsigned int lvl)
 {
-  
+
   postTrackingMbt(w_mbt,lvl);
 
   if (displayFeatures)
@@ -368,7 +368,7 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
           l->displayMovingEdges(I);
         }
       }
-      
+
       vpMbtDistanceCylinder *cy ;
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
         cy = *it;
@@ -396,7 +396,7 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
   }
 
   vpMbEdgeTracker::updateMovingEdge(I);
-  
+
   vpMbEdgeTracker::initMovingEdge(I, cMo) ;
   vpMbEdgeTracker::reinitMovingEdge(I, cMo);
 
@@ -405,7 +405,7 @@ vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w
 
   if(reInit)
     return true;
-  
+
   return false;
 }
 
@@ -465,7 +465,7 @@ vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
         l->Reinit = true;
     }
   }
-  
+
   // Same thing with cylinders as with lines
   vpMbtDistanceCylinder *cy ;
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
@@ -585,14 +585,13 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
 {
   vpColVector factor;
   nbrow = trackFirstLoop(I, factor, lvl);
-  
+
   if(nbrow < 4 && nbInfos < 4){
-    vpERROR_TRACE("\n\t\t Error-> not enough data") ;
-    throw vpTrackingException(vpTrackingException::notEnoughPointError, "\n\t\t Error-> not enough data");
+    throw vpTrackingException(vpTrackingException::notEnoughPointError, "Error: not enough features");
   }
   else if(nbrow < 4)
     nbrow = 0;
-  
+
   unsigned int totalNbRows = nbrow + 2*nbInfos;
   double residu = 0;
   double residu_1 = -1;
@@ -604,12 +603,12 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   vpColVector R_mbt, R_klt;  // residu
   vpMatrix L_true;
   vpMatrix LVJ_true;
-  
+
   if(nbrow != 0){
     L_mbt.resize(nbrow, 6, false);
     R_mbt.resize(nbrow, false);
   }
-  
+
   if(nbInfos != 0){
     L_klt.resize(2*nbInfos, 6, false);
     R_klt.resize(2*nbInfos, false);
@@ -621,16 +620,16 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
 
   vpMatrix LTL;
   vpColVector LTR;
-  
+
   double factorMBT = 1.0;
   double factorKLT = 1.0;
-  
+
   //More efficient weight repartition for hybrid tracker should come soon...
 //   factorMBT = 1.0 - (double)nbrow / (double)(nbrow + nbInfos);
 //   factorKLT = 1.0 - factorMBT;
   factorMBT = 0.35;
   factorKLT = 0.65;
-  
+
   if (nbrow < 4)
     factorKLT = 1.;
   if (nbInfos < 4)
@@ -665,7 +664,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   while( ((int)((residu - residu_1)*1e8) !=0 )  && (iter < m_maxIter) ){
     if (nbrow >= 4)
       trackSecondLoop(I, L_mbt, R_mbt, cMo, lvl);
-      
+
     if (nbInfos >= 4) {
       unsigned int shift = 0;
       vpMbtDistanceKltPoints *kltpoly;
@@ -796,7 +795,7 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
       ctTc0 = vpExponentialMap::direct(v).inverse() * ctTc0;
       cMo = ctTc0 * c0Mo;
     }
-    
+
     iter++;
   }
 
@@ -827,7 +826,7 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
     vpMbKltTracker::preTracking(I);
   }
   catch(...){}
-  
+
   if(m_nbInfos >= 4) {
     unsigned int old_maxIter = m_maxIter;
     m_maxIter = m_maxIterKlt;
@@ -838,7 +837,7 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
     m_nbInfos = 0;
     // std::cout << "[Warning] Unable to init with KLT" << std::endl;
   }
-  
+
   vpMbEdgeTracker::trackMovingEdge(I);
 
   unsigned int nbrow = 0;
@@ -846,11 +845,11 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
 
   if(postTracking(I, w_mbt, w_klt)){
     vpMbKltTracker::reinit(I);
-    
+
     // AY : Removed as edge tracked, if necessary, is reinitialized in postTracking()
 
 //    initPyramid(I, Ipyramid);
-    
+
 //    unsigned int i = (unsigned int)scales.size();
 //    do {
 //      i--;
@@ -860,7 +859,7 @@ vpMbEdgeKltTracker::track(const vpImage<unsigned char>& I)
 //        upScale(i);
 //      }
 //    } while(i != 0);
-    
+
 //    cleanPyramid(Ipyramid);
   }
 }
@@ -877,16 +876,15 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
   }
 
   unsigned int nbrow = initMbtTracking(lvl);
-  
+
   if (nbrow==0){
-//     vpERROR_TRACE("\n\t\t Error-> not enough data in the interaction matrix...") ;
-//     throw vpTrackingException(vpTrackingException::notEnoughPointError, "\n\t\t Error-> not enough data in the interaction matrix...");
+//     throw vpTrackingException(vpTrackingException::notEnoughPointError, "Error: not enough features in the interaction matrix...");
       return nbrow;
   }
-  
+
   factor.resize(nbrow);
   factor = 1;
-    
+
   unsigned int n = 0;
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
     if((*it)->isTracked()){
@@ -925,7 +923,7 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
       }
     }
   }
-  
+
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
     if((*it)->isTracked()){
       cy = *it;
@@ -978,11 +976,11 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
       n+= ci->nbFeature;
     }
   }
-  
+
   return nbrow;
 }
 
-void 
+void
 vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& I,  vpMatrix &L, vpColVector &error,
                                     vpHomogeneousMatrix& cMo_, const unsigned int lvl)
 {
@@ -1004,7 +1002,7 @@ vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char>& I,  vpMatrix &
       n+= l->nbFeatureTotal;
     }
   }
-  
+
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[lvl].begin(); it!=cylinders[lvl].end(); ++it){
     if((*it)->isTracked()){
       cy = *it;
@@ -1043,7 +1041,7 @@ void
 vpMbEdgeKltTracker::setCameraParameters(const vpCameraParameters& camera)
 {
   this->cam = camera;
-  
+
   vpMbEdgeTracker::setCameraParameters(cam);
   vpMbKltTracker::setCameraParameters(cam);
 }

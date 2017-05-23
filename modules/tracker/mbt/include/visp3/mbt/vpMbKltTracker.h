@@ -317,21 +317,21 @@ public:
 
     \return The erosion.
    */
-  inline  unsigned int getMaskBorder() const { return maskBorder; }
+  inline  unsigned int getKltMaskBorder() const { return maskBorder; }
 
   /*!
     Get the current number of klt points.
 
     \return the number of features
    */
-  inline  int  getNbKltPoints() const {return tracker.getNbFeatures();}
+  inline  int  getKltNbPoints() const {return tracker.getNbFeatures();}
 
   /*!
     Get the threshold for the acceptation of a point.
 
     \return threshold_outlier : Threshold for the weight below which a point is rejected.
    */
-  inline  double getThresholdAcceptation() const { return threshold_outlier;}
+  inline  double getKltThresholdAcceptation() const { return threshold_outlier;}
 
   virtual inline vpColVector getError() const {
     return m_error_klt;
@@ -352,19 +352,27 @@ public:
 
   void setCameraParameters(const vpCameraParameters& cam);
 
-  virtual void setKltOpencv(const vpKltOpencv& t);
 
   /*!
     Set the erosion of the mask used on the Model faces.
 
     \param  e : The desired erosion.
    */
-  inline  void setMaskBorder(const unsigned int &e)
+  inline  void setKltMaskBorder(const unsigned int &e)
   {
     maskBorder = e;
     //if(useScanLine)
     faces.getMbScanLineRenderer().setMaskBorder(maskBorder);
   }
+
+  virtual void setKltOpencv(const vpKltOpencv& t);
+
+  /*!
+    Set the threshold for the acceptation of a point.
+
+    \param th : Threshold for the weight below which a point is rejected.
+   */
+  inline  void setKltThresholdAcceptation(const double th) {threshold_outlier = th;}
 
   /*!
     Use Ogre3D for visibility tests
@@ -401,19 +409,62 @@ public:
   */
   virtual void setProjectionErrorComputation(const bool &flag) {
     if(flag)
-      vpCTRACE << "This option is not yet implemented in vpMbKltTracker, projection error computation set to false." << std::endl ; }
-
-  /*!
-    Set the threshold for the acceptation of a point.
-
-    \param th : Threshold for the weight below which a point is rejected.
-   */
-  inline  void setThresholdAcceptation(const double th) {threshold_outlier = th;}
+      std::cerr << "This option is not yet implemented in vpMbKltTracker, projection error computation set to false." << std::endl;
+  }
 
   void setUseKltTracking(const std::string &name, const bool &useKltTracking);
 
   virtual void testTracking();
   virtual void track(const vpImage<unsigned char>& I);
+
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+
+  /*!
+    Get the erosion of the mask used on the Model faces.
+    \deprecated Use rather getkltMaskBorder()
+
+    \return The erosion.
+   */
+  /* vp_deprecated */ inline unsigned int getMaskBorder() const { return maskBorder; }
+  /*!
+    Get the current number of klt points.
+    \deprecated Use rather getKltNbPoints()
+
+    \return the number of features
+   */
+  /* vp_deprecated */ inline int getNbKltPoints() const {return tracker.getNbFeatures();}
+
+  /*!
+    Get the threshold for the acceptation of a point.
+    \deprecated Use rather getKltThresholdAcceptation()
+
+    \return threshold_outlier : Threshold for the weight below which a point is rejected.
+   */
+  /* vp_deprecated */ inline double getThresholdAcceptation() const { return threshold_outlier;}
+  /*!
+    Set the erosion of the mask used on the Model faces.
+
+    \param  e : The desired erosion.
+   */
+  /* vp_deprecated */ inline void setMaskBorder(const unsigned int &e)
+  {
+    maskBorder = e;
+    //if(useScanLine)
+    faces.getMbScanLineRenderer().setMaskBorder(maskBorder);
+  }
+
+  /*!
+    Set the threshold for the acceptation of a point.
+    \deprecated Use rather setKltThresholdAcceptation()
+
+    \param th : Threshold for the weight below which a point is rejected.
+   */
+  /* vp_deprecated */ inline void setThresholdAcceptation(const double th) {threshold_outlier = th;}
+
+  //@}
 
 protected:
   /** @name Protected Member Functions Inherited from vpMbKltTracker */

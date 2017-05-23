@@ -2,7 +2,7 @@
  *
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2016 by INRIA. All rights reserved.
- * 
+ *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * ("GPL") version 2 as published by the Free Software Foundation.
@@ -10,11 +10,11 @@
  * distribution for additional information about the GNU GPL.
  *
  * For using ViSP with software that can not be combined with the GNU
- * GPL, please contact INRIA about acquiring a ViSP Professional 
+ * GPL, please contact INRIA about acquiring a ViSP Professional
  * Edition License.
  *
  * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
- * 
+ *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -24,7 +24,7 @@
  *
  * If you have questions regarding the use of this file, please contact
  * INRIA at visp@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -50,7 +50,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
 #include <visp3/mbt/vpMbKltTracker.h>
 
@@ -159,7 +159,7 @@ public:
   virtual std::map<std::string, CvPoint2D32f*> getKltPoints();
 #endif
 
-  virtual std::map<std::string, int> getNbKltPoints() const;
+  virtual std::map<std::string, int> getKltNbPoints() const;
 
   virtual unsigned int getNbPolygon() const;
   virtual std::map<std::string, unsigned int> getMultiNbPolygon() const;
@@ -269,13 +269,15 @@ public:
   void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts);
 #endif
 
+  virtual void setKltMaskBorder(const unsigned int &e);
+
   virtual void setKltOpencv(const vpKltOpencv& t);
   virtual void setKltOpencv(const std::map<std::string, vpKltOpencv> &mapOfOpenCVTrackers);
 
+  virtual void setKltThresholdAcceptation(const double th);
+
   virtual void setLod(const bool useLod, const std::string &name="");
   virtual void setLod(const bool useLod, const std::string &cameraName, const std::string &name);
-
-  virtual void setMaskBorder(const unsigned int &e);
 
   virtual void setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name="");
 
@@ -307,13 +309,20 @@ public:
 
   virtual void setScanLineVisibilityTest(const bool &v);
 
-  virtual void setThresholdAcceptation(const double th);
-
   virtual void setUseKltTracking(const std::string &name, const bool &useKltTracking);
 
   virtual void track(const vpImage<unsigned char> &I);
   virtual void track(const vpImage<unsigned char>& I1, const vpImage<unsigned char>& I2);
   virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
+  //@}
+
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /* vp_deprecated */ virtual std::map<std::string, int> getNbKltPoints() const;
+  /* vp_deprecated */ virtual void setMaskBorder(const unsigned int &e);
+  /* vp_deprecated */ virtual void setThresholdAcceptation(const double th);
   //@}
 
 protected:
