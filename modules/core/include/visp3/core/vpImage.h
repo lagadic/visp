@@ -1780,7 +1780,6 @@ void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Type> &C)
 
   if ( (this->getWidth() != B.getWidth())||(this->getHeight() != B.getHeight()))
   {
-    vpERROR_TRACE("\n\t\t vpImage mismatch in vpImage/vpImage substraction") ;
     throw(vpException(vpException::memoryAllocationError,
           "vpImage mismatch in vpImage/vpImage substraction ")) ;
   }
@@ -1822,7 +1821,6 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
 
   if ( (A.getWidth() != B.getWidth())||(A.getHeight() != B.getHeight()))
   {
-    vpERROR_TRACE("\n\t\t vpImage mismatch in vpImage/vpImage substraction") ;
     throw(vpException(vpException::memoryAllocationError,
                       "vpImage mismatch in vpImage/vpImage substraction ")) ;
   }

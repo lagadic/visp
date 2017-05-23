@@ -157,9 +157,9 @@ vpHomography::HartleyNormalization(unsigned int n,
 
 void
 vpHomography::HartleyDenormalization(vpHomography &aHbn,
-				     vpHomography &aHb,
-				     double xg1, double yg1, double coef1,
-				     double xg2, double yg2, double coef2 )
+             vpHomography &aHb,
+             double xg1, double yg1, double coef1,
+             double xg2, double yg2, double coef2 )
 {
 
   //calcul des transformations a appliquer sur M_norm pour obtenir M
@@ -341,9 +341,8 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
     for(unsigned int i = 0; i<9;i++) if(D[i]>1e-7) rank++;
     if(rank <7)
     {
-      vpTRACE(" Rank is : %d, should be 8", rank);
       throw(vpMatrixException(vpMatrixException::rankDeficient,
-                              "\n\t\t Matrix rank is deficient")) ;
+                              "Matrix rank %d is deficient (should be 8)", rank));
     }
     //h = is the column of V associated with the smallest singular value of A
 
