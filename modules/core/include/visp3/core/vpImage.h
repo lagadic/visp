@@ -131,21 +131,21 @@ class vpImage
   friend class vpImageConvert;
 
 public:
-  Type *bitmap ;  //!< points toward the bitmap
-  vpDisplay *display ;
+  Type *bitmap;  //!< points toward the bitmap
+  vpDisplay *display;
 
   //! constructor
-  vpImage() ;
+  vpImage();
   //! copy constructor
   vpImage(const vpImage<Type>&);
   //! constructor  set the size of the image
-  vpImage(unsigned int height, unsigned int width) ;
+  vpImage(unsigned int height, unsigned int width);
   //! constructor  set the size of the image and init all the pixel
-  vpImage(unsigned int height, unsigned int width, Type value) ;
+  vpImage(unsigned int height, unsigned int width, Type value);
   //! constructor from an image stored as a continuous array in memory
-  vpImage(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false) ;
+  vpImage(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false);
   //! destructor
-  virtual ~vpImage() ;
+  virtual ~vpImage();
 
   /** @name Inherited functionalities from vpImage */
   //@{
@@ -163,7 +163,7 @@ public:
 
     \sa getWidth()
    */
-  inline  unsigned int getCols() const { return width ; }
+  inline  unsigned int getCols() const { return width; }
   /*!
     Get the image height.
 
@@ -175,9 +175,9 @@ public:
   inline  unsigned int getHeight() const { return height; }
 
   // Return the maximum value within the bitmap
-  Type getMaxValue() const ;
+  Type getMaxValue() const;
   // Return the minumum value within the bitmap
-  Type getMinValue() const ;
+  Type getMinValue() const;
   //Look for the minumum and the maximum value within the bitmap
   void getMinMaxValue(Type &min, Type &max) const;
 
@@ -201,7 +201,7 @@ public:
 
     \sa getHeight()
   */
-  inline  unsigned int getRows() const { return height ; }
+  inline  unsigned int getRows() const { return height; }
   /*!
     Get the image size.
 
@@ -209,7 +209,7 @@ public:
 
     \sa getWidth(), getHeight()
    */
-  inline unsigned int getSize() const { return width*height ; }
+  inline unsigned int getSize() const { return width*height; }
 
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(double i, double j) const;
@@ -229,9 +229,9 @@ public:
   void halfSizeImage(vpImage<Type> &res) const;
 
   //! Set the size of the image
-  void init(unsigned int height, unsigned int width) ;
+  void init(unsigned int height, unsigned int width);
   //! Set the size of the image
-  void init(unsigned int height, unsigned int width, Type value) ;
+  void init(unsigned int height, unsigned int width, Type value);
   //! init from an image stored as a continuous array in memory
   void init(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false);
   void insert(const vpImage<Type> &src, const vpImagePoint topLeft);
@@ -256,7 +256,7 @@ public:
   */
   inline Type operator()(const unsigned int i, const  unsigned int j) const
   {
-    return bitmap[i*width+j] ;
+    return bitmap[i*width+j];
   }
   /*!
     Set the value \e v of an image point with coordinates (i, j), with i the row position and j
@@ -266,7 +266,7 @@ public:
   inline void  operator()(const unsigned int i, const  unsigned int j,
          const Type &v)
   {
-    bitmap[i*width+j] = v ;
+    bitmap[i*width+j] = v;
   }
   /*!
     Get the value of an image point.
@@ -284,7 +284,7 @@ public:
     unsigned int i = (unsigned int) ip.get_i();
     unsigned int j = (unsigned int) ip.get_j();
 
-    return bitmap[i*width+j] ;
+    return bitmap[i*width+j];
   }
   /*!
     Set the value of an image point.
@@ -300,7 +300,7 @@ public:
     unsigned int i = (unsigned int) ip.get_i();
     unsigned int j = (unsigned int) ip.get_j();
 
-    bitmap[i*width+j] = v ;
+    bitmap[i*width+j] = v;
   }
 
   vpImage<Type> operator-(const vpImage<Type> &B);
@@ -335,10 +335,10 @@ public:
   //@}
 
 private:
-  unsigned int npixels ; ///! number of pixel in the image
-  unsigned int width ;   ///! number of columns
-  unsigned int height ;  ///! number of rows
-  Type **row ;    //!< points the row pointer array
+  unsigned int npixels; ///! number of pixel in the image
+  unsigned int width;   ///! number of columns
+  unsigned int height;  ///! number of rows
+  Type **row;           ///! points the row pointer array
 };
 
 template<class Type>
@@ -627,18 +627,10 @@ template<class Type>
 void
 vpImage<Type>::init(unsigned int h, unsigned int w, Type value)
 {
-  try
-  {
-    init(h,w) ;
-  }
-  catch(vpException &)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+  init(h,w);
 
   for (unsigned int i=0  ; i < npixels ;  i++)
-    bitmap[i] = value ;
+    bitmap[i] = value;
 }
 
 
@@ -674,39 +666,35 @@ vpImage<Type>::init(unsigned int h, unsigned int w)
   if ((h != this->height) || (w != this->width))
   {
     if (bitmap != NULL) {
-      vpDEBUG_TRACE(10,"Destruction bitmap[]") ;
+      vpDEBUG_TRACE(10,"Destruction bitmap[]");
       delete [] bitmap;
       bitmap = NULL;
     }
   }
 
-  this->width = w ;
+  this->width = w;
   this->height = h;
 
   npixels=width*height;
 
-  if (bitmap == NULL)  bitmap = new  Type[npixels] ;
+  if (bitmap == NULL)  bitmap = new  Type[npixels];
 
-  //  vpERROR_TRACE("Allocate bitmap %p",bitmap) ;
   if (bitmap == NULL)
   {
-        vpERROR_TRACE("cannot allocate bitmap ") ;
     throw(vpException(vpException::memoryAllocationError,
-          "cannot allocate bitmap ")) ;
+          "cannot allocate bitmap "));
   }
 
-  if (row == NULL)  row = new  Type*[height] ;
-//  vpERROR_TRACE("Allocate row %p",row) ;
+  if (row == NULL)  row = new  Type*[height];
   if (row == NULL)
   {
-    vpERROR_TRACE("cannot allocate row ") ;
     throw(vpException(vpException::memoryAllocationError,
-          "cannot allocate row ")) ;
+          "cannot allocate row "));
   }
 
-  unsigned int i ;
+  unsigned int i;
   for ( i =0  ; i < height ; i++)
-    row[i] = bitmap + i*width ;
+    row[i] = bitmap + i*width;
 }
 
 /*!
@@ -740,7 +728,7 @@ vpImage<Type>::init(Type * const array, const unsigned int h, const unsigned int
     }
   }
 
-  this->width = w ;
+  this->width = w;
   this->height = h;
 
   npixels = width*height;
@@ -750,7 +738,7 @@ vpImage<Type>::init(Type * const array, const unsigned int h, const unsigned int
 
     if (bitmap == NULL) {
       throw(vpException(vpException::memoryAllocationError,
-            "cannot allocate bitmap ")) ;
+            "cannot allocate bitmap "));
     }
 
     //Copy the image data
@@ -763,7 +751,7 @@ vpImage<Type>::init(Type * const array, const unsigned int h, const unsigned int
   if (row == NULL)  row = new Type*[height];
   if (row == NULL) {
     throw(vpException(vpException::memoryAllocationError,
-          "cannot allocate row ")) ;
+          "cannot allocate row "));
   }
 
   for (unsigned int i = 0  ; i < height ; i++) {
@@ -793,14 +781,7 @@ template<class Type>
 vpImage<Type>::vpImage(unsigned int h, unsigned int w)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
-  try
-  {
-    init(h,w,0) ;
-  }
-  catch(...)
-  {
-    throw ;
-  }
+  init(h,w,0);
 }
 
 /*!
@@ -824,15 +805,7 @@ template<class Type>
 vpImage<Type>::vpImage (unsigned int h, unsigned int w, Type value)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
-  try
-  {
-    init(h,w,value) ;
-  }
-  catch(vpException &)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+  init(h,w,value);
 }
 
 /*!
@@ -853,14 +826,7 @@ template<class Type>
 vpImage<Type>::vpImage (Type * const array, const unsigned int h, const unsigned int w, const bool copyData)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
-  try
-  {
-    init(array, h, w, copyData);
-  }
-  catch(vpException &)
-  {
-    throw ;
-  }
+  init(array, h, w, copyData);
 }
 
 /*!
@@ -902,15 +868,7 @@ template<class Type>
 void
 vpImage<Type>::resize(unsigned int h, unsigned int w)
 {
-  try
-  {
-    init(h, w) ;
-  }
-  catch(vpException &)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+  init(h, w);
 }
 
 /*!
@@ -936,15 +894,7 @@ template<class Type>
 void
 vpImage<Type>::resize(unsigned int h, unsigned int w, const Type val)
 {
-  try
-  {
-    init(h, w, val) ;
-  }
-  catch(vpException &)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+  init(h, w, val);
 }
 
 
@@ -958,23 +908,23 @@ template<class Type>
 void
 vpImage<Type>::destroy()
 {
- //   vpERROR_TRACE("Deallocate ") ;
+ //   vpERROR_TRACE("Deallocate ");
 
 
   if (bitmap!=NULL)
   {
-  //  vpERROR_TRACE("Deallocate bitmap memory %p",bitmap) ;
-//    vpDEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap) ;
-    delete [] bitmap ;
+  //  vpERROR_TRACE("Deallocate bitmap memory %p",bitmap);
+//    vpDEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap);
+    delete [] bitmap;
     bitmap = NULL;
   }
 
 
   if (row!=NULL)
   {
- //   vpERROR_TRACE("Deallocate row memory %p",row) ;
-//    vpDEBUG_TRACE(20,"Deallocate row memory %p",row) ;
-    delete [] row ;
+ //   vpERROR_TRACE("Deallocate row memory %p",row);
+//    vpDEBUG_TRACE(20,"Deallocate row memory %p",row);
+    delete [] row;
     row = NULL;
   }
 
@@ -989,7 +939,7 @@ vpImage<Type>::destroy()
 template<class Type>
 vpImage<Type>::~vpImage()
 {
-  destroy() ;
+  destroy();
 }
 
 
@@ -1001,17 +951,11 @@ template<class Type>
 vpImage<Type>::vpImage(const vpImage<Type>& I)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
-  try
-  {
-    resize(I.getHeight(),I.getWidth());
-    memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type)) ;
-    for (unsigned int i =0  ; i < this->height ; i++) row[i] = bitmap + i*this->width ;
-  }
-  catch(vpException &)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+  resize(I.getHeight(),I.getWidth());
+  memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type));
+
+  for (unsigned int i =0  ; i < this->height ; i++)
+    row[i] = bitmap + i*this->width;
 }
 
 /*!
@@ -1022,12 +966,12 @@ vpImage<Type>::vpImage(const vpImage<Type>& I)
 template<class Type>
 Type vpImage<Type>::getMaxValue() const
 {
-  Type m = bitmap[0] ;
+  Type m = bitmap[0];
   for (unsigned int i=0 ; i < npixels ; i++)
   {
-    if (bitmap[i]>m) m = bitmap[i] ;
+    if (bitmap[i]>m) m = bitmap[i];
   }
-  return m ;
+  return m;
 }
 
 /*!
@@ -1040,8 +984,8 @@ Type vpImage<Type>::getMinValue() const
 {
   Type m =  bitmap[0];
   for (unsigned int i=0 ; i < npixels ; i++)
-    if (bitmap[i]<m) m = bitmap[i] ;
-  return m ;
+    if (bitmap[i]<m) m = bitmap[i];
+  return m;
 }
 
 
@@ -1057,8 +1001,8 @@ void vpImage<Type>::getMinMaxValue(Type &min, Type &max) const
   min = max =  bitmap[0];
   for (unsigned int i=0 ; i < npixels ; i++)
   {
-    if (bitmap[i]<min) min = bitmap[i] ;
-    if (bitmap[i]>max) max = bitmap[i] ;
+    if (bitmap[i]<min) min = bitmap[i];
+    if (bitmap[i]>max) max = bitmap[i];
   }
 }
 
@@ -1071,51 +1015,43 @@ vpImage<Type> & vpImage<Type>::operator=(const vpImage<Type> &I)
     /* we first have to set the initial values of the image because resize function calls init function that test the actual size of the image */
   if(bitmap != NULL){
     delete[] bitmap;
-    bitmap = NULL ;
+    bitmap = NULL;
   }
 
   if(row != NULL){
     delete[] row;
-    row = NULL ;
+    row = NULL;
   }
   this->width = I.width;
   this->height = I.height;
   this->npixels = I.npixels;
-  try
+
+  if(I.npixels != 0)
   {
-    if(I.npixels != 0)
-    {
-      if (bitmap == NULL){
-        bitmap = new  Type[npixels] ;
-      }
+    if (bitmap == NULL){
+      bitmap = new  Type[npixels];
+    }
 
-      if (bitmap == NULL){
-            vpERROR_TRACE("cannot allocate bitmap ") ;
-        throw(vpException(vpException::memoryAllocationError,
-              "cannot allocate bitmap ")) ;
-      }
+    if (bitmap == NULL){
+      throw(vpException(vpException::memoryAllocationError,
+            "cannot allocate bitmap "));
+    }
 
-      if (row == NULL){
-        row = new  Type*[height] ;
-      }
-      if (row == NULL){
-        vpERROR_TRACE("cannot allocate row ") ;
-        throw(vpException(vpException::memoryAllocationError,
-              "cannot allocate row ")) ;
-      }
+    if (row == NULL){
+      row = new  Type*[height];
+    }
+    if (row == NULL){
+      throw(vpException(vpException::memoryAllocationError,
+            "cannot allocate row "));
+    }
 
-      memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type)) ;
+    memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type));
 
-      for (unsigned int i=0; i<this->height; i++){
-        row[i] = bitmap + i*this->width;
-      }
+    for (unsigned int i=0; i<this->height; i++){
+      row[i] = bitmap + i*this->width;
     }
   }
-  catch(vpException &)
-  {
-    vpERROR_TRACE(" ") ;
-    throw ;
-  }
+
   return (* this);
 }
 
@@ -1130,7 +1066,7 @@ template<class Type>
 vpImage<Type>& vpImage<Type>::operator=(const Type &v)
 {
   for (unsigned int i=0 ; i < npixels ; i++)
-    bitmap[i] = v ;
+    bitmap[i] = v;
 
   return *this;
 }
@@ -1156,7 +1092,7 @@ bool vpImage<Type>::operator==(const vpImage<Type> &I)
       return false;
     }
   }
-  return true ;
+  return true;
 }
 /*!
   Compare two images.
@@ -1176,7 +1112,7 @@ bool vpImage<Type>::operator!=(const vpImage<Type> &I)
 //    if (bitmap[i] != I.bitmap[i])
 //      return true;
 //  }
-//  return false ;
+//  return false;
   return !(*this == I);
 }
 
@@ -1483,7 +1419,6 @@ Type vpImage<Type>::getValue(double i, double j) const
   jround = (unsigned int)floor(j);
 
   if (iround >= height || jround >= width) {
-    vpERROR_TRACE("Pixel outside the image") ;
     throw(vpException(vpImageException::notInTheImage,
           "Pixel outside the image"));
   }
@@ -1536,7 +1471,6 @@ inline double vpImage<double>::getValue(double i, double j) const
   jround = (unsigned int)floor(j);
 
   if (iround >= height || jround >= width) {
-    vpERROR_TRACE("Pixel outside the image") ;
     throw(vpException(vpImageException::notInTheImage,
           "Pixel outside the image"));
   }
@@ -1573,7 +1507,6 @@ inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
   jround = (unsigned int)floor(j);
 
   if (iround >= height || jround >= width) {
-    vpERROR_TRACE("Pixel outside the image") ;
     throw(vpException(vpImageException::notInTheImage,
           "Pixel outside the image"));
   }
@@ -1629,7 +1562,6 @@ inline Type vpImage<Type>::getValue(vpImagePoint &ip) const
   jround = (unsigned int)floor(ip.get_j());
 
   if (iround >= height || jround >= width) {
-    vpERROR_TRACE("Pixel outside the image") ;
     throw(vpException(vpImageException::notInTheImage,
           "Pixel outside the image"));
   }
@@ -1665,7 +1597,6 @@ inline double vpImage<double>::getValue(vpImagePoint &ip) const
   jround = (unsigned int)floor(ip.get_j());
 
   if (iround >= height || jround >= width) {
-    vpERROR_TRACE("Pixel outside the image") ;
     throw(vpException(vpImageException::notInTheImage,
           "Pixel outside the image"));
   }
@@ -1702,7 +1633,6 @@ inline vpRGBa vpImage<vpRGBa>::getValue(vpImagePoint &ip) const
   jround = (unsigned int)floor(ip.get_j());
 
   if (iround >= height || jround >= width) {
-    vpERROR_TRACE("Pixel outside the image") ;
     throw(vpException(vpImageException::notInTheImage,
           "Pixel outside the image"));
   }
@@ -1773,20 +1703,19 @@ void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Type> &C)
   }
   catch(vpException &me)
   {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw ;
+    std::cout << me << std::endl;
+    throw;
   }
 
   if ( (this->getWidth() != B.getWidth())||(this->getHeight() != B.getHeight()))
   {
     throw(vpException(vpException::memoryAllocationError,
-          "vpImage mismatch in vpImage/vpImage substraction ")) ;
+          "vpImage mismatch in vpImage/vpImage substraction "));
   }
 
   for (unsigned int i=0;i<this->getWidth()*this->getHeight();i++)
   {
-    *(C.bitmap + i) = *(bitmap + i) - *(B.bitmap + i) ;
+    *(C.bitmap + i) = *(bitmap + i) - *(B.bitmap + i);
   }
 }
 
@@ -1814,20 +1743,19 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
   }
   catch(vpException &me)
   {
-    vpERROR_TRACE("Error caught") ;
-    std::cout << me << std::endl ;
-    throw ;
+    std::cout << me << std::endl;
+    throw;
   }
 
   if ( (A.getWidth() != B.getWidth())||(A.getHeight() != B.getHeight()))
   {
     throw(vpException(vpException::memoryAllocationError,
-                      "vpImage mismatch in vpImage/vpImage substraction ")) ;
+                      "vpImage mismatch in vpImage/vpImage substraction "));
   }
 
   for (unsigned int i=0;i<A.getWidth()*A.getHeight();i++)
   {
-    *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i) ;
+    *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i);
   }
 }
 
@@ -1843,7 +1771,6 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
 template<class Type>
 void vpImage<Type>::performLut(const Type (&)[256], const unsigned int)
 {
-//  vpTRACE("Not implemented");
   std::cerr << "Not implemented !" << std::endl;
 }
 

@@ -67,16 +67,16 @@ vpHomography::HartleyNormalization(const std::vector<double> &x, const std::vect
   if (yn.size() != n)
     yn.resize(n);
 
-  xg = 0 ;
-  yg = 0 ;
+  xg = 0;
+  yg = 0;
 
   for (unsigned int i =0 ; i < n ; i++)
   {
-    xg += x[i] ;
-    yg += y[i] ;
+    xg += x[i];
+    yg += y[i];
   }
-  xg /= n ;
-  yg /= n ;
+  xg /= n;
+  yg /= n;
 
   // Changement d'origine : le centre de gravite doit correspondre
   // a l'origine des coordonnees
@@ -85,8 +85,8 @@ vpHomography::HartleyNormalization(const std::vector<double> &x, const std::vect
   {
     double xni=x[i]-xg;
     double yni=y[i]-yg;
-    xn[i] = xni ;
-    yn[i] = yni ;
+    xn[i] = xni;
+    yn[i] = yni;
     distance+=sqrt(vpMath::sqr(xni)+vpMath::sqr(yni));
   }//for translation sur tous les points
 
@@ -114,16 +114,16 @@ vpHomography::HartleyNormalization(unsigned int n,
                                    double &coef)
 {
   unsigned int i;
-  xg = 0 ;
-  yg = 0 ;
+  xg = 0;
+  yg = 0;
 
   for (i =0 ; i < n ; i++)
   {
-    xg += x[i] ;
-    yg += y[i] ;
+    xg += x[i];
+    yg += y[i];
   }
-  xg /= n ;
-  yg /= n ;
+  xg /= n;
+  yg /= n;
 
   //Changement d'origine : le centre de gravite doit correspondre
   // a l'origine des coordonnees
@@ -132,8 +132,8 @@ vpHomography::HartleyNormalization(unsigned int n,
   {
     double xni=x[i]-xg;
     double yni=y[i]-yg;
-    xn[i] = xni ;
-    yn[i] = yni ;
+    xn[i] = xni;
+    yn[i] = yni;
     distance+=sqrt(vpMath::sqr(xni)+vpMath::sqr(yni));
   }//for translation sur tous les points
 
@@ -174,14 +174,14 @@ vpHomography::HartleyDenormalization(vpHomography &aHbn,
   T2T.eye();
 
   T1[0][0]=T1[1][1]=coef1;
-  T1[0][2]=-coef1*xg1 ;
-  T1[1][2]=-coef1*yg1 ;
+  T1[0][2]=-coef1*xg1;
+  T1[1][2]=-coef1*yg1;
 
   T2[0][0]=T2[1][1]=coef2;
-  T2[0][2]=-coef2*xg2 ;
-  T2[1][2]=-coef2*yg2 ;
+  T2[0][2]=-coef2*xg2;
+  T2[1][2]=-coef2*yg2;
 
-  T2T=T2.pseudoInverse(1e-16) ;
+  T2T=T2.pseudoInverse(1e-16);
 
   vpMatrix aHbn_(3,3);
   for(unsigned int i=0; i<3; i++)
@@ -192,7 +192,7 @@ vpHomography::HartleyDenormalization(vpHomography &aHbn,
 
   for (unsigned int i=0 ; i < 3 ; i++)
     for (unsigned int j=0 ; j < 3 ; j++)
-      aHb[i][j] = maHb[i][j] ;
+      aHb[i][j] = maHb[i][j];
 }
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -305,23 +305,23 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
       A[2*i][0]=0;
       A[2*i][1]=0;
       A[2*i][2]=0;
-      A[2*i][3]=-xbn[i] ;
-      A[2*i][4]=-ybn[i] ;
+      A[2*i][3]=-xbn[i];
+      A[2*i][4]=-ybn[i];
       A[2*i][5]=-1;
-      A[2*i][6]=xbn[i]*yan[i] ;
+      A[2*i][6]=xbn[i]*yan[i];
       A[2*i][7]=ybn[i]*yan[i];
       A[2*i][8]=yan[i];
 
 
-      A[2*i+1][0]=xbn[i] ;
-      A[2*i+1][1]=ybn[i] ;
+      A[2*i+1][0]=xbn[i];
+      A[2*i+1][1]=ybn[i];
       A[2*i+1][2]=1;
       A[2*i+1][3]=0;
       A[2*i+1][4]=0;
       A[2*i+1][5]=0;
       A[2*i+1][6]=-xbn[i]*xan[i];
       A[2*i+1][7]=-ybn[i]*xan[i];
-      A[2*i+1][8]=-xan[i] ;
+      A[2*i+1][8]=-xan[i];
     }
 
     // Add an extra line with zero.
@@ -348,8 +348,8 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
 
     // since  we are not sure that the svd implemented sort the
     // singular value... we seek for the smallest
-    double smallestSv = 1e30 ;
-    unsigned int indexSmallestSv  = 0 ;
+    double smallestSv = 1e30;
+    unsigned int indexSmallestSv  = 0;
     for (unsigned int i=0 ; i < 9 ; i++)
       if ((D[i] < smallestSv) ){ smallestSv = D[i] ;indexSmallestSv = i ; }
 
@@ -373,13 +373,13 @@ void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> 
   }
   catch(vpMatrixException &me)
   {
-    vpTRACE("Matrix Exception ") ;
-    throw(me) ;
+    vpTRACE("Matrix Exception ");
+    throw(me);
   }
   catch(vpException &me)
   {
-    vpERROR_TRACE("caught another error") ;
-    std::cout <<std::endl << me << std::endl ;
-    throw(me) ;
+    vpERROR_TRACE("caught another error");
+    std::cout <<std::endl << me << std::endl;
+    throw(me);
   }
 }
