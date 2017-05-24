@@ -184,11 +184,11 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
       throw (vpException(vpException::ioError, "Could not open the video %s with OpenCV", fileName));
     }
 #  if VISP_HAVE_OPENCV_VERSION >= 0x030000
-    width = capture.get(cv::CAP_PROP_FRAME_WIDTH);
-    height = capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+    width = (unsigned int)capture.get(cv::CAP_PROP_FRAME_WIDTH);
+    height = (unsigned int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
 #  else
-    width = capture.get(CV_CAP_PROP_FRAME_WIDTH);
-    height = capture.get(CV_CAP_PROP_FRAME_HEIGHT);
+    width = (unsigned int)capture.get(CV_CAP_PROP_FRAME_WIDTH);
+    height = (unsigned int)capture.get(CV_CAP_PROP_FRAME_HEIGHT);
 #  endif
 
     I.resize(height, width, 0);
@@ -279,11 +279,11 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
       throw (vpException(vpException::ioError, "Could not open the video %s with OpenCV", fileName));
     }
 #  if VISP_HAVE_OPENCV_VERSION >= 0x030000
-    width = capture.get(cv::CAP_PROP_FRAME_WIDTH);
-    height = capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+    width = (unsigned int)capture.get(cv::CAP_PROP_FRAME_WIDTH);
+    height = (unsigned int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
 #  else
-    width = capture.get(CV_CAP_PROP_FRAME_WIDTH);
-    height = capture.get(CV_CAP_PROP_FRAME_HEIGHT);
+    width = (unsigned int)capture.get(CV_CAP_PROP_FRAME_WIDTH);
+    height = (unsigned int)capture.get(CV_CAP_PROP_FRAME_HEIGHT);
 #  endif
 
     I.resize(height, width, 0);
