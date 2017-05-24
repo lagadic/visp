@@ -3818,7 +3818,7 @@ void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned cha
 
   // Looking for new visible face
   if (m_trackerType & EDGE_TRACKER) {
-    bool newvisibleface = false ;
+    bool newvisibleface = false;
     vpMbEdgeTracker::visibleFace(I, cMo, newvisibleface);
 
     if (useScanLine) {

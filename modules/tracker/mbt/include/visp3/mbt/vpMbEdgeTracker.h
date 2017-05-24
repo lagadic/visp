@@ -482,7 +482,7 @@ protected:
   void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace = -1, const std::string& name = "");
   void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace = -1, const std::string& name = "");
   void addLine(vpPoint &p1, vpPoint &p2, int polygon = -1, std::string name = "");
-  void addPolygon(vpMbtPolygon &p) ;
+  void addPolygon(vpMbtPolygon &p);
 
   void cleanPyramid(std::vector<const vpImage<unsigned char>* >& _pyramid);
   void computeProjectionError(const vpImage<unsigned char>& _I);
@@ -507,7 +507,7 @@ protected:
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
   unsigned int initMbtTracking(unsigned int &nberrors_lines, unsigned int &nberrors_cylinders, unsigned int &nberrors_circles);
-  void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo) ;
+  void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
   void initPyramid(const vpImage<unsigned char>& _I, std::vector<const vpImage<unsigned char>* >& _pyramid);
   void reInitLevel(const unsigned int _lvl);
   void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
@@ -516,8 +516,8 @@ protected:
   void removeLine(const std::string& name);
   void resetMovingEdge();
   void testTracking();
-  void trackMovingEdge(const vpImage<unsigned char> &I) ;
-  void updateMovingEdge(const vpImage<unsigned char> &I) ;
+  void trackMovingEdge(const vpImage<unsigned char> &I);
+  void updateMovingEdge(const vpImage<unsigned char> &I);
   void updateMovingEdgeWeights();
   void upScale(const unsigned int _scale); 
   void visibleFace(const vpImage<unsigned char> &_I, const vpHomogeneousMatrix &_cMo, bool &newvisibleline) ; 

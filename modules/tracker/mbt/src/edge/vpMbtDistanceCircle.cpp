@@ -86,7 +86,7 @@ vpMbtDistanceCircle::~vpMbtDistanceCircle()
 void
 vpMbtDistanceCircle::project(const vpHomogeneousMatrix &cMo)
 {
-  circle->project(cMo) ;
+  circle->project(cMo);
 }
 
 
@@ -103,10 +103,10 @@ vpMbtDistanceCircle::project(const vpHomogeneousMatrix &cMo)
 void
 vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, const double r)
 {
-  circle = new vpCircle ;
-  p1 = new vpPoint ;
-  p2 = new vpPoint ;
-  p3 = new vpPoint ;
+  circle = new vpCircle;
+  p1 = new vpPoint;
+  p2 = new vpPoint;
+  p3 = new vpPoint;
 
   // Get the points
   *p1 = _p1;
@@ -131,10 +131,10 @@ vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpP
 void
 vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
 {
-  me = _me ;
+  me = _me;
   if (meEllipse != NULL)
   {
-    meEllipse->setMe(me) ;
+    meEllipse->setMe(me);
   }
 }
 
@@ -163,7 +163,7 @@ vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHom
 
     // Create the moving edges containers
     meEllipse = new vpMbtMeEllipse;
-    meEllipse->setMe(me) ;
+    meEllipse->setMe(me);
 
     //meEllipse->setDisplay(vpMeSite::RANGE_RESULT) ; // TODO only for debug
     meEllipse->setInitRange(me->getRange()); // TODO: check because set to zero for lines
@@ -196,7 +196,7 @@ vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const vpHo
   if(isvisible){
     try
     {
-      meEllipse->track(I) ;
+      meEllipse->track(I);
     }
     catch(...)
     {
@@ -382,7 +382,7 @@ vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatrix &cM
   if (isvisible)
   {
     // Perspective projection
-    circle->changeFrame(cMo) ;
+    circle->changeFrame(cMo);
     try{
       circle->projection();
     }

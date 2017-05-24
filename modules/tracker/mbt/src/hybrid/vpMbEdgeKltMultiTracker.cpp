@@ -1027,7 +1027,7 @@ void vpMbEdgeKltMultiTracker::initFromPose(const vpImage<unsigned char>& I, cons
   }
 
   char s[FILENAME_MAX];
-  std::fstream finit ;
+  std::fstream finit;
   vpPoseVector init_pos;
 
   std::string ext = ".pos";
@@ -1038,7 +1038,7 @@ void vpMbEdgeKltMultiTracker::initFromPose(const vpImage<unsigned char>& I, cons
   else
     sprintf(s,"%s.pos", initFile.c_str());
 
-  finit.open(s,std::ios::in) ;
+  finit.open(s,std::ios::in);
   if (finit.fail()){
     std::cerr << "cannot read " << s << std::endl;
     throw vpException(vpException::ioError, "cannot read init file");

@@ -140,18 +140,18 @@ int main()
 class VISP_EXPORT vpMbtMeEllipse : public vpMeTracker
 {
 public:
-  vpMbtMeEllipse() ;
-  vpMbtMeEllipse(const vpMbtMeEllipse &meellipse) ;
-  virtual ~vpMbtMeEllipse() ;
+  vpMbtMeEllipse();
+  vpMbtMeEllipse(const vpMbtMeEllipse &meellipse);
+  virtual ~vpMbtMeEllipse();
 
   void computeProjectionError(const vpImage<unsigned char>& _I, double &_sumErrorRad, unsigned int &_nbFeatures);
 
-  void display(const vpImage<unsigned char>&I, vpColor col) ;
+  void display(const vpImage<unsigned char>&I, vpColor col);
   void display(const vpImage<unsigned char>& I) {vpMeTracker::display(I);} //Shouldn't be here since it's already in vpMeTracker
   /*!
     \return Expected number of moving edges to track along the ellipse.
    */
-  int getExpectedDensity() {return (int)expecteddensity;};
+  int getExpectedDensity() {return (int)expecteddensity;}
 
   /*!
     Gets the 2 order central moment \f$ \mu_{11} \f$.
@@ -200,7 +200,7 @@ public:
   void getEquationParam(double &A, double &B, double &E) { A = a; B = b; E = e; }
 
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic,
-                    double mu20_p, double mu11_p, double mu02_p) ;
+                    double mu20_p, double mu11_p, double mu02_p);
 
   void track(const vpImage<unsigned char>& Im);
 
@@ -233,9 +233,9 @@ protected:
 
 private:
   void sample(const vpImage<unsigned char>&image);
-  void reSample(const vpImage<unsigned char> &I) ;
+  void reSample(const vpImage<unsigned char> &I);
   void updateTheta();
-  void suppressPoints() ;
+  void suppressPoints();
 };
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

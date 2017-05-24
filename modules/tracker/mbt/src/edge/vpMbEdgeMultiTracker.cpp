@@ -302,7 +302,7 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
           num += wi*vpMath::sqr(eri);
           den += wi;
 
-          m_weightedError_edgeMulti[i] =  wi*eri ;
+          m_weightedError_edgeMulti[i] =  wi*eri;
 
           for (unsigned int j = 0; j < 6; j++) {
             m_L_edgeMulti[i][j] = wi*m_L_edgeMulti[i][j];
@@ -316,7 +316,7 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
           num += wi*vpMath::sqr(eri);
           den += wi;
 
-          m_weightedError_edgeMulti[i] =  wi*eri ;
+          m_weightedError_edgeMulti[i] =  wi*eri;
         }
       }
 
@@ -1417,7 +1417,7 @@ void vpMbEdgeMultiTracker::initFromPose(const vpImage<unsigned char>& I, const s
   }
 
   char s[FILENAME_MAX];
-  std::fstream finit ;
+  std::fstream finit;
   vpPoseVector init_pos;
 
   std::string ext = ".pos";
@@ -1428,7 +1428,7 @@ void vpMbEdgeMultiTracker::initFromPose(const vpImage<unsigned char>& I, const s
   else
     sprintf(s,"%s.pos", initFile.c_str());
 
-  finit.open(s,std::ios::in) ;
+  finit.open(s,std::ios::in);
   if (finit.fail()){
     std::cerr << "cannot read " << s << std::endl;
     throw vpException(vpException::ioError, "cannot read init file");
@@ -2781,8 +2781,8 @@ void vpMbEdgeMultiTracker::track(std::map<std::string, const vpImage<unsigned ch
           try {
             it1->second->trackMovingEdge(*m_mapOfPyramidalImages[it1->first][lvl]);
           } catch(...) {
-            vpTRACE("Error in moving edge tracking") ;
-            throw ;
+            vpTRACE("Error in moving edge tracking");
+            throw;
           }
         }
 
@@ -2896,7 +2896,7 @@ void vpMbEdgeMultiTracker::track(std::map<std::string, const vpImage<unsigned ch
               it != m_mapOfEdgeTrackers.end(); ++it) {
             it->second->upScale(lvl);
           }
-          throw(e) ;
+          throw(e);
         }
       }
     }

@@ -75,7 +75,7 @@ public:
     START = 1,
     END = 0,
     POINT = 2
-  } vpMbScanLineType ;
+  } vpMbScanLineType;
 
   //! Structure to define a scanline edge (basically a pair of (X,Y,Z) vectors).
   typedef std::pair<vpColVector, vpColVector> vpMbScanLineEdge;
