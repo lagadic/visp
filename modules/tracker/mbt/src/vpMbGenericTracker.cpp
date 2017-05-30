@@ -3774,7 +3774,7 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string& confi
 #endif
 
 #else
-  vpTRACE("You need the libXML2 to read the config file %s", configFile);
+  std::cerr << "You need the libXML2 to read the config file: " << configFile << std::endl;
 #endif
 }
 
