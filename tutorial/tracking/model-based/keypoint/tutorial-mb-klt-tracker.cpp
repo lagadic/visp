@@ -69,7 +69,6 @@ int main(int argc, char** argv)
     //! [Load xml]
     if (! usexml) {
       //! [Set parameters]
-      tracker.setMaskBorder(5);
       vpKltOpencv klt_settings;
       klt_settings.setMaxFeatures(300);
       klt_settings.setWindowSize(5);
@@ -79,6 +78,7 @@ int main(int argc, char** argv)
       klt_settings.setBlockSize(3);
       klt_settings.setPyramidLevels(3);
       tracker.setKltOpencv(klt_settings);
+      tracker.setKltMaskBorder(5);
       cam.initPersProjWithoutDistortion(839, 839, 325, 243);
       tracker.setCameraParameters(cam);
       tracker.setAngleAppear( vpMath::rad(70) );

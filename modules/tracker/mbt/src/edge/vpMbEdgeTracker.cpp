@@ -89,7 +89,7 @@ vpMbEdgeTracker::vpMbEdgeTracker()
 */
 vpMbEdgeTracker::~vpMbEdgeTracker()
 {
-  vpMbtDistanceLine *l ;
+  vpMbtDistanceLine *l;
   vpMbtDistanceCylinder *cy;
   vpMbtDistanceCircle *ci;
 
@@ -98,17 +98,17 @@ vpMbEdgeTracker::~vpMbEdgeTracker()
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
         l = *it;
         if (l!=NULL){
-          delete l ;
+          delete l;
         }
-        l = NULL ;
+        l = NULL;
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[i].begin(); it!=cylinders[i].end(); ++it){
         cy = *it;
         if (cy!=NULL){
-          delete cy ;
+          delete cy;
         }
-        cy = NULL ;
+        cy = NULL;
       }
 
       lines[i].clear();
@@ -119,9 +119,9 @@ vpMbEdgeTracker::~vpMbEdgeTracker()
     for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[i].begin(); it!=circles[i].end(); ++it){
       ci = *it;
       if (ci!=NULL){
-        delete ci ;
+        delete ci;
       }
-      ci = NULL ;
+      ci = NULL;
     }
     circles[i].clear();
   }
@@ -142,17 +142,17 @@ vpMbEdgeTracker::setMovingEdge(const vpMe &p_me)
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
         vpMbtDistanceLine *l = *it;
-        l->setMovingEdge(&(this->me)) ;
+        l->setMovingEdge(&(this->me));
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[i].begin(); it!=cylinders[i].end(); ++it){
         vpMbtDistanceCylinder *cy = *it;
-        cy->setMovingEdge(&(this->me)) ;
+        cy->setMovingEdge(&(this->me));
       }
 
       for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[i].begin(); it!=circles[i].end(); ++it){
         vpMbtDistanceCircle *ci = *it;
-        ci->setMovingEdge(&(this->me)) ;
+        ci->setMovingEdge(&(this->me));
       }
     }
   }
@@ -253,7 +253,7 @@ vpMbEdgeTracker::computeVVS(const vpImage<unsigned char>& _I, const unsigned int
           num += wi*vpMath::sqr(eri);
           den += wi;
 
-          m_weightedError_edge[i] =  wi*eri ;
+          m_weightedError_edge[i] =  wi*eri;
 
           for (unsigned int j = 0; j < 6; j++) {
             m_L_edge[i][j] = wi*m_L_edge[i][j];
@@ -398,7 +398,7 @@ vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char>& _I, const un
           }
           indexFeature++;
         }
-        n += l->nbFeature[a] ;
+        n += l->nbFeature[a];
       }
     }
   }
@@ -505,7 +505,7 @@ vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char>& _I, const un
         }
       }
 
-      n+= cy->nbFeature ;
+      n+= cy->nbFeature;
     }
   }
 
@@ -579,7 +579,7 @@ vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char>& _I, const un
         }
       }
 
-      n+= ci->nbFeature ;
+      n+= ci->nbFeature;
     }
   }
 }
@@ -623,7 +623,7 @@ vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char>& I, con
               ++itListLine;
               indexFeature++;
           }
-          n+= l->nbFeature[a] ;
+          n+= l->nbFeature[a];
         }
       }
     }
@@ -654,7 +654,7 @@ vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char>& I, con
           }
           if (site.getState() != vpMeSite::NO_SUPPRESSION) m_factor[n+i] = 0.2;
         }
-        n+= cy->nbFeature ;
+        n+= cy->nbFeature;
       }
     }
   }
@@ -675,7 +675,7 @@ vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char>& I, con
           if (site.getState() != vpMeSite::NO_SUPPRESSION) m_factor[n+i] = 0.2;
           ++itCir;
         }
-        n+= ci->nbFeature ;
+        n+= ci->nbFeature;
       }
     }
   }
@@ -811,7 +811,7 @@ vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu(const vpImage<unsigned cha
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
     if((*it)->isTracked()){
       l = *it;
-      l->computeInteractionMatrixError(cMo) ;
+      l->computeInteractionMatrixError(cMo);
       for (unsigned int i=0 ; i < l->nbFeatureTotal ; i++){
         for (unsigned int j=0; j < 6 ; j++){
           m_L_edge[n+i][j] = l->L[i][j];
@@ -827,7 +827,7 @@ vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu(const vpImage<unsigned cha
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
     if((*it)->isTracked()){
       cy = *it;
-      cy->computeInteractionMatrixError(cMo, _I) ;
+      cy->computeInteractionMatrixError(cMo, _I);
       for(unsigned int i=0 ; i < cy->nbFeature ; i++){
         for(unsigned int j=0; j < 6 ; j++){
           m_L_edge[n+i][j] = cy->L[i][j];
@@ -844,7 +844,7 @@ vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu(const vpImage<unsigned cha
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
     if((*it)->isTracked()){
       ci = *it;
-      ci->computeInteractionMatrixError(cMo) ;
+      ci->computeInteractionMatrixError(cMo);
       for(unsigned int i=0 ; i < ci->nbFeature ; i++){
         for(unsigned int j=0; j < 6 ; j++){
           m_L_edge[n+i][j] = ci->L[i][j];
@@ -1061,7 +1061,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         catch(...)
         {
           vpTRACE("Error in moving edge tracking");
-          throw ;
+          throw;
         }
 
         // initialize the vector that contains the error and the matrix that contains
@@ -1071,7 +1071,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[lvl].begin(); it!=lines[lvl].end(); ++it){
           l = *it;
           if (l->isVisible()){
-            l->initInteractionMatrixError() ;
+            l->initInteractionMatrixError();
           }
         }  
 
@@ -1108,8 +1108,8 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         }
 
         // Looking for new visible face
-        bool newvisibleface = false ;
-        visibleFace(I, cMo, newvisibleface) ;
+        bool newvisibleface = false;
+        visibleFace(I, cMo, newvisibleface);
 
         //cam.computeFov(I.getWidth(), I.getHeight());
         if(useScanLine){
@@ -1119,7 +1119,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
 
         updateMovingEdge(I);
 
-        initMovingEdge(I,cMo) ;
+        initMovingEdge(I,cMo);
         // Reinit the moving edge for the lines which need it.
         reinitMovingEdge(I,cMo);
 
@@ -1137,7 +1137,7 @@ vpMbEdgeTracker::track(const vpImage<unsigned char> &I)
         }
         else{
           upScale(lvl);
-          throw(e) ;
+          throw(e);
         }
       }
     }
@@ -1396,11 +1396,11 @@ vpMbEdgeTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cM
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel) ;
+        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
-        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel) ;
+        (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
       }
 
       for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
@@ -1454,18 +1454,18 @@ vpMbEdgeTracker::displayFeaturesOnImage(const vpImage<unsigned char>& I, const u
 void
 vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
 {  
-  vpMbtDistanceLine *l ;
+  vpMbtDistanceLine *l;
 
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
     l = *it;
-    bool isvisible = false ;
+    bool isvisible = false;
 
     for(std::list<int>::const_iterator itindex=l->Lindex_polygon.begin(); itindex!=l->Lindex_polygon.end(); ++itindex){
       int index = *itindex;
-      if (index ==-1) isvisible =true ;
+      if (index ==-1) isvisible =true;
       else
       {
-        if (l->hiddenface->isVisible((unsigned int)index)) isvisible = true ;
+        if (l->hiddenface->isVisible((unsigned int)index)) isvisible = true;
       }
     }
 
@@ -1474,16 +1474,16 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
 
     if (isvisible)
     {
-      l->setVisible(true) ;
+      l->setVisible(true);
       l->updateTracked();
       if (l->meline.size() == 0 && l->isTracked())
-         l->initMovingEdge(I, _cMo) ;
+         l->initMovingEdge(I, _cMo);
     }
     else
     {
-      l->setVisible(false) ;
+      l->setVisible(false);
       for(unsigned int a = 0 ; a < l->meline.size() ; a++){
-        if (l->meline[a] != NULL) delete l->meline[a] ;
+        if (l->meline[a] != NULL) delete l->meline[a];
         l->nbFeature[a] = 0;
       }
       l->nbFeatureTotal = 0;
@@ -1491,35 +1491,35 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
     }
   }
 
-  vpMbtDistanceCylinder *cy ;
+  vpMbtDistanceCylinder *cy;
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
     cy = *it;
 
-    bool isvisible = false ;
+    bool isvisible = false;
 
     int index = cy->index_polygon;
-    if (index ==-1) isvisible =true ;
+    if (index ==-1) isvisible =true;
     else
     {
       if (cy->hiddenface->isVisible((unsigned int)index +1 ) ||
           cy->hiddenface->isVisible((unsigned int)index +2 ) ||
           cy->hiddenface->isVisible((unsigned int)index +3 ) ||
           cy->hiddenface->isVisible((unsigned int)index +4 ))
-        isvisible = true ;
+        isvisible = true;
     }
 //    vpTRACE("cyl with index %d is visible: %d", index, isvisible);
 
     if (isvisible)
     {
-      cy->setVisible(true) ;
+      cy->setVisible(true);
       if (cy->meline1==NULL || cy->meline2==NULL){
         if(cy->isTracked())
-          cy->initMovingEdge(I, _cMo) ;
+          cy->initMovingEdge(I, _cMo);
       }
     }
     else
     {
-      cy->setVisible(false) ;
+      cy->setVisible(false);
       if (cy->meline1!=NULL) delete cy->meline1;
       if (cy->meline2!=NULL) delete cy->meline2;
       cy->meline1=NULL;
@@ -1530,30 +1530,30 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
     }
   }
 
-  vpMbtDistanceCircle *ci ;
+  vpMbtDistanceCircle *ci;
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
     ci = *it;
-    bool isvisible = false ;
+    bool isvisible = false;
 
     int index = ci->index_polygon;
-    if (index ==-1) isvisible =true ;
+    if (index ==-1) isvisible =true;
     else
     {
-      if (ci->hiddenface->isVisible((unsigned int)index)) isvisible = true ;
+      if (ci->hiddenface->isVisible((unsigned int)index)) isvisible = true;
     }
 
     if (isvisible)
     {
-      ci->setVisible(true) ;
+      ci->setVisible(true);
       if (ci->meEllipse==NULL)
       {
         if(ci->isTracked())
-          ci->initMovingEdge(I, _cMo) ;
+          ci->initMovingEdge(I, _cMo);
       }
     }
     else
     {
-      ci->setVisible(false) ;
+      ci->setVisible(false);
       if (ci->meEllipse!=NULL) delete ci->meEllipse;
       ci->meEllipse=NULL;
       ci->nbFeature = 0;
@@ -1576,7 +1576,7 @@ vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
       if(l->meline.size() == 0){
         l->initMovingEdge(I, cMo);
       }
-      l->trackMovingEdge(I, cMo) ;
+      l->trackMovingEdge(I, cMo);
     }
   }
 
@@ -1586,7 +1586,7 @@ vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
         if(cy->meline1 == NULL || cy->meline2 == NULL){
           cy->initMovingEdge(I, cMo);
         }
-        cy->trackMovingEdge(I, cMo) ;
+        cy->trackMovingEdge(I, cMo);
     }
   }
 
@@ -1596,7 +1596,7 @@ vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
       if(ci->meEllipse == NULL){
         ci->initMovingEdge(I, cMo);
       }
-      ci->trackMovingEdge(I, cMo) ;
+      ci->trackMovingEdge(I, cMo);
     }
   }
 }
@@ -1610,33 +1610,33 @@ vpMbEdgeTracker::trackMovingEdge(const vpImage<unsigned char> &I)
 void
 vpMbEdgeTracker::updateMovingEdge(const vpImage<unsigned char> &I)
 {
-  vpMbtDistanceLine *l ;
+  vpMbtDistanceLine *l;
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
     if((*it)->isTracked()){
       l = *it;
-      l->updateMovingEdge(I, cMo) ;
+      l->updateMovingEdge(I, cMo);
       if (l->nbFeatureTotal == 0 && l->isVisible()){
         l->Reinit = true;
       }
     }
   }
 
-  vpMbtDistanceCylinder *cy ;
+  vpMbtDistanceCylinder *cy;
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
     if((*it)->isTracked()){
       cy = *it;
-      cy->updateMovingEdge(I, cMo) ;
+      cy->updateMovingEdge(I, cMo);
       if((cy->nbFeaturel1 == 0 || cy->nbFeaturel2 == 0) && cy->isVisible()){
         cy->Reinit = true;
       }
     }
   }
 
-  vpMbtDistanceCircle *ci ;
+  vpMbtDistanceCircle *ci;
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
     if((*it)->isTracked()){
       ci = *it;
-      ci->updateMovingEdge(I, cMo) ;
+      ci->updateMovingEdge(I, cMo);
       if(ci->nbFeature == 0  && ci->isVisible()){
         ci->Reinit = true;
       }
@@ -1653,7 +1653,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
     if((*it)->isTracked()){
       l = *it;
       unsigned int indexLine = 0;
-      double wmean = 0 ;
+      double wmean = 0;
       for(unsigned int a = 0 ; a < l->meline.size() ; a++)
       {
         if (l->nbFeature[a] > 0) {
@@ -1661,7 +1661,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
           itListLine = l->meline[a]->getMeList().begin();
 
           for (unsigned int i=0 ; i < l->nbFeature[a] ; i++){
-            wmean += m_w_edge[n+indexLine] ;
+            wmean += m_w_edge[n+indexLine];
             vpMeSite p = *itListLine;
             if (m_w_edge[n+indexLine] < 0.5){
               p.setState(vpMeSite::M_ESTIMATOR);
@@ -1674,10 +1674,10 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
           }
         }
       }
-      n+= l->nbFeatureTotal ;
+      n+= l->nbFeatureTotal;
 
       if (l->nbFeatureTotal!=0)
-        wmean /= l->nbFeatureTotal ;
+        wmean /= l->nbFeatureTotal;
       else
         wmean = 1;
 
@@ -1693,7 +1693,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[scaleLevel].begin(); it!=cylinders[scaleLevel].end(); ++it){
     if((*it)->isTracked()){
       cy = *it;
-      double wmean = 0 ;
+      double wmean = 0;
       std::list<vpMeSite>::iterator itListCyl1;
       std::list<vpMeSite>::iterator itListCyl2;
 
@@ -1702,7 +1702,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
         itListCyl2 = cy->meline2->getMeList().begin();
 
         for(unsigned int i=0 ; i < cy->nbFeaturel1 ; i++){
-          wmean += m_w_edge[n+i] ;
+          wmean += m_w_edge[n+i];
           vpMeSite p = *itListCyl1;
           if (m_w_edge[n+i] < 0.5){
             p.setState(vpMeSite::M_ESTIMATOR);
@@ -1715,7 +1715,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
       }
 
       if (cy->nbFeaturel1!=0)
-        wmean /= cy->nbFeaturel1 ;
+        wmean /= cy->nbFeaturel1;
       else
         wmean = 1;
 
@@ -1727,7 +1727,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
 
       wmean = 0;
       for(unsigned int i=cy->nbFeaturel1 ; i < cy->nbFeature ; i++){
-        wmean += m_w_edge[n+i] ;
+        wmean += m_w_edge[n+i];
         vpMeSite p = *itListCyl2;
         if (m_w_edge[n+i] < 0.5){
           p.setState(vpMeSite::M_ESTIMATOR);
@@ -1739,7 +1739,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
       }
 
       if (cy->nbFeaturel2!=0)
-        wmean /= cy->nbFeaturel2 ;
+        wmean /= cy->nbFeaturel2;
       else
         wmean = 1;
 
@@ -1749,7 +1749,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
         cy->Reinit = true;
       }
 
-      n+= cy->nbFeature ;
+      n+= cy->nbFeature;
     }
   }
 
@@ -1758,7 +1758,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[scaleLevel].begin(); it!=circles[scaleLevel].end(); ++it){
     if((*it)->isTracked()){
       ci = *it;
-      double wmean = 0 ;
+      double wmean = 0;
       std::list<vpMeSite>::iterator itListCir;
 
       if (ci->nbFeature > 0){
@@ -1767,7 +1767,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
 
       wmean = 0;
       for(unsigned int i=0 ; i < ci->nbFeature ; i++){
-        wmean += m_w_edge[n+i] ;
+        wmean += m_w_edge[n+i];
         vpMeSite p = *itListCir;
         if (m_w_edge[n+i] < 0.5){
           p.setState(vpMeSite::M_ESTIMATOR);
@@ -1779,7 +1779,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
       }
 
       if (ci->nbFeature!=0)
-        wmean /= ci->nbFeature ;
+        wmean /= ci->nbFeature;
       else
         wmean = 1;
 
@@ -1789,7 +1789,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
         ci->Reinit = true;
       }
 
-      n+= ci->nbFeature ;
+      n+= ci->nbFeature;
     }
   }
 }
@@ -1806,7 +1806,7 @@ vpMbEdgeTracker::updateMovingEdgeWeights() {
 void
 vpMbEdgeTracker::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo)
 {
-  vpMbtDistanceLine *l ;
+  vpMbtDistanceLine *l;
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[scaleLevel].begin(); it!=lines[scaleLevel].end(); ++it){
     if((*it)->isTracked()){
       l = *it;
@@ -1892,9 +1892,9 @@ vpMbEdgeTracker::samePoint(const vpPoint &P1, const vpPoint &P2) const
   double dz = fabs(P1.get_oZ() - P2.get_oZ());
 
   if (dx  <= std::numeric_limits<double>::epsilon() && dy  <= std::numeric_limits<double>::epsilon() && dz <= std::numeric_limits<double>::epsilon())
-    return true ;
+    return true;
   else
-    return false ;
+    return false;
 }
 
 
@@ -1912,8 +1912,8 @@ void
 vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygon, std::string name)
 {
   //suppress line already in the model
-  bool already_here = false ;
-  vpMbtDistanceLine *l ;
+  bool already_here = false;
+  vpMbtDistanceLine *l;
   
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
@@ -1922,23 +1922,23 @@ vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygon, std::string name
         l = *it;
         if((samePoint(*(l->p1),P1) && samePoint(*(l->p2),P2)) ||
            (samePoint(*(l->p1),P2) && samePoint(*(l->p2),P1)) ){
-          already_here = true ;
+          already_here = true;
           l->addPolygon(polygon);
-          l->hiddenface = &faces ;
+          l->hiddenface = &faces;
         }
       }
 
       if (!already_here){
-        l = new vpMbtDistanceLine ;
+        l = new vpMbtDistanceLine;
 
-        l->setCameraParameters(cam) ;
-        l->buildFrom(P1,P2) ;
+        l->setCameraParameters(cam);
+        l->buildFrom(P1,P2);
         l->addPolygon(polygon);
-        l->setMovingEdge(&me) ;
-        l->hiddenface = &faces ;
+        l->setMovingEdge(&me);
+        l->hiddenface = &faces;
         l->useScanLine = useScanLine;
 
-        l->setIndex(nline) ;
+        l->setIndex(nline);
         l->setName(name);
         
         if(clippingFlag != vpPolygon3D::NO_CLIPPING)
@@ -1950,7 +1950,7 @@ vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygon, std::string name
         if((clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING)
           l->getPolygon().setFarClippingDistance(distFarClip);
         
-        nline +=1 ;
+        nline +=1;
         lines[i].push_back(l);
       }
       upScale(i);
@@ -1994,8 +1994,8 @@ vpMbEdgeTracker::removeLine(const std::string& name)
 void
 vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace, const std::string& name)
 {
-  bool already_here = false ;
-  vpMbtDistanceCircle *ci ;
+  bool already_here = false;
+  vpMbtDistanceCircle *ci;
 
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
@@ -2009,7 +2009,7 @@ vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &
       }
 
       if (!already_here){
-        ci = new vpMbtDistanceCircle ;
+        ci = new vpMbtDistanceCircle;
 
         ci->setCameraParameters(cam);
         ci->buildFrom(P1, P2, P3, r);
@@ -2017,7 +2017,7 @@ vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &
         ci->setIndex(ncircle);
         ci->setName(name);
         ci->index_polygon = idFace;
-        ci->hiddenface = &faces ;
+        ci->hiddenface = &faces;
 
 //        if(clippingFlag != vpPolygon3D::NO_CLIPPING)
 //          ci->getPolygon().setClipping(clippingFlag);
@@ -2048,8 +2048,8 @@ vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &
 void
 vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace, const std::string& name)
 {
-  bool already_here = false ;
-  vpMbtDistanceCylinder *cy ;
+  bool already_here = false;
+  vpMbtDistanceCylinder *cy;
 
   for (unsigned int i = 0; i < scales.size(); i += 1){
     if(scales[i]){
@@ -2063,7 +2063,7 @@ vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double 
       }
 
       if (!already_here){
-        cy = new vpMbtDistanceCylinder ;
+        cy = new vpMbtDistanceCylinder;
 
         cy->setCameraParameters(cam);
         cy->buildFrom(P1, P2, r);
@@ -2071,7 +2071,7 @@ vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double 
         cy->setIndex(ncylinder);
         cy->setName(name);
         cy->index_polygon = idFace;
-        cy->hiddenface = &faces ;
+        cy->hiddenface = &faces;
         ncylinder +=1;
         cylinders[i].push_back(cy);
       }
@@ -2134,11 +2134,11 @@ vpMbEdgeTracker::removeCircle(const std::string& name)
 void
 vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
 {
-  unsigned int nbpt = p.getNbPoint() ;
+  unsigned int nbpt = p.getNbPoint();
   if(nbpt > 0){
     for (unsigned int i=0 ; i < nbpt-1 ; i++)
-      addLine(p.p[i], p.p[i+1], p.getIndex()) ;
-    addLine(p.p[nbpt-1], p.p[0], p.getIndex()) ;
+      addLine(p.p[i], p.p[i+1], p.getIndex());
+    addLine(p.p[nbpt-1], p.p[0], p.getIndex());
   }
 }
 
@@ -2156,30 +2156,30 @@ void
 vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> & _I,
                              const vpHomogeneousMatrix &_cMo, bool &newvisibleline)
 {
-  unsigned int n ;
+  unsigned int n;
   bool changed = false;
 
   if(!useOgre) {
-    //n = faces.setVisible(_I, cam, _cMo, vpMath::rad(89), vpMath::rad(89), changed) ;
-    n = faces.setVisible(_I, cam, _cMo,  angleAppears, angleDisappears, changed) ;
+    //n = faces.setVisible(_I, cam, _cMo, vpMath::rad(89), vpMath::rad(89), changed);
+    n = faces.setVisible(_I, cam, _cMo,  angleAppears, angleDisappears, changed);
   }
   else{
 #ifdef VISP_HAVE_OGRE
     n = faces.setVisibleOgre(_I, cam, _cMo, angleAppears, angleDisappears, changed);
 #else
-    n = faces.setVisible(_I, cam, _cMo,  angleAppears, angleDisappears, changed) ;
+    n = faces.setVisible(_I, cam, _cMo,  angleAppears, angleDisappears, changed);
 #endif
   } 
 
   if (n > nbvisiblepolygone)
   {
-    //cout << "une nouvelle face est visible " << endl ;
-    newvisibleline = true ;
+    //cout << "une nouvelle face est visible " << endl;
+    newvisibleline = true;
   }
   else
-    newvisibleline = false ;
+    newvisibleline = false;
 
-  nbvisiblepolygone= n ;
+  nbvisiblepolygone= n;
 }
 
 /*!
@@ -2197,7 +2197,7 @@ vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> & _I,
 void
 vpMbEdgeTracker::initFaceFromCorners(vpMbtPolygon &polygon)
 {
-  unsigned int nbpt = polygon.getNbPoint() ;
+  unsigned int nbpt = polygon.getNbPoint();
   if(nbpt > 0){
     for (unsigned int i=0 ; i < nbpt-1 ; i++)
       vpMbEdgeTracker::addLine(polygon.p[i], polygon.p[i+1], polygon.getIndex(), polygon.getName());
@@ -2219,7 +2219,7 @@ vpMbEdgeTracker::initFaceFromCorners(vpMbtPolygon &polygon)
 void
 vpMbEdgeTracker::initFaceFromLines(vpMbtPolygon &polygon)
 {
-  unsigned int nbpt = polygon.getNbPoint() ;
+  unsigned int nbpt = polygon.getNbPoint();
   if(nbpt > 0){
     for (unsigned int i=0 ; i < nbpt-1 ; i++)
       vpMbEdgeTracker::addLine(polygon.p[i], polygon.p[i+1], polygon.getIndex(), polygon.getName());
@@ -2322,8 +2322,8 @@ vpMbEdgeTracker::resetTracker()
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
         l = *it;
-        if (l!=NULL) delete l ;
-        l = NULL ;
+        if (l!=NULL) delete l;
+        l = NULL;
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[i].begin(); it!=cylinders[i].end(); ++it){
@@ -2406,8 +2406,8 @@ vpMbEdgeTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_na
     if(scales[i]){
       for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[i].begin(); it!=lines[i].end(); ++it){
         l = *it;
-        if (l!=NULL) delete l ;
-        l = NULL ;
+        if (l!=NULL) delete l;
+        l = NULL;
       }
 
       for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[i].begin(); it!=cylinders[i].end(); ++it){
@@ -2459,7 +2459,7 @@ vpMbEdgeTracker::getNbPoints(const unsigned int level) const
   }
   
   unsigned int nbGoodPoints = 0;
-  vpMbtDistanceLine *l ;
+  vpMbtDistanceLine *l;
   for(std::list<vpMbtDistanceLine*>::const_iterator it=lines[level].begin(); it!=lines[level].end(); ++it){
     l = *it;
     if (l->isVisible() && l->isTracked())
@@ -2473,7 +2473,7 @@ vpMbEdgeTracker::getNbPoints(const unsigned int level) const
     }
   }
 
-  vpMbtDistanceCylinder *cy ;
+  vpMbtDistanceCylinder *cy;
   for(std::list<vpMbtDistanceCylinder*>::const_iterator it=cylinders[level].begin(); it!=cylinders[level].end(); ++it){
     cy = *it;
     if (cy->isVisible() && cy->isTracked() && (cy->meline1 != NULL || cy->meline2 != NULL))
@@ -2487,7 +2487,7 @@ vpMbEdgeTracker::getNbPoints(const unsigned int level) const
     }
   }
 
-  vpMbtDistanceCircle *ci ;
+  vpMbtDistanceCircle *ci;
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles[level].begin(); it!=circles[level].end(); ++it){
     ci = *it;
     if (ci->isVisible() && ci->isTracked() && ci->meEllipse != NULL)

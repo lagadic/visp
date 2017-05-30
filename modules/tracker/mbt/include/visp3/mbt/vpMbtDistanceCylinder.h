@@ -71,8 +71,8 @@ class VISP_EXPORT vpMbtDistanceCylinder
     vpMe *me;
     double wmean1;
     double wmean2;
-    vpFeatureLine featureline1 ;
-    vpFeatureLine featureline2 ;
+    vpFeatureLine featureline1;
+    vpFeatureLine featureline2;
     bool isTrackedCylinder;
     
   public: 
@@ -134,8 +134,8 @@ class VISP_EXPORT vpMbtDistanceCylinder
 //#endif
 
   public:
-    vpMbtDistanceCylinder() ;
-    ~vpMbtDistanceCylinder() ;
+    vpMbtDistanceCylinder();
+    ~vpMbtDistanceCylinder();
 
     void buildFrom(const vpPoint &_p1, const vpPoint &_p2, const double r);
     
@@ -265,7 +265,7 @@ class VISP_EXPORT vpMbtDistanceCylinder
 
   private:
     void project(const vpHomogeneousMatrix &cMo);
-} ;
+};
 
 #endif
 

@@ -311,7 +311,7 @@ vpMbKltTracker::resetTracker()
 
   maskBorder = 5;
   threshold_outlier = 0.5;
-  percentGood = 0.7;
+  percentGood = 0.6;
 
   m_lambda = 0.8;
   m_maxIter = 200;
@@ -880,8 +880,7 @@ vpMbKltTracker::track(const vpImage<unsigned char>& I)
   preTracking(I);
 
   if(m_nbInfos < 4 || m_nbFaceUsed == 0){
-    vpERROR_TRACE("\n\t\t Error-> not enough data");
-    throw vpTrackingException(vpTrackingException::notEnoughPointError, "\n\t\t Error-> not enough data");
+    throw vpTrackingException(vpTrackingException::notEnoughPointError, "Error: not enough features");
   }
 
   computeVVS();

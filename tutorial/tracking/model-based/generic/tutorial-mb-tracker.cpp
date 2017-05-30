@@ -105,7 +105,7 @@ int main(int argc, char** argv)
       klt_settings.setBlockSize(3);
       klt_settings.setPyramidLevels(3);
       dynamic_cast<vpMbKltTracker*>(tracker)->setKltOpencv(klt_settings);
-      dynamic_cast<vpMbKltTracker*>(tracker)->setMaskBorder(5);
+      dynamic_cast<vpMbKltTracker*>(tracker)->setKltMaskBorder(5);
     }
 #endif
 

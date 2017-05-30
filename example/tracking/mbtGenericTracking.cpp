@@ -28,7 +28,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Example of MBT KLT Tracking.
+ * Example of Hybrid Tracking of MBT and MBT KTL.
  *
  * Authors:
  * Aurelien Yol
@@ -37,15 +37,15 @@
  *****************************************************************************/
 
 /*!
-  \example mbtKltMultiTracking.cpp
+  \example mbtGenericTracking.cpp
 
-  \brief Example of MBT KLT Tracking on an image sequence containing a cube.
+  \brief Example of tracking with vpGenericTracker on an image sequence containing a cube.
 */
 
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_DISPLAY) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/gui/vpDisplayD3D.h>
@@ -59,9 +59,11 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/io/vpParseArgv.h>
-#include <visp3/mbt/vpMbKltMultiTracker.h>
+#include <visp3/mbt/vpMbGenericTracker.h>
 
-#define GETOPTARGS  "x:m:i:n:dchtfolwv"
+#define GETOPTARGS  "x:m:i:n:dchtfColwvpT:"
+
+#define USE_XML 0
 
 
 void usage(const char *name, const char *badparam)
@@ -72,7 +74,8 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>]\n\
-  [-t] [-c] [-d] [-h] [-f] [-o] [-w] [-l] [-v]\n",
+  [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p]\n\
+  [-T <tracker type>]\n",
   name );
 
   fprintf(stdout, "\n\
@@ -101,13 +104,18 @@ OPTIONS:                                               \n\
      website. However, the .cao model allows to use the 3d model based tracker \n\
      without Coin.\n\
 \n\
+  -C                                  \n\
+     Track only the cube (not the cylinder). In this case the models files are\n\
+     cube.cao or cube.wrl instead of cube_and_cylinder.cao and \n\
+     cube_and_cylinder.wrl.\n\
+\n\
   -n <initialisation file base name>                                            \n\
      Base name of the initialisation file. The file will be 'base_name'.init .\n\
      This base name is also used for the optional picture specifying where to \n\
      click (a .ppm picture).\n\
 \n\
   -t \n\
-     Turn off the display of the the klt points. \n\
+     Turn off the display of the the moving edges and Klt points. \n\
 \n\
   -d \n\
      Turn off the display.\n\
@@ -128,6 +136,12 @@ OPTIONS:                                               \n\
   -v\n\
      Compute covariance matrix.\n\
 \n\
+  -p\n\
+     Compute gradient projection error.\n\
+\n\
+  -T <tracker type>\n\
+     Set tracker type (<1 (Edge)>, <2 (KLT)>, <3 (EdgeKlt)>).\n\
+\n\
   -h \n\
      Print the help.\n\n");
 
@@ -137,8 +151,9 @@ OPTIONS:                                               \n\
 
 
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
-                std::string &initFile, bool &displayKltPoints, bool &click_allowed, bool &display,
-                bool& cao3DModel, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline, bool &computeCovariance)
+                std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display,
+                bool& cao3DModel, bool& trackCylinder, bool &useOgre, bool &showOgreConfigDialog,
+                bool &useScanline, bool &computeCovariance, bool &projectionError, int &trackerType)
 {
   const char *optarg_;
   int   c;
@@ -149,14 +164,17 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
     case 'x': configFile = optarg_; break;
     case 'm': modelFile = optarg_; break;
     case 'n': initFile = optarg_; break;
-    case 't': displayKltPoints = false; break;
+    case 't': displayFeatures = false; break;
     case 'f': cao3DModel = true; break;
     case 'c': click_allowed = false; break;
     case 'd': display = false; break;
+    case 'C': trackCylinder = false; break;
     case 'o': useOgre = true; break;
     case 'l': useScanline = true; break;
     case 'w': showOgreConfigDialog  = true; break;
     case 'v': computeCovariance  = true; break;
+    case 'p': projectionError  = true; break;
+    case 'T': trackerType  = atoi(optarg_); break;
     case 'h': usage(argv[0], NULL); return false; break;
 
     default:
@@ -189,15 +207,17 @@ main(int argc, const char ** argv)
     std::string modelFile;
     std::string opt_initFile;
     std::string initFile;
-    bool displayKltPoints = true;
+    bool displayFeatures = true;
     bool opt_click_allowed = true;
     bool opt_display = true;
     bool cao3DModel = false;
+    bool trackCylinder = true;
     bool useOgre = false;
     bool showOgreConfigDialog = false;
     bool useScanline = false;
     bool computeCovariance = false;
-    bool quit = false;
+    bool projectionError = false;
+    int trackerType = vpMbGenericTracker::EDGE_TRACKER;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -207,10 +227,10 @@ main(int argc, const char ** argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayKltPoints,
-                    opt_click_allowed, opt_display, cao3DModel, useOgre, showOgreConfigDialog, useScanline,
-                    computeCovariance)) {
-      return (-1);
+    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayFeatures,
+                    opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre, showOgreConfigDialog,
+                    useScanline, computeCovariance, projectionError, trackerType)) {
+      return EXIT_FAILURE;
     }
 
     // Test if an input path is set
@@ -224,7 +244,7 @@ main(int argc, const char ** argv)
                 << "  image path where test images are located." << std::endl
                 << std::endl;
 
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -243,8 +263,15 @@ main(int argc, const char ** argv)
     if (!opt_modelFile.empty()){
       modelFile = opt_modelFile;
     }else{
-      std::string modelFileCao = "ViSP-images/mbt/cube.cao";
-      std::string modelFileWrl = "ViSP-images/mbt/cube.wrl";
+      std::string modelFileCao;
+      std::string modelFileWrl;
+      if(trackCylinder){
+        modelFileCao = "ViSP-images/mbt/cube_and_cylinder.cao";
+        modelFileWrl = "ViSP-images/mbt/cube_and_cylinder.wrl";
+      }else{
+        modelFileCao = "ViSP-images/mbt/cube.cao";
+        modelFileWrl = "ViSP-images/mbt/cube.wrl";
+      }
 
       if(!opt_ipath.empty()){
         if(cao3DModel){
@@ -285,12 +312,12 @@ main(int argc, const char ** argv)
     vpVideoReader reader;
 
     reader.setFileName(ipath);
-    try{
+    try {
       reader.open(I1);
       I2 = I1;
-    }catch(...){
-      std::cout << "Cannot open sequence: " << ipath << std::endl;
-      return -1;
+    } catch(...) {
+      std::cerr << "Cannot open sequence: " << ipath << std::endl;
+      return EXIT_FAILURE;
     }
 
     reader.acquire(I1);
@@ -324,19 +351,29 @@ main(int argc, const char ** argv)
       vpDisplay::flush(I2);
     }
 
-    vpMbKltMultiTracker tracker(2);
+    vpMbTracker *tracker = new vpMbGenericTracker(2, trackerType);
     vpHomogeneousMatrix c1Mo, c2Mo;
-
-    // Load tracker config file (camera parameters and moving edge settings)
     vpCameraParameters cam1, cam2;
-#if defined (VISP_HAVE_XML2)
+
+    // Initialise the tracker: camera parameters, moving edge and KLT settings
+#if defined (VISP_HAVE_XML2) && USE_XML
     // From the xml file
-    tracker.loadConfigFile(configFile, configFile);
+    dynamic_cast<vpMbGenericTracker*>(tracker)->loadConfigFile(configFile, configFile);
 #else
     // By setting the parameters:
     cam1.initPersProjWithoutDistortion(547, 542, 338, 234);
     cam2.initPersProjWithoutDistortion(547, 542, 338, 234);
 
+    vpMe me;
+    me.setMaskSize(5);
+    me.setMaskNumber(180);
+    me.setRange(7);
+    me.setThreshold(5000);
+    me.setMu1(0.5);
+    me.setMu2(0.5);
+    me.setSampleStep(4);
+
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     vpKltOpencv klt;
     klt.setMaxFeatures(10000);
     klt.setWindowSize(5);
@@ -346,35 +383,42 @@ main(int argc, const char ** argv)
     klt.setBlockSize(3);
     klt.setPyramidLevels(3);
 
-    tracker.setCameraParameters(cam1, cam2);
-    tracker.setKltOpencv(klt);
-    tracker.setKltMaskBorder(5);
-    tracker.setAngleAppear( vpMath::rad(65) );
-    tracker.setAngleDisappear( vpMath::rad(75) );
-
-    // Specify the clipping to use
-    tracker.setNearClippingDistance(0.01);
-    tracker.setFarClippingDistance(0.90);
-    tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
-    //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+    dynamic_cast<vpMbGenericTracker*>(tracker)->setKltOpencv(klt);
+    dynamic_cast<vpMbGenericTracker*>(tracker)->setKltMaskBorder(5);
 #endif
 
-    // Display the klt points
-    tracker.setDisplayFeatures(displayKltPoints);
+    dynamic_cast<vpMbGenericTracker*>(tracker)->setCameraParameters(cam1, cam2);
+    dynamic_cast<vpMbGenericTracker*>(tracker)->setMovingEdge(me);
+
+    tracker->setAngleAppear( vpMath::rad(65) );
+    tracker->setAngleDisappear( vpMath::rad(75) );
+
+    // Specify the clipping to
+    tracker->setNearClippingDistance(0.01);
+    tracker->setFarClippingDistance(0.90);
+    tracker->setClipping(tracker->getClipping() | vpMbtPolygon::FOV_CLIPPING);
+    //   tracker->setClipping(tracker->getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+#endif
+
+    // Display the moving edges, and the Klt points
+    tracker->setDisplayFeatures(displayFeatures);
 
     // Tells if the tracker has to use Ogre3D for visibility tests
-    tracker.setOgreVisibilityTest(useOgre);
+    tracker->setOgreVisibilityTest(useOgre);
     if (useOgre)
-      tracker.setOgreShowConfigDialog(showOgreConfigDialog);
+      tracker->setOgreShowConfigDialog(showOgreConfigDialog);
 
     // Tells if the tracker has to use the scanline visibility tests
-    tracker.setScanLineVisibilityTest(useScanline);
+    tracker->setScanLineVisibilityTest(useScanline);
 
     // Tells if the tracker has to compute the covariance matrix
-    tracker.setCovarianceComputation(computeCovariance);
+    tracker->setCovarianceComputation(computeCovariance);
+
+    // Tells if the tracker has to compute the projection error
+    tracker->setProjectionErrorComputation(projectionError);
 
     // Retrieve the camera parameters from the tracker
-    tracker.getCameraParameters(cam1, cam2);
+    dynamic_cast<vpMbGenericTracker*>(tracker)->getCameraParameters(cam1, cam2);
 
     // Loop to position the cube
     if (opt_display && opt_click_allowed)
@@ -382,13 +426,12 @@ main(int argc, const char ** argv)
       while(!vpDisplay::getClick(I1,false)){
         vpDisplay::display(I1);
         vpDisplay::displayText(I1, 15, 10, "click after positioning the object", vpColor::red);
-        vpDisplay::flush(I1);
-        vpTime::wait(100);
+        vpDisplay::flush(I1) ;
       }
     }
 
     // Load the 3D model (either a vrml file or a .cao file)
-    tracker.loadModel(modelFile);
+    tracker->loadModel(modelFile);
 
     // Initialise the tracker by clicking on the image
     // This function looks for
@@ -396,28 +439,29 @@ main(int argc, const char ** argv)
     //   - a ./cube/cube.ppm file to display where the user have to click (optionnal, set by the third parameter)
     if (opt_display && opt_click_allowed)
     {
-      tracker.initClick(I1, I2, initFile, initFile, true);
-      tracker.getPose(c1Mo, c2Mo);
+      dynamic_cast<vpMbGenericTracker*>(tracker)->initClick(I1, I2, initFile, initFile, true);
+      dynamic_cast<vpMbGenericTracker*>(tracker)->getPose(c1Mo, c2Mo);
       // display the 3D model at the given pose
-      tracker.display(I1, I2,c1Mo, c2Mo, cam1, cam2, vpColor::red);
+      dynamic_cast<vpMbGenericTracker*>(tracker)->display(I1, I2, c1Mo, c2Mo, cam1, cam2, vpColor::red);
     }
     else
     {
       vpHomogeneousMatrix c1Moi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
       vpHomogeneousMatrix c2Moi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
-      tracker.initFromPose(I1, I2, c1Moi, c2Moi);
+      dynamic_cast<vpMbGenericTracker*>(tracker)->initFromPose(I1, I2, c1Moi, c2Moi);
     }
 
     //track the model
-    tracker.track(I1, I2);
-    tracker.getPose(c1Mo, c2Mo);
+    dynamic_cast<vpMbGenericTracker*>(tracker)->track(I1, I2);
+    dynamic_cast<vpMbGenericTracker*>(tracker)->getPose(c1Mo, c2Mo);
 
     if (opt_display) {
       vpDisplay::flush(I1);
       vpDisplay::flush(I2);
     }
 
-    while (!reader.end())
+    bool quit = false, click = false;
+    while (!reader.end() && !quit)
     {
       // acquire a new image
       reader.acquire(I1);
@@ -426,6 +470,10 @@ main(int argc, const char ** argv)
       if (opt_display) {
         vpDisplay::display(I1);
         vpDisplay::display(I2);
+
+        std::stringstream ss;
+        ss << "Num frame: " << reader.getFrameIndex() << "/" << reader.getLastFrameIndex();
+        vpDisplay::displayText(I1, 40, 20, ss.str(), vpColor::red);
       }
 
       // Test to reset the tracker
@@ -435,14 +483,25 @@ main(int argc, const char ** argv)
           vpDisplay::display(I1);
           vpDisplay::display(I2);
         }
-        tracker.resetTracker();
-#if defined (VISP_HAVE_XML2)
-        tracker.loadConfigFile(configFile, configFile);
+
+        tracker->resetTracker();
+#if defined (VISP_HAVE_XML2) && USE_XML
+        dynamic_cast<vpMbGenericTracker*>(tracker)->loadConfigFile(configFile, configFile);
 #else
         // By setting the parameters:
         cam1.initPersProjWithoutDistortion(547, 542, 338, 234);
         cam2.initPersProjWithoutDistortion(547, 542, 338, 234);
 
+        vpMe me;
+        me.setMaskSize(5);
+        me.setMaskNumber(180);
+        me.setRange(7);
+        me.setThreshold(5000);
+        me.setMu1(0.5);
+        me.setMu2(0.5);
+        me.setSampleStep(4);
+
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
         vpKltOpencv klt;
         klt.setMaxFeatures(10000);
         klt.setWindowSize(5);
@@ -452,24 +511,28 @@ main(int argc, const char ** argv)
         klt.setBlockSize(3);
         klt.setPyramidLevels(3);
 
-        tracker.setCameraParameters(cam1, cam2);
-        tracker.setKltOpencv(klt);
-        tracker.setKltMaskBorder(5);
-        tracker.setAngleAppear( vpMath::rad(65) );
-        tracker.setAngleDisappear( vpMath::rad(75) );
-
-        // Specify the clipping to use
-        tracker.setNearClippingDistance(0.01);
-        tracker.setFarClippingDistance(0.90);
-        tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
-        //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+        dynamic_cast<vpMbGenericTracker*>(tracker)->setKltOpencv(klt);
+        dynamic_cast<vpMbGenericTracker*>(tracker)->setKltMaskBorder(5);
 #endif
-        tracker.loadModel(modelFile);
-        tracker.setCameraParameters(cam1, cam2);
-        tracker.setOgreVisibilityTest(useOgre);
-        tracker.setScanLineVisibilityTest(useScanline);
-        tracker.setCovarianceComputation(computeCovariance);
-        tracker.initFromPose(I1, I2, c1Mo, c2Mo);
+
+        dynamic_cast<vpMbGenericTracker*>(tracker)->setCameraParameters(cam1, cam2);
+        dynamic_cast<vpMbGenericTracker*>(tracker)->setMovingEdge(me);
+        tracker->setAngleAppear( vpMath::rad(65) );
+        tracker->setAngleDisappear( vpMath::rad(75) );
+
+        // Specify the clipping to
+        tracker->setNearClippingDistance(0.01);
+        tracker->setFarClippingDistance(0.90);
+        tracker->setClipping(tracker->getClipping() | vpMbtPolygon::FOV_CLIPPING);
+        //   tracker->setClipping(tracker->getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+#endif
+        tracker->loadModel(modelFile);
+        dynamic_cast<vpMbGenericTracker*>(tracker)->setCameraParameters(cam1, cam2);
+        tracker->setOgreVisibilityTest(useOgre);
+        tracker->setScanLineVisibilityTest(useScanline);
+        tracker->setCovarianceComputation(computeCovariance);
+        tracker->setProjectionErrorComputation(projectionError);
+        dynamic_cast<vpMbGenericTracker*>(tracker)->initFromPose(I1, I2, c1Mo, c2Mo);
       }
 
       // Test to set an initial pose
@@ -477,16 +540,16 @@ main(int argc, const char ** argv)
         c1Mo.buildFrom(0.0439540832,  0.0845870108,  0.5477322481,  2.179498458,  0.8611798108, -0.3491961946);
         c2Mo.buildFrom(0.0439540832,  0.0845870108,  0.5477322481,  2.179498458,  0.8611798108, -0.3491961946);
         std::cout << "Test set pose" << std::endl;
-        tracker.setPose(I1, I2, c1Mo, c2Mo);
+        dynamic_cast<vpMbGenericTracker*>(tracker)->setPose(I1, I2, c1Mo, c2Mo);
       }
 
       // track the object: stop tracking from frame 40 to 50
       if (reader.getFrameIndex() - reader.getFirstFrameIndex() < 40 || reader.getFrameIndex() - reader.getFirstFrameIndex() >= 50) {
-        tracker.track(I1, I2);
-        tracker.getPose(c1Mo, c2Mo);
+        dynamic_cast<vpMbGenericTracker*>(tracker)->track(I1, I2);
+        dynamic_cast<vpMbGenericTracker*>(tracker)->getPose(c1Mo, c2Mo);
         if (opt_display) {
           // display the 3D model
-          tracker.display(I1, I2, c1Mo, c2Mo, cam1, cam2, vpColor::darkRed);
+          dynamic_cast<vpMbGenericTracker*>(tracker)->display(I1, I2, c1Mo, c2Mo, cam1, cam2, vpColor::darkRed);
           // display the frame
           vpDisplay::displayFrame (I1, c1Mo, cam1, 0.05);
           vpDisplay::displayFrame (I2, c2Mo, cam2, 0.05);
@@ -495,14 +558,29 @@ main(int argc, const char ** argv)
 
       if (opt_click_allowed) {
         vpDisplay::displayText(I1, 10, 10, "Click to quit", vpColor::red);
-        if (vpDisplay::getClick(I1, false)) {
-          quit = true;
-          break;
+        vpMouseButton::vpMouseButtonType button;
+        if (vpDisplay::getClick(I1, button, click)) {
+          switch (button) {
+            case vpMouseButton::button1:
+              quit = !click;
+              break;
+
+            case vpMouseButton::button3:
+              click = !click;
+              break;
+
+            default:
+              break;
+          }
         }
       }
 
       if(computeCovariance) {
-        std::cout << "Covariance matrix: \n" << tracker.getCovarianceMatrix() << std::endl << std::endl;
+        std::cout << "Covariance matrix: \n" << tracker->getCovarianceMatrix() << std::endl << std::endl;
+      }
+
+      if(projectionError) {
+        std::cout << "Projection error: " << tracker->getProjectionError() << std::endl << std::endl;
       }
 
       vpDisplay::flush(I1);
@@ -511,26 +589,25 @@ main(int argc, const char ** argv)
     if (opt_click_allowed && !quit) {
       vpDisplay::getClick(I1);
     }
-
     reader.close();
 
-#if defined (VISP_HAVE_XML2)
-    // Cleanup memory allocated by xml library used to parse the xml config file in vpMbKltTracker::loadConfigFile()
+#if defined (VISP_HAVE_XML2) && USE_XML
+    // Cleanup memory allocated by xml library used to parse the xml config file in vpMbGenericTracker::loadConfigFile()
     vpXmlParser::cleanup();
 #endif
 
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 2 || COIN_MAJOR_VERSION == 3)
-    // Cleanup memory allocated by Coin library used to load a vrml model in vpMbKltTracker::loadModel()
+    // Cleanup memory allocated by Coin library used to load a vrml model in vpMbGenericTracker::loadModel()
     // We clean only if Coin was used.
     if(! cao3DModel)
       SoDB::finish();
 #endif
 
-    return 0;
+    return EXIT_SUCCESS;
   }
   catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 
@@ -540,7 +617,6 @@ int main()
 {
   std::cout << "visp_mbt, visp_gui modules and OpenCV are required to run this example." << std::endl;
   return 0;
-
 }
 
 #endif

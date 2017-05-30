@@ -72,7 +72,7 @@ class VISP_EXPORT vpMbtDistanceLine
     bool isTrackedLine;
     bool isTrackedLineWithVisibility;
     double wmean;
-    vpFeatureLine featureline ;
+    vpFeatureLine featureline;
     //! Polygon describing the line
     vpMbtPolygon poly;
     
@@ -125,8 +125,8 @@ class VISP_EXPORT vpMbtDistanceLine
 //#endif
 
   public:
-    vpMbtDistanceLine() ;
-    ~vpMbtDistanceLine() ;
+    vpMbtDistanceLine();
+    ~vpMbtDistanceLine();
 
     void addPolygon(const int &index);
 
@@ -248,7 +248,7 @@ class VISP_EXPORT vpMbtDistanceLine
 
   private:
     void project(const vpHomogeneousMatrix &cMo);
-} ;
+};
 
 #endif
 

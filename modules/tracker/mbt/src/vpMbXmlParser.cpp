@@ -229,7 +229,7 @@ vpMbXmlParser::read_camera (xmlDocPtr doc, xmlNodePtr node)
     }
   }
   
-  this->cam.initPersProjWithoutDistortion(d_px, d_py, d_u0, d_v0) ;
+  this->cam.initPersProjWithoutDistortion(d_px, d_py, d_u0, d_v0);
   
   if(!u0_node)
     std::cout << "camera : u0 : "<< this->cam.get_u0() << " (default)" <<std::endl;

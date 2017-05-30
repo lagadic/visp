@@ -74,15 +74,15 @@ vpMbtDistanceCylinder::vpMbtDistanceCylinder()
 */
 vpMbtDistanceCylinder::~vpMbtDistanceCylinder()
 {
-//	cout << "Deleting cylinder " << index << endl ;
+//	cout << "Deleting cylinder " << index << endl;
 
-  if (p1 != NULL) delete p1 ;
-  if (p2 != NULL) delete p2 ;
-  if (c != NULL) delete c ;
-  if (meline1 != NULL) delete meline1 ;
-  if (meline2 != NULL) delete meline2 ;
-  if (cercle1 != NULL) delete cercle1 ;
-  if (cercle2 != NULL) delete cercle2 ;
+  if (p1 != NULL) delete p1;
+  if (p2 != NULL) delete p2;
+  if (c != NULL) delete c;
+  if (meline1 != NULL) delete meline1;
+  if (meline2 != NULL) delete meline2;
+  if (cercle1 != NULL) delete cercle1;
+  if (cercle2 != NULL) delete cercle2;
 }
 
 /*!
@@ -93,11 +93,11 @@ vpMbtDistanceCylinder::~vpMbtDistanceCylinder()
 void
 vpMbtDistanceCylinder::project(const vpHomogeneousMatrix &cMo)
 {
-  c->project(cMo) ;
-  p1->project(cMo) ;
-  p2->project(cMo) ;
-  cercle1->project(cMo) ;
-  cercle2->project(cMo) ;
+  c->project(cMo);
+  p1->project(cMo);
+  p2->project(cMo);
+  cercle1->project(cMo);
+  cercle2->project(cMo);
 }
 
 
@@ -111,9 +111,9 @@ vpMbtDistanceCylinder::project(const vpHomogeneousMatrix &cMo)
 void
 vpMbtDistanceCylinder::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const double r)
 {
-  c = new vpCylinder ;
-  p1 = new vpPoint ;
-  p2 = new vpPoint ;
+  c = new vpCylinder;
+  p1 = new vpPoint;
+  p2 = new vpPoint;
   cercle1 = new vpCircle;
   cercle2 = new vpCircle;
 
@@ -155,14 +155,14 @@ vpMbtDistanceCylinder::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const d
 void
 vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
 {
-  me = _me ;
+  me = _me;
   if (meline1 != NULL)
   {
-    meline1->setMe(me) ;
+    meline1->setMe(me);
   }
   if (meline2 != NULL)
   {
-    meline2->setMe(me) ;
+    meline2->setMe(me);
   }
 }
 
@@ -207,12 +207,12 @@ vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpH
     double rho2,theta2;
 
     // Create the moving edges containers
-    meline1 = new vpMbtMeLine ;
-    meline1->setMe(me) ;
-    meline2 = new vpMbtMeLine ;
-    meline2->setMe(me) ;
+    meline1 = new vpMbtMeLine;
+    meline1->setMe(me);
+    meline2 = new vpMbtMeLine;
+    meline2->setMe(me);
 
-    //    meline->setDisplay(vpMeSite::RANGE_RESULT) ;
+    //    meline->setDisplay(vpMeSite::RANGE_RESULT);
     meline1->setInitRange(0);
     meline2->setInitRange(0);
 
@@ -291,7 +291,7 @@ vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vp
   if(isvisible){
     try
     {
-      meline1->track(I) ;
+      meline1->track(I);
     }
     catch(...)
     {
@@ -301,7 +301,7 @@ vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, const vp
     }
     try
     {
-      meline2->track(I) ;
+      meline2->track(I);
     }
     catch(...)
     {
@@ -394,8 +394,8 @@ vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const v
 
     try
     {
-      //meline1->updateParameters(I,rho1,theta1) ;
-      meline1->updateParameters(I,ip11,ip12,rho1,theta1) ;
+      //meline1->updateParameters(I,rho1,theta1);
+      meline1->updateParameters(I,ip11,ip12,rho1,theta1);
     }
     catch(...)
     {
@@ -403,8 +403,8 @@ vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, const v
     }
     try
     {
-      //meline2->updateParameters(I,rho2,theta2) ;
-      meline2->updateParameters(I,ip21,ip22,rho2,theta2) ;
+      //meline2->updateParameters(I,rho2,theta2);
+      meline2->updateParameters(I,ip21,ip22,rho2,theta2);
     }
     catch(...)
     {
@@ -625,10 +625,10 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
 {
   if (isvisible) {
     // Perspective projection
-    c->changeFrame(cMo) ;
-    c->projection() ;
-    cercle1->changeFrame(cMo) ;
-    cercle1->changeFrame(cMo) ;
+    c->changeFrame(cMo);
+    c->projection();
+    cercle1->changeFrame(cMo);
+    cercle1->changeFrame(cMo);
     try{
       cercle1->projection();
     }
@@ -643,47 +643,47 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
     if (disp || disp2) vpDisplay::flush(I);
 
     // Build the lines
-    vpFeatureBuilder::create(featureline2,*c,vpCylinder::line2) ;
-    vpFeatureBuilder::create(featureline1,*c,vpCylinder::line1) ;
+    vpFeatureBuilder::create(featureline2,*c,vpCylinder::line2);
+    vpFeatureBuilder::create(featureline1,*c,vpCylinder::line1);
 
-    double rho1 = featureline1.getRho() ;
-    double theta1 = featureline1.getTheta() ;
-    double rho2 = featureline2.getRho() ;
-    double theta2 = featureline2.getTheta() ;
+    double rho1 = featureline1.getRho();
+    double theta1 = featureline1.getTheta();
+    double rho2 = featureline2.getRho();
+    double theta2 = featureline2.getTheta();
 
     double co1 = cos(theta1);
     double si1 = sin(theta1);
     double co2 = cos(theta2);
     double si2 = sin(theta2);
 
-    double mx = 1.0/cam.get_px() ;
-    double my = 1.0/cam.get_py() ;
-    double xc = cam.get_u0() ;
-    double yc = cam.get_v0() ;
+    double mx = 1.0/cam.get_px();
+    double my = 1.0/cam.get_py();
+    double xc = cam.get_u0();
+    double yc = cam.get_v0();
 
-    vpMatrix H1 ;
-    H1 = featureline1.interaction() ;
-    vpMatrix H2 ;
-    H2 = featureline2.interaction() ;
+    vpMatrix H1;
+    H1 = featureline1.interaction();
+    vpMatrix H2;
+    H2 = featureline2.interaction();
 
-    vpMeSite p ;
-    unsigned int j =0 ;
+    vpMeSite p;
+    unsigned int j =0;
     for(std::list<vpMeSite>::const_iterator it=meline1->getMeList().begin(); it!=meline1->getMeList().end(); ++it){
       double x = (double)it->j;
       double y = (double)it->i;
 
-      x = (x-xc)*mx ;
-      y = (y-yc)*my ;
+      x = (x-xc)*mx;
+      y = (y-yc)*my;
 
       double alpha1 = x*si1 - y*co1;
 
-      double *Lrho = H1[0] ;
-      double *Ltheta = H1[1] ;
+      double *Lrho = H1[0];
+      double *Ltheta = H1[1];
       // Calculate interaction matrix for a distance
       for (unsigned int k=0 ; k < 6 ; k++){
         L[j][k] = (Lrho[k] + alpha1*Ltheta[k]);
       }
-      error[j] = rho1 - ( x*co1 + y*si1) ;
+      error[j] = rho1 - ( x*co1 + y*si1);
 
       if (disp) vpDisplay::displayCross(I, it->i, it->j, (unsigned int)(error[j]*100), vpColor::orange,1);
 
@@ -694,18 +694,18 @@ vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMatrix &
       double x = (double)it->j;
       double y = (double)it->i;
 
-      x = (x-xc)*mx ;
-      y = (y-yc)*my ;
+      x = (x-xc)*mx;
+      y = (y-yc)*my;
 
       double alpha2 = x*si2 - y*co2;
 
-      double *Lrho = H2[0] ;
-      double *Ltheta = H2[1] ;
+      double *Lrho = H2[0];
+      double *Ltheta = H2[1];
       // Calculate interaction matrix for a distance
       for (unsigned int k=0 ; k < 6 ; k++){
         L[j][k] = (Lrho[k] + alpha2*Ltheta[k]);
       }
-      error[j] = rho2 - ( x*co2 + y*si2) ;
+      error[j] = rho2 - ( x*co2 + y*si2);
 
       if (disp) vpDisplay::displayCross(I, it->i, it->j, (unsigned int)(error[j]*100),vpColor::red,1);
 

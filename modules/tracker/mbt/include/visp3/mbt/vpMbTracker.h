@@ -220,13 +220,13 @@ public:
     \sa setCovarianceComputation()
   */
 
-  virtual vpMatrix getCovarianceMatrix() const { 
+  virtual vpMatrix getCovarianceMatrix() const {
     if(!computeCovariance) {
 //      vpTRACE("Warning : The covariance matrix has not been computed. See setCovarianceComputation() to do it.");
       std::cerr << "Warning : The covariance matrix has not been computed. See setCovarianceComputation() to do it." << std::endl;
     }
-    
-    return covarianceMatrix; 
+
+    return covarianceMatrix;
   }
 
   /*!
@@ -544,7 +544,7 @@ public:
     rendering options) when Ogre visibility is enabled. By default, this functionality
     is turned off.
   */
-  inline void setOgreShowConfigDialog(const bool showConfigDialog){
+  inline virtual void setOgreShowConfigDialog(const bool showConfigDialog){
     ogreShowConfigDialog = showConfigDialog;
   }
 
@@ -663,7 +663,7 @@ protected:
   virtual void computeVVSPoseEstimation(const bool isoJoIdentity_, const unsigned int iter, vpMatrix &L, vpMatrix &LTL, vpColVector &R, const vpColVector &error,
                                         vpColVector &error_prev, vpColVector &LTR, double &mu, vpColVector &v, const vpColVector * const w=NULL, vpColVector * const m_w_prev=NULL);
   virtual void computeVVSWeights(vpRobust &robust, const vpColVector &error, vpColVector &w);
-  
+
 #ifdef VISP_HAVE_COIN3D
   virtual void extractGroup(SoVRMLGroup *sceneGraphVRML2, vpHomogeneousMatrix &transform, int &idFace);
   virtual void extractFaces(SoVRMLIndexedFaceSet* face_set, vpHomogeneousMatrix &transform, int &idFace, const std::string &polygonName="");

@@ -44,7 +44,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
@@ -137,7 +137,7 @@ void vpMbEdgeKltMultiTracker::computeVVS(std::map<std::string, const vpImage<uns
   m_nbrow = initMbtTracking(mapOfImages, lvl);
 
   if(m_nbInfos < 4 && m_nbrow < 4) {
-    throw vpTrackingException(vpTrackingException::notEnoughPointError, "\n\t\t Error-> not enough data");
+    throw vpTrackingException(vpTrackingException::notEnoughPointError, "Error: not enough features");
   } else if(m_nbrow < 4) {
     m_nbrow = 0;
   }
@@ -1027,7 +1027,7 @@ void vpMbEdgeKltMultiTracker::initFromPose(const vpImage<unsigned char>& I, cons
   }
 
   char s[FILENAME_MAX];
-  std::fstream finit ;
+  std::fstream finit;
   vpPoseVector init_pos;
 
   std::string ext = ".pos";
@@ -1038,7 +1038,7 @@ void vpMbEdgeKltMultiTracker::initFromPose(const vpImage<unsigned char>& I, cons
   else
     sprintf(s,"%s.pos", initFile.c_str());
 
-  finit.open(s,std::ios::in) ;
+  finit.open(s,std::ios::in);
   if (finit.fail()){
     std::cerr << "cannot read " << s << std::endl;
     throw vpException(vpException::ioError, "cannot read init file");

@@ -301,7 +301,7 @@ vpMbtDistanceKltCylinder::computeInteractionMatrixAndResidu(const vpHomogeneousM
     p0.changeFrame(_cMc0);
     p0.project();
 
-    double x0_transform(p0.get_x()), y0_transform(p0.get_y()) ;
+    double x0_transform(p0.get_x()), y0_transform(p0.get_y());
 
     double Z = computeZ(x_cur, y_cur);
 

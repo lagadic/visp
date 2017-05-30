@@ -391,7 +391,7 @@ vpMbtXmlParser::read_mask (xmlDocPtr doc, xmlNodePtr node)
     }
   }
 
-  this->m_ecm.setMaskSize(d_size) ;
+  this->m_ecm.setMaskSize(d_size);
   // Check to ensure that d_nb_mask > 0
   if (! d_nb_mask)
     throw(vpException(vpException::badValue, "Model-based tracker mask size parameter should be different from zero in xml file"));

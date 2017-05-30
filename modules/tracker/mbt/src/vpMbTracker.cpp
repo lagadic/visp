@@ -195,8 +195,8 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
   size_t pos = (unsigned int)initFile.rfind(ext);
 
   // Load the last poses from files
-  std::fstream finitpos ;
-  std::fstream finit ;
+  std::fstream finitpos;
+  std::fstream finit;
   char s[FILENAME_MAX];
   if (poseSavingFilename.empty()) {
     if ( pos == initFile.size()-ext.size() && pos != 0)
@@ -204,10 +204,10 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
     else
       str_pose =  initFile + ".0.pos";
 
-    finitpos.open(str_pose.c_str() ,std::ios::in) ;
+    finitpos.open(str_pose.c_str() ,std::ios::in);
     sprintf(s, "%s", str_pose.c_str());
   } else {
-    finitpos.open(poseSavingFilename.c_str() ,std::ios::in) ;
+    finitpos.open(poseSavingFilename.c_str() ,std::ios::in);
     sprintf(s, "%s", poseSavingFilename.c_str());
   }
   if (finitpos.fail() ){
@@ -220,7 +220,7 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
     }
 
     finitpos.close();
-    last_cMo.buildFrom(init_pos) ;
+    last_cMo.buildFrom(init_pos);
 
     std::cout <<"last_cMo : "<<std::endl << last_cMo <<std::endl;
 
@@ -230,31 +230,31 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
     vpDisplay::flush(I);
 
     std::cout << "No modification : left click " << std::endl;
-    std::cout << "Modify initial pose : right click " << std::endl ;
+    std::cout << "Modify initial pose : right click " << std::endl;
 
     vpDisplay::displayText(I, 15, 10,
                            "left click to validate, right click to modify initial pose",
                            vpColor::red);
 
-    vpDisplay::flush(I) ;
+    vpDisplay::flush(I);
 
-    while (!vpDisplay::getClick(I, ip, button)) ;
+    while (!vpDisplay::getClick(I, ip, button));
   }
 
 
   if (!finitpos.fail() && button == vpMouseButton::button1){
-    cMo = last_cMo ;
+    cMo = last_cMo;
   }
   else
   {
     vpDisplay *d_help = NULL;
 
-    vpDisplay::display(I) ;
-    vpDisplay::flush(I) ;
+    vpDisplay::display(I);
+    vpDisplay::flush(I);
 
-    vpPose pose ;
+    vpPose pose;
 
-    pose.clearPoint() ;
+    pose.clearPoint();
 
     // file parser
     // number of points
@@ -265,8 +265,8 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
     else
       sprintf(s,"%s.init", initFile.c_str());
 
-    std::cout << "Load 3D points from: " << s << std::endl ;
-    finit.open(s,std::ios::in) ;
+    std::cout << "Load 3D points from: " << s << std::endl;
+    finit.open(s,std::ios::in);
     if (finit.fail()){
       std::cout << "cannot read " << s << std::endl;
       throw vpException(vpException::ioError, "Cannot open model-based tracker init file %s", s);
@@ -285,19 +285,19 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
         if (vpIoTools::checkFilename(dispF)) {
           std::cout << "Load image to help initialization: " << dispF << std::endl;
 #if defined VISP_HAVE_X11
-          d_help = new vpDisplayX ;
+          d_help = new vpDisplayX;
 #elif defined VISP_HAVE_GDI
           d_help = new vpDisplayGDI;
 #elif defined VISP_HAVE_OPENCV
           d_help = new vpDisplayOpenCV;
 #endif
 
-          vpImage<vpRGBa> Iref ;
-          vpImageIo::read(Iref, dispF) ;
+          vpImage<vpRGBa> Iref;
+          vpImageIo::read(Iref, dispF);
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
           d_help->init(Iref, I.display->getWindowXPosition()+(int)I.getWidth()+80, I.display->getWindowYPosition(),
-                       "Where to initialize...")  ;
-          vpDisplay::display(Iref) ;
+                       "Where to initialize...");
+          vpDisplay::display(Iref);
           vpDisplay::flush(Iref);
 #endif
         }
@@ -322,14 +322,14 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
     finit.unget();
 
     unsigned int n3d;
-    finit >> n3d ;
+    finit >> n3d;
     finit.ignore(256, '\n'); // skip the rest of the line
-    std::cout << "Number of 3D points  " << n3d << std::endl ;
+    std::cout << "Number of 3D points  " << n3d << std::endl;
     if (n3d > 100000) {
       throw vpException(vpException::badValue, "In %s file, the number of 3D points exceed the max allowed", s);
     }
 
-    vpPoint *P = new vpPoint [n3d]  ;
+    vpPoint *P = new vpPoint [n3d];
     for (unsigned int i=0 ; i < n3d ; i++){
       // skip lines starting with # as comment
       finit.get(c);
@@ -362,15 +362,15 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
         vpDisplay::display(I);
         vpDisplay::displayText(I, 15, 10, text.str(), vpColor::red);
         for (unsigned int k=0; k<mem_ip.size(); k++) {
-          vpDisplay::displayCross(I, mem_ip[k], 10, vpColor::green, 2) ;
+          vpDisplay::displayCross(I, mem_ip[k], 10, vpColor::green, 2);
         }
-        vpDisplay::flush(I) ;
+        vpDisplay::flush(I);
 
         std::cout << "Click on point " << i+1 << " ";
         double x=0,y=0;
-        vpDisplay::getClick(I, ip) ;
+        vpDisplay::getClick(I, ip);
         mem_ip.push_back(ip);
-        vpDisplay::flush(I) ;
+        vpDisplay::flush(I);
         vpPixelMeterConversion::convertPoint(cam, ip, x, y);
         P[i].set_x(x);
         P[i].set_y(y);
@@ -379,13 +379,13 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
 
         pose.addPoint(P[i]) ; // and added to the pose computation point list
       }
-      vpDisplay::flush(I) ;
-      vpDisplay::display(I) ;
+      vpDisplay::flush(I);
+      vpDisplay::display(I);
 
       vpHomogeneousMatrix cMo1, cMo2;
-      pose.computePose(vpPose::LAGRANGE, cMo1) ;
+      pose.computePose(vpPose::LAGRANGE, cMo1);
       double d1 = pose.computeResidual(cMo1);
-      pose.computePose(vpPose::DEMENTHON, cMo2) ;
+      pose.computePose(vpPose::DEMENTHON, cMo2);
       double d2 = pose.computeResidual(cMo2);
 
       if(d1 < d2){
@@ -413,9 +413,9 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
       }
       else
       {
-        pose.clearPoint() ;
-        vpDisplay::display(I) ;
-        vpDisplay::flush(I) ;
+        pose.clearPoint();
+        vpDisplay::display(I);
+        vpDisplay::flush(I);
       }
     }
     vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::red);
@@ -451,34 +451,34 @@ vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::string& initF
 void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<vpPoint> &points3D_list,
                             const std::string &displayFile)
 {
-  vpDisplay::display(I) ;
-  vpDisplay::flush(I) ;
+  vpDisplay::display(I);
+  vpDisplay::flush(I);
   vpDisplay *d_help = NULL;
 
-  vpPose pose ;
+  vpPose pose;
   std::vector<vpPoint> P;
   for (unsigned int i=0 ; i < points3D_list.size() ; i++)
     P.push_back( vpPoint(points3D_list[i].get_oX(), points3D_list[i].get_oY(), points3D_list[i].get_oZ()) );
 
 #ifdef VISP_HAVE_MODULE_IO
-  vpImage<vpRGBa> Iref ;
+  vpImage<vpRGBa> Iref;
   //Display window creation and initialisation
   if(vpIoTools::checkFilename(displayFile)){
     try{
       std::cout << "Load image to help initialization: " << displayFile << std::endl;
 #if defined VISP_HAVE_X11
-      d_help = new vpDisplayX ;
+      d_help = new vpDisplayX;
 #elif defined VISP_HAVE_GDI
       d_help = new vpDisplayGDI;
 #elif defined VISP_HAVE_OPENCV
       d_help = new vpDisplayOpenCV;
 #endif
 
-      vpImageIo::read(Iref, displayFile) ;
+      vpImageIo::read(Iref, displayFile);
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
       d_help->init(Iref, I.display->getWindowXPosition()+(int)I.getWidth()+80, I.display->getWindowYPosition(),
-                   "Where to initialize...")  ;
-      vpDisplay::display(Iref) ;
+                   "Where to initialize...");
+      vpDisplay::display(Iref);
       vpDisplay::flush(Iref);
 #endif
     }
@@ -499,11 +499,11 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
   {
     for(unsigned int i=0 ; i< points3D_list.size() ; i++)
     {
-      std::cout << "Click on point " << i+1 << std::endl ;
+      std::cout << "Click on point " << i+1 << std::endl;
       double x=0,y=0;
-      vpDisplay::getClick(I, ip) ;
-      vpDisplay::displayCross(I, ip, 5,vpColor::green) ;
-      vpDisplay::flush(I) ;
+      vpDisplay::getClick(I, ip);
+      vpDisplay::displayCross(I, ip, 5,vpColor::green);
+      vpDisplay::flush(I);
       vpPixelMeterConversion::convertPoint(cam, ip, x, y);
       P[i].set_x(x);
       P[i].set_y(y);
@@ -513,12 +513,12 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
       vpDisplay::displayPoint (I, ip, vpColor::green); //display target point
       pose.addPoint(P[i]) ; // and added to the pose computation point list
     }
-    vpDisplay::flush(I) ;
+    vpDisplay::flush(I);
 
     vpHomogeneousMatrix cMo1, cMo2;
-    pose.computePose(vpPose::LAGRANGE, cMo1) ;
+    pose.computePose(vpPose::LAGRANGE, cMo1);
     double d1 = pose.computeResidual(cMo1);
-    pose.computePose(vpPose::DEMENTHON, cMo2) ;
+    pose.computePose(vpPose::DEMENTHON, cMo2);
     double d2 = pose.computeResidual(cMo2);
 
     if(d1 < d2){
@@ -534,7 +534,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
         "left click to validate, right click to re initialize object",
         vpColor::red);
 
-    vpDisplay::flush(I) ;
+    vpDisplay::flush(I);
 
     vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
     while (!vpDisplay::getClick(I, ip, button)) {};
@@ -545,9 +545,9 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
     }
     else
     {
-      pose.clearPoint() ;
-      vpDisplay::display(I) ;
-      vpDisplay::flush(I) ;
+      pose.clearPoint();
+      vpDisplay::display(I);
+      vpDisplay::flush(I);
     }
   }
 
@@ -587,7 +587,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char>& I, const std::vector<v
 void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::string& initFile )
 {
   char s[FILENAME_MAX];
-  std::fstream finit ;
+  std::fstream finit;
 
   std::string ext = ".init";
   size_t pos = initFile.rfind(ext);
@@ -597,8 +597,8 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::st
   else
     sprintf(s,"%s.init", initFile.c_str());
 
-  std::cout << "Load 2D/3D points from: " << s << std::endl ;
-  finit.open(s, std::ios::in) ;
+  std::cout << "Load 2D/3D points from: " << s << std::endl;
+  finit.open(s, std::ios::in);
   if (finit.fail()){
     std::cout << "cannot read " << s << std::endl;
     throw vpException(vpException::ioError, "Cannot open model-based tracker init file %s", s);
@@ -634,9 +634,9 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::st
     }
     finit.unget();
     double X, Y, Z;
-    finit >> X ;
-    finit >> Y ;
-    finit >> Z ;
+    finit >> X;
+    finit >> Y;
+    finit >> Z;
     finit.ignore(256, '\n'); // skip the rest of the line
 
     std::cout << "Point " << i+1 << " with 3D coordinates: " << X << " " << Y << " " << Z << std::endl;
@@ -668,7 +668,7 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::st
     throw vpException(vpException::badValue, "In %s file, number of 2D points %d and number of 3D points %d are not equal", s, n2d, n3d);
   }
 
-  vpPose pose ;
+  vpPose pose;
   for(unsigned int i=0 ; i< n2d ; i++)
   {
     // skip lines starting with # as comment
@@ -694,9 +694,9 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::st
   finit.close();
 
   vpHomogeneousMatrix cMo1, cMo2;
-  pose.computePose(vpPose::LAGRANGE, cMo1) ;
+  pose.computePose(vpPose::LAGRANGE, cMo1);
   double d1 = pose.computeResidual(cMo1);
-  pose.computePose(vpPose::DEMENTHON, cMo2) ;
+  pose.computePose(vpPose::DEMENTHON, cMo2);
   double d2 = pose.computeResidual(cMo2);
 
   if(d1 < d2)
@@ -727,7 +727,7 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::ve
 
   size_t size = points3D_list.size();
   std::vector<vpPoint> P;
-  vpPose pose ;
+  vpPose pose;
 
   for(size_t i=0 ; i< size ; i++)
   {
@@ -740,9 +740,9 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::ve
   }
 
   vpHomogeneousMatrix cMo1, cMo2;
-  pose.computePose(vpPose::LAGRANGE, cMo1) ;
+  pose.computePose(vpPose::LAGRANGE, cMo1);
   double d1 = pose.computeResidual(cMo1);
-  pose.computePose(vpPose::DEMENTHON, cMo2) ;
+  pose.computePose(vpPose::DEMENTHON, cMo2);
   double d2 = pose.computeResidual(cMo2);
 
   if(d1 < d2)
@@ -775,7 +775,7 @@ void vpMbTracker::initFromPoints( const vpImage<unsigned char>& I, const std::ve
 void vpMbTracker::initFromPose(const vpImage<unsigned char>& I, const std::string &initFile)
 {
   char s[FILENAME_MAX];
-  std::fstream finit ;
+  std::fstream finit;
   vpPoseVector init_pos;
 
   std::string ext = ".pos";
@@ -786,7 +786,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char>& I, const std::strin
   else
     sprintf(s,"%s.pos", initFile.c_str());
 
-  finit.open(s,std::ios::in) ;
+  finit.open(s,std::ios::in);
   if (finit.fail()){
     std::cout << "cannot read " << s << std::endl;
     throw vpException(vpException::ioError, "cannot read init file");
@@ -797,6 +797,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char>& I, const std::strin
   }
 
   cMo.buildFrom(init_pos);
+
   init(I);
 }
 
@@ -832,11 +833,11 @@ void vpMbTracker::initFromPose (const vpImage<unsigned char>& I, const vpPoseVec
 void vpMbTracker::savePose(const std::string &filename) const
 {
   vpPoseVector init_pos;
-  std::fstream finitpos ;
+  std::fstream finitpos;
   char s[FILENAME_MAX];
 
   sprintf(s,"%s", filename.c_str());
-  finitpos.open(s, std::ios::out) ;
+  finitpos.open(s, std::ios::out);
 
   init_pos.buildFrom(cMo);
   finitpos << init_pos;
@@ -983,7 +984,7 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const int idF
   polygon.addPoint(0, p1);
   polygon.addPoint(1, p2);
 
-  polygon.setIndex(idFace) ;
+  polygon.setIndex(idFace);
   polygon.setName(polygonName);
   polygon.setLod(useLod);
 
@@ -996,7 +997,7 @@ void vpMbTracker::addPolygon(const vpPoint& p1, const vpPoint &p2, const int idF
   //but used to be coherent when applying LOD settings for all polygons
   polygon.setMinPolygonAreaThresh(minPolygonAreaThresholdGeneral);
 
-  faces.addPolygon(&polygon) ;
+  faces.addPolygon(&polygon);
 
   if(clippingFlag != vpPolygon3D::NO_CLIPPING)
     faces.getPolygon().back()->setClipping(clippingFlag);
@@ -1019,14 +1020,14 @@ void vpMbTracker::addPolygon(const std::vector<std::vector<vpPoint> > &listFaces
         for(unsigned int j = 0 ; j < listFaces[i].size() ; j++)
             polygon.addPoint(j, listFaces[i][j]);
 
-        polygon.setIndex(id) ;
+        polygon.setIndex(id);
         polygon.setName(polygonName);
         polygon.setIsPolygonOriented(false);
         polygon.setLod(useLod);
         polygon.setMinLineLengthThresh(minLineLengthThreshold);
         polygon.setMinPolygonAreaThresh(minPolygonAreaThresholdGeneral);
 
-        faces.addPolygon(&polygon) ;
+        faces.addPolygon(&polygon);
 
         if(clippingFlag != vpPolygon3D::NO_CLIPPING)
           faces.getPolygon().back()->setClipping(clippingFlag);

@@ -67,7 +67,7 @@ class vpMbHiddenFaces
 {
   private:
   //! List of polygons
-  std::vector<PolygonType *> Lpol ;
+  std::vector<PolygonType *> Lpol;
   //! Number of visible polygon
   unsigned int nbVisiblePolygon;
   vpMbScanLine scanlineRender;
@@ -86,13 +86,13 @@ class vpMbHiddenFaces
                            bool &changed,
                            bool useOgre = false, bool not_used = false,
                            const vpImage<unsigned char> &I = vpImage<unsigned char>(),
-                           const vpCameraParameters &cam = vpCameraParameters()) ;
+                           const vpCameraParameters &cam = vpCameraParameters());
 
   public :
-                    vpMbHiddenFaces() ;
-                  ~vpMbHiddenFaces() ;
+                    vpMbHiddenFaces();
+                  ~vpMbHiddenFaces();
 
-    void          addPolygon(PolygonType *p)  ;
+    void          addPolygon(PolygonType *p);
 
     bool computeVisibility(const vpHomogeneousMatrix &cMo,
                            const double &angleAppears, const double &angleDisappears,
@@ -238,13 +238,13 @@ class vpMbHiddenFaces
     }
 #endif
 
-    unsigned int  setVisible(const vpImage<unsigned char>& I, const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, const double &angle, bool &changed) ;
-    unsigned int  setVisible(const vpImage<unsigned char>& I, const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears, bool &changed) ;
-    unsigned int  setVisible(const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears, bool &changed) ;
+    unsigned int  setVisible(const vpImage<unsigned char>& I, const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, const double &angle, bool &changed);
+    unsigned int  setVisible(const vpImage<unsigned char>& I, const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears, bool &changed);
+    unsigned int  setVisible(const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears, bool &changed);
 
 #ifdef VISP_HAVE_OGRE
-    unsigned int  setVisibleOgre(const vpImage<unsigned char>& I, const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears, bool &changed) ;
-    unsigned int  setVisibleOgre(const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears, bool &changed) ;
+    unsigned int  setVisibleOgre(const vpImage<unsigned char>& I, const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears, bool &changed);
+    unsigned int  setVisibleOgre(const vpHomogeneousMatrix &cMo, const double &angleAppears, const double &angleDisappears, bool &changed);
 #endif
   /*!
    Get the number of polygons.
@@ -252,7 +252,7 @@ class vpMbHiddenFaces
     \return Size of the list.
   */
   inline unsigned int            size() const { return (unsigned int)Lpol.size(); }
-} ;
+};
 
 /*!
   Basic constructor.
@@ -279,9 +279,9 @@ vpMbHiddenFaces<PolygonType>::~vpMbHiddenFaces()
 {
   for(unsigned int i = 0 ; i < Lpol.size() ; i++){
     if (Lpol[i]!=NULL){
-      delete Lpol[i] ;
+      delete Lpol[i];
     }
-    Lpol[i] = NULL ;
+    Lpol[i] = NULL;
   }
   Lpol.resize(0);
 
@@ -294,9 +294,9 @@ vpMbHiddenFaces<PolygonType>::~vpMbHiddenFaces()
   // This is already done by calling "delete ogre"
 //  for(unsigned int i = 0 ; i < lOgrePolygons.size() ; i++){
 //    if (lOgrePolygons[i]!=NULL){
-//      delete lOgrePolygons[i] ;
+//      delete lOgrePolygons[i];
 //    }
-//    lOgrePolygons[i] = NULL ;
+//    lOgrePolygons[i] = NULL;
 //  }
 
   lOgrePolygons.resize(0);
@@ -337,9 +337,9 @@ vpMbHiddenFaces<PolygonType>::reset()
   nbVisiblePolygon = 0;
   for(unsigned int i = 0 ; i < Lpol.size() ; i++){
     if (Lpol[i]!=NULL){
-      delete Lpol[i] ;
+      delete Lpol[i];
     }
-    Lpol[i] = NULL ;
+    Lpol[i] = NULL;
   }
   Lpol.resize(0);
 
@@ -352,9 +352,9 @@ vpMbHiddenFaces<PolygonType>::reset()
   // This is already done by calling "delete ogre"
 //  for(unsigned int i = 0 ; i < lOgrePolygons.size() ; i++){
 //    if (lOgrePolygons[i]!=NULL){
-//      delete lOgrePolygons[i] ;
+//      delete lOgrePolygons[i];
 //    }
-//    lOgrePolygons[i] = NULL ;
+//    lOgrePolygons[i] = NULL;
 //  }
 
   lOgrePolygons.resize(0);

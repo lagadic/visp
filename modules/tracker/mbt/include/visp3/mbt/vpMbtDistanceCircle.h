@@ -66,7 +66,7 @@ class VISP_EXPORT vpMbtDistanceCircle
     vpMe *me;
     //double alpha;
     double wmean;
-    vpFeatureEllipse featureEllipse ;
+    vpFeatureEllipse featureEllipse;
     //! Polygon describing the circle bbox
 //    vpMbtPolygon poly;
     bool isTrackedCircle;
@@ -121,8 +121,8 @@ class VISP_EXPORT vpMbtDistanceCircle
 //#endif
 
   public:
-    vpMbtDistanceCircle() ;
-    ~vpMbtDistanceCircle() ;
+    vpMbtDistanceCircle();
+    ~vpMbtDistanceCircle();
 
     void buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, const double r);
     
@@ -244,7 +244,7 @@ class VISP_EXPORT vpMbtDistanceCircle
 
   private:
     void project(const vpHomogeneousMatrix &cMo);
-} ;
+};
 
 #endif
 

@@ -82,9 +82,9 @@ public:
   bool hasOrientation;
 
 public: 
-            vpMbtPolygon() ;
-            vpMbtPolygon(const vpMbtPolygon& mbtp) ;
-            virtual       ~vpMbtPolygon() ;
+            vpMbtPolygon();
+            vpMbtPolygon(const vpMbtPolygon& mbtp);
+            virtual       ~vpMbtPolygon();
   
    /*!
     Get the index of the face.
@@ -106,7 +106,7 @@ public:
 		  const vpCameraParameters &cam = vpCameraParameters(), const vpImage<unsigned char> &I = vpImage<unsigned char>());
             bool          isVisible() const {return isvisible;}
 
-            vpMbtPolygon& operator=(const vpMbtPolygon& mbtp) ;
+            vpMbtPolygon& operator=(const vpMbtPolygon& mbtp);
   
   /*!
     Set the index of the face.
