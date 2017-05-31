@@ -108,12 +108,15 @@ public:
   virtual double getGoodMovingEdgesRatioThreshold() const;
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+  virtual std::vector<vpImagePoint> getKltImagePoints() const;
+  virtual std::map<int, vpImagePoint> getKltImagePointsWithId() const;
+
+  virtual unsigned int getKltMaskBorder() const;
+  virtual int getKltNbPoints() const;
+
   virtual vpKltOpencv getKltOpencv() const;
   virtual void getKltOpencv(vpKltOpencv &klt1, vpKltOpencv &klt2) const;
   virtual void getKltOpencv(std::map<std::string, vpKltOpencv> &mapOfKlts) const;
-
-  virtual std::vector<vpImagePoint> getKltImagePoints() const;
-  virtual std::map<int, vpImagePoint> getKltImagePointsWithId() const;
 
 #  if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   virtual std::vector<cv::Point2f> getKltPoints() const;
@@ -121,14 +124,10 @@ public:
 
   virtual double getKltThresholdAcceptation() const;
 #endif
+
   virtual void getLcircle(const std::string &cameraName, std::list<vpMbtDistanceCircle *>& circlesList, const unsigned int level=0) const;
   virtual void getLcylinder(const std::string &cameraName, std::list<vpMbtDistanceCylinder *>& cylindersList, const unsigned int level=0) const;
   virtual void getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *>& linesList, const unsigned int level=0) const;
-
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-  virtual unsigned int getKltMaskBorder() const;
-  virtual int getKltNbPoints() const;
-#endif
 
   virtual vpMe getMovingEdge() const;
   virtual void getMovingEdge(vpMe &me1, vpMe &me2) const;

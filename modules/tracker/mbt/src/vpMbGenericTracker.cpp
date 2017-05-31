@@ -774,6 +774,78 @@ double vpMbGenericTracker::getGoodMovingEdgesRatioThreshold() const {
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 /*!
+  Get the current list of KLT points for the reference camera.
+
+  \warning This function convert and copy the OpenCV KLT points into vpImagePoints.
+
+  \return the list of KLT points through vpKltOpencv.
+*/
+std::vector<vpImagePoint> vpMbGenericTracker::getKltImagePoints() const {
+  std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
+  if (it != m_mapOfTrackers.end()) {
+    TrackerWrapper *tracker = it->second;
+    return tracker->getKltImagePoints();
+  } else {
+    std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << "!" << std::endl;
+  }
+
+  return std::vector<vpImagePoint>();
+}
+
+/*!
+  Get the current list of KLT points and their id for the reference camera.
+
+  \warning This function convert and copy the openCV KLT points into vpImagePoints.
+
+  \return the list of KLT points and their id through vpKltOpencv.
+*/
+std::map<int, vpImagePoint> vpMbGenericTracker::getKltImagePointsWithId() const {
+  std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
+  if (it != m_mapOfTrackers.end()) {
+    TrackerWrapper *tracker = it->second;
+    return tracker->getKltImagePointsWithId();
+  } else {
+    std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << "!" << std::endl;
+  }
+
+  return std::map<int, vpImagePoint>();
+}
+
+/*!
+  Get the erosion of the mask used on the Model faces.
+
+  \return The erosion for the reference camera.
+*/
+unsigned int vpMbGenericTracker::getKltMaskBorder() const {
+  std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
+  if (it != m_mapOfTrackers.end()) {
+    TrackerWrapper *tracker = it->second;
+    return tracker->getKltMaskBorder();
+  } else {
+    std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << "!" << std::endl;
+  }
+
+  return 0;
+}
+
+/*!
+  Get number of KLT points for the reference camera.
+
+  \return Number of KLT points for the reference camera.
+*/
+int vpMbGenericTracker::getKltNbPoints() const {
+  std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
+  if (it != m_mapOfTrackers.end()) {
+    TrackerWrapper *tracker = it->second;
+    return tracker->getKltNbPoints();
+  } else {
+    std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << "!" << std::endl;
+  }
+
+  return 0;
+}
+
+/*!
   Get the klt tracker at the current state for the reference camera.
 
   \return klt tracker.
@@ -827,12 +899,12 @@ void vpMbGenericTracker::getKltOpencv(std::map<std::string, vpKltOpencv> &mapOfK
   }
 }
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
 /*!
   Get the current list of KLT points for the reference camera.
 
    \return the list of KLT points through vpKltOpencv.
 */
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
 std::vector<cv::Point2f> vpMbGenericTracker::getKltPoints() const {
   std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
   if (it != m_mapOfTrackers.end()) {
@@ -844,6 +916,7 @@ std::vector<cv::Point2f> vpMbGenericTracker::getKltPoints() const {
 
   return std::vector<cv::Point2f>();
 }
+#endif
 
 /*!
   Get the threshold for the acceptation of a point.
@@ -852,45 +925,6 @@ std::vector<cv::Point2f> vpMbGenericTracker::getKltPoints() const {
 */
 double vpMbGenericTracker::getKltThresholdAcceptation() const {
   return m_thresholdOutlier;
-}
-#endif
-
-/*!
-  Get the current list of KLT points for the reference camera.
-
-  \warning This function convert and copy the OpenCV KLT points into vpImagePoints.
-
-  \return the list of KLT points through vpKltOpencv.
-*/
-std::vector<vpImagePoint> vpMbGenericTracker::getKltImagePoints() const {
-  std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
-  if (it != m_mapOfTrackers.end()) {
-    TrackerWrapper *tracker = it->second;
-    return tracker->getKltImagePoints();
-  } else {
-    std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << "!" << std::endl;
-  }
-
-  return std::vector<vpImagePoint>();
-}
-
-/*!
-  Get the current list of KLT points and their id for the reference camera.
-
-  \warning This function convert and copy the openCV KLT points into vpImagePoints.
-
-  \return the list of KLT points and their id through vpKltOpencv.
-*/
-std::map<int, vpImagePoint> vpMbGenericTracker::getKltImagePointsWithId() const {
-  std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
-  if (it != m_mapOfTrackers.end()) {
-    TrackerWrapper *tracker = it->second;
-    return tracker->getKltImagePointsWithId();
-  } else {
-    std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << "!" << std::endl;
-  }
-
-  return std::map<int, vpImagePoint>();
 }
 #endif
 
@@ -960,25 +994,6 @@ void vpMbGenericTracker::getLline(const std::string &cameraName, std::list<vpMbt
   }
 }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-/*!
-  Get the erosion of the mask used on the Model faces.
-
-  \return The erosion for the reference camera.
-*/
-unsigned int vpMbGenericTracker::getKltMaskBorder() const {
-  std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
-  if (it != m_mapOfTrackers.end()) {
-    TrackerWrapper *tracker = it->second;
-    return tracker->getKltMaskBorder();
-  } else {
-    std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << "!" << std::endl;
-  }
-
-  return 0;
-}
-#endif
-
 /*!
   Get the moving edge parameters for the reference camera.
 
@@ -1018,17 +1033,7 @@ void vpMbGenericTracker::getMovingEdge(vpMe &me1, vpMe &me2) const {
 }
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-int vpMbGenericTracker::getKltNbPoints() const {
-  std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
-  if (it != m_mapOfTrackers.end()) {
-    TrackerWrapper *tracker = it->second;
-    return tracker->getKltNbPoints();
-  } else {
-    std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << "!" << std::endl;
-  }
 
-  return 0;
-}
 #endif
 
 /*!
@@ -3719,7 +3724,7 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string& confi
 #endif
 
   try{
-    std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
+    std::cout << " *********** Parsing XML for Model-Based Tracker ************ " << std::endl;
     xmlp.parse(configFile.c_str());
   }
   catch(...){
