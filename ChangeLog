@@ -16,6 +16,7 @@ ViSP 3.1.0 (under development)
     . Lapack is now embedded as a build-in when Lapack system library is not found
     . vpVideoReader was improved to better detect first and last image numbers of an
       image sequence and better handle the frame step
+    . Speed-up vpColVector::insert(), vpMatrix::insert() and vpMatrix::stack()
     . Refactor model-based tracker
     . Introduce vpMbGenericTracker a new class that can handle all the features
       supported by the model-based tracker but also consider stereo or multi-view
