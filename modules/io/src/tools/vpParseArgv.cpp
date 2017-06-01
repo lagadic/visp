@@ -41,9 +41,9 @@
 
 vpParseArgv::vpArgvInfo vpParseArgv::defaultTable[2] = {
     {"-help", ARGV_HELP, (char *) NULL, (char *) NULL,
-	"Print summary of command-line options and abort.\n"},
+  "Print summary of command-line options and abort.\n"},
     {NULL, ARGV_END, (char *) NULL, (char *) NULL,
-	(char *) NULL}
+  (char *) NULL}
 };
 
 int (*handlerProc1)(const char *dst, const char *key, const char *argument);
@@ -51,15 +51,15 @@ int (*handlerProc2)(const char *dst, const char *key, int valargc, const char **
 
 
 /*!
-  Process an argv array according to a table of expectedvcommand-line options. 
- 
+  Process an argv array according to a table of expectedvcommand-line options.
+
   The return value is a boolean value with true indicating an
   error. If an error occurs then an error message is printed on
   stderr. Under normal conditions, both *argcPtr and *argv are
   modified to return the arguments that couldn't be processed here
   (they didn't match the option table, or followed an
   vpParseArgv::ARGV_REST argument).
- 
+
   \param argcPtr: Pointer to the count of command line arguments.
 
   \param argv: Array of command line argument strings.
@@ -73,23 +73,23 @@ int (*handlerProc2)(const char *dst, const char *key, int valargc, const char **
   don't generate information for default options.
 */
 bool
-vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, 
-		   int flags)
+vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
+       int flags)
 
 {
    vpArgvInfo *infoPtr;	/* Pointer to the current entry in the
-				 * table of argument descriptions. */
+         * table of argument descriptions. */
    vpArgvInfo *matchPtr;	        /* Descriptor that matches current argument. */
    const char *curArg;		/* Current argument */
    char c;		/* Second character of current arg (used for
-				 * quick check for matching;  use 2nd char.
-				 * because first char. will almost always
-				 * be '-'). */
+         * quick check for matching;  use 2nd char.
+         * because first char. will almost always
+         * be '-'). */
    int srcIndex;		/* Location from which to read next argument
-				 * from argv. */
+         * from argv. */
    int dstIndex;		/* Index into argv to which next unused
-				 * argument should be copied (never greater
-				 * than srcIndex). */
+         * argument should be copied (never greater
+         * than srcIndex). */
    int argc;			/* # arguments in argv still to process. */
    size_t length;			/* Number of characters in current argument. */
    unsigned long long nargs;                   /* Number of following arguments to get. */
@@ -165,11 +165,15 @@ vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
       /*
        * Take the appropriate action based on the option type
        */
-	gotMatch:
+  gotMatch:
       infoPtr = matchPtr;
       switch (infoPtr->type) {
       case ARGV_CONSTANT:
+      case ARGV_CONSTANT_INT:
         *((int *) infoPtr->dst) = 1;
+        break;
+      case ARGV_CONSTANT_BOOL:
+        *((bool *) infoPtr->dst) = true;
         break;
       case ARGV_INT:
          nargs = (uintptr_t) infoPtr->src;
@@ -238,7 +242,7 @@ vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
             if (argc == 0) {
                goto missingArg;
             } else {
-	      char *endPtr;
+        char *endPtr;
 
                *(((float *) infoPtr->dst)+i) =
                   (float)strtod(argv[srcIndex], &endPtr); // Here we use strtod
@@ -260,7 +264,7 @@ vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
             if (argc == 0) {
                goto missingArg;
             } else {
-	      char *endPtr;
+        char *endPtr;
 
                *(((double *) infoPtr->dst)+i) =
                   strtod(argv[srcIndex], &endPtr);
@@ -280,7 +284,7 @@ vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
          handlerProc1 = (int (*)(const char *dst, const char *key, const char *argument))infoPtr->src;
 
          if ((*handlerProc1)(infoPtr->dst, infoPtr->key, argv[srcIndex]))
-	 {
+   {
             srcIndex += 1;
             argc -= 1;
          }
@@ -326,18 +330,18 @@ vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
  missingArg:
    FPRINTF(stderr, "\"%s\" option requires an additional argument\n", curArg);
    return true;
-	
+
 #undef FPRINTF
 }
 
 /*!
   Generate a help string describing command-line options.
- 
+
   Prints on stderr (unless vpParseArgv::ARGV_NO_PRINT is specified in
   flags) a help string describing all the options in argTable, plus
   all those in the default table unless vpParseArgv::ARGV_NO_DEFAULTS
   is specified in flags.
- 
+
   \param argTable: Array of command-specific argument.descriptions.
 
   \param flags: If the vpParseArgv::ARGV_NO_DEFAULTS bit is set in
@@ -456,6 +460,8 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
          case ARGV_FUNC:
          case ARGV_REST:
          case ARGV_CONSTANT:
+         case ARGV_CONSTANT_INT:
+         case ARGV_CONSTANT_BOOL:
          default: {
             break;
          }
@@ -499,9 +505,9 @@ vpParseArgv::printUsage(vpArgvInfo * argTable, int flags)
   is NULL.
 
 */
-int 
-vpParseArgv::parse(int argc, const char** argv, const char* validOpts, 
-		   const char** param)
+int
+vpParseArgv::parse(int argc, const char** argv, const char* validOpts,
+       const char** param)
 {
   static int iArg = 1;
   int chOpt;
@@ -514,49 +520,49 @@ vpParseArgv::parse(int argc, const char** argv, const char* validOpts,
       // we have an option specifier
       chOpt = argv[iArg][1];
       if (isalnum(chOpt) || ispunct(chOpt)) {
-	// we have an option character
-	psz = strchr(validOpts, chOpt);
-	if (psz != NULL) {
-	  // option is valid, we want to return chOpt
-	  if (psz[1] == ':') {
-	    // option can have a parameter
-	    psz = &(argv[iArg][2]);
-	    if (*psz == '\0') {
-	      // must look at next argv for param
-	      if (iArg+1 < argc) {
-		psz = &(argv[iArg+1][0]);
-		// next argv is the param
-		iArg++;
-		pszParam = psz;
-	      }
-	      else {
-		// reached end of args looking for param
-		// option specified without parameter
-		chOpt = -1;
-		pszParam = &(argv[iArg][0]);
-	      }
+  // we have an option character
+  psz = strchr(validOpts, chOpt);
+  if (psz != NULL) {
+    // option is valid, we want to return chOpt
+    if (psz[1] == ':') {
+      // option can have a parameter
+      psz = &(argv[iArg][2]);
+      if (*psz == '\0') {
+        // must look at next argv for param
+        if (iArg+1 < argc) {
+    psz = &(argv[iArg+1][0]);
+    // next argv is the param
+    iArg++;
+    pszParam = psz;
+        }
+        else {
+    // reached end of args looking for param
+    // option specified without parameter
+    chOpt = -1;
+    pszParam = &(argv[iArg][0]);
+        }
 
-	    }
-	    else {
-	      // param is attached to option
-	      pszParam = psz;
-	    }
-	  }
-	  else {
-	    // option is alone, has no parameter
-	  }
-	}
-	else {
-	  // option specified is not in list of valid options
-	  chOpt = -1;
-	  pszParam = &(argv[iArg][0]);
-	}
       }
       else {
-	// though option specifier was given, option character
-	// is not alpha or was was not specified
-	chOpt = -1;
-	pszParam = &(argv[iArg][0]);
+        // param is attached to option
+        pszParam = psz;
+      }
+    }
+    else {
+      // option is alone, has no parameter
+    }
+  }
+  else {
+    // option specified is not in list of valid options
+    chOpt = -1;
+    pszParam = &(argv[iArg][0]);
+  }
+      }
+      else {
+  // though option specifier was given, option character
+  // is not alpha or was was not specified
+  chOpt = -1;
+  pszParam = &(argv[iArg][0]);
       }
     }
     else {

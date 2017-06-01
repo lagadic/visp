@@ -70,7 +70,7 @@ int main(int argc, const char ** argv)
 
     vpParseArgv::vpArgvInfo argTable[] =
     {
-      {"-bool", vpParseArgv::ARGV_CONSTANT, 0, (char *) &bool_val,
+      {"-bool", vpParseArgv::ARGV_CONSTANT_BOOL, 0, (char *) &bool_val,
        "Bool enabled."},
       {"-integer", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &int_val,
        "An integer value."},

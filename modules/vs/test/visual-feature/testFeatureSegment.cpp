@@ -67,7 +67,7 @@
 
 */
 int main(int argc, const char **argv)
-{  
+{
   try {
 #if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
     int opt_no_display = 0;
@@ -79,7 +79,7 @@ int main(int argc, const char **argv)
     vpParseArgv::vpArgvInfo argTable[] =
     {
   #if (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
-      {"-d", vpParseArgv::ARGV_CONSTANT, 0, (char *) &opt_no_display,
+      {"-d", vpParseArgv::ARGV_CONSTANT_INT, 0, (char *) &opt_no_display,
        "Disable display and graphics viewer."},
   #endif
       {"-normalized", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &opt_normalized,

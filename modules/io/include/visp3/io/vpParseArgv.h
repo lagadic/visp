@@ -64,7 +64,7 @@ int main(int argc, const char ** argv)
   // Parse the command line to set the variables
   vpParseArgv::vpArgvInfo argTable[] =
   {
-    {"-bool", vpParseArgv::ARGV_CONSTANT, 0, (char *) &b_val,
+    {"-bool", vpParseArgv::ARGV_CONSTANT_BOOL, 0, (char *) &b_val,
      "Flag enabled."},
     {"-int", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &i_val,
      "An integer value."},
@@ -93,7 +93,7 @@ int main(int argc, const char ** argv)
 }
   \endcode
 
-  The code below shows an other way to parse command line arguments using 
+  The code below shows an other way to parse command line arguments using
   vpParseArgv class. Here command line options are only one character long.
   \code
 #include <stdio.h>
@@ -155,20 +155,22 @@ class VISP_EXPORT vpParseArgv
     Legal values for the type field of a vpArgvInfo.
   */
   typedef enum  {
-    ARGV_CONSTANT,/*!< Stand alone argument. */
-    ARGV_INT,     /*!< Argument is associated to an int. */
-    ARGV_LONG,    /*!< Argument is associated to a long. */
-    ARGV_STRING,  /*!< Argument is associated to a char * string. */
+    ARGV_CONSTANT,     /*!< Stand alone argument. Same as ARGV_CONSTANT_INT. */
+    ARGV_CONSTANT_INT, /*!< Stand alone argument associated to an int var that is set to 1. */
+    ARGV_CONSTANT_BOOL,/*!< Stand alone argument associated to a bool var that is set to true. */
+    ARGV_INT,          /*!< Argument is associated to an int. */
+    ARGV_LONG,         /*!< Argument is associated to a long. */
+    ARGV_STRING,       /*!< Argument is associated to a char * string. */
     ARGV_REST,
-    ARGV_FLOAT,   /*!< Argument is associated to a float. */
-    ARGV_DOUBLE,  /*!< Argument is associated to a double. */
+    ARGV_FLOAT,        /*!< Argument is associated to a float. */
+    ARGV_DOUBLE,       /*!< Argument is associated to a double. */
     ARGV_FUNC,
     ARGV_GENFUNC,
-    ARGV_HELP,    /*!< Argument is for help displaying. */
-    ARGV_END      /*!< End of the argument list. */
+    ARGV_HELP,         /*!< Argument is for help displaying. */
+    ARGV_END           /*!< End of the argument list. */
   } vpArgvType;
 
-  /*! 
+  /*!
     Flag bits.
    */
   typedef enum {
@@ -186,12 +188,12 @@ class VISP_EXPORT vpParseArgv
  */
   typedef struct {
     const char *key;    /*!< The key string that flags the option in the
-			 * argv array. */
+       * argv array. */
     vpArgvType type;	/*!< Indicates option type;  see below. */
     const char *src;		/*!< Value to be used in setting dst;  usage
-			 * depends on type. */
+       * depends on type. */
     const char *dst;		/*!< Address of value to be modified;  usage
-			 * depends on type. */
+       * depends on type. */
     const char *help;		/*!< Documentation message describing this option. */
   } vpArgvInfo;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
@@ -199,7 +201,7 @@ class VISP_EXPORT vpParseArgv
 public:
   static vpArgvInfo defaultTable[2];
   static bool parse(int *argcPtr, const char **argv,
-		    vpArgvInfo *argTable, int flags);
+        vpArgvInfo *argTable, int flags);
   static int  parse(int argc, const char** argv, const char* validOpts, const char** param);
 
  private:
