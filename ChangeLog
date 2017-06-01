@@ -5,18 +5,34 @@
      Copyright (C) 2005 - 2017 by Inria. All rights reserved.
                       https://visp.inria.fr
 
-ViSP 3.0.2 (under development)
+ViSP 3.1.0 (under development)
   - New features
     . Improve vpRealSense to better support R200 device
     . Improve vpConfig.h header content to remove path to build tree when installed
     . Speed-up vpMbKltTracker and vpMbEdgeKltTracker during reinit
     . Remove numerical recipes code that is not open-source
     . Changes done in vpMatrix to use either Lapack, OpenCV or GSL 3rd party
+    . Eigen 3rd party was introduced as an alternative for matrix computation
+    . Lapack is now embedded as a build-in when Lapack system library is not found
+    . vpVideoReader was improved to better detect first and last image numbers of an
+      image sequence and better handle the frame step
+    . Refactor model-based tracker
+    . Introduce vpMbGenericTracker a new class that can handle all the features
+      supported by the model-based tracker but also consider stereo or multi-view
+      tracking
   - Tutorials
   - Bug fixed
     . [#137] Fix bug in extration of vpRotationMatrix from vpPoseVector using
              vpPoseVector::getRotationMatrix()
     . [#149] Bug in vpTime::measureTimeMicros() (OS detection was done wrong)
+    . [#160] Build issue with msvc arround std::min() std::max()
+    . [#162] Redefinition errors in WinSock2.h and winsock.h
+    . [#165] Segmentation fault when cout a null row vector
+    . [#171] Segfault when using vpMatrix::pseudoInverse()
+    . [#175] Unable to track an ellipse with vpMeEllipse
+    . [#177] Bug in line 124 of VISPConfig.cmake
+    . [#178] Comments are not handled in vpMbTracker::initFromPoints()
+    . [#183] Inversion between pixel size and optical center in vpRealSense class
 
 ----------------------------------------------
 ViSP 3.0.1 (released February 3rd, 2017)
