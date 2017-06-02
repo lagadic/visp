@@ -201,4 +201,5 @@ We suppose from now, that you have created a folder (let say \c C:/ViSP/ViSP-sta
 \section image_next Next tutorial
 
 You are now ready to see the \ref tutorial-image-display.
+There is also the \ref tutorial-contrib-module that could be useful to understand how to introduce new developments in ViSP.
 */

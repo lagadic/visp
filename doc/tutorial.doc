@@ -1,4 +1,4 @@
-﻿/*! \page tutorial_mainpage Tutorials
+/*! \page tutorial_mainpage Tutorials
 This page references all the tutorials.
 
 - \subpage tutorial_install_pkg
@@ -24,6 +24,8 @@ This page references all the tutorials.
 - \subpage tutorial_bridge
 
 - \subpage tutorial_tools
+
+- \subpage tutorial_contrib
 
 */
 
@@ -147,5 +149,12 @@ This page introduces the user to other tools that may be useful.
 - \subpage tutorial-trace <br>This tutorial explains how to introduce trace in the code that could be enabled for debugging or disabled.
 - \subpage tutorial-multi-threading <br>This tutorial explains how to implement multi-threaded applications to capture images from a camera
 in one thread and display these images in an other thread.
+
+*/
+
+/*! \page tutorial_contrib How to contribute
+This page introduces the way to contribute to ViSP creating new modules.
+
+- \subpage tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
 
 */

@@ -22,6 +22,7 @@ ViSP 3.1.0 (under development)
       supported by the model-based tracker but also consider stereo or multi-view
       tracking
   - Tutorials
+    . New tutorial: ViSP contrib module
   - Bug fixed
     . [#137] Fix bug in extration of vpRotationMatrix from vpPoseVector using
              vpPoseVector::getRotationMatrix()

@@ -135,6 +135,10 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-multi-threading <br>This tutorial explains how to implement multi-threaded applications to capture images from a camera
 in one thread and display these images in an other thread.
 
+\subsection tuto_contrib How to contribute
+
+- \ref tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
+
 @VISP_MAINPAGE_EXTENSION@
 
 \section Examples_sec Using ViSP
