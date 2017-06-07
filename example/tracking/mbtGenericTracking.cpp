@@ -202,7 +202,6 @@ main(int argc, const char ** argv)
     std::string opt_ipath;
     std::string ipath;
     std::string opt_configFile;
-    std::string configFile;
     std::string opt_modelFile;
     std::string modelFile;
     std::string opt_initFile;
@@ -253,12 +252,15 @@ main(int argc, const char ** argv)
     else
       ipath = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube/image%04d.pgm");
 
+#if defined (VISP_HAVE_XML2) && USE_XML
+    std::string configFile;
     if (!opt_configFile.empty())
       configFile = opt_configFile;
     else if (!opt_ipath.empty())
       configFile = vpIoTools::createFilePath(opt_ipath, "ViSP-images/mbt/cube.xml");
     else
       configFile = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube.xml");
+#endif
 
     if (!opt_modelFile.empty()){
       modelFile = opt_modelFile;
