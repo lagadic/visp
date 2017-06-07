@@ -3330,14 +3330,13 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
       }
 
       //Weighting
-      double wi;
       double num = 0;
       double den = 0;
 
       unsigned int start_index = 0;
       if (m_trackerType & EDGE_TRACKER) {
         for (unsigned int i = 0; i < nb_edge_features; i++) {
-          wi = m_w_edge[i] * m_factor[i] * factorEdge;
+          double wi = m_w_edge[i] * m_factor[i] * factorEdge;
           W_true[i] = wi;
           m_weightedError[i] = wi*m_error[i];
 
@@ -3355,7 +3354,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
       if (m_trackerType & KLT_TRACKER) {
         for (unsigned int i = 0; i < nb_klt_features; i++) {
-          wi = m_w_klt[i] * factorKlt;
+          double wi = m_w_klt[i] * factorKlt;
           W_true[start_index + i] = wi;
           m_weightedError[start_index + i] = wi * m_error_klt[i];
 
@@ -4054,7 +4053,7 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &I) 
 
     postTracking(I);
 
-  } catch (vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << "Exception: " << e.what() << std::endl;
     cMo = cMo_1;
     throw e;
