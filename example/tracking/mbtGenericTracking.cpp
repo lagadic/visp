@@ -61,7 +61,7 @@
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#define GETOPTARGS  "x:m:i:n:dchtfColwvpT:"
+#define GETOPTARGS  "x:m:i:n:de:chtfColwvpT:"
 
 #define USE_XML 0
 
@@ -73,7 +73,7 @@ Example of tracking based on the 3D model.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
-  [-m <model name>] [-n <initialisation file base name>]\n\
+  [-m <model name>] [-n <initialisation file base name>] [-e <last frame index>]\n\
   [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p]\n\
   [-T <tracker type>]\n",
   name );
@@ -97,6 +97,9 @@ OPTIONS:                                               \n\
   -m <model name>                                 \n\
      Specify the name of the file of the model\n\
      The model can either be a vrml model (.wrl) or a .cao file.\n\
+\n\
+  -e <last frame index>                                 \n\
+     Specify the index of the last frame. Once reached, the tracking is stopped\n\
 \n\
   -f                                  \n\
      Do not use the vrml model, use the .cao one. These two models are \n\
@@ -151,7 +154,7 @@ OPTIONS:                                               \n\
 
 
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
-                std::string &initFile, bool &displayFeatures, bool &click_allowed, bool &display,
+                std::string &initFile, long &lastFrame, bool &displayFeatures, bool &click_allowed, bool &display,
                 bool& cao3DModel, bool& trackCylinder, bool &useOgre, bool &showOgreConfigDialog,
                 bool &useScanline, bool &computeCovariance, bool &projectionError, int &trackerType)
 {
@@ -160,6 +163,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
+    case 'e': lastFrame = atol(optarg_); break;
     case 'i': ipath = optarg_; break;
     case 'x': configFile = optarg_; break;
     case 'm': modelFile = optarg_; break;
@@ -206,6 +210,7 @@ main(int argc, const char ** argv)
     std::string modelFile;
     std::string opt_initFile;
     std::string initFile;
+    long opt_lastFrame = -1;
     bool displayFeatures = true;
     bool opt_click_allowed = true;
     bool opt_display = true;
@@ -226,7 +231,7 @@ main(int argc, const char ** argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, displayFeatures,
+    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, opt_lastFrame, displayFeatures,
                     opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre, showOgreConfigDialog,
                     useScanline, computeCovariance, projectionError, trackerType)) {
       return EXIT_FAILURE;
@@ -321,6 +326,9 @@ main(int argc, const char ** argv)
       std::cerr << "Cannot open sequence: " << ipath << std::endl;
       return EXIT_FAILURE;
     }
+
+    if (opt_lastFrame > 1 && opt_lastFrame < reader.getLastFrameIndex())
+      reader.setLastFrameIndex(opt_lastFrame);
 
     reader.acquire(I1);
     I2 = I1;
@@ -588,6 +596,9 @@ main(int argc, const char ** argv)
       vpDisplay::flush(I1);
       vpDisplay::flush(I2);
     }
+
+    std::cout << "Reached last frame: " << reader.getFrameIndex() << std::endl;
+
     if (opt_click_allowed && !quit) {
       vpDisplay::getClick(I1);
     }

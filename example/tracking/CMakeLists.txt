@@ -28,7 +28,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# ViSP overall configuration file. 
+# ViSP overall configuration file.
 #
 # Authors:
 # Fabien Spindler
@@ -89,27 +89,27 @@ add_test(mbtKltTracking-cao     mbtKltTracking -c -f ${OPTION_TO_DESACTIVE_DISPL
 add_test(mbtEdgeTracking-cao-nocyl    mbtEdgeTracking -c -f -C ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtEdgeKltTracking-cao-nocyl mbtEdgeKltTracking -c -f -C ${OPTION_TO_DESACTIVE_DISPLAY})
 
-add_test(mbtEdgeTracking-cao-scanline    mbtEdgeTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(mbtEdgeKltTracking-cao-scanline mbtEdgeKltTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(mbtKltTracking-cao-scanline     mbtKltTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(mbtEdgeTracking-cao-scanline    mbtEdgeTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 50)
+add_test(mbtEdgeKltTracking-cao-scanline mbtEdgeKltTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 50)
+add_test(mbtKltTracking-cao-scanline     mbtKltTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 50)
 
 add_test(mbtEdgeMultiTracking-cao    mbtEdgeMultiTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtEdgeKltMultiTracking-cao mbtEdgeKltMultiTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtKltMultiTracking-cao     mbtKltMultiTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
 
-add_test(mbtEdgeMultiTracking-cao-scanline    mbtEdgeMultiTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(mbtEdgeKltMultiTracking-cao-scanline mbtEdgeKltMultiTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(mbtKltMultiTracking-cao-scanline     mbtKltMultiTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(mbtEdgeMultiTracking-cao-scanline    mbtEdgeMultiTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 50)
+add_test(mbtEdgeKltMultiTracking-cao-scanline mbtEdgeKltMultiTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 50)
+add_test(mbtKltMultiTracking-cao-scanline     mbtKltMultiTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 50)
 
 add_test(mbtGenericTracking               mbtGenericTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtGenericTracking-cao           mbtGenericTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtGenericTracking-cao-nocyl     mbtGenericTracking -c -f -C ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(mbtGenericTracking-cao-scanline  mbtGenericTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(mbtGenericTracking-cao-scanline  mbtGenericTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 50)
 
 add_test(mbtGenericTracking-map               mbtGenericTracking2 -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtGenericTracking-map-cao           mbtGenericTracking2 -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtGenericTracking-map-cao-nocyl     mbtGenericTracking2 -c -f -C ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(mbtGenericTracking-map-cao-scanline  mbtGenericTracking2 -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(mbtGenericTracking-map-cao-scanline  mbtGenericTracking2 -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 50)
 
 #disable test with Ogre otherwise we get an Ogre exception with Ogre and remote access:
 #terminate called after throwing an instance of 'Ogre::RenderingAPIException'
