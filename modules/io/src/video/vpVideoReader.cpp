@@ -162,10 +162,8 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
     imSequence = new vpDiskGrabber;
     imSequence->setGenericName(fileName);
     imSequence->setStep(frameStep);
-    if (firstFrameIndexIsSet)
-    {
-      imSequence->setImageNumber(firstFrame);
-    }
+    findFirstFrameIndex();
+    imSequence->setImageNumber(firstFrame);
   }
   else if (isVideoExtensionSupported())
   {
@@ -257,10 +255,8 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
     imSequence = new vpDiskGrabber;
     imSequence->setGenericName(fileName);
     imSequence->setStep(frameStep);
-    if (firstFrameIndexIsSet)
-    {
-      imSequence->setImageNumber(firstFrame);
-    }
+    findFirstFrameIndex();
+    imSequence->setImageNumber(firstFrame);
   }
   else if (isVideoExtensionSupported())
   {
@@ -299,6 +295,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
     throw (vpException(vpException::fatalError,
         "The format of the file does not correspond to a readable format supported by ViSP."));
   }
+  
   findFirstFrameIndex();
   frameCount = firstFrame;
   if (!getFrame(I, firstFrame))
@@ -807,14 +804,9 @@ Get the last frame index (update the lastFrame attribute).
 */
 void vpVideoReader::findLastFrameIndex()
 {
-  if (!isOpen) {
-    vpERROR_TRACE("Use the open method before");
-    throw (vpException(vpException::notInitialized, "file not yet opened"));
-  }
-  
-  if (imSequence != NULL)
+  if (isImageExtensionSupported())
   {
-    if (! lastFrameIndexIsSet)
+    if (!lastFrameIndexIsSet)
     {
       std::string imageNameFormat = vpIoTools::getName(std::string(fileName));
       std::string dirName = vpIoTools::getParent(std::string(fileName));
@@ -822,8 +814,8 @@ void vpVideoReader::findLastFrameIndex()
       {
         dirName = ".";
       }
+      lastFrame = -1;
       std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
-      lastFrame = 0;
       for (size_t i = 0 ; i < files.size(); i++) {
         // Checking that file name satisfies image format,
         // specified by imageNameFormat, and extracting imageIndex
@@ -865,6 +857,7 @@ void vpVideoReader::findLastFrameIndex()
     }
   }
 #endif
+  lastFrameIndexIsSet = true;
 }
 
 /*!
@@ -872,7 +865,7 @@ Get the first frame index (update the firstFrame attribute).
 */
 void vpVideoReader::findFirstFrameIndex()
 {
-  if (imSequence != NULL)
+  if (isImageExtensionSupported())
   {
     if (!firstFrameIndexIsSet) {
       std::string imageNameFormat = vpIoTools::getName(std::string(fileName));
@@ -881,8 +874,8 @@ void vpVideoReader::findFirstFrameIndex()
       {
         dirName = ".";
       }
-      std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
       firstFrame = -1;
+      std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
       for (size_t i = 0 ; i < files.size(); i++) {
         // Checking that file name satisfies image format, specified by imageNameFormat, and extracting imageIndex
         long imageIndex = extractImageIndex(files[i], imageNameFormat);
@@ -891,7 +884,6 @@ void vpVideoReader::findFirstFrameIndex()
           firstFrame = imageIndex;
         }
       }
-      imSequence->setImageNumber(firstFrame);
     }
   }
 #ifdef VISP_HAVE_FFMPEG
@@ -908,6 +900,7 @@ void vpVideoReader::findFirstFrameIndex()
     firstFrame = 1L;
   }
 #endif
+  firstFrameIndexIsSet = true;
 }
 
 /*!
@@ -1095,4 +1088,42 @@ bool vpVideoReader::checkImageNameFormat(const std::string &format)
     }
   }
   return true;
+}
+
+/*!
+  Gets the first frame index.
+
+  \return Returns the first frame index.
+*/
+long vpVideoReader::getFirstFrameIndex() {
+  if (!initFileName) {
+    throw (vpImageException(vpImageException::noFileNameError, "The generic filename has to be set"));
+  }
+  if (!isImageExtensionSupported()) {
+    return firstFrame;
+  }
+  findFirstFrameIndex();
+  if (firstFrame == -1) {
+    throw (vpImageException(vpImageException::ioError, "Can't find %s", fileName));
+  }
+  return firstFrame;
+}
+
+/*!
+  Gets the last frame index.
+
+  \return Returns the last frame index.
+*/
+long vpVideoReader::getLastFrameIndex() {
+  if (!initFileName) {
+    throw (vpImageException(vpImageException::noFileNameError, "The generic filename has to be set"));
+  }
+  if (!isImageExtensionSupported()) {
+    return lastFrame;
+  }
+  findLastFrameIndex();
+  if (lastFrame == -1) {
+    throw (vpImageException(vpImageException::ioError, "Can't find %s", fileName));
+  }
+  return lastFrame;
 }
