@@ -25,8 +25,6 @@ This page references all the tutorials.
 
 - \subpage tutorial_tools
 
-- \subpage tutorial_contrib
-
 */
 
 /*! \page tutorial_install_pkg Installation from packages
@@ -72,6 +70,7 @@ This page introduces the user to the way to start with ViSP.
 - \subpage tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \subpage tutorial-getting-started-naoqi <br>This tutorial shows how to build a project that uses ViSP on NAOqi OS running on NAO, Romeo or Pepper humanoid robots.
 - \subpage tutorial-import-visp-into-EclipseIDE <br>This tutorial explains how to import a CMake project in Eclipse IDE.
+- \subpage tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
 
 */
 
@@ -149,12 +148,5 @@ This page introduces the user to other tools that may be useful.
 - \subpage tutorial-trace <br>This tutorial explains how to introduce trace in the code that could be enabled for debugging or disabled.
 - \subpage tutorial-multi-threading <br>This tutorial explains how to implement multi-threaded applications to capture images from a camera
 in one thread and display these images in an other thread.
-
-*/
-
-/*! \page tutorial_contrib How to contribute
-This page introduces the way to contribute to ViSP creating new modules.
-
-- \subpage tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
 
 */
