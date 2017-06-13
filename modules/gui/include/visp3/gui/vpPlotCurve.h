@@ -53,18 +53,17 @@
 
 #if defined(VISP_HAVE_DISPLAY)
 
-//! Different styles to plot the curve.
-typedef enum 
-{
-  point,
-  line,
-  dashed_line,
-  marker
-} vpCurveStyle;
-
 class vpPlotCurve
 {
   public:
+    //! Different styles to plot the curve.
+    typedef enum
+    {
+      point,
+      line,
+      dashed_line,
+      marker
+    } vpCurveStyle;
     vpColor color;
     vpCurveStyle curveStyle; 
     unsigned int thickness ;

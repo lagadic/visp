@@ -2941,7 +2941,7 @@ void vpMbGenericTracker::setPose(const vpImage<unsigned char> &I, const vpHomoge
 
   \note This function assumes a stereo configuration of the generic tracker.
 */
-void vpMbGenericTracker::setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix c2Mo) {
+void vpMbGenericTracker::setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo) {
   if (m_mapOfTrackers.size() == 2) {
     std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin();
     it->second->setPose(I1, c1Mo);
@@ -3523,17 +3523,15 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char>& I
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     if (m_trackerType & KLT_TRACKER) {
-      vpMbtDistanceKltPoints *kltpoly;
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-        kltpoly = *it;
+        vpMbtDistanceKltPoints *kltpoly = *it;
         if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
             kltpoly->displayPrimitive(I);
         }
       }
 
-      vpMbtDistanceKltCylinder *kltPolyCylinder;
       for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
-        kltPolyCylinder = *it;
+        vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
         if(displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
           kltPolyCylinder->displayPrimitive(I);
       }
@@ -3580,17 +3578,15 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<vpRGBa>& I, const
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     if (m_trackerType & KLT_TRACKER) {
-      vpMbtDistanceKltPoints *kltpoly;
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-        kltpoly = *it;
+        vpMbtDistanceKltPoints *kltpoly = *it;
         if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
             kltpoly->displayPrimitive(I);
         }
       }
 
-      vpMbtDistanceKltCylinder *kltPolyCylinder;
       for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
-        kltPolyCylinder = *it;
+        vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
         if(displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
           kltPolyCylinder->displayPrimitive(I);
       }
@@ -3895,9 +3891,8 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char
 #  endif
 
   // delete the Klt Polygon features
-  vpMbtDistanceKltPoints *kltpoly;
   for (std::list<vpMbtDistanceKltPoints*>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
-    kltpoly = *it;
+    vpMbtDistanceKltPoints *kltpoly = *it;
     if (kltpoly != NULL) {
       delete kltpoly;
     }
@@ -3905,9 +3900,8 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char
   }
   kltPolygons.clear();
 
-  vpMbtDistanceKltCylinder *kltPolyCylinder;
   for (std::list<vpMbtDistanceKltCylinder*>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end(); ++it) {
-    kltPolyCylinder = *it;
+    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
     if (kltPolyCylinder!=NULL) {
       delete kltPolyCylinder;
     }
@@ -4056,6 +4050,6 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &I) 
   } catch (const vpException &e) {
     std::cerr << "Exception: " << e.what() << std::endl;
     cMo = cMo_1;
-    throw e;
+    throw; // rethrowing the original exception
   }
 }

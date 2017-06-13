@@ -837,31 +837,5 @@ vpMbtMeLine::bubbleSortJ()
   list.sort(sortByJ);
 }
 
-
-void
-vpMbtMeLine::findSignal(const vpImage<unsigned char>& I, const vpMe *p_me, double *conv)
-{
-  vpImagePoint itest(PExt[0].ifloat+(PExt[1].ifloat-PExt[0].ifloat)/2, PExt[0].jfloat+(PExt[1].jfloat-PExt[0].jfloat)/2);
-  
-  vpMeSite pix ; //= list.value();
-  pix.init(itest.get_i(), itest.get_j(), delta, 0, sign);
-  
-  vpMeSite  *list_query_pixels;
-//  double  convolution = 0;
-  unsigned int range  = p_me->getRange();
-  
-  list_query_pixels = pix.getQueryList(I, (int)range);
-  
-  vpDisplay::displayCross(I,itest,5,vpColor::cyan,3);
-  vpDisplay::displayLine(I,vpImagePoint(list_query_pixels[0].ifloat,list_query_pixels[0].jfloat),vpImagePoint(list_query_pixels[2*range].ifloat,list_query_pixels[2*range].jfloat),vpColor::cyan);
-  vpDisplay::displayCross(I,vpImagePoint(list_query_pixels[0].ifloat,list_query_pixels[0].jfloat),5,vpColor::orange,3);
-
-  for(unsigned int n = 0 ; n < 2 * range + 1 ; n++)
-  {
-    conv[n] = list_query_pixels[n].convolution(I, p_me);
-  }
-  delete [] list_query_pixels;
-}
-
 #endif
 

@@ -226,7 +226,7 @@ public:
 
     \return the distance between the two sites.
   */
-  static double distance (const vpMeSite S1, const vpMeSite S2) {
+  static double distance (const vpMeSite &S1, const vpMeSite &S2) {
     return(sqrt(vpMath::sqr(S1.ifloat-S2.ifloat)+vpMath::sqr(S1.jfloat-S2.jfloat)));}
     
   /*!
@@ -237,7 +237,7 @@ public:
 
     \return the distance between the two sites.
   */
-  static double sqrDistance (const vpMeSite S1, const vpMeSite S2) {
+  static double sqrDistance (const vpMeSite &S1, const vpMeSite &S2) {
     return(vpMath::sqr(S1.ifloat-S2.ifloat)+vpMath::sqr(S1.jfloat-S2.jfloat));}
     
   static void display(const vpImage<unsigned char>& I, const double &i, const double &j,

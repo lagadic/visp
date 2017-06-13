@@ -100,15 +100,9 @@ vpPolygon::vpPolygon(const std::list<vpImagePoint>& corners)
   \param poly : The polygon used for the initialisation.
 */
 vpPolygon::vpPolygon(const vpPolygon &poly)
-  : _corners(), _center(), _area(0.), _goodPoly(true), _bbox()
+  : _corners(poly._corners), _center(poly._center), _area(poly._area), _goodPoly(poly._goodPoly),
+    _bbox(poly._bbox), m_PnPolyConstants(poly.m_PnPolyConstants), m_PnPolyMultiples(poly.m_PnPolyMultiples)
 {
-  _corners = poly._corners;
-  _center = poly._center;
-  _area = poly._area;
-  _goodPoly = poly._goodPoly;
-  _bbox = poly._bbox;
-  m_PnPolyConstants = poly.m_PnPolyConstants;
-  m_PnPolyMultiples = poly.m_PnPolyMultiples;
 }
 
 /*!

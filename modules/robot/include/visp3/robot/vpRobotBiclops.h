@@ -100,12 +100,6 @@ class VISP_EXPORT vpRobotBiclops
   public vpBiclops,
   public vpRobot
 {
-
-private:
-
-  void getCameraDisplacement(vpColVector &d);
-  void getArticularDisplacement(vpColVector &d);
-
 private:
   static bool robotAlreadyCreated;
   pthread_t control_thread;

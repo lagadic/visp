@@ -83,10 +83,8 @@ vpXmlParser::~vpXmlParser()
   \param _twin : The parser to copy.
 */
 vpXmlParser::vpXmlParser(const vpXmlParser& _twin)
- : nodeMap(), main_tag("config")
+ : nodeMap(_twin.nodeMap), main_tag(_twin.main_tag)
 {
-  main_tag = _twin.main_tag;
-  nodeMap = _twin.nodeMap;
 }
 
 /* utilities functions to read/write data from an xml document */

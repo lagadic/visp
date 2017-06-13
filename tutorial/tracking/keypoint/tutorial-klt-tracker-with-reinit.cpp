@@ -62,10 +62,9 @@ int main()
 
         // Add previous features if they are not to close to detected one
         double distance, minDistance_ = tracker.getMinDistance();
-        bool is_redundant;
         for (size_t i=0; i < prev_features.size(); i++) {
           // Test if a previous feature is not redundant with one of the newly detected
-          is_redundant = false;
+          bool is_redundant = false;
           for (size_t j=0; j < new_features.size(); j++){
             distance = sqrt(vpMath::sqr(new_features[j].x-prev_features[i].x) + vpMath::sqr(new_features[j].y-prev_features[i].y));
             if(distance < minDistance_){

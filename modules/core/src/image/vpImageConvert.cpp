@@ -1110,7 +1110,7 @@ void vpImageConvert::convert(const yarp::sig::ImageOf< yarp::sig::PixelRgba > *s
   if(copyData)
     memcpy(dest.bitmap, src->getRawImage(),src->height()*src->width()*sizeof(yarp::sig::PixelRgba));
   else
-    dest.bitmap = (vpRGBa*)src->getRawImage();
+    dest.bitmap = static_cast<vpRGBa*>(src->getRawImage());
 }
 
 /*!

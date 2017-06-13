@@ -215,7 +215,7 @@ vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename)
 
   bool try_opencv_reader = false;
 
-  switch(getFormat(final_filename.c_str())){
+  switch(getFormat(final_filename)){
   case FORMAT_PGM :
     readPGM(I,final_filename); break;
   case FORMAT_PPM :
@@ -298,7 +298,7 @@ vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename)
 
   bool try_opencv_reader = false;
 
-  switch(getFormat(final_filename.c_str())){
+  switch(getFormat(final_filename)){
   case FORMAT_PGM :
     readPGM(I,final_filename); break;
   case FORMAT_PPM :

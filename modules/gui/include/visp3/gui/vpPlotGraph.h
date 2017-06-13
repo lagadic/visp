@@ -199,7 +199,7 @@ public:
     //void rescale(double &min, double &max, double &delta, const int nbDiv, int side);
     void resetPointList(const unsigned int curveNum);
 
-    void setCurveColor(const unsigned int curveNum, const vpColor color);
+    void setCurveColor(const unsigned int curveNum, const vpColor &color);
     void setCurveThickness(const unsigned int curveNum, const unsigned int thickness);
     void setGridThickness (const unsigned int thickness) {
       this->gridThickness = thickness;

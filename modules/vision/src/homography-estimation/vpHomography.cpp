@@ -410,6 +410,8 @@ vpHomography::operator=(const vpHomography &H)
     for (unsigned int j=0; j< 3; j++)
     (*this)[i][j] = H[i][j];
 
+  aMb = H.aMb;
+  bP = H.bP;
   return *this;
 }
 /*!

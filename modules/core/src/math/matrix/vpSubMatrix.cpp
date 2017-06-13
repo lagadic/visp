@@ -144,6 +144,10 @@ vpSubMatrix & vpSubMatrix::operator=(const vpSubMatrix &B){
           "vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix"));
   }
 
+  pRowNum = B.pRowNum;
+  pColNum = B.pColNum;
+  parent = B.parent;
+
   double ** BrowPtrs=B.rowPtrs;
 
   for (unsigned int i=0;i<rowNum;i++) {

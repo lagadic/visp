@@ -2128,7 +2128,7 @@ void vpDisplayOpenCV::getImage(vpImage<vpRGBa> &I)
 
 void vpDisplayOpenCV::on_mouse( int event, int x, int y, int /*flags*/, void* display )
 {
-  vpDisplayOpenCV* disp = (vpDisplayOpenCV*)display;
+  vpDisplayOpenCV* disp = static_cast<vpDisplayOpenCV*>(display);
   switch ( event )
   {
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)

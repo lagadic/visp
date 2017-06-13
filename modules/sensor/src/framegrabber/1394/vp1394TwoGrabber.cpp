@@ -2540,14 +2540,12 @@ vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I,
       vpImageConvert::RGBToGrey((unsigned char *) frame->image, I.bitmap, size);
       break;
 
-
     default:
       close();
       vpERROR_TRACE("Format conversion not implemented. Acquisition failed.");
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
                                      "Format conversion not implemented. "
                                      "Acquisition failed.") );
-      break;
   };
 
   return frame;
@@ -2711,14 +2709,12 @@ vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I,
                                 (unsigned char *) I.bitmap, size);
       break;
 
-
     default:
       close();
       vpERROR_TRACE("Format conversion not implemented. Acquisition failed.");
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
                                      "Format conversion not implemented. "
                                      "Acquisition failed.") );
-      break;
   };
 
   return frame;
@@ -2905,7 +2901,6 @@ vp1394TwoGrabber::acquire(vpImage<vpRGBa> &I,
       throw (vpFrameGrabberException(vpFrameGrabberException::otherError,
                                      "Format conversion not implemented. "
                                      "Acquisition failed.") );
-      break;
   };
 
   enqueue(frame);

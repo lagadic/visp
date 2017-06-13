@@ -336,7 +336,7 @@ public:
         file.getline(line, 256);
         std::string prefix("# ");
         std::string line_(line);
-        if (line_.compare(0, 2, "# ") == 0) {
+        if (line_.compare(0, 2, prefix.c_str()) == 0) {
           // Line is a comment
           // If we are not on the first line, we should add "\n" to the end of the previous line
           if (pos)

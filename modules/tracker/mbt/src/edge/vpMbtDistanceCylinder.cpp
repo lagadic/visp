@@ -457,7 +457,7 @@ vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const v
 */
 void
 vpMbtDistanceCylinder::display(const vpImage<unsigned char>&I, const vpHomogeneousMatrix &cMo,
-                               const vpCameraParameters&camera, const vpColor col, const unsigned int thickness,
+                               const vpCameraParameters&camera, const vpColor &col, const unsigned int thickness,
                                const bool displayFullModel)
 {
   if( (isvisible && isTrackedCylinder) || displayFullModel){
@@ -521,7 +521,7 @@ vpMbtDistanceCylinder::display(const vpImage<unsigned char>&I, const vpHomogeneo
 */
 void
 vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                               const vpCameraParameters &camera, const vpColor col, const unsigned int thickness,
+                               const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                                const bool displayFullModel)
 {
   if( (isvisible && isTrackedCylinder) || displayFullModel){

@@ -377,7 +377,7 @@ vpSimulatorViper850::getCameraParameters (vpCameraParameters &cam,
 {
   if (toolCustom)
   {
-    vpCameraParameters(px_int,py_int,image_width/2,image_height/2);
+    cam.initPersProjWithoutDistortion(px_int,py_int,image_width/2,image_height/2);
   }
   // Set default parameters
   switch (getToolType()) {
@@ -1825,7 +1825,7 @@ vpSimulatorViper850::setJointLimit(const vpColVector &limitMin, const vpColVecto
   The goal is to avoid the problems du to such configurations.
 */
 bool
-vpSimulatorViper850::singularityTest(const vpColVector q, vpMatrix &J)
+vpSimulatorViper850::singularityTest(const vpColVector &q, vpMatrix &J)
 {
   double q2 = q[1];
   double q3 = q[2];
@@ -1921,38 +1921,6 @@ vpSimulatorViper850::isInJointLimit ()
 }
 
 /*!
-  Get the robot displacement expressed in the camera frame since the last call
-  of this method.
-
-  \param displacement : The measured displacement in the camera frame. The
-  dimension of \e displacement is 6 (tx, ty, ty, rx, ry,
-  rz). Translations are expressed in meters, rotations in radians with
-  the Euler Rxyz representation.
-
-  \sa getDisplacement(), getArticularDisplacement()
-*/
-void
-vpSimulatorViper850::getCameraDisplacement(vpColVector &displacement)
-{
-  getDisplacement(vpRobot::CAMERA_FRAME, displacement);
-}
-
-/*!
-  Get the robot joint displacement since the last call of this method.
-
-  \param displacement : The measured joint displacement. The dimension
-  of \e displacement is 6 (the robot joint number). All the values are
-  expressed in radians.
-
-  \sa getDisplacement(), getCameraDisplacement()
-*/
-void
-vpSimulatorViper850::getArticularDisplacement(vpColVector  &displacement)
-{
-  getDisplacement(vpRobot::ARTICULAR_FRAME, displacement);
-}
-
-/*!
   Get the robot displacement since the last call of this method.
 
   \warning This functionnality is not implemented for the moment in the
@@ -1968,7 +1936,6 @@ vpSimulatorViper850::getArticularDisplacement(vpColVector  &displacement)
   In camera or reference frame, rotations are expressed with the
   Euler Rxyz representation.
 
-  \sa getArticularDisplacement(), getCameraDisplacement()
 */
 void
 vpSimulatorViper850::getDisplacement(vpRobot::vpControlFrameType frame,

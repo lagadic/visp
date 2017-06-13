@@ -90,9 +90,9 @@ public:
   vpMe(const vpMe &me) ;
   virtual ~vpMe() ;
   
-  const vpMe& operator=(const vpMe &me);
+  vpMe& operator=(const vpMe &me);
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
-  const vpMe& operator=(const vpMe &&me);
+  vpMe& operator=(const vpMe &&me);
 #endif
 
   void checkSamplestep(double &a) { if(a < min_samplestep) a = min_samplestep ; }

@@ -62,6 +62,9 @@ vp1394CMUGrabber::vp1394CMUGrabber()
   index = 0;   // If a camera was not selected the first one (index = 0) will be used
   _format = _mode = _fps = -1;
   _modeauto=true;
+  _gain = 0;
+  _shutter = 0;
+  _color = vp1394CMUGrabber::UNKNOWN;
 }
 
 /*!

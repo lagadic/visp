@@ -274,13 +274,9 @@ protected:
     void initArms();
     void initDisplay();
     int isInJointLimit (void);
-    bool singularityTest(const vpColVector q, vpMatrix &J);
+    bool singularityTest(const vpColVector &q, vpMatrix &J);
     void updateArticularPosition();
     //@}
-    
-private:
-    void getCameraDisplacement(vpColVector &displacement);
-    void getArticularDisplacement(vpColVector &displacement);
 };
 
 #endif

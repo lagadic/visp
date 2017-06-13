@@ -1660,7 +1660,7 @@ void vpKeyPoint::filterMatches() {
   std::vector<cv::DMatch> m;
 
   if(m_useKnn) {
-    double max_dist = 0;
+    //double max_dist = 0;
     //double min_dist = std::numeric_limits<double>::max(); // create an error under Windows. To fix it we have to add #undef max
     double min_dist = DBL_MAX;
     double mean = 0.0;
@@ -1675,9 +1675,9 @@ void vpKeyPoint::filterMatches() {
         if (dist < min_dist) {
           min_dist = dist;
         }
-        if (dist > max_dist) {
-          max_dist = dist;
-        }
+        //if (dist > max_dist) {
+        //  max_dist = dist;
+        //}
       }
       mean /= m_queryDescriptors.rows;
     }
@@ -1705,7 +1705,7 @@ void vpKeyPoint::filterMatches() {
       }
     }
   } else {
-    double max_dist = 0;
+    //double max_dist = 0;
     // create an error under Windows. To fix it we have to add #undef max
     //double min_dist = std::numeric_limits<double>::max();
     double min_dist = DBL_MAX;
@@ -1719,9 +1719,9 @@ void vpKeyPoint::filterMatches() {
       if (dist < min_dist) {
         min_dist = dist;
       }
-      if (dist > max_dist) {
-        max_dist = dist;
-      }
+      //if (dist > max_dist) {
+      //  max_dist = dist;
+     // }
     }
     mean /= m_queryDescriptors.rows;
 

@@ -25,7 +25,7 @@ vpMutex s_mutex_capture;
 //! [capture-multi-threaded captureFunction]
 vpThread::Return captureFunction(vpThread::Args args)
 {
-  vpV4l2Grabber cap = *((vpV4l2Grabber *) args);
+  vpV4l2Grabber cap = *( static_cast<vpV4l2Grabber *>(args) );
   vpImage<unsigned char> frame_;
   bool stop_capture_ = false;
 

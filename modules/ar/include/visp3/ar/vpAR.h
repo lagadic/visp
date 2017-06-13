@@ -149,7 +149,7 @@ private:
   bool background;
 
  public:
-
+  vpAR() {};
 
   virtual ~vpAR() ;
   void initInternalViewer(const unsigned int width, const unsigned int height, vpImageType type = grayImage) ;

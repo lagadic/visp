@@ -110,8 +110,11 @@ vpMeTracker::operator = (vpMeTracker& p_me)
 {
   list = p_me.list;
   me = p_me.me;
-  selectDisplay = p_me.selectDisplay ;
-
+  selectDisplay = p_me.selectDisplay;
+  init_range = p_me.init_range;
+  nGoodElement = p_me.nGoodElement;
+  query_range = p_me.query_range;
+  display_point = p_me.display_point;
   return *this;
 }
 

@@ -99,6 +99,9 @@ vpTriangle::operator=(const vpTriangle& tri)
   ptempo0 = tri.ptempo0;
   ptempo1 = tri.ptempo1;
   area = tri.area;
+  apex1 = tri.apex1;
+  apex2 = tri.apex2;
+  apex3 = tri.apex3;
   return *this;
 };
 

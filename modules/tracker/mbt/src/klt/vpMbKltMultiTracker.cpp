@@ -172,9 +172,8 @@ void vpMbKltMultiTracker::computeVVS() {
   unsigned int iter = 0;
 
   computeVVSInit();
-  vpMbKltTracker *klt;
   for (std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
-    klt = it->second;
+    vpMbKltTracker *klt = it->second;
     klt->computeVVSInit();
   }
 
@@ -253,9 +252,8 @@ void vpMbKltMultiTracker::computeVVSInteractionMatrixAndResidu() {
 void vpMbKltMultiTracker::computeVVSInteractionMatrixAndResidu(std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist) {
   unsigned int startIdx = 0;
 
-  vpMbKltTracker *klt;
   for(std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
-    klt = it->second;
+    vpMbKltTracker *klt = it->second;
 
     //Use the ctTc0 variable instead of the formula in the monocular case
     //to ensure that we have the same result than vpMbKltTracker
@@ -277,10 +275,9 @@ void vpMbKltMultiTracker::computeVVSInteractionMatrixAndResidu(std::map<std::str
 }
 
 void vpMbKltMultiTracker::computeVVSWeights() {
-  vpMbKltTracker *klt;
   unsigned int startIdx = 0;
   for(std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
-    klt = it->second;
+    vpMbKltTracker *klt = it->second;
     klt->computeVVSWeights(klt->m_robust_klt, klt->m_error_klt, klt->m_w_klt);
 
     m_w_kltMulti.insert(startIdx, klt->m_w_klt);
@@ -1596,9 +1593,8 @@ void vpMbKltMultiTracker::preTracking(std::map<std::string, const vpImage<unsign
   m_nbInfos = 0;
   m_nbFaceUsed = 0;
 
-  vpMbKltTracker *klt;
   for (std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
-    klt = it->second;
+    vpMbKltTracker *klt = it->second;
 
     try {
       klt->preTracking(*mapOfImages[it->first]);
@@ -1609,10 +1605,9 @@ void vpMbKltMultiTracker::preTracking(std::map<std::string, const vpImage<unsign
 }
 
 void vpMbKltMultiTracker::postTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages) {
-  vpMbKltTracker *klt;
 
   for(std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
-    klt = it->second;
+    vpMbKltTracker *klt = it->second;
 
     //Set the camera pose
     it->second->cMo = m_mapOfCameraTransformationMatrix[it->first]*cMo;
@@ -2344,7 +2339,7 @@ void vpMbKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpHomog
   \param firstCameraIsReference : if true, the first camera is the reference, otherwise it is the second one.
 */
 void vpMbKltMultiTracker::setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-    const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix c2Mo, const bool firstCameraIsReference) {
+    const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo, const bool firstCameraIsReference) {
   if(m_mapOfKltTrackers.size() == 2) {
     std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
     it->second->setPose(I1, c1Mo);

@@ -234,7 +234,7 @@ public:
   void init(unsigned int height, unsigned int width, Type value);
   //! init from an image stored as a continuous array in memory
   void init(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false);
-  void insert(const vpImage<Type> &src, const vpImagePoint topLeft);
+  void insert(const vpImage<Type> &src, const vpImagePoint &topLeft);
 
   //------------------------------------------------------------------
   //         Acces to the image
@@ -326,7 +326,7 @@ public:
   // set the size of the image without initializing it.
   void resize(const unsigned int h, const unsigned int w);
   // set the size of the image and initialize it.
-  void resize(const unsigned int h, const unsigned int w, const Type val);
+  void resize(const unsigned int h, const unsigned int w, const Type &val);
 
   void sub(const vpImage<Type> &B, vpImage<Type> &C);
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
@@ -486,7 +486,7 @@ namespace {
   };
 
   vpThread::Return performLutThread(vpThread::Args args) {
-    ImageLut_Param_t *imageLut_param = ( (ImageLut_Param_t *) args );
+    ImageLut_Param_t *imageLut_param = static_cast<ImageLut_Param_t *> (args);
     unsigned int start_index = imageLut_param->m_start_index;
     unsigned int end_index = imageLut_param->m_end_index;
 
@@ -556,7 +556,7 @@ namespace {
   };
 
   vpThread::Return performLutRGBaThread(vpThread::Args args) {
-    ImageLutRGBa_Param_t *imageLut_param = ( (ImageLutRGBa_Param_t *) args );
+    ImageLutRGBa_Param_t *imageLut_param = static_cast<ImageLutRGBa_Param_t *> (args);
     unsigned int start_index = imageLut_param->m_start_index;
     unsigned int end_index = imageLut_param->m_end_index;
 
@@ -892,7 +892,7 @@ vpImage<Type>::resize(unsigned int h, unsigned int w)
 */
 template<class Type>
 void
-vpImage<Type>::resize(unsigned int h, unsigned int w, const Type val)
+vpImage<Type>::resize(unsigned int h, unsigned int w, const Type &val)
 {
   init(h, w, val);
 }
@@ -1159,11 +1159,8 @@ vpImage<Type> vpImage<Type>::operator-(const vpImage<Type> &B)
   \param topLeft : Upper/left coordinates in the image where the image \e src is inserted in the destination image.
 */
 template<class Type>
-void vpImage<Type>::insert(const vpImage<Type> &src, const vpImagePoint topLeft)
+void vpImage<Type>::insert(const vpImage<Type> &src, const vpImagePoint &topLeft)
 {
-  Type* srcBitmap;
-  Type* destBitmap;
-
   int itl = (int)topLeft.get_i();
   int jtl = (int)topLeft.get_j();
 
@@ -1203,8 +1200,8 @@ void vpImage<Type>::insert(const vpImage<Type> &src, const vpImagePoint topLeft)
 
   for (int i = 0; i < hsize; i++)
   {
-    srcBitmap = src.bitmap + ((src_ibegin+i)*src_w+src_jbegin);
-    destBitmap = this->bitmap + ((dest_ibegin+i)*dest_w+dest_jbegin);
+    Type *srcBitmap = src.bitmap + ((src_ibegin+i)*src_w+src_jbegin);
+    Type *destBitmap = this->bitmap + ((dest_ibegin+i)*dest_w+dest_jbegin);
 
     memcpy(destBitmap, srcBitmap, (size_t)wsize*sizeof(Type));
   }
@@ -1812,9 +1809,6 @@ inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], 
     std::vector<vpThread *> threadpool;
     std::vector<ImageLut_Param_t *> imageLutParams;
 
-    ImageLut_Param_t *imageLut_param = NULL;
-    vpThread *imageLut_thread = NULL;
-
     unsigned int image_size = getSize();
     unsigned int step = image_size / nbThreads;
     unsigned int last_step = image_size - step * (nbThreads-1);
@@ -1827,13 +1821,13 @@ inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], 
         end_index = start_index+last_step;
       }
 
-      imageLut_param = new ImageLut_Param_t(start_index, end_index, bitmap);
+      ImageLut_Param_t *imageLut_param = new ImageLut_Param_t(start_index, end_index, bitmap);
       memcpy(imageLut_param->m_lut, lut, 256*sizeof(unsigned char));
 
       imageLutParams.push_back(imageLut_param);
 
       // Start the threads
-      imageLut_thread = new vpThread((vpThread::Fn) performLutThread, (vpThread::Args) imageLut_param);
+      vpThread *imageLut_thread = new vpThread((vpThread::Fn) performLutThread, (vpThread::Args) imageLut_param);
       threadpool.push_back(imageLut_thread);
     }
 
@@ -1900,9 +1894,6 @@ inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], const unsigned
     std::vector<vpThread *> threadpool;
     std::vector<ImageLutRGBa_Param_t *> imageLutParams;
 
-    ImageLutRGBa_Param_t *imageLut_param = NULL;
-    vpThread *imageLut_thread = NULL;
-
     unsigned int image_size = getSize();
     unsigned int step = image_size / nbThreads;
     unsigned int last_step = image_size - step * (nbThreads-1);
@@ -1915,13 +1906,13 @@ inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], const unsigned
         end_index = start_index+last_step;
       }
 
-      imageLut_param = new ImageLutRGBa_Param_t(start_index, end_index, (unsigned char *) bitmap);
+      ImageLutRGBa_Param_t *imageLut_param = new ImageLutRGBa_Param_t(start_index, end_index, (unsigned char *) bitmap);
       memcpy(imageLut_param->m_lut, lut, 256*sizeof(vpRGBa));
 
       imageLutParams.push_back(imageLut_param);
 
       // Start the threads
-      imageLut_thread = new vpThread((vpThread::Fn) performLutRGBaThread, (vpThread::Args) imageLut_param);
+      vpThread *imageLut_thread = new vpThread((vpThread::Fn) performLutRGBaThread, (vpThread::Args) imageLut_param);
       threadpool.push_back(imageLut_thread);
     }
 

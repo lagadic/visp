@@ -126,7 +126,7 @@ vpKeyboard::setRawMode(bool active)
 
     tcgetattr(STDIN_FILENO, &initial_settings);
 
-    new_settings = initial_settings;
+    //new_settings = initial_settings;
     //    cfmakeraw(&new_settings);
     new_settings = initial_settings;
     new_settings.c_lflag &= (unsigned int)~ICANON;

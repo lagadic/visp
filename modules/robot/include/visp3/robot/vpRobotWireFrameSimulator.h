@@ -255,7 +255,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 
       \param col : The desired color.
     */
-    void setCameraColor(const vpColor col) {camColor = col;}
+    void setCameraColor(const vpColor &col) {camColor = col;}
 
     /*!
       Set the flag used to force the sampling time in the thread computing the
@@ -274,21 +274,21 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 
       \param col : The desired color.
     */
-    void setCurrentViewColor(const vpColor col) {curColor = col;}
+    void setCurrentViewColor(const vpColor &col) {curColor = col;}
 
     /*!
       Set the color used to display the object at the desired position in the robot's camera view.
 
       \param col : The desired color.
     */
-    void setDesiredViewColor(const vpColor col) {desColor = col;}
+    void setDesiredViewColor(const vpColor &col) {desColor = col;}
 
     /*!
       Set the desired position of the robot's camera relative to the object.
 
       \param cdMo_ : The desired pose of the camera.
     */
-    void setDesiredCameraPosition(const vpHomogeneousMatrix cdMo_)
+    void setDesiredCameraPosition(const vpHomogeneousMatrix &cdMo_)
     {
       this->vpWireFrameSimulator::setDesiredCameraPosition(cdMo_);
     }
@@ -304,7 +304,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 
       \param camMf_ : The pose of the external camera relative to the world reference frame.
     */
-    void setExternalCameraPosition(const vpHomogeneousMatrix camMf_)
+    void setExternalCameraPosition(const vpHomogeneousMatrix &camMf_)
     {
       this->vpWireFrameSimulator::setExternalCameraPosition(camMf_);
     }
@@ -361,7 +361,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 #if defined(_WIN32)
     static DWORD WINAPI launcher( LPVOID lpParam )
     {
-      ((vpRobotWireFrameSimulator *)lpParam)->updateArticularPosition();
+      (static_cast<vpRobotWireFrameSimulator *>(lpParam))->updateArticularPosition();
       return 0;
     }
 #elif defined(VISP_HAVE_PTHREAD)

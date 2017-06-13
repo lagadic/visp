@@ -427,7 +427,7 @@ vpSimulatorAfma6::getCameraParameters (vpCameraParameters &cam,
 {
   if (toolCustom)
   {
-    vpCameraParameters(px_int,py_int,image_width/2,image_height/2);
+    cam.initPersProjWithoutDistortion(px_int,py_int,image_width/2,image_height/2);
   }
   // Set default parameters
   switch (getToolType()) {
@@ -1865,7 +1865,7 @@ vpSimulatorAfma6::setJointLimit(const vpColVector &limitMin, const vpColVector &
   The goal is to avoid the problems du to such configurations.
 */
 bool
-vpSimulatorAfma6::singularityTest(const vpColVector q, vpMatrix &J)
+vpSimulatorAfma6::singularityTest(const vpColVector &q, vpMatrix &J)
 {
   double q5 = q[4];
   
@@ -1932,38 +1932,6 @@ vpSimulatorAfma6::isInJointLimit ()
 }
 
 /*!
-  Get the robot displacement expressed in the camera frame since the last call
-  of this method.
-
-  \param displacement : The measured displacement in the camera frame. The
-  dimension of \e displacement is 6 (tx, ty, ty, rx, ry,
-  rz). Translations are expressed in meters, rotations in radians with
-  the Euler Rxyz representation.
-
-  \sa getDisplacement(), getArticularDisplacement()
-*/
-void
-vpSimulatorAfma6::getCameraDisplacement(vpColVector &displacement)
-{
-  getDisplacement(vpRobot::CAMERA_FRAME, displacement);
-}
-
-/*!
-  Get the robot joint displacement since the last call of this method.
-
-  \param displacement : The measured joint displacement. The dimension
-  of \e displacement is 6 (the robot joint number). All the values are
-  expressed in radians.
-
-  \sa getDisplacement(), getCameraDisplacement()
-*/
-void
-vpSimulatorAfma6::getArticularDisplacement(vpColVector  &displacement)
-{
-  getDisplacement(vpRobot::ARTICULAR_FRAME, displacement);
-}
-
-/*!
   Get the robot displacement since the last call of this method.
 
   \warning This functionnality is not implemented for the moment in the
@@ -1979,7 +1947,6 @@ vpSimulatorAfma6::getArticularDisplacement(vpColVector  &displacement)
   In camera or reference frame, rotations are expressed with the
   Euler Rxyz representation.
 
-  \sa getArticularDisplacement(), getCameraDisplacement()
 */
 void
 vpSimulatorAfma6::getDisplacement(vpRobot::vpControlFrameType frame,

@@ -202,7 +202,7 @@ vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I,
 */
 unsigned int 
 vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I,
-		       const vpRect _rectangle)
+           const vpRect &_rectangle)
 {
   unsigned int res = fern.buildReference(_I, _rectangle);
   
@@ -358,7 +358,7 @@ vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I,
   \return True if the surface has been found.
 */
 bool 
-vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I, const vpRect rectangle)
+vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle)
 {
   vpImagePoint iP;
   iP.set_i(rectangle.getTop());

@@ -245,7 +245,7 @@ vpMbtDistanceKltCylinder::removeOutliers(const vpColVector& _w, const double &th
 
   nbPointsCur = 0;
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
-  for( ; iter != curPoints.end(); iter++){
+  for( ; iter != curPoints.end(); ++iter){
     if(_w[k] > threshold_outlier && _w[k+1] > threshold_outlier){
 //     if(_w[k] > threshold_outlier || _w[k+1] > threshold_outlier){
       tmp[iter->first] = vpImagePoint(iter->second.get_i(), iter->second.get_j());
@@ -290,7 +290,7 @@ vpMbtDistanceKltCylinder::computeInteractionMatrixAndResidu(const vpHomogeneousM
   cylinder.changeFrame(_cMc0 * c0Mo);
 
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
-  for( ; iter != curPoints.end(); iter++){
+  for( ; iter != curPoints.end(); ++iter){
     int id(iter->first);
     double i_cur(iter->second.get_i()), j_cur(iter->second.get_j());
 
@@ -544,7 +544,7 @@ void
 vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<unsigned char>& _I)
 {
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
-  for( ; iter != curPoints.end(); iter++){
+  for( ; iter != curPoints.end(); ++iter){
     int id(iter->first);
     vpImagePoint iP;
     iP.set_i(static_cast<double>(iter->second.get_i()));
@@ -569,7 +569,7 @@ void
 vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<vpRGBa>& _I)
 {
   std::map<int, vpImagePoint>::const_iterator iter = curPoints.begin();
-  for( ; iter != curPoints.end(); iter++){
+  for( ; iter != curPoints.end(); ++iter){
     int id(iter->first);
     vpImagePoint iP;
     iP.set_i(static_cast<double>(iter->second.get_i()));
@@ -587,7 +587,7 @@ vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<vpRGBa>& _I)
 
 void
 vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &camera,
-                                  const vpColor col, const unsigned int thickness, const bool /*displayFullModel*/)
+                                  const vpColor &col, const unsigned int thickness, const bool /*displayFullModel*/)
 {
   //if(isvisible || displayFullModel)
   {
@@ -638,7 +638,7 @@ vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I, const vpHomog
 
 void
 vpMbtDistanceKltCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &camera,
-                                  const vpColor col, const unsigned int thickness, const bool /*displayFullModel*/)
+                                  const vpColor &col, const unsigned int thickness, const bool /*displayFullModel*/)
 {
   //if(isvisible || displayFullModel)
   {

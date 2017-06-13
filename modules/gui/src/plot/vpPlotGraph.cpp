@@ -100,7 +100,7 @@ vpPlotGraph::initGraph (unsigned int nbCurve)
   for (unsigned int i = 0; i < curveNbr; i++)
   {
     (curveList+i)->color = colors[i%6]; 
-    (curveList+i)->curveStyle = line;
+    (curveList+i)->curveStyle = vpPlotCurve::line;
     (curveList+i)->pointListx.clear();
     (curveList+i)->pointListy.clear();
     (curveList+i)->legend.clear();
@@ -171,11 +171,11 @@ vpPlotGraph::initSize (vpImagePoint top_left, unsigned int w, unsigned int h, un
 void
 vpPlotGraph::findPose()
 {
-  vpPoint point[4];
-  point[0].setWorldCoordinates(-w_xval,-w_yval,-w_zval);
-  point[1].setWorldCoordinates(w_xval,-w_yval,-w_zval);
-  point[2].setWorldCoordinates(w_xval,w_yval,-w_zval);
-  point[3].setWorldCoordinates(-w_xval,w_yval,-w_zval);
+  vpPoint point_[4];
+  point_[0].setWorldCoordinates(-w_xval,-w_yval,-w_zval);
+  point_[1].setWorldCoordinates(w_xval,-w_yval,-w_zval);
+  point_[2].setWorldCoordinates(w_xval,w_yval,-w_zval);
+  point_[3].setWorldCoordinates(-w_xval,w_yval,-w_zval);
   
   vpImagePoint iP[4];
   iP[0].set_ij(0,0);
@@ -192,9 +192,9 @@ vpPlotGraph::findPose()
   for (unsigned int i=0 ; i < 4 ; i++)
   {
     vpPixelMeterConversion::convertPoint(cam, iP[i], x, y);
-    point[i].set_x(x);
-    point[i].set_y(y);
-    pose.addPoint(point[i]);
+    point_[i].set_x(x);
+    point_[i].set_y(y);
+    pose.addPoint(point_[i]);
   }
   
   pose.computePose(vpPose::LAGRANGE, cMo) ;
@@ -205,8 +205,8 @@ vpPlotGraph::findPose()
   double Z = 0;
   for(unsigned int i=0; i< 4; i++) {
     vpPixelMeterConversion::convertPoint(cam, iP[i], x, y);
-    Z = vpMath::maximum(Z, point[i].get_oX() / x);
-    Z = vpMath::maximum(Z, point[i].get_oY() / y);
+    Z = vpMath::maximum(Z, point_[i].get_oX() / x);
+    Z = vpMath::maximum(Z, point_[i].get_oY() / y);
   }
   cMo[2][3] = Z;
 #endif
@@ -222,7 +222,7 @@ vpPlotGraph::computeGraphParameters()
 }
 
 void 
-vpPlotGraph::setCurveColor(const unsigned int curveNum, const vpColor color)
+vpPlotGraph::setCurveColor(const unsigned int curveNum, const vpColor &color)
 {
   (curveList+curveNum)->color = color;
 }

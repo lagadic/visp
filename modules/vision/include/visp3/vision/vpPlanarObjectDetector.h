@@ -183,13 +183,13 @@ public:
                        const vpImagePoint &iP,
 		       unsigned int height, unsigned int width);
   unsigned int buildReference(const vpImage<unsigned char> &I,
-		       const vpRect rectangle);
+           const vpRect &rectangle);
     
     // matching
   bool matchPoint(const vpImage<unsigned char> &I);
   bool matchPoint(const vpImage<unsigned char> &I,
                    const vpImagePoint &iP, const unsigned int height, const unsigned int width);
-  bool matchPoint(const vpImage<unsigned char> &I, const vpRect rectangle);
+  bool matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
     // database management
   void recordDetector(const std::string& objectName, const std::string& dataFile);
   void load(const std::string& dataFilename, const std::string& objName);

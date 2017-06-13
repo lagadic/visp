@@ -1364,7 +1364,7 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname) {
   into "\\" characters. Under Unix systems all the "\\"
   characters are converted into "/" characters.
  */
-std::string vpIoTools::createFilePath(const std::string& parent, const std::string child)
+std::string vpIoTools::createFilePath(const std::string& parent, const std::string &child)
 {
 	if(child.size() == 0 && parent.size() == 0)
 	{

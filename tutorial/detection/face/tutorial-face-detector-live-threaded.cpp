@@ -34,7 +34,7 @@ vpRect s_face_bbox;
 vpThread::Return captureFunction(vpThread::Args args)
 {
 #if defined(VISP_HAVE_V4L2)
-  vpV4l2Grabber cap = *((vpV4l2Grabber *) args);
+  vpV4l2Grabber cap = *( static_cast<vpV4l2Grabber *>(args) );
 #elif defined(VISP_HAVE_OPENCV)
   cv::VideoCapture cap = *((cv::VideoCapture *) args);
 #endif

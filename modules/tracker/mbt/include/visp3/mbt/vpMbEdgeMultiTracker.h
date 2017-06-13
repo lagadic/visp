@@ -322,7 +322,7 @@ public:
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
 
   virtual void setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, const vpHomogeneousMatrix &c1Mo,
-      const vpHomogeneousMatrix c2Mo, const bool firstCameraIsReference=true);
+      const vpHomogeneousMatrix &c2Mo, const bool firstCameraIsReference=true);
 
   virtual void setPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
       const vpHomogeneousMatrix &cMo_);

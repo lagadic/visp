@@ -496,9 +496,6 @@ public:  /* Methode publiques */
   void unbiasForceTorqueSensor();
 
 private:
-  void getArticularDisplacement(vpColVector &displacement);
-  void getCameraDisplacement(vpColVector &displacement);
-
   double maxRotationVelocity_joint6;
 };
 

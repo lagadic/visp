@@ -525,7 +525,7 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
   if(Lpol[i]->isVisible())
   {
     bool testDisappear = false;
-    unsigned int nbCornerInsidePrev = 0;
+    //unsigned int nbCornerInsidePrev = 0;
 
     if(!testDisappear){
       if(useOgre)
@@ -551,8 +551,8 @@ vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &cMo,
       //nbVisiblePolygon++;
       Lpol[i]->isvisible = true;
 
-      if(nbCornerInsidePrev > Lpol[i]->getNbCornerInsidePrevImage())
-        changed = true;
+      //if(nbCornerInsidePrev > Lpol[i]->getNbCornerInsidePrevImage())
+      //  changed = true;
     }
   }
   else
@@ -797,9 +797,9 @@ vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &cameraPos
 
     if(it != result.end())
       if(it->movable->getName().find("SimpleRenderable") != Ogre::String::npos) //Test if the ogreBackground is intersect in first
-        it++;
+        ++it;
 
-    double distance, distancePrev;
+    double distance;
     // In a case of a two-axis aligned segment, ray collision is not always working.
     if(Lpol[index]->getNbPoint() == 2 &&
        (((std::fabs(Lpol[index]->getPoint(0).get_oX() - Lpol[index]->getPoint(1).get_oX()) < std::numeric_limits<double>::epsilon()) +
@@ -827,7 +827,7 @@ vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &cameraPos
       if(it != result.end())
       {
         distance = it->distance;
-        distancePrev = distance;
+        double distancePrev = distance;
 
         //std::cout << "For " << Ogre::StringConverter::toString(index) << ": " << it->movable->getName() << " / " << std::flush;
 
@@ -836,7 +836,7 @@ vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &cameraPos
         }
         else
         {
-          it++;
+          ++it;
           while(it != result.end())
           {
             distance = it->distance;
@@ -847,7 +847,7 @@ vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &cameraPos
                 nbVisible++;
                 break;
               }
-              it++;
+              ++it;
               distancePrev = distance;
             }
             else

@@ -537,9 +537,9 @@ main(int argc, const char ** argv)
           std::cout << "A click in the image to continue..." << std::endl;
         }
         vpImagePoint ip;
-        vpMouseButton::vpMouseButtonType button;
 
         if (opt_click) {
+          vpMouseButton::vpMouseButtonType button;
           bool pressed = vpDisplay::getClick(I, ip, button, opt_click_blocking);
           if (pressed) {
             switch (button) {

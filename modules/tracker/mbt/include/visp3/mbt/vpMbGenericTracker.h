@@ -266,7 +266,7 @@ public:
   virtual void setOptimizationMethod(const vpMbtOptimizationMethod &opt);
 
   virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
-  virtual void setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix c2Mo);
+  virtual void setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo);
   virtual void setPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages, const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
 
   virtual void setProjectionErrorComputation(const bool &flag);

@@ -68,7 +68,6 @@ int main(int argc, const char* argv[])
         vpDisplay::displayText(I, 10, 10, text.str(), vpColor::red);
         //! [Get face characteristics]
         for(size_t i=0; i < face_detector.getNbObjects(); i++) {
-          std::vector<vpImagePoint> p = face_detector.getPolygon(i);
           vpRect bbox = face_detector.getBBox(i);
           vpDisplay::displayRectangle(I, bbox, vpColor::green, false, 4);
           vpDisplay::displayText(I, (int)bbox.getTop()-10, (int)bbox.getLeft(),

@@ -135,8 +135,8 @@ class VISP_EXPORT vpMbtDistanceLine
     bool closeToImageBorder(const vpImage<unsigned char>& I, const unsigned int threshold);
     void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo);
     
-    void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1, const bool displayFullModel = false);
-    void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col, const unsigned int thickness = 1, const bool displayFullModel = false);
+    void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+    void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
     void displayMovingEdges(const vpImage<unsigned char> &I);
     
     /*!
@@ -222,7 +222,7 @@ class VISP_EXPORT vpMbtDistanceLine
       
       \param line_name : The name of the line.
     */
-    inline void setName(const std::string line_name) {this->name = line_name;}
+    inline void setName(const std::string &line_name) {this->name = line_name;}
     
     /*!
       Set the name of the line.

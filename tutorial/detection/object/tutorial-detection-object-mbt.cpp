@@ -99,16 +99,16 @@ int main(int argc, char ** argv) {
     //! [MBT code]
 
     //! [Keypoint selection]
+#if (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D))
+    std::string detectorName = "SIFT";
+    std::string extractorName = "SIFT";
+    std::string matcherName = "BruteForce";
+    std::string configurationFile = "detection-config-SIFT.xml";
+#else
     std::string detectorName = "FAST";
     std::string extractorName = "ORB";
     std::string matcherName = "BruteForce-Hamming";
     std::string configurationFile = "detection-config.xml";
-
-#if (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D))
-    detectorName = "SIFT";
-    extractorName = "SIFT";
-    matcherName = "BruteForce";
-    configurationFile = "detection-config-SIFT.xml";
 #endif
     //! [Keypoint selection]
 

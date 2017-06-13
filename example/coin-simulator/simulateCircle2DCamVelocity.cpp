@@ -158,7 +158,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &display)
 static
 void *mainLoop (void *_simu)
 {
-  vpSimulator *simu = (vpSimulator *)_simu ;
+  vpSimulator *simu = static_cast<vpSimulator *>(_simu) ;
   simu->initMainApplication() ;
 
   vpPoseVector vcMo ;

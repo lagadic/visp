@@ -119,12 +119,9 @@ vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker(const std::vector<std::string> 
     : vpMbEdgeMultiTracker(cameraNames), vpMbKltMultiTracker(cameraNames),
       m_factorKLT(0.65), m_factorMBT(0.35),
       thresholdKLT(2.), thresholdMBT(2.),
-      m_mapOfCameraTransformationMatrix(), m_referenceCameraName("Camera"),
+      m_mapOfCameraTransformationMatrix(), m_referenceCameraName(cameraNames.front()),
       m_nbrow(0), m_L_hybridMulti(), m_error_hybridMulti(), m_w_hybridMulti(), m_weightedError_hybridMulti()
 {
-  //Set by default the reference camera
-  m_referenceCameraName = cameraNames.front();
-
   m_lambda = 0.8;
   m_maxIter = 200;
 }
@@ -260,9 +257,8 @@ void vpMbEdgeKltMultiTracker::computeVVSInit() {
   m_w_hybridMulti.resize(totalNbRows, false);
   m_w_hybridMulti = 1;
 
-  vpMbKltTracker *klt;
   for (std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
-    klt = it->second;
+    vpMbKltTracker *klt = it->second;
     klt->computeVVSInit();
   }
 }
@@ -276,10 +272,8 @@ void vpMbEdgeKltMultiTracker::computeVVSInteractionMatrixAndResidu(std::map<std:
   unsigned int startIdx = 0;
 
   if (m_nbrow >= 4) {
-    vpMbEdgeTracker *edge;
-
     for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
-      edge = it->second;
+      vpMbEdgeTracker *edge = it->second;
 
       //Set the corresponding cMo for the current camera
       it->second->cMo = m_mapOfCameraTransformationMatrix[it->first]*cMo;
@@ -295,9 +289,8 @@ void vpMbEdgeKltMultiTracker::computeVVSInteractionMatrixAndResidu(std::map<std:
     }
   }
 
-  vpMbKltTracker *klt;
   for (std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
-    klt = it->second;
+    vpMbKltTracker *klt = it->second;
 
     if (klt->m_nbInfos > 0) {
 
@@ -325,9 +318,8 @@ void vpMbEdgeKltMultiTracker::computeVVSInteractionMatrixAndResidu(std::map<std:
 void vpMbEdgeKltMultiTracker::computeVVSWeights() {
   unsigned int startIdx = 0;
 
-  vpMbEdgeTracker *edge = NULL;
   for (std::map<std::string, vpMbEdgeTracker*>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
-    edge = it->second;
+    vpMbEdgeTracker *edge = it->second;
 
     //Compute weights
     edge->computeVVSWeights();
@@ -336,9 +328,8 @@ void vpMbEdgeKltMultiTracker::computeVVSWeights() {
     startIdx += edge->m_w_edge.getRows();
   }
 
-  vpMbKltTracker *klt;
   for(std::map<std::string, vpMbKltTracker*>::const_iterator it = m_mapOfKltTrackers.begin(); it != m_mapOfKltTrackers.end(); ++it) {
-    klt = it->second;
+    vpMbKltTracker *klt = it->second;
 
     //Compute weights
     klt->computeVVSWeights(klt->m_robust_klt, klt->m_error_klt, klt->m_w_klt);
@@ -367,19 +358,17 @@ void vpMbEdgeKltMultiTracker::display(const vpImage<unsigned char>& I, const vpH
   for(std::map<std::string, vpMbKltTracker*>::const_iterator it_klt = m_mapOfKltTrackers.begin();
       it_klt != m_mapOfKltTrackers.end(); ++it_klt) {
 
-    vpMbtDistanceKltPoints *kltpoly;
     for(std::list<vpMbtDistanceKltPoints*>::const_iterator it_pts = it_klt->second->kltPolygons.begin();
         it_pts != it_klt->second->kltPolygons.end(); ++it_pts){
-      kltpoly = *it_pts;
+      vpMbtDistanceKltPoints *kltpoly = *it_pts;
       if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
           kltpoly->displayPrimitive(I);
       }
     }
 
-    vpMbtDistanceKltCylinder *kltPolyCylinder;
     for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it_cyl = it_klt->second->kltCylinders.begin();
         it_cyl != it_klt->second->kltCylinders.end(); ++it_cyl){
-      kltPolyCylinder = *it_cyl;
+      vpMbtDistanceKltCylinder *kltPolyCylinder = *it_cyl;
       if(displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
         kltPolyCylinder->displayPrimitive(I);
     }
@@ -406,19 +395,17 @@ void vpMbEdgeKltMultiTracker::display(const vpImage<vpRGBa>& I, const vpHomogene
   for(std::map<std::string, vpMbKltTracker*>::const_iterator it_klt = m_mapOfKltTrackers.begin();
       it_klt != m_mapOfKltTrackers.end(); ++it_klt) {
 
-    vpMbtDistanceKltPoints *kltpoly;
     for(std::list<vpMbtDistanceKltPoints*>::const_iterator it_pts = it_klt->second->kltPolygons.begin();
         it_pts != it_klt->second->kltPolygons.end(); ++it_pts){
-      kltpoly = *it_pts;
+      vpMbtDistanceKltPoints *kltpoly = *it_pts;
       if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
           kltpoly->displayPrimitive(I);
       }
     }
 
-    vpMbtDistanceKltCylinder *kltPolyCylinder;
     for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it_cyl = it_klt->second->kltCylinders.begin();
         it_cyl != it_klt->second->kltCylinders.end(); ++it_cyl){
-      kltPolyCylinder = *it_cyl;
+      vpMbtDistanceKltCylinder *kltPolyCylinder = *it_cyl;
       if(displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
         kltPolyCylinder->displayPrimitive(I);
     }
@@ -449,10 +436,9 @@ void vpMbEdgeKltMultiTracker::display(const vpImage<unsigned char>& I1, const vp
   bool first = true;
   for(std::map<std::string, vpMbKltTracker*>::const_iterator it_klt = m_mapOfKltTrackers.begin();
       it_klt != m_mapOfKltTrackers.end(); ++it_klt) {
-    vpMbtDistanceKltPoints *kltpoly;
     for(std::list<vpMbtDistanceKltPoints*>::const_iterator it_pts = it_klt->second->kltPolygons.begin();
         it_pts != it_klt->second->kltPolygons.end(); ++it_pts){
-      kltpoly = *it_pts;
+      vpMbtDistanceKltPoints *kltpoly = *it_pts;
       if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
         if(first) {
           kltpoly->displayPrimitive(I1);
@@ -462,10 +448,9 @@ void vpMbEdgeKltMultiTracker::display(const vpImage<unsigned char>& I1, const vp
       }
     }
 
-    vpMbtDistanceKltCylinder *kltPolyCylinder;
     for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it_cyl = it_klt->second->kltCylinders.begin();
         it_cyl != it_klt->second->kltCylinders.end(); ++it_cyl){
-      kltPolyCylinder = *it_cyl;
+      vpMbtDistanceKltCylinder *kltPolyCylinder = *it_cyl;
       if(displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints()) {
         if(first) {
           kltPolyCylinder->displayPrimitive(I1);
@@ -503,10 +488,9 @@ void vpMbEdgeKltMultiTracker::display(const vpImage<vpRGBa>& I1, const vpImage<v
   bool first = true;
   for(std::map<std::string, vpMbKltTracker*>::const_iterator it_klt = m_mapOfKltTrackers.begin();
       it_klt != m_mapOfKltTrackers.end(); ++it_klt) {
-    vpMbtDistanceKltPoints *kltpoly;
     for(std::list<vpMbtDistanceKltPoints*>::const_iterator it_pts = it_klt->second->kltPolygons.begin();
         it_pts != it_klt->second->kltPolygons.end(); ++it_pts){
-      kltpoly = *it_pts;
+      vpMbtDistanceKltPoints *kltpoly = *it_pts;
       if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
         if(first) {
           kltpoly->displayPrimitive(I1);
@@ -516,10 +500,9 @@ void vpMbEdgeKltMultiTracker::display(const vpImage<vpRGBa>& I1, const vpImage<v
       }
     }
 
-    vpMbtDistanceKltCylinder *kltPolyCylinder;
     for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it_cyl = it_klt->second->kltCylinders.begin();
         it_cyl != it_klt->second->kltCylinders.end(); ++it_cyl){
-      kltPolyCylinder = *it_cyl;
+      vpMbtDistanceKltCylinder *kltPolyCylinder = *it_cyl;
       if(displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints()) {
         if(first) {
           kltPolyCylinder->displayPrimitive(I1);
@@ -556,19 +539,17 @@ void vpMbEdgeKltMultiTracker::display(const std::map<std::string, const vpImage<
 
     std::map<std::string, const vpImage<unsigned char> *>::const_iterator it_img = mapOfImages.find(it_klt->first);
     if(it_img != mapOfImages.end()) {
-      vpMbtDistanceKltPoints *kltpoly;
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it_pts = it_klt->second->kltPolygons.begin();
           it_pts != it_klt->second->kltPolygons.end(); ++it_pts) {
-        kltpoly = *it_pts;
+        vpMbtDistanceKltPoints *kltpoly = *it_pts;
         if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
             kltpoly->displayPrimitive( *(it_img->second) );
         }
       }
 
-      vpMbtDistanceKltCylinder *kltPolyCylinder;
       for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it_cyl = it_klt->second->kltCylinders.begin();
           it_cyl != it_klt->second->kltCylinders.end(); ++it_cyl) {
-        kltPolyCylinder = *it_cyl;
+        vpMbtDistanceKltCylinder *kltPolyCylinder = *it_cyl;
         if(displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
           kltPolyCylinder->displayPrimitive( *(it_img->second) );
       }
@@ -599,19 +580,17 @@ void vpMbEdgeKltMultiTracker::display(const std::map<std::string, const vpImage<
 
     std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img = mapOfImages.find(it_klt->first);
     if(it_img != mapOfImages.end()) {
-      vpMbtDistanceKltPoints *kltpoly;
       for(std::list<vpMbtDistanceKltPoints*>::const_iterator it_pts = it_klt->second->kltPolygons.begin();
           it_pts != it_klt->second->kltPolygons.end(); ++it_pts){
-        kltpoly = *it_pts;
+        vpMbtDistanceKltPoints *kltpoly = *it_pts;
         if(displayFeatures && kltpoly->hasEnoughPoints() && kltpoly->isTracked() && kltpoly->polygon->isVisible()) {
             kltpoly->displayPrimitive( *(it_img->second) );
         }
       }
 
-      vpMbtDistanceKltCylinder *kltPolyCylinder;
       for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it_cyl = it_klt->second->kltCylinders.begin();
           it_cyl != it_klt->second->kltCylinders.end(); ++it_cyl){
-        kltPolyCylinder = *it_cyl;
+        vpMbtDistanceKltCylinder *kltPolyCylinder = *it_cyl;
         if(displayFeatures && kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
           kltPolyCylinder->displayPrimitive( *(it_img->second) );
       }
@@ -1827,7 +1806,7 @@ void vpMbEdgeKltMultiTracker::setPose(const vpImage<unsigned char> &I, const vpH
   \param firstCameraIsReference : if true, the first camera is the reference, otherwise it is the second one.
 */
 void vpMbEdgeKltMultiTracker::setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-    const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix c2Mo, const bool firstCameraIsReference) {
+    const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo, const bool firstCameraIsReference) {
   vpMbEdgeMultiTracker::setPose(I1, I2, c1Mo, c2Mo, firstCameraIsReference);
   vpMbKltMultiTracker::setPose(I1, I2, c1Mo, c2Mo, firstCameraIsReference);
 }
@@ -2014,9 +1993,8 @@ void vpMbEdgeKltMultiTracker::track(std::map<std::string, const vpImage<unsigned
 }
 
 void vpMbEdgeKltMultiTracker::trackMovingEdges(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages) {
-  vpMbEdgeTracker *edge;
   for(std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin(); it != m_mapOfEdgeTrackers.end(); ++it) {
-    edge = it->second;
+    vpMbEdgeTracker *edge = it->second;
     //Track moving edges
     try {
       edge->trackMovingEdge(*mapOfImages[it->first]);

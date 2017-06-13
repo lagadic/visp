@@ -234,10 +234,9 @@ vpMeNurbs::vpMeNurbs()
 */
 vpMeNurbs::vpMeNurbs(const vpMeNurbs &menurbs)
   : vpMeTracker(menurbs),
-    nurbs(), dist(0.), nbControlPoints(20), beginPtFound(0), endPtFound(0), enableCannyDetection(false),
+    nurbs(menurbs.nurbs), dist(0.), nbControlPoints(20), beginPtFound(0), endPtFound(0), enableCannyDetection(false),
     cannyTh1(100.), cannyTh2(200.)
 {
-  nurbs = menurbs.nurbs;
   dist = menurbs.dist;
   nbControlPoints = menurbs.nbControlPoints;
   beginPtFound = menurbs.beginPtFound;

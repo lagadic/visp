@@ -131,7 +131,7 @@ vpSubColVector & vpSubColVector::operator=(const vpSubColVector &B)
                       "Cannot initialize (%dx1) sub-column vector from (%dx1) sub-column vector",
                       rowNum, B.getRows())) ;
   }
-  
+  pRowNum = B.pRowNum;
   for (unsigned int i=0;i<rowNum;i++)
     data[i] = B[i];
   return *this;

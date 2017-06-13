@@ -97,25 +97,20 @@ vpMeEllipse::vpMeEllipse()
   Copy constructor.
 */
 vpMeEllipse::vpMeEllipse(const vpMeEllipse &meellipse)
-  : vpMeTracker(meellipse), K(), iPc(), a(0.), b(0.), e(0.), iP1(), iP2(), alpha1(0), alpha2(2*M_PI),
-    ce(0.), se(0.), angle(), m00(0.), mu11(0.), mu20(0.), mu02(0.),
+  : vpMeTracker(meellipse), K(meellipse.K), iPc(meellipse.iPc), a(0.), b(0.), e(0.),
+    iP1(meellipse.iP1), iP2(meellipse.iP2), alpha1(0), alpha2(2*M_PI),
+    ce(0.), se(0.), angle(meellipse.angle), m00(0.), mu11(0.), mu20(0.), mu02(0.),
     m10(0.), m01(0.), m11(0.), m02(0.), m20(0.),
     thresholdWeight(0.2), expecteddensity(0.)
 {
-  K = meellipse.K;
-  iPc = meellipse.iPc;
   a = meellipse.a;
   b = meellipse.b;
   e = meellipse.e;
 
-  iP1 = meellipse.iP1;
-  iP2 = meellipse.iP2;
   alpha1 = meellipse.alpha1;
   alpha2 = meellipse.alpha2;
   ce = meellipse.ce;
   se = meellipse.se;
-
-  angle = meellipse.angle;
 
   m00 = meellipse.m00;
   mu11 = meellipse.mu11;

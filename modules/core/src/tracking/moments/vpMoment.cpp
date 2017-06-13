@@ -48,7 +48,9 @@
 /*!
   Default constructor
 */
-vpMoment::vpMoment(): object(NULL), moments(NULL), values() {}
+vpMoment::vpMoment(): object(NULL), moments(NULL), values()
+{
+}
 
 
 /*!

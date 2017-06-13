@@ -111,7 +111,6 @@ class VISP_EXPORT vpMbtMeLine : public vpMeTracker
   private:
     void bubbleSortI();
     void bubbleSortJ();
-    void findSignal(const vpImage<unsigned char>& I, const vpMe *me, double *conv);
     void sample(const vpImage<unsigned char>&image);
     void seekExtremities(const vpImage<unsigned char> &I);
     void setExtremities();

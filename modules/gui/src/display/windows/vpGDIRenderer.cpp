@@ -47,7 +47,7 @@
   Constructor.
 */
 vpGDIRenderer::vpGDIRenderer()
-  : m_bmp(NULL), m_bmp_width(0), m_bmp_height(0)
+  : m_bmp(NULL), m_bmp_width(0), m_bmp_height(0), timelost(0)
 {
   //if the screen depth is not 32bpp, throw an exception
   int bpp = GetDeviceCaps(GetDC(NULL), BITSPIXEL);

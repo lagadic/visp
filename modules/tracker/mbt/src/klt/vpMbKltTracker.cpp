@@ -94,9 +94,8 @@ vpMbKltTracker::~vpMbKltTracker()
 #endif
 
   // delete the Klt Polygon features
-  vpMbtDistanceKltPoints *kltpoly;
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
+    vpMbtDistanceKltPoints *kltpoly = *it;
     if (kltpoly!=NULL){
       delete kltpoly;
     }
@@ -104,9 +103,8 @@ vpMbKltTracker::~vpMbKltTracker()
   }
   kltPolygons.clear();
 
-  vpMbtDistanceKltCylinder *kltPolyCylinder;
   for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
-    kltPolyCylinder = *it;
+    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
     if (kltPolyCylinder!=NULL){
       delete kltPolyCylinder;
     }
@@ -115,9 +113,8 @@ vpMbKltTracker::~vpMbKltTracker()
   kltCylinders.clear();
 
   // delete the structures used to display circles
-  vpMbtDistanceCircle *ci;
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp.end(); ++it){
-    ci = *it;
+    vpMbtDistanceCircle *ci = *it;
     if (ci!=NULL){
       delete ci;
     }
@@ -257,9 +254,8 @@ vpMbKltTracker::resetTracker()
 #endif
 
   // delete the Klt Polygon features
-  vpMbtDistanceKltPoints *kltpoly;
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
+    vpMbtDistanceKltPoints *kltpoly = *it;
     if (kltpoly!=NULL){
       delete kltpoly;
     }
@@ -267,9 +263,8 @@ vpMbKltTracker::resetTracker()
   }
   kltPolygons.clear();
 
-  vpMbtDistanceKltCylinder *kltPolyCylinder;
   for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
-    kltPolyCylinder = *it;
+    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
     if (kltPolyCylinder!=NULL){
       delete kltPolyCylinder;
     }
@@ -278,9 +273,8 @@ vpMbKltTracker::resetTracker()
   kltCylinders.clear();
 
   // delete the structures used to display circles
-  vpMbtDistanceCircle *ci;
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp.end(); ++it){
-    ci = *it;
+    vpMbtDistanceCircle *ci = *it;
     if (ci!=NULL){
       delete ci;
     }
@@ -401,15 +395,13 @@ vpMbKltTracker::setCameraParameters(const vpCameraParameters& camera)
 //    faces[i]->setCameraParameters(camera);
 //  }
 
-  vpMbtDistanceKltPoints *kltpoly;
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
+    vpMbtDistanceKltPoints *kltpoly = *it;
     kltpoly->setCameraParameters(camera);
   }
 
-  vpMbtDistanceKltCylinder *kltPolyCylinder;
   for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
-    kltPolyCylinder = *it;
+    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
     kltPolyCylinder->setCameraParameters(camera);
   }
 
@@ -469,7 +461,7 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
     cdMc.extract(cdRc);
     cdMc.extract(cdtc);
 
-    unsigned int nbCur = 0;
+    //unsigned int nbCur = 0;
 
     for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it) {
       kltpoly = *it;
@@ -496,8 +488,8 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
 
         //Points displacement
         std::map<int, vpImagePoint>::const_iterator iter = kltpoly->getCurrentPoints().begin();
-        nbCur+= (unsigned int)kltpoly->getCurrentPoints().size();
-        for( ; iter != kltpoly->getCurrentPoints().end(); iter++){
+        //nbCur+= (unsigned int)kltpoly->getCurrentPoints().size();
+        for( ; iter != kltpoly->getCurrentPoints().end(); ++iter){
           vpColVector cdp(3);
           cdp[0] = iter->second.get_j(); cdp[1] = iter->second.get_i(); cdp[2] = 1.0;
 
@@ -630,10 +622,9 @@ vpMbKltTracker::preTracking(const vpImage<unsigned char>& I) {
 
   m_nbInfos = 0;
   m_nbFaceUsed = 0;
-  vpMbtDistanceKltPoints *kltpoly;
 //  for (unsigned int i = 0; i < faces.size(); i += 1){
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
+    vpMbtDistanceKltPoints *kltpoly = *it;
     if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
       kltpoly->computeNbDetectedCurrent(tracker);
 //       faces[i]->ransac();
@@ -644,9 +635,8 @@ vpMbKltTracker::preTracking(const vpImage<unsigned char>& I) {
     }
   }
 
-  vpMbtDistanceKltCylinder *kltPolyCylinder;
   for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
-    kltPolyCylinder = *it;
+    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
 
     if(kltPolyCylinder->isTracked())
     {
@@ -672,10 +662,9 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w)
   unsigned int initialNumber = 0;
   unsigned int currentNumber = 0;
   unsigned int shift = 0;
-  vpMbtDistanceKltPoints *kltpoly;
 //  for (unsigned int i = 0; i < faces.size(); i += 1){
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
+    vpMbtDistanceKltPoints *kltpoly = *it;
     if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2){
       initialNumber += kltpoly->getInitialNumberPoint();
       if(kltpoly->hasEnoughPoints()){
@@ -692,9 +681,8 @@ vpMbKltTracker::postTracking(const vpImage<unsigned char>& I, vpColVector &w)
     }
   }
 
-  vpMbtDistanceKltCylinder *kltPolyCylinder;
   for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
-    kltPolyCylinder = *it;
+    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
 
     if(kltPolyCylinder->isTracked())
     {
@@ -828,9 +816,8 @@ vpMbKltTracker::computeVVSInteractionMatrixAndResidu() {
   unsigned int shift = 0;
   vpHomography H;
 
-  vpMbtDistanceKltPoints *kltpoly;
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it){
-    kltpoly = *it;
+    vpMbtDistanceKltPoints *kltpoly = *it;
     if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2 &&
        kltpoly->hasEnoughPoints()){
       vpSubColVector subR(m_error_klt, shift, 2*kltpoly->getCurrentNumberPoints());
@@ -847,9 +834,8 @@ vpMbKltTracker::computeVVSInteractionMatrixAndResidu() {
     }
   }
 
-  vpMbtDistanceKltCylinder *kltPolyCylinder;
   for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end(); ++it){
-    kltPolyCylinder = *it;
+    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
 
     if(kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
     {
@@ -1041,8 +1027,8 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
   if(clippingFlag > 3) // Contains at least one FOV constraint
     c.computeFov(I.getWidth(), I.getHeight());
 
-  vpMbtDistanceKltPoints *kltpoly;
-  vpMbtDistanceKltCylinder *kltPolyCylinder;
+//  vpMbtDistanceKltPoints *kltpoly;
+//  vpMbtDistanceKltCylinder *kltPolyCylinder;
 
   // Previous version 12/08/2015
 //  for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
@@ -1056,7 +1042,7 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
     faces.computeScanLineRender(cam,I.getWidth(), I.getHeight());
 
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
+    vpMbtDistanceKltPoints *kltpoly = *it;
 
     kltpoly->display(I,cMo_,camera,col,thickness,displayFullModel);
 
@@ -1067,7 +1053,7 @@ vpMbKltTracker::display(const vpImage<unsigned char>& I, const vpHomogeneousMatr
   }
 
   for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
-    kltPolyCylinder = *it;
+    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
 
     kltPolyCylinder->display(I,cMo_,camera,col,thickness,displayFullModel);
 
@@ -1104,8 +1090,8 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
   if(clippingFlag > 3) // Contains at least one FOV constraint
     c.computeFov(I.getWidth(), I.getHeight());
 
-  vpMbtDistanceKltPoints *kltpoly;
-  vpMbtDistanceKltCylinder *kltPolyCylinder;
+//  vpMbtDistanceKltPoints *kltpoly;
+//  vpMbtDistanceKltCylinder *kltPolyCylinder;
 
   // Previous version 12/08/2015
 //  for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
@@ -1119,7 +1105,7 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
     faces.computeScanLineRender(cam,I.getWidth(), I.getHeight());
 
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
+    vpMbtDistanceKltPoints *kltpoly = *it;
 
     kltpoly->display(I,cMo_,camera,col,thickness,displayFullModel);
 
@@ -1130,7 +1116,7 @@ vpMbKltTracker::display(const vpImage<vpRGBa>& I, const vpHomogeneousMatrix &cMo
   }
 
   for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
-    kltPolyCylinder = *it;
+    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
 
     kltPolyCylinder->display(I,cMo_,camera,col,thickness,displayFullModel);
 
@@ -1160,18 +1146,16 @@ void
 vpMbKltTracker::testTracking()
 {
   unsigned int nbTotalPoints = 0;
-  vpMbtDistanceKltPoints *kltpoly;
 //  for (unsigned int i = 0; i < faces.size(); i += 1){
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
+    vpMbtDistanceKltPoints *kltpoly = *it;
     if(kltpoly->polygon->isVisible() && kltpoly->isTracked() && kltpoly->polygon->getNbPoint() > 2 && kltpoly->hasEnoughPoints()){
       nbTotalPoints += kltpoly->getCurrentNumberPoints();
     }
   }
 
-  vpMbtDistanceKltCylinder *kltPolyCylinder;
   for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
-    kltPolyCylinder = *it;
+    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
     if(kltPolyCylinder->isTracked() && kltPolyCylinder->hasEnoughPoints())
       nbTotalPoints += kltPolyCylinder->getCurrentNumberPoints();
   }
@@ -1243,7 +1227,6 @@ void
 vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string &name)
 {
   bool already_here = false;
-  vpMbtDistanceCircle *ci;
 
 //  for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp[i].end(); ++it){
 //    ci = *it;
@@ -1254,7 +1237,7 @@ vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P
 //  }
 
   if (!already_here){
-    ci = new vpMbtDistanceCircle;
+    vpMbtDistanceCircle *ci = new vpMbtDistanceCircle;
 
     ci->setCameraParameters(cam);
     ci->setName(name);
@@ -1305,9 +1288,8 @@ vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_nam
 
 
   // delete the Klt Polygon features
-  vpMbtDistanceKltPoints *kltpoly;
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
+    vpMbtDistanceKltPoints *kltpoly = *it;
     if (kltpoly!=NULL){
       delete kltpoly;
     }
@@ -1315,9 +1297,8 @@ vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_nam
   }
   kltPolygons.clear();
 
-  vpMbtDistanceKltCylinder *kltPolyCylinder;
   for(std::list<vpMbtDistanceKltCylinder*>::const_iterator it=kltCylinders.begin(); it!=kltCylinders.end(); ++it){
-    kltPolyCylinder = *it;
+    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
     if (kltPolyCylinder!=NULL){
       delete kltPolyCylinder;
     }
@@ -1326,9 +1307,8 @@ vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_nam
   kltCylinders.clear();
 
   // delete the structures used to display circles
-  vpMbtDistanceCircle *ci;
   for(std::list<vpMbtDistanceCircle*>::const_iterator it=circles_disp.begin(); it!=circles_disp.end(); ++it){
-    ci = *it;
+    vpMbtDistanceCircle *ci = *it;
     if (ci!=NULL){
       delete ci;
     }
@@ -1351,9 +1331,8 @@ vpMbKltTracker::reInitModel(const vpImage<unsigned char>& I, const char* cad_nam
 void
 vpMbKltTracker::setUseKltTracking(const std::string &name, const bool &useKltTracking)
 {
-  vpMbtDistanceKltPoints *kltpoly;
   for(std::list<vpMbtDistanceKltPoints*>::const_iterator it=kltPolygons.begin(); it!=kltPolygons.end(); ++it){
-    kltpoly = *it;
+    vpMbtDistanceKltPoints *kltpoly = *it;
     if(kltpoly->polygon->getName() == name){
       kltpoly->setTracked(useKltTracking);
     }

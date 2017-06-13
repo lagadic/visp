@@ -828,40 +828,6 @@ vpRobotPtu46::readPositionFile(const std::string &filename, vpColVector &q)
 
 /*!
 
-  Get the robot displacement expressed in the camera frame since the last call
-  of this method.
-
-  \param v The measured displacement in camera frame. The dimension of v is 6
-  (tx, ty, ty, rx, ry, rz). Translations are expressed in meters, rotations in
-  radians.
-
-  \sa getDisplacement(), getArticularDisplacement()
-
-*/
-void
-vpRobotPtu46::getCameraDisplacement(vpColVector &v)
-{
-  getDisplacement(vpRobot::CAMERA_FRAME, v);
-
-}
-/*!
-
-  Get the robot articular displacement since the last call of this method.
-
-  \param d The measured articular displacement. The dimension of d is 2 (the
-  number of axis of the robot) with respectively d[0] (pan displacement),
-  d[1] (tilt displacement)
-
-  \sa getDisplacement(), getCameraDisplacement()
-
-*/
-void vpRobotPtu46::getArticularDisplacement(vpColVector  &d)
-{
-  getDisplacement(vpRobot::ARTICULAR_FRAME, d);
-}
-
-/*!
-
   Get the robot displacement since the last call of this method.
 
   \warning The first call of this method gives not a good value for the
@@ -877,8 +843,6 @@ void vpRobotPtu46::getArticularDisplacement(vpColVector  &d)
 
   \exception vpRobotException::wrongStateError If a not supported frame type is
   given.
-
-  \sa getArticularDisplacement(), getCameraDisplacement()
 
 */
 void

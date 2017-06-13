@@ -284,7 +284,7 @@ vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, const vpH
 */
 void
 vpMbtDistanceCircle::display(const vpImage<unsigned char>&I, const vpHomogeneousMatrix &cMo,
-                             const vpCameraParameters &camera, const vpColor col, const unsigned int thickness,
+                             const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
                              const bool displayFullModel )
 {
   if( (isvisible && isTrackedCircle) || displayFullModel){
@@ -316,7 +316,7 @@ vpMbtDistanceCircle::display(const vpImage<unsigned char>&I, const vpHomogeneous
 */
 void
 vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                             const vpCameraParameters &camera, const vpColor col,
+                             const vpCameraParameters &camera, const vpColor &col,
                              const unsigned int thickness, const bool displayFullModel)
 {
   if( (isvisible && isTrackedCircle) || displayFullModel){

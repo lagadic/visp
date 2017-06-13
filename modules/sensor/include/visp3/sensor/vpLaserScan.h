@@ -71,7 +71,7 @@ class VISP_EXPORT vpLaserScan
   }
   /*! Copy constructor. */
   vpLaserScan(const vpLaserScan &scan)
-    : listScanPoints(), startTimestamp(0), endTimestamp(0), measurementId(0),
+    : listScanPoints(scan.listScanPoints), startTimestamp(0), endTimestamp(0), measurementId(0),
       numSteps(0), startAngle(0), stopAngle(0), numPoints(0)
   {
     startTimestamp = scan.startTimestamp;
@@ -81,7 +81,6 @@ class VISP_EXPORT vpLaserScan
     startAngle = scan.startAngle;
     stopAngle = scan.stopAngle;
     numPoints = scan.numPoints;
-    listScanPoints = scan.listScanPoints;
   }
   /*! Default destructor that does nothing. */
   virtual ~vpLaserScan() {};

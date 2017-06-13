@@ -2474,7 +2474,7 @@ void vpMbEdgeMultiTracker::setPose(const vpImage<unsigned char> &I, const vpHomo
   \param firstCameraIsReference : if true, the first camera is the reference, otherwise it is the second one.
 */
 void vpMbEdgeMultiTracker::setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-    const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix c2Mo, const bool firstCameraIsReference) {
+    const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo, const bool firstCameraIsReference) {
   if(m_mapOfEdgeTrackers.size() == 2) {
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
     it->second->setPose(I1, c1Mo);

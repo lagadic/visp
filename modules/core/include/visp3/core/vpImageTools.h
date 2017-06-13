@@ -465,11 +465,10 @@ inline void vpImageTools::binarise(vpImage<unsigned char> &I,
 
     I.performLut(lut);
   } else {
-    unsigned char v;
     unsigned char *p = I.bitmap;
     unsigned char *pend = I.bitmap + I.getWidth()*I.getHeight();
     for (; p < pend; p ++) {
-      v = *p;
+      unsigned char v = *p;
       if (v < threshold1) *p = value1;
       else if (v > threshold2) *p = value3;
       else *p = value2;
@@ -518,7 +517,7 @@ public:
 template<class Type>
 void *vpUndistortInternalType<Type>::vpUndistort_threaded(void *arg)
 {
-  vpUndistortInternalType<Type> *undistortSharedData = (vpUndistortInternalType<Type>*)arg;
+  vpUndistortInternalType<Type> *undistortSharedData = static_cast< vpUndistortInternalType<Type>* >(arg);
   int offset   = (int)undistortSharedData->threadid;
   int width    = (int)undistortSharedData->width;
   int height   = (int)undistortSharedData->height;

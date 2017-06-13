@@ -55,13 +55,9 @@ vpBSpline::vpBSpline()
   
 */
 vpBSpline::vpBSpline(const vpBSpline &bspline)
-  : controlPoints(), knots(), p(3), // By default : p=3 for clubic spline
-    crossingPoints()
+  : controlPoints(bspline.controlPoints), knots(bspline.knots), p(bspline.p), // By default : p=3 for clubic spline
+    crossingPoints(bspline.crossingPoints)
 {
-  controlPoints = bspline.controlPoints;
-  knots = bspline.knots;
-  p = bspline.p;
-  crossingPoints = bspline.crossingPoints;
 }
 /*!
   Basic destructor.
