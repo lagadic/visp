@@ -84,11 +84,11 @@ vpMeTracker::vpMeTracker(const vpMeTracker& meTracker)
   nGoodElement = meTracker.nGoodElement;
   init_range = meTracker.init_range;
   selectDisplay = meTracker.selectDisplay;
-  
-  #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   display_point = meTracker.display_point;
   query_range = meTracker.query_range;
-  #endif
+#endif
 }
 
 /*!
@@ -113,8 +113,10 @@ vpMeTracker::operator = (vpMeTracker& p_me)
   selectDisplay = p_me.selectDisplay;
   init_range = p_me.init_range;
   nGoodElement = p_me.nGoodElement;
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   query_range = p_me.query_range;
   display_point = p_me.display_point;
+#endif
   return *this;
 }
 
@@ -320,14 +322,14 @@ vpMeTracker::track(const vpImage<unsigned char>& I)
 
 /*!
   Display the moving edge sites with a color corresponding to their state.
-  
+
   - If green : The vpMeSite is a good point.
   - If blue : The point is removed because of the vpMeSite tracking phase (constrast problem).
   - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
   - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
   - If cyan : The point is removed because it's too close to another.
   - Yellow otherwise
-  
+
   \param I : The image.
 */
 void
@@ -346,7 +348,7 @@ vpMeTracker::display(const vpImage<unsigned char>& I)
 }
 
 /*! Displays the status of moving edge sites
- 
+
   \param I : The image.
   \param w : vector
   \param index_w : index
