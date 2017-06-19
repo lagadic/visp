@@ -88,6 +88,11 @@
 #include <Inventor/VRMLnodes/SoVRMLShape.h>
 #endif
 
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#  include <emmintrin.h>
+#  define VISP_HAVE_SSE2 1
+#endif
+
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -2423,17 +2428,39 @@ vpMbTracker::computeCovarianceMatrixVVS(const bool isoJoIdentity_, const vpColVe
   \param interaction : The interaction matrix (size Nx6).
   \param error : The residu vector (size Nx1).
   \param JTR : The resulting JTR column vector (size 6x1).
-
 */
 void
 vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, vpColVector& JTR) const
 {
   if(interaction.getRows() != error.getRows() || interaction.getCols() != 6 ){
     throw vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-              "Incorrect matrices size in computeJTR.");
+                            "Incorrect matrices size in computeJTR.");
   }
 
   JTR.resize(6);
+
+#if VISP_HAVE_SSE2
+  __m128d v_JTR_0_1 = _mm_setzero_pd();
+  __m128d v_JTR_2_3 = _mm_setzero_pd();
+  __m128d v_JTR_4_5 = _mm_setzero_pd();
+
+  for (unsigned int i = 0; i < interaction.getRows(); i++) {
+    const __m128d v_error = _mm_set1_pd(error[i]);
+
+    __m128d v_interaction = _mm_loadu_pd(&interaction[i][0]);
+    v_JTR_0_1 = _mm_add_pd( v_JTR_0_1, _mm_mul_pd(v_interaction, v_error) );
+
+    v_interaction = _mm_loadu_pd(&interaction[i][2]);
+    v_JTR_2_3 = _mm_add_pd( v_JTR_2_3, _mm_mul_pd(v_interaction, v_error) );
+
+    v_interaction = _mm_loadu_pd(&interaction[i][4]);
+    v_JTR_4_5 = _mm_add_pd( v_JTR_4_5, _mm_mul_pd(v_interaction, v_error) );
+  }
+
+  _mm_storeu_pd(JTR.data, v_JTR_0_1);
+  _mm_storeu_pd(JTR.data+2, v_JTR_2_3);
+  _mm_storeu_pd(JTR.data+4, v_JTR_4_5);
+#else
   const unsigned int N = interaction.getRows();
 
   for (unsigned int i = 0; i < 6; i += 1){
@@ -2443,6 +2470,7 @@ vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, v
     }
     JTR[i] = ssum;
   }
+#endif
 }
 
 void
@@ -2493,11 +2521,12 @@ vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity_, const unsigned 
         case vpMbTracker::GAUSS_NEWTON_OPT:
         default:
           v = -m_lambda * LTL.pseudoInverse(LTL.getRows()*std::numeric_limits<double>::epsilon()) * LTR;
+          break;
       }
   } else {
       vpVelocityTwistMatrix cVo;
       cVo.buildFrom(cMo);
-      vpMatrix LVJ = (L*cVo*oJo);
+      vpMatrix LVJ = (L * (cVo*oJo));
       vpMatrix LVJTLVJ = (LVJ).AtA();
       vpColVector LVJTR;
       computeJTR(LVJ, R, LVJTR);
@@ -2521,11 +2550,9 @@ vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity_, const unsigned 
           }
         case vpMbTracker::GAUSS_NEWTON_OPT:
         default:
-          {
-            v = -m_lambda*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
-            v = cVo * v;
-            break;
-          }
+          v = -m_lambda*LVJTLVJ.pseudoInverse(LVJTLVJ.getRows()*std::numeric_limits<double>::epsilon())*LVJTR;
+          v = cVo * v;
+          break;
       }
   }
 }

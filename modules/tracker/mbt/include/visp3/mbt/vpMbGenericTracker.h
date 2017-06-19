@@ -41,15 +41,19 @@
 
 #include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/mbt/vpMbKltTracker.h>
+#include <visp3/mbt/vpMbDepthNormalTracker.h>
+#include <visp3/mbt/vpMbDepthDenseTracker.h>
 
 
 class VISP_EXPORT vpMbGenericTracker : public vpMbTracker {
 public:
   enum vpTrackerType {
-    EDGE_TRACKER  = 1 << 0,   /*!< Model-based tracking using moving edges features. */
+    EDGE_TRACKER          = 1 << 0,    /*!< Model-based tracking using moving edges features. */
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-    KLT_TRACKER   = 1 << 1    /*!< Model-based tracking using KLT features. */
+    KLT_TRACKER           = 1 << 1,    /*!< Model-based tracking using KLT features. */
 #endif
+    DEPTH_NORMAL_TRACKER  = 1 << 2,    /*!< Model-based tracking using depth normal features. */
+    DEPTH_DENSE_TRACKER   = 1 << 3     /*!< Model-based tracking using depth dense features. */
   };
 
   vpMbGenericTracker();
@@ -220,6 +224,16 @@ public:
   virtual void setClipping(const unsigned int &flags1, const unsigned int &flags2);
   virtual void setClipping(const std::map<std::string, unsigned int> &mapOfClippingFlags);
 
+  virtual void setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY);
+
+  virtual void setDepthNormalFaceCentroidMethod(const vpMbtFaceDepthNormal::vpFaceCentroidType &method);
+  virtual void setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method);
+  virtual void setDepthNormalPclPlaneEstimationMethod(const int method);
+  virtual void setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter);
+  virtual void setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold);
+  virtual void setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY);
+//  virtual void setDepthNormalUseRobust(const bool use);
+
   virtual void setDisplayFeatures(const bool displayF);
 
   virtual void setFarClippingDistance(const double &dist);
@@ -245,6 +259,7 @@ public:
   virtual void setKltOpencv(const std::map<std::string, vpKltOpencv> &mapOfKlts);
 
   virtual void setKltThresholdAcceptation(const double th);
+
 #endif
 
   virtual void setLod(const bool useLod, const std::string &name="");
@@ -276,6 +291,7 @@ public:
   virtual void setScanLineVisibilityTest(const bool &v);
 
   virtual void setTrackerType(const int type);
+  virtual void setTrackerType(const std::map<std::string, int> &mapOfTrackerTypes);
 
   virtual void setUseEdgeTracking(const std::string &name, const bool &useEdgeTracking);
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
@@ -287,6 +303,14 @@ public:
   virtual void track(const vpImage<unsigned char> &I);
   virtual void track(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2);
   virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
+#ifdef VISP_HAVE_PCL
+  virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+                     std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> &mapOfPointClouds);
+#endif
+  virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+                     std::map<std::string, const std::vector<vpColVector> *> &mapOfPointClouds,
+                     std::map<std::string, unsigned int> &mapOfPointCloudWidths,
+                     std::map<std::string, unsigned int> &mapOfPointCloudHeights);
 
 
 protected:
@@ -312,14 +336,23 @@ protected:
 
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
 
-  virtual void preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
+#ifdef VISP_HAVE_PCL
+  virtual void preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+                           std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> &mapOfPointClouds);
+#endif
+  virtual void preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+                           std::map<std::string, const std::vector<vpColVector> *> &mapOfPointClouds,
+                           std::map<std::string, unsigned int> &mapOfPointCloudWidths,
+                           std::map<std::string, unsigned int> &mapOfPointCloudHeights);
 
 
 private:
-  class TrackerWrapper : public vpMbEdgeTracker
-    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-      , public vpMbKltTracker
-    #endif
+  class TrackerWrapper : public vpMbEdgeTracker,
+                      #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+                         public vpMbKltTracker,
+                      #endif
+                         public vpMbDepthNormalTracker,
+                         public vpMbDepthDenseTracker
   {
     friend class vpMbGenericTracker;
 
@@ -367,6 +400,22 @@ private:
 
     virtual void setCameraParameters(const vpCameraParameters& camera);
 
+    virtual void setClipping(const unsigned int &flags);
+
+    virtual void setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY);
+
+    virtual void setDepthNormalFaceCentroidMethod(const vpMbtFaceDepthNormal::vpFaceCentroidType &method);
+    virtual void setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method);
+    virtual void setDepthNormalPclPlaneEstimationMethod(const int method);
+    virtual void setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter);
+    virtual void setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold);
+    virtual void setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY);
+//    virtual void setDepthNormalUseRobust(const bool use);
+
+    virtual void setFarClippingDistance(const double &dist);
+
+    virtual void setNearClippingDistance(const double &dist);
+
     virtual void setOgreVisibilityTest(const bool &v);
 
     virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo);
@@ -380,14 +429,20 @@ private:
     virtual void testTracking();
 
     virtual void track(const vpImage<unsigned char>& I);
+#ifdef VISP_HAVE_PCL
+    using vpMbDepthNormalTracker::track;
+    using vpMbDepthDenseTracker::track;
+    virtual void track(const vpImage<unsigned char> * const ptr_I=NULL, const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud=nullptr);
+#endif
 
 
   protected:
-    virtual void computeVVS(const vpImage<unsigned char> &I);
+    virtual void computeVVS(const vpImage<unsigned char> * const ptr_I);
     virtual void computeVVSInit();
-    virtual void computeVVSInit(const vpImage<unsigned char> &I);
+    virtual void computeVVSInit(const vpImage<unsigned char> * const ptr_I);
     virtual void computeVVSInteractionMatrixAndResidu();
-    virtual void computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> &I);
+    using vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu;
+    virtual void computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> * const ptr_I);
     using vpMbTracker::computeVVSWeights;
     virtual void computeVVSWeights();
 
@@ -400,10 +455,15 @@ private:
     virtual void initFaceFromCorners(vpMbtPolygon &polygon);
     virtual void initFaceFromLines(vpMbtPolygon &polygon);
 
-    virtual void initMbtTracking(const vpImage<unsigned char> &I);
+    virtual void initMbtTracking(const vpImage<unsigned char> * const ptr_I);
 
-    virtual void preTracking(const vpImage<unsigned char> &I);
-    virtual void postTracking(const vpImage<unsigned char> &I);
+#ifdef VISP_HAVE_PCL
+    virtual void postTracking(const vpImage<unsigned char> * const ptr_I=NULL, const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud=nullptr);
+    virtual void preTracking(const vpImage<unsigned char> * const ptr_I=NULL, const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud=nullptr);
+#endif
+    virtual void postTracking(const vpImage<unsigned char> * const ptr_I=NULL, const unsigned int pointcloud_width=0, const unsigned int pointcloud_height=0);
+    virtual void preTracking(const vpImage<unsigned char> * const ptr_I=NULL, const std::vector<vpColVector> * const point_cloud=NULL,
+                             const unsigned int pointcloud_width=0, const unsigned int pointcloud_height=0);
   };
 
 

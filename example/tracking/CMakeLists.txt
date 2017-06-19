@@ -47,6 +47,7 @@ set(example_cpp
   mbtEdgeMultiTracking.cpp
   mbtEdgeTracking.cpp
   mbtGenericTracking.cpp
+  mbtGenericTrackingDepth.cpp
   mbtGenericTracking2.cpp
   mbtKltTracking.cpp
   mbtKltMultiTracking.cpp

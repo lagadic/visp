@@ -1209,7 +1209,7 @@ void vpMbEdgeTracker::init(const vpImage<unsigned char>& I)
   \param I : image corresponding to the desired pose.
   \param cdMo : Pose to affect.
 */
-void           
+void
 vpMbEdgeTracker::setPose( const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
 {
   cMo = cdMo;
@@ -2565,13 +2565,13 @@ vpMbEdgeTracker::setScales(const std::vector<bool>& scale)
   
   \param dist : Far clipping value.
 */
-void            
+void
 vpMbEdgeTracker::setFarClippingDistance(const double &dist) 
 { 
   if( (clippingFlag & vpPolygon3D::NEAR_CLIPPING) == vpPolygon3D::NEAR_CLIPPING && dist <= distNearClip)
-    vpTRACE("Far clipping value cannot be inferior than near clipping value. Far clipping won't be considered.");
-  else if ( dist < 0 ) 
-    vpTRACE("Far clipping value cannot be inferior than 0. Far clipping won't be considered.");
+    std::cerr << "Far clipping value cannot be inferior than near clipping value. Far clipping won't be considered." << std::endl;
+  else if ( dist < 0 )
+    std::cerr << "Far clipping value cannot be inferior than 0. Far clipping won't be considered." << std::endl;
   else{  
     vpMbTracker::setFarClippingDistance(dist);
     vpMbtDistanceLine *l;
@@ -2592,13 +2592,13 @@ vpMbEdgeTracker::setFarClippingDistance(const double &dist)
   
   \param dist : Near clipping value.
 */
-void           
+void
 vpMbEdgeTracker::setNearClippingDistance(const double &dist) 
 { 
   if( (clippingFlag & vpPolygon3D::FAR_CLIPPING) == vpPolygon3D::FAR_CLIPPING && dist >= distFarClip)
-    vpTRACE("Near clipping value cannot be superior than far clipping value. Near clipping won't be considered.");
-  else if ( dist < 0 ) 
-    vpTRACE("Near clipping value cannot be inferior than 0. Near clipping won't be considered.");
+    std::cerr << "Near clipping value cannot be superior than far clipping value. Near clipping won't be considered." << std::endl;
+  else if ( dist < 0 )
+    std::cerr << "Near clipping value cannot be inferior than 0. Near clipping won't be considered." << std::endl;
   else{
     vpMbTracker::setNearClippingDistance(dist);
     vpMbtDistanceLine *l;
@@ -2621,7 +2621,7 @@ vpMbEdgeTracker::setNearClippingDistance(const double &dist)
   
   \param flags : New clipping flags.
 */
-void            
+void
 vpMbEdgeTracker::setClipping(const unsigned int &flags) 
 { 
   vpMbTracker::setClipping(flags);

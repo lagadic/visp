@@ -54,18 +54,23 @@
 #include <vector>
 #include <limits>
 
+template <class PolygonType>
+class vpMbHiddenFaces;
+
+template <class PolygonType>
+void swap(vpMbHiddenFaces<PolygonType> &first, vpMbHiddenFaces<PolygonType> &second);
+
 /*!
   \class vpMbHiddenFaces
 
   \brief Implementation of the polygons management for the model-based trackers.
 
   \ingroup group_mbt_faces
-
  */
 template<class PolygonType = vpMbtPolygon>
 class vpMbHiddenFaces
 {
-  private:
+private:
   //! List of polygons
   std::vector<PolygonType *> Lpol;
   //! Number of visible polygon
@@ -88,9 +93,12 @@ class vpMbHiddenFaces
                            const vpImage<unsigned char> &I = vpImage<unsigned char>(),
                            const vpCameraParameters &cam = vpCameraParameters());
 
-  public :
-                    vpMbHiddenFaces();
-                  ~vpMbHiddenFaces();
+public :
+  vpMbHiddenFaces();
+  ~vpMbHiddenFaces();
+  vpMbHiddenFaces(const vpMbHiddenFaces &copy);
+  vpMbHiddenFaces& operator=(vpMbHiddenFaces other);
+  friend void swap<>(vpMbHiddenFaces &first, vpMbHiddenFaces &second);
 
     void          addPolygon(PolygonType *p);
 
@@ -304,6 +312,50 @@ vpMbHiddenFaces<PolygonType>::~vpMbHiddenFaces()
 }
 
 /*!
+  Copy constructor.
+*/
+template<class PolygonType>
+vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces(const vpMbHiddenFaces<PolygonType> &copy) :
+  Lpol(), nbVisiblePolygon(copy.nbVisiblePolygon), scanlineRender(copy.scanlineRender)
+#ifdef VISP_HAVE_OGRE
+  ,  ogreBackground(copy.ogreBackground), ogreInitialised(copy.ogreInitialised), nbRayAttempts(copy.nbRayAttempts),
+  ratioVisibleRay(copy.ratioVisibleRay), ogre(NULL), lOgrePolygons(), ogreShowConfigDialog(copy.ogreShowConfigDialog)
+#endif
+{
+  //Copy the list of polygons
+  for (unsigned int i = 0; i < copy.Lpol.size(); i++) {
+    PolygonType *poly = new PolygonType(*copy.Lpol[i]);
+    Lpol.push_back(poly);
+  }
+}
+
+template<class PolygonType>
+void swap(vpMbHiddenFaces<PolygonType> &first, vpMbHiddenFaces<PolygonType> &second) {
+  using std::swap;
+  swap(first.Lpol, second.Lpol);
+  swap(first.nbVisiblePolygon, second.nbVisiblePolygon);
+  swap(first.scanlineRender, second.scanlineRender);
+#ifdef VISP_HAVE_OGRE
+  swap(first.ogreInitialised, second.ogreInitialised);
+  swap(first.nbRayAttempts, second.nbRayAttempts);
+  swap(first.ratioVisibleRay, second.ratioVisibleRay);
+  swap(first.ogreShowConfigDialog, second.ogreShowConfigDialog);
+  swap(first.ogre, second.ogre);
+  swap(first.ogreBackground, second.ogreBackground);
+#endif
+}
+
+/*!
+  Copy assignment operator.
+*/
+template<class PolygonType>
+vpMbHiddenFaces<PolygonType>& vpMbHiddenFaces<PolygonType>::operator=(vpMbHiddenFaces<PolygonType> other) {
+  swap(*this, other);
+
+  return *this;
+}
+
+/*!
   Add a polygon to the list of polygons.
 
   \param p : The polygon to add.
@@ -436,7 +488,7 @@ vpMbHiddenFaces<PolygonType>::computeScanLineQuery(const vpPoint &a, const vpPoi
                                                    std::vector<std::pair<vpPoint, vpPoint> > &lines,
                                                    const bool &displayResults)
 {
-  scanlineRender.queryLineVisibility(a,b,lines,displayResults);
+  scanlineRender.queryLineVisibility(a, b, lines, displayResults);
 }
 
 /*!
@@ -881,4 +933,3 @@ vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &cameraPos
 #endif //VISP_HAVE_OGRE
 
 #endif // vpMbHiddenFaces
-
