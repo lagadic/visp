@@ -431,7 +431,7 @@ vpCameraParameters&
 void
 vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
 {
-  if( !isFov && w != width && h != height && w != 0 && h != 0){
+  if( (!isFov || w != width || h != height) && w != 0 && h != 0 ){
     fovNormals = std::vector<vpColVector>(4);
     
     isFov = true;
