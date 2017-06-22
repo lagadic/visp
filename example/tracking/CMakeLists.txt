@@ -68,6 +68,8 @@ if(VISP_HAVE_OGRE)
   visp_set_source_file_compile_flag(mbtEdgeTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
   visp_set_source_file_compile_flag(mbtKltTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
   visp_set_source_file_compile_flag(mbtKltMultiTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
+  visp_set_source_file_compile_flag(mbtGenericTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
+  visp_set_source_file_compile_flag(mbtGenericTracking2.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual)
 endif()
 
 foreach(cpp ${example_cpp})
