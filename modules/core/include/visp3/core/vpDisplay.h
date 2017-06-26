@@ -241,7 +241,7 @@ public:
   */
   inline bool isInitialised() { return m_displayHasBeenInitialized; }
   virtual void setDownScalingFactor(unsigned int scale);
-  void setDownScalingFactor(vpScaleType scaleType);
+  virtual void setDownScalingFactor(vpScaleType scaleType);
   //@}
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

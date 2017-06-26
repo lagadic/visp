@@ -149,6 +149,7 @@ public:
 
   void setFont( const std::string &fontname );
   void setDownScalingFactor(unsigned int scale) { window.setScale(scale); m_scale = scale; }
+  void setDownScalingFactor(vpScaleType scaleType) { m_scaleType = scaleType; }
   void setTitle(const std::string &windowtitle);
   void setWindowPosition(int winx, int winy);
 
