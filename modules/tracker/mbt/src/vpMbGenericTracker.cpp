@@ -2447,9 +2447,8 @@ void vpMbGenericTracker::setClipping(const unsigned int &flags1, const unsigned 
   \note This function will set the new parameter for all the cameras.
 */
 void vpMbGenericTracker::setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY) {
-  TrackerWrapper *tracker;
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
-    tracker = it->second;
+    TrackerWrapper *tracker = it->second;
     tracker->setDepthDenseSamplingStep(stepX, stepY);
   }
 }
@@ -2462,9 +2461,8 @@ void vpMbGenericTracker::setDepthDenseSamplingStep(const unsigned int stepX, con
   \note This function will set the new parameter for all the cameras.
 */
 void vpMbGenericTracker::setDepthNormalFaceCentroidMethod(const vpMbtFaceDepthNormal::vpFaceCentroidType &method) {
-  TrackerWrapper *tracker;
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
-    tracker = it->second;
+    TrackerWrapper *tracker = it->second;
     tracker->setDepthNormalFaceCentroidMethod(method);
   }
 }
@@ -2477,9 +2475,8 @@ void vpMbGenericTracker::setDepthNormalFaceCentroidMethod(const vpMbtFaceDepthNo
   \note This function will set the new parameter for all the cameras.
 */
 void vpMbGenericTracker::setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method) {
-  TrackerWrapper *tracker;
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
-    tracker = it->second;
+    TrackerWrapper *tracker = it->second;
     tracker->setDepthNormalFeatureEstimationMethod(method);
   }
 }
@@ -2492,9 +2489,8 @@ void vpMbGenericTracker::setDepthNormalFeatureEstimationMethod(const vpMbtFaceDe
   \note This function will set the new parameter for all the cameras.
 */
 void vpMbGenericTracker::setDepthNormalPclPlaneEstimationMethod(const int method) {
-  TrackerWrapper *tracker;
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
-    tracker = it->second;
+    TrackerWrapper *tracker = it->second;
     tracker->setDepthNormalPclPlaneEstimationMethod(method);
   }
 }
@@ -2507,9 +2503,8 @@ void vpMbGenericTracker::setDepthNormalPclPlaneEstimationMethod(const int method
   \note This function will set the new parameter for all the cameras.
 */
 void vpMbGenericTracker::setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter) {
-  TrackerWrapper *tracker;
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
-    tracker = it->second;
+    TrackerWrapper *tracker = it->second;
     tracker->setDepthNormalPclPlaneEstimationRansacMaxIter(maxIter);
   }
 }
@@ -2522,9 +2517,8 @@ void vpMbGenericTracker::setDepthNormalPclPlaneEstimationRansacMaxIter(const int
   \note This function will set the new parameter for all the cameras.
 */
 void vpMbGenericTracker::setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold) {
-  TrackerWrapper *tracker;
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
-    tracker = it->second;
+    TrackerWrapper *tracker = it->second;
     tracker->setDepthNormalPclPlaneEstimationRansacThreshold(thresold);
   }
 }
@@ -2538,9 +2532,8 @@ void vpMbGenericTracker::setDepthNormalPclPlaneEstimationRansacThreshold(const d
   \note This function will set the new parameter for all the cameras.
 */
 void vpMbGenericTracker::setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY) {
-  TrackerWrapper *tracker;
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
-    tracker = it->second;
+    TrackerWrapper *tracker = it->second;
     tracker->setDepthNormalSamplingStep(stepX, stepY);
   }
 }
@@ -3689,7 +3682,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
           }
         }
 
-        start_index += nb_depth_dense_features;
+//        start_index += nb_depth_dense_features;
       }
 
 
@@ -3833,7 +3826,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSInteractionMatrixAndResidu(co
     m_L.insert(m_L_depthDense, start_index, 0);
     m_error.insert(start_index, m_error_depthDense);
 
-    start_index += m_error_depthDense.getRows();
+//    start_index += m_error_depthDense.getRows();
   }
 }
 
@@ -3869,7 +3862,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSWeights() {
     vpMbDepthDenseTracker::computeVVSWeights();
     m_w.insert(start_index, m_w_depthDense);
 
-    start_index += m_w_depthDense.getRows();
+//    start_index += m_w_depthDense.getRows();
   }
 }
 

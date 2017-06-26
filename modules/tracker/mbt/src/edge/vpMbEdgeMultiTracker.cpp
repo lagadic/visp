@@ -54,7 +54,7 @@
 */
 vpMbEdgeMultiTracker::vpMbEdgeMultiTracker() :
     m_mapOfCameraTransformationMatrix(), m_mapOfEdgeTrackers(), m_mapOfPyramidalImages(), m_referenceCameraName("Camera"),
-    m_L_edgeMulti(), m_error_edgeMulti(), m_w_edgeMulti(), m_weightedError_edgeMulti(), m_factor()
+    m_L_edgeMulti(), m_error_edgeMulti(), m_w_edgeMulti(), m_weightedError_edgeMulti()
 {
   m_mapOfEdgeTrackers["Camera"] = new vpMbEdgeTracker();
 
@@ -69,7 +69,7 @@ vpMbEdgeMultiTracker::vpMbEdgeMultiTracker() :
 */
 vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const unsigned int nbCameras) :
     m_mapOfCameraTransformationMatrix(), m_mapOfEdgeTrackers(), m_mapOfPyramidalImages(), m_referenceCameraName("Camera"),
-    m_L_edgeMulti(), m_error_edgeMulti(), m_w_edgeMulti(), m_weightedError_edgeMulti(), m_factor()
+    m_L_edgeMulti(), m_error_edgeMulti(), m_w_edgeMulti(), m_weightedError_edgeMulti()
 {
 
   if(nbCameras == 0) {
@@ -112,7 +112,7 @@ vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const unsigned int nbCameras) :
 */
 vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const std::vector<std::string> &cameraNames) :
     m_mapOfCameraTransformationMatrix(), m_mapOfEdgeTrackers(), m_mapOfPyramidalImages(), m_referenceCameraName("Camera"),
-    m_L_edgeMulti(), m_error_edgeMulti(), m_w_edgeMulti(), m_weightedError_edgeMulti(), m_factor()
+    m_L_edgeMulti(), m_error_edgeMulti(), m_w_edgeMulti(), m_weightedError_edgeMulti()
 {
 
   if(cameraNames.empty()) {

@@ -136,9 +136,8 @@ void vpMbDepthDenseTracker::computeVisibility(const unsigned int width, const un
     faces.computeScanLineRender(cam, m_depthDenseI_dummyVisibility.getWidth(), m_depthDenseI_dummyVisibility.getHeight());
   }
 
-  vpMbtFaceDepthDense *face_normal;
   for (std::vector<vpMbtFaceDepthDense*>::const_iterator it = m_depthDenseNormalFaces.begin(); it != m_depthDenseNormalFaces.end(); ++it) {
-    face_normal = *it;
+    vpMbtFaceDepthDense *face_normal = *it;
     face_normal->computeVisibility();
   }
 }
@@ -286,9 +285,8 @@ void vpMbDepthDenseTracker::display(const vpImage<unsigned char> &I, const vpHom
     m_depthDenseHiddenFacesDisplay.computeScanLineRender(c, I.getWidth(), I.getHeight());
   }
 
-  vpMbtFaceDepthDense *face_normal;
   for (std::vector<vpMbtFaceDepthDense*>::const_iterator it = m_depthDenseNormalFaces.begin(); it != m_depthDenseNormalFaces.end(); ++it) {
-    face_normal = *it;
+    vpMbtFaceDepthDense *face_normal = *it;
     face_normal->display(I, cMo_, c, col, thickness, displayFullModel);
 
     if (displayFeatures) {
@@ -313,9 +311,8 @@ void vpMbDepthDenseTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneou
     m_depthDenseHiddenFacesDisplay.computeScanLineRender(c, I.getWidth(), I.getHeight());
   }
 
-  vpMbtFaceDepthDense *face_normal;
   for (std::vector<vpMbtFaceDepthDense*>::const_iterator it = m_depthDenseNormalFaces.begin(); it != m_depthDenseNormalFaces.end(); ++it) {
-    face_normal = *it;
+    vpMbtFaceDepthDense *face_normal = *it;
     face_normal->display(I, cMo_, c, col, thickness, displayFullModel);
 
     if (displayFeatures) {
@@ -422,9 +419,8 @@ void vpMbDepthDenseTracker::reInitModel(const pcl::PointCloud<pcl::PointXYZ>::Co
 void vpMbDepthDenseTracker::resetTracker() {
   cMo.eye();
 
-  vpMbtFaceDepthDense *normal_face;
   for (std::vector<vpMbtFaceDepthDense*>::iterator it = m_depthDenseNormalFaces.begin(); it != m_depthDenseNormalFaces.end(); ++it) {
-    normal_face = *it;
+    vpMbtFaceDepthDense *normal_face = *it;
     delete normal_face;
     normal_face = NULL;
   }

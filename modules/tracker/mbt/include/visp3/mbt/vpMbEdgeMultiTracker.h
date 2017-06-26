@@ -85,8 +85,6 @@ protected:
   vpColVector m_w_edgeMulti;
   //! Weighted error
   vpColVector m_weightedError_edgeMulti;
-  //! Moving Edge factor
-  vpColVector m_factor;
 
 
 public:

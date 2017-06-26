@@ -138,9 +138,8 @@ void vpMbDepthNormalTracker::computeVisibility(const unsigned int width, const u
     faces.computeScanLineRender(cam, m_depthNormalI_dummyVisibility.getWidth(), m_depthNormalI_dummyVisibility.getHeight());
   }
 
-  vpMbtFaceDepthNormal *face_normal;
   for (std::vector<vpMbtFaceDepthNormal*>::const_iterator it = m_depthNormalFaces.begin(); it != m_depthNormalFaces.end(); ++it) {
-    face_normal = *it;
+    vpMbtFaceDepthNormal *face_normal = *it;
     face_normal->computeVisibility();
   }
 }
@@ -284,9 +283,8 @@ void vpMbDepthNormalTracker::display(const vpImage<unsigned char> &I, const vpHo
     m_depthNormalHiddenFacesDisplay.computeScanLineRender(c, I.getWidth(), I.getHeight());
   }
 
-  vpMbtFaceDepthNormal *face_normal;
   for (std::vector<vpMbtFaceDepthNormal*>::const_iterator it = m_depthNormalFaces.begin(); it != m_depthNormalFaces.end(); ++it) {
-    face_normal = *it;
+    vpMbtFaceDepthNormal *face_normal = *it;
     face_normal->display(I, cMo_, c, col, thickness, displayFullModel);
 
     if (displayFeatures) {
@@ -311,9 +309,8 @@ void vpMbDepthNormalTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneo
     m_depthNormalHiddenFacesDisplay.computeScanLineRender(c, I.getWidth(), I.getHeight());
   }
 
-  vpMbtFaceDepthNormal *face_normal;
   for (std::vector<vpMbtFaceDepthNormal*>::const_iterator it = m_depthNormalFaces.begin(); it != m_depthNormalFaces.end(); ++it) {
-    face_normal = *it;
+    vpMbtFaceDepthNormal *face_normal = *it;
     face_normal->display(I, cMo_, c, col, thickness, displayFullModel);
 
     if (displayFeatures) {
@@ -428,9 +425,8 @@ void vpMbDepthNormalTracker::reInitModel(const pcl::PointCloud<pcl::PointXYZ>::C
 void vpMbDepthNormalTracker::resetTracker() {
   cMo.eye();
 
-  vpMbtFaceDepthNormal *normal_face;
   for (std::vector<vpMbtFaceDepthNormal*>::iterator it = m_depthNormalFaces.begin(); it != m_depthNormalFaces.end(); ++it) {
-    normal_face = *it;
+    vpMbtFaceDepthNormal *normal_face = *it;
     delete normal_face;
     normal_face = NULL;
   }

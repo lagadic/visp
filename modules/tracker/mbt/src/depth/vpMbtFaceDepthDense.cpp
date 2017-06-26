@@ -534,27 +534,25 @@ void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, const unsig
   }
 }
 
-void vpMbtFaceDepthDense::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col,
+void vpMbtFaceDepthDense::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &col,
                                   const unsigned int thickness, const bool displayFullModel) {
   if (m_polygon->isVisible() || displayFullModel) {
     computeVisibilityDisplay();
 
-    vpMbtDistanceLine *line;
     for (std::vector<vpMbtDistanceLine*>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end(); ++it) {
-      line = *it;
+      vpMbtDistanceLine *line = *it;
       line->display(I, cMo, cam, col, thickness, displayFullModel);
     }
   }
 }
 
-void vpMbtFaceDepthDense::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col,
+void vpMbtFaceDepthDense::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &col,
                                   const unsigned int thickness, const bool displayFullModel) {
   if(m_polygon->isVisible() || displayFullModel) {
     computeVisibilityDisplay();
 
-    vpMbtDistanceLine *line;
     for (std::vector<vpMbtDistanceLine*>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end(); ++it) {
-      line = *it;
+      vpMbtDistanceLine *line = *it;
       line->display(I, cMo, cam, col, thickness, displayFullModel);
     }
   }

@@ -440,7 +440,7 @@ int main(int argc, const char ** argv) {
     }
 
     if (!opt_modelFile_depth.empty())
-      modelFile_depth = modelFile_depth;
+      modelFile_depth = opt_modelFile_depth;
     else
       modelFile_depth = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "ViSP-images/mbt-depth/castel/chateau.cao");
 

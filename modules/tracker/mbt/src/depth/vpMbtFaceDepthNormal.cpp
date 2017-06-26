@@ -823,27 +823,25 @@ void vpMbtFaceDepthNormal::computeInteractionMatrix(const vpHomogeneousMatrix &c
   L[2][0] = ux*uz/D2;  L[2][1] = uy*uz/D2;  L[2][2] = uz*uz/D2; L[2][3] = uy/D;  L[2][4] = -ux/D;  L[2][5] = 0.0;
 }
 
-void vpMbtFaceDepthNormal::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col,
+void vpMbtFaceDepthNormal::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &col,
                                    const unsigned int thickness, const bool displayFullModel) {
   if (m_polygon->isVisible() || displayFullModel) {
     computeVisibilityDisplay();
 
-    vpMbtDistanceLine *line;
     for (std::vector<vpMbtDistanceLine*>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end(); ++it) {
-      line = *it;
+      vpMbtDistanceLine *line = *it;
       line->display(I, cMo, cam, col, thickness, displayFullModel);
     }
   }
 }
 
-void vpMbtFaceDepthNormal::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col,
+void vpMbtFaceDepthNormal::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &col,
                                    const unsigned int thickness, const bool displayFullModel) {
   if(m_polygon->isVisible() || displayFullModel) {
     computeVisibilityDisplay();
 
-    vpMbtDistanceLine *line;
     for (std::vector<vpMbtDistanceLine*>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end(); ++it) {
-      line = *it;
+      vpMbtDistanceLine *line = *it;
       line->display(I, cMo, cam, col, thickness, displayFullModel);
     }
   }
@@ -1182,11 +1180,10 @@ void vpMbtFaceDepthNormal::estimateFeatures(const std::vector<double> &point_clo
       B = -uy/D;
       C = -uz/D;
 
-      float xi, yi, Zi;
       for (size_t i = 0; i < point_cloud_face.size()/3; i++) {
-        xi = point_cloud_face[3*i];
-        yi = point_cloud_face[3*i+1];
-        Zi = point_cloud_face[3*i+2];
+        float xi = point_cloud_face[3*i];
+        float yi = point_cloud_face[3*i+1];
+        float Zi = point_cloud_face[3*i+2];
 
         residues[i] = (A*xi + B*yi + C - 1/Zi);
       }

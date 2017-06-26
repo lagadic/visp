@@ -117,9 +117,9 @@ public:
   void computeNormalVisibility(const double nx, const double ny, const double nz, const vpHomogeneousMatrix &cMo, const vpCameraParameters &camera,
                                vpColVector &correct_normal, vpPoint &centroid);
 
-  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col,
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &col,
                const unsigned int thickness=1, const bool displayFullModel = false);
-  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor col,
+  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &col,
                const unsigned int thickness=1, const bool displayFullModel = false);
 
   void displayFeature(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const double scale=0.05,
@@ -173,13 +173,8 @@ private:
 
     PolygonLine() : m_p1(NULL), m_p2(NULL), m_poly(), m_imPt1(), m_imPt2() { }
 
-    PolygonLine(const PolygonLine &polyLine) {
-      m_poly = polyLine.m_poly;
-      m_p1 = &m_poly.p[0];
-      m_p2 = &m_poly.p[1];
-      m_imPt1 = polyLine.m_imPt1;
-      m_imPt2 = polyLine.m_imPt2;
-    }
+    PolygonLine(const PolygonLine &polyLine)
+      : m_p1(&m_poly.p[0]), m_p2(&m_poly.p[1]), m_poly(polyLine.m_poly), m_imPt1(polyLine.m_imPt1), m_imPt2(polyLine.m_imPt2) { }
 
     PolygonLine& operator=(PolygonLine other) {
       swap(*this, other);
