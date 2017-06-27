@@ -67,6 +67,16 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpDebug.h>
 
+#define USE_SSE_CODE 1
+#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#  include <emmintrin.h>
+#  define VISP_HAVE_SSE2 1
+#endif
+
+#if VISP_HAVE_SSE2 && USE_SSE_CODE
+#  define USE_SSE 1
+#endif
+
 //Prototypes of specific functions
 vpMatrix subblock(const vpMatrix &, unsigned int, unsigned int);
 
@@ -916,10 +926,35 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
   if (colNum != V.getRows()) {
     throw(vpException(vpException::dimensionError,
                       "Cannot multiply (%dx%d) matrix by (3x3) velocity twist matrix",
-                      rowNum, colNum)) ;
+                      rowNum, colNum));
   }
-  vpMatrix M(rowNum, 6);
+  vpMatrix M;
+  M.resize(rowNum, 6, false);
 
+#if USE_SSE
+  vpMatrix V_trans(6, 6);
+  for (unsigned int i = 0; i < 6; i++) {
+    for (unsigned int j = 0; j < 6; j++) {
+      V_trans[i][j] = V[j][i];
+    }
+  }
+
+  for (unsigned int i = 0; i < rowNum; i++) {
+    double *rowptri = rowPtrs[i];
+    double *ci = M[i];
+
+    for (int j = 0; j < 6; j++) {
+      __m128d v_mul = _mm_setzero_pd();
+      for (int k = 0; k < 6; k+=2) {
+        v_mul = _mm_add_pd(v_mul, _mm_mul_pd(_mm_loadu_pd(&rowptri[k]), _mm_loadu_pd(&V_trans[j][k])));
+      }
+
+      double v_tmp[2];
+      _mm_storeu_pd(v_tmp, v_mul);
+      ci[j] = v_tmp[0] + v_tmp[1];
+    }
+  }
+#else
   unsigned int VcolNum = V.getCols();
   unsigned int VrowNum = V.getRows();
   for (unsigned int i=0;i<rowNum;i++)
@@ -933,6 +968,7 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
       ci[j] = s;
     }
   }
+#endif
 
   return M;
 }

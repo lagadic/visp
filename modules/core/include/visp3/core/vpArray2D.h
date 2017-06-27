@@ -180,7 +180,7 @@ public:
       }
     }
     else {
-      const bool recopyNeeded = (ncols != this ->colNum);
+      const bool recopyNeeded = (ncols != this ->colNum && this ->colNum != 0);
       Type * copyTmp = NULL;
       unsigned int rowTmp = 0, colTmp=0;
 

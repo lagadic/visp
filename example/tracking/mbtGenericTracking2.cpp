@@ -684,6 +684,9 @@ main(int argc, const char ** argv)
     }
     reader.close();
 
+    delete tracker;
+    tracker = NULL;
+
 #if defined (VISP_HAVE_XML2) && USE_XML
     // Cleanup memory allocated by xml library used to parse the xml config file in vpMbGenericTracker::loadConfigFile()
     vpXmlParser::cleanup();

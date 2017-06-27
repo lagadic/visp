@@ -36,13 +36,14 @@
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpExponentialMap.h>
+#include <visp3/mbt/vpMbtXmlGenericParser.h>
 #include <visp3/core/vpTrackingException.h>
-#include <visp3/mbt/vpMbtEdgeKltXmlParser.h>
 
 
 vpMbGenericTracker::vpMbGenericTracker() :
-  m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(), m_percentageGdPt(0.4),
-  m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError()
+  m_error(), m_L(), m_mapOfCameraTransformationMatrix(),
+  m_mapOfFeatureFactors(), m_mapOfTrackers(), m_percentageGdPt(0.4), m_referenceCameraName("Camera"),
+  m_thresholdOutlier(0.5), m_w(), m_weightedError()
 {
   m_mapOfTrackers["Camera"] = new TrackerWrapper(EDGE_TRACKER);
 
@@ -55,11 +56,15 @@ vpMbGenericTracker::vpMbGenericTracker() :
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   m_mapOfFeatureFactors[KLT_TRACKER] = 1.0;
 #endif
+
+  m_mapOfFeatureFactors[DEPTH_NORMAL_TRACKER] = 1.0;
+  m_mapOfFeatureFactors[DEPTH_DENSE_TRACKER] = 1.0;
 }
 
 vpMbGenericTracker::vpMbGenericTracker(const unsigned int nbCameras, const int trackerType) :
-  m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(), m_percentageGdPt(0.4),
-  m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError()
+  m_error(), m_L(), m_mapOfCameraTransformationMatrix(),
+  m_mapOfFeatureFactors(), m_mapOfTrackers(), m_percentageGdPt(0.4), m_referenceCameraName("Camera"),
+  m_thresholdOutlier(0.5), m_w(), m_weightedError()
 {
   if (nbCameras == 0) {
     throw vpException(vpTrackingException::fatalError, "Cannot use no camera!");
@@ -88,11 +93,15 @@ vpMbGenericTracker::vpMbGenericTracker(const unsigned int nbCameras, const int t
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   m_mapOfFeatureFactors[KLT_TRACKER] = 1.0;
 #endif
+
+  m_mapOfFeatureFactors[DEPTH_NORMAL_TRACKER] = 1.0;
+  m_mapOfFeatureFactors[DEPTH_DENSE_TRACKER] = 1.0;
 }
 
 vpMbGenericTracker::vpMbGenericTracker(const std::vector<int> &trackerTypes) :
-  m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(), m_percentageGdPt(0.4),
-  m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError()
+  m_error(), m_L(), m_mapOfCameraTransformationMatrix(),
+  m_mapOfFeatureFactors(), m_mapOfTrackers(), m_percentageGdPt(0.4), m_referenceCameraName("Camera"),
+  m_thresholdOutlier(0.5), m_w(), m_weightedError()
 {
   if (trackerTypes.empty()) {
     throw vpException(vpException::badValue, "There is no camera!");
@@ -123,11 +132,15 @@ vpMbGenericTracker::vpMbGenericTracker(const std::vector<int> &trackerTypes) :
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   m_mapOfFeatureFactors[KLT_TRACKER] = 1.0;
 #endif
+
+  m_mapOfFeatureFactors[DEPTH_NORMAL_TRACKER] = 1.0;
+  m_mapOfFeatureFactors[DEPTH_DENSE_TRACKER] = 1.0;
 }
 
 vpMbGenericTracker::vpMbGenericTracker(const std::vector<std::string> &cameraNames, const std::vector<int> &trackerTypes) :
-  m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(), m_percentageGdPt(0.4),
-  m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError()
+  m_error(), m_L(), m_mapOfCameraTransformationMatrix(),
+  m_mapOfFeatureFactors(), m_mapOfTrackers(), m_percentageGdPt(0.4), m_referenceCameraName("Camera"),
+  m_thresholdOutlier(0.5), m_w(), m_weightedError()
 {
   if (cameraNames.size() != trackerTypes.size() || cameraNames.empty()) {
     throw vpException(vpTrackingException::badValue, "cameraNames.size() != trackerTypes.size() || cameraNames.empty()");
@@ -149,6 +162,9 @@ vpMbGenericTracker::vpMbGenericTracker(const std::vector<std::string> &cameraNam
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   m_mapOfFeatureFactors[KLT_TRACKER] = 1.0;
 #endif
+
+  m_mapOfFeatureFactors[DEPTH_NORMAL_TRACKER] = 1.0;
+  m_mapOfFeatureFactors[DEPTH_DENSE_TRACKER] = 1.0;
 }
 
 vpMbGenericTracker::~vpMbGenericTracker() {
@@ -221,6 +237,8 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   double factorKlt = m_mapOfFeatureFactors[KLT_TRACKER];
 #endif
+  double factorDepth = m_mapOfFeatureFactors[DEPTH_NORMAL_TRACKER];
+  double factorDepthDense = m_mapOfFeatureFactors[DEPTH_DENSE_TRACKER];
 
   while( std::fabs(normRes_1 - normRes) > m_stopCriteriaEpsilon && (iter < m_maxIter) ) {
     computeVVSInteractionMatrixAndResidu(mapOfImages, mapOfVelocityTwist);
@@ -232,6 +250,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
         TrackerWrapper *tracker = it->second;
 
         tracker->cMo = m_mapOfCameraTransformationMatrix[it->first] * cMo_prev;
+
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
         vpHomogeneousMatrix c_curr_tTc_curr0 = m_mapOfCameraTransformationMatrix[it->first] * cMo_prev * tracker->c0Mo.inverse();
         tracker->ctTc0 = c_curr_tTc_curr0;
@@ -247,7 +266,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
         if (!isoJoIdentity_) {
           vpVelocityTwistMatrix cVo;
           cVo.buildFrom(cMo);
-          LVJ_true = (m_L*cVo*oJo);
+          LVJ_true = (m_L*(cVo*oJo));
         }
       }
 
@@ -279,7 +298,6 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
       }
 
       //Weighting
-      double wi;
       double num = 0;
       double den = 0;
 
@@ -289,7 +307,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
 
         if (tracker->m_trackerType & EDGE_TRACKER) {
           for (unsigned int i = 0; i < tracker->m_error_edge.getRows(); i++) {
-            wi = tracker->m_w_edge[i] * tracker->m_factor[i] * factorEdge;
+            double wi = tracker->m_w_edge[i] * tracker->m_factor[i] * factorEdge;
             W_true[start_index + i] = wi;
             m_weightedError[start_index + i] = wi * m_error[start_index + i];
 
@@ -307,7 +325,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
         if (tracker->m_trackerType & KLT_TRACKER) {
           for (unsigned int i = 0; i < tracker->m_error_klt.getRows(); i++) {
-            wi = tracker->m_w_klt[i] * factorKlt;
+            double wi = tracker->m_w_klt[i] * factorKlt;
             W_true[start_index + i] = wi;
             m_weightedError[start_index + i] = wi * m_error[start_index + i];
 
@@ -322,6 +340,38 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
           start_index += tracker->m_error_klt.getRows();
         }
 #endif
+
+        if (tracker->m_trackerType & DEPTH_NORMAL_TRACKER) {
+          for (unsigned int i = 0; i < tracker->m_error_depthNormal.getRows(); i++) {
+            double wi = tracker->m_w_depthNormal[i] * factorDepth;
+            m_weightedError[start_index + i] = wi * m_error[start_index + i];
+
+            num += wi*vpMath::sqr(m_error[start_index + i]);
+            den += wi;
+
+            for (unsigned int j = 0; j < m_L.getCols(); j++) {
+              m_L[start_index + i][j] *= wi;
+            }
+          }
+
+          start_index += tracker->m_error_depthNormal.getRows();
+        }
+
+        if (tracker->m_trackerType & DEPTH_DENSE_TRACKER) {
+          for (unsigned int i = 0; i < tracker->m_error_depthDense.getRows(); i++) {
+            double wi = tracker->m_w_depthDense[i] * factorDepthDense;
+            m_weightedError[start_index + i] = wi * m_error[start_index + i];
+
+            num += wi*vpMath::sqr(m_error[start_index + i]);
+            den += wi;
+
+            for (unsigned int j = 0; j < m_L.getCols(); j++) {
+              m_L[start_index + i][j] *= wi;
+            }
+          }
+
+          start_index += tracker->m_error_depthDense.getRows();
+        }
       }
 
       normRes_1 = normRes;
@@ -372,7 +422,7 @@ void vpMbGenericTracker::computeVVSInit(std::map<std::string, const vpImage<unsi
 
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
-    tracker->computeVVSInit(*mapOfImages[it->first]);
+    tracker->computeVVSInit(mapOfImages[it->first]);
 
     nbFeatures += tracker->m_error.getRows();
   }
@@ -390,7 +440,7 @@ void vpMbGenericTracker::computeVVSInteractionMatrixAndResidu() {
 }
 
 void vpMbGenericTracker::computeVVSInteractionMatrixAndResidu(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                                             std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist) {
+                                                              std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist) {
   unsigned int start_index = 0;
 
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
@@ -401,7 +451,8 @@ void vpMbGenericTracker::computeVVSInteractionMatrixAndResidu(std::map<std::stri
     vpHomogeneousMatrix c_curr_tTc_curr0 = m_mapOfCameraTransformationMatrix[it->first] * cMo * tracker->c0Mo.inverse();
     tracker->ctTc0 = c_curr_tTc_curr0;
 #endif
-    tracker->computeVVSInteractionMatrixAndResidu(*mapOfImages[it->first]);
+
+    tracker->computeVVSInteractionMatrixAndResidu(mapOfImages[it->first]);
 
     m_L.insert(tracker->m_L*mapOfVelocityTwist[it->first], start_index, 0);
     m_error.insert(start_index, tracker->m_error);
@@ -1907,10 +1958,23 @@ void vpMbGenericTracker::loadModel(const std::map<std::string, std::string> &map
   }
 }
 
-void vpMbGenericTracker::preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages) {
+#ifdef VISP_HAVE_PCL
+void vpMbGenericTracker::preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+                                     std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> &mapOfPointClouds) {
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
-    tracker->preTracking(*mapOfImages[it->first]);
+    tracker->preTracking(mapOfImages[it->first], mapOfPointClouds[it->first]);
+  }
+}
+#endif
+
+void vpMbGenericTracker::preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+                                     std::map<std::string, const std::vector<vpColVector> *> &mapOfPointClouds,
+                                     std::map<std::string, unsigned int> &mapOfPointCloudWidths,
+                                     std::map<std::string, unsigned int> &mapOfPointCloudHeights) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->preTracking(mapOfImages[it->first], mapOfPointClouds[it->first], mapOfPointCloudWidths[it->first], mapOfPointCloudHeights[it->first]);
   }
 }
 
@@ -2074,6 +2138,9 @@ void vpMbGenericTracker::resetTracker() {
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   m_mapOfFeatureFactors[KLT_TRACKER] = 1.0;
 #endif
+
+  m_mapOfFeatureFactors[DEPTH_NORMAL_TRACKER] = 1.0;
+  m_mapOfFeatureFactors[DEPTH_DENSE_TRACKER] = 1.0;
 
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
@@ -2311,20 +2378,15 @@ void vpMbGenericTracker::setCameraTransformationMatrix(const std::string &camera
   (\f$ _{}^{c_1}\textrm{M}_{c_1}, _{}^{c_2}\textrm{M}_{c_1}, _{}^{c_3}\textrm{M}_{c_1}, \cdots, _{}^{c_n}\textrm{M}_{c_1} \f$).
 
   \param mapOfTransformationMatrix : map of camera transformation matrices.
-
-  \note The transformation matrices for all the cameras are required.
 */
 void vpMbGenericTracker::setCameraTransformationMatrix(const std::map<std::string, vpHomogeneousMatrix> &mapOfTransformationMatrix) {
-  //Check if all the cameras have a transformation matrix
-  for (std::map<std::string, TrackerWrapper*>::const_iterator it_tracker = m_mapOfTrackers.begin(); it_tracker != m_mapOfTrackers.end(); ++it_tracker) {
-    std::map<std::string, vpHomogeneousMatrix>::const_iterator it_camTrans = mapOfTransformationMatrix.find(it_tracker->first);
+  for (std::map<std::string, vpHomogeneousMatrix>::const_iterator it = mapOfTransformationMatrix.begin(); it != mapOfTransformationMatrix.end(); ++it) {
+    std::map<std::string, vpHomogeneousMatrix>::iterator it_camTrans = m_mapOfCameraTransformationMatrix.find(it->first);
 
-    if (it_camTrans == mapOfTransformationMatrix.end()) {
-      throw vpException(vpTrackingException::initializationError, "Missing transformation matrix for camera: %s", it_tracker->first.c_str());
+    if (it_camTrans != m_mapOfCameraTransformationMatrix.end()) {
+      it_camTrans->second = it->second;
     }
   }
-
-  m_mapOfCameraTransformationMatrix = mapOfTransformationMatrix;
 }
 
 /*!
@@ -2370,9 +2432,119 @@ void vpMbGenericTracker::setClipping(const unsigned int &flags1, const unsigned 
       std::cerr << "Cannot find the reference camera: " << m_referenceCameraName << "!" << std::endl;
     }
   } else {
-    throw vpException(vpTrackingException::fatalError, "Require two cameras! There are %d cameras!", m_mapOfTrackers.size());
+    std::stringstream ss;
+    ss << "Require two cameras! There are " << m_mapOfTrackers.size() << " cameras!";
+    throw vpException(vpTrackingException::fatalError, ss.str());
   }
 }
+
+/*!
+  Set depth dense sampling step.
+
+  \param stepX : Sampling step in x-direction.
+  \param stepY : Sampling step in y-direction.
+
+  \note This function will set the new parameter for all the cameras.
+*/
+void vpMbGenericTracker::setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setDepthDenseSamplingStep(stepX, stepY);
+  }
+}
+
+/*!
+  Set method to compute the centroid for display for depth tracker.
+
+  \param method : Centroid computation method.
+
+  \note This function will set the new parameter for all the cameras.
+*/
+void vpMbGenericTracker::setDepthNormalFaceCentroidMethod(const vpMbtFaceDepthNormal::vpFaceCentroidType &method) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setDepthNormalFaceCentroidMethod(method);
+  }
+}
+
+/*!
+  Set depth feature estimation method.
+
+  \param method : Depth feature estimation method.
+
+  \note This function will set the new parameter for all the cameras.
+*/
+void vpMbGenericTracker::setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setDepthNormalFeatureEstimationMethod(method);
+  }
+}
+
+/*!
+  Set depth PCL plane estimation method.
+
+  \param method : Depth PCL plane estimation method.
+
+  \note This function will set the new parameter for all the cameras.
+*/
+void vpMbGenericTracker::setDepthNormalPclPlaneEstimationMethod(const int method) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setDepthNormalPclPlaneEstimationMethod(method);
+  }
+}
+
+/*!
+  Set depth PCL RANSAC maximum number of iterations.
+
+  \param maxIter : Depth PCL RANSAC maximum number of iterations.
+
+  \note This function will set the new parameter for all the cameras.
+*/
+void vpMbGenericTracker::setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setDepthNormalPclPlaneEstimationRansacMaxIter(maxIter);
+  }
+}
+
+/*!
+  Set depth PCL RANSAC threshold.
+
+  \param thresold : Depth PCL RANSAC threshold.
+
+  \note This function will set the new parameter for all the cameras.
+*/
+void vpMbGenericTracker::setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setDepthNormalPclPlaneEstimationRansacThreshold(thresold);
+  }
+}
+
+/*!
+  Set depth sampling step.
+
+  \param stepX : Sampling step in x-direction.
+  \param stepY : Sampling step in y-direction.
+
+  \note This function will set the new parameter for all the cameras.
+*/
+void vpMbGenericTracker::setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setDepthNormalSamplingStep(stepX, stepY);
+  }
+}
+
+//void vpMbGenericTracker::setDepthNormalUseRobust(const bool use) {
+//  TrackerWrapper *tracker;
+//  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+//    tracker = it->second;
+//    tracker->setDepthNormalUseRobust(use);
+//  }
+//}
 
 /*!
   Specify which clipping to use.
@@ -3082,6 +3254,23 @@ void vpMbGenericTracker::setTrackerType(const int type) {
 }
 
 /*!
+  Set the tracker types.
+
+  \param mapOfTrackerTypes : Map of feature types to used, see vpTrackerType (e.g. vpMbGenericTracker::EDGE_TRACKER or vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER).
+
+  \warning This function has to be called before the loading of the CAD model.
+*/
+void vpMbGenericTracker::setTrackerType(const std::map<std::string, int> &mapOfTrackerTypes) {
+  for (std::map<std::string, int>::const_iterator it = mapOfTrackerTypes.begin(); it != mapOfTrackerTypes.end(); ++it) {
+    std::map<std::string, TrackerWrapper*>::const_iterator it_tracker = m_mapOfTrackers.find(it->first);
+    if (it_tracker != m_mapOfTrackers.end()) {
+      TrackerWrapper *tracker = it_tracker->second;
+      tracker->setTrackerType(it->second);
+    }
+  }
+}
+
+/*!
   Set if the polygons that have the given name have to be considered during the tracking phase.
 
   \param name : name of the polygon(s).
@@ -3113,9 +3302,7 @@ void vpMbGenericTracker::setUseKltTracking(const std::string &name, const bool &
 }
 #endif
 
-void vpMbGenericTracker::testTracking() {
-
-}
+void vpMbGenericTracker::testTracking() { }
 
 /*!
   Realize the tracking of the object in the image.
@@ -3130,7 +3317,10 @@ void vpMbGenericTracker::track(const vpImage<unsigned char> &I) {
   std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
   mapOfImages[m_referenceCameraName] = &I;
 
-  track(mapOfImages);
+  std::map<std::string, const std::vector<vpColVector> *> mapOfPointClouds;
+  std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
+
+  track(mapOfImages, mapOfPointClouds, mapOfWidths, mapOfHeights);
 }
 
 /*!
@@ -3151,9 +3341,15 @@ void vpMbGenericTracker::track(const vpImage<unsigned char>& I1, const vpImage<u
     ++it;
 
     mapOfImages[it->first] = &I2;
-    track(mapOfImages);
+
+    std::map<std::string, const std::vector<vpColVector> *> mapOfPointClouds;
+    std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
+
+    track(mapOfImages, mapOfPointClouds, mapOfWidths, mapOfHeights);
   } else {
-    throw vpException(vpTrackingException::fatalError, "Require two cameras! There are %d cameras!", m_mapOfTrackers.size());
+    std::stringstream ss;
+    ss << "Require two cameras! There are " << m_mapOfTrackers.size() << " cameras!";
+    throw vpException(vpTrackingException::fatalError, ss.str().c_str());
   }
 }
 
@@ -3165,15 +3361,31 @@ void vpMbGenericTracker::track(const vpImage<unsigned char>& I1, const vpImage<u
   \param mapOfImages : Map of images.
 */
 void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages) {
+  std::map<std::string, const std::vector<vpColVector> *> mapOfPointClouds;
+  std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
+
+  track(mapOfImages, mapOfPointClouds, mapOfWidths, mapOfHeights);
+}
+
+#ifdef VISP_HAVE_PCL
+/*!
+  Realize the tracking of the object in the image.
+
+  \throw vpException : if the tracking is supposed to have failed
+
+  \param mapOfImages : Map of images.
+  \param mapOfPointClouds : Map of PCL pointclouds.
+*/
+void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+                               std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> &mapOfPointClouds) {
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
 
-    if ( (tracker->m_trackerType & (EDGE_TRACKER
+    if ( (tracker->m_trackerType & (EDGE_TRACKER |
                                 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-                                    | KLT_TRACKER
+                                    KLT_TRACKER |
                                 #endif
-                                    )) == 0 ) {
-
+                                    DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0 ) {
       throw vpException(vpException::fatalError, "Bad tracker type: %d", tracker->m_trackerType);
     }
 
@@ -3184,9 +3396,13 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
                                   ) && mapOfImages[it->first] == NULL) {
       throw vpException(vpException::fatalError, "Image pointer is NULL!");
     }
+
+    if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) && mapOfPointClouds[it->first] == nullptr) {
+      throw vpException(vpException::fatalError, "Pointcloud smart pointer is NULL!");
+    }
   }
 
-  preTracking(mapOfImages);
+  preTracking(mapOfImages, mapOfPointClouds);
 
   try {
     computeVVS(mapOfImages);
@@ -3200,7 +3416,66 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
 
-    tracker->postTracking(*mapOfImages[it->first]);
+    tracker->postTracking(mapOfImages[it->first], mapOfPointClouds[it->first]);
+  }
+
+  computeProjectionError();
+}
+#endif
+
+/*!
+  Realize the tracking of the object in the image.
+
+  \throw vpException : if the tracking is supposed to have failed
+
+  \param mapOfImages : Map of images.
+  \param mapOfPointClouds : Map of pointclouds.
+  \param mapOfPointCloudWidths : Map of pointcloud widths.
+  \param mapOfPointCloudHeights : Map of pointcloud heights.
+*/
+void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+                               std::map<std::string, const std::vector<vpColVector> *> &mapOfPointClouds,
+                               std::map<std::string, unsigned int> &mapOfPointCloudWidths,
+                               std::map<std::string, unsigned int> &mapOfPointCloudHeights) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+
+    if ( (tracker->m_trackerType & (EDGE_TRACKER |
+                                #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+                                    KLT_TRACKER |
+                                #endif
+                                    DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0 ) {
+      throw vpException(vpException::fatalError, "Bad tracker type: %d", tracker->m_trackerType);
+    }
+
+    if (tracker->m_trackerType & (EDGE_TRACKER
+                              #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+                                  | KLT_TRACKER
+                              #endif
+                                  ) && mapOfImages[it->first] == NULL) {
+      throw vpException(vpException::fatalError, "Image pointer is NULL!");
+    }
+
+    if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) && (mapOfPointClouds[it->first] == NULL)) {
+      throw vpException(vpException::fatalError, "Pointcloud is NULL!");
+    }
+  }
+
+  preTracking(mapOfImages, mapOfPointClouds, mapOfPointCloudWidths, mapOfPointCloudHeights);
+
+  try {
+    computeVVS(mapOfImages);
+  } catch (...) {
+    covarianceMatrix = -1;
+    throw; // throw the original exception
+  }
+
+  //TODO: testTracking somewhere/needed?
+
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+
+    tracker->postTracking(mapOfImages[it->first], mapOfPointCloudWidths[it->first], mapOfPointCloudHeights[it->first]);
   }
 
   computeProjectionError();
@@ -3222,11 +3497,11 @@ vpMbGenericTracker::TrackerWrapper::TrackerWrapper() :
 vpMbGenericTracker::TrackerWrapper::TrackerWrapper(const int trackerType) :
   m_error(), m_L(), m_trackerType(trackerType), m_w(), m_weightedError()
 {
-  if ( (m_trackerType & (EDGE_TRACKER
-                       #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-                         | KLT_TRACKER
-                       #endif
-                         )) == 0 ) {
+  if ( (m_trackerType & (EDGE_TRACKER |
+                      #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+                         KLT_TRACKER |
+                      #endif
+                         DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0 ) {
     throw vpException(vpTrackingException::badValue, "Bad value for tracker type: %d!", m_trackerType);
   }
 
@@ -3241,8 +3516,8 @@ vpMbGenericTracker::TrackerWrapper::TrackerWrapper(const int trackerType) :
 vpMbGenericTracker::TrackerWrapper::~TrackerWrapper() { }
 
 // Implemented only for debugging purposes: use TrackerWrapper as a standalone tracker
-void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char> &I) {
-  computeVVSInit(I);
+void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char> * const ptr_I) {
+  computeVVSInit(ptr_I);
 
   if (m_error.getRows() < 4) {
     throw vpTrackingException(vpTrackingException::notEnoughPointError, "Error: not enough features");
@@ -3256,6 +3531,8 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   double factorKlt = 1.0;
 #endif
+  double factorDepth = 1.0;
+  double factorDepthDense = 1.0;
 
   vpMatrix LTL;
   vpColVector LTR, v;
@@ -3276,12 +3553,16 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   unsigned int nb_klt_features = m_error_klt.getRows();
 #endif
+  unsigned int nb_depth_features = m_error_depthNormal.getRows();
+  unsigned int nb_depth_dense_features = m_error_depthDense.getRows();
 
-  while( std::fabs(normRes_1 - normRes) > m_stopCriteriaEpsilon && (iter < m_maxIter) ) {
-    computeVVSInteractionMatrixAndResidu(I);
+
+  while ( std::fabs(normRes_1 - normRes) > m_stopCriteriaEpsilon && (iter < m_maxIter) ) {
+    computeVVSInteractionMatrixAndResidu(ptr_I);
 
     bool reStartFromLastIncrement = false;
     computeVVSCheckLevenbergMarquardt(iter, m_error, error_prev, cMo_prev, mu, reStartFromLastIncrement);
+
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     if (reStartFromLastIncrement) {
       if (m_trackerType & KLT_TRACKER) {
@@ -3370,6 +3651,41 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
       }
 #endif
 
+      if (m_trackerType & DEPTH_NORMAL_TRACKER) {
+        for (unsigned int i = 0; i < nb_depth_features; i++) {
+          double wi = m_w_depthNormal[i] * factorDepth;
+          m_w[start_index + i] = m_w_depthNormal[i];
+          m_weightedError[start_index + i] = wi*m_error[start_index + i];
+
+          num += wi*vpMath::sqr(m_error[start_index + i]);
+          den += wi;
+
+          for (unsigned int j = 0; j < m_L.getCols(); j++) {
+            m_L[start_index + i][j] *= wi;
+          }
+        }
+
+        start_index += nb_depth_features;
+      }
+
+      if (m_trackerType & DEPTH_DENSE_TRACKER) {
+        for (unsigned int i = 0; i < nb_depth_dense_features; i++) {
+          double wi = m_w_depthDense[i] * factorDepthDense;
+          m_w[start_index + i] = m_w_depthDense[i];
+          m_weightedError[start_index + i] = wi*m_error[start_index + i];
+
+          num += wi*vpMath::sqr(m_error[start_index + i]);
+          den += wi;
+
+          for (unsigned int j = 0; j < m_L.getCols(); j++) {
+            m_L[start_index + i][j] *= wi;
+          }
+        }
+
+//        start_index += nb_depth_dense_features;
+      }
+
+
       computeVVSPoseEstimation(isoJoIdentity_, iter, m_L, LTL, m_weightedError, m_error, error_prev, LTR, mu, v);
 
       cMo_prev = cMo;
@@ -3405,8 +3721,8 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSInit() {
   throw vpException(vpException::fatalError, "vpMbGenericTracker::TrackerWrapper::computeVVSInit() should not be called!");
 }
 
-void vpMbGenericTracker::TrackerWrapper::computeVVSInit(const vpImage<unsigned char> &I) {
-  initMbtTracking(I);
+void vpMbGenericTracker::TrackerWrapper::computeVVSInit(const vpImage<unsigned char> * const ptr_I) {
+  initMbtTracking(ptr_I);
 
   unsigned int nbFeatures = 0;
 
@@ -3431,6 +3747,26 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSInit(const vpImage<unsigned c
   }
 #endif
 
+  if (m_trackerType & DEPTH_NORMAL_TRACKER) {
+    vpMbDepthNormalTracker::computeVVSInit();
+    nbFeatures += m_error_depthNormal.getRows();
+  } else {
+    m_error_depthNormal.clear();
+    m_weightedError_depthNormal.clear();
+    m_L_depthNormal.clear();
+    m_w_depthNormal.clear();
+  }
+
+  if (m_trackerType & DEPTH_DENSE_TRACKER) {
+    vpMbDepthDenseTracker::computeVVSInit();
+    nbFeatures += m_error_depthDense.getRows();
+  } else {
+    m_error_depthDense.clear();
+    m_weightedError_depthDense.clear();
+    m_L_depthDense.clear();
+    m_w_depthDense.clear();
+  }
+
   m_L.resize(nbFeatures, 6, false);
   m_error.resize(nbFeatures, false);
 
@@ -3443,9 +3779,9 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSInteractionMatrixAndResidu() 
   throw vpException(vpException::fatalError, "vpMbGenericTracker::TrackerWrapper::computeVVSInteractionMatrixAndResidu() should not be called!");
 }
 
-void vpMbGenericTracker::TrackerWrapper::computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> &I) {
+void vpMbGenericTracker::TrackerWrapper::computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> * const ptr_I) {
   if (m_trackerType & EDGE_TRACKER) {
-    vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu(I);
+    vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu(*ptr_I);
   }
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
@@ -3453,6 +3789,14 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSInteractionMatrixAndResidu(co
     vpMbKltTracker::computeVVSInteractionMatrixAndResidu();
   }
 #endif
+
+  if (m_trackerType & DEPTH_NORMAL_TRACKER) {
+    vpMbDepthNormalTracker::computeVVSInteractionMatrixAndResidu();
+  }
+
+  if (m_trackerType & DEPTH_DENSE_TRACKER) {
+    vpMbDepthDenseTracker::computeVVSInteractionMatrixAndResidu();
+  }
 
   unsigned int start_index = 0;
   if (m_trackerType & EDGE_TRACKER) {
@@ -3470,6 +3814,20 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSInteractionMatrixAndResidu(co
     start_index += m_error_klt.getRows();
   }
 #endif
+
+  if (m_trackerType & DEPTH_NORMAL_TRACKER) {
+    m_L.insert(m_L_depthNormal, start_index, 0);
+    m_error.insert(start_index, m_error_depthNormal);
+
+    start_index += m_error_depthNormal.getRows();
+  }
+
+  if (m_trackerType & DEPTH_DENSE_TRACKER) {
+    m_L.insert(m_L_depthDense, start_index, 0);
+    m_error.insert(start_index, m_error_depthDense);
+
+//    start_index += m_error_depthDense.getRows();
+  }
 }
 
 void vpMbGenericTracker::TrackerWrapper::computeVVSWeights() {
@@ -3490,6 +3848,22 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSWeights() {
     start_index += m_w_klt.getRows();
   }
 #endif
+
+  if (m_trackerType & DEPTH_NORMAL_TRACKER) {
+    if (m_depthNormalUseRobust) {
+      vpMbTracker::computeVVSWeights(m_robust_depthNormal, m_error_depthNormal, m_w_depthNormal);
+      m_w.insert(start_index, m_w_depthNormal);
+    }
+
+    start_index += m_w_depthNormal.getRows();
+  }
+
+  if (m_trackerType & DEPTH_DENSE_TRACKER) {
+    vpMbDepthDenseTracker::computeVVSWeights();
+    m_w.insert(start_index, m_w_depthDense);
+
+//    start_index += m_w_depthDense.getRows();
+  }
 }
 
 void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char>& I, const vpHomogeneousMatrix &cMo_, const vpCameraParameters &camera,
@@ -3500,6 +3874,10 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char>& I
   } else if ( m_trackerType == KLT_TRACKER) {
     vpMbKltTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
 #endif
+  } else if ( m_trackerType == DEPTH_NORMAL_TRACKER ) {
+    vpMbDepthNormalTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
+  } else if ( m_trackerType == DEPTH_DENSE_TRACKER ) {
+    vpMbDepthDenseTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
   } else {
     if (m_trackerType & EDGE_TRACKER) {
       for (unsigned int i = 0; i < scales.size(); i += 1){
@@ -3516,7 +3894,7 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char>& I
             (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
           }
 
-          break; //displaying model on one scale only
+          break; //display model on one scale only
         }
       }
     }
@@ -3538,6 +3916,14 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char>& I
     }
 #endif
 
+    if (m_trackerType & DEPTH_NORMAL_TRACKER) {
+      vpMbDepthNormalTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
+    }
+
+    if (m_trackerType & DEPTH_DENSE_TRACKER) {
+      vpMbDepthDenseTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
+    }
+
   #ifdef VISP_HAVE_OGRE
     if(useOgre)
       faces.displayOgre(cMo_);
@@ -3549,13 +3935,15 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<vpRGBa>& I, const
                              const vpColor& col , const unsigned int thickness, const bool displayFullModel) {
   if ( m_trackerType == EDGE_TRACKER ) {
     vpMbEdgeTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-  }
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-  else if ( m_trackerType == KLT_TRACKER ) {
+  } else if ( m_trackerType == KLT_TRACKER ) {
     vpMbKltTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
-  }
 #endif
-  else {
+  } else if ( m_trackerType == DEPTH_NORMAL_TRACKER ) {
+    vpMbDepthNormalTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
+  } else if ( m_trackerType == DEPTH_DENSE_TRACKER ) {
+    vpMbDepthDenseTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
+  } else {
     if (m_trackerType & EDGE_TRACKER) {
       for (unsigned int i = 0; i < scales.size(); i += 1){
         if(scales[i]){
@@ -3571,7 +3959,7 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<vpRGBa>& I, const
             (*it)->display(I, cMo_, camera, col, thickness, displayFullModel);
           }
 
-          break; //displaying model on one scale only
+          break; //display model on one scale only
         }
       }
     }
@@ -3593,10 +3981,18 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<vpRGBa>& I, const
     }
 #endif
 
-#ifdef VISP_HAVE_OGRE
+    if (m_trackerType & DEPTH_NORMAL_TRACKER) {
+      vpMbDepthNormalTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
+    }
+
+    if (m_trackerType & DEPTH_DENSE_TRACKER) {
+      vpMbDepthNormalTracker::display(I, cMo_, camera, col, thickness, displayFullModel);
+    }
+
+  #ifdef VISP_HAVE_OGRE
     if(useOgre)
       faces.displayOgre(cMo_);
-#endif
+  #endif
   }
 }
 
@@ -3605,7 +4001,7 @@ void vpMbGenericTracker::TrackerWrapper::init(const vpImage<unsigned char>& I) {
     throw vpException(vpException::fatalError, "model not initialized");
   }
 
-  if (clippingFlag > 2)
+  if (useScanLine || clippingFlag > 3)
     cam.computeFov(I.getWidth(), I.getHeight());
 
   bool reInitialisation = false;
@@ -3631,9 +4027,6 @@ void vpMbGenericTracker::TrackerWrapper::init(const vpImage<unsigned char>& I) {
   }
 
   if (useScanLine) {
-    if (clippingFlag <= 2)
-      cam.computeFov(I.getWidth(), I.getHeight());
-
     faces.computeClippedPolygons(cMo, cam);
     faces.computeScanLineRender(cam, I.getWidth(), I.getHeight());
   }
@@ -3651,6 +4044,12 @@ void vpMbGenericTracker::TrackerWrapper::init(const vpImage<unsigned char>& I) {
 
     initMovingEdge(I, cMo);
   }
+
+  if (m_trackerType & DEPTH_NORMAL_TRACKER)
+    vpMbDepthNormalTracker::computeVisibility(I.getWidth(), I.getHeight()); //vpMbDepthNormalTracker::init(I);
+
+  if (m_trackerType & DEPTH_DENSE_TRACKER)
+    vpMbDepthDenseTracker::computeVisibility(I.getWidth(), I.getHeight()); //vpMbDepthDenseTracker::init(I);
 }
 
 void vpMbGenericTracker::TrackerWrapper::initCircle(const vpPoint& p1, const vpPoint &p2, const vpPoint &p3, const double radius,
@@ -3678,6 +4077,12 @@ void vpMbGenericTracker::TrackerWrapper::initFaceFromCorners(vpMbtPolygon &polyg
   if (m_trackerType & KLT_TRACKER)
     vpMbKltTracker::initFaceFromCorners(polygon);
 #endif
+
+  if (m_trackerType & DEPTH_NORMAL_TRACKER)
+    vpMbDepthNormalTracker::initFaceFromCorners(polygon);
+
+  if (m_trackerType & DEPTH_DENSE_TRACKER)
+    vpMbDepthDenseTracker::initFaceFromCorners(polygon);
 }
 
 void vpMbGenericTracker::TrackerWrapper::initFaceFromLines(vpMbtPolygon &polygon) {
@@ -3688,41 +4093,56 @@ void vpMbGenericTracker::TrackerWrapper::initFaceFromLines(vpMbtPolygon &polygon
   if (m_trackerType & KLT_TRACKER)
     vpMbKltTracker::initFaceFromLines(polygon);
 #endif
+
+  if (m_trackerType & DEPTH_NORMAL_TRACKER)
+    vpMbDepthNormalTracker::initFaceFromLines(polygon);
+
+  if (m_trackerType & DEPTH_DENSE_TRACKER)
+    vpMbDepthDenseTracker::initFaceFromLines(polygon);
 }
 
-void vpMbGenericTracker::TrackerWrapper::initMbtTracking(const vpImage<unsigned char> &I) {
+void vpMbGenericTracker::TrackerWrapper::initMbtTracking(const vpImage<unsigned char> * const ptr_I) {
   if (m_trackerType & EDGE_TRACKER) {
     vpMbEdgeTracker::computeVVSInit();
-    vpMbEdgeTracker::computeVVSFirstPhaseFactor(I, 0);
+    vpMbEdgeTracker::computeVVSFirstPhaseFactor(*ptr_I, 0);
   }
 }
 
 void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string& configFile) {
 #ifdef VISP_HAVE_XML2
-  vpMbtEdgeKltXmlParser xmlp;
+  vpMbtXmlGenericParser xmlp( (vpMbtXmlGenericParser::vpParserType) m_trackerType );
 
   xmlp.setCameraParameters(cam);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
 
-  xmlp.setMovingEdge(me);
+  //Edge
+  xmlp.setEdgeMe(me);
 
-  xmlp.setMaxFeatures(10000);
-  xmlp.setWindowSize(5);
-  xmlp.setQuality(0.01);
-  xmlp.setMinDistance(5);
-  xmlp.setHarrisParam(0.01);
-  xmlp.setBlockSize(3);
-  xmlp.setPyramidLevels(3);
+  //KLT
+  xmlp.setKltMaxFeatures(10000);
+  xmlp.setKltWindowSize(5);
+  xmlp.setKltQuality(0.01);
+  xmlp.setKltMinDistance(5);
+  xmlp.setKltHarrisParam(0.01);
+  xmlp.setKltBlockSize(3);
+  xmlp.setKltPyramidLevels(3);
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-  xmlp.setMaskBorder(maskBorder);
+  xmlp.setKltMaskBorder(maskBorder);
 #endif
 
-  try{
+  //Depth normal
+  xmlp.setDepthNormalFeatureEstimationMethod(m_depthNormalFeatureEstimationMethod);
+  xmlp.setDepthNormalPclPlaneEstimationMethod(m_depthNormalPclPlaneEstimationMethod);
+  xmlp.setDepthNormalPclPlaneEstimationRansacMaxIter(m_depthNormalPclPlaneEstimationRansacMaxIter);
+  xmlp.setDepthNormalPclPlaneEstimationRansacThreshold(m_depthNormalPclPlaneEstimationRansacThreshold);
+  xmlp.setDepthNormalSamplingStepX(m_depthNormalSamplingStepX);
+  xmlp.setDepthNormalSamplingStepY(m_depthNormalSamplingStepY);
+
+  try {
     std::cout << " *********** Parsing XML for Model-Based Tracker ************ " << std::endl;
     xmlp.parse(configFile.c_str());
-  }
-  catch(...){
+  } catch (...) {
     throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ", configFile.c_str());
   }
 
@@ -3733,19 +4153,19 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string& confi
   angleAppears = vpMath::rad(xmlp.getAngleAppear());
   angleDisappears = vpMath::rad(xmlp.getAngleDisappear());
 
-  if(xmlp.hasNearClippingDistance())
+  if (xmlp.hasNearClippingDistance())
     setNearClippingDistance(xmlp.getNearClippingDistance());
 
-  if(xmlp.hasFarClippingDistance())
+  if (xmlp.hasFarClippingDistance())
     setFarClippingDistance(xmlp.getFarClippingDistance());
 
-  if(xmlp.getFovClipping()){
+  if (xmlp.getFovClipping()){
     setClipping(vpMbEdgeTracker::clippingFlag | vpPolygon3D::FOV_CLIPPING);
   }
 
   useLodGeneral = xmlp.getLodState();
-  minLineLengthThresholdGeneral = xmlp.getMinLineLengthThreshold();
-  minPolygonAreaThresholdGeneral = xmlp.getMinPolygonAreaThreshold();
+  minLineLengthThresholdGeneral = xmlp.getLodMinLineLengthThreshold();
+  minPolygonAreaThresholdGeneral = xmlp.getLodMinPolygonAreaThreshold();
 
   applyLodSettingInConfig = false;
   if(this->getNbPolygon() > 0) {
@@ -3755,33 +4175,91 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string& confi
     setMinPolygonAreaThresh(minPolygonAreaThresholdGeneral);
   }
 
+  //Edge
   vpMe meParser;
-  xmlp.getMe(meParser);
+  xmlp.getEdgeMe(meParser);
   vpMbEdgeTracker::setMovingEdge(meParser);
 
+  //KLT
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-  tracker.setMaxFeatures((int)xmlp.getMaxFeatures());
-  tracker.setWindowSize((int)xmlp.getWindowSize());
-  tracker.setQuality(xmlp.getQuality());
-  tracker.setMinDistance(xmlp.getMinDistance());
-  tracker.setHarrisFreeParameter(xmlp.getHarrisParam());
-  tracker.setBlockSize((int)xmlp.getBlockSize());
-  tracker.setPyramidLevels((int)xmlp.getPyramidLevels());
-  maskBorder = xmlp.getMaskBorder();
+  tracker.setMaxFeatures((int)xmlp.getKltMaxFeatures());
+  tracker.setWindowSize((int)xmlp.getKltWindowSize());
+  tracker.setQuality(xmlp.getKltQuality());
+  tracker.setMinDistance(xmlp.getKltMinDistance());
+  tracker.setHarrisFreeParameter(xmlp.getKltHarrisParam());
+  tracker.setBlockSize((int)xmlp.getKltBlockSize());
+  tracker.setPyramidLevels((int)xmlp.getKltPyramidLevels());
+  maskBorder = xmlp.getKltMaskBorder();
 
   //if(useScanLine)
   faces.getMbScanLineRenderer().setMaskBorder(maskBorder);
 #endif
 
+  //Depth normal
+  setDepthNormalFeatureEstimationMethod( xmlp.getDepthNormalFeatureEstimationMethod() );
+  setDepthNormalPclPlaneEstimationMethod( xmlp.getDepthNormalPclPlaneEstimationMethod() );
+  setDepthNormalPclPlaneEstimationRansacMaxIter( xmlp.getDepthNormalPclPlaneEstimationRansacMaxIter() );
+  setDepthNormalPclPlaneEstimationRansacThreshold( xmlp.getDepthNormalPclPlaneEstimationRansacThreshold() );
+  setDepthNormalSamplingStep( xmlp.getDepthNormalSamplingStepX(), xmlp.getDepthNormalSamplingStepY() );
 #else
   std::cerr << "You need the libXML2 to read the config file: " << configFile << std::endl;
 #endif
 }
 
-void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char> &I) {
+#ifdef VISP_HAVE_PCL
+void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned char> * const ptr_I, const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud) {
+  if (displayFeatures) {
+    if (m_trackerType & EDGE_TRACKER) {
+      vpMbEdgeTracker::displayFeaturesOnImage(*ptr_I, 0);
+    }
+  }
+
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+  //KLT
+  if (m_trackerType & KLT_TRACKER) {
+    if (vpMbKltTracker::postTracking(*ptr_I, m_w_klt)) {
+      vpMbKltTracker::reinit(*ptr_I);
+    }
+  }
+#endif
+
+  // Looking for new visible face
+  if (m_trackerType & EDGE_TRACKER) {
+    bool newvisibleface = false ;
+    vpMbEdgeTracker::visibleFace(*ptr_I, cMo, newvisibleface);
+
+    if (useScanLine) {
+      faces.computeClippedPolygons(cMo, cam);
+      faces.computeScanLineRender(cam, ptr_I->getWidth(), ptr_I->getHeight());
+    }
+  }
+
+  //Depth normal
+  if (m_trackerType & DEPTH_NORMAL_TRACKER)
+    vpMbDepthNormalTracker::computeVisibility(point_cloud->width, point_cloud->height);
+
+  //Depth dense
+  if (m_trackerType & DEPTH_DENSE_TRACKER)
+    vpMbDepthDenseTracker::computeVisibility(point_cloud->width, point_cloud->height);
+
+  //Edge
+  if (m_trackerType & EDGE_TRACKER) {
+    vpMbEdgeTracker::updateMovingEdge(*ptr_I);
+
+    vpMbEdgeTracker::initMovingEdge(*ptr_I, cMo);
+    // Reinit the moving edge for the lines which need it.
+    vpMbEdgeTracker::reinitMovingEdge(*ptr_I, cMo);
+
+    if (computeProjError) {
+      vpMbEdgeTracker::computeProjectionError(*ptr_I);
+    }
+  }
+}
+
+void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char> * const ptr_I, const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud) {
   if (m_trackerType & EDGE_TRACKER) {
     try {
-      vpMbEdgeTracker::trackMovingEdge(I);
+      vpMbEdgeTracker::trackMovingEdge(*ptr_I);
     } catch (...) {
       std::cerr << "Error in moving edge tracking" << std::endl;
       throw;
@@ -3791,51 +4269,121 @@ void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   if (m_trackerType & KLT_TRACKER) {
     try {
-      vpMbKltTracker::preTracking(I);
-    } catch (...) {
-      std::cerr << "Error in KLT tracking" << std::endl;
+      vpMbKltTracker::preTracking(*ptr_I);
+    } catch (vpException &e) {
+      std::cerr << "Error in KLT tracking: " << e.what() << std::endl;
       throw;
     }
   }
 #endif
-}
 
-void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned char> &I) {
+  if (m_trackerType & DEPTH_NORMAL_TRACKER) {
+    try {
+      vpMbDepthNormalTracker::segmentPointCloud(point_cloud);
+    } catch (...) {
+      std::cerr << "Error in Depth normal tracking" << std::endl;
+      throw;
+    }
+  }
+
+  if (m_trackerType & DEPTH_DENSE_TRACKER) {
+    try {
+      vpMbDepthDenseTracker::segmentPointCloud(point_cloud);
+    } catch (...) {
+      std::cerr << "Error in Depth dense tracking" << std::endl;
+      throw;
+    }
+  }
+}
+#endif
+
+void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned char> * const ptr_I,
+                                                      const unsigned int pointcloud_width, const unsigned int pointcloud_height) {
   if (displayFeatures) {
     if (m_trackerType & EDGE_TRACKER) {
-      vpMbEdgeTracker::displayFeaturesOnImage(I, 0);
+      vpMbEdgeTracker::displayFeaturesOnImage(*ptr_I, 0);
     }
   }
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   //KLT
   if (m_trackerType & KLT_TRACKER) {
-    if (vpMbKltTracker::postTracking(I, m_w_klt)) {
-      vpMbKltTracker::reinit(I);
+    if (vpMbKltTracker::postTracking(*ptr_I, m_w_klt)) {
+      vpMbKltTracker::reinit(*ptr_I);
     }
   }
 #endif
 
   // Looking for new visible face
   if (m_trackerType & EDGE_TRACKER) {
-    bool newvisibleface = false;
-    vpMbEdgeTracker::visibleFace(I, cMo, newvisibleface);
+    bool newvisibleface = false ;
+    vpMbEdgeTracker::visibleFace(*ptr_I, cMo, newvisibleface);
 
     if (useScanLine) {
       faces.computeClippedPolygons(cMo, cam);
-      faces.computeScanLineRender(cam, I.getWidth(), I.getHeight());
+      faces.computeScanLineRender(cam, ptr_I->getWidth(), ptr_I->getHeight());
     }
   }
 
-  if (m_trackerType & EDGE_TRACKER) {
-    vpMbEdgeTracker::updateMovingEdge(I);
+  //Depth normal
+  if (m_trackerType & DEPTH_NORMAL_TRACKER)
+    vpMbDepthNormalTracker::computeVisibility(pointcloud_width, pointcloud_height);
 
-    vpMbEdgeTracker::initMovingEdge(I, cMo);
+  //Depth dense
+  if (m_trackerType & DEPTH_DENSE_TRACKER)
+    vpMbDepthDenseTracker::computeVisibility(pointcloud_width, pointcloud_height);
+
+  //Edge
+  if (m_trackerType & EDGE_TRACKER) {
+    vpMbEdgeTracker::updateMovingEdge(*ptr_I);
+
+    vpMbEdgeTracker::initMovingEdge(*ptr_I, cMo);
     // Reinit the moving edge for the lines which need it.
-    vpMbEdgeTracker::reinitMovingEdge(I, cMo);
+    vpMbEdgeTracker::reinitMovingEdge(*ptr_I, cMo);
 
     if (computeProjError) {
-      vpMbEdgeTracker::computeProjectionError(I);
+      vpMbEdgeTracker::computeProjectionError(*ptr_I);
+    }
+  }
+}
+
+void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char> * const ptr_I, const std::vector<vpColVector> * const point_cloud,
+                                                     const unsigned int pointcloud_width, const unsigned int pointcloud_height) {
+  if (m_trackerType & EDGE_TRACKER) {
+    try {
+      vpMbEdgeTracker::trackMovingEdge(*ptr_I);
+    } catch (...) {
+      std::cerr << "Error in moving edge tracking" << std::endl;
+      throw;
+    }
+  }
+
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+  if (m_trackerType & KLT_TRACKER) {
+    try {
+      vpMbKltTracker::preTracking(*ptr_I);
+    } catch (vpException &e) {
+      std::cerr << "Error in KLT tracking: " << e.what() << std::endl;
+      throw;
+    }
+  }
+#endif
+
+  if (m_trackerType & DEPTH_NORMAL_TRACKER) {
+    try {
+      vpMbDepthNormalTracker::segmentPointCloud(*point_cloud, pointcloud_width, pointcloud_height);
+    } catch (...) {
+      std::cerr << "Error in Depth tracking" << std::endl;
+      throw;
+    }
+  }
+
+  if (m_trackerType & DEPTH_DENSE_TRACKER) {
+    try {
+      vpMbDepthDenseTracker::segmentPointCloud(*point_cloud, pointcloud_width, pointcloud_height);
+    } catch (...) {
+      std::cerr << "Error in Depth dense tracking" << std::endl;
+      throw;
     }
   }
 }
@@ -3881,8 +4429,8 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char
   nbvisiblepolygone = 0;
 
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   //KLT
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 #  if (VISP_HAVE_OPENCV_VERSION < 0x020408)
   if(cur != NULL){
     cvReleaseImage(&cur);
@@ -3920,7 +4468,25 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char
   circles_disp.clear();
 
   firstInitialisation = true;
+
 #endif
+
+
+  //Depth normal
+  for (size_t i = 0; i < m_depthNormalFaces.size(); i++) {
+    delete m_depthNormalFaces[i];
+    m_depthNormalFaces[i] = NULL;
+  }
+  m_depthNormalFaces.clear();
+
+
+  //Depth dense
+  for (size_t i = 0; i < m_depthDenseNormalFaces.size(); i++) {
+    delete m_depthDenseNormalFaces[i];
+    m_depthDenseNormalFaces[i] = NULL;
+  }
+  m_depthDenseNormalFaces.clear();
+
 
   faces.reset();
 
@@ -3933,6 +4499,8 @@ void vpMbGenericTracker::TrackerWrapper::resetTracker() {
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   vpMbKltTracker::resetTracker();
 #endif
+  vpMbDepthNormalTracker::resetTracker();
+  vpMbDepthDenseTracker::resetTracker();
 }
 
 void vpMbGenericTracker::TrackerWrapper::setCameraParameters(const vpCameraParameters &camera) {
@@ -3942,6 +4510,52 @@ void vpMbGenericTracker::TrackerWrapper::setCameraParameters(const vpCameraParam
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   vpMbKltTracker::setCameraParameters(cam);
 #endif
+  vpMbDepthNormalTracker::setCameraParameters(cam);
+  vpMbDepthDenseTracker::setCameraParameters(cam);
+}
+
+void vpMbGenericTracker::TrackerWrapper::setClipping(const unsigned int &flags) {
+  vpMbEdgeTracker::setClipping(flags);
+}
+
+void vpMbGenericTracker::TrackerWrapper::setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY) {
+  vpMbDepthDenseTracker::setDepthDenseSamplingStep(stepX, stepY);
+}
+
+void vpMbGenericTracker::TrackerWrapper::setDepthNormalFaceCentroidMethod(const vpMbtFaceDepthNormal::vpFaceCentroidType &method) {
+  vpMbDepthNormalTracker::setDepthNormalFaceCentroidMethod(method);
+}
+
+void vpMbGenericTracker::TrackerWrapper::setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method) {
+  vpMbDepthNormalTracker::setDepthNormalFeatureEstimationMethod(method);
+}
+
+void vpMbGenericTracker::TrackerWrapper::setDepthNormalPclPlaneEstimationMethod(const int method) {
+  vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationMethod(method);
+}
+
+void vpMbGenericTracker::TrackerWrapper::setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter) {
+  vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationRansacMaxIter(maxIter);
+}
+
+void vpMbGenericTracker::TrackerWrapper::setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold) {
+  vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationRansacThreshold(thresold);
+}
+
+void vpMbGenericTracker::TrackerWrapper::setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY) {
+  vpMbDepthNormalTracker::setDepthNormalSamplingStep(stepX, stepY);
+}
+
+//void vpMbGenericTracker::TrackerWrapper::setDepthNormalUseRobust(const bool use) {
+//  vpMbDepthNormalTracker::setDepthNormalUseRobust(use);
+//}
+
+void vpMbGenericTracker::TrackerWrapper::setFarClippingDistance(const double &dist) {
+  vpMbEdgeTracker::setFarClippingDistance(dist);
+}
+
+void vpMbGenericTracker::TrackerWrapper::setNearClippingDistance(const double &dist) {
+  vpMbEdgeTracker::setNearClippingDistance(dist);
 }
 
 void vpMbGenericTracker::TrackerWrapper::setOgreVisibilityTest(const bool &v) {
@@ -3953,6 +4567,9 @@ void vpMbGenericTracker::TrackerWrapper::setOgreVisibilityTest(const bool &v) {
 
 void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo) {
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+  if (useScanLine || clippingFlag > 3)
+    cam.computeFov(I.getWidth(), I.getHeight());
+
   vpMbKltTracker::setPose(I, cdMo);
 #else
   cMo = cdMo;
@@ -3964,7 +4581,6 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> &I
     resetMovingEdge();
 
   if (useScanLine) {
-    cam.computeFov(I.getWidth(), I.getHeight());
     faces.computeClippedPolygons(cMo, cam);
     faces.computeScanLineRender(cam, I.getWidth(), I.getHeight());
   }
@@ -3989,6 +4605,12 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> &I
   if (m_trackerType & EDGE_TRACKER)
     initMovingEdge(I, cMo);
 #endif
+
+  //Depth normal
+  vpMbDepthNormalTracker::computeVisibility(I.getWidth(), I.getHeight());
+
+  //Depth dense
+  vpMbDepthDenseTracker::computeVisibility(I.getWidth(), I.getHeight());
 }
 
 void vpMbGenericTracker::TrackerWrapper::setProjectionErrorComputation(const bool &flag) {
@@ -4000,14 +4622,16 @@ void vpMbGenericTracker::TrackerWrapper::setScanLineVisibilityTest(const bool &v
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   vpMbKltTracker::setScanLineVisibilityTest(v);
 #endif
+  vpMbDepthNormalTracker::setScanLineVisibilityTest(v);
+  vpMbDepthDenseTracker::setScanLineVisibilityTest(v);
 }
 
 void vpMbGenericTracker::TrackerWrapper::setTrackerType(const int type) {
-  if ( (type & (EDGE_TRACKER
+  if ( (type & (EDGE_TRACKER |
               #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-                | KLT_TRACKER
+                KLT_TRACKER |
               #endif
-                )) == 0 ) {
+                DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0 ) {
     throw vpException(vpTrackingException::badValue, "bad value for tracker type: !", type);
   }
 
@@ -4020,23 +4644,56 @@ void vpMbGenericTracker::TrackerWrapper::testTracking() {
   }
 }
 
-void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &I) {
+void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &
+                                            #ifdef VISP_HAVE_PCL
+                                               I
+                                            #endif
+                                               ) {
   if ( (m_trackerType & (EDGE_TRACKER
-                       #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+                      #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
                          | KLT_TRACKER
-                       #endif
+                      #endif
                          )) == 0 ) {
     std::cerr << "Bad tracker type: " << m_trackerType << std::endl;
     return;
   }
 
+#ifdef VISP_HAVE_PCL
+  track(&I, nullptr);
+#endif
+}
+
+#ifdef VISP_HAVE_PCL
+void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> * const ptr_I, const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud) {
+  if ( (m_trackerType & (EDGE_TRACKER |
+                      #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+                         KLT_TRACKER |
+                      #endif
+                         DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0 ) {
+    std::cerr << "Bad tracker type: " << m_trackerType << std::endl;
+    return;
+  }
+
+  if (m_trackerType & (EDGE_TRACKER
+                    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+                       | KLT_TRACKER
+                    #endif
+                       ) && ptr_I == NULL) {
+    throw vpException(vpException::fatalError, "Image pointer is NULL!");
+  }
+
+  if (m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) && point_cloud == nullptr) {
+    throw vpException(vpException::fatalError, "Pointcloud smart pointer is NULL!");
+  }
+
+
   //Back-up cMo in case of exception
   vpHomogeneousMatrix cMo_1 = cMo;
   try {
-    preTracking(I);
+    preTracking(ptr_I, point_cloud);
 
     try {
-      computeVVS(I);
+      computeVVS(ptr_I);
     } catch (...) {
       covarianceMatrix = -1;
       throw; // throw the original exception
@@ -4045,7 +4702,7 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &I) 
     if (m_trackerType == EDGE_TRACKER)
       testTracking();
 
-    postTracking(I);
+    postTracking(ptr_I, point_cloud);
 
   } catch (const vpException &e) {
     std::cerr << "Exception: " << e.what() << std::endl;
@@ -4053,3 +4710,4 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &I) 
     throw; // rethrowing the original exception
   }
 }
+#endif

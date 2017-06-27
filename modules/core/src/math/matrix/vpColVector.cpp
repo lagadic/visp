@@ -1012,14 +1012,7 @@ vpColVector::stdev(const vpColVector &v, const bool useBesselCorrection)
 
 #if VISP_HAVE_SSE2
   __m128d v_sub, v_mul, v_sum = _mm_setzero_pd();
-  //Compilation error with:
-  //clang version 3.5.0 (tags/RELEASE_350/final)
-  //Target: x86_64-unknown-linux-gnu
-  //Apple LLVM version 6.0 (clang-600.0.54) (based on LLVM 3.5svn)
-  //Target: x86_64-apple-darwin13.4.0
-  //error: use of undeclared identifier '_mm_set_pd1'; did you mean '_mm_set_ps1'?
-//  __m128d v_mean = _mm_set_pd1(mean_value);
-  __m128d v_mean = _mm_set_pd(mean_value, mean_value);
+  __m128d v_mean = _mm_set1_pd(mean_value);
 
   if(v.getRows() >= 4) {
     for(; i <= v.getRows()- 4; i+=4) {
