@@ -363,8 +363,8 @@ main(int argc, const char ** argv)
       display3.setDownScalingFactor(vpDisplay::SCALE_AUTO);
 
       display1.init(I1, 100, 100, "Test tracking (Cam1)");
-      display2.init(I2, (int) I1.getWidth()/vpDisplay::getDownScalingFactor(I1)+110, 100, "Test tracking (Cam2)");
-      display3.init(I3, (int) 100, I1.getHeight()/vpDisplay::getDownScalingFactor(I1)+110, "Test tracking (Cam3)");
+      display2.init(I2, (int) (I1.getWidth()/vpDisplay::getDownScalingFactor(I1))+110, 100, "Test tracking (Cam2)");
+      display3.init(I3, 100, (int) (I1.getHeight()/vpDisplay::getDownScalingFactor(I1))+110, "Test tracking (Cam3)");
 #endif
       vpDisplay::display(I1);
       vpDisplay::display(I2);
