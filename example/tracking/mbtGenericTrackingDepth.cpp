@@ -39,6 +39,7 @@
 */
 
 #include <iostream>
+#include <cstdlib>
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)
