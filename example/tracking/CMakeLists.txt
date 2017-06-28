@@ -47,8 +47,8 @@ set(example_cpp
   mbtEdgeMultiTracking.cpp
   mbtEdgeTracking.cpp
   mbtGenericTracking.cpp
-  mbtGenericTrackingDepth.cpp
   mbtGenericTracking2.cpp
+  mbtGenericTrackingDepth.cpp
   mbtKltTracking.cpp
   mbtKltMultiTracking.cpp
   templateTracker.cpp
@@ -114,6 +114,13 @@ add_test(mbtGenericTracking-map               mbtGenericTracking2 -c ${OPTION_TO
 add_test(mbtGenericTracking-map-cao           mbtGenericTracking2 -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtGenericTracking-map-cao-nocyl     mbtGenericTracking2 -c -f -C ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtGenericTracking-map-cao-scanline  mbtGenericTracking2 -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 20)
+
+add_test(mbtGenericTrackingDepth-edge-dense             mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY})
+add_test(mbtGenericTrackingDepth-edge-dense-scanline    mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 14)
+add_test(mbtGenericTrackingDepth-klt-dense              mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2)
+add_test(mbtGenericTrackingDepth-klt-dense-scanline     mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -t 2 -e 14)
+add_test(mbtGenericTrackingDepth-hybrid-dense           mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3)
+add_test(mbtGenericTrackingDepth-hybrid-dense-scanline  mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -e 14)
 
 #disable test with Ogre otherwise we get an Ogre exception with Ogre and remote access:
 #terminate called after throwing an instance of 'Ogre::RenderingAPIException'

@@ -58,7 +58,7 @@
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#define GETOPTARGS  "x:X:m:M:i:n:dchfolwvpt:T:"
+#define GETOPTARGS  "x:X:m:M:i:n:dchfolwvpt:T:e:"
 
 #define USE_XML 1
 #define USE_SMALL_DATASET 1 //small depth dataset in ViSP-images
@@ -73,7 +73,7 @@ namespace {
     %s [-i <test image path>] [-x <config file>] [-X <config file depth>]\n\
     [-m <model name>] [-M <model name depth>] [-n <initialisation file base name>]\n\
     [-f] [-c] [-d] [-h] [-o] [-w] [-l] [-v] [-p]\n\
-    [-t <tracker type>] [-T <tracker type>]\n",
+    [-t <tracker type>] [-T <tracker type>] [-e <last frame index>]\n",
     name );
 
     fprintf(stdout, "\n\
@@ -138,6 +138,9 @@ namespace {
     -T <tracker type>\n\
        Set tracker type (<4 (Depth normal)>, <8 (Depth dense)>, <12 (both)>) for depth sensor.\n\
   \n\
+    -e <last frame index>\n\
+       Specify the index of the last frame. Once reached, the tracking is stopped.\n\
+  \n\
     -h \n\
        Print the help.\n\n");
 
@@ -149,7 +152,7 @@ namespace {
                   std::string &modelFile, std::string &modelFile_depth, std::string &initFile, bool &displayFeatures,
                   bool &click_allowed, bool &display, bool &useOgre, bool &showOgreConfigDialog,
                   bool &useScanline, bool &computeCovariance, bool &projectionError, int &trackerType,
-                  int &tracker_type_depth) {
+                  int &tracker_type_depth, int &lastFrame) {
     const char *optarg_;
     int   c;
     while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
@@ -171,6 +174,7 @@ namespace {
       case 'p': projectionError  = true; break;
       case 't': trackerType  = atoi(optarg_); break;
       case 'T': tracker_type_depth  = atoi(optarg_); break;
+      case 'e': lastFrame = atoi(optarg_); break;
       case 'h': usage(argv[0], NULL); return false; break;
 
       default:
@@ -379,6 +383,7 @@ int main(int argc, const char ** argv) {
     bool projectionError = false;
     int trackerType_image = vpMbGenericTracker::EDGE_TRACKER;
     int trackerType_depth = vpMbGenericTracker::DEPTH_DENSE_TRACKER;
+    int opt_lastFrame = -1;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -391,7 +396,7 @@ int main(int argc, const char ** argv) {
     if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_configFile_depth, opt_modelFile, opt_modelFile_depth,
                     opt_initFile, displayFeatures, opt_click_allowed, opt_display, useOgre, showOgreConfigDialog,
                     useScanline, computeCovariance, projectionError, trackerType_image,
-                    trackerType_depth)) {
+                    trackerType_depth, opt_lastFrame)) {
       return EXIT_FAILURE;
     }
 
@@ -493,7 +498,7 @@ int main(int argc, const char ** argv) {
       display1.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display1.init(I, 100, 100, "Test tracking (Left)");
-      display2.init(I_depth, (int) I.getWidth()/vpDisplay::getDownScalingFactor(I)+110, 100, "Test tracking (Right)");
+      display2.init(I_depth, (int) (I.getWidth()/vpDisplay::getDownScalingFactor(I)) + 110, 100, "Test tracking (Right)");
 #endif
       vpDisplay::display(I);
       vpDisplay::display(I_depth);
@@ -592,7 +597,8 @@ int main(int argc, const char ** argv) {
     bool quit = false, click = false;
     unsigned int frame_index = 0;
     std::vector<double> time_vec;
-    while (read_data(frame_index, ipath, I, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height) && !quit) {
+    while ( read_data(frame_index, ipath, I, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height)
+            && !quit && (opt_lastFrame > 0 ? (int) frame_index <= opt_lastFrame : true) ) {
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
       if (opt_display) {
