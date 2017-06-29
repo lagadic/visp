@@ -490,6 +490,16 @@ vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatr
         std::map<int, vpImagePoint>::const_iterator iter = kltpoly->getCurrentPoints().begin();
         //nbCur+= (unsigned int)kltpoly->getCurrentPoints().size();
         for( ; iter != kltpoly->getCurrentPoints().end(); ++iter){
+#  if TARGET_OS_IPHONE
+          if ( std::find(init_ids.begin(), init_ids.end(), (long) (kltpoly->getCurrentPointsInd())[(int)iter->first]) != init_ids.end() )
+#  else
+          if ( std::find(init_ids.begin(), init_ids.end(), (long) (kltpoly->getCurrentPointsInd())[(size_t)iter->first]) != init_ids.end() )
+#  endif
+          {
+            //KLT point already processed (a KLT point can exist in another vpMbtDistanceKltPoints due to possible overlapping faces)
+            continue;
+          }
+
           vpColVector cdp(3);
           cdp[0] = iter->second.get_j(); cdp[1] = iter->second.get_i(); cdp[2] = 1.0;
 
