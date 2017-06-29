@@ -541,6 +541,23 @@ main()
       std::cout << "juxtaposeM:\n" << juxtaposeM << std::endl;
     }
 
+    {
+      std::cout << "------------------------" << std::endl;
+      std::cout << "--- TEST vpMatrix::hadamard()" << std::endl;
+      std::cout << "------------------------" << std::endl;
+
+      vpMatrix M1(3,5), M2(3,5);
+      for (unsigned int i = 0; i < M1.size(); i++) {
+        M1.data[i] = i;
+        M2.data[i] = i+2;
+      }
+
+      std::cout << "M1:\n" << M1 << std::endl;
+      std::cout << "\nM2:\n" << M2 << std::endl;
+      M2 = M1.hadamard(M2);
+      std::cout << "\nRes:\n" << M2 << std::endl;
+    }
+
     std::cout << "All tests succeed" << std::endl;
     return EXIT_SUCCESS;
   }

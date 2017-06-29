@@ -293,6 +293,8 @@ public:
 
     return s;
   }
+
+  vpArray2D<Type> hadamard(const vpArray2D<Type> &m) const;
   //@}
 
   //---------------------------------
@@ -682,6 +684,27 @@ vpArray2D<Type>::getMaxValue() const
     dataptr++;
   }
   return max;
+}
+
+/*!
+  Compute the Hadamard product (element wise matrix multiplication).
+  \param m : Second matrix;
+  \return m1.hadamard(m2) The Hadamard product : \f$ m1 \circ m2 = (m1 \circ m2)_{i,j} = (m1)_{i,j} (m2)_{i,j} \f$
+*/
+template <class Type>
+vpArray2D<Type> vpArray2D<Type>::hadamard(const vpArray2D<Type> &m) const {
+  if (m.getRows() != rowNum || m.getCols() != colNum) {
+    throw(vpException(vpException::dimensionError, "Hadamard product: bad dimensions!"));
+  }
+
+  vpArray2D<Type> out;
+  out.resize(rowNum, colNum, false);
+
+  for (unsigned int i = 0; i < dsize; i++) {
+    out.data[i] = data[i] * m.data[i];
+  }
+
+  return out;
 }
 
 #endif

@@ -293,6 +293,12 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   double sumSquare() const;
 
   //-------------------------------------------------
+  // Hadamard product
+  //-------------------------------------------------
+  /** @name Hadamard product  */
+  vpMatrix hadamard(const vpMatrix &m) const;
+
+  //-------------------------------------------------
   // Kronecker product
   //-------------------------------------------------
   /** @name Kronecker product  */
