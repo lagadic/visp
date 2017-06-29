@@ -135,7 +135,10 @@ private:
     PolygonLine() : m_p1(NULL), m_p2(NULL), m_poly(), m_imPt1(), m_imPt2() { }
 
     PolygonLine(const PolygonLine &polyLine)
-      : m_p1(&polyLine.m_poly.p[0]), m_p2(&polyLine.m_poly.p[1]), m_poly(polyLine.m_poly), m_imPt1(polyLine.m_imPt1), m_imPt2(polyLine.m_imPt2) { }
+      : m_p1(NULL), m_p2(NULL), m_poly(polyLine.m_poly), m_imPt1(polyLine.m_imPt1), m_imPt2(polyLine.m_imPt2) {
+      m_p1 = &m_poly.p[0];
+      m_p2 = &m_poly.p[1];
+    }
 
     PolygonLine& operator=(PolygonLine other) {
       swap(*this, other);
