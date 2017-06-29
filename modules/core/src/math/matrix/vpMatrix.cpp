@@ -34,9 +34,6 @@
  * Eric Marchand
  *
  *****************************************************************************/
-
-
-
 /*!
 \file vpMatrix.cpp
 \brief Definition of the vpMatrix class
@@ -470,6 +467,14 @@ void vpMatrix::AtA(vpMatrix &B) const
 {
   if ((B.rowNum != colNum) || (B.colNum != colNum)) B.resize(colNum,colNum);
 
+#ifdef VISP_HAVE_LAPACK
+  double alpha = 1.0;
+  double beta = 0.0;
+  char transa = 'n';
+  char transb = 't';
+
+  vpMatrix::blas_dgemm(transa, transb, colNum, colNum, rowNum, alpha, data, colNum, data, colNum, beta, B.data, colNum);
+#else
   unsigned int i,j,k;
   double s;
   double *ptr;
@@ -497,6 +502,7 @@ void vpMatrix::AtA(vpMatrix &B) const
     }
     *Bi = s;
   }
+#endif
 }
 
 
@@ -730,6 +736,14 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
 
   if (A.rowNum != w.rowNum) w.resize(A.rowNum);
 
+#ifdef VISP_HAVE_LAPACK
+  double alpha = 1.0;
+  double beta = 0.0;
+  char trans = 't';
+  int incr = 1;
+
+  vpMatrix::blas_dgemv(trans, A.colNum, A.rowNum, alpha, A.data, A.colNum, v.data, incr, beta, w.data, incr);
+#else
   w = 0.0;
   for (unsigned int j=0;j<A.colNum;j++) {
     double vj = v[j] ; // optimization em 5/12/2006
@@ -737,6 +751,7 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
       w[i]+=A.rowPtrs[i][j] * vj;
     }
   }
+#endif
 }
 
 //---------------------------------
@@ -762,6 +777,13 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
                       A.getRows(), A.getCols(), B.getRows(), B.getCols()));
   }
 
+#ifdef VISP_HAVE_LAPACK
+  double alpha = 1.0;
+  double beta = 0.0;
+  char trans = 'n';
+
+  vpMatrix::blas_dgemm(trans, trans, B.colNum, A.rowNum, A.colNum, alpha, B.data, B.colNum, A.data, A.colNum, beta, C.data, B.colNum);
+#else
   // 5/12/06 some "very" simple optimization to avoid indexation
   unsigned int BcolNum = B.colNum;
   unsigned int BrowNum = B.rowNum;
@@ -778,6 +800,7 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
       ci[j] = s;
     }
   }
+#endif
 }
 
 /*!
@@ -925,13 +948,20 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
 {
   if (colNum != V.getRows()) {
     throw(vpException(vpException::dimensionError,
-                      "Cannot multiply (%dx%d) matrix by (3x3) velocity twist matrix",
+                      "Cannot multiply (%dx%d) matrix by (6x6) velocity twist matrix",
                       rowNum, colNum));
   }
   vpMatrix M;
   M.resize(rowNum, 6, false);
 
-#if USE_SSE
+#ifdef VISP_HAVE_LAPACK
+  double alpha = 1.0;
+  double beta = 0.0;
+  char trans = 'n';
+
+  vpMatrix::blas_dgemm(trans, trans, V.colNum, rowNum, colNum, alpha, V.data, V.colNum, data, colNum, beta, M.data, V.colNum);
+#else
+#  if USE_SSE
   vpMatrix V_trans(6, 6);
   for (unsigned int i = 0; i < 6; i++) {
     for (unsigned int j = 0; j < 6; j++) {
@@ -954,7 +984,7 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
       ci[j] = v_tmp[0] + v_tmp[1];
     }
   }
-#else
+#  else
   unsigned int VcolNum = V.getCols();
   unsigned int VrowNum = V.getRows();
   for (unsigned int i=0;i<rowNum;i++)
@@ -968,6 +998,7 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
       ci[j] = s;
     }
   }
+#  endif
 #endif
 
   return M;
@@ -980,7 +1011,7 @@ vpMatrix vpMatrix::operator*(const vpForceTwistMatrix &V) const
 {
   if (colNum != V.getRows()) {
     throw(vpException(vpException::dimensionError,
-                      "Cannot multiply (%dx%d) matrix by (3x3) force/torque twist matrix",
+                      "Cannot multiply (%dx%d) matrix by (6x6) force/torque twist matrix",
                       rowNum, colNum)) ;
   }
   vpMatrix M(rowNum, 6);
