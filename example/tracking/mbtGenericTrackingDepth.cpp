@@ -402,7 +402,7 @@ int main(int argc, const char ** argv) {
 
 #if !defined(VISP_HAVE_MODULE_KLT) || (!defined(VISP_HAVE_OPENCV) || (VISP_HAVE_OPENCV_VERSION < 0x020100))
     if (trackerType_image == /*vpMbGenericTracker::KLT_TRACKER*/2) {
-      std::cout << "KLT only featurescannot be used: ViSP is not built with KLT module or OpenCV is not available." << std::endl;
+      std::cout << "KLT only features cannot be used: ViSP is not built with KLT module or OpenCV is not available." << std::endl;
       return EXIT_SUCCESS;
     }
 #endif
