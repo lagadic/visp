@@ -116,10 +116,11 @@ vpMbtDistanceKltPoints::init(const vpKltOpencv& _tracker)
       curPoints[id] = vpImagePoint(y_tmp, x_tmp);
       curPointsInd[id] = (int)i;
 #endif
-      nbPointsInit++;
-      nbPointsCur++;
     }
   }
+
+  nbPointsInit = (unsigned int) initPoints.size();
+  nbPointsCur = (unsigned int) curPoints.size();
 
   if(nbPointsCur >= minNbPoint) enoughPoints = true;
   else enoughPoints = false;
@@ -161,9 +162,10 @@ vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv& _tracker)
       curPoints[id] = vpImagePoint(static_cast<double>(y),static_cast<double>(x));
       curPointsInd[id] = (int)i;
 #endif
-      nbPointsCur++;
     }
   }
+
+  nbPointsCur = (unsigned int) curPoints.size();
 
   if(nbPointsCur >= minNbPoint) enoughPoints = true;
   else enoughPoints = false;
