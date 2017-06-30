@@ -92,7 +92,7 @@ namespace {
     return true;
   }
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
   vpMatrix generateRandomMatrix(const unsigned int rows, const unsigned int cols, const double min, const double max) {
     vpMatrix M(rows, cols);
 
@@ -684,7 +684,7 @@ main()
       std::cout << "juxtaposeM:\n" << juxtaposeM << std::endl;
     }
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
     {
       std::cout << "------------------------" << std::endl;
       std::cout << "--- BENCHMARK dgemm/dgemv" << std::endl;
