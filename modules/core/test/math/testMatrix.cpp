@@ -192,7 +192,7 @@ namespace {
                         A.getRows(), A.getCols(), v.getRows())) ;
     }
 
-    w.resize(A.getRows(), false);
+    w.resize(A.getRows(), true);
 
     for (unsigned int j=0;j<A.getCols();j++) {
       double vj = v[j] ; // optimization em 5/12/2006
