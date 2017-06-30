@@ -28,31 +28,25 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Matrix multiplication Lapack routines.
+ * BLAS subroutines.
  *
  *****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMatrix.h>
 
-#ifdef VISP_HAVE_LAPACK
-#  ifdef VISP_HAVE_LAPACK_BUILT_IN
-typedef long int integer;
-#  else
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#  if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
 typedef int integer;
-#  endif
 
 extern "C" void dgemm_(char *transa, char *transb, integer *M, integer *N, integer *K, double *alpha, double *a,
                        integer *lda, double *b, integer *ldb, double *beta, double *c, integer *ldc);
 
 extern "C" void dgemv_(char *trans, integer *M, integer *N, double *alpha, double *a, integer *lda,
                        double *x, integer *incx, double *beta, double *y, integer *incy);
-#endif
 
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-#ifdef VISP_HAVE_LAPACK
 void vpMatrix::blas_dgemm(char trans_a, char trans_b, const int M_, const int N_, const int K_, double alpha, double * a_data,
                           const int lda_, double * b_data, const int ldb_, double beta, double * c_data, const int ldc_) {
   integer M = (integer) M_, K = (integer) K_, N = (integer) N_;
@@ -68,7 +62,6 @@ void vpMatrix::blas_dgemv(char trans, const int M_, const int N_, double alpha, 
 
   dgemv_(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
 }
-
-#endif
+#  endif
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

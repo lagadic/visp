@@ -467,7 +467,7 @@ void vpMatrix::AtA(vpMatrix &B) const
 {
   if ((B.rowNum != colNum) || (B.colNum != colNum)) B.resize(colNum,colNum);
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
   double alpha = 1.0;
   double beta = 0.0;
   char transa = 'n';
@@ -736,7 +736,7 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
 
   if (A.rowNum != w.rowNum) w.resize(A.rowNum);
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
   double alpha = 1.0;
   double beta = 0.0;
   char trans = 't';
@@ -777,7 +777,7 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
                       A.getRows(), A.getCols(), B.getRows(), B.getCols()));
   }
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
   double alpha = 1.0;
   double beta = 0.0;
   char trans = 'n';
@@ -954,7 +954,7 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
   vpMatrix M;
   M.resize(rowNum, 6, false);
 
-#ifdef VISP_HAVE_LAPACK
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
   double alpha = 1.0;
   double beta = 0.0;
   char trans = 'n';
