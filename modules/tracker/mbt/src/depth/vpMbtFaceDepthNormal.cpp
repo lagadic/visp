@@ -795,7 +795,7 @@ void vpMbtFaceDepthNormal::computeNormalVisibility(const double nx, const double
 }
 
 void vpMbtFaceDepthNormal::computeInteractionMatrix(const vpHomogeneousMatrix &cMo, vpMatrix &L, vpColVector &features) {
-  L.resize(3, 6, false);
+  L.resize(3, 6, false, false);
 
   //Transform the plane equation for the current pose
   m_planeCamera = m_planeObject;

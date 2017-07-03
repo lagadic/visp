@@ -239,7 +239,7 @@ void vpMbKltMultiTracker::computeVVS() {
 void vpMbKltMultiTracker::computeVVSInit() {
   unsigned int nbFeatures = 2*m_nbInfos;
 
-  m_L_kltMulti.resize(nbFeatures, 6, false);
+  m_L_kltMulti.resize(nbFeatures, 6, false, false);
   m_w_kltMulti.resize(nbFeatures, false);
   m_error_kltMulti.resize(nbFeatures, false);
   m_weightedError_kltMulti.resize(nbFeatures, false);

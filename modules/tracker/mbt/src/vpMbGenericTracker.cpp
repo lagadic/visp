@@ -427,7 +427,7 @@ void vpMbGenericTracker::computeVVSInit(std::map<std::string, const vpImage<unsi
     nbFeatures += tracker->m_error.getRows();
   }
 
-  m_L.resize(nbFeatures, 6, false);
+  m_L.resize(nbFeatures, 6, false, false);
   m_error.resize(nbFeatures, false);
 
   m_weightedError.resize(nbFeatures, false);
@@ -3767,7 +3767,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSInit(const vpImage<unsigned c
     m_w_depthDense.clear();
   }
 
-  m_L.resize(nbFeatures, 6, false);
+  m_L.resize(nbFeatures, 6, false, false);
   m_error.resize(nbFeatures, false);
 
   m_weightedError.resize(nbFeatures, false);

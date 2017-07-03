@@ -141,6 +141,12 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
    */
   vpMatrix(const vpArray2D<double>& A) : vpArray2D<double>(A) {}
 
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  vpMatrix(const vpMatrix& A) : vpArray2D<double>(A) {}
+
+  vpMatrix(vpMatrix &&A);
+#endif
+
   //! Destructor (Memory de-allocation)
   virtual ~vpMatrix() {}
 
@@ -183,6 +189,10 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //@{
   vpMatrix &operator<<(double*);
   vpMatrix &operator=(const vpArray2D<double> &A);
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  vpMatrix &operator=(const vpMatrix &A);
+  vpMatrix &operator=(vpMatrix &&A);
+#endif
   vpMatrix &operator=(const double x);
   //@}
 

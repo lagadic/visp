@@ -95,6 +95,9 @@ public:
   vpColVector(const vpMatrix &M, unsigned int j);
   vpColVector(const std::vector<double> &v);
   vpColVector(const std::vector<float> &v);
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  vpColVector(vpColVector&& v);
+#endif
   /*!
     Destructor.
   */
@@ -182,6 +185,9 @@ public:
   vpColVector &operator=(const std::vector<double> &v);
   vpColVector &operator=(const std::vector<float> &v);
   vpColVector &operator=(double x);
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  vpColVector &operator=(vpColVector &&v);
+#endif
 
   double operator*(const vpColVector &x) const;
   vpMatrix  operator*(const vpRowVector &v) const;

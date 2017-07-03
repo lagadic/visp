@@ -132,7 +132,7 @@ void compute_pseudo_inverse(const vpMatrix &U, const vpColVector &sv, const vpMa
     }
 
     for (unsigned int j = 0 ; j < nrows_orig ; j++) {
-      Ap[i][j] = 0.0;
+//      Ap[i][j] = 0.0;
 
       for (unsigned int k=0 ; k < ncols_orig ; k++) {
         if (fabs(sv[k]) > maxsv*svThreshold) {
@@ -189,6 +189,22 @@ vpMatrix::vpMatrix(const vpMatrix &M,
 
   init(M, r, c, nrows, ncols);
 }
+
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>() {
+  rowNum = A.rowNum;
+  colNum = A.colNum;
+  rowPtrs = A.rowPtrs;
+  dsize = A.dsize;
+  data = A.data;
+
+  A.rowNum = 0;
+  A.colNum = 0;
+  A.rowPtrs = NULL;
+  A.dsize = 0;
+  A.data = NULL;
+}
+#endif
 
 /*!
   Initialize the matrix from a part of an input matrix \e M.
@@ -248,7 +264,7 @@ vpMatrix::init(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int n
   if (cncols > M.getCols())
     throw(vpException(vpException::dimensionError,
                       "Bad column dimension (%d > %d) used to initialize vpMatrix", cncols, M.getCols()));
-  resize(nrows, ncols);
+  resize(nrows, ncols, false, false);
 
   if (this->rowPtrs == NULL) // Fix coverity scan: explicit null dereferenced
     return; // Noting to do
@@ -361,7 +377,7 @@ vpMatrix vpMatrix::t() const
 {
   vpMatrix At ;
 
-  At.resize(colNum, rowNum);
+  At.resize(colNum, rowNum, false, false);
 
   for (unsigned int i=0;i<rowNum;i++) {
     double *coli = (*this)[i] ;
@@ -391,7 +407,7 @@ vpMatrix vpMatrix::transpose()const
 */
 void vpMatrix::transpose(vpMatrix & At ) const
 {
-  At.resize(colNum,rowNum);
+  At.resize(colNum, rowNum, false, false);
 
   size_t A_step = colNum;
   double ** AtRowPtrs = At.rowPtrs;
@@ -432,7 +448,7 @@ vpMatrix vpMatrix::AAt() const
 */
 void vpMatrix::AAt(vpMatrix &B) const
 {
-  if ((B.rowNum != rowNum) || (B.colNum != rowNum)) B.resize(rowNum,rowNum);
+  if ((B.rowNum != rowNum) || (B.colNum != rowNum)) B.resize(rowNum, rowNum, false, false);
 
   // compute A*A^T
   for(unsigned int i=0;i<rowNum;i++){
@@ -465,7 +481,7 @@ void vpMatrix::AAt(vpMatrix &B) const
 */
 void vpMatrix::AtA(vpMatrix &B) const
 {
-  if ((B.rowNum != colNum) || (B.colNum != colNum)) B.resize(colNum,colNum);
+  if ((B.rowNum != colNum) || (B.colNum != colNum)) B.resize(colNum, colNum, false, false);
 
 #if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
   double alpha = 1.0;
@@ -537,12 +553,46 @@ vpMatrix vpMatrix::AtA() const
 vpMatrix &
 vpMatrix::operator=(const vpArray2D<double> &A)
 {
-  resize(A.getRows(), A.getCols());
+  resize(A.getRows(), A.getCols(), false, false);
 
   memcpy(data, A.data, dsize*sizeof(double));
 
   return *this;
 }
+
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+vpMatrix &
+vpMatrix::operator=(const vpMatrix &A)
+{
+  resize(A.getRows(), A.getCols(), false);
+
+  memcpy(data, A.data, dsize*sizeof(double));
+
+  return *this;
+}
+
+vpMatrix &
+vpMatrix::operator=(vpMatrix &&other) {
+  if (this != &other) {
+    free(data);
+    free(rowPtrs);
+
+    rowNum = other.rowNum;
+    colNum = other.colNum;
+    rowPtrs = other.rowPtrs;
+    dsize = other.dsize;
+    data = other.data;
+
+    other.rowNum = 0;
+    other.colNum = 0;
+    other.rowPtrs = NULL;
+    other.dsize = 0;
+    other.data = NULL;
+  }
+
+  return *this;
+}
+#endif
 
 //! Set all the element of the matrix A to \e x.
 vpMatrix &
@@ -675,7 +725,6 @@ vpMatrix::createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)
   unsigned int rows = A.getRows() ;
   DA.resize(rows, rows);
 
-  DA =0 ;
   for (unsigned int i=0 ; i< rows ; i++ )
     DA[i][i] = A[i] ;
 }
@@ -734,7 +783,7 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
                       A.getRows(), A.getCols(), v.getRows())) ;
   }
 
-  if (A.rowNum != w.rowNum) w.resize(A.rowNum);
+  if (A.rowNum != w.rowNum) w.resize(A.rowNum, false);
 
 #if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
   double alpha = 1.0;
@@ -769,7 +818,7 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
 */
 void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
-  if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
+  if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum, B.colNum, false, false);
 
   if (A.colNum != B.rowNum) {
     throw(vpException(vpException::dimensionError,
@@ -952,7 +1001,7 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
                       rowNum, colNum));
   }
   vpMatrix M;
-  M.resize(rowNum, 6, false);
+  M.resize(rowNum, 6, false, false);
 
 #if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
   double alpha = 1.0;
@@ -1044,7 +1093,7 @@ A new matrix won't be allocated for every use of the function
 */
 
 void vpMatrix::add2WeightedMatrices(const vpMatrix &A, const double &wA, const vpMatrix &B,const double &wB, vpMatrix &C){
-  if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
+  if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum, B.colNum, false, false);
 
   if ((A.colNum != B.getCols())||(A.rowNum != B.getRows())) {
     throw(vpException(vpException::dimensionError,
@@ -1072,7 +1121,7 @@ void vpMatrix::add2WeightedMatrices(const vpMatrix &A, const double &wA, const v
 */
 void vpMatrix::add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {  
-  if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum,B.colNum);
+  if ((A.rowNum != C.rowNum) || (B.colNum != C.colNum)) C.resize(A.rowNum, B.colNum, false, false);
 
   if ((A.colNum != B.getCols())||(A.rowNum != B.getRows())) {
     throw(vpException(vpException::dimensionError,
@@ -1184,7 +1233,7 @@ void vpMatrix::sub2Matrices(const vpColVector &A, const vpColVector &B, vpColVec
 */
 void vpMatrix::sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
 {
-  if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
+  if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum, A.colNum, false, false);
 
   if ( (A.colNum != B.getCols())||(A.rowNum != B.getRows())) {
     throw(vpException(vpException::dimensionError,
@@ -1261,7 +1310,7 @@ vpMatrix & vpMatrix::operator-=(const vpMatrix &B)
 */
 void vpMatrix::negateMatrix(const vpMatrix &A, vpMatrix &C)
 {
-  if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum,A.colNum);
+  if ((A.rowNum != C.rowNum) || (A.colNum != C.colNum)) C.resize(A.rowNum, A.colNum, false, false);
 
   double ** ArowPtrs=A.rowPtrs;
   double ** CrowPtrs=C.rowPtrs;
@@ -1349,7 +1398,7 @@ vpMatrix  vpMatrix::operator/(double x) const
 {
   vpMatrix C;
 
-  C.resize(rowNum,colNum);
+  C.resize(rowNum, colNum, false, false);
 
   //if (x == 0) {
   if (std::fabs(x) <= std::numeric_limits<double>::epsilon()) {
@@ -1420,18 +1469,12 @@ vpMatrix & vpMatrix::operator/=(double x)
 // Matrix Operation
 //----------------------------------------------------------------
 
-
-
-
-
-
-
 /*!
   Stacks columns of a matrix in a vector.
   \param out : a vpColVector.
 */
 void vpMatrix::stackColumns(vpColVector  &out ){
-  if ((out.rowNum != colNum*rowNum) || (out.colNum != 1)) out.resize(rowNum);
+  if ((out.rowNum != colNum*rowNum) || (out.colNum != 1)) out.resize(colNum*rowNum, false, false);
 
   double *optr=out.data;
   for(unsigned int j =0;j<colNum ; j++){
@@ -1458,7 +1501,7 @@ vpColVector vpMatrix::stackColumns()
 */
 void vpMatrix::stackRows(vpRowVector &out)
 {
-  if ((out.getRows() != 1) || (out.getCols() != colNum*rowNum)) out.resize(rowNum);
+  if ((out.getRows() != 1) || (out.getCols() != colNum*rowNum)) out.resize(colNum*rowNum, false, false);
 
   double *mdata=data;
   double *optr=out.data;
@@ -3881,7 +3924,7 @@ vpMatrix::stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     return;
   }
 
-  C.resize(nra+nrb, B.getCols(), false);
+  C.resize(nra+nrb, B.getCols(), false, false);
 
   if (C.data != NULL && A.data != NULL && A.size() > 0) {
       //Copy A in C
@@ -3926,7 +3969,7 @@ vpMatrix::stack(const vpMatrix &A, const vpRowVector &r, vpMatrix &C)
     return;
   }
 
-  C.resize(nra+1, r.getCols(), false);
+  C.resize(nra+1, r.getCols(), false, false);
 
   if (C.data != NULL && A.data != NULL && A.size() > 0) {
     //Copy A in C
@@ -3980,7 +4023,7 @@ vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C,
 {
   if( ( (r + B.getRows()) <= A.getRows() ) &&
     ( (c + B.getCols()) <= A.getCols() ) ){
-      C.resize(A.getRows(),A.getCols()  );
+      C.resize(A.getRows(),A.getCols(), false, false);
 
       for(unsigned int i=0; i<A.getRows(); i++){
         for(unsigned int j=0; j<A.getCols(); j++){
@@ -4052,7 +4095,7 @@ vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     return;
   }
 
-  C.resize(B.getRows(), nca+ncb, false);
+  C.resize(B.getRows(), nca+ncb, false, false);
 
   C.insert(A, 0, 0);
   C.insert(B, 0, nca);
@@ -4384,7 +4427,7 @@ void vpMatrix::stack(const vpMatrix &A)
     }
 
     unsigned int rowNumOld = rowNum;
-    resize(rowNum+A.getRows(), colNum, false);
+    resize(rowNum+A.getRows(), colNum, false, false);
     insert(A, rowNumOld, 0);
   }
 }
@@ -4419,7 +4462,7 @@ void vpMatrix::stack(const vpRowVector &r)
     }
 
     unsigned int oldSize = size();
-    resize(rowNum+1, colNum, false);
+    resize(rowNum+1, colNum, false, false);
 
     if (data != NULL && r.data != NULL && r.size() > 0) {
       //Copy r in data
@@ -4955,7 +4998,7 @@ void vpMatrix::computeHLM(const vpMatrix &H, const double &alpha, vpMatrix &HLM)
                       "Cannot compute HLM on a non square matrix (%dx%d)",
                       H.getRows(), H.getCols() ));
   }
-  HLM.resize(H.getRows(), H.getCols());
+  HLM.resize(H.getRows(), H.getCols(), false, false);
 
   for(unsigned int i=0;i<H.getCols();i++)
   {

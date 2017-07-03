@@ -260,10 +260,10 @@ vpColVector::init(const vpColVector &v, unsigned int r, unsigned int nrows)
     throw(vpException(vpException::dimensionError,
                       "Bad row dimension (%d > %d) used to initialize vpColVector",
                       rnrows, v.getRows()));
-  resize(nrows);
+  resize(nrows, false);
 
   if (this->rowPtrs == NULL) // Fix coverity scan: explicit null dereferenced
-    return; // Noting to do
+    return; // Nothing to do
   for (unsigned int i=r ; i < rnrows; i++)
     (*this)[i-r] = v[i];
 }
@@ -334,6 +334,24 @@ vpColVector::vpColVector (const std::vector<float> &v)
     (*this)[i] = (double)(v[i]);
 }
 
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+vpColVector::vpColVector(vpColVector &&v)
+  : vpArray2D<double>()
+{
+  rowNum = v.rowNum;
+  colNum = v.colNum;
+  rowPtrs = v.rowPtrs;
+  dsize = v.dsize;
+  data = v.data;
+
+  v.rowNum = 0;
+  v.colNum = 0;
+  v.rowPtrs = NULL;
+  v.dsize = 0;
+  v.data = NULL;
+}
+#endif
+
 /*!
    Operator that allows to negate all the column vector elements.
 
@@ -347,14 +365,7 @@ vpColVector::vpColVector (const std::vector<float> &v)
 vpColVector vpColVector::operator-() const
 {
   vpColVector A ;
-  try {
-    A.resize(rowNum)  ;
-  }
-  catch(vpException &/*e*/)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
-  }
+  A.resize(rowNum, false)  ;
 
   double *vd = A.data ;   double *d = data ;
 
@@ -479,19 +490,13 @@ vpColVector vpColVector::operator/(double x) const
 */
 vpColVector &vpColVector::operator=(const vpMatrix &M)
 {
-  if (M.getCols() !=1) {
+  if (M.getCols() != 1) {
     throw (vpException(vpException::dimensionError,
                        "Cannot transform a (%dx%d) matrix into a column vector",
                        M.getRows(), M.getCols()));
   }
 
-  try {
-    resize(M.getRows());
-  }
-  catch(...) {
-    throw ;
-  }
-
+  resize(M.getRows(), false);
   memcpy(data, M.data, rowNum*sizeof(double)) ;
 
   return (*this);
@@ -502,7 +507,7 @@ vpColVector &vpColVector::operator=(const vpMatrix &M)
 */
 vpColVector & vpColVector::operator=(const std::vector<double> &v)
 {
-  resize((unsigned int)v.size());
+  resize((unsigned int)v.size(), false);
   for(unsigned int i=0; i<v.size(); i++)
     (*this)[i] = v[i];
   return *this;
@@ -512,7 +517,7 @@ vpColVector & vpColVector::operator=(const std::vector<double> &v)
 */
 vpColVector & vpColVector::operator=(const std::vector<float> &v)
 {
-	resize((unsigned int)v.size());
+  resize((unsigned int)v.size(), false);
   for(unsigned int i=0; i<v.size(); i++)
     (*this)[i] = (float)v[i];
   return *this;
@@ -522,13 +527,7 @@ vpColVector &vpColVector::operator=(const vpColVector &v)
 {
   unsigned int k = v.rowNum ;
   if (rowNum != k){
-    try {
-      resize(k);
-    }
-    catch(...)
-    {
-      throw ;
-    }
+    resize(k, false);
   }
 
   memcpy(data, v.data, rowNum*sizeof(double)) ;
@@ -542,13 +541,7 @@ vpColVector &vpColVector::operator=(const vpTranslationVector &tv)
 {
   unsigned int k = tv.getRows() ;
   if (rowNum != k){
-    try {
-      resize(k);
-    }
-    catch(...)
-    {
-      throw ;
-    }
+    resize(k, false);
   }
 
   memcpy(data, tv.data, rowNum*sizeof(double)) ;
@@ -561,13 +554,7 @@ vpColVector &vpColVector::operator=(const vpRotationVector &rv)
 {
   unsigned int k = rv.getRows() ;
   if (rowNum != k){
-    try {
-      resize(k);
-    }
-    catch(...)
-    {
-      throw ;
-    }
+    resize(k, false);
   }
 
   memcpy(data, rv.data, rowNum*sizeof(double)) ;
@@ -580,13 +567,7 @@ vpColVector &vpColVector::operator=(const vpPoseVector &p)
 {
   unsigned int k = p.getRows() ;
   if (rowNum != k){
-    try {
-      resize(k);
-    }
-    catch(...)
-    {
-      throw ;
-    }
+    resize(k, false);
   }
 
   memcpy(data, p.data, rowNum*sizeof(double)) ;
@@ -662,6 +643,29 @@ vpColVector & vpColVector::operator=(double x)
     *(d++)=  x ;
   return *this;
 }
+
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+vpColVector & vpColVector::operator=(vpColVector &&other) {
+  if (this != &other) {
+    free(data);
+    free(rowPtrs);
+
+    rowNum = other.rowNum;
+    colNum = other.colNum;
+    rowPtrs = other.rowPtrs;
+    dsize = other.dsize;
+    data = other.data;
+
+    other.rowNum = 0;
+    other.colNum = 0;
+    other.rowPtrs = NULL;
+    other.dsize = 0;
+    other.data = NULL;
+  }
+
+  return *this;
+}
+#endif
 
 /*!
   Transpose the column vector. The resulting vector becomes a row vector.
@@ -949,7 +953,7 @@ void vpColVector::stack(const vpColVector &A, const vpColVector &B, vpColVector 
   }
 
   // General case
-  C.resize(nrA + nrB);
+  C.resize(nrA + nrB, false);
 
   for (unsigned int i=0; i<nrA; i++)
     C[i] = A[i];
@@ -1074,7 +1078,7 @@ vpColVector::skew(const vpColVector &v)
                       v.getRows())) ;
   }
 
-  M.resize(3,3) ;
+  M.resize(3, 3, false, false) ;
   M[0][0] = 0 ;     M[0][1] = -v[2] ;  M[0][2] = v[1] ;
   M[1][0] = v[2] ;  M[1][1] = 0 ;      M[1][2] = -v[0] ;
   M[2][0] = -v[1] ; M[2][1] = v[0] ;   M[2][2] = 0 ;
@@ -1179,12 +1183,7 @@ void vpColVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned
                       "Cannot reshape (%dx1) column vector in (%dx%d) matrix",
                       rowNum, M.getRows(), M.getCols())) ;
   }
-  try {
-    if ((M.getRows() != nrows) || (M.getCols() != ncols)) M.resize(nrows,ncols);
-  }
-  catch(...) {
-    throw ;
-  }
+  if ((M.getRows() != nrows) || (M.getCols() != ncols)) M.resize(nrows, ncols, false, false);
 
   for(unsigned int j =0; j< ncols; j++)
     for(unsigned int i =0; i< nrows; i++)

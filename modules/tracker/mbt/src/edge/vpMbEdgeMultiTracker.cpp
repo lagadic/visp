@@ -428,7 +428,7 @@ void vpMbEdgeMultiTracker::computeVVSInit() {
   }
 
   //Initialize with correct size
-  m_L_edgeMulti.resize(nbrow, 6, false);
+  m_L_edgeMulti.resize(nbrow, 6, false, false);
   m_w_edgeMulti.resize(nbrow, false);
   m_error_edgeMulti.resize(nbrow, false);
   m_weightedError_edgeMulti.resize(nbrow, false);

@@ -103,7 +103,7 @@ buildPlane(vpPoint &P, vpPoint &Q, vpPoint &R, vpPlane &plane)
 {
   vpColVector a(3);
   vpColVector b(3);
-  vpColVector n(3);
+
   //Calculate vector corresponding to PQ
   a[0]=P.get_oX()-Q.get_oX();
   a[1]=P.get_oY()-Q.get_oY();
@@ -115,7 +115,7 @@ buildPlane(vpPoint &P, vpPoint &Q, vpPoint &R, vpPlane &plane)
   b[2]=P.get_oZ()-R.get_oZ();
 
   //Calculate normal vector to plane PQ x PR
-  n=vpColVector::cross(a,b);
+  vpColVector n = vpColVector::cross(a,b);
 
   //Equation of the plane is given by:
   double A = n[0];
@@ -177,8 +177,6 @@ vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
 
   vpColVector V1(3);
   vpColVector V2(3);
-  vpColVector V3(3);
-  vpColVector V4(3);
 
   V1[0] = p1->get_oX();
   V1[1] = p1->get_oY();
@@ -190,17 +188,15 @@ vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
   //if((V1-V2).sumSquare()!=0)
   if(std::fabs((V1-V2).sumSquare()) > std::numeric_limits<double>::epsilon())
   {
-    {
-      V3[0]=double(rand()%1000)/100;
-      V3[1]=double(rand()%1000)/100;
-      V3[2]=double(rand()%1000)/100;
+    vpColVector V3(3);
+    V3[0]=double(rand()%1000)/100;
+    V3[1]=double(rand()%1000)/100;
+    V3[2]=double(rand()%1000)/100;
 
-
-      vpColVector v_tmp1,v_tmp2;
-      v_tmp1 = V2-V1;
-      v_tmp2 = V3-V1;
-      V4=vpColVector::cross(v_tmp1,v_tmp2);
-    }
+    vpColVector v_tmp1,v_tmp2;
+    v_tmp1 = V2-V1;
+    v_tmp2 = V3-V1;
+    vpColVector V4 = vpColVector::cross(v_tmp1,v_tmp2);
 
     vpPoint P3(V3[0],V3[1],V3[2]);
     vpPoint P4(V4[0],V4[1],V4[2]);
@@ -790,11 +786,9 @@ vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
     double yc = cam.get_v0();
 
     double alpha_;
-    vpMatrix H;
-    H = featureline.interaction();
+    vpMatrix H = featureline.interaction();
 
     double x,y;
-    vpMeSite p;
     unsigned int j =0;
 
     for(unsigned int i = 0 ; i < meline.size() ; i++){

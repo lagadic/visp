@@ -812,7 +812,7 @@ void
 vpMbKltTracker::computeVVSInit() {
   unsigned int nbFeatures = 2*m_nbInfos;
 
-  m_L_klt.resize(nbFeatures, 6, false);
+  m_L_klt.resize(nbFeatures, 6, false, false);
   m_error_klt.resize(nbFeatures, false);
 
   m_weightedError_klt.resize(nbFeatures, false);
