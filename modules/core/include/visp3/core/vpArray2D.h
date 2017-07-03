@@ -136,7 +136,7 @@ public:
 
     if (rowPtrs!=NULL) {
       free(rowPtrs);
-      rowPtrs=NULL ;
+      rowPtrs=NULL;
     }
     rowNum = colNum = dsize = 0;
   }
@@ -201,14 +201,14 @@ public:
       if ((NULL == this->data) && (0 != this->dsize)) {
         if (copyTmp != NULL) delete [] copyTmp;
         throw(vpException(vpException::memoryAllocationError,
-          "Memory allocation error when allocating 2D array data")) ;
+          "Memory allocation error when allocating 2D array data"));
       }
 
       this->rowPtrs = (Type**)realloc (this->rowPtrs, nrows*sizeof(Type*));
       if ((NULL == this->rowPtrs) && (0 != this->dsize)) {
         if (copyTmp != NULL) delete [] copyTmp;
         throw(vpException(vpException::memoryAllocationError,
-          "Memory allocation error when allocating 2D array rowPtrs")) ;
+          "Memory allocation error when allocating 2D array rowPtrs"));
       }
 
       // Update rowPtrs
@@ -280,7 +280,7 @@ public:
       return s;
     std::ios_base::fmtflags original_flags = s.flags();
 
-    s.precision(10) ;
+    s.precision(10);
     for (unsigned int i=0;i<A.getRows();i++) {
       for (unsigned int j=0;j<A.getCols()-1;j++){
         s << A[i][j] << "  ";

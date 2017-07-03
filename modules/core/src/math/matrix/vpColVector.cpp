@@ -71,7 +71,7 @@ vpColVector::operator+(const vpColVector &v) const
   if (getRows() != v.getRows() ) {
     throw(vpException(vpException::dimensionError,
                       "Cannot add (%dx1) column vector to (%dx1) column vector",
-                      getRows(), v.getRows())) ;
+                      getRows(), v.getRows()));
   }
   vpColVector r(rowNum);
 
@@ -106,7 +106,7 @@ vpColVector::operator+(const vpTranslationVector &t) const
   }
   vpTranslationVector s;
 
-  for (unsigned int i=0;i<3;i++) s[i] = (*this)[i]+t[i] ;
+  for (unsigned int i=0;i<3;i++) s[i] = (*this)[i]+t[i];
 
   return s;
 }
@@ -118,7 +118,7 @@ vpColVector::operator+=(vpColVector v)
   if (getRows() != v.getRows() ) {
     throw(vpException(vpException::dimensionError,
                       "Cannot add (%dx1) column vector to (%dx1) column vector",
-                      getRows(), v.getRows())) ;
+                      getRows(), v.getRows()));
   }
 
   for (unsigned int i=0;i<rowNum;i++)
@@ -132,7 +132,7 @@ vpColVector::operator-=(vpColVector v)
   if (getRows() != v.getRows() ) {
     throw(vpException(vpException::dimensionError,
                       "Cannot substract (%dx1) column vector to (%dx1) column vector",
-                      getRows(), v.getRows())) ;
+                      getRows(), v.getRows()));
   }
 
   for (unsigned int i=0;i<rowNum;i++)
@@ -156,7 +156,7 @@ vpColVector::operator*(const vpColVector &v) const
                       "Cannot compute the dot product between column vectors with different dimensions (%d) and (%d)",
                       size(), v.size()));
   }
-  double r = 0 ;
+  double r = 0;
 
   for (unsigned int i=0;i<rowNum;i++)
       r += (*this)[i] * v[i];
@@ -189,7 +189,7 @@ vpColVector vpColVector::operator-(const vpColVector &m) const
   if (getRows() != m.getRows() ) {
     throw(vpException(vpException::dimensionError,
                       "Bad size during vpColVector (%dx1) and vpColVector (%dx1) substraction",
-                      getRows(), m.getRows())) ;
+                      getRows(), m.getRows()));
   }
   vpColVector v(rowNum);
 
@@ -254,7 +254,7 @@ w: 1 2
 void
 vpColVector::init(const vpColVector &v, unsigned int r, unsigned int nrows)
 {
-  unsigned int rnrows = r+nrows ;
+  unsigned int rnrows = r+nrows;
 
   if (rnrows > v.getRows())
     throw(vpException(vpException::dimensionError,
@@ -308,7 +308,7 @@ vpColVector::vpColVector (const vpMatrix &M)
   if(M.getCols()!=1) {
     throw(vpException(vpException::dimensionError,
                       "Cannot construct a (%dx1) row vector from a (%dx%d) matrix",
-                      M.getRows(), M.getRows(), M.getCols())) ;
+                      M.getRows(), M.getRows(), M.getCols()));
   }
 
   for(unsigned int i=0; i< M.getRows(); i++)
@@ -364,10 +364,10 @@ vpColVector::vpColVector(vpColVector &&v)
  */
 vpColVector vpColVector::operator-() const
 {
-  vpColVector A ;
-  A.resize(rowNum, false)  ;
+  vpColVector A;
+  A.resize(rowNum, false);
 
-  double *vd = A.data ;   double *d = data ;
+  double *vd = A.data;   double *d = data;
 
   for (unsigned int i=0; i<rowNum; i++)
     *(vd++)= - (*d++);
@@ -398,7 +398,7 @@ vpColVector vpColVector::operator*(double x) const
 {
   vpColVector v(rowNum);
 
-  double *vd = v.data ;   double *d = data ;
+  double *vd = v.data;   double *d = data;
 
   for (unsigned int i=0;i<rowNum;i++)
     *(vd++) = (*d++) * x;
@@ -476,7 +476,7 @@ vpColVector vpColVector::operator/(double x) const
 {
   vpColVector v(rowNum);
 
-  double *vd = v.data ;   double *d = data ;
+  double *vd = v.data;   double *d = data;
 
   for (unsigned int i=0;i<rowNum;i++)
     *(vd++) = (*d++) / x;
@@ -497,7 +497,7 @@ vpColVector &vpColVector::operator=(const vpMatrix &M)
   }
 
   resize(M.getRows(), false);
-  memcpy(data, M.data, rowNum*sizeof(double)) ;
+  memcpy(data, M.data, rowNum*sizeof(double));
 
   return (*this);
 }
@@ -525,12 +525,12 @@ vpColVector & vpColVector::operator=(const std::vector<float> &v)
 
 vpColVector &vpColVector::operator=(const vpColVector &v)
 {
-  unsigned int k = v.rowNum ;
+  unsigned int k = v.rowNum;
   if (rowNum != k){
     resize(k, false);
   }
 
-  memcpy(data, v.data, rowNum*sizeof(double)) ;
+  memcpy(data, v.data, rowNum*sizeof(double));
   return *this;
 }
 
@@ -539,12 +539,12 @@ vpColVector &vpColVector::operator=(const vpColVector &v)
  */
 vpColVector &vpColVector::operator=(const vpTranslationVector &tv)
 {
-  unsigned int k = tv.getRows() ;
+  unsigned int k = tv.getRows();
   if (rowNum != k){
     resize(k, false);
   }
 
-  memcpy(data, tv.data, rowNum*sizeof(double)) ;
+  memcpy(data, tv.data, rowNum*sizeof(double));
   return *this;
 }
 /*!
@@ -552,12 +552,12 @@ vpColVector &vpColVector::operator=(const vpTranslationVector &tv)
  */
 vpColVector &vpColVector::operator=(const vpRotationVector &rv)
 {
-  unsigned int k = rv.getRows() ;
+  unsigned int k = rv.getRows();
   if (rowNum != k){
     resize(k, false);
   }
 
-  memcpy(data, rv.data, rowNum*sizeof(double)) ;
+  memcpy(data, rv.data, rowNum*sizeof(double));
   return *this;
 }
 /*!
@@ -565,12 +565,12 @@ vpColVector &vpColVector::operator=(const vpRotationVector &rv)
  */
 vpColVector &vpColVector::operator=(const vpPoseVector &p)
 {
-  unsigned int k = p.getRows() ;
+  unsigned int k = p.getRows();
   if (rowNum != k){
     resize(k, false);
   }
 
-  memcpy(data, p.data, rowNum*sizeof(double)) ;
+  memcpy(data, p.data, rowNum*sizeof(double));
   return *this;
 }
 
@@ -637,10 +637,10 @@ vpColVector & vpColVector::operator<<( double *x )
 //! Set each element of the column vector to x.
 vpColVector & vpColVector::operator=(double x)
 {
-  double *d = data ;
+  double *d = data;
 
   for (unsigned int i=0;i<rowNum;i++)
-    *(d++)=  x ;
+    *(d++)=  x;
   return *this;
 }
 
@@ -673,7 +673,7 @@ vpColVector & vpColVector::operator=(vpColVector &&other) {
 vpRowVector vpColVector::t() const
 {
   vpRowVector v(rowNum);
-  memcpy(v.data, data, rowNum*sizeof(double)) ;
+  memcpy(v.data, data, rowNum*sizeof(double));
   return v;
 }
 
@@ -702,9 +702,9 @@ void vpColVector::transpose(vpRowVector &v) const
 */
 vpColVector operator*(const double &x, const vpColVector &v)
 {
-  vpColVector vout ;
-  vout = v*x ;
-  return vout ;
+  vpColVector vout;
+  vout = v*x;
+  return vout;
 }
 
 /*!
@@ -718,11 +718,11 @@ vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
 {
   if (a.data==NULL) {
     throw(vpException(vpException::fatalError,
-                      "Cannot compute the dot product: first vector empty")) ;
+                      "Cannot compute the dot product: first vector empty"));
   }
   if (b.data==NULL)  {
     throw(vpException(vpException::fatalError,
-                      "Cannot compute the dot product: second vector empty")) ;
+                      "Cannot compute the dot product: second vector empty"));
   }
   if (a.size() != b.size()) {
     throw(vpException(vpException::dimensionError,
@@ -730,14 +730,14 @@ vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
                       a.size(), b.size()));
   }
 
-  double *ad = a.data ;   double *bd = b.data ;
+  double *ad = a.data;   double *bd = b.data;
 
-  double c = 0 ;
+  double c = 0;
   for (unsigned int i=0 ; i < a.getRows() ; i++)
-    c += *(ad++)* *(bd++) ;
+    c += *(ad++)* *(bd++);
   //  vpMatrix c = (a.t() * b);
   //  return c[0][0];
-  return c ;
+  return c;
 }
 
 /*!
@@ -769,7 +769,7 @@ vpColVector &vpColVector::normalize()
 
   //if (sum != 0.0)
   if (std::fabs(sum_square) > std::numeric_limits<double>::epsilon())
-    *this /= sqrt(sum_square) ;
+    *this /= sqrt(sum_square);
 
   // If sum = 0, we have a nul vector. So we return just.
   return *this;
@@ -784,29 +784,29 @@ vpColVector::invSort(const vpColVector &v)
 {
   if (v.data==NULL) {
     throw(vpException(vpException::fatalError,
-                      "Cannot sort content of column vector: vector empty")) ;
+                      "Cannot sort content of column vector: vector empty"));
   }
-  vpColVector tab ;
-  tab = v ;
-  unsigned int nb_permutation = 1 ;
-  unsigned int i = 0 ;
+  vpColVector tab;
+  tab = v;
+  unsigned int nb_permutation = 1;
+  unsigned int i = 0;
   while (nb_permutation !=0 )
   {
-    nb_permutation = 0 ;
+    nb_permutation = 0;
     for (unsigned int j = v.getRows()-1 ; j >= i+1 ; j--)
     {
       if ((tab[j]>tab[j-1]))
       {
-        double tmp = tab[j] ;
-        tab[j] = tab[j-1] ;
-        tab[j-1] = tmp ;
-        nb_permutation++ ;
+        double tmp = tab[j];
+        tab[j] = tab[j-1];
+        tab[j-1] = tmp;
+        nb_permutation++;
       }
     }
-    i++ ;
+    i++;
   }
 
-  return tab ;
+  return tab;
 }
 
 /*!
@@ -818,29 +818,29 @@ vpColVector::sort(const vpColVector &v)
 {
   if (v.data==NULL) {
     throw(vpException(vpException::fatalError,
-                      "Cannot sort content of column vector: vector empty")) ;
+                      "Cannot sort content of column vector: vector empty"));
   }
-  vpColVector tab ;
-  tab = v ;
-  unsigned int nb_permutation = 1 ;
-  unsigned int i = 0 ;
+  vpColVector tab;
+  tab = v;
+  unsigned int nb_permutation = 1;
+  unsigned int i = 0;
   while (nb_permutation !=0 )
   {
-    nb_permutation = 0 ;
+    nb_permutation = 0;
     for (unsigned int j = v.getRows()-1 ; j >= i+1 ; j--)
     {
       if ((tab[j]<tab[j-1]))
       {
-        double tmp = tab[j] ;
-        tab[j] = tab[j-1] ;
-        tab[j-1] = tmp ;
-        nb_permutation++ ;
+        double tmp = tab[j];
+        tab[j] = tab[j-1];
+        tab[j-1] = tmp;
+        nb_permutation++;
       }
     }
-    i++ ;
+    i++;
   }
 
-  return tab ;
+  return tab;
 }
 
 /*!
@@ -969,16 +969,16 @@ double vpColVector::mean(const vpColVector &v)
 {
   if (v.data == NULL || v.size() == 0) {
     throw(vpException(vpException::dimensionError,
-                      "Cannot compute column vector mean: vector empty")) ;
+                      "Cannot compute column vector mean: vector empty"));
   }
 
   //Use directly sum() function
   double mean = v.sum();
 
   //Old code used
-//  double *vd = v.data ;
+//  double *vd = v.data;
 //  for (unsigned int i=0 ; i < v.getRows() ; i++)
-//    mean += *(vd++) ;
+//    mean += *(vd++);
 
   return mean/v.getRows();
 }
@@ -991,7 +991,7 @@ vpColVector::median(const vpColVector &v)
 {
   if (v.data == NULL || v.size() == 0) {
     throw(vpException(vpException::dimensionError,
-                      "Cannot compute column vector median: vector empty")) ;
+                      "Cannot compute column vector median: vector empty"));
   }
 
   std::vector<double> vectorOfDoubles(v.data, v.data + v.rowNum);
@@ -1007,7 +1007,7 @@ vpColVector::stdev(const vpColVector &v, const bool useBesselCorrection)
 {
   if (v.data == NULL || v.size() == 0) {
     throw(vpException(vpException::dimensionError,
-                      "Cannot compute column vector stdev: vector empty")) ;
+                      "Cannot compute column vector stdev: vector empty"));
   }
 
   double mean_value = mean(v);
@@ -1071,19 +1071,19 @@ vpColVector::stdev(const vpColVector &v, const bool useBesselCorrection)
 vpMatrix
 vpColVector::skew(const vpColVector &v)
 {
-  vpMatrix M ;
+  vpMatrix M;
   if (v.getRows() != 3) {
     throw(vpException(vpException::dimensionError,
                       "Cannot compute skew vector of a non 3-dimention vector (%d)",
-                      v.getRows())) ;
+                      v.getRows()));
   }
 
-  M.resize(3, 3, false, false) ;
-  M[0][0] = 0 ;     M[0][1] = -v[2] ;  M[0][2] = v[1] ;
-  M[1][0] = v[2] ;  M[1][1] = 0 ;      M[1][2] = -v[0] ;
-  M[2][0] = -v[1] ; M[2][1] = v[0] ;   M[2][2] = 0 ;
+  M.resize(3, 3, false, false);
+  M[0][0] = 0 ;     M[0][1] = -v[2] ;  M[0][2] = v[1];
+  M[1][0] = v[2] ;  M[1][1] = 0 ;      M[1][2] = -v[0];
+  M[2][0] = -v[1] ; M[2][1] = v[0] ;   M[2][2] = 0;
 
-  return M ;
+  return M;
 }
 
 /*!
@@ -1181,7 +1181,7 @@ void vpColVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned
   if(dsize!=nrows*ncols) {
     throw(vpException(vpException::dimensionError,
                       "Cannot reshape (%dx1) column vector in (%dx%d) matrix",
-                      rowNum, M.getRows(), M.getCols())) ;
+                      rowNum, M.getRows(), M.getCols()));
   }
   if ((M.getRows() != nrows) || (M.getCols() != ncols)) M.resize(nrows, ncols, false, false);
 
@@ -1453,7 +1453,7 @@ double vpColVector::infinityNorm() const
 {
   double norm=0.0;
   for (unsigned int i=0;i<rowNum;i++){
-    double x =  fabs ( (*this)[i] ) ;
+    double x =  fabs ( (*this)[i] );
     if (x > norm) {
       norm = x;
     }

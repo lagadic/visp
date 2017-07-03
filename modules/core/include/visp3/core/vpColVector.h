@@ -83,7 +83,7 @@ public:
   vpColVector(unsigned int n, double val) : vpArray2D<double>(n, 1, val){}
   //! Copy constructor that allows to construct a column vector from an other one.
   vpColVector(const vpColVector &v) : vpArray2D<double>(v) {}
-  vpColVector(const vpColVector &v, unsigned int r, unsigned int nrows) ;
+  vpColVector(const vpColVector &v, unsigned int r, unsigned int nrows);
   //! Constructor that initialize a column vector from a 3-dim (Euler or \f$\theta {\bf u}\f$)
   //! or 4-dim (quaternion) rotation vector.
   vpColVector(const vpRotationVector &v);
@@ -116,7 +116,7 @@ public:
 
     if (rowPtrs!=NULL) {
       free(rowPtrs);
-      rowPtrs=NULL ;
+      rowPtrs=NULL;
     }
     rowNum = colNum = dsize = 0;
   }
@@ -169,8 +169,8 @@ public:
   std::ostream & maplePrint(std::ostream & os) const;
   std::ostream & matlabPrint(std::ostream & os) const;
 
-  vpColVector &normalize() ;
-  vpColVector &normalize(vpColVector &x) const ;
+  vpColVector &normalize();
+  vpColVector &normalize(vpColVector &x) const;
 
   //! Operator that allows to set a value of an element \f$v_i\f$: v[i] = x
   inline double &operator[](unsigned int n) {  return *(data + n);  }
@@ -274,16 +274,16 @@ public:
   {
     return crossProd(a,b);
   }
-  static vpColVector crossProd(const vpColVector &a, const vpColVector &b)  ;
+  static vpColVector crossProd(const vpColVector &a, const vpColVector &b);
 
-  static double dotProd(const vpColVector &a, const vpColVector &b)  ;
-  static vpColVector invSort(const vpColVector &v)  ;
-  static double median(const vpColVector &v) ;
-  static double mean(const vpColVector &v)  ;
+  static double dotProd(const vpColVector &a, const vpColVector &b);
+  static vpColVector invSort(const vpColVector &v);
+  static double median(const vpColVector &v);
+  static double mean(const vpColVector &v);
   // Compute the skew matrix [v]x
   static vpMatrix skew(const vpColVector &v);
 
-  static vpColVector sort(const vpColVector &v)  ;
+  static vpColVector sort(const vpColVector &v);
 
   static vpColVector stack(const vpColVector &A, const vpColVector &B);
   static void stack(const vpColVector &A, const vpColVector &B, vpColVector &C);
@@ -310,7 +310,7 @@ public:
   /*!
      \deprecated You should rather use eye()
    */
-  vp_deprecated void setIdentity(const double & val=1.0) ;
+  vp_deprecated void setIdentity(const double & val=1.0);
   /*!
      \deprecated You should rather use stack(const vpColVector &)
    */
@@ -332,6 +332,6 @@ public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_EXPORT
 #endif
-vpColVector operator*(const double &x, const vpColVector &v) ;
+vpColVector operator*(const double &x, const vpColVector &v);
 
 #endif
