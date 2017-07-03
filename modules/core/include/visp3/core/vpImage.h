@@ -125,6 +125,9 @@ std::ostream& operator<<(std::ostream&, const vpImage<char>&);
 std::ostream& operator<<(std::ostream&, const vpImage<float>&);
 std::ostream& operator<<(std::ostream&, const vpImage<double>&);
 
+template <class Type>
+void swap(vpImage<Type> &first, vpImage<Type> &second);
+
 template<class Type>
 class vpImage
 {
@@ -138,6 +141,10 @@ public:
   vpImage();
   //! copy constructor
   vpImage(const vpImage<Type>&);
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  //! move constructor
+  vpImage(vpImage<Type>&&);
+#endif
   //! constructor  set the size of the image
   vpImage(unsigned int height, unsigned int width);
   //! constructor  set the size of the image and init all the pixel
@@ -306,7 +313,7 @@ public:
   vpImage<Type> operator-(const vpImage<Type> &B);
 
   //! Copy operator
-  vpImage<Type>& operator=(const vpImage<Type> &I);
+  vpImage<Type>& operator=(vpImage<Type> other);
 
   vpImage<Type>& operator=(const Type &v);
   bool operator==(const vpImage<Type> &I);
@@ -331,6 +338,8 @@ public:
   void sub(const vpImage<Type> &B, vpImage<Type> &C);
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
   void subsample(unsigned int v_scale, unsigned int h_scale, vpImage<Type> &sampled) const;
+
+  friend void swap<> (vpImage<Type> &first, vpImage<Type> &second);
 
   //@}
 
@@ -942,8 +951,6 @@ vpImage<Type>::~vpImage()
   destroy();
 }
 
-
-
 /*!
   Copy constructor
 */
@@ -953,10 +960,24 @@ vpImage<Type>::vpImage(const vpImage<Type>& I)
 {
   resize(I.getHeight(),I.getWidth());
   memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type));
-
-  for (unsigned int i =0  ; i < this->height ; i++)
-    row[i] = bitmap + i*this->width;
 }
+
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+/*!
+  Move constructor
+*/
+template<class Type>
+vpImage<Type>::vpImage(vpImage<Type> &&I)
+  : bitmap(I.bitmap), display(I.display), npixels(I.npixels), width(I.width), height(I.height), row(I.row)
+{
+  I.bitmap = NULL;
+  I.display = NULL;
+  I.npixels = 0;
+  I.width = 0;
+  I.height = 0;
+  I.row = NULL;
+}
+#endif
 
 /*!
   \brief Return the maximum value within the bitmap
@@ -1010,51 +1031,12 @@ void vpImage<Type>::getMinMaxValue(Type &min, Type &max) const
   \brief Copy operator
 */
 template<class Type>
-vpImage<Type> & vpImage<Type>::operator=(const vpImage<Type> &I)
+vpImage<Type> & vpImage<Type>::operator=(vpImage<Type> other)
 {
-    /* we first have to set the initial values of the image because resize function calls init function that test the actual size of the image */
-  if(bitmap != NULL){
-    delete[] bitmap;
-    bitmap = NULL;
-  }
+  swap(*this, other);
 
-  if(row != NULL){
-    delete[] row;
-    row = NULL;
-  }
-  this->width = I.width;
-  this->height = I.height;
-  this->npixels = I.npixels;
-
-  if(I.npixels != 0)
-  {
-    if (bitmap == NULL){
-      bitmap = new  Type[npixels];
-    }
-
-    if (bitmap == NULL){
-      throw(vpException(vpException::memoryAllocationError,
-            "cannot allocate bitmap "));
-    }
-
-    if (row == NULL){
-      row = new  Type*[height];
-    }
-    if (row == NULL){
-      throw(vpException(vpException::memoryAllocationError,
-            "cannot allocate row "));
-    }
-
-    memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type));
-
-    for (unsigned int i=0; i<this->height; i++){
-      row[i] = bitmap + i*this->width;
-    }
-  }
-
-  return (* this);
+  return *this;
 }
-
 
 /*!
   \brief = operator : Set all the element of the bitmap to a given  value \e v.
@@ -1932,6 +1914,17 @@ inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], const unsigned
     }
 #endif
   }
+}
+
+template<class Type>
+void swap(vpImage<Type> &first, vpImage<Type> &second) {
+  using std::swap;
+  swap(first.bitmap, second.bitmap);
+  swap(first.display, second.display);
+  swap(first.npixels, second.npixels);
+  swap(first.width, second.width);
+  swap(first.height, second.height);
+  swap(first.row, second.row);
 }
 
 #endif

@@ -820,6 +820,23 @@ main()
     }
 #endif
 
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+    {
+      std::vector<vpMatrix> vec_mat;
+      vec_mat.emplace_back(5, 5);
+
+      vpMatrix A(4,4), B(4,4);
+      A = 1;
+      B = 2;
+      vpMatrix res = A+B;
+      std::cout << "\n1) A+B:\n" << res << std::endl;
+
+      vpMatrix res2;
+      res2 = A+B;
+      std::cout << "\n2) A+B:\n" << res2 << std::endl;
+    }
+#endif
+
     std::cout << "\nAll tests succeed" << std::endl;
     return EXIT_SUCCESS;
   }

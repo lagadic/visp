@@ -242,7 +242,7 @@ void vpMbDepthNormalTracker::computeVVS() {
 void vpMbDepthNormalTracker::computeVVSInit() {
   unsigned int nb_features = (unsigned int) (3 * m_depthNormalListOfDesiredFeatures.size());
 
-  m_L_depthNormal.resize(nb_features, 6, false);
+  m_L_depthNormal.resize(nb_features, 6, false, false);
   m_error_depthNormal.resize(nb_features, false);
   m_weightedError_depthNormal.resize(nb_features, false);
 

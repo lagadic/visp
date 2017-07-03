@@ -242,7 +242,7 @@ void vpMbDepthDenseTracker::computeVVSInit() {
     m_denseDepthNbFeatures += face->getNbFeatures();
   }
 
-  m_L_depthDense.resize(m_denseDepthNbFeatures, 6, false);
+  m_L_depthDense.resize(m_denseDepthNbFeatures, 6, false, false);
   m_error_depthDense.resize(m_denseDepthNbFeatures, false);
   m_weightedError_depthDense.resize(m_denseDepthNbFeatures, false);
 

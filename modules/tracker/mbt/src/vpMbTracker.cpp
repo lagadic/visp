@@ -2437,7 +2437,7 @@ vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, v
                             "Incorrect matrices size in computeJTR.");
   }
 
-  JTR.resize(6);
+  JTR.resize(6, false);
 
 #if VISP_HAVE_SSE2
   __m128d v_JTR_0_1 = _mm_setzero_pd();

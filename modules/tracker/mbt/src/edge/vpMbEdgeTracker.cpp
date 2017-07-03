@@ -764,7 +764,7 @@ vpMbEdgeTracker::computeVVSInit() {
     throw vpTrackingException(vpTrackingException::notEnoughPointError, "No data found to compute the interaction matrix...");
   }
 
-  m_L_edge.resize(nbrow, 6, false);
+  m_L_edge.resize(nbrow, 6, false, false);
   m_error_edge.resize(nbrow, false);
 
   m_weightedError_edge.resize(nbrow, false);

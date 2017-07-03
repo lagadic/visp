@@ -127,7 +127,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   */
   vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) {}
   vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c,
-           unsigned int nrows, unsigned int ncols) ;
+           unsigned int nrows, unsigned int ncols);
   /*!
      Create a matrix from a 2D array that could be one of the following container that
      inherit from vpArray2D such as vpMatrix, vpRotationMatrix, vpHomogeneousMatrix,
@@ -140,6 +140,12 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
      \endcode
    */
   vpMatrix(const vpArray2D<double>& A) : vpArray2D<double>(A) {}
+
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  vpMatrix(const vpMatrix& A) : vpArray2D<double>(A) {}
+
+  vpMatrix(vpMatrix &&A);
+#endif
 
   //! Destructor (Memory de-allocation)
   virtual ~vpMatrix() {}
@@ -157,7 +163,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 
     if (rowPtrs!=NULL) {
       free(rowPtrs);
-      rowPtrs=NULL ;
+      rowPtrs=NULL;
     }
     rowNum = colNum = dsize = 0;
   }
@@ -171,9 +177,9 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   void diag(const vpColVector &A);
   // Initialize an identity matrix n-by-n
   void eye();
-  void eye(unsigned int n) ;
+  void eye(unsigned int n);
   // Initialize an identity matrix m-by-n
-  void eye(unsigned int m, unsigned int n) ;
+  void eye(unsigned int m, unsigned int n);
   //@}
 
   //---------------------------------
@@ -183,6 +189,10 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //@{
   vpMatrix &operator<<(double*);
   vpMatrix &operator=(const vpArray2D<double> &A);
+#ifdef VISP_HAVE_CPP11_COMPATIBILITY
+  vpMatrix &operator=(const vpMatrix &A);
+  vpMatrix &operator=(vpMatrix &&A);
+#endif
   vpMatrix &operator=(const double x);
   //@}
 
@@ -412,9 +422,9 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   unsigned int kernel(vpMatrix &kerAt, double svThreshold=1e-6) const;
 
   // solve Ax=B using the SVD decomposition (usage A = solveBySVD(B,x) )
-  void solveBySVD(const vpColVector &B, vpColVector &x) const ;
+  void solveBySVD(const vpColVector &B, vpColVector &x) const;
   // solve Ax=B using the SVD decomposition (usage  x=A.solveBySVD(B))
-  vpColVector solveBySVD(const vpColVector &B) const ;
+  vpColVector solveBySVD(const vpColVector &B) const;
 
   // singular value decomposition SVD
   void svd(vpColVector &w, vpMatrix &V);
@@ -477,7 +487,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Setting a diagonal matrix with Static Public Member Functions  */
   //@{
   // Create a diagonal matrix with the element of a vector DAii = Ai
-  static void createDiagonalMatrix(const vpColVector &A, vpMatrix &DA)  ;
+  static void createDiagonalMatrix(const vpColVector &A, vpMatrix &DA);
   //@}
 
   //---------------------------------
@@ -486,9 +496,9 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Matrix insertion with Static Public Member Functions  */
   //@{
   // Insert matrix B in matrix A at the given position (r, c).
-  static vpMatrix insert(const vpMatrix &A,const  vpMatrix &B, const unsigned int r, const unsigned int c) ;
+  static vpMatrix insert(const vpMatrix &A,const  vpMatrix &B, const unsigned int r, const unsigned int c);
   // Insert matrix B in matrix A (not modified) at the given position (r, c), the result is given in matrix C.
-  static void insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C, const unsigned int r, const unsigned int c) ;
+  static void insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C, const unsigned int r, const unsigned int c);
 
   //---------------------------------
   // Stacking with Static Public Member Functions
@@ -496,12 +506,12 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Stacking with Static Public Member Functions  */
   //@{
   // Juxtapose to matrices C = [ A B ]
-  static vpMatrix juxtaposeMatrices(const vpMatrix &A,const  vpMatrix &B) ;
+  static vpMatrix juxtaposeMatrices(const vpMatrix &A,const  vpMatrix &B);
   // Juxtapose to matrices C = [ A B ]
-  static void juxtaposeMatrices(const vpMatrix &A,const  vpMatrix &B, vpMatrix &C) ;
+  static void juxtaposeMatrices(const vpMatrix &A,const  vpMatrix &B, vpMatrix &C);
   // Stack two matrices C = [ A B ]^T
-  static vpMatrix stack(const vpMatrix &A, const vpMatrix &B) ;
-  static vpMatrix stack(const vpMatrix &A, const vpRowVector &r) ;
+  static vpMatrix stack(const vpMatrix &A, const vpMatrix &B);
+  static vpMatrix stack(const vpMatrix &A, const vpRowVector &r);
 
   // Stack two matrices C = [ A B ]^T
   static void stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
@@ -663,7 +673,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /*!
      \deprecated You should rather use diag(const double &)
    */
-  vp_deprecated void setIdentity(const double & val=1.0) ;
+  vp_deprecated void setIdentity(const double & val=1.0);
 
   vp_deprecated vpRowVector row(const unsigned int i);
   vp_deprecated vpColVector column(const unsigned int j);
@@ -688,6 +698,6 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_EXPORT
 #endif
-vpMatrix operator*(const double &x, const vpMatrix &A) ;
+vpMatrix operator*(const double &x, const vpMatrix &A);
 
 #endif
