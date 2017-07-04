@@ -682,7 +682,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 #endif
 
  private:
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+#if defined(VISP_HAVE_LAPACK)
   static void blas_dgemm(char trans_a, char trans_b, const int M, const int N, const int K, double alpha, double * a_data,
                          const int lda, double * b_data, const int ldb, double beta, double * c_data, const int ldc);
   static void blas_dgemv(char trans, const int M, const int N, double alpha, double * a_data, const int lda, double * x_data,
