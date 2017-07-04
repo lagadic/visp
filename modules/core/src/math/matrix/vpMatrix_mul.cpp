@@ -37,14 +37,23 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#  if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
-typedef int integer;
+#  if defined(VISP_HAVE_LAPACK)
+#    ifdef VISP_HAVE_LAPACK_BUILT_IN
+typedef long int integer;
+extern "C" void f2c_dgemm(char *transa, char *transb, integer *M, integer *N, integer *K, double *alpha, double *a,
+                          integer *lda, double *b, integer *ldb, double *beta, double *c, integer *ldc);
 
+extern "C" void f2c_dgemv(char *trans, integer *M, integer *N, double *alpha, double *a, integer *lda,
+                           double *x, integer *incx, double *beta, double *y, integer *incy);
+#    else
+typedef int integer;
 extern "C" void dgemm_(char *transa, char *transb, integer *M, integer *N, integer *K, double *alpha, double *a,
                        integer *lda, double *b, integer *ldb, double *beta, double *c, integer *ldc);
 
 extern "C" void dgemv_(char *trans, integer *M, integer *N, double *alpha, double *a, integer *lda,
                        double *x, integer *incx, double *beta, double *y, integer *incy);
+#    endif
+
 
 
 void vpMatrix::blas_dgemm(char trans_a, char trans_b, const int M_, const int N_, const int K_, double alpha, double * a_data,
@@ -52,7 +61,11 @@ void vpMatrix::blas_dgemm(char trans_a, char trans_b, const int M_, const int N_
   integer M = (integer) M_, K = (integer) K_, N = (integer) N_;
   integer lda = (integer) lda_, ldb = (integer) ldb_, ldc = (integer) ldc_;
 
+#ifdef VISP_HAVE_LAPACK_BUILT_IN
+  f2c_dgemm(&trans_a, &trans_b, &M, &N, &K, &alpha, a_data, &lda, b_data, &ldb, &beta, c_data, &ldc);
+#else
   dgemm_(&trans_a, &trans_b, &M, &N, &K, &alpha, a_data, &lda, b_data, &ldb, &beta, c_data, &ldc);
+#endif
 }
 
 void vpMatrix::blas_dgemv(char trans, const int M_, const int N_, double alpha, double * a_data, const int lda_, double * x_data,
@@ -60,7 +73,11 @@ void vpMatrix::blas_dgemv(char trans, const int M_, const int N_, double alpha, 
   integer M = (integer) M_, N = (integer) N_;
   integer lda = (integer) lda_, incx = (integer) incx_, incy = (integer) incy_;
 
+#ifdef VISP_HAVE_LAPACK_BUILT_IN
+  f2c_dgemv(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
+#else
   dgemv_(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
+#endif
 }
 #  endif
 
