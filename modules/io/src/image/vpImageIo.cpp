@@ -1767,7 +1767,7 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
 
   png_bytep* rowPtrs = new png_bytep[height];
 
-  unsigned int stride = width * bit_depth * channels / 8;
+  unsigned int stride = png_get_rowbytes(png_ptr, info_ptr);
   unsigned char* data = new  unsigned char[stride * height];
 
   for (unsigned int  i =0; i < height; i++)
@@ -1783,29 +1783,31 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
   case 1:
     output = (unsigned char*)I.bitmap;
     for (unsigned int i = 0; i < width*height; i++)
-      {
-        *(output++) = data[i];
-      }
+    {
+      *(output++) = data[i];
+    }
     break;
+
   case 2:
     output = (unsigned char*)I.bitmap;
     for (unsigned int i = 0; i < width*height; i++)
-      {
-        *(output++) = data[i*2];
-      }
+    {
+      *(output++) = data[i*2];
+    }
     break;
-  case 3:
 
+  case 3:
     output = (unsigned char*)Ic.bitmap;
-      for (unsigned int i = 0; i < width*height; i++)
-      {
-        *(output++) = data[i*3];
-        *(output++) = data[i*3+1];
-        *(output++) = data[i*3+2];
-        *(output++) = vpRGBa::alpha_default;
-      }
-    vpImageConvert::convert(Ic,I) ;
+    for (unsigned int i = 0; i < width*height; i++)
+    {
+      *(output++) = data[i*3];
+      *(output++) = data[i*3+1];
+      *(output++) = data[i*3+2];
+      *(output++) = vpRGBa::alpha_default;
+    }
+    vpImageConvert::convert(Ic,I);
     break;
+
   case 4:
     output = (unsigned char*)Ic.bitmap;
       for (unsigned int i = 0; i < width*height; i++)
@@ -1815,7 +1817,7 @@ vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
         *(output++) = data[i*4+2];
         *(output++) = data[i*4+3];
       }
-    vpImageConvert::convert(Ic,I) ;
+    vpImageConvert::convert(Ic,I);
     break;
   }
 
@@ -1957,7 +1959,7 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
 
   png_bytep* rowPtrs = new png_bytep[height];
 
-  unsigned int stride = width * bit_depth * channels / 8;
+  unsigned int stride = png_get_rowbytes(png_ptr, info_ptr);
   unsigned char* data = new  unsigned char[stride * height];
 
 
@@ -1974,39 +1976,41 @@ vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
   case 1:
     output = (unsigned char*)Ig.bitmap;
     for (unsigned int i = 0; i < width*height; i++)
-      {
-        *(output++) = data[i];
-      }
-    vpImageConvert::convert(Ig,I) ;
+    {
+      *(output++) = data[i];
+    }
+    vpImageConvert::convert(Ig,I);
     break;
+
   case 2:
     output = (unsigned char*)Ig.bitmap;
     for (unsigned int i = 0; i < width*height; i++)
-      {
-        *(output++) = data[i*2];
-      }
-    vpImageConvert::convert(Ig,I) ;
+    {
+      *(output++) = data[i*2];
+    }
+    vpImageConvert::convert(Ig,I);
     break;
-  case 3:
 
+  case 3:
     output = (unsigned char*)I.bitmap;
-      for (unsigned int i = 0; i < width*height; i++)
-      {
-        *(output++) = data[i*3];
-        *(output++) = data[i*3+1];
-        *(output++) = data[i*3+2];
-        *(output++) = vpRGBa::alpha_default;
-      }
+    for (unsigned int i = 0; i < width*height; i++)
+    {
+      *(output++) = data[i*3];
+      *(output++) = data[i*3+1];
+      *(output++) = data[i*3+2];
+      *(output++) = vpRGBa::alpha_default;
+    }
     break;
+
   case 4:
     output = (unsigned char*)I.bitmap;
-      for (unsigned int i = 0; i < width*height; i++)
-      {
-        *(output++) = data[i*4];
-        *(output++) = data[i*4+1];
-        *(output++) = data[i*4+2];
-        *(output++) = data[i*4+3];
-      }
+    for (unsigned int i = 0; i < width*height; i++)
+    {
+      *(output++) = data[i*4];
+      *(output++) = data[i*4+1];
+      *(output++) = data[i*4+2];
+      *(output++) = data[i*4+3];
+    }
     break;
   }
 
