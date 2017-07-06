@@ -273,10 +273,17 @@ endif()
 # Create a target from the *.cpp file, link against ViSP libraries and add a dependency to ViSP library
 # tu ensure that the library is build before this target.
 macro(visp_add_target file_cpp)
+  if(POLICY CMP0020)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
+  endif()
   get_filename_component(target ${file_cpp} NAME_WE)
   include_directories(${VISP_INCLUDE_DIRS})
   add_executable(${target} ${file_cpp})
   target_link_libraries(${target} ${VISP_LIBRARIES})
+    if(POLICY CMP0020)
+  cmake_policy(POP) #cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
+  endif()
 endmacro()
 
 # Create a dependency to the target extracted from the *.cpp file and put the target in the solution dependency folder.

@@ -90,6 +90,12 @@ cmake_minimum_required(VERSION 2.8.3)
 if(POLICY CMP0022)
   cmake_policy(SET CMP0022 NEW) # Due to sensor ATIDAQ_LIBRARIES
 endif()
+if(POLICY CMP0053)
+  cmake_policy(SET CMP0053 NEW) # For UsTK: VTK and Qt5
+endif()
+if(POLICY CMP0020)
+  cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
+endif()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
