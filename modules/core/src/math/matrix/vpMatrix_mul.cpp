@@ -62,6 +62,10 @@ void vpMatrix::blas_dgemv(char trans, const int M_, const int N_, double alpha, 
 
   dgemv_(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
 }
+
+#  else
+// Work arround to avoid warning LNK4221: This object file does not define any previously undefined public symbols
+void dummy_vpMatrix_blas() {};
 #  endif
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
