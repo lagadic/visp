@@ -21,6 +21,10 @@ ViSP 3.1.0 (under development)
     . Introduce vpMbGenericTracker a new class that can handle all the features
       supported by the model-based tracker but also consider stereo or multi-view
       tracking
+    . Add model-based depth tracking using face normals or using a dense approach
+    . Use BLAS library to compute dgemm and dgemv operations if available
+    . Add an explicit recopy parameter when resizing a vpArray2D
+    . Add move constructor / assignment operator for vpMatrix, vpColVector and vpImage
   - Tutorials
     . New tutorial: How to extend ViSP creating a new contrib module
   - Bug fixed
@@ -35,6 +39,8 @@ ViSP 3.1.0 (under development)
     . [#177] Bug in line 124 of VISPConfig.cmake
     . [#178] Comments are not handled in vpMbTracker::initFromPoints()
     . [#183] Inversion between pixel size and optical center in vpRealSense class
+    . [#187] Integer division by zero in vpDisplayWin32.cpp
+    . [#200] Issue when reading PNG images with 16bits depth with libpng
 
 ----------------------------------------------
 ViSP 3.0.1 (released February 3rd, 2017)
