@@ -63,7 +63,7 @@
   \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
 Test performance between methods to iterate over pixel image.\n\

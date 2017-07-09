@@ -54,9 +54,6 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdi:o:h"
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user);
-
 /*
 
   Print the program options.
@@ -68,7 +65,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
   \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
 Read and write PGM images on the disk. Also test exceptions.\n\
@@ -96,7 +93,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n\n",
-	  ipath.c_str(), opath.c_str(), user.c_str());
+    ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);

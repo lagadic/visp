@@ -51,9 +51,6 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdi:o:n:h"
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user, int nbiter);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user, int &nbiter);
-
 /*
   Print the program options.
 
@@ -64,7 +61,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
   \param user : Username.
   \param nbiter : Number of benchmark iterations.
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user, int nbiter)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath, const std::string &user, int nbiter)
 {
   fprintf(stdout, "\n\
 Test images addition / substraction.\n\

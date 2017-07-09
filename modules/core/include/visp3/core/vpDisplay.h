@@ -138,21 +138,21 @@ int main()
   vpDisplay::flush(I);
 
   // Get non blocking keyboard events
-  std::cout << "Check keyboard events..." << std::endl; 
+  std::cout << "Check keyboard events..." << std::endl;
   char key[10]; sprintf(key, "\0");
   bool ret;
   for (int i=0; i< 200; i++) {
     bool ret = vpDisplay::getKeyboardEvent(I, key, false);
-    if (ret) 
+    if (ret)
       std::cout << "keyboard event: key: " << "\"" << key << "\"" << std::endl;
     vpTime::wait(40);
   }
 
   // Get a blocking keyboard event
-  std::cout << "Wait for a keyboard event..." << std::endl; 
+  std::cout << "Wait for a keyboard event..." << std::endl;
   ret = vpDisplay::getKeyboardEvent(I, key, true);
   std::cout << "keyboard event: " << ret << std::endl;
-  if (ret) 
+  if (ret)
     std::cout << "key: " << "\"" << key << "\"" << std::endl;
 
   // Wait for a click in the display window
@@ -399,16 +399,16 @@ public:
 
   /*!
     Flushes the display.
-    It's necessary to use this function to see the results of any drawing.    
-  */  
+    It's necessary to use this function to see the results of any drawing.
+  */
   virtual void flushDisplay() =0;
-  
+
   /*!
     Flushes the display.
-    It's necessary to use this function to see the results of any drawing.    
-  */  
+    It's necessary to use this function to see the results of any drawing.
+  */
   virtual void flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height) =0;
-	
+
 
   /* Simple interface with the mouse event */
 
@@ -421,8 +421,8 @@ public:
     - When set to false, returns true only if a mouse button is
     pressed, otherwise returns false.
 
-    \return 
-    - true if a button was clicked. This is always the case if blocking is set 
+    \return
+    - true if a button was clicked. This is always the case if blocking is set
     to \e true.
     - false if no button was clicked. This can occur if blocking is set
     to \e false.
@@ -438,8 +438,8 @@ public:
     \param blocking [in] : true for a blocking behaviour waiting a mouse
     button click, false for a non blocking behaviour.
 
-    \return 
-    - true if a button was clicked. This is always the case if blocking is set 
+    \return
+    - true if a button was clicked. This is always the case if blocking is set
     to \e true.
     - false if no button was clicked. This can occur if blocking is set
     to \e false.
@@ -448,12 +448,12 @@ public:
   /*!
     Wait for a mouse button click and get the position of the clicked
     pixel. The button used to click is also set.
-  
+
     \param ip [out] : The coordinates of the clicked image point.
 
     \param button [out] : The button used to click.
 
-    \param blocking [in] : 
+    \param blocking [in] :
     - When set to true, this method waits until a mouse button is
     pressed and then returns always true.
     - When set to false, returns true only if a mouse button is
@@ -477,37 +477,37 @@ public:
     \param blocking [in] : true for a blocking behaviour waiting a mouse
     button click, false for a non blocking behaviour.
 
-    \return 
-    - true if a button was clicked. This is always the case if blocking is set 
+    \return
+    - true if a button was clicked. This is always the case if blocking is set
     to \e true.
     - false if no button was clicked. This can occur if blocking is set
     to \e false.
 
     \sa getClick(vpImagePoint &, vpMouseButton::vpMouseButtonType &, bool)
 
-  */ 
+  */
   virtual bool getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true) =0;
 
   /*!
     Get a keyboard event.
-    
+
     \param blocking [in] : Blocking behavior.
     - When set to true, this method waits until a key is
       pressed and then returns always true.
     - When set to false, returns true only if a key is
       pressed, otherwise returns false.
 
-      \return 
-      - true if a key was pressed. This is always the case if blocking is set 
+      \return
+      - true if a key was pressed. This is always the case if blocking is set
         to \e true.
       - false if no key was pressed. This can occur if blocking is set
         to \e false.
   */
   virtual bool getKeyboardEvent(bool blocking=true) =0;
   /*!
-    
+
     Get a keyboard event.
-    
+
     \param blocking [in] : Blocking behavior.
     - When set to true, this method waits until a key is
       pressed and then returns always true.
@@ -517,8 +517,8 @@ public:
     \param key [out]: If possible, an ISO Latin-1 character
     corresponding to the keyboard key.
 
-    \return 
-    - true if a key was pressed. This is always the case if blocking is set 
+    \return
+    - true if a key was pressed. This is always the case if blocking is set
       to \e true.
     - false if no key was pressed. This can occur if blocking is set
       to \e false.
@@ -526,21 +526,21 @@ public:
   virtual bool getKeyboardEvent(std::string &key, bool blocking=true) =0;
   /*!
     Get the coordinates of the mouse pointer.
-    
+
     \param ip [out] : The coordinates of the mouse pointer.
-  
+
     \return true if a pointer motion event was received, false otherwise.
 
     \exception vpDisplayException::notInitializedError : If the display
     was not initialized.
   */
   virtual bool getPointerMotionEvent (vpImagePoint &ip) =0;
-  
+
   /*!
     Get the coordinates of the mouse pointer.
-    
+
     \param ip [out] : The coordinates of the mouse pointer.
-  
+
     \return true.
 
     \exception vpDisplayException::notInitializedError : If the display
@@ -694,7 +694,7 @@ int main()
   static void displayDotLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1) ;
   static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1, const double &coef2, const double &coef3, bool use_centered_moments, const vpColor &color, unsigned int thickness=1);
   static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1, const double &coef2, const double &coef3, const double &theta1, const double &theta2, bool use_centered_moments, const vpColor &color, unsigned int thickness=1);
-  static void displayFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, const vpColor &color=vpColor::none, unsigned int thickness=1, vpImagePoint offset=vpImagePoint(0,0))  ;
+  static void displayFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, const vpColor &color=vpColor::none, unsigned int thickness=1, const vpImagePoint &offset=vpImagePoint(0,0))  ;
   static void displayLine(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
   static void displayLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1) ;
   static void displayPoint(const vpImage<unsigned char> &I, const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1) ;
@@ -752,7 +752,7 @@ int main()
   static void displayDotLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1) ;
   static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &coef1, const double &coef2, const double &coef3, bool use_centered_moments, const vpColor &color, unsigned int thickness=1);
   static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &coef1, const double &coef2, const double &coef3, const double &theta1, const double &theta2, bool use_centered_moments, const vpColor &color, unsigned int thickness=1);
-  static void displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, const vpColor &color=vpColor::none, unsigned int thickness=1, vpImagePoint offset=vpImagePoint(0,0))  ;
+  static void displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, const vpColor &color=vpColor::none, unsigned int thickness=1, const vpImagePoint &offset=vpImagePoint(0,0))  ;
   static void displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
   static void displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1) ;
   static void displayPoint(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1) ;

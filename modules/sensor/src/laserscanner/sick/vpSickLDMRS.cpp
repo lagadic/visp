@@ -60,11 +60,11 @@
 
   \file vpSickLDMRS.cpp
 
-  \brief Driver for the Sick LD-MRS laser scanner. 
+  \brief Driver for the Sick LD-MRS laser scanner.
 */
 
-/*! 
- 
+/*!
+
   Default constructor that initialize the Ethernet address to
   "131.254.12.119", set the port to 12002 and allocates memory for the
   body messages.
@@ -79,8 +79,8 @@ vpSickLDMRS::vpSickLDMRS()
 
   vAngle.resize(4); // Vertical angle of the 4 layers
   vAngle[0] = vpMath::rad(-1.2);
-  vAngle[1] = vpMath::rad(-0.4); 
-  vAngle[2] = vpMath::rad( 0.4); 
+  vAngle[1] = vpMath::rad(-0.4);
+  vAngle[2] = vpMath::rad( 0.4);
   vAngle[3] = vpMath::rad( 1.2);
 }
 
@@ -89,27 +89,27 @@ vpSickLDMRS::vpSickLDMRS()
 */
 vpSickLDMRS::~vpSickLDMRS()
 {
-  if (body) 
+  if (body)
     delete [] body;
 }
 
-/*! 
+/*!
   Initialize the connection with the Sick LD-MRS laser scanner.
 
   \param ip_address : Ethernet address of the laser.
   \param com_port : Ethernet port of the laser.
 
   \return true if the device was initialized, false otherwise.
-  
+
 */
-bool vpSickLDMRS::setup(std::string ip_address, int com_port)
+bool vpSickLDMRS::setup(const std::string &ip_address, int com_port)
 {
   setIpAddress( ip_address );
   setPort( com_port );
   return ( this->setup() );
 }
 
-/*! 
+/*!
   Initialize the connection with the Sick LD-MRS laser scanner.
 
   \return true if the device was initialized, false otherwise.
@@ -121,10 +121,10 @@ bool vpSickLDMRS::setup()
   struct timeval tv;
   fd_set myset;
 
-  // Create the TCP socket 
-  socket_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); 
+  // Create the TCP socket
+  socket_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   if (socket_fd < 0) {
-     fprintf(stderr, "Failed to create socket\n"); 
+     fprintf(stderr, "Failed to create socket\n");
      return false;
   }
   //bzero(&serv_addr, sizeof(serv_addr));
@@ -135,21 +135,21 @@ bool vpSickLDMRS::setup()
 
   // Establish connection
   res = connect(socket_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) ;
-  if (errno == EINPROGRESS) { 
-    tv.tv_sec = 3; 
-    tv.tv_usec = 0; 
-    FD_ZERO(&myset); 
-    FD_SET(static_cast<unsigned int>(socket_fd), &myset); 
-    res = select(socket_fd+1, NULL, &myset, NULL, &tv); 
-    if (res < 0 && errno != EINTR) { 
-      fprintf(stderr, "Error connecting to server %d - %s\n", errno, strerror(errno)); 
-      return false; 
-    } 
-    else if (res > 0) { 
+  if (errno == EINPROGRESS) {
+    tv.tv_sec = 3;
+    tv.tv_usec = 0;
+    FD_ZERO(&myset);
+    FD_SET(static_cast<unsigned int>(socket_fd), &myset);
+    res = select(socket_fd+1, NULL, &myset, NULL, &tv);
+    if (res < 0 && errno != EINTR) {
+      fprintf(stderr, "Error connecting to server %d - %s\n", errno, strerror(errno));
+      return false;
+    }
+    else if (res > 0) {
       fprintf(stderr,"ok");
     }
     else {
-      fprintf(stderr, "Timeout in select() - Cancelling!\n"); 
+      fprintf(stderr, "Timeout in select() - Cancelling!\n");
       return false;
     }
   }
@@ -241,18 +241,18 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
   // get the start/stop angle
   short startAngle = (short)ushortptr[12];
   short stopAngle = (short)ushortptr[13];
-//   std::cout << "angle in [" << startAngle << "; " << stopAngle 
+//   std::cout << "angle in [" << startAngle << "; " << stopAngle
 // 	    << "]" << std::endl;
-  
+
   // get the number of points of this measurement
   unsigned short numPoints = ushortptr[14];
 
   int nlayers = 4;
   for (int i=0; i < nlayers; i++) {
     laserscan[i].clear();
-    laserscan[i].setMeasurementId(measurementId); 
-    laserscan[i].setStartTimestamp(startTimestamp); 
-    laserscan[i].setEndTimestamp(endTimestamp); 
+    laserscan[i].setMeasurementId(measurementId);
+    laserscan[i].setStartTimestamp(startTimestamp);
+    laserscan[i].setEndTimestamp(endTimestamp);
     laserscan[i].setNumSteps(numSteps);
     laserscan[i].setStartAngle(startAngle);
     laserscan[i].setStopAngle(stopAngle);
@@ -272,11 +272,11 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
     unsigned char layer = ((unsigned char)  body[44+i*10])&0x0F;
     unsigned char echo  = ((unsigned char)  body[44+i*10])>>4;
     //unsigned char flags = (unsigned char)  body[44+i*10+1];
-    
+
     if (echo==0) {
       hAngle = (2.f * M_PI / numSteps)*(short) ushortptr[1];
       rDist = 0.01 * ushortptr[2]; // cm to meters conversion
-      
+
       //vpTRACE("layer: %d d: %f hangle: %f", layer, rDist, hAngle);
       scanPoint.setPolar(rDist, hAngle, vAngle[layer]);
       laserscan[layer].addPoint(scanPoint);

@@ -83,17 +83,17 @@ int main()
   vpSickLDMRS laser;
   laser.setIpAddress(ip);
   laser.setup();
-    
+
   vpLaserScan laserscan[4];
   for ( ; ; ) {
     // Get the measured points in the four layers
     laser.measure(laserscan);
 
-    // Prints all the measured points 
+    // Prints all the measured points
     for (int layer=0; layer<4; layer++) {
       std::vector<vpScanPoint> pointsInLayer = laserscan[layer].getScanPoints();
       vpScanPoint p;
-    
+
       for (unsigned int i=0; i < pointsInLayer.size(); i++) {
         std::cout << pointsInLayer[i] << std::endl;
       }
@@ -135,7 +135,7 @@ class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
     return (*this);
   };
 
-  bool setup(std::string ip, int port);
+  bool setup(const std::string &ip, int port);
   bool setup();
   bool measure(vpLaserScan laserscan[4]);
 
@@ -143,7 +143,7 @@ class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
 #if defined(_WIN32)
   SOCKET socket_fd;
 #else
-  int socket_fd;  
+  int socket_fd;
 #endif
   unsigned char *body;
   vpColVector vAngle; // constant vertical angle for each layer

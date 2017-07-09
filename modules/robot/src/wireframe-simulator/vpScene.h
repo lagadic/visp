@@ -84,7 +84,7 @@ typedef enum
 Model_3D getExtension(const char* file);
 void set_scene_wrl (const char* str, Bound_scene *sc, float factor);
 void set_scene (const char*, Bound_scene *, float);
-void vp2jlc_matrix (const vpHomogeneousMatrix, Matrix&);
+void vp2jlc_matrix (const vpHomogeneousMatrix &, Matrix&);
 
 #if defined(VISP_HAVE_COIN3D)
 void extractFaces(SoVRMLIndexedFaceSet* face_set, indexFaceSet *ifs);

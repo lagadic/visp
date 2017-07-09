@@ -122,7 +122,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n\n",
-	  ipath.c_str(), opath.c_str(), user.c_str());
+    ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -147,7 +147,7 @@ OPTIONS:                                               Default\n\
 */
 bool getOptions(int argc, const char **argv,
                 std::string &ipath, std::string &opath, bool &click_allowed,
-                std::string user, bool &display)
+                const std::string &user, bool &display)
 {
   const char *optarg;
   int	c;

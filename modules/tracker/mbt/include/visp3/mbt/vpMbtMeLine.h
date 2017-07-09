@@ -65,49 +65,49 @@ class VISP_EXPORT vpMbtMeLine : public vpMeTracker
     double delta ,delta_1;
     int sign;
     double a,b,c;
-  
-  public: 
+
+  public:
     int imin, imax;
     int jmin, jmax;
     double expecteddensity;
-  
-  public:  
+
+  public:
     vpMbtMeLine();
     ~vpMbtMeLine();
 
     void computeProjectionError(const vpImage<unsigned char>& _I, double &_sumErrorRad, unsigned int &_nbFeatures);
-    
+
     void display(const vpImage<unsigned char>& /*I*/, vpColor /*col*/) {;}
     void display(const vpImage<unsigned char>& I) {vpMeTracker::display(I);} //Shouldn't be here since it's already in vpMeTracker
-            
+
      /*!
      Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j \; sin(\theta) - \rho = 0 \f$
-   
-     \return : The a coefficient of the moving edge  
+
+     \return : The a coefficient of the moving edge
     */
     inline double get_a() const { return this->a;}
-    
+
      /*!
      Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j \; sin(\theta) - \rho = 0 \f$
-   
-     \return : The b coefficient of the moving edge  
+
+     \return : The b coefficient of the moving edge
     */
     inline double get_b() const { return this->b;}
-    
+
      /*!
      Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j \; sin(\theta) - \rho = 0 \f$
-   
-     \return : The c coefficient of the moving edge  
+
+     \return : The c coefficient of the moving edge
     */
     inline double get_c() const { return this->c;}
-    
+
     void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho, double theta);
 
     void track(const vpImage<unsigned char> &I);
-    
+
     void updateParameters(const vpImage<unsigned char> &I, double rho, double theta);
-    void updateParameters(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImagePoint ip2, double rho, double theta);
-  
+    void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho, double theta);
+
   private:
     void bubbleSortI();
     void bubbleSortJ();
@@ -116,7 +116,7 @@ class VISP_EXPORT vpMbtMeLine : public vpMeTracker
     void setExtremities();
     void suppressPoints(const vpImage<unsigned char> &I);
     void reSample(const vpImage<unsigned char>&image);
-    void reSample(const vpImage<unsigned char>&image, vpImagePoint ip1, vpImagePoint ip2);
+    void reSample(const vpImage<unsigned char>&image, const vpImagePoint &ip1, const vpImagePoint &ip2);
     void updateDelta();
 };
 

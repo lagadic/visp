@@ -47,7 +47,7 @@
 #include <limits>   // numeric_limits
 #include <vector>
 
-void computeTheta(double &theta, vpColVector &K, vpImagePoint iP);
+void computeTheta(double &theta, vpColVector &K, const vpImagePoint &iP);
 
 /*!
   Computes the \f$ \theta \f$ angle which represents the angle between the tangente to the curve and the i axis.
@@ -57,7 +57,7 @@ void computeTheta(double &theta, vpColVector &K, vpImagePoint iP);
   \param iP : the point belonging th the ellipse where the angle is computed.
 */
 void
-computeTheta(double &theta, vpColVector &K, vpImagePoint iP)
+computeTheta(double &theta, vpColVector &K, const vpImagePoint &iP)
 {
   double i = iP.get_i();
   double j = iP.get_j();
@@ -311,7 +311,7 @@ vpMeEllipse::printParameters()
   \param pt2 : Second point whose \f$ alpha \f$ angle is computed.
 */
 void
-vpMeEllipse::computeAngle(vpImagePoint pt1, vpImagePoint pt2)
+vpMeEllipse::computeAngle(const vpImagePoint &pt1, const vpImagePoint &pt2)
 {
   getParameters();
 

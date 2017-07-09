@@ -81,7 +81,7 @@ vpMbtMeLine::~vpMbtMeLine()
 /*!
   Initialization of the tracking. The line is defined thanks to the
   coordinates of two points corresponding to the extremities and its (\f$\rho \: \theta\f$) parameters.
-  
+
   Remember the equation of a line : \f$ i \; cos(\theta) + j \; sin(\theta) - \rho = 0 \f$
 
   \param I : Image in which the line appears.
@@ -104,15 +104,15 @@ vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
     PExt[0].jfloat = (float)ip1.get_j();
     PExt[1].ifloat = (float)ip2.get_i();
     PExt[1].jfloat = (float)ip2.get_j();
-     
+
     this->rho = rho_;
     this->theta = theta_;
     theta_1 = theta_;
-      
+
     a = cos(theta);
     b = sin(theta);
     c = -rho;
-          
+
     delta = - theta + M_PI/2.0;
     normalizeAngle(delta);
     delta_1 = delta;
@@ -180,16 +180,16 @@ vpMbtMeLine::sample(const vpImage<unsigned char>& I)
     {
       vpMeSite pix ; //= list.value();
       pix.init((int)is, (int)js, delta, 0, sign);
-  
+
       pix.track(I, me, false);
-      
+
       pix.setDisplay(selectDisplay);
 
       if(vpDEBUG_ENABLE(3))
       {
-	      ip.set_i( is );
-	      ip.set_j( js );
-	      vpDisplay::displayCross(I, ip, 2, vpColor::blue);
+        ip.set_i( is );
+        ip.set_j( js );
+        vpDisplay::displayCross(I, ip, 2, vpColor::blue);
       }
 
       list.push_back(pix);
@@ -206,7 +206,7 @@ vpMbtMeLine::sample(const vpImage<unsigned char>& I)
 
 /*!
   Suppress the moving which belong no more to the line.
-  
+
   \param I : The image.
 */
 void
@@ -255,7 +255,7 @@ vpMbtMeLine::suppressPoints(const vpImage<unsigned char> & I)
 
 /*!
  Seek along the line defined by its equation, the two extremities of the line. This function is useful in case of translation of the line.
- 
+
  \param I : Image in which the line appears.
 */
 void
@@ -319,7 +319,7 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
         if (vpDEBUG_ENABLE(3)) vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::blue);
     }
   }
-	
+
   P.init((int) PExt[1].ifloat, (int)PExt[1].jfloat, delta_1, 0, sign);
   P.setDisplay(selectDisplay);
   for (int i=0 ; i < 3 ; i++)
@@ -346,9 +346,9 @@ vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
         if (vpDEBUG_ENABLE(3)) vpDisplay::displayCross(I,P.i,P.j, 10, vpColor::blue);
     }
   }
-	
+
   me->setRange(memory_range);
-	
+
   vpCDEBUG(1) <<"end vpMeLine::sample() : ";
   vpCDEBUG(1) << n_sample << " point inserted in the list " << std::endl;
 }
@@ -477,8 +477,8 @@ vpMbtMeLine::computeProjectionError(const vpImage<unsigned char>& _I, double &_s
       double jSite = it->jfloat;
 
       for(unsigned int i = 0; i<filterX.getRows() ; i++){
-		double iImg = iSite + (i - offset);
-		for (unsigned int j = 0; j< filterX.getCols(); j++){
+    double iImg = iSite + (i - offset);
+    for (unsigned int j = 0; j< filterX.getCols(); j++){
           double jImg = jSite + (j-offset);
 
           if(iImg < 0) iImg = 0.0;
@@ -487,13 +487,13 @@ vpMbtMeLine::computeProjectionError(const vpImage<unsigned char>& _I, double &_s
           if(iImg > _I.getHeight()-1) iImg = _I.getHeight()-1;
           if(jImg > _I.getWidth()-1) jImg = _I.getWidth()-1;
 
-		  gradientX += filterX[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
+      gradientX += filterX[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
         }
       }
 
       for(unsigned int i = 0; i<filterY.getRows() ; i++){
-		double iImg = iSite + (i - offset);
-		for (unsigned int j = 0; j< filterY.getCols(); j++){
+    double iImg = iSite + (i - offset);
+    for (unsigned int j = 0; j< filterY.getCols(); j++){
           double jImg = jSite + (j-offset);
 
           if(iImg < 0) iImg = 0.0;
@@ -502,7 +502,7 @@ vpMbtMeLine::computeProjectionError(const vpImage<unsigned char>& _I, double &_s
           if(iImg > _I.getHeight()-1) iImg = _I.getHeight()-1;
           if(jImg > _I.getWidth()-1) jImg = _I.getWidth()-1;
 
-		  gradientY += filterY[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
+      gradientY += filterY[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
         }
       }
 
@@ -579,7 +579,7 @@ vpMbtMeLine::reSample(const vpImage<unsigned char> &I)
   \param ip2 : The second extremity of the line.
 */
 void
-vpMbtMeLine::reSample(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImagePoint ip2)
+vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
   size_t n = list.size();
 
@@ -619,7 +619,7 @@ vpMbtMeLine::updateDelta()
   sign *= -1;
 
   theta_1 = theta;
-  
+
   delta = - theta + M_PI/2.0;
   normalizeAngle(delta);
 
@@ -634,7 +634,7 @@ vpMbtMeLine::updateDelta()
 
 /*!
  Track the line in the image I.
- 
+
  \param I : Image in which the line appears.
  */
 void
@@ -658,7 +658,7 @@ vpMbtMeLine::track(const vpImage<unsigned char> &I)
 
 /*!
   Update the moving edges parameters after the virtual visual servoing.
-  
+
   \param  I : The image.
   \param  rho_ : The \f$\rho\f$ parameter used in the line's polar equation.
   \param  theta_ : The \f$\theta\f$ parameter used in the line's polar equation.
@@ -687,7 +687,7 @@ vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho_, doub
 
 /*!
   Update the moving edges parameters after the virtual visual servoing.
-  
+
   \param I : The image.
   \param ip1 : The first extremity of the line.
   \param ip2 : The second extremity of the line.
@@ -695,7 +695,7 @@ vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho_, doub
   \param theta_ : The \f$\theta\f$ parameter used in the line's polar equation.
 */
 void
-vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, vpImagePoint ip1, vpImagePoint ip2,
+vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                               double rho_, double theta_)
 {
   this->rho = rho_;

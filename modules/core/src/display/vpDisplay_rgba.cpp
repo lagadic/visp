@@ -322,7 +322,7 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &cen
 void
 vpDisplay::displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                         const vpCameraParameters &cam, double size, const vpColor &color,
-                        unsigned int thickness, vpImagePoint offset)
+                        unsigned int thickness, const vpImagePoint &offset)
 {
   vp_display_display_frame(I, cMo, cam, size, color, thickness, offset);
 }

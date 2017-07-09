@@ -202,7 +202,7 @@ private:
 public:
 
   vpMomentAlpha();
-  vpMomentAlpha(std::vector<double>& ref, double alphaRef);
+  vpMomentAlpha(const std::vector<double>& ref, double alphaRef);
   virtual ~vpMomentAlpha() {};
 
   void compute();

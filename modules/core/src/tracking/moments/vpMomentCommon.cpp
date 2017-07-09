@@ -39,7 +39,7 @@
 #include <visp3/core/vpMomentObject.h>
 
 /*!
-  Default constructor. Initializes the common database with the following moments: 
+  Default constructor. Initializes the common database with the following moments:
   basic, gravity,centered,centered+normalized,normalized gravity,normalized surface, scale-plane-rotation-translation invariant, alpha, symmetric invariant.
   \param dstSurface : destination surface. You may use vpMomentCommon::getSurface().
   \param ref : reference 3rd order moments (see vpMomentAlpha). You may use  vpMomentCommon::getMu3().
@@ -47,7 +47,7 @@
   \param dstZ : destination depth.
   \param flg_sxsyfromnormalized : flag to enable calculation of sx,sy from normalized moments.
 */
-vpMomentCommon::vpMomentCommon(double dstSurface,std::vector<double> ref,double refAlpha,double dstZ, bool flg_sxsyfromnormalized)
+vpMomentCommon::vpMomentCommon(double dstSurface, const std::vector<double> &ref, double refAlpha, double dstZ, bool flg_sxsyfromnormalized)
   : vpMomentDatabase(), momentBasic(), momentGravity(), momentCentered(), momentGravityNormalized(),
     momentSurfaceNormalized(dstSurface,dstZ), momentCInvariant(), momentAlpha(ref,refAlpha),
     momentArea()

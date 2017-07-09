@@ -69,10 +69,6 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdi:o:p:h"
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath,
-                bool &click_allowed, std::string user, bool &display);
-
 /*!
 
   Print the program options.
@@ -123,7 +119,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n\n",
-	  ipath.c_str(), opath.c_str(), user.c_str());
+    ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n" );
@@ -151,7 +147,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath,
-                bool &click_allowed, std::string user, bool &display)
+                bool &click_allowed, const std::string &user, bool &display)
 {
   const char *optarg_;
   int	c;

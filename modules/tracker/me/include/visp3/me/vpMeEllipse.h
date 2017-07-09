@@ -57,7 +57,7 @@
 #include <list>
 
 /*!
-  \class vpMeEllipse 
+  \class vpMeEllipse
   \ingroup module_me
 
   \brief Class that tracks an ellipse moving edges.
@@ -119,126 +119,126 @@ public:
   */
   //@{
   void initTracking(const vpImage<unsigned char> &I, const unsigned int n,
-		    unsigned *i, unsigned *j) ;
+        unsigned *i, unsigned *j) ;
   //@}
 #endif //VISP_BUILD_DEPRECATED_FUNCTIONS
-  
+
   /*!
     Gets the 0 order moment \f$ m_{00} \f$ which represents the area of the ellipse.
-    
+
     \return the value of \f$ m_{00} \f$.
   */
   inline double get_m00() const {return m00;}
-  
+
   /*!
     Gets the 1 order raw moment \f$ m_{10} \f$ with \f$ m_{nm} = \sum_{i,j}i^n j^m \f$.
-    
+
     \return the value of \f$ m_{10} \f$.
   */
   inline double get_m10() const {return m10;}
-  
+
   /*!
     Gets the 1 order raw moment \f$ m_{01} \f$ with \f$ m_{nm} = \sum_{i,j}i^n j^m \f$.
-    
+
     \return the value of \f$ m_{01} \f$.
   */
   inline double get_m01() const {return m01;}
-  
+
   /*!
     Gets the 2 order raw moment \f$ m_{11} \f$ with \f$ m_{nm} = \sum_{i,j}i^n j^m \f$.
-    
+
     \return the value of \f$ m_{11} \f$.
   */
   inline double get_m11() const {return m11;}
-  
+
   /*!
     Gets the 2 order raw moment \f$ m_{20} \f$ with \f$ m_{nm} = \sum_{i,j}i^n j^m \f$.
-    
+
     \return the value of \f$ m_{11} \f$.
   */
   inline double get_m20() const {return m20;}
-  
+
   /*!
     Gets the 2 order raw moment \f$ m_{02} \f$ with \f$ m_{nm} = \sum_{i,j}i^n j^m \f$.
-    
+
     \return the value of \f$ m_{11} \f$.
   */
   inline double get_m02() const {return m02;}
-  
+
   /*!
     Gets the 2 order central moment \f$ \mu_{11} \f$.
-    
+
     \return the value of \f$ \mu_{11} \f$.
   */
   inline double get_mu11() const {return mu11;}
-  
+
   /*!
     Gets the 2 order central moment \f$ \mu_{02} \f$.
-    
+
     \return the value of \f$ \mu_{02} \f$.
   */
   inline double get_mu02() const {return mu02;}
-  
+
   /*!
     Gets the 2 order central moment \f$ \mu_{20} \f$.
-    
+
     \return the value of \f$ \mu_{20} \f$.
   */
   inline double get_mu20() const {return mu20;}
-  
+
   /*!
     Gets the center of the ellipse.
   */
   inline vpImagePoint getCenter() const {return iPc; }
-  
+
   /*!
     Gets the semiminor axis of the ellipse.
   */
   inline double getA() const {return a; }
-  
+
   /*!
     Gets the semimajor axis of the ellipse.
   */
   inline double getB() const {return b; }
-  
+
   /*!
     Gets the angle made by the major axis and the i axis of the image frame \f$ (i,j) \f$
   */
   inline double getE() const {return e; }
-  
+
   /*!
     Gets the equation parameters of the ellipse
   */
   void getEquationParam(double &A, double &B, double &E) { A = a; B = b; E = e; }
-  
+
   /*!
     Gets the smallest \f$ alpha \f$ angle
   */
   inline double getSmallestAngle() { return alpha1; }
-  
+
   /*!
     Gets the highest \f$ alpha \f$ angle
   */
   inline double getHighestAngle() { return alpha2; }
-  
-	/*!
-		Set the new threshold for the robust estimation of the parameters of the
-		ellipse equation.
-		If the weight of a point is below this threshold, this one is removed from
-		the list of tracked meSite.
-		Value must be between 0 (never rejected) and 1 (always rejected).
 
-		\param threshold : The new value of the threshold.
-	*/
-	void setThresholdRobust(const double threshold){
-		if(threshold<0){
-			thresholdWeight = 0;
-		}else if(threshold>1){
-			thresholdWeight = 1;
-		}else{
-			thresholdWeight = threshold;
-		}
-	}
+  /*!
+    Set the new threshold for the robust estimation of the parameters of the
+    ellipse equation.
+    If the weight of a point is below this threshold, this one is removed from
+    the list of tracked meSite.
+    Value must be between 0 (never rejected) and 1 (always rejected).
+
+    \param threshold : The new value of the threshold.
+  */
+  void setThresholdRobust(const double threshold){
+    if(threshold<0){
+      thresholdWeight = 0;
+    }else if(threshold>1){
+      thresholdWeight = 1;
+    }else{
+      thresholdWeight = threshold;
+    }
+  }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
@@ -287,7 +287,7 @@ protected:
   double expecteddensity;
 
 private:
-  void computeAngle(vpImagePoint pt1, vpImagePoint pt2);
+  void computeAngle(const vpImagePoint &pt1, const vpImagePoint &pt);
   void sample(const vpImage<unsigned char>&image);
   void reSample(const vpImage<unsigned char> &I) ;
   void leastSquare() ;
@@ -305,7 +305,7 @@ private:
   //@{
   void computeAngle(int ip1, int jp1,int ip2, int jp2) ;
   void computeAngle(int ip1, int jp1, double &alpha1,
-		    int ip2, int jp2, double &alpha2) ;
+        int ip2, int jp2, double &alpha2) ;
   /*!
       \deprecated This function does nothing and shouldn't be used since we modify
       the code to detect automatically if the object to track becomes a circle
@@ -317,7 +317,7 @@ private:
 #endif //VISP_BUILD_DEPRECATED_FUNCTIONS
 
 //Static Function
-public:	
+public:
   static void display(const vpImage<unsigned char>& I, const vpImagePoint &center,
                       const double &A, const double &B, const double &E,
                       const double & smallalpha, const double &highalpha,

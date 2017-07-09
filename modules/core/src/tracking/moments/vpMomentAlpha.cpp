@@ -37,7 +37,7 @@
 
 #include <visp3/core/vpMomentAlpha.h>
 #include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentCentered.h>	
+#include <visp3/core/vpMomentCentered.h>
 #include <cmath>
 
 /*!
@@ -55,10 +55,10 @@ vpMomentAlpha::vpMomentAlpha() : isRef(true), symmetric(false), ref(), alphaRef(
   the following order: \f$\mu_{30},\mu_{21},\mu_{12},\mu_{03}\f$.
   \param alpha_ref : value of the reference alpha.
 */
-vpMomentAlpha::vpMomentAlpha(std::vector<double>& ref_, double alpha_ref)
+vpMomentAlpha::vpMomentAlpha(const std::vector<double>& ref_, double alpha_ref)
   : vpMoment(),isRef(false),symmetric(false),ref(ref_),alphaRef(alpha_ref)
 {
-  for (std::vector<double>::iterator it = ref_.begin(); it!=ref_.end(); ++it)
+  for (std::vector<double>::const_iterator it = ref_.begin(); it!=ref_.end(); ++it)
     if (std::fabs(*it)<=1e-4)
       symmetric = true;
 
@@ -66,76 +66,76 @@ vpMomentAlpha::vpMomentAlpha(std::vector<double>& ref_, double alpha_ref)
 }
 
 /*!
-	Compute the value of the alpha-moment.
+  Compute the value of the alpha-moment.
   Depends on vpMomentCentered.
  */
 void vpMomentAlpha::compute(){
-	//symmetric = symmetric | this->getObject().isSymmetric();
-	bool found_moment_centered;
+  //symmetric = symmetric | this->getObject().isSymmetric();
+  bool found_moment_centered;
 
-	const vpMomentCentered& momentCentered = (static_cast<const vpMomentCentered&> (getMoments().get("vpMomentCentered",
-			found_moment_centered)));
+  const vpMomentCentered& momentCentered = (static_cast<const vpMomentCentered&> (getMoments().get("vpMomentCentered",
+      found_moment_centered)));
 
-	if (!found_moment_centered)
-		throw vpException(vpException::notInitialized, "vpMomentCentered not found");
+  if (!found_moment_centered)
+    throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
   double t = 2.0 * momentCentered.get(1, 1) / (momentCentered.get(2, 0) - momentCentered.get(0, 2));
   //double alpha = 0.5 * atan2(2.0 * momentCentered.get(1, 1), (momentCentered.get(2, 0) - momentCentered.get(0, 2)));
   double alpha = 0.5 * atan(t);
 
-	std::vector<double> rotMu(4);
+  std::vector<double> rotMu(4);
   //std::vector<double> realMu(4);
 
-	if (isRef)
-	{
-		alphaRef = alpha;
-	}
-	else
-	{
-		if (!symmetric)
-		{
-			double r11 = cos(alpha - alphaRef);
-			double r12 = sin(alpha - alphaRef);
+  if (isRef)
+  {
+    alphaRef = alpha;
+  }
+  else
+  {
+    if (!symmetric)
+    {
+      double r11 = cos(alpha - alphaRef);
+      double r12 = sin(alpha - alphaRef);
       double r21 = -r12;
       double r22 =  r11;
-			unsigned int idx = 0;
+      unsigned int idx = 0;
       unsigned int order = 4;
       for (unsigned int c = 0; c < (order) * (order); c++)
-			{
-				unsigned int i = c % order;
-				unsigned int j = c / order;
+      {
+        unsigned int i = c % order;
+        unsigned int j = c / order;
 
-				if (i + j == 3)
-				{
-					double r11_k = 1.;
+        if (i + j == 3)
+        {
+          double r11_k = 1.;
           for (unsigned int k = 0; k <= i; k++)
-					{
-						double r12_i_k = pow(r12, (int)(i - k));
-						double comb_i_k = static_cast<double> (vpMath::comb(i, k));
+          {
+            double r12_i_k = pow(r12, (int)(i - k));
+            double comb_i_k = static_cast<double> (vpMath::comb(i, k));
             for (unsigned int l = 0; l <= j; l++)
-						{
-							rotMu[idx] += static_cast<double> (comb_i_k * vpMath::comb(j, l) * r11_k * pow(r21, (int)l) * r12_i_k
-									* pow(r22, (int)(j - l)) * momentCentered.get(k + l, (unsigned int)(int)(i + j - k - l)));
-						}
-						r11_k *= r11;
-					}
+            {
+              rotMu[idx] += static_cast<double> (comb_i_k * vpMath::comb(j, l) * r11_k * pow(r21, (int)l) * r12_i_k
+                  * pow(r22, (int)(j - l)) * momentCentered.get(k + l, (unsigned int)(int)(i + j - k - l)));
+            }
+            r11_k *= r11;
+          }
           //realMu[idx] = momentCentered.get(i, j);
-					idx++;
-				}
-			}
+          idx++;
+        }
+      }
 
-			double sum = 0.;
-			bool signChange = true;
+      double sum = 0.;
+      bool signChange = true;
       for (unsigned int i = 0; i < 4; i++)
-			{
+      {
         if (std::fabs(rotMu[i]) > 1e10 * std::numeric_limits<double>::epsilon() && std::fabs(ref[i]) > 1e10
-						* std::numeric_limits<double>::epsilon() && rotMu[i] * ref[i] > 0)
-					signChange = false;
+            * std::numeric_limits<double>::epsilon() && rotMu[i] * ref[i] > 0)
+          signChange = false;
         sum += std::fabs(rotMu[i] * ref[i]);
-			}
+      }
 
-			if (sum < 1e4 * std::numeric_limits<double>::epsilon())
-				signChange = false;
+      if (sum < 1e4 * std::numeric_limits<double>::epsilon())
+        signChange = false;
       if (signChange) {
         // alpha = alpha + M_PI;
         if (alpha < 0)
@@ -143,9 +143,9 @@ void vpMomentAlpha::compute(){
         else
           alpha -= M_PI;
       }
-		}
-	}
-	values[0] = alpha;
+    }
+  }
+  values[0] = alpha;
 }
 
 /*!
@@ -154,7 +154,7 @@ void vpMomentAlpha::compute(){
 VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentAlpha& c){
     os << (__FILE__) << std::endl;
     os << "Alpha = " << c.values[0] << "rad = " << vpMath::deg(c.values[0]) << "deg " << std::endl;
-	return os;
+  return os;
 }
 
 /*!

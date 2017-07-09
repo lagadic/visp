@@ -335,7 +335,7 @@ void set_scene_wrl (const char* /*str*/, Bound_scene* /*sc*/, float /*factor*/)
 /*
   Convert the matrix format to deal with the one in the simulator
 */
-void vp2jlc_matrix (const vpHomogeneousMatrix vpM, Matrix &jlcM)
+void vp2jlc_matrix (const vpHomogeneousMatrix &vpM, Matrix &jlcM)
 {
   for (unsigned int i = 0; i < 4; i++) {
     for (unsigned int j = 0; j < 4; j++)

@@ -53,9 +53,6 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdi:o:h"
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user);
-
 /*
 
   Print the program options.
@@ -67,7 +64,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
   \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
 Read an image from the disk (Klimt.pgm and klimp.ppm), crop a rectangular area\n\

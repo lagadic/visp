@@ -262,7 +262,7 @@ vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &center,
 template <class Type> void
 vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix &cMo,
                          const vpCameraParameters &cam, double size, const vpColor &color,
-                         unsigned int thickness, vpImagePoint offset)
+                         unsigned int thickness, const vpImagePoint &offset)
 {
   // used by display
   vpPoint o( 0.0,  0.0,  0.0);
