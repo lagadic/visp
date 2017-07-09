@@ -268,8 +268,8 @@ if(MSVC)
 endif()
 
 if(USE_EIGEN3)
-  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_svd.cpp -Wno-float-equal -Wstrict-overflow)
-  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_lu.cpp -Wno-float-equal -Wstrict-overflow)
+  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_svd.cpp -Wno-float-equal -Wno-strict-overflow)
+  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_lu.cpp -Wno-float-equal -Wno-strict-overflow)
 endif()
 
 vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES})
