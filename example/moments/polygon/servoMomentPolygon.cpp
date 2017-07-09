@@ -264,11 +264,11 @@ void execute(unsigned int nbIter){
   robot.getInternalView(Iint);
   vpDisplay::flush(Iint);
   unsigned int iter=0;
-  double t=0;
+
   ///////////////////SIMULATION LOOP/////////////////////////////
   while(iter++<nbIter ){
     vpColVector v ;
-    t = vpTime::measureTimeMs();
+    double t = vpTime::measureTimeMs();
     //get the cMo
     cMo = robot.get_cMo();
     //setup the plane in A,B,C style
@@ -336,12 +336,12 @@ void removeJointLimits(vpSimulatorAfma6& robot_)
 }
 
 void planeToABC(vpPlane& pl, double& A,double& B, double& C){
-	if(fabs(pl.getD())<std::numeric_limits<double>::epsilon()){
-		std::cout << "Invalid position:" << std::endl;
-		std::cout << cMo << std::endl;
-		std::cout << "Cannot put plane in the form 1/Z=Ax+By+C." << std::endl;
-		throw vpException(vpException::divideByZeroError,"invalid position!");
-	}
+  if(fabs(pl.getD())<std::numeric_limits<double>::epsilon()){
+    std::cout << "Invalid position:" << std::endl;
+    std::cout << cMo << std::endl;
+    std::cout << "Cannot put plane in the form 1/Z=Ax+By+C." << std::endl;
+    throw vpException(vpException::divideByZeroError,"invalid position!");
+  }
   A=-pl.getA()/pl.getD();
   B=-pl.getB()/pl.getD();
   C=-pl.getC()/pl.getD();

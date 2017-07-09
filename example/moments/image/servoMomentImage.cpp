@@ -298,7 +298,6 @@ void execute(unsigned int nbIter){
   vpDisplay::display(Iint);
   vpDisplay::flush(Iint);
   unsigned int iter=0;
-  double t=0;
 
   vpHomogeneousMatrix wMo; // Set to identity
   vpHomogeneousMatrix wMc; // Camera position in the world frame
@@ -315,7 +314,7 @@ void execute(unsigned int nbIter){
   while(iter++<nbIter ){
 
     vpColVector v ;
-    t = vpTime::measureTimeMs();
+    double t = vpTime::measureTimeMs();
     //get the cMo
     wMc = robot.getPosition();
     cMo = wMc.inverse() * wMo;
@@ -363,15 +362,15 @@ void execute(unsigned int nbIter){
 
 #if defined(PRINT_CONDITION_NUMBER)
     /*
-		 * Condition number of interaction matrix
-		 */
-		vpMatrix Linteraction = task.L;
-		vpMatrix tmpry,U;
-		vpColVector singularvals;
-		Linteraction.svd(singularvals, tmpry);
-		double condno = static_cast<double>(singularvals.getMaxValue()/singularvals.getMinValue());
-		std::cout<<"Condition Number: "<<condno<<std::endl;
-	#endif
+     * Condition number of interaction matrix
+     */
+    vpMatrix Linteraction = task.L;
+    vpMatrix tmpry,U;
+    vpColVector singularvals;
+    Linteraction.svd(singularvals, tmpry);
+    double condno = static_cast<double>(singularvals.getMaxValue()/singularvals.getMinValue());
+    std::cout<<"Condition Number: "<<condno<<std::endl;
+  #endif
 
   }
 
@@ -392,66 +391,66 @@ double error(){return _error;}
 
 
 void planeToABC(vpPlane& pl, double& A,double& B, double& C){
-	if(fabs(pl.getD())<std::numeric_limits<double>::epsilon()){
-		std::cout << "Invalid position:" << std::endl;
-		std::cout << cMo << std::endl;
-		std::cout << "Cannot put plane in the form 1/Z=Ax+By+C." << std::endl;
-		throw vpException(vpException::divideByZeroError,"invalid position!");
-	}
+  if(fabs(pl.getD())<std::numeric_limits<double>::epsilon()){
+    std::cout << "Invalid position:" << std::endl;
+    std::cout << cMo << std::endl;
+    std::cout << "Cannot put plane in the form 1/Z=Ax+By+C." << std::endl;
+    throw vpException(vpException::divideByZeroError,"invalid position!");
+  }
   A=-pl.getA()/pl.getD();
   B=-pl.getB()/pl.getD();
   C=-pl.getC()/pl.getD();
 }
 
 void paramRobot(){
-	cam = vpCameraParameters(640,480,320,240);
+  cam = vpCameraParameters(640,480,320,240);
 }
 
 void
 init_visp_plot(vpPlot& ViSP_plot) {
-	/* -------------------------------------
-	 * Initialize ViSP Plotting
-	 * -------------------------------------
-	 */
-	const unsigned int NbGraphs = 3;								// No. of graphs
-	const unsigned int NbCurves_in_graph[NbGraphs] = {6,6,6};		// Curves in each graph
+  /* -------------------------------------
+   * Initialize ViSP Plotting
+   * -------------------------------------
+   */
+  const unsigned int NbGraphs = 3;								// No. of graphs
+  const unsigned int NbCurves_in_graph[NbGraphs] = {6,6,6};		// Curves in each graph
 
-	ViSP_plot.init(NbGraphs , 800, 800, 10, 10, "Visual Servoing results...");
+  ViSP_plot.init(NbGraphs , 800, 800, 10, 10, "Visual Servoing results...");
 
-	vpColor Colors[6] = {\
-	// Colour for s1, s2, s3,  in 1st plot
-	vpColor::red, vpColor::green, vpColor::blue, \
-	vpColor::orange, vpColor::cyan,vpColor::purple
-	};
+  vpColor Colors[6] = {\
+  // Colour for s1, s2, s3,  in 1st plot
+  vpColor::red, vpColor::green, vpColor::blue, \
+  vpColor::orange, vpColor::cyan,vpColor::purple
+  };
 
-	for (unsigned int p = 0; p<NbGraphs; p++) {
-		ViSP_plot.initGraph(p,NbCurves_in_graph[p]);
-		for (unsigned int c = 0; c<NbCurves_in_graph[p]; c++)
-			ViSP_plot.setColor(p,c,Colors[c]);
-	}
+  for (unsigned int p = 0; p<NbGraphs; p++) {
+    ViSP_plot.initGraph(p,NbCurves_in_graph[p]);
+    for (unsigned int c = 0; c<NbCurves_in_graph[p]; c++)
+      ViSP_plot.setColor(p,c,Colors[c]);
+  }
 
-	ViSP_plot.setTitle(0,"Robot velocities");
-	ViSP_plot.setLegend(0, 0, "v_x");
-	ViSP_plot.setLegend(0, 1, "v_y");
-	ViSP_plot.setLegend(0, 2, "v_z");
-	ViSP_plot.setLegend(0, 3, "w_x");
-	ViSP_plot.setLegend(0, 4, "w_y");
-	ViSP_plot.setLegend(0, 5, "w_z");
+  ViSP_plot.setTitle(0,"Robot velocities");
+  ViSP_plot.setLegend(0, 0, "v_x");
+  ViSP_plot.setLegend(0, 1, "v_y");
+  ViSP_plot.setLegend(0, 2, "v_z");
+  ViSP_plot.setLegend(0, 3, "w_x");
+  ViSP_plot.setLegend(0, 4, "w_y");
+  ViSP_plot.setLegend(0, 5, "w_z");
 
-	ViSP_plot.setTitle(1,"Camera pose cMo");
-	ViSP_plot.setLegend(1, 0, "tx");
-	ViSP_plot.setLegend(1, 1, "ty");
-	ViSP_plot.setLegend(1, 2, "tz");
-	ViSP_plot.setLegend(1, 3, "tu_x");
-	ViSP_plot.setLegend(1, 4, "tu_y");
-	ViSP_plot.setLegend(1, 5, "tu_z");
+  ViSP_plot.setTitle(1,"Camera pose cMo");
+  ViSP_plot.setLegend(1, 0, "tx");
+  ViSP_plot.setLegend(1, 1, "ty");
+  ViSP_plot.setLegend(1, 2, "tz");
+  ViSP_plot.setLegend(1, 3, "tu_x");
+  ViSP_plot.setLegend(1, 4, "tu_y");
+  ViSP_plot.setLegend(1, 5, "tu_z");
 
-	ViSP_plot.setTitle(2,"Error in visual features: ");
-	ViSP_plot.setLegend(2, 0, "x_n");
-	ViSP_plot.setLegend(2, 1, "y_n");
-	ViSP_plot.setLegend(2, 2, "a_n");
-	ViSP_plot.setLegend(2, 3, "sx");
-	ViSP_plot.setLegend(2, 4, "sy");
-	ViSP_plot.setLegend(2, 5, "alpha");
+  ViSP_plot.setTitle(2,"Error in visual features: ");
+  ViSP_plot.setLegend(2, 0, "x_n");
+  ViSP_plot.setLegend(2, 1, "y_n");
+  ViSP_plot.setLegend(2, 2, "a_n");
+  ViSP_plot.setLegend(2, 3, "sx");
+  ViSP_plot.setLegend(2, 4, "sy");
+  ViSP_plot.setLegend(2, 5, "alpha");
 }
 #endif
