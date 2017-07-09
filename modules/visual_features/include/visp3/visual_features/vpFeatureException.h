@@ -91,7 +91,7 @@ class VISP_EXPORT vpFeatureException : public vpException
     }
     vpFeatureException (const int id, const std::string & msg)
       : vpException(id, msg){ ; }
-    vpFeatureException (const int id)
+    explicit vpFeatureException (const int id)
       : vpException(id){ ; }
 
 };

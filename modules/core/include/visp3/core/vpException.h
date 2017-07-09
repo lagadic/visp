@@ -106,7 +106,7 @@ class VISP_EXPORT vpException : public std::exception
     vpException (const int code, const char* format, va_list args);
     vpException (const int code, const char* format, ...);
     vpException (const int code, const std::string & msg);
-    vpException (const int code);
+    explicit vpException (const int code);
 
     /*!
       Basic destructor. Do nothing but implemented to fit the inheritance from

@@ -73,7 +73,7 @@ class VISP_EXPORT vpTemplateTrackerZNCCInverseCompositional: public vpTemplateTr
     void initPosEvalRMS(const vpColVector &p);
 
   public:
-          vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp);
+    explicit vpTemplateTrackerZNCCInverseCompositional(vpTemplateTrackerWarp *warp);
 
     void  setThresholdRMS(double threshold){threshold_RMS=threshold;}
 };

@@ -99,7 +99,7 @@ class VISP_EXPORT vpMatrixException : public vpException
     }
     vpMatrixException (const int id, const std::string & msg)
       : vpException(id, msg){ ; }
-    vpMatrixException (const int id)
+    explicit vpMatrixException (const int id)
       : vpException(id){ ; }
     // vpMatrixException() : vpException() { ;}
 };

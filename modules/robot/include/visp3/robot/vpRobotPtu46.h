@@ -104,8 +104,8 @@ private:
 public:
   static const double       defaultPositioningVelocity;
 
-  vpRobotPtu46 (const char *device="/dev/ttyS0");
-  vpRobotPtu46 (vpRobotPtu46 * pub);
+  explicit vpRobotPtu46 (const char *device="/dev/ttyS0");
+  explicit vpRobotPtu46 (vpRobotPtu46 * pub);
   virtual ~vpRobotPtu46 (void);
 
   void get_cMe(vpHomogeneousMatrix &_cMe) const;

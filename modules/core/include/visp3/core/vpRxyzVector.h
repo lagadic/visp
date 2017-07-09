@@ -126,7 +126,7 @@ int main()
   vpRxyzVector rxyz;
 
   // Initialise the Euler angles
-  rxyz[0] = vpMath::rad( 45.f); // phi   angle in rad around x axis 
+  rxyz[0] = vpMath::rad( 45.f); // phi   angle in rad around x axis
   rxyz[1] = vpMath::rad(-30.f); // theta angle in rad around y axis
   rxyz[2] = vpMath::rad( 90.f); // psi   angle in rad around z axis
 
@@ -138,12 +138,12 @@ int main()
 
   // Print the extracted Euler angles. Values are the same than the
   // one used for initialization
-  std::cout << rxyz; 
+  std::cout << rxyz;
 
   // Since the rotation vector is 3 values column vector, the
   // transpose operation produce a row vector.
   vpRowVector rxyz_t = rxyz.t();
-  
+
   // Print the transpose row vector
   std::cout << rxyz_t << std::endl;
 }
@@ -159,11 +159,11 @@ class VISP_EXPORT vpRxyzVector : public vpRotationVector
   vpRxyzVector(const double phi, const double theta, const double psi);
 
   // initialize a Rxyz vector from a rotation matrix
-  vpRxyzVector(const vpRotationMatrix& R) ;
+  explicit vpRxyzVector(const vpRotationMatrix& R) ;
 
   // initialize a Rxyz vector from a ThetaU vector
-  vpRxyzVector(const vpThetaUVector& tu) ;
-  vpRxyzVector(const vpColVector &rxyz);
+  explicit vpRxyzVector(const vpThetaUVector& tu) ;
+  explicit vpRxyzVector(const vpColVector &rxyz);
 
   //! Destructor.
   virtual ~vpRxyzVector() {};

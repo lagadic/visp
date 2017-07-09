@@ -28,7 +28,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Interface for the Servolens lens attached to the camera fixed on the 
+ * Interface for the Servolens lens attached to the camera fixed on the
  * Afma4 robot.
  *
  * Authors:
@@ -47,7 +47,7 @@
 
   \file vpServolens.h
 
-  Interface for the Servolens lens attached to the camera fixed on the 
+  Interface for the Servolens lens attached to the camera fixed on the
   Afma4 robot.
 
 */
@@ -61,7 +61,7 @@
 
   \ingroup group_robot_real_cylindrical
 
-  \brief Interface for the Servolens lens attached to the camera fixed on the 
+  \brief Interface for the Servolens lens attached to the camera fixed on the
   Afma4 robot.
 
   The code below shows how to manipulate this class to get and modify
@@ -74,7 +74,7 @@
 int main()
 {
   // Open the serial device to communicate with the Servolens lens
-  vpServolens servolens("/dev/ttyS0"); 
+  vpServolens servolens("/dev/ttyS0");
 
   // Get the current zoom position
   unsigned zoom;
@@ -82,7 +82,7 @@ int main()
   std::cout << "Actual zoom value: " << zoom << std::endl;
 
   // Set a new zoom value
-  servolens.setPosition(vpServolens::ZOOM, zoom+1000);  
+  servolens.setPosition(vpServolens::ZOOM, zoom+1000);
 }
   \endcode
 
@@ -107,11 +107,11 @@ class VISP_EXPORT vpServolens
   typedef enum {
     AUTO       = 1,
     CONTROLLED = 2,
-    RELEASED   = 3    
+    RELEASED   = 3
   } vpControllerType;
 
   vpServolens();
-  vpServolens(const char *port);
+  explicit vpServolens(const char *port);
   ~vpServolens();
 
   void open(const char *port="/dev/ttyS0");

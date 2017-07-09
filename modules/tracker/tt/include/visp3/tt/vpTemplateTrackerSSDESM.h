@@ -60,13 +60,13 @@ class VISP_EXPORT vpTemplateTrackerSSDESM: public vpTemplateTrackerSSD
     vpMatrix    HLMInv;
     vpColVector GDir;
     vpColVector GInv;
-    
+
   protected:
     void initHessienDesired(const vpImage<unsigned char> &I);
     void initCompInverse(const vpImage<unsigned char> &I);
     void trackNoPyr(const vpImage<unsigned char> &I);
 
   public:
-    vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp);
+    explicit vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp);
 };
 #endif

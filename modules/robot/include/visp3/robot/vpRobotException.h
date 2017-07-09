@@ -133,7 +133,7 @@ class VISP_EXPORT vpRobotException : public vpException
       : vpException(id, msg)
     {
     }
-    vpRobotException (const int id)
+    explicit vpRobotException (const int id)
       : vpException(id)
     {
     }

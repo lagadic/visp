@@ -78,11 +78,11 @@ extern "C" {
 
   This class allows to control the Afma4 cylindrical robot in position
   and velocity:
-  - in the joint space (vpRobot::ARTICULAR_FRAME), 
-  - in the fixed reference frame (vpRobot::REFERENCE_FRAME), 
+  - in the joint space (vpRobot::ARTICULAR_FRAME),
+  - in the fixed reference frame (vpRobot::REFERENCE_FRAME),
   - in the camera frame (vpRobot::CAMERA_FRAME),
 
-  Mixed frame (vpRobot::MIXT_FRAME) where translations are expressed 
+  Mixed frame (vpRobot::MIXT_FRAME) where translations are expressed
   in the reference frame and rotations in the camera frame is not implemented.
 
   All the translations are expressed in meters for positions and m/s
@@ -224,7 +224,7 @@ public:  /* Constantes */
 
 public:  /* Methode publiques */
 
-  vpRobotAfma4 (bool verbose=true);
+  explicit vpRobotAfma4 (bool verbose=true);
   virtual ~vpRobotAfma4 (void);
 
   void getDisplacement(vpRobot::vpControlFrameType frame,

@@ -99,7 +99,7 @@ public:
   vpPoseVector(const double tx, const double ty, const double tz,
                const double tux, const double tuy, const double tuz) ;
   // constructor convert an homogeneous matrix in a pose
-  vpPoseVector(const vpHomogeneousMatrix& M) ;
+  explicit vpPoseVector(const vpHomogeneousMatrix& M) ;
   // constructor  convert a translation and a "thetau" vector into a pose
   vpPoseVector(const vpTranslationVector& tv,
                const vpThetaUVector& tu) ;
@@ -166,7 +166,7 @@ public:
 
     \code
     vpPoseVector r(1, 2, 3, M_PI, -M_PI, 0);
-    
+
     double tx,ty,tz; // Translation
     double tux, tuy,tuz; // Theta u rotation
     tx  = r[0];

@@ -27,9 +27,9 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- * Description: Class which enables to project an image in the 3D space 
+ * Description: Class which enables to project an image in the 3D space
  * and get the view of a virtual camera.
- * 
+ *
  *
  * Authors:
  * Amaury Dame
@@ -46,28 +46,28 @@
   \ingroup group_robot_image_simu
 
   \brief Class which enables to project an image in the 3D space and get the view of a virtual camera.
-  
+
   The image is represented by a rectangular image whose corners coordinates are known in the 3D frame linked to the 3D rectangle.
-  
+
   The 3D rectangle is positionned relative to a virtual camera (represented by its intrinsic parameters). Indeed, the pose \f$ cMt \f$ has to be given by the user of the class.
-  
+
   And finally, the view of the virtual camera is given by the geImage() method.
-  
+
   You can use a colored or a gray scaled image.
-  
+
   To avoid the aliasing especially when the camera is very near from the image plane, a bilinear interpolation can be done for every pixels which have to be filled in. By default this functionality is not used because it consumes lot of time.
-  
+
   The  following example explain how to use the class.
-  
+
   \code
   #include <visp3/core/vpImage.h>
   #include <visp3/robot/vpImageSimulator.h>
-  
+
   int main()
   {
     vpImage<vpRGBa> Icamera(480,640,0);
     vpImage<vpRGBa> Iimage(60,60);
-    
+
     // Initialise the image which will be projected into the image Icamera
     vpRGBa colorb(0,0,255);
     vpRGBa colorw(255,255,255);
@@ -81,7 +81,7 @@
       for(int j = 40; j < 60; j++)
         Iimage[i][j] = colorr;
     }
-    
+
     // Initialise the 3D coordinates of the Iimage corners
     vpColVector X[4];
     for (int i = 0; i < 4; i++) X[i].resize(3);
@@ -89,31 +89,31 @@
     X[0][0] = -1;
     X[0][1] = -1;
     X[0][2] = 0;
-  
+
     // Top right corner
     X[1][0] = 1;
     X[1][1] = -1;
     X[1][2] = 0;
-  
+
     // Bottom right corner
     X[2][0] = 1;
     X[2][1] = 1;
     X[2][2] = 0;
-  
+
     //Bottom left corner
     X[3][0] = -1;
     X[3][1] = 1;
     X[3][2] = 0;
-    
+
     vpImageSimulator sim;
     sim.init(Iimage, X);
-    
+
     sim.setCameraPosition(vpHomogeneousMatrix(0,0,5,vpMath::rad(60),vpMath::rad(0),0));
-    
+
     vpCameraParameters cam(868.0, 869.0, 320, 240);
-    
+
     sim.getImage(Icamera,cam);
-    
+
     return 0;
   }
   \endcode
@@ -137,19 +137,19 @@ class VISP_EXPORT vpImageSimulator
       COLORED,
       GRAY_SCALED
     } vpColorPlan;
-    
+
     typedef enum {
       SIMPLE,
       BILINEAR_INTERPOLATION
     } vpInterpolationType;
-    
+
   private:
     vpColVector X[4];
     vpHomogeneousMatrix cMt;
     vpColVector X2[4];
     std::vector<vpPoint> pt;
     std::vector<vpPoint> ptClipped;
-    
+
     vpInterpolationType interp;
 
     //normal repere objet
@@ -182,7 +182,7 @@ class VISP_EXPORT vpImageSimulator
 
     //triangles de projection du plan
     std::vector<vpTriangle> listTriangle;
-    
+
     //image de texture
     vpColorPlan colorI;
     vpImage<unsigned char> Ig;
@@ -192,20 +192,20 @@ class VISP_EXPORT vpImageSimulator
     bool cleanPrevImage;
     bool setBackgroundTexture;	// flag set when the background is to a texture using setBackGroundTexture()
     vpColor bgColor;
-    
+
     vpColVector focal;
 
     //boolean to tell if the points in the camera frame have to be clipped
     bool needClipping;
-    
+
   public:
-    vpImageSimulator(const vpColorPlan &col = COLORED);
+    explicit vpImageSimulator(const vpColorPlan &col = COLORED);
     vpImageSimulator(const vpImageSimulator &text);
     virtual ~vpImageSimulator();
-    
+
     vpImageSimulator& operator=(const vpImageSimulator& sim);
 
-    
+
     //creation du plan a partir de ses coordonnees 3D ds repere objet et de son image texture
     void init(const vpImage<unsigned char> &I,vpColVector* X);
     void init(const vpImage<vpRGBa> &I,vpColVector* X);
@@ -220,22 +220,22 @@ class VISP_EXPORT vpImageSimulator
 
     //projection du plan par cMo => creation des deux triangles definissant projection du plan sur plan image (coord en metre)
     void setCameraPosition(const vpHomogeneousMatrix &cMt);
-    
+
     void setInterpolationType (const vpInterpolationType interplt) {this->interp = interplt;}
-    
+
     void getImage(vpImage<unsigned char> &I, const vpCameraParameters &cam);
     void getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam);
-    
-    void getImage(vpImage<unsigned char> &I, vpImage<unsigned char> &Isrc, 
-		  const vpCameraParameters &cam);
-    void getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, 
-		  const vpCameraParameters &cam);
-    
-    void getImage(vpImage<unsigned char> &I, const vpCameraParameters &cam, 
-		  vpMatrix &zBuffer);
-    void getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam, 
-		  vpMatrix &zBuffer);
-    
+
+    void getImage(vpImage<unsigned char> &I, vpImage<unsigned char> &Isrc,
+      const vpCameraParameters &cam);
+    void getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc,
+      const vpCameraParameters &cam);
+
+    void getImage(vpImage<unsigned char> &I, const vpCameraParameters &cam,
+      vpMatrix &zBuffer);
+    void getImage(vpImage<vpRGBa> &I, const vpCameraParameters &cam,
+      vpMatrix &zBuffer);
+
     static void getImage(vpImage<unsigned char> &I,
                          std::list<vpImageSimulator> &list,
                          const vpCameraParameters &cam);
@@ -249,9 +249,9 @@ class VISP_EXPORT vpImageSimulator
 
     /*!
       As it can be time consuming to reset all the image to a default baground value, this function enable to reset only the pixel which changed the previous time.
-      
+
       By default this functionality is disabled. and the background color is white.
-      
+
       \param clean : Enable the reset method.
       \param color : Color of the back ground.
     */
@@ -267,37 +267,37 @@ class VISP_EXPORT vpImageSimulator
      */
     inline void
     setBackGroundTexture(const vpImage<unsigned char>& Iback) {
-    	setBackgroundTexture = true;
-    	Ig = Iback;
+      setBackgroundTexture = true;
+      Ig = Iback;
     }
-    
+
   private:
     void initPlan(vpColVector* X);
-    
+
     //result = plan est visible.
     //ie: un plan est oriente dans si normal_plan.focal < 0 => plan est visible sinon invisible.
     bool isVisible() {return visible;}
-    
+
     //function that project a point x,y on the plane, return true if the projection is on the limited plane
     // and in this case return the corresponding image pixel Ipixelplan
     bool getPixel(const vpImagePoint &iP,unsigned char &Ipixelplan);
     bool getPixel(const vpImagePoint &iP,vpRGBa &Ipixelplan);
     bool getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint &iP,
-		  unsigned char &Ipixelplan);
+      unsigned char &Ipixelplan);
     bool getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP,
-		  vpRGBa &Ipixelplan);
+      vpRGBa &Ipixelplan);
     bool getPixelDepth(const vpImagePoint &iP, double &Zpixelplan);
     bool getPixelVisibility(const vpImagePoint &iP, double &Zpixelplan);
-    
+
         //operation 3D de base :
     void project(const vpColVector &_vin, const vpHomogeneousMatrix &_cMt,
-		 vpColVector &_vout);
+     vpColVector &_vout);
     //donne coordonnes homogenes de _v;
     void getHomogCoord(const vpColVector &_v, vpColVector &_vH);
     //donne coordonnes _v en fction coord homogenes _vH;
     void getCoordFromHomog(const vpColVector &_vH, vpColVector &_v);
-    
-    void getRoi(const unsigned int &Iwidth, const unsigned int &Iheight, 
+
+    void getRoi(const unsigned int &Iwidth, const unsigned int &Iheight,
         const vpCameraParameters &cam, const std::vector<vpPoint> &point, vpRect &rect);
 };
 

@@ -109,7 +109,7 @@ class VISP_EXPORT vpPolygon
     bool _goodPoly;
     //! Bounding box containing the polygon.
     vpRect _bbox;
-    
+
   public:
     enum PointInPolygonMethod {
       PnPolySegmentIntersection,  /*!< Legacy Point In Polygon test. */
@@ -117,38 +117,38 @@ class VISP_EXPORT vpPolygon
     };
 
     vpPolygon();
-    vpPolygon(const std::vector<vpImagePoint>& corners);
-    vpPolygon(const std::list<vpImagePoint>& corners);
+    explicit vpPolygon(const std::vector<vpImagePoint>& corners);
+    explicit vpPolygon(const std::list<vpImagePoint>& corners);
     vpPolygon(const vpPolygon &poly);
     virtual ~vpPolygon();
-    
+
     vpPolygon &operator=(const vpPolygon& poly);
-    
+
     void buildFrom(const std::vector<vpImagePoint>& corners);
     void buildFrom(const std::list<vpImagePoint>& corners);
     void buildFrom(const std::vector<vpPoint>& corners, const vpCameraParameters& cam);
 
     unsigned int getSize() const;
     void initClick(const vpImage<unsigned char>& I);
-    
+
     bool isInside(const vpImagePoint &iP, const PointInPolygonMethod &method=PnPolyRayCasting) const;
 
     void display(const vpImage<unsigned char>& I, const vpColor& color, unsigned int thickness=1) const;
-    
+
     /*!
       Get the corners of the polygon.
-      
+
       \return A reference to the corners.
     */
     const std::vector<vpImagePoint>& getCorners() const {
       return _corners;
     }
-      
-      
+
+
     /*!
       Return the area of the polygon.
       The area is computed when the polygon is built from the corners.
-      
+
       \return The area of the polygon.
     */
     inline double getArea() const{
@@ -181,7 +181,7 @@ class VISP_EXPORT vpPolygon
     void updateArea();
     void updateCenter();
     void updateBoundingBox();
-    
+
   private:
     bool testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint& ip2, const vpImagePoint& ip3, const vpImagePoint& ip4) const;
     void precalcValuesPnPoly();

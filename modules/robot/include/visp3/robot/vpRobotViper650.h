@@ -112,10 +112,10 @@ extern "C" {
 
   This class allows to control the Viper650 arm robot in position
   and velocity:
-  - in the joint space (vpRobot::ARTICULAR_FRAME), 
+  - in the joint space (vpRobot::ARTICULAR_FRAME),
   - in the fixed reference frame \f$ {\cal F}_f \f$ (vpRobot::REFERENCE_FRAME),
   - in the camera or tool frame \f$ {\cal F}_c \f$ (vpRobot::CAMERA_FRAME),
-  - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed 
+  - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed
   in the reference frame \f$ {\cal F}_f \f$ and rotations in the camera or tool frame \f$ {\cal F}_c \f$ .
 
   All the translations are expressed in meters for positions and m/s
@@ -158,10 +158,10 @@ int main()
 #ifdef VISP_HAVE_VIPER650
   vpRobotViper650 robot;
 
-  // Set the extrinsic camera parameters obtained with a perpective 
+  // Set the extrinsic camera parameters obtained with a perpective
   // projection model including a distortion parameter
   robot.init(vpViper650::TOOL_MARLIN_F033C_CAMERA,
-	     vpCameraParameters::perspectiveProjWithDistortion);
+       vpCameraParameters::perspectiveProjWithDistortion);
 #endif
 }
   \endcode
@@ -189,7 +189,7 @@ int main()
 
   vpCameraParameters cam;
   robot.getCameraParameters(cam, I);
-  // In cam, you get the intrinsic parameters of the projection model 
+  // In cam, you get the intrinsic parameters of the projection model
   // with distortion.
 #endif
 }
@@ -392,7 +392,7 @@ private: /* Attributs prives. */
 
 public:  /* Methode publiques */
 
-  vpRobotViper650 (bool verbose=true);
+  explicit vpRobotViper650 (bool verbose=true);
   virtual ~vpRobotViper650 (void);
 
   // Force/Torque control

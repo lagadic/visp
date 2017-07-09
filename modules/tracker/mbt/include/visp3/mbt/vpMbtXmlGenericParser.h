@@ -199,7 +199,7 @@ protected:
 public:
   /** @name Public Member Functions Inherited from vpMbtXmlGenericParser */
   //@{
-  vpMbtXmlGenericParser(const vpParserType &type=EDGE_PARSER);
+  explicit vpMbtXmlGenericParser(const vpParserType &type=EDGE_PARSER);
   virtual ~vpMbtXmlGenericParser();
 
   /*!
@@ -208,14 +208,14 @@ public:
   inline double getAngleAppear() const {
     return m_angleAppear;
   }
-  
+
   /*!
     Get the angle to determine if a face disappeared.
   */
   inline double getAngleDisappear() const {
     return m_angleDisappear;
   }
-  
+
   void getCameraParameters(vpCameraParameters& _cam) const {
     _cam = m_cam;
   }
@@ -282,14 +282,14 @@ public:
   inline unsigned int getDepthNormalSamplingStepY() const {
     return m_depthNormalSamplingStepY;
   }
-  
+
   /*!
     Get the far clipping distance.
   */
   inline double getFarClippingDistance() const {
     return m_farClipping;
   }
-  
+
   /*!
     Get if FOV clipping should be used or not.
   */
@@ -398,12 +398,12 @@ public:
   inline bool hasNearClippingDistance() const {
     return m_hasNearClipping;
   }
-  
+
   void parse(const std::string &filename);
 
   virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
 
-  
+
   /*!
     Set the angle to determine if a face appeared.
 
@@ -412,7 +412,7 @@ public:
   inline void setAngleAppear(const double &aappear) {
     m_angleAppear = aappear;
   }
-  
+
   /*!
     Set the angle to determine if a face disappeared.
 
@@ -421,7 +421,7 @@ public:
   inline void setAngleDisappear(const double &adisappear) {
     m_angleDisappear = adisappear;
   }
-  
+
   /*!
     Set camera parameters.
 
@@ -511,7 +511,7 @@ public:
   inline void setEdgeMe(const vpMe &_ecm) {
     m_ecm = _ecm;
   }
-  
+
   /*!
     Set the far clipping distance.
 

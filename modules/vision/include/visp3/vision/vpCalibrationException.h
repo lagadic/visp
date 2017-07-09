@@ -94,7 +94,7 @@ class VISP_EXPORT vpCalibrationException : public vpException
     }
     vpCalibrationException (const int id, const std::string & msg)
       : vpException(id, msg){ ; }
-    vpCalibrationException (const int id)
+    explicit vpCalibrationException (const int id)
       : vpException(id){ ; }
 };
 

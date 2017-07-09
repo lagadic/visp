@@ -60,7 +60,7 @@
   \f$s=(t_x,t_y,t_z)\f$.
 
   It is convenient to consider two coordinate frames noted here \f$ {\cal{F}}_1 \f$ and \f$
-  {\cal{F}}_{2} \f$. 
+  {\cal{F}}_{2} \f$.
 
   Let \f$^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$ be the homogeneous matrix that gives the
   orientation and the translation of the frame \f$ {\cal{F}}_1 \f$ with respect to the frame \f$ {\cal{F}}_2 \f$.
@@ -146,14 +146,14 @@ int main()
   vpFeatureTranslation s(vpFeatureTranslation::cdMc);
   s.buildFrom(cdMc); // Initialization of the current feature s=(tx,ty,tz)
 
-  // Set eye-in-hand control law. 
+  // Set eye-in-hand control law.
   // The computed velocities will be expressed in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA);
   // Interaction matrix is computed with the current visual features s
-  task.setInteractionMatrixType(vpServo::CURRENT); 
+  task.setInteractionMatrixType(vpServo::CURRENT);
   // Set the constant gain
   double lambda = 0.8;
-  task.setLambda(lambda);  
+  task.setLambda(lambda);
 
   // Add the 3D translation feature to the task
   task.addFeature(s); // s* is here considered as zero
@@ -161,26 +161,26 @@ int main()
   // Control loop
   for ( ; ; ) {
     // ... cdMc need here to be initialized from for example a pose estimation.
-    
+
     // Update the current 3D translation visual feature
     s.buildFrom(cdMc);
-    
+
     // compute the control law
     vpColVector v = task.computeControlLaw(); // camera velocity
   }
 }
   \endcode
 
-  If you want to deal only with the \f$(t_x,t_y)\f$ subset feature from the 3D 
-  translation, you have just to modify the addFeature() call in 
-  the previous example by the following line. In that case, the dimension 
+  If you want to deal only with the \f$(t_x,t_y)\f$ subset feature from the 3D
+  translation, you have just to modify the addFeature() call in
+  the previous example by the following line. In that case, the dimension
   of \f$s\f$ is two.
 
   \code
   // Add the (tx,ty) subset features from 3D translation to the task
   task.addFeature(s, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
   \endcode
-	     
+
   If you want to build your own control law, this other example shows
   how to create a current (\f$s\f$) and desired (\f$s^*\f$) 3D
   translation visual feature, compute the corresponding error
@@ -200,9 +200,9 @@ int main()
   vpFeatureTranslation s(vpFeatureTranslation::cdMc);
   s.buildFrom(cdMc); // Initialization of the feature
 
-  // Creation of the desired feature s*. By default this feature is 
+  // Creation of the desired feature s*. By default this feature is
   // initialized to zero
-  vpFeatureTranslation s_star(vpFeatureTranslation::cdMc); 
+  vpFeatureTranslation s_star(vpFeatureTranslation::cdMc);
 
   // Compute the interaction matrix for the translation feature
   vpMatrix L = s.interaction();
@@ -215,11 +215,11 @@ int main()
   The code below shows how to create an eye-in hand visual servoing
   task using a 3D translation feature \f$(t_x,t_y,t_z)\f$ that
   correspond to the 3D translation between the current camera frame
-  and the object frame. Like with the previous examples, to 
-  control six degrees of freedom, at least three other features must be 
-  considered like vpFeatureThetaU visual features. The way to initialize 
-  the visual features is quite the same as before. The difference is that 
-  the cMo method must be precised and the desired feature is note 
+  and the object frame. Like with the previous examples, to
+  control six degrees of freedom, at least three other features must be
+  considered like vpFeatureThetaU visual features. The way to initialize
+  the visual features is quite the same as before. The difference is that
+  the cMo method must be precised and the desired feature is note
   necessary equal to zero.
 
   \code
@@ -245,14 +245,14 @@ int main()
   vpFeatureTranslation s(vpFeatureTranslation::cMo);
   s.buildFrom(cMo); // Initialization of the current feature s=(tx,ty,tz)
 
-  // Set eye-in-hand control law. 
+  // Set eye-in-hand control law.
   // The computed velocities will be expressed in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA);
   // Interaction matrix is computed with the current visual features s
-  task.setInteractionMatrixType(vpServo::CURRENT); 
+  task.setInteractionMatrixType(vpServo::CURRENT);
   // Set the constant gain
   double lambda = 0.8;
-  task.setLambda(lambda);  
+  task.setLambda(lambda);
 
   // Add the 3D translation feature to the task
   task.addFeature(s, s_star); // s* is here considered as zero
@@ -260,10 +260,10 @@ int main()
   // Control loop
   for ( ; ; ) {
     // ... cMo need here to be computed from for example a pose estimation.
-    
+
     // Update the current 3D translation visual feature
     s.buildFrom(cMo);
-    
+
     // compute the control law
     vpColVector v = task.computeControlLaw(); // camera velocity
   }
@@ -275,29 +275,29 @@ class VISP_EXPORT vpFeatureTranslation : public vpBasicFeature
 {
 public:
 
-  /*! 
-    \enum vpFeatureTranslationRepresentationType 
+  /*!
+    \enum vpFeatureTranslationRepresentationType
     Kind of implemented 3D translation feature.
    */
   typedef enum {
     /*! Selector used to manipulate the visual feature \f$s=
       ^{c^*}t_c\f$ which gives the position of the current camera frame
       relative to the desired camera frame.*/
-    cdMc, 
+    cdMc,
     /*! Selector used to manipulate the visual feature \f$s=
       ^{c}t_{c^*}\f$ which gives the position of the desired camera frame
       relative to the current camera frame.*/
-    cMcd, 
+    cMcd,
     /*! Selector used to manipulate the visual feature \f$s=
       ^{c}t_o\f$ which gives the position of the object frame relative to
       the current camera frame. */
-    cMo 
+    cMo
   } vpFeatureTranslationRepresentationType;
 
   // basic contructor
   vpFeatureTranslation() ;
   // basic constructor specifying the type of translation feature
-  vpFeatureTranslation(vpFeatureTranslationRepresentationType r) ;
+  explicit vpFeatureTranslation(vpFeatureTranslationRepresentationType r) ;
   // constructor : build from an homogeneous matrix
   // cdMc is the displacement that the camera has to realize
   vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1, vpFeatureTranslationRepresentationType r) ;

@@ -92,7 +92,7 @@ class VISP_EXPORT vpImageException : public vpException
     }
     vpImageException (const int id, const std::string & msg)
       : vpException(id, msg){ ; }
-    vpImageException (const int id)
+    explicit vpImageException (const int id)
       : vpException(id){ ; }
 };
 

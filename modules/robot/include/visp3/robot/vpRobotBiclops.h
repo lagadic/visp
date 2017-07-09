@@ -132,7 +132,7 @@ public:
   static const double       defaultPositioningVelocity;
 
   vpRobotBiclops (void);
-  vpRobotBiclops (const std::string &filename);
+  explicit vpRobotBiclops (const std::string &filename);
   virtual ~vpRobotBiclops (void);
 
   void init (void);

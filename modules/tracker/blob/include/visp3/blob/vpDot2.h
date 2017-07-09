@@ -126,7 +126,7 @@ class VISP_EXPORT vpDot2 : public vpTracker
 {
 public:
   vpDot2();
-  vpDot2(const vpImagePoint &ip) ;
+  explicit vpDot2(const vpImagePoint &ip) ;
   vpDot2(const vpDot2& twinDot );
   virtual ~vpDot2();
 
@@ -368,69 +368,69 @@ public:
 
 public:
   double m00; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
-		with \f$i = j = 0 \f$. This moment corresponds to the dot
-		surface.
+    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+    u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
+    with \f$i = j = 0 \f$. This moment corresponds to the dot
+    surface.
 
-		\sa setComputeMoments()
-	      */
+    \sa setComputeMoments()
+        */
   double m10; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^j \f$, \f$ m_{10} \f$ is a first order moment
-		obtained with \f$i = 1 \f$ and \f$ j = 0 \f$. \f$ m_{10} \f$
-		corresponds to the inertia first order moment along the v axis.
+    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+    u_h^i v_h^j \f$, \f$ m_{10} \f$ is a first order moment
+    obtained with \f$i = 1 \f$ and \f$ j = 0 \f$. \f$ m_{10} \f$
+    corresponds to the inertia first order moment along the v axis.
 
-		\sa setComputeMoments()
-	      */
+    \sa setComputeMoments()
+        */
   double m01; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^j \f$, \f$ m_{01} \f$ is a first order moment
-		obtained with \f$i = 0 \f$ and \f$ j = 1 \f$. \f$ m_{01} \f$
-		corresponds to the inertia first order moment along the u axis.
+    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+    u_h^i v_h^j \f$, \f$ m_{01} \f$ is a first order moment
+    obtained with \f$i = 0 \f$ and \f$ j = 1 \f$. \f$ m_{01} \f$
+    corresponds to the inertia first order moment along the u axis.
 
-		\sa setComputeMoments()
-	      */
+    \sa setComputeMoments()
+        */
   double m11; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^j \f$, \f$ m_{11} \f$ is a first order moment
-		obtained with \f$i = 1 \f$ and \f$ j = 1 \f$.
+    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+    u_h^i v_h^j \f$, \f$ m_{11} \f$ is a first order moment
+    obtained with \f$i = 1 \f$ and \f$ j = 1 \f$.
 
-		\sa setComputeMoments()
-	      */
+    \sa setComputeMoments()
+        */
   double m20; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^j \f$, \f$ m_{20} \f$ is a second order moment
-		obtained with \f$i = 2 \f$ and \f$ j = 0 \f$. \f$ m_{20} \f$
-		corresponds to the inertia second order moment along the v
-		axis.
+    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+    u_h^i v_h^j \f$, \f$ m_{20} \f$ is a second order moment
+    obtained with \f$i = 2 \f$ and \f$ j = 0 \f$. \f$ m_{20} \f$
+    corresponds to the inertia second order moment along the v
+    axis.
 
-		\sa setComputeMoments()
-	      */
+    \sa setComputeMoments()
+        */
   double m02; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^j \f$, \f$ m_{02} \f$ is a second order moment
-		obtained with \f$i = 0 \f$ and \f$ j = 2 \f$. \f$ m_{02} \f$
-		corresponds to the inertia second order moment along the u
-		axis.
+    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+    u_h^i v_h^j \f$, \f$ m_{02} \f$ is a second order moment
+    obtained with \f$i = 0 \f$ and \f$ j = 2 \f$. \f$ m_{02} \f$
+    corresponds to the inertia second order moment along the u
+    axis.
 
-		\sa setComputeMoments()
-	      */
+    \sa setComputeMoments()
+        */
   double mu11;/*!< \f$ \mu_{11} \f$ is a second order central moments defined by:
-		\f$ \mu_{11} = m_{11} - \frac{m_{10}}{m_{00}}m_{01} \f$
-		
-		\sa setComputeMoments()
-	      */
+    \f$ \mu_{11} = m_{11} - \frac{m_{10}}{m_{00}}m_{01} \f$
+
+    \sa setComputeMoments()
+        */
   double mu20;/*!< \f$ \mu_{20} \f$ is a second order central moments defined by:
-		\f$ \mu_{20} = m_{20} - \frac{m_{10}}{m_{00}}m_{10} \f$
-		
-		\sa setComputeMoments()
-	      */
+    \f$ \mu_{20} = m_{20} - \frac{m_{10}}{m_{00}}m_{10} \f$
+
+    \sa setComputeMoments()
+        */
   double mu02;/*!< \f$ \mu_{02} \f$ is a second order central moments defined by:
-		\f$ \mu_{02} = m_{02} - \frac{m_{01}}{m_{00}}m_{01} \f$
-		
-		\sa setComputeMoments()
-	      */
+    \f$ \mu_{02} = m_{02} - \frac{m_{01}}{m_{00}}m_{01} \f$
+
+    \sa setComputeMoments()
+        */
 
 private:
   virtual bool isValid(const vpImage<unsigned char>& I, const vpDot2& wantedDot);
@@ -447,8 +447,8 @@ private:
   void init();
 
   bool computeParameters(const vpImage<unsigned char> &I,
-			 const double &u = -1.0,
-			 const double &v = -1.0);
+       const double &u = -1.0,
+       const double &v = -1.0);
 
 
 
@@ -481,17 +481,17 @@ private:
   }
 
   bool computeFreemanChainElement(const vpImage<unsigned char> &I,
-				  const unsigned int &u,
-				  const unsigned int &v,
-				  unsigned int &element);
+          const unsigned int &u,
+          const unsigned int &v,
+          unsigned int &element);
   void computeFreemanParameters(const int &u_p,
-				const int &v_p, unsigned int &element,
-				int &du, int &dv, float &dS,
-				float &dMu, float &dMv,
-				float &dMuv,
-				float &dMu2, float &dMv2);
+        const int &v_p, unsigned int &element,
+        int &du, int &dv, float &dS,
+        float &dMu, float &dMv,
+        float &dMuv,
+        float &dMu2, float &dMv2);
   void updateFreemanPosition( unsigned int& u, unsigned int& v,
-			      const unsigned int &dir );
+            const unsigned int &dir );
 
 
   bool isInImage(const vpImage<unsigned char> &I ) const;
@@ -501,7 +501,7 @@ private:
 
   void getGridSize( unsigned int &gridWidth, unsigned int &gridHeight );
   void setArea(const vpImage<unsigned char> &I,
-	       int u, int v, unsigned int w, unsigned int h);
+         int u, int v, unsigned int w, unsigned int h);
   void setArea(const vpImage<unsigned char> &I);
   void setArea(const vpRect & a);
 
@@ -513,12 +513,12 @@ private:
   double height;
   double surface;
   unsigned int gray_level_min;  // minumum gray level for the dot.
-				// pixel with lower level don't belong
-				// to this dot.
+        // pixel with lower level don't belong
+        // to this dot.
 
   unsigned int gray_level_max;  // maximum gray level for the dot.
-				// pixel with higher level don't belong
-				// to this dot.
+        // pixel with higher level don't belong
+        // to this dot.
   double mean_gray_level; // Mean gray level of the dot
   double grayLevelPrecision ;
   double gamma ;
@@ -545,7 +545,7 @@ private:
   // The first point coodinate on the dot border
   unsigned int firstBorder_u;
   unsigned int firstBorder_v;
-  
+
 //Static funtions
 public:
   static void display(const vpImage<unsigned char>& I,const vpImagePoint &cog,

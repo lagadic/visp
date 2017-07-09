@@ -83,7 +83,7 @@
   If the grabbing fails when the camera is attached to a bttv PCI
   card, it means potentially that you have not configured the linux
   bttv kernel module according to your board.
-  
+
   For that, depending on your linux distribution check the card id in
   - /usr/share/doc/kernel-doc-2.4.20/video4linux/bttv/CARDLIST
   - or /usr/share/doc/kernel-doc-2.6.20/Documentation/video4linux/CARDLIST.bttv
@@ -124,7 +124,7 @@ int main()
 #endif
 }
   \endcode
-  
+
 
   \author Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
 
@@ -211,7 +211,7 @@ public:
 
 public:
   vpV4l2Grabber();
-  vpV4l2Grabber(bool verbose);
+  explicit vpV4l2Grabber(bool verbose);
   vpV4l2Grabber(unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
   vpV4l2Grabber(vpImage<unsigned char> &I,
                 unsigned input, unsigned scale = vpV4l2Grabber::DEFAULT_SCALE);
@@ -237,8 +237,8 @@ public:
 
   \return Camera pixel format coding.
 
-  */  
-  inline vpV4l2PixelFormatType getPixelFormat() 
+  */
+  inline vpV4l2PixelFormatType getPixelFormat()
   {
     return (this->m_pixelformat);
   }
@@ -309,8 +309,8 @@ public:
 
   \param pixelformat : Camera pixel format coding.
 
-  */  
-  inline void setPixelFormat(vpV4l2PixelFormatType pixelformat) 
+  */
+  inline void setPixelFormat(vpV4l2PixelFormatType pixelformat)
   {
     this->m_pixelformat = pixelformat;
     if (this->m_pixelformat >= V4L2_MAX_FORMAT)
@@ -320,7 +320,7 @@ public:
   void close();
 
 private:
- 
+
   void setFormat();
   /*!
     Set the frame format.

@@ -65,16 +65,16 @@ public:
   virtual ~vpSphere() ;
 
 public:
-  vpSphere(const vpColVector& oP) ;
+  explicit vpSphere(const vpColVector& oP) ;
   vpSphere(const double X0, const double Y0,
-	   const double Z0,
-	   const double R) ;
+     const double Z0,
+     const double R) ;
 
 
   void setWorldCoordinates(const vpColVector& oP) ;
   void setWorldCoordinates(const double X0, const double Y0,
-			   const double Z0,
-			   const double R) ;
+         const double Z0,
+         const double R) ;
 
   double get_x() const { return p[0] ; }
   double get_y() const { return p[1] ; }

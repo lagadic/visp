@@ -72,22 +72,22 @@ public:
 
   /*!
     Basic constructor.
-    
+
     Build a black value.
-    
+
   */
   inline vpRGBa() : R(0), G(0), B(0), A(vpRGBa::alpha_default) {}
-  
+
   /*!
     Constructor.
-    
+
     Initialize the color with R, G, B, A values.
-    
+
     \param r : Red value.
     \param g : Green value.
     \param b : Blue value.
     \param a : Additional value.
-    
+
   */
   inline vpRGBa(const unsigned char &r, const unsigned char &g,
     const unsigned char &b, const unsigned char &a=0)
@@ -96,11 +96,11 @@ public:
 
   /*!
     Constructor.
-    
+
     Initialize all the R, G, B, A components to \e v.
-    
+
     \param v : Value to set.
-    
+
   */
   inline vpRGBa(const unsigned char &v) : R(v), G(v), B(v), A(v) {}
 
@@ -117,7 +117,7 @@ public:
     G=v[1]
     B=v[2]
     A=v[3]
-    
+
   */
   inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(vpRGBa::alpha_default)
   {

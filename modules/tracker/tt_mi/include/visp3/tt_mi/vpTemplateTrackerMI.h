@@ -152,7 +152,7 @@ public:
       d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
       NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false)
   {}
-  vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp);
+  explicit vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp);
   ~vpTemplateTrackerMI();
   vpMatrix getCovarianceMatrix() const { return covarianceMatrix; }
   double getMI() const {return MI_postEstimation;}

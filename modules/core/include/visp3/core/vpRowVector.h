@@ -73,7 +73,7 @@ public:
   //! Basic constructor that creates an empty 0-size row vector.
   vpRowVector() : vpArray2D<double>() {}
   //! Construct a row vector of size n. All the elements are initialized to zero.
-  vpRowVector(unsigned int n) : vpArray2D<double>(1, n){}
+  explicit vpRowVector(unsigned int n) : vpArray2D<double>(1, n){}
   //! Construct a row vector of size n. Each element is set to \e val.
   vpRowVector(unsigned int n, double val) : vpArray2D<double>(1, n, val){}
   //! Copy constructor that allows to construct a row vector from an other one.
@@ -196,7 +196,7 @@ public:
   }
   void reshape(vpMatrix & M,const unsigned int &nrows,const unsigned int &ncols);
   vpMatrix reshape(const unsigned int &nrows,const unsigned int &ncols);
-  
+
   /*! Modify the size of the row vector.
     \param i : Size of the vector. This value corresponds to the vector number
     of columns.

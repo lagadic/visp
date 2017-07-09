@@ -98,7 +98,7 @@ class VISP_EXPORT vpDisplayException : public vpException
     {
     }
 
-    vpDisplayException (const int id)
+    explicit vpDisplayException (const int id)
       : vpException(id)
     {
     }

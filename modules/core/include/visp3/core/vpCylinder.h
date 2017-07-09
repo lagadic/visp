@@ -100,7 +100,7 @@ public:
   } vpLineCylinderType;
 
   vpCylinder() ;
-  vpCylinder(const vpColVector& oP) ;
+  explicit vpCylinder(const vpColVector& oP) ;
   vpCylinder(const double A, const double B,
              const double C,
              const double X0, const double Y0,

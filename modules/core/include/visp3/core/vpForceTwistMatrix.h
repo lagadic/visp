@@ -28,7 +28,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Twist transformation matrix that allows to transform forces from one 
+ * Twist transformation matrix that allows to transform forces from one
  * frame to an other.
  *
  * Authors:
@@ -60,7 +60,7 @@
 
   The twist transformation matrix that allows to transform the
   force/torque vector expressed at frame \f${\cal F}_b\f$ into the
-  frame \f${\cal F}_a\f$ is a 6 by 6 matrix defined as 
+  frame \f${\cal F}_a\f$ is a 6 by 6 matrix defined as
 
   \f[
   ^a{\bf F}_b = \left[ \begin{array}{cc}
@@ -87,12 +87,12 @@ int main()
   vpHomogeneousMatrix sMp; // Force/torque sensor frame to probe frame transformation
   // ... sMp need here to be initialized
 
-  sFp.buildFrom(sMp); 
- 
-  vpColVector p_H(6); // Force/torque skew in the probe frame: fx,fy,fz,tx,ty,tz 
+  sFp.buildFrom(sMp);
+
+  vpColVector p_H(6); // Force/torque skew in the probe frame: fx,fy,fz,tx,ty,tz
   // ... p_H should here have an initial value
 
-  vpColVector s_H(6); // Force/torque skew in the sensor frame: fx,fy,fz,tx,ty,tz 
+  vpColVector s_H(6); // Force/torque skew in the sensor frame: fx,fy,fz,tx,ty,tz
 
   // Compute the value of the force/torque in the sensor frame
   s_H = sFp * p_H;
@@ -107,7 +107,7 @@ class VISP_EXPORT vpForceTwistMatrix : public vpArray2D<double>
   // copy constructor
   vpForceTwistMatrix(const vpForceTwistMatrix &F) ;
   // constructor from an homogeneous transformation
-  vpForceTwistMatrix(const vpHomogeneousMatrix &M) ;
+  explicit vpForceTwistMatrix(const vpHomogeneousMatrix &M) ;
 
   // Construction from Translation and rotation (ThetaU parameterization)
   vpForceTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau) ;

@@ -73,7 +73,7 @@ class VISP_EXPORT vpTemplateTrackerSSD: public vpTemplateTracker
     virtual void    trackNoPyr(const vpImage<unsigned char> &I) = 0;
 
   public:
-    vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp);
+    explicit vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp);
 
     double  getSSD(const vpImage<unsigned char> &I, const vpColVector &tp);
     void    setGain(double g){ gain=g; }

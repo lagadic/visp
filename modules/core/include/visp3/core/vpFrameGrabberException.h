@@ -59,7 +59,7 @@
 /* --- CLASS --------------------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
 
-/*!          
+/*!
   \brief Error that can be emited by the vpFrameGrabber class and its derivates
  */
 class VISP_EXPORT vpFrameGrabberException : public vpException
@@ -87,7 +87,7 @@ class VISP_EXPORT vpFrameGrabberException : public vpException
     }
     vpFrameGrabberException (const int id, const std::string & msg)
       : vpException(id, msg){ ; }
-    vpFrameGrabberException (const int id)
+    explicit vpFrameGrabberException (const int id)
       : vpException(id){ ; }
 
 };

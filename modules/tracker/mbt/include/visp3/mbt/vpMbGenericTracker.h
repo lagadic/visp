@@ -58,7 +58,7 @@ public:
 
   vpMbGenericTracker();
   vpMbGenericTracker(const unsigned int nbCameras, const int trackerType=EDGE_TRACKER);
-  vpMbGenericTracker(const std::vector<int> &trackerTypes);
+  explicit vpMbGenericTracker(const std::vector<int> &trackerTypes);
   vpMbGenericTracker(const std::vector<std::string> &cameraNames, const std::vector<int> &trackerTypes);
 
   virtual ~vpMbGenericTracker();
@@ -369,7 +369,7 @@ private:
     vpColVector m_weightedError;
 
     TrackerWrapper();
-    TrackerWrapper(const int trackerType);
+    explicit TrackerWrapper(const int trackerType);
 
     virtual ~TrackerWrapper();
 

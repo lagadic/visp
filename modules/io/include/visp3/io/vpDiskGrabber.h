@@ -114,16 +114,16 @@ private:
   char directory[FILENAME_MAX] ; //!< image location
   char base_name[FILENAME_MAX] ; //!< image base name
   char extension[FILENAME_MAX] ; //!< image extension
-  
+
   bool useGenericName;
   char genericName[FILENAME_MAX];
 
 public:
   vpDiskGrabber();
-  vpDiskGrabber(const char *genericName);
-  vpDiskGrabber(const char *dir, const char *basename, 
-                long number, int step, unsigned int noz,
-		const char *ext) ;
+  explicit vpDiskGrabber(const char *genericName);
+  explicit vpDiskGrabber(const char *dir, const char *basename,
+                         long number, int step, unsigned int noz,
+                         const char *ext) ;
   virtual ~vpDiskGrabber() ;
 
   void open(vpImage<unsigned char> &I) ;

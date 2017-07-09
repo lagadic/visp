@@ -112,7 +112,7 @@ int main()
 vpMomentCInvariant depends on vpMomentCentered (see vpMomentDatabase and vpMomentCommon).
 */
 class VISP_EXPORT vpMomentCInvariant : public vpMoment {
- private:	
+ private:
    std::vector<double> I;
    std::vector<double> II;
    std::vector<double> c;
@@ -128,9 +128,9 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
    double In1;              // same as I1 in Sx,Sy formulae but calculated from normalized moments
    bool flg_sxsynormalization_;
 
- public:	
-	
-   vpMomentCInvariant(bool flg_sxsynormalization = false);
+ public:
+
+   explicit vpMomentCInvariant(bool flg_sxsynormalization = false);
    virtual ~vpMomentCInvariant() {};
 
         /*!
@@ -219,7 +219,7 @@ class VISP_EXPORT vpMomentCInvariant : public vpMoment {
           Print partial invariant.
           */
         void printI(unsigned int index);
-	
+
         /*!
           Shorcut for getting the value of \f$P_x\f$.
           */

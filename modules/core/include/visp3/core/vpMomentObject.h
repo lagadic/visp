@@ -226,7 +226,7 @@ public:
   bool flg_normalize_intensity;                 // To scale the intensity of each individual pixel in the image by the maximum intensity value present in it
 
   // Constructors
-  vpMomentObject(unsigned int order);
+  explicit vpMomentObject(unsigned int order);
   vpMomentObject(const vpMomentObject& srcobj);
   /*!
   Virtual destructor to allow polymorphic usage.

@@ -88,7 +88,7 @@ class VISP_EXPORT vpServoException : public vpException
     }
     vpServoException (const int id, const std::string & msg)
       : vpException(id, msg){ ; }
-    vpServoException (const int id)
+    explicit vpServoException (const int id)
       : vpException(id){ ; }
 
 };

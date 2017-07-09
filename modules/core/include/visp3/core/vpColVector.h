@@ -78,7 +78,7 @@ public:
   vpColVector() : vpArray2D<double>() {}
   //! Construct a column vector of size n. \warning Elements are not initialized. If you want to set
   //! an initial value use vpColVector(unsigned int, double).
-  vpColVector(unsigned int n) : vpArray2D<double>(n,1){}
+  explicit vpColVector(unsigned int n) : vpArray2D<double>(n,1){}
   //! Construct a column vector of size n. Each element is set to \e val.
   vpColVector(unsigned int n, double val) : vpArray2D<double>(n, 1, val){}
   //! Copy constructor that allows to construct a column vector from an other one.
@@ -288,7 +288,7 @@ public:
   static vpColVector stack(const vpColVector &A, const vpColVector &B);
   static void stack(const vpColVector &A, const vpColVector &B, vpColVector &C);
 
-  static double stdev(const vpColVector &v, const bool useBesselCorrection=false);  
+  static double stdev(const vpColVector &v, const bool useBesselCorrection=false);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!

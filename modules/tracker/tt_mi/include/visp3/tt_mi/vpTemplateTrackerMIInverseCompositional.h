@@ -111,7 +111,7 @@ public:
     : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
       evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()//, useAYOptim(false)
   {}
-  vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp);
+  explicit vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp);
 
   /*! Use only the strong gradient pixels to compute the Jabobian. By default this feature is disabled. */
   void  setUseTemplateSelect(bool b) {useTemplateSelect = b;}

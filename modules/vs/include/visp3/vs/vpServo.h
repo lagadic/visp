@@ -232,7 +232,7 @@ public:
   // default constructor
   vpServo();
   // constructor with Choice of the visual servoing control law
-  vpServo(vpServoType servoType) ;
+  explicit vpServo(vpServoType servoType) ;
   // destructor
   virtual ~vpServo() ;
 

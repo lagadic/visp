@@ -60,7 +60,7 @@ class VISP_EXPORT vpTemplateTrackerZNCCForwardAdditional: public vpTemplateTrack
     void trackNoPyr(const vpImage<unsigned char> &I);
 
   public:
-    vpTemplateTrackerZNCCForwardAdditional(vpTemplateTrackerWarp *warp);
+    explicit vpTemplateTrackerZNCCForwardAdditional(vpTemplateTrackerWarp *warp);
 };
 #endif
 

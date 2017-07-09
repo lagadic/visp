@@ -67,10 +67,10 @@
 
   This class allows to control the Afma6 gantry robot in position
   and velocity:
-  - in the joint space (vpRobot::ARTICULAR_FRAME), 
-  - in the fixed reference frame (vpRobot::REFERENCE_FRAME), 
+  - in the joint space (vpRobot::ARTICULAR_FRAME),
+  - in the fixed reference frame (vpRobot::REFERENCE_FRAME),
   - in the camera frame (vpRobot::CAMERA_FRAME),
-  - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed 
+  - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed
   in the reference frame and rotations in the camera frame.
 
   All the translations are expressed in meters for positions and m/s
@@ -93,7 +93,7 @@
 int main()
 {
   vpSimulatorAfma6 robot;
-  
+
   robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithoutDistortion);
 
   vpColVector q(6);
@@ -110,7 +110,7 @@ int main()
 
   // Moves the robot in the joint space
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
-  
+
   return 0;
 }
   \endcode
@@ -130,7 +130,7 @@ int main()
 int main()
 {
   vpSimulatorAfma6 robot;
-  
+
   robot.init(vpAfma6::TOOL_GRIPPER, vpCameraParameters::perspectiveProjWithoutDistortion);
 
   vpColVector qvel(6);
@@ -154,7 +154,7 @@ int main()
 
   // Stop the robot
   robot.setRobotState(vpRobot::STATE_STOP);
-  
+
   return 0;
 }
   \endcode
@@ -177,24 +177,24 @@ class VISP_EXPORT vpSimulatorAfma6 : public vpRobotWireFrameSimulator, public vp
 {
   public:
     static const double defaultPositioningVelocity;
-    
+
   private:
     vpColVector q_prev_getdis;
     bool first_time_getdis;
-    
+
     double positioningVelocity;
-    
+
     vpColVector zeroPos;
     vpColVector reposPos;
-    
+
     bool toolCustom;
     std::string arm_dir;
- 
+
 public:
     vpSimulatorAfma6();
-    vpSimulatorAfma6(bool display);
+    explicit vpSimulatorAfma6(bool display);
     virtual ~vpSimulatorAfma6();
-    
+
     void getCameraParameters(vpCameraParameters &cam,
                              const unsigned int &image_width,
                              const unsigned int &image_height);
@@ -241,11 +241,11 @@ public:
     void setPositioningVelocity (const double vel) {positioningVelocity = vel;}
     bool setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint=NULL, const double &errMax = 0.001);
     vpRobot::vpRobotStateType setRobotState (const vpRobot::vpRobotStateType newState);
-    
+
     void setVelocity (const vpRobot::vpControlFrameType frame, const vpColVector & velocity);
 
     void stopMotion();
-    
+
 protected:
     /** @name Protected Member Functions Inherited from vpSimulatorAfma6 */
     //@{

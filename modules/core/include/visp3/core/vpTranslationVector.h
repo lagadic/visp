@@ -56,7 +56,7 @@
   \class vpTranslationVector
 
   \ingroup group_core_transformations
-  
+
   \brief Class that consider the case of a translation vector.
 
   Let us denote \f$^{a}{\bf t}_{b} = [t_x,t_y,t_z]^\top\f$ the translation
@@ -75,7 +75,7 @@
 
 int main()
 {
-  vpTranslationVector t; // Translation vector 
+  vpTranslationVector t; // Translation vector
 
   // Initialization of the translation vector
   t[0] =  0.2; // tx = 0.2 meters
@@ -101,9 +101,9 @@ public:
   vpTranslationVector() : vpArray2D<double>(3, 1) {};
   vpTranslationVector(const double tx, const double ty, const double tz) ;
   vpTranslationVector(const vpTranslationVector &tv);
-  vpTranslationVector(const vpHomogeneousMatrix &M);
-  vpTranslationVector(const vpPoseVector &p);
-  vpTranslationVector(const vpColVector &v);
+  explicit vpTranslationVector(const vpHomogeneousMatrix &M);
+  explicit vpTranslationVector(const vpPoseVector &p);
+  explicit vpTranslationVector(const vpColVector &v);
 
   vpTranslationVector buildFrom(const double tx, const double ty, const double tz) ;
   vpTranslationVector buildFrom(const vpHomogeneousMatrix& M) ;

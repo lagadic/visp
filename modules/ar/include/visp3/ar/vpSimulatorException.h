@@ -83,7 +83,7 @@ class VISP_EXPORT vpSimulatorException : public vpException
   public:
     vpSimulatorException (const int id, const char* format, ...);
     vpSimulatorException (const int id, const std::string & msg);
-    vpSimulatorException (const int id);
+    explicit vpSimulatorException (const int id);
 };
 
 #endif

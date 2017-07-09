@@ -63,13 +63,13 @@
   \warning This class uses threading capabilities. Thus on Unix-like
   platforms, the libpthread third-party library need to be
   installed. On Windows, we use the native threading capabilities.
-  
+
   This class allows to control the Viper850 arm robot in position
   and velocity:
-  - in the joint space (vpRobot::ARTICULAR_FRAME), 
-  - in the fixed reference frame (vpRobot::REFERENCE_FRAME), 
+  - in the joint space (vpRobot::ARTICULAR_FRAME),
+  - in the fixed reference frame (vpRobot::REFERENCE_FRAME),
   - in the camera frame (vpRobot::CAMERA_FRAME),
-  - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed 
+  - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed
   in the reference frame and rotations in the camera frame.
 
   All the translations are expressed in meters for positions and m/s
@@ -107,7 +107,7 @@ int main()
 
   // Moves the robot in the joint space
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
-  
+
   return 0;
 }
   \endcode
@@ -138,7 +138,7 @@ int main()
 
   // Moves the robot in the joint space
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
-  
+
   return 0;
 }
   \endcode
@@ -180,7 +180,7 @@ int main()
 
   // Stop the robot
   robot.setRobotState(vpRobot::STATE_STOP);
-  
+
   return 0;
 }
   \endcode
@@ -203,24 +203,24 @@ class VISP_EXPORT vpSimulatorViper850 : public vpRobotWireFrameSimulator, public
 {
   public:
     static const double defaultPositioningVelocity;
-    
+
   private:
     vpColVector q_prev_getdis;
     bool first_time_getdis;
-    
+
     double positioningVelocity;
-    
+
     vpColVector zeroPos;
     vpColVector reposPos;
-    
+
     bool toolCustom;
     std::string arm_dir;
 
   public:
     vpSimulatorViper850();
-    vpSimulatorViper850(bool display);
+    explicit vpSimulatorViper850(bool display);
     virtual ~vpSimulatorViper850();
-    
+
     void getCameraParameters(vpCameraParameters &cam,
                              const unsigned int &image_width,
                              const unsigned int &image_height);
@@ -273,7 +273,7 @@ class VISP_EXPORT vpSimulatorViper850 : public vpRobotWireFrameSimulator, public
     void setVelocity (const vpRobot::vpControlFrameType frame, const vpColVector & velocity);
 
     void stopMotion();
-    
+
 protected:
     /** @name Protected Member Functions Inherited from vpSimulatorViper850 */
     //@{
@@ -305,7 +305,7 @@ protected:
     int isInJointLimit (void);
     bool singularityTest(const vpColVector &q, vpMatrix &J);
     void updateArticularPosition();
-    //@}      
+    //@}
 };
 
 #endif

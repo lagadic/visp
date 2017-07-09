@@ -77,7 +77,7 @@
   vpHistogramValey valey;
   vpHistogram h(I);
   h.smooth();                   // Filter the histogram values
-  vpHistogramPeak peakl, peakr; // Two highest peaks in the histogram 
+  vpHistogramPeak peakl, peakr; // Two highest peaks in the histogram
                                 // - peakl: Peak on the left
                                 // - peakr: Peak on the right
 
@@ -86,7 +86,7 @@
   threshold = valey.getLevel();
   \endcode
 
-  has the same behaviour than this one: 
+  has the same behaviour than this one:
 
   \code
   vpImage<unsigned char> I;
@@ -94,13 +94,13 @@
   unsigned char dist = 60;
   vpHistogram h(I);
   h.smooth();                   // Filter the histogram values
-  vpHistogramPeak peak1, peak2; // Two highest peaks in the histogram 
+  vpHistogramPeak peak1, peak2; // Two highest peaks in the histogram
                                 // - peak1: Highest peak
                                 // - peakr: Second highest peak
 
   // Get the two highest peaks
   h.getPeaks(dist, peak1, peak2);
-  
+
   // Get the valey between the two highest peaks
   vpHistogramValey valey;
   h.getValey(peak1, peak2, valey);
@@ -115,7 +115,7 @@ class VISP_EXPORT vpHistogram
 public:
   vpHistogram();
   vpHistogram(const vpHistogram &h);
-  vpHistogram(const vpImage<unsigned char> &I);
+  explicit vpHistogram(const vpImage<unsigned char> &I);
   virtual ~vpHistogram();
 
   vpHistogram & operator=(const vpHistogram &h);
@@ -130,8 +130,8 @@ public:
 
     \code
     vpImage<unsigned char> I; // A gray level image
-    
-    vpHistogram h; 
+
+    vpHistogram h;
     h.calculate(I); // Histogram of the gray level image
 
     // Print the histogram values
@@ -160,8 +160,8 @@ public:
 
     \code
     vpImage<unsigned char> I; // A gray level image
-    
-    vpHistogram h; 
+
+    vpHistogram h;
     h.calculate(I); // Histogram of the gray level image
 
     // Print the histogram values
@@ -190,8 +190,8 @@ public:
 
     \code
     vpImage<unsigned char> I; // A gray level image
-    
-    vpHistogram h; 
+
+    vpHistogram h;
     h.calculate(I); // Histogram of the gray level image
 
     // Print the histogram values
@@ -220,7 +220,7 @@ public:
     \param value : Number of pixels having the gray level.
 
     \code
-    vpHistogram h; 
+    vpHistogram h;
 
     // Set histogram values
     for (int i=0; i < h.getSize(); i ++)
@@ -246,15 +246,15 @@ public:
 
   void     smooth(const unsigned int fsize = 3);
   unsigned getPeaks(std::list<vpHistogramPeak> & peaks);
-  unsigned getPeaks(unsigned char dist, 
+  unsigned getPeaks(unsigned char dist,
                     vpHistogramPeak & peak1,
                     vpHistogramPeak & peak2);
-  bool     getPeaks(unsigned char dist, 
+  bool     getPeaks(unsigned char dist,
                     vpHistogramPeak & peakl,
                     vpHistogramPeak & peakr,
                     vpHistogramValey & valey);
   unsigned getValey(std::list<vpHistogramValey> & valey);
-  bool     getValey(const vpHistogramPeak & peak1, 
+  bool     getValey(const vpHistogramPeak & peak1,
                     const vpHistogramPeak & peak2,
                     vpHistogramValey & valey);
   unsigned getValey(unsigned char dist,
@@ -275,8 +275,8 @@ public:
     \sa getValues()
   */
   inline unsigned getSize() const
-    { 
-      return size; 
+    {
+      return size;
     };
 
   /*!
@@ -288,8 +288,8 @@ public:
 
     \code
     vpImage<unsigned char> I; // A gray level image
-    
-    vpHistogram h; 
+
+    vpHistogram h;
     h.calculate(I); // Histogram of the gray level image
 
     // Print the histogram values
@@ -300,7 +300,7 @@ public:
 
     \sa getSize()
   */
-  inline unsigned * getValues() 
+  inline unsigned * getValues()
     {
       return histogram;
     };

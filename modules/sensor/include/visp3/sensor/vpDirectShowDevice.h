@@ -51,27 +51,27 @@
 class VISP_EXPORT vpDirectShowDevice
 {
 
-	std::string name;		//the device's name
-	std::string desc;		//the device's description
-	std::string devPath;		//the device's device path (unique)
+  std::string name;		//the device's name
+  std::string desc;		//the device's description
+  std::string devPath;		//the device's device path (unique)
 
-	bool inUse;			//true if the device is already used by a grabber
+  bool inUse;			//true if the device is already used by a grabber
 
 public:
-	vpDirectShowDevice() : inUse(false){}
-	vpDirectShowDevice(const CComPtr<IMoniker>& moniker) : inUse(false){ init(moniker); }
+  vpDirectShowDevice() : inUse(false){}
+  explicit vpDirectShowDevice(const CComPtr<IMoniker>& moniker) : inUse(false){ init(moniker); }
 
-	bool init(const CComPtr<IMoniker>& moniker);
+  bool init(const CComPtr<IMoniker>& moniker);
 
-	bool getState(){ return inUse; }
-	void setInUse(){ inUse=true; }
-	void resetInUse() { inUse=false; }
+  bool getState(){ return inUse; }
+  void setInUse(){ inUse=true; }
+  void resetInUse() { inUse=false; }
 
-	std::string& getName(){ return name; }
-	std::string& getDesc(){ return desc; }
-	std::string& getDevPath(){ return devPath; }
+  std::string& getName(){ return name; }
+  std::string& getDesc(){ return desc; }
+  std::string& getDevPath(){ return devPath; }
 
-	bool operator==(vpDirectShowDevice& dev);
+  bool operator==(vpDirectShowDevice& dev);
 
   friend VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpDirectShowDevice& dev);
 };

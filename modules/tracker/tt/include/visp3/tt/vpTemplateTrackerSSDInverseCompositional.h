@@ -63,7 +63,7 @@ class VISP_EXPORT vpTemplateTrackerSSDInverseCompositional: public vpTemplateTra
     std::vector<double> x_pos;
     std::vector<double> y_pos;
     double    threshold_RMS;
-    
+
   protected:
     void  initHessienDesired(const vpImage<unsigned char> &I);
     void  initCompInverse(const vpImage<unsigned char> &I);
@@ -73,7 +73,7 @@ class VISP_EXPORT vpTemplateTrackerSSDInverseCompositional: public vpTemplateTra
     void  initPosEvalRMS(const vpColVector &p);
 
   public:
-          vpTemplateTrackerSSDInverseCompositional(vpTemplateTrackerWarp *warp);
+    explicit vpTemplateTrackerSSDInverseCompositional(vpTemplateTrackerWarp *warp);
 
     /*! Use only the strong gradient pixels to compute the Jabobian. By default this feature is disabled. */
     void  setUseTemplateSelect(bool b) {useTemplateSelect = b;}

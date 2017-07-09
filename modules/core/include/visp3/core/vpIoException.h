@@ -91,7 +91,7 @@ class VISP_EXPORT vpIoException : public vpException
     }
     vpIoException (const int id, const std::string & msg)
       : vpException(id, msg){ ; }
-    vpIoException (const int id)
+    explicit vpIoException (const int id)
       : vpException(id){ ; }
 
 };

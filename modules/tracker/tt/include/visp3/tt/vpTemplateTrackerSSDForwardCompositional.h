@@ -61,6 +61,6 @@ class VISP_EXPORT vpTemplateTrackerSSDForwardCompositional: public vpTemplateTra
     void trackNoPyr(const vpImage<unsigned char> &I);
 
   public:
-    vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp);
+    explicit vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp);
 };
 #endif

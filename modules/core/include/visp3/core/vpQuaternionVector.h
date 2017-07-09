@@ -58,7 +58,7 @@
   \class vpQuaternionVector
 
   \ingroup group_core_transformations
-  
+
   \brief Implementation of a rotation vector as quaternion angle
   minimal representation.
 
@@ -73,22 +73,22 @@
   or buildFrom() method.
 
   It also defines common operations on a quaternion such as:
-	- multiplication (scalar and quaternion)
-	- addition
-	- substraction.
+  - multiplication (scalar and quaternion)
+  - addition
+  - substraction.
 
   */
 class VISP_EXPORT vpQuaternionVector : public vpRotationVector
 {
-private:        
+private:
   static const double minimum;
 public:
   vpQuaternionVector();
   vpQuaternionVector(const vpQuaternionVector &q);
   vpQuaternionVector(const double qx, const double qy, const double qz,const double qw) ;
-  vpQuaternionVector(const vpRotationMatrix &R);
-  vpQuaternionVector(const vpThetaUVector& tu) ;
-  vpQuaternionVector(const vpColVector &q);
+  explicit vpQuaternionVector(const vpRotationMatrix &R);
+  explicit vpQuaternionVector(const vpThetaUVector& tu) ;
+  explicit vpQuaternionVector(const vpColVector &q);
 
   //! Destructor.
   virtual ~vpQuaternionVector() {};

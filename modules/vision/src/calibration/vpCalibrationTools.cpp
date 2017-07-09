@@ -46,7 +46,7 @@
 
 #undef MAX
 #undef MIN
- 
+
 void
 vpCalibration::calibLagrange(vpCameraParameters &cam_est, vpHomogeneousMatrix &cMo_est)
 {
@@ -69,7 +69,7 @@ vpCalibration::calibLagrange(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
     double z0 = *it_LoZ;
 
     ip = *it_Lip;
-    
+
     double xi = ip.get_u()  ;
     double yi = ip.get_v()  ;
 
@@ -294,7 +294,7 @@ vpCalibration::calibVVS(vpCameraParameters &cam_est,
       double y = cY[i] ;
       double z = cZ[i] ;
       double inv_z = 1/z;
-      
+
       double X =   x*inv_z ;
       double Y =   y*inv_z ;
 
@@ -407,13 +407,13 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
     std::list<double>::const_iterator it_LoY = table_cal[p].LoY.begin();
     std::list<double>::const_iterator it_LoZ = table_cal[p].LoZ.begin();
     std::list<vpImagePoint>::const_iterator it_Lip = table_cal[p].Lip.begin();
-    
+
     for (unsigned int i =0 ; i < nbPoint[p] ; i++)
     {
       oX[curPoint]  = *it_LoX;
       oY[curPoint]  = *it_LoY;
       oZ[curPoint]  = *it_LoZ;
-    
+
       ip = *it_Lip;
       u[curPoint] = ip.get_u()  ;
       v[curPoint] = ip.get_v()  ;
@@ -422,7 +422,7 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
       ++ it_LoY;
       ++ it_LoZ;
       ++ it_Lip;
- 
+
       curPoint++;
     }
   }
@@ -436,12 +436,12 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
 
     iter++ ;
     residu_1 = r ;
-    
+
     double px = cam_est.get_px();
     double py = cam_est.get_py();
     double u0 = cam_est.get_u0();
     double v0 = cam_est.get_v0();
-   
+
     r = 0 ;
     curPoint = 0 ; //current point indice
     for (unsigned int p=0; p<nbPose ; p++)
@@ -449,8 +449,8 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
       vpHomogeneousMatrix cMoTmp = table_cal[p].cMo;
       for (unsigned int i=0 ; i < nbPoint[p]; i++)
       {
-        unsigned int curPoint2 = 2*curPoint;    
-        
+        unsigned int curPoint2 = 2*curPoint;
+
         cX[curPoint] = oX[curPoint]*cMoTmp[0][0]+oY[curPoint]*cMoTmp[0][1]
                        +oZ[curPoint]*cMoTmp[0][2] + cMoTmp[0][3];
         cY[curPoint] = oX[curPoint]*cMoTmp[1][0]+oY[curPoint]*cMoTmp[1][1]
@@ -478,7 +478,7 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
     curPoint = 0 ; //current point indice
     for (unsigned int p=0; p<nbPose ; p++)
     {
-      unsigned int q = 6*p;   
+      unsigned int q = 6*p;
       for (unsigned int i=0 ; i < nbPoint[p]; i++)
       {
         unsigned int curPoint2 = 2*curPoint;
@@ -489,7 +489,7 @@ vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal,
         double z = cZ[curPoint] ;
 
         double inv_z = 1/z;
-            
+
         double X =   x*inv_z ;
         double Y =   y*inv_z ;
 
@@ -603,7 +603,7 @@ vpCalibration::calibVVSWithDistortion(vpCameraParameters& cam_est,
   std::list<double>::const_iterator it_LoY = LoY.begin();
   std::list<double>::const_iterator it_LoZ = LoZ.begin();
   std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
-  
+
   vpImagePoint ip;
 
   for (unsigned int i =0 ; i < n_points ; i++)
@@ -638,7 +638,7 @@ vpCalibration::calibVVSWithDistortion(vpCameraParameters& cam_est,
 
     double px = cam_est.get_px() ;
     double py = cam_est.get_py() ;
-    
+
     double inv_px = 1/px ;
     double inv_py = 1/py ;
 
@@ -646,7 +646,7 @@ vpCalibration::calibVVSWithDistortion(vpCameraParameters& cam_est,
     double kdu = cam_est.get_kdu() ;
 
     double k2ud = 2*kud;
-    double k2du = 2*kdu;    
+    double k2du = 2*kdu;
     vpMatrix L(n_points*4,12) ;
 
     for (unsigned int i=0 ; i < n_points; i++)
@@ -655,7 +655,7 @@ vpCalibration::calibVVSWithDistortion(vpCameraParameters& cam_est,
       unsigned int i41 = 4*i+1;
       unsigned int i42 = 4*i+2;
       unsigned int i43 = 4*i+3;
-         
+
       cX[i] = oX[i]*cMo_est[0][0]+oY[i]*cMo_est[0][1]+oZ[i]*cMo_est[0][2] + cMo_est[0][3];
       cY[i] = oX[i]*cMo_est[1][0]+oY[i]*cMo_est[1][1]+oZ[i]*cMo_est[1][2] + cMo_est[1][3];
       cZ[i] = oX[i]*cMo_est[2][0]+oY[i]*cMo_est[2][1]+oZ[i]*cMo_est[2][2] + cMo_est[2][3];
@@ -664,14 +664,14 @@ vpCalibration::calibVVSWithDistortion(vpCameraParameters& cam_est,
       double y = cY[i] ;
       double z = cZ[i] ;
       double inv_z = 1/z;
-      
+
       double X =   x*inv_z ;
       double Y =   y*inv_z ;
 
       double X2 = X*X;
       double Y2 = Y*Y;
-      double XY = X*Y;        
-       
+      double XY = X*Y;
+
       double up = u[i] ;
       double vp = v[i] ;
 
@@ -682,20 +682,20 @@ vpCalibration::calibVVSWithDistortion(vpCameraParameters& cam_est,
       double vp0 = vp - v0;
 
       double xp0 = up0 * inv_px;
-      double xp02 = xp0 *xp0 ;   
-      
-      double yp0 = vp0 * inv_py;     
+      double xp02 = xp0 *xp0 ;
+
+      double yp0 = vp0 * inv_py;
       double yp02 = yp0 * yp0;
-      
+
       double r2du = xp02 + yp02 ;
-      double kr2du = kdu * r2du;   
+      double kr2du = kdu * r2du;
 
       P[i4] =   u0 + px*X - kr2du *(up0) ;
       P[i41] = v0 + py*Y - kr2du *(vp0) ;
 
       double r2ud = X2 + Y2 ;
       double kr2ud = 1 + kud * r2ud;
-      
+
       double Axx = px*(kr2ud+k2ud*X2);
       double Axy = px*k2ud*XY;
       double Ayy = py*(kr2ud+k2ud*Y2);
@@ -746,39 +746,39 @@ vpCalibration::calibVVSWithDistortion(vpCameraParameters& cam_est,
           L[i41][10] = -vp0*r2du ;
           L[i41][11] = 0 ;
         }
-	//---undistorted to distorted
-	      {
+  //---undistorted to distorted
+        {
           L[i42][0] = Axx*(-inv_z) ;
           L[i42][1] = Axy*(-inv_z) ;
           L[i42][2] = Axx*(X*inv_z) + Axy*(Y*inv_z) ;
           L[i42][3] = Axx*X*Y +  Axy*(1+Y2);
           L[i42][4] = -Axx*(1+X2) - Axy*XY;
           L[i42][5] = Axx*Y -Axy*X;
-	      }
-	      {
+        }
+        {
           L[i42][6]= 1 ;
           L[i42][7]= 0 ;
           L[i42][8]= X*kr2ud ;
           L[i42][9]= 0;
           L[i42][10] = 0 ;
           L[i42][11] = px*X*r2ud ;
-	      }
-	      {
+        }
+        {
           L[i43][0] = Ayx*(-inv_z) ;
           L[i43][1] = Ayy*(-inv_z) ;
           L[i43][2] = Ayx*(X*inv_z) + Ayy*(Y*inv_z) ;
           L[i43][3] = Ayx*XY + Ayy*(1+Y2) ;
           L[i43][4] = -Ayx*(1+X2) -Ayy*XY ;
           L[i43][5] = Ayx*Y -Ayy*X;
-	      }
-	      {
+        }
+        {
           L[i43][6]= 0 ;
           L[i43][7]= 1;
           L[i43][8]= 0;
           L[i43][9]= Y*kr2ud ;
           L[i43][10] = 0 ;
           L[i43][11] = py*Y*r2ud ;
-	      }
+        }
       }  // end interaction
     }    // end interaction
 
@@ -929,10 +929,10 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
 
     double k2ud = 2*kud;
     double k2du = 2*kdu;
-    
+
     for (unsigned int p=0; p<nbPose ; p++)
     {
-      unsigned int q = 6*p;   
+      unsigned int q = 6*p;
       for (unsigned int i=0 ; i < nbPoint[p]; i++)
       {
         unsigned int curPoint4 = 4*curPoint;
@@ -940,14 +940,14 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
         double y = cY[curPoint] ;
         double z = cZ[curPoint] ;
 
-        double inv_z = 1/z;    
+        double inv_z = 1/z;
         double X =   x*inv_z ;
         double Y =   y*inv_z ;
 
         double X2 = X*X;
         double Y2 = Y*Y;
         double XY = X*Y;
-       
+
         double up = u[curPoint] ;
         double vp = v[curPoint] ;
 
@@ -959,10 +959,10 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
 
         double xp0 = up0 * inv_px;
         double xp02 = xp0 *xp0 ;
-      
+
         double yp0 = vp0 * inv_py;
         double yp02 = yp0 * yp0;
-      
+
         double r2du = xp02 + yp02 ;
         double kr2du = kdu * r2du;
 
@@ -971,7 +971,7 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
 
         double r2ud = X2 + Y2 ;
         double kr2ud = 1 + kud * r2ud;
-      
+
         double Axx = px*(kr2ud+k2ud*X2);
         double Axy = px*k2ud*XY;
         double Ayy = py*(kr2ud+k2ud*Y2);
@@ -1007,7 +1007,7 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
             L[curInd][nbPose6+4] = -(up0)*(r2du) ;
             L[curInd][nbPose6+5] = 0 ;
           }
-            curInd++;     
+            curInd++;
           {
             L[curInd][q] = 0 ;
             L[curInd][q+1] = py*(-inv_z) ;
@@ -1042,7 +1042,7 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
             L[curInd][nbPose6+4] = 0 ;
             L[curInd][nbPose6+5] = px*X*r2ud ;
           }
-            curInd++;   
+            curInd++;
           {
             L[curInd][q] = Ayx*(-inv_z) ;
             L[curInd][q+1] = Ayy*(-inv_z) ;
@@ -1135,8 +1135,8 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
   between the effector and the camera (output)
 */
 void vpCalibration::calibrationTsai(std::vector<vpHomogeneousMatrix>& cMo,
-						std::vector<vpHomogeneousMatrix>& rMe,
-						vpHomogeneousMatrix &eMc){
+            std::vector<vpHomogeneousMatrix>& rMe,
+            vpHomogeneousMatrix &eMc){
 
   vpColVector x ;
   unsigned int nbPose = (unsigned int)cMo.size();
@@ -1144,7 +1144,7 @@ void vpCalibration::calibrationTsai(std::vector<vpHomogeneousMatrix>& cMo,
   {
     vpMatrix A ;
     vpColVector B ;
-    unsigned int k = 0 ;	
+    unsigned int k = 0 ;
     // for all couples ij
     for (unsigned int i=0 ; i < nbPose ; i++)
     {
@@ -1160,7 +1160,7 @@ void vpCalibration::calibrationTsai(std::vector<vpHomogeneousMatrix>& cMo,
           vpRotationMatrix rRej, cjRo ;
           rMe[j].extract(rRej) ;
           cMo[j].extract(cjRo) ;
-	  //std::cout << "rMej: " << std::endl << rMe[j] << std::endl;
+    //std::cout << "rMej: " << std::endl << rMe[j] << std::endl;
 
           vpRotationMatrix rReij = rRej.t() * rRei;
 
@@ -1199,7 +1199,7 @@ void vpCalibration::calibrationTsai(std::vector<vpHomogeneousMatrix>& cMo,
         }
       }
     }
-	
+
     // the linear system is defined
     // x = AtA^-1AtB is solved
     vpMatrix AtA = A.AtA() ;
@@ -1290,7 +1290,7 @@ void vpCalibration::calibrationTsai(std::vector<vpHomogeneousMatrix>& cMo,
           else
           {
             A = vpMatrix::stack(A,a) ;
-            B = vpColVector::stack(B,b) ;
+            B = vpColVector::stack(B, b) ;
           }
           k++ ;
         }

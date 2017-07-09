@@ -98,9 +98,9 @@ class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpRotationMatrix &R) ;
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpThetaUVector &tu) ;
   vpHomogeneousMatrix(const vpTranslationVector &t, const vpQuaternionVector &q) ;
-  vpHomogeneousMatrix(const vpPoseVector &p) ;  
-  vpHomogeneousMatrix(const std::vector<float> &v);
-  vpHomogeneousMatrix(const std::vector<double> &v);
+  explicit vpHomogeneousMatrix(const vpPoseVector &p) ;
+  explicit vpHomogeneousMatrix(const std::vector<float> &v);
+  explicit vpHomogeneousMatrix(const std::vector<double> &v);
   vpHomogeneousMatrix(const double tx, const double ty, const double tz,
                       const double tux, const double tuy, const double tuz) ;
   /*!

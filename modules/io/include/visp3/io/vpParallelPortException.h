@@ -95,7 +95,7 @@ class VISP_EXPORT vpParallelPortException : public vpException
     }
     vpParallelPortException (const int id, const std::string & msg)
       : vpException(id, msg){ ; }
-    vpParallelPortException (const int id)
+    explicit vpParallelPortException (const int id)
       : vpException(id){ ; }
 
 };

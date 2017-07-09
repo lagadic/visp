@@ -48,9 +48,9 @@
 class vpColVector;
 /*!
   \class vpAdaptiveGain
-  
+
   \ingroup group_task
-  
+
   \brief Adaptive gain computation.
 
   As described in \cite Kermorgant14a, a varying gain \f$ \lambda \f$ could be used in the visual servoing
@@ -131,7 +131,7 @@ public:
   /* --- CONSTRUCTOR -------------------------------------------------------- */
 
   vpAdaptiveGain ();
-  vpAdaptiveGain (double c);
+  explicit vpAdaptiveGain (double c);
   vpAdaptiveGain (double gain_at_zero,
                   double gain_at_infinity,
                   double slope_at_zero);

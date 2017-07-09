@@ -88,18 +88,18 @@ public:
   vpRect(const vpImagePoint &topLeft, double width, double height);
   vpRect(const vpImagePoint &topLeft, const vpImagePoint &bottomRight);
   vpRect(const vpRect& r);
-  vpRect(const std::vector<vpImagePoint> &ip);
+  explicit vpRect(const std::vector<vpImagePoint> &ip);
 
-  
+
   vpRect &operator=(const vpRect& r);
 
   /*!
-    Returns the bottom coordinate of the rectangle. 
+    Returns the bottom coordinate of the rectangle.
     \sa getRight()
   */
   inline double getBottom() const { return (this->top + this->height - 1.0); }
   /*!
-    Returns the bottom-right coordinate of the rectangle. 
+    Returns the bottom-right coordinate of the rectangle.
     \sa getTopLeft(), getBottom(), getRight()
   */
   inline vpImagePoint getBottomRight() const {
@@ -120,9 +120,9 @@ public:
 
     \sa moveCenter()
   */
-  inline void getCenter(double & x, double & y) const { 
-    x = this->left + this->width  / 2.0 - 0.5; 
-    y = this->top  + this->height / 2.0 - 0.5; 
+  inline void getCenter(double & x, double & y) const {
+    x = this->left + this->width  / 2.0 - 0.5;
+    y = this->top  + this->height / 2.0 - 0.5;
   }
 
   /*!
@@ -135,14 +135,14 @@ public:
 
     \sa moveCenter()
   */
-  inline vpImagePoint getCenter() const { 
+  inline vpImagePoint getCenter() const {
     vpImagePoint center;
-    center.set_u( this->left + this->width  / 2.0 - 0.5 ); 
-    center.set_v( this->top  + this->height / 2.0 - 0.5 ); 
+    center.set_u( this->left + this->width  / 2.0 - 0.5 );
+    center.set_v( this->top  + this->height / 2.0 - 0.5 );
     return center;
   }
 
-  /*! 
+  /*!
    Returns the height of the rectangle. The height includes both the
    top and bottom edges, i.e. height = bottom - top + 1.
 
@@ -152,14 +152,14 @@ public:
   inline double getHeight() const { return this->height; }
 
   /*!
-    Returns the left coordinate of the rectangle. 
+    Returns the left coordinate of the rectangle.
 
     \sa getTopLeft(), getRight()
   */
   inline double getLeft() const { return this->left;   }
 
   /*!
-    Returns the right coordinate of the rectangle. 
+    Returns the right coordinate of the rectangle.
     \sa getLeft()
   */
   inline double getRight() const { return (this->left + this->width - 1.0); }
@@ -171,28 +171,28 @@ public:
   inline double getSize() const { return (this->width * this->height); }
 
   /*!
-    Returns the top coordinate of the rectangle. 
+    Returns the top coordinate of the rectangle.
 
     \sa getTopLeft(), getBottom()
   */
   inline double getTop() const { return this->top;  }
 
   /*!
-    Returns the top-left position of the rectangle. 
+    Returns the top-left position of the rectangle.
 
     \sa getBottomRight(), getTop(), getLeft()
   */
-  inline vpImagePoint getTopLeft() const { 
+  inline vpImagePoint getTopLeft() const {
     vpImagePoint topLeft;
     topLeft.set_u( this->left );
     topLeft.set_v( this->top );
-    return topLeft; 
+    return topLeft;
   }
 
   /*!
    Returns the width of the rectangle. The width includes both the
    left and right edges, i.e. width = right - left + 1.
-   
+
    \sa getHeight()
 
   */
@@ -232,7 +232,7 @@ public:
     \sa setTopLeft()
   */
   inline void setBottomRight(const vpImagePoint &bottomRight) {
-    this->height = bottomRight.get_v() - this->top + 1.0; 
+    this->height = bottomRight.get_v() - this->top + 1.0;
     this->width = bottomRight.get_u() - this->left + 1.0;
   }
 
@@ -298,9 +298,9 @@ public:
 
     \sa setBottomRight()
   */
-  inline void setTopLeft(const vpImagePoint &topLeft) { 
-    this->left = topLeft.get_u(); 
-    this->top  = topLeft.get_v(); 
+  inline void setTopLeft(const vpImagePoint &topLeft) {
+    this->left = topLeft.get_u();
+    this->top  = topLeft.get_v();
   }
 
   /*!
@@ -313,7 +313,7 @@ public:
     assert(w > 0);
     this->width = w;
   }
- 
+
   /*!
     Sets the center point of the rectangle to (\e x, \e y), leaving
     the size unchanged.
@@ -324,7 +324,7 @@ public:
     this->left = x - this->width/2  + 0.5;
     this->top  = y - this->height/2 + 0.5;
   }
-  
+
   /*!
     Center the rectangle to the image point given as parameter, leaving
     the size unchanged.

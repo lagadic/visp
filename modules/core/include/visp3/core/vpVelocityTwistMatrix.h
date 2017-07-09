@@ -90,12 +90,12 @@ int main()
   vpHomogeneousMatrix fMc; // Fix to camera frame transformation
   // ... fMc need here to be initialized
 
-  fVc.buildFrom(fMc); 
- 
-  vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz 
+  fVc.buildFrom(fMc);
+
+  vpColVector c_v(6); // Velocity in the camera frame: vx,vy,vz,wx,wy,wz
   // ... c_v should here have an initial value
 
-  vpColVector f_v(6); // Velocity in the fix frame: vx,vy,vz,wx,wy,wz 
+  vpColVector f_v(6); // Velocity in the fix frame: vx,vy,vz,wx,wy,wz
 
   // Compute the velocity in the fix frame
   f_v = fVc * c_v;
@@ -112,7 +112,7 @@ class VISP_EXPORT vpVelocityTwistMatrix : public vpArray2D<double>
   // copy constructor
   vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V);
   // constructor from an homogeneous transformation
-  vpVelocityTwistMatrix(const vpHomogeneousMatrix &M);
+  explicit vpVelocityTwistMatrix(const vpHomogeneousMatrix &M);
 
   // Construction from Translation and rotation (ThetaU parameterization)
   vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau) ;

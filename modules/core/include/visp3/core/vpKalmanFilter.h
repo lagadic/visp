@@ -61,13 +61,13 @@
   {\bf x}_k= {\bf F}_{k-1} {\bf x}_{k-1} + {\bf w}_{k-1} \\
   \f]
   where \f${\bf x}_{k}\f$ is the unknown state at iteration \f$k\f$.
-  
+
   The measurement equation is given by:
   \f[
   {\bf z}_k = {\bf H} {\bf x}_k + {\bf r}_k
   \f]
   where \f${\bf z}_{k}\f$ is the measure (also named observation) at iteration \f$k\f$.
- 
+
   The predicted state is obtained by:
   \f[
   {\bf x}_{k|k-1}  =  {\bf F}_{k-1} {\bf x}_{k-1\mid k-1}
@@ -110,7 +110,7 @@ class VISP_EXPORT vpKalmanFilter
 protected :
   //bool init_done ;
 
-  //! Filter step or iteration. When set to zero, initialize the filter. 
+  //! Filter step or iteration. When set to zero, initialize the filter.
   long iter ;
 
   //! Size of the state vector \f${\bf x}_k\f$.
@@ -125,7 +125,7 @@ protected :
 
 public:
   vpKalmanFilter() ;
-  vpKalmanFilter(unsigned int n_signal) ;
+  explicit vpKalmanFilter(unsigned int n_signal) ;
   vpKalmanFilter(unsigned int size_state, unsigned int size_measure, unsigned int n_signal) ;
   /*! Destructor that does noting. */
   virtual ~vpKalmanFilter() {};
@@ -159,27 +159,27 @@ public:
   long getIteration() { return iter ; }
   /*!
     Sets the verbose mode.
-    \param on : If true, activates the verbose mode which consists in printing the Kalman 
+    \param on : If true, activates the verbose mode which consists in printing the Kalman
     filter internal values.
   */
   void verbose(bool on) { verbose_mode = on;};
 
 public:
   /*!
-    The updated state estimate \f${\bf x}_{k \mid k} \f$ where 
-    \f${\bf x}_{k \mid k} = {\bf x}_{k \mid k-1} + {\bf W}_k  
+    The updated state estimate \f${\bf x}_{k \mid k} \f$ where
+    \f${\bf x}_{k \mid k} = {\bf x}_{k \mid k-1} + {\bf W}_k
     \left[ {\bf z}_k -  {\bf H x}_{k \mid k-1} \right]\f$.
   */
   vpColVector Xest ;
   /*!
-    The predicted state \f${\bf x}_{k \mid k-1} \f$ where 
+    The predicted state \f${\bf x}_{k \mid k-1} \f$ where
     \f$ {\bf x}_{k|k-1} = {\bf F}_{k-1} {\bf x}_{k-1\mid k-1}\f$.
   */
   vpColVector Xpre ;
   //! Transition matrix \f${\bf F}\f$ that describes the evolution of the state.
   vpMatrix F ;
 
-  //! Matrix \f${\bf H}\f$ that describes the evolution of the measurements. 
+  //! Matrix \f${\bf H}\f$ that describes the evolution of the measurements.
   vpMatrix H ;
 
   //! Measurement noise covariance matrix \f${\bf R}\f$.
@@ -191,22 +191,22 @@ public:
       in vpLinearKalmanFilterInstantiation.*/
   double dt ;
   /*!
-    The state prediction covariance \f${\bf P}_{k \mid k-1} \f$ where 
-    \f$ {\bf P}_{k \mid k-1} = {\bf F}_{k-1}  {\bf P}_{k-1 \mid k-1} {\bf F}^T_{k-1} 
+    The state prediction covariance \f${\bf P}_{k \mid k-1} \f$ where
+    \f$ {\bf P}_{k \mid k-1} = {\bf F}_{k-1}  {\bf P}_{k-1 \mid k-1} {\bf F}^T_{k-1}
     + {\bf Q}_k\f$.
   */
   vpMatrix Ppre ;
 
-  /*!  
+  /*!
     The updated covariance of the state \f${\bf P}_{k \mid k}\f$
     where \f${\bf P}_{k \mid k} = \left({\bf I - W}_k {\bf H}
-    \right) {\bf P}_{k \mid k-1}\f$. 
+    \right) {\bf P}_{k \mid k-1}\f$.
   */
   vpMatrix Pest ;
 
 protected:
 
-  /*!  
+  /*!
     Filter gain \f${\bf W}_k\f$ where \f$ {\bf W}_k = {\bf P}_{k
     \mid k-1} {\bf H}^T \left[ {\bf H P}_{k \mid k-1} {\bf H}^T + {\bf
     R}_k \right]^{-1}\f$.

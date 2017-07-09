@@ -103,7 +103,7 @@ public:
     : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), evolRMS(0), x_pos(NULL), y_pos(NULL),
       threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()
   {}
-  vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp);
+  explicit vpTemplateTrackerMIForwardAdditional(vpTemplateTrackerWarp *_warp);
   void  setThresholdRMS(double threshold){threshold_RMS=threshold;}
   void  setMinimizationMethod(vpMinimizationTypeMIForwardAdditional method){minimizationMethod=method;}
 };

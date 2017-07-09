@@ -78,8 +78,8 @@ class vpQuaternionVector;
   The vpThetaUVector class is derived from vpRotationVector.
 
   The \f$\theta {\bf u}\f$ representation is one of the minimal
-  representation of a rotation matrix, where 
-  \f${\bf u} = (u_{x} \; u_{y} \; u_{z})^{\top}\f$ 
+  representation of a rotation matrix, where
+  \f${\bf u} = (u_{x} \; u_{y} \; u_{z})^{\top}\f$
   is a unit vector representing the rotation
   axis and \f$\theta\f$ is the rotation angle.
 
@@ -95,7 +95,7 @@ class vpQuaternionVector;
 
   \f[
   [{\bf u}]_{\times} = \left(
-  \begin{array}{ccc}    
+  \begin{array}{ccc}
   0 & -u_{z} & u_{y} \\
   u_{z} & 0 & -u_{x} \\
   -u_{y} & u_{x} & 0
@@ -103,7 +103,7 @@ class vpQuaternionVector;
   \right)
   \f]
   From the implementation point of view, it is nothing more than an
-  array of three floats. 
+  array of three floats.
 
   The code below shows first how to initialize a \f$\theta {\bf u}\f$
   vector, than how to contruct a rotation matrix from a vpThetaUVector
@@ -121,9 +121,9 @@ int main()
   vpThetaUVector tu;
 
   // Initialise the theta U rotation vector
-  tu[0] = vpMath::rad( 45.f); 
-  tu[1] = vpMath::rad(-30.f); 
-  tu[2] = vpMath::rad( 90.f); 
+  tu[0] = vpMath::rad( 45.f);
+  tu[1] = vpMath::rad(-30.f);
+  tu[2] = vpMath::rad( 90.f);
 
   // Construct a rotation matrix from the theta U angles
   vpRotationMatrix R(tu);
@@ -133,12 +133,12 @@ int main()
 
   // Print the extracted theta U angles. Values are the same than the
   // one used for initialization
-  std::cout << tu; 
+  std::cout << tu;
 
   // Since the rotation vector is 3 values column vector, the
   // transpose operation produce a row vector.
   vpRowVector tu_t = tu.t();
-  
+
   // Print the transpose row vector
   std::cout << tu_t << std::endl;
 }
@@ -155,21 +155,21 @@ public:
   vpThetaUVector(const vpThetaUVector &tu);
 
   // constructor initialize a Theta U vector from a homogeneous matrix
-  vpThetaUVector(const vpHomogeneousMatrix & M) ;
+  explicit vpThetaUVector(const vpHomogeneousMatrix & M) ;
   // constructor initialize a Theta U vector from a pose vector
-  vpThetaUVector(const vpPoseVector & p) ;
+  explicit vpThetaUVector(const vpPoseVector & p) ;
   // constructor initialize a Theta U vector from a rotation matrix
-  vpThetaUVector(const vpRotationMatrix& R) ;
+  explicit vpThetaUVector(const vpRotationMatrix& R) ;
   // constructor initialize a Theta U vector from a RzyxVector
-  vpThetaUVector(const vpRzyxVector& rzyx) ;
+  explicit vpThetaUVector(const vpRzyxVector& rzyx) ;
   // constructor initialize a Theta U vector from a RzyzVector
-  vpThetaUVector(const vpRzyzVector& rzyz) ;
+  explicit vpThetaUVector(const vpRzyzVector& rzyz) ;
   // constructor initialize a Theta U vector from a RxyzVector
-  vpThetaUVector(const vpRxyzVector& rxyz) ;
-  vpThetaUVector(const vpQuaternionVector& q) ;
+  explicit vpThetaUVector(const vpRxyzVector& rxyz) ;
+  explicit vpThetaUVector(const vpQuaternionVector& q) ;
 
   vpThetaUVector(const double tux, const double tuy, const double tuz);
-  vpThetaUVector(const vpColVector &tu);
+  explicit vpThetaUVector(const vpColVector &tu);
   //! Destructor.
   virtual ~vpThetaUVector() {};
 

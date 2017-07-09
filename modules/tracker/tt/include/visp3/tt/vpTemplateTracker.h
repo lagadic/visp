@@ -64,7 +64,7 @@ class VISP_EXPORT vpTemplateTracker
     unsigned int                nbLvlPyr; // If = 1, disable pyramidal usage
     unsigned int                l0Pyr;
     bool                        pyrInitialised;
-    
+
     vpTemplateTrackerPoint     *ptTemplate;
     vpTemplateTrackerPoint    **ptTemplatePyr;
     bool                        ptTemplateInit;
@@ -84,9 +84,9 @@ class VISP_EXPORT vpTemplateTracker
     vpTemplateTrackerPointCompo **ptTemplateCompoPyr;   //pour ESM
     vpTemplateTrackerZone               *zoneTracked;
     vpTemplateTrackerZone               *zoneTrackedPyr;
-    
+
     vpImage<unsigned char>     *pyr_IDes;
-    
+
     vpMatrix                    H;
     vpMatrix                    Hdesire;
     vpMatrix                   *HdesirePyr;
@@ -96,7 +96,7 @@ class VISP_EXPORT vpTemplateTracker
     vpMatrix                    HLMdesireInverse;
     vpMatrix                   *HLMdesireInversePyr;
     vpColVector                 G;
-    
+
     double                      gain;
     double                      thresholdGradient;
     bool                        costFunctionVerification;
@@ -135,7 +135,7 @@ class VISP_EXPORT vpTemplateTracker
     vpImage<double>             dIx ;
     vpImage<double>             dIy ;
     vpTemplateTrackerZone       zoneRef_; // Reference zone
-    
+
 //private:
 //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 //    vpTemplateTracker(const vpTemplateTracker &)
@@ -174,9 +174,9 @@ class VISP_EXPORT vpTemplateTracker
         iterationGlobale(0), diverge(false), nbIteration(0), useCompositionnal(false),
         useInverse(false), Warp(NULL), p(), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(), zoneRef_()
     {}
-    vpTemplateTracker(vpTemplateTrackerWarp *_warp);
+    explicit vpTemplateTracker(vpTemplateTrackerWarp *_warp);
     virtual        ~vpTemplateTracker();
-    
+
     void    display(const vpImage<unsigned char> &I, const vpColor& col = vpColor::green, const unsigned int thickness=3);
     void    display(const vpImage<vpRGBa> &I, const vpColor& col = vpColor::green, const unsigned int thickness=3);
 
@@ -203,9 +203,9 @@ class VISP_EXPORT vpTemplateTracker
     void    initClick(const vpImage<unsigned char> &I, bool delaunay=false);
     void    initFromPoints(const vpImage<unsigned char> &I, const std::vector< vpImagePoint > &v_ip, bool delaunay=false);
     void    initFromZone(const vpImage<unsigned char> &I, const vpTemplateTrackerZone& zone);
-    
+
     void    resetTracker();
-    
+
     void    setBlur(bool b){blur = b;}
     void    setCostFunctionVerification(bool b){costFunctionVerification = b;}
     void    setGain(double g){gain=g;}
@@ -251,10 +251,10 @@ class VISP_EXPORT vpTemplateTracker
     void    setThresholdGradient(double threshold){thresholdGradient=threshold;}
     /*! By default Brent usage is disabled. */
     void    setUseBrent(bool b){useBrent = b;}
-    
+
     void    track(const vpImage<unsigned char> &I);
     void    trackRobust(const vpImage<unsigned char> &I);
-    
+
   protected:
 
     void            computeOptimalBrentGain(const vpImage<unsigned char> &I,vpColVector &tp,double tMI,vpColVector &direction,double &alpha);

@@ -90,7 +90,7 @@ class VISP_EXPORT vpTrackingException : public vpException
     }
     vpTrackingException (const int id, const std::string & msg)
       : vpException(id, msg){ ; }
-    vpTrackingException (const int id)
+    explicit vpTrackingException (const int id)
       : vpException(id){ ; }
 
 };

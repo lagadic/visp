@@ -73,7 +73,7 @@ class VISP_EXPORT vpTemplateTrackerSSDForwardAdditional: public vpTemplateTracke
     void  trackNoPyr(const vpImage<unsigned char> &I);
 
   public:
-          vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp);
+    explicit vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp);
 
     void  setMinimizationMethod(vpMinimizationTypeSSDForwardAdditional method){minimizationMethod=method;}
 };

@@ -92,7 +92,7 @@ class vpThetaUVector;
   0 &\cos \psi & -\sin\psi \\
   0 &\sin \psi & \cos\psi \\
   \end{array}
-  \right) 
+  \right)
   \f]
 
   The rotation matrix corresponding to the z-y-x convention is given by:
@@ -124,7 +124,7 @@ int main()
   vpRzyxVector rzyx;
 
   // Initialise the Euler angles
-  rzyx[0] = vpMath::rad( 45.f); // phi   angle in rad/s around z axis 
+  rzyx[0] = vpMath::rad( 45.f); // phi   angle in rad/s around z axis
   rzyx[1] = vpMath::rad(-30.f); // theta angle in rad/s around y axis
   rzyx[2] = vpMath::rad( 90.f); // psi   angle in rad/s around x axis
 
@@ -136,12 +136,12 @@ int main()
 
   // Print the extracted Euler angles. Values are the same than the
   // one used for initialization
-  std::cout << rzyx; 
+  std::cout << rzyx;
 
   // Since the rotation vector is 3 values column vector, the
   // transpose operation produce a row vector.
   vpRowVector rzyx_t = rzyx.t();
-  
+
   // Print the transpose row vector
   std::cout << rzyx_t << std::endl;
 }
@@ -157,11 +157,11 @@ public:
   vpRzyxVector(const double phi, const double theta, const double psi);
 
   // initialize a Rzyx vector from a rotation matrix
-  vpRzyxVector(const vpRotationMatrix& R) ;
+  explicit vpRzyxVector(const vpRotationMatrix& R) ;
 
   // initialize a Rzyx vector from a ThetaU vector
-  vpRzyxVector(const vpThetaUVector& tu) ;
-  vpRzyxVector(const vpColVector &rzyx);
+  explicit vpRzyxVector(const vpThetaUVector& tu) ;
+  explicit vpRzyxVector(const vpColVector &rzyx);
 
   //! Destructor.
   virtual ~vpRzyxVector() {};

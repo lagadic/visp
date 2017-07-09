@@ -64,7 +64,7 @@ protected:
   void trackNoPyr(const vpImage<unsigned char> &I);
 
 public:
-  vpTemplateTrackerMIForwardCompositional(vpTemplateTrackerWarp *_warp);
+  explicit vpTemplateTrackerMIForwardCompositional(vpTemplateTrackerWarp *_warp);
 };
 
 #endif

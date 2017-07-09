@@ -74,13 +74,13 @@ class vpColVector;
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpMath.h>
 
-int main() 
+int main()
 {
   vpRxyzVector r;         // By default initialized to zero
   r[0] = vpMath::rad(45); // Rotation around x set to 45 degres converted in radians
   r[1] = M_PI;            // Rotation around y set to PI radians
   r[2] = 0;               // Rotation around z set to 0 radians
-  
+
   std::cout << "Rxyz rotation vector: " << r << std::endl;
 
   double rx = r[0];       // Get the value of the angle around x axis
@@ -92,7 +92,7 @@ int main()
 */
 
 class VISP_EXPORT vpRotationVector : public vpArray2D<double>
-{  
+{
 public:
   //! Constructor that constructs a 0-size rotation vector.
   vpRotationVector()
@@ -100,7 +100,7 @@ public:
   {}
 
   //! Constructor that constructs a vector of size n and initialize all values to zero.
-  vpRotationVector(const unsigned int n)
+  explicit vpRotationVector(const unsigned int n)
     : vpArray2D<double>(n, 1)
   {}
 

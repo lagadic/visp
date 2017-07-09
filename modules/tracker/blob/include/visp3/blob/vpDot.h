@@ -121,79 +121,79 @@ public :
   */
   typedef enum {
     CONNEXITY_4, /*!< For a given pixel 4 neighbors are considered (left,
-		   right, up, down) */
+       right, up, down) */
     CONNEXITY_8 /*!< For a given pixel 8 neighbors are considered (left,
-		  right, up, down, and the 4 pixels located on the diagonal) */
+      right, up, down, and the 4 pixels located on the diagonal) */
   } vpConnexityType;
 
   static const unsigned int SPIRAL_SEARCH_SIZE; /*!< Spiral size for the dot
-						  search. */
+              search. */
   double m00; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
-		with \f$i = j = 0 \f$.
+    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+    u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
+    with \f$i = j = 0 \f$.
 
-		\sa setComputeMoments()
-	      */
+    \sa setComputeMoments()
+        */
   double m01; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^j \f$, \f$ m_{01} \f$ is a first order moment
-		obtained with \f$i = 0 \f$ and \f$ j = 1 \f$.
+    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+    u_h^i v_h^j \f$, \f$ m_{01} \f$ is a first order moment
+    obtained with \f$i = 0 \f$ and \f$ j = 1 \f$.
 
-		\sa setComputeMoments()
-	      */
+    \sa setComputeMoments()
+        */
   double m10; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^j \f$, \f$ m_{10} \f$ is a first order moment
-		obtained with \f$i = 1 \f$ and \f$ j = 0 \f$.
+    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+    u_h^i v_h^j \f$, \f$ m_{10} \f$ is a first order moment
+    obtained with \f$i = 1 \f$ and \f$ j = 0 \f$.
 
-		\sa setComputeMoments()
-	      */
+    \sa setComputeMoments()
+        */
   double m11; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^j \f$, \f$ m_{11} \f$ is a first order moment
-		obtained with \f$i = 1 \f$ and \f$ j = 1 \f$.
+    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+    u_h^i v_h^j \f$, \f$ m_{11} \f$ is a first order moment
+    obtained with \f$i = 1 \f$ and \f$ j = 1 \f$.
 
-		\warning This moment is not computed for the moment.
+    \warning This moment is not computed for the moment.
 
-		\sa setComputeMoments()
-	      */
+    \sa setComputeMoments()
+        */
   double m20; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^j \f$, \f$ m_{20} \f$ is a second order moment
-		obtained with \f$i = 2 \f$ and \f$ j = 0 \f$.
+    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+    u_h^i v_h^j \f$, \f$ m_{20} \f$ is a second order moment
+    obtained with \f$i = 2 \f$ and \f$ j = 0 \f$.
 
-		\warning This moment is not computed for the moment.
+    \warning This moment is not computed for the moment.
 
-		\sa setComputeMoments()
-	      */
+    \sa setComputeMoments()
+        */
   double m02; /*!< Considering the general distribution moments for \f$ N \f$
-		points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-		u_h^i v_h^j \f$, \f$ m_{02} \f$ is a second order moment
-		obtained with \f$i = 0 \f$ and \f$ j = 2 \f$.
+    points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+    u_h^i v_h^j \f$, \f$ m_{02} \f$ is a second order moment
+    obtained with \f$i = 0 \f$ and \f$ j = 2 \f$.
 
-		\warning This moment is not computed for the moment.
+    \warning This moment is not computed for the moment.
 
-		\sa setComputeMoments()
-	      */
+    \sa setComputeMoments()
+        */
   double mu11;/*!< \f$ \mu_{11} \f$ is a second order central moments defined by:
-		\f$ \mu_{11} = m_{11} - \frac{m_{10}}{m_{00}}m_{01} \f$
-		
-		\sa setComputeMoments()
-	      */
+    \f$ \mu_{11} = m_{11} - \frac{m_{10}}{m_{00}}m_{01} \f$
+
+    \sa setComputeMoments()
+        */
   double mu20;/*!< \f$ \mu_{20} \f$ is a second order central moments defined by:
-		\f$ \mu_{20} = m_{20} - \frac{m_{10}}{m_{00}}m_{10} \f$
-		
-		\sa setComputeMoments()
-	      */
+    \f$ \mu_{20} = m_{20} - \frac{m_{10}}{m_{00}}m_{10} \f$
+
+    \sa setComputeMoments()
+        */
   double mu02;/*!< \f$ \mu_{02} \f$ is a second order central moments defined by:
-		\f$ \mu_{02} = m_{02} - \frac{m_{01}}{m_{00}}m_{01} \f$
-		
-		\sa setComputeMoments()
-	      */
+    \f$ \mu_{02} = m_{02} - \frac{m_{01}}{m_{00}}m_{01} \f$
+
+    \sa setComputeMoments()
+        */
 
   vpDot() ;
-  vpDot(const vpImagePoint &ip) ;
+  explicit vpDot(const vpImagePoint &ip) ;
   vpDot(const vpDot& d) ;
   virtual ~vpDot() ;
 
@@ -298,7 +298,7 @@ public :
   void initTracking(const vpImage<unsigned char> &I) ;
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip);
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip,
-		    unsigned int gray_level_min, unsigned int gray_level_max);
+        unsigned int gray_level_min, unsigned int gray_level_max);
 
   vpDot& operator =(const vpDot& d) ;
   bool operator ==(const vpDot& d) const;
@@ -329,7 +329,7 @@ public :
 
   */
   void setComputeMoments(const bool activate) { compute_moment = activate; }
-  
+
   /*!
     Set the type of connexity: 4 or 8.
   */
@@ -370,12 +370,12 @@ public :
 private:
   //! internal use only
   std::list<vpImagePoint> ip_connexities_list;
-  
+
   //! List of border points
   std::list<vpImagePoint> ip_edges_list;
 
   /*! Type of connexity
-   
+
    \warning In previous version this variable was called connexity
   */
   vpConnexityType connexityType;
@@ -393,7 +393,7 @@ private:
 
   double maxDotSizePercentage;
   unsigned char gray_level_out;
-  
+
   double mean_gray_level; // Mean gray level of the dot
   unsigned int gray_level_min; // left threshold for binarisation
   unsigned int gray_level_max; // right threshold for binarisation
@@ -404,15 +404,15 @@ private:
   //! flag : true moment are computed
   bool compute_moment ;
   double nbMaxPoint;
-  
+
   void init() ;
   void setGrayLevelOut();
   bool connexe(const vpImage<unsigned char>& I,unsigned int u,unsigned int v,
-	      double &mean_value, double &u_cog, double &v_cog, double &n);
+        double &mean_value, double &u_cog, double &v_cog, double &n);
   bool connexe(const vpImage<unsigned char>& I,unsigned int u,unsigned int v,
-	      double &mean_value, double &u_cog, double &v_cog, double &n,std::vector<bool> &checkTab);
+        double &mean_value, double &u_cog, double &v_cog, double &n,std::vector<bool> &checkTab);
   void COG(const vpImage<unsigned char> &I,double& u, double& v) ;
-  
+
 //Static Functions
 public:
   static void display(const vpImage<unsigned char>& I,const vpImagePoint &cog,

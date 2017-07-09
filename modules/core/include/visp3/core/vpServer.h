@@ -48,16 +48,16 @@
   \class vpServer
 
   \ingroup group_core_network
-  
+
   \brief This class represents a Transmission Control Protocol (TCP) server.
-  
-  TCP provides reliable, ordered delivery of a stream of bytes from a program 
+
+  TCP provides reliable, ordered delivery of a stream of bytes from a program
   on one computer to another program on another computer.
 
   Exemple of server's code, receiving and sending basic message.
-  It corresponds to the client used in the first exemple of vpClient class' 
+  It corresponds to the client used in the first exemple of vpClient class'
   documentation.
-  
+
   \code
 #include <visp3/core/vpServer.h>
 #include <iostream>
@@ -67,20 +67,20 @@ int main(int argc,const char** argv)
   int port = 35000;
   vpServer serv(port); //Launch the server on localhost
   serv.start();
-  
+
   bool run = true;
   int val;
-   
+
   while(run){
     serv.checkForConnections();
-    
+
     if(serv.getNumberOfClients() > 0)
     {
       if(serv.receive(&val) != sizeof(int)) //Receiving a value from the first client
          std::cout << "Error while receiving" << std::endl;
       else
         std::cout << "Received : " << val << std::endl;
-      
+
       val = val+1;
       if(serv.send(&val) != sizeof(int)) //Sending the new value to the first client
         std::cout << "Error while sending" << std::endl;
@@ -88,14 +88,14 @@ int main(int argc,const char** argv)
         std::cout << "Sending : " << val << std::endl;
     }
   }
-  
+
   return 0;
 }
   \endcode
-  
+
   Exemple of server's code, receiving a vpImage on request form.
   It correspond to the client used in the second exemple of vpClient class' documentation.
-  
+
   \code
 #include <visp3/core/vpServer.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -106,7 +106,7 @@ int main(int argc,const char** argv)
 int main(int argc,const char** argv)
 {
   int port = 35000;
-  
+
   std::cout << "Port: " << port << std::endl;
   vpServer serv(port);
   serv.start();
@@ -118,27 +118,27 @@ int main(int argc,const char** argv)
 #endif
 
   vpImage<unsigned char> I;
-  
+
   vpRequestImage reqImage(&I);
   serv.addDecodingRequest(&reqImage);
-  
+
   bool run = true;
-   
+
   while(run){
     serv.checkForConnections();
-    
+
     if(serv.getNumberOfClients() > 0)
     {
       int index = serv.receiveAndDecodeRequestOnce();
       std::string id = serv.getRequestIdFromIndex(index);
-        
+
       if(id == reqImage.getId())
       {
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
         if (! display.isInitialised() )
           display.init(I, -1, -1, "Remote display");
 #endif
-        
+
         vpDisplay::display(I) ;
         vpDisplay::flush(I);
 
@@ -148,11 +148,11 @@ int main(int argc,const char** argv)
       }
     }
   }
-  
+
   return 0;
 }
   \endcode
-  
+
   \sa vpClient
   \sa vpRequest
   \sa vpNetwork
@@ -160,7 +160,7 @@ int main(int argc,const char** argv)
 class VISP_EXPORT vpServer : public vpNetwork
 {
 private:
-  
+
   //######## PARAMETERS ########
   //#                          #
   //############################
@@ -168,49 +168,49 @@ private:
   int          port;
   bool         started;
   unsigned int max_clients;
-  
+
 public:
-  
+
   vpServer();
-  vpServer(const int &port);
+  explicit vpServer(const int &port);
   vpServer(const std::string &adress_serv,const int &port_serv);
-  
+
   virtual       ~vpServer();
-  
+
   bool          checkForConnections();
-  
+
   /*!
     Check if the server is started.
-    
+
     \sa vpServer::start()
 
     \return True if the server is started, false otherwise.
   */
   bool          isStarted(){ return started; }
-  
+
   /*!
     Get the maximum number of clients that can be connected to the server.
-    
+
     \sa vpServer::setMaxNumberOfClients()
 
     \return Maximum number of clients.
   */
   unsigned int  getMaxNumberOfClients(){ return max_clients; }
-  
+
   /*!
     Get the number of clients connected to the server.
 
     \return Number of clients connected.
   */
   unsigned int  getNumberOfClients(){ return (unsigned int)receptor_list.size(); }
-  
+
   void          print();
-  
+
   bool          start();
-  
+
   /*!
     Set the maximum number of clients that can be connected to the server.
-    
+
     \sa vpServer::getMaxNumberOfClients()
 
     \param l : Maximum number of clients.

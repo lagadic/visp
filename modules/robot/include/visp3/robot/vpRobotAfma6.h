@@ -80,10 +80,10 @@ extern "C" {
 
   This class allows to control the Afma6 gantry robot in position
   and velocity:
-  - in the joint space (vpRobot::ARTICULAR_FRAME), 
-  - in the fixed reference frame (vpRobot::REFERENCE_FRAME), 
+  - in the joint space (vpRobot::ARTICULAR_FRAME),
+  - in the fixed reference frame (vpRobot::REFERENCE_FRAME),
   - in the camera frame (vpRobot::CAMERA_FRAME),
-  - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed 
+  - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed
   in the reference frame and rotations in the camera frame.
 
   All the translations are expressed in meters for positions and m/s
@@ -120,18 +120,18 @@ int main() {}
   robot with:
 
   \code
-  // Set the extrinsic camera parameters obtained with a perpective 
+  // Set the extrinsic camera parameters obtained with a perpective
   // projection model including a distortion parameter
   robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithDistortion);
   \endcode
- 
+
   You can get the intrinsic camera parameters of the image I
   acquired with the camera, with:
 
   \code
   vpCameraParameters cam;
   robot.getCameraParameters(cam, I);
-  // In cam, you get the intrinsic parameters of the projection model 
+  // In cam, you get the intrinsic parameters of the projection model
   // with distortion.
   \endcode
 
@@ -259,7 +259,7 @@ public:  /* Constantes */
 
 public:  /* Methode publiques */
 
-  vpRobotAfma6 (bool verbose=true);
+  explicit vpRobotAfma6 (bool verbose=true);
   virtual ~vpRobotAfma6 (void);
 
   bool checkJointLimits(vpColVector& jointsStatus);

@@ -81,7 +81,7 @@ int main()
   vpGenericFeature logZ(1); //The dimension of the feature is 1.
   logZ.set_s( log(Z) );
 
-  // Set eye-in-hand control law. 
+  // Set eye-in-hand control law.
   // The computed velocities will be expressed in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA);
   // Interaction matrix is computed with the current visual features sd
@@ -93,7 +93,7 @@ int main()
   // Control loop
   for ( ; ; ) {
     // The new parameters x, y and Z must be computed here.
-    
+
     // Update the current point visual feature
     logZ.set_s( log(Z) ) ;
 
@@ -105,7 +105,7 @@ int main()
     LlogZ[0][4] =  x;
     logZ.setInteractionMatrix(LlogZ) ;
 
-    
+
     // compute the control law
     vpColVector v = task.computeControlLaw(); // camera velocity
   }
@@ -135,7 +135,7 @@ int main()
   vpGenericFeature logZ(1); //The dimension of the feature is 1.
   logZ.set_s( log(Z/Zd) );
 
-  // Set eye-in-hand control law. 
+  // Set eye-in-hand control law.
   // The computed velocities will be expressed in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA);
   // Interaction matrix is computed with the current visual features sd
@@ -147,7 +147,7 @@ int main()
   // Control loop
   for ( ; ; ) {
     // The new parameters x, y and Z must be computed here.
-    
+
     // Update the current point visual feature
     logZ.set_s( log(Z/Zd) ) ;
 
@@ -159,7 +159,7 @@ int main()
     LlogZ[0][4] =  x;
     logZ.setInteractionMatrix(LlogZ) ;
 
-    
+
     // compute the control law
     vpColVector v = task.computeControlLaw(); // camera velocity
   }
@@ -175,7 +175,7 @@ private:
   vpGenericFeature() ;
 
 public:
-  vpGenericFeature(unsigned int dim) ;
+  explicit vpGenericFeature(unsigned int dim) ;
   virtual ~vpGenericFeature() ;
 
   void display(const vpCameraParameters &cam,

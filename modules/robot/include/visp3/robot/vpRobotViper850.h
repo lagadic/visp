@@ -164,10 +164,10 @@ int main()
 #ifdef VISP_HAVE_VIPER850
   vpRobotViper850 robot;
 
-  // Set the extrinsic camera parameters obtained with a perpective 
+  // Set the extrinsic camera parameters obtained with a perpective
   // projection model including a distortion parameter
   robot.init(vpViper850::TOOL_MARLIN_F033C_CAMERA,
-	     vpCameraParameters::perspectiveProjWithDistortion);
+       vpCameraParameters::perspectiveProjWithDistortion);
 #endif
 }
   \endcode
@@ -195,7 +195,7 @@ int main()
 
   vpCameraParameters cam;
   robot.getCameraParameters(cam, I);
-  // In cam, you get the intrinsic parameters of the projection model 
+  // In cam, you get the intrinsic parameters of the projection model
   // with distortion.
 #endif
 }
@@ -401,7 +401,7 @@ private: /* Attributs prives. */
 
 public:  /* Methode publiques */
 
-  vpRobotViper850 (bool verbose=true);
+  explicit vpRobotViper850 (bool verbose=true);
   virtual ~vpRobotViper850 (void);
 
   // Force/Torque control
@@ -415,7 +415,7 @@ public:  /* Methode publiques */
   void getDisplacement(vpRobot::vpControlFrameType frame,
                        vpColVector &displacement);
   /*!
-    \return The control mode indicating if the robot is in automatic, 
+    \return The control mode indicating if the robot is in automatic,
     manual (usage of the dead man switch) or emergnecy stop mode.
   */
   vpControlModeType getControlMode() const {

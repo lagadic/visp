@@ -77,7 +77,7 @@ protected:
 
 public:
   //! Default constructor.
-  vpUniRand(const long seed = 0)
+  explicit vpUniRand(const long seed = 0)
     : a(16807), m(2147483647), q(127773), r(2836), normalizer(2147484721.0), x((seed)? seed : 739806647)
   {}
 

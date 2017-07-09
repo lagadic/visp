@@ -63,8 +63,8 @@ public:
   //! Basic constructor.
   vpPoint();
   vpPoint(double oX, double oY, double oZ);
-  vpPoint(const vpColVector &P);
-  vpPoint(const std::vector<double> &P);
+  explicit vpPoint(const vpColVector &P);
+  explicit vpPoint(const std::vector<double> &P);
   //! Destructor.
   virtual ~vpPoint() {}
 

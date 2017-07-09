@@ -73,7 +73,7 @@ class VISP_EXPORT vpFeatureSegment : public vpBasicFeature
 {
 public:
   //empty constructor
-  vpFeatureSegment(bool normalized=false);
+  explicit vpFeatureSegment(bool normalized=false);
 
   //! Destructor. Does nothing.
   ~vpFeatureSegment() {}
@@ -157,7 +157,7 @@ public:
   static unsigned int selectYc();
   static unsigned int selectL();
   static unsigned int selectAlpha();
-  
+
   /*!
     Set the king of feature to consider.
     \param normalized : If true, use normalized features \f${\bf s} = (x_n, y_n, l_n, \alpha)\f$.

@@ -72,13 +72,13 @@ class VISP_EXPORT vpRotationMatrix : public vpArray2D<double>
 public:
   vpRotationMatrix();
   vpRotationMatrix(const vpRotationMatrix &R);
-  vpRotationMatrix(const vpHomogeneousMatrix &M);
-  vpRotationMatrix(const vpThetaUVector &r);
-  vpRotationMatrix(const vpPoseVector &p);
-  vpRotationMatrix(const vpRzyzVector &r);
-  vpRotationMatrix(const vpRxyzVector &r);
-  vpRotationMatrix(const vpRzyxVector &r);
-  vpRotationMatrix(const vpQuaternionVector& q);
+  explicit vpRotationMatrix(const vpHomogeneousMatrix &M);
+  explicit vpRotationMatrix(const vpThetaUVector &r);
+  explicit vpRotationMatrix(const vpPoseVector &p);
+  explicit vpRotationMatrix(const vpRzyzVector &r);
+  explicit vpRotationMatrix(const vpRxyzVector &r);
+  explicit vpRotationMatrix(const vpRzyxVector &r);
+  explicit vpRotationMatrix(const vpQuaternionVector& q);
   vpRotationMatrix(const double tux, const  double tuy, const double tuz);
   /*!
     Destructor.
@@ -137,7 +137,7 @@ public:
 
   // transpose
   vpRotationMatrix t() const;
-  
+
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions

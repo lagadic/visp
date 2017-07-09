@@ -46,9 +46,9 @@
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpDisplay.h>
-// Include WinSock2.h before windows.h to ensure that winsock.h is not included by windows.h 
+// Include WinSock2.h before windows.h to ensure that winsock.h is not included by windows.h
 // since winsock.h and winsock2.h are incompatible
-#include <WinSock2.h> 
+#include <WinSock2.h>
 #include <windows.h>
 #include <visp3/gui/vpWin32Window.h>
 #include <visp3/gui/vpWin32Renderer.h>
@@ -119,7 +119,7 @@ protected:
 
 public:
 
-  vpDisplayWin32(vpWin32Renderer * rend = NULL);
+  explicit vpDisplayWin32(vpWin32Renderer * rend = NULL);
 
   vpDisplayWin32(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="");
 
@@ -131,7 +131,7 @@ public:
   void closeDisplay();
   void displayImage(const vpImage<vpRGBa> &I);
   void displayImage(const vpImage<unsigned char> &I);
-  
+
   void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height);
   void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height);
 

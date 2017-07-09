@@ -59,7 +59,7 @@
 */
 class VISP_EXPORT vpRobust
 {
-  
+
 public:
   //! Enumeration of influence functions
   typedef enum
@@ -69,11 +69,11 @@ public:
     //    MCLURE,
     HUBER
   } vpRobustEstimatorType;
-  
+
 private:
 
   //!Normalized residue
-  vpColVector normres; 
+  vpColVector normres;
   //!Sorted normalized Residues
   vpColVector sorted_normres;
   //!Sorted residues
@@ -93,23 +93,23 @@ private:
 public:
 
   //!Default Constructor
-  vpRobust(unsigned int n_data);
+  explicit vpRobust(unsigned int n_data);
   vpRobust();
   vpRobust(const vpRobust &other);
 
   //!Destructor
   virtual ~vpRobust(){};
-  
-  //! Compute the weights according a residue vector and a PsiFunction
-  void MEstimator(const vpRobustEstimatorType method,
-		 const vpColVector &residues,
-		 vpColVector &weights);
 
   //! Compute the weights according a residue vector and a PsiFunction
   void MEstimator(const vpRobustEstimatorType method,
-		 const vpColVector &residues,
-		 const vpColVector& all_residues,
-		 vpColVector &weights);
+     const vpColVector &residues,
+     vpColVector &weights);
+
+  //! Compute the weights according a residue vector and a PsiFunction
+  void MEstimator(const vpRobustEstimatorType method,
+     const vpColVector &residues,
+     const vpColVector& all_residues,
+     vpColVector &weights);
 
   vpRobust & operator=(const vpRobust &other);
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
@@ -119,9 +119,9 @@ public:
   //!Resize containers for sort methods
   void resize(unsigned int n_data);
 
-  //! Set iteration 
+  //! Set iteration
   void setIteration(const unsigned int iter){it=iter;}
-  
+
   /*!
     Set maximal noise threshold.
     \param noise_threshold : Maximal noise threshold.
@@ -143,10 +143,10 @@ public:
  private:
   //!Compute normalized median
   double computeNormalizedMedian(vpColVector &all_normres,
-				 const vpColVector &residues,
-				 const vpColVector &all_residues,
-				 const vpColVector &weights				 
-				 );
+         const vpColVector &residues,
+         const vpColVector &all_residues,
+         const vpColVector &weights
+         );
 
 
   //! Calculate various scale estimates
@@ -159,13 +159,13 @@ public:
   //---------------------------------
   /** @name PsiFunctions  */
   //@{
-  //! Tuckey influence function 
+  //! Tuckey influence function
   void psiTukey(double sigma, vpColVector &x, vpColVector &w);
-  //! Caucht influence function 
+  //! Caucht influence function
   void psiCauchy(double sigma, vpColVector &x, vpColVector &w);
-  //! McLure influence function 
+  //! McLure influence function
   void psiMcLure(double sigma, vpColVector &x, vpColVector &w);
-  //! Huber influence function 
+  //! Huber influence function
   void psiHuber(double sigma, vpColVector &x, vpColVector &w);
   //@}
 
@@ -175,7 +175,7 @@ public:
 
   //---------------------------------
   // Constrained Partial derivative of loss function with respect to the scale
-  //--------------------------------- 
+  //---------------------------------
    /** @name Constrained Chi Functions  */
   //@{
   //! Constrained Chi Function
@@ -187,7 +187,7 @@ public:
    //! Constrained Chi Huber Function
   double constrainedChiHuber(double x);
   //@}
-  
+
 #if !defined(VISP_HAVE_FUNC_ERFC) && !defined(VISP_HAVE_FUNC_STD_ERFC)
   //---------------------------------
   // Mathematic functions used to calculate the Expectation
@@ -201,7 +201,7 @@ public:
   double gammln(double xx);
   //@}
 #endif
-  
+
   /** @name Sort function  */
   //@{
   //! Swap two value

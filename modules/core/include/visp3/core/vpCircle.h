@@ -59,21 +59,21 @@ class VISP_EXPORT vpCircle : public vpForwardProjection
 public:
   void init() ;
   vpCircle() ;
-  vpCircle(const vpColVector& oP) ;
+  explicit vpCircle(const vpColVector& oP) ;
   vpCircle(const double A, const double B,
-	   const double C,
-	   const double X0, const double Y0,
-	   const double Z0,
-	   const double R) ;
+     const double C,
+     const double X0, const double Y0,
+     const double Z0,
+     const double R) ;
   virtual ~vpCircle() ;
 
 
   void setWorldCoordinates(const vpColVector& oP) ;
   void setWorldCoordinates(const double A, const double B,
-			   const double C,
-			   const double X0, const double Y0,
-			   const double Z0,
-			   const double R) ;
+         const double C,
+         const double X0, const double Y0,
+         const double Z0,
+         const double R) ;
 
 
   double getA() const { return cP[0] ; }

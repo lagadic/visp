@@ -75,7 +75,7 @@ class VISP_EXPORT vpTemplateTrackerZNCC: public vpTemplateTracker
     virtual void   trackNoPyr(const vpImage<unsigned char> &I)=0;
 
   public:
-    vpTemplateTrackerZNCC(vpTemplateTrackerWarp *warp);
+    explicit vpTemplateTrackerZNCC(vpTemplateTrackerWarp *warp);
 
     void   setGain(double _gain){gain=_gain;}
 };

@@ -50,9 +50,9 @@
 #include <cmath>    // std::fabs
 #include <limits>   // numeric_limits
 #if defined(_WIN32)
-// Include WinSock2.h before windows.h to ensure that winsock.h is not included by windows.h 
+// Include WinSock2.h before windows.h to ensure that winsock.h is not included by windows.h
 // since winsock.h and winsock2.h are incompatible
-#  include <WinSock2.h> 
+#  include <WinSock2.h>
 #  include <windows.h>
 #elif defined(VISP_HAVE_PTHREAD)
 #  include <pthread.h>
@@ -74,7 +74,7 @@
 
   \brief This class aims to be a basis used to create all the
   simulators of robots.
-  
+
   Thus in this class you will find all the parameters and methods
   which are necessary to create a simulator. Several methods are pure
   virtual. In this case it means that they are specific to the each
@@ -88,30 +88,30 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 {
   public:
     vpImage<vpRGBa> I;
-    
-    typedef enum  
+
+    typedef enum
     {
       MODEL_3D,
       MODEL_DH
     } vpDisplayRobotType;
-    
-    
+
+
   protected:
     /*! cpu time at the begining of the robot's movement*/
     double tcur;
     /*! cpu time at the end of the last robot's movement*/
     double tprev;
-    
+
     /*! Contains the 3D model of the robot's arms*/
     Bound_scene* robotArms;
-    
+
     /*! Size of the fMi table*/
     unsigned int size_fMi;
     /*! Table containing all the homogeneous matrices between the reference frame of the robot and the frames you used to compute the Denavit-Hartenberg representation
-    
+
     If you use a camera at the end of the effector, the last homogeneous matrix has to be the one between the reference frame and the camera frame (fMc)*/
     vpHomogeneousMatrix* fMi;
-    
+
     /*! The articular coordinates*/
     vpColVector artCoord;
     /*! The articular velocity*/
@@ -135,7 +135,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     pthread_mutex_t mutex_velocity;
     pthread_mutex_t mutex_display;
 #endif
-    
+
     bool displayBusy;
 
     /*! True if the robot has to be stopped*/
@@ -146,13 +146,13 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     unsigned int jointLimitArt;
     /*! True if the singularity are automatically managed */
     bool singularityManagement;
-    
+
     /*! External camera parameters*/
     vpCameraParameters cameraParam;
-    
+
     #if defined VISP_HAVE_X11
     vpDisplayX display;
-	#elif defined VISP_HAVE_GDI
+  #elif defined VISP_HAVE_GDI
     vpDisplayGDI display;
     #elif defined VISP_HAVE_OPENCV
     vpDisplayOpenCV display;
@@ -161,9 +161,9 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     #elif defined VISP_HAVE_GTK
     vpDisplayGTK display;
     #endif
-    
+
     vpDisplayRobotType displayType;
-    
+
     bool displayAllowed;
     //! Flag used to force the sampling time in the thread computing the robot's displacement to a constant value (\e samplingTime). It may be useful if the main thread (computing the features) is very time consumming. False by default.
     bool constantSamplingTimeMode;
@@ -172,7 +172,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     bool setVelocityCalled;
 
     bool verbose_;
-    
+
 //private:
 //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 //    vpRobotWireFrameSimulator(const vpRobotWireFrameSimulator &)
@@ -201,9 +201,9 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 
   public:
     vpRobotWireFrameSimulator();
-    vpRobotWireFrameSimulator(bool display);
+    explicit vpRobotWireFrameSimulator(bool display);
     virtual ~vpRobotWireFrameSimulator();
-    
+
     /** @name Inherited functionalities from vpRobotWireFrameSimulator */
     //@{
     /*!
@@ -335,7 +335,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     }
     /*! Set the parameter which enable or disable the singularity mangement */
     void setSingularityManagement (const bool sm) {singularityManagement = sm;}
-              
+
     /*!
       Activates extra printings when the robot reaches joint limits...
       */
@@ -346,7 +346,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 
     /*!
       Set the pose between the object and the fixed world frame.
-      
+
       \param fMo_ : The pose between the object and the fixed world frame.
     */
     void set_fMo(const vpHomogeneousMatrix &fMo_) {this->fMo = fMo_;}
@@ -372,7 +372,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
       return NULL;
     }
 #endif
-    
+
     /* Robot functions */
     void init() {;}
     /*! Method lauched by the thread to compute the position of the robot in the articular frame. */
@@ -386,7 +386,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
     void initDisplay() {;}
     virtual void initArms() = 0;
 
-	#if defined(_WIN32)
+  #if defined(_WIN32)
     vpColVector get_artCoord() const {
 #  if defined(WINRT_8_1)
       WaitForSingleObjectEx(mutex_artCoord, INFINITE, FALSE);
@@ -405,7 +405,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 #  endif
       artCoord = coord;
       ReleaseMutex(mutex_artCoord);}
-    
+
     vpColVector get_artVel() const {
 #  if defined(WINRT_8_1)
       WaitForSingleObjectEx(mutex_artVel, INFINITE, FALSE);
@@ -423,7 +423,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 #  endif
       artVel = vel;
       ReleaseMutex(mutex_artVel);}
-    
+
     vpColVector get_velocity() {
 #  if defined(WINRT_8_1)
       WaitForSingleObjectEx(mutex_velocity, INFINITE, FALSE);
@@ -441,7 +441,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
 #  endif
       velocity = vel;
       ReleaseMutex(mutex_velocity);}
-      
+
     void set_displayBusy (const bool &status) {
 #  if defined(WINRT_8_1)
       WaitForSingleObjectEx(mutex_display, INFINITE, FALSE);
@@ -472,7 +472,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
       pthread_mutex_lock (&mutex_artCoord);
       artCoord = coord;
       pthread_mutex_unlock (&mutex_artCoord);}
-    
+
     vpColVector get_artVel() {
       pthread_mutex_lock (&mutex_artVel);
       vpColVector artVelTmp (artVel);
@@ -482,7 +482,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
       pthread_mutex_lock (&mutex_artVel);
       artVel = vel;
       pthread_mutex_unlock (&mutex_artVel);}
-    
+
     vpColVector get_velocity() {
       pthread_mutex_lock (&mutex_velocity);
       vpColVector velocityTmp = velocity;
@@ -492,7 +492,7 @@ class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, pu
       pthread_mutex_lock (&mutex_velocity);
       velocity = vel;
       pthread_mutex_unlock (&mutex_velocity);}
-      
+
     void set_displayBusy (const bool &status) {
       pthread_mutex_lock (&mutex_display);
       displayBusy = status;
