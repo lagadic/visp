@@ -367,7 +367,7 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
     return;
   }
 
-  L.resize(getNbFeatures(), 6, false);
+  L.resize(getNbFeatures(), 6, false, false);
   error.resize(getNbFeatures(), false);
 
   //Transform the plane equation for the current pose

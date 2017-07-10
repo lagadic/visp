@@ -597,12 +597,12 @@ vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char>& I, const unsigned i
   vpMatrix LVJ_true;
 
   if(nbrow != 0){
-    L_mbt.resize(nbrow, 6, false);
+    L_mbt.resize(nbrow, 6, false, false);
     R_mbt.resize(nbrow, false);
   }
 
   if(nbInfos != 0){
-    L_klt.resize(2*nbInfos, 6, false);
+    L_klt.resize(2*nbInfos, 6, false, false);
     R_klt.resize(2*nbInfos, false);
   }
 
@@ -872,7 +872,7 @@ vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char>& I, vpColVector 
       return nbrow;
   }
 
-  factor.resize(nbrow);
+  factor.resize(nbrow, false);
   factor = 1;
 
   unsigned int n = 0;

@@ -400,6 +400,13 @@ int main(int argc, const char ** argv) {
       return EXIT_FAILURE;
     }
 
+#if !defined(VISP_HAVE_MODULE_KLT) || (!defined(VISP_HAVE_OPENCV) || (VISP_HAVE_OPENCV_VERSION < 0x020100))
+    if (trackerType_image == /*vpMbGenericTracker::KLT_TRACKER*/2) {
+      std::cout << "KLT only features cannot be used: ViSP is not built with KLT module or OpenCV is not available." << std::endl;
+      return EXIT_SUCCESS;
+    }
+#endif
+
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty() ){
       usage(argv[0], NULL);

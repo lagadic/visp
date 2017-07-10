@@ -427,7 +427,7 @@ void vpMbGenericTracker::computeVVSInit(std::map<std::string, const vpImage<unsi
     nbFeatures += tracker->m_error.getRows();
   }
 
-  m_L.resize(nbFeatures, 6, false);
+  m_L.resize(nbFeatures, 6, false, false);
   m_error.resize(nbFeatures, false);
 
   m_weightedError.resize(nbFeatures, false);
@@ -3767,7 +3767,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSInit(const vpImage<unsigned c
     m_w_depthDense.clear();
   }
 
-  m_L.resize(nbFeatures, 6, false);
+  m_L.resize(nbFeatures, 6, false, false);
   m_error.resize(nbFeatures, false);
 
   m_weightedError.resize(nbFeatures, false);
@@ -4140,7 +4140,29 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string& confi
   xmlp.setDepthNormalSamplingStepY(m_depthNormalSamplingStepY);
 
   try {
-    std::cout << " *********** Parsing XML for Model-Based Tracker ************ " << std::endl;
+
+    std::cout << " *********** Parsing XML for";
+
+    std::vector<std::string> tracker_names;
+    if (m_trackerType & EDGE_TRACKER)
+      tracker_names.push_back("Edge");
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+    if (m_trackerType & KLT_TRACKER)
+      tracker_names.push_back("Klt");
+#endif
+    if (m_trackerType & DEPTH_NORMAL_TRACKER)
+      tracker_names.push_back("Depth Normal");
+    if (m_trackerType & DEPTH_DENSE_TRACKER)
+      tracker_names.push_back("Depth Dense");
+
+    for (size_t i = 0; i < tracker_names.size(); i++) {
+      std::cout << " " << tracker_names[i];
+      if (i == tracker_names.size()-1) {
+        std::cout << " ";
+      }
+    }
+
+    std::cout << "Model-Based Tracker ************ " << std::endl;
     xmlp.parse(configFile.c_str());
   } catch (...) {
     throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ", configFile.c_str());
@@ -4566,16 +4588,23 @@ void vpMbGenericTracker::TrackerWrapper::setOgreVisibilityTest(const bool &v) {
 }
 
 void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo) {
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-  if (useScanLine || clippingFlag > 3)
-    cam.computeFov(I.getWidth(), I.getHeight());
+  bool performKltSetPose = false;
 
-  vpMbKltTracker::setPose(I, cdMo);
-#else
-  cMo = cdMo;
-  init(I);
-  return;
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+  if (m_trackerType & KLT_TRACKER)
+    performKltSetPose = true;
+
+    if (useScanLine || clippingFlag > 3)
+      cam.computeFov(I.getWidth(), I.getHeight());
+
+    vpMbKltTracker::setPose(I, cdMo);
 #endif
+
+  if (!performKltSetPose) {
+    cMo = cdMo;
+    init(I);
+    return;
+  }
 
   if (m_trackerType & EDGE_TRACKER)
     resetMovingEdge();

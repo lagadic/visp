@@ -250,7 +250,7 @@ void vpMbEdgeKltMultiTracker::computeVVS(std::map<std::string, const vpImage<uns
 void vpMbEdgeKltMultiTracker::computeVVSInit() {
   unsigned int totalNbRows = 2*m_nbInfos + m_nbrow;
 
-  m_L_hybridMulti.resize(totalNbRows, 6, false);
+  m_L_hybridMulti.resize(totalNbRows, 6, false, false);
   m_error_hybridMulti.resize(totalNbRows, false);
 
   m_weightedError_hybridMulti.resize(totalNbRows, false);
@@ -1120,7 +1120,7 @@ unsigned int vpMbEdgeKltMultiTracker::initMbtTracking(std::map<std::string, cons
       edge->computeVVSFirstPhaseFactor(*mapOfImages[it->first], lvl);
       m_factor.stack(edge->m_factor);
     } catch (...) {
-      edge->m_L_edge.resize(0, 6, false);
+      edge->m_L_edge.resize(0, 6, false, false);
       edge->m_error_edge.resize(0, false);
 
       edge->m_weightedError_edge.resize(0, false);

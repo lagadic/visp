@@ -202,9 +202,7 @@ vpFeatureLine::setABCD(const double A_, const double B_,
 vpMatrix
 vpFeatureLine::interaction(const unsigned int select)
 {
-  vpMatrix L ;
-
-  L.resize(0,6) ;
+  vpMatrix L;
 
   if (deallocate == vpBasicFeature::user)
   {
@@ -250,7 +248,7 @@ vpFeatureLine::interaction(const unsigned int select)
     vpERROR_TRACE("Incorrect plane  coordinates D is null, D = %f",D) ;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
-			     "Incorrect plane  coordinates D")) ;
+          "Incorrect plane  coordinates D")) ;
   }
 
   double lambda_theta =( A*si - B*co) /D;
@@ -260,7 +258,6 @@ vpFeatureLine::interaction(const unsigned int select)
   {
     vpMatrix Lrho(1,6) ;
 
-
     Lrho[0][0]= co*lambda_rho;
     Lrho[0][1]= si*lambda_rho;
     Lrho[0][2]= -rho*lambda_rho;
@@ -268,7 +265,7 @@ vpFeatureLine::interaction(const unsigned int select)
     Lrho[0][4]= -co*(1.0 + rho*rho);
     Lrho[0][5]= 0.0;
 
-    L = vpMatrix::stack(L,Lrho) ;
+    L.stack(Lrho);
   }
 
   if (vpFeatureLine::selectTheta() & select )
@@ -282,7 +279,7 @@ vpFeatureLine::interaction(const unsigned int select)
     Ltheta[0][4] = -rho*si;
     Ltheta[0][5] = -1.0;
 
-    L = vpMatrix::stack(L,Ltheta) ;
+    L.stack(Ltheta);
   }
   return L ;
 }

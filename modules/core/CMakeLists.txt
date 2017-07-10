@@ -267,6 +267,11 @@ if(MSVC)
   endif()
 endif()
 
+if(USE_EIGEN3)
+  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_svd.cpp -Wno-float-equal -Wstrict-overflow)
+  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_lu.cpp -Wno-float-equal -Wstrict-overflow)
+endif()
+
 vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES})
 
 vp_source_group("Src" FILES "${VISP_MODULE_visp_core_BINARY_DIR}/version_string.inc")

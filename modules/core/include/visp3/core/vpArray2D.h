@@ -97,7 +97,7 @@ public:
   vpArray2D<Type>(const vpArray2D<Type> & A)
     : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
   {
-    resize(A.rowNum, A.colNum);
+    resize(A.rowNum, A.colNum, false, false);
     memcpy(data, A.data, rowNum*colNum*sizeof(Type));
   }
   /*!
@@ -121,7 +121,7 @@ public:
   vpArray2D<Type>(unsigned int r, unsigned int c, Type val)
     : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
   {
-    resize(r, c);
+    resize(r, c, false, false);
     *this = val;
   }
   /*!
@@ -136,7 +136,7 @@ public:
 
     if (rowPtrs!=NULL) {
       free(rowPtrs);
-      rowPtrs=NULL ;
+      rowPtrs=NULL;
     }
     rowNum = colNum = dsize = 0;
   }
@@ -170,9 +170,11 @@ public:
   after resize. If false, the initial values from the common part of the
   array (common part between old and new version of the array) are kept.
   Default value is true.
+  \param recopy_ : if true, will perform an explicit recopy of the old data
+  if needed and if flagNullify is set to false.
   */
   void resize(const unsigned int nrows, const unsigned int ncols,
-              const bool flagNullify = true)
+              const bool flagNullify=true, const bool recopy_=true)
   {
     if ((nrows == rowNum) && (ncols == colNum)) {
       if (flagNullify && this->data != NULL) {
@@ -180,7 +182,8 @@ public:
       }
     }
     else {
-      const bool recopyNeeded = (ncols != this ->colNum && this ->colNum != 0);
+      bool recopy = !flagNullify && recopy_; //priority to flagNullify
+      const bool recopyNeeded = ( ncols != this->colNum && this->colNum > 0 && ncols > 0 && (!flagNullify || recopy) );
       Type * copyTmp = NULL;
       unsigned int rowTmp = 0, colTmp=0;
 
@@ -198,14 +201,14 @@ public:
       if ((NULL == this->data) && (0 != this->dsize)) {
         if (copyTmp != NULL) delete [] copyTmp;
         throw(vpException(vpException::memoryAllocationError,
-          "Memory allocation error when allocating 2D array data")) ;
+          "Memory allocation error when allocating 2D array data"));
       }
 
       this->rowPtrs = (Type**)realloc (this->rowPtrs, nrows*sizeof(Type*));
       if ((NULL == this->rowPtrs) && (0 != this->dsize)) {
         if (copyTmp != NULL) delete [] copyTmp;
         throw(vpException(vpException::memoryAllocationError,
-          "Memory allocation error when allocating 2D array rowPtrs")) ;
+          "Memory allocation error when allocating 2D array rowPtrs"));
       }
 
       // Update rowPtrs
@@ -257,7 +260,7 @@ public:
   */
   vpArray2D<Type> & operator=(const vpArray2D<Type> & A)
   {
-    resize(A.rowNum, A.colNum, false);
+    resize(A.rowNum, A.colNum, false, false);
     memcpy(data, A.data, rowNum*colNum*sizeof(Type));
     return *this;
   }
@@ -277,7 +280,7 @@ public:
       return s;
     std::ios_base::fmtflags original_flags = s.flags();
 
-    s.precision(10) ;
+    s.precision(10);
     for (unsigned int i=0;i<A.getRows();i++) {
       for (unsigned int j=0;j<A.getCols()-1;j++){
         s << A[i][j] << "  ";
