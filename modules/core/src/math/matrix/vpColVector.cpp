@@ -1440,6 +1440,37 @@ double vpColVector::euclideanNorm() const
 }
 
 /*!
+  Compute the Hadamard product (element wise vector multiplication).
+  \param v : Second vector;
+  \return v1.hadamard(v2) The kronecker product : \f$ v1 \circ v2 = (v1 \circ v2)_{i} = (v1)_{i} (v2)_{i} \f$
+*/
+vpColVector vpColVector::hadamard(const vpColVector &v) const {
+  if (v.getRows() != rowNum || v.getCols() != colNum) {
+    throw(vpException(vpException::dimensionError, "Hadamard product: bad dimensions!"));
+  }
+
+  vpColVector out;
+  out.resize(rowNum, false);
+
+  unsigned int i = 0;
+
+#if VISP_HAVE_SSE2
+  if (dsize >= 2) {
+    for (; i <= dsize - 2; i+=2) {
+      __m128d vout = _mm_mul_pd( _mm_loadu_pd(data+i), _mm_loadu_pd(v.data+i) );
+      _mm_storeu_pd( out.data+i, vout );
+    }
+  }
+#endif
+
+  for (; i < dsize; i++) {
+    out.data[i] = data[i] * v.data[i];
+  }
+
+  return out;
+}
+
+/*!
 
   Compute and return the infinity norm \f$ {||x||}_{\infty} =
   max\left({\mid x_{i} \mid}\right) \f$ with \f$i \in

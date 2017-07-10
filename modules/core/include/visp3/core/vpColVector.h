@@ -161,6 +161,8 @@ public:
     return vpColVector(*this, r, colsize);
   }
 
+  vpColVector hadamard(const vpColVector &v) const;
+
   double infinityNorm() const;
   void init(const vpColVector &v, unsigned int r, unsigned int nrows);
   void insert(unsigned int i, const vpColVector &v);

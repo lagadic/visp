@@ -1521,6 +1521,38 @@ vpRowVector vpMatrix::stackRows()
 }
 
 /*!
+  Compute the Hadamard product (element wise matrix multiplication).
+  \param m : Second matrix;
+  \return m1.hadamard(m2) The Hadamard product : \f$ m1 \circ m2 = (m1 \circ m2)_{i,j} = (m1)_{i,j} (m2)_{i,j} \f$
+*/
+vpMatrix vpMatrix::hadamard(const vpMatrix &m) const {
+  if (m.getRows() != rowNum || m.getCols() != colNum) {
+    throw(vpException(vpException::dimensionError,
+                      "In Hadamard product: bad dimension of input matrix"));
+  }
+
+  vpMatrix out;
+  out.resize(rowNum, colNum, false);
+
+  unsigned int i = 0;
+
+#if VISP_HAVE_SSE2
+  if (dsize >= 2) {
+    for (; i <= dsize - 2; i+=2) {
+      __m128d vout = _mm_mul_pd( _mm_loadu_pd(data+i), _mm_loadu_pd(m.data+i) );
+      _mm_storeu_pd( out.data+i, vout );
+    }
+  }
+#endif
+
+  for (; i < dsize; i++) {
+    out.data[i] = data[i] * m.data[i];
+  }
+
+  return out;
+}
+
+/*!
   Compute Kronecker product matrix.
   \param m1 : vpMatrix;
   \param m2 : vpMatrix;
