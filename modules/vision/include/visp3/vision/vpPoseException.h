@@ -91,7 +91,7 @@ class VISP_EXPORT vpPoseException : public vpException
     }
     vpPoseException (const int id, const std::string & msg)
       : vpException(id, msg){ ; }
-    vpPoseException (const int id)
+    explicit vpPoseException (const int id)
       : vpException(id){ ; }
     // vpPoseException() : vpException() { ;}
 };

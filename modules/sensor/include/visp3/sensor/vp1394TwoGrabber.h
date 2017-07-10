@@ -65,10 +65,10 @@
   \class vp1394TwoGrabber
 
   \ingroup group_sensor_camera
-  
+
   \brief Class for firewire ieee1394 video devices using libdc1394-2.x api.
 
- 
+
   Needs libraw1394-1.2.0 and libdc1394-2.0.0 or more recent versions
   available on http://sourceforge.net.
 
@@ -77,7 +77,7 @@
 
   \ingroup libdevice
 
-  This grabber allows single or multi camera acquisition. 
+  This grabber allows single or multi camera acquisition.
 
   - Here you will find an example of single capture from the first camera found
     on the bus. This example is available in tutorial-grabber-1394.cpp:
@@ -85,7 +85,7 @@
     A line by line explanation of this example is provided in \ref tutorial-grabber.
     An other example that shows how to use format 7
     and the auto-shutter is provided in vp1394TwoGrabber() constructor:
-  
+
   - If more than one camera is connected, it is also possible to select a specific camera by its GUID:
   \code
 #include <visp3/core/vpConfig.h>
@@ -119,7 +119,7 @@ int main()
 
   printf("Use camera with GUID: 0x%lx\n", (long unsigned int)g.getGuid());
   g.acquire(I); // Acquire an image from the camera with GUID 0xb09d01009b329c
-  
+
   vpImageIo::write(I, "image.pgm"); // Write image on the disk
 #endif
 }
@@ -274,7 +274,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
     vpCOLOR_CODING_RAW8    = DC1394_COLOR_CODING_RAW8,
     vpCOLOR_CODING_RAW16   = DC1394_COLOR_CODING_RAW16
   } vp1394TwoColorCodingType;
-  
+
   /*!
     Enumeration of the parameters that can be modified. See libdc1394 2.x header
     file dc1394/control.h
@@ -303,37 +303,37 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 //    vpFEATURE_CAPTURE_SIZE    = DC1394_FEATURE_CAPTURE_SIZE,
 //    vpFEATURE_CAPTURE_QUALITY = DC1394_FEATURE_CAPTURE_QUALITY
   } vp1394TwoParametersType;
-    
-  
- private: 
- 
+
+
+ private:
+
   /*!
-    Control structure of the values that can be modified during the execution.   
+    Control structure of the values that can be modified during the execution.
   */
-  typedef struct{ 
-    uint32_t brightness ; 
+  typedef struct{
+    uint32_t brightness ;
     uint32_t exposure;
     uint32_t sharpness;
 //    uint32_t whiteBalance;
     uint32_t hue;
     uint32_t saturation;
     uint32_t gamma;
-    uint32_t shutter ; 
+    uint32_t shutter ;
     uint32_t gain ;
     uint32_t iris;
 //    uint32_t focus;
-//    uint32_t temperature ; 
+//    uint32_t temperature ;
 //    uint32_t trigger ;
 //    uint32_t triggerDelay ;
-//    uint32_t whiteShadding ; 
+//    uint32_t whiteShadding ;
 //    uint32_t frameRate ;
 //    uint32_t zoom;
 //    uint32_t pan;
-//    uint32_t tilt ; 
+//    uint32_t tilt ;
 //    uint32_t opticalFilter ;
 //    uint32_t captureSize;
-//    uint32_t captureQuality ; 
-  } vpDc1394TwoCameraParametersData;    
+//    uint32_t captureQuality ;
+  } vpDc1394TwoCameraParametersData;
 
 //private:
 //#ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -355,7 +355,7 @@ class VISP_EXPORT vp1394TwoGrabber : public vpFrameGrabber
 //#endif
 
 public:
-  vp1394TwoGrabber(bool reset=true);
+  explicit vp1394TwoGrabber(bool reset=true);
   virtual ~vp1394TwoGrabber();
 
   void acquire(vpImage<unsigned char> &I);
@@ -425,7 +425,7 @@ public:
   void setCamera(uint64_t camera);
   void setColorCoding(vp1394TwoColorCodingType coding);
   void setFormat7ROI(unsigned int left=0, unsigned int top=0,
-		     unsigned int width=0, unsigned int height=0);
+         unsigned int width=0, unsigned int height=0);
   void setFramerate(vp1394TwoFramerateType fps);
   void setIsoTransmissionSpeed(vp1394TwoIsoSpeedType isospeed);
   void setPanControl(unsigned int panControlValue);
@@ -441,7 +441,7 @@ public:
 
  private:
   void open();
-  void initialize(bool reset); 
+  void initialize(bool reset);
   void setCapture(dc1394switch_t _switch);
   void setTransmission(dc1394switch_t _switch);
   inline void updateDataCamToStruct();
@@ -455,7 +455,7 @@ public:
   bool verbose;
   bool *camIsOpen;
   unsigned int num_buffers;
-  
+
   /* parameters for the cameras */
   bool* isDataModified;
   dc1394feature_mode_t* initialShutterMode;
