@@ -768,48 +768,65 @@ vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix &cMo)
 {
   if (isvisible)
   {
-    // feature projection
-    line->changeFrame(cMo);
-    line->projection();
+    try {
+      // feature projection
+      line->changeFrame(cMo);
+      line->projection();
 
-    vpFeatureBuilder::create(featureline,*line);
+      vpFeatureBuilder::create(featureline,*line);
 
-    double rho = featureline.getRho();
-    double theta = featureline.getTheta();
+      double rho = featureline.getRho();
+      double theta = featureline.getTheta();
 
-    double co = cos(theta);
-    double si = sin(theta);
+      double co = cos(theta);
+      double si = sin(theta);
 
-    double mx = 1.0/cam.get_px();
-    double my = 1.0/cam.get_py();
-    double xc = cam.get_u0();
-    double yc = cam.get_v0();
+      double mx = 1.0/cam.get_px();
+      double my = 1.0/cam.get_py();
+      double xc = cam.get_u0();
+      double yc = cam.get_v0();
 
-    double alpha_;
-    vpMatrix H = featureline.interaction();
+      double alpha_;
+      vpMatrix H = featureline.interaction();
 
-    double x,y;
-    unsigned int j =0;
+      double x,y;
+      unsigned int j = 0;
 
-    for(unsigned int i = 0 ; i < meline.size() ; i++){
-      for(std::list<vpMeSite>::const_iterator it=meline[i]->getMeList().begin(); it!=meline[i]->getMeList().end(); ++it){
-        x = (double)it->j;
-        y = (double)it->i;
+      for(unsigned int i = 0 ; i < meline.size() ; i++){
+        for(std::list<vpMeSite>::const_iterator it=meline[i]->getMeList().begin(); it!=meline[i]->getMeList().end(); ++it){
+          x = (double)it->j;
+          y = (double)it->i;
 
-        x = (x-xc)*mx;
-        y = (y-yc)*my;
+          x = (x-xc)*mx;
+          y = (y-yc)*my;
 
-        alpha_ = x*si - y*co;
+          alpha_ = x*si - y*co;
 
-        double *Lrho = H[0];
-        double *Ltheta = H[1];
-        // Calculate interaction matrix for a distance
-        for (unsigned int k=0 ; k < 6 ; k++)
-        {
-          L[j][k] = (Lrho[k] + alpha_*Ltheta[k]);
+          double *Lrho = H[0];
+          double *Ltheta = H[1];
+          // Calculate interaction matrix for a distance
+          for (unsigned int k=0 ; k < 6 ; k++)
+          {
+            L[j][k] = (Lrho[k] + alpha_*Ltheta[k]);
+          }
+          error[j] = rho - ( x*co + y*si);
+          j++;
         }
-        error[j] = rho - ( x*co + y*si);
-        j++;
+      }
+    } catch (const vpException &e) {
+      std::cerr << "Catch an exception: " << e.what() << std::endl;
+      std::cerr << "Set the corresponding interaction matrix part to zero." << std::endl;
+
+      unsigned int j = 0;
+      for (unsigned int i = 0; i < meline.size(); i++) {
+        for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin(); it != meline[i]->getMeList().end(); ++it) {
+          for (unsigned int k = 0; k < 6; k++) {
+            L[j][k] = 0.0;
+          }
+
+          error[j] = 0.0;
+          j++;
+        }
       }
     }
   }
