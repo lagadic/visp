@@ -1034,6 +1034,12 @@ template<class Type>
 vpImage<Type> & vpImage<Type>::operator=(vpImage<Type> other)
 {
   swap(*this, other);
+  //Swap back display pointer if it was not null
+  //vpImage<unsigned char> I2(480, 640);
+  //vpDisplayX d(I2);
+  //I2 = I1; //copy only the data
+  if (other.display != NULL)
+    display = other.display;
 
   return *this;
 }
