@@ -4591,13 +4591,14 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> &I
   bool performKltSetPose = false;
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-  if (m_trackerType & KLT_TRACKER)
+  if (m_trackerType & KLT_TRACKER) {
     performKltSetPose = true;
 
     if (useScanLine || clippingFlag > 3)
       cam.computeFov(I.getWidth(), I.getHeight());
 
     vpMbKltTracker::setPose(I, cdMo);
+  }
 #endif
 
   if (!performKltSetPose) {
