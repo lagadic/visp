@@ -74,8 +74,10 @@ vpD3DRenderer::vpD3DRenderer()
 {
   pD3D=NULL;
   pd3dDevice=NULL;
+  pSprite=NULL;
   pd3dText=NULL;
   pd3dVideoText=NULL;
+  textWidth=0;
 
   //D3D palette
   vpColor pcolor; // Predefined colors
@@ -1105,7 +1107,7 @@ void vpD3DRenderer::drawCross(const vpImagePoint &ip,
   \param w,h : Width and height of the arrow.
   \param thickness : Thickness of the lines used to display the arrow.
 */
-void vpD3DRenderer::drawArrow(const vpImagePoint &ip1, 
+void vpD3DRenderer::drawArrow(const vpImagePoint &ip1,
                               const vpImagePoint &ip2,
                               const vpColor &color,
                               unsigned int w, unsigned int h, unsigned int thickness)

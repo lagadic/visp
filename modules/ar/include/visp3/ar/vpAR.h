@@ -14,7 +14,7 @@
  * Edition License.
  *
  * See http://visp.inria.fr for more information.
- * 
+ *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
  * Campus Universitaire de Beaulieu
@@ -23,7 +23,7 @@
  *
  * If you have questions regarding the use of this file, please contact
  * Inria at visp@inria.fr
- * 
+ *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
@@ -73,7 +73,7 @@
   \class vpAR
 
   \ingroup group_ar_renderer
-  
+
   \brief Implementation of an augmented reality viewer using Coin3D 3rd party.
 
   Thus to be enabled this class requires Coin3D 3rd party installation.
@@ -81,7 +81,7 @@
 
   This class can be used to display an image behind the internal view
   of the simulator used for augmented reality application.
-  
+
   \warning This class is only available if Coin3D and one of the GUI
   (SoWin, SoXT, SoQt) are installed.
 
@@ -149,7 +149,7 @@ private:
   bool background;
 
  public:
-  vpAR() {};
+  vpAR(): background(false) {};
 
   virtual ~vpAR() ;
   void initInternalViewer(const unsigned int width, const unsigned int height, vpImageType type = grayImage) ;
