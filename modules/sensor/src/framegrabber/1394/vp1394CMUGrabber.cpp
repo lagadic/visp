@@ -50,7 +50,9 @@
    Basic constructor.
  */
 vp1394CMUGrabber::vp1394CMUGrabber()
-{	
+  : index(0), // If a camera was not selected the first one (index = 0) will be used
+    _format(-1), _mode(-1), _fps(-1), _modeauto(true), _gain(0), _shutter(0), _color(vp1394CMUGrabber::UNKNOWN)
+{
   // public members
   init = false;
 
@@ -59,12 +61,6 @@ vp1394CMUGrabber::vp1394CMUGrabber()
 
   // private members
   camera = new C1394Camera;
-  index = 0;   // If a camera was not selected the first one (index = 0) will be used
-  _format = _mode = _fps = -1;
-  _modeauto=true;
-  _gain = 0;
-  _shutter = 0;
-  _color = vp1394CMUGrabber::UNKNOWN;
 }
 
 /*!
@@ -84,7 +80,7 @@ vp1394CMUGrabber::~vp1394CMUGrabber( )
  Select the camera on the bus from its index. The first camera found on the bus has index 0.
  \param cam_id : Camera index.
 */
-void 
+void
 vp1394CMUGrabber::selectCamera(int cam_id)
 {
   int camerror;
@@ -116,10 +112,10 @@ vp1394CMUGrabber::selectCamera(int cam_id)
 /*!
  Init the selected camera.
  */
-void 
+void
 vp1394CMUGrabber::initCamera()
 {
-  if (init == false) 
+  if (init == false)
   {
     int camerror;
 
@@ -168,7 +164,7 @@ vp1394CMUGrabber::initCamera()
     camera->GetVideoFrameDimensions(&w, &h);
     this->width = w;
     this->height = h;
-    
+
     // start acquisition
     if (camera->StartImageAcquisition() != CAM_SUCCESS)
     {
@@ -188,7 +184,7 @@ vp1394CMUGrabber::initCamera()
   Initialization of the grabber using a greyscale image.
   \param I : gray level image.
   */
-void 
+void
 vp1394CMUGrabber::open(vpImage<unsigned char> &I)
 {
   initCamera();
@@ -199,7 +195,7 @@ vp1394CMUGrabber::open(vpImage<unsigned char> &I)
   Initialization of the grabber using a color image.
   \param I : color image.
   */
-void 
+void
 vp1394CMUGrabber::open(vpImage<vpRGBa> &I)
 {
   initCamera();
@@ -213,7 +209,7 @@ vp1394CMUGrabber::open(vpImage<vpRGBa> &I)
 
   \param I : Acquired gray level image.
   */
-void 
+void
 vp1394CMUGrabber::acquire(vpImage<unsigned char> &I)
 {
   // get image data
@@ -278,7 +274,7 @@ vp1394CMUGrabber::acquire(vpImage<unsigned char> &I)
 
   \param I : Acquired color image in RGBa format.
  */
-void 
+void
 vp1394CMUGrabber::acquire(vpImage<vpRGBa> &I)
 {
   // get image data
@@ -332,7 +328,7 @@ vp1394CMUGrabber::acquire(vpImage<vpRGBa> &I)
 /*!
   Stop the acquisition of images and free the camera.
   */
-void 
+void
 vp1394CMUGrabber::close()
 {
   // stop acquisition
@@ -372,8 +368,8 @@ vp1394CMUGrabber::getNumberOfConnectedCameras() const
   return n_cam;
 }
 
-/*! 
-   Get the gain min and max values. 
+/*!
+   Get the gain min and max values.
 
    \sa setAutoGain(), setGain()
    */
@@ -386,8 +382,8 @@ void vp1394CMUGrabber::getGainMinMax(unsigned short &min, unsigned short &max)
   Control->Inquire();
   Control->GetRange(&min, &max);
 }
-/*! 
-   Enable auto gain. 
+/*!
+   Enable auto gain.
 
    \sa setGain()
    */
@@ -396,8 +392,8 @@ void vp1394CMUGrabber::setAutoGain()
   initCamera();
   camera->GetCameraControl(FEATURE_GAIN)->SetAutoMode(true);
 }
-/*! 
-   Disable auto gain and set the gain to the requested value. 
+/*!
+   Disable auto gain and set the gain to the requested value.
 
    \sa setAutoGain()
    */
@@ -417,13 +413,13 @@ void vp1394CMUGrabber::setGain(unsigned short gain)
   {
     _gain = min;
     std::cout << "vp1394CMUGrabber warning: Desired gain register value of IEEE 1394 camera number " << index << " can't be less than " << _gain << std::endl;
-  } 
+  }
   else if (_gain > max)
   {
     _gain = max;
     std::cout << "vp1394CMUGrabber warning: Desired gain register value of IEEE 1394 camera number " << index << " can't be greater than " << _gain << std::endl;
   }
-  
+
   Control->SetAutoMode(false);
   if(Control->SetValue(_gain) != CAM_SUCCESS)
   {
@@ -431,8 +427,8 @@ void vp1394CMUGrabber::setGain(unsigned short gain)
   }
 }
 
-/*! 
-   Get the shutter min and max values. 
+/*!
+   Get the shutter min and max values.
 
    \sa setAutoShutter(), setShutter()
    */
@@ -446,8 +442,8 @@ void vp1394CMUGrabber::getShutterMinMax(unsigned short &min, unsigned short &max
   Control->GetRange(&min, &max);
 }
 
-/*! 
-   Enable auto shutter. 
+/*!
+   Enable auto shutter.
 
    \sa setShutter()
    */
@@ -456,8 +452,8 @@ void vp1394CMUGrabber::setAutoShutter()
   initCamera();
   camera->GetCameraControl(FEATURE_SHUTTER)->SetAutoMode(true);
 }
-/*! 
-   Disable auto shutter and set the shutter to the requested value. 
+/*!
+   Disable auto shutter and set the shutter to the requested value.
 
    \sa setAutoShutter()
    */
@@ -513,8 +509,8 @@ vp1394CMUGrabber::displayCameraDescription(int cam_id)
 /*!
  Display camera model on the standard output. Call it after open the grabber.
  */
-void 
-vp1394CMUGrabber::displayCameraModel() 
+void
+vp1394CMUGrabber::displayCameraModel()
 {
   char vendor[256] , model[256] , buf[256];
   LARGE_INTEGER ID;
@@ -570,7 +566,7 @@ vp1394CMUGrabber::displayCameraModel()
   </TABLE>
 
  */
-void 
+void
 vp1394CMUGrabber::setVideoMode( unsigned long format, unsigned long mode )
 {
   initCamera();
@@ -612,7 +608,7 @@ vp1394CMUGrabber::setVideoMode( unsigned long format, unsigned long mode )
       vpERROR_TRACE("vp1394CMUGrabber error: Can't set video mode of IEEE 1394 camera number %i",index);
       throw (vpFrameGrabberException(vpFrameGrabberException::settingError,"Can't set video mode") );
     }
-    
+
     // start acquisition
     if (camera->StartImageAcquisition() != CAM_SUCCESS)
     {
@@ -654,13 +650,13 @@ vp1394CMUGrabber::setVideoMode( unsigned long format, unsigned long mode )
 
   \sa getFramerate()
  */
-void 
+void
 vp1394CMUGrabber::setFramerate(unsigned long fps)
 {
   initCamera();
 
   _fps = fps;
- 
+
   // Set fps
   if (_fps!=-1)
   {
@@ -700,7 +696,7 @@ vp1394CMUGrabber::setFramerate(unsigned long fps)
 }
 /*!
   Get the video framerate.
-  
+
   \return Value between 0 to 7 corresponding to a specific camera framerate.
   See the following table for the correspondances between the returned
   value and the framerate.

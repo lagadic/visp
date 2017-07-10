@@ -47,11 +47,8 @@ vpTemplateTrackerMIForwardAdditional::vpTemplateTrackerMIForwardAdditional(vpTem
   : vpTemplateTrackerMI(_warp), minimizationMethod(USE_NEWTON), evolRMS(0), x_pos(NULL), y_pos(NULL),
     threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()
 {
-  evolRMS = 0;
-  x_pos = y_pos = NULL;
   useCompositionnal=false;
   threshold_RMS=1e-20;
-  minimizationMethod=USE_NEWTON;
 }
 
 void vpTemplateTrackerMIForwardAdditional::initHessienDesired(const vpImage<unsigned char> &I)
@@ -195,13 +192,13 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
       Warp->warpX(X1,X2,p);
 
       double j2=X2[0];
-			double i2=X2[1];
+      double i2=X2[1];
 
       if((i2>=0)&&(j2>=0)&&(i2<I.getHeight()-1)&&(j2<I.getWidth()-1))
       {
         Nbpoint++;
         double Tij=ptTemplate[point].val;
-				double IW;
+        double IW;
         if(!blur)
           IW=I.getValue(i2,j2);
         else

@@ -52,18 +52,17 @@
 
 
 #if defined(VISP_HAVE_SOWIN)
-vpViewer::vpViewer(HWND parent,  vpSimulator *_simu, vpViewerType viewerType):
-  SoWinExaminerViewer(parent,(char *)NULL,false)
+vpViewer::vpViewer(HWND parent,  vpSimulator *_simu, vpViewerType type)
+  : viewerType(type), SoWinExaminerViewer(parent,(char *)NULL, false)
 #elif defined(VISP_HAVE_SOQT)
-vpViewer::vpViewer(QWidget * parent,  vpSimulator *_simu, vpViewerType viewerType) :
-  SoQtExaminerViewer(parent,(char *)NULL,false)
+vpViewer::vpViewer(QWidget * parent,  vpSimulator *_simu, vpViewerType type)
+  : viewerType(type), SoQtExaminerViewer(parent, (char *)NULL, false)
 #elif defined(VISP_HAVE_SOXT)
-vpViewer::vpViewer(Widget parent,  vpSimulator *_simu, vpViewerType viewerType):
-  SoXtExaminerViewer(parent,(char *)NULL,false)
+vpViewer::vpViewer(Widget parent,  vpSimulator *_simu, vpViewerType type)
+  : viewerType(type), SoXtExaminerViewer(parent, (char *)NULL, false)
 #endif
 {
   this->simu = _simu ;
-  this->viewerType = viewerType;
   // Coin should not clear the pixel-buffer, so the background image
   // is not removed.
 
@@ -98,14 +97,14 @@ vpViewer::actualRedraw(void)
      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
      if (simu->typeImage == vpSimulator::grayImage)
        glDrawPixels((GLsizei)simu->getInternalWidth(), (GLsizei)simu->getInternalHeight(),
-		    (GLenum)GL_LUMINANCE,
-		    GL_UNSIGNED_BYTE,
-		    simu->image_background );
+        (GLenum)GL_LUMINANCE,
+        GL_UNSIGNED_BYTE,
+        simu->image_background );
      else
        glDrawPixels((GLsizei)simu->getInternalWidth(), (GLsizei)simu->getInternalHeight(),
-		    (GLenum)GL_RGB,
-		    GL_UNSIGNED_BYTE,
-		    simu->image_background );
+        (GLenum)GL_RGB,
+        GL_UNSIGNED_BYTE,
+        simu->image_background );
 
      glEnable(GL_DEPTH_TEST);
      glClear(GL_DEPTH_BUFFER_BIT);     // clear the z-buffer
@@ -123,9 +122,9 @@ vpViewer::actualRedraw(void)
     if(viewerType == vpViewer::internalView){
        simu->get = 0 ;
        glReadPixels(0, 0, (GLsizei)simu->getInternalWidth(), (GLsizei)simu->getInternalHeight(),
-		      (GLenum)GL_RGB,
-		      GL_UNSIGNED_BYTE,
-		      simu->bufferView ) ;
+          (GLenum)GL_RGB,
+          GL_UNSIGNED_BYTE,
+          simu->bufferView ) ;
        simu->get =1 ;
     }
  }
@@ -159,8 +158,8 @@ vpViewer::resize(int x, int y, bool /*fixed*/)
   GetWindowRect(parent, &rcWindow);
   ptDiff.x = (rcWindow.right - rcWindow.left) - rcClient.right;
   ptDiff.y = (rcWindow.bottom - rcWindow.top) - rcClient.bottom;
-  MoveWindow(parent,rcWindow.left, rcWindow.top, 
-	     x + ptDiff.x, y + ptDiff.y, TRUE);
+  MoveWindow(parent,rcWindow.left, rcWindow.top,
+       x + ptDiff.x, y + ptDiff.y, TRUE);
   if(fixed){
     DWORD dwStyle = GetWindowLong(parent, GWL_STYLE);
     dwStyle &= ~(WS_SIZEBOX);
@@ -171,7 +170,7 @@ vpViewer::resize(int x, int y, bool /*fixed*/)
     QWidget * parent = getParentWidget();
     parent->setFixedSize(x, y);
   }
-#endif 
+#endif
 }
 
 /*!
@@ -193,56 +192,56 @@ vpViewer::processSoEvent(const SoEvent * const event)
     case SoKeyboardEvent::H:
       if ( kbevent->getState() == SoButtonEvent::DOWN )
       {
-	      std::cout << "H : this help "<<std::endl ;
-	      std::cout << "M : get and save the external camera location (matrix)"<<std::endl;
-	      std::cout << "V : get and save the external camera location (vector)"<<std::endl;
-	      std::cout << "M : load camera location (vector)"<<std::endl;
-	      std::cout << "P : get external camera location and set the internal one"<<std::endl;
+        std::cout << "H : this help "<<std::endl ;
+        std::cout << "M : get and save the external camera location (matrix)"<<std::endl;
+        std::cout << "V : get and save the external camera location (vector)"<<std::endl;
+        std::cout << "M : load camera location (vector)"<<std::endl;
+        std::cout << "P : get external camera location and set the internal one"<<std::endl;
       }
       return TRUE;
 
     case SoKeyboardEvent::M:
       if ( kbevent->getState() == SoButtonEvent::DOWN )
       {
-	      vpHomogeneousMatrix cMf ;
-	      simu->getExternalCameraPosition(cMf) ;
-	      std::ofstream f("cMf.dat") ;
-	      cMf.save(f) ;
-	      f.close() ;
+        vpHomogeneousMatrix cMf ;
+        simu->getExternalCameraPosition(cMf) ;
+        std::ofstream f("cMf.dat") ;
+        cMf.save(f) ;
+        f.close() ;
       }
       return TRUE;
     case SoKeyboardEvent::V:
       if ( kbevent->getState() == SoButtonEvent::DOWN )
       {
-	      vpHomogeneousMatrix cMf ;
-	      simu->getExternalCameraPosition(cMf) ;
-	      vpPoseVector vcMf(cMf) ;
-	      std::ofstream f("vcMf.dat") ;
-	      vcMf.save(f) ;
-	      f.close() ;
+        vpHomogeneousMatrix cMf ;
+        simu->getExternalCameraPosition(cMf) ;
+        vpPoseVector vcMf(cMf) ;
+        std::ofstream f("vcMf.dat") ;
+        vcMf.save(f) ;
+        f.close() ;
       }
       return TRUE;
     case SoKeyboardEvent::L:
       if ( kbevent->getState() == SoButtonEvent::DOWN )
       {
-	      vpPoseVector vcMf;
-	      std::ifstream f("vcMf.dat") ;
-	      vcMf.load(f) ;
-	      f.close() ;
-	      vpHomogeneousMatrix cMf(vcMf) ;
-	      simu->setCameraPosition(cMf) ;
-	      simu->moveInternalCamera(cMf) ;
+        vpPoseVector vcMf;
+        std::ifstream f("vcMf.dat") ;
+        vcMf.load(f) ;
+        f.close() ;
+        vpHomogeneousMatrix cMf(vcMf) ;
+        simu->setCameraPosition(cMf) ;
+        simu->moveInternalCamera(cMf) ;
       }
       return TRUE;
     case SoKeyboardEvent::P:
       if ( kbevent->getState() == SoButtonEvent::DOWN )
       {
-	      vpHomogeneousMatrix cMf ;
-	      simu->getExternalCameraPosition(cMf) ;
-	      vpPoseVector vcMf(cMf) ;
-	      vcMf.print() ;
-	      simu->setCameraPosition(cMf) ;
-	      simu->moveInternalCamera(cMf) ;
+        vpHomogeneousMatrix cMf ;
+        simu->getExternalCameraPosition(cMf) ;
+        vpPoseVector vcMf(cMf) ;
+        vcMf.print() ;
+        simu->setCameraPosition(cMf) ;
+        simu->moveInternalCamera(cMf) ;
       }
       return TRUE;
     default:

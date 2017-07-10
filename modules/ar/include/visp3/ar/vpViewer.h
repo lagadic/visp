@@ -40,7 +40,7 @@
 #define vpViewer_HH
 /*!
   \file vpViewer.h
-  
+
   Viewer used by the simulator. Under Windows, the viewer is based
   either on SoWin or SoQt. Under Unix, the viewer is based on SoQt or
   SoXt.
@@ -65,7 +65,7 @@
   #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
 #elif defined(VISP_HAVE_SOXT)
-  
+
   #include <Inventor/Xt/SoXt.h>
   #include <Inventor/Xt/viewers/SoXtExaminerViewer.h>
 
@@ -108,7 +108,7 @@
 
   \warning This class is only available if Coin3D and one of the GUI
   (SoWin, SoXT, SoQt) are installed.
-  
+
 */
 
 class vpSimulator;
@@ -122,30 +122,30 @@ class VISP_EXPORT vpViewer : public SoXtExaminerViewer
 #endif
 {
 
-  friend class vpSimulator ;
+  friend class vpSimulator;
 
 public:
   typedef enum{
     internalView,
     externalView
-  } vpViewerType ; 
+  } vpViewerType;
 #if defined(VISP_HAVE_SOWIN)
-  vpViewer(HWND parent,  vpSimulator *simu,vpViewerType viewerType);
+  vpViewer(HWND parent,  vpSimulator *simu, vpViewerType type);
 #elif defined(VISP_HAVE_SOQT)
-  vpViewer(QWidget * parent,  vpSimulator *simu,vpViewerType viewerType);
+  vpViewer(QWidget * parent,  vpSimulator *simu, vpViewerType type);
 #elif defined(VISP_HAVE_SOXT)
-  vpViewer(Widget parent,  vpSimulator *simu,vpViewerType viewerType);
+  vpViewer(Widget parent,  vpSimulator *simu, vpViewerType type);
 #endif
 
   virtual ~vpViewer();
-  void  resize(int x, int y, bool fixed = false) ;
+  void  resize(int x, int y, bool fixed = false);
   virtual void actualRedraw(void);
 
 private:
- 
-  vpViewerType  viewerType; 
-  vpSimulator *simu ;
-  SbBool processSoEvent(const SoEvent * const event) ;
+
+  vpViewerType  viewerType;
+  vpSimulator *simu;
+  SbBool processSoEvent(const SoEvent * const event);
 #if defined(VISP_HAVE_SOWIN)
   static HWND init(const char * appname) {return SoWin::init(appname);};
   static void mainLoop() {SoWin::mainLoop();};
