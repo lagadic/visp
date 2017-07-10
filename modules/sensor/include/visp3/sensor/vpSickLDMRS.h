@@ -124,14 +124,16 @@ class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
   /*! Copy constructor. */
   vpSickLDMRS &operator=(const vpSickLDMRS &sick)
   {
-    socket_fd = sick.socket_fd;
-    vAngle = sick.vAngle;
-    time_offset = sick.time_offset;
-    isFirstMeasure = sick.isFirstMeasure;
-    maxlen_body = sick.maxlen_body;
-    if (body) delete [] body;
-    body = new unsigned char [104000];
-    memcpy(body, sick.body, maxlen_body);
+    if (this != &sick) {
+      socket_fd = sick.socket_fd;
+      vAngle = sick.vAngle;
+      time_offset = sick.time_offset;
+      isFirstMeasure = sick.isFirstMeasure;
+      maxlen_body = sick.maxlen_body;
+      if (body) delete [] body;
+      body = new unsigned char [104000];
+      memcpy(body, sick.body, maxlen_body);
+    }
     return (*this);
   };
 
