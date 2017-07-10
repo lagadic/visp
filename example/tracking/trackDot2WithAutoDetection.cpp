@@ -415,8 +415,8 @@ main(int argc, const char ** argv)
       printf("  width : %lf\n", d.getWidth());
       printf("  height: %lf\n", d.getHeight());
       printf("  area: %lf\n", d.getArea());
-      printf("  gray level min: %d\n", d.getGrayLevelMin());
-      printf("  gray level max: %d\n", d.getGrayLevelMax());
+      printf("  gray level min: %u\n", d.getGrayLevelMin());
+      printf("  gray level max: %u\n", d.getGrayLevelMax());
       printf("  grayLevelPrecision: %lf\n", d.getGrayLevelPrecision());
       printf("  sizePrecision: %lf\n", d.getSizePrecision());
       printf("  ellipsoidShapePrecision: %lf\n", d.getEllipsoidShapePrecision());

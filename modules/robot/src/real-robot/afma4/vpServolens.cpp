@@ -28,7 +28,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Interface for the Servolens lens attached to the camera fixed on the 
+ * Interface for the Servolens lens attached to the camera fixed on the
  * Afma4 robot.
  *
  * Authors:
@@ -40,7 +40,7 @@
 
   \file vpServolens.cpp
 
-  Interface for the Servolens lens attached to the camera fixed on the 
+  Interface for the Servolens lens attached to the camera fixed on the
   Afma4 robot.
 
 */
@@ -63,7 +63,7 @@
 
 /*!
   Default constructor. Does nothing.
-  
+
   \sa open()
 
 */
@@ -71,7 +71,7 @@ vpServolens::vpServolens() : remfd(0), isinit(false)
 {
 }
 
-/*! 
+/*!
   Open and initialize the Servolens serial link at 9600 bauds, 7
   data bits, even parity, 1 stop bit. The cariage return mode is not
   active, that means that each character is directly read without
@@ -121,7 +121,7 @@ vpServolens::open(const char *port)
     if ((this->remfd=::open(port, O_RDWR|O_NONBLOCK)) < 0) {
       vpERROR_TRACE ("Cannot open Servolens serial port.");
       throw vpRobotException (vpRobotException::communicationError,
-			      "Cannot open Servolens serial port.");
+            "Cannot open Servolens serial port.");
     }
 
     // Lecture des parametres courants de la liaison serie.
@@ -129,7 +129,7 @@ vpServolens::open(const char *port)
       ::close(this->remfd);
       vpERROR_TRACE ("Error using TCGETS in ioctl.");
       throw vpRobotException (vpRobotException::communicationError,
-			      "Error using TCGETS in ioctl");
+            "Error using TCGETS in ioctl");
     }
 
     //
@@ -160,7 +160,7 @@ vpServolens::open(const char *port)
       ::close(this->remfd);
       vpERROR_TRACE ("Error using TCGETS in ioctl.");
       throw vpRobotException (vpRobotException::communicationError,
-			      "Error using TCGETS in ioctl");
+            "Error using TCGETS in ioctl");
     }
 
     // Supprime tous les caracteres recus mais non encore lus par read()
@@ -175,10 +175,10 @@ vpServolens::open(const char *port)
     if (this->getPosition(vpServolens::ZOOM, izoom) == false) {
       vpERROR_TRACE ("Cannot dial with the servolens. Check if the serial link is connected.");
       throw vpRobotException (vpRobotException::communicationError,
-			      "Cannot dial with the servolens. Check if the serial link is connected.");
+            "Cannot dial with the servolens. Check if the serial link is connected.");
 
     }
-   
+
   }
 }
 
@@ -208,7 +208,7 @@ vpServolens::reset() const
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
   char commande[10];
 
@@ -246,7 +246,7 @@ vpServolens::init() const
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
 
   char commande[10];
@@ -275,13 +275,13 @@ vpServolens::init() const
   with Servolens.
 
 */
-void 
+void
 vpServolens::enableCmdComplete(vpServoType servo, bool active) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
   char commande[10];
 
@@ -323,13 +323,13 @@ vpServolens::enableCmdComplete(vpServoType servo, bool active) const
   with Servolens.
 
 */
-void 
+void
 vpServolens::enablePrompt(bool active) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
   char commande[10];
 
@@ -338,7 +338,7 @@ vpServolens::enablePrompt(bool active) const
     sprintf(commande, "SE1");
   else
     sprintf(commande, "SE0");
-    
+
   this->write(commande);
 }
 
@@ -350,13 +350,13 @@ vpServolens::enablePrompt(bool active) const
   \exception vpRobotException::communicationError : If cannot dial
   with Servolens.
 */
-void 
+void
 vpServolens::setController(vpControllerType controller) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
   char commande[10];
 
@@ -391,13 +391,13 @@ vpServolens::setController(vpControllerType controller) const
   \param enable : true to activate the auto iris.
 
 */
-void 
+void
 vpServolens::setAutoIris(bool enable) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
   char commande[10];
 
@@ -425,7 +425,7 @@ vpServolens::setPosition(vpServoType servo, unsigned int position) const
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
   char commande[10];
 
@@ -471,13 +471,13 @@ vpServolens::setPosition(vpServoType servo, unsigned int position) const
   /* commande a envoyer aux servomoteurs */
   switch(servo) {
     case ZOOM:
-      sprintf(commande, "ZD%d", position);
+      sprintf(commande, "ZD%u", position);
       break;
     case FOCUS:
-      sprintf(commande, "FD%d", position);
+      sprintf(commande, "FD%u", position);
       break;
     case IRIS:
-      sprintf(commande, "DD%d", position);
+      sprintf(commande, "DD%u", position);
       break;
     }
   /* envoie de la commande */
@@ -509,7 +509,7 @@ vpServolens::getPosition(vpServoType servo, unsigned int &position) const
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
   char commande[10];
   char posit[10], *pt_posit;
@@ -553,46 +553,46 @@ vpServolens::getPosition(vpServoType servo, unsigned int &position) const
 
       //    printf("caractere lu: %c\n", c);
       switch (posit_car){
-	/* on lit le 1er caractere; (soit Z, soit F, soit D) */
+  /* on lit le 1er caractere; (soit Z, soit F, soit D) */
       case 0:
-	/* sauvegarde du pointeur */
-	pt_posit = posit;
+  /* sauvegarde du pointeur */
+  pt_posit = posit;
 
-	switch (servo) {
-	case ZOOM:
-	  if( c == 'Z') posit_car = 1;
-	  break;
-	case FOCUS:
-	  if( c == 'F') posit_car = 1;
-	  break;
-	case IRIS:
-	  if( c == 'D') posit_car = 1;
-	  break;
-	}
-	break;
+  switch (servo) {
+  case ZOOM:
+    if( c == 'Z') posit_car = 1;
+    break;
+  case FOCUS:
+    if( c == 'F') posit_car = 1;
+    break;
+  case IRIS:
+    if( c == 'D') posit_car = 1;
+    break;
+  }
+  break;
 
-	/* si le 1er caractere est correct, on lit le 2eme caractere */
-	/* (toujours D) */
+  /* si le 1er caractere est correct, on lit le 2eme caractere */
+  /* (toujours D) */
       case 1:
-	if( c == 'D') posit_car = 2;
-	else posit_car = 0; /* le 2eme caractere n'est pas correct */
-	break;
+  if( c == 'D') posit_car = 2;
+  else posit_car = 0; /* le 2eme caractere n'est pas correct */
+  break;
 
-	/* si on a lu les 2 premiers caracteres, on peut lire la */
-	/* position du servo-moteur */
+  /* si on a lu les 2 premiers caracteres, on peut lire la */
+  /* position du servo-moteur */
       case 2:
-	if (c >= '0' && c <= '9')
-	{
-	  *pt_posit++ = c;        /* sauvegarde de la position */
-	  lecture_posit_en_cours = 1;
-	}
-	else if (lecture_posit_en_cours)
-	{
-	  fin_lect_posit = 1;
-	  *pt_posit = '\0';
-	}
-	else posit_car = 0;
-	break;
+  if (c >= '0' && c <= '9')
+  {
+    *pt_posit++ = c;        /* sauvegarde de la position */
+    lecture_posit_en_cours = 1;
+  }
+  else if (lecture_posit_en_cours)
+  {
+    fin_lect_posit = 1;
+    *pt_posit = '\0';
+  }
+  else posit_car = 0;
+  break;
       }
 
     }
@@ -616,20 +616,20 @@ vpServolens::getPosition(vpServoType servo, unsigned int &position) const
 
 /*!
 
-  These parameters are computed from the Dragonfly2 DR2-COL camera sensor pixel 
-  size (7.4 um) and from the servolens zoom position. 
+  These parameters are computed from the Dragonfly2 DR2-COL camera sensor pixel
+  size (7.4 um) and from the servolens zoom position.
 
-  \param I : An image coming from the Dragonfly2 camera attached to the 
+  \param I : An image coming from the Dragonfly2 camera attached to the
   servolens.
 
 \code
   #include <visp3/vs/vpServolens.h>
-  
+
   int main()
   {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     vpServolens servolens("/dev/ttyS0");
-    
+
     vpImage<unsigned char> I(240, 320);
     vpCameraParameters cam = servolens.getCameraParameters(I);
     std::cout << "Camera parameters: " << cam << std::endl;
@@ -639,15 +639,15 @@ vpServolens::getPosition(vpServoType servo, unsigned int &position) const
   \exception vpRobotException::communicationError : If cannot dial
   with Servolens.
 \endcode
-  
+
  */
-vpCameraParameters 
+vpCameraParameters
 vpServolens::getCameraParameters(vpImage<unsigned char> &I) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
   vpCameraParameters cam;
   double pix_size = 7.4e-6; // Specific to the Dragonfly2 camera
@@ -689,20 +689,20 @@ vpServolens::getCameraParameters(vpImage<unsigned char> &I) const
   \exception vpRobotException::communicationError : If cannot dial
   with Servolens.
 */
-char 
+char
 vpServolens::wait() const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
-    
+
   ssize_t r;
   r = ::write(this->remfd, "\r\n", strlen("\r\n"));
   if (r != (ssize_t)(strlen("\r\n"))) {
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot write on Servolens.");
+          "Cannot write on Servolens.");
   }
   char c;
   do {
@@ -734,7 +734,7 @@ vpServolens::wait(vpServoType servo) const
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
 
   char c;
@@ -752,7 +752,7 @@ vpServolens::wait(vpServoType servo) const
   default:
     sprintf(fin_mvt, "DF");
     break;
-    
+
   }
 
   /* lecture des caracteres recus */
@@ -760,7 +760,7 @@ vpServolens::wait(vpServoType servo) const
     /* lecture des caracteres */
     if (::read(this->remfd,&c,1) != 1) {
       throw vpRobotException (vpRobotException::communicationError,
-			      "Cannot read on Servolens.");
+            "Cannot read on Servolens.");
     }
     c &= 0x7f;
 
@@ -768,13 +768,13 @@ vpServolens::wait(vpServoType servo) const
     if (c == fin_mvt[0]) {
       /* lecture du caractere suivant */
       if (::read(this->remfd,&c,1) != 1) {
-	throw vpRobotException (vpRobotException::communicationError,
-				"Cannot read on Servolens.");
+  throw vpRobotException (vpRobotException::communicationError,
+        "Cannot read on Servolens.");
       }
 
       c &= 0x7f;
       if (c == fin_mvt[1]) {
-	sortie = true;
+  sortie = true;
       }
     }
   }
@@ -788,29 +788,29 @@ vpServolens::wait(vpServoType servo) const
 
   \param c : The character that was read.
   \param timeout_s : Timeout in seconds.
-  
+
   \return true if the reading was successfully achieved, false otherwise.
 
   \exception vpRobotException::communicationError : If cannot dial
   with Servolens.
 */
-bool 
+bool
 vpServolens::read(char *c, long timeout_s) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
 
   fd_set         readfds; /* list of fds for select to listen to */
   struct timeval timeout = {timeout_s, 0}; // seconde, micro-sec
 
-  FD_ZERO(&readfds); 
+  FD_ZERO(&readfds);
   FD_SET(static_cast<unsigned int>(this->remfd), &readfds);
 
   if (select(FD_SETSIZE, &readfds, (fd_set *)NULL,
-	     (fd_set *)NULL, &timeout) > 0) {
+       (fd_set *)NULL, &timeout) > 0) {
     ssize_t n = ::read(this->remfd, c, 1); /* read one character at a time */
     if (n != 1)
       return false;
@@ -830,13 +830,13 @@ vpServolens::read(char *c, long timeout_s) const
   \exception vpRobotException::communicationError : If cannot dial
   with Servolens.
 */
-void 
+void
 vpServolens::write(const char *s) const
 {
   if (!isinit) {
     vpERROR_TRACE ("Cannot dial with Servolens.");
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot dial with Servolens.");
+          "Cannot dial with Servolens.");
   }
   ssize_t r = 0;
   r = ::write(this->remfd,"\r", strlen("\r"));
@@ -844,7 +844,7 @@ vpServolens::write(const char *s) const
   r += ::write(this->remfd,"\r", strlen("\r"));
   if (r != (ssize_t)(2*strlen("\r") + strlen(s))) {
     throw vpRobotException (vpRobotException::communicationError,
-			    "Cannot write on Servolens.");
+          "Cannot write on Servolens.");
   }
 
 
@@ -869,7 +869,7 @@ vpServolens::write(const char *s) const
   \param out : Output string without zero characters on the left.
 
 */
-bool 
+bool
 vpServolens::clean(const char *in, char *out) const
 {
   short nb_car, i=0;
@@ -882,8 +882,8 @@ vpServolens::clean(const char *in, char *out) const
     in++;
     if (i == nb_car)
       {
-	error = true; /* la chaine ne contient pas une position */
-	*(out++) = '0'; /* mise a zero de la position */
+  error = true; /* la chaine ne contient pas une position */
+  *(out++) = '0'; /* mise a zero de la position */
       }
   }
 

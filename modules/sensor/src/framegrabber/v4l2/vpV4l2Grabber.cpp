@@ -442,7 +442,7 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
   {
     std::cout << "Warning: cannot set input channel to " << m_input << std::endl;
   }
-  
+
   vpV4l2PixelFormatType req_pixelformat = getPixelFormat();
 
   try {
@@ -456,7 +456,7 @@ vpV4l2Grabber::open(vpImage<unsigned char> &I)
                 << "] not compatible with camera" << std::endl;
       std::cout << "Try to found a compatible pixel format..." << std::endl;
     }
-    
+
     // try to fing a compatible format
     for (int format=0; format< (int)V4L2_MAX_FORMAT; format ++) {
       if (format == req_pixelformat) {
@@ -524,7 +524,7 @@ vpV4l2Grabber::open(vpImage<vpRGBa> &I)
                 << "] not compatible with camera" << std::endl;
       std::cout << "Try to found a compatible pixel format..." << std::endl;
     }
-    
+
     // try to fing a compatible format
     for (int format=0; format< (int)V4L2_MAX_FORMAT; format ++) {
       if (format == req_pixelformat) {
@@ -930,7 +930,7 @@ vpV4l2Grabber::open()
 {
   /* Open Video Device */
   struct stat st;
-  
+
   if (-1 == stat (device, &st)) {
     fprintf (stderr, "Cannot identify '%s': %d, %s\n",
              device, errno, strerror (errno));
@@ -938,12 +938,12 @@ vpV4l2Grabber::open()
                                    "Cannot identify video device") );
 
   }
-  
+
   if (!S_ISCHR (st.st_mode)) {
     fprintf (stderr, "%s is no device\n", device);
     throw (vpFrameGrabberException(vpFrameGrabberException::initializationError,
                                    "No device") );
-    
+
   }
   fd = v4l2_open (device, O_RDWR | O_NONBLOCK, 0);
   if (fd < 0) {
@@ -1173,7 +1173,7 @@ vpV4l2Grabber::setFormat()
   fmt_me.bytesperline = fmt_v4l2.fmt.pix.bytesperline;
 
   if (m_verbose) {
-    fprintf(stdout,"v4l2: new capture params (%dx%d, %c%c%c%c, %d byte, %d bytes per line)\n",
+    fprintf(stdout,"v4l2: new capture params (%ux%u, %c%c%c%c, %d byte, %d bytes per line)\n",
             fmt_me.width, fmt_me.height,
             fmt_v4l2.fmt.pix.pixelformat & 0xff,
             (fmt_v4l2.fmt.pix.pixelformat >>  8) & 0xff,
@@ -1206,7 +1206,7 @@ vpV4l2Grabber::startStreaming()
   reqbufs.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   reqbufs.memory = V4L2_MEMORY_MMAP;
 
-  
+
   if (v4l2_ioctl(fd, VIDIOC_REQBUFS, &reqbufs) == -1)
   {
     if (EINVAL == errno) {

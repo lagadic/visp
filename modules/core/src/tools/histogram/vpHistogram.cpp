@@ -417,7 +417,7 @@ vpHistogram::smooth(const unsigned int fsize)
   if (histogram == NULL) {
     vpERROR_TRACE("Histogram array not initialised\n");
     throw (vpImageException(vpImageException::notInitializedError,
-			    "Histogram array not initialised")) ;
+          "Histogram array not initialised")) ;
   }
 
   vpHistogram h;
@@ -431,8 +431,8 @@ vpHistogram::smooth(const unsigned int fsize)
     for (int j=-hsize; j <= hsize; j ++) {
       // exploitation of the overflow to detect negative value...
       if ( /*(i + j) >= 0 &&*/ (i + (unsigned int)j) < size ) {
-	      sum += h.histogram[i + (unsigned int)j];
-	      nb ++;
+        sum += h.histogram[i + (unsigned int)j];
+        nb ++;
       }
     }
     histogram[i] = sum / nb;
@@ -459,7 +459,7 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> & peaks)
   if (histogram == NULL) {
     vpERROR_TRACE("Histogram array not initialised\n");
     throw (vpImageException(vpImageException::notInitializedError,
-			    "Histogram array not initialised")) ;
+          "Histogram array not initialised")) ;
   }
 
   int prev_slope;              // Previous histogram inclination
@@ -593,9 +593,9 @@ unsigned vpHistogram::getPeaks(unsigned char dist,
 
 bool
 vpHistogram::getPeaks(unsigned char dist,
-		      vpHistogramPeak & peakl,
-		      vpHistogramPeak & peakr,
-		      vpHistogramValey & valey)
+          vpHistogramPeak & peakl,
+          vpHistogramPeak & peakr,
+          vpHistogramValey & valey)
 {
   unsigned char *peak;              // Local maxima values
   int prev_slope;              // Previous histogram inclination
@@ -655,14 +655,14 @@ vpHistogram::getPeaks(unsigned char dist,
     if (peak[index_highest_peak] - peak[i] > dist) {
       prof=0;
       for (int j=peak[i]; j <= peak[index_highest_peak]-dist; j++)
-	      if((histogram[peak[i]] - histogram[j]) > prof)
-	        prof = histogram[peak[i]] - histogram[j];
+        if((histogram[peak[i]] - histogram[j]) > prof)
+          prof = histogram[peak[i]] - histogram[j];
 
       if (prof > maxprof) {
-	      maxprof = prof;
-	      index_second_peak = i;
+        maxprof = prof;
+        index_second_peak = i;
       }
-    } 
+    }
   }
 
   // Search second local maximum on the right of the global maximum
@@ -670,8 +670,8 @@ vpHistogram::getPeaks(unsigned char dist,
     if (peak[i] - peak[index_highest_peak] > dist) {
       prof=0;
       for (int j=peak[index_highest_peak]+dist; j <= peak[i]; j++)
-	      if((histogram[peak[i]] - histogram[j]) > prof)
-	        prof = histogram[peak[i]] - histogram[j];
+        if((histogram[peak[i]] - histogram[j]) > prof)
+          prof = histogram[peak[i]] - histogram[j];
 
       if (prof > maxprof) {
         maxprof = prof;
@@ -756,7 +756,7 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> & valey)
   if (histogram == NULL) {
     vpERROR_TRACE("Histogram array not initialised\n");
     throw (vpImageException(vpImageException::notInitializedError,
-			    "Histogram array not initialised")) ;
+          "Histogram array not initialised")) ;
   }
 
   int prev_slope;              // Previous histogram inclination
@@ -824,8 +824,8 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> & valey)
 */
 bool
 vpHistogram::getValey(const vpHistogramPeak & peak1,
-		      const vpHistogramPeak & peak2,
-		      vpHistogramValey & valey)
+          const vpHistogramPeak & peak2,
+          vpHistogramValey & valey)
 {
 
   // Set the left and right peaks
@@ -1111,7 +1111,7 @@ vpHistogram::write(const char *filename)
   if (fd == NULL)
     return false;
   for (unsigned i=0; i < size; i ++)
-    fprintf(fd, "%u %d\n", i, histogram[i]);
+    fprintf(fd, "%u %u\n", i, histogram[i]);
   fclose(fd);
 
   return true;

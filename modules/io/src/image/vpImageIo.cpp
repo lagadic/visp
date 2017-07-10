@@ -507,7 +507,7 @@ vpImageIo::writePFM(const vpImage<float> &I, const std::string &filename)
 
   // Write the head
   fprintf(fd, "P8\n");					// Magic number
-  fprintf(fd, "%d %d\n", I.getWidth(), I.getHeight());	// Image size
+  fprintf(fd, "%u %u\n", I.getWidth(), I.getHeight());	// Image size
   fprintf(fd, "255\n");					// Max level
 
   // Write the bitmap
@@ -558,7 +558,7 @@ vpImageIo::writePGM(const vpImage<unsigned char> &I, const std::string &filename
 
   // Write the head
   fprintf(fd, "P5\n");					// Magic number
-  fprintf(fd, "%d %d\n", I.getWidth(), I.getHeight());	// Image size
+  fprintf(fd, "%u %u\n", I.getWidth(), I.getHeight());	// Image size
   fprintf(fd, "255\n");					// Max level
 
   // Write the bitmap
@@ -627,7 +627,7 @@ vpImageIo::writePGM(const vpImage<vpRGBa> &I, const std::string &filename)
 
   // Write the head
   fprintf(fd, "P5\n");					// Magic number
-  fprintf(fd, "%d %d\n", I.getWidth(), I.getHeight());	// Image size
+  fprintf(fd, "%u %u\n", I.getWidth(), I.getHeight());	// Image size
   fprintf(fd, "255\n");					// Max level
 
   // Write the bitmap
@@ -935,7 +935,7 @@ vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string &filename)
   }
 
   fprintf(f,"P6\n");			         // Magic number
-  fprintf(f,"%d %d\n", I.getWidth(), I.getHeight());	// Image size
+  fprintf(f,"%u %u\n", I.getWidth(), I.getHeight());	// Image size
   fprintf(f,"%d\n", 255);	        	// Max level
 
   for(unsigned int i=0;i<I.getHeight();i++)
