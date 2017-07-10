@@ -195,8 +195,6 @@ class VISP_EXPORT vpPolygon
 
   public:
     static bool isInside(const std::vector<vpImagePoint>& roi, const double &i, const double  &j, const PointInPolygonMethod &method=PnPolyRayCasting);
-  private:
-    static bool intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double  &i, const double  &j, const double  &i_test, const double  &j_test);
 };
 
 #endif

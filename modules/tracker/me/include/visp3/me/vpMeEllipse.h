@@ -306,13 +306,6 @@ private:
   void computeAngle(int ip1, int jp1,int ip2, int jp2) ;
   void computeAngle(int ip1, int jp1, double &alpha1,
         int ip2, int jp2, double &alpha2) ;
-  /*!
-      \deprecated This function does nothing and shouldn't be used since we modify
-      the code to detect automatically if the object to track becomes a circle
-      rather an ellipse.
-  */
-  vp_deprecated void setCircle(bool ) { }
-
   //@}
 #endif //VISP_BUILD_DEPRECATED_FUNCTIONS
 

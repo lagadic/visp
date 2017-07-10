@@ -264,56 +264,6 @@ vpServolens::init() const
 }
 
 /*!
-  Set or remove the Servolens command complete status at the end of servoing.
-
-  \param servo : Servolens servo motor.
-
-  \param active : true to activate the emission of a command complete
-  flag at the end of motion. false to disable this functionality.
-
-  \exception vpRobotException::communicationError : If cannot dial
-  with Servolens.
-
-*/
-void
-vpServolens::enableCmdComplete(vpServoType servo, bool active) const
-{
-  if (!isinit) {
-    vpERROR_TRACE ("Cannot dial with Servolens.");
-    throw vpRobotException (vpRobotException::communicationError,
-          "Cannot dial with Servolens.");
-  }
-  char commande[10];
-
-  /* Envoie une commande pour qu'en fin de mouvement servolens renvoie
-   * une information de fin de mouvement (ex: ZF, FF, DF).
-   */
-  switch(servo) {
-  case ZOOM:
-    if (active)
-      sprintf(commande, "ZF1");
-    else
-      sprintf(commande, "ZF0");
-    break;
-  case FOCUS:
-    if (active)
-      sprintf(commande, "FF1");
-    else
-      sprintf(commande, "FF0");
-    break;
-  case IRIS:
-    if (active)
-      sprintf(commande, "DF1");
-    else
-      sprintf(commande, "DF0");
-    break;
-  }
-
-  /* envoie de la commande */
-  this->write(commande);   /* a la fin du mouvement envoie de ZF, FF, DF */
-}
-
-/*!
   Enable or disable the emission of the Servolens prompt "SERVOLENS>".
 
   \param active : true to activate the emission of the prompy. false

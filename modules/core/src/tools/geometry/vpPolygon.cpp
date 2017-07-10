@@ -48,7 +48,7 @@
 #include <limits>
 /*!
   Basic constructor.
-  
+
   By default, it defines a triangle with the three 2D points coordinates :
   \f$ (0,0) \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
 */
@@ -66,7 +66,7 @@ vpPolygon::vpPolygon()
   Constructor which initialises the polygon thanks to the given corners.
 
   \warning the corners must be ordered (either clockwise or counter clockwise).
-  
+
   \param corners : The Points defining the corners.
 */
 vpPolygon::vpPolygon(const std::vector<vpImagePoint>& corners)
@@ -96,7 +96,7 @@ vpPolygon::vpPolygon(const std::list<vpImagePoint>& corners)
 
 /*!
   Copy constructor
-  
+
   \param poly : The polygon used for the initialisation.
 */
 vpPolygon::vpPolygon(const vpPolygon &poly)
@@ -116,7 +116,7 @@ vpPolygon::~vpPolygon()
   Equal operator.
 
   Assign \e poly to this polygon and return a reference to it.
-*/  
+*/
 vpPolygon &
 vpPolygon::operator=(const vpPolygon& poly)
 {
@@ -134,7 +134,7 @@ vpPolygon::operator=(const vpPolygon& poly)
   Initialises the triangle thanks to the collection of 2D points (in pixel).
 
   \warning the corners must be ordered (either clockwise or counter clockwise).
-  
+
   \param corners : The corners of the polyon.
 */
 void
@@ -249,51 +249,51 @@ vpPolygon::init(const std::list<vpImagePoint>& corners)
 
 /*!
   Test if two segments are intersecting.
-  
+
   \throw vpException::divideByZeroError if the two lines are aligned (denominator equal to zero).
-  
+
   \param ip1 : The first image point of the first segment.
   \param ip2 : The second image point of the first segment.
   \param ip3 : The first image point of the second segment.
   \param ip4 : The second image point of the second segment.
 */
-bool 
+bool
 vpPolygon::testIntersectionSegments(const vpImagePoint& ip1, const vpImagePoint& ip2, const vpImagePoint& ip3, const vpImagePoint& ip4) const
 {
   double di1 = ip2.get_i() - ip1.get_i();
   double dj1 = ip2.get_j() - ip1.get_j();
-  
+
   double di2 = ip4.get_i() - ip3.get_i();
   double dj2 = ip4.get_j() - ip3.get_j();
-  
+
   double denominator = di1 * dj2 - dj1 * di2;
-  
+
   if(fabs(denominator) < std::numeric_limits<double>::epsilon()){
     throw vpException(vpException::divideByZeroError, "Denominator is null, lines are parallels");
   }
-  
-  double alpha = - ( ( ip1.get_i() - ip3.get_i() ) * dj2 + di2 * ( ip3.get_j() - ip1.get_j())) / denominator;  
+
+  double alpha = - ( ( ip1.get_i() - ip3.get_i() ) * dj2 + di2 * ( ip3.get_j() - ip1.get_j())) / denominator;
   if(alpha < 0  || alpha >= 1){
     return false;
   }
-  
+
   double beta = - (di1 * (ip3.get_j() - ip1.get_j() ) + dj1 * (ip1.get_i() - ip3.get_i()) ) / denominator;
   if(beta < 0  || beta >= 1){
     return false;
   }
-  
+
   return true;
 }
 
 /*!
   Check if the 2D point \f$ ip \f$ is inside the polygon.
-  
+
   \param ip : The point which have to be tested.
   \param method : Method to use for Point In Polygon test.
-  
+
   \return Returns true if the point is inside the polygon, false otherwise.
 */
-bool 
+bool
 vpPolygon::isInside(const vpImagePoint& ip, const PointInPolygonMethod &method) const
 {
   if (_corners.size() < 3) {
@@ -446,12 +446,12 @@ vpPolygon::updateCenter()
   for(unsigned int i=0; i<_corners.size(); ++i){
     unsigned int i_p_1 = ( i+1 ) % _corners.size();
     i_tmp += (_corners[i].get_i() + _corners[i_p_1].get_i()) *
-             (_corners[i_p_1].get_i() * _corners[i].get_j() 
-	      - _corners[i_p_1].get_j() * _corners[i].get_i());
+             (_corners[i_p_1].get_i() * _corners[i].get_j()
+        - _corners[i_p_1].get_j() * _corners[i].get_i());
 
     j_tmp += (_corners[i].get_j() + _corners[i_p_1].get_j()) *
-             (_corners[i_p_1].get_i() * _corners[i].get_j() 
-	      - _corners[i_p_1].get_j() * _corners[i].get_i());
+             (_corners[i_p_1].get_i() * _corners[i].get_j()
+        - _corners[i_p_1].get_j() * _corners[i].get_i());
   }
 #endif
 
@@ -514,27 +514,6 @@ vpPolygon::display(const vpImage<unsigned char>& I, const vpColor& color, unsign
   for(unsigned int i=0; i<N; ++i){
     vpDisplay::displayLine(I, _corners[i], _corners[(i+1)%N], color, thickness);
   }
-}
-
-bool
-vpPolygon::intersect(const vpImagePoint& p1, const vpImagePoint& p2, const double &i_test, const double &j_test, const double &i, const double &j)
-{
-  double dx = p2.get_j() - p1.get_j();
-  double dy = p2.get_i() - p1.get_i();
-  double ex = j - j_test;
-  double ey = i - i_test;
-
-  double den = dx * ey - dy * ex;
-  double t = 0, u = 0;
-  //if(den != 0){
-  if(std::fabs(den) > std::fabs(den)*std::numeric_limits<double>::epsilon()){
-    t = -( ey * ( p1.get_j() - j_test ) + ex * ( -p1.get_i() + i_test ) ) / den;
-    u = -( dx * ( -p1.get_i() + i_test ) + dy * ( p1.get_j() - j_test ) ) / den;
-  }
-  else{
-    throw vpException(vpException::divideByZeroError, "denominator null");
-  }
-  return ( t >= std::numeric_limits<double>::epsilon() && t < 1.0 && u >= std::numeric_limits<double>::epsilon() && u < 1.0);
 }
 
 /*!

@@ -66,7 +66,6 @@ public:
   {
     TUKEY,
     CAUCHY,
-    //    MCLURE,
     HUBER
   } vpRobustEstimatorType;
 
@@ -150,7 +149,6 @@ public:
 
 
   //! Calculate various scale estimates
-  double scale(vpRobustEstimatorType method, vpColVector &x);
   double simultscale(vpColVector &x);
 
 
@@ -163,8 +161,6 @@ public:
   void psiTukey(double sigma, vpColVector &x, vpColVector &w);
   //! Caucht influence function
   void psiCauchy(double sigma, vpColVector &x, vpColVector &w);
-  //! McLure influence function
-  void psiMcLure(double sigma, vpColVector &x, vpColVector &w);
   //! Huber influence function
   void psiHuber(double sigma, vpColVector &x, vpColVector &w);
   //@}

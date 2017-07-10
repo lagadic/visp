@@ -130,8 +130,6 @@ class VISP_EXPORT vpServolens
 
   void init() const;
 
-  void enableCmdComplete(vpServoType servo, bool active) const;
-
   char wait() const;
   void wait(vpServoType servo) const;
 
