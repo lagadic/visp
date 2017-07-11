@@ -647,6 +647,11 @@ void vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationRansacThreshold(con
 }
 
 void vpMbDepthNormalTracker::setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY) {
+  if (stepX == 0 || stepY == 0) {
+    std::cerr << "stepX and stepY must be greater than zero!" << std::endl;
+    return;
+  }
+
   m_depthNormalSamplingStepX = stepX;
   m_depthNormalSamplingStepY = stepY;
 }

@@ -4139,6 +4139,10 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string& confi
   xmlp.setDepthNormalSamplingStepX(m_depthNormalSamplingStepX);
   xmlp.setDepthNormalSamplingStepY(m_depthNormalSamplingStepY);
 
+  //Depth dense
+  xmlp.setDepthDenseSamplingStepX(m_depthDenseSamplingStepX);
+  xmlp.setDepthDenseSamplingStepY(m_depthDenseSamplingStepY);
+
   try {
 
     std::cout << " *********** Parsing XML for";
@@ -4223,6 +4227,9 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string& confi
   setDepthNormalPclPlaneEstimationRansacMaxIter( xmlp.getDepthNormalPclPlaneEstimationRansacMaxIter() );
   setDepthNormalPclPlaneEstimationRansacThreshold( xmlp.getDepthNormalPclPlaneEstimationRansacThreshold() );
   setDepthNormalSamplingStep( xmlp.getDepthNormalSamplingStepX(), xmlp.getDepthNormalSamplingStepY() );
+
+  //Depth dense
+  setDepthDenseSamplingStep( xmlp.getDepthDenseSamplingStepX(), xmlp.getDepthDenseSamplingStepY() );
 #else
   std::cerr << "You need the libXML2 to read the config file: " << configFile << std::endl;
 #endif
