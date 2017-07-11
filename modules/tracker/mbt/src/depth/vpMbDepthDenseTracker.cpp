@@ -54,7 +54,7 @@
 
 vpMbDepthDenseTracker::vpMbDepthDenseTracker() :
   m_depthDenseHiddenFacesDisplay(), m_depthDenseI_dummyVisibility(), m_depthDenseListOfActiveFaces(),
-  m_denseDepthNbFeatures(0), m_depthDenseNormalFaces(), m_depthDenseStepX(2), m_depthDenseStepY(2),
+  m_denseDepthNbFeatures(0), m_depthDenseNormalFaces(), m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2),
   m_error_depthDense(), m_L_depthDense(), m_robust_depthDense(), m_w_depthDense(), m_weightedError_depthDense()
 #if DEBUG_DISPLAY_DEPTH_DENSE
   , m_debugDisp_depthDense(NULL), m_debugImage_depthDense()
@@ -361,8 +361,8 @@ void vpMbDepthDenseTracker::loadConfigFile(const std::string &configFile) {
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
 
-  xmlp.setDepthDenseSamplingStepX(m_depthDenseStepX);
-  xmlp.setDepthDenseSamplingStepY(m_depthDenseStepY);
+  xmlp.setDepthDenseSamplingStepX(m_depthDenseSamplingStepX);
+  xmlp.setDepthDenseSamplingStepY(m_depthDenseSamplingStepY);
 
   try {
     std::cout << " *********** Parsing XML for Mb Depth Dense Tracker ************ " << std::endl;
@@ -502,7 +502,7 @@ void vpMbDepthDenseTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointXY
 #if DEBUG_DISPLAY_DEPTH_DENSE
       std::vector<std::vector<vpImagePoint> > roiPts_vec_;
 #endif
-      if (face->computeDesiredFeatures(cMo, point_cloud, m_depthDenseStepX, m_depthDenseStepY
+      if (face->computeDesiredFeatures(cMo, point_cloud, m_depthDenseSamplingStepX, m_depthDenseSamplingStepY
                                      #if DEBUG_DISPLAY_DEPTH_DENSE
                                        , m_debugImage_depthDense, roiPts_vec_
                                      #endif
@@ -554,7 +554,7 @@ void vpMbDepthDenseTracker::segmentPointCloud(const std::vector<vpColVector> &po
 #if DEBUG_DISPLAY_DEPTH_DENSE
       std::vector<std::vector<vpImagePoint> > roiPts_vec_;
 #endif
-      if (face->computeDesiredFeatures(cMo, width, height, point_cloud, m_depthDenseStepX, m_depthDenseStepY
+      if (face->computeDesiredFeatures(cMo, width, height, point_cloud, m_depthDenseSamplingStepX, m_depthDenseSamplingStepY
                                      #if DEBUG_DISPLAY_DEPTH_DENSE
                                        , m_debugImage_depthDense, roiPts_vec_
                                      #endif

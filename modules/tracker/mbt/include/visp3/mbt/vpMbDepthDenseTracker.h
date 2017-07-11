@@ -80,8 +80,13 @@ public:
   virtual void setCameraParameters(const vpCameraParameters& camera);
 
   inline void setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY) {
-    m_depthDenseStepX = stepX;
-    m_depthDenseStepY = stepY;
+    if (stepX == 0 || stepY == 0) {
+      std::cerr << "stepX and stepY must be greater than zero!" << std::endl;
+      return;
+    }
+
+    m_depthDenseSamplingStepX = stepX;
+    m_depthDenseSamplingStepY = stepY;
   }
 
   virtual void setOgreVisibilityTest(const bool &v);
@@ -114,9 +119,9 @@ protected:
   //! List of faces
   std::vector<vpMbtFaceDepthDense*> m_depthDenseNormalFaces;
   //! Sampling step in x-direction
-  unsigned int m_depthDenseStepX;
+  unsigned int m_depthDenseSamplingStepX;
   //! Sampling step in y-direction
-  unsigned int m_depthDenseStepY;
+  unsigned int m_depthDenseSamplingStepY;
   //! (s - s*)
   vpColVector m_error_depthDense;
   //! Interaction matrix
