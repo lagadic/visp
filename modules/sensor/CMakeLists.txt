@@ -41,7 +41,8 @@
 set(opt_incs "")
 set(opt_libs "")
 
-# camera devices: v4l, dc1394, cmu1394, directshow ?, freenect, flycapture
+# camera devices: v4l, dc1394, cmu1394, directshow ?, freenect,
+# flycapture, pylon
 if(USE_V4L2)
   list(APPEND opt_incs ${V4L2_INCLUDE_DIRS})
   list(APPEND opt_libs ${V4L2_LIBRARIES})
@@ -69,6 +70,10 @@ endif()
 if(USE_FLYCAPTURE)
   list(APPEND opt_incs ${FLYCAPTURE_INCLUDE_DIRS})
   list(APPEND opt_libs ${FLYCAPTURE_LIBRARIES})
+endif()
+if(USE_PYLON)
+  list(APPEND opt_incs ${PYLON_INCLUDE_DIRS})
+  list(APPEND opt_libs ${PYLON_LIBRARIES})
 endif()
 if(USE_COMEDI)
   list(APPEND opt_incs ${COMEDI_INCLUDE_DIRS})
@@ -165,6 +170,12 @@ vp_glob_module_sources()
 if(USE_FLYCAPTURE)
   # Add specific build flag to turn off warnings coming from PointGrey flycapture 3rd party
   vp_set_source_file_compile_flag(src/framegrabber/flycapture/vpFlyCaptureGrabber.cpp -Wno-unknown-pragmas -Wno-ignored-qualifiers)
+endif()
+if(USE_PYLON)
+  # Add specific build flag to turn off warnings coming from Basler
+  # pylon headers
+  vp_set_source_file_compile_flag(src/framegrabber/pylon/vpPylonGrabber.cpp -Wno-unknown-pragmas -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(test/framegrabber/testPylonGrabber.cpp -Wno-unknown-pragmas)
 endif()
 if(USE_REALSENSE)
   # Add specific build flag to turn off warnings coming from RealSense 3rd party
