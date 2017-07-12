@@ -1193,10 +1193,24 @@ void vpFlyCaptureGrabber::acquire(vpImage<vpRGBa> &I, FlyCapture2::TimeStamp &ti
   }
   height = convertedImage.GetRows();
   width = convertedImage.GetCols();
-  unsigned char *data = convertedImage.GetData();
   I.resize(height, width);
-  unsigned int bps = convertedImage.GetBitsPerPixel();
-  memcpy(I.bitmap, data, width*height*bps/8);
+
+  unsigned char *data = convertedImage.GetData();
+  unsigned int stride = convertedImage.GetStride();
+  unsigned int Bps = convertedImage.GetBitsPerPixel() / 8; // Bytes per pixel
+  // `I.bitmap` and `I[i]` are pointers to an array of `vpRGBa` objects
+  // and single `vpRGBa` object respectively. While `data` is a pointer
+  // to an array of 32-bit RGBU values with each value a byte in the
+  // order of R, G, B and U and goes on.
+  for (unsigned int i = 0; i < height; ++i) {
+    for (unsigned int j = 0; j < width; ++j) {
+      unsigned char *pp = data + i * stride + j * Bps;
+      I[i * width + j]->R = pp[0];
+      I[i * width + j]->G = pp[1];
+      I[i * width + j]->B = pp[2];
+      I[i * width + j]->A = pp[3];
+    }
+  }
 }
 
 
