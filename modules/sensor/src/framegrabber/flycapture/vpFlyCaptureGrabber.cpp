@@ -1128,21 +1128,25 @@ void vpFlyCaptureGrabber::acquire(vpImage<unsigned char> &I, FlyCapture2::TimeSt
   }
   timestamp = m_rawImage.GetTimeStamp();
 
-  // Create a converted image
-  FlyCapture2::Image convertedImage;
+  height = m_rawImage.GetRows();
+  width = m_rawImage.GetCols();
+  I.resize(height, width);
+
+  // Create a converted image using a stride equals to `sizeof(unsigned
+  // char) * width`, which makes sure there is no paddings or holes
+  // between pixel data. And the convertedImage object is sharing the
+  // same data buffer with vpImage object `I`.
+  FlyCapture2::Image convertedImage(
+      height, width, sizeof(unsigned char) * width, I.bitmap,
+      sizeof(unsigned char) * I.getSize(), FlyCapture2::PIXEL_FORMAT_MONO8);
 
   // Convert the raw image
-  error = m_rawImage.Convert( FlyCapture2::PIXEL_FORMAT_MONO8, &convertedImage );
+  error = m_rawImage.Convert(&convertedImage);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
     throw (vpException(vpException::fatalError,
                        "Cannot convert image from camera with serial %u", getCameraSerial(m_index)));
   }
-  height = convertedImage.GetRows();
-  width = convertedImage.GetCols();
-  unsigned char *data = convertedImage.GetData();
-  I.resize(height, width);
-  memcpy(I.bitmap, data, height*width);
 }
 
 /*!
@@ -1401,5 +1405,3 @@ vpFlyCaptureGrabber &vpFlyCaptureGrabber::operator>>(vpImage<vpRGBa> &I)
 // Work arround to avoid warning: libvisp_flycapture.a(vpFlyCaptureGrabber.cpp.o) has no symbols
 void dummy_vpFlyCaptureGrabber() {};
 #endif
-
-
