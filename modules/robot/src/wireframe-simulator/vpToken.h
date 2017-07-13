@@ -42,6 +42,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include <visp3/robot/vpWireFrameSimulatorTypes.h>
 
 typedef	struct	{
   const char	*ident;	/* identifateur 	*/

@@ -43,6 +43,9 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include "vpMy.h"
+#include "vpArit.h"
+
 Matrix	*get_tmstack (void);
 void	load_tmstack (Matrix m);
 void	pop_tmstack (void);

@@ -50,6 +50,7 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpPoint.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayGDI.h>

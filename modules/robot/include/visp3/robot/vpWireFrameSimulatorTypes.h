@@ -45,6 +45,8 @@
 
 typedef	unsigned short	Index;
 typedef	char		Type;
+typedef float Matrix[4][4];
+
 /*
  *				MATRIX
  *				______
