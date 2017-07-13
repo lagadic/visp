@@ -228,6 +228,23 @@ float vpPylonGrabber::getExposure()
 }
 
 /*!
+  Return gamma correction value.
+  If the camera doesn't support gamma property, return an exception.
+
+  \sa setGamma()
+ */
+float vpPylonGrabber::getGamma()
+{
+  this->connect();
+
+  if (m_camera.IsGigE() || m_camera.IsUsb())
+    return this->getProperty<float, GenApi::IFloat>("Gamma");
+  else
+    throw vpException(vpException::notImplementedError,
+                      "Don't know how to get gamma.");
+}
+
+/*!
   Return the serial id of a camera with \e index.
   \param index : Camera index.
 
@@ -529,6 +546,33 @@ float vpPylonGrabber::setSharpness(bool sharpness_on, float sharpness_value)
   } else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to set sharpness.");
+}
+
+/*!
+  Set camera gamma correction mode and parameter.
+
+  \param gamma_on : If true turn gamma correction on, otherwise turn off.
+  \param gamma_value : Parameter used to perform gamma correction of
+  pixel intensity.
+
+  \return The measured gamma correction value after applying the new setting.
+
+  \sa getGamma()
+ */
+float vpPylonGrabber::setGamma(bool gamma_on, float gamma_value)
+{
+  this->connect();
+
+  if (m_camera.IsGigE()) {
+    this->setProperty<bool, GenApi::IBoolean>("GammaEnable", gamma_on);
+    this->setProperty<float, GenApi::IFloat>("Gamma", gamma_value);
+    return this->getProperty<float, GenApi::IFloat>("Gamma");
+  } else if (m_camera.IsUsb()) {
+    this->setProperty<float, GenApi::IFloat>("Gamma", gamma_value);
+    return this->getProperty<float, GenApi::IFloat>("Gamma");
+  } else
+    throw vpException(vpException::notImplementedError,
+                      "Don't know how to set gamma.");
 }
 
 /*!

@@ -94,6 +94,7 @@ public:
   float getGain();
   static unsigned int getNumCameras();
   float getSharpness();
+  float getGamma();
 
   //! Return true if the camera is connected.
   bool isConnected() const { return m_connected; }
@@ -113,6 +114,7 @@ public:
   float setGain(bool gain_auto, float gain_value = 0);
   float setFrameRate(float frame_rate);
   float setSharpness(bool sharpness_on, float sharpness_value = 0);
+  float setGamma(bool gamma_on, float gamma_value);
 
   void startCapture();
   void stopCapture();
