@@ -64,7 +64,13 @@ vpPylonGrabber::vpPylonGrabber()
 /*!
    Default destructor that closes the connection with the camera.
  */
-vpPylonGrabber::~vpPylonGrabber() { close(); }
+vpPylonGrabber::~vpPylonGrabber()
+{
+  close();
+  // It looks like that ~CInstantCamera can't destroy or remove the
+  // attached device properly.
+  m_camera.DestroyDevice();
+}
 
 /*!
   \return Return the number of cameras connected on the bus.
@@ -133,11 +139,13 @@ float vpPylonGrabber::getFrameRate()
 {
   this->connect();
 
-  if (m_camera.IsGigE())
-    return this->getProperty<float, GenApi::IFloat>(
-        "AcquisitionFrameRateAbs");
-  else if (m_camera.IsUsb())
-    return this->getProperty<float, GenApi::IFloat>("AcquisitionFrameRate");
+  float frame_rate;
+  if (this->getProperty<float, GenApi::IFloat>("AcquisitionFrameRate",
+                                               frame_rate))
+    return frame_rate;
+  else if (this->getProperty<float, GenApi::IFloat>("AcquisitionFrameRateAbs",
+                                                    frame_rate))
+    return frame_rate;
   else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to get frame rate.");
@@ -153,10 +161,13 @@ float vpPylonGrabber::getGain()
 {
   this->connect();
 
-  if (m_camera.IsGigE())
-    return this->getProperty<float, GenApi::IFloat>("GainAbs");
-  else if (m_camera.IsUsb())
-    return this->getProperty<float, GenApi::IFloat>("Gain");
+  float gain;
+  if (this->getProperty<float, GenApi::IFloat>("Gain", gain))
+    return gain;
+  else if (this->getProperty<float, GenApi::IFloat>("GainAbs", gain))
+    return gain;
+  else if (this->getProperty<float, GenApi::IInteger>("GainRaw", gain))
+    return gain;
   else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to get gain.");
@@ -175,10 +186,15 @@ float vpPylonGrabber::getBlackLevel()
 {
   this->connect();
 
-  if (m_camera.IsGigE())
-    return this->getProperty<float, GenApi::IFloat>("BlackLevelAbs");
-  else if (m_camera.IsUsb())
-    return this->getProperty<float, GenApi::IFloat>("BlackLevel");
+  float black_level;
+  if (this->getProperty<float, GenApi::IFloat>("BlackLevel", black_level))
+    return black_level;
+  else if (this->getProperty<float, GenApi::IFloat>("BlackLevelAbs",
+                                                    black_level))
+    return black_level;
+  else if (this->getProperty<float, GenApi::IInteger>("BlackLevelRaw",
+                                                      black_level))
+    return black_level;
   else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to get blacklevel.");
@@ -194,11 +210,16 @@ float vpPylonGrabber::getSharpness()
 {
   this->connect();
 
-  if (m_camera.IsGigE())
-    return this->getProperty<float, GenApi::IFloat>(
-        "SharpnessEnhancementAbs");
-  else if (m_camera.IsUsb())
-    return this->getProperty<float, GenApi::IFloat>("SharpnessEnhancement");
+  float sharpness;
+  if (this->getProperty<float, GenApi::IFloat>("SharpnessEnhancement",
+                                               sharpness))
+    return sharpness;
+  else if (this->getProperty<float, GenApi::IFloat>("SharpnessEnhancementAbs",
+                                                    sharpness))
+    return sharpness;
+  else if (this->getProperty<float, GenApi::IInteger>(
+               "SharpnessEnhancementRaw", sharpness))
+    return sharpness;
   else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to get sharpness.");
@@ -217,11 +238,12 @@ float vpPylonGrabber::getExposure()
 {
   this->connect();
 
-  if (m_camera.IsGigE())
-    return this->getProperty<float, GenApi::IFloat>("ExposureTimeAbs") *
-           0.001;
-  else if (m_camera.IsUsb())
-    return this->getProperty<float, GenApi::IFloat>("ExposureTime") * 0.001;
+  float exposure_us;
+  if (this->getProperty<float, GenApi::IFloat>("ExposureTime", exposure_us))
+    return exposure_us * 0.001;
+  else if (this->getProperty<float, GenApi::IFloat>("ExposureTimeAbs",
+                                                    exposure_us))
+    return exposure_us * 0.001;
   else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to get exposure.");
@@ -237,9 +259,11 @@ float vpPylonGrabber::getGamma()
 {
   this->connect();
 
-  if (m_camera.IsGigE() || m_camera.IsUsb())
-    return this->getProperty<float, GenApi::IFloat>("Gamma");
-  else
+  float gamma;
+  if (m_camera.IsGigE() || m_camera.IsUsb()) {
+    this->getProperty<float, GenApi::IFloat>("Gamma", gamma);
+    return gamma;
+  } else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to get gamma.");
 }
@@ -328,15 +352,16 @@ float vpPylonGrabber::setFrameRate(float frame_rate)
 {
   this->connect();
 
-  if (m_camera.IsGigE()) {
-    this->setProperty<float, GenApi::IFloat>("AcquisitionFrameRateAbs",
+  if (this->setProperty<float, GenApi::IFloat>("AcquisitionFrameRate",
+                                               frame_rate)) {
+    this->getProperty<float, GenApi::IFloat>("AcquisitionFrameRate",
                                              frame_rate);
-    return this->getProperty<float, GenApi::IFloat>(
-        "AcquisitionFrameRateAbs");
-  } else if (m_camera.IsUsb()) {
-    this->setProperty<float, GenApi::IFloat>("AcquisitionFrameRate",
+    return frame_rate;
+  } else if (this->setProperty<float, GenApi::IFloat>(
+                 "AcquisitionFrameRateAbs", frame_rate)) {
+    this->getProperty<float, GenApi::IFloat>("AcquisitionFrameRateAbs",
                                              frame_rate);
-    return this->getProperty<float, GenApi::IFloat>("AcquisitionFrameRate");
+    return frame_rate;
   } else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to set frame rate.");
@@ -370,9 +395,6 @@ float vpPylonGrabber::setGain(bool gain_auto, float gain_value)
           Basler_GigECamera::GainAutoEnums,
           GenApi::IEnumerationT<Basler_GigECamera::GainAutoEnums>>(
           "GainAuto", Basler_GigECamera::GainAuto_Off);
-
-    this->setProperty<float, GenApi::IFloat>("GainAbs", gain_value);
-    return this->getProperty<float, GenApi::IFloat>("GainAbs");
   } else if (m_camera.IsUsb()) {
     if (gain_auto)
       this->setProperty<
@@ -384,9 +406,18 @@ float vpPylonGrabber::setGain(bool gain_auto, float gain_value)
           Basler_UsbCameraParams::GainAutoEnums,
           GenApi::IEnumerationT<Basler_UsbCameraParams::GainAutoEnums>>(
           "GainAuto", Basler_UsbCameraParams::GainAuto_Off);
+  }
 
-    this->setProperty<float, GenApi::IFloat>("Gain", gain_value);
-    return this->getProperty<float, GenApi::IFloat>("Gain");
+  if (this->setProperty<float, GenApi::IFloat>("GainAbs", gain_value)) {
+    this->getProperty<float, GenApi::IFloat>("GainAbs", gain_value);
+    return gain_value;
+  } else if (this->setProperty<float, GenApi::IFloat>("Gain", gain_value)) {
+    this->getProperty<float, GenApi::IFloat>("Gain", gain_value);
+    return gain_value;
+  } else if (this->setProperty<float, GenApi::IFloat>("GainRaw",
+                                                      gain_value)) {
+    this->getProperty<float, GenApi::IFloat>("GainRaw", gain_value);
+    return gain_value;
   } else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to set gain.");
@@ -408,13 +439,20 @@ float vpPylonGrabber::setBlackLevel(float blacklevel_value)
 {
   this->connect();
 
-  if (m_camera.IsGigE()) {
-    this->setProperty<float, GenApi::IFloat>("BlackLevelAbs",
+  if (this->setProperty<float, GenApi::IFloat>("BlackLevelAbs",
+                                               blacklevel_value)) {
+    this->getProperty<float, GenApi::IFloat>("BlackLevelAbs",
                                              blacklevel_value);
-    return this->getProperty<float, GenApi::IFloat>("BlackLevelAbs");
-  } else if (m_camera.IsUsb()) {
-    this->setProperty<float, GenApi::IFloat>("BlackLevel", blacklevel_value);
-    return this->getProperty<float, GenApi::IFloat>("BlackLevel");
+    return blacklevel_value;
+  } else if (this->setProperty<float, GenApi::IFloat>("BlackLevel",
+                                                      blacklevel_value)) {
+    this->getProperty<float, GenApi::IFloat>("BlackLevel", blacklevel_value);
+    return blacklevel_value;
+  } else if (this->setProperty<float, GenApi::IInteger>("BlackLevelRaw",
+                                                        blacklevel_value)) {
+    this->getProperty<float, GenApi::IFloat>("BlackLevelRaw",
+                                             blacklevel_value);
+    return blacklevel_value;
   } else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to set blacklevel.");
@@ -462,11 +500,6 @@ float vpPylonGrabber::setExposure(bool exposure_on, bool exposure_auto,
           Basler_GigECamera::ExposureAutoEnums,
           GenApi::IEnumerationT<Basler_GigECamera::ExposureAutoEnums>>(
           "ExposureAuto", Basler_GigECamera::ExposureAuto_Off);
-
-    this->setProperty<float, GenApi::IFloat>("ExposureTimeAbs",
-                                             exposure_value * 1000);
-    return this->getProperty<float, GenApi::IFloat>("ExposureTimeAbs") *
-           0.001;
   } else if (m_camera.IsUsb()) {
     if (exposure_on)
       this->setProperty<
@@ -487,10 +520,17 @@ float vpPylonGrabber::setExposure(bool exposure_on, bool exposure_auto,
           Basler_UsbCameraParams::ExposureAutoEnums,
           GenApi::IEnumerationT<Basler_UsbCameraParams::ExposureAutoEnums>>(
           "ExposureAuto", Basler_UsbCameraParams::ExposureAuto_Off);
+  }
 
-    this->setProperty<float, GenApi::IFloat>("ExposureTime",
-                                             exposure_value * 1000);
-    return this->getProperty<float, GenApi::IFloat>("ExposureTime") * 0.001;
+  if (this->setProperty<float, GenApi::IFloat>("ExposureTimeAbs",
+                                               exposure_value * 1000)) {
+    this->getProperty<float, GenApi::IFloat>("ExposureTimeAbs",
+                                             exposure_value);
+    return exposure_value * 0.001;
+  } else if (this->setProperty<float, GenApi::IFloat>(
+                 "ExposureTime", exposure_value * 1000)) {
+    this->getProperty<float, GenApi::IFloat>("ExposureTime", exposure_value);
+    return exposure_value * 0.001;
   } else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to set exposure.");
@@ -522,11 +562,6 @@ float vpPylonGrabber::setSharpness(bool sharpness_on, float sharpness_value)
           Basler_GigECamera::DemosaicingModeEnums,
           GenApi::IEnumerationT<Basler_GigECamera::DemosaicingModeEnums>>(
           "DemosaicingMode", Basler_GigECamera::DemosaicingMode_Simple);
-
-    this->setProperty<float, GenApi::IFloat>("SharpnessEnhancementAbs",
-                                             sharpness_value);
-    return this->getProperty<float, GenApi::IFloat>(
-        "SharpnessEnhancementAbs");
   } else if (m_camera.IsUsb()) {
     if (sharpness_on)
       this->setProperty<Basler_UsbCameraParams::DemosaicingModeEnums,
@@ -539,10 +574,18 @@ float vpPylonGrabber::setSharpness(bool sharpness_on, float sharpness_value)
                         GenApi::IEnumerationT<
                             Basler_UsbCameraParams::DemosaicingModeEnums>>(
           "DemosaicingMode", Basler_UsbCameraParams::DemosaicingMode_Simple);
+  }
 
-    this->setProperty<float, GenApi::IFloat>("SharpnessEnhancement",
+  if (this->setProperty<float, GenApi::IFloat>("SharpnessEnhancementAbs",
+                                               sharpness_value)) {
+    this->getProperty<float, GenApi::IFloat>("SharpnessEnhancementAbs",
                                              sharpness_value);
-    return this->getProperty<float, GenApi::IFloat>("SharpnessEnhancement");
+    return sharpness_value;
+  } else if (this->setProperty<float, GenApi::IFloat>("SharpnessEnhancement",
+                                                      sharpness_value)) {
+    this->getProperty<float, GenApi::IFloat>("SharpnessEnhancement",
+                                             sharpness_value);
+    return sharpness_value;
   } else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to set sharpness.");
@@ -555,7 +598,8 @@ float vpPylonGrabber::setSharpness(bool sharpness_on, float sharpness_value)
   \param gamma_value : Parameter used to perform gamma correction of
   pixel intensity.
 
-  \return The measured gamma correction value after applying the new setting.
+  \return The measured gamma correction value after applying the new
+  setting.
 
   \sa getGamma()
  */
@@ -566,10 +610,12 @@ float vpPylonGrabber::setGamma(bool gamma_on, float gamma_value)
   if (m_camera.IsGigE()) {
     this->setProperty<bool, GenApi::IBoolean>("GammaEnable", gamma_on);
     this->setProperty<float, GenApi::IFloat>("Gamma", gamma_value);
-    return this->getProperty<float, GenApi::IFloat>("Gamma");
+    this->getProperty<float, GenApi::IFloat>("Gamma", gamma_value);
+    return gamma_value;
   } else if (m_camera.IsUsb()) {
     this->setProperty<float, GenApi::IFloat>("Gamma", gamma_value);
-    return this->getProperty<float, GenApi::IFloat>("Gamma");
+    this->getProperty<float, GenApi::IFloat>("Gamma", gamma_value);
+    return gamma_value;
   } else
     throw vpException(vpException::notImplementedError,
                       "Don't know how to set gamma.");
@@ -622,12 +668,14 @@ void vpPylonGrabber::connect()
       throw(vpException(vpException::fatalError, "No camera found"));
     }
 
-    Pylon::CTlFactory &TlFactory = Pylon::CTlFactory::GetInstance();
-    Pylon::DeviceInfoList_t lstDevices;
-    TlFactory.EnumerateDevices(lstDevices);
+    if (!m_camera.IsPylonDeviceAttached()) {
+      Pylon::CTlFactory &TlFactory = Pylon::CTlFactory::GetInstance();
+      Pylon::DeviceInfoList_t lstDevices;
+      TlFactory.EnumerateDevices(lstDevices);
 
+      m_camera.Attach(TlFactory.CreateDevice(lstDevices[m_index]));
+    }
     // Connect to a camera
-    m_camera.Attach(TlFactory.CreateDevice(lstDevices[m_index]));
     m_camera.Open();
     m_connected = true;
   }
@@ -679,7 +727,7 @@ void vpPylonGrabber::acquire(vpImage<unsigned char> &I)
 
   Pylon::CGrabResultPtr grabResult;
   // Retrieve an image
-  if (!m_camera.RetrieveResult(500, grabResult)) {
+  if (!m_camera.RetrieveResult(2000, grabResult)) {
     throw(vpException(vpException::fatalError,
                       "Cannot retrieve image from camera with serial %u",
                       getCameraSerial(m_index)));

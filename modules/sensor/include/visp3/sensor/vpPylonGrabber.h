@@ -67,6 +67,7 @@
 
   This class was tested under Ubuntu with the following cameras:
   - acA640-90gm
+  - acA1600-60gm
 
   This class is inspired by vpFlyCaptureGrabber with much simplified methods.
  */
@@ -122,12 +123,13 @@ public:
 protected:
   void open();
   /*!
-    \brief Return property node pointer.
-    \param  name Property name.
-    \return A pointer to the property node.
+    \brief  Get camera property.
+    \param[in]  name Property name.
+    \param[out]  value The returned value.
+    \return true if success, false for failure.
    */
   template <typename T, typename N>
-  T getProperty(const GenICam::gcstring &name)
+  bool getProperty(const GenICam::gcstring &name, T &value)
   {
     this->connect();
 
@@ -136,16 +138,21 @@ protected:
 
     GenApi::CPointer<N> prop = control.GetNode(name);
 
-    return prop->GetValue();
+    if (GenApi::IsReadable(prop)) {
+      value = prop->GetValue();
+    }
+
+    return GenApi::IsReadable(prop);
   }
   /*!
     \brief  Set camera property.
 
     \param  name Property name.
     \param  value value to set.
+    \return true if success, false for failure.
    */
   template <typename T, typename N>
-  void setProperty(const GenICam::gcstring &name, T value)
+  bool setProperty(const GenICam::gcstring &name, const T &value)
   {
     this->connect();
 
@@ -156,9 +163,9 @@ protected:
 
     if (GenApi::IsWritable(prop)) {
       prop->SetValue(value);
-    } else
-      throw(vpException(vpException::fatalError, "Cannot set property %s.",
-                        name));
+    }
+
+    return GenApi::IsWritable(prop);
   }
 
 protected:

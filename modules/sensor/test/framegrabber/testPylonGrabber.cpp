@@ -91,10 +91,21 @@ int main()
       g.setCameraIndex(0);
       g.setCameraSerial(guid);
     }
+    g.getCameraInfo(std::cout);
+
+    std::cout << "Frame rate: " << g.getFrameRate() << std::endl;
+    std::cout << "Gain: " << g.getGain() << std::endl;
+    std::cout << "Gamma: " << g.getGamma() << std::endl;
+    std::cout << "Exposure time (ms): " << g.getExposure() << std::endl;
+    float blackLevel = g.getBlackLevel();
+    std::cout << "Black level: " << blackLevel << std::endl;
 
     for (int i = 0; i < 10; i++)
       g.acquire(I);
     g.close();
+    std::cout << "Current image size: " << g.getWidth() << "x"
+              << g.getHeight() << std::endl;
+
     std::string filename = outputpath + "/imagetest1.pgm";
     std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename);
@@ -109,6 +120,10 @@ int main()
     filename = outputpath + "/imagetest2.pgm";
     std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename);
+  } catch (const GenericException &e) {
+    vpCERROR << e.what() << std::endl;
+  } catch (const std::exception &e) {
+    vpCERROR << e.what() << std::endl;
   } catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
   }
