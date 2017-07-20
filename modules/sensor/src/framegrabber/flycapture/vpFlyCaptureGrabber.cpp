@@ -1141,7 +1141,8 @@ void vpFlyCaptureGrabber::acquire(vpImage<unsigned char> &I, FlyCapture2::TimeSt
       sizeof(unsigned char) * I.getSize(), FlyCapture2::PIXEL_FORMAT_MONO8);
 
   // Convert the raw image
-  error = m_rawImage.Convert(&convertedImage);
+  error =
+      m_rawImage.Convert(FlyCapture2::PIXEL_FORMAT_MONO8, &convertedImage);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
     throw (vpException(vpException::fatalError,
