@@ -1128,21 +1128,26 @@ void vpFlyCaptureGrabber::acquire(vpImage<unsigned char> &I, FlyCapture2::TimeSt
   }
   timestamp = m_rawImage.GetTimeStamp();
 
-  // Create a converted image
-  FlyCapture2::Image convertedImage;
+  height = m_rawImage.GetRows();
+  width = m_rawImage.GetCols();
+  I.resize(height, width);
+
+  // Create a converted image using a stride equals to `sizeof(unsigned
+  // char) * width`, which makes sure there is no paddings or holes
+  // between pixel data. And the convertedImage object is sharing the
+  // same data buffer with vpImage object `I`.
+  FlyCapture2::Image convertedImage(
+      height, width, sizeof(unsigned char) * width, I.bitmap,
+      sizeof(unsigned char) * I.getSize(), FlyCapture2::PIXEL_FORMAT_MONO8);
 
   // Convert the raw image
-  error = m_rawImage.Convert( FlyCapture2::PIXEL_FORMAT_MONO8, &convertedImage );
+  error =
+      m_rawImage.Convert(FlyCapture2::PIXEL_FORMAT_MONO8, &convertedImage);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
     throw (vpException(vpException::fatalError,
                        "Cannot convert image from camera with serial %u", getCameraSerial(m_index)));
   }
-  height = convertedImage.GetRows();
-  width = convertedImage.GetCols();
-  unsigned char *data = convertedImage.GetData();
-  I.resize(height, width);
-  memcpy(I.bitmap, data, height*width);
 }
 
 /*!
@@ -1189,10 +1194,23 @@ void vpFlyCaptureGrabber::acquire(vpImage<vpRGBa> &I, FlyCapture2::TimeStamp &ti
   }
   height = convertedImage.GetRows();
   width = convertedImage.GetCols();
-  unsigned char *data = convertedImage.GetData();
   I.resize(height, width);
-  unsigned int bps = convertedImage.GetBitsPerPixel();
-  memcpy(I.bitmap, data, width*height*bps/8);
+
+  unsigned char *data = convertedImage.GetData();
+  unsigned int stride = convertedImage.GetStride();
+  unsigned int Bps = convertedImage.GetBitsPerPixel() / 8; // Bytes per pixel
+  // `I.bitmap` and `I[i]` are pointers to `vpRGBa` objects. While
+  // `data` is a pointer to an array of 32-bit RGBU values with each
+  // value a byte in the order of R, G, B and U and goes on.
+  for (unsigned int i = 0; i < height; ++i) {
+    for (unsigned int j = 0; j < width; ++j) {
+      unsigned char *pp = data + i * stride + j * Bps;
+      I[i][j].R = pp[0];
+      I[i][j].G = pp[1];
+      I[i][j].B = pp[2];
+      I[i][j].A = pp[3];
+    }
+  }
 }
 
 
@@ -1401,5 +1419,3 @@ vpFlyCaptureGrabber &vpFlyCaptureGrabber::operator>>(vpImage<vpRGBa> &I)
 // Work arround to avoid warning: libvisp_flycapture.a(vpFlyCaptureGrabber.cpp.o) has no symbols
 void dummy_vpFlyCaptureGrabber() {};
 #endif
-
-
