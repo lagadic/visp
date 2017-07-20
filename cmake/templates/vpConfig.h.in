@@ -111,6 +111,11 @@
                                         VISP_VERSION_MINOR, \
                                         VISP_VERSION_PATCH)
 
+// Enable debug and trace printings
+#cmakedefine VP_TRACE
+#cmakedefine VP_DEBUG
+#cmakedefine VP_DEBUG_MODE ${VP_DEBUG_MODE}
+
 // ViSP library is either compiled static or shared
 // Used to set declspec(import, export) in headers if required under Windows
 #cmakedefine VISP_BUILD_SHARED_LIBS
