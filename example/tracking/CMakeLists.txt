@@ -122,6 +122,13 @@ add_test(mbtGenericTrackingDepth-klt-dense-scanline     mbtGenericTrackingDepth 
 add_test(mbtGenericTrackingDepth-hybrid-dense           mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 3)
 add_test(mbtGenericTrackingDepth-hybrid-dense-scanline  mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -t 3 -e 14)
 
+add_test(mbtGenericTrackingDepth-edge-normal            mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -T 4)
+add_test(mbtGenericTrackingDepth-edge-normal-scanline   mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -e 14)
+add_test(mbtGenericTrackingDepth-klt-normal             mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 2)
+add_test(mbtGenericTrackingDepth-klt-normal-scanline    mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 2 -e 14)
+add_test(mbtGenericTrackingDepth-hybrid-normal          mbtGenericTrackingDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 3)
+add_test(mbtGenericTrackingDepth-hybrid-normal-scanline mbtGenericTrackingDepth -c -l ${OPTION_TO_DESACTIVE_DISPLAY} -T 4 -t 3 -e 14)
+
 #disable test with Ogre otherwise we get an Ogre exception with Ogre and remote access:
 #terminate called after throwing an instance of 'Ogre::RenderingAPIException'
 #what():  OGRE EXCEPTION(3:RenderingAPIException): Couldn`t open X display  in GLXGLSupport::getGLDisplay at /build/buildd/ogre-1.9-1.9.0+dfsg1/RenderSystems/GL/src/GLX/OgreGLXGLSupport.cpp (line 807)
