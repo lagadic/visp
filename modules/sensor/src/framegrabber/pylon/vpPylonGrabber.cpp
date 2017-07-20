@@ -758,7 +758,7 @@ void vpPylonGrabber::acquire(vpImage<vpRGBa> &I)
 
   Pylon::CGrabResultPtr grabResult;
   // Retrieve an image
-  if (!m_camera.RetrieveResult(500, grabResult)) {
+  if (!m_camera.RetrieveResult(2000, grabResult)) {
     throw(vpException(vpException::fatalError,
                       "Cannot retrieve image from camera with serial %u",
                       getCameraSerial(m_index)));
@@ -775,12 +775,15 @@ void vpPylonGrabber::acquire(vpImage<vpRGBa> &I)
     // Create a converted image
     Pylon::CPylonImage destImage;
     imageConvert.Convert(destImage, (Pylon::IImage &)grabResult);
-    for (unsigned int i = 0; i < width * height; i++) {
-      Pylon::SBGRA8Pixel *pixel = (Pylon::SBGRA8Pixel *)destImage.GetBuffer();
-      I[i]->R = pixel[i].R;
-      I[i]->G = pixel[i].G;
-      I[i]->B = pixel[i].B;
-      I[i]->A = pixel[i].A;
+    Pylon::SBGRA8Pixel *pixel = (Pylon::SBGRA8Pixel *)destImage.GetBuffer();
+    for (unsigned int i = 0; i < height; i++) {
+      for (unsigned int j = 0; j < width; j++) {
+        unsigned int p_index = i * width + j;
+        I[i][j].R = pixel[p_index].R;
+        I[i][j].G = pixel[p_index].G;
+        I[i][j].B = pixel[p_index].B;
+        I[i][j].A = pixel[p_index].A;
+      }
     }
   }
 }
