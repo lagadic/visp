@@ -67,6 +67,12 @@ if(PYLON_CONFIG)
   string(REPLACE "-I" "" PYLON_INCLUDE_DIRS ${PYLON_INC_TMP})
 else()
   set(PYLON_FOUND FALSE)
+  if(WIN32)
+    message(WARNING "FindPylon can't be used on Windows OS yet.")
+  endif(WIN32)
+  message(STATUS "Pylon SDK not found.
+   If you are sure Pylon SDK is installed, set CMake variable or
+   environment variable `PYLON_ROOT' to help CMake to find Pylon SDK.")
 endif()
   
 mark_as_advanced(
