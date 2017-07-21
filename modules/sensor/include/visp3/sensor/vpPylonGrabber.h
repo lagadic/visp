@@ -62,10 +62,11 @@
   https://www.baslerweb.com/en/support/downloads/software-downloads/#type=pylonsoftware;version=all
   \n Installation instructions included.
 
-  Once installed configure ViSP using cmake to detect Pylon SDK and
+  Once installed, configure ViSP using cmake to detect Pylon SDK and
   build ViSP to include Pylon SDK support.
 
-  This class was tested under Ubuntu with the following cameras:
+  This class was tested under Ubuntu with pylon 5.0.9 and the following
+  cameras:
   - acA640-90gm
   - acA1600-60gm
 
@@ -126,7 +127,12 @@ protected:
     \brief  Get camera property.
     \param[in]  name Property name.
     \param[out]  value The returned value.
-    \return true if success, false for failure.
+    \return true for success, false for failure.
+
+    The typename N is used internally by Pylon SDK to get GenApi::INode,
+    and it depends on T. The most used possible values for N are
+    IBoolean, IFloat, IInteger and IString. See GenApi namespace for
+    other I initiated structures.
    */
   template <typename T, typename N>
   bool getProperty(const GenICam::gcstring &name, T &value)
@@ -149,7 +155,12 @@ protected:
 
     \param  name Property name.
     \param  value value to set.
-    \return true if success, false for failure.
+    \return true for success, false for failure.
+
+    The typename N is used internally by Pylon SDK to get GenApi::INode,
+    and it depends on T. The most used possible values for N are
+    IBoolean, IFloat, IInteger and IString. See GenApi namespace for
+    other I initiated structures.
    */
   template <typename T, typename N>
   bool setProperty(const GenICam::gcstring &name, const T &value)

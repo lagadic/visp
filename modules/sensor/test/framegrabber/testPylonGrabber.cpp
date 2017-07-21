@@ -38,7 +38,7 @@
 /*!
   \file testPylonGrabber.cpp
 
-  \brief  Aquire images using Pylon library.
+  \brief  Acquire images using Pylon library.
 */
 
 #include <visp3/core/vpConfig.h>

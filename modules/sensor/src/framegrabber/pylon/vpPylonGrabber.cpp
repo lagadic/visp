@@ -41,15 +41,13 @@
   cameras.
 */
 
-#include <pylon/gige/BaslerGigEInstantCamera.h>
-#include <pylon/usb/BaslerUsbInstantCamera.h>
-
 #include <visp3/core/vpException.h>
 #include <visp3/sensor/vpPylonGrabber.h>
 
 #ifdef VISP_HAVE_PYLON
 
-#include <visp3/core/vpTime.h>
+#include <pylon/gige/BaslerGigEInstantCamera.h>
+#include <pylon/usb/BaslerUsbInstantCamera.h>
 
 /*!
    Default constructor that consider the first camera found on the bus as
@@ -86,7 +84,7 @@ unsigned int vpPylonGrabber::getNumCameras()
 
 /*!
   Print to the output stream active camera information (serial number,
-  camera model, camera vendor, sensor, resolution, firmaware version,
+  camera model, camera vendor, sensor, resolution, firmware version,
   ...).
   */
 std::ostream &vpPylonGrabber::getCameraInfo(std::ostream &os)
@@ -114,7 +112,7 @@ std::ostream &vpPylonGrabber::getCameraInfo(std::ostream &os)
 
 /*!
   Return the handler to the active camera or NULL if the camera is not
-  connected.  This function was designed to provide a direct access to
+  connected. This function was designed to provide a direct access to
   the Pylon SDK to get access to advanced functionalities that are not
   implemented in this class.
 */
@@ -152,7 +150,7 @@ float vpPylonGrabber::getFrameRate()
 }
 
 /*!
-  Return camera gain value in db.
+  Return camera gain value in dB or raw value.
   If the camera doesn't support gain property, return an exception.
 
   \sa setGain()
@@ -174,13 +172,15 @@ float vpPylonGrabber::getGain()
 }
 
 /*!
-  Return blacklevel value in %.
+  Return blacklevel value in % or raw value.
   If the camera doesn't support blacklevel property, return an exception.
 
   According to SFNC (standard feature naming convention) of GenICam
   standard, Black level is used instead of brightness.
 
-  \sa setBlackLevel() https://www.ptgrey.com/kb/11020?countryid=237
+  See "Terminology Changes" section of the page:
+  https://www.ptgrey.com/kb/11020?countryid=237
+  \sa setBlackLevel()
  */
 float vpPylonGrabber::getBlackLevel()
 {
@@ -232,7 +232,9 @@ float vpPylonGrabber::getSharpness()
   According to SFNC (standard feature naming convention) of GenICam
   standard, Exposure is used and deprecates shutter.
 
-  \sa setExposure() https://www.ptgrey.com/kb/11020?countryid=237
+  See "Terminology Changes" section of the page:
+  https://www.ptgrey.com/kb/11020?countryid=237
+  \sa setExposure()
  */
 float vpPylonGrabber::getExposure()
 {
@@ -286,7 +288,7 @@ std::string vpPylonGrabber::getCameraSerial(unsigned int index)
   }
 
   Pylon::CTlFactory &TlFactory = Pylon::CTlFactory::GetInstance();
-  Pylon::DeviceInfoList_t lstDevices; //!< List of connected cameras
+  Pylon::DeviceInfoList_t lstDevices; // List of connected cameras
   TlFactory.EnumerateDevices(lstDevices);
 
   std::ostringstream os;
@@ -295,7 +297,7 @@ std::string vpPylonGrabber::getCameraSerial(unsigned int index)
 }
 
 /*!
-  If multiples cameras are connected on the bus, select the camero to
+  If multiples cameras are connected on the bus, select the camera to
   dial with.
 
   \param index : Current camera index, a value comprised between 0 (the
@@ -372,8 +374,8 @@ float vpPylonGrabber::setFrameRate(float frame_rate)
   \param gain_auto : If true set auto gain, if false set manual gain
   applying \e gain_value parameter.
   \param gain_value : The amount of amplification that is applied to a
-  pixel in manual mode. An increase in gain
-  can result in an increase in noise.
+  pixel in manual mode. An increase in gain can result in an increase in
+  noise.
 
   \return The measured gain after applying the new setting.
 
@@ -433,7 +435,9 @@ float vpPylonGrabber::setGain(bool gain_auto, float gain_value)
   According to SFNC (standard feature naming convention) of GenICam
   standard, Black level is used instead of brightness.
 
-  \sa getBlackLevel() https://www.ptgrey.com/kb/11020?countryid=237
+  See "Terminology Changes" section of the page:
+  https://www.ptgrey.com/kb/11020?countryid=237
+  \sa getBlackLevel()
  */
 float vpPylonGrabber::setBlackLevel(float blacklevel_value)
 {
@@ -471,7 +475,9 @@ exposure applying \e exposure_value parameter.
   According to SFNC (standard feature naming convention) of GenICam
   standard, Exposure is used and deprecates shutter.
 
-  \sa getExposure() https://www.ptgrey.com/kb/11020?countryid=237
+  See "Terminology Changes" section of the page:
+  https://www.ptgrey.com/kb/11020?countryid=237
+  \sa getExposure()
  */
 float vpPylonGrabber::setExposure(bool exposure_on, bool exposure_auto,
                                   float exposure_value)
@@ -540,8 +546,8 @@ float vpPylonGrabber::setExposure(bool exposure_on, bool exposure_auto,
   Set camera sharpness mode and parameter.
 
   \param sharpness_on : If true turn sharpness on, otherwise turn off.
-  \param sharpness_value : Parameter used to tune the filter applyed on the
-image to reduce blurred edges in an image.
+  \param sharpness_value : Parameter used to tune the filter applied on
+  the image to reduce blurred edges in an image.
 
   \return The measured sharpness after applying the new setting.
 
@@ -838,7 +844,7 @@ vpPylonGrabber &vpPylonGrabber::operator>>(vpImage<unsigned char> &I)
 
 /*!
 
-   Operator that allows to capture a grey level image.
+   Operator that allows to capture a color image.
    \param I : The captured image.
  */
 vpPylonGrabber &vpPylonGrabber::operator>>(vpImage<vpRGBa> &I)
