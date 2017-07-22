@@ -264,7 +264,19 @@ VP_OPTION(BUILD_TUTORIALS  "" "" "Build ViSP tutorials" "" ON)
 # Build deprecated functions as an option.
 VP_OPTION(BUILD_DEPRECATED_FUNCTIONS  "" "" "Build deprecated functionalities" "" ON)
 # Debug and trace cflags
-VP_OPTION(ACTIVATE_DEBUG_TRACE  "" "" "Enable debug and trace printings" "" ON)
+set(ENABLE_DEBUG_LEVEL 0 CACHE STRING "Set a debug level value between 0 and 9")
+
+if(ENABLE_DEBUG_LEVEL)
+  if(ENABLE_DEBUG_LEVEL MATCHES "^([0-9]+)?$")
+    set(VP_DEBUG_MODE ${CMAKE_MATCH_1})
+    set(VP_DEBUG TRUE)
+    set(VP_TRACE TRUE)
+  else()
+    set(VP_DEBUG_MODE 0)
+  endif()
+else()
+  set(VP_DEBUG_MODE 0)
+endif()
 
 VP_OPTION(BUILD_WITH_STATIC_CRT  "" "" "Enables use of staticaly linked CRT for staticaly linked ViSP" "" ON IF MSVC)
 
