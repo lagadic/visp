@@ -97,6 +97,8 @@ public:
   static unsigned int getNumCameras();
   float getSharpness();
   float getGamma();
+  bool loadUserSet(unsigned int user_set);
+  unsigned int getUserSetDefault();
 
   //! Return true if the camera is connected.
   bool isConnected() const { return m_connected; }
@@ -117,6 +119,8 @@ public:
   float setFrameRate(float frame_rate);
   float setSharpness(bool sharpness_on, float sharpness_value = 0);
   float setGamma(bool gamma_on, float gamma_value);
+  bool saveUserSet(unsigned int user_set, bool set_default = false);
+  bool setUserSetDefault(unsigned int user_set);
 
   void startCapture();
   void stopCapture();
@@ -178,6 +182,7 @@ protected:
 
     return GenApi::IsWritable(prop);
   }
+  bool selectUserSet(unsigned int user_set);
 
 protected:
   Pylon::CInstantCamera m_camera; //!< Pointer to each camera

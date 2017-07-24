@@ -49,6 +49,8 @@
 #include <pylon/gige/BaslerGigEInstantCamera.h>
 #include <pylon/usb/BaslerUsbInstantCamera.h>
 
+#include <visp3/core/vpTime.h>
+
 /*!
    Default constructor that consider the first camera found on the bus as
    active.
@@ -294,6 +296,100 @@ std::string vpPylonGrabber::getCameraSerial(unsigned int index)
   std::ostringstream os;
   os << lstDevices[index].GetSerialNumber();
   return os.str();
+}
+
+/*!
+  \brief Loads the selected configuration into the camera's volatile
+  memory and makes it the active configuration set.
+
+  \param user_set 0 for factory default; 1, 2 and 3 for UserSet1,
+  UserSet2 and UserSet3.
+  \return true for finished, false otherwise.
+
+  \sa saveUserSet(unsigned int, bool)
+ */
+bool vpPylonGrabber::loadUserSet(unsigned int user_set)
+{
+  this->connect();
+
+  bool success = false;
+
+  success = selectUserSet(user_set);
+
+  if (success) {
+    // Get the camera control object.
+    GenApi::INodeMap &control = m_camera.GetNodeMap();
+    GenApi::CPointer<GenApi::ICommand> prop = control.GetNode("UserSetLoad");
+    prop->Execute();
+    vpTime::wait(200); // How long you have to wait?
+    success = prop->IsDone();
+  }
+
+  return success;
+}
+
+/*!
+  \brief Gets the configuration set being used as the default startup
+  set.
+
+  \return 0 for factory default; 1, 2 and 3 for UserSet1,
+  UserSet2 and UserSet3. -1 for other user sets.
+
+  \sa setUserSetDefault()
+ */
+unsigned int vpPylonGrabber::getUserSetDefault()
+{
+  this->connect();
+
+  if (m_camera.IsGigE()) {
+    Basler_GigECamera::UserSetDefaultSelectorEnums user_set =
+        Basler_GigECamera::UserSetDefaultSelector_Default;
+    this->getProperty<Basler_GigECamera::UserSetDefaultSelectorEnums,
+                      GenApi::IEnumerationT<
+                          Basler_GigECamera::UserSetDefaultSelectorEnums>>(
+        "UserSetDefaultSelector", user_set);
+    switch (user_set) {
+    case Basler_GigECamera::UserSetDefaultSelector_Default:
+      return 0;
+      break;
+    case Basler_GigECamera::UserSetDefaultSelector_UserSet1:
+      return 1;
+      break;
+    case Basler_GigECamera::UserSetDefaultSelector_UserSet2:
+      return 2;
+      break;
+    case Basler_GigECamera::UserSetDefaultSelector_UserSet3:
+      return 3;
+      break;
+    default:
+      return -1;
+    }
+  } else if (m_camera.IsUsb()) {
+    Basler_UsbCameraParams::UserSetDefaultEnums user_set =
+        Basler_UsbCameraParams::UserSetDefault_Default;
+    this->getProperty<
+        Basler_UsbCameraParams::UserSetDefaultEnums,
+        GenApi::IEnumerationT<Basler_UsbCameraParams::UserSetDefaultEnums>>(
+        "UserSetDefault", user_set);
+    switch (user_set) {
+    case Basler_UsbCameraParams::UserSetDefault_Default:
+      return 0;
+      break;
+    case Basler_UsbCameraParams::UserSetDefault_UserSet1:
+      return 1;
+      break;
+    case Basler_UsbCameraParams::UserSetDefault_UserSet2:
+      return 2;
+      break;
+    case Basler_UsbCameraParams::UserSetDefault_UserSet3:
+      return 3;
+      break;
+    default:
+      return -1;
+    }
+  } else
+    throw vpException(vpException::notImplementedError,
+                      "Don't know how to get default user set.");
 }
 
 /*!
@@ -628,6 +724,126 @@ float vpPylonGrabber::setGamma(bool gamma_on, float gamma_value)
 }
 
 /*!
+  \brief Saves the current active configuration set into the selected
+  user set.
+
+  \param user_set 0 for factory default; 1, 2 and 3 for UserSet1,
+  UserSet2 and UserSet3.
+  \param set_default Whether to set the configuration set to be used as
+  the default startup set.
+  \return true for finished, false otherwise.
+
+  \sa loadUserSet(unsigned int)
+ */
+bool vpPylonGrabber::saveUserSet(unsigned int user_set, bool set_default)
+{
+  this->connect();
+
+  bool success = false;
+
+  success = selectUserSet(user_set);
+
+  if (success) {
+    // Get the camera control object.
+    GenApi::INodeMap &control = m_camera.GetNodeMap();
+    GenApi::CPointer<GenApi::ICommand> prop = control.GetNode("UserSetSave");
+    prop->Execute();
+    vpTime::wait(200); // How long you have to wait?
+    success = prop->IsDone();
+  }
+
+  if (success)
+    success = setUserSetDefault(user_set);
+
+  return success;
+}
+
+/*!
+  \brief Sets the configuration set to be used as the default startup
+  set.
+
+  \param 0 for factory default; 1, 2 and 3 for UserSet1, UserSet2 and
+  UserSet3. -1 for other user sets.
+  \return true for finished, false otherwise.
+
+  \sa getUserSetDefault()
+ */
+bool vpPylonGrabber::setUserSetDefault(unsigned int user_set)
+{
+  this->connect();
+
+  if (m_camera.IsGigE()) {
+    switch (user_set) {
+    case 0:
+      return this
+          ->setProperty<Basler_GigECamera::UserSetDefaultSelectorEnums,
+                        GenApi::IEnumerationT<
+                            Basler_GigECamera::UserSetDefaultSelectorEnums>>(
+              "UserSetDefaultSelector",
+              Basler_GigECamera::UserSetDefaultSelector_Default);
+      break;
+    case 1:
+      return this
+          ->setProperty<Basler_GigECamera::UserSetDefaultSelectorEnums,
+                        GenApi::IEnumerationT<
+                            Basler_GigECamera::UserSetDefaultSelectorEnums>>(
+              "UserSetDefaultSelector",
+              Basler_GigECamera::UserSetDefaultSelector_UserSet1);
+      break;
+    case 2:
+      return this
+          ->setProperty<Basler_GigECamera::UserSetDefaultSelectorEnums,
+                        GenApi::IEnumerationT<
+                            Basler_GigECamera::UserSetDefaultSelectorEnums>>(
+              "UserSetDefaultSelector",
+              Basler_GigECamera::UserSetDefaultSelector_UserSet2);
+      break;
+    case 3:
+      return this
+          ->setProperty<Basler_GigECamera::UserSetDefaultSelectorEnums,
+                        GenApi::IEnumerationT<
+                            Basler_GigECamera::UserSetDefaultSelectorEnums>>(
+              "UserSetDefaultSelector",
+              Basler_GigECamera::UserSetDefaultSelector_UserSet3);
+      break;
+    default:
+      return false;
+    }
+  } else if (m_camera.IsUsb()) {
+    switch (user_set) {
+    case 0:
+      return this->setProperty<
+          Basler_UsbCameraParams::UserSetDefaultEnums,
+          GenApi::IEnumerationT<Basler_UsbCameraParams::UserSetDefaultEnums>>(
+          "UserSetDefault", Basler_UsbCameraParams::UserSetDefault_Default);
+      break;
+    case 1:
+      return this->setProperty<
+          Basler_UsbCameraParams::UserSetDefaultEnums,
+          GenApi::IEnumerationT<Basler_UsbCameraParams::UserSetDefaultEnums>>(
+          "UserSetDefault", Basler_UsbCameraParams::UserSetDefault_UserSet1);
+      break;
+    case 2:
+      return this->setProperty<
+          Basler_UsbCameraParams::UserSetDefaultEnums,
+          GenApi::IEnumerationT<Basler_UsbCameraParams::UserSetDefaultEnums>>(
+          "UserSetDefault", Basler_UsbCameraParams::UserSetDefault_UserSet2);
+      break;
+    case 3:
+      return this->setProperty<
+          Basler_UsbCameraParams::UserSetDefaultEnums,
+          GenApi::IEnumerationT<Basler_UsbCameraParams::UserSetDefaultEnums>>(
+          "UserSetDefault", Basler_UsbCameraParams::UserSetDefault_UserSet3);
+      break;
+    default:
+      return false;
+    }
+  } else
+    throw vpException(vpException::notImplementedError,
+                      "Don't know how to set default user set.");
+}
+
+/*!
    Start active camera capturing images.
 
    \sa stopCapture()
@@ -829,6 +1045,95 @@ void vpPylonGrabber::open()
 {
   this->connect();
   this->startCapture();
+}
+
+/*!
+  \brief Selects the configuration set to load, save, or configure.
+
+  \param user_set 0 for factory default; 1, 2 and 3 for UserSet1,
+  UserSet2 and UserSet3.
+  \return true for success, false for failure.
+
+  Default User Set is read-only and cannot be modified.
+ */
+bool vpPylonGrabber::selectUserSet(unsigned int user_set)
+{
+  this->connect();
+
+  bool success = false;
+
+  if (m_camera.IsGigE()) {
+    switch (user_set) {
+    case 0:
+      success = this->setProperty<
+          Basler_GigECamera::UserSetSelectorEnums,
+          GenApi::IEnumerationT<Basler_GigECamera::UserSetSelectorEnums>>(
+          "UserSetSelector", Basler_GigECamera::UserSetSelector_Default);
+      break;
+    case 1:
+      success = this->setProperty<
+          Basler_GigECamera::UserSetSelectorEnums,
+          GenApi::IEnumerationT<Basler_GigECamera::UserSetSelectorEnums>>(
+          "UserSetSelector", Basler_GigECamera::UserSetSelector_UserSet1);
+      break;
+    case 2:
+      success = this->setProperty<
+          Basler_GigECamera::UserSetSelectorEnums,
+          GenApi::IEnumerationT<Basler_GigECamera::UserSetSelectorEnums>>(
+          "UserSetSelector", Basler_GigECamera::UserSetSelector_UserSet2);
+      break;
+    case 3:
+      success = this->setProperty<
+          Basler_GigECamera::UserSetSelectorEnums,
+          GenApi::IEnumerationT<Basler_GigECamera::UserSetSelectorEnums>>(
+          "UserSetSelector", Basler_GigECamera::UserSetSelector_UserSet3);
+      break;
+    default:
+      throw vpException(vpException::notImplementedError,
+                        "Unsupported user set.");
+    }
+  } else if (m_camera.IsUsb()) {
+    switch (user_set) {
+    case 0:
+      success = this->setProperty<
+          Basler_UsbCameraParams::UserSetSelectorEnums,
+          GenApi::IEnumerationT<
+              Basler_UsbCameraParams::UserSetSelectorEnums>>(
+          "UserSetSelector", Basler_UsbCameraParams::UserSetSelector_Default);
+      break;
+    case 1:
+      success = this->setProperty<
+          Basler_UsbCameraParams::UserSetSelectorEnums,
+          GenApi::IEnumerationT<
+              Basler_UsbCameraParams::UserSetSelectorEnums>>(
+          "UserSetSelector",
+          Basler_UsbCameraParams::UserSetSelector_UserSet1);
+      break;
+    case 2:
+      success = this->setProperty<
+          Basler_UsbCameraParams::UserSetSelectorEnums,
+          GenApi::IEnumerationT<
+              Basler_UsbCameraParams::UserSetSelectorEnums>>(
+          "UserSetSelector",
+          Basler_UsbCameraParams::UserSetSelector_UserSet2);
+      break;
+    case 3:
+      success = this->setProperty<
+          Basler_UsbCameraParams::UserSetSelectorEnums,
+          GenApi::IEnumerationT<
+              Basler_UsbCameraParams::UserSetSelectorEnums>>(
+          "UserSetSelector",
+          Basler_UsbCameraParams::UserSetSelector_UserSet3);
+      break;
+    default:
+      throw vpException(vpException::notImplementedError,
+                        "Unsupported user set.");
+    }
+  } else
+    throw vpException(vpException::notImplementedError,
+                      "Don't know how to select user set.");
+
+  return success;
 }
 
 /*!
