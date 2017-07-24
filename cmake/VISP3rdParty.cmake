@@ -2,6 +2,13 @@
 # Add 3rd-party libraries build as static libs
 #----------------------------------------------------------------------
 
+if(WITH_APRILTAG)
+  set(APRILTAG_LIBRARY apriltag)
+  add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/apriltag")
+  set(APRILTAG_INCLUDE_DIRS "${${APRILTAG_LIBRARY}_SOURCE_DIR}" "${${APRILTAG_LIBRARY}_BINARY_DIR}")
+  set(APRILTAG_LIBRARIES ${APRILTAG_LIBRARY})
+endif()
+
 if(WITH_ATIDAQ)
   set(ATIDAQ_LIBRARY atidaq_c)
   add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/atidaq")

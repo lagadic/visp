@@ -73,7 +73,7 @@ public:
   /*!
      Default destructor.
      */
-  virtual ~vpDetectorBase() {};
+  virtual ~vpDetectorBase() {}
 
   /*!
     Detect objects in an image.

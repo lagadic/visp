@@ -400,6 +400,7 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF USE_REALSENSE AND NOT WINRT)
+VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF USE_PTHREAD AND UNIX AND NOT APPLE AND NOT WIN32)
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_LAPACK)
@@ -663,6 +664,7 @@ VP_SET(VISP_HAVE_FLYCAPTURE  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FLYCAPTUR
 VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND WITH_ATIDAQ))
 VP_SET(VISP_HAVE_CLIPPER     TRUE IF (BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_klt AND WITH_CLIPPER))
+VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG))
 
 VP_SET(VISP_BUILD_SHARED_LIBS TRUE IF BUILD_SHARED_LIBS) # for header vpConfig.h
 VP_SET(VISP_HAVE_DC1394_CAMERA_ENUMERATE TRUE IF (USE_DC1394 AND DC1394_CAMERA_ENUMERATE_FOUND)) # for header vpConfig.h
@@ -1115,8 +1117,9 @@ status("    Use zbar:"               USE_ZBAR         THEN "yes (ver ${ZBAR_VERS
 status("    Use dmtx:"               USE_DMTX         THEN "yes (ver ${DMTX_VERSION})" ELSE "no")
 status("")
 status("  Misc: ")
-status("    Use clipper (built-in):" WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
-status("    Use XML2:"               USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
+status("    Use AprilTag (built-in):" WITH_APRILTAG    THEN "yes" ELSE "no")
+status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
+status("    Use XML2:"                USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
 status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP       THEN "yes" ELSE "no")

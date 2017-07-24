@@ -53,7 +53,10 @@ if(USE_ZBAR)
   vp_set_source_file_compile_flag(src/barcode/vpDetectorQRCode.cpp -Wno-unused-parameter)
 endif()
 
-vp_add_module(detection visp_core)
+# April Tag is private
+include_directories(${APRILTAG_INCLUDE_DIRS})
+
+vp_add_module(detection visp_core visp_vision PRIVATE_OPTIONAL ${APRILTAG_LIBRARIES})
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
