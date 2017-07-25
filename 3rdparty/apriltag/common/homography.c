@@ -323,9 +323,9 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
         // "proper", but probably increases the reprojection error. An
         // iterative alignment step would be superior.
 
-        matd_t *R = matd_create_data(3, 3, (double[]) { R00, -R01, R02,
-                                                        R10, -R11, R12,
-                                                        R20, -R21, R22 });
+        matd_t *R = matd_create_data(3, 3, (double[]) { R00, R01, R02,
+                                                        R10, R11, R12,
+                                                        R20, R21, R22 });
 
         matd_svd_t svd = matd_svd(R);
         matd_destroy(R);
@@ -349,9 +349,9 @@ matd_t *homography_to_pose(const matd_t *H, double fx, double fy, double cx, dou
         matd_destroy(R);
     }
 
-    return matd_create_data(4, 4, (double[]) { R00, R01, R02, TX*markerScale,
-                                               R10, R11, R12, TY*markerScale,
-                                               R20, R21, R22, TZ*markerScale,
+    return matd_create_data(4, 4, (double[]) { -R00, R01, -R02, -TX*markerScale,
+                                               -R10, R11, -R12, -TY*markerScale,
+                                               -R20, R21, -R22, -TZ*markerScale,
                                                 0, 0, 0, 1 });
 }
 
