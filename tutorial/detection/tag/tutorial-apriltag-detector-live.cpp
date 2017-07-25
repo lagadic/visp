@@ -13,7 +13,7 @@
 
 int main(int argc, const char** argv) {
   //! [Macro defined]
-#if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) && (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV)))
   //! [Macro defined]
 
   int opt_device = 0;
@@ -108,7 +108,7 @@ int main(int argc, const char** argv) {
       //! [Acquisition]
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
-#else
+#elif defined(VISP_HAVE_OPENCV)
       cap >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
 #endif
