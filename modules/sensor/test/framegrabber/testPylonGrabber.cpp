@@ -69,54 +69,56 @@ int main()
     // Creation of an empty image container
     vpImage<unsigned char> I;
 
+    vpPylonFactory &factory = vpPylonFactory::instance();
     // Creation of a framegrabber
-    vpPylonGrabber g;
+    vpPylonGrabber *g =
+        factory.createPylonGrabber(vpPylonFactory::BaslerGigE);
     std::string guid;
 
     // Get the number of cameras connected on the bus
     unsigned int ncameras; // Number of cameras on the bus
-    ncameras = g.getNumCameras();
+    ncameras = g->getNumCameras();
     for (unsigned int i = 0; i < ncameras; i++) {
-      g.setCameraIndex(i);
-      guid = g.getCameraSerial(i);
+      g->setCameraIndex(i);
+      guid = g->getCameraSerial(i);
       std::cout << "Detected camera with serial: " << guid << std::endl;
     }
     // If more than one camera connected, use the first one
     if (ncameras > 1) {
-      g.setCameraIndex(0);
-      guid = g.getCameraSerial(0);
+      g->setCameraIndex(0);
+      guid = g->getCameraSerial(0);
       std::cout << "Use camera with serial: " << guid << std::endl;
       // to be sure that the setCamera() in the next line with
       // guid as parameter works
-      g.setCameraIndex(0);
-      g.setCameraSerial(guid);
+      g->setCameraIndex(0);
+      g->setCameraSerial(guid);
     }
-    g.getCameraInfo(std::cout);
+    g->getCameraInfo(std::cout);
 
-    std::cout << "Frame rate: " << g.getFrameRate() << std::endl;
-    std::cout << "Gain: " << g.getGain() << std::endl;
-    std::cout << "Gamma: " << g.getGamma() << std::endl;
-    std::cout << "Exposure time (ms): " << g.getExposure() << std::endl;
-    float blackLevel = g.getBlackLevel();
+    std::cout << "Frame rate: " << g->getFrameRate() << std::endl;
+    std::cout << "Gain: " << g->getGain() << std::endl;
+    std::cout << "Gamma: " << g->getGamma() << std::endl;
+    std::cout << "Exposure time (ms): " << g->getExposure() << std::endl;
+    float blackLevel = g->getBlackLevel();
     std::cout << "Black level: " << blackLevel << std::endl;
 
     for (int i = 0; i < 10; i++)
-      g.acquire(I);
-    g.close();
-    std::cout << "Current image size: " << g.getWidth() << "x"
-              << g.getHeight() << std::endl;
+      g->acquire(I);
+    g->close();
+    std::cout << "Current image size: " << g->getWidth() << "x"
+              << g->getHeight() << std::endl;
 
     std::string filename = outputpath + "/imagetest1.pgm";
     std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename);
 
     std::cout << "New connection..." << std::endl;
-    g.open(I);
-    g.close();
+    g->open(I);
+    g->close();
 
     std::cout << "New connection..." << std::endl;
-    g.open(I);
-    g.close();
+    g->open(I);
+    g->close();
     filename = outputpath + "/imagetest2.pgm";
     std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename);
