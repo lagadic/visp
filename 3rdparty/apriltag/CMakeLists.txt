@@ -7,6 +7,7 @@ file(GLOB lib_hdrs *.h common/*.h)
 
 add_library(${APRILTAG_LIBRARY} STATIC ${lib_srcs} ${lib_hdrs})
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C99_C_FLAGS}")
 if(CMAKE_COMPILER_IS_GNUCXX AND UNIX)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 endif()

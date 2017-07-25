@@ -41,6 +41,10 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 #include "image_f32.h"
 
+#ifndef HUGE
+# define HUGE 3.40282347e+38F
+#endif
+
 
 static inline float sqf(float v)
 {
