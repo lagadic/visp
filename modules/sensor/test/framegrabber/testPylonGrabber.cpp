@@ -51,7 +51,7 @@
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/sensor/vpPylonGrabber.h>
+#include <visp3/sensor/vpPylonFactory.h>
 /*!
   \example testPylonGrabber.cpp
 */

@@ -382,45 +382,5 @@ public:
   virtual void stopCapture() = 0;
 };
 
-/*!
-  \brief Factory singleton class to create vpPylonGrabber subclass
-  instances.
-
-  \ingroup group_sensor_camera
-
-  Use vpPylonFactory::instance() to get the singleton instance. This
-  class can also help to initialize and terminate pylon runtime system.
-
-  Example code.
-  \code
-  vpPylonFactory &factory = vpPylonFactory::instance();
-  vpPylonGrabber *g =
-  factory.createPylonGrabber(vpPylonFactory::BaslerGigE);
-  \endcode
- */
-class VISP_EXPORT vpPylonFactory
-{
-public:
-  static vpPylonFactory &instance();
-
-  /*! \enum Device class of cameras.
-   */
-  enum DeviceClass {
-    BaslerGigE, //!< Basler GigE camera.
-    BaslerUsb   //!< Basler USB camera.
-  };
-
-  vpPylonGrabber *createPylonGrabber(DeviceClass dev_class);
-
-private:
-  //! Default constructor.
-  vpPylonFactory(){};
-  vpPylonFactory(vpPylonFactory const &);
-  void operator=(vpPylonFactory const &);
-
-  Pylon::PylonAutoInitTerm
-      m_autoInitTerm; //!< Auto initialize and terminate object for pylon SDK.
-};
-
 #endif // #ifdef VISP_HAVE_PYLON
 #endif // #ifndef __vpPylonGrabber_h_

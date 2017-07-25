@@ -27,8 +27,7 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- * Description: Classes allow to grab images from a Basler camera using
- * Pylon SDK.
+ * Description: Implementation of vpPylonGrabberGigE class.
  *
  * Authors:
  * Wenfeng CAI
@@ -36,92 +35,17 @@
  *****************************************************************************/
 
 /*!
-  \file vpPylonGrabber.cpp
-  \brief Wrapper over Basler Pylon SDK to capture images from Basler
-  cameras.
+  \file vpPylonGrabberGigE.cpp
+  \brief Subclass of vpPylonGrabber, implements Basler GigE cameras
+  supporting.
 */
 
-#include <visp3/core/vpException.h>
-#include <visp3/sensor/vpPylonGrabber.h>
+#include "vpPylonGrabberGigE.h"
 
 #ifdef VISP_HAVE_PYLON
 
-#include <pylon/gige/BaslerGigEInstantCamera.h>
-#include <pylon/usb/BaslerUsbInstantCamera.h>
-
+#include <visp3/core/vpException.h>
 #include <visp3/core/vpTime.h>
-
-/* #####   CLASS vpPylonGrabberGigE   ##################################### */
-
-/*!
-  \class vpPylonGrabberGigE
-
-  Allows to grab images from a Basler GigE camera using Pylon SDK.
-
-  This class should not be instantiated directly. Use
-  vpPylonFactory::createPylonGrabber() instead.
- */
-class VISP_EXPORT vpPylonGrabberGigE : public vpPylonGrabber
-{
-public:
-  vpPylonGrabberGigE();
-  ~vpPylonGrabberGigE();
-
-  void acquire(vpImage<unsigned char> &I);
-  void acquire(vpImage<vpRGBa> &I);
-
-  void close();
-  void connect();
-  void disconnect();
-
-  float getBlackLevel();
-  std::ostream &getCameraInfo(std::ostream &os);
-  Pylon::CInstantCamera *getCameraHandler();
-  /*! Return the index of the active camera. */
-  unsigned int getCameraIndex() const { return m_index; };
-  std::string getCameraSerial(unsigned int index);
-  float getExposure();
-  float getFrameRate();
-  float getGain();
-  unsigned int getNumCameras();
-  float getGamma();
-  bool loadUserSet(UserSetName user_set);
-  UserSetName getUserSetDefault();
-
-  //! Return true if the camera is connected.
-  bool isConnected() const { return m_connected; }
-  //! Return true if the camera capture is started.
-  bool isCaptureStarted() const { return m_camera.IsGrabbing(); }
-  void open(vpImage<unsigned char> &I);
-  void open(vpImage<vpRGBa> &I);
-
-  vpPylonGrabber &operator>>(vpImage<unsigned char> &I);
-  vpPylonGrabber &operator>>(vpImage<vpRGBa> &I);
-
-  float setBlackLevel(float blacklevel_value = 0);
-  void setCameraIndex(unsigned int index);
-  void setCameraSerial(std::string &serial);
-  float setExposure(bool exposure_on, bool exposure_auto,
-                    float exposure_value = 0);
-  float setGain(bool gain_auto, float gain_value = 0);
-  float setFrameRate(float frame_rate);
-  float setGamma(bool gamma_on, float gamma_value);
-  bool saveUserSet(UserSetName user_set, bool set_default = false);
-  bool setUserSetDefault(UserSetName user_set);
-
-  void startCapture();
-  void stopCapture();
-
-protected:
-  void open();
-  bool selectUserSet(UserSetName user_set);
-
-private:
-  Pylon::CBaslerGigEInstantCamera m_camera; //!< Pointer to each camera
-  unsigned int m_index;                     //!< Active camera index
-  unsigned int m_numCameras; //!< Number of connected GigE cameras
-  bool m_connected;          //!< true if camera connected
-};
 
 /*!
    Default constructor that consider the first camera found on the bus as
@@ -917,41 +841,8 @@ vpPylonGrabber &vpPylonGrabberGigE::operator>>(vpImage<vpRGBa> &I)
   return *this;
 }
 
-/* #####   CLASS vpPylonFactory   ######################################### */
-
-/*!
-  \brief Get the vpPylonFactory singleton.
- */
-vpPylonFactory &vpPylonFactory::instance()
-{
-  static vpPylonFactory instance;
-
-  return instance;
-}
-
-/*!
-  \brief Create an object of vpPylonGrabber.
-
-  \param  dev_class The device class. See vpPylonFactory::DeviceClass
-  for valid values.
-  \return The pointer towards the vpPylonGrabber object. It's the
-  caller's responsibility to destroy the object. NULL pointer will be
-  returned if requested object can't be properly created.
- */
-vpPylonGrabber *vpPylonFactory::createPylonGrabber(DeviceClass dev_class)
-{
-  switch (dev_class) {
-  case BaslerGigE:
-    return new vpPylonGrabberGigE();
-    break;
-  default:
-    return NULL;
-    break;
-  }
-}
-
 #else
 // Work arround to avoid warning:
-// libvisp_pylon.a(vpPylonGrabber.cpp.o) has no symbols
-void dummy_vpPylonGrabber(){};
+// libvisp_pylon.a(vpPylonGrabberGigE.cpp.o) has no symbols
+void dummy_vpPylonGrabberGigE(){};
 #endif // #ifdef VISP_HAVE_PYLON

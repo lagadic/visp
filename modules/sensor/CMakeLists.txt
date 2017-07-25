@@ -174,7 +174,8 @@ endif()
 if(USE_PYLON)
   # Add specific build flag to turn off warnings coming from Basler
   # pylon headers
-  vp_set_source_file_compile_flag(src/framegrabber/pylon/vpPylonGrabber.cpp -Wno-unknown-pragmas -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(src/framegrabber/pylon/vpPylonFactory.cpp -Wno-unknown-pragmas)
+  vp_set_source_file_compile_flag(src/framegrabber/pylon/vpPylonGrabberGigE.cpp -Wno-unknown-pragmas -Wno-unused-parameter)
   vp_set_source_file_compile_flag(test/framegrabber/testPylonGrabber.cpp -Wno-unknown-pragmas)
 endif()
 if(USE_REALSENSE)
