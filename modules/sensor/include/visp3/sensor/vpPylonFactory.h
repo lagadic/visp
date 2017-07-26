@@ -62,7 +62,7 @@
   \code
   vpPylonFactory &factory = vpPylonFactory::instance();
   vpPylonGrabber *g =
-  factory.createPylonGrabber(vpPylonFactory::BaslerGigE);
+  factory.createPylonGrabber(vpPylonFactory::BASLER_GIGE);
   \endcode
  */
 class VISP_EXPORT vpPylonFactory
@@ -70,7 +70,7 @@ class VISP_EXPORT vpPylonFactory
 public:
   static vpPylonFactory &instance();
 
-  /*! \enum Device class of cameras.
+  /*! Device class of cameras.
    */
   enum DeviceClass {
     BASLER_GIGE, //!< Basler GigE camera.

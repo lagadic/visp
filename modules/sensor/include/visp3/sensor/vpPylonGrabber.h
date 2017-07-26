@@ -65,7 +65,7 @@
   \code
   vpPylonFactory &factory = vpPylonFactory::instance();
   vpPylonGrabber *g =
-  factory.createPylonGrabber(vpPylonFactory::BaslerGigE);
+  factory.createPylonGrabber(vpPylonFactory::BASLER_GIGE);
   \endcode
 
   To use this class install first Pylon SDK\n
@@ -90,7 +90,7 @@ public:
    */
   virtual ~vpPylonGrabber(){};
 
-  /*! \enum Valid values for user set names.
+  /*! Valid values for user set names.
    */
   enum UserSetName {
     USERSET_DEFAULT,  //!< The default user set.
