@@ -45,6 +45,7 @@
 #ifdef VISP_HAVE_PYLON
 
 #include "vpPylonGrabberGigE.h"
+#include "vpPylonGrabberUsb.h"
 
 /*!
   \brief Get the vpPylonFactory singleton.
@@ -70,6 +71,9 @@ vpPylonGrabber *vpPylonFactory::createPylonGrabber(DeviceClass dev_class)
   switch (dev_class) {
   case BASLER_GIGE:
     return new vpPylonGrabberGigE();
+    break;
+  case BASLER_USB:
+    return new vpPylonGrabberUsb();
     break;
   default:
     return NULL;
