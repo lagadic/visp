@@ -72,7 +72,7 @@ int main()
     vpPylonFactory &factory = vpPylonFactory::instance();
     // Creation of a framegrabber
     vpPylonGrabber *g =
-        factory.createPylonGrabber(vpPylonFactory::BaslerGigE);
+        factory.createPylonGrabber(vpPylonFactory::BASLER_GIGE);
     std::string guid;
 
     // Get the number of cameras connected on the bus

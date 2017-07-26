@@ -93,11 +93,11 @@ public:
   /*! \enum Valid values for user set names.
    */
   enum UserSetName {
-    UserSet_Default,  //!< The default user set.
-    UserSet_UserSet1, //!< User set 1.
-    UserSet_UserSet2, //!< User set 2.
-    UserSet_UserSet3, //!< User set 3.
-    UserSet_Unknown   //!< User set not supported.
+    USERSET_DEFAULT,  //!< The default user set.
+    USERSET_USERSET1, //!< User set 1.
+    USERSET_USERSET2, //!< User set 2.
+    USERSET_USERSET3, //!< User set 3.
+    USERSET_UNKNOWN   //!< User set not supported.
   };
 
   /*!
@@ -215,7 +215,7 @@ public:
     \param user_set See vpPylonGrabber::UserSetName for valid values.
     \return true for finished, false otherwise.
 
-    \sa saveUserSet(unsigned int, bool)
+    \sa saveUserSet()
    */
   virtual bool loadUserSet(UserSetName user_set) = 0;
   /*!
@@ -343,7 +343,7 @@ public:
 
     \sa getGamma()
    */
-  virtual float setGamma(bool gamma_on, float gamma_value) = 0;
+  virtual float setGamma(bool gamma_on, float gamma_value = 0) = 0;
   /*!
     \brief Saves the current active configuration set into the selected
     user set.
@@ -353,7 +353,7 @@ public:
     the default startup set.
     \return true for finished, false otherwise.
 
-    \sa loadUserSet(unsigned int)
+    \sa loadUserSet()
    */
   virtual bool saveUserSet(UserSetName user_set,
                            bool set_default = false) = 0;

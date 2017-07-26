@@ -40,6 +40,11 @@
   supporting.
 */
 
+#ifndef __vpPylonGrabberGigE_h_
+#define __vpPylonGrabberGigE_h_
+
+#include <visp3/core/vpConfig.h>
+
 #include <visp3/sensor/vpPylonGrabber.h>
 
 #ifdef VISP_HAVE_PYLON
@@ -100,7 +105,7 @@ public:
                     float exposure_value = 0);
   float setGain(bool gain_auto, float gain_value = 0);
   float setFrameRate(float frame_rate);
-  float setGamma(bool gamma_on, float gamma_value);
+  float setGamma(bool gamma_on, float gamma_value = 0);
   bool saveUserSet(UserSetName user_set, bool set_default = false);
   bool setUserSetDefault(UserSetName user_set);
 
@@ -118,8 +123,5 @@ private:
   bool m_connected;          //!< true if camera connected
 };
 
-#else
-// Work arround to avoid warning:
-// libvisp_pylon.a(vpPylonGrabberGigE.cpp.o) has no symbols
-void dummy_vpPylonGrabberGigE(){};
 #endif // #ifdef VISP_HAVE_PYLON
+#endif // #ifndef __vpPylonGrabberGigE_h_

@@ -37,6 +37,8 @@
 #ifndef __vpPylonFactory_h_
 #define __vpPylonFactory_h_
 
+#include <visp3/core/vpConfig.h>
+
 #include <visp3/sensor/vpPylonGrabber.h>
 
 #ifdef VISP_HAVE_PYLON
@@ -71,8 +73,8 @@ public:
   /*! \enum Device class of cameras.
    */
   enum DeviceClass {
-    BaslerGigE, //!< Basler GigE camera.
-    BaslerUsb   //!< Basler USB camera.
+    BASLER_GIGE, //!< Basler GigE camera.
+    BASLER_USB   //!< Basler USB camera.
   };
 
   vpPylonGrabber *createPylonGrabber(DeviceClass dev_class);

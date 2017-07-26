@@ -68,7 +68,7 @@ vpPylonFactory &vpPylonFactory::instance()
 vpPylonGrabber *vpPylonFactory::createPylonGrabber(DeviceClass dev_class)
 {
   switch (dev_class) {
-  case BaslerGigE:
+  case BASLER_GIGE:
     return new vpPylonGrabberGigE();
     break;
   default:

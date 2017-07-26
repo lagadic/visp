@@ -60,13 +60,7 @@ vpPylonGrabberGigE::vpPylonGrabberGigE()
 /*!
    Default destructor that closes the connection with the camera.
  */
-vpPylonGrabberGigE::~vpPylonGrabberGigE()
-{
-  close();
-  // It looks like that ~CInstantCamera can't destroy or remove the
-  // attached device properly.
-  // m_camera.DestroyDevice();
-}
+vpPylonGrabberGigE::~vpPylonGrabberGigE() { close(); }
 
 /*!
   \return Return the number of cameras connected on the bus.
@@ -260,7 +254,7 @@ std::string vpPylonGrabberGigE::getCameraSerial(unsigned int index)
   \param user_set See vpPylonGrabber::UserSetName for valid values.
   \return true for finished, false otherwise.
 
-  \sa saveUserSet(unsigned int, bool)
+  \sa saveUserSet()
  */
 bool vpPylonGrabberGigE::loadUserSet(UserSetName user_set)
 {
@@ -294,19 +288,19 @@ vpPylonGrabber::UserSetName vpPylonGrabberGigE::getUserSetDefault()
 
   switch (user_set) {
   case Basler_GigECamera::UserSetDefaultSelector_Default:
-    return UserSet_Default;
+    return USERSET_DEFAULT;
     break;
   case Basler_GigECamera::UserSetDefaultSelector_UserSet1:
-    return UserSet_UserSet1;
+    return USERSET_USERSET1;
     break;
   case Basler_GigECamera::UserSetDefaultSelector_UserSet2:
-    return UserSet_UserSet2;
+    return USERSET_USERSET2;
     break;
   case Basler_GigECamera::UserSetDefaultSelector_UserSet3:
-    return UserSet_UserSet3;
+    return USERSET_USERSET3;
     break;
   default:
-    return UserSet_Unknown;
+    return USERSET_UNKNOWN;
   }
 }
 
@@ -348,7 +342,7 @@ void vpPylonGrabberGigE::setCameraSerial(std::string &serial)
 {
   m_numCameras = getNumCameras();
   for (unsigned int i = 0; i < m_numCameras; i++) {
-    if (vpPylonGrabberGigE::getCameraSerial(i) == serial) {
+    if (getCameraSerial(i) == serial) {
       m_index = i;
       return;
     }
@@ -515,7 +509,7 @@ float vpPylonGrabberGigE::setGamma(bool gamma_on, float gamma_value)
   the default startup set.
   \return true for finished, false otherwise.
 
-  \sa loadUserSet(unsigned int)
+  \sa loadUserSet()
  */
 bool vpPylonGrabberGigE::saveUserSet(UserSetName user_set, bool set_default)
 {
@@ -551,22 +545,22 @@ bool vpPylonGrabberGigE::setUserSetDefault(UserSetName user_set)
   connect();
 
   switch (user_set) {
-  case UserSet_Default:
+  case USERSET_DEFAULT:
     m_camera.UserSetDefaultSelector.SetValue(
         Basler_GigECamera::UserSetDefaultSelector_Default);
     return true;
     break;
-  case UserSet_UserSet1:
+  case USERSET_USERSET1:
     m_camera.UserSetDefaultSelector.SetValue(
         Basler_GigECamera::UserSetDefaultSelector_UserSet1);
     return true;
     break;
-  case UserSet_UserSet2:
+  case USERSET_USERSET2:
     m_camera.UserSetDefaultSelector.SetValue(
         Basler_GigECamera::UserSetDefaultSelector_UserSet2);
     return true;
     break;
-  case UserSet_UserSet3:
+  case USERSET_USERSET3:
     m_camera.UserSetDefaultSelector.SetValue(
         Basler_GigECamera::UserSetDefaultSelector_UserSet3);
     return true;
@@ -796,22 +790,22 @@ bool vpPylonGrabberGigE::selectUserSet(UserSetName user_set)
   connect();
 
   switch (user_set) {
-  case UserSet_Default:
+  case USERSET_DEFAULT:
     m_camera.UserSetSelector.SetValue(
         Basler_GigECamera::UserSetSelector_Default);
     return true;
     break;
-  case UserSet_UserSet1:
+  case USERSET_USERSET1:
     m_camera.UserSetSelector.SetValue(
         Basler_GigECamera::UserSetSelector_UserSet1);
     return true;
     break;
-  case UserSet_UserSet2:
+  case USERSET_USERSET2:
     m_camera.UserSetSelector.SetValue(
         Basler_GigECamera::UserSetSelector_UserSet2);
     return true;
     break;
-  case UserSet_UserSet3:
+  case USERSET_USERSET3:
     m_camera.UserSetSelector.SetValue(
         Basler_GigECamera::UserSetSelector_UserSet3);
     return true;
