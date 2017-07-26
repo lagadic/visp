@@ -105,7 +105,7 @@ public:
                     float exposure_value = 0);
   float setGain(bool gain_auto, float gain_value = 0);
   float setFrameRate(float frame_rate);
-  float setGamma(bool gamma_on, float gamma_value = 0);
+  float setGamma(bool gamma_on, float gamma_value = 1);
   bool saveUserSet(UserSetName user_set, bool set_default = false);
   bool setUserSetDefault(UserSetName user_set);
 

@@ -343,7 +343,7 @@ public:
 
     \sa getGamma()
    */
-  virtual float setGamma(bool gamma_on, float gamma_value = 0) = 0;
+  virtual float setGamma(bool gamma_on, float gamma_value = 1) = 0;
   /*!
     \brief Saves the current active configuration set into the selected
     user set.

@@ -480,7 +480,7 @@ float vpPylonGrabberUsb::setGamma(bool gamma_on, float gamma_value)
     if (gamma_on)
       m_camera.Gamma.SetValue(gamma_value);
     else
-      m_camera.Gamma.SetValue(0);
+      m_camera.Gamma.SetValue(1);
     return m_camera.Gamma.GetValue();
   } else
     throw vpException(vpException::notImplementedError,
