@@ -157,8 +157,11 @@ if(USE_PCL)
   endif()
 endif()
 
-# atidac is private
-include_directories(${ATIDAQ_INCLUDE_DIRS})
+if(WITH_ATIDAQ)
+  # atidac is private
+  include_directories(${ATIDAQ_INCLUDE_DIRS})
+endif()
+
 vp_add_module(sensor visp_core PRIVATE_OPTIONAL ${ATIDAQ_LIBRARIES})
 vp_glob_module_sources()
 

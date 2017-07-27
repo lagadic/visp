@@ -185,8 +185,10 @@ if(USE_PCL)
   endif()
 endif()
 
-# clipper is private
-include_directories(${CLIPPER_INCLUDE_DIRS})
+if(WITH_CLIPPER)
+  # clipper is private
+  include_directories(${CLIPPER_INCLUDE_DIRS})
+endif()
 
 vp_add_module(mbt visp_vision visp_core visp_me visp_visual_features OPTIONAL visp_ar visp_klt visp_gui PRIVATE_OPTIONAL ${CLIPPER_LIBRARIES})
 vp_glob_module_sources()
