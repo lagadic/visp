@@ -52,12 +52,15 @@ if(USE_ZBAR)
   # Add specific build flag to turn off warnings coming from zbar 3rd party
   vp_set_source_file_compile_flag(src/barcode/vpDetectorQRCode.cpp -Wno-unused-parameter)
 endif()
+if(WITH_APRILTAG)
+  # April Tag is private
+  include_directories(${APRILTAG_INCLUDE_DIRS})
 
-# April Tag is private
-include_directories(${APRILTAG_INCLUDE_DIRS})
+  # Add specific build flag to turn off warnings coming from apriltag 3rd party
+  vp_set_source_file_compile_flag(src/tag/vpDetectorAprilTag.cpp -Wno-unused-parameter)
+endif()
 
 vp_add_module(detection visp_core visp_vision PRIVATE_OPTIONAL ${APRILTAG_LIBRARIES})
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-
