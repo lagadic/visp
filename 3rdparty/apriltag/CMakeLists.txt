@@ -5,6 +5,8 @@ vp_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 file(GLOB lib_srcs *.c common/*.c)
 file(GLOB lib_hdrs *.h common/*.h)
 
+vp_list_filterout(lib_srcs common/unionfind.c) # has no symbols
+
 add_library(${APRILTAG_LIBRARY} STATIC ${lib_srcs} ${lib_hdrs})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C99_C_FLAGS}")
