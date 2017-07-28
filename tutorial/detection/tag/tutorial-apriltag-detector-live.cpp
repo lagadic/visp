@@ -5,7 +5,9 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
+#ifdef VISP_HAVE_XML2
 #include <visp3/core/vpXmlParserCamera.h>
+#endif
 #ifdef VISP_HAVE_V4L2
 #include <visp3/sensor/vpV4l2Grabber.h>
 #endif
@@ -55,10 +57,11 @@ int main(int argc, const char** argv) {
   }
 
   vpCameraParameters cam;
+  cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
+#ifdef VISP_HAVE_XML2
   vpXmlParserCamera parser;
-  if (parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
-    cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
-  }
+  parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
+#endif
   std::cout << "cam:\n" << cam << std::endl;
 
   try {

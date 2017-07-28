@@ -59,6 +59,11 @@ either expressed or implied, of the Regents of The University of Michigan.
 # define M_PI 3.141592653589793238462643383279502884196
 #endif
 
+#ifdef __MINGW32__
+#define srandom srand
+#define random rand
+#endif
+
 extern zarray_t *apriltag_quad_gradient(apriltag_detector_t *td, image_u8_t *im);
 extern zarray_t *apriltag_quad_thresh(apriltag_detector_t *td, image_u8_t *im);
 
