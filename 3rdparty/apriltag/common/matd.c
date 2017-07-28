@@ -816,7 +816,11 @@ matd_t *matd_op(const char *expr, ...)
     va_list ap;
     va_start(ap, expr);
 
+#ifdef _MSC_VER
+    matd_t **args = malloc(nargs*sizeof *args);
+#else
     matd_t *args[nargs];
+#endif
     for (int i = 0; i < nargs; i++) {
         args[i] = va_arg(ap, matd_t*);
         // XXX: sanity check argument; emit warning/error if args[i]
@@ -829,8 +833,12 @@ matd_t *matd_op(const char *expr, ...)
     int argpos = 0;
     int garbpos = 0;
 
+#ifdef _MSC_VER
+    matd_t **garb = malloc(2 * exprlen*sizeof *garb);
+#else
     matd_t *garb[2*exprlen]; // can't create more than 2 new result per character
                              // one result, and possibly one argument to free
+#endif
 
     matd_t *res = matd_op_recurse(expr, &pos, NULL, args, &argpos, garb, &garbpos, 0);
 
@@ -840,6 +848,11 @@ matd_t *matd_op(const char *expr, ...)
     for (int i = 0; i < garbpos; i++) {
         matd_destroy(garb[i]);
     }
+
+#ifdef _MSC_VER
+    free(args);
+    free(garb);
+#endif
 
     return res_copy;
 }
@@ -1026,7 +1039,11 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
             //
             int vlen = A->nrows - hhidx;
 
+#ifdef _MSC_VER
+            double *v = malloc(vlen*sizeof *v);
+#else
             double v[vlen];
+#endif
 
             double mag2 = 0;
             for (int i = 0; i < vlen; i++) {
@@ -1078,12 +1095,20 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
                 for (int j = 0; j < vlen; j++)
                     MATD_EL(B, hhidx+j, i) -= 2*dot*v[j];
             }
+
+#ifdef _MSC_VER
+            free(v);
+#endif
         }
 
         if (hhidx+2 < A->ncols) {
             int vlen = A->ncols - hhidx - 1;
 
+#ifdef _MSC_VER
+            double *v = malloc(vlen*sizeof *v);
+#else
             double v[vlen];
+#endif
 
             double mag2 = 0;
             for (int i = 0; i < vlen; i++) {
@@ -1132,6 +1157,10 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
                 for (int j = 0; j < vlen; j++)
                     MATD_EL(B, i, hhidx+1+j) -= 2*dot*v[j];
             }
+
+#ifdef _MSC_VER
+            free(v);
+#endif
         }
     }
 
@@ -1152,7 +1181,11 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
 
     // for each of the first B->ncols rows, which index has the
     // maximum absolute value? (used by method 1)
+#ifdef _MSC_VER
+    int *maxrowidx = malloc(B->ncols*sizeof *maxrowidx);
+#else
     int maxrowidx[B->ncols];
+#endif
     int lastmaxi, lastmaxj;
 
     if (find_max_method == 1) {
@@ -1375,8 +1408,13 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
 
     // them all positive by flipping the corresponding columns of
     // U/LS.
+#ifdef _MSC_VER
+    int *idxs = malloc(A->ncols*sizeof *idxs);
+    double *vals = malloc(A->ncols*sizeof *vals);
+#else
     int idxs[A->ncols];
     double vals[A->ncols];
+#endif
     for (int i = 0; i < A->ncols; i++) {
         idxs[i] = i;
         vals[i] = MATD_EL(B, i, i);
@@ -1441,6 +1479,12 @@ static matd_svd_t matd_svd_tall(matd_t *A, int flags)
     res.U = LS;
     res.S = B;
     res.V = RS;
+
+#ifdef _MSC_VER
+    free(maxrowidx);
+    free(idxs);
+    free(vals);
+#endif
 
     return res;
 }
@@ -1536,7 +1580,11 @@ matd_plu_t *matd_plu(const matd_t *a)
 
         // swap rows p and j?
         if (p != j) {
+#ifdef _MSC_VER
+          TYPE *tmp = malloc(lu->ncols*sizeof *tmp);
+#else
             TYPE tmp[lu->ncols];
+#endif
             memcpy(tmp, &MATD_EL(lu, p, 0), sizeof(TYPE) * lu->ncols);
             memcpy(&MATD_EL(lu, p, 0), &MATD_EL(lu, j, 0), sizeof(TYPE) * lu->ncols);
             memcpy(&MATD_EL(lu, j, 0), tmp, sizeof(TYPE) * lu->ncols);
@@ -1544,6 +1592,10 @@ matd_plu_t *matd_plu(const matd_t *a)
             piv[p] = piv[j];
             piv[j] = k;
             pivsign = -pivsign;
+
+#ifdef _MSC_VER
+            free(tmp);
+#endif
         }
 
         double LUjj = MATD_EL(lu, j, j);

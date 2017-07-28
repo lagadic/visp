@@ -230,13 +230,21 @@ int zhash_remove(zhash_t *zh, const void *key, void *old_key, void *old_value)
 
                 if (zh->entries[entry_idx * zh->entrysz]) {
                     // completely remove this entry
+#ifdef _MSC_VER
+                  char *tmp = malloc(zh->entrysz*sizeof *tmp);
+#else
                     char tmp[zh->entrysz];
+#endif
                     memcpy(tmp, &zh->entries[entry_idx * zh->entrysz], zh->entrysz);
                     zh->entries[entry_idx * zh->entrysz] = 0;
                     zh->size--;
                     // reinsert it
                     if (zhash_put(zh, &tmp[1], &tmp[1+zh->keysz], NULL, NULL))
                         assert(0);
+
+#ifdef _MSC_VER
+                    free(tmp);
+#endif
                 } else {
                     break;
                 }
@@ -341,7 +349,11 @@ void zhash_iterator_remove(zhash_iterator_t *zit)
     int entry_idx = (zit->last_entry + 1) & (zh->nentries - 1);
     while (zh->entries[entry_idx *zh->entrysz]) {
         // completely remove this entry
+#ifdef _MSC_VER
+      char *tmp = malloc(zh->entrysz*sizeof *tmp);
+#else
         char tmp[zh->entrysz];
+#endif
         memcpy(tmp, &zh->entries[entry_idx * zh->entrysz], zh->entrysz);
         zh->entries[entry_idx * zh->entrysz] = 0;
         zh->size--;

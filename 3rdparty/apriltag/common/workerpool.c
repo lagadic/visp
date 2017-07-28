@@ -31,8 +31,13 @@ either expressed or implied, of the Regents of The University of Michigan.
 */
 
 #define __USE_GNU
+#ifdef _MSC_VER
+#include "../pthreads-w32-2-9-1-release/pthreads-win32/pthread.h"
+#include "../pthreads-w32-2-9-1-release/pthreads-win32/sched.h"
+#else
 #include <pthread.h>
 #include <sched.h>
+#endif
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -264,6 +269,9 @@ size_t getline(char **lineptr, size_t *n, FILE *stream) {
 
 int workerpool_get_nprocs()
 {
+#ifdef _MSC_VER
+  int nproc = 1;
+#else
     FILE * f = fopen("/proc/cpuinfo", "r");
     size_t n = 0;
     char * buf = NULL;
@@ -283,6 +291,7 @@ int workerpool_get_nprocs()
     }
 
     free(buf);
+#endif
 
     return nproc;
 }

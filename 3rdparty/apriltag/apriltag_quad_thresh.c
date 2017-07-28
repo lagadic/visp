@@ -49,7 +49,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "common/postscript_utils.h"
 #include "common/math_util.h"
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(_MSC_VER)
 #define random rand
 #endif
 
@@ -182,7 +182,11 @@ static inline void ptsort(struct pt *pts, int sz)
     if (stacksz > 1024)
         stacksz = 0;
 
+#ifdef _MSC_VER
+    struct pt *_tmp_stack = malloc(stacksz*sizeof *_tmp_stack);
+#else
     struct pt _tmp_stack[stacksz];
+#endif
     struct pt *tmp = _tmp_stack;
 
     if (stacksz == 0) {
@@ -226,6 +230,10 @@ static inline void ptsort(struct pt *pts, int sz)
         free(tmp);
 
 #undef MERGE
+
+#ifdef _MSC_VER
+    free(_tmp_stack);
+#endif
 }
 
 // lfps contains *cumulative* moments for N points, with
@@ -297,9 +305,12 @@ void fit_line(struct line_fit_pt *lfps, int sz, int i0, int i1, double *lineparm
         //
         // XXX this was using the double-precision atan2. Was there a case where
         // we needed that precision? Seems doubtful.
-        double normal_theta = .5 * atan2f(-2*Cxy, (Cyy - Cxx));
-        nx = cosf(normal_theta);
-        ny = sinf(normal_theta);
+        double normal_theta = .5 * atan2(-2*Cxy, (Cyy - Cxx));
+        //double normal_theta = .5 * atan2f(-2 * Cxy, (Cyy - Cxx));
+        nx = cos(normal_theta);
+        ny = sin(normal_theta);
+        //nx = cosf(normal_theta);
+        //ny = sinf(normal_theta);
     } else {
         // 73.5 ms per frame on 5S, example.pnm
         double ty = -2*Cxy;
@@ -414,7 +425,11 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
 
 //    printf("sz %5d, ksz %3d\n", sz, ksz);
 
+#ifdef _MSC_VER
+    double *errs = malloc(sz*sizeof *errs);
+#else
     double errs[sz];
+#endif
 
     for (int i = 0; i < sz; i++) {
         fit_line(lfps, sz, (i + sz - ksz) % sz, (i + ksz) % sz, NULL, &errs[i], NULL);
@@ -422,7 +437,11 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
 
     // apply a low-pass filter to errs
     if (1) {
+#ifdef _MSC_VER
+        double *y = malloc(sz*sizeof *y);
+#else
         double y[sz];
+#endif
 
         // how much filter to apply?
 
@@ -444,7 +463,11 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
 
         // For default values of cutoff = 0.05, sigma = 3,
         // we have fsz = 17.
+#ifdef _MSC_VER
+        float *f = malloc(fsz*sizeof *f);
+#else
         float f[fsz];
+#endif
 
         for (int i = 0; i < fsz; i++) {
             int j = i - fsz / 2;
@@ -460,11 +483,25 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
             y[iy] = acc;
         }
 
+#ifdef _MSC_VER
+        memcpy(errs, y, sz * sizeof *y);
+#else
         memcpy(errs, y, sizeof(y));
+#endif
+
+#ifdef _MSC_VER
+        free(y);
+        free(f);
+#endif
     }
 
+#ifdef _MSC_VER
+    int *maxima = malloc(sz*sizeof *maxima);
+    double *maxima_errs = malloc(sz*sizeof *maxima_errs);
+#else
     int maxima[sz];
     double maxima_errs[sz];
+#endif
     int nmaxima = 0;
 
     for (int i = 0; i < sz; i++) {
@@ -476,15 +513,26 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
     }
 
     // if we didn't get at least 4 maxima, we can't fit a quad.
-    if (nmaxima < 4)
-        return 0;
+    if (nmaxima < 4) {
+#ifdef _MSC_VER
+      free(errs);
+      free(maxima);
+      free(maxima_errs);
+#endif
+      return 0;
+    }
 
     // select only the best maxima if we have too many
     int max_nmaxima = td->qtp.max_nmaxima;
 
     if (nmaxima > max_nmaxima) {
+#ifdef _MSC_VER
+      double *maxima_errs_copy = malloc(nmaxima*sizeof *maxima_errs_copy);
+      memcpy(maxima_errs_copy, maxima_errs, nmaxima * sizeof *maxima_errs_copy);
+#else
         double maxima_errs_copy[nmaxima];
         memcpy(maxima_errs_copy, maxima_errs, sizeof(maxima_errs_copy));
+#endif
 
         // throw out all but the best handful of maxima. Sorts descending.
         qsort(maxima_errs_copy, nmaxima, sizeof(double), err_compare_descending);
@@ -497,10 +545,14 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
             maxima[out++] = maxima[in];
         }
         nmaxima = out;
+
+#ifdef _MSC_VER
+        free(maxima_errs_copy);
+#endif
     }
 
     int best_indices[4];
-    double best_error = HUGE_VALF;
+    double best_error = HUGE_VAL; // HUGE_VALF;
 
     double err01, err12, err23, err30;
     double mse01, mse12, mse23, mse30;
@@ -514,7 +566,6 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
 
         for (int m1 = m0+1; m1 < nmaxima - 2; m1++) {
             int i1 = maxima[m1];
-
             fit_line(lfps, sz, i0, i1, params01, &err01, &mse01);
 
             if (mse01 > td->qtp.max_line_fit_mse)
@@ -555,7 +606,13 @@ int quad_segment_maxima(apriltag_detector_t *td, zarray_t *cluster, struct line_
         }
     }
 
-    if (best_error == HUGE_VALF)
+#ifdef _MSC_VER
+    free(errs);
+    free(maxima);
+    free(maxima_errs);
+#endif
+
+    if (best_error == HUGE_VAL /*HUGE_VALF*/)
         return 0;
 
     for (int i = 0; i < 4; i++)
@@ -782,8 +839,22 @@ int fit_quad(apriltag_detector_t *td, image_u8_t *im, zarray_t *cluster, struct 
         int nbuckets = 4*sz;
 
 #define ASSOC 2
+#ifdef _MSC_VER
+        struct pt **v = malloc(nbuckets * sizeof *v);
+        for (int i = 0; i < nbuckets; i++) {
+          v[i] = malloc(ASSOC*sizeof *v[i]);
+          for (int j = 0; j < ASSOC; j++) {
+            v[i][j].gx = 0;
+            v[i][j].gy = 0;
+            v[i][j].theta = 0;
+            v[i][j].x = 0;
+            v[i][j].y = 0;
+          }
+        }
+#else
         struct pt v[nbuckets][ASSOC];
         memset(v, 0, sizeof(v));
+#endif
 
         // put each point into a bucket.
         for (int i = 0; i < sz; i++) {
@@ -816,6 +887,13 @@ int fit_quad(apriltag_detector_t *td, image_u8_t *im, zarray_t *cluster, struct 
 
         zarray_truncate(cluster, outsz);
         sz = outsz;
+
+#ifdef _MSC_VER
+        for (int i = 0; i < nbuckets; i++) {
+          free(v[i]);
+        }
+        free(v);
+#endif
     }
 
     if (sz < 4)
@@ -1536,7 +1614,11 @@ zarray_t *apriltag_quad_thresh(apriltag_detector_t *td, image_u8_t *im)
     } else {
         int sz = h - 1;
         int chunksize = 1 + sz / (APRILTAG_TASKS_PER_THREAD_TARGET * td->nthreads);
+#ifdef _MSC_VER
+        struct unionfind_task *tasks = malloc((sz / chunksize + 1)*sizeof *tasks);
+#else
         struct unionfind_task tasks[sz / chunksize + 1];
+#endif
 
         int ntasks = 0;
 
@@ -1750,7 +1832,11 @@ zarray_t *apriltag_quad_thresh(apriltag_detector_t *td, image_u8_t *im)
 
     int sz = zarray_size(clusters);
     int chunksize = 1 + sz / (APRILTAG_TASKS_PER_THREAD_TARGET * td->nthreads);
+#ifdef _MSC_VER
+    struct quad_task *tasks = malloc((sz / chunksize + 1)*sizeof *tasks);
+#else
     struct quad_task tasks[sz / chunksize + 1];
+#endif
 
     int ntasks = 0;
     for (int i = 0; i < sz; i += chunksize) {
@@ -1768,6 +1854,10 @@ zarray_t *apriltag_quad_thresh(apriltag_detector_t *td, image_u8_t *im)
     }
 
     workerpool_run(td->wp);
+
+#ifdef _MSC_VER
+    free(tasks);
+#endif
 
     timeprofile_stamp(td->tp, "fit quads to clusters");
 

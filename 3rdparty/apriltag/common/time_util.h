@@ -35,9 +35,18 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "sys/time.h" //#include <sys/time.h>
-#include "time.h" //#include <time.h>
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#include "sys/times.h"
+#include "time.h"
+#else
+#include <sys/time.h>
+#include <time.h>
+#endif
+#ifdef _MSC_VER
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

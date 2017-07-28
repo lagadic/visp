@@ -663,10 +663,18 @@ static inline void TFN(s_mat_ABC)(const TNAME *A, int Arows, int Acols,
                                   const TNAME *C, int Crows, int Ccols,
                                   TNAME *R, int Rrows, int Rcols)
 {
+#ifdef _MSC_VER
+    TNAME *tmp = malloc(Arows*Bcols * sizeof *tmp);
+#else
     TNAME tmp[Arows*Bcols];
+#endif
 
     TFN(s_mat_AB)(A, Arows, Acols, B, Brows, Bcols, tmp, Arows, Bcols);
     TFN(s_mat_AB)(tmp, Arows, Bcols, C, Crows, Ccols, R, Rrows, Rcols);
+
+#ifdef _MSC_VER
+    free(tmp);
+#endif
 }
 
 static inline void TFN(s_mat_Ab)(const TNAME *A, int Arows, int Acols,

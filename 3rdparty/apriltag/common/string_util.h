@@ -40,6 +40,10 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 #include "common/zarray.h"
 
+#ifdef _MSC_VER
+#define __attribute__(A)
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

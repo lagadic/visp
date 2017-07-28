@@ -38,7 +38,6 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <string.h>
 #include <stdio.h>
 #include <inttypes.h>
-#include <sys/time.h>
 
 #include "common/image_u8.h"
 #include "common/image_u8x3.h"
@@ -59,7 +58,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 # define M_PI 3.141592653589793238462643383279502884196
 #endif
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(_MSC_VER)
 #define srandom srand
 #define random rand
 #endif
@@ -1229,7 +1228,11 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
 
         int chunksize = 1 + zarray_size(quads) / (APRILTAG_TASKS_PER_THREAD_TARGET * td->nthreads);
 
+#ifdef _MSC_VER
+        struct quad_decode_task *tasks = malloc((zarray_size(quads) / chunksize + 1)*sizeof *tasks);
+#else
         struct quad_decode_task tasks[zarray_size(quads) / chunksize + 1];
+#endif
 
         int ntasks = 0;
         for (int i = 0; i < zarray_size(quads); i+= chunksize) {
@@ -1247,6 +1250,10 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
         }
 
         workerpool_run(td->wp);
+
+#ifdef _MSC_VER
+        free(tasks);
+#endif
 
         if (im_samples != NULL) {
             image_u8_write_pnm(im_samples, "debug_samples.pnm");

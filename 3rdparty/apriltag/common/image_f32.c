@@ -42,7 +42,8 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "image_f32.h"
 
 #ifndef HUGE
-# define HUGE 3.40282347e+38F
+//# define HUGE 3.40282347e+38F
+#include <float.h>
 #endif
 
 
@@ -115,7 +116,11 @@ void image_f32_gaussian_blur(image_f32_t *im, double sigma, int ksz)
     assert((ksz & 1) == 1); // ksz must be odd.
 
     // build the kernel.
+#ifdef _MSC_VER
+    float *k = malloc(ksz*sizeof *k);
+#else
     float k[ksz];
+#endif
 
     // for kernel of length 5:
     // dk[0] = f(-2), dk[1] = f(-1), dk[2] = f(0), dk[3] = f(1), dk[4] = f(2)
@@ -133,15 +138,32 @@ void image_f32_gaussian_blur(image_f32_t *im, double sigma, int ksz)
     for (int i = 0; i < ksz; i++)
         k[i] /= acc;
 
+#ifdef _MSC_VER
+    free(k);
+#endif
+
     for (int y = 0; y < im->height; y++) {
+#ifdef _MSC_VER
+        float *x = malloc(im->stride*sizeof *x);
+#else
         float x[im->stride];
+#endif
         memcpy(x, &im->buf[y*im->stride], im->stride * sizeof(float));
         convolve(x, &im->buf[y*im->stride], im->width, k, ksz);
+
+#ifdef _MSC_VER
+        free(x);
+#endif
     }
 
     for (int x = 0; x < im->width; x++) {
+#ifdef _MSC_VER
+        float *xb = malloc(im->height*sizeof *xb);
+        float *yb = malloc(im->height*sizeof *yb);
+#else
         float xb[im->height];
         float yb[im->height];
+#endif
 
         for (int y = 0; y < im->height; y++)
             xb[y] = im->buf[y*im->stride + x];
@@ -150,13 +172,22 @@ void image_f32_gaussian_blur(image_f32_t *im, double sigma, int ksz)
 
         for (int y = 0; y < im->height; y++)
             im->buf[y*im->stride + x] = yb[y];
+
+#ifdef _MSC_VER
+        free(xb);
+        free(yb);
+#endif
     }
 }
 
 // remap all values to [0, 1]
 void image_f32_normalize(image_f32_t *im)
 {
+#ifndef HUGE
+  float min = FLT_MAX, max = -FLT_MAX;
+#else
     float min = HUGE, max = -HUGE;
+#endif
 
     for (int y = 0; y < im->height; y++) {
         for (int x = 0; x < im->width; x++) {
@@ -201,7 +232,11 @@ int image_f32_write_pnm(const image_f32_t *im, const char *path)
     fprintf(f, "P5\n%d %d\n255\n", im->width, im->height);
 
     for (int y = 0; y < im->height; y++) {
+#ifdef _MSC_VER
+        uint8_t *line = malloc(im->width*sizeof *line);
+#else
         uint8_t line[im->width];
+#endif
         for (int x = 0; x < im->width; x++) {
             float v = im->buf[y*im->stride + x];
             if (v < 0)
@@ -215,6 +250,10 @@ int image_f32_write_pnm(const image_f32_t *im, const char *path)
             res = -2;
             goto finish;
         }
+
+#ifdef _MSC_VER
+        free(line);
+#endif
     }
 
 finish:

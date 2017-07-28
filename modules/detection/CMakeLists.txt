@@ -59,6 +59,10 @@ if(WITH_APRILTAG)
   # Add specific build flag to turn off warnings coming from apriltag 3rd party
   vp_set_source_file_compile_flag(src/tag/vpDetectorAprilTag.cpp -Wno-unused-parameter)
 endif()
+if(WITH_PTHREAD)
+  # pthreads is private
+  include_directories(${PTHREADS_INCLUDE_DIRS})
+endif()
 
 vp_add_module(detection visp_core visp_vision PRIVATE_OPTIONAL ${APRILTAG_LIBRARIES})
 vp_glob_module_sources()

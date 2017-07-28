@@ -38,7 +38,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "g2d.h"
 #include "common/math_util.h"
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(_MSC_VER)
 #define random rand
 #endif
 

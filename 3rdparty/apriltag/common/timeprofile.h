@@ -38,7 +38,11 @@ extern "C" {
 #endif
 
 #include <stdio.h>
+#if defined(_MSC_VER) || defined(__MINGW32__)
+//#include "time.h" //included in "time_util.h"
+#else
 #include <sys/time.h>
+#endif
 #include <string.h>
 #include <stdint.h>
 

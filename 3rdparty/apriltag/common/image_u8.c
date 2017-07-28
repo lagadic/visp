@@ -324,16 +324,28 @@ void image_u8_convolve_2D(image_u8_t *im, const uint8_t *k, int ksz)
     assert((ksz & 1) == 1); // ksz must be odd.
 
     for (int y = 0; y < im->height; y++) {
-
+#ifdef _MSC_VER
+        uint8_t *x = malloc(im->stride*sizeof *x);
+#else
         uint8_t x[im->stride];
+#endif
         memcpy(x, &im->buf[y*im->stride], im->stride);
 
         convolve(x, &im->buf[y*im->stride], im->width, k, ksz);
+
+#ifdef _MSC_VER
+        free(x);
+#endif
     }
 
     for (int x = 0; x < im->width; x++) {
+#ifdef _MSC_VER
+        uint8_t *xb = malloc(im->height*sizeof *xb);
+        uint8_t *yb = malloc(im->height*sizeof *yb);
+#else
         uint8_t xb[im->height];
         uint8_t yb[im->height];
+#endif
 
         for (int y = 0; y < im->height; y++)
             xb[y] = im->buf[y*im->stride + x];
@@ -342,6 +354,11 @@ void image_u8_convolve_2D(image_u8_t *im, const uint8_t *k, int ksz)
 
         for (int y = 0; y < im->height; y++)
             im->buf[y*im->stride + x] = yb[y];
+
+#ifdef _MSC_VER
+        free(xb);
+        free(yb);
+#endif
     }
 }
 
@@ -353,7 +370,11 @@ void image_u8_gaussian_blur(image_u8_t *im, double sigma, int ksz)
     assert((ksz & 1) == 1); // ksz must be odd.
 
     // build the kernel.
+#ifdef _MSC_VER
+    double *dk = malloc(ksz*sizeof *dk);
+#else
     double dk[ksz];
+#endif
 
     // for kernel of length 5:
     // dk[0] = f(-2), dk[1] = f(-1), dk[2] = f(0), dk[3] = f(1), dk[4] = f(2)
@@ -371,7 +392,11 @@ void image_u8_gaussian_blur(image_u8_t *im, double sigma, int ksz)
     for (int i = 0; i < ksz; i++)
         dk[i] /= acc;
 
+#ifdef _MSC_VER
+    uint8_t *k = malloc(ksz*sizeof *k);
+#else
     uint8_t k[ksz];
+#endif
     for (int i = 0; i < ksz; i++)
         k[i] = dk[i]*255;
 
@@ -381,6 +406,11 @@ void image_u8_gaussian_blur(image_u8_t *im, double sigma, int ksz)
     }
 
     image_u8_convolve_2D(im, k, ksz);
+
+#ifdef _MSC_VER
+    free(dk);
+    free(k);
+#endif
 }
 
 image_u8_t *image_u8_rotate(const image_u8_t *in, double rad, uint8_t pad)
@@ -638,7 +668,11 @@ image_u8_t *image_u8_decimate(image_u8_t *im, float ffactor)
         }
     } else {
         // XXX this isn't a very good decimation code.
+#ifdef _MSC_VER
+      uint32_t *row = malloc(swidth*sizeof *row);
+#else
         uint32_t row[swidth];
+#endif
 
         for (int y = 0; y < height; y+= factor) {
             memset(row, 0, sizeof(row));
@@ -653,6 +687,10 @@ image_u8_t *image_u8_decimate(image_u8_t *im, float ffactor)
                 decim->buf[(y/factor)*decim->stride + x] = row[x] / sq(factor);
 
         }
+
+#ifdef _MSC_VER
+        free(row);
+#endif
     }
 
     return decim;

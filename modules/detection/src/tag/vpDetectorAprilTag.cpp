@@ -116,11 +116,15 @@ public:
               const bool computePose, const bool displayTag) {
     m_tagPoses.clear();
 
+#ifdef _MSC_VER
+    image_u8_t im{ (int32_t)I.getWidth() , (int32_t)I.getHeight() , (int32_t)I.getWidth() , I.bitmap };
+#else
     image_u8_t im = { .width = (int32_t) I.getWidth(),
                       .height = (int32_t) I.getHeight(),
                       .stride = (int32_t) I.getWidth(),
                       .buf = I.bitmap
                     };
+#endif
 
     zarray_t *detections = apriltag_detector_detect(m_td, &im);
     int nb_detections = zarray_size(detections);

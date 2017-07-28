@@ -2,13 +2,6 @@
 # Add 3rd-party libraries build as static libs
 #----------------------------------------------------------------------
 
-if(WITH_APRILTAG)
-  set(APRILTAG_LIBRARY apriltag)
-  add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/apriltag")
-  set(APRILTAG_INCLUDE_DIRS "${${APRILTAG_LIBRARY}_SOURCE_DIR}" "${${APRILTAG_LIBRARY}_BINARY_DIR}")
-  set(APRILTAG_LIBRARIES ${APRILTAG_LIBRARY})
-endif()
-
 if(WITH_ATIDAQ)
   set(ATIDAQ_LIBRARY atidaq_c)
   add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/atidaq")
@@ -30,4 +23,19 @@ if(WITH_LAPACK)
   add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/clapack")
   set(LAPACK_LIBRARIES ${LAPACK_LIBRARY})
   set(LAPACK_VERSION ${LAPACK_MAJOR_VERSION}.${LAPACK_MINOR_VERSION}.${LAPACK_PATCH_VERSION})
+endif()
+
+if(WITH_PTHREAD)
+  set(PTHREADS_LIBRARY visp_pthread)
+  add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/pthreads-w32-2-9-1-release")
+  set(PTHREADS_INCLUDE_DIRS "${${PTHREADS_LIBRARY}_SOURCE_DIR}" "${${PTHREADS_LIBRARY}_BINARY_DIR}")
+  set(PTHREADS_LIBRARIES ${PTHREADS_LIBRARY})
+  set(PTHREADS_VERSION ${PTHREADS_MAJOR_VERSION}.${PTHREADS_MINOR_VERSION}.${PTHREADS_PATCH_VERSION})
+endif()
+
+if(WITH_APRILTAG)
+  set(APRILTAG_LIBRARY apriltag)
+  add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/apriltag")
+  set(APRILTAG_INCLUDE_DIRS "${${APRILTAG_LIBRARY}_SOURCE_DIR}" "${${APRILTAG_LIBRARY}_BINARY_DIR}")
+  set(APRILTAG_LIBRARIES ${APRILTAG_LIBRARY})
 endif()

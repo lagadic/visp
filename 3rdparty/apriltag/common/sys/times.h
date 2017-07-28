@@ -5,8 +5,10 @@
 #include <sys/timeb.h>
 #include <sys/types.h>
 #include <winsock2.h>
+#include <Windows.h>
+#include <stdint.h> // portable: uint64_t   MSVC: __int64 
 
-int gettimeofday(struct timeval* t,void* timezone);
+int gettimeofday(struct timeval* t, void* timezone);
 
 // from linux's sys/times.h
 
@@ -32,7 +34,7 @@ struct tms
    All times are in CLK_TCKths of a second.  */
 clock_t times (struct tms *__buffer);
 
-typedef long long suseconds_t ;
+typedef long long suseconds_t;
 
 #endif
 #endif

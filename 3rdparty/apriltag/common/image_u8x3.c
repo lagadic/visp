@@ -204,7 +204,11 @@ void image_u8x3_gaussian_blur(image_u8x3_t *im, double sigma, int ksz)
     assert((ksz & 1) == 1); // ksz must be odd.
 
     // build the kernel.
+#ifdef _MSC_VER
+    double *dk = malloc(ksz*sizeof *dk);
+#else
     double dk[ksz];
+#endif
 
     // for kernel of length 5:
     // dk[0] = f(-2), dk[1] = f(-1), dk[2] = f(0), dk[3] = f(1), dk[4] = f(2)
@@ -222,7 +226,11 @@ void image_u8x3_gaussian_blur(image_u8x3_t *im, double sigma, int ksz)
     for (int i = 0; i < ksz; i++)
         dk[i] /= acc;
 
+#ifdef _MSC_VER
+    uint8_t *k = malloc(ksz*sizeof *k);
+#else
     uint8_t k[ksz];
+#endif
     for (int i = 0; i < ksz; i++)
         k[i] = dk[i]*255;
 
@@ -233,9 +241,13 @@ void image_u8x3_gaussian_blur(image_u8x3_t *im, double sigma, int ksz)
 
     for (int c = 0; c < 3; c++) {
         for (int y = 0; y < im->height; y++) {
-
+#ifdef _MSC_VER
+          uint8_t *in = malloc(im->stride*sizeof *in);
+          uint8_t *out = malloc(im->stride*sizeof *out);
+#else
             uint8_t in[im->stride];
             uint8_t out[im->stride];
+#endif
 
             for (int x = 0; x < im->width; x++)
                 in[x] = im->buf[y*im->stride + 3 * x + c];
@@ -244,11 +256,21 @@ void image_u8x3_gaussian_blur(image_u8x3_t *im, double sigma, int ksz)
 
             for (int x = 0; x < im->width; x++)
                 im->buf[y*im->stride + 3 * x + c] = out[x];
+
+#ifdef _MSC_VER
+            free(in);
+            free(out);
+#endif
         }
 
         for (int x = 0; x < im->width; x++) {
+#ifdef _MSC_VER
+          uint8_t *in = malloc(im->height*sizeof *in);
+          uint8_t *out = malloc(im->height*sizeof *out);
+#else
             uint8_t in[im->height];
             uint8_t out[im->height];
+#endif
 
             for (int y = 0; y < im->height; y++)
                 in[y] = im->buf[y*im->stride + 3*x + c];
@@ -257,6 +279,15 @@ void image_u8x3_gaussian_blur(image_u8x3_t *im, double sigma, int ksz)
 
             for (int y = 0; y < im->height; y++)
                 im->buf[y*im->stride + 3*x + c] = out[y];
+
+#ifdef _MSC_VER
+            free(in);
+            free(out);
+#endif
         }
     }
+
+#ifdef _MSC_VER
+    free(dk);
+#endif
 }

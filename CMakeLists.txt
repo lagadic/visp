@@ -403,7 +403,8 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF USE_REALSENSE AND NOT WINRT)
-VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF C99_FOUND AND USE_PTHREAD AND (UNIX OR WIN32 AND MINGW))
+VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF NOT USE_PTHREAD)
+VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_PTHREAD OR WITH_PTHREAD) AND (C99_FOUND AND (UNIX OR (WIN32 AND MINGW)) OR (WIN32 AND MSVC)))
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_LAPACK)
@@ -1127,6 +1128,7 @@ status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP       THEN "yes" ELSE "no")
 status("    Use pthread:"            USE_PTHREAD      THEN "yes" ELSE "no")
+status("    Use pthread (built-in):" WITH_PTHREAD     THEN "yes (ver ${PTHREADS_VERSION})" ELSE "no")
 status("    Use cxx11:"              USE_CPP11        THEN "yes" ELSE "no")
 
 # ========================== documentation ==========================

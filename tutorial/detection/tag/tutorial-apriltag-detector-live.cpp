@@ -15,7 +15,7 @@
 
 int main(int argc, const char** argv) {
   //! [Macro defined]
-#if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) && (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV)))
+#if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) && (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
 
   int opt_device = 0;
@@ -35,7 +35,7 @@ int main(int argc, const char** argv) {
     } else if (std::string(argv[i]) == "--input" && i+1 < argc) {
       opt_device = atoi(argv[i+1]);
     } else if (std::string(argv[i]) == "--quad_decimate" && i+1 < argc) {
-      quad_decimate = atof(argv[i+1]);
+      quad_decimate = (float) atof(argv[i+1]);
     } else if (std::string(argv[i]) == "--nthreads" && i+1 < argc) {
       nThreads = atoi(argv[i+1]);
     } else if (std::string(argv[i]) == "--intrinsic" && i+1 < argc) {
