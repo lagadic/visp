@@ -40,42 +40,81 @@
 #
 #############################################################################
 
-set(PYLON_ROOT_SEARCH_PATH /opt/pylon5)
-# For more possible versions, just add more paths below.
-# list(APPEND PYLON_ROOT_SEARCH_PATH "/somepath/include")
+if(APPLE)
+  find_path(PYLON_INCLUDE_DIR pylon/PylonIncludes.h)
+  find_path(PYLON_BASE_INCLUDE_DIR
+    NAMES Base/GCTypes.h
+    HINTS ${PYLON_INCLUDE_DIR}/Headers
+    PATH_SUFFIXES GenICam)
 
-find_program(PYLON_CONFIG pylon-config
-             PATHS ${PYLON_ROOT}
-             PATHS $ENV{PYLON_ROOT}
-             PATHS ${PYLON_ROOT_SEARCH_PATH}
-             PATH_SUFFIXES bin)
+  find_library(PYLON_LIBRARIES pylon)
 
-if(PYLON_CONFIG)
-  set(PYLON_FOUND TRUE)
-  execute_process(COMMAND ${PYLON_CONFIG} "--version"
-                  OUTPUT_VARIABLE PYLON_VERSION
-                  OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process(COMMAND ${PYLON_CONFIG} "--libs" "--libs-rpath"
-                  OUTPUT_VARIABLE PYLON_LIBRARIES
-                  OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process(COMMAND ${PYLON_CONFIG} "--libdir"
-                  OUTPUT_VARIABLE PYLON_LIBDIR
-                  OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process(COMMAND ${PYLON_CONFIG} "--cflags-only-I"
-                  OUTPUT_VARIABLE PYLON_INC_TMP
-                  OUTPUT_STRIP_TRAILING_WHITESPACE)
-  string(REPLACE "-I" "" PYLON_INCLUDE_DIRS ${PYLON_INC_TMP})
+  find_program(PYLON_CONFIG pylon-config
+               HINTS ${PYLON_INCLUDE_DIR}
+               PATH_SUFFIXES Versions/A/Resources/Tools)
+
+  if(PYLON_INCLUDE_DIR)
+    list(APPEND PYLON_INCLUDE_DIRS ${PYLON_INCLUDE_DIR})
+  endif()
+  if(PYLON_BASE_INCLUDE_DIR)
+    list(APPEND PYLON_INCLUDE_DIRS ${PYLON_BASE_INCLUDE_DIR})
+  endif()
+
+  if(PYLON_CONFIG)
+    execute_process(COMMAND ${PYLON_CONFIG} "--version"
+                    OUTPUT_VARIABLE PYLON_VERSION_TMP
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REPLACE "-n" "" PYLON_VERSION ${PYLON_VERSION_TMP})
+  endif()
+
+  if(PYLON_INCLUDE_DIRS AND PYLON_LIBRARIES)
+    set(PYLON_FOUND TRUE)
+  endif()
+elseif(WIN32)
+  message(WARNING "FindPylon can't be used on Windows OS yet.")
+  set(PYLON_FOUND FALSE)
+elseif(UNIX)
+  set(PYLON_ROOT_SEARCH_PATH /opt/pylon5)
+  # For more possible versions, just add more paths below.
+  # list(APPEND PYLON_ROOT_SEARCH_PATH "/somepath/include")
+
+  find_program(PYLON_CONFIG pylon-config
+               PATHS ${PYLON_ROOT}
+               PATHS $ENV{PYLON_ROOT}
+               PATHS ${PYLON_ROOT_SEARCH_PATH}
+               PATH_SUFFIXES bin)
+
+  if(PYLON_CONFIG)
+    execute_process(COMMAND ${PYLON_CONFIG} "--version"
+                    OUTPUT_VARIABLE PYLON_VERSION
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND ${PYLON_CONFIG} "--libs" "--libs-rpath"
+                    OUTPUT_VARIABLE PYLON_LIBRARIES
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND ${PYLON_CONFIG} "--cflags-only-I"
+                    OUTPUT_VARIABLE PYLON_INC_TMP
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REPLACE "-I" "" PYLON_INCLUDE_DIRS ${PYLON_INC_TMP})
+
+    set(PYLON_FOUND TRUE)
+  endif()
 else()
   set(PYLON_FOUND FALSE)
-  if(WIN32)
-    message(WARNING "FindPylon can't be used on Windows OS yet.")
-  endif(WIN32)
   message(STATUS "Pylon SDK not found.
    If you are sure Pylon SDK is installed, set CMake variable or
    environment variable `PYLON_ROOT' to help CMake to find Pylon SDK.")
 endif()
-  
+
+  message("PYLON_CONFIG: ${PYLON_CONFIG}")
+  message("PYLON_INCLUDE_DIR: ${PYLON_INCLUDE_DIR}")
+  message("PYLON_BASE_INCLUDE_DIR: ${PYLON_BASE_INCLUDE_DIR}")
+  message("PYLON_INCLUDE_DIRS: ${PYLON_INCLUDE_DIRS}")
+  message("PYLON_LIBRARIES: ${PYLON_LIBRARIES}")
+  message("PYLON_VERSION_TMP: \"${PYLON_VERSION_TMP}\"")
+  message("PYLON_VERSION: ${PYLON_VERSION}")
+
 mark_as_advanced(
   PYLON_INCLUDE_DIRS
   PYLON_LIBRARIES
+  PYLON_CONFIG
 )
