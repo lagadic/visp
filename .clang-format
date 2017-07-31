@@ -3,4 +3,4 @@ BasedOnStyle: LLVM
 BreakBeforeBraces: Linux
 ColumnLimit: 78
 ConstructorInitializerIndentWidth: 2
-SpacesInAngles: true
+Standard: Cpp03
