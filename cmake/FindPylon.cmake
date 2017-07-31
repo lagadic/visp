@@ -105,14 +105,6 @@ else()
    environment variable `PYLON_ROOT' to help CMake to find Pylon SDK.")
 endif()
 
-  message("PYLON_CONFIG: ${PYLON_CONFIG}")
-  message("PYLON_INCLUDE_DIR: ${PYLON_INCLUDE_DIR}")
-  message("PYLON_BASE_INCLUDE_DIR: ${PYLON_BASE_INCLUDE_DIR}")
-  message("PYLON_INCLUDE_DIRS: ${PYLON_INCLUDE_DIRS}")
-  message("PYLON_LIBRARIES: ${PYLON_LIBRARIES}")
-  message("PYLON_VERSION_TMP: \"${PYLON_VERSION_TMP}\"")
-  message("PYLON_VERSION: ${PYLON_VERSION}")
-
 mark_as_advanced(
   PYLON_INCLUDE_DIRS
   PYLON_LIBRARIES
