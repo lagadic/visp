@@ -307,6 +307,9 @@
 // Defined if PointGrey FlyCapture SDK available.
 #cmakedefine VISP_HAVE_FLYCAPTURE
 
+// Defined if Basler Pylon SDK available.
+#cmakedefine VISP_HAVE_PYLON
+
 // Defined if Comedi (linux control and measurement cdevice interface) available.
 #cmakedefine VISP_HAVE_COMEDI
 
