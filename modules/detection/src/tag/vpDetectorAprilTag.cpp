@@ -34,6 +34,7 @@
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_APRILTAG
+#include <map>
 
 #include <apriltag.h>
 #include <tag36h11.h>
@@ -52,7 +53,8 @@
 
 class vpDetectorAprilTag::Impl {
 public:
-  Impl(const vpAprilTagFamily &tagFamily) : m_cam(), m_poseFromHomography(false), m_tagFamily(tagFamily), m_tagPoses(), m_tagSize(1.0), m_td(NULL), m_tf(NULL) {
+  Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
+    : m_cam(), m_poseEstimationMethod(method), m_tagFamily(tagFamily), m_tagPoses(), m_tagSize(1.0), m_td(NULL), m_tf(NULL) {
     switch (m_tagFamily) {
       case TAG_36h11:
         m_tf = tag36h11_create();
@@ -81,6 +83,9 @@ public:
 
     m_td = apriltag_detector_create();
     apriltag_detector_add_family(m_td, m_tf);
+
+    m_mapOfCorrespondingPoseMethods[DEMENTHON_VIRTUAL_VS] = vpPose::DEMENTHON;
+    m_mapOfCorrespondingPoseMethods[LAGRANGE_VIRTUAL_VS] = vpPose::LAGRANGE;
   }
 
   ~Impl() {
@@ -180,73 +185,93 @@ public:
       }
 
       if (computePose) {
-        if (m_poseFromHomography) {
+        vpHomogeneousMatrix cMo;
+        if (m_poseEstimationMethod == HOMOGRAPHY_VIRTUAL_VS || m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
           double fx = m_cam.get_px(), fy = m_cam.get_py();
           double cx = m_cam.get_u0(), cy = m_cam.get_v0();
 
           matd_t *M = homography_to_pose(det->H, fx, fy, cx, cy, m_tagSize/2);
 
-          vpHomogeneousMatrix cMo;
           for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
               cMo[i][j] = MATD_EL(M, i, j);
             }
             cMo[i][3] = MATD_EL(M, i, 3);
           }
-          m_tagPoses.push_back(cMo);
 
           matd_destroy(M);
-        } else {
-          vpPoint pt;
-          vpImagePoint imPt;
-          double x = 0.0, y = 0.0;
-          std::vector<vpPoint> pts(4);
-          pt.setWorldCoordinates(-m_tagSize/2.0, -m_tagSize/2.0, 0.0);
-          imPt.set_uv(det->p[0][0], det->p[0][1]);
-          vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
-          pt.set_x(x);
-          pt.set_y(y);
-          pts[0] = pt;
-
-          pt.setWorldCoordinates(m_tagSize/2.0, -m_tagSize/2.0, 0.0);
-          imPt.set_uv(det->p[1][0], det->p[1][1]);
-          vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
-          pt.set_x(x);
-          pt.set_y(y);
-          pts[1] = pt;
-
-          pt.setWorldCoordinates(m_tagSize/2.0, m_tagSize/2.0, 0.0);
-          imPt.set_uv(det->p[2][0], det->p[2][1]);
-          vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
-          pt.set_x(x);
-          pt.set_y(y);
-          pts[2] = pt;
-
-          pt.setWorldCoordinates(-m_tagSize/2.0, m_tagSize/2.0, 0.0);
-          imPt.set_uv(det->p[3][0], det->p[3][1]);
-          vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
-          pt.set_x(x);
-          pt.set_y(y);
-          pts[3] = pt;
-
-          vpPose pose;
-          pose.addPoints(pts);
-          vpHomogeneousMatrix cMo_dementhon, cMo_lagrange;
-          double residual_dementhon = std::numeric_limits<double>::max(), residual_lagrange = std::numeric_limits<double>::max();
-
-          if (pose.computePose(vpPose::DEMENTHON, cMo_dementhon)) {
-            residual_dementhon = pose.computeResidual(cMo_dementhon);
-          }
-
-          if (pose.computePose(vpPose::LAGRANGE, cMo_lagrange)) {
-            residual_lagrange = pose.computeResidual(cMo_lagrange);
-          }
-
-          vpHomogeneousMatrix cMo = residual_dementhon < residual_lagrange ? cMo_dementhon : cMo_lagrange;
-          pose.computePose(vpPose::VIRTUAL_VS, cMo);
-
-          m_tagPoses.push_back(cMo);
         }
+
+        //Add marker object points
+        vpPoint pt;
+        vpImagePoint imPt;
+        double x = 0.0, y = 0.0;
+        std::vector<vpPoint> pts(4);
+        pt.setWorldCoordinates(-m_tagSize/2.0, -m_tagSize/2.0, 0.0);
+        imPt.set_uv(det->p[0][0], det->p[0][1]);
+        vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
+        pt.set_x(x);
+        pt.set_y(y);
+        pts[0] = pt;
+
+        pt.setWorldCoordinates(m_tagSize/2.0, -m_tagSize/2.0, 0.0);
+        imPt.set_uv(det->p[1][0], det->p[1][1]);
+        vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
+        pt.set_x(x);
+        pt.set_y(y);
+        pts[1] = pt;
+
+        pt.setWorldCoordinates(m_tagSize/2.0, m_tagSize/2.0, 0.0);
+        imPt.set_uv(det->p[2][0], det->p[2][1]);
+        vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
+        pt.set_x(x);
+        pt.set_y(y);
+        pts[2] = pt;
+
+        pt.setWorldCoordinates(-m_tagSize/2.0, m_tagSize/2.0, 0.0);
+        imPt.set_uv(det->p[3][0], det->p[3][1]);
+        vpPixelMeterConversion::convertPoint(m_cam, imPt, x, y);
+        pt.set_x(x);
+        pt.set_y(y);
+        pts[3] = pt;
+
+        vpPose pose;
+        pose.addPoints(pts);
+
+        if (m_poseEstimationMethod != HOMOGRAPHY_VIRTUAL_VS) {
+          if (m_poseEstimationMethod == BEST_RESIDUAL_VIRTUAL_VS) {
+            vpHomogeneousMatrix cMo_dementhon, cMo_lagrange, cMo_homography = cMo;
+
+            double residual_dementhon = std::numeric_limits<double>::max(), residual_lagrange = std::numeric_limits<double>::max();
+            double residual_homography = pose.computeResidual(cMo_homography);
+
+            if (pose.computePose(vpPose::DEMENTHON, cMo_dementhon)) {
+              residual_dementhon = pose.computeResidual(cMo_dementhon);
+            }
+
+            if (pose.computePose(vpPose::LAGRANGE, cMo_lagrange)) {
+              residual_lagrange = pose.computeResidual(cMo_lagrange);
+            }
+
+            if (residual_dementhon < residual_lagrange) {
+              if (residual_dementhon < residual_homography) {
+                cMo = cMo_dementhon;
+              } else {
+                cMo = cMo_homography;
+              }
+            } else if (residual_lagrange < residual_homography) {
+              cMo = cMo_lagrange;
+            } else {
+//              cMo = cMo_homography; //already the case
+            }
+          } else {
+            pose.computePose(m_mapOfCorrespondingPoseMethods[m_poseEstimationMethod], cMo);
+          }
+        }
+
+        //Compute final pose using VVS
+        pose.computePose(vpPose::VIRTUAL_VS, cMo);
+        m_tagPoses.push_back(cMo);
       }
     }
 
@@ -291,13 +316,14 @@ public:
     m_tagSize = tagSize;
   }
 
-  void setUsePoseFromHomography(const bool use) {
-    m_poseFromHomography = use;
+  void setPoseEstimationMethod(const vpPoseEstimationMethod &method) {
+    m_poseEstimationMethod = method;
   }
 
 protected:
   vpCameraParameters m_cam;
-  bool m_poseFromHomography;
+  std::map<vpPoseEstimationMethod, vpPose::vpPoseMethodType> m_mapOfCorrespondingPoseMethods;
+  vpPoseEstimationMethod m_poseEstimationMethod;
   vpAprilTagFamily m_tagFamily;
   std::vector<vpHomogeneousMatrix> m_tagPoses;
   double m_tagSize;
@@ -308,8 +334,8 @@ protected:
 /*!
    Default constructor.
 */
-vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily)
-  : m_displayTag(false), m_poseFromHomography(false), m_tagFamily(tagFamily), m_impl(new Impl(tagFamily)) {
+vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &poseEstimationMethod)
+  : m_displayTag(false), m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily), m_impl(new Impl(tagFamily, poseEstimationMethod)) {
 }
 
 vpDetectorAprilTag::~vpDetectorAprilTag() {
@@ -363,15 +389,13 @@ void vpDetectorAprilTag::setAprilTagNbThreads(const int nThreads) {
 }
 
 /*!
-  If true, the homography from the tag detection is used to compute the pose (default is false).
-  Otherwise, a classical PnP method is used.
-  As the homography is already computed to detect the April Tag, this method should be faster.
+  Set the method to use to compute the pose, \see vpPoseEstimationMethod
 
-  \param use : If true, pose is computed from the homography, otherwise use a PnP method.
+  \param poseEstimationMethod : The method to used.
 */
-void vpDetectorAprilTag::setAprilTagPoseFromHomography(const bool use) {
-  m_poseFromHomography = use;
-  m_impl->setUsePoseFromHomography(m_poseFromHomography);
+void vpDetectorAprilTag::setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod) {
+  m_poseEstimationMethod = poseEstimationMethod;
+  m_impl->setPoseEstimationMethod(poseEstimationMethod);
 }
 
 /*!

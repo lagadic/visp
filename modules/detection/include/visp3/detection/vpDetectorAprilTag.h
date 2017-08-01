@@ -53,18 +53,28 @@ public:
     TAG_25h7
   };
 
-  vpDetectorAprilTag(const vpAprilTagFamily &tagFamily=TAG_36h11);
+  enum vpPoseEstimationMethod {
+    HOMOGRAPHY_VIRTUAL_VS,    /*!< Non linear virtual visual servoing approach initialized by the homography approach */
+    DEMENTHON_VIRTUAL_VS,     /*!< Non linear virtual visual servoing approach initialized by the Dementhon approach */
+    LAGRANGE_VIRTUAL_VS,      /*!< Non linear virtual visual servoing approach initialized by the Lagrange approach */
+    BEST_RESIDUAL_VIRTUAL_VS  /*!< Non linear virtual visual servoing approach initialized by the approach that gives the lowest residual */
+  };
+
+  vpDetectorAprilTag(const vpAprilTagFamily &tagFamily=TAG_36h11, const vpPoseEstimationMethod &poseEstimationMethod=HOMOGRAPHY_VIRTUAL_VS);
   virtual ~vpDetectorAprilTag();
 
   bool detect(const vpImage<unsigned char> &I);
   void detect(const vpImage<unsigned char> &I, const double tagSize, const vpCameraParameters &cam, std::vector<vpHomogeneousMatrix> &cMo_vec);
 
-  inline bool getPoseFromHomography() const {
-    return m_poseFromHomography;
+  /*!
+    Return the pose estimation method.
+  */
+  inline vpPoseEstimationMethod getPoseEstimationMethod() const {
+    return m_poseEstimationMethod;
   }
 
   void setAprilTagNbThreads(const int nThreads);
-  void setAprilTagPoseFromHomography(const bool use);
+  void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod);
   void setAprilTagQuadDecimate(const float quadDecimate);
   void setAprilTagQuadSigma(const float quadSigma);
   void setAprilTagRefineDecode(const bool refineDecode);
@@ -77,7 +87,7 @@ public:
 
 protected:
   bool m_displayTag;
-  bool m_poseFromHomography;
+  vpPoseEstimationMethod m_poseEstimationMethod;
   vpAprilTagFamily m_tagFamily;
 
 private:
@@ -88,6 +98,60 @@ private:
   class Impl;
   Impl *m_impl;
 };
+
+inline std::ostream & operator <<(std::ostream &os, const vpDetectorAprilTag::vpPoseEstimationMethod &method) {
+  switch (method) {
+    case vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS:
+      os << "HOMOGRAPHY_VIRTUAL_VS";
+      break;
+
+    case vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS:
+      os << "DEMENTHON_VIRTUAL_VS";
+      break;
+
+    case vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS:
+      os << "LAGRANGE_VIRTUAL_VS";
+      break;
+
+    case vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS:
+      os << "BEST_RESIDUAL_VIRTUAL_VS";
+      break;
+
+    default:
+      break;
+  }
+
+  return os;
+}
+
+inline std::ostream & operator <<(std::ostream &os, const vpDetectorAprilTag::vpAprilTagFamily &tagFamily) {
+  switch (tagFamily) {
+    case vpDetectorAprilTag::TAG_36h11:
+      os << "TAG_36h11";
+      break;
+
+    case vpDetectorAprilTag::TAG_36h10:
+      os << "TAG_36h10";
+      break;
+
+    case vpDetectorAprilTag::TAG_36ARTOOLKIT:
+      os << "TAG_36ARTOOLKIT";
+      break;
+
+    case vpDetectorAprilTag::TAG_25h9:
+      os << "TAG_25h9";
+      break;
+
+    case vpDetectorAprilTag::TAG_25h7:
+      os << "TAG_25h7";
+      break;
+
+    default:
+      break;
+  }
+
+  return os;
+}
 
 #endif
 #endif
