@@ -45,7 +45,7 @@ extern "C" {
 #include "common/workerpool.h"
 #include "common/timeprofile.h"
 #ifdef _MSC_VER
-#include "../pthreads-w32-2-9-1-release/pthreads-win32/pthread.h"
+#include "../pthreads-win32/pthread.h"
 #else
 #include <pthread.h>
 #endif

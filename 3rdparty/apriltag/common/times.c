@@ -1,7 +1,7 @@
 #include "sys/times.h"
 
 #ifdef _WIN32
-int gettimeofday(struct timeval* t, void*) {
+int gettimeofday(struct timeval* t, void* timezone) {
   struct _timeb timebuffer;
   _ftime( &timebuffer );
   t->tv_sec=timebuffer.time;

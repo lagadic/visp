@@ -32,8 +32,8 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 #define __USE_GNU
 #ifdef _MSC_VER
-#include "../pthreads-w32-2-9-1-release/pthreads-win32/pthread.h"
-#include "../pthreads-w32-2-9-1-release/pthreads-win32/sched.h"
+#include "../pthreads-win32/pthread.h"
+#include "../pthreads-win32/sched.h"
 #else
 #include <pthread.h>
 #include <sched.h>
