@@ -111,8 +111,8 @@ public:
   // = operator
   vpCalibration& operator=(const vpCalibration& twinCalibration);
 
-  static void calibrationTsai(std::vector<vpHomogeneousMatrix> &cMo,
-                              std::vector<vpHomogeneousMatrix> &rMe,
+  static void calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
+                              const std::vector<vpHomogeneousMatrix> &rMe,
                               vpHomogeneousMatrix &eMc);
 
   //! Suppress all the point in the array of point
@@ -129,7 +129,7 @@ public:
                                      double &globalReprojectionError,
                                      bool verbose = false) ;
 
-  static int computeCalibrationTsai(std::vector<vpCalibration> &table_cal,
+  static int computeCalibrationTsai(const std::vector<vpCalibration> &table_cal,
                                     vpHomogeneousMatrix &eMc,
                                     vpHomogeneousMatrix &eMc_dist);
   double computeStdDeviation(const vpHomogeneousMatrix &cMo_est,
