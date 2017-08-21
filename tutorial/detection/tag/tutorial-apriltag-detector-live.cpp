@@ -67,7 +67,8 @@ int main(int argc, const char** argv) {
   cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
 #ifdef VISP_HAVE_XML2
   vpXmlParserCamera parser;
-  parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
+  if (!intrinsic_file.empty() && !camera_name.empty())
+    parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
 #endif
   std::cout << "cam:\n" << cam << std::endl;
   std::cout << "poseEstimationMethod: " << poseEstimationMethod << std::endl;

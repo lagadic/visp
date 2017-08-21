@@ -33,7 +33,7 @@ int main(int argc, const char** argv) {
     } else if (std::string(argv[i]) == "--input" && i+1 < argc) {
       input_filename = std::string(argv[i+1]);
     } else if (std::string(argv[i]) == "--quad_decimate" && i+1 < argc) {
-      quad_decimate = atof(argv[i+1]);
+      quad_decimate = (float)atof(argv[i+1]);
     } else if (std::string(argv[i]) == "--nthreads" && i+1 < argc) {
       nThreads = atoi(argv[i+1]);
     } else if (std::string(argv[i]) == "--intrinsic" && i+1 < argc) {
@@ -64,7 +64,8 @@ int main(int argc, const char** argv) {
   cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
 #ifdef VISP_HAVE_XML2
   vpXmlParserCamera parser;
-  parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
+  if (! intrinsic_file.empty() && ! camera_name.empty())
+    parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
 #endif
   std::cout << "cam:\n" << cam << std::endl;
   std::cout << "poseEstimationMethod: " << poseEstimationMethod << std::endl;
