@@ -557,9 +557,9 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method,
   end-effector considering the model with distortion.
   \return 0 if the computation managed, -1 if less than three poses are provides as input.
 */
-int vpCalibration::computeCalibrationTsai(std::vector<vpCalibration> &table_cal,
-                                          vpHomogeneousMatrix& eMc,
-                                          vpHomogeneousMatrix& eMc_dist)
+int vpCalibration::computeCalibrationTsai(const std::vector<vpCalibration> &table_cal,
+                                          vpHomogeneousMatrix & eMc,
+                                          vpHomogeneousMatrix & eMc_dist)
 {
   try{
     unsigned int nbPose = (unsigned int)table_cal.size();

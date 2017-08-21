@@ -1134,8 +1134,8 @@ vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal
   \param eMc : homogeneous matrix representing the transformation
   between the effector and the camera (output)
 */
-void vpCalibration::calibrationTsai(std::vector<vpHomogeneousMatrix>& cMo,
-            std::vector<vpHomogeneousMatrix>& rMe,
+void vpCalibration::calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
+            const std::vector<vpHomogeneousMatrix> &rMe,
             vpHomogeneousMatrix &eMc){
 
   vpColVector x ;
