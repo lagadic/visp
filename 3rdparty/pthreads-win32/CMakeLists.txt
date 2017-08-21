@@ -181,3 +181,8 @@ set_property(TARGET ${PTHREADS_LIBRARY} APPEND PROPERTY
 if(NOT BUILD_SHARED_LIBS)
   vp_install_target(${PTHREADS_LIBRARY} EXPORT VISPModules ARCHIVE DESTINATION ${VISP_3P_LIB_INSTALL_PATH} COMPONENT dev)
 endif()
+
+if(MSVC)
+  vp_set_source_file_compile_flag(pthread_spin_lock.c /wd4013)
+  vp_set_source_file_compile_flag(pthread_spin_trylock.c /wd4013)
+endif()

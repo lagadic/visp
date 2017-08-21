@@ -178,10 +178,10 @@ public:
       messages[i] = ss.str();
 
       if (displayTag) {
-        vpDisplay::displayLine(I, det->p[0][1], det->p[0][0], det->p[1][1], det->p[1][0], vpColor::red, 2);
-        vpDisplay::displayLine(I, det->p[0][1], det->p[0][0], det->p[3][1], det->p[3][0], vpColor::green, 2);
-        vpDisplay::displayLine(I, det->p[1][1], det->p[1][0], det->p[2][1], det->p[2][0], vpColor::blue, 2);
-        vpDisplay::displayLine(I, det->p[2][1], det->p[2][0], det->p[3][1], det->p[3][0], vpColor::yellow, 2);
+        vpDisplay::displayLine(I, (int)det->p[0][1], (int)det->p[0][0], (int)det->p[1][1], (int)det->p[1][0], vpColor::red, 2);
+        vpDisplay::displayLine(I, (int)det->p[0][1], (int)det->p[0][0], (int)det->p[3][1], (int)det->p[3][0], vpColor::green, 2);
+        vpDisplay::displayLine(I, (int)det->p[1][1], (int)det->p[1][0], (int)det->p[2][1], (int)det->p[2][0], vpColor::blue, 2);
+        vpDisplay::displayLine(I, (int)det->p[2][1], (int)det->p[2][0], (int)det->p[3][1], (int)det->p[3][0], vpColor::yellow, 2);
       }
 
       if (computePose) {
