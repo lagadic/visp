@@ -3,7 +3,7 @@
 #----------------------------------------------------------------------
 
 if(WITH_ATIDAQ)
-  set(ATIDAQ_LIBRARY atidaq_c)
+  set(ATIDAQ_LIBRARY visp_atidaq)
   add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/atidaq")
   set(ATIDAQ_INCLUDE_DIRS "${${ATIDAQ_LIBRARY}_SOURCE_DIR}" "${${ATIDAQ_LIBRARY}_BINARY_DIR}")
   set(ATIDAQ_LIBRARIES ${ATIDAQ_LIBRARY})
@@ -11,7 +11,7 @@ if(WITH_ATIDAQ)
 endif()
 
 if(WITH_CLIPPER)
-  set(CLIPPER_LIBRARY clipper)
+  set(CLIPPER_LIBRARY visp_clipper)
   add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/clipper")
   set(CLIPPER_INCLUDE_DIRS "${${CLIPPER_LIBRARY}_SOURCE_DIR}" "${${CLIPPER_LIBRARY}_BINARY_DIR}")
   set(CLIPPER_LIBRARIES ${CLIPPER_LIBRARY})
@@ -34,8 +34,9 @@ if(WITH_PTHREAD)
 endif()
 
 if(WITH_APRILTAG)
-  set(APRILTAG_LIBRARY apriltag)
+  set(APRILTAG_LIBRARY visp_apriltag)
   add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/apriltag")
   set(APRILTAG_INCLUDE_DIRS "${${APRILTAG_LIBRARY}_SOURCE_DIR}" "${${APRILTAG_LIBRARY}_BINARY_DIR}")
   set(APRILTAG_LIBRARIES ${APRILTAG_LIBRARY})
+  set(APRILTAG_VERSION ${APRILTAG_MAJOR_VERSION}.${APRILTAG_MINOR_VERSION}.${APRILTAG_PATCH_VERSION})
 endif()
