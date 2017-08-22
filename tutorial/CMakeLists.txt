@@ -32,6 +32,7 @@ visp_add_subdirectory(detection/barcode             REQUIRED_DEPS visp_core visp
 visp_add_subdirectory(detection/face                REQUIRED_DEPS visp_core visp_detection visp_io visp_gui visp_sensor)
 visp_add_subdirectory(detection/matching            REQUIRED_DEPS visp_core visp_vision visp_io visp_gui)
 visp_add_subdirectory(detection/object              REQUIRED_DEPS visp_core visp_vision visp_mbt visp_io visp_gui)
+visp_add_subdirectory(detection/tag                 REQUIRED_DEPS visp_core visp_detection visp_io visp_gui visp_sensor)
 visp_add_subdirectory(image                         REQUIRED_DEPS visp_core visp_io visp_gui)
 visp_add_subdirectory(robot/pioneer                 REQUIRED_DEPS visp_core visp_robot visp_vs visp_gui)
 visp_add_subdirectory(simulator/image               REQUIRED_DEPS visp_core visp_robot visp_io visp_gui)

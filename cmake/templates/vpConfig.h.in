@@ -126,8 +126,11 @@
 // Defined if MSVC is the compiler
 #cmakedefine VISP_USE_MSVC
 
-// Defined if ATIDAQ-C is build and available.
+// Defined if Clipper is build and available.
 #cmakedefine VISP_HAVE_CLIPPER
+
+// Defined if April Tag is build and available.
+#cmakedefine VISP_HAVE_APRILTAG
 
 // Defined if X11 library available.
 #cmakedefine VISP_HAVE_X11

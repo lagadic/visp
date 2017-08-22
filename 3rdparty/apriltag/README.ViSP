@@ -1,0 +1,22 @@
+Porting of the AprilTag library: https://april.eecs.umich.edu/software/apriltag.html
+AprilTag version is 2016-12-01 (0.9.8).
+
+Changes / modifications made:
+  - scale directly the pose computed in homography_to_pose() (homography.c)
+    by the marker size
+  - we observed that the pose returned by homography_to_pose() is left-handed,
+    we add a transformation to get a right-handed pose
+
+Windows porting (MinGW):
+  - see commit 4f5d150 and previous
+  - use C99 flag
+  - replace srandom and random by srand and rand
+  - replacement for <sys/time.h>, see https://www.codefull.org/2015/12/systime-h-replacement-for-windows/
+  - replacement for getline() function, see here https://stackoverflow.com/a/735472
+
+Windows porting (MSVC):
+  - see commit 8bf0b87
+  - see MinGW porting
+  - build AprilTag with pthreads-win32 (https://www.sourceware.org/pthreads-win32/)
+  - replace variable-length array in C99 by malloc as Visual Studio does not conform to C99
+  - replace some missing posix functions or constants

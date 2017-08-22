@@ -334,6 +334,9 @@ endif()
 
 find_host_program(XRANDR xrandr)
 
+# Find C99 flag
+VP_CHECK_PACKAGE(C99)
+
 VP_OPTION(USE_AFMA4    "" "" "Include Afma4 robot support"      "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT))
 VP_OPTION(USE_AFMA6    "" "" "Include Afma6 robot support"      "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT))
 VP_OPTION(USE_VIPER650 "" "" "Include Viper s650 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT))
@@ -401,6 +404,8 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON IF NOT WINRT)
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF USE_REALSENSE AND NOT WINRT)
+VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF NOT USE_PTHREAD)
+VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_PTHREAD OR WITH_PTHREAD) AND (C99_FOUND AND (UNIX OR (WIN32 AND MINGW)) OR (WIN32 AND MSVC)))
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_LAPACK)
@@ -665,6 +670,7 @@ VP_SET(VISP_HAVE_PYLON  TRUE IF (BUILD_MODULE_visp_sensor AND USE_PYLON))
 VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND WITH_ATIDAQ))
 VP_SET(VISP_HAVE_CLIPPER     TRUE IF (BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_klt AND WITH_CLIPPER))
+VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG))
 
 VP_SET(VISP_BUILD_SHARED_LIBS TRUE IF BUILD_SHARED_LIBS) # for header vpConfig.h
 VP_SET(VISP_HAVE_DC1394_CAMERA_ENUMERATE TRUE IF (USE_DC1394 AND DC1394_CAMERA_ENUMERATE_FOUND)) # for header vpConfig.h
@@ -1114,16 +1120,18 @@ status("    Use atidaq (built-in):"  WITH_ATIDAQ      THEN "yes (ver ${ATIDAQ_VE
 status("    Use comedi:"             USE_COMEDI       THEN "yes (ver ${COMEDI_VERSION})" ELSE "no")
 status("")
 status("  Detection: ")
-status("    Use zbar:"               USE_ZBAR         THEN "yes (ver ${ZBAR_VERSION})" ELSE "no")
-status("    Use dmtx:"               USE_DMTX         THEN "yes (ver ${DMTX_VERSION})" ELSE "no")
+status("    Use zbar:"                USE_ZBAR         THEN "yes (ver ${ZBAR_VERSION})" ELSE "no")
+status("    Use dmtx:"                USE_DMTX         THEN "yes (ver ${DMTX_VERSION})" ELSE "no")
+status("    Use AprilTag (built-in):" WITH_APRILTAG    THEN "yes (ver ${APRILTAG_VERSION})" ELSE "no")
 status("")
 status("  Misc: ")
-status("    Use clipper (built-in):" WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
-status("    Use XML2:"               USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
+status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
+status("    Use XML2:"                USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
 status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP       THEN "yes" ELSE "no")
 status("    Use pthread:"            USE_PTHREAD      THEN "yes" ELSE "no")
+status("    Use pthread (built-in):" WITH_PTHREAD     THEN "yes (ver ${PTHREADS_VERSION})" ELSE "no")
 status("    Use cxx11:"              USE_CPP11        THEN "yes" ELSE "no")
 
 # ========================== documentation ==========================
