@@ -37,6 +37,7 @@
 #
 # Authors:
 # Wenfeng CAI
+# Fabien Spindler : compat with OSX and Windows
 #
 #############################################################################
 
@@ -71,8 +72,54 @@ if(APPLE)
     set(PYLON_FOUND TRUE)
   endif()
 elseif(WIN32)
-  message(WARNING "FindPylon can't be used on Windows OS yet.")
-  set(PYLON_FOUND FALSE)
+  find_path(PYLON_INCLUDE_DIR pylon/PylonIncludes.h
+    PATHS "$ENV{PYLON_HOME}/include"
+	      "C:/Program Files/Basler/pylon 5/Development/include")
+
+  set(PYLON_LIB_SEARCH_PATH "$ENV{PYLON_HOME}/lib/x64")
+
+  if(CMAKE_CL_64)
+    list(APPEND PYLON_LIB_SEARCH_PATH "C:/Program Files/Basler/pylon 5/Development/lib/x64")
+  else()
+    list(APPEND PYLON_LIB_SEARCH_PATH "C:/Program Files/Basler/pylon 5/Development/lib/Win32")
+  endif()
+
+  find_library(PYLON_BASE_LIBRARY
+	NAMES PylonBase_MD_VC120_v5_0.lib
+	PATHS ${PYLON_LIB_SEARCH_PATH})
+  find_library(PYLON_GCBASE_LIBRARY
+    NAMES GCBase_MD_VC120_v3_0_Basler_pylon_v5_0.lib
+	PATHS ${PYLON_LIB_SEARCH_PATH})
+  find_library(PYLON_GENAPI_LIBRARY
+	NAMES GenApi_MD_VC120_v3_0_Basler_pylon_v5_0.lib
+	PATHS ${PYLON_LIB_SEARCH_PATH})
+  find_library(PYLON_UTILITY_LIBRARY
+	NAMES PylonUtility_MD_VC120_v5_0.lib
+	PATHS ${PYLON_LIB_SEARCH_PATH})
+
+  if(PYLON_INCLUDE_DIR)
+    list(APPEND PYLON_INCLUDE_DIRS ${PYLON_INCLUDE_DIR})
+  endif()
+  if(PYLON_BASE_LIBRARY AND PYLON_GCBASE_LIBRARY)
+    list(APPEND PYLON_LIBRARIES ${PYLON_BASE_LIBRARY})
+    list(APPEND PYLON_LIBRARIES ${PYLON_GCBASE_LIBRARY})
+    list(APPEND PYLON_LIBRARIES ${PYLON_GENAPI_LIBRARY})
+    list(APPEND PYLON_LIBRARIES ${PYLON_UTILITY_LIBRARY})
+  endif()
+
+  if(PYLON_INCLUDE_DIRS AND PYLON_LIBRARIES)
+    vp_parse_header("${PYLON_INCLUDE_DIR}/pylon/PylonVersionNumber.h" PYLON_VERSION_LINES PYLON_VERSION_MAJOR PYLON_VERSION_MINOR PYLON_VERSION_SUBMINOR)
+    set(PYLON_VERSION "${PYLON_VERSION_MAJOR}.${PYLON_VERSION_MINOR}.${PYLON_VERSION_SUBMINOR}")
+    set(PYLON_FOUND TRUE)
+  endif()
+
+  mark_as_advanced(
+    PYLON_BASE_LIBRARY
+	PYLON_GCBASE_LIBRARY
+	PYLON_GENAPI_LIBRARY
+	PYLON_UTILITY_LIBRARY
+  )
+
 elseif(UNIX)
   set(PYLON_ROOT_SEARCH_PATH /opt/pylon5)
   # For more possible versions, just add more paths below.
@@ -106,6 +153,7 @@ else()
 endif()
 
 mark_as_advanced(
+  PYLON_INCLUDE_DIR
   PYLON_INCLUDE_DIRS
   PYLON_LIBRARIES
   PYLON_CONFIG
