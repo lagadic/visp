@@ -109,8 +109,8 @@ class Builder:
             "-DBUILD_TESTS=OFF",
             "-DBUILD_TUTORIALS=OFF",
             "-DUSE_XML2=OFF",
-            "-DUSE_PTHREAD=OFF",
             "-DUSE_ZLIB=OFF",
+            "-DUSE_EIGEN3=OFF",
         ]
         return args
 
