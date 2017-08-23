@@ -20,3 +20,6 @@ Windows porting (MSVC):
   - build AprilTag with pthreads-win32 (https://www.sourceware.org/pthreads-win32/)
   - replace variable-length array in C99 by malloc as Visual Studio does not conform to C99
   - replace some missing posix functions or constants
+
+Windows UWP porting (MSVC):
+  - remove functions that are using missing win32 functions not available on UWP (see #ifdef WINRT and #ifndef WINRT)

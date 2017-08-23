@@ -62,9 +62,13 @@ int64_t utime_get_useconds(int64_t v);
 void    utime_to_timeval(int64_t v, struct timeval *tv);
 void    utime_to_timespec(int64_t v, struct timespec *ts);
 
+#ifndef WINRT
 int32_t  timeutil_usleep(int64_t useconds);
+#endif
 uint32_t timeutil_sleep(unsigned int seconds);
+#ifndef WINRT
 int32_t  timeutil_sleep_hz(timeutil_rest_t *rest, double hz);
+#endif
 
 void timeutil_timer_reset(timeutil_rest_t *rest);
 void timeutil_timer_start(timeutil_rest_t *rest);

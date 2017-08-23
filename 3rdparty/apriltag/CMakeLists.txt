@@ -10,6 +10,8 @@ file(GLOB lib_srcs *.c common/*.c)
 file(GLOB lib_hdrs *.h common/*.h common/sys/*.h)
 
 vp_list_filterout(lib_srcs common/unionfind.c) # has no symbols
+vp_list_filterout(lib_srcs common/getopt.c)    # useless and produces errors on uwp
+vp_list_filterout(lib_hdrs common/getopt.h)    # useless and produces errors on uwp
 
 add_library(${APRILTAG_LIBRARY} STATIC ${lib_srcs} ${lib_hdrs})
 if(WIN32 AND MSVC)
@@ -55,6 +57,8 @@ if(MSVC)
   vp_set_source_file_compile_flag(common/zhash.c /wd4267)
   vp_set_source_file_compile_flag(common/zmaxheap.c /wd4098 /wd4244)
   vp_set_source_file_compile_flag(common/workerpool.c /wd4018 /wd4244)
+  vp_set_source_file_compile_flag(common/pam.c /wd4018)
+  vp_set_source_file_compile_flag(common/string_util.c /wd4018)
   vp_set_source_file_compile_flag(tag16h5.c /wd4996)
   vp_set_source_file_compile_flag(tag25h7.c /wd4996)
   vp_set_source_file_compile_flag(tag25h9.c /wd4996)

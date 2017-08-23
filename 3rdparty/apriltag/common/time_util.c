@@ -83,7 +83,7 @@ void utime_to_timespec(int64_t v, struct timespec *ts)
     ts->tv_nsec = (suseconds_t) utime_get_useconds(v)*1000;
 }
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && ! defined(WINRT)
 //https://stackoverflow.com/a/17283549/6055233
 void usleep(__int64 usec)
 {
@@ -99,6 +99,7 @@ void usleep(__int64 usec)
 }
 #endif
 
+#ifndef WINRT
 int32_t timeutil_usleep(int64_t useconds)
 {
     // unistd.h function, but usleep is obsoleted in POSIX.1-2008.
@@ -110,6 +111,7 @@ int32_t timeutil_usleep(int64_t useconds)
     return usleep(useconds);
 #endif
 }
+#endif
 
 uint32_t timeutil_sleep(unsigned int seconds)
 {
@@ -122,6 +124,7 @@ uint32_t timeutil_sleep(unsigned int seconds)
 #endif
 }
 
+#ifndef WINRT
 int32_t timeutil_sleep_hz(timeutil_rest_t *rest, double hz)
 {
     int64_t max_delay = 1000000L/hz;
@@ -135,6 +138,7 @@ int32_t timeutil_sleep_hz(timeutil_rest_t *rest, double hz)
 
     return ret;
 }
+#endif
 
 void timeutil_timer_reset(timeutil_rest_t *rest)
 {
