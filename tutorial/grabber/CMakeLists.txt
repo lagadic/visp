@@ -8,6 +8,7 @@ find_package(VISP REQUIRED visp_core visp_sensor visp_io visp_gui)
 set(tutorial_cpp
   tutorial-grabber-1394.cpp
   tutorial-grabber-1394-writer.cpp
+  tutorial-grabber-basler-pylon.cpp
   tutorial-grabber-CMU1394.cpp
   tutorial-grabber-flycapture.cpp
   tutorial-grabber-opencv.cpp
@@ -24,6 +25,9 @@ if(VISP_HAVE_FLYCAPTURE)
   # Add specific build flag to turn off warnings coming from PointGrey flycapture 3rd party
   visp_set_source_file_compile_flag(tutorial-grabber-flycapture.cpp -Wno-unknown-pragmas -Wno-ignored-qualifiers)
 endif()
+if(VISP_HAVE_PYLON)
+  visp_set_source_file_compile_flag(tutorial-grabber-basler-pylon.cpp -Wno-unknown-pragmas -Wno-overloaded-virtual -Wno-unused-parameter)
+endif()
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
@@ -36,3 +40,4 @@ endforeach()
 foreach(data ${tutorial_data})
   visp_copy_data(tutorial-video-reader.cpp ${data})
 endforeach()
+
