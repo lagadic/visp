@@ -42,15 +42,114 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
+/*!
+  \class vpDetectorAprilTag
+  \ingroup group_detection_tag
+  Base class for AprilTag detector. This class is a wrapper over <a href="https://april.eecs.umich.edu/software/apriltag.html">AprilTag</a>.
+  There is no need to download and install AprilTag from source code or existing pre-built packages since the source code is embedded in ViSP.
+
+  The detect() function allows to detect multiple tags in an image. Once detected,
+  for each tag it is possible to retrieve the location of the corners using getPolygon(),
+  the encoded message using getMessage(), the bounding box using getBBox() and the center
+  of gravity using getCog().
+
+  If camera parameters and the size of the tag are provided, thanks to
+  detect(const vpImage<unsigned char> &, const double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &)
+  this class allows also to estimate the 3D pose of the tag in terms of position and orientation wrt the camera.
+
+  The following sample code shows how to use this class to detect the location of 36h11 AprilTag patterns in an image.
+  \code
+#include <visp3/detection/vpDetectorAprilTag.h>
+#include <visp3/io/vpImageIo.h>
+
+int main()
+{
+#ifdef VISP_HAVE_APRILTAG
+  vpImage<unsigned char> I;
+  vpImageIo::read(I, "image-tag36h11.pgm");
+
+  vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11);
+
+  bool status = detector.detect(I);
+  if (status) {
+    for(size_t i=0; i < detector.getNbObjects(); i++) {
+      std::cout << "Tag code " << i << ":" << std::endl;
+      std::vector<vpImagePoint> p = detector.getPolygon(i);
+      for(size_t j=0; j < p.size(); j++)
+        std::cout << "  Point " << j << ": " << p[j] << std::endl;
+      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" << std::endl;
+    }
+  }
+#endif
+}
+  \endcode
+
+  The previous example may produce results like:
+  \code
+Tag code 0:
+  Point 0: 124.008, 442.226
+  Point 1: 194.614, 441.237
+  Point 2: 184.833, 540.386
+  Point 3: 111.948, 533.634
+  Message: "36h11 id: 0"
+Tag code 1:
+  Point 0: 245.327, 438.801
+  Point 1: 338.116, 437.221
+  Point 2: 339.341, 553.539
+  Point 3: 238.954, 543.855
+  Message: "36h11 id: 1"
+  \endcode
+
+  This other example shows how to estimate the 3D pose of 36h11 AprilTag patterns.
+  \code
+#include <visp3/detection/vpDetectorAprilTag.h>
+#include <visp3/io/vpImageIo.h>
+
+int main()
+{
+#ifdef VISP_HAVE_APRILTAG
+  vpImage<unsigned char> I;
+  vpImageIo::read(I, "image-tag36h11.pgm");
+
+  vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11);
+  std::vector<vpHomogeneousMatrix> cMo;
+  vpCameraParameters cam;
+  cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
+  double tagSize = 0.053;
+
+  bool status = detector.detect(I, tagSize, cam, cMo);
+  if (status) {
+    for(size_t i=0; i < detector.getNbObjects(); i++) {
+      std::cout << "Tag code " << i << ":" << std::endl;
+      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" << std::endl;
+      std::cout << "  Pose: " << vpPoseVector(cMo[i]).t() << std::endl;
+    }
+  }
+#endif
+}
+  \endcode
+  The previous example may produce results like:
+  \code
+Tag code 0:
+  Message: "36h11 id: 0"
+  Pose: 0.1015061088  -0.05239057228  0.3549037285  1.991474322  2.04143538  -0.9412360063
+Tag code 1:
+  Message: "36h11 id: 1"
+  Pose: 0.08951250829  0.02243780207  0.306540622  1.998073197  2.061488008  -0.8699567948
+  \endcode
+
+  Other examples are also provided in tutorial-apriltag-detector.cpp and
+  tutorial-apriltag-detector-live.cpp
+*/
 class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase {
 
 public:
   enum vpAprilTagFamily {
-    TAG_36h11,
-    TAG_36h10,
-    TAG_36ARTOOLKIT,
-    TAG_25h9,
-    TAG_25h7
+    TAG_36h11,       /*!< AprilTag <a href="https://april.eecs.umich.edu/software/apriltag.html">36h11</a> pattern (recommended) */
+    TAG_36h10,       /*!< AprilTag <a href="https://april.eecs.umich.edu/software/apriltag.html">36h10</a> pattern */
+    TAG_36ARTOOLKIT, /*!< <a href="https://artoolkit.org/">ARToolKit</a> pattern. */
+    TAG_25h9,        /*!< AprilTag <a href="https://april.eecs.umich.edu/software/apriltag.html">25h9</a> pattern */
+    TAG_25h7         /*!< AprilTag <a href="https://april.eecs.umich.edu/software/apriltag.html">25h7</a> pattern */
   };
 
   enum vpPoseEstimationMethod {
@@ -64,7 +163,7 @@ public:
   virtual ~vpDetectorAprilTag();
 
   bool detect(const vpImage<unsigned char> &I);
-  void detect(const vpImage<unsigned char> &I, const double tagSize, const vpCameraParameters &cam, std::vector<vpHomogeneousMatrix> &cMo_vec);
+  bool detect(const vpImage<unsigned char> &I, const double tagSize, const vpCameraParameters &cam, std::vector<vpHomogeneousMatrix> &cMo_vec);
 
   /*!
     Return the pose estimation method.
@@ -81,6 +180,7 @@ public:
   void setAprilTagRefineEdges(const bool refineEdges);
   void setAprilTagRefinePose(const bool refinePose);
 
+  /*! Allow to enable the display of overlay tag information in the windows (vpDisplay) associated to the input image. */
   inline void setDisplayTag(const bool display) {
     m_displayTag = display;
   }

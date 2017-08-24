@@ -338,6 +338,9 @@ vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily, const 
   : m_displayTag(false), m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily), m_impl(new Impl(tagFamily, poseEstimationMethod)) {
 }
 
+/*!
+   Destructor that desallocate memory.
+*/
 vpDetectorAprilTag::~vpDetectorAprilTag() {
   delete m_impl;
 }
@@ -346,13 +349,14 @@ vpDetectorAprilTag::~vpDetectorAprilTag() {
   Detect AprilTag tags in the image. Return true if at least one tag is detected, false otherwise.
 
   \param I : Input image.
+  \return true if at least one tag is detected.
 */
 bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I) {
   m_message.clear();
   m_polygon.clear();
   m_nb_objects = 0;
 
-  bool detected =  m_impl->detect(I, m_polygon, m_message, false, m_displayTag);
+  bool detected = m_impl->detect(I, m_polygon, m_message, false, m_displayTag);
   m_nb_objects = m_message.size();
 
   return detected;
@@ -362,20 +366,23 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I) {
   Detect AprilTag tags in the image and compute the corresponding tag poses.
 
   \param I : Input image.
-  \param tagSize : Tag size in meter.
+  \param tagSize : Tag size in meter corresponding to the external width of the pattern.
   \param cam : Camera intrinsic parameters.
   \param cMo_vec : List of tag poses.
+  \return true if at least one tag is detected.
 */
-void vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double tagSize, const vpCameraParameters &cam, std::vector<vpHomogeneousMatrix> &cMo_vec) {
+bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double tagSize, const vpCameraParameters &cam, std::vector<vpHomogeneousMatrix> &cMo_vec) {
   m_message.clear();
   m_polygon.clear();
   m_nb_objects = 0;
 
   m_impl->setTagSize(tagSize);
   m_impl->setCameraParameters(cam);
-  m_impl->detect(I, m_polygon, m_message, true, m_displayTag);
+  bool detected = m_impl->detect(I, m_polygon, m_message, true, m_displayTag);
   m_nb_objects = m_message.size();
   m_impl->getTagPoses(cMo_vec);
+
+  return detected;
 }
 
 /*!
