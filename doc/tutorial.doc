@@ -112,6 +112,7 @@ This page introduces the user to the way to detect features or objects in images
 - \subpage tutorial-detection-barcode <br>This tutorial focuses on bar code (QR code, Data Matrix code) detection.
 - \subpage tutorial-detection-face <br>This tutorial focuses on face detection thanks to OpenCV Haar cascade classifier.
 - \subpage tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object.
+- \subpage tutorial-detection-apriltag <br>This tutorial focuses on AprilTag patterns detection and pose estimation.
 
 */
 

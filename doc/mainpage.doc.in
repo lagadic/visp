@@ -1,4 +1,4 @@
-/*! 
+/*!
 
 \mainpage ViSP @VISP_VERSION@ main page
 
@@ -16,9 +16,9 @@ href="http://www.inria.fr/en/centre/rennes" target="_parent">Inria Rennes</a>.</
 <p>ViSP wiki is <a href="https://github.com/lagadic/visp/wiki" target="_parent">https://github.com/lagadic/visp/wiki</a></p>
 
 <p>ViSP source code is now available on GitHub <a href="https://github.com/lagadic/visp" target="_parent">https://github.com/lagadic/visp</a></p>
- 
-<p>If you have any problems or find any bugs, please report them in 
-<a href="https://github.com/lagadic/visp/issues">the bug tracker</a>. If you may need help, please use the available <a href="http://gforge.inria.fr/forum/?group_id=397" target="_parent">forums</a>.<p> 
+
+<p>If you have any problems or find any bugs, please report them in
+<a href="https://github.com/lagadic/visp/issues">the bug tracker</a>. If you may need help, please use the available <a href="http://gforge.inria.fr/forum/?group_id=397" target="_parent">forums</a>.<p>
 
 It is also possible to contact ViSP main developers using: <a href="mailto:visp@inria.fr?subject=[visp]">visp@inria.fr</a>
 
@@ -42,7 +42,7 @@ href="https://visp.inria.fr/software-architecture" target="_parent">https://visp
 
 <p>ViSP full installation procedure using CMake is detailed in the \ref tuto_install_sdk "Installation from prebuild SDK tutorials" and \ref tuto_install_src "Installation from source tutorials". \ref tuto_started "Getting started tutorials" and documents in pdf are also available from <a
 href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr/publications</a>.</p>
- 
+
 \section tutorial Tutorials
 
 <p>Here after you will find a list of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
@@ -88,8 +88,8 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-image-display <br>In this tutorial you will learn how to display an image in a window and how to down scale the window size to be able to display images that are larger than the screen resolution.
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
-- \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position. 
-- \ref tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices. 
+- \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position.
+- \ref tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices.
 
 \subsection tuto_calib Camera calibration
 
@@ -99,18 +99,19 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 
 - \ref tutorial-tracking-blob <br>This tutorial introduces blob tracking and detection.
 - \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
-- \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges. 
+- \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges.
 - \ref tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints.
 - \ref tutorial-tracking-mb-stereo <br>This tutorial focuses on model-based trackers with stereo cameras.
 - \ref tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.
 
-\subsection tuto_detection Detection 
+\subsection tuto_detection Detection
 
 - \ref tutorial-matching <br>This tutorial shows how to detect and match keypoints.
 - \ref tutorial-matching-deprecated <br>This tutorial shows how to detect and match SURF keypoints. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
 - \ref tutorial-detection-barcode <br>This tutorial focuses on bar code (QR code, Data Matrix code) detection.
 - \ref tutorial-detection-face <br>This tutorial focuses on face detection thanks to OpenCV Haar cascade classifier.
 - \ref tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object.
+- \ref tutorial-detection-apriltag <br>This tutorial focuses on AprilTag patterns detection and pose estimation.
 
 \subsection tuto_computer_vision Computer vision
 
@@ -141,7 +142,7 @@ in one thread and display these images in an other thread.
 \section Examples_sec Using ViSP
 
 <p>ViSP C++ classes are organized in <a href="modules.html">modules</a> that may help the user during his project implementation.</p>
- 
+
 <p>From the <a href="examples.html">example</a> page, you will also find
 examples showing how to use the library to acquire and display an
 image, compute a camera pose, estimate an homography, servo a real
@@ -157,7 +158,7 @@ scheme, ...</p>
 - You can write new tutorials, new documentations or simply improve the existing documentation.
 - If you just want to say you've been happy with the library, you can send us a postcard from your place, to the following address: <em>Inria Rennes Bretagne Atlantique, Lagadic team, Campus de Beaulieu, 35042 Rennes Cedex, FRANCE.</em>
 
-<p>You can also ask for help using either <a href="https://gforge.inria.fr/forum/?group_id=397">the french or the english forum</a>. 
+<p>You can also ask for help using either <a href="https://gforge.inria.fr/forum/?group_id=397">the french or the english forum</a>.
 
 */
 
@@ -390,6 +391,11 @@ scheme, ...</p>
   \defgroup group_detection_face Face detection
   Face detection.
 */
+/*!
+  \ingroup module_detection
+  \defgroup group_detection_tag Tag detection
+  Tag detection.
+*/
 
 /*******************************************
  * Module tracker
@@ -434,7 +440,7 @@ scheme, ...</p>
  *******************************************/
 /*!
   \defgroup module_robot robot: Robot module
-  Robot module content. 
+  Robot module content.
 */
 /*!
   \ingroup module_robot
@@ -519,17 +525,17 @@ scheme, ...</p>
   \defgroup group_sensor_laserscanner Laser scanner
   Laser scanner interfaces.
 */
-/*!  
+/*!
   \ingroup module_sensor
   \defgroup group_sensor_camera Camera
   Camera interfaces.
 */
-/*!  
+/*!
   \ingroup module_sensor
   \defgroup group_sensor_rgbd RGB-D sensor
   RGB-D sensor interfaces.
 */
-/*!  
+/*!
   \ingroup module_sensor
   \defgroup group_sensor_ft Force/Torque sensor
   Force/Torque sensor interfaces.
@@ -564,7 +570,7 @@ scheme, ...</p>
   \ingroup module_tracker
   \defgroup module_tt_mi tt_mi: Template tracker based on mutual information module
   Template tracker based on mutual information module content. This module is an
-  extension of \ref module_tt where mutual information cost function is introduced. 
+  extension of \ref module_tt where mutual information cost function is introduced.
 */
 /*!
   \ingroup module_tt_mi

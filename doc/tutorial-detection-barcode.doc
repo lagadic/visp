@@ -103,4 +103,11 @@ Then in the while loop, at each iteration we acquire a new image
 
 This new image is then given as input to the bar code detector.
 
+\section barcode_detection_next Next tutorial
+
+Now you can follow \ref tutorial-pose-estimation that explains how to compute a 3D pose from points. This tutorial could be useful if you want to compute the pose of a QR code from it’s 4 corner coordinates in the image that could be retrieved using getPolygon(), it’s 3D size and camera parameters. 
+
+You are now also ready to see \ref tutorial-detection-apriltag, that illustrates how to detect AprilTag patterns in an image and compute the 3D pose of each pattern.
+
+
 */
