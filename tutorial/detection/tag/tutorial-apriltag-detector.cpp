@@ -107,18 +107,7 @@ int main(int argc, const char** argv) {
     ss << "Detection time: " << t << " ms for " << detector->getNbObjects() << " tags";
     vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
 
-    //! [Display camera pose for each tag]
-    for (size_t i = 0; i < cMo_vec.size() ; i++) {
-      vpDisplay::displayFrame(I, cMo_vec[i], cam, tagSize/2, vpColor::none, 3);
-    }
-    //! [Display camera pose for each tag]
-
-    vpDisplay::displayText(I, 20, 20, "Click to display bounding boxes.", vpColor::red);
-    vpDisplay::flush(I);
-    vpDisplay::getClick(I);
-
-    vpDisplay::display(I);
-
+    //! [Parse detected codes]
     for(size_t i=0; i < detector->getNbObjects(); i++) {
       //! [Parse detected codes]
       //! [Get location]
@@ -138,6 +127,18 @@ int main(int argc, const char** argv) {
         vpDisplay::displayText(I, p[j]+vpImagePoint(15,5), number.str(), vpColor::blue);
       }
     }
+
+    vpDisplay::displayText(I, 20, 20, "Click to display tag poses", vpColor::red);
+    vpDisplay::flush(I);
+    vpDisplay::getClick(I);
+
+    vpDisplay::display(I);
+
+    //! [Display camera pose for each tag]
+    for (size_t i = 0; i < cMo_vec.size() ; i++) {
+      vpDisplay::displayFrame(I, cMo_vec[i], cam, tagSize/2, vpColor::none, 3);
+    }
+    //! [Display camera pose for each tag]
 
     vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
     vpDisplay::flush(I);
