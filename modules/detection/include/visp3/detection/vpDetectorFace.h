@@ -93,10 +93,10 @@ public:
     Default destructor.
    */
   virtual ~vpDetectorFace() {};
-  void setCascadeClassifierFile(const std::string &filename);
 
   bool detect(const vpImage<unsigned char> &I);
   bool detect(const cv::Mat &frame_gray);
+  void setCascadeClassifierFile(const std::string &filename);
 };
 
 #endif
