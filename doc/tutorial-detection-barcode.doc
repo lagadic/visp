@@ -59,7 +59,7 @@ Since the classes that allow to detect QR codes and Data Matrix codes inherit fr
 
 \snippet tutorial-barcode-detector.cpp Create detector
  
-We are now reader to detect the bar code in the image.
+We are now ready to detect the bar code in the image.
 
 \snippet tutorial-barcode-detector.cpp Detection
 
