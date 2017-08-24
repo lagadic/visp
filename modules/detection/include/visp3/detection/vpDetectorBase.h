@@ -81,6 +81,35 @@ public:
     \return true if one or multiple objects are detected, false otherwise.
    */
   virtual bool detect(const vpImage<unsigned char> &I) = 0;
+
+  /** @name Inherited functionalities from vpDetectorBase */
+  //@{
+
+  /*!
+    Return the bounding box of the ith object.
+   */
+  vpRect getBBox(size_t i) const ;
+
+  /*!
+    Return the center of gravity location of the ith object.
+   */
+  vpImagePoint getCog(size_t i) const ;
+
+  /*!
+    Returns the contained message of the ith object if there is one.
+   */
+  std::vector< std::string > & getMessage() { return m_message; }
+
+  /*!
+    Returns the contained message of the ith object if there is one.
+   */
+  std::string & getMessage(size_t i);
+
+  /*!
+    Return the number of objects that are detected.
+    */
+  size_t getNbObjects() const {return m_nb_objects; }
+
   /*!
     Returns object container box as a vector of points.
    */
@@ -93,31 +122,8 @@ public:
     Returns ith object container box as a vector of points.
    */
   std::vector<vpImagePoint> & getPolygon(size_t i);
-  
-  /*!
-    Returns the contained message of the ith object if there is one.
-   */
-  std::string & getMessage(size_t i);
-  
-  /*!
-    Returns the contained message of the ith object if there is one.
-   */
-  std::vector< std::string > & getMessage() { return m_message; }
-  
-  /*!
-    Return the number of objects that are detected.
-    */
-  size_t getNbObjects() const {return m_nb_objects; }
-  
-  /*!
-    Return the center of gravity location of the ith object.
-   */
-  vpImagePoint getCog(size_t i) const ;
-  
-  /*!
-    Return the bounding box of the ith object.
-   */
-  vpRect getBBox(size_t i) const ;
+
+  //@}
 };
 
 #endif
