@@ -44,6 +44,15 @@
 
 #ifdef VISP_HAVE_PYLON
 
+// Work arround: /usr/X11R6/include/X11/X.h:115:30: note: expanded from macro 'None'
+#ifdef None
+#  undef None
+#endif
+// Work arround: /usr/X11R6/include/X11/Xlib.h:83:16: note: expanded from macro 'Status'
+#ifdef Status
+#  undef Status
+#endif
+
 #include <pylon/PylonIncludes.h>
 
 /*!
