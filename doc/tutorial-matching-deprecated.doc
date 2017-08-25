@@ -28,7 +28,7 @@ Now, let us explain the lines dedicated to the SURF keypoint usage.
 First we have to include the header of the vpKeyPointSurf class that is a wrapper over OpenCV classes.
 \snippet tutorial-matching-surf-deprecated.cpp Include
 
-Note that this class is only available if ViSP was build with OpenCV non free module. This is ensured by the check of VISP_HAVE_OPENCV_NONFREE macro. To grab the images from the mpeg video stream we need also that ViSP was build with ffmpeg 3rd party. That's why we check VISP_HAVE_FFMPEG macro definition:
+Note that this class is only available if ViSP was build with OpenCV non free module. This is ensured by the check of VISP_HAVE_OPENCV_NONFREE macro.
 \snippet tutorial-matching-surf-deprecated.cpp Define
 
 Then we open the mpeg video stream and grab the first image of the video that is stored in \c I container. A Surf keypoint class is instantiated and keypoints are detected on the first image which is considered as the reference image:

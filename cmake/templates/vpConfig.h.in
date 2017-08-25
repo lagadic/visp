@@ -273,9 +273,6 @@
 // Defined if RealSense library available.
 #cmakedefine VISP_HAVE_REALSENSE
 
-// Defined if ffmpeg library available.
-#cmakedefine VISP_HAVE_FFMPEG
-
 // Defined if raw1394 and dc1394-2.x libraries available.
 #cmakedefine VISP_HAVE_DC1394
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(VISP_HAVE_DC1394)

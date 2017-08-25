@@ -90,13 +90,11 @@ It is also possible to grab images using OpenCV. You may find an example in tuto
 
 \section grabber-video-stream Images from a video stream
 
-With ViSP it also possible to get images from an input video stream. Supported formats are *.avi, *.mp4, *.mov, *.ogv, *.flv and many others... To this end we exploit ffmpeg or OpenCV 3rd parties.
-
-If ViSP was build with ffmpeg 3rd party support (cmake -DUSE_FFMPEG=ON ...), we use ffmpeg capabilities to decode the video stream. If ffmpeg is not found or used (cmake -DUSE_FFMPEG=OFF ...) and if OpenCV is available (cmake -DUSE_OPENCV=ON ...) we use rather OpenCV capabilities. This new feature was introduced in ViSP 2.10.0 and is especially useful under Windows where installing ffmpeg is quite complex. 
+With ViSP it also possible to get images from an input video stream. Supported formats are *.avi, *.mp4, *.mov, *.ogv, *.flv and many others... To this end we exploit OpenCV 3rd party.
 
 The example below available in tutorial-video-reader.cpp shows how o consider an mpeg video stream.
 
-\warning We recall that this example works only if ViSP was build with ffmpeg or OpenCV support.
+\warning We recall that this example works only if ViSP was build with OpenCV support.
 
 \include tutorial-video-reader.cpp
 
@@ -128,7 +126,7 @@ you may use the following:
 \code
   g.setFileName("./image%04d.png");
 \endcode
-where you specify that each image number is coded with 4 digits. Here, ffmpeg is no yet mandatory, but rather \c libpng or OpenCV that should be available to read PNG images. Supported image formats are PPM, PGM, PNG and JPEG. 
+where you specify that each image number is coded with 4 digits. Here, we will use \c libpng or \c OpenCV to read PNG images. Supported image formats are PPM, PGM, PNG and JPEG. 
 
 Then as for any other grabber, you have to initialize the frame grabber using:
 

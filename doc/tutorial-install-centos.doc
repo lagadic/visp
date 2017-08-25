@@ -288,7 +288,6 @@ Specific devices
   \-libusb-1.0                : no
   \-pthread                   : yes
 Video and image Read/Write:
-  FFMPEG                      : no
   libjpeg                     : no
   libpng                      : no
 Misc:
@@ -339,7 +338,7 @@ $ ls -als libpthread*
 
 \subsection install_centos_issues_videoreader vpVideoReader is not able to read mpeg videos
 
-On CentOS 7.0, vpVideoReader is not able to read mpeg videos. If ffmpeg is not installed (this is our case since ffmpeg is not packaged for CentOS 7.0), this class uses OpenCV to read and decode videos. Some examples or tutorials provided in ViSP hang during cv::Capture::open() call. The reason is that OpenCV 2.4.5 cv::Capture seams buggy. This is for example the case if you run:
+On CentOS 7.0, vpVideoReader uses OpenCV to read and decode videos. Some examples or tutorials provided in ViSP hang during cv::Capture::open() call. The reason is that OpenCV 2.4.5 cv::Capture seams buggy. This is for example the case if you run:
 \code
 $ ./example/video/videoReader
 \endcode

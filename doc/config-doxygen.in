@@ -2083,7 +2083,6 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_DISPLAY \
                          VISP_HAVE_DMTX \
                          VISP_HAVE_EIGEN3 \
-                         VISP_HAVE_FFMPEG \
                          VISP_HAVE_FLYCAPTURE \
                          VISP_HAVE_GDI \
                          VISP_HAVE_GTK \

@@ -9,13 +9,13 @@
 
 /*!
  This example allows to read and display a video from a file.
- It only requires that ViSP is build with OpenCV or ffmpeg.
+ It only requires that ViSP is build with OpenCV.
 
  Example: ./tutorial-video-reader --name video.mpg
  */
 int main(int argc, char** argv)
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100) || defined(VISP_HAVE_FFMPEG)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   try {
     std::string videoname = "video.mpg";
 
@@ -75,6 +75,6 @@ int main(int argc, char** argv)
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install OpenCV or ffmpeg and rebuild ViSP to use this example." << std::endl;
+  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 }

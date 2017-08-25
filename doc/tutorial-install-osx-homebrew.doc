@@ -313,7 +313,6 @@ Specific devices
   \-libusb-1.0                : yes
   \-pthread                   : yes
 Video and image Read/Write:
-  FFMPEG                      : no
   libjpeg                     : yes
   libpng                      : yes
 Misc:

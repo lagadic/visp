@@ -10,7 +10,7 @@
 
 
 int main(int argc, char ** argv) {
-#if defined(VISP_HAVE_OPENCV) && ((VISP_HAVE_OPENCV_VERSION >= 0x020400) || defined(VISP_HAVE_FFMPEG))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
   //! [MBT code]
   try {
     std::string videoname = "teabox.mpg";
@@ -234,7 +234,7 @@ int main(int argc, char ** argv) {
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install OpenCV or ffmpeg and rebuild ViSP to use this example." << std::endl;
+  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 
   return 0;
