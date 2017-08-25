@@ -1,11 +1,5 @@
 get_filename_component(TOOLCHAIN_ROOT_DIR ${CMAKE_TOOLCHAIN_FILE} PATH)
 
-# BZip2 detection for ffmpeg
-list(APPEND CMAKE_INCLUDE_PATH "${TOOLCHAIN_ROOT_DIR}/bzip2/include")
-list(APPEND CMAKE_LIBRARY_PATH "${TOOLCHAIN_ROOT_DIR}/bzip2")
-
-# ffmpeg
-set(ENV{FFMPEG_DIR} "${TOOLCHAIN_ROOT_DIR}/ffmpeg")
 # jpeg
 set(ENV{LIBJPEG_DIR} "${TOOLCHAIN_ROOT_DIR}/jpeg")
 # png

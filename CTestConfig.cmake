@@ -265,9 +265,6 @@ if(VISP_HAVE_SOXT)
 endif(VISP_HAVE_SOXT)
 
 #---- Images ----
-if(VISP_HAVE_FFMPEG)
-  set(BUILDNAME "${BUILDNAME}-ffmpeg")
-endif(VISP_HAVE_FFMPEG)
 if(VISP_HAVE_JPEG)
   set(BUILDNAME "${BUILDNAME}-jpeg")
 endif(VISP_HAVE_JPEG)

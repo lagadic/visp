@@ -9,7 +9,7 @@
 #include <visp3/core/vpIoTools.h>
 
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
 void learnCube(const vpImage<unsigned char> &I, vpMbEdgeTracker &tracker, vpKeyPoint &keypoint_learning, int id) {
   //! [Keypoints reference detection]
   std::vector<cv::KeyPoint> trainKeyPoints;
@@ -45,7 +45,7 @@ void learnCube(const vpImage<unsigned char> &I, vpMbEdgeTracker &tracker, vpKeyP
 #endif
 
 int main(int argc, char ** argv) {
-#if defined(VISP_HAVE_OPENCV) && ((VISP_HAVE_OPENCV_VERSION >= 0x020400) || defined(VISP_HAVE_FFMPEG))
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
   //! [MBT code]
   try {
     std::string videoname = "cube.mpeg";
@@ -328,7 +328,7 @@ int main(int argc, char ** argv) {
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install OpenCV or ffmpeg and rebuild ViSP to use this example." << std::endl;
+  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 
   return 0;

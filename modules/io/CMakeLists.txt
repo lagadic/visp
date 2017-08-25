@@ -55,12 +55,6 @@ if(USE_PNG)
   add_definitions(${PNG_DEFINITIONS})
 endif()
 
-# videos: ffmpeg
-if(USE_FFMPEG)
-  list(APPEND opt_incs ${FFMPEG_INCLUDE_DIRS})
-  list(APPEND opt_libs ${FFMPEG_LIBRARIES})
-endif()
-
 vp_add_module(io visp_core)
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})

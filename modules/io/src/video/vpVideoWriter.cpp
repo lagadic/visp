@@ -53,16 +53,7 @@
   Basic constructor.
 */
 vpVideoWriter::vpVideoWriter() :
-#ifdef VISP_HAVE_FFMPEG
-    ffmpeg(NULL),
-#  if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
-    codec(CODEC_ID_MPEG1VIDEO),
-#  else
-    codec(AV_CODEC_ID_MPEG1VIDEO),
-#  endif
-    bit_rate(500000),
-    framerate(25),
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
     writer(), fourcc(0), framerate(0.),
 #endif
     formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0),
@@ -73,16 +64,7 @@ vpVideoWriter::vpVideoWriter() :
   frameCount = 0;
   isOpen = false;
   width = height = 0;
-#ifdef VISP_HAVE_FFMPEG
-  ffmpeg = NULL;
-#  if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
-  codec = CODEC_ID_MPEG1VIDEO;
-#  else
-  codec = AV_CODEC_ID_MPEG1VIDEO;
-#  endif
-  bit_rate = 500000;
-  framerate = 25;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
   framerate = 25.0;
   fourcc = cv::VideoWriter::fourcc('P','I','M','1');
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
@@ -97,18 +79,14 @@ vpVideoWriter::vpVideoWriter() :
 */
 vpVideoWriter::~vpVideoWriter()
 {
-  #ifdef VISP_HAVE_FFMPEG
-  if (ffmpeg != NULL)
-    delete ffmpeg;
-  #endif
 }
 
 
 /*!
   It enables to set the path and the name of the files which will be saved.
-  
-  If you want to write a sequence of images, \f$ filename \f$ corresponds to the path followed by the image name template. For exemple, if you want to write different images named image0001.jpeg, image0002.jpg, ... and located in the folder /local/image, \f$ filename \f$ will be "/local/image/image%04d.jpg". 
-  
+
+  If you want to write a sequence of images, \f$ filename \f$ corresponds to the path followed by the image name template. For exemple, if you want to write different images named image0001.jpeg, image0002.jpg, ... and located in the folder /local/image, \f$ filename \f$ will be "/local/image/image%04d.jpg".
+
   \param filename : filename template of an image sequence.
 */
 void vpVideoWriter::setFileName(const char *filename)
@@ -125,13 +103,13 @@ void vpVideoWriter::setFileName(const char *filename)
   }
 
   strcpy(this->fileName,filename);
-  
+
   formatType = getFormat(fileName);
 
   if (formatType == FORMAT_UNKNOWN) {
     throw(vpException(vpException::badValue, "Filename extension not supported"));
   }
-  
+
   initFileName = true;
 }
 
@@ -149,7 +127,7 @@ void vpVideoWriter::setFileName(const std::string &filename)
 
 /*!
   Sets all the parameters needed to write the video or the image sequence.
-  
+
   \param I : One image with the right dimensions.
 */
 void vpVideoWriter::open(vpImage< vpRGBa > &I)
@@ -159,7 +137,7 @@ void vpVideoWriter::open(vpImage< vpRGBa > &I)
     vpERROR_TRACE("The generic filename has to be set");
     throw (vpImageException(vpImageException::noFileNameError,"filename empty"));
   }
-  
+
   if (formatType == FORMAT_PGM ||
       formatType == FORMAT_PPM ||
       formatType == FORMAT_JPEG ||
@@ -173,14 +151,7 @@ void vpVideoWriter::open(vpImage< vpRGBa > &I)
            formatType == FORMAT_MPEG4 ||
            formatType == FORMAT_MOV)
   {
-#ifdef VISP_HAVE_FFMPEG
-    ffmpeg = new vpFFMPEG;
-    ffmpeg->setFramerate(framerate);
-    ffmpeg->setBitRate(bit_rate);
-    if(!ffmpeg->openEncoder(fileName, I.getWidth(), I.getHeight(), codec)) {
-      throw (vpException(vpException::ioError ,"Could not open encode the video with ffmpeg"));
-    }
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
     writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size((int)I.getWidth(), (int)I.getHeight()));
 
     if(!writer.isOpened())
@@ -189,20 +160,19 @@ void vpVideoWriter::open(vpImage< vpRGBa > &I)
       throw (vpException(vpException::fatalError , "Could not open encode the video with opencv"));
     }
 #else
-    //vpERROR_TRACE("To encode video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
-    throw (vpException(vpException::fatalError ,"To encode video files ViSP should be build with ffmpeg or opencv 3rd >= 2.1.0 party libraries."));
+    throw (vpException(vpException::fatalError ,"To encode video files ViSP should be build with opencv 3rd >= 2.1.0 party libraries."));
 #endif
   }
-  
+
   frameCount = firstFrame;
-  
+
   isOpen = true;
 }
 
 
 /*!
   Sets all the parameters needed to write the video or the image sequence.
-  
+
   \param I : One image with the right dimensions.
 */
 void vpVideoWriter::open(vpImage< unsigned char > &I)
@@ -212,7 +182,7 @@ void vpVideoWriter::open(vpImage< unsigned char > &I)
     vpERROR_TRACE("The generic filename has to be set");
     throw (vpImageException(vpImageException::noFileNameError,"filename empty"));
   }
-  
+
   if (formatType == FORMAT_PGM ||
       formatType == FORMAT_PPM ||
       formatType == FORMAT_JPEG ||
@@ -226,14 +196,7 @@ void vpVideoWriter::open(vpImage< unsigned char > &I)
            formatType == FORMAT_MPEG4 ||
            formatType == FORMAT_MOV)
   {
-#ifdef VISP_HAVE_FFMPEG
-    ffmpeg = new vpFFMPEG;
-    ffmpeg->setFramerate(framerate);
-    ffmpeg->setBitRate(bit_rate);
-    if(!ffmpeg->openEncoder(fileName, I.getWidth(), I.getHeight(), codec)) {
-      throw (vpException(vpException::ioError ,"Could not encode the video with ffmpeg"));
-    }
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
     writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size((int)I.getWidth(), (int)I.getHeight()));
 
     if(!writer.isOpened())
@@ -242,22 +205,21 @@ void vpVideoWriter::open(vpImage< unsigned char > &I)
       throw (vpException(vpException::ioError ,"Could not encode the video with opencv"));
     }
 #else
-    //vpERROR_TRACE("To encode video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
-    throw (vpException(vpException::fatalError ,"To encode video files ViSP should be build with ffmpeg or opencv 3rd >= 2.1.0 party libraries."));
+    throw (vpException(vpException::fatalError ,"To encode video files ViSP should be build with opencv 3rd >= 2.1.0 party libraries."));
 #endif
   }
-  
+
   frameCount = firstFrame;
-  
+
   isOpen = true;
 }
 
 
 /*!
   Saves the image as a frame of the video or as an image belonging to the image sequence.
- 
+
   Each time this method is used, the frame counter is incremented and thus the file name change for the case of an image sequence.
- 
+
   \param I : The image which has to be saved
 */
 void vpVideoWriter::saveFrame (vpImage< vpRGBa > &I)
@@ -268,7 +230,7 @@ void vpVideoWriter::saveFrame (vpImage< vpRGBa > &I)
     throw (vpException(vpException::notInitialized,"file not yet opened"));
   }
 
-  
+
   if (formatType == FORMAT_PGM ||
       formatType == FORMAT_PPM ||
       formatType == FORMAT_JPEG ||
@@ -282,12 +244,10 @@ void vpVideoWriter::saveFrame (vpImage< vpRGBa > &I)
   }
   else
   {
-#ifdef VISP_HAVE_FFMPEG
-    ffmpeg->saveFrame(I);
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-	  cv::Mat matFrame;
-	  vpImageConvert::convert(I, matFrame);
-	  writer << matFrame;
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+    cv::Mat matFrame;
+    vpImageConvert::convert(I, matFrame);
+    writer << matFrame;
 #endif
   }
 
@@ -297,9 +257,9 @@ void vpVideoWriter::saveFrame (vpImage< vpRGBa > &I)
 
 /*!
   Saves the image as a frame of the video or as an image belonging to the image sequence.
- 
+
   Each time this method is used, the frame counter is incremented and thus the file name change for the case of an image sequence.
- 
+
   \param I : The image which has to be saved
 */
 void vpVideoWriter::saveFrame (vpImage< unsigned char > &I)
@@ -323,9 +283,7 @@ void vpVideoWriter::saveFrame (vpImage< unsigned char > &I)
   }
   else
   {
-#ifdef VISP_HAVE_FFMPEG
-    ffmpeg->saveFrame(I);
-#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
     cv::Mat matFrame, rgbMatFrame;
     vpImageConvert::convert(I, matFrame);
     cv::cvtColor(matFrame, rgbMatFrame, cv::COLOR_GRAY2BGR);
@@ -352,18 +310,12 @@ void vpVideoWriter::close()
     vpERROR_TRACE("The video has to be open first with the open method");
     throw (vpException(vpException::notInitialized,"file not yet opened"));
   }
-  #ifdef VISP_HAVE_FFMPEG
-  if (ffmpeg != NULL)
-  {
-    ffmpeg->endWrite();
-  }
-  #endif
 }
 
 
 /*!
   Gets the format of the file(s) which has/have to be written.
-  
+
   \return Returns the format.
 */
 vpVideoWriter::vpVideoFormatType

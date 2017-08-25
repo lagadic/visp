@@ -67,10 +67,6 @@ $ su -c "dnf install Coin3-devel"
 \code
 $ su -c "dnf install libjpeg-devel libpng-devel"
 \endcode
-- ffmpeg, to be able to read or encode compressed video streams (only useful if OpenCV is not installed)
-\code
-$ su -c "dnf install ffmpeg-devel"
-\endcode
 - Ogre 3D if you want to do augmented reality or simulation
 \code
 $ su -c "dnf install ogre-devel ogre-samples ois-devel"
@@ -304,7 +300,6 @@ Specific devices
   \-libusb-1.0                : no
   \-pthread                   : yes
 Video and image Read/Write:
-  FFMPEG                      : no
   libjpeg                     : no
   libpng                      : no
 Misc:

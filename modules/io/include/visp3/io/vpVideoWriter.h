@@ -46,7 +46,6 @@
 #include <string>
 
 #include <visp3/io/vpImageIo.h>
-#include <visp3/io/vpFFMPEG.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020200
 #  include <opencv2/highgui/highgui.hpp>
@@ -61,7 +60,7 @@
   \ingroup group_io_video
 
   \brief Class that enables to write easily a video file or a sequence of images.
- 
+
   This class has its own implementation to write a sequence of PGM and PPM images.
 
   This class may benefit from optional 3rd parties:
@@ -74,10 +73,6 @@
     libjpeg is not installed, OpenCV is also used to consider these image formats. OpenCV
     allows also to consider AVI, MPEG, MPEG4, MOV, OGV, WMV, FLV, MKV video formats.
     Installation instructions are provided here https://visp.inria.fr/3rd_opencv.
-  - ffmpeg: If installed and enabled this optional 3rd party is used to write
-    AVI, MPEG, MPEG4, MOV, OGV, WMV, FLV, MKV video formats. It means that if OpenCV is
-    also installed, that OpenCV is not used to read a video. Installation instructions
-    are provided here https://visp.inria.fr/3rd_ffmpeg.
 
   The following example available in tutorial-video-recorder.cpp shows how this
   class can be used to record a video from a camera by default in an mpeg file.
@@ -85,38 +80,38 @@
 
   The following example shows also how this class can be used to write an image sequence.
   The images are stored in the folder "./image" and are named "image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ...
-  
+
   \code
   #include <visp3/core/vpConfig.h>
   #include <visp3/io/vpVideoWriter.h>
- 
+
   int main()
   {
   vpImage<vpRGBa> I;
 
   vpVideoWriter writer;
-  
+
   //Initialize the writer.
   writer.setFileName("./image/image%04d.jpeg");
- 
+
   writer.open(I);
- 
+
   for ( ; ; )
   {
     //Here the code to capture or create an image and stores it in I.
-  
+
     //Save the image
     writer.saveFrame(I);
   }
-  
+
   writer.close();
 
   return 0;
   }
   \endcode
-  
+
   The other following example explains how to use the class to write directly an mpeg file.
-  
+
   \code
 #include <visp3/io/vpVideoWriter.h>
 
@@ -129,16 +124,7 @@ int main()
   // Set up the framerate to 30Hz. Default is 25Hz.
   writer.setFramerate(30);
 
-#ifdef VISP_HAVE_FFMPEG
-  // Set up the bit rate
-  writer.setBitRate(1000000);
-  // Set up the codec to use
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
-  writer.setCodec(CODEC_ID_MPEG2VIDEO);
-#else
-  writer.setCodec(AV_CODEC_ID_MPEG2VIDEO);
-#endif
-#elif defined VISP_HAVE_OPENCV
+#if defined VISP_HAVE_OPENCV
   writer.setCodec( CV_FOURCC('P','I','M','1') );
 #endif
   writer.setFileName("./test.mpeg");
@@ -161,24 +147,12 @@ int main()
 */
 
 class VISP_EXPORT vpVideoWriter
-{    
-  private:   
-#ifdef VISP_HAVE_FFMPEG
-    //!To read video files
-    vpFFMPEG *ffmpeg;
-    //!The codec to use
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
-    CodecID codec;
-#else
-    AVCodecID codec;
-#endif
-    //!The bite rate
-    unsigned int bit_rate;
-    int framerate;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-	  cv::VideoWriter writer;
-	  int fourcc;
-	  double framerate;
+{
+  private:
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+    cv::VideoWriter writer;
+    int fourcc;
+    double framerate;
 #endif
     //!Types of available formats
     typedef enum
@@ -193,25 +167,25 @@ class VISP_EXPORT vpVideoWriter
       FORMAT_MOV,
       FORMAT_UNKNOWN
     } vpVideoFormatType;
-    
+
     //!Video's format which has to be writen
     vpVideoFormatType formatType;
-    
+
     //!Path to the image sequence
     char fileName[FILENAME_MAX];
-    
+
     //!Indicates if the path to the image sequence is set.
     bool initFileName;
-    
+
     //!Indicates if the video is "open".
     bool isOpen;
-    
+
     //!Count the frame number.
     unsigned int frameCount;
-    
+
     //!The first frame index.
     unsigned int firstFrame;
-    
+
     //!Size of the frame
     unsigned int width;
     unsigned int height;
@@ -219,7 +193,7 @@ class VISP_EXPORT vpVideoWriter
   public:
     vpVideoWriter();
     ~vpVideoWriter();
-    
+
     void close();
 
     /*!
@@ -241,33 +215,7 @@ class VISP_EXPORT vpVideoWriter
     void saveFrame (vpImage< vpRGBa > &I);
     void saveFrame (vpImage< unsigned char > &I);
 
-#ifdef VISP_HAVE_FFMPEG
-    /*!
-      Sets the bit rate of the video when encoding.
-
-      \param bitrate : the expected bit rate.
-
-      By default the bit rate is set to 500 000.
-    */
-    inline void setBitRate(const unsigned int bitrate) {this->bit_rate = bitrate;}
-
-    /*!
-      Sets the codec used to encode the video.
-
-      \param codec_id : the expected codec.
-
-      By default codec is set to AV_CODEC_ID_MPEG1VIDEO. But if installed, you can use one of the
-      AVCodecID proposed by ffmpeg such as : AV_CODEC_ID_MPEG2VIDEO, AV_CODEC_ID_MPEG2VIDEO_XVMC,
-      AV_CODEC_ID_MPEG4, AV_CODEC_ID_H264, ... (More AVCodecID can be found in the ffmpeg documentation).
-
-      Of course to use the codec it must be installed on your computer.
-    */
-#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(54,51,110) // libavcodec 54.51.100
-    inline void setCodec(const CodecID codec_id) {this->codec = codec_id;}
-#else
-    inline void setCodec(const AVCodecID codec_id) {this->codec = codec_id;}
-#endif
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
     inline void setCodec(const int fourcc_codec) {this->fourcc = fourcc_codec;}
 #endif
 
@@ -275,23 +223,12 @@ class VISP_EXPORT vpVideoWriter
     void setFileName(const std::string &filename);
     /*!
       Enables to set the first frame index.
-      
+
       \param first_frame : The first frame index.
     */
     inline void setFirstFrameIndex(const unsigned int first_frame) {this->firstFrame = first_frame;}
-#ifdef VISP_HAVE_FFMPEG
-    /*!
-      Sets the framerate in Hz of the video when encoding.
-
-      \param frame_rate : the expected framerate.
-
-      By default the framerate is set to 25Hz.
-    */
-    inline void setFramerate(const int frame_rate) {
-      this->framerate = frame_rate;
-    }
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-	/*!
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+  /*!
       Sets the framerate in Hz of the video when encoding.
 
       \param frame_rate : the expected framerate.

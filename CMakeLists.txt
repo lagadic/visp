@@ -395,7 +395,6 @@ VP_OPTION(USE_X11         X11         ""    "Include X11 support"          "" ON
 VP_OPTION(USE_GTK2        MyGTK2       ""    "Include gtk2 support"         "" OFF IF NOT WINRT)
 VP_OPTION(USE_JPEG       "JPEG;MyJPEG" ""    "Include jpeg support"         "" ON)
 VP_OPTION(USE_PNG        "PNG;MyPNG"   ""    "Include png support"          "" ON)
-VP_OPTION(USE_FFMPEG      FFMPEG       ""    "Include ffmpeg support"       "" OFF)
 # To control Pioneer mobile robots, under UNIX we need Aria, pthread, rt and dl 3rd party libraries
 VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" ON IF NOT WINRT)
 #VP_OPTION(USE_RT          RT           ""    "Include rt support"           "" ON)
@@ -620,7 +619,6 @@ VP_SET(VISP_HAVE_LAPACK      TRUE IF (BUILD_MODULE_visp_core AND (USE_LAPACK OR 
 VP_SET(VISP_HAVE_LAPACK_BUILT_IN TRUE IF (BUILD_MODULE_visp_core AND WITH_LAPACK))
 VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND USE_PTHREAD))
 VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
-VP_SET(VISP_HAVE_FFMPEG      TRUE IF (BUILD_MODULE_visp_core AND USE_FFMPEG))
 VP_SET(VISP_HAVE_PCL         TRUE IF (BUILD_MODULE_visp_core AND USE_PCL))
 
 VP_SET(VISP_HAVE_OGRE        TRUE IF (BUILD_MODULE_visp_ar AND USE_OGRE))
@@ -1078,7 +1076,6 @@ status("  Media I/O: ")
 status("    Use JPEG:"               USE_JPEG         THEN "yes (ver ${JPEG_LIB_VERSION})" ELSE "no")
 status("    Use PNG:"                USE_PNG          THEN "yes (ver ${PNG_VERSION_STRING})" ELSE "no")
 status("    \\- Use ZLIB:"           USE_ZLIB         THEN "yes (ver ${ZLIB_VERSION_STRING})" ELSE "no")
-status("    Use FFMPEG:"             USE_FFMPEG       THEN "yes" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
 status("")
 status("  Real robots: ")

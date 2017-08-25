@@ -47,7 +47,6 @@
 #include <string>
 
 #include <visp3/io/vpDiskGrabber.h>
-#include <visp3/io/vpFFMPEG.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020200
 #include "opencv2/highgui/highgui.hpp"
@@ -76,10 +75,6 @@
     libjpeg is not installed, OpenCV is also used to consider these image formats. OpenCV
     allows also to consider AVI, MPEG, MPEG4, MOV, OGV, WMV, FLV, MKV video formats.
     Installation instructions are provided here https://visp.inria.fr/3rd_opencv.
-  - ffmpeg: If installed and enabled this optional 3rd party is used to read
-    AVI, MPEG, MPEG4, MOV, OGV, WMV, FLV, MKV video formats. It means that if OpenCV is
-    also installed, that OpenCV is not used to read a video. Installation instructions
-    are provided here https://visp.inria.fr/3rd_ffmpeg.
 
   The following example available in tutorial-video-reader.cpp shows how this
   class is really easy to use. It enables to read a video file named video.mpeg.
@@ -95,7 +90,7 @@
 
 int main()
 {
-#ifdef VISP_HAVE_FFMPEG
+#ifdef VISP_HAVE_OPENCV
   vpImage<vpRGBa> I;
 
   vpVideoReader reader;
@@ -105,7 +100,7 @@ int main()
   reader.open(I);
 
   // Read the nearest key frame from the 3th frame
-  reader.getFrame(I,2);
+  reader.getFrame(I, 2);
 
   // After positionning the video reader use acquire to read the video frame by frame
   reader.acquire(I);
@@ -172,10 +167,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 private:
     //!To read sequences of images
     vpDiskGrabber *imSequence;
-#ifdef VISP_HAVE_FFMPEG
-    //!To read video files
-    vpFFMPEG *ffmpeg;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
     //!To read video files with OpenCV
     cv::VideoCapture capture;
     cv::Mat frame;
@@ -231,9 +223,7 @@ private:
 //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 //    vpVideoReader(const vpVideoReader &)
 //      : vpFrameGrabber(), imSequence(NULL),
-//    #ifdef VISP_HAVE_FFMPEG
-//        ffmpeg(NULL),
-//    #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+//    #if VISP_HAVE_OPENCV_VERSION >= 0x020100
 //        capture(), frame(),
 //    #endif
 //        formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0),
