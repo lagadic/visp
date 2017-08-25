@@ -80,7 +80,7 @@
     AVI, MPEG, MPEG4, MOV, OGV, WMV, FLV, MKV video formats. It means that if OpenCV is
     also installed, that OpenCV is not used to read a video. Installation instructions
     are provided here https://visp.inria.fr/3rd_ffmpeg.
-  
+
   The following example available in tutorial-video-reader.cpp shows how this
   class is really easy to use. It enables to read a video file named video.mpeg.
   \include tutorial-video-reader.cpp
@@ -114,7 +114,7 @@ int main()
 #endif
 }
   \endcode
-  
+
   The other following example explains how to use the class to read a
   sequence of images. The images are stored in the folder "./image" and are
   named "image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ... As explained
@@ -144,7 +144,7 @@ int main()
   return 0;
 }
   \endcode
-  
+
   Note that it is also possible to access to a specific frame using getFrame().
   \code
 #include <visp3/io/vpVideoReader.h>
@@ -168,7 +168,7 @@ int main()
 */
 
 class VISP_EXPORT vpVideoReader : public vpFrameGrabber
-{    
+{
 private:
     //!To read sequences of images
     vpDiskGrabber *imSequence;
@@ -205,10 +205,10 @@ private:
       FORMAT_MKV,
       FORMAT_UNKNOWN
     } vpVideoFormatType;
-    
+
     //!Video's format which has to be read
     vpVideoFormatType formatType;
-    
+
     //!Path to the video
     char fileName[FILENAME_MAX];
     //!Indicates if the path to the video is set.
@@ -225,6 +225,7 @@ private:
     bool lastFrameIndexIsSet;
     //!The frame step
     long frameStep;
+    double frameRate;
 
 //private:
 //#ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -249,7 +250,7 @@ private:
 public:
     vpVideoReader();
     ~vpVideoReader();
-    
+
     void acquire(vpImage< vpRGBa > &I);
     void acquire(vpImage< unsigned char > &I);
     void close(){;}
@@ -270,7 +271,17 @@ public:
     }
     bool getFrame(vpImage<vpRGBa> &I, long frame);
     bool getFrame(vpImage<unsigned char> &I, long frame);
-    double getFramerate();
+    /*!
+      Return the frame rate in Hz used to encode the video stream.
+
+      If the video is a sequence of images, return -1.
+    */
+    double getFramerate()  {
+      if (!isOpen) {
+        getProperties();
+      }
+      return frameRate;
+    }
 
     /*!
       Get the frame index of the current image. This index is updated at each call of the
@@ -288,13 +299,23 @@ public:
 
       \return Returns the first frame index.
     */
-    inline long getFirstFrameIndex() const {return firstFrame;}
+    inline long getFirstFrameIndex() {
+        if (!isOpen) {
+          getProperties();
+        }
+        return firstFrame;
+    }
     /*!
       Gets the last frame index.
 
       \return Returns the last frame index.
     */
-    inline long getLastFrameIndex() const {return lastFrame;}
+    inline long getLastFrameIndex() {
+        if (!isOpen) {
+          getProperties();
+        }
+        return lastFrame;
+    }
     /*!
       Gets the frame step.
 
@@ -343,15 +364,15 @@ public:
 
     /*!
       Sets the frame step index.
-	  The default frame step is 1
+    The default frame step is 1
 
-	  \param frame_step : The frame index step.
+    \param frame_step : The frame index step.
 
-	  \sa setFrameStep()
-	*/
-	inline void setFrameStep(const long frame_step) {
-	  this->frameStep = frame_step;
-	}
+    \sa setFrameStep()
+  */
+  inline void setFrameStep(const long frame_step) {
+    this->frameStep = frame_step;
+  }
 
 private:
     vpVideoFormatType getFormat(const char *filename);
@@ -362,6 +383,7 @@ private:
     bool isVideoExtensionSupported();
     long extractImageIndex(const std::string &imageName, const std::string &format);
     bool checkImageNameFormat(const std::string &format);
+    void getProperties();
 };
 
 #endif

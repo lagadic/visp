@@ -62,7 +62,7 @@ vpVideoReader::vpVideoReader()
 #endif
   formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0),
   firstFrame(0), lastFrame(0), firstFrameIndexIsSet(false), lastFrameIndexIsSet(false),
-  frameStep(1)
+  frameStep(1), frameRate(0.)
 {
 }
 
@@ -144,13 +144,9 @@ void vpVideoReader::setFileName(const std::string &filename)
 }
 
 /*!
-Sets all the parameters needed to read the video or the image sequence.
-
-Grab the first frame and stores it in the image \f$ I \f$.
-
-\param I : The image where the frame is stored.
+  Open video stream and get first and last frame indexes.
 */
-void vpVideoReader::open(vpImage< vpRGBa > &I)
+void vpVideoReader::getProperties()
 {
   if (!initFileName)
   {
@@ -166,6 +162,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
     {
       imSequence->setImageNumber(firstFrame);
     }
+    frameRate = -1.;
   }
   else if (isVideoExtensionSupported())
   {
@@ -176,6 +173,7 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
       throw (vpException(vpException::ioError, "Could not open the video %s with ffmpeg", fileName));
     }
     ffmpeg->initStream();
+    frameRate = ffmpeg->getFramerate();
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
     capture.open(fileName);
 
@@ -186,12 +184,13 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
 #  if VISP_HAVE_OPENCV_VERSION >= 0x030000
     width = (unsigned int)capture.get(cv::CAP_PROP_FRAME_WIDTH);
     height = (unsigned int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+    frameRate = (double)capture.get(cv::CAP_PROP_FPS);
 #  else
     width = (unsigned int)capture.get(CV_CAP_PROP_FRAME_WIDTH);
     height = (unsigned int)capture.get(CV_CAP_PROP_FRAME_HEIGHT);
+    frameRate = capture.get(CV_CAP_PROP_FPS);
 #  endif
 
-    I.resize(height, width, 0);
 #else
   throw (vpException(vpException::fatalError,
       "To read video files ViSP should be build with ffmpeg or opencv 3rd >= 2.1.0 party libraries."));
@@ -205,18 +204,26 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
   }
 
   findFirstFrameIndex();
-  frameCount = firstFrame;
-  if (!getFrame(I, firstFrame))
-  {
-    //vpERROR_TRACE("Could not read the video first frame");
-    throw (vpException(vpException::ioError, "Could not read the video first frame"));
-  }
-
-  height = I.getHeight();
-  width = I.getWidth();
-
   isOpen = true;
   findLastFrameIndex();
+}
+
+/*!
+Sets all the parameters needed to read the video or the image sequence.
+
+Grab the first frame and stores it in the image \f$ I \f$.
+
+\param I : The image where the frame is stored.
+*/
+void vpVideoReader::open(vpImage< vpRGBa > &I)
+{
+  getProperties();
+
+  frameCount = firstFrame;
+  if(!getFrame(I,firstFrame))
+  {
+    throw (vpException(vpException::ioError , "Could not read the video first frame"));
+  }
 
   // Rewind to the first frame since open() should not increase the frame counter
   frameCount = firstFrame;
@@ -232,10 +239,10 @@ void vpVideoReader::open(vpImage< vpRGBa > &I)
 #  else
     capture.set(CV_CAP_PROP_POS_FRAMES, firstFrame -1);
 #endif
+    frameCount --;
 #endif
   }
 }
-
 
 /*!
 Sets all the parameters needed to read the video or the image sequence.
@@ -246,71 +253,13 @@ Grab the first frame and stores it in the image \f$ I \f$.
 */
 void vpVideoReader::open(vpImage<unsigned char> &I)
 {
-  if (!initFileName)
-  {
-    throw (vpImageException(vpImageException::noFileNameError,
-                            "The generic video filename has to be set"));
-  }
+  getProperties();
 
-  if (isImageExtensionSupported())
-  {
-    imSequence = new vpDiskGrabber;
-    imSequence->setGenericName(fileName);
-    imSequence->setStep(frameStep);
-    if (firstFrameIndexIsSet)
-    {
-      imSequence->setImageNumber(firstFrame);
-    }
-  }
-  else if (isVideoExtensionSupported())
-  {
-#ifdef VISP_HAVE_FFMPEG
-    ffmpeg = new vpFFMPEG;
-    if (!ffmpeg->openStream(fileName, vpFFMPEG::GRAY_SCALED))
-    {
-      throw (vpException(vpException::ioError, "Could not open the video %s with ffmpeg", fileName));
-    }
-    ffmpeg->initStream();
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    capture.open(fileName);
-
-    if(!capture.isOpened())
-    {
-      throw (vpException(vpException::ioError, "Could not open the video %s with OpenCV", fileName));
-    }
-#  if VISP_HAVE_OPENCV_VERSION >= 0x030000
-    width = (unsigned int)capture.get(cv::CAP_PROP_FRAME_WIDTH);
-    height = (unsigned int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
-#  else
-    width = (unsigned int)capture.get(CV_CAP_PROP_FRAME_WIDTH);
-    height = (unsigned int)capture.get(CV_CAP_PROP_FRAME_HEIGHT);
-#  endif
-
-    I.resize(height, width, 0);
-#else
-  //vpERROR_TRACE("To read video files ViSP should be build with ffmpeg or opencv 3rd party libraries.");
-  throw (vpException(vpException::fatalError,
-                     "To read video files ViSP should be build with ffmpeg or opencv >= 2.1.0 3rd party libraries."));
-#endif
-  }
-  else if (formatType == FORMAT_UNKNOWN)
-  {
-    //vpERROR_TRACE("The format of the file does not correspond to a readable format.");
-    throw (vpException(vpException::fatalError,
-        "The format of the file does not correspond to a readable format supported by ViSP."));
-  }
-  findFirstFrameIndex();
   frameCount = firstFrame;
-  if (!getFrame(I, firstFrame))
+  if(!getFrame(I,firstFrame))
   {
-    throw (vpException(vpException::ioError, "Could not read the video %s first frame", fileName));
+    throw (vpException(vpException::ioError , "Could not read the video first frame"));
   }
-
-  height = I.getHeight();
-  width = I.getWidth();
-
-  isOpen = true;
-  findLastFrameIndex();
 
   // Rewind to the first frame since open() should not increase the frame counter
   frameCount = firstFrame;
@@ -326,6 +275,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 #  else
     capture.set(CV_CAP_PROP_POS_FRAMES, firstFrame -1);
 #  endif
+    frameCount --;
 #endif
   }
 }
@@ -528,7 +478,10 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
     try
     {
       imSequence->acquire(I, frame_index);
+      width = I.getWidth();
+      height = I.getHeight();
       frameCount = imSequence->getImageNumber();
+      imSequence->setImageNumber(frameCount); // to not increment vpDiskGrabber next image
       if (frameCount + frameStep > lastFrame) {
         imSequence->setImageNumber(frameCount);
       }
@@ -615,7 +568,10 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
     try
     {
       imSequence->acquire(I, frame_index);
+      width = I.getWidth();
+      height = I.getHeight();
       frameCount = imSequence->getImageNumber();
+      imSequence->setImageNumber(frameCount); // to not increment vpDiskGrabber next image
       if (frameCount + frameStep > lastFrame) {
         imSequence->setImageNumber(frameCount);
       }
@@ -696,7 +652,7 @@ Gets the format of the file(s) which has/have to be read.
 */
 vpVideoReader::vpVideoFormatType
   vpVideoReader::getFormat(const char *filename)
-{  
+{
   std::string sfilename(filename);
 
   std::string ext = vpVideoReader::getExtension(sfilename);
@@ -811,7 +767,7 @@ void vpVideoReader::findLastFrameIndex()
     vpERROR_TRACE("Use the open method before");
     throw (vpException(vpException::notInitialized, "file not yet opened"));
   }
-  
+
   if (imSequence != NULL)
   {
     if (! lastFrameIndexIsSet)
@@ -911,38 +867,6 @@ void vpVideoReader::findFirstFrameIndex()
 }
 
 /*!
-Return the frame rate in Hz used to encode the video stream.
-
-If the video is a sequence of images, return -1.
-*/
-double vpVideoReader::getFramerate()
-{
-  double framerate = -1.;
-
-#ifdef VISP_HAVE_FFMPEG
-  if (ffmpeg != NULL)
-  {
-    framerate = ffmpeg->getFramerate();
-  }
-#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-   framerate = capture.get(cv::CAP_PROP_FPS);
-   // if(framerate == 0)
-   if (std::fabs(framerate) <= std::numeric_limits<double>::epsilon())
-   {
-     vpERROR_TRACE("Problem with cv::CAP_PROP_FPS");
-   }
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-   framerate = capture.get(CV_CAP_PROP_FPS);
-   // if(framerate == 0)
-   if (std::fabs(framerate) <= std::numeric_limits<double>::epsilon())
-   {
-     vpERROR_TRACE("Problem with CV_CAP_PROP_FPS");
-   }
-#endif
-  return framerate;
-}
-
-/*!
 Return true if the image file extension is supported, false otherwise.
 */
 bool vpVideoReader::isImageExtensionSupported()
@@ -968,7 +892,7 @@ bool vpVideoReader::isVideoExtensionSupported()
     formatType == FORMAT_MPEG ||
     formatType == FORMAT_MPEG4 ||
     formatType == FORMAT_MOV ||
-    formatType == FORMAT_OGV || 
+    formatType == FORMAT_OGV ||
     formatType == FORMAT_WMV ||
     formatType == FORMAT_FLV ||
     formatType == FORMAT_MKV);
@@ -1038,7 +962,7 @@ vpVideoReader &vpVideoReader::operator>>(vpImage<vpRGBa> &I)
   Checks imageName format and extracts its index.
 
   Format must contain substring "%0xd", defining the length of image index.
-  For example, format can be "img%04d.jpg". Then "img0001.jpg" and "img0000.jpg" 
+  For example, format can be "img%04d.jpg". Then "img0001.jpg" and "img0000.jpg"
   satisfy it, while "picture001.jpg" and "img001.jpg" don't.
 
   \param imageName : name from which to extract
