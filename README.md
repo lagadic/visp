@@ -1,6 +1,7 @@
 ### ViSP: Open source Visual Servoing Platform
 
-[![Build Status](https://travis-ci.org/lagadic/visp.png)](https://travis-ci.org/lagadic/visp)
+[![Build Status: Linux](https://travis-ci.org/lagadic/visp.png)](https://travis-ci.org/lagadic/visp)
+[![Build status: Windows](https://ci.appveyor.com/api/projects/status/19rqbbob4wk3ki6q?svg=true)](https://ci.appveyor.com/project/lagadic/visp)
 
 #### Resources
 - Homepage: http://visp.inria.fr

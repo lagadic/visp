@@ -1,0 +1,56 @@
+# Specify version format
+version: "3.1.0-{build}"
+
+os: Visual Studio 2015
+
+# to add several platforms to build matrix
+platform:
+- x64
+
+# scripts that are called at very beginning, before repo cloning
+init:
+  - cmd: cmake --version
+  - cmd: msbuild /version
+
+install:
+  # Create temp dir to collect test outputs
+  - md C:\temp
+
+  # All external dependencies are installed in C:\projects\deps
+  - mkdir C:\projects\deps
+  - cd C:\projects\deps
+
+  # visp-images
+  - git clone https://github.com/lagadic/ViSP-images C:\projects\deps\ViSP-images
+  - set VISP_INPUT_IMAGE_PATH=C:\projects\deps
+
+  # opencv
+  - cmd: choco install OpenCV
+
+# visp clone directory
+clone_folder: C:\projects\visp\visp
+
+before_build:
+  - cmd: SET ARCH=x64
+  # setup visp
+  - cmd: SET VISP_DLL_DIR=C:\projects\visp\build\install\%ARCH%\vc14\bin
+  - cmd: SET PATH=%VISP_DLL_DIR%;%PATH%
+  
+  # setup opencv
+  - cmd: SET OpenCV_DIR=C:\tools\opencv\build
+  - cmd: SET OpenCV_DLL_DIR=%OpenCV_DIR%\%ARCH%\vc14\bin
+  - cmd: SET PATH=%OPENCV_DLL_DIR%;%PATH%
+
+build_script:
+  - echo %PATH%
+  - dir C:\projects\deps
+  - dir C:\tools
+  - dir C:\tools\opencv\build\%ARCH%\vc14\bin
+  - md C:\projects\visp\build
+  - cd C:\projects\visp\build
+  - cmake -G "Visual Studio 14 2015 Win64" ..\visp
+  - cmake --build . --config Release --target install
+  - ctest
+#  - C:\projects\visp\build\modules\core\Release\testIoPGM
+
+
