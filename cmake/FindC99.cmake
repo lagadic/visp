@@ -42,8 +42,8 @@ include(CheckCCompilerFlag)
 include(FindPackageHandleStandardArgs)
 
 set(C99_C_FLAG_CANDIDATES
-  "-std=c99"
   "-std=gnu99"
+  "-std=c99"
 )
 
 # check C C99 compiler flag
