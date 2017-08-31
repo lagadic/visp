@@ -598,6 +598,7 @@ main(int argc, const char ** argv)
     }
 
     std::cout << "Reached last frame: " << reader.getFrameIndex() << std::endl;
+    std::cout << "\nFinal poses, c1Mo:\n" << c1Mo << "\nc2Mo:\n" << c2Mo << std::endl;
 
     if (opt_click_allowed && !quit) {
       vpDisplay::getClick(I1);

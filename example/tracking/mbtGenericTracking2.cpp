@@ -678,6 +678,9 @@ main(int argc, const char ** argv)
     }
 
     std::cout << "Reached last frame: " << reader.getFrameIndex() << std::endl;
+    std::cout << "\nFinal poses, c1Mo:\n" << mapOfCameraPoses["Camera1"]
+              << "\nc2Mo:\n" << mapOfCameraPoses["Camera2"]
+              << "\nc3Mo:\n" << mapOfCameraPoses["Camera3"] << std::endl;
 
     if (opt_click_allowed && !quit) {
       vpDisplay::getClick(I1);

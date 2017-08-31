@@ -170,9 +170,29 @@ void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues
 
   psiTukey(sigma, m_normres, weights);
 }
-#else
+
 template <typename T>
-void vpMbtTukeyEstimator<T>::MEstimator(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold) {
+void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &/*residues*/, std::vector<T> &/*weights*/, const T /*NoiseThreshold*/) {
+  //unused
+}
+
+#else
+template <>
+void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights, const float NoiseThreshold) {
+  MEstimator_impl(residues, weights, NoiseThreshold);
+}
+
+template <>
+void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues, std::vector<double> &weights, const double NoiseThreshold) {
+  MEstimator_impl(residues, weights, NoiseThreshold);
+}
+
+// Without MEstimator_impl, error with g++4.6, ok with gcc 5.4.0
+// Ubuntu-12.04-Linux-i386-g++4.6-Dyn-RelWithDebInfo-dc1394-v4l2-X11-OpenCV2.3.1-lapack-gsl-Coin-jpeg-png-xml-pthread-OpenMP-dmtx-zbar-Wov-Weq-Moment:
+// libvisp_mbt.so.3.1.0: undefined reference to
+// `vpMbtTukeyEstimator<double>::MEstimator(std::vector<double, std::allocator<double> > const&, std::vector<double, std::allocator<double> >&, double)'
+template <typename T>
+void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold) {
   if (residues.empty()) {
     return;
   }
