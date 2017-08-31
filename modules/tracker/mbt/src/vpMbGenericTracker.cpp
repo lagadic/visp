@@ -3302,7 +3302,24 @@ void vpMbGenericTracker::setUseKltTracking(const std::string &name, const bool &
 }
 #endif
 
-void vpMbGenericTracker::testTracking() { }
+void vpMbGenericTracker::testTracking() {
+  //Test tracking fails only if all testTracking have failed
+  bool isOneTestTrackingOk = false;
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    try {
+      tracker->testTracking();
+      isOneTestTrackingOk = true;
+    } catch(...) { }
+  }
+
+  if (!isOneTestTrackingOk) {
+    std::ostringstream oss;
+    oss << "Not enough moving edges to track the object. Try to reduce the threshold="
+        << m_percentageGdPt << " using setGoodMovingEdgesRatioThreshold()";
+    throw vpTrackingException(vpTrackingException::fatalError, oss.str());
+  }
+}
 
 /*!
   Realize the tracking of the object in the image.
@@ -3411,7 +3428,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
     throw; // throw the original exception
   }
 
-  //TODO: testTracking somewhere/needed?
+  testTracking();
 
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
@@ -3470,7 +3487,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
     throw; // throw the original exception
   }
 
-  //TODO: testTracking somewhere/needed?
+  testTracking();
 
   for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
