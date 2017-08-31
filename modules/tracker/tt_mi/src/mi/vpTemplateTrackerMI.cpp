@@ -402,7 +402,7 @@ void vpTemplateTrackerMI::computeProba(int &nbpoint)
   }
   unsigned int indd, indd2;
   indd = indd2 = 0;
-  for(int i=0;i<Ncb*Ncb;i++){
+  for(volatile int i=0;i<Ncb*Ncb;i++){
     Prt[i]=Prt[i]/nbpoint;
     for(unsigned int j=0;j<nbParam;j++){
       dPrt[indd]=dPrt[indd]/nbpoint;
@@ -669,7 +669,7 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I,int &nc, const
   double *tPt = new double[tNcb];
 
   double MI=0;
-  int Nbpoint=0;
+  volatile int Nbpoint=0;
   double IW;
 
   vpImage<double> GaussI ;
@@ -717,7 +717,7 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I,int &nc, const
   for(int r=0;r<nc;r++)
     for(int t=0;t<nc;t++)
     {
-      for(int i=0;i<tinfluBspline_;i++)
+      for(volatile int i=0;i<tinfluBspline_;i++)
       {
         int r2,t2;
         r2=r+i/bspline_;
@@ -734,7 +734,7 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I,int &nc, const
     delete[] tPr;
     delete[] tPt;
 
-	  return 0;
+    return 0;
   }
   else
   {
@@ -787,7 +787,7 @@ double vpTemplateTrackerMI::getMI256(const vpImage<unsigned char> &I, const vpCo
   vpColVector Pr256(256);Pr256=0;
   vpColVector Pt256(256);Pt256=0;
 
-  int Nbpoint=0;
+  volatile int Nbpoint=0;
   unsigned int Tij,IW;
 
   vpImage<double> GaussI ;
