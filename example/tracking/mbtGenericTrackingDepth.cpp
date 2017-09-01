@@ -394,7 +394,7 @@ int main(int argc, const char ** argv) {
       residues.push_back(0.12f);
       std::vector<float> weights(5, 1);
 
-      tukey_estimator.MEstimator(residues, weights, 1e-3);
+      tukey_estimator.MEstimator(residues, weights, (float) 1e-3);
 
       for (size_t i = 0; i < weights.size(); i++) {
         std::cout << "residues[" << i << "]=" << residues[i]
