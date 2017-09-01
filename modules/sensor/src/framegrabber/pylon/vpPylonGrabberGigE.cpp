@@ -338,7 +338,7 @@ void vpPylonGrabberGigE::setCameraIndex(unsigned int index)
 
   \sa getCameraSerial()
  */
-void vpPylonGrabberGigE::setCameraSerial(std::string &serial)
+void vpPylonGrabberGigE::setCameraSerial(const std::string &serial)
 {
   m_numCameras = getNumCameras();
   for (unsigned int i = 0; i < m_numCameras; i++) {
