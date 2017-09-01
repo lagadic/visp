@@ -299,7 +299,7 @@ public:
 
     \sa getCameraSerial()
    */
-  virtual void setCameraSerial(std::string &serial) = 0;
+  virtual void setCameraSerial(const std::string &serial) = 0;
   /*!
     Set camera exposure mode and parameter.
 

@@ -100,7 +100,7 @@ public:
 
   float setBlackLevel(float blacklevel_value = 0);
   void setCameraIndex(unsigned int index);
-  void setCameraSerial(std::string &serial);
+  void setCameraSerial(const std::string &serial);
   float setExposure(bool exposure_on, bool exposure_auto,
                     float exposure_value = 0);
   float setGain(bool gain_auto, float gain_value = 0);

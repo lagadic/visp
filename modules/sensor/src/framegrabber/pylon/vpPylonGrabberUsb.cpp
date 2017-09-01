@@ -332,7 +332,7 @@ void vpPylonGrabberUsb::setCameraIndex(unsigned int index)
 
   \sa getCameraSerial()
  */
-void vpPylonGrabberUsb::setCameraSerial(std::string &serial)
+void vpPylonGrabberUsb::setCameraSerial(const std::string &serial)
 {
   m_numCameras = getNumCameras();
   for (unsigned int i = 0; i < m_numCameras; i++) {
