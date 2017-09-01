@@ -309,6 +309,9 @@ endif()
 if(ENABLE_MOMENTS_COMBINE_MATRICES)
   set(BUILDNAME "${BUILDNAME}-Moment")
 endif()
+if(ENABLE_SSE2 OR ENABLE_SSE3 OR ENABLE_SSSE3)
+  set(BUILDNAME "${BUILDNAME}-sse")
+endif()
 
 #---- Suffix contrib ----
 if(VISP_CONTRIB_MODULES_PATH)
