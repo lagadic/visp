@@ -1484,10 +1484,11 @@ vpMbEdgeTracker::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogen
       l->setVisible(false);
       for(unsigned int a = 0 ; a < l->meline.size() ; a++){
         if (l->meline[a] != NULL) delete l->meline[a];
-        l->nbFeature[a] = 0;
+        if (a < l->nbFeature.size()) l->nbFeature[a] = 0;
       }
       l->nbFeatureTotal = 0;
       l->meline.clear();
+      l->nbFeature.clear();
     }
   }
 
