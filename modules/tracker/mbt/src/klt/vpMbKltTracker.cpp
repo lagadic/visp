@@ -420,7 +420,7 @@ vpMbKltTracker::setCameraParameters(const vpCameraParameters& camera)
 void
 vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix& cdMo)
 {
-  if((int)(kltCylinders.size()) != 0)
+  if(! kltCylinders.empty())
   {
     std::cout << "WARNING: Cannot set pose when model contains cylinder(s). This feature is not implemented yet." << std::endl;
     std::cout << "Tracker will be reinitialized with the given pose." << std::endl;
