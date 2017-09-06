@@ -20,7 +20,6 @@ endif()
 
 if(C99_FOUND)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C99_C_FLAGS}")
-message("add c99 flag: ${C99_C_FLAGS}")
 endif()
 if(CMAKE_COMPILER_IS_GNUCXX AND UNIX)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
