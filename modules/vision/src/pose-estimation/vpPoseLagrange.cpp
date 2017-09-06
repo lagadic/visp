@@ -448,9 +448,9 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type
 
     }
     else if (coplanar_plane_type == 2) {  // plane by=d
-      cMo[0][1] = (X1[1]*X2[2])-(X1[2]*X2[1]);
-      cMo[1][1] = (X1[2]*X2[0])-(X1[0]*X2[2]);
-      cMo[2][1] = (X1[0]*X2[1])-(X1[1]*X2[0]);
+      cMo[0][1] = (X1[2]*X2[1])-(X1[1]*X2[2]);
+      cMo[1][1] = (X1[0]*X2[2])-(X1[2]*X2[0]);
+      cMo[2][1] = (X1[1]*X2[0])-(X1[0]*X2[1]);
 
       for (i=0;i<3;i++)
       { /* calcul de la matrice de passage	*/
@@ -460,7 +460,6 @@ vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, const int coplanar_plane_type
       }
     }
     else { // plane cz=d or any other
-
       cMo[0][2] = (X1[1]*X2[2])-(X1[2]*X2[1]);
       cMo[1][2] = (X1[2]*X2[0])-(X1[0]*X2[2]);
       cMo[2][2] = (X1[0]*X2[1])-(X1[1]*X2[0]);
