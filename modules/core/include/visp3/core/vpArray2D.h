@@ -356,7 +356,7 @@ public:
       } while(! headerIsDecoded);
 
       if (header != NULL) {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if defined(__MINGW32__) || !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
         sprintf(header, "%s", h.c_str());
 #else
         _snprintf_s(header, h.size()+1, _TRUNCATE, "%s", h.c_str());
@@ -390,7 +390,7 @@ public:
         h+=c;
       }
       if (header != NULL) {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if /*defined(__MINGW32__) || */!defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
         sprintf(header, "%s", h.c_str());
 #else
         _snprintf_s(header, h.size()+1, _TRUNCATE, "%s", h.c_str());
@@ -482,7 +482,7 @@ public:
 
     if (header != NULL) {
       std::string h_ = h.substr(0, h.size() - 1); // Remove last '\n' char
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if defined(__MINGW32__) || !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       sprintf(header, "%s", h_.c_str());
 #else
       _snprintf_s(header, h_.size()+1, _TRUNCATE, "%s", h_.c_str());
