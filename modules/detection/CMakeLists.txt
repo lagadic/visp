@@ -57,7 +57,7 @@ if(WITH_APRILTAG)
   include_directories(${APRILTAG_INCLUDE_DIRS})
 
   # Add specific build flag to turn off warnings coming from apriltag 3rd party
-  if(UNIX)
+  if(UNIX OR MINGW)
     vp_set_source_file_compile_flag(src/tag/vpDetectorAprilTag.cpp -Wno-unused-parameter -Wno-strict-overflow)
   else(WIN32)
     vp_set_source_file_compile_flag(src/tag/vpDetectorAprilTag.cpp /wd4200)
