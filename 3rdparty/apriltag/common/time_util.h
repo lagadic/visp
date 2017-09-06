@@ -42,6 +42,11 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <sys/time.h>
 #include <time.h>
 #endif
+
+#if defined(__MINGW32__) // to define struct timespec
+#include <pthread.h>
+#endif
+
 #ifdef _MSC_VER
 #include <io.h>
 #else

@@ -33,7 +33,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <stdlib.h>
 #include <math.h>
 #include "time_util.h"
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
 #include <windows.h>
 #endif
 
@@ -116,7 +116,7 @@ int32_t timeutil_usleep(int64_t useconds)
 uint32_t timeutil_sleep(unsigned int seconds)
 {
     // unistd.h function
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__MINGW32__)
   Sleep(seconds);
   return 0;
 #else
