@@ -390,7 +390,7 @@ public:
         h+=c;
       }
       if (header != NULL) {
-#if /*defined(__MINGW32__) || */!defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if defined(__MINGW32__) || !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
         sprintf(header, "%s", h.c_str());
 #else
         _snprintf_s(header, h.size()+1, _TRUNCATE, "%s", h.c_str());

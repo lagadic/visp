@@ -231,7 +231,7 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
       }
 
       //Pick a point randomly
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__))
       unsigned int r_ = (unsigned int) rand() % size;
 #else
       unsigned int r_ = (unsigned int) rand_r(&m_initial_seed) % size;
@@ -239,7 +239,7 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
 
       while(usedPt[r_]) {
         //If already picked, pick another point randomly
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__))
         r_ = (unsigned int) rand() % size;
 #else
         r_ = (unsigned int) rand_r(&m_initial_seed) % size;
@@ -606,7 +606,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
             }
 
             //Pick a point randomly
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__))
             unsigned int r_ = (unsigned int) rand() % size;
 #else
             unsigned int r_ = (unsigned int) rand_r(&initial_seed) % size;
@@ -614,7 +614,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
 
             while(usedPt[r_]) {
               //If already picked, pick another point randomly
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__))
               r_ = (unsigned int) rand() % size;
 #else
               r_ = (unsigned int) rand_r(&initial_seed) % size;
