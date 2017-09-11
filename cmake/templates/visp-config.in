@@ -44,14 +44,14 @@ relpath=`(cd $relpath/..; pwd)`
 
 PREFIX=$relpath
 
-CFLAGS="${VISP_CONFIG_CFLAGS_SCRIPT}"
+CFLAGS="@VISP_CONFIG_CFLAGS_SCRIPT@"
 
-LIBS="${VISP_CONFIG_LIBS_SCRIPT}"
+LIBS="@VISP_CONFIG_LIBS_SCRIPT@"
 
-VERSION="${VISP_VERSION}"
+VERSION="@VISP_VERSION@"
 
-NO_NEWLINE_CHARACTER="${VISP_ECHO_NO_NEWLINE_CHARACTER}"
-NO_NEWLINE_OPTION="${VISP_ECHO_NO_NEWLINE_OPTION}"
+NO_NEWLINE_CHARACTER="@VISP_ECHO_NO_NEWLINE_CHARACTER@"
+NO_NEWLINE_OPTION="@VISP_ECHO_NO_NEWLINE_OPTION@"
 
 usage()
 {
@@ -82,14 +82,14 @@ fi;
 
 for arg in $@; do
     case $arg in
-	--prefix) echo $NO_NEWLINE_OPTION "$PREFIX$NO_NEWLINE_CHARACTER";;
-	--cflags) echo $NO_NEWLINE_OPTION "$CFLAGS$NO_NEWLINE_CHARACTER";;
-	--libs) echo $NO_NEWLINE_OPTION "$LIBS$NO_NEWLINE_CHARACTER";;
-	--version) 
-	    echo "ViSP $VERSION (Visual Servoing Platform)"
-	    echo ""
-	    echo "Copyright (C) 2005 - 2017 Inria. All rights reserved.";;
-	--dumpversion) echo $NO_NEWLINE_OPTION "$VERSION$NO_NEWLINE_CHARACTER";;
+  --prefix) echo $NO_NEWLINE_OPTION "$PREFIX$NO_NEWLINE_CHARACTER";;
+  --cflags) echo $NO_NEWLINE_OPTION "$CFLAGS$NO_NEWLINE_CHARACTER";;
+  --libs) echo $NO_NEWLINE_OPTION "$LIBS$NO_NEWLINE_CHARACTER";;
+  --version)
+      echo "ViSP $VERSION (Visual Servoing Platform)"
+      echo ""
+      echo "Copyright (C) 2005 - 2017 Inria. All rights reserved.";;
+  --dumpversion) echo $NO_NEWLINE_OPTION "$VERSION$NO_NEWLINE_CHARACTER";;
         *) usage; exit 0 ;;
     esac;
 done;

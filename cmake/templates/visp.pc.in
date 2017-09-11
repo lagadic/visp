@@ -1,14 +1,14 @@
 # Package Information for pkg-config
 
-prefix=${CMAKE_INSTALL_PREFIX}
+prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
 Name: ViSP
 Description: Visual Servoing Platform
-URL: http://visp.inria.fr
-Version: ${VISP_VERSION}
-Libs: ${VISP_CONFIG_LIBS_PC}
+URL: https://visp.inria.fr
+Version: @VISP_VERSION@
+Libs: @VISP_CONFIG_LIBS_PC@
 
-Cflags: ${VISP_CONFIG_CFLAGS_PC}
+Cflags: @VISP_CONFIG_CFLAGS_PC@
