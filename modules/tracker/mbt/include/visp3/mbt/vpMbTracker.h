@@ -518,7 +518,7 @@ public:
 
     \param ratio : Ratio of succesful attempts that has to be considered. Value has to be between 0.0 (0%) and 1.0 (100%).
   */
-  void setGoodNbRayCastingAttemptsRatio(const double &ratio) {
+  virtual void setGoodNbRayCastingAttemptsRatio(const double &ratio) {
     faces.setGoodNbRayCastingAttemptsRatio(ratio);
   }
   /*!
@@ -529,7 +529,7 @@ public:
 
     \param attempts Number of rays to be sent.
   */
-  void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts) {
+  virtual void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts) {
     faces.setNbRayCastingAttemptsForVisibility(attempts);
   }
 #endif
