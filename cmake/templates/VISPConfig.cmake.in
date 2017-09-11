@@ -158,7 +158,7 @@ if(POLICY CMP0024)
   # Fix to prevent multiple includes
   if(NOT TARGET visp_core)
     cmake_policy(PUSH)
-    cmake_policy(SET CMP0024 OLD)
+    cmake_policy(SET CMP0024 NEW)
     # Our library dependencies (contains definitions for IMPORTED targets)
     include("${CMAKE_CURRENT_LIST_DIR}/VISPModules.cmake")
     cmake_policy(POP)
