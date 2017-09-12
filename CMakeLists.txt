@@ -832,7 +832,7 @@ endif(BUILD_PACKAGE)
 # Usage:
 #    visp-config --cflags ...
 #----------------------------------------------------------------------
-include(cmake/VISPGeneratePkgConfigScript.cmake)
+include(cmake/VISPGenerateConfigScript.cmake)
 
 #----------------------------------------------------------------------
 # Propagation in sub dirs to build demo, example, test, tutorial
