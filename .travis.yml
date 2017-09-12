@@ -40,6 +40,9 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libogre-1.9-dev libois-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libzbar-dev libdmtx-dev; fi"
 
+  # Work arround to found libomp.so when executing tests
+  - "if [ $CC = 'clang' ]; then export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/clang-3.9.0/lib; fi"
+
 before_script:
   - mkdir build
   - cd build
