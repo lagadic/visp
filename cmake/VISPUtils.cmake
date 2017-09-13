@@ -181,6 +181,24 @@ macro(vp_list_remove_separator __lst)
   endif()
 endmacro()
 
+# remove cmake ; list separator
+macro(vp_list_replace_separator __lst __separator)
+  if(${__lst})
+    list(GET ${__lst} 0 __lst_reformated)
+    list(LENGTH ${__lst} __lenght)
+    if(__lenght GREATER 1)
+      MATH(EXPR __lenght "${__lenght} - 1")
+      message("__lenght: ${__lenght}")
+      foreach(_i RANGE 1 ${__lenght}-1)
+        list(GET ${__lst} ${_i} element)
+        message("element ${_i}: ${element}")
+       set(__lst_reformated "${__lst_reformated}${__separator}${element}")
+      endforeach()
+    endif()
+    set(${__lst} ${__lst_reformated})
+  endif()
+endmacro()
+
 # Provides an option that the user can optionally select.
 # Can accept condition to control when option is available for user.
 # Usage:
@@ -862,4 +880,12 @@ macro(vp_get_version_from_pkg LIBNAME PKG_PATH OUTPUT_VAR)
     file(STRINGS "${PKG_PATH}/${LIBNAME}.pc" line_to_parse REGEX "^Version:[ \t]+[0-9.]*.*$" LIMIT_COUNT 1)
     string(REGEX REPLACE ".*Version: ([^ ]+).*" "\\1" ${OUTPUT_VAR} "${line_to_parse}" )
   endif()
+endmacro()
+
+macro(vp_cmake_script_append_var content_var)
+  foreach(var_name ${ARGN})
+    set(${content_var} "${${content_var}}
+set(${var_name} \"${${var_name}}\")
+")
+  endforeach()
 endmacro()
