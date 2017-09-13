@@ -85,7 +85,7 @@ if(CMAKE_TOOLCHAIN_FILE AND I_AM_A_ROBOT)
   include(platforms/naoqi/cmake/extra.cmake)
 endif()
 
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 2.8.12.2)
 
 if(POLICY CMP0022)
   cmake_policy(SET CMP0022 NEW) # Due to sensor ATIDAQ_LIBRARIES
