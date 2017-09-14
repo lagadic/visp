@@ -40,7 +40,7 @@
 #
 #############################################################################
 
-if(MINGW)
+if(MINGW OR IOS)
   # not implemented yet
   return()
 endif()
