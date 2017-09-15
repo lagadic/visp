@@ -51,8 +51,14 @@ endif()
 #   Doxygen documentation target, for "make visp_doc" and "make html-doc" (to keep compat with previous versions)
 # ----------------------------------------------------------------------------
 if(DOXYGEN_FOUND)
-  add_custom_target(html-doc ${DOXYGEN_EXECUTABLE} ${VISP_DOC_DIR}/config-doxygen) # for compat with previous versions
-  add_custom_target(visp_doc ${DOXYGEN_EXECUTABLE} ${VISP_DOC_DIR}/config-doxygen)
+  add_custom_target(html-doc
+    COMMAND "${DOXYGEN_EXECUTABLE}" "${VISP_DOC_DIR}/config-doxygen"
+    DEPENDS "${VISP_DOC_DIR}/config-doxygen"
+  ) # for compat with previous versions
+  add_custom_target(visp_doc
+    COMMAND "${DOXYGEN_EXECUTABLE}" "${VISP_DOC_DIR}/config-doxygen"
+    DEPENDS "${VISP_DOC_DIR}/config-doxygen"
+  )
   if(ENABLE_SOLUTION_FOLDERS)
     set_target_properties(visp_doc PROPERTIES FOLDER "extra")
     set_target_properties(html-doc PROPERTIES FOLDER "extra")

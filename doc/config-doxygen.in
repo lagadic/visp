@@ -1648,14 +1648,14 @@ LATEX_OUTPUT           = latex
 # The default file is: latex.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_CMD_NAME         = @LATEX_COMPILER@
+LATEX_CMD_NAME         = "@LATEX_COMPILER@"
 
 # The MAKEINDEX_CMD_NAME tag can be used to specify the command name to generate
 # index for LaTeX.
 # The default file is: makeindex.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-MAKEINDEX_CMD_NAME     = @MAKEINDEX_COMPILER@
+MAKEINDEX_CMD_NAME     = "@MAKEINDEX_COMPILER@"
 
 # If the COMPACT_LATEX tag is set to YES, doxygen generates more compact LaTeX
 # documents. This may be useful for small projects and may help to save some
