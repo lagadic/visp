@@ -96,6 +96,9 @@ endif()
 if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
 endif()
+if(POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW) # To turn off a warning in native FindOpenMP with cmake 3.9.2
+endif()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
