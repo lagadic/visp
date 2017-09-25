@@ -42,6 +42,10 @@
 #include <librealsense/rs.hpp>
 #include <visp3/core/vpImage.h>
 
+#ifdef VISP_HAVE_PCL
+#include <pcl/pcl_config.h>
+#endif
+
 template <class Type>
 void vp_rs_get_frame_data_impl(const rs::device *m_device, const std::map <rs::stream, rs::intrinsics> &m_intrinsics, const rs::stream &stream, vpImage<Type> &data)
 {
@@ -339,17 +343,25 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map <rs::s
         {
           // For out of bounds color data, default to a shade of blue in order to visually distinguish holes.
           // This color value is same as the librealsense out of bounds color value.
+#if PCL_VERSION_COMPARE(<, 1, 1, 0)
           unsigned int r = 96, g = 157, b = 198;
           uint32_t rgb = (static_cast<uint32_t>(r) << 16 |
                           static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
 
           pointcloud->points[(size_t) (i*depth_width + j)].rgb = *reinterpret_cast<float*>(&rgb);
+#else
+          pointcloud->points[(size_t) (i*depth_width + j)].r = (uint8_t) 96;
+          pointcloud->points[(size_t) (i*depth_width + j)].g = (uint8_t) 157;
+          pointcloud->points[(size_t) (i*depth_width + j)].b = (uint8_t) 198;
+#endif
+
         }
         else
         {
           unsigned int i_ = (unsigned int) color_pixel.y;
           unsigned int j_ = (unsigned int) color_pixel.x;
 
+#if PCL_VERSION_COMPARE(<, 1, 1, 0)
           uint32_t rgb = 0;
           if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8 || m_device->get_stream_format(rs::stream::color) == rs::format::rgba8) {
             rgb = (static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel]) << 16 |
@@ -362,6 +374,17 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map <rs::s
           }
 
           pointcloud->points[(size_t) (i*depth_width + j)].rgb = *reinterpret_cast<float*>(&rgb);
+#else
+          if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8 || m_device->get_stream_format(rs::stream::color) == rs::format::rgba8) {
+            pointcloud->points[(size_t) (i*depth_width + j)].r = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel];
+            pointcloud->points[(size_t) (i*depth_width + j)].g = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1];
+            pointcloud->points[(size_t) (i*depth_width + j)].b = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2];
+          } else if (m_device->get_stream_format(rs::stream::color) == rs::format::bgr8 || m_device->get_stream_format(rs::stream::color) == rs::format::bgra8) {
+            pointcloud->points[(size_t) (i*depth_width + j)].b = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel];
+            pointcloud->points[(size_t) (i*depth_width + j)].g = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1];
+            pointcloud->points[(size_t) (i*depth_width + j)].r = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2];
+          }
+#endif
         }
       }
     }
