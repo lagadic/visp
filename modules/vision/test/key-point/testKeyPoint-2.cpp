@@ -189,26 +189,23 @@ int main(int argc, const char ** argv) {
 #ifdef VISP_HAVE_XML2
     tracker.loadConfigFile(tracker_config_file);
     tracker.getCameraParameters(cam);
-
-    usexml = true;
+#else
+    vpMe me;
+    me.setMaskSize(5);
+    me.setMaskNumber(180);
+    me.setRange(8);
+    me.setThreshold(10000);
+    me.setMu1(0.5);
+    me.setMu2(0.5);
+    me.setSampleStep(4);
+    me.setNbTotalSample(250);
+    tracker.setMovingEdge(me);
+    cam.initPersProjWithoutDistortion(547.7367575, 542.0744058, 338.7036994, 234.5083345);
+    tracker.setCameraParameters(cam);
+    tracker.setNearClippingDistance(0.01);
+    tracker.setFarClippingDistance(100.0);
+    tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
 #endif
-    if (! usexml) {
-      vpMe me;
-      me.setMaskSize(5);
-      me.setMaskNumber(180);
-      me.setRange(8);
-      me.setThreshold(10000);
-      me.setMu1(0.5);
-      me.setMu2(0.5);
-      me.setSampleStep(4);
-      me.setNbTotalSample(250);
-      tracker.setMovingEdge(me);
-      cam.initPersProjWithoutDistortion(547.7367575, 542.0744058, 338.7036994, 234.5083345);
-      tracker.setCameraParameters(cam);
-      tracker.setNearClippingDistance(0.01);
-      tracker.setFarClippingDistance(100.0);
-      tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
-    }
 
     tracker.setAngleAppear(vpMath::rad(89));
     tracker.setAngleDisappear(vpMath::rad(89));

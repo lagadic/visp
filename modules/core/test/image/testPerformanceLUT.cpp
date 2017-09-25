@@ -114,7 +114,7 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath,
-    std::string user, unsigned int &nbThreads)
+    const std::string &user, unsigned int &nbThreads)
 {
   const char *optarg_;
   int c;

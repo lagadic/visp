@@ -97,11 +97,7 @@ int main()
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
     robot.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
     robot.set_fMo(wMo);
-    bool ret = true;
-#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
-    ret =
-    #endif
-        robot.initialiseCameraRelativeToObject(cMo);
+    bool ret = robot.initialiseCameraRelativeToObject(cMo);
     if (ret == false)
       return 0; // Not able to set the position
     robot.setDesiredCameraPosition(cdMo);

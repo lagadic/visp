@@ -52,9 +52,6 @@
 // List of allowed command line options
 #define GETOPTARGS	"cdo:h"
 
-void usage(const char *name, const char *badparam, std::string opath, std::string user);
-bool getOptions(int argc, const char **argv, std::string &opath, std::string user);
-
 /*!
 
   Print the program options.
@@ -63,7 +60,7 @@ bool getOptions(int argc, const char **argv, std::string &opath, std::string use
   \param badparam : Bad parameter name.
 
 */
-void usage(const char *name, const char *badparam, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
 Test save / load learning files for vpKeyPoint class.\n\
@@ -99,7 +96,7 @@ OPTIONS:                                               \n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &opath, std::string user)
+bool getOptions(int argc, const char **argv, std::string &opath, const std::string &user)
 {
   const char *optarg_;
   int	c;

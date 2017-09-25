@@ -254,9 +254,7 @@ bool vpPylonGrabberUsb::loadUserSet(UserSetName user_set)
 {
   connect();
 
-  bool success = false;
-
-  success = selectUserSet(user_set);
+  bool success = selectUserSet(user_set);
 
   if (success) {
     m_camera.UserSetLoad.Execute();
@@ -502,9 +500,7 @@ bool vpPylonGrabberUsb::saveUserSet(UserSetName user_set, bool set_default)
 {
   connect();
 
-  bool success = false;
-
-  success = selectUserSet(user_set);
+  bool success = selectUserSet(user_set);
 
   if (success) {
     m_camera.UserSetSave.Execute();

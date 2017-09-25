@@ -109,7 +109,7 @@ OPTIONS:                                               Default\n\
   \param nbiter : Number of benchmark iterations.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user, int &nbiter)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user, int &nbiter)
 {
   const char *optarg_;
   int c;

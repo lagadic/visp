@@ -70,7 +70,7 @@ typedef enum {
   vpGTK,
   vpGDI,
   vpD3D,
-  vpCV 
+  vpCV
 } vpDisplayType;
 
 void usage(const char *name, const char *badparam, std::string ipath, vpDisplayType &dtype);
@@ -138,7 +138,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n\n",
-	  ipath.c_str(), display.c_str());
+    ipath.c_str(), display.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -237,7 +237,7 @@ main(int argc, const char ** argv)
 #elif defined VISP_HAVE_D3D9
     opt_dtype = vpD3D;
 #elif defined VISP_HAVE_OPENCV
-    opt_dtype = vpCV;  
+    opt_dtype = vpCV;
 #endif
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
@@ -276,7 +276,7 @@ main(int argc, const char ** argv)
 #if defined VISP_HAVE_OPENCV
       std::cout << "  CV (use \"-t CV\" option to use it)\n";
       nbDevices ++;
-#endif   
+#endif
       if (!nbDevices) {
         std::cout << "  No display is available\n";
       }

@@ -109,14 +109,14 @@ double	enorm (const double *x, int n)
        */
       if (xabs <= x3max)
       {
-	//if (xabs != 0.0)
-	if (xabs > std::numeric_limits<double>::epsilon())
-	  s3 += (xabs / x3max) * (xabs / x3max);
+  //if (xabs != 0.0)
+  if (xabs > std::numeric_limits<double>::epsilon())
+    s3 += (xabs / x3max) * (xabs / x3max);
       }
       else
       {
-	s3 = 1.0 + s3 * (x3max / xabs) * (x3max / xabs);
-	x3max = xabs;
+  s3 = 1.0 + s3 * (x3max / xabs) * (x3max / xabs);
+  x3max = xabs;
       }
     }
 
@@ -127,12 +127,12 @@ double	enorm (const double *x, int n)
        */
       if (xabs <= x1max)
       {
-	s1 += (xabs / x1max) * (xabs / x1max);
+  s1 += (xabs / x1max) * (xabs / x1max);
       }
       else
       {
-	s1 = 1.0 + s1 * (x1max / xabs) * (x1max / xabs);
-	x1max = xabs;
+  s1 = 1.0 + s1 * (x1max / xabs) * (x1max / xabs);
+  x1max = xabs;
       }
     }
   }
@@ -148,7 +148,7 @@ double	enorm (const double *x, int n)
       norm_eucl = x3max * sqrt(s3);
     else if (s2 >= x3max)
       norm_eucl = sqrt (s2 * (1.0 + ( x3max / s2) * (x3max * s3)));
-    else if (s2 < x3max)
+    else /*if (s2 < x3max)*/
       norm_eucl = sqrt (x3max * ((s2 / x3max) + (x3max * s3)));
   }
   else
@@ -559,7 +559,7 @@ double pythag (double a, double b)
  *
  */
 int	qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt,
-	      int /* lipvt */, double *rdiag, double *acnorm, double *wa)
+        int /* lipvt */, double *rdiag, double *acnorm, double *wa)
 {
   const double	tolerance = 0.05;
 
@@ -1007,12 +1007,12 @@ int	qrsolv (int n, double *r, int ldr, int *ipvt, double *diag, double *qtb,
  * Sinon la valeur -1 est retournee.
  */
 int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
-			       double *jac, int ldfjac, int iflag), int m, int n, double *x,
-	       double *fvec, double *fjac, int ldfjac, double ftol, double xtol,
-	       double gtol, unsigned int maxfev, double *diag, int mode,
-	       const double factor, int nprint, int *info, unsigned int *nfev,
-	       int *njev, int *ipvt, double *qtf, double *wa1, double *wa2,
-	       double *wa3, double *wa4)
+             double *jac, int ldfjac, int iflag), int m, int n, double *x,
+         double *fvec, double *fjac, int ldfjac, double ftol, double xtol,
+         double gtol, unsigned int maxfev, double *diag, int mode,
+         const double factor, int nprint, int *info, unsigned int *nfev,
+         int *njev, int *ipvt, double *qtf, double *wa1, double *wa2,
+         double *wa3, double *wa4)
 {
   const double	tol1 = 0.1, tol5 = 0.5, tol25 = 0.25, tol75 = 0.75, tol0001 = 0.0001;
   int		oncol = TRUE;
@@ -1609,9 +1609,9 @@ int	lmder (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
  *
  */
 int lmder1 (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
-			    double *jac, int ldfjac, int iflag),
-	    int m, int n, double *x, double *fvec, double *fjac,
-	    int ldfjac, double tol, int *info, int *ipvt, int lwa, double *wa)
+          double *jac, int ldfjac, int iflag),
+      int m, int n, double *x, double *fvec, double *fjac,
+      int ldfjac, double tol, int *info, int *ipvt, int lwa, double *wa)
 {
   const double	factor = 100.0;
   unsigned int		maxfev, nfev;
@@ -1640,8 +1640,8 @@ int lmder1 (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
   nprint = 0;
 
   lmder (ptr_fcn , m, n, x, fvec, fjac, ldfjac, ftol, xtol, gtol, maxfev, wa,
-	 mode, factor, nprint, info, &nfev, &njev, ipvt, &wa[n], &wa[2 * n],
-	 &wa[3 * n], &wa[4 * n], &wa[5 * n]);
+   mode, factor, nprint, info, &nfev, &njev, ipvt, &wa[n], &wa[2 * n],
+   &wa[3 * n], &wa[4 * n], &wa[5 * n]);
 
   if (*info == 8)
     *info = 4;
@@ -1651,10 +1651,3 @@ int lmder1 (void (*ptr_fcn)(int m, int n, double *xc, double *fvecc,
 
 #undef TRUE
 #undef FALSE
-
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
