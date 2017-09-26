@@ -68,3 +68,4 @@ vp_add_module(detection visp_core visp_vision PRIVATE_OPTIONAL ${APRILTAG_LIBRAR
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
+vp_add_tests(DEPENDS_ON visp_detection visp_gui visp_io)
