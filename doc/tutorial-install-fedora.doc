@@ -3,11 +3,13 @@
 \page tutorial-install-fedora Tutorial: Installation from source for Linux Fedora
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Linux Fedora. These steps have been tested for Fedora 21 (64 bit) distribution, but should work with any other distribution as well. 
+In this tutorial you will learn how to install ViSP from source on Linux Fedora. These steps have been tested for Fedora 21 and Fedora 26 (64 bit) distribution, but should work with any other distribution as well. 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
 \section install_fedora_required Install prerequisities
+
+Prior to build and install ViSP from source, you may install GNU g++ compiler and CMake.
 
 - gcc 4.4.x or later. This can be istalled with:
 \code
@@ -34,9 +36,9 @@ $ su -c "dnf install opencv-devel"
 \code
 $ su -c "dnf install libX11-devel"
 \endcode
-- lapack to benefit from optimized mathematical capabilities
+- lapack and eigen to benefit from optimized mathematical capabilities
 \code
-$ su -c "dnf install lapack-devel"
+$ su -c "dnf install lapack-devel eigen3-devel"
 \endcode
 - libdc1394 to grab images from firewire cameras
 \code
@@ -77,49 +79,57 @@ $ su -c "dnf install libdmtx-devel"
 \endcode
 
 \section install_fedora_install_visp Install ViSP from source code
-\subsection install_fedora_get_source Getting ViSP source code
+\subsection install_fedora_ws Create a workspace
 
-There are different ways to get ViSP source code:
+First we will create a workspace in \c $HOME/visp-ws that will contain ViSP source, build and dataset.
+\code
+$ export VISP_WS=$HOME/visp-ws
+$ mkdir -p $VISP_WS
+\endcode
+
+\subsection install_fedora_get_source Getting ViSP source code
+There are different ways to get ViSP source code in this workspace:
 
 - You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \code
-$ tar xvzf visp-x.y.z.tar.gz 
+$ tar xvzf visp-x.y.z.tar.gz -C $VISP_WS
 \endcode
 or
 \code
-$ unzip visp-x.y.z.zip
+$ unzip visp-x.y.z.zip -d $VISP_WS
 \endcode
 
 - You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
 \code
-$ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
+$ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz -C $VISP_WS
 \endcode
 
 - Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the following command
 \code
+$ cd $VISP_WS
 $ git clone https://github.com/lagadic/visp.git
 \endcode
 
-We suppose now that ViSP source is in a directory denoted \c \<source_dir\>, for example \c $HOME/visp
+We suppose now that ViSP source is in the directory \c $VISP_WS/visp. The following should be adapted if you downloaded ViSP from a zip or tarball. In that case, the source is rather in something like \c $VISP_WS/visp-x.y.z.
 
 \subsection install_fedora_config Configuring ViSP from source
 
-- Create first a directory denoted \c \<binary_dir\> where you want to build ViSP. This directory will contain generated Makefiles, object files, and output libraries and binaries.
+- In the worspace, create first a directory like \c visp-build that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
 \code
-$ cd $HOME; mkdir visp-build
+$ mkdir $VISP_WS/visp-build
 \endcode
 
-- Enter the \c \<binary_dir\> and configure the build:
+- Enter the \c visp-build and configure the build:
 \code
-$ cd $HOME/visp-build
+$ cd $VISP_WS/visp-build
 $ cmake ../visp
 \endcode
 A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 \code
 $ ccmake ../visp
 \endcode
-The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned On/Off. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-ccmake-ubuntu-all.jpeg Snapshot of the ccmake \c ../visp command used to configure ViSP.
+The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
+\image html img-ccmake-fedora-all.jpeg Snapshot of the ccmake \c ../visp command used to configure ViSP.
 
 Now we can build ViSP.
 
@@ -130,12 +140,15 @@ Now we can build ViSP.
 $ make -j4
 \endcode
 
-- To install ViSP proceed with:
+\note Installing ViSP is optional, since ViSP could be used as a 3rd party without installation. To proceed with the installation run:
 \code
 $ sudo make install
 \endcode
-\note This stage is optional, since ViSP could be used as a 3rd party without installation. 
-\note The default install location is set to \c /usr/local. This location could be changed modifying \c CMAKE_INSTALL_PREFIX var. 
+\note The default install location is set to \c /usr/local. This location could be changed modifying \c CMAKE_INSTALL_PREFIX var:
+\code
+$ cmake ../visp -DCMAKE_INSTALL_PREFIX=/usr
+$ sudo make install
+\endcode
 
 \subsection install_fedora_doc Building ViSP documentation
 
@@ -148,9 +161,9 @@ Then you can proceed with:
 $ cmake ../visp
 $ make -j4 visp_doc
 \endcode
-The generated documentation is then available in \c \<binary_dir\>/doc/html/index\.html
+The generated documentation is then available in \c $VISP_WS/visp-build/doc/html/index\.html
 
-- It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var \c ENABLE\_FULL\_DOC=ON like:
+- It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var \c ENABLE\_FULL\_DOC to \c ON like:
 \code
 $ cmake ../visp -DENABLE_FULL_DOC=ON
 $ make -j4 visp_doc
@@ -160,21 +173,26 @@ $ make -j4 visp_doc
 Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named \c ViSP-images-x.y.z.zip. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples.
 
 \code
-$ cd $HOME
-$ unzip ViSP-images-x.y.z.zip
+$ unzip ViSP-images-x.y.z.zip -d $VISP_WS
 \endcode
 
-We suppose now that the data are located in \c $HOME/ViSP-images.
+Rename \c $VISP_WS/ViSP-images-x.y.z into \c $VISP_WS/ViSP-images
 \code
-$ ls $HOME/ViSP-images
-Klimt	     README.md    circle  ellipse    iv    mbt   mire-2
-LICENSE.txt  calibration  cube    ellipse-1  line  mire  video
+$ mv $VISP_WS/ViSP-images-x.y.z $VISP_WS/ViSP-images
+\endcode
+
+We suppose now that the data are located in \c $VISP_WS/ViSP-images.
+\code
+$ ls $VISP_WS/ViSP-images
+calibration  cube     ellipse-1  Klimt        line  mire    README.md
+circle       ellipse  iv         LICENSE.txt  mbt   mire-2  video
 \endcode
 
 Set \c VISP_INPUT_IMAGE_PATH environment variable to help ViSP examples and tests to find the location of the data set. It's convenient if the environment variables is automatically added to your bash session every time a new shell is launched: 
 
 \code
-$ echo "export VISP_INPUT_IMAGE_PATH=$HOME" >> ~/.bashrc
+$ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
+$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS" >> ~/.bashrc
 $ source ~/.bashrc
 \endcode
 
@@ -183,7 +201,7 @@ $ source ~/.bashrc
 From now, you can try to run ViSP examples and tests. For example you can run \c displayX example that should open a windows with Klimt painting image and some overlay drawings:
 
 \code
-$ cd $HOME/visp-build
+$ cd $VISP_WS/visp-build
 $ ./example/device/display/displayX
 
 A click to close the windows...
@@ -200,6 +218,7 @@ Bye
 \subsection install_fedora_tips_uninstall How to uninstall ViSP
 After ViSP installation, you can remove installed material using:
 \code
+$ cd $VISP_WS/visp-build
 $ sudo make uninstall
 \endcode
 
@@ -207,6 +226,7 @@ $ sudo make uninstall
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \code
+$ cd $VISP_WS/visp-build
 $ make -j4 visp_modules
 \endcode
 
@@ -214,10 +234,12 @@ $ make -j4 visp_modules
 
 If you want to build a given module and all the dependencies:
 \code
+$ cd $VISP_WS/visp-build
 $ make -j4 visp_<module_name>
 \endcode
 For example to build the model-based tracker module named mbt, run:
 \code
+$ cd $VISP_WS/visp-build
 $ make -j4 visp_mbt
 \endcode
 
@@ -225,26 +247,29 @@ $ make -j4 visp_mbt
 
 To know which are the target available with \c make:
 \code
+$ cd $VISP_WS/visp-build
 $ make help | grep visp
-... visp_tests
-... visp_demos
 ... visp_tutorials
-... visp_examples
+... visp_tests
 ... visp_modules
 ... visp_doc
+... visp_examples
+... visp_demos
+... visp_clipper
+... visp_apriltag
 ... visp_core
-... visp_detection
 ... visp_gui
 ... visp_io
 ... visp_klt
 ... visp_me
-... visp_robot
 ... visp_sensor
 ... visp_ar
 ... visp_blob
+... visp_robot
 ... visp_visual_features
 ... visp_vs
 ... visp_vision
+... visp_detection
 ... visp_mbt
 ... visp_tt
 ... visp_tt_mi
@@ -252,67 +277,9 @@ $ make help | grep visp
 
 \subsection install_fedora_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
 
-To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named \c ViSP-third-party.txt and located in \c \<binary_dir\>. We provide hereafter an example of a possible content of this file:
-\code
-                    ViSP third-party libraries
+To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named \c ViSP-third-party.txt and located in \c $VISP_WS/visp-build. We provide hereafter an example of a possible content of this file:
 
-Below you will find the list of third party libraries used to 
-build ViSP on your computer.
-
-Mathematics:
-  Gnu Scientific Library      : no
-  Lapack/blas                 : yes
-Simulator:
-  Ogre simulator              : no
-  \- Ogre3D                   : no
-  \- OIS                      : no
-  Coin simulator              : no
-  \- Coin3D                   : no
-  \- SoWin                    : no
-  \- SoXt                     : no
-  \- SoQt                     : no
-  \- Qt4                      : no
-  \- Qt3                      : no
-Robots
-  Afma6                       : no
-  Afma4                       : no
-  Biclops                     : no
-  Ptu46                       : no
-  Pioneer                     : no
-  Viper S650                  : no
-  Viper S850                  : no
-Video devices (display)
-  X11                         : yes
-  GTK                         : no
-  OpenCV                      : yes 
-  GDI                         : no
-  Direct3D                    : no
-Framegrabbers
-  Firewire libdc1394-2.x      : yes
-  Video For Linux Two         : yes
-  DirectShow                  : no
-  CMU 1394 Digital Camera SDK : no
-  OpenCV                      : yes 
-Specific devices
-  Yarp                        : no
-  Kinect                      : no
-  \-libfreenect               : no
-  \-libusb-1.0                : no
-  \-pthread                   : yes
-Video and image Read/Write:
-  libjpeg                     : no
-  libpng                      : no
-Misc:
-  XML2                        : yes
-  pthread                     : yes
-  OpenMP                      : yes
-  zbar                        : yes
-  dmtx                        : no
-Documentation:
-  Doxygen                     : no
-  Graphviz dot                : no
-ViSP built with C++11 features: no
-\endcode
+\image html img-build-info-fedora.jpeg Content of \c $VISP_WS/visp-build/ViSP-third-party.txt file that contains build info.
 
 \section install_fedora_next Next tutorial
 
