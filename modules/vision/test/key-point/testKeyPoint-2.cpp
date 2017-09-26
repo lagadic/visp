@@ -185,7 +185,6 @@ int main(int argc, const char ** argv) {
     //Load config for tracker
     std::string tracker_config_file = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube.xml");
 
-    bool usexml = false;
 #ifdef VISP_HAVE_XML2
     tracker.loadConfigFile(tracker_config_file);
     tracker.getCameraParameters(cam);
