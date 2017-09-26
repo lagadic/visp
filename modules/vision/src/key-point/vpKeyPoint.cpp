@@ -3686,17 +3686,15 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
   if(saveTrainingImages) {
 #ifdef VISP_HAVE_MODULE_IO
     //Save the training image files in the same directory
-    int cpt = 0;
+    unsigned int cpt = 0;
 
     for(std::map<int, vpImage<unsigned char> >::const_iterator it = m_mapOfImages.begin(); it != m_mapOfImages.end(); ++it, cpt++) {
       if(cpt > 999) {
         throw vpException(vpException::fatalError, "The number of training images to save is too big !");
       }
 
-      char buffer[4];
-      sprintf(buffer, "%03d", cpt);
       std::stringstream ss;
-      ss << "train_image_" << buffer;
+      ss << "train_image_" << std::setfill('0') << std::setw(3) << cpt;
 
       switch(m_imageFormat) {
       case jpgImageFormat:
