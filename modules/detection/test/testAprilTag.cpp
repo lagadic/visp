@@ -232,6 +232,8 @@ int main(int argc, const char *argv[]) {
     vpDisplayGDI d;
 #elif defined(VISP_HAVE_OPENCV)
     vpDisplayOpenCV d;
+#else
+    opt_display = false;
 #endif
 
     vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
@@ -251,7 +253,9 @@ int main(int argc, const char *argv[]) {
     cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
 
     if (opt_display) {
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
       d.init(I, 0, 0, "AprilTag detection");
+#endif
       vpDisplay::display(I);
     }
 
