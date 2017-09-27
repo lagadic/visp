@@ -62,7 +62,7 @@ if(USE_VIRTUOSE)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /ignore:4099")
     # Disable Visual C++ C4312 warning occuring on 3rd party VirtuoseAPI.h file
     # VirtuoseAPI.h(280): warning C4312: 'type cast': conversion from 'int' to 'char *' of greater size
-	# VirtuoseAPI.h(302): warning C4312: 'type cast': conversion from 'int' to 'VirtContext' of greater size
+  # VirtuoseAPI.h(302): warning C4312: 'type cast': conversion from 'int' to 'VirtContext' of greater size
     vp_set_source_file_compile_flag(src/haptic-device/virtuose/vpVirtuose.cpp /wd4312)
     vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp /wd4312)
     vp_set_source_file_compile_flag(test/virtuose/testVirtuoseAfma6.cpp /wd4312)
@@ -134,7 +134,7 @@ endif()
 
 if(USE_ARIA)
   # Add specific build flag to turn off warnings coming from libaria 3rd party
-  vp_set_source_file_compile_flag(src/real-robot/pioneer/vpRobotPioneer.cpp -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(src/real-robot/pioneer/vpRobotPioneer.cpp -Wno-unused-parameter -Wno-type-limits)
 endif()
 
 if(USE_COIN3D)
