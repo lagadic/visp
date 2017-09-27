@@ -38,7 +38,7 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_REALSENSE)
-
+#include <thread>
 #include <librealsense/rs.hpp>
 #include <visp3/core/vpImage.h>
 
@@ -302,6 +302,11 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map <rs::s
       throw vpException(vpException::fatalError, "Cannot find intrinsics for color stream!");
     }
 
+    if (m_device->get_stream_format(rs::stream::color) != rs::format::rgb8 && m_device->get_stream_format(rs::stream::color) != rs::format::rgba8 &&
+        m_device->get_stream_format(rs::stream::color) != rs::format::bgr8 && m_device->get_stream_format(rs::stream::color) != rs::format::bgra8) {
+      throw vpException(vpException::fatalError, "Color stream type must be rgb8, rgba8, bgr8 or bgra8!");
+    }
+
     int depth_width = it_intrinsics_depth->second.width;
     int depth_height = it_intrinsics_depth->second.height;
     pointcloud->width = (uint32_t) depth_width;
@@ -309,85 +314,99 @@ void vp_rs_get_pointcloud_impl(const rs::device *m_device, const std::map <rs::s
     pointcloud->resize((size_t) (depth_width * depth_height));
 
     const float depth_scale = m_device->get_depth_scale();
-
     rs::extrinsics depth_2_color_extrinsic = m_device->get_extrinsics(stream_depth, stream_color);
 
-    // Fill the PointCloud2 fields.
-    rs::float3 depth_point, color_point;
-    rs::float2 color_pixel;
-    uint16_t * depth = (uint16_t *)m_device->get_frame_data(stream_depth);
-    unsigned char * color = (unsigned char *)m_device->get_frame_data(stream_color);
+    const uint16_t * depth = (uint16_t *)m_device->get_frame_data(stream_depth);
+    const unsigned char * color = (unsigned char *)m_device->get_frame_data(stream_color);
     int color_width = it_intrinsics_color->second.width;
     int color_height = it_intrinsics_color->second.height;
 
+    bool swap_rgb = m_device->get_stream_format(rs::stream::color) == rs::format::bgr8 || m_device->get_stream_format(rs::stream::color) == rs::format::bgra8;
     unsigned int nb_color_pixel = (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8 || m_device->get_stream_format(rs::stream::color) == rs::format::bgr8) ? 3 : 4;
-    for (int i = 0; i < depth_height; i++) {
-      for (int j = 0; j < depth_width; j++) {
-        float scaled_depth = depth[i*depth_width + j] * depth_scale;
 
-        rs::float2 depth_pixel = { (float) j, (float) i};
-        depth_point = it_intrinsics_depth->second.deproject(depth_pixel, scaled_depth);
+    int nb_threads = (int) std::thread::hardware_concurrency();
+    int step = depth_height / nb_threads;
 
-        if (depth_point.z <= 0 || depth_point.z > max_Z) {
-          depth_point.x = depth_point.y = depth_point.z = invalidDepthValue;
-        }
-        pointcloud->points[(size_t) (i*depth_width + j)].x = depth_point.x;
-        pointcloud->points[(size_t) (i*depth_width + j)].y = depth_point.y;
-        pointcloud->points[(size_t) (i*depth_width + j)].z = depth_point.z;
+    std::vector<std::thread> workers;
+    for (int index = 0; index < nb_threads; index++) {
+      int start_index = index*step;
+      int end_index = index == nb_threads-1 ? depth_height : (index+1)*step;
 
-        color_point = depth_2_color_extrinsic.transform(depth_point);
-        color_pixel = it_intrinsics_color->second.project(color_point);
+      workers.push_back(std::thread([&, start_index, end_index]()
+      {
+        for (int i = start_index; i < end_index; i++) {
+          for (int j = 0; j < depth_width; j++) {
+            float scaled_depth = depth[i*depth_width + j] * depth_scale;
 
-        if (color_pixel.y < 0 || color_pixel.y >= color_height
-            || color_pixel.x < 0 || color_pixel.x >= color_width)
-        {
-          // For out of bounds color data, default to a shade of blue in order to visually distinguish holes.
-          // This color value is same as the librealsense out of bounds color value.
-#if PCL_VERSION_COMPARE(<, 1, 1, 0)
-          unsigned int r = 96, g = 157, b = 198;
-          uint32_t rgb = (static_cast<uint32_t>(r) << 16 |
-                          static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
+            rs::float2 depth_pixel = { (float) j, (float) i};
+            rs::float3 depth_point = it_intrinsics_depth->second.deproject(depth_pixel, scaled_depth);
 
-          pointcloud->points[(size_t) (i*depth_width + j)].rgb = *reinterpret_cast<float*>(&rgb);
-#else
-          pointcloud->points[(size_t) (i*depth_width + j)].r = (uint8_t) 96;
-          pointcloud->points[(size_t) (i*depth_width + j)].g = (uint8_t) 157;
-          pointcloud->points[(size_t) (i*depth_width + j)].b = (uint8_t) 198;
-#endif
+            if (depth_point.z <= 0 || depth_point.z > max_Z) {
+              depth_point.x = depth_point.y = depth_point.z = invalidDepthValue;
+            }
+            pointcloud->points[(size_t) (i*depth_width + j)].x = depth_point.x;
+            pointcloud->points[(size_t) (i*depth_width + j)].y = depth_point.y;
+            pointcloud->points[(size_t) (i*depth_width + j)].z = depth_point.z;
 
-        }
-        else
-        {
-          unsigned int i_ = (unsigned int) color_pixel.y;
-          unsigned int j_ = (unsigned int) color_pixel.x;
+            rs::float3 color_point = depth_2_color_extrinsic.transform(depth_point);
+            rs::float2 color_pixel = it_intrinsics_color->second.project(color_point);
 
-#if PCL_VERSION_COMPARE(<, 1, 1, 0)
-          uint32_t rgb = 0;
-          if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8 || m_device->get_stream_format(rs::stream::color) == rs::format::rgba8) {
-            rgb = (static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel]) << 16 |
-                   static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1]) << 8 |
-                   static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2]));
-          } else if (m_device->get_stream_format(rs::stream::color) == rs::format::bgr8 || m_device->get_stream_format(rs::stream::color) == rs::format::bgra8) {
-            rgb = (static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel]) |
-                   static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1]) << 8 |
-                   static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2]) << 16);
+            if (color_pixel.y < 0 || color_pixel.y >= color_height ||
+                color_pixel.x < 0 || color_pixel.x >= color_width)
+            {
+              // For out of bounds color data, default to a shade of blue in order to visually distinguish holes.
+              // This color value is same as the librealsense out of bounds color value.
+    #if PCL_VERSION_COMPARE(<, 1, 1, 0)
+              unsigned int r = 96, g = 157, b = 198;
+              uint32_t rgb = (static_cast<uint32_t>(r) << 16 |
+                              static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
+
+              pointcloud->points[(size_t) (i*depth_width + j)].rgb = *reinterpret_cast<float*>(&rgb);
+    #else
+              pointcloud->points[(size_t) (i*depth_width + j)].r = (uint8_t) 96;
+              pointcloud->points[(size_t) (i*depth_width + j)].g = (uint8_t) 157;
+              pointcloud->points[(size_t) (i*depth_width + j)].b = (uint8_t) 198;
+    #endif
+            }
+            else
+            {
+              unsigned int i_ = (unsigned int) color_pixel.y;
+              unsigned int j_ = (unsigned int) color_pixel.x;
+
+    #if PCL_VERSION_COMPARE(<, 1, 1, 0)
+              uint32_t rgb = 0;
+              if (swap_rgb) {
+                rgb = (static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel]) |
+                       static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1]) << 8 |
+                       static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2]) << 16);
+              } else {
+                rgb = (static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel]) << 16 |
+                       static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1]) << 8 |
+                       static_cast<uint32_t>(color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2]));
+              }
+
+              pointcloud->points[(size_t) (i*depth_width + j)].rgb = *reinterpret_cast<float*>(&rgb);
+    #else
+              if (swap_rgb) {
+                pointcloud->points[(size_t) (i*depth_width + j)].b = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel];
+                pointcloud->points[(size_t) (i*depth_width + j)].g = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1];
+                pointcloud->points[(size_t) (i*depth_width + j)].r = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2];
+              } else {
+                pointcloud->points[(size_t) (i*depth_width + j)].r = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel];
+                pointcloud->points[(size_t) (i*depth_width + j)].g = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1];
+                pointcloud->points[(size_t) (i*depth_width + j)].b = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2];
+              }
+    #endif
+            }
           }
-
-          pointcloud->points[(size_t) (i*depth_width + j)].rgb = *reinterpret_cast<float*>(&rgb);
-#else
-          if (m_device->get_stream_format(rs::stream::color) == rs::format::rgb8 || m_device->get_stream_format(rs::stream::color) == rs::format::rgba8) {
-            pointcloud->points[(size_t) (i*depth_width + j)].r = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel];
-            pointcloud->points[(size_t) (i*depth_width + j)].g = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1];
-            pointcloud->points[(size_t) (i*depth_width + j)].b = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2];
-          } else if (m_device->get_stream_format(rs::stream::color) == rs::format::bgr8 || m_device->get_stream_format(rs::stream::color) == rs::format::bgra8) {
-            pointcloud->points[(size_t) (i*depth_width + j)].b = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel];
-            pointcloud->points[(size_t) (i*depth_width + j)].g = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1];
-            pointcloud->points[(size_t) (i*depth_width + j)].r = (uint32_t) color[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2];
-          }
-#endif
         }
-      }
+      }));
     }
+
+    std::for_each(workers.begin(), workers.end(), [](std::thread &t)
+    {
+      t.join();
+    });
   }
   else {
     pointcloud->clear();
