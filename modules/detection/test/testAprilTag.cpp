@@ -310,7 +310,10 @@ int main(int argc, const char *argv[]) {
         std::replace(message.begin(), message.end(), ' ', '_');
         std::map<std::string, TagGroundTruth>::iterator it = mapOfTagsGroundTruth.find(message);
         TagGroundTruth current(message, p);
-        if (it != mapOfTagsGroundTruth.end() && it->second != current) {
+        if (it == mapOfTagsGroundTruth.end()) {
+          std::cerr << "Problem with tag decoding (tag_family or id): " << message << std::endl;
+          return EXIT_FAILURE;
+        } else if (it->second != current) {
           std::cerr << "Problem, current detection:\n" << current << "\nGround truth:\n" << it->second << std::endl;
           return EXIT_FAILURE;
         }
@@ -342,7 +345,10 @@ int main(int argc, const char *argv[]) {
         std::string message = detector->getMessage(i);
         std::replace(message.begin(), message.end(), ' ', '_');
         std::map<std::string, vpPoseVector>::iterator it = mapOfPosesGroundTruth.find(message);
-        if ( it != mapOfPosesGroundTruth.end()) {
+        if (it == mapOfPosesGroundTruth.end()) {
+          std::cerr << "Problem with tag decoding (tag_family or id): " << message << std::endl;
+          return EXIT_FAILURE;
+        } else {
           for (unsigned int cpt = 0; cpt < 6; cpt++) {
             if ( !vpMath::equal(it->second[cpt], pose_vec[cpt], 0.005) ) {
               std::cerr << "Problem, current pose: " << pose_vec.t() << "\nGround truth pose: " << it->second.t() << std::endl;
