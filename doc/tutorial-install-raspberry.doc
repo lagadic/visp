@@ -182,7 +182,7 @@ A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 $ ccmake ../visp
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-ccmake-ubuntu-all.jpeg Snapshot of the ccmake \c ../visp command used to configure ViSP.
+\image html img-ccmake-raspberry-all.png Snapshot of the ccmake \c ../visp command used to configure ViSP.
 
 \subsection install_raspberry_visp_build Build ViSP libraries
 
@@ -331,26 +331,26 @@ $ cat $VISP_WS/visp-build/ViSP-third-party.txt
 ==========================================================
 General configuration information for ViSP 3.1.0
 
-  Version control:               3.0.1-340-gae7e5f10c
+  Version control:               3.0.1-350-gabcba81
 
   Platform:
-    Timestamp:                   2017-09-26T15:06:26Z
-    Host:                        Linux 4.10.0-26-generic x86_64
-    CMake:                       3.7.2
+    Timestamp:                   2017-09-27T19:27:53Z
+    Host:                        Linux 4.1.19-v7+ armv7l
+    CMake:                       3.0.2
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/make
     Configuration:               Release
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                /usr/bin/c++  (ver 6.3.0)
-    C++ flags (Release):         -Wall -Wextra -fopenmp -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
-    C++ flags (Debug):           -Wall -Wextra -fopenmp -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C++ Compiler:                /usr/bin/c++  (ver 4.9.2)
+    C++ flags (Release):         -Wall -Wextra -fopenmp -fvisibility=hidden -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -fopenmp -fvisibility=hidden -fPIC -g
     C Compiler:                  /usr/bin/cc
-    C flags (Release):           -Wall -Wextra -fopenmp -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
-    C flags (Debug):             -Wall -Wextra -fopenmp -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
-    Linker flags (Release):
-    Linker flags (Debug):
+    C flags (Release):           -Wall -Wextra -fopenmp -fvisibility=hidden -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -fopenmp -fvisibility=hidden -fPIC -g
+    Linker flags (Release):      
+    Linker flags (Debug):        
 
   ViSP modules:
     To be built:                 core gui io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
@@ -365,16 +365,16 @@ General configuration information for ViSP 3.1.0
   Mathematics: 
     Use Lapack/blas:             yes (ver 3.7.0)
     Use Lapack (built-in):       no
-    Use Eigen3:                  yes (ver 3.3.2)
+    Use Eigen3:                  yes (ver 3.2.2)
     Use OpenCV:                  yes (ver 2.4.9.1)
-    Use GSL:                     yes (ver 2.3)
+    Use GSL:                     yes (ver 1.16)
 
   Simulator: 
     Ogre simulator: 
-    \- Use Ogre3D:               yes (ver 1.9.0)
-    \- Use OIS:                  yes (ver 1.3.0)
+    \- Use Ogre3D:               no
+    \- Use OIS:                  no
     Coin simulator: 
-    \- Use Coin3D:               yes (ver 4.0.0)
+    \- Use Coin3D:               no
     \- Use SoWin:                no
     \- Use SoXt:                 no
     \- Use SoQt:                 no
@@ -382,9 +382,9 @@ General configuration information for ViSP 3.1.0
     \- Use Qt3:                  no
 
   Media I/O: 
-    Use JPEG:                    yes (ver 80)
-    Use PNG:                     yes (ver 1.6.28)
-    \- Use ZLIB:                 yes (ver 1.2.11)
+    Use JPEG:                    yes (ver 62)
+    Use PNG:                     yes (ver 1.2.50)
+    \- Use ZLIB:                 yes (ver 1.2.8)
     Use OpenCV:                  yes (ver 2.4.9.1)
 
   Real robots: 
@@ -392,7 +392,7 @@ General configuration information for ViSP 3.1.0
     Use Afma6:                   no
     Use Viper650:                no
     Use Viper850:                no
-    Use aria (Pioneer):          no
+    Use aria (Pioneer):          yes
     Use PTU46:                   no
     Use Biclops PT:              no
 
@@ -404,21 +404,21 @@ General configuration information for ViSP 3.1.0
     Use Direct3D:                no
 
   Cameras: 
-    Use DC1394-2.x:              yes (ver 2.2.5)
+    Use DC1394-2.x:              yes (ver 2.2.3)
     Use CMU 1394:                no
-    Use V4L2:                    yes (ver 1.12.3)
+    Use V4L2:                    yes (ver 1.6.0)
     Use directshow:              no
     Use OpenCV:                  yes (ver 2.4.9.1)
     Use Flycapture:              no
-    Use Pylon:                   yes (ver 5.0.9.10389)
+    Use Pylon:                   no
 
   RGB-D sensors: 
     Use Realsense:               no
     \- Use PCL:                  no
        \- Use VTK:               no
-    Use Kinect:                  yes
-    \- Use libfreenect:          yes (ver 0.5)
-    \- Use libusb-1:             yes (ver 0.1.12)
+    Use Kinect:                  no
+    \- Use libfreenect:          no
+    \- Use libusb-1:             no
     \- Use pthread:              yes
 
   F/T sensors: 
@@ -427,12 +427,12 @@ General configuration information for ViSP 3.1.0
 
   Detection: 
     Use zbar:                    yes (ver 0.10)
-    Use dmtx:                    yes (ver 0.7.4)
+    Use dmtx:                    no
     Use AprilTag (built-in):     yes (ver 0.9.8)
 
   Misc: 
     Use Clipper (built-in):      yes (ver 6.4.2)
-    Use XML2:                    yes (ver 2.9.4)
+    Use XML2:                    yes (ver 2.9.1)
 
   Optimization: 
     Use OpenMP:                  yes

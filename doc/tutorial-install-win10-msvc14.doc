@@ -25,7 +25,7 @@ We recommend to install OpenCV 3rd party. Other 3rd parties should be considered
 
 \subsubsection install_win10_msvc10_3rdparty_opencv OpenCV 3rd party
 
-- From http://opencv.org/downloads.html download the latest OpenCV for Windows version. In our case we install \c opencv-3.1.0.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-3.1.0.exe extracted all the material in \c C:\\OpenCV\\opencv.
+- From http://opencv.org/releases.html download the latest OpenCV for Windows version. In our case we install \c opencv-3.1.0.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-3.1.0.exe extracted all the material in \c C:\\OpenCV\\opencv.
 \note OpenCV 3.1.0 windows installer contains pre-build libraries compatible with Visual C++ 2015 (in \c C:\\OpenCV\\opencv\\build\\x64\\vc14) and also libraries compatible with Visual C++ 2013 (in \c C:\\OpenCV\\opencv\\build\\x64\\vc12). With any other compiler version you need to build yourself OpenCV from source.
 
 \note There is an <a href="http://docs.opencv.org/doc/tutorials/introduction/windows_install/windows_install.html#windows-install-prebuild">OpenCV tutorial: Installation Using the Pre-build Libraries</a> that may help if you encounter some difficulties.

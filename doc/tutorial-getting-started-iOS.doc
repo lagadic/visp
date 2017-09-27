@@ -4,14 +4,13 @@
   \tableofcontents
 
 
-  \note We assume that you have \c "ViSP for iOS" either after following \ref tutorial-install-ios-package or \ref tutorial-install-iOS. Following one of these tutorial allows to exploit \c visp3.framework to build an application for iOS devices.
+  \note We assume that you have \c "ViSP for iOS" either after following \ref tutorial-install-ios-package or \ref tutorial-install-iOS. Following one of these tutorials allows to exploit \c visp3.framework to build an application for iOS devices.
 
 In this tutorial we suppose that you install \c visp3.framework in a folder named \c \<framework_dir\>/ios. If \c \<framework_dir\> corresponds to \c ~/framework, you should get the following:
 
 \code
 $ ls ~/framework/ios
-opencv2.framework
-visp3.framework
+opencv2.framework         visp3.framework
 \endcode
 
 \section getting-started-iOS-create Create a new Xcode project

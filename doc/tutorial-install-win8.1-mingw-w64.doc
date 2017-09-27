@@ -50,7 +50,7 @@ ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.in
 
 We recommend to install OpenCV. 
 
-- Since OpenCV is not packaged for Mingw, you have to install OpenCV from source. From http://opencv.org/downloads.html download the latest OpenCV for Windows version. In our case we install \c opencv-3.0.0.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-3.0.0.exe extracted all the prebuilt binaries, <b>but also the source code</b> in \c C:\\OpenCV\\opencv.
+- Since OpenCV is not packaged for Mingw, you have to install OpenCV from source. From http://opencv.org/releases.html download the latest OpenCV for Windows version. In our case we install \c opencv-3.0.0.exe pre-build SDK in \c C:\\OpenCV. The installer opencv-3.0.0.exe extracted all the prebuilt binaries, <b>but also the source code</b> in \c C:\\OpenCV\\opencv.
 
 - Now we have to use CMake to configure OpenCV from source. As \c \<source_dir\> we will set \c C:\\OpenCV\\opencv\\sources and as \c \<binary_dir\> we set \c C:\\OpenCV\\opencv\\sources\\build-mingw.
 \image html img-win8.1-mingw-opencv-cmake-configure.jpg

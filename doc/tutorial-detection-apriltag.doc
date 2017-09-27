@@ -19,22 +19,28 @@ Note that all the material (source code and image) described in this tutorial is
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/tag
 \endcode
 
-\subsection apriltag_detection_print Print an AprilTag marker
+\section apriltag_detection_print Print an AprilTag marker
 
 You can directly download on the <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> website some pre-generated tag families:
-  - <a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">36h11 (recommended)</a>
-  - <a href="https://april.eecs.umich.edu/media/apriltag/tag36h10.tgz">36h10</a>
-  - <a href="https://april.eecs.umich.edu/media/apriltag/tag25h9.tgz">25h9</a>
-  - <a href="https://april.eecs.umich.edu/media/apriltag/tag16h5.tgz">16h5</a>
+- <a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">36h11 (recommended)</a>
+- <a href="https://april.eecs.umich.edu/media/apriltag/tag36h10.tgz">36h10</a>
+- <a href="https://april.eecs.umich.edu/media/apriltag/tag25h9.tgz">25h9</a>
+- <a href="https://april.eecs.umich.edu/media/apriltag/tag16h5.tgz">16h5</a>
 
 In each archive you will find a PNG image of each tag, a mosaic in PNG containing every tag and a ready-to-print postscript file with one tag per page.
 If you want to print an individual tag, you can manually scale the corresponding PNG image using two methods:
-  - on Unix with ImageMagick, e.g.: `convert tag36_11_00000.png -scale 5000% tag36_11_00000_big.png`
-  - or open the image with <a href="https://www.gimp.org/">Gimp</a>:
-    - then from the pulldown menu, select **Image** > **Scale Image**
-    - set the unit and the size
-    - set the **Interpolation** mode to **None**
-    - click on the **Scale** button
+- on Unix with ImageMagick, e.g.:
+\code
+$ convert tag36_11_00000.png -scale 5000% tag36_11_00000_big.png
+\endcode
+- or open the image with <a href="https://www.gimp.org/">Gimp</a>:
+  - then from the pulldown menu, select **Image** > **Scale Image**
+  - set the unit and the size
+  - set the **Interpolation** mode to **None**
+  - click on the **Scale** button
+  - From the pulldown menu, select **File** > **Export As**
+  - Save the image as a new PNG image, e.g., `/tmp/tag36_11_00000-rescaled.png`
+  - Send the PNG file to your printer
 
 \section apriltag_detection_basic AprilTag detection and pose estimation (single image)
 
