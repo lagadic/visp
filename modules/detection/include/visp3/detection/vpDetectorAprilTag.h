@@ -149,7 +149,8 @@ public:
     TAG_36h10,       /*!< AprilTag <a href="https://april.eecs.umich.edu/software/apriltag.html">36h10</a> pattern */
     TAG_36ARTOOLKIT, /*!< <a href="https://artoolkit.org/">ARToolKit</a> pattern. */
     TAG_25h9,        /*!< AprilTag <a href="https://april.eecs.umich.edu/software/apriltag.html">25h9</a> pattern */
-    TAG_25h7         /*!< AprilTag <a href="https://april.eecs.umich.edu/software/apriltag.html">25h7</a> pattern */
+    TAG_25h7,        /*!< AprilTag <a href="https://april.eecs.umich.edu/software/apriltag.html">25h7</a> pattern */
+    TAG_16h5         /*!< AprilTag <a href="https://april.eecs.umich.edu/software/apriltag.html">16h5</a> pattern */
   };
 
   enum vpPoseEstimationMethod {
@@ -227,23 +228,27 @@ inline std::ostream & operator <<(std::ostream &os, const vpDetectorAprilTag::vp
 inline std::ostream & operator <<(std::ostream &os, const vpDetectorAprilTag::vpAprilTagFamily &tagFamily) {
   switch (tagFamily) {
     case vpDetectorAprilTag::TAG_36h11:
-      os << "TAG_36h11";
+      os << "36h11";
       break;
 
     case vpDetectorAprilTag::TAG_36h10:
-      os << "TAG_36h10";
+      os << "36h10";
       break;
 
     case vpDetectorAprilTag::TAG_36ARTOOLKIT:
-      os << "TAG_36ARTOOLKIT";
+      os << "36artoolkit";
       break;
 
     case vpDetectorAprilTag::TAG_25h9:
-      os << "TAG_25h9";
+      os << "25h9";
       break;
 
     case vpDetectorAprilTag::TAG_25h7:
-      os << "TAG_25h7";
+      os << "25h7";
+      break;
+
+    case vpDetectorAprilTag::TAG_16h5:
+      os << "16h5";
       break;
 
     default:

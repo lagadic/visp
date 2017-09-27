@@ -42,6 +42,7 @@
 #include <tag36artoolkit.h>
 #include <tag25h9.h>
 #include <tag25h7.h>
+#include <tag16h5.h>
 #include <common/homography.h>
 
 #include <visp3/detection/vpDetectorAprilTag.h>
@@ -74,6 +75,10 @@ public:
 
       case TAG_25h7:
         m_tf = tag25h7_create();
+        break;
+
+      case TAG_16h5:
+        m_tf = tag16h5_create();
         break;
 
       default:
@@ -112,6 +117,10 @@ public:
         tag25h7_destroy(m_tf);
         break;
 
+      case TAG_16h5:
+        tag16h5_destroy(m_tf);
+        break;
+
       default:
         break;
     }
@@ -134,32 +143,6 @@ public:
     polygons.resize( (size_t) nb_detections);
     messages.resize( (size_t) nb_detections);
 
-    std::string tag_family_name = "";
-    switch (m_tagFamily) {
-      case TAG_36h11:
-        tag_family_name = "36h11";
-        break;
-
-      case TAG_36h10:
-        tag_family_name = "36h10";
-        break;
-
-      case TAG_36ARTOOLKIT:
-        tag_family_name = "36artoolkit";
-        break;
-
-      case TAG_25h9:
-        tag_family_name = "25h9";
-        break;
-
-      case TAG_25h7:
-        tag_family_name = "25h7";
-        break;
-
-      default:
-        break;
-    }
-
     for (int i = 0; i < zarray_size(detections); i++) {
       apriltag_detection_t *det;
       zarray_get(detections, i, &det);
@@ -170,7 +153,7 @@ public:
       }
       polygons[i] = polygon;
       std::stringstream ss;
-      ss << tag_family_name << " id: " << det->id;
+      ss << m_tagFamily << " id: " << det->id;
       messages[i] = ss.str();
 
       if (displayTag) {

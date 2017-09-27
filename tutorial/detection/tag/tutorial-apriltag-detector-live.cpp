@@ -56,7 +56,7 @@ int main(int argc, const char** argv) {
                    " [--pose_method <method> (0: HOMOGRAPHY_VIRTUAL_VS, 1: DEMENTHON_VIRTUAL_VS,"
                    " 2: LAGRANGE_VIRTUAL_VS, 3: BEST_RESIDUAL_VIRTUAL_VS)]"
                    " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,"
-                   " 3: TAG_25h9, 4: TAG_25h7)]"
+                   " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
                    " [--display_tag] [--help]"
                 << std::endl;
       return EXIT_SUCCESS;

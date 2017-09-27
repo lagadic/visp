@@ -5,13 +5,13 @@
 
 \section intro_apriltag Introduction
 
-This tutorial shows how to detect one or more AprilTag patterns with ViSP. To this end we provide vpDetectorAprilTag class that is a wrapper over <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> 3rd party library. Notice that there is no need to install this 3rd party, since AprilTag source code is embedded in ViSP. 
+This tutorial shows how to detect one or more AprilTag patterns with ViSP. To this end, we provide vpDetectorAprilTag class that is a wrapper over <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> 3rd party library. Notice that there is no need to install this 3rd party, since AprilTag source code is embedded in ViSP. 
 
-The vpDetectorAprilTag class inherits from vpDetectorBase class, a generic class dedicated to detection. For each detected tag, it allows to retrieve some characteristics such as the tag id, and in the image the polygon that contains the tag and corresponds to its 4 corner coordinates, the bounding box or the center of gravity of the tag.
+The vpDetectorAprilTag class inherits from vpDetectorBase class, a generic class dedicated to detection. For each detected tag, it allows to retrieve some characteristics such as the tag id, and in the image, the polygon that contains the tag and corresponds to its 4 corner coordinates, the bounding box or the center of gravity of the tag.
 
-Moreover vpDetectorAprilTag class allows to estimate the 3D pose of the tag. To this end camera parameters as well as the size of the tag are required.
+Moreover vpDetectorAprilTag class allows to estimate the 3D pose of the tag. To this end, the camera parameters as well as the size of the tag are required.
 
-In the next sections you will find examples that show how to detect tags in a single image and or in images acquired from a camera connected to your computer.
+In the next sections you will find examples that show how to detect tags in a single image or in images acquired from a camera connected to your computer.
 
 Note that all the material (source code and image) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
@@ -19,18 +19,35 @@ Note that all the material (source code and image) described in this tutorial is
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/tag
 \endcode
 
+\subsection apriltag_detection_print Print an AprilTag marker
+
+You can directly download on the <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> website some pre-generated tag families:
+  - <a href="https://april.eecs.umich.edu/media/apriltag/tag36h11.tgz">36h11 (recommended)</a>
+  - <a href="https://april.eecs.umich.edu/media/apriltag/tag36h10.tgz">36h10</a>
+  - <a href="https://april.eecs.umich.edu/media/apriltag/tag25h9.tgz">25h9</a>
+  - <a href="https://april.eecs.umich.edu/media/apriltag/tag16h5.tgz">16h5</a>
+
+In each archive you will find a PNG image of each tag, a mosaic in PNG containing every tag and a ready-to-print postscript file with one tag per page.
+If you want to print an individual tag, you can manually scale the corresponding PNG image using two methods:
+  - on Unix with ImageMagick, e.g.: `convert tag36_11_00000.png -scale 5000% tag36_11_00000_big.png`
+  - or open the image with <a href="https://www.gimp.org/">Gimp</a>:
+    - then from the pulldown menu, select **Image** > **Scale Image**
+    - set the unit and the size
+    - set the **Interpolation** mode to **None**
+    - click on the **Scale** button
+
 \section apriltag_detection_basic AprilTag detection and pose estimation (single image)
 
 The following example also available in tutorial-apriltag-detector.cpp allows to detect a tag on a single image. 
 
 \include tutorial-apriltag-detector.cpp
 
-The default behavior is to detect <a href="https://april.eecs.umich.edu/software/apriltag.html">h36h11</a> patterns in \c AprilTag.pgm image, but \c -—tag_family \<family\> option allows to consider other patterns. To see which are the options, just run:
+The default behavior is to detect <a href="https://april.eecs.umich.edu/software/apriltag.html">36h11</a> patterns in \c AprilTag.pgm image, but \c --tag_family \<family\> option allows to consider other patterns. To see which are the options, just run:
 \code
-$ ./tutorial-apriltag-detector —help
+$ ./tutorial-apriltag-detector --help
 \endcode
 
-To detect multiple h36h11 patterns in the image \c AprilTag.pgm that is provided just run:
+To detect multiple 36h11 patterns in the \c AprilTag.pgm image that is provided just run:
 \code
 $ ./tutorial-apriltag-detector
 \endcode
@@ -50,23 +67,23 @@ Then in the \c main() function before going further we need to check if ViSP was
 
 \snippet tutorial-apriltag-detector.cpp Macro defined
 
-After reading the input image \c AprilTag.pgm and creation of a display device in order to visualize the image, since vpDetectorAprilTag class inherits from vpDetectorBase we are able to construct the requested detector.
+After reading the input image \c AprilTag.pgm and the creation of a display device in order to visualize the image, since vpDetectorAprilTag class inherits from vpDetectorBase we are able to construct the requested detector (you can also use directly vpDetectorAprilTag).
 
 \snippet tutorial-apriltag-detector.cpp Create base detector
 
-Then we are applying some settings. There is especially vpDetectorAprilTag::setAprilTagQuadDecimate() function that could be used to decimate the input image in order to speed up detection.
+Then we are applying some settings. There is especially vpDetectorAprilTag::setAprilTagQuadDecimate() function that could be used to decimate the input image in order to speed-up the detection.
 
 \snippet tutorial-apriltag-detector.cpp AprilTag detector settings
  
-We are now ready to detect any 36h11 tag in the image. There is the vpDetectorAprilTag::detect(const vpImage<unsigned char> &) function that allows to simply detect any tags in the image, but since here we want also to estimate the 3D pose of the tags, we call rather vpDetectorAprilTag::detect(const vpImage<unsigned char> &, const double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &) that returns the pose of each tag as a vector of vpHomogeneousMatrix in \c cMo_vec var.
+We are now ready to detect any 36h11 tags in the image. There is the vpDetectorAprilTag::detect(const vpImage<unsigned char> &) function that allows to simply detect any tags in the image, but since here we want also to estimate the 3D pose of the tags, we call rather vpDetectorAprilTag::detect(const vpImage<unsigned char> &, const double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &) that returns the pose of each tag as a vector of vpHomogeneousMatrix in \c cMo_vec var.
 
 \snippet tutorial-apriltag-detector.cpp Detect and compute pose
 
-If one or more tags are detected we can retrieve the number of detected tags in order to create a for loop over the tags.
+If one or more tags are detected, we can retrieve the number of detected tags in order to create a for loop over the tags.
 
 \snippet tutorial-apriltag-detector.cpp Parse detected codes
 
-For each tag, we can then get the location of the 4 points that define the polygon that contains the code and the corresponding bounding box.
+For each tag, we can then get the location of the 4 points that define the polygon that contains the tag and the corresponding bounding box.
 
 \snippet tutorial-apriltag-detector.cpp Get location
 
@@ -74,9 +91,13 @@ And finally, we are also able to get the tag id calling vpDetectorAprilTag::getM
 
 \snippet tutorial-apriltag-detector.cpp Get message
 
-Next in the code we display the 3D pose of each tag as a RGB frame. 
+Next in the code we display the 3D pose of each tag as a RGB frame.
 
 \snippet tutorial-apriltag-detector.cpp Display camera pose for each tag
+
+\note
+  - To get absolute pose (not relative to a scale factor), you have to provide the real size of the marker (length of a marker side).
+  - To calibrate your camera, you can follow this tutorial: \ref tutorial-calibration
 
 \section apriltag_detection_live AprilTag detection and pose estimation (live camera)
 
@@ -85,17 +106,17 @@ This other example also available in tutorial-apriltag-detector-live.cpp shows h
 \include tutorial-apriltag-detector-live.cpp
 
 The usage of this example is similar to the previous one:
-- with option \c —tag_family you select the kind of tag that you want to detect.
-- if more than one camera is connected to you computer, with option \c —-input you can select which camera to use. The first camera that is found has number 0.
+- with option \c --tag_family you select the kind of tag that you want to detect.
+- if more than one camera is connected to you computer, with option \c --input you can select which camera to use. The first camera that is found has number 0.
 
 To detect 36h11 tags on images acquired by a second camera connected to your computer use:
 \code
-$ ./tutorial-apriltag-detector-live --tag_family 0 —input 1
+$ ./tutorial-apriltag-detector-live --tag_family 0 --input 1
 \endcode
 
 The source code of this example is very similar to the previous one except that here we use camera framegrabber devices (see \ref tutorial-grabber). Two different grabber may be used:
-- If ViSP was build with Video For Linux (V4L2) support available for example on Fedora or Ubuntu distribution, VISP_HAVE_V4L2 macro is defined. In that case, images coming from an USB camera are acquired using vpV4l2Grabber class. 
-- If ViSP wasn't build with V4L2 support but with OpenCV, we use cv::VideoCapture class to grab the images. Notice that when images are acquired with OpenCV there is an additional conversion from cv::Mat to vpImage.
+- If ViSP was built with Video For Linux (V4L2) support available for example on Fedora or Ubuntu distribution, VISP_HAVE_V4L2 macro is defined. In that case, images coming from an USB camera are acquired using vpV4l2Grabber class. 
+- If ViSP wasn't built with V4L2 support but with OpenCV, we use cv::VideoCapture class to grab the images. Notice that when images are acquired with OpenCV there is an additional conversion from cv::Mat to vpImage.
 
 \snippet tutorial-apriltag-detector-live.cpp Construct grabber
 
