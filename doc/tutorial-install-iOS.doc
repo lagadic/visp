@@ -9,7 +9,7 @@ In this tutorial you will learn how to build ViSP framework from source on OSX i
 
 \section install_iOS_required Install required software
 
-- CMake gui 2.8 for OSX or higher that could be download at : http://www.cmake.org
+- CMake gui 2.8.12.2 for OSX or higher that could be download at : http://www.cmake.org
 - Xcode
 - Python 2.7 (not tested with Python 3)
 
