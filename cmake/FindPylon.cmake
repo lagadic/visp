@@ -71,10 +71,12 @@ if(APPLE)
   if(PYLON_INCLUDE_DIRS AND PYLON_LIBRARIES)
     set(PYLON_FOUND TRUE)
   endif()
+
+  mark_as_advanced(PYLON_BASE_INCLUDE_DIR)
 elseif(WIN32)
   find_path(PYLON_INCLUDE_DIR pylon/PylonIncludes.h
     PATHS "$ENV{PYLON_HOME}/include"
-	      "C:/Program Files/Basler/pylon 5/Development/include")
+        "C:/Program Files/Basler/pylon 5/Development/include")
 
   set(PYLON_LIB_SEARCH_PATH "$ENV{PYLON_HOME}/lib/x64")
 
@@ -85,17 +87,17 @@ elseif(WIN32)
   endif()
 
   find_library(PYLON_BASE_LIBRARY
-	NAMES PylonBase_MD_VC120_v5_0.lib
-	PATHS ${PYLON_LIB_SEARCH_PATH})
+    NAMES PylonBase_MD_VC120_v5_0.lib
+    PATHS ${PYLON_LIB_SEARCH_PATH})
   find_library(PYLON_GCBASE_LIBRARY
     NAMES GCBase_MD_VC120_v3_0_Basler_pylon_v5_0.lib
-	PATHS ${PYLON_LIB_SEARCH_PATH})
+    PATHS ${PYLON_LIB_SEARCH_PATH})
   find_library(PYLON_GENAPI_LIBRARY
-	NAMES GenApi_MD_VC120_v3_0_Basler_pylon_v5_0.lib
-	PATHS ${PYLON_LIB_SEARCH_PATH})
+    NAMES GenApi_MD_VC120_v3_0_Basler_pylon_v5_0.lib
+    PATHS ${PYLON_LIB_SEARCH_PATH})
   find_library(PYLON_UTILITY_LIBRARY
-	NAMES PylonUtility_MD_VC120_v5_0.lib
-	PATHS ${PYLON_LIB_SEARCH_PATH})
+    NAMES PylonUtility_MD_VC120_v5_0.lib
+    PATHS ${PYLON_LIB_SEARCH_PATH})
 
   if(PYLON_INCLUDE_DIR)
     list(APPEND PYLON_INCLUDE_DIRS ${PYLON_INCLUDE_DIR})
@@ -115,9 +117,9 @@ elseif(WIN32)
 
   mark_as_advanced(
     PYLON_BASE_LIBRARY
-	PYLON_GCBASE_LIBRARY
-	PYLON_GENAPI_LIBRARY
-	PYLON_UTILITY_LIBRARY
+    PYLON_GCBASE_LIBRARY
+    PYLON_GENAPI_LIBRARY
+    PYLON_UTILITY_LIBRARY
   )
 
 elseif(UNIX)
