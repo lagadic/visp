@@ -130,7 +130,7 @@ void vpKltOpencv::initTracking(const cv::Mat &I, const cv::Mat &mask)
 
   m_points_id.clear();
 
-  cv::goodFeaturesToTrack(m_gray, m_points[1], m_maxCount, m_qualityLevel, m_minDistance, mask, m_blockSize, 0, m_harris_k);
+  cv::goodFeaturesToTrack(m_gray, m_points[1], m_maxCount, m_qualityLevel, m_minDistance, mask, m_blockSize, false, m_harris_k);
 
   if(m_points[1].size() > 0){
     cv::cornerSubPix(m_gray, m_points[1], cv::Size(m_winSize, m_winSize), cv::Size(-1,-1), m_termcrit);
