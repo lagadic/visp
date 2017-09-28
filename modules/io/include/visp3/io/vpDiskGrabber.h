@@ -110,7 +110,7 @@ class VISP_EXPORT vpDiskGrabber  : public vpFrameGrabber
 private:
   long m_image_number ; //!< id of the current image to be read
   long m_image_number_next ; //!< id of the next image to be read
-  int m_image_step ;    //!< increment between two image id
+  long m_image_step ;    //!< increment between two image id
   unsigned int m_number_of_zero ; //!< number of zero in the image name (image.00000.pgm)
 
   std::string m_directory; //!< image location
@@ -152,7 +152,7 @@ public:
   void setGenericName(const std::string &genericName);
   void setImageNumber(long number) ;
   void setNumberOfZero(unsigned int noz);
-  void setStep(int a);
+  void setStep(long step);
 } ;
 
 #endif
