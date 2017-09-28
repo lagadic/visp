@@ -311,22 +311,6 @@ int main(int argc, const char ** argv) {
     // Append to the output path string, the login name of the user
     opath = vpIoTools::createFilePath(opath, username);
 
-    // Test if the output path exist. If no try to create it
-    if (vpIoTools::checkDirectory(opath) == false) {
-      try {
-        // Create the dirname
-        vpIoTools::makeDirectory(opath);
-      }
-      catch (...) {
-        usage(argv[0], NULL, opt_opath, username);
-        std::stringstream ss;
-        ss << std::endl << "ERROR:" << std::endl;
-        ss << "  Cannot create " << opath << std::endl;
-        ss << "  Check your -o " << opt_opath << " option " << std::endl;
-        throw vpException(vpException::ioError, ss.str().c_str());
-      }
-    }
-
     vpImage<unsigned char> I;
 
     //Set the path location of the image sequence
