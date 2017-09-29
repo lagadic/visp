@@ -51,7 +51,7 @@
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/vision/vpPose.h>
 
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpDetectorAprilTag::Impl {
 public:
   Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
@@ -309,6 +309,7 @@ protected:
   apriltag_detector_t *m_td;
   apriltag_family_t *m_tf;
 };
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
    Default constructor.

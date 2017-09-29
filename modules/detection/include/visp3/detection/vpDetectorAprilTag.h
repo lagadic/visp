@@ -47,6 +47,8 @@
   \ingroup group_detection_tag
   Base class for AprilTag detector. This class is a wrapper over <a href="https://april.eecs.umich.edu/software/apriltag.html">AprilTag</a>.
   There is no need to download and install AprilTag from source code or existing pre-built packages since the source code is embedded in ViSP.
+  Reference papers are <I> AprilTag: A robust and flexible visual fiducial system </I> (\cite olson2011tags) and <I> AprilTag 2: Efficient and robust
+  fiducial detection </I> (\cite wang2016iros).
 
   The detect() function allows to detect multiple tags in an image. Once detected,
   for each tag it is possible to retrieve the location of the corners using getPolygon(),
