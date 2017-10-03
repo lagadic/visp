@@ -254,7 +254,7 @@ public:
       }
     }
 
-    zarray_destroy(detections);
+    apriltag_detections_destroy(detections);
 
     return detected;
   }

@@ -297,7 +297,6 @@ bool
 vpPolygon::isInside(const vpImagePoint& ip, const PointInPolygonMethod &method) const
 {
   if (_corners.size() < 3) {
-    std::cerr << "It is not a polygon (_corners.size() < 3)!" << std::endl;
     return false;
   }
 
@@ -360,7 +359,6 @@ vpPolygon::isInside(const vpImagePoint& ip, const PointInPolygonMethod &method) 
 void
 vpPolygon::precalcValuesPnPoly() {
   if (_corners.size() < 3) {
-    std::cerr << "It is not a polygon (_corners.size() < 3)!" << std::endl;
     return;
   }
 
