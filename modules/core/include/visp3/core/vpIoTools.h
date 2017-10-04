@@ -235,7 +235,7 @@ public:
   static std::string configFile;
   static std::vector<std::string> configVars;
   static std::vector<std::string> configValues;
-} ;
 
-
+  static int mkdir_p(const char *path, const int mode);
+};
 #endif

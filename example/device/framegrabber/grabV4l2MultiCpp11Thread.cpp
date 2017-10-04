@@ -410,11 +410,6 @@ int main(int argc, char *argv[])
   std::vector<std::thread> storage_threads;
 
   std::string parent_directory = vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
-  if(saveVideo) {
-    std::cout << "Create parent_directory: " << parent_directory << std::endl;
-    vpIoTools::makeDirectory(parent_directory);
-  }
-
   for(size_t deviceId = 0; deviceId < grabbers.size(); deviceId++) {
     //Start the capture thread for the current camera stream
     capture_threads.emplace_back( capture, grabbers[deviceId], std::ref(share_images[deviceId]) );

@@ -44,6 +44,7 @@
 #include <visp3/core/vpIoException.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 #include <fstream>
 #include <string.h>
 #include <sys/stat.h>
@@ -65,6 +66,10 @@
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
 #  include <TargetConditionals.h> // To detect OSX or IOS using TARGET_OS_IOS macro
+#endif
+
+#ifndef PATH_MAX
+#define PATH_MAX _MAX_PATH
 #endif
 
 std::string vpIoTools::baseName = "";
@@ -378,7 +383,10 @@ vpIoTools::checkDirectory(const char *dirname )
   {
     return false;
   }
-  if ( (stbuf.st_mode & S_IFDIR) == 0 ) {
+#if defined(_WIN32) || (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+  if ( (stbuf.st_mode & S_IFDIR) == 0 )
+#endif
+  {
     return false;
   }
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -406,13 +414,64 @@ vpIoTools::checkDirectory(const char *dirname )
   \sa checkDirectory(const char *)
 */
 bool
-vpIoTools::checkDirectory(const std::string &dirname )
+vpIoTools::checkDirectory(const std::string &dirname)
 {
   return vpIoTools::checkDirectory(dirname.c_str());
 }
-/*!
 
-  Create a new directory.
+//See: https://gist.github.com/JonathonReinhart/8c0d90191c38af2dcadb102c4e202950
+int
+vpIoTools::mkdir_p(const char *path, const int mode)
+{
+  /* Adapted from http://stackoverflow.com/a/2336245/119527 */
+  const size_t len = strlen(path);
+  char _path[PATH_MAX];
+  char *p = NULL;
+  const char sep = vpIoTools::separator;
+
+  errno = 0;
+  if (len > sizeof(_path)-1) {
+    errno = ENAMETOOLONG;
+    return -1;
+  }
+  /* Copy string so its mutable */
+  strcpy(_path, path);
+
+  /* Iterate over the string */
+  for (p = _path + 1; *p; p++) { //path cannot be empty
+    if (*p == sep) {
+      /* Temporarily truncate */
+      *p = '\0';
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+      if (mkdir(_path, (mode_t)mode) != 0)
+#elif defined(_WIN32)
+      (void)mode; //var not used
+      if (!checkDirectory(_path) && _mkdir(_path) != 0)
+#endif
+      {
+        if (errno != EEXIST)
+          return -1;
+      }
+      *p = sep;
+    }
+}
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+  if (mkdir(_path, (mode_t) mode) != 0)
+#elif defined(_WIN32)
+  if (_mkdir(_path) != 0 )
+#endif
+  {
+    if (errno != EEXIST)
+      return -1;
+  }
+
+  return 0;
+}
+
+/*!
+  Create a new directory. It will create recursively the parent directories if needed.
 
   \param dirname : Directory to create. The directory name
   is converted to the current system's format; see path().
@@ -425,8 +484,13 @@ vpIoTools::checkDirectory(const std::string &dirname )
   \sa makeDirectory(const std::string &)
 */
 void
-vpIoTools::makeDirectory(const  char *dirname )
+vpIoTools::makeDirectory(const char *dirname )
 {
+#if ( (!defined(__unix__) && !defined(__unix) && (!defined(__APPLE__) || !defined(__MACH__))) ) && !defined(_WIN32)
+  std::cerr << "Unsupported platform for vpIoTools::makeDirectory()!" << std::endl;
+  return;
+#endif
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   struct stat stbuf;
 #elif defined(_WIN32)
@@ -436,7 +500,7 @@ vpIoTools::makeDirectory(const  char *dirname )
   if ( dirname == NULL || dirname[0] == '\0' ) {
     vpERROR_TRACE( "invalid directory name\n");
     throw(vpIoException(vpIoException::invalidDirectoryName,
-			"invalid directory name")) ;
+                        "invalid directory name")) ;
   }
 
   std::string _dirname = path(dirname);
@@ -447,29 +511,24 @@ vpIoTools::makeDirectory(const  char *dirname )
   if ( _stat( _dirname.c_str(), &stbuf ) != 0 )
 #endif
   {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-    if ( mkdir( _dirname.c_str(), (mode_t)0755 ) != 0 )
-#elif defined(_WIN32)
-    if ( _mkdir( _dirname.c_str()) != 0 )
-#endif
-    {
+    if ( vpIoTools::mkdir_p( _dirname.c_str(), 0755 ) != 0 ) {
       vpERROR_TRACE("unable to create directory '%s'\n",  dirname );
       throw(vpIoException(vpIoException::cantCreateDirectory,
-			  "unable to create directory")) ;
+                          "unable to create directory")) ;
     }
+
     vpDEBUG_TRACE(2,"has created directory '%s'\n", dirname );
   }
 
-  if ( checkDirectory( dirname ) == false) {
+  if (checkDirectory( dirname ) == false) {
     vpERROR_TRACE("unable to create directory '%s'\n",  dirname );
     throw(vpIoException(vpIoException::cantCreateDirectory,
-			"unable to create directory")) ;
+                        "unable to create directory")) ;
   }
 }
 
 /*!
-
-  Create a new directory.
+  Create a new directory. It will create recursively the parent directories if needed.
 
   \param dirname : Directory to create. The directory name
   is converted to the current system's format; see path().
@@ -488,12 +547,11 @@ vpIoTools::makeDirectory(const std::string &dirname )
   catch (...) {
     vpERROR_TRACE("unable to create directory '%s'\n",dirname.c_str());
     throw(vpIoException(vpIoException::cantCreateDirectory,
-			"unable to create directory")) ;
+          "unable to create directory")) ;
   }
 }
 
 /*!
-
   Check if a file exists.
 
   \param filename : Filename to test if it exists.
