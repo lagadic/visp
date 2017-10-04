@@ -255,7 +255,7 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const std::vector<vpIma
     vpMeEllipse ellipse;
     ...
     vpDisplay::display(I);
-    ellipse.track(I) ;
+    ellipse.track(I);
 
     vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_mu20(), ellipse.get_mu11(), ellipse.get_mu02(),
                               true, vpColor::orange, 1);
@@ -309,7 +309,7 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &cen
     vpMeEllipse ellipse;
     ...
     vpDisplay::display(I);
-    ellipse.track(I) ;
+    ellipse.track(I);
 
     vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_mu20(),
                               ellipse.get_mu11(), ellipse.get_mu02(),

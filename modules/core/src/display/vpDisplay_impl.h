@@ -6,7 +6,7 @@ vp_display_close(vpImage<Type> &I)
 {
   if ( I.display != NULL )
   {
-    ( I.display )->closeDisplay() ;
+    ( I.display )->closeDisplay();
     I.display = NULL;
   }
 
@@ -17,7 +17,7 @@ vp_display_display(const vpImage<Type> &I)
 {
   if ( I.display != NULL )
   {
-    ( I.display )->displayImage ( I ) ;
+    ( I.display )->displayImage ( I );
   }
 
 }
@@ -28,7 +28,7 @@ vp_display_display_arrow(const vpImage<Type> &I, const vpImagePoint &ip1, const 
 {
   if ( I.display != NULL )
   {
-    ( I.display )->displayArrow ( ip1, ip2, color, w, h, thickness ) ;
+    ( I.display )->displayArrow ( ip1, ip2, color, w, h, thickness );
   }
 }
 
@@ -43,7 +43,7 @@ vp_display_display_arrow(const vpImage<Type> &I, int i1, int j1, int i2, int j2,
     ip1.set_j(j1);
     ip2.set_i(i2);
     ip2.set_j(j2);
-    ( I.display )->displayArrow ( ip1, ip2, color, w, h, thickness ) ;
+    ( I.display )->displayArrow ( ip1, ip2, color, w, h, thickness );
   }
 }
 
@@ -61,7 +61,7 @@ vp_display_display_camera(const vpImage<Type> &I, const vpHomogeneousMatrix &cMo
   pt[4].setWorldCoordinates ( 0.0,0.0,-size );
 
   for (int i = 0; i < 5; i++)
-    pt[i].track ( cMo ) ;
+    pt[i].track ( cMo );
 
   vpImagePoint ip, ip_1, ip0;
   vpMeterPixelConversion::convertPoint ( cam, pt[4].p[0], pt[4].p[1], ip0);
@@ -83,7 +83,7 @@ vp_display_display_char_string(const vpImage<Type> &I, const vpImagePoint &ip,
 {
   if ( I.display != NULL )
   {
-    ( I.display )->displayCharString ( ip, string, color ) ;
+    ( I.display )->displayCharString ( ip, string, color );
   }
 }
 
@@ -97,7 +97,7 @@ vp_display_display_char_string(const vpImage<Type> &I, int i, int j,
     ip.set_i( i );
     ip.set_j( j );
 
-    ( I.display )->displayCharString ( ip, string, color ) ;
+    ( I.display )->displayCharString ( ip, string, color );
   }
 }
 
@@ -107,7 +107,7 @@ vp_display_display_circle(const vpImage<Type> &I, const vpImagePoint &center, un
 {
   if ( I.display != NULL )
   {
-    ( I.display )->displayCircle ( center, radius, color, fill, thickness ) ;
+    ( I.display )->displayCircle ( center, radius, color, fill, thickness );
   }
 }
 
@@ -121,7 +121,7 @@ vp_display_display_circle(const vpImage<Type> &I, int i, int j,  unsigned int ra
     ip.set_i( i );
     ip.set_j( j );
 
-    ( I.display )->displayCircle ( ip, radius, color, fill, thickness ) ;
+    ( I.display )->displayCircle ( ip, radius, color, fill, thickness );
   }
 }
 
@@ -131,7 +131,7 @@ vp_display_display_cross(const vpImage<Type> &I, const vpImagePoint &ip, unsigne
 {
   if ( I.display != NULL )
   {
-    ( I.display )->displayCross ( ip, size, color, thickness ) ;
+    ( I.display )->displayCross ( ip, size, color, thickness );
   }
 }
 
@@ -145,7 +145,7 @@ vp_display_display_cross(const vpImage<Type> &I, int i, int j, unsigned int size
     ip.set_i( i );
     ip.set_j( j );
 
-    ( I.display )->displayCross ( ip, size, color, thickness ) ;
+    ( I.display )->displayCross ( ip, size, color, thickness );
   }
 }
 
@@ -186,7 +186,7 @@ vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &center,
     vpImagePoint iP11;
     double j2, i2;
     vpImagePoint iP22;
-    j1 = j2 = i1 = i2 = 0 ;
+    j1 = j2 = i1 = i2 = 0;
     double a=0., b=0., e=0.;
 
     double mu20_p = coef1;
@@ -231,7 +231,7 @@ vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &center,
     double ce = cos(e);
     double se = sin(e);
 
-    double k = smallalpha ;
+    double k = smallalpha;
     j1 = a *cos(k) ; // equation of an ellipse
     i1 = b *sin(k) ; // equation of an ellipse
 
@@ -250,11 +250,11 @@ vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &center,
       iP22.set_j ( center.get_j() + ce *j2 - se *i2 );
       iP22.set_i ( center.get_i() + se *j2 + ce *i2 );
 
-      ( I.display )->displayLine(iP11, iP22, color, thickness) ;
+      ( I.display )->displayLine(iP11, iP22, color, thickness);
 
       iP11 = iP22;
 
-      k += incr ;
+      k += incr;
     }
   }
 }
@@ -270,38 +270,38 @@ vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix &cMo,
   vpPoint y( 0.0, size,  0.0);
   vpPoint z( 0.0,  0.0, size);
 
-  o.track ( cMo ) ;
-  x.track ( cMo ) ;
-  y.track ( cMo ) ;
-  z.track ( cMo ) ;
+  o.track ( cMo );
+  x.track ( cMo );
+  y.track ( cMo );
+  z.track ( cMo );
 
   vpImagePoint ipo, ip1;
 
   if ( color == vpColor::none )
   {
-    vpMeterPixelConversion::convertPoint ( cam, o.p[0], o.p[1], ipo) ;
+    vpMeterPixelConversion::convertPoint ( cam, o.p[0], o.p[1], ipo);
 
-    vpMeterPixelConversion::convertPoint ( cam, x.p[0], x.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, vpColor::red, 4*thickness, 2*thickness, thickness) ;
+    vpMeterPixelConversion::convertPoint ( cam, x.p[0], x.p[1], ip1);
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, vpColor::red, 4*thickness, 2*thickness, thickness);
 
-    vpMeterPixelConversion::convertPoint ( cam, y.p[0], y.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, vpColor::green, 4*thickness, 2*thickness, thickness) ;
+    vpMeterPixelConversion::convertPoint ( cam, y.p[0], y.p[1], ip1);
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, vpColor::green, 4*thickness, 2*thickness, thickness);
 
-    vpMeterPixelConversion::convertPoint ( cam, z.p[0], z.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, vpColor::blue, 4*thickness, 2*thickness, thickness) ;
+    vpMeterPixelConversion::convertPoint ( cam, z.p[0], z.p[1], ip1);
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, vpColor::blue, 4*thickness, 2*thickness, thickness);
   }
   else
   {
-    vpMeterPixelConversion::convertPoint ( cam, o.p[0], o.p[1], ipo) ;
+    vpMeterPixelConversion::convertPoint ( cam, o.p[0], o.p[1], ipo);
 
-    vpMeterPixelConversion::convertPoint ( cam, x.p[0], x.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, color, 4*thickness, 2*thickness, thickness) ;
+    vpMeterPixelConversion::convertPoint ( cam, x.p[0], x.p[1], ip1);
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, color, 4*thickness, 2*thickness, thickness);
 
-    vpMeterPixelConversion::convertPoint ( cam, y.p[0], y.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, color, 4*thickness, 2*thickness, thickness) ;
+    vpMeterPixelConversion::convertPoint ( cam, y.p[0], y.p[1], ip1);
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, color, 4*thickness, 2*thickness, thickness);
 
-    vpMeterPixelConversion::convertPoint ( cam, z.p[0], z.p[1], ip1) ;
-    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, color, 4*thickness, 2*thickness, thickness) ;
+    vpMeterPixelConversion::convertPoint ( cam, z.p[0], z.p[1], ip1);
+    vpDisplay::displayArrow ( I, ipo+offset, ip1+offset, color, 4*thickness, 2*thickness, thickness);
   }
 }
 
@@ -336,7 +336,7 @@ vp_display_display_point(const vpImage<Type> &I, const vpImagePoint &ip,
 {
   if ( I.display != NULL )
   {
-    ( I.display )->displayPoint ( ip, color, thickness ) ;
+    ( I.display )->displayPoint ( ip, color, thickness );
   }
 }
 
@@ -349,7 +349,7 @@ vp_display_display_point(const vpImage<Type> &I, int i, int j,
     vpImagePoint ip;
     ip.set_i( i );
     ip.set_j( j );
-    ( I.display )->displayPoint ( ip, color, thickness ) ;
+    ( I.display )->displayPoint ( ip, color, thickness );
   }
 }
 
@@ -372,7 +372,7 @@ vp_display_display_rectangle(const vpImage<Type> &I, const vpImagePoint &topLeft
   if ( I.display != NULL )
   {
     ( I.display )->displayRectangle ( topLeft, width, height, color,
-                                      fill, thickness ) ;
+                                      fill, thickness );
   }
 }
 
@@ -382,7 +382,7 @@ vp_display_display_rectangle(const vpImage<Type> &I, const vpRect &rectangle,
 {
   if ( I.display != NULL )
   {
-    ( I.display )->displayRectangle ( rectangle, color, fill, thickness ) ;
+    ( I.display )->displayRectangle ( rectangle, color, fill, thickness );
   }
 }
 
@@ -424,7 +424,7 @@ vp_display_display_rectangle(const vpImage<Type> &I,
   if ( I.display != NULL )
   {
     ( I.display )->displayRectangle ( topLeft, bottomRight, color,
-                                      fill, thickness ) ;
+                                      fill, thickness );
   }
 }
 
@@ -440,7 +440,7 @@ vp_display_display_rectangle(const vpImage<Type> &I,
     topLeft.set_j( j );
 
     ( I.display )->displayRectangle ( topLeft, width, height,
-                                      color, fill, thickness ) ;
+                                      color, fill, thickness );
   }
 }
 
@@ -474,7 +474,6 @@ vp_display_display_rectangle(const vpImage<Type> &I,
 template <class Type> void
 vp_display_display_roi(const vpImage<Type> &I, const vpRect &roi)
 {
-  vpImagePoint topLeft;
   double top = floor(roi.getTop());
   double left = floor(roi.getLeft());
   double roiheight = floor(roi.getHeight());
@@ -484,12 +483,12 @@ vp_display_display_roi(const vpImage<Type> &I, const vpRect &roi)
 
   if (top < 0 || top > iheight || left < 0 || left > iwidth || top+roiheight > iheight || left+roiwidth > iwidth)
   {
-    throw ( vpException ( vpException::dimensionError, "Region of interest outside of the image" ) ) ;
+    throw ( vpException ( vpException::dimensionError, "Region of interest outside of the image" ) );
   }
 
   if ( I.display != NULL )
   {
-    ( I.display )->displayImageROI ( I , vpImagePoint(top,left), (unsigned int)roiwidth,(unsigned int)roiheight ) ;
+    ( I.display )->displayImageROI ( I , vpImagePoint(top,left), (unsigned int)roiwidth,(unsigned int)roiheight );
   }
 }
 
@@ -498,7 +497,7 @@ vp_display_flush(const vpImage<Type> &I)
 {
   if ( I.display != NULL )
   {
-    ( I.display )->flushDisplay() ;
+    ( I.display )->flushDisplay();
   }
 }
 
@@ -507,7 +506,7 @@ vp_display_flush_roi(const vpImage<Type> &I, const vpRect &roi)
 {
   if ( I.display != NULL )
   {
-    ( I.display )->flushDisplayROI(roi.getTopLeft(),(unsigned int)roi.getWidth(),(unsigned int)roi.getHeight()) ;
+    ( I.display )->flushDisplayROI(roi.getTopLeft(),(unsigned int)roi.getWidth(),(unsigned int)roi.getHeight());
   }
 }
 
@@ -516,9 +515,9 @@ vp_display_get_click(const vpImage<Type> &I, bool blocking)
 {
   if ( I.display != NULL )
   {
-    return ( I.display )->getClick(blocking) ;
+    return ( I.display )->getClick(blocking);
   }
-  return false ;
+  return false;
 }
 
 template <class Type> bool
@@ -526,9 +525,9 @@ vp_display_get_click(const vpImage<Type> &I, vpImagePoint &ip, bool blocking)
 {
   if ( I.display != NULL )
   {
-    return ( I.display )->getClick ( ip, blocking ) ;
+    return ( I.display )->getClick ( ip, blocking );
   }
-  return false ;
+  return false;
 }
 
 template <class Type> bool
@@ -537,9 +536,9 @@ vp_display_get_click(const vpImage<Type> &I, vpImagePoint &ip,
 {
   if ( I.display != NULL )
   {
-    return ( I.display )->getClick ( ip, button, blocking ) ;
+    return ( I.display )->getClick ( ip, button, blocking );
   }
-  return false ;
+  return false;
 }
 
 template <class Type> bool
@@ -548,9 +547,9 @@ vp_display_get_click_up(const vpImage<Type> &I, vpImagePoint &ip,
 {
   if ( I.display != NULL )
   {
-    return ( I.display )->getClickUp ( ip, button, blocking ) ;
+    return ( I.display )->getClickUp ( ip, button, blocking );
   }
-  return false ;
+  return false;
 }
 
 template <class Type> bool
@@ -558,9 +557,9 @@ vp_display_get_keyboard_event(const vpImage<Type> &I, bool blocking)
 {
   if ( I.display != NULL )
   {
-    return ( I.display )->getKeyboardEvent ( blocking ) ;
+    return ( I.display )->getKeyboardEvent ( blocking );
   }
-  return false ;
+  return false;
 }
 
 template <class Type> bool
@@ -568,9 +567,9 @@ vp_display_get_keyboard_event(const vpImage<Type> &I, std::string &key, bool blo
 {
   if ( I.display != NULL )
   {
-    return ( I.display )->getKeyboardEvent ( key, blocking ) ;
+    return ( I.display )->getKeyboardEvent ( key, blocking );
   }
-  return false ;
+  return false;
 }
 
 template <class Type> bool
@@ -583,7 +582,7 @@ vp_display_get_keyboard_event(const vpImage<Type> &I, char *key, bool blocking)
     sprintf(key, "%s", str.c_str());
     return ret;
   }
-  return false ;
+  return false;
 }
 
 template <class Type> bool
@@ -591,7 +590,7 @@ vp_display_get_pointer_motion_event(const vpImage<Type> &I, vpImagePoint &ip)
 {
   if ( I.display != NULL )
   {
-    return ( I.display )->getPointerMotionEvent ( ip ) ;
+    return ( I.display )->getPointerMotionEvent ( ip );
   }
   return false;
 }
@@ -601,7 +600,7 @@ vp_display_get_pointer_position(const vpImage<Type> &I, vpImagePoint &ip)
 {
   if ( I.display != NULL )
   {
-    return ( I.display )->getPointerPosition ( ip ) ;
+    return ( I.display )->getPointerPosition ( ip );
   }
   return false;
 }
@@ -611,7 +610,7 @@ vp_display_set_background(const vpImage<Type> &I, const vpColor &color)
 {
   if ( I.display != NULL )
   {
-    ( I.display )->clearDisplay ( color ) ;
+    ( I.display )->clearDisplay ( color );
   }
 }
 
@@ -621,7 +620,7 @@ vp_display_display_text(const vpImage<Type> &I, const vpImagePoint &ip,
 {
   if ( I.display != NULL )
   {
-    ( I.display )->displayCharString ( ip, s.c_str(), color ) ;
+    ( I.display )->displayCharString ( ip, s.c_str(), color );
   }
 }
 
@@ -635,7 +634,7 @@ vp_display_display_text(const vpImage<Type> &I, int i, int j,
     ip.set_i( i );
     ip.set_j( j );
 
-    ( I.display )->displayCharString ( ip, s.c_str(), color ) ;
+    ( I.display )->displayCharString ( ip, s.c_str(), color );
   }
 }
 
@@ -644,7 +643,7 @@ vp_display_set_font(const vpImage<Type> &I, const std::string &fontname )
 {
   if ( I.display != NULL )
   {
-    ( I.display )->setFont ( fontname) ;
+    ( I.display )->setFont ( fontname);
   }
 }
 
@@ -654,7 +653,7 @@ vp_display_set_title(const vpImage<Type> &I, const std::string &windowtitle)
 {
   if ( I.display != NULL )
   {
-    ( I.display )->setTitle ( windowtitle ) ;
+    ( I.display )->setTitle ( windowtitle );
   }
 }
 
@@ -663,7 +662,7 @@ vp_display_set_window_position(const vpImage<Type> &I, int winx, int winy)
 {
   if ( I.display != NULL )
   {
-    ( I.display )->setWindowPosition ( winx, winy ) ;
+    ( I.display )->setWindowPosition ( winx, winy );
   }
 }
 
@@ -672,7 +671,7 @@ vp_display_get_down_scaling_factor(const vpImage<Type> &I)
 {
   if ( I.display != NULL )
   {
-    return ( I.display )->getDownScalingFactor() ;
+    return ( I.display )->getDownScalingFactor();
   }
   else {
     throw(vpException(vpException::fatalError,"Cannot get the down scaling factor: Display is not initialized"));
