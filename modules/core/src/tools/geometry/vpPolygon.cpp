@@ -203,6 +203,31 @@ vpPolygon::initClick(const vpImage<unsigned char>& I)
   buildFrom(cornersClick);
 }
 
+/*!
+  Initialises the polygon by (left-)clicking to add a corners to the polygon.
+  A right click is used to stop the addition of new corners.
+
+  \param I : The image where to click to initialise the corners.
+*/
+void
+vpPolygon::initClick(const vpImage<vpRGBa>& I)
+{
+  vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+  vpImagePoint ip;
+
+  std::vector<vpImagePoint> cornersClick;
+
+  while(button == vpMouseButton::button1){
+    bool ret = vpDisplay::getClick(I, ip, button, true);
+    if(ret && button == vpMouseButton::button1){
+      vpDisplay::displayCross(I, ip, 5, vpColor::red);
+      cornersClick.push_back(ip);
+      vpDisplay::flush(I);
+    }
+  }
+
+  buildFrom(cornersClick);
+}
 
 /*!
   Intialises the polygon using the collection of image points. This method

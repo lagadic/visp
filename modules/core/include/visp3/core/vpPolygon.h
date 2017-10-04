@@ -130,6 +130,7 @@ class VISP_EXPORT vpPolygon
 
     unsigned int getSize() const;
     void initClick(const vpImage<unsigned char>& I);
+    void initClick(const vpImage<vpRGBa>& I);
 
     bool isInside(const vpImagePoint &iP, const PointInPolygonMethod &method=PnPolyRayCasting) const;
 

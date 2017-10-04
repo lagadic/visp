@@ -692,11 +692,13 @@ int main()
   static void displayCross(const vpImage<unsigned char> &I, int i, int j, unsigned int size, const vpColor &color, unsigned int thickness=1) ;
   static void displayDotLine(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
   static void displayDotLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1) ;
+  static void displayDotLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips, const bool closeTheShape, const vpColor &color, unsigned int thickness=1);
   static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1, const double &coef2, const double &coef3, bool use_centered_moments, const vpColor &color, unsigned int thickness=1);
   static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1, const double &coef2, const double &coef3, const double &theta1, const double &theta2, bool use_centered_moments, const vpColor &color, unsigned int thickness=1);
   static void displayFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, const vpColor &color=vpColor::none, unsigned int thickness=1, const vpImagePoint &offset=vpImagePoint(0,0))  ;
   static void displayLine(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
   static void displayLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1) ;
+  static void displayLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips, const bool closeTheShape, const vpColor &color, unsigned int thickness=1);
   static void displayPoint(const vpImage<unsigned char> &I, const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1) ;
   static void displayPoint(const vpImage<unsigned char> &I, int i, int j, const vpColor &color, unsigned int thickness=1) ;
   static void displayPolygon(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip, const vpColor &color, unsigned int thickness=1) ;
@@ -750,11 +752,13 @@ int main()
   static void displayCross(const vpImage<vpRGBa> &I, int i, int j, unsigned int size, const vpColor &color, unsigned int thickness=1) ;
   static void displayDotLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
   static void displayDotLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1) ;
+  static void displayDotLine(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &ips, const bool closeTheShape, const vpColor &color, unsigned int thickness=1);
   static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &coef1, const double &coef2, const double &coef3, bool use_centered_moments, const vpColor &color, unsigned int thickness=1);
   static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &coef1, const double &coef2, const double &coef3, const double &theta1, const double &theta2, bool use_centered_moments, const vpColor &color, unsigned int thickness=1);
   static void displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, const vpColor &color=vpColor::none, unsigned int thickness=1, const vpImagePoint &offset=vpImagePoint(0,0))  ;
   static void displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
   static void displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1) ;
+  static void displayLine(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &ips, const bool closeTheShape, const vpColor &color, unsigned int thickness=1);
   static void displayPoint(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1) ;
   static void displayPoint(const vpImage<vpRGBa> &I, int i, int j, const vpColor &color, unsigned int thickness=1) ;
   static void displayPolygon(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &vip, const vpColor &color, unsigned int thickness=1) ;
