@@ -73,7 +73,6 @@ if(IPHONEOS)
   execute_process(COMMAND xcrun --sdk iphoneos --show-sdk-platform-path
                   OUTPUT_VARIABLE _IPHONEOS_SDK_PLATFORM_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
   set (_CMAKE_IOS_DEVELOPER_ROOT "${_IPHONEOS_SDK_PLATFORM_PATH}/Developer") # "${_IPHONEOS_SDK_PATH}")
-  set (_CMAKE_IOS_DEVELOPER_ROOT "${_IPHONEOS_SDK_PATH}")
 elseif(IPHONESIMULATOR)
   execute_process(COMMAND xcrun --sdk iphonesimulator --show-sdk-path
                    OUTPUT_VARIABLE _CMAKE_IOS_SDK_ROOT OUTPUT_STRIP_TRAILING_WHITESPACE)
