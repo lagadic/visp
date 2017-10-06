@@ -72,13 +72,13 @@ if(IPHONEOS)
                   OUTPUT_VARIABLE _CMAKE_IOS_SDK_ROOT OUTPUT_STRIP_TRAILING_WHITESPACE)
   execute_process(COMMAND xcrun --sdk iphoneos --show-sdk-platform-path
                   OUTPUT_VARIABLE _IPHONEOS_SDK_PLATFORM_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-  set (_CMAKE_IOS_DEVELOPER_ROOT "${_IPHONEOS_SDK_PLATFORM_PATH}/Developer") # "${_IPHONEOS_SDK_PATH}")
+  set (_CMAKE_IOS_DEVELOPER_ROOT "${_IPHONEOS_SDK_PLATFORM_PATH}/Developer")
 elseif(IPHONESIMULATOR)
   execute_process(COMMAND xcrun --sdk iphonesimulator --show-sdk-path
                    OUTPUT_VARIABLE _CMAKE_IOS_SDK_ROOT OUTPUT_STRIP_TRAILING_WHITESPACE)
   execute_process(COMMAND xcrun --sdk iphonesimulator --show-sdk-platform-path
                    OUTPUT_VARIABLE _IPHONESIMULATOR_SDK_PLATFORM_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-  set (_CMAKE_IOS_DEVELOPER_ROOT "${_IPHONESIMULATOR_SDK_DEVELOPER_PATH}/Developer") # "${_IPHONESIMULATOR_SDK_PATH}")
+  set (_CMAKE_IOS_DEVELOPER_ROOT "${_IPHONESIMULATOR_SDK_PLATFORM_PATH}/Developer")
 endif()
 
 # Set the sysroot default to the most recent SDK
