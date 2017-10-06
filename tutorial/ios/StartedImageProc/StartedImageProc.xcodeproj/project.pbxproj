@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B4DDFA71F876EBA00369048 /* ImageConversion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4B4DDFA61F876EBA00369048 /* ImageConversion.mm */; };
 		4BB56F241D9B99EF00C8F8FE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BB56F231D9B99EF00C8F8FE /* main.m */; };
 		4BB56F271D9B99EF00C8F8FE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BB56F261D9B99EF00C8F8FE /* AppDelegate.m */; };
 		4BB56F2A1D9B99EF00C8F8FE /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB56F291D9B99EF00C8F8FE /* ViewController.mm */; };
@@ -17,6 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4B4DDFA51F876EBA00369048 /* ImageConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageConversion.h; sourceTree = "<group>"; };
+		4B4DDFA61F876EBA00369048 /* ImageConversion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageConversion.mm; sourceTree = "<group>"; };
 		4BB56F1F1D9B99EF00C8F8FE /* StartedImageProc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StartedImageProc.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BB56F231D9B99EF00C8F8FE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4BB56F251D9B99EF00C8F8FE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -63,6 +66,8 @@
 				4BF38A311D9BCAC500609A7C /* monkey.png */,
 				4BB56F251D9B99EF00C8F8FE /* AppDelegate.h */,
 				4BB56F261D9B99EF00C8F8FE /* AppDelegate.m */,
+				4B4DDFA51F876EBA00369048 /* ImageConversion.h */,
+				4B4DDFA61F876EBA00369048 /* ImageConversion.mm */,
 				4BB56F281D9B99EF00C8F8FE /* ViewController.h */,
 				4BB56F291D9B99EF00C8F8FE /* ViewController.mm */,
 				4BB56F2B1D9B99EF00C8F8FE /* Main.storyboard */,
@@ -157,6 +162,7 @@
 				4BB56F2A1D9B99EF00C8F8FE /* ViewController.mm in Sources */,
 				4BB56F271D9B99EF00C8F8FE /* AppDelegate.m in Sources */,
 				4BB56F241D9B99EF00C8F8FE /* main.m in Sources */,
+				4B4DDFA71F876EBA00369048 /* ImageConversion.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
