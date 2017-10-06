@@ -109,7 +109,6 @@ class Builder:
             "-DBUILD_EXAMPLES=OFF",
             "-DBUILD_TESTS=OFF",
             "-DBUILD_TUTORIALS=OFF",
-            "-DUSE_XML2=OFF",
          ]
         return args
 
