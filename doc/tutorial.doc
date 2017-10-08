@@ -37,6 +37,7 @@ This page introduces the user to the way to exploit ViSP with iOS devices.
 - \subpage tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 - \subpage tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \subpage tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices. 
+- \subpage tutorial-detection-apriltag-ios <br>This tutorial shows how to do detct an AprilTag marker on iOS devices. 
 
 */
 

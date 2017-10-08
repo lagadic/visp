@@ -13,8 +13,8 @@
 
 @interface ImageDisplay : NSObject
 
-+ (UIImage *)display:(UIImage *)image :(vpDetectorBase &)detector :(UIColor*)color :(int)tickness;
-+ (UIImage *)display:(UIImage *)image :(const vpHomogeneousMatrix &)cMo :(const vpCameraParameters &)cam
-                    :(double) size :(int)tickness;
++ (UIImage *)displayLine:(UIImage *)image :(vpImagePoint &)ip1 :(vpImagePoint &)ip2 :(UIColor*)color :(int)tickness;
++ (UIImage *)displayFrame:(UIImage *)image :(const vpHomogeneousMatrix &)cMo :(const vpCameraParameters &)cam
+                         :(double) size :(int)tickness;
 
 @end

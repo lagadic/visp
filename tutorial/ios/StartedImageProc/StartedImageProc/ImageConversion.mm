@@ -1,10 +1,3 @@
-//
-//  Conversion.m
-//  StartedApriTag
-//
-//  Created by Fabien Spindler on 04/10/2017.
-//  Copyright © 2017 MyOrganization. All rights reserved.
-//
 /****************************************************************************
  *
  * This file is part of the ViSP software.

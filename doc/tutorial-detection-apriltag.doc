@@ -1,11 +1,11 @@
 /**
 
-\page tutorial-detection-apriltag Tutorial: AprilTag pattern detection
+\page tutorial-detection-apriltag Tutorial: AprilTag marker detection
 \tableofcontents
 
 \section intro_apriltag Introduction
 
-This tutorial shows how to detect one or more AprilTag patterns with ViSP. To this end, we provide vpDetectorAprilTag class that is a wrapper over <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> 3rd party library. Notice that there is no need to install this 3rd party, since AprilTag source code is embedded in ViSP. 
+This tutorial shows how to detect one or more AprilTag marker with ViSP. To this end, we provide vpDetectorAprilTag class that is a wrapper over <a href="https://april.eecs.umich.edu/software/apriltag.html">Apriltag</a> 3rd party library. Notice that there is no need to install this 3rd party, since AprilTag source code is embedded in ViSP. 
 
 The vpDetectorAprilTag class inherits from vpDetectorBase class, a generic class dedicated to detection. For each detected tag, it allows to retrieve some characteristics such as the tag id, and in the image, the polygon that contains the tag and corresponds to its 4 corner coordinates, the bounding box or the center of gravity of the tag.
 
@@ -48,12 +48,12 @@ The following example also available in tutorial-apriltag-detector.cpp allows to
 
 \include tutorial-apriltag-detector.cpp
 
-The default behavior is to detect <a href="https://april.eecs.umich.edu/software/apriltag.html">36h11</a> patterns in \c AprilTag.pgm image, but \c --tag_family \<family\> option allows to consider other patterns. To see which are the options, just run:
+The default behavior is to detect <a href="https://april.eecs.umich.edu/software/apriltag.html">36h11</a> marker in \c AprilTag.pgm image, but \c --tag_family \<family\> option allows to consider other tags. To see which are the options, just run:
 \code
 $ ./tutorial-apriltag-detector --help
 \endcode
 
-To detect multiple 36h11 patterns in the \c AprilTag.pgm image that is provided just run:
+To detect multiple 36h11 tags in the \c AprilTag.pgm image that is provided just run:
 \code
 $ ./tutorial-apriltag-detector
 \endcode

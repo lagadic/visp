@@ -67,7 +67,7 @@ The following function implemented in \c ImageConversion.mm show how to convert 
 
 \section image_ios_output Application output
 
-Once build, if you run \c StartedImageProc application on your device, you should be able to see the followings screen shots.
+Once build, if you run \c StartedImageProc application on your device, you should be able to see the following screen shots.
 
 - Selecting \c "load image" gives the following result:
 \image html img-started-imgproc-ios-output-color.jpeg 
@@ -77,5 +77,9 @@ Once build, if you run \c StartedImageProc application on your device, you shoul
 \image html img-started-imgproc-ios-output-gradient.png
 - Selecting \c "canny detector" gives the following result:
 \image html img-started-imgproc-ios-output-canny.png
+
+\section image_ios_next Next tutorial
+
+You are now ready to see the \ref tutorial-detection-apriltag-ios.
 
 */

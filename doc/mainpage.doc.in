@@ -53,6 +53,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices.
+- \ref tutorial-detection-apriltag-ios <br>This tutorial shows how to do detct an AprilTag marker on iOS devices. 
 
 \subsection tuto_install_sdk Installation from prebuild SDK
 
