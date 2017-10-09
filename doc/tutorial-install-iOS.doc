@@ -90,6 +90,8 @@ $ ls ~/framework/ios
 build			opencv2.framework	visp3.framework
 \endcode
 
+\note ViSP framework is build with capabilities that enables the usage of the following 3rd parties: XML, OpenCV, pthread, apriltag, lapack.
+
 \section install_iOS_next Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started-iOS that shows how to use ViSP as a 3rd party to build your own project for iOS devices.
