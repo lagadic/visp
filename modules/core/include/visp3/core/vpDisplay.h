@@ -187,13 +187,13 @@ public:
 
 protected :
   //! display has been initialized
-  bool m_displayHasBeenInitialized ;
+  bool m_displayHasBeenInitialized;
   //! display position
-  int m_windowXPosition ;
+  int m_windowXPosition;
   //! display position
-  int m_windowYPosition ;
-  unsigned int m_width ;
-  unsigned int m_height ;
+  int m_windowYPosition;
+  unsigned int m_width;
+  unsigned int m_height;
   std::string m_title;
   unsigned int m_scale;
   vpScaleType m_scaleType;
@@ -201,8 +201,8 @@ protected :
   void setScale(vpScaleType scaleType, unsigned int width, unsigned int height);
 
 public:
-  vpDisplay() ;
-  vpDisplay(const vpDisplay& d) ;
+  vpDisplay();
+  vpDisplay(const vpDisplay& d);
   virtual ~vpDisplay();
 
   /** @name Inherited functionalities from vpDisplay */
@@ -211,7 +211,7 @@ public:
   /*!
     Return the value of the down scale factor applied to the image in order to reduce the size of the window used to display the image.
    */
-  unsigned int getDownScalingFactor() { return m_scale; };
+  unsigned int getDownScalingFactor() { return m_scale; }
   /*!
     Return the display height.
     \sa getWidth()
@@ -227,12 +227,12 @@ public:
     Return the position (along the horizontal axis) on the screen of the display window.
     \sa getWindowYPosition()
    */
-  int getWindowXPosition() const { return m_windowXPosition; };
+  int getWindowXPosition() const { return m_windowXPosition; }
   /*!
     Return the position (along the vertical axis) on the screen of the display window.
     \sa getWindowXPosition()
    */
-  int getWindowYPosition() const { return m_windowYPosition; };
+  int getWindowYPosition() const { return m_windowYPosition; }
 
   /*!
     Check if the display has been initialised
@@ -251,11 +251,11 @@ public:
     Set the window backgroud to \e color.
     \param color : Background color.
   */
-  virtual void clearDisplay(const vpColor &color=vpColor::white) =0 ;
+  virtual void clearDisplay(const vpColor &color=vpColor::white)=0;
   /*!
     Close the window.
   */
-  virtual void closeDisplay() =0;
+  virtual void closeDisplay()=0;
 
   /*!
     Display an arrow from image point \e ip1 to image point \e ip2.
@@ -266,7 +266,7 @@ public:
     \param h : Arrow height.
     \param thickness : Thickness of the lines used to display the arrow.
   */
-  virtual void displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color=vpColor::white, unsigned int w=4, unsigned int h=2, unsigned int thickness=1) =0;
+  virtual void displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color=vpColor::white, unsigned int w=4, unsigned int h=2, unsigned int thickness=1)=0;
   /*!
     Display a string at the image point \e ip location.
 
@@ -278,7 +278,7 @@ public:
 
     \sa setFont()
   */
-  virtual void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color=vpColor::green) =0;
+  virtual void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color=vpColor::green)=0;
   /*!
     Display a circle.
     \param center : Circle center position.
@@ -288,7 +288,7 @@ public:
     \param thickness : Thickness of the circle. This parameter is only useful
     when \e fill is set to false.
   */
-  virtual void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false, unsigned int thickness=1) =0;
+  virtual void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false, unsigned int thickness=1)=0;
   /*!
     Display a cross at the image point \e ip location.
     \param ip : Cross location.
@@ -296,7 +296,7 @@ public:
     \param color : Cross color.
     \param thickness : Thickness of the lines used to display the cross.
   */
-  virtual void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness=1) =0;
+  virtual void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness=1)=0;
   /*!
     Display a dashed line from image point \e ip1 to image point \e ip2.
     \param ip1 : Initial image point.
@@ -304,7 +304,7 @@ public:
     \param color : Line color.
     \param thickness : Dashed line thickness.
   */
-  virtual void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) =0;
+  virtual void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1)=0;
   /*!
     Display a line from image point \e ip1 to image point \e ip2.
     \param ip1 : Initial image point.
@@ -312,7 +312,7 @@ public:
     \param color : Line color.
     \param thickness : Line thickness.
   */
-  virtual void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) =0;
+  virtual void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1)=0;
 
   /*!
     Display the gray level image \e I (8bits).
@@ -325,7 +325,7 @@ public:
 
     \sa init(), closeDisplay()
   */
-  virtual void displayImage(const vpImage<unsigned char> &I) =0 ;
+  virtual void displayImage(const vpImage<unsigned char> &I)=0;
 
   /*!
     Display the color image \e I in RGBa format (32bits).
@@ -338,10 +338,10 @@ public:
 
     \sa init(), closeDisplay()
   */
-  virtual void displayImage(const vpImage<vpRGBa> &I) =0 ;
+  virtual void displayImage(const vpImage<vpRGBa> &I)=0;
 
-  virtual void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height) =0 ;
-  virtual void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height) =0 ;
+  virtual void displayImageROI(const vpImage<unsigned char> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height)=0;
+  virtual void displayImageROI(const vpImage<vpRGBa> &I,const vpImagePoint &iP, const unsigned int width, const unsigned int height)=0;
 
   /*!
     Display a point at the image point \e ip location.
@@ -349,7 +349,7 @@ public:
     \param color : Point color.
     \param thickness : Point thickness.
   */
-  virtual void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1) =0;
+  virtual void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1)=0;
 
   /*!
     Display a rectangle with \e topLeft as the top-left corner and \e
@@ -366,7 +366,7 @@ public:
     false.
   */
   virtual void displayRectangle(const vpImagePoint &topLeft, unsigned int width, unsigned int height,
-                                const vpColor &color, bool fill = false, unsigned int thickness=1)=0 ;
+                                const vpColor &color, bool fill = false, unsigned int thickness=1)=0;
   /*!
     Display a rectangle with \e topLeft as the top-left corner and \e
     width and \e height the rectangle size.
@@ -395,19 +395,19 @@ public:
     false.
 
   */
-  virtual void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness=1)=0 ;
+  virtual void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness=1)=0;
 
   /*!
     Flushes the display.
     It's necessary to use this function to see the results of any drawing.
   */
-  virtual void flushDisplay() =0;
+  virtual void flushDisplay()=0;
 
   /*!
     Flushes the display.
     It's necessary to use this function to see the results of any drawing.
   */
-  virtual void flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height) =0;
+  virtual void flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height)=0;
 
 
   /* Simple interface with the mouse event */
@@ -427,7 +427,7 @@ public:
     - false if no button was clicked. This can occur if blocking is set
     to \e false.
   */
-  virtual bool getClick(bool blocking=true) =0;
+  virtual bool getClick(bool blocking=true)=0;
 
   /*!
     Wait for a click from one of the mouse button and get the position
@@ -444,7 +444,7 @@ public:
     - false if no button was clicked. This can occur if blocking is set
     to \e false.
   */
-  virtual bool getClick(vpImagePoint &ip, bool blocking=true) =0;
+  virtual bool getClick(vpImagePoint &ip, bool blocking=true)=0;
   /*!
     Wait for a mouse button click and get the position of the clicked
     pixel. The button used to click is also set.
@@ -463,7 +463,7 @@ public:
     button is pressed, the location of the mouse pointer is updated in
     \e ip.
   */
-  virtual bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType& button, bool blocking=true) =0 ;
+  virtual bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType& button, bool blocking=true)=0;
   /*!
     Wait for a mouse button click release and get the position of the
     image point were the click release occurs.  The button used to click is
@@ -486,7 +486,7 @@ public:
     \sa getClick(vpImagePoint &, vpMouseButton::vpMouseButtonType &, bool)
 
   */
-  virtual bool getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true) =0;
+  virtual bool getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true)=0;
 
   /*!
     Get a keyboard event.
@@ -503,7 +503,7 @@ public:
       - false if no key was pressed. This can occur if blocking is set
         to \e false.
   */
-  virtual bool getKeyboardEvent(bool blocking=true) =0;
+  virtual bool getKeyboardEvent(bool blocking=true)=0;
   /*!
 
     Get a keyboard event.
@@ -523,7 +523,7 @@ public:
     - false if no key was pressed. This can occur if blocking is set
       to \e false.
   */
-  virtual bool getKeyboardEvent(std::string &key, bool blocking=true) =0;
+  virtual bool getKeyboardEvent(std::string &key, bool blocking=true)=0;
   /*!
     Get the coordinates of the mouse pointer.
 
@@ -534,7 +534,7 @@ public:
     \exception vpDisplayException::notInitializedError : If the display
     was not initialized.
   */
-  virtual bool getPointerMotionEvent (vpImagePoint &ip) =0;
+  virtual bool getPointerMotionEvent (vpImagePoint &ip)=0;
 
   /*!
     Get the coordinates of the mouse pointer.
@@ -546,21 +546,21 @@ public:
     \exception vpDisplayException::notInitializedError : If the display
     was not initialized.
   */
-  virtual bool getPointerPosition (vpImagePoint &ip) =0;
+  virtual bool getPointerPosition (vpImagePoint &ip)=0;
 
   /*!
     Gets the screen vertical resolution in pixel.
    */
-  virtual unsigned int getScreenHeight() =0;
+  virtual unsigned int getScreenHeight()=0;
   /*!
     Gets the screen resolution in pixel.
     \param width, height : Screen resolution in pixels.
    */
-  virtual void getScreenSize(unsigned int &width, unsigned int &height) =0;
+  virtual void getScreenSize(unsigned int &width, unsigned int &height)=0;
   /*!
     Gets the screen horizontal resolution in pixel.
    */
-  virtual unsigned int getScreenWidth() =0;
+  virtual unsigned int getScreenWidth()=0;
 
   /*!
     Initialize the display (size, position and title) of a gray level image.
@@ -570,7 +570,7 @@ public:
     \param y : Vertical position of the upper/left window corner.
     \param title : Window title.
   */
-  virtual void init(vpImage<unsigned char> &I, int x=-1, int y=-1, const std::string &title="") =0 ;
+  virtual void init(vpImage<unsigned char> &I, int x=-1, int y=-1, const std::string &title="")=0;
   /*!
     Initialize the display (size, position and title) of a color
     image in RGBa format.
@@ -580,7 +580,7 @@ public:
     \param y : Vertical position of the upper/left window corner.
     \param title : Window title.
   */
-  virtual void init(vpImage<vpRGBa> &I, int x=-1, int y=-1, const std::string &title="") =0 ;
+  virtual void init(vpImage<vpRGBa> &I, int x=-1, int y=-1, const std::string &title="")=0;
 
   /*!
     Initialize the display size, position and title.
@@ -642,7 +642,7 @@ int main()
 }
     \endcode
   */
-  virtual void init(unsigned int width, unsigned int height, int x=-1, int y=-1, const std::string &title="") =0;
+  virtual void init(unsigned int width, unsigned int height, int x=-1, int y=-1, const std::string &title="")=0;
 
   /*!
     Set the font used to display a text in overlay. The display is
@@ -657,12 +657,12 @@ int main()
 
     \sa displayCharString()
   */
-  virtual void setFont(const std::string &font) =0;
+  virtual void setFont(const std::string &font)=0;
   /*!
     Set the window title.
     \param title : Window title.
   */
-  virtual void setTitle(const std::string &title) =0;
+  virtual void setTitle(const std::string &title)=0;
   /*!
     Set the window position in the screen.
 
@@ -670,7 +670,7 @@ int main()
     \param y : Vertical position of the upper/left window corner.
 
   */
-  virtual void setWindowPosition(int x, int y) = 0 ;
+  virtual void setWindowPosition(int x, int y) = 0;
   //@}
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -679,48 +679,50 @@ int main()
     @name Static public vpDisplay functionalities on gray level images.
   */
   //@{
-  static void close(vpImage<unsigned char> &I) ;
-  static void display(const vpImage<unsigned char> &I) ;
-  static void displayArrow(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color=vpColor::white, unsigned int w=4, unsigned int h=2, unsigned int thickness=1) ;
-  static void displayArrow(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color=vpColor::white, unsigned int w=4, unsigned int h=2, unsigned int thickness=1) ;
+  static void close(vpImage<unsigned char> &I);
+  static void display(const vpImage<unsigned char> &I);
+  static void displayArrow(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color=vpColor::white, unsigned int w=4, unsigned int h=2, unsigned int thickness=1);
+  static void displayArrow(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color=vpColor::white, unsigned int w=4, unsigned int h=2, unsigned int thickness=1);
   static void displayCamera(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness);
-  static void displayCharString(const vpImage<unsigned char> &I, const vpImagePoint &ip, const char *string, const vpColor &color) ;
-  static void displayCharString(const vpImage<unsigned char> &I, int i, int j, const char *string, const vpColor &color) ;
+  static void displayCharString(const vpImage<unsigned char> &I, const vpImagePoint &ip, const char *string, const vpColor &color);
+  static void displayCharString(const vpImage<unsigned char> &I, int i, int j, const char *string, const vpColor &color);
   static void displayCircle(const vpImage<unsigned char> &I, const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false, unsigned int thickness=1);
   static void displayCircle(const vpImage<unsigned char> &I, int i, int j, unsigned int radius, const vpColor &color, bool fill = false, unsigned int thickness=1);
-  static void displayCross(const vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness=1) ;
-  static void displayCross(const vpImage<unsigned char> &I, int i, int j, unsigned int size, const vpColor &color, unsigned int thickness=1) ;
-  static void displayDotLine(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
-  static void displayDotLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1) ;
+  static void displayCross(const vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness=1);
+  static void displayCross(const vpImage<unsigned char> &I, int i, int j, unsigned int size, const vpColor &color, unsigned int thickness=1);
+  static void displayDotLine(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1);
+  static void displayDotLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1);
+  static void displayDotLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips, const bool closeTheShape, const vpColor &color, unsigned int thickness=1);
   static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1, const double &coef2, const double &coef3, bool use_centered_moments, const vpColor &color, unsigned int thickness=1);
   static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1, const double &coef2, const double &coef3, const double &theta1, const double &theta2, bool use_centered_moments, const vpColor &color, unsigned int thickness=1);
-  static void displayFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, const vpColor &color=vpColor::none, unsigned int thickness=1, const vpImagePoint &offset=vpImagePoint(0,0))  ;
-  static void displayLine(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
-  static void displayLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1) ;
-  static void displayPoint(const vpImage<unsigned char> &I, const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1) ;
-  static void displayPoint(const vpImage<unsigned char> &I, int i, int j, const vpColor &color, unsigned int thickness=1) ;
-  static void displayPolygon(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip, const vpColor &color, unsigned int thickness=1) ;
+  static void displayFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, const vpColor &color=vpColor::none, unsigned int thickness=1, const vpImagePoint &offset=vpImagePoint(0,0));
+  static void displayLine(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1);
+  static void displayLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1);
+  static void displayLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips, const bool closeTheShape, const vpColor &color, unsigned int thickness=1);
+  static void displayPoint(const vpImage<unsigned char> &I, const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1);
+  static void displayPoint(const vpImage<unsigned char> &I, int i, int j, const vpColor &color, unsigned int thickness=1);
+  static void displayPolygon(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip, const vpColor &color, unsigned int thickness=1);
   static void displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color, bool fill = false, unsigned int thickness=1);
   static void displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color, bool fill = false, unsigned int thickness=1);
   static void displayRectangle(const vpImage<unsigned char> &I, const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness=1);
   static void displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &center, float angle, unsigned int width, unsigned int height, const vpColor &color, unsigned int thickness=1);
   static void displayRectangle(const vpImage<unsigned char> &I, int i, int j, unsigned int width, unsigned int height, const vpColor &color, bool fill = false, unsigned int thickness=1);
   static void displayRectangle(const vpImage<unsigned char> &I, unsigned int i, unsigned int j, float angle, unsigned int width, unsigned int height, const vpColor &color,  unsigned int thickness=1);
-  static void displayROI(const vpImage<unsigned char> &I,const vpRect &roi) ;
-  static void displayText(const vpImage<unsigned char> &I, const vpImagePoint &ip, const std::string &s, const vpColor &color) ;
-  static void displayText(const vpImage<unsigned char> &I, int i, int j, const std::string &s, const vpColor &color) ;
+  static void displayROI(const vpImage<unsigned char> &I,const vpRect &roi);
+  static void displayText(const vpImage<unsigned char> &I, const vpImagePoint &ip, const std::string &s, const vpColor &color);
+  static void displayText(const vpImage<unsigned char> &I, int i, int j, const std::string &s, const vpColor &color);
 
-  static void flush(const vpImage<unsigned char> &I) ;
-  static void flushROI(const vpImage<unsigned char> &I,const vpRect &roi) ;
+  static void flush(const vpImage<unsigned char> &I);
+  static void flushROI(const vpImage<unsigned char> &I,const vpRect &roi);
 
-  static bool getClick(const vpImage<unsigned char> &I, bool blocking=true) ;
-  static bool getClick(const vpImage<unsigned char> &I, vpImagePoint &ip, bool blocking=true) ;
-  static bool getClick(const vpImage<unsigned char> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
-  static bool getClick(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
-  static bool getClickUp(const vpImage<unsigned char> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
-  static bool getClickUp(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
+  static bool getClick(const vpImage<unsigned char> &I, bool blocking=true);
+  static bool getClick(const vpImage<unsigned char> &I, vpImagePoint &ip, bool blocking=true);
+  static bool getClick(const vpImage<unsigned char> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true);
+  static bool getClick(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button, bool blocking=true);
+  static bool getClickUp(const vpImage<unsigned char> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true);
+  static bool getClickUp(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button, bool blocking=true);
   static unsigned int getDownScalingFactor(const vpImage<unsigned char> &I);
-  static void getImage(const vpImage<unsigned char> &Is, vpImage<vpRGBa> &Id) ;
+  static void getImage(const vpImage<unsigned char> &Is, vpImage<vpRGBa> &Id);
   static bool getKeyboardEvent(const vpImage<unsigned char> &I, bool blocking=true);
   static bool getKeyboardEvent(const vpImage<unsigned char> &I, std::string &key, bool blocking=true);
   static bool getKeyboardEvent(const vpImage<unsigned char> &I, char *key, bool blocking=true);
@@ -737,48 +739,50 @@ int main()
     @name Static public vpDisplay functionalities on 32 bits color images.
   */
   //@{
-  static void close(vpImage<vpRGBa> &I) ;
-  static void display(const vpImage<vpRGBa> &I) ;
-  static void displayArrow(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color=vpColor::white, unsigned int w=4, unsigned int h=2, unsigned int thickness=1) ;
-  static void displayArrow(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color=vpColor::white, unsigned int w=4, unsigned int h=2, unsigned int thickness=1) ;
+  static void close(vpImage<vpRGBa> &I);
+  static void display(const vpImage<vpRGBa> &I);
+  static void displayArrow(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color=vpColor::white, unsigned int w=4, unsigned int h=2, unsigned int thickness=1);
+  static void displayArrow(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color=vpColor::white, unsigned int w=4, unsigned int h=2, unsigned int thickness=1);
   static void displayCamera(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness);
-  static void displayCharString(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const char *string, const vpColor &color) ;
-  static void displayCharString(const vpImage<vpRGBa> &I, int i, int j, const char *string, const vpColor &color) ;
+  static void displayCharString(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const char *string, const vpColor &color);
+  static void displayCharString(const vpImage<vpRGBa> &I, int i, int j, const char *string, const vpColor &color);
   static void displayCircle(const vpImage<vpRGBa> &I, const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false, unsigned int thickness=1);
   static void displayCircle(const vpImage<vpRGBa> &I, int i, int j, unsigned int radius, const vpColor &color, bool fill = false, unsigned int thickness=1);
-  static void displayCross(const vpImage<vpRGBa> &I, const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness=1) ;
-  static void displayCross(const vpImage<vpRGBa> &I, int i, int j, unsigned int size, const vpColor &color, unsigned int thickness=1) ;
-  static void displayDotLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
-  static void displayDotLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1) ;
+  static void displayCross(const vpImage<vpRGBa> &I, const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness=1);
+  static void displayCross(const vpImage<vpRGBa> &I, int i, int j, unsigned int size, const vpColor &color, unsigned int thickness=1);
+  static void displayDotLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1);
+  static void displayDotLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1);
+  static void displayDotLine(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &ips, const bool closeTheShape, const vpColor &color, unsigned int thickness=1);
   static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &coef1, const double &coef2, const double &coef3, bool use_centered_moments, const vpColor &color, unsigned int thickness=1);
   static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &coef1, const double &coef2, const double &coef3, const double &theta1, const double &theta2, bool use_centered_moments, const vpColor &color, unsigned int thickness=1);
-  static void displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, const vpColor &color=vpColor::none, unsigned int thickness=1, const vpImagePoint &offset=vpImagePoint(0,0))  ;
-  static void displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1) ;
-  static void displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1) ;
-  static void displayPoint(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1) ;
-  static void displayPoint(const vpImage<vpRGBa> &I, int i, int j, const vpColor &color, unsigned int thickness=1) ;
-  static void displayPolygon(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &vip, const vpColor &color, unsigned int thickness=1) ;
+  static void displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size, const vpColor &color=vpColor::none, unsigned int thickness=1, const vpImagePoint &offset=vpImagePoint(0,0));
+  static void displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness=1);
+  static void displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color, unsigned int thickness=1);
+  static void displayLine(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &ips, const bool closeTheShape, const vpColor &color, unsigned int thickness=1);
+  static void displayPoint(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const vpColor &color, unsigned int thickness=1);
+  static void displayPoint(const vpImage<vpRGBa> &I, int i, int j, const vpColor &color, unsigned int thickness=1);
+  static void displayPolygon(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &vip, const vpColor &color, unsigned int thickness=1);
   static void displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color, bool fill = false, unsigned int thickness=1);
   static void displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color, bool fill = false, unsigned int thickness=1);
   static void displayRectangle(const vpImage<vpRGBa> &I, const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness=1);
   static void displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &center, float angle, unsigned int width, unsigned int height, const vpColor &color, unsigned int thickness=1);
   static void displayRectangle(const vpImage<vpRGBa> &I, int i, int j, unsigned int width, unsigned int height, const vpColor &color, bool fill = false, unsigned int thickness=1);
   static void displayRectangle(const vpImage<vpRGBa> &I, unsigned int i, unsigned int j, float angle, unsigned int width, unsigned int height, const vpColor &color,  unsigned int thickness=1);
-  static void displayROI(const vpImage<vpRGBa> &I,const vpRect &roi) ;
-  static void displayText(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const std::string &s, const vpColor &color) ;
-  static void displayText(const vpImage<vpRGBa> &I, int i, int j, const std::string &s, const vpColor &color) ;
+  static void displayROI(const vpImage<vpRGBa> &I,const vpRect &roi);
+  static void displayText(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const std::string &s, const vpColor &color);
+  static void displayText(const vpImage<vpRGBa> &I, int i, int j, const std::string &s, const vpColor &color);
 
-  static void flush(const vpImage<vpRGBa> &I) ;
-  static void flushROI(const vpImage<vpRGBa> &I,const vpRect &roi) ;
+  static void flush(const vpImage<vpRGBa> &I);
+  static void flushROI(const vpImage<vpRGBa> &I,const vpRect &roi);
 
-  static bool getClick(const vpImage<vpRGBa> &I, bool blocking=true) ;
-  static bool getClick(const vpImage<vpRGBa> &I, vpImagePoint &ip, bool blocking=true) ;
-  static bool getClick(const vpImage<vpRGBa> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
-  static bool getClick(const vpImage<vpRGBa> &I, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
-  static bool getClickUp(const vpImage<vpRGBa> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
-  static bool getClickUp(const vpImage<vpRGBa> &I, vpMouseButton::vpMouseButtonType &button, bool blocking=true) ;
+  static bool getClick(const vpImage<vpRGBa> &I, bool blocking=true);
+  static bool getClick(const vpImage<vpRGBa> &I, vpImagePoint &ip, bool blocking=true);
+  static bool getClick(const vpImage<vpRGBa> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true);
+  static bool getClick(const vpImage<vpRGBa> &I, vpMouseButton::vpMouseButtonType &button, bool blocking=true);
+  static bool getClickUp(const vpImage<vpRGBa> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking=true);
+  static bool getClickUp(const vpImage<vpRGBa> &I, vpMouseButton::vpMouseButtonType &button, bool blocking=true);
   static unsigned int getDownScalingFactor(const vpImage<vpRGBa> &I);
-  static void getImage(const vpImage<vpRGBa> &Is, vpImage<vpRGBa> &Id) ;
+  static void getImage(const vpImage<vpRGBa> &Is, vpImage<vpRGBa> &Id);
   static bool getKeyboardEvent(const vpImage<vpRGBa> &I, bool blocking=true);
   static bool getKeyboardEvent(const vpImage<vpRGBa> &I, std::string &key, bool blocking=true);
   static bool getKeyboardEvent(const vpImage<vpRGBa> &I, char *key, bool blocking=true);
@@ -795,6 +799,6 @@ int main()
   //! get the window pixmap and put it in vpRGBa image
   virtual void getImage(vpImage<vpRGBa> &I) = 0;
 
-} ;
+};
 
 #endif

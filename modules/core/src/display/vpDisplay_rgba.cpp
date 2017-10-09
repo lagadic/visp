@@ -197,6 +197,27 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2,
 }
 
 /*!
+  Display the dashed lines formed by the list of image points
+  \param I : The image associated to the display.
+  \param ips : List of image points.
+  \param closeTheShape : If true, display a dashed line from the first and last image points.
+  \param color : Line color.
+  \param thickness : Dashed line thickness.
+*/
+void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &ips,
+                               const bool closeTheShape, const vpColor &color, unsigned int thickness )
+{
+  if (ips.size() <= 1)
+    return;
+
+  for (size_t i = 0; i < ips.size()-1; i++)
+    vp_display_display_dot_line(I, ips[i], ips[i+1], color, thickness);
+
+  if (closeTheShape)
+    vp_display_display_dot_line(I, ips.front(), ips.back(), color, thickness);
+}
+
+/*!
   Display an ellipse from its parameters expressed in pixels.
   \param I : Image to consider.
   \param center : Center \f$(u_c, v_c)\f$ of the ellipse.
@@ -234,7 +255,7 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2,
     vpMeEllipse ellipse;
     ...
     vpDisplay::display(I);
-    ellipse.track(I) ;
+    ellipse.track(I);
 
     vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_mu20(), ellipse.get_mu11(), ellipse.get_mu02(),
                               true, vpColor::orange, 1);
@@ -288,7 +309,7 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &cen
     vpMeEllipse ellipse;
     ...
     vpDisplay::display(I);
-    ellipse.track(I) ;
+    ellipse.track(I);
 
     vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_mu20(),
                               ellipse.get_mu11(), ellipse.get_mu02(),
@@ -352,6 +373,27 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, in
                             const vpColor &color, unsigned int thickness )
 {
   vp_display_display_line(I, i1, j1, i2, j2, color, thickness);
+}
+
+/*!
+  Display the lines formed by the list of image points.
+  \param I : The image associated to the display.
+  \param ips : List of image points.
+  \param closeTheShape : If true, draw a line from the first and last image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &ips,
+                            const bool closeTheShape, const vpColor &color, unsigned int thickness )
+{
+  if (ips.size() <= 1)
+    return;
+
+  for (size_t i = 0; i < ips.size()-1; i++)
+    vp_display_display_line(I, ips[i], ips[i+1], color, thickness);
+
+  if (closeTheShape)
+    vp_display_display_line(I, ips.front(), ips.back(), color, thickness);
 }
 
 /*!

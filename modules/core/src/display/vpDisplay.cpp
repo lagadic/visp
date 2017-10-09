@@ -76,7 +76,7 @@ vpDisplay::vpDisplay(const vpDisplay &d)
 */
 vpDisplay::~vpDisplay()
 {
-  m_displayHasBeenInitialized = false ;
+  m_displayHasBeenInitialized = false;
 }
 
 /*!
@@ -129,11 +129,11 @@ int main()
   vpDisplay::flush(I);
 
   // Updates the color image with the original loaded image and the overlay
-  vpDisplay::getImage(I, Ioverlay) ;
+  vpDisplay::getImage(I, Ioverlay);
 
   // Write the color image on the disk
   std::string ofilename("overlay.ppm");
-  vpImageIo::write(Ioverlay, ofilename) ;
+  vpImageIo::write(Ioverlay, ofilename);
 
   // Wait for a click in the display window
   vpDisplay::getClick(I);
@@ -149,7 +149,7 @@ vpDisplay::getImage(const vpImage<unsigned  char> &Isrc, vpImage<vpRGBa> &Idest 
 {
   if ( Isrc.display != NULL )
   {
-    ( Isrc.display )->getImage ( Idest ) ;
+    ( Isrc.display )->getImage ( Idest );
   }
   else
   {
@@ -207,11 +207,11 @@ int main()
   vpDisplay::flush(I);
 
   // Updates the color image with the original loaded image and the overlay
-  vpDisplay::getImage(I, Ioverlay) ;
+  vpDisplay::getImage(I, Ioverlay);
 
   // Write the color image on the disk
   std::string ofilename("overlay.ppm");
-  vpImageIo::write(Ioverlay, ofilename) ;
+  vpImageIo::write(Ioverlay, ofilename);
 
   // Wait for a click in the display window
   vpDisplay::getClick(I);
@@ -227,7 +227,7 @@ vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
 {
   if ( Isrc.display != NULL )
   {
-    ( Isrc.display )->getImage ( Idest ) ;
+    ( Isrc.display )->getImage ( Idest );
   }
   else {
     Idest = Isrc;
