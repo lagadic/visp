@@ -17,31 +17,6 @@ Note that all the material (source code and image) used in this tutorial is part
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedImageProc
 \endcode
 
-\section image_ios_convert Image conversion functions
-
-\subsection image_ios_convert_uiimage_vpimage_color UIImage to color vpImage
-
-The following function implemented in ViewController.mm show how to convert an UIImage into a vpImage<vpRGBa> instanciated as a color image. 
-
-\snippet ViewController.mm vpImageColorFromUIImage
-
-\subsection image_ios_convert_uiimage_vpimage_gray UIImage to gray vpImage 
-
-The following function implemented in ViewController.mm show how to convert an UIImage into a vpImage<unsigned char> instanciated as a grey level image. 
-
-\snippet ViewController.mm vpImageGrayFromUIImage
-
-\subsection image_ios_convert_vpimage_color_uiimage Color vpImage to UIImage
-
-The following function implemented in ViewController.mm show how to convert a gray level vpImage<unsigned char> into an UIImage. 
-
-\snippet ViewController.mm UIImageFromVpImageColor
-
-\subsection image_ios_convert_vpimage_gray_uiimage Gray vpImage to UIImage
-
-The following function implemented in ViewController.mm show how to convert a color vpImage<vpRGBa> into an UIImage. 
-
-\snippet ViewController.mm UIImageFromVpImageGray
 
 \section image_ios_app StartedImageProc application
 
@@ -63,17 +38,48 @@ In the dialog box, enable check box \c "Copy item if needed" to add \c visp3.fra
 
 Now you should be able to build and run your application.
 
+\section image_ios_convert Image conversion functions
+
+The Xcode project \c StartedImageProc contains \c ImageConversion.h and \c ImageConversion.mm files that implement the functions to convert UIImage to ViSP vpImage and vice versa.
+\subsection image_ios_convert_uiimage_vpimage_color UIImage to color vpImage
+
+The following function implemented in \c ImageConversion.mm show how to convert an UIImage into a vpImage<vpRGBa> instanciated as a color image. 
+
+\snippet ImageConversion.mm vpImageColorFromUIImage
+
+\subsection image_ios_convert_uiimage_vpimage_gray UIImage to gray vpImage 
+
+The following function implemented in \c ImageConversion.mm show how to convert an UIImage into a vpImage<unsigned char> instanciated as a grey level image. 
+
+\snippet ImageConversion.mm vpImageGrayFromUIImage
+
+\subsection image_ios_convert_vpimage_color_uiimage Color vpImage to UIImage
+
+The following function implemented in \c ImageConversion.mm show how to convert a gray level vpImage<unsigned char> into an UIImage. 
+
+\snippet ImageConversion.mm UIImageFromVpImageColor
+
+\subsection image_ios_convert_vpimage_gray_uiimage Gray vpImage to UIImage
+
+The following function implemented in \c ImageConversion.mm show how to convert a color vpImage<vpRGBa> into an UIImage. 
+
+\snippet ImageConversion.mm UIImageFromVpImageGray
+
 \section image_ios_output Application output
 
-Once build, if you run \c StartedImageProc application on your device, you should be able to see the followings screen shots.
+Once build, if you run \c StartedImageProc application on your device, you should be able to see the following screen shots.
 
 - Selecting \c "load image" gives the following result:
 \image html img-started-imgproc-ios-output-color.jpeg 
 - Selecting \c "convert to gray" gives the following result:
-\image html img-started-imgproc-ios-output-gray.jpeg
+\image html img-started-imgproc-ios-output-gray.png
 - Selecting \c "compute gradient" gives the following result:
-\image html img-started-imgproc-ios-output-gradient.jpeg
+\image html img-started-imgproc-ios-output-gradient.png
 - Selecting \c "canny detector" gives the following result:
-\image html img-started-imgproc-ios-output-canny.jpeg
+\image html img-started-imgproc-ios-output-canny.png
+
+\section image_ios_next Next tutorial
+
+You are now ready to see the \ref tutorial-detection-apriltag-ios.
 
 */

@@ -56,7 +56,7 @@ set (CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS "-dynamiclib -headerpad_max_install_nam
 set (CMAKE_SHARED_MODULE_CREATE_C_FLAGS "-bundle -headerpad_max_install_names")
 set (CMAKE_SHARED_MODULE_LOADER_C_FLAG "-Wl,-bundle_loader,")
 set (CMAKE_SHARED_MODULE_LOADER_CXX_FLAG "-Wl,-bundle_loader,")
-set (CMAKE_FIND_LIBRARY_SUFFIXES ".dylib" ".so" ".a")
+set (CMAKE_FIND_LIBRARY_SUFFIXES ".dylib" ".so" ".a" ".tbd")
 
 # hack: if a new cmake (which uses CMAKE_INSTALL_NAME_TOOL) runs on an old build tree
 # (where install_name_tool was hardcoded) and where CMAKE_INSTALL_NAME_TOOL isn't in the cache
@@ -67,61 +67,55 @@ if (NOT DEFINED CMAKE_INSTALL_NAME_TOOL)
 endif (NOT DEFINED CMAKE_INSTALL_NAME_TOOL)
 
 # Setup iOS developer location
-if (IPHONEOS)
+if(IPHONEOS)
+  execute_process(COMMAND xcrun --sdk iphoneos --show-sdk-path
+                  OUTPUT_VARIABLE _CMAKE_IOS_SDK_ROOT OUTPUT_STRIP_TRAILING_WHITESPACE)
   execute_process(COMMAND xcrun --sdk iphoneos --show-sdk-platform-path
-                  OUTPUT_VARIABLE _IPHONEOS_SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-  set (_CMAKE_IOS_DEVELOPER_ROOT ${_IPHONEOS_SDK_PATH}/Developer)
-else ()
-  if (IPHONESIMULATOR)
-    execute_process(COMMAND xcrun --sdk iphonesimulator --show-sdk-platform-path
-                   OUTPUT_VARIABLE _IPHONESIMULATOR_SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set (_CMAKE_IOS_DEVELOPER_ROOT "${_IPHONESIMULATOR_SDK_PATH}/Developer")
-  endif ()
-endif ()
-# Find installed iOS SDKs
-file (GLOB _CMAKE_IOS_SDKS "${_CMAKE_IOS_DEVELOPER_ROOT}/SDKs/*")
+                  OUTPUT_VARIABLE _IPHONEOS_SDK_PLATFORM_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
+  set (_CMAKE_IOS_DEVELOPER_ROOT "${_IPHONEOS_SDK_PLATFORM_PATH}/Developer")
+elseif(IPHONESIMULATOR)
+  execute_process(COMMAND xcrun --sdk iphonesimulator --show-sdk-path
+                   OUTPUT_VARIABLE _CMAKE_IOS_SDK_ROOT OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND xcrun --sdk iphonesimulator --show-sdk-platform-path
+                   OUTPUT_VARIABLE _IPHONESIMULATOR_SDK_PLATFORM_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
+  set (_CMAKE_IOS_DEVELOPER_ROOT "${_IPHONESIMULATOR_SDK_PLATFORM_PATH}/Developer")
+endif()
 
-# Find and use the most recent iOS sdk
-if (_CMAKE_IOS_SDKS)
-    list (SORT _CMAKE_IOS_SDKS)
-    list (REVERSE _CMAKE_IOS_SDKS)
-    list (GET _CMAKE_IOS_SDKS 0 _CMAKE_IOS_SDK_ROOT)
+# Set the sysroot default to the most recent SDK
+set (CMAKE_OSX_SYSROOT ${_CMAKE_IOS_SDK_ROOT} CACHE PATH "Sysroot used for iOS support")
 
-    # Set the sysroot default to the most recent SDK
-    set (CMAKE_OSX_SYSROOT ${_CMAKE_IOS_SDK_ROOT} CACHE PATH "Sysroot used for iOS support")
+# set the architecture for iOS - this env var sets armv6,armv7 and appears to be XCode's standard.
+# The other found is ARCHS_UNIVERSAL_IPHONE_OS but that is armv7 only
+set (CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_32_BIT)" CACHE string  "Build architecture for iOS")
 
-    # set the architecture for iOS - this env var sets armv6,armv7 and appears to be XCode's standard. The other found is ARCHS_UNIVERSAL_IPHONE_OS but that is armv7 only
-    set (CMAKE_OSX_ARCHITECTURES "$(ARCHS_STANDARD_32_BIT)" CACHE string  "Build architecture for iOS")
+# Set the default based on this file and not the environment variable
+set (CMAKE_FIND_ROOT_PATH ${_CMAKE_IOS_DEVELOPER_ROOT} ${_CMAKE_IOS_SDK_ROOT} CACHE string  "iOS library search path root")
 
-    # Set the default based on this file and not the environment variable
-    set (CMAKE_FIND_ROOT_PATH ${_CMAKE_IOS_DEVELOPER_ROOT} ${_CMAKE_IOS_SDK_ROOT} CACHE string  "iOS library search path root")
+# default to searching for frameworks first
+set (CMAKE_FIND_FRAMEWORK FIRST)
 
-    # default to searching for frameworks first
-    set (CMAKE_FIND_FRAMEWORK FIRST)
-
-    # set up the default search directories for frameworks
-    set (CMAKE_SYSTEM_FRAMEWORK_PATH
-        ${_CMAKE_IOS_SDK_ROOT}/System/Library/Frameworks
-        ${_CMAKE_IOS_SDK_ROOT}/System/Library/PrivateFrameworks
-        ${_CMAKE_IOS_DEVELOPER_ROOT}/Library/Frameworks
-    )
-endif (_CMAKE_IOS_SDKS)
+# set up the default search directories for frameworks
+set (CMAKE_SYSTEM_FRAMEWORK_PATH
+  ${_CMAKE_IOS_SDK_ROOT}/System/Library/Frameworks
+  ${_CMAKE_IOS_SDK_ROOT}/System/Library/PrivateFrameworks
+  ${_CMAKE_IOS_DEVELOPER_ROOT}/Library/Frameworks
+)
 
 if ("${CMAKE_BACKWARDS_COMPATIBILITY}" MATCHES "^1\\.[0-6]$")
-    set (CMAKE_SHARED_MODULE_CREATE_C_FLAGS "${CMAKE_SHARED_MODULE_CREATE_C_FLAGS} -flat_namespace -undefined suppress")
+  set (CMAKE_SHARED_MODULE_CREATE_C_FLAGS "${CMAKE_SHARED_MODULE_CREATE_C_FLAGS} -flat_namespace -undefined suppress")
 endif ("${CMAKE_BACKWARDS_COMPATIBILITY}" MATCHES "^1\\.[0-6]$")
 
 if (NOT XCODE)
-      # Enable shared library versioning.  This flag is not actually referenced
-      # but the fact that the setting exists will cause the generators to support
-      # soname computation.
-      set (CMAKE_SHARED_LIBRARY_SONAME_C_FLAG "-install_name")
+  # Enable shared library versioning.  This flag is not actually referenced
+  # but the fact that the setting exists will cause the generators to support
+  # soname computation.
+  set (CMAKE_SHARED_LIBRARY_SONAME_C_FLAG "-install_name")
 endif (NOT XCODE)
 
 # Xcode does not support -isystem yet.
 if (XCODE)
-    set (CMAKE_INCLUDE_SYSTEM_FLAG_C)
-    set (CMAKE_INCLUDE_SYSTEM_FLAG_CXX)
+  set (CMAKE_INCLUDE_SYSTEM_FLAG_C)
+  set (CMAKE_INCLUDE_SYSTEM_FLAG_CXX)
 endif (XCODE)
 
 # Need to list dependent shared libraries on link line.  When building

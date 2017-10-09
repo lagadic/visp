@@ -294,6 +294,9 @@ endif()
 if(VISP_HAVE_ZBAR)
   set(BUILDNAME "${BUILDNAME}-zbar")
 endif()
+if(VISP_HAVE_APRILTAG)
+  set(BUILDNAME "${BUILDNAME}-apriltag")
+endif()
 
 
 #---- Special compiler flags ----

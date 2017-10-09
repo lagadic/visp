@@ -378,7 +378,7 @@ vpDiskGrabber::setImageNumber(long number)
   Set the step between two images.
 */
 void
-vpDiskGrabber::setStep(int step)
+vpDiskGrabber::setStep(long step)
 {
   m_image_step = step;
 }

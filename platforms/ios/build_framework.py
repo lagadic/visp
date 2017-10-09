@@ -76,8 +76,10 @@ class Builder:
             if self.contrib:
                 cmake_flags.append("-DVISP_CONTRIB_MODULES_PATH=%s" % self.contrib)
             if xcode_ver >= 7 and t[1] == 'iPhoneOS':
-                cmake_flags.append("-DCMAKE_C_FLAGS=-fembed-bitcode")
+                cmake_flags.append("-DCMAKE_C_FLAGS=-fembed-bitcode -Wno-implicit-function-declaration -Wno-logical-op-parentheses -Wno-unused-variable -Wno-parentheses -Wno-sometimes-uninitialized -Wno-unused-parameter -Wno-shorten-64-to-32")
                 cmake_flags.append("-DCMAKE_CXX_FLAGS=-fembed-bitcode")
+            else:
+                cmake_flags.append("-DCMAKE_C_FLAGS=-Wno-implicit-function-declaration -Wno-logical-op-parentheses -Wno-unused-variable -Wno-parentheses -Wno-sometimes-uninitialized -Wno-unused-parameter -Wno-shorten-64-to-32")
             self.buildOne(t[0], t[1], mainBD, cmake_flags)
             self.mergeLibs(mainBD)
         self.makeFramework(outdir, dirs)
@@ -100,7 +102,6 @@ class Builder:
         args = [
             "cmake",
             "-GXcode",
-            "-DCMAKE_C_FLAGS=\"-Wno-implicit-function-declaration\" ",
             "-DAPPLE_FRAMEWORK=ON",
             "-DCMAKE_INSTALL_PREFIX=install",
             "-DCMAKE_BUILD_TYPE=Release",
@@ -108,10 +109,7 @@ class Builder:
             "-DBUILD_EXAMPLES=OFF",
             "-DBUILD_TESTS=OFF",
             "-DBUILD_TUTORIALS=OFF",
-            "-DUSE_XML2=OFF",
-            "-DUSE_ZLIB=OFF",
-            "-DUSE_EIGEN3=OFF",
-        ]
+         ]
         return args
 
     def getBuildCommand(self, arch, target):

@@ -1,0 +1,62 @@
+/**
+
+\page tutorial-detection-apriltag-ios Tutorial: AprilTag marker detection on iOS
+\tableofcontents
+
+\section intro_apriltag_ios Introduction
+
+This tutorial follows the \ref tutorial-detection-apriltag and shows how AprilTag marker detection could be achieved with ViSP on iOS devices.
+
+In the next section you will find an example that show how to detect tags in a single image. To know how to print an AprilTag marker, see \ref apriltag_detection_print.
+
+Note that all the material (Xcode project and image) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedAprilTag
+\endcode
+
+
+\section apriltag_detection_basic_ios AprilTag detection and pose estimation (single image)
+
+Let us consider the Xcode project named \c StartedAprilTag that is part of ViSP source code. This project is a Xcode \c "Single view application" that contain \c ImageConversion.h and \c ImageConversion.mm to convert from/to UIImage to ViSP images (see \ref image_ios_convert). It contains also \c ImageDisplay.h and \c ImageDisplay.mm files useful to display lines and frames in an image overlay, \c ViewController.mm that handles the tag detection, and an image \c AprilTag.png used as input.
+\image html img-detection-apriltag-ios-xcode.png
+
+To download the complete \c StartedAprilTag project, run the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedAprilTag
+\endcode
+
+Once downloaded, you have just to drag & drop ViSP and OpenCV frameworks available following \ref tutorial-install-ios-package.
+\image html img-detection-apriltag-ios-drag-drop.png
+
+In the dialog box, enable check box \c "Copy item if needed" to add \c visp3.framework and \c opencv.framework to the project.
+\image html img-started-imgproc-ios-drag-drop-dialog.png
+
+Now you should be able to build and run your application.
+
+
+\section apriltag_detection_display Image display functions
+
+The Xcode project \c StartedAprilTag contains \c ImageDisplay.h and \c ImageDisplay.mm files that implement the functions to display a line or a frame in overlay of an UIImage.
+
+\subsection apriltag_detection_display_line Display a line
+
+The following function implemented in \c ImageDisplay.mm show how to display a line. 
+
+\snippet ImageDisplay.mm display line
+
+\subsection apriltag_detection_display_frame Display a 3D frame
+
+The following function implemented in \c ImageDisplay.mm show how to display a 3D frame; red line for x, green for y and blue for z axis. 
+
+\snippet ImageDisplay.mm display frame
+
+\section apriltag_detection_basic_output Application output
+
+Once build, if you run \c StartedAprilTag application on your device, you should be able to see the following screen shot:
+
+\image html img-detection-apriltag-ios-output.png
+
+
+*/

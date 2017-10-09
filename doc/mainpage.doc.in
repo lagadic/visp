@@ -47,13 +47,20 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 
 <p>Here after you will find a list of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
 
+\subsection tuto_ios ViSP iOS
+
+- \ref tutorial-install-ios-package <br>In this tutorial you will learn how to install ViSP prebuilt framework for iOS devices.
+- \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
+- \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
+- \ref tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices.
+- \ref tutorial-detection-apriltag-ios <br>This tutorial shows how to do detct an AprilTag marker on iOS devices. 
+
 \subsection tuto_install_sdk Installation from prebuild SDK
 
 - \ref tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt SDK from Ubuntu or Debian packages.
 - \ref tutorial-install-archlinux-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for Arch Linux.
 - \ref tutorial-install-osx-homebrew-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK on OSX with Homebrew.
 - \ref tutorial-install-ros-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for ROS.
-- \ref tutorial-install-ios-package <br>In this tutorial you will learn how to install ViSP prebuilt framework for iOS devices.
 
 \subsection tuto_install_src Installation from source
 
@@ -68,7 +75,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-install-win10-msvc14-uwp <br>In this tutorial you will learn how to install ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2015.
 - \ref tutorial-install-win81-mingw64 <br>In this tutorial you will learn how to install ViSP from source on Windows 8.1 or Windows 10 with Mingw-w64.
 - \ref tutorial-install-osx-homebrew <br>In this tutorial you will learn how to install ViSP from source on OSX with Homebrew.
-- \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
+
 
 \subsection tuto_install_crosscompiling Installation from cross-compiling
 
@@ -78,7 +85,6 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 \subsection tuto_started Getting started
 
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
-- \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-getting-started-naoqi <br>This tutorial shows how to build a project that uses ViSP on NAOqi OS running on NAO, Romeo or Pepper humanoid robots.
 - \ref tutorial-import-visp-into-EclipseIDE <br>This tutorial shows how to import a CMake project that uses ViSP in Eclipse IDE.
 - \ref tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
@@ -89,7 +95,6 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position.
-- \ref tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices.
 
 \subsection tuto_calib Camera calibration
 

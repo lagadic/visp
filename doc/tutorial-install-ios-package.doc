@@ -29,9 +29,10 @@ $ unzip ~/Downloads/visp3.framework*.zip -d ~/framework/ios
 The content of \c \<framework_dir\>/ios should be the following:
 \code
 $ ls ~/framework/ios
-opencv2.framework
-visp3.framework
+opencv2.framework      visp3.framework
 \endcode
+
+\note ViSP framework is build with capabilities that enables the usage of the following 3rd parties: XML, OpenCV, pthread, apriltag, lapack.
 
 \section install_ios_package_next Next tutorial
 

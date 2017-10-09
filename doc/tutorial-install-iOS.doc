@@ -17,7 +17,7 @@ In this tutorial you will learn how to build ViSP framework from source on OSX i
 
 \section install_iOS_opencv Getting OpenCV framework (optional)
 
-We suggest to follow these steps in order to install OpenCV framework in such a way that the resulting ViSP framework builds with OpenCV as 3rd party. This could be useful for users who want to use keypoints throw ViSP classes (vpKltOpencv, vpKeyPoint) or the model-based tracker in his hybrid version (vpMbKltTracker). If you are not interested in ViSP capabilities that use OpenCV as 3rd party, just skip this section.
+We suggest to follow these steps in order to install OpenCV framework in such a way that the resulting ViSP framework builds with OpenCV as 3rd party. This could be useful for users who want to use ViSP and OpenCV together. It will also allow to exploit keypoints throw ViSP classes (vpKltOpencv, vpKeyPoint) or the model-based tracker in his hybrid version (vpMbKltTracker). If you are not interested in capabilities leveraged by using OpenCV as 3rd party, just skip this section.
 
 - Download the latest <a href="http://opencv.org/releases.html">OpenCV for iOS</a> like \c opencv-3.3.0-ios-framework.zip
 - Unzip the archive in a directory denoted \c \<framework_dir\>/ios. If \c \<framework_dir\> is for example the following folder \c ~/framework just do the following:
@@ -89,6 +89,8 @@ $ python visp/platforms/ios/build_framework.py ios
 $ ls ~/framework/ios
 build			opencv2.framework	visp3.framework
 \endcode
+
+\note ViSP framework is build with capabilities that enables the usage of the following 3rd parties: XML, OpenCV, pthread, apriltag, lapack.
 
 \section install_iOS_next Next tutorial
 
