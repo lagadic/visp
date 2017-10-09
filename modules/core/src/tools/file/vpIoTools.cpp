@@ -1732,6 +1732,7 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
   }
   while (FindNextFile(hFind, &FindFileData));
   FindClose(hFind);
+  std::sort(files.begin(), files.end());
   return files;
 
 #  else
