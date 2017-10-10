@@ -42,6 +42,7 @@
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpPolygon.h>
+#include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayGDI.h>
