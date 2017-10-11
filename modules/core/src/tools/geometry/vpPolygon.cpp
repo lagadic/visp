@@ -182,9 +182,12 @@ vpPolygon::buildFrom(const std::vector<vpPoint>& corners, const vpCameraParamete
   A right click is used to stop the addition of new corners.
 
   \param I : The image where to click to initialise the corners.
+  \param size : Cross size in terms of number of pixels that is displayed over a polygon corner.
+  \param color : Color used to display the cross over the polygon corner.
+  \param thickness : Thickness used to display the cross.
 */
 void
-vpPolygon::initClick(const vpImage<unsigned char>& I)
+vpPolygon::initClick(const vpImage<unsigned char>& I, unsigned int size, const vpColor &color, unsigned int thickness)
 {
   vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
   vpImagePoint ip;
@@ -194,7 +197,7 @@ vpPolygon::initClick(const vpImage<unsigned char>& I)
   while(button == vpMouseButton::button1){
     bool ret = vpDisplay::getClick(I, ip, button, true);
     if(ret && button == vpMouseButton::button1){
-      vpDisplay::displayCross(I, ip, 5, vpColor::red);
+      vpDisplay::displayCross(I, ip, size, color, thickness);
       cornersClick.push_back(ip);
       vpDisplay::flush(I);
     }
@@ -208,9 +211,12 @@ vpPolygon::initClick(const vpImage<unsigned char>& I)
   A right click is used to stop the addition of new corners.
 
   \param I : The image where to click to initialise the corners.
+  \param size : Size of the cross in terms of number of pixels that is displayed over a polygon corner.
+  \param color : Color used to display the cross over the polygon corner.
+  \param thickness : Thickness used to display the cross.
 */
 void
-vpPolygon::initClick(const vpImage<vpRGBa>& I)
+vpPolygon::initClick(const vpImage<vpRGBa>& I, unsigned int size, const vpColor &color, unsigned int thickness)
 {
   vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
   vpImagePoint ip;
@@ -220,7 +226,7 @@ vpPolygon::initClick(const vpImage<vpRGBa>& I)
   while(button == vpMouseButton::button1){
     bool ret = vpDisplay::getClick(I, ip, button, true);
     if(ret && button == vpMouseButton::button1){
-      vpDisplay::displayCross(I, ip, 5, vpColor::red);
+      vpDisplay::displayCross(I, ip, size, color, thickness);
       cornersClick.push_back(ip);
       vpDisplay::flush(I);
     }

@@ -129,8 +129,8 @@ class VISP_EXPORT vpPolygon
     void buildFrom(const std::vector<vpPoint>& corners, const vpCameraParameters& cam);
 
     unsigned int getSize() const;
-    void initClick(const vpImage<unsigned char>& I);
-    void initClick(const vpImage<vpRGBa>& I);
+    void initClick(const vpImage<unsigned char>& I, unsigned int size=5, const vpColor &color=vpColor::red, unsigned int thickness=1);
+    void initClick(const vpImage<vpRGBa>& I, unsigned int size=5, const vpColor &color=vpColor::red, unsigned int thickness=1);
 
     bool isInside(const vpImagePoint &iP, const PointInPolygonMethod &method=PnPolyRayCasting) const;
 
