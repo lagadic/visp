@@ -48,26 +48,27 @@
 
 int main()
 {
-  vpMatrix M ;
-  vpMatrix M1(2,3) ;
-  vpMatrix M2(3,3) ;
-  vpMatrix M3(2,2) ;
+  vpMatrix M;
+  vpMatrix M1(2,3);
+  vpMatrix M3(2,2);
 
   std::cout << "** test matrix exception during multiplication" << std::endl;
 
   try {
-    M = M1*M3 ;
+    M = M1*M3;
   }
-  catch (vpException &e) {
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 
   std::cout << "** test matrix exception during addition" << std::endl;
 
   try {
-    M = M1+M3 ;
+    M = M1+M3;
   }
-  catch (vpException &e)  {
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+
+  return 0;
 }

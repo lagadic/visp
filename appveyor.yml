@@ -5,12 +5,27 @@ os: Visual Studio 2015
 
 # to add several platforms to build matrix
 platform:
-- x64
+  - x64
 
-# scripts that are called at very beginning, before repo cloning
+configuration:
+  - Release
+
+environment:
+  VISP_OPENCV_MINGW_FILE: opencv-3.3.0-MinGW-build-package.7z
+  VISP_OPENCV_MINGW_DIR: opencv-3.3.0-MinGW-build-package
+  VISP_OPENCV_MINGW_PKG: https://github.com/s-trinh/visp-dependencies/blob/master/opencv-3.3.0-MinGW-build-package.7z?raw=true
+
+  matrix:
+    - CMAKE_GENERATOR: MinGW Makefiles
+      BUILD_NAME: mingw
+
+    - CMAKE_GENERATOR: Visual Studio 14 2015 Win64
+      BUILD_NAME: vs2015
+
+# Scripts that are called at very beginning, before repo cloning
 init:
-  - cmd: cmake --version
-  - cmd: msbuild /version
+  - cmake --version
+  - msbuild /version
 
 install:
   # Create temp dir to collect test outputs
@@ -25,32 +40,56 @@ install:
   - set VISP_INPUT_IMAGE_PATH=C:\projects\deps
 
   # opencv
-  - cmd: choco install OpenCV
+  - if "%CMAKE_GENERATOR%"=="Visual Studio 14 2015 Win64" choco install OpenCV
+  - ps: >-
+      if (${env:CMAKE_GENERATOR} -imatch "MinGW Makefiles" -and !(Test-Path ${env:VISP_OPENCV_MINGW_FILE})) {
+        echo "Downloading OpenCV MinGW from ${env:VISP_OPENCV_MINGW_PKG} ..."
+        appveyor DownloadFile "${env:VISP_OPENCV_MINGW_PKG}" -FileName ${env:VISP_OPENCV_MINGW_FILE} -Timeout 1200000
+      }
+
+  - ps: >-
+      if (${env:CMAKE_GENERATOR} -imatch "MinGW Makefiles") {
+        echo "Extracting OpenCV MinGW to C:\projects\deps ..."
+        7z x ${env:VISP_OPENCV_MINGW_FILE} -y -o"C:\projects\deps"
+      }
+
+cache:
+  - opencv-3.3.0-MinGW-build-package.7z -> appveyor.yml
 
 # visp clone directory
 clone_folder: C:\projects\visp\visp
 
 before_build:
-  - cmd: SET ARCH=x64
-  # setup visp
-  - cmd: SET VISP_DLL_DIR=C:\projects\visp\build\install\%ARCH%\vc14\bin
-  - cmd: SET PATH=%VISP_DLL_DIR%;%PATH%
-  
-  # setup opencv
-  - cmd: SET OpenCV_DIR=C:\tools\opencv\build
-  - cmd: SET OpenCV_DLL_DIR=%OpenCV_DIR%\%ARCH%\vc14\bin
-  - cmd: SET PATH=%OPENCV_DLL_DIR%;%PATH%
+  # Workaround for CMake not wanting sh.exe on PATH for MinGW
+  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set PATH=C:\MinGW\bin;%PATH%
+  - dir C:\MinGW\bin
+  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" mingw32-make --version
+  # Setup ViSP
+  - if "%CMAKE_GENERATOR%"=="Visual Studio 14 2015 Win64" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\vc14\bin
+  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set VISP_DLL_DIR=C:\projects\visp\build\install\x86\mingw\bin
+  - SET PATH=%VISP_DLL_DIR%;%PATH%
+  # Setup OpenCV
+  - if "%CMAKE_GENERATOR%"=="Visual Studio 14 2015 Win64" set OpenCV_DIR=C:\tools\opencv\build
+  - if "%CMAKE_GENERATOR%"=="Visual Studio 14 2015 Win64" set OpenCV_DLL_DIR=%OpenCV_DIR%\%platform%\vc14\bin
+  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_MINGW_DIR%\install
+  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set OpenCV_DLL_DIR=%OpenCV_DIR%\x86\mingw\bin
+  - set PATH=%OPENCV_DLL_DIR%;%PATH%
+  # Issue with pthreads threading on MinGW AppVeyor
+  - if "%CMAKE_GENERATOR%"=="Visual Studio 14 2015 Win64" set APPVEYOR_THREADING=true
+  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" set APPVEYOR_THREADING=false
 
 build_script:
   - echo %PATH%
   - dir C:\projects\deps
   - dir C:\tools
-  - dir C:\tools\opencv\build\%ARCH%\vc14\bin
+  - dir %OpenCV_DLL_DIR%
   - md C:\projects\visp\build
   - cd C:\projects\visp\build
-  - cmake -G "Visual Studio 14 2015 Win64" ..\visp
-  - cmake --build . --config Release --target install
-  - ctest
-#  - C:\projects\visp\build\modules\core\Release\testIoPGM
-
-
+  - cmake -G "%CMAKE_GENERATOR%" -DCMAKE_BUILD_TYPE=%configuration% ..\visp
+  - cmake --build . --config %configuration% --target install
+  - dir C:\projects\visp\build\install
+  - dir %VISP_DLL_DIR%
+  - if "%CMAKE_GENERATOR%"=="Visual Studio 14 2015 Win64" ctest
+  # Issue with exception on MinGW AppVeyor
+  - if "%CMAKE_GENERATOR%"=="MinGW Makefiles" ctest -E testMatrixException

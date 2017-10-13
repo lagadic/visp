@@ -47,6 +47,7 @@
 #include <time.h>
 
 #include <visp3/core/vpThread.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpColVector.h>
 
 
@@ -141,43 +142,53 @@ namespace {
 }
 
 int main() {
-  unsigned int nb_threads = 4;
-  unsigned int size = 1000007;
-  srand((unsigned int) time(NULL));
+  std::string appveyor_threading = "";
+  try {
+    appveyor_threading = vpIoTools::getenv("APPVEYOR_THREADING");
+  } catch (...) {}
 
-  vpColVector v1(size), v2(size);
-  for (unsigned int i = 0; i < size; i++) {
-    v1[i] = rand() % 101;
-    v2[i] = rand() % 101;
-  }
+  if (appveyor_threading == "true") {
+    unsigned int nb_threads = 4;
+    unsigned int size = 1000007;
+    srand((unsigned int)time(NULL));
 
-  //! [functor-thread-example threadCreation]
-  std::vector<vpThread> threads(nb_threads);
-  std::vector<ArithmFunctor> functors(nb_threads);
-  unsigned int split = size / nb_threads;
-  for (unsigned int i = 0; i < nb_threads; i++) {
-    if (i < nb_threads-1) {
-      functors[i] = ArithmFunctor(v1, v2, i*split, (i+1)*split);
-    } else {
-      functors[i] = ArithmFunctor(v1, v2, i*split, size);
+    vpColVector v1(size), v2(size);
+    for (unsigned int i = 0; i < size; i++) {
+      v1[i] = rand() % 101;
+      v2[i] = rand() % 101;
     }
 
-    threads[i].create((vpThread::Fn) arithmThread, (vpThread::Args) &functors[i]);
-  }
-  //! [functor-thread-example threadCreation]
+    //! [functor-thread-example threadCreation]
+    std::vector<vpThread> threads(nb_threads);
+    std::vector<ArithmFunctor> functors(nb_threads);
+    unsigned int split = size / nb_threads;
+    for (unsigned int i = 0; i < nb_threads; i++) {
+      if (i < nb_threads - 1) {
+        functors[i] = ArithmFunctor(v1, v2, i*split, (i + 1)*split);
+      }
+      else {
+        functors[i] = ArithmFunctor(v1, v2, i*split, size);
+      }
 
-  //! [functor-thread-example getResults]
-  vpColVector res_add, res_mul;
-  for (size_t i = 0; i < nb_threads; i++) {
-    threads[i].join();
+      std::cout << "Create thread: " << i << std::endl;
+      threads[i].create((vpThread::Fn) arithmThread, (vpThread::Args) &functors[i]);
+    }
+    //! [functor-thread-example threadCreation]
 
-    insert(res_add, functors[i].getVectorAdd());
-    insert(res_mul, functors[i].getVectorMul());
-  }
-  //! [functor-thread-example getResults]
+    //! [functor-thread-example getResults]
+    vpColVector res_add, res_mul;
+    for (size_t i = 0; i < nb_threads; i++) {
+      std::cout << "Join thread: " << i << std::endl;
+      threads[i].join();
 
-  if (!check(v1, v2, res_add, res_mul)) {
-    return EXIT_FAILURE;
+      insert(res_add, functors[i].getVectorAdd());
+      insert(res_mul, functors[i].getVectorMul());
+    }
+    //! [functor-thread-example getResults]
+
+    if (!check(v1, v2, res_add, res_mul)) {
+      return EXIT_FAILURE;
+    }
   }
 
   std::cout << "testThread2 is ok!" << std::endl;

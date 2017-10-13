@@ -195,7 +195,7 @@ bool vpPose::RansacFunctor::poseRansacImpl() {
   int nbTrials = 0;
   unsigned int nbMinRandom = 4;
 
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32) && (defined(_MSC_VER) || defined(__MINGW32__))
   srand(m_initial_seed);
 #endif
 
@@ -564,7 +564,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix & cMo, bool (*func)(vpHomogeneousMat
       unsigned int initial_seed = 0;
 #endif
 
-#if defined(_WIN32) && defined(_MSC_VER)
+#if defined(_WIN32)  && (defined(_MSC_VER) || defined(__MINGW32__))
       srand(initial_seed);
 #endif
 

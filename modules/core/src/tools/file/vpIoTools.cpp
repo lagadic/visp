@@ -365,6 +365,8 @@ vpIoTools::checkDirectory(const char *dirname )
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   struct stat stbuf;
+#elif defined(_WIN32) && defined(__MINGW32__)
+  struct stat stbuf;
 #elif defined(_WIN32)
   struct _stat stbuf;
 #endif
@@ -377,6 +379,12 @@ vpIoTools::checkDirectory(const char *dirname )
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if ( stat( _dirname.c_str(), &stbuf ) != 0 )
+#elif defined(_WIN32) && defined(__MINGW32__)
+  //Remove trailing separator character if any
+  //AppVeyor: Windows 6.3.9600 AMD64 ; C:/MinGW/bin/g++.exe  (ver 5.3.0) ; GNU Make 3.82.90 Built for i686-pc-mingw32
+  if (!_dirname.empty() && _dirname.at(_dirname.size() - 1) == vpIoTools::separator)
+    _dirname = _dirname.substr(0, _dirname.size()-1);
+  if (stat(_dirname.c_str(), &stbuf) != 0)
 #elif defined(_WIN32)
   if ( _stat( _dirname.c_str(), &stbuf ) != 0 )
 #endif
@@ -493,6 +501,8 @@ vpIoTools::makeDirectory(const char *dirname )
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   struct stat stbuf;
+#elif defined(_WIN32) && defined(__MINGW32__)
+  struct stat stbuf;
 #elif defined(_WIN32)
   struct _stat stbuf;
 #endif
@@ -507,6 +517,8 @@ vpIoTools::makeDirectory(const char *dirname )
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if ( stat( _dirname.c_str(), &stbuf ) != 0 )
+#elif defined(_WIN32) && defined(__MINGW32__)
+  if (stat(_dirname.c_str(), &stbuf) != 0)
 #elif defined(_WIN32)
   if ( _stat( _dirname.c_str(), &stbuf ) != 0 )
 #endif
