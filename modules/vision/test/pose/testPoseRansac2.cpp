@@ -42,6 +42,7 @@
 #include <visp3/vision/vpPose.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpGaussRand.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 
@@ -1852,18 +1853,25 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original, const std
 #  define TEST_PARALLEL_RANSAC
 #endif
 
+  std::string appveyor_threading = "";
+  try {
+    appveyor_threading = vpIoTools::getenv("APPVEYOR_THREADING");
+  } catch (...) {}
+
 #ifdef TEST_PARALLEL_RANSAC
   vpPose pose_ransac_parallel, pose_ransac_parallel2;
-  pose_ransac_parallel.setUseParallelRansac(true);
-  pose_ransac_parallel2.setUseParallelRansac(true);
+  if (appveyor_threading == "true") {
+    pose_ransac_parallel.setUseParallelRansac(true);
+    pose_ransac_parallel2.setUseParallelRansac(true);
 
-  pose_ransac_parallel.setRansacFilterFlags(vpPose::PREFILTER_DUPLICATE_POINTS + vpPose::CHECK_DEGENERATE_POINTS);
-  pose_ransac_parallel2.setRansacFilterFlags(vpPose::PREFILTER_DUPLICATE_POINTS + vpPose::CHECK_DEGENERATE_POINTS);
+    pose_ransac_parallel.setRansacFilterFlags(vpPose::PREFILTER_DUPLICATE_POINTS + vpPose::CHECK_DEGENERATE_POINTS);
+    pose_ransac_parallel2.setRansacFilterFlags(vpPose::PREFILTER_DUPLICATE_POINTS + vpPose::CHECK_DEGENERATE_POINTS);
 
 #if !defined (VISP_HAVE_OPENMP)
-  pose_ransac_parallel.setNbParallelRansacThreads(2);
-  pose_ransac_parallel2.setNbParallelRansacThreads(2);
+    pose_ransac_parallel.setNbParallelRansacThreads(2);
+    pose_ransac_parallel2.setNbParallelRansacThreads(2);
 #endif
+  }
 #endif
   pose_ransac.setRansacFilterFlags(vpPose::PREFILTER_DUPLICATE_POINTS + vpPose::CHECK_DEGENERATE_POINTS);
   pose_ransac2.setRansacFilterFlags(vpPose::PREFILTER_DUPLICATE_POINTS + vpPose::CHECK_DEGENERATE_POINTS);
@@ -1875,8 +1883,10 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original, const std
   pose_ransac.addPoints(bunnyModelPoints_noisy);
   pose_ransac2.addPoints(bunnyModelPoints_noisy);
 #ifdef TEST_PARALLEL_RANSAC
-  pose_ransac_parallel.addPoints(bunnyModelPoints_noisy);
-  pose_ransac_parallel2.addPoints(bunnyModelPoints_noisy);
+  if (appveyor_threading == "true") {
+    pose_ransac_parallel.addPoints(bunnyModelPoints_noisy);
+    pose_ransac_parallel2.addPoints(bunnyModelPoints_noisy);
+  }
 #endif
 
   //Print the number of points in the final data vector
@@ -1891,13 +1901,15 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original, const std
   pose_ransac.setRansacThreshold(threshold);
   pose_ransac.setRansacMaxTrials(1000);
 #ifdef TEST_PARALLEL_RANSAC
-  pose_ransac_parallel.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
-  pose_ransac_parallel.setRansacThreshold(threshold);
-  pose_ransac_parallel.setRansacMaxTrials(1000);
+  if (appveyor_threading == "true") {
+    pose_ransac_parallel.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
+    pose_ransac_parallel.setRansacThreshold(threshold);
+    pose_ransac_parallel.setRansacMaxTrials(1000);
 
-  pose_ransac_parallel2.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
-  pose_ransac_parallel2.setRansacThreshold(threshold);
-  pose_ransac_parallel2.setRansacMaxTrials(vpPose::computeRansacIterations(0.99, 0.4, 4, -1));
+    pose_ransac_parallel2.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
+    pose_ransac_parallel2.setRansacThreshold(threshold);
+    pose_ransac_parallel2.setRansacMaxTrials(vpPose::computeRansacIterations(0.99, 0.4, 4, -1));
+  }
 #endif
 
   //RANSAC with p=0.99, epsilon=0.4
@@ -1949,27 +1961,30 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original, const std
   std::cout << "Corresponding residual: " << r_estimated << std::endl;
 
 #ifdef TEST_PARALLEL_RANSAC
-  vpHomogeneousMatrix cMo_estimated_RANSAC_parallel;
-  double t_RANSAC_parallel = vpTime::measureTimeMs();
-  pose_ransac_parallel.computePose(vpPose::RANSAC, cMo_estimated_RANSAC_parallel);
-  t_RANSAC_parallel = vpTime::measureTimeMs() - t_RANSAC_parallel;
+  double r_RANSAC_estimated_parallel = std::numeric_limits<double>::max();
+  if (appveyor_threading == "true") {
+    vpHomogeneousMatrix cMo_estimated_RANSAC_parallel;
+    double t_RANSAC_parallel = vpTime::measureTimeMs();
+    pose_ransac_parallel.computePose(vpPose::RANSAC, cMo_estimated_RANSAC_parallel);
+    t_RANSAC_parallel = vpTime::measureTimeMs() - t_RANSAC_parallel;
 
-  std::cout << "\ncMo estimated with parallel RANSAC (1000 iterations) on noisy data:\n" << cMo_estimated_RANSAC_parallel << std::endl;
-  std::cout << "Computation time: " << t_RANSAC_parallel << " ms" << std::endl;
+    std::cout << "\ncMo estimated with parallel RANSAC (1000 iterations) on noisy data:\n" << cMo_estimated_RANSAC_parallel << std::endl;
+    std::cout << "Computation time: " << t_RANSAC_parallel << " ms" << std::endl;
 
-  double r_RANSAC_estimated_parallel = ground_truth_pose.computeResidual(cMo_estimated_RANSAC_parallel);
-  std::cout << "Corresponding residual (1000 iterations): " << r_RANSAC_estimated_parallel << std::endl;
+    r_RANSAC_estimated_parallel = ground_truth_pose.computeResidual(cMo_estimated_RANSAC_parallel);
+    std::cout << "Corresponding residual (1000 iterations): " << r_RANSAC_estimated_parallel << std::endl;
 
-  vpHomogeneousMatrix cMo_estimated_RANSAC_parallel2;
-  double t_RANSAC_parallel2 = vpTime::measureTimeMs();
-  pose_ransac_parallel2.computePose(vpPose::RANSAC, cMo_estimated_RANSAC_parallel2);
-  t_RANSAC_parallel2 = vpTime::measureTimeMs() - t_RANSAC_parallel2;
+    vpHomogeneousMatrix cMo_estimated_RANSAC_parallel2;
+    double t_RANSAC_parallel2 = vpTime::measureTimeMs();
+    pose_ransac_parallel2.computePose(vpPose::RANSAC, cMo_estimated_RANSAC_parallel2);
+    t_RANSAC_parallel2 = vpTime::measureTimeMs() - t_RANSAC_parallel2;
 
-  std::cout << "\ncMo estimated with parallel RANSAC (" << ransac_iterations << " iterations) on noisy data:\n" << cMo_estimated_RANSAC_parallel2 << std::endl;
-  std::cout << "Computation time: " << t_RANSAC_parallel2 << " ms" << std::endl;
+    std::cout << "\ncMo estimated with parallel RANSAC (" << ransac_iterations << " iterations) on noisy data:\n" << cMo_estimated_RANSAC_parallel2 << std::endl;
+    std::cout << "Computation time: " << t_RANSAC_parallel2 << " ms" << std::endl;
 
-  double r_RANSAC_estimated_parallel2 = ground_truth_pose.computeResidual(cMo_estimated_RANSAC_parallel2);
-  std::cout << "Corresponding residual (" << ransac_iterations << " iterations): " << r_RANSAC_estimated_parallel2 << std::endl;
+    double r_RANSAC_estimated_parallel2 = ground_truth_pose.computeResidual(cMo_estimated_RANSAC_parallel2);
+    std::cout << "Corresponding residual (" << ransac_iterations << " iterations): " << r_RANSAC_estimated_parallel2 << std::endl;
+  }
 #endif
 
 
@@ -2014,42 +2029,44 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original, const std
 
 
 #ifdef TEST_PARALLEL_RANSAC
-  //Check for parallel RANSAC
-  //Check inlier index
-  std::cout << "\nCheck for parallel RANSAC (1000 iterations)" << std::endl;
-  std::vector<unsigned int> vectorOfFoundInlierIndex_parallel = pose_ransac_parallel.getRansacInlierIndex();
-  nbInlierIndexOk = checkInlierIndex(vectorOfFoundInlierIndex_parallel, vectorOfOutlierFlags);
+  if (appveyor_threading == "true") {
+    //Check for parallel RANSAC
+    //Check inlier index
+    std::cout << "\nCheck for parallel RANSAC (1000 iterations)" << std::endl;
+    std::vector<unsigned int> vectorOfFoundInlierIndex_parallel = pose_ransac_parallel.getRansacInlierIndex();
+    nbInlierIndexOk = checkInlierIndex(vectorOfFoundInlierIndex_parallel, vectorOfOutlierFlags);
 
-  std::cout << "There are " << nbInlierIndexOk << " true inliers found, " << vectorOfFoundInlierIndex_parallel.size()
-            << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
+    std::cout << "There are " << nbInlierIndexOk << " true inliers found, " << vectorOfFoundInlierIndex_parallel.size()
+      << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
 
-  //Check inlier points returned
-  std::vector<vpPoint> vectorOfFoundInlierPoints_parallel = pose_ransac_parallel.getRansacInliers();
-  if(vectorOfFoundInlierPoints_parallel.size() != vectorOfFoundInlierIndex_parallel.size()) {
-    std::cerr << "The number of inlier index is different with the number of inlier points !" << std::endl;
-    return false;
-  }
-  if (!checkInlierPoints(vectorOfFoundInlierPoints_parallel, vectorOfFoundInlierIndex_parallel, bunnyModelPoints_noisy)) {
-    return false;
-  }
+    //Check inlier points returned
+    std::vector<vpPoint> vectorOfFoundInlierPoints_parallel = pose_ransac_parallel.getRansacInliers();
+    if (vectorOfFoundInlierPoints_parallel.size() != vectorOfFoundInlierIndex_parallel.size()) {
+      std::cerr << "The number of inlier index is different with the number of inlier points !" << std::endl;
+      return false;
+    }
+    if (!checkInlierPoints(vectorOfFoundInlierPoints_parallel, vectorOfFoundInlierIndex_parallel, bunnyModelPoints_noisy)) {
+      return false;
+    }
 
-  //Check for parallel RANSAC 2
-  //Check inlier index
-  std::cout << "\nCheck for parallel RANSAC (" << ransac_iterations << " iterations)" << std::endl;
-  std::vector<unsigned int> vectorOfFoundInlierIndex_parallel2 = pose_ransac_parallel2.getRansacInlierIndex();
-  nbInlierIndexOk = checkInlierIndex(vectorOfFoundInlierIndex_parallel2, vectorOfOutlierFlags);
+    //Check for parallel RANSAC 2
+    //Check inlier index
+    std::cout << "\nCheck for parallel RANSAC (" << ransac_iterations << " iterations)" << std::endl;
+    std::vector<unsigned int> vectorOfFoundInlierIndex_parallel2 = pose_ransac_parallel2.getRansacInlierIndex();
+    nbInlierIndexOk = checkInlierIndex(vectorOfFoundInlierIndex_parallel2, vectorOfOutlierFlags);
 
-  std::cout << "There are " << nbInlierIndexOk << " true inliers found, " << vectorOfFoundInlierIndex_parallel2.size()
-            << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
+    std::cout << "There are " << nbInlierIndexOk << " true inliers found, " << vectorOfFoundInlierIndex_parallel2.size()
+      << " inliers returned and " << nbTrueInlierIndex << " true inliers." << std::endl;
 
-  //Check inlier points returned
-  std::vector<vpPoint> vectorOfFoundInlierPoints_parallel2 = pose_ransac_parallel2.getRansacInliers();
-  if(vectorOfFoundInlierPoints_parallel2.size() != vectorOfFoundInlierIndex_parallel2.size()) {
-    std::cerr << "The number of inlier index is different with the number of inlier points !" << std::endl;
-    return false;
-  }
-  if (!checkInlierPoints(vectorOfFoundInlierPoints_parallel2, vectorOfFoundInlierIndex_parallel2, bunnyModelPoints_noisy)) {
-    return false;
+    //Check inlier points returned
+    std::vector<vpPoint> vectorOfFoundInlierPoints_parallel2 = pose_ransac_parallel2.getRansacInliers();
+    if (vectorOfFoundInlierPoints_parallel2.size() != vectorOfFoundInlierIndex_parallel2.size()) {
+      std::cerr << "The number of inlier index is different with the number of inlier points !" << std::endl;
+      return false;
+    }
+    if (!checkInlierPoints(vectorOfFoundInlierPoints_parallel2, vectorOfFoundInlierIndex_parallel2, bunnyModelPoints_noisy)) {
+      return false;
+    }
   }
 #endif
 
@@ -2061,11 +2078,13 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original, const std
     return false;
   } else {
 #ifdef TEST_PARALLEL_RANSAC
-    if (r_RANSAC_estimated_parallel > threshold) {
-      std::cerr << "The pose estimated with the parallel RANSAC method is badly estimated!" << std::endl;
-      std::cerr << "r_RANSAC_estimated_parallel=" << r_RANSAC_estimated_parallel << std::endl;
-      std::cerr << "threshold=" << threshold << std::endl;
-      return false;
+    if (appveyor_threading == "true") {
+      if (r_RANSAC_estimated_parallel > threshold) {
+        std::cerr << "The pose estimated with the parallel RANSAC method is badly estimated!" << std::endl;
+        std::cerr << "r_RANSAC_estimated_parallel=" << r_RANSAC_estimated_parallel << std::endl;
+        std::cerr << "threshold=" << threshold << std::endl;
+        return false;
+      }
     }
     #endif
     std::cout << "The pose estimated with the RANSAC method is well estimated!" << std::endl;

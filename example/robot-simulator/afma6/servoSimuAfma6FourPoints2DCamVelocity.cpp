@@ -165,193 +165,201 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 int
 main(int argc, const char ** argv)
 {
+  std::string appveyor_threading = "";
   try {
-    bool opt_click_allowed = true;
-    bool opt_display = true;
+    appveyor_threading = vpIoTools::getenv("APPVEYOR_THREADING");
+  } catch (...) {}
 
-    // Read the command line options
-    if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      exit (-1);
-    }
+  if (appveyor_threading == "true") {
+    try {
+      bool opt_click_allowed = true;
+      bool opt_display = true;
 
-    // We open two displays, one for the internal camera view, the other one for
-    // the external view, using either X11, GTK or GDI.
-#if defined VISP_HAVE_X11
-    vpDisplayX displayInt;
-#elif defined VISP_HAVE_GDI
-    vpDisplayGDI displayInt;
-#elif defined VISP_HAVE_OPENCV
-    vpDisplayOpenCV displayInt;
-#endif
-
-    vpImage<unsigned char> Iint(480, 640, 255);
-
-    if (opt_display) {
-      // open a display for the visualization
-      displayInt.init(Iint,700,0, "Internal view") ;
-    }
-
-    vpServo task;
-
-    std::cout << std::endl ;
-    std::cout << "----------------------------------------------" << std::endl ;
-    std::cout << " Test program for vpServo "  <<std::endl ;
-    std::cout << " Eye-in-hand task control, articular velocity are computed"
-              << std::endl ;
-    std::cout << " Simulation " << std::endl ;
-    std::cout << " task : servo 4 points " << std::endl ;
-    std::cout << "----------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
-
-    // sets the initial camera location
-    vpHomogeneousMatrix cMo(-0.05,-0.05,0.7,
-                            vpMath::rad(10),  vpMath::rad(10),  vpMath::rad(-30));
-
-    // sets the point coordinates in the object frame
-    vpPoint point[4] ;
-    point[0].setWorldCoordinates(-0.045,-0.045,0) ;
-    point[3].setWorldCoordinates(-0.045,0.045,0) ;
-    point[2].setWorldCoordinates(0.045,0.045,0) ;
-    point[1].setWorldCoordinates(0.045,-0.045,0) ;
-
-    // computes the point coordinates in the camera frame and its 2D coordinates
-    for (unsigned int i = 0 ; i < 4 ; i++)
-      point[i].track(cMo) ;
-
-    // sets the desired position of the point
-    vpFeaturePoint p[4] ;
-    for (unsigned int i = 0 ; i < 4 ; i++)
-      vpFeatureBuilder::create(p[i],point[i])  ;  //retrieve x,y and Z of the vpPoint structure
-
-    // sets the desired position of the feature point s*
-    vpFeaturePoint pd[4] ;
-
-    // Desired pose
-    vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,0.8,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)));
-
-    // Projection of the points
-    for (unsigned int  i = 0 ; i < 4 ; i++)
-      point[i].track(cdMo);
-
-    for (unsigned int  i = 0 ; i < 4 ; i++)
-      vpFeatureBuilder::create(pd[i], point[i]);
-
-    // define the task
-    // - we want an eye-in-hand control law
-    // - articular velocity are computed
-    task.setServo(vpServo::EYEINHAND_CAMERA);
-    task.setInteractionMatrixType(vpServo::DESIRED) ;
-
-    // we want to see a point on a point
-    for (unsigned int i = 0 ; i < 4 ; i++)
-      task.addFeature(p[i],pd[i]) ;
-
-    // set the gain
-    task.setLambda(0.8) ;
-
-    // Declaration of the robot
-    vpSimulatorAfma6 robot(opt_display);
-
-    // Initialise the robot and especially the camera
-    robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithoutDistortion);
-    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
-
-    // Initialise the object for the display part*/
-    robot.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
-
-    // Initialise the position of the object relative to the pose of the robot's camera
-    robot.initialiseObjectRelativeToCamera(cMo);
-
-    // Set the desired position (for the displaypart)
-    robot.setDesiredCameraPosition(cdMo);
-
-    // Get the internal robot's camera parameters
-    vpCameraParameters cam;
-    robot.getCameraParameters(cam,Iint);
-
-    if (opt_display)
-    {
-      //Get the internal view
-      vpDisplay::display(Iint);
-      robot.getInternalView(Iint);
-      vpDisplay::flush(Iint);
-    }
-
-    // Display task information
-    task.print() ;
-
-    unsigned int iter=0 ;
-    vpTRACE("\t loop") ;
-    while(iter++<500)
-    {
-      std::cout << "---------------------------------------------" << iter <<std::endl ;
-      vpColVector v ;
-
-      // Get the Time at the beginning of the loop
-      double t = vpTime::measureTimeMs();
-
-      // Get the current pose of the camera
-      cMo = robot.get_cMo();
-
-      if (iter==1) {
-        std::cout <<"Initial robot position with respect to the object frame:\n";
-        cMo.print();
+      // Read the command line options
+      if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
+        exit (-1);
       }
 
-      // new point position
+      // We open two displays, one for the internal camera view, the other one for
+      // the external view, using either X11, GTK or GDI.
+  #if defined VISP_HAVE_X11
+      vpDisplayX displayInt;
+  #elif defined VISP_HAVE_GDI
+      vpDisplayGDI displayInt;
+  #elif defined VISP_HAVE_OPENCV
+      vpDisplayOpenCV displayInt;
+  #endif
+
+      vpImage<unsigned char> Iint(480, 640, 255);
+
+      if (opt_display) {
+        // open a display for the visualization
+        displayInt.init(Iint,700,0, "Internal view") ;
+      }
+
+      vpServo task;
+
+      std::cout << std::endl ;
+      std::cout << "----------------------------------------------" << std::endl ;
+      std::cout << " Test program for vpServo "  <<std::endl ;
+      std::cout << " Eye-in-hand task control, articular velocity are computed"
+                << std::endl ;
+      std::cout << " Simulation " << std::endl ;
+      std::cout << " task : servo 4 points " << std::endl ;
+      std::cout << "----------------------------------------------" << std::endl ;
+      std::cout << std::endl ;
+
+      // sets the initial camera location
+      vpHomogeneousMatrix cMo(-0.05,-0.05,0.7,
+                              vpMath::rad(10),  vpMath::rad(10),  vpMath::rad(-30));
+
+      // sets the point coordinates in the object frame
+      vpPoint point[4] ;
+      point[0].setWorldCoordinates(-0.045,-0.045,0) ;
+      point[3].setWorldCoordinates(-0.045,0.045,0) ;
+      point[2].setWorldCoordinates(0.045,0.045,0) ;
+      point[1].setWorldCoordinates(0.045,-0.045,0) ;
+
+      // computes the point coordinates in the camera frame and its 2D coordinates
       for (unsigned int i = 0 ; i < 4 ; i++)
-      {
         point[i].track(cMo) ;
-        // retrieve x,y and Z of the vpPoint structure
-        vpFeatureBuilder::create(p[i],point[i])  ;
-      }
+
+      // sets the desired position of the point
+      vpFeaturePoint p[4] ;
+      for (unsigned int i = 0 ; i < 4 ; i++)
+        vpFeatureBuilder::create(p[i],point[i])  ;  //retrieve x,y and Z of the vpPoint structure
+
+      // sets the desired position of the feature point s*
+      vpFeaturePoint pd[4] ;
+
+      // Desired pose
+      vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0,0.0,0.8,vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)));
+
+      // Projection of the points
+      for (unsigned int  i = 0 ; i < 4 ; i++)
+        point[i].track(cdMo);
+
+      for (unsigned int  i = 0 ; i < 4 ; i++)
+        vpFeatureBuilder::create(pd[i], point[i]);
+
+      // define the task
+      // - we want an eye-in-hand control law
+      // - articular velocity are computed
+      task.setServo(vpServo::EYEINHAND_CAMERA);
+      task.setInteractionMatrixType(vpServo::DESIRED) ;
+
+      // we want to see a point on a point
+      for (unsigned int i = 0 ; i < 4 ; i++)
+        task.addFeature(p[i],pd[i]) ;
+
+      // set the gain
+      task.setLambda(0.8) ;
+
+      // Declaration of the robot
+      vpSimulatorAfma6 robot(opt_display);
+
+      // Initialise the robot and especially the camera
+      robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithoutDistortion);
+      robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+
+      // Initialise the object for the display part*/
+      robot.initScene(vpWireFrameSimulator::PLATE, vpWireFrameSimulator::D_STANDARD);
+
+      // Initialise the position of the object relative to the pose of the robot's camera
+      robot.initialiseObjectRelativeToCamera(cMo);
+
+      // Set the desired position (for the displaypart)
+      robot.setDesiredCameraPosition(cdMo);
+
+      // Get the internal robot's camera parameters
+      vpCameraParameters cam;
+      robot.getCameraParameters(cam,Iint);
 
       if (opt_display)
       {
-        // Get the internal view and display it
-        vpDisplay::display(Iint) ;
+        //Get the internal view
+        vpDisplay::display(Iint);
         robot.getInternalView(Iint);
         vpDisplay::flush(Iint);
       }
 
-      if (opt_display && opt_click_allowed && iter == 1)
+      // Display task information
+      task.print() ;
+
+      unsigned int iter=0 ;
+      vpTRACE("\t loop") ;
+      while(iter++<500)
       {
-        // suppressed for automate test
-        std::cout << "Click in the internal view window to continue..." << std::endl;
-        vpDisplay::getClick(Iint) ;
+        std::cout << "---------------------------------------------" << iter <<std::endl ;
+        vpColVector v ;
+
+        // Get the Time at the beginning of the loop
+        double t = vpTime::measureTimeMs();
+
+        // Get the current pose of the camera
+        cMo = robot.get_cMo();
+
+        if (iter==1) {
+          std::cout <<"Initial robot position with respect to the object frame:\n";
+          cMo.print();
+        }
+
+        // new point position
+        for (unsigned int i = 0 ; i < 4 ; i++)
+        {
+          point[i].track(cMo) ;
+          // retrieve x,y and Z of the vpPoint structure
+          vpFeatureBuilder::create(p[i],point[i])  ;
+        }
+
+        if (opt_display)
+        {
+          // Get the internal view and display it
+          vpDisplay::display(Iint) ;
+          robot.getInternalView(Iint);
+          vpDisplay::flush(Iint);
+        }
+
+        if (opt_display && opt_click_allowed && iter == 1)
+        {
+          // suppressed for automate test
+          std::cout << "Click in the internal view window to continue..." << std::endl;
+          vpDisplay::getClick(Iint) ;
+        }
+
+        // compute the control law
+        v = task.computeControlLaw() ;
+
+        // send the camera velocity to the controller
+        robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+
+        std::cout << "|| s - s* || " << ( task.getError() ).sumSquare() <<std::endl ;
+
+        // The main loop has a duration of 10 ms at minimum
+        vpTime::wait(t,10);
       }
 
-      // compute the control law
-      v = task.computeControlLaw() ;
+      // Display task information
+      task.print() ;
+      task.kill();
 
-      // send the camera velocity to the controller
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+      std::cout <<"Final robot position with respect to the object frame:\n";
+      cMo.print();
 
-      std::cout << "|| s - s* || " << ( task.getError() ).sumSquare() <<std::endl ;
-
-      // The main loop has a duration of 10 ms at minimum
-      vpTime::wait(t,10);
+      if (opt_display && opt_click_allowed)
+      {
+        // suppressed for automate test
+        std::cout << "Click in the internal view window to end..." << std::endl;
+        vpDisplay::getClick(Iint) ;
+      }
+      return 0;
     }
-
-    // Display task information
-    task.print() ;
-    task.kill();
-
-    std::cout <<"Final robot position with respect to the object frame:\n";
-    cMo.print();
-
-    if (opt_display && opt_click_allowed)
-    {
-      // suppressed for automate test
-      std::cout << "Click in the internal view window to end..." << std::endl;
-      vpDisplay::getClick(Iint) ;
+    catch(vpException &e) {
+      std::cout << "Catch a ViSP exception: " << e << std::endl;
+      return 1;
     }
-    return 0;
   }
-  catch(vpException &e) {
-    std::cout << "Catch a ViSP exception: " << e << std::endl;
-    return 1;
-  }
+  return 0;
 }
 #else
 int
