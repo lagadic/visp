@@ -1688,7 +1688,7 @@ std::vector<std::string> vpIoTools::splitChain(const std::string & chain, const 
 
 
 /*!
-   List of files in directory
+   List of files in directory, in alphabetical order.
    There is no difference if pathname contains terminating backslash or not
    Unlike scandir(), does not return "." and ".."
    \param pathname : path to directory
@@ -1717,6 +1717,7 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
     free(list[i]);
   }
   free(list);
+  std::sort(files.begin(), files.end());
   return files;
 
 #elif defined(_WIN32)
@@ -1743,6 +1744,7 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname) {
   }
   while (FindNextFile(hFind, &FindFileData));
   FindClose(hFind);
+  std::sort(files.begin(), files.end());
   return files;
 
 #  else
