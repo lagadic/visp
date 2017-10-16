@@ -28,33 +28,45 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Tukey M-estimator.
+ * CPU features (hardware capabilities).
  *
  *****************************************************************************/
 
-#ifndef __vpMbtTukeyEstimator_h_
-#define __vpMbtTukeyEstimator_h_
+#include <visp3/core/vpCPUFeatures.h>
+#include "x86/cpu_x86.h"
 
-#include <vector>
-#include <visp3/core/vpColVector.h>
+namespace vpCPUFeatures {
+static const FeatureDetector::cpu_x86 cpu_features;
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+bool checkSSE2() {
+  return cpu_features.HW_SSE2;
+}
 
-template <typename T>
-class VISP_EXPORT vpMbtTukeyEstimator {
-public:
-  void MEstimator(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
-  void MEstimator(const vpColVector &residues, vpColVector &weights, const double NoiseThreshold);
+bool checkSSE3() {
+  return cpu_features.HW_SSE3;
+}
 
-private:
-  T getMedian(std::vector<T> &vec);
-  void MEstimator_impl(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
-  void MEstimator_impl_ssse3(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
-  void psiTukey(const T sig, std::vector<T> &x, std::vector<T> &weights);
-  void psiTukey(const T sig, std::vector<T> &x, vpColVector &weights);
+bool checkSSSE3() {
+  return cpu_features.HW_SSSE3;
+}
 
-  std::vector<T> m_normres;
-  std::vector<T> m_residues;
-};
-#endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
-#endif
+bool checkSSE41() {
+  return cpu_features.HW_SSE41;
+}
+
+bool checkSSE42() {
+  return cpu_features.HW_SSE42;
+}
+
+bool checkAVX() {
+  return cpu_features.HW_AVX;
+}
+
+bool checkAVX2() {
+  return cpu_features.HW_AVX2;
+}
+
+void printCPUInfo() {
+  cpu_features.print();
+}
+} //namespace vpCPUFeatures

@@ -34,6 +34,7 @@
 
 #include <visp3/mbt/vpMbtFaceDepthNormal.h>
 #include <visp3/mbt/vpMbtTukeyEstimator.h>
+#include <visp3/core/vpCPUFeatures.h>
 
 #ifdef VISP_HAVE_PCL
 #  include <pcl/segmentation/sac_segmentation.h>
@@ -193,8 +194,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
     point_cloud_face->reserve( (size_t) (bb.getWidth()*bb.getHeight()) );
   }
 
-
-#if USE_SSE
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
+#if !USE_SSE
+  checkSSE2 = false;
+#else
   bool push = false;
   double prev_x, prev_y, prev_z;
 #endif
@@ -223,28 +226,30 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
             //Add point for custom method for plane equation estimation
             vpPixelMeterConversion::convertPoint(m_cam, j, i, x, y);
 
-  #if USE_SSE
-            if (!push) {
-              push = true;
-              prev_x = x;
-              prev_y = y;
-              prev_z = (*point_cloud)(j,i).z;
+            if (checkSSE2) {
+#if USE_SSE
+              if (!push) {
+                push = true;
+                prev_x = x;
+                prev_y = y;
+                prev_z = (*point_cloud)(j,i).z;
+              } else {
+                push = false;
+                point_cloud_face_custom.push_back(prev_x);
+                point_cloud_face_custom.push_back(x);
+
+                point_cloud_face_custom.push_back(prev_y);
+                point_cloud_face_custom.push_back(y);
+
+                point_cloud_face_custom.push_back(prev_z);
+                point_cloud_face_custom.push_back((*point_cloud)(j,i).z);
+              }
+#endif
             } else {
-              push = false;
-              point_cloud_face_custom.push_back(prev_x);
               point_cloud_face_custom.push_back(x);
-
-              point_cloud_face_custom.push_back(prev_y);
               point_cloud_face_custom.push_back(y);
-
-              point_cloud_face_custom.push_back(prev_z);
               point_cloud_face_custom.push_back((*point_cloud)(j,i).z);
             }
-  #else
-            point_cloud_face_custom.push_back(x);
-            point_cloud_face_custom.push_back(y);
-            point_cloud_face_custom.push_back((*point_cloud)(j,i).z);
-  #endif
           }
         }
 
@@ -256,7 +261,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   }
 
 #if USE_SSE
-  if (push) {
+  if (checkSSE2 && push) {
     point_cloud_face_custom.push_back(prev_x);
     point_cloud_face_custom.push_back(prev_y);
     point_cloud_face_custom.push_back(prev_z);
@@ -339,7 +344,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
     point_cloud_face_custom.reserve( (size_t) (3*bb.getWidth()*bb.getHeight()) );
   }
 
-#if USE_SSE
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
+#if !USE_SSE
+  checkSSE2 = false;
+#else
   bool push = false;
   double prev_x, prev_y, prev_z;
 #endif
@@ -363,28 +371,31 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
         if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
           //Add point for custom method for plane equation estimation
           vpPixelMeterConversion::convertPoint(m_cam, j, i, x, y);
+
+          if (checkSSE2) {
 #if USE_SSE
-          if (!push) {
-            push = true;
-            prev_x = x;
-            prev_y = y;
-            prev_z = point_cloud[i*width + j][2];
+            if (!push) {
+              push = true;
+              prev_x = x;
+              prev_y = y;
+              prev_z = point_cloud[i*width + j][2];
+            } else {
+              push = false;
+              point_cloud_face_custom.push_back(prev_x);
+              point_cloud_face_custom.push_back(x);
+
+              point_cloud_face_custom.push_back(prev_y);
+              point_cloud_face_custom.push_back(y);
+
+              point_cloud_face_custom.push_back(prev_z);
+              point_cloud_face_custom.push_back(point_cloud[i*width + j][2]);
+            }
+#endif
           } else {
-            push = false;
-            point_cloud_face_custom.push_back(prev_x);
             point_cloud_face_custom.push_back(x);
-
-            point_cloud_face_custom.push_back(prev_y);
             point_cloud_face_custom.push_back(y);
-
-            point_cloud_face_custom.push_back(prev_z);
             point_cloud_face_custom.push_back(point_cloud[i*width + j][2]);
           }
-#else
-          point_cloud_face_custom.push_back(x);
-          point_cloud_face_custom.push_back(y);
-          point_cloud_face_custom.push_back(point_cloud[i*width + j][2]);
-#endif
         }
 
 #if DEBUG_DISPLAY_DEPTH_NORMAL
@@ -395,7 +406,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   }
 
 #if USE_SSE
-  if (push) {
+  if (checkSSE2 && push) {
     point_cloud_face_custom.push_back(prev_x);
     point_cloud_face_custom.push_back(prev_y);
     point_cloud_face_custom.push_back(prev_z);
@@ -970,24 +981,167 @@ void vpMbtFaceDepthNormal::estimateFeatures(const std::vector<double> &point_clo
 
   Mat33<double> ATA_3x3;
 
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
+#if !USE_SSE
+  checkSSE2 = false;
+#endif
+
+  if (checkSSE2) {
 #if USE_SSE
-  while ( std::fabs(error - prev_error) > 1e-6 && (iter < max_iter) ) {
-    if (iter == 0) {
-      //Transform the plane equation for the current pose
-      m_planeCamera = m_planeObject;
-      m_planeCamera.changeFrame(cMo);
+    while ( std::fabs(error - prev_error) > 1e-6 && (iter < max_iter) ) {
+      if (iter == 0) {
+        //Transform the plane equation for the current pose
+        m_planeCamera = m_planeObject;
+        m_planeCamera.changeFrame(cMo);
 
-      double ux = m_planeCamera.getA();
-      double uy = m_planeCamera.getB();
-      double uz = m_planeCamera.getC();
-      double D  = m_planeCamera.getD();
+        double ux = m_planeCamera.getA();
+        double uy = m_planeCamera.getB();
+        double uz = m_planeCamera.getC();
+        double D  = m_planeCamera.getD();
 
-      //Features
-      A = -ux/D;
-      B = -uy/D;
-      C = -uz/D;
+        //Features
+        A = -ux/D;
+        B = -uy/D;
+        C = -uz/D;
 
+        size_t cpt = 0;
+        if (point_cloud_face.size()/3 >= 2) {
+          const double *ptr_point_cloud = &point_cloud_face[0];
+          const __m128d vA = _mm_set1_pd(A);
+          const __m128d vB = _mm_set1_pd(B);
+          const __m128d vC = _mm_set1_pd(C);
+          const __m128d vones = _mm_set1_pd(1.0);
+
+          double *ptr_residues = &residues[0];
+
+          for (; cpt <= point_cloud_face.size()-6; cpt+=6, ptr_point_cloud+=6, ptr_residues+=2) {
+            const __m128d vxi = _mm_loadu_pd(ptr_point_cloud);
+            const __m128d vyi = _mm_loadu_pd(ptr_point_cloud+2);
+            const __m128d vZi = _mm_loadu_pd(ptr_point_cloud+4);
+            const __m128d vinvZi = _mm_div_pd(vones, vZi);
+
+            const __m128d tmp = _mm_add_pd( _mm_add_pd( _mm_mul_pd(vA, vxi), _mm_mul_pd(vB, vyi) ), _mm_sub_pd(vC, vinvZi) );
+            _mm_storeu_pd(ptr_residues, tmp);
+          }
+        }
+
+        for (; cpt < point_cloud_face.size(); cpt+=3) {
+          double xi = point_cloud_face[cpt];
+          double yi = point_cloud_face[cpt+1];
+          double Zi = point_cloud_face[cpt+2];
+
+          residues[cpt/3] = (A*xi + B*yi + C - 1/Zi);
+        }
+      }
+
+      tukey_robust.MEstimator(residues, w, 1e-2);
+
+      __m128d vsum_wi2_xi2 = _mm_setzero_pd();
+      __m128d vsum_wi2_yi2 = _mm_setzero_pd();
+      __m128d vsum_wi2 = _mm_setzero_pd();
+      __m128d vsum_wi2_xi_yi = _mm_setzero_pd();
+      __m128d vsum_wi2_xi = _mm_setzero_pd();
+      __m128d vsum_wi2_yi = _mm_setzero_pd();
+
+      __m128d vsum_wi2_xi_Zi = _mm_setzero_pd();
+      __m128d vsum_wi2_yi_Zi = _mm_setzero_pd();
+      __m128d vsum_wi2_Zi = _mm_setzero_pd();
+
+      //Estimate A, B, C
       size_t cpt = 0;
+      if (point_cloud_face.size()/3 >= 2) {
+        const double *ptr_point_cloud = &point_cloud_face[0];
+        double *ptr_w = &w[0];
+
+        const __m128d vones = _mm_set1_pd(1.0);
+
+        for (; cpt <= point_cloud_face.size()-6; cpt+=6, ptr_point_cloud+=6, ptr_w += 2) {
+          const __m128d vwi2 = _mm_mul_pd( _mm_loadu_pd(ptr_w), _mm_loadu_pd(ptr_w) );
+
+          const __m128d vxi = _mm_loadu_pd(ptr_point_cloud);
+          const __m128d vyi = _mm_loadu_pd(ptr_point_cloud+2);
+          const __m128d vZi = _mm_loadu_pd(ptr_point_cloud+4);
+          const __m128d vinvZi = _mm_div_pd(vones, vZi);
+
+          vsum_wi2_xi2 = _mm_add_pd( vsum_wi2_xi2, _mm_mul_pd( vwi2, _mm_mul_pd(vxi, vxi) ) );
+          vsum_wi2_yi2 = _mm_add_pd( vsum_wi2_yi2, _mm_mul_pd( vwi2, _mm_mul_pd(vyi, vyi) ) );
+          vsum_wi2 = _mm_add_pd( vsum_wi2, vwi2 );
+          vsum_wi2_xi_yi = _mm_add_pd( vsum_wi2_xi_yi, _mm_mul_pd( vwi2, _mm_mul_pd(vxi, vyi) ) );
+          vsum_wi2_xi = _mm_add_pd( vsum_wi2_xi, _mm_mul_pd( vwi2, vxi ) );
+          vsum_wi2_yi = _mm_add_pd( vsum_wi2_yi, _mm_mul_pd( vwi2, vyi ) );
+
+          const __m128d vwi2_invZi = _mm_mul_pd(vwi2, vinvZi);
+          vsum_wi2_xi_Zi = _mm_add_pd( vsum_wi2_xi_Zi, _mm_mul_pd( vxi, vwi2_invZi ) );
+          vsum_wi2_yi_Zi = _mm_add_pd( vsum_wi2_yi_Zi, _mm_mul_pd( vyi, vwi2_invZi ) );
+          vsum_wi2_Zi    = _mm_add_pd( vsum_wi2_Zi, vwi2_invZi );
+        }
+      }
+
+      double vtmp[2];
+      _mm_storeu_pd(vtmp, vsum_wi2_xi2);
+      double sum_wi2_xi2 = vtmp[0] + vtmp[1];
+
+      _mm_storeu_pd(vtmp, vsum_wi2_yi2);
+      double sum_wi2_yi2 = vtmp[0] + vtmp[1];
+
+      _mm_storeu_pd(vtmp, vsum_wi2);
+      double sum_wi2 = vtmp[0] + vtmp[1];
+
+      _mm_storeu_pd(vtmp, vsum_wi2_xi_yi);
+      double sum_wi2_xi_yi = vtmp[0] + vtmp[1];
+
+      _mm_storeu_pd(vtmp, vsum_wi2_xi);
+      double sum_wi2_xi = vtmp[0] + vtmp[1];
+
+      _mm_storeu_pd(vtmp, vsum_wi2_yi);
+      double sum_wi2_yi = vtmp[0] + vtmp[1];
+
+      _mm_storeu_pd(vtmp, vsum_wi2_xi_Zi);
+      double sum_wi2_xi_Zi = vtmp[0] + vtmp[1];
+
+      _mm_storeu_pd(vtmp, vsum_wi2_yi_Zi);
+      double sum_wi2_yi_Zi = vtmp[0] + vtmp[1];
+
+      _mm_storeu_pd(vtmp, vsum_wi2_Zi);
+      double sum_wi2_Zi = vtmp[0] + vtmp[1];
+
+      for (; cpt < point_cloud_face.size(); cpt+=3) {
+        double wi2 = w[cpt/3] * w[cpt/3];
+
+        double xi = point_cloud_face[cpt];
+        double yi = point_cloud_face[cpt+1];
+        double Zi = point_cloud_face[cpt+2];
+        double invZi = 1.0 / Zi;
+
+        sum_wi2_xi2 += wi2 * xi*xi;
+        sum_wi2_yi2 += wi2 * yi*yi;
+        sum_wi2 += wi2;
+        sum_wi2_xi_yi += wi2 * xi*yi;
+        sum_wi2_xi += wi2 * xi;
+        sum_wi2_yi += wi2 * yi;
+
+        sum_wi2_xi_Zi += wi2 * xi * invZi;
+        sum_wi2_yi_Zi += wi2 * yi * invZi;
+        sum_wi2_Zi += wi2 * invZi;
+      }
+
+      ATA_3x3[0] = sum_wi2_xi2;    ATA_3x3[1] = sum_wi2_xi_yi;  ATA_3x3[2] = sum_wi2_xi;
+      ATA_3x3[3] = sum_wi2_xi_yi;  ATA_3x3[4] = sum_wi2_yi2;    ATA_3x3[5] = sum_wi2_yi;
+      ATA_3x3[6] = sum_wi2_xi;     ATA_3x3[7] = sum_wi2_yi;     ATA_3x3[8] = sum_wi2;
+
+      Mat33<double> minv = ATA_3x3.inverse();
+
+      A = minv[0]*sum_wi2_xi_Zi + minv[1]*sum_wi2_yi_Zi + minv[2]*sum_wi2_Zi;
+      B = minv[3]*sum_wi2_xi_Zi + minv[4]*sum_wi2_yi_Zi + minv[5]*sum_wi2_Zi;
+      C = minv[6]*sum_wi2_xi_Zi + minv[7]*sum_wi2_yi_Zi + minv[8]*sum_wi2_Zi;
+
+      cpt = 0;
+
+      //Compute error
+      prev_error = error;
+      error = 0.0;
+
+      __m128d verror = _mm_set1_pd(0.0);
       if (point_cloud_face.size()/3 >= 2) {
         const double *ptr_point_cloud = &point_cloud_face[0];
         const __m128d vA = _mm_set1_pd(A);
@@ -997,254 +1151,118 @@ void vpMbtFaceDepthNormal::estimateFeatures(const std::vector<double> &point_clo
 
         double *ptr_residues = &residues[0];
 
-        for (; cpt <= point_cloud_face.size()-6; cpt+=6, ptr_point_cloud+=6, ptr_residues+=2) {
+        for (; cpt <= point_cloud_face.size()-6; cpt+=6, ptr_point_cloud+=6, ptr_residues += 2) {
           const __m128d vxi = _mm_loadu_pd(ptr_point_cloud);
           const __m128d vyi = _mm_loadu_pd(ptr_point_cloud+2);
           const __m128d vZi = _mm_loadu_pd(ptr_point_cloud+4);
           const __m128d vinvZi = _mm_div_pd(vones, vZi);
 
           const __m128d tmp = _mm_add_pd( _mm_add_pd( _mm_mul_pd(vA, vxi), _mm_mul_pd(vB, vyi) ), _mm_sub_pd(vC, vinvZi) );
+          verror = _mm_add_pd( verror, _mm_mul_pd( tmp, tmp ) );
+
           _mm_storeu_pd(ptr_residues, tmp);
         }
       }
 
-      for (; cpt < point_cloud_face.size(); cpt+=3) {
-        double xi = point_cloud_face[cpt];
-        double yi = point_cloud_face[cpt+1];
-        double Zi = point_cloud_face[cpt+2];
+      _mm_storeu_pd(vtmp, verror);
+      error = vtmp[0] + vtmp[1];
 
-        residues[cpt/3] = (A*xi + B*yi + C - 1/Zi);
+      for (size_t idx = cpt; idx < point_cloud_face.size(); idx+=3) {
+        double xi = point_cloud_face[idx];
+        double yi = point_cloud_face[idx+1];
+        double Zi = point_cloud_face[idx+2];
+
+        error += vpMath::sqr(A*xi + B*yi + C - 1/Zi);
+        residues[idx/3] = (A*xi + B*yi + C - 1/Zi);
       }
-    }
 
-    tukey_robust.MEstimator(residues, w, 1e-2);
+      error /= point_cloud_face.size()/3;
 
-    __m128d vsum_wi2_xi2 = _mm_setzero_pd();
-    __m128d vsum_wi2_yi2 = _mm_setzero_pd();
-    __m128d vsum_wi2 = _mm_setzero_pd();
-    __m128d vsum_wi2_xi_yi = _mm_setzero_pd();
-    __m128d vsum_wi2_xi = _mm_setzero_pd();
-    __m128d vsum_wi2_yi = _mm_setzero_pd();
+      iter++;
+    } //while ( std::fabs(error - prev_error) > 1e-6 && (iter < max_iter) )
+#endif
+  } else {
+    while ( std::fabs(error - prev_error) > 1e-6 && (iter < max_iter) ) {
+      if (iter == 0) {
+        //Transform the plane equation for the current pose
+        m_planeCamera = m_planeObject;
+        m_planeCamera.changeFrame(cMo);
 
-    __m128d vsum_wi2_xi_Zi = _mm_setzero_pd();
-    __m128d vsum_wi2_yi_Zi = _mm_setzero_pd();
-    __m128d vsum_wi2_Zi = _mm_setzero_pd();
+        double ux = m_planeCamera.getA();
+        double uy = m_planeCamera.getB();
+        double uz = m_planeCamera.getC();
+        double D  = m_planeCamera.getD();
 
-    //Estimate A, B, C
-    size_t cpt = 0;
-    if (point_cloud_face.size()/3 >= 2) {
-      const double *ptr_point_cloud = &point_cloud_face[0];
-      double *ptr_w = &w[0];
+        //Features
+        A = -ux/D;
+        B = -uy/D;
+        C = -uz/D;
 
-      const __m128d vones = _mm_set1_pd(1.0);
+        for (size_t i = 0; i < point_cloud_face.size()/3; i++) {
+          float xi = point_cloud_face[3*i];
+          float yi = point_cloud_face[3*i+1];
+          float Zi = point_cloud_face[3*i+2];
 
-      for (; cpt <= point_cloud_face.size()-6; cpt+=6, ptr_point_cloud+=6, ptr_w += 2) {
-        const __m128d vwi2 = _mm_mul_pd( _mm_loadu_pd(ptr_w), _mm_loadu_pd(ptr_w) );
-
-        const __m128d vxi = _mm_loadu_pd(ptr_point_cloud);
-        const __m128d vyi = _mm_loadu_pd(ptr_point_cloud+2);
-        const __m128d vZi = _mm_loadu_pd(ptr_point_cloud+4);
-        const __m128d vinvZi = _mm_div_pd(vones, vZi);
-
-        vsum_wi2_xi2 = _mm_add_pd( vsum_wi2_xi2, _mm_mul_pd( vwi2, _mm_mul_pd(vxi, vxi) ) );
-        vsum_wi2_yi2 = _mm_add_pd( vsum_wi2_yi2, _mm_mul_pd( vwi2, _mm_mul_pd(vyi, vyi) ) );
-        vsum_wi2 = _mm_add_pd( vsum_wi2, vwi2 );
-        vsum_wi2_xi_yi = _mm_add_pd( vsum_wi2_xi_yi, _mm_mul_pd( vwi2, _mm_mul_pd(vxi, vyi) ) );
-        vsum_wi2_xi = _mm_add_pd( vsum_wi2_xi, _mm_mul_pd( vwi2, vxi ) );
-        vsum_wi2_yi = _mm_add_pd( vsum_wi2_yi, _mm_mul_pd( vwi2, vyi ) );
-
-        const __m128d vwi2_invZi = _mm_mul_pd(vwi2, vinvZi);
-        vsum_wi2_xi_Zi = _mm_add_pd( vsum_wi2_xi_Zi, _mm_mul_pd( vxi, vwi2_invZi ) );
-        vsum_wi2_yi_Zi = _mm_add_pd( vsum_wi2_yi_Zi, _mm_mul_pd( vyi, vwi2_invZi ) );
-        vsum_wi2_Zi    = _mm_add_pd( vsum_wi2_Zi, vwi2_invZi );
+          residues[i] = (A*xi + B*yi + C - 1/Zi);
+        }
       }
-    }
 
-    double vtmp[2];
-    _mm_storeu_pd(vtmp, vsum_wi2_xi2);
-    double sum_wi2_xi2 = vtmp[0] + vtmp[1];
+      tukey_robust.MEstimator(residues, w, 1e-2);
 
-    _mm_storeu_pd(vtmp, vsum_wi2_yi2);
-    double sum_wi2_yi2 = vtmp[0] + vtmp[1];
+      //Estimate A, B, C
+      double sum_wi2_xi2 = 0.0, sum_wi2_yi2 = 0.0, sum_wi2 = 0.0;
+      double sum_wi2_xi_yi = 0.0, sum_wi2_xi = 0.0, sum_wi2_yi = 0.0;
 
-    _mm_storeu_pd(vtmp, vsum_wi2);
-    double sum_wi2 = vtmp[0] + vtmp[1];
-
-    _mm_storeu_pd(vtmp, vsum_wi2_xi_yi);
-    double sum_wi2_xi_yi = vtmp[0] + vtmp[1];
-
-    _mm_storeu_pd(vtmp, vsum_wi2_xi);
-    double sum_wi2_xi = vtmp[0] + vtmp[1];
-
-    _mm_storeu_pd(vtmp, vsum_wi2_yi);
-    double sum_wi2_yi = vtmp[0] + vtmp[1];
-
-    _mm_storeu_pd(vtmp, vsum_wi2_xi_Zi);
-    double sum_wi2_xi_Zi = vtmp[0] + vtmp[1];
-
-    _mm_storeu_pd(vtmp, vsum_wi2_yi_Zi);
-    double sum_wi2_yi_Zi = vtmp[0] + vtmp[1];
-
-    _mm_storeu_pd(vtmp, vsum_wi2_Zi);
-    double sum_wi2_Zi = vtmp[0] + vtmp[1];
-
-    for (; cpt < point_cloud_face.size(); cpt+=3) {
-      double wi2 = w[cpt/3] * w[cpt/3];
-
-      double xi = point_cloud_face[cpt];
-      double yi = point_cloud_face[cpt+1];
-      double Zi = point_cloud_face[cpt+2];
-      double invZi = 1.0 / Zi;
-
-      sum_wi2_xi2 += wi2 * xi*xi;
-      sum_wi2_yi2 += wi2 * yi*yi;
-      sum_wi2 += wi2;
-      sum_wi2_xi_yi += wi2 * xi*yi;
-      sum_wi2_xi += wi2 * xi;
-      sum_wi2_yi += wi2 * yi;
-
-      sum_wi2_xi_Zi += wi2 * xi * invZi;
-      sum_wi2_yi_Zi += wi2 * yi * invZi;
-      sum_wi2_Zi += wi2 * invZi;
-    }
-
-    ATA_3x3[0] = sum_wi2_xi2;    ATA_3x3[1] = sum_wi2_xi_yi;  ATA_3x3[2] = sum_wi2_xi;
-    ATA_3x3[3] = sum_wi2_xi_yi;  ATA_3x3[4] = sum_wi2_yi2;    ATA_3x3[5] = sum_wi2_yi;
-    ATA_3x3[6] = sum_wi2_xi;     ATA_3x3[7] = sum_wi2_yi;     ATA_3x3[8] = sum_wi2;
-
-    Mat33<double> minv = ATA_3x3.inverse();
-
-    A = minv[0]*sum_wi2_xi_Zi + minv[1]*sum_wi2_yi_Zi + minv[2]*sum_wi2_Zi;
-    B = minv[3]*sum_wi2_xi_Zi + minv[4]*sum_wi2_yi_Zi + minv[5]*sum_wi2_Zi;
-    C = minv[6]*sum_wi2_xi_Zi + minv[7]*sum_wi2_yi_Zi + minv[8]*sum_wi2_Zi;
-
-    cpt = 0;
-
-    //Compute error
-    prev_error = error;
-    error = 0.0;
-
-    __m128d verror = _mm_set1_pd(0.0);
-    if (point_cloud_face.size()/3 >= 2) {
-      const double *ptr_point_cloud = &point_cloud_face[0];
-      const __m128d vA = _mm_set1_pd(A);
-      const __m128d vB = _mm_set1_pd(B);
-      const __m128d vC = _mm_set1_pd(C);
-      const __m128d vones = _mm_set1_pd(1.0);
-
-      double *ptr_residues = &residues[0];
-
-      for (; cpt <= point_cloud_face.size()-6; cpt+=6, ptr_point_cloud+=6, ptr_residues += 2) {
-        const __m128d vxi = _mm_loadu_pd(ptr_point_cloud);
-        const __m128d vyi = _mm_loadu_pd(ptr_point_cloud+2);
-        const __m128d vZi = _mm_loadu_pd(ptr_point_cloud+4);
-        const __m128d vinvZi = _mm_div_pd(vones, vZi);
-
-        const __m128d tmp = _mm_add_pd( _mm_add_pd( _mm_mul_pd(vA, vxi), _mm_mul_pd(vB, vyi) ), _mm_sub_pd(vC, vinvZi) );
-        verror = _mm_add_pd( verror, _mm_mul_pd( tmp, tmp ) );
-
-        _mm_storeu_pd(ptr_residues, tmp);
-      }
-    }
-
-    _mm_storeu_pd(vtmp, verror);
-    error = vtmp[0] + vtmp[1];
-
-    for (size_t idx = cpt; idx < point_cloud_face.size(); idx+=3) {
-      double xi = point_cloud_face[idx];
-      double yi = point_cloud_face[idx+1];
-      double Zi = point_cloud_face[idx+2];
-
-      error += vpMath::sqr(A*xi + B*yi + C - 1/Zi);
-      residues[idx/3] = (A*xi + B*yi + C - 1/Zi);
-    }
-
-    error /= point_cloud_face.size()/3;
-
-    iter++;
-  } //while ( std::fabs(error - prev_error) > 1e-6 && (iter < max_iter) )
-#else
-  while ( std::fabs(error - prev_error) > 1e-6 && (iter < max_iter) ) {
-    if (iter == 0) {
-      //Transform the plane equation for the current pose
-      m_planeCamera = m_planeObject;
-      m_planeCamera.changeFrame(cMo);
-
-      double ux = m_planeCamera.getA();
-      double uy = m_planeCamera.getB();
-      double uz = m_planeCamera.getC();
-      double D  = m_planeCamera.getD();
-
-      //Features
-      A = -ux/D;
-      B = -uy/D;
-      C = -uz/D;
+      double sum_wi2_xi_Zi = 0.0, sum_wi2_yi_Zi = 0.0, sum_wi2_Zi = 0.0;
 
       for (size_t i = 0; i < point_cloud_face.size()/3; i++) {
-        float xi = point_cloud_face[3*i];
-        float yi = point_cloud_face[3*i+1];
-        float Zi = point_cloud_face[3*i+2];
+        double wi2 = w[i]*w[i];
 
+        double xi = point_cloud_face[3*i];
+        double yi = point_cloud_face[3*i+1];
+        double Zi = point_cloud_face[3*i+2];
+        double invZi = 1 / Zi;
+
+        sum_wi2_xi2 += wi2 * xi*xi;
+        sum_wi2_yi2 += wi2 * yi*yi;
+        sum_wi2 += wi2;
+        sum_wi2_xi_yi += wi2 * xi*yi;
+        sum_wi2_xi += wi2 * xi;
+        sum_wi2_yi += wi2 * yi;
+
+        sum_wi2_xi_Zi += wi2 * xi * invZi;
+        sum_wi2_yi_Zi += wi2 * yi * invZi;
+        sum_wi2_Zi += wi2 * invZi;
+      }
+
+      ATA_3x3[0] = sum_wi2_xi2;    ATA_3x3[1] = sum_wi2_xi_yi;  ATA_3x3[2] = sum_wi2_xi;
+      ATA_3x3[3] = sum_wi2_xi_yi;  ATA_3x3[4] = sum_wi2_yi2;    ATA_3x3[5] = sum_wi2_yi;
+      ATA_3x3[6] = sum_wi2_xi;     ATA_3x3[7] = sum_wi2_yi;     ATA_3x3[8] = sum_wi2;
+
+      Mat33<double> minv = ATA_3x3.inverse();
+
+      A = minv[0]*sum_wi2_xi_Zi + minv[1]*sum_wi2_yi_Zi + minv[2]*sum_wi2_Zi;
+      B = minv[3]*sum_wi2_xi_Zi + minv[4]*sum_wi2_yi_Zi + minv[5]*sum_wi2_Zi;
+      C = minv[6]*sum_wi2_xi_Zi + minv[7]*sum_wi2_yi_Zi + minv[8]*sum_wi2_Zi;
+
+      prev_error = error;
+      error = 0.0;
+
+      //Compute error
+      for (size_t i = 0; i < point_cloud_face.size()/3; i++) {
+        double xi = point_cloud_face[3*i];
+        double yi = point_cloud_face[3*i+1];
+        double Zi = point_cloud_face[3*i+2];
+
+        error += vpMath::sqr(A*xi + B*yi + C - 1/Zi);
         residues[i] = (A*xi + B*yi + C - 1/Zi);
       }
-    }
 
-    tukey_robust.MEstimator(residues, w, 1e-2);
+      error /= point_cloud_face.size()/3;
 
-    //Estimate A, B, C
-    double sum_wi2_xi2 = 0.0, sum_wi2_yi2 = 0.0, sum_wi2 = 0.0;
-    double sum_wi2_xi_yi = 0.0, sum_wi2_xi = 0.0, sum_wi2_yi = 0.0;
-
-    double sum_wi2_xi_Zi = 0.0, sum_wi2_yi_Zi = 0.0, sum_wi2_Zi = 0.0;
-
-    for (size_t i = 0; i < point_cloud_face.size()/3; i++) {
-      double wi2 = w[i]*w[i];
-
-      double xi = point_cloud_face[3*i];
-      double yi = point_cloud_face[3*i+1];
-      double Zi = point_cloud_face[3*i+2];
-      double invZi = 1 / Zi;
-
-      sum_wi2_xi2 += wi2 * xi*xi;
-      sum_wi2_yi2 += wi2 * yi*yi;
-      sum_wi2 += wi2;
-      sum_wi2_xi_yi += wi2 * xi*yi;
-      sum_wi2_xi += wi2 * xi;
-      sum_wi2_yi += wi2 * yi;
-
-      sum_wi2_xi_Zi += wi2 * xi * invZi;
-      sum_wi2_yi_Zi += wi2 * yi * invZi;
-      sum_wi2_Zi += wi2 * invZi;
-    }
-
-    ATA_3x3[0] = sum_wi2_xi2;    ATA_3x3[1] = sum_wi2_xi_yi;  ATA_3x3[2] = sum_wi2_xi;
-    ATA_3x3[3] = sum_wi2_xi_yi;  ATA_3x3[4] = sum_wi2_yi2;    ATA_3x3[5] = sum_wi2_yi;
-    ATA_3x3[6] = sum_wi2_xi;     ATA_3x3[7] = sum_wi2_yi;     ATA_3x3[8] = sum_wi2;
-
-    Mat33<double> minv = ATA_3x3.inverse();
-
-    A = minv[0]*sum_wi2_xi_Zi + minv[1]*sum_wi2_yi_Zi + minv[2]*sum_wi2_Zi;
-    B = minv[3]*sum_wi2_xi_Zi + minv[4]*sum_wi2_yi_Zi + minv[5]*sum_wi2_Zi;
-    C = minv[6]*sum_wi2_xi_Zi + minv[7]*sum_wi2_yi_Zi + minv[8]*sum_wi2_Zi;
-
-    prev_error = error;
-    error = 0.0;
-
-    //Compute error
-    for (size_t i = 0; i < point_cloud_face.size()/3; i++) {
-      double xi = point_cloud_face[3*i];
-      double yi = point_cloud_face[3*i+1];
-      double Zi = point_cloud_face[3*i+2];
-
-      error += vpMath::sqr(A*xi + B*yi + C - 1/Zi);
-      residues[i] = (A*xi + B*yi + C - 1/Zi);
-    }
-
-    error /= point_cloud_face.size()/3;
-
-    iter++;
-  } //while ( std::fabs(error - prev_error) > 1e-6 && (iter < max_iter) )
-#endif
+      iter++;
+    } //while ( std::fabs(error - prev_error) > 1e-6 && (iter < max_iter) )
+  }
 
   x_estimated.resize(3, false);
   x_estimated[0] = A;

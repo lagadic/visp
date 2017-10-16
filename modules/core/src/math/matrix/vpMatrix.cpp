@@ -63,6 +63,7 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/core/vpCPUFeatures.h>
 
 #define USE_SSE_CODE 1
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
@@ -1010,44 +1011,51 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
 
   vpMatrix::blas_dgemm(trans, trans, V.colNum, rowNum, colNum, alpha, V.data, V.colNum, data, colNum, beta, M.data, V.colNum);
 #else
-#  if USE_SSE
-  vpMatrix V_trans(6, 6);
-  for (unsigned int i = 0; i < 6; i++) {
-    for (unsigned int j = 0; j < 6; j++) {
-      V_trans[i][j] = V[j][i];
-    }
-  }
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
+#if !USE_SSE
+  checkSSE2 = false;
+#endif
 
-  for (unsigned int i = 0; i < rowNum; i++) {
-    double *rowptri = rowPtrs[i];
-    double *ci = M[i];
-
-    for (int j = 0; j < 6; j++) {
-      __m128d v_mul = _mm_setzero_pd();
-      for (int k = 0; k < 6; k+=2) {
-        v_mul = _mm_add_pd(v_mul, _mm_mul_pd(_mm_loadu_pd(&rowptri[k]), _mm_loadu_pd(&V_trans[j][k])));
+  if (checkSSE2) {
+#if USE_SSE
+    vpMatrix V_trans(6, 6);
+    for (unsigned int i = 0; i < 6; i++) {
+      for (unsigned int j = 0; j < 6; j++) {
+        V_trans[i][j] = V[j][i];
       }
+    }
 
-      double v_tmp[2];
-      _mm_storeu_pd(v_tmp, v_mul);
-      ci[j] = v_tmp[0] + v_tmp[1];
+    for (unsigned int i = 0; i < rowNum; i++) {
+      double *rowptri = rowPtrs[i];
+      double *ci = M[i];
+
+      for (int j = 0; j < 6; j++) {
+        __m128d v_mul = _mm_setzero_pd();
+        for (int k = 0; k < 6; k+=2) {
+          v_mul = _mm_add_pd(v_mul, _mm_mul_pd(_mm_loadu_pd(&rowptri[k]), _mm_loadu_pd(&V_trans[j][k])));
+        }
+
+        double v_tmp[2];
+        _mm_storeu_pd(v_tmp, v_mul);
+        ci[j] = v_tmp[0] + v_tmp[1];
+      }
     }
-  }
-#  else
-  unsigned int VcolNum = V.getCols();
-  unsigned int VrowNum = V.getRows();
-  for (unsigned int i=0;i<rowNum;i++)
-  {
-    double *rowptri = rowPtrs[i];
-    double *ci = M[i];
-    for (unsigned int j=0;j<VcolNum;j++)
+#endif
+  } else {
+    unsigned int VcolNum = V.getCols();
+    unsigned int VrowNum = V.getRows();
+    for (unsigned int i=0;i<rowNum;i++)
     {
-      double s = 0;
-      for (unsigned int k=0;k<VrowNum;k++) s += rowptri[k] * V[k][j];
-      ci[j] = s;
+      double *rowptri = rowPtrs[i];
+      double *ci = M[i];
+      for (unsigned int j=0;j<VcolNum;j++)
+      {
+        double s = 0;
+        for (unsigned int k=0;k<VrowNum;k++) s += rowptri[k] * V[k][j];
+        ci[j] = s;
+      }
     }
   }
-#  endif
 #endif
 
   return M;
@@ -1537,7 +1545,7 @@ vpMatrix vpMatrix::hadamard(const vpMatrix &m) const {
   unsigned int i = 0;
 
 #if VISP_HAVE_SSE2
-  if (dsize >= 2) {
+  if (vpCPUFeatures::checkSSE2() && dsize >= 2) {
     for (; i <= dsize - 2; i+=2) {
       __m128d vout = _mm_mul_pd( _mm_loadu_pd(data+i), _mm_loadu_pd(m.data+i) );
       _mm_storeu_pd( out.data+i, vout );

@@ -36,6 +36,7 @@
  *****************************************************************************/
 
 #include <visp3/core/vpImageTools.h>
+#include <visp3/core/vpCPUFeatures.h>
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #  include <emmintrin.h>
@@ -300,7 +301,7 @@ vpImageTools::imageAdd(const vpImage<unsigned char> &I1,
   unsigned int cpt = 0;
 
 #if VISP_HAVE_SSE2
-  if (Ires.getSize() >= 16) {
+  if (vpCPUFeatures::checkSSE2() && Ires.getSize() >= 16) {
     for (; cpt <= Ires.getSize() - 16 ; cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
       const __m128i v1   = _mm_loadu_si128( (const __m128i*) ptr_I1);
       const __m128i v2   = _mm_loadu_si128( (const __m128i*) ptr_I2);
@@ -344,7 +345,7 @@ vpImageTools::imageSubtract(const vpImage<unsigned char> &I1,
   unsigned int cpt = 0;
 
 #if VISP_HAVE_SSE2
-  if (Ires.getSize() >= 16) {
+  if (vpCPUFeatures::checkSSE2() && Ires.getSize() >= 16) {
     for (; cpt <= Ires.getSize() - 16 ; cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
       const __m128i v1   = _mm_loadu_si128( (const __m128i*) ptr_I1);
       const __m128i v2   = _mm_loadu_si128( (const __m128i*) ptr_I2);
