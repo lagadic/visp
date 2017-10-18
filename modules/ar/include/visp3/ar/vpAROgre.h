@@ -62,11 +62,11 @@
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRxyzVector.h>
 
-#include <Ogre.h>
-#include <OgreFrameListener.h>
+#include <OGRE/Ogre.h>
+#include <OGRE/OgreFrameListener.h>
 
 #ifdef VISP_HAVE_OIS
-#  include <OIS.h>
+#  include <ois/OIS.h>
 #endif
 
 /*!
