@@ -28,33 +28,48 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Tukey M-estimator.
+ * CPU features (hardware capabilities).
  *
  *****************************************************************************/
 
-#ifndef __vpMbtTukeyEstimator_h_
-#define __vpMbtTukeyEstimator_h_
 
-#include <vector>
-#include <visp3/core/vpColVector.h>
+#ifndef __vpCPUFeatures_h_
+#define __vpCPUFeatures_h_
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+/*!
+  \file vpCPUFeatures.h
+  \brief Check CPU features (hardware capabilities).
+*/
 
-template <typename T>
-class VISP_EXPORT vpMbtTukeyEstimator {
-public:
-  void MEstimator(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
-  void MEstimator(const vpColVector &residues, vpColVector &weights, const double NoiseThreshold);
+#include <visp3/core/vpConfig.h>
 
-private:
-  T getMedian(std::vector<T> &vec);
-  void MEstimator_impl(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
-  void MEstimator_impl_ssse3(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
-  void psiTukey(const T sig, std::vector<T> &x, std::vector<T> &weights);
-  void psiTukey(const T sig, std::vector<T> &x, vpColVector &weights);
+/*!
+  \ingroup group_core_cpu_features
+  \brief Check CPU features (hardware capabilities).
 
-  std::vector<T> m_normres;
-  std::vector<T> m_residues;
-};
-#endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  The example below shows how to check or get CPU capabilities.
+
+  \code
+#include <visp3/core/vpCPUFeatures.h>
+
+int main()
+{
+  std::cout << "checkSSE2: " << vpCPUFeatures::checkSSE2() << std::endl;
+  std::cout << "CPU info: " << vpCPUFeatures::printCPUInfo() << std::endl;
+  return 0;
+}
+  \endcode
+*/
+
+namespace vpCPUFeatures {
+  VISP_EXPORT bool checkSSE2();
+  VISP_EXPORT bool checkSSE3();
+  VISP_EXPORT bool checkSSSE3();
+  VISP_EXPORT bool checkSSE41();
+  VISP_EXPORT bool checkSSE42();
+  VISP_EXPORT bool checkAVX();
+  VISP_EXPORT bool checkAVX2();
+  VISP_EXPORT void printCPUInfo();
+}
+
 #endif

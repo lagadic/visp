@@ -33,6 +33,7 @@
  *****************************************************************************/
 
 #include <visp3/mbt/vpMbtFaceDepthDense.h>
+#include <visp3/core/vpCPUFeatures.h>
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #  include <emmintrin.h>
@@ -176,10 +177,14 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
 
   m_pointCloudFace.reserve( (size_t) (bb.getWidth()*bb.getHeight()) );
 
-#if USE_SSE
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
+#if !USE_SSE
+  checkSSE2 = false;
+#else
   bool push = false;
   double prev_x = 0.0, prev_y = 0.0, prev_z = 0.0;
 #endif
+
   for (unsigned int i = top; i < bottom; i+=stepY) {
     for (unsigned int j = left; j < right; j+=stepX) {
       if ( pcl::isFinite((*point_cloud)(j,i)) && (*point_cloud)(j,i).z > 0
@@ -190,28 +195,30 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
            m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
            : polygon_2d.isInside(vpImagePoint(i,j)) )
            ) {
+        if (checkSSE2) {
 #if USE_SSE
-        if (!push) {
-          push = true;
-          prev_x = (*point_cloud)(j,i).x;
-          prev_y = (*point_cloud)(j,i).y;
-          prev_z = (*point_cloud)(j,i).z;
+          if (!push) {
+            push = true;
+            prev_x = (*point_cloud)(j,i).x;
+            prev_y = (*point_cloud)(j,i).y;
+            prev_z = (*point_cloud)(j,i).z;
+          } else {
+            push = false;
+            m_pointCloudFace.push_back(prev_x);
+            m_pointCloudFace.push_back((*point_cloud)(j,i).x);
+
+            m_pointCloudFace.push_back(prev_y);
+            m_pointCloudFace.push_back((*point_cloud)(j,i).y);
+
+            m_pointCloudFace.push_back(prev_z);
+            m_pointCloudFace.push_back((*point_cloud)(j,i).z);
+          }
+#endif
         } else {
-          push = false;
-          m_pointCloudFace.push_back(prev_x);
           m_pointCloudFace.push_back((*point_cloud)(j,i).x);
-
-          m_pointCloudFace.push_back(prev_y);
           m_pointCloudFace.push_back((*point_cloud)(j,i).y);
-
-          m_pointCloudFace.push_back(prev_z);
           m_pointCloudFace.push_back((*point_cloud)(j,i).z);
         }
-#else
-        m_pointCloudFace.push_back((*point_cloud)(j,i).x);
-        m_pointCloudFace.push_back((*point_cloud)(j,i).y);
-        m_pointCloudFace.push_back((*point_cloud)(j,i).z);
-#endif
 
 #if DEBUG_DISPLAY_DEPTH_DENSE
         debugImage[i][j] = 255;
@@ -221,7 +228,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   }
 
 #if USE_SSE
-  if (push) {
+  if (checkSSE2 && push) {
     m_pointCloudFace.push_back(prev_x);
     m_pointCloudFace.push_back(prev_y);
     m_pointCloudFace.push_back(prev_z);
@@ -272,10 +279,14 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
 
   m_pointCloudFace.reserve( (size_t) (bb.getWidth()*bb.getHeight()) );
 
-#if USE_SSE
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
+#if !USE_SSE
+  checkSSE2 = false;
+#else
   bool push = false;
   double prev_x = 0.0, prev_y = 0.0, prev_z = 0.0;
 #endif
+
   for (unsigned int i = top; i < bottom; i+=stepY) {
     for (unsigned int j = left; j < right; j+=stepX) {
       if ( point_cloud[i*width + j][2] > 0
@@ -286,28 +297,30 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
            m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
            : polygon_2d.isInside(vpImagePoint(i,j)) )
            ) {
+        if (checkSSE2) {
 #if USE_SSE
-        if (!push) {
-          push = true;
-          prev_x = point_cloud[i*width + j][0];
-          prev_y = point_cloud[i*width + j][1];
-          prev_z = point_cloud[i*width + j][2];
+          if (!push) {
+            push = true;
+            prev_x = point_cloud[i*width + j][0];
+            prev_y = point_cloud[i*width + j][1];
+            prev_z = point_cloud[i*width + j][2];
+          } else {
+            push = false;
+            m_pointCloudFace.push_back(prev_x);
+            m_pointCloudFace.push_back( point_cloud[i*width + j][0] );
+
+            m_pointCloudFace.push_back(prev_y);
+            m_pointCloudFace.push_back( point_cloud[i*width + j][1] );
+
+            m_pointCloudFace.push_back(prev_z);
+            m_pointCloudFace.push_back( point_cloud[i*width + j][2] );
+          }
+#endif
         } else {
-          push = false;
-          m_pointCloudFace.push_back(prev_x);
           m_pointCloudFace.push_back( point_cloud[i*width + j][0] );
-
-          m_pointCloudFace.push_back(prev_y);
           m_pointCloudFace.push_back( point_cloud[i*width + j][1] );
-
-          m_pointCloudFace.push_back(prev_z);
           m_pointCloudFace.push_back( point_cloud[i*width + j][2] );
         }
-#else
-        m_pointCloudFace.push_back( point_cloud[i*width + j][0] );
-        m_pointCloudFace.push_back( point_cloud[i*width + j][1] );
-        m_pointCloudFace.push_back( point_cloud[i*width + j][2] );
-#endif
 
 #if DEBUG_DISPLAY_DEPTH_DENSE
         debugImage[i][j] = 255;
@@ -317,7 +330,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   }
 
 #if USE_SSE
-  if (push) {
+  if (checkSSE2 && push) {
     m_pointCloudFace.push_back(prev_x);
     m_pointCloudFace.push_back(prev_y);
     m_pointCloudFace.push_back(prev_z);
@@ -379,98 +392,105 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
   double nz = m_planeCamera.getC();
   double D  = m_planeCamera.getD();
 
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
 #if !USE_SSE
-  vpColVector normal(3);
-  normal[0] = nx;  normal[1] = ny;  normal[2] = nz;
-  vpColVector pt(3);
+  checkSSE2 = false;
+#endif
 
-  unsigned int idx = 0;
-  for (size_t i = 0; i < m_pointCloudFace.size(); i+=3, idx++) {
-    double x = m_pointCloudFace[i];
-    double y = m_pointCloudFace[i+1];
-    double z = m_pointCloudFace[i+2];
+  if (checkSSE2) {
+#if USE_SSE
+    size_t cpt = 0;
+    if (getNbFeatures() >= 2) {
+      double *ptr_point_cloud = &m_pointCloudFace[0];
+      double *ptr_L = L.data;
+      double *ptr_error = error.data;
 
-    double _a1 = (nz*y) - (ny*z);
-    double _a2 = (nx*z) - (nz*x);
-    double _a3 = (ny*x) - (nx*y);
+      const __m128d vnx = _mm_set1_pd(nx);
+      const __m128d vny = _mm_set1_pd(ny);
+      const __m128d vnz = _mm_set1_pd(nz);
+      const __m128d vd  = _mm_set1_pd(D);
 
-    //L
-    L[idx][0] = nx;  L[idx][1] = ny;  L[idx][2] = nz; L[idx][3] = _a1;  L[idx][4] = _a2;  L[idx][5] = _a3;
+      double tmp_a1[2], tmp_a2[2], tmp_a3[2];
 
-    pt[0] = x;  pt[1] = y;  pt[2] = z;
-    //Error
-    error[idx] = D + (normal.t()*pt);
-  }
-#else
-  size_t cpt = 0;
-  if (getNbFeatures() >= 2) {
-    double *ptr_point_cloud = &m_pointCloudFace[0];
-    double *ptr_L = L.data;
-    double *ptr_error = error.data;
+      for (; cpt <= m_pointCloudFace.size()-6; cpt+=6, ptr_point_cloud+=6) {
+        const __m128d vx = _mm_loadu_pd(ptr_point_cloud);
+        const __m128d vy = _mm_loadu_pd(ptr_point_cloud+2);
+        const __m128d vz = _mm_loadu_pd(ptr_point_cloud+4);
 
-    const __m128d vnx = _mm_set1_pd(nx);
-    const __m128d vny = _mm_set1_pd(ny);
-    const __m128d vnz = _mm_set1_pd(nz);
-    const __m128d vd  = _mm_set1_pd(D);
+        const __m128d va1 = _mm_sub_pd( _mm_mul_pd(vnz, vy), _mm_mul_pd(vny, vz) );
+        const __m128d va2 = _mm_sub_pd( _mm_mul_pd(vnx, vz), _mm_mul_pd(vnz, vx) );
+        const __m128d va3 = _mm_sub_pd( _mm_mul_pd(vny, vx), _mm_mul_pd(vnx, vy) );
 
-    double tmp_a1[2], tmp_a2[2], tmp_a3[2];
+        _mm_storeu_pd(tmp_a1, va1);
+        _mm_storeu_pd(tmp_a2, va2);
+        _mm_storeu_pd(tmp_a3, va3);
 
-    for (; cpt <= m_pointCloudFace.size()-6; cpt+=6, ptr_point_cloud+=6) {
-      const __m128d vx = _mm_loadu_pd(ptr_point_cloud);
-      const __m128d vy = _mm_loadu_pd(ptr_point_cloud+2);
-      const __m128d vz = _mm_loadu_pd(ptr_point_cloud+4);
+        *ptr_L = nx;  ptr_L++;
+        *ptr_L = ny;  ptr_L++;
+        *ptr_L = nz;  ptr_L++;
+        *ptr_L = tmp_a1[0];  ptr_L++;
+        *ptr_L = tmp_a2[0];  ptr_L++;
+        *ptr_L = tmp_a3[0];  ptr_L++;
 
-      const __m128d va1 = _mm_sub_pd( _mm_mul_pd(vnz, vy), _mm_mul_pd(vny, vz) );
-      const __m128d va2 = _mm_sub_pd( _mm_mul_pd(vnx, vz), _mm_mul_pd(vnz, vx) );
-      const __m128d va3 = _mm_sub_pd( _mm_mul_pd(vny, vx), _mm_mul_pd(vnx, vy) );
+        *ptr_L = nx;  ptr_L++;
+        *ptr_L = ny;  ptr_L++;
+        *ptr_L = nz;  ptr_L++;
+        *ptr_L = tmp_a1[1];  ptr_L++;
+        *ptr_L = tmp_a2[1];  ptr_L++;
+        *ptr_L = tmp_a3[1];  ptr_L++;
 
-      _mm_storeu_pd(tmp_a1, va1);
-      _mm_storeu_pd(tmp_a2, va2);
-      _mm_storeu_pd(tmp_a3, va3);
-
-      *ptr_L = nx;  ptr_L++;
-      *ptr_L = ny;  ptr_L++;
-      *ptr_L = nz;  ptr_L++;
-      *ptr_L = tmp_a1[0];  ptr_L++;
-      *ptr_L = tmp_a2[0];  ptr_L++;
-      *ptr_L = tmp_a3[0];  ptr_L++;
-
-      *ptr_L = nx;  ptr_L++;
-      *ptr_L = ny;  ptr_L++;
-      *ptr_L = nz;  ptr_L++;
-      *ptr_L = tmp_a1[1];  ptr_L++;
-      *ptr_L = tmp_a2[1];  ptr_L++;
-      *ptr_L = tmp_a3[1];  ptr_L++;
-
-      const __m128d verror = _mm_add_pd( _mm_add_pd( vd, _mm_mul_pd(vnx, vx) ), _mm_add_pd( _mm_mul_pd(vny, vy), _mm_mul_pd(vnz, vz) ) );
-      _mm_storeu_pd(ptr_error, verror);
-      ptr_error += 2;
+        const __m128d verror = _mm_add_pd( _mm_add_pd( vd, _mm_mul_pd(vnx, vx) ), _mm_add_pd( _mm_mul_pd(vny, vy), _mm_mul_pd(vnz, vz) ) );
+        _mm_storeu_pd(ptr_error, verror);
+        ptr_error += 2;
+      }
     }
-  }
 
-  for (; cpt < m_pointCloudFace.size(); cpt+=3) {
-    double x = m_pointCloudFace[cpt];
-    double y = m_pointCloudFace[cpt+1];
-    double z = m_pointCloudFace[cpt+2];
+    for (; cpt < m_pointCloudFace.size(); cpt+=3) {
+      double x = m_pointCloudFace[cpt];
+      double y = m_pointCloudFace[cpt+1];
+      double z = m_pointCloudFace[cpt+2];
 
-    double _a1 = (nz*y) - (ny*z);
-    double _a2 = (nx*z) - (nz*x);
-    double _a3 = (ny*x) - (nx*y);
+      double _a1 = (nz*y) - (ny*z);
+      double _a2 = (nx*z) - (nz*x);
+      double _a3 = (ny*x) - (nx*y);
 
-    //L
-    L[(unsigned int) (cpt/3)][0] = nx;   L[(unsigned int) (cpt/3)][1] = ny;   L[(unsigned int) (cpt/3)][2] = nz;
-    L[(unsigned int) (cpt/3)][3] = _a1;  L[(unsigned int) (cpt/3)][4] = _a2;  L[(unsigned int) (cpt/3)][5] = _a3;
+      //L
+      L[(unsigned int) (cpt/3)][0] = nx;   L[(unsigned int) (cpt/3)][1] = ny;   L[(unsigned int) (cpt/3)][2] = nz;
+      L[(unsigned int) (cpt/3)][3] = _a1;  L[(unsigned int) (cpt/3)][4] = _a2;  L[(unsigned int) (cpt/3)][5] = _a3;
 
+      vpColVector normal(3);
+      normal[0] = nx;  normal[1] = ny;  normal[2] = nz;
+
+      vpColVector pt(3);
+      pt[0] = x;  pt[1] = y;  pt[2] = z;
+
+      //Error
+      error[(unsigned int) (cpt/3)] = D + (normal.t()*pt);
+    }
+#endif
+  } else {
     vpColVector normal(3);
     normal[0] = nx;  normal[1] = ny;  normal[2] = nz;
-
     vpColVector pt(3);
-    pt[0] = x;  pt[1] = y;  pt[2] = z;
 
-    //Error
-    error[(unsigned int) (cpt/3)] = D + (normal.t()*pt);
+    unsigned int idx = 0;
+    for (size_t i = 0; i < m_pointCloudFace.size(); i+=3, idx++) {
+      double x = m_pointCloudFace[i];
+      double y = m_pointCloudFace[i+1];
+      double z = m_pointCloudFace[i+2];
+
+      double _a1 = (nz*y) - (ny*z);
+      double _a2 = (nx*z) - (nz*x);
+      double _a3 = (ny*x) - (nx*y);
+
+      //L
+      L[idx][0] = nx;  L[idx][1] = ny;  L[idx][2] = nz; L[idx][3] = _a1;  L[idx][4] = _a2;  L[idx][5] = _a3;
+
+      pt[0] = x;  pt[1] = y;  pt[2] = z;
+      //Error
+      error[idx] = D + (normal.t()*pt);
+    }
   }
-#endif
 }
 
 void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, const unsigned int width, const unsigned int height, std::vector<vpImagePoint> &roiPts

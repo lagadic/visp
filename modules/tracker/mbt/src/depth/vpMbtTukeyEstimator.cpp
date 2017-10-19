@@ -37,6 +37,7 @@
 #include <algorithm>
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpCPUFeatures.h>
 #include <visp3/mbt/vpMbtTukeyEstimator.h>
 
 #define USE_TRANSFORM 1
@@ -64,6 +65,7 @@
 
 #define USE_ORIGINAL_TUKEY_CODE 1
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #if HAVE_TRANSFORM
 namespace {
@@ -76,17 +78,8 @@ namespace {
 }
 #endif
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 template class vpMbtTukeyEstimator<float>;
 template class vpMbtTukeyEstimator<double>;
-
-template <typename T> T vpMbtTukeyEstimator<T>::getMedian(std::vector<T> &vec) {
-  //Not the exact median when even number of elements
-  int index = (int) ( ceil(vec.size()/2.0) ) - 1;
-  std::nth_element(vec.begin(), vec.begin() + index, vec.end());
-  return vec[index];
-}
 
 #if VISP_HAVE_SSSE3
 namespace {
@@ -95,96 +88,13 @@ namespace {
     return _mm_andnot_ps(sign_mask, x);
   }
 }
-
-template <>
-void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights, const float NoiseThreshold) {
-  if (residues.empty()) {
-    return;
-  }
-
-  m_residues = residues;
-
-  float med = getMedian(m_residues);
-  m_normres.resize(residues.size());
-
-  size_t i = 0;
-  __m128 med_128 = _mm_set_ps1(med);
-
-  if (m_residues.size() >= 4) {
-    for (i = 0; i <= m_residues.size()-4; i+=4) {
-      __m128 residues_128 = _mm_loadu_ps(residues.data()+i);
-      _mm_storeu_ps( m_normres.data()+i, abs_ps( _mm_sub_ps(residues_128, med_128) ) );
-    }
-  }
-
-  for (; i < m_residues.size(); i++) {
-    m_normres[i] = (std::fabs(residues[i]- med));
-  }
-
-  m_residues = m_normres;
-  float normmedian = getMedian(m_residues);
-
-  // 1.48 keeps scale estimate consistent for a normal probability dist.
-  float sigma = 1.4826f*normmedian; // median Absolute Deviation
-
-  // Set a minimum threshold for sigma
-  // (when sigma reaches the level of noise in the image)
-  if(sigma < NoiseThreshold) {
-    sigma = NoiseThreshold;
-  }
-
-  psiTukey(sigma, m_normres, weights);
-}
-
-template <>
-void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues, std::vector<double> &weights, const double NoiseThreshold) {
-  if (residues.empty()) {
-    return;
-  }
-
-  m_residues = residues;
-
-  double med = getMedian(m_residues);
-  m_normres.resize(residues.size());
-
-#if HAVE_TRANSFORM
-  std::transform(residues.begin(), residues.end(), m_normres.begin(),
-                 std::bind(AbsDiff<double>(), std::placeholders::_1, med));
-#else
-  for (size_t i = 0; i < m_residues.size(); i++) {
-    m_normres[i] = (std::fabs(residues[i]- med));
-  }
 #endif
 
-  m_residues = m_normres;
-  double normmedian = getMedian(m_residues);
-
-  // 1.48 keeps scale estimate consistent for a normal probability dist.
-  double sigma = 1.4826*normmedian; // median Absolute Deviation
-
-  // Set a minimum threshold for sigma
-  // (when sigma reaches the level of noise in the image)
-  if (sigma < NoiseThreshold) {
-    sigma = NoiseThreshold;
-  }
-
-  psiTukey(sigma, m_normres, weights);
-}
-
-template <typename T>
-void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &/*residues*/, std::vector<T> &/*weights*/, const T /*NoiseThreshold*/) {
-  //unused
-}
-
-#else
-template <>
-void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights, const float NoiseThreshold) {
-  MEstimator_impl(residues, weights, NoiseThreshold);
-}
-
-template <>
-void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues, std::vector<double> &weights, const double NoiseThreshold) {
-  MEstimator_impl(residues, weights, NoiseThreshold);
+template <typename T> T vpMbtTukeyEstimator<T>::getMedian(std::vector<T> &vec) {
+  //Not the exact median when even number of elements
+  int index = (int) ( ceil(vec.size()/2.0) ) - 1;
+  std::nth_element(vec.begin(), vec.begin() + index, vec.end());
+  return vec[index];
 }
 
 // Without MEstimator_impl, error with g++4.6, ok with gcc 5.4.0
@@ -225,7 +135,119 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std
 
   psiTukey(sigma, m_normres, weights);
 }
+
+template <>
+void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<float> &residues, std::vector<float> &weights, const float NoiseThreshold) {
+#if VISP_HAVE_SSSE3
+  if (residues.empty()) {
+    return;
+  }
+
+  m_residues = residues;
+
+  float med = getMedian(m_residues);
+  m_normres.resize(residues.size());
+
+  size_t i = 0;
+  __m128 med_128 = _mm_set_ps1(med);
+
+  if (m_residues.size() >= 4) {
+    for (i = 0; i <= m_residues.size()-4; i+=4) {
+      __m128 residues_128 = _mm_loadu_ps(residues.data()+i);
+      _mm_storeu_ps( m_normres.data()+i, abs_ps( _mm_sub_ps(residues_128, med_128) ) );
+    }
+  }
+
+  for (; i < m_residues.size(); i++) {
+    m_normres[i] = (std::fabs(residues[i]- med));
+  }
+
+  m_residues = m_normres;
+  float normmedian = getMedian(m_residues);
+
+  // 1.48 keeps scale estimate consistent for a normal probability dist.
+  float sigma = 1.4826f*normmedian; // median Absolute Deviation
+
+  // Set a minimum threshold for sigma
+  // (when sigma reaches the level of noise in the image)
+  if(sigma < NoiseThreshold) {
+    sigma = NoiseThreshold;
+  }
+
+  psiTukey(sigma, m_normres, weights);
+#else
+  (void)residues;
+  (void)weights;
+  (void)NoiseThreshold;
 #endif
+}
+
+template <>
+void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector<double> &residues, std::vector<double> &weights, const double NoiseThreshold) {
+#if VISP_HAVE_SSSE3
+  if (residues.empty()) {
+    return;
+  }
+
+  m_residues = residues;
+
+  double med = getMedian(m_residues);
+  m_normres.resize(residues.size());
+
+#if HAVE_TRANSFORM
+  std::transform(residues.begin(), residues.end(), m_normres.begin(),
+                 std::bind(AbsDiff<double>(), std::placeholders::_1, med));
+#else
+  for (size_t i = 0; i < m_residues.size(); i++) {
+    m_normres[i] = (std::fabs(residues[i]- med));
+  }
+#endif
+
+  m_residues = m_normres;
+  double normmedian = getMedian(m_residues);
+
+  // 1.48 keeps scale estimate consistent for a normal probability dist.
+  double sigma = 1.4826*normmedian; // median Absolute Deviation
+
+  // Set a minimum threshold for sigma
+  // (when sigma reaches the level of noise in the image)
+  if (sigma < NoiseThreshold) {
+    sigma = NoiseThreshold;
+  }
+
+  psiTukey(sigma, m_normres, weights);
+#else
+  (void)residues;
+  (void)weights;
+  (void)NoiseThreshold;
+#endif
+}
+
+template <>
+void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights, const float NoiseThreshold) {
+  bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
+#if !VISP_HAVE_SSSE3
+  checkSSSE3 = false;
+#endif
+
+  if (checkSSSE3)
+    MEstimator_impl_ssse3(residues, weights, NoiseThreshold);
+  else
+    MEstimator_impl(residues, weights, NoiseThreshold);
+}
+
+template <>
+void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues, std::vector<double> &weights, const double NoiseThreshold) {
+  bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
+#if !VISP_HAVE_SSSE3
+  checkSSSE3 = false;
+#endif
+
+  if (checkSSSE3)
+    MEstimator_impl_ssse3(residues, weights, NoiseThreshold);
+  else
+    MEstimator_impl(residues, weights, NoiseThreshold);
+}
 
 template <typename T>
 void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x, vpColVector &weights) {
