@@ -61,7 +61,7 @@ $ ./tutorial-mb-tracker --tracker 0
 will produce results similar to:
 \htmlonly
 <br>
-<iframe width="420" height="315" src="http://www.youtube.com/embed/b__u_yGEbmc?rel=0" frameborder="0" allowfullscreen></iframe>
+<p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/b__u_yGEbmc?rel=0" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 - Using vpMbKltTracker to track only keypoints:
 \code
@@ -70,7 +70,7 @@ $ ./tutorial-mb-tracker --tracker 1
 will produce results similar to:
 \htmlonly
 <br>
-<iframe width="420" height="315" src="http://www.youtube.com/embed/eZmUw9r6Idw?rel=0" frameborder="0" allowfullscreen></iframe>
+<p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/eZmUw9r6Idw?rel=0" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 - Using vpMbEdgeKltTracker to track moving-edges and keypoints in an hybrid scheme:
 \code
@@ -79,7 +79,7 @@ $ ./tutorial-mb-tracker --tracker 2
 will produce results similar to:
 \htmlonly
 <br>
-<iframe width="420" height="315" src="http://www.youtube.com/embed/a-RX9NPF2k0?rel=0" frameborder="0" allowfullscreen></iframe>
+<p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/a-RX9NPF2k0?rel=0" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
 With this example it is also possible to work on an other data set using "--video" and "--model" command line options. For example, if you run:
@@ -863,7 +863,7 @@ $ ./tutorial-mb-tracker-full --video /your-path-to-model/cubesat/video/00%2d.png
 You should be able to obtain these kind of results:
 
 \htmlonly
-<iframe width="560" height="315" src="https://www.youtube.com/embed/i1zRGhZGpLk" frameborder="0" allowfullscreen></iframe>
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/i1zRGhZGpLk" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
 \subsection mb_use_case_mmicro mmicro model
@@ -877,7 +877,7 @@ $ ./tutorial-mb-tracker-full --video /your-path-to-model/mmicro/video/mmicro00%2
 You should be able to obtain these kind of results:
 
 \htmlonly
-<iframe width="560" height="315" src="https://www.youtube.com/embed/UK10KMMJFCI" frameborder="0" allowfullscreen></iframe>
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/UK10KMMJFCI" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
 \section mb_known_issues Known issues
