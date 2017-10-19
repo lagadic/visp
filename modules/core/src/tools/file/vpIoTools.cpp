@@ -91,25 +91,25 @@ const std::string& vpIoTools::getBuildInformation()
 
 /*!
   Sets the base name (prefix) of the experiment files.
-    
+
   \param s : Prefix of the experiment files.
 */
 void vpIoTools::setBaseName(const std::string &s) {baseName = s;}
 /*!
   Sets the base directory of the experiment files.
-    
+
   \param dir : Directory where the data will be saved.
 */
 void vpIoTools::setBaseDir(const std::string &dir) {baseDir = dir + "/";}
 /*!
   Gets the base name (prefix) of the experiment files.
-    
+
   \return the base name of the experiment files.
 */
 std::string vpIoTools::getBaseName() {return baseName;}
 /*!
   Gets the full path of the experiment files : baseDir/baseName
-    
+
   \return the full path of the experiment files.
 */
 std::string vpIoTools::getFullName() {return baseDir + baseName;}
@@ -142,7 +142,7 @@ vpIoTools::getUserName(std::string &username)
   if (_username == NULL) {
     vpERROR_TRACE( "Cannot get the username. Check your LOGNAME environment variable" );
     throw(vpIoException(vpIoException::cantGetUserName,
-			"Cannot get the username")) ;
+      "Cannot get the username")) ;
   }
   username = _username;
 #elif defined(_WIN32)
@@ -158,7 +158,7 @@ vpIoTools::getUserName(std::string &username)
   username = infoBuf;
   delete [] infoBuf;
 #  else
-	throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username: not implemented on Universal Windows Platform"));
+  throw(vpIoException(vpIoException::cantGetUserName, "Cannot get the username: not implemented on Universal Windows Platform"));
 #  endif
 #endif
 }
@@ -190,7 +190,7 @@ vpIoTools::getUserName()
   if (_username == NULL) {
     vpERROR_TRACE( "Cannot get the username. Check your LOGNAME environment variable" );
     throw(vpIoException(vpIoException::cantGetUserName,
-			"Cannot get the username")) ;
+      "Cannot get the username")) ;
   }
   username = _username;
 #elif defined(_WIN32)
@@ -203,7 +203,7 @@ vpIoTools::getUserName()
     delete [] infoBuf;
     vpERROR_TRACE( "Cannot get the username" );
     throw(vpIoException(vpIoException::cantGetUserName,
-			"Cannot get the username")) ;
+      "Cannot get the username")) ;
 
   }
   username = infoBuf;
@@ -258,7 +258,7 @@ vpIoTools::getenv(const char *env)
   _value = ::getenv(env);
   if (_value == NULL) {
     throw(vpIoException(vpIoException::cantGetenv,
-			"Cannot get the environment variable value")) ;
+      "Cannot get the environment variable value")) ;
   }
   value = _value;
 
@@ -313,7 +313,7 @@ vpIoTools::getenv(const std::string &env)
   \param minor : Extracted minor.
   \param patch : Extracted patch.
 */
-void 
+void
 vpIoTools::getVersion(const std::string &version, unsigned int &major, unsigned int &minor, unsigned int &patch)
 {
   if(version.size() == 0){
@@ -321,16 +321,16 @@ vpIoTools::getVersion(const std::string &version, unsigned int &major, unsigned 
     minor = 0;
     patch = 0;
   }
-  else{  
+  else{
     size_t major_pos = version.find('.');
     std::string major_str = version.substr(0, major_pos);
     major = (unsigned)atoi(major_str.c_str());
-    
+
     if(major_pos != std::string::npos){
       size_t minor_pos = version.find('.', major_pos+1);
       std::string minor_str = version.substr(major_pos+1, (minor_pos - (major_pos+1)));
       minor = (unsigned)atoi(minor_str.c_str());
-      
+
       if(minor_pos != std::string::npos){
         std::string patch_str = version.substr(minor_pos+1);
         patch = (unsigned)atoi(patch_str.c_str());
@@ -648,6 +648,7 @@ vpIoTools::copy(const char *src, const char *dst)
   if ( vpIoTools::checkFilename(src) ) {
     //std::cout << "copy file: " << src << " in " << dst << std::endl;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#  if TARGET_OS_IOS == 0 // The following code is not working on iOS since wordexp() is not available
     char cmd[FILENAME_MAX];
     int ret;
     sprintf(cmd, "cp -p %s %s", src, dst);
@@ -655,6 +656,9 @@ vpIoTools::copy(const char *src, const char *dst)
     if (ret) {}; // to avoid a warning
     //std::cout << cmd << " return value: " << ret << std::endl;
     return true;
+#  else
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src, dst));
+#  endif
 #elif defined(_WIN32)
 #  if ( ! defined(WINRT) )
     char cmd[FILENAME_MAX];
@@ -674,6 +678,7 @@ vpIoTools::copy(const char *src, const char *dst)
   else if ( vpIoTools::checkDirectory(src) ) {
     //std::cout << "copy directory: " << src << " in " << dst << std::endl;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#  if TARGET_OS_IOS == 0 // The following code is not working on iOS since wordexp() is not available
     char cmd[FILENAME_MAX];
     int ret;
     sprintf(cmd, "cp -p -r %s %s", src, dst);
@@ -681,6 +686,9 @@ vpIoTools::copy(const char *src, const char *dst)
     if (ret) {}; // to avoid a warning
     //std::cout << cmd << " return value: " << ret << std::endl;
     return true;
+#  else
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src, dst));
+#  endif
 #elif defined(_WIN32)
 #  if ( ! defined(WINRT) )
     char cmd[FILENAME_MAX];
@@ -744,23 +752,27 @@ vpIoTools::remove(const char *file_or_dir)
   else if ( vpIoTools::checkDirectory(file_or_dir) ) {
     //std::cout << "remove directory: " << file_or_dir << std::endl;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-	char cmd[FILENAME_MAX];
-	sprintf(cmd, "rm -rf %s", file_or_dir);
-	int ret = system(cmd);
-	if (ret) {}; // to avoid a warning
-	//std::cout << cmd << " return value: " << ret << std::endl;
-	return true;
+#  if TARGET_OS_IOS == 0 // The following code is not working on iOS since wordexp() is not available
+  char cmd[FILENAME_MAX];
+  sprintf(cmd, "rm -rf %s", file_or_dir);
+  int ret = system(cmd);
+  if (ret) {}; // to avoid a warning
+  //std::cout << cmd << " return value: " << ret << std::endl;
+  return true;
+#  else
+    throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on iOS Platform", file_or_dir));
+#  endif
 #elif defined(_WIN32)
 #  if ( ! defined(WINRT) )
-	char cmd[FILENAME_MAX];  
-	std::string file_or_dir_ = vpIoTools::path(file_or_dir);
+  char cmd[FILENAME_MAX];
+  std::string file_or_dir_ = vpIoTools::path(file_or_dir);
     sprintf(cmd, "rmdir /S /Q %s", file_or_dir_.c_str());
-	int ret = system(cmd);
-	if (ret) {}; // to avoid a warning
+  int ret = system(cmd);
+  if (ret) {}; // to avoid a warning
     //std::cout << cmd << " return value: " << ret << std::endl;
-	return true;
+  return true;
 #  else
-	throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on Universal Windows Platform", file_or_dir));
+  throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on Universal Windows Platform", file_or_dir));
 #  endif
 #endif
   }
@@ -870,7 +882,7 @@ vpIoTools::path(const char *pathname)
 
 /*!
   Converts a path name to the current system's format.
-  
+
   \param pathname : Path name to convert. Under windows, converts all
   the "/" characters in the \e pathname string into "\\"
   characters. Under Unix systems converts all the "\\" characters in
@@ -1012,10 +1024,10 @@ bool vpIoTools::readConfigVar(const std::string &var, int &value)
   for(unsigned int k=0;k<configVars.size() && found==false;++k)
     {
       if(configVars[k] == var)
-	{
-	  value = atoi(configValues[k].c_str());
-	  found = true;
-	}
+  {
+    value = atoi(configValues[k].c_str());
+    found = true;
+  }
     }
   if(found == false)
     std::cout << var << " not found in config file" << std::endl;
@@ -1084,10 +1096,10 @@ bool vpIoTools::readConfigVar(const std::string &var, std::string &value)
   for(unsigned int k=0;k<configVars.size() && found==false;++k)
     {
       if(configVars[k] == var)
-	{
-	  value = configValues[k];
-	  found = true;
-	}
+  {
+    value = configValues[k];
+    found = true;
+  }
     }
   if(found == false)
     std::cout << var << " not found in config file" << std::endl;
@@ -1178,7 +1190,7 @@ void vpIoTools::addNameElement(const std::string &strTrue, const double &val)
 }
 
 /*!
-  Creates the directory \e baseDir/baseName. If already exists, empties 
+  Creates the directory \e baseDir/baseName. If already exists, empties
   it if \e empty is true.
   Useful to save the images corresponding to a particular experiment.
 
@@ -1370,23 +1382,23 @@ std::string vpIoTools::getNameWE(const std::string& pathname)
 }
 
 /*!
- 	 Returns the pathname string of this pathname's parent.
+   Returns the pathname string of this pathname's parent.
    \return The pathname string of this pathname's parent, or
    an empty string if this pathname does not name a parent directory.
  */
 std::string vpIoTools::getParent(const std::string& pathname)
 {
-	if(pathname.size() > 0)
-	{
-		std::string convertedPathname = vpIoTools::path(pathname);
+  if(pathname.size() > 0)
+  {
+    std::string convertedPathname = vpIoTools::path(pathname);
 
-		size_t index = convertedPathname.find_last_of(vpIoTools::separator);
-		if(index != std::string::npos) {
-			return convertedPathname.substr(0, index);
-		}
-	}
+    size_t index = convertedPathname.find_last_of(vpIoTools::separator);
+    if(index != std::string::npos) {
+      return convertedPathname.substr(0, index);
+    }
+  }
 
-	return "";
+  return "";
 }
 
 /*!
@@ -1436,43 +1448,43 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname) {
  */
 std::string vpIoTools::createFilePath(const std::string& parent, const std::string &child)
 {
-	if(child.size() == 0 && parent.size() == 0)
-	{
-		return "";
-	}
+  if(child.size() == 0 && parent.size() == 0)
+  {
+    return "";
+  }
 
-	if(child.size() == 0)
-	{
-		return vpIoTools::path(parent);
-	}
+  if(child.size() == 0)
+  {
+    return vpIoTools::path(parent);
+  }
 
-	if(parent.size() == 0)
-	{
-		return vpIoTools::path(child);
-	}
+  if(parent.size() == 0)
+  {
+    return vpIoTools::path(child);
+  }
 
-	std::string convertedParent = vpIoTools::path(parent);
-	std::string convertedChild = vpIoTools::path(child);
+  std::string convertedParent = vpIoTools::path(parent);
+  std::string convertedChild = vpIoTools::path(child);
 
-	std::stringstream ss;
-	ss << vpIoTools::separator;
-	std::string stringSeparator;
-	ss >> stringSeparator;
+  std::stringstream ss;
+  ss << vpIoTools::separator;
+  std::string stringSeparator;
+  ss >> stringSeparator;
 
-	std::string lastConvertedParentChar = convertedParent.substr(convertedParent.size() - 1);
-	std::string firstConvertedChildChar = convertedChild.substr(0, 1);
+  std::string lastConvertedParentChar = convertedParent.substr(convertedParent.size() - 1);
+  std::string firstConvertedChildChar = convertedChild.substr(0, 1);
 
-	if(lastConvertedParentChar == stringSeparator)
-	{
-		convertedParent = convertedParent.substr(0, convertedParent.size() - 1);
-	}
+  if(lastConvertedParentChar == stringSeparator)
+  {
+    convertedParent = convertedParent.substr(0, convertedParent.size() - 1);
+  }
 
-	if(firstConvertedChildChar == stringSeparator)
-	{
-		convertedChild = convertedChild.substr(1);
-	}
+  if(firstConvertedChildChar == stringSeparator)
+  {
+    convertedChild = convertedChild.substr(1);
+  }
 
-	return std::string(convertedParent + vpIoTools::separator + convertedChild);
+  return std::string(convertedParent + vpIoTools::separator + convertedChild);
 }
 
 /*!
@@ -1483,18 +1495,18 @@ std::string vpIoTools::createFilePath(const std::string& parent, const std::stri
 bool vpIoTools::isAbsolutePathname(const std::string& pathname)
 {
   //# Inspired by the Python 2.7.8 module.
-	//# Return whether a path is absolute.
-	//# Trivial in Posix, harder on the Mac or MS-DOS.
-	//# For DOS it is absolute if it starts with a slash or backslash (current
-	//# volume), or if a pathname after the volume letter and colon / UNC resource
-	//# starts with a slash or backslash.
-	//
-	//def isabs(s):
-	//    """Test whether a path is absolute"""
-	//    s = splitdrive(s)[1]
-	//    return s != '' and s[:1] in '/\\'
-	std::string path = splitDrive(pathname).second;
-	return path.size() > 0 && (path.substr(0, 1) == "/" || path.substr(0, 1) == "\\");
+  //# Return whether a path is absolute.
+  //# Trivial in Posix, harder on the Mac or MS-DOS.
+  //# For DOS it is absolute if it starts with a slash or backslash (current
+  //# volume), or if a pathname after the volume letter and colon / UNC resource
+  //# starts with a slash or backslash.
+  //
+  //def isabs(s):
+  //    """Test whether a path is absolute"""
+  //    s = splitdrive(s)[1]
+  //    return s != '' and s[:1] in '/\\'
+  std::string path = splitDrive(pathname).second;
+  return path.size() > 0 && (path.substr(0, 1) == "/" || path.substr(0, 1) == "\\");
 }
 
 /*!
@@ -1518,9 +1530,9 @@ bool vpIoTools::isSamePathname(const std::string& pathname1, const std::string& 
 /*!
    Split a path in a drive specification (a drive letter followed by a colon) and the path specification.
    It is always true that drivespec + pathspec == p
- 	 Inspired by the Python 2.7.8 module.
- 	 \return a pair whose the first element is the drive specification and the second element
- 	 the path specification
+   Inspired by the Python 2.7.8 module.
+   \return a pair whose the first element is the drive specification and the second element
+   the path specification
  */
 std::pair<std::string, std::string> vpIoTools::splitDrive(const std::string& pathname)
 {
@@ -1575,44 +1587,44 @@ std::pair<std::string, std::string> vpIoTools::splitDrive(const std::string& pat
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   return std::pair<std::string, std::string>("", pathname);
 #else
-	const std::string sep = "\\";
-	const std::string sepsep = "\\\\";
-	const std::string altsep = "/";
+  const std::string sep = "\\";
+  const std::string sepsep = "\\\\";
+  const std::string altsep = "/";
 
-	if(pathname.size() > 1) {
-		std::string normPathname = pathname;
-		std::replace(normPathname.begin(), normPathname.end(), *altsep.c_str(), *sep.c_str());
+  if(pathname.size() > 1) {
+    std::string normPathname = pathname;
+    std::replace(normPathname.begin(), normPathname.end(), *altsep.c_str(), *sep.c_str());
 
-		if(normPathname.substr(0, 2) == sepsep && normPathname.substr(2, 1) != sep) {
-			// is a UNC path:
-			// vvvvvvvvvvvvvvvvvvvv drive letter or UNC path
-			// \\machine\mountpoint\directory\etc\...
-			//           directory ^^^^^^^^^^^^^^^
-			size_t index = normPathname.find(sep, 2);
-			if(index == std::string::npos) {
-				return std::pair<std::string, std::string>("", pathname);
-			}
+    if(normPathname.substr(0, 2) == sepsep && normPathname.substr(2, 1) != sep) {
+      // is a UNC path:
+      // vvvvvvvvvvvvvvvvvvvv drive letter or UNC path
+      // \\machine\mountpoint\directory\etc\...
+      //           directory ^^^^^^^^^^^^^^^
+      size_t index = normPathname.find(sep, 2);
+      if(index == std::string::npos) {
+        return std::pair<std::string, std::string>("", pathname);
+      }
 
-			size_t index2 = normPathname.find(sep, index + 1);
-			//# a UNC path can't have two slashes in a row
-			//# (after the initial two)
-			if(index2 == index + 1) {
-				return std::pair<std::string, std::string>("", pathname);
-			}
+      size_t index2 = normPathname.find(sep, index + 1);
+      //# a UNC path can't have two slashes in a row
+      //# (after the initial two)
+      if(index2 == index + 1) {
+        return std::pair<std::string, std::string>("", pathname);
+      }
 
-			if(index2 == std::string::npos) {
-				index2 = pathname.size();
-			}
+      if(index2 == std::string::npos) {
+        index2 = pathname.size();
+      }
 
-			return std::pair<std::string, std::string>(pathname.substr(0, index2), pathname.substr(index2));
-		}
+      return std::pair<std::string, std::string>(pathname.substr(0, index2), pathname.substr(index2));
+    }
 
-		if(normPathname[1] == ':') {
-			return std::pair<std::string, std::string>(pathname.substr(0, 2), pathname.substr(2));
-		}
-	}
+    if(normPathname[1] == ':') {
+      return std::pair<std::string, std::string>(pathname.substr(0, 2), pathname.substr(2));
+    }
+  }
 
-	return std::pair<std::string, std::string>("", pathname);
+  return std::pair<std::string, std::string>("", pathname);
 #endif
 }
 
