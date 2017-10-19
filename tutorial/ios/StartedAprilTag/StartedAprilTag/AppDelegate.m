@@ -1,10 +1,4 @@
-//
-//  AppDelegate.m
-//  StartedAprilTag
-//
-//  Created by Fabien Spindler on 06/10/2017.
-//  Copyright © 2017 MyOrganization. All rights reserved.
-//
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #import "AppDelegate.h"
 
@@ -47,5 +41,7 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
-
 @end
+
+#endif
+

@@ -36,6 +36,8 @@
 #import <visp3/visp.h>
 #endif
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 @interface ImageConversion : NSObject
 
 + (vpImage<vpRGBa>)vpImageColorFromUIImage:(UIImage *)image;
@@ -44,3 +46,6 @@
 + (UIImage *)UIImageFromVpImageGray:(const vpImage<unsigned char> &)I;
 
 @end
+
+#endif
+

@@ -29,6 +29,8 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #import <Foundation/Foundation.h>
 
 #import "ImageDisplay.h"
@@ -132,3 +134,6 @@
 //! [display frame]
 
 @end
+
+#endif
+

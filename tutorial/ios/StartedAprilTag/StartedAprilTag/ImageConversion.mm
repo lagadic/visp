@@ -29,6 +29,8 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #import "ImageConversion.h"
 
 @implementation ImageConversion
@@ -206,3 +208,6 @@
 //! [UIImageFromVpImageGray]
 
 @end
+
+#endif
+

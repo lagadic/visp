@@ -29,6 +29,8 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #import "ViewController.h"
 #ifdef __cplusplus
 #import <visp3/visp.h>
@@ -108,3 +110,6 @@
     // Dispose of any resources that can be recreated.
 }
 @end
+
+#endif
+
