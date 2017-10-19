@@ -6,6 +6,7 @@
 In this tutorial you will learn how to build ViSP framework from source on OSX in order to use it for iOS developments. These steps have been tested:
 - on OSX El Capitan 10.11.45 and 10.11.6, with CMake 3.5.2, Xcode 7.3.1 and 8.0, and Python 2.7.10
 - on OSX Sierra 10.12.5, with CMake 3.9.1, Xcode 8.3.3, and Python 2.7.10.
+- on OSX Sierra 10.12.6, with CMake 3.9.1, Xcode 9.0.1, and Python 2.7.10.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 

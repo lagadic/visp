@@ -29,6 +29,8 @@
  *
  *****************************************************************************/
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 #import "ViewController.h"
 #import "ImageConversion.h"
 #ifdef __cplusplus
@@ -136,3 +138,6 @@ NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to g
 }
 
 @end
+
+#endif
+

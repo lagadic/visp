@@ -1,10 +1,4 @@
-//
-//  AppDelegate.m
-//  StartedImageProc
-//
-//  Created by Fabien Spindler on 28/09/2016.
-//  Copyright © 2016 MyOrganization. All rights reserved.
-//
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #import "AppDelegate.h"
 
@@ -47,5 +41,7 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
-
 @end
+
+#endif
+
