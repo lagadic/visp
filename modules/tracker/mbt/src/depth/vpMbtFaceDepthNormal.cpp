@@ -1199,9 +1199,9 @@ void vpMbtFaceDepthNormal::estimateFeatures(const std::vector<double> &point_clo
         C = -uz/D;
 
         for (size_t i = 0; i < point_cloud_face.size()/3; i++) {
-          float xi = point_cloud_face[3*i];
-          float yi = point_cloud_face[3*i+1];
-          float Zi = point_cloud_face[3*i+2];
+          double xi = point_cloud_face[3*i];
+          double yi = point_cloud_face[3*i+1];
+          double Zi = point_cloud_face[3*i+2];
 
           residues[i] = (A*xi + B*yi + C - 1/Zi);
         }
