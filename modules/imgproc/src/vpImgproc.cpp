@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * This file is part of the ViSP software.
- * Copyright (C) 2005 - 2015 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,12 +168,12 @@ void vp::equalizeHistogram(vpImage<unsigned char> &I) {
   unsigned int cdfMin = /*std::numeric_limits<unsigned int>::max()*/ UINT_MAX, cdfMax = 0;
   unsigned int minValue = /*std::numeric_limits<unsigned int>::max()*/ UINT_MAX, maxValue = 0;
   cdf[0] = hist[0];
-  
+
   if(cdf[0] < cdfMin && cdf[0] > 0) {
     cdfMin = cdf[0];
     minValue = 0;
   }
-  
+
   for(unsigned int i = 1; i < 256; i++) {
     cdf[i] = cdf[i-1] + hist[i];
 
@@ -187,7 +187,7 @@ void vp::equalizeHistogram(vpImage<unsigned char> &I) {
       maxValue = i;
     }
   }
-  
+
   unsigned int nbPixels = I.getWidth()*I.getHeight();
   if(nbPixels == cdfMin) {
     //Only one brightness value in the image
