@@ -71,11 +71,11 @@ int computeThresholdHuang(const vpHistogram &hist) {
 
   //Find first and last non-empty bin
   size_t first, last;
-  for (first = 0; first < (size_t) hist.getSize() && hist[first] == 0; first++) {
+  for (first = 0; first < (size_t) hist.getSize() && hist[(unsigned char)first] == 0; first++) {
     // do nothing
   }
 
-  for (last = (size_t) hist.getSize()-1; last > first && hist[last] == 0; last--) {
+  for (last = (size_t) hist.getSize()-1; last > first && hist[(unsigned char)last] == 0; last--) {
     // do nothing
   }
 
@@ -87,15 +87,15 @@ int computeThresholdHuang(const vpHistogram &hist) {
   std::vector<float> S(last + 1);
   std::vector<float> W(last + 1);
 
-  S[0] = hist[0];
+  S[0] = (float)hist[0];
   W[0] = 0.0f;
   for (size_t i = std::max((size_t) 1, first); i <= last; i++) {
-    S[i] = S[i - 1] + hist[i];
-    W[i] = W[i - 1] + i * (float) hist[i];
+    S[i] = S[i - 1] + hist[(unsigned char)i];
+    W[i] = W[i - 1] + i * (float) hist[(unsigned char)i];
   }
 
   //Precalculate the summands of the entropy given the absolute difference x - mu (integral)
-  float C = last - first;
+  float C = (float)(last - first);
   std::vector<float> Smu(last + 1 - first);
 
   for (size_t i = 1; i < Smu.size(); i++) {
@@ -111,17 +111,17 @@ int computeThresholdHuang(const vpHistogram &hist) {
     float entropy = 0;
     int mu = vpMath::round(W[threshold] / S[threshold]);
     for (size_t i = first; i <= threshold; i++) {
-      entropy += Smu[(size_t) std::abs((int) i - mu)] * hist[i];
+      entropy += Smu[(size_t) std::abs((int) i - mu)] * hist[(unsigned char)i];
     }
 
     mu = vpMath::round((W[last] - W[threshold]) / (S[last] - S[threshold]));
     for (size_t i = threshold + 1; i <= last; i++) {
-      entropy += Smu[(size_t) std::abs((int) i - mu)] * hist[i];
+      entropy += Smu[(size_t) std::abs((int) i - mu)] * hist[(unsigned char)i];
     }
 
     if (bestEntropy > entropy) {
       bestEntropy = entropy;
-      bestThreshold = threshold;
+      bestThreshold = (int)threshold;
     }
   }
 
@@ -150,7 +150,7 @@ int computeThresholdIntermodes(const vpHistogram &hist) {
 
   std::vector<float> hist_float(hist.getSize());
   for (unsigned int cpt = 0; cpt < hist.getSize(); cpt++) {
-    hist_float[cpt] = hist[cpt];
+    hist_float[cpt] = (float)hist[cpt];
   }
 
   int iter = 0;
@@ -183,7 +183,7 @@ int computeThresholdIntermodes(const vpHistogram &hist) {
     }
   }
 
-  return std::floor(tt / 2.0); //vpMath::round(tt / 2.0);
+  return (int)std::floor(tt / 2.0); //vpMath::round(tt / 2.0);
 }
 
 int computeThresholdIsoData(const vpHistogram &hist, const unsigned int imageSize) {
@@ -193,7 +193,7 @@ int computeThresholdIsoData(const vpHistogram &hist, const unsigned int imageSiz
   //STEP 1: Compute mean intensity of image from histogram, set T=mean(I)
   std::vector<float> cumsum(hist.getSize(), 0.0f);
   std::vector<float> sum_ip(hist.getSize(), 0.0f);
-  cumsum[0] = hist[0];
+  cumsum[0] = (float)hist[0];
   for (unsigned int cpt = 1; cpt < hist.getSize(); cpt++) {
     sum_ip[cpt] = cpt * (float) hist[cpt] + sum_ip[cpt-1];
     cumsum[cpt] = (float) hist[cpt] + cumsum[cpt-1];
@@ -229,7 +229,7 @@ int computeThresholdMean(const vpHistogram &hist, const unsigned int imageSize) 
     sum_ip += cpt * (float) hist[cpt];
   }
 
-  return std::floor( sum_ip / imageSize );
+  return (int)std::floor( sum_ip / imageSize );
 }
 
 int computeThresholdOtsu(const vpHistogram &hist, const unsigned int imageSize) {
@@ -325,8 +325,8 @@ int computeThresholdTriangle(vpHistogram &hist) {
   // = \frac{ \left | \left ( y_2-y_1 \right ) x_0 - \left ( x_2-x_1 \right ) y_0 + x_2 y_1 - y_2 x_1 \right | }
   //        { \sqrt{ \left ( y_2 - y_1 \right )^{2} + \left ( x_2 - x_1 \right )^{2} } }
   //Constants are ignored
-  float a = max_value; //y_2 - y_1
-  float b = left_bound - max_idx; //-(x_2 - x_1)
+  float a = (float)max_value; //y_2 - y_1
+  float b = (float)(left_bound - max_idx); //-(x_2 - x_1)
   float max_dist = 0.0f;
 
   for (int cpt = left_bound+1; cpt <= max_idx; cpt++) {

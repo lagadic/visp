@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
 
       double centroid_x = std::fabs(obj.get(1, 0) / obj.get(0, 0));
       double centroid_y = std::fabs(obj.get(0, 1) / obj.get(0, 0));
-      vpDisplay::displayText(I_draw_contours, centroid_y, centroid_x-20, ss.str(), vpColor::red);
+      vpDisplay::displayText(I_draw_contours, centroid_y, centroid_x-20., ss.str(), vpColor::red);
     }
   }
   //! [Count coins]

@@ -72,8 +72,8 @@ void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, con
     vpImagePoint current_seed = seed_queue.front();
     seed_queue.pop();
 
-    unsigned int x = current_seed.get_j();
-    unsigned int y = current_seed.get_i();
+    unsigned int x = (unsigned int)current_seed.get_j();
+    unsigned int y = (unsigned int)current_seed.get_i();
     int x1 = (int) x;
 
     //Find most left pixel

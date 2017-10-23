@@ -48,9 +48,9 @@ int main(int argc, const char ** argv) {
 #ifdef VISP_HAVE_X11
   vpDisplayX d, d2, d3, d4, d5;
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d, d2, d3, d4;
+  vpDisplayGDI d, d2, d3, d4, d5;
 #elif defined(VISP_HAVE_OPENCV)
-  vpDisplayOpenCV d, d2, d3, d4;
+  vpDisplayOpenCV d, d2, d3, d4, d5;
 #endif
   d.init(I_color, 0, 0, "Input color image");
 
