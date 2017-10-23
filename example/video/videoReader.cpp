@@ -90,7 +90,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input video path>                                %s\n\
      Set video input path.\n\
-     From this path read \"ViSP-images/video/video.mpeg\"\n\
+     From this path read \"video/video.mpeg\"\n\
      video.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -235,7 +235,7 @@ main(int argc, const char ** argv)
 
     if (opt_ppath.empty())
     {
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/video/cube.mpeg");
+      filename = vpIoTools::createFilePath(ipath, "video/cube.mpeg");
     }
     else
     {

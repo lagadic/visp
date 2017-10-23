@@ -72,7 +72,7 @@ namespace {
   OPTIONS:                                               Default\n\
     -i <input image path>                                %s\n\
        Set image input path.\n\
-       From this path read \"ViSP-images/Klimt/Klimt.pgm,\n\
+       From this path read \"Klimt/Klimt.pgm,\n\
        .ppm, .jpeg and .png images.\n\
        Setting the VISP_INPUT_IMAGE_PATH environment\n\
        variable produces the same behaviour than using\n\
@@ -300,7 +300,7 @@ int main(int argc, const char *argv[]) {
 
     //Test on real image
     if (opt_ppath.empty()) {
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
       vpImageIo::read(I, filename);
     } else {
       filename = opt_ppath;

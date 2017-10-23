@@ -80,8 +80,8 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
-     and \"ViSP-images/Klimt/Klimt.ppm\" images.\n\
+     From this path read \"Klimt/Klimt.pgm\"\n\
+     and \"Klimt/Klimt.ppm\" images.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
      this option.\n\
@@ -236,7 +236,7 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I ;
 
     // Load a color image from the disk and convert it to a grey level one
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
     std::cout << "Read image: " << filename << std::endl;
     vpImageIo::read(I, filename);
     // Write the content of the image on the disk
@@ -248,7 +248,7 @@ main(int argc, const char ** argv)
     try
     {
       // Load a non existing grey image
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/image-that-does-not-exist.ppm");
+      filename = vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
       std::cout << "Read image: " << filename << std::endl;
       vpImageIo::read(I, filename) ;
     }
@@ -273,7 +273,7 @@ main(int argc, const char ** argv)
     vpImage<vpRGBa> Irgba ;
 
     // Load a color image from the disk
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
     std::cout << "Read image: " << filename << std::endl;
     vpImageIo::read(Irgba, filename);
     // Write the content of the color image on the disk
@@ -284,7 +284,7 @@ main(int argc, const char ** argv)
     try {
       // Try to load a non existing image (test for exceptions)
       // Load a non existing color image
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/image-that-does-not-exist.ppm");
+      filename = vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
       std::cout << "Read image: " << filename << std::endl;
       vpImageIo::read(Irgba, filename) ;
     }

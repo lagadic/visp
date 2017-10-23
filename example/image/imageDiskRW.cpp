@@ -90,7 +90,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
+     From this path read \"Klimt/Klimt.pgm\"\n\
      image.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -253,7 +253,7 @@ main(int argc, const char ** argv)
     // Although I is a gray level image you can read and write
     // color image. Obviously the color will be translated as a gray level
 
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
     vpImageIo::read(I, filename);
 
     filename = vpIoTools::createFilePath(dirname, "IoPPM.Klimt_char.ppm");
@@ -264,7 +264,7 @@ main(int argc, const char ** argv)
     // an exception is thrown
     //Try to load a non existing image
     try {
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/image-that-does-not-exist.ppm");
+      filename = vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
       vpImageIo::read(I,filename) ;
     }
     catch(vpException &e) {
@@ -290,7 +290,7 @@ main(int argc, const char ** argv)
     // read write unsigned char ppm image.
 
     // Load a color image from the disk
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
     vpImageIo::read(Irgba, filename);
 
     // Write the content of the color image on the disk
@@ -299,7 +299,7 @@ main(int argc, const char ** argv)
 
     // test io error
     try {
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/image-that-does-not-exist.ppm");
+      filename = vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
       vpImageIo::read(Irgba,filename) ;
     }
     catch(vpException &e) {

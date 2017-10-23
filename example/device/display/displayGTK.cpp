@@ -99,7 +99,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
+     From this path read \"Klimt/Klimt.pgm\"\n\
      image.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -267,7 +267,7 @@ main(int argc, const char ** argv)
     vpImagePoint ip, ip1, ip2;
 
     // Load a grey image from the disk
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
     vpImageIo::read(I, filename) ;
 
     // Create a display using X11
@@ -372,7 +372,7 @@ main(int argc, const char ** argv)
     vpImage<vpRGBa> Irgba ;
 
     // Load a grey image from the disk and convert it to a color image
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
     vpImageIo::read(Irgba, filename) ;
 
     // Create a new display

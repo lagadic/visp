@@ -243,7 +243,7 @@ int main(int argc, const char *argv[])
       std::cout << "\nUsage: " << argv[0] << " [-i <image path>] [-c] [-d] [--help]\n" << std::endl;
       std::cout << "\nOptions: " << std::endl;
       std::cout << "  -i <input image path> : set image input path.\n"
-                << "       From this path read \"ViSP-images/Klimt/Klimt.pgm\" image.\n"
+                << "       From this path read \"Klimt/Klimt.pgm\" image.\n"
                 << "       Setting the VISP_INPUT_IMAGE_PATH environment\n"
                 << "       variable produces the same behaviour than using\n"
                 << "       this option." << std::endl;
@@ -290,11 +290,11 @@ int main(int argc, const char *argv[])
       return 0;
     }
     vpImage<unsigned char> I;
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
     vpImageIo::read(I, filename);
 
     vpImage<vpRGBa> C;
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
     vpImageIo::read(C, filename);
 
     int nbfailure = 0;

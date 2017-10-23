@@ -158,7 +158,7 @@ int main(int argc, const char ** argv) {
     vpImage<unsigned char> I;
 
     //Set the path location of the image sequence
-    std::string dirname = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube");
+    std::string dirname = vpIoTools::createFilePath(env_ipath, "mbt/cube");
 
     //Build the name of the image files
     std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000.pgm");
@@ -183,7 +183,7 @@ int main(int argc, const char ** argv) {
     vpCameraParameters cam;
     vpMbEdgeTracker tracker;
     //Load config for tracker
-    std::string tracker_config_file = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube.xml");
+    std::string tracker_config_file = vpIoTools::createFilePath(env_ipath, "mbt/cube.xml");
 
 #ifdef VISP_HAVE_XML2
     tracker.loadConfigFile(tracker_config_file);
@@ -210,11 +210,11 @@ int main(int argc, const char ** argv) {
     tracker.setAngleDisappear(vpMath::rad(89));
 
     //Load CAO model
-    std::string cao_model_file = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube.cao");
+    std::string cao_model_file = vpIoTools::createFilePath(env_ipath, "mbt/cube.cao");
     tracker.loadModel(cao_model_file);
 
     //Initialize the pose
-    std::string init_file = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube.init");
+    std::string init_file = vpIoTools::createFilePath(env_ipath, "mbt/cube.init");
     if (opt_display && opt_click_allowed) {
       tracker.initClick(I, init_file);
     }

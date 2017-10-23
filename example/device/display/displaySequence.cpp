@@ -116,7 +116,7 @@ SYNOPSIS\n\
  OPTIONS:                                               Default\n\
   -i <test image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"ViSP-images/cube/image.%%04d.pgm\"\n\
+     From this path read \"cube/image.%%04d.pgm\"\n\
      images. These images come from ViSP-images-x.y.z.tar.gz\n\
      available on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -154,7 +154,7 @@ SYNOPSIS\n\
 \n\
   -h\n\
      Print the help.\n\n",
-	  ipath.c_str(),ppath.c_str(), first, nimages, step);
+    ipath.c_str(),ppath.c_str(), first, nimages, step);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -300,11 +300,11 @@ main(int argc, const char ** argv)
       //  terminate called after throwing an instance of 'vpImageException'
       //
       //  The sequence is available on the visp www site
-      //  http://www.irisa.fr/lagadic/visp/visp.html
+      //  https://visp.inria.fr/download/
       //  in the download section. It is named "ViSP-images.tar.gz"
 
       // Set the path location of the image sequence
-      dirname = vpIoTools::createFilePath(ipath, "ViSP-images/cube");
+      dirname = vpIoTools::createFilePath(ipath, "cube");
 
       // Build the name of the image file
 
