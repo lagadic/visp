@@ -3,9 +3,10 @@
 @rem # This file is part of the ViSP software.
 @rem # Copyright (C) 2005 - 2017 by Inria. All rights reserved.
 @rem #
-@rem # This software is free software; you can redistribute it and/or
-@rem # modify it under the terms of the GNU General Public License
-@rem # ("GPL") version 2 as published by the Free Software Foundation.
+@rem # This software is free software; you can redistribute it and/or modify
+@rem # it under the terms of the GNU General Public License as published by
+@rem # the Free Software Foundation; either version 2 of the License, or
+@rem # (at your option) any later version.
 @rem # See the file LICENSE.txt at the root directory of this source
 @rem # distribution for additional information about the GNU GPL.
 @rem #
