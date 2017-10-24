@@ -79,6 +79,16 @@ std::string vpIoTools::configFile = "";
 std::vector<std::string> vpIoTools::configVars = std::vector<std::string>();
 std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 
+namespace {
+  void replaceAll(std::string &str, const std::string& search, const std::string& replace) {
+    size_t start_pos = 0;
+    while((start_pos = str.find(search, start_pos)) != std::string::npos) {
+      str.replace(start_pos, search.length(), replace);
+      start_pos += replace.length(); // Handles case where 'replace' is a substring of 'search'
+    }
+  }
+}
+
 /*!
   Return build informations (OS, compiler, build flags, used 3rd parties...).
  */
@@ -836,8 +846,6 @@ vpIoTools::rename(const std::string &oldfilename, const std::string &newfilename
   return vpIoTools::rename(oldfilename.c_str(), newfilename.c_str());
 }
 
-
-
 /*!
   Converts a path name to the current system's format.
 
@@ -857,23 +865,18 @@ vpIoTools::path(const char *pathname)
 
 #if defined(_WIN32)
   for(unsigned int i=0 ; i<path.length() ; i++)
-    if( path[i] == '/')	path[i] = '\\';
+    if( path[i] == '/') path[i] = '\\';
 #elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
   for(unsigned int i=0 ; i<path.length() ; i++)
-    if( path[i] == '\\')	path[i] = '/';
+    if( path[i] == '\\') path[i] = '/';
 #  if TARGET_OS_IOS == 0 // The following code is not working on iOS since wordexp() is not available
   wordexp_t exp_result;
 
-  wordexp(path.c_str(), &exp_result, 0);
-  path = "";
-  //If path contains whitespace, wordexp_t will try to expand each word separated by whitespaces
-  //This is why we need to concatenate the results
-  for(size_t i = 0; i < exp_result.we_wordc; i++) {
-    path += exp_result.we_wordv[i];
-    if(i < exp_result.we_wordc-1) {
-      path += " ";
-    }
-  }
+  //escape quote character
+  replaceAll(path, "'", "'\\''");
+  //add quotes to handle special characters like parentheses and spaces
+  wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
+  path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0]  : "";
   wordfree(&exp_result);
 #  endif
 #endif
