@@ -254,9 +254,5 @@ int main() {
   }
 
   return EXIT_SUCCESS;
-#else
-  (void)argc;
-  (void)argv;
-  return 0;
 #endif
 }
