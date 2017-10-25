@@ -100,7 +100,7 @@ OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
      From this path read images \n\
-     \"ViSP-images/ellipse-1/image.%%04d.pgm\"\n\
+     \"ellipse-1/image.%%04d.pgm\"\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
      this option.\n\
@@ -221,7 +221,7 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I ;
 
     // Set the path location of the image sequence
-    dirname = vpIoTools::createFilePath(ipath, "ViSP-images/ellipse-1");
+    dirname = vpIoTools::createFilePath(ipath, "ellipse-1");
 
     // Build the name of the image file
     unsigned int iter = 1; // Image number

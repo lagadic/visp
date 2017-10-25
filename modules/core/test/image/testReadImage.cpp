@@ -80,7 +80,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"ViSP-images/Klimt/Klimt.pgm,\n\
+     From this path read \"Klimt/Klimt.pgm,\n\
      .ppm, .jpeg and .png images.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -191,29 +191,29 @@ main(int argc, const char ** argv)
 
     if (opt_ppath.empty())
     {
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
       vpImageIo::read(I,filename);
       printf("Read ppm ok\n");
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
       vpImageIo::read(I,filename);
       printf("Read pgm ok\n");
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.jpeg");
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.jpeg");
       vpImageIo::read(I,filename);
       printf("Read jpeg ok\n");
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.png");
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.png");
       vpImageIo::read(I,filename);
       printf("Read png ok\n");
 
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
       vpImageIo::read(Irgb,filename);
       printf("Read ppm ok\n");
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
       vpImageIo::read(Irgb,filename);
       printf("Read pgm ok\n");
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.jpeg");
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.jpeg");
       vpImageIo::read(Irgb,filename);
       printf("Read jpeg ok\n");
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.png");
+      filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.png");
       vpImageIo::read(Irgb,filename);
       printf("Read png ok\n");
     }

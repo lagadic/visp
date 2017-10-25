@@ -78,7 +78,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
+     From this path read \"Klimt/Klimt.pgm\"\n\
      image.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -227,7 +227,7 @@ int main(int argc, const char ** argv)
       vpImage<unsigned char> I;
 
       // Read the input grey image from the disk
-      std::string filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
+      std::string filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
       std::cout << "Read image: " << filename << std::endl;
       vpImageIo::read(I, filename) ;
       std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
@@ -313,7 +313,7 @@ int main(int argc, const char ** argv)
       vpImage<vpRGBa> I;
 
       // Read the input color image from the disk
-      std::string filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
+      std::string filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
       std::cout << "Read image: " << filename << std::endl;
       vpImageIo::read(I, filename) ;
       std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;

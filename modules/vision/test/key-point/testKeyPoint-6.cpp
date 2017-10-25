@@ -203,7 +203,7 @@ int main(int argc, const char ** argv) {
     vpImage<unsigned char> I;
 
     //Set the path location of the image sequence
-    std::string dirname = vpIoTools::createFilePath(env_ipath, "ViSP-images/Klimt");
+    std::string dirname = vpIoTools::createFilePath(env_ipath, "Klimt");
 
     //Build the name of the image files
     std::string filename = vpIoTools::createFilePath(dirname, "/Klimt.png");

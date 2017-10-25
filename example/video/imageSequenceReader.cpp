@@ -90,7 +90,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input images path>                                %s\n\
      Set ViSP-images input path.\n\
-     From this path read \"ViSP-images/cube/image.%%04d.pgm\"\n\
+     From this path read \"cube/image.%%04d.pgm\"\n\
      images.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -241,7 +241,7 @@ main(int argc, const char ** argv)
 
     if (opt_ppath.empty())
     {
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/mire-2/image.%04d.pgm");
+      filename = vpIoTools::createFilePath(ipath, "mire-2/image.%04d.pgm");
     }
     else
     {

@@ -14,7 +14,7 @@
  * GPL, please contact INRIA about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://www.irisa.fr/lagadic/visp/visp.html for more information.
+ * See https://visp.inria.fr/download/ for more information.
  *
  * This software was developed at:
  * INRIA Rennes - Bretagne Atlantique

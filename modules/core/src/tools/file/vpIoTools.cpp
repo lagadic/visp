@@ -1244,11 +1244,15 @@ void vpIoTools::saveConfigFile(const bool &actuallySave)
 std::string vpIoTools::getViSPImagesDataPath()
 {
   std::string data_path;
-  std::string file_to_test("ViSP-images/mbt/cube.cao");
+  std::string file_to_test("mbt/cube.cao");
   std::string filename;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   // Test if visp-images-data package is u-installed (Ubuntu and Debian)
-  data_path = "/usr/share/visp-images-data";
+  data_path = "/usr/share/visp-images-data/ViSP-images";
+  filename = data_path + "/" + file_to_test;
+  if (vpIoTools::checkFilename(filename))
+    return data_path;
+  data_path = "/usr/share/visp-images-data/visp-images";
   filename = data_path + "/" + file_to_test;
   if (vpIoTools::checkFilename(filename))
     return data_path;
@@ -1256,6 +1260,14 @@ std::string vpIoTools::getViSPImagesDataPath()
   // Test if VISP_INPUT_IMAGE_PATH env var is set
   try {
     data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH");
+    filename = data_path + "/" + file_to_test;
+    if (vpIoTools::checkFilename(filename))
+      return data_path;
+    data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH") + "/ViSP-images";
+    filename = data_path + "/" + file_to_test;
+    if (vpIoTools::checkFilename(filename))
+      return data_path;
+    data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH") + "/visp-images";
     filename = data_path + "/" + file_to_test;
     if (vpIoTools::checkFilename(filename))
       return data_path;

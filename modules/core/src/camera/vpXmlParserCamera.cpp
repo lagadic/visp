@@ -230,7 +230,7 @@ vpXmlParserCamera::save(const vpCameraParameters &cam, const std::string &filena
     xmlNodePtr node_tmp = xmlNewComment((xmlChar*)
                                         "This file stores intrinsic camera parameters used\n"
                                         "   in the vpCameraParameters Class of ViSP available\n"
-                                        "   at http://www.irisa.fr/lagadic/visp/visp.html .\n"
+                                        "   at https://visp.inria.fr/download/ .\n"
                                         "   It can be read with the parse method of\n"
                                         "   the vpXmlParserCamera class.");
     xmlAddChild(node,node_tmp);

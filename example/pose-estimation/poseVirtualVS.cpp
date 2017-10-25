@@ -121,7 +121,7 @@ OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
      From this path read images \n\
-     \"ViSP-images/cube/image.%%04d.pgm\"\n\
+     \"cube/image.%%04d.pgm\"\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
      this option.\n\
@@ -305,11 +305,11 @@ main(int argc, const char** argv)
       //  terminate called after throwing an instance of 'vpImageException'
       //
       //  The sequence is available on the visp www site
-      //  http://www.irisa.fr/lagadic/visp/visp.html
+      //  https://visp.inria.fr/download/
       //  in the download section. It is named "ViSP-images-x.y.z.tar.gz"
 
       // directory name
-      dirname = vpIoTools::createFilePath(ipath, "ViSP-images/cube");
+      dirname = vpIoTools::createFilePath(ipath, "cube");
 
       // Build the name of the image file
 

@@ -103,7 +103,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set mire.pgm image input path.\n\
-     From this path read \"ViSP-images/mire/mire.pgm\" video.\n\
+     From this path read \"mire/mire.pgm\" image.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment variable \n\
      produces the same behaviour than using this option.\n\
             \n\
@@ -296,7 +296,7 @@ main(int argc, const char ** argv)
     if (!opt_ipath.empty())
       ipath = opt_ipath;
 
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/mire/mire.pgm");
+    filename = vpIoTools::createFilePath(ipath, "mire/mire.pgm");
 
     imsim.init(filename.c_str(), X);
 

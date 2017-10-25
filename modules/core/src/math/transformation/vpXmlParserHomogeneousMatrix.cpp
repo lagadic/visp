@@ -164,7 +164,7 @@ vpXmlParserHomogeneousMatrix::save(const vpHomogeneousMatrix &M, const std::stri
     xmlNodePtr node_tmp = xmlNewComment((xmlChar*)
                                         "This file stores homogeneous matrix used\n"
                                         "   in the vpHomogeneousMatrix Class of ViSP available\n"
-                                        "   at http://www.irisa.fr/lagadic/visp/visp.html .\n"
+                                        "   at https://visp.inria.fr/download/ .\n"
                                         "   It can be read with the parse method of\n"
                                         "   the vpXmlParserHomogeneousMatrix class.");
     xmlAddChild(node,node_tmp);

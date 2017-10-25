@@ -158,7 +158,7 @@ int main(int argc, const char ** argv) {
     vpImage<unsigned char> Iref, Icur, Imatch;
 
     //Set the path location of the image sequence
-    std::string dirname = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube");
+    std::string dirname = vpIoTools::createFilePath(env_ipath, "mbt/cube");
 
     //Build the name of the image files
     std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000.pgm");

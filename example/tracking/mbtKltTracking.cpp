@@ -79,7 +79,7 @@ OPTIONS:                                               \n\
   -i <input image path>                                \n\
      Set image input path.\n\
      From this path read images \n\
-     \"ViSP-images/mbt/cube/image%%04d.ppm\". These \n\
+     \"mbt/cube/image%%04d.ppm\". These \n\
      images come from ViSP-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -233,22 +233,22 @@ main(int argc, const char ** argv)
 
     // Get the option values
     if (!opt_ipath.empty())
-      ipath = vpIoTools::createFilePath(opt_ipath, "ViSP-images/mbt/cube/image%04d.pgm");
+      ipath = vpIoTools::createFilePath(opt_ipath, "mbt/cube/image%04d.pgm");
     else
-      ipath = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube/image%04d.pgm");
+      ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.pgm");
 
     if (!opt_configFile.empty())
       configFile = opt_configFile;
     else if (!opt_ipath.empty())
-      configFile = vpIoTools::createFilePath(opt_ipath, "ViSP-images/mbt/cube.xml");
+      configFile = vpIoTools::createFilePath(opt_ipath, "mbt/cube.xml");
     else
-      configFile = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube.xml");
+      configFile = vpIoTools::createFilePath(env_ipath, "mbt/cube.xml");
 
     if (!opt_modelFile.empty()){
       modelFile = opt_modelFile;
     }else{
-      std::string modelFileCao = "ViSP-images/mbt/cube.cao";
-      std::string modelFileWrl = "ViSP-images/mbt/cube.wrl";
+      std::string modelFileCao = "mbt/cube.cao";
+      std::string modelFileWrl = "mbt/cube.wrl";
 
       if(!opt_ipath.empty()){
         if(cao3DModel){
@@ -281,9 +281,9 @@ main(int argc, const char ** argv)
     if (!opt_initFile.empty())
       initFile = opt_initFile;
     else if (!opt_ipath.empty())
-      initFile = vpIoTools::createFilePath(opt_ipath, "ViSP-images/mbt/cube");
+      initFile = vpIoTools::createFilePath(opt_ipath, "mbt/cube");
     else
-      initFile = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube");
+      initFile = vpIoTools::createFilePath(env_ipath, "mbt/cube");
 
     vpImage<unsigned char> I;
     vpVideoReader reader;

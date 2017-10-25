@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# ViSP overall configuration file. 
+# ViSP overall configuration file.
 #
 # Authors:
 # Fabien Spindler
@@ -64,7 +64,7 @@ endforeach()
 # To run some of these tests don't forget to set VISP_INPUT_IMAGE_PATH
 # environment variable to the ViSP test sequences location.
 # To get these sequence download ViSP-images.tar.gz from
-# http://www.irisa.fr/lagadic/visp/visp.html
+# https://visp.inria.fr/download/
 add_test(servoSimu4Points servoSimu4Points -d)
 add_test(servoSimuCylinder servoSimuCylinder -d)
 add_test(servoSimuSphere servoSimuSphere -d)

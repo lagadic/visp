@@ -275,7 +275,7 @@ main()
 
     // Set the default input path
     if (! ipath.empty())
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/iv/4points.iv");
+      filename = vpIoTools::createFilePath(ipath, "iv/4points.iv");
 
     std::cout << "Load : " << filename << std::endl
               << "This file should be in the working directory" << std::endl;

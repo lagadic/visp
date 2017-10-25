@@ -96,7 +96,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"ViSP-images/circle/circle.pgm\"\n\
+     From this path read \"circle/circle.pgm\"\n\
      image. \n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -219,7 +219,7 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I ;
 
     // Set the path location of the image sequence
-    dirname = vpIoTools::createFilePath(ipath, "ViSP-images/circle");
+    dirname = vpIoTools::createFilePath(ipath, "circle");
 
     // Build the name of the image file
     filename = vpIoTools::createFilePath(dirname, "circle.pgm");

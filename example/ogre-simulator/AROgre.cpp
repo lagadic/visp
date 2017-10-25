@@ -101,7 +101,7 @@ OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
      From this path read images \n\
-     \"ViSP-images/mire-2/image.%%04d.pgm\". These \n\
+     \"mire-2/image.%%04d.pgm\". These \n\
      images come from ViSP-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -569,7 +569,7 @@ int main(int argc, const char **argv)
 
     if (opt_ppath.empty()){
       // Set the path location of the image sequence
-      dirname = vpIoTools::createFilePath(ipath, "ViSP-images/mire-2");
+      dirname = vpIoTools::createFilePath(ipath, "mire-2");
 
       // Build the name of the image file
 

@@ -101,7 +101,7 @@ OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
      From this path read images \n\
-     \"ViSP-images/ellipse-1/image.%%04d.pgm\"\n\
+     \"ellipse-1/image.%%04d.pgm\"\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
      this option.\n\
@@ -115,7 +115,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n",
-	  ipath.c_str());
+    ipath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -222,7 +222,7 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I ;
 
     // Set the path location of the image sequence
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/ellipse-1/image.%04d.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ellipse-1/image.%04d.pgm");
 
     // Build the name of the image file
     vpVideoReader reader;

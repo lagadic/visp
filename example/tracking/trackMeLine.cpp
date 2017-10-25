@@ -102,7 +102,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"ViSP-images/line/image.%%04d.pgm\"\n\
+     From this path read \"line/image.%%04d.pgm\"\n\
      images. \n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -225,7 +225,7 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I ;
 
     // Set the path location of the image sequence
-    dirname = vpIoTools::createFilePath(ipath, "ViSP-images/line");
+    dirname = vpIoTools::createFilePath(ipath, "line");
 
     // Build the name of the image file
     unsigned int iter = 1; // Image number

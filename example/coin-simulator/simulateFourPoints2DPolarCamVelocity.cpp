@@ -90,7 +90,7 @@ fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"ViSP-images/iv/4points.iv\"\n\
+     From this path read \"iv/4points.iv\"\n\
      cad model.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -376,7 +376,7 @@ int main(int argc, const char ** argv)
       simu.setZoomFactor(1.0f) ;
 
       // Load the cad model
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/iv/4points.iv");
+      filename = vpIoTools::createFilePath(ipath, "iv/4points.iv");
       simu.load(filename.c_str()) ;
 
       simu.setInternalCameraParameters(cam) ;

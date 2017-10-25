@@ -63,7 +63,7 @@ endforeach()
 # To run some of these tests don't forget to set VISP_INPUT_IMAGE_PATH
 # environment variable to the ViSP test sequences location.
 # To get these sequence download ViSP-images.tar.gz from
-# http://www.irisa.fr/lagadic/visp/visp.html
+# https://visp.inria.fr/download/
 add_test(displaySequence displaySequence ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(displayGDI displayGDI -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(displayD3D displayD3D -c ${OPTION_TO_DESACTIVE_DISPLAY})

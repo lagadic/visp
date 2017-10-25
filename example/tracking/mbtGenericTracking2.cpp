@@ -84,7 +84,7 @@ OPTIONS:                                               \n\
   -i <input image path>                                \n\
      Set image input path.\n\
      From this path read images \n\
-     \"ViSP-images/mbt/cube/image%%04d.ppm\". These \n\
+     \"mbt/cube/image%%04d.ppm\". These \n\
      images come from ViSP-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -254,18 +254,18 @@ main(int argc, const char ** argv)
 
     // Get the option values
     if (!opt_ipath.empty())
-      ipath = vpIoTools::createFilePath(opt_ipath, "ViSP-images/mbt/cube/image%04d.pgm");
+      ipath = vpIoTools::createFilePath(opt_ipath, "mbt/cube/image%04d.pgm");
     else
-      ipath = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube/image%04d.pgm");
+      ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.pgm");
 
 #if defined (VISP_HAVE_XML2) && USE_XML
     std::string configFile;
     if (!opt_configFile.empty())
       configFile = opt_configFile;
     else if (!opt_ipath.empty())
-      configFile = vpIoTools::createFilePath(opt_ipath, "ViSP-images/mbt/cube.xml");
+      configFile = vpIoTools::createFilePath(opt_ipath, "mbt/cube.xml");
     else
-      configFile = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube.xml");
+      configFile = vpIoTools::createFilePath(env_ipath, "mbt/cube.xml");
 #endif
 
     if (!opt_modelFile.empty()){
@@ -274,11 +274,11 @@ main(int argc, const char ** argv)
       std::string modelFileCao;
       std::string modelFileWrl;
       if(trackCylinder){
-        modelFileCao = "ViSP-images/mbt/cube_and_cylinder.cao";
-        modelFileWrl = "ViSP-images/mbt/cube_and_cylinder.wrl";
+        modelFileCao = "mbt/cube_and_cylinder.cao";
+        modelFileWrl = "mbt/cube_and_cylinder.wrl";
       }else{
-        modelFileCao = "ViSP-images/mbt/cube.cao";
-        modelFileWrl = "ViSP-images/mbt/cube.wrl";
+        modelFileCao = "mbt/cube.cao";
+        modelFileWrl = "mbt/cube.wrl";
       }
 
       if(!opt_ipath.empty()){
@@ -312,9 +312,9 @@ main(int argc, const char ** argv)
     if (!opt_initFile.empty())
       initFile = opt_initFile;
     else if (!opt_ipath.empty())
-      initFile = vpIoTools::createFilePath(opt_ipath, "ViSP-images/mbt/cube");
+      initFile = vpIoTools::createFilePath(opt_ipath, "mbt/cube");
     else
-      initFile = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube");
+      initFile = vpIoTools::createFilePath(env_ipath, "mbt/cube");
 
     std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
     vpImage<unsigned char> I1, I2, I3;
