@@ -30,11 +30,11 @@ The first step is to read the input image:
 
 \snippet tutorial-contrast-sharpening.cpp Read
 
-The low constrast color image used in this tutorial can be downloaded <a href="https://upload.wikimedia.org/wikipedia/commons/f/fd/Crayfish_low_contrast.JPG">here</a> (By Biem (Own work) [Public domain], via Wikimedia Commons):
+The low contrast color image used in this tutorial can be downloaded <a href="https://upload.wikimedia.org/wikipedia/commons/f/fd/Crayfish_low_contrast.JPG">here</a> (By Biem (Own work) [Public domain], via Wikimedia Commons):
 
-\image html img-tutorial-contrast-sharpening-Crayfish-low-contrast.png "Input low constrast color image"
+\image html img-tutorial-contrast-sharpening-Crayfish-low-contrast.png "Input low contrast color image"
 
-The figure below represents the histogram and the cumulative histogram of the low contrast image. Most of the histogram bins are approximatively in the [80 - 140] range, resulting in an image with low dynamic.
+The figure below represents the histogram and the cumulative histogram of the low contrast image. Most of the histogram bins are approximately in the [80 - 140] range, resulting in an image with low dynamic.
 
 \image html img-tutorial-contrast-sharpening-Crayfish-low-contrast-hist.png "Histogram and cumulative histogram of the input image"
 

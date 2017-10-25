@@ -79,6 +79,6 @@ The original photo after the Retinex processing:
 
 \section imgproc_brightness_next Next tutorial
 
-You can now read the \ref tutorial-imgproc-contrast-sharpening, for additionnal constrast and sharpness improvement techniques.
+You can now read the \ref tutorial-imgproc-contrast-sharpening, for additional contrast and sharpness improvement techniques.
 
 */

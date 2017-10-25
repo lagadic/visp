@@ -10,10 +10,10 @@ This tutorial will show you how to use the <a href="https://en.wikipedia.org/wik
 The principle for a 2D image is the following:
 - in input: a seed point, the pixel value to be replaced that forms the connected area, the pixel value to replace
 - starting from a seed point
-- explore the neighbourhood looking for same pixel values
+- explore the neighborhood looking for same pixel values
 - replace the old pixel value by the desired one
 
-To explore the neighbourhood, a 4-connexity or 8-connexity search are possible:
+To explore the neighborhood, a 4-connexity or 8-connexity search are possible:
 
 \image html img-tutorial-flood-fill-4-connexity.png "4-connexity"
 
