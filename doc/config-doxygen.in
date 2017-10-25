@@ -2129,6 +2129,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_MODULE_DETECTION \
                          VISP_HAVE_MODULE_GUI \
                          VISP_HAVE_MODULE_IO \
+                         VISP_HAVE_MODULE_IMGPROC \
                          VISP_HAVE_MODULE_ROBOT \
                          VISP_HAVE_MODULE_SENSOR \
                          VISP_HAVE_MODULE_BLOB \
