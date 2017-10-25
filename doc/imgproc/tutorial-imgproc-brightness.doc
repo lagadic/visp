@@ -1,0 +1,84 @@
+/**
+
+\page tutorial-imgproc-brightness Tutorial: Brightness and contrast adjustment
+\tableofcontents
+
+\section imgproc_brightness_intro Introduction
+
+While the ViSP library is not intended to be an image processing library or replace a raster graphics editor, some easy image processing techniques can be used to improve or adjust the brightness and the contrast of an image.
+
+The different techniques used in this tutorial are:
+- brightness and contrast adjustment using a linear function
+- gamma correction
+- histogram equalization
+- Retinex algorithm
+
+The following example also available in tutorial-brightness-adjustment.cpp will demonstrate on a real underexposed photo the result of each of these methods:
+
+\include tutorial-brightness-adjustment.cpp
+
+These functions are provided in a \a vp:: namespace and accessible using this include:
+
+\snippet tutorial-brightness-adjustment.cpp Include
+
+\section imgproc_brightness_adjust Brightness and contrast adjustment
+
+The brightness and the contrast of an image can be adjusted using a linear function:
+\f[I_{res}\left ( i,j \right ) = \alpha \cdot  I_{src}\left ( i,j \right ) + \beta\f]
+
+The \f$\alpha\f$ value will behave as a gain factor and the \f$\beta\f$ value as an offset.
+
+The code to use is straightforward:
+
+\snippet tutorial-brightness-adjustment.cpp Brightness contrast adjustment
+
+The result image is the following:
+
+\image html img-tutorial-brighness-adjust-alpha10-beta50.png "Left: underexposed image - Right: image adjusted with alpha=10, beta=50"
+
+\section imgproc_brightness_gamma_correction Gamma correction
+
+<a href="https://en.wikipedia.org/wiki/Gamma_correction">Gamma correction</a> is a simple technique allowing to correct an image using a non-linear operation. The formula used is:
+\f[I_{res}\left ( i,j \right ) = \left ( \frac{I_{src}\left ( i,j \right )}{255} \right )^{\frac{1}{\gamma}} \cdot 255\f]
+
+The image below shows in x the input pixel values and in y the output pixel values as they would be transformed by a gamma correction function according to different gamma values.
+
+\image html img-tutorial-brighness-gamma-correction-plot.png "Visualization of the gamma correction function"
+
+The result image is the following:
+
+\image html img-tutorial-brighness-gamma-correction-3.5.png "Left: underexposed image - Right: image corrected with gamma=3.5"
+
+\section imgproc_brightness_histogram_equalization Histogram equalization
+
+<a href="https://en.wikipedia.org/wiki/Histogram_equalization">Histogram equalization</a> is an image processing method that will adjust the contrast of an image by stretching or shrinking the intensity distribution in order to have a linear cumulative histogram distribution.
+
+In the next figure, you can observe the histogram for the original underexposed photo where most of the pixel intensities are located in the [0, 30] range. The cumulative histogram distribution has a strong slope for very low pixel intensities.
+
+\image html img-tutorial-brighness-hist-eq-cumulative.png "Histogram and normalized cumulative histogram of the underexposed photo"
+
+The histogram for the equalized photo is displayed in the next figure. This time, the bins are spread more uniformally along the intensity range and the cumulative histogram distribution presents a more linear shape.
+
+\image html img-tutorial-brighness-hist-eq-cumulative2.png "Histogram and normalized cumulative histogram of the equalized photo"
+
+The result of the histogram equalized image is displayed below:
+
+\image html img-tutorial-brighness-hist-eq.png "Left: underexposed image - Right: histogram equalized image"
+
+\section imgproc_brightness_retinex Retinex
+
+The Retinex algorithm implemented is ported from the <a href="http://imagej.net/Retinex">Retinex ImageJ</a> plugin:
+
+<blockquote>
+Retinex filtering is based on Land's theory of image perception, proposed to explain the perceived colour constancy of objects under varying illumination conditions. Several approaches exist to implement the retinex principles, among these the multiscale retinex with colour restoration algorithm (MSRCR) combines colour constancy with local contrast enhancement so images are rendered similarly to how human vision is believed to operate.
+</blockquote>
+
+The original photo after the Retinex processing:
+
+\image html img-tutorial-brighness-retinex-dynamic-3.png "Left: underexposed image - Right: result of the Retinex algorithm with default parameters and dynamic=3"
+
+\section imgproc_brightness_next Next tutorial
+
+You can now read the \ref tutorial-imgproc-contrast-sharpening, for additional contrast and sharpness improvement techniques.
+
+*/

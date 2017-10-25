@@ -1,0 +1,69 @@
+/*******************************************
+ * Module imgproc
+ *******************************************/
+/*!
+  \defgroup module_imgproc imgproc: Image processing module
+  Image processing module content.
+*/
+/*!
+  \ingroup module_imgproc
+  \defgroup group_imgproc_brightness Brightness and contrast adjustment
+  Brightness and contrast adjustment.
+*/
+/*!
+  \ingroup module_imgproc
+  \defgroup group_imgproc_gamma Gamma correction
+  Gamma correction.
+*/
+/*!
+  \ingroup module_imgproc
+  \defgroup group_imgproc_histogram Histogram equalization
+  Histogram equalization.
+*/
+/*!
+  \ingroup module_imgproc
+  \defgroup group_imgproc_contrast Contrast stretching
+  Contrast stretching.
+*/
+/*!
+  \ingroup module_imgproc
+  \defgroup group_imgproc_sharpening Image sharpening
+  Image sharpening.
+*/
+/*!
+  \ingroup module_imgproc
+  \defgroup group_imgproc_retinex Retinex
+  Enhance the contrast of a color image using the Retinex technique, based on the Retinex ImageJ plugin:
+  <blockquote>
+  Retinex filtering is based on Land's theory of image perception, proposed to explain the perceived colour constancy
+  of objects under varying illumination conditions. Several approaches exist to implement the retinex principles,
+  among these the multiscale retinex with colour restoration algorithm (MSRCR) combines colour constancy
+  with local contrast enhancement so images are rendered similarly to how human vision is believed to operate.
+  </blockquote>
+  This method is based on the <a href="http://imagej.net/Retinex">Retinex ImageJ</a> plugin written by Francisco Jiménez Hernández,
+  which is a modified implementation of the Retinex filter from the <a href="https://docs.gimp.org/en/plug-in-retinex.html">GIMP package</a>
+  by Fabien Pelisson.
+*/
+/*!
+  \ingroup module_imgproc
+  \defgroup group_imgproc_connected_components Connected components
+  Connected components.
+*/
+/*!
+  \ingroup module_imgproc
+  \defgroup group_imgproc_contours Contours extraction
+  Contours extraction.
+*/
+/*!
+  \ingroup module_imgproc
+  \defgroup group_imgproc_morph Additional image morphology functions
+  Additional image morphology functions.
+*/
+/*!
+  \ingroup module_imgproc
+  \defgroup group_imgproc_threshold Automatic thresholding
+  Automatic thresholding using various well-known methods.
+  
+  \image html img-auto-threshold-grid36-03.png Input image.
+  \image html img-auto-threshold-grid36-03-otsu.png Image automatically thresholded with the Otsu method.
+*/

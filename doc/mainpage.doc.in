@@ -96,6 +96,17 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position.
 
+\subsection tuto_imgproc Image processing
+
+- \ref tutorial-imgproc-brightness <br>This tutorial will show you some simple techniques to adjust or improve the brightness / contrast of an image.
+- \ref tutorial-imgproc-contrast-sharpening <br>This tutorial will show you some simple techniques to improve the contrast and the sharpness of an image.
+- \ref tutorial-imgproc-autothreshold <br>This tutorial will show you different methods to automatically threshold, binarize an image.
+- \ref tutorial-imgproc-contour <br>This tutorial will show you how to extract the contours from a binary image.
+- \ref tutorial-imgproc-connected-components <br>This tutorial will show you how to do a connected-components labeling.
+- \ref tutorial-imgproc-flood-fill <br>This tutorial will show you how to use the flood fill algorithm.
+- \ref tutorial-imgproc-count-coins <br>This tutorial will show you how to count the number of coins in an image.
+
+
 \subsection tuto_calib Camera calibration
 
 - \ref tutorial-calibration <br>This tutorial explains how to calibrate a camera.

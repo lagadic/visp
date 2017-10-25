@@ -1,0 +1,104 @@
+/**
+
+\page tutorial-imgproc-contrast-sharpening Tutorial: Contrast and image sharpening techniques
+\tableofcontents
+
+\section imgproc_contrast_sharpening_intro Introduction
+
+While the ViSP library is not intended to be an image processing library or replace a raster graphics editor, some easy image processing techniques can be used to improve the contrast and the sharpness of an image.
+
+The different methods presented are:
+- histogram stretching, see the corresponding <a href="https://docs.gimp.org/en/plug-in-c-astretch.html">Gimp documentation</a>.
+- histogram stretching in the HSV color space, see the corresponding <a href="https://docs.gimp.org/en/plug-in-autostretch-hsv.html">Gimp documentation</a>.
+- histogram equalization, see the corresponding <a href="https://en.wikipedia.org/wiki/Histogram_equalization">Wikipedia entry</a>.
+- unsharp masking, an image sharpening technique, see the corresponding <a href="https://en.wikipedia.org/wiki/Unsharp_masking">Wikipedia entry</a>.
+
+The first two methods consist of stretching the histogram of an image to make it use the entire range of values. It is more or less similar to the histogram equalization technique (presented in \ref imgproc_brightness_histogram_equalization).
+The stretching will act like a direct mapping between the old and new intensity values whereas the histogram equalization will linearize the cumulative histogram distribution to try to make each intensity values the same weighting in the image.
+
+\section imgproc_contrast_sharpening_example Example code
+
+The following example also available in tutorial-contrast-sharpening.cpp will show the result of each of these methods on a low contrast image.
+
+\include tutorial-contrast-sharpening.cpp
+
+These functions are provided in a \a vp:: namespace and accessible using this include:
+
+\snippet tutorial-contrast-sharpening.cpp Include
+
+The first step is to read the input image:
+
+\snippet tutorial-contrast-sharpening.cpp Read
+
+The low contrast color image used in this tutorial can be downloaded <a href="https://upload.wikimedia.org/wikipedia/commons/f/fd/Crayfish_low_contrast.JPG">here</a> (By Biem (Own work) [Public domain], via Wikimedia Commons):
+
+\image html img-tutorial-contrast-sharpening-Crayfish-low-contrast.png "Input low contrast color image"
+
+The figure below represents the histogram and the cumulative histogram of the low contrast image. Most of the histogram bins are approximately in the [80 - 140] range, resulting in an image with low dynamic.
+
+\image html img-tutorial-contrast-sharpening-Crayfish-low-contrast-hist.png "Histogram and cumulative histogram of the input image"
+
+The histogram stretching can be done with:
+
+\snippet tutorial-contrast-sharpening.cpp Stretch contrast
+
+The result is:
+
+\image html img-tutorial-contrast-sharpening-histogram-stretching.png "Histogram stretching"
+
+The corresponding histogram and cumulative histogram are the following:
+
+\image html img-tutorial-contrast-sharpening-histogram-stretching-hist.png "Histogram and cumulative histogram of the stretched histogram image"
+
+This method stretches the histogram with a direct mapping between the old and the new intensity values. The histogram bins are more spread out and the image gains some dynamic. It will not change the intensity distribution as the histogram equalization method could do.
+
+The histogram stretching on HSV colorspace can be done with:
+
+\snippet tutorial-contrast-sharpening.cpp Stretch contrast HSV
+
+\image html img-tutorial-contrast-sharpening-histogram-stretching-HSV.png "Histogram stretching on HSV colorspace"
+
+The main difference is that this method will stretch the Saturation and Value components and preserve the Hue channel.
+
+From the Gimp documentation:
+<blockquote>
+it works in HSV color space, rather than RGB color space, and it preserves the Hue. Thus, it independently stretches the ranges of the Hue, Saturation and Value components of the colors. Occasionally the results are good, often they are a bit odd.
+</blockquote>
+
+\image html img-tutorial-contrast-sharpening-histogram-stretching-HSV-hist.png "Histogram and cumulative histogram of the stretched histogram image in HSV colorspace"
+
+The histogram and cumulative histogram are similar to the previous method as expected.
+
+The last technique to improve the image contrast consists of equalizing the image histogram:
+
+\snippet tutorial-contrast-sharpening.cpp Histogram equalization
+
+The result is:
+
+\image html img-tutorial-contrast-sharpening-histogram-equalization.png "Histogram equalization"
+
+If we look at the histogram and the cumulative histogram:
+
+\image html img-tutorial-contrast-sharpening-histogram-equalization-hist.png "Histogram and cumulative histogram of the stretched histogram image in HSV colorspace"
+
+The cumulative histogram is more linear which can be related to a more equal distribution of the pixel intensities in the image.
+
+The unsharp masking will sharpen the edges in an image:
+
+\snippet tutorial-contrast-sharpening.cpp Unsharp mask
+
+It is applied here on the image after histogram stretching in the HSV colorspace:
+
+\image html img-tutorial-contrast-sharpening-unsharp-masking.png "Unsharp masking on the processed image after histogram stretching in HSV"
+
+Two parameters can be modified:
+- the size of the Gaussian kernel, see vpImageFilter::gaussianBlur(const vpImage<double> &, vpImage<double> &, unsigned int, double, bool)
+- the unsharp masking weighting: \f$ I_{sharpen} = \frac{\left( I_{original} - weight \times I_{blurred} \right)}{\left( 1 - weight \right)} \f$
+
+To summarize, the techniques presented to improve the contrast of an image can do a good job in some situations and not in another. Note that they are automatic methods unlike the unsharp masking that can be tuned (but the default values should be good enough in most of the situation).
+
+\section imgproc_contrast_sharpening_next Next tutorial
+
+You can now read the \ref tutorial-imgproc-autothreshold, to learn how to automatically threshold / binarise a grayscale image.
+
+*/

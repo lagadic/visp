@@ -1,0 +1,77 @@
+/**
+
+\page tutorial-imgproc-flood-fill Tutorial: Flood fill algorithm
+\tableofcontents
+
+\section imgproc_flood_fill_intro Introduction
+
+This tutorial will show you how to use the <a href="https://en.wikipedia.org/wiki/Flood_fill">flood fill</a> algorithm to fill connected areas in an image. This method is used for instance in raster graphics editor to perform the "bucket" fill tool.
+
+The principle for a 2D image is the following:
+- in input: a seed point, the pixel value to be replaced that forms the connected area, the pixel value to replace
+- starting from a seed point
+- explore the neighborhood looking for same pixel values
+- replace the old pixel value by the desired one
+
+To explore the neighborhood, a 4-connexity or 8-connexity search are possible:
+
+\image html img-tutorial-flood-fill-4-connexity.png "4-connexity"
+
+\image html img-tutorial-flood-fill-8-connexity.png "8-connexity"
+
+\section imgproc_flood_fill_example Example code
+
+The following example also available in tutorial-flood-fill.cpp will mimic the "bucket" fill tool:
+
+\include tutorial-flood-fill.cpp
+
+What the tutorial code does from the user side is:
+- let the user draw 3 polygons on a raster (bitmap) image
+- do the "bucket" fill tool when the user clicks on a pixel location
+
+The flood fill function is provided in a \a vp:: namespace and accessible using this include:
+
+\snippet tutorial-flood-fill.cpp Include
+
+The first thing to do is to create a raster image of 640x480 size:
+
+\snippet tutorial-flood-fill.cpp Create bitmap
+
+These lines of code allows the user to click in the image to draw a polygon shape:
+
+\snippet tutorial-flood-fill.cpp Draw polygons
+
+Now, we need to draw these polygons on a grayscale image (the current flood fill implementation needs a grayscale image) as the ViSP display is done on an internal image. This will be used as a mask: 255 pixel values are used for locations where we need to paint in the raster image.
+
+For this, we can use the <a href="https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm">Bresenham's line algorithm</a> to actually draw a line from a starting and ending point.
+The direct C++ implementation of the Bresenham's line algorithm is the following:
+
+\snippet tutorial-flood-fill.cpp Bresenham's line algorithm
+
+Draw the polygon lines on a grayscale image is then simple:
+
+\snippet tutorial-flood-fill.cpp Draw polygon lines
+
+Now we need to be able to get the 2D image location when the user click on the image to select the seed point:
+
+\snippet tutorial-flood-fill.cpp Seed point click
+
+The flood fill is performed using the desired seed point and by replacing 0 pixel values by 255 values in the mask image. A 4-connexity is used as the 8-connexity will overflow due to the thin line drawing.
+
+\snippet tutorial-flood-fill.cpp Flood fill
+
+The final step is to update the raster image:
+
+\snippet tutorial-flood-fill.cpp Bucket fill
+
+Here are some steps illustrated with images:
+
+\image html img-tutorial-flood-fill-draw-polygons.png "Polygons drawn by the user"
+
+\image html img-tutorial-flood-fill-bucket-fill.png "Raster image after bucket fill"
+
+\section imgproc_flood_fill_next Next tutorial
+
+You can now read the \ref tutorial-imgproc-count-coins, for a final tutorial that will illustrate some of the image processing techniques presented in these tutorials on a specific use case: how to count the number of coins in an image.
+
+*/

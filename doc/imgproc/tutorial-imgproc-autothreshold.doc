@@ -1,0 +1,61 @@
+/**
+
+\page tutorial-imgproc-autothreshold Tutorial: Automatic thresholding
+\tableofcontents
+
+\section imgproc_autothreshold_intro Introduction
+
+This tutorial will show you how to automatically threshold, binarize an image using different methods:
+- Huang \cite Huang_imagethresholding
+- Intermodes \cite NYAS:NYAS1035
+- Isodata \cite article4310039
+- Mean \cite Glasbey:1993:AHT:167725.167747
+- Otsu \cite article4310076
+- Triangle \cite doi:10.1177/25.7.70454
+
+These functions have been ported from the <a href="https://imagej.net/Auto_Threshold">Auto Threshold ImageJ plugin</a> and you can refer to the corresponding documentation for more information.
+
+\section imgproc_autothreshold_example Example code
+
+The following example also available in tutorial-autothreshold.cpp will demonstrate on a sample image the result of each of these methods:
+
+\include tutorial-autothreshold.cpp
+
+These functions are provided in a \a vp:: namespace and accessible using this include:
+
+\snippet tutorial-autothreshold.cpp Include
+
+The code to use is pretty straightword:
+- Huang:
+\snippet tutorial-autothreshold.cpp Huang
+- Intermodes:
+\snippet tutorial-autothreshold.cpp Intermodes
+- IsoData:
+\snippet tutorial-autothreshold.cpp IsoData
+- Mean:
+\snippet tutorial-autothreshold.cpp Mean
+- Otsu:
+\snippet tutorial-autothreshold.cpp Otsu
+- Triangle:
+\snippet tutorial-autothreshold.cpp Triangle
+
+
+The following image presents the results for each method:
+
+\image html img-tutorial-autothreshold.png "Comparison of different binarizations using the threshold value returned by each method"
+
+The function vp::autoThreshold(vpImage<unsigned char> &, const vp::vpAutoThresholdMethod &, const unsigned char, const unsigned char) has two parameters to specify the pixel values to use for the background and the foreground. By default, it is (see vpImageTools::binarise(vpImage<Type> &, Type, Type, Type, Type, Type, const bool)):
+
+\f[
+  I_{bin}\left ( i,j \right ) = 
+  \left \{ \begin{matrix}
+  0 \text{ if } I_{src}\left ( i,j \right ) < \text{threshold} \\ 
+  255 \text{ otherwise}
+  \end{matrix} \right.
+\f]
+
+\section imgproc_autothreshold_next Next tutorial
+
+You can now read the \ref tutorial-imgproc-contour, to learn how to extract the contours from a binary image.
+
+*/
