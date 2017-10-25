@@ -78,7 +78,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
+     From this path read \"Klimt/Klimt.pgm\"\n\
      image.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -228,7 +228,7 @@ main(int argc, const char ** argv)
     // Here starts really the test
     //
 
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/calibration/grid36-03.pgm");
+    filename = vpIoTools::createFilePath(ipath, "calibration/grid36-03.pgm");
     vpImage<unsigned char> I;
     vpImageIo::read(I, filename);
     std::cout << "Read: " << filename << " (" << I.getWidth() << "x" << I.getHeight() << ")" << std::endl;
