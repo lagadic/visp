@@ -3,9 +3,10 @@
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
  *
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
@@ -78,7 +79,7 @@ OPTIONS:                                               \n\
   -i <input image path>                                \n\
      Set image input path.\n\
      From this path read images \n\
-     \"ViSP-images/mbt/cube/image%%04d.ppm\". These \n\
+     \"mbt/cube/image%%04d.ppm\". These \n\
      images come from ViSP-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -245,16 +246,16 @@ main(int argc, const char ** argv)
 
     // Get the option values
     if (!opt_ipath.empty())
-      ipath = vpIoTools::createFilePath(opt_ipath, "ViSP-images/mbt/cube/image%04d.pgm");
+      ipath = vpIoTools::createFilePath(opt_ipath, "mbt/cube/image%04d.pgm");
     else
-      ipath = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube/image%04d.pgm");
+      ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.pgm");
 
     if (!opt_configFile.empty())
       configFile = opt_configFile;
     else if (!opt_ipath.empty())
-      configFile = vpIoTools::createFilePath(opt_ipath, "ViSP-images/mbt/cube.xml");
+      configFile = vpIoTools::createFilePath(opt_ipath, "mbt/cube.xml");
     else
-      configFile = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube.xml");
+      configFile = vpIoTools::createFilePath(env_ipath, "mbt/cube.xml");
 
     if (!opt_modelFile.empty()){
       modelFile = opt_modelFile;
@@ -262,11 +263,11 @@ main(int argc, const char ** argv)
       std::string modelFileCao;
       std::string modelFileWrl;
       if(trackCylinder){
-        modelFileCao = "ViSP-images/mbt/cube_and_cylinder.cao";
-        modelFileWrl = "ViSP-images/mbt/cube_and_cylinder.wrl";
+        modelFileCao = "mbt/cube_and_cylinder.cao";
+        modelFileWrl = "mbt/cube_and_cylinder.wrl";
       }else{
-        modelFileCao = "ViSP-images/mbt/cube.cao";
-        modelFileWrl = "ViSP-images/mbt/cube.wrl";
+        modelFileCao = "mbt/cube.cao";
+        modelFileWrl = "mbt/cube.wrl";
       }
 
       if(!opt_ipath.empty()){
@@ -300,9 +301,9 @@ main(int argc, const char ** argv)
     if (!opt_initFile.empty())
       initFile = opt_initFile;
     else if (!opt_ipath.empty())
-      initFile = vpIoTools::createFilePath(opt_ipath, "ViSP-images/mbt/cube");
+      initFile = vpIoTools::createFilePath(opt_ipath, "mbt/cube");
     else
-      initFile = vpIoTools::createFilePath(env_ipath, "ViSP-images/mbt/cube");
+      initFile = vpIoTools::createFilePath(env_ipath, "mbt/cube");
 
     vpImage<unsigned char> I;
     vpVideoReader reader;

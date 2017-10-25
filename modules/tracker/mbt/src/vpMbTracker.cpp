@@ -3,9 +3,10 @@
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
  *
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
@@ -70,6 +71,7 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpTrackingException.h>
+#include <visp3/core/vpCPUFeatures.h>
 
 #ifdef VISP_HAVE_COIN3D
 //Inventor includes
@@ -2439,38 +2441,45 @@ vpMbTracker::computeJTR(const vpMatrix& interaction, const vpColVector& error, v
 
   JTR.resize(6, false);
 
-#if VISP_HAVE_SSE2
-  __m128d v_JTR_0_1 = _mm_setzero_pd();
-  __m128d v_JTR_2_3 = _mm_setzero_pd();
-  __m128d v_JTR_4_5 = _mm_setzero_pd();
-
-  for (unsigned int i = 0; i < interaction.getRows(); i++) {
-    const __m128d v_error = _mm_set1_pd(error[i]);
-
-    __m128d v_interaction = _mm_loadu_pd(&interaction[i][0]);
-    v_JTR_0_1 = _mm_add_pd( v_JTR_0_1, _mm_mul_pd(v_interaction, v_error) );
-
-    v_interaction = _mm_loadu_pd(&interaction[i][2]);
-    v_JTR_2_3 = _mm_add_pd( v_JTR_2_3, _mm_mul_pd(v_interaction, v_error) );
-
-    v_interaction = _mm_loadu_pd(&interaction[i][4]);
-    v_JTR_4_5 = _mm_add_pd( v_JTR_4_5, _mm_mul_pd(v_interaction, v_error) );
-  }
-
-  _mm_storeu_pd(JTR.data, v_JTR_0_1);
-  _mm_storeu_pd(JTR.data+2, v_JTR_2_3);
-  _mm_storeu_pd(JTR.data+4, v_JTR_4_5);
-#else
-  const unsigned int N = interaction.getRows();
-
-  for (unsigned int i = 0; i < 6; i += 1){
-    double ssum = 0;
-    for (unsigned int j = 0; j < N; j += 1){
-      ssum += interaction[j][i] * error[j];
-    }
-    JTR[i] = ssum;
-  }
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
+#if !VISP_HAVE_SSE2
+  checkSSE2 = false;
 #endif
+
+  if (checkSSE2) {
+#if VISP_HAVE_SSE2
+    __m128d v_JTR_0_1 = _mm_setzero_pd();
+    __m128d v_JTR_2_3 = _mm_setzero_pd();
+    __m128d v_JTR_4_5 = _mm_setzero_pd();
+
+    for (unsigned int i = 0; i < interaction.getRows(); i++) {
+      const __m128d v_error = _mm_set1_pd(error[i]);
+
+      __m128d v_interaction = _mm_loadu_pd(&interaction[i][0]);
+      v_JTR_0_1 = _mm_add_pd( v_JTR_0_1, _mm_mul_pd(v_interaction, v_error) );
+
+      v_interaction = _mm_loadu_pd(&interaction[i][2]);
+      v_JTR_2_3 = _mm_add_pd( v_JTR_2_3, _mm_mul_pd(v_interaction, v_error) );
+
+      v_interaction = _mm_loadu_pd(&interaction[i][4]);
+      v_JTR_4_5 = _mm_add_pd( v_JTR_4_5, _mm_mul_pd(v_interaction, v_error) );
+    }
+
+    _mm_storeu_pd(JTR.data, v_JTR_0_1);
+    _mm_storeu_pd(JTR.data+2, v_JTR_2_3);
+    _mm_storeu_pd(JTR.data+4, v_JTR_4_5);
+#endif
+  } else {
+    const unsigned int N = interaction.getRows();
+
+    for (unsigned int i = 0; i < 6; i += 1){
+      double ssum = 0;
+      for (unsigned int j = 0; j < N; j += 1){
+        ssum += interaction[j][i] * error[j];
+      }
+      JTR[i] = ssum;
+    }
+  }
 }
 
 void

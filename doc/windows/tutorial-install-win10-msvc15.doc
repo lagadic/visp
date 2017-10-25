@@ -1,0 +1,285 @@
+/**
+
+\page tutorial-install-win10-msvc15 Tutorial: Installation from source for Windows 10 with Visual C++ 2017 (vc15)
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++. These steps have been tested on Windows 10 (64 bit), with CMake 3.9.4 and Visual Studio Community 2017. 
+
+\note Concerning ViSP installation, we provide also other \ref tutorial.
+
+\section install_win10_msvc15_required Install prerequisites
+
+- Visual C++. Visual Studio Community 2017 that includes Visual C++ could be downloaded from https://www.visualstudio.com. During installation enable "Desktop development with C++" to get "Windows 10 SDK". This SDK allows usage of the Graphical Device Interface (GDI) useful to display images in a window thanks to vpDisplayGDI class.
+- CMake that could be download at : http://www.cmake.org. Download the latest release for Windows win64-x64 platform (at the time this tuto was written it was the file \c cmake-3.9.4-win64-x64.msi). To install just double click on the msi file.
+
+\section install_win10_msvc15_ws Create a workspace
+
+First create a workspace that will contain all ViSP and optional 3rd parties. This workspace is here set to \c C:\\workspace folder, but it could be set to any other location.
+To create the workspace:
+- Open a \c cmd terminal (in your "Start" menu click on "Run" and type in \c cmd.exe) and run:
+\code
+C:\> mkdir C:\workspace
+\endcode
+
+\section install_win10_msvc15_3rdparty Install 3rd parties
+
+ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install \ref install_win10_msvc15_3rdparty_opencv and \ref install_win10_msvc15_3rdparty_xml in the workspace. If you have an Intel Realsense depth camera you may also install \ref install_win10_msvc15_3rdparty_realsense. If your camera is a PointFrey you may install \ref install_win10_msvc15_3rdparty_flycapture, while if your camera is a Basler, you may rather install \ref install_win10_msvc15_3rdparty_pylon. Other 3rd parties are optional and should be considered only by expert developers.
+
+\subsection install_win10_msvc15_3rdparty_opencv OpenCV 3rd party
+
+<b>1. Get OpenCV</b>
+
+First you have to get OpenCV:
+- From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got \c opencv-3.3.0-vc14.exe Win pack installer.
+- Extract the content of the archive in `C:\workspace`.
+\image html img-win10-extract-opencv.png
+- The installer extracted all the material in `C:\workspace\opencv`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like \c C:\\workspace\\opencv-3.3.0.
+
+OpenCV 3.3.0 windows installer contains pre-build libraries compatible with Visual C++ 2015 (vc14) in `C:\workspace\opencv-3.3.0\build\x64\vc14`. Since here we are using Visual C++ 2017 (vc15) you need to build yourself OpenCV from source and install the libraries in `C:\workspace\opencv-3.3.0\build\x64\vc15`.
+
+<b>2. Configure OpenCV</b>
+
+To build OpenCV from source with Visual C++ 2017 (vc15):
+- Launch CMake (cmake-gui), complete the source code and build locations as in the next image.
+\image html img-cmake-win10-msvc15-opencv-launch.png
+- Click then on "Configure" button.
+\image html img-cmake-win10-msvc15-opencv-folder.png
+- Click on "Yes" to create the `C:/workspace/opencv-3.3.0/build-vc15` folder.
+- Select then your compiler "Visual Studio 15 2017 Win64" and click on "Finish" button. 
+\image html img-cmake-win10-msvc15-opencv-msvc-version.png
+- This will start CMake configuration.
+- Modify `CMAKE_INSTALL_PREFIX` var to `C:/workspace/opencv-3.3.0/build` folder location.
+\image html img-cmake-win10-msvc15-opencv-install.png
+- Click again on "Configure" button. All the red lines should disappear.
+- To finish the configuration, click on "Generate" button.
+\image html img-cmake-win10-msvc15-opencv-generate.png
+- Once the generation is done, in `C:/workspace/opencv-3.3.0/sources/build-vc15` folder you have the Visual Studio \c OpenCV.sln generated solution file.
+
+<b>3. Build OpenCV</b>
+
+- To build OpenCV just double click on `C:/workspace/opencv-3.3.0/sources/build-vc15/OpenCV.sln` solution file. This action will open OpenCV project in Visual Studio C++ 15 2017. As shown in the next image, by default the solution configuration is set to \c Debug.
+- Build `INSTALL` target for `Debug` configuration (on the right panel move the mouse on `INSTALL` target and right click to enter `Build INSTALL`
+\image html img-win10-msvc15-build-opencv-debug.png
+- Select `Release` configuration and build also `INSTALL` target for `Release`
+\image html img-win10-msvc15-build-opencv-release.png
+- After these steps, OpenCV libraries are installed in `C:/workspace/opencv-3.3.0/build/x64/vc15`
+
+<b>4. Complete OpenCV installation</b>
+
+Now you have to conclude OpenCV installation setting some environment vars:
+- In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a \c cmd terminal and enter:
+\code
+C:\> setx OpenCV_DIR C:\workspace\opencv-3.3.0\build
+\endcode
+where `C:\workspace\opencv-3.3.0\build` is where you have installed OpenCV. Inside this folder you should have a file named \c OpenCVConfig.cmake. 
+
+- You have also to add the location of OpenCV libraries in the PATH environment variable following the indications mentioned in \ref install_win10_msvc15_env_var.
+
+
+\subsection install_win10_msvc15_3rdparty_xml libxml2 3rd party
+
+- Download the latest libxml2 release from ftp://xmlsoft.org/libxml2. At the time this tuto was written it was `libxml2-2.9.6.tag.gz` file.
+- Extract the content of the tarball in `C:\workspace`. [Winrar](https://www.win-rar.com) could be used to this end.
+- Here we suppose that you have libxml2 source code in `C:\workspace\libxml2-2.9.6` folder.
+- Open a Visual Studio Native Tools 64-bit (x64) Command Prompt; open the "Start" menu, scroll to "Visual Studio 2017", and select "Visual Studio Command Prompt for native x64".
+- To build libxml2 from source enter the following instructions in the Visual Studio Command Prompt:
+\code
+C:\> cd C:\workspace\libxml2-2.9.6\win32
+C:\> cscript configure.js iconv=no ftp=no http=no compiler=msvc prefix=C:\workspace\libxml2-2.9.6\build-vc15
+C:\> nmake /f Makefile.msvc
+C:\> nmake /f Makefile.msvc install
+\endcode
+- After these steps, libxml2 library could be found in `C:/workspace/libxml2-2.9.6/build/vc15/bin/libxml2.dll`
+- To complete the installation, set `XML2_DIR` environment variable:
+\code
+C:\> setx XML2_DIR "C:\workspace\libxml2-2.9.6\build-vc15"
+\endcode
+- You have also to add the location of libxml2 library in the PATH environment variable following the indications mentioned in \ref install_win10_msvc15_env_var.
+
+\subsection install_win10_msvc15_3rdparty_realsense librealsense 3rd party
+
+I you have an Intel RealSense Depth camera (F200, SR300, R200, LR200, ZR300, and D400 series cameras), you may install librealsense 1.12.1. Otherwise you can skip this section.
+
+\note There is also librealsense 2.x.y, but ViSP is not compatible yet with thi version, that is why we recommend to install the last stable release 1.12.1.
+
+First you need to get librealsense 1.12.1 :
+
+- Get librealsense 1.12.1 source code from github
+
+        C:\> cd C:\workspace
+        C:\> git clone https://github.com/IntelRealSense/librealsense.git librealsense-1.12.1
+        C:\> git checkout tags/v1.12.1
+    
+- Here we suppose that you have librealsense source code in `C:\workspace\librealsense-1.12.1` folder.
+
+Then you need to configure the build:
+- Launch CMake (cmake-gui), complete the source code and build locations as in the next image to set the location of the build to `C:/workspace/librealsense-1.12.1/build-vc15`:
+\image html img-cmake-win10-msvc15-realsense-config.png
+- Click then on "Configure" button and accept the creation of the build directory by a click on "Yes" button. 
+- Select then your compiler "Visual Studio 15 2017 Win64" and click on "Finish" button. 
+- Modify `CMAKE_INSTALL_PREFIX` var to `C:/workspace/librealsense-1.12.1/build-vc15` folder location.
+\image html img-cmake-win10-msvc15-realsense-install.png
+- Click again on "Configure" button. All the red lines should disappear.
+- To finish the configuration, click on "Generate" button.
+
+Next, you have to build librealsense:
+- To build librealsense just double click on `C:/workspace/librealsense-1.12.1/Realsense.sln` solution file. This action will open Realsense project in Visual Studio C++ 15 2017.
+- Select `Release` configuration and build `INSTALL` target
+\image html img-cmake-win10-msvc15-realsense-build.png
+- After these steps, librealsense library could be found in `C:/workspace/librealsense-1.12.1/build-vc15/bin/realsense.dll`
+
+To complete the installation:
+- set `REALSENSE_DIR` environment variable:
+\code
+C:\> setx REALSENSE_DIR "C:\workspace\librealsense-1.12.1\build-vc15"
+\endcode
+- You have also to add the location of librealsense library in the PATH environment variable following the indications mentioned in \ref install_win10_msvc15_env_var.
+
+\subsection install_win10_msvc15_3rdparty_flycapture FlyCapture 3rd party
+
+I you have a PointGrey USB 2.0, USB 3.0, GigE or FireWire camera (DragonFly2, Flea3...), you may install FlyCapture. Otherwise you can skip this section.
+
+Complete installation instructions are given [here](https://www.ptgrey.com/KB/10020). We recap hereafter the main instructions to install FlyCapture SDK under Windows:
+
+- Download the latest FlyCapture2 Full SDK for your camera from Point Grey’s [download site](https://eu.ptgrey.com/support/downloads). On the download page, select your product family and "Windows 10 64 bit" as operating system. At the time this tutorial we written we selected "FlyCapture 2.11.3.164 SDK - Windows (64 bit)" to download `FlyCapture_2.11.2.164_x64.exe` file.
+- Double-click the downloaded software executable and follow the installation instructions.
+- Select the correct driver for the camera when prompted by the installation instructions.
+- Reboot the system.
+
+\subsection install_win10_msvc15_3rdparty_pylon Pylon 3rd party
+
+I you have a Basler FireWire, Camera Link, GigE or USB3.0 camera, you may install Pylon SDK. Otherwise you can skip this section.
+
+To install Pylon:
+- visit [Basler Software Download page](https://www.baslerweb.com/en/support/downloads/software-downloads/) to download and install the SDK corresponding to your platform. At the time this tutorial we written we selected "Pylon 5.0.10 Camera Software Suite Windows" to download `Basler_pylon_5.0.10.10613.exe` file.
+- Double-click on downloaded file and follow the installation instructions. Be carreful to select "Developer" profile during the installation in order to install Pylon SDK headers (.h) besides the dll.
+- Reboot the system.
+
+\section install_win10_msvc15_install_visp Install ViSP from source code
+\subsection install_win10_msvc15_get_source Getting ViSP source code
+
+There are different ways to get ViSP source code.
+
+- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once visp-x.y.z.tar.gz or visp-x.y.z.zip is downloaded, uncompress the file in `C:\workspace\visp\visp-x.y.z`.
+
+- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once visp-snapshot-yyyy-mm-dd.tar.gz is downloaded, uncompress the file in `C:\workspace\visp\visp-x.y.z`.
+
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the git command line (see \ref install_win7_tip_git):
+\code
+C:\> mkdir C:\workspace\visp
+C:\> cd C:\workspace\visp
+C:\> git clone https://github.com/lagadic/visp.git
+\endcode
+
+We suppose now that ViSP source is in `C:\workspace\visp\visp`. 
+
+\subsection install_win10_msvc15_config Configuring ViSP from source 
+
+The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution file that will be located in `C:/workspace/visp/visp-build-vc15`.
+
+- Launch CMake (cmake-gui) and complete the source code and binaries location as in the next image.
+\image html img-cmake-win10-msvc15-visp-launch.png
+- Click then on "Configure" button.
+\image html img-cmake-win10-msvc15-visp-create-folder.png
+- Click on "Yes" to create the `C:/workspace/visp/visp-build-vc15` folder.
+- Select then your compiler "Visual Studio 15 2017 Win64" and click on "Finish" button.
+\image html img-cmake-win10-msvc15-opencv-msvc-version.png
+- This will start CMake configuration. As shown in the next image, Flycapture, GDI (Graphical Device Interface), OpenCV,  OpenMP, Pylon, Realsense and XML2 3rd parties are automatically detected. 
+\image html img-cmake-win10-msvc15-visp-config.png
+
+\note Installation folder is set to `C:/workspace/visp/visp-build-vc15/install`. If you want to change the installation folder to `C:/Program Files (x86)/ViSP`, make sure that you have administrator privileges to write in that folder before modifying `CMAKE_INSTALL_PREFIX`. 
+
+- Click then on "Configure" button. All the red lines should disappear.
+\image html img-cmake-win10-msvc15-visp-config2.png
+\note The default configuration lead to the creation of a shared library (with \c .dll extension). This is the default configuration that is recommended. If you want to create rather a static library (with \c .lib extension) you have to uncheck the \c BUILD_SHARED_LIBS option to disable DLL creation. 
+
+- To finish the configuration, click on "Generate" button.
+\image html img-cmake-win10-msvc15-visp-generate.png
+
+- Once the generation is done, in `C:/workspace/visp/visp-build-vc15` folder you have the Visual Studio \c VISP.sln generated solution file.
+
+\subsection install_win10_msvc15_build Building ViSP from source
+
+- To build ViSP just double click on `C:/workspace/visp/visp-build-vc15/VISP.sln` solution file. This action will open ViSP project in Visual Studio C++. As shown in the next image, by default, Visual Studio position the solution configuration to \c Debug.
+\image html img-win10-msvc15-visp-open.png
+
+- Enter menu "BUILD/Build Solution" to build ViSP.
+\image html img-win10-msvc15-visp-build.png
+
+- At the end of the build process you should have the following indicating that all the build succeeded.
+\image html img-win10-msvc15-visp-build-end.png
+
+- Now to install ViSP, build "INSTALL" project. To this end, apply a left click on "INSTALL" to select the project, then a right click to enter in the "Build" menu.
+\image html img-win10-msvc15-visp-install.png
+
+- At the end of the installation, you should have the following.
+\image html img-win10-msvc15-visp-install-end.png
+
+- As shown in the previous image, all the headers but also the generated libraries are copied in `C:/workspace/visp/visp-build-vc15/install` folder; headers and libraries in `include` and `x64/vc15` subfolders respectively.
+
+- This ends ViSP installation with \c Debug configuration.
+
+- We recommend now to do the same with \c Release settings. As shown in the next image, select the \c Release configuration. 
+\image html img-win10-msvc15-visp-release.png
+
+- Now, as previously, build and install ViSP again.
+
+- At the end, in `C:/workspace/visp/visp-build-vc15/install/x64/vc15/bin` folder you have two versions of ViSP DLL libraries corresponding to ViSP modules; the one suffixed by "d" with debug information, the other one optimized with release compiler options.
+\image html img-win10-msvc15-visp-explorer-install.png
+
+\subsection install_win10_msvc15_env_var Setting up PATH variable
+
+If you built static libraries then you are done. Otherwise, if you follow this tutorial step by step you need to add the bin folders path to the systems path. This is because you will use ViSP and OpenCV libraries in form of "Dynamic-link libraries" (also known as DLL). Inside these are stored all the algorithms and information the libraries contains. The operating system will load them only on demand, during runtime. However, to do this he needs to know where they are. The systems \c PATH variable contains a list of folders where DLLs can be found. Add ViSP and OpenCV libraries path to this and the OS will know where to look if he ever needs the libraries. Otherwise, you will need to copy the used DLLs right beside the applications executable file (exe) for the OS to find it.
+
+To modify the PATH var and add the path to ViSP library, open a \c cmd terminal and run:
+\code
+C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\workspace\visp\visp-build-vc15\install\x64\vc15\bin"
+\endcode
+
+Then to add the path to OpenCV 3rd party libraries location, close and re-open a cmd-terminal and run:
+\code
+C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\workspace\opencv-3.3.0\build\x64\vc15\bin"
+\endcode
+
+Then to add the path to libxml2 3rd party library location, close and re-open a cmd-terminal and run:
+\code
+C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\workspace\libxml2-2.9.6\build-vc15\bin"
+\endcode
+
+Then to add the path to librealsense 3rd party library location, close and re-open a cmd-terminal and run:
+\code
+C:\> echo %PATH%
+C:\> setx PATH "%PATH%;C:\workspace\librealsense-1.12.1\build-vc15\bin"
+\endcode
+
+Then close and re-open a cmd terminal to check if the PATH var was well positioned.
+
+\code
+C:\> echo %PATH%
+\endcode
+
+\section install_win10_msvc15_dataset Install ViSP dataset
+
+Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named \c ViSP-images-x.y.z.zip. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples.
+
+Download `visp-images-3.1.0.zip` from http://visp.inria.fr/download and uncompress it in your workspace `C:/workspace`. 
+\image html img-win10-msvc15-visp-images.png
+
+ViSP examples and tests are able to detect automatically the location of the requested data if you position an environment variable called \c VISP_INPUT_IMAGE_PATH. In our case, this variable should be set to `C:\workspace`.
+\code
+C:\> setx VISP_INPUT_IMAGE_PATH C:\workspace\visp-images-3.1.0
+\endcode
+
+From now, you can try to run ViSP examples and tests. For example, if you want to run \c \<binary dir\>/example/device/display/Debug/displayGDI.exe, open a command window, enter in the right folder, and run:
+
+\image html img-win10-msvc15-cmd-displayGDI.png
+
+\section install_win10_msvc15_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+
+*/

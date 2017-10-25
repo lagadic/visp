@@ -3,9 +3,10 @@
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
  *
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
@@ -90,181 +91,180 @@ bool test(const std::string &s, const vpRotationVector &v, const double &bench)
 int main()
 {
   try {
-    int err = 1;
     {
       vpThetaUVector r1(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       std::vector<double> bench1(3, vpMath::rad(10));
       if (test("r1", r1, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpThetaUVector r2 = r1;
       if (test("r2", r2, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       if (test("r2", r2, vpMath::rad(10)) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpThetaUVector r3;
       r3 = vpMath::rad(10);
       if (test("r3", r3, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       std::cout << "** Test " << ++cpt << std::endl;
       for(unsigned int i=0; i<r3.size(); i++) {
         if (std::fabs(r3[i]-bench1[i]) > std::fabs(r3[i])*std::numeric_limits<double>::epsilon()) {
           std::cout << "Test fails: bad content" << std::endl;
-          return false;
+          return EXIT_FAILURE;
         }
       }
 
       vpColVector r4 = 0.5 * r1;
       std::vector<double> bench2(3, vpMath::rad(5));
       if (test("r4", r4, bench2) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpThetaUVector r5(r3);
       if (test("r5", r5, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
     }
     {
       vpRxyzVector r1(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       std::vector<double> bench1(3, vpMath::rad(10));
       if (test("r1", r1, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpRxyzVector r2 = r1;
       if (test("r2", r2, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       if (test("r2", r2, vpMath::rad(10)) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpRxyzVector r3;
       r3 = vpMath::rad(10);
       if (test("r3", r3, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       std::cout << "** Test " << ++cpt << std::endl;
       for(unsigned int i=0; i<r3.size(); i++) {
         if (std::fabs(r3[i]-bench1[i]) > std::fabs(r3[i])*std::numeric_limits<double>::epsilon()) {
           std::cout << "Test fails: bad content" << std::endl;
-          return false;
+          return EXIT_FAILURE;
         }
       }
 
       vpColVector r4 = 0.5 * r1;
       std::vector<double> bench2(3, vpMath::rad(5));
       if (test("r4", r4, bench2) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpRxyzVector r5(r3);
       if (test("r5", r5, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
     }
     {
       vpRzyxVector r1(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       std::vector<double> bench1(3, vpMath::rad(10));
       if (test("r1", r1, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpRzyxVector r2 = r1;
       if (test("r2", r2, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       if (test("r2", r2, vpMath::rad(10)) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpRzyxVector r3;
       r3 = vpMath::rad(10);
       if (test("r3", r3, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       std::cout << "** Test " << ++cpt << std::endl;
       for(unsigned int i=0; i<r3.size(); i++) {
         if (std::fabs(r3[i]-bench1[i]) > std::fabs(r3[i])*std::numeric_limits<double>::epsilon()) {
           std::cout << "Test fails: bad content" << std::endl;
-          return false;
+          return EXIT_FAILURE;
         }
       }
 
       vpColVector r4 = 0.5 * r1;
       std::vector<double> bench2(3, vpMath::rad(5));
       if (test("r4", r4, bench2) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpRzyxVector r5(r3);
       if (test("r5", r5, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
     }
     {
       vpRzyzVector r1(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       std::vector<double> bench1(3, vpMath::rad(10));
       if (test("r1", r1, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpRzyzVector r2 = r1;
       if (test("r2", r2, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       if (test("r2", r2, vpMath::rad(10)) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpRzyzVector r3;
       r3 = vpMath::rad(10);
       if (test("r3", r3, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       std::cout << "** Test " << ++cpt << std::endl;
       for(unsigned int i=0; i<r3.size(); i++) {
         if (std::fabs(r3[i]-bench1[i]) > std::fabs(r3[i])*std::numeric_limits<double>::epsilon()) {
           std::cout << "Test fails: bad content" << std::endl;
-          return false;
+          return EXIT_FAILURE;
         }
       }
 
       vpColVector r4 = 0.5 * r1;
       std::vector<double> bench2(3, vpMath::rad(5));
       if (test("r4", r4, bench2) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpRzyzVector r5(r3);
       if (test("r5", r5, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
     }
     {
       vpQuaternionVector r1(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       std::vector<double> bench1(4, vpMath::rad(10));
       if (test("r1", r1, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpQuaternionVector r2 = r1;
       if (test("r2", r2, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       if (test("r2", r2, vpMath::rad(10)) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpQuaternionVector r3;
       r3.set(vpMath::rad(10), vpMath::rad(10), vpMath::rad(10), vpMath::rad(10));
       if (test("r3", r3, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
 
       std::cout << "** Test " << ++cpt << std::endl;
       for(unsigned int i=0; i<r3.size(); i++) {
         if (std::fabs(r3[i]-bench1[i]) > std::fabs(r3[i])*std::numeric_limits<double>::epsilon()) {
           std::cout << "Test fails: bad content" << std::endl;
-          return false;
+          return EXIT_FAILURE;
         }
       }
 
       vpColVector r4 = 0.5 * r1;
       std::vector<double> bench2(4, vpMath::rad(5));
       if (test("r4", r4, bench2) == false)
-        return err;
+        return EXIT_FAILURE;
 
       vpQuaternionVector r5(r3);
       if (test("r5", r5, bench1) == false)
-        return err;
+        return EXIT_FAILURE;
     }
     {
       vpRotationMatrix R;
@@ -350,10 +350,10 @@ int main()
       }
     }
     std::cout << "All tests succeed" << std::endl;
-    return 0;
+    return EXIT_SUCCESS;
   }
   catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

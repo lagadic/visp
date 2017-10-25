@@ -3,9 +3,10 @@
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
  *
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
@@ -137,7 +138,7 @@ OPTIONS:                                                            Default\n\
   -i <input image path>                                \n\
      Set image input path.\n\
      From this path read images \n\
-     \"ViSP-images/cube/image%%04d.pgm\". These \n\
+     \"cube/image%%04d.pgm\". These \n\
      images come from ViSP-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -319,9 +320,9 @@ main(int argc, const char ** argv)
 
     // Get the option values
     if (!opt_ipath.empty())
-      ipath = vpIoTools::createFilePath(opt_ipath, "ViSP-images/mire-2/image.%04d.pgm");
+      ipath = vpIoTools::createFilePath(opt_ipath, "mire-2/image.%04d.pgm");
     else
-      ipath = vpIoTools::createFilePath(env_ipath, "ViSP-images/mire-2/image.%04d.pgm");
+      ipath = vpIoTools::createFilePath(env_ipath, "mire-2/image.%04d.pgm");
 
     vpImage<unsigned char> I;
     vpVideoReader reader;

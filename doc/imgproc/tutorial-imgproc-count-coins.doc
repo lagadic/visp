@@ -1,0 +1,123 @@
+/**
+
+\page tutorial-imgproc-count-coins Practical example: count the number of coins in an image
+\tableofcontents
+
+\section imgproc_count_coins_intro Introduction
+
+This tutorial will show you how to count the number of coins in an image. To do this, we will reuse some of the image processing techniques presented before and some other image processing methods:
+- automatic thresholding (\ref tutorial-imgproc-autothreshold)
+- flood fill (\ref tutorial-imgproc-flood-fill) / fill holes
+- find contours (\ref tutorial-imgproc-contour)
+- morphological operations
+- image moments
+
+The two sample images to test the image processing pipeline are:
+
+\image html img-tutorial-count-coins-coins1.png "Sample image 1"
+
+\image html img-tutorial-count-coins-coins2.png "Sample image 2"
+
+The second image can be downloaded <a href="https://upload.wikimedia.org/wikipedia/commons/c/c8/Fransiz_frangi_madeni_paralari.PNG">here</a> (by Atacanus (Own work) [Public domain], via Wikimedia Commons).
+
+We assume similar lighting condition and coins placement in the image to build the image processing pipeline.
+
+\section imgproc_count_coins_example Example code
+
+The example code also available in tutorial-count-coins.cpp is:
+
+\include tutorial-count-coins.cpp
+
+To run the demo code for the sample image 1:
+
+\code
+$ ./tutorial-count-coins
+\endcode
+
+To run the demo code for the sample image 2:
+
+\code
+$ ./tutorial-count-coins --input coins2.pgm --white_foreground
+\endcode
+
+The functions we will use needs the following includes:
+
+\snippet tutorial-count-coins.cpp Include
+
+The image processing functions in the \a imgproc module are declared in the \a vp:: namespace.
+
+The first thing to do is to read the image using:
+
+\snippet tutorial-count-coins.cpp Read
+
+As we assume the coins are placed on an uniform background with a distinct color, we can use an automatic thresholding method to binarize the image:
+
+\snippet tutorial-count-coins.cpp Binarisation
+
+We use an option to switch between dark or bright background. The coins will be represented with 255 values after the binarisation, as you can see in the following images:
+
+\image html img-tutorial-count-coins-binarisation1.png "Otsu's thresholding for the sample image 1"
+
+\image html img-tutorial-count-coins-binarisation2.png "Otsu's thresholding for the sample image 2"
+
+You can notice some "holes" in the binarisation due to some shiny parts of the coin for the first case and to some dark parts of the coin in the second case.
+
+We can now use a function to fill the holes in the binary images:
+
+\snippet tutorial-count-coins.cpp Fill holes
+
+The fill holes algorithm is basic:
+- flood fill the binary image using a seed point just outside of the image
+
+\image html img-tutorial-count-coins-mask.png "Left: binary image, right: result of the flood fill operation"
+
+- substract the flood fill image from a white image to get only the holes
+
+\image html img-tutorial-count-coins-white-holes.png "Top left: white image, bottom left: flood fill image, right: I_holes = I_white - I_flood_fill"
+
+- add the holes image to the binary image to get an image without holes
+
+\image html img-tutorial-count-coins-fill-holes.png "Top left: binary image, bottom left: holes image, right: I_fill = I_bin + I_holes"
+
+Similarly for the sample image 1, the binary image with holes filled is:
+
+\image html img-tutorial-count-coins-fill1.png "Binary image with holes filled for the sample image 1"
+
+To "clean" the binary image, we will now perform some morphological operations:
+- an <a href="https://en.wikipedia.org/wiki/Opening_(morphology)">opening</a> (an erosion followed by a dilatation) to remove some potential single foreground pixels
+\snippet tutorial-count-coins.cpp Opening
+
+- a <a href="https://en.wikipedia.org/wiki/Closing_(morphology)">closing</a> (a dilatation followed by an erosion) to fill some remaining small holes
+\snippet tutorial-count-coins.cpp Closing
+
+
+The result image for the sample image 1 is (the morphological operations do not improve the binarisation for the sample 2):
+
+\image html img-tutorial-count-coins-close1.png "Binary image after an opening and a closing"
+
+Now that we have properly binarized the images to get only the coins, we can extract the contours. As the function expects a binary image with values 0/1, we need to create a new image accordingly:
+
+\snippet tutorial-count-coins.cpp Find contours
+
+To display the extracted contours, we can use:
+
+\snippet tutorial-count-coins.cpp Draw contours
+
+To count the number of coins, we use the number of extracted contours. But to be robust to some remaining bad binarized pixels, we will measure the area of the contour (\f$ m_{00} \f$) and discard too small area contours.
+The image moments are used to compute the area of the contour and the centroid (\f$ x_{centroid}=\frac{m_{10}}{m_{00}} \f$, \f$ y_{centroid}=\frac{m_{01}}{m_{00}} \f$) of the contour to display some texts:
+
+\snippet tutorial-count-coins.cpp Count coins
+
+The final result images are:
+
+\image html img-tutorial-count-coins-count-coins1.png "9 coins have been detected for the sample image 1"
+
+\image html img-tutorial-count-coins-count-coins2.png "11 coins have been detected for the sample image 2"
+
+This tutorial showed you how some basic image processing techniques can be used to create an application to count the number of coins in an image. Some assumptions must be made to guarantee that the image processing pipeline will work:
+- the coins are placed on an uniform background with a different color (to be able to automatically threshold the image)
+- the coins must be isolated from each other (to be able to extract the contours)
+- the image must be clean (to avoid to use too much some morphological operations)
+- the size of the coins in the image is more or less defined (to be able to discard contours that are not coins using the contour area)
+
+*/

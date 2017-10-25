@@ -3,9 +3,10 @@
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
  *
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
@@ -43,7 +44,7 @@
 
   This example shows by multithreading how to:
   - acquire Sick LD-MRS laser measurements
-  - how to process the data in order to display the laser scans and how 
+  - how to process the data in order to display the laser scans and how
     to save the scan data in a file
   - and how to acquire and display images from a firewire camera if connected.
 
@@ -71,7 +72,7 @@
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/core/vpIoTools.h>
- 
+
 #if ( !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) ) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK))
 
 static int save = 0;
@@ -125,11 +126,11 @@ void *laser_display_and_save_loop(void *)
 
   unsigned int iter = 0;
   for ( ; ; ) {
-    
+
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_GTK) )
     vpDisplay::display(map);
 #endif
-    
+
 #ifdef VISP_HAVE_PTHREAD
     pthread_mutex_lock(&shm_mutex);
 #endif
@@ -141,14 +142,14 @@ void *laser_display_and_save_loop(void *)
 
     //     std::cout << "laser start timestamp "
     // 	      << laserscan[0].getStartTimestamp() - time_offset << std::endl;
-    
+
     // Parse the four layers
     for (int layer=0; layer<4; layer++) {
       if (! ((0x1<<layer) & layerToDisplay)) {
         std::cout << "Layer " << layer+1 << " is not displayed" << std::endl;
         continue;
       }
-      
+
       std::vector<vpScanPoint> pointsLayer = laserscan[layer].getScanPoints();
 
       if (save) {
@@ -168,7 +169,7 @@ void *laser_display_and_save_loop(void *)
                << "# Data : \"radial distance (m)\" \"horizontal angle (rad)\" \"vertical angle (rad)\" \"X (m)\" \"Y (m)\" \"Z (m)\""
                << std::endl;
       }
-      
+
 
       vpImagePoint E; // Beam echo
       double resolution = 5; // 100 pixels = 1 meter - increase this value to see better near info
@@ -320,7 +321,7 @@ int main(int argc, const char ** argv)
       }
       catch (...) {
         std::cout << "Cannot create " << output_path << " directory" << std::endl;
-        return false;
+        return EXIT_FAILURE;
       }
     }
 
@@ -348,7 +349,7 @@ int main(int argc, const char ** argv)
                           vpParseArgv::ARGV_NO_LEFTOVERS |
                           vpParseArgv::ARGV_NO_ABBREV |
                           vpParseArgv::ARGV_NO_DEFAULTS)) {
-      return (false);
+      return (EXIT_FAILURE);
     }
 
     time_offset = vpTime::measureTimeSecond();
@@ -364,11 +365,11 @@ int main(int argc, const char ** argv)
     pthread_join(thread_laser_display, 0);
 #endif
 
-    return 0;
+    return EXIT_SUCCESS;
   }
   catch(vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 

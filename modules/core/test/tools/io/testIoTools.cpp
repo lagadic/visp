@@ -3,9 +3,10 @@
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
  *
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
@@ -487,6 +488,10 @@ main(int argc, const char ** argv)
     return EXIT_FAILURE;
   }
 
+  // Get the user login name
+  std::string username = "";
+  vpIoTools::getUserName(username);
+  std::ofstream dummy_file;
 
   //Test isSamePathname()
 #if defined(_WIN32)
@@ -528,16 +533,12 @@ main(int argc, const char ** argv)
 #else
   //realpath requires not fake path, so we create dummy file and directories
 
-  // Get the user login name
-  std::string username = "";
-  vpIoTools::getUserName(username);
-  vpIoTools::makeDirectory("/tmp/" + username);
   vpIoTools::makeDirectory("/tmp/" + username + "/test");
   vpIoTools::makeDirectory("/tmp/" + username + "/dummy dir");
 
   std::string path1 = "/tmp/" + username + "/test/file.txt";
   std::string path2 = "/tmp/" + username + "/test/../test/file.txt";
-  std::ofstream dummy_file(path1.c_str());
+  dummy_file.open(path1.c_str());
   if (!dummy_file.is_open()) {
     return EXIT_SUCCESS;
   }
@@ -582,6 +583,22 @@ main(int argc, const char ** argv)
     return EXIT_FAILURE;
   }
 #endif
+
+
+  //Test checkFilename()
+  vpIoTools::makeDirectory("/tmp/" + username + "/directory (1) with ' quote and spaces");
+  path1 = "/tmp/" + username + "/directory (1) with ' quote and spaces/file with ' quote (1) and spaces.txt";
+  dummy_file.open(path1.c_str());
+  if (!dummy_file.is_open()) {
+    return EXIT_SUCCESS;
+  }
+  dummy_file.close();
+
+  if (!vpIoTools::checkFilename(path1)) {
+    std::cerr << "Problem with checkFilename(" << path1 << ")!" << std::endl;
+    return EXIT_FAILURE;
+  }
+  std::cout << "Test vpIoTools::checkFilename() is ok." << std::endl;
 
 
   std::cout << std::endl << "End" << std::endl;

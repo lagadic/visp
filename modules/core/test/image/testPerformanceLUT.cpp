@@ -3,9 +3,10 @@
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
  *
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
@@ -77,7 +78,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"ViSP-images/Klimt/Klimt.pgm\"\n\
+     From this path read \"Klimt/Klimt.pgm\"\n\
      image.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -298,7 +299,7 @@ main(int argc, const char ** argv)
     vpImage<vpRGBa> I_iterate1, I_iterate2, I_lut;
 
     // Load a grey image from the disk
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.ppm");
+    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
     std::cout << "\nRead image: " << filename << std::endl;
     vpImageIo::read(I_iterate1, filename);
     vpImageIo::read(I_iterate2, filename);
@@ -377,7 +378,7 @@ main(int argc, const char ** argv)
     vpImage<unsigned char> I_iterate_grayscale1, I_lut_grayscale;
 
     // Load a grayscale image from the disk
-    filename = vpIoTools::createFilePath(ipath, "ViSP-images/Klimt/Klimt.pgm");
+    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
     std::cout << "\nRead image: " << filename << std::endl;
     vpImageIo::read(I_iterate_grayscale1, filename);
     vpImageIo::read(I_lut_grayscale, filename);

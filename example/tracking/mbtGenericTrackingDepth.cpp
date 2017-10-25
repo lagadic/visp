@@ -3,9 +3,10 @@
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
  *
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
@@ -463,9 +464,9 @@ int main(int argc, const char ** argv) {
     }
 
     // Get the option values
-    ipath = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "ViSP-images/mbt-depth/castel/castel");
+    ipath = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/castel");
 
-    std::string dir_path = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "ViSP-images/mbt-depth");
+    std::string dir_path = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth");
     if (!vpIoTools::checkDirectory(dir_path)) {
       std::cerr << "ViSP-images does not contain the folder: " << dir_path << "!" << std::endl;
       return EXIT_SUCCESS;
@@ -475,28 +476,28 @@ int main(int argc, const char ** argv) {
     if (!opt_configFile.empty())
       configFile = opt_configFile;
     else
-      configFile = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "ViSP-images/mbt-depth/castel/chateau.xml");
+      configFile = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.xml");
 
     if (!opt_configFile_depth.empty())
       configFile_depth = opt_configFile_depth;
     else
-      configFile_depth = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "ViSP-images/mbt-depth/castel/chateau_depth.xml");
+      configFile_depth = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau_depth.xml");
 
     std::string modelFile, modelFile_depth;
     if (!opt_modelFile.empty())
       modelFile = opt_modelFile;
     else {
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 2 || COIN_MAJOR_VERSION == 3 || COIN_MAJOR_VERSION == 4)
-      modelFile = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "ViSP-images/mbt-depth/castel/chateau_gantry.wrl");
+      modelFile = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau_gantry.wrl");
 #else
-      modelFile = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "ViSP-images/mbt-depth/castel/chateau.cao");
+      modelFile = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.cao");
 #endif
     }
 
     if (!opt_modelFile_depth.empty())
       modelFile_depth = opt_modelFile_depth;
     else
-      modelFile_depth = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "ViSP-images/mbt-depth/castel/chateau.cao");
+      modelFile_depth = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.cao");
 
     std::string vrml_ext = ".wrl";
     bool use_vrml = (modelFile.compare(modelFile.length() - vrml_ext.length(), vrml_ext.length(), vrml_ext) == 0) ||
@@ -514,7 +515,7 @@ int main(int argc, const char ** argv) {
     if (!opt_initFile.empty())
       initFile = opt_initFile;
     else
-      initFile = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "ViSP-images/mbt-depth/castel/chateau.init");
+      initFile = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.init");
 
     vpImage<unsigned char> I, I_depth;
     vpImage<uint16_t> I_depth_raw;
@@ -564,7 +565,7 @@ int main(int argc, const char ** argv) {
     loadConfiguration(tracker, configFile, configFile_depth);
 
     vpHomogeneousMatrix depth_M_color;
-    std::string depth_M_color_filename = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "ViSP-images/mbt-depth/castel/depth_M_color.txt");
+    std::string depth_M_color_filename = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/depth_M_color.txt");
     {
       std::ifstream depth_M_color_file(depth_M_color_filename.c_str());
       depth_M_color.load(depth_M_color_file);

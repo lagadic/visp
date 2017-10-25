@@ -1,0 +1,46 @@
+/**
+
+\page tutorial-imgproc-connected-components Tutorial: Connected-components labeling
+\tableofcontents
+
+\section imgproc_connected_components_intro Introduction
+
+This tutorial will show you how to perform a <a href="https://en.wikipedia.org/wiki/Connected-component_labeling">connected-components labeling</a>.
+
+\section imgproc_connected_components_example Example code
+
+The corresponding code is available in tutorial-connected-components.cpp:
+
+\include tutorial-connected-components.cpp
+
+The function is provided in a \a vp:: namespace and accessible using this include:
+
+\snippet tutorial-connected-components.cpp Include
+
+The first step is to read an image:
+
+\snippet tutorial-connected-components.cpp Read
+
+\image html img-tutorial-connected-components-img.png "Input image"
+
+The connected-components labeling can be done with:
+
+\snippet tutorial-connected-components.cpp Connected components
+
+Each pixel other than the background (0 pixel value in the original image) is assigned a label stored in \a vpImage<int> variable. The number of connected-components is returned in \a nbComponents variable. The connexity can be 4-connexity or 8-connexity.
+
+To visualize the labeling, we can use these lines of code:
+
+\snippet tutorial-connected-components.cpp Draw connected components
+
+Each label is assigned a specific color. The result image is:
+
+\image html img-tutorial-connected-components-labeling.png "Connected-components labeling"
+
+\note As you can see, the input image does not need to be a binary image but must be a grayscale image.
+
+\section imgproc_connected_components_next Next tutorial
+
+You can now read the \ref tutorial-imgproc-flood-fill, to learn how to do a flood fill.
+
+*/

@@ -3,9 +3,10 @@
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
  *
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
@@ -74,7 +75,7 @@ namespace {
   OPTIONS:                                               Default\n\
     -i <input image path>                                %s\n\
        Set image input path.\n\
-       From this path read \"ViSP-images/AprilTag/AprilTag.pgm image.\n\
+       From this path read \"AprilTag/AprilTag.pgm image.\n\
        Setting the VISP_INPUT_IMAGE_PATH environment\n\
        variable produces the same behaviour than using\n\
        this option.\n\
@@ -215,7 +216,7 @@ int main(int argc, const char *argv[]) {
 
     vpImage<unsigned char> I;
     if (opt_ppath.empty()) {
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/AprilTag/AprilTag.pgm");
+      filename = vpIoTools::createFilePath(ipath, "AprilTag/AprilTag.pgm");
     } else {
       filename = opt_ppath;
     }
@@ -266,7 +267,7 @@ int main(int argc, const char *argv[]) {
     std::map<std::string, TagGroundTruth> mapOfTagsGroundTruth;
     bool use_detection_ground_truth = false;
     {
-      std::string filename_ground_truth = vpIoTools::createFilePath(ipath, "ViSP-images/AprilTag/ground_truth_detection.txt");
+      std::string filename_ground_truth = vpIoTools::createFilePath(ipath, "AprilTag/ground_truth_detection.txt");
       std::ifstream file_ground_truth(filename_ground_truth.c_str());
       if (file_ground_truth.is_open() && opt_ppath.empty()) {
         use_detection_ground_truth = true;
@@ -288,7 +289,7 @@ int main(int argc, const char *argv[]) {
     std::map<std::string, vpPoseVector> mapOfPosesGroundTruth;
     bool use_pose_ground_truth = false;
     {
-      std::string filename_ground_truth = vpIoTools::createFilePath(ipath, "ViSP-images/AprilTag/ground_truth_pose.txt");
+      std::string filename_ground_truth = vpIoTools::createFilePath(ipath, "AprilTag/ground_truth_pose.txt");
       std::ifstream file_ground_truth(filename_ground_truth.c_str());
       if (file_ground_truth.is_open() && opt_ppath.empty()) {
         use_pose_ground_truth = true;

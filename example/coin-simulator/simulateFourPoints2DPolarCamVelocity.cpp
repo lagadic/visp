@@ -3,9 +3,10 @@
  * This file is part of the ViSP software.
  * Copyright (C) 2005 - 2017 by Inria. All rights reserved.
  *
- * This software is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * ("GPL") version 2 as published by the Free Software Foundation.
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  * See the file LICENSE.txt at the root directory of this source
  * distribution for additional information about the GNU GPL.
  *
@@ -89,7 +90,7 @@ fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"ViSP-images/iv/4points.iv\"\n\
+     From this path read \"iv/4points.iv\"\n\
      cad model.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -375,7 +376,7 @@ int main(int argc, const char ** argv)
       simu.setZoomFactor(1.0f) ;
 
       // Load the cad model
-      filename = vpIoTools::createFilePath(ipath, "ViSP-images/iv/4points.iv");
+      filename = vpIoTools::createFilePath(ipath, "iv/4points.iv");
       simu.load(filename.c_str()) ;
 
       simu.setInternalCameraParameters(cam) ;
