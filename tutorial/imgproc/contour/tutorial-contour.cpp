@@ -14,6 +14,7 @@
 //! [Include]
 #endif
 
+#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 namespace {
 //! [Print contours hierarchy func]
 void displayContourInfo(const vp::vpContour &contour, const int level) {
@@ -41,6 +42,7 @@ void drawContoursTree(vpImage<vpRGBa> &I, const vp::vpContour &contour) {
 }
 //! [Draw contours hierarchical func]
 } //namespace
+#endif
 
 int main(int argc, const char ** argv) {
   //! [Macro defined]
