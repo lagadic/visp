@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-tracking-mb-generic Tutorial: Markerless generic model-based tracking
+\page tutorial-tracking-OB-generic Tutorial: Markerless generic model-based tracking
 \tableofcontents
 
 \section mb_generic_intro Introduction
@@ -57,7 +57,7 @@ The basis type of features that can be used with the model-based tracker are:
 - depth normal feature (face primitives) (since ViSP 3.1.0)
 - dense depth feature (face primitives) (since ViSP 3.1.0)
 
-The moving-edges and KLT features require a RGB camera, more precisely these features operate on grayscale image. The depth normal and dense deth features require a depth map that can be obtained from a RGB-D camera for example.
+The moving-edges and KLT features require a RGB camera, more precisely these features operate on grayscale image. The depth normal and dense depth features require a depth map that can be obtained from a RGB-D camera for example.
 
 If you want to use a depth feature, we advise you to choose the dense depth features that is a much more robust method compared to the depth normal feature. Keep in mind also that Kinect-like sensors have a limited depth range (from ~0.8m to ~3.5m).
 
@@ -78,8 +78,8 @@ vpImage<unsigned char> I;
 vpImageConvert::convert(I_color, I);
 \endcode
 
-For depth features, you need to supply a pointcloud, that means a 2D array where each element contains the X, Y and Z coordinate in the depth sensor frame. The following datatype are accepted:
-- a vector of vpColVector: the column vector beeing a `3x1` (X, Y, Z)
+For depth features, you need to supply a pointcloud, that means a 2D array where each element contains the X, Y and Z coordinate in the depth sensor frame. The following data type are accepted:
+- a vector of vpColVector: the column vector being a `3x1` (X, Y, Z)
 \code
 std::vector<vpColVector> pointcloud(640*480);
 // Fill the pointcloud
@@ -90,7 +90,7 @@ coordinate[2] = Z;
 pointcloud[0] = coordinate;
 \endcode
 
-- a <a href="http://docs.pointclouds.org/trunk/classpcl_1_1_point_cloud.html">PCL pointcloud</a> smart pointer of <a href="http://docs.pointclouds.org/trunk/structpcl_1_1_point_x_y_z.html">pcl::PointXYZ</a> datatype:
+- a <a href="http://docs.pointclouds.org/trunk/classpcl_1_1_point_cloud.html">PCL pointcloud</a> smart pointer of <a href="http://docs.pointclouds.org/trunk/structpcl_1_1_point_x_y_z.html">pcl::PointXYZ</a> data type:
 \code
 pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud;
 \endcode
@@ -201,7 +201,7 @@ $ ./tutorial-mb-generic-tracker-stereo-mono --name <video name> --tracker <0=egd
 The config, model, init files should be named according to the video name: teabox.mpg / teabox.cao / teabox.xml / teabox.init
 
 \warning
-ViSP must have been buit with OpenCV and the KLT module must be enabled to run this tutorial. The xml2 library is needed if you want to use a configuration file, otherwise you will have to configure the tracker in the code.
+ViSP must have been built with OpenCV and the KLT module must be enabled to run this tutorial. The xml2 library is needed if you want to use a configuration file, otherwise you will have to configure the tracker in the code.
 
 \note
 The command line:
@@ -278,7 +278,7 @@ $ ./tutorial-mb-generic-tracker-stereo --name <video name left> <video name righ
 The config, model, init files should be named according to the video name: teabox_left.mpg / teabox_left.cao / teabox_left.xml / teabox_left.init, ...
 
 \warning
-ViSP must have been buit with OpenCV and the KLT module must be enabled to run this tutorial. The xml2 library is **required** in this tutorial code.
+ViSP must have been built with OpenCV and the KLT module must be enabled to run this tutorial. The xml2 library is **required** in this tutorial code.
 
 \note
 The command line:
