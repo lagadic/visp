@@ -1,0 +1,344 @@
+/**
+
+\page tutorial-tracking-OB-generic Tutorial: Markerless generic model-based tracking
+\tableofcontents
+
+\section mb_generic_intro Introduction
+
+This tutorial describes how to use the generic model-based tracker. You are advised to have read these tutorials:
+- \ref tutorial-tracking-mb to have an overview of the model-based edge / KLT / hybrid tracker and to know how to model an object to track and how to configure the tracker
+- \ref tutorial-tracking-mb-stereo and specifically the \ref mb_stereo_intro section for some details about advantages and limitations of using multiple cameras and the \ref mb_stereo_moving_cameras section
+
+\subsection mb_generic_overview Overview
+
+The main motivations for the introduction of this new class (vpMbGenericTracker) are:
+- provide a unique class for the user to choose which type of features to use for the tracking (the features can be combined)
+- extend the single view tracking to multiple cameras (similarly to the vpMbEdgeMultiTracker, vpMbKltMultiTracker, vpMbEdgeKltMultiTracker)
+
+In this perspective, this class can be used instead of the following classes:
+- vpMbEdgeTracker
+- vpMbKltTracker
+- vpMbDepthNormalTracker (since ViSP 3.1.0)
+- vpMbDepthDenseTracker (since ViSP 3.1.0)
+- vpMbEdgeKltTracker
+- vpMbEdgeMultiTracker (extension to the multi-view case)
+- vpMbKltMultiTracker (extension to the multi-view case)
+- vpMbEdgeKltMultiTracker (extension to the multi-view case)
+
+Moreover, the features can be combined to improve the tracking robustness (e.g. a stereo tracker with edge + KLT for the left camera and dense depth features for the right camera).
+
+The following video demonstrates the use of the generic tracker with a RGB-D sensor using the following features:
+- edge + KLT features for the color camera
+- depth normal features for the depth sensor
+
+\htmlonly
+<p align="center"><iframe width="640" height="360" src="https://www.youtube.com/embed/4FARYLYzNL8" frameborder="0" allowfullscreen></iframe></p>
+\endhtmlonly
+
+In this video, the same setup is used but with:
+- edge features for the color camera
+- dense depth features for the depth sensor
+
+\htmlonly
+<p align="center"><iframe width="640" height="360" src="https://www.youtube.com/embed/LFej9NF6F1A" frameborder="0" allowfullscreen></iframe></p>
+\endhtmlonly
+
+Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/stereo-generic
+\endcode
+
+\subsection mb_generic_features Features overview
+
+The basis type of features that can be used with the model-based tracker are:
+- moving-edges feature (line, face, cylinder and circle primitive) \cite Comport06b
+- KLT feature (face and cylinder primitives) \cite Pressigout:2007
+- depth normal feature (face primitives) (since ViSP 3.1.0)
+- dense depth feature (face primitives) (since ViSP 3.1.0)
+
+The moving-edges and KLT features require a RGB camera, more precisely these features operate on grayscale image. The depth normal and dense depth features require a depth map that can be obtained from a RGB-D camera for example.
+
+If you want to use a depth feature, we advise you to choose the dense depth features that is a much more robust method compared to the depth normal feature. Keep in mind also that Kinect-like sensors have a limited depth range (from ~0.8m to ~3.5m).
+
+\subsection mb_generic_input Input data
+
+For classical features working on grayscale image, you have to use the following data type:
+
+\code
+vpImage<unsigned char> I;
+\endcode
+
+You can convert to a grayscale image if the image acquired is in RGBa data type:
+
+\code
+vpImage<vpRGBa> I_color;
+// Color image acquisition
+vpImage<unsigned char> I;
+vpImageConvert::convert(I_color, I);
+\endcode
+
+For depth features, you need to supply a pointcloud, that means a 2D array where each element contains the X, Y and Z coordinate in the depth sensor frame. The following data type are accepted:
+- a vector of vpColVector: the column vector being a `3x1` (X, Y, Z)
+\code
+std::vector<vpColVector> pointcloud(640*480);
+// Fill the pointcloud
+vpColVector coordinate(3);
+coordinate[0] = X;
+coordinate[1] = Y;
+coordinate[2] = Z;
+pointcloud[0] = coordinate;
+\endcode
+
+- a <a href="http://docs.pointclouds.org/trunk/classpcl_1_1_point_cloud.html">PCL pointcloud</a> smart pointer of <a href="http://docs.pointclouds.org/trunk/structpcl_1_1_point_x_y_z.html">pcl::PointXYZ</a> data type:
+\code
+pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud;
+\endcode
+
+If you have only a depth map, a 2D array where each element is the distance in meter between the depth sensor frame to the object, you will need to compute the 3D coordinates using the depth sensor intrinsic parameters.
+For instance, without taking into account the distortion (see also vpPixelMeterConversion::convertPoint), the conversion is (u and v are the pixel coordinates, u0, v0, px, py are the intrinsic parameters):
+
+\f[
+\left\{\begin{matrix}
+X = \frac{u - u_0}{px} \times Z \\
+Y = \frac{v - v_0}{px} \times Z
+\end{matrix}\right.
+\f]
+
+Here an example of a depth map:
+
+\image html tutorial-tracking-mb-generic-depth-map.png
+
+\section mb_generic_started Getting started
+
+\subsection mb_generic_implementation_detail Implementation detail
+
+\note
+This section is similar to the \ref mb_stereo_implementation_detail section in \ref tutorial-tracking-mb-stereo
+
+Each tracker is stored in a map, the key corresponding to the name of the camera on which the tracker will process. By default, the camera names are set to:
+-  "Camera" when the tracker is constructed with one camera.
+-  "Camera1" to "CameraN" when the tracker is constructed with N cameras.
+-  The default reference camera will be "Camera1" in the multiple cameras case.
+
+\image html img-multi-cameras-config.png Default name convention and reference camera ("Camera1").
+
+To deal with multiple cameras, in the virtual visual servoing control law we concatenate all the interaction matrices and residual vectors and transform them in a single reference camera frame to compute
+the reference camera velocity.
+Thus, we have to know the transformation matrix between each camera and the reference camera.
+
+For example, if the reference camera is "Camera1" (\f$ c_1 \f$), we need the following information: 
+\f$ _{}^{c_2}\textrm{M}_{c_1}, _{}^{c_3}\textrm{M}_{c_1}, \cdots, _{}^{c_n}\textrm{M}_{c_1} \f$.
+
+\subsection mb_generic_choose_features Declare a model-based tracker of the desired feature type
+
+The following enumeration (vpMbGenericTracker::vpTrackerType) values are available to get the desired model-based tracker:
+- moving-edges feature: vpMbGenericTracker::EDGE_TRACKER
+- KLT feature: vpMbGenericTracker::KLT_TRACKER
+- depth normal feature: vpMbGenericTracker::DEPTH_NORMAL_TRACKER
+- depth dense feature: vpMbGenericTracker::DEPTH_DENSE_TRACKER
+
+The tracker declaration is then:
+\code
+vpMbGenericTracker tracker(vpMbGenericTracker::EDGE_TRACKER);
+\endcode
+
+To combine the features:
+\code
+vpMbGenericTracker tracker(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
+\endcode
+
+To "fully exploit" the capabilities of a RGB-D sensor, you can use for instance:
+
+\code
+std::vector<int> trackerTypes(2);
+trackerTypes[0] = vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER;
+trackerTypes[1] = vpMbGenericTracker::DEPTH_DENSE_TRACKER;
+vpMbGenericTracker tracker(trackerTypes);
+\endcode
+
+This will declare a tracker with edge + KLT features for the color camera and dense depth feature for the depth sensor.
+
+\subsection mb_generic_interface_with_the_code Interfacing with the code
+
+\note
+This section is more or less similar to the \ref mb_stereo_interface_with_the_code section in \ref tutorial-tracking-mb-stereo
+
+Each essential method used to initialize the tracker and process the tracking have three signatures in order to ease the call to the method and according to three working modes:
+-  tracking using one camera, the signature remains the same.
+-  tracking using two cameras, all the necessary methods accept directly the corresponding parameters for each camera.
+-  tracking using multiple cameras, you have to supply the different parameters within a map. The key corresponds to the name of the camera and the value is the parameter.
+
+The following table sums up how to call the different methods based on the camera configuration for the main functions.
+
+<table>
+<caption id="mb_generic_method_example_table">Example of the different method signatures.</caption>
+<tr><th>Method calling example:               <th>Monocular case                        <th>Stereo case                                                       <th>Multiple cameras case                                             <th>Remarks
+<tr><td>Construct a model-based edge tracker: <td>vpMbGenericTracker tracker            <td>vpMbGenericTracker tracker(2, vpMbGenericTracker::EDGE_TRACKER)   <td>vpMbGenericTracker tracker(5, vpMbGenericTracker::EDGE_TRACKER)   <td>The default constructor corresponds to a monocular edge tracker.
+<tr><td>Load a configuration file:            <td>tracker.loadConfigFile("config.xml")  <td>tracker.loadConfigFile("config1.xml", "config2.xml")              <td>tracker.loadConfigFile(mapOfConfigFiles)                          <td>Each tracker can have different parameters (intrinsic parameters, visibility angles, etc.).
+<tr><td>Load a model file:                    <td>tracker.loadModel("model.cao")        <td>tracker.loadModel("model1.cao", "model2.cao")                     <td>tracker.loadModel(mapOfModelFiles)                                <td>Different models can be used.
+<tr><td>Get the intrinsic camera parameters:  <td>tracker.getCameraParameters(cam)      <td>tracker.getCameraParameters(cam1, cam2)                           <td>tracker.getCameraParameters(mapOfCam)                             <td>
+<tr><td>Set the transformation matrix between each camera and the reference one: <td>   <td>tracker.setCameraTransformationMatrix(mapOfCamTrans)              <td>tracker.setCameraTransformationMatrix(mapOfCamTrans)              <td>For the reference camera, the identity homogeneous matrix must be used.
+<tr><td>Setting to display the features:      <td>tracker.setDisplayFeatures(true)      <td>tracker.setDisplayFeatures(true)                                  <td>tracker.setDisplayFeatures(true)                                  <td>This is a general parameter.
+<tr><td>Initialize the pose by click:         <td>tracker.initClick(I, "f_init.init")   <td>tracker.initClick(I1, I2, "f_init1.init", "f_init2.init")         <td>tracker.initClick(mapOfImg, mapOfInitFiles)                       <td>Assuming the transformation matrices between the cameras have been set, some init files can be omitted as long as the reference camera has an init file. The corresponding images must be supplied.
+<tr><td>Track the object:                     <td>tracker.track(I)                      <td>tracker.track(I1, I2)                                             <td>tracker.track(mapOfImg)                                           <td>See the documentation to track with pointcloud.
+<tr><td>Get the pose:                         <td>tracker.getPose(cMo)                  <td>tracker.getPose(c1Mo, c2Mo)                                       <td>tracker.getPose(mapOfPoses)                                       <td>tracker.getPose(cMo) will return the pose for the reference camera in the stereo/multiple cameras configurations.
+<tr><td>Display the model:                    <td>tracker.display(I, cMo, cam, ...)     <td>tracker.display(I1, I2, c1Mo, c2Mo, cam1, cam2, ...)              <td>tracker.display(mapOfImg, mapOfPoses, mapOfCam, ...)              <td>
+</table>
+  
+\note As the trackers are stored in an alphabetic order internally, you have to match the method parameters with the correct 
+tracker position in the map in the stereo cameras case.
+
+\section mb_generic_example Example code
+
+\subsection mb_generic_mono_example_code Monocular model-based tracking
+The following example comes from tutorial-mb-generic-tracker-stereo-mono.cpp and allows to track a tea box modeled in cao format.
+
+Once built, to choose which tracker to use, run the binary with the following argument:
+\code
+$ ./tutorial-mb-generic-tracker-stereo-mono --name <video name> --tracker <0=egde|1=klt|2=hybrid>
+\endcode
+The config, model, init files should be named according to the video name: teabox.mpg / teabox.cao / teabox.xml / teabox.init
+
+\warning
+ViSP must have been built with OpenCV and the KLT module must be enabled to run this tutorial. The xml2 library is needed if you want to use a configuration file, otherwise you will have to configure the tracker in the code.
+
+\note
+The command line:
+\code
+$ ./tutorial-mb-generic-tracker-stereo-mono
+\endcode
+will run the model-based edge tracker on the teabox sequence.
+
+The source code is the following:
+\include tutorial-mb-generic-tracker-stereo-mono.cpp
+
+\subsection mb_generic_mono_explanation_of_the_code Explanation of the code (monocular model-based tracking)
+
+The previous source code shows how to use the new vpMbGenericTracker class as a replacement of the classical classes. The procedure to configure the tracker remains the same:
+-  construct the tracker
+-  configure the tracker by loading a configuration file
+-  load a 3D model
+-  track on the current image
+-  get the current pose and display the model in the image
+
+Please refer to the tutorial \ref tutorial-tracking-mb in order to have explanations about the configuration parameters and how to model an object in a ViSP compatible format.
+
+The required include is: 
+
+\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Include
+
+We need a grayscale image for the tracking:
+
+\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Image
+
+To set the type of the tracker (the first parameter is the number of cameras, the second parameter is the type of the tracker(s)):
+
+\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Constructor
+
+To load the configuration file, we use:
+
+\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Load config file
+
+Otherwise you can parameter the tracker directly in the code:
+
+\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Set parameters
+
+To load the 3D object model, we use:
+
+\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Load cao
+
+We can also use the following setting that enables the display of the features used during the tracking:
+
+\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Set display features
+
+The initial pose is set by clicking on specific points in the image:
+
+\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Init
+
+The tracking is done by:
+
+\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Track
+
+To get the current camera pose:
+
+\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Get pose
+
+To display the model with the estimated pose:
+
+\snippet tutorial-mb-generic-tracker-stereo-mono.cpp Display
+
+\subsection mb_generic_stereo_example_code Stereo model-based tracking
+The following example comes from tutorial-mb-generic-tracker-stereo.cpp and allows to track a tea box modeled in cao format using a stereo rig.
+
+Once built, to choose which tracker to use, run the binary with the following argument:
+\code
+$ ./tutorial-mb-generic-tracker-stereo --name <video name left> <video name right>] --tracker <0=egde|1=klt|2=hybrid> <0=egde|1=klt|2=hybrid>
+\endcode
+The config, model, init files should be named according to the video name: teabox_left.mpg / teabox_left.cao / teabox_left.xml / teabox_left.init, ...
+
+\warning
+ViSP must have been built with OpenCV and the KLT module must be enabled to run this tutorial. The xml2 library is **required** in this tutorial code.
+
+\note
+The command line:
+\code
+$ ./tutorial-mb-generic-tracker-stereo
+\endcode
+will run the stereo model-based edge tracker on the stereo teabox sequence.
+
+\subsection mb_generic_stereo_explanation_of_the_code Explanation of the code (stereo model-based tracking)
+
+The procedure is almost identical to the monocular case.
+
+The include is:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Include
+
+Two images are needed:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Images
+
+To set the types of the tracker:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Constructor
+
+To load the configuration files, we use:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Load config file
+
+We have to set the transformation matrices between the cameras and the reference camera to be able to compute the control law in a reference camera frame. In the code we consider the left camera with the name "Camera1" as the reference camera.
+For the right camera with the name "Camera2" we have to set the transformation (\f$ ^{c_{right}}{\bf M}_{c_{left}} \f$). This transformation is read from cRightMcLeft.txt file. Since our left and right cameras are not moving, this transformation is constant and does not need to be updated in the tracking loop:
+
+\note For the reference camera, the camera transformation matrix has to be specified as an identity homogeneous matrix (no rotation, no translation). By default the vpHomogeneousMatrix constructor builds an identity matrix.
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Set camera transformation matrix
+
+To load the 3D object model, we use:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Load cao
+
+We can also use the following setting that enables the display of the features used during the tracking:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Set display features
+
+The initial poses are set by clicking on specific points in the image:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Init
+
+The tracking is done by:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Track
+
+To get the current camera poses:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Get pose
+
+To display the model with the estimated poses:
+
+\snippet tutorial-mb-generic-tracker-stereo.cpp Display
+
+\section mb_generic_next Next tutorial
+You are now ready to see the next \ref tutorial-tracking-tt.
+
+*/

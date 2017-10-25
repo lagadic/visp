@@ -5,15 +5,18 @@
 
 \section mb_stereo_intro Introduction
 
-This tutorial describes the model-based tracking of objects using simultaneously multiple cameras views. It allows to simultaneously track the object in the images viewed by a set of cameras while providing its 3D localization (i.e., the object pose expressed in a reference camera frame) when calibrated cameras are used.
+\warning
+This tutorial can be considered obsolete since ViSP 3.1.0 version as we have introduced a generic tracker (vpMbGenericTracker) that can replace the vpMbEdgeMultiTracker, vpMbKltMultiTracker and vpMbEdgeKltMultiTracker classes. The explanations about the multi-views model-based tracking remain valid though.
 
-The software allows the tracking of a markerless object using the knowledge of its CAD model. Considered objects have to be modeled by segments, circles or cylinders. The model of the object could be defined in vrml format (except for circles), or in cao format.
+This tutorial describes the model-based tracking of object using simultaneously multiple cameras views. It allows to track the object in the images viewed by a set of cameras while providing its 3D localization. Calibrated cameras (intrinsic and extrinsic between the reference and the other cameras) are required.
 
-Next section highlights the different versions of the markerless multi-view model-based trackers that have been developed. The multi-view model-based tracker can consider moving-edges behind the lines of the model (thanks to vpMbEdgeMultiTracker class). It can also consider keypoints that are detected and tracked on each visible face of the model (thanks to vpMbKltMultiTracker class). The tracker can also handle moving-edges and keypoints in a hybrid scheme (thanks to vpMbEdgeKltMultiTracker class).
+The mbt ViSP module allows the tracking of a markerless object using the knowledge of its CAD model. Considered objects have to be modeled by segment, circle or cylinder primitives. The model of the object could be defined in vrml format (except for circles) or in cao (our own format).
 
-While the multi-view model-based edges tracker implemented in vpMbEdgeMultiTracker is appropriate to track texture less objects, the multi-view model-based keypoints tracker implemented in vpMbKltMultiTracker is more designed to exploit textured objects with edges that are not really visible. The multi-view model-based hybrid tracker implemented in vpMbEdgeKltMultiTracker is appropriate to track textured objects with visible edges.
+Next section highlights the different versions of the markerless multi-view model-based trackers that have been developed. The multi-view model-based tracker can consider moving-edges (thanks to the vpMbEdgeMultiTracker class). It can also consider KLT features that are detected and tracked on each visible face of the model (thanks to the vpMbKltMultiTracker class). The tracker can also handle moving-edges and KLT features in a hybrid scheme (thanks to vpMbEdgeKltMultiTracker the class).
 
-These classes allow tracking the same object as two cameras or more sees it.
+While the multi-view model-based edges tracker implemented in vpMbEdgeMultiTracker is appropriate to track texture-less objects (with visible edges), the multi-view model-based KLT tracker implemented in vpMbKltMultiTracker is suitable for textured objects. The multi-view model-based hybrid tracker implemented in vpMbEdgeKltMultiTracker is appropriate to track objects with texture and or with visible edges.
+
+These classes allow the tracking of the same object assuming two or more cameras:
 The main advantages of this configuration with respect to the mono-camera case (see \ref tutorial-tracking-mb) concern:
 - the possibility to extend the application field of view;
 - a more robust tracking as the configuration of the stereo rig allows to track the object under multiple viewpoints and thus with more visual features.
@@ -22,16 +25,16 @@ In order to achieve this, the following information are required:
 - the intrinsic parameters of each camera;
 - the transformation matrix between each camera and a reference camera: \f$ ^{c_{current}}{\bf M}_{c_{reference}} \f$.
 
-In the following sections, we consider the tracking of a tea box modeled in cao format. A stereo camera sees this object. Thus to illustrate the behavior of the tracker, the following video shows the resulting tracking performed with vpMbEdgeMultiTracker. In this example the fixed cameras located on Romeo Humanoid robot head captured the images.
+In the following sections, we consider the tracking of a tea box modeled in cao format. A stereo camera sees this object. The following video shows the tracking performed with vpMbEdgeMultiTracker. In this example ,the fixed cameras located on the Romeo Humanoid robot head captured the images.
 
 \htmlonly
-<iframe width="560" height="315" src="https://www.youtube.com/embed/aWXvvkeytp0" frameborder="0" allowfullscreen></iframe>
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/aWXvvkeytp0" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
-This other video shows the behavior of the hybrid tracking performed with vpMbEdgeKltMultiTracker where features are the teabox edges and the keypoints on the visible faces.
+This other video shows the behavior of the hybrid tracking performed with vpMbEdgeKltMultiTracker.
 
 \htmlonly
-<iframe width="560" height="315" src="https://www.youtube.com/embed/0poP7gONdMc" frameborder="0" allowfullscreen></iframe>
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/0poP7gONdMc" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
 \note The cameras can move, but the tracking will be effective as long as the transformation matrix between the cameras and the reference camera is known and updated at each iteration.
@@ -39,7 +42,7 @@ This other video shows the behavior of the hybrid tracking performed with vpMbEd
 
 Next sections will highlight how to easily adapt your code to use multiple cameras with the model-based tracker. As only the new methods dedicated to multiple views tracking will be presented, 
 you are highly recommended to follow \ref tutorial-tracking-mb in order to be familiar with the model-based tracking concepts, the different trackers that are available in ViSP (the edge tracker: vpMbEdgeTracker, the klt feature points tracker: vpMbKltTracker 
-and the hybrid tracker: vpMbEdgeKltTracker) and with the configuration loading part.
+and the hybrid tracker: vpMbEdgeKltTracker) and with the configuration part.
 
 Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
@@ -52,7 +55,7 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-b
 \subsection mb_stereo_overview Overview
 
 The model-based trackers available for multiple views tracking rely on the same trackers than in the monocular case:
-- a vpMbEdgeMultiTracker similar to vpMbEdgeTracker which tracks moving-edges corresponding to the visible lines of the model protected in the image plane at the current pose (suitable for textureless objects).
+- a vpMbEdgeMultiTracker similar to vpMbEdgeTracker which tracks moving-edges corresponding to the visible lines of the model projected in the image plane at the current pose (suitable for texture-less objects).
 - a vpMbKltMultiTracker similar to vpMbKltTracker which uses the optical flow information to track the object (suitable for textured objects).
 - a vpMbEdgeKltMultiTracker similar to vpMbEdgeKltTracker which merges the two information (edge and texture information) for better robustness of the tracking (can deal with both types of objects).
 
@@ -83,19 +86,19 @@ the reference camera velocity.
 Thus, we have to know the transformation matrix between each camera and the reference camera.
 
 For example, if the reference camera is "Camera1" (\f$ c_1 \f$), we need the following information: 
-\f$ _{}^{c_1}\textrm{M}_{c_1}, _{}^{c_2}\textrm{M}_{c_1}, _{}^{c_3}\textrm{M}_{c_1}, \cdots, _{}^{c_n}\textrm{M}_{c_1} \f$.
+\f$ _{}^{c_2}\textrm{M}_{c_1}, _{}^{c_3}\textrm{M}_{c_1}, \cdots, _{}^{c_n}\textrm{M}_{c_1} \f$.
 
 \subsection mb_stereo_interface_with_the_code Interfacing with the code
 
 Each essential method used to initialize the tracker and process the tracking have three signatures in order to ease the call to the method and according to three working modes:
 -  tracking using one camera, the signature remains the same than the previous classes (vpMbEdgeTracker, vpMbKltTracker, vpMbEdgeKltTracker).
 -  tracking using two cameras, all the necessary methods accept directly the corresponding parameter for each camera. By default, the first parameter corresponds to the reference camera.
--  tracking using multiple cameras, you have to supply the different parameters with a map. The key corresponds to the name of the camera and the value is the value to the parameter.
+-  tracking using multiple cameras, you have to supply the different parameters with a map. The key corresponds to the name of the camera and the value to the parameter.
 
 The following table sums up how to call the different methods based on the camera configuration for the main functions.
 
 <table>
-<caption id="method_example_table">Example of the different method signatures.</caption>
+<caption id="mb_stereo_method_example_table">Example of the different method signatures.</caption>
 <tr><th>Method calling example:               <th>Monocular case                         <th>Stereo case                                               <th>Multiple cameras case                                 <th>Remarks
 <tr><td>Construct a model-based edge tracker: <td>vpMbEdgeMultiTracker tracker           <td>vpMbEdgeMultiTracker tracker(2)                           <td>vpMbEdgeMultiTracker tracker(5)                       <td>The default constructor corresponds to the monocular configuration.
 <tr><td>Load a configuration file:            <td>tracker.loadConfigFile("config.xml")   <td>tracker.loadConfigFile("config1.xml", "config2.xml")      <td>tracker.loadConfigFile(mapOfConfigFiles)              <td>Each tracker can have different parameters (intrinsic parameters, visibility angles, etc.).
@@ -109,8 +112,7 @@ The following table sums up how to call the different methods based on the camer
 <tr><td>Display the model:                    <td>tracker.display(I, cMo, cam, ...)      <td>tracker.display(I1, I2, c1Mo, c2Mo, cam1, cam2, ...)      <td>tracker.display(mapOfImg, mapOfPoses, mapOfCam)       <td>
 </table>
   
-\note As the trackers are stored in an alphabetic order internally, you have to match the method parameters with the correct 
-tracker position in the map in the stereo cameras case.
+\note As the trackers are stored in an alphabetic order internally, you have to match the method parameters with the correct tracker position in the map in the stereo cameras case.
 
 \subsection mb_stereo_example_code Example code
 The following example comes from tutorial-mb-tracker-stereo.cpp and allows to track a tea box modeled in cao format using one of the three multi-view markerless trackers implemented in ViSP. In this example we consider a stereo configuration.
@@ -125,16 +127,16 @@ The source code is the following:
 
 \subsection mb_stereo_explanation_of_the_code Explanation of the code
 
-The previous source code shows how to implement model-based tracking on stereo images using the standard procedure to configure the tracker:
+The previous source code shows how to use a model-based tracking on stereo images using the standard procedure to configure the tracker:
 -  construct the tracker
 -  initialize the tracker by loading a configuration file
 -  load a 3D model
 -  process the tracking
 -  get the pose and display the model in the image
 
-\warning The xml2 library, used to load the configuration file, is required to build the tutorial example. OpenCV is required to use the KLT functionality.
+\warning The xml2 library, used to load the configuration file, is required to build the tutorial example. OpenCV is also required and the KLT module has to be enabled to use the KLT functionality.
 
-Please refer to the tutorial \ref tutorial-tracking-mb in order to have explanations on the configuration parameters and for information on how to model an object in a ViSP compatible format.
+Please refer to the tutorial \ref tutorial-tracking-mb in order to have the explanations about the configuration parameters and how to model an object in a ViSP compatible format.
 
 To test the three kind of trackers, only vpMbEdgeKltMultiTracker.h header is required as the others (vpMbEdgeMultiTracker.h and vpMbKltMultiTracker.h) are already included in the hybrid header class. 
 
@@ -168,7 +170,8 @@ We can also use the following setting that enables the display of the features u
 
 \snippet tutorial-mb-tracker-stereo.cpp Set display features
 
-We have to set the transformation matrices between the cameras and the reference camera to be able to compute the control law in a reference camera frame. In the code we consider the left camera with name "Camera1" as the reference camera. For the right camera with name "Camera2" we have to set the transformation (\f$ ^{c_{right}}{\bf M}_{c_{left}} \f$). This transformation is read from cRightMcLeft.txt file. Since our left and right cameras are not moving, this transformation is constant and has not to be updated in the tracking loop:
+We have to set the transformation matrices between the cameras and the reference camera to be able to compute the control law in a reference camera frame. In the code we consider the left camera with the name "Camera1" as the reference camera. For the right camera with the name "Camera2" we have to set the transformation (\f$ ^{c_{right}}{\bf M}_{c_{left}} \f$).
+This transformation is read from cRightMcLeft.txt file. Since our left and right cameras are not moving, this transformation is constant and has not to be updated in the tracking loop:
 
 \note For the reference camera, the camera transformation matrix has to be specified as an identity homogeneous matrix (no rotation, no translation). By default the vpHomogeneousMatrix constructor builds an identity matrix.
 
@@ -210,15 +213,15 @@ tracker.setCameraTransformationMatrix(mapOfCamTrans);
 tracker.track(mapOfImg);
 \endcode
 
-This information can be available through the robot kinematics and different kind of sensors for example.
+This information can be available through the robot kinematics or using different kind of sensors.
 
-The following video shows how the result of a stereo hybrid model-based tracking based on object edges and keypoints located on visible faces could be used to servo Romeo humanoid robot eyes to gaze the object. Here the images were captured by Romeo eyes that are moving.
+The following video shows the stereo hybrid model-based tracking based on object edges and KLT features located on visible faces. The result of the tracking is then used to servo the Romeo humanoid robot eyes to gaze toward the object. The images were captured by cameras located in the Romeo eyes.
 
 \htmlonly
-<iframe width="560" height="315" src="https://www.youtube.com/embed/IguBxf4VRUc" frameborder="0" allowfullscreen></iframe>
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/IguBxf4VRUc" frameborder="0" allowfullscreen></iframe></p>
 \endhtmlonly
 
 \section mb_stereo_next Next tutorial
-You are now ready to see the next \ref tutorial-tracking-tt.
+You are now ready to see the next \ref tutorial-tracking-mb-generic.
 
 */
