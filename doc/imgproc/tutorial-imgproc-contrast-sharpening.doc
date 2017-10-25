@@ -11,7 +11,7 @@ The different methods presented are:
 - histogram stretching, see the corresponding <a href="https://docs.gimp.org/en/plug-in-c-astretch.html">Gimp documentation</a>.
 - histogram stretching in the HSV color space, see the corresponding <a href="https://docs.gimp.org/en/plug-in-autostretch-hsv.html">Gimp documentation</a>.
 - histogram equalization, see the corresponding <a href="https://en.wikipedia.org/wiki/Histogram_equalization">Wikipedia entry</a>.
-- contrast limited adaptative histogram equalization (CLAHE), see the corresponding <a href="https://en.wikipedia.org/wiki/Adaptive_histogram_equalization#Contrast_Limited_AHE">Wikipedia entry</a>.
+- contrast limited adaptive histogram equalization (CLAHE), see the corresponding <a href="https://en.wikipedia.org/wiki/Adaptive_histogram_equalization#Contrast_Limited_AHE">Wikipedia entry</a>.
 - unsharp masking, an image sharpening technique, see the corresponding <a href="https://en.wikipedia.org/wiki/Unsharp_masking">Wikipedia entry</a>.
 
 The first two methods consist of stretching the histogram of an image to make it use the entire range of values. It is more or less similar to the histogram equalization technique (presented in \ref imgproc_brightness_histogram_equalization).
@@ -89,14 +89,14 @@ To use the CLAHE algorithm:
 
 \snippet tutorial-contrast-sharpening.cpp CLAHE
 
-The CLAHE method avoid the overamplification of the noise compared to the histogram equalization method:
+The CLAHE method avoid the over amplification of the noise compared to the histogram equalization method:
 
-\image html img-tutorial-contrast-sharpening-CLAHE.png "Contrast limited adaptative histogram equalization (blockRadius=150, bins=256, slope=3)"
+\image html img-tutorial-contrast-sharpening-CLAHE.png "Contrast limited adaptive histogram equalization (blockRadius=150, bins=256, slope=3)"
 
 The parameters are:
 - the block radius: the size (2*blockRadius+1) of the neighborhood to consider around the current pixel location
 - the number of bins for the histogram computation
-- the maximum slope to limit the contast enhancement
+- the maximum slope to limit the contrast enhancement
 
 The histogram of the corrected image is stretched and the local processing plus the limitation of the contrast enhancement avoid the over boosting of the contrast as in the histogram equalization case.
 
