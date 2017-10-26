@@ -409,7 +409,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
           }
         }
 
-        if (y + blockRadius + 1 <= (int) I1.getHeight()) {
+        if (y + blockRadius < (int) I1.getHeight()) {
           int yMax1 = yMax - 1;
           // Sliding histogram, add bottom
           for (int xi = xMin0; xi < xMax0; xi++) {
