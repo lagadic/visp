@@ -61,6 +61,7 @@ BOOL IsWow64()
 {
     BOOL bIsWow64 = FALSE;
 
+#ifndef WINRT // Turned off on UWP where GetModuleHandle() doesn't exist
     LPFN_ISWOW64PROCESS fnIsWow64Process = (LPFN_ISWOW64PROCESS) GetProcAddress(
         GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
 
@@ -73,6 +74,7 @@ BOOL IsWow64()
             bIsWow64 = FALSE;
         }
     }
+#endif
     return bIsWow64;
 }
 bool cpu_x86::detect_OS_x64(){
