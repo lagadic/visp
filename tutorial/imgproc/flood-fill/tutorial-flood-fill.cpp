@@ -13,6 +13,8 @@
 //! [Include]
 #endif
 
+#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+
 namespace {
 //! [Bresenham's line algorithm]
 vpImagePoint switchToOctantZeroFrom(const int octant, const vpImagePoint &imPt) {
@@ -163,6 +165,8 @@ void drawLine(vpImage<unsigned char> &I, const unsigned char value, const vpImag
 }
 //! [Bresenham's line algorithm]
 } //namespace
+
+#endif
 
 int main() {
   //! [Macro defined]
