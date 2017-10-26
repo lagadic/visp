@@ -151,8 +151,8 @@ void vpImageMorphology::erosion(vpImage<unsigned char> &I, const vpConnexityType
 
           _mm_storeu_si128( (__m128i *) (ptr_curr_I + j), m );
         }
-#endif
       }
+#endif
 
       for (; j < I.getWidth(); j++) {
         unsigned char min_value = null_value;
@@ -222,7 +222,7 @@ void vpImageMorphology::dilatation(vpImage<unsigned char> &I, const vpConnexityT
       unsigned char *ptr_curr_I = I.bitmap + i*I.getWidth();
 
 #if VISP_HAVE_SSE2
-      if (checkSSE2 && I.getWidth() >= 16)
+      if (checkSSE2 && I.getWidth() >= 16) {
         for (; j <= I.getWidth() - 16; j+=16) {
           __m128i m = _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[0]) );
           m = _mm_max_epu8(m, _mm_loadu_si128( (const __m128i *) (ptr_curr_J + j + offset[1])) );
@@ -232,6 +232,7 @@ void vpImageMorphology::dilatation(vpImage<unsigned char> &I, const vpConnexityT
 
           _mm_storeu_si128( (__m128i *) (ptr_curr_I + j), m );
         }
+      }
 #endif
 
       for (; j < I.getWidth(); j++) {
@@ -271,8 +272,8 @@ void vpImageMorphology::dilatation(vpImage<unsigned char> &I, const vpConnexityT
 
           _mm_storeu_si128( (__m128i *) (ptr_curr_I + j), m );
         }
-#endif
       }
+#endif
 
       for (; j < I.getWidth(); j++) {
         unsigned char max_value = null_value;
