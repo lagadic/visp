@@ -8,13 +8,11 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
-#if defined(VISP_HAVE_MODULE_IMGPROC)
+#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 //! [Include]
 #include <visp3/imgproc/vpImgproc.h>
 //! [Include]
-#endif
 
-#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 namespace {
 //! [Print contours hierarchy func]
 void displayContourInfo(const vp::vpContour &contour, const int level) {

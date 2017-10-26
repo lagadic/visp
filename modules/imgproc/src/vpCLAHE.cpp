@@ -139,7 +139,7 @@ namespace {
 
   std::vector<float> createTransfer(const std::vector<int> &hist, const int limit, std::vector<int> &cdfs) {
     clipHistogram(hist, cdfs, limit);
-    int hMin = hist.size() - 1;
+    int hMin = (int) hist.size() - 1;
 
     for (int i = 0; i < hMin; ++i) {
       if (cdfs[i] != 0) {
@@ -164,7 +164,7 @@ namespace {
   }
 
   float transferValue(const int v, std::vector<int> &clippedHist) {
-    int clippedHistLength = clippedHist.size();
+    int clippedHistLength = (int) clippedHist.size();
     int hMin = clippedHistLength - 1;
     for (int i = 0; i < hMin; i++) {
       if (clippedHist[i] != 0) {
