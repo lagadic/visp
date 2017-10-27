@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-win10-msvc15-uwp Tutorial: Installation from source for Universal Windows Platform (UWP) with Visual C++ 2017 (vc15)
+\page tutorial-install-win10-msvc15-uwp Tutorial: Installation from source for UWP with Visual C++ 2017 (vc15)
 \tableofcontents
 
 In this tutorial you will learn how to build ViSP framework for Universal Windows Platform (UWP) to include ViSP functionalities in apps developments that target a wide range of devices including PC, mobile, Xbox, HoloLens, IoT, and Surface Hub. 
@@ -43,7 +43,6 @@ C:\> git clone https://github.com/lagadic/visp.git
 \endcode
 
 We suppose now that ViSP source is in `C:\workspace\visp\visp`. 
-
 
 \section install_msvc15_uwp_build_without_opencv Build ViSP
 
