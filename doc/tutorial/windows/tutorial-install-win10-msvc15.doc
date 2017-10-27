@@ -9,7 +9,7 @@ In this tutorial you will learn how to install ViSP from source on Windows 10 wi
 
 \section install_win10_msvc15_required Install prerequisites
 
-- Visual C++. Visual Studio Community 2017 that includes Visual C++ could be downloaded from https://www.visualstudio.com. During installation enable "Desktop development with C++" to get "Windows 10 SDK". This SDK allows usage of the Graphical Device Interface (GDI) useful to display images in a window thanks to vpDisplayGDI class.
+- Visual C++. Visual Studio Community 2017 that includes Visual C++ could be downloaded from https://www.visualstudio.com/downloads/. During installation enable "Desktop development with C++" to get "Windows 10 SDK". This SDK allows usage of the Graphical Device Interface (GDI) useful to display images in a window thanks to vpDisplayGDI class.
 - CMake that could be download at : http://www.cmake.org. Download the latest release for Windows win64-x64 platform (at the time this tuto was written it was the file \c cmake-3.9.4-win64-x64.msi). To install just double click on the msi file.
 
 \section install_win10_msvc15_ws Create a workspace
