@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-win10-msvc14 Tutorial: Installation from source for Windows 10 with Visual C++ 2015
+\page tutorial-install-win10-msvc14 Tutorial: Installation from source for Windows 10 with Visual C++ 2015 (vc14)
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++. These steps have been tested on Windows 10 (64 bit), with CMake 3.3.2 and Visual Studio Community 2015. 

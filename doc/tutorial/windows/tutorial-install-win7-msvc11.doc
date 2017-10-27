@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-win7 Tutorial: Installation from source for Windows 7 with Visual C++ 2012
+\page tutorial-install-win7 Tutorial: Installation from source for Windows 7 with Visual C++ 2012 (vc11)
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on Windows with Visual C++. These steps have been tested on Windows 7 (64 bit), with CMake 3.3.2 and Visual Studio 2012 but should work with any other version as well. 

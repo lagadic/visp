@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-win81-msvc Tutorial: Installation from source for Windows 8.1 with Visual C++ 2013
+\page tutorial-install-win81-msvc Tutorial: Installation from source for Windows 8.1 with Visual C++ 2013 (vc12)
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on Windows 8.1 with Visual C++. These steps have been tested on Windows 8.1 (64 bit), with CMake 3.3.2 and Visual Studio Express 2013 but should work with any other version as well. 
