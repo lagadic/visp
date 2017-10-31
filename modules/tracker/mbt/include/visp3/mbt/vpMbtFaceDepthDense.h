@@ -53,6 +53,13 @@
 
 class VISP_EXPORT vpMbtFaceDepthDense {
 public:
+  enum vpDepthDenseFilteringType {
+    NO_FILTERING                    = 0,      ///< Face is used if visible
+    DEPTH_OCCUPANCY_RATIO_FILTERING = 1 << 1, ///< Face is used if there is enough depth information in the face polygon
+    MIN_DISTANCE_FILTERING          = 1 << 2, ///< Face is used if the camera position is farther than the threshold
+    MAX_DISTANCE_FILTERING          = 1 << 3  ///< Face is used if the camera position is closer than the threshold
+  };
+
   //! Camera intrinsic parameters
   vpCameraParameters m_cam;
   //! Flags specifying which clipping to used
@@ -118,6 +125,26 @@ public:
 
   void setScanLineVisibilityTest(const bool v);
 
+  inline void setDepthDenseFilteringMaxDistance(const double maxDistance) {
+    m_depthDenseFilteringMaxDist = maxDistance;
+  }
+
+  inline void setDepthDenseFilteringMethod(const int method) {
+    m_depthDenseFilteringMethod = method;
+  }
+
+  inline void setDepthDenseFilteringMinDistance(const double minDistance) {
+    m_depthDenseFilteringMinDist = minDistance;
+  }
+
+  inline void setDepthDenseFilteringOccupancyRatio(const double occupancyRatio) {
+    if (occupancyRatio < 0.0 || occupancyRatio > 1.0) {
+      std::cerr << "occupancyRatio < 0.0 || occupancyRatio > 1.0" << std::endl;
+    } else {
+      m_depthDenseFilteringOccupancyRatio = occupancyRatio;
+    }
+  }
+
 
 private:
   class PolygonLine {
@@ -159,6 +186,14 @@ private:
 
 
 protected:
+  //! Method to use to consider or not the face
+  int m_depthDenseFilteringMethod;
+  //! Maximum distance threshold
+  double m_depthDenseFilteringMaxDist;
+  //! Minimum distance threshold
+  double m_depthDenseFilteringMinDist;
+  //! Ratio between available depth points and theoretical number of points
+  double m_depthDenseFilteringOccupancyRatio;
   //! Flag to define if the face should be tracked or not
   bool m_isTracked;
   //! Visibility flag
@@ -177,6 +212,7 @@ protected:
                 #if DEBUG_DISPLAY_DEPTH_DENSE
                   , std::vector<std::vector<vpImagePoint> > &roiPts_vec
                 #endif
+                  , double &distanceToFace
                   );
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;

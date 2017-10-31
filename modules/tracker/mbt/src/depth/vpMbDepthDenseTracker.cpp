@@ -594,6 +594,35 @@ void vpMbDepthDenseTracker::setCameraParameters(const vpCameraParameters &camera
   }
 }
 
+void vpMbDepthDenseTracker::setDepthDenseFilteringMaxDistance(const double maxDistance) {
+  for (std::vector<vpMbtFaceDepthDense*>::const_iterator it = m_depthDenseNormalFaces.begin(); it != m_depthDenseNormalFaces.end(); ++it) {
+    (*it)->setDepthDenseFilteringMaxDistance(maxDistance);
+  }
+}
+
+void vpMbDepthDenseTracker::setDepthDenseFilteringMethod(const int method) {
+  for (std::vector<vpMbtFaceDepthDense*>::const_iterator it = m_depthDenseNormalFaces.begin(); it != m_depthDenseNormalFaces.end(); ++it) {
+    (*it)->setDepthDenseFilteringMethod(method);
+  }
+}
+
+void vpMbDepthDenseTracker::setDepthDenseFilteringMinDistance(const double minDistance) {
+  for (std::vector<vpMbtFaceDepthDense*>::const_iterator it = m_depthDenseNormalFaces.begin(); it != m_depthDenseNormalFaces.end(); ++it) {
+    (*it)->setDepthDenseFilteringMinDistance(minDistance);
+  }
+}
+
+void vpMbDepthDenseTracker::setDepthDenseFilteringOccupancyRatio(const double occupancyRatio) {
+  if (occupancyRatio < 0.0 || occupancyRatio > 1.0) {
+    std::cerr << "occupancyRatio < 0.0 || occupancyRatio > 1.0" << std::endl;
+    return;
+  }
+
+  for (std::vector<vpMbtFaceDepthDense*>::const_iterator it = m_depthDenseNormalFaces.begin(); it != m_depthDenseNormalFaces.end(); ++it) {
+    (*it)->setDepthDenseFilteringOccupancyRatio(occupancyRatio);
+  }
+}
+
 void vpMbDepthDenseTracker::track(const vpImage<unsigned char> &) {
   throw vpException(vpException::fatalError, "Cannot track with a grayscale image!");
 }
