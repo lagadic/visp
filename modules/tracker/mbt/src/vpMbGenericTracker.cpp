@@ -2440,6 +2440,68 @@ void vpMbGenericTracker::setClipping(const unsigned int &flags1, const unsigned 
 }
 
 /*!
+  Set maximum distance to consider a face.
+  You should use the maximum depth range of the sensor used.
+
+  \param maxDistance : Maximum distance to the face.
+
+  \sa setDepthDenseFilteringMethod
+  \note This function will set the new parameter for all the cameras.
+*/
+void vpMbGenericTracker::setDepthDenseFilteringMaxDistance(const double maxDistance) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setDepthDenseFilteringMaxDistance(maxDistance);
+  }
+}
+
+/*!
+  Set method to discard a face, e.g.if outside of the depth range.
+
+  \param method : Depth dense filtering method.
+
+  \sa vpMbtFaceDepthDense::vpDepthDenseFilteringType
+  \note This function will set the new parameter for all the cameras.
+*/
+void vpMbGenericTracker::setDepthDenseFilteringMethod(const int method) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setDepthDenseFilteringMethod(method);
+  }
+}
+
+/*!
+  Set minimum distance to consider a face.
+  You should use the minimum depth range of the sensor used.
+
+  \param minDistance : Minimum distance to the face.
+
+  \sa setDepthDenseFilteringMethod
+  \note This function will set the new parameter for all the cameras.
+*/
+void vpMbGenericTracker::setDepthDenseFilteringMinDistance(const double minDistance) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setDepthDenseFilteringMinDistance(minDistance);
+  }
+}
+
+/*!
+  Set depth occupancy ratio to consider a face, used to discard faces where the depth map is not well reconstructed.
+
+  \param occupancyRatio : Occupancy ratio, between [0 ; 1].
+
+  \sa setDepthDenseFilteringMethod
+  \note This function will set the new parameter for all the cameras.
+*/
+void vpMbGenericTracker::setDepthDenseFilteringOccupancyRatio(const double occupancyRatio) {
+  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->setDepthDenseFilteringOccupancyRatio(occupancyRatio);
+  }
+}
+
+/*!
   Set depth dense sampling step.
 
   \param stepX : Sampling step in x-direction.
@@ -2538,14 +2600,6 @@ void vpMbGenericTracker::setDepthNormalSamplingStep(const unsigned int stepX, co
     tracker->setDepthNormalSamplingStep(stepX, stepY);
   }
 }
-
-//void vpMbGenericTracker::setDepthNormalUseRobust(const bool use) {
-//  TrackerWrapper *tracker;
-//  for (std::map<std::string, TrackerWrapper*>::const_iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end(); ++it) {
-//    tracker = it->second;
-//    tracker->setDepthNormalUseRobust(use);
-//  }
-//}
 
 /*!
   Specify which clipping to use.
@@ -4564,38 +4618,6 @@ void vpMbGenericTracker::TrackerWrapper::setCameraParameters(const vpCameraParam
 void vpMbGenericTracker::TrackerWrapper::setClipping(const unsigned int &flags) {
   vpMbEdgeTracker::setClipping(flags);
 }
-
-void vpMbGenericTracker::TrackerWrapper::setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY) {
-  vpMbDepthDenseTracker::setDepthDenseSamplingStep(stepX, stepY);
-}
-
-void vpMbGenericTracker::TrackerWrapper::setDepthNormalFaceCentroidMethod(const vpMbtFaceDepthNormal::vpFaceCentroidType &method) {
-  vpMbDepthNormalTracker::setDepthNormalFaceCentroidMethod(method);
-}
-
-void vpMbGenericTracker::TrackerWrapper::setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method) {
-  vpMbDepthNormalTracker::setDepthNormalFeatureEstimationMethod(method);
-}
-
-void vpMbGenericTracker::TrackerWrapper::setDepthNormalPclPlaneEstimationMethod(const int method) {
-  vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationMethod(method);
-}
-
-void vpMbGenericTracker::TrackerWrapper::setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter) {
-  vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationRansacMaxIter(maxIter);
-}
-
-void vpMbGenericTracker::TrackerWrapper::setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold) {
-  vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationRansacThreshold(thresold);
-}
-
-void vpMbGenericTracker::TrackerWrapper::setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY) {
-  vpMbDepthNormalTracker::setDepthNormalSamplingStep(stepX, stepY);
-}
-
-//void vpMbGenericTracker::TrackerWrapper::setDepthNormalUseRobust(const bool use) {
-//  vpMbDepthNormalTracker::setDepthNormalUseRobust(use);
-//}
 
 void vpMbGenericTracker::TrackerWrapper::setFarClippingDistance(const double &dist) {
   vpMbEdgeTracker::setFarClippingDistance(dist);

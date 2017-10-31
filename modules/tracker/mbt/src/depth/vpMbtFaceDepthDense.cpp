@@ -52,7 +52,9 @@
 vpMbtFaceDepthDense::vpMbtFaceDepthDense() :
   m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(NULL),
   m_planeObject(), m_polygon(NULL), m_useScanLine(false),
-  m_isTracked(false), m_isVisible(false), m_listOfFaceLines(), m_planeCamera(), m_pointCloudFace(), m_polygonLines()
+  m_depthDenseFilteringMethod(DEPTH_OCCUPANCY_RATIO_FILTERING), m_depthDenseFilteringMaxDist(3.0), m_depthDenseFilteringMinDist(0.8),
+  m_depthDenseFilteringOccupancyRatio(0.3), m_isTracked(false), m_isVisible(false), m_listOfFaceLines(),
+  m_planeCamera(), m_pointCloudFace(), m_polygonLines()
 {
 }
 
@@ -146,16 +148,23 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
     return false;
 
   std::vector<vpImagePoint> roiPts;
+  double distanceToFace;
   computeROI(cMo, width, height, roiPts
            #if DEBUG_DISPLAY_DEPTH_DENSE
              , roiPts_vec
            #endif
+             , distanceToFace
              );
 
   if (roiPts.size() <= 2) {
 #ifndef NDEBUG
     std::cerr << "Error: roiPts.size() <= 2 in computeDesiredFeatures" << std::endl;
 #endif
+    return false;
+  }
+
+  if ( ((m_depthDenseFilteringMethod & MAX_DISTANCE_FILTERING) && distanceToFace > m_depthDenseFilteringMaxDist) ||
+       ((m_depthDenseFilteringMethod & MIN_DISTANCE_FILTERING) && distanceToFace < m_depthDenseFilteringMinDist) ) {
     return false;
   }
 
@@ -186,44 +195,48 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   double prev_x = 0.0, prev_y = 0.0, prev_z = 0.0;
 #endif
 
+  int totalTheoreticalPoints = 0, totalPoints = 0;
   for (unsigned int i = top; i < bottom; i+=stepY) {
     for (unsigned int j = left; j < right; j+=stepX) {
-      if ( pcl::isFinite((*point_cloud)(j,i)) && (*point_cloud)(j,i).z > 0
-           &&
-           ( m_useScanLine ?
-           (i <  m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
-           j <  m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
-           m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
-           : polygon_2d.isInside(vpImagePoint(i,j)) )
-           ) {
-        if (checkSSE2) {
-#if USE_SSE
-          if (!push) {
-            push = true;
-            prev_x = (*point_cloud)(j,i).x;
-            prev_y = (*point_cloud)(j,i).y;
-            prev_z = (*point_cloud)(j,i).z;
+      if ( ( m_useScanLine ?
+             (i <  m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+              j <  m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
+              m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
+             : polygon_2d.isInside(vpImagePoint(i,j)) ) ) {
+        totalTheoreticalPoints++;
+
+        if (pcl::isFinite((*point_cloud)(j,i)) && (*point_cloud)(j,i).z > 0) {
+          totalPoints++;
+
+          if (checkSSE2) {
+  #if USE_SSE
+            if (!push) {
+              push = true;
+              prev_x = (*point_cloud)(j,i).x;
+              prev_y = (*point_cloud)(j,i).y;
+              prev_z = (*point_cloud)(j,i).z;
+            } else {
+              push = false;
+              m_pointCloudFace.push_back(prev_x);
+              m_pointCloudFace.push_back((*point_cloud)(j,i).x);
+
+              m_pointCloudFace.push_back(prev_y);
+              m_pointCloudFace.push_back((*point_cloud)(j,i).y);
+
+              m_pointCloudFace.push_back(prev_z);
+              m_pointCloudFace.push_back((*point_cloud)(j,i).z);
+            }
+  #endif
           } else {
-            push = false;
-            m_pointCloudFace.push_back(prev_x);
             m_pointCloudFace.push_back((*point_cloud)(j,i).x);
-
-            m_pointCloudFace.push_back(prev_y);
             m_pointCloudFace.push_back((*point_cloud)(j,i).y);
-
-            m_pointCloudFace.push_back(prev_z);
             m_pointCloudFace.push_back((*point_cloud)(j,i).z);
           }
-#endif
-        } else {
-          m_pointCloudFace.push_back((*point_cloud)(j,i).x);
-          m_pointCloudFace.push_back((*point_cloud)(j,i).y);
-          m_pointCloudFace.push_back((*point_cloud)(j,i).z);
-        }
 
-#if DEBUG_DISPLAY_DEPTH_DENSE
-        debugImage[i][j] = 255;
-#endif
+  #if DEBUG_DISPLAY_DEPTH_DENSE
+          debugImage[i][j] = 255;
+  #endif
+        }
       }
     }
   }
@@ -235,6 +248,12 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
     m_pointCloudFace.push_back(prev_z);
   }
 #endif
+
+  if ( totalPoints == 0 ||
+       ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
+        totalPoints / (double) totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio) ) {
+    return false;
+  }
 
   return true;
 }
@@ -252,16 +271,23 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
     return 0;
 
   std::vector<vpImagePoint> roiPts;
+  double distanceToFace;
   computeROI(cMo, width, height, roiPts
            #if DEBUG_DISPLAY_DEPTH_DENSE
              , roiPts_vec
            #endif
+             , distanceToFace
              );
 
   if (roiPts.size() <= 2) {
 #ifndef NDEBUG
     std::cerr << "Error: roiPts.size() <= 2 in computeDesiredFeatures" << std::endl;
 #endif
+    return false;
+  }
+
+  if ( ((m_depthDenseFilteringMethod & MAX_DISTANCE_FILTERING) && distanceToFace > m_depthDenseFilteringMaxDist) ||
+       ((m_depthDenseFilteringMethod & MIN_DISTANCE_FILTERING) && distanceToFace < m_depthDenseFilteringMinDist) ) {
     return false;
   }
 
@@ -288,44 +314,48 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   double prev_x = 0.0, prev_y = 0.0, prev_z = 0.0;
 #endif
 
+  int totalTheoreticalPoints = 0, totalPoints = 0;
   for (unsigned int i = top; i < bottom; i+=stepY) {
     for (unsigned int j = left; j < right; j+=stepX) {
-      if ( point_cloud[i*width + j][2] > 0
-           &&
-           ( m_useScanLine ?
-           (i <  m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
-           j <  m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
-           m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
-           : polygon_2d.isInside(vpImagePoint(i,j)) )
-           ) {
-        if (checkSSE2) {
-#if USE_SSE
-          if (!push) {
-            push = true;
-            prev_x = point_cloud[i*width + j][0];
-            prev_y = point_cloud[i*width + j][1];
-            prev_z = point_cloud[i*width + j][2];
+      if ( ( m_useScanLine ?
+             (i <  m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+             j <  m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
+             m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
+             : polygon_2d.isInside(vpImagePoint(i,j)) ) ) {
+        totalTheoreticalPoints++;
+
+        if (point_cloud[i*width + j][2] > 0) {
+          totalPoints++;
+
+          if (checkSSE2) {
+  #if USE_SSE
+            if (!push) {
+              push = true;
+              prev_x = point_cloud[i*width + j][0];
+              prev_y = point_cloud[i*width + j][1];
+              prev_z = point_cloud[i*width + j][2];
+            } else {
+              push = false;
+              m_pointCloudFace.push_back(prev_x);
+              m_pointCloudFace.push_back( point_cloud[i*width + j][0] );
+
+              m_pointCloudFace.push_back(prev_y);
+              m_pointCloudFace.push_back( point_cloud[i*width + j][1] );
+
+              m_pointCloudFace.push_back(prev_z);
+              m_pointCloudFace.push_back( point_cloud[i*width + j][2] );
+            }
+  #endif
           } else {
-            push = false;
-            m_pointCloudFace.push_back(prev_x);
             m_pointCloudFace.push_back( point_cloud[i*width + j][0] );
-
-            m_pointCloudFace.push_back(prev_y);
             m_pointCloudFace.push_back( point_cloud[i*width + j][1] );
-
-            m_pointCloudFace.push_back(prev_z);
             m_pointCloudFace.push_back( point_cloud[i*width + j][2] );
           }
-#endif
-        } else {
-          m_pointCloudFace.push_back( point_cloud[i*width + j][0] );
-          m_pointCloudFace.push_back( point_cloud[i*width + j][1] );
-          m_pointCloudFace.push_back( point_cloud[i*width + j][2] );
-        }
 
-#if DEBUG_DISPLAY_DEPTH_DENSE
-        debugImage[i][j] = 255;
-#endif
+  #if DEBUG_DISPLAY_DEPTH_DENSE
+          debugImage[i][j] = 255;
+  #endif
+        }
       }
     }
   }
@@ -337,6 +367,12 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
     m_pointCloudFace.push_back(prev_z);
   }
 #endif
+
+  if ( totalPoints == 0 ||
+       ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
+        totalPoints / (double) totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio) ) {
+    return false;
+  }
 
   return true;
 }
@@ -498,6 +534,7 @@ void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, const unsig
                                    #if DEBUG_DISPLAY_DEPTH_DENSE
                                      , std::vector<std::vector<vpImagePoint> > &roiPts_vec
                                    #endif
+                                     , double &distanceToFace
                                      ) {
   if (m_useScanLine || m_clippingFlag > 2)
     m_cam.computeFov(width, height);
@@ -523,6 +560,8 @@ void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, const unsig
         std::vector<std::pair<vpPoint, vpPoint> > linesLst;
         m_hiddenFace->computeScanLineQuery(it->m_poly.polyClipped[0].first, it->m_poly.polyClipped[1].first, linesLst, true);
 
+        vpPoint faceCentroid;
+
         for (unsigned int i = 0 ; i < linesLst.size(); i++) {
           linesLst[i].first.project();
           linesLst[i].second.project();
@@ -536,6 +575,10 @@ void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, const unsig
           roiPts.push_back(ip1);
           roiPts.push_back(ip2);
 
+          faceCentroid.set_X( faceCentroid.get_X() + linesLst[i].first.get_X() + linesLst[i].second.get_X() );
+          faceCentroid.set_Y( faceCentroid.get_Y() + linesLst[i].first.get_Y() + linesLst[i].second.get_Y() );
+          faceCentroid.set_Z( faceCentroid.get_Z() + linesLst[i].first.get_Z() + linesLst[i].second.get_Z() );
+
 #if DEBUG_DISPLAY_DEPTH_DENSE
           std::vector<vpImagePoint> roiPts_;
           roiPts_.push_back(ip1);
@@ -543,11 +586,45 @@ void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, const unsig
           roiPts_vec.push_back(roiPts_);
 #endif
         }
+
+        if (linesLst.empty()) {
+          distanceToFace = std::numeric_limits<double>::max();
+        } else {
+          faceCentroid.set_X( faceCentroid.get_X() / (2*linesLst.size()) );
+          faceCentroid.set_Y( faceCentroid.get_Y() / (2*linesLst.size()) );
+          faceCentroid.set_Z( faceCentroid.get_Z() / (2*linesLst.size()) );
+
+          distanceToFace = sqrt(faceCentroid.get_X()*faceCentroid.get_X() + faceCentroid.get_Y()*faceCentroid.get_Y()
+                                + faceCentroid.get_Z()*faceCentroid.get_Z());
+        }
       }
     }
   } else {
     //Get polygon clipped
     m_polygon->getRoiClipped(m_cam, roiPts, cMo);
+
+    //Get 3D polygon clipped
+    std::vector<vpPoint> polygonsClipped;
+    m_polygon->getPolygonClipped(polygonsClipped);
+
+    if (polygonsClipped.empty()) {
+      distanceToFace = std::numeric_limits<double>::max();
+    } else {
+      vpPoint faceCentroid;
+
+      for (size_t i = 0; i < polygonsClipped.size(); i++) {
+        faceCentroid.set_X( faceCentroid.get_X() + polygonsClipped[i].get_X() );
+        faceCentroid.set_Y( faceCentroid.get_Y() + polygonsClipped[i].get_Y() );
+        faceCentroid.set_Z( faceCentroid.get_Z() + polygonsClipped[i].get_Z() );
+      }
+
+      faceCentroid.set_X( faceCentroid.get_X()/polygonsClipped.size() );
+      faceCentroid.set_Y( faceCentroid.get_Y()/polygonsClipped.size() );
+      faceCentroid.set_Z( faceCentroid.get_Z()/polygonsClipped.size() );
+
+      distanceToFace = sqrt(faceCentroid.get_X()*faceCentroid.get_X() + faceCentroid.get_Y()*faceCentroid.get_Y()
+                            + faceCentroid.get_Z()*faceCentroid.get_Z());
+    }
 
 #if DEBUG_DISPLAY_DEPTH_DENSE
     roiPts_vec.push_back(roiPts);

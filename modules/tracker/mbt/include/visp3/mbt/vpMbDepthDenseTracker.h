@@ -80,6 +80,11 @@ public:
 
   virtual void setCameraParameters(const vpCameraParameters& camera);
 
+  virtual void setDepthDenseFilteringMaxDistance(const double maxDistance);
+  virtual void setDepthDenseFilteringMethod(const int method);
+  virtual void setDepthDenseFilteringMinDistance(const double minDistance);
+  virtual void setDepthDenseFilteringOccupancyRatio(const double occupancyRatio);
+
   inline void setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY) {
     if (stepX == 0 || stepY == 0) {
       std::cerr << "stepX and stepY must be greater than zero!" << std::endl;

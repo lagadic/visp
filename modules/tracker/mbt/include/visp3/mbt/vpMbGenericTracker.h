@@ -225,6 +225,10 @@ public:
   virtual void setClipping(const unsigned int &flags1, const unsigned int &flags2);
   virtual void setClipping(const std::map<std::string, unsigned int> &mapOfClippingFlags);
 
+  virtual void setDepthDenseFilteringMaxDistance(const double maxDistance);
+  virtual void setDepthDenseFilteringMethod(const int method);
+  virtual void setDepthDenseFilteringMinDistance(const double minDistance);
+  virtual void setDepthDenseFilteringOccupancyRatio(const double occupancyRatio);
   virtual void setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY);
 
   virtual void setDepthNormalFaceCentroidMethod(const vpMbtFaceDepthNormal::vpFaceCentroidType &method);
@@ -233,7 +237,6 @@ public:
   virtual void setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter);
   virtual void setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold);
   virtual void setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY);
-//  virtual void setDepthNormalUseRobust(const bool use);
 
   virtual void setDisplayFeatures(const bool displayF);
 
@@ -402,16 +405,6 @@ private:
     virtual void setCameraParameters(const vpCameraParameters& camera);
 
     virtual void setClipping(const unsigned int &flags);
-
-    virtual void setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY);
-
-    virtual void setDepthNormalFaceCentroidMethod(const vpMbtFaceDepthNormal::vpFaceCentroidType &method);
-    virtual void setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method);
-    virtual void setDepthNormalPclPlaneEstimationMethod(const int method);
-    virtual void setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter);
-    virtual void setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold);
-    virtual void setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY);
-//    virtual void setDepthNormalUseRobust(const bool use);
 
     virtual void setFarClippingDistance(const double &dist);
 
