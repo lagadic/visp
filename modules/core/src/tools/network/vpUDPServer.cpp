@@ -63,7 +63,7 @@
   \note The server will listen to all the interfaces (see INADDR_ANY).
 */
 vpUDPServer::vpUDPServer(const int port)
-  : m_clientAddress(), m_clientLength(0), m_hostaddrp(NULL), m_hostp(NULL),
+  : m_clientAddress(), m_clientLength(0),
     m_serverAddress(), m_socketFileDescriptor(0)
 #if defined(_WIN32)
     , m_wsa()
@@ -79,7 +79,7 @@ vpUDPServer::vpUDPServer(const int port)
   \param port : Server port number.
 */
 vpUDPServer::vpUDPServer(const std::string &hostname, const int port)
-  : m_clientAddress(), m_clientLength(0), m_hostaddrp(NULL), m_hostp(NULL),
+  : m_clientAddress(), m_clientLength(0),
     m_serverAddress(), m_socketFileDescriptor(0)
 #if defined(_WIN32)
     , m_wsa()
