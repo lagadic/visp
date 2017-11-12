@@ -228,8 +228,9 @@ int main(int argc, const char ** argv)
                         cv::TermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 30, 0.1 ));
 #endif
         }
-        char title[20]; sprintf(title, "image %ld", frame_index);
-        vpDisplay::setTitle(I, title);
+        std::stringstream ss;
+        ss << "image " << frame_index;
+        vpDisplay::setTitle(I, ss.str());
         for (unsigned int i=0; i < pointBuf.size(); i++) {
           vpImagePoint ip(pointBuf[i].y, pointBuf[i].x);
           data.push_back(ip);
