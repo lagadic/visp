@@ -263,8 +263,13 @@ VP_OPTION(BUILD_COVERAGE "" "" "Enables test coverage" "" OFF IF (BUILD_TESTS AN
 
 # Build demos as an option.
 VP_OPTION(BUILD_DEMOS  "" "" "Build ViSP demos" "" ON)
-# Build demos as an option.
+# Build tutorials as an option.
 VP_OPTION(BUILD_TUTORIALS  "" "" "Build ViSP tutorials" "" ON)
+# Build apps as an option.
+vp_check_subdirectories(VISP_CONTRIB_MODULES_PATH apps APPS_FOUND)
+if(APPS_FOUND)
+  VP_OPTION(BUILD_APPS  "" "" "Build ViSP apps" "" ON)
+endif()
 # Build deprecated functions as an option.
 VP_OPTION(BUILD_DEPRECATED_FUNCTIONS  "" "" "Build deprecated functionalities" "" ON)
 # Debug and trace cflags
@@ -858,6 +863,9 @@ if(BUILD_TUTORIALS)
   add_subdirectory(tutorial)
   vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH tutorial)
 endif()
+if(BUILD_APPS)
+  vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH apps)
+endif()
 
 # ----------------------------------------------------------------------------
 #  Update version of 3rd party for which info is missing
@@ -1155,6 +1163,9 @@ status("    Tests:"                  BUILD_TESTS      THEN "yes" ELSE "no")
 status("    Demos:"                  BUILD_DEMOS      THEN "yes" ELSE "no")
 status("    Examples:"               BUILD_EXAMPLES   THEN "yes" ELSE "no")
 status("    Tutorials:"              BUILD_TUTORIALS  THEN "yes" ELSE "no")
+if(APPS_FOUND)
+  status("    Apps:"              BUILD_APPS  THEN "yes" ELSE "no")
+endif()
 
 # ========================== auxiliary ==========================
 status("")
