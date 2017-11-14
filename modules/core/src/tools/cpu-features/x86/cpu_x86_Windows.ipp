@@ -7,6 +7,7 @@
  * Modification for ViSP:
  *   - _xgetbv (MinGW)
  *   - __cpuidex (MinGW)
+ *   - _xgetbv (Visual Studio 2010)
  */
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,6 +23,26 @@ namespace FeatureDetector{
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+#if defined _MSC_VER && _MSC_VER <= 1600
+//ref: https://github.com/webmproject/libwebp/blob/v0.6.0/src/dsp/cpu.c#L82
+//ref: http://forums.codeguru.com/showthread.php?551499-xgetbv
+//note: code to return the uint64_t value
+//return ((uint64_t)edx_ << 32) | eax_;
+//could be discard?
+//ref: http://forums.codeguru.com/showthread.php?551499-xgetbv&s=aa59e5d6a36eb176c820406e707b42e4&p=2185193#post2185193
+//ref: https://stackoverflow.com/a/25824252/6055233
+uint64_t _xgetbv(unsigned int ext_ctrl_reg)
+{
+  uint32_t eax_, edx_;
+  __asm {
+    mov ecx, [ext_ctrl_reg]
+    __asm _emit 0x0f __asm _emit 0x01 __asm _emit 0xd0 /* xgetbv() */
+    mov eax_, eax
+    mov edx_, edx
+  }
+  return ((uint64_t)edx_ << 32) | eax_;
+}
+#endif
 #if defined(__MINGW32__)
 unsigned __int64 _xgetbv(unsigned int index)
 {
