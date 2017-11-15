@@ -883,7 +883,7 @@ You should be able to obtain these kind of results:
 \section mb_known_issues Known issues
 \subsection mb_known_issues_example_with_ogre Model-based trackers examples are not working with Ogre visibility ckeck
 
-If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option), you may encounter the following issue that was obtained following \ref tutorial-install-win81-msvc :
+If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option), you may encounter the following issue that was obtained following \ref tutorial-install-win10-msvc12 :
 \code
 C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o
 ...
