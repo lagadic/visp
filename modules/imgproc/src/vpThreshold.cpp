@@ -209,7 +209,7 @@ int computeThresholdIsoData(const vpHistogram &hist, const unsigned int imageSiz
   int T2 = vpMath::round( (MAT + MBT) / 2.0f );
 
   //% STEP 3 to n: repeat step 2 if T(i)~=T(i-1)
-  while ( std::fabs(T2-T) >= 1.0f ) {
+  while ( std::abs(T2-T) >= 1 ) {
     MBT = sum_ip[ (size_t) (T2-2) ] / cumsum[ (size_t) (T2-2) ];
     MAT = ( sum_ip.back() - sum_ip[ (size_t) (T2-1) ] ) / ( cumsum.back() - cumsum[ (size_t) (T2-1) ] );
 

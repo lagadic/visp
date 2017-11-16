@@ -94,7 +94,13 @@ ptw32_semwait (sem_t * sem)
           if (v < 0)
             {
               /* Must wait */
-              if (WaitForSingleObject (s->sem, INFINITE) == WAIT_OBJECT_0)
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+            if (WaitForSingleObjectEx(s->sem, INFINITE, FALSE) == WAIT_OBJECT_0)
+#  else
+            if (WaitForSingleObject (s->sem, INFINITE) == WAIT_OBJECT_0)
+#  endif
+#endif
 		{
 #if defined(NEED_SEM)
 		  if (pthread_mutex_lock (&s->lock) == 0)

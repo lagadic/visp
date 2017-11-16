@@ -132,10 +132,19 @@ sem_init (sem_t * sem, int pshared, unsigned int value)
 
 #else /* NEED_SEM */
 
-	      if ((s->sem = CreateSemaphore (NULL,	/* Always NULL */
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+      if ((s->sem = CreateSemaphoreEx(NULL,	/* Always NULL */
+                (long)0,	/* Force threads to wait */
+                (long)SEM_VALUE_MAX,	/* Maximum value */
+                NULL, 0, EVENT_ALL_ACCESS)) == 0)	/* Name */
+#  else
+      if ((s->sem = CreateSemaphore (NULL,	/* Always NULL */
 					     (long) 0,	/* Force threads to wait */
 					     (long) SEM_VALUE_MAX,	/* Maximum value */
 					     NULL)) == 0)	/* Name */
+#  endif
+#endif
 		{
 		  (void) pthread_mutex_destroy(&s->lock);
 		  result = ENOSPC;

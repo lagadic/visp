@@ -85,7 +85,13 @@ pthread_mutex_lock (pthread_mutex_t * mutex)
                               (PTW32_INTERLOCKED_LONGPTR) &mx->lock_idx,
 			      (PTW32_INTERLOCKED_LONG) -1) != 0)
 	        {
-	          if (WAIT_OBJECT_0 != WaitForSingleObject (mx->event, INFINITE))
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+          if (WAIT_OBJECT_0 != WaitForSingleObjectEx(mx->event, INFINITE, FALSE))
+#  else
+          if (WAIT_OBJECT_0 != WaitForSingleObject (mx->event, INFINITE))
+#  endif
+#endif
 	            {
 	              result = EINVAL;
 		      break;
@@ -124,7 +130,13 @@ pthread_mutex_lock (pthread_mutex_t * mutex)
                                   (PTW32_INTERLOCKED_LONGPTR) &mx->lock_idx,
 			          (PTW32_INTERLOCKED_LONG) -1) != 0)
 		    {
-	              if (WAIT_OBJECT_0 != WaitForSingleObject (mx->event, INFINITE))
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+              if (WAIT_OBJECT_0 != WaitForSingleObjectEx(mx->event, INFINITE, FALSE))
+#  else
+              if (WAIT_OBJECT_0 != WaitForSingleObject (mx->event, INFINITE))
+#  endif
+#endif
 		        {
 	                  result = EINVAL;
 		          break;
@@ -172,7 +184,13 @@ pthread_mutex_lock (pthread_mutex_t * mutex)
                                        (PTW32_INTERLOCKED_LONGPTR) &mx->lock_idx,
                                        (PTW32_INTERLOCKED_LONG) -1) != 0)
                     {
-                      if (WAIT_OBJECT_0 != WaitForSingleObject (mx->event, INFINITE))
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+                    if (WAIT_OBJECT_0 != WaitForSingleObjectEx(mx->event, INFINITE, FALSE))
+#  else
+                    if (WAIT_OBJECT_0 != WaitForSingleObject (mx->event, INFINITE))
+#  endif
+#endif
                         {
                           result = EINVAL;
                           break;
@@ -232,7 +250,13 @@ pthread_mutex_lock (pthread_mutex_t * mutex)
                                            (PTW32_INTERLOCKED_LONGPTR) &mx->lock_idx,
                                            (PTW32_INTERLOCKED_LONG) -1) != 0)
                         {
-                          if (WAIT_OBJECT_0 != WaitForSingleObject (mx->event, INFINITE))
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+                        if (WAIT_OBJECT_0 != WaitForSingleObjectEx(mx->event, INFINITE, FALSE))
+#  else
+                        if (WAIT_OBJECT_0 != WaitForSingleObject (mx->event, INFINITE))
+#  endif
+#endif
                             {
                               result = EINVAL;
                               break;

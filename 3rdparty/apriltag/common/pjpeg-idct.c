@@ -22,6 +22,10 @@ License along with this library; if not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include <stdint.h>
 
+#if defined(_MSC_VER)
+#define inline __inline
+#endif
+
 #ifndef M_PI
 # define M_PI 3.141592653589793238462643383279502884196
 #endif

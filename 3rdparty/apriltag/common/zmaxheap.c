@@ -39,6 +39,10 @@ either expressed or implied, of the Regents of The University of Michigan.
 
 #include "zmaxheap.h"
 
+#if defined(_MSC_VER)
+#define inline __inline
+#endif
+
 #if defined(__MINGW32__) || defined(_MSC_VER)
 #define srandom srand
 #define random rand

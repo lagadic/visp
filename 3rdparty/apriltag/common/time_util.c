@@ -37,6 +37,13 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <windows.h>
 #endif
 
+#if defined(_MSC_VER) && (_MSC_VER < 1900) && !defined(_CRT_NO_TIME_T)
+struct timespec {
+	time_t tv_sec;
+	long tv_nsec;
+};
+#endif
+
 struct timeutil_rest
 {
     int64_t acc_time;

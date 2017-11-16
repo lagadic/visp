@@ -150,7 +150,13 @@ pthread_cancel (pthread_t thread)
 
 	  SuspendThread (threadH);
 
-	  if (WaitForSingleObject (threadH, 0) == WAIT_TIMEOUT)
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+    if (WaitForSingleObjectEx(threadH, 0, FALSE) == WAIT_TIMEOUT)
+#  else
+    if (WaitForSingleObject (threadH, 0) == WAIT_TIMEOUT)
+#  endif
+#endif
 	    {
 	      tp->state = PThreadStateCanceling;
 	      tp->cancelState = PTHREAD_CANCEL_DISABLE;

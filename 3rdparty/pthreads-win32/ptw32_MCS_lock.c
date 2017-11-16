@@ -128,7 +128,13 @@ ptw32_mcs_flag_wait (HANDLE * flag)
     {
       /* the flag is not set. create event. */
 
-      HANDLE e = CreateEvent(NULL, PTW32_FALSE, PTW32_FALSE, NULL);
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+    HANDLE e = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
+#  else
+    HANDLE e = CreateEvent(NULL, PTW32_FALSE, PTW32_FALSE, NULL);
+#  endif
+#endif
 
       if ((PTW32_INTERLOCKED_SIZE)0 == PTW32_INTERLOCKED_COMPARE_EXCHANGE_SIZE(
 			                  (PTW32_INTERLOCKED_SIZEPTR)flag,
@@ -136,7 +142,13 @@ ptw32_mcs_flag_wait (HANDLE * flag)
 			                  (PTW32_INTERLOCKED_SIZE)0))
 	{
 	  /* stored handle in the flag. wait on it now. */
-	  WaitForSingleObject(e, INFINITE);
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+        WaitForSingleObjectEx(e, INFINITE, FALSE);
+#  else
+        WaitForSingleObject(e, INFINITE);
+#  endif
+#endif
 	}
 
       CloseHandle(e);

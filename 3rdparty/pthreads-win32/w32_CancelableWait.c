@@ -85,7 +85,13 @@ ptw32_cancelable_wait (HANDLE waitHandle, DWORD timeout)
       handles[1] = NULL;
     }
 
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+  status = WaitForMultipleObjectsEx(nHandles, handles, PTW32_FALSE, timeout, FALSE);
+#  else
   status = WaitForMultipleObjects (nHandles, handles, PTW32_FALSE, timeout);
+#  endif
+#endif
 
   switch (status - WAIT_OBJECT_0)
     {

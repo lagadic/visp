@@ -79,9 +79,15 @@ ptw32_new (void)
   tp->threadLock = 0;
   tp->robustMxListLock = 0;
   tp->robustMxList = NULL;
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+  tp->cancelEvent = CreateEventEx(0, NULL, CREATE_EVENT_MANUAL_RESET, EVENT_ALL_ACCESS);
+#  else
   tp->cancelEvent = CreateEvent (0, (int) PTW32_TRUE,	/* manualReset  */
 				 (int) PTW32_FALSE,	/* setSignaled  */
 				 NULL);
+#  endif
+#endif
 
   if (tp->cancelEvent == NULL)
     {

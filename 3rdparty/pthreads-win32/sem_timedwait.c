@@ -68,7 +68,13 @@ ptw32_sem_timedwait_cleanup (void * args)
        * were cancelled just before we return (after taking the semaphore)
        * which is ok.
        */
-      if (WaitForSingleObject(s->sem, 0) == WAIT_OBJECT_0)
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+    if (WaitForSingleObjectEx(s->sem, 0, FALSE) == WAIT_OBJECT_0)
+#  else
+    if (WaitForSingleObject(s->sem, 0) == WAIT_OBJECT_0)
+#  endif
+#endif
 	{
 	  /* We got the semaphore on the second attempt */
 	  *(a->resultPtr) = 0;

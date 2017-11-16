@@ -60,7 +60,13 @@ ptw32_sem_wait_cleanup(void * sem)
        * anyway. If we don't get the semaphore we indicate that we're no
        * longer waiting.
        */
-      if (*((sem_t *)sem) != NULL && !(WaitForSingleObject(s->sem, 0) == WAIT_OBJECT_0))
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+    if (*((sem_t *)sem) != NULL && !(WaitForSingleObjectEx(s->sem, 0, FALSE) == WAIT_OBJECT_0))
+#  else
+    if (*((sem_t *)sem) != NULL && !(WaitForSingleObject(s->sem, 0) == WAIT_OBJECT_0))
+#  endif
+#endif
 	{
 	  ++s->value;
 #if defined(NEED_SEM)

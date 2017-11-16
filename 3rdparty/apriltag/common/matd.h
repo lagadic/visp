@@ -41,6 +41,10 @@ either expressed or implied, of the Regents of The University of Michigan.
 extern "C" {
 #endif
 
+#if defined(_MSC_VER)
+#define inline __inline
+#endif
+
 /**
  * Defines a matrix structure for holding double-precision values with
  * data in row-major order (i.e. index = row*ncols + col).

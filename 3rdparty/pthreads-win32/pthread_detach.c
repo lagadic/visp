@@ -126,7 +126,13 @@ pthread_detach (pthread_t thread)
 	  /* The thread has exited or is exiting but has not been joined or
 	   * detached. Need to wait in case it's still exiting.
 	   */
-	  (void) WaitForSingleObject(tp->threadH, INFINITE);
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+        (void) WaitForSingleObjectEx(tp->threadH, INFINITE, FALSE);
+#  else
+        (void) WaitForSingleObject(tp->threadH, INFINITE);
+#  endif
+#endif
 	  ptw32_threadDestroy (thread);
 	}
     }

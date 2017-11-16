@@ -44,6 +44,10 @@ either expressed or implied, of the Regents of The University of Michigan.
 extern "C" {
 #endif
 
+#if defined(_MSC_VER)
+#define inline __inline
+#endif
+
 #ifndef M_TWOPI
 # define M_TWOPI       6.2831853071795862319959  /* 2*pi */
 #endif

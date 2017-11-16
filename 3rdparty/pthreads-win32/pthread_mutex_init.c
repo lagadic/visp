@@ -112,9 +112,15 @@ pthread_mutex_init (pthread_mutex_t * mutex, const pthread_mutexattr_t * attr)
 
       mx->ownerThread.p = NULL;
 
+#if defined(_WIN32)
+#  if defined(WINRT_8_1)
+      mx->event = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
+#  else
       mx->event = CreateEvent (NULL, PTW32_FALSE,    /* manual reset = No */
                               PTW32_FALSE,           /* initial state = not signaled */
                               NULL);                 /* event name */
+#  endif
+#endif
 
       if (0 == mx->event)
         {

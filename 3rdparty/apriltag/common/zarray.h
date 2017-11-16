@@ -42,6 +42,10 @@ either expressed or implied, of the Regents of The University of Michigan.
 extern "C" {
 #endif
 
+#if defined(_MSC_VER)
+#define inline __inline
+#endif
+
 /**
  * Defines a structure which acts as a resize-able array ala Java's ArrayList.
  */
