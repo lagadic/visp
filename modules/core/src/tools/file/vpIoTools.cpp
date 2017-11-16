@@ -79,6 +79,7 @@ std::string vpIoTools::configFile = "";
 std::vector<std::string> vpIoTools::configVars = std::vector<std::string>();
 std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 
+#if TARGET_OS_IOS == 0 // The following code is not working on iOS since wordexp() is not available
 namespace {
   void replaceAll(std::string &str, const std::string& search, const std::string& replace) {
     size_t start_pos = 0;
@@ -88,6 +89,7 @@ namespace {
     }
   }
 }
+#endif
 
 /*!
   Return build informations (OS, compiler, build flags, used 3rd parties...).
