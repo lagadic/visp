@@ -137,6 +137,12 @@
 #define HAVE_MODE_T
 #endif
 
+// struct timespec undefined with Visual Studio 2013 and previous (_MSC_VER 1800)
+// introduced in Visual Studio 2015 (_MSC_VER 1900)
+#if defined(_MSC_VER) && (_MSC_VER >= 1900) && !defined(_CRT_NO_TIME_T)
+#define HAVE_STRUCT_TIMESPEC
+#endif
+
 #if defined(__BORLANDC__)
 #endif
 

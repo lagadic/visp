@@ -242,7 +242,7 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, const int time
     }
 
     char result[INET_ADDRSTRLEN];
-    const char * ptr = InetNtop(AF_INET, (void*)&m_clientAddress.sin_addr, result, sizeof(result));
+    const char * ptr = inet_ntop(AF_INET, (void*)&m_clientAddress.sin_addr, result, sizeof(result));
     if (ptr == NULL) {
       std::cerr << "InetNtop failed with error: " << WSAGetLastError() << std::endl;
     } else {

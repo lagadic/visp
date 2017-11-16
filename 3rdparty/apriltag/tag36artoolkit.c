@@ -38,7 +38,11 @@ either expressed or implied, of the Regents of The University of Michigan.
 apriltag_family_t *tag36artoolkit_create()
 {
     apriltag_family_t *tf = calloc(1, sizeof(apriltag_family_t));
+#ifdef WINRT
+    tf->name = _strdup("artoolkit");
+#else
     tf->name = strdup("artoolkit");
+#endif
     tf->black_border = 1;
     tf->d = 6;
     tf->h = 7; // not sure.

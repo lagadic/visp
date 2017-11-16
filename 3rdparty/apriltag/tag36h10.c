@@ -39,7 +39,11 @@ either expressed or implied, of the Regents of The University of Michigan.
 apriltag_family_t *tag36h10_create()
 {
    apriltag_family_t *tf = calloc(1, sizeof(apriltag_family_t));
+#ifdef WINRT
+   tf->name = _strdup("tag36h10");
+#else
    tf->name = strdup("tag36h10");
+#endif
    tf->black_border = 1;
    tf->d = 6;
    tf->h = 10;
