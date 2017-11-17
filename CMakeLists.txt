@@ -228,20 +228,24 @@ set(VISP_CONTRIB_MODULES_PATH "" CACHE PATH "Where to look for additional contri
 # Get the OS
 set(OS ${CMAKE_SYSTEM_NAME})
 
-set(OGRE_HOME $ENV{OGRE_HOME})
-if(OGRE_HOME)
+set(OGRE_DIR $ENV{OGRE_DIR})
+if(NOT OGRE_DIR) # For compat with previous ViSP versions
+  set(OGRE_DIR $ENV{OGRE_HOME})
+endif()
+if(OGRE_DIR)
   # replace \ with / especially for windows
-  STRING(REGEX REPLACE "\\\\" "/" OGRE_HOME ${OGRE_HOME})
+  STRING(REGEX REPLACE "\\\\" "/" OGRE_DIR ${OGRE_DIR})
 endif()
 
 # add the path to detect Ogre3D
 if(WIN32)
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/CMake")
+  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/cmake")
+  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/CMake")
 endif(WIN32)
 
 if(UNIX)
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/cmake")
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_HOME}/CMake")
+  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/cmake")
+  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/CMake")
   list(APPEND CMAKE_MODULE_PATH "/usr/local/lib/OGRE/cmake")
   list(APPEND CMAKE_MODULE_PATH "/usr/lib/OGRE/cmake")
   list(APPEND CMAKE_MODULE_PATH "/usr/local/lib64/OGRE/cmake")
@@ -774,7 +778,9 @@ VP_SET(VISP_HAVE_FUNC_LOG1P TRUE IF HAVE_FUNC_LOG1P) # for header vpConfig.h
 VP_SET(VISP_BUILD_DEPRECATED_FUNCTIONS TRUE IF BUILD_DEPRECATED_FUNCTIONS) # for header vpConfig.h
 VP_SET(VISP_MOMENTS_COMBINE_MATRICES TRUE IF ENABLE_MOMENTS_COMBINE_MATRICES) # for header vpConfig.h
 VP_SET(VISP_USE_MSVC TRUE IF MSVC) # for header vpConfig.h
-VP_SET(VISP_HAVE_CPP11_COMPATIBILITY TRUE IF USE_CPP11) # for header vpConfig.h
+# Hack for msvc12 (Visual 2013) where C++11 implementation is incomplete
+VP_SET(VISP_HAVE_CPP11_COMPATIBILITY TRUE IF USE_CPP11 OR (MSVC_VERSION EQUAL 1800)) # for header vpConfig.h
+
 VP_SET(VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION TRUE IF (USE_BICLOPS AND BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION)) # for header vpConfig.h
 
 # libraries for Pioneer mobile robots
