@@ -53,42 +53,42 @@ Next we suggest to first build ViSP without OpenCV.
 - Configure ViSP build for Windows Store 10 targeting a x86 platform, by opening a cmd terminal and running: 
 \code
 C:\> cd C:\workspace\visp
-C:\> md visp-build-msvc14-uwp-ws-10
-C:\> cd visp-build-msvc14-uwp-ws-10
+C:\> md visp-build-vc14-uwp-ws-10
+C:\> cd visp-build-vc14-uwp-ws-10
 C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=x86 ../visp
 \endcode
 
-- To build ViSP just double click on `C:/workspace/visp/visp-build-msvc14-uwp-ws-10/VISP.sln` solution file. This action will open ViSP project in Visual Studio C++.
+- To build ViSP just double click on `C:/workspace/visp/visp-build-vc14-uwp-ws-10/VISP.sln` solution file. This action will open ViSP project in Visual Studio C++.
 
-- With Visual Studio build and install the solution. If everything goes right you will find ViSP libraries and headers in `C:/workspace/visp/visp-build-msvc14-uwp-ws-10/install` folder. 
+- With Visual Studio build and install the solution. If everything goes right you will find ViSP libraries and headers in `C:/workspace/visp/visp-build-vc14-uwp-ws-10/install` folder. 
 
 \subsection install_msvc14_uwp_build_ws_8_1 Build for Windows Store 8.1
 
 - Configure ViSP build for Windows Store 8.1 targeting a x86 platform, by opening a cmd terminal and running: 
 \code
 C:\> cd C:\workspace\visp
-C:\> md visp-build-msvc14-uwp-ws-8.1
-C:\> cd visp-build-msvc14-uwp-ws-8.1
+C:\> md visp-build-vc14-uwp-ws-8.1
+C:\> cd visp-build-vc14-uwp-ws-8.1
 C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="8.1" -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=x86 ../visp
 \endcode
 
-- To build ViSP just double click on `C:/workspace/visp/visp-build-msvc14-uwp-ws-8.1/VISP.sln` solution file. This action will open ViSP project in Visual Studio C++.
+- To build ViSP just double click on `C:/workspace/visp/visp-build-vc14-uwp-ws-8.1/VISP.sln` solution file. This action will open ViSP project in Visual Studio C++.
 
-- With Visual Studio build and install the solution. If everything goes right you will find ViSP libraries and headers in `C:/workspace/visp/visp-build-msvc14-uwp-ws-8.1/install` folder.
+- With Visual Studio build and install the solution. If everything goes right you will find ViSP libraries and headers in `C:/workspace/visp/visp-build-vc14-uwp-ws-8.1/install` folder.
 
 \subsection install_msvc14_uwp_build_wp_8_1 Build for Windows Phone 8.1
 
 - Configure ViSP build for Windows Phone 8.1 targeting a x86 platform, by opening a cmd terminal and running: 
 \code
 C:\> cd C:\workspace\visp
-C:\> md visp-build-msvc14-uwp-wp-8.1
-C:\> cd visp-build-msvc14-uwp-wp-8.1
+C:\> md visp-build-vc14-uwp-wp-8.1
+C:\> cd visp-build-vc14-uwp-wp-8.1
 C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsPhone -DCMAKE_SYSTEM_VERSION:String="8.1" -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=x86 ../visp
 \endcode
 
-- To build ViSP just double click on `C:/workspace/visp/visp-build-msvc14-uwp-wp-8.1/VISP.sln` solution file. This action will open ViSP project in Visual Studio C++.
+- To build ViSP just double click on `C:/workspace/visp/visp-build-vc14-uwp-wp-8.1/VISP.sln` solution file. This action will open ViSP project in Visual Studio C++.
 
-- With Visual Studio build and install the solution. If everything goes right you will find ViSP libraries and headers in `C:/workspace/visp/visp-build-msvc14-uwp-wp-8.1/install` folder. 
+- With Visual Studio build and install the solution. If everything goes right you will find ViSP libraries and headers in `C:/workspace/visp/visp-build-vc14-uwp-wp-8.1/install` folder. 
 
 Now if you want that ViSP benefits from OpenCV functionalities, you can follow the next section.
 
@@ -117,20 +117,20 @@ C:\> git apply --ignore-space-change --ignore-whitespace ..\opencv-microsoft-bra
 - Configure OpenCV build. The following command is for Windows Store 10.0 targetting a x86 platform but could be easily adapted:
 \code
 C:\> cd C:\workspace\opencv
-C:\> md opencv-build-msvc14-uwp-ws-10.0
-C:\> cd opencv-build-msvc14-uwp-ws-10.0
+C:\> md opencv-build-vc14-uwp-ws-10.0
+C:\> cd opencv-build-vc14-uwp-ws-10.0
 C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=x86  -DBUILD_opencv_ts=OFF ../opencv
 \endcode
 
-- Open `C:/workspace/opencv/opencv-build-msvc14-uwp-ws-10/opencv.sln` file with Visual Studio 2015, build and install all the solution
+- Open `C:/workspace/opencv/opencv-build-vc14-uwp-ws-10/opencv.sln` file with Visual Studio 2015, build and install all the solution
 
-- If everything goes right you will find OpenCV libraries and headers in `C:/workspace/opencv/opencv-build-msvc14-uwp-ws-10/install` folder.
+- If everything goes right you will find OpenCV libraries and headers in `C:/workspace/opencv/opencv-build-vc14-uwp-ws-10/install` folder.
 
-Now you can use OpenCV as third-party and configure ViSP in order to use OpenCV. To this end modify the cmake command that was used to \ref install_msvc14_uwp_build_without_opencv by adding `-DOpenCV_DIR=C:\workspace\opencv\opencv-build-msvc14-uwp-ws-10\install` option to cmake command line:
+Now you can use OpenCV as third-party and configure ViSP in order to use OpenCV. To this end modify the cmake command that was used to \ref install_msvc14_uwp_build_without_opencv by adding `-DOpenCV_DIR=C:\workspace\opencv\opencv-build-vc14-uwp-ws-10\install` option to cmake command line:
 
 \code
-C:\> cd C:\workspace\visp\visp-build-msvc14-uwp-ws-10
-C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=x86 -DOpenCV_DIR=C:/workspace/opencv/opencv-build-msvc14-uwp-ws-10/install ../visp
+C:\> cd C:\workspace\visp\visp-build-vc14-uwp-ws-10
+C:\> cmake.exe -G "Visual Studio 14 2015" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DCMAKE_VS_EFFECTIVE_PLATFORMS:String=x86 -DOpenCV_DIR=C:/workspace/opencv/opencv-build-vc14-uwp-ws-10/install ../visp
 \endcode
 
 As described in \ref install_msvc14_uwp_build_without_opencv, open again ViSP solution file, build and install ViSP.
