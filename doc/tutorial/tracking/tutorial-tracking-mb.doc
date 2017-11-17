@@ -1,0 +1,922 @@
+/**
+
+\page tutorial-tracking-mb Tutorial: Markerless model-based tracking
+\tableofcontents
+
+\section mb_intro Introduction
+
+ViSP allows simultaneously the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization (i.e., the object pose expressed in the camera frame) when a calibrated camera is used \cite Comport06b. Considered objects should be modeled by lines, circles or cylinders. The CAD model of the object could be defined in vrml format (except for circles), or in cao format. 
+
+To follow this tutorial depending on your interest you should be sure that ViSP was build with the following third-parties:
+- \c OpenCV: Useful if you want to investigate the KLT keypoint tracker implemented in vpMbKltTracker or its hybrid version vpMbEdgeKltTracker. We recommend to install \c OpenCV. This 3rd party may be also useful to consider input videos (mpeg, png, jpeg...).
+- \c libxml: This 3rd party is optional but recommended to read the tracker settings as well as the camera settings from an xml file. More information is given in \ref mb_settings_xml.
+- \c Ogre \c 3D: This 3rd party is optional and could be difficult to instal on OSX and Windows. To begin with the tracker we don't recomend to istall it. \c Ogre \c 3D allows to enable \ref mb_settings_visibility_ogre.
+- \c Coin \c 3D: This 3rd party is also optional and difficult to install. That's why we don't recommend to install \c Coin \c 3D to begin with the tracker. \c Coin \c 3D allows only to consider \ref mb_advanced_wrml  instead of the home-made \ref mb_advanced_cao.
+
+Next sections highlight how to use the differents versions of the markerless model-based trackers that are implemented in ViSP.
+
+Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/generic
+\endcode
+
+\section mb_started Getting started
+
+In ViSP, depending on the visual features that are used three trackers are available:
+- a tracker implemented in vpMbEdgeTracker that consider moving-edges behind the visible lines of the model. This tracker is appropriate to track texture less objects.
+- an other tracker implemented in vpMbKltTracker that consider KLT keypoints that are detected and tracked on each visible face of the model. This tracker is more designed to track textured objects with edges that are not really visible.
+- an hybrid version implemented in vpMbEdgeKltTracker that is able to consider moving-edges and KLT keypoints. This tracker is appropriate to track textured objects with visible edges.
+
+\subsection mb_started_src Example source code
+The following example that comes from tutorial-mb-tracker.cpp allows to track a tea box modeled in cao format using one of the markerless model-based tracker implemented in ViSP.
+
+\include tutorial-mb-tracker.cpp
+
+\note An extension of the previous getting started example is proposed in tutorial-mb-tracker-full.cpp where advanced functionalities such as reading tracker settings from an XML file or visibility computation are implemented.
+
+\note Other tutorials that are specific to a given tracker are provided in tutorial-mb-edge-tracker.cpp, tutorial-mb-klt-tracker.cpp and tutorial-mb-hybrid-tracker.cpp.
+
+\subsection mb_started_input Example input data
+
+The previous example uses the following data as input:
+- a video file; "teabox.mpg" is the default video.
+- a cad model that describes the object to track. In our case the file \c "teabox.cao" is the default one. See \ref mb_model section to learn how the teabox is modelled and section \ref mb_advanced_cao to learn how to model an other object.
+- a file with extension "*.init" that contains the 3D coordinates of some points used to compute an initial pose which serves to initialize the tracker. The user has than to click in the image on the corresponding 2D points. The default file is named "teabox.init". The content of this file is detailed in \ref mb_started_src_explained section.
+- an optional image with extension "*.ppm" that may help the user to remember the location of the corresponding 3D points specified in "*.init" file.
+
+
+\subsection mb_started_exe Running the example
+
+Once build, to see the options that are available in the previous source code, just run:
+\code
+$ ./tutorial-mb-tracker --help
+Usage: ./tutorial-mb-tracker-full [--video <video name>] [--model <model name>] [--tracker <0=egde|1=keypoint|2=hybrid>] [--help]
+\endcode
+By default, \c teabox.mpg video and \c teabox.cao model are used as input. Using \c "--tracker" option, you can specify which tracker has to be used:
+- Using vpMbEdgeTracker to track only moving-edges:
+\code
+$ ./tutorial-mb-tracker --tracker 0
+\endcode
+will produce results similar to:
+\htmlonly
+<br>
+<p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/b__u_yGEbmc?rel=0" frameborder="0" allowfullscreen></iframe></p>
+\endhtmlonly
+- Using vpMbKltTracker to track only keypoints:
+\code
+$ ./tutorial-mb-tracker --tracker 1
+\endcode
+will produce results similar to:
+\htmlonly
+<br>
+<p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/eZmUw9r6Idw?rel=0" frameborder="0" allowfullscreen></iframe></p>
+\endhtmlonly
+- Using vpMbEdgeKltTracker to track moving-edges and keypoints in an hybrid scheme:
+\code
+$ ./tutorial-mb-tracker --tracker 2
+\endcode
+will produce results similar to:
+\htmlonly
+<br>
+<p align="center"><iframe width="420" height="315" src="http://www.youtube.com/embed/a-RX9NPF2k0?rel=0" frameborder="0" allowfullscreen></iframe></p>
+\endhtmlonly
+
+With this example it is also possible to work on an other data set using "--video" and "--model" command line options. For example, if you run:
+\code
+$ ./tutorial-mb-tracker --video <path1>/myvideo%04.png --model <path2>/myobject.cao.
+\endcode
+it means that the following images will be used as input:
+\code
+<path1>/myvideo0001.png
+<path1>/myvideo0002.png
+...
+<path1>/myvideo0009.png
+<path1>/myvideo0010.png
+...
+\endcode
+and that in \c \<path2\> you have the following data:
+- \c myobject.init: The coordinates of at least four 3D points used for the initialization.
+- \c myobject.cao: The CAD model of the object to track.
+- \c myobject.ppm: An optional image that shows where the user has to click the points defined in \c myobject.init.
+- \c myobject.xml: An optional files that contains the tracker parameters that are specific to the image sequence and that contains also the camera intrinsic parameters obtained by calibration (see \ref tutorial-calibration). This file is handled in tutorial-mb-tracker-full.cpp but not in tutorial-mb-tracker.cpp. That's why since the video \c teabox.mpg was acquired by an other camera than yours, you have to set the camera intrinsic parameters in tutorial-mb-tracker.cpp source code modifying the line:
+\snippet tutorial-mb-tracker.cpp Set camera parameters
+
+and build again before using \c "--model" command line option.
+
+\subsection mb_started_src_explained Source code explained
+
+Hereafter is the description of the some lines introduced in the previous example.
+
+First we include the header of the hybrid tracker that includes internally vpMbEdgeTracker and vpMbKltTracker classes.
+\snippet tutorial-mb-tracker.cpp Include
+
+The tracker uses image \c I and the intrinsic camera parameters \c cam as input.
+\snippet tutorial-mb-tracker.cpp Image
+
+As output, it estimates \c cMo, the pose of the object in the camera frame.
+\snippet tutorial-mb-tracker.cpp cMo
+
+Once input image \c teabox.pgm is loaded in \c I, a window is created and initialized with image \c I. Then we create an instance of the tracker depending on \c "--tracker" command line option.
+\snippet tutorial-mb-tracker.cpp Constructor
+
+Then the corresponding tracker settings are initialized. More details are given in \ref mb_settings section.
+\snippet tutorial-mb-tracker.cpp Set parameters
+
+Now we are ready to load the cad model of the object. ViSP supports cad model in cao format or in vrml format. The cao format is a particular format only supported by ViSP. It doesn't require an additional 3rd party rather then vrml format that require Coin 3rd party. We load the cad model in cao format from \c teabox.cao file which complete description is provided in \ref mb_teabox_cao with:
+\snippet tutorial-mb-tracker.cpp Load cao
+
+It is also possible to modify the code to load the cad model in vrml format from \c teabox.wrl file described in \ref mb_teabox_vrml. To this end modify the previous line with:
+\code
+tracker->loadModel(objectname + ".wrl");
+\endcode
+
+Once the model of the object to track is loaded, with the next line the display in the image window of additional drawings in overlay such as the moving edges positions, is then enabled by:
+\snippet tutorial-mb-tracker.cpp Set display
+
+Now we have to initialize the tracker. With the next line we choose to use a user interaction. 
+\snippet tutorial-mb-tracker.cpp Init
+
+The user has to click in the image on four vertices with their 3D coordinates defined in the \c "teabox.init" file. The following image shows where the user has to click.
+
+\image html img-teabox-click.jpg Image \c "teabox.ppm" used to help the user to initialize the tracker. 
+
+Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker. Note also that the third optional argument "true" is used here to enable the display of an image that may help the user for the initialization. The name of this image is the same as the \c "*.init" file except the extension that sould be \c ".ppm". In our case it will be \c "teabox.ppm".
+
+The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user intialization is provided hereafter. Note that all the characters after character '#' are considered as comments. 
+
+\includelineno teabox.init
+
+We give now the signification of each line of this file:
+- line 1: Number of 3D points that are defined in this file. At least 4 points are required. Four is the minimal number of points requested to compute a pose.
+- line 2: Each point is defined by its 3D coordinates. Here we define the first point with coordinates (0,0,0). In the previous figure it corresponds to vertex 0 of the tea box. This point is also the origin of the frame in which all the points are defined.  
+- line 3: 3D coordinates of vertex 3.
+- line 4: 3D coordinates of vertex 2.
+- line 5: 3D coordinates of vertex 5.
+
+Here the user has to click on vertex 0, 3, 2 and 5 in the window that displays image \c I. From the 3D coordinates defined in \c teabox.init and the corresponding 2D coordinates of the vertices obtained by user interaction a pose is computed that is then used to initialize the tracker.
+
+Next, in the infinite while loop, after displaying the next image, we track the object on a new image \c I.
+\snippet tutorial-mb-tracker.cpp Track
+
+The result of the tracking is a pose \c cMo that can be obtained by:
+\snippet tutorial-mb-tracker.cpp Get pose
+
+Next lines are used first to retrieve the camera parameters used by the tracker, then to display the visible part of the cad model using red lines with 2 as thickness, and finally to display the object frame at the estimated position \c cMo. Each axis of the frame are 0.025 meters long. Using vpColor::none indicates that x-axis is displayed in red, y-axis in green, while z-axis in blue. The thickness of the axis is 3.
+\snippet tutorial-mb-tracker.cpp Display
+
+The last lines are here to free the memory allocated for the display and tracker:
+\snippet tutorial-mb-tracker.cpp Cleanup
+
+\section mb_model Teabox CAD model
+
+ViSP supports two different ways to describe CAD models, either in cao or in vrml format.
+- cao format is specific to ViSP. It allows to describe the CAD model of an object using a text file with extension \c .cao.
+- vrml format is supported only if Coin 3rd party is installed. This format allows to describe the CAD model of an object using a text file with extension \c .wrl.
+
+
+\subsection mb_teabox_cao teabox.cao example
+
+The content of the file teabox.cao used in the getting started \ref mb_started_src but also in tutorial-mb-edge-tracker.cpp and in tutorial-mb-hybrid-tracker.cpp examples is given here:
+
+\includelineno teabox.cao
+
+This file describes the model of the tea box corresponding to the next image:
+
+\image html img-teabox-cao.jpg Index of the vertices used to model the tea box in cao format.
+
+We make the choice to describe the faces of the box from the 3D points that correspond to the vertices. We provide now a line by line description of the file. Notice that the characters after the '#' are considered as comments.
+- line 1: Header of the \c .cao file
+- line 3: The model is defined by 8 3D points. Here the 8 points correspond to the 8 vertices of the tea box presented in the previous figure. Thus, next 8 lines define the 3D points coordinates.
+- line 4: 3D point with coordinate (0,0,0) corresponding to vertex 0 of the tea box. This point is also the origin of the frame in which all the 3D points are defined.
+- line 5: 3D point with coordinate (0,0,-0.08) corresponding to vertex 1.
+- line 6 to 11: The other 3D points corresponding to vertices 2 to 7 respectively.
+- line 13: Number of 3D lines defined from two 3D points. It is possible to introduce 3D lines and then use these lines to define faces from these 3D lines. This is particularly useful to define faces from non-closed polygons. For instance, it can be used to specify the tracking of only 3 edges of a rectangle. Notice also that a 3D line that doesn't belong to a face is always visible and consequently always tracked.
+- line 15: Number of faces defined from 3D lines. In our teabox example we decide to define all the faces from 3D points, that is why this value is set to 0. 
+- line 17: The number of faces defined by a set of 3D points. Here our teabox has 6 faces. Thus, next 6 lines describe each face from the 3D points defined previously line 4 to 11. Notice here that all the faces defined from 3D points corresponds to closed polygons. 
+- line 18: First face defined by 4 3D points, respectively vertices 0,1,2,3. The orientation of the face is counter clockwise by going from vertex 0 to vertex 1, then 2 and 3. This fixes the orientation of the normal of the face going outside the object.
+- line 19: Second face also defined by 4 points, respectively vertices 1,6,5,2 to have a counter clockwise orientation.
+- line 20 to 23: The four other faces of the box.
+- line 25: Number of 3D cylinders describing the model. Since we model a simple box, the number of cylinders is 0.
+- line 27: Number of 3D circles describing the model. For the same reason, the number of circles is 0.
+
+\subsection mb_teabox_cao_triangle teabox-triangle.cao example
+
+The content of the file teabox-triangle.cao used in the tutorial-mb-klt-tracker.cpp example is given here:
+
+\includelineno teabox-triangle.cao
+
+This file describes the model of the tea box corresponding to the next image:
+
+\image html img-teabox-cao-triangle.jpg Index of the vertices used to model the tea box in cao format with triangles.
+
+Until line 15, the content of this file is similar to the one described in 
+\ref mb_teabox_cao. Line 17 we specify that the model contains 12 faces. Each face is then described as a triangle.
+
+\note Since some lines of the model (for example the one between points 0 and 2, or 7 and 3...) don't correspond to teabox edges, this CAD model is not suited for moving-edges and hybrid trackers. 
+
+\subsection mb_teabox_vrml teabox.wrl example
+
+The content of the \c teabox.wrl file used in tutorial-mb-tracker-full.cpp and tutorial-mb-edge-tracker.cpp when \c teabox.cao is missing is given hereafter. This content is to make into relation with \c teabox.cao described in \ref mb_teabox_cao. As for the cao format, \c teabox.wrl describes first the vertices of the box, then the edges that corresponds to the faces. 
+
+\includelineno teabox.wrl
+
+This file describes the model of the tea box corresponding to the next image:
+
+\image html img-teabox-cao.jpg Index of the vertices used to model the tea box in vrml format.
+
+We provide now a line by line description of the file where the faces of the box are defined from the vertices:
+- line 1 to 10: Header of the \c .wrl file.
+- line 13 to 20: 3D coordinates of the 8 tea box vertices.
+- line 34 to 29: Each line describe a face. In this example, a face is defined by 4 vertices. For example, the first face join vertices 0,1,2,3. The orientation of the face is counter clockwise by going from vertex 0 to vertex 1, then 2 and 3. This fixes the orientation of the normal of the face going outside the object.
+
+
+\section mb_settings Tracker settings
+
+\subsection mb_settings_xml Settings from an XML file
+
+
+Instead of setting the tracker parameters from source code, if libxml2 is available it is possible to specify the settings from an XML file. As done in tutorial-mb-tracker-full.cpp example, to read the parameters from an XML file, simply modify the code like:
+\snippet tutorial-mb-tracker-full.cpp Load xml
+The content of the XML file teabox.xml that is considered by default is the following:
+\code
+<?xml version="1.0"?>
+<conf>
+  <ecm>
+    <mask>
+      <size>5</size>
+      <nb_mask>180</nb_mask>
+    </mask>
+    <range>
+      <tracking>8</tracking>
+    </range>
+    <contrast>
+      <edge_threshold>10000</edge_threshold>
+      <mu1>0.5</mu1>
+      <mu2>0.5</mu2>
+    </contrast>
+    <sample>
+      <step>4</step>
+    </sample>
+  </ecm>
+  <klt>
+    <mask_border>5</mask_border> 
+    <max_features>300</max_features> 
+    <window_size>5</window_size> 
+    <quality>0.015</quality> 
+    <min_distance>8</min_distance> 
+    <harris>0.01</harris>
+    <size_block>3</size_block> 
+    <pyramid_lvl>3</pyramid_lvl> 
+  </klt>
+  <camera>
+    <u0>325.66776</u0> 
+    <v0>243.69727</v0> 
+    <px>839.21470</px> 
+    <py>839.44555</py> 
+  </camera>
+  <face>
+    <angle_appear>70</angle_appear> 
+    <angle_disappear>80</angle_disappear> 
+    <near_clipping>0.1</near_clipping>
+    <far_clipping>100</far_clipping>
+    <fov_clipping>1</fov_clipping>
+  </face>
+</conf>
+\endcode
+
+Depending on the tracker all the XML tags are not useful:
+- \c \<ecm\> tag corresponds to the moving-edges settings. This tag is used by vpMbEdgeTracker and vpMbEdgeKltTracker.
+- \c \<klt\> tag corresponds to the keypoint settings. This tag is used by vpMbKltTracker and vpMbEdgeKltTracker.
+- \c \<camera\> and \c \<face\> tags are used by all the trackers.
+
+\subsection mb_settings_ecm Moving-edges settings
+Moving-edges settings affect the way the visible edges of an object are tracked.
+These settings could be tuned either from XML using \<ecm\> tag as:
+
+\code
+<conf>
+  ...
+  <ecm>
+    <mask>
+      <size>5</size>
+      <nb_mask>180</nb_mask>
+    </mask>
+    <range>
+      <tracking>8</tracking>
+    </range>
+    <contrast>
+      <edge_threshold>10000</edge_threshold>
+      <mu1>0.5</mu1>
+      <mu2>0.5</mu2>
+    </contrast>
+    <sample>
+      <step>4</step>
+    </sample>
+  </ecm>
+  ...
+</conf>
+\endcode
+
+of from source code using vpMbEdgeTracker::setMovingEdge() method:
+\snippet tutorial-mb-tracker-full.cpp Set moving-edges parameters
+
+Either from xml or from the previous source code you can set:
+- mask_size: defines the size of the convolution mask used to detect an edge.
+- nb_mask: number of mask applied to determine the object contour. The number of mask determines the precision of the normal of the edge for every sample. If precision is 2deg, then there are 360/2 = 180 masks.
+- range_tracking: range on both sides of the reference pixel along the normal of the contour used to track a moving-edge. If the displacement of the tracked object in two successive images is large, you have to increase this parameter. 
+- edge_threshold: likelihood threshold used to determined if the moving edge is valid or not.
+- mu1: minimum image contrast allowed to detect a contour.
+- mu2: maximum image contrast allowed to detect a contour.
+- sample_step: minimum distance in pixel between two discretized moving-edges. To increase the number of moving-edges you have to reduce this parameter.
+
+\note Most important parameters are \e range_tracking and \e sample_step.
+
+
+\subsection mb_settings_klt Keypoints settings
+Keypoint settings affect tracking of keypoints on visible faces using KLT. 
+These settings could be tuned either from XML using \<klt\> tag as:
+
+\code
+<conf>
+  ...
+  <klt>
+    <mask_border>5</mask_border> 
+    <max_features>300</max_features> 
+    <window_size>5</window_size> 
+    <quality>0.015</quality> 
+    <min_distance>8</min_distance> 
+    <harris>0.01</harris>
+    <size_block>3</size_block> 
+    <pyramid_lvl>3</pyramid_lvl> 
+  </klt>
+  ...
+</conf>
+\endcode
+
+of from source code using vpMbKltTracker::setKltOpencv() and vpMbKltTracker::setMaskBorder() methods:
+\snippet tutorial-mb-tracker-full.cpp Set klt parameters
+
+With the previous parameters you can set:
+- mask_border: erosion number of the mask used on each face.
+- max_features: maximum number of keypoint features to track in the image.
+- window_size: window size used to refine the corner locations.
+- quality: parameter characterizing the minimal accepted quality of image corners. Corners with quality measure less than this parameter are rejected. This means that if you want to have more keypoints on a face, you have to reduce this parameter. 
+- min_distance: minimal Euclidean distance between detected corners during keypoint detection stage used to initialize keypoint location.
+- harris: free parameter of the Harris detector.
+- size_block: size of the averaging block used to track the keypoint features.
+- pyramid_lvl: maximal pyramid level. If the level is zero, then no pyramid is computed for the optical flow.
+
+\note Most important parameters are \e min_distance and \e quality.
+
+\subsection mb_settings_cam Camera settings
+Camera settings correspond to the intrinsic camera parameters without distorsion. If images are acquired by a camera that has a large field of view that introduce distorsion, images need to be undistorded before processed by the tracker. The camera parameters are then the one obtained on undistorded images.
+
+Camera settings could be set from XML using \<camera\> tag as:
+\code
+<conf>
+  ...
+  <camera>
+    <u0>325.66776</u0> 
+    <v0>243.69727</v0> 
+    <px>839.21470</px> 
+    <py>839.44555</py> 
+  </camera>
+  ...
+</conf>
+\endcode
+of from source code using vpMbTracker::setCameraParameters() method:
+\snippet tutorial-mb-tracker-full.cpp Set camera parameters
+
+As described in vpCameraParameters class, these parameters correspond to \f$(p_x, p_y)\f$ the ratio between the focal length and the size of a pixel, and \f$(u_0, v_0)\f$ the coordinates of the principal point in pixel.
+
+\note The \ref tutorial-calibration explains how to obtain these parameters from a camera calibration stage.
+
+\subsection mb_settings_visibility Visibility settings
+
+An important setting concerns the visibility test that is used to determine if a face is visible or not. Note that moving-edges and keypoints are only tracked on visible faces. Three different visibility tests are implemented; with or without Ogre ray tracing and with or without scanline rendering. The default test is the one without Ogre and scanline. The functions vpMbTracker::setOgreVisibilityTest() and vpMbTracker::setScanLineVisibilityTest() allow to select which test to use. 
+
+\subsubsection mb_settings_visibility_default Default visibility based on normals
+Let us now highlight how the default visibility test works. As illustrated in the following figure, the angle \f$ \alpha \f$ between the normal of the face and the line going from the camera to the center of gravity of the face is used to determine if the face is visible. 
+
+\image html img-tracker-mb-visibility.jpg Principle of the visibility test used to determine if a face is visible.
+
+When no advanced visibility test is enable (we recall that this is the default behavior), the algorithm that computes the normal of the face is very simple. It makes the assumption that faces are convex and oriented counter clockwise. If we consider two parameters; the angle to determine if a face is appearing \f$ \alpha_{appear} \f$, and the angle to determine if the face is disappearing \f$ \alpha_{disappear} \f$, a face will be considered as visible if  \f$  \alpha \leq \alpha_{disappear} \f$. We consider also that a new face is appearing if \f$  \alpha \leq \alpha_{appear} \f$. These two parameters can be set either in the XML file:
+\code
+<conf>
+  ...
+  <face>
+    <angle_appear>70</angle_appear> 
+    <angle_disappear>80</angle_disappear> 
+  </face>
+\endcode
+or in the code:
+\snippet tutorial-mb-tracker-full.cpp Set angles
+
+Here the face is considered as appearing if \f$ \alpha \leq 70\f$ degrees, and disappearing if \f$ \alpha > 80\f$ degrees.
+
+\note When these two angle parameters are not set, their default values set to 89 degrees are used. 
+
+\subsubsection mb_settings_visibility_ogre Advanced visibility via Ogre3D
+
+The Ogre3D visibility test approach is based on ray tracing. When this test is enabled, the algorithm used to determine the visibility of a face performs (<b>in addition to the previous test based on normals, i.e on the visible faces resulting from the previous test</b>) another test which sets the faces that are <b>partially occluded as non-visible</b>. It can be enabled via:
+\code
+  tracker->setOgreVisibilityTest(true);
+\endcode
+\image html img-tracker-mb-visibility-ogre.png "Ogre visibility test on both polygons."
+
+When using the <b>classical version of the ogre visibility test</b> (which is the default behavior when activating this test), <b>only one ray</b> is used per polygon to test its visibility. As shown on the figure above, this only ray is sent from the camera to the center of gravity of the considered polygon. If the ray intersects another polygon before the considered one, it is set as non-visible. Intersections are computed <b>between the ray and the axis-aligned bounding-box (AABB)</b> of each polygon. In the figure above, the ray associated to the first polygon intersects first the AABB of the second polygon so it is considered as occluded. As a result, only the second polygon will be used during the tracking phase. This means that when using the edges, only the blue lines will be taken into account, and when using the keypoints, they will be detected only inside the second polygon (blue area).
+
+Additionnaly, it is also possible to use a statistical approach during the ray tracing phase in order to improve the visibility results.
+\code
+  tracker->setNbRayCastingAttemptsForVisibility(4);
+  tracker->setGoodNbRayCastingAttemptsRatio(0.70);
+\endcode
+\image html img-tracker-mb-visibility-ogre-advanced.png "Ogre visibility test on the first polygon, using a statistical approach."
+
+Contrary to the classical version of this test, the <b>statistical approach uses multiple rays per polygons</b> (4 in the example above). Each ray is sent randomly toward the considered polygon. If a specified ratio of rays do not have intersected another polygon before the considered one, the polygon is set as visible. In the example above, three ray on four return the first polygon as visible. As the ratio of good matches is more than 70% (which corresponds to the chosen ratio in this example) the first polygon is considered as visible, as well as the second one. As a result, all visible blue lines will be taken into account during the tracking phase of the edges and the keypoints that are detected inside the green area will be also used. Unfortunately, this approach is a <b>polygon based approach</b> so the dashed blue lines, that are not visible, will also be used during the tracking phase. Plus, keypoints that are detected inside the overlapping area won't be well associated and can disturb the algorithm.
+
+\note Since ViSP 3.0.0 we have introduced vpMbTracker::setOgreShowConfigDialog() method that allows to open the Ogre configuration pannel which can be used to select the renderer. To enable this feature, use:
+
+\code
+  tracker->setOgreShowConfigDialog(true);
+\endcode
+
+\subsubsection mb_settings_visibility_scanline Advanced visibility via Scanline Rendering
+
+Contrary to the visibility test using Ogre3D, this method <b>does not require any additional third-party library</b>. As for the advanced visibility using Ogre3D, <b>this test is applied in addition to the test based on normals (i.e on the faces set as visible during this test) and also in addition to the test with Ogre3D if it has been activated</b>. This test is based on the scanline rendering algorithm and can be enabled via:
+\code
+  tracker->setScanLineVisibilityTest(true);
+\endcode
+\image html img-tracker-mb-visibility-scanline.png "Scanline visibility test on both polygons."
+
+Even if this approach requires a bit <b>more computing power</b>, it is a <b>pixel perfect visibility test</b>. According to the camera point of view, polygons will be <b>decomposed in order to consider only their visible parts</b>. As a result, if we consider the example above, dashed red lines won't be considered during the tracking phase and detected keypoints will be correctly matched with the closest (in term of depth from the camera position) polygon.
+
+\subsection mb_settings_clipping Clipping settings
+
+Additionally to the visibility test described above, it is also possible to use clipping. Firstly, the algorithm removes the faces that are not visibles, according to the visibility test used, then it will also remove the faces or parts of the faces that are out of the clipping planes. As illustrated in the following figure, different clipping planes can be enabled.  
+
+\image html img-fov.png Camera field of view and clipping planes. 
+
+Let us consider two plane categories: the ones belonging to the field of view or FOV (Left, Right, Up and Down), and the Near and Far clipping planes. The FOV planes can be enabled by:
+
+\snippet tutorial-mb-tracker-full.cpp Set clipping fov
+
+which is equivalent to:
+
+\code
+  tracker->setClipping(vpMbtPolygon::LEFT_CLIPPING 
+                    | vpMbtPolygon::RIGHT_CLIPPING
+                    | vpMbtPolygon::UP_CLIPPING 
+                    | vpMbtPolygon::DOWN_CLIPPING);
+\endcode
+
+Of course, if the user just wants to activate Right and Up clipping, he will use:
+
+\code
+  tracker->setClipping(vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING);
+\endcode
+
+For the Near and Far clipping it is quite different. Indeed, those planes require clipping distances. Here there are two choices, either the user uses default values and activate them with:
+
+\code
+  tracker->setClipping(vpMbtPolygon::NEAR_CLIPPING | vpMbtPolygon::FAR_CLIPPING);
+\endcode
+
+or the user can specify the distances in meters, which will automatically activate the clipping for those planes:
+
+\snippet tutorial-mb-tracker-full.cpp Set clipping distance
+
+It is also possible to enable them in the XML file. This is done with the following lines:
+
+\code
+<conf>
+  ...
+  <face>
+    ...
+    <near_clipping>0.1</near_clipping>
+    <far_clipping>100.0</far_clipping>
+    <fov_clipping>0</fov_clipping>
+  </face>
+\endcode
+
+Here for simplicity, the user just has the possibility to either activate all the FOV clipping planes or none of them (fov_clipping requires a boolean).
+
+\note When clipping parameters are not set in the XML file, nor in the code, clipping is not used. Usually clipping is not helpful when the oject to track is simple.  
+
+
+\section mb_advanced Advanced
+\subsection mb_advanced_model How to manipulate the model
+
+The following code shows how to access to the CAD model
+- to check if a face is visible, 
+- to get the name of the face (only with models in \c .cao format for the moment)
+- to check if the level of detail is enable/disable (only with models in \c .cao format for the moment)
+- to access to the coordinates of the 3D points used to model a face
+- from the pose \e cMo estimated by the tracker to compute the coordinates of the 3D points in the image 
+
+\code
+       vpMbHiddenFaces<vpMbtPolygon> &faces = tracker.getFaces();
+       std::cout << "Number of faces: " << faces.size() << std::endl;
+       for (unsigned int i=0; i < faces.size(); i++) {
+         std::vector<vpMbtPolygon*> &poly = faces.getPolygon();
+         std::cout << "face " << i << " with index: " << poly[i]->getIndex()
+			 << (poly[i]->getName().empty() ? "" : (" with name: " + poly[i]->getName()))
+             << " is " << (poly[i]->isVisible() ? "visible" : "not visible")
+             << " and has " << poly[i]->getNbPoint() << " points" 
+             << " and LOD is" << (poly[i]->useLod ? "enabled" : "disabled") << std::endl;
+             
+         for (unsigned j=0; j<poly[i]->getNbPoint(); j++) {
+           vpPoint P = poly[i]->getPoint(j);
+           P.project(cMo);
+           std::cout << " P obj " << j << ": " << P.get_oX() << " " << P.get_oY() << " " << P.get_oZ() << std::endl;
+           std::cout << " P cam" << j << ": " << P.get_X() << " " << P.get_Y() << " " << P.get_Z() << std::endl;
+
+           vpImagePoint iP;
+           vpMeterPixelConversion::convertPoint(cam, P.get_x(), P.get_y(), iP);
+           std::cout << " iP " << j << ": " << iP.get_u() << " " << iP.get_v() << std::endl;
+         }
+       }
+\endcode
+
+
+\subsection mb_advanced_lod Level of detail (LOD)
+
+The level of detail (LOD) consists in introducing additional constraints to the visibility check to determine if the features of a face have to be tracked or not. Two parameters are used 
+- the line length (in pixel)
+- the area of the face (in pixel²), that could be closed or not (you can define an open face by adding all the segments without the last one which closes the face)
+
+The tracker allows to enable/disable the level of detail concept using vpMbTracker::setLod() function.
+This example permits to set LOD settings to all elements :
+\code
+tracker.setLod(true);
+tracker.setMinLineLengthThresh(40.0);
+tracker.setMinPolygonAreaThresh(500.0);
+\endcode
+
+This example permits to set LOD settings to specific elements denominated by his name.
+\code
+tracker.setLod(false);
+tracker.setLod(true, "Left line");
+tracker.setLod(true, "Front face");
+tracker.setMinLineLengthThresh(35.0, "Left line");
+tracker.setMinPolygonAreaThresh(120.0, "Front face");
+\endcode
+
+Furthermore, to set a name to a face see \ref mb_advanced_cao_nam.
+
+
+\subsection mb_advanced_cao CAD model in cao format
+
+\subsubsection mb_advanced_cao_lin How to model faces from lines
+The first thing to do is to declare the differents points. Then you define each segment of the face with the index of the start point and with the index of the end point.
+Finally, you define the face with the index of the segments which constitute the face.
+
+\note The way you declare the face segments (clockwise or counter clockwise) will determine the direction of the normal of the face and so will influe on the visibility of the face.
+
+\code
+V1
+# Left wing model
+6                               # Number of points
+# 3D points
+-4     -3.8  	0.7
+-6     -8.8  	0.2
+-12   -21.7    -1.2
+-9    -21.7    -1.2
+ 0.8   -8.8  	0.2
+ 4.6   -3.8  	0.7
+# 3D lines
+6                               # Number of lines
+0 1                             # line 0
+1 2
+2 3
+3 4
+4 5
+5 0                             # line 5
+# Faces from 3D lines
+1                               # Number of faces defined by lines
+6 0 1 2 3 4 5	                # face 0: [number of lines] [index of the lines]...
+# Faces from 3D points
+0
+# 3D cylinders
+0
+# 3D circles
+0
+\endcode
+
+
+\subsubsection mb_advanced_cao_cyl How to model cylinders
+The first thing to do is to declare the two points defining the cylinder axis of revolution. Then you declare the cylinder with the index of the points that define the cylinder axis of revolution and with the cylinder radius.
+
+\note For the level of detail, in a case of a cylinder, this is taking into account by using the length of the axis of revolution to determine the visibility.
+
+\image html img-cylinder.png Example of a cylinder.
+
+\code
+V1
+# Cylinder model
+2                 # Number of points
+# 3D points
+16.9 0 0.5        # point 0
+-20  0 0.5        # point 1
+# 3D lines
+0
+# Faces from 3D lines
+0
+# Faces from 3D points
+0
+# 3D cylinders
+1                 # Number of cylinders
+0 1 2.4           # cylinder 0: [1st point on revolution axis] [2nd point on revolution axis] [radius]
+# 3D circles
+0
+\endcode
+
+
+\subsubsection mb_advanced_cao_cir How to model circles
+The first thing to do is to declare three points: one point for the center of the circle and two points on the circle plane (i.e. not necessary located on the perimeter of the circle but on the plane of the circle). Then you declare your circle with the radius and with index of the three points.
+
+\note The way you declare the two points on the circle plane (clockwise or counter clockwise) will determine the direction of the normal of the circle and so will influe on the visibility of the circle.
+For the level of detail, in a case of a circle, this is taking into account by using the area of the bounding box of the circle to determine the visibility.
+
+\image html img-circle.png Example of a circle.
+
+\code
+V1
+# Circle model
+3                    # Number of points
+# 3D points
+-3.4 	14.6 	1.1  # point 0
+-3.4 	15.4 	1.1
+-3.4 	14.6 	1.8  # point 2
+# 3D lines
+0
+# Faces from 3D lines
+0
+# Faces from 3D points
+0
+# 3D cylinders
+0
+# 3D circles
+1                    # Number of circles
+0.8 0 2 1            # circle 0: [radius] [circle center] [1st point on circle plane] [2nd point on circle plane]
+\endcode
+
+
+\subsubsection mb_advanced_cao_hie How to create a hierarchical model
+It could be useful to define a complex model instead of using one big model file with all the declaration with different sub-models, each one representing a specific part of the complex model in a specific model file.
+To create a hierarchical model, the first step is to define all the elementary parts and then regroup them.
+
+\image html img-plane-hierarchical-diagram.jpg Example of a possible hierarchical modelling of a plane.
+
+For example, if we want to have a model of a plane, we could represent as elementary parts the left and right wings, the tailplane (which is constituted of some other parts) and a cylinder for the plane fuselage.
+The following lines represent the top model of the plane.
+
+\code
+V1
+# header
+# load the different parts of the plane
+load("wings.cao")       # load the left and right wings
+load("tailplane.cao")
+# 3D points
+2                       # Number of points
+16.9 0 0.5
+-20  0 0.5
+# 3D lines
+0
+# Faces from 3D lines
+0
+# Faces from 3D points
+0
+# 3D cylinders
+1                       # Number of cylinders
+0 1 2.4                 # define the plane fuselage as a cylinder
+# 3D circles
+0
+\endcode
+
+\note The path to include another model can be expressed as an absolute or a relative path (relative to the file which includes the model).
+
+
+\subsubsection mb_advanced_cao_nam How to set a name to a face
+To exploit the name of a face in the code, see sections about \ref mb_advanced_lod and \ref mb_advanced_exclude.
+
+It could be useful to give a name for a face in a model in order to easily modify his LOD parameters for example, or to decide if you want to use this face or not during the tracking phase.
+This is done directly in the model file :
+\code
+V1
+# header
+# load the different parts of the plane
+load("wings.cao")
+load("tailplane.cao")
+# 3D points
+5                                    # Number of points
+16.9 	0 	0.5
+-20  	0 	0.5
+-3.4 	14.6 	1.1
+-3.4 	15.4 	1.1
+-3.4 	14.6 	1.8
+# 3D lines
+0
+# Faces from 3D lines
+0
+# Faces from 3D points
+0
+# 3D cylinders
+1                                    # Number of cylinders
+0 1 2.4		name=plane_fuselage
+# 3D circles
+1                                    # Number of circles
+0.8	2 4 3	name="right reactor"
+\endcode
+
+\note If the name contains space characters, it must be surrounded by quotes.
+You can give a name to all the elements excepts for points.
+
+
+\subsubsection mb_advanced_cao_lod How to tune the level of detail
+
+As explained in section \ref mb_advanced_lod the parameters of the lod can be set in the source code. They can also be set directly in the configuration file or in the CAD model in cao format.
+
+The following lines show the content of the configuration file :
+
+\code
+<?xml version="1.0"?>
+<conf>
+  <lod>
+	<use_lod>1</use_lod>
+	<min_line_length_threshold>40</min_line_length_threshold>
+	<min_polygon_area_threshold>150</min_polygon_area_threshold>
+  </lod>
+</conf>
+\endcode
+
+In CAD model file, you can specify the LOD settings to the desired elements :
+
+\code
+V1
+# header
+# load the different parts of the plane
+load("wings.cao")
+load("tailplane.cao")
+# 3D points
+5				# number of points
+16.9 	0 	0.5
+-20  	0 	0.5
+-3.4 	14.6 	1.1
+-3.4 	15.4 	1.1
+-3.4 	14.6 	1.8
+# 3D lines
+0
+# Faces from 3D lines
+0
+# Faces from 3D points
+0
+# 3D cylinders
+1                               # Number of cylinders
+0 1 2.4	name=plane_fuselage useLod=true minLineLengthThreshold=100.0
+# 3D circles
+1                               # Number of circles
+0.8 2 4 3	name="right reactor" useLod=true minPolygonAreaThreshold=40.0
+\endcode
+
+\note The order you call the methods to load the configuration file and to load the CAD model in the code will modify the result of the LOD parameters.
+Basically, the LOD settings expressed in configuration file will have effect on all the elements in the CAD model while the LOD settings expressed in CAD model will be specific to an element.
+The natural order would be to load first the configuration file and after the CAD model.
+
+\subsection mb_advanced_wrml CAD model in wrml format
+\subsubsection mb_advanced_wrml_nam How to set a name to a face
+
+To exploit the name of a face in the code, see sections about \ref mb_advanced_lod and \ref mb_advanced_exclude.
+
+When using a wrml file, names are associated with shapes. In the example below (the model of a teabox), as only one shape is defined, all its faces will have the same name: "teabox_name". 
+
+\note If you want to set different names for different faces, you have to define them in different shapes.
+
+\code
+#VRML V2.0 utf8
+
+DEF fst_0 Group {
+children [
+
+# Object "teabox"
+
+DEF teabox_name Shape {
+
+geometry DEF cube IndexedFaceSet {
+
+coord Coordinate { 
+point [
+0     0      0   ,
+0     0     -0.08,
+0.165 0     -0.08,
+0.165 0      0   ,
+0.165 0.068  0   ,
+0.165 0.068 -0.08,
+0     0.068 -0.08,
+0     0.068  0    ]
+}
+
+coordIndex [
+ 0,1,2,3,-1,
+ 1,6,5,2,-1,
+ 4,5,6,7,-1,
+ 0,3,4,7,-1,
+ 5,4,3,2,-1,
+ 0,7,6,1,-1]}
+}
+
+]
+}
+\endcode
+
+\subsection mb_advanced_exclude How not to consider specific polygons
+
+When using model-based trackers, it is possible not to consider edge tracking or keypoint tracking for specific faces. To do so, <b>the faces you want to consider must have a name</b>.
+
+If you want to enable (default behavior) or disable the edge tracking on specific face it can be done via:
+
+\code
+vpMbEdgeTracker::setUseEdgeTracking("name of the face", boolean);
+\endcode
+
+If the boolean is set to False, the tracking of the edges of the faces that have the given name will be disable. If it is set to True (default behavior), it will be enable. 
+
+As for the edge tracking, the same functionnality is also available when using keypoints via:
+
+\code
+vpMbKltTracker::setUseKltTracking("name of the face", boolean);
+\endcode
+
+\section mb_use_case Use case
+
+Hereafter we provide the information to test the tracker on more complex objects. Data-set could be found browsing http://visp-doc.inria.fr/download/mbt-model/
+
+\subsection mb_use_case_cubesat CubeSAT satellite model
+
+In http://visp-doc.inria.fr/download/mbt-model/cubesat.zip you will find the model data set (.obj, .cao, .init, .xml, .ppm) and a video to test the \c CubeSAT object tracking. After unzip in a folder (let say \c /your-path-to-model) you may run the tracker with something similar to:
+
+\code
+$ ./tutorial-mb-tracker-full --video /your-path-to-model/cubesat/video/00%2d.png --model /your-path-to-model/cubesat/cubesat1b.cao
+\endcode
+
+You should be able to obtain these kind of results:
+
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/i1zRGhZGpLk" frameborder="0" allowfullscreen></iframe></p>
+\endhtmlonly
+
+\subsection mb_use_case_mmicro mmicro model
+
+In http://visp-doc.inria.fr/download/mbt-model/mmicro.zip you will find the model data set (.cao, .wrl, .init, .xml, .ppm) and a video to track the \c mmicro object. After unzip in a folder (let say \c /your-path-to-model) you may run the tracker with something similar to:
+
+\code
+$ ./tutorial-mb-tracker-full --video /your-path-to-model/mmicro/video/mmicro00%2d.png --model /your-path-to-model/mmicro/mmicro.cao
+\endcode
+
+You should be able to obtain these kind of results:
+
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/UK10KMMJFCI" frameborder="0" allowfullscreen></iframe></p>
+\endhtmlonly
+
+\section mb_known_issues Known issues
+\subsection mb_known_issues_example_with_ogre Model-based trackers examples are not working with Ogre visibility ckeck
+
+If you run mbtEdgeTracking.cpp, mbtKltTracking.cpp or mbtEdgeKltTracking.cpp examples enabling Ogre visibility check (using "-o" option), you may encounter the following issue that was obtained following \ref tutorial-install-win10-msvc12 :
+\code
+C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o
+...
+OGRE EXCEPTION(6:FileNotFoundException): Cannot locate resource VTFInstancing.cg in resource group General
+...
+*** Initializing OIS ***
+\endcode
+and then a wonderful runtime issue as in the next image:
+\image html img-win8.1-msvc-mbtracker-ogre-issue.jpg
+
+It means maybe that Ogre version is not compatible with DirectX 11. This can be checked adding "-w" option to the command line:
+\code
+C:\ViSP\ViSP-3.0.0-build\example\Tracking\Debug> mbtEdgeTracking.exe -c -o -w
+\endcode
+Now the binary should open the Ogre configuration window where you have to select "OpenGL Rendering Subsystem" instead of "Direct3D11 Rendering Subsystem". Press then OK to continue and start the tracking of the cube.
+\image html img-win8.1-msvc-mbtracker-ogre-opengl.jpg
+
+\subsection mb_known_issues_tutorial_with_ogre Model-based trackers tutorials are not working with Ogre visibility ckeck
+
+This issue is similar to \ref mb_known_issues_example_with_ogre. It may occur with tutorial-mb-edge-tracker.cpp, tutorial-mb-klt-tracker.cpp and tutorial-mb-hybrid-tracker.cpp. To make working the tutorials:
+
+- modify the code like:
+\code
+  tracker.setOgreVisibilityTest(true);
+  tracker.setOgreShowConfigDialog(true);
+\endcode
+- build the modified tutorial
+- run the binary. Now the binary should open the Ogre configuration window where you have to select an Ogre renderer that is working on your computer. 
+\image html img-win8.1-msvc-mbtracker-ogre-opengl.jpg
+- Press then OK to continue and start the tracking of the object.
+
+\section mb_next Next tutorial
+You are now ready to see the next \ref tutorial-tracking-mb-stereo if you want to extend the tracking on multiple view images or  \ref tutorial-tracking-tt.
+
+
+*/
