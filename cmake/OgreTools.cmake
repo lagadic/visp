@@ -40,6 +40,8 @@ if(WIN32)
   mark_as_advanced(OGRE_FRAMEWORK_PATH)
 endif()
 
+include(FindPkgMacros OPTIONAL)
+
 #########################################################
 # Find Ogre plugins
 #
@@ -101,7 +103,8 @@ macro(vp_create_ogre_plugin_config_file)
     if(OGRE_RenderSystem_GL_LIBRARY_REL)
       get_filename_component(OGRE_PLUGIN_DIR_REL ${OGRE_RenderSystem_GL_LIBRARY_REL} PATH)
       #message("set manually OGRE_PLUGIN_DIR_REL to ${OGRE_PLUGIN_DIR_REL}")
-    elseif(OGRE_RenderSystem_GL_LIBRARY_DBG)
+	endif()
+    if(OGRE_RenderSystem_GL_LIBRARY_DBG)
       get_filename_component(OGRE_PLUGIN_DIR_DBG ${OGRE_RenderSystem_GL_LIBRARY_DBG} PATH)
       #message("set manually OGRE_PLUGIN_DIR_DBG to ${OGRE_PLUGIN_DIR_DBG}")
     endif()
@@ -138,7 +141,7 @@ macro(vp_create_ogre_plugin_config_file)
     #MESSAGE("PLUGINS_CONTENT_REL: ${PLUGINS_CONTENT_REL}")
     file(WRITE "${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins.cfg" ${PLUGINS_CONTENT_REL})
   endif()
-	  
+
   if(OGRE_PLUGIN_DIR_DBG)
     list(APPEND PLUGIN_DBG ${OGRE_RenderSystem_Direct3D9_LIBRARY_DBG})
     list(APPEND PLUGIN_DBG ${OGRE_RenderSystem_Direct3D10_LIBRARY_DBG})
@@ -166,7 +169,7 @@ macro(vp_create_ogre_plugin_config_file)
         list(APPEND PLUGINS_CONTENT_DBG " Plugin=${PLUGIN_NAME}\n")
       endif()
     endforeach()
-	  
+
     #MESSAGE("PLUGINS_CONTENT_DBG: ${PLUGINS_CONTENT_DBG}")
     file(WRITE "${VISP_HAVE_OGRE_PLUGINS_PATH}/plugins_d.cfg" ${PLUGINS_CONTENT_DBG})
   endif()

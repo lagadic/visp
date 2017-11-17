@@ -46,13 +46,14 @@
 
 */
 
-#include "visp3/core/vpConfig.h"
+#include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_OGRE
 
-#include "visp3/ar/vpAROgre.h"
-#include "visp3/core/vpIoTools.h"
+#include <visp3/ar/vpAROgre.h>
+#include <visp3/core/vpIoTools.h>
 
+#include <OgreRectangle2D.h>
 
 /*!
   Constructor.
@@ -78,7 +79,7 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam,
       mInputManager(0), mKeyboard(0),
 #endif
       keepOn(true), // When created no reason to stop displaying
-      mImageRGBA(), mImage(), mPixelBuffer(NULL), mBackground(NULL), mBackgroundHeight(0),
+      mImageRGBA(), mImage(), mPixelBuffer(), mBackground(NULL), mBackgroundHeight(0),
       mBackgroundWidth(0), mWindowHeight(height), mWindowWidth(width), windowHidden(false),
       mNearClipping(0.001), mFarClipping(200), mcam(cam), mshowConfigDialog(true),
       mOptionnalResourceLocation()
