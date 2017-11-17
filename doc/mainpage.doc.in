@@ -22,6 +22,12 @@ href="http://www.inria.fr/en/centre/rennes" target="_parent">Inria Rennes</a>.</
 
 It is also possible to contact ViSP main developers using: <a href="mailto:visp@inria.fr?subject=[visp]">visp@inria.fr</a>
 
+\section arch_sec Software architecture
+
+Since ViSP 3.0.0, we design a new modular software architecture where ViSP capabilities are grouped in several modules (core, io, gui, vision, …). In ViSP 3.1.0 we introduced a new module called imgproc. As a result, the user will find several shared or static libraries, one for each module. The following figure highlights the module dependencies and the third-party libraries that may be used by each module. The central module is the core module. All other modules depend on core.
+
+\image html soft_archi_v6.png "ViSP modules and their optional dependencies"
+
 \section download_sec Download
 
 <p>From <a
@@ -69,7 +75,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-install-centos <br>In this other tutorial you will learn how to install ViSP from source on Linux CentOS.
 - \ref tutorial-install-opensuse <br>In this other tutorial you will learn how to install ViSP from source on Linux openSUSE.
 - \ref tutorial-install-raspberry <br>In this tutorial you will learn how to install ViSP from source on Raspberry Pi.
-- \ref tutorial-install-win7 <br>In this tutorial you will learn how to install ViSP from source on Windows 7 with Visual C++ 2012.
+- \ref tutorial-install-win7 <br>In this tutorial you will learn how to install ViSP from source on Windows 7 with Visual C++ 2012 (vc11).
 - \ref tutorial-install-win10-msvc12 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2013 (vc12).
 - \ref tutorial-install-win10-msvc14 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2015 (vc14).
 - \ref tutorial-install-win10-msvc15 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2017 (vc15).
