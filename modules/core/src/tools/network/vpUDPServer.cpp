@@ -50,10 +50,6 @@
 #include <Ws2tcpip.h>
 #endif
 
-#ifndef InetNtop
-#define InetNtop inet_ntop //Unix and MinGW
-#endif
-
 #include <visp3/core/vpUDPServer.h>
 
 /*!
@@ -244,7 +240,7 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, const int time
     char result[INET_ADDRSTRLEN];
     const char * ptr = inet_ntop(AF_INET, (void*)&m_clientAddress.sin_addr, result, sizeof(result));
     if (ptr == NULL) {
-      std::cerr << "InetNtop failed with error: " << WSAGetLastError() << std::endl;
+      std::cerr << "inet_ntop failed with error: " << WSAGetLastError() << std::endl;
     } else {
       hostIp = result;
     }
