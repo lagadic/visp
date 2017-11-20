@@ -16,8 +16,10 @@ vp_list_filterout(lib_srcs events.c)
 
 add_library(${ATIDAQ_LIBRARY} STATIC ${lib_srcs} ${lib_hdrs})
 
-if(CMAKE_COMPILER_IS_GNUCXX AND UNIX)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+if(UNIX)
+  if(CMAKE_COMPILER_IS_GNUCXX OR CV_ICC)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+  endif()
 endif()
 
 if(ENABLE_SOLUTION_FOLDERS)

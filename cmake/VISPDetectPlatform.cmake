@@ -46,6 +46,33 @@ if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
   set(CMAKE_COMPILER_IS_CLANGCC 1)
 endif()
 
+# ----------------------------------------------------------------------------
+# Detect Intel ICC compiler for -fPIC in 3rdparty ( UNIX ONLY )
+# NOTE: The system needs to determine if the '-fPIC' option needs to be added
+#  for the 3rdparty static libs being compiled.  The CMakeLists.txt files
+#  in 3rdparty use the CV_ICC definition being set here to determine if
+#  the -fPIC flag should be used.
+# ----------------------------------------------------------------------------
+if(UNIX)
+  if  (__ICL)
+    set(CV_ICC __ICL)
+  elseif(__ICC)
+    set(CV_ICC __ICC)
+  elseif(__ECL)
+    set(CV_ICC __ECL)
+  elseif(__ECC)
+    set(CV_ICC __ECC)
+  elseif(__INTEL_COMPILER)
+    set(CV_ICC __INTEL_COMPILER)
+  elseif(CMAKE_C_COMPILER MATCHES "icc")
+    set(CV_ICC icc_matches_c_compiler)
+  endif()
+endif()
+
+if(MSVC AND CMAKE_C_COMPILER MATCHES "icc|icl")
+  set(CV_ICC __INTEL_COMPILER_FOR_WINDOWS)
+endif()
+
 if(CMAKE_COMPILER_IS_GNUCXX)
   if(WIN32)
     execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine
