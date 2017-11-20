@@ -112,7 +112,7 @@ int main() {
   }
 
   if(!vpMath::isNaN(std::numeric_limits<double>::infinity() - std::numeric_limits<double>::infinity())) {
-    std::cerr << "Fail: IsNaN(1.0/epsilon)=" << vpMath::isNaN(1.0/std::numeric_limits<double>::epsilon())
+    std::cerr << "Fail: IsNaN(infinity - infinity)=" << vpMath::isNaN(std::numeric_limits<double>::infinity() - std::numeric_limits<double>::infinity())
       << " / should be true" << std::endl;
     return -1;
   }
