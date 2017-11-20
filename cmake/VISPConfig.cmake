@@ -49,7 +49,7 @@
 #   - VISP_USE_FILE      : File to include to use ViSP without specific cmake code
 #
 # Windows specific variables:
-#   - VISP_STATIC        : If set to TRUE uses ViSP static library (.lib) rather then dynamic (.dll) 
+#   - VISP_STATIC        : If set to TRUE uses ViSP static library (.lib) rather then dynamic (.dll)
 #
 # Typical usage in user project:
 #
@@ -88,8 +88,10 @@ if(MSVC)
     set(VISP_RUNTIME vc12)
   elseif(MSVC_VERSION EQUAL 1900)
     set(VISP_RUNTIME vc14)
-  elseif(MSVC_VERSION EQUAL 1910 OR MSVC_VERSION EQUAL 1911)
+  elseif(MSVC_VERSION MATCHES "^191[0-9]$")
     set(VISP_RUNTIME vc15)
+  else()
+    message(WARNING "ViSP does not recognize MSVC_VERSION \"${MSVC_VERSION}\". Cannot set VISP_RUNTIME")
   endif()
 elseif(MINGW)
   set(VISP_RUNTIME mingw)
