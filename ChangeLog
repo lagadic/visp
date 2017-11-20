@@ -25,8 +25,30 @@ ViSP 3.1.0 (under development)
     . Use BLAS library to compute dgemm and dgemv operations if available
     . Add an explicit recopy parameter when resizing a vpArray2D
     . Add move constructor / assignment operator for vpMatrix, vpColVector and vpImage
+    . Improve VISP_INPUT_IMAGE_PATH env var usage to get more flexibility
+    . Update ViSP license to GPLv2 or later
+    . Introduce new imgproc module dedicated to image processing and tutorials
+    . Introduce AppVeyor check for continuous integration
+    . Add UDP client server
+    . Introduce AprilTag as a 3rd party and vpDetectorAprilTag wrapper
+    . Improve vpIoTools to make recursive folder and sort files
+    . Introduce vpPylonGrabber a wrapper for Basler cameras using Pylon SDK
+    . Remove ffmpeg 3rd party usage
   - Tutorials
     . New tutorial: How to extend ViSP creating a new contrib module
+    . New tutorial: AprilTag marker detection on iOS
+    . New tutorial: Installation from source for Windows with Visual C++ 2017 (vc15)
+    . New tutorial: Installation from source for UWP with Visual C++ 2017 (vc15)
+    . New tutorial: How to import a CMake project that uses ViSP in Eclipse IDE
+    . New tutorial: Brightness and contrast adjustment
+    . New tutorial: Contrast and image sharpening techniques
+    . New tutorial: Automatic thresholding
+    . New tutorial: Contours extraction from a binary image
+    . New tutorial: Connected-components labeling
+    . New tutorial: Flood fill algorithm
+    . New tutorial: Practical example: count the number of coins in an image
+    . New tutorial: Markerless generic model-based tracking
+    . New tutorial: AprilTag marker detection
   - Bug fixed
     . [#137] Fix bug in extration of vpRotationMatrix from vpPoseVector using
              vpPoseVector::getRotationMatrix()
@@ -41,6 +63,9 @@ ViSP 3.1.0 (under development)
     . [#183] Inversion between pixel size and optical center in vpRealSense class
     . [#187] Integer division by zero in vpDisplayWin32.cpp
     . [#200] Issue when reading PNG images with 16bits depth with libpng
+    . [#201]Fix read PNG images with 16 bits depth with libpng
+    . [#207] CMake option 'ACTIVATE_DEBUG_TRACE' has never been used 
+    . [#226] Planar pose Lagrange computation returns a left handed frame
 
 ----------------------------------------------
 ViSP 3.0.1 (released February 3rd, 2017)
