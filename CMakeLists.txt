@@ -353,7 +353,7 @@ VP_OPTION(USE_AFMA4    "" "" "Include Afma4 robot support"      "" ON IF (RAW139
 VP_OPTION(USE_AFMA6    "" "" "Include Afma6 robot support"      "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT))
 VP_OPTION(USE_VIPER650 "" "" "Include Viper s650 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT))
 VP_OPTION(USE_VIPER850 "" "" "Include Viper s850 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT))
-#VP_OPTION(USE_VIRTUOSE    Virtuose    "" "Include Virtuose SDK support for Haption devices" "" ON IF NOT WINRT)
+VP_OPTION(USE_VIRTUOSE    Virtuose    "" "Include Virtuose SDK support for Haption devices" "" ON IF NOT WINRT)
 VP_OPTION(USE_DC1394      DC1394      "" "Include dc1394 support"          "" ON IF UNIX AND NOT WINRT)
 VP_OPTION(USE_V4L2        V4L2        "" "Include v4l2 support"            "" ON IF UNIX AND NOT WINRT)
 VP_OPTION(USE_FLYCAPTURE  FlyCapture  "" "Include FlyCapture SDK support for PointGrey cameras" "" ON IF NOT WINRT)
