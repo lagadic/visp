@@ -54,16 +54,12 @@ class vpColVector;
 
   \ingroup group_core_transformations
 
-  \brief Implementation of a velocity twist matrix and operations on such kind of matrices.
+  This class derived from vpArray2D<double> implements the 6 by 6 matrix which transforms velocities
+  from one frame to another. This matrix is also called velocity twist transformation matrix.
 
-  Class that consider the particular case of twist
-  transformation matrix that allows to transform a velocity skew from
-  one frame to an other.
-
-  The vpVelocityTwistMatrix class is derived from vpArray2D<double>.
-
-  A twist transformation matrix is a 6x6 matrix that express a velocity in frame <em>a</em> knowing
-  velocity in <em>b</em>. This matrix is defined as:
+  The full velocity twist transformation matrix allows to compute the velocity of the point
+  <em>a</em> expressed in frame <em>a</em> knowing its
+  velocity at point <em>b</em> expressed in frame <em>b</em>. This matrix is defined as:
   \f[
   ^a{\bf V}_b = \left[\begin{array}{cc}
   ^a{\bf R}_b & [^a{\bf t}_b]_\times \; ^a{\bf R}_b\\
@@ -75,10 +71,20 @@ class vpColVector;
   where \f$ ^a{\bf R}_b \f$ is a rotation matrix and
   \f$ ^a{\bf t}_b \f$ is a translation vector.
 
-  The vpVelocityTwistMatrix is derived from vpArray2D.
+  When the point where the velocity is expressed doesn't change, the matrix becomes block diagonal.
+  It allows than to compute the velocity of the point
+  <em>b</em> expressed in frame <em>a</em> knowing its
+  velocity at point <em>b</em> expressed in frame <em>b</em> :
+  \f[
+  ^a{\bf V}_b = \left[\begin{array}{cc}
+  ^a{\bf R}_b & {\bf 0}_{3\times 3} \\
+  {\bf 0}_{3\times 3} & ^a{\bf R}_b
+  \end{array}
+  \right]
+  \f]
 
-  The code belows shows for example how to convert a velocity skew
-  from camera frame to a fix frame.
+  The code below shows how to convert a velocity skew
+  expressed at the origin of the camera frame into the origin of the fix frame using the full velocity twist matrix.
 
   \code
 #include <visp3/core/vpColVector.h>
@@ -113,14 +119,18 @@ class VISP_EXPORT vpVelocityTwistMatrix : public vpArray2D<double>
   // copy constructor
   vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V);
   // constructor from an homogeneous transformation
-  explicit vpVelocityTwistMatrix(const vpHomogeneousMatrix &M);
+  explicit vpVelocityTwistMatrix(const vpHomogeneousMatrix &M, bool full=true);
 
-  // Construction from Translation and rotation (ThetaU parameterization)
-  vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau) ;
   // Construction from Translation and rotation (matrix parameterization)
   vpVelocityTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
+  // Construction from Translation and rotation (ThetaU parameterization)
+  vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau);
   vpVelocityTwistMatrix(const double tx,  const double ty,  const double tz,
                         const double tux, const double tuy, const double tuz);
+
+  vpVelocityTwistMatrix(const vpRotationMatrix &R);
+  vpVelocityTwistMatrix(const vpThetaUVector &thetau);
+
   /*!
     Destructor.
   */
@@ -131,7 +141,9 @@ class VISP_EXPORT vpVelocityTwistMatrix : public vpArray2D<double>
                                   const vpRotationMatrix &R);
   vpVelocityTwistMatrix buildFrom(const vpTranslationVector &t,
                                   const vpThetaUVector &thetau);
-  vpVelocityTwistMatrix buildFrom(const vpHomogeneousMatrix &M) ;
+  vpVelocityTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full=true);
+  vpVelocityTwistMatrix buildFrom(const vpRotationMatrix &R);
+  vpVelocityTwistMatrix buildFrom(const vpThetaUVector &thetau);
 
   void extract( vpRotationMatrix &R) const;
   void extract(vpTranslationVector &t) const;
