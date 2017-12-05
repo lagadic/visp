@@ -52,3 +52,5 @@ vp_module_include_directories()
 vp_create_module()
 
 vp_add_tests(DEPENDS_ON visp_imgproc visp_io)
+
+vp_set_source_file_compile_flag(src/vpCLAHE.cpp -Wno-strict-overflow)
