@@ -444,7 +444,7 @@ main(int argc, const char ** argv)
 
   //Test makeDirectory()
   try {
-    std::string username = "", directory_filename = "";
+    std::string username, directory_filename;
     vpIoTools::getUserName(username);
 #if defined(_WIN32)
     directory_filename = "C:/temp/" + username + "/test_directory1/test directory 2/";
@@ -453,7 +453,7 @@ main(int argc, const char ** argv)
 #endif
     vpIoTools::makeDirectory(directory_filename);
     vpIoTools::makeDirectory(directory_filename);
-    std::cout << "Create directories: " << directory_filename << " ; check: " 
+    std::cout << "Create directories: " << directory_filename << " ; check: "
               << vpIoTools::checkDirectory(directory_filename) << std::endl;
 
 #if defined(_WIN32)
