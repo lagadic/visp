@@ -51,17 +51,12 @@
 
   \ingroup group_core_transformations
 
-  \brief Implementation of a force/torque twist matrix and operations on such kind of matrices.
+  This class derived from vpArray2D<double> implements the 6 by 6 matrix which transforms force/torque
+  from one frame to another. This matrix is also called force/torque twist transformation matrix.
 
-  Class that consider the particular case of twist
-  transformation matrix that allows to transform a force/troque vector
-  from one frame to an other.
-
-  The vpForceTwistMatrix class is derived from vpArray2D<double>.
-
-  The twist transformation matrix that allows to transform the
-  force/torque vector expressed at frame \f${\cal F}_b\f$ into the
-  frame \f${\cal F}_a\f$ is a 6 by 6 matrix defined as
+  The full force/torque twist transformation matrix allows to compute the force/torque at point
+  <em>a</em> expressed in frame <em>a</em> knowing its
+  force/torque at point <em>b</em> expressed in frame <em>b</em>. This matrix is defined as:
 
   \f[
   ^a{\bf F}_b = \left[ \begin{array}{cc}
@@ -71,8 +66,20 @@
   \right]
   \f]
 
-  \f$ ^a{\bf R}_b \f$ is a rotation matrix and
+  where \f$ ^a{\bf R}_b \f$ is a rotation matrix and
   \f$ ^a{\bf t}_b \f$ is a translation vector.
+
+  When the point where the velocity is expressed doesn't change, the matrix becomes block diagonal.
+  It allows than to compute the force/torque at point
+  <em>b</em> expressed in frame <em>a</em> knowing its
+  force/torque at point <em>b</em> expressed in frame <em>b</em> :
+  \f[
+  ^a{\bf F}_b = \left[ \begin{array}{cc}
+  ^a{\bf R}_b & {\bf 0}_{3\times 3}\\
+  {\bf 0}_{3\times 3} & ^a{\bf R}_b
+  \end{array}
+  \right]
+  \f]
 
   The code belows shows for example how to convert a force/torque skew
   from probe frame to a sensor frame.
@@ -108,14 +115,18 @@ class VISP_EXPORT vpForceTwistMatrix : public vpArray2D<double>
   // copy constructor
   vpForceTwistMatrix(const vpForceTwistMatrix &F) ;
   // constructor from an homogeneous transformation
-  explicit vpForceTwistMatrix(const vpHomogeneousMatrix &M) ;
+  explicit vpForceTwistMatrix(const vpHomogeneousMatrix &M, bool full=true);
 
-  // Construction from Translation and rotation (ThetaU parameterization)
-  vpForceTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau) ;
   // Construction from Translation and rotation (matrix parameterization)
   vpForceTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R) ;
+  // Construction from Translation and rotation (ThetaU parameterization)
+  vpForceTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau) ;
   vpForceTwistMatrix(const double tx,  const double ty,  const double tz,
                      const double tux, const double tuy, const double tuz) ;
+
+  vpForceTwistMatrix(const vpRotationMatrix &R) ;
+  vpForceTwistMatrix(const vpThetaUVector &thetau) ;
+
   /*!
     Destructor.
   */
@@ -125,7 +136,10 @@ class VISP_EXPORT vpForceTwistMatrix : public vpArray2D<double>
                                const vpRotationMatrix &R);
   vpForceTwistMatrix buildFrom(const vpTranslationVector &t,
                                const vpThetaUVector &thetau);
-  vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M) ;
+  vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full=true);
+
+  vpForceTwistMatrix buildFrom(const vpRotationMatrix &R);
+  vpForceTwistMatrix buildFrom(const vpThetaUVector &thetau);
 
   // Basic initialisation (identity)
   void eye() ;

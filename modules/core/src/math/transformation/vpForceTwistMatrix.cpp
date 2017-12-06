@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Twist transformation matrix that allows to transform forces from one 
+ * Twist transformation matrix that allows to transform forces from one
  * frame to an other.
  *
  * Authors:
@@ -112,32 +112,40 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpForceTwistMatrix &F)
 
 /*!
 
-  Initialize a force/torque twist transformation matrix from an
-  homogeneous matrix. Given the homogeneous transformation
+  Initialize a force/torque twist transformation matrix from an homogeneous matrix
+  \f$M\f$ with \f[ {\bf M} = \left[\begin{array}{cc} {\bf R} & {\bf t}
+  \\ {\bf 0}_{1\times 3} & 1 \end{array} \right] \f]
 
-  \f[ ^a{\bf M}_b = \left(\begin{array}{cc} 
-  ^a{\bf R}_b & ^a{\bf t}_b\\
-  0 & 1
-  \end{array} \right) \f]
-
-  the force/torque twist matrix is given by :
-
+  \param M : Homogeneous matrix \f$\bf M\f$ used to initialize the twist
+  transformation matrix.
+  \param full : Boolean used to indicate which matrix should be filled.
+  - When set to true, use the complete force/torque skew transformation:
   \f[
-  ^a{\bf F}_b = \left[\begin{array}{cc}
-  ^a{\bf R}_b & {\bf 0}_{3\times 3}\\
-  {[^a{\bf t}_b]}_{\times} \; ^a{\bf R}_b & ^a{\bf R}_b
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {[{\bf t}]}_{\times} \; {\bf R}  & {\bf R}
+  \end{array}
+  \right]
+  \f]
+  - When set to false, use the block diagonal velocity skew transformation:
+  \f[
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {{\bf 0}_{3 \times 3}} & {\bf R}
   \end{array}
   \right]
   \f]
 
-  \param M : Homogeneous matrix \f$^a{\bf M}_b\f$ used to initialize the twist
-  transformation matrix. 
-
 */
-vpForceTwistMatrix::vpForceTwistMatrix(const vpHomogeneousMatrix &M)
+vpForceTwistMatrix::vpForceTwistMatrix(const vpHomogeneousMatrix &M, bool full)
   : vpArray2D<double>(6,6)
 {
-  buildFrom(M);
+  if (full)
+    buildFrom(M);
+  else
+    buildFrom(M.getRotationMatrix());
 }
 
 /*!
@@ -145,9 +153,18 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpHomogeneousMatrix &M)
   Initialize a force/torque twist transformation matrix from a translation vector
   \e t and a rotation vector with \f$\theta u \f$ parametrization.
 
+  \f[
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {[{\bf t}]}_{\times} \; {\bf R}  & {\bf R}
+  \end{array}
+  \right]
+  \f]
+
   \param t : Translation vector.
-  
-  \param thetau : \f$\theta u\f$ rotation vector.
+
+  \param thetau : \f$\theta u\f$ rotation vector used to initialize \f$R\f$.
 
 */
 vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &t,
@@ -159,11 +176,42 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &t,
 
 /*!
 
+  Initialize a force/torque block diagonal twist transformation matrix from a rotation vector with \f$\theta u \f$ parametrization.
+
+  \f[
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {{\bf 0}_{3 \times 3}}  & {\bf R}
+  \end{array}
+  \right]
+  \f]
+
+  \param thetau : \f$\theta u\f$ rotation vector used to initialize \f$R\f$.
+
+*/
+vpForceTwistMatrix::vpForceTwistMatrix(const vpThetaUVector &thetau)
+  : vpArray2D<double>(6,6)
+{
+  buildFrom(thetau) ;
+}
+
+/*!
+
   Initialize a force/torque twist transformation matrix from a translation vector
-  \e t and a rotation matrix R.
+  \e t and a rotation matrix \e R.
+
+  \f[
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {[{\bf t}]}_{\times} \; {\bf R}  & {\bf R}
+  \end{array}
+  \right]
+  \f]
 
   \param t : Translation vector.
-  
+
   \param R : Rotation matrix.
 
 */
@@ -176,12 +224,45 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &t,
 
 /*!
 
+  Initialize a force/torque block diagonal twist transformation matrix from a rotation matrix \e R.
+
+  \f[
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {{\bf 0}_{3 \times 3}}  & {\bf R}
+  \end{array}
+  \right]
+  \f]
+
+  \param t : Translation vector.
+
+  \param R : Rotation matrix.
+
+*/
+vpForceTwistMatrix::vpForceTwistMatrix(const vpRotationMatrix &R)
+  : vpArray2D<double>(6,6)
+{
+  buildFrom(R) ;
+}
+
+/*!
+
   Initialize a force/torque twist transformation matrix from a translation vector
   \f${\bf t}=(t_x, t_y, t_z)^T\f$ and a rotation vector with \f$\theta {\bf u}=(\theta u_x, \theta u_y, \theta u_z)^T \f$ parametrization.
 
+  \f[
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {[{\bf t}]}_{\times} \; {\bf R}  & {\bf R}
+  \end{array}
+  \right]
+  \f]
+
   \param tx,ty,tz : Translation vector in meters.
 
-  \param tux,tuy,tuz : \f$\theta {\bf u}\f$ rotation vector expressed in radians.
+  \param tux,tuy,tuz : \f$\theta {\bf u}\f$ rotation vector expressed in radians used to initialize \f$R\f$.
 */
 vpForceTwistMatrix::vpForceTwistMatrix(const double tx, const double ty, const double tz,
                                        const double tux, const double tuy, const double tuz)
@@ -189,13 +270,13 @@ vpForceTwistMatrix::vpForceTwistMatrix(const double tx, const double ty, const d
 {
   vpTranslationVector T(tx,ty,tz) ;
   vpThetaUVector tu(tux,tuy,tuz) ;
-  buildFrom(T,tu) ;  
+  buildFrom(T,tu) ;
 }
 
 /*!
 
-  Operator that allows to multiply a skew transformation matrix by an
-  other skew transformation matrix.
+  Operator that allows to multiply a force/torque twist transformation matrix by an
+  other force/torque skew transformation matrix.
 
 \code
 #include <visp3/core/vpForceTwistMatrix.h>
@@ -227,9 +308,9 @@ vpForceTwistMatrix::operator*(const vpForceTwistMatrix &F) const
 }
 
 /*!
-  Operator that allows to multiply a skew transformation matrix by a matrix.
+  Operator that allows to multiply a force/torque skew transformation matrix by a matrix.
 
-  \exception vpException::dimensionError If M is not a 6 rows
+  \exception vpException::dimensionError : If \f$\bf M\f$ is not a 6 rows
   dimension matrix.
 */
 vpMatrix
@@ -257,7 +338,7 @@ vpForceTwistMatrix::operator*(const vpMatrix &M) const
 
 /*!
 
-  Operator that allows to multiply a skew transformation matrix by a
+  Operator that allows to multiply a force/torque skew transformation matrix by a
   column vector.
 
   \param H : Force/torque skew vector \f${\bf H} = [f_x, f_y, f_z, \tau_x, \tau_y, \tau_z] \f$.
@@ -265,10 +346,10 @@ vpForceTwistMatrix::operator*(const vpMatrix &M) const
   For example, this operator can be used to convert a force/torque skew from sensor
   frame into the probe frame :
 
-  \f$^p{\bf H} = ^p{\bf F}_s \; ^s{\bf H}\f$
+  \f[{^p}{\bf H}_{p} = {^p}{\bf F}_s \; {^s}{\bf H}_s\f]
 
   The example below shows how to handle that transformation.
-  
+
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper850.h>
@@ -280,7 +361,7 @@ int main()
 #ifdef VISP_HAVE_VIPER850
   vpRobotViper850 robot;
   vpColVector sH = robot.getForceTorque(sH); // Get the force/torque measures
-#endif  
+#endif
 
   // Set the transformation from sensor frame to the probe frame
   vpHomogeneousMatrix pMs;
@@ -292,7 +373,7 @@ int main()
   // Compute the resulting force/torque in the probe frame
   vpColVector pH(6); // Force/torque in the probe frame
   pH = pFs * sH;
- 
+
   return 0;
 }
   \endcode
@@ -319,7 +400,7 @@ vpForceTwistMatrix::operator*(const vpColVector &H) const
       Hout[i]+=rowPtrs[i][j] * H[j];
     }
   }
-  
+
   return Hout ;
 }
 
@@ -327,10 +408,19 @@ vpForceTwistMatrix::operator*(const vpColVector &H) const
 /*!
 
   Build a force/torque twist transformation matrix from a translation vector
-  \e t and a rotation matrix R.
+  \e t and a rotation matrix \e R.
+
+  \f[
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {[{\bf t}]}_{\times} \; {\bf R}  & {\bf R}
+  \end{array}
+  \right]
+  \f]
 
   \param t : Translation vector.
-  
+
   \param R : Rotation matrix.
 
 */
@@ -338,11 +428,10 @@ vpForceTwistMatrix
 vpForceTwistMatrix::buildFrom(const vpTranslationVector &t,
                               const vpRotationMatrix &R)
 {
-  unsigned int i, j;
   vpMatrix skewaR = t.skew(t)*R ;
-  
-  for (i=0 ; i < 3 ; i++) {
-    for (j=0 ; j < 3 ; j++)	{
+
+  for (unsigned int i=0 ; i < 3 ; i++) {
+    for (unsigned int j=0 ; j < 3 ; j++)	{
       (*this)[i][j] = R[i][j] ;
       (*this)[i+3][j+3] = R[i][j] ;
       (*this)[i+3][j] = skewaR[i][j] ;
@@ -353,24 +442,82 @@ vpForceTwistMatrix::buildFrom(const vpTranslationVector &t,
 
 /*!
 
+  Build a block diagonal force/torque twist transformation matrix from a rotation matrix \e R.
+
+  \f[
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {{\bf 0}_{3 \times 3}}  & {\bf R}
+  \end{array}
+  \right]
+  \f]
+
+  \param R : Rotation matrix.
+
+*/
+vpForceTwistMatrix
+vpForceTwistMatrix::buildFrom(const vpRotationMatrix &R)
+{
+  for (unsigned int i=0 ; i < 3 ; i++) {
+    for (unsigned int j=0 ; j < 3 ; j++)	{
+      (*this)[i][j] = R[i][j] ;
+      (*this)[i+3][j+3] = R[i][j] ;
+      (*this)[i+3][j] = 0;
+    }
+  }
+  return (*this) ;
+}
+
+/*!
+
   Initialize a force/torque twist transformation matrix from a translation vector
   \e t and a rotation vector with \f$\theta u \f$ parametrization.
 
+  \f[
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {[{\bf t}]}_{\times} \; {\bf R}  & {\bf R}
+  \end{array}
+  \right]
+  \f]
+
   \param tv : Translation vector.
-  
-  \param thetau : \f$\theta {\bf u}\f$ rotation vector.
+
+  \param thetau : \f$\theta {\bf u}\f$ rotation vector used to initialise \f$\bf R \f$.
 
 */
 vpForceTwistMatrix
 vpForceTwistMatrix::buildFrom(const vpTranslationVector &tv,
                               const vpThetaUVector &thetau)
 {
-  vpRotationMatrix R ;
-  R.buildFrom(thetau) ;
-  buildFrom(tv,R) ;
+  buildFrom(tv, vpRotationMatrix(thetau));
   return (*this) ;
 }
 
+/*!
+
+  Initialize a force/torque block diagonal twist transformation matrix from a rotation vector with \f$\theta u \f$ parametrization.
+
+  \f[
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {{\bf 0}_{3 \times 3}}  & {\bf R}
+  \end{array}
+  \right]
+  \f]
+
+  \param thetau : \f$\theta {\bf u}\f$ rotation vector used to initialise \f$\bf R \f$.
+
+*/
+vpForceTwistMatrix
+vpForceTwistMatrix::buildFrom(const vpThetaUVector &thetau)
+{
+  buildFrom(vpRotationMatrix(thetau));
+  return (*this) ;
+}
 
 /*!
 
@@ -378,25 +525,42 @@ vpForceTwistMatrix::buildFrom(const vpTranslationVector &tv,
   \f$M\f$ with \f[ {\bf M} = \left[\begin{array}{cc} {\bf R} & {\bf t}
   \\ {\bf 0}_{1\times 3} & 1 \end{array} \right] \f]
 
-  \param M : Homogeneous matrix \f$M\f$ used to initialize the force/torque twist
+  \param M : Homogeneous matrix \f$M\f$ used to initialize the velocity twist
   transformation matrix.
-
+  \param full : Boolean used to indicate which matrix should be filled.
+  - When set to true, use the complete force/torque skew transformation:
+  \f[
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {[{\bf t}]}_{\times} \; {\bf R}  & {\bf R}
+  \end{array}
+  \right]
+  \f]
+  - When set to false, use the block diagonal velocity skew transformation:
+  \f[
+  {\bf F} = \left[
+  \begin{array}{cc}
+  {\bf R} & {\bf 0}_{3 \times 3} \\
+  {{\bf 0}_{3 \times 3}} & {\bf R}
+  \end{array}
+  \right]
+  \f]
 */
 vpForceTwistMatrix
-vpForceTwistMatrix::buildFrom(const vpHomogeneousMatrix &M)
+vpForceTwistMatrix::buildFrom(const vpHomogeneousMatrix &M, bool full)
 {
-  vpTranslationVector tv ;
-  vpRotationMatrix R ;
-  M.extract(R) ;
-  M.extract(tv) ;
-  
-  buildFrom(tv, R) ;
+  if (full)
+    buildFrom(M.getTranslationVector(), M.getRotationMatrix());
+  else
+    buildFrom(M.getRotationMatrix());
+
   return (*this) ;
 }
 
 /*!
 
-  Pretty print a velocity twist matrix. The data are tabulated.
+  Pretty print a force/torque twist matrix. The data are tabulated.
   The common widths before and after the decimal point
   are set with respect to the parameter maxlen.
 
