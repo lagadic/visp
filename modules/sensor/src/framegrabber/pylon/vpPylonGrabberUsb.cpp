@@ -341,7 +341,8 @@ void vpPylonGrabberUsb::setCameraSerial(const std::string &serial)
     }
   }
   throw(vpException(vpException::badValue,
-                    "The camera with serial id %u is not present.", serial));
+                    "The camera with serial id %s is not present.",
+                    serial.c_str()));
 }
 
 /*!
@@ -665,8 +666,8 @@ void vpPylonGrabberUsb::acquire(vpImage<unsigned char> &I)
   // Retrieve an image
   if (!m_camera.RetrieveResult(2000, grabResult)) {
     throw(vpException(vpException::fatalError,
-                      "Cannot retrieve image from camera with serial %u",
-                      getCameraSerial(m_index)));
+                      "Cannot retrieve image from camera with serial %s",
+                      getCameraSerial(m_index).c_str()));
   }
 
   if (grabResult->GrabSucceeded()) {
@@ -696,8 +697,8 @@ void vpPylonGrabberUsb::acquire(vpImage<vpRGBa> &I)
   // Retrieve an image
   if (!m_camera.RetrieveResult(2000, grabResult)) {
     throw(vpException(vpException::fatalError,
-                      "Cannot retrieve image from camera with serial %u",
-                      getCameraSerial(m_index)));
+                      "Cannot retrieve image from camera with serial %s",
+                      getCameraSerial(m_index).c_str()));
   }
 
   if (grabResult->GrabSucceeded()) {
