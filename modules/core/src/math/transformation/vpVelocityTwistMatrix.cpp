@@ -112,7 +112,7 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V)
   \f$M\f$ with \f[ {\bf M} = \left[\begin{array}{cc} {\bf R} & {\bf t}
   \\ {\bf 0}_{1\times 3} & 1 \end{array} \right] \f]
 
-  \param M : Homogeneous matrix \f$M\f$ used to initialize the velocity twist
+  \param M : Homogeneous matrix \f$\bf M\f$ used to initialize the velocity twist
   transformation matrix.
   \param full : Boolean used to indicate which matrix should be filled.
   - When set to true, use the complete velocity skew transformation :

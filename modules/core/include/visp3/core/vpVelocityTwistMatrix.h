@@ -57,7 +57,7 @@ class vpColVector;
   This class derived from vpArray2D<double> implements the 6 by 6 matrix which transforms velocities
   from one frame to another. This matrix is also called velocity twist transformation matrix.
 
-  The full velocity twist transformation matrix allows to compute the velocity of the point
+  The full velocity twist transformation matrix allows to compute the velocity at point
   <em>a</em> expressed in frame <em>a</em> knowing its
   velocity at point <em>b</em> expressed in frame <em>b</em>. This matrix is defined as:
   \f[
@@ -72,7 +72,7 @@ class vpColVector;
   \f$ ^a{\bf t}_b \f$ is a translation vector.
 
   When the point where the velocity is expressed doesn't change, the matrix becomes block diagonal.
-  It allows than to compute the velocity of the point
+  It allows than to compute the velocity at point
   <em>b</em> expressed in frame <em>a</em> knowing its
   velocity at point <em>b</em> expressed in frame <em>b</em> :
   \f[
