@@ -155,13 +155,40 @@ tracker.setUseTemplateSelect(true);
 
 This function will force the tracker to only consider, in the reference template, the pixels that have an high gradient value. This is another solution to limit the number of considered pixels.
 
-As well as vpTemplateTrackerSSDInverseCompositional::setUseTemplateSelect() or vpTemplateTrackerZNCCInverseCompositional::setUseTemplateSelect(), another function, only available in vpTemplateTrackerSSDInverseCompositional and vpTemplateTrackerZNCCInverseCompositional is:
+As well as vpTemplateTrackerSSDInverseCompositional::setUseTemplateSelect() or vpTemplateTrackerMIInverseCompositional::setUseTemplateSelect(), another function, only available in vpTemplateTrackerSSDInverseCompositional and vpTemplateTrackerZNCCInverseCompositional is:
 
 \code
 tracker.setThresholdRMS(1e-6);
 \endcode
 
 By increasing this root mean square threshold value, the algorithm will reduce its number of iterations which should also speed up the tracking phase. This function should be used wisely with the vpTemplateTracker::setIterationMax() function.
+
+\subsubsection tuning_tt_mi Example tuning MI tracker
+
+In tutorial-template-tracker.cpp we use vpTemplateTrackerSSDInverseCompositional class that implements the  "Sum of Square Differences" as similarity function. To use Mutual Information that is more robust to occlusion and lighting changes, the code needs to be modified, first introducing vpTemplateTrackerMIInverseCompositional header, then instanciating the tracker, and finally setting the paramaters to speed up the MI tracker that is slower than the SSD one:
+
+- **Adding vpTemplateTrackerMIInverseCompositional header** consists in adding the following line at the beginning of the tutorial-template-tracker.cpp example
+\code
+#include <visp3/tt_mi/vpTemplateTrackerMIInverseCompositional.h>
+\endcode
+
+- **Instantiating the MI tracker** consists in replacing the following line
+\code
+  vpTemplateTrackerSSDInverseCompositional tracker(&warp);
+\endcode
+with the following:
+\code
+  vpTemplateTrackerMIInverseCompositional tracker(&warp);
+\endcode
+
+- **Speeding up the MI tracker** could be performed increasing the sampling step to 3 along the rows and the colums and increasing the root mean square threshold value. The following parameters should speed up the tracker: 
+\code
+  tracker.setSampling(3, 3);
+  tracker.setLambda(0.001);
+  tracker.setIterationMax(200);
+  tracker.setPyramidal(2, 1);
+  tracker.setThresholdRMS(1e-6);
+\endcode
 
 \subsection points_tt How to get the points of the template
 
