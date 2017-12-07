@@ -6,6 +6,10 @@
                       https://visp.inria.fr
 
 ViSP 3.1.0 (under development)
+  - Contributors:
+    . This release was possible thanks to contributions from Fabien Spindler,
+      Souriya Trinh, Wenfeng Cai, Oleksandr Borysov, Marc Pouliquen, Ronald Ensing,
+      Yuriy Baranov, Jason Chevie
   - New features
     . Improve vpRealSense to better support R200 device
     . Improve vpConfig.h header content to remove path to build tree when installed
@@ -34,7 +38,7 @@ ViSP 3.1.0 (under development)
     . Improve vpIoTools to make recursive folder and sort files
     . Introduce vpPylonGrabber a wrapper for Basler cameras using Pylon SDK
     . Remove ffmpeg 3rd party usage
-    . Compute with Intel Compiler icc
+    . Add compat with Intel Compiler icc
   - Tutorials
     . New tutorial: How to extend ViSP creating a new contrib module
     . New tutorial: AprilTag marker detection on iOS
