@@ -21,23 +21,27 @@ ViSP 3.1.0 (under development)
     . vpVideoReader was improved to better detect first and last image numbers of an
       image sequence and better handle the frame step
     . Speed-up vpColVector::insert(), vpMatrix::insert() and vpMatrix::stack()
-    . Refactor model-based tracker
+    . Refactor model-based tracker (+ some segfault / memory fixes)
     . Introduce vpMbGenericTracker a new class that can handle all the features
       supported by the model-based tracker but also consider stereo or multi-view
       tracking
     . Add model-based depth tracking using face normals or using a dense approach
     . Use BLAS library to compute dgemm and dgemv operations if available
+    . Add Hadamard product
     . Add an explicit recopy parameter when resizing a vpArray2D
     . Add move constructor / assignment operator for vpMatrix, vpColVector and vpImage
+    . Introduce vpPylonGrabber a wrapper for Basler cameras using Pylon SDK
+    . Introduce AprilTag as a 3rd party and vpDetectorAprilTag wrapper
+    . Remove ffmpeg 3rd party usage
+    . Introduce AppVeyor check for continuous integration (MSVC + mingw-w64)
+    . Fix slow acquisition of color pointcloud with RealSense camera
+    . Improve vpIoTools to make recursive folder and sort files
+    . Add display of polygon lines (vpDisplay::displayLine() / vpDisplay::displayDotLine())
+    . Add CPU capabilities check
     . Improve VISP_INPUT_IMAGE_PATH env var usage to get more flexibility
     . Update ViSP license to GPLv2 or later
     . Introduce new imgproc module dedicated to image processing and tutorials
-    . Introduce AppVeyor check for continuous integration
-    . Add UDP client server
-    . Introduce AprilTag as a 3rd party and vpDetectorAprilTag wrapper
-    . Improve vpIoTools to make recursive folder and sort files
-    . Introduce vpPylonGrabber a wrapper for Basler cameras using Pylon SDK
-    . Remove ffmpeg 3rd party usage
+    . Add UDP client / server
     . Add compat with Intel Compiler icc
   - Tutorials
     . New tutorial: How to extend ViSP creating a new contrib module
@@ -68,7 +72,7 @@ ViSP 3.1.0 (under development)
     . [#183] Inversion between pixel size and optical center in vpRealSense class
     . [#187] Integer division by zero in vpDisplayWin32.cpp
     . [#200] Issue when reading PNG images with 16bits depth with libpng
-    . [#201]Fix read PNG images with 16 bits depth with libpng
+    . [#201] Fix read PNG images with 16 bits depth with libpng
     . [#207] CMake option 'ACTIVATE_DEBUG_TRACE' has never been used 
     . [#226] Planar pose Lagrange computation returns a left handed frame
 
