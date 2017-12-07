@@ -159,25 +159,7 @@ set(VISP_MODULE_${item}_LINK_DEPS \"${_deps}\")
             "${VISP_SOURCE_DIR}/cmake/VISPGenerateConfigScript.cmake"
     COMMENT "Generate visp-config"
   )
-  add_custom_command(
-    OUTPUT "${FILE_VISP_CONFIG_SCRIPT_INSTALL}"
-    COMMAND ${CMAKE_COMMAND} "-DCMAKE_HELPER_SCRIPT=${CMAKE_HELPER_SCRIPT}" -P "${VISP_SOURCE_DIR}/cmake/VISPGenerateConfigScript.cmake"
-    DEPENDS "${CMAKE_BINARY_DIR}/VISPGenerateConfigScript.info.cmake"
-            "${VISP_SOURCE_DIR}/cmake/VISPGenerateConfigScript.cmake"
-    COMMENT "Generate visp-config for installation"
-  )
-  if(UNIX)
-    add_custom_command(
-      OUTPUT "${FILE_VISP_CONFIG_PC_INSTALL}"
-      COMMAND ${CMAKE_COMMAND} "-DCMAKE_HELPER_SCRIPT=${CMAKE_HELPER_SCRIPT}" -P "${VISP_SOURCE_DIR}/cmake/VISPGenerateConfigScript.cmake"
-      DEPENDS "${CMAKE_BINARY_DIR}/VISPGenerateConfigScript.info.cmake"
-              "${VISP_SOURCE_DIR}/cmake/VISPGenerateConfigScript.cmake"
-      COMMENT "Generate visp.pc for installation"
-    )
-    add_custom_target(developer_scripts ALL SOURCES "${FILE_VISP_CONFIG_SCRIPT}" "${FILE_VISP_CONFIG_SCRIPT_INSTALL}" "${FILE_VISP_CONFIG_PC_INSTALL}")
-  else()
-    add_custom_target(developer_scripts ALL SOURCES "${FILE_VISP_CONFIG_SCRIPT}" "${FILE_VISP_CONFIG_SCRIPT_INSTALL}")
-  endif()
+  add_custom_target(developer_scripts ALL SOURCES "${FILE_VISP_CONFIG_SCRIPT}")
 
   #----------------------------------------------------------------------
   # customize install target
