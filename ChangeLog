@@ -10,6 +10,8 @@ ViSP 3.1.0 (under development)
     . This release was possible thanks to contributions from Fabien Spindler,
       Souriya Trinh, Wenfeng Cai, Oleksandr Borysov, Marc Pouliquen, Ronald Ensing,
       Yuriy Baranov, Jason Chevie
+    . Google Summer of Code 2017: Vikas Thamizharasan that developed for the model-based
+      tracker Blender import/export CAD model plugins and a Qt-based CAD model viewer
   - New features
     . Improve vpRealSense to better support R200 device
     . Improve vpConfig.h header content to remove path to build tree when installed
