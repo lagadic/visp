@@ -948,6 +948,7 @@ int main()
   vpRealSense rs;
   rs.open();
   std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
+  return 0;
 }
   \endcode
  */

@@ -47,7 +47,6 @@
 #include <visp3/sensor/vpRealSense.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpMutex.h>
 #include <visp3/core/vpThread.h>
@@ -85,7 +84,6 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
   pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
   pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud_);
   viewer->setBackgroundColor (0, 0, 0);
-  viewer->addCoordinateSystem (1.0);
   viewer->initCameraParameters ();
   viewer->setPosition(640+80, 480+80);
   viewer->setCameraPosition(0,0,-0.5, 0,-1,0);
@@ -125,7 +123,7 @@ int main()
 #if defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_CPP11_COMPATIBILITY)
   try {
     vpRealSense rs;
-
+    rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
     rs.open();
 
     std::cout << rs.getCameraParameters(rs::stream::color, vpCameraParameters::perspectiveProjWithoutDistortion) << std::endl;
@@ -139,18 +137,8 @@ int main()
 
     vpImage<unsigned char> infrared_display((unsigned int) rs.getIntrinsics(rs::stream::infrared).height, (unsigned int) rs.getIntrinsics(rs::stream::infrared).width);
     vpImage<uint16_t> infrared_y16;
-    vpImage<unsigned char> infrared_y8;
     rs::device * dev = rs.getHandler();
-    bool use_infrared_y16 = false;
-    if (dev->get_stream_format(rs::stream::infrared) == rs::format::y16) {
-      use_infrared_y16 = true;
-    } else {
-      rs.close();
-      rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
-      rs.open();
-      color.resize(480, 640);
-      infrared_y8.init(infrared_display.getHeight(), infrared_display.getWidth());
-    }
+    bool use_infrared_y16 = dev->get_stream_format(rs::stream::infrared) == rs::format::y16;
 
     vpImage<vpRGBa> depth_display((unsigned int) rs.getIntrinsics(rs::stream::depth).height, (unsigned int) rs.getIntrinsics(rs::stream::depth).width);
     vpImage<uint16_t> depth(depth_display.getHeight(), depth_display.getWidth());
@@ -193,11 +181,10 @@ int main()
         vpImageConvert::convert(infrared_y16, infrared_display);
       } else {
 #ifdef VISP_HAVE_PCL
-        rs.acquire( (unsigned char *) color.bitmap, (unsigned char *) depth.bitmap, NULL, pointcloud, (unsigned char *) infrared_y8.bitmap );
+        rs.acquire( (unsigned char *) color.bitmap, (unsigned char *) depth.bitmap, NULL, pointcloud, (unsigned char *) infrared_display.bitmap );
 #else
         rs.acquire( (unsigned char *) color.bitmap, (unsigned char *) depth.bitmap, NULL, (unsigned char *) infrared_y8.bitmap );
 #endif
-        vpImageConvert::convert(infrared_y8, infrared_display);
       }
 
 
@@ -254,7 +241,7 @@ int main()
     rs.close();
   }
   catch(const vpException &e) {
-    std::cerr << "RealSense error " << e.getStringMessage() << std::endl;
+    std::cerr << "RealSense error " << e.what() << std::endl;
   }
   catch(const rs::error & e)  {
     std::cerr << "RealSense error calling " << e.get_failed_function() << "(" << e.get_failed_args() << "): " << e.what() << std::endl;
@@ -270,4 +257,3 @@ int main()
 #endif
   return 0;
 }
-

@@ -118,6 +118,7 @@ int main()
     if (vpDisplay::getClick(I, false))
       break;
   }
+  return 0;
 }
   \endcode
 
@@ -170,6 +171,7 @@ int main()
 
     viewer->spinOnce (100);
   }
+  return 0;
 }
   \endcode
 

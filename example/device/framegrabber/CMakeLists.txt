@@ -52,6 +52,7 @@ set(example_cpp
   grabFlyCapture.cpp
   grabOpenCV.cpp
   grabRealSense.cpp
+  grabRealSense2.cpp
   grabV4l2MultiCpp11Thread.cpp
 )
 

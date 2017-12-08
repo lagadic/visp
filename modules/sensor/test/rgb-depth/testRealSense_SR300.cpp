@@ -75,8 +75,8 @@ namespace {
       pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
       pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
 
-      viewer->setBackgroundColor (0, 0, 0);
-      viewer->initCameraParameters ();
+      viewer->setBackgroundColor(0, 0, 0);
+      viewer->initCameraParameters();
       viewer->setPosition(640+80, 480+80);
       viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
       viewer->setSize(640, 480);
@@ -92,10 +92,12 @@ namespace {
             update_pointcloud = false;
             local_cancelled = cancelled;
 
-            if (m_colorMode) {
-              local_pointcloud_color = pointcloud_color->makeShared();
-            } else {
-              local_pointcloud = pointcloud->makeShared();
+            if (local_update) {
+              if (m_colorMode) {
+                local_pointcloud_color = pointcloud_color->makeShared();
+              } else {
+                local_pointcloud = pointcloud->makeShared();
+              }
             }
           }
         }
@@ -121,7 +123,7 @@ namespace {
           }
         }
 
-        viewer->spinOnce (10);
+        viewer->spinOnce(5);
       }
 
       std::cout << "End of point cloud display thread" << std::endl;
@@ -480,11 +482,13 @@ int main(int argc, char *argv[]) {
 #else
 int main() {
 #if !defined(VISP_HAVE_REALSENSE)
-  std::cout << "Install RealSense SDK to make this test working. X11 or GDI are needed also." << std::endl;
-#elif !defined(VISP_HAVE_CPP11_COMPATIBILITY)
-  std::cout << "Build ViSP with c++11 compiler flag (cmake -DUSE_CPP11=ON) to make this test working" << std::endl;
-#elif !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_GDI)
-  std::cout << "X11 or GDI are needed!" << std::endl;
+  std::cout << "Install librealsense to make this test work." << std::endl;
+#endif
+#if !defined(VISP_HAVE_CPP11_COMPATIBILITY)
+  std::cout << "Build ViSP with C++11 compiler flag (cmake -DUSE_CPP11=ON) to make this test work." << std::endl;
+#endif
+#if !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_GDI)
+  std::cout << "X11 or GDI are needed." << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

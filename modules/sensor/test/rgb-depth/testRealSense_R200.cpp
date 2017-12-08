@@ -75,8 +75,8 @@ namespace {
       pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
       pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
 
-      viewer->setBackgroundColor (0, 0, 0);
-      viewer->initCameraParameters ();
+      viewer->setBackgroundColor(0, 0, 0);
+      viewer->initCameraParameters();
       viewer->setPosition(640+80, 480+80);
       viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
       viewer->setSize(640, 480);
@@ -92,10 +92,12 @@ namespace {
             update_pointcloud = false;
             local_cancelled = cancelled;
 
-            if (m_colorMode) {
-              local_pointcloud_color = pointcloud_color->makeShared();
-            } else {
-              local_pointcloud = pointcloud->makeShared();
+            if (local_update) {
+              if (m_colorMode) {
+                local_pointcloud_color = pointcloud_color->makeShared();
+              } else {
+                local_pointcloud = pointcloud->makeShared();
+              }
             }
           }
         }
@@ -121,7 +123,7 @@ namespace {
           }
         }
 
-        viewer->spinOnce (10);
+        viewer->spinOnce(5);
       }
 
       std::cout << "End of point cloud display thread" << std::endl;
