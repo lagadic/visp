@@ -20,7 +20,7 @@ before_install:
 #  - unzip ${TRAVIS_BUILD_DIR}/ViSP-images-3.0.0.zip -d ${TRAVIS_BUILD_DIR}
   # Get libs for OSX
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew update; fi"
-  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then /usr/bin/yes | pip uninstall numpy; fi"
+  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then /usr/bin/yes | pip2 uninstall numpy; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew tap homebrew/science; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install opencv3; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then export OpenCV_DIR=/usr/local/opt/opencv3; fi"
