@@ -266,7 +266,7 @@ The previous source code shows how to use the new vpMbGenericTracker class as a 
 -  track on the current image
 -  get the current pose and display the model in the image
 
-Please refer to the tutorial \ref tutorial-tracking-mb in order to have explanations about the configuration parameters and how to model an object in a ViSP compatible format.
+Please refer to the tutorial \ref tutorial-tracking-mb in order to have explanations about the configuration parameters (\ref mb_settings) and how to model an object in a ViSP compatible format (\ref mb_advanced_cao).
 
 The required include is: 
 
@@ -383,6 +383,6 @@ To display the model with the estimated poses:
 \snippet tutorial-mb-generic-tracker-stereo.cpp Display
 
 \section mb_generic_next Next tutorial
-You are now ready to see the next \ref tutorial-tracking-tt.
+You are now ready to see the next \ref tutorial-tracking-mb-CAO-editor.
 
 */

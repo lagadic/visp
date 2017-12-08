@@ -136,7 +136,7 @@ The previous source code shows how to use a model-based tracking on stereo image
 
 \warning The xml2 library, used to load the configuration file, is required to build the tutorial example. OpenCV is also required and the KLT module has to be enabled to use the KLT functionality.
 
-Please refer to the tutorial \ref tutorial-tracking-mb in order to have the explanations about the configuration parameters and how to model an object in a ViSP compatible format.
+Please refer to the tutorial \ref tutorial-tracking-mb in order to have the explanations about the configuration parameters (\ref mb_settings) and how to model an object in a ViSP compatible format (\ref mb_advanced_cao).
 
 To test the three kind of trackers, only vpMbEdgeKltMultiTracker.h header is required as the others (vpMbEdgeMultiTracker.h and vpMbKltMultiTracker.h) are already included in the hybrid header class. 
 
