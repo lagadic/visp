@@ -128,6 +128,7 @@ This page introduces the user to the way to track objects in images.
 - \subpage tutorial-tracking-mb <br>This tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints.
 - \subpage tutorial-tracking-mb-stereo <br>This tutorial focuses on model-based trackers using stereo cameras.
 - \subpage tutorial-tracking-mb-generic <br>This tutorial focuses on generic model-based trackers.
+- \subpage tutorial-tracking-mb-CAO-editor <br>This tutorial presents the project done during the GSoC 2017: two Blender plugins to import/export .cao model file and a Qt-based .cao editor.
 - \subpage tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.
 
 */

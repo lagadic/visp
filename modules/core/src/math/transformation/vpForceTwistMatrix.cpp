@@ -235,8 +235,6 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpTranslationVector &t,
   \right]
   \f]
 
-  \param t : Translation vector.
-
   \param R : Rotation matrix.
 
 */

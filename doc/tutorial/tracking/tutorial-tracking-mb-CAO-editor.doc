@@ -1,0 +1,27 @@
+/**
+
+\page tutorial-tracking-mb-CAO-editor Tutorial: Markerless model-based tracker CAD model editor - GSoC 2017 project
+\tableofcontents
+
+\section mb_GSoC_17_intro Introduction
+
+The ViSP organization was happy to be accepted in the Google Summer of Code (<a href="https://summerofcode.withgoogle.com/archive/2017/organizations/4892929554382848/">GSoC 2017</a>) project for its first participation. This <a href="https://github.com/lagadic/visp/wiki/GSoC_2017#project-2-markerless-model-based-tracker-cad-model-editor">wiki page</a> summarizes the project ideas.
+
+\section mb_GSoC_17_cao_editor ViSP CAO editor
+
+This project is the result of the work done by Vikas Thamizharasan to develop the project Markerless model-based tracker CAD model editor.
+
+It contains useful tools related to the CAD model in .cao format used by the ViSP model-based tracker.
+
+The following tools have been developed for this project:
+
+- a Blender .cao CAD model exporter, see this <a href="https://github.com/lagadic/visp_cao_editor/blob/master/blenderAddons/vispCAOExport/README.md">tutorial</a>
+- a Blender .cao CAD model importer, see this <a href="https://github.com/lagadic/visp_cao_editor/blob/master/blenderAddons/vispCAOImport/README.md">tutorial</a>
+- a QT-based .cao CAD model editor/viewer, see this <a href="https://github.com/lagadic/visp_cao_editor/wiki/GSoC-2017-with-ViSP">description</a>
+
+A more complete description of the project is also available <a href="https://github.com/lagadic/visp_cao_editor/wiki/GSoC-2017-with-ViSP">here</a>.
+
+\section mb_GSoC_17_next Next tutorial
+You are now ready to see the next \ref tutorial-tracking-tt.
+
+*/

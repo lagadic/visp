@@ -521,12 +521,12 @@ The following code shows how to access to the CAD model
        for (unsigned int i=0; i < faces.size(); i++) {
          std::vector<vpMbtPolygon*> &poly = faces.getPolygon();
          std::cout << "face " << i << " with index: " << poly[i]->getIndex()
-			 << (poly[i]->getName().empty() ? "" : (" with name: " + poly[i]->getName()))
+             << (poly[i]->getName().empty() ? "" : (" with name: " + poly[i]->getName()))
              << " is " << (poly[i]->isVisible() ? "visible" : "not visible")
              << " and has " << poly[i]->getNbPoint() << " points" 
-             << " and LOD is" << (poly[i]->useLod ? "enabled" : "disabled") << std::endl;
+             << " and LOD is " << (poly[i]->useLod ? "enabled" : "disabled") << std::endl;
              
-         for (unsigned j=0; j<poly[i]->getNbPoint(); j++) {
+         for (unsigned int j=0; j<poly[i]->getNbPoint(); j++) {
            vpPoint P = poly[i]->getPoint(j);
            P.project(cMo);
            std::cout << " P obj " << j << ": " << P.get_oX() << " " << P.get_oY() << " " << P.get_oZ() << std::endl;
@@ -567,6 +567,12 @@ Furthermore, to set a name to a face see \ref mb_advanced_cao_nam.
 
 
 \subsection mb_advanced_cao CAD model in cao format
+
+\note You may be interested to look at \ref tutorial-tracking-mb-CAO-editor that will present some useful tools to handle more conveniently the custom .cao model file:
+
+- one Blender plugin to export a classical CAD model (Collada, Wavefront, Stl, ...) in the ViSP .cao format
+- one Blender plugin to import the ViSP .cao format into Blender
+- a Qt-based application to edit and view a .cao model file to check if the modeling is correct for instance
 
 \subsubsection mb_advanced_cao_lin How to model faces from lines
 The first thing to do is to declare the differents points. Then you define each segment of the face with the index of the start point and with the index of the end point.
