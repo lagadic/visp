@@ -136,3 +136,4 @@ Version History
 0.7.0	Initial beta release; no known bugs; compiles with no errors or warnings
 	in Microsoft Visual Studio.NET
 	Beta released 10-2-01
+
