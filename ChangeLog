@@ -60,6 +60,7 @@ ViSP 3.1.0 (under development)
     . New tutorial: Practical example: count the number of coins in an image
     . New tutorial: Markerless generic model-based tracking
     . New tutorial: AprilTag marker detection
+    . New tutorial: Markerless model-based tracker CAD model editor - GSoC 2017 project 
   - Bug fixed
     . [#137] Fix bug in extration of vpRotationMatrix from vpPoseVector using
              vpPoseVector::getRotationMatrix()
