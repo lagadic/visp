@@ -82,8 +82,8 @@ const double vpRobotAfma4::defaultPositioningVelocity = 15.0;
 */
 void emergencyStopAfma4(int signo)
 {
-  std::cout << "Stop the Afma4 application by signal (" 
-	    << signo << "): " << (char)7 ;
+  std::cout << "Stop the Afma4 application by signal ("
+      << signo << "): " << (char)7 ;
   switch(signo)
     {
     case SIGINT:
@@ -230,8 +230,8 @@ vpRobotAfma4::init (void)
   // Look if the power is on or off
   UInt32 HIPowerStatus;
   UInt32 EStopStatus;
-  Try( PrimitiveSTATUS_Afma4(NULL, NULL, &EStopStatus, NULL, NULL, NULL, 
-			     &HIPowerStatus));
+  Try( PrimitiveSTATUS_Afma4(NULL, NULL, &EStopStatus, NULL, NULL, NULL,
+           &HIPowerStatus));
   CAL_Wait(0.1);
 
   // Print the robot status
@@ -268,8 +268,8 @@ vpRobotAfma4::init (void)
   // Test if an error occurs
   if (TryStt == -20001)
     printf("No connection detected. Check if the robot is powered on \n"
-	   "and if the firewire link exist between the MotionBlox and this computer.\n");
-  else if (TryStt == -675) 
+     "and if the firewire link exist between the MotionBlox and this computer.\n");
+  else if (TryStt == -675)
     printf(" Timeout enabling power...\n");
 
   if (TryStt < 0) {
@@ -305,7 +305,7 @@ vpRobotAfma4::~vpRobotAfma4 (void)
   // Look if the power is on or off
   UInt32 HIPowerStatus;
   Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL,
-			     &HIPowerStatus));
+           &HIPowerStatus));
   CAL_Wait(0.1);
 
 //   if (HIPowerStatus == 1) {
@@ -395,7 +395,7 @@ vpRobotAfma4::stopMotion(void)
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot stop robot motion");
     throw vpRobotException (vpRobotException::lowLevelError,
-			      "Cannot stop robot motion.");
+            "Cannot stop robot motion.");
   }
 }
 
@@ -454,7 +454,7 @@ vpRobotAfma4::powerOn(void)
   if (EStopStatus == ESTOP_ACTIVATED) {
     std::cout << "Sorry, cannot power on the robot." << std::endl;
     throw vpRobotException (vpRobotException::lowLevelError,
-			      "Cannot power on the robot.");
+            "Cannot power on the robot.");
   }
 
   if (HIPowerStatus == 0) {
@@ -468,7 +468,7 @@ vpRobotAfma4::powerOn(void)
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot power on the robot");
     throw vpRobotException (vpRobotException::lowLevelError,
-			      "Cannot power off the robot.");
+            "Cannot power off the robot.");
   }
 }
 
@@ -488,8 +488,8 @@ vpRobotAfma4::powerOff(void)
 
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL, 
-			     &HIPowerStatus));
+  Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL,
+           &HIPowerStatus));
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 1) {
@@ -503,7 +503,7 @@ vpRobotAfma4::powerOff(void)
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot power off the robot");
     throw vpRobotException (vpRobotException::lowLevelError,
-			      "Cannot power off the robot.");
+            "Cannot power off the robot.");
   }
 }
 
@@ -525,8 +525,8 @@ vpRobotAfma4::getPowerState(void)
   bool status = false;
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL, 
-			     &HIPowerStatus));
+  Try( PrimitiveSTATUS_Afma4(NULL, NULL, NULL, NULL, NULL, NULL,
+           &HIPowerStatus));
   CAL_Wait(0.1);
 
   if (HIPowerStatus == 1) {
@@ -537,7 +537,7 @@ vpRobotAfma4::getPowerState(void)
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot get the power status");
     throw vpRobotException (vpRobotException::lowLevelError,
-			      "Cannot get the power status.");
+            "Cannot get the power status.");
   }
   return status;
 }
@@ -797,46 +797,46 @@ vpRobotAfma4::getPositioningVelocity (void)
 
 void
 vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
-			   const vpColVector & position )
+         const vpColVector & position )
 {
 
   if (vpRobot::STATE_POSITION_CONTROL != getRobotState ()) {
     vpERROR_TRACE ("Robot was not in position-based control\n"
-		   "Modification of the robot state");
+       "Modification of the robot state");
     setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
   }
-  
+
   int error = 0;
-  
+
   switch(frame) {
   case vpRobot::REFERENCE_FRAME:
     vpERROR_TRACE ("Positionning error. Reference frame not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Positionning error: "
-			    "Reference frame not implemented.");
+          "Positionning error: "
+          "Reference frame not implemented.");
     break ;
-  case vpRobot::CAMERA_FRAME : 
+  case vpRobot::CAMERA_FRAME :
     vpERROR_TRACE ("Positionning error. Camera frame not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Positionning error: "
-			    "Camera frame not implemented.");
+          "Positionning error: "
+          "Camera frame not implemented.");
     break ;
   case vpRobot::MIXT_FRAME:
     vpERROR_TRACE ("Positionning error. Mixt frame not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Positionning error: "
-			    "Mixt frame not implemented.");
+          "Positionning error: "
+          "Mixt frame not implemented.");
     break ;
-    
+
   case vpRobot::ARTICULAR_FRAME: {
     break ;
-    
+
   }
   }
   if (position.getRows() != this->njoint) {
     vpERROR_TRACE ("Positionning error: bad vector dimension.");
     throw vpRobotException (vpRobotException::positionOutOfRangeError,
- 			    "Positionning error: bad vector dimension."); 
+          "Positionning error: bad vector dimension.");
   }
 
   InitTry;
@@ -851,13 +851,13 @@ vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
     std::cout << " : Unknown error (see Fabien).\n";
   else if (error == -1)
     std::cout << "Position out of range.\n";
-  
+
   if (TryStt < 0 || error < 0) {
     vpERROR_TRACE ("Positionning error.");
     throw vpRobotException (vpRobotException::positionOutOfRangeError,
-			    "Position out of range.");
+          "Position out of range.");
   }
-  
+
   return ;
 }
 
@@ -913,10 +913,10 @@ vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
   \sa setPosition()
 */
 void vpRobotAfma4::setPosition (const vpRobot::vpControlFrameType frame,
-				const double q1,
-				const double q2,
-				const double q4,
-				const double q5)
+        const double q1,
+        const double q2,
+        const double q4,
+        const double q5)
 {
   try {
     vpColVector position(this->njoint) ;
@@ -972,7 +972,7 @@ void vpRobotAfma4::setPosition(const char *filename)
   if (ret == false) {
     vpERROR_TRACE ("Bad position in \"%s\"", filename);
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Bad position in filename.");
+          "Bad position in filename.");
   }
   this->setRobotState(vpRobot::STATE_POSITION_CONTROL);
   this->setPosition(vpRobot::ARTICULAR_FRAME, q);
@@ -1097,7 +1097,7 @@ vpRobotAfma4::getPosition (const vpRobot::vpControlFrameType frame,
   case vpRobot::MIXT_FRAME: {
     vpERROR_TRACE ("Cannot get position in mixt frame: not implemented");
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot get position in mixt frame: "
+          "Cannot get position in mixt frame: "
           "not implemented");
   }
   }
@@ -1106,7 +1106,7 @@ vpRobotAfma4::getPosition (const vpRobot::vpControlFrameType frame,
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot get position.");
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot get position.");
+          "Cannot get position.");
   }
 
   return;
@@ -1141,12 +1141,19 @@ void vpRobotAfma4::getPosition(const vpRobot::vpControlFrameType frame,
   vector is 2 when the control is in the camera frame (frame is than set to
   vpRobot::CAMERA_FRAME).
 
-  - In articular, \f$ vel = [\dot{q}_1, \dot{q}_2, \dot{q}_3, \dot{q}_4]^t \f$ correspond to joint velocities.
+  - In articular, \f$ vel = [\dot{q}_1, \dot{q}_2, \dot{q}_3, \dot{q}_4]^t \f$
+    where \f$\dot{q}_1, \dot{q}_3, \dot{q}_4 \f$ correspond to joint velocities
+    in rad/s and \f$\dot{q}_2\f$ to the vertical translation velocity in m/s.
 
   - In camera frame, \f$ vel = [^{c} t_x, ^{c} t_y, ^{c} t_z,^{c}
-  \omega_x, ^{c} \omega_y]^t, ^{c} \omega_z]^t\f$ is expressed in the
-  camera frame. Since only four dof are available, in camera frame we
-  control control only the camera pan and tilt.
+  \omega_x, ^{c} \omega_y]^t, ^{c} \omega_z]^t\f$ is a velocity twist
+  expressed in the camera frame, with translations velocities
+  \f$ ^{c} v_x, ^{c} v_y, ^{c} v_z \f$ in m/s
+  and rotation velocities \f$ ^{c}\omega_x, ^{c} \omega_y, ^{c} \omega_z \f$ in rad/s.
+  Since only four dof are available, in camera frame we
+  control only the camera pan and tilt. In other words we apply only
+  \f$ ^{c}\omega_x, ^{c} \omega_y\f$ to the robot, even if \f$ vel \f$ is
+  a 6-dimension vector.
 
   \exception vpRobotException::wrongStateError : If a the robot is not
   configured to handle a velocity. The robot can handle a velocity only if the
@@ -1253,7 +1260,7 @@ vpRobotAfma4::setVelocity (const vpRobot::vpControlFrameType frame,
 
     vpColVector velocity = vpRobot::saturateVelocities(vel, vel_max, true);
 
-#if 0 // ok 
+#if 0 // ok
     vpMatrix eJe(4,6);
     eJe = 0;
     eJe[2][4] = -1;
@@ -1386,7 +1393,7 @@ vpRobotAfma4::getVelocity (const vpRobot::vpControlFrameType frame,
 {
 
   switch (frame) {
-  case vpRobot::ARTICULAR_FRAME: 
+  case vpRobot::ARTICULAR_FRAME:
     velocity.resize (this->njoint);
     break;
   default:
@@ -1449,10 +1456,10 @@ vpRobotAfma4::getVelocity (const vpRobot::vpControlFrameType frame,
 
     case vpRobot::MIXT_FRAME: {
       vpERROR_TRACE ("Cannot get a velocity in the mixt frame: "
-		     "functionality not implemented");
+         "functionality not implemented");
       throw vpRobotException (vpRobotException::wrongStateError,
-			      "Cannot get a displacement in the mixt frame:"
-			      "functionality not implemented");
+            "Cannot get a displacement in the mixt frame:"
+            "functionality not implemented");
 
       break ;
     }
@@ -1476,7 +1483,7 @@ vpRobotAfma4::getVelocity (const vpRobot::vpControlFrameType frame,
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot get velocity.");
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot get velocity.");
+          "Cannot get velocity.");
   }
 }
 
@@ -1717,10 +1724,10 @@ vpRobotAfma4::savePosFile(const std::string &filename, const vpColVector &q)
 
   // Save positions in mm and deg
   fprintf(fd, "R: %lf %lf %lf %lf\n",
-	  vpMath::deg(q[0]),
-	  q[1],
-	  vpMath::deg(q[2]),
-	  vpMath::deg(q[3]));
+    vpMath::deg(q[0]),
+    q[1],
+    vpMath::deg(q[2]),
+    vpMath::deg(q[3]));
 
   fclose(fd) ;
   return (true);
@@ -1767,7 +1774,7 @@ vpRobotAfma4::move(const char *filename)
 */
 void
 vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame,
-			      vpColVector &displacement)
+            vpColVector &displacement)
 {
   displacement.resize (6);
   displacement = 0;
@@ -1818,7 +1825,7 @@ vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame,
   if (TryStt < 0) {
     vpERROR_TRACE ("Cannot get velocity.");
     throw vpRobotException (vpRobotException::lowLevelError,
-			    "Cannot get velocity.");
+          "Cannot get velocity.");
   }
 }
 

@@ -40,9 +40,9 @@
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpRobotPioneer.h>
 // Warning: vpMath.h should be included after Aria.h to avoid the build issue:
-// "/usr/include/Aria/ariaUtil.h:732:21: error: ‘isfinite’ was not declared 
+// "/usr/include/Aria/ariaUtil.h:732:21: error: ‘isfinite’ was not declared
 // in this scope"
-// This error is due to cmath header included from vpMath.h that makes 
+// This error is due to cmath header included from vpMath.h that makes
 // isfinite() ambiguous between ::isfinite() and std::isfinite()
 #include <visp3/core/vpMath.h>
 
@@ -84,7 +84,7 @@ vpRobotPioneer::~vpRobotPioneer()
     second value is the velocity of the right wheel in m/s. In that case sets the velocity of the wheels
     independently.
   - If the frame is vpRobot::REFERENCE_FRAME, first value is the translation velocity in m/s.
-    Second value is the rotational velocity in rad/s.
+    Second value is the rotational velocity in rad/s along the vertical axis.
 
   Note that to secure the usage of the robot, velocities are saturated to the maximum allowed
   which can be obtained by getMaxTranslationVelocity() and getMaxRotationVelocity(). To change

@@ -82,8 +82,8 @@ const double vpRobotViper850::defaultPositioningVelocity = 15.0;
 */
 void emergencyStopViper850(int signo)
 {
-  std::cout << "Stop the Viper850 application by signal (" 
-	    << signo << "): " << (char)7 ;
+  std::cout << "Stop the Viper850 application by signal ("
+      << signo << "): " << (char)7 ;
   switch(signo)
   {
   case SIGINT:
@@ -143,10 +143,10 @@ int main()
 #ifdef VISP_HAVE_VIPER850
   vpRobotViper850 robot;
 
-  // Set the extrinsic camera parameters obtained with a perpective 
+  // Set the extrinsic camera parameters obtained with a perpective
   // projection model including a distorsion parameter
   robot.init(vpViper850::TOOL_MARLIN_F033C_CAMERA,
-	     vpCameraParameters::perspectiveProjWithDistortion);
+       vpCameraParameters::perspectiveProjWithDistortion);
   \endcode
 
   Now, you can get the intrinsic camera parameters associated to an
@@ -296,7 +296,7 @@ vpRobotViper850::init (void)
   // Look if the power is on or off
   UInt32 HIPowerStatus;
   UInt32 EStopStatus;
-  Try( PrimitiveSTATUS_Viper850(NULL, NULL, &EStopStatus, NULL, NULL, NULL, 
+  Try( PrimitiveSTATUS_Viper850(NULL, NULL, &EStopStatus, NULL, NULL, NULL,
                                 &HIPowerStatus));
   CAL_Wait(0.1);
 
@@ -393,10 +393,10 @@ int main()
 #ifdef VISP_HAVE_VIPER850
   vpRobotViper850 robot;
 
-  // Set the extrinsic camera parameters obtained with a perpective 
+  // Set the extrinsic camera parameters obtained with a perpective
   // projection model including a distorsion parameter
   robot.init(vpViper850::TOOL_MARLIN_F033C_CAMERA,
-	     vpCameraParameters::perspectiveProjWithDistortion);
+       vpCameraParameters::perspectiveProjWithDistortion);
   \endcode
 
   Now, you can get the intrinsic camera parameters associated to an
@@ -852,7 +852,7 @@ void
   if (HIPowerStatus == 0) {
     fprintf(stdout, "Power ON the Viper850 robot\n");
     fflush(stdout);
-    
+
     Try( PrimitivePOWERON_Viper850() );
   }
 
@@ -880,7 +880,7 @@ void
 
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try( PrimitiveSTATUS_Viper850(NULL, NULL, NULL, NULL, NULL, NULL, 
+  Try( PrimitiveSTATUS_Viper850(NULL, NULL, NULL, NULL, NULL, NULL,
                                 &HIPowerStatus));
   CAL_Wait(0.1);
 
@@ -917,7 +917,7 @@ bool
   bool status = false;
   // Look if the power is on or off
   UInt32 HIPowerStatus;
-  Try( PrimitiveSTATUS_Viper850(NULL, NULL, NULL, NULL, NULL, NULL, 
+  Try( PrimitiveSTATUS_Viper850(NULL, NULL, NULL, NULL, NULL, NULL,
                                 &HIPowerStatus));
   CAL_Wait(0.1);
 
@@ -1280,7 +1280,7 @@ void
     std::cout << " : Position out of range.\n";
   else if (TryStt == -3019) {
     if (frame == vpRobot::ARTICULAR_FRAME)
-      std::cout << " : Joint position out of range.\n";    
+      std::cout << " : Joint position out of range.\n";
     else
       std::cout << " : Cartesian position leads to a joint position out of range.\n";
   }
@@ -1671,20 +1671,22 @@ void vpRobotViper850::getPosition(const vpRobot::vpControlFrameType frame,
   is always 6.
 
   - In articular, \f$ vel = [\dot{q}_1, \dot{q}_2, \dot{q}_3, \dot{q}_4,
-  \dot{q}_5, \dot{q}_6]^t \f$ correspond to joint velocities.
+  \dot{q}_5, \dot{q}_6]^t \f$ correspond to joint velocities in rad/s.
 
   - In camera frame, \f$ vel = [^{c} v_x, ^{c} v_y, ^{c} v_z, ^{c}
-  \omega_x, ^{c} \omega_y, ^{c} \omega_z]^t \f$ is expressed in the
-  camera frame.
+  \omega_x, ^{c} \omega_y, ^{c} \omega_z]^t \f$ is a velocity twist vector expressed in the
+  camera frame, with translations velocities \f$ ^{c} v_x, ^{c} v_y, ^{c} v_z \f$ in m/s
+  and rotation velocities \f$ ^{c}\omega_x, ^{c} \omega_y, ^{c} \omega_z \f$ in rad/s.
 
   - In reference frame, \f$ vel = [^{r} v_x, ^{r} v_y, ^{r} v_z, ^{r}
-  \omega_x, ^{r} \omega_y, ^{r} \omega_z]^t \f$ is expressed in the
-  reference frame.
+  \omega_x, ^{r} \omega_y, ^{r} \omega_z]^t \f$ is a velocity twist vector expressed in the
+  reference frame, with translations velocities \f$ ^{c} v_x, ^{c} v_y, ^{c} v_z \f$ in m/s
+  and rotation velocities \f$ ^{c}\omega_x, ^{c} \omega_y, ^{c} \omega_z \f$ in rad/s.
 
   - In mixt frame, \f$ vel = [^{r} v_x, ^{r} v_y, ^{r} v_z, ^{c} \omega_x,
-  ^{c} \omega_y, ^{c} \omega_z]^t \f$.  In mixt frame, translations \f$ v_x,
-  v_y, v_z \f$ are expressed in the reference frame and rotations \f$
-  \omega_x, \omega_y, \omega_z \f$ in the camera frame.
+  ^{c} \omega_y, ^{c} \omega_z]^t \f$ is a velocity twist vector where, translations
+  \f$ ^{r} v_x, ^{r} v_y, ^{r} v_z \f$ are expressed in the reference frame in m/s and rotations
+  \f$ ^{c} \omega_x, ^{c} \omega_y, ^{c} \omega_z \f$ in the camera frame in rad/s.
 
   \exception vpRobotException::wrongStateError : If a the robot is not
   configured to handle a velocity. The robot can handle a velocity only if the
@@ -1742,7 +1744,7 @@ void vpRobotViper850::setVelocity(const vpRobot::vpControlFrameType frame,
                             "Cannot send a velocity to the robot "
                             "use setRobotState(vpRobot::STATE_VELOCITY_CONTROL) first) ");
   }
-  
+
   vpColVector vel_sat(6);
 
   // Velocity saturation
@@ -2147,14 +2149,14 @@ int main()
 
   // Get the current robot joint positions
   vpColVector q;        // Current joint position
-  robot.getPosition(vpRobot::ARTICULAR_FRAME, q); 
+  robot.getPosition(vpRobot::ARTICULAR_FRAME, q);
 
   // Save this position in a file named "current.pos"
-  robot.savePosFile("current.pos", q); 
+  robot.savePosFile("current.pos", q);
 
   // Get the position from a file and move to the registered position
   robot.readPosFile("current.pos", q); // Set the joint position from the file
-  
+
   robot.setPositioningVelocity(5); // Positioning velocity set to 5%
   robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
 #endif
@@ -2377,7 +2379,7 @@ void
 }
 
 /*!
-  
+
   Bias the force/torque sensor.
 
   \sa unbiasForceTorqueSensor(), getForceTorque()
@@ -2397,7 +2399,7 @@ void vpRobotViper850::biasForceTorqueSensor()
   Try( PrimitiveTFS_BIAS_Viper850() );
 
   // Wait 500 ms to be sure the next measures take into account the bias
-  vpTime::wait(500); 
+  vpTime::wait(500);
 
   CatchPrint();
   if (TryStt < 0) {
@@ -2429,7 +2431,7 @@ void vpRobotViper850::unbiasForceTorqueSensor()
 }
 
 /*!
-  
+
   Get the rough force/torque sensor measures.
 
   \param H: [Fx, Fy, Fz, Tx, Ty, Tz] Forces/torques measured by the sensor.
@@ -2460,7 +2462,7 @@ int main()
 #endif
 }
   \endcode
-  
+
   \exception vpRobotException::lowLevelError : If the force/torque measures
   cannot be get from the low level controller.
 

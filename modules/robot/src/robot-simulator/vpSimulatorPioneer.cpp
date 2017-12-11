@@ -111,7 +111,9 @@ vpSimulatorPioneer::get_eJe(vpMatrix &_eJe)
 
   \param frame : Control frame type. Only vpRobot::ARTICULAR_FRAME is implemented.
 
-  \param v : Velocity vector \f$(v_x, w_z)\f$ to apply to the robot.
+  \param v : Velocity vector \f$(v_x, \omega_z)\f$ to apply to the robot, where \f$v_x\f$
+  is the linear translational velocity in m/s and \f$\omega_z\f$ is the rotational velocity
+  in rad/s arround the vertical axis.
 
   Depending on the velocity specified as input, the robot position is updated
   using the sampling time that can be modified using setSamplingTime().
@@ -172,10 +174,10 @@ vpSimulatorPioneer::setVelocity(const vpRobot::vpControlFrameType frame,
                             "functionality not implemented");
   case vpRobot::MIXT_FRAME:
     vpERROR_TRACE ("Cannot set a velocity in the mixt frame: "
-		 "functionality not implemented");
+     "functionality not implemented");
     throw vpRobotException (vpRobotException::wrongStateError,
-			    "Cannot set a velocity in the mixt frame:"
-			    "functionality not implemented");
+          "Cannot set a velocity in the mixt frame:"
+          "functionality not implemented");
 
     break ;
   }

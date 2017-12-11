@@ -118,7 +118,10 @@ vpSimulatorPioneerPan::get_eJe(vpMatrix &_eJe)
 
   \param frame : Control frame type. Only vpRobot::ARTICULAR_FRAME is implemented.
 
-  \param v : Velocity vector \f$(v_x, w_z, \dot q)\f$ to apply to the robot.
+  \param v : Velocity vector \f$(v_x, \omega_z, \dot q)\f$ to apply to the robot, where \f$v_x\f$
+  is the linear translational velocity in m/s and \f$\omega_z\f$ is the rotational velocity
+  in rad/s arround the vertical axis of the mobile base, and, \f$\dot q\f$ is the pan velocity
+  in rad/s of the camera.
 
   Depending on the velocity specified as input, the robot position is updated
   using the sampling time that can be modified using setSamplingTime().

@@ -194,24 +194,18 @@ void vpSimulatorCamera::getPosition(const vpRobot::vpControlFrameType frame, vpC
   \param frame : Control frame type. Only articular (vpRobot::ARTICULAR_FRAME)
   and camera frame (vpRobot::CAMERA_FRAME) are implemented.
 
-  \param v : Velocity to apply to the robot.
+  \param v : Velocity twist to apply to the robot.
 
-  - In the camera frame, this velocity is represented by a vector of dimension 6
-  \f$ {\bf v} = [{\bf t}, {\bf \theta u }]^t \f$ where \f$ \bf t \f$ is a
-  translation vector and \f$ {\bf \theta u} \f$ is a rotation vector (see
-  vpThetaUVector): \f$ {\bf v} = [t_x, t_y, t_z, {\theta u}_x, {\theta u}_y,
-  {\theta u}_z] \f$ (see vpTranslationVector and vpThetaUVector).
+  - In the camera frame, this velocity is represented by a twist vector of dimension 6
+  \f$ {\bf v} = [v_x v_y v_z w_x w_y w_z]^t \f$ where \f$ v_x, v_y, v_z  \f$ are the
+  translation velocities in m/s and \f$ w_x, w_y, w_z \f$ the rotation velocities in rad/s
+  applied in the camera frame.
 
-  - In articular, this velocity is represented by a 6 dimension vector \f$
-  \dot{{\bf q}} = [{\bf t}, {\bf \theta u}]^t \f$ where \f$ \bf t \f$ is a
-  translation vector and \f$ {\bf \theta u} \f$ is a rotation vector (see
-  vpThetaUVector): \f$ \dot{{\bf q}} = [t_x, t_y, t_z, {\theta u}_x, {\theta
-  u}_y, {\theta u}_z] \f$ (see vpTranslationVector and vpThetaUVector). The
-  robot jacobian \f$ {^e}{\bf J}_e\f$ expressed in the end-effector frame is
-  here set to identity.
+  - In articular, the behavior is the same as in camera frame.
 
-  We use the exponential map (vpExponentialMap) to update the camera location.
-  Sampling time can be set using setSamplingTime().
+  Internally, the exponential map (vpExponentialMap) is used to update the camera position
+  from its velocity after applying the velocity during a sampling time.
+  This sampling time can be set using setSamplingTime().
 
   \sa setSamplingTime()
 
