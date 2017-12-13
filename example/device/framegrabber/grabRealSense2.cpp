@@ -128,8 +128,8 @@ namespace {
     bool m_colorMode;
     std::mutex &m_mutex;
   };
-#endif
 }
+#endif
 
 int main() {
   try {
@@ -164,7 +164,7 @@ int main() {
     vpDisplayX dd(depth_display, 10, (int) color.getHeight()+80, "Depth image");
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI dc(color, 10, 10, "Color image");
-    vpDisplayGDI di(infrared_display, color.getWidth()+80, 10, "Infrared image");
+    vpDisplayGDI di(infrared, color.getWidth()+80, 10, "Infrared image");
     vpDisplayGDI dd(depth_display, 10, color.getHeight()+80, "Depth image");
 #endif
 
