@@ -299,9 +299,9 @@ int main(int argc, char *argv[]) {
     auto infrared_frame = data.first(RS2_STREAM_INFRARED);
     getNativeFrame(infrared_frame, (unsigned char *) infrared_raw.bitmap);
 
+#ifdef VISP_HAVE_PCL
     getPointcloud(depth_frame, pointcloud_colvector);
 
-#ifdef VISP_HAVE_PCL
     {
       std::lock_guard<std::mutex> lock(mutex);
 
