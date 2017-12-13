@@ -191,6 +191,11 @@ if(USE_REALSENSE)
   # Add specific build flag to turn off warnings coming from RealSense 3rd party
   vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense.cpp -Wno-strict-aliasing -Wno-pessimizing-move -Wno-unused-parameter)
 endif()
+if(USE_REALSENSE2)
+  # Add specific build flag to turn off warnings coming from RealSense2 3rd party
+  vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense2.cpp -Wno-reorder -Wno-unused-function)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_SR300.cpp -Wno-reorder -Wno-unused-function)
+endif()
 
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
