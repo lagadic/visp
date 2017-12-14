@@ -703,8 +703,7 @@ LAYOUT_FILE            =
 # LATEX_BIB_STYLE. To use this feature you need bibtex and perl available in the
 # search path. See also \cite for info how to create references.
 
-CITE_BIB_FILES         = "@VISP_SOURCE_DIR@/doc/biblio/references.bib" \
-                         "@VISP_CONTRIB_MODULES_PATH@/doc/biblio/references.bib"
+CITE_BIB_FILES         = @DOXYGEN_CITE_BIB_FILES@
 
 #---------------------------------------------------------------------------
 # Configuration options related to warning and progress messages
