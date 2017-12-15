@@ -84,6 +84,10 @@ if(USE_REALSENSE)
   list(APPEND opt_incs ${REALSENSE_INCLUDE_DIRS})
   list(APPEND opt_libs ${REALSENSE_LIBRARIES})
 endif()
+if(USE_REALSENSE2)
+  list(APPEND opt_incs ${REALSENSE2_INCLUDE_DIRS})
+  list(APPEND opt_libs ${REALSENSE2_LIBRARIES})
+endif()
 if(USE_PCL)
   list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
 
@@ -187,6 +191,11 @@ if(USE_REALSENSE)
   # Add specific build flag to turn off warnings coming from RealSense 3rd party
   vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense.cpp -Wno-strict-aliasing -Wno-pessimizing-move -Wno-unused-parameter)
 endif()
+if(USE_REALSENSE2)
+  # Add specific build flag to turn off warnings coming from RealSense2 3rd party
+  vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense2.cpp -Wno-reorder -Wno-unused-function)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_SR300.cpp -Wno-reorder -Wno-unused-function)
+endif()
 
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
@@ -196,4 +205,5 @@ if(USE_PCL)
   # Add specific build flag to turn off warnings coming from PCL 3rd party
   vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_R200.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter)
   vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_SR300.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_SR300.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-pessimizing-move -Wno-unused-parameter)
 endif()
