@@ -64,7 +64,7 @@
 #
 # Or you can search for specific OpenCV modules:
 #
-#   find_package(VISP REQUIRED core videoio)
+#   find_package(VISP REQUIRED core io)
 #
 # If the module is found then VISP_<MODULE>_FOUND is set to TRUE.
 #
@@ -244,6 +244,8 @@ set(VISP_HAVE_X11            "@VISP_HAVE_X11@")
 set(VISP_HAVE_XML2           "@VISP_HAVE_XML2@")
 set(VISP_HAVE_YARP           "@VISP_HAVE_YARP@")
 set(VISP_HAVE_ZBAR           "@VISP_HAVE_ZBAR@")
+
+@VISP_CONTRIB_MODULES_CONFIGCMAKE@
 
 set(VISP_COMPILER_FAIL_REGEX
     "command line option .* is valid for .* but not for C\\+\\+" # GNU
