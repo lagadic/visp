@@ -204,6 +204,7 @@ set(VISP_HAVE_DIRECTSHOW     "@VISP_HAVE_DIRECTSHOW@")
 set(VISP_HAVE_DISPLAY        "@VISP_HAVE_DISPLAY@")
 set(VISP_HAVE_DMTX           "@VISP_HAVE_DMTX@")
 set(VISP_HAVE_EIGEN3         "@VISP_HAVE_EIGEN3@")
+set(VISP_HAVE_FRANKA         "@VISP_HAVE_FRANKA@")
 set(VISP_HAVE_FLYCAPTURE     "@VISP_HAVE_FLYCAPTURE@")
 set(VISP_HAVE_GDI            "@VISP_HAVE_GDI@")
 set(VISP_HAVE_GTK            "@VISP_HAVE_GTK@")
@@ -272,6 +273,14 @@ endif()
 #----------------------------------------------------------------------
 if(VISP_HAVE_OPENMP)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} @OpenMP_CXX_FLAGS@")
+endif()
+
+#----------------------------------------------------------------------
+# Propagate c++14 option requested with libfranka
+#----------------------------------------------------------------------
+if(VISP_HAVE_FRANKA)
+  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
 #----------------------------------------------------------------------

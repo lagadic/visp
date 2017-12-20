@@ -351,6 +351,9 @@
 #cmakedefine VISP_HAVE_VIPER850_DATA
 #define VISP_VIPER850_DATA_PATH "${VISP_VIPER850_DATA_PATH}"
 
+// Defined if Franka Emika robot available.
+#cmakedefine VISP_HAVE_FRANKA
+
 // Defined if the Aria library and (pthread, rt, dl libraries under Unix) is found.
 // These libraries are used to control Pioneer mobile robots.
 #cmakedefine VISP_HAVE_PIONEER

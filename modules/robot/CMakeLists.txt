@@ -106,6 +106,21 @@ elseif(USE_ARIA AND NOT UNIX)
   list(APPEND opt_libs ${ARIA_LIBRARIES})
 endif()
 
+if(USE_FRANKA)
+  get_target_property(Franka_inc_dirs_ ${Franka_LIBRARIES} INTERFACE_INCLUDE_DIRECTORIES)
+  list(APPEND opt_incs ${Franka_inc_dirs_})
+
+  set(config_ "release" "debug" "releasewithdebinfo" "relwithdebinfo" "none")
+  foreach(imp_config_ ${config_})
+    string(TOUPPER "${imp_config_}" imp_config_up_)
+    get_target_property(Franka_lib ${Franka_LIBRARIES} IMPORTED_LOCATION_${imp_config_up_})
+    if(Franka_lib)
+       list(APPEND opt_libs ${Franka_lib})
+       break()
+    endif()
+  endforeach()
+endif()
+
 # for the wireframe simulator we can use optional opengl and coin
 if(USE_COIN3D)
   if(WIN32)
