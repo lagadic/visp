@@ -5,6 +5,10 @@
 #include <iostream>
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
+
+#ifdef VISP_HAVE_FRANKA
+
 #include <franka/exception.h>
 #include <franka/robot.h>
 
@@ -168,3 +172,10 @@ int main(int argc, char** argv) {
 
   return 0;
 }
+
+#else
+int main()
+{
+  std::cout << "This example needs libfranka to control Panda robot." << std::endl;
+}
+#endif

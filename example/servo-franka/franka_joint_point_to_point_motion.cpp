@@ -5,6 +5,10 @@
 #include <iostream>
 #include <vector>
 
+#include <visp3/core/vpConfig.h>
+
+#ifdef VISP_HAVE_FRANKA
+
 #include <franka/exception.h>
 #include <franka/robot.h>
 
@@ -219,3 +223,10 @@ void calculateSynchronizedValues(const std::array<double, 7>& delta_q,
     }
   }
 }
+
+#else
+int main()
+{
+  std::cout << "This example needs libfranka to control Panda robot." << std::endl;
+}
+#endif
