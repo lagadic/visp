@@ -512,7 +512,7 @@ int main(int argc, char *argv[]) {
 
     //Cannot render two pcl::visualization::PCLVisualizer so use an arg option to switch between B&W and color point cloud rendering until a solution is found
     test_R200(rs, enables, params, options, "R200_COLOR_RGBA8_640x480_60FPS + R200_DEPTH_Z16_640x480_60FPS + R200_INFRARED_Y8_640x480_60FPS + R200_INFRARED2_Y8_640x480_60FPS",
-              false, rs::stream::color, rs::stream::depth, rs::stream::infrared2, true, (argc > 1 ? (bool)atoi(argv[1]) : false));
+              false, rs::stream::color, rs::stream::depth, rs::stream::infrared2, true, (argc > 1 ? (bool)(atoi(argv[1]) > 0) : false));
 #endif
   } catch(const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
