@@ -6,8 +6,8 @@
 //! [Include]
 
 int main()
-{  
-  //! [Define]
+{
+//! [Define]
 #if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
   //! [Define]
   vpImage<unsigned char> I;
@@ -23,18 +23,17 @@ int main()
 
   //! [Create image]
   vpImage<unsigned char> Idisp;
-  Idisp.resize(I.getHeight(), 2*I.getWidth());
+  Idisp.resize(I.getHeight(), 2 * I.getWidth());
   Idisp.insert(I, vpImagePoint(0, 0));
   Idisp.insert(I, vpImagePoint(0, I.getWidth()));
   //! [Create image]
   //! [Init display]
-  vpDisplayOpenCV d(Idisp, 0, 0, "Matching surf keypoints") ;
+  vpDisplayOpenCV d(Idisp, 0, 0, "Matching surf keypoints");
   vpDisplay::display(Idisp);
   vpDisplay::flush(Idisp);
   //! [Init display]
 
-  while ( ! reader.end() )
-  {
+  while (!reader.end()) {
     //! [Acquisition]
     reader.acquire(I);
     Idisp.insert(I, vpImagePoint(0, I.getWidth()));
@@ -42,7 +41,9 @@ int main()
 
     //! [Display]
     vpDisplay::display(Idisp);
-    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()), vpImagePoint(I.getHeight(), I.getWidth()), vpColor::white, 2);
+    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()),
+                           vpImagePoint(I.getHeight(), I.getWidth()),
+                           vpColor::white, 2);
     //! [Display]
 
     //! [Matching]
@@ -51,12 +52,13 @@ int main()
 
     //! [Get matches]
     vpImagePoint iPref, iPcur;
-    for (unsigned int i = 0; i < nbMatch; i++)
-    {
+    for (unsigned int i = 0; i < nbMatch; i++) {
       surf.getMatchedPoints(i, iPref, iPcur);
       //! [Get matches]
       //! [Display matches]
-      vpDisplay::displayLine(Idisp, iPref, iPcur + vpImagePoint(0, I.getWidth()), vpColor::green);
+      vpDisplay::displayLine(Idisp, iPref,
+                             iPcur + vpImagePoint(0, I.getWidth()),
+                             vpColor::green);
       //! [Display matches]
     }
     //! [Display flush]

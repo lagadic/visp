@@ -1,30 +1,31 @@
 /*! \example tutorial-ibvs-4pts-plotter-continuous-gain-adaptive.cpp */
+#include <visp3/gui/vpPlot.h>
+#include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/vs/vpServo.h>
-#include <visp3/robot/vpSimulatorCamera.h>
-#include <visp3/gui/vpPlot.h>
 
 int main()
 {
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
-    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));
+    vpHomogeneousMatrix cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10),
+                            vpMath::rad(50));
 
-    vpPoint point[4] ;
-    point[0].setWorldCoordinates(-0.1,-0.1, 0);
-    point[1].setWorldCoordinates( 0.1,-0.1, 0);
-    point[2].setWorldCoordinates( 0.1, 0.1, 0);
+    vpPoint point[4];
+    point[0].setWorldCoordinates(-0.1, -0.1, 0);
+    point[1].setWorldCoordinates(0.1, -0.1, 0);
+    point[2].setWorldCoordinates(0.1, 0.1, 0);
     point[3].setWorldCoordinates(-0.1, 0.1, 0);
 
-    vpServo task ;
+    vpServo task;
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::CURRENT);
 
     vpAdaptiveGain lambda(4, 0.4, 30);
     task.setLambda(lambda);
 
-    vpFeaturePoint p[4], pd[4] ;
-    for (unsigned int i = 0 ; i < 4 ; i++) {
+    vpFeaturePoint p[4], pd[4];
+    for (unsigned int i = 0; i < 4; i++) {
       point[i].track(cdMo);
       vpFeatureBuilder::create(pd[i], point[i]);
       point[i].track(cMo);
@@ -39,7 +40,7 @@ int main()
     wMo = wMc * cMo;
 
 #ifdef VISP_HAVE_DISPLAY
-    vpPlot plotter(2, 250*2, 500, 100, 200, "Real time curves plotter");
+    vpPlot plotter(2, 250 * 2, 500, 100, 200, "Real time curves plotter");
     plotter.setTitle(0, "Visual features error");
     plotter.setTitle(1, "Camera velocities");
 
@@ -64,21 +65,21 @@ int main()
 #endif
 
     unsigned int iter = 0;
-    while(1) {
+    while (1) {
       robot.getPosition(wMc);
       cMo = wMc.inverse() * wMo;
-      for (unsigned int i = 0 ; i < 4 ; i++) {
+      for (unsigned int i = 0; i < 4; i++) {
         point[i].track(cMo);
         vpFeatureBuilder::create(p[i], point[i]);
       }
-      vpColVector v = task.computeControlLaw(iter*robot.getSamplingTime());
+      vpColVector v = task.computeControlLaw(iter * robot.getSamplingTime());
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
 #ifdef VISP_HAVE_DISPLAY
       plotter.plot(0, iter, task.getError());
       plotter.plot(1, iter, v);
 #endif
-      if (( task.getError() ).sumSquare() < 0.0001)
+      if ((task.getError()).sumSquare() < 0.0001)
         break;
 
       iter++;
@@ -93,10 +94,7 @@ int main()
 
     vpDisplay::getClick(plotter.I);
 #endif
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }
-
-

@@ -36,22 +36,21 @@
  *
  *****************************************************************************/
 
-
 #ifndef __vpMutex_h_
 #define __vpMutex_h_
 
-#include <visp3/core/vpConfig.h>
 #include <iostream>
+#include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 
 #if defined(VISP_HAVE_PTHREAD)
-#  include <pthread.h>
+#include <pthread.h>
 #elif defined(_WIN32)
-// Include WinSock2.h before windows.h to ensure that winsock.h is not included by windows.h 
-// since winsock.h and winsock2.h are incompatible
-#  include <WinSock2.h> 
-#  include <windows.h>
+// Include WinSock2.h before windows.h to ensure that winsock.h is not
+// included by windows.h since winsock.h and winsock2.h are incompatible
+#include <WinSock2.h>
+#include <windows.h>
 #endif
 
 /*!
@@ -62,8 +61,9 @@
 
    Class that allows protection by mutex.
 
-   This class implements native pthread functionalities if available, of native Windows threading
-   capabilities if pthread is not available under Windows.
+   This class implements native pthread functionalities if available, of
+   native Windows threading capabilities if pthread is not available under
+   Windows.
 
    An example of vpMutex usage is given in testMutex.cpp.
 
@@ -71,19 +71,20 @@
 
    \sa vpScopedLock
 */
-class vpMutex {
+class vpMutex
+{
 public:
-  vpMutex() : m_mutex() {
+  vpMutex() : m_mutex()
+  {
 #if defined(VISP_HAVE_PTHREAD)
-    pthread_mutex_init( &m_mutex, NULL );
+    pthread_mutex_init(&m_mutex, NULL);
 #elif defined(_WIN32)
-#  ifdef WINRT_8_1
+#ifdef WINRT_8_1
     m_mutex = CreateMutexEx(NULL, NULL, 0, NULL);
-#  else
-    m_mutex = CreateMutex(
-      NULL,              // default security attributes
-      FALSE,             // initially not owned
-      NULL);             // unnamed mutex
+#else
+    m_mutex = CreateMutex(NULL,                 // default security attributes
+                          FALSE,                // initially not owned
+                          NULL);                // unnamed mutex
 #endif
     if (m_mutex == NULL) {
       std::cout << "CreateMutex error: " << GetLastError() << std::endl;
@@ -91,32 +92,32 @@ public:
     }
 #endif
   }
-	void lock() {
+  void lock()
+  {
 #if defined(VISP_HAVE_PTHREAD)
-    pthread_mutex_lock( &m_mutex );
+    pthread_mutex_lock(&m_mutex);
 #elif defined(_WIN32)
     DWORD dwWaitResult;
-#  ifdef WINRT_8_1
+#ifdef WINRT_8_1
     dwWaitResult = WaitForSingleObjectEx(m_mutex, INFINITE, FALSE);
-#  else
-    dwWaitResult = WaitForSingleObject(
-          m_mutex,    // handle to mutex
-          INFINITE);  // no time-out interval
-#  endif
+#else
+    dwWaitResult = WaitForSingleObject(m_mutex, // handle to mutex
+                                       INFINITE); // no time-out interval
+#endif
     if (dwWaitResult == WAIT_FAILED)
-	  std::cout << "lock() error: " << GetLastError() << std::endl;
+      std::cout << "lock() error: " << GetLastError() << std::endl;
 #endif
   }
-	void unlock() {
-#if defined(VISP_HAVE_PTHREAD)
-    pthread_mutex_unlock( &m_mutex );
-#elif defined(_WIN32)
-  // Release ownership of the mutex object
-  if (!ReleaseMutex(m_mutex))
+  void unlock()
   {
-    // Handle error.
-    std::cout << "unlock() error: " << GetLastError() << std::endl;
-  }
+#if defined(VISP_HAVE_PTHREAD)
+    pthread_mutex_unlock(&m_mutex);
+#elif defined(_WIN32)
+    // Release ownership of the mutex object
+    if (!ReleaseMutex(m_mutex)) {
+      // Handle error.
+      std::cout << "unlock() error: " << GetLastError() << std::endl;
+    }
 #endif
   }
 
@@ -128,10 +129,9 @@ public:
 
     \brief Class that allows protection by mutex.
 
-    The following example shows how to use this class to protect a portion of code from concurrent access.
-    The scope of the mutex lock/unlock is determined by the constructor/destructor.
-    \code
-#include <visp3/core/vpMutex.h>
+    The following example shows how to use this class to protect a portion of
+code from concurrent access. The scope of the mutex lock/unlock is determined
+by the constructor/destructor. \code #include <visp3/core/vpMutex.h>
 
 int main()
 {
@@ -167,29 +167,23 @@ int main()
   class vpScopedLock
   {
   private:
-    vpMutex & _mutex;
+    vpMutex &_mutex;
 
-//  private:
-//#ifndef DOXYGEN_SHOULD_SKIP_THIS
-//    vpScopedLock &operator=(const vpScopedLock &){
-//      throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-//      return *this;
-//    }
-//#endif
+    //  private:
+    //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    //    vpScopedLock &operator=(const vpScopedLock &){
+    //      throw vpException(vpException::functionNotImplementedError,"Not
+    //      implemented!"); return *this;
+    //    }
+    //#endif
 
   public:
     //! Constructor that locks the mutex.
-    vpScopedLock(vpMutex & mutex)
-      : _mutex(mutex)
-    {
-      _mutex.lock();
-    }
+    vpScopedLock(vpMutex &mutex) : _mutex(mutex) { _mutex.lock(); }
     //! Destructor that unlocks the mutex.
-    ~vpScopedLock()
-    {
-      _mutex.unlock();
-    }
+    ~vpScopedLock() { _mutex.unlock(); }
   };
+
 private:
 #if defined(VISP_HAVE_PTHREAD)
   pthread_mutex_t m_mutex;

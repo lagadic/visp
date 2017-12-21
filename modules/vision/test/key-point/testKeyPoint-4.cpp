@@ -29,8 +29,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Test keypoint matching and pose estimation with mostly OpenCV functions calls
- * to detect potential memory leaks in testKeyPoint-2.cpp.
+ * Test keypoint matching and pose estimation with mostly OpenCV functions
+ *calls to detect potential memory leaks in testKeyPoint-2.cpp.
  *
  * Authors:
  * Souriya Trinh
@@ -45,24 +45,25 @@
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
-#include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/io/vpVideoReader.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/io/vpParseArgv.h>
-#include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpParseArgv.h>
+#include <visp3/io/vpVideoReader.h>
+#include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/vision/vpKeyPoint.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdh"
+#define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed,
+                bool &display);
 
 /*!
 
@@ -108,20 +109,29 @@ OPTIONS:                                               \n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed,
+                bool &display)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'c': click_allowed = false; break;
-    case 'd': display = false; break;
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'c':
+      click_allowed = false;
+      break;
+    case 'd':
+      display = false;
+      break;
+    case 'h':
+      usage(argv[0], NULL);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg_);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -139,10 +149,11 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 /*!
   \example testKeyPoint-4.cpp
 
-  \brief   Test keypoint matching and pose estimation with mostly OpenCV functions calls
-  to detect potential memory leaks in testKeyPoint-2.cpp.
+  \brief   Test keypoint matching and pose estimation with mostly OpenCV
+  functions calls to detect potential memory leaks in testKeyPoint-2.cpp.
 */
-int main(int argc, const char ** argv) {
+int main(int argc, const char **argv)
+{
   try {
     std::string env_ipath;
     bool opt_click_allowed = true;
@@ -150,27 +161,32 @@ int main(int argc, const char ** argv) {
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      exit (-1);
+      exit(-1);
     }
 
-    //Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+    // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
-    if(env_ipath.empty()) {
-      std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment variable value." << std::endl;
+    if (env_ipath.empty()) {
+      std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment "
+                   "variable value."
+                << std::endl;
       return -1;
     }
 
     vpImage<unsigned char> I, Imatch, Iref;
 
-    //Set the path location of the image sequence
+    // Set the path location of the image sequence
     std::string dirname = vpIoTools::createFilePath(env_ipath, "mbt/cube");
 
-    //Build the name of the image files
-    std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000.pgm");
+    // Build the name of the image files
+    std::string filenameRef =
+        vpIoTools::createFilePath(dirname, "image0000.pgm");
     vpImageIo::read(I, filenameRef);
     Iref = I;
-    std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d.pgm");
+    std::string filenameCur =
+        vpIoTools::createFilePath(dirname, "image%04d.pgm");
 
 #if defined VISP_HAVE_X11
     vpDisplayX display, display2;
@@ -185,16 +201,20 @@ int main(int argc, const char ** argv) {
     if (opt_display) {
       display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display.init(I, 0, 0, "ORB keypoints matching");
-      Imatch.resize(I.getHeight(), 2*I.getWidth());
+      Imatch.resize(I.getHeight(), 2 * I.getWidth());
       Imatch.insert(I, vpImagePoint(0, 0));
       display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-      display2.init(Imatch, 0, (int)I.getHeight()/vpDisplay::getDownScalingFactor(I) + 70, "ORB keypoints matching");
+      display2.init(Imatch, 0,
+                    (int)I.getHeight() / vpDisplay::getDownScalingFactor(I) +
+                        70,
+                    "ORB keypoints matching");
     }
 
     vpCameraParameters cam;
     vpMbEdgeTracker tracker;
-    //Load config for tracker
-    std::string tracker_config_file = vpIoTools::createFilePath(env_ipath, "mbt/cube.xml");
+    // Load config for tracker
+    std::string tracker_config_file =
+        vpIoTools::createFilePath(env_ipath, "mbt/cube.xml");
 
 #ifdef VISP_HAVE_XML2
     tracker.loadConfigFile(tracker_config_file);
@@ -210,7 +230,8 @@ int main(int argc, const char ** argv) {
     me.setSampleStep(4);
     me.setNbTotalSample(250);
     tracker.setMovingEdge(me);
-    cam.initPersProjWithoutDistortion(547.7367575, 542.0744058, 338.7036994, 234.5083345);
+    cam.initPersProjWithoutDistortion(547.7367575, 542.0744058, 338.7036994,
+                                      234.5083345);
     tracker.setCameraParameters(cam);
     tracker.setNearClippingDistance(0.01);
     tracker.setFarClippingDistance(100.0);
@@ -220,26 +241,27 @@ int main(int argc, const char ** argv) {
     tracker.setAngleAppear(vpMath::rad(89));
     tracker.setAngleDisappear(vpMath::rad(89));
 
-    //Load CAO model
-    std::string cao_model_file = vpIoTools::createFilePath(env_ipath, "mbt/cube.cao");
+    // Load CAO model
+    std::string cao_model_file =
+        vpIoTools::createFilePath(env_ipath, "mbt/cube.cao");
     tracker.loadModel(cao_model_file);
 
-    //Initialize the pose
-    std::string init_file = vpIoTools::createFilePath(env_ipath, "mbt/cube.init");
+    // Initialize the pose
+    std::string init_file =
+        vpIoTools::createFilePath(env_ipath, "mbt/cube.init");
     if (opt_display && opt_click_allowed) {
       tracker.initClick(I, init_file);
-    }
-    else
-    {
-      vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
+    } else {
+      vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719,
+                               2.063603907, 1.110231561, -0.4392789872);
       tracker.initFromPose(I, cMoi);
     }
 
-    //Get the init pose
+    // Get the init pose
     vpHomogeneousMatrix cMo;
     tracker.getPose(cMo);
 
-    //Init keypoints
+    // Init keypoints
     cv::Ptr<cv::FeatureDetector> detector;
     cv::Ptr<cv::DescriptorExtractor> extractor;
     cv::Ptr<cv::DescriptorMatcher> matcher;
@@ -253,40 +275,41 @@ int main(int argc, const char ** argv) {
 #endif
     matcher = cv::DescriptorMatcher::create("BruteForce-Hamming");
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020400 &&                                 \
+     VISP_HAVE_OPENCV_VERSION < 0x030000)
     detector->set("nLevels", 1);
 #endif
 
-    //Detect keypoints on the current image
+    // Detect keypoints on the current image
     std::vector<cv::KeyPoint> trainKeyPoints;
     cv::Mat matImg;
     vpImageConvert::convert(I, matImg);
     detector->detect(matImg, trainKeyPoints);
 
-
-    //Keep only keypoints on the cube
+    // Keep only keypoints on the cube
     std::vector<vpPolygon> polygons;
     std::vector<std::vector<vpPoint> > roisPt;
-    std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > > pair = tracker.getPolygonFaces(false);
+    std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
+        pair = tracker.getPolygonFaces(false);
     polygons = pair.first;
     roisPt = pair.second;
 
-    //Compute the 3D coordinates
+    // Compute the 3D coordinates
     std::vector<cv::Point3f> points3f;
-    vpKeyPoint::compute3DForPointsInPolygons(cMo, cam, trainKeyPoints, polygons, roisPt, points3f);
+    vpKeyPoint::compute3DForPointsInPolygons(cMo, cam, trainKeyPoints,
+                                             polygons, roisPt, points3f);
 
-
-    //Extract descriptors
+    // Extract descriptors
     cv::Mat trainDescriptors;
     extractor->compute(matImg, trainKeyPoints, trainDescriptors);
 
-    if(trainKeyPoints.size() != (size_t) trainDescriptors.rows || trainKeyPoints.size() != points3f.size()) {
+    if (trainKeyPoints.size() != (size_t)trainDescriptors.rows ||
+        trainKeyPoints.size() != points3f.size()) {
       std::cerr << "Problem with training data size !" << std::endl;
       return -1;
     }
 
-
-    //Init reader for getting the input image sequence
+    // Init reader for getting the input image sequence
     vpVideoReader g;
     g.setFileName(filenameCur);
     g.open(I);
@@ -294,7 +317,8 @@ int main(int argc, const char ** argv) {
 
     bool opt_click = false;
     vpMouseButton::vpMouseButtonType button;
-    while((opt_display && !g.end()) || (!opt_display && g.getFrameIndex() < 30)) {
+    while ((opt_display && !g.end()) ||
+           (!opt_display && g.getFrameIndex() < 30)) {
       g.acquire(I);
 
       vpImageConvert::convert(I, matImg);
@@ -307,23 +331,28 @@ int main(int argc, const char ** argv) {
       std::vector<std::vector<cv::DMatch> > knn_matches;
       std::vector<cv::DMatch> matches;
       matcher->knnMatch(queryDescriptors, trainDescriptors, knn_matches, 2);
-      for(std::vector<std::vector<cv::DMatch> >::const_iterator it = knn_matches.begin(); it != knn_matches.end(); ++it) {
-        if(it->size() > 1) {
+      for (std::vector<std::vector<cv::DMatch> >::const_iterator it =
+               knn_matches.begin();
+           it != knn_matches.end(); ++it) {
+        if (it->size() > 1) {
           double ratio = (*it)[0].distance / (*it)[1].distance;
-          if(ratio < 0.85) {
+          if (ratio < 0.85) {
             matches.push_back((*it)[0]);
           }
         }
       }
 
       vpPose estimated_pose;
-      for(std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
+      for (std::vector<cv::DMatch>::const_iterator it = matches.begin();
+           it != matches.end(); ++it) {
         vpPoint pt(points3f[(size_t)(it->trainIdx)].x,
-            points3f[(size_t)(it->trainIdx)].y,
-            points3f[(size_t)(it->trainIdx)].z);
+                   points3f[(size_t)(it->trainIdx)].y,
+                   points3f[(size_t)(it->trainIdx)].z);
 
         double x = 0.0, y = 0.0;
-        vpPixelMeterConversion::convertPoint(cam, queryKeyPoints[(size_t)(it->queryIdx)].pt.x, queryKeyPoints[(size_t)(it->queryIdx)].pt.y, x, y);
+        vpPixelMeterConversion::convertPoint(
+            cam, queryKeyPoints[(size_t)(it->queryIdx)].pt.x,
+            queryKeyPoints[(size_t)(it->queryIdx)].pt.y, x, y);
         pt.set_x(x);
         pt.set_y(y);
 
@@ -331,32 +360,35 @@ int main(int argc, const char ** argv) {
       }
 
       bool is_pose_estimated = false;
-      if(estimated_pose.npt >= 4) {
+      if (estimated_pose.npt >= 4) {
         try {
-          unsigned int nb_inliers = (unsigned int) (0.6 * estimated_pose.npt);
+          unsigned int nb_inliers = (unsigned int)(0.6 * estimated_pose.npt);
           estimated_pose.setRansacNbInliersToReachConsensus(nb_inliers);
           estimated_pose.setRansacThreshold(0.01);
           estimated_pose.setRansacMaxTrials(500);
           estimated_pose.computePose(vpPose::RANSAC, cMo);
           is_pose_estimated = true;
-        } catch(...) {
+        } catch (...) {
           is_pose_estimated = false;
         }
       }
 
-      if(opt_display) {
+      if (opt_display) {
         vpDisplay::display(I);
 
         Imatch.insert(I, vpImagePoint(0, Iref.getWidth()));
         vpDisplay::display(Imatch);
-        for(std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
-          vpImagePoint leftPt(trainKeyPoints[(size_t) it->trainIdx].pt.y, trainKeyPoints[(size_t) it->trainIdx].pt.x);
-          vpImagePoint rightPt(queryKeyPoints[(size_t) it->queryIdx].pt.y, queryKeyPoints[(size_t) it->queryIdx].pt.x
-              + Iref.getWidth());
+        for (std::vector<cv::DMatch>::const_iterator it = matches.begin();
+             it != matches.end(); ++it) {
+          vpImagePoint leftPt(trainKeyPoints[(size_t)it->trainIdx].pt.y,
+                              trainKeyPoints[(size_t)it->trainIdx].pt.x);
+          vpImagePoint rightPt(queryKeyPoints[(size_t)it->queryIdx].pt.y,
+                               queryKeyPoints[(size_t)it->queryIdx].pt.x +
+                                   Iref.getWidth());
           vpDisplay::displayLine(Imatch, leftPt, rightPt, vpColor::green);
         }
 
-        if(is_pose_estimated) {
+        if (is_pose_estimated) {
           tracker.setPose(I, cMo);
           tracker.display(I, cMo, cam, vpColor::red);
           vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none);
@@ -366,20 +398,19 @@ int main(int argc, const char ** argv) {
         vpDisplay::flush(I);
       }
 
-      //Click requested to process next image
+      // Click requested to process next image
       if (opt_click_allowed && opt_display) {
-        if(opt_click) {
+        if (opt_click) {
           vpDisplay::getClick(I, button, true);
-          if(button == vpMouseButton::button3) {
+          if (button == vpMouseButton::button3) {
             opt_click = false;
           }
         } else {
-          //Use right click to enable/disable step by step tracking
-          if(vpDisplay::getClick(I, button, false)) {
+          // Use right click to enable/disable step by step tracking
+          if (vpDisplay::getClick(I, button, false)) {
             if (button == vpMouseButton::button3) {
               opt_click = true;
-            }
-            else if(button == vpMouseButton::button1) {
+            } else if (button == vpMouseButton::button1) {
               break;
             }
           }
@@ -387,7 +418,7 @@ int main(int argc, const char ** argv) {
       }
     }
 
-  } catch(vpException &e) {
+  } catch (vpException &e) {
     std::cerr << e.what() << std::endl;
     return -1;
   }
@@ -396,7 +427,8 @@ int main(int argc, const char ** argv) {
   return 0;
 }
 #else
-int main() {
+int main()
+{
   std::cerr << "You need OpenCV library." << std::endl;
 
   return 0;

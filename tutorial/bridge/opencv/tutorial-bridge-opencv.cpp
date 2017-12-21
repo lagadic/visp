@@ -1,7 +1,7 @@
 //! \example tutorial-bridge-opencv.cpp
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/io/vpImageIo.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
 #include <opencv2/core/core.hpp>
@@ -22,8 +22,9 @@ int main()
   //! [Set ViSP camera parameters]
 
   //! [Set OpenCV camera parameters]
-  cv::Mat K = (cv::Mat_<double>(3,3) << cam.get_px(), 0, cam.get_u0(), 0, cam.get_py(), cam.get_v0(), 0, 0, 1);
-  cv::Mat D = (cv::Mat_<double>(4,1) << cam.get_kud(), 0, 0, 0);
+  cv::Mat K = (cv::Mat_<double>(3, 3) << cam.get_px(), 0, cam.get_u0(), 0,
+               cam.get_py(), cam.get_v0(), 0, 0, 1);
+  cv::Mat D = (cv::Mat_<double>(4, 1) << cam.get_kud(), 0, 0, 0);
   //! [Set OpenCV camera parameters]
 
   //! [Load ViSP image]
@@ -48,6 +49,6 @@ int main()
 
   //! [Save image]
   vpImageIo::write(IUndistorted, "chessboard-undistorted.pgm");
-  //! [Save image]
+//! [Save image]
 #endif
 }

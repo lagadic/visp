@@ -40,18 +40,19 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__)))
 
 #include <arpa/inet.h>
 #include <iostream>
-#include <vector>
 #include <string.h>
+#include <vector>
 
-#include <visp3/sensor/vpScanPoint.h>
-#include <visp3/sensor/vpLaserScan.h>
-#include <visp3/sensor/vpLaserScanner.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpException.h>
+#include <visp3/sensor/vpLaserScan.h>
+#include <visp3/sensor/vpLaserScanner.h>
+#include <visp3/sensor/vpScanPoint.h>
 
 /*!
 
@@ -78,8 +79,9 @@
 
 int main()
 {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  std::string ip = "131.254.12.119";
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||
+(defined(__APPLE__) && defined(__MACH__))) // UNIX std::string ip =
+"131.254.12.119";
 
   vpSickLDMRS laser;
   laser.setIpAddress(ip);
@@ -92,8 +94,8 @@ int main()
 
     // Prints all the measured points
     for (int layer=0; layer<4; layer++) {
-      std::vector<vpScanPoint> pointsInLayer = laserscan[layer].getScanPoints();
-      vpScanPoint p;
+      std::vector<vpScanPoint> pointsInLayer =
+laserscan[layer].getScanPoints(); vpScanPoint p;
 
       for (unsigned int i=0; i < pointsInLayer.size(); i++) {
         std::cout << pointsInLayer[i] << std::endl;
@@ -106,18 +108,20 @@ int main()
 */
 class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
 {
- public:
+public:
   enum MagicWord {
-    MagicWordC2 = 0xAFFEC0C2   ///< The magic word that allows to identify the messages that are sent by the Sick LD-MRS.
+    MagicWordC2 = 0xAFFEC0C2 ///< The magic word that allows to identify the
+                             ///< messages that are sent by the Sick LD-MRS.
   };
   enum DataType {
-    MeasuredData = 0x2202      ///< Flag to indicate that the body of a message contains measured data.
+    MeasuredData = 0x2202 ///< Flag to indicate that the body of a message
+                          ///< contains measured data.
   };
   vpSickLDMRS();
   /*! Copy constructor. */
   vpSickLDMRS(const vpSickLDMRS &sick)
-    : vpLaserScanner(sick), socket_fd(-1), body(NULL), vAngle(), time_offset(0),
-      isFirstMeasure(true), maxlen_body(104000)
+    : vpLaserScanner(sick), socket_fd(-1), body(NULL), vAngle(),
+      time_offset(0), isFirstMeasure(true), maxlen_body(104000)
   {
     *this = sick;
   };
@@ -131,8 +135,9 @@ class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
       time_offset = sick.time_offset;
       isFirstMeasure = sick.isFirstMeasure;
       maxlen_body = sick.maxlen_body;
-      if (body) delete [] body;
-      body = new unsigned char [104000];
+      if (body)
+        delete[] body;
+      body = new unsigned char[104000];
       memcpy(body, sick.body, maxlen_body);
     }
     return (*this);
@@ -142,7 +147,7 @@ class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
   bool setup();
   bool measure(vpLaserScan laserscan[4]);
 
- protected:
+protected:
 #if defined(_WIN32)
   SOCKET socket_fd;
 #else
@@ -153,7 +158,7 @@ class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
   double time_offset;
   bool isFirstMeasure;
   size_t maxlen_body;
- };
+};
 
 #endif
 

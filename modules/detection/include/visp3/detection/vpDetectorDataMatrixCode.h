@@ -39,33 +39,32 @@
 #ifndef __vpDetectorDataMatrixCode_h__
 #define __vpDetectorDataMatrixCode_h__
 
-#include <vector>
-#include <utility>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_DMTX
 
-#include <visp3/detection/vpDetectorBase.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/detection/vpDetectorBase.h>
 
 /*!
   \class vpDetectorDataMatrixCode
   \ingroup group_detection_barcode
   Base class for bar code detector. This class is a wrapper over libdmtx
-  available from http://www.libdmtx.org. Installation instructions are provided
-  here https://visp.inria.fr/3rd_dmtx.
+  available from http://www.libdmtx.org. Installation instructions are
+provided here https://visp.inria.fr/3rd_dmtx.
 
-  The detect() function allows to detect multiple QR codes in an image. Once detected,
-  for each QR code it is possible to retrieve the location of the corners using getPolygon(),
-  the encoded message using getMessage(), the bounding box using getBBox() and the center
-  of gravity using getCog().
+  The detect() function allows to detect multiple QR codes in an image. Once
+detected, for each QR code it is possible to retrieve the location of the
+corners using getPolygon(), the encoded message using getMessage(), the
+bounding box using getBBox() and the center of gravity using getCog().
 
-  The following sample code shows how to use this class to detect QR codes in an image.
-  \code
-#include <visp3/detection/vpDetectorDataMatrixCode.h>
-#include <visp3/io/vpImageIo.h>
+  The following sample code shows how to use this class to detect QR codes in
+an image. \code #include <visp3/detection/vpDetectorDataMatrixCode.h> #include
+<visp3/io/vpImageIo.h>
 
 int main()
 {
@@ -82,7 +81,8 @@ int main()
       std::vector<vpImagePoint> p = detector.getPolygon(i);
       for(size_t j=0; j < p.size(); j++)
         std::cout << "  Point " << j << ": " << p[j] << std::endl;
-      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" << std::endl;
+      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" <<
+std::endl;
     }
   }
 #endif
@@ -113,7 +113,7 @@ class VISP_EXPORT vpDetectorDataMatrixCode : public vpDetectorBase
 {
 public:
   vpDetectorDataMatrixCode();
-  virtual ~vpDetectorDataMatrixCode() {};
+  virtual ~vpDetectorDataMatrixCode(){};
   bool detect(const vpImage<unsigned char> &I);
 };
 

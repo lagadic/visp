@@ -42,31 +42,30 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#include "vpBound.h"
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpWireFrameSimulatorTypes.h>
-#include "vpBound.h"
 
-//Inventor includes
+// Inventor includes
 #if defined(VISP_HAVE_COIN3D)
-#include <Inventor/nodes/SoSeparator.h>
+#include <Inventor/VRMLnodes/SoVRMLCoordinate.h>
+#include <Inventor/VRMLnodes/SoVRMLGroup.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedFaceSet.h>
 #include <Inventor/VRMLnodes/SoVRMLIndexedLineSet.h>
-#include <Inventor/VRMLnodes/SoVRMLCoordinate.h>
-#include <Inventor/actions/SoWriteAction.h>
-#include <Inventor/actions/SoSearchAction.h>
-#include <Inventor/misc/SoChildList.h>
+#include <Inventor/VRMLnodes/SoVRMLShape.h>
 #include <Inventor/actions/SoGetMatrixAction.h>
 #include <Inventor/actions/SoGetPrimitiveCountAction.h>
+#include <Inventor/actions/SoSearchAction.h>
 #include <Inventor/actions/SoToVRML2Action.h>
-#include <Inventor/VRMLnodes/SoVRMLGroup.h>
-#include <Inventor/VRMLnodes/SoVRMLShape.h>
+#include <Inventor/actions/SoWriteAction.h>
+#include <Inventor/misc/SoChildList.h>
+#include <Inventor/nodes/SoSeparator.h>
 
-#include <vector>
 #include <list>
+#include <vector>
 
-typedef struct indexFaceSet
-{
-  indexFaceSet() : nbPt(0), pt(), nbIndex(0), index() {};
+typedef struct indexFaceSet {
+  indexFaceSet() : nbPt(0), pt(), nbIndex(0), index(){};
   int nbPt;
   std::vector<vpPoint> pt;
   int nbIndex;
@@ -75,22 +74,17 @@ typedef struct indexFaceSet
 
 #endif
 
-typedef enum
-{
-  BND_MODEL,
-  WRL_MODEL,
-  UNKNOWN_MODEL
-} Model_3D;
+typedef enum { BND_MODEL, WRL_MODEL, UNKNOWN_MODEL } Model_3D;
 
-Model_3D getExtension(const char* file);
-void set_scene_wrl (const char* str, Bound_scene *sc, float factor);
-void set_scene (const char*, Bound_scene *, float);
-void vp2jlc_matrix (const vpHomogeneousMatrix &, Matrix&);
+Model_3D getExtension(const char *file);
+void set_scene_wrl(const char *str, Bound_scene *sc, float factor);
+void set_scene(const char *, Bound_scene *, float);
+void vp2jlc_matrix(const vpHomogeneousMatrix &, Matrix &);
 
 #if defined(VISP_HAVE_COIN3D)
-void extractFaces(SoVRMLIndexedFaceSet* face_set, indexFaceSet *ifs);
-void ifsToBound (Bound*, std::list<indexFaceSet*> &);
-void destroyIfs(std::list<indexFaceSet*> &);
+void extractFaces(SoVRMLIndexedFaceSet *face_set, indexFaceSet *ifs);
+void ifsToBound(Bound *, std::list<indexFaceSet *> &);
+void destroyIfs(std::list<indexFaceSet *> &);
 #endif
 
 #endif

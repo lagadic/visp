@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpROTATIONMATRIX_H
 #define vpROTATIONMATRIX_H
 
@@ -45,22 +44,23 @@
   \brief Class that consider the particular case of rotation matrix
 */
 
-#include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpArray2D.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpPoseVector.h>
+#include <visp3/core/vpQuaternionVector.h>
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpRzyxVector.h>
 #include <visp3/core/vpRzyzVector.h>
 #include <visp3/core/vpThetaUVector.h>
 #include <visp3/core/vpTranslationVector.h>
-#include <visp3/core/vpQuaternionVector.h>
-#include <visp3/core/vpPoseVector.h>
 
 /*!
   \class vpRotationMatrix
 
   \ingroup group_core_transformations
 
-  \brief Implementation of a rotation matrix and operations on such kind of matrices.
+  \brief Implementation of a rotation matrix and operations on such kind of
+  matrices.
 
   The vpRotationMatrix considers the particular case of
   a rotation matrix.
@@ -79,21 +79,22 @@ public:
   explicit vpRotationMatrix(const vpRzyzVector &r);
   explicit vpRotationMatrix(const vpRxyzVector &r);
   explicit vpRotationMatrix(const vpRzyxVector &r);
-  explicit vpRotationMatrix(const vpQuaternionVector& q);
-  vpRotationMatrix(const double tux, const  double tuy, const double tuz);
+  explicit vpRotationMatrix(const vpQuaternionVector &q);
+  vpRotationMatrix(const double tux, const double tuy, const double tuz);
   /*!
     Destructor.
   */
-  virtual ~vpRotationMatrix() {};
+  virtual ~vpRotationMatrix(){};
 
   vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
-  vpRotationMatrix buildFrom(const vpThetaUVector &v) ;
+  vpRotationMatrix buildFrom(const vpThetaUVector &v);
   vpRotationMatrix buildFrom(const vpPoseVector &p);
   vpRotationMatrix buildFrom(const vpRzyzVector &v);
   vpRotationMatrix buildFrom(const vpRxyzVector &v);
   vpRotationMatrix buildFrom(const vpRzyxVector &v);
-  vpRotationMatrix buildFrom(const vpQuaternionVector& q);
-  vpRotationMatrix buildFrom(const double tux, const double tuy, const double tuz);
+  vpRotationMatrix buildFrom(const vpQuaternionVector &q);
+  vpRotationMatrix buildFrom(const double tux, const double tuy,
+                             const double tuz);
 
   void eye();
 
@@ -103,7 +104,7 @@ public:
   vpRotationMatrix inverse() const;
   void inverse(vpRotationMatrix &R) const;
 
-  bool isARotationMatrix() const  ;
+  bool isARotationMatrix() const;
 
   // copy operator from vpRotationMatrix
   vpRotationMatrix &operator=(const vpRotationMatrix &R);
@@ -120,7 +121,7 @@ public:
   vpRotationMatrix operator*(const double x) const;
   vpRotationMatrix &operator*=(const double x);
 
-  void printVector() ;
+  void printVector();
 
   /*!
     This function is not applicable to a rotation matrix that is always a
@@ -133,7 +134,8 @@ public:
     (void)nrows;
     (void)ncols;
     (void)flagNullify;
-    throw(vpException(vpException::fatalError, "Cannot resize a rotation matrix"));
+    throw(vpException(vpException::fatalError,
+                      "Cannot resize a rotation matrix"));
   };
 
   // transpose
@@ -148,12 +150,12 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {};
+  vp_deprecated void init(){};
   /*!
      \deprecated You should rather use eye().
    */
   vp_deprecated void setIdentity();
-  //@}
+//@}
 #endif
 
 private:
@@ -163,6 +165,6 @@ private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_EXPORT
 #endif
-vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R) ;
+vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R);
 
 #endif

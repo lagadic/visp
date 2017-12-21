@@ -37,7 +37,6 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file vpKalmanFilter.cpp
   \brief Generic kalman filtering implementation.
@@ -50,43 +49,47 @@
 
 /*!
   Initialize the Kalman filter.
-  
-  \param size_state_vector : Size of the state vector \f${\bf x}_{k}\f$ for one signal.
+
+  \param size_state_vector : Size of the state vector \f${\bf x}_{k}\f$ for
+  one signal.
 
   \param size_measure_vector : Size of the measure vector \f${\bf z}_{k}\f$
   for one signal.
 
   \param n_signal : Number of signal to filter.
 */
-void
-vpKalmanFilter::init(unsigned int size_state_vector, unsigned int size_measure_vector,
-                     unsigned int n_signal)
+void vpKalmanFilter::init(unsigned int size_state_vector,
+                          unsigned int size_measure_vector,
+                          unsigned int n_signal)
 {
   this->size_state = size_state_vector;
-  this->size_measure = size_measure_vector ;
-  this->nsignal = n_signal ;
-  F.resize(size_state*nsignal, size_state*nsignal) ;
-  H.resize(size_measure*nsignal,  size_state*nsignal) ;
+  this->size_measure = size_measure_vector;
+  this->nsignal = n_signal;
+  F.resize(size_state * nsignal, size_state * nsignal);
+  H.resize(size_measure * nsignal, size_state * nsignal);
 
-  R.resize(size_measure*nsignal, size_measure*nsignal) ;
-  Q.resize(size_state*nsignal, size_state*nsignal) ;
+  R.resize(size_measure * nsignal, size_measure * nsignal);
+  Q.resize(size_state * nsignal, size_state * nsignal);
 
-  Xest.resize(size_state*nsignal) ; Xest = 0;
-  Xpre.resize(size_state*nsignal) ; Xpre = 0 ;
+  Xest.resize(size_state * nsignal);
+  Xest = 0;
+  Xpre.resize(size_state * nsignal);
+  Xpre = 0;
 
-  Pest.resize(size_state*nsignal, size_state*nsignal) ; Pest = 0 ;
+  Pest.resize(size_state * nsignal, size_state * nsignal);
+  Pest = 0;
 
-  I.resize(size_state*nsignal, size_state*nsignal) ;
+  I.resize(size_state * nsignal, size_state * nsignal);
   //  init_done = false ;
-  iter = 0 ;
-  dt = -1 ;
+  iter = 0;
+  dt = -1;
 }
 
 /*!
   Construct a default Kalman filter.
 
   The verbose mode is by default desactivated.
-  
+
 */
 vpKalmanFilter::vpKalmanFilter()
   : iter(0), size_state(0), size_measure(0), nsignal(0), verbose_mode(false),
@@ -98,12 +101,13 @@ vpKalmanFilter::vpKalmanFilter()
   Construct a default Kalman filter by setting the number of signal to filter.
 
   The verbose mode is by default desactivated.
-  
+
   \param n_signal : Number of signal to filter.
 */
 vpKalmanFilter::vpKalmanFilter(unsigned int n_signal)
-  : iter(0), size_state(0), size_measure(0), nsignal(n_signal), verbose_mode(false),
-    Xest(), Xpre(), F(), H(), R(), Q(), dt(-1), Ppre(), Pest(), W(), I()
+  : iter(0), size_state(0), size_measure(0), nsignal(n_signal),
+    verbose_mode(false), Xest(), Xpre(), F(), H(), R(), Q(), dt(-1), Ppre(),
+    Pest(), W(), I()
 {
 }
 
@@ -111,19 +115,22 @@ vpKalmanFilter::vpKalmanFilter(unsigned int n_signal)
   Construct a Kalman filter.
 
   The verbose mode is by default desactivated.
-  
-  \param size_state_vector : Size of the state vector \f${\bf x}_{(k)}\f$ for one signal.
+
+  \param size_state_vector : Size of the state vector \f${\bf x}_{(k)}\f$ for
+  one signal.
 
   \param size_measure_vector : Size of the measure vector \f${\bf z}_{(k)}\f$
   for one signal.
 
   \param n_signal : Number of signal to filter.
 */
-vpKalmanFilter::vpKalmanFilter(unsigned int size_state_vector, unsigned int size_measure_vector, unsigned int n_signal)
+vpKalmanFilter::vpKalmanFilter(unsigned int size_state_vector,
+                               unsigned int size_measure_vector,
+                               unsigned int n_signal)
   : iter(0), size_state(0), size_measure(0), nsignal(0), verbose_mode(false),
     Xest(), Xpre(), F(), H(), R(), Q(), dt(-1), Ppre(), Pest(), W(), I()
 {
-  init( size_state_vector, size_measure_vector, n_signal) ;
+  init(size_state_vector, size_measure_vector, n_signal);
 }
 
 /*!
@@ -135,47 +142,46 @@ vpKalmanFilter::vpKalmanFilter(unsigned int size_state_vector, unsigned int size
   \f]
   and the state prediction covariance by
   \f[
-  {\bf P}_{k \mid k-1}  = {\bf F}_{k-1}  {\bf P}_{k-1 \mid k-1} {\bf F}^T_{k-1}
+  {\bf P}_{k \mid k-1}  = {\bf F}_{k-1}  {\bf P}_{k-1 \mid k-1} {\bf
+  F}^T_{k-1}
   + {\bf Q}_k
   \f]
 
 */
 
-void
-vpKalmanFilter::prediction()
+void vpKalmanFilter::prediction()
 {
-  if (Xest.getRows() != size_state*nsignal) {
-    std::cout << " in vpKalmanFilter::prediction()" << Xest.getRows()
-	      <<" " << size_state*nsignal<<  std::endl ;
+  if (Xest.getRows() != size_state * nsignal) {
+    std::cout << " in vpKalmanFilter::prediction()" << Xest.getRows() << " "
+              << size_state * nsignal << std::endl;
     std::cout << " Error : Filter non initialized " << std::endl;
-    exit(1) ;
+    exit(1);
   }
 
-//   if (!init_done) {
-//     std::cout << " in vpKalmanFilter::prediction()" << Xest.getRows()<<" " << size_state<<  std::endl ;
-//     std::cout << " Error : Filter non initialized " << std::endl;
-//     exit(1) ;
-//     return;
-//   }
-  
+  //   if (!init_done) {
+  //     std::cout << " in vpKalmanFilter::prediction()" << Xest.getRows()<<"
+  //     " << size_state<<  std::endl ; std::cout << " Error : Filter non
+  //     initialized " << std::endl; exit(1) ; return;
+  //   }
+
   if (verbose_mode) {
-    std::cout << "F = " << std::endl <<  F << std::endl ;
-    std::cout << "Xest = "<< std::endl  << Xest << std::endl  ;  
+    std::cout << "F = " << std::endl << F << std::endl;
+    std::cout << "Xest = " << std::endl << Xest << std::endl;
   }
   // Prediction
   // Bar-Shalom  5.2.3.2
-  Xpre = F*Xest  ;
+  Xpre = F * Xest;
   if (verbose_mode) {
-    std::cout << "Xpre = "<< std::endl  << Xpre << std::endl  ;
-    std::cout << "Q = "<< std::endl  << Q << std::endl  ;  
-    std::cout << "Pest " << std::endl << Pest << std::endl ;
+    std::cout << "Xpre = " << std::endl << Xpre << std::endl;
+    std::cout << "Q = " << std::endl << Q << std::endl;
+    std::cout << "Pest " << std::endl << Pest << std::endl;
   }
   // Bar-Shalom  5.2.3.5
-  Ppre = F*Pest*F.t() + Q ;
+  Ppre = F * Pest * F.t() + Q;
 
   // Matrice de covariance de l'erreur de prediction
-  if (verbose_mode) 
-    std::cout << "Ppre " << std::endl << Ppre << std::endl ;
+  if (verbose_mode)
+    std::cout << "Ppre " << std::endl << Ppre << std::endl;
 }
 
 /*!
@@ -183,7 +189,8 @@ vpKalmanFilter::prediction()
   Update the Kalman filter by applying the filtering equations and
   increment the filter iteration (vpKalmanFilter::iter).
 
-  \param z : Measure (or observation) \f${\bf z}_k\f$ provided at iteration \f$k\f$.
+  \param z : Measure (or observation) \f${\bf z}_k\f$ provided at iteration
+  \f$k\f$.
 
   The filtering equation is given by:
   \f[
@@ -197,10 +204,8 @@ vpKalmanFilter::prediction()
   \f]
   and where the updated covariance of the state is given by
   \f[
-  {\bf P}_{k \mid k} = \left({\bf I} - {\bf W}_k {\bf H} \right)  {\bf P}_{k \mid k-1}
-  \f]
-  or in a symetric form
-  \f[
+  {\bf P}_{k \mid k} = \left({\bf I} - {\bf W}_k {\bf H} \right)  {\bf P}_{k
+  \mid k-1} \f] or in a symetric form \f[
   {\bf P}_{k \mid k} = {\bf P}_{k \mid k-1} - {\bf W}_k {\bf S}_k {\bf W}^T_k
   \f]
   with
@@ -209,39 +214,37 @@ vpKalmanFilter::prediction()
   \f]
 
 */
-void
-vpKalmanFilter::filtering(const vpColVector &z)
+void vpKalmanFilter::filtering(const vpColVector &z)
 {
   if (verbose_mode)
-    std::cout << "z " << std::endl << z << std::endl ;
+    std::cout << "z " << std::endl << z << std::endl;
   // Bar-Shalom  5.2.3.11
-  vpMatrix S =  H*Ppre*H.t() + R ;
+  vpMatrix S = H * Ppre * H.t() + R;
   if (verbose_mode)
-    std::cout << "S " << std::endl << S << std::endl ;
+    std::cout << "S " << std::endl << S << std::endl;
 
-  W = (Ppre * H.t())* (S).inverseByLU() ;
+  W = (Ppre * H.t()) * (S).inverseByLU();
   if (verbose_mode)
-    std::cout << "W " << std::endl << W << std::endl ;
+    std::cout << "W " << std::endl << W << std::endl;
   // Bar-Shalom  5.2.3.15
-  Pest = Ppre - W*S*W.t() ;
+  Pest = Ppre - W * S * W.t();
   if (verbose_mode)
-    std::cout << "Pest " << std::endl << Pest << std::endl ;
+    std::cout << "Pest " << std::endl << Pest << std::endl;
 
   if (0) {
     // Bar-Shalom  5.2.3.16
     // numeriquement plus stable que  5.2.3.15
-    vpMatrix  Pestinv  ;
-    Pestinv = Ppre.inverseByLU()  + H.t() * R.inverseByLU()*H ;
-    Pest =   Pestinv.inverseByLU() ;
+    vpMatrix Pestinv;
+    Pestinv = Ppre.inverseByLU() + H.t() * R.inverseByLU() * H;
+    Pest = Pestinv.inverseByLU();
   }
   // Bar-Shalom  5.2.3.12 5.2.3.13 5.2.3.7
-  Xest = Xpre + (W*(z - (H*Xpre))) ;
+  Xest = Xpre + (W * (z - (H * Xpre)));
   if (verbose_mode)
-    std::cout << "Xest " << std::endl << Xest << std::endl ;
-  
-  iter++ ;
-}
+    std::cout << "Xest " << std::endl << Xest << std::endl;
 
+  iter++;
+}
 
 #if 0
 

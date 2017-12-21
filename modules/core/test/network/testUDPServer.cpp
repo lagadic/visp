@@ -40,14 +40,15 @@
 */
 
 #include <cstdlib>
-#include <iostream>
-#include <vector>
 #include <cstring>
-#include <sstream>
+#include <iostream>
 #include <iterator>
+#include <sstream>
+#include <vector>
 #include <visp3/core/vpUDPServer.h>
 
-namespace {
+namespace
+{
 struct DataType {
   double double_val;
   int int_val;
@@ -57,21 +58,26 @@ struct DataType {
 };
 }
 
-int main() {
+int main()
+{
   try {
     int port = 50037;
     vpUDPServer server(port);
 
     std::string msg = "", hostInfo = "";
-    //Receive and send custom data type
+    // Receive and send custom data type
     int res = server.receive(msg, hostInfo);
     if (res) {
       DataType data_type;
-      memcpy(&data_type.double_val, msg.c_str(), sizeof(data_type.double_val));
-      memcpy(&data_type.int_val, msg.c_str()+sizeof(data_type.double_val), sizeof(data_type.int_val));
-      std::cout << "Server received double_val: " << data_type.double_val << " ; int_val: " << data_type.int_val << " from: " << hostInfo << std::endl;
+      memcpy(&data_type.double_val, msg.c_str(),
+             sizeof(data_type.double_val));
+      memcpy(&data_type.int_val, msg.c_str() + sizeof(data_type.double_val),
+             sizeof(data_type.int_val));
+      std::cout << "Server received double_val: " << data_type.double_val
+                << " ; int_val: " << data_type.int_val
+                << " from: " << hostInfo << std::endl;
 
-      //Get address and port
+      // Get address and port
       std::istringstream iss(hostInfo);
       std::vector<std::string> tokens;
       std::copy(std::istream_iterator<std::string>(iss),
@@ -79,22 +85,25 @@ int main() {
                 std::back_inserter(tokens));
       data_type.double_val += 1.5;
       data_type.int_val += 2;
-      char data[sizeof(data_type.double_val)+sizeof(data_type.int_val)];
+      char data[sizeof(data_type.double_val) + sizeof(data_type.int_val)];
       memcpy(data, &data_type.double_val, sizeof(data_type.double_val));
-      memcpy(data+sizeof(data_type.double_val), &data_type.int_val, sizeof(data_type.int_val));
-      msg = std::string(data, sizeof(data_type.double_val)+sizeof(data_type.int_val));
+      memcpy(data + sizeof(data_type.double_val), &data_type.int_val,
+             sizeof(data_type.int_val));
+      msg = std::string(data, sizeof(data_type.double_val) +
+                                  sizeof(data_type.int_val));
 
       server.send(msg, tokens[1], atoi(tokens[2].c_str()));
     }
 
-    //Receive and send message
+    // Receive and send message
     while (true) {
       int res = server.receive(msg, hostInfo, 5000);
       if (res) {
-        std::cout << "Server received: " << msg << " from: " << hostInfo << std::endl;
+        std::cout << "Server received: " << msg << " from: " << hostInfo
+                  << std::endl;
         std::cout << "Reply to the client: Echo: " << msg << std::endl;
 
-        //Get address and port
+        // Get address and port
         std::istringstream iss(hostInfo);
         std::vector<std::string> tokens;
         std::copy(std::istream_iterator<std::string>(iss),

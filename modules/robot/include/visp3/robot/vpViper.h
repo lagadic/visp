@@ -47,10 +47,10 @@
 
 */
 
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
-#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/robot/vpRobotException.h>
 
@@ -60,10 +60,10 @@
 
   \ingroup group_robot_real_arm group_robot_simu_arm
 
-  \brief Modelisation of the ADEPT Viper robot 
+  \brief Modelisation of the ADEPT Viper robot
 
-  This robot has six degrees of freedom. The model of the robot is the following:
-  \image html model-viper.png Model of the Viper 850 robot.
+  This robot has six degrees of freedom. The model of the robot is the
+  following: \image html model-viper.png Model of the Viper 850 robot.
 
   The non modified Denavit-Hartenberg representation of the robot is
   given in the table below, where \f$q_1^*, \ldots, q_6^*\f$
@@ -97,11 +97,11 @@
 
   - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
     M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
-    a calibration stage. We can also consider a custom tool TOOL_CUSTOM and set this
-    during robot initialisation or using set_eMc().
+    a calibration stage. We can also consider a custom tool TOOL_CUSTOM and
+  set this during robot initialisation or using set_eMc().
 
   - \f$ {\cal F}_s \f$: the force/torque sensor frame, with \f$d7=0.0666\f$.
-  
+
   The forward kinematics of the robot is implemented in get_fMw(),
   get_fMe() and get_fMc().
 
@@ -112,22 +112,26 @@
 */
 class VISP_EXPORT vpViper
 {
- public:
+public:
   vpViper();
-  virtual ~vpViper() {};
+  virtual ~vpViper(){};
 
   /** @name Inherited functionalities from vpViper */
   //@{
-  vpHomogeneousMatrix getForwardKinematics(const vpColVector & q) const;
-  unsigned int getInverseKinematicsWrist(const vpHomogeneousMatrix & fMw, vpColVector & q, const bool &verbose=false) const;
-  unsigned int getInverseKinematics(const vpHomogeneousMatrix & fMc, vpColVector & q, const bool &verbose=false) const;
-  vpHomogeneousMatrix get_fMc (const vpColVector & q) const;
-  void get_fMw(const vpColVector & q, vpHomogeneousMatrix & fMw) const;
-  void get_wMe(vpHomogeneousMatrix & wMe) const;
-  void get_eMc(vpHomogeneousMatrix & eMc) const;
-  void get_eMs(vpHomogeneousMatrix & eMs) const;
-  void get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe) const;
-  void get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc) const;
+  vpHomogeneousMatrix getForwardKinematics(const vpColVector &q) const;
+  unsigned int getInverseKinematicsWrist(const vpHomogeneousMatrix &fMw,
+                                         vpColVector &q,
+                                         const bool &verbose = false) const;
+  unsigned int getInverseKinematics(const vpHomogeneousMatrix &fMc,
+                                    vpColVector &q,
+                                    const bool &verbose = false) const;
+  vpHomogeneousMatrix get_fMc(const vpColVector &q) const;
+  void get_fMw(const vpColVector &q, vpHomogeneousMatrix &fMw) const;
+  void get_wMe(vpHomogeneousMatrix &wMe) const;
+  void get_eMc(vpHomogeneousMatrix &eMc) const;
+  void get_eMs(vpHomogeneousMatrix &eMs) const;
+  void get_fMe(const vpColVector &q, vpHomogeneousMatrix &fMe) const;
+  void get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const;
 
   void get_cMe(vpHomogeneousMatrix &cMe) const;
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
@@ -136,26 +140,30 @@ class VISP_EXPORT vpViper
   void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
 
   virtual void set_eMc(const vpHomogeneousMatrix &eMc_);
-  virtual void set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_);
+  virtual void set_eMc(const vpTranslationVector &etc_,
+                       const vpRxyzVector &erc_);
 
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;
   double getCoupl56() const;
   //@}
 
-  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpViper & viper);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                              const vpViper &viper);
 
- private:
-  bool convertJointPositionInLimits(unsigned int joint, const double &q, double &q_mod, const bool &verbose=false) const;
+private:
+  bool convertJointPositionInLimits(unsigned int joint, const double &q,
+                                    double &q_mod,
+                                    const bool &verbose = false) const;
 
- public:
+public:
   static const unsigned int njoint; ///< Number of joint.
 
- protected:
+protected:
   vpHomogeneousMatrix eMc; //!< End effector to camera transformation
   // Minimal representation of eMc
   vpTranslationVector etc; // meters
-  vpRxyzVector        erc; // radian
+  vpRxyzVector erc;        // radian
 
   // Denavit-Hartenberg parameters
   double a1, d1; //!< for joint 1
@@ -165,11 +173,10 @@ class VISP_EXPORT vpViper
   double d6;     //!< for joint 6
   double d7;     //!< for force/torque location
   double c56;    //!< Mechanical coupling between joint 5 and joint 6
-  
+
   // Software joint limits in radians
   vpColVector joint_max; // Maximal value of the joints
   vpColVector joint_min; // Minimal value of the joints
 };
 
 #endif
-

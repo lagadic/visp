@@ -37,8 +37,6 @@
  *
  *****************************************************************************/
 
-
-
 #ifndef vpBasicFeature_H
 #define vpBasicFeature_H
 
@@ -47,15 +45,15 @@
   \brief class that defines what is a visual feature
 */
 
-#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpMatrix.h>
 
 // Display Issue
 
 // Meter/pixel conversion
 #include <visp3/core/vpCameraParameters.h>
 
-//Color / image / display
+// Color / image / display
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
@@ -71,7 +69,6 @@
 // #define FEATURE_LINE7 0x40
 // #define FEATURE_LINE8 0x80
 
-
 /*!
   \class vpBasicFeature
   \ingroup group_core_features
@@ -80,86 +77,84 @@
 class VISP_EXPORT vpBasicFeature
 {
 public: // Public constantes
-  static const unsigned int FEATURE_LINE [32];
+  static const unsigned int FEATURE_LINE[32];
 
-  enum {
-    FEATURE_ALL = 0xffff
-  };
+  enum { FEATURE_ALL = 0xffff };
   /*!
     \enum vpBasicFeatureDeallocatorType
     Indicates who should deallocate the feature.
 
   */
-  typedef enum
-  {
-    user,
-    vpServo
-  } vpBasicFeatureDeallocatorType;
+  typedef enum { user, vpServo } vpBasicFeatureDeallocatorType;
 
 protected:
   //! State of the visual feature.
-  vpColVector s ;
+  vpColVector s;
   //! Dimension of the visual feature.
-  unsigned int dim_s ;
-  //int featureLine[8] ;
-  //! Ensure that all the parameters needed to compute the iteraction matrix are set.
+  unsigned int dim_s;
+  // int featureLine[8] ;
+  //! Ensure that all the parameters needed to compute the iteraction matrix
+  //! are set.
   bool *flags;
   //! Number of parameters needed to compute the interaction matrix.
   unsigned int nbParameters;
 
 public:
-  vpBasicFeature() ;
-  vpBasicFeature(const vpBasicFeature &f) ;
+  vpBasicFeature();
+  vpBasicFeature(const vpBasicFeature &f);
   virtual ~vpBasicFeature();
 
   /** @name Inherited functionalities from vpBasicFeature */
   //@{
   /*! Return the dimension of the feature vector \f$\bf s\f$. */
-  unsigned int dimension_s() { return dim_s ; }
+  unsigned int dimension_s() { return dim_s; }
 
   virtual void display(const vpCameraParameters &cam,
                        const vpImage<unsigned char> &I,
-                       const vpColor &color=vpColor::green,
-                       unsigned int thickness=1) const = 0;
+                       const vpColor &color = vpColor::green,
+                       unsigned int thickness = 1) const = 0;
   virtual void display(const vpCameraParameters &cam,
                        const vpImage<vpRGBa> &I,
-                       const vpColor &color=vpColor::green,
-                       unsigned int thickness=1) const = 0;
+                       const vpColor &color = vpColor::green,
+                       unsigned int thickness = 1) const = 0;
 
-  virtual void init() = 0 ;
+  virtual void init() = 0;
 
   virtual vpColVector error(const vpBasicFeature &s_star,
-                            const unsigned int select= FEATURE_ALL);
+                            const unsigned int select = FEATURE_ALL);
 
   // Get the feature vector.
-  vpColVector get_s(unsigned int select=FEATURE_ALL) const;
-  vpBasicFeatureDeallocatorType getDeallocate() { return deallocate ; }
+  vpColVector get_s(unsigned int select = FEATURE_ALL) const;
+  vpBasicFeatureDeallocatorType getDeallocate() { return deallocate; }
 
   // Get the feature vector dimension.
-  unsigned int getDimension(const unsigned int select=FEATURE_ALL) const;
+  unsigned int getDimension(const unsigned int select = FEATURE_ALL) const;
   //! Compute the interaction matrix from a subset of the possible features.
   virtual vpMatrix interaction(const unsigned int select = FEATURE_ALL) = 0;
   //! Return element \e i in the state vector  (usage : x = s[i] )
-  virtual inline double operator[](const unsigned int i) const {  return s[i]; }
-  vpBasicFeature &operator=(const vpBasicFeature &f) ;
+  virtual inline double operator[](const unsigned int i) const
+  {
+    return s[i];
+  }
+  vpBasicFeature &operator=(const vpBasicFeature &f);
   //! Print the name of the feature.
-  virtual void print(const unsigned int select= FEATURE_ALL) const = 0 ;
+  virtual void print(const unsigned int select = FEATURE_ALL) const = 0;
 
-  virtual vpBasicFeature *duplicate() const = 0 ;
+  virtual vpBasicFeature *duplicate() const = 0;
 
-  void setDeallocate(vpBasicFeatureDeallocatorType d) { deallocate = d ; }
+  void setDeallocate(vpBasicFeatureDeallocatorType d) { deallocate = d; }
   void setFlags();
   //@}
 
   //! Select all the features.
-  static  unsigned int selectAll()  { return FEATURE_ALL ; }
+  static unsigned int selectAll() { return FEATURE_ALL; }
 
 protected:
   void resetFlags();
 
 protected:
-  vpBasicFeatureDeallocatorType deallocate ;
-} ;
+  vpBasicFeatureDeallocatorType deallocate;
+};
 
 #endif
 

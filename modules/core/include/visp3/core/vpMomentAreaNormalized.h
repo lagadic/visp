@@ -52,45 +52,54 @@ class vpMomentCentered;
 
   \ingroup group_core_moments
 
-  \brief Class handling the normalized surface moment that is invariant in scale and used to estimate depth.
+  \brief Class handling the normalized surface moment that is invariant in
+scale and used to estimate depth.
 
   This moment depends on vpMomentCentered.
 
   The idea behind vpMomentAreaNormalized is described in \cite Tahri05z.
 
-  During a visual servoing process, a vpMomentAreaNormalized will converge towards the desired depth when the current surface will converge to the destination surface.
-  It is defined as follows: \f$ a_n=Z^* \sqrt{\frac{a^*}{a}} \f$ where \e a is the current surface and \e a* the destination surface.
-  Consequently, the vpMomentAreaNormalized needs to have information about the desired depth \e Z* and the desired surface \e a*.
+  During a visual servoing process, a vpMomentAreaNormalized will converge
+towards the desired depth when the current surface will converge to the
+destination surface. It is defined as follows: \f$ a_n=Z^*
+\sqrt{\frac{a^*}{a}} \f$ where \e a is the current surface and \e a* the
+destination surface. Consequently, the vpMomentAreaNormalized needs to have
+information about the desired depth \e Z* and the desired surface \e a*.
 
   \warning About the order of the object.
-  The surface (refered to as \e a in the above paragraph) depends of the nature of the object.
-  - In case of a continuous object (when vpMomentObject::getType() is vpMomentObject::DENSE_FULL_OBJECT or vpMomentObject::DENSE_POLYGON) \f$a=m_{00}\f$.
-  - In case of a discrete object (when vpMomentObject::getType() is vpMomentObject::DISCRETE) \f$a=\mu_{20}+\mu_{02}\f$.
+  The surface (refered to as \e a in the above paragraph) depends of the
+nature of the object.
+  - In case of a continuous object (when vpMomentObject::getType() is
+vpMomentObject::DENSE_FULL_OBJECT or vpMomentObject::DENSE_POLYGON)
+\f$a=m_{00}\f$.
+  - In case of a discrete object (when vpMomentObject::getType() is
+vpMomentObject::DISCRETE) \f$a=\mu_{20}+\mu_{02}\f$.
 
-  Therefore, a vpMomentObject has to be of minimum order 2 in order to compute a vpMomentAreaNormalized moment in the discrete case
-  and of minimum order 0 in continous cases.
+  Therefore, a vpMomentObject has to be of minimum order 2 in order to compute
+a vpMomentAreaNormalized moment in the discrete case and of minimum order 0 in
+continous cases.
 
   This example shows a computation in the discrete case.
   \code
+#include <visp3/core/vpMomentAreaNormalized.h>
+#include <visp3/core/vpMomentCentered.h>
+#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentAreaNormalized.h>
 
 int main()
 {
   vpPoint p;
   std::vector<vpPoint> vec_p; // vector that contains object points
 
-  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane of point 1
-  vec_p.push_back(p);
-  p.set_x(2); p.set_y(2); // coordinates in meters in the image plane of point 2
-  vec_p.push_back(p);
+  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane of point
+1 vec_p.push_back(p); p.set_x(2); p.set_y(2); // coordinates in meters in the
+image plane of point 2 vec_p.push_back(p);
 
-  //////////////////////////////REFERENCE VALUES////////////////////////////////
-  vpMomentObject obj(2); // Object where all the moment defined with
+  //////////////////////////////REFERENCE
+VALUES//////////////////////////////// vpMomentObject obj(2); // Object where
+all the moment defined with
                          // i+j <= 2 will be computed below. Order is
                          // 2 because in discrete mode, the surface
                          // computation is a=mu02+mu02
@@ -126,29 +135,32 @@ int main()
 An:1.41421
   \endcode
 */
-class VISP_EXPORT vpMomentAreaNormalized : public vpMoment {
- private:
-	double desiredSurface;
-	double desiredDepth;
- public:
-  vpMomentAreaNormalized(double desiredSurface, double desiredDepth);
-  virtual ~vpMomentAreaNormalized() {};
-        void compute();
-        /*!
-        Retrieves the desired depth \e Z* as specified in the constructor.
-        */
-        double getDesiredDepth() const { return desiredDepth; }
-        /*!
-        Retrieves the desired surface \e a* as specified in the constructor.
-        */
-        double getDesiredSurface() const { return desiredSurface; }
+class VISP_EXPORT vpMomentAreaNormalized : public vpMoment
+{
+private:
+  double desiredSurface;
+  double desiredDepth;
 
-        /*!
-        Moment name.
-        */
-        const char* name() const {return "vpMomentAreaNormalized";}
-        friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentAreaNormalized& v);
-        void printDependencies(std::ostream& os) const;
+public:
+  vpMomentAreaNormalized(double desiredSurface, double desiredDepth);
+  virtual ~vpMomentAreaNormalized(){};
+  void compute();
+  /*!
+  Retrieves the desired depth \e Z* as specified in the constructor.
+  */
+  double getDesiredDepth() const { return desiredDepth; }
+  /*!
+  Retrieves the desired surface \e a* as specified in the constructor.
+  */
+  double getDesiredSurface() const { return desiredSurface; }
+
+  /*!
+  Moment name.
+  */
+  const char *name() const { return "vpMomentAreaNormalized"; }
+  friend VISP_EXPORT std::ostream &
+  operator<<(std::ostream &os, const vpMomentAreaNormalized &v);
+  void printDependencies(std::ostream &os) const;
 };
 
 #endif

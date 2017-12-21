@@ -43,11 +43,9 @@
   degrees of freedom).
 */
 
-
-
 #include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpViper850.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/robot/vpViper850.h>
 
 #include <iostream>
 
@@ -60,24 +58,25 @@ int main()
     vpViper850 viper850;
     vpCameraParameters cam;
 
-    std::cout << "-- Default settings for Viper 850  ---" 
-              << std::endl;
+    std::cout << "-- Default settings for Viper 850  ---" << std::endl;
     std::cout << viper850 << std::endl;
     viper850.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
-    
-    std::cout << "-- Settings associated to the Marlin F033C camera without distortion ---" 
+
+    std::cout << "-- Settings associated to the Marlin F033C camera without "
+                 "distortion ---"
               << std::endl;
-    viper850.init( vpViper850::TOOL_MARLIN_F033C_CAMERA);
+    viper850.init(vpViper850::TOOL_MARLIN_F033C_CAMERA);
 
     std::cout << viper850 << std::endl;
     viper850.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
 
-    std::cout << "-- Settings associated to the Marlin F033C camera with distortion ------" 
+    std::cout << "-- Settings associated to the Marlin F033C camera with "
+                 "distortion ------"
               << std::endl;
-    viper850.init( vpViper850::TOOL_MARLIN_F033C_CAMERA,
-                   vpCameraParameters::perspectiveProjWithDistortion);
+    viper850.init(vpViper850::TOOL_MARLIN_F033C_CAMERA,
+                  vpCameraParameters::perspectiveProjWithDistortion);
     std::cout << viper850 << std::endl;
     viper850.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
@@ -92,7 +91,7 @@ int main()
     qmotor[5] = vpMath::rad(13.37);
 #else
     qmotor[0] = vpMath::rad(0);
-    qmotor[1] = vpMath::rad(0-90);
+    qmotor[1] = vpMath::rad(0 - 90);
     qmotor[2] = vpMath::rad(0);
     qmotor[3] = vpMath::rad(0);
     qmotor[4] = vpMath::rad(0);
@@ -111,15 +110,12 @@ int main()
     std::cout << "fMe:" << std::endl
               << "\tt: " << t.t() << std::endl
               << "\trzyz (rad): " << r.t() << std::endl
-              << "\trzyz (deg): " << vpMath::deg(r[0])
-              << " " << vpMath::deg(r[1])
-              << " " << vpMath::deg(r[2]) << std::endl;
+              << "\trzyz (deg): " << vpMath::deg(r[0]) << " "
+              << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << std::endl;
 
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return 1;
   }
 }
-

@@ -44,14 +44,14 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include "vpBound.h"
 #include "vpArit.h"
+#include "vpBound.h"
 
-void open_display (void);
-void close_display (void);
-void point_3D_2D (Point3f *p3, Index size, int xsize, int ysize, Point2i *p2);
-void set_Bound_face_display (Bound *bp, Byte b);
-void wireframe_Face (Face *fp, Point2i *pp);
+void open_display(void);
+void close_display(void);
+void point_3D_2D(Point3f *p3, Index size, int xsize, int ysize, Point2i *p2);
+void set_Bound_face_display(Bound *bp, Byte b);
+void wireframe_Face(Face *fp, Point2i *pp);
 
 #endif
 #endif

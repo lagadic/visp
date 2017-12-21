@@ -47,34 +47,32 @@
 
 */
 
-
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h> // Debug trace
 #include <stdlib.h>
 #include <vector>
-#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_DC1394))
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h> // Debug trace
+#if (defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_DC1394))
 
-#include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/visual_features/vpFeatureSegment.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/vs/vpServo.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/robot/vpRobotAfma6.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpException.h>
-#include <visp3/vs/vpServoDisplay.h>
 #include <visp3/blob/vpDot.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpPoint.h>
 #include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/robot/vpRobotAfma6.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeatureSegment.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/vs/vpServoDisplay.h>
 
-int
-main()
+int main()
 {
   // Log file creation in /tmp/$USERNAME/log.dat
   // This file contains by line:
@@ -88,17 +86,15 @@ main()
 
   // Create a log filename to save velocities...
   std::string logdirname;
-  logdirname ="/tmp/" + username;
+  logdirname = "/tmp/" + username;
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(logdirname) == false) {
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    }
-    catch (...) {
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
+    } catch (...) {
+      std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       exit(-1);
     }
@@ -109,140 +105,136 @@ main()
   // Open the log file name
   std::ofstream flog(logfilename.c_str());
 
-  try
-  {
-    vpServo task ;
+  try {
+    vpServo task;
 
-    vpImage<unsigned char> I ;
+    vpImage<unsigned char> I;
 
     vp1394TwoGrabber g;
     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-    g.open(I) ;
+    g.open(I);
 
-    g.acquire(I) ;
+    g.acquire(I);
 
 #ifdef VISP_HAVE_X11
-    vpDisplayX display(I,100,100,"Current image") ;
+    vpDisplayX display(I, 100, 100, "Current image");
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV display(I,100,100,"Current image") ;
+    vpDisplayOpenCV display(I, 100, 100, "Current image");
 #elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I,100,100,"Current image") ;
+    vpDisplayGTK display(I, 100, 100, "Current image");
 #endif
 
-    vpDisplay::display(I) ;
-    vpDisplay::flush(I) ;
+    vpDisplay::display(I);
+    vpDisplay::flush(I);
 
-    std::vector<vpDot> dot_d(2), dot(2) ;
-    vpFeatureSegment seg_d,seg ;
+    std::vector<vpDot> dot_d(2), dot(2);
+    vpFeatureSegment seg_d, seg;
     vpImagePoint cog;
-    vpRobotAfma6 robot ;
-    vpCameraParameters cam ;
+    vpRobotAfma6 robot;
+    vpCameraParameters cam;
 
     // Update camera parameters
-    robot.getCameraParameters (cam, I);
+    robot.getCameraParameters(cam, I);
     std::cout << "define the initial segment" << std::endl;
 
-    for(std::vector<vpDot>::iterator i = dot.begin();i!=dot.end(); ++i){
+    for (std::vector<vpDot>::iterator i = dot.begin(); i != dot.end(); ++i) {
       std::cout << "Click on a dot..." << std::endl;
-      i->initTracking(I) ;
+      i->initTracking(I);
       cog = i->getCog();
-      vpDisplay::displayCross(I, cog, 10, vpColor::blue) ;
+      vpDisplay::displayCross(I, cog, 10, vpColor::blue);
       vpDisplay::flush(I);
-    } 
-    vpFeatureBuilder::create(seg, cam, dot[0], dot[1]);    
-    seg.display(cam,I,vpColor::red);
+    }
+    vpFeatureBuilder::create(seg, cam, dot[0], dot[1]);
+    seg.display(cam, I, vpColor::red);
     vpDisplay::flush(I);
     std::cout << "define the destination segment" << std::endl;
-    for(std::vector<vpDot>::iterator i = dot_d.begin();i!=dot_d.end(); ++i){
+    for (std::vector<vpDot>::iterator i = dot_d.begin(); i != dot_d.end();
+         ++i) {
       vpImagePoint ip;
-      vpDisplay::getClick(I,ip);
+      vpDisplay::getClick(I, ip);
       *i = vpDot(ip);
-      vpDisplay::displayCross(I, ip, 10, vpColor::green) ;
+      vpDisplay::displayCross(I, ip, 10, vpColor::green);
     }
     vpFeatureBuilder::create(seg_d, cam, dot_d[0], dot_d[1]);
-    seg_d.setZ1( 1. );
-    seg_d.setZ2( 1. );
+    seg_d.setZ1(1.);
+    seg_d.setZ2(1.);
 
-    seg_d.display(cam,I);
+    seg_d.display(cam, I);
     vpDisplay::flush(I);
     // define the task
     // - we want an eye-in-hand control law
     // - robot is controlled in the camera frame
-    task.setServo(vpServo::EYEINHAND_CAMERA) ;
-    task.setInteractionMatrixType(vpServo::DESIRED); 
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    task.setInteractionMatrixType(vpServo::DESIRED);
 
     // - we want to see both segments
-    task.addFeature(seg, seg_d) ;
+    task.addFeature(seg, seg_d);
 
     // - set the constant gain
-    task.setLambda(0.8) ;
+    task.setLambda(0.8);
 
-    // Display task information 
-    task.print() ;
+    // Display task information
+    task.print();
 
     // Now the robot will be controlled in velocity
-    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
-    for ( ; ; ) {
+    for (;;) {
       // Acquire a new image from the camera
-      g.acquire(I) ;
+      g.acquire(I);
 
       // Display this image
-      vpDisplay::display(I) ;
+      vpDisplay::display(I);
 
       // Achieve the tracking of the dot in the image
-      for(std::vector<vpDot>::iterator i = dot.begin();i!=dot.end(); ++i){
-        i->track(I) ;
+      for (std::vector<vpDot>::iterator i = dot.begin(); i != dot.end();
+           ++i) {
+        i->track(I);
       }
 
       // Update the segment feature from the dot locations
       vpFeatureBuilder::create(seg, cam, dot[0], dot[1]);
-      
-      vpColVector v ;
+
+      vpColVector v;
       // Compute the visual servoing skew vector
-      v = task.computeControlLaw() ;
+      v = task.computeControlLaw();
 
       // Display the current and desired feature segments in the image display
-      vpServoDisplay::display(task, cam, I) ;
+      vpServoDisplay::display(task, cam, I);
 
       // Apply the computed joint velocities to the robot
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
       // Save feature error (s-s*) for the feature segment. For this feature
       // segments, we have 4 errors (Xc,Yc,l,alpha).
-      flog << ( task.getError() ).t() << std::endl;
+      flog << (task.getError()).t() << std::endl;
 
       // Flush the display
-      vpDisplay::flush(I) ;
-
+      vpDisplay::flush(I);
     }
 
-    flog.close() ; // Close the log file
+    flog.close(); // Close the log file
 
     // Display task information
-    task.print() ;
+    task.print();
 
     // Kill the task
     task.kill();
 
     return 0;
-  }
-  catch (...)
-  {
-    flog.close() ; // Close the log file
-    vpERROR_TRACE(" Test failed") ;
+  } catch (...) {
+    flog.close(); // Close the log file
+    vpERROR_TRACE(" Test failed");
     return 0;
   }
 }
 
-
 #else
-int
-main()
+int main()
 {
-  vpERROR_TRACE("You do not have an afma6 robot or a firewire framegrabber connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot or a firewire framegrabber "
+                "connected to your computer...");
 }
 #endif

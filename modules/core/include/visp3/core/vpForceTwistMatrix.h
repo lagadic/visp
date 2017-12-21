@@ -45,18 +45,19 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 
-
 /*!
   \class vpForceTwistMatrix
 
   \ingroup group_core_transformations
 
-  This class derived from vpArray2D<double> implements the 6 by 6 matrix which transforms force/torque
-  from one frame to another. This matrix is also called force/torque twist transformation matrix.
+  This class derived from vpArray2D<double> implements the 6 by 6 matrix which
+transforms force/torque from one frame to another. This matrix is also called
+force/torque twist transformation matrix.
 
-  The full force/torque twist transformation matrix allows to compute the force/torque at point
-  <em>a</em> expressed in frame <em>a</em> knowing its
-  force/torque at point <em>b</em> expressed in frame <em>b</em>. This matrix is defined as:
+  The full force/torque twist transformation matrix allows to compute the
+force/torque at point <em>a</em> expressed in frame <em>a</em> knowing its
+  force/torque at point <em>b</em> expressed in frame <em>b</em>. This matrix
+is defined as:
 
   \f[
   ^a{\bf F}_b = \left[ \begin{array}{cc}
@@ -69,8 +70,8 @@
   where \f$ ^a{\bf R}_b \f$ is a rotation matrix and
   \f$ ^a{\bf t}_b \f$ is a translation vector.
 
-  When the point where the velocity is expressed doesn't change, the matrix becomes block diagonal.
-  It allows than to compute the force/torque at point
+  When the point where the velocity is expressed doesn't change, the matrix
+becomes block diagonal. It allows than to compute the force/torque at point
   <em>b</em> expressed in frame <em>a</em> knowing its
   force/torque at point <em>b</em> expressed in frame <em>b</em> :
   \f[
@@ -90,17 +91,21 @@
 
 int main()
 {
-  vpForceTwistMatrix sFp; // Twist transformation matrix from sensor to probe frame
+  vpForceTwistMatrix sFp; // Twist transformation matrix from sensor to probe
+frame
 
-  vpHomogeneousMatrix sMp; // Force/torque sensor frame to probe frame transformation
+  vpHomogeneousMatrix sMp; // Force/torque sensor frame to probe frame
+transformation
   // ... sMp need here to be initialized
 
   sFp.buildFrom(sMp);
 
-  vpColVector p_H(6); // Force/torque skew in the probe frame: fx,fy,fz,tx,ty,tz
+  vpColVector p_H(6); // Force/torque skew in the probe frame:
+fx,fy,fz,tx,ty,tz
   // ... p_H should here have an initial value
 
-  vpColVector s_H(6); // Force/torque skew in the sensor frame: fx,fy,fz,tx,ty,tz
+  vpColVector s_H(6); // Force/torque skew in the sensor frame:
+fx,fy,fz,tx,ty,tz
 
   // Compute the value of the force/torque in the sensor frame
   s_H = sFp * p_H;
@@ -109,55 +114,58 @@ int main()
 */
 class VISP_EXPORT vpForceTwistMatrix : public vpArray2D<double>
 {
- public:
+public:
   // basic constructor
   vpForceTwistMatrix();
   // copy constructor
-  vpForceTwistMatrix(const vpForceTwistMatrix &F) ;
+  vpForceTwistMatrix(const vpForceTwistMatrix &F);
   // constructor from an homogeneous transformation
-  explicit vpForceTwistMatrix(const vpHomogeneousMatrix &M, bool full=true);
+  explicit vpForceTwistMatrix(const vpHomogeneousMatrix &M, bool full = true);
 
   // Construction from Translation and rotation (matrix parameterization)
-  vpForceTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R) ;
+  vpForceTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
   // Construction from Translation and rotation (ThetaU parameterization)
-  vpForceTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau) ;
-  vpForceTwistMatrix(const double tx,  const double ty,  const double tz,
-                     const double tux, const double tuy, const double tuz) ;
+  vpForceTwistMatrix(const vpTranslationVector &t,
+                     const vpThetaUVector &thetau);
+  vpForceTwistMatrix(const double tx, const double ty, const double tz,
+                     const double tux, const double tuy, const double tuz);
 
-  vpForceTwistMatrix(const vpRotationMatrix &R) ;
-  vpForceTwistMatrix(const vpThetaUVector &thetau) ;
+  vpForceTwistMatrix(const vpRotationMatrix &R);
+  vpForceTwistMatrix(const vpThetaUVector &thetau);
 
   /*!
     Destructor.
   */
-  virtual ~vpForceTwistMatrix() {};
+  virtual ~vpForceTwistMatrix(){};
 
   vpForceTwistMatrix buildFrom(const vpTranslationVector &t,
                                const vpRotationMatrix &R);
   vpForceTwistMatrix buildFrom(const vpTranslationVector &t,
                                const vpThetaUVector &thetau);
-  vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full=true);
+  vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M,
+                               bool full = true);
 
   vpForceTwistMatrix buildFrom(const vpRotationMatrix &R);
   vpForceTwistMatrix buildFrom(const vpThetaUVector &thetau);
 
   // Basic initialisation (identity)
-  void eye() ;
+  void eye();
 
-  vpForceTwistMatrix operator*(const vpForceTwistMatrix &F) const ;
-  vpMatrix operator*(const vpMatrix &M) const ;
+  vpForceTwistMatrix operator*(const vpForceTwistMatrix &F) const;
+  vpMatrix operator*(const vpMatrix &M) const;
 
-  vpColVector operator*(const vpColVector &H) const ;
+  vpColVector operator*(const vpColVector &H) const;
 
   // copy operator from vpMatrix (handle with care)
   vpForceTwistMatrix &operator=(const vpForceTwistMatrix &H);
 
-  int print(std::ostream& s, unsigned int length, char const* intro=0) const;
+  int print(std::ostream &s, unsigned int length,
+            char const *intro = 0) const;
 
   /*!
-    This function is not applicable to a velocity twist matrix that is always a
-    6-by-6 matrix.
-    \exception vpException::fatalError When this function is called.
+    This function is not applicable to a velocity twist matrix that is always
+    a 6-by-6 matrix. \exception vpException::fatalError When this function is
+    called.
     */
   void resize(const unsigned int nrows, const unsigned int ncols,
               const bool flagNullify = true)
@@ -165,7 +173,8 @@ class VISP_EXPORT vpForceTwistMatrix : public vpArray2D<double>
     (void)nrows;
     (void)ncols;
     (void)flagNullify;
-    throw(vpException(vpException::fatalError, "Cannot resize a velocity twist matrix"));
+    throw(vpException(vpException::fatalError,
+                      "Cannot resize a velocity twist matrix"));
   };
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -177,13 +186,13 @@ class VISP_EXPORT vpForceTwistMatrix : public vpArray2D<double>
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {};
+  vp_deprecated void init(){};
   /*!
      \deprecated You should rather use eye().
    */
   vp_deprecated void setIdentity();
-  //@}
+//@}
 #endif
-} ;
+};
 
 #endif

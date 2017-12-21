@@ -45,7 +45,8 @@
 #ifndef VISP_HAVE_PIONEER
 int main()
 {
-  std::cout << "\nThis example requires Aria 3rd party library. You should install it.\n"
+  std::cout << "\nThis example requires Aria 3rd party library. You should "
+               "install it.\n"
             << std::endl;
   return 0;
 }
@@ -56,9 +57,9 @@ int main()
   \example movePioneer.cpp example showing how to connect and send
   direct basic motion commands to a Pioneer mobile robot.
 
-  WARNING: this program does no sensing or avoiding of obstacles, the robot WILL
-  collide with any objects in the way!   Make sure the robot has about 2-3
-  meters of free space around it before starting the program.
+  WARNING: this program does no sensing or avoiding of obstacles, the robot
+  WILL collide with any objects in the way!   Make sure the robot has about
+  2-3 meters of free space around it before starting the program.
 
   This program will work either with the MobileSim simulator or on a real
   robot's onboard computer.  (Or use -remoteHost to connect to a wireless
@@ -67,30 +68,30 @@ int main()
 int main(int argc, char **argv)
 {
   try {
-    std::cout << "\nWARNING: this program does no sensing or avoiding of obstacles, \n"
-                 "the robot WILL collide with any objects in the way! Make sure the \n"
-                 "robot has approximately 3 meters of free space on all sides.\n"
-              << std::endl;
+    std::cout
+        << "\nWARNING: this program does no sensing or avoiding of "
+           "obstacles, \n"
+           "the robot WILL collide with any objects in the way! Make sure "
+           "the \n"
+           "robot has approximately 3 meters of free space on all sides.\n"
+        << std::endl;
 
     vpRobotPioneer robot;
 
     ArArgumentParser parser(&argc, argv);
     parser.loadDefaultArguments();
 
-    // ArRobotConnector connects to the robot, get some initial data from it such as type and name,
-    // and then loads parameter files for this robot.
+    // ArRobotConnector connects to the robot, get some initial data from it
+    // such as type and name, and then loads parameter files for this robot.
     ArRobotConnector robotConnector(&parser, &robot);
-    if(!robotConnector.connectRobot())
-    {
+    if (!robotConnector.connectRobot()) {
       ArLog::log(ArLog::Terse, "Could not connect to the robot.");
-      if(parser.checkHelpAndWarnUnparsed())
-      {
+      if (parser.checkHelpAndWarnUnparsed()) {
         Aria::logOptions();
         Aria::exit(1);
       }
     }
-    if (!Aria::parseArgs())
-    {
+    if (!Aria::parseArgs()) {
       Aria::logOptions();
       Aria::shutdown();
       return false;
@@ -102,19 +103,22 @@ int main(int argc, char **argv)
     // Robot velocities
     vpColVector v(2), v_mes(2);
 
-    for (int i=0; i < 100; i++)
-    {
+    for (int i = 0; i < 100; i++) {
       double t = vpTime::measureTimeMs();
 
       v = 0;
-      v[0] = i/1000.; // Translational velocity in m/s
-      //v[1] = vpMath::rad(i/5.); // Rotational velocity in rad/sec
+      v[0] = i / 1000.; // Translational velocity in m/s
+      // v[1] = vpMath::rad(i/5.); // Rotational velocity in rad/sec
       robot.setVelocity(vpRobot::REFERENCE_FRAME, v);
 
       v_mes = robot.getVelocity(vpRobot::REFERENCE_FRAME);
-      std::cout << "Trans. vel= " << v_mes[0] << " m/s, Rot. vel=" << vpMath::deg(v_mes[1]) << " deg/s" << std::endl;
+      std::cout << "Trans. vel= " << v_mes[0]
+                << " m/s, Rot. vel=" << vpMath::deg(v_mes[1]) << " deg/s"
+                << std::endl;
       v_mes = robot.getVelocity(vpRobot::ARTICULAR_FRAME);
-      std::cout << "Left wheel vel= " << v_mes[0] << " m/s, Right wheel vel=" << v_mes[1] << " m/s" << std::endl;
+      std::cout << "Left wheel vel= " << v_mes[0]
+                << " m/s, Right wheel vel=" << v_mes[1] << " m/s"
+                << std::endl;
       std::cout << "Battery=" << robot.getBatteryVoltage() << std::endl;
 
       vpTime::wait(t, 40);
@@ -127,8 +131,11 @@ int main(int argc, char **argv)
     ArUtil::sleep(1000);
 
     robot.lock();
-    ArLog::log(ArLog::Normal, "simpleMotionCommands: Pose=(%.2f,%.2f,%.2f), Trans. Vel=%.2f, Rot. Vel=%.2f, Battery=%.2fV",
-               robot.getX(), robot.getY(), robot.getTh(), robot.getVel(), robot.getRotVel(), robot.getBatteryVoltage());
+    ArLog::log(ArLog::Normal,
+               "simpleMotionCommands: Pose=(%.2f,%.2f,%.2f), Trans. "
+               "Vel=%.2f, Rot. Vel=%.2f, Battery=%.2fV",
+               robot.getX(), robot.getY(), robot.getTh(), robot.getVel(),
+               robot.getRotVel(), robot.getBatteryVoltage());
     robot.unlock();
 
     std::cout << "Ending robot thread..." << std::endl;
@@ -140,12 +147,10 @@ int main(int argc, char **argv)
     // exit
     ArLog::log(ArLog::Normal, "simpleMotionCommands: Exiting.");
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }
 }
 
 #endif
-

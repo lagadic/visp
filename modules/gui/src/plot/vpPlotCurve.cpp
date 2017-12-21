@@ -39,17 +39,18 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <visp3/gui/vpPlotCurve.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpPlotCurve.h>
 
 #if defined(VISP_HAVE_DISPLAY)
-vpPlotCurve::vpPlotCurve() :
-  color(vpColor::red), curveStyle(point), thickness(1), nbPoint(0), lastPoint(),
-  pointListx(), pointListy(), pointListz(), legend(), xmin(0), xmax(0), ymin(0), ymax(0)
+vpPlotCurve::vpPlotCurve()
+  : color(vpColor::red), curveStyle(point), thickness(1), nbPoint(0),
+    lastPoint(), pointListx(), pointListy(), pointListz(), legend(), xmin(0),
+    xmax(0), ymin(0), ymax(0)
 {
 }
 
@@ -60,26 +61,36 @@ vpPlotCurve::~vpPlotCurve()
   pointListz.clear();
 }
 
-void
-vpPlotCurve::plotPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const double x, const double y)
-{  
+void vpPlotCurve::plotPoint(const vpImage<unsigned char> &I,
+                            const vpImagePoint &iP, const double x,
+                            const double y)
+{
   nbPoint++;
-  
-  if (nbPoint > 1)
-  {
-    vpDisplay::displayLine(I,lastPoint, iP, color, thickness);
+
+  if (nbPoint > 1) {
+    vpDisplay::displayLine(I, lastPoint, iP, color, thickness);
   }
-#if defined (VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY)
   double top;
   double left;
   double width;
   double height;
-  
-  if (iP.get_i() <= lastPoint.get_i()) {top = iP.get_i()-5; height = lastPoint.get_i() - top+10;}
-  else {top = lastPoint.get_i()-5; height = iP.get_i() - top+10;}
-  if (iP.get_j() <= lastPoint.get_j()) {left = iP.get_j()-5; width = lastPoint.get_j() - left+10;}
-  else {left = lastPoint.get_j()-5; width = iP.get_j() - left+10;}
-  vpDisplay::flushROI(I,vpRect(left,top,width,height));
+
+  if (iP.get_i() <= lastPoint.get_i()) {
+    top = iP.get_i() - 5;
+    height = lastPoint.get_i() - top + 10;
+  } else {
+    top = lastPoint.get_i() - 5;
+    height = iP.get_i() - top + 10;
+  }
+  if (iP.get_j() <= lastPoint.get_j()) {
+    left = iP.get_j() - 5;
+    width = lastPoint.get_j() - left + 10;
+  } else {
+    left = lastPoint.get_j() - 5;
+    width = iP.get_j() - left + 10;
+  }
+  vpDisplay::flushROI(I, vpRect(left, top, width, height));
 #endif
   lastPoint = iP;
   pointListx.push_back(x);
@@ -87,23 +98,23 @@ vpPlotCurve::plotPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, 
   pointListz.push_back(0.0);
 }
 
-void 
-vpPlotCurve::plotList(const vpImage<unsigned char> &I, const double xorg, const double yorg, const double zoomx, const double zoomy)
+void vpPlotCurve::plotList(const vpImage<unsigned char> &I, const double xorg,
+                           const double yorg, const double zoomx,
+                           const double zoomy)
 {
   std::list<double>::const_iterator it_ptListx = pointListx.begin();
   std::list<double>::const_iterator it_ptListy = pointListy.begin();
-  
+
   unsigned int k = 0;
   vpImagePoint iP;
-  while (k < nbPoint)
-  {
-    iP.set_ij(yorg-(zoomy*(*it_ptListy)),xorg+(zoomx*(*it_ptListx)));
-    
+  while (k < nbPoint) {
+    iP.set_ij(yorg - (zoomy * (*it_ptListy)), xorg + (zoomx * (*it_ptListx)));
+
     if (k > 0)
-      vpDisplay::displayLine(I,lastPoint, iP, color, thickness);
-    
+      vpDisplay::displayLine(I, lastPoint, iP, color, thickness);
+
     lastPoint = iP;
-    
+
     ++it_ptListx;
     ++it_ptListy;
     k++;
@@ -111,7 +122,8 @@ vpPlotCurve::plotList(const vpImage<unsigned char> &I, const double xorg, const 
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpPlotCurve.cpp.o) has no symbols
-void dummy_vpPlotCurve() {};
+// Work arround to avoid warning: libvisp_core.a(vpPlotCurve.cpp.o) has no
+// symbols
+void dummy_vpPlotCurve(){};
 #endif
 #endif

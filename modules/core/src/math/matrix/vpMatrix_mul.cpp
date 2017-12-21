@@ -38,35 +38,47 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#  if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
 typedef int integer;
 
-extern "C" void dgemm_(char *transa, char *transb, integer *M, integer *N, integer *K, double *alpha, double *a,
-                       integer *lda, double *b, integer *ldb, double *beta, double *c, integer *ldc);
+extern "C" void dgemm_(char *transa, char *transb, integer *M, integer *N,
+                       integer *K, double *alpha, double *a, integer *lda,
+                       double *b, integer *ldb, double *beta, double *c,
+                       integer *ldc);
 
-extern "C" void dgemv_(char *trans, integer *M, integer *N, double *alpha, double *a, integer *lda,
-                       double *x, integer *incx, double *beta, double *y, integer *incy);
+extern "C" void dgemv_(char *trans, integer *M, integer *N, double *alpha,
+                       double *a, integer *lda, double *x, integer *incx,
+                       double *beta, double *y, integer *incy);
 
+void vpMatrix::blas_dgemm(char trans_a, char trans_b, const int M_,
+                          const int N_, const int K_, double alpha,
+                          double *a_data, const int lda_, double *b_data,
+                          const int ldb_, double beta, double *c_data,
+                          const int ldc_)
+{
+  integer M = (integer)M_, K = (integer)K_, N = (integer)N_;
+  integer lda = (integer)lda_, ldb = (integer)ldb_, ldc = (integer)ldc_;
 
-void vpMatrix::blas_dgemm(char trans_a, char trans_b, const int M_, const int N_, const int K_, double alpha, double * a_data,
-                          const int lda_, double * b_data, const int ldb_, double beta, double * c_data, const int ldc_) {
-  integer M = (integer) M_, K = (integer) K_, N = (integer) N_;
-  integer lda = (integer) lda_, ldb = (integer) ldb_, ldc = (integer) ldc_;
-
-  dgemm_(&trans_a, &trans_b, &M, &N, &K, &alpha, a_data, &lda, b_data, &ldb, &beta, c_data, &ldc);
+  dgemm_(&trans_a, &trans_b, &M, &N, &K, &alpha, a_data, &lda, b_data, &ldb,
+         &beta, c_data, &ldc);
 }
 
-void vpMatrix::blas_dgemv(char trans, const int M_, const int N_, double alpha, double * a_data, const int lda_, double * x_data,
-                          const int incx_, double beta, double * y_data, const int incy_) {
-  integer M = (integer) M_, N = (integer) N_;
-  integer lda = (integer) lda_, incx = (integer) incx_, incy = (integer) incy_;
+void vpMatrix::blas_dgemv(char trans, const int M_, const int N_,
+                          double alpha, double *a_data, const int lda_,
+                          double *x_data, const int incx_, double beta,
+                          double *y_data, const int incy_)
+{
+  integer M = (integer)M_, N = (integer)N_;
+  integer lda = (integer)lda_, incx = (integer)incx_, incy = (integer)incy_;
 
-  dgemv_(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
+  dgemv_(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data,
+         &incy);
 }
 
-#  else
-// Work arround to avoid warning LNK4221: This object file does not define any previously undefined public symbols
-void dummy_vpMatrix_blas() {};
-#  endif
+#else
+// Work arround to avoid warning LNK4221: This object file does not define any
+// previously undefined public symbols
+void dummy_vpMatrix_blas(){};
+#endif
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

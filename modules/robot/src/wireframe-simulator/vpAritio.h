@@ -45,16 +45,15 @@
 
 #include <visp3/core/vpConfig.h>
 
-#include	<stdio.h>
+#include <stdio.h>
 
 #include "vpArit.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-void fprintf_Position (FILE *f, AritPosition *pp);
-void fscanf_Point3f (Point3f *pp);
-void fscanf_Vector (Vector *vp);
-void fscanf_Position (AritPosition *pp);
+void fprintf_Position(FILE *f, AritPosition *pp);
+void fscanf_Point3f(Point3f *pp);
+void fscanf_Vector(Vector *vp);
+void fscanf_Position(AritPosition *pp);
 
 #endif
 #endif
-

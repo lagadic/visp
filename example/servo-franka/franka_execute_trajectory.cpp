@@ -15,24 +15,31 @@
 
 /**
  * @example franka_execute_trajectory.cpp
- * An example showing how to execute a joint trajectory loaded from a CSV file.
+ * An example showing how to execute a joint trajectory loaded from a CSV
+ * file.
  *
- * This example is part of libfranka FCI C++ API: https://frankaemika.github.io/libfranka
- * See https://frankaemika.github.io/docs for more details.
+ * This example is part of libfranka FCI C++ API:
+ * https://frankaemika.github.io/libfranka See
+ * https://frankaemika.github.io/docs for more details.
  */
 
 template <class T, size_t N>
-std::ostream& operator<<(std::ostream& ostream, const std::array<T, N>& array) {
+std::ostream &operator<<(std::ostream &ostream, const std::array<T, N> &array)
+{
   ostream << "[";
-  std::copy(array.cbegin(), array.cend() - 1, std::ostream_iterator<T>(ostream, ","));
-  std::copy(array.cend() - 1, array.cend(), std::ostream_iterator<T>(ostream));
+  std::copy(array.cbegin(), array.cend() - 1,
+            std::ostream_iterator<T>(ostream, ","));
+  std::copy(array.cend() - 1, array.cend(),
+            std::ostream_iterator<T>(ostream));
   ostream << "]";
   return ostream;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
   if (argc != 4) {
-    std::cerr << "Usage: " << argv[0] << " <robot-hostname> <trajectory-csv> <output>" << std::endl;
+    std::cerr << "Usage: " << argv[0]
+              << " <robot-hostname> <trajectory-csv> <output>" << std::endl;
     return -1;
   }
 
@@ -40,7 +47,7 @@ int main(int argc, char** argv) {
   std::fstream csv_file_stream;
   csv_file_stream.open(argv[2], std::fstream::in);
 
-  std::vector<std::array<double, 7>> samples;
+  std::vector<std::array<double, 7> > samples;
   while (csv_file_stream) {
     std::array<double, 7> q;
     char delimiter;
@@ -55,19 +62,22 @@ int main(int argc, char** argv) {
   try {
     franka::Robot robot(argv[1]);
 
-    // Set additional parameters always before the control loop, NEVER in the control loop!
-    // Set collision behavior.
-    robot.setCollisionBehavior(
-        {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}}, {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
-        {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}}, {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
-        {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}}, {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
-        {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}}, {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}});
+    // Set additional parameters always before the control loop, NEVER in the
+    // control loop! Set collision behavior.
+    robot.setCollisionBehavior({{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
+                               {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
+                               {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
+                               {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
+                               {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
+                               {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
+                               {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
+                               {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}});
 
     // Set the joint impedance.
     robot.setJointImpedance({{3000, 3000, 3000, 2500, 2500, 2000, 2000}});
 
     size_t index = 0;
-    robot.control([&](const franka::RobotState& robot_state,
+    robot.control([&](const franka::RobotState &robot_state,
                       franka::Duration time_step) -> franka::JointPositions {
       states.push_back(robot_state);
 
@@ -78,9 +88,9 @@ int main(int argc, char** argv) {
       }
       return samples[index];
     });
-  } catch (const franka::ControlException& e) {
+  } catch (const franka::ControlException &e) {
     std::cout << e.what() << std::endl;
-  } catch (const franka::Exception& e) {
+  } catch (const franka::Exception &e) {
     std::cout << e.what() << std::endl;
     return -1;
   }
@@ -104,6 +114,7 @@ int main(int argc, char** argv) {
 #else
 int main()
 {
-  std::cout << "This example needs libfranka to control Panda robot." << std::endl;
+  std::cout << "This example needs libfranka to control Panda robot."
+            << std::endl;
 }
 #endif

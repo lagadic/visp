@@ -49,7 +49,7 @@
 
 /*!
   \class vpRequest
-  
+
   \ingroup group_core_network
 
   \brief This the request that will transit on the network
@@ -58,9 +58,9 @@
   First parameter : Height of the image.
   Second parameter : Width of the image.
   Thirs parameter : Bitmap of the image (not compress).
-  
+
   Here is the header of the vpRequestImage class.
-  
+
   \code
 #ifndef vpRequestImage_H
 #define vpRequestImage_H
@@ -72,21 +72,21 @@ class vpRequestImage : public vpRequest
 {
 private:
   vpImage<unsigned char> *I;
-  
+
 public:
   vpRequestImage();
   vpRequestImage(vpImage<unsigned char> *);
   ~vpRequestImage();
-  
+
   virtual void encode();
   virtual void decode();
 };
 
 #endif
   \endcode
-  
+
   Here is the definition of the vpRequestImage class.
-  
+
   \code
 #include <vpRequestImage.h>
 
@@ -102,28 +102,29 @@ vpRequestImage::vpRequestImage(vpImage<unsigned char> *Im){
 vpRequestImage::~vpRequestImage(){}
 
 void vpRequestImage::encode(){
-  clear(); 
-  
+  clear();
+
   unsigned int h = I->getHeight();
-  unsigned int w = I->getWidth();     
+  unsigned int w = I->getWidth();
 
   addParameterObject(&h);
   addParameterObject(&w);
   addParameterObject(I->bitmap,h*w*sizeof(unsigned char));
 }
-  
+
 void vpRequestImage::decode(){
   if(listOfParams.size() == 3){
     unsigned int w, h;
     memcpy((void*)&h, (void*)listOfParams[0].c_str(), sizeof(unsigned int));
     memcpy((void*)&w, (void*)listOfParams[1].c_str(), sizeof(unsigned int));
-    
+
     I->resize(h,w);
-    memcpy((void*)I->bitmap,(void*)listOfParams[2].c_str(),w*h*sizeof(unsigned char));
+    memcpy((void*)I->bitmap,(void*)listOfParams[2].c_str(),w*h*sizeof(unsigned
+char));
   }
 }
   \endcode
-  
+
   \sa vpClient
   \sa vpServer
   \sa vpNetwork
@@ -131,107 +132,111 @@ void vpRequestImage::decode(){
 class VISP_EXPORT vpRequest
 {
 protected:
-  std::string               request_id;
-  std::vector<std::string>  listOfParams;
-  
+  std::string request_id;
+  std::vector<std::string> listOfParams;
+
 public:
-                vpRequest();
-  virtual       ~vpRequest();
-  
-  void          addParameter(char *params);
-  void          addParameter(std::string &params);
-  void          addParameter(std::vector<std::string> &listOfparams);
-  template<typename T>
-  void          addParameterObject(T * params, const int &sizeOfObject = sizeof(T));
-  
+  vpRequest();
+  virtual ~vpRequest();
+
+  void addParameter(char *params);
+  void addParameter(std::string &params);
+  void addParameter(std::vector<std::string> &listOfparams);
+  template <typename T>
+  void addParameterObject(T *params, const int &sizeOfObject = sizeof(T));
+
   /*!
     Decode the parameters of the request (Funtion that has to be redifined).
-    
+
     \sa vpRequest::encode()
   */
-  virtual void  decode() = 0;
-  
+  virtual void decode() = 0;
+
   /*!
     Clear the parameters of the request.
   */
-  void          clear(){ listOfParams.clear(); }
-  
+  void clear() { listOfParams.clear(); }
+
   /*!
     Encode the parameters of the request (Funtion that has to be redifined).
-    
+
     \sa vpRequest::decode()
   */
-  virtual void  encode() = 0;
-  
+  virtual void encode() = 0;
+
   /*!
     Accessor on the parameters.
-    
+
     \return Parameter at the index i.
-  */  
-  inline std::string&        operator[](const unsigned int &i)   { return listOfParams[i];}
+  */
+  inline std::string &operator[](const unsigned int &i)
+  {
+    return listOfParams[i];
+  }
 
   /*!
     Accessor on the parameters (const).
-    
+
     \return Parameter at the index i (const).
-  */ 
-  inline const  std::string& operator[](const unsigned int &i) const { return listOfParams[i];}
-  
+  */
+  inline const std::string &operator[](const unsigned int &i) const
+  {
+    return listOfParams[i];
+  }
+
   /*!
     Get the ID of the request.
-    
+
     \sa vpRequest::setId()
-    
+
     \return ID of the request.
   */
-  std::string   getId(){ return request_id; }
-  
+  std::string getId() { return request_id; }
+
   /*!
     Change the ID of the request.
-    
+
     \sa vpRequest::getId()
-    
+
     \param id : new ID.
   */
-  void          setId(const char *id){ request_id = id; }
-  
+  void setId(const char *id) { request_id = id; }
+
   /*!
     Get the number of parameters.
-    
+
     \return Number of parameters.
   */
-  unsigned int  size(){ return (unsigned int)listOfParams.size(); }
+  unsigned int size() { return (unsigned int)listOfParams.size(); }
 };
-
 
 //######## Definition of Template Functions ########
 //#                                                #
 //##################################################
 
-
 /*!
   Add an object as parameter of the request.
-  
-  \warning Only simple object can be sent unless you know its size. 
-  Sending object containing pointers, virtual methods, etc, won't probably work.
-  Unless the size is well defined...
-  
+
+  \warning Only simple object can be sent unless you know its size.
+  Sending object containing pointers, virtual methods, etc, won't probably
+  work. Unless the size is well defined...
+
   \sa vpRequest::addParameter()
 
   \param params : Object to add.
   \param sizeOfObject : Size of the object.
 */
-template<typename T>
-void vpRequest::addParameterObject(T * params, const int &sizeOfObject)
+template <typename T>
+void vpRequest::addParameterObject(T *params, const int &sizeOfObject)
 {
-  if(sizeOfObject != 0){
-    char *tempS = new char [sizeOfObject];
-    memcpy((void*)tempS, (void*)params, sizeOfObject);
+  if (sizeOfObject != 0) {
+    char *tempS = new char[sizeOfObject];
+    memcpy((void *)tempS, (void *)params, sizeOfObject);
     std::string returnVal(tempS, (size_t)sizeOfObject);
-  
+
     listOfParams.push_back(returnVal);
 
-    delete [] tempS;
+    delete[] tempS;
   }
 }
 

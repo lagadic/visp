@@ -49,16 +49,16 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include "vpMy.h"
 #include "vpArit.h"
 #include "vpBound.h"
+#include "vpMy.h"
 
-void open_clipping (void);
-void open_clipping (void);
-void close_clipping (void);
-Bound *clipping_Bound (Bound *bp, Matrix m);
-void set_Point4f_code (Point4f *p4, int size, Byte *cp);
-Byte where_is_Point4f (Point4f *p4);
+void open_clipping(void);
+void open_clipping(void);
+void close_clipping(void);
+Bound *clipping_Bound(Bound *bp, Matrix m);
+void set_Point4f_code(Point4f *p4, int size, Byte *cp);
+Byte where_is_Point4f(Point4f *p4);
 
 #endif
 #endif

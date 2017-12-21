@@ -1,7 +1,7 @@
 /*! \example tutorial-grabber-CMU1394.cpp */
-#include <visp3/sensor/vp1394CMUGrabber.h>
-#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/sensor/vp1394CMUGrabber.h>
 
 int main()
 {
@@ -16,7 +16,8 @@ int main()
     g.setFramerate(4); // 30 fps
     g.open(I);
 
-    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight() << std::endl;
+    std::cout << "Image size: " << I.getWidth() << " " << I.getHeight()
+              << std::endl;
 
 #ifdef VISP_HAVE_GDI
     vpDisplayGDI d(I);
@@ -24,15 +25,14 @@ int main()
     std::cout << "No image viewer is available..." << std::endl;
 #endif
 
-    while(1) {
+    while (1) {
       g.acquire(I);
       vpDisplay::display(I);
       vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false)) // A click to exit
         break;
     }
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

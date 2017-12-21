@@ -44,20 +44,21 @@
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020301)
 
 #include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/vision/vpKeyPoint.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdh"
+#define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed,
+                bool &display);
 
 /*!
 
@@ -103,20 +104,29 @@ OPTIONS:                                               \n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed,
+                bool &display)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'c': click_allowed = false; break;
-    case 'd': display = false; break;
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'c':
+      click_allowed = false;
+      break;
+    case 'd':
+      display = false;
+      break;
+    case 'h':
+      usage(argv[0], NULL);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg_);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -134,10 +144,11 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 /*!
   \example testKeyPoint-5.cpp
 
-  \brief   Test keypoints detection with OpenCV, specially the Pyramid implementation
-  feature missing in OpenCV 3.0.
+  \brief   Test keypoints detection with OpenCV, specially the Pyramid
+  implementation feature missing in OpenCV 3.0.
 */
-int main(int argc, const char ** argv) {
+int main(int argc, const char **argv)
+{
   try {
     std::string env_ipath;
     bool opt_click_allowed = true;
@@ -145,23 +156,26 @@ int main(int argc, const char ** argv) {
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      exit (EXIT_FAILURE);
+      exit(EXIT_FAILURE);
     }
 
-    //Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+    // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
-    if(env_ipath.empty()) {
-      std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment variable value." << std::endl;
+    if (env_ipath.empty()) {
+      std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment "
+                   "variable value."
+                << std::endl;
       return EXIT_FAILURE;
     }
 
     vpImage<unsigned char> I;
 
-    //Set the path location of the image sequence
+    // Set the path location of the image sequence
     std::string dirname = vpIoTools::createFilePath(env_ipath, "Klimt");
 
-    //Build the name of the image files
+    // Build the name of the image files
     std::string filename = vpIoTools::createFilePath(dirname, "/Klimt.png");
     vpImageIo::read(I, filename);
 
@@ -175,19 +189,23 @@ int main(int argc, const char ** argv) {
     vpDisplayOpenCV display;
 #endif
 
-    if(opt_display) {
+    if (opt_display) {
       display.init(I, 0, 0, "KeyPoints detection.");
     }
 
-    //Here, we want to test feature detection on a pyramid of images even for features that
-    //are scale invariant to detect potential problem in ViSP.
+    // Here, we want to test feature detection on a pyramid of images even for
+    // features that  are scale invariant to detect potential problem in ViSP.
     std::cout << "INFORMATION: " << std::endl;
-    std::cout << "Here, we want to test feature detection on a pyramid of images even for features "
-        "that are scale invariant to detect potential problem in ViSP." << std::endl << std::endl;
+    std::cout
+        << "Here, we want to test feature detection on a pyramid of images "
+           "even for features "
+           "that are scale invariant to detect potential problem in ViSP."
+        << std::endl
+        << std::endl;
     vpKeyPoint keyPoints;
 
-    //Will test the different types of keypoints detection to see if there is a problem
-    //between OpenCV versions, modules or constructors
+    // Will test the different types of keypoints detection to see if there is
+    // a problem  between OpenCV versions, modules or constructors
     std::vector<std::string> detectorNames;
     detectorNames.push_back("PyramidFAST");
     detectorNames.push_back("FAST");
@@ -197,8 +215,9 @@ int main(int argc, const char ** argv) {
     detectorNames.push_back("GFTT");
     detectorNames.push_back("PyramidSimpleBlob");
     detectorNames.push_back("SimpleBlob");
-    //In contrib modules
-#if (VISP_HAVE_OPENCV_VERSION < 0x030000) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
+// In contrib modules
+#if (VISP_HAVE_OPENCV_VERSION < 0x030000) ||                                 \
+    defined(VISP_HAVE_OPENCV_XFEATURES2D)
     detectorNames.push_back("PyramidSTAR");
     detectorNames.push_back("STAR");
 #endif
@@ -226,22 +245,26 @@ int main(int argc, const char ** argv) {
     detectorNames.push_back("SURF");
 #endif
 
-    for(std::vector<std::string>::const_iterator itd = detectorNames.begin(); itd != detectorNames.end(); ++itd) {
+    for (std::vector<std::string>::const_iterator itd = detectorNames.begin();
+         itd != detectorNames.end(); ++itd) {
       keyPoints.setDetector(*itd);
 
       std::vector<cv::KeyPoint> kpts;
 
       keyPoints.detect(I, kpts);
-      std::cout << "Nb keypoints detected: " << kpts.size() << " for " << *itd << " method." << std::endl;
-      if(kpts.empty()) {
-        std::cerr << "No keypoints detected with " << *itd << " and image: " << filename << "." << std::endl;
+      std::cout << "Nb keypoints detected: " << kpts.size() << " for " << *itd
+                << " method." << std::endl;
+      if (kpts.empty()) {
+        std::cerr << "No keypoints detected with " << *itd
+                  << " and image: " << filename << "." << std::endl;
         return EXIT_FAILURE;
       }
 
       if (opt_display) {
         vpDisplay::display(I);
 
-        for(std::vector<cv::KeyPoint>::const_iterator it = kpts.begin(); it != kpts.end(); ++it) {
+        for (std::vector<cv::KeyPoint>::const_iterator it = kpts.begin();
+             it != kpts.end(); ++it) {
           vpImagePoint imPt;
           imPt.set_uv(it->pt.x, it->pt.y);
 
@@ -258,23 +281,29 @@ int main(int argc, const char ** argv) {
 
     std::cout << "\n\n";
 
-    std::map<vpKeyPoint::vpFeatureDetectorType, std::string> mapOfDetectorNames = keyPoints.getDetectorNames();
+    std::map<vpKeyPoint::vpFeatureDetectorType, std::string>
+        mapOfDetectorNames = keyPoints.getDetectorNames();
     for (int i = 0; i < vpKeyPoint::DETECTOR_TYPE_SIZE; i++) {
-      keyPoints.setDetector( (vpKeyPoint::vpFeatureDetectorType) i );
+      keyPoints.setDetector((vpKeyPoint::vpFeatureDetectorType)i);
 
       std::vector<cv::KeyPoint> kpts;
 
       keyPoints.detect(I, kpts);
-      std::cout << "Nb keypoints detected: " << kpts.size() << " for " << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType) i] << " method." << std::endl;
+      std::cout << "Nb keypoints detected: " << kpts.size() << " for "
+                << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType)i]
+                << " method." << std::endl;
       if (kpts.empty()) {
-        std::cerr << "No keypoints detected with " << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType) i] << " method  and image: " << filename << "." << std::endl;
+        std::cerr << "No keypoints detected with "
+                  << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType)i]
+                  << " method  and image: " << filename << "." << std::endl;
         return EXIT_FAILURE;
       }
 
       if (opt_display) {
         vpDisplay::display(I);
 
-        for(std::vector<cv::KeyPoint>::const_iterator it = kpts.begin(); it != kpts.end(); ++it) {
+        for (std::vector<cv::KeyPoint>::const_iterator it = kpts.begin();
+             it != kpts.end(); ++it) {
           vpImagePoint imPt;
           imPt.set_uv(it->pt.x, it->pt.y);
 
@@ -289,7 +318,7 @@ int main(int argc, const char ** argv) {
       }
     }
 
-  } catch(vpException &e) {
+  } catch (vpException &e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -300,7 +329,8 @@ int main(int argc, const char ** argv) {
 #else
 #include <cstdlib>
 
-int main() {
+int main()
+{
   std::cerr << "You need OpenCV library." << std::endl;
 
   return EXIT_SUCCESS;

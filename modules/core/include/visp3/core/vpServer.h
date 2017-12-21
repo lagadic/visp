@@ -44,7 +44,6 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpNetwork.h>
 
-
 /*!
   \class vpServer
 
@@ -60,8 +59,8 @@
   documentation.
 
   \code
-#include <visp3/core/vpServer.h>
 #include <iostream>
+#include <visp3/core/vpServer.h>
 
 int main(int argc,const char** argv)
 {
@@ -77,16 +76,14 @@ int main(int argc,const char** argv)
 
     if(serv.getNumberOfClients() > 0)
     {
-      if(serv.receive(&val) != sizeof(int)) //Receiving a value from the first client
-         std::cout << "Error while receiving" << std::endl;
-      else
-        std::cout << "Received : " << val << std::endl;
+      if(serv.receive(&val) != sizeof(int)) //Receiving a value from the first
+client std::cout << "Error while receiving" << std::endl; else std::cout <<
+"Received : " << val << std::endl;
 
       val = val+1;
-      if(serv.send(&val) != sizeof(int)) //Sending the new value to the first client
-        std::cout << "Error while sending" << std::endl;
-      else
-        std::cout << "Sending : " << val << std::endl;
+      if(serv.send(&val) != sizeof(int)) //Sending the new value to the first
+client std::cout << "Error while sending" << std::endl; else std::cout <<
+"Sending : " << val << std::endl;
     }
   }
 
@@ -95,12 +92,13 @@ int main(int argc,const char** argv)
   \endcode
 
   Exemple of server's code, receiving a vpImage on request form.
-  It correspond to the client used in the second exemple of vpClient class' documentation.
+  It correspond to the client used in the second exemple of vpClient class'
+documentation.
 
   \code
 #include <visp3/core/vpServer.h>
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
 
 #include "vpRequestImage.h" //See vpRequest class documentation
 
@@ -161,24 +159,22 @@ int main(int argc,const char** argv)
 class VISP_EXPORT vpServer : public vpNetwork
 {
 private:
-
   //######## PARAMETERS ########
   //#                          #
   //############################
-  std::string  adress;
-  int          port;
-  bool         started;
+  std::string adress;
+  int port;
+  bool started;
   unsigned int max_clients;
 
 public:
-
   vpServer();
   explicit vpServer(const int &port);
-  vpServer(const std::string &adress_serv,const int &port_serv);
+  vpServer(const std::string &adress_serv, const int &port_serv);
 
-  virtual       ~vpServer();
+  virtual ~vpServer();
 
-  bool          checkForConnections();
+  bool checkForConnections();
 
   /*!
     Check if the server is started.
@@ -187,7 +183,7 @@ public:
 
     \return True if the server is started, false otherwise.
   */
-  bool          isStarted(){ return started; }
+  bool isStarted() { return started; }
 
   /*!
     Get the maximum number of clients that can be connected to the server.
@@ -196,18 +192,21 @@ public:
 
     \return Maximum number of clients.
   */
-  unsigned int  getMaxNumberOfClients(){ return max_clients; }
+  unsigned int getMaxNumberOfClients() { return max_clients; }
 
   /*!
     Get the number of clients connected to the server.
 
     \return Number of clients connected.
   */
-  unsigned int  getNumberOfClients(){ return (unsigned int)receptor_list.size(); }
+  unsigned int getNumberOfClients()
+  {
+    return (unsigned int)receptor_list.size();
+  }
 
-  void          print();
+  void print();
 
-  bool          start();
+  bool start();
 
   /*!
     Set the maximum number of clients that can be connected to the server.
@@ -216,7 +215,7 @@ public:
 
     \param l : Maximum number of clients.
   */
-  void          setMaxNumberOfClients(unsigned int &l){ max_clients = l; }
+  void setMaxNumberOfClients(unsigned int &l) { max_clients = l; }
 };
 
 #endif

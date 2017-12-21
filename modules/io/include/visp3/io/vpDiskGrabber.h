@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file vpDiskGrabber.h
   \brief Class to load image sequence from the disk.
@@ -46,10 +45,10 @@
 
 #include <string>
 
-#include <visp3/io/vpImageIo.h>
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpFrameGrabber.h>
 #include <visp3/core/vpRGBa.h>
-#include <visp3/core/vpDebug.h>
+#include <visp3/io/vpImageIo.h>
 
 /*!
   \class vpDiskGrabber
@@ -106,13 +105,14 @@ int main(){
 }
 \endcode
 */
-class VISP_EXPORT vpDiskGrabber  : public vpFrameGrabber
+class VISP_EXPORT vpDiskGrabber : public vpFrameGrabber
 {
 private:
-  long m_image_number ; //!< id of the current image to be read
-  long m_image_number_next ; //!< id of the next image to be read
-  long m_image_step ;    //!< increment between two image id
-  unsigned int m_number_of_zero ; //!< number of zero in the image name (image.00000.pgm)
+  long m_image_number;           //!< id of the current image to be read
+  long m_image_number_next;      //!< id of the next image to be read
+  long m_image_step;             //!< increment between two image id
+  unsigned int m_number_of_zero; //!< number of zero in the image name
+                                 //!< (image.00000.pgm)
 
   std::string m_directory; //!< image location
   std::string m_base_name; //!< image base name
@@ -126,15 +126,15 @@ public:
   explicit vpDiskGrabber(const std::string &genericName);
   explicit vpDiskGrabber(const std::string &dir, const std::string &basename,
                          long number, int step, unsigned int noz,
-                         const std::string &ext) ;
-  virtual ~vpDiskGrabber() ;
+                         const std::string &ext);
+  virtual ~vpDiskGrabber();
 
   void acquire(vpImage<unsigned char> &I);
   void acquire(vpImage<vpRGBa> &I);
-  void acquire(vpImage<float> &I) ;
+  void acquire(vpImage<float> &I);
   void acquire(vpImage<unsigned char> &I, long image_number);
   void acquire(vpImage<vpRGBa> &I, long image_number);
-  void acquire(vpImage<float> &I, long image_number) ;
+  void acquire(vpImage<float> &I, long image_number);
 
   void close();
 
@@ -143,18 +143,17 @@ public:
   */
   long getImageNumber() { return m_image_number; };
 
-  void open(vpImage<unsigned char> &I) ;
-  void open(vpImage<vpRGBa> &I) ;
-  void open(vpImage<float> &I) ;
+  void open(vpImage<unsigned char> &I);
+  void open(vpImage<vpRGBa> &I);
+  void open(vpImage<float> &I);
 
   void setBaseName(const std::string &name);
   void setDirectory(const std::string &dir);
   void setExtension(const std::string &ext);
   void setGenericName(const std::string &genericName);
-  void setImageNumber(long number) ;
+  void setImageNumber(long number);
   void setNumberOfZero(unsigned int noz);
   void setStep(long step);
-} ;
+};
 
 #endif
-

@@ -1,12 +1,12 @@
 //! \example tutorial-image-filter.cpp
 
+#include <visp3/core/vpImageFilter.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/core/vpImageFilter.h>
 
 void display(vpImage<unsigned char> &I, const std::string &title);
 void display(vpImage<double> &D, const std::string &title);
@@ -29,7 +29,7 @@ void display(vpImage<unsigned char> &I, const std::string &title)
 
   vpDisplay::setTitle(I, title.c_str());
   vpDisplay::display(I);
-  vpDisplay::displayText(I, 15,15, "Click to continue...", vpColor::red);
+  vpDisplay::displayText(I, 15, 15, "Click to continue...", vpColor::red);
   vpDisplay::flush(I);
   vpDisplay::getClick(I);
 }
@@ -41,11 +41,11 @@ void display(vpImage<double> &D, const std::string &title)
   display(I, title);
 }
 
-int main(int argc, char** argv )
+int main(int argc, char **argv)
 {
   try {
-    if(argc != 2) {
-      printf( "Usage: %s <image name.[pgm,ppm,jpeg,png,bmp]>\n", argv[0] );
+    if (argc != 2) {
+      printf("Usage: %s <image name.[pgm,ppm,jpeg,png,bmp]>\n", argv[0]);
       return -1;
     }
     //! [vpImage construction]
@@ -54,8 +54,7 @@ int main(int argc, char** argv )
 
     try {
       vpImageIo::read(I, argv[1]);
-    }
-    catch(...) {
+    } catch (...) {
       std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
       return -1;
     }
@@ -83,7 +82,7 @@ int main(int argc, char** argv )
     //! [Gradients y]
     display(dIy, "Gradient dIy");
 
-    //! [Canny]
+//! [Canny]
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
     vpImage<unsigned char> C;
     vpImageFilter::canny(I, C, 5, 15, 3);
@@ -92,10 +91,16 @@ int main(int argc, char** argv )
     //! [Canny]
 
     //! [Convolution kernel]
-    vpMatrix K(3,3); // Sobel kernel along x
-    K[0][0] = 1; K[0][1] = 0; K[0][2] = -1;
-    K[1][0] = 2; K[1][1] = 0; K[1][2] = -2;
-    K[2][0] = 1; K[2][1] = 0; K[2][2] = -1;
+    vpMatrix K(3, 3); // Sobel kernel along x
+    K[0][0] = 1;
+    K[0][1] = 0;
+    K[0][2] = -1;
+    K[1][0] = 2;
+    K[1][1] = 0;
+    K[1][2] = -2;
+    K[2][0] = 1;
+    K[2][1] = 0;
+    K[2][2] = -1;
     //! [Convolution kernel]
     //! [Convolution]
     vpImage<double> Gx;
@@ -105,16 +110,15 @@ int main(int argc, char** argv )
 
     //! [Gaussian pyramid]
     size_t nlevel = 3;
-    std::vector< vpImage<unsigned char> > pyr(nlevel);
+    std::vector<vpImage<unsigned char> > pyr(nlevel);
     pyr[0] = I;
-    for (size_t i=1; i < nlevel; i++) {
-      vpImageFilter::getGaussPyramidal(pyr[i-1], pyr[i]);
+    for (size_t i = 1; i < nlevel; i++) {
+      vpImageFilter::getGaussPyramidal(pyr[i - 1], pyr[i]);
       display(pyr[i], "Pyramid");
     }
     //! [Gaussian pyramid]
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

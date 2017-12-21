@@ -36,16 +36,15 @@
  *
  *****************************************************************************/
 
-#include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpImageFilter.h>
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-#  include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-#  include <opencv2/imgproc/imgproc_c.h>
+#include <opencv2/imgproc/imgproc_c.h>
 #elif defined(VISP_HAVE_OPENCV)
-#  include <cv.h>
+#include <cv.h>
 #endif
-
 
 /*!
   Apply a filter to an image.
@@ -60,7 +59,8 @@
     \sum_{y=0}^{\textbf{kernel\_h}}
     \sum_{x=0}^{\textbf{kernel\_w}}
     \textbf{M} \left( x,y \right ) \times
-    \textbf{I} \left( u-\frac{\textbf{kernel\_w}}{2}+x,v-\frac{\textbf{kernel\_h}}{2}+y \right)
+    \textbf{I} \left(
+  u-\frac{\textbf{kernel\_w}}{2}+x,v-\frac{\textbf{kernel\_h}}{2}+y \right)
   \f]
   The convolution is almost the same operation:
   \f[
@@ -68,28 +68,30 @@
     \sum_{y=0}^{\textbf{kernel\_h}}
     \sum_{x=0}^{\textbf{kernel\_w}}
     \textbf{M} \left( x,y \right ) \times
-    \textbf{I} \left( u+\frac{\textbf{kernel\_w}}{2}-x,v+\frac{\textbf{kernel\_h}}{2}-y \right)
+    \textbf{I} \left(
+  u+\frac{\textbf{kernel\_w}}{2}-x,v+\frac{\textbf{kernel\_h}}{2}-y \right)
   \f]
   Only pixels in the input image fully covered by the kernel are considered.
 */
-void
-vpImageFilter::filter(const vpImage<unsigned char> &I,
-                      vpImage<double>& If,
-                      const vpMatrix& M,
-                      const bool convolve) {
+void vpImageFilter::filter(const vpImage<unsigned char> &I,
+                           vpImage<double> &If, const vpMatrix &M,
+                           const bool convolve)
+{
   unsigned int size_y = M.getRows(), size_x = M.getCols();
-  unsigned int half_size_y = size_y/2, half_size_x = size_x/2;
+  unsigned int half_size_y = size_y / 2, half_size_x = size_x / 2;
 
-  If.resize(I.getHeight(),I.getWidth(), 0.0);
+  If.resize(I.getHeight(), I.getWidth(), 0.0);
 
   if (convolve) {
-    for (unsigned int i = half_size_y; i < I.getHeight()-half_size_y; i++) {
-      for (unsigned int j = half_size_x; j < I.getWidth()-half_size_x; j++) {
+    for (unsigned int i = half_size_y; i < I.getHeight() - half_size_y; i++) {
+      for (unsigned int j = half_size_x; j < I.getWidth() - half_size_x;
+           j++) {
         double conv = 0;
 
-        for(unsigned int a = 0 ; a < size_y ; a++ ) {
-          for(unsigned int b = 0 ; b < size_x ; b++ ) {
-            double val =  I[i+half_size_y-a][j+half_size_x-b]; //Convolution
+        for (unsigned int a = 0; a < size_y; a++) {
+          for (unsigned int b = 0; b < size_x; b++) {
+            double val =
+                I[i + half_size_y - a][j + half_size_x - b]; // Convolution
             conv += M[a][b] * val;
           }
         }
@@ -97,13 +99,15 @@ vpImageFilter::filter(const vpImage<unsigned char> &I,
       }
     }
   } else {
-    for (unsigned int i = half_size_y; i < I.getHeight()-half_size_y; i++) {
-      for (unsigned int j = half_size_x; j < I.getWidth()-half_size_x; j++) {
+    for (unsigned int i = half_size_y; i < I.getHeight() - half_size_y; i++) {
+      for (unsigned int j = half_size_x; j < I.getWidth() - half_size_x;
+           j++) {
         double corr = 0;
 
-        for(unsigned int a = 0 ; a < size_y ; a++ ) {
-          for(unsigned int b = 0 ; b < size_x ; b++ ) {
-            double val =  I[i-half_size_y+a][j-half_size_x+b]; //Correlation
+        for (unsigned int a = 0; a < size_y; a++) {
+          for (unsigned int b = 0; b < size_x; b++) {
+            double val =
+                I[i - half_size_y + a][j - half_size_x + b]; // Correlation
             corr += M[a][b] * val;
           }
         }
@@ -116,8 +120,8 @@ vpImageFilter::filter(const vpImage<unsigned char> &I,
 /*!
   Apply a filter to an image:
   \f[
-    \textbf{I}_u = \textbf{M} \ast \textbf{I} \textbf{ and } \textbf{I}_v = \textbf{M}^t \ast \textbf{I}
-  \f]
+    \textbf{I}_u = \textbf{M} \ast \textbf{I} \textbf{ and } \textbf{I}_v =
+  \textbf{M}^t \ast \textbf{I} \f]
 
   \param I : Image to filter
   \param Iu : Filtered image along the horizontal axis (u = columns).
@@ -125,27 +129,26 @@ vpImageFilter::filter(const vpImage<unsigned char> &I,
   \param M : Filter kernel.
   \param convolve : If true, perform a convolution otherwise a correlation.
 */
-void
-vpImageFilter::filter(const vpImage<double> &I,
-                      vpImage<double>& Iu,
-                      vpImage<double>& Iv,
-                      const vpMatrix& M,
-                      const bool convolve) {
+void vpImageFilter::filter(const vpImage<double> &I, vpImage<double> &Iu,
+                           vpImage<double> &Iv, const vpMatrix &M,
+                           const bool convolve)
+{
   unsigned int size = M.getRows();
-  unsigned int half_size = size/2;
+  unsigned int half_size = size / 2;
 
-  Iu.resize(I.getHeight(),I.getWidth(), 0.0);
-  Iv.resize(I.getHeight(),I.getWidth(), 0.0);
+  Iu.resize(I.getHeight(), I.getWidth(), 0.0);
+  Iv.resize(I.getHeight(), I.getWidth(), 0.0);
 
   if (convolve) {
-    for (unsigned int v = half_size ; v < I.getHeight()-half_size ; v++) {
-      for (unsigned int u = half_size ; u < I.getWidth()-half_size ; u++) {
+    for (unsigned int v = half_size; v < I.getHeight() - half_size; v++) {
+      for (unsigned int u = half_size; u < I.getWidth() - half_size; u++) {
         double conv_u = 0;
         double conv_v = 0;
 
-        for(unsigned int a = 0 ; a < size ; a++ ) {
-          for(unsigned int b = 0 ; b < size ; b++ ) {
-            double val =  I[v+half_size-a][u+half_size-b]; //Convolution
+        for (unsigned int a = 0; a < size; a++) {
+          for (unsigned int b = 0; b < size; b++) {
+            double val =
+                I[v + half_size - a][u + half_size - b]; // Convolution
             conv_u += M[a][b] * val;
             conv_v += M[b][a] * val;
           }
@@ -155,14 +158,15 @@ vpImageFilter::filter(const vpImage<double> &I,
       }
     }
   } else {
-    for (unsigned int v = half_size ; v < I.getHeight()-half_size ; v++) {
-      for (unsigned int u = half_size ; u < I.getWidth()-half_size ; u++) {
+    for (unsigned int v = half_size; v < I.getHeight() - half_size; v++) {
+      for (unsigned int u = half_size; u < I.getWidth() - half_size; u++) {
         double conv_u = 0;
         double conv_v = 0;
 
-        for(unsigned int a = 0 ; a < size ; a++ ) {
-          for(unsigned int b = 0 ; b < size ; b++ ) {
-            double val =  I[v-half_size+a][u-half_size+b]; //Correlation
+        for (unsigned int a = 0; a < size; a++) {
+          for (unsigned int b = 0; b < size; b++) {
+            double val =
+                I[v - half_size + a][u - half_size + b]; // Correlation
             conv_u += M[a][b] * val;
             conv_v += M[b][a] * val;
           }
@@ -216,41 +220,42 @@ vpImageFilter::filter(const vpImage<double> &I,
     \right ] \ast I
     \right )
   \f]
-  Using two separable kernels reduce the number of operations and can be faster for large kernels.
+  Using two separable kernels reduce the number of operations and can be
+  faster for large kernels.
 
   \param I : Image to filter
   \param If : Filtered image.
   \param kernelH : Separable kernel (performed first).
   \param kernelV : Separable kernel (performed last).
-  \note Only pixels in the input image fully covered by the kernel are considered.
+  \note Only pixels in the input image fully covered by the kernel are
+  considered.
 */
-void
-vpImageFilter::sepFilter(const vpImage<unsigned char> &I,
-                         vpImage<double>& If,
-                         const vpColVector& kernelH,
-                         const vpColVector &kernelV) {
+void vpImageFilter::sepFilter(const vpImage<unsigned char> &I,
+                              vpImage<double> &If, const vpColVector &kernelH,
+                              const vpColVector &kernelV)
+{
   unsigned int size = kernelH.size();
-  unsigned int half_size = size/2;
+  unsigned int half_size = size / 2;
 
-  If.resize(I.getHeight(),I.getWidth(), 0.0);
-  vpImage<double> I_filter(I.getHeight(),I.getWidth(), 0.0);
+  If.resize(I.getHeight(), I.getWidth(), 0.0);
+  vpImage<double> I_filter(I.getHeight(), I.getWidth(), 0.0);
 
   for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = half_size; j < I.getWidth()-half_size; j++) {
+    for (unsigned int j = half_size; j < I.getWidth() - half_size; j++) {
       double conv = 0.0;
       for (unsigned int a = 0; a < kernelH.size(); a++) {
-        conv += kernelH[a] * I[i][j+half_size-a];
+        conv += kernelH[a] * I[i][j + half_size - a];
       }
 
       I_filter[i][j] = conv;
     }
   }
 
-  for (unsigned int i = half_size; i < I.getHeight()-half_size; i++) {
+  for (unsigned int i = half_size; i < I.getHeight() - half_size; i++) {
     for (unsigned int j = 0; j < I.getWidth(); j++) {
       double conv = 0.0;
       for (unsigned int a = 0; a < kernelV.size(); a++) {
-        conv += kernelV[a] * I_filter[i+half_size-a][j];
+        conv += kernelV[a] * I_filter[i + half_size - a][j];
       }
 
       If[i][j] = conv;
@@ -285,9 +290,8 @@ int main()
   //First grab the source image Isrc.
 
   //Apply the Canny edge operator and set the Icanny image.
-  vpImageFilter::canny(Isrc, Icanny, gaussianFilterSize, thresholdCanny, apertureSobel);
-#endif
-  return (0);
+  vpImageFilter::canny(Isrc, Icanny, gaussianFilterSize, thresholdCanny,
+apertureSobel); #endif return (0);
 }
   \endcode
 
@@ -299,21 +303,23 @@ int main()
   greater than this value are marked as an edge).
   \param apertureSobel : Size of the mask for the Sobel operator (odd number).
 */
-void
-vpImageFilter:: canny(const vpImage<unsigned char>& Isrc,
-                      vpImage<unsigned char>& Ires,
-                      const unsigned int gaussianFilterSize,
-                      const double thresholdCanny,
-                      const unsigned int apertureSobel)
+void vpImageFilter::canny(const vpImage<unsigned char> &Isrc,
+                          vpImage<unsigned char> &Ires,
+                          const unsigned int gaussianFilterSize,
+                          const double thresholdCanny,
+                          const unsigned int apertureSobel)
 {
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  IplImage* img_ipl = NULL;
+  IplImage *img_ipl = NULL;
   vpImageConvert::convert(Isrc, img_ipl);
-  IplImage* edges_ipl;
-  edges_ipl = cvCreateImage(cvSize(img_ipl->width, img_ipl->height), img_ipl->depth, img_ipl->nChannels);
+  IplImage *edges_ipl;
+  edges_ipl = cvCreateImage(cvSize(img_ipl->width, img_ipl->height),
+                            img_ipl->depth, img_ipl->nChannels);
 
-  cvSmooth(img_ipl, img_ipl, CV_GAUSSIAN, (int)gaussianFilterSize, (int)gaussianFilterSize, 0, 0);
-  cvCanny(img_ipl, edges_ipl, thresholdCanny, thresholdCanny, (int)apertureSobel);
+  cvSmooth(img_ipl, img_ipl, CV_GAUSSIAN, (int)gaussianFilterSize,
+           (int)gaussianFilterSize, 0, 0);
+  cvCanny(img_ipl, edges_ipl, thresholdCanny, thresholdCanny,
+          (int)apertureSobel);
 
   vpImageConvert::convert(edges_ipl, Ires);
   cvReleaseImage(&img_ipl);
@@ -321,8 +327,11 @@ vpImageFilter:: canny(const vpImage<unsigned char>& Isrc,
 #else
   cv::Mat img_cvmat, edges_cvmat;
   vpImageConvert::convert(Isrc, img_cvmat);
-  cv::GaussianBlur(img_cvmat, img_cvmat, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize), 0, 0);
-  cv::Canny(img_cvmat, edges_cvmat, thresholdCanny, thresholdCanny, (int)apertureSobel);
+  cv::GaussianBlur(img_cvmat, img_cvmat,
+                   cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize),
+                   0, 0);
+  cv::Canny(img_cvmat, edges_cvmat, thresholdCanny, thresholdCanny,
+            (int)apertureSobel);
   vpImageConvert::convert(edges_cvmat, Ires);
 #endif
 }
@@ -331,114 +340,111 @@ vpImageFilter:: canny(const vpImage<unsigned char>& Isrc,
 /*!
   Apply a separable filter.
  */
-void vpImageFilter::filter(const vpImage<unsigned char> &I, vpImage<double>& GI, const double *filter,unsigned  int size)
+void vpImageFilter::filter(const vpImage<unsigned char> &I,
+                           vpImage<double> &GI, const double *filter,
+                           unsigned int size)
 {
-  vpImage<double> GIx ;
-  filterX(I, GIx,filter,size);
-  filterY(GIx, GI,filter,size);
+  vpImage<double> GIx;
+  filterX(I, GIx, filter, size);
+  filterY(GIx, GI, filter, size);
   GIx.destroy();
 }
 
 /*!
   Apply a separable filter.
  */
-void vpImageFilter::filter(const vpImage<double> &I, vpImage<double>& GI, const double *filter,unsigned  int size)
+void vpImageFilter::filter(const vpImage<double> &I, vpImage<double> &GI,
+                           const double *filter, unsigned int size)
 {
-  vpImage<double> GIx ;
-  filterX(I, GIx,filter,size);
-  filterY(GIx, GI,filter,size);
+  vpImage<double> GIx;
+  filterX(I, GIx, filter, size);
+  filterY(GIx, GI, filter, size);
   GIx.destroy();
 }
 
-void vpImageFilter::filterX(const vpImage<unsigned char> &I, vpImage<double>& dIx, const double *filter,unsigned  int size)
+void vpImageFilter::filterX(const vpImage<unsigned char> &I,
+                            vpImage<double> &dIx, const double *filter,
+                            unsigned int size)
 {
-  dIx.resize(I.getHeight(),I.getWidth()) ;
-  for (unsigned int i=0 ; i < I.getHeight() ; i++)
-  {
-    for (unsigned int j=0 ; j < (size-1)/2 ; j++)
-    {
-      dIx[i][j]=vpImageFilter::filterXLeftBorder(I,i,j,filter,size);
-      //dIx[i][j]=0;
+  dIx.resize(I.getHeight(), I.getWidth());
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < (size - 1) / 2; j++) {
+      dIx[i][j] = vpImageFilter::filterXLeftBorder(I, i, j, filter, size);
+      // dIx[i][j]=0;
     }
-    for (unsigned int j=(size-1)/2 ; j < I.getWidth()-(size-1)/2 ; j++)
-    {
-      dIx[i][j]=vpImageFilter::filterX(I,i,j,filter,size);
+    for (unsigned int j = (size - 1) / 2; j < I.getWidth() - (size - 1) / 2;
+         j++) {
+      dIx[i][j] = vpImageFilter::filterX(I, i, j, filter, size);
     }
-    for (unsigned int j=I.getWidth()-(size-1)/2 ; j < I.getWidth() ; j++)
-    {
-      dIx[i][j]=vpImageFilter::filterXRightBorder(I,i,j,filter,size);
-      //dIx[i][j]=0;
+    for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth();
+         j++) {
+      dIx[i][j] = vpImageFilter::filterXRightBorder(I, i, j, filter, size);
+      // dIx[i][j]=0;
     }
   }
 }
-void vpImageFilter::filterX(const vpImage<double> &I, vpImage<double>& dIx, const double *filter,unsigned  int size)
+void vpImageFilter::filterX(const vpImage<double> &I, vpImage<double> &dIx,
+                            const double *filter, unsigned int size)
 {
-  dIx.resize(I.getHeight(),I.getWidth()) ;
-  for (unsigned int i=0 ; i < I.getHeight() ; i++)
-  {
-    for (unsigned int j=0 ; j < (size-1)/2 ; j++)
-    {
-      dIx[i][j]=vpImageFilter::filterXLeftBorder(I,i,j,filter,size);
-      //dIx[i][j]=0;
+  dIx.resize(I.getHeight(), I.getWidth());
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < (size - 1) / 2; j++) {
+      dIx[i][j] = vpImageFilter::filterXLeftBorder(I, i, j, filter, size);
+      // dIx[i][j]=0;
     }
-    for (unsigned int j=(size-1)/2 ; j < I.getWidth()-(size-1)/2 ; j++)
-    {
-      dIx[i][j]=vpImageFilter::filterX(I,i,j,filter,size);
+    for (unsigned int j = (size - 1) / 2; j < I.getWidth() - (size - 1) / 2;
+         j++) {
+      dIx[i][j] = vpImageFilter::filterX(I, i, j, filter, size);
     }
-    for (unsigned int j=I.getWidth()-(size-1)/2 ; j < I.getWidth() ; j++)
-    {
-      dIx[i][j]=vpImageFilter::filterXRightBorder(I,i,j,filter,size);
-      //dIx[i][j]=0;
+    for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth();
+         j++) {
+      dIx[i][j] = vpImageFilter::filterXRightBorder(I, i, j, filter, size);
+      // dIx[i][j]=0;
     }
   }
 }
-void vpImageFilter::filterY(const vpImage<unsigned char> &I, vpImage<double>& dIy, const double *filter,unsigned  int size)
+void vpImageFilter::filterY(const vpImage<unsigned char> &I,
+                            vpImage<double> &dIy, const double *filter,
+                            unsigned int size)
 {
-  dIy.resize(I.getHeight(),I.getWidth()) ;
-  for (unsigned int i=0 ; i < (size-1)/2 ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=vpImageFilter::filterYTopBorder(I,i,j,filter,size);
+  dIy.resize(I.getHeight(), I.getWidth());
+  for (unsigned int i = 0; i < (size - 1) / 2; i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = vpImageFilter::filterYTopBorder(I, i, j, filter, size);
     }
   }
-  for (unsigned int i=(size-1)/2 ; i < I.getHeight()-(size-1)/2 ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=vpImageFilter::filterY(I,i,j,filter,size);
+  for (unsigned int i = (size - 1) / 2; i < I.getHeight() - (size - 1) / 2;
+       i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = vpImageFilter::filterY(I, i, j, filter, size);
     }
   }
-  for (unsigned int i=I.getHeight()-(size-1)/2 ; i < I.getHeight() ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=vpImageFilter::filterYBottomBorder(I,i,j,filter,size);
+  for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight();
+       i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = vpImageFilter::filterYBottomBorder(I, i, j, filter, size);
     }
   }
 }
-void vpImageFilter::filterY(const vpImage<double> &I, vpImage<double>& dIy, const double *filter,unsigned  int size)
+void vpImageFilter::filterY(const vpImage<double> &I, vpImage<double> &dIy,
+                            const double *filter, unsigned int size)
 {
-  dIy.resize(I.getHeight(),I.getWidth()) ;
-  for (unsigned int i=0 ; i < (size-1)/2 ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=vpImageFilter::filterYTopBorder(I,i,j,filter,size);
+  dIy.resize(I.getHeight(), I.getWidth());
+  for (unsigned int i = 0; i < (size - 1) / 2; i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = vpImageFilter::filterYTopBorder(I, i, j, filter, size);
     }
   }
-  for (unsigned int i=(size-1)/2 ; i < I.getHeight()-(size-1)/2 ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=vpImageFilter::filterY(I,i,j,filter,size);
+  for (unsigned int i = (size - 1) / 2; i < I.getHeight() - (size - 1) / 2;
+       i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = vpImageFilter::filterY(I, i, j, filter, size);
     }
   }
-  for (unsigned int i=I.getHeight()-(size-1)/2 ; i < I.getHeight() ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=vpImageFilter::filterYBottomBorder(I,i,j,filter,size);
+  for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight();
+       i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = vpImageFilter::filterYBottomBorder(I, i, j, filter, size);
     }
   }
 }
@@ -448,17 +454,21 @@ void vpImageFilter::filterY(const vpImage<double> &I, vpImage<double>& dIy, cons
   \param I : Input image.
   \param GI : Filtered image.
   \param size : Filter size. This value should be odd.
-  \param sigma : Gaussian standard deviation. If it is equal to zero or negative, it is computed from filter size as sigma = (size-1)/6.
-  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+  \param sigma : Gaussian standard deviation. If it is equal to zero or
+  negative, it is computed from filter size as sigma = (size-1)/6. \param
+  normalize : Flag indicating whether to normalize the filter coefficients or
+  not.
 
  */
-void vpImageFilter::gaussianBlur(const vpImage<unsigned char> &I, vpImage<double>& GI, unsigned int size, double sigma, bool normalize)
+void vpImageFilter::gaussianBlur(const vpImage<unsigned char> &I,
+                                 vpImage<double> &GI, unsigned int size,
+                                 double sigma, bool normalize)
 {
-  double *fg=new double[(size+1)/2] ;
-  vpImageFilter::getGaussianKernel(fg, size, sigma, normalize) ;
-  vpImage<double> GIx ;
-  vpImageFilter::filterX(I, GIx,fg,size);
-  vpImageFilter::filterY(GIx, GI,fg,size);
+  double *fg = new double[(size + 1) / 2];
+  vpImageFilter::getGaussianKernel(fg, size, sigma, normalize);
+  vpImage<double> GIx;
+  vpImageFilter::filterX(I, GIx, fg, size);
+  vpImageFilter::filterY(GIx, GI, fg, size);
   GIx.destroy();
   delete[] fg;
 }
@@ -468,17 +478,21 @@ void vpImageFilter::gaussianBlur(const vpImage<unsigned char> &I, vpImage<double
   \param I : Input double image.
   \param GI : Filtered image.
   \param size : Filter size. This value should be odd.
-  \param sigma : Gaussian standard deviation. If it is equal to zero or negative, it is computed from filter size as sigma = (size-1)/6.
-  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+  \param sigma : Gaussian standard deviation. If it is equal to zero or
+  negative, it is computed from filter size as sigma = (size-1)/6. \param
+  normalize : Flag indicating whether to normalize the filter coefficients or
+  not.
 
  */
-void vpImageFilter::gaussianBlur(const vpImage<double> &I, vpImage<double>& GI, unsigned int size, double sigma, bool normalize)
+void vpImageFilter::gaussianBlur(const vpImage<double> &I,
+                                 vpImage<double> &GI, unsigned int size,
+                                 double sigma, bool normalize)
 {
-  double *fg=new double[(size+1)/2] ;
-  vpImageFilter::getGaussianKernel(fg, size, sigma, normalize) ;
-  vpImage<double> GIx ;
-  vpImageFilter::filterX(I, GIx,fg,size);
-  vpImageFilter::filterY(GIx, GI,fg,size);
+  double *fg = new double[(size + 1) / 2];
+  vpImageFilter::getGaussianKernel(fg, size, sigma, normalize);
+  vpImage<double> GIx;
+  vpImageFilter::filterX(I, GIx, fg, size);
+  vpImageFilter::filterY(GIx, GI, fg, size);
   GIx.destroy();
   delete[] fg;
 }
@@ -486,226 +500,218 @@ void vpImageFilter::gaussianBlur(const vpImage<double> &I, vpImage<double>& GI, 
 /*!
   Return the coefficients of a Gaussian filter.
 
-  \param filter : Pointer to the filter kernel that should refer to a (size+1)/2 array.
-  The first value refers to the central coefficient, the next one to the right coefficients. Left coefficients could be deduced by symmetry.
-  \param size : Filter size. This value should be odd.
-  \param sigma : Gaussian standard deviation. If it is equal to zero or negative, it is computed from filter size as sigma = (size-1)/6.
-  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+  \param filter : Pointer to the filter kernel that should refer to a
+  (size+1)/2 array. The first value refers to the central coefficient, the
+  next one to the right coefficients. Left coefficients could be deduced by
+  symmetry. \param size : Filter size. This value should be odd. \param sigma
+  : Gaussian standard deviation. If it is equal to zero or negative, it is
+  computed from filter size as sigma = (size-1)/6. \param normalize : Flag
+  indicating whether to normalize the filter coefficients or not.
 */
-void vpImageFilter::getGaussianKernel(double *filter, unsigned int size, double sigma, bool normalize)
+void vpImageFilter::getGaussianKernel(double *filter, unsigned int size,
+                                      double sigma, bool normalize)
 {
-  if (size%2 != 1)
-    throw (vpImageException(vpImageException::incorrectInitializationError,
-          "Bad Gaussian filter size"));
+  if (size % 2 != 1)
+    throw(vpImageException(vpImageException::incorrectInitializationError,
+                           "Bad Gaussian filter size"));
 
-  if (sigma<= 0)
-    sigma = (size-1)/6.0;
+  if (sigma <= 0)
+    sigma = (size - 1) / 6.0;
 
-  int middle = (int)(size-1)/2;
+  int middle = (int)(size - 1) / 2;
   double sigma2 = vpMath::sqr(sigma);
-  for( int i=0; i<= middle; i++)
-  {
-    filter[i] = (1./(sigma*sqrt(2.*M_PI)))*exp(-(i*i)/(2.*sigma2));
+  for (int i = 0; i <= middle; i++) {
+    filter[i] =
+        (1. / (sigma * sqrt(2. * M_PI))) * exp(-(i * i) / (2. * sigma2));
   }
   if (normalize) {
-    //renormalization
-    double sum=0;
-    for(int i=1; i<=middle; i++)
-    {
-      sum += 2*filter[i] ;
+    // renormalization
+    double sum = 0;
+    for (int i = 1; i <= middle; i++) {
+      sum += 2 * filter[i];
     }
     sum += filter[0];
 
-    for(int i=0; i<=middle; i++)
-    {
-      filter[i] = filter[i]/sum;
+    for (int i = 0; i <= middle; i++) {
+      filter[i] = filter[i] / sum;
     }
   }
 }
 
 /*!
-  Return the coefficients of a Gaussian derivative filter that may be used to compute spatial image derivatives after applying a Gaussian blur.
+  Return the coefficients of a Gaussian derivative filter that may be used to
+  compute spatial image derivatives after applying a Gaussian blur.
 
-  \param filter : Pointer to the filter kernel that should refer to a (size+1)/2 array.
-  The first value refers to the central coefficient, the next one to the right coefficients. Left coefficients could be deduced by symmetry.
-  \param size : Filter size. This value should be odd.
-  \param sigma : Gaussian standard deviation. If it is equal to zero or negative, it is computed from filter size as sigma = (size-1)/6.
-  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+  \param filter : Pointer to the filter kernel that should refer to a
+  (size+1)/2 array. The first value refers to the central coefficient, the
+  next one to the right coefficients. Left coefficients could be deduced by
+  symmetry. \param size : Filter size. This value should be odd. \param sigma
+  : Gaussian standard deviation. If it is equal to zero or negative, it is
+  computed from filter size as sigma = (size-1)/6. \param normalize : Flag
+  indicating whether to normalize the filter coefficients or not.
 */
-void vpImageFilter::getGaussianDerivativeKernel(double *filter, unsigned int size, double sigma, bool normalize)
+void vpImageFilter::getGaussianDerivativeKernel(double *filter,
+                                                unsigned int size,
+                                                double sigma, bool normalize)
 {
-  if (size%2 != 1)
-    throw (vpImageException(vpImageException::incorrectInitializationError,
-          "Bad Gaussian filter size"));
+  if (size % 2 != 1)
+    throw(vpImageException(vpImageException::incorrectInitializationError,
+                           "Bad Gaussian filter size"));
 
-  if (sigma<= 0)
-    sigma = (size-1)/6.0;
+  if (sigma <= 0)
+    sigma = (size - 1) / 6.0;
 
-  int middle = (int)(size-1)/2;
+  int middle = (int)(size - 1) / 2;
   double sigma2 = vpMath::sqr(sigma);
   filter[0] = 0.;
-  for(int i=1; i<= middle; i++)
-  {
-    filter[i] = -(1./(sigma*sqrt(2.*M_PI)))*(exp(-((i+1)*(i+1))/(2.*sigma2))-exp(-((i-1)*(i-1))/(2.*sigma2)))/2.;
+  for (int i = 1; i <= middle; i++) {
+    filter[i] = -(1. / (sigma * sqrt(2. * M_PI))) *
+                (exp(-((i + 1) * (i + 1)) / (2. * sigma2)) -
+                 exp(-((i - 1) * (i - 1)) / (2. * sigma2))) /
+                2.;
   }
 
   if (normalize) {
-    double sum=0;
-    for(int i=1; i<=middle; i++)
-    {
-      sum += 2.*(1./(sigma*sqrt(2.*M_PI)))*exp(-(i*i)/(2.*sigma2));
+    double sum = 0;
+    for (int i = 1; i <= middle; i++) {
+      sum += 2. * (1. / (sigma * sqrt(2. * M_PI))) *
+             exp(-(i * i) / (2. * sigma2));
     }
-    sum += (1./(sigma*sqrt(2.*M_PI))) ;
+    sum += (1. / (sigma * sqrt(2. * M_PI)));
 
-    for(int i=1; i<=middle; i++)
-    {
-      filter[i] = filter[i]/sum;
+    for (int i = 1; i <= middle; i++) {
+      filter[i] = filter[i] / sum;
     }
   }
 }
 
-
-void vpImageFilter::getGradX(const vpImage<unsigned char> &I, vpImage<double>& dIx)
+void vpImageFilter::getGradX(const vpImage<unsigned char> &I,
+                             vpImage<double> &dIx)
 {
-  dIx.resize(I.getHeight(),I.getWidth()) ;
-  //dIx=0;
-  for (unsigned int i=0 ; i < I.getHeight() ; i++)
-  {
-    for (unsigned int j=0 ; j < 3 ; j++)
-    {
-      dIx[i][j]=0;
+  dIx.resize(I.getHeight(), I.getWidth());
+  // dIx=0;
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < 3; j++) {
+      dIx[i][j] = 0;
     }
-    for (unsigned int j=3 ; j < I.getWidth()-3 ; j++)
-    {
-      dIx[i][j]=vpImageFilter::derivativeFilterX(I,i,j);
+    for (unsigned int j = 3; j < I.getWidth() - 3; j++) {
+      dIx[i][j] = vpImageFilter::derivativeFilterX(I, i, j);
     }
-    for (unsigned int j=I.getWidth()-3 ; j < I.getWidth() ; j++)
-    {
-      dIx[i][j]=0;
+    for (unsigned int j = I.getWidth() - 3; j < I.getWidth(); j++) {
+      dIx[i][j] = 0;
     }
   }
 }
 
-void vpImageFilter::getGradY(const vpImage<unsigned char> &I, vpImage<double>& dIy)
+void vpImageFilter::getGradY(const vpImage<unsigned char> &I,
+                             vpImage<double> &dIy)
 {
-  dIy.resize(I.getHeight(),I.getWidth()) ;
-  //dIy=0;
-  for (unsigned int i=0 ; i < 3 ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=0;
+  dIy.resize(I.getHeight(), I.getWidth());
+  // dIy=0;
+  for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = 0;
     }
   }
-  for (unsigned int i=3 ; i < I.getHeight()-3 ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=vpImageFilter::derivativeFilterY(I,i,j);
+  for (unsigned int i = 3; i < I.getHeight() - 3; i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = vpImageFilter::derivativeFilterY(I, i, j);
     }
   }
-  for (unsigned int i=I.getHeight()-3 ; i < I.getHeight() ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=0;
+  for (unsigned int i = I.getHeight() - 3; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = 0;
     }
   }
 }
 
-void vpImageFilter::getGradX(const vpImage<unsigned char> &I, vpImage<double>& dIx, const double *filter,unsigned  int size)
+void vpImageFilter::getGradX(const vpImage<unsigned char> &I,
+                             vpImage<double> &dIx, const double *filter,
+                             unsigned int size)
 {
-  dIx.resize(I.getHeight(),I.getWidth()) ;
+  dIx.resize(I.getHeight(), I.getWidth());
   //#pragma omp parallel for
-  for (unsigned int i=0 ; i < I.getHeight() ; i++)
-  {
-    for (unsigned int j=0 ; j < (size-1)/2 ; j++)
-    {
-      dIx[i][j]=0;
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < (size - 1) / 2; j++) {
+      dIx[i][j] = 0;
     }
-    for (unsigned int j=(size-1)/2 ; j < I.getWidth()-(size-1)/2 ; j++)
-    {
-      dIx[i][j]=vpImageFilter::derivativeFilterX(I,i,j,filter,size);
+    for (unsigned int j = (size - 1) / 2; j < I.getWidth() - (size - 1) / 2;
+         j++) {
+      dIx[i][j] = vpImageFilter::derivativeFilterX(I, i, j, filter, size);
     }
-    for (unsigned int j=I.getWidth()-(size-1)/2 ; j < I.getWidth() ; j++)
-    {
-      dIx[i][j]=0;
+    for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth();
+         j++) {
+      dIx[i][j] = 0;
     }
   }
 }
-void vpImageFilter::getGradX(const vpImage<double> &I, vpImage<double>& dIx, const double *filter,unsigned  int size)
+void vpImageFilter::getGradX(const vpImage<double> &I, vpImage<double> &dIx,
+                             const double *filter, unsigned int size)
 {
-  dIx.resize(I.getHeight(),I.getWidth()) ;
-  //dIx=0;
-  for (unsigned int i=0 ; i < I.getHeight() ; i++)
-  {
-    for (unsigned int j=0 ; j < (size-1)/2 ; j++)
-    {
-      dIx[i][j]=0;
+  dIx.resize(I.getHeight(), I.getWidth());
+  // dIx=0;
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < (size - 1) / 2; j++) {
+      dIx[i][j] = 0;
     }
-    for (unsigned int j=(size-1)/2 ; j < I.getWidth()-(size-1)/2 ; j++)
-    {
-      dIx[i][j]=vpImageFilter::derivativeFilterX(I,i,j,filter,size);
+    for (unsigned int j = (size - 1) / 2; j < I.getWidth() - (size - 1) / 2;
+         j++) {
+      dIx[i][j] = vpImageFilter::derivativeFilterX(I, i, j, filter, size);
     }
-    for (unsigned int j=I.getWidth()-(size-1)/2 ; j < I.getWidth() ; j++)
-    {
-      dIx[i][j]=0;
+    for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth();
+         j++) {
+      dIx[i][j] = 0;
     }
   }
 }
 
-void vpImageFilter::getGradY(const vpImage<unsigned char> &I, vpImage<double>& dIy, const double *filter,unsigned  int size)
+void vpImageFilter::getGradY(const vpImage<unsigned char> &I,
+                             vpImage<double> &dIy, const double *filter,
+                             unsigned int size)
 {
-  dIy.resize(I.getHeight(),I.getWidth()) ;
+  dIy.resize(I.getHeight(), I.getWidth());
   //#pragma omp parallel for
-  for (unsigned int i=0 ; i < (size-1)/2 ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=0;
+  for (unsigned int i = 0; i < (size - 1) / 2; i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = 0;
     }
   }
   //#pragma omp parallel for
-  for (unsigned int i=(size-1)/2 ; i < I.getHeight()-(size-1)/2 ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=vpImageFilter::derivativeFilterY(I,i,j,filter,size);
+  for (unsigned int i = (size - 1) / 2; i < I.getHeight() - (size - 1) / 2;
+       i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = vpImageFilter::derivativeFilterY(I, i, j, filter, size);
     }
   }
   //#pragma omp parallel for
-  for (unsigned int i=I.getHeight()-(size-1)/2 ; i < I.getHeight() ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=0;
+  for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight();
+       i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = 0;
     }
   }
 }
 
-void vpImageFilter::getGradY(const vpImage<double> &I, vpImage<double>& dIy, const double *filter,unsigned  int size)
+void vpImageFilter::getGradY(const vpImage<double> &I, vpImage<double> &dIy,
+                             const double *filter, unsigned int size)
 {
-  dIy.resize(I.getHeight(),I.getWidth()) ;
-  //dIy=0;
-  for (unsigned int i=0 ; i < (size-1)/2 ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=0;
+  dIy.resize(I.getHeight(), I.getWidth());
+  // dIy=0;
+  for (unsigned int i = 0; i < (size - 1) / 2; i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = 0;
     }
   }
-  for (unsigned int i=(size-1)/2 ; i < I.getHeight()-(size-1)/2 ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=vpImageFilter::derivativeFilterY(I,i,j,filter,size);
+  for (unsigned int i = (size - 1) / 2; i < I.getHeight() - (size - 1) / 2;
+       i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = vpImageFilter::derivativeFilterY(I, i, j, filter, size);
     }
   }
-  for (unsigned int i=I.getHeight()-(size-1)/2 ; i < I.getHeight() ; i++)
-  {
-    for (unsigned int j=0 ; j < I.getWidth() ; j++)
-    {
-      dIy[i][j]=0;
+  for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight();
+       i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      dIy[i][j] = 0;
     }
   }
 }
@@ -714,14 +720,20 @@ void vpImageFilter::getGradY(const vpImage<double> &I, vpImage<double>& dIy, con
    Compute the gradient along X after applying a gaussian filter along Y.
    \param I : Input image
    \param dIx : Gradient along X.
-   \param gaussianKernel : Gaussian kernel which values should be computed using vpImageFilter::getGaussianKernel().
-   \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using vpImageFilter::getGaussianDerivativeKernel().
-   \param size : Size of the Gaussian and Gaussian derivative kernels.
+   \param gaussianKernel : Gaussian kernel which values should be computed
+   using vpImageFilter::getGaussianKernel(). \param gaussianDerivativeKernel :
+   Gaussian derivative kernel which values should be computed using
+   vpImageFilter::getGaussianDerivativeKernel(). \param size : Size of the
+   Gaussian and Gaussian derivative kernels.
  */
-void vpImageFilter::getGradXGauss2D(const vpImage<unsigned char> &I, vpImage<double>& dIx, const double *gaussianKernel, const double *gaussianDerivativeKernel, unsigned  int size)
+void vpImageFilter::getGradXGauss2D(const vpImage<unsigned char> &I,
+                                    vpImage<double> &dIx,
+                                    const double *gaussianKernel,
+                                    const double *gaussianDerivativeKernel,
+                                    unsigned int size)
 {
   vpImage<double> GIy;
-  vpImageFilter::filterY(I,  GIy, gaussianKernel, size);
+  vpImageFilter::filterY(I, GIy, gaussianKernel, size);
   vpImageFilter::getGradX(GIy, dIx, gaussianDerivativeKernel, size);
 }
 
@@ -729,51 +741,65 @@ void vpImageFilter::getGradXGauss2D(const vpImage<unsigned char> &I, vpImage<dou
    Compute the gradient along Y after applying a gaussian filter along X.
    \param I : Input image
    \param dIy : Gradient along Y.
-   \param gaussianKernel : Gaussian kernel which values should be computed using vpImageFilter::getGaussianKernel().
-   \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using vpImageFilter::getGaussianDerivativeKernel().
-   \param size : Size of the Gaussian and Gaussian derivative kernels.
+   \param gaussianKernel : Gaussian kernel which values should be computed
+   using vpImageFilter::getGaussianKernel(). \param gaussianDerivativeKernel :
+   Gaussian derivative kernel which values should be computed using
+   vpImageFilter::getGaussianDerivativeKernel(). \param size : Size of the
+   Gaussian and Gaussian derivative kernels.
  */
-void vpImageFilter::getGradYGauss2D(const vpImage<unsigned char> &I, vpImage<double>& dIy, const double *gaussianKernel, const double *gaussianDerivativeKernel,unsigned  int size)
+void vpImageFilter::getGradYGauss2D(const vpImage<unsigned char> &I,
+                                    vpImage<double> &dIy,
+                                    const double *gaussianKernel,
+                                    const double *gaussianDerivativeKernel,
+                                    unsigned int size)
 {
   vpImage<double> GIx;
-  vpImageFilter::filterX(I,  GIx, gaussianKernel, size);
+  vpImageFilter::filterX(I, GIx, gaussianKernel, size);
   vpImageFilter::getGradY(GIx, dIy, gaussianDerivativeKernel, size);
 }
 
-//operation pour pyramide gaussienne
-void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char>& GI)
+// operation pour pyramide gaussienne
+void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I,
+                                      vpImage<unsigned char> &GI)
 {
   vpImage<unsigned char> GIx;
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   cv::Mat imgsrc, imgdest;
   vpImageConvert::convert(I, imgsrc);
-  cv::pyrDown( imgsrc, imgdest, cv::Size((int)I.getWidth()/2,(int)I.getHeight()/2));
+  cv::pyrDown(imgsrc, imgdest,
+              cv::Size((int)I.getWidth() / 2, (int)I.getHeight() / 2));
   vpImageConvert::convert(imgdest, GI);
 #elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   cv::Mat imgsrc, imgdest;
   vpImageConvert::convert(I, imgsrc);
-  cv::pyrDown( imgsrc, imgdest, cvSize((int)I.getWidth()/2,(int)I.getHeight()/2));
+  cv::pyrDown(imgsrc, imgdest,
+              cvSize((int)I.getWidth() / 2, (int)I.getHeight() / 2));
   vpImageConvert::convert(imgdest, GI);
 #elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
-  IplImage* imgsrc = NULL;//cvCreateImage(cvGetSize(imgign), IPL_DEPTH_8U, 1);
-  IplImage* imgdest = NULL;//cvCreateImage(cvGetSize(imgign), IPL_DEPTH_8U, 1);
-  imgsrc = cvCreateImage(cvSize((int)I.getWidth(),(int)I.getHeight()), IPL_DEPTH_8U, 1);
-  imgdest = cvCreateImage(cvSize((int)I.getWidth()/2,(int)I.getHeight()/2), IPL_DEPTH_8U, 1);
-  vpImageConvert::convert(I,imgsrc);
-  cvPyrDown( imgsrc, imgdest);
-  vpImageConvert::convert(imgdest,GI);
+  IplImage *imgsrc =
+      NULL; // cvCreateImage(cvGetSize(imgign), IPL_DEPTH_8U, 1);
+  IplImage *imgdest =
+      NULL; // cvCreateImage(cvGetSize(imgign), IPL_DEPTH_8U, 1);
+  imgsrc = cvCreateImage(cvSize((int)I.getWidth(), (int)I.getHeight()),
+                         IPL_DEPTH_8U, 1);
+  imgdest = cvCreateImage(
+      cvSize((int)I.getWidth() / 2, (int)I.getHeight() / 2), IPL_DEPTH_8U, 1);
+  vpImageConvert::convert(I, imgsrc);
+  cvPyrDown(imgsrc, imgdest);
+  vpImageConvert::convert(imgdest, GI);
 
   cvReleaseImage(&imgsrc);
   cvReleaseImage(&imgdest);
-  //vpImage<unsigned char> sGI;sGI=GI;
+// vpImage<unsigned char> sGI;sGI=GI;
 
 #else
-  vpImageFilter::getGaussXPyramidal(I,GIx);
-  vpImageFilter::getGaussYPyramidal(GIx,GI);
+  vpImageFilter::getGaussXPyramidal(I, GIx);
+  vpImageFilter::getGaussYPyramidal(GIx, GI);
 #endif
 }
 
-void vpImageFilter::getGaussXPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char>& GI)
+void vpImageFilter::getGaussXPyramidal(const vpImage<unsigned char> &I,
+                                       vpImage<unsigned char> &GI)
 {
 #if 0
   GI.resize(I.getHeight(),(int)((I.getWidth()+1.)/2.)) ;
@@ -787,50 +813,44 @@ void vpImageFilter::getGaussXPyramidal(const vpImage<unsigned char> &I, vpImage<
     GI[i][(int)((I.getWidth()+1.)/2.)-1]=I[i][2*((int)((I.getWidth()+1.)/2.)-1)];
   }
 #else
-  unsigned int w = I.getWidth()/2;
+  unsigned int w = I.getWidth() / 2;
 
-  GI.resize(I.getHeight(), w) ;
-  for (unsigned int i=0 ; i < I.getHeight() ; i++)
-  {
-    GI[i][0]=I[i][0];
-    for (unsigned int j=1 ; j < w-1 ; j++)
-    {
-      GI[i][j]=vpImageFilter::filterGaussXPyramidal(I,i,2*j);
+  GI.resize(I.getHeight(), w);
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    GI[i][0] = I[i][0];
+    for (unsigned int j = 1; j < w - 1; j++) {
+      GI[i][j] = vpImageFilter::filterGaussXPyramidal(I, i, 2 * j);
     }
-    GI[i][w-1]=I[i][2*w-1];
+    GI[i][w - 1] = I[i][2 * w - 1];
   }
 
 #endif
 }
-void vpImageFilter::getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char>& GI)
+void vpImageFilter::getGaussYPyramidal(const vpImage<unsigned char> &I,
+                                       vpImage<unsigned char> &GI)
 {
 
 #ifdef ORIG
-  GI.resize((int)((I.getHeight()+1.)/2.),I.getWidth()) ;
-  for (unsigned int j=0 ; j < I.getWidth() ; j++)
-  {
-    GI[0][j]=I[0][j];
-    for (unsigned int i=1 ; i < ((I.getHeight()+1.)/2.)-1 ; i++)
-    {
-      GI[i][j]=vpImageFilter::filterGaussYPyramidal(I,2*i,j);
+  GI.resize((int)((I.getHeight() + 1.) / 2.), I.getWidth());
+  for (unsigned int j = 0; j < I.getWidth(); j++) {
+    GI[0][j] = I[0][j];
+    for (unsigned int i = 1; i < ((I.getHeight() + 1.) / 2.) - 1; i++) {
+      GI[i][j] = vpImageFilter::filterGaussYPyramidal(I, 2 * i, j);
     }
-    GI[(int)((I.getHeight()+1.)/2.)-1][j]=I[2*((int)((I.getHeight()+1.)/2.)-1)][j];
+    GI[(int)((I.getHeight() + 1.) / 2.) - 1][j] =
+        I[2 * ((int)((I.getHeight() + 1.) / 2.) - 1)][j];
   }
 
 #else
-  unsigned int h = I.getHeight()/2;
+  unsigned int h = I.getHeight() / 2;
 
-  GI.resize(h, I.getWidth()) ;
-  for (unsigned int j=0 ; j < I.getWidth() ; j++)
-  {
-    GI[0][j]=I[0][j];
-    for (unsigned int i=1 ; i < h-1 ; i++)
-    {
-         GI[i][j]=vpImageFilter::filterGaussYPyramidal(I,2*i,j);
+  GI.resize(h, I.getWidth());
+  for (unsigned int j = 0; j < I.getWidth(); j++) {
+    GI[0][j] = I[0][j];
+    for (unsigned int i = 1; i < h - 1; i++) {
+      GI[i][j] = vpImageFilter::filterGaussYPyramidal(I, 2 * i, j);
     }
-    GI[h-1][j]=I[2*h-1][j];
+    GI[h - 1][j] = I[2 * h - 1][j];
   }
 #endif
 }
-
-

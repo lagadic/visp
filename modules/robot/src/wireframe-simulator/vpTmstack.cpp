@@ -38,12 +38,9 @@
  *
  *****************************************************************************/
 
-
-
-
-#include "vpMy.h"
-#include "vpArit.h"
 #include "vpTmstack.h"
+#include "vpArit.h"
+#include "vpMy.h"
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
@@ -51,12 +48,10 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#define	STACKSIZE	32
+#define STACKSIZE 32
 
-
-static	Matrix	stack[STACKSIZE]/* = IDENTITY_MATRIX*/;	/* pile		*/
-static	Matrix	*sp		 = stack;		/* sommet 	*/
-
+static Matrix stack[STACKSIZE] /* = IDENTITY_MATRIX*/; /* pile		*/
+static Matrix *sp = stack;                             /* sommet 	*/
 
 /*
  * La procedure "get_tmstack" retourne la matrice au sommet
@@ -64,11 +59,7 @@ static	Matrix	*sp		 = stack;		/* sommet 	*/
  * Sortie :
  *		Pointeur de la matrice au sommet de la pile.
  */
-Matrix	*
-get_tmstack (void)
-{
-	return (sp);
-}
+Matrix *get_tmstack(void) { return (sp); }
 
 /*
  * La procedure "load_tmstack" charge une matrice au sommet
@@ -76,61 +67,57 @@ get_tmstack (void)
  * Entree :
  * m		Matrice a charger.
  */
-void
-load_tmstack (Matrix m)
+void load_tmstack(Matrix m)
 {
-	//bcopy ((char *) m, (char *) *sp, sizeof (Matrix));
-	memmove ((char *) *sp, (char *) m, sizeof (Matrix));
+  // bcopy ((char *) m, (char *) *sp, sizeof (Matrix));
+  memmove((char *)*sp, (char *)m, sizeof(Matrix));
 }
 
 /*
  * La procedure "pop_tmstack" depile la matrice au sommet
  * de la pile des matrices de transformation.
  */
-void
-pop_tmstack (void)
+void pop_tmstack(void)
 {
-	if (sp == stack) {
-    static	char	proc_name[] = "pop_tmstack";
-    fprintf (stderr, "%s: stack underflow\n", proc_name);
-		return;
-	}
-	else	sp--;
+  if (sp == stack) {
+    static char proc_name[] = "pop_tmstack";
+    fprintf(stderr, "%s: stack underflow\n", proc_name);
+    return;
+  } else
+    sp--;
 }
 
 /*
  * La procedure "push_tmstack" empile et duplique le sommet
  * de la pile des matrices de transformation.
  */
-void
-push_tmstack (void)
+void push_tmstack(void)
 {
-	if (sp == stack + STACKSIZE - 1) {
-    static	char	proc_name[] = "push_tmstack";
-    fprintf (stderr, "%s: stack overflow\n", proc_name);
-		return;
-	}
-	sp++;
-	//bcopy ((char *) (sp - 1), (char *) sp, sizeof (Matrix));
-	memmove ((char *) sp, (char *) (sp - 1), sizeof (Matrix));
+  if (sp == stack + STACKSIZE - 1) {
+    static char proc_name[] = "push_tmstack";
+    fprintf(stderr, "%s: stack overflow\n", proc_name);
+    return;
+  }
+  sp++;
+  // bcopy ((char *) (sp - 1), (char *) sp, sizeof (Matrix));
+  memmove((char *)sp, (char *)(sp - 1), sizeof(Matrix));
 }
 
 /*
  * La procedure "swap_tmstack" echange les deux premieres matrices
  * de la pile des matrices de transformation.
  */
-void
-swap_tmstack (void)
+void swap_tmstack(void)
 {
-	Matrix	*mp, tmp;
+  Matrix *mp, tmp;
 
-	mp = (sp == stack) ? sp + 1 : sp - 1; 
-// 	bcopy ((char *) *sp, (char *) tmp, sizeof (Matrix));
-// 	bcopy ((char *) *mp, (char *) *sp, sizeof (Matrix));
-// 	bcopy ((char *) tmp, (char *) *mp, sizeof (Matrix));
-	memmove ((char *) tmp, (char *) *sp, sizeof (Matrix));
-	memmove ((char *) *sp, (char *) *mp, sizeof (Matrix));
-	memmove ((char *) *mp, (char *) tmp, sizeof (Matrix)); 
+  mp = (sp == stack) ? sp + 1 : sp - 1;
+  // 	bcopy ((char *) *sp, (char *) tmp, sizeof (Matrix));
+  // 	bcopy ((char *) *mp, (char *) *sp, sizeof (Matrix));
+  // 	bcopy ((char *) tmp, (char *) *mp, sizeof (Matrix));
+  memmove((char *)tmp, (char *)*sp, sizeof(Matrix));
+  memmove((char *)*sp, (char *)*mp, sizeof(Matrix));
+  memmove((char *)*mp, (char *)tmp, sizeof(Matrix));
 }
 
 /*
@@ -139,11 +126,7 @@ swap_tmstack (void)
  * Entree :
  * m		Matrice multiplicative.
  */
-void
-postmult_tmstack (Matrix m)
-{
-	postmult_matrix (*sp, m);
-}
+void postmult_tmstack(Matrix m) { postmult_matrix(*sp, m); }
 
 /*
  * La procedure "postrotate_tmstack" postmultiplie la matrice au sommet
@@ -151,13 +134,12 @@ postmult_tmstack (Matrix m)
  * Entree :
  * vp		Vecteur de rotation.
  */
-void
-postrotate_tmstack (Vector *vp)
+void postrotate_tmstack(Vector *vp)
 {
-	Matrix	m;
+  Matrix m;
 
-	Rotate_to_Matrix (vp, m);
-	postmult3_matrix (*sp, m);
+  Rotate_to_Matrix(vp, m);
+  postmult3_matrix(*sp, m);
 }
 
 /*
@@ -166,11 +148,7 @@ postrotate_tmstack (Vector *vp)
  * Entree :
  * vp		Vecteur d'homothetie.
  */
-void
-postscale_tmstack (Vector *vp)
-{
-	postscale_matrix (*sp, vp);
-}
+void postscale_tmstack(Vector *vp) { postscale_matrix(*sp, vp); }
 
 /*
  * La procedure "posttranslate_tmstack" postmultiplie la matrice au sommet
@@ -178,11 +156,7 @@ postscale_tmstack (Vector *vp)
  * Entree :
  * vp		Vecteur de translation.
  */
-void
-posttranslate_tmstack (Vector *vp)
-{
-	posttrans_matrix (*sp, vp);
-}
+void posttranslate_tmstack(Vector *vp) { posttrans_matrix(*sp, vp); }
 
 /*
  * La procedure "premult_tmstack" premultiplie la matrice au sommet
@@ -190,11 +164,7 @@ posttranslate_tmstack (Vector *vp)
  * Entree :
  * m		Matrice multiplicative.
  */
-void
-premult_tmstack (Matrix m)
-{
-	premult_matrix (*sp, m);
-}
+void premult_tmstack(Matrix m) { premult_matrix(*sp, m); }
 
 /*
  * La procedure "prerotate_tmstack" premultiplie la matrice au sommet
@@ -202,13 +172,12 @@ premult_tmstack (Matrix m)
  * Entree :
  * vp		Vecteur de rotation.
  */
-void
-prerotate_tmstack (Vector *vp)
+void prerotate_tmstack(Vector *vp)
 {
-	Matrix	m;
+  Matrix m;
 
-	Rotate_to_Matrix (vp, m);
-	premult3_matrix (*sp, m);
+  Rotate_to_Matrix(vp, m);
+  premult3_matrix(*sp, m);
 }
 
 /*
@@ -217,11 +186,7 @@ prerotate_tmstack (Vector *vp)
  * Entree :
  * vp		Vecteur d'homothetie.
  */
-void
-prescale_tmstack (Vector *vp)
-{
-	prescale_matrix (*sp, vp);
-}
+void prescale_tmstack(Vector *vp) { prescale_matrix(*sp, vp); }
 
 /*
  * La procedure "pretranslate_tmstack" premultiplie la matrice au sommet
@@ -229,11 +194,6 @@ prescale_tmstack (Vector *vp)
  * Entree :
  * vp		Vecteur de translation.
  */
-void
-pretranslate_tmstack (Vector *vp)
-{
-	pretrans_matrix (*sp, vp);
-}
+void pretranslate_tmstack(Vector *vp) { pretrans_matrix(*sp, vp); }
 
 #endif
-

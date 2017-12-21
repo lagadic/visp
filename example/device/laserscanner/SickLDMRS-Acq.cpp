@@ -36,23 +36,22 @@
  *
  *****************************************************************************/
 
-
 /*!
   \example SickLDMRS-Acq.cpp
 
   \brief Example that shows how to acquire Sick LD-MRS laser
-  measurements.  
+  measurements.
 
   \warning For the moment, this example is only working on UNIX
   platforms since the Sick LD-MRS driver was not ported to Windows.
 
 */
 #include <visp3/core/vpDebug.h>
-#include <visp3/sensor/vpSickLDMRS.h>
 #include <visp3/io/vpParseArgv.h>
+#include <visp3/sensor/vpSickLDMRS.h>
 
-
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__)))
 
 int main()
 {
@@ -64,28 +63,28 @@ int main()
     laser.setup();
     unsigned long int iter = 0;
 
-    for ( ; ; ) {
+    for (;;) {
       double t1 = vpTime::measureTimeMs();
       vpLaserScan laserscan[4];
       if (laser.measure(laserscan) == false)
         continue;
 
-      iter ++;
-      std::cout << "iter: " << iter << " time: "
-                << vpTime::measureTimeMs() - t1 << " ms" << std::endl;
+      iter++;
+      std::cout << "iter: " << iter
+                << " time: " << vpTime::measureTimeMs() - t1 << " ms"
+                << std::endl;
     }
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }
 }
 
-#else // #ifdef UNIX
+#else  // #ifdef UNIX
 
 int main()
-{ 
+{
   std::cout << "This example is only working on UNIX platforms \n"
             << "since the Sick LD-MRS driver was not ported to Windows."
             << std::endl;

@@ -44,16 +44,14 @@
 #ifndef __MOMENT_H__
 #define __MOMENT_H__
 
-#include <vector>
 #include <iostream>
+#include <vector>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-
 class vpMomentDatabase;
 class vpMomentObject;
-
 
 /*!
   \class vpMoment
@@ -62,9 +60,10 @@ class vpMomentObject;
 
   \brief This class defines shared methods/attributes for 2D moments.
 
-  All moments or combination of moments in the moments module are based on this class.
-  A moment uses a vpMomentObject object to access all useful information.
-  Moment values are obtained by a 4-step process common for all moment types:
+  All moments or combination of moments in the moments module are based on
+  this class. A moment uses a vpMomentObject object to access all useful
+  information. Moment values are obtained by a 4-step process common for all
+  moment types:
   - Declaration.
   \code
   vpMoment moment;
@@ -82,17 +81,21 @@ class vpMomentObject;
   std::vector<double> values = moment.get();
   \endcode
 
-  A moment may also be linked to a vpMomentDatabase. Moments linked to a database are able to access each others values.
-  Some moments can be computed only if they are linked to a a database containing their dependencies.
+  A moment may also be linked to a vpMomentDatabase. Moments linked to a
+  database are able to access each others values. Some moments can be computed
+  only if they are linked to a a database containing their dependencies.
   Linking to a database is done using the vpMoment::linkTo(...) method.
 
-  There are no constraints about format of the array returned by vpMoment::get(); any implementation is fine.
+  There are no constraints about format of the array returned by
+  vpMoment::get(); any implementation is fine.
 
-  Each moment must have a string name by implementing the char* vpMoment::name() method which allows to identify the moment in the database.
-  Each moment must also implement a compute method describing how to obtain its values from the object.
+  Each moment must have a string name by implementing the char*
+  vpMoment::name() method which allows to identify the moment in the database.
+  Each moment must also implement a compute method describing how to obtain
+  its values from the object.
 
-  \attention Order of moment computation DOES matter: when you compute a moment using vpMoment::compute(),
-  all moment dependencies must be computed.
+  \attention Order of moment computation DOES matter: when you compute a
+  moment using vpMoment::compute(), all moment dependencies must be computed.
   We recall that implemented moments are:
   - vpMomentAlpha
   - vpMomentArea
@@ -107,8 +110,8 @@ class vpMomentObject;
 class VISP_EXPORT vpMoment
 {
 private:
-  vpMomentObject* object;
-  vpMomentDatabase* moments;
+  vpMomentObject *object;
+  vpMomentDatabase *moments;
   char _name[255];
 
 protected:
@@ -117,20 +120,21 @@ protected:
      Returns the linked moment database.
      \return the moment database
    */
-  inline vpMomentDatabase& getMoments() const { return *moments; }
+  inline vpMomentDatabase &getMoments() const { return *moments; }
 
-//private:
-//#ifndef DOXYGEN_SHOULD_SKIP_THIS
-//  vpMoment(const vpMoment &)
-//    : object(NULL), moments(NULL), values()
-//  {
-//    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-//  }
-//  vpMoment &operator=(const vpMoment &){
-//    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-//    return *this;
-//  }
-//#endif
+  // private:
+  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //  vpMoment(const vpMoment &)
+  //    : object(NULL), moments(NULL), values()
+  //  {
+  //    throw vpException(vpException::functionNotImplementedError,"Not
+  //    implemented!");
+  //  }
+  //  vpMoment &operator=(const vpMoment &){
+  //    throw vpException(vpException::functionNotImplementedError,"Not
+  //    implemented!"); return *this;
+  //  }
+  //#endif
 
 public:
   vpMoment();
@@ -142,18 +146,19 @@ public:
 
   /** @name Inherited functionalities from vpMoment */
   //@{
-  virtual void compute()=0;
-  inline const vpMomentObject& getObject() const { return *object;}
+  virtual void compute() = 0;
+  inline const vpMomentObject &getObject() const { return *object; }
   /*!
      Returns all values computed by the moment.
      \return vector of values
    */
-  const std::vector<double>& get() const { return values;}
-  void linkTo(vpMomentDatabase& moments);
-  virtual const char* name() const = 0;
-  virtual void printDependencies(std::ostream& os) const;
-  void update(vpMomentObject& object);
+  const std::vector<double> &get() const { return values; }
+  void linkTo(vpMomentDatabase &moments);
+  virtual const char *name() const = 0;
+  virtual void printDependencies(std::ostream &os) const;
+  void update(vpMomentObject &object);
   //@}
-  friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMoment& m);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                              const vpMoment &m);
 };
 #endif

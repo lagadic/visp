@@ -57,14 +57,14 @@
 
 #ifdef VISP_HAVE_AFMA4
 
-#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/robot/vpRobotAfma4.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"mh"
+#define GETOPTARGS "mh"
 
 /*!
 
@@ -95,10 +95,9 @@ OPTIONS:                                               Default\n\
      Print the help.\n\n");
 
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
-
 }
 
 /*!
@@ -115,15 +114,22 @@ OPTIONS:                                               Default\n\
 bool getOptions(int argc, const char **argv, bool &control)
 {
   const char *optarg;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
-    case 'm': control = false; break;
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'm':
+      control = false;
+      break;
+    case 'h':
+      usage(argv[0], NULL);
+      return false;
+      break;
 
     default:
-      usage(argv[0], optarg); return false; break;
+      usage(argv[0], optarg);
+      return false;
+      break;
     }
   }
 
@@ -138,22 +144,20 @@ bool getOptions(int argc, const char **argv, bool &control)
   return true;
 }
 
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
-  try
-  {
+  try {
     bool control = true; // Turn on the robot control by applying positions
     // and velocities to the robot.
     // Read the command line options
     if (getOptions(argc, argv, control) == false) {
-      exit (-1);
+      exit(-1);
     }
 
-    vpRobotAfma4 robot ;
+    vpRobotAfma4 robot;
 
-    vpColVector qd(robot.njoint) ;
-    vpColVector q(robot.njoint) ;
+    vpColVector qd(robot.njoint);
+    vpColVector q(robot.njoint);
 
     //
     // Position control in articular
@@ -165,17 +169,16 @@ main(int argc, const char ** argv)
 
     std::cout << "Position control: in articular..." << std::endl;
     std::cout << "  position to reach: " << qd.t() << std::endl;
-    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
     if (control)
-      robot.setPosition(vpRobot::ARTICULAR_FRAME, qd) ;
-    sleep(1) ;
+      robot.setPosition(vpRobot::ARTICULAR_FRAME, qd);
+    sleep(1);
 
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, q);
+    std::cout << "  measured position: " << q.t();
+    sleep(1);
 
-    robot.getPosition(vpRobot::ARTICULAR_FRAME, q) ;
-    std::cout << "  measured position: " << q.t() ;
-    sleep(1) ;
-
-    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
 #if 0
     //
@@ -220,37 +223,36 @@ main(int argc, const char ** argv)
     //
     // Velocity control in camera frame
     //
-    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
     std::cout << "Velocity control: in camera frame..." << std::endl;
-    q.resize(6) ;
+    q.resize(6);
     q = 0.0;
-    q[0] = vpMath::rad(2) ; // rotation arround vertical axis
+    q[0] = vpMath::rad(2); // rotation arround vertical axis
     std::cout << "  rx rotation: " << q[0] << std::endl;
     if (control)
-      robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
-    sleep(5) ;
+      robot.setVelocity(vpRobot::CAMERA_FRAME, q);
+    sleep(5);
 
-    q.resize(6) ;
+    q.resize(6);
     q = 0.0;
-    q[1] = vpMath::rad(2) ; // rotation arround vertical axis
+    q[1] = vpMath::rad(2); // rotation arround vertical axis
     std::cout << "  ry rotation: " << q[1] << std::endl;
     if (control)
-      robot.setVelocity(vpRobot::CAMERA_FRAME, q) ;
-    sleep(5) ;
+      robot.setVelocity(vpRobot::CAMERA_FRAME, q);
+    sleep(5);
 
     std::cout << "The end" << std::endl;
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return 1;
   }
 }
 #else
-int
-main()
+int main()
 {
-  vpERROR_TRACE("You do not have an afma4 robot connected to your computer...");
+  vpERROR_TRACE(
+      "You do not have an afma4 robot connected to your computer...");
   return 0;
 }
 

@@ -36,14 +36,12 @@
  *
  *****************************************************************************/
 
-
 /* \file vpException.h
    \brief error that can be emited by the vp class and its derivates
  */
 
 #ifndef __vpException_H
 #define __vpException_H
-
 
 /* --------------------------------------------------------------------- */
 /* --- INCLUDE --------------------------------------------------------- */
@@ -52,14 +50,13 @@
 #include <visp3/core/vpConfig.h>
 
 /* Classes standards. */
-#include <iostream>                /* Classe std::ostream.    */
-#include <string>                  /* Classe string.     */
+#include <iostream> /* Classe std::ostream.    */
 #include <stdarg.h>
+#include <string> /* Classe string.     */
 
 /* --------------------------------------------------------------------- */
 /* --- CLASS ----------------------------------------------------------- */
 /* --------------------------------------------------------------------- */
-
 
 /*!
    \class vpException
@@ -73,64 +70,64 @@
  */
 class VISP_EXPORT vpException : public std::exception
 {
-  protected:
+protected:
+  //! Contains the error code, see the errorCodeEnum table for details.
+  int code;
 
-    //! Contains the error code, see the errorCodeEnum table for details.
-    int code;
+  //! Contains an error message (can be empty)
+  std::string message;
 
-    //! Contains an error message (can be empty)
-    std::string message;
+  //! Set the message container
+  void setMessage(const char *format, va_list args);
 
-    //! Set the message container
-    void setMessage(const char* format, va_list args);
+  //!  forbid the empty constructor (protected)
+  vpException() : code(notInitialized), message(""){};
 
-    //!  forbid the empty constructor (protected)
-    vpException(): code(notInitialized), message("") { };
+public:
+  enum generalExceptionEnum {
+    memoryAllocationError,
+    memoryFreeError,
+    functionNotImplementedError,
+    ioError,
+    cannotUseConstructorError,
+    notImplementedError,
+    divideByZeroError,
+    dimensionError,
+    fatalError,
+    badValue, /*!< Used to indicate that a value is not in the allowed range.
+               */
+    notInitialized /*!< Used to indicate that a parameter is not initialized.
+                    */
+  };
 
-  public:
+  vpException(const int code, const char *format, va_list args);
+  vpException(const int code, const char *format, ...);
+  vpException(const int code, const std::string &msg);
+  explicit vpException(const int code);
 
-    enum generalExceptionEnum
-    {
-      memoryAllocationError,
-      memoryFreeError,
-      functionNotImplementedError,
-      ioError,
-      cannotUseConstructorError,
-      notImplementedError,
-      divideByZeroError,
-      dimensionError,
-      fatalError,
-      badValue, /*!< Used to indicate that a value is not in the allowed range. */
-      notInitialized /*!< Used to indicate that a parameter is not initialized. */
-    } ;
+  /*!
+    Basic destructor. Do nothing but implemented to fit the inheritance from
+    std::exception
+  */
+  virtual ~vpException() throw() {}
 
-    vpException (const int code, const char* format, va_list args);
-    vpException (const int code, const char* format, ...);
-    vpException (const int code, const std::string & msg);
-    explicit vpException (const int code);
+  /** @name Inherited functionalities from vpException */
+  //@{
+  //! Send the object code.
+  int getCode(void);
 
-    /*!
-      Basic destructor. Do nothing but implemented to fit the inheritance from
-      std::exception
-    */
-    virtual ~vpException() throw() {}
+  //! Send a reference (constant) related the error message (can be empty).
+  const std::string &getStringMessage(void) const;
+  //! send a pointer on the array of  \e char related to the error string.
+  //! Cannot be  \e NULL.
+  const char *getMessage(void) const;
+  //@}
 
-    /** @name Inherited functionalities from vpException */
-    //@{
-    //! Send the object code.
-    int getCode (void);
+  //! Print the error structure.
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                              const vpException &art);
 
-    //! Send a reference (constant) related the error message (can be empty).
-    const std::string &getStringMessage (void) const;
-    //! send a pointer on the array of  \e char related to the error string.
-    //! Cannot be  \e NULL.
-    const char *getMessage (void) const;
-    //@}
-
-    //! Print the error structure.
-    friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpException & art);
-
-    const char* what () const throw();
+  const char *what() const throw();
 };
 
 #endif /* #ifndef __vpException_H */

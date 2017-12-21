@@ -1,7 +1,7 @@
 //! \example tutorial-image-simulator.cpp
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
 //! [Include]
 #include <visp3/robot/vpImageSimulator.h>
@@ -17,18 +17,28 @@ int main()
 
     //! [Set model]
     vpColVector X[4];
-    for (int i = 0; i < 4; i++) X[i].resize(3);
+    for (int i = 0; i < 4; i++)
+      X[i].resize(3);
     // Top left     Top right       Bottom right   Bottom left
-    X[0][0] = -0.1; X[1][0] =  0.1; X[2][0] = 0.1; X[3][0] = -0.1;
-    X[0][1] = -0.1; X[1][1] = -0.1; X[2][1] = 0.1; X[3][1] =  0.1;
-    X[0][2] =  0;   X[1][2] =  0;   X[2][2] = 0;   X[3][2] =  0;
+    X[0][0] = -0.1;
+    X[1][0] = 0.1;
+    X[2][0] = 0.1;
+    X[3][0] = -0.1;
+    X[0][1] = -0.1;
+    X[1][1] = -0.1;
+    X[2][1] = 0.1;
+    X[3][1] = 0.1;
+    X[0][2] = 0;
+    X[1][2] = 0;
+    X[2][2] = 0;
+    X[3][2] = 0;
     //! [Set model]
 
     //! [Image construction]
     vpImage<unsigned char> I(480, 640);
     //! [Image construction]
     //! [Camera parameters]
-    vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
+    vpCameraParameters cam(840, 840, I.getWidth() / 2, I.getHeight() / 2);
     //! [Camera parameters]
     //! [Set cMo]
     vpHomogeneousMatrix cMo(0, 0, 0.35, 0, vpMath::rad(30), vpMath::rad(15));
@@ -50,11 +60,10 @@ int main()
     //! [Write image]
     try {
       vpImageIo::write(I, "./rendered_image.jpg");
-    }
-    catch(...) {
+    } catch (...) {
       std::cout << "Unsupported image format" << std::endl;
     }
-    //! [Write image]
+//! [Write image]
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I);
@@ -71,8 +80,7 @@ int main()
     vpDisplay::flush(I);
     std::cout << "A click to quit..." << std::endl;
     vpDisplay::getClick(I);
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

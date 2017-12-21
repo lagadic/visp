@@ -42,15 +42,15 @@
 #ifndef VPCOMMONMOMENTS_H
 #define VPCOMMONMOMENTS_H
 
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentBasic.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentGravityCenterNormalized.h>
-#include <visp3/core/vpMomentAreaNormalized.h>
-#include <visp3/core/vpMomentCInvariant.h>
 #include <visp3/core/vpMomentAlpha.h>
 #include <visp3/core/vpMomentArea.h>
+#include <visp3/core/vpMomentAreaNormalized.h>
+#include <visp3/core/vpMomentBasic.h>
+#include <visp3/core/vpMomentCInvariant.h>
+#include <visp3/core/vpMomentCentered.h>
+#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentGravityCenter.h>
+#include <visp3/core/vpMomentGravityCenterNormalized.h>
 
 #include <vector>
 
@@ -73,23 +73,32 @@ class vpMomentObject;
     - vpMomentAlpha
     - vpMomentArea
 
-    There is no need to do the linkTo operations manually nor is it necessary to care about the order of moment computation.
+    There is no need to do the linkTo operations manually nor is it necessary
+  to care about the order of moment computation.
 
-    This class carries an vpMomentCommon::updateAll() method capable of updating AND computing moments from an object (see 4-step process in vpMoment).
-    The moments computed by this class are classical moments used in moment-based visual servoing.
-    For more information see \cite Tahri05z.
+    This class carries an vpMomentCommon::updateAll() method capable of
+  updating AND computing moments from an object (see 4-step process in
+  vpMoment). The moments computed by this class are classical moments used in
+  moment-based visual servoing. For more information see \cite Tahri05z.
 
-    To initialize this moment set the user needs to compute the following things:
-    - the Mu3 value set: set of third-order centered moments computed for a reference object. (\f$\mu_{ij}$ with $i+j = 3\f$ ).
-    These values allow the system to save the reference angular position and to perform planar rotations of more than 180 degrees if needed.
+    To initialize this moment set the user needs to compute the following
+  things:
+    - the Mu3 value set: set of third-order centered moments computed for a
+  reference object. (\f$\mu_{ij}$ with $i+j = 3\f$ ). These values allow the
+  system to save the reference angular position and to perform planar
+  rotations of more than 180 degrees if needed.
     - the destination depth.
-    - the surface of the destination object in the end of the visual servoing process.
-    - the reference alpha: angular position of the object used to obtain the Mu3 set.
+    - the surface of the destination object in the end of the visual servoing
+  process.
+    - the reference alpha: angular position of the object used to obtain the
+  Mu3 set.
 
-    Shortcuts for each of these prerequisites are provided by this class except depth (methods
-    vpMomentCommon::getMu3(), vpMomentCommon::getSurface(), vpMomentCommon::getAlpha()).
+    Shortcuts for each of these prerequisites are provided by this class
+  except depth (methods vpMomentCommon::getMu3(),
+  vpMomentCommon::getSurface(), vpMomentCommon::getAlpha()).
 
-    \attention Make sure your object is at least of order 5 when using this pre-filled database.
+    \attention Make sure your object is at least of order 5 when using this
+  pre-filled database.
 
 */
 class VISP_EXPORT vpMomentCommon : public vpMomentDatabase
@@ -100,32 +109,37 @@ private:
   vpMomentCentered momentCentered;
   vpMomentGravityCenterNormalized momentGravityNormalized;
   vpMomentAreaNormalized momentSurfaceNormalized;
-  vpMomentCInvariant* momentCInvariant;
+  vpMomentCInvariant *momentCInvariant;
   vpMomentAlpha momentAlpha;
   vpMomentArea momentArea;
 
-//private:
-//#ifndef DOXYGEN_SHOULD_SKIP_THIS
-//  vpMomentCommon(const vpMomentCommon &)
-//    : vpMomentDatabase(), momentBasic(), momentGravity(), momentCentered(), momentGravityNormalized(),
-//      momentSurfaceNormalized(0, 0), momentCInvariant(), momentAlpha(), momentArea()
-//  {
-//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-//  }
-//  vpMomentCommon &operator=(const vpMomentCommon &){
-//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-//    return *this;
-//  }
-//#endif
+  // private:
+  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //  vpMomentCommon(const vpMomentCommon &)
+  //    : vpMomentDatabase(), momentBasic(), momentGravity(),
+  //    momentCentered(), momentGravityNormalized(),
+  //      momentSurfaceNormalized(0, 0), momentCInvariant(), momentAlpha(),
+  //      momentArea()
+  //  {
+  //    throw vpException(vpException::functionNotImplementedError, "Not
+  //    implemented!");
+  //  }
+  //  vpMomentCommon &operator=(const vpMomentCommon &){
+  //    throw vpException(vpException::functionNotImplementedError, "Not
+  //    implemented!"); return *this;
+  //  }
+  //#endif
 
 public:
-  vpMomentCommon(double dstSurface, const std::vector<double> &ref, double refAlpha, double dstZ=1.0, bool flg_sxsyfromnormalized=false);
+  vpMomentCommon(double dstSurface, const std::vector<double> &ref,
+                 double refAlpha, double dstZ = 1.0,
+                 bool flg_sxsyfromnormalized = false);
   virtual ~vpMomentCommon();
 
-  static double getAlpha(vpMomentObject& object);
-  static std::vector<double> getMu3(vpMomentObject& object);
-  static double getSurface(vpMomentObject& object);
+  static double getAlpha(vpMomentObject &object);
+  static std::vector<double> getMu3(vpMomentObject &object);
+  static double getSurface(vpMomentObject &object);
 
-  void updateAll(vpMomentObject& object);
+  void updateAll(vpMomentObject &object);
 };
 #endif // VPCOMMONMOMENTS_H

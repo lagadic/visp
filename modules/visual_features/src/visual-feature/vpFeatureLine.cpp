@@ -36,12 +36,10 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file vpFeatureLine.cpp
   \brief Class that defines 2D line visual feature
 */
-
 
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureLine.h>
@@ -61,14 +59,11 @@
 // Meter/pixel conversion
 #include <visp3/core/vpCameraParameters.h>
 
-//Color / image / display
+// Color / image / display
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 
-
-
 #include <visp3/core/vpFeatureDisplay.h>
-
 
 /*
 
@@ -86,71 +81,69 @@ other functionalities ar useful but not mandatory
 /*!
   Initialize the memory space requested for 2D line visual feature.
 */
-void
-vpFeatureLine::init()
+void vpFeatureLine::init()
 {
-    //feature dimension
-    dim_s = 2 ;
-    nbParameters = 6;
+  // feature dimension
+  dim_s = 2;
+  nbParameters = 6;
 
-    // memory allocation
-    //  x cos(theta) + y sin(theta) - rho = 0
-    // s[0] = rho
-    // s[1] = theta
-    s.resize(dim_s) ;
-    if (flags == NULL)
-      flags = new bool[nbParameters];
-    for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
+  // memory allocation
+  //  x cos(theta) + y sin(theta) - rho = 0
+  // s[0] = rho
+  // s[1] = theta
+  s.resize(dim_s);
+  if (flags == NULL)
+    flags = new bool[nbParameters];
+  for (unsigned int i = 0; i < nbParameters; i++)
+    flags[i] = false;
 
-    A = B = C = D = 0.0 ;
+  A = B = C = D = 0.0;
 }
-
-
-/*! 
-  Default constructor that build a visual feature.
-*/
-vpFeatureLine::vpFeatureLine() : A(0), B(0), C(0), D(0)
-{
-    init() ;
-}
-
 
 /*!
-  Sets the values of \f$ \rho \f$ and \f$ \theta \f$ which represent the parameters of the 2D line feature.
+  Default constructor that build a visual feature.
+*/
+vpFeatureLine::vpFeatureLine() : A(0), B(0), C(0), D(0) { init(); }
+
+/*!
+  Sets the values of \f$ \rho \f$ and \f$ \theta \f$ which represent the
+  parameters of the 2D line feature.
 
   \param rho : \f$ \rho \f$ value to set.
   \param theta : \f$ \theta \f$ value to set.
 */
-void
-vpFeatureLine::setRhoTheta(const double rho, const double theta)
+void vpFeatureLine::setRhoTheta(const double rho, const double theta)
 {
-  s[0] = rho ;
-  s[1] = theta ;
-  for( int i = 0; i < 2; i++) flags[i] = true;
+  s[0] = rho;
+  s[1] = theta;
+  for (int i = 0; i < 2; i++)
+    flags[i] = true;
 }
 
-
 /*!
-  Sets the values of A, B, C and D which represent the parameters used to describe the equation of a plan in the camera frame.
-  \f[ AX + BY + CZ + D = 0 \f]
-  Those parameters are needed to compute the interaction matrix associated to a visual feature. Normally, two plans are needed to describe a line (the intersection of those two plans). But to compute the interaction matrix only one plan equation is required. The only one restrictions is that the value of D must not be equal to zero !
+  Sets the values of A, B, C and D which represent the parameters used to
+  describe the equation of a plan in the camera frame. \f[ AX + BY + CZ + D =
+  0 \f] Those parameters are needed to compute the interaction matrix
+  associated to a visual feature. Normally, two plans are needed to describe a
+  line (the intersection of those two plans). But to compute the interaction
+  matrix only one plan equation is required. The only one restrictions is that
+  the value of D must not be equal to zero !
 
   \param A_ : A value to set.
   \param B_ : B value to set.
   \param C_ : C value to set.
   \param D_ : D value to set.
 */
-void
-vpFeatureLine::setABCD(const double A_, const double B_,
-           const double C_, const double D_)
+void vpFeatureLine::setABCD(const double A_, const double B_, const double C_,
+                            const double D_)
 {
-  this->A = A_ ;
-  this->B = B_ ;
-  this->C = C_ ;
-  this->D = D_ ;
-  for(unsigned int i = 2; i < nbParameters; i++) flags[i] = true;
+  this->A = A_;
+  this->B = B_;
+  this->C = C_;
+  this->D = D_;
+  for (unsigned int i = 2; i < nbParameters; i++)
+    flags[i] = true;
 }
-
 
 /*!
 
@@ -158,17 +151,20 @@ vpFeatureLine::setABCD(const double A_, const double B_,
   is made thanks to the values of the line feature \f$ \rho \f$ and
   \f$ \theta \f$ and the equation of a plan to which the line belongs.
 
-  \f[ L = \left[\begin{array}{c}L_{\rho} \\ L_{\theta}\end{array}\right] =  
+  \f[ L = \left[\begin{array}{c}L_{\rho} \\ L_{\theta}\end{array}\right] =
   \left[\begin{array}{cccccc}
-  \lambda_{\rho}cos(\theta) & \lambda_{\rho}sin(\theta) & -\lambda_{\rho}\rho & (1+\rho^2)sin(\theta) & -(1+\rho^2)cos(\theta) & 0 \\
-  \lambda_{\theta}cos(\theta) & \lambda_{\theta}sin(\theta) & -\lambda_{\theta}\rho & -\rho cos(\theta) & -\rho sin(\theta) & -1
+  \lambda_{\rho}cos(\theta) & \lambda_{\rho}sin(\theta) & -\lambda_{\rho}\rho
+  & (1+\rho^2)sin(\theta) & -(1+\rho^2)cos(\theta) & 0 \\
+  \lambda_{\theta}cos(\theta) & \lambda_{\theta}sin(\theta) &
+  -\lambda_{\theta}\rho & -\rho cos(\theta) & -\rho sin(\theta) & -1
   \end{array}\right]\f]
 
   Where :
-  \f[ \lambda_{\rho} = (A \; \rho \; cos(\theta) + B \; \rho \; sin(\theta) + C) / D \f]
-  \f[ \lambda_{\theta} = (A \; sin(\theta) - B \; cos(\theta)) / D \f]
+  \f[ \lambda_{\rho} = (A \; \rho \; cos(\theta) + B \; \rho \; sin(\theta) +
+  C) / D \f] \f[ \lambda_{\theta} = (A \; sin(\theta) - B \; cos(\theta)) / D
+  \f]
 
-  \param select : Selection of a subset of the possible line features. 
+  \param select : Selection of a subset of the possible line features.
   - To compute the interaction matrix for all the two line features
     use vpBasicFeature::FEATURE_ALL. In that case the dimension of the
     interaction matrix is \f$ [2 \times 6] \f$
@@ -200,36 +196,38 @@ vpFeatureLine::setABCD(const double A_, const double B_,
   vpMatrix L_theta = s.interaction( vpBasicFeature::FEATURE_ALL );
   \endcode
 */
-vpMatrix
-vpFeatureLine::interaction(const unsigned int select)
+vpMatrix vpFeatureLine::interaction(const unsigned int select)
 {
   vpMatrix L;
 
-  if (deallocate == vpBasicFeature::user)
-  {
-    for (unsigned int i = 0; i < nbParameters; i++)
-    {
-      if (flags[i] == false)
-      {
-        switch(i){
+  if (deallocate == vpBasicFeature::user) {
+    for (unsigned int i = 0; i < nbParameters; i++) {
+      if (flags[i] == false) {
+        switch (i) {
         case 0:
-          vpTRACE("Warning !!!  The interaction matrix is computed but rho was not set yet");
-        break;
+          vpTRACE("Warning !!!  The interaction matrix is computed but rho "
+                  "was not set yet");
+          break;
         case 1:
-          vpTRACE("Warning !!!  The interaction matrix is computed but theta was not set yet");
-        break;
+          vpTRACE("Warning !!!  The interaction matrix is computed but theta "
+                  "was not set yet");
+          break;
         case 2:
-          vpTRACE("Warning !!!  The interaction matrix is computed but A was not set yet");
-        break;
+          vpTRACE("Warning !!!  The interaction matrix is computed but A was "
+                  "not set yet");
+          break;
         case 3:
-          vpTRACE("Warning !!!  The interaction matrix is computed but B was not set yet");
-        break;
+          vpTRACE("Warning !!!  The interaction matrix is computed but B was "
+                  "not set yet");
+          break;
         case 4:
-          vpTRACE("Warning !!!  The interaction matrix is computed but C was not set yet");
-        break;
+          vpTRACE("Warning !!!  The interaction matrix is computed but C was "
+                  "not set yet");
+          break;
         case 5:
-          vpTRACE("Warning !!!  The interaction matrix is computed but D was not set yet");
-        break;
+          vpTRACE("Warning !!!  The interaction matrix is computed but D was "
+                  "not set yet");
+          break;
         default:
           vpTRACE("Problem during the reading of the variable flags");
         }
@@ -237,54 +235,49 @@ vpFeatureLine::interaction(const unsigned int select)
     }
     resetFlags();
   }
-  double rho = s[0] ;
-  double theta = s[1] ;
-
+  double rho = s[0];
+  double theta = s[1];
 
   double co = cos(theta);
   double si = sin(theta);
 
-  if (fabs(D) < 1e-6)
-  {
-    vpERROR_TRACE("Incorrect plane  coordinates D is null, D = %f",D) ;
+  if (fabs(D) < 1e-6) {
+    vpERROR_TRACE("Incorrect plane  coordinates D is null, D = %f", D);
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
-          "Incorrect plane  coordinates D")) ;
+                             "Incorrect plane  coordinates D"));
   }
 
-  double lambda_theta =( A*si - B*co) /D;
-  double lambda_rho =  (C + rho*A*co + rho*B*si)/D;
+  double lambda_theta = (A * si - B * co) / D;
+  double lambda_rho = (C + rho * A * co + rho * B * si) / D;
 
-  if (vpFeatureLine::selectRho() & select )
-  {
-    vpMatrix Lrho(1,6) ;
+  if (vpFeatureLine::selectRho() & select) {
+    vpMatrix Lrho(1, 6);
 
-    Lrho[0][0]= co*lambda_rho;
-    Lrho[0][1]= si*lambda_rho;
-    Lrho[0][2]= -rho*lambda_rho;
-    Lrho[0][3]= si*(1.0 + rho*rho);
-    Lrho[0][4]= -co*(1.0 + rho*rho);
-    Lrho[0][5]= 0.0;
+    Lrho[0][0] = co * lambda_rho;
+    Lrho[0][1] = si * lambda_rho;
+    Lrho[0][2] = -rho * lambda_rho;
+    Lrho[0][3] = si * (1.0 + rho * rho);
+    Lrho[0][4] = -co * (1.0 + rho * rho);
+    Lrho[0][5] = 0.0;
 
     L.stack(Lrho);
   }
 
-  if (vpFeatureLine::selectTheta() & select )
-  {
-    vpMatrix Ltheta(1,6) ;
+  if (vpFeatureLine::selectTheta() & select) {
+    vpMatrix Ltheta(1, 6);
 
-    Ltheta[0][0] = co*lambda_theta;
-    Ltheta[0][1] = si*lambda_theta;
-    Ltheta[0][2] = -rho*lambda_theta;
-    Ltheta[0][3] = -rho*co;
-    Ltheta[0][4] = -rho*si;
+    Ltheta[0][0] = co * lambda_theta;
+    Ltheta[0][1] = si * lambda_theta;
+    Ltheta[0][2] = -rho * lambda_theta;
+    Ltheta[0][3] = -rho * co;
+    Ltheta[0][4] = -rho * si;
     Ltheta[0][5] = -1.0;
 
     L.stack(Ltheta);
   }
-  return L ;
+  return L;
 }
-
 
 /*!
   Compute the error \f$ (s-s^*)\f$ between the current and the desired
@@ -324,40 +317,37 @@ vpFeatureLine::interaction(const unsigned int select)
   s.error(s_star, vpFeatureLine::selectTheta());
   \endcode
 */
-vpColVector
-vpFeatureLine::error(const vpBasicFeature &s_star,
-		      const unsigned int select)
+vpColVector vpFeatureLine::error(const vpBasicFeature &s_star,
+                                 const unsigned int select)
 {
-  vpColVector e(0) ;
+  vpColVector e(0);
 
-  try{
-    if (vpFeatureLine::selectRho() & select )
-    {
-      vpColVector erho(1) ;
-      erho[0] = s[0] - s_star[0] ;
+  try {
+    if (vpFeatureLine::selectRho() & select) {
+      vpColVector erho(1);
+      erho[0] = s[0] - s_star[0];
 
-      e = vpColVector::stack(e,erho) ;
+      e = vpColVector::stack(e, erho);
     }
 
-    if (vpFeatureLine::selectTheta() & select )
-    {
+    if (vpFeatureLine::selectTheta() & select) {
 
-      double err = s[1] - s_star[1] ;
-      while (err < -M_PI) err += 2*M_PI ;
-      while (err > M_PI) err -= 2*M_PI ;
+      double err = s[1] - s_star[1];
+      while (err < -M_PI)
+        err += 2 * M_PI;
+      while (err > M_PI)
+        err -= 2 * M_PI;
 
-      vpColVector etheta(1) ;
-      etheta[0] = err ;
-      e = vpColVector::stack(e,etheta) ;
+      vpColVector etheta(1);
+      etheta[0] = err;
+      e = vpColVector::stack(e, etheta);
     }
-  }
-  catch(...) {
-    throw ;
+  } catch (...) {
+    throw;
   }
 
-  return e ;
+  return e;
 }
-
 
 /*!
   Print to stdout the values of the current visual feature \f$ s \f$.
@@ -379,18 +369,18 @@ vpFeatureLine::error(const vpBasicFeature &s_star,
   \endcode
 */
 
-void
-vpFeatureLine::print(const unsigned int select ) const
+void vpFeatureLine::print(const unsigned int select) const
 {
 
-  std::cout <<"Line:\t  " << A <<"X+" << B <<"Y+" << C <<"Z +" << D <<"=0" <<std::endl ;;
-  if (vpFeatureLine::selectRho() & select )
-    std::cout << "     \trho=" << s[0] ;
-  if (vpFeatureLine::selectTheta() & select )
-    std::cout << "     \ttheta=" << s[1] ;
-  std::cout <<std::endl ;
+  std::cout << "Line:\t  " << A << "X+" << B << "Y+" << C << "Z +" << D
+            << "=0" << std::endl;
+  ;
+  if (vpFeatureLine::selectRho() & select)
+    std::cout << "     \trho=" << s[0];
+  if (vpFeatureLine::selectTheta() & select)
+    std::cout << "     \ttheta=" << s[1];
+  std::cout << std::endl;
 }
-
 
 /*!
 
@@ -406,14 +396,13 @@ vpFeatureLine::print(const unsigned int select ) const
   \param theta : The \f$ \theta \f$ parameter.
 
 */
-void
-vpFeatureLine::buildFrom(const double rho, const double theta)
+void vpFeatureLine::buildFrom(const double rho, const double theta)
 {
-  s[0] = rho ;
-  s[1] = theta ;
-  for( int i = 0; i < 2; i++) flags[i] = true;
+  s[0] = rho;
+  s[1] = theta;
+  for (int i = 0; i < 2; i++)
+    flags[i] = true;
 }
-
 
 /*!
 
@@ -444,18 +433,18 @@ vpFeatureLine::buildFrom(const double rho, const double theta)
 
 */
 void vpFeatureLine::buildFrom(const double rho, const double theta,
-            const double A_, const double B_,
-            const double C_, const double D_)
+                              const double A_, const double B_,
+                              const double C_, const double D_)
 {
-  s[0] = rho ;
-  s[1] = theta ;
-  this->A = A_ ;
-  this->B = B_ ;
-  this->C = C_ ;
-  this->D = D_ ;
-  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
+  s[0] = rho;
+  s[1] = theta;
+  this->A = A_;
+  this->B = B_;
+  this->C = C_;
+  this->D = D_;
+  for (unsigned int i = 0; i < nbParameters; i++)
+    flags[i] = true;
 }
-
 
 /*!
   Create an object with the same type.
@@ -469,11 +458,9 @@ void vpFeatureLine::buildFrom(const double rho, const double theta,
 */
 vpFeatureLine *vpFeatureLine::duplicate() const
 {
-  vpFeatureLine *feature  =  new vpFeatureLine ;
-  return feature ;
+  vpFeatureLine *feature = new vpFeatureLine;
+  return feature;
 }
-
-
 
 /*!
 
@@ -485,24 +472,21 @@ vpFeatureLine *vpFeatureLine::duplicate() const
   \param thickness : Thickness of the feature representation.
 
 */
-void
-vpFeatureLine::display(const vpCameraParameters &cam,
-                       const vpImage<unsigned char> &I,
-                       const vpColor &color,
-                       unsigned int thickness) const
+void vpFeatureLine::display(const vpCameraParameters &cam,
+                            const vpImage<unsigned char> &I,
+                            const vpColor &color,
+                            unsigned int thickness) const
 {
-  try{
-    double rho,theta ;
-    rho = getRho() ;
-    theta = getTheta() ;
+  try {
+    double rho, theta;
+    rho = getRho();
+    theta = getTheta();
 
-    vpFeatureDisplay::displayLine(rho, theta, cam, I, color, thickness) ;
+    vpFeatureDisplay::displayLine(rho, theta, cam, I, color, thickness);
 
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
 
@@ -516,24 +500,20 @@ vpFeatureLine::display(const vpCameraParameters &cam,
   \param thickness : Thickness of the feature representation.
 
  */
-void
-vpFeatureLine::display(const vpCameraParameters &cam,
-                       const vpImage<vpRGBa> &I,
-                       const vpColor &color,
-                       unsigned int thickness) const
+void vpFeatureLine::display(const vpCameraParameters &cam,
+                            const vpImage<vpRGBa> &I, const vpColor &color,
+                            unsigned int thickness) const
 {
-  try{
-    double rho,theta ;
-    rho = getRho() ;
-    theta = getTheta() ;
+  try {
+    double rho, theta;
+    rho = getRho();
+    theta = getTheta();
 
-    vpFeatureDisplay::displayLine(rho, theta, cam, I, color, thickness) ;
+    vpFeatureDisplay::displayLine(rho, theta, cam, I, color, thickness);
 
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
 
@@ -541,9 +521,11 @@ vpFeatureLine::display(const vpCameraParameters &cam,
 
   Function used to select the \f$ \rho \f$ subset of the line visual feature.
 
-  This function is to use in conjunction with interaction() in order to compute the interaction matrix associated to \f$ \rho \f$.
+  This function is to use in conjunction with interaction() in order to
+  compute the interaction matrix associated to \f$ \rho \f$.
 
-  This function is also useful in the vpServo class to indicate that a subset of the visual feature is to use in the control law:
+  This function is also useful in the vpServo class to indicate that a subset
+  of the visual feature is to use in the control law:
 
   \code
   vpFeatureLine s;
@@ -553,15 +535,18 @@ vpFeatureLine::display(const vpCameraParameters &cam,
   task.addFeature(s, vpFeatureLine::selectRho());
   \endcode
 */
-unsigned int vpFeatureLine::selectRho()  { return FEATURE_LINE[0] ; }
+unsigned int vpFeatureLine::selectRho() { return FEATURE_LINE[0]; }
 
 /*!
 
-  Function used to select the \f$ \theta \f$ subset of the line visual feature.
+  Function used to select the \f$ \theta \f$ subset of the line visual
+  feature.
 
-  This function is to use in conjunction with interaction() in order to compute the interaction matrix associated to \f$ \theta \f$.
+  This function is to use in conjunction with interaction() in order to
+  compute the interaction matrix associated to \f$ \theta \f$.
 
-  This function is also useful in the vpServo class to indicate that a subset of the visual feature is to use in the control law:
+  This function is also useful in the vpServo class to indicate that a subset
+  of the visual feature is to use in the control law:
 
   \code
   vpFeatureLine s;
@@ -571,4 +556,4 @@ unsigned int vpFeatureLine::selectRho()  { return FEATURE_LINE[0] ; }
   task.addFeature(s, vpFeatureLine::selectTheta());
   \endcode
 */
-unsigned int vpFeatureLine::selectTheta()  { return FEATURE_LINE[1] ; }
+unsigned int vpFeatureLine::selectTheta() { return FEATURE_LINE[1]; }

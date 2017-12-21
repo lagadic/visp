@@ -35,46 +35,52 @@
  * Manikandan Bakthavatchalam
  *
  *****************************************************************************/
+#include <cmath>
 #include <visp3/core/vpMomentArea.h>
-#include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpMomentCentered.h>
 #include <visp3/core/vpMomentDatabase.h>
-#include <cmath>
+#include <visp3/core/vpMomentObject.h>
 
 /*!
   Has the area \f$ a = m_{00} = \mu_{00} \f$.
   Gets the value of m00 from vpMomentCentered.
 */
-void vpMomentArea::compute(){
-    /* getObject() returns a reference to a vpMomentObject. This is public member of vpMoment */
-    if(getObject().getType()==vpMomentObject::DISCRETE) {
-    	bool found_moment_centered;
-		/*   getMoments() returns a reference to a vpMomentDatabase. It is a protected member of and is inherited from vpMoment
-		 *  .get() is a member function of vpMomentDatabase that returns a specific moment which is linked to it
-		 */
-		const vpMomentCentered& momentCentered = static_cast<const vpMomentCentered&>(getMoments().get("vpMomentCentered",found_moment_centered));
-		if(!found_moment_centered) throw vpException(vpException::notInitialized,"vpMomentCentered not found");
-		values[0] = momentCentered.get(2,0) + momentCentered.get(0,2);
-    }
-    else {
-    	values[0] = getObject().get(0,0);
-    }
+void vpMomentArea::compute()
+{
+  /* getObject() returns a reference to a vpMomentObject. This is public
+   * member of vpMoment */
+  if (getObject().getType() == vpMomentObject::DISCRETE) {
+    bool found_moment_centered;
+    /*   getMoments() returns a reference to a vpMomentDatabase. It is a
+     * protected member of and is inherited from vpMoment .get() is a member
+     * function of vpMomentDatabase that returns a specific moment which is
+     * linked to it
+     */
+    const vpMomentCentered &momentCentered =
+        static_cast<const vpMomentCentered &>(
+            getMoments().get("vpMomentCentered", found_moment_centered));
+    if (!found_moment_centered)
+      throw vpException(vpException::notInitialized,
+                        "vpMomentCentered not found");
+    values[0] = momentCentered.get(2, 0) + momentCentered.get(0, 2);
+  } else {
+    values[0] = getObject().get(0, 0);
+  }
 }
 
 /*!
   Default constructor.
 */
-vpMomentArea::vpMomentArea() : vpMoment(){
-    values.resize(1);
-}
+vpMomentArea::vpMomentArea() : vpMoment() { values.resize(1); }
 
 /*!
   Outputs the moment's values to a stream.
 */
-VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentArea& m){
-    os << (__FILE__) << std::endl;
-    os << "a(m00) = " << m.values[0] << std::endl;
-    return os;    
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentArea &m)
+{
+  os << (__FILE__) << std::endl;
+  os << "a(m00) = " << m.values[0] << std::endl;
+  return os;
 }
 
 /*!
@@ -82,20 +88,22 @@ If the vpMomentObject type is
 1. DISCRETE(set of discrete points), uses mu20+mu02
 2. DENSE_FULL_OBJECT(from image) used mu00
 */
-void vpMomentArea::printDependencies(std::ostream& os) const{
-    os << (__FILE__) << std::endl;
+void vpMomentArea::printDependencies(std::ostream &os) const
+{
+  os << (__FILE__) << std::endl;
 
-    bool found_moment_centered;
-    const vpMomentCentered& momentCentered = static_cast<const vpMomentCentered&>(getMoments().get("vpMomentCentered",found_moment_centered));
-    if(!found_moment_centered) throw vpException(vpException::notInitialized,"vpMomentCentered not found");
+  bool found_moment_centered;
+  const vpMomentCentered &momentCentered =
+      static_cast<const vpMomentCentered &>(
+          getMoments().get("vpMomentCentered", found_moment_centered));
+  if (!found_moment_centered)
+    throw vpException(vpException::notInitialized,
+                      "vpMomentCentered not found");
 
-    if(getObject().getType()==vpMomentObject::DISCRETE)
-    {
-        os << "mu20 = " << momentCentered.get(2, 0) << "\t";
-        os << "mu02 = " << momentCentered.get(0, 2) << std::endl;
-    }
-    else
-    {
-        os << "mu00 = " << momentCentered.get(0, 0) << std::endl;
-    }
+  if (getObject().getType() == vpMomentObject::DISCRETE) {
+    os << "mu20 = " << momentCentered.get(2, 0) << "\t";
+    os << "mu02 = " << momentCentered.get(0, 2) << std::endl;
+  } else {
+    os << "mu00 = " << momentCentered.get(0, 0) << std::endl;
+  }
 }

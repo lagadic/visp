@@ -44,12 +44,12 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include "vpView.h"
 #include "vpArit.h"
+#include "vpView.h"
 
-void View_to_Matrix (View_parameters *vp, Matrix m);
-void set_parallel (View_parameters *vp, Matrix wc);
-void set_perspective (View_parameters *vp, Matrix wc);
+void View_to_Matrix(View_parameters *vp, Matrix m);
+void set_parallel(View_parameters *vp, Matrix wc);
+void set_perspective(View_parameters *vp, Matrix wc);
 
 #endif
 #endif

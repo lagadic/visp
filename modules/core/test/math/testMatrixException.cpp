@@ -42,32 +42,30 @@
   \brief Tests matrix exception
 */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <visp3/core/vpMatrix.h>
 
 int main()
 {
   vpMatrix M;
-  vpMatrix M1(2,3);
-  vpMatrix M3(2,2);
+  vpMatrix M1(2, 3);
+  vpMatrix M3(2, 2);
 
   std::cout << "** test matrix exception during multiplication" << std::endl;
 
   try {
-    M = M1*M3;
-  }
-  catch (const vpException &e) {
+    M = M1 * M3;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 
   std::cout << "** test matrix exception during addition" << std::endl;
 
   try {
-    M = M1+M3;
-  }
-  catch (const vpException &e) {
+    M = M1 + M3;
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 

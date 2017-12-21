@@ -49,38 +49,43 @@
 #include <visp3/io/vpImageIo.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020200
-#  include <opencv2/highgui/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020000
-#  include <opencv/highgui.h>
+#include <opencv/highgui.h>
 #endif
-
 
 /*!
   \class vpVideoWriter
 
   \ingroup group_io_video
 
-  \brief Class that enables to write easily a video file or a sequence of images.
+  \brief Class that enables to write easily a video file or a sequence of
+images.
 
-  This class has its own implementation to write a sequence of PGM and PPM images.
+  This class has its own implementation to write a sequence of PGM and PPM
+images.
 
   This class may benefit from optional 3rd parties:
-  - libpng: If installed this optional 3rd party is used to write a sequence of PNG images.
-    Installation instructions are provided here https://visp.inria.fr/3rd_png.
-  - libjpeg: If installed this optional 3rd party is used to write a sequence of JPEG images.
-    Installation instructions are provided here https://visp.inria.fr/3rd_jpeg.
-  - OpenCV: If installed this optional 3rd party is used to write a sequence of images
-    where images could be in TIFF, BMP, DIB, PBM, RASTER, JPEG2000 format. If libpng or
-    libjpeg is not installed, OpenCV is also used to consider these image formats. OpenCV
-    allows also to consider AVI, MPEG, MPEG4, MOV, OGV, WMV, FLV, MKV video formats.
-    Installation instructions are provided here https://visp.inria.fr/3rd_opencv.
+  - libpng: If installed this optional 3rd party is used to write a sequence
+of PNG images. Installation instructions are provided here
+https://visp.inria.fr/3rd_png.
+  - libjpeg: If installed this optional 3rd party is used to write a sequence
+of JPEG images. Installation instructions are provided here
+https://visp.inria.fr/3rd_jpeg.
+  - OpenCV: If installed this optional 3rd party is used to write a sequence
+of images where images could be in TIFF, BMP, DIB, PBM, RASTER, JPEG2000
+format. If libpng or libjpeg is not installed, OpenCV is also used to consider
+these image formats. OpenCV allows also to consider AVI, MPEG, MPEG4, MOV,
+OGV, WMV, FLV, MKV video formats. Installation instructions are provided here
+https://visp.inria.fr/3rd_opencv.
 
-  The following example available in tutorial-video-recorder.cpp shows how this
-  class can be used to record a video from a camera by default in an mpeg file.
-  \include tutorial-video-recorder.cpp
+  The following example available in tutorial-video-recorder.cpp shows how
+this class can be used to record a video from a camera by default in an mpeg
+file. \include tutorial-video-recorder.cpp
 
-  The following example shows also how this class can be used to write an image sequence.
-  The images are stored in the folder "./image" and are named "image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ...
+  The following example shows also how this class can be used to write an
+image sequence. The images are stored in the folder "./image" and are named
+"image0000.jpeg", "image0001.jpeg", "image0002.jpeg", ...
 
   \code
   #include <visp3/core/vpConfig.h>
@@ -111,7 +116,8 @@
   }
   \endcode
 
-  The other following example explains how to use the class to write directly an mpeg file.
+  The other following example explains how to use the class to write directly
+an mpeg file.
 
   \code
 #include <visp3/io/vpVideoWriter.h>
@@ -149,85 +155,90 @@ int main()
 
 class VISP_EXPORT vpVideoWriter
 {
-  private:
+private:
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    cv::VideoWriter writer;
-    int fourcc;
-    double framerate;
+  cv::VideoWriter writer;
+  int fourcc;
+  double framerate;
 #endif
-    //!Types of available formats
-    typedef enum
-    {
-      FORMAT_PGM,
-      FORMAT_PPM,
-      FORMAT_JPEG,
-      FORMAT_PNG,
-      FORMAT_AVI,
-      FORMAT_MPEG,
-      FORMAT_MPEG4,
-      FORMAT_MOV,
-      FORMAT_UNKNOWN
-    } vpVideoFormatType;
+  //! Types of available formats
+  typedef enum {
+    FORMAT_PGM,
+    FORMAT_PPM,
+    FORMAT_JPEG,
+    FORMAT_PNG,
+    FORMAT_AVI,
+    FORMAT_MPEG,
+    FORMAT_MPEG4,
+    FORMAT_MOV,
+    FORMAT_UNKNOWN
+  } vpVideoFormatType;
 
-    //!Video's format which has to be writen
-    vpVideoFormatType formatType;
+  //! Video's format which has to be writen
+  vpVideoFormatType formatType;
 
-    //!Path to the image sequence
-    char fileName[FILENAME_MAX];
+  //! Path to the image sequence
+  char fileName[FILENAME_MAX];
 
-    //!Indicates if the path to the image sequence is set.
-    bool initFileName;
+  //! Indicates if the path to the image sequence is set.
+  bool initFileName;
 
-    //!Indicates if the video is "open".
-    bool isOpen;
+  //! Indicates if the video is "open".
+  bool isOpen;
 
-    //!Count the frame number.
-    unsigned int frameCount;
+  //! Count the frame number.
+  unsigned int frameCount;
 
-    //!The first frame index.
-    unsigned int firstFrame;
+  //! The first frame index.
+  unsigned int firstFrame;
 
-    //!Size of the frame
-    unsigned int width;
-    unsigned int height;
+  //! Size of the frame
+  unsigned int width;
+  unsigned int height;
 
-  public:
-    vpVideoWriter();
-    ~vpVideoWriter();
+public:
+  vpVideoWriter();
+  ~vpVideoWriter();
 
-    void close();
+  void close();
 
-    /*!
-      Gets the current frame index.
+  /*!
+    Gets the current frame index.
 
-      \return Returns the current frame index.
-    */
-    inline unsigned int getCurrentFrameIndex() const {return frameCount;}
+    \return Returns the current frame index.
+  */
+  inline unsigned int getCurrentFrameIndex() const { return frameCount; }
 
-    void open (vpImage< vpRGBa > &I);
-    void open (vpImage< unsigned char > &I);
-    /*!
-      Reset the frame counter and sets it to the first image index.
+  void open(vpImage<vpRGBa> &I);
+  void open(vpImage<unsigned char> &I);
+  /*!
+    Reset the frame counter and sets it to the first image index.
 
-      By default the first frame index is set to 0.
-    */
-    inline void resetFrameCounter() {frameCount = firstFrame;}
+    By default the first frame index is set to 0.
+  */
+  inline void resetFrameCounter() { frameCount = firstFrame; }
 
-    void saveFrame (vpImage< vpRGBa > &I);
-    void saveFrame (vpImage< unsigned char > &I);
+  void saveFrame(vpImage<vpRGBa> &I);
+  void saveFrame(vpImage<unsigned char> &I);
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    inline void setCodec(const int fourcc_codec) {this->fourcc = fourcc_codec;}
+  inline void setCodec(const int fourcc_codec)
+  {
+    this->fourcc = fourcc_codec;
+  }
 #endif
 
-    void setFileName(const char *filename);
-    void setFileName(const std::string &filename);
-    /*!
-      Enables to set the first frame index.
+  void setFileName(const char *filename);
+  void setFileName(const std::string &filename);
+  /*!
+    Enables to set the first frame index.
 
-      \param first_frame : The first frame index.
-    */
-    inline void setFirstFrameIndex(const unsigned int first_frame) {this->firstFrame = first_frame;}
+    \param first_frame : The first frame index.
+  */
+  inline void setFirstFrameIndex(const unsigned int first_frame)
+  {
+    this->firstFrame = first_frame;
+  }
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
   /*!
       Sets the framerate in Hz of the video when encoding.
@@ -236,14 +247,15 @@ class VISP_EXPORT vpVideoWriter
 
       By default the framerate is set to 25Hz.
     */
-    inline void setFramerate(const double frame_rate) {
-      this->framerate = frame_rate;
-    }
+  inline void setFramerate(const double frame_rate)
+  {
+    this->framerate = frame_rate;
+  }
 #endif
 
-    private:
-      vpVideoFormatType getFormat(const char *filename);
-      static std::string getExtension(const std::string &filename);
+private:
+  vpVideoFormatType getFormat(const char *filename);
+  static std::string getExtension(const std::string &filename);
 };
 
 #endif

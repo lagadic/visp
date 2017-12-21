@@ -45,75 +45,87 @@
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/tt/vpTemplateTrackerTriangle.h>
-#include <visp3/tt/vpTemplateTrackerHeader.h>
 #include <visp3/core/vpRect.h>
+#include <visp3/tt/vpTemplateTrackerHeader.h>
+#include <visp3/tt/vpTemplateTrackerTriangle.h>
 
 /*!
   \class vpTemplateTrackerZone
   \ingroup group_tt_tools
-  A zone is defined by a set of triangles defined as vpTemplateTrackerTriangle.
+  A zone is defined by a set of triangles defined as
+  vpTemplateTrackerTriangle.
 
-  A zone can be initialized either by user interaction using mouse click in a display device
-  throw initClick(), or by a list of points throw initFromPoints().
+  A zone can be initialized either by user interaction using mouse click in a
+  display device throw initClick(), or by a list of points throw
+  initFromPoints().
  */
 class VISP_EXPORT vpTemplateTrackerZone
 {
-  protected:
-    std::vector<vpTemplateTrackerTriangle> Zone; //!< Vector of triangles that defines the zone.
-    int min_x; //!< Bounding box parameter
-    int min_y; //!< Bounding box parameter
-    int max_x; //!< Bounding box parameter
-    int max_y; //!< Bounding box parameter
+protected:
+  std::vector<vpTemplateTrackerTriangle>
+      Zone;  //!< Vector of triangles that defines the zone.
+  int min_x; //!< Bounding box parameter
+  int min_y; //!< Bounding box parameter
+  int max_x; //!< Bounding box parameter
+  int max_y; //!< Bounding box parameter
 
-  public:
-    vpTemplateTrackerZone();
-    vpTemplateTrackerZone(const vpTemplateTrackerZone &z);
-    ~vpTemplateTrackerZone();
+public:
+  vpTemplateTrackerZone();
+  vpTemplateTrackerZone(const vpTemplateTrackerZone &z);
+  ~vpTemplateTrackerZone();
 
-    //add a triangle to the zone
-    void add(const vpTemplateTrackerTriangle &t);
-    void clear();
-    void copy(const vpTemplateTrackerZone& z);
+  // add a triangle to the zone
+  void add(const vpTemplateTrackerTriangle &t);
+  void clear();
+  void copy(const vpTemplateTrackerZone &z);
 
-    //display the area on an image
-    void display(const vpImage<unsigned char> &I, const vpColor &col = vpColor::green, const unsigned int thickness=3);
-    void display(const vpImage<vpRGBa> &I, const vpColor &col = vpColor::green, const unsigned int thickness=3);
+  // display the area on an image
+  void display(const vpImage<unsigned char> &I,
+               const vpColor &col = vpColor::green,
+               const unsigned int thickness = 3);
+  void display(const vpImage<vpRGBa> &I, const vpColor &col = vpColor::green,
+               const unsigned int thickness = 3);
 
-    //colorie le tieme triangle
-    void fillTriangle(vpImage<unsigned char>& I, unsigned int id, unsigned char gray_level);
+  // colorie le tieme triangle
+  void fillTriangle(vpImage<unsigned char> &I, unsigned int id,
+                    unsigned char gray_level);
 
-    double getArea() const;
-    vpImagePoint getCenter() const;
-    vpImagePoint getCenter(int borne_x, int borne_y) const;
-    //get bounds of the area
-    int getMaxx() const;
-    int getMaxy() const;
-    int getMinx() const;
-    int getMiny() const;
-    vpRect getBoundingBox() const;
+  double getArea() const;
+  vpImagePoint getCenter() const;
+  vpImagePoint getCenter(int borne_x, int borne_y) const;
+  // get bounds of the area
+  int getMaxx() const;
+  int getMaxy() const;
+  int getMinx() const;
+  int getMiny() const;
+  vpRect getBoundingBox() const;
 
-    /*! Return the number of triangles that define the zone. \sa getTriangle() */
-    unsigned int getNbTriangle() const { return (unsigned int)Zone.size(); }
-    vpTemplateTrackerZone getPyramidDown() const;
-    //renvoie le ieme triangle de la zone
-    void getTriangle(unsigned int i, vpTemplateTrackerTriangle &T) const;
-    vpTemplateTrackerTriangle getTriangle(unsigned int i) const;
+  /*! Return the number of triangles that define the zone. \sa getTriangle()
+   */
+  unsigned int getNbTriangle() const { return (unsigned int)Zone.size(); }
+  vpTemplateTrackerZone getPyramidDown() const;
+  // renvoie le ieme triangle de la zone
+  void getTriangle(unsigned int i, vpTemplateTrackerTriangle &T) const;
+  vpTemplateTrackerTriangle getTriangle(unsigned int i) const;
 
-    //create an area by clicking on an image
-    void initClick(const vpImage<unsigned char>& I, bool delaunay = false);
-    //create an area with a pointer of integer that describes a series of triangles:
-    // *pt= t0.S1.x,t0.S1.y,t0.S2.x,t0.S2.y,t0.S3.x,t0.S3.y, t1.S1.x ...
-    void initFromPoints(const vpImage<unsigned char>& I, const std::vector< vpImagePoint > &ip, bool delaunay = false);
+  // create an area by clicking on an image
+  void initClick(const vpImage<unsigned char> &I, bool delaunay = false);
+  // create an area with a pointer of integer that describes a series of
+  // triangles:
+  // *pt= t0.S1.x,t0.S1.y,t0.S2.x,t0.S2.y,t0.S3.x,t0.S3.y, t1.S1.x ...
+  void initFromPoints(const vpImage<unsigned char> &I,
+                      const std::vector<vpImagePoint> &ip,
+                      bool delaunay = false);
 
-    //check if a point is in the area
-    bool inZone(const int &i,const int &j) const;
-    bool inZone(const double &i,const double &j) const;
-    //check if a point is in the area and return the corresponding triangle id_triangle where the point is.
-    bool inZone(const int &i,const int &j, unsigned int &id_triangle) const;
-    bool inZone(const double &i,const double &j, unsigned int &id_triangle) const;
+  // check if a point is in the area
+  bool inZone(const int &i, const int &j) const;
+  bool inZone(const double &i, const double &j) const;
+  // check if a point is in the area and return the corresponding triangle
+  // id_triangle where the point is.
+  bool inZone(const int &i, const int &j, unsigned int &id_triangle) const;
+  bool inZone(const double &i, const double &j,
+              unsigned int &id_triangle) const;
 
-    vpTemplateTrackerZone & operator=(const vpTemplateTrackerZone &z);
+  vpTemplateTrackerZone &operator=(const vpTemplateTrackerZone &z);
 };
 #endif
-

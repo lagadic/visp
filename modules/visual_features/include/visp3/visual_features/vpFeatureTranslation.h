@@ -37,7 +37,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpFeatureTranslation_H
 #define vpFeatureTranslation_H
 
@@ -46,12 +45,11 @@
   \brief class that defines the translation visual feature.
 */
 
-#include <visp3/core/vpMatrix.h>
-#include <visp3/visual_features/vpBasicFeature.h>
-#include <visp3/core/vpTranslationVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRGBa.h>
-
+#include <visp3/core/vpTranslationVector.h>
+#include <visp3/visual_features/vpBasicFeature.h>
 
 /*!
   \class vpFeatureTranslation
@@ -60,11 +58,13 @@
   \brief Class that defines the translation visual feature
   \f$s=(t_x,t_y,t_z)\f$.
 
-  It is convenient to consider two coordinate frames noted here \f$ {\cal{F}}_1 \f$ and \f$
+  It is convenient to consider two coordinate frames noted here \f$
+{\cal{F}}_1 \f$ and \f$
   {\cal{F}}_{2} \f$.
 
-  Let \f$^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$ be the homogeneous matrix that gives the
-  orientation and the translation of the frame \f$ {\cal{F}}_1 \f$ with respect to the frame \f$ {\cal{F}}_2 \f$.
+  Let \f$^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$ be the homogeneous matrix that
+gives the orientation and the translation of the frame \f$ {\cal{F}}_1 \f$
+with respect to the frame \f$ {\cal{F}}_2 \f$.
 
   \f[
   ^{{\cal{F}}_2}M_{{\cal{F}}_1} = \left(\begin{array}{cc}
@@ -74,30 +74,31 @@
   \right)
   \f]
 
-  with \f$^{{\cal{F}}_2}R_{{\cal{F}}_1} \f$ the rotation matrix that gives the orientation
-  of the frame \f$ {\cal{F}}_1 \f$ relative to the frame \f$ {\cal{F}}_2 \f$ and
-  \f$^{{\cal{F}}_2}t_{{\cal{F}}_1} \f$ the translation vector that gives the position of
-  the frame \f$ {\cal{F}}_1 \f$ relative to the frame \f$ {\cal{F}}_2 \f$. To
-  know more about homogeneous matrices see vpHomogeneousMatrix
-  documentation.
+  with \f$^{{\cal{F}}_2}R_{{\cal{F}}_1} \f$ the rotation matrix that gives the
+orientation of the frame \f$ {\cal{F}}_1 \f$ relative to the frame \f$
+{\cal{F}}_2 \f$ and \f$^{{\cal{F}}_2}t_{{\cal{F}}_1} \f$ the translation
+vector that gives the position of the frame \f$ {\cal{F}}_1 \f$ relative to
+the frame \f$ {\cal{F}}_2 \f$. To know more about homogeneous matrices see
+vpHomogeneousMatrix documentation.
 
   This class can be used to manipulate three kind of visual features:
 
   -  This class can be used to manipulate the translation visual feature
   \f$s= ^{c^*}t_c\f$ which gives the position of
-  the current camera frame relative to the desired camera frame. It is composed by the three components \f$(t_x,t_y,t_z)\f$. The desired
-  visual feature \f$ s^* \f$ is equal to zero. The corresponding error
-  is than equal to \f$ e=(s-s^*) = ^{c^*}t_c \f$. In this case, the
-  interaction matrix related to \f$ s \f$ is given by \f[ L = [
+  the current camera frame relative to the desired camera frame. It is
+composed by the three components \f$(t_x,t_y,t_z)\f$. The desired visual
+feature \f$ s^* \f$ is equal to zero. The corresponding error is than equal to
+\f$ e=(s-s^*) = ^{c^*}t_c \f$. In this case, the interaction matrix related to
+\f$ s \f$ is given by \f[ L = [
   ^{c^*}R_c \;\; 0_3] \f]
 
   -  This class can also be used to manipulate the translation visual feature
   \f$s= ^{c}t_{c^*}\f$ which gives the position of
-  the desired camera frame relative to the current camera frame. It is composed by the three components \f$(t_x,t_y,t_z)\f$. The desired
-  visual feature \f$ s^* \f$ is equal to zero. The corresponding error
-  is than equal to \f$ e=(s-s^*) = ^{c}t_{c^*} \f$. In this case, the
-  interaction matrix related to \f$ s \f$ is given by \f[ L = [
-  -I_3 \;\; [^{c}t_{c^*}]_\times] \f]
+  the desired camera frame relative to the current camera frame. It is
+composed by the three components \f$(t_x,t_y,t_z)\f$. The desired visual
+feature \f$ s^* \f$ is equal to zero. The corresponding error is than equal to
+\f$ e=(s-s^*) = ^{c}t_{c^*} \f$. In this case, the interaction matrix related
+to \f$ s \f$ is given by \f[ L = [ -I_3 \;\; [^{c}t_{c^*}]_\times] \f]
 
   - Actually, this class can also be used to manipulate the
   translation visual feature \f$s= ^{c}t_o\f$ which gives the position
@@ -132,8 +133,8 @@
   while \f$s^*\f$ is set to zero.
 
   \code
-#include <visp3/visual_features/vpFeatureTranslation.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/visual_features/vpFeatureTranslation.h>
 #include <visp3/vs/vpServo.h>
 
 int main()
@@ -161,7 +162,8 @@ int main()
 
   // Control loop
   for ( ; ; ) {
-    // ... cdMc need here to be initialized from for example a pose estimation.
+    // ... cdMc need here to be initialized from for example a pose
+estimation.
 
     // Update the current 3D translation visual feature
     s.buildFrom(cdMc);
@@ -179,8 +181,8 @@ int main()
 
   \code
   // Add the (tx,ty) subset features from 3D translation to the task
-  task.addFeature(s, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
-  \endcode
+  task.addFeature(s, vpFeatureTranslation::selectTx() |
+vpFeatureTranslation::selectTy()); \endcode
 
   If you want to build your own control law, this other example shows
   how to create a current (\f$s\f$) and desired (\f$s^*\f$) 3D
@@ -188,9 +190,9 @@ int main()
   vector \f$(s-s^*)\f$ and finally build the interaction matrix \f$L_s\f$.
 
   \code
-#include <visp3/visual_features/vpFeatureTranslation.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
+#include <visp3/visual_features/vpFeatureTranslation.h>
 
 int main()
 {
@@ -224,8 +226,8 @@ int main()
   necessary equal to zero.
 
   \code
-#include <visp3/visual_features/vpFeatureTranslation.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/visual_features/vpFeatureTranslation.h>
 #include <visp3/vs/vpServo.h>
 
 int main()
@@ -237,7 +239,8 @@ int main()
 
   // Creation of the desired visual feature s*
   vpFeatureTranslation s_star(vpFeatureTranslation::cMo);
-  s_star.buildFrom(cdMo); // Initialization of the desired feature s*=(tx*,ty*,tz*)
+  s_star.buildFrom(cdMo); // Initialization of the desired feature
+s*=(tx*,ty*,tz*)
 
   vpHomogeneousMatrix cMo;
   // ... cMo need here to be computed.
@@ -275,7 +278,6 @@ int main()
 class VISP_EXPORT vpFeatureTranslation : public vpBasicFeature
 {
 public:
-
   /*!
     \enum vpFeatureTranslationRepresentationType
     Kind of implemented 3D translation feature.
@@ -296,56 +298,55 @@ public:
   } vpFeatureTranslationRepresentationType;
 
   // basic contructor
-  vpFeatureTranslation() ;
+  vpFeatureTranslation();
   // basic constructor specifying the type of translation feature
-  explicit vpFeatureTranslation(vpFeatureTranslationRepresentationType r) ;
+  explicit vpFeatureTranslation(vpFeatureTranslationRepresentationType r);
   // constructor : build from an homogeneous matrix
   // cdMc is the displacement that the camera has to realize
-  vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1, vpFeatureTranslationRepresentationType r) ;
+  vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1,
+                       vpFeatureTranslationRepresentationType r);
   //! Destructor. Does nothing.
   virtual ~vpFeatureTranslation() {}
 
   // build from an homogeneous matrix
   // cdMc is the displacement that the camera has to realize
-  void buildFrom(const vpHomogeneousMatrix &f2Mf1) ;
+  void buildFrom(const vpHomogeneousMatrix &f2Mf1);
 
-  void display(const vpCameraParameters &cam,
-               const vpImage<unsigned char> &I,
-               const vpColor &color=vpColor::green,
-               unsigned int thickness=1) const ;
-  void display(const vpCameraParameters &cam,
-               const vpImage<vpRGBa> &I,
-               const vpColor &color=vpColor::green,
-               unsigned int thickness=1) const ;
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
+               const vpColor &color = vpColor::green,
+               unsigned int thickness = 1) const;
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
+               const vpColor &color = vpColor::green,
+               unsigned int thickness = 1) const;
 
   //! Feature duplication
-  vpFeatureTranslation *duplicate() const ;
+  vpFeatureTranslation *duplicate() const;
 
   // compute the error between two visual features from a subset
   // a the possible features
   vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL)  ;
+                    const unsigned int select = FEATURE_ALL);
 
   vpFeatureTranslationRepresentationType getFeatureTranslationType() const;
 
-  double get_Tx() const ;
-  double get_Ty() const ;
-  double get_Tz() const ;
+  double get_Tx() const;
+  double get_Ty() const;
+  double get_Tz() const;
 
   // basic construction
-  void init() ;
+  void init();
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
 
   // print the name of the feature
-  void print(const unsigned int select= FEATURE_ALL) const ;
+  void print(const unsigned int select = FEATURE_ALL) const;
 
-  void set_Tx(const double t_x) ;
-  void set_Ty(const double t_y) ;
-  void set_Tz(const double t_z) ;
+  void set_Tx(const double t_x);
+  void set_Ty(const double t_y);
+  void set_Tz(const double t_z);
 
-  void setFeatureTranslationType(const vpFeatureTranslationRepresentationType r);
-
+  void
+  setFeatureTranslationType(const vpFeatureTranslationRepresentationType r);
 
   // feature selection
   static unsigned int selectTx();
@@ -356,7 +357,6 @@ private:
   //! displacement that the camera has to realize
   vpHomogeneousMatrix f2Mf1;
   vpFeatureTranslationRepresentationType translation;
-} ;
-
+};
 
 #endif

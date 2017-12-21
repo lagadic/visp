@@ -40,89 +40,85 @@
 
 #include <stdio.h>
 #include <visp3/core/vpConfig.h>
-#if ( defined(VISP_HAVE_DIRECTSHOW) )
+#if (defined(VISP_HAVE_DIRECTSHOW))
 
 #include <visp3/sensor/vpDirectShowDevice.h>
 
-
 /*!
-	Initialize the vpDirectShowDevice with the moniker's information
-	\param pMoniker The moniker that contains the device's information
-	\return Was the operation successfull
+        Initialize the vpDirectShowDevice with the moniker's information
+        \param pMoniker The moniker that contains the device's information
+        \return Was the operation successfull
 */
-bool vpDirectShowDevice::init(const CComPtr<IMoniker>& pMoniker)
+bool vpDirectShowDevice::init(const CComPtr<IMoniker> &pMoniker)
 {
-	HRESULT hr;
+  HRESULT hr;
 
-	//Get the properties
-	CComPtr<IPropertyBag> pPropBag;
-  pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void**)(&pPropBag));
+  // Get the properties
+  CComPtr<IPropertyBag> pPropBag;
+  pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)(&pPropBag));
 
-	//get the name of the input
-	VARIANT varName;
-	VARIANT varDesc;
-	VARIANT varDevPath;
-	VariantInit(&varName);
-	VariantInit(&varDesc);
-	VariantInit(&varDevPath);
-	char tmp[FILENAME_MAX];
+  // get the name of the input
+  VARIANT varName;
+  VARIANT varDesc;
+  VARIANT varDevPath;
+  VariantInit(&varName);
+  VariantInit(&varDesc);
+  VariantInit(&varDevPath);
+  char tmp[FILENAME_MAX];
 
-	hr = pPropBag->Read(L"FriendlyName", &varName, 0);
+  hr = pPropBag->Read(L"FriendlyName", &varName, 0);
 
-	//successfully got the name
-	if (SUCCEEDED(hr))
-	{
-		sprintf(tmp, "%S", varName.bstrVal);
-		name = tmp;
-	}
+  // successfully got the name
+  if (SUCCEEDED(hr)) {
+    sprintf(tmp, "%S", varName.bstrVal);
+    name = tmp;
+  }
 
-	VariantClear(&varName);
+  VariantClear(&varName);
 
-	hr = pPropBag->Read(L"Description", &varDesc, 0);
+  hr = pPropBag->Read(L"Description", &varDesc, 0);
 
-	//successfully got the description
-	if (SUCCEEDED(hr))
-	{
-		sprintf(tmp, "%S", varDesc.bstrVal);
-		desc = tmp;
-	}
+  // successfully got the description
+  if (SUCCEEDED(hr)) {
+    sprintf(tmp, "%S", varDesc.bstrVal);
+    desc = tmp;
+  }
 
-	VariantClear(&varDesc);
+  VariantClear(&varDesc);
 
-	hr = pPropBag->Read(L"DevicePath", &varDevPath, 0);
+  hr = pPropBag->Read(L"DevicePath", &varDevPath, 0);
 
-	//successfully got the device path
-	if (SUCCEEDED(hr))
-	{
-		sprintf(tmp, "%S",varDevPath.bstrVal);
-		devPath = tmp;
-	}
+  // successfully got the device path
+  if (SUCCEEDED(hr)) {
+    sprintf(tmp, "%S", varDevPath.bstrVal);
+    devPath = tmp;
+  }
 
-	VariantClear(&varDevPath);
+  VariantClear(&varDevPath);
 
-	inUse=false;
+  inUse = false;
 
-	return true;
+  return true;
 }
 
 /*!
-	Compares the two vpDirectShowDevice.
-	\return true if they are equal
+        Compares the two vpDirectShowDevice.
+        \return true if they are equal
 */
-bool vpDirectShowDevice::operator==(vpDirectShowDevice& dev)
+bool vpDirectShowDevice::operator==(vpDirectShowDevice &dev)
 {
-	return name==dev.name
-		&& desc==dev.desc
-		&& devPath==dev.devPath;
+  return name == dev.name && desc == dev.desc && devPath == dev.devPath;
 }
 
-VISP_EXPORT std::ostream& operator<<(std::ostream& os, vpDirectShowDevice& dev)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                     vpDirectShowDevice &dev)
 {
-  return os<<dev.name<<std::endl<<dev.desc<<std::endl<<dev.devPath;
+  return os << dev.name << std::endl << dev.desc << std::endl << dev.devPath;
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_sensor.a(vpDirectShowDevice.cpp.o) has no symbols
-void dummy_vpDirectShowDevice() {};
+// Work arround to avoid warning: libvisp_sensor.a(vpDirectShowDevice.cpp.o)
+// has no symbols
+void dummy_vpDirectShowDevice(){};
 #endif
 #endif

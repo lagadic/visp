@@ -36,19 +36,17 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file vpSimulatorPioneerPan.cpp
   \brief class that defines the Pioneer mobile robot simulator equipped
   with a camera able to move in pan.
 */
 
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/robot/vpSimulatorPioneerPan.h>
-#include <visp3/robot/vpRobotException.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpExponentialMap.h>
-
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/robot/vpRobotException.h>
+#include <visp3/robot/vpSimulatorPioneerPan.h>
 
 /*!
   Constructor.
@@ -59,9 +57,10 @@
   setSamplingTime().
 
 */
-vpSimulatorPioneerPan::vpSimulatorPioneerPan() : wMc_(), wMm_(), xm_(0), ym_(0), theta_(0), q_pan_()
+vpSimulatorPioneerPan::vpSimulatorPioneerPan()
+  : wMc_(), wMm_(), xm_(0), ym_(0), theta_(0), q_pan_()
 {
-  init() ;
+  init();
 }
 
 /*!
@@ -91,14 +90,11 @@ void vpSimulatorPioneerPan::init()
   wMc_ = wMm_ * mMp_ * pMe_ * cMe_.inverse();
 }
 
-
 /*!
   Destructor.
 
 */
-vpSimulatorPioneerPan::~vpSimulatorPioneerPan()
-{
-}
+vpSimulatorPioneerPan::~vpSimulatorPioneerPan() {}
 
 /*!
   Get the robot jacobian expressed in the end-effector frame.
@@ -107,8 +103,7 @@ vpSimulatorPioneerPan::~vpSimulatorPioneerPan()
   \param _eJe : A 6 by 3 matrix representing the robot jacobian \f$ {^e}{\bf
   J}_e\f$ expressed in the end-effector frame.
 */
-void
-vpSimulatorPioneerPan::get_eJe(vpMatrix &_eJe)
+void vpSimulatorPioneerPan::get_eJe(vpMatrix &_eJe)
 {
   _eJe = vpUnicycle::get_eJe();
 }
@@ -116,12 +111,14 @@ vpSimulatorPioneerPan::get_eJe(vpMatrix &_eJe)
 /*!
   Send to the controller a velocity.
 
-  \param frame : Control frame type. Only vpRobot::ARTICULAR_FRAME is implemented.
+  \param frame : Control frame type. Only vpRobot::ARTICULAR_FRAME is
+  implemented.
 
-  \param v : Velocity vector \f$(v_x, \omega_z, \dot q)\f$ to apply to the robot, where \f$v_x\f$
-  is the linear translational velocity in m/s and \f$\omega_z\f$ is the rotational velocity
-  in rad/s arround the vertical axis of the mobile base, and, \f$\dot q\f$ is the pan velocity
-  in rad/s of the camera.
+  \param v : Velocity vector \f$(v_x, \omega_z, \dot q)\f$ to apply to the
+  robot, where \f$v_x\f$ is the linear translational velocity in m/s and
+  \f$\omega_z\f$ is the rotational velocity in rad/s arround the vertical axis
+  of the mobile base, and, \f$\dot q\f$ is the pan velocity in rad/s of the
+  camera.
 
   Depending on the velocity specified as input, the robot position is updated
   using the sampling time that can be modified using setSamplingTime().
@@ -129,66 +126,64 @@ vpSimulatorPioneerPan::get_eJe(vpMatrix &_eJe)
   \sa setSamplingTime()
 
 */
-void
-vpSimulatorPioneerPan::setVelocity(const vpRobot::vpControlFrameType frame,
-                                   const vpColVector &v)
+void vpSimulatorPioneerPan::setVelocity(
+    const vpRobot::vpControlFrameType frame, const vpColVector &v)
 {
-  switch (frame)
-  {
-  case vpRobot::ARTICULAR_FRAME:{
-      if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState ()) {
-        setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
-      }
+  switch (frame) {
+  case vpRobot::ARTICULAR_FRAME: {
+    if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
+      setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    }
 
-      setRobotFrame(frame);
+    setRobotFrame(frame);
 
-      // v is a 3 dimension vector that contains vx, wz, qpan
-      if (v.size() != 3) {
-        vpERROR_TRACE ("Bad dimension of the control vector");
-        throw vpRobotException (vpRobotException::dimensionError,
-                                "Bad dimension of the control vector");
-      }
+    // v is a 3 dimension vector that contains vx, wz, qpan
+    if (v.size() != 3) {
+      vpERROR_TRACE("Bad dimension of the control vector");
+      throw vpRobotException(vpRobotException::dimensionError,
+                             "Bad dimension of the control vector");
+    }
 
-      vpColVector v_max(3);
+    vpColVector v_max(3);
 
-      v_max[0] = getMaxTranslationVelocity();
-      v_max[1] = getMaxRotationVelocity();
-      v_max[2] = getMaxRotationVelocity();
+    v_max[0] = getMaxTranslationVelocity();
+    v_max[1] = getMaxRotationVelocity();
+    v_max[2] = getMaxRotationVelocity();
 
-      vpColVector v_sat = vpRobot::saturateVelocities(v, v_max, true);
+    vpColVector v_sat = vpRobot::saturateVelocities(v, v_max, true);
 
-      xm_ += delta_t_ * v_sat[0] * cos(theta_);
-      ym_ += delta_t_ * v_sat[0] * sin(theta_);
-      theta_ += delta_t_ * v_sat[1];
-      q_pan_ += delta_t_ * v_sat[2];
+    xm_ += delta_t_ * v_sat[0] * cos(theta_);
+    ym_ += delta_t_ * v_sat[0] * sin(theta_);
+    theta_ += delta_t_ * v_sat[1];
+    q_pan_ += delta_t_ * v_sat[2];
 
-      vpRotationMatrix wRm(0, 0, theta_);
-      vpTranslationVector wtm(xm_, ym_, 0);
-      wMm_.buildFrom(wtm, wRm);
+    vpRotationMatrix wRm(0, 0, theta_);
+    vpTranslationVector wtm(xm_, ym_, 0);
+    wMm_.buildFrom(wtm, wRm);
 
-      // Update the end effector pose
-      set_pMe(q_pan_);
+    // Update the end effector pose
+    set_pMe(q_pan_);
 
-      // Update the camera pose
-      wMc_ = wMm_ * mMp_ * pMe_ * cMe_.inverse();
+    // Update the camera pose
+    wMc_ = wMm_ * mMp_ * pMe_ * cMe_.inverse();
 
-      // Update the jacobian
-      set_eJe(q_pan_);
+    // Update the jacobian
+    set_eJe(q_pan_);
 
-      break ;
-      }
+    break;
+  }
   case vpRobot::CAMERA_FRAME:
-    throw vpRobotException (vpRobotException::wrongStateError,
-                            "Cannot set a velocity in the camera frame:"
-                            "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError,
+                           "Cannot set a velocity in the camera frame:"
+                           "functionality not implemented");
   case vpRobot::REFERENCE_FRAME:
-    throw vpRobotException (vpRobotException::wrongStateError,
-                            "Cannot set a velocity in the reference frame:"
-                            "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError,
+                           "Cannot set a velocity in the reference frame:"
+                           "functionality not implemented");
   case vpRobot::MIXT_FRAME:
-    throw vpRobotException (vpRobotException::wrongStateError,
-                            "Cannot set a velocity in the mixt frame:"
-                            "functionality not implemented");
+    throw vpRobotException(vpRobotException::wrongStateError,
+                           "Cannot set a velocity in the mixt frame:"
+                           "functionality not implemented");
   }
 }
 
@@ -196,10 +191,9 @@ vpSimulatorPioneerPan::setVelocity(const vpRobot::vpControlFrameType frame,
   Get the robot position in the world frame.
 
 */
-void
-vpSimulatorPioneerPan::getPosition(vpHomogeneousMatrix &wMc) const
+void vpSimulatorPioneerPan::getPosition(vpHomogeneousMatrix &wMc) const
 {
-  wMc = this->wMc_ ;
+  wMc = this->wMc_;
 }
 
 /*
@@ -209,7 +203,8 @@ vpSimulatorPioneerPan::getPosition(vpHomogeneousMatrix &wMc) const
   - in the camera cartesien frame,
   - joint (articular) coordinates of each axes (not implemented)
   - in a reference or fixed cartesien frame attached to the robot base
-  - in a mixt cartesien frame (translation in reference frame, and rotation in camera frame)
+  - in a mixt cartesien frame (translation in reference frame, and rotation in
+  camera frame)
 
   \param position : Measured position of the robot:
   - in camera cartesien frame, a 6 dimension vector, set to 0.
@@ -220,19 +215,22 @@ vpSimulatorPioneerPan::getPosition(vpHomogeneousMatrix &wMc) const
   the translation tx, ty, tz in meters (like a vpTranslationVector), and the
   last 3 values to the rx, ry, rz rotation (like a vpRxyzVector).
 */
-void vpSimulatorPioneerPan::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
+void vpSimulatorPioneerPan::getPosition(
+    const vpRobot::vpControlFrameType frame, vpColVector &q)
 {
-  q.resize (6);
+  q.resize(6);
 
   switch (frame) {
-  case vpRobot::CAMERA_FRAME :
+  case vpRobot::CAMERA_FRAME:
     q = 0;
     break;
 
-  case vpRobot::ARTICULAR_FRAME :
-    std::cout << "ARTICULAR_FRAME is not implemented in vpSimulatorPioneer::getPosition()" << std::endl;
+  case vpRobot::ARTICULAR_FRAME:
+    std::cout << "ARTICULAR_FRAME is not implemented in "
+                 "vpSimulatorPioneer::getPosition()"
+              << std::endl;
     break;
-  case vpRobot::REFERENCE_FRAME : {
+  case vpRobot::REFERENCE_FRAME: {
     // Convert wMc_ to a position
     // From fMc extract the pose
     vpRotationMatrix wRc;
@@ -240,14 +238,16 @@ void vpSimulatorPioneerPan::getPosition(const vpRobot::vpControlFrameType frame,
     vpRxyzVector rxyz;
     rxyz.buildFrom(wRc);
 
-    for (unsigned int i=0; i < 3; i++) {
+    for (unsigned int i = 0; i < 3; i++) {
       q[i] = this->wMc_[i][3]; // translation x,y,z
-      q[i+3] = rxyz[i]; // Euler rotation x,y,z
+      q[i + 3] = rxyz[i];      // Euler rotation x,y,z
     }
 
     break;
-    }
-  case vpRobot::MIXT_FRAME :
-    std::cout << "MIXT_FRAME is not implemented in vpSimulatorCamera::getPosition()" << std::endl;
+  }
+  case vpRobot::MIXT_FRAME:
+    std::cout
+        << "MIXT_FRAME is not implemented in vpSimulatorCamera::getPosition()"
+        << std::endl;
   }
 }

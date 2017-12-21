@@ -36,30 +36,31 @@
  *
  *****************************************************************************/
 
-
-
 #ifndef __vpDisplayException_H
 #define __vpDisplayException_H
 
-
-/* ------------------------------------------------------------------------- */
-/* --- INCLUDE ------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
-
+/* -------------------------------------------------------------------------
+ */
+/* --- INCLUDE -------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /* \file vpDisplayException.h
    \brief error that can be emited by the vpDisplay class and its derivates
  */
 /* Classes standards. */
+#include <iostream> /* Classe std::ostream.    */
+#include <string>   /* Classe string.     */
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
-#include <iostream>                /* Classe std::ostream.    */
-#include <string>                  /* Classe string.     */
 
-
-/* ------------------------------------------------------------------------- */
-/* --- CLASS --------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+ */
+/* --- CLASS ---------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /*!
   \class vpDisplayException
@@ -68,42 +69,37 @@
  */
 class VISP_EXPORT vpDisplayException : public vpException
 {
-  public:
-    /*!
-    \brief Lists the possible error than can be emmited while calling
-    vpDisplay member
-   */
-    enum errorDisplayCodeEnum
-    {
-      notInitializedError,
-      cannotOpenWindowError,
-      connexionError,
-      XWindowsError,
-      GTKWindowsError,
-      colorAllocError,
-      depthNotSupportedError
-    } ;
+public:
+  /*!
+  \brief Lists the possible error than can be emmited while calling
+  vpDisplay member
+ */
+  enum errorDisplayCodeEnum {
+    notInitializedError,
+    cannotOpenWindowError,
+    connexionError,
+    XWindowsError,
+    GTKWindowsError,
+    colorAllocError,
+    depthNotSupportedError
+  };
 
-  public:
-    vpDisplayException(const int id,  const char* format, ...)
-    {
-      this->code = id;
-      va_list args;
-      va_start(args, format);
-      setMessage(format, args);
-      va_end (args);
-    }
+public:
+  vpDisplayException(const int id, const char *format, ...)
+  {
+    this->code = id;
+    va_list args;
+    va_start(args, format);
+    setMessage(format, args);
+    va_end(args);
+  }
 
-    vpDisplayException (const int id, const std::string & msg)
-      : vpException(id, msg)
-    {
-    }
+  vpDisplayException(const int id, const std::string &msg)
+    : vpException(id, msg)
+  {
+  }
 
-    explicit vpDisplayException (const int id)
-      : vpException(id)
-    {
-    }
-
+  explicit vpDisplayException(const int id) : vpException(id) {}
 };
 
 #endif

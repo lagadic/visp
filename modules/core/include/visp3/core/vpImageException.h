@@ -39,11 +39,12 @@
 #ifndef __vpImageException_H
 #define __vpImageException_H
 
-
-/* ------------------------------------------------------------------------- */
-/* --- INCLUDE ------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
-
+/* -------------------------------------------------------------------------
+ */
+/* --- INCLUDE -------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /* \file vpImageException.h
    \brief error that can be emited by the vpImage class and its derivates
@@ -53,12 +54,15 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#include <iostream>                /* Classe std::ostream.    */
-#include <string>                  /* Classe string.     */
+#include <iostream> /* Classe std::ostream.    */
+#include <string>   /* Classe string.     */
 
-/* ------------------------------------------------------------------------- */
-/* --- CLASS --------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+ */
+/* --- CLASS ---------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /*!
 
@@ -68,33 +72,34 @@
  */
 class VISP_EXPORT vpImageException : public vpException
 {
-  public:
-    /*!
-    \brief Lists the possible error than can be emmited while calling
-    vpImage member
-   */
-    enum errorImageCodeEnum
-    {
-      ioError,
-      noFileNameError,
-      notInitializedError,
-      incorrectInitializationError,
-      notInTheImage
-    } ;
+public:
+  /*!
+  \brief Lists the possible error than can be emmited while calling
+  vpImage member
+ */
+  enum errorImageCodeEnum {
+    ioError,
+    noFileNameError,
+    notInitializedError,
+    incorrectInitializationError,
+    notInTheImage
+  };
 
-  public:
-    vpImageException (const int id, const char* format, ...)
-    {
-      this->code = id;
-      va_list args;
-      va_start(args, format);
-      setMessage(format, args);
-      va_end (args);
-    }
-    vpImageException (const int id, const std::string & msg)
-      : vpException(id, msg){ ; }
-    explicit vpImageException (const int id)
-      : vpException(id){ ; }
+public:
+  vpImageException(const int id, const char *format, ...)
+  {
+    this->code = id;
+    va_list args;
+    va_start(args, format);
+    setMessage(format, args);
+    va_end(args);
+  }
+  vpImageException(const int id, const std::string &msg)
+    : vpException(id, msg)
+  {
+    ;
+  }
+  explicit vpImageException(const int id) : vpException(id) { ; }
 };
 
 #endif

@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpPoint_H
 #define vpPoint_H
 
@@ -47,10 +46,9 @@
 
 class vpHomogeneousMatrix;
 
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpForwardProjection.h>
 #include <visp3/core/vpColor.h>
-
+#include <visp3/core/vpForwardProjection.h>
+#include <visp3/core/vpMatrix.h>
 
 /*!
   \class vpPoint
@@ -70,26 +68,22 @@ public:
   virtual ~vpPoint() {}
 
 public:
-
   // Compute the 3D coordinates _cP  (camera frame)
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP) ;
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP);
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
+  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green,
+               const unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I,
+               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green,
+               const unsigned int thickness = 1);
+  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                const vpCameraParameters &cam,
-               const vpColor &color=vpColor::green,
-               const unsigned int thickness=1) ;
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam,
-               const vpColor &color=vpColor::green,
-               const unsigned int thickness=1) ;
-  void display(const vpImage<vpRGBa> &I,
-               const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam,
-               const vpColor &color=vpColor::green,
-               const unsigned int thickness=1) ;
-  vpPoint *duplicate() const ;
+               const vpColor &color = vpColor::green,
+               const unsigned int thickness = 1);
+  vpPoint *duplicate() const;
 
   // Get coordinates
   double get_X() const;
@@ -104,18 +98,20 @@ public:
   double get_y() const;
   double get_w() const;
 
-  void getWorldCoordinates(double& oX, double& oY, double& oZ);
+  void getWorldCoordinates(double &oX, double &oY, double &oZ);
   void getWorldCoordinates(vpColVector &P);
   vpColVector getWorldCoordinates(void);
   void getWorldCoordinates(std::vector<double> &P);
 
   //! Basic construction.
-  void init() ;
+  void init();
 
-  friend VISP_EXPORT std::ostream& operator<<(std::ostream& os, const vpPoint& vpp);
-  vpPoint& operator=(const vpPoint& vpp);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                              const vpPoint &vpp);
+  vpPoint &operator=(const vpPoint &vpp);
 
-  //! Projection onto the image plane of a point. Input: the 3D coordinates in the camera frame _cP, output : the 2D coordinates _p.
+  //! Projection onto the image plane of a point. Input: the 3D coordinates in
+  //! the camera frame _cP, output : the 2D coordinates _p.
   void projection(const vpColVector &_cP, vpColVector &_p);
 
   void projection();

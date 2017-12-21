@@ -39,9 +39,9 @@
 #include <algorithm> // for (std::min) and (std::max)
 #include <visp3/core/vpConfig.h>
 
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpMath.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpMatrix.h>
 
 // Exception
 #include <visp3/core/vpException.h>
@@ -52,26 +52,30 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_LAPACK
-#  ifdef VISP_HAVE_LAPACK_BUILT_IN
+#ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
-#  else
+#else
 typedef int integer;
-#  endif
+#endif
 
-extern "C" int dgeqrf_(integer *m, integer *n, double *a, integer *lda, double *tau, double *work, integer *lwork, integer *info);
+extern "C" int dgeqrf_(integer *m, integer *n, double *a, integer *lda,
+                       double *tau, double *work, integer *lwork,
+                       integer *info);
 extern "C" int dormqr_(char *side, char *trans, integer *m, integer *n,
-                       integer *k, double *a, integer *lda, double *tau, double *c__,
-                       integer *ldc, double *work, integer *lwork, integer *info);
+                       integer *k, double *a, integer *lda, double *tau,
+                       double *c__, integer *ldc, double *work,
+                       integer *lwork, integer *info);
 extern "C" int dorgqr_(integer *, integer *, integer *, double *, integer *,
                        double *, double *, integer *, integer *);
-extern "C" int dtrtri_(char *uplo, char *diag, integer *n, double *a, integer *lda, integer *info);
+extern "C" int dtrtri_(char *uplo, char *diag, integer *n, double *a,
+                       integer *lda, integer *info);
 
-int allocate_work(double** work);
+int allocate_work(double **work);
 
-int allocate_work(double** work)
+int allocate_work(double **work)
 {
   unsigned int dimWork = (unsigned int)((*work)[0]);
-  delete[] *work;
+  delete[] * work;
   *work = new double[dimWork];
   return (int)dimWork;
 }
@@ -79,7 +83,8 @@ int allocate_work(double** work)
 
 #ifdef VISP_HAVE_LAPACK
 /*!
-  Compute the inverse of a n-by-n matrix using the QR decomposition with Lapack 3rd party.
+  Compute the inverse of a n-by-n matrix using the QR decomposition with
+Lapack 3rd party.
 
   \return The inverse matrix.
 
@@ -108,15 +113,17 @@ int main()
 */
 vpMatrix vpMatrix::inverseByQRLapack() const
 {
-  if ( rowNum != colNum) {
-    throw(vpMatrixException(vpMatrixException::matrixError,
-                            "Cannot inverse a non-square matrix (%ux%u) by QR", rowNum, colNum)) ;
+  if (rowNum != colNum) {
+    throw(vpMatrixException(
+        vpMatrixException::matrixError,
+        "Cannot inverse a non-square matrix (%ux%u) by QR", rowNum, colNum));
   }
 
   integer rowNum_ = (integer)this->getRows();
   integer colNum_ = (integer)this->getCols();
-  integer lda = (integer)rowNum_; //lda is the number of rows because we don't use a submatrix
-  integer dimTau = (std::min)(rowNum_,colNum_);
+  integer lda = (integer)
+      rowNum_; // lda is the number of rows because we don't use a submatrix
+  integer dimTau = (std::min)(rowNum_, colNum_);
   integer dimWork = -1;
   double *tau = new double[dimTau];
   double *work = new double[1];
@@ -124,103 +131,115 @@ vpMatrix vpMatrix::inverseByQRLapack() const
   vpMatrix C;
   vpMatrix A = *this;
 
-  try{
-    //1) Extract householder reflections (useful to compute Q) and R
-    dgeqrf_(
-            &rowNum_,        //The number of rows of the matrix A.  M >= 0.
-            &colNum_,        //The number of columns of the matrix A.  N >= 0.
-            A.data,     /*On entry, the M-by-N matrix A.
-                              On exit, the elements on and above the diagonal of the array
-                              contain the min(M,N)-by-N upper trapezoidal matrix R (R is
-                              upper triangular if m >= n); the elements below the diagonal,
-                              with the array TAU, represent the orthogonal matrix Q as a
-                              product of min(m,n) elementary reflectors.
-                            */
-            &lda,            //The leading dimension of the array A.  LDA >= max(1,M).
-            tau,            /*Dimension (min(M,N))
-                              The scalar factors of the elementary reflectors
-                            */
-            work,           //Internal working array. dimension (MAX(1,LWORK))
-            &dimWork,       //The dimension of the array WORK.  LWORK >= max(1,N).
-            &info           //status
-          );
+  try {
+    // 1) Extract householder reflections (useful to compute Q) and R
+    dgeqrf_(&rowNum_, // The number of rows of the matrix A.  M >= 0.
+            &colNum_, // The number of columns of the matrix A.  N >= 0.
+            A.data,   /*On entry, the M-by-N matrix A.
+                            On exit, the elements on and above the diagonal of
+                         the array   contain the min(M,N)-by-N upper trapezoidal
+                         matrix R (R is   upper triangular if m >= n); the
+                         elements below the diagonal,   with the array TAU,
+                         represent the orthogonal matrix Q as a   product of
+                         min(m,n) elementary reflectors.
+                          */
+            &lda, // The leading dimension of the array A.  LDA >= max(1,M).
+            tau,  /*Dimension (min(M,N))
+                    The scalar factors of the elementary reflectors
+                  */
+            work, // Internal working array. dimension (MAX(1,LWORK))
+            &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
+            &info     // status
+    );
 
-    if(info != 0){
-      std::cout << "dgeqrf_:Preparation:" << -info << "th element had an illegal value" << std::endl;
+    if (info != 0) {
+      std::cout << "dgeqrf_:Preparation:" << -info
+                << "th element had an illegal value" << std::endl;
       throw vpMatrixException::badValue;
     }
     dimWork = allocate_work(&work);
 
-    dgeqrf_(
-          &rowNum_,        //The number of rows of the matrix A.  M >= 0.
-          &colNum_,        //The number of columns of the matrix A.  N >= 0.
-          A.data,     /*On entry, the M-by-N matrix A.
-                            On exit, the elements on and above the diagonal of the array
-                            contain the min(M,N)-by-N upper trapezoidal matrix R (R is
-                            upper triangular if m >= n); the elements below the diagonal,
-                            with the array TAU, represent the orthogonal matrix Q as a
-                            product of min(m,n) elementary reflectors.
+    dgeqrf_(&rowNum_, // The number of rows of the matrix A.  M >= 0.
+            &colNum_, // The number of columns of the matrix A.  N >= 0.
+            A.data,   /*On entry, the M-by-N matrix A.
+                            On exit, the elements on and above the diagonal of
+                         the array   contain the min(M,N)-by-N upper trapezoidal
+                         matrix R (R is   upper triangular if m >= n); the
+                         elements below the diagonal,   with the array TAU,
+                         represent the orthogonal matrix Q as a   product of
+                         min(m,n) elementary reflectors.
                           */
-          &lda,            //The leading dimension of the array A.  LDA >= max(1,M).
-          tau,            /*Dimension (min(M,N))
-                            The scalar factors of the elementary reflectors
-                          */
-          work,           //Internal working array. dimension (MAX(1,LWORK))
-          &dimWork,       //The dimension of the array WORK.  LWORK >= max(1,N).
-          &info           //status
-        );
+            &lda, // The leading dimension of the array A.  LDA >= max(1,M).
+            tau,  /*Dimension (min(M,N))
+                    The scalar factors of the elementary reflectors
+                  */
+            work, // Internal working array. dimension (MAX(1,LWORK))
+            &dimWork, // The dimension of the array WORK.  LWORK >= max(1,N).
+            &info     // status
+    );
 
-
-    if(info != 0){
-      std::cout << "dgeqrf_:" << -info << "th element had an illegal value" << std::endl;
+    if (info != 0) {
+      std::cout << "dgeqrf_:" << -info << "th element had an illegal value"
+                << std::endl;
       throw vpMatrixException::badValue;
     }
 
-    //A now contains the R matrix in its upper triangular (in lapack convention)
+    // A now contains the R matrix in its upper triangular (in lapack
+    // convention)
     C = A;
 
-    //2) Invert R
-    dtrtri_((char*)"U",(char*)"N",&dimTau,C.data,&lda,&info);
-    if(info!=0){
-      if(info < 0)
-        std::cout << "dtrtri_:"<< -info << "th element had an illegal value" << std::endl;
-      else if(info > 0){
-        std::cout << "dtrtri_:R("<< info << "," <<info << ")"<< " is exactly zero.  The triangular matrix is singular and its inverse can not be computed." << std::endl;
+    // 2) Invert R
+    dtrtri_((char *)"U", (char *)"N", &dimTau, C.data, &lda, &info);
+    if (info != 0) {
+      if (info < 0)
+        std::cout << "dtrtri_:" << -info << "th element had an illegal value"
+                  << std::endl;
+      else if (info > 0) {
+        std::cout << "dtrtri_:R(" << info << "," << info << ")"
+                  << " is exactly zero.  The triangular matrix is singular "
+                     "and its inverse can not be computed."
+                  << std::endl;
         std::cout << "R=" << std::endl << C << std::endl;
       }
       throw vpMatrixException::badValue;
     }
 
-    //3) Zero-fill R^-1
-    //the matrix is upper triangular for lapack but lower triangular for visp
-    //we fill it with zeros above the diagonal (where we don't need the values)
-    for(unsigned int i=0;i<C.getRows();i++)
-      for(unsigned int j=0;j<C.getRows();j++)
-        if(j>i) C[i][j] = 0.;
+    // 3) Zero-fill R^-1
+    // the matrix is upper triangular for lapack but lower triangular for visp
+    // we fill it with zeros above the diagonal (where we don't need the
+    // values)
+    for (unsigned int i = 0; i < C.getRows(); i++)
+      for (unsigned int j = 0; j < C.getRows(); j++)
+        if (j > i)
+          C[i][j] = 0.;
 
     dimWork = -1;
     integer ldc = lda;
 
-    //4) Transpose Q and left-multiply it by R^-1
-    //get R^-1*tQ
-    //C contains R^-1
-    //A contains Q
-    dormqr_((char*)"R", (char*)"T", &rowNum_, &colNum_, &dimTau, A.data, &lda, tau, C.data, &ldc, work, &dimWork, &info);
-    if(info != 0){
-      std::cout << "dormqr_:Preparation"<< -info << "th element had an illegal value" << std::endl;
+    // 4) Transpose Q and left-multiply it by R^-1
+    // get R^-1*tQ
+    // C contains R^-1
+    // A contains Q
+    dormqr_((char *)"R", (char *)"T", &rowNum_, &colNum_, &dimTau, A.data,
+            &lda, tau, C.data, &ldc, work, &dimWork, &info);
+    if (info != 0) {
+      std::cout << "dormqr_:Preparation" << -info
+                << "th element had an illegal value" << std::endl;
       throw vpMatrixException::badValue;
     }
     dimWork = allocate_work(&work);
 
-    dormqr_((char*)"R", (char*)"T", &rowNum_, &colNum_, &dimTau, A.data, &lda, tau, C.data, &ldc, work, &dimWork, &info);
+    dormqr_((char *)"R", (char *)"T", &rowNum_, &colNum_, &dimTau, A.data,
+            &lda, tau, C.data, &ldc, work, &dimWork, &info);
 
-    if(info != 0){
-      std::cout << "dormqr_:"<< -info << "th element had an illegal value" << std::endl;
+    if (info != 0) {
+      std::cout << "dormqr_:" << -info << "th element had an illegal value"
+                << std::endl;
       throw vpMatrixException::badValue;
     }
     delete[] tau;
     delete[] work;
-  } catch(vpMatrixException&) {
+  } catch (vpMatrixException &) {
     delete[] tau;
     delete[] work;
     throw;
@@ -233,8 +252,8 @@ vpMatrix vpMatrix::inverseByQRLapack() const
 
 /*!
   Compute the inverse of a n-by-n matrix using the QR decomposition.
-  Only available if Lapack 3rd party is installed. If Lapack is not installed we use a
-  Lapack built-in version.
+  Only available if Lapack 3rd party is installed. If Lapack is not installed
+we use a Lapack built-in version.
 
   \return The inverse matrix.
 
@@ -261,12 +280,12 @@ int main()
 
   \sa inverseByLU(), inverseByCholesky()
 */
-vpMatrix
-vpMatrix::inverseByQR() const
+vpMatrix vpMatrix::inverseByQR() const
 {
 #ifdef VISP_HAVE_LAPACK
   return inverseByQRLapack();
 #else
-  throw(vpException(vpException::fatalError, "Cannot inverse matrix by QR. Install Lapack 3rd party"));
+  throw(vpException(vpException::fatalError,
+                    "Cannot inverse matrix by QR. Install Lapack 3rd party"));
 #endif
 }

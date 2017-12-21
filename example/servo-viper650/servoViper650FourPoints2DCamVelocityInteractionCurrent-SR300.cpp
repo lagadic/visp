@@ -42,45 +42,45 @@
 
   \brief Example of eye-in-hand control law. We control here a real robot, the
   Viper S650 robot (arm with 6 degrees of freedom). The velocity is
-  computed in camera frame. The inverse jacobian that converts cartesian velocities
-  in joint velocities is implemented in the robot low level controller.
-  Visual features are the image coordinates of 4 points. The target is made of 4 dots
-  arranged as a 10cm by 10cm square.
+  computed in camera frame. The inverse jacobian that converts cartesian
+  velocities in joint velocities is implemented in the robot low level
+  controller. Visual features are the image coordinates of 4 points. The
+  target is made of 4 dots arranged as a 10cm by 10cm square.
 
   The device used to acquire images is a Realsense SR300 device.
 
-  Camera extrinsic (eMc) parameters are read from SR300-eMc.cnf file located besides this code.
+  Camera extrinsic (eMc) parameters are read from SR300-eMc.cnf file located
+  besides this code.
 
   Camera intrinsic parameters are retrieved from the Realsense SDK.
 
 */
 
-
-#include <stdio.h>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <sstream>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_VIPER650) && defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_X11)
+#if defined(VISP_HAVE_VIPER650) && defined(VISP_HAVE_REALSENSE) &&           \
+    defined(VISP_HAVE_X11)
 
-#include <visp3/sensor/vpRealSense.h>
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/blob/vpDot2.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/vision/vpPose.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/robot/vpRobotViper650.h>
+#include <visp3/sensor/vpRealSense.h>
+#include <visp3/vision/vpPose.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
 #define L 0.05 // to deal with a 10cm by 10cm square
-
 
 /*!
 
@@ -103,16 +103,17 @@
 void compute_pose(std::vector<vpPoint> &point, std::vector<vpDot2> &dot,
                   vpCameraParameters cam, vpHomogeneousMatrix &cMo, bool init)
 {
-  vpHomogeneousMatrix cMo_dementhon;  // computed pose with dementhon method
-  vpHomogeneousMatrix cMo_lagrange;   // computed pose with lagrange method
+  vpHomogeneousMatrix cMo_dementhon; // computed pose with dementhon method
+  vpHomogeneousMatrix cMo_lagrange;  // computed pose with lagrange method
   vpPose pose;
 
-  for (size_t i=0; i < point.size(); i ++) {
+  for (size_t i = 0; i < point.size(); i++) {
 
-    double x=0, y=0;
+    double x = 0, y = 0;
     vpImagePoint cog = dot[i].getCog();
-    vpPixelMeterConversion::convertPoint(cam, cog, x, y); //pixel to meter conversion
-    point[i].set_x(x);//projection perspective          p
+    vpPixelMeterConversion::convertPoint(cam, cog, x,
+                                         y); // pixel to meter conversion
+    point[i].set_x(x); // projection perspective          p
     point[i].set_y(y);
     pose.addPoint(point[i]);
   }
@@ -134,8 +135,7 @@ void compute_pose(std::vector<vpPoint> &point, std::vector<vpDot2> &dot,
   pose.computePose(vpPose::LOWE, cMo);
 }
 
-int
-main()
+int main()
 {
   // Log file creation in /tmp/$USERNAME/log.dat
   // This file contains by line:
@@ -149,19 +149,17 @@ main()
 
   // Create a log filename to save velocities...
   std::string logdirname;
-  logdirname ="/tmp/" + username;
+  logdirname = "/tmp/" + username;
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(logdirname) == false) {
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    }
-    catch (...) {
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
+    } catch (...) {
+      std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
-      return(-1);
+      return (-1);
     }
   }
   std::string logfilename;
@@ -173,7 +171,8 @@ main()
   try {
     vpRobotViper650 robot;
 
-    // Load the end-effector to camera frame transformation from SR300-eMc.cnf file
+    // Load the end-effector to camera frame transformation from SR300-eMc.cnf
+    // file
     robot.init(vpRobotViper650::TOOL_CUSTOM, "./SR300-eMc.cnf");
     vpHomogeneousMatrix eMc;
     robot.get_eMc(eMc);
@@ -184,16 +183,20 @@ main()
     vpImage<unsigned char> I;
 
     vpRealSense g;
-    // Enable the RealSense device to acquire only color images with size 640x480
+    // Enable the RealSense device to acquire only color images with size
+    // 640x480
     g.setEnableStream(rs::stream::color, true);
     g.setEnableStream(rs::stream::depth, false);
     g.setEnableStream(rs::stream::infrared, false);
     g.setEnableStream(rs::stream::infrared2, false);
-    g.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
+    g.setStreamSettings(
+        rs::stream::color,
+        vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
     g.open();
 
     // Update camera parameters
-    vpCameraParameters cam = g.getCameraParameters(rs::stream::color, vpCameraParameters::perspectiveProjWithDistortion);
+    vpCameraParameters cam = g.getCameraParameters(
+        rs::stream::color, vpCameraParameters::perspectiveProjWithDistortion);
     std::cout << "Camera intrinsic parameters: \n" << cam << std::endl;
 
     g.acquire(I);
@@ -204,10 +207,11 @@ main()
 
     std::vector<vpDot2> dot(4);
 
-    std::cout << "Click on the 4 dots clockwise starting from upper/left dot..."
-              << std::endl;
+    std::cout
+        << "Click on the 4 dots clockwise starting from upper/left dot..."
+        << std::endl;
 
-    for (size_t i=0; i < dot.size(); i++) {
+    for (size_t i = 0; i < dot.size(); i++) {
       dot[i].setGraphics(true);
       dot[i].initTracking(I);
       vpImagePoint cog = dot[i].getCog();
@@ -217,16 +221,17 @@ main()
 
     // Sets the current position of the visual feature
     vpFeaturePoint p[4];
-    for (size_t i=0; i < dot.size(); i++)
-      vpFeatureBuilder::create(p[i], cam, dot[i]);  //retrieve x,y  of the vpFeaturePoint structure
+    for (size_t i = 0; i < dot.size(); i++)
+      vpFeatureBuilder::create(
+          p[i], cam, dot[i]); // retrieve x,y  of the vpFeaturePoint structure
 
     // Set the position of the square target in a frame which origin is
     // centered in the middle of the square
     std::vector<vpPoint> point(4);
     point[0].setWorldCoordinates(-L, -L, 0);
-    point[1].setWorldCoordinates( L, -L, 0);
-    point[2].setWorldCoordinates( L,  L, 0);
-    point[3].setWorldCoordinates(-L,  L, 0);
+    point[1].setWorldCoordinates(L, -L, 0);
+    point[2].setWorldCoordinates(L, L, 0);
+    point[3].setWorldCoordinates(-L, L, 0);
 
     // Compute target initial pose
     vpHomogeneousMatrix cMo;
@@ -234,13 +239,14 @@ main()
     std::cout << "Initial camera pose (cMo): \n" << cMo << std::endl;
 
     // Initialise a desired pose to compute s*, the desired 2D point features
-    vpHomogeneousMatrix cMo_d( vpTranslationVector(0, 0, 0.5), // tz = 0.5 meter
-                               vpRotationMatrix() );           // no rotation
+    vpHomogeneousMatrix cMo_d(
+        vpTranslationVector(0, 0, 0.5), // tz = 0.5 meter
+        vpRotationMatrix());            // no rotation
 
     // Sets the desired position of the 2D visual feature
     vpFeaturePoint pd[4];
     // Compute the desired position of the features from the desired pose
-    for (int i=0; i < 4; i ++) {
+    for (int i = 0; i < 4; i++) {
       vpColVector cP, p;
       point[i].changeFrame(cMo_d, cP);
       point[i].projection(cP, p);
@@ -251,7 +257,7 @@ main()
     }
 
     // We want to see a point on a point
-    for (size_t i=0; i < dot.size(); i++)
+    for (size_t i = 0; i < dot.size(); i++)
       task.addFeature(p[i], pd[i]);
 
     // Set the proportional gain
@@ -267,8 +273,9 @@ main()
     // Initialise the velocity control of the robot
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-    std::cout << "\nHit CTRL-C or click in the image to stop the loop...\n" << std::flush;
-    for (;; ) {
+    std::cout << "\nHit CTRL-C or click in the image to stop the loop...\n"
+              << std::flush;
+    for (;;) {
       // Acquire a new image from the camera
       g.acquire(I);
 
@@ -277,7 +284,7 @@ main()
 
       try {
         // For each point...
-        for (size_t i=0; i < dot.size(); i++) {
+        for (size_t i = 0; i < dot.size(); i++) {
           // Achieve the tracking of the dot in the image
           dot[i].track(I);
           // Display a green cross at the center of gravity position in the
@@ -285,18 +292,18 @@ main()
           vpImagePoint cog = dot[i].getCog();
           vpDisplay::displayCross(I, cog, 10, vpColor::green);
         }
-      }
-      catch(...) {
-        std::cout << "Error detected while tracking visual features.." << std::endl;
+      } catch (...) {
+        std::cout << "Error detected while tracking visual features.."
+                  << std::endl;
         break;
       }
 
-      // During the servo, we compute the pose using a non linear method. For the
-      // initial pose used in the non linear minimisation we use the pose
+      // During the servo, we compute the pose using a non linear method. For
+      // the initial pose used in the non linear minimisation we use the pose
       // computed at the previous iteration.
       compute_pose(point, dot, cam, cMo, false);
 
-      for (size_t i=0; i < dot.size(); i++) {
+      for (size_t i = 0; i < dot.size(); i++) {
         // Update the point feature from the dot location
         vpFeatureBuilder::create(p[i], cam, dot[i]);
         // Set the feature Z coordinate from the pose
@@ -318,8 +325,8 @@ main()
       // Save velocities applied to the robot in the log file
       // v[0], v[1], v[2] correspond to camera translation velocities in m/s
       // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
-      flog << v[0] << " " << v[1] << " " << v[2] << " "
-                   << v[3] << " " << v[4] << " " << v[5] << " ";
+      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4]
+           << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
       vpColVector qvel;
@@ -329,8 +336,8 @@ main()
       //   velocities in m/s
       // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
       //   velocities in rad/s
-      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " "
-                      << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
+      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " " << qvel[3]
+           << " " << qvel[4] << " " << qvel[5] << " ";
 
       // Get the measured joint positions of the robot
       vpColVector q;
@@ -340,12 +347,12 @@ main()
       //   positions in m
       // - q[3], q[4], q[5] correspond to measured joint rotation
       //   positions in rad
-      flog << q[0] << " " << q[1] << " " << q[2] << " "
-                   << q[3] << " " << q[4] << " " << q[5] << " ";
+      flog << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << " " << q[4]
+           << " " << q[5] << " ";
 
       // Save feature error (s-s*) for the 4 feature points. For each feature
-      // point, we have 2 errors (along x and y axis).  This error is expressed
-      // in meters in the camera frame
+      // point, we have 2 errors (along x and y axis).  This error is
+      // expressed in meters in the camera frame
       flog << task.getError() << std::endl;
 
       vpDisplay::displayText(I, 10, 10, "Click to quit...", vpColor::red);
@@ -355,7 +362,8 @@ main()
       // Flush the display
       vpDisplay::flush(I);
 
-      //std::cout << "\t\t || s - s* || = " << ( task.getError() ).sumSquare() << std::endl;
+      // std::cout << "\t\t || s - s* || = " << ( task.getError()
+      // ).sumSquare() << std::endl;
     }
 
     std::cout << "Display task information: " << std::endl;
@@ -363,9 +371,7 @@ main()
     task.kill();
     flog.close(); // Close the log file
     return 0;
-  }
-  catch (const vpException &e)
-  {
+  } catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 0;
@@ -373,10 +379,11 @@ main()
 }
 
 #else
-int
-main()
+int main()
 {
-  std::cout << "You do not have an Viper650 robot or a RealSense device connected to your computer..." << std::endl;
+  std::cout << "You do not have an Viper650 robot or a RealSense device "
+               "connected to your computer..."
+            << std::endl;
 }
 
 #endif

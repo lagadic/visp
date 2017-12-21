@@ -36,15 +36,15 @@
  *
  *****************************************************************************/
 
-
 #ifndef __vpSimulatorException_H
 #define __vpSimulatorException_H
 
-
-/* ------------------------------------------------------------------------- */
-/* --- INCLUDE ------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
-
+/* -------------------------------------------------------------------------
+ */
+/* --- INCLUDE -------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /* \file vpSimulatorException.h
    \brief error that can be emited by the vpSimulator class and its derivates
@@ -53,12 +53,15 @@
 
 #include <visp3/core/vpException.h>
 
-#include <iostream>                /* Classe std::ostream.    */
-#include <string>                  /* Classe string.     */
+#include <iostream> /* Classe std::ostream.    */
+#include <string>   /* Classe string.     */
 
-/* ------------------------------------------------------------------------- */
-/* --- CLASS --------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+ */
+/* --- CLASS ---------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /*!
 
@@ -67,24 +70,23 @@
  */
 class VISP_EXPORT vpSimulatorException : public vpException
 {
-  public:
-    /*!
-    \brief Lists the possible error than can be emmited while calling
-    vpSimulator member
-   */
-    enum errorSimulatorCodeEnum
-    {
-      ioError,
-      noFileNameError,
-      notInitializedError,
-      windowSizeNotInitializedError,
-      badInitializationError
-    } ;
+public:
+  /*!
+  \brief Lists the possible error than can be emmited while calling
+  vpSimulator member
+ */
+  enum errorSimulatorCodeEnum {
+    ioError,
+    noFileNameError,
+    notInitializedError,
+    windowSizeNotInitializedError,
+    badInitializationError
+  };
 
-  public:
-    vpSimulatorException (const int id, const char* format, ...);
-    vpSimulatorException (const int id, const std::string & msg);
-    explicit vpSimulatorException (const int id);
+public:
+  vpSimulatorException(const int id, const char *format, ...);
+  vpSimulatorException(const int id, const std::string &msg);
+  explicit vpSimulatorException(const int id);
 };
 
 #endif

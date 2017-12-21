@@ -70,19 +70,20 @@
   telling Ogre where to look for renderer plugins.
 
 */
-vpAROgre::vpAROgre(const vpCameraParameters &cam,
-		   unsigned int width, unsigned int height,
-		   const char *resourcePath, const char *pluginsPath)
-    : name("ViSP - Augmented Reality"),mRoot(0), mCamera(0), mSceneMgr(0), mWindow(0),
-      mResourcePath(resourcePath), mPluginsPath(pluginsPath),
+vpAROgre::vpAROgre(const vpCameraParameters &cam, unsigned int width,
+                   unsigned int height, const char *resourcePath,
+                   const char *pluginsPath)
+  : name("ViSP - Augmented Reality"), mRoot(0), mCamera(0), mSceneMgr(0),
+    mWindow(0), mResourcePath(resourcePath), mPluginsPath(pluginsPath),
 #ifdef VISP_HAVE_OIS
-      mInputManager(0), mKeyboard(0),
+    mInputManager(0), mKeyboard(0),
 #endif
-      keepOn(true), // When created no reason to stop displaying
-      mImageRGBA(), mImage(), mPixelBuffer(), mBackground(NULL), mBackgroundHeight(0),
-      mBackgroundWidth(0), mWindowHeight(height), mWindowWidth(width), windowHidden(false),
-      mNearClipping(0.001), mFarClipping(200), mcam(cam), mshowConfigDialog(true),
-      mOptionnalResourceLocation()
+    keepOn(true), // When created no reason to stop displaying
+    mImageRGBA(), mImage(), mPixelBuffer(), mBackground(NULL),
+    mBackgroundHeight(0), mBackgroundWidth(0), mWindowHeight(height),
+    mWindowWidth(width), windowHidden(false), mNearClipping(0.001),
+    mFarClipping(200), mcam(cam), mshowConfigDialog(true),
+    mOptionnalResourceLocation()
 {
 }
 
@@ -115,24 +116,23 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam,
 
 */
 void vpAROgre::init(vpImage<unsigned char> &I,
-		    bool
+                    bool
 #ifdef VISP_HAVE_OIS
-		    bufferedKeys
+                        bufferedKeys
 #endif
-        ,bool hidden
-		    )
+                    ,
+                    bool hidden)
 {
   mBackgroundWidth = I.getWidth();
   mBackgroundHeight = I.getHeight();
 
   init(
 #ifdef VISP_HAVE_OIS
-       bufferedKeys,
+      bufferedKeys,
 #else
       false,
 #endif
-      hidden
-       );
+      hidden);
   // Create the background image which will come from the grabber
   createBackground(I);
 }
@@ -166,24 +166,23 @@ void vpAROgre::init(vpImage<unsigned char> &I,
 
 */
 void vpAROgre::init(vpImage<vpRGBa> &I,
-		    bool
+                    bool
 #ifdef VISP_HAVE_OIS
-		    bufferedKeys
+                        bufferedKeys
 #endif
-        ,bool hidden
-		    )
+                    ,
+                    bool hidden)
 {
   mBackgroundWidth = I.getWidth();
   mBackgroundHeight = I.getHeight();
 
   init(
 #ifdef VISP_HAVE_OIS
-       bufferedKeys,
+      bufferedKeys,
 #else
-       false,
+      false,
 #endif
-       hidden
-       );
+      hidden);
   // Create the background image which will come from the grabber
   createBackground(I);
 }
@@ -214,44 +213,46 @@ void vpAROgre::init(vpImage<vpRGBa> &I,
 */
 void vpAROgre::init(bool
 #ifdef VISP_HAVE_OIS
-		    bufferedKeys
+                        bufferedKeys
 #endif
-        ,bool hidden
-		    )
+                    ,
+                    bool hidden)
 {
   // Create the root
   // mPluginsPath may contain more than one folder location separated by ";"
   bool pluginsFileExists = false;
   std::string pluginFile;
-  std::vector<std::string> plugingsPaths = vpIoTools::splitChain(std::string(mPluginsPath), std::string(";"));
-  for (size_t i=0; i<plugingsPaths.size(); i++) {
+  std::vector<std::string> plugingsPaths =
+      vpIoTools::splitChain(std::string(mPluginsPath), std::string(";"));
+  for (size_t i = 0; i < plugingsPaths.size(); i++) {
 #if defined(NDEBUG) || !defined(_WIN32)
-    pluginFile = plugingsPaths[i]+"/plugins.cfg";
+    pluginFile = plugingsPaths[i] + "/plugins.cfg";
 #else
-    pluginFile = plugingsPaths[i]+"/plugins_d.cfg";
+    pluginFile = plugingsPaths[i] + "/plugins_d.cfg";
 #endif
 
-    if(vpIoTools::checkFilename(pluginFile)) {
+    if (vpIoTools::checkFilename(pluginFile)) {
       pluginsFileExists = true;
       break;
     }
   }
-  if (! pluginsFileExists) {
+  if (!pluginsFileExists) {
     std::string errorMsg = std::string("Error: the requested plugins file \"")
 #if defined(NDEBUG) || !defined(_WIN32)
-        + std::string("plugins.cfg")
+                           + std::string("plugins.cfg")
 #else
-        + std::string("plugins_d.cfg")
+                           + std::string("plugins_d.cfg")
 #endif
-    + std::string("\" doesn't exist in ")
-    + std::string(mPluginsPath);
+                           + std::string("\" doesn't exist in ") +
+                           std::string(mPluginsPath);
     std::cout << errorMsg << std::endl;
 
-    throw (vpException(vpException::ioError, errorMsg));
+    throw(vpException(vpException::ioError, errorMsg));
   }
-  std::cout << "######################### Load plugin file: " << pluginFile << std::endl;
+  std::cout << "######################### Load plugin file: " << pluginFile
+            << std::endl;
 
-  if(Ogre::Root::getSingletonPtr() == NULL)
+  if (Ogre::Root::getSingletonPtr() == NULL)
     mRoot = new Ogre::Root(pluginFile, "ogre.cfg", "Ogre.log");
   else
     mRoot = Ogre::Root::getSingletonPtr();
@@ -270,24 +271,26 @@ void vpAROgre::init(bool
   // mResourcePath may contain more than one folder location separated by ";"
   bool resourcesFileExists = false;
   std::string resourceFile;
-  std::vector<std::string> resourcesPaths = vpIoTools::splitChain(std::string(mResourcePath), std::string(";"));
-  for (size_t i=0; i<resourcesPaths.size(); i++) {
-    resourceFile = resourcesPaths[i]+"/resources.cfg";
-    if(vpIoTools::checkFilename(resourceFile)) {
+  std::vector<std::string> resourcesPaths =
+      vpIoTools::splitChain(std::string(mResourcePath), std::string(";"));
+  for (size_t i = 0; i < resourcesPaths.size(); i++) {
+    resourceFile = resourcesPaths[i] + "/resources.cfg";
+    if (vpIoTools::checkFilename(resourceFile)) {
       resourcesFileExists = true;
       break;
     }
   }
-  if (! resourcesFileExists) {
-    std::string errorMsg = std::string("Error: the requested resource file \"resources.cfg\"")
-        + std::string("doesn't exist in ")
-        + std::string(mResourcePath);
+  if (!resourcesFileExists) {
+    std::string errorMsg =
+        std::string("Error: the requested resource file \"resources.cfg\"") +
+        std::string("doesn't exist in ") + std::string(mResourcePath);
 
     std::cout << errorMsg << std::endl;
 
-    throw (vpException(vpException::ioError, errorMsg));
+    throw(vpException(vpException::ioError, errorMsg));
   }
-  std::cout << "######################### Load resource file: " << resourceFile << std::endl;
+  std::cout << "######################### Load resource file: "
+            << resourceFile << std::endl;
   Ogre::ConfigFile cf;
   cf.load(resourceFile);
 
@@ -295,45 +298,48 @@ void vpAROgre::init(bool
   Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
 
   Ogre::String secName, typeName, archName;
-  while (seci.hasMoreElements())
-    {
-      secName = seci.peekNextKey();
-      Ogre::ConfigFile::SettingsMultiMap *settings = seci.getNext();
-      Ogre::ConfigFile::SettingsMultiMap::iterator i;
-      for (i = settings->begin(); i != settings->end(); ++i)
-	{
-	  typeName = i->first;
-	  archName = i->second;
-	  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-									 archName, typeName, secName);
-	}
+  while (seci.hasMoreElements()) {
+    secName = seci.peekNextKey();
+    Ogre::ConfigFile::SettingsMultiMap *settings = seci.getNext();
+    Ogre::ConfigFile::SettingsMultiMap::iterator i;
+    for (i = settings->begin(); i != settings->end(); ++i) {
+      typeName = i->first;
+      archName = i->second;
+      Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+          archName, typeName, secName);
     }
-    std::cout << "##################### add resources" << std::endl;
-  //Add optionnal resources (given by the user).
-  for(std::list<std::string>::const_iterator iter = mOptionnalResourceLocation.begin(); iter != mOptionnalResourceLocation.end(); ++iter){
-    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(*iter, "FileSystem", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  }
+  std::cout << "##################### add resources" << std::endl;
+  // Add optionnal resources (given by the user).
+  for (std::list<std::string>::const_iterator iter =
+           mOptionnalResourceLocation.begin();
+       iter != mOptionnalResourceLocation.end(); ++iter) {
+    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+        *iter, "FileSystem",
+        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   }
 
   // Create the window
   bool canInit = true;
-  if(mshowConfigDialog){
+  if (mshowConfigDialog) {
     mRoot->restoreConfig();
-    if(!mRoot->showConfigDialog())
+    if (!mRoot->showConfigDialog())
       canInit = false;
-  }
-  else{
-    if(!mRoot->restoreConfig())
+  } else {
+    if (!mRoot->restoreConfig())
       canInit = false;
   }
 
-  if(!mRoot->isInitialised()){
-    if(!canInit){ //We set the default renderer system
-      const Ogre::RenderSystemList& lRenderSystemList = mRoot->getAvailableRenderers();
-      if( lRenderSystemList.size() == 0 )
+  if (!mRoot->isInitialised()) {
+    if (!canInit) { // We set the default renderer system
+      const Ogre::RenderSystemList &lRenderSystemList =
+          mRoot->getAvailableRenderers();
+      if (lRenderSystemList.size() == 0)
         throw "ConfigDialog aborted"; // Exit the application on cancel
 
       Ogre::RenderSystem *lRenderSystem = lRenderSystemList.at(0);
-      std::cout << "Using " << lRenderSystem->getName() << " as renderer." << std::endl;
+      std::cout << "Using " << lRenderSystem->getName() << " as renderer."
+                << std::endl;
       mRoot->setRenderSystem(lRenderSystem);
     }
 
@@ -345,44 +351,43 @@ void vpAROgre::init(bool
   Ogre::ConfigOptionMap config = mRoot->getRenderSystem()->getConfigOptions();
   Ogre::ConfigOptionMap::const_iterator it = config.begin();
 
-  while( it != config.end() ){
+  while (it != config.end()) {
     Ogre::String leftconf = (*it).first;
     Ogre::String rightconf = (*it).second.currentValue;
 
-    if(leftconf == "Video Mode"){
-      if(canInit) {
+    if (leftconf == "Video Mode") {
+      if (canInit) {
         std::stringstream ss(rightconf.c_str());
         std::string dummy;
         ss >> mWindowWidth >> dummy >> mWindowHeight;
         if (ss.fail())
           std::cout << "Cannot read Ogre video mode" << std::endl;
-      }
-      else{
-        if(mWindowWidth == 0 && mWindowHeight == 0){
+      } else {
+        if (mWindowWidth == 0 && mWindowHeight == 0) {
           mWindowWidth = mBackgroundWidth;
           mWindowHeight = mBackgroundHeight;
         }
       }
-    }
-    else if( leftconf == "Full Screen" ){
-      if(canInit){
-        if(rightconf == "Yes") fullscreen = true;
+    } else if (leftconf == "Full Screen") {
+      if (canInit) {
+        if (rightconf == "Yes")
+          fullscreen = true;
       }
-    }
-    else
+    } else
       misc[leftconf] = rightconf;
 
     ++it;
   }
 
   // With Ogre version >= 1.8.1 we hide the window
-  if( hidden ){
-#if ( OGRE_VERSION >= (1 << 16 | 8 << 8 | 1) )
+  if (hidden) {
+#if (OGRE_VERSION >= (1 << 16 | 8 << 8 | 1))
     misc["hidden"] = "true";
     windowHidden = true;
 #endif
   }
-  mWindow = mRoot->createRenderWindow(name, mWindowWidth, mWindowHeight, fullscreen, &misc);
+  mWindow = mRoot->createRenderWindow(name, mWindowWidth, mWindowHeight,
+                                      fullscreen, &misc);
 
   // Initialise resources
   Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -402,8 +407,8 @@ void vpAROgre::init(bool
   createCamera();
 
   // Create a viewport
-  Ogre::Viewport* viewPort = mWindow->addViewport(mCamera);
-//   Ogre::Viewport* viewPort = mCamera->getViewport();
+  Ogre::Viewport *viewPort = mWindow->addViewport(mCamera);
+  //   Ogre::Viewport* viewPort = mCamera->getViewport();
   viewPort->setClearEveryFrame(true);
   // Set the projection parameters to match the camera intrinsic parameters
   updateCameraProjection();
@@ -428,29 +433,36 @@ void vpAROgre::init(bool
   mWindow->getCustomAttribute("WINDOW", &windowHnd);
   windowHndStr << windowHnd;
   pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
-  // Let the user use the keyboard elsewhere
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  pl.insert(std::make_pair(std::string("x11_keyboard_grab"), std::string("false")));
+// Let the user use the keyboard elsewhere
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  pl.insert(
+      std::make_pair(std::string("x11_keyboard_grab"), std::string("false")));
 #endif
 
-  mInputManager = OIS::InputManager::createInputSystem( pl );
+  mInputManager = OIS::InputManager::createInputSystem(pl);
 
-  //Create all devices
+  // Create all devices
   // Here we only consider the keyboard input
-  mKeyboard = static_cast<OIS::Keyboard*>(mInputManager->createInputObject( OIS::OISKeyboard, bufferedKeys ));
-  if ( !bufferedKeys ) mKeyboard->setEventCallback ( this);
+  mKeyboard = static_cast<OIS::Keyboard *>(
+      mInputManager->createInputObject(OIS::OISKeyboard, bufferedKeys));
+  if (!bufferedKeys)
+    mKeyboard->setEventCallback(this);
 #endif
 
   // Initialise a render to texture to be able to retrieve a screenshot
-  Ogre::TexturePtr Texture = Ogre::TextureManager::getSingleton().createManual("rtf", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,Ogre::TEX_TYPE_2D,
-                                                                               mWindow->getWidth(),mWindow->getHeight(), 0, Ogre::PF_R8G8B8A8, Ogre::TU_RENDERTARGET);
+  Ogre::TexturePtr Texture =
+      Ogre::TextureManager::getSingleton().createManual(
+          "rtf", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+          Ogre::TEX_TYPE_2D, mWindow->getWidth(), mWindow->getHeight(), 0,
+          Ogre::PF_R8G8B8A8, Ogre::TU_RENDERTARGET);
 
-
-
-//   Ogre::TexturePtr Texture = Ogre::TextureManager::getSingleton().createManual("rtf", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,Ogre::TEX_TYPE_2D,
-//                                                                                640,480, 0, Ogre::PF_R8G8B8A8, Ogre::TU_RENDERTARGET);
-  Ogre::RenderTexture* RTarget = Texture->getBuffer()->getRenderTarget();
-  /*Ogre::Viewport* Viewport =*/ RTarget->addViewport(mCamera);
+  //   Ogre::TexturePtr Texture =
+  //   Ogre::TextureManager::getSingleton().createManual("rtf",
+  //   Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,Ogre::TEX_TYPE_2D,
+  //                                                                                640,480, 0, Ogre::PF_R8G8B8A8, Ogre::TU_RENDERTARGET);
+  Ogre::RenderTexture *RTarget = Texture->getBuffer()->getRenderTarget();
+  /*Ogre::Viewport* Viewport =*/RTarget->addViewport(mCamera);
   RTarget->getViewport(0)->setClearEveryFrame(true);
   RTarget->getViewport(0)->setOverlaysEnabled(false);
 }
@@ -465,14 +477,16 @@ vpAROgre::~vpAROgre(void)
   // Close OIS
   closeOIS();
 
-  if ( mWindow) {
+  if (mWindow) {
     Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
     windowClosed(mWindow);
   }
 
   // Delete root
-  if(Ogre::Root::getSingletonPtr() && !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements()) {
-    if(mRoot) {
+  if (Ogre::Root::getSingletonPtr() && !Ogre::Root::getSingletonPtr()
+                                            ->getSceneManagerIterator()
+                                            .hasMoreElements()) {
+    if (mRoot) {
       delete mRoot;
     }
   }
@@ -484,13 +498,12 @@ vpAROgre::~vpAROgre(void)
   \param evt : Frame event to process.
   \return False if the program must be stopped.
 */
-bool vpAROgre::stopTest(const Ogre::FrameEvent& evt)
+bool vpAROgre::stopTest(const Ogre::FrameEvent &evt)
 {
   // Always keep this part
-  if(keepOn){
+  if (keepOn) {
     return updateScene(evt);
-  }
-  else
+  } else
     return keepOn;
 }
 
@@ -503,7 +516,7 @@ bool vpAROgre::stopTest(const Ogre::FrameEvent& evt)
   \param evt : Frame event to process.
   \return True if everything went well.
 */
-bool vpAROgre::frameStarted(const Ogre::FrameEvent& evt)
+bool vpAROgre::frameStarted(const Ogre::FrameEvent &evt)
 {
   // custom method telling what to do at the beginning of each frame
   bool result = customframeStarted(evt);
@@ -513,10 +526,11 @@ bool vpAROgre::frameStarted(const Ogre::FrameEvent& evt)
   processInputEvent(evt);
 
   // See if we have to stop rendering
-  if(result) return stopTest(evt);
-  else return result;
+  if (result)
+    return stopTest(evt);
+  else
+    return result;
 }
-
 
 /*!
   Function telling what to do after each frame.
@@ -524,14 +538,16 @@ bool vpAROgre::frameStarted(const Ogre::FrameEvent& evt)
   \param evt : Frame event to process.
   \return True if everything went well.
 */
-bool vpAROgre::frameEnded(const Ogre::FrameEvent& evt)
+bool vpAROgre::frameEnded(const Ogre::FrameEvent &evt)
 {
   // custom method telling what to do at the end of each frame
   bool result = customframeEnded(evt);
 
   // See if we have to stop rendering
-  if(result) return stopTest(evt);
-  else return result;
+  if (result)
+    return stopTest(evt);
+  else
+    return result;
 }
 
 /*!
@@ -542,27 +558,30 @@ bool vpAROgre::frameEnded(const Ogre::FrameEvent& evt)
   \param evt : Frame event to process
   \return True if everything went well
 */
-bool vpAROgre::customframeStarted(const Ogre::FrameEvent& /*evt*/)
+bool vpAROgre::customframeStarted(const Ogre::FrameEvent & /*evt*/)
 {
   // See if window was closed
-  if(mWindow->isClosed())	return false;
+  if (mWindow->isClosed())
+    return false;
 
 #ifdef VISP_HAVE_OIS
   // Get keyboard input
   mKeyboard->capture();
-  if(mKeyboard->isKeyDown(OIS::KC_ESCAPE))
+  if (mKeyboard->isKeyDown(OIS::KC_ESCAPE))
     return false;
 #endif
   return true;
 }
-
 
 /*!
   Function telling what to do after each frame.
   \param evt : Frame event to process.
   \return True if everything went well.
 */
-bool vpAROgre::customframeEnded(const Ogre::FrameEvent& /*evt*/){return true;}
+bool vpAROgre::customframeEnded(const Ogre::FrameEvent & /*evt*/)
+{
+  return true;
+}
 
 /*!
 
@@ -574,10 +593,11 @@ bool vpAROgre::customframeEnded(const Ogre::FrameEvent& /*evt*/){return true;}
 
   \param rw : RenderWindow to close.
 */
-void vpAROgre::windowClosed(Ogre::RenderWindow* rw)
+void vpAROgre::windowClosed(Ogre::RenderWindow *rw)
 {
-  //Only close for window that created OIS (the main window in these demos)
-  if( rw == mWindow ) closeOIS();
+  // Only close for window that created OIS (the main window in these demos)
+  if (rw == mWindow)
+    closeOIS();
 }
 
 /*!
@@ -586,7 +606,7 @@ void vpAROgre::windowClosed(Ogre::RenderWindow* rw)
   \param cMw : Camera pose as an homogeneous matrix.
 */
 bool vpAROgre::renderOneFrame(const vpImage<unsigned char> &I,
-           const vpHomogeneousMatrix &cMw)
+                              const vpHomogeneousMatrix &cMw)
 {
   // Update the background to match the situation
   updateBackgroundTexture(I);
@@ -604,7 +624,7 @@ bool vpAROgre::renderOneFrame(const vpImage<unsigned char> &I,
   \param cMw : Camera pose as an homogeneous matrix.
 */
 bool vpAROgre::renderOneFrame(const vpImage<vpRGBa> &I,
-           const vpHomogeneousMatrix &cMw)
+                              const vpHomogeneousMatrix &cMw)
 {
   // Update the background to match the situation
   updateBackgroundTexture(I);
@@ -622,14 +642,13 @@ bool vpAROgre::renderOneFrame(const vpImage<vpRGBa> &I,
   \param cMw : Camera pose as an homogeneous matrix.
 */
 void vpAROgre::display(const vpImage<unsigned char> &I,
-           const vpHomogeneousMatrix &cMw)
+                       const vpHomogeneousMatrix &cMw)
 {
   // Display on Ogre Window
-  if(renderOneFrame(I,cMw)){
+  if (renderOneFrame(I, cMw)) {
     mWindow->update();
     keepOn = true;
-  }
-  else
+  } else
     keepOn = false;
 }
 
@@ -638,14 +657,14 @@ void vpAROgre::display(const vpImage<unsigned char> &I,
   \param I : RGBa image to show in background.
   \param cMw : Camera pose as an homogeneous matrix.
 */
-void vpAROgre::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMw)
+void vpAROgre::display(const vpImage<vpRGBa> &I,
+                       const vpHomogeneousMatrix &cMw)
 {
   // Display on Ogre Window
-  if(renderOneFrame(I,cMw)){
+  if (renderOneFrame(I, cMw)) {
     mWindow->update();
     keepOn = true;
-  }
-  else
+  } else
     keepOn = false;
 }
 
@@ -653,15 +672,12 @@ void vpAROgre::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMw)
   Ask the program if we can continue to render.
   \return True if nothing stopped the rendering loop.
 */
-bool vpAROgre::continueRendering(void)
-{
-  return keepOn;
-}
+bool vpAROgre::continueRendering(void) { return keepOn; }
 
 /*!
   Set the camera intrinsic parameters
 */
-void vpAROgre::setCameraParameters(const vpCameraParameters &cameraP )
+void vpAROgre::setCameraParameters(const vpCameraParameters &cameraP)
 {
   mcam = cameraP;
 }
@@ -674,7 +690,8 @@ void vpAROgre::setCameraParameters(const vpCameraParameters &cameraP )
 void vpAROgre::load(const std::string &entityName, const std::string &model)
 {
   Ogre::Entity *newEntity = mSceneMgr->createEntity(entityName, model);
-  Ogre::SceneNode *newNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(entityName);
+  Ogre::SceneNode *newNode =
+      mSceneMgr->getRootSceneNode()->createChildSceneNode(entityName);
   newNode->attachObject(newEntity);
 }
 
@@ -689,7 +706,8 @@ void vpAROgre::setPosition(const std::string &sceneName,
 {
   // Reset the position
   Ogre::SceneNode *node = mSceneMgr->getSceneNode(sceneName);
-  node->setPosition((Ogre::Real)wTo[0], (Ogre::Real)wTo[1], (Ogre::Real)wTo[2]);
+  node->setPosition((Ogre::Real)wTo[0], (Ogre::Real)wTo[1],
+                    (Ogre::Real)wTo[2]);
 }
 
 /*!
@@ -697,10 +715,13 @@ void vpAROgre::setPosition(const std::string &sceneName,
   \param sceneName : Name of the SceneNode in the scene graph.
   \return The position of the node.
 */
-vpTranslationVector vpAROgre::getPosition(const std::string &sceneName)const
+vpTranslationVector vpAROgre::getPosition(const std::string &sceneName) const
 {
-  Ogre::Vector3 translation = mSceneMgr->getSceneNode(sceneName)->getPosition();
-  return vpTranslationVector((Ogre::Real)translation[0], (Ogre::Real)translation[1], (Ogre::Real)translation[2]);
+  Ogre::Vector3 translation =
+      mSceneMgr->getSceneNode(sceneName)->getPosition();
+  return vpTranslationVector((Ogre::Real)translation[0],
+                             (Ogre::Real)translation[1],
+                             (Ogre::Real)translation[2]);
 }
 
 /*!
@@ -708,15 +729,16 @@ vpTranslationVector vpAROgre::getPosition(const std::string &sceneName)const
   \param sceneName : Name of the SceneNode to rotate.
   \param wRo : The rotation matrix representing the rotation to apply.
 */
-void vpAROgre::setRotation(const std::string &sceneName, const vpRotationMatrix &wRo)
+void vpAROgre::setRotation(const std::string &sceneName,
+                           const vpRotationMatrix &wRo)
 {
   // Get the node in its original position
   mSceneMgr->getSceneNode(sceneName)->resetOrientation();
   // Apply the new rotation
-  Ogre::Matrix3 rotationOgre
-    = Ogre::Matrix3( (Ogre::Real)wRo[0][0], (Ogre::Real)wRo[0][1], (Ogre::Real)wRo[0][2],
-         (Ogre::Real)wRo[1][0], (Ogre::Real)wRo[1][1], (Ogre::Real)wRo[1][2],
-         (Ogre::Real)wRo[2][0], (Ogre::Real)wRo[2][1], (Ogre::Real)wRo[2][2]);
+  Ogre::Matrix3 rotationOgre = Ogre::Matrix3(
+      (Ogre::Real)wRo[0][0], (Ogre::Real)wRo[0][1], (Ogre::Real)wRo[0][2],
+      (Ogre::Real)wRo[1][0], (Ogre::Real)wRo[1][1], (Ogre::Real)wRo[1][2],
+      (Ogre::Real)wRo[2][0], (Ogre::Real)wRo[2][1], (Ogre::Real)wRo[2][2]);
   Ogre::Quaternion q(rotationOgre);
   mSceneMgr->getSceneNode(sceneName)->rotate(q);
 }
@@ -726,13 +748,14 @@ void vpAROgre::setRotation(const std::string &sceneName, const vpRotationMatrix 
   \param sceneName : Name of the SceneNode to rotate.
   \param wRo : The rotation matrix representing the rotation to apply.
 */
-void vpAROgre::addRotation(const std::string &sceneName, const vpRotationMatrix &wRo)
+void vpAROgre::addRotation(const std::string &sceneName,
+                           const vpRotationMatrix &wRo)
 {
   // Apply the new rotation
-  Ogre::Matrix3 rotationOgre
-    = Ogre::Matrix3( (Ogre::Real)wRo[0][0], (Ogre::Real)wRo[0][1], (Ogre::Real)wRo[0][2],
-         (Ogre::Real)wRo[1][0], (Ogre::Real)wRo[1][1], (Ogre::Real)wRo[1][2],
-         (Ogre::Real)wRo[2][0], (Ogre::Real)wRo[2][1], (Ogre::Real)wRo[2][2]);
+  Ogre::Matrix3 rotationOgre = Ogre::Matrix3(
+      (Ogre::Real)wRo[0][0], (Ogre::Real)wRo[0][1], (Ogre::Real)wRo[0][2],
+      (Ogre::Real)wRo[1][0], (Ogre::Real)wRo[1][1], (Ogre::Real)wRo[1][2],
+      (Ogre::Real)wRo[2][0], (Ogre::Real)wRo[2][1], (Ogre::Real)wRo[2][2]);
   Ogre::Quaternion q(rotationOgre);
   mSceneMgr->getSceneNode(sceneName)->rotate(q);
 }
@@ -745,7 +768,8 @@ void vpAROgre::addRotation(const std::string &sceneName, const vpRotationMatrix 
   translation to apply.
 
 */
-void vpAROgre::setPosition(const std::string &sceneName, const vpHomogeneousMatrix &wMo)
+void vpAROgre::setPosition(const std::string &sceneName,
+                           const vpHomogeneousMatrix &wMo)
 {
   // Extract the position and orientation data
   vpRotationMatrix rotations;
@@ -774,12 +798,16 @@ void vpAROgre::setVisibility(const std::string &sceneName, bool isVisible)
   \param factory : Scale factor along the x-axis.
   \param factorz : Scale factor along the x-axis.
 */
-void vpAROgre::setScale(const std::string &sceneName, const float factorx, const float factory, const float factorz)
+void vpAROgre::setScale(const std::string &sceneName, const float factorx,
+                        const float factory, const float factorz)
 {
   // Reset the scale to its original value
-  mSceneMgr->getSceneNode(sceneName)->scale(Ogre::Vector3(1,1,1)/mSceneMgr->getSceneNode(sceneName)->getScale());
+  mSceneMgr->getSceneNode(sceneName)->scale(
+      Ogre::Vector3(1, 1, 1) /
+      mSceneMgr->getSceneNode(sceneName)->getScale());
   // Apply the new scale
-  mSceneMgr->getSceneNode(sceneName)->scale(Ogre::Vector3(factorx, factory, factorz));
+  mSceneMgr->getSceneNode(sceneName)->scale(
+      Ogre::Vector3(factorx, factory, factorz));
 }
 
 /*!
@@ -793,148 +821,173 @@ void vpAROgre::createCamera(void)
 /*!
   Create a greylevel background to show the real scene.
 
-  \param I : This parameter is here only used to initialize a grey level background.
+  \param I : This parameter is here only used to initialize a grey level
+  background.
 */
 void vpAROgre::createBackground(vpImage<unsigned char> & /* I */)
 {
   // Create a rectangle to show the incoming images from the camera
-  mBackground = new Ogre::Rectangle2D(true); // true = textured
+  mBackground = new Ogre::Rectangle2D(true);     // true = textured
   mBackground->setCorners(-1.0, 1.0, 1.0, -1.0); // Spread all over the window
-  mBackground->setBoundingBox(Ogre::AxisAlignedBox(-100000.0*Ogre::Vector3::UNIT_SCALE, 100000.0*Ogre::Vector3::UNIT_SCALE)); // To be shown everywhere
+  mBackground->setBoundingBox(Ogre::AxisAlignedBox(
+      -100000.0 * Ogre::Vector3::UNIT_SCALE,
+      100000.0 * Ogre::Vector3::UNIT_SCALE)); // To be shown everywhere
 
   // Texture options
-  Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_NONE);
+  Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(
+      Ogre::TFO_NONE);
   Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(1);
 
   // Dynamic texture
-  // If we are using opengl we can boost a little bit performances with a dynamic texture
-  if(mRoot->getRenderSystem()->getName() == "OpenGL Rendering Subsystem") {
-    Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
-						      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-						      Ogre::TEX_TYPE_2D,
-						      mBackgroundWidth,//width
-						      mBackgroundHeight,//height
-						      0,  // num of mip maps
-						      Ogre::PF_BYTE_L,
-						      Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
-  }
-  else{
-    Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
-						      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-						      Ogre::TEX_TYPE_2D,
-						      mBackgroundWidth,//width
-						      mBackgroundHeight,//height
-						      0,  // num of mip maps
-						      Ogre::PF_BYTE_L,
-						      Ogre::TU_DEFAULT);
+  // If we are using opengl we can boost a little bit performances with a
+  // dynamic texture
+  if (mRoot->getRenderSystem()->getName() == "OpenGL Rendering Subsystem") {
+    Ogre::TextureManager::getSingleton().createManual(
+        "BackgroundTexture",
+        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+        Ogre::TEX_TYPE_2D,
+        mBackgroundWidth,  // width
+        mBackgroundHeight, // height
+        0,                 // num of mip maps
+        Ogre::PF_BYTE_L, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+  } else {
+    Ogre::TextureManager::getSingleton().createManual(
+        "BackgroundTexture",
+        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+        Ogre::TEX_TYPE_2D,
+        mBackgroundWidth,  // width
+        mBackgroundHeight, // height
+        0,                 // num of mip maps
+        Ogre::PF_BYTE_L, Ogre::TU_DEFAULT);
   }
 
   // Pointer to the dynamic texture
-  Ogre::TexturePtr dynTexPtr = Ogre::TextureManager::getSingleton().getByName("BackgroundTexture");
-//#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-//    .dynamicCast<Ogre::Texture>();// Get the pixel buffer
-//#else
-//      ;
-//#endif
+  Ogre::TexturePtr dynTexPtr =
+      Ogre::TextureManager::getSingleton().getByName("BackgroundTexture");
+  //#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
+  //    .dynamicCast<Ogre::Texture>();// Get the pixel buffer
+  //#else
+  //      ;
+  //#endif
   mPixelBuffer = dynTexPtr->getBuffer();
 
   // Material to apply the texture to the background
-  Ogre::MaterialPtr Backgroundmaterial
-    = Ogre::MaterialManager::getSingleton().create("BackgroundMaterial",
-               Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-//#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-//      .dynamicCast<Ogre::Material>();
-//#else
-//      ;
-//#endif
-  Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
+  Ogre::MaterialPtr Backgroundmaterial =
+      Ogre::MaterialManager::getSingleton().create(
+          "BackgroundMaterial",
+          Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  //#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
+  //      .dynamicCast<Ogre::Material>();
+  //#else
+  //      ;
+  //#endif
+  Ogre::Technique *Backgroundtechnique =
+      Backgroundmaterial->createTechnique();
   Backgroundtechnique->createPass();
   Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
-  Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
-  mBackground->setMaterial("BackgroundMaterial"); // Attach the material to the rectangle
-  mBackground->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND); // To be rendered in Background
+  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(
+      false); // Background
+  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(
+      false); // Background
+  Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState(
+      "BackgroundTexture");
+  mBackground->setMaterial(
+      "BackgroundMaterial"); // Attach the material to the rectangle
+  mBackground->setRenderQueueGroup(
+      Ogre::RENDER_QUEUE_BACKGROUND); // To be rendered in Background
 
   // Add the background to the Scene Graph so it will be rendered
-  Ogre::SceneNode *BackgroundNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("BackgoundNode");
+  Ogre::SceneNode *BackgroundNode =
+      mSceneMgr->getRootSceneNode()->createChildSceneNode("BackgoundNode");
   BackgroundNode->attachObject(mBackground);
 }
 
 /*!
   Create a color background to show the real scene.
 
-  \param I : This parameter is here only used to initialize a color background.
+  \param I : This parameter is here only used to initialize a color
+  background.
 */
 void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
 {
   // Create a rectangle to show the incoming images from the camera
-  mBackground = new Ogre::Rectangle2D(true); // true = textured
+  mBackground = new Ogre::Rectangle2D(true);     // true = textured
   mBackground->setCorners(-1.0, 1.0, 1.0, -1.0); // Spread all over the window
-  mBackground->setBoundingBox(Ogre::AxisAlignedBox(-100000.0*Ogre::Vector3::UNIT_SCALE, 100000.0*Ogre::Vector3::UNIT_SCALE)); // To be shown everywhere
+  mBackground->setBoundingBox(Ogre::AxisAlignedBox(
+      -100000.0 * Ogre::Vector3::UNIT_SCALE,
+      100000.0 * Ogre::Vector3::UNIT_SCALE)); // To be shown everywhere
 
   // Texture options
-  Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_NONE);
+  Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(
+      Ogre::TFO_NONE);
   Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(1);
 
   // Dynamic texture
-  // If we are using opengl we can boost a little bit performances with a dynamic texture
-  if(mRoot->getRenderSystem()->getName() == "OpenGL Rendering Subsystem") {
-    Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
-						      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-						      Ogre::TEX_TYPE_2D,
-						      mBackgroundWidth,//width
-						      mBackgroundHeight,//height
-						      0,  // num of mip maps
-                  //Ogre::PF_BYTE_RGBA,
-                  Ogre::PF_BYTE_BGRA,
-                  Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+  // If we are using opengl we can boost a little bit performances with a
+  // dynamic texture
+  if (mRoot->getRenderSystem()->getName() == "OpenGL Rendering Subsystem") {
+    Ogre::TextureManager::getSingleton().createManual(
+        "BackgroundTexture",
+        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+        Ogre::TEX_TYPE_2D,
+        mBackgroundWidth,  // width
+        mBackgroundHeight, // height
+        0,                 // num of mip maps
+        // Ogre::PF_BYTE_RGBA,
+        Ogre::PF_BYTE_BGRA, Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+  } else { // As that texture does not seem to work properly with direct3D we
+           // use a default texture
+    Ogre::TextureManager::getSingleton().createManual(
+        "BackgroundTexture",
+        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+        Ogre::TEX_TYPE_2D,
+        mBackgroundWidth,  // width
+        mBackgroundHeight, // height
+        0,                 // num of mip maps
+        // Ogre::PF_BYTE_RGBA,
+        Ogre::PF_BYTE_BGRA, Ogre::TU_DEFAULT);
   }
-  else{ // As that texture does not seem to work properly with direct3D we use a default texture
-    Ogre::TextureManager::getSingleton().createManual("BackgroundTexture",
-						      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-						      Ogre::TEX_TYPE_2D,
-						      mBackgroundWidth,//width
-						      mBackgroundHeight,//height
-						      0,  // num of mip maps
-                  //Ogre::PF_BYTE_RGBA,
-                  Ogre::PF_BYTE_BGRA,
-						      Ogre::TU_DEFAULT);
-  }
-
 
   // Pointer to the dynamic texture
   Ogre::TexturePtr dynTexPtr =
-    Ogre::TextureManager::getSingleton().getByName("BackgroundTexture");
-//#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-//      .dynamicCast<Ogre::Texture>();// Get the pixel buffer
-//#else
-//      ;
-//#endif
+      Ogre::TextureManager::getSingleton().getByName("BackgroundTexture");
+  //#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
+  //      .dynamicCast<Ogre::Texture>();// Get the pixel buffer
+  //#else
+  //      ;
+  //#endif
 
   // Get the pixel buffer
   mPixelBuffer = dynTexPtr->getBuffer();
 
   // Material to apply the texture to the background
-  Ogre::MaterialPtr Backgroundmaterial
-    = Ogre::MaterialManager::getSingleton().create("BackgroundMaterial",
-               Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-//#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-//      .dynamicCast<Ogre::Material>();
-//#else
-//      ;
-//#endif
-  Ogre::Technique *Backgroundtechnique = Backgroundmaterial->createTechnique();
+  Ogre::MaterialPtr Backgroundmaterial =
+      Ogre::MaterialManager::getSingleton().create(
+          "BackgroundMaterial",
+          Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  //#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
+  //      .dynamicCast<Ogre::Material>();
+  //#else
+  //      ;
+  //#endif
+  Ogre::Technique *Backgroundtechnique =
+      Backgroundmaterial->createTechnique();
   Backgroundtechnique->createPass();
   Backgroundmaterial->getTechnique(0)->getPass(0)->setLightingEnabled(false);
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(false); // Background
-  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false); // Background
-  Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState("BackgroundTexture");
-  mBackground->setMaterial("BackgroundMaterial"); // Attach the material to the rectangle
-  mBackground->setRenderQueueGroup(Ogre::RENDER_QUEUE_BACKGROUND); // To be rendered in Background
+  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthCheckEnabled(
+      false); // Background
+  Backgroundmaterial->getTechnique(0)->getPass(0)->setDepthWriteEnabled(
+      false); // Background
+  Backgroundmaterial->getTechnique(0)->getPass(0)->createTextureUnitState(
+      "BackgroundTexture");
+  mBackground->setMaterial(
+      "BackgroundMaterial"); // Attach the material to the rectangle
+  mBackground->setRenderQueueGroup(
+      Ogre::RENDER_QUEUE_BACKGROUND); // To be rendered in Background
 
   // Add the background to the Scene Graph so it will be rendered
-  Ogre::SceneNode *BackgroundNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("BackgoundNode");
+  Ogre::SceneNode *BackgroundNode =
+      mSceneMgr->getRootSceneNode()->createChildSceneNode("BackgoundNode");
   BackgroundNode->attachObject(mBackground);
 }
 
@@ -948,13 +1001,12 @@ void vpAROgre::createBackground(vpImage<vpRGBa> & /* I */)
 void vpAROgre::closeOIS(void)
 {
 #ifdef VISP_HAVE_OIS
-  if( mInputManager )
-    {
-      mInputManager->destroyInputObject( mKeyboard );
+  if (mInputManager) {
+    mInputManager->destroyInputObject(mKeyboard);
 
-      OIS::InputManager::destroyInputSystem(mInputManager);
-      mInputManager = 0;
-    }
+    OIS::InputManager::destroyInputSystem(mInputManager);
+    mInputManager = 0;
+  }
 #endif
 }
 
@@ -965,22 +1017,24 @@ void vpAROgre::closeOIS(void)
 // http://strawlab.org/2011/11/05/augmented-reality-with-OpenGL/
 void vpAROgre::updateCameraProjection(void)
 {
-  if(mCamera != 0){
-      Ogre::Real f,n,f_m_n,f_p_n,px,py,u0,v0;
-      f = (Ogre::Real)(mFarClipping); // Far clip distance
-      n = (Ogre::Real)(mNearClipping); // Near clip distance
-      f_m_n = (Ogre::Real)(f-n);
-      f_p_n = (Ogre::Real)(f+n);
-      px = (Ogre::Real)mcam.get_px();
-      py = (Ogre::Real)mcam.get_py();
-      u0 = (Ogre::Real)mcam.get_u0();
-      v0 = (Ogre::Real)mcam.get_v0();
-      Ogre::Matrix4 Projection
-        = Ogre::Matrix4( (Ogre::Real)(2.0*px/mBackgroundWidth), 0,  (Ogre::Real)(1.0 - 2.0*(u0/mBackgroundWidth)), 0,
-                 0, (Ogre::Real)(2.0*py/mBackgroundHeight), (Ogre::Real)(-1.0 + 2.0*(v0/mBackgroundHeight)),0,
-                 0, 0, (Ogre::Real)(-1.0*f_p_n/f_m_n), (Ogre::Real)(-2.0*f*n/f_m_n),
-                 0, 0, -1.0, 0);
-      mCamera->setCustomProjectionMatrix(true, Projection);
+  if (mCamera != 0) {
+    Ogre::Real f, n, f_m_n, f_p_n, px, py, u0, v0;
+    f = (Ogre::Real)(mFarClipping);  // Far clip distance
+    n = (Ogre::Real)(mNearClipping); // Near clip distance
+    f_m_n = (Ogre::Real)(f - n);
+    f_p_n = (Ogre::Real)(f + n);
+    px = (Ogre::Real)mcam.get_px();
+    py = (Ogre::Real)mcam.get_py();
+    u0 = (Ogre::Real)mcam.get_u0();
+    v0 = (Ogre::Real)mcam.get_v0();
+    Ogre::Matrix4 Projection =
+        Ogre::Matrix4((Ogre::Real)(2.0 * px / mBackgroundWidth), 0,
+                      (Ogre::Real)(1.0 - 2.0 * (u0 / mBackgroundWidth)), 0, 0,
+                      (Ogre::Real)(2.0 * py / mBackgroundHeight),
+                      (Ogre::Real)(-1.0 + 2.0 * (v0 / mBackgroundHeight)), 0,
+                      0, 0, (Ogre::Real)(-1.0 * f_p_n / f_m_n),
+                      (Ogre::Real)(-2.0 * f * n / f_m_n), 0, 0, -1.0, 0);
+    mCamera->setCustomProjectionMatrix(true, Projection);
   }
 }
 
@@ -989,15 +1043,16 @@ void vpAROgre::updateCameraProjection(void)
 */
 void vpAROgre::updateBackgroundTexture(const vpImage<unsigned char> &I)
 {
-  // Inspired from Ogre wiki : http://www.ogre3d.org/tikiwiki/Creating+dynamic+textures
-  // Lock the pixel buffer and get a pixel box. HBL_DISCARD is to use for best
-  // performance than HBL_NORMAL
+  // Inspired from Ogre wiki :
+  // http://www.ogre3d.org/tikiwiki/Creating+dynamic+textures Lock the pixel
+  // buffer and get a pixel box. HBL_DISCARD is to use for best performance
+  // than HBL_NORMAL
   mPixelBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD); // Lock the buffer
-  const Ogre::PixelBox& pixelBox = mPixelBuffer->getCurrentLock();
+  const Ogre::PixelBox &pixelBox = mPixelBuffer->getCurrentLock();
   // Buffer data
-  Ogre::uint8* pDest = static_cast<Ogre::uint8*>(pixelBox.data);
+  Ogre::uint8 *pDest = static_cast<Ogre::uint8 *>(pixelBox.data);
   // Fill in the data in the grey level texture
-  memcpy(pDest, I.bitmap, mBackgroundHeight*mBackgroundWidth);
+  memcpy(pDest, I.bitmap, mBackgroundHeight * mBackgroundWidth);
 
   // Unlock the pixel buffer
   mPixelBuffer->unlock();
@@ -1008,31 +1063,33 @@ void vpAROgre::updateBackgroundTexture(const vpImage<unsigned char> &I)
 */
 void vpAROgre::updateBackgroundTexture(const vpImage<vpRGBa> &I)
 {
-  // Inspired from Ogre wiki : http://www.ogre3d.org/tikiwiki/Creating+dynamic+textures
-  // Lock the pixel buffer and get a pixel box. HBL_DISCARD is to use for best
-  // performance than HBL_NORMAL
+  // Inspired from Ogre wiki :
+  // http://www.ogre3d.org/tikiwiki/Creating+dynamic+textures Lock the pixel
+  // buffer and get a pixel box. HBL_DISCARD is to use for best performance
+  // than HBL_NORMAL
   mPixelBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD); // Lock the buffer
-  const Ogre::PixelBox& pixelBox = mPixelBuffer->getCurrentLock();
+  const Ogre::PixelBox &pixelBox = mPixelBuffer->getCurrentLock();
   // Buffer data
-  Ogre::uint8* pDest = static_cast<Ogre::uint8*>(pixelBox.data);
-  // Fill in the data in the grey level texture
+  Ogre::uint8 *pDest = static_cast<Ogre::uint8 *>(pixelBox.data);
+// Fill in the data in the grey level texture
 #if 1 // if texture in BGRa format
-  for(unsigned int i=0; i<mBackgroundHeight; i++){
-    for(unsigned int j=0; j<mBackgroundWidth; j++){
+  for (unsigned int i = 0; i < mBackgroundHeight; i++) {
+    for (unsigned int j = 0; j < mBackgroundWidth; j++) {
       // Color Image
-//      *pDest++=I[i][mBackgroundWidth-j].B; // Blue component
-//      *pDest++=I[i][mBackgroundWidth-j].G; // Green component
-//      *pDest++=I[i][mBackgroundWidth-j].R; // Red component
+      //      *pDest++=I[i][mBackgroundWidth-j].B; // Blue component
+      //      *pDest++=I[i][mBackgroundWidth-j].G; // Green component
+      //      *pDest++=I[i][mBackgroundWidth-j].R; // Red component
 
-      *pDest++=I[i][j].B; // Blue component
-      *pDest++=I[i][j].G; // Green component
-      *pDest++=I[i][j].R; // Red component
+      *pDest++ = I[i][j].B; // Blue component
+      *pDest++ = I[i][j].G; // Green component
+      *pDest++ = I[i][j].R; // Red component
 
-      *pDest++ = 255;     // Alpha component
+      *pDest++ = 255; // Alpha component
     }
   }
 #else // if texture in RGBa format which is the format of the input image
-  memcpy(pDest, I.bitmap, mBackgroundHeight*mBackgroundWidth*sizeof(vpRGBa));
+  memcpy(pDest, I.bitmap,
+         mBackgroundHeight * mBackgroundWidth * sizeof(vpRGBa));
 #endif
 
   // Unlock the pixel buffer
@@ -1042,15 +1099,21 @@ void vpAROgre::updateBackgroundTexture(const vpImage<vpRGBa> &I)
 /*!
   Update Camera parameters from a pose calculation.
 */
-void vpAROgre::updateCameraParameters (const vpHomogeneousMatrix &cMw)
+void vpAROgre::updateCameraParameters(const vpHomogeneousMatrix &cMw)
 {
-  // The matrix is given to Ogre with some changes to fit with the world projection
+  // The matrix is given to Ogre with some changes to fit with the world
+  // projection
   Ogre::Matrix4 ModelView
-//    = Ogre::Matrix4( (Ogre::Real)-cMo[0][0],  (Ogre::Real)-cMo[0][1],  (Ogre::Real)-cMo[0][2],  (Ogre::Real)-cMo[0][3],
-    = Ogre::Matrix4( (Ogre::Real)cMw[0][0],  (Ogre::Real)cMw[0][1],  (Ogre::Real)cMw[0][2],  (Ogre::Real)cMw[0][3],
-         (Ogre::Real)-cMw[1][0], (Ogre::Real)-cMw[1][1], (Ogre::Real)-cMw[1][2], (Ogre::Real)-cMw[1][3],
-         (Ogre::Real)-cMw[2][0], (Ogre::Real)-cMw[2][1], (Ogre::Real)-cMw[2][2], (Ogre::Real)-cMw[2][3],
-		     (Ogre::Real)0,          (Ogre::Real)0,          (Ogre::Real)0,          (Ogre::Real)1);
+      //    = Ogre::Matrix4( (Ogre::Real)-cMo[0][0],  (Ogre::Real)-cMo[0][1],
+      //    (Ogre::Real)-cMo[0][2],  (Ogre::Real)-cMo[0][3],
+      = Ogre::Matrix4((Ogre::Real)cMw[0][0], (Ogre::Real)cMw[0][1],
+                      (Ogre::Real)cMw[0][2], (Ogre::Real)cMw[0][3],
+                      (Ogre::Real)-cMw[1][0], (Ogre::Real)-cMw[1][1],
+                      (Ogre::Real)-cMw[1][2], (Ogre::Real)-cMw[1][3],
+                      (Ogre::Real)-cMw[2][0], (Ogre::Real)-cMw[2][1],
+                      (Ogre::Real)-cMw[2][2], (Ogre::Real)-cMw[2][3],
+                      (Ogre::Real)0, (Ogre::Real)0, (Ogre::Real)0,
+                      (Ogre::Real)1);
   mCamera->setCustomViewMatrix(true, ModelView);
 }
 
@@ -1060,48 +1123,48 @@ void vpAROgre::updateCameraParameters (const vpHomogeneousMatrix &cMw)
   \param I : The image on which to copy the result of the rendering loop.
   \param cMo : The desired camera pose.
 */
-void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo)
+void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I,
+                                  const vpHomogeneousMatrix &cMo)
 {
-    updateCameraParameters(cMo);
-    Ogre::TexturePtr dynTexPtr = Ogre::TextureManager::getSingleton().getByName("rtf");
-//#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
-//        .dynamicCast<Ogre::Texture>();
-//#else
-//        ;
-//#endif
-    Ogre::RenderTexture* RTarget = dynTexPtr->getBuffer()->getRenderTarget();
-    mWindow->update();
-    RTarget->update();
-    if(I.getHeight() != mWindow->getHeight() || I.getWidth() != mWindow->getWidth()){
-       I.resize(mWindow->getHeight(), mWindow->getWidth());
-    }
-    Ogre::HardwarePixelBufferSharedPtr mPixelBuffer = dynTexPtr->getBuffer();
-    mPixelBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD);
-    const Ogre::PixelBox& pixelBox = mPixelBuffer->getCurrentLock();
-    dynTexPtr->getBuffer()->blitToMemory(pixelBox);
-    Ogre::uint8* pDest = static_cast<Ogre::uint8*>(pixelBox.data);
+  updateCameraParameters(cMo);
+  Ogre::TexturePtr dynTexPtr =
+      Ogre::TextureManager::getSingleton().getByName("rtf");
+  //#if ( OGRE_VERSION >= (1 << 16 | 9 << 8 | 0) )
+  //        .dynamicCast<Ogre::Texture>();
+  //#else
+  //        ;
+  //#endif
+  Ogre::RenderTexture *RTarget = dynTexPtr->getBuffer()->getRenderTarget();
+  mWindow->update();
+  RTarget->update();
+  if (I.getHeight() != mWindow->getHeight() ||
+      I.getWidth() != mWindow->getWidth()) {
+    I.resize(mWindow->getHeight(), mWindow->getWidth());
+  }
+  Ogre::HardwarePixelBufferSharedPtr mPixelBuffer = dynTexPtr->getBuffer();
+  mPixelBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD);
+  const Ogre::PixelBox &pixelBox = mPixelBuffer->getCurrentLock();
+  dynTexPtr->getBuffer()->blitToMemory(pixelBox);
+  Ogre::uint8 *pDest = static_cast<Ogre::uint8 *>(pixelBox.data);
 #if 1 // if texture in BGRa format
-    for(unsigned int i=0; i<I.getHeight(); i++){
-      for(unsigned int j=0; j<I.getWidth(); j++){
-	// Color Image
-	I[i][j].B = *pDest++; // Blue component
-	I[i][j].G = *pDest++; // Green component
-	I[i][j].R = *pDest++; // Red component
-	I[i][j].A = *pDest++; // Alpha component
-      }
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      // Color Image
+      I[i][j].B = *pDest++; // Blue component
+      I[i][j].G = *pDest++; // Green component
+      I[i][j].R = *pDest++; // Red component
+      I[i][j].A = *pDest++; // Alpha component
     }
+  }
 #else // if texture in RGBa format which is the format of the input image
-    memcpy(I.bitmap, pDest, I.getHeight()*I.getWidth()*sizeof(vpRGBa));
+  memcpy(I.bitmap, pDest, I.getHeight() * I.getWidth() * sizeof(vpRGBa));
 #endif
 
-    // Unlock the pixel buffer
-    mPixelBuffer->unlock();
-
+  // Unlock the pixel buffer
+  mPixelBuffer->unlock();
 }
-
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning: libvisp_ar.a(vpAROgre.cpp.o) has no symbols
-void dummy_vpAROgre() {};
+void dummy_vpAROgre(){};
 #endif
-

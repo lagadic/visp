@@ -36,15 +36,15 @@
  *
  *****************************************************************************/
 
-
 #ifndef __vpIoException_H
 #define __vpIoException_H
 
-
-/* ------------------------------------------------------------------------- */
-/* --- INCLUDE ------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
-
+/* -------------------------------------------------------------------------
+ */
+/* --- INCLUDE -------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /*!
   \file vpIoException.h
@@ -57,9 +57,12 @@
 #include <iostream>
 #include <string>
 
-/* ------------------------------------------------------------------------- */
-/* --- CLASS --------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+ */
+/* --- CLASS ---------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /*!
   \class vpIoException
@@ -68,33 +71,32 @@
  */
 class VISP_EXPORT vpIoException : public vpException
 {
-  public:
-    /*!
-    \brief Lists the possible error than can be emmited while calling
-    vpIo member.
-   */
-    enum error
-    {
-      invalidDirectoryName, /*! Directory name is invalid. */
-      cantCreateDirectory,  /*! Unable to create a directory. */
-      cantGetUserName,      /*! User name is not available. */
-      cantGetenv            /*! Cannot get environment variable value. */
-    } ;
+public:
+  /*!
+  \brief Lists the possible error than can be emmited while calling
+  vpIo member.
+ */
+  enum error {
+    invalidDirectoryName, /*! Directory name is invalid. */
+    cantCreateDirectory,  /*! Unable to create a directory. */
+    cantGetUserName,      /*! User name is not available. */
+    cantGetenv            /*! Cannot get environment variable value. */
+  };
 
-  public:
-    vpIoException (const int id,  const char* format, ...)
-    {
-      this->code = id;
-      va_list args;
-      va_start(args, format);
-      setMessage(format, args);
-      va_end (args);
-    }
-    vpIoException (const int id, const std::string & msg)
-      : vpException(id, msg){ ; }
-    explicit vpIoException (const int id)
-      : vpException(id){ ; }
-
+public:
+  vpIoException(const int id, const char *format, ...)
+  {
+    this->code = id;
+    va_list args;
+    va_start(args, format);
+    setMessage(format, args);
+    va_end(args);
+  }
+  vpIoException(const int id, const std::string &msg) : vpException(id, msg)
+  {
+    ;
+  }
+  explicit vpIoException(const int id) : vpException(id) { ; }
 };
 
 #endif

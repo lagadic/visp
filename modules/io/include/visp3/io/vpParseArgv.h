@@ -31,7 +31,6 @@
 #ifndef vpParseArgv_h
 #define vpParseArgv_h
 
-
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
@@ -46,12 +45,12 @@
 
   \code
 #include <stdio.h>
-#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/io/vpParseArgv.h>
 
 // Usage : [-bool] [-int <integer value>] [-long <long value>]
-//         [-float <float value>] [-double <double value>] [-string <string value>] [-h]
-int main(int argc, const char ** argv)
+//         [-float <float value>] [-double <double value>] [-string <string
+value>] [-h] int main(int argc, const char ** argv)
 {
   // Variables to set by command line parsing
   bool   b_val = false;
@@ -78,8 +77,8 @@ int main(int argc, const char ** argv)
      "A string value."},
     {"-h", vpParseArgv::ARGV_HELP, (char*) NULL, (char *) NULL,
      "Print the help."},
-    {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL}
-  } ;
+    {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*)
+NULL} } ;
 
   // Read the command line options
   if(vpParseArgv::parse(&argc, argv, argTable,
@@ -98,11 +97,12 @@ int main(int argc, const char ** argv)
   \code
 #include <stdio.h>
 #include <stdlib.h>
-#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"bi:l:f:d:h" // double point mean here that the preceding option request an argument
+#define GETOPTARGS	"bi:l:f:d:h" // double point mean here that the
+preceding option request an argument
 
 // Usage : [-b] [-i <integer value>] [-l <long value>]
 //         [-f <float value>] [-d <double value>] [-s <string value>] [-h]
@@ -147,69 +147,70 @@ int main(int argc, const char ** argv)
 
 */
 
-
 class VISP_EXPORT vpParseArgv
 {
- public:
+public:
   /*!
     Legal values for the type field of a vpArgvInfo.
   */
-  typedef enum  {
-    ARGV_CONSTANT,     /*!< Stand alone argument. Same as ARGV_CONSTANT_INT. */
-    ARGV_CONSTANT_INT, /*!< Stand alone argument associated to an int var that is set to 1. */
-    ARGV_CONSTANT_BOOL,/*!< Stand alone argument associated to a bool var that is set to true. */
-    ARGV_INT,          /*!< Argument is associated to an int. */
-    ARGV_LONG,         /*!< Argument is associated to a long. */
-    ARGV_STRING,       /*!< Argument is associated to a char * string. */
+  typedef enum {
+    ARGV_CONSTANT, /*!< Stand alone argument. Same as ARGV_CONSTANT_INT. */
+    ARGV_CONSTANT_INT, /*!< Stand alone argument associated to an int var that
+                          is set to 1. */
+    ARGV_CONSTANT_BOOL, /*!< Stand alone argument associated to a bool var
+                           that is set to true. */
+    ARGV_INT,           /*!< Argument is associated to an int. */
+    ARGV_LONG,          /*!< Argument is associated to a long. */
+    ARGV_STRING,        /*!< Argument is associated to a char * string. */
     ARGV_REST,
-    ARGV_FLOAT,        /*!< Argument is associated to a float. */
-    ARGV_DOUBLE,       /*!< Argument is associated to a double. */
+    ARGV_FLOAT,  /*!< Argument is associated to a float. */
+    ARGV_DOUBLE, /*!< Argument is associated to a double. */
     ARGV_FUNC,
     ARGV_GENFUNC,
-    ARGV_HELP,         /*!< Argument is for help displaying. */
-    ARGV_END           /*!< End of the argument list. */
+    ARGV_HELP, /*!< Argument is for help displaying. */
+    ARGV_END   /*!< End of the argument list. */
   } vpArgvType;
 
   /*!
     Flag bits.
    */
   typedef enum {
-    ARGV_NO_DEFAULTS		= 0x1, /*!< No default options like -help. */
-    ARGV_NO_LEFTOVERS		= 0x2, /*!< Print an error message if an option is not in the argument list. */
-    ARGV_NO_ABBREV		= 0x4, /*!< No abrevation. Print an error message if an option is abrevated (ie "-i" in place of "-int" which is requested). */
-    ARGV_DONT_SKIP_FIRST_ARG	= 0x8, /*!< Don't skip first argument. */
-    ARGV_NO_PRINT		= 0x10 /*!< No printings. */
+    ARGV_NO_DEFAULTS = 0x1,  /*!< No default options like -help. */
+    ARGV_NO_LEFTOVERS = 0x2, /*!< Print an error message if an option is not
+                                in the argument list. */
+    ARGV_NO_ABBREV = 0x4,    /*!< No abrevation. Print an error message if an
+                                option is abrevated (ie "-i" in place of "-int"
+                                which is requested). */
+    ARGV_DONT_SKIP_FIRST_ARG = 0x8, /*!< Don't skip first argument. */
+    ARGV_NO_PRINT = 0x10            /*!< No printings. */
   } vpArgvFlags;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
- /*!
+  /*!
 
-   Structure used to specify how to handle argv options.
- */
+    Structure used to specify how to handle argv options.
+  */
   typedef struct {
-    const char *key;    /*!< The key string that flags the option in the
-       * argv array. */
-    vpArgvType type;	/*!< Indicates option type;  see below. */
-    const char *src;		/*!< Value to be used in setting dst;  usage
-       * depends on type. */
-    const char *dst;		/*!< Address of value to be modified;  usage
-       * depends on type. */
-    const char *help;		/*!< Documentation message describing this option. */
+    const char *key;  /*!< The key string that flags the option in the
+                       * argv array. */
+    vpArgvType type;  /*!< Indicates option type;  see below. */
+    const char *src;  /*!< Value to be used in setting dst;  usage
+                       * depends on type. */
+    const char *dst;  /*!< Address of value to be modified;  usage
+                       * depends on type. */
+    const char *help; /*!< Documentation message describing this option. */
   } vpArgvInfo;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 public:
   static vpArgvInfo defaultTable[2];
-  static bool parse(int *argcPtr, const char **argv,
-        vpArgvInfo *argTable, int flags);
-  static int  parse(int argc, const char** argv, const char* validOpts, const char** param);
+  static bool parse(int *argcPtr, const char **argv, vpArgvInfo *argTable,
+                    int flags);
+  static int parse(int argc, const char **argv, const char *validOpts,
+                   const char **param);
 
- private:
-  static void printUsage (vpArgvInfo *argTable, int flags);
-
-
-
-} ;
-
+private:
+  static void printUsage(vpArgvInfo *argTable, int flags);
+};
 
 #endif

@@ -42,24 +42,26 @@
   Test some vpRowVector functionalities.
 */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRowVector.h>
 
-
-bool test(const std::string &s, const vpRowVector &v, const std::vector<double> &bench)
+bool test(const std::string &s, const vpRowVector &v,
+          const std::vector<double> &bench)
 {
   static unsigned int cpt = 0;
   std::cout << "** Test " << ++cpt << std::endl;
-  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v << "]" << std::endl;
-  if(bench.size() != v.size()) {
+  std::cout << s << "(" << v.getRows() << "," << v.getCols() << ") = [" << v
+            << "]" << std::endl;
+  if (bench.size() != v.size()) {
     std::cout << "Test fails: bad size wrt bench" << std::endl;
     return false;
   }
-  for (unsigned int i=0; i<v.size(); i++) {
-    if (std::fabs(v[i]-bench[i]) > std::fabs(v[i])*std::numeric_limits<double>::epsilon()) {
+  for (unsigned int i = 0; i < v.size(); i++) {
+    if (std::fabs(v[i] - bench[i]) >
+        std::fabs(v[i]) * std::numeric_limits<double>::epsilon()) {
       std::cout << "Test fails: bad content" << std::endl;
       return false;
     }
@@ -80,7 +82,7 @@ int main()
     std::vector<double> bench1(4, 3);
     if (test("v", v, bench1) == false)
       return err;
-    std::vector<double> bench2(4, 3./6);
+    std::vector<double> bench2(4, 3. / 6);
     v.normalize();
     if (test("v", v, bench2) == false)
       return err;
@@ -94,9 +96,9 @@ int main()
   {
     vpRowVector v(4);
     std::vector<double> bench1(4);
-    for(unsigned int i=0; i<v.size(); i++) {
+    for (unsigned int i = 0; i < v.size(); i++) {
       v[i] = (double)i;
-	  bench1[i] = (double)i;
+      bench1[i] = (double)i;
     }
     if (test("v", v, bench1) == false)
       return err;
@@ -115,7 +117,7 @@ int main()
     bench3.push_back(3);
 
     vpRowVector r1;
-    for(size_t i=0; i<4; i++)
+    for (size_t i = 0; i < 4; i++)
       r1.stack((double)i);
 
     vpRowVector r2 = r1.extract(1, 3);
@@ -125,7 +127,7 @@ int main()
   {
     vpMatrix M(1, 4);
     std::vector<double> bench(4);
-    for(unsigned int i=0; i<M.getCols(); i++) {
+    for (unsigned int i = 0; i < M.getCols(); i++) {
       M[0][i] = i;
       bench[i] = i;
     }
@@ -179,7 +181,7 @@ int main()
   {
     vpRowVector r1(3, 1);
     vpRowVector r2 = -r1;
-    std::vector<double> bench(3,-1);
+    std::vector<double> bench(3, -1);
     // v contains [-1 -1 -1]
     if (test("r2", r2, bench) == false)
       return err;
@@ -230,7 +232,8 @@ int main()
       return err;
   }
   {
-    // Test mean, median and standard deviation against Matlab with rng(0) and rand(10,1)*10
+    // Test mean, median and standard deviation against Matlab with rng(0) and
+    // rand(10,1)*10
     vpRowVector r(10);
     r[0] = 8.1472;
     r[1] = 9.0579;
@@ -245,28 +248,28 @@ int main()
 
     std::cout << "** Test mean" << std::endl;
     double res = vpRowVector::mean(r);
-    if(!vpMath::equal(res, 6.2386, 0.001)) {
+    if (!vpMath::equal(res, 6.2386, 0.001)) {
       std::cout << "Test fails: bad mean " << res << std::endl;
       return err;
     }
 
     std::cout << "** Test stdev" << std::endl;
     res = vpRowVector::stdev(r);
-    if(!vpMath::equal(res, 3.2810, 0.001)) {
+    if (!vpMath::equal(res, 3.2810, 0.001)) {
       std::cout << "Test fails: bad stdev " << res << std::endl;
       return err;
     }
 
     std::cout << "** Test stdev(bessel)" << std::endl;
     res = vpRowVector::stdev(r, true);
-    if(!vpMath::equal(res, 3.4585, 0.001)) {
+    if (!vpMath::equal(res, 3.4585, 0.001)) {
       std::cout << "Test fails: bad stdev(bessel) " << res << std::endl;
       return err;
     }
 
     std::cout << "** Test median" << std::endl;
     res = vpRowVector::median(r);
-    if(!vpMath::equal(res, 7.2354, 0.001)) {
+    if (!vpMath::equal(res, 7.2354, 0.001)) {
       std::cout << "Test fails: bad median " << res << std::endl;
       return err;
     }
@@ -275,7 +278,7 @@ int main()
     std::cout << "** Test median (odd)" << std::endl;
     r.stack(1.5761);
     res = vpRowVector::median(r);
-    if(!vpMath::equal(res, 6.3236, 0.001)) {
+    if (!vpMath::equal(res, 6.3236, 0.001)) {
       std::cout << "Test fails: bad median (odd) " << res << std::endl;
       return err;
     }

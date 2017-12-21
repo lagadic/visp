@@ -40,19 +40,19 @@
 #ifndef vpRfstack_h
 #define vpRfstack_h
 
-#include <visp3/core/vpConfig.h>
 #include <stdio.h>
+#include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-void	fprintf_rfstack (FILE *fp);
-int	*get_rfstack (void);
-void	load_rfstack (int i);
-void	pop_rfstack (void);
-void	push_rfstack (void);
-void	swap_rfstack (void);
-void	add_rfstack (int i);
-void	sub_rfstack (int i);
+void fprintf_rfstack(FILE *fp);
+int *get_rfstack(void);
+void load_rfstack(int i);
+void pop_rfstack(void);
+void push_rfstack(void);
+void swap_rfstack(void);
+void add_rfstack(int i);
+void sub_rfstack(int i);
 
 #endif
 #endif

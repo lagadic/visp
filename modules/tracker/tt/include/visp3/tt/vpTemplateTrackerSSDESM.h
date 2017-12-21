@@ -51,23 +51,23 @@
   \class vpTemplateTrackerSSDESM
   \ingroup group_tt_tracker
 */
-class VISP_EXPORT vpTemplateTrackerSSDESM: public vpTemplateTrackerSSD
+class VISP_EXPORT vpTemplateTrackerSSDESM : public vpTemplateTrackerSSD
 {
-  protected:
-    bool        compoInitialised;
-    vpMatrix    HDir;
-    vpMatrix    HInv;
-    vpMatrix    HLMDir;
-    vpMatrix    HLMInv;
-    vpColVector GDir;
-    vpColVector GInv;
+protected:
+  bool compoInitialised;
+  vpMatrix HDir;
+  vpMatrix HInv;
+  vpMatrix HLMDir;
+  vpMatrix HLMInv;
+  vpColVector GDir;
+  vpColVector GInv;
 
-  protected:
-    void initHessienDesired(const vpImage<unsigned char> &I);
-    void initCompInverse(const vpImage<unsigned char> &I);
-    void trackNoPyr(const vpImage<unsigned char> &I);
+protected:
+  void initHessienDesired(const vpImage<unsigned char> &I);
+  void initCompInverse(const vpImage<unsigned char> &I);
+  void trackNoPyr(const vpImage<unsigned char> &I);
 
-  public:
-    explicit vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp);
+public:
+  explicit vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp);
 };
 #endif

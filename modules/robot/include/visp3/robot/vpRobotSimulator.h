@@ -45,20 +45,19 @@
 */
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpRobot.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
-
+#include <visp3/robot/vpRobot.h>
 
 /*!
   \class vpRobotSimulator
 
-  \ingroup group_robot_simu_gantry group_robot_simu_arm group_robot_simu_unicycle
-  \ingroup group_robot_simu_camera
+  \ingroup group_robot_simu_gantry group_robot_simu_arm
+  group_robot_simu_unicycle \ingroup group_robot_simu_camera
 
   \brief This class aims to be a basis used to create all the
   robot simulators.
-  
+
 */
 class VISP_EXPORT vpRobotSimulator : public vpRobot
 {
@@ -70,26 +69,23 @@ public:
   /*!
     Basic destructor
   */
-  virtual ~vpRobotSimulator() {};
+  virtual ~vpRobotSimulator(){};
 
   /** @name Inherited functionalities from vpRobotSimulator */
   //@{
   /*!
     Return the sampling time.
 
-    \return Sampling time in second used to compute the robot displacement from
-    the velocity applied to the robot during this time.
+    \return Sampling time in second used to compute the robot displacement
+    from the velocity applied to the robot during this time.
   */
-  inline double getSamplingTime() const
-  {
-    return(this->delta_t_);
-  }
+  inline double getSamplingTime() const { return (this->delta_t_); }
 
   /*!
     Set the sampling time.
 
-    \param delta_t : Sampling time in second used to compute the robot displacement from
-    the velocity applied to the robot during this time.
+    \param delta_t : Sampling time in second used to compute the robot
+    displacement from the velocity applied to the robot during this time.
 
   */
   virtual inline void setSamplingTime(const double &delta_t)

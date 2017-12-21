@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpRingLight_h
 #define vpRingLight_h
 
@@ -45,16 +44,14 @@
   \brief Ring light management under unix.
 */
 
-
-
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_MODULE_IO) && defined(VISP_HAVE_PARPORT)
 
 #include <iostream>
 
-#include <visp3/robot/vpRingLight.h>
 #include <visp3/io/vpParallelPort.h>
+#include <visp3/robot/vpRingLight.h>
 /*!
 
   \class vpRingLight
@@ -69,14 +66,14 @@
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/robot/vpRingLight.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
 int main()
 {
 #if defined(VISP_HAVE_PARPORT) && defined(VISP_HAVE_DC1394)
-  vp1394TwoGrabber g; // Firewire framegrabber based on libdc1394-2.x third party lib
-  vpImage<unsigned char> I;
+  vp1394TwoGrabber g; // Firewire framegrabber based on libdc1394-2.x third
+party lib vpImage<unsigned char> I;
 
   vpRingLight light; // Open the device to access to the ring light.
 
@@ -91,8 +88,8 @@ int main()
   Here is an example showing how to turn on the lighting during 10 seconds.
   \code
 #include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpRingLight.h>
 #include <visp3/core/vpTime.h>
+#include <visp3/robot/vpRingLight.h>
 
 int main()
 {
@@ -124,8 +121,7 @@ public:
 
 private:
   vpParallelPort parport;
-
-} ;
+};
 
 #endif
 

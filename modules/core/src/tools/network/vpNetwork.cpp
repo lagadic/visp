@@ -36,14 +36,13 @@
  *
  *****************************************************************************/
 
-
 #include <visp3/core/vpNetwork.h>
 
 vpNetwork::vpNetwork()
-  : emitter(), receptor_list(), readFileDescriptor(), socketMax(0), request_list(),
-    max_size_message(999999), separator("[*@*]"), beginning("[*start*]"), end("[*end*]"),
-    param_sep("[*|*]"), currentMessageReceived(), tv(), tv_sec(0), tv_usec(10),
-    verboseMode(false)
+  : emitter(), receptor_list(), readFileDescriptor(), socketMax(0),
+    request_list(), max_size_message(999999), separator("[*@*]"),
+    beginning("[*start*]"), end("[*end*]"), param_sep("[*|*]"),
+    currentMessageReceived(), tv(), tv_sec(0), tv_usec(10), verboseMode(false)
 {
   tv.tv_sec = tv_sec;
 #if TARGET_OS_IPHONE
@@ -53,11 +52,11 @@ vpNetwork::vpNetwork()
 #endif
 
 #if defined(_WIN32)
-  //Enable the sockets to be used
-  //Note that: if we were using "winsock.h" instead of "winsock2.h" we would had to use:
-  //WSAStartup(MAKEWORD(1,0), &WSAData);
+  // Enable the sockets to be used
+  // Note that: if we were using "winsock.h" instead of "winsock2.h" we would
+  // had to use:  WSAStartup(MAKEWORD(1,0), &WSAData);
   WSADATA WSAData;
-  WSAStartup(MAKEWORD(2,0), &WSAData);
+  WSAStartup(MAKEWORD(2, 0), &WSAData);
 #endif
 }
 
@@ -69,11 +68,11 @@ vpNetwork::~vpNetwork()
 }
 
 /*!
-  Add a decoding request to the emitter. This request will be used to decode the received messages.
-  Each request must have a different id.
+  Add a decoding request to the emitter. This request will be used to decode
+  the received messages. Each request must have a different id.
 
-  \warning vpRequest is a virtual pure class. It has to be implemented according to the way how you want
-  to decode the message received.
+  \warning vpRequest is a virtual pure class. It has to be implemented
+  according to the way how you want to decode the message received.
 
   \sa vpNetwork::removeDecodingRequest()
 
@@ -83,14 +82,16 @@ void vpNetwork::addDecodingRequest(vpRequest *req)
 {
   bool alreadyHas = false;
 
-  for(unsigned int i = 0 ; i < request_list.size() ; i++)
-    if(request_list[i]->getId() == req->getId()){
+  for (unsigned int i = 0; i < request_list.size(); i++)
+    if (request_list[i]->getId() == req->getId()) {
       alreadyHas = true;
       break;
     }
 
-  if(alreadyHas)
-    std::cout << "Server already has one request with the similar ID. Request hasn't been added." << std::endl;
+  if (alreadyHas)
+    std::cout << "Server already has one request with the similar ID. "
+                 "Request hasn't been added."
+              << std::endl;
   else
     request_list.push_back(req);
 }
@@ -104,11 +105,9 @@ void vpNetwork::addDecodingRequest(vpRequest *req)
 */
 void vpNetwork::removeDecodingRequest(const char *id)
 {
-  for(unsigned int i = 0 ; i < request_list.size() ; i++)
-  {
-    if(request_list[i]->getId() == id)
-    {
-      request_list.erase(request_list.begin()+(int)i);
+  for (unsigned int i = 0; i < request_list.size(); i++) {
+    if (request_list[i]->getId() == id) {
+      request_list.erase(request_list.begin() + (int)i);
       break;
     }
   }
@@ -121,14 +120,16 @@ void vpNetwork::removeDecodingRequest(const char *id)
 */
 void vpNetwork::print(const char *id)
 {
-  for(unsigned int i = 0 ; i < receptor_list.size() ; i++)
-  {
-    std::cout << id << i << " : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
+  for (unsigned int i = 0; i < receptor_list.size(); i++) {
+    std::cout << id << i << " : "
+              << inet_ntoa(receptor_list[i].receptorAddress.sin_addr)
+              << std::endl;
   }
 }
 
 /*!
-  Get the receptor index from its name. The name can be either the IP, or its name on the network.
+  Get the receptor index from its name. The name can be either the IP, or its
+  name on the network.
 
   \param name : Name of the receptor.
 
@@ -138,20 +139,18 @@ int vpNetwork::getReceptorIndex(const char *name)
 {
   struct hostent *server = gethostbyname(name);
 
-  if ( server == NULL )
-  {
-    std::string noSuchHostMessage( "ERROR, " );
-    noSuchHostMessage.append( name );
-    noSuchHostMessage.append( ": no such host\n" );
-    vpERROR_TRACE( noSuchHostMessage.c_str(), "vpNetwork::getReceptorIndex()" );
+  if (server == NULL) {
+    std::string noSuchHostMessage("ERROR, ");
+    noSuchHostMessage.append(name);
+    noSuchHostMessage.append(": no such host\n");
+    vpERROR_TRACE(noSuchHostMessage.c_str(), "vpNetwork::getReceptorIndex()");
     return -1;
   }
 
   std::string ip = inet_ntoa(*(in_addr *)server->h_addr);
 
-  for(int i = 0 ; i < (int)receptor_list.size() ; i++)
-  {
-    if(receptor_list[(unsigned)i].receptorIP == ip)
+  for (int i = 0; i < (int)receptor_list.size(); i++) {
+    if (receptor_list[(unsigned)i].receptorIP == ip)
       return i;
   }
 
@@ -171,10 +170,7 @@ int vpNetwork::getReceptorIndex(const char *name)
 
   \return The number of bytes that have been sent, -1 if an error occured.
 */
-int vpNetwork::sendRequest(vpRequest &req)
-{
-  return sendRequestTo(req,0);
-}
+int vpNetwork::sendRequest(vpRequest &req) { return sendRequestTo(req, 0); }
 
 /*!
   Send a request to a specific receptor.
@@ -193,21 +189,20 @@ int vpNetwork::sendRequest(vpRequest &req)
 int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
 {
   int size = (int)receptor_list.size();
-  int sizeMinusOne = (int)receptor_list.size()-1;
-  if(size == 0 || dest > (unsigned)sizeMinusOne)
-  {
-    if(verboseMode)
-      vpTRACE( "Cannot Send Request! Bad Index" );
+  int sizeMinusOne = (int)receptor_list.size() - 1;
+  if (size == 0 || dest > (unsigned)sizeMinusOne) {
+    if (verboseMode)
+      vpTRACE("Cannot Send Request! Bad Index");
     return 0;
   }
 
   std::string message = beginning + req.getId() + separator;
 
-  if(req.size() != 0){
+  if (req.size() != 0) {
     message += req[0];
 
-    for(unsigned int i = 1 ; i < req.size() ; i++){
-        message += param_sep + req[i];
+    for (unsigned int i = 1; i < req.size(); i++) {
+      message += param_sep + req[i];
     }
   }
 
@@ -219,12 +214,18 @@ int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  int value = (int)sendto(receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), message.size(), flags,
-                          (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  int value = (int)sendto(receptor_list[dest].socketFileDescriptorReceptor,
+                          message.c_str(), message.size(), flags,
+                          (sockaddr *)&receptor_list[dest].receptorAddress,
+                          receptor_list[dest].receptorAddressSize);
 #else
-  int value = sendto((unsigned)receptor_list[dest].socketFileDescriptorReceptor, message.c_str(), (int)message.size(), flags,
-                     (sockaddr*) &receptor_list[dest].receptorAddress,receptor_list[dest].receptorAddressSize);
+  int value =
+      sendto((unsigned)receptor_list[dest].socketFileDescriptorReceptor,
+             message.c_str(), (int)message.size(), flags,
+             (sockaddr *)&receptor_list[dest].receptorAddress,
+             receptor_list[dest].receptorAddressSize);
 #endif
 
   return value;
@@ -263,10 +264,11 @@ int vpNetwork::sendAndEncodeRequest(vpRequest &req)
 
   \return The number of bytes that have been sent, -1 if an error occured.
 */
-int vpNetwork::sendAndEncodeRequestTo(vpRequest &req, const unsigned int &dest)
+int vpNetwork::sendAndEncodeRequestTo(vpRequest &req,
+                                      const unsigned int &dest)
 {
   req.encode();
-  return sendRequestTo(req,dest);
+  return sendRequestTo(req, dest);
 }
 
 /*!
@@ -290,7 +292,8 @@ std::vector<int> vpNetwork::receiveRequest()
 }
 
 /*!
-  Receives requests, from a specific emitter, untils there is request to receive.
+  Receives requests, from a specific emitter, untils there is request to
+  receive.
 
   \warning Requests will be received but not decoded.
 
@@ -305,7 +308,8 @@ std::vector<int> vpNetwork::receiveRequest()
 
   \param receptorEmitting : Index of the receptor emitting the message
 */
-std::vector<int> vpNetwork::receiveRequestFrom(const unsigned int &receptorEmitting)
+std::vector<int>
+vpNetwork::receiveRequestFrom(const unsigned int &receptorEmitting)
 {
   _receiveRequestFrom(receptorEmitting);
   return _handleRequests();
@@ -313,8 +317,8 @@ std::vector<int> vpNetwork::receiveRequestFrom(const unsigned int &receptorEmitt
 
 /*!
   Receives a message once (in the limit of the Maximum message size value).
-  This message can represent an entire request or not. Several calls to this function
-  might be necessary to get the entire request.
+  This message can represent an entire request or not. Several calls to this
+  function might be necessary to get the entire request.
 
   \warning Requests will be received but not decoded.
 
@@ -336,9 +340,10 @@ int vpNetwork::receiveRequestOnce()
 }
 
 /*!
-  Receives a message once (in the limit of the Maximum message size value), from a specific emitter.
-  This message can represent an entire request or not. Several calls to this function
-  might be necessary to get the entire request.
+  Receives a message once (in the limit of the Maximum message size value),
+  from a specific emitter. This message can represent an entire request or
+  not. Several calls to this function might be necessary to get the entire
+  request.
 
   \warning Requests will be received but not decoded.
 
@@ -378,15 +383,16 @@ int vpNetwork::receiveRequestOnceFrom(const unsigned int &receptorEmitting)
 std::vector<int> vpNetwork::receiveAndDecodeRequest()
 {
   std::vector<int> res = receiveRequest();
-  for(unsigned int i = 0 ; i < res.size() ; i++)
-    if(res[i] != -1)
+  for (unsigned int i = 0; i < res.size(); i++)
+    if (res[i] != -1)
       request_list[(unsigned)res[i]]->decode();
 
   return res;
 }
 
 /*!
-  Receives and decode requests, from a specific emitter, untils there is request to receive.
+  Receives and decode requests, from a specific emitter, untils there is
+  request to receive.
 
   \warning Requests will be received but not decoded.
 
@@ -401,11 +407,12 @@ std::vector<int> vpNetwork::receiveAndDecodeRequest()
 
   \param receptorEmitting : Index of the receptor emitting the message
 */
-std::vector<int> vpNetwork::receiveAndDecodeRequestFrom(const unsigned int &receptorEmitting)
+std::vector<int>
+vpNetwork::receiveAndDecodeRequestFrom(const unsigned int &receptorEmitting)
 {
   std::vector<int> res = receiveRequestFrom(receptorEmitting);
-  for(unsigned int i = 0 ; i < res.size() ; i++) {
-    if(res[i] != -1)
+  for (unsigned int i = 0; i < res.size(); i++) {
+    if (res[i] != -1)
       request_list[(unsigned)res[i]]->decode();
   }
 
@@ -414,9 +421,9 @@ std::vector<int> vpNetwork::receiveAndDecodeRequestFrom(const unsigned int &rece
 
 /*!
   Receives a message once (in the limit of the Maximum message size value).
-  This message can represent an entire request or not. Several calls to this function
-  might be necessary to get the entire request.
-  If it represents an entire request, it decodes the request.
+  This message can represent an entire request or not. Several calls to this
+  function might be necessary to get the entire request. If it represents an
+  entire request, it decodes the request.
 
   \warning Requests will be received but not decoded.
 
@@ -434,17 +441,17 @@ std::vector<int> vpNetwork::receiveAndDecodeRequestFrom(const unsigned int &rece
 int vpNetwork::receiveAndDecodeRequestOnce()
 {
   int res = receiveRequestOnce();
-  if(res != -1)
+  if (res != -1)
     request_list[(unsigned)res]->decode();
 
   return res;
 }
 
 /*!
-  Receives a message once (in the limit of the Maximum message size value), from a specific emitter.
-  This message can represent an entire request or not. Several calls to this function
-  might be necessary to get the entire request.
-  If it represents an entire request, it decodes the request.
+  Receives a message once (in the limit of the Maximum message size value),
+  from a specific emitter. This message can represent an entire request or
+  not. Several calls to this function might be necessary to get the entire
+  request. If it represents an entire request, it decodes the request.
 
   \warning Requests will be received but not decoded.
 
@@ -461,38 +468,37 @@ int vpNetwork::receiveAndDecodeRequestOnce()
 
   \return The number of bytes received, -1 if an error occured.
 */
-int vpNetwork::receiveAndDecodeRequestOnceFrom(const unsigned int &receptorEmitting)
+int vpNetwork::receiveAndDecodeRequestOnceFrom(
+    const unsigned int &receptorEmitting)
 {
   int res = receiveRequestOnceFrom(receptorEmitting);
-  if(res != -1)
+  if (res != -1)
     request_list[(unsigned)res]->decode();
 
   return res;
 }
 
-
 //######## Definition of Template Functions ########
 //#                                                #
 //##################################################
 
-
 /*!
   Handle requests until there are requests to handle.
 
-  \warning : This function doesn't decode the requests. If it does handle a request that hasn't been ran yet,
-  The request's parameters will be replace.
+  \warning : This function doesn't decode the requests. If it does handle a
+  request that hasn't been ran yet, The request's parameters will be replace.
 
   \sa vpNetwork::handleFirstRequest()
 
-  \return : The list of index corresponding to the requests that have been handled.
+  \return : The list of index corresponding to the requests that have been
+  handled.
 */
 std::vector<int> vpNetwork::_handleRequests()
 {
   std::vector<int> resIndex;
   int index = _handleFirstRequest();
 
-  while(index != -1)
-  {
+  while (index != -1) {
     resIndex.push_back(index);
     index = _handleFirstRequest();
   }
@@ -503,8 +509,8 @@ std::vector<int> vpNetwork::_handleRequests()
 /*!
   Handle the first request in the queue.
 
-  \warning : This function doesn't run the request. If it does handle a request that hasn't been ran yet,
-  The request's parameters will be replace.
+  \warning : This function doesn't run the request. If it does handle a
+  request that hasn't been ran yet, The request's parameters will be replace.
 
   \sa vpNetwork::handleRequests()
 
@@ -516,79 +522,80 @@ int vpNetwork::_handleFirstRequest()
   size_t indSep = currentMessageReceived.find(separator);
   size_t indEnd = currentMessageReceived.find(end);
 
-  if (indStart == std::string::npos && indSep == std::string::npos && indEnd == std::string::npos)
-  {
-    if(currentMessageReceived.size() != 0)
+  if (indStart == std::string::npos && indSep == std::string::npos &&
+      indEnd == std::string::npos) {
+    if (currentMessageReceived.size() != 0)
       currentMessageReceived.clear();
 
-    if(verboseMode)
+    if (verboseMode)
       vpTRACE("Incorrect message");
 
     return -1;
   }
 
-  if(indStart == std::string::npos || indSep == std::string::npos || indEnd == std::string::npos)
+  if (indStart == std::string::npos || indSep == std::string::npos ||
+      indEnd == std::string::npos)
     return -1;
 
-  if(indEnd < indStart)
-  {
-    if(verboseMode)
+  if (indEnd < indStart) {
+    if (verboseMode)
       vpTRACE("Incorrect message");
-    currentMessageReceived.erase((unsigned)indStart,indEnd+end.size());
+    currentMessageReceived.erase((unsigned)indStart, indEnd + end.size());
     return -1;
   }
 
-  size_t indStart2 = currentMessageReceived.find(beginning,indStart+1);
-  if(indStart2 != std::string::npos && indStart2 < indEnd)
-  {
-    if(verboseMode)
+  size_t indStart2 = currentMessageReceived.find(beginning, indStart + 1);
+  if (indStart2 != std::string::npos && indStart2 < indEnd) {
+    if (verboseMode)
       vpTRACE("Incorrect message");
-    currentMessageReceived.erase((unsigned)indStart,(unsigned)indStart2);
+    currentMessageReceived.erase((unsigned)indStart, (unsigned)indStart2);
     return -1;
   }
 
   size_t deb = indStart + beginning.size();
   std::string id = currentMessageReceived.substr((unsigned)deb, indSep - deb);
 
-  //deb = indSep+separator.size();
-  //std::string params = currentMessageReceived.substr((unsigned)deb, (unsigned)(indEnd - deb));
+  // deb = indSep+separator.size();
+  // std::string params = currentMessageReceived.substr((unsigned)deb,
+  // (unsigned)(indEnd - deb));
 
-//   std::cout << "Handling : " << currentMessageReceived.substr(indStart, indEnd+end.size() - indStart) << std::endl;
+  //   std::cout << "Handling : " << currentMessageReceived.substr(indStart,
+  //   indEnd+end.size() - indStart) << std::endl;
 
   int indRequest = 0;
   bool hasBeenFound = false;
-  for(unsigned int i = 0 ; i < request_list.size() ; i++)
-  {
-    if(id == request_list[i]->getId()){
-        hasBeenFound = true;
-        request_list[i]->clear();
-        indRequest = (int)i;
-        break;
+  for (unsigned int i = 0; i < request_list.size(); i++) {
+    if (id == request_list[i]->getId()) {
+      hasBeenFound = true;
+      request_list[i]->clear();
+      indRequest = (int)i;
+      break;
     }
   }
 
-  if(!hasBeenFound){
-    //currentMessageReceived.erase(indStart,indEnd+end.size());
-    if(verboseMode)
+  if (!hasBeenFound) {
+    // currentMessageReceived.erase(indStart,indEnd+end.size());
+    if (verboseMode)
       vpTRACE("No request corresponds to the received message");
     return -1;
   }
 
   size_t indDebParam = indSep + separator.size();
-  size_t indEndParam = currentMessageReceived.find(param_sep,indDebParam);
+  size_t indEndParam = currentMessageReceived.find(param_sep, indDebParam);
 
   std::string param;
-  while(indEndParam != std::string::npos || indEndParam < indEnd)
-  {
-    param = currentMessageReceived.substr((unsigned)indDebParam,(unsigned)(indEndParam - indDebParam));
+  while (indEndParam != std::string::npos || indEndParam < indEnd) {
+    param = currentMessageReceived.substr(
+        (unsigned)indDebParam, (unsigned)(indEndParam - indDebParam));
     request_list[(unsigned)indRequest]->addParameter(param);
-    indDebParam = indEndParam+param_sep.size();
-    indEndParam = currentMessageReceived.find(param_sep,indDebParam);
+    indDebParam = indEndParam + param_sep.size();
+    indEndParam = currentMessageReceived.find(param_sep, indDebParam);
   }
 
-  param = currentMessageReceived.substr((unsigned)indDebParam, indEnd - indDebParam);
+  param = currentMessageReceived.substr((unsigned)indDebParam,
+                                        indEnd - indDebParam);
   request_list[(unsigned)indRequest]->addParameter(param);
-  currentMessageReceived.erase(indStart,indEnd+end.size());
+  currentMessageReceived.erase(indStart, indEnd + end.size());
 
   return indRequest;
 }
@@ -609,11 +616,13 @@ int vpNetwork::_handleFirstRequest()
 */
 void vpNetwork::_receiveRequest()
 {
-  while(_receiveRequestOnce() > 0) {};
+  while (_receiveRequestOnce() > 0) {
+  };
 }
 
 /*!
-  Receives requests, from a specific emitter, untils there is request to receive.
+  Receives requests, from a specific emitter, untils there is request to
+  receive.
 
   \warning Requests will be received but not decoded.
 
@@ -630,13 +639,14 @@ void vpNetwork::_receiveRequest()
 */
 void vpNetwork::_receiveRequestFrom(const unsigned int &receptorEmitting)
 {
-  while(_receiveRequestOnceFrom(receptorEmitting) > 0) {};
+  while (_receiveRequestOnceFrom(receptorEmitting) > 0) {
+  };
 }
 
 /*!
   Receives a message once (in the limit of the Maximum message size value).
-  This message can represent an entire request or not. Several calls to this function
-  might be necessary to get the entire request.
+  This message can represent an entire request or not. Several calls to this
+  function might be necessary to get the entire request.
 
   \warning Requests will be received but not decoded.
 
@@ -653,10 +663,9 @@ void vpNetwork::_receiveRequestFrom(const unsigned int &receptorEmitting)
 */
 int vpNetwork::_receiveRequestOnce()
 {
-  if(receptor_list.size() == 0)
-  {
-    if(verboseMode)
-      vpTRACE( "No Receptor!" );
+  if (receptor_list.size() == 0) {
+    if (verboseMode)
+      vpTRACE("No Receptor!");
     return -1;
   }
 
@@ -669,48 +678,55 @@ int vpNetwork::_receiveRequestOnce()
 
   FD_ZERO(&readFileDescriptor);
 
-  for(unsigned int i=0; i<receptor_list.size(); i++){
-    if(i == 0)
+  for (unsigned int i = 0; i < receptor_list.size(); i++) {
+    if (i == 0)
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
 
-    FD_SET((unsigned)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor);
-    if(socketMax < receptor_list[i].socketFileDescriptorReceptor) socketMax = receptor_list[i].socketFileDescriptorReceptor;
+    FD_SET((unsigned)receptor_list[i].socketFileDescriptorReceptor,
+           &readFileDescriptor);
+    if (socketMax < receptor_list[i].socketFileDescriptorReceptor)
+      socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
 
-  int value = select((int)socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
+  int value =
+      select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
   int numbytes = 0;
 
-  if(value == -1){
-    if(verboseMode)
-      vpERROR_TRACE( "Select error" );
+  if (value == -1) {
+    if (verboseMode)
+      vpERROR_TRACE("Select error");
     return -1;
-  }
-  else if(value == 0){
-    //Timeout
+  } else if (value == 0) {
+    // Timeout
     return 0;
-  }
-  else{
-    for(unsigned int i=0; i<receptor_list.size(); i++){
-      if(FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor,&readFileDescriptor)){
-        char *buf = new char [max_size_message];
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-        numbytes=(int)recv(receptor_list[i].socketFileDescriptorReceptor, buf, max_size_message, 0);
+  } else {
+    for (unsigned int i = 0; i < receptor_list.size(); i++) {
+      if (FD_ISSET(
+              (unsigned int)receptor_list[i].socketFileDescriptorReceptor,
+              &readFileDescriptor)) {
+        char *buf = new char[max_size_message];
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+        numbytes = (int)recv(receptor_list[i].socketFileDescriptorReceptor,
+                             buf, max_size_message, 0);
 #else
-        numbytes=recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
+        numbytes =
+            recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor,
+                 buf, (int)max_size_message, 0);
 #endif
 
-        if(numbytes <= 0)
-        {
-          std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
-          receptor_list.erase(receptor_list.begin()+(int)i);
-          delete [] buf;
+        if (numbytes <= 0) {
+          std::cout << "Disconnected : "
+                    << inet_ntoa(receptor_list[i].receptorAddress.sin_addr)
+                    << std::endl;
+          receptor_list.erase(receptor_list.begin() + (int)i);
+          delete[] buf;
           return numbytes;
-        }
-        else {
+        } else {
           std::string returnVal(buf, (unsigned int)numbytes);
           currentMessageReceived.append(returnVal);
         }
-        delete [] buf;
+        delete[] buf;
         break;
       }
     }
@@ -720,9 +736,10 @@ int vpNetwork::_receiveRequestOnce()
 }
 
 /*!
-  Receives a message once (in the limit of the Maximum message size value), from a specific emitter.
-  This message can represent an entire request or not. Several calls to this function
-  might be necessary to get the entire request.
+  Receives a message once (in the limit of the Maximum message size value),
+  from a specific emitter. This message can represent an entire request or
+  not. Several calls to this function might be necessary to get the entire
+  request.
 
   \warning Requests will be received but not decoded.
 
@@ -742,11 +759,10 @@ int vpNetwork::_receiveRequestOnce()
 int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
 {
   int size = (int)receptor_list.size();
-  int sizeMinusOne = (int)receptor_list.size()-1;
-  if(size == 0 || receptorEmitting > (unsigned)sizeMinusOne )
-  {
-    if(verboseMode)
-      vpTRACE( "No receptor at the specified index!" );
+  int sizeMinusOne = (int)receptor_list.size() - 1;
+  if (size == 0 || receptorEmitting > (unsigned)sizeMinusOne) {
+    if (verboseMode)
+      vpTRACE("No receptor at the specified index!");
     return -1;
   }
 
@@ -760,44 +776,50 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
   FD_ZERO(&readFileDescriptor);
 
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;
-  FD_SET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor);
+  FD_SET((unsigned int)receptor_list[receptorEmitting]
+             .socketFileDescriptorReceptor,
+         &readFileDescriptor);
 
-  int value = select((int)socketMax+1,&readFileDescriptor,NULL,NULL,&tv);
+  int value =
+      select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
   int numbytes = 0;
-  if(value == -1){
-    if(verboseMode)
-      vpERROR_TRACE( "Select error" );
+  if (value == -1) {
+    if (verboseMode)
+      vpERROR_TRACE("Select error");
     return -1;
-  }
-  else if(value == 0){
-    //Timeout
+  } else if (value == 0) {
+    // Timeout
     return 0;
-  }
-  else{
-    if(FD_ISSET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor,&readFileDescriptor)){
-      char *buf = new char [max_size_message];
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      numbytes=(int)recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, max_size_message, 0);
+  } else {
+    if (FD_ISSET((unsigned int)receptor_list[receptorEmitting]
+                     .socketFileDescriptorReceptor,
+                 &readFileDescriptor)) {
+      char *buf = new char[max_size_message];
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+      numbytes = (int)recv(
+          receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf,
+          max_size_message, 0);
 #else
-      numbytes=recv((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, buf, (int)max_size_message, 0);
+      numbytes = recv((unsigned int)receptor_list[receptorEmitting]
+                          .socketFileDescriptorReceptor,
+                      buf, (int)max_size_message, 0);
 #endif
-      if(numbytes <= 0)
-      {
-        std::cout << "Disconnected : " << inet_ntoa(receptor_list[receptorEmitting].receptorAddress.sin_addr) << std::endl;
-        receptor_list.erase(receptor_list.begin()+(int)receptorEmitting);
-        delete [] buf;
+      if (numbytes <= 0) {
+        std::cout << "Disconnected : "
+                  << inet_ntoa(receptor_list[receptorEmitting]
+                                   .receptorAddress.sin_addr)
+                  << std::endl;
+        receptor_list.erase(receptor_list.begin() + (int)receptorEmitting);
+        delete[] buf;
         return numbytes;
-      }
-      else {
+      } else {
         std::string returnVal(buf, (unsigned int)numbytes);
         currentMessageReceived.append(returnVal);
       }
-      delete [] buf;
+      delete[] buf;
     }
   }
 
   return numbytes;
 }
-
-
-

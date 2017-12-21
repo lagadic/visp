@@ -36,14 +36,11 @@
  *
  *****************************************************************************/
 
-
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_PTU46
 
-
 #ifndef __vpROBOT_PTU46_H
 #define __vpROBOT_PTU46_H
-
 
 /* ------------------------------------------------------------------------ */
 /* --- INCLUDES ----------------------------------------------------------- */
@@ -53,20 +50,18 @@
 #include <iostream>
 #include <stdio.h>
 
-
 /* --- ViSP --- */
-#include <visp3/robot/vpRobot.h>
-#include <visp3/robot/vpPtu46.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
+#include <visp3/robot/vpPtu46.h>
+#include <visp3/robot/vpRobot.h>
 
 #include <ptu.h> // Contrib for Ptu-46 robot
 
 /* ------------------------------------------------------------------------ */
 /* --- CLASS ------------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
-
 
 /*!
 
@@ -82,63 +77,60 @@
   head.
 
 */
-class VISP_EXPORT vpRobotPtu46
-  :
-  public vpPtu46,
-  public vpRobot
+class VISP_EXPORT vpRobotPtu46 : public vpPtu46, public vpRobot
 {
 
 private:
-
   /*! \brief No copy constructor allowed.   */
-  vpRobotPtu46 (const vpRobotPtu46 & ass);
+  vpRobotPtu46(const vpRobotPtu46 &ass);
 
   /*! Object to control. This is a contribution. */
   Ptu ptu;
 
 private:
   static bool robotAlreadyCreated;
-  double      positioningVelocity;
-  int         velocityMesureTempo;
-  char	      *device;
+  double positioningVelocity;
+  int velocityMesureTempo;
+  char *device;
 
 public:
-  static const double       defaultPositioningVelocity;
+  static const double defaultPositioningVelocity;
 
-  explicit vpRobotPtu46 (const char *device="/dev/ttyS0");
-  explicit vpRobotPtu46 (vpRobotPtu46 * pub);
-  virtual ~vpRobotPtu46 (void);
+  explicit vpRobotPtu46(const char *device = "/dev/ttyS0");
+  explicit vpRobotPtu46(vpRobotPtu46 *pub);
+  virtual ~vpRobotPtu46(void);
 
   void get_cMe(vpHomogeneousMatrix &_cMe) const;
   void get_cVe(vpVelocityTwistMatrix &_cVe) const;
   void get_eJe(vpMatrix &_eJe);
   void get_fJe(vpMatrix &_fJe);
 
-  void getDisplacement(vpRobot::vpControlFrameType  frame, vpColVector &q);
-  void getPosition (const vpRobot::vpControlFrameType frame, vpColVector &q);
-  double getPositioningVelocity (void);
-  void getVelocity (const vpRobot::vpControlFrameType frame, vpColVector & q_dot);
-  vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
+  void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &q);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  double getPositioningVelocity(void);
+  void getVelocity(const vpRobot::vpControlFrameType frame,
+                   vpColVector &q_dot);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
 
-  void init (void);
+  void init(void);
 
   bool readPositionFile(const std::string &filename, vpColVector &q);
 
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) ;
-  void setPosition (const vpRobot::vpControlFrameType frame, const double &q1, const double &q2) ;
-  void setPosition(const char *filename) ;
-  void setPositioningVelocity (const double velocity);
-  vpRobot::vpRobotStateType setRobotState (vpRobot::vpRobotStateType newState);
+  void setPosition(const vpRobot::vpControlFrameType frame,
+                   const vpColVector &q);
+  void setPosition(const vpRobot::vpControlFrameType frame, const double &q1,
+                   const double &q2);
+  void setPosition(const char *filename);
+  void setPositioningVelocity(const double velocity);
+  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
 
-  void setVelocity (const vpRobot::vpControlFrameType frame, const vpColVector & q_dot);
+  void setVelocity(const vpRobot::vpControlFrameType frame,
+                   const vpColVector &q_dot);
 
-  void stopMotion() ;
+  void stopMotion();
 };
 
-
-
 #endif /* #ifndef __vpROBOT_PTU46_H */
-
 
 /*
  * Local variables:

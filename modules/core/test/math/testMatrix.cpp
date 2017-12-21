@@ -44,202 +44,213 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/core/vpGEMM.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpVelocityTwistMatrix.h>
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-
-namespace {
-  bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &bench)
-  {
-    static unsigned int cpt = 0;
-    std::cout << "** Test " << ++cpt << std::endl;
-    std::cout << s << "(" << M.getRows() << "," << M.getCols() << ") = \n" << M << std::endl;
-    if(bench.size() != M.size()) {
-      std::cout << "Test fails: bad size wrt bench" << std::endl;
+namespace
+{
+bool test(const std::string &s, const vpMatrix &M,
+          const std::vector<double> &bench)
+{
+  static unsigned int cpt = 0;
+  std::cout << "** Test " << ++cpt << std::endl;
+  std::cout << s << "(" << M.getRows() << "," << M.getCols() << ") = \n"
+            << M << std::endl;
+  if (bench.size() != M.size()) {
+    std::cout << "Test fails: bad size wrt bench" << std::endl;
+    return false;
+  }
+  for (unsigned int i = 0; i < M.size(); i++) {
+    if (std::fabs(M.data[i] - bench[i]) >
+        std::fabs(M.data[i]) * std::numeric_limits<double>::epsilon()) {
+      std::cout << "Test fails: bad content" << std::endl;
       return false;
     }
-    for (unsigned int i=0; i<M.size(); i++) {
-      if (std::fabs(M.data[i]-bench[i]) > std::fabs(M.data[i])*std::numeric_limits<double>::epsilon()) {
-        std::cout << "Test fails: bad content" << std::endl;
+  }
+
+  return true;
+}
+
+double getRandomValues(const double min, const double max)
+{
+  return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
+}
+
+bool equalMatrix(const vpMatrix &A, const vpMatrix &B,
+                 const double tol = std::numeric_limits<double>::epsilon())
+{
+  if (A.getRows() != B.getRows() || A.getCols() != B.getCols()) {
+    return false;
+  }
+
+  for (unsigned int i = 0; i < A.getRows(); i++) {
+    for (unsigned int j = 0; j < A.getCols(); j++) {
+      if (!vpMath::equal(A[i][j], B[i][j], tol)) {
         return false;
       }
     }
-
-    return true;
   }
 
-  double getRandomValues(const double min, const double max) {
-    return (max - min) * ( (double) rand() / (double) RAND_MAX ) + min;
-  }
-
-  bool equalMatrix(const vpMatrix &A, const vpMatrix &B, const double tol=std::numeric_limits<double>::epsilon()) {
-    if (A.getRows() != B.getRows() || A.getCols() != B.getCols()) {
-      return false;
-    }
-
-    for (unsigned int i = 0; i < A.getRows(); i++) {
-      for (unsigned int j = 0; j < A.getCols(); j++) {
-        if ( !vpMath::equal(A[i][j], B[i][j], tol) ) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  }
+  return true;
+}
 
 #if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
-  vpMatrix generateRandomMatrix(const unsigned int rows, const unsigned int cols, const double min, const double max) {
-    vpMatrix M(rows, cols);
+vpMatrix generateRandomMatrix(const unsigned int rows,
+                              const unsigned int cols, const double min,
+                              const double max)
+{
+  vpMatrix M(rows, cols);
 
-    for (unsigned int i = 0; i < M.getRows(); i++) {
-      for (unsigned int j = 0; j < M.getCols(); j++) {
-        M[i][j] = getRandomValues(min, max);
-      }
+  for (unsigned int i = 0; i < M.getRows(); i++) {
+    for (unsigned int j = 0; j < M.getCols(); j++) {
+      M[i][j] = getRandomValues(min, max);
     }
-
-    return M;
   }
 
-  vpColVector generateRandomVector(const unsigned int rows, const double min, const double max) {
-    vpColVector v(rows);
+  return M;
+}
 
-    for (unsigned int i = 0; i < v.getRows(); i++) {
-      v[i] = getRandomValues(min, max);
-    }
+vpColVector generateRandomVector(const unsigned int rows, const double min,
+                                 const double max)
+{
+  vpColVector v(rows);
 
-    return v;
+  for (unsigned int i = 0; i < v.getRows(); i++) {
+    v[i] = getRandomValues(min, max);
   }
 
-  //Copy of vpMatrix::mult2Matrices
-  vpMatrix dgemm_regular(const vpMatrix &A, const vpMatrix &B) {
-    vpMatrix C;
+  return v;
+}
 
-    if ((A.getRows() != C.getRows()) || (B.getCols() != C.getCols())) C.resize(A.getRows(), B.getCols(), false);
+// Copy of vpMatrix::mult2Matrices
+vpMatrix dgemm_regular(const vpMatrix &A, const vpMatrix &B)
+{
+  vpMatrix C;
 
-    if (A.getCols() != B.getRows()) {
-      throw(vpException(vpException::dimensionError,
-                        "Cannot multiply (%dx%d) matrix by (%dx%d) matrix",
-                        A.getRows(), A.getCols(), B.getRows(), B.getCols()));
-    }
+  if ((A.getRows() != C.getRows()) || (B.getCols() != C.getCols()))
+    C.resize(A.getRows(), B.getCols(), false);
 
-    // 5/12/06 some "very" simple optimization to avoid indexation
-    unsigned int BcolNum = B.getCols();
-    unsigned int BrowNum = B.getRows();
-    unsigned int i,j,k;
-    for (i=0;i<A.getRows();i++)
-    {
-      double *rowptri = A[i];
-      double *ci = C[i];
-      for (j=0;j<BcolNum;j++)
-      {
-        double s = 0;
-        for (k=0;k<BrowNum;k++) s += rowptri[k] * B[k][j];
-        ci[j] = s;
-      }
-    }
-
-    return C;
+  if (A.getCols() != B.getRows()) {
+    throw(vpException(vpException::dimensionError,
+                      "Cannot multiply (%dx%d) matrix by (%dx%d) matrix",
+                      A.getRows(), A.getCols(), B.getRows(), B.getCols()));
   }
 
-  //Copy of vpMatrix::AtA
-  vpMatrix AtA_regular(const vpMatrix &A) {
-    vpMatrix B;
-    B.resize(A.getCols(), A.getCols(), false);
-
-    unsigned int i,j,k;
-    double s;
-    double *ptr;
-    for (i=0;i<A.getCols();i++)
-    {
-      double *Bi = B[i] ;
-      for (j=0;j<i;j++)
-      {
-        ptr=A.data;
-        s = 0 ;
-        for (k=0;k<A.getRows();k++)
-        {
-          s +=(*(ptr+i)) * (*(ptr+j));
-          ptr+=A.getCols();
-        }
-        *Bi++ = s ;
-        B[j][i] = s;
-      }
-      ptr=A.data;
-      s = 0 ;
-      for (k=0;k<A.getRows();k++)
-      {
-        s +=(*(ptr+i)) * (*(ptr+i));
-        ptr+=A.getCols();
-      }
-      *Bi = s;
+  // 5/12/06 some "very" simple optimization to avoid indexation
+  unsigned int BcolNum = B.getCols();
+  unsigned int BrowNum = B.getRows();
+  unsigned int i, j, k;
+  for (i = 0; i < A.getRows(); i++) {
+    double *rowptri = A[i];
+    double *ci = C[i];
+    for (j = 0; j < BcolNum; j++) {
+      double s = 0;
+      for (k = 0; k < BrowNum; k++)
+        s += rowptri[k] * B[k][j];
+      ci[j] = s;
     }
-
-    return B;
   }
 
-  //Copy of vpMatrix::multMatrixVector
-  vpMatrix dgemv_regular(const vpMatrix &A, const vpColVector &v) {
-    vpColVector w;
+  return C;
+}
 
-    if (A.getCols() != v.getRows()) {
-      throw(vpException(vpException::dimensionError,
-                        "Cannot multiply a (%dx%d) matrix by a (%d) column vector",
-                        A.getRows(), A.getCols(), v.getRows())) ;
-    }
+// Copy of vpMatrix::AtA
+vpMatrix AtA_regular(const vpMatrix &A)
+{
+  vpMatrix B;
+  B.resize(A.getCols(), A.getCols(), false);
 
-    w.resize(A.getRows(), true);
-
-    for (unsigned int j=0;j<A.getCols();j++) {
-      double vj = v[j] ; // optimization em 5/12/2006
-      for (unsigned int i=0;i<A.getRows();i++) {
-        w[i]+=A[i][j] * vj;
+  unsigned int i, j, k;
+  double s;
+  double *ptr;
+  for (i = 0; i < A.getCols(); i++) {
+    double *Bi = B[i];
+    for (j = 0; j < i; j++) {
+      ptr = A.data;
+      s = 0;
+      for (k = 0; k < A.getRows(); k++) {
+        s += (*(ptr + i)) * (*(ptr + j));
+        ptr += A.getCols();
       }
+      *Bi++ = s;
+      B[j][i] = s;
     }
-
-    return w;
+    ptr = A.data;
+    s = 0;
+    for (k = 0; k < A.getRows(); k++) {
+      s += (*(ptr + i)) * (*(ptr + i));
+      ptr += A.getCols();
+    }
+    *Bi = s;
   }
 
-  //Copy of vpMatrix::operator*(const vpVelocityTwistMatrix &V)
-  vpMatrix mat_mul_twist_matrix(const vpMatrix &A, const vpVelocityTwistMatrix &V) {
-    vpMatrix M;
+  return B;
+}
 
-    if (A.getCols() != V.getRows()) {
-      throw(vpException(vpException::dimensionError,
-                        "Cannot multiply (%dx%d) matrix by (6x6) velocity twist matrix",
-                        A.getRows(), A.getCols()));
-    }
+// Copy of vpMatrix::multMatrixVector
+vpMatrix dgemv_regular(const vpMatrix &A, const vpColVector &v)
+{
+  vpColVector w;
 
-    M.resize(A.getRows(), 6, false);
-
-    unsigned int VcolNum = V.getCols();
-    unsigned int VrowNum = V.getRows();
-
-    for (unsigned int i=0;i<A.getRows();i++)
-    {
-      double *rowptri = A[i];
-      double *ci = M[i];
-      for (unsigned int j=0;j<VcolNum;j++)
-      {
-        double s = 0;
-        for (unsigned int k=0;k<VrowNum;k++) s += rowptri[k] * V[k][j];
-        ci[j] = s;
-      }
-    }
-
-    return M;
+  if (A.getCols() != v.getRows()) {
+    throw(vpException(
+        vpException::dimensionError,
+        "Cannot multiply a (%dx%d) matrix by a (%d) column vector",
+        A.getRows(), A.getCols(), v.getRows()));
   }
+
+  w.resize(A.getRows(), true);
+
+  for (unsigned int j = 0; j < A.getCols(); j++) {
+    double vj = v[j]; // optimization em 5/12/2006
+    for (unsigned int i = 0; i < A.getRows(); i++) {
+      w[i] += A[i][j] * vj;
+    }
+  }
+
+  return w;
+}
+
+// Copy of vpMatrix::operator*(const vpVelocityTwistMatrix &V)
+vpMatrix mat_mul_twist_matrix(const vpMatrix &A,
+                              const vpVelocityTwistMatrix &V)
+{
+  vpMatrix M;
+
+  if (A.getCols() != V.getRows()) {
+    throw(vpException(
+        vpException::dimensionError,
+        "Cannot multiply (%dx%d) matrix by (6x6) velocity twist matrix",
+        A.getRows(), A.getCols()));
+  }
+
+  M.resize(A.getRows(), 6, false);
+
+  unsigned int VcolNum = V.getCols();
+  unsigned int VrowNum = V.getRows();
+
+  for (unsigned int i = 0; i < A.getRows(); i++) {
+    double *rowptri = A[i];
+    double *ci = M[i];
+    for (unsigned int j = 0; j < VcolNum; j++) {
+      double s = 0;
+      for (unsigned int k = 0; k < VrowNum; k++)
+        s += rowptri[k] * V[k][j];
+      ci[j] = s;
+    }
+  }
+
+  return M;
+}
 #endif
 }
 
-
-int
-main()
+int main()
 {
   try {
     int err = 1;
@@ -255,20 +266,20 @@ main()
         return err;
     }
     {
-      vpMatrix M(4,5);
+      vpMatrix M(4, 5);
       int val = 0;
-      for(unsigned int i=0; i<M.getRows(); i++) {
-        for(unsigned int j=0; j<M.getCols(); j++) {
+      for (unsigned int i = 0; i < M.getRows(); i++) {
+        for (unsigned int j = 0; j < M.getCols(); j++) {
           M[i][j] = val++;
         }
       }
-      std::cout <<"M ";
-      M.print (std::cout, 4);
+      std::cout << "M ";
+      M.print(std::cout, 4);
 
       vpMatrix N;
       N.init(M, 0, 1, 2, 3);
-      std::cout <<"N ";
-      N.print (std::cout, 4);
+      std::cout << "N ";
+      N.print(std::cout, 4);
       std::string header("My 4-by-5 matrix\nwith a second line");
 
       // Save matrix in text format
@@ -281,7 +292,9 @@ main()
       vpMatrix M1;
       char header_[100];
       if (vpMatrix::loadMatrix("matrix.mat", M1, false, header_))
-        std::cout << "Matrix loaded from matrix.mat file with header \"" << header_ << "\": \n" << M1 << std::endl;
+        std::cout << "Matrix loaded from matrix.mat file with header \""
+                  << header_ << "\": \n"
+                  << M1 << std::endl;
       else
         return err;
       if (header != std::string(header_)) {
@@ -297,7 +310,9 @@ main()
 
       // Load matrix in binary format
       if (vpMatrix::loadMatrix("matrix.bin", M1, true, header_))
-        std::cout << "Matrix loaded from matrix.bin file with header \"" << header_ << "\": \n" << M1 << std::endl;
+        std::cout << "Matrix loaded from matrix.bin file with header \""
+                  << header_ << "\": \n"
+                  << M1 << std::endl;
       else
         return err;
       if (header != std::string(header_)) {
@@ -314,7 +329,9 @@ main()
       // Read matrix in YAML format
       vpMatrix M2;
       if (vpMatrix::loadMatrixYAML("matrix.yml", M2, header_))
-        std::cout << "Matrix loaded from matrix.yml file with header \"" << header_ << "\": \n" << M2 << std::endl;
+        std::cout << "Matrix loaded from matrix.yml file with header \""
+                  << header_ << "\": \n"
+                  << M2 << std::endl;
       else
         return err;
       if (header != std::string(header_)) {
@@ -340,80 +357,79 @@ main()
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST PRETTY PRINT---" << std::endl;
       std::cout << "------------------------" << std::endl;
-      vpMatrix M ;
+      vpMatrix M;
       M.eye(4);
 
       std::cout << "call std::cout << M;" << std::endl;
       std::cout << M << std::endl;
 
       std::cout << "call M.print (std::cout, 4);" << std::endl;
-      M.print (std::cout, 4);
+      M.print(std::cout, 4);
 
       std::cout << "------------------------" << std::endl;
-      M.resize(3,3) ;
+      M.resize(3, 3);
       M.eye(3);
-      M[1][0]=1.235;
-      M[1][1]=12.345;
-      M[1][2]=.12345;
+      M[1][0] = 1.235;
+      M[1][1] = 12.345;
+      M[1][2] = .12345;
       std::cout << "call std::cout << M;" << std::endl;
       std::cout << M;
       std::cout << "call M.print (std::cout, 6);" << std::endl;
-      M.print (std::cout, 6);
+      M.print(std::cout, 6);
       std::cout << std::endl;
 
       std::cout << "------------------------" << std::endl;
-      M[0][0]=-1.235;
-      M[1][0]=-12.235;
+      M[0][0] = -1.235;
+      M[1][0] = -12.235;
 
       std::cout << "call std::cout << M;" << std::endl;
       std::cout << M << std::endl;
 
       std::cout << "call M.print (std::cout, 10);" << std::endl;
-      M.print (std::cout, 10);
+      M.print(std::cout, 10);
       std::cout << std::endl;
 
       std::cout << "call M.print (std::cout, 2);" << std::endl;
-      M.print (std::cout, 2);
+      M.print(std::cout, 2);
       std::cout << std::endl;
 
       std::cout << "------------------------" << std::endl;
-      M.resize(3,3) ;
+      M.resize(3, 3);
       M.eye(3);
-      M[0][2]=-0.0000000876;
+      M[0][2] = -0.0000000876;
       std::cout << "call std::cout << M;" << std::endl;
       std::cout << M << std::endl;
 
       std::cout << "call M.print (std::cout, 4);" << std::endl;
-      M.print (std::cout, 4);
+      M.print(std::cout, 4);
       std::cout << std::endl;
       std::cout << "call M.print (std::cout, 10, \"M\");" << std::endl;
-      M.print (std::cout, 10, "M");
+      M.print(std::cout, 10, "M");
       std::cout << std::endl;
       std::cout << "call M.print (std::cout, 20, \"M\");" << std::endl;
-      M.print (std::cout, 20, "M");
+      M.print(std::cout, 20, "M");
       std::cout << std::endl;
-
 
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST RESIZE --------" << std::endl;
       std::cout << "------------------------" << std::endl;
-      std::cout <<  "5x5" << std::endl;
-      M.resize(5,5,false);
+      std::cout << "5x5" << std::endl;
+      M.resize(5, 5, false);
       std::cout << M << std::endl;
       std::cout << "3x2" << std::endl;
-      M.resize(3,2,false);
+      M.resize(3, 2, false);
       std::cout << M << std::endl;
       std::cout << "2x2" << std::endl;
-      M.resize(2,2,false);
+      M.resize(2, 2, false);
       std::cout << M << std::endl;
       std::cout << "------------------------" << std::endl;
 
       vpVelocityTwistMatrix vMe;
-      vpMatrix A(1,6),B;
+      vpMatrix A(1, 6), B;
 
-      A=1.0;
-      //vMe=1.0;
-      B=A*vMe;
+      A = 1.0;
+      // vMe=1.0;
+      B = A * vMe;
 
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST vpRowVector * vpColVector" << std::endl;
@@ -437,7 +453,7 @@ main()
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST vpRowVector * vpMatrix" << std::endl;
       std::cout << "------------------------" << std::endl;
-      M.resize(3,3) ;
+      M.resize(3, 3);
       M.eye(3);
 
       M[1][0] = 1.5;
@@ -452,7 +468,7 @@ main()
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST vpGEMM " << std::endl;
       std::cout << "------------------------" << std::endl;
-      M.resize(3,3) ;
+      M.resize(3, 3);
       M.eye(3);
       vpMatrix N(3, 3);
       N[0][0] = 2;
@@ -465,19 +481,21 @@ main()
 
       vpMatrix D;
 
-      //realise the operation D = 2 * M^T * N + 3 C
+      // realise the operation D = 2 * M^T * N + 3 C
       vpGEMM(M, N, 2, C, 3, D, VP_GEMM_A_T);
       std::cout << D << std::endl;
     }
 
     {
       std::cout << "------------------------" << std::endl;
-      std::cout << "--- TEST vpMatrix insert() with same colNum " << std::endl;
+      std::cout << "--- TEST vpMatrix insert() with same colNum "
+                << std::endl;
       std::cout << "------------------------" << std::endl;
-      const unsigned int nb = 100; //10000; //for ctest otherwise takes too long time with static call
+      const unsigned int nb = 100; // 10000; //for ctest otherwise takes too
+                                   // long time with static call
       const unsigned int size = 100;
 
-      vpMatrix m_big(nb*size, 6);
+      vpMatrix m_big(nb * size, 6);
       std::vector<vpMatrix> submatrices(nb);
       for (size_t cpt = 0; cpt < submatrices.size(); cpt++) {
         vpMatrix m(size, 6);
@@ -493,15 +511,17 @@ main()
 
       double t = vpTime::measureTimeMs();
       for (unsigned int i = 0; i < nb; i++) {
-        m_big.insert(submatrices[(size_t) i], i*size, 0);
+        m_big.insert(submatrices[(size_t)i], i * size, 0);
       }
       t = vpTime::measureTimeMs() - t;
       std::cout << "Matrix insert(): " << t << " ms" << std::endl;
 
       for (unsigned int cpt = 0; cpt < nb; cpt++) {
-        for (unsigned int i = 0; i <size; i++) {
+        for (unsigned int i = 0; i < size; i++) {
           for (unsigned int j = 0; j < 6; j++) {
-            if ( !vpMath::equal(m_big[cpt*size+i][j], submatrices[(size_t) cpt][i][j], std::numeric_limits<double>::epsilon()) ) {
+            if (!vpMath::equal(m_big[cpt * size + i][j],
+                               submatrices[(size_t)cpt][i][j],
+                               std::numeric_limits<double>::epsilon())) {
               std::cerr << "Problem with vpMatrix insert()!" << std::endl;
               return EXIT_FAILURE;
             }
@@ -509,8 +529,8 @@ main()
         }
       }
 
-      //Try to insert empty matrices
-      vpMatrix m1(2,3), m2, m3;
+      // Try to insert empty matrices
+      vpMatrix m1(2, 3), m2, m3;
       m1.insert(m2, 0, 0);
       m3.insert(m2, 0, 0);
 
@@ -519,27 +539,25 @@ main()
       std::cout << "m2:\n" << m2 << std::endl;
       std::cout << "m3:\n" << m3 << std::endl;
 
-
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix stack()" << std::endl;
       std::cout << "------------------------" << std::endl;
 
       {
-        vpMatrix L, L2(2,6);
+        vpMatrix L, L2(2, 6);
         L2 = 2;
         L.stack(L2);
         std::cout << "L:\n" << L << std::endl;
-        L2.resize(3,6);
+        L2.resize(3, 6);
         L2 = 3;
         L.stack(L2);
         std::cout << "L:\n" << L << std::endl;
       }
 
-
       vpMatrix m_big_stack;
       t = vpTime::measureTimeMs();
       for (unsigned int i = 0; i < nb; i++) {
-        m_big_stack.stack(submatrices[(size_t) i]);
+        m_big_stack.stack(submatrices[(size_t)i]);
       }
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nMatrix stack(): " << t << " ms" << std::endl;
@@ -548,7 +566,6 @@ main()
         std::cerr << "Problem with vpMatrix stack()!" << std::endl;
         return EXIT_FAILURE;
       }
-
 
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix stack(vpRowVector)" << std::endl;
@@ -567,28 +584,27 @@ main()
         return EXIT_FAILURE;
       }
 
-
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix::stack()" << std::endl;
       std::cout << "------------------------" << std::endl;
 
       {
-        vpMatrix L, L2(2,6), L_tmp;
+        vpMatrix L, L2(2, 6), L_tmp;
         L2 = 2;
         vpMatrix::stack(L_tmp, L2, L);
         std::cout << "L:\n" << L << std::endl;
-        L2.resize(3,6);
+        L2.resize(3, 6);
         L2 = 3;
         L_tmp = L;
         vpMatrix::stack(L_tmp, L2, L);
         std::cout << "L:\n" << L << std::endl;
       }
 
-
       vpMatrix m_big_stack_static, m_big_stack_static_tmp;
       t = vpTime::measureTimeMs();
       for (unsigned int i = 0; i < nb; i++) {
-        vpMatrix::stack(m_big_stack_static_tmp, submatrices[(size_t) i], m_big_stack_static);
+        vpMatrix::stack(m_big_stack_static_tmp, submatrices[(size_t)i],
+                        m_big_stack_static);
         m_big_stack_static_tmp = m_big_stack_static;
       }
       t = vpTime::measureTimeMs() - t;
@@ -599,28 +615,32 @@ main()
         return EXIT_FAILURE;
       }
 
-
       std::cout << "------------------------" << std::endl;
-      std::cout << "--- TEST vpMatrix::stack(vpMatrix, vpRowVector, vpMatrix)" << std::endl;
+      std::cout << "--- TEST vpMatrix::stack(vpMatrix, vpRowVector, vpMatrix)"
+                << std::endl;
       std::cout << "------------------------" << std::endl;
 
       vpMatrix m_big_stack_static_row, m_big_stack_static_row_tmp;
       t = vpTime::measureTimeMs();
       for (unsigned int i = 0; i < m_big_stack_static.getRows(); i++) {
-        vpMatrix::stack(m_big_stack_static_row_tmp, m_big_stack_static.getRow(i), m_big_stack_static_row);
+        vpMatrix::stack(m_big_stack_static_row_tmp,
+                        m_big_stack_static.getRow(i), m_big_stack_static_row);
         m_big_stack_static_row_tmp = m_big_stack_static_row;
       }
       t = vpTime::measureTimeMs() - t;
-      std::cout << "\nMatrix::stack(vpMatrix, vpRowVector, vpMatrix): " << t << " ms" << std::endl;
+      std::cout << "\nMatrix::stack(vpMatrix, vpRowVector, vpMatrix): " << t
+                << " ms" << std::endl;
 
       if (!equalMatrix(m_big_stack_static, m_big_stack_static_row)) {
-        std::cerr << "Problem with vpMatrix::stack(vpMatrix, vpRowVector, vpMatrix)!" << std::endl;
+        std::cerr << "Problem with vpMatrix::stack(vpMatrix, vpRowVector, "
+                     "vpMatrix)!"
+                  << std::endl;
         return EXIT_FAILURE;
       }
     }
 
     {
-      vpMatrix m1(11,9), m2(3,4);
+      vpMatrix m1(11, 9), m2(3, 4);
       for (unsigned int i = 0; i < m2.getRows(); i++) {
         for (unsigned int j = 0; j < m2.getCols(); j++) {
           m2[i][j] = getRandomValues(-100.0, 100.0);
@@ -632,7 +652,8 @@ main()
 
       for (unsigned int i = 0; i < m2.getRows(); i++) {
         for (unsigned int j = 0; j < m2.getCols(); j++) {
-          if ( !vpMath::equal(m1[i+offset_i][j+offset_j], m2[i][j], std::numeric_limits<double>::epsilon()) ) {
+          if (!vpMath::equal(m1[i + offset_i][j + offset_j], m2[i][j],
+                             std::numeric_limits<double>::epsilon())) {
             std::cerr << "Problem with vpMatrix insert()!" << std::endl;
             return EXIT_FAILURE;
           }
@@ -644,7 +665,8 @@ main()
 
       for (unsigned int i = 0; i < m2.getRows(); i++) {
         for (unsigned int j = 0; j < m2.getCols(); j++) {
-          if ( !vpMath::equal(m1[i+offset_i][j+offset_j], m2[i][j], std::numeric_limits<double>::epsilon()) ) {
+          if (!vpMath::equal(m1[i + offset_i][j + offset_j], m2[i][j],
+                             std::numeric_limits<double>::epsilon())) {
             std::cerr << "Problem with vpMatrix insert()!" << std::endl;
             return EXIT_FAILURE;
           }
@@ -656,7 +678,8 @@ main()
 
       for (unsigned int i = 0; i < m2.getRows(); i++) {
         for (unsigned int j = 0; j < m2.getCols(); j++) {
-          if ( !vpMath::equal(m1[i+offset_i][j+offset_j], m2[i][j], std::numeric_limits<double>::epsilon()) ) {
+          if (!vpMath::equal(m1[i + offset_i][j + offset_j], m2[i][j],
+                             std::numeric_limits<double>::epsilon())) {
             std::cerr << "Problem with vpMatrix insert()!" << std::endl;
             return EXIT_FAILURE;
           }
@@ -672,10 +695,10 @@ main()
       vpMatrix A(5, 6), B(5, 4);
       for (unsigned int i = 0; i < A.getRows(); i++) {
         for (unsigned int j = 0; j < A.getCols(); j++) {
-          A[i][j] = i*A.getCols()+j;
+          A[i][j] = i * A.getCols() + j;
 
           if (j < B.getCols()) {
-            B[i][j] = (i*B.getCols()+j)*10;
+            B[i][j] = (i * B.getCols() + j) * 10;
           }
         }
       }
@@ -699,50 +722,53 @@ main()
       vec_C_regular.reserve(nb_matrices);
 
       for (size_t i = 0; i < nb_matrices; i++) {
-        vec_A.push_back( generateRandomMatrix(cols, rows, min, max) );
-        vec_B.push_back( generateRandomMatrix(rows, cols, min, max) );
+        vec_A.push_back(generateRandomMatrix(cols, rows, min, max));
+        vec_B.push_back(generateRandomMatrix(rows, cols, min, max));
       }
 
       double t = vpTime::measureTimeMs();
       for (size_t i = 0; i < nb_matrices; i++) {
-        vec_C.push_back( vec_A[i]*vec_B[i] );
+        vec_C.push_back(vec_A[i] * vec_B[i]);
       }
       t = vpTime::measureTimeMs() - t;
-      std::cout << nb_matrices << " matrix multiplication: (6x200) x (200x6)" << std::endl;
+      std::cout << nb_matrices << " matrix multiplication: (6x200) x (200x6)"
+                << std::endl;
       std::cout << "Lapack: " << t << " ms" << std::endl;
       std::cout << "vec_C:\n" << vec_C.back() << std::endl;
 
       t = vpTime::measureTimeMs();
       for (size_t i = 0; i < nb_matrices; i++) {
-        vec_C_regular.push_back( dgemm_regular(vec_A[i], vec_B[i]) );
+        vec_C_regular.push_back(dgemm_regular(vec_A[i], vec_B[i]));
       }
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nRegular: " << t << " ms" << std::endl;
       std::cout << "vec_C_regular:\n" << vec_C_regular.back() << std::endl;
 
-
-      vpMatrix A = generateRandomMatrix(480, 640, min, max), B = generateRandomMatrix(640, 480, min, max);
+      vpMatrix A = generateRandomMatrix(480, 640, min, max),
+               B = generateRandomMatrix(640, 480, min, max);
       vpMatrix AB, AB_regular;
 
       t = vpTime::measureTimeMs();
-      AB = A*B;
+      AB = A * B;
       t = vpTime::measureTimeMs() - t;
-      std::cout << "\nMatrix multiplication: (480x640) x (640x480)" << std::endl;
+      std::cout << "\nMatrix multiplication: (480x640) x (640x480)"
+                << std::endl;
       std::cout << "Lapack: " << t << " ms" << std::endl;
-      std::cout << "Min=" << AB.getMinValue() << " ; Max=" << AB.getMaxValue() << std::endl;
+      std::cout << "Min=" << AB.getMinValue() << " ; Max=" << AB.getMaxValue()
+                << std::endl;
 
       t = vpTime::measureTimeMs();
       AB_regular = dgemm_regular(A, B);
       t = vpTime::measureTimeMs() - t;
       std::cout << "Regular: " << t << " ms" << std::endl;
-      std::cout << "Min=" << AB_regular.getMinValue() << " ; Max=" << AB_regular.getMaxValue() << std::endl;
+      std::cout << "Min=" << AB_regular.getMinValue()
+                << " ; Max=" << AB_regular.getMaxValue() << std::endl;
       bool res = equalMatrix(AB, AB_regular, 1e-9);
       std::cout << "Check result: " << res << std::endl;
       if (!res) {
         std::cerr << "Problem with matrix multiplication!" << std::endl;
         return EXIT_FAILURE;
       }
-
 
       int nb_iterations = 1000;
       vpMatrix L = generateRandomMatrix(1000, 6, min, max);
@@ -752,7 +778,9 @@ main()
       for (int i = 0; i < nb_iterations; i++)
         LTL = L.AtA();
       t = vpTime::measureTimeMs() - t;
-      std::cout << "\n" << nb_iterations << " iterations of AtA for size: (1000x6)" << std::endl;
+      std::cout << "\n"
+                << nb_iterations << " iterations of AtA for size: (1000x6)"
+                << std::endl;
       std::cout << "Lapack: " << t << " ms" << std::endl;
       std::cout << "LTL:\n" << LTL << std::endl;
 
@@ -769,16 +797,19 @@ main()
         return EXIT_FAILURE;
       }
 
-
       vpMatrix LT = generateRandomMatrix(6, 1000, min, max);
       vpColVector R = generateRandomVector(1000, min, max);
       vpMatrix LTR, LTR_regular;
 
       t = vpTime::measureTimeMs();
       for (int i = 0; i < nb_iterations; i++)
-        LTR = LT*R;
+        LTR = LT * R;
       t = vpTime::measureTimeMs() - t;
-      std::cout << "\n" << nb_iterations << " iterations of matrix vector multiplication: (6x1000) x (1000x1)" << std::endl;
+      std::cout << "\n"
+                << nb_iterations
+                << " iterations of matrix vector multiplication: (6x1000) x "
+                   "(1000x1)"
+                << std::endl;
       std::cout << "Lapack: " << t << " ms" << std::endl;
       std::cout << "LTR:\n" << LTR.t() << std::endl;
 
@@ -795,16 +826,21 @@ main()
         return EXIT_FAILURE;
       }
 
-
-      vpVelocityTwistMatrix V(getRandomValues(min, max), getRandomValues(min, max), getRandomValues(min, max),
-                              getRandomValues(min, max), getRandomValues(min, max), getRandomValues(min, max));
+      vpVelocityTwistMatrix V(
+          getRandomValues(min, max), getRandomValues(min, max),
+          getRandomValues(min, max), getRandomValues(min, max),
+          getRandomValues(min, max), getRandomValues(min, max));
       vpMatrix LV, LV_regular;
 
       t = vpTime::measureTimeMs();
       for (int i = 0; i < nb_iterations; i++)
-        LV = L*V;
+        LV = L * V;
       t = vpTime::measureTimeMs() - t;
-      std::cout << "\n" << nb_iterations << " iterations of matrix velocity twist matrix multiplication: (1000x6) x (6x6)" << std::endl;
+      std::cout << "\n"
+                << nb_iterations
+                << " iterations of matrix velocity twist matrix "
+                   "multiplication: (1000x6) x (6x6)"
+                << std::endl;
       std::cout << "Lapack: " << t << " ms" << std::endl;
 
       t = vpTime::measureTimeMs();
@@ -815,7 +851,9 @@ main()
       res = equalMatrix(LV, LV_regular, 1e-9);
       std::cout << "Check result: " << res << std::endl;
       if (!res) {
-        std::cerr << "Problem with matrix and velocity twist matrix multiplication!" << std::endl;
+        std::cerr
+            << "Problem with matrix and velocity twist matrix multiplication!"
+            << std::endl;
         return EXIT_FAILURE;
       }
     }
@@ -826,14 +864,14 @@ main()
       std::vector<vpMatrix> vec_mat;
       vec_mat.emplace_back(5, 5);
 
-      vpMatrix A(4,4), B(4,4);
+      vpMatrix A(4, 4), B(4, 4);
       A = 1;
       B = 2;
-      vpMatrix res = A+B;
+      vpMatrix res = A + B;
       std::cout << "\n1) A+B:\n" << res << std::endl;
 
       vpMatrix res2;
-      res2 = A+B;
+      res2 = A + B;
       std::cout << "\n2) A+B:\n" << res2 << std::endl;
     }
 #endif
@@ -843,10 +881,10 @@ main()
       std::cout << "--- TEST vpMatrix::hadamard()" << std::endl;
       std::cout << "------------------------" << std::endl;
 
-      vpMatrix M1(3,5), M2(3,5);
+      vpMatrix M1(3, 5), M2(3, 5);
       for (unsigned int i = 0; i < M1.size(); i++) {
         M1.data[i] = i;
-        M2.data[i] = i+2;
+        M2.data[i] = i + 2;
       }
 
       std::cout << "M1:\n" << M1 << std::endl;
@@ -857,8 +895,7 @@ main()
 
     std::cout << "\nAll tests succeed" << std::endl;
     return EXIT_SUCCESS;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

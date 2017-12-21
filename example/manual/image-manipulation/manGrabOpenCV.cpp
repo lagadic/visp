@@ -45,20 +45,21 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vpOpenCVGrabber.h>
 
-int main(){
+int main()
+{
   vpImage<unsigned char> I; // Grey level image
-  
+
 #ifdef VISP_HAVE_OPENCV
-  vpOpenCVGrabber g; 	// Create the grabber
-   
-  g.open();             // Initialize the grabber
- 
+  vpOpenCVGrabber g; // Create the grabber
+
+  g.open(); // Initialize the grabber
+
   g.setWidth(640);
-  g.setHeight(480);     // If the camera supports 640x480 image size 
-  g.setFramerate(30);   // If the camera supports 30fps framerate
-  
-  while(1)
-    g.acquire(I);       // Acquire an image
+  g.setHeight(480);   // If the camera supports 640x480 image size
+  g.setFramerate(30); // If the camera supports 30fps framerate
+
+  while (1)
+    g.acquire(I); // Acquire an image
 
 #endif
 }

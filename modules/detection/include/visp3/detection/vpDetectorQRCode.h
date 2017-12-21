@@ -39,9 +39,9 @@
 #ifndef __vpDetectorQRCode_h__
 #define __vpDetectorQRCode_h__
 
-#include <vector>
-#include <utility>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include <visp3/core/vpConfig.h>
 
@@ -49,25 +49,24 @@
 
 #include <zbar.h>
 
-#include <visp3/detection/vpDetectorBase.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/detection/vpDetectorBase.h>
 
 /*!
   \class vpDetectorQRCode
   \ingroup group_detection_barcode
   Base class for bar code detector. This class is a wrapper over libzbar
-  available from http://zbar.sourceforge.net. Installation instructions are provided
-  here https://visp.inria.fr/3rd_zbar.
+  available from http://zbar.sourceforge.net. Installation instructions are
+provided here https://visp.inria.fr/3rd_zbar.
 
-  The detect() function allows to detect multiple QR codes in an image. Once detected,
-  for each QR code it is possible to retrieve the location of the corners using getPolygon(),
-  the encoded message using getMessage(), the bounding box using getBBox() and the center
-  of gravity using getCog().
+  The detect() function allows to detect multiple QR codes in an image. Once
+detected, for each QR code it is possible to retrieve the location of the
+corners using getPolygon(), the encoded message using getMessage(), the
+bounding box using getBBox() and the center of gravity using getCog().
 
-  The following sample code shows how to use this class to detect QR codes in an image.
-  \code
-#include <visp3/detection/vpDetectorQRCode.h>
-#include <visp3/io/vpImageIo.h>
+  The following sample code shows how to use this class to detect QR codes in
+an image. \code #include <visp3/detection/vpDetectorQRCode.h> #include
+<visp3/io/vpImageIo.h>
 
 int main()
 {
@@ -84,7 +83,8 @@ int main()
       std::vector<vpImagePoint> p = detector.getPolygon(i);
       for(size_t j=0; j < p.size(); j++)
         std::cout << "  Point " << j << ": " << p[j] << std::endl;
-      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" << std::endl;
+      std::cout << "  Message: \"" << detector.getMessage(i) << "\"" <<
+std::endl;
     }
   }
 #endif
@@ -117,7 +117,7 @@ protected:
 
 public:
   vpDetectorQRCode();
-  virtual ~vpDetectorQRCode() {};
+  virtual ~vpDetectorQRCode(){};
   bool detect(const vpImage<unsigned char> &I);
 };
 

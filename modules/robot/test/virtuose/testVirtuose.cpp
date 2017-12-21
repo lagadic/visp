@@ -38,7 +38,8 @@
 
 /*!
   \example testVirtuose.cpp
-    Test for reading the Virtuose's joint values inside the main function after checking the emergency button.
+    Test for reading the Virtuose's joint values inside the main function
+  after checking the emergency button.
 */
 
 #include <visp3/robot/vpVirtuose.h>
@@ -51,20 +52,19 @@ int main()
     virtuose.init();
 
     bool emergStop = virtuose.getEmergencyStop();
-    if (emergStop)
-    {
+    if (emergStop) {
       std::cout << "The system is operational." << std::endl;
       vpColVector q = virtuose.getArticularPosition();
       std::cout << "The current joint values are : " << q.t() << std::endl;
-    }
-    else
-      std::cout << "The system is not operational. \nPlease plug the emergency stop to the system (or untrigger it)." << std::endl;
-  }
-  catch(vpException &e) {
+    } else
+      std::cout << "The system is not operational. \nPlease plug the "
+                   "emergency stop to the system (or untrigger it)."
+                << std::endl;
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }
 #else
-  std::cout << "You should install Virtuose SDK to use this binary..." << std::endl;
+  std::cout << "You should install Virtuose SDK to use this binary..."
+            << std::endl;
 #endif
 }
-

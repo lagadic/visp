@@ -56,37 +56,33 @@
 
 class vpPlotCurve
 {
-  public:
-    //! Different styles to plot the curve.
-    typedef enum
-    {
-      point,
-      line,
-      dashed_line,
-      marker
-    } vpCurveStyle;
-    vpColor color;
-    vpCurveStyle curveStyle; 
-    unsigned int thickness ;
-    //vpMarkerStyle markerStyle;
-    //char lineStyle[20];
-    //vpList<vpImagePoint> pointList;
-    unsigned int nbPoint;
-    vpImagePoint lastPoint;
-    std::list<double> pointListx;
-    std::list<double> pointListy;
-    std::list<double> pointListz;
-    std::string legend;
-    double xmin;
-    double xmax;
-    double ymin;
-    double ymax;
-    
-  public:
-    vpPlotCurve();
-    ~vpPlotCurve();
-    void plotPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const double x, const double y);
-    void plotList(const vpImage<unsigned char> &I, const double xorg, const double yorg, const double zoomx, const double zoomy);
+public:
+  //! Different styles to plot the curve.
+  typedef enum { point, line, dashed_line, marker } vpCurveStyle;
+  vpColor color;
+  vpCurveStyle curveStyle;
+  unsigned int thickness;
+  // vpMarkerStyle markerStyle;
+  // char lineStyle[20];
+  // vpList<vpImagePoint> pointList;
+  unsigned int nbPoint;
+  vpImagePoint lastPoint;
+  std::list<double> pointListx;
+  std::list<double> pointListy;
+  std::list<double> pointListz;
+  std::string legend;
+  double xmin;
+  double xmax;
+  double ymin;
+  double ymax;
+
+public:
+  vpPlotCurve();
+  ~vpPlotCurve();
+  void plotPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP,
+                 const double x, const double y);
+  void plotList(const vpImage<unsigned char> &I, const double xorg,
+                const double yorg, const double zoomx, const double zoomy);
 };
 
 #endif

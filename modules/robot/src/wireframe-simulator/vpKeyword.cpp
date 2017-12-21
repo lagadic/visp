@@ -37,42 +37,36 @@
  *
  *****************************************************************************/
 
-
-
-
+#include "vpKeyword.h"
 #include "vpMy.h"
 #include "vpToken.h"
-#include "vpKeyword.h"
 
-#include	<stdio.h>
-#include	<stdlib.h>
-#include	<string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-static	void	open_hash (void);
-static	void	close_hash (void);
-static	int hashpjw (const char *str);
-static	void insert_keyword (const char *str, Index token);
+static void open_hash(void);
+static void close_hash(void);
+static int hashpjw(const char *str);
+static void insert_keyword(const char *str, Index token);
 
-#ifdef	debug
-static	void	delete_keyword (void);
-static	char	*get_keyword (void);
-#endif	/* debug */
+#ifdef debug
+static void delete_keyword(void);
+static char *get_keyword(void);
+#endif /* debug */
 
+#define PRIME 211
+#define NEXT(x) (x) = (x)->next
 
-#define	PRIME		211
-#define	NEXT(x)		(x) = (x)->next
-
-typedef struct	bucket {
-	struct	bucket	*next;	/* element suivant	*/
-  char		*ident;	/* identifateur 	*/
-	Byte		length;	/* longueur de "ident"	*/
-	Index		token;	/* code du jeton 	*/
+typedef struct bucket {
+  struct bucket *next; /* element suivant	*/
+  char *ident;         /* identifateur 	*/
+  Byte length;         /* longueur de "ident"	*/
+  Index token;         /* code du jeton 	*/
 } Bucket;
 
-
-static	Bucket	**hash_tbl;	/* table de "hash-coding"	*/
-
+static Bucket **hash_tbl; /* table de "hash-coding"	*/
 
 /*
  * La procedure "open_keyword" alloue et initialise les variables utilisees
@@ -80,58 +74,54 @@ static	Bucket	**hash_tbl;	/* table de "hash-coding"	*/
  * Entree :
  * kwp		Tableau des mots cles termine par NULL.
  */
-void open_keyword (Keyword *kwp)
+void open_keyword(Keyword *kwp)
 {
-	open_hash ();
-	for (; kwp->ident != NULL; kwp++) /* recopie les mots cles	*/
-		insert_keyword (kwp->ident, kwp->token);
+  open_hash();
+  for (; kwp->ident != NULL; kwp++) /* recopie les mots cles	*/
+    insert_keyword(kwp->ident, kwp->token);
 }
 
 /*
  * La procedure "close_keyword" libere les variables utilisees
  * par les procedures de gestion des mots cles.
  */
-void close_keyword (void)
-{
-	close_hash ();
-}
+void close_keyword(void) { close_hash(); }
 
 /*
  * La procedure "open_hash" alloue et initialise la table de codage.
  */
-static	void
-open_hash (void)
+static void open_hash(void)
 {
-	Bucket	**head, **bend;
+  Bucket **head, **bend;
 
-	if ((hash_tbl = (Bucket **) malloc (sizeof (Bucket *) * PRIME))==NULL){
-    static	 char	proc_name[] = "open_hash";
-    perror (proc_name);
-		exit (1);
-	}
-	head = hash_tbl;
-	bend = head + PRIME;
-  for (; head < bend; *head++ = NULL) {};
+  if ((hash_tbl = (Bucket **)malloc(sizeof(Bucket *) * PRIME)) == NULL) {
+    static char proc_name[] = "open_hash";
+    perror(proc_name);
+    exit(1);
+  }
+  head = hash_tbl;
+  bend = head + PRIME;
+  for (; head < bend; *head++ = NULL) {
+  };
 }
 
 /*
  * La procedure "close_hash" libere la table de codage et ses elements.
  */
-static	void
-close_hash (void)
+static void close_hash(void)
 {
-	Bucket	**head = hash_tbl;
-	Bucket **bend = head + PRIME;
-	Bucket	*bp;	/* element courant	*/
-	Bucket	*next;	/* element suivant	*/
+  Bucket **head = hash_tbl;
+  Bucket **bend = head + PRIME;
+  Bucket *bp;   /* element courant	*/
+  Bucket *next; /* element suivant	*/
 
-	for (; head < bend; head++) {	/* libere les listes	*/
-		for (bp = *head; bp != NULL; bp = next) {
-			next = bp->next;
-			free ((char *) bp);
-		}
-	}
-	free ((char *) hash_tbl);	/* libere la table	*/
+  for (; head < bend; head++) { /* libere les listes	*/
+    for (bp = *head; bp != NULL; bp = next) {
+      next = bp->next;
+      free((char *)bp);
+    }
+  }
+  free((char *)hash_tbl); /* libere la table	*/
 }
 
 /*
@@ -146,22 +136,20 @@ close_hash (void)
  * Sortie :
  *		Le code de la chaine.
  */
-static	int
-hashpjw (const char *str)
+static int hashpjw(const char *str)
 {
-	unsigned	h = 0;	/* "hash value"	*/
+  unsigned h = 0; /* "hash value"	*/
 
-	for (; *str != '\0'; str++) {
-    unsigned	g;
+  for (; *str != '\0'; str++) {
+    unsigned g;
     h = (h << 4) + (unsigned)(*str);
     if ((g = h & ~0xfffffff) != 0) {
-			h ^= g >> 24;
-			h ^= g;
-		}
-	}
+      h ^= g >> 24;
+      h ^= g;
+    }
+  }
   return ((int)(h % PRIME));
 }
-
 
 /*
  * La procedure "insert_keyword" insere en tete d'un point d'entree
@@ -171,26 +159,25 @@ hashpjw (const char *str)
  * str		Chaine de caracteres du mot cle.
  * token	Valeur du jeton associe au mot cle.
  */
-static	void
-insert_keyword (const char *str, Index token)
+static void insert_keyword(const char *str, Index token)
 {
-	Bucket	**head = hash_tbl + hashpjw (str);
-	Bucket	*bp;
-	Byte	length;
+  Bucket **head = hash_tbl + hashpjw(str);
+  Bucket *bp;
+  Byte length;
 
-	length = (Byte)( strlen(str) ); // Warning! Overflow possible!
-	if ((bp = (Bucket *) malloc (sizeof (Bucket) + length  + 1)) == NULL) {
-    static	const char	proc_name[] = "insert_keyword";
-    perror (proc_name);
-		exit (1);
-	}
-	bp->length = length;
-	bp->token  = token;
-	bp->ident  = (char *) (bp + 1);
-	strcpy (bp->ident, str);
+  length = (Byte)(strlen(str)); // Warning! Overflow possible!
+  if ((bp = (Bucket *)malloc(sizeof(Bucket) + length + 1)) == NULL) {
+    static const char proc_name[] = "insert_keyword";
+    perror(proc_name);
+    exit(1);
+  }
+  bp->length = length;
+  bp->token = token;
+  bp->ident = (char *)(bp + 1);
+  strcpy(bp->ident, str);
 
-	bp->next = *head;	/* insere "b" en tete de "head"	*/
-	*head = bp;
+  bp->next = *head; /* insere "b" en tete de "head"	*/
+  *head = bp;
 }
 
 /*
@@ -204,41 +191,42 @@ insert_keyword (const char *str, Index token)
  * Sortie :
  * 		Valeur du jeton associe si c'est un mot cle, 0 sinon.
  */
-Index get_symbol (char *ident, int length)
+Index get_symbol(char *ident, int length)
 {
-	Bucket	*bp; 
-  const char	*kwd;
-	char	*idn = ident;
-	int	len  = length;
+  Bucket *bp;
+  const char *kwd;
+  char *idn = ident;
+  int len = length;
 
-	{	/* calcule le code de hachage (voir "hashpjw")	*/
-		unsigned	h = 0;	/* "hash value"	*/
+  {                 /* calcule le code de hachage (voir "hashpjw")	*/
+    unsigned h = 0; /* "hash value"	*/
 
-		for (; len != 0; idn++, len--) {
-      unsigned	g;
+    for (; len != 0; idn++, len--) {
+      unsigned g;
       h = (h << 4) + (unsigned)(*idn);
       if ((g = h & ~0xfffffff) != 0) {
-				h ^= g >> 24;
-				h ^= g;
-			}
-		}
-		bp = hash_tbl[h % PRIME];
-	}
+        h ^= g >> 24;
+        h ^= g;
+      }
+    }
+    bp = hash_tbl[h % PRIME];
+  }
 
-	/* recherche le mot cle	*/
+  /* recherche le mot cle	*/
 
-	for (; bp != NULL; NEXT(bp)) {
-		if (length == bp->length) {
-			idn = ident;
-			len = length;
-			kwd = bp->ident;
+  for (; bp != NULL; NEXT(bp)) {
+    if (length == bp->length) {
+      idn = ident;
+      len = length;
+      kwd = bp->ident;
       for (; *idn == *kwd; idn++, kwd++) {
         --len;
-        if (len == 0) return (bp->token);
+        if (len == 0)
+          return (bp->token);
       }
-		}
-	}
-	return (0);	/*  identificateur	*/
+    }
+  }
+  return (0); /*  identificateur	*/
 }
 
 #endif

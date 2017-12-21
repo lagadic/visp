@@ -44,12 +44,12 @@
 #ifndef vpMeLine_HH
 #define vpMeLine_HH
 
-#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpMatrix.h>
 #include <visp3/me/vpMeTracker.h>
 
-#include <math.h>
 #include <iostream>
+#include <math.h>
 
 /*!
   \class vpMeLine
@@ -101,8 +101,8 @@
 \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/me/vpMeLine.h>
 #include <visp3/core/vpImagePoint.h>
+#include <visp3/me/vpMeLine.h>
 
 int main()
 {
@@ -115,7 +115,7 @@ int main()
       I[i][j] = 255;
     }
   }
-    
+
   // Set the moving-edges tracker parameters
   vpMe me;
   me.setRange(25);
@@ -127,7 +127,7 @@ int main()
   line.setMe(&me);
 
   // Initialize the location of the vertical line to track
-  vpImagePoint ip1, ip2; // Two points belonging to the line to track 
+  vpImagePoint ip1, ip2; // Two points belonging to the line to track
   ip1.set_i( 120 );
   ip1.set_j( 119 );
   ip2.set_i( 170 );
@@ -146,26 +146,28 @@ int main()
 }
 \endcode
 
-  \note It is possible to display the line as an overlay. For that you 
+  \note It is possible to display the line as an overlay. For that you
   must use the display function of the class vpMeLine.
 */
 
 class VISP_EXPORT vpMeLine : public vpMeTracker
 {
 private:
-  static void update_indices(double theta,int incr,int i,int j,int& i1,int& i2,int& j1,int& j2);
-  
-protected:
-  vpMeSite PExt[2] ;
+  static void update_indices(double theta, int incr, int i, int j, int &i1,
+                             int &i2, int &j1, int &j2);
 
-  double rho, theta ;
-  double delta ,delta_1;
+protected:
+  vpMeSite PExt[2];
+
+  double rho, theta;
+  double delta, delta_1;
   double angle, angle_1;
   int sign;
 
-  //! Flag to specify wether the intensity of the image at the middle point is used to compute the sign of rho or not.
+  //! Flag to specify wether the intensity of the image at the middle point is
+  //! used to compute the sign of rho or not.
   bool _useIntensityForRho;
-  
+
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
 #else
@@ -177,85 +179,96 @@ protected:
   double c; //!< Parameter c of the line equation a*i + b*j + c = 0
 
 public:
-  vpMeLine() ;
+  vpMeLine();
   vpMeLine(const vpMeLine &meline);
-  virtual ~vpMeLine() ;
+  virtual ~vpMeLine();
 
-  void display(const vpImage<unsigned char>& I, vpColor col) ;
+  void display(const vpImage<unsigned char> &I, vpColor col);
 
-  void track(const vpImage<unsigned char>& Im);
+  void track(const vpImage<unsigned char> &Im);
 
-  void sample(const vpImage<unsigned char>&image);
-  void reSample(const vpImage<unsigned char> &I) ;
-  void leastSquare() ;
+  void sample(const vpImage<unsigned char> &image);
+  void reSample(const vpImage<unsigned char> &I);
+  void leastSquare();
   void updateDelta();
-  void setExtremities() ;
-  void seekExtremities(const vpImage<unsigned char> &I) ;
-  void suppressPoints() ;
+  void setExtremities();
+  void seekExtremities(const vpImage<unsigned char> &I);
+  void suppressPoints();
 
-  void initTracking(const vpImage<unsigned char> &I) ;
-  void initTracking(const vpImage<unsigned char> &I,
-		    const vpImagePoint &ip1,
-		    const vpImagePoint &ip2) ;
+  void initTracking(const vpImage<unsigned char> &I);
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1,
+                    const vpImagePoint &ip2);
 
-  void computeRhoTheta(const vpImage<unsigned char> &I) ;
-  double getRho() const ;
-  double getTheta() const ;
-  void getExtremities(vpImagePoint &ip1, vpImagePoint &ip2) ;
-  
+  void computeRhoTheta(const vpImage<unsigned char> &I);
+  double getRho() const;
+  double getTheta() const;
+  void getExtremities(vpImagePoint &ip1, vpImagePoint &ip2);
+
   /*!
     Gets the equation parameters of the line
   */
-  void getEquationParam(double &A, double &B, double &C) { A = a; B = b; C = c; }
-  
+  void getEquationParam(double &A, double &B, double &C)
+  {
+    A = a;
+    B = b;
+    C = c;
+  }
+
   /*!
     Gets parameter a of the line equation a*i + b*j + c = 0
   */
-  inline double getA() const {return a; }
-  
+  inline double getA() const { return a; }
+
   /*!
     Gets parameter b of the line equation a*i + b*j + c = 0
   */
-  inline double getB() const {return b; }
-  
+  inline double getB() const { return b; }
+
   /*!
     Gets parameter c of the line equation a*i + b*j + c = 0
   */
-  inline double getC() const {return c; }
+  inline double getC() const { return c; }
 
-  static bool intersection(const vpMeLine &line1, const vpMeLine &line2, 
-			   vpImagePoint &ip); 
+  static bool intersection(const vpMeLine &line1, const vpMeLine &line2,
+                           vpImagePoint &ip);
 
   /*!
     This method allows to turn off the computation of the sign of the rho
-    attribute based on the intensity near the middle point of the line. This is
-    usually done to distinguish between a black/white and a white/black edge but
-    it may be source of problem (ex. for a servoing example) when this point can
-    be occluded.
+    attribute based on the intensity near the middle point of the line. This
+    is usually done to distinguish between a black/white and a white/black
+    edge but it may be source of problem (ex. for a servoing example) when
+    this point can be occluded.
 
     \param useIntensityForRho : new value of the flag.
   */
-  inline void computeRhoSignFromIntensity(const bool useIntensityForRho){
+  inline void computeRhoSignFromIntensity(const bool useIntensityForRho)
+  {
     _useIntensityForRho = useIntensityForRho;
   }
 
-//Static Functions
-public: 
-  static void display(const vpImage<unsigned char>& I,const vpMeSite &PExt1, const vpMeSite &PExt2,
-                      const double &A, const double &B, const double &C,
-                      const vpColor &color = vpColor::green,  unsigned int thickness=1);
-  static void display(const vpImage<vpRGBa>& I,const vpMeSite &PExt1, const vpMeSite &PExt2,
-                      const double &A, const double &B, const double &C,
-                      const vpColor &color = vpColor::green,  unsigned int thickness=1);
+  // Static Functions
+public:
+  static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1,
+                      const vpMeSite &PExt2, const double &A, const double &B,
+                      const double &C, const vpColor &color = vpColor::green,
+                      unsigned int thickness = 1);
+  static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1,
+                      const vpMeSite &PExt2, const double &A, const double &B,
+                      const double &C, const vpColor &color = vpColor::green,
+                      unsigned int thickness = 1);
 
-  static void display(const vpImage<unsigned char>& I,const vpMeSite &PExt1, const vpMeSite &PExt2,
-                      const std::list<vpMeSite> &site_list,
-                      const double &A, const double &B, const double &C,
-                      const vpColor &color = vpColor::green,  unsigned int thickness=1);
-  static void display(const vpImage<vpRGBa>& I,const vpMeSite &PExt1, const vpMeSite &PExt2,
-                      const std::list<vpMeSite> &site_list,
-                      const double &A, const double &B, const double &C,
-                      const vpColor &color = vpColor::green,  unsigned int thickness=1);
+  static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1,
+                      const vpMeSite &PExt2,
+                      const std::list<vpMeSite> &site_list, const double &A,
+                      const double &B, const double &C,
+                      const vpColor &color = vpColor::green,
+                      unsigned int thickness = 1);
+  static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1,
+                      const vpMeSite &PExt2,
+                      const std::list<vpMeSite> &site_list, const double &A,
+                      const double &B, const double &C,
+                      const vpColor &color = vpColor::green,
+                      unsigned int thickness = 1);
 };
 
 #endif

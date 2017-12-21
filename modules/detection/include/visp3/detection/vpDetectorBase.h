@@ -39,10 +39,10 @@
 #ifndef __vpDetectorBase_h__
 #define __vpDetectorBase_h__
 
-#include <vector>
-#include <utility>
-#include <string>
 #include <assert.h>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
@@ -54,17 +54,22 @@
   Base class for object detection.
 
   This class is a generic class that can be used to detect:
-  - bar codes like QRcodes of Data matrices. The example given in tutorial-barcode-detector.cpp shows
-    how to detect one or more bar codes in an image. In tutorial-barcode-detector-live.cpp you will find
-    an other example that shows how to use this class to detect bar codes in images acquired by a camera.
+  - bar codes like QRcodes of Data matrices. The example given in
+  tutorial-barcode-detector.cpp shows how to detect one or more bar codes in
+  an image. In tutorial-barcode-detector-live.cpp you will find an other
+  example that shows how to use this class to detect bar codes in images
+  acquired by a camera.
   - faces. An example is provided in tutorial-face-detector-live.cpp.
  */
 class VISP_EXPORT vpDetectorBase
 {
 protected:
-  std::vector< std::vector<vpImagePoint> > m_polygon; //!< For each object, defines the polygon that contains the object.
-  std::vector< std::string > m_message; //!< Message attached to each object.
-  size_t m_nb_objects; //!< Number of detected objects.
+  std::vector<std::vector<vpImagePoint> > m_polygon; //!< For each object,
+                                                     //!< defines the polygon
+                                                     //!< that contains the
+                                                     //!< object.
+  std::vector<std::string> m_message; //!< Message attached to each object.
+  size_t m_nb_objects;                //!< Number of detected objects.
 
 public:
   /*!
@@ -89,40 +94,37 @@ public:
   /*!
     Return the bounding box of the ith object.
    */
-  vpRect getBBox(size_t i) const ;
+  vpRect getBBox(size_t i) const;
 
   /*!
     Return the center of gravity location of the ith object.
    */
-  vpImagePoint getCog(size_t i) const ;
+  vpImagePoint getCog(size_t i) const;
 
   /*!
     Returns the contained message of the ith object if there is one.
    */
-  std::vector< std::string > & getMessage() { return m_message; }
+  std::vector<std::string> &getMessage() { return m_message; }
 
   /*!
     Returns the contained message of the ith object if there is one.
    */
-  std::string & getMessage(size_t i);
+  std::string &getMessage(size_t i);
 
   /*!
     Return the number of objects that are detected.
     */
-  size_t getNbObjects() const {return m_nb_objects; }
+  size_t getNbObjects() const { return m_nb_objects; }
 
   /*!
     Returns object container box as a vector of points.
    */
-  std::vector< std::vector<vpImagePoint> > & getPolygon()
-  {
-    return m_polygon;
-  }
+  std::vector<std::vector<vpImagePoint> > &getPolygon() { return m_polygon; }
 
   /*!
     Returns ith object container box as a vector of points.
    */
-  std::vector<vpImagePoint> & getPolygon(size_t i);
+  std::vector<vpImagePoint> &getPolygon(size_t i);
 
   //@}
 };

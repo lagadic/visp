@@ -36,16 +36,14 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file vpFeatureBuilderPoint3D.cpp
   \brief  conversion between tracker
   and visual feature 3D Point
 */
+#include <visp3/core/vpException.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureException.h>
-#include <visp3/core/vpException.h>
-
 
 /*!
 
@@ -53,35 +51,27 @@
   \f$(X,Y,Z)\f$ in the camera frame. The values of \f$(X,Y,Z)\f$ are
   expressed in meters.
 
-  \warning To be sure that the vpFeaturePoint is well initialized, you have to be sure that at least the point
-  coordinates in the camera frame are computed and stored in the vpPoint.
+  \warning To be sure that the vpFeaturePoint is well initialized, you have to
+  be sure that at least the point coordinates in the camera frame are computed
+  and stored in the vpPoint.
 
   \param s : Visual feature to initialize.
 
   \param t : The vpPoint used to create the vpFeaturePoint.
 */
-void
-vpFeatureBuilder::create(vpFeaturePoint3D &s, const vpPoint &t )
+void vpFeatureBuilder::create(vpFeaturePoint3D &s, const vpPoint &t)
 {
-  try
-  {
+  try {
 
+    s.set_X(t.cP[0] / t.cP[3]);
+    s.set_Y(t.cP[1] / t.cP[3]);
+    s.set_Z(t.cP[2] / t.cP[3]);
 
-
-    s.set_X( t.cP[0]/t.cP[3]) ;
-    s.set_Y( t.cP[1]/t.cP[3])  ;
-    s.set_Z( t.cP[2]/t.cP[3])  ;
-
-
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
-
-
 
 /*
  * Local variables:

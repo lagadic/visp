@@ -36,44 +36,46 @@
  *
  *****************************************************************************/
 
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpMath.h>
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpException.h>
-#include <visp3/core/vpMatrixException.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpMatrixException.h>
 
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
+#include <cmath> // std::fabs
 #include <iostream>
+#include <limits> // numeric_limits
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef VISP_HAVE_EIGEN3
-#  include <Eigen/SVD>
+#include <Eigen/SVD>
 #endif
 
 #ifdef VISP_HAVE_GSL
-#  include <gsl/gsl_linalg.h>
+#include <gsl/gsl_linalg.h>
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
-#    include <opencv2/core/core.hpp>
+#include <opencv2/core/core.hpp>
 #endif
 
 #ifdef VISP_HAVE_LAPACK
-#  ifdef VISP_HAVE_LAPACK_BUILT_IN
+#ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
-#  else
+#else
 typedef int integer;
-#  endif
+#endif
 
-extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a, integer *lda, double *s, double *u, integer *ldu, double *vt,
-                       integer *ldvt, double *work, integer *lwork, integer *iwork, integer *info);
+extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a,
+                       integer *lda, double *s, double *u, integer *ldu,
+                       double *vt, integer *ldvt, double *work,
+                       integer *lwork, integer *iwork, integer *info);
 
-#  include <stdio.h>
-#  include <string.h>
+#include <stdio.h>
+#include <string.h>
 #endif
 /*---------------------------------------------------------------------
 
@@ -87,7 +89,8 @@ SVD related functions
 
   Singular value decomposition (SVD) using OpenCV 3rd party.
 
-  Given matrix \f$M\f$, this function computes it singular value decomposition such as
+  Given matrix \f$M\f$, this function computes it singular value decomposition
+such as
 
   \f[ M = U \Sigma V^{\top} \f]
 
@@ -157,13 +160,15 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
   cv::Mat opencvV = opencvSVD.vt;
   cv::Mat opencvW = opencvSVD.w;
   V.resize((unsigned int)opencvV.rows, (unsigned int)opencvV.cols);
-  w.resize((unsigned int)(opencvW.rows*opencvW.cols));
+  w.resize((unsigned int)(opencvW.rows * opencvW.cols));
 
-  memcpy(V.data, opencvV.data, (size_t)(8*opencvV.rows*opencvV.cols));
-  V=V.transpose();
-  memcpy(w.data, opencvW.data, (size_t)(8*opencvW.rows*opencvW.cols));
-  this->resize((unsigned int)opencvSVD.u.rows, (unsigned int)opencvSVD.u.cols);
-  memcpy(this->data, opencvSVD.u.data, (size_t)(8*opencvSVD.u.rows*opencvSVD.u.cols));
+  memcpy(V.data, opencvV.data, (size_t)(8 * opencvV.rows * opencvV.cols));
+  V = V.transpose();
+  memcpy(w.data, opencvW.data, (size_t)(8 * opencvW.rows * opencvW.cols));
+  this->resize((unsigned int)opencvSVD.u.rows,
+               (unsigned int)opencvSVD.u.cols);
+  memcpy(this->data, opencvSVD.u.data,
+         (size_t)(8 * opencvSVD.u.rows * opencvSVD.u.cols));
 }
 
 #endif
@@ -173,7 +178,8 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
 
   Singular value decomposition (SVD) using Lapack 3rd party.
 
-  Given matrix \f$M\f$, this function computes it singular value decomposition such as
+  Given matrix \f$M\f$, this function computes it singular value decomposition
+such as
 
   \f[ M = U \Sigma V^{\top} \f]
 
@@ -236,37 +242,40 @@ int main()
 */
 void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
 {
-  w.resize( this->getCols() );
-  V.resize( this->getCols(), this->getCols() );
+  w.resize(this->getCols());
+  V.resize(this->getCols(), this->getCols());
 
   integer m = (integer)(this->getCols());
   integer n = (integer)(this->getRows());
   integer lda = m;
   integer ldu = m;
-  integer ldvt = (std::min)(m,n);
+  integer ldvt = (std::min)(m, n);
   integer info, lwork;
 
   double wkopt;
   double *work;
 
-  integer* iwork = new integer[8*static_cast<integer>((std::min)(n,m))];
+  integer *iwork = new integer[8 * static_cast<integer>((std::min)(n, m))];
 
   double *s = w.data;
-  double *a = new double[static_cast<unsigned int>(lda*n)];
-  memcpy(a, this->data, this->getRows()*this->getCols()*sizeof(double));
+  double *a = new double[static_cast<unsigned int>(lda * n)];
+  memcpy(a, this->data, this->getRows() * this->getCols() * sizeof(double));
   double *u = V.data;
   double *vt = this->data;
 
   lwork = -1;
-  dgesdd_( (char*)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, iwork, &info );
+  dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork,
+          iwork, &info);
   lwork = (int)wkopt;
   work = new double[static_cast<unsigned int>(lwork)];
 
-  dgesdd_( (char*)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, iwork, &info );
+  dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork,
+          iwork, &info);
 
-  if( info > 0 ) {
-   throw(vpMatrixException(vpMatrixException::fatalError,
-         "The algorithm computing SVD failed to converge.")) ;
+  if (info > 0) {
+    throw(
+        vpMatrixException(vpMatrixException::fatalError,
+                          "The algorithm computing SVD failed to converge."));
   }
 
   V = V.transpose();
@@ -282,7 +291,8 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
 
   Singular value decomposition (SVD) using GSL 3rd party.
 
-  Given matrix \f$M\f$, this function computes it singular value decomposition such as
+  Given matrix \f$M\f$, this function computes it singular value decomposition
+such as
 
   \f[ M = U \Sigma V^{\top} \f]
 
@@ -343,15 +353,14 @@ int main()
 
   \sa svd(), svdEigen3(), svdOpenCV(), svdLapack()
 */
-void
-vpMatrix::svdGsl(vpColVector &w, vpMatrix &V)
+void vpMatrix::svdGsl(vpColVector &w, vpMatrix &V)
 {
-  w.resize( this->getCols() );
-  V.resize( this->getCols(), this->getCols() );
+  w.resize(this->getCols());
+  V.resize(this->getCols(), this->getCols());
 
-  unsigned int nc = getCols() ;
-  unsigned int nr = getRows() ;
-  gsl_vector *work = gsl_vector_alloc(nc) ;
+  unsigned int nc = getCols();
+  unsigned int nr = getRows();
+  gsl_vector *work = gsl_vector_alloc(nc);
 
   gsl_matrix A;
   A.size1 = nr;
@@ -376,9 +385,9 @@ vpMatrix::svdGsl(vpColVector &w, vpMatrix &V)
   S.owner = 0;
   S.block = 0;
 
-  gsl_linalg_SV_decomp(&A, &V_, &S, work) ;
+  gsl_linalg_SV_decomp(&A, &V_, &S, work);
 
-  gsl_vector_free(work) ;
+  gsl_vector_free(work);
 }
 #endif // # #GSL
 
@@ -387,7 +396,8 @@ vpMatrix::svdGsl(vpColVector &w, vpMatrix &V)
 
   Singular value decomposition (SVD) using Eigen3 3rd party.
 
-  Given matrix \f$M\f$, this function computes it singular value decomposition such as
+  Given matrix \f$M\f$, this function computes it singular value decomposition
+such as
 
   \f[ M = U \Sigma V^{\top} \f]
 
@@ -450,16 +460,23 @@ int main()
 */
 void vpMatrix::svdEigen3(vpColVector &w, vpMatrix &V)
 {
-  w.resize( this->getCols() );
-  V.resize( this->getCols(), this->getCols() );
+  w.resize(this->getCols());
+  V.resize(this->getCols(), this->getCols());
 
-  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > M(this->data, this->getRows(), this->getCols());
+  Eigen::Map<
+      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >
+      M(this->data, this->getRows(), this->getCols());
 
-  Eigen::JacobiSVD<Eigen::MatrixXd> svd(M, Eigen::ComputeThinU | Eigen::ComputeThinV);
+  Eigen::JacobiSVD<Eigen::MatrixXd> svd(M, Eigen::ComputeThinU |
+                                               Eigen::ComputeThinV);
 
   Eigen::Map<Eigen::VectorXd> w_(w.data, w.size());
-  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > V_(V.data, V.getRows(), V.getCols());
-  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > U_(this->data, this->getRows(), this->getCols());
+  Eigen::Map<
+      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >
+      V_(V.data, V.getRows(), V.getCols());
+  Eigen::Map<
+      Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >
+      U_(this->data, this->getRows(), this->getCols());
   w_ = svd.singularValues();
   V_ = svd.matrixV();
   U_ = svd.matrixU();

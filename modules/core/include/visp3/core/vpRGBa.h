@@ -37,7 +37,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpRGBa_h
 #define vpRGBa_h
 
@@ -57,9 +56,9 @@
   Class that defines a RGBa 32 bits structure that is used to build color
   images. RGBa stands for red green blue alpha color space.
 
-  The alpha channel is normally used as an opacity channel. If a pixel has a value
-  of 0 in its alpha channel, it is fully transparent, whereas a value of 255 in the alpha
-  channel gives a fully opaque pixel.
+  The alpha channel is normally used as an opacity channel. If a pixel has a
+  value of 0 in its alpha channel, it is fully transparent, whereas a value of
+  255 in the alpha channel gives a fully opaque pixel.
 
   By default the alpha channel is set to vpRGBa::alpha_default.
   \sa vpImage
@@ -67,9 +66,7 @@
 class VISP_EXPORT vpRGBa
 {
 public:
-  enum AlphaDefault {
-    alpha_default = 255
-  };
+  enum AlphaDefault { alpha_default = 255 };
 
   /*!
     Basic constructor.
@@ -91,9 +88,10 @@ public:
 
   */
   inline vpRGBa(const unsigned char &r, const unsigned char &g,
-    const unsigned char &b, const unsigned char &a=0)
-    : R(r), G(g), B(b), A(a) {}
-
+                const unsigned char &b, const unsigned char &a = 0)
+    : R(r), G(g), B(b), A(a)
+  {
+  }
 
   /*!
     Constructor.
@@ -104,7 +102,6 @@ public:
 
   */
   inline vpRGBa(const unsigned char &v) : R(v), G(v), B(v), A(v) {}
-
 
   /*!
     Copy constructor.
@@ -120,21 +117,23 @@ public:
     A=v[3]
 
   */
-  inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(vpRGBa::alpha_default)
+  inline vpRGBa(const vpColVector &v)
+    : R(0), G(0), B(0), A(vpRGBa::alpha_default)
   {
     *this = v;
   }
 
-  // We cannot add here the following destructor without changing the hypothesis that the size of this class is 4.
-  // With the destructor it becomes 16 that does break a lot of things arround image conversions
+  // We cannot add here the following destructor without changing the
+  // hypothesis that the size of this class is 4. With the destructor it
+  // becomes 16 that does break a lot of things arround image conversions
   // virtual ~vpRGBa() {}; // Not to implement
 
-  vpRGBa & operator=(const unsigned char &v) ;
-  vpRGBa & operator=(const vpRGBa &v) ;
+  vpRGBa &operator=(const unsigned char &v);
+  vpRGBa &operator=(const vpRGBa &v);
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
-  vpRGBa & operator=(const vpRGBa &&v);
+  vpRGBa &operator=(const vpRGBa &&v);
 #endif
-  vpRGBa & operator=(const vpColVector &v) ;
+  vpRGBa &operator=(const vpColVector &v);
   bool operator==(const vpRGBa &v);
   bool operator!=(const vpRGBa &v);
 
@@ -148,17 +147,16 @@ public:
   bool operator<(const vpRGBa &v) const;
   bool operator>(const vpRGBa &v) const;
 
-  friend VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpRGBa& rgba);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                              const vpRGBa &rgba);
 
- public:
-  unsigned char R ; //!< Red component.
-  unsigned char G ; //!< Green component.
-  unsigned char B ; //!< Blue component.
-  unsigned char A ; //!< Additionnal component.
+public:
+  unsigned char R; //!< Red component.
+  unsigned char G; //!< Green component.
+  unsigned char B; //!< Blue component.
+  unsigned char A; //!< Additionnal component.
 
-  friend VISP_EXPORT vpRGBa operator*(const double &x, const vpRGBa  &rgb);
-
-} ;
+  friend VISP_EXPORT vpRGBa operator*(const double &x, const vpRGBa &rgb);
+};
 
 #endif
-

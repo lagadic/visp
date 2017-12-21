@@ -55,8 +55,7 @@
   vpHistogramValey v2 = v1; // Valey p2 is set to 0, 255
   \endcode
 */
-vpHistogramValey &
-vpHistogramValey::operator=(const vpHistogramValey &v)
+vpHistogramValey &vpHistogramValey::operator=(const vpHistogramValey &v)
 {
   setLevel(v.level);
   setValue(v.value);
@@ -71,24 +70,23 @@ vpHistogramValey::operator=(const vpHistogramValey &v)
   \param v : Gray level histogram valey to compar.
 
 */
-bool
-vpHistogramValey::operator==(const vpHistogramValey &v) const
+bool vpHistogramValey::operator==(const vpHistogramValey &v) const
 {
-  return ( (level == v.level) && (value == v.value) );
+  return ((level == v.level) && (value == v.value));
 }
 
 /*!
   \relates vpHistogramValey
   \brief std::cout a valey
 */
-VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpHistogramValey &v)
+VISP_EXPORT std::ostream &operator<<(std::ostream &s,
+                                     const vpHistogramValey &v)
 {
-  
+
   s << (int)v.getLevel() << " " << v.getValue();
 
   return s;
 }
-
 
 /*
  * Local variables:

@@ -44,46 +44,53 @@
 
 #include <visp3/robot/vpWireFrameSimulatorTypes.h>
 
-#ifndef	NULL
-#define	NULL		0
+#ifndef NULL
+#define NULL 0
 #endif
-#ifndef	FALSE
-#define	FALSE		0
+#ifndef FALSE
+#define FALSE 0
 #endif
-#ifndef	TRUE
-#define	TRUE		1
-#endif
-
-#ifndef	STDIN
-#define	STDIN		0
-#endif
-#ifndef	STDOUT
-#define	STDOUT		1
-#endif
-#ifndef	STDERR
-#define	STDERR		2
+#ifndef TRUE
+#define TRUE 1
 #endif
 
-#define	NAMESIZE	80
-#define	LINESIZE	256
+#ifndef STDIN
+#define STDIN 0
+#endif
+#ifndef STDOUT
+#define STDOUT 1
+#endif
+#ifndef STDERR
+#define STDERR 2
+#endif
 
+#define NAMESIZE 80
+#define LINESIZE 256
 
-#define	M_EPSILON	1E-06
+#define M_EPSILON 1E-06
 
 //#define	ABS(X)		(((X) < 0)   ? -(X) : (X))
-#define	FABS(X)		(((X) < 0.0) ? -(X) : (X))
+#define FABS(X) (((X) < 0.0) ? -(X) : (X))
 //#define	MAX(A,B)	(((A) > (B)) ? (A) : (B))
 //#define	MAX3(A,B,C)	(MAX(MAX(A,B),C))
 //#define	MIN(A,B)	(((A) < (B)) ? (A) : (B))
 //#define	MIN3(A,B,C)	(MIN(MIN(A,B),C))
 
-#define	MIN_MAX(M,MIN,MAX)	if ((M) < (MIN)) (MIN) = (M);\
-			 	else if ((M) > (MAX)) (MAX) = (M) 
+#define MIN_MAX(M, MIN, MAX)                                                 \
+  if ((M) < (MIN))                                                           \
+    (MIN) = (M);                                                             \
+  else if ((M) > (MAX))                                                      \
+  (MAX) = (M)
 
-#define	TWO_POWER(P)	(((P) > 0) ? 1 << (P) : 1)
-#define	SWAP(A,B,T)	{ (T) = (A); (A) = (B); (B) = (T); }
+#define TWO_POWER(P) (((P) > 0) ? 1 << (P) : 1)
+#define SWAP(A, B, T)                                                        \
+  {                                                                          \
+    (T) = (A);                                                               \
+    (A) = (B);                                                               \
+    (B) = (T);                                                               \
+  }
 
-typedef	unsigned char	Byte;
+typedef unsigned char Byte;
 
 #endif
 #endif

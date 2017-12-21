@@ -42,7 +42,6 @@
 
 #include <visp3/detection/vpDetectorQRCode.h>
 
-
 /*!
    Default constructor.
  */
@@ -53,7 +52,8 @@ vpDetectorQRCode::vpDetectorQRCode() : m_scanner()
 }
 
 /*!
-  Detect QR codes in the image. Return true if a code is detected, false otherwise.
+  Detect QR codes in the image. Return true if a code is detected, false
+  otherwise.
 
   \param I : Input image.
  */
@@ -69,21 +69,23 @@ bool vpDetectorQRCode::detect(const vpImage<unsigned char> &I)
   unsigned int height = I.getHeight();
 
   // wrap image data
-  zbar::Image img(width, height, "Y800", I.bitmap, (unsigned long)(width * height));
+  zbar::Image img(width, height, "Y800", I.bitmap,
+                  (unsigned long)(width * height));
 
   // scan the image for barcodes
-  m_nb_objects =  (size_t) m_scanner.scan(img);
+  m_nb_objects = (size_t)m_scanner.scan(img);
 
   // extract results
-  for(zbar::Image::SymbolIterator symbol = img.symbol_begin();
-      symbol != img.symbol_end();
-      ++symbol) {
-    m_message.push_back( symbol->get_data() );
+  for (zbar::Image::SymbolIterator symbol = img.symbol_begin();
+       symbol != img.symbol_end(); ++symbol) {
+    m_message.push_back(symbol->get_data());
     detected = true;
 
     std::vector<vpImagePoint> polygon;
-    for(unsigned int i=0; i < (unsigned int)symbol->get_location_size(); i++){
-      polygon.push_back(vpImagePoint(symbol->get_location_y(i), symbol->get_location_x(i)));
+    for (unsigned int i = 0; i < (unsigned int)symbol->get_location_size();
+         i++) {
+      polygon.push_back(
+          vpImagePoint(symbol->get_location_y(i), symbol->get_location_x(i)));
     }
     m_polygon.push_back(polygon);
   }
@@ -94,6 +96,7 @@ bool vpDetectorQRCode::detect(const vpImage<unsigned char> &I)
   return detected;
 }
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpDetectorQRCode.cpp.o) has no symbols
-void dummy_vpDetectorQRCode() {};
+// Work arround to avoid warning: libvisp_core.a(vpDetectorQRCode.cpp.o) has
+// no symbols
+void dummy_vpDetectorQRCode(){};
 #endif

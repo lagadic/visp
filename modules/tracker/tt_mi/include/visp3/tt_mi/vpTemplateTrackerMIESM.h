@@ -40,10 +40,9 @@
 #ifndef vpTemplateTrackerMIESM_hh
 #define vpTemplateTrackerMIESM_hh
 
-
+#include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTracker.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
-#include <visp3/core/vpImageFilter.h>
 
 #include <visp3/tt_mi/vpTemplateTrackerMI.h>
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>
@@ -52,14 +51,14 @@
   \class vpTemplateTrackerMIESM
   \ingroup group_tt_mi_tracker
 */
-class VISP_EXPORT vpTemplateTrackerMIESM: public vpTemplateTrackerMI
+class VISP_EXPORT vpTemplateTrackerMIESM : public vpTemplateTrackerMI
 {
   /*! Minimization method. */
   typedef enum {
     USE_NEWTON, // not used
-    USE_LMA, // not used
+    USE_LMA,    // not used
     USE_GRADIENT,
-    USE_QUASINEWTON //not used => see default equivalence
+    USE_QUASINEWTON // not used => see default equivalence
   } vpMinimizationTypeMIESM;
 
 protected:
@@ -77,30 +76,37 @@ protected:
   void initHessienDesired(const vpImage<unsigned char> &I);
   void trackNoPyr(const vpImage<unsigned char> &I);
 
-//private:
-//#ifndef DOXYGEN_SHOULD_SKIP_THIS
-//  vpTemplateTrackerMIESM(const vpTemplateTrackerMIESM &)
-//    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), CompoInitialised(false),
-//      HDirect(), HInverse(), HdesireDirect(), HdesireInverse(), GDirect(), GInverse()
-//  {
-//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-//  }
-//  vpTemplateTrackerMIESM &operator=(const vpTemplateTrackerMIESM &){
-//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-//    return *this;
-//  }
-//#endif
+  // private:
+  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //  vpTemplateTrackerMIESM(const vpTemplateTrackerMIESM &)
+  //    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON),
+  //    CompoInitialised(false),
+  //      HDirect(), HInverse(), HdesireDirect(), HdesireInverse(), GDirect(),
+  //      GInverse()
+  //  {
+  //    throw vpException(vpException::functionNotImplementedError, "Not
+  //    implemented!");
+  //  }
+  //  vpTemplateTrackerMIESM &operator=(const vpTemplateTrackerMIESM &){
+  //    throw vpException(vpException::functionNotImplementedError, "Not
+  //    implemented!"); return *this;
+  //  }
+  //#endif
 
 public:
   //! Default constructor.
   vpTemplateTrackerMIESM()
-    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), CompoInitialised(false),
-      HDirect(), HInverse(), HdesireDirect(), HdesireInverse(), GDirect(), GInverse()
-  {}
+    : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON),
+      CompoInitialised(false), HDirect(), HInverse(), HdesireDirect(),
+      HdesireInverse(), GDirect(), GInverse()
+  {
+  }
   explicit vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp);
 
-  void  setMinimizationMethod(vpMinimizationTypeMIESM method){minimizationMethod=method;}
+  void setMinimizationMethod(vpMinimizationTypeMIESM method)
+  {
+    minimizationMethod = method;
+  }
 };
 
 #endif
-

@@ -39,7 +39,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 
-#if ( defined(VISP_HAVE_GDI) )
+#if (defined(VISP_HAVE_GDI))
 
 #ifndef vpDisplayGDI_HH
 #define vpDisplayGDI_HH
@@ -53,14 +53,14 @@
 
   \brief Display for windows using GDI (available on any windows 32 platform).
 
-  GDI stands for Graphics Device Interface and is a core component of Microsoft
-  Windows operating systems used for displaying graphics in a window.
+  GDI stands for Graphics Device Interface and is a core component of
+Microsoft Windows operating systems used for displaying graphics in a window.
 
   The example below shows how to display an image with this video device.
   \code
 #include <visp3/core/vpConfig.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/io/vpImageIo.h>
 
 int main()
 {
@@ -96,7 +96,8 @@ int main()
   vpImagePoint topLeftCorner;
   topLeftCorner.set_i(50);
   topLeftCorner.set_j(10);
-  vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green, true);
+  vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green,
+true);
 
   // Flush the foreground and background display
   vpDisplay::flush(I);
@@ -108,8 +109,8 @@ int main()
   for (int i=0; i< 200; i++) {
     bool ret = vpDisplay::getKeyboardEvent(I, key, false);
     if (ret)
-      std::cout << "keyboard event: key: " << "\"" << key << "\"" << std::endl;
-    vpTime::wait(40);
+      std::cout << "keyboard event: key: " << "\"" << key << "\"" <<
+std::endl; vpTime::wait(40);
   }
 
   // Get a blocking keyboard event
@@ -130,15 +131,18 @@ class VISP_EXPORT vpDisplayGDI : public vpDisplayWin32
 {
 public:
   vpDisplayGDI();
-  vpDisplayGDI(int winx, int winy, const std::string &title="");
+  vpDisplayGDI(int winx, int winy, const std::string &title = "");
   vpDisplayGDI(vpImage<unsigned char> &I, vpScaleType type);
-  vpDisplayGDI(vpImage<unsigned char> &I, int winx=-1, int winy=-1, const std::string &title="", vpScaleType type=SCALE_DEFAULT) ;
+  vpDisplayGDI(vpImage<unsigned char> &I, int winx = -1, int winy = -1,
+               const std::string &title = "",
+               vpScaleType type = SCALE_DEFAULT);
   vpDisplayGDI(vpImage<vpRGBa> &I, vpScaleType type);
-  vpDisplayGDI(vpImage<vpRGBa> &I, int winx=-1, int winy=-1, const std::string &title="", vpScaleType type=SCALE_DEFAULT) ;
+  vpDisplayGDI(vpImage<vpRGBa> &I, int winx = -1, int winy = -1,
+               const std::string &title = "",
+               vpScaleType type = SCALE_DEFAULT);
 
   virtual ~vpDisplayGDI();
 };
 
 #endif
 #endif
-

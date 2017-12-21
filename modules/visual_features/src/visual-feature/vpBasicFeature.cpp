@@ -37,29 +37,20 @@
  *
  *****************************************************************************/
 
-
-
 #include <visp3/visual_features/vpBasicFeature.h>
 
-const unsigned int vpBasicFeature::FEATURE_LINE [32] =
-    {
-  (unsigned int)(1 <<  0),	(unsigned int)(1 <<  1),
-  (unsigned int)(1 <<  2),	(unsigned int)(1 <<  3),
-  (unsigned int)(1 <<  4),	(unsigned int)(1 <<  5),
-  (unsigned int)(1 <<  6),	(unsigned int)(1 <<  7),
-  (unsigned int)(1 <<  8),	(unsigned int)(1 <<  9),
-  (unsigned int)(1 << 10),	(unsigned int)(1 << 11),
-  (unsigned int)(1 << 12),	(unsigned int)(1 << 13),
-  (unsigned int)(1 << 14),	(unsigned int)(1 << 15),
-  (unsigned int)(1 << 16),	(unsigned int)(1 << 17),
-  (unsigned int)(1 << 18),	(unsigned int)(1 << 19),
-  (unsigned int)(1 << 20),	(unsigned int)(1 << 21),
-  (unsigned int)(1 << 22),	(unsigned int)(1 << 23),
-  (unsigned int)(1 << 24),	(unsigned int)(1 << 25),
-  (unsigned int)(1 << 26),	(unsigned int)(1 << 27),
-  (unsigned int)(1 << 28),	(unsigned int)(1 << 29),
-  (unsigned int)(1 << 30),	(unsigned int)(1 << 31)
-    };
+const unsigned int vpBasicFeature::FEATURE_LINE[32] = {
+    (unsigned int)(1 << 0),  (unsigned int)(1 << 1),  (unsigned int)(1 << 2),
+    (unsigned int)(1 << 3),  (unsigned int)(1 << 4),  (unsigned int)(1 << 5),
+    (unsigned int)(1 << 6),  (unsigned int)(1 << 7),  (unsigned int)(1 << 8),
+    (unsigned int)(1 << 9),  (unsigned int)(1 << 10), (unsigned int)(1 << 11),
+    (unsigned int)(1 << 12), (unsigned int)(1 << 13), (unsigned int)(1 << 14),
+    (unsigned int)(1 << 15), (unsigned int)(1 << 16), (unsigned int)(1 << 17),
+    (unsigned int)(1 << 18), (unsigned int)(1 << 19), (unsigned int)(1 << 20),
+    (unsigned int)(1 << 21), (unsigned int)(1 << 22), (unsigned int)(1 << 23),
+    (unsigned int)(1 << 24), (unsigned int)(1 << 25), (unsigned int)(1 << 26),
+    (unsigned int)(1 << 27), (unsigned int)(1 << 28), (unsigned int)(1 << 29),
+    (unsigned int)(1 << 30), (unsigned int)(1 << 31)};
 
 /*!
   \file vpBasicFeature.cpp
@@ -69,7 +60,8 @@ const unsigned int vpBasicFeature::FEATURE_LINE [32] =
   Default constructor.
 */
 vpBasicFeature::vpBasicFeature()
-  : s(), dim_s(0), flags(NULL), nbParameters(0), deallocate(vpBasicFeature::user)
+  : s(), dim_s(0), flags(NULL), nbParameters(0),
+    deallocate(vpBasicFeature::user)
 {
 }
 
@@ -79,7 +71,7 @@ vpBasicFeature::vpBasicFeature()
 vpBasicFeature::~vpBasicFeature()
 {
   if (flags != NULL) {
-    delete [] flags;
+    delete[] flags;
     flags = NULL;
   }
 }
@@ -88,7 +80,8 @@ vpBasicFeature::~vpBasicFeature()
   Copy constructor.
 */
 vpBasicFeature::vpBasicFeature(const vpBasicFeature &f)
-  : s(), dim_s(0), flags(NULL), nbParameters(0), deallocate(vpBasicFeature::user)
+  : s(), dim_s(0), flags(NULL), nbParameters(0),
+    deallocate(vpBasicFeature::user)
 {
   *this = f;
 }
@@ -103,8 +96,8 @@ vpBasicFeature &vpBasicFeature::operator=(const vpBasicFeature &f)
   nbParameters = f.nbParameters;
   deallocate = f.deallocate;
   if (flags)
-    delete [] flags;
-  flags = new bool [nbParameters];
+    delete[] flags;
+  flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = f.flags[i];
 
@@ -112,83 +105,76 @@ vpBasicFeature &vpBasicFeature::operator=(const vpBasicFeature &f)
 }
 
 //! Get the feature vector dimension.
-unsigned int
-vpBasicFeature::getDimension(unsigned int select) const
+unsigned int vpBasicFeature::getDimension(unsigned int select) const
 {
-    unsigned int dim = 0 ;
-    if(dim_s>31)
-    	return dim_s;
-    for (unsigned int i=0 ; i < s.getRows() ; i++)
-    {
-	//	printf("%x %x %d \n",select, featureLine[i], featureLine[i] & select);
-	if (FEATURE_LINE[i] & select) dim +=1 ;
-    }
-    return dim ;
+  unsigned int dim = 0;
+  if (dim_s > 31)
+    return dim_s;
+  for (unsigned int i = 0; i < s.getRows(); i++) {
+    //	printf("%x %x %d \n",select, featureLine[i], featureLine[i] & select);
+    if (FEATURE_LINE[i] & select)
+      dim += 1;
+  }
+  return dim;
 }
 
 //! Get the feature vector  \f$\bf s\f$.
-vpColVector
-vpBasicFeature::get_s(const unsigned int select) const
+vpColVector vpBasicFeature::get_s(const unsigned int select) const
 {
   vpColVector state(0), stateLine(1);
-  // if s is higher than the possible selections (photometry), send back the whole vector
-  if(dim_s > 31)
+  // if s is higher than the possible selections (photometry), send back the
+  // whole vector
+  if (dim_s > 31)
     return s;
 
-  for(unsigned int i=0;i<dim_s;++i)
-  {
-    if(FEATURE_LINE[i] & select)
-    {
+  for (unsigned int i = 0; i < dim_s; ++i) {
+    if (FEATURE_LINE[i] & select) {
       stateLine[0] = s[i];
       state.stack(stateLine);
     }
   }
-  return state ;
+  return state;
 }
 
 void vpBasicFeature::resetFlags()
 {
-  if (flags != NULL)
-  {
+  if (flags != NULL) {
     for (unsigned int i = 0; i < nbParameters; i++)
       flags[i] = false;
   }
 }
 
-//! Set feature flags to true to prevent warning when re-computing the interaction matrix without having updated the feature.
+//! Set feature flags to true to prevent warning when re-computing the
+//! interaction matrix without having updated the feature.
 void vpBasicFeature::setFlags()
 {
-  if (flags != NULL)
-    {
+  if (flags != NULL) {
     for (unsigned int i = 0; i < nbParameters; i++)
-	    flags[i] = true;
-    }
+      flags[i] = true;
+  }
 }
 
-//! Compute the error between two visual features from a subset of the possible features.
+//! Compute the error between two visual features from a subset of the
+//! possible features.
 vpColVector vpBasicFeature::error(const vpBasicFeature &s_star,
-	    const unsigned int select)
+                                  const unsigned int select)
 {
-	vpColVector e(0),eLine(1);
-	if (dim_s <= 31)
-	{
-		for(unsigned int i=0;i<dim_s;++i){
-			if(FEATURE_LINE[i] & select)
-			{
-				eLine[0] = s[i] - s_star[i];
+  vpColVector e(0), eLine(1);
+  if (dim_s <= 31) {
+    for (unsigned int i = 0; i < dim_s; ++i) {
+      if (FEATURE_LINE[i] & select) {
+        eLine[0] = s[i] - s_star[i];
         e.stack(eLine);
-				//std::cout << "dim_s <= 31"<<std::endl;
-			}
-		}
-	}
-	else
-	{
-		e.resize(dim_s);
-		vpColVector sd = s_star.get_s();
-		e = s - sd;
-	}
+        // std::cout << "dim_s <= 31"<<std::endl;
+      }
+    }
+  } else {
+    e.resize(dim_s);
+    vpColVector sd = s_star.get_s();
+    e = s - sd;
+  }
 
-   return e ;
+  return e;
 }
 
 /*

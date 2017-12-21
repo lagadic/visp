@@ -44,15 +44,14 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include	<stdio.h>
+#include <stdio.h>
 
-#include "vpMyio.h"
 #include "vpArit.h"
-#include "vpViewio.h"
-#include "vpToken.h"
 #include "vpLex.h"
+#include "vpMyio.h"
 #include "vpSkipio.h"
-
+#include "vpToken.h"
+#include "vpViewio.h"
 
 /*
  * La procedure "fscanf_Remove" lit en ascii les parametres d'elimination
@@ -60,20 +59,35 @@
  * Entree :
  * bp		Parametres a lire.
  */
-void fscanf_Remove (Byte *bp)
+void fscanf_Remove(Byte *bp)
 {
-	switch (lex ()) {
-	case T_NONE	: *bp  = IS_INSIDE; break; 
-	case T_ABOVE	: *bp |= IS_ABOVE;  break;
-	case T_BACK	: *bp |= IS_BACK;   break;
-	case T_BELOW	: *bp |= IS_BELOW;  break;
-	case T_FRONT	: *bp |= IS_FRONT;  break;
-	case T_LEFT	: *bp |= IS_LEFT;   break;
-	case T_RIGHT	: *bp |= IS_RIGHT;  break;
-	default	:
-	  lexerr ("start", "remove: keyword \"none|above|back|below|front|left|right\" expected");
-		break;
-	}
+  switch (lex()) {
+  case T_NONE:
+    *bp = IS_INSIDE;
+    break;
+  case T_ABOVE:
+    *bp |= IS_ABOVE;
+    break;
+  case T_BACK:
+    *bp |= IS_BACK;
+    break;
+  case T_BELOW:
+    *bp |= IS_BELOW;
+    break;
+  case T_FRONT:
+    *bp |= IS_FRONT;
+    break;
+  case T_LEFT:
+    *bp |= IS_LEFT;
+    break;
+  case T_RIGHT:
+    *bp |= IS_RIGHT;
+    break;
+  default:
+    lexerr("start", "remove: keyword "
+                    "\"none|above|back|below|front|left|right\" expected");
+    break;
+  }
 }
 
 /*
@@ -82,74 +96,72 @@ void fscanf_Remove (Byte *bp)
  * Entree :
  * vp		Parametres de visualisation a lire.
  */
-void fscanf_View_parameters (View_parameters *vp)
+void fscanf_View_parameters(View_parameters *vp)
 {
-	/* Lecture du type de projection lors de la prise de vue.	*/
+  /* Lecture du type de projection lors de la prise de vue.	*/
 
-	skip_keyword (T_TYPE, "view: keyword \"type\" expected");
-	switch (lex ()) {
-	case T_PARALLEL :
-		vp->type = PARALLEL;
-		break;
-	case T_PERSPECTIVE :
-		vp->type = PERSPECTIVE;
-		break;
-	default :
-	  lexerr ("start", "view_type: keyword \"parallel|perspective\" expected");
-		break;
-	}
+  skip_keyword(T_TYPE, "view: keyword \"type\" expected");
+  switch (lex()) {
+  case T_PARALLEL:
+    vp->type = PARALLEL;
+    break;
+  case T_PERSPECTIVE:
+    vp->type = PERSPECTIVE;
+    break;
+  default:
+    lexerr("start", "view_type: keyword \"parallel|perspective\" expected");
+    break;
+  }
 
-	/* Lecture du centre de projection (oeil) de la prise de vue.	*/
+  /* Lecture du centre de projection (oeil) de la prise de vue.	*/
 
-	skip_keyword (T_COP, "view: keyword \"cop\" expected");
-	pusherr ("view_cop: ");
-	fscanf_Point3f (&vp->cop);
-	poperr ();
+  skip_keyword(T_COP, "view: keyword \"cop\" expected");
+  pusherr("view_cop: ");
+  fscanf_Point3f(&vp->cop);
+  poperr();
 
-	/* Lecture du point de reference (cible) a la prise de vue.	*/
+  /* Lecture du point de reference (cible) a la prise de vue.	*/
 
-	skip_keyword (T_VRP, "view: keyword \"vrp\" expected");
-	pusherr ("view_vrp: ");
-	fscanf_Point3f (&vp->vrp);
-	poperr ();
+  skip_keyword(T_VRP, "view: keyword \"vrp\" expected");
+  pusherr("view_vrp: ");
+  fscanf_Point3f(&vp->vrp);
+  poperr();
 
-	/* Lecture de la direction normale au plan de projection.	*/
+  /* Lecture de la direction normale au plan de projection.	*/
 
-	skip_keyword (T_VPN, "view: keyword \"vpn\" expected");
-	pusherr ("view_vpn: ");
-	fscanf_Vector (&vp->vpn);
-	poperr ();
+  skip_keyword(T_VPN, "view: keyword \"vpn\" expected");
+  pusherr("view_vpn: ");
+  fscanf_Vector(&vp->vpn);
+  poperr();
 
-	/* Lecture de la direction indiquant le haut de la projection.	*/
+  /* Lecture de la direction indiquant le haut de la projection.	*/
 
-	skip_keyword (T_VUP, "view: keyword \"vup\" expected");
-	pusherr ("view_vup: ");
-	fscanf_Vector (&vp->vup);
-	poperr ();
+  skip_keyword(T_VUP, "view: keyword \"vup\" expected");
+  pusherr("view_vup: ");
+  fscanf_Vector(&vp->vup);
+  poperr();
 
-	/* Lecture de la fenetre de projection de la prise de vue.	*/
+  /* Lecture de la fenetre de projection de la prise de vue.	*/
 
-	skip_keyword (T_WINDOW, "view: keyword \"window\" expected");
-	pusherr ("view_window_umin: ");
-	fscanf_float (&vp->vwd.umin);
-	popuperr ("view_window_umax: ");
-	fscanf_float (&vp->vwd.umax);
-	popuperr ("view_window_vmin: ");
-	fscanf_float (&vp->vwd.vmin);
-	popuperr ("view_window_vmax: ");
-	fscanf_float (&vp->vwd.vmax);
-	poperr ();
+  skip_keyword(T_WINDOW, "view: keyword \"window\" expected");
+  pusherr("view_window_umin: ");
+  fscanf_float(&vp->vwd.umin);
+  popuperr("view_window_umax: ");
+  fscanf_float(&vp->vwd.umax);
+  popuperr("view_window_vmin: ");
+  fscanf_float(&vp->vwd.vmin);
+  popuperr("view_window_vmax: ");
+  fscanf_float(&vp->vwd.vmax);
+  poperr();
 
-	/* Lecture des profondeurs de decoupage avant et arriere.	*/
+  /* Lecture des profondeurs de decoupage avant et arriere.	*/
 
-	skip_keyword (T_DEPTH, "view: keyword \"depth\" expected");
-	pusherr ("view_depth_front: ");
-	fscanf_float (&vp->depth.front);
-	popuperr ("view_depth_back: ");
-	fscanf_float (&vp->depth.back);
-	poperr ();
+  skip_keyword(T_DEPTH, "view: keyword \"depth\" expected");
+  pusherr("view_depth_front: ");
+  fscanf_float(&vp->depth.front);
+  popuperr("view_depth_back: ");
+  fscanf_float(&vp->depth.back);
+  poperr();
 }
 
 #endif
-
-

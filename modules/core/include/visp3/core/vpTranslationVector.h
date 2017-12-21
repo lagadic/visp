@@ -37,8 +37,6 @@
  *
  *****************************************************************************/
 
-
-
 #ifndef vpTRANSLATIONVECTOR_H
 #define vpTRANSLATIONVECTOR_H
 
@@ -48,10 +46,9 @@
 */
 
 #include <visp3/core/vpArray2D.h>
-#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpPoseVector.h>
-
 
 /*!
   \class vpTranslationVector
@@ -94,50 +91,53 @@ int main()
 class VISP_EXPORT vpTranslationVector : public vpArray2D<double>
 {
 public:
-
   /*!
       Default constructor.
       The translation vector is initialized to zero.
     */
-  vpTranslationVector() : vpArray2D<double>(3, 1) {};
-  vpTranslationVector(const double tx, const double ty, const double tz) ;
+  vpTranslationVector() : vpArray2D<double>(3, 1){};
+  vpTranslationVector(const double tx, const double ty, const double tz);
   vpTranslationVector(const vpTranslationVector &tv);
   explicit vpTranslationVector(const vpHomogeneousMatrix &M);
   explicit vpTranslationVector(const vpPoseVector &p);
   explicit vpTranslationVector(const vpColVector &v);
 
-  vpTranslationVector buildFrom(const double tx, const double ty, const double tz) ;
-  vpTranslationVector buildFrom(const vpHomogeneousMatrix& M) ;
-  vpTranslationVector buildFrom(const vpPoseVector& p) ;
-  vpTranslationVector buildFrom(const vpColVector& v) ;
+  vpTranslationVector buildFrom(const double tx, const double ty,
+                                const double tz);
+  vpTranslationVector buildFrom(const vpHomogeneousMatrix &M);
+  vpTranslationVector buildFrom(const vpPoseVector &p);
+  vpTranslationVector buildFrom(const vpColVector &v);
 
   double euclideanNorm() const;
 
   // operators
 
   // translation vectors additions  c = a + b (a, b  unchanged)
-  vpTranslationVector operator+(const vpTranslationVector &tv) const ;
+  vpTranslationVector operator+(const vpTranslationVector &tv) const;
   vpTranslationVector operator+(const vpColVector &v) const;
   // translation vectors substraction  c = a - b (a, b  unchanged)
-  vpTranslationVector operator-(const vpTranslationVector &tv) const ;
+  vpTranslationVector operator-(const vpTranslationVector &tv) const;
   // negate t = -a  (t is unchanged)
-  vpTranslationVector operator-() const ;
-  vpMatrix  operator*(const vpRowVector &v) const;
+  vpTranslationVector operator-() const;
+  vpMatrix operator*(const vpRowVector &v) const;
   // b = x * a (x=scalar)
   vpTranslationVector operator*(const double x) const;
-  vpTranslationVector & operator*=(double x);
+  vpTranslationVector &operator*=(double x);
   vpTranslationVector operator/(const double x) const;
-  vpTranslationVector & operator/=(double x);
+  vpTranslationVector &operator/=(double x);
   // Copy operator.   Allow operation such as A = v
   vpTranslationVector &operator=(const vpColVector &tv);
   vpTranslationVector &operator=(const vpTranslationVector &tv);
 
-  vpTranslationVector &operator=(double x) ;
+  vpTranslationVector &operator=(double x);
 
   //! Operator that allows to set a value of an element \f$t_i\f$: t[i] = x
-  inline double &operator [](unsigned int n) {  return *(data + n);  }
+  inline double &operator[](unsigned int n) { return *(data + n); }
   //! Operator that allows to get the value of an element \f$t_i\f$: x = t[i]
-  inline const double &operator [](unsigned int n) const { return *(data+n);  }
+  inline const double &operator[](unsigned int n) const
+  {
+    return *(data + n);
+  }
 
   /*!
     This function is not applicable to a translation vector that is always a
@@ -150,22 +150,23 @@ public:
     (void)nrows;
     (void)ncols;
     (void)flagNullify;
-    throw(vpException(vpException::fatalError, "Cannot resize a translation vector"));
+    throw(vpException(vpException::fatalError,
+                      "Cannot resize a translation vector"));
   };
 
-  void set(const double tx, const double ty, const double tz) ;
+  void set(const double tx, const double ty, const double tz);
 
   // Skew Symmetric matrix
-  vpMatrix skew() const ;
+  vpMatrix skew() const;
 
   double sumSquare() const;
 
   vpRowVector t() const;
 
   static vpTranslationVector cross(const vpTranslationVector &a,
-                                   const vpTranslationVector &b) ;
-  static vpMatrix skew(const vpTranslationVector &tv) ;
-  static void skew(const  vpTranslationVector &tv, vpMatrix &M) ;
-} ;
+                                   const vpTranslationVector &b);
+  static vpMatrix skew(const vpTranslationVector &tv);
+  static void skew(const vpTranslationVector &tv, vpMatrix &M);
+};
 
 #endif

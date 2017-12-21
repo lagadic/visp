@@ -43,9 +43,9 @@
 #include <visp3/core/vpDisplayException.h>
 #include <visp3/core/vpImageConvert.h>
 
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpPoint.h>
 
 /*!
   \file vpDisplay.cpp
@@ -56,8 +56,9 @@
   Default constructor.
 */
 vpDisplay::vpDisplay()
-  : m_displayHasBeenInitialized(false), m_windowXPosition(0), m_windowYPosition(0),
-    m_width(0), m_height(0), m_title(), m_scale(1), m_scaleType(SCALE_DEFAULT)
+  : m_displayHasBeenInitialized(false), m_windowXPosition(0),
+    m_windowYPosition(0), m_width(0), m_height(0), m_title(), m_scale(1),
+    m_scaleType(SCALE_DEFAULT)
 {
 }
 
@@ -66,19 +67,17 @@ vpDisplay::vpDisplay()
 */
 vpDisplay::vpDisplay(const vpDisplay &d)
   : m_displayHasBeenInitialized(d.m_displayHasBeenInitialized),
-    m_windowXPosition(d.m_windowXPosition), m_windowYPosition(d.m_windowYPosition),
-    m_width(d.m_width), m_height(d.m_height), m_title(d.m_title),
-    m_scale(d.m_scale), m_scaleType(d.m_scaleType)
+    m_windowXPosition(d.m_windowXPosition),
+    m_windowYPosition(d.m_windowYPosition), m_width(d.m_width),
+    m_height(d.m_height), m_title(d.m_title), m_scale(d.m_scale),
+    m_scaleType(d.m_scaleType)
 {
 }
 
 /*!
   Destructor that desallocates memory.
 */
-vpDisplay::~vpDisplay()
-{
-  m_displayHasBeenInitialized = false;
-}
+vpDisplay::~vpDisplay() { m_displayHasBeenInitialized = false; }
 
 /*!
   Get the window pixmap and put it in vpRGBa image.
@@ -86,12 +85,12 @@ vpDisplay::~vpDisplay()
   The code below shows how to use this method.
   \code
 #include <visp3/core/vpConfig.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 
 int main()
 {
@@ -145,15 +144,12 @@ int main()
 }
   \endcode
 */
-void
-vpDisplay::getImage(const vpImage<unsigned  char> &Isrc, vpImage<vpRGBa> &Idest )
+void vpDisplay::getImage(const vpImage<unsigned char> &Isrc,
+                         vpImage<vpRGBa> &Idest)
 {
-  if ( Isrc.display != NULL )
-  {
-    ( Isrc.display )->getImage ( Idest );
-  }
-  else
-  {
+  if (Isrc.display != NULL) {
+    (Isrc.display)->getImage(Idest);
+  } else {
     vpImageConvert::convert(Isrc, Idest);
   }
 }
@@ -164,12 +160,12 @@ vpDisplay::getImage(const vpImage<unsigned  char> &Isrc, vpImage<vpRGBa> &Idest 
   The code below shows how to use this method.
   \code
 #include <visp3/core/vpConfig.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 
 int main()
 {
@@ -223,55 +219,60 @@ int main()
 }
   \endcode
 */
-void
-vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
+void vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
 {
-  if ( Isrc.display != NULL )
-  {
-    ( Isrc.display )->getImage ( Idest );
-  }
-  else {
+  if (Isrc.display != NULL) {
+    (Isrc.display)->getImage(Idest);
+  } else {
     Idest = Isrc;
   }
 }
 
 /*!
-  Set the down scale factor applied to the image in order to reduce the display size.
-  \param scale : Scale factor applied to display a rescaled image.
+  Set the down scale factor applied to the image in order to reduce the
+  display size. \param scale : Scale factor applied to display a rescaled
+  image.
  */
 void vpDisplay::setDownScalingFactor(unsigned int scale)
 {
-  if (! m_displayHasBeenInitialized)
+  if (!m_displayHasBeenInitialized)
     m_scale = scale;
   else {
-    std::cout << "Warning: Cannot apply the down scaling factor " << scale << " to the display window since the display is initialized yet..." << std::endl;
+    std::cout
+        << "Warning: Cannot apply the down scaling factor " << scale
+        << " to the display window since the display is initialized yet..."
+        << std::endl;
   }
 }
 
 /*!
- * Computes the down scaling factor that should be applied to the window size to display
- * the image given the resolution of the screen.
- * \param width, height : Image size.
- * \return
+ * Computes the down scaling factor that should be applied to the window size
+ * to display the image given the resolution of the screen. \param width,
+ * height : Image size. \return
  */
-unsigned int vpDisplay::computeAutoScale(unsigned int width, unsigned int height)
+unsigned int vpDisplay::computeAutoScale(unsigned int width,
+                                         unsigned int height)
 {
   unsigned int screen_width, screen_height;
   getScreenSize(screen_width, screen_height);
-  double wscale = (std::max)(1., ceil(2.*(double)width / (double)screen_width));
-  double hscale = (std::max)(1., ceil(2.*(double)height / (double)screen_height));
-  unsigned int scale = (unsigned int)(std::max)(1u, (std::max)((unsigned int)wscale, (unsigned int)hscale));
+  double wscale =
+      (std::max)(1., ceil(2. * (double)width / (double)screen_width));
+  double hscale =
+      (std::max)(1., ceil(2. * (double)height / (double)screen_height));
+  unsigned int scale = (unsigned int)(std::max)(
+      1u, (std::max)((unsigned int)wscale, (unsigned int)hscale));
   return scale;
 }
 
 /*!
  * Set the down scaling factor either in auto mode or set manually.
  */
-void vpDisplay::setScale(vpScaleType scaleType, unsigned int width, unsigned int height)
+void vpDisplay::setScale(vpScaleType scaleType, unsigned int width,
+                         unsigned int height)
 {
   switch (scaleType) {
   case vpDisplay::SCALE_AUTO:
-    setDownScalingFactor( computeAutoScale(width, height) );
+    setDownScalingFactor(computeAutoScale(width, height));
     break;
   case vpDisplay::SCALE_DEFAULT:
   case vpDisplay::SCALE_1:
@@ -312,8 +313,8 @@ void vpDisplay::setScale(vpScaleType scaleType, unsigned int width, unsigned int
    This method has to be called before display initialization.
 
    \code
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
 
 int main()
 {
@@ -323,16 +324,14 @@ int main()
 #elif defined VISP_HAVE_GDI
   vpDisplayGDI d;
 #endif
-  d.setDownScalingFactor(vpDisplay::SCALE_4); // Display in a 160 by 120 windows size
-  d.init(I);
-  vpDisplay::display(I);
-  vpDisplay::flush(I);
+  d.setDownScalingFactor(vpDisplay::SCALE_4); // Display in a 160 by 120
+windows size d.init(I); vpDisplay::display(I); vpDisplay::flush(I);
   vpDisplay::getClick(I); // wait for a click to quit
 }
    \endcode
  */
 void vpDisplay::setDownScalingFactor(vpScaleType scaleType)
 {
-  if (! m_displayHasBeenInitialized)
+  if (!m_displayHasBeenInitialized)
     m_scaleType = scaleType;
 }

@@ -37,10 +37,10 @@
  *****************************************************************************/
 
 #include <iostream>
+#include <limits>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpThetaUVector.h>
-#include <limits>
 
 int main()
 {
@@ -48,7 +48,9 @@ int main()
     vpThetaUVector tu;
 
     // Construct a rotation matrix from the theta U angles
-    vpRotationMatrix R(vpMath::rad(0.),vpMath::rad(180)+100*std::numeric_limits<double>::epsilon(),0.);
+    vpRotationMatrix R(
+        vpMath::rad(0.),
+        vpMath::rad(180) + 100 * std::numeric_limits<double>::epsilon(), 0.);
 
     // Extract the theta U angles from a rotation matrix
     tu.buildFrom(R);
@@ -60,8 +62,7 @@ int main()
     // Print the transpose row vector
     std::cout << tu_t << std::endl;
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

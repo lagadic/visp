@@ -37,7 +37,6 @@
  *
  *****************************************************************************/
 
-
 /*!
   \example servoSimuSphere2DCamVelocity.cpp
   Servo a sphere:
@@ -47,20 +46,20 @@
 
 */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/visual_features/vpFeatureEllipse.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/io/vpParseArgv.h>
-#include <visp3/vs/vpServo.h>
 #include <visp3/core/vpSphere.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/robot/vpSimulatorCamera.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeatureEllipse.h>
+#include <visp3/vs/vpServo.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"h"
+#define GETOPTARGS "h"
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv);
@@ -107,15 +106,19 @@ Set the program options.
 bool getOptions(int argc, const char **argv)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'h':
+      usage(argv[0], NULL);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg_);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -130,102 +133,103 @@ bool getOptions(int argc, const char **argv)
   return true;
 }
 
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   try {
     // Read the command line options
     if (getOptions(argc, argv) == false) {
-      exit (-1);
+      exit(-1);
     }
 
-    vpServo task ;
-    vpSimulatorCamera robot ;
+    vpServo task;
+    vpSimulatorCamera robot;
 
-    std::cout << std::endl ;
-    std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << " Test program for vpServo "  <<std::endl ;
-    std::cout << " Simulation " << std::endl ;
-    std::cout << " task : servo a sphere " << std::endl ;
-    std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
+    std::cout << std::endl;
+    std::cout << "-------------------------------------------------------"
+              << std::endl;
+    std::cout << " Test program for vpServo " << std::endl;
+    std::cout << " Simulation " << std::endl;
+    std::cout << " task : servo a sphere " << std::endl;
+    std::cout << "-------------------------------------------------------"
+              << std::endl;
+    std::cout << std::endl;
 
     // sets the initial camera location
-    vpHomogeneousMatrix cMo ;
-    cMo[0][3] = 0.1 ;
-    cMo[1][3] = 0.2 ;
-    cMo[2][3] = 2 ;
+    vpHomogeneousMatrix cMo;
+    cMo[0][3] = 0.1;
+    cMo[1][3] = 0.2;
+    cMo[2][3] = 2;
     // Compute the position of the object in the world frame
     vpHomogeneousMatrix wMc, wMo;
-    robot.getPosition(wMc) ;
+    robot.getPosition(wMc);
     wMo = wMc * cMo;
 
-    vpHomogeneousMatrix cMod ;
-    cMod[0][3] = 0 ;
-    cMod[1][3] = 0 ;
-    cMod[2][3] = 1 ;
+    vpHomogeneousMatrix cMod;
+    cMod[0][3] = 0;
+    cMod[1][3] = 0;
+    cMod[2][3] = 1;
 
     // sets the sphere coordinates in the world frame
-    vpSphere sphere ;
-    sphere.setWorldCoordinates(0,0,0,0.1) ;
+    vpSphere sphere;
+    sphere.setWorldCoordinates(0, 0, 0, 0.1);
 
     // sets the desired position of the visual feature
-    vpFeatureEllipse pd ;
-    sphere.track(cMod) ;
-    vpFeatureBuilder::create(pd,sphere)  ;
+    vpFeatureEllipse pd;
+    sphere.track(cMod);
+    vpFeatureBuilder::create(pd, sphere);
 
-    // computes the sphere coordinates in the camera frame and its 2D coordinates
-    // sets the current position of the visual feature
-    vpFeatureEllipse p ;
-    sphere.track(cMo) ;
-    vpFeatureBuilder::create(p,sphere)  ;
+    // computes the sphere coordinates in the camera frame and its 2D
+    // coordinates sets the current position of the visual feature
+    vpFeatureEllipse p;
+    sphere.track(cMo);
+    vpFeatureBuilder::create(p, sphere);
 
     // define the task
     // - we want an eye-in-hand control law
     // - robot is controlled in the camera frame
-    task.setServo(vpServo::EYEINHAND_CAMERA) ;
+    task.setServo(vpServo::EYEINHAND_CAMERA);
 
     // we want to see a sphere on a sphere
-    task.addFeature(p,pd) ;
+    task.addFeature(p, pd);
 
     // set the gain
-    task.setLambda(1) ;
+    task.setLambda(1);
 
     // Display task information
-    task.print() ;
+    task.print();
 
-    unsigned int iter=0 ;
+    unsigned int iter = 0;
     // loop
-    while(iter++ < 500)
-    {
-      std::cout << "---------------------------------------------" << iter <<std::endl ;
-      vpColVector v ;
+    while (iter++ < 500) {
+      std::cout << "---------------------------------------------" << iter
+                << std::endl;
+      vpColVector v;
 
       // get the robot position
-      robot.getPosition(wMc) ;
+      robot.getPosition(wMc);
       // Compute the position of the camera wrt the object frame
       cMo = wMc.inverse() * wMo;
 
       // new sphere position: retrieve x,y and Z of the vpSphere structure
-      sphere.track(cMo) ;
-      vpFeatureBuilder::create(p,sphere);
+      sphere.track(cMo);
+      vpFeatureBuilder::create(p, sphere);
 
       // compute the control law
-      v = task.computeControlLaw() ;
+      v = task.computeControlLaw();
 
-      std::cout << "Task rank: " << task.getTaskRank() << std::endl ;
+      std::cout << "Task rank: " << task.getTaskRank() << std::endl;
       // send the camera velocity to the controller
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-      std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
+                << std::endl;
     }
 
     // Display task information
-    task.print() ;
+    task.print();
     task.kill();
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return 1;
   }

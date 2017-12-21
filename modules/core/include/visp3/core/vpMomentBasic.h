@@ -52,35 +52,40 @@
   \ingroup group_core_moments
 
   \brief This class defines the 2D basic moment \f$m_{ij}\f$.
-    This class is a wrapper for vpMomentObject wich allows to use it as a moment.
-    This enables all common operations such as adding to a vpMomentDatabase.
+    This class is a wrapper for vpMomentObject wich allows to use it as a
+  moment. This enables all common operations such as adding to a
+  vpMomentDatabase.
 
   In the case of a dense object \e O, 2D basic moments are defined by:
   \f[m_{ij} = \int \int_{O} x^j y^j dx dy\f]
 
-  In the case of a discrete set of \e n points, the basic moments are defined by
-  \f[m_{ij} = \sum_{k=1}^{n} x_k^j y_k^j \f]
+  In the case of a discrete set of \e n points, the basic moments are defined
+  by \f[m_{ij} = \sum_{k=1}^{n} x_k^j y_k^j \f]
 
   The selection of a dense or discrete object is done in vpMomentObject.
-  The maximum order of vpMomentBasic is the same as that of vpMomentObject (ie: \f$i+j \leq \f$ vpMomentObject::getOrder).
+  The maximum order of vpMomentBasic is the same as that of vpMomentObject
+  (ie: \f$i+j \leq \f$ vpMomentObject::getOrder).
 
-  Note that in the continuous case, the basic moment \f$m_{00}\f$ corresponds to the surface \f$a\f$ of the object.
-  In the discrete case, it is the number of discrete points \f$n\f$.
+  Note that in the continuous case, the basic moment \f$m_{00}\f$ corresponds
+  to the surface \f$a\f$ of the object. In the discrete case, it is the number
+  of discrete points \f$n\f$.
 */
 
-class VISP_EXPORT vpMomentBasic : public vpMoment {
- public:	
+class VISP_EXPORT vpMomentBasic : public vpMoment
+{
+public:
   vpMomentBasic();
   virtual ~vpMomentBasic(){};
 
-        void compute();
-        const std::vector<double>& get() const;
-        double get (unsigned int i,unsigned int j) const;
-        /*!
-          Moment name.
-          */
-        const char* name() const { return "vpMomentBasic";}
-        friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentBasic& v);
-        void printDependencies(std::ostream& os) const;
+  void compute();
+  const std::vector<double> &get() const;
+  double get(unsigned int i, unsigned int j) const;
+  /*!
+    Moment name.
+    */
+  const char *name() const { return "vpMomentBasic"; }
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                              const vpMomentBasic &v);
+  void printDependencies(std::ostream &os) const;
 };
 #endif

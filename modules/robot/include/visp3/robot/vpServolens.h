@@ -42,7 +42,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__)))
 
 /*!
 
@@ -91,31 +92,23 @@ int main()
 
 class VISP_EXPORT vpServolens
 {
- public:
+public:
+  typedef enum { ZOOM = 1, FOCUS = 2, IRIS = 3 } vpServoType;
   typedef enum {
-    ZOOM = 1,
-    FOCUS= 2,
-    IRIS = 3
-  } vpServoType;
-  typedef enum {
-    ZOOM_MAX  = 10000,	// Valeur maxi zoom (mm/100)
-    ZOOM_MIN  = 1000,	// Valeur mini zoom (mm/100)
-    FOCUS_MAX = 1500,	// Valeur maxi focus (metres/100)
-    FOCUS_MIN = 100,	// Valeur mini focus (metres/100)
-    IRIS_MAX  = 1000,	// Valeur maxi diaph (ouverture/100)
-    IRIS_MIN  = 160	// Valeur mini disph (ouverture/100)
+    ZOOM_MAX = 10000, // Valeur maxi zoom (mm/100)
+    ZOOM_MIN = 1000,  // Valeur mini zoom (mm/100)
+    FOCUS_MAX = 1500, // Valeur maxi focus (metres/100)
+    FOCUS_MIN = 100,  // Valeur mini focus (metres/100)
+    IRIS_MAX = 1000,  // Valeur maxi diaph (ouverture/100)
+    IRIS_MIN = 160    // Valeur mini disph (ouverture/100)
   } vpLimitsType;
-  typedef enum {
-    AUTO       = 1,
-    CONTROLLED = 2,
-    RELEASED   = 3
-  } vpControllerType;
+  typedef enum { AUTO = 1, CONTROLLED = 2, RELEASED = 3 } vpControllerType;
 
   vpServolens();
   explicit vpServolens(const char *port);
   ~vpServolens();
 
-  void open(const char *port="/dev/ttyS0");
+  void open(const char *port = "/dev/ttyS0");
   void close();
   void reset() const;
 
@@ -127,8 +120,7 @@ class VISP_EXPORT vpServolens
 
   void enablePrompt(bool active) const;
 
- private:
-
+private:
   void init() const;
 
   char wait() const;
@@ -145,4 +137,3 @@ class VISP_EXPORT vpServolens
 
 #endif
 #endif
-

@@ -36,8 +36,6 @@
  *
  *****************************************************************************/
 
-
-
 #ifndef vpTracker_H
 #define vpTracker_H
 
@@ -46,10 +44,9 @@
   \brief Class that defines what is a generic tracker.
 */
 
-#include <visp3/core/vpImage.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-
+#include <visp3/core/vpImage.h>
 
 /*!
   \class vpTracker
@@ -60,7 +57,7 @@
   - in the camera frame \e cP. These parameters are located in the public
     attribute vpTracker::cP.
   - in the image plane \e p. These parameters are located in the public
-    attribute vpTracker::p. They correspond to normalized coordinates 
+    attribute vpTracker::p. They correspond to normalized coordinates
     of the feature expressed in meters.
 
 */
@@ -71,32 +68,31 @@ public:
     Feature coordinates expressed in the image plane \e p. They correspond
     to 2D normalized coordinates expressed in meters.
   */
-  vpColVector p ;
+  vpColVector p;
   /*!
-    Feature coordinates expressed in the camera frame \e cP. 
+    Feature coordinates expressed in the camera frame \e cP.
   */
-  vpColVector cP ;
+  vpColVector cP;
 
   /*!
     Flag used to indicate if the feature parameters \e cP expressed
     in the camera frame are available.
   */
-  bool cPAvailable ;
+  bool cPAvailable;
 
 public:
   //! Default initialization.
-  void init() ;
+  void init();
   //! Default constructor.
-  vpTracker() ;
+  vpTracker();
   //! Copy constructor.
-  vpTracker(const vpTracker &tracker) ;
+  vpTracker(const vpTracker &tracker);
   //! Copy operator.
   vpTracker &operator=(const vpTracker &tracker);
 
   //! Destructor.
   virtual ~vpTracker() { ; }
-} ;
-
+};
 
 #endif
 

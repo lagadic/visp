@@ -29,7 +29,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Load XML parameters of the Model based tracker (using edges and point features).
+ * Load XML parameters of the Model based tracker (using edges and point
+ *features).
  *
  * Authors:
  * Aurelien Yol
@@ -38,8 +39,9 @@
 
 /*!
  * \file vpMbtEdgeKltXmlParser.h
- * \brief Parse an Xml file to extract configuration parameters of a mbtConfig object.
-*/
+ * \brief Parse an Xml file to extract configuration parameters of a mbtConfig
+ * object.
+ */
 
 #ifndef vpMbtEdgeKltXmlParser_HH
 #define vpMbtEdgeKltXmlParser_HH
@@ -48,48 +50,39 @@
 
 #ifdef VISP_HAVE_XML2
 
-#include <libxml/xmlmemory.h>      /* Fonctions de la lib XML.                */
+#include <libxml/xmlmemory.h> /* Fonctions de la lib XML.                */
 
-#include <visp3/mbt/vpMbtXmlParser.h>
 #include <visp3/mbt/vpMbtKltXmlParser.h>
+#include <visp3/mbt/vpMbtXmlParser.h>
 
 /*!
   \class vpMbtEdgeKltXmlParser
-  \brief Parse an Xml file to extract configuration parameters of a mbtConfig object.
-  \ingroup group_mbt_xml_parser
+  \brief Parse an Xml file to extract configuration parameters of a mbtConfig
+  object. \ingroup group_mbt_xml_parser
 
   Data parser for the model based tracker.
 
  */
-class VISP_EXPORT vpMbtEdgeKltXmlParser: public vpMbtXmlParser, public vpMbtKltXmlParser
+class VISP_EXPORT vpMbtEdgeKltXmlParser : public vpMbtXmlParser,
+                                          public vpMbtKltXmlParser
 {
 protected:
-  typedef enum{
-    camera,
-    face,
-    klt,
-    ecm,
-    lod
-  } dataToParseMbtEdgeKlt;
+  typedef enum { camera, face, klt, ecm, lod } dataToParseMbtEdgeKlt;
+
 public:
+  vpMbtEdgeKltXmlParser();
+  virtual ~vpMbtEdgeKltXmlParser();
 
-    vpMbtEdgeKltXmlParser();
-    virtual ~vpMbtEdgeKltXmlParser();
-
-  void parse(const char * filename);
+  void parse(const char *filename);
 
   virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
 
   void writeMainClass(xmlNodePtr node);
-	
+
 protected:
   void init();
-
 };
 
 #endif
 
 #endif /* NMBTEDGEKLTXMLPARSER_H_ */
-
-
-

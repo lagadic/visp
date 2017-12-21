@@ -41,16 +41,20 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-template <typename T>
-class VISP_EXPORT vpMbtTukeyEstimator {
+template <typename T> class VISP_EXPORT vpMbtTukeyEstimator
+{
 public:
-  void MEstimator(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
-  void MEstimator(const vpColVector &residues, vpColVector &weights, const double NoiseThreshold);
+  void MEstimator(const std::vector<T> &residues, std::vector<T> &weights,
+                  const T NoiseThreshold);
+  void MEstimator(const vpColVector &residues, vpColVector &weights,
+                  const double NoiseThreshold);
 
 private:
   T getMedian(std::vector<T> &vec);
-  void MEstimator_impl(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
-  void MEstimator_impl_ssse3(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
+  void MEstimator_impl(const std::vector<T> &residues,
+                       std::vector<T> &weights, const T NoiseThreshold);
+  void MEstimator_impl_ssse3(const std::vector<T> &residues,
+                             std::vector<T> &weights, const T NoiseThreshold);
   void psiTukey(const T sig, std::vector<T> &x, std::vector<T> &weights);
   void psiTukey(const T sig, std::vector<T> &x, vpColVector &weights);
 

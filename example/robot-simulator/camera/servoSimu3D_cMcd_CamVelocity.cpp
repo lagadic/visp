@@ -47,28 +47,28 @@
   - an eye-in-hand control law,
   - where velocities are computed in the camera frame.
 
-  To compute the camera velocities, we use here the vpServo class. 
-  
+  To compute the camera velocities, we use here the vpServo class.
+
   This example is to make into relation with
   servoSimu3D_cdMc_CamVelocity.cpp where the current visual feature is
   \f$s=({^{c^*}}{\bf t}_c, \; \theta u_{{^{c^*}}{\bf R}_c})\f$.
 
 */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#include <visp3/visual_features/vpFeatureThetaU.h>
-#include <visp3/visual_features/vpFeatureTranslation.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/io/vpParseArgv.h>
-#include <visp3/vs/vpServo.h>
 #include <visp3/robot/vpSimulatorCamera.h>
+#include <visp3/visual_features/vpFeatureThetaU.h>
+#include <visp3/visual_features/vpFeatureTranslation.h>
+#include <visp3/vs/vpServo.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"h"
+#define GETOPTARGS "h"
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv);
@@ -114,15 +114,19 @@ Set the program options.
 bool getOptions(int argc, const char **argv)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'h':
+      usage(argv[0], NULL);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg_);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -137,13 +141,12 @@ bool getOptions(int argc, const char **argv)
   return true;
 }
 
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   try {
     // Read the command line options
     if (getOptions(argc, argv) == false) {
-      exit (-1);
+      exit(-1);
     }
 
     // Log file creation in /tmp/$USERNAME/log.dat
@@ -157,19 +160,17 @@ main(int argc, const char ** argv)
     // Create a log filename to save velocities...
     std::string logdirname;
 #if defined(_WIN32)
-    logdirname ="C:/temp/" + username;
+    logdirname = "C:/temp/" + username;
 #else
-    logdirname ="/tmp/" + username;
+    logdirname = "/tmp/" + username;
 #endif
     // Test if the output path exist. If no try to create it
     if (vpIoTools::checkDirectory(logdirname) == false) {
       try {
         // Create the dirname
         vpIoTools::makeDirectory(logdirname);
-      }
-      catch (...) {
-        std::cerr << std::endl
-                  << "ERROR:" << std::endl;
+      } catch (...) {
+        std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << logdirname << std::endl;
         exit(-1);
       }
@@ -180,111 +181,119 @@ main(int argc, const char ** argv)
     // Open the log file name
     std::ofstream flog(logfilename.c_str());
 
-    vpServo task ;
-    vpSimulatorCamera robot ;
+    vpServo task;
+    vpSimulatorCamera robot;
 
-    std::cout << std::endl ;
-    std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << " Test program for vpServo "  <<std::endl ;
-    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
-    std::cout << " Simulation " << std::endl ;
-    std::cout << " task :  3D visual servoing " << std::endl ;
-    std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
+    std::cout << std::endl;
+    std::cout << "-------------------------------------------------------"
+              << std::endl;
+    std::cout << " Test program for vpServo " << std::endl;
+    std::cout
+        << " Eye-in-hand task control, velocity computed in the camera frame"
+        << std::endl;
+    std::cout << " Simulation " << std::endl;
+    std::cout << " task :  3D visual servoing " << std::endl;
+    std::cout << "-------------------------------------------------------"
+              << std::endl;
+    std::cout << std::endl;
 
     // Sets the initial camera location
-    vpPoseVector c_r_o(// Translation tx,ty,tz
-                       0.1, 0.2, 2,
-                       // ThetaU rotation
-                       vpMath::rad(20), vpMath::rad(10),  vpMath::rad(50) ) ;
+    vpPoseVector c_r_o( // Translation tx,ty,tz
+        0.1, 0.2, 2,
+        // ThetaU rotation
+        vpMath::rad(20), vpMath::rad(10), vpMath::rad(50));
 
     // From the camera pose build the corresponding homogeneous matrix
-    vpHomogeneousMatrix cMo(c_r_o) ;
+    vpHomogeneousMatrix cMo(c_r_o);
 
     // Set the robot initial position
     vpHomogeneousMatrix wMc, wMo;
-    robot.getPosition(wMc) ;
+    robot.getPosition(wMc);
     wMo = wMc * cMo; // Compute the position of the object in the world frame
 
     // Sets the desired camera location
-    vpPoseVector cd_r_o(// Translation tx,ty,tz
-                        0, 0, 1,
-                        // ThetaU rotation
-                        vpMath::rad(0),vpMath::rad(0),vpMath::rad(0)) ;
+    vpPoseVector cd_r_o( // Translation tx,ty,tz
+        0, 0, 1,
+        // ThetaU rotation
+        vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
 
     // From the camera desired pose build the corresponding homogeneous matrix
-    vpHomogeneousMatrix cdMo(cd_r_o) ;
+    vpHomogeneousMatrix cdMo(cd_r_o);
 
-    // Compute the transformation from the initial camera position to the desired one
-    vpHomogeneousMatrix cMcd ;
-    cMcd = cMo*cdMo.inverse() ;
+    // Compute the transformation from the initial camera position to the
+    // desired one
+    vpHomogeneousMatrix cMcd;
+    cMcd = cMo * cdMo.inverse();
 
     // Build the 3D translation feature: ctc*
-    vpFeatureTranslation t(vpFeatureTranslation::cMcd) ;
-    t.buildFrom(cMcd) ;
+    vpFeatureTranslation t(vpFeatureTranslation::cMcd);
+    t.buildFrom(cMcd);
 
     // Build the 3D rotation feature: thetaU_cRc*
     vpFeatureThetaU tu(vpFeatureThetaU::cRcd); // current feature
-    tu.buildFrom(cMcd) ;
+    tu.buildFrom(cMcd);
 
     // Sets the desired rotation (always zero !)  since s is the
     // rotation that the camera has to achieve. Here s* = (0, 0)^T
-    vpFeatureTranslation td(vpFeatureTranslation::cMcd) ;
+    vpFeatureTranslation td(vpFeatureTranslation::cMcd);
     vpFeatureThetaU tud(vpFeatureThetaU::cRcd); // desired feature
 
     // Define the task
     // - we want an eye-in-hand control law
     // - the robot is controlled in the camera frame
-    task.setServo(vpServo::EYEINHAND_CAMERA) ;
+    task.setServo(vpServo::EYEINHAND_CAMERA);
     // - we use here the interaction matrix computed with the current
     //   features
     task.setInteractionMatrixType(vpServo::CURRENT);
 
     // Add the current and desired visual features
-    task.addFeature(t,td) ;    // 3D translation
-    task.addFeature(tu,tud) ;  // 3D rotation theta u
+    task.addFeature(t, td);   // 3D translation
+    task.addFeature(tu, tud); // 3D rotation theta u
 
     // - set the constant gain to 1.0
-    task.setLambda(1) ;
+    task.setLambda(1);
 
     // Display task information
-    task.print() ;
+    task.print();
 
-    unsigned int iter=0 ;
+    unsigned int iter = 0;
     // Start the visual servoing loop. We stop the servo after 200 iterations
-    while(iter++ < 200) {
-      std::cout << "------------------------------------" << iter <<std::endl ;
-      vpColVector v ;
+    while (iter++ < 200) {
+      std::cout << "------------------------------------" << iter
+                << std::endl;
+      vpColVector v;
 
       // get the robot position
-      robot.getPosition(wMc) ;
+      robot.getPosition(wMc);
       // Compute the position of the camera wrt the object frame
       cMo = wMc.inverse() * wMo;
 
       // new displacement to achieve
-      cMcd = cMo*cdMo.inverse() ;
+      cMcd = cMo * cdMo.inverse();
 
       // Update the current visual features
-      t.buildFrom(cMcd) ;
-      tu.buildFrom(cMcd) ;
+      t.buildFrom(cMcd);
+      tu.buildFrom(cMcd);
 
       // Compute the control law
-      v = task.computeControlLaw() ;
+      v = task.computeControlLaw();
 
       // Display task information
-      if (iter==1) task.print() ;
+      if (iter == 1)
+        task.print();
 
       // Send the camera velocity to the controller
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
       // Retrieve the error
-      std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
+                << std::endl;
 
       // Save log
-      flog << v.t() << " " << ( task.getError() ).t() << std::endl;
+      flog << v.t() << " " << (task.getError()).t() << std::endl;
     }
     // Display task information
-    task.print() ;
+    task.print();
 
     // Kill the task
     task.kill();
@@ -292,10 +301,8 @@ main(int argc, const char ** argv)
     // Close the log file
     flog.close();
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return 1;
   }
 }
-

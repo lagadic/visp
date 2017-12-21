@@ -50,8 +50,8 @@
 #include "vpMy.h"
 #include "vpView.h"
 
-void fscanf_Remove (Byte *bp);
-void fscanf_View_parameters (View_parameters *vp);
+void fscanf_Remove(Byte *bp);
+void fscanf_View_parameters(View_parameters *vp);
 
 #endif
 #endif

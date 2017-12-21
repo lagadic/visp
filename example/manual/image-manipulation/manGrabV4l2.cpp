@@ -64,13 +64,12 @@ int main()
     g.setHeight(576); // Acquired images are 576 height
     g.setNBuffers(3); // 3 ring buffers to ensure real-time acquisition
     g.open(I);        // Open the grabber
-    for ( ; ; )
-      g.acquire(I);     // Acquire a 768x576 grey image
+    for (;;)
+      g.acquire(I); // Acquire a 768x576 grey image
 #endif
 
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

@@ -38,12 +38,11 @@
 
 #include <iomanip>
 
-#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImageTools.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/imgproc/vpImgproc.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
-#include <visp3/imgproc/vpImgproc.h>
-
 
 /*!
   \example testFloodFill.cpp
@@ -52,10 +51,12 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS  "cdi:o:h"
+#define GETOPTARGS "cdi:o:h"
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user);
+void usage(const char *name, const char *badparam, std::string ipath,
+           std::string opath, std::string user);
+bool getOptions(int argc, const char **argv, std::string &ipath,
+                std::string &opath, std::string user);
 
 /*
   Print the program options.
@@ -66,7 +67,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
   \param opath : Output image path.
   \param user : Username.
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, std::string ipath,
+           std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
 Test flood fill algorithm.\n\
@@ -93,8 +95,7 @@ OPTIONS:                                               Default\n\
      output result images are written.\n\
 \n\
   -h\n\
-     Print the help.\n\n",
-    ipath.c_str(), opath.c_str(), user.c_str());
+     Print the help.\n\n", ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -110,23 +111,33 @@ OPTIONS:                                               Default\n\
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, std::string user)
+bool getOptions(int argc, const char **argv, std::string &ipath,
+                std::string &opath, std::string user)
 {
   const char *optarg_;
   int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'i': ipath = optarg_; break;
-      case 'o': opath = optarg_; break;
-      case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
+    case 'i':
+      ipath = optarg_;
+      break;
+    case 'o':
+      opath = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, ipath, opath, user);
+      return false;
+      break;
 
     case 'c':
     case 'd':
       break;
 
     default:
-      usage(argv[0], optarg_, ipath, opath, user); return false; break;
+      usage(argv[0], optarg_, ipath, opath, user);
+      return false;
+      break;
     }
   }
 
@@ -141,7 +152,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
   return true;
 }
 
-void printImage(const vpImage<unsigned char> &I, const std::string &name) {
+void printImage(const vpImage<unsigned char> &I, const std::string &name)
+{
   std::cout << "\n" << name << ":" << std::endl;
 
   std::cout << "   ";
@@ -160,15 +172,15 @@ void printImage(const vpImage<unsigned char> &I, const std::string &name) {
     std::cout << std::setfill(' ') << std::setw(2) << i << "|";
 
     for (unsigned int j = 0; j < I.getWidth(); j++) {
-      std::cout << std::setfill(' ') << std::setw(2) << static_cast<unsigned int>(I[i][j]) << " ";
+      std::cout << std::setfill(' ') << std::setw(2)
+                << static_cast<unsigned int>(I[i][j]) << " ";
     }
 
     std::cout << std::endl;
   }
 }
 
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string env_ipath;
@@ -179,14 +191,15 @@ main(int argc, const char ** argv)
     std::string filename;
     std::string username;
 
-    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+    // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
-    if (! env_ipath.empty())
+    if (!env_ipath.empty())
       ipath = env_ipath;
 
-    // Set the default output path
+// Set the default output path
 #if defined(_WIN32)
     opt_opath = "C:/temp";
 #else
@@ -198,7 +211,7 @@ main(int argc, const char ** argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_opath, username) == false) {
-      exit (EXIT_FAILURE);
+      exit(EXIT_FAILURE);
     }
 
     // Get the option values
@@ -215,13 +228,12 @@ main(int argc, const char ** argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(opath);
-      }
-      catch (...) {
+      } catch (...) {
         usage(argv[0], NULL, ipath, opt_opath, username);
-        std::cerr << std::endl
-                  << "ERROR:" << std::endl;
+        std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
-        std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
+        std::cerr << "  Check your -o " << opt_opath << " option "
+                  << std::endl;
         exit(EXIT_FAILURE);
       }
     }
@@ -230,166 +242,189 @@ main(int argc, const char ** argv)
     // the input path comming from the command line option
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
-        std::cout << std::endl
-                  << "WARNING: " << std::endl;
+        std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
+                  << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
-    if (opt_ipath.empty() && env_ipath.empty()){
+    if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, opt_opath, username);
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
-      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-                << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl << std::endl;
+      std::cerr << std::endl << "ERROR:" << std::endl;
+      std::cerr
+          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+          << std::endl
+          << "  environment variable to specify the location of the "
+          << std::endl
+          << "  image path where test images are located." << std::endl
+          << std::endl;
       exit(EXIT_FAILURE);
     }
-
 
     //
     // Here starts really the test
     //
 
-    unsigned char image_data[8*8] = {
-      1, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 0, 0, 0,
-      1, 0, 0, 0, 1, 0, 1, 0,
-      1, 0, 0, 0, 1, 1, 1, 0,
-      1, 1, 1, 1, 0, 1, 1, 1,
-      1, 0, 0, 1, 1, 0, 1, 0,
-      1, 0, 0, 0, 1, 0, 1, 0,
-      1, 0, 0, 0, 1, 1, 1, 0
-    };
-    vpImage<unsigned char> I_test_flood_fill_4_connexity(image_data, 8, 8, true);
-    vpImage<unsigned char> I_test_flood_fill_8_connexity = I_test_flood_fill_4_connexity;
+    unsigned char image_data[8 * 8] = {
+        1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0,
+        1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1,
+        1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0};
+    vpImage<unsigned char> I_test_flood_fill_4_connexity(image_data, 8, 8,
+                                                         true);
+    vpImage<unsigned char> I_test_flood_fill_8_connexity =
+        I_test_flood_fill_4_connexity;
     printImage(I_test_flood_fill_4_connexity, "Test image data");
 
-    unsigned char image_data_check_4_connexity[8*8] = {
-      1, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 0, 0, 0,
-      1, 1, 1, 1, 1, 0, 1, 0,
-      1, 1, 1, 1, 1, 1, 1, 0,
-      1, 1, 1, 1, 0, 1, 1, 1,
-      1, 0, 0, 1, 1, 0, 1, 0,
-      1, 0, 0, 0, 1, 0, 1, 0,
-      1, 0, 0, 0, 1, 1, 1, 0
-    };
-    vpImage<unsigned char> I_check_4_connexity(image_data_check_4_connexity, 8, 8, true);
+    unsigned char image_data_check_4_connexity[8 * 8] = {
+        1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0,
+        1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1,
+        1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0};
+    vpImage<unsigned char> I_check_4_connexity(image_data_check_4_connexity,
+                                               8, 8, true);
 
-    unsigned char image_data_check_8_connexity[8*8] = {
-      1, 0, 0, 0, 0, 0, 0, 0,
-      1, 1, 1, 1, 1, 0, 0, 0,
-      1, 1, 1, 1, 1, 0, 1, 0,
-      1, 1, 1, 1, 1, 1, 1, 0,
-      1, 1, 1, 1, 1, 1, 1, 1,
-      1, 0, 0, 1, 1, 1, 1, 0,
-      1, 0, 0, 0, 1, 1, 1, 0,
-      1, 0, 0, 0, 1, 1, 1, 0
-    };
-    vpImage<unsigned char> I_check_8_connexity(image_data_check_8_connexity, 8, 8, true);
+    unsigned char image_data_check_8_connexity[8 * 8] = {
+        1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0,
+        1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1,
+        1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0};
+    vpImage<unsigned char> I_check_8_connexity(image_data_check_8_connexity,
+                                               8, 8, true);
 
-    //Test flood fill on test data 4-connexity
-    vp::floodFill(I_test_flood_fill_4_connexity, vpImagePoint(2,2), 0, 1, vpImageMorphology::CONNEXITY_4);
-    printImage(I_test_flood_fill_4_connexity, "I_test_flood_fill_4_connexity");
+    // Test flood fill on test data 4-connexity
+    vp::floodFill(I_test_flood_fill_4_connexity, vpImagePoint(2, 2), 0, 1,
+                  vpImageMorphology::CONNEXITY_4);
+    printImage(I_test_flood_fill_4_connexity,
+               "I_test_flood_fill_4_connexity");
 
     if (I_test_flood_fill_4_connexity != I_check_4_connexity) {
-      throw vpException(vpException::fatalError, "Problem with vp::floodFill() and 4-connexity!");
+      throw vpException(vpException::fatalError,
+                        "Problem with vp::floodFill() and 4-connexity!");
     }
-    std::cout << "\n(I_test_flood_fill_4_connexity == I_check_4_connexity)? " << (I_test_flood_fill_4_connexity == I_check_4_connexity) << std::endl;
+    std::cout << "\n(I_test_flood_fill_4_connexity == I_check_4_connexity)? "
+              << (I_test_flood_fill_4_connexity == I_check_4_connexity)
+              << std::endl;
 
-    //Test flood fill on test data 8-connexity
-    vp::floodFill(I_test_flood_fill_8_connexity, vpImagePoint(2,2), 0, 1, vpImageMorphology::CONNEXITY_8);
-    printImage(I_test_flood_fill_8_connexity, "I_test_flood_fill_8_connexity");
+    // Test flood fill on test data 8-connexity
+    vp::floodFill(I_test_flood_fill_8_connexity, vpImagePoint(2, 2), 0, 1,
+                  vpImageMorphology::CONNEXITY_8);
+    printImage(I_test_flood_fill_8_connexity,
+               "I_test_flood_fill_8_connexity");
 
     if (I_test_flood_fill_8_connexity != I_check_8_connexity) {
-      throw vpException(vpException::fatalError, "Problem with vp::floodFill() and 8-connexity!");
+      throw vpException(vpException::fatalError,
+                        "Problem with vp::floodFill() and 8-connexity!");
     }
-    std::cout << "\n(I_test_flood_fill_8_connexity == I_check_8_connexity)? " << (I_test_flood_fill_8_connexity == I_check_8_connexity) << std::endl;
+    std::cout << "\n(I_test_flood_fill_8_connexity == I_check_8_connexity)? "
+              << (I_test_flood_fill_8_connexity == I_check_8_connexity)
+              << std::endl;
 
-
-    //Read Klimt.ppm
+    // Read Klimt.ppm
     filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
     vpImage<unsigned char> I_klimt;
     vpImageIo::read(I_klimt, filename);
-    std::cout << "\nRead image: " << filename << " (" << I_klimt.getWidth() << "x" << I_klimt.getHeight() << ")"
-              << std::endl << std::endl;
-    vpImageTools::binarise(I_klimt, (unsigned char) 127, (unsigned char) 255, (unsigned char) 0, (unsigned char) 255, (unsigned char) 255);
+    std::cout << "\nRead image: " << filename << " (" << I_klimt.getWidth()
+              << "x" << I_klimt.getHeight() << ")" << std::endl
+              << std::endl;
+    vpImageTools::binarise(I_klimt, (unsigned char)127, (unsigned char)255,
+                           (unsigned char)0, (unsigned char)255,
+                           (unsigned char)255);
 
     int seed_x = 0;
     int seed_y = 0;
 
     vpImage<unsigned char> I_klimt_flood_fill_4_connexity = I_klimt;
     double t = vpTime::measureTimeMs();
-    vp::floodFill(I_klimt_flood_fill_4_connexity, vpImagePoint(seed_y, seed_x), 0, 255, vpImageMorphology::CONNEXITY_4);
+    vp::floodFill(I_klimt_flood_fill_4_connexity,
+                  vpImagePoint(seed_y, seed_x), 0, 255,
+                  vpImageMorphology::CONNEXITY_4);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Flood fill on Klimt image (4-connexity): " << t << " ms" << std::endl;
+    std::cout << "Flood fill on Klimt image (4-connexity): " << t << " ms"
+              << std::endl;
 
-    filename = vpIoTools::createFilePath(opath, "Klimt_flood_fill_4_connexity.pgm");
+    filename =
+        vpIoTools::createFilePath(opath, "Klimt_flood_fill_4_connexity.pgm");
     vpImageIo::write(I_klimt_flood_fill_4_connexity, filename);
 
     vpImage<unsigned char> I_klimt_flood_fill_8_connexity = I_klimt;
     t = vpTime::measureTimeMs();
-    vp::floodFill(I_klimt_flood_fill_8_connexity, vpImagePoint(seed_y, seed_x), 0, 255, vpImageMorphology::CONNEXITY_8);
+    vp::floodFill(I_klimt_flood_fill_8_connexity,
+                  vpImagePoint(seed_y, seed_x), 0, 255,
+                  vpImageMorphology::CONNEXITY_8);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "Flood fill on Klimt image (8-connexity): " << t << " ms" << std::endl;
-    filename = vpIoTools::createFilePath(opath, "Klimt_flood_fill_8_connexity.pgm");
+    std::cout << "Flood fill on Klimt image (8-connexity): " << t << " ms"
+              << std::endl;
+    filename =
+        vpIoTools::createFilePath(opath, "Klimt_flood_fill_8_connexity.pgm");
     vpImageIo::write(I_klimt_flood_fill_8_connexity, filename);
-
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020408
     cv::Mat matImg_klimt_4_connexity, matImg_klimt_8_connexity;
     vpImageConvert::convert(I_klimt, matImg_klimt_4_connexity);
     vpImageConvert::convert(I_klimt, matImg_klimt_8_connexity);
 
-    //4-connexity
+    // 4-connexity
     t = vpTime::measureTimeMs();
-    cv::floodFill(matImg_klimt_4_connexity, cv::Point(seed_x, seed_y), cv::Scalar(255), 0, cv::Scalar(), cv::Scalar(), 4);
+    cv::floodFill(matImg_klimt_4_connexity, cv::Point(seed_x, seed_y),
+                  cv::Scalar(255), 0, cv::Scalar(), cv::Scalar(), 4);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "OpenCV flood fill on Klimt image (4-connexity): " << t << " ms" << std::endl;
+    std::cout << "OpenCV flood fill on Klimt image (4-connexity): " << t
+              << " ms" << std::endl;
 
     vpImage<unsigned char> I_klimt_flood_fill_4_connexity_check;
-    vpImageConvert::convert(matImg_klimt_4_connexity, I_klimt_flood_fill_4_connexity_check);
+    vpImageConvert::convert(matImg_klimt_4_connexity,
+                            I_klimt_flood_fill_4_connexity_check);
 
-    filename = vpIoTools::createFilePath(opath, "Klimt_flood_fill_4_connexity_opencv.pgm");
+    filename = vpIoTools::createFilePath(
+        opath, "Klimt_flood_fill_4_connexity_opencv.pgm");
     vpImageIo::write(I_klimt_flood_fill_4_connexity_check, filename);
 
-
-    //8-connexity
+    // 8-connexity
     t = vpTime::measureTimeMs();
-    cv::floodFill(matImg_klimt_8_connexity, cv::Point(seed_x, seed_y), cv::Scalar(255), 0, cv::Scalar(), cv::Scalar(), 8);
+    cv::floodFill(matImg_klimt_8_connexity, cv::Point(seed_x, seed_y),
+                  cv::Scalar(255), 0, cv::Scalar(), cv::Scalar(), 8);
     t = vpTime::measureTimeMs() - t;
-    std::cout << "OpenCV flood fill on Klimt image (8-connexity): " << t << " ms" << std::endl;
+    std::cout << "OpenCV flood fill on Klimt image (8-connexity): " << t
+              << " ms" << std::endl;
 
     vpImage<unsigned char> I_klimt_flood_fill_8_connexity_check;
-    vpImageConvert::convert(matImg_klimt_8_connexity, I_klimt_flood_fill_8_connexity_check);
+    vpImageConvert::convert(matImg_klimt_8_connexity,
+                            I_klimt_flood_fill_8_connexity_check);
 
-    filename = vpIoTools::createFilePath(opath, "Klimt_flood_fill_8_connexity_opencv.pgm");
+    filename = vpIoTools::createFilePath(
+        opath, "Klimt_flood_fill_8_connexity_opencv.pgm");
     vpImageIo::write(I_klimt_flood_fill_8_connexity_check, filename);
 
+    // Check
+    std::cout << "\n(I_klimt_flood_fill_4_connexity == "
+                 "I_klimt_flood_fill_4_connexity_check)? "
+              << (I_klimt_flood_fill_4_connexity ==
+                  I_klimt_flood_fill_4_connexity_check)
+              << std::endl;
+    std::cout << "(I_klimt_flood_fill_8_connexity == "
+                 "I_klimt_flood_fill_8_connexity_check)? "
+              << (I_klimt_flood_fill_8_connexity ==
+                  I_klimt_flood_fill_8_connexity_check)
+              << std::endl;
 
-    //Check
-    std::cout << "\n(I_klimt_flood_fill_4_connexity == I_klimt_flood_fill_4_connexity_check)? "
-              << (I_klimt_flood_fill_4_connexity == I_klimt_flood_fill_4_connexity_check) << std::endl;
-    std::cout << "(I_klimt_flood_fill_8_connexity == I_klimt_flood_fill_8_connexity_check)? "
-              << (I_klimt_flood_fill_8_connexity == I_klimt_flood_fill_8_connexity_check) << std::endl;
-
-    if (I_klimt_flood_fill_4_connexity != I_klimt_flood_fill_4_connexity_check) {
-      throw vpException(vpException::fatalError, "(I_klimt_flood_fill_4_connexity != I_klimt_flood_fill_4_connexity_check)");
+    if (I_klimt_flood_fill_4_connexity !=
+        I_klimt_flood_fill_4_connexity_check) {
+      throw vpException(vpException::fatalError,
+                        "(I_klimt_flood_fill_4_connexity != "
+                        "I_klimt_flood_fill_4_connexity_check)");
     }
-    if (I_klimt_flood_fill_8_connexity != I_klimt_flood_fill_8_connexity_check) {
-      throw vpException(vpException::fatalError, "(I_klimt_flood_fill_8_connexity != I_klimt_flood_fill_8_connexity_check)");
+    if (I_klimt_flood_fill_8_connexity !=
+        I_klimt_flood_fill_8_connexity_check) {
+      throw vpException(vpException::fatalError,
+                        "(I_klimt_flood_fill_8_connexity != "
+                        "I_klimt_flood_fill_8_connexity_check)");
     }
 #endif
 
     std::cout << "\nTest flood fill is ok!" << std::endl;
     return EXIT_SUCCESS;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

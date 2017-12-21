@@ -42,22 +42,22 @@
 #ifndef vpLex_h
 #define vpLex_h
 
-#include <visp3/core/vpConfig.h>
 #include <stdio.h>
+#include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-void open_lex (void);
-void close_lex (void);
+void open_lex(void);
+void close_lex(void);
 int lex(void);
-void unlex (void);
-void open_source (FILE *fd, const char *str);
-void close_source (void);
-void lexerr (const char* path, ...);
-void pusherr (const char *str);
-void popuperr (const char *str);
-void poperr (void);
-int lexecho (FILE *f, int token);
+void unlex(void);
+void open_source(FILE *fd, const char *str);
+void close_source(void);
+void lexerr(const char *path, ...);
+void pusherr(const char *str);
+void popuperr(const char *str);
+void poperr(void);
+int lexecho(FILE *f, int token);
 
 #endif
 #endif

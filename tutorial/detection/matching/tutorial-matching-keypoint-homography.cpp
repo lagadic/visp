@@ -1,12 +1,12 @@
 //! \example tutorial-matching-keypoint-homography.cpp
+#include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/io/vpVideoReader.h>
 #include <visp3/vision/vpHomography.h>
 #include <visp3/vision/vpKeyPoint.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/io/vpVideoReader.h>
 
 int main(int argc, const char **argv)
-{  
+{
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   //! [Select method]
   int method = 0;
@@ -17,7 +17,8 @@ int main(int argc, const char **argv)
   if (method == 0)
     std::cout << "Uses Ransac to estimate the homography" << std::endl;
   else
-    std::cout << "Uses a robust scheme to estimate the homography" << std::endl;
+    std::cout << "Uses a robust scheme to estimate the homography"
+              << std::endl;
   //! [Select method]
 
   vpImage<unsigned char> I;
@@ -28,54 +29,57 @@ int main(int argc, const char **argv)
 
   const std::string detectorName = "ORB";
   const std::string extractorName = "ORB";
-  //Hamming distance must be used with ORB
+  // Hamming distance must be used with ORB
   const std::string matcherName = "BruteForce-Hamming";
-  vpKeyPoint::vpFilterMatchingType filterType = vpKeyPoint::ratioDistanceThreshold;
+  vpKeyPoint::vpFilterMatchingType filterType =
+      vpKeyPoint::ratioDistanceThreshold;
   vpKeyPoint keypoint(detectorName, extractorName, matcherName, filterType);
   keypoint.buildReference(I);
 
   vpImage<unsigned char> Idisp;
-  Idisp.resize(I.getHeight(), 2*I.getWidth());
+  Idisp.resize(I.getHeight(), 2 * I.getWidth());
   Idisp.insert(I, vpImagePoint(0, 0));
   Idisp.insert(I, vpImagePoint(0, I.getWidth()));
 
-  vpDisplayOpenCV d(Idisp, 0, 0, "Homography from matched keypoints") ;
+  vpDisplayOpenCV d(Idisp, 0, 0, "Homography from matched keypoints");
   vpDisplay::display(Idisp);
   vpDisplay::flush(Idisp);
 
   //! [Set coordinates]
   vpImagePoint corner_ref[4];
-  corner_ref[0].set_ij(115,  64);
-  corner_ref[1].set_ij( 83, 253);
+  corner_ref[0].set_ij(115, 64);
+  corner_ref[1].set_ij(83, 253);
   corner_ref[2].set_ij(282, 307);
-  corner_ref[3].set_ij(330,  72);
+  corner_ref[3].set_ij(330, 72);
   //! [Set coordinates]
   //! [Display]
-  for (unsigned int i=0; i<4; i++) {
+  for (unsigned int i = 0; i < 4; i++) {
     vpDisplay::displayCross(Idisp, corner_ref[i], 12, vpColor::red);
   }
   vpDisplay::flush(Idisp);
   //! [Display]
 
   //! [Camera]
-  vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
+  vpCameraParameters cam(840, 840, I.getWidth() / 2, I.getHeight() / 2);
   //! [Camera]
 
   vpHomography curHref;
 
-  while ( ! reader.end() )
-  {
+  while (!reader.end()) {
     reader.acquire(I);
     Idisp.insert(I, vpImagePoint(0, I.getWidth()));
     vpDisplay::display(Idisp);
-    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()), vpImagePoint(I.getHeight(), I.getWidth()), vpColor::white, 2);
+    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()),
+                           vpImagePoint(I.getHeight(), I.getWidth()),
+                           vpColor::white, 2);
 
     //! [Matching]
     unsigned int nbMatch = keypoint.matchPoint(I);
     std::cout << "Nb matches: " << nbMatch << std::endl;
     //! [Matching]
 
-    std::vector<vpImagePoint> iPref(nbMatch), iPcur(nbMatch); // Coordinates in pixels (for display only)
+    std::vector<vpImagePoint> iPref(nbMatch),
+        iPcur(nbMatch); // Coordinates in pixels (for display only)
     //! [Allocation]
     std::vector<double> mPref_x(nbMatch), mPref_y(nbMatch);
     std::vector<double> mPcur_x(nbMatch), mPcur_y(nbMatch);
@@ -85,22 +89,24 @@ int main(int argc, const char **argv)
     for (unsigned int i = 0; i < nbMatch; i++) {
       keypoint.getMatchedPoints(i, iPref[i], iPcur[i]);
       //! [Pixel conversion]
-      vpPixelMeterConversion::convertPoint(cam, iPref[i], mPref_x[i], mPref_y[i]);
-      vpPixelMeterConversion::convertPoint(cam, iPcur[i], mPcur_x[i], mPcur_y[i]);
+      vpPixelMeterConversion::convertPoint(cam, iPref[i], mPref_x[i],
+                                           mPref_y[i]);
+      vpPixelMeterConversion::convertPoint(cam, iPcur[i], mPcur_x[i],
+                                           mPcur_y[i]);
       //! [Pixel conversion]
     }
 
     //! [Homography estimation]
-    try{
+    try {
       double residual;
       if (method == 0)
-        vpHomography::ransac(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
-                             (unsigned int)(mPref_x.size()*0.25), 2.0/cam.get_px(), true);
+        vpHomography::ransac(
+            mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
+            (unsigned int)(mPref_x.size() * 0.25), 2.0 / cam.get_px(), true);
       else
-        vpHomography::robust(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref, inliers, residual,
-                             0.4, 4, true);
-    } catch(...)
-    {
+        vpHomography::robust(mPref_x, mPref_y, mPcur_x, mPcur_y, curHref,
+                             inliers, residual, 0.4, 4, true);
+    } catch (...) {
       std::cout << "Cannot compute homography from matches..." << std::endl;
     }
 
@@ -108,27 +114,28 @@ int main(int argc, const char **argv)
 
     //! [Projection]
     vpImagePoint corner_cur[4];
-    for (int i=0; i< 4; i++) {
+    for (int i = 0; i < 4; i++) {
       corner_cur[i] = vpHomography::project(cam, curHref, corner_ref[i]);
     }
     //! [Projection]
 
     //! [Display contour]
     vpImagePoint offset(0, I.getWidth());
-    for (int i=0; i< 4; i++) {
-      vpDisplay::displayLine(Idisp,
-                             corner_cur[i]       + offset,
-                             corner_cur[(i+1)%4] + offset,
-                             vpColor::blue, 3);
+    for (int i = 0; i < 4; i++) {
+      vpDisplay::displayLine(Idisp, corner_cur[i] + offset,
+                             corner_cur[(i + 1) % 4] + offset, vpColor::blue,
+                             3);
     }
     //! [Display contour]
 
     //! [Display matches]
     for (unsigned int i = 0; i < nbMatch; i++) {
-      if(inliers[i] == true)
-        vpDisplay::displayLine(Idisp, iPref[i], iPcur[i] + offset, vpColor::green);
+      if (inliers[i] == true)
+        vpDisplay::displayLine(Idisp, iPref[i], iPcur[i] + offset,
+                               vpColor::green);
       else
-        vpDisplay::displayLine(Idisp, iPref[i], iPcur[i] + offset, vpColor::red);
+        vpDisplay::displayLine(Idisp, iPref[i], iPcur[i] + offset,
+                               vpColor::red);
     }
     //! [Display matches]
 
@@ -140,7 +147,8 @@ int main(int argc, const char **argv)
 
   vpDisplay::getClick(Idisp);
 #else
-  (void)argc; (void)argv;
+  (void)argc;
+  (void)argv;
 #endif
   return 0;
 }

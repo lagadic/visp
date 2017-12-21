@@ -49,9 +49,9 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 
+#include <cmath>  // std::fabs
+#include <limits> // numeric_limits
 #include <ostream>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
 #include <vector>
 
 class vpRect;
@@ -66,7 +66,7 @@ class vpRect;
 
   \warning If you want to define a point thanks to its coordinates
   given in meter in the object frame, the camera frame or the image
-  plane, you have to use the class vpPoint. 
+  plane, you have to use the class vpPoint.
 
   In this class, the 2D coordinates are not necessary integer
   values. It is easy to manipulate the given coordinates in the two
@@ -85,10 +85,9 @@ class vpRect;
   set_j(const double j) and set_u(const double u).</B>
 */
 
-
 class VISP_EXPORT vpImagePoint
 {
- public:
+public:
   /*!
     Default constructor that initialize the coordinates of the image
     point to zero.
@@ -113,7 +112,8 @@ class VISP_EXPORT vpImagePoint
   /*!
     Copy operator.
   */
-  inline vpImagePoint& operator=(const vpImagePoint &ip) {
+  inline vpImagePoint &operator=(const vpImagePoint &ip)
+  {
     this->i = ip.i;
     this->j = ip.j;
     return *this;
@@ -122,31 +122,34 @@ class VISP_EXPORT vpImagePoint
   /*!
     Move operator.
   */
-  inline vpImagePoint& operator=(const vpImagePoint &&ip) {
+  inline vpImagePoint &operator=(const vpImagePoint &&ip)
+  {
     this->i = std::move(ip.i);
     this->j = std::move(ip.j);
     return *this;
   }
 #endif
 
-  vpImagePoint& operator+=(const vpImagePoint &ip);
+  vpImagePoint &operator+=(const vpImagePoint &ip);
 
   /*!
 
     Operator -=.
 
   */
-  inline vpImagePoint& operator-=(const vpImagePoint &ip) {
+  inline vpImagePoint &operator-=(const vpImagePoint &ip)
+  {
     this->i -= ip.i;
     this->j -= ip.j;
     return *this;
   }
-  vpImagePoint& operator/=(const double scale);
+  vpImagePoint &operator/=(const double scale);
   /*!
 
     Operator *=.
 */
-  inline vpImagePoint& operator*=(const double scale) {
+  inline vpImagePoint &operator*=(const double scale)
+  {
     this->i *= scale;
     this->j *= scale;
     return *this;
@@ -161,7 +164,7 @@ class VISP_EXPORT vpImagePoint
 
     \sa set_j(), set_u(), set_v()
   */
-  inline void set_i(const double ii) {  this->i = ii ; }
+  inline void set_i(const double ii) { this->i = ii; }
 
   /*!
 
@@ -172,7 +175,7 @@ class VISP_EXPORT vpImagePoint
 
     \sa set_i(), set_u(), set_v()
   */
-  inline void set_j(const double jj) {  this->j = jj ; }
+  inline void set_j(const double jj) { this->j = jj; }
 
   /*!
 
@@ -183,9 +186,10 @@ class VISP_EXPORT vpImagePoint
 
     \sa set_i(), set_j(), set_u(), set_v()
   */
-  inline void set_ij(const double ii, const double jj) {
-    this->i = ii ;
-    this->j = jj ;
+  inline void set_ij(const double ii, const double jj)
+  {
+    this->i = ii;
+    this->j = jj;
   }
 
   /*!
@@ -197,7 +201,7 @@ class VISP_EXPORT vpImagePoint
 
     \sa get_j(), get_u(), get_v()
   */
-  inline double get_i()  const { return i ; }
+  inline double get_i() const { return i; }
 
   /*!
 
@@ -208,7 +212,7 @@ class VISP_EXPORT vpImagePoint
 
     \sa get_i(), get_u(), get_v()
   */
-  inline double get_j()  const { return j ; }
+  inline double get_j() const { return j; }
 
   /*!
 
@@ -219,7 +223,7 @@ class VISP_EXPORT vpImagePoint
 
     \sa set_i(), set_j(), set_v()
   */
-  inline void set_u(const double u) {  j = u ; }
+  inline void set_u(const double u) { j = u; }
 
   /*!
 
@@ -230,7 +234,7 @@ class VISP_EXPORT vpImagePoint
 
     \sa set_i(), set_j(), set_u()
   */
-  inline void set_v(const double v) {  i = v ; }
+  inline void set_v(const double v) { i = v; }
 
   /*!
 
@@ -241,9 +245,10 @@ class VISP_EXPORT vpImagePoint
 
     \sa set_i(), set_j(), set_u(), set_v()
   */
-  inline void set_uv(const double u, const double v) {
-    this->i = v ;
-    this->j = u ;
+  inline void set_uv(const double u, const double v)
+  {
+    this->i = v;
+    this->j = u;
   }
 
   /*!
@@ -255,7 +260,7 @@ class VISP_EXPORT vpImagePoint
 
     \sa get_i(), get_j(), get_v()
   */
-  inline double get_u()  const { return j ; }
+  inline double get_u() const { return j; }
 
   /*!
 
@@ -266,7 +271,7 @@ class VISP_EXPORT vpImagePoint
 
     \sa get_i(), get_j(), get_u()
   */
-  inline double get_v()  const { return i; }
+  inline double get_v() const { return i; }
 
   /*!
 
@@ -277,12 +282,14 @@ class VISP_EXPORT vpImagePoint
 
     \return the distance between the two points.
   */
-  static double distance (const vpImagePoint &iP1, const vpImagePoint &iP2) {
-    return(sqrt(vpMath::sqr(iP1.get_i()-iP2.get_i())+vpMath::sqr(iP1.get_j()-iP2.get_j())));}
+  static double distance(const vpImagePoint &iP1, const vpImagePoint &iP2)
+  {
+    return (sqrt(vpMath::sqr(iP1.get_i() - iP2.get_i()) +
+                 vpMath::sqr(iP1.get_j() - iP2.get_j())));
+  }
 
+  static vpRect getBBox(const std::vector<vpImagePoint> &ipVec);
 
-  static vpRect getBBox(const std::vector<vpImagePoint>& ipVec);
-    
   /*!
 
     Compute the distance \f$ |iP1 - iP2| = (i_1-i_2)^2+(j_1-j_2)^2 \f$
@@ -292,29 +299,45 @@ class VISP_EXPORT vpImagePoint
 
     \return the distance between the two points.
   */
-  static double sqrDistance (const vpImagePoint &iP1, const vpImagePoint &iP2) {
-    return(vpMath::sqr(iP1.get_i()-iP2.get_i())+vpMath::sqr(iP1.get_j()-iP2.get_j()));}
-  
-  
-  bool inRectangle( const vpRect &rect ) const;
+  static double sqrDistance(const vpImagePoint &iP1, const vpImagePoint &iP2)
+  {
+    return (vpMath::sqr(iP1.get_i() - iP2.get_i()) +
+            vpMath::sqr(iP1.get_j() - iP2.get_j()));
+  }
 
-  friend VISP_EXPORT bool operator==( const vpImagePoint &ip1, const vpImagePoint &ip2 );
-  friend VISP_EXPORT bool operator!=( const vpImagePoint &ip1, const vpImagePoint &ip2 );
-  friend VISP_EXPORT vpImagePoint operator+=( const vpImagePoint &ip1, const vpImagePoint &ip2 );
-  friend VISP_EXPORT vpImagePoint operator+( const vpImagePoint &ip1, const vpImagePoint &ip2 );
-  friend VISP_EXPORT vpImagePoint operator+( const vpImagePoint &ip1, const int offset );
-  friend VISP_EXPORT vpImagePoint operator+( const vpImagePoint &ip1, const unsigned int offset );
-  friend VISP_EXPORT vpImagePoint operator+( const vpImagePoint &ip1, const double offset );
-  friend VISP_EXPORT vpImagePoint operator-( const vpImagePoint &ip1, const vpImagePoint &ip2 );
-  friend VISP_EXPORT vpImagePoint operator-( const vpImagePoint &ip1, const int offset );
-  friend VISP_EXPORT vpImagePoint operator-( const vpImagePoint &ip1, const unsigned int offset );
-  friend VISP_EXPORT vpImagePoint operator-( const vpImagePoint &ip1, const double offset );
-  friend VISP_EXPORT vpImagePoint operator*( const vpImagePoint &ip1, const double scale );
-  friend VISP_EXPORT vpImagePoint operator/( const vpImagePoint &ip1, const double scale );
-  friend VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpImagePoint& ip);
+  bool inRectangle(const vpRect &rect) const;
 
- private:
-  double i,j;
+  friend VISP_EXPORT bool operator==(const vpImagePoint &ip1,
+                                     const vpImagePoint &ip2);
+  friend VISP_EXPORT bool operator!=(const vpImagePoint &ip1,
+                                     const vpImagePoint &ip2);
+  friend VISP_EXPORT vpImagePoint operator+=(const vpImagePoint &ip1,
+                                             const vpImagePoint &ip2);
+  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1,
+                                            const vpImagePoint &ip2);
+  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1,
+                                            const int offset);
+  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1,
+                                            const unsigned int offset);
+  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1,
+                                            const double offset);
+  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1,
+                                            const vpImagePoint &ip2);
+  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1,
+                                            const int offset);
+  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1,
+                                            const unsigned int offset);
+  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1,
+                                            const double offset);
+  friend VISP_EXPORT vpImagePoint operator*(const vpImagePoint &ip1,
+                                            const double scale);
+  friend VISP_EXPORT vpImagePoint operator/(const vpImagePoint &ip1,
+                                            const double scale);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                              const vpImagePoint &ip);
+
+private:
+  double i, j;
 };
 
 #endif

@@ -33,41 +33,26 @@
  *
  *****************************************************************************/
 
-#include <visp3/core/vpCPUFeatures.h>
 #include "x86/cpu_x86.h"
+#include <visp3/core/vpCPUFeatures.h>
 
-namespace vpCPUFeatures {
+namespace vpCPUFeatures
+{
 static const FeatureDetector::cpu_x86 cpu_features;
 
-bool checkSSE2() {
-  return cpu_features.HW_SSE2;
-}
+bool checkSSE2() { return cpu_features.HW_SSE2; }
 
-bool checkSSE3() {
-  return cpu_features.HW_SSE3;
-}
+bool checkSSE3() { return cpu_features.HW_SSE3; }
 
-bool checkSSSE3() {
-  return cpu_features.HW_SSSE3;
-}
+bool checkSSSE3() { return cpu_features.HW_SSSE3; }
 
-bool checkSSE41() {
-  return cpu_features.HW_SSE41;
-}
+bool checkSSE41() { return cpu_features.HW_SSE41; }
 
-bool checkSSE42() {
-  return cpu_features.HW_SSE42;
-}
+bool checkSSE42() { return cpu_features.HW_SSE42; }
 
-bool checkAVX() {
-  return cpu_features.HW_AVX;
-}
+bool checkAVX() { return cpu_features.HW_AVX; }
 
-bool checkAVX2() {
-  return cpu_features.HW_AVX2;
-}
+bool checkAVX2() { return cpu_features.HW_AVX2; }
 
-void printCPUInfo() {
-  cpu_features.print();
-}
-} //namespace vpCPUFeatures
+void printCPUInfo() { cpu_features.print(); }
+} // namespace vpCPUFeatures

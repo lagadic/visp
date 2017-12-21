@@ -49,8 +49,6 @@
 
 */
 
-
-
 /*!
   \example servoAfma4Point2DCamVelocity.cpp
 
@@ -61,29 +59,27 @@
 
 */
 
-
-
+#include <stdlib.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h> // Debug trace
-#include <stdlib.h>
-#if (defined (VISP_HAVE_AFMA4) && defined (VISP_HAVE_DC1394))
+#if (defined(VISP_HAVE_AFMA4) && defined(VISP_HAVE_DC1394))
 
-#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
-#include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/visual_features/vpFeaturePoint.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/vs/vpServo.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/robot/vpRobotAfma4.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/robot/vpRobotAfma4.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
+#include <visp3/vs/vpServo.h>
 
 // Exception
 #include <visp3/core/vpException.h>
@@ -91,8 +87,7 @@
 
 #include <visp3/blob/vpDot.h>
 
-int
-main()
+int main()
 {
   try {
     // Log file creation in /tmp/$USERNAME/log.dat
@@ -107,17 +102,15 @@ main()
 
     // Create a log filename to save velocities...
     std::string logdirname;
-    logdirname ="/tmp/" + username;
+    logdirname = "/tmp/" + username;
 
     // Test if the output path exist. If no try to create it
     if (vpIoTools::checkDirectory(logdirname) == false) {
       try {
         // Create the dirname
         vpIoTools::makeDirectory(logdirname);
-      }
-      catch (...) {
-        std::cerr << std::endl
-                  << "ERROR:" << std::endl;
+      } catch (...) {
+        std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << logdirname << std::endl;
         exit(-1);
       }
@@ -128,115 +121,116 @@ main()
     // Open the log file name
     std::ofstream flog(logfilename.c_str());
 
-    vpRobotAfma4 robot ;
-    vpServo task ;
+    vpRobotAfma4 robot;
+    vpServo task;
 
-
-    vpImage<unsigned char> I ;
+    vpImage<unsigned char> I;
 
     vp1394TwoGrabber g(false);
     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-    g.open(I) ;
+    g.open(I);
 
-    g.acquire(I) ;
+    g.acquire(I);
 
 #ifdef VISP_HAVE_X11
-    vpDisplayX display(I,100,100,"Current image") ;
+    vpDisplayX display(I, 100, 100, "Current image");
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV display(I,100,100,"Current image") ;
+    vpDisplayOpenCV display(I, 100, 100, "Current image");
 #elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I,100,100,"Current image") ;
+    vpDisplayGTK display(I, 100, 100, "Current image");
 #endif
 
-    vpDisplay::display(I) ;
-    vpDisplay::flush(I) ;
+    vpDisplay::display(I);
+    vpDisplay::flush(I);
 
-    std::cout << std::endl ;
-    std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << " Test program for vpServo "  <<std::endl ;
-    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
-    std::cout << " Simulation " << std::endl ;
-    std::cout << " task : servo a point " << std::endl ;
-    std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
+    std::cout << std::endl;
+    std::cout << "-------------------------------------------------------"
+              << std::endl;
+    std::cout << " Test program for vpServo " << std::endl;
+    std::cout
+        << " Eye-in-hand task control, velocity computed in the camera frame"
+        << std::endl;
+    std::cout << " Simulation " << std::endl;
+    std::cout << " task : servo a point " << std::endl;
+    std::cout << "-------------------------------------------------------"
+              << std::endl;
+    std::cout << std::endl;
 
-    vpDot dot ;
+    vpDot dot;
 
     std::cout << "Click on a dot..." << std::endl;
-    dot.initTracking(I) ;
+    dot.initTracking(I);
 
     // Get the cog of the dot
     vpImagePoint cog = dot.getCog();
 
-    vpDisplay::displayCross(I, cog, 10, vpColor::blue) ;
+    vpDisplay::displayCross(I, cog, 10, vpColor::blue);
     vpDisplay::flush(I);
 
+    vpCameraParameters cam;
 
-    vpCameraParameters cam ;
+    vpTRACE("sets the current position of the visual feature ");
+    vpFeaturePoint p;
+    vpFeatureBuilder::create(
+        p, cam, dot); // retrieve x,y and Z of the vpPoint structure
 
-    vpTRACE("sets the current position of the visual feature ") ;
-    vpFeaturePoint p ;
-    vpFeatureBuilder::create(p, cam, dot) ;  //retrieve x,y and Z of the vpPoint structure
+    vpTRACE("sets the desired position of the visual feature ");
+    vpFeaturePoint pd;
+    pd.buildFrom(0, 0, 1);
 
-    vpTRACE("sets the desired position of the visual feature ") ;
-    vpFeaturePoint pd ;
-    pd.buildFrom(0,0,1) ;
+    vpTRACE("define the task");
+    vpTRACE("\t we want an eye-in-hand control law");
+    vpTRACE("\t robot is controlled in the camera frame");
+    task.setServo(vpServo::EYEINHAND_CAMERA);
 
-    vpTRACE("define the task") ;
-    vpTRACE("\t we want an eye-in-hand control law") ;
-    vpTRACE("\t robot is controlled in the camera frame") ;
-    task.setServo(vpServo::EYEINHAND_CAMERA) ;
+    vpTRACE("\t we want to see a point on a point..");
+    std::cout << std::endl;
+    task.addFeature(p, pd);
 
-    vpTRACE("\t we want to see a point on a point..") ;
-    std::cout << std::endl ;
-    task.addFeature(p,pd) ;
+    vpTRACE("\t set the gain");
+    task.setLambda(0.8);
 
-    vpTRACE("\t set the gain") ;
-    task.setLambda(0.8) ;
+    vpTRACE("Display task information ");
+    task.print();
 
-
-    vpTRACE("Display task information " ) ;
-    task.print() ;
-
-
-    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
-    for ( ; ; ) {
+    for (;;) {
       // Acquire a new image from the camera
-      g.acquire(I) ;
+      g.acquire(I);
 
       // Display this image
-      vpDisplay::display(I) ;
+      vpDisplay::display(I);
 
       // Achieve the tracking of the dot in the image
-      dot.track(I) ;
+      dot.track(I);
 
       // Get the cog of the dot
       vpImagePoint cog = dot.getCog();
 
       // Display a green cross at the center of gravity position in the image
-      vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
+      vpDisplay::displayCross(I, cog, 10, vpColor::green);
 
       // Update the point feature from the dot location
       vpFeatureBuilder::create(p, cam, dot);
 
-      vpColVector v ;
+      vpColVector v;
       // Compute the visual servoing skew vector
-      v = task.computeControlLaw() ;
+      v = task.computeControlLaw();
 
       // Display the current and desired feature points in the image display
-      vpServoDisplay::display(task, cam, I) ;
+      vpServoDisplay::display(task, cam, I);
 
       // Apply the computed joint velocities to the robot
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
       // Save velocities applied to the robot in the log file
       // v[0], v[1], v[2] correspond to camera translation velocities in m/s
       // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
-      flog << v[0] << " " << v[1] << " " << v[2] << " "
-                   << v[3] << " " << v[4] << " " << v[5] << " ";
+      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4]
+           << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
       vpColVector qvel;
@@ -246,8 +240,8 @@ main()
       //   velocities in m/s
       // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
       //   velocities in rad/s
-      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " "
-                      << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
+      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " " << qvel[3]
+           << " " << qvel[4] << " " << qvel[5] << " ";
 
       // Get the measured joint positions of the robot
       vpColVector q;
@@ -257,40 +251,37 @@ main()
       //   positions in m
       // - q[3], q[4], q[5] correspond to measured joint rotation
       //   positions in rad
-      flog << q[0] << " " << q[1] << " " << q[2] << " "
-                   << q[3] << " " << q[4] << " " << q[5] << " ";
+      flog << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << " " << q[4]
+           << " " << q[5] << " ";
 
       // Save feature error (s-s*) for the feature point. For this feature
-      // point, we have 2 errors (along x and y axis).  This error is expressed
-      // in meters in the camera frame
+      // point, we have 2 errors (along x and y axis).  This error is
+      // expressed in meters in the camera frame
       flog << task.getError() << std::endl;
 
       // Flush the display
-      vpDisplay::flush(I) ;
-
+      vpDisplay::flush(I);
     }
 
-    flog.close() ; // Close the log file
+    flog.close(); // Close the log file
 
     // Display task information
-    task.print() ;
+    task.print();
 
     // Kill the task
     task.kill();
 
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return 1;
   }
 }
 
-
 #else
-int
-main()
+int main()
 {
-  vpERROR_TRACE("You do not have an afma4 robot or a firewire framegrabber connected to your computer...");
+  vpERROR_TRACE("You do not have an afma4 robot or a firewire framegrabber "
+                "connected to your computer...");
 }
 #endif

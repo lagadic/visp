@@ -36,66 +36,71 @@
  *
  *****************************************************************************/
 
-#include <visp3/core/vpConfig.h>
 #include <iostream>
+#include <visp3/core/vpConfig.h>
 
-#if ( defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) )
-#include <visp3/gui/vpWin32API.h>
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 #include <visp3/core/vpTime.h>
-DWORD vpProcessErrors(const std::string &api_name){
+#include <visp3/gui/vpWin32API.h>
+DWORD vpProcessErrors(const std::string &api_name)
+{
   LPVOID lpMsgBuf;
   DWORD err = GetLastError();
-  
-  FormatMessage(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER |
-        FORMAT_MESSAGE_FROM_SYSTEM |
-        FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
-        err,
-        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-        (LPTSTR) &lpMsgBuf,
-        0, NULL );
-  std::cout << "call to " << api_name << " failed with the following error code: " << err << "(" << (LPTSTR)lpMsgBuf << ")" << std::endl;
+
+  FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+                    FORMAT_MESSAGE_IGNORE_INSERTS,
+                NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                (LPTSTR)&lpMsgBuf, 0, NULL);
+  std::cout << "call to " << api_name
+            << " failed with the following error code: " << err << "("
+            << (LPTSTR)lpMsgBuf << ")" << std::endl;
   return err;
 }
 
-BOOL vpLineTo(HDC hdc, int nXEnd, int nYEnd){
+BOOL vpLineTo(HDC hdc, int nXEnd, int nYEnd)
+{
   BOOL ret = LineTo(hdc, nXEnd, nYEnd);
-  if(ret == 0)
+  if (ret == 0)
     vpProcessErrors("LineTo");
   return ret;
 }
 
-BOOL vpMoveToEx(HDC hdc, int X, int Y, LPPOINT lpPoint){
+BOOL vpMoveToEx(HDC hdc, int X, int Y, LPPOINT lpPoint)
+{
   BOOL ret = MoveToEx(hdc, X, Y, lpPoint);
-  if(ret == 0)
+  if (ret == 0)
     vpProcessErrors("MoveToEx");
   return ret;
 }
 
-BOOL vpBitBlt(HDC hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, HDC hdcSrc, int nXSrc, int nYSrc, DWORD dwRop){
-  BOOL ret = BitBlt(hdcDest,nXDest,nYDest, nWidth, nHeight, hdcSrc, nXSrc, nYSrc, dwRop);
-  if(ret == 0)
+BOOL vpBitBlt(HDC hdcDest, int nXDest, int nYDest, int nWidth, int nHeight,
+              HDC hdcSrc, int nXSrc, int nYSrc, DWORD dwRop)
+{
+  BOOL ret = BitBlt(hdcDest, nXDest, nYDest, nWidth, nHeight, hdcSrc, nXSrc,
+                    nYSrc, dwRop);
+  if (ret == 0)
     vpProcessErrors("BitBlt");
   return ret;
 }
 
-BOOL vpInvalidateRect(HWND hWnd, const RECT *lpRect, BOOL bErase){
-  BOOL ret = InvalidateRect(hWnd,lpRect,bErase);
-  if(ret == 0)
+BOOL vpInvalidateRect(HWND hWnd, const RECT *lpRect, BOOL bErase)
+{
+  BOOL ret = InvalidateRect(hWnd, lpRect, bErase);
+  if (ret == 0)
     vpProcessErrors("InvalidateRect");
   return ret;
 }
 
-void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h){
-  
-  HGDIOBJ ret = SelectObject(hDCMem,h);
-  if(ret==NULL){
+void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h)
+{
+
+  HGDIOBJ ret = SelectObject(hDCMem, h);
+  if (ret == NULL) {
     vpProcessErrors("SelectObject");
 
     double ms = vpTime::measureTimeMs();
 
-    while(ret==NULL && vpTime::measureTimeMs()-ms<5000){
+    while (ret == NULL && vpTime::measureTimeMs() - ms < 5000) {
       DeleteObject(h);
       DeleteDC(hDCMem);
       ReleaseDC(hWnd, hDC);
@@ -103,39 +108,47 @@ void vpSelectObject(HWND hWnd, HDC hDC, HDC hDCMem, HGDIOBJ h){
   }
 }
 
-BOOL vpReleaseSemaphore(HANDLE hSemaphore,LONG IReleaseCount,LPLONG lpPreviousCount){
-  BOOL ret = ReleaseSemaphore(hSemaphore,IReleaseCount,lpPreviousCount);
+BOOL vpReleaseSemaphore(HANDLE hSemaphore, LONG IReleaseCount,
+                        LPLONG lpPreviousCount)
+{
+  BOOL ret = ReleaseSemaphore(hSemaphore, IReleaseCount, lpPreviousCount);
 #ifndef __MINGW32__
-  if(ret==0){
+  if (ret == 0) {
     vpProcessErrors("ReleaseSemaphore");
   }
 #endif
   return ret;
 }
 
-void vpEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
+void vpEnterCriticalSection(LPCRITICAL_SECTION lpCriticalSection)
+{
   EnterCriticalSection(lpCriticalSection);
 }
-void vpLeaveCriticalSection(LPCRITICAL_SECTION lpCriticalSection){
+void vpLeaveCriticalSection(LPCRITICAL_SECTION lpCriticalSection)
+{
   LeaveCriticalSection(lpCriticalSection);
 }
 
-COLORREF vpSetPixel(HDC hdc, int X, int Y, COLORREF crColor){
+COLORREF vpSetPixel(HDC hdc, int X, int Y, COLORREF crColor)
+{
   COLORREF ret = SetPixel(hdc, X, Y, crColor);
-  if(ret == 0)
+  if (ret == 0)
     vpProcessErrors("SetPixel");
   return ret;
 }
 
-HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes, UINT cBitsPerPel, const VOID *lpvBits){
+HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes,
+                       UINT cBitsPerPel, const VOID *lpvBits)
+{
   HBITMAP ret = CreateBitmap(nWidth, nHeight, cPlanes, cBitsPerPel, lpvBits);
-  if (ret==NULL)
+  if (ret == NULL)
     vpProcessErrors("CreateBitmap");
 
   return ret;
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpWin32API.cpp.o) has no symbols
-void dummy_vpWin32API() {};
+// Work arround to avoid warning: libvisp_core.a(vpWin32API.cpp.o) has no
+// symbols
+void dummy_vpWin32API(){};
 #endif

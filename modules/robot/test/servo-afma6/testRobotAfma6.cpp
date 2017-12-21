@@ -43,12 +43,11 @@
   degrees of freedom).
 */
 
-#include <visp3/robot/vpRobotAfma6.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/robot/vpRobotAfma6.h>
 
 #include <iostream>
-
 
 #ifdef VISP_HAVE_AFMA6
 
@@ -61,45 +60,46 @@ int main()
     vpRobotAfma6 afma6;
     vpCameraParameters cam;
 
-    std::cout << "-- Default settings for Afma6  ---" 
-              << std::endl;
+    std::cout << "-- Default settings for Afma6  ---" << std::endl;
     std::cout << afma6 << std::endl;
     afma6.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
 
-    std::cout << "-- Settings associated to the CCMOP tool without distortion ---" 
-              << std::endl;
-    afma6.init( vpAfma6::TOOL_CCMOP);
-
-    std::cout << afma6 << std::endl;
-    afma6.getCameraParameters(cam, 640, 480);
-    std::cout << cam << std::endl;
-
-    std::cout << "-- Settings associated to CCMOP tool with distortion ------" 
-              << std::endl;
-    afma6.init( vpAfma6::TOOL_CCMOP,
-                vpCameraParameters::perspectiveProjWithDistortion);
-    std::cout << afma6 << std::endl;
-    afma6.getCameraParameters(cam, 640, 480);
-    std::cout << cam << std::endl;
-
-    std::cout << "-- Settings associated to the gripper tool without distortion ---" 
-              << std::endl;
-    afma6.init( vpAfma6::TOOL_GRIPPER);
+    std::cout
+        << "-- Settings associated to the CCMOP tool without distortion ---"
+        << std::endl;
+    afma6.init(vpAfma6::TOOL_CCMOP);
 
     std::cout << afma6 << std::endl;
     afma6.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
 
-    std::cout << "-- Settings associated to gripper tool with distortion ------" 
+    std::cout << "-- Settings associated to CCMOP tool with distortion ------"
               << std::endl;
-    afma6.init( vpAfma6::TOOL_GRIPPER,
-                vpCameraParameters::perspectiveProjWithDistortion);
+    afma6.init(vpAfma6::TOOL_CCMOP,
+               vpCameraParameters::perspectiveProjWithDistortion);
     std::cout << afma6 << std::endl;
     afma6.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
-  }
-  catch(vpException &e) {
+
+    std::cout
+        << "-- Settings associated to the gripper tool without distortion ---"
+        << std::endl;
+    afma6.init(vpAfma6::TOOL_GRIPPER);
+
+    std::cout << afma6 << std::endl;
+    afma6.getCameraParameters(cam, 640, 480);
+    std::cout << cam << std::endl;
+
+    std::cout
+        << "-- Settings associated to gripper tool with distortion ------"
+        << std::endl;
+    afma6.init(vpAfma6::TOOL_GRIPPER,
+               vpCameraParameters::perspectiveProjWithDistortion);
+    std::cout << afma6 << std::endl;
+    afma6.getCameraParameters(cam, 640, 480);
+    std::cout << cam << std::endl;
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
   return 0;
@@ -107,8 +107,9 @@ int main()
 #else
 int main()
 {
-  std::cout << "The real Afma6 robot controller is not available." << std::endl;
-  return 0; 
+  std::cout << "The real Afma6 robot controller is not available."
+            << std::endl;
+  return 0;
 }
 
 #endif

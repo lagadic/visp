@@ -39,34 +39,33 @@
 /*!
   \file homographyHLM2DObject.cpp
 
-  \brief Example of the HLM (Malis) homography estimation algorithm with a planar object using vpHomography class.
+  \brief Example of the HLM (Malis) homography estimation algorithm with a
+  planar object using vpHomography class.
 
 */
-
-
 
 /*!
   \example homographyHLM2DObject.cpp
 
-  Example of the HLM (Malis) homography estimation algorithm with a planar object using vpHomography class.
+  Example of the HLM (Malis) homography estimation algorithm with a planar
+  object using vpHomography class.
 
 */
 
-
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRotationMatrix.h>
-#include <visp3/vision/vpHomography.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpThetaUVector.h>
+#include <visp3/vision/vpHomography.h>
 
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/io/vpParseArgv.h>
 #include <stdlib.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/io/vpParseArgv.h>
 // List of allowed command line options
-#define GETOPTARGS	"h"
+#define GETOPTARGS "h"
 #define L 0.1
 #define nbpt 5
 
@@ -96,7 +95,7 @@ OPTIONS:                                               Default\n\
      Print the help.\n");
 
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
 }
@@ -113,15 +112,19 @@ OPTIONS:                                               Default\n\
 bool getOptions(int argc, const char **argv)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'h':
+      usage(argv[0], NULL);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg_);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -136,140 +139,135 @@ bool getOptions(int argc, const char **argv)
   return true;
 }
 
-
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   try {
     // Read the command line options
     if (getOptions(argc, argv) == false) {
-      exit (-1);
+      exit(-1);
     }
 
-    vpPoint P[nbpt]  ;  //  Point to be tracked
-    std::vector<double> xa(nbpt), ya(nbpt) ;
-    std::vector<double> xb(nbpt), yb(nbpt) ;
+    vpPoint P[nbpt]; //  Point to be tracked
+    std::vector<double> xa(nbpt), ya(nbpt);
+    std::vector<double> xb(nbpt), yb(nbpt);
 
-    vpPoint aP[nbpt]  ;  //  Point to be tracked
-    vpPoint bP[nbpt]  ;  //  Point to be tracked
+    vpPoint aP[nbpt]; //  Point to be tracked
+    vpPoint bP[nbpt]; //  Point to be tracked
 
-    P[0].setWorldCoordinates(-L,-L, 0 ) ;
-    P[1].setWorldCoordinates(2*L,-L, 0 ) ;
-    P[2].setWorldCoordinates(L,L, 0 ) ;
-    P[3].setWorldCoordinates(-L,3*L, 0 ) ;
-    P[4].setWorldCoordinates(0,0, 0 ) ;
+    P[0].setWorldCoordinates(-L, -L, 0);
+    P[1].setWorldCoordinates(2 * L, -L, 0);
+    P[2].setWorldCoordinates(L, L, 0);
+    P[3].setWorldCoordinates(-L, 3 * L, 0);
+    P[4].setWorldCoordinates(0, 0, 0);
     /*
     P[5].setWorldCoordinates(10,20, 0 ) ;
     P[6].setWorldCoordinates(-10,12, 0 ) ;
   */
-    vpHomogeneousMatrix bMo(0,0,1, 0,0,0) ;
-    vpHomogeneousMatrix aMb(1,0,0.0,vpMath::rad(10),0,vpMath::rad(40)) ;
-    vpHomogeneousMatrix aMo =aMb*bMo ;
-    for(unsigned int i=0 ; i < nbpt ; i++)
-    {
-      P[i].project(aMo) ;
-      aP[i] = P[i] ;
-      xa[i] = P[i].get_x() ;
-      ya[i] = P[i].get_y() ;
+    vpHomogeneousMatrix bMo(0, 0, 1, 0, 0, 0);
+    vpHomogeneousMatrix aMb(1, 0, 0.0, vpMath::rad(10), 0, vpMath::rad(40));
+    vpHomogeneousMatrix aMo = aMb * bMo;
+    for (unsigned int i = 0; i < nbpt; i++) {
+      P[i].project(aMo);
+      aP[i] = P[i];
+      xa[i] = P[i].get_x();
+      ya[i] = P[i].get_y();
     }
 
-    for(unsigned int i=0 ; i < nbpt ; i++)
-    {
-      P[i].project(bMo) ;
-      bP[i] = P[i] ;
-      xb[i] = P[i].get_x() ;
-      yb[i] = P[i].get_y() ;
+    for (unsigned int i = 0; i < nbpt; i++) {
+      P[i].project(bMo);
+      bP[i] = P[i];
+      xb[i] = P[i].get_x();
+      yb[i] = P[i].get_y();
     }
-    std::cout << "-------------------------------" <<std::endl ;
-    std::cout << "aMb "<<std::endl <<aMb << std::endl ;
-    std::cout << "-------------------------------" <<std::endl ;
-    vpHomography aHb ;
+    std::cout << "-------------------------------" << std::endl;
+    std::cout << "aMb " << std::endl << aMb << std::endl;
+    std::cout << "-------------------------------" << std::endl;
+    vpHomography aHb;
 
-    vpHomography::HLM(xb, yb, xa, ya, true, aHb) ;
+    vpHomography::HLM(xb, yb, xa, ya, true, aHb);
 
-    aHb /= aHb[2][2] ;
-    std::cout << "aHb computed using the Malis paralax  algorithm: \n" << aHb<< std::endl ;
+    aHb /= aHb[2][2];
+    std::cout << "aHb computed using the Malis paralax  algorithm: \n"
+              << aHb << std::endl;
 
-    vpRotationMatrix aRb  ;
-    vpTranslationVector aTb ;
-    vpColVector n ;
+    vpRotationMatrix aRb;
+    vpTranslationVector aTb;
+    vpColVector n;
 
-    std::cout << "-------------------------------" <<std::endl ;
+    std::cout << "-------------------------------" << std::endl;
     std::cout << "extract R, T and n " << std::endl;
-    aHb.computeDisplacement(aRb, aTb, n) ;
-    std::cout << "Rotation: aRb" <<std::endl ;
-    std::cout << aRb << std::endl ;
-    std::cout << "Translation: aTb" <<std::endl;
-    std::cout << (aTb).t() <<std::endl   ;
-    std::cout << "Normal to the plane: n" <<std::endl;
-    std::cout << (n).t() <<std::endl ;
+    aHb.computeDisplacement(aRb, aTb, n);
+    std::cout << "Rotation: aRb" << std::endl;
+    std::cout << aRb << std::endl;
+    std::cout << "Translation: aTb" << std::endl;
+    std::cout << (aTb).t() << std::endl;
+    std::cout << "Normal to the plane: n" << std::endl;
+    std::cout << (n).t() << std::endl;
 
+    std::cout << "-------------------------------" << std::endl;
+    std::cout << "Compare with built homography H = R + t/d " << std::endl;
+    vpPlane bp(0, 0, 1, 1);
+    vpHomography aHb_built(aMb, bp);
+    std::cout << "aHb built from the displacement " << std::endl;
+    std::cout << std::endl << aHb_built / aHb_built[2][2] << std::endl;
 
-    std::cout << "-------------------------------" <<std::endl ;
-    std::cout << "Compare with built homography H = R + t/d " << std::endl ;
-    vpPlane bp(0,0,1,1) ;
-    vpHomography aHb_built(aMb,bp) ;
-    std::cout << "aHb built from the displacement " << std::endl ;
-    std::cout <<  std::endl <<aHb_built/aHb_built[2][2] << std::endl ;
+    aHb_built.computeDisplacement(aRb, aTb, n);
+    std::cout << "Rotation: aRb" << std::endl;
+    std::cout << aRb << std::endl;
+    std::cout << "Translation: aTb" << std::endl;
+    std::cout << (aTb).t() << std::endl;
+    std::cout << "Normal to the plane: n" << std::endl;
+    std::cout << (n).t() << std::endl;
 
-    aHb_built.computeDisplacement(aRb, aTb, n) ;
-    std::cout << "Rotation: aRb" <<std::endl ;
-    std::cout << aRb << std::endl ;
-    std::cout << "Translation: aTb" <<std::endl;
-    std::cout << (aTb).t() <<std::endl ;
-    std::cout << "Normal to the plane: n" <<std::endl;
-    std::cout << (n).t() <<std::endl ;
+    std::cout << "-------------------------------" << std::endl;
+    std::cout << "test if ap = aHb bp" << std::endl;
 
-    std::cout << "-------------------------------" << std::endl ;
-    std::cout << "test if ap = aHb bp" << std::endl ;
-
-    for(unsigned int i=0 ; i < nbpt ; i++)
-    {
-      std::cout << "Point "<< i<< std::endl ;
-      vpPoint p ;
-      std::cout << "(" ;
-      std::cout << aP[i].get_x()/aP[i].get_w()<<", "<< aP[i].get_y()/aP[i].get_w() ;
-      std::cout <<") =  (" ;
-      p = aHb*bP[i] ;
-      std::cout << p.get_x() /p.get_w()<<",  "<< p.get_y()/ p.get_w() <<")"<<std::endl ;
+    for (unsigned int i = 0; i < nbpt; i++) {
+      std::cout << "Point " << i << std::endl;
+      vpPoint p;
+      std::cout << "(";
+      std::cout << aP[i].get_x() / aP[i].get_w() << ", "
+                << aP[i].get_y() / aP[i].get_w();
+      std::cout << ") =  (";
+      p = aHb * bP[i];
+      std::cout << p.get_x() / p.get_w() << ",  " << p.get_y() / p.get_w()
+                << ")" << std::endl;
     }
 
-    std::cout << "-------------------------------" <<std::endl ;
-    std::cout << "test displacement" << std::endl ;
+    std::cout << "-------------------------------" << std::endl;
+    std::cout << "test displacement" << std::endl;
 
-    std::list<vpRotationMatrix> laRb ;
-    std::list<vpTranslationVector> laTb ;
-    std::list<vpColVector> lnb ;
+    std::list<vpRotationMatrix> laRb;
+    std::list<vpTranslationVector> laTb;
+    std::list<vpColVector> lnb;
 
-    vpHomography::computeDisplacement(aHb,bP[0].get_x(),bP[0].get_y(),
-        laRb, laTb, lnb) ;
+    vpHomography::computeDisplacement(aHb, bP[0].get_x(), bP[0].get_y(), laRb,
+                                      laTb, lnb);
 
     std::list<vpRotationMatrix>::const_iterator it_laRb = laRb.begin();
     std::list<vpTranslationVector>::const_iterator it_laTb = laTb.begin();
     std::list<vpColVector>::const_iterator it_lnb = lnb.begin();
 
-    int k =1 ;
-    while (it_lnb != lnb.end())
-    {
-      std::cout << "Solution " << k++ << std::endl ;
+    int k = 1;
+    while (it_lnb != lnb.end()) {
+      std::cout << "Solution " << k++ << std::endl;
 
       aRb = *it_laRb;
       aTb = *it_laTb;
       n = *it_lnb;
-      std::cout << "Rotation: aRb" <<std::endl ;
-      std::cout << aRb << std::endl ;
-      std::cout << "Translation: aTb" <<std::endl;
-      std::cout << (aTb).t() <<std::endl ;
-      std::cout << "Normal to the plane: n" <<std::endl;
-      std::cout << (n).t() <<std::endl ;
+      std::cout << "Rotation: aRb" << std::endl;
+      std::cout << aRb << std::endl;
+      std::cout << "Translation: aTb" << std::endl;
+      std::cout << (aTb).t() << std::endl;
+      std::cout << "Normal to the plane: n" << std::endl;
+      std::cout << (n).t() << std::endl;
 
-      ++ it_laRb;
-      ++ it_laTb;
-      ++ it_lnb;
+      ++it_laRb;
+      ++it_laTb;
+      ++it_lnb;
     }
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

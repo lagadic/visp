@@ -36,19 +36,17 @@
  *
  *****************************************************************************/
 
-
 /*!
   \example testMatrixDeterminant.cpp
   \brief Test matrix determinant computation.
 */
 
-#include <visp3/core/vpTime.h>
 #include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpTime.h>
 #include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdn:i:pf:R:C:vh"
-
+#define GETOPTARGS "cdn:i:pf:R:C:vh"
 
 /*!
 
@@ -101,7 +99,7 @@ OPTIONS:                                               Default\n\
      Print the help.\n\n");
 
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
 }
@@ -113,17 +111,20 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv,
-                unsigned int& nb_matrices, unsigned int& nb_iterations,
-                bool& use_plot_file, std::string& plotfile,
-                unsigned int& nbrows, unsigned int& nbcols, bool& verbose)
+bool getOptions(int argc, const char **argv, unsigned int &nb_matrices,
+                unsigned int &nb_iterations, bool &use_plot_file,
+                std::string &plotfile, unsigned int &nbrows,
+                unsigned int &nbcols, bool &verbose)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'h':
+      usage(argv[0], NULL);
+      return false;
+      break;
     case 'n':
       nb_matrices = (unsigned int)atoi(optarg_);
       break;
@@ -146,14 +147,15 @@ bool getOptions(int argc, const char **argv,
     case 'v':
       verbose = true;
       break;
-      // add default options -c -d
+    // add default options -c -d
     case 'c':
       break;
     case 'd':
       break;
     default:
       usage(argv[0], optarg_);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -173,88 +175,98 @@ vpMatrix make_random_matrix(unsigned int nbrows, unsigned int nbcols)
   vpMatrix A;
   A.resize(nbrows, nbcols);
 
-  for (unsigned int i=0 ; i < A.getRows(); i++)
-    for  (unsigned int j=0 ; j < A.getCols(); j++)
-      A[i][j] =  (double)rand()/(double)RAND_MAX;
+  for (unsigned int i = 0; i < A.getRows(); i++)
+    for (unsigned int j = 0; j < A.getCols(); j++)
+      A[i][j] = (double)rand() / (double)RAND_MAX;
   return A;
 }
 
-void create_bench(unsigned int nb_matrices, unsigned int nb_rows, unsigned int nb_cols, bool verbose,
+void create_bench(unsigned int nb_matrices, unsigned int nb_rows,
+                  unsigned int nb_cols, bool verbose,
                   std::vector<vpMatrix> &bench)
 {
   if (verbose)
-    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_cols << " matrices" << std::endl;
+    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows
+              << " by " << nb_cols << " matrices" << std::endl;
   bench.clear();
-  for(unsigned int i = 0; i < nb_matrices; i++) {
+  for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M = make_random_matrix(nb_rows, nb_cols);
     bench.push_back(M);
   }
 }
 
-void test_det_default(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
+void test_det_default(bool verbose, const std::vector<vpMatrix> &bench,
+                      double &time, std::vector<double> &result)
 {
   if (verbose)
     std::cout << "Test determinant using default method" << std::endl;
   // Compute inverse
-  if(verbose)
-    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << std::endl;
+  if (verbose)
+    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x"
+              << bench[0].AtA().getCols() << std::endl;
 
   result.resize(bench.size());
   double t = vpTime::measureTimeMs();
-  for(unsigned int i = 0; i < bench.size(); i++) {
+  for (unsigned int i = 0; i < bench.size(); i++) {
     result[i] = bench[i].AtA().det();
   }
   time = vpTime::measureTimeMs() - t;
 }
 
-#if defined (VISP_HAVE_EIGEN3)
-void test_det_eigen3(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
+#if defined(VISP_HAVE_EIGEN3)
+void test_det_eigen3(bool verbose, const std::vector<vpMatrix> &bench,
+                     double &time, std::vector<double> &result)
 {
   if (verbose)
     std::cout << "Test determinant using Eigen3 3rd party" << std::endl;
   // Compute inverse
-  if(verbose)
-    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << std::endl;
+  if (verbose)
+    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x"
+              << bench[0].AtA().getCols() << std::endl;
 
   result.resize(bench.size());
   double t = vpTime::measureTimeMs();
-  for(unsigned int i = 0; i < bench.size(); i++) {
+  for (unsigned int i = 0; i < bench.size(); i++) {
     result[i] = bench[i].AtA().detByLUEigen3();
   }
   time = vpTime::measureTimeMs() - t;
 }
 #endif
 
-#if defined (VISP_HAVE_GSL)
-void test_det_gsl(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
+#if defined(VISP_HAVE_GSL)
+void test_det_gsl(bool verbose, const std::vector<vpMatrix> &bench,
+                  double &time, std::vector<double> &result)
 {
   if (verbose)
     std::cout << "Test determinant using GSL 3rd party" << std::endl;
   // Compute inverse
-  if(verbose)
-    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << std::endl;
+  if (verbose)
+    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x"
+              << bench[0].AtA().getCols() << std::endl;
 
   result.resize(bench.size());
   double t = vpTime::measureTimeMs();
-  for(unsigned int i = 0; i < bench.size(); i++) {
+  for (unsigned int i = 0; i < bench.size(); i++) {
     result[i] = bench[i].AtA().detByLUGsl();
   }
   time = vpTime::measureTimeMs() - t;
 }
 #endif
 
-#if defined (VISP_HAVE_LAPACK)
-void test_det_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
+#if defined(VISP_HAVE_LAPACK)
+void test_det_lapack(bool verbose, const std::vector<vpMatrix> &bench,
+                     double &time, std::vector<double> &result)
 {
   if (verbose)
     std::cout << "Test determinant using Lapack 3rd party" << std::endl;
   // Compute inverse
-  if(verbose)
-    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << std::endl;
+  if (verbose)
+    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x"
+              << bench[0].AtA().getCols() << std::endl;
 
   result.resize(bench.size());
   double t = vpTime::measureTimeMs();
-  for(unsigned int i = 0; i < bench.size(); i++) {
+  for (unsigned int i = 0; i < bench.size(); i++) {
     result[i] = bench[i].AtA().detByLULapack();
   }
   time = vpTime::measureTimeMs() - t;
@@ -262,78 +274,88 @@ void test_det_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &t
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-void test_det_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
+void test_det_opencv(bool verbose, const std::vector<vpMatrix> &bench,
+                     double &time, std::vector<double> &result)
 {
   if (verbose)
     std::cout << "Test determinant using OpenCV 3rd party" << std::endl;
   // Compute inverse
-  if(verbose)
-    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << std::endl;
+  if (verbose)
+    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x"
+              << bench[0].AtA().getCols() << std::endl;
 
   result.resize(bench.size());
   double t = vpTime::measureTimeMs();
-  for(unsigned int i = 0; i < bench.size(); i++) {
+  for (unsigned int i = 0; i < bench.size(); i++) {
     result[i] = bench[i].AtA().detByLUOpenCV();
   }
   time = vpTime::measureTimeMs() - t;
 }
 #endif
 
-void save_time(const std::string &method, bool verbose, bool use_plot_file, std::ofstream &of, double time)
+void save_time(const std::string &method, bool verbose, bool use_plot_file,
+               std::ofstream &of, double time)
 {
-  if(use_plot_file)
+  if (use_plot_file)
     of << time << "\t";
-  if(verbose || !use_plot_file) {
+  if (verbose || !use_plot_file) {
     std::cout << method << time << std::endl;
   }
 }
 
-int
-main(int argc, const char *argv[])
+int main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_GSL) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_GSL) ||                   \
+    defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
     unsigned int nb_cols = 6;
     bool verbose = false;
     std::string plotfile("plot-det.csv");
-    bool use_plot_file=false;
+    bool use_plot_file = false;
     std::ofstream of;
 
     // Read the command line options
-    if (getOptions(argc, argv, nb_matrices, nb_iterations, use_plot_file, plotfile, nb_rows, nb_cols, verbose) == false) {
-      exit (-1);
+    if (getOptions(argc, argv, nb_matrices, nb_iterations, use_plot_file,
+                   plotfile, nb_rows, nb_cols, verbose) == false) {
+      exit(-1);
     }
 
-    if(use_plot_file){
+    if (use_plot_file) {
       of.open(plotfile.c_str());
-      of << "iter" << "\t";
+      of << "iter"
+         << "\t";
 
-      of << "\"Determinant default\"" << "\t";
+      of << "\"Determinant default\""
+         << "\t";
 
 #if defined(VISP_HAVE_LAPACK)
-      of << "\"Determinant Lapack\"" << "\t";
+      of << "\"Determinant Lapack\""
+         << "\t";
 #endif
 #if defined(VISP_HAVE_EIGEN3)
-      of << "\"Determinant Eigen3\"" << "\t";
+      of << "\"Determinant Eigen3\""
+         << "\t";
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-      of << "\"Determinant OpenCV\"" << "\t";
+      of << "\"Determinant OpenCV\""
+         << "\t";
 #endif
 #if defined(VISP_HAVE_GSL)
-      of << "\"Determinant GSL\"" << "\t";
+      of << "\"Determinant GSL\""
+         << "\t";
 #endif
       of << std::endl;
     }
 
     int ret = EXIT_SUCCESS;
-    for(unsigned int iter = 0; iter < nb_iterations; iter++) {
+    for (unsigned int iter = 0; iter < nb_iterations; iter++) {
       std::vector<vpMatrix> bench;
       create_bench(nb_matrices, nb_rows, nb_cols, verbose, bench);
 
-      if(use_plot_file)
+      if (use_plot_file)
         of << iter << "\t";
 
       double time;
@@ -366,73 +388,81 @@ main(int argc, const char *argv[])
       save_time("Determinant by GSL: ", verbose, use_plot_file, of, time);
 #endif
 
-      if(use_plot_file)
+      if (use_plot_file)
         of << std::endl;
 
 #if defined(VISP_HAVE_GSL) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       // Compare results
-      for(unsigned int i = 0; i < bench.size(); i++) {
+      for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_gsl[i] - result_opencv[i]) > 1e-6) {
-          std::cout << "Determinant differ between GSL and OpenCV: " << result_gsl[i] << " " << result_opencv[i] << std::endl;
+          std::cout << "Determinant differ between GSL and OpenCV: "
+                    << result_gsl[i] << " " << result_opencv[i] << std::endl;
           ret = EXIT_FAILURE;
         }
       }
 #endif
 #if defined(VISP_HAVE_GSL) && defined(VISP_HAVE_LAPACK)
       // Compare results
-      for(unsigned int i = 0; i < bench.size(); i++) {
+      for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_gsl[i] - result_lapack[i]) > 1e-6) {
-          std::cout << "Determinant differ between GSL and Lapack: " << result_gsl[i] << " " << result_lapack[i] << std::endl;
+          std::cout << "Determinant differ between GSL and Lapack: "
+                    << result_gsl[i] << " " << result_lapack[i] << std::endl;
           ret = EXIT_FAILURE;
         }
       }
 #endif
 #if defined(VISP_HAVE_GSL) && defined(VISP_HAVE_EIGEN3)
       // Compare results
-      for(unsigned int i = 0; i < bench.size(); i++) {
+      for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_gsl[i] - result_eigen3[i]) > 1e-6) {
-          std::cout << "Determinant differ between GSL and Eigen3: " << result_gsl[i] << " " << result_eigen3[i] << std::endl;
+          std::cout << "Determinant differ between GSL and Eigen3: "
+                    << result_gsl[i] << " " << result_eigen3[i] << std::endl;
           ret = EXIT_FAILURE;
         }
       }
 #endif
 #if defined(VISP_HAVE_LAPACK) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       // Compare results
-      for(unsigned int i = 0; i < bench.size(); i++) {
+      for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_lapack[i] - result_opencv[i]) > 1e-6) {
-          std::cout << "Determinant differ between Lapack and OpenCV: " << result_lapack[i] << " " << result_opencv[i] << std::endl;
+          std::cout << "Determinant differ between Lapack and OpenCV: "
+                    << result_lapack[i] << " " << result_opencv[i]
+                    << std::endl;
           ret = EXIT_FAILURE;
         }
       }
 #endif
 #if defined(VISP_HAVE_EIGEN3) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       // Compare results
-      for(unsigned int i = 0; i < bench.size(); i++) {
+      for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_eigen3[i] - result_opencv[i]) > 1e-6) {
-          std::cout << "Determinant differ between Eigen3 and OpenCV: " << result_eigen3[i] << " " << result_opencv[i] << std::endl;
+          std::cout << "Determinant differ between Eigen3 and OpenCV: "
+                    << result_eigen3[i] << " " << result_opencv[i]
+                    << std::endl;
           ret = EXIT_FAILURE;
         }
       }
 #endif
 #if defined(VISP_HAVE_EIGEN3) && defined(VISP_HAVE_LAPACK)
       // Compare results
-      for(unsigned int i = 0; i < bench.size(); i++) {
+      for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_eigen3[i] - result_lapack[i]) > 1e-6) {
-          std::cout << "Determinant differ between Eigen3 and Lapack: " << result_eigen3[i] << " " << result_lapack[i] << std::endl;
+          std::cout << "Determinant differ between Eigen3 and Lapack: "
+                    << result_eigen3[i] << " " << result_lapack[i]
+                    << std::endl;
           ret = EXIT_FAILURE;
         }
       }
 #endif
     }
-    if(use_plot_file) {
+    if (use_plot_file) {
       of.close();
       std::cout << "Result saved in " << plotfile << std::endl;
     }
 
-    if(ret == EXIT_SUCCESS) {
+    if (ret == EXIT_SUCCESS) {
       std::cout << "Test succeed" << std::endl;
-    }
-    else {
+    } else {
       std::cout << "Test failed" << std::endl;
     }
 
@@ -440,11 +470,12 @@ main(int argc, const char *argv[])
 #else
     (void)argc;
     (void)argv;
-    std::cout << "Test does nothing since you dont't have Eigen3, Lapack, OpenCV or GSL 3rd party" << std::endl;
+    std::cout << "Test does nothing since you dont't have Eigen3, Lapack, "
+                 "OpenCV or GSL 3rd party"
+              << std::endl;
     return EXIT_SUCCESS;
 #endif
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }

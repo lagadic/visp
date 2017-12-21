@@ -46,12 +46,15 @@
 
 #include <visp3/core/vpException.h>
 
-#include <iostream>                /* Classe std::ostream.    */
-#include <string>                  /* Classe string.     */
+#include <iostream> /* Classe std::ostream.    */
+#include <string>   /* Classe string.     */
 
-/* ------------------------------------------------------------------------- */
-/* --- CLASS --------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+ */
+/* --- CLASS ---------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /*!
   \class vpServoException
@@ -60,38 +63,38 @@
  */
 class VISP_EXPORT vpServoException : public vpException
 {
-  public:
-    /*!
+public:
+  /*!
 
-    \brief Lists the possible error than can be emmited while calling
-    vpServo member
-   */
-    enum errorServoCodeEnum
-    {
-      //! Current or desired feature list is empty
-      noFeatureError,
-      //! No degree of freedom is available to achieve the secondary task.
-      noDofFree,
-      //! Task was not killed properly
-      notKilledProperly,
-      //! Other exception
-      servoError
-    } ;
+  \brief Lists the possible error than can be emmited while calling
+  vpServo member
+ */
+  enum errorServoCodeEnum {
+    //! Current or desired feature list is empty
+    noFeatureError,
+    //! No degree of freedom is available to achieve the secondary task.
+    noDofFree,
+    //! Task was not killed properly
+    notKilledProperly,
+    //! Other exception
+    servoError
+  };
 
-  public:
-    vpServoException (const int id,  const char* format, ...)
-    {
-      this->code = id;
-      va_list args;
-      va_start(args, format);
-      setMessage(format, args);
-      va_end (args);
-    }
-    vpServoException (const int id, const std::string & msg)
-      : vpException(id, msg){ ; }
-    explicit vpServoException (const int id)
-      : vpException(id){ ; }
-
+public:
+  vpServoException(const int id, const char *format, ...)
+  {
+    this->code = id;
+    va_list args;
+    va_start(args, format);
+    setMessage(format, args);
+    va_end(args);
+  }
+  vpServoException(const int id, const std::string &msg)
+    : vpException(id, msg)
+  {
+    ;
+  }
+  explicit vpServoException(const int id) : vpException(id) { ; }
 };
 
 #endif

@@ -29,7 +29,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * 2D normalized gravity center moment descriptor (usually described by the pair Xn,Yn)
+ * 2D normalized gravity center moment descriptor (usually described by the
+ *pair Xn,Yn)
  *
  * Authors:
  * Filip Novotny
@@ -37,13 +38,14 @@
  *****************************************************************************/
 /*!
   \file vpMomentGravityCenterNormalized.h
-  \brief 2D normalized gravity center moment descriptor (usually described by the pair Xn,Yn)
+  \brief 2D normalized gravity center moment descriptor (usually described by
+  the pair Xn,Yn)
 */
 #ifndef __MOMENTGRAVITYNORMALIZED_H__
 #define __MOMENTGRAVITYNORMALIZED_H__
 
-#include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentGravityCenter.h>
 class vpMomentObject;
 
 /*!
@@ -53,20 +55,25 @@ class vpMomentObject;
 
   \brief Class describing 2D normalized gravity center moment.
 
-  Centered and normalized gravity center moment is defined as follows: \f$(x_n,y_n)\f$ where
-  \f$x_n = x_g a_n\f$ and \f$y_n = y_g a_n\f$.
+  Centered and normalized gravity center moment is defined as follows:
+  \f$(x_n,y_n)\f$ where \f$x_n = x_g a_n\f$ and \f$y_n = y_g a_n\f$.
 
-  vpMomentGravityCenterNormalized depends on vpMomentAreaNormalized to get access to \f$a_n\f$ and on vpMomentGravityCenter to get access to \f$(x_g,y_g)\f$ .
+  vpMomentGravityCenterNormalized depends on vpMomentAreaNormalized to get
+  access to \f$a_n\f$ and on vpMomentGravityCenter to get access to
+  \f$(x_g,y_g)\f$ .
 */
-class VISP_EXPORT vpMomentGravityCenterNormalized : public vpMomentGravityCenter {
- public:	
+class VISP_EXPORT vpMomentGravityCenterNormalized
+  : public vpMomentGravityCenter
+{
+public:
   vpMomentGravityCenterNormalized();
-  virtual ~vpMomentGravityCenterNormalized() {};
+  virtual ~vpMomentGravityCenterNormalized(){};
   void compute();
   //! Moment name.
-  const char* name() const {return "vpMomentGravityCenterNormalized";}
-  void  printDependencies(std::ostream& os) const;
-  friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentGravityCenterNormalized& v);
+  const char *name() const { return "vpMomentGravityCenterNormalized"; }
+  void printDependencies(std::ostream &os) const;
+  friend VISP_EXPORT std::ostream &
+  operator<<(std::ostream &os, const vpMomentGravityCenterNormalized &v);
 };
 
 #endif

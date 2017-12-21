@@ -46,17 +46,16 @@
 #include <iostream>
 #include <stdio.h>
 
-#include <visp3/robot/vpRobot.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/robot/vpAfma4.h>
+#include <visp3/robot/vpRobot.h>
 
 // low level controller api
 extern "C" {
-#  include "irisa_Afma4.h"
-#  include "trycatch.h"
+#include "irisa_Afma4.h"
+#include "trycatch.h"
 }
-
 
 /*!
   \class vpRobotAfma4
@@ -175,21 +174,16 @@ extern "C" {
   positions from a position file with readPosFile() and writePosFile()
   methods.
 */
-class VISP_EXPORT vpRobotAfma4
-  :
-  public vpAfma4,
-  public vpRobot
+class VISP_EXPORT vpRobotAfma4 : public vpAfma4, public vpRobot
 {
 
 private: /* Not allowed functions. */
-
   /*!
     Copy constructor not allowed.
    */
-  vpRobotAfma4 (const vpRobotAfma4 & robot);
+  vpRobotAfma4(const vpRobotAfma4 &robot);
 
 private: /* Attributs prives. */
-
   /** \brief Vrai ssi aucun objet de la classe vpRobotAfma4 n'existe.
    *
    * Il ne peut exister simultanement qu'un seul objet de la classe
@@ -214,8 +208,7 @@ private: /* Attributs prives. */
   vpColVector q_prev_getdis;
   bool first_time_getdis;
 
-public:  /* Constantes */
-
+public: /* Constantes */
   /* Vitesse maximale par default lors du positionnement du robot.
    * C'est la valeur a la construction de l'attribut prive \a
    * positioningVelocity. Cette valeur peut etre changee par la fonction
@@ -223,30 +216,30 @@ public:  /* Constantes */
    */
   static const double defaultPositioningVelocity; // = 20.0;
 
-public:  /* Methode publiques */
-
-  explicit vpRobotAfma4 (bool verbose=true);
-  virtual ~vpRobotAfma4 (void);
+public: /* Methode publiques */
+  explicit vpRobotAfma4(bool verbose = true);
+  virtual ~vpRobotAfma4(void);
 
   void getDisplacement(vpRobot::vpControlFrameType frame,
                        vpColVector &displacement);
-  void getPosition (const vpRobot::vpControlFrameType frame,
-                    vpColVector &position);
-  void getPosition (const vpRobot::vpControlFrameType frame,
-                    vpColVector &position, double &timestamp);
+  void getPosition(const vpRobot::vpControlFrameType frame,
+                   vpColVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame,
+                   vpColVector &position, double &timestamp);
 
-  double getPositioningVelocity (void);
+  double getPositioningVelocity(void);
   bool getPowerState();
 
   double getTime() const;
 
-  void getVelocity (const vpRobot::vpControlFrameType frame,
-                    vpColVector & velocity);
-  void getVelocity (const vpRobot::vpControlFrameType frame,
-                    vpColVector & velocity, double &timestamp);
+  void getVelocity(const vpRobot::vpControlFrameType frame,
+                   vpColVector &velocity);
+  void getVelocity(const vpRobot::vpControlFrameType frame,
+                   vpColVector &velocity, double &timestamp);
 
-  vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
-  vpColVector getVelocity (const vpRobot::vpControlFrameType frame, double &timestamp);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame,
+                          double &timestamp);
 
   void get_cMe(vpHomogeneousMatrix &cMe) const;
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
@@ -254,35 +247,34 @@ public:  /* Methode publiques */
   void get_eJe(vpMatrix &eJe);
   void get_fJe(vpMatrix &fJe);
 
-  void init (void);
+  void init(void);
 
-  void move(const char *filename) ;
+  void move(const char *filename);
 
-  void powerOn() ;
-  void powerOff() ;
+  void powerOn();
+  void powerOff();
 
-  static bool readPosFile(const std::string &filename, vpColVector &q)  ;
-  static bool savePosFile(const std::string &filename, const vpColVector &q)  ;
+  static bool readPosFile(const std::string &filename, vpColVector &q);
+  static bool savePosFile(const std::string &filename, const vpColVector &q);
 
   /* --- POSITIONNEMENT --------------------------------------------------- */
   void setPosition(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &position) ;
-  void setPosition (const vpRobot::vpControlFrameType frame,
-                    const double q1, const double q2,
-                    const double q4, const double q5) ;
-  void setPosition(const char *filename) ;
-  void setPositioningVelocity (const double velocity);
+                   const vpColVector &position);
+  void setPosition(const vpRobot::vpControlFrameType frame, const double q1,
+                   const double q2, const double q4, const double q5);
+  void setPosition(const char *filename);
+  void setPositioningVelocity(const double velocity);
 
   /* --- ETAT ------------------------------------------------------------- */
 
-  vpRobot::vpRobotStateType setRobotState (vpRobot::vpRobotStateType newState);
+  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
 
   /* --- VITESSE ---------------------------------------------------------- */
 
-  void setVelocity (const vpRobot::vpControlFrameType frame,
-                    const vpColVector & velocity);
+  void setVelocity(const vpRobot::vpControlFrameType frame,
+                   const vpColVector &velocity);
 
-  void stopMotion() ;
+  void stopMotion();
 };
 
 #endif

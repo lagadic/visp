@@ -48,20 +48,19 @@
 
 */
 
-#if defined (VISP_HAVE_DIRECTSHOW) 
-#if (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_DIRECTSHOW)
+#if (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 
-
-#include <visp3/sensor/vpDirectShowGrabber.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpTime.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpParseArgv.h>
+#include <visp3/sensor/vpDirectShowGrabber.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"dhn:o:"
+#define GETOPTARGS "dhn:o:"
 
 /*!
 
@@ -73,7 +72,8 @@
   \param opath : Image filename when saving.
 
 */
-void usage(const char *name, const char *badparam, unsigned &nframes, std::string &opath)
+void usage(const char *name, const char *badparam, unsigned &nframes,
+           std::string &opath)
 {
   fprintf(stdout, "\n\
 Acquire images using DirectShow (under Windows only) and display\n\
@@ -99,7 +99,7 @@ OPTIONS:                                               Default\n\
      Print the help.\n\
 \n", nframes, opath.c_str());
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
 }
@@ -119,25 +119,33 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &display,
-                unsigned &nframes, bool &save, std::string &opath)
+bool getOptions(int argc, const char **argv, bool &display, unsigned &nframes,
+                bool &save, std::string &opath)
 {
   const char *optarg;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
-    case 'd': display = false; break;
+    case 'd':
+      display = false;
+      break;
     case 'n':
-      nframes = atoi(optarg); break;
+      nframes = atoi(optarg);
+      break;
     case 'o':
       save = true;
-      opath = optarg; break;
-    case 'h': usage(argv[0], NULL, nframes, opath); return false; break;
+      opath = optarg;
+      break;
+    case 'h':
+      usage(argv[0], NULL, nframes, opath);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg, nframes, opath);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -152,32 +160,30 @@ bool getOptions(int argc, const char **argv, bool &display,
   return true;
 }
 
-
 /*!
   \example grabDirectShow.cpp
 
   Example of framegrabbing using vpDirectShowGrabber class.
 
-  Grab grey level images using DirectShow frame grabbing capabilities. Display the
-  images using the GTK or GDI display.
+  Grab grey level images using DirectShow frame grabbing capabilities. Display
+  the images using the GTK or GDI display.
 */
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   try {
     bool opt_display = true;
     unsigned nframes = 50;
     bool save = false;
 
-    // Declare an image. It size is not defined yet. It will be defined when the
-    // image will acquired the first time.
+// Declare an image. It size is not defined yet. It will be defined when the
+// image will acquired the first time.
 #ifdef GRAB_COLOR
     vpImage<vpRGBa> I; // This is a color image (in RGBa format)
 #else
     vpImage<unsigned char> I; // This is a B&W image
 #endif
 
-    // Set default output image name for saving
+// Set default output image name for saving
 #ifdef GRAB_COLOR
     // Color images will be saved in PGM P6 format
     std::string opath = "C:/temp/I%04d.ppm";
@@ -188,15 +194,15 @@ main(int argc, const char ** argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_display, nframes, save, opath) == false) {
-      exit (-1);
+      exit(-1);
     }
     // Create the grabber
-    vpDirectShowGrabber* grabber = new vpDirectShowGrabber();
+    vpDirectShowGrabber *grabber = new vpDirectShowGrabber();
 
-    //test if a camera is connected
-    if(grabber->getDeviceNumber() == 0)
-    {
-      vpCTRACE << "there is no camera detected on your computer." << std::endl ;
+    // test if a camera is connected
+    if (grabber->getDeviceNumber() == 0) {
+      vpCTRACE << "there is no camera detected on your computer."
+               << std::endl;
       grabber->close();
       exit(0);
     }
@@ -206,11 +212,10 @@ main(int argc, const char ** argv)
     // Acquire an image
     grabber->acquire(I);
 
+    std::cout << "Image size: width : " << I.getWidth()
+              << " height: " << I.getHeight() << std::endl;
 
-    std::cout << "Image size: width : " << I.getWidth() <<  " height: "
-              << I.getHeight() << std::endl;
-
-    // Creates a display
+// Creates a display
 #if defined VISP_HAVE_GTK
     vpDisplayGTK display;
 #elif defined VISP_HAVE_GDI
@@ -218,20 +223,20 @@ main(int argc, const char ** argv)
 #endif
 
     if (opt_display) {
-      display.init(I,100,100,"DirectShow Framegrabber");
+      display.init(I, 100, 100, "DirectShow Framegrabber");
     }
 
-    double tbegin=0, ttotal=0;
+    double tbegin = 0, ttotal = 0;
 
     ttotal = 0;
     tbegin = vpTime::measureTimeMs();
     // Loop for image acquisition and display
     for (unsigned i = 0; i < nframes; i++) {
-      //Acquires an RGBa image
+      // Acquires an RGBa image
       grabber->acquire(I);
 
       if (opt_display) {
-        //Displays the grabbed rgba image
+        // Displays the grabbed rgba image
         vpDisplay::display(I);
         vpDisplay::flush(I);
       }
@@ -250,31 +255,21 @@ main(int argc, const char ** argv)
       ttotal += tloop;
     }
     std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
-    std::cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << std::endl;
+    std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps"
+              << std::endl;
 
     // Release the framegrabber
     delete grabber;
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }
 }
-#else // (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
+#else  // (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 
-int
-main()
-{
-  vpTRACE("GDI or GTK is not available...") ;
-}
+int main() { vpTRACE("GDI or GTK is not available..."); }
 #endif // (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
-#else // defined (VISP_HAVE_DIRECTSHOW) 
-int
-main()
-{
-  vpTRACE("DirectShow is not available...") ;
-}
-#endif // defined (VISP_HAVE_DIRECTSHOW) 
-
-
+#else  // defined (VISP_HAVE_DIRECTSHOW)
+int main() { vpTRACE("DirectShow is not available..."); }
+#endif // defined (VISP_HAVE_DIRECTSHOW)

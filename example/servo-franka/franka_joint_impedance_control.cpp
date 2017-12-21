@@ -20,31 +20,39 @@
 #include <franka/model.h>
 #include <franka/robot.h>
 
-namespace {
+namespace
+{
 template <class T, size_t N>
-std::ostream& operator<<(std::ostream& ostream, const std::array<T, N>& array) {
+std::ostream &operator<<(std::ostream &ostream, const std::array<T, N> &array)
+{
   ostream << "[";
-  std::copy(array.cbegin(), array.cend() - 1, std::ostream_iterator<T>(ostream, ","));
-  std::copy(array.cend() - 1, array.cend(), std::ostream_iterator<T>(ostream));
+  std::copy(array.cbegin(), array.cend() - 1,
+            std::ostream_iterator<T>(ostream, ","));
+  std::copy(array.cend() - 1, array.cend(),
+            std::ostream_iterator<T>(ostream));
   ostream << "]";
   return ostream;
 }
-}  // anonymous namespace
+} // anonymous namespace
 
 /**
  * @example franka_joint_impedance_control.cpp
- * An example showing a joint impedance type control that executes a Cartesian motion in the shape
- * of a circle. The example illustrates how to use the internal inverse kinematics to map a
- * Cartesian trajectory to joint space. The joint space target is tracked by an impedance control
- * that additionally compensates coriolis terms using the libfranka model library. This example also
- * serves to compare commanded vs. measured torques. The results are printed from a separate thread
- * to avoid blocking print functions in the real-time loop.
+ * An example showing a joint impedance type control that executes a Cartesian
+ * motion in the shape of a circle. The example illustrates how to use the
+ * internal inverse kinematics to map a Cartesian trajectory to joint space.
+ * The joint space target is tracked by an impedance control that additionally
+ * compensates coriolis terms using the libfranka model library. This example
+ * also serves to compare commanded vs. measured torques. The results are
+ * printed from a separate thread to avoid blocking print functions in the
+ * real-time loop.
  *
- * This example is part of libfranka FCI C++ API: https://frankaemika.github.io/libfranka
- * See https://frankaemika.github.io/docs for more details.
+ * This example is part of libfranka FCI C++ API:
+ * https://frankaemika.github.io/libfranka See
+ * https://frankaemika.github.io/docs for more details.
  */
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
   // Check whether the required arguments were passed.
   if (argc != 5) {
     std::cerr << "Usage: ./" << argv[0] << " <robot-hostname>"
@@ -85,8 +93,8 @@ int main(int argc, char** argv) {
   std::thread print_thread([print_rate, &print_data, &running]() {
     while (running) {
       // Sleep to achieve the desired print rate.
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(static_cast<int>((1.0 / print_rate * 1000.0))));
+      std::this_thread::sleep_for(std::chrono::milliseconds(
+          static_cast<int>((1.0 / print_rate * 1000.0))));
 
       // Try to lock data to avoid read write collisions.
       if (print_data.mutex.try_lock() && print_data.has_data) {
@@ -96,13 +104,16 @@ int main(int argc, char** argv) {
         for (size_t i = 0; i < 7; ++i) {
           tau_d_actual[i] = print_data.tau_d_last[i] + print_data.gravity[i];
           tau_error[i] = tau_d_actual[i] - print_data.robot_state.tau_J[i];
-          error_rms += std::sqrt(std::pow(tau_error[i], 2.0)) / tau_error.size();
+          error_rms +=
+              std::sqrt(std::pow(tau_error[i], 2.0)) / tau_error.size();
         }
         // Print data to console
         std::cout << "tau_error [Nm]: " << tau_error << std::endl
                   << "tau_commanded [Nm]: " << tau_d_actual << std::endl
-                  << "tau_measured [Nm]: " << print_data.robot_state.tau_J << std::endl
-                  << "root mean square of tau_error [Nm]: " << error_rms << std::endl
+                  << "tau_measured [Nm]: " << print_data.robot_state.tau_J
+                  << std::endl
+                  << "root mean square of tau_error [Nm]: " << error_rms
+                  << std::endl
                   << "-----------------------" << std::endl;
         print_data.has_data = false;
         print_data.mutex.unlock();
@@ -115,11 +126,14 @@ int main(int argc, char** argv) {
     franka::Robot robot(argv[1]);
 
     // Set collision behavior.
-    robot.setCollisionBehavior(
-        {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}}, {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
-        {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}}, {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
-        {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}}, {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
-        {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}}, {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}});
+    robot.setCollisionBehavior({{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
+                               {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
+                               {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
+                               {{20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0}},
+                               {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
+                               {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
+                               {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}},
+                               {{20.0, 20.0, 20.0, 25.0, 25.0, 25.0}});
 
     // Load the kinematics and dynamics model.
     franka::Model model = robot.loadModel();
@@ -127,19 +141,25 @@ int main(int argc, char** argv) {
     // Read the initial pose to start the motion from there.
     std::array<double, 16> initial_pose = robot.readOnce().O_T_EE;
 
-    // Define callback function to send Cartesian pose goals to get inverse kinematics solved.
-    std::function<franka::CartesianPose(const franka::RobotState&, franka::Duration)>
-        cartesian_pose_callback = [=, &time, &vel_current, &running, &angle](
-            const franka::RobotState& /*state*/, franka::Duration period) -> franka::CartesianPose {
+    // Define callback function to send Cartesian pose goals to get inverse
+    // kinematics solved.
+    std::function<franka::CartesianPose(const franka::RobotState &,
+                                        franka::Duration)>
+        cartesian_pose_callback =
+            [=, &time, &vel_current, &running,
+             &angle](const franka::RobotState & /*state*/,
+                     franka::Duration period) -> franka::CartesianPose {
       // Update time.
       time += period.toSec();
 
       // Compute Cartesian velocity.
       if (vel_current < vel_max && time < run_time) {
-        vel_current += period.toSec() * std::fabs(vel_max / acceleration_time);
+        vel_current +=
+            period.toSec() * std::fabs(vel_max / acceleration_time);
       }
       if (vel_current > 0.0 && time > run_time) {
-        vel_current -= period.toSec() * std::fabs(vel_max / acceleration_time);
+        vel_current -=
+            period.toSec() * std::fabs(vel_max / acceleration_time);
       }
       vel_current = std::fmax(vel_current, 0.0);
       vel_current = std::fmin(vel_current, vel_max);
@@ -168,25 +188,31 @@ int main(int argc, char** argv) {
 
     // Set gains for the joint impedance control.
     // Stiffness
-    const std::array<double, 7> k_gains = {{1000.0, 1000.0, 1000.0, 1000.0, 500.0, 300.0, 100.0}};
+    const std::array<double, 7> k_gains = {
+        {1000.0, 1000.0, 1000.0, 1000.0, 500.0, 300.0, 100.0}};
     // Damping
-    const std::array<double, 7> d_gains = {{100.0, 100.0, 100.0, 100.0, 50.0, 30.0, 10.0}};
+    const std::array<double, 7> d_gains = {
+        {100.0, 100.0, 100.0, 100.0, 50.0, 30.0, 10.0}};
 
     // Define callback for the joint torque control loop.
-    std::function<franka::Torques(const franka::RobotState&, franka::Duration)>
-        impedance_control_callback = [&print_data, &model, k_gains, d_gains](
-            const franka::RobotState& state, franka::Duration /*period*/) -> franka::Torques {
+    std::function<franka::Torques(const franka::RobotState &,
+                                  franka::Duration)>
+        impedance_control_callback =
+            [&print_data, &model, k_gains,
+             d_gains](const franka::RobotState &state,
+                      franka::Duration /*period*/) -> franka::Torques {
       // Read current coriolis terms from model.
       std::array<double, 7> coriolis = model.coriolis(
-          state, {{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}}, 0.0, {{0.0, 0.0, 0.0}});
+          state, {{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}}, 0.0,
+          {{0.0, 0.0, 0.0}});
 
       // Compute torque command from joint impedance control law.
-      // Note: The answer to our Cartesian pose inverse kinematics is always in state.q_d with one
-      // time step delay.
+      // Note: The answer to our Cartesian pose inverse kinematics is always
+      // in state.q_d with one time step delay.
       std::array<double, 7> tau_d;
       for (size_t i = 0; i < 7; i++) {
-        tau_d[i] =
-            k_gains[i] * (state.q_d[i] - state.q[i]) - d_gains[i] * state.dq[i] + coriolis[i];
+        tau_d[i] = k_gains[i] * (state.q_d[i] - state.q[i]) -
+                   d_gains[i] * state.dq[i] + coriolis[i];
       }
 
       // Update data to print.
@@ -205,7 +231,7 @@ int main(int argc, char** argv) {
     // Start real-time control loop.
     robot.control(impedance_control_callback, cartesian_pose_callback);
 
-  } catch (const franka::Exception& ex) {
+  } catch (const franka::Exception &ex) {
     running = false;
     std::cerr << ex.what() << std::endl;
   }
@@ -219,6 +245,7 @@ int main(int argc, char** argv) {
 #else
 int main()
 {
-  std::cout << "This example needs libfranka to control Panda robot." << std::endl;
+  std::cout << "This example needs libfranka to control Panda robot."
+            << std::endl;
 }
 #endif

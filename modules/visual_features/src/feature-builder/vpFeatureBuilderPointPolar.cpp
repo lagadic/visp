@@ -37,16 +37,15 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file vpFeatureBuilderPointPolar.cpp
 
   \brief Conversion between tracker and visual feature point with
   polar coordinates.
 */
+#include <visp3/core/vpException.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureException.h>
-#include <visp3/core/vpException.h>
 
 #ifdef VISP_HAVE_MODULE_BLOB
 /*!
@@ -64,11 +63,11 @@
   \warning This function does not initialize \f$Z\f$ which is
   requested to compute the interaction matrix by
   vpfeaturePointPolar::interaction().
-  
+
   \param s : Visual feature \f$(\rho,\theta)\f$ to initialize. Be
   aware, the 3D depth \f$Z\f$ requested to compute the interaction
   matrix is not initialized by this function.
-  
+
   \param cam : Camera parameters.
 
   \param dot : Tracked dot. The center of gravity corresponds to the
@@ -91,7 +90,7 @@
 
   // Initialize rho,theta visual feature
   vpFeatureBuilder::create(s, cam, dot);
-  
+
   // A pose estimation is requested to initialize Z, the depth of the
   // point in the camera frame.
   double Z = 1; // Depth of the point in meters
@@ -101,29 +100,26 @@
 
 */
 void vpFeatureBuilder::create(vpFeaturePointPolar &s,
-			      const vpCameraParameters &cam,
-			      const vpDot &dot)
+                              const vpCameraParameters &cam, const vpDot &dot)
 {
   try {
-    double x=0, y=0;
+    double x = 0, y = 0;
 
     vpImagePoint cog;
     cog = dot.getCog();
 
-    vpPixelMeterConversion::convertPoint(cam, cog, x, y) ;
+    vpPixelMeterConversion::convertPoint(cam, cog, x, y);
 
-    double rho   = sqrt(x*x + y*y);
+    double rho = sqrt(x * x + y * y);
     double theta = atan2(y, x);
- 
-    s.set_rho(rho) ;
-    s.set_theta(theta) ;
-  }
-  catch(...) {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+
+    s.set_rho(rho);
+    s.set_theta(theta);
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
-
 
 /*!
 
@@ -140,11 +136,11 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
   \warning This function does not initialize \f$Z\f$ which is
   requested to compute the interaction matrix by
   vpfeaturePointPolar::interaction().
-  
+
   \param s : Visual feature \f$(\rho,\theta)\f$ to initialize. Be
   aware, the 3D depth \f$Z\f$ requested to compute the interaction
   matrix is not initialized by this function.
-  
+
   \param cam : Camera parameters.
 
   \param dot : Tracked dot. The center of gravity corresponds to the
@@ -167,7 +163,7 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
 
   // Initialize rho,theta visual feature
   vpFeatureBuilder::create(s, cam, dot);
-  
+
   // A pose estimation is requested to initialize Z, the depth of the
   // point in the camera frame.
   double Z = 1; // Depth of the point in meters
@@ -177,50 +173,48 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
 
 */
 void vpFeatureBuilder::create(vpFeaturePointPolar &s,
-			      const vpCameraParameters &cam,
-			      const vpDot2 &dot)
+                              const vpCameraParameters &cam,
+                              const vpDot2 &dot)
 {
   try {
-    double x=0, y=0;
+    double x = 0, y = 0;
 
     vpImagePoint cog;
     cog = dot.getCog();
 
-    vpPixelMeterConversion::convertPoint(cam, cog, x, y) ;
+    vpPixelMeterConversion::convertPoint(cam, cog, x, y);
 
-    double rho   = sqrt(x*x + y*y);
+    double rho = sqrt(x * x + y * y);
     double theta = atan2(y, x);
- 
-    s.set_rho(rho) ;
-    s.set_theta(theta) ;
-  }
-  catch(...) {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+
+    s.set_rho(rho);
+    s.set_theta(theta);
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
 #endif //#ifdef VISP_HAVE_MODULE_BLOB
-
 
 /*!
 
   Initialize a point feature with polar coordinates
   \f$(\rho,\theta)\f$ using the coordinates of the point in pixels
-  obtained by image processing. The points coordinates are stored in a vpImagePoint. Using the camera
-  parameters, the pixels coordinates of the point are first
-  converted in cartesian \f$(x,y)\f$ coordinates in meter in the
-  camera frame and than in polar coordinates by:
+  obtained by image processing. The points coordinates are stored in a
+  vpImagePoint. Using the camera parameters, the pixels coordinates of the
+  point are first converted in cartesian \f$(x,y)\f$ coordinates in meter in
+  the camera frame and than in polar coordinates by:
 
   \f[\rho = \sqrt{x^2+y^2}  \hbox{,}\; \; \theta = \arctan \frac{y}{x}\f]
 
   \warning This function does not initialize \f$Z\f$ which is
   requested to compute the interaction matrix by
   vpfeaturePointPolar::interaction().
-  
+
   \param s : Visual feature \f$(\rho,\theta)\f$ to initialize. Be
   aware, the 3D depth \f$Z\f$ requested to compute the interaction
   matrix is not initialized by this function.
-  
+
   \param cam : Camera parameters.
 
   \param iP : The vpImagePoint used to create the vpFeaturePoint.
@@ -237,13 +231,12 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
 
   vpFeaturePointPolar s;    // Point feature with polar coordinates
   ...
-  // Set the point coordinates in the image (here the coordinates are given in the (i,j) frame
-  iP.set_i(0);
-  iP.set_j(0);
+  // Set the point coordinates in the image (here the coordinates are given in
+  the (i,j) frame iP.set_i(0); iP.set_j(0);
 
   // Initialize rho,theta visual feature
   vpFeatureBuilder::create(s, cam, iP);
-  
+
   // A pose estimation is requested to initialize Z, the depth of the
   // point in the camera frame.
   double Z = 1; // Depth of the point in meters
@@ -253,26 +246,24 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
 
 */
 void vpFeatureBuilder::create(vpFeaturePointPolar &s,
-			      const vpCameraParameters &cam,
-			      const vpImagePoint &iP)
+                              const vpCameraParameters &cam,
+                              const vpImagePoint &iP)
 {
   try {
-    double x=0, y=0;
+    double x = 0, y = 0;
 
-    vpPixelMeterConversion::convertPoint(cam,iP,x,y) ;
+    vpPixelMeterConversion::convertPoint(cam, iP, x, y);
 
-    double rho   = sqrt(x*x + y*y);
+    double rho = sqrt(x * x + y * y);
     double theta = atan2(y, x);
- 
-    s.set_rho(rho) ;
-    s.set_theta(theta) ;
-  }
-  catch(...) {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+
+    s.set_rho(rho);
+    s.set_theta(theta);
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
-
 
 /*!
 
@@ -292,43 +283,40 @@ void vpFeatureBuilder::create(vpFeaturePointPolar &s,
   image plane corresponding to the camera perspective projection, and
   with 3D depth \f$Z\f$.
 */
-void
-vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpPoint &p)
+void vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpPoint &p)
 {
   try {
 
     double x = p.get_x();
     double y = p.get_y();
 
-    double rho   = sqrt(x*x + y*y);
+    double rho = sqrt(x * x + y * y);
     double theta = atan2(y, x);
 
-    s.set_rho(rho) ;
-    s.set_theta(theta) ;
+    s.set_rho(rho);
+    s.set_theta(theta);
 
-    s.set_Z( p.get_Z() )  ;
-
+    s.set_Z(p.get_Z());
 
     if (s.get_Z() < 0) {
-      vpERROR_TRACE("Point is behind the camera ") ;
-      std::cout <<"Z = " << s.get_Z() << std::endl ;
+      vpERROR_TRACE("Point is behind the camera ");
+      std::cout << "Z = " << s.get_Z() << std::endl;
 
       throw(vpFeatureException(vpFeatureException::badInitializationError,
-			       "Point is behind the camera ")) ;
+                               "Point is behind the camera "));
     }
 
     if (fabs(s.get_Z()) < 1e-6) {
-      vpERROR_TRACE("Point Z coordinates is null ") ;
-      std::cout <<"Z = " << s.get_Z() << std::endl ;
+      vpERROR_TRACE("Point Z coordinates is null ");
+      std::cout << "Z = " << s.get_Z() << std::endl;
 
       throw(vpFeatureException(vpFeatureException::badInitializationError,
-			       "Point Z coordinates is null")) ;
+                               "Point Z coordinates is null"));
     }
 
-  }
-  catch(...) {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
 
@@ -365,34 +353,31 @@ vpFeatureBuilder::create(vpFeaturePointPolar &s, const vpPoint &p)
   image plane corresponding to the camera perspective projection, and
   with 3D depth \f$Z\f$.
 */
-void
-vpFeatureBuilder::create(vpFeaturePointPolar &s,
-			 const vpCameraParameters &goodCam,
-			 const vpCameraParameters &wrongCam,
-			 const vpPoint &p)
+void vpFeatureBuilder::create(vpFeaturePointPolar &s,
+                              const vpCameraParameters &goodCam,
+                              const vpCameraParameters &wrongCam,
+                              const vpPoint &p)
 {
   try {
     double x = p.get_x();
     double y = p.get_y();
 
-    s.set_Z( p.get_Z() );
+    s.set_Z(p.get_Z());
 
-    double u=0, v=0;
+    double u = 0, v = 0;
     vpMeterPixelConversion::convertPoint(goodCam, x, y, u, v);
     vpPixelMeterConversion::convertPoint(wrongCam, u, v, x, y);
 
-    double rho   = sqrt(x*x + y*y);
+    double rho = sqrt(x * x + y * y);
     double theta = atan2(y, x);
 
-    s.set_rho(rho) ;
-    s.set_theta(theta) ;
-  }
-  catch(...) {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+    s.set_rho(rho);
+    s.set_theta(theta);
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
-
 
 /*
  * Local variables:

@@ -38,10 +38,11 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#include <sys/types.h>
-#include <sys/socket.h>
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 #else
 #include <winsock2.h>
 #endif
@@ -55,11 +56,14 @@
 
   \ingroup group_core_network
 
-  \brief This class implements a basic (IPv4) User Datagram Protocol (UDP) server.
+  \brief This class implements a basic (IPv4) User Datagram Protocol (UDP)
+server.
 
   More information <a href="https://tools.ietf.org/html/rfc768">here</a>,
-  <a href="https://www.beej.us/guide/bgnet/output/html/singlepage/bgnet.html">here</a>
-  or <a href="https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.hala001/samples.htm">here</a>:
+  <a
+href="https://www.beej.us/guide/bgnet/output/html/singlepage/bgnet.html">here</a>
+  or <a
+href="https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.hala001/samples.htm">here</a>:
   <blockquote>
   This User Datagram  Protocol  (UDP)  is  defined  to  make  available  a
   datagram   mode  of  packet-switched   computer   communication  in  the
@@ -80,9 +84,9 @@
   \code
 #include <cstdlib>
 #include <iostream>
-#include <vector>
-#include <sstream>
 #include <iterator>
+#include <sstream>
+#include <vector>
 #include <visp3/core/vpUDPServer.h>
 
 int main() {
@@ -94,8 +98,8 @@ int main() {
     std::string msg = "", hostInfo = "";
       int res = server.receive(msg, hostInfo, 5000);
       if (res) {
-        std::cout << "Server received: " << msg << " from: " << hostInfo << std::endl;
-        std::cout << "Reply to the client: Echo: " << msg << std::endl;
+        std::cout << "Server received: " << msg << " from: " << hostInfo <<
+std::endl; std::cout << "Reply to the client: Echo: " << msg << std::endl;
 
         //Get address and port
         std::istringstream iss(hostInfo);
@@ -119,22 +123,23 @@ int main() {
 }
   \endcode
 
-  If you want to send a complex data type, you can either send the ASCII representation
-  or send directly the byte data. In the last case, you should have to handle that
-  both the server and the client have the same data type representation.
-  Be careful also with the endianness of the network / host.
+  If you want to send a complex data type, you can either send the ASCII
+representation or send directly the byte data. In the last case, you should
+have to handle that both the server and the client have the same data type
+representation. Be careful also with the endianness of the network / host.
 
-  Here an example using a structure of data, assuming that both the server and the client
-  have the same architecture (probably you should write your own serialization / deserialization
-  functions for the data you want to send / receive):
+  Here an example using a structure of data, assuming that both the server and
+the client have the same architecture (probably you should write your own
+serialization / deserialization functions for the data you want to send /
+receive):
 
   \code
 #include <cstdlib>
-#include <iostream>
-#include <vector>
 #include <cstring>
-#include <sstream>
+#include <iostream>
 #include <iterator>
+#include <sstream>
+#include <vector>
 #include <visp3/core/vpUDPServer.h>
 
 struct DataType {
@@ -154,9 +159,11 @@ int main() {
     int res = server.receive(msg, hostInfo);
     if (res) {
       DataType data_type;
-      memcpy(&data_type.double_val, msg.c_str(), sizeof(data_type.double_val));
-      memcpy(&data_type.int_val, msg.c_str()+sizeof(data_type.double_val), sizeof(data_type.int_val));
-      std::cout << "Server received double_val: " << data_type.double_val << " ; int_val: " << data_type.int_val << " from: " << hostInfo << std::endl;
+      memcpy(&data_type.double_val, msg.c_str(),
+sizeof(data_type.double_val)); memcpy(&data_type.int_val,
+msg.c_str()+sizeof(data_type.double_val), sizeof(data_type.int_val));
+      std::cout << "Server received double_val: " << data_type.double_val << "
+; int_val: " << data_type.int_val << " from: " << hostInfo << std::endl;
 
       //Get address and port
       std::istringstream iss(hostInfo);
@@ -168,8 +175,9 @@ int main() {
       data_type.int_val += 2;
       char data[sizeof(data_type.double_val)+sizeof(data_type.int_val)];
       memcpy(data, &data_type.double_val, sizeof(data_type.double_val));
-      memcpy(data+sizeof(data_type.double_val), &data_type.int_val, sizeof(data_type.int_val));
-      msg = std::string(data, sizeof(data_type.double_val)+sizeof(data_type.int_val));
+      memcpy(data+sizeof(data_type.double_val), &data_type.int_val,
+sizeof(data_type.int_val)); msg = std::string(data,
+sizeof(data_type.double_val)+sizeof(data_type.int_val));
 
       server.send(msg, tokens[1], atoi(tokens[2].c_str()));
     }
@@ -184,22 +192,26 @@ int main() {
 
   \sa vpUDPServer
 */
-class VISP_EXPORT vpUDPServer {
+class VISP_EXPORT vpUDPServer
+{
 public:
   vpUDPServer(const int port);
   vpUDPServer(const std::string &hostname, const int port);
   ~vpUDPServer();
 
-  int receive(std::string &msg, const int timeoutMs=0);
-  int receive(std::string &msg, std::string &hostInfo, const int timeoutMs=0);
-  int send(const std::string &msg, const std::string &hostname, const int port);
+  int receive(std::string &msg, const int timeoutMs = 0);
+  int receive(std::string &msg, std::string &hostInfo,
+              const int timeoutMs = 0);
+  int send(const std::string &msg, const std::string &hostname,
+           const int port);
 
 private:
   char m_buf[VP_MAX_UDP_PAYLOAD];
   struct sockaddr_in m_clientAddress;
   int m_clientLength;
   struct sockaddr_in m_serverAddress;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
   int m_socketFileDescriptor;
 #else
   SOCKET m_socketFileDescriptor;

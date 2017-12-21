@@ -36,18 +36,17 @@
  *
  *****************************************************************************/
 
-
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpTranslationVector.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/vs/vpServo.h>
-#include <visp3/visual_features/vpFeaturePoint.h>
-#include <visp3/visual_features/vpGenericFeature.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/visual_features/vpFeatureThetaU.h>
 #include <visp3/blob/vpDot2.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpTranslationVector.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
+#include <visp3/visual_features/vpFeatureThetaU.h>
+#include <visp3/visual_features/vpGenericFeature.h>
+#include <visp3/vs/vpServo.h>
 
 #include <iostream>
 
@@ -61,15 +60,15 @@
 int main()
 {
   try {
-    for (int i=0; i < 3; i++) {
-      vpServo task ;
+    for (int i = 0; i < 3; i++) {
+      vpServo task;
 
       // Creation od a Theta U vector that represent the rotation
       // between the desired camera frame and the current one.
       vpThetaUVector tu_cdRc; // Current visual feature s
-      tu_cdRc[0] =0.1;
-      tu_cdRc[1] =0.2;
-      tu_cdRc[2] =0.3;
+      tu_cdRc[0] = 0.1;
+      tu_cdRc[1] = 0.2;
+      tu_cdRc[2] = 0.3;
 
       // Creation of the current feature s
       vpFeatureThetaU s(vpFeatureThetaU::cdRc);
@@ -81,10 +80,10 @@ int main()
       vpFeatureThetaU s_star(vpFeatureThetaU::cdRc); // init to zero
 
       // Compute the interaction matrix for the ThetaU_z feature
-      vpMatrix L_z =  s.interaction( vpFeatureThetaU::selectTUz() );
+      vpMatrix L_z = s.interaction(vpFeatureThetaU::selectTUz());
       // Compute the error vector (s-s^*) for the ThetaU_z feature
       s.error(s_star, vpFeatureThetaU::selectTUz());
-      
+
       // A call to kill() is requested here to destroy properly the current
       // and desired feature lists.
       task.kill();
@@ -92,8 +91,7 @@ int main()
       std::cout << "End, call vpServo destructors..." << std::endl;
     }
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

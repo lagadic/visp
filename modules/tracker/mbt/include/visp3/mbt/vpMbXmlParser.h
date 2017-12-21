@@ -38,8 +38,9 @@
 
 /*!
  * \file vpMbXmlParser.h
- * \brief Parse an Xml file to extract configuration parameters of a mbtConfig object.
-*/
+ * \brief Parse an Xml file to extract configuration parameters of a mbtConfig
+ * object.
+ */
 
 #ifndef vpMbXmlParser_HH
 #define vpMbXmlParser_HH
@@ -48,20 +49,20 @@
 
 #ifdef VISP_HAVE_XML2
 
-#include <libxml/xmlmemory.h>      /* Fonctions de la lib XML.                */
+#include <libxml/xmlmemory.h> /* Fonctions de la lib XML.                */
 
-#include <visp3/core/vpXmlParser.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpXmlParser.h>
 
 /*!
   \class vpMbXmlParser
-  \brief Parse an Xml file to extract configuration parameters of a mbtConfig object.
-  \ingroup group_mbt_xml_parser
+  \brief Parse an Xml file to extract configuration parameters of a mbtConfig
+  object. \ingroup group_mbt_xml_parser
 
   Data parser for the model based tracker.
 
  */
-class VISP_EXPORT vpMbXmlParser: public vpXmlParser
+class VISP_EXPORT vpMbXmlParser : public vpXmlParser
 {
 protected:
   //! Camera parameters.
@@ -86,8 +87,8 @@ protected:
   double minLineLengthThreshold;
   //! Minimum polygon area to track a face when LOD is enabled
   double minPolygonAreaThreshold;
-    
-  typedef enum{
+
+  typedef enum {
     conf,
     face,
     angle_appear,
@@ -109,59 +110,59 @@ protected:
     last
   } dataToParseMb;
 
-
 public:
-
   /** @name Public Member Functions Inherited from vpMbXmlParser */
   //@{
-    vpMbXmlParser();
-    virtual ~vpMbXmlParser();
+  vpMbXmlParser();
+  virtual ~vpMbXmlParser();
 
   /*!
     Get the angle to determine if a face appeared.
 
     \return angleAppear
   */
-  inline double getAngleAppear() const {return angleAppear;}
-  
+  inline double getAngleAppear() const { return angleAppear; }
+
   /*!
     Get the angle to determine if a face disappeared.
 
     \return angleDisappear
   */
-  inline double getAngleDisappear() const {return angleDisappear;}
-  
-  void getCameraParameters(vpCameraParameters& _cam) const { _cam = this->cam;}
-  
+  inline double getAngleDisappear() const { return angleDisappear; }
+
+  void getCameraParameters(vpCameraParameters &_cam) const
+  {
+    _cam = this->cam;
+  }
+
   /*!
     Get the far clipping distance.
 
     \return farClipping
   */
-  inline double getFarClippingDistance() const {return farClipping;}
-  
+  inline double getFarClippingDistance() const { return farClipping; }
+
   /*!
     Use FOV clipping
 
     \return True if yes, False otherwise.
   */
-  inline bool getFovClipping() const {return fovClipping;}
+  inline bool getFovClipping() const { return fovClipping; }
 
   /*!
      Get the state of LOD setting.
 
      \return True if LOD is enabled, false otherwise.
    */
-  inline bool getLodState() const {
-    return useLod;
-  }
-  
+  inline bool getLodState() const { return useLod; }
+
   /*!
      Get the minimum line length to track a segment when LOD is enabled.
 
      \return The minimum line length.
    */
-  inline double getMinLineLengthThreshold() const {
+  inline double getMinLineLengthThreshold() const
+  {
     return minLineLengthThreshold;
   }
 
@@ -170,7 +171,8 @@ public:
 
      \return The minimum polygon area.
    */
-  inline double getMinPolygonAreaThreshold() const {
+  inline double getMinPolygonAreaThreshold() const
+  {
     return minPolygonAreaThreshold;
   }
 
@@ -179,73 +181,78 @@ public:
 
     \return nearClipping
   */
-  inline double getNearClippingDistance() const {return nearClipping;}
-  
+  inline double getNearClippingDistance() const { return nearClipping; }
+
   /*!
     Has Far clipping been specified?
 
     \return True if yes, False otherwise.
   */
-  inline bool hasFarClippingDistance() const {return hasFarClipping;}
-  
+  inline bool hasFarClippingDistance() const { return hasFarClipping; }
+
   /*!
     Has Near clipping been specified?
 
     \return True if yes, False otherwise.
   */
-  inline bool hasNearClippingDistance() const {return hasNearClipping;}
-  
-	void parse(const char * filename);
+  inline bool hasNearClippingDistance() const { return hasNearClipping; }
+
+  void parse(const char *filename);
 
   virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
-  void read_camera (xmlDocPtr doc, xmlNodePtr node);
+  void read_camera(xmlDocPtr doc, xmlNodePtr node);
   void read_face(xmlDocPtr doc, xmlNodePtr node);
-  void read_lod (xmlDocPtr doc, xmlNodePtr node);
-  
+  void read_lod(xmlDocPtr doc, xmlNodePtr node);
+
   /*!
     Set the angle to determine if a face appeared.
 
     \param aappear : New angleAppear
   */
-  inline void setAngleAppear(const double &aappear) {angleAppear = aappear;}
-  
+  inline void setAngleAppear(const double &aappear) { angleAppear = aappear; }
+
   /*!
     Set the angle to determine if a face disappeared.
 
     \param adisappear : New angleDisappear
   */
-  inline void setAngleDisappear(const double &adisappear) {angleDisappear = adisappear;}
-  
-  void setCameraParameters(const vpCameraParameters &_cam){ cam = _cam; }
-  
+  inline void setAngleDisappear(const double &adisappear)
+  {
+    angleDisappear = adisappear;
+  }
+
+  void setCameraParameters(const vpCameraParameters &_cam) { cam = _cam; }
+
   /*!
     Set the far clipping distance.
 
     \param fclip : New farClipping
   */
-  inline void setFarClippingDistance(const double &fclip) {farClipping = fclip;}
+  inline void setFarClippingDistance(const double &fclip)
+  {
+    farClipping = fclip;
+  }
 
   /*!
     Set the near clipping distance.
 
     \param nclip : New nearClipping
   */
-  inline void setNearClippingDistance(const double &nclip) {nearClipping = nclip;}
-	
+  inline void setNearClippingDistance(const double &nclip)
+  {
+    nearClipping = nclip;
+  }
+
   void writeMainClass(xmlNodePtr node);
   //@}
-	
+
 protected:
   /** @name Protected Member Functions Inherited from vpMbXmlParser */
   //@{
   void init();
   //@}
-
 };
 
 #endif
 
 #endif /* NMBXMLPARSER_H_ */
-
-
-

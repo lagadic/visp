@@ -38,18 +38,13 @@
  *
  *****************************************************************************/
 
-
-
-
-
-
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#include "vpMy.h"
-#include "vpToken.h"
 #include "vpLex.h"
+#include "vpMy.h"
 #include "vpSkipio.h"
+#include "vpToken.h"
 #include <stdio.h>
 
 /*
@@ -58,47 +53,49 @@
  * Entree :
  * f		Fichier en sortie.
  */
-void skip_cmd (void)
+void skip_cmd(void)
 {
-	int	token;
+  int token;
 
-	fprintf (stderr, "\n$ ");
-  fwrite (mytext, (size_t)mylength, 1, stderr);
-  while ((token = lexecho (stderr, '$')) !=  T_EOF && token != '$') {};
-	unlex ();
+  fprintf(stderr, "\n$ ");
+  fwrite(mytext, (size_t)mylength, 1, stderr);
+  while ((token = lexecho(stderr, '$')) != T_EOF && token != '$') {
+  };
+  unlex();
 }
 
 /*
- * La procedure "skip_keyword" saute les structures des articles 
+ * La procedure "skip_keyword" saute les structures des articles
  * jusqu'a reconnaitre le mot cle de jeton "token".
  * Entree :
  * token	Jeton du mot cle a reconnaitre.
  * err		Message d'erreur si le mot cle n'est pas reconnu.
  */
-void skip_keyword (int token, const char *err)
+void skip_keyword(int token, const char *err)
 {
-	int	t;
+  int t;
 
-	switch (t = lex ()) {
-	case T_IDENT :		/* saute le mot cle inconnu	*/
-		while ((t = lex ()) != 0){ 
-		  switch (t) {
-		    case '$'   :	/* nouvelle commande		*/
-		    case T_EOF :	/* fin de fichier		*/
-		      lexerr ("start", err, NULL);
-			    break;
-		    default	:
-			    if (t == token) return;
-			    break;
-		  }
+  switch (t = lex()) {
+  case T_IDENT: /* saute le mot cle inconnu	*/
+    while ((t = lex()) != 0) {
+      switch (t) {
+      case '$':   /* nouvelle commande		*/
+      case T_EOF: /* fin de fichier		*/
+        lexerr("start", err, NULL);
+        break;
+      default:
+        if (t == token)
+          return;
+        break;
+      }
     }
-		break;
-	default	:
-		if (t == token) return;
-		break;
-	}
-	lexerr ("start", err, NULL);
+    break;
+  default:
+    if (t == token)
+      return;
+    break;
+  }
+  lexerr("start", err, NULL);
 }
 
 #endif
-

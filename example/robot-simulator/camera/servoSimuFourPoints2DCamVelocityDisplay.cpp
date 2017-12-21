@@ -55,32 +55,34 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                     \
+     defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/io/vpParseArgv.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpProjectionDisplay.h>
+#include <visp3/io/vpParseArgv.h>
+#include <visp3/robot/vpSimulatorCamera.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
-#include <visp3/robot/vpSimulatorCamera.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdh"
+#define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed,
+                bool &display);
 
 /*!
 
@@ -129,20 +131,29 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed,
+                bool &display)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'c': click_allowed = false; break;
-    case 'd': display = false; break;
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'c':
+      click_allowed = false;
+      break;
+    case 'd':
+      display = false;
+      break;
+    case 'h':
+      usage(argv[0], NULL);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg_);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -157,8 +168,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
   return true;
 }
 
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   try {
     bool opt_click_allowed = true;
@@ -166,11 +176,11 @@ main(int argc, const char ** argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      exit (-1);
+      exit(-1);
     }
 
-    // We open two displays, one for the internal camera view, the other one for
-    // the external view, using either X11, GTK or GDI.
+// We open two displays, one for the internal camera view, the other one for
+// the external view, using either X11, GTK or GDI.
 #if defined VISP_HAVE_X11
     vpDisplayX displayInt;
     vpDisplayX displayExt;
@@ -187,163 +197,170 @@ main(int argc, const char ** argv)
 
     // open a display for the visualization
 
-    vpImage<unsigned char> Iint(300, 300, 0) ;
-    vpImage<unsigned char> Iext(300, 300, 0) ;
+    vpImage<unsigned char> Iint(300, 300, 0);
+    vpImage<unsigned char> Iext(300, 300, 0);
 
     if (opt_display) {
-      displayInt.init(Iint,0,0, "Internal view") ;
-      displayExt.init(Iext,330,000, "External view") ;
-
+      displayInt.init(Iint, 0, 0, "Internal view");
+      displayExt.init(Iext, 330, 000, "External view");
     }
-    vpProjectionDisplay externalview ;
+    vpProjectionDisplay externalview;
 
-    double px, py ; px = py = 500 ;
-    double u0, v0 ; u0 = 150, v0 = 160 ;
+    double px, py;
+    px = py = 500;
+    double u0, v0;
+    u0 = 150, v0 = 160;
 
-    vpCameraParameters cam(px,py,u0,v0);
+    vpCameraParameters cam(px, py, u0, v0);
 
-    int i ;
-    vpServo task ;
-    vpSimulatorCamera robot ;
+    int i;
+    vpServo task;
+    vpSimulatorCamera robot;
 
-    std::cout << std::endl ;
-    std::cout << "----------------------------------------------" << std::endl ;
-    std::cout << " Test program for vpServo "  <<std::endl ;
+    std::cout << std::endl;
+    std::cout << "----------------------------------------------"
+              << std::endl;
+    std::cout << " Test program for vpServo " << std::endl;
     std::cout << " Eye-in-hand task control, articular velocity are computed"
-              << std::endl ;
-    std::cout << " Simulation " << std::endl ;
-    std::cout << " task : servo 4 points " << std::endl ;
-    std::cout << "----------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
+              << std::endl;
+    std::cout << " Simulation " << std::endl;
+    std::cout << " task : servo 4 points " << std::endl;
+    std::cout << "----------------------------------------------"
+              << std::endl;
+    std::cout << std::endl;
 
     // sets the initial camera location
-    vpHomogeneousMatrix cMo(-0.1,-0.1,1,
-                            vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
+    vpHomogeneousMatrix cMo(-0.1, -0.1, 1, vpMath::rad(40), vpMath::rad(10),
+                            vpMath::rad(60));
 
     // Compute the position of the object in the world frame
     vpHomogeneousMatrix wMc, wMo;
-    robot.getPosition(wMc) ;
+    robot.getPosition(wMc);
     wMo = wMc * cMo;
 
-    vpHomogeneousMatrix cextMo(0,0,2,
-                               0,0,0) ;//vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
+    vpHomogeneousMatrix cextMo(
+        0, 0, 2, 0, 0,
+        0); // vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
 
     // sets the point coordinates in the object frame
-    vpPoint point[4] ;
-    point[0].setWorldCoordinates(-0.1,-0.1,0) ;
-    point[1].setWorldCoordinates(0.1,-0.1,0) ;
-    point[2].setWorldCoordinates(0.1,0.1,0) ;
-    point[3].setWorldCoordinates(-0.1,0.1,0) ;
+    vpPoint point[4];
+    point[0].setWorldCoordinates(-0.1, -0.1, 0);
+    point[1].setWorldCoordinates(0.1, -0.1, 0);
+    point[2].setWorldCoordinates(0.1, 0.1, 0);
+    point[3].setWorldCoordinates(-0.1, 0.1, 0);
 
-    for (i = 0 ; i < 4 ; i++)
-      externalview.insert(point[i]) ;
+    for (i = 0; i < 4; i++)
+      externalview.insert(point[i]);
 
-    // computes  the point coordinates in the camera frame and its 2D coordinates
-    for (i = 0 ; i < 4 ; i++)
-      point[i].track(cMo) ;
+    // computes  the point coordinates in the camera frame and its 2D
+    // coordinates
+    for (i = 0; i < 4; i++)
+      point[i].track(cMo);
 
     // sets the desired position of the point
-    vpFeaturePoint p[4] ;
-    for (i = 0 ; i < 4 ; i++)
-      vpFeatureBuilder::create(p[i],point[i])  ;  //retrieve x,y and Z of the vpPoint structure
+    vpFeaturePoint p[4];
+    for (i = 0; i < 4; i++)
+      vpFeatureBuilder::create(
+          p[i], point[i]); // retrieve x,y and Z of the vpPoint structure
 
     // sets the desired position of the feature point s*
-    vpFeaturePoint pd[4] ;
+    vpFeaturePoint pd[4];
 
-    pd[0].buildFrom(-0.1,-0.1, 1) ;
-    pd[1].buildFrom( 0.1,-0.1, 1) ;
-    pd[2].buildFrom( 0.1, 0.1, 1) ;
-    pd[3].buildFrom(-0.1, 0.1, 1) ;
+    pd[0].buildFrom(-0.1, -0.1, 1);
+    pd[1].buildFrom(0.1, -0.1, 1);
+    pd[2].buildFrom(0.1, 0.1, 1);
+    pd[3].buildFrom(-0.1, 0.1, 1);
 
     // define the task
     // - we want an eye-in-hand control law
     // - articular velocity are computed
-    task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
-    task.setInteractionMatrixType(vpServo::MEAN) ;
+    task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
+    task.setInteractionMatrixType(vpServo::MEAN);
 
     // Set the position of the camera in the end-effector frame ") ;
-    vpHomogeneousMatrix cMe ;
-    vpVelocityTwistMatrix cVe(cMe) ;
-    task.set_cVe(cVe) ;
+    vpHomogeneousMatrix cMe;
+    vpVelocityTwistMatrix cVe(cMe);
+    task.set_cVe(cVe);
 
     // Set the Jacobian (expressed in the end-effector frame)
-    vpMatrix eJe ;
-    robot.get_eJe(eJe) ;
-    task.set_eJe(eJe) ;
+    vpMatrix eJe;
+    robot.get_eJe(eJe);
+    task.set_eJe(eJe);
 
     // we want to see a point on a point
-    for (i = 0 ; i < 4 ; i++)
-      task.addFeature(p[i],pd[i]) ;
+    for (i = 0; i < 4; i++)
+      task.addFeature(p[i], pd[i]);
 
     // set the gain
-    task.setLambda(1) ;
+    task.setLambda(1);
 
     // Display task information " ) ;
-    task.print() ;
+    task.print();
 
-    unsigned int iter=0 ;
+    unsigned int iter = 0;
     // loop
-    while(iter++<200)
-    {
-      std::cout << "---------------------------------------------" << iter <<std::endl ;
-      vpColVector v ;
+    while (iter++ < 200) {
+      std::cout << "---------------------------------------------" << iter
+                << std::endl;
+      vpColVector v;
 
       // Set the Jacobian (expressed in the end-effector frame)
       // since q is modified eJe is modified
-      robot.get_eJe(eJe) ;
-      task.set_eJe(eJe) ;
+      robot.get_eJe(eJe);
+      task.set_eJe(eJe);
 
       // get the robot position
-      robot.getPosition(wMc) ;
+      robot.getPosition(wMc);
       // Compute the position of the camera wrt the object frame
       cMo = wMc.inverse() * wMo;
 
       // update new point position and corresponding features
-      for (i = 0 ; i < 4 ; i++)
-      {
-        point[i].track(cMo) ;
-        //retrieve x,y and Z of the vpPoint structure
-        vpFeatureBuilder::create(p[i],point[i])  ;
+      for (i = 0; i < 4; i++) {
+        point[i].track(cMo);
+        // retrieve x,y and Z of the vpPoint structure
+        vpFeatureBuilder::create(p[i], point[i]);
       }
-      // since vpServo::MEAN interaction matrix is used, we need also to update the desired features at each iteration
-      pd[0].buildFrom(-0.1,-0.1, 1) ;
-      pd[1].buildFrom( 0.1,-0.1, 1) ;
-      pd[2].buildFrom( 0.1, 0.1, 1) ;
-      pd[3].buildFrom(-0.1, 0.1, 1) ;
+      // since vpServo::MEAN interaction matrix is used, we need also to
+      // update the desired features at each iteration
+      pd[0].buildFrom(-0.1, -0.1, 1);
+      pd[1].buildFrom(0.1, -0.1, 1);
+      pd[2].buildFrom(0.1, 0.1, 1);
+      pd[3].buildFrom(-0.1, 0.1, 1);
 
       if (opt_display) {
-        vpDisplay::display(Iint) ;
-        vpDisplay::display(Iext) ;
-        vpServoDisplay::display(task,cam,Iint) ;
-        externalview.display(Iext,cextMo, cMo, cam, vpColor::green) ;
+        vpDisplay::display(Iint);
+        vpDisplay::display(Iext);
+        vpServoDisplay::display(task, cam, Iint);
+        externalview.display(Iext, cextMo, cMo, cam, vpColor::green);
         vpDisplay::flush(Iint);
         vpDisplay::flush(Iext);
       }
 
       // compute the control law
-      v = task.computeControlLaw() ;
+      v = task.computeControlLaw();
 
       // send the camera velocity to the controller
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-      std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() <<std::endl ;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
+                << std::endl;
     }
 
     // Display task information
-    task.print() ;
+    task.print();
     task.kill();
 
-    std::cout <<"Final robot position with respect to the object frame:\n";
+    std::cout << "Final robot position with respect to the object frame:\n";
     cMo.print();
 
     if (opt_display && opt_click_allowed) {
       // suppressed for automate test
-      std::cout << "\n\nClick in the internal view window to end..." << std::endl;
-      vpDisplay::getClick(Iint) ;
+      std::cout << "\n\nClick in the internal view window to end..."
+                << std::endl;
+      vpDisplay::getClick(Iint);
     }
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return 1;
   }
@@ -353,7 +370,9 @@ main(int argc, const char ** argv)
 
 int main()
 {
-  std::cout << "You do not have X11, GTK, GDI or OpenCV display functionalities..." << std::endl;
+  std::cout
+      << "You do not have X11, GTK, GDI or OpenCV display functionalities..."
+      << std::endl;
 }
 
 #endif

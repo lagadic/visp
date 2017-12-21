@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpFeaturePointPolar_H
 #define vpFeaturePointPolar_H
 
@@ -46,12 +45,11 @@
 */
 
 #include <visp3/core/vpMatrix.h>
-#include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/core/vpPoint.h>
+#include <visp3/visual_features/vpBasicFeature.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
-
 
 /*!
   \class vpFeaturePointPolar
@@ -88,12 +86,11 @@
   =
   \left[
   \begin{array}{cccccc}
-  \frac{-\cos \theta}{Z} & \frac{-\sin \theta}{Z}  &  \frac{\rho}{Z} & (1+\rho^2)\sin\theta  & -(1+\rho^2)\cos\theta &  0 \\
+  \frac{-\cos \theta}{Z} & \frac{-\sin \theta}{Z}  &  \frac{\rho}{Z} &
+(1+\rho^2)\sin\theta  & -(1+\rho^2)\cos\theta &  0 \\
   \;\\									\
-   \frac{\sin\theta}{\rho Z} & \frac{-\cos\theta}{\rho Z} &  0 &  \cos\theta /\rho &  \sin\theta/\rho & -1 \\
-  \end{array}
-  \right]
-  \f]
+   \frac{\sin\theta}{\rho Z} & \frac{-\cos\theta}{\rho Z} &  0 &  \cos\theta
+/\rho &  \sin\theta/\rho & -1 \\ \end{array} \right] \f]
 
   where \f$Z\f$ is the 3D depth of the considered point in the camera frame.
 
@@ -151,13 +148,13 @@ int main()
   point[3].setWorldCoordinates(-0.1,  0.1, 0);
 
   // Initialize the desired pose between the camera and the object frame
-  vpHomogeneousMatrix cMod; 
+  vpHomogeneousMatrix cMod;
   cMod.buildFrom(0, 0, 1, 0, 0, 0);
 
-  // Compute the desired position of the point 
+  // Compute the desired position of the point
   for (int i = 0 ; i < 4 ; i++) {
     // Compute the 3D point coordinates in the camera frame cP = cMod * oP
-    point[i].changeFrame(cMod); 
+    point[i].changeFrame(cMod);
     // Compute the perspective projection to set (x,y)
     point[i].projection();
   }
@@ -165,33 +162,33 @@ int main()
   // Create 4 desired visual features as 2D points with polar coordinates
   vpFeaturePointPolar pd[4];
   // Initialize the desired visual feature from the desired point positions
-  for (int i = 0 ; i < 4 ; i++) 
+  for (int i = 0 ; i < 4 ; i++)
     vpFeatureBuilder::create(pd[i], point[i]);
-  
+
   // Initialize the current pose between the camera and the object frame
-  vpHomogeneousMatrix cMo; 
-  cMo.buildFrom(0, 0, 1.2, 0, 0, M_PI); 
+  vpHomogeneousMatrix cMo;
+  cMo.buildFrom(0, 0, 1.2, 0, 0, M_PI);
   // ... cMo need here to be computed from a pose estimation
 
   for (int i = 0 ; i < 4 ; i++) {
     // Compute the 3D point coordinates in the camera frame cP = cMo * oP
-    point[i].changeFrame(cMo); 
+    point[i].changeFrame(cMo);
     // Compute the perspective projection to set (x,y)
     point[i].projection();
   }
   // Create 4 current visual features as 2D points with polar coordinates
   vpFeaturePointPolar p[4];
   // Initialize the current visual feature from the current point positions
-  for (int i = 0 ; i < 4 ; i++) 
+  for (int i = 0 ; i < 4 ; i++)
     vpFeatureBuilder::create(p[i], point[i]);
 
   // Visual servo task initialization
   vpServo task;
   // - Camera is monted on the robot end-effector and velocities are
   //   computed in the camera frame
-  task.setServo(vpServo::EYEINHAND_CAMERA); 
+  task.setServo(vpServo::EYEINHAND_CAMERA);
   // - Interaction matrix is computed with the current visual features s
-  task.setInteractionMatrixType(vpServo::CURRENT); 
+  task.setInteractionMatrixType(vpServo::CURRENT);
   // - Set the contant gain to 1
   task.setLambda(1);
   // - Add current and desired features
@@ -205,11 +202,11 @@ int main()
     // coordinates in the image plane
     for (int i = 0 ; i < 4 ; i++)
       point[i].track(cMo) ;
-   
+
     // Update the current 2D point visual feature with polar coordinates
     for (int i = 0 ; i < 4 ; i++)
       vpFeatureBuilder::create(p[i], point[i]);
-    
+
     // compute the control law
     vpColVector v = task.computeControlLaw(); // camera velocity
   }
@@ -218,24 +215,24 @@ int main()
 }
   \endcode
 
-  If you want to deal only with the \f$\rho\f$ subset feature from the 2D 
-  point feature set, you have just to modify the addFeature() call in the 
-  previous example by the following line. In that case, the dimension of 
+  If you want to deal only with the \f$\rho\f$ subset feature from the 2D
+  point feature set, you have just to modify the addFeature() call in the
+  previous example by the following line. In that case, the dimension of
   \f$s\f$ is four.
 
   \code
-  // Add the rho subset feature from the 2D point polar coordinates visual features
-  task.addFeature(p[i], pd[i], vpFeaturePointPolar::selectRho());
+  // Add the rho subset feature from the 2D point polar coordinates visual
+features task.addFeature(p[i], pd[i], vpFeaturePointPolar::selectRho());
   \endcode
 
-  If you want to build your own control law, this other example shows how 
-  to create a current (\f$s\f$) and desired (\f$s^*\f$) 2D point visual 
-  feature with polar coordinates, compute the corresponding error vector 
+  If you want to build your own control law, this other example shows how
+  to create a current (\f$s\f$) and desired (\f$s^*\f$) 2D point visual
+  feature with polar coordinates, compute the corresponding error vector
   \f$(s-s^*)\f$ and finally build the interaction matrix \f$L_s\f$.
 
   \code
-#include <visp3/visual_features/vpFeaturePointPolar.h>
 #include <visp3/core/vpMatrix.h>
+#include <visp3/visual_features/vpFeaturePointPolar.h>
 
 int main()
 {
@@ -252,8 +249,8 @@ int main()
   // Compute the interaction matrix L_s for the current feature
   vpMatrix L = s.interaction();
 
-  // Compute the error vector (s-s*) for the point feature with polar coordinates
-  s.error(s_star);
+  // Compute the error vector (s-s*) for the point feature with polar
+coordinates s.error(s_star);
 
   return 0;
 }
@@ -265,57 +262,55 @@ class VISP_EXPORT vpFeaturePointPolar : public vpBasicFeature
 private:
   //! FeaturePoint depth (required to compute the interaction matrix)
   //! default Z = 1m
-  double Z ;
+  double Z;
 
 public:
   // basic constructor
-  vpFeaturePointPolar() ;
+  vpFeaturePointPolar();
   //! Destructor. Does nothing.
-  virtual ~vpFeaturePointPolar() { }
+  virtual ~vpFeaturePointPolar() {}
 
-  void buildFrom(const double rho, const double theta, const double Z) ;
+  void buildFrom(const double rho, const double theta, const double Z);
 
-  void display(const vpCameraParameters &cam,
-               const vpImage<unsigned char> &I,
-               const vpColor &color=vpColor::green,
-               unsigned int thickness=1) const ;
-  void display(const vpCameraParameters &cam,
-               const vpImage<vpRGBa> &I,
-               const vpColor &color=vpColor::green,
-               unsigned int thickness=1) const ;
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
+               const vpColor &color = vpColor::green,
+               unsigned int thickness = 1) const;
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
+               const vpColor &color = vpColor::green,
+               unsigned int thickness = 1) const;
 
   // feature duplication
-  vpFeaturePointPolar *duplicate() const ;
+  vpFeaturePointPolar *duplicate() const;
 
   // compute the error between two visual features from a subset
   // a the possible features
   vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL)  ;
+                    const unsigned int select = FEATURE_ALL);
 
   // basic construction
-  void init() ;
+  void init();
 
   // get the point rho-coordinates
-  double get_rho()  const ;
+  double get_rho() const;
   // get the point theta-coordinates
-  double get_theta()   const ;
+  double get_theta() const;
   // get the point depth (camera frame)
-  double get_Z() const  ;
+  double get_Z() const;
 
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
 
   // print the name of the feature
-  void print(const unsigned int select = FEATURE_ALL ) const ;
+  void print(const unsigned int select = FEATURE_ALL) const;
 
   // set the point rho-coordinates
-  void set_rho(const double rho) ;
+  void set_rho(const double rho);
   // set the point theta-coordinates
-  void set_theta(const double theta) ;
+  void set_theta(const double theta);
   // set the point depth (camera frame)
-  void set_Z(const double Z) ;
+  void set_Z(const double Z);
   // set the point rho, theta polar coordinates and Z coordinate
-  void set_rhoThetaZ(const double rho, const double theta, const double Z) ;
+  void set_rhoThetaZ(const double rho, const double theta, const double Z);
 
   /*
     vpBasicFeature method instantiation
@@ -327,10 +322,8 @@ public:
     @name Deprecated functions
   */
   //! compute the error between a visual features and zero
-  vpColVector error(const unsigned int select = FEATURE_ALL)  ;
-} ;
-
-
+  vpColVector error(const unsigned int select = FEATURE_ALL);
+};
 
 #endif
 

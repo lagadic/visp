@@ -7,12 +7,9 @@ int main()
     vpImage<vpRGBa> I;
     vpImageIo::read(I, "monkey.jpeg");
     vpImageIo::write(I, "monkey.png");
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << e.getMessage() << std::endl;
-  }
-  catch(...) {
+  } catch (...) {
     std::cout << "Unsupported image format" << std::endl;
   }
 }
-

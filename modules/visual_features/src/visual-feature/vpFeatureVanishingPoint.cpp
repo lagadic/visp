@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 /*!  \file vpFeatureVanishingPoint.cpp
   \brief Class that defines 2D vanishing
   point visual feature (Z coordinate in 3D space is infinity)
@@ -56,89 +55,68 @@
 
 #include <visp3/core/vpFeatureDisplay.h>
 
-void
-vpFeatureVanishingPoint::init()
+void vpFeatureVanishingPoint::init()
 {
-    //feature dimension
-    dim_s = 2 ;
-    nbParameters = 2;
+  // feature dimension
+  dim_s = 2;
+  nbParameters = 2;
 
-    // memory allocation
-    s.resize(dim_s) ;
-    if (flags == NULL)
-      flags = new bool[nbParameters];
-    for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
+  // memory allocation
+  s.resize(dim_s);
+  if (flags == NULL)
+    flags = new bool[nbParameters];
+  for (unsigned int i = 0; i < nbParameters; i++)
+    flags[i] = false;
 
-    //Z not required  (infinity)
-    //set_Z(1) ;
-
+  // Z not required  (infinity)
+  // set_Z(1) ;
 }
-vpFeatureVanishingPoint::vpFeatureVanishingPoint()
-{
-    init() ;
-}
-
+vpFeatureVanishingPoint::vpFeatureVanishingPoint() { init(); }
 
 //! set the point x-coordinates
-void
-vpFeatureVanishingPoint::set_x(const double _x)
+void vpFeatureVanishingPoint::set_x(const double _x)
 {
-    s[0] = _x ;
-    flags[0] = true;
+  s[0] = _x;
+  flags[0] = true;
 }
 //! get the point x-coordinates
-double
-vpFeatureVanishingPoint::get_x() const
-{
-    return s[0] ;
-}
+double vpFeatureVanishingPoint::get_x() const { return s[0]; }
 
 //! set the point y-coordinates
-void
-vpFeatureVanishingPoint::set_y(const double _y)
+void vpFeatureVanishingPoint::set_y(const double _y)
 {
-    s[1] = _y ;
-    flags[1] = true;
+  s[1] = _y;
+  flags[1] = true;
 }
 //! get the point y-coordinates
-double
-vpFeatureVanishingPoint::get_y() const
-{
-    return s[1] ;
-}
-
+double vpFeatureVanishingPoint::get_y() const { return s[1]; }
 
 //! set the point xy coordinates
-void
-vpFeatureVanishingPoint::set_xy(const double _x,
-			const double _y)
+void vpFeatureVanishingPoint::set_xy(const double _x, const double _y)
 {
-  set_x(_x) ;
-  set_y(_y) ;
+  set_x(_x);
+  set_y(_y);
 }
 
-
 //! compute the interaction matrix from a subset of the possible features
-vpMatrix
-vpFeatureVanishingPoint::interaction(const unsigned int select)
+vpMatrix vpFeatureVanishingPoint::interaction(const unsigned int select)
 {
-  vpMatrix L ;
+  vpMatrix L;
 
-  L.resize(0,6) ;
+  L.resize(0, 6);
 
-  if (deallocate == vpBasicFeature::user)
-  {
-    for (unsigned int i = 0; i < nbParameters; i++)
-    {
-      if (flags[i] == false)
-      {
-        switch(i){
+  if (deallocate == vpBasicFeature::user) {
+    for (unsigned int i = 0; i < nbParameters; i++) {
+      if (flags[i] == false) {
+        switch (i) {
         case 0:
-          vpTRACE("Warning !!!  The interaction matrix is computed but x was not set yet");
-        break;
+          vpTRACE("Warning !!!  The interaction matrix is computed but x was "
+                  "not set yet");
+          break;
         case 1:
-          vpTRACE("Warning !!!  The interaction matrix is computed but y was not set yet");
-        break;
+          vpTRACE("Warning !!!  The interaction matrix is computed but y was "
+                  "not set yet");
+          break;
         default:
           vpTRACE("Problem during the reading of the variable flags");
         }
@@ -147,94 +125,84 @@ vpFeatureVanishingPoint::interaction(const unsigned int select)
     resetFlags();
   }
 
-  double x = get_x() ;
-  double y = get_y() ;
+  double x = get_x();
+  double y = get_y();
 
-  if (vpFeatureVanishingPoint::selectX() & select )
-  {
-    vpMatrix Lx(1,6) ; Lx = 0;
+  if (vpFeatureVanishingPoint::selectX() & select) {
+    vpMatrix Lx(1, 6);
+    Lx = 0;
 
-    Lx[0][0] = 0.  ;
-    Lx[0][1] = 0. ;
-    Lx[0][2] = 0. ;
-    Lx[0][3] = x*y ;
-    Lx[0][4] = -(1+x*x) ;
-    Lx[0][5] = y ;
+    Lx[0][0] = 0.;
+    Lx[0][1] = 0.;
+    Lx[0][2] = 0.;
+    Lx[0][3] = x * y;
+    Lx[0][4] = -(1 + x * x);
+    Lx[0][5] = y;
 
-    L = vpMatrix::stack(L,Lx) ;
+    L = vpMatrix::stack(L, Lx);
   }
 
-  if (vpFeatureVanishingPoint::selectY() & select )
-  {
-    vpMatrix Ly(1,6) ; Ly = 0;
+  if (vpFeatureVanishingPoint::selectY() & select) {
+    vpMatrix Ly(1, 6);
+    Ly = 0;
 
-    Ly[0][0] = 0 ;
-    Ly[0][1] = 0. ;
-    Ly[0][2] = 0. ;
-    Ly[0][3] = 1+y*y ;
-    Ly[0][4] = -x*y ;
-    Ly[0][5] = -x ;
+    Ly[0][0] = 0;
+    Ly[0][1] = 0.;
+    Ly[0][2] = 0.;
+    Ly[0][3] = 1 + y * y;
+    Ly[0][4] = -x * y;
+    Ly[0][5] = -x;
 
-    L = vpMatrix::stack(L,Ly) ;
+    L = vpMatrix::stack(L, Ly);
   }
-  return L ;
+  return L;
 }
 
-
-/*! compute the error between two visual features from a subset of the possible
-  features
+/*! compute the error between two visual features from a subset of the
+  possible features
  */
-vpColVector
-vpFeatureVanishingPoint::error(const vpBasicFeature &s_star,
-			       const unsigned int select)
+vpColVector vpFeatureVanishingPoint::error(const vpBasicFeature &s_star,
+                                           const unsigned int select)
 {
-  vpColVector e(0) ;
+  vpColVector e(0);
 
-  try{
-    if (vpFeatureVanishingPoint::selectX() & select )
-    {
-      vpColVector ex(1) ;
-      ex[0] = s[0] - s_star[0] ;
+  try {
+    if (vpFeatureVanishingPoint::selectX() & select) {
+      vpColVector ex(1);
+      ex[0] = s[0] - s_star[0];
 
-      e = vpColVector::stack(e,ex) ;
+      e = vpColVector::stack(e, ex);
     }
 
-    if (vpFeatureVanishingPoint::selectY() & select )
-    {
-      vpColVector ey(1) ;
-      ey[0] = s[1] - s_star[1] ;
-      e =  vpColVector::stack(e,ey) ;
+    if (vpFeatureVanishingPoint::selectY() & select) {
+      vpColVector ey(1);
+      ey[0] = s[1] - s_star[1];
+      e = vpColVector::stack(e, ey);
     }
+  } catch (...) {
+    throw;
   }
-  catch(...) {
-    throw ;
-  }
-  return e ;
+  return e;
 }
 
-
-
-void
-vpFeatureVanishingPoint::print(const unsigned int select ) const
+void vpFeatureVanishingPoint::print(const unsigned int select) const
 {
 
-  std::cout <<"Point: " <<std::endl;
-  if (vpFeatureVanishingPoint::selectX() & select )
-    std::cout << " x=" << get_x() ;
-  if (vpFeatureVanishingPoint::selectY() & select )
-    std::cout << " y=" << get_y() ;
-  std::cout <<std::endl ;
+  std::cout << "Point: " << std::endl;
+  if (vpFeatureVanishingPoint::selectX() & select)
+    std::cout << " x=" << get_x();
+  if (vpFeatureVanishingPoint::selectY() & select)
+    std::cout << " y=" << get_y();
+  std::cout << std::endl;
 }
 
-
-void
-vpFeatureVanishingPoint::buildFrom(const double _x, const double _y)
+void vpFeatureVanishingPoint::buildFrom(const double _x, const double _y)
 {
-  s[0] = _x ;
-  s[1] = _y ;
-  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
+  s[0] = _x;
+  s[1] = _y;
+  for (unsigned int i = 0; i < nbParameters; i++)
+    flags[i] = true;
 }
-
 
 /*!
 
@@ -246,24 +214,21 @@ vpFeatureVanishingPoint::buildFrom(const double _x, const double _y)
   \param thickness : Thickness of the feature representation.
 
 */
-void
-vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
-                                 const vpImage<unsigned char> &I,
-                                 const vpColor &color,
-                                 unsigned int thickness) const
+void vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
+                                      const vpImage<unsigned char> &I,
+                                      const vpColor &color,
+                                      unsigned int thickness) const
 {
-  try{
-    double x,y ;
-    x = get_x() ;
-    y = get_y() ;
+  try {
+    double x, y;
+    x = get_x();
+    y = get_y();
 
-    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness) ;
+    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
 
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
 /*!
@@ -276,35 +241,31 @@ vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
   \param thickness : Thickness of the feature representation.
 
 */
-void
-vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
-                                 const vpImage<vpRGBa> &I,
-                                 const vpColor &color,
-                                 unsigned int thickness) const
+void vpFeatureVanishingPoint::display(const vpCameraParameters &cam,
+                                      const vpImage<vpRGBa> &I,
+                                      const vpColor &color,
+                                      unsigned int thickness) const
 {
-  try{
-    double x,y ;
-    x = get_x() ;
-    y = get_y() ;
+  try {
+    double x, y;
+    x = get_x();
+    y = get_y();
 
-    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness) ;
+    vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
 
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
-
 
 /*! for memory issue (used by the vpServo class only)
  */
 vpFeatureVanishingPoint *vpFeatureVanishingPoint::duplicate() const
 {
-  vpFeatureVanishingPoint *feature = new vpFeatureVanishingPoint ;
-  return feature ;
+  vpFeatureVanishingPoint *feature = new vpFeatureVanishingPoint;
+  return feature;
 }
 
-unsigned int vpFeatureVanishingPoint::selectX()  { return FEATURE_LINE[0] ; }
-unsigned int vpFeatureVanishingPoint::selectY()  { return FEATURE_LINE[1] ; }
+unsigned int vpFeatureVanishingPoint::selectX() { return FEATURE_LINE[0]; }
+unsigned int vpFeatureVanishingPoint::selectY() { return FEATURE_LINE[1]; }

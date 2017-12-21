@@ -39,8 +39,8 @@
 #include <algorithm>
 #include <math.h>
 
-#include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpRowVector.h>
 
 /*!
@@ -48,8 +48,6 @@
   \brief Class that consider the case of a generic rotation vector
   (cannot be used as is !).
 */
-
-
 
 /*!
   Return the transpose of the rotation vector.
@@ -59,26 +57,27 @@ vpRowVector vpRotationVector::t() const
 {
   vpRowVector v(dsize);
 
-  for (unsigned int i=0; i< dsize; i++)
+  for (unsigned int i = 0; i < dsize; i++)
     v[i] = data[i];
 
   return v;
 }
 
 /*!
-  Operator that allows to multiply each element of a rotation vector by a scalar.
+  Operator that allows to multiply each element of a rotation vector by a
+  scalar.
 
   \param x : The scalar.
 
-  \return The rotation vector multiplied by the scalar as a column vector. The current
-  rotation vector (*this) is unchanged.
+  \return The rotation vector multiplied by the scalar as a column vector. The
+  current rotation vector (*this) is unchanged.
 
 */
 vpColVector vpRotationVector::operator*(double x) const
 {
   vpColVector v(dsize);
 
-  for (unsigned int i=0;i<dsize;i++)
+  for (unsigned int i = 0; i < dsize; i++)
     v[i] = (*this)[i] * x;
   return v;
 }
@@ -87,25 +86,26 @@ vpColVector vpRotationVector::operator*(double x) const
   \relates vpRotationVector
   Allows to multiply a scalar by rotaion vector.
 */
-vpColVector operator*(const double &x,const vpRotationVector &v)
+vpColVector operator*(const double &x, const vpRotationVector &v)
 {
-  vpColVector vout ;
-  vout = v*x ;
-  return vout ;
+  vpColVector vout;
+  vout = v * x;
+  return vout;
 }
 
 /*!
-  Return the sum square of all the elements \f$r_{i}\f$ of the rotation vector r(m).
+  Return the sum square of all the elements \f$r_{i}\f$ of the rotation vector
+  r(m).
 
   \return The value \f[\sum{i=0}^{m} r_i^{2}\f].
   */
 double vpRotationVector::sumSquare() const
 {
-  double sum_square=0.0;
+  double sum_square = 0.0;
 
-  for (unsigned int i=0;i<rowNum;i++) {
-    double x=rowPtrs[i][0];
-    sum_square += x*x;
+  for (unsigned int i = 0; i < rowNum; i++) {
+    double x = rowPtrs[i][0];
+    sum_square += x * x;
   }
 
   return sum_square;

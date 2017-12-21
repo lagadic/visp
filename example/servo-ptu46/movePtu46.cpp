@@ -38,11 +38,10 @@
 /*!
   \file movePtu46.cpp
 
-  \brief Example of a real robot control, the ptu-46 robot (pan-tilt turret). The
-  robot is controlled first in position, then in velocity.
+  \brief Example of a real robot control, the ptu-46 robot (pan-tilt turret).
+  The robot is controlled first in position, then in velocity.
 
 */
-
 
 /*!
   \example movePtu46.cpp
@@ -53,43 +52,40 @@
 */
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#  include <unistd.h>
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#include <unistd.h>
 #endif
-
-
 
 #ifdef VISP_HAVE_PTU46
 
 #include <visp3/robot/vpRobotPtu46.h>
 
-int
-main()
+int main()
 {
-  try
-  {
-    vpRobotPtu46 robot ;
-    vpColVector q(2) ;
+  try {
+    vpRobotPtu46 robot;
+    vpColVector q(2);
 
-    vpERROR_TRACE(" ") ;
+    vpERROR_TRACE(" ");
 
-    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+    robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
 
     q = 0;
     vpCTRACE << "Set position in the articular frame: " << q.t();
-    robot.setPosition(vpRobot::ARTICULAR_FRAME, q) ;
+    robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
 
     q[0] = vpMath::rad(10);
     q[1] = vpMath::rad(20);
     vpCTRACE << "Set position in the articular frame: " << q.t();
-    robot.setPosition(vpRobot::ARTICULAR_FRAME, q) ;
+    robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
 
-    vpColVector qm(2) ;
-    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm) ;
-    vpCTRACE << "Position in the articular frame " << qm.t() ;
+    vpColVector qm(2);
+    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm);
+    vpCTRACE << "Position in the articular frame " << qm.t();
 
-    vpColVector qdot(2) ;
-    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+    vpColVector qdot(2);
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 #if 0
     qdot = 0 ;
     qdot[0] = vpMath::rad(10) ;
@@ -108,35 +104,32 @@ main()
     sleep(2) ;
 #endif
 
-    qdot = 0 ;
+    qdot = 0;
     //  qdot[0] = vpMath::rad(0.1) ;
-    qdot[1] = vpMath::rad(10) ;
-    vpCTRACE << "Set articular frame velocity " << qdot.t() ;
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
-    sleep(2) ;
+    qdot[1] = vpMath::rad(10);
+    vpCTRACE << "Set articular frame velocity " << qdot.t();
+    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
+    sleep(2);
 
-    qdot = 0 ;
+    qdot = 0;
     qdot[0] = vpMath::rad(-5);
-    //qdot[1] = vpMath::rad(-5);
+    // qdot[1] = vpMath::rad(-5);
 
-    vpCTRACE << "Set articular frame velocity " << qdot.t() ;
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot) ;
-    sleep(2) ;
-  }
-  catch (...)
-  {
+    vpCTRACE << "Set articular frame velocity " << qdot.t();
+    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
+    sleep(2);
+  } catch (...) {
     std::cout << "Sorry PtU46 not available ..." << std::endl;
   }
 
   return 0;
-
 }
 #else
-int
-main()
+int main()
 {
-  vpERROR_TRACE("You do not have a ptu-46 robot connected to your computer...");
-  return 0; 
+  vpERROR_TRACE(
+      "You do not have a ptu-46 robot connected to your computer...");
+  return 0;
 }
 
 #endif

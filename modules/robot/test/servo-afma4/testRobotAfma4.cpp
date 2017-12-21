@@ -43,12 +43,11 @@
   degrees of freedom).
 */
 
-#include <visp3/robot/vpRobotAfma4.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/robot/vpRobotAfma4.h>
 
 #include <iostream>
-
 
 #ifdef VISP_HAVE_AFMA4
 
@@ -61,8 +60,7 @@ int main()
     vpRobotAfma4 afma4;
 
     std::cout << afma4 << std::endl;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
   return 0;
@@ -70,8 +68,9 @@ int main()
 #else
 int main()
 {
-  std::cout << "The real Afma4 robot controller is not available." << std::endl;
-  return 0; 
+  std::cout << "The real Afma4 robot controller is not available."
+            << std::endl;
+  return 0;
 }
 
 #endif

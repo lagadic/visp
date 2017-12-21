@@ -44,64 +44,75 @@
 
 */
 
-#include <sstream>
 #include <iostream>
+#include <sstream>
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/robot/vpRobotException.h>
-#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpTranslationVector.h>
-#include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpVelocityTwistMatrix.h>
+#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/robot/vpAfma6.h>
+#include <visp3/robot/vpRobotException.h>
 
 /* ----------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
-static const char *opt_Afma6[] = {"JOINT_MAX","JOINT_MIN","LONG_56","COUPL_56",
-                                  "CAMERA", "eMc_ROT_XYZ","eMc_TRANS_XYZ",
-                                  NULL};
+static const char *opt_Afma6[] = {"JOINT_MAX",     "JOINT_MIN", "LONG_56",
+                                  "COUPL_56",      "CAMERA",    "eMc_ROT_XYZ",
+                                  "eMc_TRANS_XYZ", NULL};
 
 #ifdef VISP_HAVE_AFMA6_DATA
 const std::string vpAfma6::CONST_AFMA6_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_Afma6.cnf");
+    std::string(VISP_AFMA6_DATA_PATH) +
+    std::string("/include/const_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_ccmop_without_distortion_Afma6.cnf");
+    std::string(VISP_AFMA6_DATA_PATH) +
+    std::string("/include/const_eMc_ccmop_without_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_ccmop_with_distortion_Afma6.cnf");
+    std::string(VISP_AFMA6_DATA_PATH) +
+    std::string("/include/const_eMc_ccmop_with_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_GRIPPER_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_gripper_without_distortion_Afma6.cnf");
+    std::string(VISP_AFMA6_DATA_PATH) +
+    std::string("/include/const_eMc_gripper_without_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_gripper_with_distortion_Afma6.cnf");
+    std::string(VISP_AFMA6_DATA_PATH) +
+    std::string("/include/const_eMc_gripper_with_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_vacuum_without_distortion_Afma6.cnf");
+    std::string(VISP_AFMA6_DATA_PATH) +
+    std::string("/include/const_eMc_vacuum_without_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_vacuum_with_distortion_Afma6.cnf");
+    std::string(VISP_AFMA6_DATA_PATH) +
+    std::string("/include/const_eMc_vacuum_with_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_generic_without_distortion_Afma6.cnf");
+    std::string(VISP_AFMA6_DATA_PATH) +
+    std::string("/include/const_eMc_generic_without_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_generic_with_distortion_Afma6.cnf");
+    std::string(VISP_AFMA6_DATA_PATH) +
+    std::string("/include/const_eMc_generic_with_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_CAMERA_AFMA6_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_camera_Afma6.xml");
+    std::string(VISP_AFMA6_DATA_PATH) +
+    std::string("/include/const_camera_Afma6.xml");
 
 #endif // VISP_HAVE_AFMA6_DATA
 
-const char * const vpAfma6::CONST_CCMOP_CAMERA_NAME = "Dragonfly2-8mm-ccmop";
-const char * const vpAfma6::CONST_GRIPPER_CAMERA_NAME = "Dragonfly2-6mm-gripper";
-const char * const vpAfma6::CONST_VACUUM_CAMERA_NAME = "Dragonfly2-6mm-vacuum";
-const char * const vpAfma6::CONST_GENERIC_CAMERA_NAME = "Generic-camera";
+const char *const vpAfma6::CONST_CCMOP_CAMERA_NAME = "Dragonfly2-8mm-ccmop";
+const char *const vpAfma6::CONST_GRIPPER_CAMERA_NAME =
+    "Dragonfly2-6mm-gripper";
+const char *const vpAfma6::CONST_VACUUM_CAMERA_NAME = "Dragonfly2-6mm-vacuum";
+const char *const vpAfma6::CONST_GENERIC_CAMERA_NAME = "Generic-camera";
 
 const vpAfma6::vpAfma6ToolType vpAfma6::defaultTool = TOOL_CCMOP;
 
@@ -125,7 +136,7 @@ vpAfma6::vpAfma6()
   // coupling between join 5 and 6
   this->_coupl_56 = 0.009091;
   // distance between join 5 and 6
-  this->_long_56  = -0.06924;
+  this->_long_56 = -0.06924;
   // Camera extrinsic parameters: effector to camera frame
   this->_eMc.eye(); // Default values are initialized ...
   //  ... in init (vpAfma6::vpAfma6ToolType tool,
@@ -146,17 +157,15 @@ vpAfma6::vpAfma6()
   this->_joint_min[5] = -1.5901;
 
   init();
-
 }
 
 /*!
 
   Initialize the robot with the default tool vpAfma6::defaultTool.
  */
-void
-vpAfma6::init (void)
+void vpAfma6::init(void)
 {
-  this->init ( vpAfma6::defaultTool);
+  this->init(vpAfma6::defaultTool);
   return;
 }
 
@@ -165,19 +174,19 @@ vpAfma6::init (void)
   Read files containing the constant parameters related to the robot
   kinematics and to the end-effector to camera transformation.
 
-  \param camera_extrinsic_parameters : Filename containing the constant parameters of
-  the robot kinematics \f$^e{\bf M}_c \f$ transformation.
+  \param camera_extrinsic_parameters : Filename containing the constant
+  parameters of the robot kinematics \f$^e{\bf M}_c \f$ transformation.
 
-  \param camera_intrinsic_parameters : Filename containing the camera extrinsic parameters.
+  \param camera_intrinsic_parameters : Filename containing the camera
+  extrinsic parameters.
 
 */
-void
-vpAfma6::init (const std::string &camera_extrinsic_parameters,
-               const std::string &camera_intrinsic_parameters)
+void vpAfma6::init(const std::string &camera_extrinsic_parameters,
+                   const std::string &camera_intrinsic_parameters)
 {
-  this->parseConfigFile (camera_extrinsic_parameters);
+  this->parseConfigFile(camera_extrinsic_parameters);
 
-  this->parseConfigFile (camera_intrinsic_parameters);
+  this->parseConfigFile(camera_intrinsic_parameters);
 }
 
 /*!
@@ -206,11 +215,11 @@ eMc_ROT_XYZ 10.0 -90.0 20.0
 eMc_TRANS_XYZ  0.05 0.01 0.06
     \endcode
 
-  \sa init(vpAfma6::vpToolType, vpCameraParameters::vpCameraParametersProjType),
-  init(vpAfma6::vpToolType, const vpHomogeneousMatrix&)
+  \sa init(vpAfma6::vpToolType,
+vpCameraParameters::vpCameraParametersProjType), init(vpAfma6::vpToolType,
+const vpHomogeneousMatrix&)
 */
-void
-vpAfma6::init(vpAfma6::vpAfma6ToolType tool, const std::string &filename)
+void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, const std::string &filename)
 {
   this->setToolType(tool);
   this->parseConfigFile(filename.c_str());
@@ -225,10 +234,9 @@ vpAfma6::init(vpAfma6::vpAfma6ToolType tool, const std::string &filename)
   extrinsic parameters.
 
 */
-void
-vpAfma6::init (const std::string &camera_extrinsic_parameters)
+void vpAfma6::init(const std::string &camera_extrinsic_parameters)
 {
-  this->parseConfigFile (camera_extrinsic_parameters);
+  this->parseConfigFile(camera_extrinsic_parameters);
 }
 
 /*!
@@ -241,15 +249,16 @@ vpAfma6::init (const std::string &camera_extrinsic_parameters)
   \param eMc : Homogeneous matrix representation of the transformation
   between the end-effector frame and the tool frame.
 
-  \sa init(vpAfma6::vpAfma6ToolType, vpCameraParameters::vpCameraParametersProjType),
+  \sa init(vpAfma6::vpAfma6ToolType,
+  vpCameraParameters::vpCameraParametersProjType),
   init(vpAfma6::vpAfma6ToolType, const std::string&)
 
 */
-void
-vpAfma6::init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc)
+void vpAfma6::init(vpAfma6::vpAfma6ToolType tool,
+                   const vpHomogeneousMatrix &eMc)
 {
-    this->setToolType(tool);
-    this->set_eMc(eMc);
+  this->setToolType(tool);
+  this->set_eMc(eMc);
 }
 
 /*!
@@ -269,63 +278,62 @@ vpAfma6::init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc)
   \param proj_model : Projection model of the camera.
 
 */
-void
-vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
-               vpCameraParameters::vpCameraParametersProjType proj_model)
+void vpAfma6::init(vpAfma6::vpAfma6ToolType tool,
+                   vpCameraParameters::vpCameraParametersProjType proj_model)
 {
-  
+
   this->projModel = proj_model;
-  
+
 #ifdef VISP_HAVE_AFMA6_DATA
   // Read the robot parameters from files
   std::string filename_eMc;
   switch (tool) {
   case vpAfma6::TOOL_CCMOP: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-        filename_eMc = CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME;
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+      filename_eMc = CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME;
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-        filename_eMc = CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME;
+    case vpCameraParameters::perspectiveProjWithDistortion:
+      filename_eMc = CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME;
       break;
     }
     break;
   }
   case vpAfma6::TOOL_GRIPPER: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-        filename_eMc = CONST_EMC_GRIPPER_WITHOUT_DISTORTION_FILENAME;
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+      filename_eMc = CONST_EMC_GRIPPER_WITHOUT_DISTORTION_FILENAME;
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-        filename_eMc = CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME;
+    case vpCameraParameters::perspectiveProjWithDistortion:
+      filename_eMc = CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME;
       break;
     }
     break;
   }
   case vpAfma6::TOOL_VACUUM: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-        filename_eMc = CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME;
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+      filename_eMc = CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME;
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-        filename_eMc = CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME;
+    case vpCameraParameters::perspectiveProjWithDistortion:
+      filename_eMc = CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME;
       break;
     }
     break;
   }
   case vpAfma6::TOOL_GENERIC_CAMERA: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-        filename_eMc = CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+      filename_eMc = CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-        filename_eMc = CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
+    case vpCameraParameters::perspectiveProjWithDistortion:
+      filename_eMc = CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
       break;
     }
     break;
   }
   default: {
-    vpERROR_TRACE ("This error should not occur!");
+    vpERROR_TRACE("This error should not occur!");
     //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
     // 		   "que les specs de la classe ont ete modifiee, "
     // 		   "et que le code n'a pas ete mis a jour "
@@ -337,81 +345,81 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
     break;
   }
   }
-  
-  this->init (vpAfma6::CONST_AFMA6_FILENAME, filename_eMc);
 
-#else // VISP_HAVE_AFMA6_DATA
+  this->init(vpAfma6::CONST_AFMA6_FILENAME, filename_eMc);
+
+#else  // VISP_HAVE_AFMA6_DATA
 
   // Use here default values of the robot constant parameters.
   switch (tool) {
   case vpAfma6::TOOL_CCMOP: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
       _erc[0] = vpMath::rad(164.35); // rx
-      _erc[1] = vpMath::rad( 89.64); // ry
+      _erc[1] = vpMath::rad(89.64);  // ry
       _erc[2] = vpMath::rad(-73.05); // rz
-      _etc[0] = 0.0117; // tx
-      _etc[1] = 0.0033; // ty
-      _etc[2] = 0.2272; // tz
+      _etc[0] = 0.0117;              // tx
+      _etc[1] = 0.0033;              // ty
+      _etc[2] = 0.2272;              // tz
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
+    case vpCameraParameters::perspectiveProjWithDistortion:
       _erc[0] = vpMath::rad(33.54); // rx
       _erc[1] = vpMath::rad(89.34); // ry
       _erc[2] = vpMath::rad(57.83); // rz
-      _etc[0] = 0.0373; // tx
-      _etc[1] = 0.0024; // ty
-      _etc[2] = 0.2286; // tz
+      _etc[0] = 0.0373;             // tx
+      _etc[1] = 0.0024;             // ty
+      _etc[2] = 0.2286;             // tz
       break;
     }
     break;
   }
   case vpAfma6::TOOL_GRIPPER: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-      _erc[0] = vpMath::rad( 88.33); // rx
-      _erc[1] = vpMath::rad( 72.07); // ry
-      _erc[2] = vpMath::rad(  2.53); // rz
-      _etc[0] = 0.0783; // tx
-      _etc[1] = 0.1234; // ty
-      _etc[2] = 0.1638; // tz
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+      _erc[0] = vpMath::rad(88.33); // rx
+      _erc[1] = vpMath::rad(72.07); // ry
+      _erc[2] = vpMath::rad(2.53);  // rz
+      _etc[0] = 0.0783;             // tx
+      _etc[1] = 0.1234;             // ty
+      _etc[2] = 0.1638;             // tz
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
+    case vpCameraParameters::perspectiveProjWithDistortion:
       _erc[0] = vpMath::rad(86.69); // rx
       _erc[1] = vpMath::rad(71.93); // ry
-      _erc[2] = vpMath::rad( 4.17); // rz
-      _etc[0] = 0.1034; // tx
-      _etc[1] = 0.1142; // ty
-      _etc[2] = 0.1642; // tz
+      _erc[2] = vpMath::rad(4.17);  // rz
+      _etc[0] = 0.1034;             // tx
+      _etc[1] = 0.1142;             // ty
+      _etc[2] = 0.1642;             // tz
       break;
     }
     break;
   }
   case vpAfma6::TOOL_VACUUM: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-      _erc[0] = vpMath::rad( 90.40); // rx
-      _erc[1] = vpMath::rad( 75.11); // ry
-      _erc[2] = vpMath::rad(  0.18); // rz
-      _etc[0] = 0.0038; // tx
-      _etc[1] = 0.1281; // ty
-      _etc[2] = 0.1658; // tz
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+      _erc[0] = vpMath::rad(90.40); // rx
+      _erc[1] = vpMath::rad(75.11); // ry
+      _erc[2] = vpMath::rad(0.18);  // rz
+      _etc[0] = 0.0038;             // tx
+      _etc[1] = 0.1281;             // ty
+      _etc[2] = 0.1658;             // tz
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
+    case vpCameraParameters::perspectiveProjWithDistortion:
       _erc[0] = vpMath::rad(91.61); // rx
       _erc[1] = vpMath::rad(76.17); // ry
       _erc[2] = vpMath::rad(-0.98); // rz
-      _etc[0] = 0.0815; // tx
-      _etc[1] = 0.1162; // ty
-      _etc[2] = 0.1658; // tz
+      _etc[0] = 0.0815;             // tx
+      _etc[1] = 0.1162;             // ty
+      _etc[2] = 0.1658;             // tz
       break;
     }
     break;
   }
   case vpAfma6::TOOL_CUSTOM:
   case vpAfma6::TOOL_GENERIC_CAMERA: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-    case vpCameraParameters::perspectiveProjWithDistortion :
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+    case vpCameraParameters::perspectiveProjWithDistortion:
       // set eMc to identity
       _erc[0] = 0; // rx
       _erc[1] = 0; // ry
@@ -429,9 +437,8 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
 #endif // VISP_HAVE_AFMA6_DATA
 
   setToolType(tool);
-  return ;
+  return;
 }
-
 
 /*!
 
@@ -439,8 +446,8 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
   homogeneous matrix.
 
   By forward kinematics we mean here the position and the orientation
-  of the camera relative to the base frame given the articular positions of all
-  the six joints.
+  of the camera relative to the base frame given the articular positions of
+  all the six joints.
 
   This method is the same than get_fMc(const vpColVector & q).
 
@@ -457,8 +464,7 @@ vpAfma6::init (vpAfma6::vpAfma6ToolType tool,
   \sa getInverseKinematics()
 
 */
-vpHomogeneousMatrix
-vpAfma6::getForwardKinematics(const vpColVector & q) const
+vpHomogeneousMatrix vpAfma6::getForwardKinematics(const vpColVector &q) const
 {
   vpHomogeneousMatrix fMc;
   fMc = get_fMc(q);
@@ -494,8 +500,8 @@ vpAfma6::getForwardKinematics(const vpColVector & q) const
   The code below shows how to compute the inverse geometric model:
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotAfma6.h>
 
@@ -539,12 +545,12 @@ int main()
   \sa getForwardKinematics()
 
 */
-int
-vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
-                              vpColVector & q, const bool &nearest, const bool &verbose) const
+int vpAfma6::getInverseKinematics(const vpHomogeneousMatrix &fMc,
+                                  vpColVector &q, const bool &nearest,
+                                  const bool &verbose) const
 {
   vpHomogeneousMatrix fMe;
-  double q_[2][6],d[2],t;
+  double q_[2][6], d[2], t;
   int ok[2];
   double cord[6];
 
@@ -552,7 +558,6 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
 
   if (q.getRows() != njoint)
     q.resize(6);
-
 
   //   for(unsigned int i=0;i<3;i++) {
   //     fMe[i][3] = fMc[i][3];
@@ -569,131 +574,131 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
   fMe = fMc * this->_eMc.inverse();
   //   std::cout << "\n\nfMe: " << fMe;
 
-  if (fMe[2][2] >= .99999f)
-  {
+  if (fMe[2][2] >= .99999f) {
     vpTRACE("singularity\n");
-    q_[0][4] = q_[1][4] = M_PI/2.f;
-    t = atan2(fMe[0][0],fMe[0][1]);
+    q_[0][4] = q_[1][4] = M_PI / 2.f;
+    t = atan2(fMe[0][0], fMe[0][1]);
     q_[1][3] = q_[0][3] = q[3];
     q_[1][5] = q_[0][5] = t - q_[0][3];
 
-    while  ((q_[1][5]+vpMath::rad(2)) >= this->_joint_max[5])
-      /*			-> a cause du couplage 4/5	*/
+    while ((q_[1][5] + vpMath::rad(2)) >= this->_joint_max[5])
+    /*			-> a cause du couplage 4/5	*/
     {
       q_[1][5] -= vpMath::rad(10);
       q_[1][3] += vpMath::rad(10);
     }
-    while  (q_[1][5] <= this->_joint_min[5])
-    {
+    while (q_[1][5] <= this->_joint_min[5]) {
       q_[1][5] += vpMath::rad(10);
       q_[1][3] -= vpMath::rad(10);
     }
-  }
-  else if (fMe[2][2] <= -.99999)
-  {
+  } else if (fMe[2][2] <= -.99999) {
     vpTRACE("singularity\n");
-    q_[0][4] = q_[1][4] = -M_PI/2;
-    t = atan2(fMe[1][1],fMe[1][0]);
+    q_[0][4] = q_[1][4] = -M_PI / 2;
+    t = atan2(fMe[1][1], fMe[1][0]);
     q_[1][3] = q_[0][3] = q[3];
     q_[1][5] = q_[0][5] = q_[0][3] - t;
-    while  ((q_[1][5]+vpMath::rad(2)) >= this->_joint_max[5])
-      /*			-> a cause du couplage 4/5	*/
+    while ((q_[1][5] + vpMath::rad(2)) >= this->_joint_max[5])
+    /*			-> a cause du couplage 4/5	*/
     {
       q_[1][5] -= vpMath::rad(10);
       q_[1][3] -= vpMath::rad(10);
     }
-    while  (q_[1][5] <= this->_joint_min[5])
-    {
+    while (q_[1][5] <= this->_joint_min[5]) {
       q_[1][5] += vpMath::rad(10);
       q_[1][3] += vpMath::rad(10);
     }
-  }
-  else
-  {
-    q_[0][3] = atan2(-fMe[0][2],fMe[1][2]);
-    if (q_[0][3] >= 0.0) q_[1][3] = q_[0][3] - M_PI;
-    else q_[1][3] = q_[0][3] + M_PI;
+  } else {
+    q_[0][3] = atan2(-fMe[0][2], fMe[1][2]);
+    if (q_[0][3] >= 0.0)
+      q_[1][3] = q_[0][3] - M_PI;
+    else
+      q_[1][3] = q_[0][3] + M_PI;
 
     q_[0][4] = asin(fMe[2][2]);
-    if (q_[0][4] >= 0.0) q_[1][4] = M_PI - q_[0][4];
-    else q_[1][4] = -M_PI - q_[0][4];
+    if (q_[0][4] >= 0.0)
+      q_[1][4] = M_PI - q_[0][4];
+    else
+      q_[1][4] = -M_PI - q_[0][4];
 
-    q_[0][5] = atan2(-fMe[2][1],fMe[2][0]);
-    if (q_[0][5] >= 0.0) q_[1][5] = q_[0][5] - M_PI;
-    else q_[1][5] = q_[0][5] + M_PI;
+    q_[0][5] = atan2(-fMe[2][1], fMe[2][0]);
+    if (q_[0][5] >= 0.0)
+      q_[1][5] = q_[0][5] - M_PI;
+    else
+      q_[1][5] = q_[0][5] + M_PI;
   }
-  q_[0][0] = fMe[0][3] - this->_long_56*cos(q_[0][3]);
-  q_[1][0] = fMe[0][3] - this->_long_56*cos(q_[1][3]);
-  q_[0][1] = fMe[1][3] - this->_long_56*sin(q_[0][3]);
-  q_[1][1] = fMe[1][3] - this->_long_56*sin(q_[1][3]);
+  q_[0][0] = fMe[0][3] - this->_long_56 * cos(q_[0][3]);
+  q_[1][0] = fMe[0][3] - this->_long_56 * cos(q_[1][3]);
+  q_[0][1] = fMe[1][3] - this->_long_56 * sin(q_[0][3]);
+  q_[1][1] = fMe[1][3] - this->_long_56 * sin(q_[1][3]);
   q_[0][2] = q_[1][2] = fMe[2][3];
 
   /* prise en compte du couplage axes 5/6	*/
-  q_[0][5] += this->_coupl_56*q_[0][4];
-  q_[1][5] += this->_coupl_56*q_[1][4];
+  q_[0][5] += this->_coupl_56 * q_[0][4];
+  q_[1][5] += this->_coupl_56 * q_[1][4];
 
-  for (int j=0;j<2;j++)
-  {
+  for (int j = 0; j < 2; j++) {
     ok[j] = 1;
     // test is position is reachable
-    for (unsigned int i=0;i<6;i++) {
+    for (unsigned int i = 0; i < 6; i++) {
       if (q_[j][i] < this->_joint_min[i] || q_[j][i] > this->_joint_max[i]) {
         if (verbose) {
           if (i < 3)
-            std::cout << "Joint " << i << " not in limits: " << this->_joint_min[i] << " < " << q_[j][i] << " < " << this->_joint_max[i] << std::endl;
+            std::cout << "Joint " << i
+                      << " not in limits: " << this->_joint_min[i] << " < "
+                      << q_[j][i] << " < " << this->_joint_max[i]
+                      << std::endl;
           else
-            std::cout << "Joint " << i << " not in limits: " << vpMath::deg(this->_joint_min[i]) << " < " << vpMath::deg(q_[j][i]) << " < " << vpMath::deg(this->_joint_max[i]) << std::endl;
+            std::cout << "Joint " << i << " not in limits: "
+                      << vpMath::deg(this->_joint_min[i]) << " < "
+                      << vpMath::deg(q_[j][i]) << " < "
+                      << vpMath::deg(this->_joint_max[i]) << std::endl;
         }
         ok[j] = 0;
       }
     }
   }
-  if (ok[0] == 0)
-  {
+  if (ok[0] == 0) {
     if (ok[1] == 0) {
       std::cout << "No solution..." << std::endl;
       nbsol = 0;
       return nbsol;
-    }
-    else if (ok[1] == 1) {
-      for (unsigned int i=0;i<6;i++) cord[i] = q_[1][i];
+    } else if (ok[1] == 1) {
+      for (unsigned int i = 0; i < 6; i++)
+        cord[i] = q_[1][i];
       nbsol = 1;
     }
-  }
-  else
-  {
+  } else {
     if (ok[1] == 0) {
-      for (unsigned int i=0;i<6;i++) cord[i] = q_[0][i];
+      for (unsigned int i = 0; i < 6; i++)
+        cord[i] = q_[0][i];
       nbsol = 1;
-    }
-    else
-    {
+    } else {
       nbsol = 2;
-      //vpTRACE("2 solutions\n");
-      for (int j=0;j<2;j++)
-      {
+      // vpTRACE("2 solutions\n");
+      for (int j = 0; j < 2; j++) {
         d[j] = 0.0;
-        for (unsigned int i=3;i<6;i++)
+        for (unsigned int i = 3; i < 6; i++)
           d[j] += (q_[j][i] - q[i]) * (q_[j][i] - q[i]);
       }
-      if (nearest == true)
-      {
+      if (nearest == true) {
         if (d[0] <= d[1])
-          for (unsigned int i=0;i<6;i++) cord[i] = q_[0][i];
+          for (unsigned int i = 0; i < 6; i++)
+            cord[i] = q_[0][i];
         else
-          for (unsigned int i=0;i<6;i++) cord[i] = q_[1][i];
-      }
-      else
-      {
+          for (unsigned int i = 0; i < 6; i++)
+            cord[i] = q_[1][i];
+      } else {
         if (d[0] <= d[1])
-          for (unsigned int i=0;i<6;i++) cord[i] = q_[1][i];
+          for (unsigned int i = 0; i < 6; i++)
+            cord[i] = q_[1][i];
         else
-          for (unsigned int i=0;i<6;i++) cord[i] = q_[0][i];
+          for (unsigned int i = 0; i < 6; i++)
+            cord[i] = q_[0][i];
       }
     }
   }
-  for(unsigned int i=0; i<6; i++)
-    q[i] = cord[i] ;
+  for (unsigned int i = 0; i < 6; i++)
+    q[i] = cord[i];
 
   return nbsol;
 }
@@ -704,8 +709,8 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
   homogeneous matrix.
 
   By forward kinematics we mean here the position and the orientation
-  of the camera relative to the base frame given the articular positions of all
-  the six joints.
+  of the camera relative to the base frame given the articular positions of
+  all the six joints.
 
   This method is the same than getForwardKinematics(const vpColVector & q).
 
@@ -720,8 +725,7 @@ vpAfma6::getInverseKinematics(const vpHomogeneousMatrix & fMc,
 
   \sa getForwardKinematics(const vpColVector & q)
 */
-vpHomogeneousMatrix
-vpAfma6::get_fMc (const vpColVector & q) const
+vpHomogeneousMatrix vpAfma6::get_fMc(const vpColVector &q) const
 {
   vpHomogeneousMatrix fMc;
   get_fMc(q, fMc);
@@ -735,8 +739,8 @@ vpAfma6::get_fMc (const vpColVector & q) const
   homogeneous matrix.
 
   By forward kinematics we mean here the position and the orientation
-  of the camera relative to the base frame given the articular positions of all
-  the six joints.
+  of the camera relative to the base frame given the articular positions of
+  all the six joints.
 
   \param q : Articular joint position of the robot. q[0], q[1], q[2]
   correspond to the first 3 translations expressed in meter, while
@@ -748,8 +752,7 @@ vpAfma6::get_fMc (const vpColVector & q) const
   camera frame (fMc).
 
 */
-void
-vpAfma6::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc) const
+void vpAfma6::get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 {
 
   // Compute the direct geometric model: fMe = transformation between
@@ -782,37 +785,36 @@ vpAfma6::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc) const
   end effector frame (fMe).
 
 */
-void
-vpAfma6::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe) const
+void vpAfma6::get_fMe(const vpColVector &q, vpHomogeneousMatrix &fMe) const
 {
-  double            q0 = q[0]; // meter
-  double            q1 = q[1]; // meter
-  double            q2 = q[2]; // meter
+  double q0 = q[0]; // meter
+  double q1 = q[1]; // meter
+  double q2 = q[2]; // meter
 
   /* Decouplage liaisons 2 et 3. */
-  double            q5 = q[5] - this->_coupl_56 * q[4];
+  double q5 = q[5] - this->_coupl_56 * q[4];
 
-  double            c1 = cos(q[3]);
-  double            s1 = sin(q[3]);
-  double            c2 = cos(q[4]);
-  double            s2 = sin(q[4]);
-  double            c3 = cos(q5);
-  double            s3 = sin(q5);
+  double c1 = cos(q[3]);
+  double s1 = sin(q[3]);
+  double c2 = cos(q[4]);
+  double s2 = sin(q[4]);
+  double c3 = cos(q5);
+  double s3 = sin(q5);
 
   // Compute the direct geometric model: fMe = transformation betwee
   // fix and end effector frame.
-  fMe[0][0] = s1*s2*c3 + c1*s3;
-  fMe[0][1] = -s1*s2*s3 + c1*c3;
-  fMe[0][2] = -s1*c2;
-  fMe[0][3] = q0 + this->_long_56*c1;
+  fMe[0][0] = s1 * s2 * c3 + c1 * s3;
+  fMe[0][1] = -s1 * s2 * s3 + c1 * c3;
+  fMe[0][2] = -s1 * c2;
+  fMe[0][3] = q0 + this->_long_56 * c1;
 
-  fMe[1][0] = -c1*s2*c3 + s1*s3;
-  fMe[1][1] = c1*s2*s3 + s1*c3;
-  fMe[1][2] = c1*c2;
-  fMe[1][3] = q1 + this->_long_56*s1;
+  fMe[1][0] = -c1 * s2 * c3 + s1 * s3;
+  fMe[1][1] = c1 * s2 * s3 + s1 * c3;
+  fMe[1][2] = c1 * c2;
+  fMe[1][3] = q1 + this->_long_56 * s1;
 
-  fMe[2][0] = c2*c3;
-  fMe[2][1] = -c2*s3;
+  fMe[2][0] = c2 * c3;
+  fMe[2][1] = -c2 * s3;
   fMe[2][2] = s2;
   fMe[2][3] = q2;
 
@@ -836,8 +838,7 @@ vpAfma6::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe) const
   end-effector frame.
 
 */
-void
-vpAfma6::get_cMe(vpHomogeneousMatrix &cMe) const
+void vpAfma6::get_cMe(vpHomogeneousMatrix &cMe) const
 {
   cMe = this->_eMc.inverse();
 }
@@ -851,11 +852,7 @@ vpAfma6::get_cMe(vpHomogeneousMatrix &cMe) const
   camera frame.
 
 */
-vpHomogeneousMatrix
-vpAfma6::get_eMc() const
-{
-  return(this->_eMc);
-}
+vpHomogeneousMatrix vpAfma6::get_eMc() const { return (this->_eMc); }
 
 /*!
 
@@ -866,13 +863,12 @@ vpAfma6::get_eMc() const
   \param cVe : Twist transformation.
 
 */
-void
-vpAfma6::get_cVe(vpVelocityTwistMatrix &cVe) const
+void vpAfma6::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
-  vpHomogeneousMatrix cMe ;
-  get_cMe(cMe) ;
+  vpHomogeneousMatrix cMe;
+  get_cMe(cMe);
 
-  cVe.buildFrom(cMe) ;
+  cVe.buildFrom(cMe);
 
   return;
 }
@@ -889,38 +885,40 @@ vpAfma6::get_cVe(vpVelocityTwistMatrix &cVe) const
   \param eJe : Robot jacobian expressed in the end-effector frame.
 
 */
-void
-vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe) const
+void vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 {
 
-  eJe.resize(6,6) ;
+  eJe.resize(6, 6);
 
-  double s4,c4,s5,c5,s6,c6 ;
+  double s4, c4, s5, c5, s6, c6;
 
-  s4=sin(q[3]); c4=cos(q[3]);
-  s5=sin(q[4]); c5=cos(q[4]);
-  s6=sin(q[5]-this->_coupl_56*q[4]); c6=cos(q[5]-this->_coupl_56*q[4]);
+  s4 = sin(q[3]);
+  c4 = cos(q[3]);
+  s5 = sin(q[4]);
+  c5 = cos(q[4]);
+  s6 = sin(q[5] - this->_coupl_56 * q[4]);
+  c6 = cos(q[5] - this->_coupl_56 * q[4]);
 
   eJe = 0;
-  eJe[0][0] = s4*s5*c6+c4*s6;
-  eJe[0][1] = -c4*s5*c6+s4*s6;
-  eJe[0][2] = c5*c6;
-  eJe[0][3] = - this->_long_56*s5*c6;
+  eJe[0][0] = s4 * s5 * c6 + c4 * s6;
+  eJe[0][1] = -c4 * s5 * c6 + s4 * s6;
+  eJe[0][2] = c5 * c6;
+  eJe[0][3] = -this->_long_56 * s5 * c6;
 
-  eJe[1][0] = -s4*s5*s6+c4*c6;
-  eJe[1][1] = c4*s5*s6+s4*c6;
-  eJe[1][2] = -c5*s6;
-  eJe[1][3] = this->_long_56*s5*s6;
+  eJe[1][0] = -s4 * s5 * s6 + c4 * c6;
+  eJe[1][1] = c4 * s5 * s6 + s4 * c6;
+  eJe[1][2] = -c5 * s6;
+  eJe[1][3] = this->_long_56 * s5 * s6;
 
-  eJe[2][0] = -s4*c5;
-  eJe[2][1] = c4*c5;
+  eJe[2][0] = -s4 * c5;
+  eJe[2][1] = c4 * c5;
   eJe[2][2] = s5;
-  eJe[2][3] = this->_long_56*c5;
+  eJe[2][3] = this->_long_56 * c5;
 
-  eJe[3][3] = c5*c6;
+  eJe[3][3] = c5 * c6;
   eJe[3][4] = s6;
 
-  eJe[4][3] = -c5*s6;
+  eJe[4][3] = -c5 * s6;
   eJe[4][4] = c6;
 
   eJe[5][3] = s5;
@@ -929,7 +927,6 @@ vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 
   return;
 }
-
 
 /*!
 
@@ -958,39 +955,38 @@ vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 
 */
 
-void
-vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe) const
+void vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe) const
 {
 
-  fJe.resize(6,6) ;
+  fJe.resize(6, 6);
 
   // block superieur gauche
-  fJe[0][0] = fJe[1][1] = fJe[2][2] = 1 ;
+  fJe[0][0] = fJe[1][1] = fJe[2][2] = 1;
 
-  double s4 = sin(q[3]) ;
-  double c4 = cos(q[3]) ;
-
+  double s4 = sin(q[3]);
+  double c4 = cos(q[3]);
 
   // block superieur droit
-  fJe[0][3] = - this->_long_56*s4 ;
-  fJe[1][3] =   this->_long_56*c4 ;
+  fJe[0][3] = -this->_long_56 * s4;
+  fJe[1][3] = this->_long_56 * c4;
 
-
-  double s5 = sin(q[4]) ;
-  double c5 = cos(q[4]) ;
+  double s5 = sin(q[4]);
+  double c5 = cos(q[4]);
   // block inferieur droit
-  fJe[3][4] = c4 ;     fJe[3][5] = -s4*c5 ;
-  fJe[4][4] = s4 ;     fJe[4][5] = c4*c5 ;
-  fJe[5][3] = 1 ;      fJe[5][5] = s5 ;
+  fJe[3][4] = c4;
+  fJe[3][5] = -s4 * c5;
+  fJe[4][4] = s4;
+  fJe[4][5] = c4 * c5;
+  fJe[5][3] = 1;
+  fJe[5][5] = s5;
 
   // coupling between joint 5 and 6
-  fJe[3][4] += this->_coupl_56*s4*c5;
-  fJe[4][4] += -this->_coupl_56*c4*c5;
-  fJe[5][4] += -this->_coupl_56*s5;
+  fJe[3][4] += this->_coupl_56 * s4 * c5;
+  fJe[4][4] += -this->_coupl_56 * c4 * c5;
+  fJe[5][4] += -this->_coupl_56 * s5;
 
   return;
 }
-
 
 /*!
   Get min joint values.
@@ -1000,11 +996,10 @@ vpAfma6::get_fJe(const vpColVector &q, vpMatrix &fJe) const
   A,B,C in radians.
 
 */
-vpColVector
-vpAfma6::getJointMin() const
+vpColVector vpAfma6::getJointMin() const
 {
   vpColVector qmin(6);
-  for (unsigned int i=0; i < 6; i ++)
+  for (unsigned int i = 0; i < 6; i++)
     qmin[i] = this->_joint_min[i];
   return qmin;
 }
@@ -1017,11 +1012,10 @@ vpAfma6::getJointMin() const
   A,B,C in radians.
 
 */
-vpColVector
-vpAfma6::getJointMax() const
+vpColVector vpAfma6::getJointMax() const
 {
   vpColVector qmax(6);
-  for (unsigned int i=0; i < 6; i ++)
+  for (unsigned int i = 0; i < 6; i++)
     qmax[i] = this->_joint_max[i];
   return qmax;
 }
@@ -1032,11 +1026,7 @@ vpAfma6::getJointMax() const
 
   \return Coupling factor between join 5 and 6.
 */
-double
-vpAfma6::getCoupl56() const
-{
-  return _coupl_56;
-}
+double vpAfma6::getCoupl56() const { return _coupl_56; }
 
 /*!
 
@@ -1044,12 +1034,7 @@ vpAfma6::getCoupl56() const
 
   \return Distance between join 5 and 6.
 */
-double
-vpAfma6::getLong56() const
-{
-  return _long_56;
-}
-
+double vpAfma6::getLong56() const { return _long_56; }
 
 /*!
 
@@ -1057,20 +1042,21 @@ vpAfma6::getLong56() const
 
   \param filename : File name containing the robot constant
   parameters, like max/min joint values, distance between 5 and 6 axis,
-  coupling factor between axis 5 and 6, and the hand-to-eye homogeneous matrix.
+  coupling factor between axis 5 and 6, and the hand-to-eye homogeneous
+  matrix.
 
 */
-void
-vpAfma6::parseConfigFile (const std::string &filename)
+void vpAfma6::parseConfigFile(const std::string &filename)
 {
   vpRxyzVector erc;        // eMc rotation
   vpTranslationVector etc; // eMc translation
 
   std::ifstream fdconfig(filename.c_str(), std::ios::in);
 
-  if(! fdconfig.is_open()) {
-    throw vpRobotException (vpRobotException::readingParametersError,
-                            "Impossible to read the config file: %s", filename.c_str());
+  if (!fdconfig.is_open()) {
+    throw vpRobotException(vpRobotException::readingParametersError,
+                           "Impossible to read the config file: %s",
+                           filename.c_str());
   }
 
   std::string line;
@@ -1079,61 +1065,63 @@ vpAfma6::parseConfigFile (const std::string &filename)
   bool get_etc = false;
   int code;
 
-  while(std::getline(fdconfig, line)) {
-    lineNum ++;
-    if((line.compare(0, 1, "#") == 0) || line.empty()) { // skip comment or empty line
+  while (std::getline(fdconfig, line)) {
+    lineNum++;
+    if ((line.compare(0, 1, "#") == 0) ||
+        line.empty()) { // skip comment or empty line
       continue;
     }
     std::istringstream ss(line);
     std::string key;
     ss >> key;
 
-    for (code = 0; NULL != opt_Afma6[code]; ++ code) {
+    for (code = 0; NULL != opt_Afma6[code]; ++code) {
       if (key.compare(opt_Afma6[code]) == 0) {
         break;
       }
     }
 
-    switch(code)
-    {
-      case 0:
-        ss >> this->_joint_max[0] >> this->_joint_max[1] >> this->_joint_max[2]
-            >> this->_joint_max[3] >> this->_joint_max[4] >> this->_joint_max[5];
-        break;
+    switch (code) {
+    case 0:
+      ss >> this->_joint_max[0] >> this->_joint_max[1] >>
+          this->_joint_max[2] >> this->_joint_max[3] >> this->_joint_max[4] >>
+          this->_joint_max[5];
+      break;
 
-      case 1:
-        ss >> this->_joint_min[0] >> this->_joint_min[1] >> this->_joint_min[2]
-            >> this->_joint_min[3] >> this->_joint_min[4] >> this->_joint_min[5];
-        break;
+    case 1:
+      ss >> this->_joint_min[0] >> this->_joint_min[1] >>
+          this->_joint_min[2] >> this->_joint_min[3] >> this->_joint_min[4] >>
+          this->_joint_min[5];
+      break;
 
-      case 2:
-        ss >> this->_long_56;
-        break;
+    case 2:
+      ss >> this->_long_56;
+      break;
 
-      case 3:
-        ss >> this->_coupl_56;
-        break;
+    case 3:
+      ss >> this->_coupl_56;
+      break;
 
-      case 4:
-        break; // Nothing to do: camera name
+    case 4:
+      break; // Nothing to do: camera name
 
-      case 5:
-        ss >> erc[0] >> erc[1] >> erc[2];
+    case 5:
+      ss >> erc[0] >> erc[1] >> erc[2];
 
-        // Convert rotation from degrees to radians
-        erc = erc * M_PI / 180.0;
-        get_erc = true;
-        break;
+      // Convert rotation from degrees to radians
+      erc = erc * M_PI / 180.0;
+      get_erc = true;
+      break;
 
-      case 6:
-        ss >> etc[0] >> etc[1] >> etc[2];
-        get_etc = true;
-        break;
+    case 6:
+      ss >> etc[0] >> etc[1] >> etc[2];
+      get_etc = true;
+      break;
 
-      default:
-        throw(vpRobotException(vpRobotException::readingParametersError,
-                               "Bad configuration file %s line #%d",
-                               filename.c_str(), lineNum));
+    default:
+      throw(vpRobotException(vpRobotException::readingParametersError,
+                             "Bad configuration file %s line #%d",
+                             filename.c_str(), lineNum));
     }
   }
 
@@ -1147,7 +1135,6 @@ vpAfma6::parseConfigFile (const std::string &filename)
     vpRotationMatrix eRc(_erc);
     this->_eMc.buildFrom(_etc, eRc);
   }
-
 }
 
 /*!
@@ -1158,8 +1145,7 @@ vpAfma6::parseConfigFile (const std::string &filename)
   \param eMc : Transformation between the end-effector frame
   and the tool frame.
 */
-void
-vpAfma6::set_eMc(const vpHomogeneousMatrix &eMc)
+void vpAfma6::set_eMc(const vpHomogeneousMatrix &eMc)
 {
   this->_eMc = eMc;
   this->_etc = eMc.getTranslationVector();
@@ -1195,10 +1181,10 @@ vpAfma6::set_eMc(const vpHomogeneousMatrix &eMc)
   attached to the robot.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/robot/vpRobotAfma6.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/robot/vpRobotAfma6.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
 int main()
 {
@@ -1214,41 +1200,40 @@ int main()
   // Get the intrinsic camera parameters depending on the image size
   // Camera parameters are read from
   // /udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml
-  // if VISP_HAVE_AFMA6_DATA and VISP_HAVE_XML2 macros are defined in vpConfig.h file
-  try {
-    robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
+  // if VISP_HAVE_AFMA6_DATA and VISP_HAVE_XML2 macros are defined in
+vpConfig.h file try { robot.getCameraParameters (cam, I.getWidth(),
+I.getHeight());
   }
   catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    std::cout << "Cannot get camera parameters for image: " << I.getWidth() <<
+" x " << I.getHeight() << std::endl;
   }
   std::cout << "Camera parameters: " << cam << std::endl;
 #endif
 }
   \endcode
 
-  \exception vpRobotException::readingParametersError : If the camera parameters are not found.
+  \exception vpRobotException::readingParametersError : If the camera
+parameters are not found.
 */
 
-void
-vpAfma6::getCameraParameters (vpCameraParameters &cam,
-                              const unsigned int &image_width,
-                              const unsigned int &image_height) const
+void vpAfma6::getCameraParameters(vpCameraParameters &cam,
+                                  const unsigned int &image_width,
+                                  const unsigned int &image_height) const
 {
-#if defined(VISP_HAVE_XML2) && defined (VISP_HAVE_AFMA6_DATA)
+#if defined(VISP_HAVE_XML2) && defined(VISP_HAVE_AFMA6_DATA)
   vpXmlParserCamera parser;
   switch (getToolType()) {
   case vpAfma6::TOOL_CCMOP: {
     std::cout << "Get camera parameters for camera \""
               << vpAfma6::CONST_CCMOP_CAMERA_NAME << "\"" << std::endl
               << "from the XML file: \""
-              << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\""<< std::endl;
-    if (parser.parse(cam,
-                     vpAfma6::CONST_CAMERA_AFMA6_FILENAME,
-                     vpAfma6::CONST_CCMOP_CAMERA_NAME,
-                     projModel,
-                     image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+              << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
+    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME,
+                     vpAfma6::CONST_CCMOP_CAMERA_NAME, projModel, image_width,
+                     image_height) != vpXmlParserCamera::SEQUENCE_OK) {
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
@@ -1256,14 +1241,13 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
     std::cout << "Get camera parameters for camera \""
               << vpAfma6::CONST_GRIPPER_CAMERA_NAME << "\"" << std::endl
               << "from the XML file: \""
-              << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\""<< std::endl;
-    if (parser.parse(cam,
-                     vpAfma6::CONST_CAMERA_AFMA6_FILENAME,
-                     vpAfma6::CONST_GRIPPER_CAMERA_NAME,
-                     projModel,
-                     image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+              << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
+    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME,
+                     vpAfma6::CONST_GRIPPER_CAMERA_NAME, projModel,
+                     image_width,
+                     image_height) != vpXmlParserCamera::SEQUENCE_OK) {
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
@@ -1271,14 +1255,13 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
     std::cout << "Get camera parameters for camera \""
               << vpAfma6::CONST_VACUUM_CAMERA_NAME << "\"" << std::endl
               << "from the XML file: \""
-              << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\""<< std::endl;
-    if (parser.parse(cam,
-                     vpAfma6::CONST_CAMERA_AFMA6_FILENAME,
-                     vpAfma6::CONST_VACUUM_CAMERA_NAME,
-                     projModel,
-                     image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+              << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
+    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME,
+                     vpAfma6::CONST_VACUUM_CAMERA_NAME, projModel,
+                     image_width,
+                     image_height) != vpXmlParserCamera::SEQUENCE_OK) {
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
@@ -1286,19 +1269,18 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
     std::cout << "Get camera parameters for camera \""
               << vpAfma6::CONST_GENERIC_CAMERA_NAME << "\"" << std::endl
               << "from the XML file: \""
-              << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\""<< std::endl;
-    if (parser.parse(cam,
-                     vpAfma6::CONST_CAMERA_AFMA6_FILENAME,
-                     vpAfma6::CONST_GENERIC_CAMERA_NAME,
-                     projModel,
-                     image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+              << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
+    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME,
+                     vpAfma6::CONST_GENERIC_CAMERA_NAME, projModel,
+                     image_width,
+                     image_height) != vpXmlParserCamera::SEQUENCE_OK) {
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
   default: {
-    vpERROR_TRACE ("This error should not occur!");
+    vpERROR_TRACE("This error should not occur!");
     //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
     //        "que les specs de la classe ont ete modifiee, "
     //        "et que le code n'a pas ete mis a jour "
@@ -1307,8 +1289,8 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
     //        "vpAfma6::vpAfma6ToolType, et controlez que "
     //        "tous les cas ont ete pris en compte dans la "
     //        "fonction init(camera).");
-    throw vpRobotException (vpRobotException::readingParametersError,
-                            "Impossible to read the camera parameters.");
+    throw vpRobotException(vpRobotException::readingParametersError,
+                           "Impossible to read the camera parameters.");
   }
   }
 #else
@@ -1319,19 +1301,20 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \""
                 << vpAfma6::CONST_CCMOP_CAMERA_NAME << "\"" << std::endl;
-      switch(this->projModel) {
-      case vpCameraParameters::perspectiveProjWithoutDistortion :
+      switch (this->projModel) {
+      case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(1108.0, 1110.0, 314.5, 243.2);
         break;
-      case vpCameraParameters::perspectiveProjWithDistortion :
-        cam.initPersProjWithDistortion(1090.6, 1090.0, 310.1, 260.8, -0.2114, 0.2217);
+      case vpCameraParameters::perspectiveProjWithDistortion:
+        cam.initPersProjWithDistortion(1090.6, 1090.0, 310.1, 260.8, -0.2114,
+                                       0.2217);
         break;
       }
-    }
-    else {
-      vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+    } else {
+      vpTRACE("Cannot get default intrinsic camera parameters for this image "
+              "resolution");
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
@@ -1340,19 +1323,20 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \""
                 << vpAfma6::CONST_GRIPPER_CAMERA_NAME << "\"" << std::endl;
-      switch(this->projModel) {
-      case vpCameraParameters::perspectiveProjWithoutDistortion :
+      switch (this->projModel) {
+      case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(850.9, 853.0, 311.1, 243.6);
         break;
-      case vpCameraParameters::perspectiveProjWithDistortion :
-        cam.initPersProjWithDistortion(837.0, 837.5, 308.7, 251.6, -0.1455, 0.1511);
+      case vpCameraParameters::perspectiveProjWithDistortion:
+        cam.initPersProjWithDistortion(837.0, 837.5, 308.7, 251.6, -0.1455,
+                                       0.1511);
         break;
       }
-    }
-    else {
-      vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+    } else {
+      vpTRACE("Cannot get default intrinsic camera parameters for this image "
+              "resolution");
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
@@ -1361,19 +1345,20 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \""
                 << vpAfma6::CONST_VACUUM_CAMERA_NAME << "\"" << std::endl;
-      switch(this->projModel) {
-      case vpCameraParameters::perspectiveProjWithoutDistortion :
+      switch (this->projModel) {
+      case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(853.5, 856.0, 307.8, 236.8);
         break;
-      case vpCameraParameters::perspectiveProjWithDistortion :
-        cam.initPersProjWithDistortion(828.5, 829.0, 322.5, 232.9, -0.1921, 0.2057);
+      case vpCameraParameters::perspectiveProjWithDistortion:
+        cam.initPersProjWithDistortion(828.5, 829.0, 322.5, 232.9, -0.1921,
+                                       0.2057);
         break;
       }
-    }
-    else {
-      vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+    } else {
+      vpTRACE("Cannot get default intrinsic camera parameters for this image "
+              "resolution");
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
@@ -1382,24 +1367,25 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \""
                 << vpAfma6::CONST_GENERIC_CAMERA_NAME << "\"" << std::endl;
-      switch(this->projModel) {
-      case vpCameraParameters::perspectiveProjWithoutDistortion :
+      switch (this->projModel) {
+      case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(853.5, 856.0, 307.8, 236.8);
         break;
-      case vpCameraParameters::perspectiveProjWithDistortion :
-        cam.initPersProjWithDistortion(828.5, 829.0, 322.5, 232.9, -0.1921, 0.2057);
+      case vpCameraParameters::perspectiveProjWithDistortion:
+        cam.initPersProjWithDistortion(828.5, 829.0, 322.5, 232.9, -0.1921,
+                                       0.2057);
         break;
       }
-    }
-    else {
-      vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+    } else {
+      vpTRACE("Cannot get default intrinsic camera parameters for this image "
+              "resolution");
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
   default:
-    vpERROR_TRACE ("This error should not occur!");
+    vpERROR_TRACE("This error should not occur!");
     break;
   }
 #endif
@@ -1416,10 +1402,10 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
   \param I : A B&W image send by the current camera in use.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/robot/vpRobotAfma6.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/robot/vpRobotAfma6.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
 int main()
 {
@@ -1437,21 +1423,22 @@ int main()
     robot.getCameraParameters (cam, I);
   }
   catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    std::cout << "Cannot get camera parameters for image: " << I.getWidth() <<
+" x " << I.getHeight() << std::endl;
   }
   std::cout << "Camera parameters: " << cam << std::endl;
 #endif
 }
   \endcode
 
-  \exception vpRobotException::readingParametersError : If the camera parameters are not found.
+  \exception vpRobotException::readingParametersError : If the camera
+parameters are not found.
 
 */
-void
-vpAfma6::getCameraParameters (vpCameraParameters &cam,
-                              const vpImage<unsigned char> &I) const
+void vpAfma6::getCameraParameters(vpCameraParameters &cam,
+                                  const vpImage<unsigned char> &I) const
 {
-  getCameraParameters(cam,I.getWidth(),I.getHeight());
+  getCameraParameters(cam, I.getWidth(), I.getHeight());
 }
 /*!
   \brief Get the current intrinsic camera parameters obtained by calibration.
@@ -1463,11 +1450,11 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
   \param I : A color image send by the current camera in use.
 
   \code
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/robot/vpRobotAfma6.h>
-#include <visp3/core/vpCameraParameters.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
 int main()
 {
@@ -1485,24 +1472,24 @@ int main()
     robot.getCameraParameters (cam, I);
   }
   catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    std::cout << "Cannot get camera parameters for image: " << I.getWidth() <<
+" x " << I.getHeight() << std::endl;
   }
   std::cout << "Camera parameters: " << cam << std::endl;
 #endif
 }
   \endcode
 
-  \exception vpRobotException::readingParametersError : If the camera parameters are not found.
+  \exception vpRobotException::readingParametersError : If the camera
+parameters are not found.
 
 */
 
-void
-vpAfma6::getCameraParameters (vpCameraParameters &cam,
-                              const vpImage<vpRGBa> &I) const
+void vpAfma6::getCameraParameters(vpCameraParameters &cam,
+                                  const vpImage<vpRGBa> &I) const
 {
-  getCameraParameters(cam,I.getWidth(),I.getHeight());
+  getCameraParameters(cam, I.getWidth(), I.getHeight());
 }
-
 
 /*!
 
@@ -1513,57 +1500,38 @@ vpAfma6::getCameraParameters (vpCameraParameters &cam,
   \param os : Output stream.
   \param afma6 : Robot parameters.
 */
-VISP_EXPORT std::ostream & operator << (std::ostream & os,
-                            const vpAfma6 & afma6)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAfma6 &afma6)
 {
   vpRotationMatrix eRc;
   afma6._eMc.extract(eRc);
   vpRxyzVector rxyz(eRc);
 
-  os
-      << "Joint Max:" << std::endl
-      << "\t" << afma6._joint_max[0]
-      << "\t" << afma6._joint_max[1]
-      << "\t" << afma6._joint_max[2]
-      << "\t" << afma6._joint_max[3]
-      << "\t" << afma6._joint_max[4]
-      << "\t" << afma6._joint_max[5]
-      << "\t" << std::endl
+  os << "Joint Max:" << std::endl
+     << "\t" << afma6._joint_max[0] << "\t" << afma6._joint_max[1] << "\t"
+     << afma6._joint_max[2] << "\t" << afma6._joint_max[3] << "\t"
+     << afma6._joint_max[4] << "\t" << afma6._joint_max[5] << "\t"
+     << std::endl
 
-      << "Joint Min: " << std::endl
-      << "\t" << afma6._joint_min[0]
-      << "\t" << afma6._joint_min[1]
-      << "\t" << afma6._joint_min[2]
-      << "\t" << afma6._joint_min[3]
-      << "\t" << afma6._joint_min[4]
-      << "\t" << afma6._joint_min[5]
-      << "\t" << std::endl
+     << "Joint Min: " << std::endl
+     << "\t" << afma6._joint_min[0] << "\t" << afma6._joint_min[1] << "\t"
+     << afma6._joint_min[2] << "\t" << afma6._joint_min[3] << "\t"
+     << afma6._joint_min[4] << "\t" << afma6._joint_min[5] << "\t"
+     << std::endl
 
-      << "Long 5-6: " << std::endl
-      << "\t" << afma6._long_56
-      << "\t" << std::endl
+     << "Long 5-6: " << std::endl
+     << "\t" << afma6._long_56 << "\t" << std::endl
 
-      << "Coupling 5-6:" << std::endl
-      << "\t" << afma6._coupl_56
-      << "\t" << std::endl
+     << "Coupling 5-6:" << std::endl
+     << "\t" << afma6._coupl_56 << "\t" << std::endl
 
-      << "eMc: "<< std::endl
-      << "\tTranslation (m): "
-      << afma6._eMc[0][3] << " "
-      << afma6._eMc[1][3] << " "
-      << afma6._eMc[2][3]
-      << "\t" << std::endl
-      << "\tRotation Rxyz (rad) : "
-      << rxyz[0] << " "
-      << rxyz[1] << " "
-      << rxyz[2]
-      << "\t" << std::endl
-      << "\tRotation Rxyz (deg) : "
-      << vpMath::deg(rxyz[0])  << " "
-      << vpMath::deg(rxyz[1])  << " "
-      << vpMath::deg(rxyz[2])
-      << "\t" << std::endl;
+     << "eMc: " << std::endl
+     << "\tTranslation (m): " << afma6._eMc[0][3] << " " << afma6._eMc[1][3]
+     << " " << afma6._eMc[2][3] << "\t" << std::endl
+     << "\tRotation Rxyz (rad) : " << rxyz[0] << " " << rxyz[1] << " "
+     << rxyz[2] << "\t" << std::endl
+     << "\tRotation Rxyz (deg) : " << vpMath::deg(rxyz[0]) << " "
+     << vpMath::deg(rxyz[1]) << " " << vpMath::deg(rxyz[2]) << "\t"
+     << std::endl;
 
   return os;
 }
-

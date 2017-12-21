@@ -49,11 +49,13 @@
 
 /*!
   \ingroup group_tt_tracker
-  The algorithm implemented in this class is described in \cite Baker04a and \cite Marchand16a.
+  The algorithm implemented in this class is described in \cite Baker04a and
+  \cite Marchand16a.
  */
-class VISP_EXPORT vpTemplateTrackerSSDForwardAdditional: public vpTemplateTrackerSSD
+class VISP_EXPORT vpTemplateTrackerSSDForwardAdditional
+  : public vpTemplateTrackerSSD
 {
-  public:
+public:
   /*! Minimization method. */
   typedef enum {
     USE_NEWTON,
@@ -62,21 +64,23 @@ class VISP_EXPORT vpTemplateTrackerSSDForwardAdditional: public vpTemplateTracke
     USE_QUASINEWTON
   } vpMinimizationTypeSSDForwardAdditional;
 
-  private:
-    vpMinimizationTypeSSDForwardAdditional minimizationMethod;
-    //valeur pour calculer Quasi_Newton
-    vpColVector        p_prec;
-    vpColVector        G_prec;
-    vpMatrix           KQuasiNewton;
+private:
+  vpMinimizationTypeSSDForwardAdditional minimizationMethod;
+  // valeur pour calculer Quasi_Newton
+  vpColVector p_prec;
+  vpColVector G_prec;
+  vpMatrix KQuasiNewton;
 
-  protected:
-    void  initHessienDesired(const vpImage<unsigned char> &/*I*/){}
-    void  trackNoPyr(const vpImage<unsigned char> &I);
+protected:
+  void initHessienDesired(const vpImage<unsigned char> & /*I*/) {}
+  void trackNoPyr(const vpImage<unsigned char> &I);
 
-  public:
-    explicit vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp);
+public:
+  explicit vpTemplateTrackerSSDForwardAdditional(vpTemplateTrackerWarp *warp);
 
-    void  setMinimizationMethod(vpMinimizationTypeSSDForwardAdditional method){minimizationMethod=method;}
+  void setMinimizationMethod(vpMinimizationTypeSSDForwardAdditional method)
+  {
+    minimizationMethod = method;
+  }
 };
 #endif
-

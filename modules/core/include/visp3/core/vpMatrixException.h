@@ -39,11 +39,12 @@
 #ifndef __vpMatrixException_H
 #define __vpMatrixException_H
 
-
-/* ------------------------------------------------------------------------- */
-/* --- INCLUDE ------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
-
+/* -------------------------------------------------------------------------
+ */
+/* --- INCLUDE -------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /* Classes standards. */
 //
@@ -51,12 +52,15 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#include <iostream>                /* Classe std::ostream.    */
-#include <string>                  /* Classe string.     */
+#include <iostream> /* Classe std::ostream.    */
+#include <string>   /* Classe string.     */
 
-/* ------------------------------------------------------------------------- */
-/* --- CLASS --------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+ */
+/* --- CLASS ---------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /*!
   \class vpMatrixException
@@ -65,44 +69,45 @@
  */
 class VISP_EXPORT vpMatrixException : public vpException
 {
-  public:
-    /*!
-    \brief Lists the possible error than can be emmited while calling
-    vpMatrix member
-   */
-    enum errorCodeEnum
-    {
-      //! error returns by a constructor
-      constructionError,
-      //! something is not initialized
-      notInitializedError,
-      //! function not implemented
-      notImplementedError,
-      //! index out of range
-      outOfRangeError,
-      //! iterative algorithm doesn't converge (ex SVD)
-      convergencyError,
-      incorrectMatrixSizeError,
-      forbiddenOperatorError,
-      subMatrixError,
-      matrixError,
-      rankDeficient
-    } ;
+public:
+  /*!
+  \brief Lists the possible error than can be emmited while calling
+  vpMatrix member
+ */
+  enum errorCodeEnum {
+    //! error returns by a constructor
+    constructionError,
+    //! something is not initialized
+    notInitializedError,
+    //! function not implemented
+    notImplementedError,
+    //! index out of range
+    outOfRangeError,
+    //! iterative algorithm doesn't converge (ex SVD)
+    convergencyError,
+    incorrectMatrixSizeError,
+    forbiddenOperatorError,
+    subMatrixError,
+    matrixError,
+    rankDeficient
+  };
 
-  public:
-    vpMatrixException (const int id,  const char* format, ...)
-    {
-      this->code = id;
-      va_list args;
-      va_start(args, format);
-      setMessage(format, args);
-      va_end (args);
-    }
-    vpMatrixException (const int id, const std::string & msg)
-      : vpException(id, msg){ ; }
-    explicit vpMatrixException (const int id)
-      : vpException(id){ ; }
-    // vpMatrixException() : vpException() { ;}
+public:
+  vpMatrixException(const int id, const char *format, ...)
+  {
+    this->code = id;
+    va_list args;
+    va_start(args, format);
+    setMessage(format, args);
+    va_end(args);
+  }
+  vpMatrixException(const int id, const std::string &msg)
+    : vpException(id, msg)
+  {
+    ;
+  }
+  explicit vpMatrixException(const int id) : vpException(id) { ; }
+  // vpMatrixException() : vpException() { ;}
 };
 
 #endif

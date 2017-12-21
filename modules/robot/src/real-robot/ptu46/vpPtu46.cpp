@@ -36,17 +36,13 @@
  *
  *****************************************************************************/
 
-
-
 /* ----------------------------------------------------------------------- */
 /* --- INCLUDE ----------------------------------------------------------- */
 /* ----------------------------------------------------------------------- */
 
-
-#include <visp3/robot/vpPtu46.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/robot/vpPtu46.h>
 #include <visp3/robot/vpRobotException.h>
-
 
 /* Inclusion des fichiers standards.		*/
 #include <math.h>
@@ -56,11 +52,10 @@
 /* --- COMPUTE ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
 const unsigned int vpPtu46::ndof = 2; /*<! Pan and tilt are considered. */
-const float vpPtu46::L    = 0.0765f; /*! Horizontal offset along the last joint,
-				      from last joint to camera frame. */
-const float vpPtu46::h    = 0.068f; /*<! Vertical offset from last joint to
-				     camera frame. */
-
+const float vpPtu46::L = 0.0765f; /*! Horizontal offset along the last joint,
+                                   from last joint to camera frame. */
+const float vpPtu46::h = 0.068f;  /*<! Vertical offset from last joint to
+                                   camera frame. */
 
 /*!
   Compute the direct geometric model of the camera: fMc
@@ -68,49 +63,49 @@ const float vpPtu46::h    = 0.068f; /*<! Vertical offset from last joint to
   \param q : Articular position for pan and tilt axis.
 
   \param fMc : Homogeneous matrix corresponding to the direct geometric model
-  of the camera. Describes the transformation between the robot reference frame
-  (called fixed) and the camera frame.
+  of the camera. Describes the transformation between the robot reference
+  frame (called fixed) and the camera frame.
 
 */
-void
-vpPtu46::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc) const
+void vpPtu46::computeMGD(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 {
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for ptu-46 articular vector");
-    throw(vpException(vpException::dimensionError, "Bad dimension for ptu-46 articular vector"));
+    throw(vpException(vpException::dimensionError,
+                      "Bad dimension for ptu-46 articular vector"));
   }
 
-  double            q1 = q[0]; // pan
-  double            q2 = q[1]; // tilt
+  double q1 = q[0]; // pan
+  double q2 = q[1]; // tilt
 
-  double            c1 = cos(q1);
-  double            s1 = sin(q1);
-  double            c2 = cos(q2);
-  double            s2 = sin(q2);
+  double c1 = cos(q1);
+  double s1 = sin(q1);
+  double c2 = cos(q2);
+  double s2 = sin(q2);
 
   fMc[0][0] = s1;
-  fMc[0][1] = c1*s2;
-  fMc[0][2] = c1*c2;
-  fMc[0][3] = -h*c1*s2 - L*s1;
+  fMc[0][1] = c1 * s2;
+  fMc[0][2] = c1 * c2;
+  fMc[0][3] = -h * c1 * s2 - L * s1;
 
   fMc[1][0] = -c1;
-  fMc[1][1] = s1*s2;
-  fMc[1][2] = s1*c2;
-  fMc[1][3] = -h*s1*s2 + L*c1;
+  fMc[1][1] = s1 * s2;
+  fMc[1][2] = s1 * c2;
+  fMc[1][3] = -h * s1 * s2 + L * c1;
 
   fMc[2][0] = 0;
   fMc[2][1] = -c2;
   fMc[2][2] = s2;
-  fMc[2][3] = h*c2;
+  fMc[2][3] = h * c2;
 
   fMc[3][0] = 0;
   fMc[3][1] = 0;
   fMc[3][2] = 0;
   fMc[3][3] = 1;
 
-  vpCDEBUG (6) << "Position de la camera: " << std::endl << fMc;
+  vpCDEBUG(6) << "Position de la camera: " << std::endl << fMc;
 
-  return ;
+  return;
 }
 
 /*!
@@ -119,16 +114,15 @@ vpPtu46::computeMGD (const vpColVector & q, vpHomogeneousMatrix & fMc) const
   \param q : Articular position for pan and tilt axis.
 
   \return fMc, the homogeneous matrix corresponding to the direct geometric
-  model of the camera. Describes the transformation between the robot reference
-  frame (called fixed) and the camera frame.
+  model of the camera. Describes the transformation between the robot
+  reference frame (called fixed) and the camera frame.
 
 */
-vpHomogeneousMatrix
-vpPtu46::computeMGD (const vpColVector & q) const
+vpHomogeneousMatrix vpPtu46::computeMGD(const vpColVector &q) const
 {
   vpHomogeneousMatrix fMc;
 
-  computeMGD (q, fMc);
+  computeMGD(q, fMc);
 
   return fMc;
 }
@@ -142,18 +136,15 @@ vpPtu46::computeMGD (const vpColVector & q) const
   reference frame (called fixed) and the camera frame.
 
 */
-void
-vpPtu46::computeMGD (const vpColVector & q, vpPoseVector & r) const
+void vpPtu46::computeMGD(const vpColVector &q, vpPoseVector &r) const
 {
   vpHomogeneousMatrix fMc;
 
-  computeMGD (q, fMc);
+  computeMGD(q, fMc);
   r.buildFrom(fMc.inverse());
 
-  return ;
+  return;
 }
-
-
 
 /* ---------------------------------------------------------------------- */
 /* --- CONSTRUCTOR ------------------------------------------------------ */
@@ -164,75 +155,63 @@ vpPtu46::computeMGD (const vpColVector & q, vpPoseVector & r) const
   Default construtor. Call init().
 
 */
-vpPtu46::vpPtu46 (void)
-{
-  init();
-}
+vpPtu46::vpPtu46(void) { init(); }
 /* ---------------------------------------------------------------------- */
 /* --- PRIVATE ---------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
-
 
 /*!
   Initialization. Here nothing to do.
 
 */
-void
-vpPtu46::init ()
-{
-  return ;
-}
-
+void vpPtu46::init() { return; }
 
 /* ----------------------------------------------------------------------- */
 /* --- DISPLAY ----------------------------------------------------------- */
 /* ----------------------------------------------------------------------- */
 
-VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpPtu46 & /* constant */)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                     const vpPtu46 & /* constant */)
 {
-  os
-    << "Geometric parameters: " << std::endl
-    << "L: "
-    << "\t" << vpPtu46::L << std::endl
-    << "h: "
-    << "\t" << vpPtu46::h << std::endl;
+  os << "Geometric parameters: " << std::endl
+     << "L: "
+     << "\t" << vpPtu46::L << std::endl
+     << "h: "
+     << "\t" << vpPtu46::h << std::endl;
 
   return os;
 }
 
-
 /*!
 
   Get the twist matrix corresponding to the transformation between the
-  camera frame and the end effector frame. The end effector frame is located on
-  the tilt axis.
+  camera frame and the end effector frame. The end effector frame is located
+  on the tilt axis.
 
   \param cVe : Twist transformation between camera and end effector frame to
   expess a velocity skew from end effector frame in camera frame.
 
 */
-void
-vpPtu46::get_cVe(vpVelocityTwistMatrix &cVe) const
+void vpPtu46::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
-  vpHomogeneousMatrix cMe ;
-  get_cMe(cMe) ;
+  vpHomogeneousMatrix cMe;
+  get_cMe(cMe);
 
-  cVe.buildFrom(cMe) ;
+  cVe.buildFrom(cMe);
 }
 
 /*!
 
   Get the homogeneous matrix corresponding to the transformation between the
-  camera frame and the end effector frame. The end effector frame is located on
-  the tilt axis.
+  camera frame and the end effector frame. The end effector frame is located
+  on the tilt axis.
 
   \param cMe :  Homogeneous matrix between camera and end effector frame.
 
 */
-void
-vpPtu46::get_cMe(vpHomogeneousMatrix &cMe) const
+void vpPtu46::get_cMe(vpHomogeneousMatrix &cMe) const
 {
-  vpHomogeneousMatrix eMc ;
+  vpHomogeneousMatrix eMc;
 
   eMc[0][0] = 0;
   eMc[0][1] = -1;
@@ -254,7 +233,7 @@ vpPtu46::get_cMe(vpHomogeneousMatrix &cMe) const
   eMc[3][2] = 0;
   eMc[3][3] = 1;
 
-  cMe = eMc.inverse()  ;
+  cMe = eMc.inverse();
 }
 
 /*!
@@ -269,20 +248,19 @@ vpPtu46::get_cMe(vpHomogeneousMatrix &cMe) const
   tilt axis).
 
 */
-void
-vpPtu46::get_eJe(const vpColVector &q, vpMatrix &eJe) const
+void vpPtu46::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 {
 
-
-  eJe.resize(6,2) ;
+  eJe.resize(6, 2);
 
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for ptu-46 articular vector");
-    throw(vpException(vpException::dimensionError, "Bad dimension for ptu-46 articular vector"));
+    throw(vpException(vpException::dimensionError,
+                      "Bad dimension for ptu-46 articular vector"));
   }
 
-  double s2 = sin(q[1]) ;
-  double c2 = cos(q[1]) ;
+  double s2 = sin(q[1]);
+  double c2 = cos(q[1]);
 
   eJe = 0;
 
@@ -296,23 +274,23 @@ vpPtu46::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 
   \param q : Articular position for pan and tilt axis.
 
-  \param fJe : Jacobian between reference frame (or fix frame) and end effector
-  frame (on tilt axis).
+  \param fJe : Jacobian between reference frame (or fix frame) and end
+  effector frame (on tilt axis).
 
 */
-void
-vpPtu46::get_fJe(const vpColVector &q, vpMatrix &fJe) const
+void vpPtu46::get_fJe(const vpColVector &q, vpMatrix &fJe) const
 {
 
   if (q.getRows() != 2) {
     vpERROR_TRACE("Bad dimension for ptu-46 articular vector");
-    throw(vpException(vpException::dimensionError, "Bad dimension for ptu-46 articular vector"));
+    throw(vpException(vpException::dimensionError,
+                      "Bad dimension for ptu-46 articular vector"));
   }
 
-  fJe.resize(6,2) ;
+  fJe.resize(6, 2);
 
-  double s1 = sin(q[0]) ;
-  double c1 = cos(q[0]) ;
+  double s1 = sin(q[0]);
+  double c1 = cos(q[0]);
 
   fJe = 0;
 

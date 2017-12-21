@@ -38,8 +38,9 @@
 
 /*!
  * \file vpMbtKltXmlParser.h
- * \brief Parse an Xml file to extract configuration parameters of a Mbt Klt object.
-*/
+ * \brief Parse an Xml file to extract configuration parameters of a Mbt Klt
+ * object.
+ */
 #ifndef vpMbtKltXmlParser_HH
 #define vpMbtKltXmlParser_HH
 
@@ -47,19 +48,19 @@
 
 #ifdef VISP_HAVE_XML2
 
-#include <libxml/xmlmemory.h>      /* Fonctions de la lib XML. */
+#include <libxml/xmlmemory.h> /* Fonctions de la lib XML. */
 
 #include <visp3/mbt/vpMbXmlParser.h>
 
 /*!
   \class vpMbtKltXmlParser
-  \brief Parse an Xml file to extract configuration parameters of a Mbt Klt object.
-  \ingroup group_mbt_xml_parser
+  \brief Parse an Xml file to extract configuration parameters of a Mbt Klt
+  object. \ingroup group_mbt_xml_parser
 
   Data parser for the KLT model based tracker.
 
 */
-class VISP_EXPORT vpMbtKltXmlParser: virtual public vpMbXmlParser
+class VISP_EXPORT vpMbtKltXmlParser : virtual public vpMbXmlParser
 {
 protected:
   //! Border of the mask used on Klt points
@@ -78,8 +79,8 @@ protected:
   unsigned int blockSize;
   //! Number of pyramid levels
   unsigned int pyramidLevels;
-    
-  typedef enum{
+
+  typedef enum {
     klt = vpMbXmlParser::last,
     mask_border,
     max_features,
@@ -92,130 +93,129 @@ protected:
     last
   } dataToParseMbKlt;
 
-
 public:
   /** @name Public Member Functions Inherited from vpMbtKltXmlParser */
   //@{
-	vpMbtKltXmlParser();
-	virtual ~vpMbtKltXmlParser();
+  vpMbtKltXmlParser();
+  virtual ~vpMbtKltXmlParser();
 
   /*!
     Get the size of a block.
 
     \return blockSize
   */
-  inline unsigned int getBlockSize() const {return blockSize;}
-  
+  inline unsigned int getBlockSize() const { return blockSize; }
+
   /*!
     Get the Harris free parameter.
 
     \return harrisParam
   */
-  inline double getHarrisParam() const {return harrisParam;}
-  
-	/*!
-    Get the Border of the mask.
+  inline double getHarrisParam() const { return harrisParam; }
 
-    \return faceBorder
-  */
-  inline unsigned int getMaskBorder() const {return maskBorder;}
-  
+  /*!
+Get the Border of the mask.
+
+\return faceBorder
+*/
+  inline unsigned int getMaskBorder() const { return maskBorder; }
+
   /*!
     Get the maximum number of features for the KLT.
 
     \return maxFeatures
   */
-  inline unsigned int getMaxFeatures() const {return maxFeatures;}
-  
+  inline unsigned int getMaxFeatures() const { return maxFeatures; }
+
   /*!
     Get the minimum distance between KLT points.
 
     \return minDist
   */
-  inline double getMinDistance() const {return minDist;}
-  
+  inline double getMinDistance() const { return minDist; }
+
   /*!
     Get the number of pyramid levels
 
     \return pyramidLevels
   */
-  inline unsigned int getPyramidLevels() const {return pyramidLevels;} 
-  
+  inline unsigned int getPyramidLevels() const { return pyramidLevels; }
+
   /*!
     Get the quality of the KLT.
 
     \return quality
   */
-  inline double getQuality() const {return qualityValue;}
-  
+  inline double getQuality() const { return qualityValue; }
+
   /*!
     Get the size of the window used in the KLT tracker.
 
     \return winSize
   */
-  inline unsigned int getWindowSize() const {return winSize;}
-  
-  void parse(const char * filename);
-  
+  inline unsigned int getWindowSize() const { return winSize; }
+
+  void parse(const char *filename);
+
   virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
   void read_klt(xmlDocPtr doc, xmlNodePtr node);
-  
+
   /*!
     Set the size of a block.
 
     \param bs : New blockSize
   */
-  inline void setBlockSize(const unsigned int &bs) {blockSize = bs;}
-  
+  inline void setBlockSize(const unsigned int &bs) { blockSize = bs; }
+
   /*!
     Set the Harris free parameter.
 
     \param hp : New harrisParam
   */
-  inline void setHarrisParam(const double &hp) {harrisParam = hp;}
-  
+  inline void setHarrisParam(const double &hp) { harrisParam = hp; }
+
   /*!
     Set the Border of the mask.
 
     \param mb = new maskBorder
   */
-  inline void setMaskBorder(const unsigned int &mb) {maskBorder = mb;}
-  
+  inline void setMaskBorder(const unsigned int &mb) { maskBorder = mb; }
+
   /*!
     Set the maximum number of features for the KLT.
 
     \param mF : New maxFeatures
   */
-  inline void setMaxFeatures(const unsigned int &mF) {maxFeatures = mF;}
-  
+  inline void setMaxFeatures(const unsigned int &mF) { maxFeatures = mF; }
+
   /*!
     Set the minimum distance between KLT points.
 
     \param mD : New minDist
   */
-  inline void setMinDistance(const double &mD) {minDist = mD;}
+  inline void setMinDistance(const double &mD) { minDist = mD; }
 
   /*!
     Set the number of pyramid levels
 
     \param pL : New pyramidLevels
   */
-  inline void setPyramidLevels(const unsigned int &pL) {pyramidLevels = pL;} 
-  
+  inline void setPyramidLevels(const unsigned int &pL) { pyramidLevels = pL; }
+
   /*!
     Set the quality of the KLT.
 
     \param q : New quality
   */
-  inline void setQuality(const double &q) {qualityValue = q;}
-  
+  inline void setQuality(const double &q) { qualityValue = q; }
+
   /*!
     Set the size of the window used in the KLT tracker.
 
     \param w : New winSize
   */
-  inline void setWindowSize(const unsigned int &w) {winSize = w;}
-  
+  inline void setWindowSize(const unsigned int &w) { winSize = w; }
+
   void writeMainClass(xmlNodePtr node);
   //@}
 
@@ -224,12 +224,8 @@ protected:
   //@{
   void init();
   //@}
-
 };
 
 #endif
 
 #endif
-
-
-

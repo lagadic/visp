@@ -40,15 +40,15 @@
 #ifndef vpKeyword_H
 #define vpKeyword_H
 
-#include <visp3/core/vpConfig.h>
 #include "vpMy.h"
 #include "vpToken.h"
+#include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-void open_keyword (Keyword *kwp);
-void close_keyword (void);
-Index get_symbol (char *ident, int length);
+void open_keyword(Keyword *kwp);
+void close_keyword(void);
+Index get_symbol(char *ident, int length);
 
 #endif
 #endif

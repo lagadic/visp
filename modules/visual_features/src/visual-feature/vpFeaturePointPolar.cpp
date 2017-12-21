@@ -36,12 +36,10 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file vpFeaturePointPolar.cpp
   \brief Class that defines a 2D point visual feature with polar coordinates..
 */
-
 
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeaturePointPolar.h>
@@ -58,8 +56,6 @@
 
 #include <visp3/core/vpFeatureDisplay.h>
 
-
-
 /*
 
   attributes and members directly related to the vpBasicFeature needs
@@ -67,34 +63,33 @@
 
 */
 
-/*! 
+/*!
 
   Initialise the memory space requested for a 2D point visual
   feature with polar coordinates.
-  
+
   By default this feature is initialized to \f$(\rho, \theta) = (0,
   0)\f$.  The 3D depth of the point requested in the interaction
   matrix (see interaction()) is initialized to \f$Z=1\f$.
 */
-void
-vpFeaturePointPolar::init()
+void vpFeaturePointPolar::init()
 {
-    //feature dimension
-    dim_s = 2 ;
-    nbParameters = 3;
+  // feature dimension
+  dim_s = 2;
+  nbParameters = 3;
 
-    // memory allocation
-    s.resize(dim_s) ;
-    if (flags == NULL)
-      flags = new bool[nbParameters];
-    for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
+  // memory allocation
+  s.resize(dim_s);
+  if (flags == NULL)
+    flags = new bool[nbParameters];
+  for (unsigned int i = 0; i < nbParameters; i++)
+    flags[i] = false;
 
-    //default value Z (1 meters)
-    Z = 1;
-
+  // default value Z (1 meters)
+  Z = 1;
 }
 
-/*!  
+/*!
 
   Default constructor that build a 2D point visual feature with
   polar coordinates and initialize it to \f$(\rho, \theta) = (0,
@@ -104,100 +99,78 @@ vpFeaturePointPolar::init()
   matrix (see interaction()) is initialized to \f$Z=1\f$.
 
 */
-vpFeaturePointPolar::vpFeaturePointPolar() : Z(1.)
-{
-    init() ;
-}
+vpFeaturePointPolar::vpFeaturePointPolar() : Z(1.) { init(); }
 
-
-/*! 
+/*!
   Set the image point \f$\rho\f$ polar coordinate.
 
   \sa set_theta()
 */
-void
-vpFeaturePointPolar::set_rho(const double rho)
+void vpFeaturePointPolar::set_rho(const double rho)
 {
-    s[0] = rho ;
-    flags[0] = true;
+  s[0] = rho;
+  flags[0] = true;
 }
-/*! 
+/*!
   Set the image point \f$\theta\f$ polar coordinate.
 
   \sa set_rho()
 */
-void
-vpFeaturePointPolar::set_theta(const double theta)
+void vpFeaturePointPolar::set_theta(const double theta)
 {
-    s[1] = theta ;
-    flags[1] = true;
+  s[1] = theta;
+  flags[1] = true;
 }
 
-/*! 
+/*!
   Set the 3D point depth in the camera frame.
 
 */
-void
-vpFeaturePointPolar::set_Z(const double Z_)
+void vpFeaturePointPolar::set_Z(const double Z_)
 {
-    this->Z = Z_ ;
-    flags[2] = true;
+  this->Z = Z_;
+  flags[2] = true;
 }
 
-/*! 
+/*!
   Initialize the image point visual feature with polar coordinates.
 
   \param rho, theta : Polar coordinates \f$(\rho,\theta)\f$ of
   the image point.
 
   \param Z_ : 3D depth of the point in the camera frame.
-  
+
   \sa set_rho(), set_theta(), set_Z()
 */
-void
-vpFeaturePointPolar::set_rhoThetaZ(const double rho,
-					 const double theta,
-           const double Z_)
+void vpFeaturePointPolar::set_rhoThetaZ(const double rho, const double theta,
+                                        const double Z_)
 {
-  set_rho(rho) ;
-  set_theta(theta) ;
-  set_Z(Z_) ;
+  set_rho(rho);
+  set_theta(theta);
+  set_Z(Z_);
 
-  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
+  for (unsigned int i = 0; i < nbParameters; i++)
+    flags[i] = true;
 }
 
-/*! 
+/*!
   Get the image point \f$\rho\f$ polar coordinate.
 
   \sa get_theta()
 */
-double
-vpFeaturePointPolar::get_rho() const
-{
-    return s[0] ;
-}
+double vpFeaturePointPolar::get_rho() const { return s[0]; }
 
-/*! 
+/*!
   Get the image point \f$\theta\f$ polar coordinate.
 
   \sa get_rho()
 */
-double
-vpFeaturePointPolar::get_theta() const
-{
-    return s[1] ;
-}
-/*! 
+double vpFeaturePointPolar::get_theta() const { return s[1]; }
+/*!
   Get the 3D point depth in the camera frame.
 
 */
-double
-vpFeaturePointPolar::get_Z() const
-{
-    return this->Z ;
-}
-
-
+double vpFeaturePointPolar::get_Z() const { return this->Z; }
 
 /*!
   Compute and return the interaction matrix \f$ L \f$ associated to a
@@ -215,18 +188,17 @@ vpFeaturePointPolar::get_Z() const
   =
   \left[
   \begin{array}{cccccc}
-  \frac{-\cos \theta}{Z} & \frac{-\sin \theta}{Z}  &  \frac{\rho}{Z} & (1+\rho^2)\sin\theta  & -(1+\rho^2)\cos\theta &  0 \\
+  \frac{-\cos \theta}{Z} & \frac{-\sin \theta}{Z}  &  \frac{\rho}{Z} &
+  (1+\rho^2)\sin\theta  & -(1+\rho^2)\cos\theta &  0 \\
   \; \\
-   \frac{\sin\theta}{\rho Z} & \frac{-\cos\theta}{\rho Z} &  0 &  \cos\theta /\rho &  \sin\theta/\rho & -1 \\
-  \end{array}
-  \right]
-  \f]
+   \frac{\sin\theta}{\rho Z} & \frac{-\cos\theta}{\rho Z} &  0 &  \cos\theta
+  /\rho &  \sin\theta/\rho & -1 \\ \end{array} \right] \f]
 
   where \f$Z\f$ is the 3D depth of the considered point.
 
   \param select : Selection of a subset of the possible polar
   point coordinate features.
-  - To compute the interaction matrix for all the two 
+  - To compute the interaction matrix for all the two
     subset features \f$(\rho,\theta)\f$ use vpBasicFeature::FEATURE_ALL. In
     that case the dimension of the interaction matrix is \f$ [2 \times
     6] \f$
@@ -242,7 +214,7 @@ vpFeaturePointPolar::get_Z() const
   is behind the camera \f$(Z < 0)\f$, or if the 3D depth is null \f$(Z
   = 0)\f$, or if the \f$\rho\f$ polar coordinate of the point is null.
 
-  The code below shows how to compute the interaction matrix associated to 
+  The code below shows how to compute the interaction matrix associated to
   the visual feature \f$s = (\rho,\theta)\f$.
   \code
   vpFeaturePointPolar s;
@@ -274,29 +246,28 @@ vpFeaturePointPolar::get_Z() const
 
   In that case, L_theta is a 1 by 6 matrix.
 */
-vpMatrix
-vpFeaturePointPolar::interaction(const unsigned int select)
+vpMatrix vpFeaturePointPolar::interaction(const unsigned int select)
 {
-  vpMatrix L ;
+  vpMatrix L;
 
-  L.resize(0,6) ;
+  L.resize(0, 6);
 
-  if (deallocate == vpBasicFeature::user)
-  {
-    for (unsigned int i = 0; i < nbParameters; i++)
-    {
-      if (flags[i] == false)
-      {
-        switch(i){
+  if (deallocate == vpBasicFeature::user) {
+    for (unsigned int i = 0; i < nbParameters; i++) {
+      if (flags[i] == false) {
+        switch (i) {
         case 0:
-          vpTRACE("Warning !!!  The interaction matrix is computed but rho was not set yet");
-        break;
+          vpTRACE("Warning !!!  The interaction matrix is computed but rho "
+                  "was not set yet");
+          break;
         case 1:
-          vpTRACE("Warning !!!  The interaction matrix is computed but theta was not set yet");
-        break;
+          vpTRACE("Warning !!!  The interaction matrix is computed but theta "
+                  "was not set yet");
+          break;
         case 2:
-          vpTRACE("Warning !!!  The interaction matrix is computed but Z was not set yet");
-        break;
+          vpTRACE("Warning !!!  The interaction matrix is computed but Z was "
+                  "not set yet");
+          break;
         default:
           vpTRACE("Problem during the reading of the variable flags");
         }
@@ -305,74 +276,72 @@ vpFeaturePointPolar::interaction(const unsigned int select)
     resetFlags();
   }
 
-  double rho   = get_rho() ;
-  double theta = get_theta() ;
-  double Z_    = get_Z() ;
+  double rho = get_rho();
+  double theta = get_theta();
+  double Z_ = get_Z();
 
   double c_ = cos(theta);
   double s_ = sin(theta);
 
-  double rho2 = rho*rho;
+  double rho2 = rho * rho;
 
   if (fabs(rho) < 1e-6) {
-    vpERROR_TRACE("rho polar coordinate of the point is null") ;
-    std::cout <<"rho = " << rho << std::endl ;
+    vpERROR_TRACE("rho polar coordinate of the point is null");
+    std::cout << "rho = " << rho << std::endl;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
-			     "rho polar coordinate of the point is null")) ;
+                             "rho polar coordinate of the point is null"));
   }
 
-  if (Z_ < 0)
-  {
-    vpERROR_TRACE("Point is behind the camera ") ;
-    std::cout <<"Z = " << Z_ << std::endl ;
+  if (Z_ < 0) {
+    vpERROR_TRACE("Point is behind the camera ");
+    std::cout << "Z = " << Z_ << std::endl;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
-			     "Point is behind the camera ")) ;
+                             "Point is behind the camera "));
   }
 
-  if (fabs(Z_) < 1e-6)
-  {
-    vpERROR_TRACE("Point Z coordinates is null ") ;
-    std::cout <<"Z = " << Z_ << std::endl ;
+  if (fabs(Z_) < 1e-6) {
+    vpERROR_TRACE("Point Z coordinates is null ");
+    std::cout << "Z = " << Z_ << std::endl;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
-			     "Point Z coordinates is null")) ;
+                             "Point Z coordinates is null"));
   }
 
-  if (vpFeaturePointPolar::selectRho() & select )
-  {
-    vpMatrix Lrho(1,6) ; Lrho = 0;
+  if (vpFeaturePointPolar::selectRho() & select) {
+    vpMatrix Lrho(1, 6);
+    Lrho = 0;
 
-    Lrho[0][0] = -c_/Z_  ;
-    Lrho[0][1] = -s_/Z_ ;
-    Lrho[0][2] = rho/Z_ ;
-    Lrho[0][3] = (1+rho2)*s_ ;
-    Lrho[0][4] = -(1+rho2)*c_ ;
-    Lrho[0][5] = 0 ;
+    Lrho[0][0] = -c_ / Z_;
+    Lrho[0][1] = -s_ / Z_;
+    Lrho[0][2] = rho / Z_;
+    Lrho[0][3] = (1 + rho2) * s_;
+    Lrho[0][4] = -(1 + rho2) * c_;
+    Lrho[0][5] = 0;
 
-//     printf("Lrho: rho %f theta %f Z %f\n", rho, theta, Z);
-//     std::cout << "Lrho: " << Lrho << std::endl;
+    //     printf("Lrho: rho %f theta %f Z %f\n", rho, theta, Z);
+    //     std::cout << "Lrho: " << Lrho << std::endl;
 
-    L = vpMatrix::stack(L,Lrho) ;
+    L = vpMatrix::stack(L, Lrho);
   }
 
-  if (vpFeaturePointPolar::selectTheta() & select )
-  {
-    vpMatrix Ltheta(1,6) ; Ltheta = 0;
+  if (vpFeaturePointPolar::selectTheta() & select) {
+    vpMatrix Ltheta(1, 6);
+    Ltheta = 0;
 
-    Ltheta[0][0] = s_/(rho*Z_) ;
-    Ltheta[0][1]  = -c_/(rho*Z_) ;
-    Ltheta[0][2] = 0 ;
-    Ltheta[0][3] = c_/rho ;
-    Ltheta[0][4] = s_/rho ;
-    Ltheta[0][5] = -1 ;
+    Ltheta[0][0] = s_ / (rho * Z_);
+    Ltheta[0][1] = -c_ / (rho * Z_);
+    Ltheta[0][2] = 0;
+    Ltheta[0][3] = c_ / rho;
+    Ltheta[0][4] = s_ / rho;
+    Ltheta[0][5] = -1;
 
-//     printf("Ltheta: rho %f theta %f Z %f\n", rho, theta, Z);
-//     std::cout << "Ltheta: " << Ltheta << std::endl;
-    L = vpMatrix::stack(L,Ltheta) ;
+    //     printf("Ltheta: rho %f theta %f Z %f\n", rho, theta, Z);
+    //     std::cout << "Ltheta: " << Ltheta << std::endl;
+    L = vpMatrix::stack(L, Ltheta);
   }
-  return L ;
+  return L;
 }
 
 /*!
@@ -389,7 +358,7 @@ vpFeaturePointPolar::interaction(const unsigned int select)
   \param select : The error can be computed for a selection of a
   subset of the possible 2D point polar coordinate features.
   - To compute the error for all the three coordinates use
-    vpBasicFeature::FEATURE_ALL. In that case the error vector is a 3 
+    vpBasicFeature::FEATURE_ALL. In that case the error vector is a 3
     dimension column vector.
   - To compute the error for only one of the polar coordinate
     feature \f$(\rho,\theta)\f$ use one of the
@@ -417,54 +386,50 @@ vpFeaturePointPolar::interaction(const unsigned int select)
   vpColVector e = s.error(s_star, vpFeaturePointPolar::selectRho());
   \endcode
 */
-vpColVector
-vpFeaturePointPolar::error(const vpBasicFeature &s_star,
-				 const unsigned int select)
+vpColVector vpFeaturePointPolar::error(const vpBasicFeature &s_star,
+                                       const unsigned int select)
 {
-  vpColVector e(0) ;
-   
-  try{
-    if (vpFeaturePointPolar::selectRho() & select )
-    {
-      vpColVector erho(1) ;
-      erho[0] = s[0] - s_star[0] ;
+  vpColVector e(0);
 
-      e = vpColVector::stack(e,erho) ;
+  try {
+    if (vpFeaturePointPolar::selectRho() & select) {
+      vpColVector erho(1);
+      erho[0] = s[0] - s_star[0];
+
+      e = vpColVector::stack(e, erho);
     }
 
-    if (vpFeaturePointPolar::selectTheta() & select )
-    {
+    if (vpFeaturePointPolar::selectTheta() & select) {
 
-      //      printf("err: %f - %f = %f\n", s[1], s_star[1], s[1] - s_star[1]);
-      double err = s[1] - s_star[1] ;
+      //      printf("err: %f - %f = %f\n", s[1], s_star[1], s[1] -
+      //      s_star[1]);
+      double err = s[1] - s_star[1];
 
       //      printf("Error: %f ", err );
-      while (err < -M_PI) err += 2*M_PI ;
-      while (err > M_PI) err -= 2*M_PI ;
+      while (err < -M_PI)
+        err += 2 * M_PI;
+      while (err > M_PI)
+        err -= 2 * M_PI;
       //     printf(" modif %f \n", err );
- 
-      vpColVector etheta(1) ;
-      etheta[0] = err ;
-      e =  vpColVector::stack(e,etheta) ;
+
+      vpColVector etheta(1);
+      etheta[0] = err;
+      e = vpColVector::stack(e, etheta);
     }
+  } catch (...) {
+    throw;
   }
-  catch(...) {
-    throw ;
-  }
 
-
-  return e ;
-
+  return e;
 }
-
 
 /*!
   Print to stdout the values of the current visual feature.
 
   \param select : Selection of a subset of the possible 2D image point
   feature coordinates.
-  - To print all the two polar coordinates \f$(\rho,\theta)\f$ used as 
-  features use vpBasicFeature::FEATURE_ALL. 
+  - To print all the two polar coordinates \f$(\rho,\theta)\f$ used as
+  features use vpBasicFeature::FEATURE_ALL.
   - To print only one of the polar coordinate
   feature \f$(\rho,\theta)\f$ use one of the
   corresponding function selectRho() or selectTheta().
@@ -479,21 +444,19 @@ vpFeaturePointPolar::error(const vpBasicFeature &s_star,
   s.print(vpFeaturePointPolar::selectRho()); // print only the rho component
   \endcode
 */
-void
-vpFeaturePointPolar::print(const unsigned int select ) const
+void vpFeaturePointPolar::print(const unsigned int select) const
 {
 
-  std::cout <<"Point:  Z=" << get_Z() ;
-  if (vpFeaturePointPolar::selectRho() & select )
-    std::cout << " rho=" << get_rho() ;
-  if (vpFeaturePointPolar::selectTheta() & select )
-    std::cout << " theta=" << get_theta() ;
-  std::cout <<std::endl ;
+  std::cout << "Point:  Z=" << get_Z();
+  if (vpFeaturePointPolar::selectRho() & select)
+    std::cout << " rho=" << get_rho();
+  if (vpFeaturePointPolar::selectTheta() & select)
+    std::cout << " theta=" << get_theta();
+  std::cout << std::endl;
 }
 
+/*!
 
-/*!  
-  
   Build a 2D image point visual feature with polar coordinates.
 
   \param rho, theta : Polar coordinates \f$(\rho,\theta)\f$ of
@@ -509,37 +472,34 @@ vpFeaturePointPolar::print(const unsigned int select ) const
   (\f$Z\f$ coordinate) is null. That means that the 3D point is
   on the camera which is not possible.
 */
-void
-vpFeaturePointPolar::buildFrom(const double rho, const double theta, 
-             const double Z_)
+void vpFeaturePointPolar::buildFrom(const double rho, const double theta,
+                                    const double Z_)
 {
 
-  s[0] = rho ;
-  s[1] = theta ;
+  s[0] = rho;
+  s[1] = theta;
 
-  this->Z = Z_  ;
+  this->Z = Z_;
 
-  if (Z < 0)
-  {
-    vpERROR_TRACE("Point is behind the camera ") ;
-    std::cout <<"Z = " << Z << std::endl ;
-
-    throw(vpFeatureException(vpFeatureException::badInitializationError,
-			     "Point is behind the camera ")) ;
-  }
-
-  if (fabs(Z) < 1e-6)
-  {
-    vpERROR_TRACE("Point Z coordinates is null ") ;
-    std::cout <<"Z = " << Z << std::endl ;
+  if (Z < 0) {
+    vpERROR_TRACE("Point is behind the camera ");
+    std::cout << "Z = " << Z << std::endl;
 
     throw(vpFeatureException(vpFeatureException::badInitializationError,
-			     "Point Z coordinates is null")) ;
+                             "Point is behind the camera "));
   }
 
-  for(unsigned int i = 0; i < nbParameters; i++) flags[i] = true;
+  if (fabs(Z) < 1e-6) {
+    vpERROR_TRACE("Point Z coordinates is null ");
+    std::cout << "Z = " << Z << std::endl;
+
+    throw(vpFeatureException(vpFeatureException::badInitializationError,
+                             "Point Z coordinates is null"));
+  }
+
+  for (unsigned int i = 0; i < nbParameters; i++)
+    flags[i] = true;
 }
-
 
 /*!
 
@@ -551,26 +511,24 @@ vpFeaturePointPolar::buildFrom(const double rho, const double theta,
   \param thickness : Thickness of the feature representation.
 
 */
-void
-vpFeaturePointPolar::display(const vpCameraParameters &cam,
-                             const vpImage<unsigned char> &I,
-                             const vpColor &color,
-                             unsigned int thickness) const
+void vpFeaturePointPolar::display(const vpCameraParameters &cam,
+                                  const vpImage<unsigned char> &I,
+                                  const vpColor &color,
+                                  unsigned int thickness) const
 {
   try {
-    double rho,theta;
-    rho   = get_rho();
+    double rho, theta;
+    rho = get_rho();
     theta = get_theta();
 
-    double x,y;
-    x = rho*cos(theta);
-    y = rho*sin(theta);
+    double x, y;
+    x = rho * cos(theta);
+    y = rho * sin(theta);
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
-  }
-  catch(...) {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
 
@@ -584,32 +542,30 @@ vpFeaturePointPolar::display(const vpCameraParameters &cam,
   \param thickness : Thickness of the feature representation.
 
  */
-void
-vpFeaturePointPolar::display(const vpCameraParameters &cam,
-                             const vpImage<vpRGBa> &I,
-                             const vpColor &color,
-                             unsigned int thickness) const
+void vpFeaturePointPolar::display(const vpCameraParameters &cam,
+                                  const vpImage<vpRGBa> &I,
+                                  const vpColor &color,
+                                  unsigned int thickness) const
 {
   try {
-    double rho,theta;
+    double rho, theta;
     rho = get_rho();
     theta = get_theta();
 
-    double x,y;
-    x = rho*cos(theta);
-    y = rho*sin(theta);
+    double x, y;
+    x = rho * cos(theta);
+    y = rho * sin(theta);
 
     vpFeatureDisplay::displayPoint(x, y, cam, I, color, thickness);
 
-  }
-  catch(...) {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
 
 /*!
-  
+
   Create an object with the same type.
 
   \code
@@ -622,7 +578,7 @@ vpFeaturePointPolar::display(const vpCameraParameters &cam,
 vpFeaturePointPolar *vpFeaturePointPolar::duplicate() const
 {
   vpFeaturePointPolar *feature = new vpFeaturePointPolar;
-  return feature ;
+  return feature;
 }
 
 /*!
@@ -642,14 +598,12 @@ vpFeaturePointPolar *vpFeaturePointPolar::duplicate() const
   vpFeaturePointPolar p;
   vpServo task;
   ...
-  // Add only the rho subset coordinate feature from an image point to the task
-  task.addFeature(p, vpFeaturePointPolar::selectRho());
-  \endcode
+  // Add only the rho subset coordinate feature from an image point to the
+  task task.addFeature(p, vpFeaturePointPolar::selectRho()); \endcode
 
   \sa selectTheta()
 */
-unsigned int vpFeaturePointPolar::selectRho()  { return FEATURE_LINE[0] ; }
-
+unsigned int vpFeaturePointPolar::selectRho() { return FEATURE_LINE[0]; }
 
 /*!
 
@@ -668,10 +622,9 @@ unsigned int vpFeaturePointPolar::selectRho()  { return FEATURE_LINE[0] ; }
   vpFeaturePointPolar p;
   vpServo task;
   ...
-  // Add only the theta subset coordinate feature from an image point to the task
-  task.addFeature(p, vpFeaturePointPolar::selectTheta());
-  \endcode
+  // Add only the theta subset coordinate feature from an image point to the
+  task task.addFeature(p, vpFeaturePointPolar::selectTheta()); \endcode
 
   \sa selectRho()
 */
-unsigned int vpFeaturePointPolar::selectTheta()  { return FEATURE_LINE[1] ; }
+unsigned int vpFeaturePointPolar::selectTheta() { return FEATURE_LINE[1]; }

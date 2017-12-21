@@ -40,7 +40,8 @@
   \example testVirtuoseJointLimits.cpp
 
   Test Haption Virtuose for testing the force feedback in articular mode.
-  A force is felt when approaching to the Virtuose's joint limits (estimated experimentally).
+  A force is felt when approaching to the Virtuose's joint limits (estimated
+  experimentally).
 */
 
 #include <visp3/core/vpTime.h>
@@ -48,40 +49,49 @@
 
 #if defined(VISP_HAVE_VIRTUOSE)
 
-void CallBackVirtuose(VirtContext VC, void* ptr)
+void CallBackVirtuose(VirtContext VC, void *ptr)
 {
-  (void) VC;
-  vpVirtuose* p_virtuose=(vpVirtuose*)ptr;
+  (void)VC;
+  vpVirtuose *p_virtuose = (vpVirtuose *)ptr;
 
-  float maxQ[6] = {0.7811045051f,  -0.07668215036f,  2.481732368f,  2.819076777f,  1.044736624f,  2.687076807f};
-  float minQ[6] ={-0.8011951447f, -1.648244739f, 0.7439950705f, -3.022218227f, -1.260564089f, -2.054088593f};
+  float maxQ[6] = {0.7811045051f, -0.07668215036f, 2.481732368f,
+                   2.819076777f,  1.044736624f,    2.687076807f};
+  float minQ[6] = {-0.8011951447f, -1.648244739f, 0.7439950705f,
+                   -3.022218227f,  -1.260564089f, -2.054088593f};
   unsigned int numJoint = 6;
 
   vpColVector feedbackRegion(numJoint, 0);
   vpColVector forceFeedback(numJoint, 0);
 
   int feedbackRegionFactor = 10;
-  float saturationForce[6] = {5,5,5,2.5,2.5,2.5};
+  float saturationForce[6] = {5, 5, 5, 2.5, 2.5, 2.5};
 
-  for (unsigned int iter=0; iter<numJoint; iter++)
-    feedbackRegion[iter] = (maxQ[iter] - minQ[iter])/feedbackRegionFactor;
+  for (unsigned int iter = 0; iter < numJoint; iter++)
+    feedbackRegion[iter] = (maxQ[iter] - minQ[iter]) / feedbackRegionFactor;
 
   vpColVector currentQ = p_virtuose->getArticularPosition();
 
   // force feedback definition
-  for (unsigned int iter = 0; iter < numJoint; iter++){
-    if (currentQ[iter] >= (maxQ[iter] - feedbackRegion[iter]))
-    {
-      forceFeedback[iter] = -saturationForce[iter] * pow((currentQ[iter] - maxQ[iter] + feedbackRegion[iter]) / feedbackRegion[iter], 2);
-      std::cout << "WARNING! Getting close to the maximum joint limit. Joint #" << iter + 1 << std::endl;
-    }
-    else if (currentQ[iter] <= (minQ[iter] + feedbackRegion[iter]))
-    {
-      forceFeedback[iter] = saturationForce[iter] * pow((minQ[iter] + feedbackRegion[iter] - currentQ[iter]) / feedbackRegion[iter], 2);
-      std::cout << "WARNING! Getting close to the minimum joint limit. Joint #" << iter + 1 << std::endl;
-    }
-    else
-    {
+  for (unsigned int iter = 0; iter < numJoint; iter++) {
+    if (currentQ[iter] >= (maxQ[iter] - feedbackRegion[iter])) {
+      forceFeedback[iter] =
+          -saturationForce[iter] *
+          pow((currentQ[iter] - maxQ[iter] + feedbackRegion[iter]) /
+                  feedbackRegion[iter],
+              2);
+      std::cout
+          << "WARNING! Getting close to the maximum joint limit. Joint #"
+          << iter + 1 << std::endl;
+    } else if (currentQ[iter] <= (minQ[iter] + feedbackRegion[iter])) {
+      forceFeedback[iter] =
+          saturationForce[iter] *
+          pow((minQ[iter] + feedbackRegion[iter] - currentQ[iter]) /
+                  feedbackRegion[iter],
+              2);
+      std::cout
+          << "WARNING! Getting close to the minimum joint limit. Joint #"
+          << iter + 1 << std::endl;
+    } else {
       forceFeedback[iter] = 0;
       std::cout << "Safe zone" << std::endl;
     }
@@ -137,8 +147,10 @@ int main()
     std::cout << "Min Joint values: " << min_joint.t() << std::endl;
 
     // Best Result (small errors are to be expected)
-    // Max Joint values: 0.7811045051  -0.07668215036  2.481732368  2.819076777  1.044736624  2.687076807
-    //  Min Joint values: -0.8011951447  -1.648244739  0.7439950705  -3.022218227  -1.260564089  -2.054088593
+    // Max Joint values: 0.7811045051  -0.07668215036  2.481732368
+    2.819076777  1.044736624  2.687076807
+    //  Min Joint values: -0.8011951447  -1.648244739  0.7439950705
+    -3.022218227  -1.260564089  -2.054088593
 */
 
     virtuose.setPeriodicFunction(CallBackVirtuose);
@@ -147,9 +159,8 @@ int main()
     int counter = 0;
     bool swtch = true;
 
-    while(swtch) {
-      if (counter>=10)
-      {
+    while (swtch) {
+      if (counter >= 10) {
         virtuose.stopPeriodicFunction();
         virtuose.setPowerOff();
         swtch = false;
@@ -159,8 +170,7 @@ int main()
     }
 
     std::cout << "The end" << std::endl;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }
 }
@@ -168,6 +178,7 @@ int main()
 #else
 int main()
 {
-  std::cout << "You should install Virtuose API to use this binary..." << std::endl;
+  std::cout << "You should install Virtuose API to use this binary..."
+            << std::endl;
 }
 #endif

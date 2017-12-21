@@ -37,16 +37,16 @@
  *****************************************************************************/
 
 #include <iostream>
-#include <vector>
 #include <limits>
+#include <vector>
 
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpPoint.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/vision/vpPoseFeatures.h>
+#include <visp3/core/vpPoint.h>
 #include <visp3/vision/vpPose.h>
+#include <visp3/vision/vpPoseFeatures.h>
 
 /*!
   \example testPoseFeatures.cpp
@@ -58,43 +58,49 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
-class vp_createPointClass{
+class vp_createPointClass
+{
 public:
   int value;
-  
-  vp_createPointClass() : value(0){}
-  
-  int vp_createPoint(vpFeaturePoint &fp,const vpPoint &v){
+
+  vp_createPointClass() : value(0) {}
+
+  int vp_createPoint(vpFeaturePoint &fp, const vpPoint &v)
+  {
     value += 1;
-    vpFeatureBuilder::create(fp,v);
+    vpFeatureBuilder::create(fp, v);
     return value;
   }
 };
 
-void vp_createPoint(vpFeaturePoint &fp,const vpPoint &v){
-  vpFeatureBuilder::create(fp,v);
+void vp_createPoint(vpFeaturePoint &fp, const vpPoint &v)
+{
+  vpFeatureBuilder::create(fp, v);
 }
 
-void vp_createLine(vpFeatureLine &fp,const vpLine &v){
-  vpFeatureBuilder::create(fp,v);
+void vp_createLine(vpFeatureLine &fp, const vpLine &v)
+{
+  vpFeatureBuilder::create(fp, v);
 }
 #endif
 #endif
-
 
 int test_pose(bool use_robust)
 {
   if (use_robust)
-    std::cout << "** Test robust pose estimation from features\n" << std::endl;
+    std::cout << "** Test robust pose estimation from features\n"
+              << std::endl;
   else
     std::cout << "** Test pose estimation from features\n" << std::endl;
 
-  vpImage<unsigned char> I(600,600);
+  vpImage<unsigned char> I(600, 600);
 
-  vpHomogeneousMatrix cMo_ref(0., 0., 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(60));
+  vpHomogeneousMatrix cMo_ref(0., 0., 1., vpMath::rad(0), vpMath::rad(0),
+                              vpMath::rad(60));
   vpPoseVector pose_ref = vpPoseVector(cMo_ref);
 
-  std::cout << "Reference pose used to create the visual features : " << std::endl;
+  std::cout << "Reference pose used to create the visual features : "
+            << std::endl;
   std::cout << pose_ref.t() << std::endl;
 
   vpPoseFeatures pose;
@@ -104,35 +110,32 @@ int test_pose(bool use_robust)
   double val = 0.25;
   double val2 = 0.0;
 
-  //2D Point Feature
-  pts.push_back( vpPoint(0.0,-val,val2) );
-  pts.push_back( vpPoint(0.0,val,val2) );
-  pts.push_back( vpPoint(-val,val,val2) );
+  // 2D Point Feature
+  pts.push_back(vpPoint(0.0, -val, val2));
+  pts.push_back(vpPoint(0.0, val, val2));
+  pts.push_back(vpPoint(-val, val, val2));
 
-  //Segment Feature
-  pts.push_back( vpPoint(-val,-val/2.0,val2) );
-  pts.push_back( vpPoint(val,val/2.0,val2) );
+  // Segment Feature
+  pts.push_back(vpPoint(-val, -val / 2.0, val2));
+  pts.push_back(vpPoint(val, val / 2.0, val2));
 
-  //3D point Feature
-  pts.push_back( vpPoint(0.0,0.0,-1.5) );
+  // 3D point Feature
+  pts.push_back(vpPoint(0.0, 0.0, -1.5));
 
-  //Line Feature
+  // Line Feature
   vpLine line;
-  line.setWorldCoordinates(0.0,1.0,0.0,.0,
-                           0.0,0.0,1.0,0.0);
+  line.setWorldCoordinates(0.0, 1.0, 0.0, .0, 0.0, 0.0, 1.0, 0.0);
 
-  //Vanishing Point Feature
+  // Vanishing Point Feature
   vpLine l1;
-  l1.setWorldCoordinates(0.0,1.0,0.2,0.0,
-                         1.0,0.0,0.0,-0.25);
+  l1.setWorldCoordinates(0.0, 1.0, 0.2, 0.0, 1.0, 0.0, 0.0, -0.25);
 
   vpLine l2;
-  l2.setWorldCoordinates(0.0,1.0,0.2,0.0,
-                         -1.0,0.0,0.0,-0.25);
+  l2.setWorldCoordinates(0.0, 1.0, 0.2, 0.0, -1.0, 0.0, 0.0, -0.25);
 
-  //Ellipse Feature
+  // Ellipse Feature
   vpCircle circle;
-  circle.setWorldCoordinates(0.0, 0.0, 1.0 , 0.0, 0.0, 0.0, 0.25);
+  circle.setWorldCoordinates(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.25);
 
   pts[0].project(cMo_ref);
   pts[1].project(cMo_ref);
@@ -156,7 +159,7 @@ int test_pose(bool use_robust)
 
   pose.addFeaturePoint3D(pts[5]);
 
-  pose.addFeatureVanishingPoint(l1,l2);
+  pose.addFeatureVanishingPoint(l1, l2);
 
   //   pose.addFeatureSegment(pts[3],pts[4]);
   //
@@ -168,9 +171,11 @@ int test_pose(bool use_robust)
   vpFeaturePoint fp;
   vpFeatureLine fl;
   vpFeatureSegment fs;
-  void (*ptr)(vpFeatureSegment&, vpPoint&, vpPoint&) = &vpFeatureBuilder::create;
+  void (*ptr)(vpFeatureSegment &, vpPoint &, vpPoint &) =
+      &vpFeatureBuilder::create;
   vp_createPointClass cpClass;
-  int (vp_createPointClass::*ptrClass)(vpFeaturePoint&, const vpPoint&) = &vp_createPointClass::vp_createPoint;
+  int (vp_createPointClass::*ptrClass)(vpFeaturePoint &, const vpPoint &) =
+      &vp_createPointClass::vp_createPoint;
   pose.addSpecificFeature(&cpClass, ptrClass, fp, pts[1]);
   pose.addSpecificFeature(&vp_createLine, fl, line);
   pose.addSpecificFeature(ptr, fs, pts[3], pts[4]);
@@ -181,20 +186,23 @@ int test_pose(bool use_robust)
   pose.setVVSIterMax(200);
   pose.setCovarianceComputation(true);
 
-  vpHomogeneousMatrix cMo_est(0.4, 0.3, 1.5, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
+  vpHomogeneousMatrix cMo_est(0.4, 0.3, 1.5, vpMath::rad(0), vpMath::rad(0),
+                              vpMath::rad(0));
   vpPoseVector pose_est = vpPoseVector(cMo_est);
-  std::cout << "\nPose used as initialisation of the pose computation : " << std::endl;
+  std::cout << "\nPose used as initialisation of the pose computation : "
+            << std::endl;
   std::cout << pose_est.t() << std::endl;
 
-  if (! use_robust)
+  if (!use_robust)
     pose.computePose(cMo_est);
   else
     pose.computePose(cMo_est, vpPoseFeatures::ROBUST_VIRTUAL_VS);
 
-  if (! use_robust)
+  if (!use_robust)
     std::cout << "\nEstimated pose from visual features : " << std::endl;
   else
-    std::cout << "\nRobust estimated pose from visual features : " << std::endl;
+    std::cout << "\nRobust estimated pose from visual features : "
+              << std::endl;
 
   pose_est.buildFrom(cMo_est);
   std::cout << pose_est.t() << std::endl;
@@ -202,16 +210,19 @@ int test_pose(bool use_robust)
   std::cout << "\nResulting covariance (Diag): " << std::endl;
   vpMatrix covariance = pose.getCovarianceMatrix();
   std::cout << covariance[0][0] << " " << covariance[1][1] << " "
-                                                           << covariance[2][2] << " " << covariance[3][3] << " "
-                                                                                                          << covariance[4][4] << " " << covariance[5][5] << " " << std::endl;
+            << covariance[2][2] << " " << covariance[3][3] << " "
+            << covariance[4][4] << " " << covariance[5][5] << " "
+            << std::endl;
 
   int test_fail = 0;
-  for(unsigned int i=0; i<6; i++) {
-    if (std::fabs(pose_ref[i]-pose_est[i]) > 0.001)
+  for (unsigned int i = 0; i < 6; i++) {
+    if (std::fabs(pose_ref[i] - pose_est[i]) > 0.001)
       test_fail = 1;
   }
 
-  std::cout << "\nPose is " << (test_fail ? "badly" : "well") << " estimated\n" << std::endl;
+  std::cout << "\nPose is " << (test_fail ? "badly" : "well")
+            << " estimated\n"
+            << std::endl;
 
   return test_fail;
 }
@@ -226,8 +237,7 @@ int main()
       return -1;
 
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return -1;
   }

@@ -3,15 +3,17 @@
 #ifdef VISP_HAVE_MODULE_SENSOR
 #include <visp3/sensor/vpV4l2Grabber.h>
 #endif
+#include <visp3/blob/vpDot2.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/blob/vpDot2.h>
 
 int main()
 {
-#if ((defined(VISP_HAVE_V4L2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)))
+#if ((defined(VISP_HAVE_V4L2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)) &&  \
+     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                    \
+      defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)))
   vpImage<unsigned char> I; // Create a gray level image container
 
 #if defined(VISP_HAVE_V4L2)
@@ -19,7 +21,7 @@ int main()
   g.open(I);
 #elif defined(VISP_HAVE_OPENCV)
   cv::VideoCapture g(0); // open the default camera
-  if(!g.isOpened()) { // check if we succeeded
+  if (!g.isOpened()) {   // check if we succeeded
     std::cout << "Failed to open the camera" << std::endl;
     return -1;
   }
@@ -45,7 +47,7 @@ int main()
   vpImagePoint germ;
   bool init_done = false;
   std::cout << "Click!!!" << std::endl;
-  while(1) {
+  while (1) {
     try {
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
@@ -55,19 +57,19 @@ int main()
 #endif
       vpDisplay::display(I);
 
-      if (! init_done) {
-        vpDisplay::displayText(I, vpImagePoint(10,10), "Click in the blob to initialize the tracker", vpColor::red);
+      if (!init_done) {
+        vpDisplay::displayText(I, vpImagePoint(10, 10),
+                               "Click in the blob to initialize the tracker",
+                               vpColor::red);
         if (vpDisplay::getClick(I, germ, false)) {
           blob.initTracking(I, germ);
           init_done = true;
         }
-      }
-      else {
+      } else {
         blob.track(I);
       }
       vpDisplay::flush(I);
-    }
-    catch(...) {
+    } catch (...) {
       init_done = false;
     }
   }

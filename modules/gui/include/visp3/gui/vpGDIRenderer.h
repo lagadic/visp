@@ -38,40 +38,39 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if ( defined(VISP_HAVE_GDI) )
+#if (defined(VISP_HAVE_GDI))
 #ifndef vpGDIRenderer_HH
 #define vpGDIRenderer_HH
 
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-// Include WinSock2.h before windows.h to ensure that winsock.h is not included by windows.h 
-// since winsock.h and winsock2.h are incompatible
-#include <WinSock2.h> 
+// Include WinSock2.h before windows.h to ensure that winsock.h is not
+// included by windows.h since winsock.h and winsock2.h are incompatible
+#include <WinSock2.h>
 #include <windows.h>
 
-#include <visp3/gui/vpWin32Renderer.h>
+#include <visp3/core/vpDisplayException.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
-#include <visp3/core/vpDisplayException.h>
+#include <visp3/gui/vpWin32Renderer.h>
 
 #include <visp3/core/vpMath.h>
 
 class VISP_EXPORT vpGDIRenderer : public vpWin32Renderer
 {
-  //the handle of the associated window
+  // the handle of the associated window
   HWND m_hWnd;
 
-  //the bitmap object to display
+  // the bitmap object to display
   HBITMAP m_bmp;
 
-  //colors for overlay
+  // colors for overlay
   COLORREF m_colors[vpColor::id_unknown];
 
-  //font used to draw text
+  // font used to draw text
   HFONT m_hFont;
 
-  //used to ensure that only one thread at a time is accessing bmp
+  // used to ensure that only one thread at a time is accessing bmp
   CRITICAL_SECTION m_criticalSection;
 
   unsigned int m_bmp_width;
@@ -86,59 +85,62 @@ public:
 
   bool render();
 
-  void setImg(const vpImage<vpRGBa>& I);
-  void setImg(const vpImage<unsigned char>& I);
-  void setImgROI(const vpImage<vpRGBa>& I, const vpImagePoint &iP, const unsigned int width, const unsigned int height );
-  void setImgROI(const vpImage<unsigned char>& I, const vpImagePoint &iP, const unsigned int width, const unsigned int height );
+  void setImg(const vpImage<vpRGBa> &I);
+  void setImg(const vpImage<unsigned char> &I);
+  void setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP,
+                 const unsigned int width, const unsigned int height);
+  void setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP,
+                 const unsigned int width, const unsigned int height);
 
   void setPixel(const vpImagePoint &iP, const vpColor &color);
 
-  void drawLine(const vpImagePoint &ip1,
-                const vpImagePoint &ip2,
-                const vpColor &color, unsigned int thickness, int style=PS_SOLID);
+  void drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
+                const vpColor &color, unsigned int thickness,
+                int style = PS_SOLID);
 
-  void drawRect(const vpImagePoint &topLeft,
-                unsigned int width, unsigned int height,
-                const vpColor &color, bool fill=false,
-                unsigned int thickness=1);
+  void drawRect(const vpImagePoint &topLeft, unsigned int width,
+                unsigned int height, const vpColor &color, bool fill = false,
+                unsigned int thickness = 1);
 
   void clear(const vpColor &color);
 
   void drawCircle(const vpImagePoint &center, unsigned int radius,
-                  const vpColor &color, bool fill=false, unsigned int thickness=1);
+                  const vpColor &color, bool fill = false,
+                  unsigned int thickness = 1);
 
-  void drawText(const vpImagePoint &ip, const char * text,
+  void drawText(const vpImagePoint &ip, const char *text,
                 const vpColor &color);
 
   void drawCross(const vpImagePoint &ip, unsigned int size,
-                 const vpColor &color, unsigned int thickness=1);
+                 const vpColor &color, unsigned int thickness = 1);
 
-  void drawArrow(const vpImagePoint &ip1,
-                 const vpImagePoint &ip2,
-                 const vpColor &color, unsigned int w,unsigned int h, unsigned int thickness=1);
+  void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2,
+                 const vpColor &color, unsigned int w, unsigned int h,
+                 unsigned int thickness = 1);
 
   void getImage(vpImage<vpRGBa> &I);
 
 private:
+  // updates the renderer hbitmaps.
+  bool updateBitmap(HBITMAP &hBmp, unsigned char *imBuffer, unsigned int w,
+                    unsigned int h);
+  // updates the renderer hbitmaps.
+  bool updateBitmapROI(unsigned char *imBuffer, int i_min, int j_min, int w,
+                       int h);
 
-  //updates the renderer hbitmaps.
-  bool updateBitmap(HBITMAP& hBmp, unsigned char * imBuffer,
-                    unsigned int w, unsigned int h);
-  //updates the renderer hbitmaps.
-  bool updateBitmapROI(unsigned char * imBuffer, int i_min, int j_min, int w, int h);
+  // converts a vpImage<vpRGBa> into a HBITMAP .
+  void convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp);
 
-  //converts a vpImage<vpRGBa> into a HBITMAP .
-  void convert(const vpImage<vpRGBa> &I, HBITMAP& hBmp);
+  // converst a vpImage<unsigned char> into a HBITMAP .
+  void convert(const vpImage<unsigned char> &I, HBITMAP &hBmp);
 
-  //converst a vpImage<unsigned char> into a HBITMAP .
-  void convert(const vpImage<unsigned char> &I, HBITMAP& hBmp);
+  // converts a vpImage<vpRGBa> into a HBITMAP .
+  void convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP,
+                  const unsigned int width, const unsigned int height);
 
-  //converts a vpImage<vpRGBa> into a HBITMAP .
-  void convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width, const unsigned int height);
-
-  //converst a vpImage<unsigned char> into a HBITMAP .
-  void convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width, const unsigned int height);
-
+  // converst a vpImage<unsigned char> into a HBITMAP .
+  void convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP,
+                  const unsigned int width, const unsigned int height);
 };
 #endif
 #endif

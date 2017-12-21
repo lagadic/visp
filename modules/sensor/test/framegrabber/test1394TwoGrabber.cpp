@@ -36,14 +36,12 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file test1394TwoGrabber.cpp
 
   \brief  Aquire images using libdc1394-2.x library.
 
 */
-
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
@@ -53,19 +51,18 @@
 
 #if defined(VISP_HAVE_DC1394)
 
-#include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 /*!
   \example test1394TwoGrabber.cpp
 
 
 
 */
-int
-main()
+int main()
 {
-  try  {
+  try {
     std::cout << "IEEE1394 test in progress..." << std::endl;
 
     // Get the user name
@@ -84,50 +81,50 @@ main()
     // Get the number of cameras connected on the bus
     unsigned int ncameras; // Number of cameras on the bus
     ncameras = g.getNumCameras();
-    for (unsigned int i=0; i < ncameras; i++) {
+    for (unsigned int i = 0; i < ncameras; i++) {
       g.setCamera(i);
       g.getGuid(guid);
-      std::cout << "Detected camera with GUID 0x" 
-                << std::hex << guid << std::endl;
+      std::cout << "Detected camera with GUID 0x" << std::hex << guid
+                << std::endl;
     }
     // If more than one camera connected, use the last one
     if (ncameras > 1) {
-      g.setCamera(ncameras -1);
+      g.setCamera(ncameras - 1);
       g.getGuid(guid);
       std::cout << "Use camera with GUID 0x" << std::hex << guid << std::endl;
-      g.setCamera(0); // to be sure that the setCamera() in the next line with guid as parameter works
+      g.setCamera(0); // to be sure that the setCamera() in the next line with
+                      // guid as parameter works
       g.setCamera(guid);
     }
 
-    for (int i=0;i<10;i++) g.acquire(I);
+    for (int i = 0; i < 10; i++)
+      g.acquire(I);
     g.close();
     std::string filename = outputpath + "/imagetest1.pgm";
     std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename);
 
-    std::cout << "New connection..."<< std::endl;
+    std::cout << "New connection..." << std::endl;
     g.open(I);
     g.close();
 
-    std::cout << "New connection..."<< std::endl;
+    std::cout << "New connection..." << std::endl;
     g.open(I);
-    //g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_800x600_YUV422);
+    // g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_800x600_YUV422);
     g.acquire(I);
     g.close();
     filename = outputpath + "/imagetest2.pgm";
     std::cout << "Write image: " << filename << std::endl;
     vpImageIo::write(I, filename);
-  }
-  catch (...) {
+  } catch (...) {
     vpCERROR << "Failure: exit" << std::endl;
   }
 }
 #else
-int
-main()
+int main()
 {
   vpTRACE("Ieee 1394 grabber capabilities are not available...\n"
-          "You should install libdc1394-2 to use this binary.") ;
+          "You should install libdc1394-2 to use this binary.");
 }
 
 #endif

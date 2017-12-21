@@ -45,7 +45,6 @@
 #include <iostream>
 #include <visp3/core/vpIoTools.h>
 
-
 int main()
 {
   std::string info = vpIoTools::getBuildInformation();

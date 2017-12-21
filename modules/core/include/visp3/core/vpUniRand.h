@@ -49,10 +49,8 @@
 
   The algorithms and notations used are described in \cite Gentle:2004.
 
-  The following example shows how to use this class to generate 10 numbers between 0 and 5.
-\code
-#include <iostream>
-#include <visp3/core/vpUniRand.h>
+  The following example shows how to use this class to generate 10 numbers
+between 0 and 5. \code #include <iostream> #include <visp3/core/vpUniRand.h>
 
 int main()
 {
@@ -64,14 +62,16 @@ int main()
  */
 class VISP_EXPORT vpUniRand
 {
-  long    a;
-  long    m; //2^31-1
-  long    q; //integer part of m/a
-  long    r;//r=m mod a
-  double normalizer; //we use a normalizer > m to ensure ans will never be 1 (it is the case if x = 739806647)
+  long a;
+  long m;            // 2^31-1
+  long q;            // integer part of m/a
+  long r;            // r=m mod a
+  double normalizer; // we use a normalizer > m to ensure ans will never be 1
+                     // (it is the case if x = 739806647)
 
 private:
   void draw0();
+
 protected:
   long x;
   double draw1();
@@ -79,16 +79,16 @@ protected:
 public:
   //! Default constructor.
   explicit vpUniRand(const long seed = 0)
-    : a(16807), m(2147483647), q(127773), r(2836), normalizer(2147484721.0), x((seed)? seed : 739806647)
-  {}
+    : a(16807), m(2147483647), q(127773), r(2836), normalizer(2147484721.0),
+      x((seed) ? seed : 739806647)
+  {
+  }
 
   //! Default destructor.
-  virtual ~vpUniRand() {};
+  virtual ~vpUniRand(){};
 
   //! Operator that allows to get a random value.
-  double operator()() {
-    return draw1();
-  }
+  double operator()() { return draw1(); }
 };
 
 #endif

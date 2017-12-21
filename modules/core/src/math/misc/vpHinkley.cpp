@@ -45,23 +45,22 @@
 
 */
 
-#include <visp3/core/vpHinkley.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/core/vpHinkley.h>
 //#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
 
+#include <cmath> // std::fabs
+#include <iostream>
+#include <limits> // numeric_limits
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
 
 /* VP_DEBUG_MODE fixed by configure:
    1:
    2:
    3: Print data
 */
-
 
 /*!
 
@@ -96,7 +95,8 @@ vpHinkley::vpHinkley()
 */
 
 vpHinkley::vpHinkley(double alpha_val, double delta_val)
-  : dmin2(delta_val/2.), alpha(alpha_val), nsignal(0), mean(0), Sk(0), Mk(0), Tk(0), Nk(0)
+  : dmin2(delta_val / 2.), alpha(alpha_val), nsignal(0), mean(0), Sk(0),
+    Mk(0), Tk(0), Nk(0)
 {
 }
 
@@ -113,8 +113,7 @@ vpHinkley::vpHinkley(double alpha_val, double delta_val)
   \sa setAlpha(), setDelta()
 
 */
-void
-vpHinkley::init(double alpha_val, double delta_val)
+void vpHinkley::init(double alpha_val, double delta_val)
 {
   init();
 
@@ -127,9 +126,7 @@ vpHinkley::init(double alpha_val, double delta_val)
   Destructor.
 
 */
-vpHinkley::~vpHinkley()
-{
-}
+vpHinkley::~vpHinkley() {}
 
 /*!
 
@@ -140,7 +137,7 @@ vpHinkley::~vpHinkley()
 void vpHinkley::init()
 {
   nsignal = 0;
-  mean  = 0.0;
+  mean = 0.0;
 
   Sk = 0;
   Mk = 0;
@@ -157,10 +154,7 @@ void vpHinkley::init()
   \sa setAlpha()
 
 */
-void vpHinkley::setDelta(double delta)
-{
-  dmin2 = delta / 2;
-}
+void vpHinkley::setDelta(double delta) { dmin2 = delta / 2; }
 
 /*!
 
@@ -169,10 +163,7 @@ void vpHinkley::setDelta(double delta)
   \sa setDelta()
 
 */
-void vpHinkley::setAlpha(double alpha_val)
-{
-  this->alpha = alpha_val;
-}
+void vpHinkley::setAlpha(double alpha_val) { this->alpha = alpha_val; }
 
 /*!
 
@@ -189,9 +180,10 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownwardJump(double signal)
 
   vpHinkleyJumpType jump = noJump;
 
-  nsignal ++; // Signal length
+  nsignal++; // Signal length
 
-  if (nsignal == 1) mean = signal;
+  if (nsignal == 1)
+    mean = signal;
 
   // Calcul des variables cumulees
   computeSk(signal);
@@ -199,18 +191,18 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownwardJump(double signal)
   computeMk();
 
   vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2
-	    << " signal: " << signal << " Sk: " << Sk << " Mk: " << Mk;
+              << " signal: " << signal << " Sk: " << Sk << " Mk: " << Mk;
 
   // teste si les variables cumulees excedent le seuil
   if ((Mk - Sk) > alpha)
     jump = downwardJump;
 
 #ifdef VP_DEBUG
-  if (VP_DEBUG_MODE >=2) {
-    switch(jump) {
+  if (VP_DEBUG_MODE >= 2) {
+    switch (jump) {
     case noJump:
       std::cout << "noJump " << std::endl;
-     break;
+      break;
     case downwardJump:
       std::cout << "downWardJump " << std::endl;
       break;
@@ -223,10 +215,12 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownwardJump(double signal)
 
   computeMean(signal);
 
-  if (jump == downwardJump)  {
+  if (jump == downwardJump) {
     vpCDEBUG(2) << "\n*** Reset the Hinkley test  ***\n";
 
-    Sk = 0; Mk = 0;  nsignal = 0;
+    Sk = 0;
+    Mk = 0;
+    nsignal = 0;
   }
 
   return (jump);
@@ -247,9 +241,10 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testUpwardJump(double signal)
 
   vpHinkleyJumpType jump = noJump;
 
-  nsignal ++; // Signal length
+  nsignal++; // Signal length
 
-  if (nsignal == 1) mean = signal;
+  if (nsignal == 1)
+    mean = signal;
 
   // Calcul des variables cumulees
   computeTk(signal);
@@ -257,7 +252,7 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testUpwardJump(double signal)
   computeNk();
 
   vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2
-	    << " signal: " << signal << " Tk: " << Tk << " Nk: " << Nk;
+              << " signal: " << signal << " Tk: " << Tk << " Nk: " << Nk;
 
   // teste si les variables cumulees excedent le seuil
   if ((Tk - Nk) > alpha)
@@ -265,10 +260,10 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testUpwardJump(double signal)
 
 #ifdef VP_DEBUG
   if (VP_DEBUG_MODE >= 2) {
-    switch(jump) {
+    switch (jump) {
     case noJump:
       std::cout << "noJump " << std::endl;
-     break;
+      break;
     case downwardJump:
       std::cout << "downWardJump " << std::endl;
       break;
@@ -280,10 +275,12 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testUpwardJump(double signal)
 #endif
   computeMean(signal);
 
-  if (jump == upwardJump)  {
+  if (jump == upwardJump) {
     vpCDEBUG(2) << "\n*** Reset the Hinkley test  ***\n";
 
-    Tk = 0; Nk = 0;  nsignal = 0;
+    Tk = 0;
+    Nk = 0;
+    nsignal = 0;
   }
 
   return (jump);
@@ -304,9 +301,10 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownUpwardJump(double signal)
 
   vpHinkleyJumpType jump = noJump;
 
-  nsignal ++; // Signal length
+  nsignal++; // Signal length
 
-  if (nsignal == 1) mean = signal;
+  if (nsignal == 1)
+    mean = signal;
 
   // Calcul des variables cumulees
   computeSk(signal);
@@ -316,9 +314,8 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownUpwardJump(double signal)
   computeNk();
 
   vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2
-	      << " signal: " << signal
-	      << " Sk: " << Sk << " Mk: " << Mk
-	      << " Tk: " << Tk << " Nk: " << Nk << std::endl;
+              << " signal: " << signal << " Sk: " << Sk << " Mk: " << Mk
+              << " Tk: " << Tk << " Nk: " << Nk << std::endl;
 
   // teste si les variables cumulees excedent le seuil
   if ((Mk - Sk) > alpha)
@@ -328,10 +325,10 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownUpwardJump(double signal)
 
 #ifdef VP_DEBUG
   if (VP_DEBUG_MODE >= 2) {
-    switch(jump) {
+    switch (jump) {
     case noJump:
       std::cout << "noJump " << std::endl;
-     break;
+      break;
     case downwardJump:
       std::cout << "downWardJump " << std::endl;
       break;
@@ -347,7 +344,11 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownUpwardJump(double signal)
   if ((jump == upwardJump) || (jump == downwardJump)) {
     vpCDEBUG(2) << "\n*** Reset the Hinkley test  ***\n";
 
-    Sk = 0; Mk = 0; Tk = 0; Nk = 0;  nsignal = 0;
+    Sk = 0;
+    Mk = 0;
+    Tk = 0;
+    Nk = 0;
+    nsignal = 0;
     // Debut modif FS le 03/09/2003
     mean = signal;
     // Fin modif FS le 03/09/2003
@@ -371,15 +372,15 @@ void vpHinkley::computeMean(double signal)
   // apres un saut, la moyenne a tendance a "deriver". Pour reduire ces
   // derives de la moyenne, elle n'est remise a jour avec la valeur
   // courante du signal que si un debut de saut potentiel n'est pas detecte.
-  //if ( ((Mk-Sk) == 0) && ((Tk-Nk) == 0) )
-  if ( ( std::fabs(Mk-Sk) <= std::fabs(vpMath::maximum(Mk,Sk))*std::numeric_limits<double>::epsilon() ) 
-       && 
-       ( std::fabs(Tk-Nk) <= std::fabs(vpMath::maximum(Tk,Nk))*std::numeric_limits<double>::epsilon() ) )
-  // Fin modif FS le 03/09/2003
+  // if ( ((Mk-Sk) == 0) && ((Tk-Nk) == 0) )
+  if ((std::fabs(Mk - Sk) <= std::fabs(vpMath::maximum(Mk, Sk)) *
+                                 std::numeric_limits<double>::epsilon()) &&
+      (std::fabs(Tk - Nk) <= std::fabs(vpMath::maximum(Tk, Nk)) *
+                                 std::numeric_limits<double>::epsilon()))
+    // Fin modif FS le 03/09/2003
 
-  // Mise a jour de la moyenne.
+    // Mise a jour de la moyenne.
     mean = (mean * (nsignal - 1) + signal) / (nsignal);
-
 }
 /*!
 
@@ -401,7 +402,8 @@ void vpHinkley::computeSk(double signal)
 */
 void vpHinkley::computeMk()
 {
-  if (Sk > Mk) Mk = Sk;
+  if (Sk > Mk)
+    Mk = Sk;
 }
 /*!
 
@@ -422,26 +424,24 @@ void vpHinkley::computeTk(double signal)
 */
 void vpHinkley::computeNk()
 {
-  if (Tk < Nk) Nk = Tk;
+  if (Tk < Nk)
+    Nk = Tk;
 }
 
 void vpHinkley::print(vpHinkley::vpHinkleyJumpType jump)
 {
-  switch(jump)
-    {
-    case noJump :
-      std::cout << " No jump detected " << std::endl ;
-      break ;
-    case downwardJump :
-      std::cout << " Jump downward detected " << std::endl ;
-      break ;
-    case upwardJump :
-      std::cout << " Jump upward detected " << std::endl ;
-      break ;
-    default:
-      std::cout << " Jump  detected " << std::endl ;
-      break ;
-
+  switch (jump) {
+  case noJump:
+    std::cout << " No jump detected " << std::endl;
+    break;
+  case downwardJump:
+    std::cout << " Jump downward detected " << std::endl;
+    break;
+  case upwardJump:
+    std::cout << " Jump upward detected " << std::endl;
+    break;
+  default:
+    std::cout << " Jump  detected " << std::endl;
+    break;
   }
 }
-

@@ -45,23 +45,25 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_DISPLAY) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_MODULE_KLT) &&        \
+    defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_DISPLAY) &&               \
+    (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
 #include <visp3/core/vpDebug.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/io/vpVideoReader.h>
+#include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
+#include <visp3/io/vpVideoReader.h>
 #include <visp3/mbt/vpMbKltTracker.h>
 
-#define GETOPTARGS  "x:m:i:n:de:chtfolwv"
+#define GETOPTARGS "x:m:i:n:de:chtfolwv"
 
 void usage(const char *name, const char *badparam)
 {
@@ -71,8 +73,7 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>] [-e <last frame index>]\n\
-  [-t] [-c] [-d] [-h] [-f] [-o] [-w] [-l] [-v]\n",
-  name );
+  [-t] [-c] [-d] [-h] [-f] [-o] [-w] [-l] [-v]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\
@@ -137,34 +138,66 @@ OPTIONS:                                               \n\
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
-
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
-                std::string &initFile, long &lastFrame, bool &displayKltPoints, bool &click_allowed, bool &display,
-                bool& cao3DModel, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline, bool &computeCovariance)
+bool getOptions(int argc, const char **argv, std::string &ipath,
+                std::string &configFile, std::string &modelFile,
+                std::string &initFile, long &lastFrame,
+                bool &displayKltPoints, bool &click_allowed, bool &display,
+                bool &cao3DModel, bool &useOgre, bool &showOgreConfigDialog,
+                bool &useScanline, bool &computeCovariance)
 {
   const char *optarg_;
-  int   c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'e': lastFrame = atol(optarg_); break;
-    case 'i': ipath = optarg_; break;
-    case 'x': configFile = optarg_; break;
-    case 'm': modelFile = optarg_; break;
-    case 'n': initFile = optarg_; break;
-    case 't': displayKltPoints = false; break;
-    case 'f': cao3DModel = true; break;
-    case 'c': click_allowed = false; break;
-    case 'd': display = false; break;
-    case 'o': useOgre = true; break;
-    case 'l': useScanline = true; break;
-    case 'w': showOgreConfigDialog  = true; break;
-    case 'v': computeCovariance  = true; break;
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'e':
+      lastFrame = atol(optarg_);
+      break;
+    case 'i':
+      ipath = optarg_;
+      break;
+    case 'x':
+      configFile = optarg_;
+      break;
+    case 'm':
+      modelFile = optarg_;
+      break;
+    case 'n':
+      initFile = optarg_;
+      break;
+    case 't':
+      displayKltPoints = false;
+      break;
+    case 'f':
+      cao3DModel = true;
+      break;
+    case 'c':
+      click_allowed = false;
+      break;
+    case 'd':
+      display = false;
+      break;
+    case 'o':
+      useOgre = true;
+      break;
+    case 'l':
+      useScanline = true;
+      break;
+    case 'w':
+      showOgreConfigDialog = true;
+      break;
+    case 'v':
+      computeCovariance = true;
+      break;
+    case 'h':
+      usage(argv[0], NULL);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg_);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -179,8 +212,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
   return true;
 }
 
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string env_ipath;
@@ -203,30 +235,33 @@ main(int argc, const char ** argv)
     bool computeCovariance = false;
     bool quit = false;
 
-    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+    // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
-    if (! env_ipath.empty())
+    if (!env_ipath.empty())
       ipath = env_ipath;
 
     // Read the command line options
-    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, opt_lastFrame, displayKltPoints,
-                    opt_click_allowed, opt_display, cao3DModel, useOgre, showOgreConfigDialog, useScanline,
-                    computeCovariance)) {
+    if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile,
+                    opt_initFile, opt_lastFrame, displayKltPoints,
+                    opt_click_allowed, opt_display, cao3DModel, useOgre,
+                    showOgreConfigDialog, useScanline, computeCovariance)) {
       return (-1);
     }
 
     // Test if an input path is set
-    if (opt_ipath.empty() && env_ipath.empty() ){
+    if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL);
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
-      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-                << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+      std::cerr << std::endl << "ERROR:" << std::endl;
+      std::cerr
+          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+          << std::endl
+          << "  environment variable to specify the location of the "
+          << std::endl
+          << "  image path where test images are located." << std::endl
+          << std::endl;
 
       return (-1);
     }
@@ -244,34 +279,35 @@ main(int argc, const char ** argv)
     else
       configFile = vpIoTools::createFilePath(env_ipath, "mbt/cube.xml");
 
-    if (!opt_modelFile.empty()){
+    if (!opt_modelFile.empty()) {
       modelFile = opt_modelFile;
-    }else{
+    } else {
       std::string modelFileCao = "mbt/cube.cao";
       std::string modelFileWrl = "mbt/cube.wrl";
 
-      if(!opt_ipath.empty()){
-        if(cao3DModel){
+      if (!opt_ipath.empty()) {
+        if (cao3DModel) {
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileCao);
-        }
-        else{
+        } else {
 #ifdef VISP_HAVE_COIN3D
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileWrl);
 #else
-          std::cerr << "Coin is not detected in ViSP. Use the .cao model instead." << std::endl;
+          std::cerr
+              << "Coin is not detected in ViSP. Use the .cao model instead."
+              << std::endl;
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileCao);
 #endif
         }
-      }
-      else{
-        if(cao3DModel){
+      } else {
+        if (cao3DModel) {
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileCao);
-        }
-        else{
+        } else {
 #ifdef VISP_HAVE_COIN3D
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileWrl);
 #else
-          std::cerr << "Coin is not detected in ViSP. Use the .cao model instead." << std::endl;
+          std::cerr
+              << "Coin is not detected in ViSP. Use the .cao model instead."
+              << std::endl;
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileCao);
 #endif
         }
@@ -289,9 +325,9 @@ main(int argc, const char ** argv)
     vpVideoReader reader;
 
     reader.setFileName(ipath);
-    try{
+    try {
       reader.open(I);
-    }catch(...){
+    } catch (...) {
       std::cout << "Cannot open sequence: " << ipath << std::endl;
       return -1;
     }
@@ -301,7 +337,7 @@ main(int argc, const char ** argv)
 
     reader.acquire(I);
 
-    // initialise a  display
+// initialise a  display
 #if defined VISP_HAVE_X11
     vpDisplayX display;
 #elif defined VISP_HAVE_GDI
@@ -315,12 +351,11 @@ main(int argc, const char ** argv)
 #else
     opt_display = false;
 #endif
-    if (opt_display)
-    {
+    if (opt_display) {
 #if (defined VISP_HAVE_DISPLAY)
-      display.init(I, 100, 100, "Test tracking") ;
+      display.init(I, 100, 100, "Test tracking");
 #endif
-      vpDisplay::display(I) ;
+      vpDisplay::display(I);
       vpDisplay::flush(I);
     }
 
@@ -329,7 +364,7 @@ main(int argc, const char ** argv)
 
     // Load tracker config file (camera parameters and moving edge settings)
     vpCameraParameters cam;
-#if defined (VISP_HAVE_XML2)
+#if defined(VISP_HAVE_XML2)
     // From the xml file
     tracker.loadConfigFile(configFile);
 #else
@@ -348,14 +383,16 @@ main(int argc, const char ** argv)
     tracker.setCameraParameters(cam);
     tracker.setKltOpencv(klt);
     tracker.setKltMaskBorder(5);
-    tracker.setAngleAppear( vpMath::rad(65) );
-    tracker.setAngleDisappear( vpMath::rad(75) );
+    tracker.setAngleAppear(vpMath::rad(65));
+    tracker.setAngleDisappear(vpMath::rad(75));
 
     // Specify the clipping to use
     tracker.setNearClippingDistance(0.01);
     tracker.setFarClippingDistance(0.90);
     tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
-    //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+//   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING |
+//   vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
+//   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
 
     // Display the klt points
@@ -376,12 +413,12 @@ main(int argc, const char ** argv)
     tracker.getCameraParameters(cam);
 
     // Loop to position the cube
-    if (opt_display && opt_click_allowed)
-    {
-      while(!vpDisplay::getClick(I,false)){
+    if (opt_display && opt_click_allowed) {
+      while (!vpDisplay::getClick(I, false)) {
         vpDisplay::display(I);
-        vpDisplay::displayText(I, 15, 10, "click after positioning the object", vpColor::red);
-        vpDisplay::flush(I) ;
+        vpDisplay::displayText(
+            I, 15, 10, "click after positioning the object", vpColor::red);
+        vpDisplay::flush(I);
       }
     }
 
@@ -390,30 +427,29 @@ main(int argc, const char ** argv)
 
     // Initialise the tracker by clicking on the image
     // This function looks for
-    //   - a ./cube/cube.init file that defines the 3d coordinates (in meter, in the object basis) of the points used for the initialisation
-    //   - a ./cube/cube.ppm file to display where the user have to click (optionnal, set by the third parameter)
-    if (opt_display && opt_click_allowed)
-    {
+    //   - a ./cube/cube.init file that defines the 3d coordinates (in meter,
+    //   in the object basis) of the points used for the initialisation
+    //   - a ./cube/cube.ppm file to display where the user have to click
+    //   (optionnal, set by the third parameter)
+    if (opt_display && opt_click_allowed) {
       tracker.initClick(I, initFile, true);
       tracker.getPose(cMo);
       // display the 3D model at the given pose
-      tracker.display(I,cMo, cam, vpColor::red);
-    }
-    else
-    {
-      vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
+      tracker.display(I, cMo, cam, vpColor::red);
+    } else {
+      vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719,
+                               2.063603907, 1.110231561, -0.4392789872);
       tracker.initFromPose(I, cMoi);
     }
 
-    //track the model
+    // track the model
     tracker.track(I);
     tracker.getPose(cMo);
 
     if (opt_display)
       vpDisplay::flush(I);
 
-    while (!reader.end())
-    {
+    while (!reader.end()) {
       // acquire a new image
       reader.acquire(I);
       // display the image
@@ -426,7 +462,7 @@ main(int argc, const char ** argv)
         if (opt_display)
           vpDisplay::display(I);
         tracker.resetTracker();
-#if defined (VISP_HAVE_XML2)
+#if defined(VISP_HAVE_XML2)
         tracker.loadConfigFile(configFile);
 #else
         // By setting the parameters:
@@ -444,14 +480,17 @@ main(int argc, const char ** argv)
         tracker.setCameraParameters(cam);
         tracker.setKltOpencv(klt);
         tracker.setKltMaskBorder(5);
-        tracker.setAngleAppear( vpMath::rad(65) );
-        tracker.setAngleDisappear( vpMath::rad(75) );
+        tracker.setAngleAppear(vpMath::rad(65));
+        tracker.setAngleDisappear(vpMath::rad(75));
 
         // Specify the clipping to use
         tracker.setNearClippingDistance(0.01);
         tracker.setFarClippingDistance(0.90);
-        tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
-        //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING | vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+        tracker.setClipping(tracker.getClipping() |
+                            vpMbtPolygon::FOV_CLIPPING);
+//   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING |
+//   vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
+//   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
         tracker.loadModel(modelFile);
         tracker.setCameraParameters(cam);
@@ -463,30 +502,32 @@ main(int argc, const char ** argv)
 
       // Test to set an initial pose
       if (reader.getFrameIndex() == reader.getFirstFrameIndex() + 50) {
-        cMo.buildFrom(0.0439540832,  0.0845870108,  0.5477322481,  2.179498458,  0.8611798108, -0.3491961946);
+        cMo.buildFrom(0.0439540832, 0.0845870108, 0.5477322481, 2.179498458,
+                      0.8611798108, -0.3491961946);
         vpTRACE("Test set pose");
         tracker.setPose(I, cMo);
-//        if (opt_display) {
-//          // display the 3D model
-//          tracker.display(I, cMo, cam, vpColor::darkRed);
-//          // display the frame
-//          vpDisplay::displayFrame (I, cMo, cam, 0.05);
-////          if (opt_click_allowed) {
-////            vpDisplay::flush(I);
-////            vpDisplay::getClick(I);
-////          }
-//        }
+        //        if (opt_display) {
+        //          // display the 3D model
+        //          tracker.display(I, cMo, cam, vpColor::darkRed);
+        //          // display the frame
+        //          vpDisplay::displayFrame (I, cMo, cam, 0.05);
+        ////          if (opt_click_allowed) {
+        ////            vpDisplay::flush(I);
+        ////            vpDisplay::getClick(I);
+        ////          }
+        //        }
       }
 
       // track the object: stop tracking from frame 40 to 50
-      if (reader.getFrameIndex() - reader.getFirstFrameIndex() < 40 || reader.getFrameIndex() - reader.getFirstFrameIndex() >= 50) {
+      if (reader.getFrameIndex() - reader.getFirstFrameIndex() < 40 ||
+          reader.getFrameIndex() - reader.getFirstFrameIndex() >= 50) {
         tracker.track(I);
         tracker.getPose(cMo);
         if (opt_display) {
           // display the 3D model
           tracker.display(I, cMo, cam, vpColor::darkRed);
           // display the frame
-          vpDisplay::displayFrame (I, cMo, cam, 0.05);
+          vpDisplay::displayFrame(I, cMo, cam, 0.05);
         }
       }
 
@@ -498,14 +539,17 @@ main(int argc, const char ** argv)
         }
       }
 
-      if(computeCovariance) {
-        std::cout << "Covariance matrix: \n" << tracker.getCovarianceMatrix() << std::endl << std::endl;
+      if (computeCovariance) {
+        std::cout << "Covariance matrix: \n"
+                  << tracker.getCovarianceMatrix() << std::endl
+                  << std::endl;
       }
 
-      vpDisplay::flush(I) ;
+      vpDisplay::flush(I);
     }
 
-    std::cout << "Reached last frame: " << reader.getFrameIndex() << std::endl;
+    std::cout << "Reached last frame: " << reader.getFrameIndex()
+              << std::endl;
 
     if (opt_click_allowed && !quit) {
       vpDisplay::getClick(I);
@@ -513,21 +557,21 @@ main(int argc, const char ** argv)
 
     reader.close();
 
-#if defined (VISP_HAVE_XML2)
-    // Cleanup memory allocated by xml library used to parse the xml config file in vpMbKltTracker::loadConfigFile()
+#if defined(VISP_HAVE_XML2)
+    // Cleanup memory allocated by xml library used to parse the xml config
+    // file in vpMbKltTracker::loadConfigFile()
     vpXmlParser::cleanup();
 #endif
 
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
-    // Cleanup memory allocated by Coin library used to load a vrml model in vpMbKltTracker::loadModel()
-    // We clean only if Coin was used.
-    if(! cao3DModel)
+    // Cleanup memory allocated by Coin library used to load a vrml model in
+    // vpMbKltTracker::loadModel() We clean only if Coin was used.
+    if (!cao3DModel)
       SoDB::finish();
 #endif
 
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }
@@ -537,9 +581,10 @@ main(int argc, const char ** argv)
 
 int main()
 {
-  std::cout << "visp_mbt, visp_gui modules and OpenCV are required to run this example." << std::endl;
+  std::cout << "visp_mbt, visp_gui modules and OpenCV are required to run "
+               "this example."
+            << std::endl;
   return 0;
-
 }
 
 #endif

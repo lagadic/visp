@@ -4,24 +4,28 @@
 #include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #endif
+#include <visp3/blob/vpDot2.h>
+#include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/blob/vpDot2.h>
-#include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/vision/vpPose.h>
 
 void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
-                 const vpCameraParameters &cam, bool init, vpHomogeneousMatrix &cMo);
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+                 const vpCameraParameters &cam, bool init,
+                 vpHomogeneousMatrix &cMo);
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                      \
+    defined(VISP_HAVE_OPENCV)
 void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init);
 #endif
 
 void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
-                 const vpCameraParameters &cam, bool init, vpHomogeneousMatrix &cMo)
+                 const vpCameraParameters &cam, bool init,
+                 vpHomogeneousMatrix &cMo)
 {
-  vpPose pose;     double x=0, y=0;
-  for (unsigned int i=0; i < point.size(); i ++) {
+  vpPose pose;
+  double x = 0, y = 0;
+  for (unsigned int i = 0; i < point.size(); i++) {
     vpPixelMeterConversion::convertPoint(cam, dot[i].getCog(), x, y);
     point[i].set_x(x);
     point[i].set_y(y);
@@ -29,34 +33,34 @@ void computePose(std::vector<vpPoint> &point, const std::vector<vpDot2> &dot,
   }
 
   if (init == true) {
-	vpHomogeneousMatrix cMo_dem;
-	vpHomogeneousMatrix cMo_lag;
-  pose.computePose(vpPose::DEMENTHON, cMo_dem);
-  pose.computePose(vpPose::LAGRANGE, cMo_lag);
-  double residual_dem = pose.computeResidual(cMo_dem);
-	double residual_lag = pose.computeResidual(cMo_lag);
-	if (residual_dem < residual_lag)
+    vpHomogeneousMatrix cMo_dem;
+    vpHomogeneousMatrix cMo_lag;
+    pose.computePose(vpPose::DEMENTHON, cMo_dem);
+    pose.computePose(vpPose::LAGRANGE, cMo_lag);
+    double residual_dem = pose.computeResidual(cMo_dem);
+    double residual_lag = pose.computeResidual(cMo_lag);
+    if (residual_dem < residual_lag)
       cMo = cMo_dem;
-	else
+    else
       cMo = cMo_lag;
   }
   pose.computePose(vpPose::VIRTUAL_VS, cMo);
 }
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                      \
+    defined(VISP_HAVE_OPENCV)
 void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init)
 {
   if (init) {
     vpDisplay::flush(I);
-    for(unsigned int i=0; i<dot.size(); i++) {
+    for (unsigned int i = 0; i < dot.size(); i++) {
       dot[i].setGraphics(true);
       dot[i].setGraphicsThickness(2);
       dot[i].initTracking(I);
       vpDisplay::flush(I);
     }
-  }
-  else {
-    for(unsigned int i=0; i<dot.size(); i++) {
+  } else {
+    for (unsigned int i = 0; i < dot.size(); i++) {
       dot[i].track(I);
     }
   }
@@ -65,8 +69,12 @@ void track(vpImage<unsigned char> &I, std::vector<vpDot2> &dot, bool init)
 
 int main()
 {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) && (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-  try {  vpImage<unsigned char> I;
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
+     defined(VISP_HAVE_OPENCV)) &&                                           \
+    (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||              \
+     (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+  try {
+    vpImage<unsigned char> I;
 
 #if defined(VISP_HAVE_DC1394)
     vp1394TwoGrabber g;
@@ -76,17 +84,17 @@ int main()
     g.open(I);
 #elif defined(VISP_HAVE_OPENCV)
     cv::VideoCapture g(0); // open the default camera
-    if(!g.isOpened()) { // check if we succeeded
+    if (!g.isOpened()) {   // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
       return -1;
     }
     cv::Mat frame;
     g >> frame; // get a new frame from camera
-	vpImageConvert::convert(frame, I);
+    vpImageConvert::convert(frame, I);
 #endif
 
     // Parameters of our camera
-    vpCameraParameters cam(840, 840, I.getWidth()/2, I.getHeight()/2);
+    vpCameraParameters cam(840, 840, I.getWidth() / 2, I.getHeight() / 2);
 
     // The pose container
     vpHomogeneousMatrix cMo;
@@ -94,10 +102,10 @@ int main()
     std::vector<vpDot2> dot(4);
     std::vector<vpPoint> point;
     double L = 0.06;
-    point.push_back( vpPoint(-L, -L, 0) );
-    point.push_back( vpPoint( L, -L, 0) );
-    point.push_back( vpPoint( L,  L, 0) );
-    point.push_back( vpPoint(-L,  L, 0) );
+    point.push_back(vpPoint(-L, -L, 0));
+    point.push_back(vpPoint(L, -L, 0));
+    point.push_back(vpPoint(L, L, 0));
+    point.push_back(vpPoint(-L, L, 0));
 
     bool init = true;
 #if defined(VISP_HAVE_X11)
@@ -108,12 +116,12 @@ int main()
     vpDisplayOpenCV d(I);
 #endif
 
-    while(1){
-      // Image Acquisition
+    while (1) {
+// Image Acquisition
 #if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394)
       g.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
-	  g >> frame;
+      g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
 
@@ -122,13 +130,13 @@ int main()
       computePose(point, dot, cam, init, cMo);
       vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
       vpDisplay::flush(I);
-      if (init) init = false; // turn off the initialisation specific stuff
+      if (init)
+        init = false; // turn off the initialisation specific stuff
 
       if (vpDisplay::getClick(I, false))
         break;
     }
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

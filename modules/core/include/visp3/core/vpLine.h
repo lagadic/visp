@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpLine_H
 #define vpLine_H
 
@@ -45,8 +44,8 @@
   \brief  class that defines what is a line
 */
 
-#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpMatrix.h>
 
 #include <visp3/core/vpForwardProjection.h>
 
@@ -58,7 +57,7 @@
   camera frame and the image plane. All the parameters
   must be set in meter.
 
-  \par Object and camera frame parametrization: 
+  \par Object and camera frame parametrization:
   In the 3D frames, the object frame parameters (\e oP) and the camera
   frame parameters (\e cP), the line is defined as the intersection
   between two plans. Thus, the parameters which define the line are
@@ -85,7 +84,7 @@
   in the vpTracker::cP public attribute, where \e cP is a vector
   defined as: \f[ cP = \left[\begin{array}{c}A1_c \\ B1_c \\ C1_c \\
   D1_c \\ A2_c \\ B2_c \\ C2_c \\ D2_c \end{array}\right] \f]
-  
+
   \par Image plane parametrization:
   In the image plane, the line is defined thanks to its 2D equation.
   \f[ x \; cos(\theta) + y \; sin(\theta) -\rho = 0 \f] Here \f$ x
@@ -107,10 +106,9 @@ class VISP_EXPORT vpLine : public vpForwardProjection
 {
 
 public:
+  void init();
 
-  void init() ;
-
-  vpLine() ;
+  vpLine();
   //! Destructor
   virtual ~vpLine() { ; }
 
@@ -123,7 +121,7 @@ public:
 
     \sa setTheta()
   */
-  void setRho(const double rho) {  p[0] = rho ; };
+  void setRho(const double rho) { p[0] = rho; };
 
   /*!
     Sets the \f$ \theta \f$ angle value used to define the line in the
@@ -133,7 +131,7 @@ public:
 
     \sa setRho()
   */
-  void setTheta(const double theta) {  p[1] = theta ;};
+  void setTheta(const double theta) { p[1] = theta; };
 
   /*!
 
@@ -145,7 +143,7 @@ public:
 
     \sa getRho()
   */
-  double getTheta()   const {  return p[1] ; }
+  double getTheta() const { return p[1]; }
 
   /*!
     Gets the \f$ \rho \f$ value corresponding to one of the
@@ -156,41 +154,32 @@ public:
 
     \sa getTheta()
   */
-  double getRho()  const  {  return p[0] ; }
-
-
+  double getRho() const { return p[0]; }
 
   void setWorldCoordinates(const double &A1, const double &B1,
-			   const double &C1, const double &D1,
-			   const double &A2, const double &B2,
-			   const double &C2, const double &D2) ;
+                           const double &C1, const double &D1,
+                           const double &A2, const double &B2,
+                           const double &C2, const double &D2);
 
+  void setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2);
 
-  void setWorldCoordinates(const vpColVector &oP1,
-			   const vpColVector &oP2) ;
+  void setWorldCoordinates(const vpColVector &oP);
 
+  void projection();
+  void projection(const vpColVector &cP, vpColVector &p);
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP);
+  void changeFrame(const vpHomogeneousMatrix &cMo);
 
-  void setWorldCoordinates(const vpColVector &oP) ;
-
-
-  void projection() ;
-  void projection(const vpColVector &cP, vpColVector &p) ;
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) ;
-  void changeFrame(const vpHomogeneousMatrix &cMo) ;
-
+  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green,
+               const unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I,
-               const vpCameraParameters &cam,
-               const vpColor &color=vpColor::green,
-               const unsigned int thickness=1) ;
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam,
-               const vpColor &color=vpColor::green,
-               const unsigned int thickness=1) ;
+               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green,
+               const unsigned int thickness = 1);
 
-  vpLine *duplicate() const ;
-} ;
-
+  vpLine *duplicate() const;
+};
 
 #endif
 

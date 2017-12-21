@@ -44,11 +44,11 @@
 #ifndef vpCircle_hh
 #define vpCircle_hh
 
-#include <visp3/core/vpHomogeneousMatrix.h>
 #include <math.h>
 #include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMath.h>
 #include <visp3/core/vpForwardProjection.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpMath.h>
 
 /*!
   \class vpCircle
@@ -58,62 +58,51 @@
 class VISP_EXPORT vpCircle : public vpForwardProjection
 {
 public:
-  void init() ;
-  vpCircle() ;
-  explicit vpCircle(const vpColVector& oP) ;
-  vpCircle(const double A, const double B,
-     const double C,
-     const double X0, const double Y0,
-     const double Z0,
-     const double R) ;
-  virtual ~vpCircle() ;
+  void init();
+  vpCircle();
+  explicit vpCircle(const vpColVector &oP);
+  vpCircle(const double A, const double B, const double C, const double X0,
+           const double Y0, const double Z0, const double R);
+  virtual ~vpCircle();
 
+  void setWorldCoordinates(const vpColVector &oP);
+  void setWorldCoordinates(const double A, const double B, const double C,
+                           const double X0, const double Y0, const double Z0,
+                           const double R);
 
-  void setWorldCoordinates(const vpColVector& oP) ;
-  void setWorldCoordinates(const double A, const double B,
-         const double C,
-         const double X0, const double Y0,
-         const double Z0,
-         const double R) ;
+  double getA() const { return cP[0]; }
+  double getB() const { return cP[1]; }
+  double getC() const { return cP[2]; }
 
+  double getX() const { return cP[3]; }
+  double getY() const { return cP[4]; }
+  double getZ() const { return cP[5]; }
 
-  double getA() const { return cP[0] ; }
-  double getB()  const{ return cP[1] ; }
-  double getC() const { return cP[2] ; }
+  double getR() const { return cP[6]; }
 
-  double getX() const { return cP[3] ; }
-  double getY() const { return cP[4] ; }
-  double getZ()  const{ return cP[5] ; }
+  void projection();
+  void projection(const vpColVector &cP, vpColVector &p);
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP);
+  void changeFrame(const vpHomogeneousMatrix &cMo);
 
-  double getR() const { return cP[6] ; }
-
-
-
-  void projection() ;
-  void projection(const vpColVector &cP, vpColVector &p) ;
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) ;
-  void changeFrame(const vpHomogeneousMatrix &cMo)  ;
-
-
+  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green,
+               const unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I,
-               const vpCameraParameters &cam,
-               const vpColor &color=vpColor::green,
-               const unsigned int thickness=1) ;
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam,
-               const vpColor &color=vpColor::green,
-               const unsigned int thickness=1) ;
-  vpCircle *duplicate() const ;
+               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green,
+               const unsigned int thickness = 1);
+  vpCircle *duplicate() const;
 
   //###################
   // Static Functions
   //###################
 
-  public:
-  static void computeIntersectionPoint(const vpCircle &circle, const vpCameraParameters &cam, const double &rho, const double &theta, double &i, double &j);
-
-} ;
-
+public:
+  static void computeIntersectionPoint(const vpCircle &circle,
+                                       const vpCameraParameters &cam,
+                                       const double &rho, const double &theta,
+                                       double &i, double &j);
+};
 
 #endif

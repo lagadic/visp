@@ -39,9 +39,9 @@
  *****************************************************************************/
 /*!
  \file vpTemplateTrackerWarpHomographySL3.h
- \brief warping function of an homography: the homography is defined on the sl3 lie algebra  H=exp(Sum(p[i]* A_i)) A_i is the basis of the SL3 Algebra
+ \brief warping function of an homography: the homography is defined on the
+ sl3 lie algebra  H=exp(Sum(p[i]* A_i)) A_i is the basis of the SL3 Algebra
 */
-
 
 #ifndef vpTemplateTrackerWarpHomographySL3_hh
 #define vpTemplateTrackerWarpHomographySL3_hh
@@ -55,164 +55,188 @@
   \class vpTemplateTrackerWarpHomographySL3
   \ingroup group_tt_warp
 */
-class VISP_EXPORT vpTemplateTrackerWarpHomographySL3: public vpTemplateTrackerWarp
+class VISP_EXPORT vpTemplateTrackerWarpHomographySL3
+  : public vpTemplateTrackerWarp
 {
-  protected:
-    vpMatrix G;
-    vpMatrix dGx;
-    std::vector<vpMatrix> A;
-    
-  public:
-    //constructor;
-    vpTemplateTrackerWarpHomographySL3();
-    ~vpTemplateTrackerWarpHomographySL3();
+protected:
+  vpMatrix G;
+  vpMatrix dGx;
+  std::vector<vpMatrix> A;
 
-    /*!
-     Compute the exponential of the homography matrix defined by the given parameters
+public:
+  // constructor;
+  vpTemplateTrackerWarpHomographySL3();
+  ~vpTemplateTrackerWarpHomographySL3();
 
-     \param p : Parameters of the SL3 homography warping function.
-    */
-    void computeCoeff(const vpColVector &p);
+  /*!
+   Compute the exponential of the homography matrix defined by the given
+   parameters
 
-    /*!
-     Compute the projection denominator (Z) used in x = X/Z and y = Y/Z.
+   \param p : Parameters of the SL3 homography warping function.
+  */
+  void computeCoeff(const vpColVector &p);
 
-     \param vX : Point to consider
-     \param ParamM : parameters of the warping function.
-    */
-    void computeDenom(vpColVector &vX, const vpColVector &ParamM);
+  /*!
+   Compute the projection denominator (Z) used in x = X/Z and y = Y/Z.
 
-    /*!
-      Compute the derivative of the warping function according to its parameters.
+   \param vX : Point to consider
+   \param ParamM : parameters of the warping function.
+  */
+  void computeDenom(vpColVector &vX, const vpColVector &ParamM);
 
-      \param X1 : Point to consider in the derivative computation.
-      \param X2 : Point to consider in the derivative computation.
-      \param ParamM : Parameters of the warping function.
-      \param dW : Resulting derivative matrix.
-    */
-    void dWarp(const vpColVector &X1,const vpColVector &X2,const vpColVector &ParamM,vpMatrix &dW);
+  /*!
+    Compute the derivative of the warping function according to its
+    parameters.
 
-    /*!
-      Compute the compositionnal derivative of the warping function according to its parameters.
+    \param X1 : Point to consider in the derivative computation.
+    \param X2 : Point to consider in the derivative computation.
+    \param ParamM : Parameters of the warping function.
+    \param dW : Resulting derivative matrix.
+  */
+  void dWarp(const vpColVector &X1, const vpColVector &X2,
+             const vpColVector &ParamM, vpMatrix &dW);
 
-      \param X1 : Point to consider in the derivative computation.
-      \param X2 : Point to consider in the derivative computation.
-      \param ParamM : Parameters of the warping function.
-      \param dwdp0 : Derivative matrix of the warping function according to the initial warping function parameters (p=0).
-      \param dW : Resulting compositionnal derivative matrix.
-    */
-    void dWarpCompo(const vpColVector &X1,const vpColVector &X2,const vpColVector &ParamM,const double *dwdp0,vpMatrix &dW);
+  /*!
+    Compute the compositionnal derivative of the warping function according to
+    its parameters.
 
-    /*!
-      Find the displacement/warping function parameters from a list of points.
+    \param X1 : Point to consider in the derivative computation.
+    \param X2 : Point to consider in the derivative computation.
+    \param ParamM : Parameters of the warping function.
+    \param dwdp0 : Derivative matrix of the warping function according to the
+    initial warping function parameters (p=0). \param dW : Resulting
+    compositionnal derivative matrix.
+  */
+  void dWarpCompo(const vpColVector &X1, const vpColVector &X2,
+                  const vpColVector &ParamM, const double *dwdp0,
+                  vpMatrix &dW);
 
-      \param ut0 : Original u coordinates.
-      \param vt0 : Original v coordinates.
-      \param u : Warped u coordinates.
-      \param v : Warped v coordinates.
-      \param nb_pt : Number of points.
-      \param p : Resulting warping function parameters.
-    */
-    void findWarp(const double *ut0,const double *vt0,const double *u,const double *v,int nb_pt,vpColVector& p);
+  /*!
+    Find the displacement/warping function parameters from a list of points.
 
-    /*!
-      Compute the derivative of the image with relation to the warping function parameters.
+    \param ut0 : Original u coordinates.
+    \param vt0 : Original v coordinates.
+    \param u : Warped u coordinates.
+    \param v : Warped v coordinates.
+    \param nb_pt : Number of points.
+    \param p : Resulting warping function parameters.
+  */
+  void findWarp(const double *ut0, const double *vt0, const double *u,
+                const double *v, int nb_pt, vpColVector &p);
 
-      \param i : i coordinate (along the rows) of the point to consider in the image.
-      \param j : j coordinate (along the columns) of the point to consider in the image.
-      \param dy : Derivative on the y-axis (along the rows) of the point (i,j).
-      \param dx : Derivative on the x-axis (along the columns) of the point (i,j).
-      \param dIdW : Resulting derivative matrix (Image according to the warping function).
-    */
-    void getdW0(const int &i,const int &j,const double &dy,const double &dx,double *dIdW);
+  /*!
+    Compute the derivative of the image with relation to the warping function
+    parameters.
 
-    /*!
-      Compute the derivative of the warping function according to the initial parameters.
+    \param i : i coordinate (along the rows) of the point to consider in the
+    image. \param j : j coordinate (along the columns) of the point to
+    consider in the image. \param dy : Derivative on the y-axis (along the
+    rows) of the point (i,j). \param dx : Derivative on the x-axis (along the
+    columns) of the point (i,j). \param dIdW : Resulting derivative matrix
+    (Image according to the warping function).
+  */
+  void getdW0(const int &i, const int &j, const double &dy, const double &dx,
+              double *dIdW);
 
-      \param i : i coordinate (along the rows) of the point to consider in the image.
-      \param j : j coordinate (along the columns) of the point to consider in the image.
-      \param dIdW : Resulting derivative matrix (Image according to the warping function).
-    */
-    void getdWdp0(const int &i,const int &j,double *dIdW);
+  /*!
+    Compute the derivative of the warping function according to the initial
+    parameters.
 
-    /*!
-      Compute the derivative of the warping function according to the initial parameters.
+    \param i : i coordinate (along the rows) of the point to consider in the
+    image. \param j : j coordinate (along the columns) of the point to
+    consider in the image. \param dIdW : Resulting derivative matrix (Image
+    according to the warping function).
+  */
+  void getdWdp0(const int &i, const int &j, double *dIdW);
 
-      \param i : i coordinate (along the rows) of the point to consider in the image.
-      \param j : j coordinate (along the columns) of the point to consider in the image.
-      \param dIdW : Resulting derivative matrix (Image according to the warping function).
-    */
-    void getdWdp0(const double &i, const double &j,double *dIdW);
+  /*!
+    Compute the derivative of the warping function according to the initial
+    parameters.
 
-    /*!
-     Return the homography defined by the warping function
+    \param i : i coordinate (along the rows) of the point to consider in the
+    image. \param j : j coordinate (along the columns) of the point to
+    consider in the image. \param dIdW : Resulting derivative matrix (Image
+    according to the warping function).
+  */
+  void getdWdp0(const double &i, const double &j, double *dIdW);
 
-     \return An Homography via vpHomography.
-     */
-    vpHomography getHomography() const;
+  /*!
+   Return the homography defined by the warping function
 
-    /*!
-      Get the inverse of the warping function parameters.
+   \return An Homography via vpHomography.
+   */
+  vpHomography getHomography() const;
 
-      \param ParamM : Parameters of the warping function.
-      \param ParamMinv : Inverse parameters.
-    */
-    void getParamInverse(const vpColVector &ParamM,vpColVector &ParamMinv) const;
+  /*!
+    Get the inverse of the warping function parameters.
 
-    /*!
-      Get the parameters of the warping function one level down.
+    \param ParamM : Parameters of the warping function.
+    \param ParamMinv : Inverse parameters.
+  */
+  void getParamInverse(const vpColVector &ParamM,
+                       vpColVector &ParamMinv) const;
 
-      \param p : Current parameters of the warping function.
-      \param pdown : Resulting parameters on level down.
-    */
-    void getParamPyramidDown(const vpColVector &p,vpColVector &pdown);
+  /*!
+    Get the parameters of the warping function one level down.
 
-    /*!
-      Get the parameters of the warping function one level up.
+    \param p : Current parameters of the warping function.
+    \param pdown : Resulting parameters on level down.
+  */
+  void getParamPyramidDown(const vpColVector &p, vpColVector &pdown);
 
-      \param p : Current parameters of the warping function.
-      \param pup : Resulting parameters one level up.
-    */
-    void getParamPyramidUp(const vpColVector &p,vpColVector &pup);
+  /*!
+    Get the parameters of the warping function one level up.
 
-    /*!
-      Tells if the warping function is ESM compatible.
+    \param p : Current parameters of the warping function.
+    \param pup : Resulting parameters one level up.
+  */
+  void getParamPyramidUp(const vpColVector &p, vpColVector &pup);
 
-      \return True if it is ESM compatible, False otherwise.
-    */
-    bool isESMcompatible() const {return true;}
+  /*!
+    Tells if the warping function is ESM compatible.
 
-    /*!
-      Get the displacement resulting from the composition of two other displacements.
+    \return True if it is ESM compatible, False otherwise.
+  */
+  bool isESMcompatible() const { return true; }
 
-      \param p1 : First displacement.
-      \param p2 : Second displacement.
-      \param pres : Displacement resulting from the composition of p1 and p2.
-    */
-    void pRondp(const vpColVector &p1, const vpColVector &p2,vpColVector &pres) const;
+  /*!
+    Get the displacement resulting from the composition of two other
+    displacements.
 
-    /*!
-      Warp a point.
+    \param p1 : First displacement.
+    \param p2 : Second displacement.
+    \param pres : Displacement resulting from the composition of p1 and p2.
+  */
+  void pRondp(const vpColVector &p1, const vpColVector &p2,
+              vpColVector &pres) const;
 
-      \param vX : Coordinates of the point to warp.
-      \param vXres : Coordinates of the warped point.
-      \param ParamM : Parameters of the warping function.
-    */
-    void warpX(const vpColVector &vX,vpColVector &vXres,const vpColVector &ParamM);
+  /*!
+    Warp a point.
 
-    /*!
-      Warp a point.
+    \param vX : Coordinates of the point to warp.
+    \param vXres : Coordinates of the warped point.
+    \param ParamM : Parameters of the warping function.
+  */
+  void warpX(const vpColVector &vX, vpColVector &vXres,
+             const vpColVector &ParamM);
 
-      \param i : i coordinate (along the rows) of the point to warp.
-      \param j : j coordinate (along the columns) of the point to warp.
-      \param i2 : i coordinate (along the rows) of the warped point.
-      \param j2 : j coordinate (along the columns) of the warped point.
-      \param ParamM : Parameters of the warping function.
-    */
-    void warpX(const int &i,const int &j,double &i2,double &j2,const vpColVector &ParamM);
+  /*!
+    Warp a point.
 
-    #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    void warpXInv(const vpColVector &/*vX*/,vpColVector &/*vXres*/,const vpColVector &/*ParamM*/) {}
-    #endif
+    \param i : i coordinate (along the rows) of the point to warp.
+    \param j : j coordinate (along the columns) of the point to warp.
+    \param i2 : i coordinate (along the rows) of the warped point.
+    \param j2 : j coordinate (along the columns) of the warped point.
+    \param ParamM : Parameters of the warping function.
+  */
+  void warpX(const int &i, const int &j, double &i2, double &j2,
+             const vpColVector &ParamM);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  void warpXInv(const vpColVector & /*vX*/, vpColVector & /*vXres*/,
+                const vpColVector & /*ParamM*/)
+  {
+  }
+#endif
 };
 #endif

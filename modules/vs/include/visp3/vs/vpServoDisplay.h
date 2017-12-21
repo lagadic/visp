@@ -50,7 +50,7 @@
 // Meter/pixel conversion
 #include <visp3/core/vpCameraParameters.h>
 
-//Color / image / display
+// Color / image / display
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
@@ -62,19 +62,16 @@
 class VISP_EXPORT vpServoDisplay
 {
 public:
-  static void display(const vpServo &s,
-                      const vpCameraParameters &cam,
+  static void display(const vpServo &s, const vpCameraParameters &cam,
                       const vpImage<unsigned char> &I,
                       vpColor currentColor = vpColor::green,
                       vpColor desiredColor = vpColor::red,
-                      unsigned int thickness=1) ;
-  static void display(const vpServo &s,
-                      const vpCameraParameters &cam,
+                      unsigned int thickness = 1);
+  static void display(const vpServo &s, const vpCameraParameters &cam,
                       const vpImage<vpRGBa> &I,
                       vpColor currentColor = vpColor::green,
                       vpColor desiredColor = vpColor::red,
-                      unsigned int thickness=1) ;
-} ;
+                      unsigned int thickness = 1);
+};
 
 #endif
-

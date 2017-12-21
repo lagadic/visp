@@ -42,7 +42,6 @@
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/robot/vpUnicycle.h>
 
-
 /*!
 
   \class vpPioneer
@@ -52,11 +51,12 @@
   \brief Generic functions for Pioneer mobile robots.
 
   This class provides common features for Pioneer mobile robots.
-  This robot has two control velocities \f$(v_x, w_z)\f$, the translational and
-  rotational velocities of the mobile platform respectively.
+  This robot has two control velocities \f$(v_x, w_z)\f$, the translational
+  and rotational velocities of the mobile platform respectively.
 
-  The figure below shows the position of the frames that are used to model the robot.
-  The end effector frame is here located at the middle point between the two wheels.
+  The figure below shows the position of the frames that are used to model the
+  robot. The end effector frame is here located at the middle point between
+  the two wheels.
 
   \image html pioneer.png
 
@@ -88,7 +88,7 @@
   \f].
 
 */
-class VISP_EXPORT vpPioneer: public vpUnicycle
+class VISP_EXPORT vpPioneer : public vpUnicycle
 {
 public:
   /*!
@@ -103,7 +103,7 @@ public:
   /*!
     Destructor that does nothing.
     */
-  virtual ~vpPioneer() {};
+  virtual ~vpPioneer(){};
 
 private:
   /*!
@@ -113,9 +113,10 @@ private:
   void set_cMe()
   {
     // Position of the camera in the mobile platform frame
-    double l = 0.13; // distance between the camera frame and the mobile robot frame
+    double l =
+        0.13; // distance between the camera frame and the mobile robot frame
     vpTranslationVector cte; // meters
-    vpRxyzVector        cre; // radian
+    vpRxyzVector cre;        // radian
     cte.set(0, 0, -l);
     cre.buildFrom(vpMath::rad(90.), 0, vpMath::rad(90.));
     cMe_.buildFrom(cte, vpRotationMatrix(cre));
@@ -126,9 +127,9 @@ private:
     middle between the two wheels.
 
     Considering \f${\bf v} = {^e}{\bf J}_e \; [v_x, w_z]\f$ with
-    \f$(v_x, w_z)\f$ respectively the translational and rotational control velocities
-    of the mobile robot and \f$\bf v\f$ the six dimention velocity skew expressed at the
-    end effector frame, the robot jacobian is given by:
+    \f$(v_x, w_z)\f$ respectively the translational and rotational control
+    velocities of the mobile robot and \f$\bf v\f$ the six dimention velocity
+    skew expressed at the end effector frame, the robot jacobian is given by:
 
     \f[
     {^e}{\bf J}_e = \left(\begin{array}{cc}
@@ -153,4 +154,3 @@ private:
 };
 
 #endif
-

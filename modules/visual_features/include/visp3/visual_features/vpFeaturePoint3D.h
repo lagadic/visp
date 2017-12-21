@@ -37,7 +37,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpFeaturePoint3d_H
 #define vpFeaturePoint3d_H
 
@@ -47,8 +46,8 @@
 */
 
 #include <visp3/core/vpMatrix.h>
-#include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/core/vpPoint.h>
+#include <visp3/visual_features/vpBasicFeature.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
@@ -62,10 +61,8 @@
   {\bf X} = (X,Y,Z)\f$ coordinates in the camera frame.
 
   This class is intended to manipulate the 3D point visual feature
-  \f$ s = (X,Y,Z) \f$. The interaction matrix related to \f$ s \f$ is given by:
-  \f[
-  L = \left[
-  \begin{array}{rrrrrr}
+  \f$ s = (X,Y,Z) \f$. The interaction matrix related to \f$ s \f$ is given
+by: \f[ L = \left[ \begin{array}{rrrrrr}
   -1 &  0 &  0 &  0 & -Z &  Y \\
    0 & -1 &  0 &  Z &  0 & -X \\
    0 &  0 & -1 & -Y &  X &  0 \\
@@ -101,8 +98,8 @@
 
   \code
 #include <iostream>
-#include <visp3/visual_features/vpFeaturePoint3D.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/visual_features/vpFeaturePoint3D.h>
 #include <visp3/vs/vpServo.h>
 
 int main()
@@ -113,56 +110,58 @@ int main()
   vpPoint point(0.1, -0.1, 0);
 
   vpHomogeneousMatrix cMo; // Pose between the camera and the object frame
-  cMo.buildFrom(0, 0, 1.2, 0, 0, 0); 
+  cMo.buildFrom(0, 0, 1.2, 0, 0, 0);
   // ... cMo need here to be computed from a pose estimation
 
-  point.changeFrame(cMo); // Compute the 3D point coordinates in the camera frame cP = cMo * oP
+  point.changeFrame(cMo); // Compute the 3D point coordinates in the camera
+frame cP = cMo * oP
 
   // Creation of the current feature s
   vpFeaturePoint3D s;
-  s.buildFrom(point); // Initialize the feature from the 3D point coordinates in the camera frame: s=(X,Y,Z)
-  s.print();
+  s.buildFrom(point); // Initialize the feature from the 3D point coordinates
+in the camera frame: s=(X,Y,Z) s.print();
 
-  // Creation of the desired feature s*. 
+  // Creation of the desired feature s*.
   vpFeaturePoint3D s_star;
   s_star.buildFrom(0, 0, 1); // Z*=1 meter
   s_star.print();
 
-  // Set eye-in-hand control law. 
+  // Set eye-in-hand control law.
   // The computed velocities will be expressed in the camera frame
   task.setServo(vpServo::EYEINHAND_CAMERA);
   // Interaction matrix is computed with the desired visual features s*
-  task.setInteractionMatrixType(vpServo::DESIRED); 
+  task.setInteractionMatrixType(vpServo::DESIRED);
   // Set the constant gain
   double lambda = 0.8;
-  task.setLambda(lambda);  
+  task.setLambda(lambda);
 
   // Add the 3D point feature to the task
-  task.addFeature(s, s_star); 
+  task.addFeature(s, s_star);
 
   // Control loop
   for ( ; ; ) {
     // ... cMo need here to be estimated from for example a pose estimation.
-    point.changeFrame(cMo); // Compute the 3D point coordinates in the camera frame cP = cMo * oP
-   
+    point.changeFrame(cMo); // Compute the 3D point coordinates in the camera
+frame cP = cMo * oP
+
     // Update the current 3D point visual feature
     s.buildFrom(point);
-    
+
     // compute the control law
     vpColVector v = task.computeControlLaw(); // camera velocity
   }
 }
   \endcode
 
-  If you want to deal only with the \f$(X,Y)\f$ subset feature from the 3D 
-  point feature, you have just to modify the addFeature() call in 
-  the previous example by the following line. In that case, the dimension 
+  If you want to deal only with the \f$(X,Y)\f$ subset feature from the 3D
+  point feature, you have just to modify the addFeature() call in
+  the previous example by the following line. In that case, the dimension
   of \f$s\f$ is two.
 
   \code
   // Add the (X,Y) subset feature from the 3D point visual feature to the task
-  task.addFeature(s, s_star, vpFeaturePoint3D::selectX() | vpFeaturePoint3D::selectY());
-  \endcode
+  task.addFeature(s, s_star, vpFeaturePoint3D::selectX() |
+vpFeaturePoint3D::selectY()); \endcode
 
   If you want to build your own control law, this other example shows
   how to create a current (\f$s\f$) and desired (\f$s^*\f$) 3D
@@ -171,9 +170,9 @@ int main()
 
   \code
 #include <iostream>
-#include <visp3/visual_features/vpFeaturePoint3D.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMatrix.h>
+#include <visp3/visual_features/vpFeaturePoint3D.h>
 
 int main()
 {
@@ -181,17 +180,18 @@ int main()
   vpPoint point(0.1, -0.1, 0);
 
   vpHomogeneousMatrix cMo; // Pose between the camera and the object frame
-  cMo.buildFrom(0, 0, 1.2, 0, 0, 0); 
+  cMo.buildFrom(0, 0, 1.2, 0, 0, 0);
   // ... cMo need here to be computed from a pose estimation
 
-  point.changeFrame(cMo); // Compute the 3D point coordinates in the camera frame cP = cMo * oP
+  point.changeFrame(cMo); // Compute the 3D point coordinates in the camera
+frame cP = cMo * oP
 
   // Creation of the current feature s
   vpFeaturePoint3D s;
-  s.buildFrom(point); // Initialize the feature from the 3D point coordinates in the camera frame 
-  s.print();
+  s.buildFrom(point); // Initialize the feature from the 3D point coordinates
+in the camera frame s.print();
 
-  // Creation of the desired feature s*. 
+  // Creation of the desired feature s*.
   vpFeaturePoint3D s_star;
   s_star.buildFrom(0, 0, 1); // Z*=1 meter
   s_star.print();
@@ -214,7 +214,7 @@ class VISP_EXPORT vpFeaturePoint3D : public vpBasicFeature
 
 public:
   // basic constructor
-  vpFeaturePoint3D() ;
+  vpFeaturePoint3D();
   //! Destructor. Does nothing.
   virtual ~vpFeaturePoint3D() {}
 
@@ -223,56 +223,52 @@ public:
   */
 
   // build feature from a point (vpPoint)
-  void buildFrom(const vpPoint &p) ;
+  void buildFrom(const vpPoint &p);
   // set the point XY and Z-coordinates
-  void buildFrom(const double X, const double Y, const double Z) ;
+  void buildFrom(const double X, const double Y, const double Z);
 
-  void display(const vpCameraParameters &cam,
-               const vpImage<unsigned char> &I,
-               const vpColor &color=vpColor::green,
-               unsigned int thickness=1) const ;
-  void display(const vpCameraParameters &cam,
-               const vpImage<vpRGBa> &I,
-               const vpColor &color=vpColor::green,
-               unsigned int thickness=1) const ;
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
+               const vpColor &color = vpColor::green,
+               unsigned int thickness = 1) const;
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
+               const vpColor &color = vpColor::green,
+               unsigned int thickness = 1) const;
 
   // feature duplication
-  vpFeaturePoint3D *duplicate() const ;
+  vpFeaturePoint3D *duplicate() const;
 
   // compute the error between two visual features from a subset
   // a the possible features
   vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL)  ;
+                    const unsigned int select = FEATURE_ALL);
 
   // get the point X-coordinates
-  double get_X()  const ;
+  double get_X() const;
   // get the point Y-coordinates
-  double get_Y()   const ;
+  double get_Y() const;
   // get the point depth (camera frame)
-  double get_Z() const  ;
+  double get_Z() const;
 
   // basic construction
-  void init() ;
+  void init();
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
 
   // print the name of the feature
-  void print(const unsigned int select=FEATURE_ALL ) const ;
+  void print(const unsigned int select = FEATURE_ALL) const;
 
   // set the point X-coordinates
-  void set_X(const double X) ;
+  void set_X(const double X);
   // set the point Y-coordinates
-  void set_Y(const double Y) ;
+  void set_Y(const double Y);
   // set the point depth (camera frame)
-  void set_Z(const double Z) ;
+  void set_Z(const double Z);
   // set the point XY and Z-coordinates
-  void set_XYZ(const double X, const double Y, const double Z) ;
+  void set_XYZ(const double X, const double Y, const double Z);
 
   static unsigned int selectX();
   static unsigned int selectY();
   static unsigned int selectZ();
-} ;
-
-
+};
 
 #endif

@@ -25,7 +25,7 @@ vpMutex s_mutex_capture;
 //! [capture-multi-threaded captureFunction]
 vpThread::Return captureFunction(vpThread::Args args)
 {
-  vpV4l2Grabber cap = *( static_cast<vpV4l2Grabber *>(args) );
+  vpV4l2Grabber cap = *(static_cast<vpV4l2Grabber *>(args));
   vpImage<unsigned char> frame_;
   bool stop_capture_ = false;
 
@@ -82,8 +82,8 @@ vpThread::Return displayFunction(vpThread::Args args)
       }
 
       // Check if we need to initialize the display with the first frame
-      if (! display_initialized_) {
-        // Initialize the display
+      if (!display_initialized_) {
+// Initialize the display
 #if defined(VISP_HAVE_X11)
         d_ = new vpDisplayX(I_);
         display_initialized_ = true;
@@ -102,11 +102,10 @@ vpThread::Return displayFunction(vpThread::Args args)
 
       // Update the display
       vpDisplay::flush(I_);
-    }
-    else {
+    } else {
       vpTime::wait(2); // Sleep 2ms
     }
-  } while(capture_state_ != capture_stopped);
+  } while (capture_state_ != capture_stopped);
 
 #if defined(VISP_HAVE_X11)
   delete d_;
@@ -118,19 +117,23 @@ vpThread::Return displayFunction(vpThread::Args args)
 //! [capture-multi-threaded displayFunction]
 
 //! [capture-multi-threaded mainFunction]
-int main(int argc, const char* argv[])
+int main(int argc, const char *argv[])
 {
   unsigned int opt_device = 0; // Default is opening /dev/video0
-  unsigned int opt_scale = 2;  // Default value is 2 in the constructor. Turn it to 1 to avoid subsampling
+  unsigned int opt_scale = 2;  // Default value is 2 in the constructor. Turn
+                               // it to 1 to avoid subsampling
 
   // Command line options
-  for (int i=0; i<argc; i++) {
+  for (int i = 0; i < argc; i++) {
     if (std::string(argv[i]) == "--device")
-      opt_device = (unsigned int)atoi(argv[i+1]);
+      opt_device = (unsigned int)atoi(argv[i + 1]);
     else if (std::string(argv[i]) == "--scale")
-      opt_scale = (unsigned int)atoi(argv[i+1]);
+      opt_scale = (unsigned int)atoi(argv[i + 1]);
     else if (std::string(argv[i]) == "--help") {
-      std::cout << "Usage: " << argv[0] << " [--device <camera device>] [--scale <subsampling factor>] [--help]" << std::endl;
+      std::cout << "Usage: " << argv[0]
+                << " [--device <camera device>] [--scale <subsampling "
+                   "factor>] [--help]"
+                << std::endl;
       return 0;
     }
   }
@@ -157,13 +160,18 @@ int main(int argc, const char* argv[])
 #else
 int main()
 {
-#  ifndef VISP_HAVE_V4L2
-  std::cout << "You should enable V4L2 to make this example working..." << std::endl;
-#  elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
-#  else
-  std::cout << "Multi-threading seems not supported on this platform" << std::endl;
-#  endif
+#ifndef VISP_HAVE_V4L2
+  std::cout << "You should enable V4L2 to make this example working..."
+            << std::endl;
+#elif !defined(_WIN32) &&                                                    \
+    (defined(__unix__) || defined(__unix) ||                                 \
+     (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::cout << "You should enable pthread usage and rebuild ViSP..."
+            << std::endl;
+#else
+  std::cout << "Multi-threading seems not supported on this platform"
+            << std::endl;
+#endif
 }
 
 #endif

@@ -41,7 +41,6 @@
 
 #include <visp3/core/vpRowVector.h>
 
-
 /*!
   \file vpSubRowVector.h
 
@@ -64,31 +63,31 @@
 class VISP_EXPORT vpSubRowVector : public vpRowVector
 {
 
-private :
+private:
   //! Copy constructor unavaible
-  vpSubRowVector(const vpSubRowVector& /* m */);
+  vpSubRowVector(const vpSubRowVector & /* m */);
 
-protected :
-
+protected:
   //! Number of row of parent vpColvector at initialization
   unsigned int pColNum;
   //! Parent vpColvector
   vpRowVector *parent;
 
 public:
-
   vpSubRowVector();
-  vpSubRowVector(vpRowVector &v, const unsigned int & offset,const unsigned int & ncols);
+  vpSubRowVector(vpRowVector &v, const unsigned int &offset,
+                 const unsigned int &ncols);
   virtual ~vpSubRowVector();
 
   void checkParentStatus() const;
 
-  void init(vpRowVector &v, const unsigned int & offset,const unsigned int & ncols);
+  void init(vpRowVector &v, const unsigned int &offset,
+            const unsigned int &ncols);
 
-  vpSubRowVector & operator=(const vpSubRowVector &B);
-  vpSubRowVector & operator=(const vpRowVector &B);
-  vpSubRowVector & operator=(const vpMatrix &B);
-  vpSubRowVector & operator=(const double &x);
+  vpSubRowVector &operator=(const vpSubRowVector &B);
+  vpSubRowVector &operator=(const vpRowVector &B);
+  vpSubRowVector &operator=(const vpMatrix &B);
+  vpSubRowVector &operator=(const double &x);
 };
 
 #endif

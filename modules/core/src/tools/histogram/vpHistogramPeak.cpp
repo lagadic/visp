@@ -45,7 +45,6 @@
 
 #include <visp3/core/vpHistogramPeak.h>
 
-
 /*!
   Defaut constructor for a gray level histogram peak.
 */
@@ -55,7 +54,9 @@ vpHistogramPeak::vpHistogramPeak() : level(0), value(0) {}
   Defaut constructor for a gray level histogram peak.
 */
 vpHistogramPeak::vpHistogramPeak(unsigned char lvl, unsigned val)
-  : level(lvl), value(val) {}
+  : level(lvl), value(val)
+{
+}
 
 /*!
   Copy constructor of a gray level histogram peak.
@@ -76,8 +77,7 @@ vpHistogramPeak::vpHistogramPeak(const vpHistogramPeak &p)
   vpHistogramPeak p2 = p1; // Peak p2 is set to 0, 255
   \endcode
 */
-vpHistogramPeak &
-vpHistogramPeak::operator=(const vpHistogramPeak &p)
+vpHistogramPeak &vpHistogramPeak::operator=(const vpHistogramPeak &p)
 {
   setLevel(p.level);
   setValue(p.value);
@@ -92,19 +92,19 @@ vpHistogramPeak::operator=(const vpHistogramPeak &p)
   \param p : Gray level histogram peak to compar.
 
 */
-bool
-vpHistogramPeak::operator==(const vpHistogramPeak &p) const
+bool vpHistogramPeak::operator==(const vpHistogramPeak &p) const
 {
-  return ( (level == p.level) && (value == p.value) );
+  return ((level == p.level) && (value == p.value));
 }
 
 /*!
   \relates vpHistogramPeak
   \brief std::cout a peak
 */
-VISP_EXPORT std::ostream &operator <<(std::ostream &s,const vpHistogramPeak &p)
+VISP_EXPORT std::ostream &operator<<(std::ostream &s,
+                                     const vpHistogramPeak &p)
 {
-  
+
   s << (int)p.getLevel() << " " << p.getValue();
 
   return s;

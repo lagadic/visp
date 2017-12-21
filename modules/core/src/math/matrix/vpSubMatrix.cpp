@@ -36,16 +36,13 @@
  *
  *****************************************************************************/
 
-#include <visp3/core/vpSubMatrix.h>
+#include <stdlib.h>
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpDebug.h>
-#include <stdlib.h>
+#include <visp3/core/vpSubMatrix.h>
 
-vpSubMatrix::vpSubMatrix()
-  : pRowNum(0), pColNum(0), parent(NULL)
-{
-}
+vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(NULL) {}
 
 /*!
   \brief Constructor
@@ -55,11 +52,12 @@ vpSubMatrix::vpSubMatrix()
   \param nrows : number of rows of the sub matrix
   \param ncols : number of columns of the sub matrix
 */
-vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int &row_offset, const unsigned int &col_offset,
-                         const unsigned int & nrows,  const unsigned int & ncols)
+vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int &row_offset,
+                         const unsigned int &col_offset,
+                         const unsigned int &nrows, const unsigned int &ncols)
   : pRowNum(0), pColNum(0), parent(NULL)
 {
-  init(m,row_offset,col_offset,nrows,ncols);
+  init(m, row_offset, col_offset, nrows, ncols);
 }
 
 /*!
@@ -70,31 +68,36 @@ vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int &row_offset, const unsi
   \param nrows : number of rows of the sub matrix
   \param ncols : number of columns of the sub matrix
 */
-void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsigned int &col_offset , const unsigned int & nrows ,  const unsigned int & ncols){
+void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset,
+                       const unsigned int &col_offset,
+                       const unsigned int &nrows, const unsigned int &ncols)
+{
 
-  if(! m.data){
+  if (!m.data) {
     throw(vpMatrixException(vpMatrixException::subMatrixError,
-          "SubMatrix parent matrix is not allocated"));
+                            "SubMatrix parent matrix is not allocated"));
   }
 
-  if(row_offset+nrows <= m.getRows() && col_offset+ncols <= m.getCols()){
-    data=m.data;
-    parent =&m;
+  if (row_offset + nrows <= m.getRows() &&
+      col_offset + ncols <= m.getCols()) {
+    data = m.data;
+    parent = &m;
     rowNum = nrows;
     colNum = ncols;
-    pRowNum=m.getRows();
-    pColNum=m.getCols();
+    pRowNum = m.getRows();
+    pColNum = m.getCols();
 
-    if(rowPtrs)
+    if (rowPtrs)
       free(rowPtrs);
 
-    rowPtrs=(double**) malloc(nrows * sizeof(double*));
-    for(unsigned int r=0;r<nrows;r++)
-      rowPtrs[r]= m.data+col_offset+(r+row_offset)*pColNum;
+    rowPtrs = (double **)malloc(nrows * sizeof(double *));
+    for (unsigned int r = 0; r < nrows; r++)
+      rowPtrs[r] = m.data + col_offset + (r + row_offset) * pColNum;
 
-    dsize = pRowNum*pColNum;
-  }else{
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,"Submatrix cannot be contain in parent matrix"));
+    dsize = pRowNum * pColNum;
+  } else {
+    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                            "Submatrix cannot be contain in parent matrix"));
   }
 }
 
@@ -102,14 +105,17 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsign
   \brief This method can be used to detect if the parent matrix
    always exits or its size have not changed and  throw an exception is not
 */
-void vpSubMatrix::checkParentStatus() const {
-  if(!data){
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-          "vpSubMatrix parent vpMatrix has been destroyed"));
+void vpSubMatrix::checkParentStatus() const
+{
+  if (!data) {
+    throw(
+        vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
+                          "vpSubMatrix parent vpMatrix has been destroyed"));
   }
-  if(pRowNum!=parent->getRows() || pColNum!=parent->getCols()){
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-          "vpSubMatrix size of parent vpMatrix has been changed"));
+  if (pRowNum != parent->getRows() || pColNum != parent->getCols()) {
+    throw(vpMatrixException(
+        vpMatrixException::incorrectMatrixSizeError,
+        "vpSubMatrix size of parent vpMatrix has been changed"));
   }
 }
 
@@ -117,16 +123,17 @@ void vpSubMatrix::checkParentStatus() const {
   \brief Operation A = B
   \param B : a matrix
 */
-vpSubMatrix & vpSubMatrix::operator=(const vpMatrix &B){
+vpSubMatrix &vpSubMatrix::operator=(const vpMatrix &B)
+{
 
-  if ((colNum != B.getCols())||(rowNum != B.getRows()))
-  {
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-          "vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix"));
+  if ((colNum != B.getCols()) || (rowNum != B.getRows())) {
+    throw(vpMatrixException(
+        vpMatrixException::incorrectMatrixSizeError,
+        "vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix"));
   }
 
-  for (unsigned int i=0;i<rowNum;i++) {
-    for(unsigned int j=0;j<colNum;j++)
+  for (unsigned int i = 0; i < rowNum; i++) {
+    for (unsigned int j = 0; j < colNum; j++)
       rowPtrs[i][j] = B[i][j];
   }
 
@@ -137,22 +144,23 @@ vpSubMatrix & vpSubMatrix::operator=(const vpMatrix &B){
   \brief Operation A = B
   \param B : a subMatrix
 */
-vpSubMatrix & vpSubMatrix::operator=(const vpSubMatrix &B){
+vpSubMatrix &vpSubMatrix::operator=(const vpSubMatrix &B)
+{
 
-  if ((colNum != B.getCols())||(rowNum != B.getRows()))
-  {
-    throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
-          "vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix"));
+  if ((colNum != B.getCols()) || (rowNum != B.getRows())) {
+    throw(vpMatrixException(
+        vpMatrixException::incorrectMatrixSizeError,
+        "vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix"));
   }
 
   pRowNum = B.pRowNum;
   pColNum = B.pColNum;
   parent = B.parent;
 
-  double ** BrowPtrs=B.rowPtrs;
+  double **BrowPtrs = B.rowPtrs;
 
-  for (unsigned int i=0;i<rowNum;i++) {
-    for(unsigned int j=0;j<colNum;j++)
+  for (unsigned int i = 0; i < rowNum; i++) {
+    for (unsigned int j = 0; j < colNum; j++)
       rowPtrs[i][j] = BrowPtrs[i][j];
   }
 
@@ -163,17 +171,14 @@ vpSubMatrix & vpSubMatrix::operator=(const vpSubMatrix &B){
   \brief Operation A = x
   \param x : a scalar
 */
-vpSubMatrix & vpSubMatrix::operator=(const double &x){
-  for (unsigned int i=0;i<rowNum;i++) {
-    for(unsigned int j=0;j<colNum;j++)
+vpSubMatrix &vpSubMatrix::operator=(const double &x)
+{
+  for (unsigned int i = 0; i < rowNum; i++) {
+    for (unsigned int j = 0; j < colNum; j++)
       rowPtrs[i][j] = x;
   }
 
   return *this;
 }
 
-
-vpSubMatrix::~vpSubMatrix()
-{
-  data=NULL;
-}
+vpSubMatrix::~vpSubMatrix() { data = NULL; }

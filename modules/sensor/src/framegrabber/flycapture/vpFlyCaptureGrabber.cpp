@@ -38,7 +38,8 @@
 
 /*!
   \file vpFlyCaptureGrabber.cpp
-  \brief Wrapper over PointGrey FlyCapture SDK to capture images from PointGrey cameras.
+  \brief Wrapper over PointGrey FlyCapture SDK to capture images from
+  PointGrey cameras.
 */
 
 #include <visp3/core/vpException.h>
@@ -49,10 +50,12 @@
 #include <visp3/core/vpTime.h>
 
 /*!
-   Default constructor that consider the first camera found on the bus as active.
+   Default constructor that consider the first camera found on the bus as
+   active.
  */
 vpFlyCaptureGrabber::vpFlyCaptureGrabber()
-  : m_camera(), m_guid(), m_index(0), m_numCameras(0), m_rawImage(), m_connected(false), m_capture(false)
+  : m_camera(), m_guid(), m_index(0), m_numCameras(0), m_rawImage(),
+    m_connected(false), m_capture(false)
 {
   m_numCameras = this->getNumCameras();
 }
@@ -60,10 +63,7 @@ vpFlyCaptureGrabber::vpFlyCaptureGrabber()
 /*!
    Default destructor that closes the connection with the camera.
  */
-vpFlyCaptureGrabber::~vpFlyCaptureGrabber()
-{
-  close();
-}
+vpFlyCaptureGrabber::~vpFlyCaptureGrabber() { close(); }
 /*!
   \return Return the number of cameras connected on the bus.
 */
@@ -79,10 +79,10 @@ unsigned int vpFlyCaptureGrabber::getNumCameras()
 }
 
 /*!
-  Print to the output stream active camera information (serial number, camera model,
-  camera vendor, sensor, resolution, firmaware version, ...).
+  Print to the output stream active camera information (serial number, camera
+  model, camera vendor, sensor, resolution, firmaware version, ...).
   */
-std::ostream &vpFlyCaptureGrabber::getCameraInfo(std::ostream & os)
+std::ostream &vpFlyCaptureGrabber::getCameraInfo(std::ostream &os)
 {
   this->connect();
 
@@ -103,15 +103,15 @@ std::ostream &vpFlyCaptureGrabber::getCameraInfo(std::ostream & os)
   return os;
 }
 
-
 /*!
-  Return the handler to the active camera or NULL if the camera is not connected.
-  This function was designed to provide a direct access to the FlyCapture SDK to
-  get access to advanced functionalities that are not implemented in this class.
+  Return the handler to the active camera or NULL if the camera is not
+connected. This function was designed to provide a direct access to the
+FlyCapture SDK to get access to advanced functionalities that are not
+implemented in this class.
 
-  We provide here after and example that shows how to use this function to access
-  to the camera and check if a given video mode and framerate are supported by the
-  camera.
+  We provide here after and example that shows how to use this function to
+access to the camera and check if a given video mode and framerate are
+supported by the camera.
 
 \code
 #include <visp3/core/vpImage.h>
@@ -127,10 +127,10 @@ int main()
   g.connect();
   FlyCapture2::Camera *handler = g.getCameraHandler();
   bool supported = false;
-  handler->GetVideoModeAndFrameRateInfo(FlyCapture2::VIDEOMODE_1280x960Y8, FlyCapture2::FRAMERATE_60, &supported);
-  if (supported)
-    g.setVideoModeAndFrameRate(FlyCapture2::VIDEOMODE_1280x960Y8, FlyCapture2::FRAMERATE_60);
-  g.startCapture();
+  handler->GetVideoModeAndFrameRateInfo(FlyCapture2::VIDEOMODE_1280x960Y8,
+FlyCapture2::FRAMERATE_60, &supported); if (supported)
+    g.setVideoModeAndFrameRate(FlyCapture2::VIDEOMODE_1280x960Y8,
+FlyCapture2::FRAMERATE_60); g.startCapture();
 
   for(int i=0; i< nframes; i++) {
     g.acquire(I);
@@ -140,9 +140,8 @@ int main()
 \endcode
 
 
-  The following code shows how to use this function to check if a given format7
-  (here MODE_0, PIXEL_FORMAT_MONO8) is supported by the camera:
-  \code
+  The following code shows how to use this function to check if a given
+format7 (here MODE_0, PIXEL_FORMAT_MONO8) is supported by the camera: \code
 #include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
@@ -154,7 +153,8 @@ int main()
 
   // Query for available Format 7 modes
   const FlyCapture2::Mode k_fmt7Mode = FlyCapture2::MODE_0;
-  const FlyCapture2::PixelFormat k_fmt7PixFmt = FlyCapture2::PIXEL_FORMAT_MONO8;
+  const FlyCapture2::PixelFormat k_fmt7PixFmt =
+FlyCapture2::PIXEL_FORMAT_MONO8;
 
   FlyCapture2::Format7Info fmt7Info;
   bool supported;
@@ -165,10 +165,12 @@ int main()
     return -1;
   }
   if (supported) {
-    std::cout << "Max image pixels: (" << fmt7Info.maxWidth << ", " << fmt7Info.maxHeight << ")" << std::endl;
-    std::cout << "Image Unit size: (" << fmt7Info.imageHStepSize << ", " << fmt7Info.imageVStepSize << ")" << std::endl;
-    std::cout << "Offset Unit size: (" << fmt7Info.offsetHStepSize << ", " << fmt7Info.offsetVStepSize << ")" << std::endl;
-    std::cout << "Pixel format bitfield: 0x" << fmt7Info.pixelFormatBitField << std::endl;
+    std::cout << "Max image pixels: (" << fmt7Info.maxWidth << ", " <<
+fmt7Info.maxHeight << ")" << std::endl; std::cout << "Image Unit size: (" <<
+fmt7Info.imageHStepSize << ", " << fmt7Info.imageVStepSize << ")" <<
+std::endl; std::cout << "Offset Unit size: (" << fmt7Info.offsetHStepSize <<
+", " << fmt7Info.offsetVStepSize << ")" << std::endl; std::cout << "Pixel
+format bitfield: 0x" << fmt7Info.pixelFormatBitField << std::endl;
 
     if ( (k_fmt7PixFmt & fmt7Info.pixelFormatBitField) == 0 ) {
       // Pixel format not supported!
@@ -187,8 +189,7 @@ FlyCapture2::Camera *vpFlyCaptureGrabber::getCameraHandler()
 
   if (m_connected == true) {
     return &m_camera;
-  }
-  else {
+  } else {
     return NULL;
   }
 }
@@ -317,10 +318,9 @@ float vpFlyCaptureGrabber::getExposure()
   Return the serial id of a camera with \e index.
   \param index : Camera index.
 
-  The following code shows how to retrieve the serial id of all the cameras that
-  are connected on the bus.
-  \code
-#include <visp3/sensor/vpFlyCaptureGrabber.h>
+  The following code shows how to retrieve the serial id of all the cameras
+that are connected on the bus. \code #include
+<visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -329,27 +329,27 @@ int main()
   unsigned int num_cameras = vpFlyCaptureGrabber::getNumCameras();
   for (unsigned int i=0; i<num_cameras; i++) {
     unsigned int serial_id = vpFlyCaptureGrabber::getCameraSerial(i);
-    std::cout << "Camera with index " << i << " has serial id: " << serial_id << std::endl;
+    std::cout << "Camera with index " << i << " has serial id: " << serial_id
+<< std::endl;
   }
 #endif
 }
   \endcode
 
-  When two cameras are connected (PGR Flea3 in our case), we get the following:
-  \code
-Camera with index 0 has serial id: 15372913
-Camera with index 1 has serial id: 15290004
-  \endcode
+  When two cameras are connected (PGR Flea3 in our case), we get the
+following: \code Camera with index 0 has serial id: 15372913 Camera with index
+1 has serial id: 15290004 \endcode
 
   \sa setCameraSerial()
  */
 unsigned int vpFlyCaptureGrabber::getCameraSerial(unsigned int index)
 {
   unsigned int num_cameras = vpFlyCaptureGrabber::getNumCameras();
-  if(index >= num_cameras) {
-    throw (vpException(vpException::badValue,
-                       "The camera with index %u is not present. Only %d cameras connected.",
-                       index, num_cameras) );
+  if (index >= num_cameras) {
+    throw(vpException(
+        vpException::badValue,
+        "The camera with index %u is not present. Only %d cameras connected.",
+        index, num_cameras));
   }
   unsigned int serial_id;
   FlyCapture2::BusManager busMgr;
@@ -357,8 +357,8 @@ unsigned int vpFlyCaptureGrabber::getCameraSerial(unsigned int index)
   error = busMgr.GetCameraSerialNumberFromIndex(index, &serial_id);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError,
-                       "Cannot get camera with index %d serial id.", index) );
+    throw(vpException(vpException::fatalError,
+                      "Cannot get camera with index %d serial id.", index));
   }
   return serial_id;
 }
@@ -369,22 +369,22 @@ unsigned int vpFlyCaptureGrabber::getCameraSerial(unsigned int index)
   with.
 
   \param index : Current camera index, a value comprised between 0 (the first
-  camera found on the bus) and the number of cameras found on the bus and returned by
-  getNumCameras() minus 1. If two cameras are connected on the bus,
-  setting \e index to one allows to communicate with the second
-  one. This identifier is not unique. That is why, it is also possible
-  to select a camera by its serial number, which is unique using
-  setCameraSerial().
+  camera found on the bus) and the number of cameras found on the bus and
+  returned by getNumCameras() minus 1. If two cameras are connected on the
+  bus, setting \e index to one allows to communicate with the second one. This
+  identifier is not unique. That is why, it is also possible to select a
+  camera by its serial number, which is unique using setCameraSerial().
 
-  \exception vpException::badValue : If the index is greater or equal to the number of
-  cameras connected to the bus.
+  \exception vpException::badValue : If the index is greater or equal to the
+  number of cameras connected to the bus.
   */
 void vpFlyCaptureGrabber::setCameraIndex(unsigned int index)
 {
-  if(index >= m_numCameras) {
-    throw (vpException(vpException::badValue,
-                       "The camera with index %u is not present. Only %d cameras connected.",
-                       index, m_numCameras) );
+  if (index >= m_numCameras) {
+    throw(vpException(
+        vpException::badValue,
+        "The camera with index %u is not present. Only %d cameras connected.",
+        index, m_numCameras));
   }
 
   m_index = index;
@@ -394,9 +394,8 @@ void vpFlyCaptureGrabber::setCameraIndex(unsigned int index)
    Set the current camera from its unique serial identifier.
    \param serial_id : Camera serial id.
 
-   The following example shows how to capture images from a camera that has seial id 15290004.
-   \code
-#include <visp3/sensor/vpFlyCaptureGrabber.h>
+   The following example shows how to capture images from a camera that has
+seial id 15290004. \code #include <visp3/sensor/vpFlyCaptureGrabber.h>
 
 int main()
 {
@@ -423,15 +422,15 @@ void vpFlyCaptureGrabber::setCameraSerial(unsigned int serial_id)
   FlyCapture2::BusManager busMgr;
   FlyCapture2::Error error;
   m_numCameras = this->getNumCameras();
-  for (unsigned int i=0; i<m_numCameras; i++) {
+  for (unsigned int i = 0; i < m_numCameras; i++) {
     if (vpFlyCaptureGrabber::getCameraSerial(i) == serial_id) {
       m_index = i;
       return;
     }
   }
-  throw (vpException(vpException::badValue,
-                     "The camera with serial id %u is not present.",
-                     serial_id) );
+  throw(vpException(vpException::badValue,
+                    "The camera with serial id %u is not present.",
+                    serial_id));
 }
 
 /*!
@@ -443,9 +442,9 @@ void vpFlyCaptureGrabber::setCameraSerial(unsigned int serial_id)
   \param value : value to set.
   \param prop_value : Switch to affect value to the corresponding variable.
  */
-void vpFlyCaptureGrabber::setProperty(const FlyCapture2::PropertyType &prop_type,
-                                      bool on, bool auto_on,
-                                      float value, PropertyValue prop_value)
+void vpFlyCaptureGrabber::setProperty(
+    const FlyCapture2::PropertyType &prop_type, bool on, bool auto_on,
+    float value, PropertyValue prop_value)
 {
   this->connect();
 
@@ -458,14 +457,18 @@ void vpFlyCaptureGrabber::setProperty(const FlyCapture2::PropertyType &prop_type
     prop.onOff = on && propInfo.onOffSupported;
     prop.autoManualMode = auto_on && propInfo.autoSupported;
     prop.absControl = propInfo.absValSupported;
-    switch(prop_value) {
+    switch (prop_value) {
     case ABS_VALUE: {
-      float value_ = (std::max)((std::min)((float)value, (float)propInfo.absMax), (float)propInfo.absMin);
+      float value_ =
+          (std::max)((std::min)((float)value, (float)propInfo.absMax),
+                     (float)propInfo.absMin);
       prop.absValue = value_;
       break;
     }
     case VALUE_A: {
-      unsigned int value_ = (std::max)((std::min)((unsigned int)value, (unsigned int)propInfo.max), (unsigned int)propInfo.min);
+      unsigned int value_ = (std::max)(
+          (std::min)((unsigned int)value, (unsigned int)propInfo.max),
+          (unsigned int)propInfo.min);
       prop.valueA = value_;
       break;
     }
@@ -475,9 +478,8 @@ void vpFlyCaptureGrabber::setProperty(const FlyCapture2::PropertyType &prop_type
     error = m_camera.SetProperty(&prop);
     if (error != FlyCapture2::PGRERROR_OK) {
       error.PrintErrorTrace();
-      throw (vpException(vpException::fatalError,
-                         "Cannot set property %d.",
-                         (int)prop_type) );
+      throw(vpException(vpException::fatalError, "Cannot set property %d.",
+                        (int)prop_type));
     }
   }
 }
@@ -501,9 +503,10 @@ int main()
   g.setCameraIndex(0);
 
   float framerate = g.getFrameRate();
-  std::cout << "Cur frame rate: " << std::fixed << std::setprecision(3) << framerate << " fps" << std::endl;
-  framerate = g.setFrameRate(30); // Set framerate to 30 fps
-  std::cout << "New frame rate: " << std::fixed << std::setprecision(3) << framerate << " fps" << std::endl;
+  std::cout << "Cur frame rate: " << std::fixed << std::setprecision(3) <<
+framerate << " fps" << std::endl; framerate = g.setFrameRate(30); // Set
+framerate to 30 fps std::cout << "New frame rate: " << std::fixed <<
+std::setprecision(3) << framerate << " fps" << std::endl;
 
   g.open(I);
   while (1)
@@ -525,9 +528,10 @@ float vpFlyCaptureGrabber::setFrameRate(float frame_rate)
 
 /*!
   Set camera shutter mode and parameter.
-  \param auto_shutter : If true set auto shutter, if false set manual shutter applying \e shutter_ms parameter.
-  \param shutter_ms : This is the speed at which the camera shutter opens and closes in manual mode.
-  \return The measured shutter after applying the new setting.
+  \param auto_shutter : If true set auto shutter, if false set manual shutter
+applying \e shutter_ms parameter. \param shutter_ms : This is the speed at
+which the camera shutter opens and closes in manual mode. \return The measured
+shutter after applying the new setting.
 
   The following example shows how to use this function:
   \code
@@ -567,10 +571,10 @@ float vpFlyCaptureGrabber::setShutter(bool auto_shutter, float shutter_ms)
 
 /*!
   Set camera gain mode and value.
-  \param gain_auto : If true set auto gain, if false set manual gain applying \e gain_value parameter.
-  \param gain_value : The amount of amplification that is applied to a pixel in manual mode. An increase in gain
-  can result in an increase in noise.
-  \return The measured gain after applying the new setting.
+  \param gain_auto : If true set auto gain, if false set manual gain applying
+\e gain_value parameter. \param gain_value : The amount of amplification that
+is applied to a pixel in manual mode. An increase in gain can result in an
+increase in noise. \return The measured gain after applying the new setting.
 
   The following example shows how to use this function:
   \code
@@ -611,9 +615,11 @@ float vpFlyCaptureGrabber::setGain(bool gain_auto, float gain_value)
 
 /*!
   Set camera brightness mode and parameter.
-  \param brightness_auto : If true set auto brightness, if false set manual brightness applying \e brightness_value parameter.
-  \param brightness_value : This is the level of black in an image. A high brightness will result in a low amount of black in the image.
-  \return The measured brightness after applying the new setting.
+  \param brightness_auto : If true set auto brightness, if false set manual
+brightness applying \e brightness_value parameter. \param brightness_value :
+This is the level of black in an image. A high brightness will result in a low
+amount of black in the image. \return The measured brightness after applying
+the new setting.
 
   The following example shows how to use this function:
   \code
@@ -642,11 +648,13 @@ int main()
 
   \sa getBrightness()
  */
-float vpFlyCaptureGrabber::setBrightness(bool brightness_auto, float brightness_value)
+float vpFlyCaptureGrabber::setBrightness(bool brightness_auto,
+                                         float brightness_value)
 {
   this->connect();
 
-  this->setProperty(FlyCapture2::BRIGHTNESS, true, brightness_auto, brightness_value);
+  this->setProperty(FlyCapture2::BRIGHTNESS, true, brightness_auto,
+                    brightness_value);
   FlyCapture2::Property prop = this->getProperty(FlyCapture2::BRIGHTNESS);
   return prop.absValue;
 }
@@ -655,15 +663,16 @@ float vpFlyCaptureGrabber::setBrightness(bool brightness_auto, float brightness_
   Set camera exposure mode and parameter.
 
   \param exposure_on : If true turn exposure on, otherwise turn off.
-  \param exposure_auto : If true set auto exposure, if false set manual exposure applying \e exposure_value parameter.
-  \param exposure_value : This is the average intensity of the image. It will use
-  other available (non-manually adjustable) controls to adjust the image. Specifically,
-  when shutter and gain are both in auto mode, manually adjusting the exposure is
-  actually adjusting the auto-exposure, which tries to make the average intensity of
-  the image 1/4 of the auto-exposure value e.g. exposure is 400, the camera will try
-  to adjust shutter and gain so that the average image intensity is 100. When the
-  auto-exposure mode is enabled for exposure, the camera tries to manipulate shutter
-  and gain such that 5% of the image is saturated (pixel value of 255).
+  \param exposure_auto : If true set auto exposure, if false set manual
+exposure applying \e exposure_value parameter. \param exposure_value : This is
+the average intensity of the image. It will use other available (non-manually
+adjustable) controls to adjust the image. Specifically, when shutter and gain
+are both in auto mode, manually adjusting the exposure is actually adjusting
+the auto-exposure, which tries to make the average intensity of the image 1/4
+of the auto-exposure value e.g. exposure is 400, the camera will try to adjust
+shutter and gain so that the average image intensity is 100. When the
+  auto-exposure mode is enabled for exposure, the camera tries to manipulate
+shutter and gain such that 5% of the image is saturated (pixel value of 255).
 
   \return The measured brightness after applying the new setting.
 
@@ -694,11 +703,13 @@ int main()
 
   \sa getExposure()
  */
-float vpFlyCaptureGrabber::setExposure(bool exposure_on, bool exposure_auto, float exposure_value)
+float vpFlyCaptureGrabber::setExposure(bool exposure_on, bool exposure_auto,
+                                       float exposure_value)
 {
   this->connect();
 
-  this->setProperty(FlyCapture2::AUTO_EXPOSURE, exposure_on, exposure_auto, exposure_value);
+  this->setProperty(FlyCapture2::AUTO_EXPOSURE, exposure_on, exposure_auto,
+                    exposure_value);
   FlyCapture2::Property prop = this->getProperty(FlyCapture2::AUTO_EXPOSURE);
   return prop.absValue;
 }
@@ -707,8 +718,10 @@ float vpFlyCaptureGrabber::setExposure(bool exposure_on, bool exposure_auto, flo
   Set camera sharpness mode and parameter.
 
   \param sharpness_on : If true turn sharpness on, otherwise turn off.
-  \param sharpness_auto : If true set auto sharpness, if false set manual sharpness applying \e sharpness_value parameter.
-  \param sharpness_value : Parameter used to tune the filter applyed on the image to reduce blurred edges in an image.
+  \param sharpness_auto : If true set auto sharpness, if false set manual
+sharpness applying \e sharpness_value parameter. \param sharpness_value :
+Parameter used to tune the filter applyed on the image to reduce blurred edges
+in an image.
 
   \return The measured sharpness after applying the new setting.
 
@@ -726,10 +739,10 @@ int main()
 
   float sharpness = g.getSharpness();
   std::cout << "Sharpness       : " << sharpness << std::endl;
-  sharpness = g.setSharpness(true, false, 1000); // Turn manual sharpness on to 1000
-  std::cout << "Sharpness manual: " << sharpness << std::endl;
-  sharpness = g.setSharpness(true, true); // Turn auto sharpness on
-  std::cout << "Sharpness auto  : " << sharpness << std::endl;
+  sharpness = g.setSharpness(true, false, 1000); // Turn manual sharpness on
+to 1000 std::cout << "Sharpness manual: " << sharpness << std::endl; sharpness
+= g.setSharpness(true, true); // Turn auto sharpness on std::cout <<
+"Sharpness auto  : " << sharpness << std::endl;
 
   g.open(I);
   ...
@@ -739,11 +752,14 @@ int main()
 
   \sa getSharpness()
  */
-unsigned int vpFlyCaptureGrabber::setSharpness(bool sharpness_on, bool sharpness_auto, unsigned int sharpness_value)
+unsigned int vpFlyCaptureGrabber::setSharpness(bool sharpness_on,
+                                               bool sharpness_auto,
+                                               unsigned int sharpness_value)
 {
   this->connect();
 
-  this->setProperty(FlyCapture2::SHARPNESS, sharpness_on, sharpness_auto, (float)sharpness_value, VALUE_A);
+  this->setProperty(FlyCapture2::SHARPNESS, sharpness_on, sharpness_auto,
+                    (float)sharpness_value, VALUE_A);
   FlyCapture2::Property prop = this->getProperty(FlyCapture2::SHARPNESS);
   return prop.valueA;
 }
@@ -752,18 +768,19 @@ unsigned int vpFlyCaptureGrabber::setSharpness(bool sharpness_on, bool sharpness
   Return property values.
   \param prop_type : Property type.
  */
-FlyCapture2::Property vpFlyCaptureGrabber::getProperty(FlyCapture2::PropertyType prop_type)
+FlyCapture2::Property
+vpFlyCaptureGrabber::getProperty(FlyCapture2::PropertyType prop_type)
 {
   this->connect();
 
   FlyCapture2::Property prop;
   prop.type = prop_type;
   FlyCapture2::Error error;
-  error = m_camera.GetProperty( &prop );
+  error = m_camera.GetProperty(&prop);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError,
-                       "Cannot get property %d value.", (int)prop_type));
+    throw(vpException(vpException::fatalError,
+                      "Cannot get property %d value.", (int)prop_type));
   }
   return prop;
 }
@@ -785,8 +802,8 @@ vpFlyCaptureGrabber::getPropertyInfo(FlyCapture2::PropertyType prop_type)
   error = m_camera.GetPropertyInfo(&propInfo);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError, "Cannot get property %d info.",
-                       (int)prop_type) );
+    throw(vpException(vpException::fatalError, "Cannot get property %d info.",
+                      (int)prop_type));
   }
   return propInfo;
 }
@@ -796,8 +813,8 @@ vpFlyCaptureGrabber::getPropertyInfo(FlyCapture2::PropertyType prop_type)
   \param video_mode : Camera video mode.
   \param frame_rate : Camera frame rate.
 
-  The following example shows how to use this function to set the camera image resolution to
-  1280 x 960, pixel format to Y8 and capture framerate to 60 fps.
+  The following example shows how to use this function to set the camera image
+resolution to 1280 x 960, pixel format to Y8 and capture framerate to 60 fps.
   \code
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vpFlyCaptureGrabber.h>
@@ -810,9 +827,8 @@ int main()
   vpFlyCaptureGrabber g;
 
   g.setCameraIndex(0); // Default camera is the first on the bus
-  g.setVideoModeAndFrameRate(FlyCapture2::VIDEOMODE_1280x960Y8, FlyCapture2::FRAMERATE_60);
-  g.open(I);
-  g.getCameraInfo(std::cout);
+  g.setVideoModeAndFrameRate(FlyCapture2::VIDEOMODE_1280x960Y8,
+FlyCapture2::FRAMERATE_60); g.open(I); g.getCameraInfo(std::cout);
 
   for(int i=0; i< nframes; i++) {
     g.acquire(I);
@@ -821,8 +837,8 @@ int main()
 }
   \endcode
  */
-void vpFlyCaptureGrabber::setVideoModeAndFrameRate(FlyCapture2::VideoMode video_mode,
-                                                   FlyCapture2::FrameRate frame_rate)
+void vpFlyCaptureGrabber::setVideoModeAndFrameRate(
+    FlyCapture2::VideoMode video_mode, FlyCapture2::FrameRate frame_rate)
 {
   this->connect();
 
@@ -830,38 +846,42 @@ void vpFlyCaptureGrabber::setVideoModeAndFrameRate(FlyCapture2::VideoMode video_
   error = m_camera.SetVideoModeAndFrameRate(video_mode, frame_rate);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError, "Cannot set video mode and framerate.") );
+    throw(vpException(vpException::fatalError,
+                      "Cannot set video mode and framerate."));
   }
 }
 
 /*!
   Return true if video mode and framerate is supported.
   */
-bool vpFlyCaptureGrabber::isVideoModeAndFrameRateSupported(FlyCapture2::VideoMode video_mode,
-                                                           FlyCapture2::FrameRate frame_rate)
+bool vpFlyCaptureGrabber::isVideoModeAndFrameRateSupported(
+    FlyCapture2::VideoMode video_mode, FlyCapture2::FrameRate frame_rate)
 {
   this->connect();
 
   FlyCapture2::Error error;
   bool supported = false;
-  error = m_camera.GetVideoModeAndFrameRateInfo(video_mode, frame_rate, &supported);
+  error = m_camera.GetVideoModeAndFrameRateInfo(video_mode, frame_rate,
+                                                &supported);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError, "Cannot get video mode and framerate.") );
+    throw(vpException(vpException::fatalError,
+                      "Cannot get video mode and framerate."));
   }
   return supported;
 }
 
 /*!
   Return size and offset corresponding to a centered roi.
-  \param size : Horizontal or vertical roi size. If set to 0, use the max allowed size.
-  \param max_size : Allowed max size.
-  \param step : Step.
+  \param size : Horizontal or vertical roi size. If set to 0, use the max
+  allowed size. \param max_size : Allowed max size. \param step : Step.
  */
 std::pair<unsigned int, unsigned int>
-vpFlyCaptureGrabber::centerRoi(unsigned int size, unsigned int max_size, unsigned int step)
+vpFlyCaptureGrabber::centerRoi(unsigned int size, unsigned int max_size,
+                               unsigned int step)
 {
-  if (size == 0 || size > max_size) size = max_size;
+  if (size == 0 || size > max_size)
+    size = max_size;
   // size should be a multiple of step
   size = size / step * step;
   const unsigned int offset = (max_size - size) / 2;
@@ -873,11 +893,14 @@ vpFlyCaptureGrabber::centerRoi(unsigned int size, unsigned int max_size, unsigne
   Set format7 video mode.
   \param format7_mode : Format 7 mode.
   \param pixel_format : Pixel format.
-  \param width,height : Size of the centered roi. If set to 0, use the max allowed size.
+  \param width,height : Size of the centered roi. If set to 0, use the max
+allowed size.
 
-  If the format7 video mode and pixel format are not supported, return an exception.
+  If the format7 video mode and pixel format are not supported, return an
+exception.
 
-  The following example shows how to use this fonction to capture a 640x480 roi:
+  The following example shows how to use this fonction to capture a 640x480
+roi:
 
   \code
 #include <iomanip>
@@ -891,7 +914,8 @@ int main()
   vpFlyCaptureGrabber g;
   g.setCameraIndex(0);
 
-  g.setFormat7VideoMode(FlyCapture2::MODE_0, FlyCapture2::PIXEL_FORMAT_MONO8, 640, 480);
+  g.setFormat7VideoMode(FlyCapture2::MODE_0, FlyCapture2::PIXEL_FORMAT_MONO8,
+640, 480);
 
   g.open(I);
   ...
@@ -899,9 +923,9 @@ int main()
 }
   \endcode
  */
-void vpFlyCaptureGrabber::setFormat7VideoMode(FlyCapture2::Mode format7_mode,
-                                              FlyCapture2::PixelFormat pixel_format,
-                                              unsigned int width, unsigned int height)
+void vpFlyCaptureGrabber::setFormat7VideoMode(
+    FlyCapture2::Mode format7_mode, FlyCapture2::PixelFormat pixel_format,
+    unsigned int width, unsigned int height)
 {
   this->connect();
 
@@ -913,38 +937,46 @@ void vpFlyCaptureGrabber::setFormat7VideoMode(FlyCapture2::Mode format7_mode,
   error = m_camera.GetFormat7Info(&fmt7_info, &fmt7_supported);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError, "Cannot get format7 info.") );
+    throw(vpException(vpException::fatalError, "Cannot get format7 info."));
   }
-  if (! fmt7_supported) {
-    throw (vpException(vpException::fatalError, "Format7 mode %d not supported.", (int)format7_mode) );
+  if (!fmt7_supported) {
+    throw(vpException(vpException::fatalError,
+                      "Format7 mode %d not supported.", (int)format7_mode));
   }
 
   FlyCapture2::Format7ImageSettings fmt7_settings;
   fmt7_settings.mode = format7_mode;
   fmt7_settings.pixelFormat = pixel_format;
   // Set centered roi
-  std::pair<unsigned int, unsigned int> roi_w = this->centerRoi(width, fmt7_info.maxWidth, fmt7_info.imageHStepSize);
-  std::pair<unsigned int, unsigned int> roi_h = this->centerRoi(height, fmt7_info.maxHeight, fmt7_info.imageVStepSize);
-  fmt7_settings.width   = roi_w.first;
+  std::pair<unsigned int, unsigned int> roi_w =
+      this->centerRoi(width, fmt7_info.maxWidth, fmt7_info.imageHStepSize);
+  std::pair<unsigned int, unsigned int> roi_h =
+      this->centerRoi(height, fmt7_info.maxHeight, fmt7_info.imageVStepSize);
+  fmt7_settings.width = roi_w.first;
   fmt7_settings.offsetX = roi_w.second;
-  fmt7_settings.height  = roi_h.first;
+  fmt7_settings.height = roi_h.first;
   fmt7_settings.offsetY = roi_h.second;
 
   // Validate the settings
   FlyCapture2::Format7PacketInfo fmt7_packet_info;
   bool valid = false;
-  error = m_camera.ValidateFormat7Settings(&fmt7_settings, &valid, &fmt7_packet_info);
+  error = m_camera.ValidateFormat7Settings(&fmt7_settings, &valid,
+                                           &fmt7_packet_info);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError, "Cannot validate format7 settings.") );
+    throw(vpException(vpException::fatalError,
+                      "Cannot validate format7 settings."));
   }
-  if (! valid) {
-    throw (vpException(vpException::fatalError, "Format7 settings are not valid.") );
+  if (!valid) {
+    throw(vpException(vpException::fatalError,
+                      "Format7 settings are not valid."));
   }
-  error = m_camera.SetFormat7Configuration(&fmt7_settings, fmt7_packet_info.recommendedBytesPerPacket);
+  error = m_camera.SetFormat7Configuration(
+      &fmt7_settings, fmt7_packet_info.recommendedBytesPerPacket);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError, "Cannot set format7 settings.") );
+    throw(
+        vpException(vpException::fatalError, "Cannot set format7 settings."));
   }
 }
 
@@ -963,7 +995,7 @@ bool vpFlyCaptureGrabber::isFormat7Supported(FlyCapture2::Mode format7_mode)
   error = m_camera.GetFormat7Info(&fmt7_info, &supported);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError, "Cannot get format7 info.") );
+    throw(vpException(vpException::fatalError, "Cannot get format7 info."));
   }
 
   return supported;
@@ -983,8 +1015,9 @@ void vpFlyCaptureGrabber::startCapture()
     error = m_camera.StartCapture();
     if (error != FlyCapture2::PGRERROR_OK) {
       error.PrintErrorTrace();
-      throw (vpException(vpException::fatalError,
-                         "Cannot start capture for camera with serial %u", getCameraSerial(m_index)));
+      throw(vpException(vpException::fatalError,
+                        "Cannot start capture for camera with serial %u",
+                        getCameraSerial(m_index)));
     }
     m_capture = true;
   }
@@ -1007,7 +1040,7 @@ void vpFlyCaptureGrabber::stopCapture()
     error = m_camera.StopCapture();
     if (error != FlyCapture2::PGRERROR_OK) {
       error.PrintErrorTrace();
-      throw (vpException(vpException::fatalError, "Cannot stop capture.") );
+      throw(vpException(vpException::fatalError, "Cannot stop capture."));
     }
     m_capture = false;
   }
@@ -1028,7 +1061,8 @@ void vpFlyCaptureGrabber::connect()
     FlyCapture2::Error error;
     m_numCameras = this->getNumCameras();
     if (m_numCameras == 0) {
-      throw (vpException(vpException::fatalError, "No camera found on the bus"));
+      throw(
+          vpException(vpException::fatalError, "No camera found on the bus"));
     }
 
     FlyCapture2::BusManager busMgr;
@@ -1036,16 +1070,17 @@ void vpFlyCaptureGrabber::connect()
     error = busMgr.GetCameraFromIndex(m_index, &m_guid);
     if (error != FlyCapture2::PGRERROR_OK) {
       error.PrintErrorTrace();
-      throw (vpException(vpException::fatalError,
-                         "Cannot retrieve guid of camera with index %u.",
-                         m_index) );
+      throw(vpException(vpException::fatalError,
+                        "Cannot retrieve guid of camera with index %u.",
+                        m_index));
     }
     // Connect to a camera
     error = m_camera.Connect(&m_guid);
     if (error != FlyCapture2::PGRERROR_OK) {
       error.PrintErrorTrace();
-      throw (vpException(vpException::fatalError,
-                         "Cannot connect to camera with serial %u", getCameraSerial(m_index)));
+      throw(vpException(vpException::fatalError,
+                        "Cannot connect to camera with serial %u",
+                        getCameraSerial(m_index)));
     }
     m_connected = true;
   }
@@ -1068,7 +1103,7 @@ void vpFlyCaptureGrabber::disconnect()
     error = m_camera.Disconnect();
     if (error != FlyCapture2::PGRERROR_OK) {
       error.PrintErrorTrace();
-      throw (vpException(vpException::fatalError, "Cannot stop capture.") );
+      throw(vpException(vpException::fatalError, "Cannot stop capture."));
     }
     m_connected = false;
   }
@@ -1080,8 +1115,9 @@ void vpFlyCaptureGrabber::disconnect()
 
 /*!
    Stop active camera capturing images and disconnect the active camera.
-   If you want to use again this camera, you may call setCamera(const unsigned int &)
-   and open(vpImage<unsigned char> &) or open(vpImage<vpRGBa> &) to connect again the camera.
+   If you want to use again this camera, you may call setCamera(const unsigned
+   int &) and open(vpImage<unsigned char> &) or open(vpImage<vpRGBa> &) to
+   connect again the camera.
 
    Similar then calling stopCapture() and disconnect():
    \code
@@ -1115,17 +1151,19 @@ void vpFlyCaptureGrabber::acquire(vpImage<unsigned char> &I)
 
   \param timestamp : The acquisition timestamp.
 */
-void vpFlyCaptureGrabber::acquire(vpImage<unsigned char> &I, FlyCapture2::TimeStamp &timestamp)
+void vpFlyCaptureGrabber::acquire(vpImage<unsigned char> &I,
+                                  FlyCapture2::TimeStamp &timestamp)
 {
   this->open();
 
   FlyCapture2::Error error;
   // Retrieve an image
-  error = m_camera.RetrieveBuffer( &m_rawImage );
+  error = m_camera.RetrieveBuffer(&m_rawImage);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError,
-                       "Cannot retrieve image from camera with serial %u", getCameraSerial(m_index)));
+    throw(vpException(vpException::fatalError,
+                      "Cannot retrieve image from camera with serial %u",
+                      getCameraSerial(m_index)));
   }
   timestamp = m_rawImage.GetTimeStamp();
 
@@ -1146,8 +1184,9 @@ void vpFlyCaptureGrabber::acquire(vpImage<unsigned char> &I, FlyCapture2::TimeSt
       m_rawImage.Convert(FlyCapture2::PIXEL_FORMAT_MONO8, &convertedImage);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError,
-                       "Cannot convert image from camera with serial %u", getCameraSerial(m_index)));
+    throw(vpException(vpException::fatalError,
+                      "Cannot convert image from camera with serial %u",
+                      getCameraSerial(m_index)));
   }
 }
 
@@ -1169,17 +1208,19 @@ void vpFlyCaptureGrabber::acquire(vpImage<vpRGBa> &I)
 
   \param timestamp : The acquisition timestamp.
 */
-void vpFlyCaptureGrabber::acquire(vpImage<vpRGBa> &I, FlyCapture2::TimeStamp &timestamp)
+void vpFlyCaptureGrabber::acquire(vpImage<vpRGBa> &I,
+                                  FlyCapture2::TimeStamp &timestamp)
 {
   this->open();
 
   FlyCapture2::Error error;
   // Retrieve an image
-  error = m_camera.RetrieveBuffer( &m_rawImage );
+  error = m_camera.RetrieveBuffer(&m_rawImage);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError,
-                       "Cannot retrieve image from camera with serial %u", getCameraSerial(m_index)));
+    throw(vpException(vpException::fatalError,
+                      "Cannot retrieve image from camera with serial %u",
+                      getCameraSerial(m_index)));
   }
   timestamp = m_rawImage.GetTimeStamp();
 
@@ -1187,11 +1228,12 @@ void vpFlyCaptureGrabber::acquire(vpImage<vpRGBa> &I, FlyCapture2::TimeStamp &ti
   FlyCapture2::Image convertedImage;
 
   // Convert the raw image
-  error = m_rawImage.Convert( FlyCapture2::PIXEL_FORMAT_RGBU, &convertedImage );
+  error = m_rawImage.Convert(FlyCapture2::PIXEL_FORMAT_RGBU, &convertedImage);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError,
-                       "Cannot convert image from camera with serial %u", getCameraSerial(m_index)));
+    throw(vpException(vpException::fatalError,
+                      "Cannot convert image from camera with serial %u",
+                      getCameraSerial(m_index)));
   }
   height = convertedImage.GetRows();
   width = convertedImage.GetCols();
@@ -1213,7 +1255,6 @@ void vpFlyCaptureGrabber::acquire(vpImage<vpRGBa> &I, FlyCapture2::TimeStamp &ti
     }
   }
 }
-
 
 /*!
    Connect to the active camera, start capture and retrieve an image.
@@ -1265,12 +1306,12 @@ bool vpFlyCaptureGrabber::isCameraPowerAvailable()
   unsigned int powerRegVal = 0;
 
   FlyCapture2::Error error;
-  error = m_camera.ReadRegister( powerReg, &powerRegVal );
-  if ( error != FlyCapture2::PGRERROR_OK ) {
+  error = m_camera.ReadRegister(powerReg, &powerRegVal);
+  if (error != FlyCapture2::PGRERROR_OK) {
     return false;
   }
 
-  return ( (powerRegVal & 0x00008000 ) != 0 );
+  return ((powerRegVal & 0x00008000) != 0);
 }
 
 /*!
@@ -1280,18 +1321,18 @@ bool vpFlyCaptureGrabber::isCameraPowerAvailable()
  */
 bool vpFlyCaptureGrabber::getCameraPower()
 {
-  if ( ! isCameraPowerAvailable() )
+  if (!isCameraPowerAvailable())
     return false;
   const unsigned int powerReg = 0x610;
-  unsigned int powerRegVal = 0 ;
+  unsigned int powerRegVal = 0;
 
   FlyCapture2::Error error;
-  error = m_camera.ReadRegister( powerReg, &powerRegVal );
-  if ( error != FlyCapture2::PGRERROR_OK ) {
+  error = m_camera.ReadRegister(powerReg, &powerRegVal);
+  if (error != FlyCapture2::PGRERROR_OK) {
     return false;
   }
 
-  return ( (powerRegVal & (0x1 << 31)) != 0 );
+  return ((powerRegVal & (0x1 << 31)) != 0);
 }
 
 /*!
@@ -1312,7 +1353,8 @@ int main()
   g.connect();
 
   bool power = g.getCameraPower();
-  std::cout << "Camera is powered: " << ((power == true) ? "on" : "off") << std::endl;
+  std::cout << "Camera is powered: " << ((power == true) ? "on" : "off") <<
+std::endl;
 
   if (power)
     g.setCameraPower(false); // Power off the camera
@@ -1326,9 +1368,9 @@ void vpFlyCaptureGrabber::setCameraPower(bool on)
 {
   this->connect();
 
-  if ( ! isCameraPowerAvailable() ) {
-    throw (vpException(vpException::badValue,
-                       "Cannot power on camera. Feature not available") );
+  if (!isCameraPowerAvailable()) {
+    throw(vpException(vpException::badValue,
+                      "Cannot power on camera. Feature not available"));
   }
 
   // Power on the camera
@@ -1338,10 +1380,11 @@ void vpFlyCaptureGrabber::setCameraPower(bool on)
   powerRegVal = (on == true) ? 0x80000000 : 0x0;
 
   FlyCapture2::Error error;
-  error  = m_camera.WriteRegister( powerReg, powerRegVal );
+  error = m_camera.WriteRegister(powerReg, powerRegVal);
   if (error != FlyCapture2::PGRERROR_OK) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError, "Cannot power on the camera.") );
+    throw(
+        vpException(vpException::fatalError, "Cannot power on the camera."));
   }
 
   const unsigned int millisecondsToSleep = 100;
@@ -1349,17 +1392,16 @@ void vpFlyCaptureGrabber::setCameraPower(bool on)
   unsigned int retries = 10;
 
   // Wait for camera to complete power-up
-  do
-  {
+  do {
     vpTime::wait(millisecondsToSleep);
     error = m_camera.ReadRegister(powerReg, &regVal);
     if (error == FlyCapture2::PGRERROR_TIMEOUT) {
       // ignore timeout errors, camera may not be responding to
       // register reads during power-up
-    }
-    else if (error != FlyCapture2::PGRERROR_OK) {
+    } else if (error != FlyCapture2::PGRERROR_OK) {
       error.PrintErrorTrace();
-      throw (vpException(vpException::fatalError, "Cannot power on the camera.") );
+      throw(vpException(vpException::fatalError,
+                        "Cannot power on the camera."));
     }
 
     retries--;
@@ -1368,7 +1410,8 @@ void vpFlyCaptureGrabber::setCameraPower(bool on)
   // Check for timeout errors after retrying
   if (error == FlyCapture2::PGRERROR_TIMEOUT) {
     error.PrintErrorTrace();
-    throw (vpException(vpException::fatalError, "Cannot power on the camera. Timeout occur") );
+    throw(vpException(vpException::fatalError,
+                      "Cannot power on the camera. Timeout occur"));
   }
 }
 
@@ -1388,7 +1431,8 @@ int main()
 }
    \endcode
  */
-vpFlyCaptureGrabber &vpFlyCaptureGrabber::operator>>(vpImage<unsigned char> &I)
+vpFlyCaptureGrabber &vpFlyCaptureGrabber::
+operator>>(vpImage<unsigned char> &I)
 {
   this->acquire(I);
   return *this;
@@ -1417,6 +1461,7 @@ vpFlyCaptureGrabber &vpFlyCaptureGrabber::operator>>(vpImage<vpRGBa> &I)
 }
 
 #else
-// Work arround to avoid warning: libvisp_flycapture.a(vpFlyCaptureGrabber.cpp.o) has no symbols
-void dummy_vpFlyCaptureGrabber() {};
+// Work arround to avoid warning:
+// libvisp_flycapture.a(vpFlyCaptureGrabber.cpp.o) has no symbols
+void dummy_vpFlyCaptureGrabber(){};
 #endif

@@ -7,13 +7,13 @@
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 
 #if defined(VISP_HAVE_PTHREAD)
-#  include <pthread.h>
-#  include <string.h>
+#include <pthread.h>
+#include <string.h>
 #elif defined(_WIN32)
-// Include WinSock2.h before windows.h to ensure that winsock.h is not included by windows.h 
-// since winsock.h and winsock2.h are incompatible
-#  include <WinSock2.h> 
-#  include <windows.h>
+// Include WinSock2.h before windows.h to ensure that winsock.h is not
+// included by windows.h since winsock.h and winsock2.h are incompatible
+#include <WinSock2.h>
+#include <windows.h>
 #endif
 
 /*!
@@ -22,12 +22,14 @@
    \ingroup group_core_threading
 
    Class to represent individual threads of execution.
-   This class implements native pthread functionalities if available, or native Windows threading
-   capabilities if pthread is not available under Windows.
+   This class implements native pthread functionalities if available, or
+   native Windows threading capabilities if pthread is not available under
+   Windows.
 
-   There are two examples implemented in testMutex.cpp and testThread.cpp to show how to use this class.
-   The content of test-thread.cpp that hightlights the main functionalities of this class is given hereafter:
-   \snippet testThread.cpp Code
+   There are two examples implemented in testMutex.cpp and testThread.cpp to
+   show how to use this class. The content of test-thread.cpp that hightlights
+   the main functionalities of this class is given hereafter: \snippet
+   testThread.cpp Code
 
    More examples are provided in \ref tutorial-multi-threading.
  */
@@ -42,38 +44,38 @@ public:
 #elif defined(_WIN32)
   typedef LPVOID Args;
   typedef DWORD Return;
-	typedef LPTHREAD_START_ROUTINE Fn;
-	//typedef DWORD (*Fn)(Args);
-	typedef HANDLE Handle;
+  typedef LPTHREAD_START_ROUTINE Fn;
+  // typedef DWORD (*Fn)(Args);
+  typedef HANDLE Handle;
 #endif
   /*!
-     Default constructor that does nothing. To attach a function to this thread
-     of execution you need to call create().
+     Default constructor that does nothing. To attach a function to this
+     thread of execution you need to call create().
    */
-  vpThread() : m_handle(), m_isCreated(false), m_isJoinable(false)
-  {
-  }
+  vpThread() : m_handle(), m_isCreated(false), m_isJoinable(false) {}
 
   /*!
-     Construct a thread object that represents a new joinable thread of execution.
-     The new thread of execution calls \e fn passing \e args as arguments.
-     \param fn : A pointer to a function.
-     \param args : Arguments passed to the call to \e fn (if any).
+     Construct a thread object that represents a new joinable thread of
+     execution. The new thread of execution calls \e fn passing \e args as
+     arguments. \param fn : A pointer to a function. \param args : Arguments
+     passed to the call to \e fn (if any).
    */
-  vpThread(vpThread::Fn fn, vpThread::Args args=NULL) : m_handle(), m_isCreated(false), m_isJoinable(false)
+  vpThread(vpThread::Fn fn, vpThread::Args args = NULL)
+    : m_handle(), m_isCreated(false), m_isJoinable(false)
   {
     create(fn, args);
   }
 
   /*!
-     Creates a thread object that represents a new joinable thread of execution.
-     \param fn : A pointer to a function.
-     \param args : Arguments passed to the call to \e fn (if any).
+     Creates a thread object that represents a new joinable thread of
+     execution. \param fn : A pointer to a function. \param args : Arguments
+     passed to the call to \e fn (if any).
    */
-  void create(vpThread::Fn fn, vpThread::Args args=NULL)
+  void create(vpThread::Fn fn, vpThread::Args args = NULL)
   {
     if (m_isCreated)
-      throw vpException(vpException::fatalError, "The thread is already created");
+      throw vpException(vpException::fatalError,
+                        "The thread is already created");
 #if defined(VISP_HAVE_PTHREAD)
     int err = pthread_create(&m_handle, NULL, fn, args);
     if (err != 0) {
@@ -81,14 +83,14 @@ public:
                         "Can't create thread : %s", strerror(err));
     }
 #elif defined(_WIN32)
-    DWORD   dwThreadIdArray;
-    m_handle = CreateThread(
-          NULL,                   // default security attributes
-          0,                      // use default stack size
-          fn,                     // thread function name
-          args,                   // argument to thread function
-          0,                      // use default creation flags
-          &dwThreadIdArray);      // returns the thread identifier
+    DWORD dwThreadIdArray;
+    m_handle =
+        CreateThread(NULL,              // default security attributes
+                     0,                 // use default stack size
+                     fn,                // thread function name
+                     args,              // argument to thread function
+                     0,                 // use default creation flags
+                     &dwThreadIdArray); // returns the thread identifier
 #endif
 
     m_isJoinable = true;
@@ -106,13 +108,13 @@ public:
 #endif
   }
 
-
   /*!
      This function return when the thread execution has completed.
-     This blocks the execution of the thread that calls this function until the function
-     called on construction returns (if it hasn't yet).
+     This blocks the execution of the thread that calls this function until
+     the function called on construction returns (if it hasn't yet).
 
-     After a call to this function, the thread object becomes non-joinable and can be destroyed safely.
+     After a call to this function, the thread object becomes non-joinable and
+     can be destroyed safely.
 
      \sa joinable()
    */
@@ -122,23 +124,21 @@ public:
 #if defined(VISP_HAVE_PTHREAD)
       pthread_join(m_handle, NULL);
 #elif defined(_WIN32)
-#  if defined(WINRT_8_1)
+#if defined(WINRT_8_1)
       WaitForSingleObjectEx(m_handle, INFINITE, FALSE);
-#  else
+#else
       WaitForSingleObject(m_handle, INFINITE);
-#  endif
+#endif
 #endif
       m_isJoinable = false;
     }
   }
 
   /*!
-     Returns a value used to access implementation-specific information associated to the thread.
+     Returns a value used to access implementation-specific information
+     associated to the thread.
    */
-  Handle getHandle()
-  {
-    return m_handle;
-  }
+  Handle getHandle() { return m_handle; }
 
   /*!
      Returns whether the thread object is joinable.
@@ -149,14 +149,11 @@ public:
 
      \sa join()
    */
-  bool joinable()
-  {
-    return m_isJoinable;
-  }
+  bool joinable() { return m_isJoinable; }
 
 protected:
-  Handle m_handle; //!< Thread handle
-  bool m_isCreated; //!< Indicates if the thread is created
+  Handle m_handle;   //!< Thread handle
+  bool m_isCreated;  //!< Indicates if the thread is created
   bool m_isJoinable; //!< Indicates if the thread is joinable
 };
 

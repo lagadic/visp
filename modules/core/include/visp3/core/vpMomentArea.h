@@ -41,7 +41,7 @@
 #include <visp3/core/vpMoment.h>
 
 class vpMomentObject;
-class vpMomentCentered;		// Required for discrete case of vpMomentObject
+class vpMomentCentered; // Required for discrete case of vpMomentObject
 
 /*!
   \class vpMomentArea
@@ -51,19 +51,21 @@ class vpMomentCentered;		// Required for discrete case of vpMomentObject
   \brief Class handling the surface moment.
 
 */
-class VISP_EXPORT vpMomentArea : public vpMoment {
+class VISP_EXPORT vpMomentArea : public vpMoment
+{
 public:
   vpMomentArea();
-  virtual ~vpMomentArea() {};
+  virtual ~vpMomentArea(){};
 
   /** @name Inherited functionalities from vpMomentArea */
   //@{
   void compute();
   //! Moment name.
-  const char* name() const {return "vpMomentArea";}
-  void printDependencies(std::ostream& os) const;
+  const char *name() const { return "vpMomentArea"; }
+  void printDependencies(std::ostream &os) const;
   //@}
-  friend VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentArea& m);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                              const vpMomentArea &m);
 };
 
 #endif

@@ -36,27 +36,30 @@
  *
  *****************************************************************************/
 
-
 #ifndef __vpTrackingException_H
 #define __vpTrackingException_H
 
-
-/* ------------------------------------------------------------------------- */
-/* --- INCLUDE ------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
-
+/* -------------------------------------------------------------------------
+ */
+/* --- INCLUDE -------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /* \file vpTrackingException.h
    \brief error that can be emited by the vpTracker class and its derivates
  */
 /* Classes standards. */
 
+#include <iostream> /* Classe std::ostream.    */
+#include <string>   /* Classe string.     */
 #include <visp3/core/vpException.h>
-#include <iostream>                /* Classe std::ostream.    */
-#include <string>                  /* Classe string.     */
-/* ------------------------------------------------------------------------- */
-/* --- CLASS --------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+ */
+/* --- CLASS ---------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /*!
   \class vpTrackingException
@@ -65,35 +68,35 @@
  */
 class VISP_EXPORT vpTrackingException : public vpException
 {
-  public:
-    /*!
-    \brief Lists the possible error than can be emmited while calling
-    vpTracking member
-   */
-    enum errorTrackingCodeEnum
-    {
-      featureLostError,
+public:
+  /*!
+  \brief Lists the possible error than can be emmited while calling
+  vpTracking member
+ */
+  enum errorTrackingCodeEnum {
+    featureLostError,
 
-      // Moving edges
-      notEnoughPointError,
-      initializationError,
-      fatalError
-    } ;
+    // Moving edges
+    notEnoughPointError,
+    initializationError,
+    fatalError
+  };
 
-  public:
-    vpTrackingException (const int id,  const char* format, ...)
-    {
-      this->code = id;
-      va_list args;
-      va_start(args, format);
-      setMessage(format, args);
-      va_end (args);
-    }
-    vpTrackingException (const int id, const std::string & msg)
-      : vpException(id, msg){ ; }
-    explicit vpTrackingException (const int id)
-      : vpException(id){ ; }
-
+public:
+  vpTrackingException(const int id, const char *format, ...)
+  {
+    this->code = id;
+    va_list args;
+    va_start(args, format);
+    setMessage(format, args);
+    va_end(args);
+  }
+  vpTrackingException(const int id, const std::string &msg)
+    : vpException(id, msg)
+  {
+    ;
+  }
+  explicit vpTrackingException(const int id) : vpException(id) { ; }
 };
 
 #endif

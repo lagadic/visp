@@ -36,9 +36,7 @@
  *
  *****************************************************************************/
 
-
 #include <visp3/visual_features/vpGenericFeature.h>
-
 
 // Exception
 #include <visp3/core/vpException.h>
@@ -47,26 +45,17 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-
-
 /*!
   \file vpGenericFeature.cpp
-  Class that defines what is a generic feature. This class could be used to create new
-  features not implemented in ViSP.
+  Class that defines what is a generic feature. This class could be used to
+  create new features not implemented in ViSP.
 */
 
-vpGenericFeature::~vpGenericFeature()
-{
+vpGenericFeature::~vpGenericFeature() {}
 
-}
+void vpGenericFeature::init() { s = 0; }
 
-void vpGenericFeature::init()
-{
-  s = 0 ;
-}
-
-
-/*! 
+/*!
 
   Default constructor. You are not allowed to use this
   constructor. Please use the vpGenericFeature::vpGenericFeature(int
@@ -82,24 +71,25 @@ vpGenericFeature::vpGenericFeature()
   /*
   vpERROR_TRACE("You are not allow to use this constructor ") ;
   vpERROR_TRACE("Please, use  vpGenericFeature::vpGenericFeature(int _dim) "
-	      "constructor") ;
+              "constructor") ;
   vpERROR_TRACE("And provide the dimension of the visual feature ") ;
   throw(vpException(vpException::cannotUseConstructorError,
-			     "You are not allow to use this constructor ")) ;
+                             "You are not allow to use this constructor ")) ;
   */
 }
 
-
 /*!
-  Constructor of the class you have to use. The feature table is initilialized with the good dimension.
+  Constructor of the class you have to use. The feature table is initilialized
+  with the good dimension.
 
-  \param dimension_gen_s : Dimension of the generic feature. It corresponds to the number of features you want to create.
+  \param dimension_gen_s : Dimension of the generic feature. It corresponds to
+  the number of features you want to create.
 */
 vpGenericFeature::vpGenericFeature(unsigned int dimension_gen_s)
   : L(), err(), errorStatus(errorNotInitalized)
 {
-  this->dim_s = dimension_gen_s ;
-  s.resize(dimension_gen_s) ;
+  this->dim_s = dimension_gen_s;
+  s.resize(dimension_gen_s);
 }
 
 /*!
@@ -111,22 +101,18 @@ vpGenericFeature::vpGenericFeature(unsigned int dimension_gen_s)
   \exception vpFeatureException::sizeMismatchError : If the size of
   the error vector is bad.
 */
-void
-vpGenericFeature::setError(const vpColVector &error_vector)
+void vpGenericFeature::setError(const vpColVector &error_vector)
 {
-  if (error_vector.getRows() != dim_s)
-  {
+  if (error_vector.getRows() != dim_s) {
     vpERROR_TRACE("size mismatch between error dimension"
-		"and feature dimension");
+                  "and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
-			     "size mismatch between error dimension"
-			     "and feature dimension"));
-
+                             "size mismatch between error dimension"
+                             "and feature dimension"));
   }
-  errorStatus = errorInitialized ;
-  err = error_vector ;
+  errorStatus = errorInitialized;
+  err = error_vector;
 }
-
 
 /*!
   Compute the error \f$ (s-s^*)\f$ between the current and the desired
@@ -139,8 +125,8 @@ vpGenericFeature::setError(const vpColVector &error_vector)
   vpGenericFeature::serError is not used in the loop then an exception is
   thrown
 
-  obviously if vpGenericFeature::setError is not used then s_star is considered
-  and this warning is meaningless.
+  obviously if vpGenericFeature::setError is not used then s_star is
+  considered and this warning is meaningless.
 
   \param s_star : Desired visual feature.
 
@@ -180,72 +166,56 @@ vpGenericFeature::setError(const vpColVector &error_vector)
   s.setInteractionMatrix(L);
 
   // Compute the error vector (s-s*) for the two first features
-  s.error(s_star, vpBasicFeature::FEATURE_LINE[0] | vpBasicFeature::FEATURE_LINE[1]);
-  \endcode
+  s.error(s_star, vpBasicFeature::FEATURE_LINE[0] |
+  vpBasicFeature::FEATURE_LINE[1]); \endcode
 */
-vpColVector
-vpGenericFeature::error(const vpBasicFeature &s_star,
-			const unsigned int select)
+vpColVector vpGenericFeature::error(const vpBasicFeature &s_star,
+                                    const unsigned int select)
 {
-  if (s_star.get_s().getRows() != dim_s)
-  {
+  if (s_star.get_s().getRows() != dim_s) {
     vpERROR_TRACE("size mismatch between s* dimension "
-		"and feature dimension");
+                  "and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
-			     "size mismatch between s* dimension "
-			     "and feature dimension"));
-
+                             "size mismatch between s* dimension "
+                             "and feature dimension"));
   }
 
-  vpColVector e(0) ;
+  vpColVector e(0);
 
-  try
-  {
-    if (errorStatus == errorHasToBeUpdated)
-    {
+  try {
+    if (errorStatus == errorHasToBeUpdated) {
       vpERROR_TRACE("Error has no been updated since last iteration"
-		  "you should have used vpGenericFeature::setError"
-		  "in you visual servoing loop") ;
-      throw(vpFeatureException(vpFeatureException::badErrorVectorError,
-			       "Error has no been updated since last iteration"));
+                    "you should have used vpGenericFeature::setError"
+                    "in you visual servoing loop");
+      throw(vpFeatureException(
+          vpFeatureException::badErrorVectorError,
+          "Error has no been updated since last iteration"));
+    } else if (errorStatus == errorInitialized) {
+      vpDEBUG_TRACE(25, "Error init: e=e.");
+      errorStatus = errorHasToBeUpdated;
+      for (unsigned int i = 0; i < dim_s; i++)
+        if (FEATURE_LINE[i] & select) {
+          vpColVector ex(1);
+          ex[i] = err[i];
+
+          e = vpColVector::stack(e, ex);
+        }
+    } else {
+      vpDEBUG_TRACE(25, "Error not init: e=s-s*.");
+
+      for (unsigned int i = 0; i < dim_s; i++)
+        if (FEATURE_LINE[i] & select) {
+          vpColVector ex(1);
+          ex[0] = s[i] - s_star[i];
+
+          e = vpColVector::stack(e, ex);
+        }
     }
-    else
-      if (errorStatus == errorInitialized)
-      {
-	vpDEBUG_TRACE(25,"Error init: e=e.");
-	errorStatus = errorHasToBeUpdated ;
-	for (unsigned int i=0 ; i < dim_s ; i++)
-	  if (FEATURE_LINE[i] & select )
-	  {
-	    vpColVector ex(1) ;
-	    ex[i] = err[i] ;
-
-	    e = vpColVector::stack(e,ex) ;
-	  }
-      }
-      else
-      {
-	vpDEBUG_TRACE(25,"Error not init: e=s-s*.");
-
-	for (unsigned int i=0 ; i < dim_s ; i++)
-	  if (FEATURE_LINE[i] & select )
-	  {
-	    vpColVector ex(1) ;
-	    ex[0] = s[i] - s_star[i] ;
-
-	    e = vpColVector::stack(e,ex) ;
-	  }
-
-      }
-  }
-  catch(...) {
+  } catch (...) {
     throw;
   }
-  return e ;
-
+  return e;
 }
-
-
 
 /*!
 
@@ -287,63 +257,50 @@ vpGenericFeature::error(const vpBasicFeature &s_star,
   s.error(vpBasicFeature::FEATURE_LINE[0] | vpBasicFeature::FEATURE_LINE[1]);
   \endcode
 */
-vpColVector
-vpGenericFeature::error( const unsigned int select)
+vpColVector vpGenericFeature::error(const unsigned int select)
 {
-  vpColVector e(0) ;
+  vpColVector e(0);
 
-  try
-  {
-    if (errorStatus == errorHasToBeUpdated)
-    {
+  try {
+    if (errorStatus == errorHasToBeUpdated) {
       vpERROR_TRACE("Error has no been updated since last iteration"
-		  "you should have used vpGenericFeature::setError"
-		  "in you visual servoing loop") ;
-      throw(vpFeatureException(vpFeatureException::badErrorVectorError,
-			       "Error has no been updated since last iteration"));
+                    "you should have used vpGenericFeature::setError"
+                    "in you visual servoing loop");
+      throw(vpFeatureException(
+          vpFeatureException::badErrorVectorError,
+          "Error has no been updated since last iteration"));
+    } else if (errorStatus == errorInitialized) {
+      errorStatus = errorHasToBeUpdated;
+      for (unsigned int i = 0; i < dim_s; i++)
+        if (FEATURE_LINE[i] & select) {
+          vpColVector ex(1);
+          ex[i] = err[i];
+
+          e = vpColVector::stack(e, ex);
+        }
+    } else {
+
+      for (unsigned int i = 0; i < dim_s; i++)
+        if (FEATURE_LINE[i] & select) {
+          vpColVector ex(1);
+          ex[i] = s[i];
+
+          e = vpColVector::stack(e, ex);
+        }
     }
-    else
-      if (errorStatus == errorInitialized)
-      {
-	errorStatus = errorHasToBeUpdated ;
-	for (unsigned int i=0 ; i < dim_s ; i++)
-	  if (FEATURE_LINE[i] & select )
-	  {
-	    vpColVector ex(1) ;
-	    ex[i] = err[i] ;
-
-	    e = vpColVector::stack(e,ex) ;
-	  }
-      }
-      else
-      {
-
-	for (unsigned int i=0 ; i < dim_s ; i++)
-	  if (FEATURE_LINE[i] & select )
-	  {
-	    vpColVector ex(1) ;
-	    ex[i] = s[i]  ;
-
-	    e = vpColVector::stack(e,ex) ;
-	  }
-
-      }
-  }
-  catch(...) {
+  } catch (...) {
     throw;
   }
 
-  return e ;
-
+  return e;
 }
-
 
 /*!
 
   Compute and return the interaction matrix \f$ L \f$ for the whole
   features or a part of them.
 
-  \param select : Selection of a subset of the possible features. 
+  \param select : Selection of a subset of the possible features.
   - To compute the interaction matrix for all the features use
     vpBasicFeature::FEATURE_ALL. In that case the dimension of the interaction
     matrix is \f$ [number of features \times 6] \f$
@@ -369,8 +326,8 @@ vpGenericFeature::error( const unsigned int select)
   vpGenericFeature s(3);
   s.set_s(0, 0, 0);
 
-  // Here you have to compute the interaction matrix L for all the three features
-  s.setInteractionMatrix(L);
+  // Here you have to compute the interaction matrix L for all the three
+  features s.setInteractionMatrix(L);
 
   vpMatrix L_x = s.interaction( vpBasicFeature::FEATURE_LINE[0] );
   \endcode
@@ -385,44 +342,42 @@ vpGenericFeature::error( const unsigned int select)
   // Here you have to compute the interaction matrix L
   s.setInteractionMatrix(L);
 
-  vpMatrix L_x = s.interaction( vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1] );
-  \endcode
+  vpMatrix L_x = s.interaction(
+  vpBasicFeature::FEATURE_LINE[0]|vpBasicFeature::FEATURE_LINE[1] ); \endcode
 */
-vpMatrix
-vpGenericFeature::interaction(const unsigned int select)
+vpMatrix vpGenericFeature::interaction(const unsigned int select)
 {
-  if (L.getRows() == 0)
-  {
-    std::cout << "interaction matrix " << L << std::endl ;
+  if (L.getRows() == 0) {
+    std::cout << "interaction matrix " << L << std::endl;
     vpERROR_TRACE("Interaction has not been initialized");
-    std::cout << "A possible reason (may be) is that you have set" << std::endl ;
-    std::cout << "the interaction matrix for s and compute a control " << std::endl ;
-    std::cout << "with Ls=s* (default) or vice versa" << std::endl ;
+    std::cout << "A possible reason (may be) is that you have set"
+              << std::endl;
+    std::cout << "the interaction matrix for s and compute a control "
+              << std::endl;
+    std::cout << "with Ls=s* (default) or vice versa" << std::endl;
 
     throw(vpFeatureException(vpFeatureException::notInitializedError,
-			     "size mismatch between s* dimension "
-			     "and feature dimension"));
-
+                             "size mismatch between s* dimension "
+                             "and feature dimension"));
   }
 
-  vpMatrix Ls ;
+  vpMatrix Ls;
 
-  Ls.resize(0,6) ;
+  Ls.resize(0, 6);
 
-  for (unsigned int i=0 ; i < dim_s ; i++)
-    if (FEATURE_LINE[i] & select )
-    {
-      vpMatrix Lx(1,6) ; Lx = 0;
+  for (unsigned int i = 0; i < dim_s; i++)
+    if (FEATURE_LINE[i] & select) {
+      vpMatrix Lx(1, 6);
+      Lx = 0;
 
-      for (int j=0 ; j < 6 ; j++)
-	Lx[0][j] = L[i][j] ;
+      for (int j = 0; j < 6; j++)
+        Lx[0][j] = L[i][j];
 
-      Ls = vpMatrix::stack(Ls,Lx) ;
+      Ls = vpMatrix::stack(Ls, Lx);
     }
 
-  return Ls ;
+  return Ls;
 }
-
 
 /*!
   \brief set the value of the interaction matrix.
@@ -433,73 +388,69 @@ vpGenericFeature::interaction(const unsigned int select)
   matrix is different from the dimension of the visual feature as specified
   in the constructor
 */
-void
-vpGenericFeature::setInteractionMatrix(const vpMatrix &L_)
+void vpGenericFeature::setInteractionMatrix(const vpMatrix &L_)
 {
-  if (L_.getRows() != dim_s)
-  {
-    std::cout << L_.getRows() <<"  " << dim_s << std::endl ;;
+  if (L_.getRows() != dim_s) {
+    std::cout << L_.getRows() << "  " << dim_s << std::endl;
+    ;
     vpERROR_TRACE("size mismatch between interaction matrix size "
-		"and feature dimension");
+                  "and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
-			     "size mismatch between interaction matrix size "
-			     "and feature dimension"));
+                             "size mismatch between interaction matrix size "
+                             "and feature dimension"));
   }
 
-  this->L = L_ ;
+  this->L = L_;
 }
 
 /*!
   \brief set the value of all the features.
 
-  \param s_vector : It is a vector containing the value of the visual features.
+  \param s_vector : It is a vector containing the value of the visual
+  features.
 
   \exception an exception is thrown if the number of row of the vector s
   is different from the dimension of the visual feature as specified
   in the constructor
 */
-void
-vpGenericFeature::set_s(const vpColVector &s_vector)
+void vpGenericFeature::set_s(const vpColVector &s_vector)
 {
 
-  if (s_vector.getRows() != dim_s)
-  {
+  if (s_vector.getRows() != dim_s) {
     vpERROR_TRACE("size mismatch between s dimension"
-		"and feature dimension");
+                  "and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
-			     "size mismatch between s dimension"
-			     "and feature dimension"));
+                             "size mismatch between s dimension"
+                             "and feature dimension"));
   }
-  this->s = s_vector ;
+  this->s = s_vector;
 }
-
 
 /*!
   \brief get the value of all the features.
 
-  \param s_vector : It is a vector which will contain the value of the visual features.
+  \param s_vector : It is a vector which will contain the value of the visual
+  features.
 
   \exception an exception is thrown if the number of row of the vector s
   is different from the dimension of the visual feature as specified
   in the constructor
 */
-void
-vpGenericFeature::get_s(vpColVector &s_vector) const
+void vpGenericFeature::get_s(vpColVector &s_vector) const
 {
-  if (s_vector.getRows() != dim_s)
-  {
+  if (s_vector.getRows() != dim_s) {
     vpERROR_TRACE("size mismatch between s dimension"
-		"and feature dimension");
+                  "and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
-			     "size mismatch between s dimension"
-			     "and feature dimension"));
+                             "size mismatch between s dimension"
+                             "and feature dimension"));
   }
-  s_vector = this->s ;
+  s_vector = this->s;
 }
 
-
 /*!
-  \brief set the value of three features if the number of feature is equal to 3.
+  \brief set the value of three features if the number of feature is equal
+  to 3.
 
   \param s0 : value of the first visual feature
 
@@ -511,25 +462,25 @@ vpGenericFeature::get_s(vpColVector &s_vector) const
   is different from the dimension of the visual feature as specified
   in the constructor
 */
-void
-vpGenericFeature::set_s(const double s0, const double s1, const double s2)
+void vpGenericFeature::set_s(const double s0, const double s1,
+                             const double s2)
 {
 
-  if (3 != dim_s)
-  {
+  if (3 != dim_s) {
     vpERROR_TRACE("size mismatch between number of parameters"
-		"and feature dimension");
+                  "and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
-			     "size mismatch between  number of parameters"
-			     "and feature dimension"));
-
+                             "size mismatch between  number of parameters"
+                             "and feature dimension"));
   }
-  s[0] = s0 ; s[1] = s1 ; s[2] = s2 ;
+  s[0] = s0;
+  s[1] = s1;
+  s[2] = s2;
 }
 
-
 /*!
-  \brief get the value of three features if the number of feature is equal to 3.
+  \brief get the value of three features if the number of feature is equal
+  to 3.
 
   \param s0 : value of the first visual feature
 
@@ -541,22 +492,20 @@ vpGenericFeature::set_s(const double s0, const double s1, const double s2)
   is different from the dimension of the visual feature as specified
   in the constructor
 */
-void
-vpGenericFeature::get_s(double &s0, double &s1, double &s2) const
+void vpGenericFeature::get_s(double &s0, double &s1, double &s2) const
 {
 
-  if (3 != dim_s)
-  {
+  if (3 != dim_s) {
     vpERROR_TRACE("size mismatch between number of parameters"
-		"and feature dimension");
+                  "and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
-			     "size mismatch between  number of parameters"
-			     "and feature dimension"));
-
+                             "size mismatch between  number of parameters"
+                             "and feature dimension"));
   }
-  s0 = s[0] ; s1 = s[1] ; s2 = s[2] ;
+  s0 = s[0];
+  s1 = s[1];
+  s2 = s[2];
 }
-
 
 /*!
   \brief set the value of two features if the number of feature is equal to 2.
@@ -569,22 +518,19 @@ vpGenericFeature::get_s(double &s0, double &s1, double &s2) const
   is different from the dimension of the visual feature as specified
   in the constructor
 */
-void
-vpGenericFeature::set_s(const double s0, const double s1)
+void vpGenericFeature::set_s(const double s0, const double s1)
 {
 
-  if (2 != dim_s)
-  {
+  if (2 != dim_s) {
     vpERROR_TRACE("size mismatch between number of parameters"
-		"and feature dimension");
+                  "and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
-			     "size mismatch between  number of parameters"
-			     "and feature dimension"));
-
+                             "size mismatch between  number of parameters"
+                             "and feature dimension"));
   }
-  s[0] = s0 ; s[1] = s1 ;
+  s[0] = s0;
+  s[1] = s1;
 }
-
 
 /*!
   \brief get the value of two features if the number of feature is equal to 2.
@@ -597,22 +543,19 @@ vpGenericFeature::set_s(const double s0, const double s1)
   is different from the dimension of the visual feature as specified
   in the constructor
 */
-void
-vpGenericFeature::get_s(double &s0, double &s1) const
+void vpGenericFeature::get_s(double &s0, double &s1) const
 {
 
-  if (2 != dim_s)
-  {
+  if (2 != dim_s) {
     vpERROR_TRACE("size mismatch between number of parameters"
-		"and feature dimension");
+                  "and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
-			     "size mismatch between  number of parameters"
-			     "and feature dimension"));
-
+                             "size mismatch between  number of parameters"
+                             "and feature dimension"));
   }
-  s0 = s[0] ; s1 = s[1] ;
+  s0 = s[0];
+  s1 = s[1];
 }
-
 
 /*!
   \brief set the value of one feature if the number of feature is equal to 1.
@@ -623,22 +566,18 @@ vpGenericFeature::get_s(double &s0, double &s1) const
   is different from the dimension of the visual feature as specified
   in the constructor
 */
-void
-vpGenericFeature::set_s(const double s0)
+void vpGenericFeature::set_s(const double s0)
 {
 
-  if (1 != dim_s)
-  {
+  if (1 != dim_s) {
     vpERROR_TRACE("size mismatch between number of parameters"
-		"and feature dimension");
+                  "and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
-			     "size mismatch between  number of parameters"
-			     "and feature dimension"));
-
+                             "size mismatch between  number of parameters"
+                             "and feature dimension"));
   }
-  s[0] = s0 ;
+  s[0] = s0;
 }
-
 
 /*!
   \brief get the value of one feature if the number of feature is equal to 1.
@@ -649,22 +588,18 @@ vpGenericFeature::set_s(const double s0)
   is different from the dimension of the visual feature as specified
   in the constructor
 */
-void
-vpGenericFeature::get_s(double &s0) const
+void vpGenericFeature::get_s(double &s0) const
 {
 
-  if (1 != dim_s)
-  {
+  if (1 != dim_s) {
     vpERROR_TRACE("size mismatch between number of parameters"
-		"and feature dimension");
+                  "and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError,
-			     "size mismatch between  number of parameters"
-			     "and feature dimension"));
-
+                             "size mismatch between  number of parameters"
+                             "and feature dimension"));
   }
   s0 = s[0];
 }
-
 
 /*!
   Print to stdout the values of the current visual feature \f$ s \f$.
@@ -687,43 +622,39 @@ vpGenericFeature::get_s(double &s0) const
   s.print(vpBasicFeature::FEATURE_LINE[0]); // print only the first component
   \endcode
 */
-void
-vpGenericFeature::print(const unsigned int select) const
+void vpGenericFeature::print(const unsigned int select) const
 {
 
-  std::cout <<"Generic Feature: "  ;
-  for (unsigned int i=0 ; i < dim_s ; i++)
-    if (FEATURE_LINE[i] & select )
-    {
-      std::cout << " s["<<i << "]=" << s[i] ;
+  std::cout << "Generic Feature: ";
+  for (unsigned int i = 0; i < dim_s; i++)
+    if (FEATURE_LINE[i] & select) {
+      std::cout << " s[" << i << "]=" << s[i];
     }
 
-  std::cout <<std::endl ;
+  std::cout << std::endl;
 }
 
 vpGenericFeature *vpGenericFeature::duplicate() const
 {
-  vpGenericFeature *feature= new vpGenericFeature(dim_s) ;
+  vpGenericFeature *feature = new vpGenericFeature(dim_s);
 
-  vpTRACE("dims = %d",dim_s) ;
-  return feature ;
+  vpTRACE("dims = %d", dim_s);
+  return feature;
 }
 
 /*!
   Not implemented.
 */
-void
-vpGenericFeature::display(const vpCameraParameters &/* cam */,
-                          const vpImage<unsigned char> &/* I */,
-                          const vpColor &/* color */,
-                          unsigned int /* thickness */) const
+void vpGenericFeature::display(const vpCameraParameters & /* cam */,
+                               const vpImage<unsigned char> & /* I */,
+                               const vpColor & /* color */,
+                               unsigned int /* thickness */) const
 {
-  static int firsttime =0 ;
+  static int firsttime = 0;
 
-  if (firsttime==0)
-  {
-    firsttime=1 ;
-    vpERROR_TRACE("not implemented") ;
+  if (firsttime == 0) {
+    firsttime = 1;
+    vpERROR_TRACE("not implemented");
     // Do not throw and error since it is not subject
     // to produce a failure
   }
@@ -731,18 +662,16 @@ vpGenericFeature::display(const vpCameraParameters &/* cam */,
 /*!
   Not implemented.
  */
-void
-vpGenericFeature::display(const vpCameraParameters &/* cam */,
-                          const vpImage<vpRGBa> &/* I */,
-                          const vpColor &/* color */,
-                          unsigned int /* thickness */) const
+void vpGenericFeature::display(const vpCameraParameters & /* cam */,
+                               const vpImage<vpRGBa> & /* I */,
+                               const vpColor & /* color */,
+                               unsigned int /* thickness */) const
 {
-  static int firsttime =0 ;
+  static int firsttime = 0;
 
-  if (firsttime==0)
-  {
-    firsttime=1 ;
-    vpERROR_TRACE("not implemented") ;
+  if (firsttime == 0) {
+    firsttime = 1;
+    vpERROR_TRACE("not implemented");
     // Do not throw and error since it is not subject
     // to produce a failure
   }

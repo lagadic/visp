@@ -46,20 +46,21 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/io/vpVideoReader.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
+#include <visp3/io/vpVideoReader.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdh"
+#define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
+bool getOptions(int argc, const char **argv, bool &click_allowed,
+                bool &display);
 
 /*!
 
@@ -104,20 +105,29 @@ OPTIONS:                                               \n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed,
+                bool &display)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'c': click_allowed = false; break;
-    case 'd': display = false; break;
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'c':
+      click_allowed = false;
+      break;
+    case 'd':
+      display = false;
+      break;
+    case 'h':
+      usage(argv[0], NULL);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg_);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -138,7 +148,8 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
   \brief   Test keypoint matching with mostly OpenCV functions calls
   to detect potential memory leaks in testKeyPoint.cpp.
 */
-int main(int argc, const char ** argv) {
+int main(int argc, const char **argv)
+{
   try {
     std::string env_ipath;
     bool opt_click_allowed = true;
@@ -146,28 +157,33 @@ int main(int argc, const char ** argv) {
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      exit (-1);
+      exit(-1);
     }
 
-    //Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+    // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
-    if(env_ipath.empty()) {
-      std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment variable value." << std::endl;
+    if (env_ipath.empty()) {
+      std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment "
+                   "variable value."
+                << std::endl;
       return -1;
     }
 
     vpImage<unsigned char> Iref, Icur, Imatch;
 
-    //Set the path location of the image sequence
+    // Set the path location of the image sequence
     std::string dirname = vpIoTools::createFilePath(env_ipath, "mbt/cube");
 
-    //Build the name of the image files
-    std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000.pgm");
+    // Build the name of the image files
+    std::string filenameRef =
+        vpIoTools::createFilePath(dirname, "image0000.pgm");
     vpImageIo::read(Iref, filenameRef);
-    std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d.pgm");
+    std::string filenameCur =
+        vpIoTools::createFilePath(dirname, "image%04d.pgm");
 
-    //Init keypoints
+    // Init keypoints
     cv::Ptr<cv::FeatureDetector> detector;
     cv::Ptr<cv::DescriptorExtractor> extractor;
     cv::Ptr<cv::DescriptorMatcher> matcher;
@@ -192,8 +208,8 @@ int main(int argc, const char ** argv) {
     g.open(Icur);
     g.acquire(Icur);
 
-    Imatch.resize(Icur.getHeight(), 2*Icur.getWidth());
-    Imatch.insert(Iref, vpImagePoint(0,0));
+    Imatch.resize(Icur.getHeight(), 2 * Icur.getWidth());
+    Imatch.insert(Iref, vpImagePoint(0, 0));
 
 #if defined VISP_HAVE_X11
     vpDisplayX display;
@@ -212,11 +228,11 @@ int main(int argc, const char ** argv) {
 
     bool opt_click = false;
     vpMouseButton::vpMouseButtonType button;
-    while(!g.end()) {
+    while (!g.end()) {
       g.acquire(Icur);
       Imatch.insert(Icur, vpImagePoint(0, Icur.getWidth()));
 
-      if(opt_display) {
+      if (opt_display) {
         vpDisplay::display(Imatch);
       }
 
@@ -230,40 +246,44 @@ int main(int argc, const char ** argv) {
       std::vector<std::vector<cv::DMatch> > knn_matches;
       std::vector<cv::DMatch> matches;
       matcher->knnMatch(queryDescriptors, trainDescriptors, knn_matches, 2);
-      for(std::vector<std::vector<cv::DMatch> >::const_iterator it = knn_matches.begin(); it != knn_matches.end(); ++it) {
-        if(it->size() > 1) {
+      for (std::vector<std::vector<cv::DMatch> >::const_iterator it =
+               knn_matches.begin();
+           it != knn_matches.end(); ++it) {
+        if (it->size() > 1) {
           double ratio = (*it)[0].distance / (*it)[1].distance;
-          if(ratio < 0.85) {
+          if (ratio < 0.85) {
             matches.push_back((*it)[0]);
           }
         }
       }
 
-      if(opt_display) {
-        for(std::vector<cv::DMatch>::const_iterator it = matches.begin(); it != matches.end(); ++it) {
-          vpImagePoint leftPt(trainKeyPoints[(size_t) it->trainIdx].pt.y, trainKeyPoints[(size_t) it->trainIdx].pt.x);
-          vpImagePoint rightPt(queryKeyPoints[(size_t) it->queryIdx].pt.y, queryKeyPoints[(size_t) it->queryIdx].pt.x
-              + Iref.getWidth());
+      if (opt_display) {
+        for (std::vector<cv::DMatch>::const_iterator it = matches.begin();
+             it != matches.end(); ++it) {
+          vpImagePoint leftPt(trainKeyPoints[(size_t)it->trainIdx].pt.y,
+                              trainKeyPoints[(size_t)it->trainIdx].pt.x);
+          vpImagePoint rightPt(queryKeyPoints[(size_t)it->queryIdx].pt.y,
+                               queryKeyPoints[(size_t)it->queryIdx].pt.x +
+                                   Iref.getWidth());
           vpDisplay::displayLine(Imatch, leftPt, rightPt, vpColor::green);
         }
 
         vpDisplay::flush(Imatch);
       }
 
-      //Click requested to process next image
+      // Click requested to process next image
       if (opt_click_allowed && opt_display) {
-        if(opt_click) {
+        if (opt_click) {
           vpDisplay::getClick(Imatch, button, true);
-          if(button == vpMouseButton::button3) {
+          if (button == vpMouseButton::button3) {
             opt_click = false;
           }
         } else {
-          //Use right click to enable/disable step by step tracking
-          if(vpDisplay::getClick(Imatch, button, false)) {
+          // Use right click to enable/disable step by step tracking
+          if (vpDisplay::getClick(Imatch, button, false)) {
             if (button == vpMouseButton::button3) {
               opt_click = true;
-            }
-            else if(button == vpMouseButton::button1) {
+            } else if (button == vpMouseButton::button1) {
               break;
             }
           }
@@ -271,7 +291,7 @@ int main(int argc, const char ** argv) {
       }
     }
 
-  } catch(vpException &e) {
+  } catch (vpException &e) {
     std::cerr << e.what() << std::endl;
     return -1;
   }
@@ -280,7 +300,8 @@ int main(int argc, const char ** argv) {
   return 0;
 }
 #else
-int main() {
+int main()
+{
   std::cerr << "You need OpenCV library." << std::endl;
 
   return 0;

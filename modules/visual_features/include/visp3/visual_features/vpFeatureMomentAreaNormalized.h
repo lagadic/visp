@@ -37,7 +37,8 @@
  *****************************************************************************/
 /*!
   \file vpFeatureMomentAreaNormalized.h
-  \brief Implementation of the interaction matrix computation for vpMomentAreaNormalized.
+  \brief Implementation of the interaction matrix computation for
+  vpMomentAreaNormalized.
 */
 #ifndef __FEATUREMOMENTAREANORMALIZED_H__
 #define __FEATUREMOMENTAREANORMALIZED_H__
@@ -50,18 +51,25 @@ class vpMomentDatabase;
 
   \ingroup group_visual_features
 
-  \brief Functionality computation for normalized surface moment feature. Computes the interaction matrix associated with vpMomentAreaNormalized.
+  \brief Functionality computation for normalized surface moment feature.
+  Computes the interaction matrix associated with vpMomentAreaNormalized.
 
-  The interaction matrix for the moment feature can be deduced from \cite Tahri05z.
+  The interaction matrix for the moment feature can be deduced from \cite
+  Tahri05z.
 
-  To do so, one must derive it and obtain a combination of interaction matrices by using (1).
-  It allows to compute the interaction matrix for \f$ a_n \f$.
+  To do so, one must derive it and obtain a combination of interaction
+  matrices by using (1). It allows to compute the interaction matrix for \f$
+  a_n \f$.
 
-  The interaction matrix computed is single-dimension (no selection possible) and can be obtained by calling vpFeatureMomentGravityCenterNormalized::interaction.
+  The interaction matrix computed is single-dimension (no selection possible)
+  and can be obtained by calling
+  vpFeatureMomentGravityCenterNormalized::interaction.
 
-  This feature is often used in moment-based visual servoing to control the depth parameter.
+  This feature is often used in moment-based visual servoing to control the
+  depth parameter.
 
-  Minimum vpMomentObject order needed to compute this feature: 1 in dense mode and 3 in discrete mode.
+  Minimum vpMomentObject order needed to compute this feature: 1 in dense mode
+  and 3 in discrete mode.
 
   This feature depends on:
     - vpMomentCentered
@@ -70,29 +78,36 @@ class vpMomentDatabase;
     - vpFeatureMomentBasic
 
 */
-class VISP_EXPORT vpFeatureMomentAreaNormalized : public vpFeatureMoment{
- public:
-        /*!
-        Initializes the feature with information about the database of moment primitives, the object plane and feature database.
-        \param database : Moment database. The database of moment primitives (first parameter) is mandatory. It is used to access different moment values later used to compute the final matrix.
-        \param A : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-        \param B : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-        \param C : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-        \param featureMoments : Feature database.
+class VISP_EXPORT vpFeatureMomentAreaNormalized : public vpFeatureMoment
+{
+public:
+  /*!
+  Initializes the feature with information about the database of moment
+  primitives, the object plane and feature database. \param database : Moment
+  database. The database of moment primitives (first parameter) is mandatory.
+  It is used to access different moment values later used to compute the final
+  matrix. \param A : Plane coefficient in a \f$ A \times x+B \times y + C =
+  \frac{1}{Z} \f$ plane. \param B : Plane coefficient in a \f$ A \times x+B
+  \times y + C = \frac{1}{Z} \f$ plane. \param C : Plane coefficient in a \f$
+  A \times x+B \times y + C = \frac{1}{Z} \f$ plane. \param featureMoments :
+  Feature database.
 
-        */
-        vpFeatureMomentAreaNormalized(vpMomentDatabase& database,double A_, double B_, double C_,vpFeatureMomentDatabase* featureMoments=NULL)
-          : vpFeatureMoment(database,A_,B_,C_,featureMoments,1){}
-        void compute_interaction();
-        /*!
-          associated moment name
-          */
-        const char* momentName() const { return "vpMomentAreaNormalized";}
-        /*!
-          feature name
-          */
-        const char* name() const { return "vpFeatureMomentAreaNormalized";}
-
+  */
+  vpFeatureMomentAreaNormalized(
+      vpMomentDatabase &database, double A_, double B_, double C_,
+      vpFeatureMomentDatabase *featureMoments = NULL)
+    : vpFeatureMoment(database, A_, B_, C_, featureMoments, 1)
+  {
+  }
+  void compute_interaction();
+  /*!
+    associated moment name
+    */
+  const char *momentName() const { return "vpMomentAreaNormalized"; }
+  /*!
+    feature name
+    */
+  const char *name() const { return "vpFeatureMomentAreaNormalized"; }
 };
 
 #else
@@ -103,7 +118,8 @@ class vpMomentDatabase;
 
   \ingroup group_visual_features
 
-  \brief Functionality computation for normalized surface moment feature. Computes the interaction matrix associated with vpMomentAreaNormalized.
+  \brief Functionality computation for normalized surface moment feature.
+Computes the interaction matrix associated with vpMomentAreaNormalized.
 
   The interaction matrix for the moment has the following form:
   - In the discrete case:
@@ -138,14 +154,19 @@ with:
     - \f$e_{i,j}=\frac{\mu_{i,j}}{NA}\f$
     - \f$NA=\mu_{2,0}+\mu_{0,2}\f$
     - \f$\eta\f$ is the centered and normalized moment.
-  To do so, one must derive it and obtain a combination of interaction matrices by using (1).
-  It allows to compute the interaction matrix for \f$ a_n \f$.
+  To do so, one must derive it and obtain a combination of interaction
+matrices by using (1). It allows to compute the interaction matrix for \f$ a_n
+\f$.
 
-  The interaction matrix computed is single-dimension (no selection possible) and can be obtained by calling vpFeatureMomentGravityCenterNormalized::interaction.
+  The interaction matrix computed is single-dimension (no selection possible)
+and can be obtained by calling
+vpFeatureMomentGravityCenterNormalized::interaction.
 
-  This feature is often used in moment-based visual servoing to control the depth parameter.
+  This feature is often used in moment-based visual servoing to control the
+depth parameter.
 
-  Minimum vpMomentObject order needed to compute this feature: 1 in dense mode and 3 in discrete mode.
+  Minimum vpMomentObject order needed to compute this feature: 1 in dense mode
+and 3 in discrete mode.
 
   This feature depends on:
   - vpMomentCentered
@@ -153,29 +174,36 @@ with:
   - vpMomentGravityCenter
 
 */
-class VISP_EXPORT vpFeatureMomentAreaNormalized : public vpFeatureMoment{
- public:
-        /*!
-        Initializes the feature with information about the database of moment primitives, the object plane and feature database.
-        \param data_base : Moment database. The database of moment primitives (first parameter) is mandatory. It is used to access different moment values later used to compute the final matrix.
-        \param A_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-        \param B_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-        \param C_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-        \param featureMoments : Feature database.
+class VISP_EXPORT vpFeatureMomentAreaNormalized : public vpFeatureMoment
+{
+public:
+  /*!
+  Initializes the feature with information about the database of moment
+  primitives, the object plane and feature database. \param data_base : Moment
+  database. The database of moment primitives (first parameter) is mandatory.
+  It is used to access different moment values later used to compute the final
+  matrix. \param A_ : Plane coefficient in a \f$ A \times x+B \times y + C =
+  \frac{1}{Z} \f$ plane. \param B_ : Plane coefficient in a \f$ A \times x+B
+  \times y + C = \frac{1}{Z} \f$ plane. \param C_ : Plane coefficient in a \f$
+  A \times x+B \times y + C = \frac{1}{Z} \f$ plane. \param featureMoments :
+  Feature database.
 
-        */
-        vpFeatureMomentAreaNormalized(vpMomentDatabase& data_base,double A_, double B_, double C_,vpFeatureMomentDatabase* featureMoments=NULL) :
-            vpFeatureMoment(data_base,A_,B_,C_,featureMoments,1){}
-        void compute_interaction();
-        /*!
-          associated moment name
-          */
-        const char* momentName() const { return "vpMomentAreaNormalized";}
-        /*!
-          feature name
-          */
-        const char* name() const { return "vpFeatureMomentAreaNormalized";}
-
+  */
+  vpFeatureMomentAreaNormalized(
+      vpMomentDatabase &data_base, double A_, double B_, double C_,
+      vpFeatureMomentDatabase *featureMoments = NULL)
+    : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 1)
+  {
+  }
+  void compute_interaction();
+  /*!
+    associated moment name
+    */
+  const char *momentName() const { return "vpMomentAreaNormalized"; }
+  /*!
+    feature name
+    */
+  const char *name() const { return "vpFeatureMomentAreaNormalized"; }
 };
 #endif
 #endif

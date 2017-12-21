@@ -81,140 +81,154 @@
   \brief Contrast Limited Adaptive Histogram Equalization (CLAHE).
 */
 
-#include <visp3/imgproc/vpImgproc.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/imgproc/vpImgproc.h>
 
-namespace {
-  int fastRound(const float value) {
-    return (int) (value + 0.5f);
-  }
+namespace
+{
+int fastRound(const float value) { return (int)(value + 0.5f); }
 
-  void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, const int limit) {
-    clippedHist = hist;
-    int clippedEntries = 0, clippedEntriesBefore = 0;
-    int histlength = (int) hist.size();
+void clipHistogram(const std::vector<int> &hist,
+                   std::vector<int> &clippedHist, const int limit)
+{
+  clippedHist = hist;
+  int clippedEntries = 0, clippedEntriesBefore = 0;
+  int histlength = (int)hist.size();
 
-    do {
-      clippedEntriesBefore = clippedEntries;
-      clippedEntries = 0;
-      for (int i = 0; i < histlength; i++) {
-        int d = clippedHist[i] - limit;
-        if (d > 0) {
-          clippedEntries += d;
-          clippedHist[i] = limit;
-        }
-      }
-
-      int d = clippedEntries / (histlength);
-      int m = clippedEntries % (histlength);
-      for (int i = 0; i < histlength; i++) {
-        clippedHist[i] += d;
-      }
-
-      if (m != 0) {
-        int s = (histlength - 1) / m;
-        for (int i = s / 2; i < histlength; i += s) {
-          ++(clippedHist[i]);
-        }
-      }
-    } while (clippedEntries != clippedEntriesBefore);
-  }
-
-  void createHistogram(const int blockRadius, const int bins, const int blockXCenter,
-                       const int blockYCenter, const vpImage<unsigned char> &I,
-                       std::vector<int> &hist) {
-    std::fill(hist.begin(), hist.end(), 0);
-
-    int xMin = std::max( 0, blockXCenter - blockRadius );
-    int yMin = std::max( 0, blockYCenter - blockRadius );
-    int xMax = std::min( (int) I.getWidth(), blockXCenter + blockRadius + 1 );
-    int yMax = std::min( (int) I.getHeight(), blockYCenter + blockRadius + 1 );
-
-    for (int y = yMin; y < yMax; ++y) {
-      for (int x = xMin; x < xMax; ++x) {
-        ++hist[fastRound(I[y][x] / 255.0f * bins)];
-      }
-    }
-  }
-
-  std::vector<float> createTransfer(const std::vector<int> &hist, const int limit, std::vector<int> &cdfs) {
-    clipHistogram(hist, cdfs, limit);
-    int hMin = (int) hist.size() - 1;
-
-    for (int i = 0; i < hMin; ++i) {
-      if (cdfs[i] != 0) {
-        hMin = i;
-      }
-    }
-    int cdf = 0;
-    for (int i = hMin; i < (int) hist.size(); ++i) {
-      cdf += cdfs[i];
-      cdfs[i] = cdf;
-    }
-
-    int cdfMin = cdfs[hMin];
-    int cdfMax = cdfs[hist.size() - 1];
-
-    std::vector<float> transfer(hist.size());
-    for (int i = 0; i < (int) transfer.size(); ++i) {
-      transfer[i] = (cdfs[i] - cdfMin) / (float) (cdfMax - cdfMin);
-    }
-
-    return transfer;
-  }
-
-  float transferValue(const int v, std::vector<int> &clippedHist) {
-    int clippedHistLength = (int) clippedHist.size();
-    int hMin = clippedHistLength - 1;
-    for (int i = 0; i < hMin; i++) {
-      if (clippedHist[i] != 0) {
-        hMin = i;
+  do {
+    clippedEntriesBefore = clippedEntries;
+    clippedEntries = 0;
+    for (int i = 0; i < histlength; i++) {
+      int d = clippedHist[i] - limit;
+      if (d > 0) {
+        clippedEntries += d;
+        clippedHist[i] = limit;
       }
     }
 
-    int cdf = 0;
-    for (int i = hMin; i <= v; i++) {
-      cdf += clippedHist[i];
+    int d = clippedEntries / (histlength);
+    int m = clippedEntries % (histlength);
+    for (int i = 0; i < histlength; i++) {
+      clippedHist[i] += d;
     }
 
-    int cdfMax = cdf;
-    for (int i = v + 1; i < clippedHistLength; ++i) {
-      cdfMax += clippedHist[i];
+    if (m != 0) {
+      int s = (histlength - 1) / m;
+      for (int i = s / 2; i < histlength; i += s) {
+        ++(clippedHist[i]);
+      }
     }
+  } while (clippedEntries != clippedEntriesBefore);
+}
 
-    int cdfMin = clippedHist[ hMin ];
-    return (cdf - cdfMin) / (float) (cdfMax - cdfMin);
+void createHistogram(const int blockRadius, const int bins,
+                     const int blockXCenter, const int blockYCenter,
+                     const vpImage<unsigned char> &I, std::vector<int> &hist)
+{
+  std::fill(hist.begin(), hist.end(), 0);
+
+  int xMin = std::max(0, blockXCenter - blockRadius);
+  int yMin = std::max(0, blockYCenter - blockRadius);
+  int xMax = std::min((int)I.getWidth(), blockXCenter + blockRadius + 1);
+  int yMax = std::min((int)I.getHeight(), blockYCenter + blockRadius + 1);
+
+  for (int y = yMin; y < yMax; ++y) {
+    for (int x = xMin; x < xMax; ++x) {
+      ++hist[fastRound(I[y][x] / 255.0f * bins)];
+    }
+  }
+}
+
+std::vector<float> createTransfer(const std::vector<int> &hist,
+                                  const int limit, std::vector<int> &cdfs)
+{
+  clipHistogram(hist, cdfs, limit);
+  int hMin = (int)hist.size() - 1;
+
+  for (int i = 0; i < hMin; ++i) {
+    if (cdfs[i] != 0) {
+      hMin = i;
+    }
+  }
+  int cdf = 0;
+  for (int i = hMin; i < (int)hist.size(); ++i) {
+    cdf += cdfs[i];
+    cdfs[i] = cdf;
   }
 
-  float transferValue(const int v, const std::vector<int> &hist, std::vector<int> &clippedHist, const int limit) {
-    clipHistogram(hist, clippedHist, limit);
+  int cdfMin = cdfs[hMin];
+  int cdfMax = cdfs[hist.size() - 1];
 
-    return transferValue(v, clippedHist);
+  std::vector<float> transfer(hist.size());
+  for (int i = 0; i < (int)transfer.size(); ++i) {
+    transfer[i] = (cdfs[i] - cdfMin) / (float)(cdfMax - cdfMin);
   }
+
+  return transfer;
+}
+
+float transferValue(const int v, std::vector<int> &clippedHist)
+{
+  int clippedHistLength = (int)clippedHist.size();
+  int hMin = clippedHistLength - 1;
+  for (int i = 0; i < hMin; i++) {
+    if (clippedHist[i] != 0) {
+      hMin = i;
+    }
+  }
+
+  int cdf = 0;
+  for (int i = hMin; i <= v; i++) {
+    cdf += clippedHist[i];
+  }
+
+  int cdfMax = cdf;
+  for (int i = v + 1; i < clippedHistLength; ++i) {
+    cdfMax += clippedHist[i];
+  }
+
+  int cdfMin = clippedHist[hMin];
+  return (cdf - cdfMin) / (float)(cdfMax - cdfMin);
+}
+
+float transferValue(const int v, const std::vector<int> &hist,
+                    std::vector<int> &clippedHist, const int limit)
+{
+  clipHistogram(hist, clippedHist, limit);
+
+  return transferValue(v, clippedHist);
+}
 }
 
 /*!
   \ingroup group_imgproc_brightness
 
-   Adjust the contrast of a grayscale image locally using the Contrast Limited Adaptative Histogram Equalization method.
-   The limit parameter allows to limit the slope of the transformation function to prevent the overamplification of noise.
-   This method is a transcription of the CLAHE ImageJ plugin code by Stephan Saalfeld.
+   Adjust the contrast of a grayscale image locally using the Contrast Limited
+  Adaptative Histogram Equalization method. The limit parameter allows to
+  limit the slope of the transformation function to prevent the
+  overamplification of noise. This method is a transcription of the CLAHE
+  ImageJ plugin code by Stephan Saalfeld.
 
    \param I1 : The first grayscale image.
-   \param I2 : The second grayscale image after application of the CLAHE method.
-   \param blockRadius : The size (2*blockRadius+1) of the local region around a pixel for which the histogram is equalized.
-   This size should be larger than the size of features to be preserved.
-   \param bins : The number of histogram bins used for histogram equalization (between 1 and 256).
-   The number of histogram bins should be smaller than the number of pixels in a block.
-   \param slope : Limits the contrast stretch in the intensity transfer function.
-   Very large values will let the histogram equalization do whatever it wants to do, that is result in maximal local contrast.
-   The value 1 will result in the original image.
-   \param fast : Use the fast but less accurate version of the filter. The fast version does not evaluate the intensity
-   transfer function for each pixel independently but for a grid of adjacent boxes of the given block size only
-   and interpolates for locations in between.
+   \param I2 : The second grayscale image after application of the CLAHE
+  method. \param blockRadius : The size (2*blockRadius+1) of the local region
+  around a pixel for which the histogram is equalized. This size should be
+  larger than the size of features to be preserved. \param bins : The number
+  of histogram bins used for histogram equalization (between 1 and 256). The
+  number of histogram bins should be smaller than the number of pixels in a
+  block. \param slope : Limits the contrast stretch in the intensity transfer
+  function. Very large values will let the histogram equalization do whatever
+  it wants to do, that is result in maximal local contrast. The value 1 will
+  result in the original image. \param fast : Use the fast but less accurate
+  version of the filter. The fast version does not evaluate the intensity
+   transfer function for each pixel independently but for a grid of adjacent
+  boxes of the given block size only and interpolates for locations in
+  between.
 */
-void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const int blockRadius,
-               const int bins, const float slope, const bool fast) {
+void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2,
+               const int blockRadius, const int bins, const float slope,
+               const bool fast)
+{
   if (blockRadius < 0) {
     std::cerr << "Error: blockRadius < 0!" << std::endl;
     return;
@@ -225,8 +239,11 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
     return;
   }
 
-  if ((unsigned int) (2*blockRadius+1) > I1.getWidth() || (unsigned int) (2*blockRadius+1) > I1.getHeight()) {
-    std::cerr << "Error: (unsigned int) (2*blockRadius+1) > I1.getWidth() || (unsigned int) (2*blockRadius+1) > I1.getHeight()!" << std::endl;
+  if ((unsigned int)(2 * blockRadius + 1) > I1.getWidth() ||
+      (unsigned int)(2 * blockRadius + 1) > I1.getHeight()) {
+    std::cerr << "Error: (unsigned int) (2*blockRadius+1) > I1.getWidth() || "
+                 "(unsigned int) (2*blockRadius+1) > I1.getHeight()!"
+              << std::endl;
     return;
   }
 
@@ -234,7 +251,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
 
   if (fast) {
     int blockSize = 2 * blockRadius + 1;
-    int limit = (int)( slope * blockSize * blockSize / bins + 0.5 );
+    int limit = (int)(slope * blockSize * blockSize / bins + 0.5);
 
     /* div */
     int nc = I1.getWidth() / blockSize;
@@ -274,14 +291,14 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
 
     switch (rm) {
     case 0:
-      rs.resize((size_t) nr);
+      rs.resize((size_t)nr);
       for (int i = 0; i < nr; ++i) {
         rs[i] = i * blockSize + blockRadius + 1;
       }
       break;
 
     case 1:
-      rs.resize((size_t) (nr + 1));
+      rs.resize((size_t)(nr + 1));
       for (int i = 0; i < nr; ++i) {
         rs[i] = i * blockSize + blockRadius + 1;
       }
@@ -289,7 +306,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
       break;
 
     default:
-      rs.resize((size_t) (nr + 2));
+      rs.resize((size_t)(nr + 2));
       rs[0] = blockRadius + 1;
       for (int i = 0; i < nr; ++i) {
         rs[i + 1] = i * blockSize + blockRadius + 1 + rm / 2;
@@ -297,16 +314,16 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
       rs[nr + 1] = I1.getHeight() - blockRadius - 1;
     }
 
-    std::vector<int> hist((size_t) (bins+1));
-    std::vector<int> cdfs((size_t) (bins+1));
+    std::vector<int> hist((size_t)(bins + 1));
+    std::vector<int> cdfs((size_t)(bins + 1));
     std::vector<float> tl;
     std::vector<float> tr;
     std::vector<float> br;
     std::vector<float> bl;
 
-    for (int r = 0; r <= (int) rs.size(); ++r) {
+    for (int r = 0; r <= (int)rs.size(); ++r) {
       int r0 = std::max(0, r - 1);
-      int r1 = std::min((int) rs.size() - 1, r);
+      int r1 = std::min((int)rs.size() - 1, r);
       int dr = rs[r1] - rs[r0];
 
       createHistogram(blockRadius, bins, cs[0], rs[r0], I1, hist);
@@ -319,11 +336,11 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
       }
 
       int yMin = (r == 0 ? 0 : rs[r0]);
-      int yMax = (r < (int) rs.size() ? rs[r1] : I1.getHeight());
+      int yMax = (r < (int)rs.size() ? rs[r1] : I1.getHeight());
 
-      for (int c = 0; c <= (int) cs.size(); ++c) {
+      for (int c = 0; c <= (int)cs.size(); ++c) {
         int c0 = std::max(0, c - 1);
-        int c1 = std::min((int) cs.size() - 1, c);
+        int c1 = std::min((int)cs.size() - 1, c);
         int dc = cs[c1] - cs[c0];
 
         tl = tr;
@@ -341,12 +358,12 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
         }
 
         int xMin = (c == 0 ? 0 : cs[c0]);
-        int xMax = (c < (int) cs.size() ? cs[c1] : I1.getWidth());
+        int xMax = (c < (int)cs.size() ? cs[c1] : I1.getWidth());
         for (int y = yMin; y < yMax; ++y) {
-          float wy = (float) (rs[r1] - y) / dr;
+          float wy = (float)(rs[r1] - y) / dr;
 
           for (int x = xMin; x < xMax; ++x) {
-            float wx = (float) (cs[c1] - x) / dc;
+            float wx = (float)(cs[c1] - x) / dc;
             int v = fastRound(I1[y][x] / 255.0f * bins);
             float t00 = tl[v];
             float t01 = tr[v];
@@ -363,22 +380,22 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
             }
 
             float t = (r0 == r1) ? t0 : wy * t0 + (1.0f - wy) * t1;
-            I2[y][x] = std::max( 0, std::min(255, fastRound(t * 255.0f)) );
+            I2[y][x] = std::max(0, std::min(255, fastRound(t * 255.0f)));
           }
         }
       }
     }
   } else {
-    std::vector<int> hist(bins+1), prev_hist(bins+1);
-    std::vector<int> clippedHist(bins+1);
+    std::vector<int> hist(bins + 1), prev_hist(bins + 1);
+    std::vector<int> clippedHist(bins + 1);
 
     bool first = true;
     int xMin0 = 0;
-    int xMax0 = std::min((int) I1.getWidth(), blockRadius);
+    int xMax0 = std::min((int)I1.getWidth(), blockRadius);
 
-    for (int y = 0; y < (int) I1.getHeight(); y++) {
-      int yMin = std::max(0, y - (int) blockRadius);
-      int yMax = std::min((int) I1.getHeight(), y + blockRadius + 1);
+    for (int y = 0; y < (int)I1.getHeight(); y++) {
+      int yMin = std::max(0, y - (int)blockRadius);
+      int yMax = std::min((int)I1.getHeight(), y + blockRadius + 1);
       int h = yMax - yMin;
 
 #if 0
@@ -409,7 +426,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
           }
         }
 
-        if (y + blockRadius < (int) I1.getHeight()) {
+        if (y + blockRadius < (int)I1.getHeight()) {
           int yMax1 = yMax - 1;
           // Sliding histogram, add bottom
           for (int xi = xMin0; xi < xMax0; xi++) {
@@ -420,8 +437,8 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
       prev_hist = hist;
 #endif
 
-      for (int x = 0; x < (int) I1.getWidth(); x++) {
-        int xMin = std::max(0, x - (int) blockRadius);
+      for (int x = 0; x < (int)I1.getWidth(); x++) {
+        int xMin = std::max(0, x - (int)blockRadius);
         int xMax = x + blockRadius + 1;
 
         if (xMin > 0) {
@@ -432,7 +449,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
           }
         }
 
-        if (xMax <= (int) I1.getWidth()) {
+        if (xMax <= (int)I1.getWidth()) {
           int xMax1 = xMax - 1;
           // Sliding histogram, add right
           for (int yi = yMin; yi < yMax; yi++) {
@@ -441,10 +458,11 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
         }
 
         int v = fastRound(I1[y][x] / 255.0f * bins);
-        int w = std::min((int) I1.getWidth(), xMax) - xMin;
-        int n = h*w;
-        int limit = (int) (slope * n / bins + 0.5f);
-        I2[y][x] = fastRound(transferValue(v, hist, clippedHist, limit) * 255.0f);
+        int w = std::min((int)I1.getWidth(), xMax) - xMin;
+        int n = h * w;
+        int limit = (int)(slope * n / bins + 0.5f);
+        I2[y][x] =
+            fastRound(transferValue(v, hist, clippedHist, limit) * 255.0f);
       }
     }
   }
@@ -453,26 +471,33 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
 /*!
   \ingroup group_imgproc_brightness
 
-  Adjust the contrast of a color image locally using the Contrast Limited Adaptative Histogram Equalization method.
-  The limit parameter allows to limit the slope of the transformation function to prevent the overamplification of noise.
-  This method is a transcription of the CLAHE ImageJ plugin code by Stephan Saalfeld.
+  Adjust the contrast of a color image locally using the Contrast Limited
+  Adaptative Histogram Equalization method. The limit parameter allows to
+  limit the slope of the transformation function to prevent the
+  overamplification of noise. This method is a transcription of the CLAHE
+  ImageJ plugin code by Stephan Saalfeld.
 
   \param I1 : The first color image.
   \param I2 : The second color image after application of the CLAHE method.
-  \param blockRadius : The size (2*blockRadius+1) of the local region around a pixel for which the histogram is equalized.
-  This size should be larger than the size of features to be preserved.
-  \param  bins : The number of histogram bins used for histogram equalization (between 1 and 256).
-  The number of histogram bins should be smaller than the number of pixels in a block.
-  \param slope : Limits the contrast stretch in the intensity transfer function.
-  Very large values will let the histogram equalization do whatever it wants to do, that is result in maximal local contrast.
-  The value 1 will result in the original image.
-  \param fast : Use the fast but less accurate version of the filter. The fast version does not evaluate the intensity
-  transfer function for each pixel independently but for a grid of adjacent boxes of the given block size only
-  and interpolates for locations in between.
+  \param blockRadius : The size (2*blockRadius+1) of the local region around a
+  pixel for which the histogram is equalized. This size should be larger than
+  the size of features to be preserved. \param  bins : The number of histogram
+  bins used for histogram equalization (between 1 and 256). The number of
+  histogram bins should be smaller than the number of pixels in a block.
+  \param slope : Limits the contrast stretch in the intensity transfer
+  function. Very large values will let the histogram equalization do whatever
+  it wants to do, that is result in maximal local contrast. The value 1 will
+  result in the original image. \param fast : Use the fast but less accurate
+  version of the filter. The fast version does not evaluate the intensity
+  transfer function for each pixel independently but for a grid of adjacent
+  boxes of the given block size only and interpolates for locations in
+  between.
 */
-void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int blockRadius,
-               const int bins, const float slope, const bool fast) {
-  //Split
+void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2,
+               const int blockRadius, const int bins, const float slope,
+               const bool fast)
+{
+  // Split
   vpImage<unsigned char> pR(I1.getHeight(), I1.getWidth());
   vpImage<unsigned char> pG(I1.getHeight(), I1.getWidth());
   vpImage<unsigned char> pB(I1.getHeight(), I1.getWidth());
@@ -480,16 +505,16 @@ void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int blockRa
 
   vpImageConvert::split(I1, &pR, &pG, &pB, &pa);
 
-  //Apply CLAHE independently on RGB channels
+  // Apply CLAHE independently on RGB channels
   vpImage<unsigned char> resR, resG, resB;
   clahe(pR, resR, blockRadius, bins, slope, fast);
   clahe(pG, resG, blockRadius, bins, slope, fast);
   clahe(pB, resB, blockRadius, bins, slope, fast);
 
   I2.resize(I1.getHeight(), I1.getWidth());
-  unsigned int size = I2.getWidth()*I2.getHeight();
-  unsigned char *ptrStart = (unsigned char *) I2.bitmap;
-  unsigned char *ptrEnd = ptrStart + size*4;
+  unsigned int size = I2.getWidth() * I2.getHeight();
+  unsigned char *ptrStart = (unsigned char *)I2.bitmap;
+  unsigned char *ptrEnd = ptrStart + size * 4;
   unsigned char *ptrCurrent = ptrStart;
 
   unsigned int cpt = 0;

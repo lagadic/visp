@@ -42,22 +42,24 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) &&                                         \
+    (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 
 #include <map>
 
-#include <visp3/core/vpPolygon3D.h>
-#include <visp3/klt/vpKltOpencv.h>
-#include <visp3/core/vpPlane.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpGEMM.h>
-#include <visp3/vision/vpHomography.h>
+#include <visp3/core/vpPlane.h>
+#include <visp3/core/vpPolygon3D.h>
+#include <visp3/klt/vpKltOpencv.h>
 #include <visp3/mbt/vpMbHiddenFaces.h>
+#include <visp3/vision/vpHomography.h>
 
 /*!
   \class vpMbtDistanceKltPoints
 
-  \brief Implementation of a polygon of the model containing points of interest. It is used by the model-based tracker KLT, and hybrid.
+  \brief Implementation of a polygon of the model containing points of
+  interest. It is used by the model-based tracker KLT, and hybrid.
 
   \warning This class is only available if OpenCV is installed, and used.
 
@@ -72,7 +74,8 @@ private:
   vpColVector N;
   //! current normal
   vpColVector N_cur;
-  //! inverse of the distance between the plane and the camera at the initial position (speed up computation)
+  //! inverse of the distance between the plane and the camera at the initial
+  //! position (speed up computation)
   double invd0;
   //! cRc0_0n (temporary variable to speed up the computation)
   vpColVector cRc0_0n;
@@ -108,104 +111,125 @@ public:
   bool useScanLine;
 
 private:
+  double compute_1_over_Z(const double x, const double y);
+  void computeP_mu_t(const double x_in, const double y_in, double &x_out,
+                     double &y_out, const vpMatrix &cHc0);
+  bool isTrackedFeature(const int id);
 
-  double              compute_1_over_Z(const double x, const double y);
-  void                computeP_mu_t(const double x_in, const double y_in, double& x_out, double& y_out, const vpMatrix& cHc0);
-  bool                isTrackedFeature(const int id);
-
-//private:
-//#ifndef DOXYGEN_SHOULD_SKIP_THIS
-//    vpMbtDistanceKltPoints(const vpMbtDistanceKltPoints &)
-//      : H(), N(), N_cur(), invd0(1.), cRc0_0n(), initPoints(), curPoints(), curPointsInd(),
-//        nbPointsCur(0), nbPointsInit(0), minNbPoint(4), enoughPoints(false), dt(1.), d0(1.),
-//        cam(), isTrackedKltPoints(true), polygon(NULL), hiddenface(NULL), useScanLine(false)
-//    {
-//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-//    }
-//    vpMbtDistanceKltPoints &operator=(const vpMbtDistanceKltPoints &){
-//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-//      return *this;
-//    }
-//#endif
+  // private:
+  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //    vpMbtDistanceKltPoints(const vpMbtDistanceKltPoints &)
+  //      : H(), N(), N_cur(), invd0(1.), cRc0_0n(), initPoints(),
+  //      curPoints(), curPointsInd(),
+  //        nbPointsCur(0), nbPointsInit(0), minNbPoint(4),
+  //        enoughPoints(false), dt(1.), d0(1.), cam(),
+  //        isTrackedKltPoints(true), polygon(NULL), hiddenface(NULL),
+  //        useScanLine(false)
+  //    {
+  //      throw vpException(vpException::functionNotImplementedError, "Not
+  //      implemented!");
+  //    }
+  //    vpMbtDistanceKltPoints &operator=(const vpMbtDistanceKltPoints &){
+  //      throw vpException(vpException::functionNotImplementedError, "Not
+  //      implemented!"); return *this;
+  //    }
+  //#endif
 
 public:
-                      vpMbtDistanceKltPoints();
-  virtual             ~vpMbtDistanceKltPoints();
+  vpMbtDistanceKltPoints();
+  virtual ~vpMbtDistanceKltPoints();
 
-  unsigned int        computeNbDetectedCurrent(const vpKltOpencv& _tracker);
-  void                computeHomography(const vpHomogeneousMatrix& _cTc0, vpHomography& cHc0);
-  void                computeInteractionMatrixAndResidu(vpColVector& _R, vpMatrix& _J);
+  unsigned int computeNbDetectedCurrent(const vpKltOpencv &_tracker);
+  void computeHomography(const vpHomogeneousMatrix &_cTc0,
+                         vpHomography &cHc0);
+  void computeInteractionMatrixAndResidu(vpColVector &_R, vpMatrix &_J);
 
-  void                display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
-  void                display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+  void display(const vpImage<unsigned char> &I,
+               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &col, const unsigned int thickness = 1,
+               const bool displayFullModel = false);
+  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
+               const vpCameraParameters &cam, const vpColor &col,
+               const unsigned int thickness = 1,
+               const bool displayFullModel = false);
 
-  void                displayPrimitive(const vpImage<unsigned char>& _I);
-  void                displayPrimitive(const vpImage<vpRGBa>& _I);
+  void displayPrimitive(const vpImage<unsigned char> &_I);
+  void displayPrimitive(const vpImage<vpRGBa> &_I);
 
   /*!
     Get the camera parameters of the face.
 
     \return cam : the camera parameters of the face.
   */
-  inline vpCameraParameters& getCameraParameters(){ return cam; }
+  inline vpCameraParameters &getCameraParameters() { return cam; }
 
-  inline vpColVector  getCurrentNormal() const {return N_cur; }
+  inline vpColVector getCurrentNormal() const { return N_cur; }
 
-  inline std::map<int, vpImagePoint>& getCurrentPoints() {return curPoints; }
+  inline std::map<int, vpImagePoint> &getCurrentPoints() { return curPoints; }
 
-  inline std::map<int, int>& getCurrentPointsInd() {return curPointsInd; }
+  inline std::map<int, int> &getCurrentPointsInd() { return curPointsInd; }
 
   /*!
-    Get the number of point that was belonging to the face at the initialisation
+    Get the number of point that was belonging to the face at the
+    initialisation
 
     \return the number of initial point.
 
     \sa getCurrentNumberPoints()
   */
-  inline unsigned int getInitialNumberPoint() const { return nbPointsInit;}
+  inline unsigned int getInitialNumberPoint() const { return nbPointsInit; }
   /*!
     Get the number of points detected in the last image.
 
-    \warning To have the real number of points, the function computeNbDetectedCurrent()
-    must be called first.
+    \warning To have the real number of points, the function
+    computeNbDetectedCurrent() must be called first.
 
     \return the number of points detected in the current image.
 
     \sa getInitialNumberPoint()
   */
-  inline unsigned int getCurrentNumberPoints() const {return nbPointsCur;}
+  inline unsigned int getCurrentNumberPoints() const { return nbPointsCur; }
 
-  inline  bool        hasEnoughPoints() const {return enoughPoints;}
+  inline bool hasEnoughPoints() const { return enoughPoints; }
 
-          void        init(const vpKltOpencv& _tracker);
+  void init(const vpKltOpencv &_tracker);
 
   /*!
    Return if the klt points are used for tracking.
 
    \return True if it is used, False otherwise.
   */
-  inline  bool        isTracked() const {return isTrackedKltPoints;}
+  inline bool isTracked() const { return isTrackedKltPoints; }
 
-          void        removeOutliers(const vpColVector& weight, const double &threshold_outlier);
+  void removeOutliers(const vpColVector &weight,
+                      const double &threshold_outlier);
 
   /*!
     Set the camera parameters
 
     \param _cam : the new camera parameters
   */
-  virtual inline void setCameraParameters(const vpCameraParameters& _cam){ cam = _cam; }
+  virtual inline void setCameraParameters(const vpCameraParameters &_cam)
+  {
+    cam = _cam;
+  }
 
   /*!
     Set if the klt points have to considered during tracking phase.
 
     \param track : True if they have to be tracked, False otherwise.
   */
-  inline void setTracked(const bool& track) {this->isTrackedKltPoints = track;}
+  inline void setTracked(const bool &track)
+  {
+    this->isTrackedKltPoints = track;
+  }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  void updateMask(cv::Mat &mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
+  void updateMask(cv::Mat &mask, unsigned char _nb = 255,
+                  unsigned int _shiftBorder = 0);
 #else
-  void updateMask(IplImage* mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
+  void updateMask(IplImage *mask, unsigned char _nb = 255,
+                  unsigned int _shiftBorder = 0);
 #endif
 };
 

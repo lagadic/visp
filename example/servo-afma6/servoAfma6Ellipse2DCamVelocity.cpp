@@ -38,16 +38,14 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file servoAfma6Ellipse2DCamVelocity.cpp
 
-  \brief Example of eye-in-hand control law. We control here a real robot, the Afma6
-  robot (cartesian robot, with 6 degrees of freedom). The velocity is computed
-  in the camera frame. The used visual feature is a circle.
+  \brief Example of eye-in-hand control law. We control here a real robot, the
+  Afma6 robot (cartesian robot, with 6 degrees of freedom). The velocity is
+  computed in the camera frame. The used visual feature is a circle.
 
 */
-
 
 /*!
   \example servoAfma6Ellipse2DCamVelocity.cpp
@@ -58,26 +56,25 @@
 
 */
 
-
+#include <cmath>  // std::fabs
+#include <limits> // numeric_limits
+#include <stdlib.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h> // Debug trace
-#include <stdlib.h>
-#include <cmath>    // std::fabs
-#include <limits>   // numeric_limits
-#if (defined (VISP_HAVE_AFMA6) && defined (VISP_HAVE_DC1394))
+#if (defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_DC1394))
 
-#include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/core/vpImage.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
-#include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureEllipse.h>
 #include <visp3/vs/vpServo.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
 
 #include <visp3/robot/vpRobotAfma6.h>
 
@@ -87,168 +84,163 @@
 
 #include <visp3/blob/vpDot.h>
 
-
-
-int
-main()
+int main()
 {
-  try
-  {
-    vpServo task ;
+  try {
+    vpServo task;
 
-    vpImage<unsigned char> I ;
+    vpImage<unsigned char> I;
     vp1394TwoGrabber g;
     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-    g.open(I) ;
-    g.acquire(I) ;
+    g.open(I);
+    g.acquire(I);
 
 #ifdef VISP_HAVE_X11
-    vpDisplayX display(I,100,100,"Current image") ;
+    vpDisplayX display(I, 100, 100, "Current image");
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV display(I,100,100,"Current image") ;
+    vpDisplayOpenCV display(I, 100, 100, "Current image");
 #elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I,100,100,"Current image") ;
+    vpDisplayGTK display(I, 100, 100, "Current image");
 #endif
 
-    vpDisplay::display(I) ;
-    vpDisplay::flush(I) ;
-
-    std::cout << std::endl ;
-    std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << " Test program for vpServo "  <<std::endl ;
-    std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
-    std::cout << " Simulation " << std::endl ;
-    std::cout << " task : servo a point " << std::endl ;
-    std::cout << "-------------------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
-
-
-    vpDot dot ;
-
-    dot.setMaxDotSize(0.30) ; // Max dot size is 30 % of the image size
-    // dot.setGraphics(true) ;
-    dot.setComputeMoments(true) ;
-    std::cout << "Click on an ellipse..." << std::endl;
-    dot.initTracking(I) ;
-    vpImagePoint cog = dot.getCog();
-    vpDisplay::displayCross(I, cog, 10, vpColor::blue) ;
+    vpDisplay::display(I);
     vpDisplay::flush(I);
 
-    dot.track(I) ;
+    std::cout << std::endl;
+    std::cout << "-------------------------------------------------------"
+              << std::endl;
+    std::cout << " Test program for vpServo " << std::endl;
+    std::cout
+        << " Eye-in-hand task control, velocity computed in the camera frame"
+        << std::endl;
+    std::cout << " Simulation " << std::endl;
+    std::cout << " task : servo a point " << std::endl;
+    std::cout << "-------------------------------------------------------"
+              << std::endl;
+    std::cout << std::endl;
 
-    vpCameraParameters cam ;
+    vpDot dot;
 
-    vpRobotAfma6 robot ;
+    dot.setMaxDotSize(0.30); // Max dot size is 30 % of the image size
+    // dot.setGraphics(true) ;
+    dot.setComputeMoments(true);
+    std::cout << "Click on an ellipse..." << std::endl;
+    dot.initTracking(I);
+    vpImagePoint cog = dot.getCog();
+    vpDisplay::displayCross(I, cog, 10, vpColor::blue);
+    vpDisplay::flush(I);
+
+    dot.track(I);
+
+    vpCameraParameters cam;
+
+    vpRobotAfma6 robot;
 
     // Update camera parameters
-    robot.getCameraParameters (cam, I);
+    robot.getCameraParameters(cam, I);
 
-    vpTRACE("sets the current position of the visual feature ") ;
-    vpFeatureEllipse c ;
-    vpFeatureBuilder::create(c, cam, dot)  ;
+    vpTRACE("sets the current position of the visual feature ");
+    vpFeatureEllipse c;
+    vpFeatureBuilder::create(c, cam, dot);
 
-
-    std::cout << " Learning 0/1 " <<std::endl ;
-    int learning ;
-    std::cin >> learning ;
-    char name[FILENAME_MAX] ;
-    sprintf(name,"dat/ellipse.dat") ;
-    if (learning ==1)
-    {
+    std::cout << " Learning 0/1 " << std::endl;
+    int learning;
+    std::cin >> learning;
+    char name[FILENAME_MAX];
+    sprintf(name, "dat/ellipse.dat");
+    if (learning == 1) {
       // save the object position
-      vpTRACE("Save the location of the object in a file dat/ellipse.dat") ;
-      std::ofstream f(name) ;
-      f << c.get_s().t() ;
-      f.close() ;
-      exit(1) ;
+      vpTRACE("Save the location of the object in a file dat/ellipse.dat");
+      std::ofstream f(name);
+      f << c.get_s().t();
+      f.close();
+      exit(1);
     }
 
+    vpTRACE("sets the desired position of the visual feature ");
+    vpFeatureEllipse cd;
+    std::ifstream f("dat/ellipse.dat");
+    double x, y, mu20, mu11, mu02;
+    f >> x;
+    f >> y;
+    f >> mu20;
+    f >> mu11;
+    f >> mu02;
+    f.close();
+    cd.buildFrom(x, y, mu20, mu11, mu02);
+    cd.setABC(0, 0, 10);
 
-    vpTRACE("sets the desired position of the visual feature ") ;
-    vpFeatureEllipse cd ;
-    std::ifstream f("dat/ellipse.dat") ;
-    double x,y,mu20,mu11,mu02 ;
-    f >> x ;   f >> y ;  f >> mu20 ;  f >> mu11 ;  f >> mu02 ;
-    f.close() ;
-    cd.buildFrom(x,y,mu20,mu11,mu02) ;
-    cd.setABC(0,0,10) ;
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE);
 
-    task.setServo(vpServo::EYEINHAND_CAMERA) ;
-    task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE) ;
+    task.addFeature(c, cd);
 
-    task.addFeature(c,cd) ;
+    task.setLambda(0.01);
 
-    task.setLambda(0.01) ;
-
-    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
-    unsigned int iter=0 ;
-    double lambda_av =0.01;
-    double alpha = 0.1 ; //1 ;
-    double beta =3 ; //3 ;
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
+    unsigned int iter = 0;
+    double lambda_av = 0.01;
+    double alpha = 0.1; // 1 ;
+    double beta = 3;    // 3 ;
 
     std::cout << "alpha 0.7" << std::endl;
-    std::cin >> alpha ;
+    std::cin >> alpha;
     std::cout << "beta 5" << std::endl;
-    std::cin >> beta ;
-    for ( ; ; )
-    {
-      std::cout << "---------------------------------------------" << iter++ <<std::endl ;
+    std::cin >> beta;
+    for (;;) {
+      std::cout << "---------------------------------------------" << iter++
+                << std::endl;
 
-      g.acquire(I) ;
-      vpDisplay::display(I) ;
+      g.acquire(I);
+      vpDisplay::display(I);
 
-      dot.track(I) ;
+      dot.track(I);
 
       // Get the dot cog
       cog = dot.getCog();
 
-      vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
+      vpDisplay::displayCross(I, cog, 10, vpColor::green);
 
-      vpFeatureBuilder::create(c,cam, dot);
+      vpFeatureBuilder::create(c, cam, dot);
       // Compute the adaptative gain (speed up the convergence)
-      double gain ;
-      if (iter>2)
-      {
+      double gain;
+      if (iter > 2) {
         if (std::fabs(alpha) <= std::numeric_limits<double>::epsilon())
-          gain = lambda_av ;
-        else
-        {
-          gain = alpha * exp (-beta * ( task.getError() ).sumSquare() ) +  lambda_av;
+          gain = lambda_av;
+        else {
+          gain =
+              alpha * exp(-beta * (task.getError()).sumSquare()) + lambda_av;
         }
-      }
-      else gain = lambda_av ;
+      } else
+        gain = lambda_av;
 
+      vpTRACE("%f %f", (task.getError()).sumSquare(), gain);
+      task.setLambda(gain);
+      vpColVector v;
+      v = task.computeControlLaw();
+      std::cout << "rank " << task.getTaskRank() << std::endl;
+      vpServoDisplay::display(task, cam, I);
+      std::cout << v.t();
+      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-      vpTRACE("%f %f", ( task.getError() ).sumSquare(),  gain) ;
-      task.setLambda(gain) ;
-      vpColVector v ;
-      v = task.computeControlLaw() ;
-      std::cout <<"rank " << task.getTaskRank() << std::endl ;
-      vpServoDisplay::display(task,cam,I) ;
-      std::cout << v.t() ;
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
-
-      vpDisplay::flush(I) ;
-      vpTRACE("\t\t || s - s* || = %f ", ( task.getError() ).sumSquare()) ;
+      vpDisplay::flush(I);
+      vpTRACE("\t\t || s - s* || = %f ", (task.getError()).sumSquare());
     }
 
-    vpTRACE("Display task information " ) ;
-    task.print() ;
+    vpTRACE("Display task information ");
+    task.print();
     task.kill();
-  }
-  catch (...)
-  {
-    vpERROR_TRACE(" Test failed") ;
+  } catch (...) {
+    vpERROR_TRACE(" Test failed");
     return 0;
   }
 }
 
-
 #else
-int
-main()
+int main()
 {
-  vpERROR_TRACE("You do not have an afma6 robot or a firewire framegrabber connected to your computer...");
+  vpERROR_TRACE("You do not have an afma6 robot or a firewire framegrabber "
+                "connected to your computer...");
 }
 #endif

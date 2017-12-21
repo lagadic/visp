@@ -44,39 +44,42 @@
 #include <queue>
 #include <visp3/imgproc/vpImgproc.h>
 
-namespace {
-void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &listOfNeighbors,
+namespace
+{
+void getNeighbors(const vpImage<unsigned char> &I,
+                  std::queue<vpImagePoint> &listOfNeighbors,
                   const unsigned int i, const unsigned int j,
-                  const vpImageMorphology::vpConnexityType &connexity) {
+                  const vpImageMorphology::vpConnexityType &connexity)
+{
   unsigned char currValue = I[i][j];
 
   if (connexity == vpImageMorphology::CONNEXITY_4) {
-    //Top
-    if (I[i-1][j] == currValue) {
-      listOfNeighbors.push(vpImagePoint(i-1, j));
+    // Top
+    if (I[i - 1][j] == currValue) {
+      listOfNeighbors.push(vpImagePoint(i - 1, j));
     }
 
-    //Left
-    if (I[i][j-1] == currValue) {
-      listOfNeighbors.push(vpImagePoint(i, j-1));
+    // Left
+    if (I[i][j - 1] == currValue) {
+      listOfNeighbors.push(vpImagePoint(i, j - 1));
     }
 
-    //Right
-    if (I[i][j+1] == currValue) {
-      listOfNeighbors.push(vpImagePoint(i, j+1));
+    // Right
+    if (I[i][j + 1] == currValue) {
+      listOfNeighbors.push(vpImagePoint(i, j + 1));
     }
 
-    //Bottom
-    if (I[i+1][j] == currValue) {
-      listOfNeighbors.push(vpImagePoint(i+1, j));
+    // Bottom
+    if (I[i + 1][j] == currValue) {
+      listOfNeighbors.push(vpImagePoint(i + 1, j));
     }
   } else {
     for (int cpt1 = -1; cpt1 <= 1; cpt1++) {
       for (int cpt2 = -1; cpt2 <= 1; cpt2++) {
-        //Everything except the current position
+        // Everything except the current position
         if (cpt1 != 0 || cpt2 != 0) {
-          if ( I[(int) i + cpt1][(int) j + cpt2] == currValue ) {
-            listOfNeighbors.push(vpImagePoint( (int) i + cpt1, (int) j + cpt2));
+          if (I[(int)i + cpt1][(int)j + cpt2] == currValue) {
+            listOfNeighbors.push(vpImagePoint((int)i + cpt1, (int)j + cpt2));
           }
         }
       }
@@ -84,25 +87,28 @@ void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &lis
   }
 }
 
-void visitNeighbors(vpImage<unsigned char> &I_copy, std::queue<vpImagePoint> &listOfNeighbors, vpImage<int> &labels,
-                    const int current_label, const vpImageMorphology::vpConnexityType &connexity) {
-  //Visit the neighbors
+void visitNeighbors(vpImage<unsigned char> &I_copy,
+                    std::queue<vpImagePoint> &listOfNeighbors,
+                    vpImage<int> &labels, const int current_label,
+                    const vpImageMorphology::vpConnexityType &connexity)
+{
+  // Visit the neighbors
   while (!listOfNeighbors.empty()) {
     vpImagePoint imPt = listOfNeighbors.front();
-    unsigned int i = (unsigned int) imPt.get_i();
-    unsigned int j = (unsigned int) imPt.get_j();
+    unsigned int i = (unsigned int)imPt.get_i();
+    unsigned int j = (unsigned int)imPt.get_j();
     listOfNeighbors.pop();
 
     if (I_copy[i][j]) {
       getNeighbors(I_copy, listOfNeighbors, i, j, connexity);
 
-      //Reset current position and set label
+      // Reset current position and set label
       I_copy[i][j] = 0;
       labels[i][j] = current_label;
     }
   }
 }
-} //namespace
+} // namespace
 
 /*!
   \ingroup group_imgproc_connected_components
@@ -110,59 +116,63 @@ void visitNeighbors(vpImage<unsigned char> &I_copy, std::queue<vpImagePoint> &li
   Perform connected components detection.
 
   \param I : Input image (0 means background).
-  \param labels : Label image that contain for each position the component label.
-  \param nbComponents : Number of connected components.
-  \param connexity : Type of connexity.
+  \param labels : Label image that contain for each position the component
+  label. \param nbComponents : Number of connected components. \param
+  connexity : Type of connexity.
 */
-void vp::connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents,
-                             const vpImageMorphology::vpConnexityType &connexity) {
+void vp::connectedComponents(
+    const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents,
+    const vpImageMorphology::vpConnexityType &connexity)
+{
   if (I.getSize() == 0) {
     return;
   }
 
   labels.resize(I.getHeight(), I.getWidth());
 
-  vpImage<unsigned char> I_copy(I.getHeight()+2, I.getWidth()+2);
+  vpImage<unsigned char> I_copy(I.getHeight() + 2, I.getWidth() + 2);
   // Copy and add border
   for (unsigned int i = 0; i < I_copy.getHeight(); i++) {
     if (i == 0 || i == I_copy.getHeight() - 1) {
-      memset(I_copy[i], 0, sizeof(unsigned char)*I_copy.getWidth());
+      memset(I_copy[i], 0, sizeof(unsigned char) * I_copy.getWidth());
     } else {
       I_copy[i][0] = 0;
-      memcpy(I_copy[i]+1, I[i-1], sizeof(unsigned char)*I.getWidth());
+      memcpy(I_copy[i] + 1, I[i - 1], sizeof(unsigned char) * I.getWidth());
       I_copy[i][I_copy.getWidth() - 1] = 0;
     }
   }
 
-  vpImage<int> labels_copy(I.getHeight()+2, I.getWidth()+2, 0);
+  vpImage<int> labels_copy(I.getHeight() + 2, I.getWidth() + 2, 0);
 
   int current_label = 1;
   std::queue<vpImagePoint> listOfNeighbors;
 
   for (unsigned int cpt1 = 0; cpt1 < I.getHeight(); cpt1++) {
-    unsigned int i = cpt1+1;
+    unsigned int i = cpt1 + 1;
 
     for (unsigned int cpt2 = 0; cpt2 < I.getWidth(); cpt2++) {
-      unsigned int j = cpt2+1;
+      unsigned int j = cpt2 + 1;
 
       if (I_copy[i][j] && labels_copy[i][j] == 0) {
-        //Get all the neighbors relative to the current position
+        // Get all the neighbors relative to the current position
         getNeighbors(I_copy, listOfNeighbors, i, j, connexity);
 
-        //Reset current position and set label
+        // Reset current position and set label
         I_copy[i][j] = 0;
         labels_copy[i][j] = current_label;
 
-        visitNeighbors(I_copy, listOfNeighbors, labels_copy, current_label, connexity);
+        visitNeighbors(I_copy, listOfNeighbors, labels_copy, current_label,
+                       connexity);
 
-        //Increment label
+        // Increment label
         current_label++;
       }
     }
   }
 
   for (unsigned int i = 0; i < labels.getHeight(); i++) {
-    memcpy(labels[i], labels_copy[i+1]+1, sizeof(int)*labels.getWidth());
+    memcpy(labels[i], labels_copy[i + 1] + 1,
+           sizeof(int) * labels.getWidth());
   }
 
   nbComponents = current_label - 1;

@@ -7,30 +7,30 @@
          with C++11 threads.
 */
 
-#if defined(VISP_HAVE_CPP11_COMPATIBILITY) && defined(VISP_HAVE_V4L2) && ( defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) )
+#if defined(VISP_HAVE_CPP11_COMPATIBILITY) && defined(VISP_HAVE_V4L2) &&     \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
 
+#include <condition_variable>
 #include <iostream>
 #include <limits>
-#include <queue>
 #include <mutex>
+#include <queue>
 #include <thread>
-#include <condition_variable>
 
-#include <visp3/sensor/vpV4l2Grabber.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpTime.h>
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoWriter.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
 
+#define GETOPTARGS "d:oh"
 
-#define GETOPTARGS  "d:oh"
-
-
-namespace {
+namespace
+{
 
 void usage(const char *name, const char *badparam)
 {
@@ -49,30 +49,36 @@ OPTIONS:                                               \n\
      Save each stream in a dedicated folder.\n\
     \n\
   -h \n\
-     Print the help.\n\n",
-    name);
+     Print the help.\n\n", name);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
-bool getOptions(int argc, char **argv,
-                unsigned int &deviceCount,
+bool getOptions(int argc, char **argv, unsigned int &deviceCount,
                 bool &saveVideo)
 {
   const char *optarg;
-  const char **argv1=(const char**)argv;
-  int   c;
+  const char **argv1 = (const char **)argv;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv1, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {
-    case 'd': deviceCount = (unsigned int) atoi(optarg); break;
-    case 'o': saveVideo = true; break;
-    case 'h': usage(argv[0], NULL); return false; break;
+    case 'd':
+      deviceCount = (unsigned int)atoi(optarg);
+      break;
+    case 'o':
+      saveVideo = true;
+      break;
+    case 'h':
+      usage(argv[0], NULL);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -87,38 +93,46 @@ bool getOptions(int argc, char **argv,
   return true;
 }
 
-//Code adapted from the original author Dan Mašek to be compatible with ViSP image
-class FrameQueue {
+// Code adapted from the original author Dan Mašek to be compatible with ViSP
+// image
+class FrameQueue
+{
 
 public:
   struct cancelled {
   };
 
-  FrameQueue() : m_cancelled(false), m_cond(), m_queueColor(), m_maxQueueSize(std::numeric_limits<size_t>::max()), m_mutex() {
+  FrameQueue()
+    : m_cancelled(false), m_cond(), m_queueColor(),
+      m_maxQueueSize(std::numeric_limits<size_t>::max()), m_mutex()
+  {
   }
 
-  void cancel() {
+  void cancel()
+  {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_cancelled = true;
     m_cond.notify_all();
   }
 
-  //Push the image to save in the queue (FIFO)
-  void push(const vpImage<vpRGBa> &image) {
+  // Push the image to save in the queue (FIFO)
+  void push(const vpImage<vpRGBa> &image)
+  {
     std::lock_guard<std::mutex> lock(m_mutex);
 
     m_queueColor.push(image);
 
-    //Pop extra images in the queue
-    while(m_queueColor.size() > m_maxQueueSize) {
+    // Pop extra images in the queue
+    while (m_queueColor.size() > m_maxQueueSize) {
       m_queueColor.pop();
     }
 
     m_cond.notify_one();
   }
 
-  //Pop the image to save from the queue (FIFO)
-  vpImage<vpRGBa> pop() {
+  // Pop the image to save from the queue (FIFO)
+  vpImage<vpRGBa> pop()
+  {
     std::unique_lock<std::mutex> lock(m_mutex);
 
     while (m_queueColor.empty()) {
@@ -139,7 +153,8 @@ public:
     return image;
   }
 
-  void setMaxQueueSize(const size_t max_queue_size) {
+  void setMaxQueueSize(const size_t max_queue_size)
+  {
     m_maxQueueSize = max_queue_size;
   }
 
@@ -151,21 +166,23 @@ private:
   std::mutex m_mutex;
 };
 
-
-class StorageWorker {
+class StorageWorker
+{
 
 public:
   StorageWorker(FrameQueue &queue, const std::string &filename,
-      const unsigned int width, const unsigned int height) :
-    m_queue(queue), m_filename(filename), m_width(width), m_height(height) {
+                const unsigned int width, const unsigned int height)
+    : m_queue(queue), m_filename(filename), m_width(width), m_height(height)
+  {
   }
 
-  //Thread main loop
-  void run() {
+  // Thread main loop
+  void run()
+  {
     vpImage<vpRGBa> O_color(m_height, m_width);
 
     vpVideoWriter writer;
-    if(!m_filename.empty()) {
+    if (!m_filename.empty()) {
       writer.setFileName(m_filename);
       writer.open(O_color);
     }
@@ -174,7 +191,7 @@ public:
       for (;;) {
         vpImage<vpRGBa> image(m_queue.pop());
 
-        if(!m_filename.empty()) {
+        if (!m_filename.empty()) {
           writer.saveFrame(image);
         }
       }
@@ -189,8 +206,8 @@ private:
   unsigned int m_height;
 };
 
-
-class ShareImage {
+class ShareImage
+{
 
 private:
   bool m_cancelled;
@@ -203,23 +220,29 @@ public:
   struct cancelled {
   };
 
-  ShareImage() : m_cancelled(false), m_cond(), m_mutex(), m_pImgData(NULL), m_totalSize(0) {
+  ShareImage()
+    : m_cancelled(false), m_cond(), m_mutex(), m_pImgData(NULL),
+      m_totalSize(0)
+  {
   }
 
-  virtual ~ShareImage() {
-    if(m_pImgData != NULL) {
-      delete []m_pImgData;
+  virtual ~ShareImage()
+  {
+    if (m_pImgData != NULL) {
+      delete[] m_pImgData;
     }
   }
 
-  void cancel() {
+  void cancel()
+  {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_cancelled = true;
     m_cond.notify_all();
   }
 
-  //Get the image to display
-  void getImage(unsigned char * const imageData, const unsigned int totalSize) {
+  // Get the image to display
+  void getImage(unsigned char *const imageData, const unsigned int totalSize)
+  {
     std::unique_lock<std::mutex> lock(m_mutex);
 
     if (m_cancelled) {
@@ -232,61 +255,67 @@ public:
       throw cancelled();
     }
 
-    //Copy to imageData
-    if(totalSize <= m_totalSize) {
-      memcpy(imageData, m_pImgData, totalSize*sizeof(unsigned char));
+    // Copy to imageData
+    if (totalSize <= m_totalSize) {
+      memcpy(imageData, m_pImgData, totalSize * sizeof(unsigned char));
     } else {
       std::cerr << "totalSize <= m_totalSize !" << std::endl;
     }
   }
 
-  bool isCancelled() {
+  bool isCancelled()
+  {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_cancelled;
   }
 
-  //Set the image to display
-  void setImage(const unsigned char * const imageData, const unsigned int totalSize) {
+  // Set the image to display
+  void setImage(const unsigned char *const imageData,
+                const unsigned int totalSize)
+  {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    if(m_pImgData == NULL || m_totalSize != totalSize) {
+    if (m_pImgData == NULL || m_totalSize != totalSize) {
       m_totalSize = totalSize;
 
-      if(m_pImgData != NULL) {
-        delete []m_pImgData;
+      if (m_pImgData != NULL) {
+        delete[] m_pImgData;
       }
 
       m_pImgData = new unsigned char[m_totalSize];
     }
 
-    //Copy from imageData
-    memcpy(m_pImgData, imageData, m_totalSize*sizeof(unsigned char));
+    // Copy from imageData
+    memcpy(m_pImgData, imageData, m_totalSize * sizeof(unsigned char));
 
     m_cond.notify_one();
   }
 };
 
-
-void capture(vpV4l2Grabber * const pGrabber, ShareImage &share_image) {
+void capture(vpV4l2Grabber *const pGrabber, ShareImage &share_image)
+{
   vpImage<vpRGBa> local_img;
 
-  //Open the camera stream
+  // Open the camera stream
   pGrabber->open(local_img);
 
-  while(true) {
-    if(share_image.isCancelled()) {
+  while (true) {
+    if (share_image.isCancelled()) {
       break;
     }
 
     pGrabber->acquire(local_img);
 
-    //Update share_image
-    share_image.setImage((unsigned char *) local_img.bitmap, local_img.getSize()*4);
+    // Update share_image
+    share_image.setImage((unsigned char *)local_img.bitmap,
+                         local_img.getSize() * 4);
   }
 }
 
-void display(const unsigned int width, const unsigned int height, const int win_x, const int win_y,
-             const unsigned int deviceId, ShareImage &share_image, FrameQueue &queue, const bool save) {
+void display(const unsigned int width, const unsigned int height,
+             const int win_x, const int win_y, const unsigned int deviceId,
+             ShareImage &share_image, FrameQueue &queue, const bool save)
+{
   vpImage<vpRGBa> local_img(height, width);
 
 #if defined VISP_HAVE_X11
@@ -295,7 +324,7 @@ void display(const unsigned int width, const unsigned int height, const int win_
   vpDisplayGTK display;
 #endif
 
-  //Init Display
+  // Init Display
   std::stringstream ss;
   ss << "Camera stream " << deviceId;
   display.init(local_img, win_x, win_y, ss.str());
@@ -303,34 +332,43 @@ void display(const unsigned int width, const unsigned int height, const int win_
   try {
     vpMouseButton::vpMouseButtonType button;
 
-    vpImage<unsigned char> I_red(height, width), I_green(height, width), I_blue(height, width), I_alpha(height, width);;
-    vpImage<unsigned char> I_red_gaussian(height, width), I_green_gaussian(height, width), I_blue_gaussian(height, width);
-    vpImage<double> I_red_gaussian_double, I_green_gaussian_double, I_blue_gaussian_double;
+    vpImage<unsigned char> I_red(height, width), I_green(height, width),
+        I_blue(height, width), I_alpha(height, width);
+    ;
+    vpImage<unsigned char> I_red_gaussian(height, width),
+        I_green_gaussian(height, width), I_blue_gaussian(height, width);
+    vpImage<double> I_red_gaussian_double, I_green_gaussian_double,
+        I_blue_gaussian_double;
 
     bool exit = false, gaussian_blur = false;
-    while(!exit) {
+    while (!exit) {
       double t = vpTime::measureTimeMs();
 
-      //Get image
-      share_image.getImage((unsigned char *) local_img.bitmap, local_img.getSize()*4);
+      // Get image
+      share_image.getImage((unsigned char *)local_img.bitmap,
+                           local_img.getSize() * 4);
 
-      //Apply gaussian blur to simulate a computation on the image
-      if(gaussian_blur) {
-        //Split channels
+      // Apply gaussian blur to simulate a computation on the image
+      if (gaussian_blur) {
+        // Split channels
         vpImageConvert::split(local_img, &I_red, &I_green, &I_blue, &I_alpha);
         vpImageConvert::convert(I_red, I_red_gaussian_double);
         vpImageConvert::convert(I_green, I_green_gaussian_double);
         vpImageConvert::convert(I_blue, I_blue_gaussian_double);
 
-        vpImageFilter::gaussianBlur(I_red_gaussian_double, I_red_gaussian_double, 21);
-        vpImageFilter::gaussianBlur(I_green_gaussian_double, I_green_gaussian_double, 21);
-        vpImageFilter::gaussianBlur(I_blue_gaussian_double, I_blue_gaussian_double, 21);
+        vpImageFilter::gaussianBlur(I_red_gaussian_double,
+                                    I_red_gaussian_double, 21);
+        vpImageFilter::gaussianBlur(I_green_gaussian_double,
+                                    I_green_gaussian_double, 21);
+        vpImageFilter::gaussianBlur(I_blue_gaussian_double,
+                                    I_blue_gaussian_double, 21);
 
         vpImageConvert::convert(I_red_gaussian_double, I_red_gaussian);
         vpImageConvert::convert(I_green_gaussian_double, I_green_gaussian);
         vpImageConvert::convert(I_blue_gaussian_double, I_blue_gaussian);
 
-        vpImageConvert::merge(&I_red_gaussian, &I_green_gaussian, &I_blue_gaussian, NULL, local_img);
+        vpImageConvert::merge(&I_red_gaussian, &I_green_gaussian,
+                              &I_blue_gaussian, NULL, local_img);
       }
 
       t = vpTime::measureTimeMs() - t;
@@ -340,43 +378,44 @@ void display(const unsigned int width, const unsigned int height, const int win_
       vpDisplay::display(local_img);
 
       vpDisplay::displayText(local_img, 20, 20, ss.str(), vpColor::red);
-      vpDisplay::displayText(local_img, 40, 20, "Left click to quit, right click for Gaussian blur.", vpColor::red);
+      vpDisplay::displayText(
+          local_img, 40, 20,
+          "Left click to quit, right click for Gaussian blur.", vpColor::red);
 
       vpDisplay::flush(local_img);
 
-      if(save) {
+      if (save) {
         queue.push(local_img);
       }
 
-      if(vpDisplay::getClick(local_img, button, false)) {
-        switch(button) {
-          case vpMouseButton::button3:
-            gaussian_blur = !gaussian_blur;
-            break;
+      if (vpDisplay::getClick(local_img, button, false)) {
+        switch (button) {
+        case vpMouseButton::button3:
+          gaussian_blur = !gaussian_blur;
+          break;
 
-          default:
-            exit = true;
-            break;
+        default:
+          exit = true;
+          break;
         }
       }
     }
-  } catch(ShareImage::cancelled &) {
+  } catch (ShareImage::cancelled &) {
     std::cout << "Cancelled!" << std::endl;
   }
 
   share_image.cancel();
 }
 
-} //Namespace
-
+} // Namespace
 
 int main(int argc, char *argv[])
 {
   unsigned int deviceCount = 1;
-  unsigned int cameraScale = 1; //640x480
+  unsigned int cameraScale = 1; // 640x480
   bool saveVideo = false;
 
-  //Read the command line options
+  // Read the command line options
   if (!getOptions(argc, argv, deviceCount, saveVideo)) {
     return (-1);
   }
@@ -384,7 +423,7 @@ int main(int argc, char *argv[])
   std::vector<vpV4l2Grabber *> grabbers;
 
   const unsigned int offsetX = 100, offsetY = 100;
-  for(unsigned int devicedId = 0; devicedId < deviceCount; devicedId++) {
+  for (unsigned int devicedId = 0; devicedId < deviceCount; devicedId++) {
     try {
       vpV4l2Grabber *pGrabber = new vpV4l2Grabber;
       std::stringstream ss;
@@ -393,7 +432,7 @@ int main(int argc, char *argv[])
       pGrabber->setScale(cameraScale);
 
       grabbers.push_back(pGrabber);
-    } catch(vpException &e) {
+    } catch (vpException &e) {
       std::cerr << "Exception: " << e.what() << std::endl;
     }
   }
@@ -404,23 +443,26 @@ int main(int argc, char *argv[])
   std::vector<std::thread> capture_threads;
   std::vector<std::thread> display_threads;
 
-  //Synchronized queues for each camera stream
+  // Synchronized queues for each camera stream
   std::vector<FrameQueue> save_queues(grabbers.size());
   std::vector<StorageWorker> storages;
   std::vector<std::thread> storage_threads;
 
   std::string parent_directory = vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
-  for(size_t deviceId = 0; deviceId < grabbers.size(); deviceId++) {
-    //Start the capture thread for the current camera stream
-    capture_threads.emplace_back( capture, grabbers[deviceId], std::ref(share_images[deviceId]) );
+  for (size_t deviceId = 0; deviceId < grabbers.size(); deviceId++) {
+    // Start the capture thread for the current camera stream
+    capture_threads.emplace_back(capture, grabbers[deviceId],
+                                 std::ref(share_images[deviceId]));
     int win_x = deviceId * offsetX, win_y = deviceId * offsetY;
 
-    //Start the display thread for the current camera stream
-    display_threads.emplace_back( display, grabbers[deviceId]->getWidth(), grabbers[deviceId]->getHeight(),
-                                  win_x, win_y, deviceId, std::ref(share_images[deviceId]),
-                                  std::ref(save_queues[deviceId]), saveVideo );
+    // Start the display thread for the current camera stream
+    display_threads.emplace_back(display, grabbers[deviceId]->getWidth(),
+                                 grabbers[deviceId]->getHeight(), win_x,
+                                 win_y, deviceId,
+                                 std::ref(share_images[deviceId]),
+                                 std::ref(save_queues[deviceId]), saveVideo);
 
-    if(saveVideo) {
+    if (saveVideo) {
       std::stringstream ss;
       ss << parent_directory << "/Camera_Stream" << deviceId;
       std::cout << "Create directory: " << ss.str() << std::endl;
@@ -428,43 +470,46 @@ int main(int argc, char *argv[])
       ss << "/%06d.png";
       std::string filename = ss.str();
 
-      storages.emplace_back( std::ref(save_queues[deviceId]), std::cref(filename),
-                             grabbers[deviceId]->getWidth(), grabbers[deviceId]->getHeight() );
+      storages.emplace_back(
+          std::ref(save_queues[deviceId]), std::cref(filename),
+          grabbers[deviceId]->getWidth(), grabbers[deviceId]->getHeight());
     }
   }
 
-  if(saveVideo) {
-    for(auto& s : storages) {
-      //Start the storage thread for the current camera stream
+  if (saveVideo) {
+    for (auto &s : storages) {
+      // Start the storage thread for the current camera stream
       storage_threads.emplace_back(&StorageWorker::run, &s);
     }
   }
 
-  //Join all the worker threads, waiting for them to finish
-  for(auto& ct : capture_threads) {
+  // Join all the worker threads, waiting for them to finish
+  for (auto &ct : capture_threads) {
     ct.join();
   }
 
-  for (auto& dt : display_threads) {
+  for (auto &dt : display_threads) {
     dt.join();
   }
 
-  //Clean first the grabbers to avoid camera problems when cancelling the storage threads in the terminal
-  for(auto& g : grabbers) {
+  // Clean first the grabbers to avoid camera problems when cancelling the
+  // storage threads in the terminal
+  for (auto &g : grabbers) {
     delete g;
   }
 
-  if(saveVideo) {
-    std::cout << "\nWaiting for finishing thread to write images..." << std::endl;
+  if (saveVideo) {
+    std::cout << "\nWaiting for finishing thread to write images..."
+              << std::endl;
   }
 
   // We're done reading, cancel all the queues
-  for (auto& qu : save_queues) {
+  for (auto &qu : save_queues) {
     qu.cancel();
   }
 
-  //Join all the worker threads, waiting for them to finish
-  for (auto& st : storage_threads) {
+  // Join all the worker threads, waiting for them to finish
+  for (auto &st : storage_threads) {
     st.join();
   }
 
@@ -475,8 +520,9 @@ int main(int argc, char *argv[])
 
 int main()
 {
-  std::cout << "Warning: This example need to be build with cxx11 compiler flags, v4l2 and x11 or gtk 3rd partiess. " << std::endl;
+  std::cout << "Warning: This example need to be build with cxx11 compiler "
+               "flags, v4l2 and x11 or gtk 3rd partiess. "
+            << std::endl;
   return 0;
 }
 #endif
-

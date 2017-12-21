@@ -49,19 +49,22 @@
 
 /*!
   \ingroup group_tt_tracker
-  The algorithm implemented in this class is described in \cite Baker04a and \cite Marchand16a.
+  The algorithm implemented in this class is described in \cite Baker04a and
+  \cite Marchand16a.
  */
-class VISP_EXPORT vpTemplateTrackerSSDForwardCompositional: public vpTemplateTrackerSSD
+class VISP_EXPORT vpTemplateTrackerSSDForwardCompositional
+  : public vpTemplateTrackerSSD
 {
-  protected:
-    bool compoInitialised;
+protected:
+  bool compoInitialised;
 
-  protected:
-    void initHessienDesired(const vpImage<unsigned char> &I);
-    void initCompo(const vpImage<unsigned char> &I);
-    void trackNoPyr(const vpImage<unsigned char> &I);
+protected:
+  void initHessienDesired(const vpImage<unsigned char> &I);
+  void initCompo(const vpImage<unsigned char> &I);
+  void trackNoPyr(const vpImage<unsigned char> &I);
 
-  public:
-    explicit vpTemplateTrackerSSDForwardCompositional(vpTemplateTrackerWarp *warp);
+public:
+  explicit vpTemplateTrackerSSDForwardCompositional(
+      vpTemplateTrackerWarp *warp);
 };
 #endif

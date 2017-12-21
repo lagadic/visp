@@ -95,23 +95,23 @@
 */
 class VISP_EXPORT vpHinkley
 {
- public:
+public:
   /*! \enum vpHinkleyJumpType
     Indicates if a jump is detected by the Hinkley test.
   */
   typedef enum {
-    noJump, /*!< No jump is detected by the Hinkley test. */
+    noJump,       /*!< No jump is detected by the Hinkley test. */
     downwardJump, /*!< A downward jump is detected by the Hinkley test. */
-    upwardJump /*!< An upward jump is detected by the Hinkley test. */
+    upwardJump    /*!< An upward jump is detected by the Hinkley test. */
   } vpHinkleyJumpType;
 
- public:
+public:
   vpHinkley();
   ~vpHinkley();
   vpHinkley(double alpha, double delta);
 
   void init();
-  void init(double alpha, double delta) ;
+  void init(double alpha, double delta);
 
   void setDelta(double delta);
   void setAlpha(double alpha);
@@ -119,47 +119,49 @@ class VISP_EXPORT vpHinkley
   vpHinkleyJumpType testUpwardJump(double signal);
   vpHinkleyJumpType testDownUpwardJump(double signal);
 
-  static void print(vpHinkleyJumpType jump) ;
+  static void print(vpHinkleyJumpType jump);
 
   /*!
     \return The mean value \f$m_0\f$ of the signal \f$ s(t) \f$.
 
   */
-  inline double getMean() {return mean;}
+  inline double getMean() { return mean; }
   /*!
-    \return The value of \f$S_k = \sum_{t=0}^{k} (s(t) - m_0 + \frac{\delta}{2})\f$
+    \return The value of \f$S_k = \sum_{t=0}^{k} (s(t) - m_0 +
+    \frac{\delta}{2})\f$
 
   */
-  inline double getSk() {return Sk;}
+  inline double getSk() { return Sk; }
   /*!
     \return The value of \f$M_k\f$, the maximum value of \f$S_k\f$.
 
   */
-  inline double getMk() {return Mk;}
+  inline double getMk() { return Mk; }
   /*!
 
     \return The value of \f$T_k = \sum_{t=0}^{k} (s(t) - m_0 -
     \frac{\delta}{2})\f$
 
   */
-  inline double getTk() {return Tk;}
+  inline double getTk() { return Tk; }
   /*!
     \return The value of \f$N_k\f$, the maximum value of \f$T_k\f$.
 
   */
-  inline double getNk() {return Nk;}
- private:
+  inline double getNk() { return Nk; }
+
+private:
   void computeMean(double signal);
   void computeSk(double signal);
   void computeMk();
   void computeTk(double signal);
   void computeNk();
 
- private:
+private:
   double dmin2;
   double alpha;
-  int    nsignal;	// Signal length
-  double mean;	// Signal mean value
+  int nsignal; // Signal length
+  double mean; // Signal mean value
   double Sk;
   double Mk;
   double Tk;

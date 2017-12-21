@@ -47,13 +47,13 @@
 
 #if defined(VISP_HAVE_VIRTUOSE)
 
-void CallBackVirtuose(VirtContext VC, void* ptr)
+void CallBackVirtuose(VirtContext VC, void *ptr)
 {
-  (void) VC;
-  vpVirtuose* p_virtuose=(vpVirtuose*)ptr;
+  (void)VC;
+  vpVirtuose *p_virtuose = (vpVirtuose *)ptr;
 
   vpPoseVector localPose = p_virtuose->getPhysicalPosition();
-  vpColVector  vel = p_virtuose->getPhysicalVelocity();
+  vpColVector vel = p_virtuose->getPhysicalVelocity();
   std::cout << "pose: " << localPose.t() << std::endl;
   std::cout << "vel: " << vel.t() << std::endl;
 
@@ -71,9 +71,8 @@ int main()
     int counter = 0;
     bool swtch = true;
 
-    while(swtch){
-      if (counter>=2)
-      {
+    while (swtch) {
+      if (counter >= 2) {
         virtuose.stopPeriodicFunction();
         swtch = false;
       }
@@ -81,8 +80,7 @@ int main()
       vpTime::sleepMs(1000);
     }
     std::cout << "The end" << std::endl;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }
 }
@@ -90,6 +88,7 @@ int main()
 #else
 int main()
 {
-  std::cout << "You should install Virtuose API to use this binary..." << std::endl;
+  std::cout << "You should install Virtuose API to use this binary..."
+            << std::endl;
 }
 #endif

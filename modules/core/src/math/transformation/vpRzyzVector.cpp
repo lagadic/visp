@@ -38,24 +38,21 @@
  *
  *****************************************************************************/
 
-
-#include <visp3/core/vpRzyzVector.h>
 #include <math.h>
+#include <visp3/core/vpRzyzVector.h>
 
 /*!
   \file vpRzyzVector.cpp
-  \brief class that consider the case of the Rzyz angle parameterization for the rotation :
-  Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
+  \brief class that consider the case of the Rzyz angle parameterization for
+  the rotation : Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
 */
 
 /*! Default constructor that initialize all the 3 angles to zero. */
-vpRzyzVector::vpRzyzVector()
-  : vpRotationVector (3)
-{}
+vpRzyzVector::vpRzyzVector() : vpRotationVector(3) {}
 /*! Copy constructor. */
-vpRzyzVector::vpRzyzVector(const vpRzyzVector &rzyz)
-  : vpRotationVector(rzyz)
-{}
+vpRzyzVector::vpRzyzVector(const vpRzyzVector &rzyz) : vpRotationVector(rzyz)
+{
+}
 
 /*!
   Constructor from 3 angles (in radian).
@@ -63,21 +60,21 @@ vpRzyzVector::vpRzyzVector(const vpRzyzVector &rzyz)
   \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
   \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
 */
-vpRzyzVector::vpRzyzVector(const double phi, const double theta, const double psi)
-  : vpRotationVector (3)
+vpRzyzVector::vpRzyzVector(const double phi, const double theta,
+                           const double psi)
+  : vpRotationVector(3)
 {
   buildFrom(phi, theta, psi);
 }
 
-/*! 
+/*!
   Constructor that initialize \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler
   angles from a rotation matrix.
   \param R : Rotation matrix used to initialize the Euler angles.
 */
-vpRzyzVector::vpRzyzVector(const vpRotationMatrix& R)
-  : vpRotationVector (3)
+vpRzyzVector::vpRzyzVector(const vpRotationMatrix &R) : vpRotationVector(3)
 {
-  buildFrom(R) ;
+  buildFrom(R);
 }
 
 /*!
@@ -86,66 +83,64 @@ vpRzyzVector::vpRzyzVector(const vpRotationMatrix& R)
   \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as
   input to initialize the Euler angles.
 */
-vpRzyzVector::vpRzyzVector(const vpThetaUVector& tu)
-  : vpRotationVector (3)
+vpRzyzVector::vpRzyzVector(const vpThetaUVector &tu) : vpRotationVector(3)
 {
-  buildFrom(tu) ;
+  buildFrom(tu);
 }
 
 /*! Copy constructor from a 3-dimension vector. */
-vpRzyzVector::vpRzyzVector(const vpColVector &rzyz)
-  : vpRotationVector (3)
+vpRzyzVector::vpRzyzVector(const vpColVector &rzyz) : vpRotationVector(3)
 {
   if (rzyz.size() != 3) {
-    throw(vpException(vpException::dimensionError, "Cannot construct a R-zyz vector from a %d-dimension col vector", rzyz.size()));
+    throw(vpException(
+        vpException::dimensionError,
+        "Cannot construct a R-zyz vector from a %d-dimension col vector",
+        rzyz.size()));
   }
-  for (unsigned int i=0; i< 3; i++)
+  for (unsigned int i = 0; i < 3; i++)
     data[i] = rzyz[i];
 }
 
-/*! 
+/*!
   Convert a rotation matrix into a \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler
   angles vector.
-  
+
   \param R : Rotation matrix used as input.
-  \return \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler angles vector.   
+  \return \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler angles vector.
 */
-vpRzyzVector
-vpRzyzVector::buildFrom(const vpRotationMatrix& R)
+vpRzyzVector vpRzyzVector::buildFrom(const vpRotationMatrix &R)
 {
-  double phi ;
-  if ((fabs(R[1][2]) < 1e-6) &&(fabs(R[0][2]) < 1e-6))
-    phi = 0 ;
+  double phi;
+  if ((fabs(R[1][2]) < 1e-6) && (fabs(R[0][2]) < 1e-6))
+    phi = 0;
   else
-    phi = atan2(R[1][2],R[0][2]) ;
-  double cphi = cos(phi) ;
-  double sphi = sin(phi) ;
+    phi = atan2(R[1][2], R[0][2]);
+  double cphi = cos(phi);
+  double sphi = sin(phi);
 
-  double theta = atan2(cphi*R[0][2]+sphi*R[1][2],R[2][2]);
+  double theta = atan2(cphi * R[0][2] + sphi * R[1][2], R[2][2]);
 
-  double psi = atan2(-sphi*R[0][0]+cphi*R[1][0],-sphi*R[0][1]+cphi*R[1][1]) ;
+  double psi = atan2(-sphi * R[0][0] + cphi * R[1][0],
+                     -sphi * R[0][1] + cphi * R[1][1]);
 
   buildFrom(phi, theta, psi);
 
-  return *this ;
+  return *this;
 }
 
-
-/*! 
-  Convert a \f$\theta {\bf u}\f$ vector into a \f$R_{zyz}=(\varphi,\theta,\psi)\f$
-  Euler angles vector.
-  \param tu : \f$\theta {\bf u}\f$ representation of a rotation used here as
-  input.
-  \return \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler angles vector.   
+/*!
+  Convert a \f$\theta {\bf u}\f$ vector into a
+  \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler angles vector. \param tu :
+  \f$\theta {\bf u}\f$ representation of a rotation used here as input.
+  \return \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler angles vector.
 */
-vpRzyzVector
-vpRzyzVector::buildFrom(const vpThetaUVector& tu)
+vpRzyzVector vpRzyzVector::buildFrom(const vpThetaUVector &tu)
 {
-  vpRotationMatrix R ;
-  R.buildFrom(tu) ;
-  buildFrom(R) ;
+  vpRotationMatrix R;
+  R.buildFrom(tu);
+  buildFrom(R);
 
-  return *this ;
+  return *this;
 }
 
 /*!
@@ -169,7 +164,7 @@ int main()
 */
 vpRzyzVector &vpRzyzVector::operator=(double v)
 {
-  for (unsigned int i=0; i< dsize; i++)
+  for (unsigned int i = 0; i < dsize; i++)
     data[i] = v;
 
   return *this;
@@ -181,12 +176,12 @@ vpRzyzVector &vpRzyzVector::operator=(double v)
   \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
   \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
 */
-void
-vpRzyzVector::buildFrom(const double phi, const double theta, const double psi)
+void vpRzyzVector::buildFrom(const double phi, const double theta,
+                             const double psi)
 {
-  data[0] = phi ;
-  data[1] = theta ;
-  data[2] = psi ;
+  data[0] = phi;
+  data[1] = theta;
+  data[2] = psi;
 }
 
 /*!
@@ -194,7 +189,8 @@ vpRzyzVector::buildFrom(const double phi, const double theta, const double psi)
   Copy operator that initializes a \f$R_{zyz}=(\varphi,\theta,\psi)\f$
   Euler angles vector from a 3-dimension column vector.
 
-  \param rzyz : 3-dimension vector containing the values of the rotation vector.
+  \param rzyz : 3-dimension vector containing the values of the rotation
+vector.
 
 \code
 #include <visp3/core/vpRzyzVector.h>
@@ -214,9 +210,12 @@ int main()
 vpRzyzVector &vpRzyzVector::operator=(const vpColVector &rzyz)
 {
   if (rzyz.size() != 3) {
-    throw(vpException(vpException::dimensionError, "Cannot set a R-zyz vector from a %d-dimension col vector", rzyz.size()));
+    throw(vpException(
+        vpException::dimensionError,
+        "Cannot set a R-zyz vector from a %d-dimension col vector",
+        rzyz.size()));
   }
-  for (unsigned int i=0; i< 3; i++)
+  for (unsigned int i = 0; i < 3; i++)
     data[i] = rzyz[i];
 
   return *this;

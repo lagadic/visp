@@ -49,11 +49,11 @@
 
 #include "vpMy.h"
 
-void fscanf_float (float *fp);
-void fscanf_Index (Index *ip);
-void fscanf_int (int *ip);
-void fscanf_string (char **str);
-void fscanf_Type (Type *ip);
+void fscanf_float(float *fp);
+void fscanf_Index(Index *ip);
+void fscanf_int(int *ip);
+void fscanf_string(char **str);
+void fscanf_Type(Type *ip);
 
 #endif
 #endif

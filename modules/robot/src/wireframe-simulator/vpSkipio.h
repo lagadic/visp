@@ -45,8 +45,8 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-void skip_cmd (void);
-void skip_keyword (int token, const char *err);
+void skip_cmd(void);
+void skip_keyword(int token, const char *err);
 
 #endif
 #endif

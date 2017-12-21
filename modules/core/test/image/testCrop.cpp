@@ -36,13 +36,13 @@
  *
  *****************************************************************************/
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpRect.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
-#include <visp3/core/vpDebug.h>
 
 #include <stdlib.h>
 
@@ -57,7 +57,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"cdi:o:h"
+#define GETOPTARGS "cdi:o:h"
 
 /*
 
@@ -70,7 +70,8 @@
   \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath, const std::string &user)
+void usage(const char *name, const char *badparam, const std::string &ipath,
+           const std::string &opath, const std::string &user)
 {
   fprintf(stdout, "\n\
 Read an image from the disk (Klimt.pgm), crop a rectangular area\n\
@@ -98,8 +99,7 @@ OPTIONS:                                               Default\n\
      Klimt_cropped.pgm output image is written.\n\
 \n\
   -h\n\
-     Print the help.\n\n",
-    ipath.c_str(), opath.c_str(), user.c_str());
+     Print the help.\n\n", ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -117,23 +117,33 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user)
+bool getOptions(int argc, const char **argv, std::string &ipath,
+                std::string &opath, const std::string &user)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'i': ipath = optarg_; break;
-    case 'o': opath = optarg_; break;
-    case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
+    case 'i':
+      ipath = optarg_;
+      break;
+    case 'o':
+      opath = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, ipath, opath, user);
+      return false;
+      break;
 
     case 'c':
     case 'd':
       break;
 
     default:
-      usage(argv[0], optarg_, ipath, opath, user); return false; break;
+      usage(argv[0], optarg_, ipath, opath, user);
+      return false;
+      break;
     }
   }
 
@@ -148,8 +158,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
   return true;
 }
 
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string env_ipath;
@@ -160,14 +169,15 @@ main(int argc, const char ** argv)
     std::string filename;
     std::string username;
 
-    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+    // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
-    if (! env_ipath.empty())
+    if (!env_ipath.empty())
       ipath = env_ipath;
 
-    // Set the default output path
+// Set the default output path
 #if defined(_WIN32)
     opt_opath = "C:/temp";
 #else
@@ -179,7 +189,7 @@ main(int argc, const char ** argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_opath, username) == false) {
-      exit (-1);
+      exit(-1);
     }
 
     // Get the option values
@@ -196,13 +206,12 @@ main(int argc, const char ** argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(opath);
-      }
-      catch (...) {
+      } catch (...) {
         usage(argv[0], NULL, ipath, opt_opath, username);
-        std::cerr << std::endl
-                  << "ERROR:" << std::endl;
+        std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
-        std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
+        std::cerr << "  Check your -o " << opt_opath << " option "
+                  << std::endl;
         exit(-1);
       }
     }
@@ -211,23 +220,25 @@ main(int argc, const char ** argv)
     // the input path comming from the command line option
     if (opt_ipath.empty()) {
       if (ipath != env_ipath) {
-        std::cout << std::endl
-                  << "WARNING: " << std::endl;
+        std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
+                  << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
-    if (opt_ipath.empty() && env_ipath.empty()){
+    if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, opt_opath, username);
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
-      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-                << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl << std::endl;
+      std::cerr << std::endl << "ERROR:" << std::endl;
+      std::cerr
+          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+          << std::endl
+          << "  environment variable to specify the location of the "
+          << std::endl
+          << "  image path where test images are located." << std::endl
+          << std::endl;
       exit(-1);
     }
 
@@ -240,7 +251,7 @@ main(int argc, const char ** argv)
     // Read the input grey image from the disk
     filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
     std::cout << "Read image: " << filename << std::endl;
-    vpImageIo::read(I, filename) ;
+    vpImageIo::read(I, filename);
 
     // Specify the cropping area
     vpRect roi;
@@ -255,10 +266,9 @@ main(int argc, const char ** argv)
     // Write the cropped image on the disk
     filename = vpIoTools::createFilePath(opath, "Klimt_crop.pgm");
     std::cout << "Write cropped image: " << filename << std::endl;
-    vpImageIo::write(C, filename) ;
+    vpImageIo::write(C, filename);
     return 0;
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return 1;
   }

@@ -29,7 +29,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Pre-filled pseudo-database used to handle dependencies between common moment features.
+ * Pre-filled pseudo-database used to handle dependencies between common
+ *moment features.
  *
  * Authors:
  * Filip Novotny
@@ -38,21 +39,22 @@
 
 /*!
   \file vpFeatureMomentCommon.h
-  \brief Pre-filled pseudo-database used to handle dependencies between common moment features.
+  \brief Pre-filled pseudo-database used to handle dependencies between common
+  moment features.
 */
 
 #ifndef __FEATUREMOMENTCOMMON_H__
 #define __FEATUREMOMENTCOMMON_H__
 #include <visp3/visual_features/vpFeatureMomentAlpha.h>
-#include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
-#include <visp3/visual_features/vpFeatureMomentBasic.h>
-#include <visp3/visual_features/vpFeatureMomentGravityCenterNormalized.h>
-#include <visp3/visual_features/vpFeatureMomentCentered.h>
-#include <visp3/visual_features/vpFeatureMomentCInvariant.h>
-#include <visp3/visual_features/vpFeatureMomentCommon.h>
-#include <visp3/visual_features/vpFeatureMomentAreaNormalized.h>
-#include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <visp3/visual_features/vpFeatureMomentArea.h>
+#include <visp3/visual_features/vpFeatureMomentAreaNormalized.h>
+#include <visp3/visual_features/vpFeatureMomentBasic.h>
+#include <visp3/visual_features/vpFeatureMomentCInvariant.h>
+#include <visp3/visual_features/vpFeatureMomentCentered.h>
+#include <visp3/visual_features/vpFeatureMomentCommon.h>
+#include <visp3/visual_features/vpFeatureMomentDatabase.h>
+#include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
+#include <visp3/visual_features/vpFeatureMomentGravityCenterNormalized.h>
 
 class vpMomentDatabase;
 class vpServo;
@@ -61,7 +63,8 @@ class vpServo;
 
   \ingroup group_visual_features
 
-  \brief This class allows to access common vpFeatureMoments in a pre-filled database.
+  \brief This class allows to access common vpFeatureMoments in a pre-filled
+database.
 
   It is a vpMomentDatabase filled with the following moments:
   - vpFeatureMomentGravityCenter
@@ -73,81 +76,86 @@ class vpServo;
   - vpFeatureMomentBasic
 
 
-  There is no need to do the linkTo operations manually nor is it necessary to care about the order of feature computation.
+  There is no need to do the linkTo operations manually nor is it necessary to
+care about the order of feature computation.
 
-  This class has an vpMomentCommon::updateAll method capable of updating the plane parameters AND computing interaction matrices inside the features.
+  This class has an vpMomentCommon::updateAll method capable of updating the
+plane parameters AND computing interaction matrices inside the features.
 
   The moment features computed by this class are classical moments
   features used in moment-based visual servoing.  For more
   information see \cite Tahri05z.
 
-  To initialize this feature set, the user needs to supply a vpMomentDatabase containing at least the contents of vpMomentCommon.
+  To initialize this feature set, the user needs to supply a vpMomentDatabase
+containing at least the contents of vpMomentCommon.
 
-  The features can be retrieved like from a normal vpFeatureMomentDatabase. However, some shortcuts to retrieve the features are provided.
+  The features can be retrieved like from a normal vpFeatureMomentDatabase.
+However, some shortcuts to retrieve the features are provided.
 
-  \attention Make sure your object is at least of order 6 when using this pre-filled database.
+  \attention Make sure your object is at least of order 6 when using this
+pre-filled database.
 
-  The following code demonstrates the construction of a 6x6 interaction matrix as described in [1].
-  \code
+  The following code demonstrates the construction of a 6x6 interaction matrix
+as described in [1]. \code
 
-#include <visp3/core/vpMomentObject.h>
+#include <iostream>
+#include <vector>
 #include <visp3/core/vpMomentCommon.h>
+#include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 #include <visp3/visual_features/vpFeatureMomentCommon.h>
 #include <visp3/vs/vpServo.h>
-#include <iostream>
-#include <vector>
 
 int main()
 {
     // Define source polygon
   vpPoint p;
-  std::vector<vpPoint> vec_p; // vector that contains the vertices of the contour polygon
+  std::vector<vpPoint> vec_p; // vector that contains the vertices of the
+contour polygon
 
-  p.set_x(-0.2); p.set_y(0.1); // coordinates in meters in the image plane (vertex 1)
+  p.set_x(-0.2); p.set_y(0.1); // coordinates in meters in the image plane
+(vertex 1) vec_p.push_back(p); p.set_x(+0.3); p.set_y(0.1); // coordinates in
+meters in the image plane (vertex 2) vec_p.push_back(p); p.set_x(+0.2);
+p.set_y(-0.1); // coordinates in meters in the image plane (vertex 3)
   vec_p.push_back(p);
-  p.set_x(+0.3); p.set_y(0.1); // coordinates in meters in the image plane (vertex 2)
-  vec_p.push_back(p);
-  p.set_x(+0.2); p.set_y(-0.1); // coordinates in meters in the image plane (vertex 3)
-  vec_p.push_back(p);
-  p.set_x(-0.2); p.set_y(-0.15); // coordinates in meters in the image plane (vertex 4)
-  vec_p.push_back(p);
-  p.set_x(-0.2); p.set_y(0.1); // close the contour (vertex 5 = vertex 1)
-  vec_p.push_back(p);
+  p.set_x(-0.2); p.set_y(-0.15); // coordinates in meters in the image plane
+(vertex 4) vec_p.push_back(p); p.set_x(-0.2); p.set_y(0.1); // close the
+contour (vertex 5 = vertex 1) vec_p.push_back(p);
 
 
-  vpMomentObject src(6); // Create a source moment object with 6 as maximum order
-  src.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by a countour polygon
-  src.fromVector(vec_p); // Init the dense object with the source polygon
-  vec_p.clear();
+  vpMomentObject src(6); // Create a source moment object with 6 as maximum
+order src.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by
+a countour polygon src.fromVector(vec_p); // Init the dense object with the
+source polygon vec_p.clear();
 
   //Define destination polygon. This is the source polygon translated
   //of 0.1 on x-axis
-  p.set_x(-0.1); p.set_y(0.1); // coordinates in meters in the image plane (vertex 1)
+  p.set_x(-0.1); p.set_y(0.1); // coordinates in meters in the image plane
+(vertex 1) vec_p.push_back(p); p.set_x(+0.4); p.set_y(0.1); // coordinates in
+meters in the image plane (vertex 2) vec_p.push_back(p); p.set_x(+0.3);
+p.set_y(-0.1); // coordinates in meters in the image plane (vertex 3)
   vec_p.push_back(p);
-  p.set_x(+0.4); p.set_y(0.1); // coordinates in meters in the image plane (vertex 2)
-  vec_p.push_back(p);
-  p.set_x(+0.3); p.set_y(-0.1); // coordinates in meters in the image plane (vertex 3)
-  vec_p.push_back(p);
-  p.set_x(-0.1); p.set_y(-0.15); // coordinates in meters in the image plane (vertex 4)
-  vec_p.push_back(p);
-  p.set_x(-0.1); p.set_y(0.1); // close the contour (vertex 5 = vertex 1)
-  vec_p.push_back(p);
+  p.set_x(-0.1); p.set_y(-0.15); // coordinates in meters in the image plane
+(vertex 4) vec_p.push_back(p); p.set_x(-0.1); p.set_y(0.1); // close the
+contour (vertex 5 = vertex 1) vec_p.push_back(p);
 
-  vpMomentObject dst(6); // Create a destination moment object with 6 as maximum order
-  dst.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by a countour polygon
-  dst.fromVector(vec_p); // Init the dense object with the destination
+  vpMomentObject dst(6); // Create a destination moment object with 6 as
+maximum order dst.setType(vpMomentObject::DENSE_POLYGON); // The object is
+defined by a countour polygon dst.fromVector(vec_p); // Init the dense object
+with the destination
                          // polygon
 
 
   //init classic moment primitives (for source)
-  vpMomentCommon mdb_src(vpMomentCommon::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst),1.);
+  vpMomentCommon
+mdb_src(vpMomentCommon::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst),1.);
   //Init classic features
   vpFeatureMomentCommon fmdb_src(mdb_src);
 
   ////init classic moment primitives (for destination)
-  vpMomentCommon mdb_dst(vpMomentCommon::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst),1.);
+  vpMomentCommon
+mdb_dst(vpMomentCommon::getSurface(dst),vpMomentCommon::getMu3(dst),vpMomentCommon::getAlpha(dst),1.);
   //Init classic features
   vpFeatureMomentCommon fmdb_dst(mdb_dst);
 
@@ -173,7 +181,8 @@ int main()
   task.addFeature(fmdb_src.getFeatureAn(),fmdb_dst.getFeatureAn());
   //the object is NOT symmetric
   //select C4 and C6
-  task.addFeature(fmdb_src.getFeatureCInvariant(),fmdb_dst.getFeatureCInvariant(),(1 << 3) | (1 << 5));
+  task.addFeature(fmdb_src.getFeatureCInvariant(),fmdb_dst.getFeatureCInvariant(),(1
+<< 3) | (1 << 5));
   task.addFeature(fmdb_src.getFeatureAlpha(),fmdb_dst.getFeatureAlpha());
 
   task.setLambda(1) ;
@@ -215,54 +224,65 @@ Gain : Zero= 1	Inf= 1	Deriv= 0
 
 \endcode
 */
-class VISP_EXPORT vpFeatureMomentCommon : public vpFeatureMomentDatabase{
+class VISP_EXPORT vpFeatureMomentCommon : public vpFeatureMomentDatabase
+{
 private:
-    vpFeatureMomentGravityCenter featureGravity;
-    vpFeatureMomentGravityCenterNormalized featureGravityNormalized;
-    vpFeatureMomentAreaNormalized featureAn;
-    vpFeatureMomentCInvariant featureCInvariant;
-    vpFeatureMomentAlpha featureAlpha;
-    vpFeatureMomentCentered featureCentered;
-    vpFeatureMomentBasic featureMomentBasic;
-    vpFeatureMomentArea feature_moment_area;
+  vpFeatureMomentGravityCenter featureGravity;
+  vpFeatureMomentGravityCenterNormalized featureGravityNormalized;
+  vpFeatureMomentAreaNormalized featureAn;
+  vpFeatureMomentCInvariant featureCInvariant;
+  vpFeatureMomentAlpha featureAlpha;
+  vpFeatureMomentCentered featureCentered;
+  vpFeatureMomentBasic featureMomentBasic;
+  vpFeatureMomentArea feature_moment_area;
 
 public:
-    vpFeatureMomentCommon(vpMomentDatabase& moments,double A=0.0,double B=0.0,double C=1.0);
-    void updateAll(double A,double B,double C);
-    /*!
-    Returns alpha.
-    */
-    vpFeatureMomentAlpha& getFeatureAlpha(){ return featureAlpha;}
+  vpFeatureMomentCommon(vpMomentDatabase &moments, double A = 0.0,
+                        double B = 0.0, double C = 1.0);
+  void updateAll(double A, double B, double C);
+  /*!
+  Returns alpha.
+  */
+  vpFeatureMomentAlpha &getFeatureAlpha() { return featureAlpha; }
 
-    /*!
-    Returns normalized surface.
-    */
-    vpFeatureMomentAreaNormalized& getFeatureAn(){ return featureAn;}
-    /*!
-    Returns basic moment.
-    */
-    vpFeatureMomentBasic& getFeatureMomentBasic(){ return featureMomentBasic;}
-    /*!
-    Returns centered moments.
-    */
-    vpFeatureMomentCentered& getFeatureCentered(){ return featureCentered;}
+  /*!
+  Returns normalized surface.
+  */
+  vpFeatureMomentAreaNormalized &getFeatureAn() { return featureAn; }
+  /*!
+  Returns basic moment.
+  */
+  vpFeatureMomentBasic &getFeatureMomentBasic() { return featureMomentBasic; }
+  /*!
+  Returns centered moments.
+  */
+  vpFeatureMomentCentered &getFeatureCentered() { return featureCentered; }
 
-    /*!
-    Returns non-symmetric invariants.
-     */
-    vpFeatureMomentCInvariant& getFeatureCInvariant(){ return featureCInvariant;}
-    /*!
-        Returns normalized gravity center.
-    */
-    vpFeatureMomentGravityCenterNormalized& getFeatureGravityNormalized(){ return featureGravityNormalized;}
-    /*!
-	Returns the area
-	*/
-	vpFeatureMomentArea& getFeatureArea(){ return feature_moment_area;}
-	/*!
-		Returns gravity center
-	*/
-	vpFeatureMomentGravityCenter& getFeatureGravityCenter(){ return featureGravity;}
+  /*!
+  Returns non-symmetric invariants.
+   */
+  vpFeatureMomentCInvariant &getFeatureCInvariant()
+  {
+    return featureCInvariant;
+  }
+  /*!
+      Returns normalized gravity center.
+  */
+  vpFeatureMomentGravityCenterNormalized &getFeatureGravityNormalized()
+  {
+    return featureGravityNormalized;
+  }
+  /*!
+      Returns the area
+      */
+  vpFeatureMomentArea &getFeatureArea() { return feature_moment_area; }
+  /*!
+          Returns gravity center
+  */
+  vpFeatureMomentGravityCenter &getFeatureGravityCenter()
+  {
+    return featureGravity;
+  }
 };
 
 #endif

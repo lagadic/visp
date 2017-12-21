@@ -45,50 +45,75 @@
 */
 
 #include <visp3/core/vpDebug.h>
-#include <visp3/robot/vpViper650.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpXmlParserCamera.h>
+#include <visp3/robot/vpViper650.h>
 
-static const char *opt_viper650[] = {"CAMERA", "eMc_ROT_XYZ","eMc_TRANS_XYZ", NULL};
+static const char *opt_viper650[] = {"CAMERA", "eMc_ROT_XYZ", "eMc_TRANS_XYZ",
+                                     NULL};
 
 #ifdef VISP_HAVE_VIPER650_DATA
-const std::string vpViper650::CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_VIPER650_DATA_PATH) + std::string("/include/const_eMc_MarlinF033C_without_distortion_Viper650.cnf");
+const std::string
+    vpViper650::CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME =
+        std::string(VISP_VIPER650_DATA_PATH) +
+        std::string(
+            "/include/const_eMc_MarlinF033C_without_distortion_Viper650.cnf");
 
-const std::string vpViper650::CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME =
-    std::string(VISP_VIPER650_DATA_PATH) + std::string("/include/const_eMc_MarlinF033C_with_distortion_Viper650.cnf");
+const std::string
+    vpViper650::CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME =
+        std::string(VISP_VIPER650_DATA_PATH) +
+        std::string(
+            "/include/const_eMc_MarlinF033C_with_distortion_Viper650.cnf");
 
-const std::string vpViper650::CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_VIPER650_DATA_PATH) + std::string("/include/const_eMc_PTGreyFlea2_without_distortion_Viper650.cnf");
+const std::string
+    vpViper650::CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME =
+        std::string(VISP_VIPER650_DATA_PATH) +
+        std::string(
+            "/include/const_eMc_PTGreyFlea2_without_distortion_Viper650.cnf");
 
-const std::string vpViper650::CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME =
-    std::string(VISP_VIPER650_DATA_PATH) + std::string("/include/const_eMc_PTGreyFlea2_with_distortion_Viper650.cnf");
+const std::string
+    vpViper650::CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME =
+        std::string(VISP_VIPER650_DATA_PATH) +
+        std::string(
+            "/include/const_eMc_PTGreyFlea2_with_distortion_Viper650.cnf");
 
-const std::string vpViper650::CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_VIPER650_DATA_PATH) + std::string("/include/const_eMc_schunk_gripper_without_distortion_Viper650.cnf");
+const std::string
+    vpViper650::CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME =
+        std::string(VISP_VIPER650_DATA_PATH) +
+        std::string("/include/"
+                    "const_eMc_schunk_gripper_without_distortion_Viper650."
+                    "cnf");
 
-const std::string vpViper650::CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME =
-    std::string(VISP_VIPER650_DATA_PATH) + std::string("/include/const_eMc_schunk_gripper_with_distortion_Viper650.cnf");
+const std::string
+    vpViper650::CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME =
+        std::string(VISP_VIPER650_DATA_PATH) +
+        std::string(
+            "/include/const_eMc_schunk_gripper_with_distortion_Viper650.cnf");
 
 const std::string vpViper650::CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_VIPER650_DATA_PATH) + std::string("/include/const_eMc_generic_without_distortion_Viper650.cnf");
+    std::string(VISP_VIPER650_DATA_PATH) +
+    std::string("/include/const_eMc_generic_without_distortion_Viper650.cnf");
 
 const std::string vpViper650::CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME =
-    std::string(VISP_VIPER650_DATA_PATH) + std::string("/include/const_eMc_generic_with_distortion_Viper650.cnf");
+    std::string(VISP_VIPER650_DATA_PATH) +
+    std::string("/include/const_eMc_generic_with_distortion_Viper650.cnf");
 
 const std::string vpViper650::CONST_CAMERA_FILENAME =
-    std::string(VISP_VIPER650_DATA_PATH) + std::string("/include/const_camera_Viper650.xml");
+    std::string(VISP_VIPER650_DATA_PATH) +
+    std::string("/include/const_camera_Viper650.xml");
 
 #endif // VISP_HAVE_VIPER650_DATA
 
-const char * const vpViper650::CONST_MARLIN_F033C_CAMERA_NAME = "Marlin-F033C-12mm";
-const char * const vpViper650::CONST_PTGREY_FLEA2_CAMERA_NAME = "PTGrey-Flea2-6mm";
-const char * const vpViper650::CONST_SCHUNK_GRIPPER_CAMERA_NAME = "Schunk-Gripper-PTGrey-Flea2-6mm";
-const char * const vpViper650::CONST_GENERIC_CAMERA_NAME = "Generic-camera";
+const char *const vpViper650::CONST_MARLIN_F033C_CAMERA_NAME =
+    "Marlin-F033C-12mm";
+const char *const vpViper650::CONST_PTGREY_FLEA2_CAMERA_NAME =
+    "PTGrey-Flea2-6mm";
+const char *const vpViper650::CONST_SCHUNK_GRIPPER_CAMERA_NAME =
+    "Schunk-Gripper-PTGrey-Flea2-6mm";
+const char *const vpViper650::CONST_GENERIC_CAMERA_NAME = "Generic-camera";
 
-const vpViper650::vpToolType vpViper650::defaultTool = vpViper650::TOOL_PTGREY_FLEA2_CAMERA;
-
-
+const vpViper650::vpToolType vpViper650::defaultTool =
+    vpViper650::TOOL_PTGREY_FLEA2_CAMERA;
 
 /*!
 
@@ -97,7 +122,8 @@ const vpViper650::vpToolType vpViper650::defaultTool = vpViper650::TOOL_PTGREY_F
 
 */
 vpViper650::vpViper650()
-  : tool_current(vpViper650::defaultTool), projModel(vpCameraParameters::perspectiveProjWithoutDistortion)
+  : tool_current(vpViper650::defaultTool),
+    projModel(vpCameraParameters::perspectiveProjWithoutDistortion)
 {
   // Denavit Hartenberg parameters
   a1 = 0.075;
@@ -105,7 +131,8 @@ vpViper650::vpViper650()
   a3 = 0.090;
   d1 = 0.335;
   d4 = 0.295;
-  d6 = 0.080 + 0.1016; // To take into account the offset to go to the tool changer
+  d6 = 0.080 +
+       0.1016; // To take into account the offset to go to the tool changer
   c56 = -341.33 / 9102.22;
 
   // Software joint limits in radians
@@ -129,8 +156,7 @@ vpViper650::vpViper650()
 
   Initialize the robot with the default tool vpViper650::defaultTool.
  */
-void
-vpViper650::init (void)
+void vpViper650::init(void)
 {
   this->init(vpViper650::defaultTool);
   return;
@@ -145,13 +171,12 @@ vpViper650::init (void)
   extrinsic parameters.
 
 */
-void
-vpViper650::init (const std::string &camera_extrinsic_parameters)
+void vpViper650::init(const std::string &camera_extrinsic_parameters)
 {
-  //vpTRACE ("Parse camera file \""%s\"".", camera_filename);
-  this->parseConfigFile (camera_extrinsic_parameters);
+  // vpTRACE ("Parse camera file \""%s\"".", camera_filename);
+  this->parseConfigFile(camera_extrinsic_parameters);
 
-  return ;
+  return;
 }
 
 /*!
@@ -175,69 +200,70 @@ vpViper650::init (const std::string &camera_extrinsic_parameters)
   init(vpViper650::vpToolType, const vpHomogeneousMatrix&)
 
 */
-void
-vpViper650::init (vpViper650::vpToolType tool,
-                  vpCameraParameters::vpCameraParametersProjType proj_model)
+void vpViper650::init(
+    vpViper650::vpToolType tool,
+    vpCameraParameters::vpCameraParametersProjType proj_model)
 {
-  
+
   this->projModel = proj_model;
-  
+
 #ifdef VISP_HAVE_VIPER650_DATA
   // Read the robot parameters from files
   std::string filename_eMc;
   switch (tool) {
   case vpViper650::TOOL_MARLIN_F033C_CAMERA: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-        filename_eMc = CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME;
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+      filename_eMc = CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME;
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-        filename_eMc = CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME;
+    case vpCameraParameters::perspectiveProjWithDistortion:
+      filename_eMc = CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME;
       break;
     }
     break;
   }
   case vpViper650::TOOL_PTGREY_FLEA2_CAMERA: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-        filename_eMc = CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME;
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+      filename_eMc = CONST_EMC_PTGREY_FLEA2_WITHOUT_DISTORTION_FILENAME;
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-        filename_eMc = CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME;
+    case vpCameraParameters::perspectiveProjWithDistortion:
+      filename_eMc = CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME;
       break;
     }
     break;
   }
   case vpViper650::TOOL_SCHUNK_GRIPPER_CAMERA: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-        filename_eMc = CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME;
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+      filename_eMc = CONST_EMC_SCHUNK_GRIPPER_WITHOUT_DISTORTION_FILENAME;
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-        filename_eMc = CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME;
+    case vpCameraParameters::perspectiveProjWithDistortion:
+      filename_eMc = CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME;
       break;
     }
     break;
   }
   case vpViper650::TOOL_GENERIC_CAMERA: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-        filename_eMc = CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+      filename_eMc = CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-        filename_eMc = CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
+    case vpCameraParameters::perspectiveProjWithDistortion:
+      filename_eMc = CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
       break;
     }
     break;
   }
   case vpViper650::TOOL_CUSTOM: {
-    throw vpRobotException (vpRobotException::badValue,
-                            "No predefined file available for a custom tool"
-                            "You should use init(vpViper650::vpToolType, const std::string&) or"
-                            "init(vpViper650::vpToolType, const vpHomogeneousMatrix&) instead");
+    throw vpRobotException(
+        vpRobotException::badValue,
+        "No predefined file available for a custom tool"
+        "You should use init(vpViper650::vpToolType, const std::string&) or"
+        "init(vpViper650::vpToolType, const vpHomogeneousMatrix&) instead");
   }
   default: {
-    vpERROR_TRACE ("This error should not occur!");
+    vpERROR_TRACE("This error should not occur!");
     //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
     // 		   "que les specs de la classe ont ete modifiee, "
     // 		   "et que le code n'a pas ete mis a jour "
@@ -249,61 +275,61 @@ vpViper650::init (vpViper650::vpToolType tool,
     break;
   }
   }
-  
-  this->init (filename_eMc);
 
-#else // VISP_HAVE_VIPER650_DATA
+  this->init(filename_eMc);
+
+#else  // VISP_HAVE_VIPER650_DATA
 
   // Use here default values of the robot constant parameters.
   switch (tool) {
   case vpViper650::TOOL_MARLIN_F033C_CAMERA: {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-      erc[0] = vpMath::rad(0.07); // rx
-      erc[1] = vpMath::rad(2.76); // ry
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+      erc[0] = vpMath::rad(0.07);   // rx
+      erc[1] = vpMath::rad(2.76);   // ry
       erc[2] = vpMath::rad(-91.50); // rz
-      etc[0] = -0.0453; // tx
-      etc[1] =  0.0005; // ty
-      etc[2] =  0.0728; // tz
+      etc[0] = -0.0453;             // tx
+      etc[1] = 0.0005;              // ty
+      etc[2] = 0.0728;              // tz
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-      erc[0] = vpMath::rad(0.26); // rx
-      erc[1] = vpMath::rad(2.12); // ry
+    case vpCameraParameters::perspectiveProjWithDistortion:
+      erc[0] = vpMath::rad(0.26);   // rx
+      erc[1] = vpMath::rad(2.12);   // ry
       erc[2] = vpMath::rad(-91.31); // rz
-      etc[0] = -0.0444; // tx
-      etc[1] = -0.0005; // ty
-      etc[2] =  0.1022; // tz
+      etc[0] = -0.0444;             // tx
+      etc[1] = -0.0005;             // ty
+      etc[2] = 0.1022;              // tz
       break;
     }
     break;
   }
   case vpViper650::TOOL_PTGREY_FLEA2_CAMERA:
-  case vpViper650::TOOL_SCHUNK_GRIPPER_CAMERA:  {
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-      erc[0] = vpMath::rad(0.15); // rx
-      erc[1] = vpMath::rad(1.28); // ry
+  case vpViper650::TOOL_SCHUNK_GRIPPER_CAMERA: {
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+      erc[0] = vpMath::rad(0.15);  // rx
+      erc[1] = vpMath::rad(1.28);  // ry
       erc[2] = vpMath::rad(-90.8); // rz
-      etc[0] = -0.0456; // tx
-      etc[1] = -0.0013; // ty
-      etc[2] =  0.001; // tz
+      etc[0] = -0.0456;            // tx
+      etc[1] = -0.0013;            // ty
+      etc[2] = 0.001;              // tz
       break;
-    case vpCameraParameters::perspectiveProjWithDistortion :
-      erc[0] = vpMath::rad(0.72); // rx
-      erc[1] = vpMath::rad(2.10); // ry
+    case vpCameraParameters::perspectiveProjWithDistortion:
+      erc[0] = vpMath::rad(0.72);  // rx
+      erc[1] = vpMath::rad(2.10);  // ry
       erc[2] = vpMath::rad(-90.5); // rz
-      etc[0] = -0.0444; // tx
-      etc[1] = -0.0012; // ty
-      etc[2] =  0.078; // tz
+      etc[0] = -0.0444;            // tx
+      etc[1] = -0.0012;            // ty
+      etc[2] = 0.078;              // tz
       break;
     }
     break;
   }
   case vpViper650::TOOL_GENERIC_CAMERA: {
     // Set eMc to identity
-    switch(projModel) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion :
-    case vpCameraParameters::perspectiveProjWithDistortion :
+    switch (projModel) {
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
+    case vpCameraParameters::perspectiveProjWithDistortion:
       erc[0] = 0; // rx
       erc[1] = 0; // ry
       erc[2] = 0; // rz
@@ -315,10 +341,11 @@ vpViper650::init (vpViper650::vpToolType tool,
     break;
   }
   case vpViper650::TOOL_CUSTOM: {
-    throw vpRobotException (vpRobotException::badValue,
-                            "No predefined parameters available for a custom tool"
-                            "You should use init(vpViper650::vpToolType, const std::string&) or"
-                            "init(vpViper650::vpToolType, const vpHomogeneousMatrix&) instead");
+    throw vpRobotException(
+        vpRobotException::badValue,
+        "No predefined parameters available for a custom tool"
+        "You should use init(vpViper650::vpToolType, const std::string&) or"
+        "init(vpViper650::vpToolType, const vpHomogeneousMatrix&) instead");
   }
   }
   vpRotationMatrix eRc(erc);
@@ -326,7 +353,7 @@ vpViper650::init (vpViper650::vpToolType tool,
 #endif // VISP_HAVE_VIPER650_DATA
 
   setToolType(tool);
-  return ;
+  return;
 }
 
 /*!
@@ -355,15 +382,15 @@ eMc_ROT_XYZ 10.0 -90.0 20.0
 eMc_TRANS_XYZ  0.05 0.01 0.06
     \endcode
 
-  \sa init(vpViper650::vpToolType, vpCameraParameters::vpCameraParametersProjType),
-  init(vpViper650::vpToolType, const vpHomogeneousMatrix&)
+  \sa init(vpViper650::vpToolType,
+vpCameraParameters::vpCameraParametersProjType), init(vpViper650::vpToolType,
+const vpHomogeneousMatrix&)
 */
-void
-vpViper650::init(vpViper650::vpToolType tool,
-                 const std::string &filename)
+void vpViper650::init(vpViper650::vpToolType tool,
+                      const std::string &filename)
 {
-    this->setToolType(tool);
-    this->parseConfigFile(filename.c_str());
+  this->setToolType(tool);
+  this->parseConfigFile(filename.c_str());
 }
 
 /*!
@@ -376,16 +403,16 @@ vpViper650::init(vpViper650::vpToolType tool,
   \param eMc_ : Homogeneous matrix representation of the transformation
   between the end-effector frame and the tool frame.
 
-  \sa init(vpViper650::vpToolType, vpCameraParameters::vpCameraParametersProjType),
+  \sa init(vpViper650::vpToolType,
+  vpCameraParameters::vpCameraParametersProjType),
   init(vpViper650::vpToolType, const std::string&)
 
 */
-void
-vpViper650::init(vpViper650::vpToolType tool,
-                 const vpHomogeneousMatrix &eMc_)
+void vpViper650::init(vpViper650::vpToolType tool,
+                      const vpHomogeneousMatrix &eMc_)
 {
-    this->setToolType(tool);
-    this->set_eMc(eMc_);
+  this->setToolType(tool);
+  this->set_eMc(eMc_);
 }
 
 /*!
@@ -396,17 +423,17 @@ vpViper650::init(vpViper650::vpToolType tool,
   parameters, like the hand-to-eye transformation.
 
 */
-void
-vpViper650::parseConfigFile (const std::string &filename)
+void vpViper650::parseConfigFile(const std::string &filename)
 {
   vpRxyzVector erc;        // eMc rotation
   vpTranslationVector etc; // eMc translation
 
   std::ifstream fdconfig(filename.c_str(), std::ios::in);
 
-  if(! fdconfig.is_open()) {
-    throw vpRobotException (vpRobotException::readingParametersError,
-                            "Impossible to read the config file: %s", filename.c_str());
+  if (!fdconfig.is_open()) {
+    throw vpRobotException(vpRobotException::readingParametersError,
+                           "Impossible to read the config file: %s",
+                           filename.c_str());
   }
 
   std::string line;
@@ -415,22 +442,23 @@ vpViper650::parseConfigFile (const std::string &filename)
   bool get_etc = false;
   int code;
 
-  while(std::getline(fdconfig, line)) {
-    lineNum ++;
-    if((line.compare(0, 1, "#") == 0) || line.empty()) { // skip comment or empty line
+  while (std::getline(fdconfig, line)) {
+    lineNum++;
+    if ((line.compare(0, 1, "#") == 0) ||
+        line.empty()) { // skip comment or empty line
       continue;
     }
     std::istringstream ss(line);
     std::string key;
     ss >> key;
 
-    for (code = 0; NULL != opt_viper650[code]; ++ code)  {
+    for (code = 0; NULL != opt_viper650[code]; ++code) {
       if (key.compare(opt_viper650[code]) == 0) {
         break;
       }
     }
 
-    switch(code) {
+    switch (code) {
     case 0:
       break; // Nothing to do: camera name
 
@@ -461,13 +489,13 @@ vpViper650::parseConfigFile (const std::string &filename)
   // Compute the eMc matrix from the translations and rotations
   if (get_etc && get_erc) {
     this->set_eMc(etc, erc);
-  }
-  else {
-    throw vpRobotException (vpRobotException::readingParametersError,
-                            "Could not read translation and rotation parameters from config file %s", filename.c_str());
+  } else {
+    throw vpRobotException(vpRobotException::readingParametersError,
+                           "Could not read translation and rotation "
+                           "parameters from config file %s",
+                           filename.c_str());
   }
 }
-
 
 /*!
   Get the current intrinsic camera parameters obtained by calibration.
@@ -479,7 +507,8 @@ vpViper650::parseConfigFile (const std::string &filename)
 
   \warning Thid method needs also an access to the files containing the
   camera parameters in XML format. This access is available if
-  VISP_HAVE_VIPER650_DATA macro is defined in include/visp3/core/vpConfig.h file.
+  VISP_HAVE_VIPER650_DATA macro is defined in include/visp3/core/vpConfig.h
+file.
 
   - If VISP_HAVE_VIPER650_DATA and VISP_HAVE_XML2 macros are defined,
   this method gets the camera parameters from const_camera_Viper650.xml
@@ -498,9 +527,9 @@ vpViper650::parseConfigFile (const std::string &filename)
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/robot/vpViper650.h>
 #include <visp3/robot/vpRobotViper650.h>
+#include <visp3/robot/vpViper650.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
 int main()
 {
@@ -529,90 +558,91 @@ int main()
     robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
   }
   catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    std::cout << "Cannot get camera parameters for image: " << I.getWidth() <<
+" x " << I.getHeight() << std::endl;
   }
   std::cout << "Camera parameters: " << cam << std::endl;
 }
   \endcode
 
-  \exception vpRobotException::readingParametersError : If the camera parameters are not found.
+  \exception vpRobotException::readingParametersError : If the camera
+parameters are not found.
 
 */
 
-void
-vpViper650::getCameraParameters (vpCameraParameters &cam,
-                                 const unsigned int &image_width,
-                                 const unsigned int &image_height) const
+void vpViper650::getCameraParameters(vpCameraParameters &cam,
+                                     const unsigned int &image_width,
+                                     const unsigned int &image_height) const
 {
-#if defined(VISP_HAVE_XML2) && defined (VISP_HAVE_VIPER650_DATA)
+#if defined(VISP_HAVE_XML2) && defined(VISP_HAVE_VIPER650_DATA)
   vpXmlParserCamera parser;
   switch (getToolType()) {
   case vpViper650::TOOL_MARLIN_F033C_CAMERA: {
     std::cout << "Get camera parameters for camera \""
-              << vpViper650::CONST_MARLIN_F033C_CAMERA_NAME << "\"" << std::endl
-              << "from the XML file: \""
-              << vpViper650::CONST_CAMERA_FILENAME << "\""<< std::endl;
-    if (parser.parse(cam,
-                     vpViper650::CONST_CAMERA_FILENAME,
-                     vpViper650::CONST_MARLIN_F033C_CAMERA_NAME,
-                     projModel,
-                     image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+              << vpViper650::CONST_MARLIN_F033C_CAMERA_NAME << "\""
+              << std::endl
+              << "from the XML file: \"" << vpViper650::CONST_CAMERA_FILENAME
+              << "\"" << std::endl;
+    if (parser.parse(cam, vpViper650::CONST_CAMERA_FILENAME,
+                     vpViper650::CONST_MARLIN_F033C_CAMERA_NAME, projModel,
+                     image_width,
+                     image_height) != vpXmlParserCamera::SEQUENCE_OK) {
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
   case vpViper650::TOOL_PTGREY_FLEA2_CAMERA: {
     std::cout << "Get camera parameters for camera \""
-              << vpViper650::CONST_PTGREY_FLEA2_CAMERA_NAME << "\"" << std::endl
-              << "from the XML file: \""
-              << vpViper650::CONST_CAMERA_FILENAME << "\""<< std::endl;
-    if (parser.parse(cam,
-                     vpViper650::CONST_CAMERA_FILENAME,
-                     vpViper650::CONST_PTGREY_FLEA2_CAMERA_NAME,
-                     projModel,
-                     image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+              << vpViper650::CONST_PTGREY_FLEA2_CAMERA_NAME << "\""
+              << std::endl
+              << "from the XML file: \"" << vpViper650::CONST_CAMERA_FILENAME
+              << "\"" << std::endl;
+    if (parser.parse(cam, vpViper650::CONST_CAMERA_FILENAME,
+                     vpViper650::CONST_PTGREY_FLEA2_CAMERA_NAME, projModel,
+                     image_width,
+                     image_height) != vpXmlParserCamera::SEQUENCE_OK) {
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
   case vpViper650::TOOL_SCHUNK_GRIPPER_CAMERA: {
     std::cout << "Get camera parameters for camera \""
-              << vpViper650::CONST_SCHUNK_GRIPPER_CAMERA_NAME << "\"" << std::endl
-              << "from the XML file: \""
-              << vpViper650::CONST_CAMERA_FILENAME << "\""<< std::endl;
-    if (parser.parse(cam,
-                     vpViper650::CONST_CAMERA_FILENAME,
-                     vpViper650::CONST_SCHUNK_GRIPPER_CAMERA_NAME,
-                     projModel,
-                     image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+              << vpViper650::CONST_SCHUNK_GRIPPER_CAMERA_NAME << "\""
+              << std::endl
+              << "from the XML file: \"" << vpViper650::CONST_CAMERA_FILENAME
+              << "\"" << std::endl;
+    if (parser.parse(cam, vpViper650::CONST_CAMERA_FILENAME,
+                     vpViper650::CONST_SCHUNK_GRIPPER_CAMERA_NAME, projModel,
+                     image_width,
+                     image_height) != vpXmlParserCamera::SEQUENCE_OK) {
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
   case vpViper650::TOOL_GENERIC_CAMERA: {
     std::cout << "Get camera parameters for camera \""
               << vpViper650::CONST_GENERIC_CAMERA_NAME << "\"" << std::endl
-              << "from the XML file: \""
-              << vpViper650::CONST_CAMERA_FILENAME << "\""<< std::endl;
-    if (parser.parse(cam,
-                     vpViper650::CONST_CAMERA_FILENAME,
-                     vpViper650::CONST_GENERIC_CAMERA_NAME,
-                     projModel,
-                     image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+              << "from the XML file: \"" << vpViper650::CONST_CAMERA_FILENAME
+              << "\"" << std::endl;
+    if (parser.parse(cam, vpViper650::CONST_CAMERA_FILENAME,
+                     vpViper650::CONST_GENERIC_CAMERA_NAME, projModel,
+                     image_width,
+                     image_height) != vpXmlParserCamera::SEQUENCE_OK) {
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
   case vpViper650::TOOL_CUSTOM: {
-    throw vpRobotException (vpRobotException::badValue,
-                            "No intrinsic parameters available for a custom tool");
+    throw vpRobotException(
+        vpRobotException::badValue,
+        "No intrinsic parameters available for a custom tool");
   }
   default: {
-    vpERROR_TRACE ("This error should not occur!");
+    vpERROR_TRACE("This error should not occur!");
     //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
     //        "que les specs de la classe ont ete modifiee, "
     //        "et que le code n'a pas ete mis a jour "
@@ -621,8 +651,8 @@ vpViper650::getCameraParameters (vpCameraParameters &cam,
     //        "vpViper650::vpViper650ToolType, et controlez que "
     //        "tous les cas ont ete pris en compte dans la "
     //        "fonction init(camera).");
-    throw vpRobotException (vpRobotException::readingParametersError,
-                            "Impossible to read the camera parameters.");
+    throw vpRobotException(vpRobotException::readingParametersError,
+                           "Impossible to read the camera parameters.");
   }
   }
 #else
@@ -632,20 +662,22 @@ vpViper650::getCameraParameters (vpCameraParameters &cam,
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \""
-                << vpViper650::CONST_MARLIN_F033C_CAMERA_NAME << "\"" << std::endl;
-      switch(this->projModel) {
-      case vpCameraParameters::perspectiveProjWithoutDistortion :
+                << vpViper650::CONST_MARLIN_F033C_CAMERA_NAME << "\""
+                << std::endl;
+      switch (this->projModel) {
+      case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(1232.0, 1233.0, 317.7, 253.9);
         break;
-      case vpCameraParameters::perspectiveProjWithDistortion :
-        cam.initPersProjWithDistortion(1214.0, 1213.0, 323.1, 240.0, -0.1824, 0.1881);
+      case vpCameraParameters::perspectiveProjWithDistortion:
+        cam.initPersProjWithDistortion(1214.0, 1213.0, 323.1, 240.0, -0.1824,
+                                       0.1881);
         break;
       }
-    }
-    else {
-      vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+    } else {
+      vpTRACE("Cannot get default intrinsic camera parameters for this image "
+              "resolution");
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
@@ -654,20 +686,22 @@ vpViper650::getCameraParameters (vpCameraParameters &cam,
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \""
-                << vpViper650::CONST_PTGREY_FLEA2_CAMERA_NAME << "\"" << std::endl;
-      switch(this->projModel) {
-      case vpCameraParameters::perspectiveProjWithoutDistortion :
+                << vpViper650::CONST_PTGREY_FLEA2_CAMERA_NAME << "\""
+                << std::endl;
+      switch (this->projModel) {
+      case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(868.0, 869.0, 314.8, 254.1);
         break;
-      case vpCameraParameters::perspectiveProjWithDistortion :
-        cam.initPersProjWithDistortion(831.3, 831.6, 322.7, 265.8, -0.1955, 0.2047);
+      case vpCameraParameters::perspectiveProjWithDistortion:
+        cam.initPersProjWithDistortion(831.3, 831.6, 322.7, 265.8, -0.1955,
+                                       0.2047);
         break;
       }
-    }
-    else {
-      vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+    } else {
+      vpTRACE("Cannot get default intrinsic camera parameters for this image "
+              "resolution");
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
@@ -676,30 +710,32 @@ vpViper650::getCameraParameters (vpCameraParameters &cam,
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \""
                 << vpViper650::CONST_GENERIC_CAMERA_NAME << "\"" << std::endl;
-      switch(this->projModel) {
-      case vpCameraParameters::perspectiveProjWithoutDistortion :
+      switch (this->projModel) {
+      case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(868.0, 869.0, 314.8, 254.1);
         break;
-      case vpCameraParameters::perspectiveProjWithDistortion :
-        cam.initPersProjWithDistortion(831.3, 831.6, 322.7, 265.8, -0.1955, 0.2047);
+      case vpCameraParameters::perspectiveProjWithDistortion:
+        cam.initPersProjWithDistortion(831.3, 831.6, 322.7, 265.8, -0.1955,
+                                       0.2047);
         break;
       }
-    }
-    else {
-      vpTRACE("Cannot get default intrinsic camera parameters for this image resolution");
-      throw vpRobotException (vpRobotException::readingParametersError,
-                              "Impossible to read the camera parameters.");
+    } else {
+      vpTRACE("Cannot get default intrinsic camera parameters for this image "
+              "resolution");
+      throw vpRobotException(vpRobotException::readingParametersError,
+                             "Impossible to read the camera parameters.");
     }
     break;
   }
   case vpViper650::TOOL_CUSTOM: {
-    throw vpRobotException (vpRobotException::badValue,
-                            "No intrinsic parameters available for a custom tool");
+    throw vpRobotException(
+        vpRobotException::badValue,
+        "No intrinsic parameters available for a custom tool");
   }
   default:
-    vpERROR_TRACE ("This error should not occur!");
-    throw vpRobotException (vpRobotException::readingParametersError,
-                            "Impossible to read the camera parameters.");
+    vpERROR_TRACE("This error should not occur!");
+    throw vpRobotException(vpRobotException::readingParametersError,
+                           "Impossible to read the camera parameters.");
     break;
   }
 #endif
@@ -716,7 +752,8 @@ vpViper650::getCameraParameters (vpCameraParameters &cam,
 
   \warning Thid method needs also an access to the files containing the
   camera parameters in XML format. This access is available if
-  VISP_HAVE_VIPER650_DATA macro is defined in include/visp3/core/vpConfig.h file.
+  VISP_HAVE_VIPER650_DATA macro is defined in include/visp3/core/vpConfig.h
+file.
 
   - If VISP_HAVE_VIPER650_DATA and VISP_HAVE_XML2 macros are defined,
   this method gets the camera parameters from const_camera_Viper650.xml
@@ -731,9 +768,9 @@ vpViper650::getCameraParameters (vpCameraParameters &cam,
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/robot/vpViper650.h>
 #include <visp3/robot/vpRobotViper650.h>
+#include <visp3/robot/vpViper650.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
 int main()
 {
@@ -758,20 +795,21 @@ int main()
     robot.getCameraParameters (cam, I);
   }
   catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    std::cout << "Cannot get camera parameters for image: " << I.getWidth() <<
+" x " << I.getHeight() << std::endl;
   }
   std::cout << "Camera parameters: " << cam << std::endl;
 }
   \endcode
 
-  \exception vpRobotException::readingParametersError : If the camera parameters are not found.
+  \exception vpRobotException::readingParametersError : If the camera
+parameters are not found.
 
 */
-void
-vpViper650::getCameraParameters (vpCameraParameters &cam,
-                                 const vpImage<unsigned char> &I) const
+void vpViper650::getCameraParameters(vpCameraParameters &cam,
+                                     const vpImage<unsigned char> &I) const
 {
-  getCameraParameters(cam,I.getWidth(),I.getHeight());
+  getCameraParameters(cam, I.getWidth(), I.getHeight());
 }
 /*!
   \brief Get the current intrinsic camera parameters obtained by calibration.
@@ -782,8 +820,9 @@ vpViper650::getCameraParameters (vpCameraParameters &cam,
   defined in include/visp3/core/vpConfig.h file.
 
   \warning Thid method needs also an access to the files containing the camera
-  parameters in XML format. This access is available if VISP_HAVE_VIPER650_DATA
-  macro is defined in include/visp3/core/vpConfig.h file.
+  parameters in XML format. This access is available if
+VISP_HAVE_VIPER650_DATA macro is defined in include/visp3/core/vpConfig.h
+file.
 
   - If VISP_HAVE_VIPER650_DATA and VISP_HAVE_XML2 macros are defined,
   this method gets the camera parameters from const_camera_Viper650.xml
@@ -798,9 +837,9 @@ vpViper650::getCameraParameters (vpCameraParameters &cam,
   \code
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/robot/vpViper650.h>
 #include <visp3/robot/vpRobotViper650.h>
+#include <visp3/robot/vpViper650.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
 int main()
 {
@@ -825,19 +864,20 @@ int main()
     robot.getCameraParameters (cam, I);
   }
   catch(...) {
-    std::cout << "Cannot get camera parameters for image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+    std::cout << "Cannot get camera parameters for image: " << I.getWidth() <<
+" x " << I.getHeight() << std::endl;
   }
   std::cout << "Camera parameters: " << cam << std::endl;
 }
   \endcode
 
-  \exception vpRobotException::readingParametersError : If the camera parameters are not found.
+  \exception vpRobotException::readingParametersError : If the camera
+parameters are not found.
 
 */
 
-void
-vpViper650::getCameraParameters (vpCameraParameters &cam,
-                                 const vpImage<vpRGBa> &I) const
+void vpViper650::getCameraParameters(vpCameraParameters &cam,
+                                     const vpImage<vpRGBa> &I) const
 {
-  getCameraParameters(cam,I.getWidth(),I.getHeight());
+  getCameraParameters(cam, I.getWidth(), I.getHeight());
 }

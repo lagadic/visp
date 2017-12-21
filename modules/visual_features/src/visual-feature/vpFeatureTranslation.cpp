@@ -37,7 +37,6 @@
  *
  *****************************************************************************/
 
-
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureTranslation.h>
 
@@ -50,7 +49,6 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-
 /*!
   \file vpFeatureTranslation.cpp
   \brief class that defines 3D translation visual feature
@@ -62,24 +60,23 @@ other functionalities are useful but not mandatory
 
 */
 
-/*! 
+/*!
 
   Initialise the memory space requested for 3D translation visual
   feature.
 */
-void
-vpFeatureTranslation::init()
+void vpFeatureTranslation::init()
 {
-  //feature dimension
-  dim_s = 3 ;
+  // feature dimension
+  dim_s = 3;
   nbParameters = 1;
 
   // memory allocation
-  s.resize(dim_s) ;
+  s.resize(dim_s);
   if (flags == NULL)
     flags = new bool[nbParameters];
-  for (unsigned int i = 0; i < nbParameters; i++) flags[i] = false;
-
+  for (unsigned int i = 0; i < nbParameters; i++)
+    flags[i] = false;
 }
 
 /*!
@@ -91,55 +88,59 @@ vpFeatureTranslation::init()
 vpFeatureTranslation::vpFeatureTranslation()
   : f2Mf1(), translation(vpFeatureTranslation::cdMc)
 {
-  init() ;
+  init();
 }
 
+/*!
+  Default constructor that builds a visual feature and initialize it to zero
+  specifying the type.
 
-/*! 
-  Default constructor that builds a visual feature and initialize it to zero specifying the type.
-
-  \param r : Type of considered 3D translation feature. 
+  \param r : Type of considered 3D translation feature.
 
 */
-vpFeatureTranslation::vpFeatureTranslation(vpFeatureTranslationRepresentationType r)
+vpFeatureTranslation::vpFeatureTranslation(
+    vpFeatureTranslationRepresentationType r)
   : f2Mf1(), translation(r)
 {
-  init() ;
+  init();
 }
-
 
 /*!
 
   Constructor that builds a 3D visual feature from an homogeneous
-  matrix \f$ ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$ that represent the 3D transformation between two frames \f${\cal{F}}_1\f$ and \f${\cal{F}}_2\f$.
+  matrix \f$ ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$ that represent the 3D
+  transformation between two frames \f${\cal{F}}_1\f$ and \f${\cal{F}}_2\f$.
 
   \param f2Mf1_ [in] : 3D displacement that the camera has to achieve to
-  move from the frame \f${\cal{F}}_2\f$ to the frame \f${\cal{F}}_1\f$ (\f$ ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$).
-  \param r : type of feature. It can be vpFeature::cdMc or vpFeature::cMo.
+  move from the frame \f${\cal{F}}_2\f$ to the frame \f${\cal{F}}_1\f$ (\f$
+  ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$). \param r : type of feature. It can be
+  vpFeature::cdMc or vpFeature::cMo.
 
 */
-vpFeatureTranslation::vpFeatureTranslation(vpHomogeneousMatrix &f2Mf1_, vpFeatureTranslationRepresentationType r)
+vpFeatureTranslation::vpFeatureTranslation(
+    vpHomogeneousMatrix &f2Mf1_, vpFeatureTranslationRepresentationType r)
   : f2Mf1(), translation(r)
 {
-  init() ;
+  init();
 
-  buildFrom(f2Mf1_) ;
+  buildFrom(f2Mf1_);
 }
 
 /*!
   Build a 3D translation visual feature from an homogeneous
-  matrix \f$ ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$ that represent the 3D transformation between two frames \f${\cal{F}}_1\f$ and \f${\cal{F}}_2\f$.
+  matrix \f$ ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$ that represent the 3D
+  transformation between two frames \f${\cal{F}}_1\f$ and \f${\cal{F}}_2\f$.
 
   \param f2Mf1_ [in] : 3D displacement that the camera has to achieve to
-  move from the frame \f${\cal{F}}_2\f$ to the frame \f${\cal{F}}_1\f$ (\f$ ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$).
+  move from the frame \f${\cal{F}}_2\f$ to the frame \f${\cal{F}}_1\f$ (\f$
+  ^{{\cal{F}}_2}M_{{\cal{F}}_1} \f$).
 */
-void
-vpFeatureTranslation::buildFrom(const vpHomogeneousMatrix &f2Mf1_)
+void vpFeatureTranslation::buildFrom(const vpHomogeneousMatrix &f2Mf1_)
 {
-  this->f2Mf1 = f2Mf1_ ;
-  s[0] = f2Mf1[0][3] ;
-  s[1] = f2Mf1[1][3] ;
-  s[2] = f2Mf1[2][3] ;
+  this->f2Mf1 = f2Mf1_;
+  s[0] = f2Mf1[0][3];
+  s[1] = f2Mf1[1][3];
+  s[2] = f2Mf1[2][3];
 
   flags[0] = true;
 }
@@ -148,14 +149,15 @@ vpFeatureTranslation::buildFrom(const vpHomogeneousMatrix &f2Mf1_)
 
   Set the type of translation feature.
 
-  \param r : type of translation feature. It can be vpFeatureTranslation::cdMc, vpFeatureTranslation::cMcd
-             or vpFeatureTranslation::cMo.
-  \sa getFeatureTranslationType()
+  \param r : type of translation feature. It can be
+  vpFeatureTranslation::cdMc, vpFeatureTranslation::cMcd or
+  vpFeatureTranslation::cMo. \sa getFeatureTranslationType()
 
 */
-void vpFeatureTranslation::setFeatureTranslationType(const vpFeatureTranslationRepresentationType r)
+void vpFeatureTranslation::setFeatureTranslationType(
+    const vpFeatureTranslationRepresentationType r)
 {
-    translation = r;
+  translation = r;
 }
 
 /*!
@@ -167,10 +169,7 @@ void vpFeatureTranslation::setFeatureTranslationType(const vpFeatureTranslationR
   \sa get_Tx()
 
 */
-void vpFeatureTranslation::set_Tx(const double t_x)
-{
-    s[0] = t_x ;
-}
+void vpFeatureTranslation::set_Tx(const double t_x) { s[0] = t_x; }
 /*!
 
   Initialise the \f$t_y \f$ subset value of the 3D
@@ -180,10 +179,7 @@ void vpFeatureTranslation::set_Tx(const double t_x)
   \sa get_Ty()
 
 */
-void vpFeatureTranslation::set_Ty(const double t_y)
-{
-    s[1] = t_y ;
-}
+void vpFeatureTranslation::set_Ty(const double t_y) { s[1] = t_y; }
 /*!
 
   Initialise the \f$t_z \f$ subset value of the 3D
@@ -193,60 +189,43 @@ void vpFeatureTranslation::set_Ty(const double t_y)
   \sa get_Tz()
 
 */
-void
-vpFeatureTranslation::set_Tz(const double t_z)
-{
-    s[2] = t_z ;
-}
-
+void vpFeatureTranslation::set_Tz(const double t_z) { s[2] = t_z; }
 
 /*!
 
   Get the type of translation feature.
 
-  \return Type of translation feature. It can be vpFeatureTranslation::cdMc, vpFeatureTranslation::cMcd
-             or vpFeatureTranslation::cMo.
-  \sa setFeatureTranslationType()
+  \return Type of translation feature. It can be vpFeatureTranslation::cdMc,
+  vpFeatureTranslation::cMcd or vpFeatureTranslation::cMo. \sa
+  setFeatureTranslationType()
 
 */
-vpFeatureTranslation::vpFeatureTranslationRepresentationType vpFeatureTranslation::getFeatureTranslationType()  const
+vpFeatureTranslation::vpFeatureTranslationRepresentationType
+vpFeatureTranslation::getFeatureTranslationType() const
 {
-  return translation ;
+  return translation;
 }
 
 /*!
-  Return the \f$t_x \f$ subset value of the visual feature 
+  Return the \f$t_x \f$ subset value of the visual feature
   \f$s\f$.
 
 */
-double vpFeatureTranslation::get_Tx()  const
-{
-  return s[0] ;
-}
-
+double vpFeatureTranslation::get_Tx() const { return s[0]; }
 
 /*!
-  Return the \f$t_y \f$ subset value of the visual feature 
+  Return the \f$t_y \f$ subset value of the visual feature
   \f$s\f$.
 
 */
-double vpFeatureTranslation::get_Ty()   const
-{
-  return s[1] ;
-}
-
+double vpFeatureTranslation::get_Ty() const { return s[1]; }
 
 /*!
-  Return the \f$t_z \f$ subset value of the visual feature 
+  Return the \f$t_z \f$ subset value of the visual feature
   \f$s\f$.
 
 */
-double
-vpFeatureTranslation::get_Tz() const
-{
-  return  s[2]  ;
-}
-
+double vpFeatureTranslation::get_Tz() const { return s[2]; }
 
 /*!
 
@@ -259,7 +238,7 @@ vpFeatureTranslation::get_Tz() const
 
   - With the feature type cdMc:
 
-  \f[ L = [ ^{c^*}R_c \;\; 0_3] \f] 
+  \f[ L = [ ^{c^*}R_c \;\; 0_3] \f]
 
   where \f$^{c^*}R_c\f$ is the rotation the camera has to achieve to
   move from the desired camera frame to the current camera frame.
@@ -279,7 +258,7 @@ vpFeatureTranslation::get_Tz() const
   the object frame relative to the current camera frame.
 
   \param select : Selection of a subset of the possible translation
-  features. 
+  features.
   - To compute the interaction matrix for all the three translation
     subset features \f$(t_x,t_y,t_y)\f$ use vpBasicFeature::FEATURE_ALL. In
     that case the dimension of the interaction matrix is \f$ [3 \times
@@ -298,7 +277,7 @@ vpFeatureTranslation::get_Tz() const
 
   \code
   vpHomogeneousMatrix cdMc;
-  ... 
+  ...
   // Creation of the current feature s
   vpFeatureTranslation s(vpFeatureTranslation::cdMc);
   s.buildFrom(cdMc);
@@ -311,8 +290,8 @@ vpFeatureTranslation::get_Tz() const
   subset visual feature:
 
   \code
-  vpMatrix L_xy = s.interaction( vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy() );
-  \endcode
+  vpMatrix L_xy = s.interaction( vpFeatureTranslation::selectTx() |
+  vpFeatureTranslation::selectTy() ); \endcode
 
   L_xy is here now a 2 by 6 matrix. The first line corresponds to
   the \f$ t_x \f$ visual feature while the second one to the \f$
@@ -329,20 +308,20 @@ vpFeatureTranslation::get_Tz() const
   line corresponds to the \f$ t_z \f$ visual feature.
 
 */
-vpMatrix
-vpFeatureTranslation::interaction(const unsigned int select)
+vpMatrix vpFeatureTranslation::interaction(const unsigned int select)
 {
 
-  vpMatrix L ;
-  L.resize(0,6) ;
+  vpMatrix L;
+  L.resize(0, 6);
 
   if (deallocate == vpBasicFeature::user) {
     for (unsigned int i = 0; i < nbParameters; i++) {
       if (flags[i] == false) {
-        switch(i){
+        switch (i) {
         case 0:
-          vpTRACE("Warning !!!  The interaction matrix is computed but f2Mf1 was not set yet");
-        break;
+          vpTRACE("Warning !!!  The interaction matrix is computed but f2Mf1 "
+                  "was not set yet");
+          break;
         default:
           vpTRACE("Problem during the reading of the variable flags");
         }
@@ -352,92 +331,122 @@ vpFeatureTranslation::interaction(const unsigned int select)
   }
 
   if (translation == cdMc) {
-    //This version is a simplification
-    if (vpFeatureTranslation::selectTx() & select ) {
-      vpMatrix Lx(1,6) ;
+    // This version is a simplification
+    if (vpFeatureTranslation::selectTx() & select) {
+      vpMatrix Lx(1, 6);
 
-      for (int i=0 ; i < 3 ; i++)
-	Lx[0][i] = f2Mf1[0][i] ;
-      Lx[0][3] = 0 ;    Lx[0][4] = 0 ;    Lx[0][5] = 0 ;
+      for (int i = 0; i < 3; i++)
+        Lx[0][i] = f2Mf1[0][i];
+      Lx[0][3] = 0;
+      Lx[0][4] = 0;
+      Lx[0][5] = 0;
 
-      L = vpMatrix::stack(L,Lx) ;
+      L = vpMatrix::stack(L, Lx);
     }
 
-    if (vpFeatureTranslation::selectTy() & select ) {
-      vpMatrix Ly(1,6) ;
+    if (vpFeatureTranslation::selectTy() & select) {
+      vpMatrix Ly(1, 6);
 
-      for (int i=0 ; i < 3 ; i++)
-	Ly[0][i] = f2Mf1[1][i] ;
-      Ly[0][3] = 0 ;    Ly[0][4] = 0 ;    Ly[0][5] = 0 ;
+      for (int i = 0; i < 3; i++)
+        Ly[0][i] = f2Mf1[1][i];
+      Ly[0][3] = 0;
+      Ly[0][4] = 0;
+      Ly[0][5] = 0;
 
-      L = vpMatrix::stack(L,Ly) ;
+      L = vpMatrix::stack(L, Ly);
     }
 
-    if (vpFeatureTranslation::selectTz() & select ) {
-      vpMatrix Lz(1,6) ;
+    if (vpFeatureTranslation::selectTz() & select) {
+      vpMatrix Lz(1, 6);
 
-      for (int i=0 ; i < 3 ; i++)
-	Lz[0][i] = f2Mf1[2][i] ;
-      Lz[0][3] = 0 ;    Lz[0][4] = 0 ;    Lz[0][5] = 0 ;
+      for (int i = 0; i < 3; i++)
+        Lz[0][i] = f2Mf1[2][i];
+      Lz[0][3] = 0;
+      Lz[0][4] = 0;
+      Lz[0][5] = 0;
 
-      L = vpMatrix::stack(L,Lz) ;
+      L = vpMatrix::stack(L, Lz);
     }
   }
   if (translation == cMcd) {
-    //This version is a simplification
-    if (vpFeatureTranslation::selectTx() & select ) {
-      vpMatrix Lx(1,6) ;
-      Lx[0][0] = -1 ;    Lx[0][1] = 0 ;    Lx[0][2] = 0 ;
-      Lx[0][3] = 0 ;    Lx[0][4] = -s[2] ;    Lx[0][5] = s[1] ;
+    // This version is a simplification
+    if (vpFeatureTranslation::selectTx() & select) {
+      vpMatrix Lx(1, 6);
+      Lx[0][0] = -1;
+      Lx[0][1] = 0;
+      Lx[0][2] = 0;
+      Lx[0][3] = 0;
+      Lx[0][4] = -s[2];
+      Lx[0][5] = s[1];
 
-      L = vpMatrix::stack(L,Lx) ;
+      L = vpMatrix::stack(L, Lx);
     }
 
-    if (vpFeatureTranslation::selectTy() & select ) {
-      vpMatrix Ly(1,6) ;
-      Ly[0][0] = 0 ;    Ly[0][1] = -1 ;    Ly[0][2] = 0 ;
-      Ly[0][3] = s[2] ;    Ly[0][4] = 0 ;    Ly[0][5] = -s[0] ;
+    if (vpFeatureTranslation::selectTy() & select) {
+      vpMatrix Ly(1, 6);
+      Ly[0][0] = 0;
+      Ly[0][1] = -1;
+      Ly[0][2] = 0;
+      Ly[0][3] = s[2];
+      Ly[0][4] = 0;
+      Ly[0][5] = -s[0];
 
-      L = vpMatrix::stack(L,Ly) ;
+      L = vpMatrix::stack(L, Ly);
     }
 
-    if (vpFeatureTranslation::selectTz() & select ) {
-      vpMatrix Lz(1,6) ;
-      Lz[0][0] = 0 ;    Lz[0][1] = 0 ;    Lz[0][2] = -1 ;
-      Lz[0][3] = -s[1] ;    Lz[0][4] = s[0] ;    Lz[0][5] = 0 ;
+    if (vpFeatureTranslation::selectTz() & select) {
+      vpMatrix Lz(1, 6);
+      Lz[0][0] = 0;
+      Lz[0][1] = 0;
+      Lz[0][2] = -1;
+      Lz[0][3] = -s[1];
+      Lz[0][4] = s[0];
+      Lz[0][5] = 0;
 
-      L = vpMatrix::stack(L,Lz) ;
+      L = vpMatrix::stack(L, Lz);
     }
   }
 
   if (translation == cMo) {
-    //This version is a simplification
-    if (vpFeatureTranslation::selectTx() & select ) {
-      vpMatrix Lx(1,6) ;
-      Lx[0][0] = -1 ;    Lx[0][1] = 0 ;    Lx[0][2] = 0 ;
-      Lx[0][3] = 0 ;    Lx[0][4] = -s[2] ;    Lx[0][5] = s[1] ;
+    // This version is a simplification
+    if (vpFeatureTranslation::selectTx() & select) {
+      vpMatrix Lx(1, 6);
+      Lx[0][0] = -1;
+      Lx[0][1] = 0;
+      Lx[0][2] = 0;
+      Lx[0][3] = 0;
+      Lx[0][4] = -s[2];
+      Lx[0][5] = s[1];
 
-      L = vpMatrix::stack(L,Lx) ;
+      L = vpMatrix::stack(L, Lx);
     }
 
-    if (vpFeatureTranslation::selectTy() & select ) {
-      vpMatrix Ly(1,6) ;
-      Ly[0][0] = 0 ;    Ly[0][1] = -1 ;    Ly[0][2] = 0 ;
-      Ly[0][3] = s[2] ;    Ly[0][4] = 0 ;    Ly[0][5] = -s[0] ;
+    if (vpFeatureTranslation::selectTy() & select) {
+      vpMatrix Ly(1, 6);
+      Ly[0][0] = 0;
+      Ly[0][1] = -1;
+      Ly[0][2] = 0;
+      Ly[0][3] = s[2];
+      Ly[0][4] = 0;
+      Ly[0][5] = -s[0];
 
-      L = vpMatrix::stack(L,Ly) ;
+      L = vpMatrix::stack(L, Ly);
     }
 
-    if (vpFeatureTranslation::selectTz() & select ) {
-      vpMatrix Lz(1,6) ;
-      Lz[0][0] = 0 ;    Lz[0][1] = 0 ;    Lz[0][2] = -1 ;
-      Lz[0][3] = -s[1] ;    Lz[0][4] = s[0] ;    Lz[0][5] = 0 ;
+    if (vpFeatureTranslation::selectTz() & select) {
+      vpMatrix Lz(1, 6);
+      Lz[0][0] = 0;
+      Lz[0][1] = 0;
+      Lz[0][2] = -1;
+      Lz[0][3] = -s[1];
+      Lz[0][4] = s[0];
+      Lz[0][5] = 0;
 
-      L = vpMatrix::stack(L,Lz) ;
+      L = vpMatrix::stack(L, Lz);
     }
   }
 
-  return L ;
+  return L;
 }
 
 /*!
@@ -445,20 +454,21 @@ vpFeatureTranslation::interaction(const unsigned int select)
   visual features from a subset of the possible features.
 
   - With the feature type cdMc:
-  Since this visual feature \f$ s \f$ represent the 3D translation from the desired
-  camera frame to the current one \f$^{c^*}t_{c} \f$, the desired
+  Since this visual feature \f$ s \f$ represent the 3D translation from the
+  desired camera frame to the current one \f$^{c^*}t_{c} \f$, the desired
   visual feature \f$ s^* \f$ should be zero. Thus, the error is here
   equal to the current visual feature \f$ s \f$.
 
   - With the feature type cMo:
-  In this case the desired feature is not necessary equal to zero. Thus, the error is here equal to \f$ s-s^* \f$.
+  In this case the desired feature is not necessary equal to zero. Thus, the
+  error is here equal to \f$ s-s^* \f$.
 
   \param s_star : Desired visual feature.
 
   \param select : The error can be computed for a selection of a
   subset of the possible translation features.
   - To compute the error for all the three translation vector coordinates use
-    vpBasicFeature::FEATURE_ALL. In that case the error vector is a 3 
+    vpBasicFeature::FEATURE_ALL. In that case the error vector is a 3
     dimension column vector.
   - To compute the error for only one of the translation vector coordinate
     feature \f$(t_x, t_y, t_z)\f$ use one of the
@@ -469,19 +479,23 @@ vpFeatureTranslation::interaction(const unsigned int select)
   visual feature.
 
   \exception vpFeatureException::badInitializationError : If the
-  desired visual feature \f$ s^* \f$ is not equal to zero in the case of the feature type is cdMc or cMcd.
+  desired visual feature \f$ s^* \f$ is not equal to zero in the case of the
+  feature type is cdMc or cMcd.
 
   The code below shows how to use this method to manipulate the \f$
-  t_z \f$ subset in the case of the cdMc feature type. It can be used also with the cMo feature type. In that case just change vpFeatureTranslation::cdMc by vpFeatureTranslation::cMo during the declaration of the two vpFeatureTranslation features.
+  t_z \f$ subset in the case of the cdMc feature type. It can be used also
+  with the cMo feature type. In that case just change
+  vpFeatureTranslation::cdMc by vpFeatureTranslation::cMo during the
+  declaration of the two vpFeatureTranslation features.
 
   \code
   // Creation of the current feature s
   vpFeatureTranslation s(vpFeatureTranslation::cdMc);
   s.set_TUz(0.3); // Initialization of the feature
 
-  // Creation of the desired feature s*. By default this feature is 
+  // Creation of the desired feature s*. By default this feature is
   // initialized to zero
-  vpFeatureTranslation s_star(vpFeatureTranslation::cdMc); 
+  vpFeatureTranslation s_star(vpFeatureTranslation::cdMc);
 
   // Compute the interaction matrix for the t_z translation feature
   vpMatrix L_z = s.interaction( vpFeatureTranslation::selectTz() );
@@ -494,52 +508,46 @@ vpFeatureTranslation::interaction(const unsigned int select)
   the code becomes:
   \code
   // Compute the interaction matrix for the t_y, t_z features
-  vpMatrix L_yz = s.interaction( vpFeatureTranslation::selectTy() | vpFeatureTranslation::selectTz() );
+  vpMatrix L_yz = s.interaction( vpFeatureTranslation::selectTy() |
+  vpFeatureTranslation::selectTz() );
 
   // Compute the error vector e = (s-s*) for the t_y, t_z feature
-  vpColVector e = s.error(s_star, vpFeatureTranslation::selectTy() | vpFeatureTranslation::selectTz());
-  \endcode
+  vpColVector e = s.error(s_star, vpFeatureTranslation::selectTy() |
+  vpFeatureTranslation::selectTz()); \endcode
 
 */
-vpColVector
-vpFeatureTranslation::error(const vpBasicFeature &s_star,
-			    const unsigned int select)
+vpColVector vpFeatureTranslation::error(const vpBasicFeature &s_star,
+                                        const unsigned int select)
 {
-  vpColVector e(0) ;
+  vpColVector e(0);
 
-  if(translation == cdMc || translation == cMcd)
-  {
-    if (s_star.get_s().sumSquare() > 1e-6)
-    {
-      vpERROR_TRACE("s* should be zero ! ") ;
+  if (translation == cdMc || translation == cMcd) {
+    if (s_star.get_s().sumSquare() > 1e-6) {
+      vpERROR_TRACE("s* should be zero ! ");
       throw(vpFeatureException(vpFeatureException::badInitializationError,
-			       "s* should be zero !")) ;
+                               "s* should be zero !"));
     }
   }
 
+  if (vpFeatureTranslation::selectTx() & select) {
+    vpColVector ex(1);
+    ex[0] = s[0] - s_star[0];
+    e = vpColVector::stack(e, ex);
+  }
 
-  if (vpFeatureTranslation::selectTx() & select )
-    {
-      vpColVector ex(1) ;
-      ex[0] = s[0]-s_star[0]  ;
-      e = vpColVector::stack(e,ex) ;
-    }
+  if (vpFeatureTranslation::selectTy() & select) {
+    vpColVector ey(1);
+    ey[0] = s[1] - s_star[1];
+    e = vpColVector::stack(e, ey);
+  }
 
-  if (vpFeatureTranslation::selectTy() & select )
-    {
-      vpColVector ey(1) ;
-      ey[0] = s[1]-s_star[1] ;
-      e = vpColVector::stack(e,ey) ;
-    }
+  if (vpFeatureTranslation::selectTz() & select) {
+    vpColVector ez(1);
+    ez[0] = s[2] - s_star[2];
+    e = vpColVector::stack(e, ez);
+  }
 
-  if (vpFeatureTranslation::selectTz() & select )
-    {
-      vpColVector ez(1) ;
-      ez[0] = s[2]-s_star[2] ;
-      e = vpColVector::stack(e,ez) ;
-    }
-
-  return e ;
+  return e;
 }
 
 /*!
@@ -547,14 +555,15 @@ vpFeatureTranslation::error(const vpBasicFeature &s_star,
 
   \param select : Selection of a subset of the possible translation features.
   - To print all the three translation vector coordinates used as features use
-  vpBasicFeature::FEATURE_ALL. 
+  vpBasicFeature::FEATURE_ALL.
   - To print only one of the translation coordinate
   feature \f$(t_x, t_y, t_z)\f$ use one of the
   corresponding function selectTx(), selectTy() or selectTz().
 
   \code
-  vpHomogeneousMatrix cdMc; // Homogeneous transformation between the desired camera frame and the current camera frame.
-  
+  vpHomogeneousMatrix cdMc; // Homogeneous transformation between the desired
+  camera frame and the current camera frame.
+
   // Creation of the current feature s
   vpFeatureTranslation s(vpFeatureTranslation::cdMc);
   s.buildFrom(cdMc);
@@ -564,90 +573,83 @@ vpFeatureTranslation::error(const vpBasicFeature &s_star,
   s.print(vpFeatureTranslation::selectTz()); // print only the t_z component
   \endcode
 */
-void
-vpFeatureTranslation::print(const unsigned int select) const
+void vpFeatureTranslation::print(const unsigned int select) const
 {
-  std::cout <<"Translation 3D: ";
-  if (vpFeatureTranslation::selectTx() & select ) {
+  std::cout << "Translation 3D: ";
+  if (vpFeatureTranslation::selectTx() & select) {
     std::cout << s[0] << " ";
   }
-  if (vpFeatureTranslation::selectTy() & select ) {
+  if (vpFeatureTranslation::selectTy() & select) {
     std::cout << s[1] << " ";
   }
-  if (vpFeatureTranslation::selectTz() & select ) {
+  if (vpFeatureTranslation::selectTz() & select) {
     std::cout << s[2] << " ";
   }
   std::cout << std::endl;
 }
 
-
 /*!
-  
+
   Create an object with the same type.
 
   \code
   vpBasicFeature *s_star;
-  vpFeatureTranslation s(vpFeatureTranslation::cdMc); //or vpFeatureTranslation s(vpFeatureTranslation::cMo);
-  s_star = s.duplicate(); // s_star is now a vpFeatureTranslation
-  \endcode
+  vpFeatureTranslation s(vpFeatureTranslation::cdMc); //or
+  vpFeatureTranslation s(vpFeatureTranslation::cMo); s_star = s.duplicate();
+  // s_star is now a vpFeatureTranslation \endcode
 
 */
 vpFeatureTranslation *vpFeatureTranslation::duplicate() const
 {
   vpFeatureTranslation *feature = NULL;
   if (translation == cdMc)
-    feature = new vpFeatureTranslation(cdMc) ;
+    feature = new vpFeatureTranslation(cdMc);
   if (translation == cMo)
-    feature = new vpFeatureTranslation(cMo) ;
+    feature = new vpFeatureTranslation(cMo);
   if (translation == cMcd)
-    feature = new vpFeatureTranslation(cMcd) ;
-  return feature ;
+    feature = new vpFeatureTranslation(cMcd);
+  return feature;
 }
-
 
 /*!
 
   Not implemented.
 
 */
-void
-vpFeatureTranslation::display(const vpCameraParameters &/* cam */,
-                              const vpImage<unsigned char> &/* I */,
-                              const vpColor &/* color */,
-                              unsigned int /* thickness */) const
+void vpFeatureTranslation::display(const vpCameraParameters & /* cam */,
+                                   const vpImage<unsigned char> & /* I */,
+                                   const vpColor & /* color */,
+                                   unsigned int /* thickness */) const
 {
-  static int firsttime =0 ;
+  static int firsttime = 0;
 
-  if (firsttime==0)
-    {
-      firsttime=1 ;
-      vpERROR_TRACE("not implemented") ;
-      // Do not throw and error since it is not subject
-      // to produce a failure
-    }
+  if (firsttime == 0) {
+    firsttime = 1;
+    vpERROR_TRACE("not implemented");
+    // Do not throw and error since it is not subject
+    // to produce a failure
+  }
 }
 /*!
 
   Not implemented.
 
 */
-void
-vpFeatureTranslation::display(const vpCameraParameters &/* cam */,
-                              const vpImage<vpRGBa> &/* I */,
-                              const vpColor &/* color */,
-                              unsigned int /* thickness */) const
+void vpFeatureTranslation::display(const vpCameraParameters & /* cam */,
+                                   const vpImage<vpRGBa> & /* I */,
+                                   const vpColor & /* color */,
+                                   unsigned int /* thickness */) const
 {
-  static int firsttime =0 ;
+  static int firsttime = 0;
 
-  if (firsttime==0)
-    {
-      firsttime=1 ;
-      vpERROR_TRACE("not implemented") ;
-      // Do not throw and error since it is not subject
-      // to produce a failure
-    }
+  if (firsttime == 0) {
+    firsttime = 1;
+    vpERROR_TRACE("not implemented");
+    // Do not throw and error since it is not subject
+    // to produce a failure
+  }
 }
- 
+
 /*!
 
   Function used to select the \f$ t_x\f$ subset of the translation
@@ -667,8 +669,8 @@ vpFeatureTranslation::display(const vpCameraParameters &/* cam */,
   vpServo task;
   ...
   // Add the (tx,ty) subset features from 3D translation to the task
-  task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
-  \endcode
+  task.addFeature(t, vpFeatureTranslation::selectTx() |
+  vpFeatureTranslation::selectTy()); \endcode
 
   - With the feature type cMcd:
   \code
@@ -676,8 +678,8 @@ vpFeatureTranslation::display(const vpCameraParameters &/* cam */,
   vpServo task;
   ...
   // Add the (tx,ty) subset features from 3D translation to the task
-  task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
-  \endcode
+  task.addFeature(t, vpFeatureTranslation::selectTx() |
+  vpFeatureTranslation::selectTy()); \endcode
 
   - With the feature type cMo:
   \code
@@ -686,13 +688,13 @@ vpFeatureTranslation::display(const vpCameraParameters &/* cam */,
   vpServo task;
   ...
   // Add the (tx,ty) subset features from 3D translation to the task
-  task.addFeature(t, t_star, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
-  \endcode
+  task.addFeature(t, t_star, vpFeatureTranslation::selectTx() |
+  vpFeatureTranslation::selectTy()); \endcode
 
   \sa selectTy(), selectTz()
 
 */
-unsigned int vpFeatureTranslation::selectTx()  { return FEATURE_LINE[0] ; }
+unsigned int vpFeatureTranslation::selectTx() { return FEATURE_LINE[0]; }
 
 /*!
 
@@ -713,8 +715,8 @@ unsigned int vpFeatureTranslation::selectTx()  { return FEATURE_LINE[0] ; }
   vpServo task;
   ...
   // Add the (tx,ty) subset features from 3D translation to the task
-  task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
-  \endcode
+  task.addFeature(t, vpFeatureTranslation::selectTx() |
+  vpFeatureTranslation::selectTy()); \endcode
 
   - With the feature type cMcd:
   \code
@@ -722,8 +724,8 @@ unsigned int vpFeatureTranslation::selectTx()  { return FEATURE_LINE[0] ; }
   vpServo task;
   ...
   // Add the (tx,ty) subset features from 3D translation to the task
-  task.addFeature(t, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
-  \endcode
+  task.addFeature(t, vpFeatureTranslation::selectTx() |
+  vpFeatureTranslation::selectTy()); \endcode
 
   - With the feature type cMo:
   \code
@@ -732,12 +734,12 @@ unsigned int vpFeatureTranslation::selectTx()  { return FEATURE_LINE[0] ; }
   vpServo task;
   ...
   // Add the (tx,ty) subset features from 3D translation to the task
-  task.addFeature(t, t_star, vpFeatureTranslation::selectTx() | vpFeatureTranslation::selectTy());
-  \endcode
+  task.addFeature(t, t_star, vpFeatureTranslation::selectTx() |
+  vpFeatureTranslation::selectTy()); \endcode
 
   \sa selectTx(), selectTz()
 */
-unsigned int vpFeatureTranslation::selectTy()  { return FEATURE_LINE[1] ; }
+unsigned int vpFeatureTranslation::selectTy() { return FEATURE_LINE[1]; }
 
 /*!
 
@@ -782,4 +784,4 @@ unsigned int vpFeatureTranslation::selectTy()  { return FEATURE_LINE[1] ; }
 
   \sa selectTx(), selectTy()
 */
-unsigned int vpFeatureTranslation::selectTz()  { return FEATURE_LINE[2] ; }
+unsigned int vpFeatureTranslation::selectTz() { return FEATURE_LINE[2]; }

@@ -43,30 +43,25 @@
 #ifndef __vpROBOT_BICLOPS_H
 #define __vpROBOT_BICLOPS_H
 
-
 /* ------------------------------------------------------------------------ */
 /* --- INCLUDES ----------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
 /* --- GENERAL --- */
 #include <iostream>
-#include <stdio.h>
 #include <pthread.h>
-
+#include <stdio.h>
 
 /* --- ViSP --- */
-#include <visp3/robot/vpRobot.h>
-#include <visp3/robot/vpBiclops.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
+#include <visp3/robot/vpBiclops.h>
+#include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpRobotBiclopsController.h>
-
 
 /* ------------------------------------------------------------------------ */
 /* --- CLASS -------------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
-
-
 
 /*!
   \class vpRobotBiclops
@@ -83,12 +78,12 @@
 
   The control of the head is done by vpRobotBiclopsController class.
 
-  \warning Velocity control mode is not exported from the top-level Biclops API
-  class provided by Traclabs. That means that there is no protection in this
-  mode to prevent an axis from striking its hard limit. In position mode,
+  \warning Velocity control mode is not exported from the top-level Biclops
+  API class provided by Traclabs. That means that there is no protection in
+  this mode to prevent an axis from striking its hard limit. In position mode,
   Traclabs put soft limits in that keep any command from driving to a position
-  too close to the hard limits. In velocity mode this protection does not exist
-  in the current API.
+  too close to the hard limits. In velocity mode this protection does not
+  exist in the current API.
 
   \warning With the understanding that hitting the hard limits at full
   speed/power can damage the unit, damage due to velocity mode commanding is
@@ -96,10 +91,7 @@
 
 
 */
-class VISP_EXPORT vpRobotBiclops
-  :
-  public vpBiclops,
-  public vpRobot
+class VISP_EXPORT vpRobotBiclops : public vpBiclops, public vpRobot
 {
 private:
   static bool robotAlreadyCreated;
@@ -113,58 +105,63 @@ private:
   vpColVector q_previous;
   bool controlThreadCreated;
 
-//private:
-//#ifndef DOXYGEN_SHOULD_SKIP_THIS
-//  /*! \brief No copy constructor allowed.   */
-//  vpRobotBiclops(const vpRobotBiclops &)
-//    : vpBiclops(), vpRobot(), control_thread(), controller(),
-//      positioningVelocity(0), q_previous(), controlThreadCreated(false)
-//  {
-//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-//  }
-//  vpRobotBiclops &operator=(const vpRobotBiclops &){
-//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-//    return *this;
-//  }
-//#endif
+  // private:
+  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //  /*! \brief No copy constructor allowed.   */
+  //  vpRobotBiclops(const vpRobotBiclops &)
+  //    : vpBiclops(), vpRobot(), control_thread(), controller(),
+  //      positioningVelocity(0), q_previous(), controlThreadCreated(false)
+  //  {
+  //    throw vpException(vpException::functionNotImplementedError, "Not
+  //    implemented!");
+  //  }
+  //  vpRobotBiclops &operator=(const vpRobotBiclops &){
+  //    throw vpException(vpException::functionNotImplementedError, "Not
+  //    implemented!"); return *this;
+  //  }
+  //#endif
 
 public:
+  static const double defaultPositioningVelocity;
 
-  static const double       defaultPositioningVelocity;
+  vpRobotBiclops(void);
+  explicit vpRobotBiclops(const std::string &filename);
+  virtual ~vpRobotBiclops(void);
 
-  vpRobotBiclops (void);
-  explicit vpRobotBiclops (const std::string &filename);
-  virtual ~vpRobotBiclops (void);
-
-  void init (void);
+  void init(void);
 
   void get_cMe(vpHomogeneousMatrix &_cMe) const;
   void get_cVe(vpVelocityTwistMatrix &_cVe) const;
-  void get_eJe(vpMatrix &_eJe)  ;
-  void get_fJe(vpMatrix &_fJe)  ;
+  void get_eJe(vpMatrix &_eJe);
+  void get_fJe(vpMatrix &_fJe);
 
-  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &d);
-  void getPosition (const vpRobot::vpControlFrameType frame, vpColVector &q);
-  double getPositioningVelocity (void);
-  void getVelocity (const vpRobot::vpControlFrameType frame, vpColVector & q_dot);
-  vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
+  void getDisplacement(const vpRobot::vpControlFrameType frame,
+                       vpColVector &d);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  double getPositioningVelocity(void);
+  void getVelocity(const vpRobot::vpControlFrameType frame,
+                   vpColVector &q_dot);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
 
-  bool readPositionFile(const std::string &filename, vpColVector &q)  ;
+  bool readPositionFile(const std::string &filename, vpColVector &q);
 
-  void setConfigFile (const std::string &filename="/usr/share/BiclopsDefault.cfg");
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) ;
-  void setPosition (const vpRobot::vpControlFrameType frame, const double &q1, const double &q2) ;
-  void setPosition(const char *filename) ;
-  void setPositioningVelocity (const double velocity);
-  vpRobot::vpRobotStateType  setRobotState (const vpRobot::vpRobotStateType newState);
-  void setVelocity (const vpRobot::vpControlFrameType frame, const vpColVector & q_dot);
+  void setConfigFile(
+      const std::string &filename = "/usr/share/BiclopsDefault.cfg");
+  void setPosition(const vpRobot::vpControlFrameType frame,
+                   const vpColVector &q);
+  void setPosition(const vpRobot::vpControlFrameType frame, const double &q1,
+                   const double &q2);
+  void setPosition(const char *filename);
+  void setPositioningVelocity(const double velocity);
+  vpRobot::vpRobotStateType
+  setRobotState(const vpRobot::vpRobotStateType newState);
+  void setVelocity(const vpRobot::vpControlFrameType frame,
+                   const vpColVector &q_dot);
 
-  void stopMotion() ;
+  void stopMotion();
 
-  static void * vpRobotBiclopsSpeedControlLoop (void * arg);
+  static void *vpRobotBiclopsSpeedControlLoop(void *arg);
 };
-
-
 
 #endif /* #ifndef __vpROBOT_BICLOPS_H */
 

@@ -36,32 +36,32 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file grab1394CMU.cpp
 
   \brief Video capture example based on CMU 1394 Digital Camera SDK.
 
 */
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
+#include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
-#include <visp3/core/vpTime.h>
+#include <visp3/sensor/vp1394CMUGrabber.h>
 
 #define GRAB_COLOR
 
 // List of allowed command line options
-#define GETOPTARGS	"dhn:o:"
+#define GETOPTARGS "dhn:o:"
 
-void usage(const char *name, const char *badparam, unsigned &nframes, std::string &opath);
+void usage(const char *name, const char *badparam, unsigned &nframes,
+           std::string &opath);
 bool getOptions(int argc, const char **argv, bool &display,
                 unsigned int &nframes, bool &save, std::string &opath);
 
@@ -75,7 +75,8 @@ bool getOptions(int argc, const char **argv, bool &display,
   \param opath : Image filename when saving.
 
 */
-void usage(const char *name, const char *badparam, unsigned &nframes, std::string &opath)
+void usage(const char *name, const char *badparam, unsigned &nframes,
+           std::string &opath)
 {
   fprintf(stdout, "\n\
 Acquire images using CMU 1394 Digital Camera SDK (available under Windows only) and display\n\
@@ -101,7 +102,7 @@ OPTIONS:                                               Default\n\
      Print the help.\n\
 \n", nframes, opath.c_str());
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
 }
@@ -125,21 +126,29 @@ bool getOptions(int argc, const char **argv, bool &display,
                 unsigned int &nframes, bool &save, std::string &opath)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'd': display = false; break;
+    case 'd':
+      display = false;
+      break;
     case 'n':
-      nframes = (unsigned int)atoi(optarg_); break;
+      nframes = (unsigned int)atoi(optarg_);
+      break;
     case 'o':
       save = true;
-      opath = optarg_; break;
-    case 'h': usage(argv[0], NULL, nframes, opath); return false; break;
+      opath = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, nframes, opath);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg_, nframes, opath);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -154,30 +163,28 @@ bool getOptions(int argc, const char **argv, bool &display,
   return true;
 }
 
-
 /*!
   \example grab1394CMU.cpp
 
-  Video capture example based on CMU 1394 Digital Camera SDK using vp1394CMUGrabber class.
-  Display the images using the GDI or OpenCV display.
+  Video capture example based on CMU 1394 Digital Camera SDK using
+  vp1394CMUGrabber class. Display the images using the GDI or OpenCV display.
 */
 #if defined(VISP_HAVE_CMU1394)
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   bool opt_display = true;
   unsigned nframes = 50;
   bool save = false;
 
-  // Declare an image. It size is not defined yet. It will be defined when the
-  // image will acquired the first time.
+// Declare an image. It size is not defined yet. It will be defined when the
+// image will acquired the first time.
 #ifdef GRAB_COLOR
   vpImage<vpRGBa> I; // This is a color image (in RGBa format)
 #else
   vpImage<unsigned char> I; // This is a B&W image
 #endif
 
-  // Set default output image name for saving
+// Set default output image name for saving
 #ifdef GRAB_COLOR
   // Color images will be saved in PGM P6 format
   std::string opath = "C:/temp/I%04d.ppm";
@@ -188,52 +195,54 @@ main(int argc, const char ** argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_display, nframes, save, opath) == false) {
-    exit (-1);
+    exit(-1);
   }
 
   // Create the grabber
   vp1394CMUGrabber g;
   unsigned short gain_min, gain_max;
   g.getGainMinMax(gain_min, gain_max);
-  std::cout << "Gain range [" <<  gain_min << ", " << gain_max << "]" << std::endl;
+  std::cout << "Gain range [" << gain_min << ", " << gain_max << "]"
+            << std::endl;
   unsigned short shutter_min, shutter_max;
   g.getShutterMinMax(shutter_min, shutter_max);
-  std::cout << "Shutter range [" <<  shutter_min << ", " << shutter_max << "]" << std::endl;
+  std::cout << "Shutter range [" << shutter_min << ", " << shutter_max << "]"
+            << std::endl;
   g.setFramerate(4); // 30 fps
   std::cout << "Actual framerate: " << g.getFramerate() << std::endl;
-  g.setVideoMode(0,0);
-	g.acquire(I);
+  g.setVideoMode(0, 0);
+  g.acquire(I);
 
-  std::cout << "Image size: width : " << I.getWidth() <<  " height: "
-            << I.getHeight() << std::endl;
+  std::cout << "Image size: width : " << I.getWidth()
+            << " height: " << I.getHeight() << std::endl;
 
-#if (defined (VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
-  // Creates a display
+// Creates a display
 #if defined VISP_HAVE_OPENCV
   vpDisplayOpenCV display;
 #elif defined VISP_HAVE_GDI
   vpDisplayGDI display;
 #endif
   if (opt_display) {
-    display.init(I,100,100,"DirectShow Framegrabber");
+    display.init(I, 100, 100, "DirectShow Framegrabber");
   }
 #endif
 
   try {
-    double tbegin=0, ttotal=0;
+    double tbegin = 0, ttotal = 0;
 
     ttotal = 0;
     tbegin = vpTime::measureTimeMs();
     // Loop for image acquisition and display
     for (unsigned i = 0; i < nframes; i++) {
-      //Acquires an RGBa image
+      // Acquires an RGBa image
       g.acquire(I);
 
-#if (defined (VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       if (opt_display) {
-	      //Displays the grabbed rgba image
-	      vpDisplay::display(I);
+        // Displays the grabbed rgba image
+        vpDisplay::display(I);
         vpDisplay::flush(I);
         if (vpDisplay::getClick(I, false)) // A click to exit
           break;
@@ -254,9 +263,9 @@ main(int argc, const char ** argv)
       ttotal += tloop;
     }
     std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
-    std::cout << "Mean frequency: " << 1000./(ttotal / nframes) << " fps" << std::endl;
-  }
-  catch(vpException &e) {
+    std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps"
+              << std::endl;
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }
@@ -264,8 +273,8 @@ main(int argc, const char ** argv)
 #else
 int main()
 {
-  std::cout << "This example requires CMU 1394 Digital Camera SDK. " << std::endl;
+  std::cout << "This example requires CMU 1394 Digital Camera SDK. "
+            << std::endl;
   return 0;
 }
 #endif
-

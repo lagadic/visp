@@ -45,20 +45,20 @@
   the overlayed features in an image on the disk.
 
 */
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
 #ifdef VISP_HAVE_X11
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 
-#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/io/vpParseArgv.h>
 
 /*!
   \example displayXMulti.cpp
@@ -71,7 +71,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS	"cdi:o:h"
+#define GETOPTARGS "cdi:o:h"
 
 /*!
 
@@ -84,7 +84,8 @@
   \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
+void usage(const char *name, const char *badparam, std::string ipath,
+           std::string opath, std::string user)
 {
   fprintf(stdout, "\n\
 Read an image on the disk, display it using X11, display some\n\
@@ -122,11 +123,10 @@ OPTIONS:                                               Default\n\
      using the task manager under Windows.\n\
 \n\
   -h\n\
-     Print the help.\n\n",
-    ipath.c_str(), opath.c_str(), user.c_str());
+     Print the help.\n\n", ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
 }
@@ -148,22 +148,36 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, bool &click_allowed,
+bool getOptions(int argc, const char **argv, std::string &ipath,
+                std::string &opath, bool &click_allowed,
                 const std::string &user, bool &display)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'c': click_allowed = false; break;
-    case 'd': display = false; break;
-    case 'i': ipath = optarg_; break;
-    case 'o': opath = optarg_; break;
-    case 'h': usage(argv[0], NULL, ipath, opath, user); return false; break;
+    case 'c':
+      click_allowed = false;
+      break;
+    case 'd':
+      display = false;
+      break;
+    case 'i':
+      ipath = optarg_;
+      break;
+    case 'o':
+      opath = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, ipath, opath, user);
+      return false;
+      break;
 
     default:
-      usage(argv[0], optarg_, ipath, opath, user); return false; break;
+      usage(argv[0], optarg_, ipath, opath, user);
+      return false;
+      break;
     }
   }
 
@@ -178,8 +192,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
   return true;
 }
 
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string env_ipath;
@@ -192,15 +205,17 @@ main(int argc, const char ** argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
-    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+    // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
-    if (! env_ipath.empty())
+    if (!env_ipath.empty())
       ipath = env_ipath;
 
-    // Set the default output path
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+// Set the default output path
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
 #elif defined(_WIN32)
     opt_opath = "C:\\temp";
@@ -210,9 +225,9 @@ main(int argc, const char ** argv)
     vpIoTools::getUserName(username);
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_opath,
-                   opt_click_allowed, username, opt_display) == false) {
-      exit (-1);
+    if (getOptions(argc, argv, opt_ipath, opt_opath, opt_click_allowed,
+                   username, opt_display) == false) {
+      exit(-1);
     }
 
     // Get the option values
@@ -229,11 +244,9 @@ main(int argc, const char ** argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(odirname);
-      }
-      catch (...) {
+      } catch (...) {
         usage(argv[0], NULL, ipath, opath, username);
-        std::cerr << std::endl
-                  << "ERROR:" << std::endl;
+        std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << odirname << std::endl;
         std::cerr << "  Check your -o " << opath << " option " << std::endl;
         exit(-1);
@@ -244,39 +257,38 @@ main(int argc, const char ** argv)
     // the input path comming from the command line option
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
-        std::cout << std::endl
-                  << "WARNING: " << std::endl;
+        std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
+                  << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
-    if (opt_ipath.empty() && env_ipath.empty()){
+    if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath, opath, username);
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
-      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-                << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl << std::endl;
+      std::cerr << std::endl << "ERROR:" << std::endl;
+      std::cerr
+          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+          << std::endl
+          << "  environment variable to specify the location of the "
+          << std::endl
+          << "  image path where test images are located." << std::endl
+          << std::endl;
       exit(-1);
     }
 
     // Create two color images
-    vpImage<vpRGBa> I1, I2 ;
+    vpImage<vpRGBa> I1, I2;
     vpImagePoint ip, ip1, ip2;
 
     try {
       // Load a grey image from the disk
       filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
-      vpImageIo::read(I1, filename) ;
-    }
-    catch(...)
-    {
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
+      vpImageIo::read(I1, filename);
+    } catch (...) {
+      std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
                 << "  or VISP_INPUT_IMAGE_PATH environment variable."
@@ -286,12 +298,9 @@ main(int argc, const char ** argv)
     try {
       // Load a color image from the disk
       filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
-      vpImageIo::read(I2, filename) ;
-    }
-    catch(...)
-    {
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
+      vpImageIo::read(I2, filename);
+    } catch (...) {
+      std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
                 << "  or VISP_INPUT_IMAGE_PATH environment variable."
@@ -305,109 +314,110 @@ main(int argc, const char ** argv)
 
     if (opt_display) {
       // Attach image 1 to display 1
-      display1.init(I1, 0,     0,"X11 Display 1...") ;
+      display1.init(I1, 0, 0, "X11 Display 1...");
       // Attach image 2 to display 2
-      display2.init(I2, 200, 200,"X11 Display 2...") ;
+      display2.init(I2, 200, 200, "X11 Display 2...");
       // Display the images
-      vpDisplay::display(I1) ;
-      vpDisplay::display(I2) ;
+      vpDisplay::display(I1);
+      vpDisplay::display(I2);
 
       // In the first display, display in overlay horizontal red lines
-      for (unsigned int i=0 ; i < I1.getHeight() ; i+=20) {
-        ip1.set_i( i );
-        ip1.set_j( 0 );
-        ip2.set_i( i );
-        ip2.set_j( I1.getWidth() );
-        vpDisplay::displayLine(I1, ip1, ip2, vpColor::red) ;
+      for (unsigned int i = 0; i < I1.getHeight(); i += 20) {
+        ip1.set_i(i);
+        ip1.set_j(0);
+        ip2.set_i(i);
+        ip2.set_j(I1.getWidth());
+        vpDisplay::displayLine(I1, ip1, ip2, vpColor::red);
       }
 
       // In the first display, display in overlay vertical green dot lines
-      for (unsigned int i=0 ; i < I1.getWidth() ; i+=20) {
-        ip1.set_i( 0 );
-        ip1.set_j( i );
-        ip2.set_i( I1.getWidth() );
-        ip2.set_j( i );
-        vpDisplay::displayDotLine(I1, ip1, ip2, vpColor::green) ;
+      for (unsigned int i = 0; i < I1.getWidth(); i += 20) {
+        ip1.set_i(0);
+        ip1.set_j(i);
+        ip2.set_i(I1.getWidth());
+        ip2.set_j(i);
+        vpDisplay::displayDotLine(I1, ip1, ip2, vpColor::green);
       }
 
       // In the first display, display in overlay a blue arrow
-      ip1.set_i( 0 );
-      ip1.set_j( 0 );
-      ip2.set_i( 100 );
-      ip2.set_j( 100 );
-      vpDisplay::displayArrow(I1, ip1, ip2, vpColor::blue) ;
+      ip1.set_i(0);
+      ip1.set_j(0);
+      ip2.set_i(100);
+      ip2.set_j(100);
+      vpDisplay::displayArrow(I1, ip1, ip2, vpColor::blue);
 
       // In the first display, display in overlay some circles. The
       // position of the center is 200, 200 the radius is increased by 20
       // pixels for each circle
-      for (unsigned int i=0 ; i < 100 ; i+=20) {
-        ip.set_i( 200 );
-        ip.set_j( 200 );
-        vpDisplay::displayCircle(I1, ip, 20+i,vpColor::yellow) ;
+      for (unsigned int i = 0; i < 100; i += 20) {
+        ip.set_i(200);
+        ip.set_j(200);
+        vpDisplay::displayCircle(I1, ip, 20 + i, vpColor::yellow);
       }
 
       // In the first display, display in overlay a yellow string
-      ip.set_i( 100 );
-      ip.set_j( 100 );
-      vpDisplay::displayText(I1, ip,
-                             "ViSP is a marvelous software",
-                             vpColor::blue) ;
+      ip.set_i(100);
+      ip.set_j(100);
+      vpDisplay::displayText(I1, ip, "ViSP is a marvelous software",
+                             vpColor::blue);
 
-      //Flush displays. The displays must be flushed to show the overlay.
-      //without this line, nothing will be displayed.
+      // Flush displays. The displays must be flushed to show the overlay.
+      // without this line, nothing will be displayed.
       vpDisplay::flush(I1);
       vpDisplay::flush(I2);
 
       // If click is allowed, wait for a blocking mouse click in the first
       // display, to display a cross at the clicked pixel position
       if (opt_click_allowed) {
-        std::cout << "\nA click in the first display to draw a cross..." << std::endl;
+        std::cout << "\nA click in the first display to draw a cross..."
+                  << std::endl;
         // Blocking wait for a click. Get the position of the selected pixel
-        // (i correspond to the row and j to the column coordinates in the image)
+        // (i correspond to the row and j to the column coordinates in the
+        // image)
         vpDisplay::getClick(I1, ip);
         // Display a red cross on the click pixel position
         std::cout << "Cross position: " << ip << std::endl;
-        vpDisplay::displayCross(I1, ip, 15,vpColor::red);
+        vpDisplay::displayCross(I1, ip, 15, vpColor::red);
         vpDisplay::flush(I1);
-      }
-      else {
-        ip.set_i( 50 );
-        ip.set_j( 50 );
+      } else {
+        ip.set_i(50);
+        ip.set_j(50);
         // Display a red cross at position ip in the first display
-        std::cout << "Cross position: " << ip<< std::endl;
+        std::cout << "Cross position: " << ip << std::endl;
         vpDisplay::displayCross(I1, ip, 15, vpColor::red);
         vpDisplay::flush(I1);
       }
 
       // Create a color image
-      vpImage<vpRGBa> Ioverlay ;
-      // Updates the color image with the original loaded image 1 and the overlay
-      vpDisplay::getImage(I1, Ioverlay) ;
+      vpImage<vpRGBa> Ioverlay;
+      // Updates the color image with the original loaded image 1 and the
+      // overlay
+      vpDisplay::getImage(I1, Ioverlay);
 
       // Write the color image on the disk
-      filename = vpIoTools::createFilePath(odirname, "Klimt_grey.overlay.ppm");
-      vpImageIo::write(Ioverlay, filename) ;
+      filename =
+          vpIoTools::createFilePath(odirname, "Klimt_grey.overlay.ppm");
+      vpImageIo::write(Ioverlay, filename);
 
       // If click is allowed, wait for a mouse click to close the display
       if (opt_click_allowed) {
-        std::cout << "\nA click in the second display to close the windows and exit..." << std::endl;
+        std::cout << "\nA click in the second display to close the windows "
+                     "and exit..."
+                  << std::endl;
         // Wait for a blocking mouse click
-        vpDisplay::getClick(I2) ;
+        vpDisplay::getClick(I2);
       }
     }
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }
 }
 #else
-int
-main()
+int main()
 {
   vpERROR_TRACE("You do not have X11 functionalities to display images...");
 }
 
 #endif
-

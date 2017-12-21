@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file vpImage.h
   \brief Image handling.
@@ -52,12 +51,12 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRGBa.h>
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
-#  include <visp3/core/vpThread.h>
+#include <visp3/core/vpThread.h>
 #endif
 
 #include <fstream>
+#include <iomanip> // std::setw
 #include <iostream>
-#include <iomanip>      // std::setw
 #include <math.h>
 #include <string.h>
 
@@ -113,45 +112,44 @@ value = I[i][j]; // Here we will get the pixel value at position (101, 80)
 
 */
 
-//Ref: http://en.cppreference.com/w/cpp/language/friend#Template_friends
-template<class Type>
+// Ref: http://en.cppreference.com/w/cpp/language/friend#Template_friends
+template <class Type>
 class vpImage; // forward declare to make function declaration possible
 
 // declarations
-template<class Type>
-std::ostream& operator<<(std::ostream&, const vpImage<Type>&);
-
-std::ostream& operator<<(std::ostream&, const vpImage<unsigned char>&);
-std::ostream& operator<<(std::ostream&, const vpImage<char>&);
-std::ostream& operator<<(std::ostream&, const vpImage<float>&);
-std::ostream& operator<<(std::ostream&, const vpImage<double>&);
-
 template <class Type>
-void swap(vpImage<Type> &first, vpImage<Type> &second);
+std::ostream &operator<<(std::ostream &, const vpImage<Type> &);
 
-template<class Type>
-class vpImage
+std::ostream &operator<<(std::ostream &, const vpImage<unsigned char> &);
+std::ostream &operator<<(std::ostream &, const vpImage<char> &);
+std::ostream &operator<<(std::ostream &, const vpImage<float> &);
+std::ostream &operator<<(std::ostream &, const vpImage<double> &);
+
+template <class Type> void swap(vpImage<Type> &first, vpImage<Type> &second);
+
+template <class Type> class vpImage
 {
   friend class vpImageConvert;
 
 public:
-  Type *bitmap;  //!< points toward the bitmap
+  Type *bitmap; //!< points toward the bitmap
   vpDisplay *display;
 
   //! constructor
   vpImage();
   //! copy constructor
-  vpImage(const vpImage<Type>&);
+  vpImage(const vpImage<Type> &);
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
   //! move constructor
-  vpImage(vpImage<Type>&&);
+  vpImage(vpImage<Type> &&);
 #endif
   //! constructor  set the size of the image
   vpImage(unsigned int height, unsigned int width);
   //! constructor  set the size of the image and init all the pixel
   vpImage(unsigned int height, unsigned int width, Type value);
   //! constructor from an image stored as a continuous array in memory
-  vpImage(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false);
+  vpImage(Type *const array, const unsigned int height,
+          const unsigned int width, const bool copyData = false);
   //! destructor
   virtual ~vpImage();
 
@@ -171,7 +169,7 @@ public:
 
     \sa getWidth()
    */
-  inline  unsigned int getCols() const { return width; }
+  inline unsigned int getCols() const { return width; }
   /*!
     Get the image height.
 
@@ -180,13 +178,13 @@ public:
     \sa getWidth()
 
   */
-  inline  unsigned int getHeight() const { return height; }
+  inline unsigned int getHeight() const { return height; }
 
   // Return the maximum value within the bitmap
   Type getMaxValue() const;
   // Return the minumum value within the bitmap
   Type getMinValue() const;
-  //Look for the minumum and the maximum value within the bitmap
+  // Look for the minumum and the maximum value within the bitmap
   void getMinMaxValue(Type &min, Type &max) const;
 
   /*!
@@ -199,7 +197,7 @@ public:
 
     \sa getWidth(), getHeight()
    */
-  inline unsigned int getNumberOfPixel() const{ return npixels; }
+  inline unsigned int getNumberOfPixel() const { return npixels; }
 
   /*!
 
@@ -209,7 +207,7 @@ public:
 
     \sa getHeight()
   */
-  inline  unsigned int getRows() const { return height; }
+  inline unsigned int getRows() const { return height; }
   /*!
     Get the image size.
 
@@ -217,7 +215,7 @@ public:
 
     \sa getWidth(), getHeight()
    */
-  inline unsigned int getSize() const { return width*height; }
+  inline unsigned int getSize() const { return width * height; }
 
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(double i, double j) const;
@@ -231,7 +229,7 @@ public:
     \sa getHeight()
 
   */
-  inline  unsigned int getWidth() const { return width; }
+  inline unsigned int getWidth() const { return width; }
 
   // Returns a new image that's half size of the current image
   void halfSizeImage(vpImage<Type> &res) const;
@@ -241,40 +239,41 @@ public:
   //! Set the size of the image
   void init(unsigned int height, unsigned int width, Type value);
   //! init from an image stored as a continuous array in memory
-  void init(Type * const array, const unsigned int height, const unsigned int width, const bool copyData=false);
+  void init(Type *const array, const unsigned int height,
+            const unsigned int width, const bool copyData = false);
   void insert(const vpImage<Type> &src, const vpImagePoint &topLeft);
 
   //------------------------------------------------------------------
   //         Acces to the image
 
   //! operator[] allows operation like I[i] = x.
-  inline Type *operator[]( const unsigned int i)   { return row[i];}
-  inline Type *operator[]( const int i)   { return row[i];}
+  inline Type *operator[](const unsigned int i) { return row[i]; }
+  inline Type *operator[](const int i) { return row[i]; }
 
   //! operator[] allows operation like x = I[i]
-  inline const Type *operator[](unsigned int i) const { return row[i];}
-  inline const Type *operator[](int i) const { return row[i];}
+  inline const Type *operator[](unsigned int i) const { return row[i]; }
+  inline const Type *operator[](int i) const { return row[i]; }
 
   /*!
-    Get the value of an image point with coordinates (i, j), with i the row position and j
-    the column position.
+    Get the value of an image point with coordinates (i, j), with i the row
+    position and j the column position.
 
     \return Value of the image point (i, j).
 
   */
-  inline Type operator()(const unsigned int i, const  unsigned int j) const
+  inline Type operator()(const unsigned int i, const unsigned int j) const
   {
-    return bitmap[i*width+j];
+    return bitmap[i * width + j];
   }
   /*!
-    Set the value \e v of an image point with coordinates (i, j), with i the row position and j
-    the column position.
+    Set the value \e v of an image point with coordinates (i, j), with i the
+    row position and j the column position.
 
   */
-  inline void  operator()(const unsigned int i, const  unsigned int j,
-         const Type &v)
+  inline void operator()(const unsigned int i, const unsigned int j,
+                         const Type &v)
   {
-    bitmap[i*width+j] = v;
+    bitmap[i * width + j] = v;
   }
   /*!
     Get the value of an image point.
@@ -289,10 +288,10 @@ public:
   */
   inline Type operator()(const vpImagePoint &ip) const
   {
-    unsigned int i = (unsigned int) ip.get_i();
-    unsigned int j = (unsigned int) ip.get_j();
+    unsigned int i = (unsigned int)ip.get_i();
+    unsigned int j = (unsigned int)ip.get_j();
 
-    return bitmap[i*width+j];
+    return bitmap[i * width + j];
   }
   /*!
     Set the value of an image point.
@@ -305,28 +304,29 @@ public:
   */
   inline void operator()(const vpImagePoint &ip, const Type &v)
   {
-    unsigned int i = (unsigned int) ip.get_i();
-    unsigned int j = (unsigned int) ip.get_j();
+    unsigned int i = (unsigned int)ip.get_i();
+    unsigned int j = (unsigned int)ip.get_j();
 
-    bitmap[i*width+j] = v;
+    bitmap[i * width + j] = v;
   }
 
   vpImage<Type> operator-(const vpImage<Type> &B);
 
   //! Copy operator
-  vpImage<Type>& operator=(vpImage<Type> other);
+  vpImage<Type> &operator=(vpImage<Type> other);
 
-  vpImage<Type>& operator=(const Type &v);
+  vpImage<Type> &operator=(const Type &v);
   bool operator==(const vpImage<Type> &I);
   bool operator!=(const vpImage<Type> &I);
-  friend std::ostream& operator<< <> (std::ostream &s, const vpImage<Type> &I);
-  friend std::ostream& operator<<(std::ostream &s, const vpImage<unsigned char> &I);
-  friend std::ostream& operator<<(std::ostream &s, const vpImage<char> &I);
-  friend std::ostream& operator<<(std::ostream &s, const vpImage<float> &I);
-  friend std::ostream& operator<<(std::ostream &s, const vpImage<double> &I);
+  friend std::ostream &operator<<<>(std::ostream &s, const vpImage<Type> &I);
+  friend std::ostream &operator<<(std::ostream &s,
+                                  const vpImage<unsigned char> &I);
+  friend std::ostream &operator<<(std::ostream &s, const vpImage<char> &I);
+  friend std::ostream &operator<<(std::ostream &s, const vpImage<float> &I);
+  friend std::ostream &operator<<(std::ostream &s, const vpImage<double> &I);
 
   // Perform a look-up table transformation
-  void performLut(const Type (&lut)[256], const unsigned int nbThreads=1);
+  void performLut(const Type (&lut)[256], const unsigned int nbThreads = 1);
 
   // Returns a new image that's a quarter size of the current image
   void quarterSizeImage(vpImage<Type> &res) const;
@@ -338,9 +338,10 @@ public:
 
   void sub(const vpImage<Type> &B, vpImage<Type> &C);
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
-  void subsample(unsigned int v_scale, unsigned int h_scale, vpImage<Type> &sampled) const;
+  void subsample(unsigned int v_scale, unsigned int h_scale,
+                 vpImage<Type> &sampled) const;
 
-  friend void swap<> (vpImage<Type> &first, vpImage<Type> &second);
+  friend void swap<>(vpImage<Type> &first, vpImage<Type> &second);
 
   //@}
 
@@ -351,22 +352,23 @@ private:
   Type **row;           ///! points the row pointer array
 };
 
-template<class Type>
-std::ostream& operator<<(std::ostream &s, const vpImage<Type> &I) {
+template <class Type>
+std::ostream &operator<<(std::ostream &s, const vpImage<Type> &I)
+{
   if (I.bitmap == NULL) {
     return s;
   }
 
   for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth()-1; j++) {
+    for (unsigned int j = 0; j < I.getWidth() - 1; j++) {
       s << I[i][j] << " ";
     }
 
     // We don't add "  " after the last column element
-    s << I[i][I.getWidth() -1];
+    s << I[i][I.getWidth() - 1];
 
     // We don't add a \n character at the end of the last row line
-    if (i < I.getHeight()-1) {
+    if (i < I.getHeight() - 1) {
       s << std::endl;
     }
   }
@@ -374,7 +376,9 @@ std::ostream& operator<<(std::ostream &s, const vpImage<Type> &I) {
   return s;
 }
 
-inline std::ostream& operator<<(std::ostream &s, const vpImage<unsigned char> &I) {
+inline std::ostream &operator<<(std::ostream &s,
+                                const vpImage<unsigned char> &I)
+{
   if (I.bitmap == NULL) {
     return s;
   }
@@ -382,15 +386,15 @@ inline std::ostream& operator<<(std::ostream &s, const vpImage<unsigned char> &I
   std::ios_base::fmtflags original_flags = s.flags();
 
   for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth()-1; j++) {
+    for (unsigned int j = 0; j < I.getWidth() - 1; j++) {
       s << std::setw(3) << static_cast<unsigned>(I[i][j]) << " ";
     }
 
     // We don't add "  " after the last column element
-    s << std::setw(3) << static_cast<unsigned>(I[i][I.getWidth() -1]);
+    s << std::setw(3) << static_cast<unsigned>(I[i][I.getWidth() - 1]);
 
     // We don't add a \n character at the end of the last row line
-    if (i < I.getHeight()-1) {
+    if (i < I.getHeight() - 1) {
       s << std::endl;
     }
   }
@@ -399,7 +403,8 @@ inline std::ostream& operator<<(std::ostream &s, const vpImage<unsigned char> &I
   return s;
 }
 
-inline std::ostream& operator<<(std::ostream &s, const vpImage<char> &I) {
+inline std::ostream &operator<<(std::ostream &s, const vpImage<char> &I)
+{
   if (I.bitmap == NULL) {
     return s;
   }
@@ -407,15 +412,15 @@ inline std::ostream& operator<<(std::ostream &s, const vpImage<char> &I) {
   std::ios_base::fmtflags original_flags = s.flags();
 
   for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth()-1; j++) {
-      s <<std::setw(4) << static_cast<int>(I[i][j]) << " ";
+    for (unsigned int j = 0; j < I.getWidth() - 1; j++) {
+      s << std::setw(4) << static_cast<int>(I[i][j]) << " ";
     }
 
     // We don't add "  " after the last column element
-    s << std::setw(4) << static_cast<int>(I[i][I.getWidth() -1]);
+    s << std::setw(4) << static_cast<int>(I[i][I.getWidth() - 1]);
 
     // We don't add a \n character at the end of the last row line
-    if (i < I.getHeight()-1) {
+    if (i < I.getHeight() - 1) {
       s << std::endl;
     }
   }
@@ -424,24 +429,26 @@ inline std::ostream& operator<<(std::ostream &s, const vpImage<char> &I) {
   return s;
 }
 
-inline std::ostream& operator<<(std::ostream &s, const vpImage<float> &I) {
+inline std::ostream &operator<<(std::ostream &s, const vpImage<float> &I)
+{
   if (I.bitmap == NULL) {
     return s;
   }
 
   std::ios_base::fmtflags original_flags = s.flags();
-  s.precision(9); //http://en.cppreference.com/w/cpp/types/numeric_limits/max_digits10
+  s.precision(
+      9); // http://en.cppreference.com/w/cpp/types/numeric_limits/max_digits10
 
   for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth()-1; j++) {
+    for (unsigned int j = 0; j < I.getWidth() - 1; j++) {
       s << I[i][j] << " ";
     }
 
     // We don't add "  " after the last column element
-    s << I[i][I.getWidth() -1];
+    s << I[i][I.getWidth() - 1];
 
     // We don't add a \n character at the end of the last row line
-    if (i < I.getHeight()-1) {
+    if (i < I.getHeight() - 1) {
       s << std::endl;
     }
   }
@@ -450,24 +457,26 @@ inline std::ostream& operator<<(std::ostream &s, const vpImage<float> &I) {
   return s;
 }
 
-inline std::ostream& operator<<(std::ostream &s, const vpImage<double> &I) {
+inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
+{
   if (I.bitmap == NULL) {
     return s;
   }
 
   std::ios_base::fmtflags original_flags = s.flags();
-  s.precision(17); //http://en.cppreference.com/w/cpp/types/numeric_limits/max_digits10
+  s.precision(
+      17); // http://en.cppreference.com/w/cpp/types/numeric_limits/max_digits10
 
   for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth()-1; j++) {
+    for (unsigned int j = 0; j < I.getWidth() - 1; j++) {
       s << I[i][j] << " ";
     }
 
     // We don't add "  " after the last column element
-    s << I[i][I.getWidth() -1];
+    s << I[i][I.getWidth() - 1];
 
     // We don't add a \n character at the end of the last row line
-    if (i < I.getHeight()-1) {
+    if (i < I.getHeight() - 1) {
       s << std::endl;
     }
   }
@@ -475,150 +484,157 @@ inline std::ostream& operator<<(std::ostream &s, const vpImage<double> &I) {
   s.flags(original_flags); // restore s to standard state
   return s;
 }
-
 
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
-namespace {
-  struct ImageLut_Param_t {
-    unsigned int m_start_index;
-    unsigned int m_end_index;
+namespace
+{
+struct ImageLut_Param_t {
+  unsigned int m_start_index;
+  unsigned int m_end_index;
 
-    unsigned char m_lut[256];
-    unsigned char *m_bitmap;
+  unsigned char m_lut[256];
+  unsigned char *m_bitmap;
 
-    ImageLut_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) {
-    }
-
-    ImageLut_Param_t(const unsigned int start_index, const unsigned int end_index,
-        unsigned char *bitmap) :
-      m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap) {
-    }
-  };
-
-  vpThread::Return performLutThread(vpThread::Args args) {
-    ImageLut_Param_t *imageLut_param = static_cast<ImageLut_Param_t *> (args);
-    unsigned int start_index = imageLut_param->m_start_index;
-    unsigned int end_index = imageLut_param->m_end_index;
-
-    unsigned char *bitmap = imageLut_param->m_bitmap;
-
-    unsigned char *ptrStart = bitmap + start_index;
-    unsigned char *ptrEnd = bitmap + end_index;
-    unsigned char *ptrCurrent = ptrStart;
-
-
-//    while(ptrCurrent != ptrEnd) {
-//      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-//      ++ptrCurrent;
-//    }
-
-    if(end_index - start_index >= 8) {
-      //Unroll loop version
-      for(; ptrCurrent <= ptrEnd - 8;) {
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-        ++ptrCurrent;
-
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-        ++ptrCurrent;
-
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-        ++ptrCurrent;
-
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-        ++ptrCurrent;
-
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-        ++ptrCurrent;
-
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-        ++ptrCurrent;
-
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-        ++ptrCurrent;
-
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-        ++ptrCurrent;
-      }
-    }
-
-    for(; ptrCurrent != ptrEnd; ++ptrCurrent) {
-      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-    }
-
-    return 0;
+  ImageLut_Param_t()
+    : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL)
+  {
   }
 
+  ImageLut_Param_t(const unsigned int start_index,
+                   const unsigned int end_index, unsigned char *bitmap)
+    : m_start_index(start_index), m_end_index(end_index), m_lut(),
+      m_bitmap(bitmap)
+  {
+  }
+};
 
-  struct ImageLutRGBa_Param_t {
-    unsigned int m_start_index;
-    unsigned int m_end_index;
+vpThread::Return performLutThread(vpThread::Args args)
+{
+  ImageLut_Param_t *imageLut_param = static_cast<ImageLut_Param_t *>(args);
+  unsigned int start_index = imageLut_param->m_start_index;
+  unsigned int end_index = imageLut_param->m_end_index;
 
-    vpRGBa m_lut[256];
-    unsigned char *m_bitmap;
+  unsigned char *bitmap = imageLut_param->m_bitmap;
 
-    ImageLutRGBa_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) {
+  unsigned char *ptrStart = bitmap + start_index;
+  unsigned char *ptrEnd = bitmap + end_index;
+  unsigned char *ptrCurrent = ptrStart;
+
+  //    while(ptrCurrent != ptrEnd) {
+  //      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+  //      ++ptrCurrent;
+  //    }
+
+  if (end_index - start_index >= 8) {
+    // Unroll loop version
+    for (; ptrCurrent <= ptrEnd - 8;) {
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+      ++ptrCurrent;
+
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+      ++ptrCurrent;
+
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+      ++ptrCurrent;
+
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+      ++ptrCurrent;
+
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+      ++ptrCurrent;
+
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+      ++ptrCurrent;
+
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+      ++ptrCurrent;
+
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+      ++ptrCurrent;
     }
+  }
 
-    ImageLutRGBa_Param_t(const unsigned int start_index, const unsigned int end_index,
-        unsigned char *bitmap) :
-      m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap) {
-    }
-  };
+  for (; ptrCurrent != ptrEnd; ++ptrCurrent) {
+    *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
+  }
 
-  vpThread::Return performLutRGBaThread(vpThread::Args args) {
-    ImageLutRGBa_Param_t *imageLut_param = static_cast<ImageLutRGBa_Param_t *> (args);
-    unsigned int start_index = imageLut_param->m_start_index;
-    unsigned int end_index = imageLut_param->m_end_index;
+  return 0;
+}
 
-    unsigned char *bitmap = imageLut_param->m_bitmap;
+struct ImageLutRGBa_Param_t {
+  unsigned int m_start_index;
+  unsigned int m_end_index;
 
-    unsigned char *ptrStart = bitmap + start_index*4;
-    unsigned char *ptrEnd = bitmap + end_index*4;
-    unsigned char *ptrCurrent = ptrStart;
+  vpRGBa m_lut[256];
+  unsigned char *m_bitmap;
 
+  ImageLutRGBa_Param_t()
+    : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL)
+  {
+  }
 
-    if(end_index - start_index >= 4*2) {
-      //Unroll loop version
-      for(; ptrCurrent <= ptrEnd - 4*2;) {
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].R;
-        ptrCurrent++;
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].G;
-        ptrCurrent++;
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].B;
-        ptrCurrent++;
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].A;
-        ptrCurrent++;
+  ImageLutRGBa_Param_t(const unsigned int start_index,
+                       const unsigned int end_index, unsigned char *bitmap)
+    : m_start_index(start_index), m_end_index(end_index), m_lut(),
+      m_bitmap(bitmap)
+  {
+  }
+};
 
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].R;
-        ptrCurrent++;
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].G;
-        ptrCurrent++;
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].B;
-        ptrCurrent++;
-        *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].A;
-        ptrCurrent++;
-      }
-    }
+vpThread::Return performLutRGBaThread(vpThread::Args args)
+{
+  ImageLutRGBa_Param_t *imageLut_param =
+      static_cast<ImageLutRGBa_Param_t *>(args);
+  unsigned int start_index = imageLut_param->m_start_index;
+  unsigned int end_index = imageLut_param->m_end_index;
 
-    while(ptrCurrent != ptrEnd) {
+  unsigned char *bitmap = imageLut_param->m_bitmap;
+
+  unsigned char *ptrStart = bitmap + start_index * 4;
+  unsigned char *ptrEnd = bitmap + end_index * 4;
+  unsigned char *ptrCurrent = ptrStart;
+
+  if (end_index - start_index >= 4 * 2) {
+    // Unroll loop version
+    for (; ptrCurrent <= ptrEnd - 4 * 2;) {
       *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].R;
       ptrCurrent++;
-
       *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].G;
       ptrCurrent++;
-
       *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].B;
       ptrCurrent++;
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].A;
+      ptrCurrent++;
 
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].R;
+      ptrCurrent++;
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].G;
+      ptrCurrent++;
+      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].B;
+      ptrCurrent++;
       *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].A;
       ptrCurrent++;
     }
-
-    return 0;
   }
+
+  while (ptrCurrent != ptrEnd) {
+    *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].R;
+    ptrCurrent++;
+
+    *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].G;
+    ptrCurrent++;
+
+    *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].B;
+    ptrCurrent++;
+
+    *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].A;
+    ptrCurrent++;
+  }
+
+  return 0;
+}
 }
 #endif
-
 
 /*!
   \brief Image initialisation
@@ -633,16 +649,14 @@ namespace {
 
   \sa vpImage::init(h, w)
 */
-template<class Type>
-void
-vpImage<Type>::init(unsigned int h, unsigned int w, Type value)
+template <class Type>
+void vpImage<Type>::init(unsigned int h, unsigned int w, Type value)
 {
-  init(h,w);
+  init(h, w);
 
-  for (unsigned int i=0  ; i < npixels ;  i++)
+  for (unsigned int i = 0; i < npixels; i++)
     bitmap[i] = value;
 }
-
 
 /*!
   \brief Image initialization
@@ -661,23 +675,20 @@ vpImage<Type>::init(unsigned int h, unsigned int w, Type value)
   \exception vpException::memoryAllocationError
 
 */
-template<class Type>
-void
-vpImage<Type>::init(unsigned int h, unsigned int w)
+template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 {
   if (h != this->height) {
-    if (row != NULL)  {
-      vpDEBUG_TRACE(10,"Destruction row[]");
-      delete [] row;
+    if (row != NULL) {
+      vpDEBUG_TRACE(10, "Destruction row[]");
+      delete[] row;
       row = NULL;
     }
   }
 
-  if ((h != this->height) || (w != this->width))
-  {
+  if ((h != this->height) || (w != this->width)) {
     if (bitmap != NULL) {
-      vpDEBUG_TRACE(10,"Destruction bitmap[]");
-      delete [] bitmap;
+      vpDEBUG_TRACE(10, "Destruction bitmap[]");
+      delete[] bitmap;
       bitmap = NULL;
     }
   }
@@ -685,26 +696,26 @@ vpImage<Type>::init(unsigned int h, unsigned int w)
   this->width = w;
   this->height = h;
 
-  npixels=width*height;
-
-  if (bitmap == NULL)  bitmap = new  Type[npixels];
+  npixels = width * height;
 
   if (bitmap == NULL)
-  {
+    bitmap = new Type[npixels];
+
+  if (bitmap == NULL) {
     throw(vpException(vpException::memoryAllocationError,
-          "cannot allocate bitmap "));
+                      "cannot allocate bitmap "));
   }
 
-  if (row == NULL)  row = new  Type*[height];
   if (row == NULL)
-  {
+    row = new Type *[height];
+  if (row == NULL) {
     throw(vpException(vpException::memoryAllocationError,
-          "cannot allocate row "));
+                      "cannot allocate row "));
   }
 
   unsigned int i;
-  for ( i =0  ; i < height ; i++)
-    row[i] = bitmap + i*width;
+  for (i = 0; i < height; i++)
+    row[i] = bitmap + i * width;
 }
 
 /*!
@@ -715,25 +726,27 @@ vpImage<Type>::init(unsigned int h, unsigned int w)
   \param array : Image data stored as a continuous array in memory
   \param h : Image height.
   \param w : Image width.
-  \param copyData : If false (by default) only the memory address is copied, otherwise the data are copied.
+  \param copyData : If false (by default) only the memory address is copied,
+  otherwise the data are copied.
 
   \exception vpException::memoryAllocationError
 */
-template<class Type>
-void
-vpImage<Type>::init(Type * const array, const unsigned int h, const unsigned int w, const bool copyData)
+template <class Type>
+void vpImage<Type>::init(Type *const array, const unsigned int h,
+                         const unsigned int w, const bool copyData)
 {
   if (h != this->height) {
-    if (row != NULL)  {
-      delete [] row;
+    if (row != NULL) {
+      delete[] row;
       row = NULL;
     }
   }
 
-  //Delete bitmap if copyData==false, otherwise only if the dimension differs
-  if ( (copyData && ((h != this->height) || (w != this->width))) || !copyData ) {
+  // Delete bitmap if copyData==false, otherwise only if the dimension differs
+  if ((copyData && ((h != this->height) || (w != this->width))) ||
+      !copyData) {
     if (bitmap != NULL) {
-      delete [] bitmap;
+      delete[] bitmap;
       bitmap = NULL;
     }
   }
@@ -741,31 +754,33 @@ vpImage<Type>::init(Type * const array, const unsigned int h, const unsigned int
   this->width = w;
   this->height = h;
 
-  npixels = width*height;
+  npixels = width * height;
 
-  if(copyData) {
-    if (bitmap == NULL)  bitmap = new  Type[npixels];
+  if (copyData) {
+    if (bitmap == NULL)
+      bitmap = new Type[npixels];
 
     if (bitmap == NULL) {
       throw(vpException(vpException::memoryAllocationError,
-            "cannot allocate bitmap "));
+                        "cannot allocate bitmap "));
     }
 
-    //Copy the image data
-    memcpy(bitmap, array, (size_t) (npixels * sizeof(Type)));
+    // Copy the image data
+    memcpy(bitmap, array, (size_t)(npixels * sizeof(Type)));
   } else {
-    //Copy the address of the array in the bitmap
+    // Copy the address of the array in the bitmap
     bitmap = array;
   }
 
-  if (row == NULL)  row = new Type*[height];
+  if (row == NULL)
+    row = new Type *[height];
   if (row == NULL) {
     throw(vpException(vpException::memoryAllocationError,
-          "cannot allocate row "));
+                      "cannot allocate row "));
   }
 
-  for (unsigned int i = 0  ; i < height ; i++) {
-    row[i] = bitmap + i*width;
+  for (unsigned int i = 0; i < height; i++) {
+    row[i] = bitmap + i * width;
   }
 }
 
@@ -787,11 +802,11 @@ vpImage<Type>::init(Type * const array, const unsigned int h, const unsigned int
 
   \sa vpImage::init(height, width)
 */
-template<class Type>
+template <class Type>
 vpImage<Type>::vpImage(unsigned int h, unsigned int w)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
-  init(h,w,0);
+  init(h, w, 0);
 }
 
 /*!
@@ -811,11 +826,11 @@ vpImage<Type>::vpImage(unsigned int h, unsigned int w)
 
   \sa vpImage::init(height, width, value)
 */
-template<class Type>
-vpImage<Type>::vpImage (unsigned int h, unsigned int w, Type value)
+template <class Type>
+vpImage<Type>::vpImage(unsigned int h, unsigned int w, Type value)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
-  init(h,w,value);
+  init(h, w, value);
 }
 
 /*!
@@ -826,14 +841,16 @@ vpImage<Type>::vpImage (unsigned int h, unsigned int w, Type value)
   \param array : Image data stored as a continuous array in memory.
   \param h : Image height.
   \param w : Image width.
-  \param copyData : If false (by default) only the memory address is copied, otherwise the data are copied.
+  \param copyData : If false (by default) only the memory address is copied,
+  otherwise the data are copied.
 
   \return MEMORY_FAULT if memory allocation is impossible, else OK
 
   \sa vpImage::init(array, height, width)
 */
-template<class Type>
-vpImage<Type>::vpImage (Type * const array, const unsigned int h, const unsigned int w, const bool copyData)
+template <class Type>
+vpImage<Type>::vpImage(Type *const array, const unsigned int h,
+                       const unsigned int w, const bool copyData)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
   init(array, h, w, copyData);
@@ -848,7 +865,7 @@ vpImage<Type>::vpImage (Type * const array, const unsigned int h, const unsigned
 
   \sa vpImage::resize(height, width) for memory allocation
 */
-template<class Type>
+template <class Type>
 vpImage<Type>::vpImage()
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
@@ -874,9 +891,8 @@ vpImage<Type>::vpImage()
 
   \sa init(unsigned int, unsigned int)
 */
-template<class Type>
-void
-vpImage<Type>::resize(unsigned int h, unsigned int w)
+template <class Type>
+void vpImage<Type>::resize(unsigned int h, unsigned int w)
 {
   init(h, w);
 }
@@ -900,44 +916,35 @@ vpImage<Type>::resize(unsigned int h, unsigned int w)
 
   \sa init(unsigned int, unsigned int)
 */
-template<class Type>
-void
-vpImage<Type>::resize(unsigned int h, unsigned int w, const Type &val)
+template <class Type>
+void vpImage<Type>::resize(unsigned int h, unsigned int w, const Type &val)
 {
   init(h, w, val);
 }
 
-
 /*!
   \brief Destructor : Memory de-allocation
 
   \warning does not deallocate memory for display and video
 
 */
-template<class Type>
-void
-vpImage<Type>::destroy()
+template <class Type> void vpImage<Type>::destroy()
 {
- //   vpERROR_TRACE("Deallocate ");
+  //   vpERROR_TRACE("Deallocate ");
 
-
-  if (bitmap!=NULL)
-  {
-  //  vpERROR_TRACE("Deallocate bitmap memory %p",bitmap);
-//    vpDEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap);
-    delete [] bitmap;
+  if (bitmap != NULL) {
+    //  vpERROR_TRACE("Deallocate bitmap memory %p",bitmap);
+    //    vpDEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap);
+    delete[] bitmap;
     bitmap = NULL;
   }
 
-
-  if (row!=NULL)
-  {
- //   vpERROR_TRACE("Deallocate row memory %p",row);
-//    vpDEBUG_TRACE(20,"Deallocate row memory %p",row);
-    delete [] row;
+  if (row != NULL) {
+    //   vpERROR_TRACE("Deallocate row memory %p",row);
+    //    vpDEBUG_TRACE(20,"Deallocate row memory %p",row);
+    delete[] row;
     row = NULL;
   }
-
 }
 
 /*!
@@ -946,30 +953,27 @@ vpImage<Type>::destroy()
   \warning does not deallocate memory for display and video
 
 */
-template<class Type>
-vpImage<Type>::~vpImage()
-{
-  destroy();
-}
+template <class Type> vpImage<Type>::~vpImage() { destroy(); }
 
 /*!
   Copy constructor
 */
-template<class Type>
-vpImage<Type>::vpImage(const vpImage<Type>& I)
+template <class Type>
+vpImage<Type>::vpImage(const vpImage<Type> &I)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL)
 {
-  resize(I.getHeight(),I.getWidth());
-  memcpy(bitmap, I.bitmap, I.npixels*sizeof(Type));
+  resize(I.getHeight(), I.getWidth());
+  memcpy(bitmap, I.bitmap, I.npixels * sizeof(Type));
 }
 
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
 /*!
   Move constructor
 */
-template<class Type>
+template <class Type>
 vpImage<Type>::vpImage(vpImage<Type> &&I)
-  : bitmap(I.bitmap), display(I.display), npixels(I.npixels), width(I.width), height(I.height), row(I.row)
+  : bitmap(I.bitmap), display(I.display), npixels(I.npixels), width(I.width),
+    height(I.height), row(I.row)
 {
   I.bitmap = NULL;
   I.display = NULL;
@@ -985,13 +989,12 @@ vpImage<Type>::vpImage(vpImage<Type> &&I)
 
   \sa getMinValue()
 */
-template<class Type>
-Type vpImage<Type>::getMaxValue() const
+template <class Type> Type vpImage<Type>::getMaxValue() const
 {
   Type m = bitmap[0];
-  for (unsigned int i=0 ; i < npixels ; i++)
-  {
-    if (bitmap[i]>m) m = bitmap[i];
+  for (unsigned int i = 0; i < npixels; i++) {
+    if (bitmap[i] > m)
+      m = bitmap[i];
   }
   return m;
 }
@@ -1001,15 +1004,14 @@ Type vpImage<Type>::getMaxValue() const
 
   \sa getMaxValue()
 */
-template<class Type>
-Type vpImage<Type>::getMinValue() const
+template <class Type> Type vpImage<Type>::getMinValue() const
 {
-  Type m =  bitmap[0];
-  for (unsigned int i=0 ; i < npixels ; i++)
-    if (bitmap[i]<m) m = bitmap[i];
+  Type m = bitmap[0];
+  for (unsigned int i = 0; i < npixels; i++)
+    if (bitmap[i] < m)
+      m = bitmap[i];
   return m;
 }
-
 
 /*!
   \brief Look for the minimum and the maximum value within the bitmap
@@ -1017,28 +1019,29 @@ Type vpImage<Type>::getMinValue() const
   \sa getMaxValue()
   \sa getMinValue()
 */
-template<class Type>
+template <class Type>
 void vpImage<Type>::getMinMaxValue(Type &min, Type &max) const
 {
-  min = max =  bitmap[0];
-  for (unsigned int i=0 ; i < npixels ; i++)
-  {
-    if (bitmap[i]<min) min = bitmap[i];
-    if (bitmap[i]>max) max = bitmap[i];
+  min = max = bitmap[0];
+  for (unsigned int i = 0; i < npixels; i++) {
+    if (bitmap[i] < min)
+      min = bitmap[i];
+    if (bitmap[i] > max)
+      max = bitmap[i];
   }
 }
 
 /*!
   \brief Copy operator
 */
-template<class Type>
-vpImage<Type> & vpImage<Type>::operator=(vpImage<Type> other)
+template <class Type>
+vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> other)
 {
   swap(*this, other);
-  //Swap back display pointer if it was not null
-  //vpImage<unsigned char> I2(480, 640);
-  //vpDisplayX d(I2);
-  //I2 = I1; //copy only the data
+  // Swap back display pointer if it was not null
+  // vpImage<unsigned char> I2(480, 640);
+  // vpDisplayX d(I2);
+  // I2 = I1; //copy only the data
   if (other.display != NULL)
     display = other.display;
 
@@ -1046,15 +1049,14 @@ vpImage<Type> & vpImage<Type>::operator=(vpImage<Type> other)
 }
 
 /*!
-  \brief = operator : Set all the element of the bitmap to a given  value \e v.
-   \f$ A = v <=> A[i][j] = v \f$
+  \brief = operator : Set all the element of the bitmap to a given  value \e
+  v. \f$ A = v <=> A[i][j] = v \f$
 
    \warning = must be defined for \f$ <\f$ Type \f$ > \f$
 */
-template<class Type>
-vpImage<Type>& vpImage<Type>::operator=(const Type &v)
+template <class Type> vpImage<Type> &vpImage<Type>::operator=(const Type &v)
 {
-  for (unsigned int i=0 ; i < npixels ; i++)
+  for (unsigned int i = 0; i < npixels; i++)
     bitmap[i] = v;
 
   return *this;
@@ -1065,19 +1067,19 @@ vpImage<Type>& vpImage<Type>::operator=(const Type &v)
 
   \return true if the images are the same, false otherwise.
 */
-template<class Type>
-bool vpImage<Type>::operator==(const vpImage<Type> &I)
+template <class Type> bool vpImage<Type>::operator==(const vpImage<Type> &I)
 {
   if (this->width != I.getWidth())
     return false;
   if (this->height != I.getHeight())
     return false;
 
-//  printf("wxh: %dx%d bitmap: %p I.bitmap %p\n", width, height, bitmap, I.bitmap);
-  for (unsigned int i=0 ; i < npixels ; i++)
-  {
+  //  printf("wxh: %dx%d bitmap: %p I.bitmap %p\n", width, height, bitmap,
+  //  I.bitmap);
+  for (unsigned int i = 0; i < npixels; i++) {
     if (bitmap[i] != I.bitmap[i]) {
-//      std::cout << "differ for pixel " << i << " (" << i%this->height << ", " << i - i%this->height << ")" << std::endl;
+      //      std::cout << "differ for pixel " << i << " (" << i%this->height
+      //      << ", " << i - i%this->height << ")" << std::endl;
       return false;
     }
   }
@@ -1088,20 +1090,19 @@ bool vpImage<Type>::operator==(const vpImage<Type> &I)
 
   \return true if the images are different, false if they are the same.
 */
-template<class Type>
-bool vpImage<Type>::operator!=(const vpImage<Type> &I)
+template <class Type> bool vpImage<Type>::operator!=(const vpImage<Type> &I)
 {
-//  if (this->width != I.getWidth())
-//    return true;
-//  if (this->height != I.getHeight())
-//    return true;
+  //  if (this->width != I.getWidth())
+  //    return true;
+  //  if (this->height != I.getHeight())
+  //    return true;
 
-//  for (unsigned int i=0 ; i < npixels ; i++)
-//  {
-//    if (bitmap[i] != I.bitmap[i])
-//      return true;
-//  }
-//  return false;
+  //  for (unsigned int i=0 ; i < npixels ; i++)
+  //  {
+  //    if (bitmap[i] != I.bitmap[i])
+  //      return true;
+  //  }
+  //  return false;
   return !(*this == I);
 }
 
@@ -1130,11 +1131,11 @@ int main()
   \sa sub(const vpImage<Type> &, const vpImage<Type> &, vpImage<Type> &) to
   avoid matrix allocation for each use.
 */
-template<class Type>
+template <class Type>
 vpImage<Type> vpImage<Type>::operator-(const vpImage<Type> &B)
 {
   vpImage<Type> C;
-  sub(*this,B,C);
+  sub(*this, B, C);
   return C;
 }
 
@@ -1142,13 +1143,16 @@ vpImage<Type> vpImage<Type>::operator-(const vpImage<Type> &B)
   Insert an image into another one.
 
   It is possible to insert the image \f$ src \f$ into the calling vpImage.
-  You can set the point in the destination image where the top left corner of the \f$ src \f$ image will belocated.
+  You can set the point in the destination image where the top left corner of
+  the \f$ src \f$ image will belocated.
 
   \param src : Image to insert
-  \param topLeft : Upper/left coordinates in the image where the image \e src is inserted in the destination image.
+  \param topLeft : Upper/left coordinates in the image where the image \e src
+  is inserted in the destination image.
 */
-template<class Type>
-void vpImage<Type>::insert(const vpImage<Type> &src, const vpImagePoint &topLeft)
+template <class Type>
+void vpImage<Type>::insert(const vpImage<Type> &src,
+                           const vpImagePoint &topLeft)
 {
   int itl = (int)topLeft.get_i();
   int jtl = (int)topLeft.get_j();
@@ -1187,12 +1191,12 @@ void vpImage<Type>::insert(const vpImage<Type> &src, const vpImagePoint &topLeft
   else
     hsize = src_h - src_ibegin;
 
-  for (int i = 0; i < hsize; i++)
-  {
-    Type *srcBitmap = src.bitmap + ((src_ibegin+i)*src_w+src_jbegin);
-    Type *destBitmap = this->bitmap + ((dest_ibegin+i)*dest_w+dest_jbegin);
+  for (int i = 0; i < hsize; i++) {
+    Type *srcBitmap = src.bitmap + ((src_ibegin + i) * src_w + src_jbegin);
+    Type *destBitmap =
+        this->bitmap + ((dest_ibegin + i) * dest_w + dest_jbegin);
 
-    memcpy(destBitmap, srcBitmap, (size_t)wsize*sizeof(Type));
+    memcpy(destBitmap, srcBitmap, (size_t)wsize * sizeof(Type));
   }
 }
 
@@ -1226,16 +1230,15 @@ void vpImage<Type>::insert(const vpImage<Type> &src, const vpImagePoint &topLeft
 
   \sa subsample()
 */
-template<class Type>
-void
-vpImage<Type>::halfSizeImage(vpImage<Type> &res) const
+template <class Type>
+void vpImage<Type>::halfSizeImage(vpImage<Type> &res) const
 {
-  unsigned int h = height/2;
-  unsigned int w = width/2;
+  unsigned int h = height / 2;
+  unsigned int w = width / 2;
   res.resize(h, w);
-  for(unsigned int i = 0; i < h; i++)
-    for(unsigned int j = 0; j < w; j++)
-      res[i][j] = (*this)[i<<1][j<<1];
+  for (unsigned int i = 0; i < h; i++)
+    for (unsigned int j = 0; j < w; j++)
+      res[i][j] = (*this)[i << 1][j << 1];
 }
 
 /*!
@@ -1255,16 +1258,16 @@ vpImage<Type>::halfSizeImage(vpImage<Type> &res) const
   vpImageIo::write(I2, "myHalfSizeImage.pgm");
   \endcode
 */
-template<class Type>
-void
-vpImage<Type>::subsample(unsigned int v_scale, unsigned int h_scale, vpImage<Type> &sampled) const
+template <class Type>
+void vpImage<Type>::subsample(unsigned int v_scale, unsigned int h_scale,
+                              vpImage<Type> &sampled) const
 {
-  unsigned int h = height/v_scale;
-  unsigned int w = width/h_scale;
+  unsigned int h = height / v_scale;
+  unsigned int w = width / h_scale;
   sampled.resize(h, w);
-  for(unsigned int i = 0; i < h; i++)
-    for(unsigned int j = 0; j < w; j++)
-      sampled[i][j] = (*this)[i*v_scale][j*h_scale];
+  for (unsigned int i = 0; i < h; i++)
+    for (unsigned int j = 0; j < w; j++)
+      sampled[i][j] = (*this)[i * v_scale][j * h_scale];
 }
 
 /*!
@@ -1291,16 +1294,15 @@ vpImage<Type>::subsample(unsigned int v_scale, unsigned int h_scale, vpImage<Typ
 
 */
 
-template<class Type>
-void
-vpImage<Type>::quarterSizeImage(vpImage<Type> &res) const
+template <class Type>
+void vpImage<Type>::quarterSizeImage(vpImage<Type> &res) const
 {
-  unsigned int h = height/4;
-  unsigned int w = width/4;
+  unsigned int h = height / 4;
+  unsigned int w = width / 4;
   res.resize(h, w);
-  for(unsigned int i = 0; i < h; i++)
-    for(unsigned int j = 0; j < w; j++)
-      res[i][j] = (*this)[i<<2][j<<2];
+  for (unsigned int i = 0; i < h; i++)
+    for (unsigned int j = 0; j < w; j++)
+      res[i][j] = (*this)[i << 2][j << 2];
 }
 
 /*!
@@ -1336,18 +1338,16 @@ vpImage<Type>::quarterSizeImage(vpImage<Type> &res) const
   See halfSizeImage(vpImage<Type> &) for an example of pyramid construction.
 
 */
-template<class Type>
-void
-vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
+template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 {
-  int h = height*2;
-  int w = width*2;
+  int h = height * 2;
+  int w = width * 2;
 
   res.resize(h, w);
 
-  for(int i = 0; i < h; i++)
-    for(int j = 0; j < w; j++)
-      res[i][j] = (*this)[i>>1][j>>1];
+  for (int i = 0; i < h; i++)
+    for (int j = 0; j < w; j++)
+      res[i][j] = (*this)[i >> 1][j >> 1];
 
   /*
     A B C
@@ -1357,30 +1357,31 @@ vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
     B E G I are interpolated pixels
   */
 
-  //interpolate pixels B and I
-  for(int i = 0; i < h; i += 2)
-    for(int j = 1; j < w - 1; j += 2)
-      res[i][j] = (Type)(0.5 * ((*this)[i>>1][j>>1]
-        + (*this)[i>>1][(j>>1) + 1]));
+  // interpolate pixels B and I
+  for (int i = 0; i < h; i += 2)
+    for (int j = 1; j < w - 1; j += 2)
+      res[i][j] = (Type)(
+          0.5 * ((*this)[i >> 1][j >> 1] + (*this)[i >> 1][(j >> 1) + 1]));
 
-  //interpolate pixels E and G
-  for(int i = 1; i < h - 1; i += 2)
-    for(int j = 0; j < w; j += 2)
-      res[i][j] = (Type)(0.5 * ((*this)[i>>1][j>>1]
-        + (*this)[(i>>1)+1][j>>1]));
+  // interpolate pixels E and G
+  for (int i = 1; i < h - 1; i += 2)
+    for (int j = 0; j < w; j += 2)
+      res[i][j] = (Type)(
+          0.5 * ((*this)[i >> 1][j >> 1] + (*this)[(i >> 1) + 1][j >> 1]));
 
-  //interpolate pixel F
-  for(int i = 1; i < h - 1; i += 2)
-    for(int j = 1; j < w - 1; j += 2)
-      res[i][j] = (Type)(0.25 * ((*this)[i>>1][j>>1]
-         + (*this)[i>>1][(j>>1)+1]
-         + (*this)[(i>>1)+1][j>>1]
-         + (*this)[(i>>1)+1][(j>>1)+1]));
+  // interpolate pixel F
+  for (int i = 1; i < h - 1; i += 2)
+    for (int j = 1; j < w - 1; j += 2)
+      res[i][j] = (Type)(0.25 * ((*this)[i >> 1][j >> 1] +
+                                 (*this)[i >> 1][(j >> 1) + 1] +
+                                 (*this)[(i >> 1) + 1][j >> 1] +
+                                 (*this)[(i >> 1) + 1][(j >> 1) + 1]));
 }
 
 /*!
 
-  Retrieves pixel value from an image containing values of type \e Type with sub-pixel accuracy.
+  Retrieves pixel value from an image containing values of type \e Type with
+  sub-pixel accuracy.
 
   Gets the value of a sub-pixel with coordinates (i,j) with bilinear
   interpolation. If location is out of bounds, then return the value of the
@@ -1395,8 +1396,7 @@ vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
   of the image.
 
 */
-template<class Type>
-Type vpImage<Type>::getValue(double i, double j) const
+template <class Type> Type vpImage<Type>::getValue(double i, double j) const
 {
   unsigned int iround, jround;
   double rfrac, cfrac;
@@ -1406,7 +1406,7 @@ Type vpImage<Type>::getValue(double i, double j) const
 
   if (iround >= height || jround >= width) {
     throw(vpException(vpImageException::notInTheImage,
-          "Pixel outside the image"));
+                      "Pixel outside the image"));
   }
 
   if (i > height - 1)
@@ -1415,18 +1415,22 @@ Type vpImage<Type>::getValue(double i, double j) const
   if (j > width - 1)
     j = (double)(width - 1);
 
-  double rratio = i - (double) iround;
-  if(rratio < 0)
-    rratio=-rratio;
-  double cratio = j - (double) jround;
-  if(cratio < 0)
-    cratio=-cratio;
+  double rratio = i - (double)iround;
+  if (rratio < 0)
+    rratio = -rratio;
+  double cratio = j - (double)jround;
+  if (cratio < 0)
+    cratio = -cratio;
 
   rfrac = 1.0f - rratio;
   cfrac = 1.0f - cratio;
 
-  double value = ((double)row[iround][jround] * rfrac + (double)row[iround+1][jround] * rratio)*cfrac
-             + ((double)row[iround][jround+1]*rfrac + (double)row[iround+1][jround+1] * rratio)*cratio;
+  double value = ((double)row[iround][jround] * rfrac +
+                  (double)row[iround + 1][jround] * rratio) *
+                     cfrac +
+                 ((double)row[iround][jround + 1] * rfrac +
+                  (double)row[iround + 1][jround + 1] * rratio) *
+                     cratio;
   return (Type)vpMath::round(value);
 }
 
@@ -1447,8 +1451,7 @@ Type vpImage<Type>::getValue(double i, double j) const
   of the image.
 
 */
-template<>
-inline double vpImage<double>::getValue(double i, double j) const
+template <> inline double vpImage<double>::getValue(double i, double j) const
 {
   unsigned int iround, jround;
   double rfrac, cfrac;
@@ -1458,7 +1461,7 @@ inline double vpImage<double>::getValue(double i, double j) const
 
   if (iround >= height || jround >= width) {
     throw(vpException(vpImageException::notInTheImage,
-          "Pixel outside the image"));
+                      "Pixel outside the image"));
   }
 
   if (i > height - 1)
@@ -1467,24 +1470,26 @@ inline double vpImage<double>::getValue(double i, double j) const
   if (j > width - 1)
     j = (double)(width - 1);
 
-  double rratio = i - (double) iround;
-  if(rratio < 0)
-    rratio=-rratio;
-  double cratio = j - (double) jround;
-  if(cratio < 0)
-    cratio=-cratio;
+  double rratio = i - (double)iround;
+  if (rratio < 0)
+    rratio = -rratio;
+  double cratio = j - (double)jround;
+  if (cratio < 0)
+    cratio = -cratio;
 
   rfrac = 1.0f - rratio;
   cfrac = 1.0f - cratio;
 
-
-  double value = ((double)row[iround][jround] * rfrac + (double)row[iround+1][jround] * rratio)*cfrac
-             + ((double)row[iround][jround+1]*rfrac + (double)row[iround+1][jround+1] * rratio)*cratio;
+  double value = ((double)row[iround][jround] * rfrac +
+                  (double)row[iround + 1][jround] * rratio) *
+                     cfrac +
+                 ((double)row[iround][jround + 1] * rfrac +
+                  (double)row[iround + 1][jround + 1] * rratio) *
+                     cratio;
   return value;
 }
 
-template<>
-inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
+template <> inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
 {
   unsigned int iround, jround;
   double rfrac, cfrac;
@@ -1494,7 +1499,7 @@ inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
 
   if (iround >= height || jround >= width) {
     throw(vpException(vpImageException::notInTheImage,
-          "Pixel outside the image"));
+                      "Pixel outside the image"));
   }
 
   if (i > height - 1)
@@ -1503,28 +1508,43 @@ inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
   if (j > width - 1)
     j = (double)(width - 1);
 
-  double rratio = i - (double) iround;
-  if(rratio < 0)
-    rratio=-rratio;
-  double cratio = j - (double) jround;
-  if(cratio < 0)
-    cratio=-cratio;
+  double rratio = i - (double)iround;
+  if (rratio < 0)
+    rratio = -rratio;
+  double cratio = j - (double)jround;
+  if (cratio < 0)
+    cratio = -cratio;
 
   rfrac = 1.0f - rratio;
   cfrac = 1.0f - cratio;
 
-  double valueR = ((double)row[iround][jround].R * rfrac + (double)row[iround+1][jround].R * rratio)*cfrac
-             + ((double)row[iround][jround+1].R * rfrac + (double)row[iround+1][jround+1].R * rratio)*cratio;
-  double valueG = ((double)row[iround][jround].G * rfrac + (double)row[iround+1][jround].G * rratio)*cfrac
-             + ((double)row[iround][jround+1].G* rfrac + (double)row[iround+1][jround+1].G * rratio)*cratio;
-  double valueB = ((double)row[iround][jround].B * rfrac + (double)row[iround+1][jround].B * rratio)*cfrac
-             + ((double)row[iround][jround+1].B*rfrac + (double)row[iround+1][jround+1].B * rratio)*cratio;
-  return vpRGBa((unsigned char)vpMath::round(valueR),(unsigned char)vpMath::round(valueG),(unsigned char)vpMath::round(valueB));
+  double valueR = ((double)row[iround][jround].R * rfrac +
+                   (double)row[iround + 1][jround].R * rratio) *
+                      cfrac +
+                  ((double)row[iround][jround + 1].R * rfrac +
+                   (double)row[iround + 1][jround + 1].R * rratio) *
+                      cratio;
+  double valueG = ((double)row[iround][jround].G * rfrac +
+                   (double)row[iround + 1][jround].G * rratio) *
+                      cfrac +
+                  ((double)row[iround][jround + 1].G * rfrac +
+                   (double)row[iround + 1][jround + 1].G * rratio) *
+                      cratio;
+  double valueB = ((double)row[iround][jround].B * rfrac +
+                   (double)row[iround + 1][jround].B * rratio) *
+                      cfrac +
+                  ((double)row[iround][jround + 1].B * rfrac +
+                   (double)row[iround + 1][jround + 1].B * rratio) *
+                      cratio;
+  return vpRGBa((unsigned char)vpMath::round(valueR),
+                (unsigned char)vpMath::round(valueG),
+                (unsigned char)vpMath::round(valueB));
 }
 
 /*!
 
-Retrieves pixel value from an image containing values of type \e Type with sub-pixel accuracy.
+Retrieves pixel value from an image containing values of type \e Type with
+sub-pixel accuracy.
 
 Gets the value of a sub-pixel with coordinates (i,j) with bilinear
 interpolation. If location is out of bounds, then return the value of the
@@ -1538,7 +1558,7 @@ closest pixel.
 of the image.
 
 */
-template<class Type>
+template <class Type>
 inline Type vpImage<Type>::getValue(vpImagePoint &ip) const
 {
   unsigned int iround, jround;
@@ -1549,7 +1569,7 @@ inline Type vpImage<Type>::getValue(vpImagePoint &ip) const
 
   if (iround >= height || jround >= width) {
     throw(vpException(vpImageException::notInTheImage,
-          "Pixel outside the image"));
+                      "Pixel outside the image"));
   }
 
   if (ip.get_i() > height - 1)
@@ -1558,23 +1578,26 @@ inline Type vpImage<Type>::getValue(vpImagePoint &ip) const
   if (ip.get_j() > width - 1)
     ip.set_j((double)(width - 1));
 
-  double rratio = ip.get_i() - (double) iround;
-  if(rratio < 0)
-    rratio=-rratio;
-  double cratio = ip.get_j() - (double) jround;
-  if(cratio < 0)
-    cratio=-cratio;
+  double rratio = ip.get_i() - (double)iround;
+  if (rratio < 0)
+    rratio = -rratio;
+  double cratio = ip.get_j() - (double)jround;
+  if (cratio < 0)
+    cratio = -cratio;
 
   rfrac = 1.0f - rratio;
   cfrac = 1.0f - cratio;
 
-  double value = ((double)row[iround][jround] * rfrac + (double)row[iround+1][jround] * rratio)*cfrac
-             + ((double)row[iround][jround+1]*rfrac + (double)row[iround+1][jround+1] * rratio)*cratio;
+  double value = ((double)row[iround][jround] * rfrac +
+                  (double)row[iround + 1][jround] * rratio) *
+                     cfrac +
+                 ((double)row[iround][jround + 1] * rfrac +
+                  (double)row[iround + 1][jround + 1] * rratio) *
+                     cratio;
   return (Type)vpMath::round(value);
 }
 
-template<>
-inline double vpImage<double>::getValue(vpImagePoint &ip) const
+template <> inline double vpImage<double>::getValue(vpImagePoint &ip) const
 {
   unsigned int iround, jround;
   double rfrac, cfrac;
@@ -1584,7 +1607,7 @@ inline double vpImage<double>::getValue(vpImagePoint &ip) const
 
   if (iround >= height || jround >= width) {
     throw(vpException(vpImageException::notInTheImage,
-          "Pixel outside the image"));
+                      "Pixel outside the image"));
   }
 
   if (ip.get_i() > height - 1)
@@ -1593,24 +1616,26 @@ inline double vpImage<double>::getValue(vpImagePoint &ip) const
   if (ip.get_j() > width - 1)
     ip.set_j((double)(width - 1));
 
-  double rratio = ip.get_i() - (double) iround;
-  if(rratio < 0)
-    rratio=-rratio;
-  double cratio = ip.get_j() - (double) jround;
-  if(cratio < 0)
-    cratio=-cratio;
+  double rratio = ip.get_i() - (double)iround;
+  if (rratio < 0)
+    rratio = -rratio;
+  double cratio = ip.get_j() - (double)jround;
+  if (cratio < 0)
+    cratio = -cratio;
 
   rfrac = 1.0f - rratio;
   cfrac = 1.0f - cratio;
 
-
-  double value = ((double)row[iround][jround] * rfrac + (double)row[iround+1][jround] * rratio)*cfrac
-             + ((double)row[iround][jround+1]*rfrac + (double)row[iround+1][jround+1] * rratio)*cratio;
+  double value = ((double)row[iround][jround] * rfrac +
+                  (double)row[iround + 1][jround] * rratio) *
+                     cfrac +
+                 ((double)row[iround][jround + 1] * rfrac +
+                  (double)row[iround + 1][jround + 1] * rratio) *
+                     cratio;
   return value;
 }
 
-template<>
-inline vpRGBa vpImage<vpRGBa>::getValue(vpImagePoint &ip) const
+template <> inline vpRGBa vpImage<vpRGBa>::getValue(vpImagePoint &ip) const
 {
   unsigned int iround, jround;
   double rfrac, cfrac;
@@ -1620,7 +1645,7 @@ inline vpRGBa vpImage<vpRGBa>::getValue(vpImagePoint &ip) const
 
   if (iround >= height || jround >= width) {
     throw(vpException(vpImageException::notInTheImage,
-          "Pixel outside the image"));
+                      "Pixel outside the image"));
   }
 
   if (ip.get_i() > height - 1)
@@ -1629,23 +1654,37 @@ inline vpRGBa vpImage<vpRGBa>::getValue(vpImagePoint &ip) const
   if (ip.get_j() > width - 1)
     ip.set_j((double)(width - 1));
 
-  double rratio = ip.get_i() - (double) iround;
-  if(rratio < 0)
-    rratio=-rratio;
-  double cratio = ip.get_j() - (double) jround;
-  if(cratio < 0)
-    cratio=-cratio;
+  double rratio = ip.get_i() - (double)iround;
+  if (rratio < 0)
+    rratio = -rratio;
+  double cratio = ip.get_j() - (double)jround;
+  if (cratio < 0)
+    cratio = -cratio;
 
   rfrac = 1.0f - rratio;
   cfrac = 1.0f - cratio;
 
-  double valueR = ((double)row[iround][jround].R * rfrac + (double)row[iround+1][jround].R * rratio)*cfrac
-             + ((double)row[iround][jround+1].R * rfrac + (double)row[iround+1][jround+1].R * rratio)*cratio;
-  double valueG = ((double)row[iround][jround].G * rfrac + (double)row[iround+1][jround].G * rratio)*cfrac
-             + ((double)row[iround][jround+1].G* rfrac + (double)row[iround+1][jround+1].G * rratio)*cratio;
-  double valueB = ((double)row[iround][jround].B * rfrac + (double)row[iround+1][jround].B * rratio)*cfrac
-             + ((double)row[iround][jround+1].B*rfrac + (double)row[iround+1][jround+1].B * rratio)*cratio;
-  return vpRGBa((unsigned char)vpMath::round(valueR),(unsigned char)vpMath::round(valueG),(unsigned char)vpMath::round(valueB));
+  double valueR = ((double)row[iround][jround].R * rfrac +
+                   (double)row[iround + 1][jround].R * rratio) *
+                      cfrac +
+                  ((double)row[iround][jround + 1].R * rfrac +
+                   (double)row[iround + 1][jround + 1].R * rratio) *
+                      cratio;
+  double valueG = ((double)row[iround][jround].G * rfrac +
+                   (double)row[iround + 1][jround].G * rratio) *
+                      cfrac +
+                  ((double)row[iround][jround + 1].G * rfrac +
+                   (double)row[iround + 1][jround + 1].G * rratio) *
+                      cratio;
+  double valueB = ((double)row[iround][jround].B * rfrac +
+                   (double)row[iround + 1][jround].B * rratio) *
+                      cfrac +
+                  ((double)row[iround][jround + 1].B * rfrac +
+                   (double)row[iround + 1][jround + 1].B * rratio) *
+                      cratio;
+  return vpRGBa((unsigned char)vpMath::round(valueR),
+                (unsigned char)vpMath::round(valueG),
+                (unsigned char)vpMath::round(valueB));
 }
 
 /*!
@@ -1677,30 +1716,26 @@ int main()
 
   \sa operator-()
 */
-template<class Type>
+template <class Type>
 void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Type> &C)
 {
 
-  try
-  {
-    if ((this->getHeight() != C.getHeight())
-      || (this->getWidth() != C.getWidth()))
+  try {
+    if ((this->getHeight() != C.getHeight()) ||
+        (this->getWidth() != C.getWidth()))
       C.resize(this->getHeight(), this->getWidth());
-  }
-  catch(vpException &me)
-  {
+  } catch (vpException &me) {
     std::cout << me << std::endl;
     throw;
   }
 
-  if ( (this->getWidth() != B.getWidth())||(this->getHeight() != B.getHeight()))
-  {
+  if ((this->getWidth() != B.getWidth()) ||
+      (this->getHeight() != B.getHeight())) {
     throw(vpException(vpException::memoryAllocationError,
-          "vpImage mismatch in vpImage/vpImage substraction "));
+                      "vpImage mismatch in vpImage/vpImage substraction "));
   }
 
-  for (unsigned int i=0;i<this->getWidth()*this->getHeight();i++)
-  {
+  for (unsigned int i = 0; i < this->getWidth() * this->getHeight(); i++) {
     *(C.bitmap + i) = *(bitmap + i) - *(B.bitmap + i);
   }
 }
@@ -1716,31 +1751,25 @@ void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Type> &C)
 
   \sa operator-()
 */
-template<class Type>
+template <class Type>
 void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
                         vpImage<Type> &C)
 {
 
-  try
-  {
-    if ((A.getHeight() != C.getHeight())
-      || (A.getWidth() != C.getWidth()))
+  try {
+    if ((A.getHeight() != C.getHeight()) || (A.getWidth() != C.getWidth()))
       C.resize(A.getHeight(), A.getWidth());
-  }
-  catch(vpException &me)
-  {
+  } catch (vpException &me) {
     std::cout << me << std::endl;
     throw;
   }
 
-  if ( (A.getWidth() != B.getWidth())||(A.getHeight() != B.getHeight()))
-  {
+  if ((A.getWidth() != B.getWidth()) || (A.getHeight() != B.getHeight())) {
     throw(vpException(vpException::memoryAllocationError,
                       "vpImage mismatch in vpImage/vpImage substraction "));
   }
 
-  for (unsigned int i=0;i<A.getWidth()*A.getHeight();i++)
-  {
+  for (unsigned int i = 0; i < A.getWidth() * A.getHeight(); i++) {
     *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i);
   }
 }
@@ -1750,88 +1779,93 @@ void vpImage<Type>::sub(const vpImage<Type> &A, const vpImage<Type> &B,
   \warning This generic method is not implemented. You should rather use the
   instantiated methods for unsigned char and vpRGBa images.
 
-  \sa vpImage<unsigned char>::performLut(const unsigned char (&)[256], const unsigned int)
-  \sa vpImage<vpRGBa char>::performLut(const vpRGBa (&)[256], const unsigned int)
+  \sa vpImage<unsigned char>::performLut(const unsigned char (&)[256], const
+  unsigned int) \sa vpImage<vpRGBa char>::performLut(const vpRGBa (&)[256],
+  const unsigned int)
 
 */
-template<class Type>
+template <class Type>
 void vpImage<Type>::performLut(const Type (&)[256], const unsigned int)
 {
   std::cerr << "Not implemented !" << std::endl;
 }
 
 /*!
-  Modify the intensities of a grayscale image using the look-up table passed in parameter.
+  Modify the intensities of a grayscale image using the look-up table passed
+  in parameter.
 
-  \param lut : Look-up table (unsigned char array of size=256) which maps each intensity to his new value.
-  \param nbThreads : Number of threads to use for the computation.
+  \param lut : Look-up table (unsigned char array of size=256) which maps each
+  intensity to his new value. \param nbThreads : Number of threads to use for
+  the computation.
 */
-template<>
-inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], const unsigned int nbThreads) {
-  unsigned int size = getWidth()*getHeight();
-  unsigned char *ptrStart = (unsigned char*) bitmap;
+template <>
+inline void
+vpImage<unsigned char>::performLut(const unsigned char (&lut)[256],
+                                   const unsigned int nbThreads)
+{
+  unsigned int size = getWidth() * getHeight();
+  unsigned char *ptrStart = (unsigned char *)bitmap;
   unsigned char *ptrEnd = ptrStart + size;
   unsigned char *ptrCurrent = ptrStart;
-
 
   bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
 #if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
   use_single_thread = true;
 #endif
 
-  if(!use_single_thread && getSize() <= nbThreads) {
+  if (!use_single_thread && getSize() <= nbThreads) {
     use_single_thread = true;
   }
 
+  if (use_single_thread) {
+    // Single thread
 
-  if(use_single_thread) {
-    //Single thread
-
-    while(ptrCurrent != ptrEnd) {
+    while (ptrCurrent != ptrEnd) {
       *ptrCurrent = lut[*ptrCurrent];
       ++ptrCurrent;
     }
   } else {
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
-    //Multi-threads
+    // Multi-threads
 
     std::vector<vpThread *> threadpool;
     std::vector<ImageLut_Param_t *> imageLutParams;
 
     unsigned int image_size = getSize();
     unsigned int step = image_size / nbThreads;
-    unsigned int last_step = image_size - step * (nbThreads-1);
+    unsigned int last_step = image_size - step * (nbThreads - 1);
 
-    for(unsigned int index = 0; index < nbThreads; index++) {
-      unsigned int start_index = index*step;
-      unsigned int end_index = (index+1)*step;
+    for (unsigned int index = 0; index < nbThreads; index++) {
+      unsigned int start_index = index * step;
+      unsigned int end_index = (index + 1) * step;
 
-      if(index == nbThreads-1) {
-        end_index = start_index+last_step;
+      if (index == nbThreads - 1) {
+        end_index = start_index + last_step;
       }
 
-      ImageLut_Param_t *imageLut_param = new ImageLut_Param_t(start_index, end_index, bitmap);
-      memcpy(imageLut_param->m_lut, lut, 256*sizeof(unsigned char));
+      ImageLut_Param_t *imageLut_param =
+          new ImageLut_Param_t(start_index, end_index, bitmap);
+      memcpy(imageLut_param->m_lut, lut, 256 * sizeof(unsigned char));
 
       imageLutParams.push_back(imageLut_param);
 
       // Start the threads
-      vpThread *imageLut_thread = new vpThread((vpThread::Fn) performLutThread, (vpThread::Args) imageLut_param);
+      vpThread *imageLut_thread = new vpThread(
+          (vpThread::Fn)performLutThread, (vpThread::Args)imageLut_param);
       threadpool.push_back(imageLut_thread);
     }
 
-    for(size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+    for (size_t cpt = 0; cpt < threadpool.size(); cpt++) {
       // Wait until thread ends up
       threadpool[cpt]->join();
     }
 
-
-    //Delete
-    for(size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+    // Delete
+    for (size_t cpt = 0; cpt < threadpool.size(); cpt++) {
       delete threadpool[cpt];
     }
 
-    for(size_t cpt = 0; cpt < imageLutParams.size(); cpt++) {
+    for (size_t cpt = 0; cpt < imageLutParams.size(); cpt++) {
       delete imageLutParams[cpt];
     }
 #endif
@@ -1839,32 +1873,34 @@ inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], 
 }
 
 /*!
-  Modify the intensities of a color image using the look-up table passed in parameter.
+  Modify the intensities of a color image using the look-up table passed in
+  parameter.
 
-  \param lut : Look-up table (vpRGBa array of size=256) which maps each intensity to his new value.
-  \param nbThreads : Number of threads to use for the computation.
+  \param lut : Look-up table (vpRGBa array of size=256) which maps each
+  intensity to his new value. \param nbThreads : Number of threads to use for
+  the computation.
 */
-template<>
-inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], const unsigned int nbThreads) {
-  unsigned int size = getWidth()*getHeight();
-  unsigned char *ptrStart = (unsigned char*) bitmap;
-  unsigned char *ptrEnd = ptrStart + size*4;
+template <>
+inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256],
+                                        const unsigned int nbThreads)
+{
+  unsigned int size = getWidth() * getHeight();
+  unsigned char *ptrStart = (unsigned char *)bitmap;
+  unsigned char *ptrEnd = ptrStart + size * 4;
   unsigned char *ptrCurrent = ptrStart;
-
 
   bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
 #if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
   use_single_thread = true;
 #endif
 
-  if(!use_single_thread && getSize() <= nbThreads) {
+  if (!use_single_thread && getSize() <= nbThreads) {
     use_single_thread = true;
   }
 
-
-  if(use_single_thread) {
-    //Single thread
-    while(ptrCurrent != ptrEnd) {
+  if (use_single_thread) {
+    // Single thread
+    while (ptrCurrent != ptrEnd) {
       *ptrCurrent = lut[*ptrCurrent].R;
       ++ptrCurrent;
 
@@ -1879,52 +1915,53 @@ inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], const unsigned
     }
   } else {
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
-    //Multi-threads
+    // Multi-threads
     std::vector<vpThread *> threadpool;
     std::vector<ImageLutRGBa_Param_t *> imageLutParams;
 
     unsigned int image_size = getSize();
     unsigned int step = image_size / nbThreads;
-    unsigned int last_step = image_size - step * (nbThreads-1);
+    unsigned int last_step = image_size - step * (nbThreads - 1);
 
-    for(unsigned int index = 0; index < nbThreads; index++) {
-      unsigned int start_index = index*step;
-      unsigned int end_index = (index+1)*step;
+    for (unsigned int index = 0; index < nbThreads; index++) {
+      unsigned int start_index = index * step;
+      unsigned int end_index = (index + 1) * step;
 
-      if(index == nbThreads-1) {
-        end_index = start_index+last_step;
+      if (index == nbThreads - 1) {
+        end_index = start_index + last_step;
       }
 
-      ImageLutRGBa_Param_t *imageLut_param = new ImageLutRGBa_Param_t(start_index, end_index, (unsigned char *) bitmap);
-      memcpy(imageLut_param->m_lut, lut, 256*sizeof(vpRGBa));
+      ImageLutRGBa_Param_t *imageLut_param = new ImageLutRGBa_Param_t(
+          start_index, end_index, (unsigned char *)bitmap);
+      memcpy(imageLut_param->m_lut, lut, 256 * sizeof(vpRGBa));
 
       imageLutParams.push_back(imageLut_param);
 
       // Start the threads
-      vpThread *imageLut_thread = new vpThread((vpThread::Fn) performLutRGBaThread, (vpThread::Args) imageLut_param);
+      vpThread *imageLut_thread = new vpThread(
+          (vpThread::Fn)performLutRGBaThread, (vpThread::Args)imageLut_param);
       threadpool.push_back(imageLut_thread);
     }
 
-    for(size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+    for (size_t cpt = 0; cpt < threadpool.size(); cpt++) {
       // Wait until thread ends up
       threadpool[cpt]->join();
     }
 
-
-    //Delete
-    for(size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+    // Delete
+    for (size_t cpt = 0; cpt < threadpool.size(); cpt++) {
       delete threadpool[cpt];
     }
 
-    for(size_t cpt = 0; cpt < imageLutParams.size(); cpt++) {
+    for (size_t cpt = 0; cpt < imageLutParams.size(); cpt++) {
       delete imageLutParams[cpt];
     }
 #endif
   }
 }
 
-template<class Type>
-void swap(vpImage<Type> &first, vpImage<Type> &second) {
+template <class Type> void swap(vpImage<Type> &first, vpImage<Type> &second)
+{
   using std::swap;
   swap(first.bitmap, second.bitmap);
   swap(first.display, second.display);

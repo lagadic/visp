@@ -38,56 +38,60 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if ( defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) )
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 
 #ifndef vpWin32Renderer_HH
 #define vpWin32Renderer_HH
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <visp3/core/vpImage.h>
 #include <visp3/core/vpColor.h>
-// Include WinSock2.h before windows.h to ensure that winsock.h is not included by windows.h 
-// since winsock.h and winsock2.h are incompatible
-#include <WinSock2.h> 
-#include <windows.h>
+#include <visp3/core/vpImage.h>
+// Include WinSock2.h before windows.h to ensure that winsock.h is not
+// included by windows.h since winsock.h and winsock2.h are incompatible
+#include <WinSock2.h>
 #include <visp3/core/vpDebug.h>
+#include <windows.h>
 
 class VISP_EXPORT vpWin32Renderer
 {
 
 protected:
-  //the size of the display
+  // the size of the display
   unsigned int m_rwidth;
   unsigned int m_rheight;
   unsigned int m_rscale;
 
 public:
-  vpWin32Renderer() : m_rwidth(0), m_rheight(0), m_rscale(1) {};
+  vpWin32Renderer() : m_rwidth(0), m_rheight(0), m_rscale(1){};
   //! Destructor.
-  virtual ~vpWin32Renderer() {};
+  virtual ~vpWin32Renderer(){};
 
   //! Inits the display .
-  virtual bool init(HWND hWnd, unsigned int w, unsigned int h) =0;
+  virtual bool init(HWND hWnd, unsigned int w, unsigned int h) = 0;
 
   //! Renders the image.
-  virtual bool render() =0;
+  virtual bool render() = 0;
 
   /*!
     Sets the image to display.
     \param im The image to display.
   */
-  virtual void setImg(const vpImage<vpRGBa>& im) =0;
-  virtual void setImg(const vpImage<unsigned char>& im) =0;
-  virtual void setImgROI(const vpImage<vpRGBa>& im, const vpImagePoint &iP, const unsigned int width, const unsigned int height ) =0;
-  virtual void setImgROI(const vpImage<unsigned char>& im, const vpImagePoint &iP, const unsigned int width, const unsigned int height ) =0;
+  virtual void setImg(const vpImage<vpRGBa> &im) = 0;
+  virtual void setImg(const vpImage<unsigned char> &im) = 0;
+  virtual void setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP,
+                         const unsigned int width,
+                         const unsigned int height) = 0;
+  virtual void setImgROI(const vpImage<unsigned char> &im,
+                         const vpImagePoint &iP, const unsigned int width,
+                         const unsigned int height) = 0;
 
   /*!
     Sets the pixel at (x,y).
     \param iP The coordinates of the pixel.
     \param color The color of the pixel.
   */
-  virtual void setPixel(const vpImagePoint &iP, const vpColor &color) =0;
+  virtual void setPixel(const vpImagePoint &iP, const vpColor &color) = 0;
 
   void setScale(unsigned int scale) { m_rscale = scale; }
   void setHeight(unsigned int height) { m_rheight = height; }
@@ -101,9 +105,9 @@ public:
     \param thickness line thickness
     \param style style of the line
   */
-  virtual void drawLine(const vpImagePoint &ip1,
-                        const vpImagePoint &ip2,
-                        const vpColor &color, unsigned int thickness, int style=PS_SOLID) =0;
+  virtual void drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
+                        const vpColor &color, unsigned int thickness,
+                        int style = PS_SOLID) = 0;
 
   /*!
     Draws a rectangle.
@@ -114,16 +118,15 @@ public:
     \param fill True if it is a filled rectangle
     \param thickness line thickness
   */
-  virtual void drawRect(const vpImagePoint &topLeft,
-                        unsigned int width, unsigned int height,
-                        const vpColor &color, bool fill=false,
-                        unsigned int thickness=1) =0;
+  virtual void drawRect(const vpImagePoint &topLeft, unsigned int width,
+                        unsigned int height, const vpColor &color,
+                        bool fill = false, unsigned int thickness = 1) = 0;
 
   /*!
     Clears the image to color c.
     \param color The color used to fill the image.
   */
-  virtual void clear(const vpColor &color) =0;
+  virtual void clear(const vpColor &color) = 0;
 
   /*!
     Draws a circle.
@@ -134,7 +137,8 @@ public:
     \param thickness Drawing thickness
   */
   virtual void drawCircle(const vpImagePoint &center, unsigned int radius,
-                          const vpColor &color, bool fill, unsigned int thickness=1) =0;
+                          const vpColor &color, bool fill,
+                          unsigned int thickness = 1) = 0;
 
   /*!
     Draws some text.
@@ -142,8 +146,8 @@ public:
     \param text The string to display
     \param color The text's color
   */
-  virtual void drawText(const vpImagePoint &ip, const char * text,
-                        const vpColor &color) =0;
+  virtual void drawText(const vpImagePoint &ip, const char *text,
+                        const vpColor &color) = 0;
 
   /*!
     Draws a cross.
@@ -153,7 +157,8 @@ public:
     \param thickness Thickness of the drawing
   */
   virtual void drawCross(const vpImagePoint &ip, unsigned int size,
-                         const vpColor &color, unsigned int thickness=1) =0;
+                         const vpColor &color,
+                         unsigned int thickness = 1) = 0;
 
   /*!
     Draws an arrow.
@@ -163,15 +168,15 @@ public:
     \param w,h Width and height of the arrow
     \param thickness Thickness of the drawing
   */
-  virtual void drawArrow(const vpImagePoint &ip1,
-                         const vpImagePoint &ip2,
-                         const vpColor &color, unsigned int w, unsigned int h, unsigned int thickness) =0;
+  virtual void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2,
+                         const vpColor &color, unsigned int w, unsigned int h,
+                         unsigned int thickness) = 0;
 
   /*!
     Gets the currently displayed image.
     \param I Image returned.
   */
-  virtual void getImage(vpImage<vpRGBa> &I) =0;
+  virtual void getImage(vpImage<vpRGBa> &I) = 0;
 };
 
 #endif

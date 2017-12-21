@@ -56,12 +56,14 @@
   instance of the class open a window which contains between 1 and 4
   graphics. Each one contains a desired number of curves.
 
-  \warning This class is only available if one of the display functionalities (X11, GDI, GTK, OpenCV or Direct3D)
-  is available. In visp3/core/vpConfig.h header file, you should have VISP_HAVE_DISPLAY define.
+  \warning This class is only available if one of the display functionalities
+(X11, GDI, GTK, OpenCV or Direct3D) is available. In visp3/core/vpConfig.h
+header file, you should have VISP_HAVE_DISPLAY define.
 
-  The example below shows how to use the vpPlot class. An other example provided in tutoral-ibvs-plotter.cpp
-  and described in \ref tutorial-plotter shows how to use this class to plot in real-time some curves during
-  an image-based visual servo.
+  The example below shows how to use the vpPlot class. An other example
+provided in tutoral-ibvs-plotter.cpp and described in \ref tutorial-plotter
+shows how to use this class to plot in real-time some curves during an
+image-based visual servo.
 
   \code
 #include <visp3/gui/vpPlot.h>
@@ -72,9 +74,8 @@ int main ()
   // Create a window (700 by 700) at position (100, 200) with two graphics
   vpPlot A(2, 700, 700, 100, 200, "Curves...");
 
-  // The first graphic contains 1 curve and the second graphic contains 2 curves
-  A.initGraph(0,1);
-  A.initGraph(1,2);
+  // The first graphic contains 1 curve and the second graphic contains 2
+curves A.initGraph(0,1); A.initGraph(1,2);
 
   // The color of the curve in the first graphic is red
   A.setColor(0,0,vpColor::red);
@@ -113,89 +114,111 @@ int main ()
 
 class VISP_EXPORT vpPlot
 {
-  public:
-    vpImage<unsigned char> I;
-  
-  private:
-    vpDisplay *display;
-    
-    unsigned int graphNbr;
-    vpPlotGraph* graphList;
-    
-    unsigned int margei;
-    unsigned int margej;
-    
-    float factori;
-    float factorj;
-    
-//private:
-//#ifndef DOXYGEN_SHOULD_SKIP_THIS
-//    vpPlot(const vpPlot &)
-//      : I(), display(NULL), graphNbr(0), graphList(NULL), margei(0), margej(0),
-//        factori(0), factorj(0)
-//    {
-//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-//    }
-//    vpPlot &operator=(const vpPlot &){
-//      throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-//      return *this;
-//    }
-//#endif
+public:
+  vpImage<unsigned char> I;
+
+private:
+  vpDisplay *display;
+
+  unsigned int graphNbr;
+  vpPlotGraph *graphList;
+
+  unsigned int margei;
+  unsigned int margej;
+
+  float factori;
+  float factorj;
+
+  // private:
+  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //    vpPlot(const vpPlot &)
+  //      : I(), display(NULL), graphNbr(0), graphList(NULL), margei(0),
+  //      margej(0),
+  //        factori(0), factorj(0)
+  //    {
+  //      throw vpException(vpException::functionNotImplementedError, "Not
+  //      implemented!");
+  //    }
+  //    vpPlot &operator=(const vpPlot &){
+  //      throw vpException(vpException::functionNotImplementedError, "Not
+  //      implemented!"); return *this;
+  //    }
+  //#endif
 
 public:
-    vpPlot();
-    vpPlot(const unsigned int nbGraph,
-	   const unsigned int height=700, 
-	   const unsigned int width=700, 
-     const int x=-1, const int y=-1, const std::string &title="");
-    ~vpPlot();
-    void getPixelValue(const bool block);
-    void init(const unsigned int nbGraph,
-	      const unsigned int height=700, 
-	      const unsigned int width=700, 
-        const int x=-1, const int y=-1, const std::string &title="");
-    void initGraph (unsigned int graphNum, unsigned int curveNbr);
-    
-    void initRange (const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax);
-    void initRange (const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
-    void navigate (void);
+  vpPlot();
+  vpPlot(const unsigned int nbGraph, const unsigned int height = 700,
+         const unsigned int width = 700, const int x = -1, const int y = -1,
+         const std::string &title = "");
+  ~vpPlot();
+  void getPixelValue(const bool block);
+  void init(const unsigned int nbGraph, const unsigned int height = 700,
+            const unsigned int width = 700, const int x = -1,
+            const int y = -1, const std::string &title = "");
+  void initGraph(unsigned int graphNum, unsigned int curveNbr);
 
-    void plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y);
-    void plot(const unsigned int graphNum, const double x, const vpColVector &v_y);
-    void plot(const unsigned int graphNum, const double x, const vpRowVector &v_y);
-    void plot(const unsigned int graphNum, const double x, const vpPoseVector &v_y);
-    void plot(const unsigned int graphNum, const double x, const vpTranslationVector &v_y);
-    void plot(const unsigned int graphNum, const double x, const vpRotationVector &v_y);
-    vpMouseButton::vpMouseButtonType plot (const unsigned int graphNum, const unsigned int curveNum, const double x, const double y, const double z);
-    vpMouseButton::vpMouseButtonType plot(const unsigned int graphNum, const double x, const vpColVector &v_y, const vpColVector &v_z);
+  void initRange(const unsigned int graphNum, double xmin, double xmax,
+                 double ymin, double ymax);
+  void initRange(const unsigned int graphNum, double xmin, double xmax,
+                 double ymin, double ymax, double zmin, double zmax);
+  void navigate(void);
 
-    void resetPointList (const unsigned int graphNum);
-    void resetPointList (const unsigned int graphNum, const unsigned int curveNum);
+  void plot(const unsigned int graphNum, const unsigned int curveNum,
+            const double x, const double y);
+  void plot(const unsigned int graphNum, const double x,
+            const vpColVector &v_y);
+  void plot(const unsigned int graphNum, const double x,
+            const vpRowVector &v_y);
+  void plot(const unsigned int graphNum, const double x,
+            const vpPoseVector &v_y);
+  void plot(const unsigned int graphNum, const double x,
+            const vpTranslationVector &v_y);
+  void plot(const unsigned int graphNum, const double x,
+            const vpRotationVector &v_y);
+  vpMouseButton::vpMouseButtonType plot(const unsigned int graphNum,
+                                        const unsigned int curveNum,
+                                        const double x, const double y,
+                                        const double z);
+  vpMouseButton::vpMouseButtonType plot(const unsigned int graphNum,
+                                        const double x,
+                                        const vpColVector &v_y,
+                                        const vpColVector &v_z);
 
-    void saveData(const unsigned int graphNum, const std::string &dataFile, const std::string &title_prefix="");
-    void setColor (const unsigned int graphNum, const unsigned int curveNum, vpColor color);
-    void setGraphThickness (const unsigned int graphNum, const unsigned int thickness);
-    void setGridThickness (const unsigned int graphNum, const unsigned int thickness);
-    /*!
-      Set the font of the characters. The display should be initialized before.
+  void resetPointList(const unsigned int graphNum);
+  void resetPointList(const unsigned int graphNum,
+                      const unsigned int curveNum);
 
-      To know which font are available, on Unix you can use xfontsel or xlsfonts utilities.
-      */
-    void setFont(const std::string &font)
-    {
-      if (display->isInitialised())
-        vpDisplay::setFont(I, font.c_str());
-    }
-    void setLegend (const unsigned int graphNum, const unsigned int curveNum, const std::string &legend);
-    void setTitle (const unsigned int graphNum, const std::string &title);
-    void setUnitX (const unsigned int graphNum, const std::string &unitx);
-    void setUnitY (const unsigned int graphNum, const std::string &unity);
-    void setUnitZ (const unsigned int graphNum, const std::string &unitz);
-    void setThickness (const unsigned int graphNum, const unsigned int curveNum, const unsigned int thickness);
-    
-  private:
-    void initNbGraph (unsigned int nbGraph);
-    void displayGrid();
+  void saveData(const unsigned int graphNum, const std::string &dataFile,
+                const std::string &title_prefix = "");
+  void setColor(const unsigned int graphNum, const unsigned int curveNum,
+                vpColor color);
+  void setGraphThickness(const unsigned int graphNum,
+                         const unsigned int thickness);
+  void setGridThickness(const unsigned int graphNum,
+                        const unsigned int thickness);
+  /*!
+    Set the font of the characters. The display should be initialized before.
+
+    To know which font are available, on Unix you can use xfontsel or xlsfonts
+    utilities.
+    */
+  void setFont(const std::string &font)
+  {
+    if (display->isInitialised())
+      vpDisplay::setFont(I, font.c_str());
+  }
+  void setLegend(const unsigned int graphNum, const unsigned int curveNum,
+                 const std::string &legend);
+  void setTitle(const unsigned int graphNum, const std::string &title);
+  void setUnitX(const unsigned int graphNum, const std::string &unitx);
+  void setUnitY(const unsigned int graphNum, const std::string &unity);
+  void setUnitZ(const unsigned int graphNum, const std::string &unitz);
+  void setThickness(const unsigned int graphNum, const unsigned int curveNum,
+                    const unsigned int thickness);
+
+private:
+  void initNbGraph(unsigned int nbGraph);
+  void displayGrid();
 };
 #endif
 

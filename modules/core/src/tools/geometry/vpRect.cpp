@@ -42,9 +42,8 @@
   \ingroup libtools
 */
 
-
-#include <visp3/core/vpRect.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/core/vpRect.h>
 
 /*!
   Constructs a default rectangle with the \e top, \e left corner set to (0,0)
@@ -89,16 +88,15 @@ vpRect::vpRect(const vpImagePoint &topLeft, const vpImagePoint &bottomRight)
 {
   this->left = topLeft.get_u();
   this->top = topLeft.get_v();
-  
-  setBottom( bottomRight.get_v() );
-  setRight( bottomRight.get_u() );
+
+  setBottom(bottomRight.get_v());
+  setRight(bottomRight.get_u());
 }
 
 /*!
   Constructs a rectangle that is a copy of \e r.
 */
-vpRect::vpRect(const vpRect& r)
-  : left(0), top(0), width(0), height(0)
+vpRect::vpRect(const vpRect &r) : left(0), top(0), width(0), height(0)
 {
   *this = r;
 }
@@ -106,12 +104,12 @@ vpRect::vpRect(const vpRect& r)
 /*!
 
   Assign \e r to this rectangle and return a reference to this rectangle.
-*/  
-vpRect &vpRect::operator=(const vpRect& r) 
+*/
+vpRect &vpRect::operator=(const vpRect &r)
 {
-  this->left   = r.left;
-  this->top    = r.top;
-  this->width  = r.width;
+  this->left = r.left;
+  this->top = r.top;
+  this->width = r.width;
   this->height = r.height;
   return *this;
 }
@@ -134,8 +132,10 @@ vpRect::vpRect(const std::vector<vpImagePoint> &ip)
 
   \return Returns true if the point belongs to the rectangle.
 */
-bool vpRect::isInside( const vpImagePoint &ip ) const{
-  return ( ip.get_i() <= this->getBottom() && ip.get_i() >= this->getTop() && ip.get_j() <= this->getRight() && ip.get_j() >= this->getLeft());
+bool vpRect::isInside(const vpImagePoint &ip) const
+{
+  return (ip.get_i() <= this->getBottom() && ip.get_i() >= this->getTop() &&
+          ip.get_j() <= this->getRight() && ip.get_j() >= this->getLeft());
 }
 
 /*!
@@ -178,25 +178,29 @@ void vpRect::set(const vpImagePoint &topLeft, double w, double h)
 void vpRect::set(const std::vector<vpImagePoint> &ip)
 {
   if (ip.size() < 1)
-    throw (vpException(vpException::dimensionError,
-                       "At least 1 point is requested to build a rectangle"));
+    throw(vpException(vpException::dimensionError,
+                      "At least 1 point is requested to build a rectangle"));
   double minu, maxu;
   double minv, maxv;
   minu = maxu = ip[0].get_u();
   minv = maxv = ip[0].get_v();
 
-  for(size_t i=1; i<ip.size(); i++) {
-    double u  = ip[i].get_u();
-    double v  = ip[i].get_v();
-    if ( u < minu ) minu = u;
-    else if (u > maxu) maxu = u;
-    if ( v < minv ) minv = v;
-    else if (v > maxv) maxv = v;
+  for (size_t i = 1; i < ip.size(); i++) {
+    double u = ip[i].get_u();
+    double v = ip[i].get_v();
+    if (u < minu)
+      minu = u;
+    else if (u > maxu)
+      maxu = u;
+    if (v < minv)
+      minv = v;
+    else if (v > maxv)
+      maxv = v;
   }
 
-  setLeft  (minu);
-  setTop   (minv);
-  setRight (maxu);
+  setLeft(minu);
+  setTop(minv);
+  setRight(maxu);
   setBottom(maxv);
 }
 
@@ -212,17 +216,14 @@ void vpRect::set(const vpImagePoint &topLeft, const vpImagePoint &bottomRight)
   this->left = topLeft.get_u();
   this->top = topLeft.get_v();
 
-  setBottom( bottomRight.get_v() );
-  setRight( bottomRight.get_u() );
+  setBottom(bottomRight.get_v());
+  setRight(bottomRight.get_u());
 }
 
 /*!
   Set the rectangle from \e r.
 */
-void vpRect::set(const vpRect& r)
-{
-  *this = r;
-}
+void vpRect::set(const vpRect &r) { *this = r; }
 
 /*!
  Operator to compare two rectangles.
@@ -230,11 +231,16 @@ void vpRect::set(const vpRect& r)
  */
 bool vpRect::operator==(const vpRect &r) const
 {
-  //return (top == r.top && left == r.left && width == r.width && height == r.height);
-  return (std::fabs(top-r.top) <= std::fabs(top)*std::numeric_limits<double>::epsilon()
-          && std::fabs(left-r.left) <= std::fabs(left)*std::numeric_limits<double>::epsilon()
-          && std::fabs(width-r.width) <= std::fabs(width)*std::numeric_limits<double>::epsilon()
-          && std::fabs(height-r.height) <= std::fabs(height)*std::numeric_limits<double>::epsilon());
+  // return (top == r.top && left == r.left && width == r.width && height ==
+  // r.height);
+  return (std::fabs(top - r.top) <=
+              std::fabs(top) * std::numeric_limits<double>::epsilon() &&
+          std::fabs(left - r.left) <=
+              std::fabs(left) * std::numeric_limits<double>::epsilon() &&
+          std::fabs(width - r.width) <=
+              std::fabs(width) * std::numeric_limits<double>::epsilon() &&
+          std::fabs(height - r.height) <=
+              std::fabs(height) * std::numeric_limits<double>::epsilon());
 }
 
 /*!
@@ -243,22 +249,29 @@ bool vpRect::operator==(const vpRect &r) const
  */
 bool vpRect::operator!=(const vpRect &r) const
 {
-  //return (top != r.top || left != r.left || width != r.width || height != r.height);
-//  return (std::fabs(top-r.top) > std::fabs(top)*std::numeric_limits<double>::epsilon()
-//          || std::fabs(left-r.left) > std::fabs(left)*std::numeric_limits<double>::epsilon()
-//          || std::fabs(width-r.width) > std::fabs(width)*std::numeric_limits<double>::epsilon()
-//          || std::fabs(height-r.height) > std::fabs(height)*std::numeric_limits<double>::epsilon());
+  // return (top != r.top || left != r.left || width != r.width || height !=
+  // r.height);
+  //  return (std::fabs(top-r.top) >
+  //  std::fabs(top)*std::numeric_limits<double>::epsilon()
+  //          || std::fabs(left-r.left) >
+  //          std::fabs(left)*std::numeric_limits<double>::epsilon()
+  //          || std::fabs(width-r.width) >
+  //          std::fabs(width)*std::numeric_limits<double>::epsilon()
+  //          || std::fabs(height-r.height) >
+  //          std::fabs(height)*std::numeric_limits<double>::epsilon());
   return !(*this == r);
 }
 
 /*!
  Intersection operator.
- \return Intersection rectangle or null rectangle if the two rectangles do not intersect.
+ \return Intersection rectangle or null rectangle if the two rectangles do not
+ intersect.
  */
-vpRect& vpRect::operator&=(const vpRect &r) {
+vpRect &vpRect::operator&=(const vpRect &r)
+{
   double x1 = (std::max)(left, r.left);
   double y1 = (std::max)(top, r.top);
-  width  = (std::min)(left + width, r.left + r.width) - x1;
+  width = (std::min)(left + width, r.left + r.width) - x1;
   height = (std::min)(top + height, r.top + r.height) - y1;
   left = x1;
   top = y1;
@@ -272,9 +285,11 @@ vpRect& vpRect::operator&=(const vpRect &r) {
 
 /*!
  Intersection operator.
- \return Intersection rectangle or null rectangle if the two rectangles do not intersect.
+ \return Intersection rectangle or null rectangle if the two rectangles do not
+ intersect.
  */
-vpRect vpRect::operator&(const vpRect &r) const {
+vpRect vpRect::operator&(const vpRect &r) const
+{
   vpRect a = *this;
   return a &= r;
 }
@@ -287,12 +302,15 @@ vpRect vpRect::operator&(const vpRect &r) const {
 
   \return Returns true if the point belongs to the rectangle.
 */
-VISP_EXPORT bool inRectangle( const vpImagePoint &ip, const vpRect &rect ) {
-  return ( ip.get_i() <= rect.getBottom() && ip.get_i() >= rect.getTop() && ip.get_j() <= rect.getRight() && ip.get_j() >= rect.getLeft());
+VISP_EXPORT bool inRectangle(const vpImagePoint &ip, const vpRect &rect)
+{
+  return (ip.get_i() <= rect.getBottom() && ip.get_i() >= rect.getTop() &&
+          ip.get_j() <= rect.getRight() && ip.get_j() >= rect.getLeft());
 }
 
-VISP_EXPORT std::ostream& operator<< (std::ostream &os, const vpRect& r)
- {
-  os << r.getLeft() << ", " << r.getTop() << ", " << r.getWidth() << ", " << r.getHeight();
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRect &r)
+{
+  os << r.getLeft() << ", " << r.getTop() << ", " << r.getWidth() << ", "
+     << r.getHeight();
   return os;
 }

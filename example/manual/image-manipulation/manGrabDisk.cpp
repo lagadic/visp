@@ -78,19 +78,17 @@ int main()
     g.setExtension("pgm");
 
     // Open the framegrabber by loading the first image of the sequence
-    g.open(I) ;
+    g.open(I);
 
     // this is the loop over the image sequence
-    for(int cpt = 0; cpt < 100; cpt++)
-    {
+    for (int cpt = 0; cpt < 100; cpt++) {
       // read the image and then increment the image counter so that the next
       // call to acquire(I) will get the next image
-      g.acquire(I) ;
+      g.acquire(I);
     }
 
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

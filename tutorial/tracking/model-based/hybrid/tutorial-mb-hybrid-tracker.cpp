@@ -1,41 +1,43 @@
 /*! \example tutorial-mb-hybrid-tracker.cpp */
+#include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/mbt/vpMbEdgeKltTracker.h>
 #include <visp3/io/vpVideoReader.h>
+#include <visp3/mbt/vpMbEdgeKltTracker.h>
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
   try {
     std::string videoname = "teabox.mpg";
 
-    for (int i=0; i<argc; i++) {
+    for (int i = 0; i < argc; i++) {
       if (std::string(argv[i]) == "--name")
-        videoname = std::string(argv[i+1]);
+        videoname = std::string(argv[i + 1]);
       else if (std::string(argv[i]) == "--help") {
-        std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--help]\n" << std::endl;
+        std::cout << "\nUsage: " << argv[0]
+                  << " [--name <video name>] [--help]\n"
+                  << std::endl;
         return 0;
       }
     }
     std::string parentname = vpIoTools::getParent(videoname);
     std::string objectname = vpIoTools::getNameWE(videoname);
 
-    if(! parentname.empty())
-       objectname = parentname + "/" + objectname;
+    if (!parentname.empty())
+      objectname = parentname + "/" + objectname;
 
     std::cout << "Video name: " << videoname << std::endl;
-    std::cout << "Tracker requested config files: " << objectname
-              << ".[init,"
+    std::cout << "Tracker requested config files: " << objectname << ".[init,"
 #ifdef VISP_HAVE_XML2
               << "xml,"
 #endif
               << "cao or wrl]" << std::endl;
-    std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
+    std::cout << "Tracker optional config files: " << objectname << ".[ppm]"
+              << std::endl;
 
     vpImage<unsigned char> I;
     vpCameraParameters cam;
@@ -46,11 +48,14 @@ int main(int argc, char** argv)
     g.open(I);
 
 #if defined(VISP_HAVE_X11)
-    vpDisplayX display(I,100,100,"Model-based hybrid tracker");;
+    vpDisplayX display(I, 100, 100, "Model-based hybrid tracker");
+    ;
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display(I,100,100,"Model-based hybrid tracker");;
+    vpDisplayGDI display(I, 100, 100, "Model-based hybrid tracker");
+    ;
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV display(I,100,100,"Model-based hybrid tracker");;
+    vpDisplayOpenCV display(I, 100, 100, "Model-based hybrid tracker");
+    ;
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
@@ -58,12 +63,12 @@ int main(int argc, char** argv)
     vpMbEdgeKltTracker tracker;
     bool usexml = false;
 #ifdef VISP_HAVE_XML2
-    if(vpIoTools::checkFilename(objectname + ".xml")) {
+    if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
     }
 #endif
-    if (! usexml) {
+    if (!usexml) {
       vpMe me;
       me.setMaskSize(5);
       me.setMaskNumber(180);
@@ -85,8 +90,8 @@ int main(int argc, char** argv)
       tracker.setMaskBorder(5);
       cam.initPersProjWithoutDistortion(839, 839, 325, 243);
       tracker.setCameraParameters(cam);
-      tracker.setAngleAppear( vpMath::rad(70) );
-      tracker.setAngleDisappear( vpMath::rad(80) );
+      tracker.setAngleAppear(vpMath::rad(70));
+      tracker.setAngleDisappear(vpMath::rad(80));
       tracker.setNearClippingDistance(0.1);
       tracker.setFarClippingDistance(100.0);
       tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
@@ -97,7 +102,7 @@ int main(int argc, char** argv)
     tracker.setDisplayFeatures(true);
     tracker.initClick(I, objectname + ".init", true);
 
-    while(! g.end()){
+    while (!g.end()) {
       g.acquire(I);
       vpDisplay::display(I);
       tracker.track(I);
@@ -119,18 +124,19 @@ int main(int argc, char** argv)
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 3)
     SoDB::finish();
 #endif
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
 #ifdef VISP_HAVE_OGRE
-  catch(Ogre::Exception &e) {
-    std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
+  catch (Ogre::Exception &e) {
+    std::cout << "Catch an Ogre exception: " << e.getDescription()
+              << std::endl;
   }
 #endif
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
+  std::cout << "Install OpenCV and rebuild ViSP to use this example."
+            << std::endl;
 #endif
 }

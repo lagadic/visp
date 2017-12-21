@@ -44,26 +44,27 @@
 
 #include <iostream>
 
-#include <visp3/sensor/vpOpenCVGrabber.h>
-#include <visp3/sensor/vpV4l2Grabber.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/ar/vpAROgre.h>
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/ar/vpAROgre.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpOpenCVGrabber.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
 
 int main()
 {
   try {
-#if defined(VISP_HAVE_OGRE) 
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OGRE)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) ||                  \
+    (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
     // Image to stock gathered data
     // Here we acquire a color image. The consequence will be that
     // the background texture used in Ogre renderer will be also in color.
     vpImage<vpRGBa> I;
 
-    // Now we try to find an available framegrabber
+// Now we try to find an available framegrabber
 #if defined(VISP_HAVE_V4L2)
     // Video for linux 2 grabber
     vpV4l2Grabber grabber;
@@ -77,7 +78,7 @@ int main()
 #elif defined(VISP_HAVE_OPENCV)
     // OpenCV to gather images
     cv::VideoCapture grabber(0); // open the default camera
-    if(!grabber.isOpened()) { // check if we succeeded
+    if (!grabber.isOpened()) {   // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
       return -1;
     }
@@ -91,7 +92,7 @@ int main()
     double py = 565;
     double u0 = I.getWidth() / 2;
     double v0 = I.getHeight() / 2;
-    vpCameraParameters cam(px,py,u0,v0);
+    vpCameraParameters cam(px, py, u0, v0);
     // The matrix with our pose
     // Defines the pose of the object in the camera frame
     vpHomogeneousMatrix cMo;
@@ -103,8 +104,8 @@ int main()
     // Initialisation
     // Here we load the requested plugins specified in the "plugins.cfg" file
     // and the resources specified in the "resources.cfg" file
-    // These two files can be found respectively in ViSP_HAVE_OGRE_PLUGINS_PATH
-    // and ViSP_HAVE_OGRE_RESOURCES_PATH folders
+    // These two files can be found respectively in
+    // ViSP_HAVE_OGRE_PLUGINS_PATH and ViSP_HAVE_OGRE_RESOURCES_PATH folders
     ogre.init(I);
 
     // Create a basic scene
@@ -117,15 +118,16 @@ int main()
     //  Here we use a mesh included in
     //  the installation files : a robot.
     // -----------------------------------
-    // Here we load the "robot.mesh" model that is found thanks to the resources locations
-    // specified in the "resources.cfg" file
+    // Here we load the "robot.mesh" model that is found thanks to the
+    // resources locations specified in the "resources.cfg" file
     ogre.load("Robot", "robot.mesh");
     // Modify robot scale and orientation
     // - downscale the size to have something completly visible in the image
     // - rotation of 180 deg along robot x axis to have head over feet
     // - rotation of -90 deg along y axis to have robot facing the camera
     ogre.setScale("Robot", 0.001f, 0.001f, 0.001f);
-    ogre.setRotation("Robot", vpRotationMatrix(vpRxyzVector(M_PI, -M_PI/2, 0)));
+    ogre.setRotation("Robot",
+                     vpRotationMatrix(vpRxyzVector(M_PI, -M_PI / 2, 0)));
 
     // Update projection matrix
     cMo[2][3] = 0.5; // Z = 0.5 meter
@@ -133,8 +135,8 @@ int main()
     std::cout << "cMo:\n" << cMo << std::endl;
 
     // Rendering loop, ended with on escape
-    while(ogre.continueRendering()){
-      // Acquire a new image
+    while (ogre.continueRendering()) {
+// Acquire a new image
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394)
       grabber.acquire(I);
 #elif defined(VISP_HAVE_OPENCV)
@@ -145,21 +147,20 @@ int main()
       // ...
       // cMo updated
       // Display the robot at the position specified by cMo with vpAROgre
-      ogre.display(I,cMo);
+      ogre.display(I, cMo);
     }
 #else
-    std::cout << "You need an available framegrabber to run this example" << std::endl;
+    std::cout << "You need an available framegrabber to run this example"
+              << std::endl;
 #endif
 #else
     std::cout << "You need Ogre3D to run this example" << std::endl;
 #endif
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
-  }
-  catch(...) {
+  } catch (...) {
     std::cout << "Catch an exception " << std::endl;
     return 1;
   }

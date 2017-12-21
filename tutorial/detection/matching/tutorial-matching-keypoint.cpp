@@ -1,13 +1,14 @@
 //! \example tutorial-matching-keypoint.cpp
 #include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/io/vpVideoReader.h>
 #include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpVideoReader.h>
 //! [Include]
 #include <visp3/vision/vpKeyPoint.h>
 //! [Include]
 
-int main() {
-  //! [Define]
+int main()
+{
+//! [Define]
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   //! [Define]
   vpImage<unsigned char> I;
@@ -19,27 +20,28 @@ int main() {
   //! [Construction]
   const std::string detectorName = "ORB";
   const std::string extractorName = "ORB";
-  //Hamming distance must be used with ORB
+  // Hamming distance must be used with ORB
   const std::string matcherName = "BruteForce-Hamming";
-  vpKeyPoint::vpFilterMatchingType filterType = vpKeyPoint::ratioDistanceThreshold;
+  vpKeyPoint::vpFilterMatchingType filterType =
+      vpKeyPoint::ratioDistanceThreshold;
   vpKeyPoint keypoint(detectorName, extractorName, matcherName, filterType);
-  std::cout << "Reference keypoints=" << keypoint.buildReference(I) << std::endl;
+  std::cout << "Reference keypoints=" << keypoint.buildReference(I)
+            << std::endl;
   //! [Construction]
 
   //! [Create image]
   vpImage<unsigned char> Idisp;
-  Idisp.resize(I.getHeight(), 2*I.getWidth());
+  Idisp.resize(I.getHeight(), 2 * I.getWidth());
   Idisp.insert(I, vpImagePoint(0, 0));
   Idisp.insert(I, vpImagePoint(0, I.getWidth()));
   //! [Create image]
   //! [Init display]
-  vpDisplayOpenCV d(Idisp, 0, 0, "Matching keypoints with ORB keypoints") ;
+  vpDisplayOpenCV d(Idisp, 0, 0, "Matching keypoints with ORB keypoints");
   vpDisplay::display(Idisp);
   vpDisplay::flush(Idisp);
   //! [Init display]
 
-  while ( ! reader.end() )
-  {
+  while (!reader.end()) {
     //! [Acquisition]
     reader.acquire(I);
     Idisp.insert(I, vpImagePoint(0, I.getWidth()));
@@ -47,7 +49,9 @@ int main() {
 
     //! [Display]
     vpDisplay::display(Idisp);
-    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()), vpImagePoint(I.getHeight(), I.getWidth()), vpColor::white, 2);
+    vpDisplay::displayLine(Idisp, vpImagePoint(0, I.getWidth()),
+                           vpImagePoint(I.getHeight(), I.getWidth()),
+                           vpColor::white, 2);
     //! [Display]
 
     //! [Matching]
@@ -58,12 +62,13 @@ int main() {
 
     //! [Get matches]
     vpImagePoint iPref, iPcur;
-    for (unsigned int i = 0; i < nbMatch; i++)
-    {
+    for (unsigned int i = 0; i < nbMatch; i++) {
       keypoint.getMatchedPoints(i, iPref, iPcur);
       //! [Get matches]
       //! [Display matches]
-      vpDisplay::displayLine(Idisp, iPref, iPcur + vpImagePoint(0, I.getWidth()), vpColor::green);
+      vpDisplay::displayLine(Idisp, iPref,
+                             iPcur + vpImagePoint(0, I.getWidth()),
+                             vpColor::green);
       //! [Display matches]
     }
     //! [Display flush]

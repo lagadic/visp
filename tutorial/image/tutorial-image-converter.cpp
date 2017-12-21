@@ -1,6 +1,6 @@
 /*! \example tutorial-image-converter.cpp */
-#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/io/vpImageIo.h>
 
 int main()
 {
@@ -16,11 +16,10 @@ int main()
     vpImage<unsigned char> I;
     vpImageConvert::convert(A, I);
 
-#  ifdef VISP_HAVE_PNG
+#ifdef VISP_HAVE_PNG
     vpImageIo::write(I, "monkey.png"); // Gray
-#  endif
-  }
-  catch(vpException &e) {
+#endif
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #endif

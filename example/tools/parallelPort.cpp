@@ -46,16 +46,16 @@
 #include <visp3/core/vpDebug.h>
 
 #if defined VISP_HAVE_PARPORT
-#include <stdlib.h>
-#include <stdio.h>
 #include <iostream>
 #include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include <visp3/io/vpParallelPort.h>
 #include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"d:h"
+#define GETOPTARGS "d:h"
 
 /*!
 
@@ -82,14 +82,12 @@ OPTIONS:                                               Default\n\
      Value should be in [0:255].\n\
 \n\
   -h\n\
-     Print the help.\n\n",
-	  data);
+     Print the help.\n\n", data);
 
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
-
 }
 
 /*!
@@ -106,7 +104,7 @@ OPTIONS:                                               Default\n\
 bool getOptions(int argc, const char **argv, unsigned char &data)
 {
   const char *optarg;
-  int	c;
+  int c;
 
   int value;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
@@ -117,19 +115,23 @@ bool getOptions(int argc, const char **argv, unsigned char &data)
       if ((value < 0) || (value > 255)) {
         usage(argv[0], optarg, data);
         std::cerr << "ERROR: " << std::endl;
-        std::cerr << "  Bad value \"-d " << optarg << "\""
-                  << std::endl << std::endl;
+        std::cerr << "  Bad value \"-d " << optarg << "\"" << std::endl
+                  << std::endl;
         return false;
-      }
-      else {
-        data = (unsigned char) value;
+      } else {
+        data = (unsigned char)value;
       }
       break;
     }
-    case 'h': usage(argv[0], NULL, data); return false; break;
+    case 'h':
+      usage(argv[0], NULL, data);
+      return false;
+      break;
 
     default:
-      usage(argv[0], optarg, data); return false; break;
+      usage(argv[0], optarg, data);
+      return false;
+      break;
     }
   }
 
@@ -149,15 +151,14 @@ bool getOptions(int argc, const char **argv, unsigned char &data)
   Send a data to the parallel port.
 
 */
-int
-main(int argc, const char **argv)
+int main(int argc, const char **argv)
 {
   // data to send to the parallel port
   unsigned char data = 0;
 
   // Read the command line options
   if (getOptions(argc, argv, data) == false) {
-    exit (-1);
+    exit(-1);
   }
   try {
 
@@ -166,10 +167,8 @@ main(int argc, const char **argv)
     printf("Send data \"%d\" to the parallel port\n", data);
     parport.sendData(data);
 
-
-  }
-  catch (vpParallelPortException &e) {
-    switch(e.getCode()) {
+  } catch (vpParallelPortException &e) {
+    switch (e.getCode()) {
     case vpParallelPortException::opening:
       printf("Can't open the parallel port\n");
       break;
@@ -177,17 +176,16 @@ main(int argc, const char **argv)
       printf("Can't close the parallel port\n");
       break;
     }
-  }
-  catch(...) {
+  } catch (...) {
     printf("An error occurs...\n");
   }
   return 0;
 }
 #else
-int
-main()
+int main()
 {
-  vpTRACE("Sorry, for the moment, vpParallelPort class works only on unix...");
+  vpTRACE(
+      "Sorry, for the moment, vpParallelPort class works only on unix...");
   return 0;
 }
 #endif

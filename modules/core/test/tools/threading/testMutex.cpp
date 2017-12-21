@@ -51,21 +51,23 @@
 
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 
-int thread_counter=0;
+int thread_counter = 0;
 vpMutex mutex;
 
 vpThread::Return doSomeThing(vpThread::Args args)
 {
   mutex.lock();
-  unsigned int thread_id = *((unsigned int *) args);
+  unsigned int thread_id = *((unsigned int *)args);
 
-  std::cout << "Started job " << thread_counter << " with id " << thread_id << std::endl;
+  std::cout << "Started job " << thread_counter << " with id " << thread_id
+            << std::endl;
 
-  for(unsigned long i=0; i<(0xFFFF);i++) {};
+  for (unsigned long i = 0; i < (0xFFFF); i++) {
+  };
 
   std::cout << "Ended job " << thread_counter << std::endl;
 
-  thread_counter ++;
+  thread_counter++;
   mutex.unlock();
 
   return 0;
@@ -73,18 +75,18 @@ vpThread::Return doSomeThing(vpThread::Args args)
 
 int main(void)
 {
-  unsigned int nthread=10;
-  vpThread *thread = new vpThread [nthread];
-  unsigned int *thread_id = new unsigned int [nthread];
+  unsigned int nthread = 10;
+  vpThread *thread = new vpThread[nthread];
+  unsigned int *thread_id = new unsigned int[nthread];
 
-  for(unsigned int i=0; i<nthread; i++)
-  {
+  for (unsigned int i = 0; i < nthread; i++) {
     thread_id[i] = i;
-    thread[i].create((vpThread::Fn)&doSomeThing, (vpThread::Args)&thread_id[i]);
+    thread[i].create((vpThread::Fn)&doSomeThing,
+                     (vpThread::Args)&thread_id[i]);
   }
 
-  delete [] thread;
-  delete [] thread_id;
+  delete[] thread;
+  delete[] thread_id;
 
   return 0;
 }
@@ -92,10 +94,13 @@ int main(void)
 #else
 int main()
 {
-#  if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
-#  else
-  std::cout << "Multi-threading seems not supported on this platform" << std::endl;
-#  endif
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::cout << "You should enable pthread usage and rebuild ViSP..."
+            << std::endl;
+#else
+  std::cout << "Multi-threading seems not supported on this platform"
+            << std::endl;
+#endif
 }
 #endif

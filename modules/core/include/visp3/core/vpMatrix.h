@@ -39,18 +39,18 @@
 #ifndef vpMatrix_H
 #define vpMatrix_H
 
+#include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpTime.h>
-#include <visp3/core/vpArray2D.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/core/vpForceTwistMatrix.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpTime.h>
+#include <visp3/core/vpVelocityTwistMatrix.h>
 
 #ifdef VISP_HAVE_GSL
-#  include <gsl/gsl_math.h>
-#  include <gsl/gsl_eigen.h>
+#include <gsl/gsl_eigen.h>
+#include <gsl/gsl_math.h>
 #endif
 
 #include <iostream>
@@ -76,40 +76,46 @@ class vpForceTwistMatrix;
 
   \brief Implementation of a matrix and operations on matrices.
 
-  This class needs one of the following third-party to compute matrix inverse, pseudo-inverse,
-  singular value decomposition, determinant:
-  - If Lapack is installed and detected by ViSP, this 3rd party is used by vpMatrix.
-    Installation instructions are provided here https://visp.inria.fr/3rd_lapack;
-  - else if Eigen3 is installed and detected by ViSP, this 3rd party is used by vpMatrix.
-    Installation instructions are provided here https://visp.inria.fr/3rd_eigen;
+  This class needs one of the following third-party to compute matrix inverse,
+  pseudo-inverse, singular value decomposition, determinant:
+  - If Lapack is installed and detected by ViSP, this 3rd party is used by
+  vpMatrix. Installation instructions are provided here
+  https://visp.inria.fr/3rd_lapack;
+  - else if Eigen3 is installed and detected by ViSP, this 3rd party is used
+  by vpMatrix. Installation instructions are provided here
+  https://visp.inria.fr/3rd_eigen;
   - else if OpenCV is installed and detected by ViSP, this 3rd party is used,
-    Installation instructions are provided here https://visp.inria.fr/3rd_opencv;
-  - else if GSL is installed and detected by ViSP, we use this other 3rd party.
-    Installation instructions are provided here https://visp.inria.fr/3rd_gsl.
-  - If none of these previous 3rd parties is installed, we use by default a Lapack built-in version.
+    Installation instructions are provided here
+  https://visp.inria.fr/3rd_opencv;
+  - else if GSL is installed and detected by ViSP, we use this other 3rd
+  party. Installation instructions are provided here
+  https://visp.inria.fr/3rd_gsl.
+  - If none of these previous 3rd parties is installed, we use by default a
+  Lapack built-in version.
 
   vpMatrix class provides a data structure for the matrices as well
   as a set of operations on these matrices.
 
   The vpMatrix class is derived from vpArray2D<double>.
 
-  \sa vpArray2D, vpRowVector, vpColVector, vpHomogeneousMatrix, vpRotationMatrix,
-  vpVelocityTwistMatrix, vpForceTwistMatrix, vpHomography
+  \sa vpArray2D, vpRowVector, vpColVector, vpHomogeneousMatrix,
+  vpRotationMatrix, vpVelocityTwistMatrix, vpForceTwistMatrix, vpHomography
 */
 class VISP_EXPORT vpMatrix : public vpArray2D<double>
 {
- public:
+public:
   /*!
     Method used to compute the determinant of a square matrix.
     \sa det()
   */
   typedef enum {
-    LU_DECOMPOSITION     /*!< LU decomposition method. */
+    LU_DECOMPOSITION /*!< LU decomposition method. */
   } vpDetMethod;
 
- public:
+public:
   /*!
-    Basic constructor of a matrix of double. Number of columns and rows are zero.
+    Basic constructor of a matrix of double. Number of columns and rows are
+    zero.
   */
   vpMatrix() : vpArray2D<double>(0, 0) {}
   /*!
@@ -126,24 +132,24 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
     \param c : Matrix number of columns.
     \param val : Each element of the matrix is set to \e val.
   */
-  vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) {}
+  vpMatrix(unsigned int r, unsigned int c, double val)
+    : vpArray2D<double>(r, c, val)
+  {
+  }
   vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c,
            unsigned int nrows, unsigned int ncols);
   /*!
-     Create a matrix from a 2D array that could be one of the following container that
-     inherit from vpArray2D such as vpMatrix, vpRotationMatrix, vpHomogeneousMatrix,
-     vpPoseVector, vpColVector, vpRowVector...
+     Create a matrix from a 2D array that could be one of the following
+     container that inherit from vpArray2D such as vpMatrix, vpRotationMatrix,
+     vpHomogeneousMatrix, vpPoseVector, vpColVector, vpRowVector...
 
-     The following example shows how to create a matrix from an homogeneous matrix:
-     \code
-     vpRotationMatrix R;
-     vpMatrix M(R);
-     \endcode
+     The following example shows how to create a matrix from an homogeneous
+     matrix: \code vpRotationMatrix R; vpMatrix M(R); \endcode
    */
-  vpMatrix(const vpArray2D<double>& A) : vpArray2D<double>(A) {}
+  vpMatrix(const vpArray2D<double> &A) : vpArray2D<double>(A) {}
 
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
-  vpMatrix(const vpMatrix& A) : vpArray2D<double>(A) {}
+  vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) {}
 
   vpMatrix(vpMatrix &&A);
 #endif
@@ -157,14 +163,14 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   */
   void clear()
   {
-    if (data != NULL ) {
+    if (data != NULL) {
       free(data);
-      data=NULL;
+      data = NULL;
     }
 
-    if (rowPtrs!=NULL) {
+    if (rowPtrs != NULL) {
       free(rowPtrs);
-      rowPtrs=NULL;
+      rowPtrs = NULL;
     }
     rowNum = colNum = dsize = 0;
   }
@@ -188,7 +194,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //---------------------------------
   /** @name Assignment operators */
   //@{
-  vpMatrix &operator<<(double*);
+  vpMatrix &operator<<(double *);
   vpMatrix &operator=(const vpArray2D<double> &A);
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
   vpMatrix &operator=(const vpMatrix &A);
@@ -202,17 +208,18 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //-------------------------------------------------
   /** @name Stacking  */
   //@{
-  // Stack the matrix A below the current one, copy if not initialized this = [ this A ]^T
+  // Stack the matrix A below the current one, copy if not initialized this =
+  // [ this A ]^T
   void stack(const vpMatrix &A);
   void stack(const vpRowVector &r);
   // Stacks columns of a matrix in a vector
-  void stackColumns(vpColVector &out );
+  void stackColumns(vpColVector &out);
 
   // Stacks columns of a matrix in a vector
   vpColVector stackColumns();
 
   // Stacks columns of a matrix in a vector
-  void stackRows(vpRowVector  &out );
+  void stackRows(vpRowVector &out);
 
   // Stacks columns of a matrix in a vector
   vpRowVector stackRows();
@@ -224,7 +231,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Matrix insertion */
   //@{
   // Insert matrix A in the current matrix at the given position (r, c).
-  void insert(const vpMatrix&A, const unsigned int r, const unsigned int c);
+  void insert(const vpMatrix &A, const unsigned int r, const unsigned int c);
   //@}
 
   //-------------------------------------------------
@@ -232,12 +239,16 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //-------------------------------------------------
   /** @name Columns, rows, sub-matrices extraction */
   //@{
-  vpMatrix extract(unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols) const;
+  vpMatrix extract(unsigned int r, unsigned int c, unsigned int nrows,
+                   unsigned int ncols) const;
   vpColVector getCol(const unsigned int j) const;
-  vpColVector getCol(const unsigned int j, const unsigned int i_begin, const unsigned int size) const;
+  vpColVector getCol(const unsigned int j, const unsigned int i_begin,
+                     const unsigned int size) const;
   vpRowVector getRow(const unsigned int i) const;
-  vpRowVector getRow(const unsigned int i, const unsigned int j_begin, const unsigned int size) const;
-  void init(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols);
+  vpRowVector getRow(const unsigned int i, const unsigned int j_begin,
+                     const unsigned int size) const;
+  void init(const vpMatrix &M, unsigned int r, unsigned int c,
+            unsigned int nrows, unsigned int ncols);
   //@}
 
   //---------------------------------
@@ -249,21 +260,21 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   double det(vpDetMethod method = LU_DECOMPOSITION) const;
   double detByLU() const;
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#  ifdef VISP_HAVE_EIGEN3
+#ifdef VISP_HAVE_EIGEN3
   double detByLUEigen3() const;
-#  endif
-#  ifdef VISP_HAVE_GSL
+#endif
+#ifdef VISP_HAVE_GSL
   double detByLUGsl() const;
-#  endif
-#  ifdef VISP_HAVE_LAPACK
+#endif
+#ifdef VISP_HAVE_LAPACK
   double detByLULapack() const;
-#  endif
-#  if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   double detByLUOpenCV() const;
-#  endif
+#endif
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-  //Compute the exponential matrix of a square matrix
+  // Compute the exponential matrix of a square matrix
   vpMatrix expm() const;
 
   // operation A = A + B
@@ -274,7 +285,8 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   vpMatrix operator*(const vpRotationMatrix &R) const;
   vpMatrix operator*(const vpVelocityTwistMatrix &V) const;
   vpMatrix operator*(const vpForceTwistMatrix &V) const;
-  // operation t_out = A * t (A is unchanged, t and t_out are translation vectors)
+  // operation t_out = A * t (A is unchanged, t and t_out are translation
+  // vectors)
   vpTranslationVector operator*(const vpTranslationVector &tv) const;
   vpColVector operator*(const vpColVector &v) const;
   vpMatrix operator+(const vpMatrix &B) const;
@@ -315,10 +327,10 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Kronecker product  */
   //@{
   // Compute Kronecker product matrix
-  void kron(const vpMatrix  &m1, vpMatrix  &out) const;
+  void kron(const vpMatrix &m1, vpMatrix &out) const;
 
   // Compute Kronecker product matrix
-  vpMatrix kron(const vpMatrix  &m1) const;
+  vpMatrix kron(const vpMatrix &m1) const;
   //@}
 
   //-------------------------------------------------
@@ -330,8 +342,8 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   vpMatrix t() const;
 
   // Compute the transpose C = A^T
-  vpMatrix transpose()const;
-  void  transpose(vpMatrix & C )const;
+  vpMatrix transpose() const;
+  void transpose(vpMatrix &C) const;
 
   vpMatrix AAt() const;
   void AAt(vpMatrix &B) const;
@@ -349,72 +361,94 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   vpMatrix inverseByLU() const;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#  if defined(VISP_HAVE_EIGEN3)
+#if defined(VISP_HAVE_EIGEN3)
   vpMatrix inverseByLUEigen3() const;
-#  endif
-#  if defined(VISP_HAVE_GSL)
+#endif
+#if defined(VISP_HAVE_GSL)
   vpMatrix inverseByLUGsl() const;
-#  endif
-#  if defined(VISP_HAVE_LAPACK)
+#endif
+#if defined(VISP_HAVE_LAPACK)
   vpMatrix inverseByLULapack() const;
-#  endif
-#  if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   vpMatrix inverseByLUOpenCV() const;
-#  endif
+#endif
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-  // inverse matrix A using the Cholesky decomposition (only for real symmetric matrices)
+  // inverse matrix A using the Cholesky decomposition (only for real
+  // symmetric matrices)
   vpMatrix inverseByCholesky() const;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#  if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK)
   vpMatrix inverseByCholeskyLapack() const;
-#  endif
-#  if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   vpMatrix inverseByCholeskyOpenCV() const;
-#  endif
+#endif
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   // inverse matrix A using the QR decomposition
   vpMatrix inverseByQR() const;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#  if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK)
   vpMatrix inverseByQRLapack() const;
-#  endif
+#endif
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-  vpMatrix pseudoInverse(double svThreshold=1e-6) const;
-  unsigned int pseudoInverse(vpMatrix &Ap, double svThreshold=1e-6) const;
-  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const;
-  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt) const;
-  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+  vpMatrix pseudoInverse(double svThreshold = 1e-6) const;
+  unsigned int pseudoInverse(vpMatrix &Ap, double svThreshold = 1e-6) const;
+  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv,
+                             double svThreshold = 1e-6) const;
+  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv,
+                             double svThreshold, vpMatrix &imA,
+                             vpMatrix &imAt) const;
+  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv,
+                             double svThreshold, vpMatrix &imA,
+                             vpMatrix &imAt, vpMatrix &kerAt) const;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#  if defined(VISP_HAVE_LAPACK)
-  vpMatrix pseudoInverseLapack(double svThreshold=1e-6) const;
-  unsigned int pseudoInverseLapack(vpMatrix &Ap, double svThreshold=1e-6) const;
-  unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const;
-  unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
-#  endif
-#  if defined(VISP_HAVE_EIGEN3)
-  vpMatrix pseudoInverseEigen3(double svThreshold=1e-6) const;
-  unsigned int pseudoInverseEigen3(vpMatrix &Ap, double svThreshold=1e-6) const;
-  unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const;
-  unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
-#  endif
-#  if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-  vpMatrix pseudoInverseOpenCV(double svThreshold=1e-6) const;
-  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, double svThreshold=1e-6) const;
-  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const;
-  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
-#  endif
-#  if defined(VISP_HAVE_GSL)
-  vpMatrix pseudoInverseGsl(double svThreshold=1e-6) const;
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, double svThreshold=1e-6) const;
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold=1e-6) const;
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
-#  endif
+#if defined(VISP_HAVE_LAPACK)
+  vpMatrix pseudoInverseLapack(double svThreshold = 1e-6) const;
+  unsigned int pseudoInverseLapack(vpMatrix &Ap,
+                                   double svThreshold = 1e-6) const;
+  unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv,
+                                   double svThreshold = 1e-6) const;
+  unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv,
+                                   double svThreshold, vpMatrix &imA,
+                                   vpMatrix &imAt, vpMatrix &kerAt) const;
+#endif
+#if defined(VISP_HAVE_EIGEN3)
+  vpMatrix pseudoInverseEigen3(double svThreshold = 1e-6) const;
+  unsigned int pseudoInverseEigen3(vpMatrix &Ap,
+                                   double svThreshold = 1e-6) const;
+  unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv,
+                                   double svThreshold = 1e-6) const;
+  unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv,
+                                   double svThreshold, vpMatrix &imA,
+                                   vpMatrix &imAt, vpMatrix &kerAt) const;
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+  vpMatrix pseudoInverseOpenCV(double svThreshold = 1e-6) const;
+  unsigned int pseudoInverseOpenCV(vpMatrix &Ap,
+                                   double svThreshold = 1e-6) const;
+  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv,
+                                   double svThreshold = 1e-6) const;
+  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv,
+                                   double svThreshold, vpMatrix &imA,
+                                   vpMatrix &imAt, vpMatrix &kerAt) const;
+#endif
+#if defined(VISP_HAVE_GSL)
+  vpMatrix pseudoInverseGsl(double svThreshold = 1e-6) const;
+  unsigned int pseudoInverseGsl(vpMatrix &Ap,
+                                double svThreshold = 1e-6) const;
+  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv,
+                                double svThreshold = 1e-6) const;
+  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv,
+                                double svThreshold, vpMatrix &imA,
+                                vpMatrix &imAt, vpMatrix &kerAt) const;
+#endif
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   //@}
@@ -426,7 +460,7 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name SVD decomposition  */
   //@{
   double cond() const;
-  unsigned int kernel(vpMatrix &kerAt, double svThreshold=1e-6) const;
+  unsigned int kernel(vpMatrix &kerAt, double svThreshold = 1e-6) const;
 
   // solve Ax=B using the SVD decomposition (usage A = solveBySVD(B,x) )
   void solveBySVD(const vpColVector &B, vpColVector &x) const;
@@ -436,18 +470,18 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   // singular value decomposition SVD
   void svd(vpColVector &w, vpMatrix &V);
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#  ifdef VISP_HAVE_EIGEN3
+#ifdef VISP_HAVE_EIGEN3
   void svdEigen3(vpColVector &w, vpMatrix &V);
-#  endif
-#  ifdef VISP_HAVE_GSL
+#endif
+#ifdef VISP_HAVE_GSL
   void svdGsl(vpColVector &w, vpMatrix &V);
-#  endif
-#  ifdef VISP_HAVE_LAPACK
+#endif
+#ifdef VISP_HAVE_LAPACK
   void svdLapack(vpColVector &w, vpMatrix &V);
-#  endif
-#  if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
   void svdOpenCV(vpColVector &w, vpMatrix &V);
-#  endif
+#endif
 #endif
   //@}
 
@@ -476,12 +510,18 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //---------------------------------
   /** @name Printing  */
   //@{
-  std::ostream & cppPrint(std::ostream & os, const std::string &matrixName = "A", bool octet = false) const;
-  std::ostream & csvPrint(std::ostream & os) const;
-  std::ostream & maplePrint(std::ostream & os) const;
-  std::ostream & matlabPrint(std::ostream & os) const;
-  int print(std::ostream& s, unsigned int length, char const* intro=0) const;
-  void printSize() const { std::cout << getRows() <<" x " << getCols() <<"  " ; }
+  std::ostream &cppPrint(std::ostream &os,
+                         const std::string &matrixName = "A",
+                         bool octet = false) const;
+  std::ostream &csvPrint(std::ostream &os) const;
+  std::ostream &maplePrint(std::ostream &os) const;
+  std::ostream &matlabPrint(std::ostream &os) const;
+  int print(std::ostream &s, unsigned int length,
+            char const *intro = 0) const;
+  void printSize() const
+  {
+    std::cout << getRows() << " x " << getCols() << "  ";
+  }
   //@}
 
   //------------------------------------------------------------------
@@ -503,9 +543,12 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Matrix insertion with Static Public Member Functions  */
   //@{
   // Insert matrix B in matrix A at the given position (r, c).
-  static vpMatrix insert(const vpMatrix &A,const  vpMatrix &B, const unsigned int r, const unsigned int c);
-  // Insert matrix B in matrix A (not modified) at the given position (r, c), the result is given in matrix C.
-  static void insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C, const unsigned int r, const unsigned int c);
+  static vpMatrix insert(const vpMatrix &A, const vpMatrix &B,
+                         const unsigned int r, const unsigned int c);
+  // Insert matrix B in matrix A (not modified) at the given position (r, c),
+  // the result is given in matrix C.
+  static void insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C,
+                     const unsigned int r, const unsigned int c);
 
   //---------------------------------
   // Stacking with Static Public Member Functions
@@ -513,9 +556,10 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Stacking with Static Public Member Functions  */
   //@{
   // Juxtapose to matrices C = [ A B ]
-  static vpMatrix juxtaposeMatrices(const vpMatrix &A,const  vpMatrix &B);
+  static vpMatrix juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B);
   // Juxtapose to matrices C = [ A B ]
-  static void juxtaposeMatrices(const vpMatrix &A,const  vpMatrix &B, vpMatrix &C);
+  static void juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B,
+                                vpMatrix &C);
   // Stack two matrices C = [ A B ]^T
   static vpMatrix stack(const vpMatrix &A, const vpMatrix &B);
   static vpMatrix stack(const vpMatrix &A, const vpRowVector &r);
@@ -531,17 +575,27 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Matrix operations with Static Public Member Functions  */
   //@{
   static void add2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
-  static void add2Matrices(const vpColVector &A, const vpColVector &B, vpColVector &C);
-  static void add2WeightedMatrices(const vpMatrix &A, const double &wA, const vpMatrix &B,const double &wB, vpMatrix &C);
-  static void computeHLM(const vpMatrix &H, const double &alpha, vpMatrix &HLM);
-  static void mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
-  static void mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpRotationMatrix &C);
-  static void mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpHomogeneousMatrix &C);
-  static void mult2Matrices(const vpMatrix &A, const vpColVector &B, vpColVector &C);
-  static void multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVector &w);
+  static void add2Matrices(const vpColVector &A, const vpColVector &B,
+                           vpColVector &C);
+  static void add2WeightedMatrices(const vpMatrix &A, const double &wA,
+                                   const vpMatrix &B, const double &wB,
+                                   vpMatrix &C);
+  static void computeHLM(const vpMatrix &H, const double &alpha,
+                         vpMatrix &HLM);
+  static void mult2Matrices(const vpMatrix &A, const vpMatrix &B,
+                            vpMatrix &C);
+  static void mult2Matrices(const vpMatrix &A, const vpMatrix &B,
+                            vpRotationMatrix &C);
+  static void mult2Matrices(const vpMatrix &A, const vpMatrix &B,
+                            vpHomogeneousMatrix &C);
+  static void mult2Matrices(const vpMatrix &A, const vpColVector &B,
+                            vpColVector &C);
+  static void multMatrixVector(const vpMatrix &A, const vpColVector &v,
+                               vpColVector &w);
   static void negateMatrix(const vpMatrix &A, vpMatrix &C);
   static void sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C);
-  static void sub2Matrices(const vpColVector &A, const vpColVector &B, vpColVector &C);
+  static void sub2Matrices(const vpColVector &A, const vpColVector &B,
+                           vpColVector &C);
   //@}
 
   //---------------------------------
@@ -550,10 +604,10 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   /** @name Kronecker product with Static Public Member Functions  */
   //@{
   // Compute Kronecker product matrix
-  static void kron(const vpMatrix  &m1, const vpMatrix  &m2 , vpMatrix  &out);
+  static void kron(const vpMatrix &m1, const vpMatrix &m2, vpMatrix &out);
 
   // Compute Kronecker product matrix
-  static vpMatrix kron(const vpMatrix  &m1, const vpMatrix  &m2 );
+  static vpMatrix kron(const vpMatrix &m1, const vpMatrix &m2);
   //@}
 
   //---------------------------------
@@ -561,10 +615,20 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   //---------------------------------
   /** @name Covariance computation with Static Public Member Functions  */
   //@{
-  static vpMatrix computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b);
-  static vpMatrix computeCovarianceMatrix(const vpMatrix &A, const vpColVector &x, const vpColVector &b, const vpMatrix &w);
-  static vpMatrix computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls, const vpMatrix &W);
-  static vpMatrix computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls);
+  static vpMatrix computeCovarianceMatrix(const vpMatrix &A,
+                                          const vpColVector &x,
+                                          const vpColVector &b);
+  static vpMatrix computeCovarianceMatrix(const vpMatrix &A,
+                                          const vpColVector &x,
+                                          const vpColVector &b,
+                                          const vpMatrix &w);
+  static vpMatrix computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo,
+                                             const vpColVector &deltaS,
+                                             const vpMatrix &Ls,
+                                             const vpMatrix &W);
+  static vpMatrix computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo,
+                                             const vpColVector &deltaS,
+                                             const vpMatrix &Ls);
   //@}
 
   //---------------------------------
@@ -577,19 +641,23 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 
     \param filename : absolute file name.
     \param M : matrix to be loaded.
-    \param binary :If true the matrix is loaded from a binary file, else from a text file.
-    \param header : Header of the file is loaded in this parameter
+    \param binary :If true the matrix is loaded from a binary file, else from
+    a text file. \param header : Header of the file is loaded in this
+    parameter
 
     \return Returns true if no problem appends.
   */
-  static inline bool loadMatrix(const std::string &filename, vpArray2D<double> &M,
-                                const bool binary = false, char *header = NULL)
+  static inline bool loadMatrix(const std::string &filename,
+                                vpArray2D<double> &M,
+                                const bool binary = false,
+                                char *header = NULL)
   {
     return vpArray2D<double>::load(filename, M, binary, header);
   }
 
   /*!
-    Load a matrix from a YAML-formatted file. This function overloads vpArray2D::loadYAML().
+    Load a matrix from a YAML-formatted file. This function overloads
+    vpArray2D::loadYAML().
 
     \param filename : absolute file name.
     \param M : matrix to be loaded from the file.
@@ -597,7 +665,8 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 
     \return Returns true if no problem appends.
   */
-  static inline bool loadMatrixYAML(const std::string &filename, vpArray2D<double> &M, char *header = NULL)
+  static inline bool loadMatrixYAML(const std::string &filename,
+                                    vpArray2D<double> &M, char *header = NULL)
   {
     return vpArray2D<double>::loadYAML(filename, M, header);
   }
@@ -607,14 +676,17 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
 
     \param filename : absolute file name.
     \param M : matrix to be saved.
-    \param binary : If true the matrix is save in a binary file, else a text file.
-    \param header : optional line that will be saved at the beginning of the file.
+    \param binary : If true the matrix is save in a binary file, else a text
+    file. \param header : optional line that will be saved at the beginning of
+    the file.
 
     \return Returns true if no problem appends.
 
-    Warning : If you save the matrix as in a text file the precision is less than if you save it in a binary file.
+    Warning : If you save the matrix as in a text file the precision is less
+    than if you save it in a binary file.
   */
-  static inline bool saveMatrix(const std::string &filename, const vpArray2D<double> &M,
+  static inline bool saveMatrix(const std::string &filename,
+                                const vpArray2D<double> &M,
                                 const bool binary = false,
                                 const char *header = "")
   {
@@ -622,21 +694,24 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   }
 
   /*!
-    Save a matrix in a YAML-formatted file. This function overloads vpArray2D::saveYAML().
+    Save a matrix in a YAML-formatted file. This function overloads
+    vpArray2D::saveYAML().
 
     \param filename : absolute file name.
     \param M : matrix to be saved in the file.
-    \param header : optional lines that will be saved at the beginning of the file. Should be YAML-formatted and will adapt to the indentation if any.
+    \param header : optional lines that will be saved at the beginning of the
+    file. Should be YAML-formatted and will adapt to the indentation if any.
 
     \return Returns true if success.
 
   */
-  static inline bool saveMatrixYAML(const std::string &filename, const vpArray2D<double> &M, const char *header = "")
+  static inline bool saveMatrixYAML(const std::string &filename,
+                                    const vpArray2D<double> &M,
+                                    const char *header = "")
   {
     return vpArray2D<double>::saveYAML(filename, M, header);
   }
-  //@}
-
+//@}
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -644,61 +719,86 @@ class VISP_EXPORT vpMatrix : public vpArray2D<double>
   */
   //@{
   /*!
-     \deprecated Only provided for compatibilty with ViSP previous releases. This function does nothing.
+     \deprecated Only provided for compatibilty with ViSP previous releases.
+     This function does nothing.
    */
-  vp_deprecated void init() { }
+  vp_deprecated void init() {}
 
   /*!
      \deprecated You should rather use stack(const vpMatrix &A)
    */
   vp_deprecated void stackMatrices(const vpMatrix &A) { stack(A); }
   /*!
-     \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix &B)
+     \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix
+     &B)
    */
-  vp_deprecated static vpMatrix stackMatrices(const vpMatrix &A, const vpMatrix &B) { return stack(A, B); }
+  vp_deprecated static vpMatrix stackMatrices(const vpMatrix &A,
+                                              const vpMatrix &B)
+  {
+    return stack(A, B);
+  }
   /*!
-     \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
+     \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix
+     &B, vpMatrix &C)
    */
-  vp_deprecated static void stackMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C) { stack(A, B, C); }
+  vp_deprecated static void stackMatrices(const vpMatrix &A,
+                                          const vpMatrix &B, vpMatrix &C)
+  {
+    stack(A, B, C);
+  }
   /*!
-     \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix &B)
+     \deprecated You should rather use stack(const vpMatrix &A, const vpMatrix
+     &B)
    */
-  vp_deprecated static vpMatrix stackMatrices(const vpMatrix &A, const vpRowVector &B);
+  vp_deprecated static vpMatrix stackMatrices(const vpMatrix &A,
+                                              const vpRowVector &B);
   /*!
-     \deprecated You should rather use stack(const vpMatrix &A, const vpRowVector &B, vpMatrix &C)
+     \deprecated You should rather use stack(const vpMatrix &A, const
+     vpRowVector &B, vpMatrix &C)
    */
-  vp_deprecated static void stackMatrices(const vpMatrix &A, const vpRowVector &B, vpMatrix &C);
+  vp_deprecated static void stackMatrices(const vpMatrix &A,
+                                          const vpRowVector &B, vpMatrix &C);
   /*!
-     \deprecated You should rather use vpColVector::stack(const vpColVector &A, const vpColVector &B)
+     \deprecated You should rather use vpColVector::stack(const vpColVector
+     &A, const vpColVector &B)
    */
-  vp_deprecated static vpMatrix stackMatrices(const vpColVector &A, const vpColVector &B);
+  vp_deprecated static vpMatrix stackMatrices(const vpColVector &A,
+                                              const vpColVector &B);
   /*!
-     \deprecated You should rather use vpColVector::stack(const vpColVector &A, const vpColVector &B, vpColVector &C)
+     \deprecated You should rather use vpColVector::stack(const vpColVector
+     &A, const vpColVector &B, vpColVector &C)
    */
-  vp_deprecated static void stackMatrices(const vpColVector &A, const vpColVector &B, vpColVector &C);
+  vp_deprecated static void
+  stackMatrices(const vpColVector &A, const vpColVector &B, vpColVector &C);
 
   /*!
      \deprecated You should rather use diag(const double &)
    */
-  vp_deprecated void setIdentity(const double & val=1.0);
+  vp_deprecated void setIdentity(const double &val = 1.0);
 
   vp_deprecated vpRowVector row(const unsigned int i);
   vp_deprecated vpColVector column(const unsigned int j);
 
-  //@}
+//@}
 #endif
 
- private:
+private:
 #if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
-  static void blas_dgemm(char trans_a, char trans_b, const int M, const int N, const int K, double alpha, double * a_data,
-                         const int lda, double * b_data, const int ldb, double beta, double * c_data, const int ldc);
-  static void blas_dgemv(char trans, const int M, const int N, double alpha, double * a_data, const int lda, double * x_data,
-                         const int incx, double beta, double * y_data, const int incy);
+  static void blas_dgemm(char trans_a, char trans_b, const int M, const int N,
+                         const int K, double alpha, double *a_data,
+                         const int lda, double *b_data, const int ldb,
+                         double beta, double *c_data, const int ldc);
+  static void blas_dgemv(char trans, const int M, const int N, double alpha,
+                         double *a_data, const int lda, double *x_data,
+                         const int incx, double beta, double *y_data,
+                         const int incy);
 #endif
 
-  static void computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls, vpMatrix &Js, vpColVector &deltaP);
+  static void computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo,
+                                         const vpColVector &deltaS,
+                                         const vpMatrix &Ls, vpMatrix &Js,
+                                         vpColVector &deltaP);
 };
-
 
 //////////////////////////////////////////////////////////////////////////
 

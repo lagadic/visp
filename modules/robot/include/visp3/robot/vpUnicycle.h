@@ -42,7 +42,6 @@
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
-
 /*!
 
   \class vpUnicycle
@@ -60,13 +59,11 @@ public:
   /*!
     Default constructor that does nothing.
     */
-  vpUnicycle() : cMe_(), eJe_()
-  {
-  };
+  vpUnicycle() : cMe_(), eJe_(){};
   /*!
     Destructor that does nothing.
     */
-  virtual ~vpUnicycle() {};
+  virtual ~vpUnicycle(){};
 
   /** @name Inherited functionalities from vpUnicycle */
   //@{
@@ -74,73 +71,61 @@ public:
     Return the tranformation \f${^c}{\bf M}_e\f$ between the camera frame
     and the mobile robot end effector frame.
     */
-  vpHomogeneousMatrix get_cMe() const
-  {
-    return cMe_;
-  }
+  vpHomogeneousMatrix get_cMe() const { return cMe_; }
 
   /*!
 
     Return the twist transformation from camera frame to the mobile robot
-    end effector frame.  This transformation allows to compute a velocity expressed
-    in the end effector frame into the camera frame.
+    end effector frame.  This transformation allows to compute a velocity
+    expressed in the end effector frame into the camera frame.
   */
   vpVelocityTwistMatrix get_cVe() const
   {
     vpVelocityTwistMatrix cVe;
-    cVe.buildFrom(cMe_) ;
+    cVe.buildFrom(cMe_);
     return cVe;
   }
 
   /*!
 
     Return the twist transformation from camera frame to the mobile robot
-    end effector frame.  This transformation allows to compute a velocity expressed
-    in the end effector frame into the camera frame.
+    end effector frame.  This transformation allows to compute a velocity
+    expressed in the end effector frame into the camera frame.
 
     \sa get_cVe()
   */
-  void get_cVe(vpVelocityTwistMatrix &cVe) const
-  {
-    cVe = get_cVe();
-  }
+  void get_cVe(vpVelocityTwistMatrix &cVe) const { cVe = get_cVe(); }
 
   /*!
-    Return the robot jacobian \f${^e}{\bf J}_e\f$ expressed in the end effector frame.
+    Return the robot jacobian \f${^e}{\bf J}_e\f$ expressed in the end
+    effector frame.
 
-    \return The robot jacobian such as \f${\bf v} = {^e}{\bf J}_e \; \dot{\bf q}\f$ with
-    \f$\dot{\bf q} = (v_x, w_z)\f$ the robot control velocities and \f$\bf v\f$ the six dimention velocity skew.
+    \return The robot jacobian such as \f${\bf v} = {^e}{\bf J}_e \; \dot{\bf
+    q}\f$ with \f$\dot{\bf q} = (v_x, w_z)\f$ the robot control velocities and
+    \f$\bf v\f$ the six dimention velocity skew.
   */
-  vpMatrix get_eJe() const
-  {
-    return eJe_;
-  }
+  vpMatrix get_eJe() const { return eJe_; }
 
   /*!
-    Set the transformation between the camera frame and the end effector frame.
+    Set the transformation between the camera frame and the end effector
+    frame.
     */
-  void set_cMe(const vpHomogeneousMatrix &cMe)
-  {
-    cMe_ = cMe;
-  }
+  void set_cMe(const vpHomogeneousMatrix &cMe) { cMe_ = cMe; }
 
   /*!
-    Set the robot jacobian \f${^e}{\bf J}_e\f$ expressed in the end effector frame.
+    Set the robot jacobian \f${^e}{\bf J}_e\f$ expressed in the end effector
+    frame.
 
-    \param eJe : The robot jacobian to set such as \f${\bf v} = {^e}{\bf J}_e \; \dot{\bf q}\f$ with
-    \f$\dot{\bf q} = (v_x, w_z)\f$ the robot control velocities and \f$\bf v\f$ the six dimention velocity skew.
+    \param eJe : The robot jacobian to set such as \f${\bf v} = {^e}{\bf J}_e
+    \; \dot{\bf q}\f$ with \f$\dot{\bf q} = (v_x, w_z)\f$ the robot control
+    velocities and \f$\bf v\f$ the six dimention velocity skew.
   */
-  void set_eJe(const vpMatrix &eJe)
-  {
-    eJe_ = eJe;
-  }
+  void set_eJe(const vpMatrix &eJe) { eJe_ = eJe; }
   //@}
 
 protected:
   vpHomogeneousMatrix cMe_; // Camera frame to mobile platform frame
-  vpMatrix            eJe_; // Robot jacobian
+  vpMatrix eJe_;            // Robot jacobian
 };
 
 #endif
-
-

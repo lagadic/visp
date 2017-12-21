@@ -52,21 +52,22 @@
 
   \ingroup group_sensor_ft
 
-  Interface for ATI force/torque sensor. This class works only under linux-like OS.
-  It requires Comedi 3rd party. Installation instructions are provided here https://visp.inria.fr/3rd_comedi.
+  Interface for ATI force/torque sensor. This class works only under
+linux-like OS. It requires Comedi 3rd party. Installation instructions are
+provided here https://visp.inria.fr/3rd_comedi.
 
-  Comedi is the linux control and measurement device interface. For more information see http://www.comedi.org.
+  Comedi is the linux control and measurement device interface. For more
+information see http://www.comedi.org.
 
   This class was tested with ATI Gamma 65-SI FT sensor connected to a
   National Instrument NI DAQmx PCI-6220 board.
 
-  Synchronous F/T data acquisition is performed using getForceTorque(). The call to the function
-  blocks until the whole acquisition has finished.
+  Synchronous F/T data acquisition is performed using getForceTorque(). The
+call to the function blocks until the whole acquisition has finished.
 
-  The following example shows how to get single measures from an ATI F/T device each 10 ms (100 Hz).
-  \code
-#include <visp3/core/vpTime.h>
-#include <visp3/sensor/vpForceTorqueAtiSensor.h>
+  The following example shows how to get single measures from an ATI F/T
+device each 10 ms (100 Hz). \code #include <visp3/core/vpTime.h> #include
+<visp3/sensor/vpForceTorqueAtiSensor.h>
 
 int main(int argc, char** argv)
 {
@@ -94,12 +95,10 @@ public:
   void close();
 
   /*!
-     Return the calibration file location specified using setCalibrationFile().
-     \sa setCalibrationFile()
+     Return the calibration file location specified using
+     setCalibrationFile(). \sa setCalibrationFile()
    */
-  std::string getCalibrationFile() const {
-    return m_calibfile;
-  }
+  std::string getCalibrationFile() const { return m_calibfile; }
   vpColVector getForceTorque() const;
   vpColVector getForceTorqueAsync() const;
   std::string getForceUnits() const;
@@ -107,17 +106,21 @@ public:
 
   void open();
 
-  void setCalibrationFile(const std::string &calibfile, unsigned short index=1);
+  void setCalibrationFile(const std::string &calibfile,
+                          unsigned short index = 1);
   void unbias();
 
-  friend VISP_EXPORT std::ostream & operator<< (std::ostream &os, const vpForceTorqueAtiSensor &ati);
+  friend VISP_EXPORT std::ostream &
+  operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati);
 
 protected:
-  std::string m_calibfile;       //!< ATI calibration file FT*.cal
-  unsigned short m_index;        //!< Index of calibration in file (default: 1)
-  unsigned short m_num_axes;     //!< Number of axis or gages available from the sensor
-  unsigned short m_num_channels; //!< Number of channels available from the sensor
-  vpColVector m_sample_bias;     //!< Sample value used for bias
+  std::string m_calibfile; //!< ATI calibration file FT*.cal
+  unsigned short m_index;  //!< Index of calibration in file (default: 1)
+  unsigned short
+      m_num_axes; //!< Number of axis or gages available from the sensor
+  unsigned short
+      m_num_channels;        //!< Number of channels available from the sensor
+  vpColVector m_sample_bias; //!< Sample value used for bias
 };
 
 #endif

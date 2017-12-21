@@ -47,38 +47,36 @@
 
 #include <math.h>
 
-#include <visp3/tt/vpTemplateTracker.h>
-#include <visp3/core/vpImage.h>
 #include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpImageTools.h>
-#include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/tt/vpTemplateTracker.h>
 #include <visp3/vision/vpHomography.h>
 
 /*!
   \class vpTemplateTrackerSSD
   \ingroup group_tt_tracker
 */
-class VISP_EXPORT vpTemplateTrackerSSD: public vpTemplateTracker
+class VISP_EXPORT vpTemplateTrackerSSD : public vpTemplateTracker
 {
-  protected:
-    vpRowVector     DI;
-    vpRowVector     temp;
+protected:
+  vpRowVector DI;
+  vpRowVector temp;
 
-  protected:
-            double  getCost(const vpImage<unsigned char> &I, const vpColVector &tp);
-            double  getCost(const vpImage<unsigned char> &I){ return getCost(I,p); }
-    virtual void    initHessienDesired(const vpImage<unsigned char> &I) = 0;
-    virtual void    trackNoPyr(const vpImage<unsigned char> &I) = 0;
+protected:
+  double getCost(const vpImage<unsigned char> &I, const vpColVector &tp);
+  double getCost(const vpImage<unsigned char> &I) { return getCost(I, p); }
+  virtual void initHessienDesired(const vpImage<unsigned char> &I) = 0;
+  virtual void trackNoPyr(const vpImage<unsigned char> &I) = 0;
 
-  public:
-    explicit vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp);
+public:
+  explicit vpTemplateTrackerSSD(vpTemplateTrackerWarp *warp);
 
-    double  getSSD(const vpImage<unsigned char> &I, const vpColVector &tp);
-    void    setGain(double g){ gain=g; }
+  double getSSD(const vpImage<unsigned char> &I, const vpColVector &tp);
+  void setGain(double g) { gain = g; }
 };
 
 #endif
-

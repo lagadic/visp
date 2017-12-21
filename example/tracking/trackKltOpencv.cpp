@@ -42,35 +42,39 @@
   \brief Example of KLT tracking using OpenCV library.
 */
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
-#include <stdio.h>
-#include <sstream>
 #include <iomanip>
+#include <sstream>
+#include <stdio.h>
 #include <vector>
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined (VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_KLT) &&                                         \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                     \
+     defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
-#if defined (VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
-#include <visp3/klt/vpKltOpencv.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpParseArgv.h>
+#include <visp3/klt/vpKltOpencv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdf:i:n:p:s:h"
+#define GETOPTARGS "cdf:i:n:p:s:h"
 
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath,
-           unsigned first, unsigned nimages, unsigned step);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first,
-                unsigned &nimages, unsigned &step, bool &click_allowed, bool &display);
+void usage(const char *name, const char *badparam, std::string ipath,
+           std::string ppath, unsigned first, unsigned nimages,
+           unsigned step);
+bool getOptions(int argc, const char **argv, std::string &ipath,
+                std::string &ppath, unsigned &first, unsigned &nimages,
+                unsigned &step, bool &click_allowed, bool &display);
 /*!
   \example trackKltOpencv.cpp
 
@@ -92,8 +96,8 @@ Print the program options.
 
 
 */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath,
-           unsigned first, unsigned nimages, unsigned step)
+void usage(const char *name, const char *badparam, std::string ipath,
+           std::string ppath, unsigned first, unsigned nimages, unsigned step)
 {
   fprintf(stdout, "\n\
 Example of KLT tracking using OpenCV library.\n\
@@ -142,8 +146,7 @@ OPTIONS:                                               Default\n\
      Turn off the display.\n\
 \n\
   -h\n\
-     Print the help.\n",
-	  ipath.c_str(), ppath.c_str(), first, nimages, step);
+     Print the help.\n", ipath.c_str(), ppath.c_str(), first, nimages, step);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -165,27 +168,45 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first,
-                unsigned &nimages, unsigned &step, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath,
+                std::string &ppath, unsigned &first, unsigned &nimages,
+                unsigned &step, bool &click_allowed, bool &display)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'c': click_allowed = false; break;
-    case 'd': display = false; break;
-    case 'i': ipath = optarg_; break;
-    case 'p': ppath = optarg_; break;
-    case 'f': first = (unsigned) atoi(optarg_); break;
-    case 'n': nimages = (unsigned) atoi(optarg_); break;
-    case 's': step = (unsigned) atoi(optarg_); break;
-    case 'h': usage(argv[0], NULL, ipath, ppath, first, nimages, step);
-      return false; break;
+    case 'c':
+      click_allowed = false;
+      break;
+    case 'd':
+      display = false;
+      break;
+    case 'i':
+      ipath = optarg_;
+      break;
+    case 'p':
+      ppath = optarg_;
+      break;
+    case 'f':
+      first = (unsigned)atoi(optarg_);
+      break;
+    case 'n':
+      nimages = (unsigned)atoi(optarg_);
+      break;
+    case 's':
+      step = (unsigned)atoi(optarg_);
+      break;
+    case 'h':
+      usage(argv[0], NULL, ipath, ppath, first, nimages, step);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg_, ipath, ppath, first, nimages, step);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -200,8 +221,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
   return true;
 }
 
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string env_ipath;
@@ -216,17 +236,18 @@ main(int argc, const char ** argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
-    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+    // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
-    if (! env_ipath.empty())
+    if (!env_ipath.empty())
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_ppath,opt_first, opt_nimages,
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_nimages,
                    opt_step, opt_click_allowed, opt_display) == false) {
-      exit (-1);
+      exit(-1);
     }
 
     // Get the option values
@@ -237,26 +258,29 @@ main(int argc, const char ** argv)
     // the input path comming from the command line option
     if (!opt_ipath.empty() && !env_ipath.empty() && opt_ppath.empty()) {
       if (ipath != env_ipath) {
-        std::cout << std::endl
-                  << "WARNING: " << std::endl;
+        std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
+                  << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
-    if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty() ){
-      usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages, opt_step);
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
-      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-                << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << "  Use -p <personal image path> option if you want to "<<std::endl
-                << "  use personal images." << std::endl
-                << std::endl;
+    if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()) {
+      usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages,
+            opt_step);
+      std::cerr << std::endl << "ERROR:" << std::endl;
+      std::cerr
+          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+          << std::endl
+          << "  environment variable to specify the location of the "
+          << std::endl
+          << "  image path where test images are located." << std::endl
+          << "  Use -p <personal image path> option if you want to "
+          << std::endl
+          << "  use personal images." << std::endl
+          << std::endl;
 
       exit(-1);
     }
@@ -264,9 +288,9 @@ main(int argc, const char ** argv)
     // Declare an image, this is a gray level image (unsigned char)
     // it size is not defined yet, it will be defined when the image will
     // read on the disk
-    vpImage<unsigned char> vpI ; // This is a ViSP image used for display only
+    vpImage<unsigned char> vpI; // This is a ViSP image used for display only
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-    IplImage * cvI = NULL; // This is an OpenCV IPL image used by the tracker
+    IplImage *cvI = NULL; // This is an OpenCV IPL image used by the tracker
 #else
     cv::Mat cvI;
 #endif
@@ -275,8 +299,7 @@ main(int argc, const char ** argv)
     std::ostringstream s;
     char cfilename[FILENAME_MAX];
 
-    if (opt_ppath.empty()){
-
+    if (opt_ppath.empty()) {
 
       // Warning :
       // the image sequence is not provided with the ViSP package
@@ -298,9 +321,8 @@ main(int argc, const char ** argv)
       s.setf(std::ios::right, std::ios::adjustfield);
       s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
       filename = vpIoTools::createFilePath(dirname, s.str());
-    }
-    else {
-      sprintf(cfilename, opt_ppath.c_str(), iter) ;
+    } else {
+      sprintf(cfilename, opt_ppath.c_str(), iter);
       filename = cfilename;
     }
 
@@ -310,21 +332,18 @@ main(int argc, const char ** argv)
     //
     // exception readPGM may throw various exception if, for example,
     // the file does not exist, or if the memory cannot be allocated
-    try{
+    try {
       std::cout << "Load: " << filename << std::endl;
 
       // Load a ViSP image used for the display
-      vpImageIo::read(vpI, filename) ;
+      vpImageIo::read(vpI, filename);
       vpImageConvert::convert(vpI, cvI);
-    }
-    catch(...)
-    {
-      // an exception is throwned if an exception from readPGM has been catched
-      // here this will result in the end of the program
-      // Note that another error message has been printed from readPGM
-      // to give more information about the error
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
+    } catch (...) {
+      // an exception is throwned if an exception from readPGM has been
+      // catched here this will result in the end of the program Note that
+      // another error message has been printed from readPGM to give more
+      // information about the error
+      std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
                 << "  or VISP_INPUT_IMAGE_PATH environment variable."
@@ -332,7 +351,7 @@ main(int argc, const char ** argv)
       exit(-1);
     }
 
-    // We open a window using either X11, GTK or GDI.
+// We open a window using either X11, GTK or GDI.
 #if defined VISP_HAVE_X11
     vpDisplayX display;
 #elif defined VISP_HAVE_GTK
@@ -345,27 +364,27 @@ main(int argc, const char ** argv)
 
     if (opt_display) {
       // Display size is automatically defined by the image (I) size
-      display.init(vpI, 100, 100,"Display...") ;
+      display.init(vpI, 100, 100, "Display...");
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
-      vpDisplay::display(vpI) ;
-      vpDisplay::flush(vpI) ;
+      vpDisplay::display(vpI);
+      vpDisplay::flush(vpI);
     }
 
     // KLT tracker
     vpKltOpencv tracker;
 
     // Event manager
-    //tracker.setOnNewFeature(&newFeature);
-    //tracker.setOnFeatureLost(&lostFeature);
-    //tracker.setIsFeatureValid(&isValid);
+    // tracker.setOnNewFeature(&newFeature);
+    // tracker.setOnFeatureLost(&lostFeature);
+    // tracker.setIsFeatureValid(&isValid);
 
     // Tracker parameters
     tracker.setTrackerId(1);
-    //tracker.setOnMeasureFeature(&modifyFeature);
+    // tracker.setOnMeasureFeature(&modifyFeature);
     tracker.setMaxFeatures(200);
     tracker.setWindowSize(10);
     tracker.setQuality(0.01);
@@ -384,19 +403,18 @@ main(int argc, const char ** argv)
     }
 
     // tracking is now initialized. We can start the tracker.
-    while (iter < opt_first + opt_nimages*opt_step) {
+    while (iter < opt_first + opt_nimages * opt_step) {
       // set the new image name
-      if (opt_ppath.empty()){
+      if (opt_ppath.empty()) {
         s.str("");
         s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
         filename = vpIoTools::createFilePath(dirname, s.str());
-      }
-      else {
-        sprintf(cfilename, opt_ppath.c_str(), iter) ;
+      } else {
+        sprintf(cfilename, opt_ppath.c_str(), iter);
         filename = cfilename;
       }
       // read the image
-      vpImageIo::read(vpI, filename) ;
+      vpImageIo::read(vpI, filename);
       vpImageConvert::convert(vpI, cvI);
 
       // track the dot and returns its coordinates in the image
@@ -407,50 +425,46 @@ main(int argc, const char ** argv)
 
       if (opt_display) {
         // Display the image
-        vpDisplay::display(vpI) ;
+        vpDisplay::display(vpI);
       }
 
       std::cout << "Tracking on image: " << filename << std::endl;
       double time = vpTime::measureTimeMs();
       // Tracking of the detected points
       tracker.track(cvI);
-      std::cout << "Tracking performed in " <<
-                   vpTime::measureTimeMs() - time << " ms" << std::endl;
+      std::cout << "Tracking performed in " << vpTime::measureTimeMs() - time
+                << " ms" << std::endl;
 
       if (opt_display) {
         // Display the tracked points
         tracker.display(vpI, vpColor::red);
 
-        vpDisplay::flush(vpI) ;
+        vpDisplay::flush(vpI);
       }
       iter += opt_step;
     }
     if (opt_display && opt_click_allowed) {
       std::cout << "\nA click to exit..." << std::endl;
       // Wait for a blocking mouse click
-      vpDisplay::getClick(vpI) ;
+      vpDisplay::getClick(vpI);
     }
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }
 }
 #else
-int
-main()
-{
-  vpERROR_TRACE("You do not have OpenCV functionalities...");
-}
+int main() { vpERROR_TRACE("You do not have OpenCV functionalities..."); }
 #endif
 #else
 #include <iostream>
 
 int main()
 {
-  std::cout << "visp_klt module or X11, GTK, GDI or OpenCV display functionalities are required..." << std::endl;
+  std::cout << "visp_klt module or X11, GTK, GDI or OpenCV display "
+               "functionalities are required..."
+            << std::endl;
 }
-
 
 #endif

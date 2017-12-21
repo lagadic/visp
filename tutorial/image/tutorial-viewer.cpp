@@ -3,17 +3,18 @@
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
 //! [Include display]
 //! [Include io]
 #include <visp3/io/vpImageIo.h>
 //! [Include io]
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-  if(argc != 2) {
-    printf( "Usage: %s <image name.[pgm,ppm,jpeg,png,tiff,bmp,ras,jp2]>\n", argv[0] );
+  if (argc != 2) {
+    printf("Usage: %s <image name.[pgm,ppm,jpeg,png,tiff,bmp,ras,jp2]>\n",
+           argv[0]);
     return -1;
   }
 
@@ -24,15 +25,14 @@ int main(int argc, char** argv)
   //! [vpImage reading]
   try {
     vpImageIo::read(I, argv[1]);
-  }
-  catch(...) {
+  } catch (...) {
     std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
     return -1;
   }
   //! [vpImage reading]
 
   try {
-    //! [vpDisplay construction]
+//! [vpDisplay construction]
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I, vpDisplay::SCALE_AUTO);
 #elif defined(VISP_HAVE_GDI)
@@ -59,8 +59,7 @@ int main(int argc, char** argv)
     //! [vpDisplay get click]
     vpDisplay::getClick(I);
     //! [vpDisplay get click]
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

@@ -36,12 +36,12 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_CPP11_COMPATIBILITY)
-#include <set>
-#include <map>
 #include <iomanip>
+#include <librealsense2/rsutil.h>
+#include <map>
+#include <set>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/sensor/vpRealSense2.h>
-#include <librealsense2/rsutil.h>
 
 #define MANUAL_POINTCLOUD 1
 
@@ -49,24 +49,24 @@
  * Default constructor.
  */
 vpRealSense2::vpRealSense2()
-  : m_colorIntrinsics(), m_depth2ColorExtrinsics(), m_depthIntrinsics(), m_depthScale(0.0f),
-    m_invalidDepthValue(0.0f), m_max_Z(8.0f), m_pipe(), m_pipelineProfile(), m_pointcloud(),
-    m_points() {
+  : m_colorIntrinsics(), m_depth2ColorExtrinsics(), m_depthIntrinsics(),
+    m_depthScale(0.0f), m_invalidDepthValue(0.0f), m_max_Z(8.0f), m_pipe(),
+    m_pipelineProfile(), m_pointcloud(), m_points()
+{
 }
 
 /*!
  * Default destructor that stops the streaming.
  * \sa stop()
  */
-vpRealSense2::~vpRealSense2() {
-  close();
-}
+vpRealSense2::~vpRealSense2() { close(); }
 
 /*!
   Acquire greyscale image from RealSense device.
   \param grey : Greyscale image.
  */
-void vpRealSense2::acquire(vpImage<unsigned char> &grey) {
+void vpRealSense2::acquire(vpImage<unsigned char> &grey)
+{
   auto data = m_pipe.wait_for_frames();
   auto color_frame = data.get_color_frame();
   getGreyFrame(color_frame, grey);
@@ -76,7 +76,8 @@ void vpRealSense2::acquire(vpImage<unsigned char> &grey) {
   Acquire color image from RealSense device.
   \param color : Color image.
  */
-void vpRealSense2::acquire(vpImage<vpRGBa> &color) {
+void vpRealSense2::acquire(vpImage<vpRGBa> &color)
+{
   auto data = m_pipe.wait_for_frames();
   auto color_frame = data.get_color_frame();
   getColorFrame(color_frame, color);
@@ -90,8 +91,12 @@ void vpRealSense2::acquire(vpImage<vpRGBa> &color) {
   \param data_infrared : Infrared image buffer or NULL if not wanted.
   \param align_to : Align to a reference stream or NULL if not wanted.
  */
-void vpRealSense2::acquire(unsigned char * const data_image, unsigned char * const data_depth, std::vector<vpColVector> * const data_pointCloud,
-                           unsigned char * const data_infrared, rs2::align * const align_to) {
+void vpRealSense2::acquire(unsigned char *const data_image,
+                           unsigned char *const data_depth,
+                           std::vector<vpColVector> *const data_pointCloud,
+                           unsigned char *const data_infrared,
+                           rs2::align *const align_to)
+{
   auto data = m_pipe.wait_for_frames();
   if (align_to != NULL)
     data = align_to->proccess(data);
@@ -122,12 +127,18 @@ void vpRealSense2::acquire(unsigned char * const data_image, unsigned char * con
   \param data_image : Color image buffer or NULL if not wanted.
   \param data_depth : Depth image buffer or NULL if not wanted.
   \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
-  \param pointcloud : Point cloud (in PCL format and without texture information) pointer or NULL if not wanted.
-  \param data_infrared : Infrared image buffer or NULL if not wanted.
-  \param align_to : Align to a reference stream or NULL if not wanted.
+  \param pointcloud : Point cloud (in PCL format and without texture
+  information) pointer or NULL if not wanted. \param data_infrared : Infrared
+  image buffer or NULL if not wanted. \param align_to : Align to a reference
+  stream or NULL if not wanted.
  */
-void vpRealSense2::acquire(unsigned char * const data_image, unsigned char * const data_depth, std::vector<vpColVector> * const data_pointCloud,
-                           pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud, unsigned char * const data_infrared, rs2::align * const align_to) {
+void vpRealSense2::acquire(unsigned char *const data_image,
+                           unsigned char *const data_depth,
+                           std::vector<vpColVector> *const data_pointCloud,
+                           pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
+                           unsigned char *const data_infrared,
+                           rs2::align *const align_to)
+{
   auto data = m_pipe.wait_for_frames();
   if (align_to != NULL)
     data = align_to->proccess(data);
@@ -160,12 +171,18 @@ void vpRealSense2::acquire(unsigned char * const data_image, unsigned char * con
   \param data_image : Color image buffer or NULL if not wanted.
   \param data_depth : Depth image buffer or NULL if not wanted.
   \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
-  \param pointcloud : Point cloud (in PCL format and with texture information) pointer or NULL if not wanted.
-  \param data_infrared : Infrared image buffer or NULL if not wanted.
-  \param align_to : Align to a reference stream or NULL if not wanted.
+  \param pointcloud : Point cloud (in PCL format and with texture information)
+  pointer or NULL if not wanted. \param data_infrared : Infrared image buffer
+  or NULL if not wanted. \param align_to : Align to a reference stream or NULL
+  if not wanted.
  */
-void vpRealSense2::acquire(unsigned char * const data_image, unsigned char * const data_depth, std::vector<vpColVector> * const data_pointCloud,
-                           pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud, unsigned char * const data_infrared, rs2::align * const align_to) {
+void vpRealSense2::acquire(unsigned char *const data_image,
+                           unsigned char *const data_depth,
+                           std::vector<vpColVector> *const data_pointCloud,
+                           pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
+                           unsigned char *const data_infrared,
+                           rs2::align *const align_to)
+{
   auto data = m_pipe.wait_for_frames();
   if (align_to != NULL)
     data = align_to->proccess(data);
@@ -198,25 +215,29 @@ void vpRealSense2::acquire(unsigned char * const data_image, unsigned char * con
   librealsense documentation:
   <blockquote>
   Stop the pipeline streaming.
-  The pipeline stops delivering samples to the attached computer vision modules and processing blocks, stops the device
-  streaming and releases the device resources used by the pipeline. It is the application's responsibility to release any
-  frame reference it owns.
-  The method takes effect only after \c start() was called, otherwise an exception is raised.
+  The pipeline stops delivering samples to the attached computer vision
+  modules and processing blocks, stops the device streaming and releases the
+  device resources used by the pipeline. It is the application's
+  responsibility to release any frame reference it owns. The method takes
+  effect only after \c start() was called, otherwise an exception is raised.
   </blockquote>
  */
-void vpRealSense2::close() {
-  m_pipe.stop();
-}
+void vpRealSense2::close() { m_pipe.stop(); }
 
 /*!
-   Return the camera parameters corresponding to a specific stream. This function has to be called after open().
-   \param stream : stream for which camera intrinsic parameters are returned.
-   \param type : Indicate if the model should include distorsion parameters or not.
+   Return the camera parameters corresponding to a specific stream. This
+   function has to be called after open(). \param stream : stream for which
+   camera intrinsic parameters are returned. \param type : Indicate if the
+   model should include distorsion parameters or not.
 
    \sa getIntrinsics()
  */
-vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream, vpCameraParameters::vpCameraParametersProjType type) const {
-  auto rs_stream = m_pipelineProfile.get_stream(stream).as<rs2::video_stream_profile>();
+vpCameraParameters vpRealSense2::getCameraParameters(
+    const rs2_stream &stream,
+    vpCameraParameters::vpCameraParametersProjType type) const
+{
+  auto rs_stream =
+      m_pipelineProfile.get_stream(stream).as<rs2::video_stream_profile>();
   auto intrinsics = rs_stream.get_intrinsics();
 
   vpCameraParameters cam;
@@ -236,88 +257,108 @@ vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream, v
 }
 
 /*!
-   Get intrinsic parameters corresponding to the stream. This function has to be called after open().
-   \param stream : stream for which the camera intrinsic parameters are returned.
+   Get intrinsic parameters corresponding to the stream. This function has to
+   be called after open(). \param stream : stream for which the camera
+   intrinsic parameters are returned.
 
    \sa getCameraParameters()
   */
-rs2_intrinsics vpRealSense2::getIntrinsics(const rs2_stream &stream) const {
-  auto vsp = m_pipelineProfile.get_stream(stream).as<rs2::video_stream_profile>();
+rs2_intrinsics vpRealSense2::getIntrinsics(const rs2_stream &stream) const
+{
+  auto vsp =
+      m_pipelineProfile.get_stream(stream).as<rs2::video_stream_profile>();
   return vsp.get_intrinsics();
 }
 
-void vpRealSense2::getColorFrame(const rs2::frame &frame, vpImage<vpRGBa> &color) {
+void vpRealSense2::getColorFrame(const rs2::frame &frame,
+                                 vpImage<vpRGBa> &color)
+{
   auto vf = frame.as<rs2::video_frame>();
-  const unsigned int width = (unsigned int) vf.get_width();
-  const unsigned int height = (unsigned int) vf.get_height();
+  const unsigned int width = (unsigned int)vf.get_width();
+  const unsigned int height = (unsigned int)vf.get_height();
   color.resize(height, width);
 
   if (frame.get_profile().format() == RS2_FORMAT_RGB8) {
-    vpImageConvert::RGBToRGBa( (unsigned char *) frame.get_data(), (unsigned char *) color.bitmap, width, height );
+    vpImageConvert::RGBToRGBa((unsigned char *)frame.get_data(),
+                              (unsigned char *)color.bitmap, width, height);
   } else if (frame.get_profile().format() == RS2_FORMAT_RGBA8) {
-    memcpy( (unsigned char *) color.bitmap, (unsigned char *) frame.get_data(), width*height*sizeof(vpRGBa) );
+    memcpy((unsigned char *)color.bitmap, (unsigned char *)frame.get_data(),
+           width * height * sizeof(vpRGBa));
   } else if (frame.get_profile().format() == RS2_FORMAT_BGR8) {
-    vpImageConvert::BGRToRGBa( (unsigned char *) frame.get_data(), (unsigned char *) color.bitmap, width, height );
+    vpImageConvert::BGRToRGBa((unsigned char *)frame.get_data(),
+                              (unsigned char *)color.bitmap, width, height);
   } else {
-    throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
+    throw vpException(vpException::fatalError,
+                      "RealSense Camera - color stream not supported!");
   }
 }
 
-void vpRealSense2::getGreyFrame(const rs2::frame &frame, vpImage<unsigned char> &grey) {
+void vpRealSense2::getGreyFrame(const rs2::frame &frame,
+                                vpImage<unsigned char> &grey)
+{
   auto vf = frame.as<rs2::video_frame>();
-  const unsigned int width = (unsigned int) vf.get_width();
-  const unsigned int height = (unsigned int) vf.get_height();
+  const unsigned int width = (unsigned int)vf.get_width();
+  const unsigned int height = (unsigned int)vf.get_height();
   grey.resize(height, width);
 
   if (frame.get_profile().format() == RS2_FORMAT_RGB8) {
-    vpImageConvert::RGBToGrey( (unsigned char *) frame.get_data(), (unsigned char *) grey.bitmap, width, height );
+    vpImageConvert::RGBToGrey((unsigned char *)frame.get_data(),
+                              (unsigned char *)grey.bitmap, width, height);
   } else if (frame.get_profile().format() == RS2_FORMAT_RGBA8) {
-    vpImageConvert::RGBaToGrey( (unsigned char *) frame.get_data(), (unsigned char *) grey.bitmap, width*height );
+    vpImageConvert::RGBaToGrey((unsigned char *)frame.get_data(),
+                               (unsigned char *)grey.bitmap, width * height);
   } else if (frame.get_profile().format() == RS2_FORMAT_BGR8) {
-    vpImageConvert::BGRToGrey( (unsigned char *) frame.get_data(), (unsigned char *) grey.bitmap, width, height );
+    vpImageConvert::BGRToGrey((unsigned char *)frame.get_data(),
+                              (unsigned char *)grey.bitmap, width, height);
   } else {
-    throw vpException(vpException::fatalError, "RealSense Camera - color stream not supported!");
+    throw vpException(vpException::fatalError,
+                      "RealSense Camera - color stream not supported!");
   }
 }
 
-void vpRealSense2::getNativeFrameData(const rs2::frame &frame, unsigned char * const data) {
+void vpRealSense2::getNativeFrameData(const rs2::frame &frame,
+                                      unsigned char *const data)
+{
   auto vf = frame.as<rs2::video_frame>();
   int size = vf.get_width() * vf.get_height();
 
   switch (frame.get_profile().format()) {
-    case RS2_FORMAT_RGB8:
-    case RS2_FORMAT_BGR8:
-      memcpy( data, frame.get_data(), size*3 );
-      break;
+  case RS2_FORMAT_RGB8:
+  case RS2_FORMAT_BGR8:
+    memcpy(data, frame.get_data(), size * 3);
+    break;
 
-    case RS2_FORMAT_RGBA8:
-    case RS2_FORMAT_BGRA8:
-      memcpy( data, frame.get_data(), size*4 );
-      break;
+  case RS2_FORMAT_RGBA8:
+  case RS2_FORMAT_BGRA8:
+    memcpy(data, frame.get_data(), size * 4);
+    break;
 
-    case RS2_FORMAT_Y16:
-    case RS2_FORMAT_Z16:
-      memcpy( data, frame.get_data(), size*2 );
-      break;
+  case RS2_FORMAT_Y16:
+  case RS2_FORMAT_Z16:
+    memcpy(data, frame.get_data(), size * 2);
+    break;
 
-    case RS2_FORMAT_Y8:
-      memcpy( data, frame.get_data(), size );
-      break;
+  case RS2_FORMAT_Y8:
+    memcpy(data, frame.get_data(), size);
+    break;
 
-    default:
-      break;
+  default:
+    break;
   }
 }
 
-void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector> &pointcloud) {
+void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame,
+                                 std::vector<vpColVector> &pointcloud)
+{
   auto vf = depth_frame.as<rs2::video_frame>();
   const int width = vf.get_width();
   const int height = vf.get_height();
-  pointcloud.resize((size_t) (width*height));
+  pointcloud.resize((size_t)(width * height));
 
-  const uint16_t* p_depth_frame = reinterpret_cast<const uint16_t*>(depth_frame.get_data());
+  const uint16_t *p_depth_frame =
+      reinterpret_cast<const uint16_t *>(depth_frame.get_data());
 
-  #pragma omp parallel for schedule(dynamic)
+#pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < height; i++) {
     auto depth_pixel_index = i * width;
 
@@ -326,8 +367,9 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
       auto pixels_distance = m_depthScale * p_depth_frame[depth_pixel_index];
 
       float points[3];
-      const float pixel[] = { (float) j, (float) i };
-      rs2_deproject_pixel_to_point(points, &m_depthIntrinsics, pixel, pixels_distance);
+      const float pixel[] = {(float)j, (float)i};
+      rs2_deproject_pixel_to_point(points, &m_depthIntrinsics, pixel,
+                                   pixels_distance);
 
       if (pixels_distance <= 0 || pixels_distance > m_max_Z)
         points[0] = points[1] = points[2] = m_invalidDepthValue;
@@ -337,24 +379,28 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
       v[1] = points[1];
       v[2] = points[2];
       v[3] = 1.0;
-      pointcloud[(size_t) depth_pixel_index] = v;
+      pointcloud[(size_t)depth_pixel_index] = v;
     }
   }
 }
 
 #ifdef VISP_HAVE_PCL
-void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud) {
+void vpRealSense2::getPointcloud(
+    const rs2::depth_frame &depth_frame,
+    pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
+{
   auto vf = depth_frame.as<rs2::video_frame>();
   const int width = vf.get_width();
   const int height = vf.get_height();
-  pointcloud->width = (uint32_t) width;
-  pointcloud->height = (uint32_t) height;
-  pointcloud->resize((size_t) (width * height));
+  pointcloud->width = (uint32_t)width;
+  pointcloud->height = (uint32_t)height;
+  pointcloud->resize((size_t)(width * height));
 
-#if MANUAL_POINTCLOUD //faster when tested
-  const uint16_t* p_depth_frame = reinterpret_cast<const uint16_t*>(depth_frame.get_data());
+#if MANUAL_POINTCLOUD // faster when tested
+  const uint16_t *p_depth_frame =
+      reinterpret_cast<const uint16_t *>(depth_frame.get_data());
 
-  #pragma omp parallel for schedule(dynamic)
+#pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < height; i++) {
     auto depth_pixel_index = i * width;
 
@@ -363,15 +409,16 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::Point
       auto pixels_distance = m_depthScale * p_depth_frame[depth_pixel_index];
 
       float points[3];
-      const float pixel[] = { (float) j, (float) i };
-      rs2_deproject_pixel_to_point(points, &m_depthIntrinsics, pixel, pixels_distance);
+      const float pixel[] = {(float)j, (float)i};
+      rs2_deproject_pixel_to_point(points, &m_depthIntrinsics, pixel,
+                                   pixels_distance);
 
       if (pixels_distance <= 0 || pixels_distance > m_max_Z)
         points[0] = points[1] = points[2] = m_invalidDepthValue;
 
-      pointcloud->points[(size_t) (depth_pixel_index)].x = points[0];
-      pointcloud->points[(size_t) (depth_pixel_index)].y = points[1];
-      pointcloud->points[(size_t) (depth_pixel_index)].z = points[2];
+      pointcloud->points[(size_t)(depth_pixel_index)].x = points[0];
+      pointcloud->points[(size_t)(depth_pixel_index)].y = points[1];
+      pointcloud->points[(size_t)(depth_pixel_index)].z = points[2];
     }
   }
 #else
@@ -392,24 +439,33 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::Point
 #endif
 }
 
-void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2::frame &color_frame,
-                                 pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud) {
+void vpRealSense2::getPointcloud(
+    const rs2::depth_frame &depth_frame, const rs2::frame &color_frame,
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud)
+{
   auto vf = depth_frame.as<rs2::video_frame>();
   const int width = vf.get_width();
   const int height = vf.get_height();
-  pointcloud->width = (uint32_t) width;
-  pointcloud->height = (uint32_t) height;
-  pointcloud->resize((size_t) (width * height));
+  pointcloud->width = (uint32_t)width;
+  pointcloud->height = (uint32_t)height;
+  pointcloud->resize((size_t)(width * height));
 
-  const uint16_t* p_depth_frame = reinterpret_cast<const uint16_t*>(depth_frame.get_data());
+  const uint16_t *p_depth_frame =
+      reinterpret_cast<const uint16_t *>(depth_frame.get_data());
   const int color_width = m_colorIntrinsics.width;
   const int color_height = m_colorIntrinsics.height;
-  auto color_format = color_frame.as<rs2::video_frame>().get_profile().format();
-  bool swap_rgb = color_format == RS2_FORMAT_BGR8 || color_format == RS2_FORMAT_BGRA8;
-  unsigned int nb_color_pixel = (color_format == RS2_FORMAT_RGB8 || color_format == RS2_FORMAT_BGR8) ? 3 : 4;
-  const unsigned char* p_color_frame = reinterpret_cast<const unsigned char*>(color_frame.get_data());
+  auto color_format =
+      color_frame.as<rs2::video_frame>().get_profile().format();
+  bool swap_rgb =
+      color_format == RS2_FORMAT_BGR8 || color_format == RS2_FORMAT_BGRA8;
+  unsigned int nb_color_pixel =
+      (color_format == RS2_FORMAT_RGB8 || color_format == RS2_FORMAT_BGR8)
+          ? 3
+          : 4;
+  const unsigned char *p_color_frame =
+      reinterpret_cast<const unsigned char *>(color_frame.get_data());
 
-  #pragma omp parallel for schedule(dynamic)
+#pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < height; i++) {
     auto depth_pixel_index = i * width;
 
@@ -418,65 +474,106 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
       auto pixels_distance = m_depthScale * p_depth_frame[depth_pixel_index];
 
       float depth_point[3];
-      const float pixel[] = { (float) j, (float) i };
-      rs2_deproject_pixel_to_point(depth_point, &m_depthIntrinsics, pixel, pixels_distance);
+      const float pixel[] = {(float)j, (float)i};
+      rs2_deproject_pixel_to_point(depth_point, &m_depthIntrinsics, pixel,
+                                   pixels_distance);
 
       if (pixels_distance <= 0 || pixels_distance > m_max_Z)
-        depth_point[0] = depth_point[1] = depth_point[2] = m_invalidDepthValue;
+        depth_point[0] = depth_point[1] = depth_point[2] =
+            m_invalidDepthValue;
 
-      pointcloud->points[(size_t) depth_pixel_index].x = depth_point[0];
-      pointcloud->points[(size_t) depth_pixel_index].y = depth_point[1];
-      pointcloud->points[(size_t) depth_pixel_index].z = depth_point[2];
+      pointcloud->points[(size_t)depth_pixel_index].x = depth_point[0];
+      pointcloud->points[(size_t)depth_pixel_index].y = depth_point[1];
+      pointcloud->points[(size_t)depth_pixel_index].z = depth_point[2];
 
       float color_point[3];
-      rs2_transform_point_to_point(color_point, &m_depth2ColorExtrinsics, depth_point);
+      rs2_transform_point_to_point(color_point, &m_depth2ColorExtrinsics,
+                                   depth_point);
       float color_pixel[2];
-      rs2_project_point_to_pixel(color_pixel, &m_colorIntrinsics, color_point);
+      rs2_project_point_to_pixel(color_pixel, &m_colorIntrinsics,
+                                 color_point);
 
       if (color_pixel[1] < 0 || color_pixel[1] >= color_height ||
-          color_pixel[0] < 0 || color_pixel[0] >= color_width)
-      {
-        // For out of bounds color data, default to a shade of blue in order to visually distinguish holes.
-        // This color value is same as the librealsense out of bounds color value.
+          color_pixel[0] < 0 || color_pixel[0] >= color_width) {
+// For out of bounds color data, default to a shade of blue in order to
+// visually distinguish holes. This color value is same as the librealsense
+// out of bounds color value.
 #if PCL_VERSION_COMPARE(<, 1, 1, 0)
         unsigned int r = 96, g = 157, b = 198;
-        uint32_t rgb = (static_cast<uint32_t>(r) << 16 |
-                        static_cast<uint32_t>(g) << 8 | static_cast<uint32_t>(b));
+        uint32_t rgb =
+            (static_cast<uint32_t>(r) << 16 | static_cast<uint32_t>(g) << 8 |
+             static_cast<uint32_t>(b));
 
-        pointcloud->points[(size_t) depth_pixel_index].rgb = *reinterpret_cast<float*>(&rgb);
+        pointcloud->points[(size_t)depth_pixel_index].rgb =
+            *reinterpret_cast<float *>(&rgb);
 #else
-        pointcloud->points[(size_t) depth_pixel_index].r = (uint8_t) 96;
-        pointcloud->points[(size_t) depth_pixel_index].g = (uint8_t) 157;
-        pointcloud->points[(size_t) depth_pixel_index].b = (uint8_t) 198;
+        pointcloud->points[(size_t)depth_pixel_index].r = (uint8_t)96;
+        pointcloud->points[(size_t)depth_pixel_index].g = (uint8_t)157;
+        pointcloud->points[(size_t)depth_pixel_index].b = (uint8_t)198;
 #endif
-      }
-      else
-      {
-        unsigned int i_ = (unsigned int) color_pixel[1];
-        unsigned int j_ = (unsigned int) color_pixel[0];
+      } else {
+        unsigned int i_ = (unsigned int)color_pixel[1];
+        unsigned int j_ = (unsigned int)color_pixel[0];
 
 #if PCL_VERSION_COMPARE(<, 1, 1, 0)
         uint32_t rgb = 0;
         if (swap_rgb) {
-          rgb = (static_cast<uint32_t>(p_color_frame[(i_* (unsigned int) color_width + j_) * nb_color_pixel]) |
-                 static_cast<uint32_t>(p_color_frame[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1]) << 8 |
-                 static_cast<uint32_t>(p_color_frame[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2]) << 16);
+          rgb = (static_cast<uint32_t>(
+                     p_color_frame[(i_ * (unsigned int)color_width + j_) *
+                                   nb_color_pixel]) |
+                 static_cast<uint32_t>(
+                     p_color_frame[(i_ * (unsigned int)color_width + j_) *
+                                       nb_color_pixel +
+                                   1])
+                     << 8 |
+                 static_cast<uint32_t>(
+                     p_color_frame[(i_ * (unsigned int)color_width + j_) *
+                                       nb_color_pixel +
+                                   2])
+                     << 16);
         } else {
-          rgb = (static_cast<uint32_t>(p_color_frame[(i_* (unsigned int) color_width + j_) * nb_color_pixel]) << 16 |
-                 static_cast<uint32_t>(p_color_frame[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1]) << 8 |
-                 static_cast<uint32_t>(p_color_frame[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2]));
+          rgb = (static_cast<uint32_t>(
+                     p_color_frame[(i_ * (unsigned int)color_width + j_) *
+                                   nb_color_pixel])
+                     << 16 |
+                 static_cast<uint32_t>(
+                     p_color_frame[(i_ * (unsigned int)color_width + j_) *
+                                       nb_color_pixel +
+                                   1])
+                     << 8 |
+                 static_cast<uint32_t>(
+                     p_color_frame[(i_ * (unsigned int)color_width + j_) *
+                                       nb_color_pixel +
+                                   2]));
         }
 
-        pointcloud->points[(size_t) (i*depth_width + j)].rgb = *reinterpret_cast<float*>(&rgb);
+        pointcloud->points[(size_t)(i * depth_width + j)].rgb =
+            *reinterpret_cast<float *>(&rgb);
 #else
         if (swap_rgb) {
-          pointcloud->points[(size_t) depth_pixel_index].b = (uint32_t) p_color_frame[(i_* (unsigned int) color_width + j_) * nb_color_pixel];
-          pointcloud->points[(size_t) depth_pixel_index].g = (uint32_t) p_color_frame[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1];
-          pointcloud->points[(size_t) depth_pixel_index].r = (uint32_t) p_color_frame[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2];
+          pointcloud->points[(size_t)depth_pixel_index].b =
+              (uint32_t)p_color_frame[(i_ * (unsigned int)color_width + j_) *
+                                      nb_color_pixel];
+          pointcloud->points[(size_t)depth_pixel_index].g =
+              (uint32_t)p_color_frame[(i_ * (unsigned int)color_width + j_) *
+                                          nb_color_pixel +
+                                      1];
+          pointcloud->points[(size_t)depth_pixel_index].r =
+              (uint32_t)p_color_frame[(i_ * (unsigned int)color_width + j_) *
+                                          nb_color_pixel +
+                                      2];
         } else {
-          pointcloud->points[(size_t) depth_pixel_index].r = (uint32_t) p_color_frame[(i_* (unsigned int) color_width + j_) * nb_color_pixel];
-          pointcloud->points[(size_t) depth_pixel_index].g = (uint32_t) p_color_frame[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 1];
-          pointcloud->points[(size_t) depth_pixel_index].b = (uint32_t) p_color_frame[(i_* (unsigned int) color_width + j_) * nb_color_pixel + 2];
+          pointcloud->points[(size_t)depth_pixel_index].r =
+              (uint32_t)p_color_frame[(i_ * (unsigned int)color_width + j_) *
+                                      nb_color_pixel];
+          pointcloud->points[(size_t)depth_pixel_index].g =
+              (uint32_t)p_color_frame[(i_ * (unsigned int)color_width + j_) *
+                                          nb_color_pixel +
+                                      1];
+          pointcloud->points[(size_t)depth_pixel_index].b =
+              (uint32_t)p_color_frame[(i_ * (unsigned int)color_width + j_) *
+                                          nb_color_pixel +
+                                      2];
         }
 #endif
       }
@@ -487,10 +584,14 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
 #endif
 
 /*!
-   Get the extrinsic transformation from one stream to another. This function has to be called after open().
-   \param from, to : streams for which the camera extrinsic parameters are returned.
+   Get the extrinsic transformation from one stream to another. This function
+   has to be called after open(). \param from, to : streams for which the
+   camera extrinsic parameters are returned.
   */
-vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, const rs2_stream &to) const {
+vpHomogeneousMatrix
+vpRealSense2::getTransformation(const rs2_stream &from,
+                                const rs2_stream &to) const
+{
   auto from_stream = m_pipelineProfile.get_stream(from);
   auto to_stream = m_pipelineProfile.get_stream(to);
   rs2_extrinsics extrinsics = from_stream.get_extrinsics_to(to_stream);
@@ -500,7 +601,7 @@ vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, cons
   for (unsigned int i = 0; i < 3; i++) {
     t[i] = extrinsics.translation[i];
     for (unsigned int j = 0; j < 3; j++)
-      R[i][j] = extrinsics.rotation[i*3+j];
+      R[i][j] = extrinsics.rotation[i * 3 + j];
   }
 
   vpHomogeneousMatrix to_M_from(t, R);
@@ -510,111 +611,137 @@ vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, cons
 /*!
   Open access to the RealSense device and start the streaming.
  */
-void vpRealSense2::open(const rs2::config &cfg) {
+void vpRealSense2::open(const rs2::config &cfg)
+{
   m_pipelineProfile = m_pipe.start(cfg);
 
   rs2::device dev = m_pipelineProfile.get_device();
 
   // Go over the device's sensors
-  for (rs2::sensor& sensor : dev.query_sensors()) {
+  for (rs2::sensor &sensor : dev.query_sensors()) {
     // Check if the sensor if a depth sensor
     if (rs2::depth_sensor dpt = sensor.as<rs2::depth_sensor>()) {
       m_depthScale = dpt.get_depth_scale();
     }
   }
 
-  auto depth_stream = m_pipelineProfile.get_stream(RS2_STREAM_DEPTH).as<rs2::video_stream_profile>();
+  auto depth_stream = m_pipelineProfile.get_stream(RS2_STREAM_DEPTH)
+                          .as<rs2::video_stream_profile>();
   m_depthIntrinsics = depth_stream.get_intrinsics();
 
   auto color_stream = m_pipelineProfile.get_stream(RS2_STREAM_COLOR);
-  m_colorIntrinsics = m_pipelineProfile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>().get_intrinsics();
+  m_colorIntrinsics = m_pipelineProfile.get_stream(RS2_STREAM_COLOR)
+                          .as<rs2::video_stream_profile>()
+                          .get_intrinsics();
   m_depth2ColorExtrinsics = depth_stream.get_extrinsics_to(color_stream);
 }
 
-namespace {
-//Helper functions to print information about the RealSense device
-void print(const rs2_extrinsics& extrinsics, std::ostream &os) {
+namespace
+{
+// Helper functions to print information about the RealSense device
+void print(const rs2_extrinsics &extrinsics, std::ostream &os)
+{
   std::stringstream ss;
   ss << "Rotation Matrix:\n";
 
-  for (auto i = 0 ; i < 3 ; ++i) {
-    for (auto j = 0 ; j < 3 ; ++j) {
-      ss << std::left << std::setw(15) << std::setprecision(5) << extrinsics.rotation[j*3 +i];
+  for (auto i = 0; i < 3; ++i) {
+    for (auto j = 0; j < 3; ++j) {
+      ss << std::left << std::setw(15) << std::setprecision(5)
+         << extrinsics.rotation[j * 3 + i];
     }
     ss << std::endl;
   }
 
   ss << "\nTranslation Vector: ";
-  for (size_t i = 0 ; i < sizeof(extrinsics.translation)/sizeof(extrinsics.translation[0]) ; ++i)
+  for (size_t i = 0;
+       i < sizeof(extrinsics.translation) / sizeof(extrinsics.translation[0]);
+       ++i)
     ss << std::setprecision(15) << extrinsics.translation[i] << "  ";
 
   os << ss.str() << "\n\n";
 }
 
-void print(const rs2_intrinsics& intrinsics, std::ostream &os) {
+void print(const rs2_intrinsics &intrinsics, std::ostream &os)
+{
   std::stringstream ss;
-  ss << std::left << std::setw(14) << "Width: "      << "\t" << intrinsics.width  << "\n" <<
-        std::left << std::setw(14) << "Height: "     << "\t" << intrinsics.height << "\n" <<
-        std::left << std::setw(14) << "PPX: "        << "\t" << std::setprecision(15)  << intrinsics.ppx << "\n" <<
-        std::left << std::setw(14) << "PPY: "        << "\t" << std::setprecision(15)  << intrinsics.ppy << "\n" <<
-        std::left << std::setw(14) << "Fx: "         << "\t" << std::setprecision(15)  << intrinsics.fx  << "\n" <<
-        std::left << std::setw(14) << "Fy: "         << "\t" << std::setprecision(15)  << intrinsics.fy  << "\n" <<
-        std::left << std::setw(14) << "Distortion: " << "\t" << rs2_distortion_to_string(intrinsics.model) << "\n" <<
-        std::left << std::setw(14) << "Coeffs: ";
+  ss << std::left << std::setw(14) << "Width: "
+     << "\t" << intrinsics.width << "\n"
+     << std::left << std::setw(14) << "Height: "
+     << "\t" << intrinsics.height << "\n"
+     << std::left << std::setw(14) << "PPX: "
+     << "\t" << std::setprecision(15) << intrinsics.ppx << "\n"
+     << std::left << std::setw(14) << "PPY: "
+     << "\t" << std::setprecision(15) << intrinsics.ppy << "\n"
+     << std::left << std::setw(14) << "Fx: "
+     << "\t" << std::setprecision(15) << intrinsics.fx << "\n"
+     << std::left << std::setw(14) << "Fy: "
+     << "\t" << std::setprecision(15) << intrinsics.fy << "\n"
+     << std::left << std::setw(14) << "Distortion: "
+     << "\t" << rs2_distortion_to_string(intrinsics.model) << "\n"
+     << std::left << std::setw(14) << "Coeffs: ";
 
-  for (size_t i = 0 ; i < sizeof(intrinsics.coeffs)/sizeof(intrinsics.coeffs[0]) ; ++i)
+  for (size_t i = 0;
+       i < sizeof(intrinsics.coeffs) / sizeof(intrinsics.coeffs[0]); ++i)
     ss << "\t" << std::setprecision(15) << intrinsics.coeffs[i] << "  ";
 
   os << ss.str() << "\n\n";
 }
 
-void safe_get_intrinsics(const rs2::video_stream_profile& profile, rs2_intrinsics& intrinsics) {
+void safe_get_intrinsics(const rs2::video_stream_profile &profile,
+                         rs2_intrinsics &intrinsics)
+{
   try {
     intrinsics = profile.get_intrinsics();
-  } catch(...) { }
+  } catch (...) {
+  }
 }
 
-bool operator ==(const rs2_intrinsics& lhs,
-                 const rs2_intrinsics& rhs) {
-  return lhs.width == rhs.width &&
-      lhs.height == rhs.height &&
-      lhs.ppx == rhs.ppx &&
-      lhs.ppy == rhs.ppy &&
-      lhs.fx == rhs.fx &&
-      lhs.fy == rhs.fy &&
-      lhs.model == rhs.model &&
-      !std::memcmp(lhs.coeffs, rhs.coeffs, sizeof(rhs.coeffs));
+bool operator==(const rs2_intrinsics &lhs, const rs2_intrinsics &rhs)
+{
+  return lhs.width == rhs.width && lhs.height == rhs.height &&
+         lhs.ppx == rhs.ppx && lhs.ppy == rhs.ppy && lhs.fx == rhs.fx &&
+         lhs.fy == rhs.fy && lhs.model == rhs.model &&
+         !std::memcmp(lhs.coeffs, rhs.coeffs, sizeof(rhs.coeffs));
 }
 
-std::string get_str_formats(const std::set<rs2_format>& formats) {
+std::string get_str_formats(const std::set<rs2_format> &formats)
+{
   std::stringstream ss;
   for (auto format = formats.begin(); format != formats.end(); ++format) {
-    ss << *format << ((format != formats.end()) && (next(format) == formats.end())?"":"/");
+    ss << *format
+       << ((format != formats.end()) && (next(format) == formats.end())
+               ? ""
+               : "/");
   }
   return ss.str();
 }
 
-struct stream_and_resolution{
+struct stream_and_resolution {
   rs2_stream stream;
   int stream_index;
   int width;
   int height;
   std::string stream_name;
 
-  bool operator <(const stream_and_resolution& obj) const {
-    return (std::make_tuple(stream, stream_index, width, height) < std::make_tuple(obj.stream, obj.stream_index, obj.width, obj.height));
+  bool operator<(const stream_and_resolution &obj) const
+  {
+    return (
+        std::make_tuple(stream, stream_index, width, height) <
+        std::make_tuple(obj.stream, obj.stream_index, obj.width, obj.height));
   }
 };
 
-struct stream_and_index{
+struct stream_and_index {
   rs2_stream stream;
   int stream_index;
 
-  bool operator <(const stream_and_index& obj) const {
-    return (std::make_tuple(stream, stream_index) < std::make_tuple(obj.stream, obj.stream_index));
+  bool operator<(const stream_and_index &obj) const
+  {
+    return (std::make_tuple(stream, stream_index) <
+            std::make_tuple(obj.stream, obj.stream_index));
   }
 };
-} //anonymous namespace
+} // anonymous namespace
 
 /*!
   \relates vpRealSense2
@@ -636,11 +763,10 @@ int main()
 }
   \endcode
  */
-std::ostream & operator<<(std::ostream &os, const vpRealSense2 &rs) {
-  os << std::left << std::setw(30) << "Device Name"
-     << std::setw(20) << "Serial Number"
-     << std::setw(20) << "Firmware Version"
-     << std::endl;
+std::ostream &operator<<(std::ostream &os, const vpRealSense2 &rs)
+{
+  os << std::left << std::setw(30) << "Device Name" << std::setw(20)
+     << "Serial Number" << std::setw(20) << "Firmware Version" << std::endl;
 
   rs2::device dev = rs.m_pipelineProfile.get_device();
   os << std::left << std::setw(30) << dev.get_info(RS2_CAMERA_INFO_NAME)
@@ -653,42 +779,51 @@ std::ostream & operator<<(std::ostream &os, const vpRealSense2 &rs) {
   for (auto j = 0; j < RS2_CAMERA_INFO_COUNT; ++j) {
     auto param = static_cast<rs2_camera_info>(j);
     if (dev.supports(param))
-      os << "    " << std::left << std::setw(30) << rs2_camera_info_to_string(rs2_camera_info(param))
-         << ": \t" << dev.get_info(param) << "\n";
+      os << "    " << std::left << std::setw(30)
+         << rs2_camera_info_to_string(rs2_camera_info(param)) << ": \t"
+         << dev.get_info(param) << "\n";
   }
 
   os << "\n";
 
-  for (auto&& sensor : dev.query_sensors()) {
-    os << "Options for " << sensor.get_info(RS2_CAMERA_INFO_NAME) << std::endl;
+  for (auto &&sensor : dev.query_sensors()) {
+    os << "Options for " << sensor.get_info(RS2_CAMERA_INFO_NAME)
+       << std::endl;
 
-    os << std::setw(55) << " Supported options:" << std::setw(10) << "min" << std::setw(10)
-       << " max" << std::setw(6) << " step" << std::setw(10) << " default" << std::endl;
+    os << std::setw(55) << " Supported options:" << std::setw(10) << "min"
+       << std::setw(10) << " max" << std::setw(6) << " step" << std::setw(10)
+       << " default" << std::endl;
     for (auto j = 0; j < RS2_OPTION_COUNT; ++j) {
       auto opt = static_cast<rs2_option>(j);
       if (sensor.supports(opt)) {
         auto range = sensor.get_option_range(opt);
         os << "    " << std::left << std::setw(50) << opt << " : "
-           << std::setw(5) << range.min << "... " << std::setw(12) << range.max
-           << std::setw(6) << range.step << std::setw(10) << range.def << "\n";
+           << std::setw(5) << range.min << "... " << std::setw(12)
+           << range.max << std::setw(6) << range.step << std::setw(10)
+           << range.def << "\n";
       }
     }
 
     os << "\n";
   }
 
-  for (auto&& sensor : dev.query_sensors()) {
-    os << "Stream Profiles supported by " << sensor.get_info(RS2_CAMERA_INFO_NAME) << "\n";
+  for (auto &&sensor : dev.query_sensors()) {
+    os << "Stream Profiles supported by "
+       << sensor.get_info(RS2_CAMERA_INFO_NAME) << "\n";
 
-    os << std::setw(55) << " Supported modes:" << std::setw(10) << "stream" << std::setw(10)
-       << " resolution" << std::setw(6) << " fps" << std::setw(10) << " format" << "\n";
+    os << std::setw(55) << " Supported modes:" << std::setw(10) << "stream"
+       << std::setw(10) << " resolution" << std::setw(6) << " fps"
+       << std::setw(10) << " format"
+       << "\n";
     // Show which streams are supported by this device
-    for (auto&& profile : sensor.get_stream_profiles()) {
+    for (auto &&profile : sensor.get_stream_profiles()) {
       if (auto video = profile.as<rs2::video_stream_profile>()) {
-        os << "    " << profile.stream_name() << "\t  " << video.width() << "x"
-           << video.height() << "\t@ " << profile.fps() << "Hz\t" << profile.format() << "\n";
+        os << "    " << profile.stream_name() << "\t  " << video.width()
+           << "x" << video.height() << "\t@ " << profile.fps() << "Hz\t"
+           << profile.format() << "\n";
       } else {
-        os << "    " << profile.stream_name() << "\t@ " << profile.fps() << "Hz\t" << profile.format() << "\n";
+        os << "    " << profile.stream_name() << "\t@ " << profile.fps()
+           << "Hz\t" << profile.format() << "\n";
       }
     }
 
@@ -696,37 +831,51 @@ std::ostream & operator<<(std::ostream &os, const vpRealSense2 &rs) {
   }
 
   std::map<stream_and_index, rs2::stream_profile> streams;
-  std::map<stream_and_resolution, std::vector<std::pair<std::set<rs2_format>, rs2_intrinsics> > > intrinsics_map;
-  for (auto&& sensor : dev.query_sensors()) {
+  std::map<stream_and_resolution,
+           std::vector<std::pair<std::set<rs2_format>, rs2_intrinsics> > >
+      intrinsics_map;
+  for (auto &&sensor : dev.query_sensors()) {
     // Intrinsics
-    for (auto&& profile : sensor.get_stream_profiles()) {
+    for (auto &&profile : sensor.get_stream_profiles()) {
       if (auto video = profile.as<rs2::video_stream_profile>()) {
-        if (streams.find(stream_and_index{profile.stream_type(), profile.stream_index()}) == streams.end()) {
-          streams[stream_and_index{profile.stream_type(), profile.stream_index()}] = profile;
+        if (streams.find(stream_and_index{profile.stream_type(),
+                                          profile.stream_index()}) ==
+            streams.end()) {
+          streams[stream_and_index{profile.stream_type(),
+                                   profile.stream_index()}] = profile;
         }
 
         rs2_intrinsics intrinsics{};
-        stream_and_resolution stream_res{profile.stream_type(), profile.stream_index(), video.width(), video.height(), profile.stream_name()};
+        stream_and_resolution stream_res{
+            profile.stream_type(), profile.stream_index(), video.width(),
+            video.height(), profile.stream_name()};
         safe_get_intrinsics(video, intrinsics);
-        auto it = std::find_if((intrinsics_map[stream_res]).begin(), (intrinsics_map[stream_res]).end(), [&](const std::pair<std::set<rs2_format>, rs2_intrinsics>& kvp) {
-          return intrinsics == kvp.second;
-        });
+        auto it = std::find_if(
+            (intrinsics_map[stream_res]).begin(),
+            (intrinsics_map[stream_res]).end(),
+            [&](const std::pair<std::set<rs2_format>, rs2_intrinsics> &kvp) {
+              return intrinsics == kvp.second;
+            });
         if (it == (intrinsics_map[stream_res]).end()) {
-          (intrinsics_map[stream_res]).push_back({{profile.format()}, intrinsics});
+          (intrinsics_map[stream_res])
+              .push_back({{profile.format()}, intrinsics});
         } else {
-          it->first.insert(profile.format()); // If the intrinsics are equals, add the profile format to format set
+          it->first.insert(profile.format()); // If the intrinsics are equals,
+                                              // add the profile format to
+                                              // format set
         }
       }
     }
   }
 
   os << "Provided Intrinsic:\n";
-  for (auto& kvp : intrinsics_map) {
+  for (auto &kvp : intrinsics_map) {
     auto stream_res = kvp.first;
-    for (auto& intrinsics : kvp.second) {
+    for (auto &intrinsics : kvp.second) {
       auto formats = get_str_formats(intrinsics.first);
-      os << "Intrinsic of \"" << stream_res.stream_name << "\"\t  " << stream_res.width << "x"
-         << stream_res.height << "\t  " << formats << "\n";
+      os << "Intrinsic of \"" << stream_res.stream_name << "\"\t  "
+         << stream_res.width << "x" << stream_res.height << "\t  " << formats
+         << "\n";
       if (intrinsics.second == rs2_intrinsics{}) {
         os << "Intrinsic NOT available!\n\n";
       } else {
@@ -739,8 +888,9 @@ std::ostream & operator<<(std::ostream &os, const vpRealSense2 &rs) {
   os << "\nProvided Extrinsic:\n";
   for (auto kvp1 = streams.begin(); kvp1 != streams.end(); ++kvp1) {
     for (auto kvp2 = streams.begin(); kvp2 != streams.end(); ++kvp2) {
-      os << "Extrinsic from \"" << kvp1->second.stream_name() << "\"\t  " <<
-            "To" << "\t  \"" << kvp2->second.stream_name() << "\"\n";
+      os << "Extrinsic from \"" << kvp1->second.stream_name() << "\"\t  "
+         << "To"
+         << "\t  \"" << kvp2->second.stream_name() << "\"\n";
       auto extrinsics = kvp1->second.get_extrinsics_to(kvp2->second);
       print(extrinsics, os);
     }
@@ -750,6 +900,7 @@ std::ostream & operator<<(std::ostream &os, const vpRealSense2 &rs) {
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_sensor.a(vpRealSense2.cpp.o) has no symbols
-void dummy_vpRealSense2() {};
+// Work arround to avoid warning: libvisp_sensor.a(vpRealSense2.cpp.o) has no
+// symbols
+void dummy_vpRealSense2(){};
 #endif

@@ -43,14 +43,12 @@
   degrees of freedom).
 */
 
-
-#include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpAfma4.h>
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/robot/vpAfma4.h>
 
 #include <iostream>
-
 
 int main()
 {
@@ -63,10 +61,8 @@ int main()
     std::cout << afma4 << std::endl;
 
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }
 }
-

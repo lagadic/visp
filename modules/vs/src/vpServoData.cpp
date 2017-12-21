@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file vpServoData.cpp
   \brief save data during the task execution
@@ -45,78 +44,64 @@
 // Servo
 #include <visp3/vs/vpServo.h>
 
-#include <visp3/vs/vpServoData.h>
 #include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/vs/vpServoData.h>
 
-void
-vpServoData::open(const char *directory)
+void vpServoData::open(const char *directory)
 {
-  try
-  {
+  try {
     if (vpIoTools::checkDirectory(directory) == false)
       vpIoTools::makeDirectory(directory);
 
-    char s[FILENAME_MAX] ;
+    char s[FILENAME_MAX];
 
-    sprintf(s,"%s/vel.dat",directory) ;
-    velocityFile.open(s)  ;
-    sprintf(s,"%s/error.dat",directory) ;
-    errorFile.open(s)  ;
-    sprintf(s,"%s/errornorm.dat",directory) ;
-    errorNormFile.open(s)  ;
-    sprintf(s,"%s/s.dat",directory) ;
-    sFile.open(s)  ;
-    sprintf(s,"%s/sStar.dat",directory) ;
-    sStarFile.open(s) ;
+    sprintf(s, "%s/vel.dat", directory);
+    velocityFile.open(s);
+    sprintf(s, "%s/error.dat", directory);
+    errorFile.open(s);
+    sprintf(s, "%s/errornorm.dat", directory);
+    errorNormFile.open(s);
+    sprintf(s, "%s/s.dat", directory);
+    sFile.open(s);
+    sprintf(s, "%s/sStar.dat", directory);
+    sStarFile.open(s);
 
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
 
-void vpServoData::setCmDeg()
-{
-  cmDeg = true ;
-}
-void vpServoData::setMeterRad()
-{
-  cmDeg = false ;
-}
+void vpServoData::setCmDeg() { cmDeg = true; }
+void vpServoData::setMeterRad() { cmDeg = false; }
 void vpServoData::save(const vpServo &task)
 {
-  if (cmDeg==false) velocityFile << task.q_dot.t() ;
-  else
-  {
-    for (unsigned int i=0 ; i < 3 ; i++)
-      velocityFile <<  task.q_dot[i]*100 <<" " ;
-    for (unsigned int i=4 ; i < 6 ; i++)
-      velocityFile <<  vpMath::deg(task.q_dot[i]) <<" " ;
-    velocityFile << std::endl ;
+  if (cmDeg == false)
+    velocityFile << task.q_dot.t();
+  else {
+    for (unsigned int i = 0; i < 3; i++)
+      velocityFile << task.q_dot[i] * 100 << " ";
+    for (unsigned int i = 4; i < 6; i++)
+      velocityFile << vpMath::deg(task.q_dot[i]) << " ";
+    velocityFile << std::endl;
   }
-  errorFile << ( task.getError() ).t() ;
-  errorNormFile << ( task.getError() ).sumSquare() << std::endl ;
-  vNormFile << task.q_dot.sumSquare() << std::endl ;
+  errorFile << (task.getError()).t();
+  errorNormFile << (task.getError()).sumSquare() << std::endl;
+  vNormFile << task.q_dot.sumSquare() << std::endl;
 
-  sFile <<task.s.t() ;
+  sFile << task.s.t();
   sStarFile << task.sStar.t();
 }
 
-
-
 void vpServoData::close()
 {
-  velocityFile.close() ;
-  errorFile.close() ;
-  errorNormFile.close() ;
-  sFile.close() ;
-  sStarFile.close() ;
+  velocityFile.close();
+  errorFile.close();
+  errorNormFile.close();
+  sFile.close();
+  sStarFile.close();
 }
-
-
 
 /*
  * Local variables:

@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpKeyboard_h
 #define vpKeyboard_h
 
@@ -47,22 +46,24 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__)))
 
-#  include <iostream>
-#  include <termios.h>
-#  include <unistd.h>
-#  include <stdlib.h>
-
+#include <iostream>
+#include <stdlib.h>
+#include <termios.h>
+#include <unistd.h>
 
 /*!
 
   \class vpKeyboard
   \ingroup group_io_keyboard
-  \brief Keybord management under unix (Linux or OSX). This class is not available under windows.
+  \brief Keybord management under unix (Linux or OSX). This class is not
+  available under windows.
 
   Gets a key from the keyboard without waiting for the "Enter" key.
-  \warning The key that was pressed is only detected if the terminal where the binary was launched is active.
+  \warning The key that was pressed is only detected if the terminal where the
+  binary was launched is active.
 
   \code
   vpKeyboard keyboard; // Turn on keyboard raw mode
@@ -98,7 +99,7 @@ private:
   void setRawMode(bool active);
 
   struct termios initial_settings, new_settings;
-} ;
+};
 
 #endif // defined UNIX
 

@@ -10,14 +10,19 @@
 #include <visp3/core/vpXmlParserCamera.h>
 #endif
 
-int main(int argc, const char** argv) {
-  //! [Macro defined]
-#if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+int main(int argc, const char **argv)
+{
+//! [Macro defined]
+#if defined(VISP_HAVE_APRILTAG) &&                                           \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
+     defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
 
   std::string input_filename = "AprilTag.pgm";
-  vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
-  vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
+  vpDetectorAprilTag::vpAprilTagFamily tagFamily =
+      vpDetectorAprilTag::TAG_36h11;
+  vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod =
+      vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
   double tagSize = 0.053;
   float quad_decimate = 1.0;
   int nThreads = 1;
@@ -26,46 +31,52 @@ int main(int argc, const char** argv) {
   bool display_tag = false;
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--pose_method" && i+1 < argc) {
-      poseEstimationMethod = (vpDetectorAprilTag::vpPoseEstimationMethod) atoi(argv[i+1]);
-    } else if (std::string(argv[i]) == "--tag_size" && i+1 < argc) {
-      tagSize = atof(argv[i+1]);
-    } else if (std::string(argv[i]) == "--input" && i+1 < argc) {
-      input_filename = std::string(argv[i+1]);
-    } else if (std::string(argv[i]) == "--quad_decimate" && i+1 < argc) {
-      quad_decimate = (float)atof(argv[i+1]);
-    } else if (std::string(argv[i]) == "--nthreads" && i+1 < argc) {
-      nThreads = atoi(argv[i+1]);
-    } else if (std::string(argv[i]) == "--intrinsic" && i+1 < argc) {
-      intrinsic_file = std::string(argv[i+1]);
-    } else if (std::string(argv[i]) == "--camera_name" && i+1 < argc) {
-      camera_name = std::string(argv[i+1]);
+    if (std::string(argv[i]) == "--pose_method" && i + 1 < argc) {
+      poseEstimationMethod =
+          (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
+      tagSize = atof(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
+      input_filename = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+      quad_decimate = (float)atof(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
+      nThreads = atoi(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
+      intrinsic_file = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
+      camera_name = std::string(argv[i + 1]);
     } else if (std::string(argv[i]) == "--display_tag") {
       display_tag = true;
-    } else if (std::string(argv[i]) == "--tag_family" && i+1 < argc) {
-      tagFamily = (vpDetectorAprilTag::vpAprilTagFamily) atoi(argv[i+1]);
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Usage: " << argv[0]
-                << " [--input <input file>] [--tag_size <tag_size in m>]"
-                   " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
-                   " [--intrinsic <intrinsic file>] [--camera_name <camera name>]"
-                   " [--pose_method <method> (0: HOMOGRAPHY_VIRTUAL_VS, 1: DEMENTHON_VIRTUAL_VS,"
-                   " 2: LAGRANGE_VIRTUAL_VS, 3: BEST_RESIDUAL_VIRTUAL_VS)]"
-                   " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT,"
-                   " 3: TAG_25h9, 4: TAG_25h7)]"
-                   " [--display_tag] [--help]"
-                << std::endl;
+    } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
+      tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--help" ||
+               std::string(argv[i]) == "-h") {
+      std::cout
+          << "Usage: " << argv[0]
+          << " [--input <input file>] [--tag_size <tag_size in m>]"
+             " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
+             " [--intrinsic <intrinsic file>] [--camera_name <camera name>]"
+             " [--pose_method <method> (0: HOMOGRAPHY_VIRTUAL_VS, 1: "
+             "DEMENTHON_VIRTUAL_VS,"
+             " 2: LAGRANGE_VIRTUAL_VS, 3: BEST_RESIDUAL_VIRTUAL_VS)]"
+             " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: "
+             "TAG_36ARTOOLKIT,"
+             " 3: TAG_25h9, 4: TAG_25h7)]"
+             " [--display_tag] [--help]"
+          << std::endl;
       return EXIT_SUCCESS;
     }
   }
 
   vpCameraParameters cam;
-  cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
+  cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954,
+                                    243.4373779);
 #ifdef VISP_HAVE_XML2
   vpXmlParserCamera parser;
-  if (! intrinsic_file.empty() && ! camera_name.empty())
-    parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
+  if (!intrinsic_file.empty() && !camera_name.empty())
+    parser.parse(cam, intrinsic_file, camera_name,
+                 vpCameraParameters::perspectiveProjWithoutDistortion);
 #endif
   std::cout << "cam:\n" << cam << std::endl;
   std::cout << "poseEstimationMethod: " << poseEstimationMethod << std::endl;
@@ -88,10 +99,13 @@ int main(int argc, const char** argv) {
     //! [Create base detector]
 
     //! [AprilTag detector settings]
-    dynamic_cast<vpDetectorAprilTag*>(detector)->setAprilTagQuadDecimate(quad_decimate);
-    dynamic_cast<vpDetectorAprilTag*>(detector)->setAprilTagPoseEstimationMethod(poseEstimationMethod);
-    dynamic_cast<vpDetectorAprilTag*>(detector)->setAprilTagNbThreads(nThreads);
-    dynamic_cast<vpDetectorAprilTag*>(detector)->setDisplayTag(display_tag);
+    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagQuadDecimate(
+        quad_decimate);
+    dynamic_cast<vpDetectorAprilTag *>(detector)
+        ->setAprilTagPoseEstimationMethod(poseEstimationMethod);
+    dynamic_cast<vpDetectorAprilTag *>(detector)->setAprilTagNbThreads(
+        nThreads);
+    dynamic_cast<vpDetectorAprilTag *>(detector)->setDisplayTag(display_tag);
     //! [AprilTag detector settings]
 
     vpDisplay::display(I);
@@ -99,16 +113,18 @@ int main(int argc, const char** argv) {
     double t = vpTime::measureTimeMs();
     //! [Detect and compute pose]
     std::vector<vpHomogeneousMatrix> cMo_vec;
-    dynamic_cast<vpDetectorAprilTag*>(detector)->detect(I, tagSize, cam, cMo_vec);
+    dynamic_cast<vpDetectorAprilTag *>(detector)->detect(I, tagSize, cam,
+                                                         cMo_vec);
     //! [Detect and compute pose]
     t = vpTime::measureTimeMs() - t;
 
     std::stringstream ss;
-    ss << "Detection time: " << t << " ms for " << detector->getNbObjects() << " tags";
+    ss << "Detection time: " << t << " ms for " << detector->getNbObjects()
+       << " tags";
     vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
 
     //! [Parse detected codes]
-    for(size_t i=0; i < detector->getNbObjects(); i++) {
+    for (size_t i = 0; i < detector->getNbObjects(); i++) {
       //! [Parse detected codes]
       //! [Get location]
       std::vector<vpImagePoint> p = detector->getPolygon(i);
@@ -116,27 +132,30 @@ int main(int argc, const char** argv) {
       //! [Get location]
       vpDisplay::displayRectangle(I, bbox, vpColor::green);
       //! [Get message]
-      vpDisplay::displayText(I, (int) (bbox.getTop()-10), (int) bbox.getLeft(),
-                             "Message: \"" + detector->getMessage(i) + "\"",
-                             vpColor::red);
+      vpDisplay::displayText(
+          I, (int)(bbox.getTop() - 10), (int)bbox.getLeft(),
+          "Message: \"" + detector->getMessage(i) + "\"", vpColor::red);
       //! [Get message]
-      for(size_t j=0; j < p.size(); j++) {
+      for (size_t j = 0; j < p.size(); j++) {
         vpDisplay::displayCross(I, p[j], 14, vpColor::red, 3);
         std::ostringstream number;
         number << j;
-        vpDisplay::displayText(I, p[j]+vpImagePoint(15,5), number.str(), vpColor::blue);
+        vpDisplay::displayText(I, p[j] + vpImagePoint(15, 5), number.str(),
+                               vpColor::blue);
       }
     }
 
-    vpDisplay::displayText(I, 20, 20, "Click to display tag poses", vpColor::red);
+    vpDisplay::displayText(I, 20, 20, "Click to display tag poses",
+                           vpColor::red);
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
 
     vpDisplay::display(I);
 
     //! [Display camera pose for each tag]
-    for (size_t i = 0; i < cMo_vec.size() ; i++) {
-      vpDisplay::displayFrame(I, cMo_vec[i], cam, tagSize/2, vpColor::none, 3);
+    for (size_t i = 0; i < cMo_vec.size(); i++) {
+      vpDisplay::displayFrame(I, cMo_vec[i], cam, tagSize / 2, vpColor::none,
+                              3);
     }
     //! [Display camera pose for each tag]
 
@@ -145,7 +164,7 @@ int main(int argc, const char** argv) {
     vpDisplay::getClick(I);
 
     delete detector;
-  } catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
 

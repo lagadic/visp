@@ -1,35 +1,41 @@
 //! \example tutorial-mb-generic-tracker-stereo-mono.cpp
 #include <cstdlib>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/core/vpIoTools.h>
 //! [Include]
 #include <visp3/mbt/vpMbGenericTracker.h>
 //! [Include]
 #include <visp3/io/vpVideoReader.h>
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020300)
   try {
     std::string opt_videoname = "teabox.mpg";
     int opt_tracker = vpMbGenericTracker::EDGE_TRACKER;
 
-    for (int i = 0; i<argc; i++) {
-      if (std::string(argv[i]) == "--name" && i+1 < argc)
-        opt_videoname = std::string(argv[i+1]);
-      else if (std::string(argv[i]) == "--tracker" && i+1 < argc)
-        opt_tracker = atoi(argv[i+1]);
+    for (int i = 0; i < argc; i++) {
+      if (std::string(argv[i]) == "--name" && i + 1 < argc)
+        opt_videoname = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--tracker" && i + 1 < argc)
+        opt_tracker = atoi(argv[i + 1]);
       else if (std::string(argv[i]) == "--help") {
-        std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--tracker <1=egde|2=keypoint|3=hybrid>] [--help]\n" << std::endl;
+        std::cout << "\nUsage: " << argv[0]
+                  << " [--name <video name>] [--tracker "
+                     "<1=egde|2=keypoint|3=hybrid>] [--help]\n"
+                  << std::endl;
         return EXIT_SUCCESS;
       }
     }
 
     if (opt_tracker < 1 || opt_tracker > 3) {
-      std::cerr << "Wrong tracker type. Correct values are: 1=egde|2=keypoint|3=hybrid." << std::endl;
+      std::cerr << "Wrong tracker type. Correct values are: "
+                   "1=egde|2=keypoint|3=hybrid."
+                << std::endl;
       return EXIT_SUCCESS;
     }
 
@@ -37,13 +43,14 @@ int main(int argc, char** argv) {
     std::string objectname = vpIoTools::getNameWE(opt_videoname);
 
     if (!parentname.empty()) {
-       objectname = parentname + "/" + objectname;
+      objectname = parentname + "/" + objectname;
     }
 
     std::cout << "Video name: " << opt_videoname << std::endl;
     std::cout << "Tracker requested config files: " << objectname
               << ".[init, cao]" << std::endl;
-    std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
+    std::cout << "Tracker optional config files: " << objectname << ".[ppm]"
+              << std::endl;
 
     //! [Image]
     vpImage<unsigned char> I;
@@ -64,20 +71,22 @@ int main(int argc, char** argv) {
 
     //! [Constructor]
     vpMbGenericTracker tracker(1, opt_tracker);
-    //! [Constructor]
+//! [Constructor]
 
-#if !defined (VISP_HAVE_MODULE_KLT)
+#if !defined(VISP_HAVE_MODULE_KLT)
     if (opt_tracker >= 2) {
-      std::cout << "KLT and hybrid model-based tracker are not available since visp_klt module is missing" << std::endl;
+      std::cout << "KLT and hybrid model-based tracker are not available "
+                   "since visp_klt module is missing"
+                << std::endl;
       return EXIT_SUCCESS;
     }
 #endif
 
-    //! [Set parameters]
+//! [Set parameters]
 #ifdef VISP_HAVE_XML2
     //! [Load config file]
     tracker.loadConfigFile(objectname + ".xml");
-    //! [Load config file]
+//! [Load config file]
 #else
     if (opt_tracker == 1 || opt_tracker == 3) {
       vpMe me;
@@ -109,7 +118,8 @@ int main(int argc, char** argv) {
     {
       //! [Set camera parameters]
       vpCameraParameters cam;
-      cam.initPersProjWithoutDistortion(839.21470, 839.44555, 325.66776, 243.69727);
+      cam.initPersProjWithoutDistortion(839.21470, 839.44555, 325.66776,
+                                        243.69727);
       tracker.setCameraParameters(cam);
       //! [Set camera parameters]
     }
@@ -158,7 +168,8 @@ int main(int argc, char** argv) {
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
+  std::cout << "Install OpenCV and rebuild ViSP to use this example."
+            << std::endl;
   return EXIT_SUCCESS;
 #endif
 }

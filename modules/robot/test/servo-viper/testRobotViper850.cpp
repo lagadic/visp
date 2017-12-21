@@ -43,14 +43,11 @@
   degrees of freedom).
 */
 
-
-
-
-#include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpRobotViper850.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpCameraParameters.h>
 #include <iostream>
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/robot/vpRobotViper850.h>
 #ifdef VISP_HAVE_VIPER850
 
 int main()
@@ -62,28 +59,28 @@ int main()
     vpRobotViper850 viper850;
     vpCameraParameters cam;
 
-    std::cout << "-- Default settings for Viper850  ---" 
-              << std::endl;
+    std::cout << "-- Default settings for Viper850  ---" << std::endl;
     std::cout << viper850 << std::endl;
     viper850.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
 
-    std::cout << "-- Settings associated to the Marlin F033C camera without distortion ---" 
+    std::cout << "-- Settings associated to the Marlin F033C camera without "
+                 "distortion ---"
               << std::endl;
-    viper850.init( vpViper850::TOOL_MARLIN_F033C_CAMERA);
+    viper850.init(vpViper850::TOOL_MARLIN_F033C_CAMERA);
 
     std::cout << viper850 << std::endl;
     viper850.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
 
-    std::cout << "-- Settings associated to the Marlin F033C camera with distortion ------" 
+    std::cout << "-- Settings associated to the Marlin F033C camera with "
+                 "distortion ------"
               << std::endl;
-    viper850.init( vpViper850::TOOL_MARLIN_F033C_CAMERA,
-                   vpCameraParameters::perspectiveProjWithDistortion);
+    viper850.init(vpViper850::TOOL_MARLIN_F033C_CAMERA,
+                  vpCameraParameters::perspectiveProjWithDistortion);
     std::cout << viper850 << std::endl;
     viper850.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
-
 
     std::cout << "-- Current joint position:" << std::endl;
     vpColVector q;
@@ -103,12 +100,11 @@ int main()
 
     std::cout << "fMe:" << std::endl
               << "\tt: " << t.t() << std::endl
-              << "\trzyz (deg): " << vpMath::deg(rzyz[0])
-              << " " << vpMath::deg(rzyz[1])
-              << " " << vpMath::deg(rzyz[2]) << std::endl;
+              << "\trzyz (deg): " << vpMath::deg(rzyz[0]) << " "
+              << vpMath::deg(rzyz[1]) << " " << vpMath::deg(rzyz[2])
+              << std::endl;
 
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
   return 0;
@@ -116,8 +112,9 @@ int main()
 #else
 int main()
 {
-  std::cout << "The real Viper850 robot controller is not available." << std::endl;
-  return 0; 
+  std::cout << "The real Viper850 robot controller is not available."
+            << std::endl;
+  return 0;
 }
 
 #endif

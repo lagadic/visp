@@ -41,15 +41,12 @@
  \file vpRobust.h
 */
 
-
-
 #ifndef CROBUST_HH
 #define CROBUST_HH
 
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
-
 
 /*!
   \class vpRobust
@@ -63,23 +60,17 @@ class VISP_EXPORT vpRobust
 
 public:
   //! Enumeration of influence functions
-  typedef enum
-  {
-    TUKEY,
-    CAUCHY,
-    HUBER
-  } vpRobustEstimatorType;
+  typedef enum { TUKEY, CAUCHY, HUBER } vpRobustEstimatorType;
 
 private:
-
-  //!Normalized residue
+  //! Normalized residue
   vpColVector normres;
-  //!Sorted normalized Residues
+  //! Sorted normalized Residues
   vpColVector sorted_normres;
-  //!Sorted residues
+  //! Sorted residues
   vpColVector sorted_residues;
 
-  //!Noise threshold
+  //! Noise threshold
   double NoiseThreshold;
   //!
   double sig_prev;
@@ -91,67 +82,62 @@ private:
   unsigned int size;
 
 public:
-
-  //!Default Constructor
+  //! Default Constructor
   explicit vpRobust(unsigned int n_data);
   vpRobust();
   vpRobust(const vpRobust &other);
 
-  //!Destructor
+  //! Destructor
   virtual ~vpRobust(){};
 
   //! Compute the weights according a residue vector and a PsiFunction
   void MEstimator(const vpRobustEstimatorType method,
-     const vpColVector &residues,
-     vpColVector &weights);
+                  const vpColVector &residues, vpColVector &weights);
 
   //! Compute the weights according a residue vector and a PsiFunction
   void MEstimator(const vpRobustEstimatorType method,
-     const vpColVector &residues,
-     const vpColVector& all_residues,
-     vpColVector &weights);
+                  const vpColVector &residues,
+                  const vpColVector &all_residues, vpColVector &weights);
 
-  vpRobust & operator=(const vpRobust &other);
+  vpRobust &operator=(const vpRobust &other);
 #ifdef VISP_HAVE_CPP11_COMPATIBILITY
-  vpRobust & operator=(const vpRobust &&other);
+  vpRobust &operator=(const vpRobust &&other);
 #endif
 
-  //!Resize containers for sort methods
+  //! Resize containers for sort methods
   void resize(unsigned int n_data);
 
   //! Set iteration
-  void setIteration(const unsigned int iter){it=iter;}
+  void setIteration(const unsigned int iter) { it = iter; }
 
   /*!
     Set maximal noise threshold.
     \param noise_threshold : Maximal noise threshold.
   */
-  inline void setThreshold(const double noise_threshold) {
-    NoiseThreshold=noise_threshold;
+  inline void setThreshold(const double noise_threshold)
+  {
+    NoiseThreshold = noise_threshold;
   }
 
   //! Simult Mestimator
   vpColVector simultMEstimator(vpColVector &residues);
 
-//public :
-//double residualMedian ;
-//double normalizedResidualMedian ;
-//  private:
-//   double median(const vpColVector &x);
-//   double median(const vpColVector &x, vpColVector &weights);
+  // public :
+  // double residualMedian ;
+  // double normalizedResidualMedian ;
+  //  private:
+  //   double median(const vpColVector &x);
+  //   double median(const vpColVector &x, vpColVector &weights);
 
- private:
-  //!Compute normalized median
+private:
+  //! Compute normalized median
   double computeNormalizedMedian(vpColVector &all_normres,
-         const vpColVector &residues,
-         const vpColVector &all_residues,
-         const vpColVector &weights
-         );
-
+                                 const vpColVector &residues,
+                                 const vpColVector &all_residues,
+                                 const vpColVector &weights);
 
   //! Calculate various scale estimates
   double simultscale(vpColVector &x);
-
 
   //---------------------------------
   //  Partial derivative of loss function with respect to the residue
@@ -173,7 +159,7 @@ public:
   //---------------------------------
   // Constrained Partial derivative of loss function with respect to the scale
   //---------------------------------
-   /** @name Constrained Chi Functions  */
+  /** @name Constrained Chi Functions  */
   //@{
   //! Constrained Chi Function
   double constrainedChi(vpRobustEstimatorType method, double x);
@@ -181,9 +167,9 @@ public:
   double constrainedChiTukey(double x);
   //! Constrained Chi Cauchy Function
   double constrainedChiCauchy(double x);
-   //! Constrained Chi Huber Function
+  //! Constrained Chi Huber Function
   double constrainedChiHuber(double x);
-  //@}
+//@}
 
 #if !defined(VISP_HAVE_FUNC_ERFC) && !defined(VISP_HAVE_FUNC_STD_ERFC)
   //---------------------------------
@@ -196,13 +182,18 @@ public:
   void gser(double *gamser, double a, double x, double *gln);
   void gcf(double *gammcf, double a, double x, double *gln);
   double gammln(double xx);
-  //@}
+//@}
 #endif
 
   /** @name Sort function  */
   //@{
   //! Swap two value
-  void exch(double &A, double &B){swap = A; A = B;  B = swap;}
+  void exch(double &A, double &B)
+  {
+    swap = A;
+    A = B;
+    B = swap;
+  }
   //! Sort function using partition method
   int partition(vpColVector &a, int l, int r);
   //! Sort the vector and select a value in the sorted vector

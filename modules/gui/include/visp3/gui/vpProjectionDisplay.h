@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpProjectionDisplay_H
 #define vpProjectionDisplay_H
 
@@ -46,18 +45,18 @@
 */
 
 #include <visp3/core/vpConfig.h>
-#if defined (VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY)
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColor.h>
+#include <visp3/core/vpForwardProjection.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/core/vpForwardProjection.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
 
 #include <list>
 
@@ -69,36 +68,36 @@
 class VISP_EXPORT vpProjectionDisplay
 {
 private:
-  vpImage<unsigned char> Icam ;
-  vpImage<unsigned char> Iext ;
+  vpImage<unsigned char> Icam;
+  vpImage<unsigned char> Iext;
 
 #if defined VISP_HAVE_X11
-  vpDisplayX dIcam ;
-  vpDisplayX dIext ;
+  vpDisplayX dIcam;
+  vpDisplayX dIext;
 #elif defined VISP_HAVE_GTK
-  vpDisplayGTK dIcam ;
-  vpDisplayGTK dIext ;
+  vpDisplayGTK dIcam;
+  vpDisplayGTK dIext;
 #elif defined VISP_HAVE_GDI
-  vpDisplayGDI dIcam ;
-  vpDisplayGDI dIext ;
+  vpDisplayGDI dIcam;
+  vpDisplayGDI dIext;
 #elif defined VISP_HAVE_OPENCV
-  vpDisplayOpenCV dIcam ;
-  vpDisplayOpenCV dIext ;
+  vpDisplayOpenCV dIcam;
+  vpDisplayOpenCV dIext;
 #elif defined(VISP_HAVE_D3D9)
-  vpDisplayD3D dIcam ;
-  vpDisplayD3D dIext ;
+  vpDisplayD3D dIcam;
+  vpDisplayD3D dIext;
 #endif
 public:
-  void init() ;
-  void init(int select) ;
-  void close() ;
-  static int internalView() { return 0x01 ; }
-  static int externalView() { return 0x02 ; }
+  void init();
+  void init(int select);
+  void close();
+  static int internalView() { return 0x01; }
+  static int externalView() { return 0x02; }
 
   /*! Default constructor. */
   vpProjectionDisplay()
     : Icam(), Iext(),
-#if defined (VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY)
       dIcam(), dIext(),
 #endif
       listFp(), o(), x(), y(), z(), traj()
@@ -107,38 +106,33 @@ public:
   }
   explicit vpProjectionDisplay(int select)
     : Icam(), Iext(),
-#if defined (VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY)
       dIcam(), dIext(),
 #endif
       listFp(), o(), x(), y(), z(), traj()
   {
-    init(select) ;
+    init(select);
   }
 
-  void insert( vpForwardProjection &fp) ;
-  void display(vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cextMo,
-               const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam,
-               const vpColor &color,
-               const bool &displayTraj = false,
-               const unsigned int thickness=1);
+  void insert(vpForwardProjection &fp);
+  void display(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cextMo,
+               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color, const bool &displayTraj = false,
+               const unsigned int thickness = 1);
   void displayCamera(vpImage<unsigned char> &I,
                      const vpHomogeneousMatrix &cextMo,
                      const vpHomogeneousMatrix &cMo,
                      const vpCameraParameters &cam,
-                     const unsigned int thickness=1) ;
+                     const unsigned int thickness = 1);
 
 private:
-  std::list<vpForwardProjection *> listFp ;
-  vpPoint o ;
-  vpPoint x ;
-  vpPoint y ;
-  vpPoint z ;
+  std::list<vpForwardProjection *> listFp;
+  vpPoint o;
+  vpPoint x;
+  vpPoint y;
+  vpPoint z;
   vpMatrix traj;
-} ;
-
-
+};
 
 #endif
 #endif

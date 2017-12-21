@@ -36,37 +36,35 @@
  *
  *****************************************************************************/
 
+#include <visp3/core/vpDebug.h>
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpRobotException.h>
-#include <visp3/core/vpDebug.h>
-
 
 const double vpRobot::maxTranslationVelocityDefault = 0.2;
 const double vpRobot::maxRotationVelocityDefault = 0.7;
 
-/* ------------------------------------------------------------------------- */
-/* --- CONSTRUCTEUR -------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+ */
+/* --- CONSTRUCTEUR --------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
-vpRobot::vpRobot (void)
-  :
-  stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
-  maxTranslationVelocity (maxTranslationVelocityDefault),
-  maxRotationVelocity (maxRotationVelocityDefault),
-  nDof(0),
-  eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false),
-  qmin(NULL), qmax(NULL), verbose_(true)
+vpRobot::vpRobot(void)
+  : stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
+    maxTranslationVelocity(maxTranslationVelocityDefault),
+    maxRotationVelocity(maxRotationVelocityDefault), nDof(0), eJe(),
+    eJeAvailable(false), fJe(), fJeAvailable(false),
+    areJointLimitsAvailable(false), qmin(NULL), qmax(NULL), verbose_(true)
 {
 }
 
-vpRobot::vpRobot (const vpRobot &robot)
-  :
-  stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
-  maxTranslationVelocity (maxTranslationVelocityDefault),
-  maxRotationVelocity (maxRotationVelocityDefault),
-  nDof(0),
-  eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false),
-  qmin(NULL), qmax(NULL), verbose_(true)
+vpRobot::vpRobot(const vpRobot &robot)
+  : stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
+    maxTranslationVelocity(maxTranslationVelocityDefault),
+    maxRotationVelocity(maxRotationVelocityDefault), nDof(0), eJe(),
+    eJeAvailable(false), fJe(), fJeAvailable(false),
+    areJointLimitsAvailable(false), qmin(NULL), qmax(NULL), verbose_(true)
 {
   *this = robot;
 }
@@ -77,17 +75,17 @@ vpRobot::vpRobot (const vpRobot &robot)
 vpRobot::~vpRobot()
 {
   if (qmin != NULL) {
-    delete [] qmin;
+    delete[] qmin;
     qmin = NULL;
   }
   if (qmax != NULL) {
-    delete [] qmax;
+    delete[] qmax;
     qmax = NULL;
   }
 }
 
 /*! Copy operator. */
-vpRobot & vpRobot::operator=(const vpRobot &robot)
+vpRobot &vpRobot::operator=(const vpRobot &robot)
 {
   stateRobot = robot.stateRobot;
   frameRobot = robot.frameRobot;
@@ -96,12 +94,12 @@ vpRobot & vpRobot::operator=(const vpRobot &robot)
   nDof = robot.nDof;
   eJe = robot.eJe;
   eJeAvailable = robot.eJeAvailable;
-  fJe= robot.fJe;
+  fJe = robot.fJe;
   fJeAvailable = robot.fJeAvailable;
   areJointLimitsAvailable = robot.areJointLimitsAvailable;
-  qmin = new double [nDof];
-  qmax = new double [nDof];
-  for (int i = 0; i< nDof; i++) {
+  qmin = new double[nDof];
+  qmax = new double[nDof];
+  for (int i = 0; i < nDof; i++) {
     qmin[i] = robot.qmin[i];
     qmax[i] = robot.qmax[i];
   }
@@ -112,19 +110,23 @@ vpRobot & vpRobot::operator=(const vpRobot &robot)
 /*!
   Saturate velocities.
 
-  \param v_in : Vector of input velocities to saturate. Translation velocities should
-  be expressed in m/s while rotation velocities in rad/s.
+  \param v_in : Vector of input velocities to saturate. Translation velocities
+should be expressed in m/s while rotation velocities in rad/s.
 
-  \param v_max : Vector of maximal allowed velocities. Maximal translation velocities
-  should be expressed in m/s while maximal rotation velocities in rad/s.
+  \param v_max : Vector of maximal allowed velocities. Maximal translation
+velocities should be expressed in m/s while maximal rotation velocities in
+rad/s.
 
-  \param verbose : Print a message indicating which axis causes the saturation.
+  \param verbose : Print a message indicating which axis causes the
+saturation.
 
   \return Saturated velocities.
 
-  \exception vpRobotException::dimensionError : If the input vectors have different dimensions.
+  \exception vpRobotException::dimensionError : If the input vectors have
+different dimensions.
 
-  The code below shows how to use this static method in order to saturate a velocity skew vector.
+  The code below shows how to use this static method in order to saturate a
+velocity skew vector.
 
   \code
 #include <iostream>
@@ -160,26 +162,28 @@ int main()
 }
   \endcode
   */
-vpColVector
-vpRobot::saturateVelocities(const vpColVector &v_in, const vpColVector &v_max, bool verbose)
+vpColVector vpRobot::saturateVelocities(const vpColVector &v_in,
+                                        const vpColVector &v_max,
+                                        bool verbose)
 {
   unsigned int size = v_in.size();
   if (size != v_max.size())
-    throw vpRobotException (vpRobotException::dimensionError, "Velocity vectors should have the same dimension");
+    throw vpRobotException(vpRobotException::dimensionError,
+                           "Velocity vectors should have the same dimension");
 
-  double scale = 1;  // global scale factor to saturate all the axis
-  for (unsigned int i = 0; i < size; i++)
-  {
+  double scale = 1; // global scale factor to saturate all the axis
+  for (unsigned int i = 0; i < size; i++) {
     double v_i = fabs(v_in[i]);
     double v_max_i = fabs(v_max[i]);
-    if ( v_i > v_max_i ) // Test if we should saturate the axis
+    if (v_i > v_max_i) // Test if we should saturate the axis
     {
-      double scale_i = v_max_i/v_i;
+      double scale_i = v_max_i / v_i;
       if (scale_i < scale)
         scale = scale_i;
 
       if (verbose)
-        std::cout << "Excess velocity " << v_in[i] << " axis nr. " << i << std::endl;
+        std::cout << "Excess velocity " << v_in[i] << " axis nr. " << i
+                  << std::endl;
     }
   }
 
@@ -189,92 +193,95 @@ vpRobot::saturateVelocities(const vpColVector &v_in, const vpColVector &v_max, b
   return v_sat;
 }
 
-
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
-/* -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+ */
+/* --------------------------------------------------------------------------
+ */
+/* --------------------------------------------------------------------------
+ */
 
 /*!
   \file vpRobot.cpp
   \brief class that defines a generic virtual robot
 */
 vpRobot::vpRobotStateType
-vpRobot::setRobotState (const vpRobot::vpRobotStateType newState)
+vpRobot::setRobotState(const vpRobot::vpRobotStateType newState)
 {
-  stateRobot = newState ;
-  return newState ;
+  stateRobot = newState;
+  return newState;
 }
 
 vpRobot::vpControlFrameType
-vpRobot::setRobotFrame (vpRobot::vpControlFrameType newFrame)
+vpRobot::setRobotFrame(vpRobot::vpControlFrameType newFrame)
 {
-  frameRobot = newFrame ;
-  return newFrame ;
+  frameRobot = newFrame;
+  return newFrame;
 }
 
 /*!
   Return the current robot position in the specified frame.
 */
-vpColVector
-vpRobot::getPosition (vpRobot::vpControlFrameType frame)
+vpColVector vpRobot::getPosition(vpRobot::vpControlFrameType frame)
 {
   vpColVector r;
-  this ->getPosition (frame, r);
+  this->getPosition(frame, r);
 
   return r;
 }
 
-/* ------------------------------------------------------------------------- */
-/* --- VELOCITY CONTROL ---------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+ */
+/* --- VELOCITY CONTROL ----------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
-/*! 
+/*!
 
-  Set the maximal translation velocity that can be sent to the robot during a velocity control.
+  Set the maximal translation velocity that can be sent to the robot during a
+  velocity control.
 
   \param v_max : Maximum translation velocity expressed in m/s.
 
 */
-void
-vpRobot::setMaxTranslationVelocity (const double v_max)
+void vpRobot::setMaxTranslationVelocity(const double v_max)
 {
-  this ->maxTranslationVelocity = v_max;
+  this->maxTranslationVelocity = v_max;
   return;
 }
 
 /*!
-  Get the maximal translation velocity that can be sent to the robot during a velocity control.
+  Get the maximal translation velocity that can be sent to the robot during a
+  velocity control.
 
   \return Maximum translation velocity expressed in m/s.
 */
-double
-vpRobot::getMaxTranslationVelocity (void) const
+double vpRobot::getMaxTranslationVelocity(void) const
 {
-  return this ->maxTranslationVelocity;
+  return this->maxTranslationVelocity;
 }
-/*! 
+/*!
 
-  Set the maximal rotation velocity that can be sent to the robot  during a velocity control.
+  Set the maximal rotation velocity that can be sent to the robot  during a
+  velocity control.
 
   \param w_max : Maximum rotation velocity expressed in rad/s.
 */
 
-void
-vpRobot::setMaxRotationVelocity (const double w_max)
+void vpRobot::setMaxRotationVelocity(const double w_max)
 {
-  this ->maxRotationVelocity = w_max;
+  this->maxRotationVelocity = w_max;
   return;
 }
 
-/*! 
+/*!
 
-  Get the maximal rotation velocity that can be sent to the robot during a velocity control.
+  Get the maximal rotation velocity that can be sent to the robot during a
+  velocity control.
 
   \return Maximum rotation velocity expressed in rad/s.
 */
-double
-vpRobot::getMaxRotationVelocity (void) const
+double vpRobot::getMaxRotationVelocity(void) const
 {
-  return this ->maxRotationVelocity;
+  return this->maxRotationVelocity;
 }
-

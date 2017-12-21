@@ -3,10 +3,10 @@
 #include <cstdlib>
 #include <iostream>
 #include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 
 #if defined(VISP_HAVE_MODULE_IMGPROC)
 //! [Include]
@@ -14,23 +14,28 @@
 //! [Include]
 #endif
 
-int main(int argc, const char ** argv) {
-  //! [Macro defined]
-#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+int main(int argc, const char **argv)
+{
+//! [Macro defined]
+#if defined(VISP_HAVE_MODULE_IMGPROC) &&                                     \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
+     defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
 
   std::string input_filename = "img.pgm";
-  vpImageMorphology::vpConnexityType connexity = vpImageMorphology::CONNEXITY_4;
+  vpImageMorphology::vpConnexityType connexity =
+      vpImageMorphology::CONNEXITY_4;
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--input" && i+1 < argc) {
-      input_filename = std::string(argv[i+1]);
-    } else if (std::string(argv[i]) == "--connexity" && i+1 < argc) {
-      connexity = (vpImageMorphology::vpConnexityType) atoi(argv[i+1]);
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    if (std::string(argv[i]) == "--input" && i + 1 < argc) {
+      input_filename = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--connexity" && i + 1 < argc) {
+      connexity = (vpImageMorphology::vpConnexityType)atoi(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--help" ||
+               std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-                << " [--input <input image>] [--connexity <0: 4-connexity, 1: 8-connexity>] [--help]"
+                << " [--input <input image>] [--connexity <0: 4-connexity, "
+                   "1: 8-connexity>] [--help]"
                 << std::endl;
       return EXIT_SUCCESS;
     }
@@ -39,7 +44,7 @@ int main(int argc, const char ** argv) {
   //! [Read]
   vpImage<unsigned char> I;
   vpImageIo::read(I, input_filename);
-  //! [Read]
+//! [Read]
 
 #ifdef VISP_HAVE_X11
   vpDisplayX d, d2;
@@ -62,9 +67,10 @@ int main(int argc, const char ** argv) {
   for (unsigned int i = 0; i < I_conn.getHeight(); i++) {
     for (unsigned int j = 0; j < I_conn.getWidth(); j++) {
       if (labels[i][j] != 0) {
-        I_conn[i][j] = vpRGBa(vpColor::getColor( (unsigned int) labels[i][j]).R,
-                              vpColor::getColor( (unsigned int) labels[i][j]).G,
-                              vpColor::getColor( (unsigned int) labels[i][j]).B);
+        I_conn[i][j] =
+            vpRGBa(vpColor::getColor((unsigned int)labels[i][j]).R,
+                   vpColor::getColor((unsigned int)labels[i][j]).G,
+                   vpColor::getColor((unsigned int)labels[i][j]).B);
       }
     }
   }

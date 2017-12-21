@@ -3,10 +3,10 @@
 #include <cstdlib>
 #include <iostream>
 #include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 
 #if defined(VISP_HAVE_MODULE_IMGPROC)
 //! [Include]
@@ -14,9 +14,12 @@
 //! [Include]
 #endif
 
-int main(int argc, const char ** argv) {
-  //! [Macro defined]
-#if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+int main(int argc, const char **argv)
+{
+//! [Macro defined]
+#if defined(VISP_HAVE_MODULE_IMGPROC) &&                                     \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) ||                     \
+     defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
   //!
   std::string input_filename = "Crayfish-low-contrast.ppm";
@@ -27,24 +30,26 @@ int main(int argc, const char ** argv) {
   double weight = 0.5;
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--input" && i+1 < argc) {
-      input_filename = std::string(argv[i+1]);
-    } else if (std::string(argv[i]) == "--blockRadius" && i+1 < argc) {
-      blockRadius = atoi(argv[i+1]);
-    } else if (std::string(argv[i]) == "--bins" && i+1 < argc) {
-      bins = atoi(argv[i+1]);
-    } else if (std::string(argv[i]) == "--slope" && i+1 < argc) {
-      slope = (float) atof(argv[i+1]);
-    } else if (std::string(argv[i]) == "--size" && i+1 < argc) {
-      size = (unsigned int) atoi(argv[i+1]);
-    } else if (std::string(argv[i]) == "--weight" && i+1 < argc) {
-      weight = atof(argv[i+1]);
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    if (std::string(argv[i]) == "--input" && i + 1 < argc) {
+      input_filename = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--blockRadius" && i + 1 < argc) {
+      blockRadius = atoi(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--bins" && i + 1 < argc) {
+      bins = atoi(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--slope" && i + 1 < argc) {
+      slope = (float)atof(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--size" && i + 1 < argc) {
+      size = (unsigned int)atoi(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--weight" && i + 1 < argc) {
+      weight = atof(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--help" ||
+               std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
                 << " [--input <input image>]"
-                   " [--blockRadius <block radius for CLAHE>] [--bins <nb histogram bins for CLAHE>] [--slope <slope for CLAHE>]"
-                   " [--size <Gaussian kernel size>] [--weight <unsharp mask weighting>]"
+                   " [--blockRadius <block radius for CLAHE>] [--bins <nb "
+                   "histogram bins for CLAHE>] [--slope <slope for CLAHE>]"
+                   " [--size <Gaussian kernel size>] [--weight <unsharp mask "
+                   "weighting>]"
                    " [--help]"
                 << std::endl;
       return EXIT_SUCCESS;
@@ -54,7 +59,7 @@ int main(int argc, const char ** argv) {
   //! [Read]
   vpImage<vpRGBa> I_color;
   vpImageIo::read(I_color, input_filename);
-  //! [Read]
+//! [Read]
 
 #ifdef VISP_HAVE_X11
   vpDisplayX d, d2, d3, d4, d5, d6;
@@ -75,25 +80,27 @@ int main(int argc, const char ** argv) {
   vpImage<vpRGBa> I_stretch_hsv;
   vp::stretchContrastHSV(I_color, I_stretch_hsv);
   //! [Stretch contrast HSV]
-  d3.init(I_stretch_hsv, 0, I_color.getHeight()+80, "Stretch contrast HSV");
+  d3.init(I_stretch_hsv, 0, I_color.getHeight() + 80, "Stretch contrast HSV");
 
   //! [Histogram equalization]
   vpImage<vpRGBa> I_hist_eq;
   vp::equalizeHistogram(I_color, I_hist_eq);
   //! [Histogram equalization]
-  d4.init(I_hist_eq, I_color.getWidth(), I_color.getHeight()+80, "Histogram equalization");
+  d4.init(I_hist_eq, I_color.getWidth(), I_color.getHeight() + 80,
+          "Histogram equalization");
 
   //! [CLAHE]
   vpImage<vpRGBa> I_clahe;
   vp::clahe(I_color, I_clahe, blockRadius, bins, slope);
   //! [CLAHE]
-  d5.init(I_clahe, 0, 2*I_color.getHeight()+80, "Histogram equalization");
+  d5.init(I_clahe, 0, 2 * I_color.getHeight() + 80, "Histogram equalization");
 
   //! [Unsharp mask]
   vpImage<vpRGBa> I_unsharp;
   vp::unsharpMask(I_clahe, I_unsharp, size, weight);
   //! [Unsharp mask]
-  d6.init(I_unsharp, I_color.getWidth(), 2*I_color.getHeight()+80, "Unsharp mask");
+  d6.init(I_unsharp, I_color.getWidth(), 2 * I_color.getHeight() + 80,
+          "Unsharp mask");
 
   vpDisplay::display(I_color);
   vpDisplay::display(I_stretch);

@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpTHETAUVECTOR_H
 #define vpTHETAUVECTOR_H
 
@@ -57,21 +56,20 @@ class vpRotationVector;
 class vpQuaternionVector;
 
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpRotationVector.h>
-#include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpQuaternionVector.h>
+#include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpRotationVector.h>
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpRzyxVector.h>
-#include <visp3/core/vpQuaternionVector.h>
-
 
 /*!
   \class vpThetaUVector
 
   \ingroup group_core_transformations
 
-  \brief Implementation of a rotation vector as \f$\theta {\bf u}\f$ axis-angle
-  minimal representation.
+  \brief Implementation of a rotation vector as \f$\theta {\bf u}\f$
+axis-angle minimal representation.
 
   Class that consider the case of the \f$\theta {\bf u}\f$
   parameterization for the rotation.
@@ -88,8 +86,8 @@ class vpQuaternionVector;
   rotation matrix \f${\bf R}\f$ using the Rodrigues formula:
 
   \f[
-  {\bf R} =  {\bf I}_{3} + (1 - \cos{ \theta}) \; {\bf u u}^{\top} + \sin{ \theta} \; [{\bf u}]_{\times}
-  \f]
+  {\bf R} =  {\bf I}_{3} + (1 - \cos{ \theta}) \; {\bf u u}^{\top} + \sin{
+\theta} \; [{\bf u}]_{\times} \f]
 
   with \f${\bf I}_{3}\f$ the identity matrix of dimension
   \f$3\times3\f$ and \f$[{\bf u}]_{\times}\f$ the skew matrix:
@@ -148,7 +146,6 @@ int main()
 class VISP_EXPORT vpThetaUVector : public vpRotationVector
 {
 private:
-
   static const double minimum;
 
 public:
@@ -156,47 +153,47 @@ public:
   vpThetaUVector(const vpThetaUVector &tu);
 
   // constructor initialize a Theta U vector from a homogeneous matrix
-  explicit vpThetaUVector(const vpHomogeneousMatrix & M) ;
+  explicit vpThetaUVector(const vpHomogeneousMatrix &M);
   // constructor initialize a Theta U vector from a pose vector
-  explicit vpThetaUVector(const vpPoseVector & p) ;
+  explicit vpThetaUVector(const vpPoseVector &p);
   // constructor initialize a Theta U vector from a rotation matrix
-  explicit vpThetaUVector(const vpRotationMatrix& R) ;
+  explicit vpThetaUVector(const vpRotationMatrix &R);
   // constructor initialize a Theta U vector from a RzyxVector
-  explicit vpThetaUVector(const vpRzyxVector& rzyx) ;
+  explicit vpThetaUVector(const vpRzyxVector &rzyx);
   // constructor initialize a Theta U vector from a RzyzVector
-  explicit vpThetaUVector(const vpRzyzVector& rzyz) ;
+  explicit vpThetaUVector(const vpRzyzVector &rzyz);
   // constructor initialize a Theta U vector from a RxyzVector
-  explicit vpThetaUVector(const vpRxyzVector& rxyz) ;
-  explicit vpThetaUVector(const vpQuaternionVector& q) ;
+  explicit vpThetaUVector(const vpRxyzVector &rxyz);
+  explicit vpThetaUVector(const vpQuaternionVector &q);
 
   vpThetaUVector(const double tux, const double tuy, const double tuz);
   explicit vpThetaUVector(const vpColVector &tu);
   //! Destructor.
-  virtual ~vpThetaUVector() {};
+  virtual ~vpThetaUVector(){};
 
   // convert an homogeneous matrix into Theta U vector
-  vpThetaUVector buildFrom(const vpHomogeneousMatrix& M) ;
+  vpThetaUVector buildFrom(const vpHomogeneousMatrix &M);
   // convert a pose vector into Theta U vector
-  vpThetaUVector buildFrom(const vpPoseVector& p) ;
+  vpThetaUVector buildFrom(const vpPoseVector &p);
   // convert a rotation matrix into Theta U vector
-  vpThetaUVector buildFrom(const vpRotationMatrix& R) ;
+  vpThetaUVector buildFrom(const vpRotationMatrix &R);
   // convert an Rzyx vector into Theta U vector
-  vpThetaUVector buildFrom(const vpRzyxVector &rzyx) ;
+  vpThetaUVector buildFrom(const vpRzyxVector &rzyx);
   // convert an Rzyz vector into Theta U vector
-  vpThetaUVector buildFrom(const vpRzyzVector &zyz) ;
+  vpThetaUVector buildFrom(const vpRzyzVector &zyz);
   // convert an Rxyz vector into Theta U vector
-  vpThetaUVector buildFrom(const vpRxyzVector &xyz) ;
-  vpThetaUVector buildFrom(const vpQuaternionVector &q) ;
+  vpThetaUVector buildFrom(const vpRxyzVector &xyz);
+  vpThetaUVector buildFrom(const vpQuaternionVector &q);
 
   void buildFrom(const double tux, const double tuy, const double tuz);
 
   // extract the angle and the axis from the ThetaU representation
-  void extract( double &theta, vpColVector &u) const;
+  void extract(double &theta, vpColVector &u) const;
   double getTheta() const;
   vpColVector getU() const;
 
   vpThetaUVector &operator=(const vpColVector &tu);
-  vpThetaUVector &operator=(double x) ;
-} ;
+  vpThetaUVector &operator=(double x);
+};
 
 #endif

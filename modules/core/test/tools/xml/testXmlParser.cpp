@@ -36,14 +36,13 @@
  *
  *****************************************************************************/
 
-
 /*!
   \example testXmlParser.cpp
 
   XML parser example.
-  
-  This example contains the declaration of a class used to read and write data 
-  in a xml file like: 
+
+  This example contains the declaration of a class used to read and write data
+  in a xml file like:
   \code
   <config>
       <range>5.5</range>
@@ -52,79 +51,72 @@
       <name>Object</name>
   </config>
   \endcode
-  
-*/
 
+*/
 
 #include <visp3/core/vpConfig.h>
 
 #include <iostream>
 #if defined(VISP_HAVE_XML2)
 
-#include <visp3/core/vpXmlParser.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpXmlParser.h>
 #include <visp3/io/vpParseArgv.h>
 
 #include <string>
 
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-/* -------------------------------------------------------------------------- */
-/*                               CLASS EXAMPLE                                */
-/* -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+ */
+/*                               CLASS EXAMPLE */
+/* --------------------------------------------------------------------------
+ */
 
 /*!
   \class vpExampleDataParser
-  \brief Class example used to show how to implement a xml parser based on the 
+  \brief Class example used to show how to implement a xml parser based on the
   vpXmlParser
 */
-class vpExampleDataParser: public vpXmlParser
+class vpExampleDataParser : public vpXmlParser
 {
 protected:
   double m_range;
   int m_step;
   int m_size_filter;
   std::string m_name;
-  
-  typedef enum{
-    config,
-    range,
-    step,
-    size_filter,
-    name
-  }dataToParse;
 
-  
+  typedef enum { config, range, step, size_filter, name } dataToParse;
+
 public:
   vpExampleDataParser();
   virtual ~vpExampleDataParser();
-  
+
   // Data accessors.
-  double getRange() const {return m_range;}
-  int getStep() const {return m_step;}
-  int getSizeFilter() const {return m_size_filter;}
-  std::string getName() const {return  m_name;}
-  
-  void setRange(const double _range) {m_range = _range;}
-  void setStep(const int _step) {m_step = _step;}
-  void setSizeFilter(const int _size_filter) {m_size_filter = _size_filter;}
-  void setName(const std::string& _name) { m_name = _name;}
-  
-protected:  
-  virtual void readMainClass (xmlDocPtr doc, xmlNodePtr node);
-  virtual void writeMainClass (xmlNodePtr node);
+  double getRange() const { return m_range; }
+  int getStep() const { return m_step; }
+  int getSizeFilter() const { return m_size_filter; }
+  std::string getName() const { return m_name; }
+
+  void setRange(const double _range) { m_range = _range; }
+  void setStep(const int _step) { m_step = _step; }
+  void setSizeFilter(const int _size_filter) { m_size_filter = _size_filter; }
+  void setName(const std::string &_name) { m_name = _name; }
+
+protected:
+  virtual void readMainClass(xmlDocPtr doc, xmlNodePtr node);
+  virtual void writeMainClass(xmlNodePtr node);
 };
 
 /*!
   Constructor.
-  Initialise the map according to the data to parse, and initialise data to 
-  default values. 
-  
+  Initialise the map according to the data to parse, and initialise data to
+  default values.
+
 */
 vpExampleDataParser::vpExampleDataParser()
- : m_range(0.), m_step(0), m_size_filter(0), m_name("")
+  : m_range(0.), m_step(0), m_size_filter(0), m_name("")
 {
   nodeMap["config"] = config;
   nodeMap["range"] = range;
@@ -135,29 +127,27 @@ vpExampleDataParser::vpExampleDataParser()
 
 /*!
   Destructor.
-  
+
 */
-vpExampleDataParser::~vpExampleDataParser()
-{
-  
-}
+vpExampleDataParser::~vpExampleDataParser() {}
 
 /*!
-  Read the main class. This method corresponds to the parsing of the main 
-  document (which contains the whole data in the class). At this point, the 
-  document exists and is open. 
-  
-  \param doc : Pointer to the document to parse. 
-  \param node : Pointer to the root node of the document. 
+  Read the main class. This method corresponds to the parsing of the main
+  document (which contains the whole data in the class). At this point, the
+  document exists and is open.
+
+  \param doc : Pointer to the document to parse.
+  \param node : Pointer to the root node of the document.
 */
-void
-vpExampleDataParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
+void vpExampleDataParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 {
-  for(xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;  dataNode = dataNode->next)  {
-    if(dataNode->type == XML_ELEMENT_NODE){
-      std::map<std::string, int>::iterator iter_data= this->nodeMap.find((char*)dataNode->name);
-      if(iter_data != nodeMap.end()){
-        switch (iter_data->second){
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL;
+       dataNode = dataNode->next) {
+    if (dataNode->type == XML_ELEMENT_NODE) {
+      std::map<std::string, int>::iterator iter_data =
+          this->nodeMap.find((char *)dataNode->name);
+      if (iter_data != nodeMap.end()) {
+        switch (iter_data->second) {
         case range:
           this->m_range = xmlReadDoubleChild(doc, dataNode);
           break;
@@ -167,11 +157,12 @@ vpExampleDataParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
         case size_filter:
           this->m_size_filter = xmlReadIntChild(doc, dataNode);
           break;
-        case name:{
+        case name: {
           this->m_name = xmlReadStringChild(doc, dataNode);
-        }break;
+        } break;
         default:
-          vpTRACE("unknown tag in readConfigNode : %d, %s", iter_data->second, (iter_data->first).c_str());
+          vpTRACE("unknown tag in readConfigNode : %d, %s", iter_data->second,
+                  (iter_data->first).c_str());
           break;
         }
       }
@@ -180,33 +171,35 @@ vpExampleDataParser::readMainClass (xmlDocPtr doc, xmlNodePtr node)
 }
 
 /*!
-  Write the data in the file. 
-  The file has already been opened or created in the save() method. And the root
-  node (corresponding to the main tag) has already been writen. 
-  
-  \param node : Pointer to the root node. 
-*/
-void 
-vpExampleDataParser::writeMainClass(xmlNodePtr node)
-{
-  xmlWriteDoubleChild(node, (const char*)"range", m_range);
-  xmlWriteIntChild(node, (const char*)"step", m_step);
-  xmlWriteIntChild(node, (const char*)"size_filter", m_size_filter);
-  xmlWriteCharChild(node, (const char*)"name", m_name.c_str());
-}
+  Write the data in the file.
+  The file has already been opened or created in the save() method. And the
+  root node (corresponding to the main tag) has already been writen.
 
+  \param node : Pointer to the root node.
+*/
+void vpExampleDataParser::writeMainClass(xmlNodePtr node)
+{
+  xmlWriteDoubleChild(node, (const char *)"range", m_range);
+  xmlWriteIntChild(node, (const char *)"step", m_step);
+  xmlWriteIntChild(node, (const char *)"size_filter", m_size_filter);
+  xmlWriteCharChild(node, (const char *)"name", m_name.c_str());
+}
 
 #endif // doxygen
 
-/* -------------------------------------------------------------------------- */
-/*                         COMMAND LINE OPTIONS                               */
-/* -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+ */
+/*                         COMMAND LINE OPTIONS */
+/* --------------------------------------------------------------------------
+ */
 
 // List of allowed command line options
-#define GETOPTARGS	"cdo:h"
+#define GETOPTARGS "cdo:h"
 
-void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user);
-bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user);
+void usage(const char *name, const char *badparam, const std::string &opath,
+           const std::string &user);
+bool getOptions(int argc, const char **argv, std::string &opath,
+                const std::string &user);
 
 /*!
 
@@ -218,7 +211,8 @@ Print the program options.
 \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, const std::string& opath, const std::string& user)
+void usage(const char *name, const char *badparam, const std::string &opath,
+           const std::string &user)
 {
   fprintf(stdout, "\n\
 Write and read data in a xml file.\n\
@@ -238,7 +232,7 @@ OPTIONS:                                               Default\n\
      Print the help.\n\n", opath.c_str(), user.c_str());
 
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
 }
@@ -252,22 +246,30 @@ OPTIONS:                                               Default\n\
   \param user : Username.
   \return false if the program has to be stopped, true otherwise.
 */
-bool getOptions(int argc, const char **argv, std::string &opath, const std::string& user)
+bool getOptions(int argc, const char **argv, std::string &opath,
+                const std::string &user)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'o': opath = optarg_; break;
-    case 'h': usage(argv[0], NULL, opath, user); return false; break;
+    case 'o':
+      opath = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, opath, user);
+      return false;
+      break;
 
     case 'c':
     case 'd':
       break;
 
     default:
-      usage(argv[0], optarg_, opath, user); return false; break;
+      usage(argv[0], optarg_, opath, user);
+      return false;
+      break;
     }
   }
 
@@ -282,13 +284,13 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
   return true;
 }
 
+/* --------------------------------------------------------------------------
+ */
+/*                               MAIN FUNCTION */
+/* --------------------------------------------------------------------------
+ */
 
-
-/* -------------------------------------------------------------------------- */
-/*                               MAIN FUNCTION                                */
-/* -------------------------------------------------------------------------- */
-
-int main(int argc, const char** argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string opt_opath;
@@ -296,14 +298,17 @@ int main(int argc, const char** argv)
     std::string filename;
     std::string username;
 
-    std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout <<  "  testXmlParser.cpp" <<std::endl << std::endl ;
-    std::cout <<  "  writing and readind data using a xml parser" << std::endl ;
-    std::cout <<  "-------------------------------------------------------" << std::endl ;
-    std::cout << std::endl ;
+    std::cout << "-------------------------------------------------------"
+              << std::endl;
+    std::cout << "  testXmlParser.cpp" << std::endl << std::endl;
+    std::cout << "  writing and readind data using a xml parser" << std::endl;
+    std::cout << "-------------------------------------------------------"
+              << std::endl;
+    std::cout << std::endl;
 
-    // Set the default output path
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+// Set the default output path
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
 #elif defined(_WIN32)
     opt_opath = "C:\\temp";
@@ -314,7 +319,7 @@ int main(int argc, const char** argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_opath, username) == false) {
-      exit (-1);
+      exit(-1);
     }
 
     // Get the option values
@@ -329,11 +334,9 @@ int main(int argc, const char** argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(dirname);
-      }
-      catch (...) {
+      } catch (...) {
         usage(argv[0], NULL, opath, username);
-        std::cerr << std::endl
-                  << "ERROR:" << std::endl;
+        std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
         std::cerr << "  Check your -o " << opath << " option " << std::endl;
         exit(-1);
@@ -362,7 +365,7 @@ int main(int argc, const char** argv)
 
       parser2.parse(filename);
 
-      std::cout << "Read from " << filename << std::endl ;
+      std::cout << "Read from " << filename << std::endl;
       std::cout << "Range : " << parser2.getRange() << std::endl;
       std::cout << "Step : " << parser2.getStep() << std::endl;
       std::cout << "Filter size : " << parser2.getSizeFilter() << std::endl;
@@ -372,8 +375,7 @@ int main(int argc, const char** argv)
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

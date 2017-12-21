@@ -15,12 +15,12 @@ int main()
 
     vpDisplay::setTitle(I, "My image");
     vpDisplay::display(I);
-    vpDisplay::displayCircle(I, I.getHeight()/2, I.getWidth()/2, 200, vpColor::red, true);
+    vpDisplay::displayCircle(I, I.getHeight() / 2, I.getWidth() / 2, 200,
+                             vpColor::red, true);
     vpDisplay::flush(I);
     std::cout << "A click to quit..." << std::endl;
     vpDisplay::getClick(I);
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
 }

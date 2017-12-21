@@ -39,40 +39,37 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if ( defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9) )
+#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_D3D9))
 #ifndef vpWin32Window_HH
 #define vpWin32Window_HH
 
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-// Include WinSock2.h before windows.h to ensure that winsock.h is not included by windows.h
-// since winsock.h and winsock2.h are incompatible
+// Include WinSock2.h before windows.h to ensure that winsock.h is not
+// included by windows.h since winsock.h and winsock2.h are incompatible
 #include <WinSock2.h>
-#include <windows.h>
-#include <visp3/gui/vpWin32Renderer.h>
-#include <visp3/gui/vpGDIRenderer.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpDisplayException.h>
+#include <visp3/gui/vpGDIRenderer.h>
+#include <visp3/gui/vpWin32Renderer.h>
+#include <windows.h>
 
+// ViSP-defined messages for window's callback function
+#define vpWM_GETCLICK WM_USER + 1
+#define vpWM_DISPLAY WM_USER + 2
+#define vpWM_GETCLICKUP WM_USER + 3
+#define vpWM_CLOSEDISPLAY WM_USER + 4
+#define vpWM_GETPOINTERMOTIONEVENT WM_USER + 5
+#define vpWM_DISPLAY_ROI WM_USER + 6
 
-//ViSP-defined messages for window's callback function
-#define vpWM_GETCLICK WM_USER+1
-#define vpWM_DISPLAY WM_USER+2
-#define vpWM_GETCLICKUP WM_USER+3
-#define vpWM_CLOSEDISPLAY WM_USER+4
-#define vpWM_GETPOINTERMOTIONEVENT WM_USER+5
-#define vpWM_DISPLAY_ROI WM_USER+6
-
-//No specific mouse button query
+// No specific mouse button query
 #define vpNO_BUTTON_QUERY -1
 
 class vpDisplayWin32;
 
 class VISP_EXPORT vpWin32Window
 {
-private :
-
+private:
   HINSTANCE hInst;
 
   //! Window's handle
@@ -112,20 +109,20 @@ private :
   static bool registered;
 
   //! The renderer used by the window
-  vpWin32Renderer * renderer;
+  vpWin32Renderer *renderer;
 
 public:
-
-  explicit vpWin32Window(vpWin32Renderer * rend = NULL);
+  explicit vpWin32Window(vpWin32Renderer *rend = NULL);
   virtual ~vpWin32Window();
 
-  HWND getHWnd(){ return hWnd;}
+  HWND getHWnd() { return hWnd; }
 
   //! Returns true if the window is initialized
-  bool isInitialized(){ return initialized; }
+  bool isInitialized() { return initialized; }
 
   //! Initialize the window
-  void initWindow(const char* title, int posx, int posy, unsigned int w, unsigned int h);
+  void initWindow(const char *title, int posx, int posy, unsigned int w,
+                  unsigned int h);
 
   void setScale(unsigned int scale) { renderer->setScale(scale); };
 
@@ -135,8 +132,8 @@ public:
   friend class vpDisplayGDI;
 
   //! The message loop
-  friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
-                                  WPARAM wParam, LPARAM lParam);
+  friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam,
+                                  LPARAM lParam);
 };
 
 #endif

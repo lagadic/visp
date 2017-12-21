@@ -39,44 +39,52 @@
 #include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 /*!
-  Computes the two gravity center coordinates commonly called \f$x_g\f$ and \f$y_g\f$.
+  Computes the two gravity center coordinates commonly called \f$x_g\f$ and
+  \f$y_g\f$.
 */
-void vpMomentGravityCenter::compute(){
-    values[0] = getObject().get(1,0)/getObject().get(0,0);
-    values[1] = getObject().get(0,1)/getObject().get(0,0);
+void vpMomentGravityCenter::compute()
+{
+  values[0] = getObject().get(1, 0) / getObject().get(0, 0);
+  values[1] = getObject().get(0, 1) / getObject().get(0, 0);
 }
 
 /*!
   Default constructor.
 */
-vpMomentGravityCenter::vpMomentGravityCenter() : vpMoment(){
-    values.resize(2);
+vpMomentGravityCenter::vpMomentGravityCenter() : vpMoment()
+{
+  values.resize(2);
 }
 
 /*!
   Returns a vector of the two gravity center coordinates.
   \return Coordinates in the following moment: \f$(x_g,y_g)\f$.
 */
-const std::vector<double>& vpMomentGravityCenter::get() const{
-    return values;
+const std::vector<double> &vpMomentGravityCenter::get() const
+{
+  return values;
 }
 
 /*!
   Outputs the moment's values to a stream.
 */
-VISP_EXPORT std::ostream & operator<<(std::ostream & os, const vpMomentGravityCenter& m){
-    os << (__FILE__) << std::endl;
-    os << "(Xg,Yg) = (" << m.values[0] << ", " << m.values[1] << ")" << std::endl;
-    return os;    
+VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                     const vpMomentGravityCenter &m)
+{
+  os << (__FILE__) << std::endl;
+  os << "(Xg,Yg) = (" << m.values[0] << ", " << m.values[1] << ")"
+     << std::endl;
+  return os;
 }
 
 /*!
 Prints its dependencies
 Basic moments m10, m01 and m00 from vpMomentObject
 */
-void  vpMomentGravityCenter::printDependencies(std::ostream& os) const{
-    os << (__FILE__) << std::endl;
-    os << "m10 = " << getObject().get(1,0) << "\t";
-    os << "m00 = " << getObject().get(0,1) << "\t";
-    os << "m00 = " << getObject().get(0,0) << std::endl;
+void vpMomentGravityCenter::printDependencies(std::ostream &os) const
+{
+  os << (__FILE__) << std::endl;
+  os << "m10 = " << getObject().get(1, 0) << "\t";
+  os << "m00 = " << getObject().get(0, 1) << "\t";
+  os << "m00 = " << getObject().get(0, 0) << std::endl;
 }

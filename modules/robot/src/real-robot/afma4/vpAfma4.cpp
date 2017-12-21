@@ -44,29 +44,26 @@
 
 */
 
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpVelocityTwistMatrix.h>
-#include <visp3/robot/vpRobotException.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpTranslationVector.h>
-#include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/robot/vpAfma4.h>
-
+#include <visp3/robot/vpRobotException.h>
 
 /* ----------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 const unsigned int vpAfma4::njoint = 4;
 
-
 /*!
 
   Default constructor.
 
 */
-vpAfma4::vpAfma4()
-  : _a1(0), _d3(0), _d4(0), _etc(), _erc(), _eMc()
+vpAfma4::vpAfma4() : _a1(0), _d3(0), _d4(0), _etc(), _erc(), _eMc()
 {
   // Set the default parameters in case of the config files are not available.
 
@@ -75,7 +72,7 @@ vpAfma4::vpAfma4()
   //
   this->_a1 = 0.205; // distance along x2
   this->_d3 = 0.403; // distance along z2
-  this->_d4 = 0.14; // distance along z3
+  this->_d4 = 0.14;  // distance along z3
 
   // Maximal value of the joints
   this->_joint_max[0] = 1.8;  // rad
@@ -83,17 +80,17 @@ vpAfma4::vpAfma4()
   this->_joint_max[2] = 0.9;  // rad
   this->_joint_max[3] = 0.76; // rad
   // Minimal value of the joints
-  this->_joint_min[0] = -1.5; // rad
-  this->_joint_min[1] = -0.9; // meter
-  this->_joint_min[2] = -3.5; // rad
-  this->_joint_min[3] = -0.76;// rad
+  this->_joint_min[0] = -1.5;  // rad
+  this->_joint_min[1] = -0.9;  // meter
+  this->_joint_min[2] = -3.5;  // rad
+  this->_joint_min[3] = -0.76; // rad
 
   // Camera extrinsic parameters: effector to camera frame
   this->_etc[0] = 0.; // Translation
   this->_etc[1] = 0.;
   this->_etc[2] = 0.;
   this->_erc[0] = 0.; // Rotation
-  this->_erc[1] = -M_PI/2.;
+  this->_erc[1] = -M_PI / 2.;
   this->_erc[2] = 0;
 
   vpRotationMatrix eRc(_erc);
@@ -102,16 +99,11 @@ vpAfma4::vpAfma4()
   init();
 }
 
-
 /*!
 
   Does nothing for the moment.
  */
-void
-vpAfma4::init (void)
-{
-  return;
-}
+void vpAfma4::init(void) { return; }
 
 /*!
 
@@ -119,8 +111,8 @@ vpAfma4::init (void)
   homogeneous matrix.
 
   By forward kinematics we mean here the position and the orientation
-  of the camera relative to the base frame given the articular positions of all
-  the four joints.
+  of the camera relative to the base frame given the articular positions of
+ all the four joints.
 
   This method is the same than get_fMc(const vpColVector & q).
 
@@ -137,15 +129,14 @@ vpAfma4::init (void)
   model which expresses the transformation between the fix frame and the
   camera frame (\f${^f}M_c\f$) with:
   \f[
-  {^f}M_c =  {^f}M_e *  {^e}M_c 
+  {^f}M_c =  {^f}M_e *  {^e}M_c
   \f]
 
   \sa get_fMc(const vpColVector & q)
   \sa getInverseKinematics()
 
 */
-vpHomogeneousMatrix
-vpAfma4::getForwardKinematics(const vpColVector & q) const
+vpHomogeneousMatrix vpAfma4::getForwardKinematics(const vpColVector &q) const
 {
   vpHomogeneousMatrix fMc;
   fMc = get_fMc(q);
@@ -159,8 +150,8 @@ vpAfma4::getForwardKinematics(const vpColVector & q) const
   homogeneous matrix.
 
   By forward kinematics we mean here the position and the orientation
-  of the camera relative to the base frame given the articular positions of all
-  the four joints.
+  of the camera relative to the base frame given the articular positions of
+  all the four joints.
 
   This method is the same than getForwardKinematics(const vpColVector & q).
 
@@ -177,13 +168,12 @@ vpAfma4::getForwardKinematics(const vpColVector & q) const
   model which expresses the transformation between the fix frame and the
   camera frame (\f${^f}M_c\f$) with:
   \f[
-  {^f}M_c =  {^f}M_e *  {^e}M_c 
+  {^f}M_c =  {^f}M_e *  {^e}M_c
   \f]
 
   \sa getForwardKinematics(const vpColVector & q)
 */
-vpHomogeneousMatrix
-vpAfma4::get_fMc (const vpColVector & q) const
+vpHomogeneousMatrix vpAfma4::get_fMc(const vpColVector &q) const
 {
   vpHomogeneousMatrix fMc;
   get_fMc(q, fMc);
@@ -197,8 +187,8 @@ vpAfma4::get_fMc (const vpColVector & q) const
   homogeneous matrix.
 
   By forward kinematics we mean here the position and the orientation
-  of the camera relative to the base frame given the articular positions of all
-  the four joints.
+  of the camera relative to the base frame given the articular positions of
+  all the four joints.
 
   \param q : Articular position of the four joints: q[0] corresponds to
   the first rotation (joint 1 with value \f$q_1\f$) of the turret
@@ -213,12 +203,11 @@ vpAfma4::get_fMc (const vpColVector & q) const
   model which expresses the transformation between the fix frame and the
   camera frame (\f${^f}M_c\f$) with:
   \f[
-  {^f}M_c =  {^f}M_e *  {^e}M_c 
+  {^f}M_c =  {^f}M_e *  {^e}M_c
   \f]
 
 */
-void
-vpAfma4::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc) const
+void vpAfma4::get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 {
 
   // Compute the direct geometric model: fMe = transformation between
@@ -256,8 +245,10 @@ vpAfma4::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc) const
 
   \f[
   {^f}M_e = \left[\begin{array}{cccc}
-  c_1s_4c_5+s_1c_4c_5  & -c_1s_4s_5-s_1c_4s_5 & c_1c_4-s_1s_4 &a_1c_1-d_3s_1 \\
-  s_1s_4c_5-c_1c_4c_5  & -s_1s_4s_5+c_1c_4s_5 & s_1c_4+c_1s_4 &a_1s_1+d_3c_1 \\
+  c_1s_4c_5+s_1c_4c_5  & -c_1s_4s_5-s_1c_4s_5 & c_1c_4-s_1s_4 &a_1c_1-d_3s_1
+  \\
+  s_1s_4c_5-c_1c_4c_5  & -s_1s_4s_5+c_1c_4s_5 & s_1c_4+c_1s_4 &a_1s_1+d_3c_1
+  \\
   -s_5 & -c_5  & d_4+q_2 \\
   0  &   0  &   0  &   1    \\
   \end{array}
@@ -265,31 +256,30 @@ vpAfma4::get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc) const
   \f]
 
 */
-void
-vpAfma4::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe) const
+void vpAfma4::get_fMe(const vpColVector &q, vpHomogeneousMatrix &fMe) const
 {
-  double            q1 = q[0]; // rot touret
-  double            q2 = q[1]; // vertical translation
-  double            q4 = q[2]; // pan
-  double            q5 = q[3]; // tilt
+  double q1 = q[0]; // rot touret
+  double q2 = q[1]; // vertical translation
+  double q4 = q[2]; // pan
+  double q5 = q[3]; // tilt
 
-  double            c1 = cos(q1);
-  double            s1 = sin(q1);
-  double            c4 = cos(q4);
-  double            s4 = sin(q4);
-  double            c5 = cos(q5);
-  double            s5 = sin(q5);
+  double c1 = cos(q1);
+  double s1 = sin(q1);
+  double c4 = cos(q4);
+  double s4 = sin(q4);
+  double c5 = cos(q5);
+  double s5 = sin(q5);
 
   /* Calcul du modele d'apres les angles. */
-  fMe[0][0] = c1*s4*c5 + s1*c4*c5;
-  fMe[0][1] = -c1*s4*s5 - s1*c4*s5;
-  fMe[0][2] = c1*c4 - s1*s4;
-  fMe[0][3] = c1*this->_a1 - s1*(this->_d3);
+  fMe[0][0] = c1 * s4 * c5 + s1 * c4 * c5;
+  fMe[0][1] = -c1 * s4 * s5 - s1 * c4 * s5;
+  fMe[0][2] = c1 * c4 - s1 * s4;
+  fMe[0][3] = c1 * this->_a1 - s1 * (this->_d3);
 
-  fMe[1][0] = s1*s4*c5 - c1*c4*c5;
-  fMe[1][1] = -s1*s4*s5 + c1*c4*s5;
-  fMe[1][2] = s1*c4+c1*s4;
-  fMe[1][3] = s1*this->_a1 + c1*(this->_d3);
+  fMe[1][0] = s1 * s4 * c5 - c1 * c4 * c5;
+  fMe[1][1] = -s1 * s4 * s5 + c1 * c4 * s5;
+  fMe[1][2] = s1 * c4 + c1 * s4;
+  fMe[1][3] = s1 * this->_a1 + c1 * (this->_d3);
 
   fMe[2][0] = -s5;
   fMe[2][1] = -c5;
@@ -316,8 +306,7 @@ vpAfma4::get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe) const
   end-effector frame.
 
 */
-void
-vpAfma4::get_cMe(vpHomogeneousMatrix &cMe) const
+void vpAfma4::get_cMe(vpHomogeneousMatrix &cMe) const
 {
   cMe = this->_eMc.inverse();
 }
@@ -331,13 +320,12 @@ vpAfma4::get_cMe(vpHomogeneousMatrix &cMe) const
   \param cVe : Twist transformation.
 
 */
-void
-vpAfma4::get_cVe(vpVelocityTwistMatrix &cVe) const
+void vpAfma4::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
-  vpHomogeneousMatrix cMe ;
-  get_cMe(cMe) ;
+  vpHomogeneousMatrix cMe;
+  get_cMe(cMe);
 
-  cVe.buildFrom(cMe) ;
+  cVe.buildFrom(cMe);
 
   return;
 }
@@ -360,14 +348,13 @@ vpAfma4::get_cVe(vpVelocityTwistMatrix &cVe) const
   \param cVf : Twist transformation.
 
 */
-void
-vpAfma4::get_cVf(const vpColVector & q, vpVelocityTwistMatrix &cVf) const
+void vpAfma4::get_cVf(const vpColVector &q, vpVelocityTwistMatrix &cVf) const
 {
-  vpHomogeneousMatrix fMc, cMf ;
-  get_fMc(q, fMc) ;
+  vpHomogeneousMatrix fMc, cMf;
+  get_fMc(q, fMc);
   cMf = fMc.inverse();
 
-  cVf.buildFrom(cMf) ;
+  cVf.buildFrom(cMf);
 
   return;
 }
@@ -408,24 +395,25 @@ vpAfma4::get_cVf(const vpColVector & q, vpVelocityTwistMatrix &cVf) const
 
   \sa get_fJe()
 */
-void
-vpAfma4::get_eJe(const vpColVector &q, vpMatrix &eJe) const
+void vpAfma4::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 {
-  double            q4 = q[2]; // pan
-  double            q5 = q[3]; // tilt
+  double q4 = q[2]; // pan
+  double q5 = q[3]; // tilt
 
-  double            c4 = cos(q4);
-  double            s4 = sin(q4);
-  double            c5 = cos(q5);
-  double            s5 = sin(q5);
+  double c4 = cos(q4);
+  double s4 = sin(q4);
+  double c5 = cos(q5);
+  double s5 = sin(q5);
 
   eJe.resize(6, 4);
 
   eJe = 0;
 
-  eJe[0][0] = -(this->_a1*c4 + this->_d3*s4)*c5;  eJe[0][1] = -s5;
-  eJe[1][0] =  (this->_a1*c4 + this->_d3*s4)*s5;  eJe[1][1] = -c5;
-  eJe[2][0] =  (this->_a1*s4 - this->_d3*c4);
+  eJe[0][0] = -(this->_a1 * c4 + this->_d3 * s4) * c5;
+  eJe[0][1] = -s5;
+  eJe[1][0] = (this->_a1 * c4 + this->_d3 * s4) * s5;
+  eJe[1][1] = -c5;
+  eJe[2][0] = (this->_a1 * s4 - this->_d3 * c4);
   eJe[3][0] = eJe[3][2] = -s5;
   eJe[4][0] = eJe[4][2] = -c5;
   eJe[5][3] = 1.;
@@ -462,10 +450,9 @@ vpAfma4::get_eJe(const vpColVector &q, vpMatrix &eJe) const
   \sa get_eJe() and get_fJe_inverse()
 */
 
-void
-vpAfma4::get_fJe(const vpColVector &q, vpMatrix &fJe) const
+void vpAfma4::get_fJe(const vpColVector &q, vpMatrix &fJe) const
 {
-  fJe.resize(6,4) ;
+  fJe.resize(6, 4);
 
   double q1 = q[0]; // rot touret
   double q4 = q[2]; // pan
@@ -477,12 +464,12 @@ vpAfma4::get_fJe(const vpColVector &q, vpMatrix &fJe) const
 
   fJe = 0;
 
-  fJe[0][0] = -s1*this->_a1 - c1*this->_d3;
+  fJe[0][0] = -s1 * this->_a1 - c1 * this->_d3;
 
-  fJe[1][0] = c1*this->_a1 - s1*this->_d3;
- 
+  fJe[1][0] = c1 * this->_a1 - s1 * this->_d3;
+
   fJe[2][1] = 1.0;
- 
+
   fJe[3][3] = c14;
 
   fJe[4][3] = s14;
@@ -490,7 +477,7 @@ vpAfma4::get_fJe(const vpColVector &q, vpMatrix &fJe) const
   fJe[5][0] = fJe[5][2] = 1.0;
 }
 
-/*! 
+/*!
 
   Get the inverse jacobian.
 
@@ -519,14 +506,15 @@ vpAfma4::get_fJe(const vpColVector &q, vpMatrix &fJe) const
   \sa get_eJe() and get_fJe()
 
 */
-void vpAfma4::get_fJe_inverse(const vpColVector &q, vpMatrix &fJe_inverse) const
+void vpAfma4::get_fJe_inverse(const vpColVector &q,
+                              vpMatrix &fJe_inverse) const
 {
-  fJe_inverse.resize(4, 6) ;
+  fJe_inverse.resize(4, 6);
   fJe_inverse = 0;
 
   double q1 = q[0]; // rot touret
   double q4 = q[2]; // pan
- 
+
   double c1 = cos(q1);
   double s1 = sin(q1);
   double c14 = cos(q1 + q4);
@@ -534,13 +522,13 @@ void vpAfma4::get_fJe_inverse(const vpColVector &q, vpMatrix &fJe_inverse) const
 
   double det = this->_a1 * this->_a1 + this->_d3 * this->_d3;
 
-  fJe_inverse[0][0] = (-s1*this->_a1 - c1*this->_d3)/det;
-  fJe_inverse[0][1] = (c1*this->_a1 - s1*this->_d3)/det;
+  fJe_inverse[0][0] = (-s1 * this->_a1 - c1 * this->_d3) / det;
+  fJe_inverse[0][1] = (c1 * this->_a1 - s1 * this->_d3) / det;
 
   fJe_inverse[1][2] = fJe_inverse[2][5] = 1.;
 
-  fJe_inverse[2][0] = - fJe_inverse[0][0];
-  fJe_inverse[2][1] = - fJe_inverse[0][1];
+  fJe_inverse[2][0] = -fJe_inverse[0][0];
+  fJe_inverse[2][1] = -fJe_inverse[0][1];
 
   fJe_inverse[3][3] = c14;
   fJe_inverse[3][4] = s14;
@@ -549,16 +537,15 @@ void vpAfma4::get_fJe_inverse(const vpColVector &q, vpMatrix &fJe_inverse) const
 /*!
   Get min joint values.
 
-  \return Minimal joint values for the 4 dof 
+  \return Minimal joint values for the 4 dof
   X, Y, A, B. Translation Y is expressed in meters. Rotations
   X,A and B in radians.
 
 */
-vpColVector
-vpAfma4::getJointMin() const
+vpColVector vpAfma4::getJointMin() const
 {
   vpColVector qmin(4);
-  for (unsigned int i=0; i < 4; i ++)
+  for (unsigned int i = 0; i < 4; i++)
     qmin[i] = this->_joint_min[i];
   return qmin;
 }
@@ -571,16 +558,13 @@ vpAfma4::getJointMin() const
   X, A and B in radians.
 
 */
-vpColVector
-vpAfma4::getJointMax() const
+vpColVector vpAfma4::getJointMax() const
 {
   vpColVector qmax(4);
-  for (unsigned int i=0; i < 4; i ++)
+  for (unsigned int i = 0; i < 4; i++)
     qmax[i] = this->_joint_max[i];
   return qmax;
 }
-
-
 
 /*!
 
@@ -591,56 +575,39 @@ vpAfma4::getJointMax() const
   \param os : Output stream.
   \param afma4 : Robot parameters.
 */
-VISP_EXPORT std::ostream & operator << (std::ostream & os,
-			    const vpAfma4 & afma4)
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAfma4 &afma4)
 {
   vpRotationMatrix eRc;
   afma4._eMc.extract(eRc);
   vpRxyzVector rxyz(eRc);
 
-  os
-    << "Joint Max:" << std::endl
-    << "\t" << afma4._joint_max[0]
-    << "\t" << afma4._joint_max[1]
-    << "\t" << afma4._joint_max[2]
-    << "\t" << afma4._joint_max[3]
-    << "\t" << std::endl
+  os << "Joint Max:" << std::endl
+     << "\t" << afma4._joint_max[0] << "\t" << afma4._joint_max[1] << "\t"
+     << afma4._joint_max[2] << "\t" << afma4._joint_max[3] << "\t"
+     << std::endl
 
-    << "Joint Min: " << std::endl
-    << "\t" << afma4._joint_min[0]
-    << "\t" << afma4._joint_min[1]
-    << "\t" << afma4._joint_min[2]
-    << "\t" << afma4._joint_min[3]
-    << "\t" << std::endl
+     << "Joint Min: " << std::endl
+     << "\t" << afma4._joint_min[0] << "\t" << afma4._joint_min[1] << "\t"
+     << afma4._joint_min[2] << "\t" << afma4._joint_min[3] << "\t"
+     << std::endl
 
-    << "a1: " << std::endl
-    << "\t" << afma4._a1
-    << "\t" << std::endl
+     << "a1: " << std::endl
+     << "\t" << afma4._a1 << "\t" << std::endl
 
-    << "d3: " << std::endl
-    << "\t" << afma4._d3
-    << "\t" << std::endl
+     << "d3: " << std::endl
+     << "\t" << afma4._d3 << "\t" << std::endl
 
-    << "d4: " << std::endl
-    << "\t" << afma4._d4
-    << "\t" << std::endl
+     << "d4: " << std::endl
+     << "\t" << afma4._d4 << "\t" << std::endl
 
-    << "eMc: "<< std::endl
-    << "\tTranslation (m): "
-    << afma4._eMc[0][3] << " "
-    << afma4._eMc[1][3] << " "
-    << afma4._eMc[2][3]
-    << "\t" << std::endl
-    << "\tRotation Rxyz (rad) : "
-    << rxyz[0] << " "
-    << rxyz[1] << " "
-    << rxyz[2]
-    << "\t" << std::endl
-    << "\tRotation Rxyz (deg) : "
-    << vpMath::deg(rxyz[0])  << " "
-    << vpMath::deg(rxyz[1])  << " "
-    << vpMath::deg(rxyz[2])
-    << "\t" << std::endl;
+     << "eMc: " << std::endl
+     << "\tTranslation (m): " << afma4._eMc[0][3] << " " << afma4._eMc[1][3]
+     << " " << afma4._eMc[2][3] << "\t" << std::endl
+     << "\tRotation Rxyz (rad) : " << rxyz[0] << " " << rxyz[1] << " "
+     << rxyz[2] << "\t" << std::endl
+     << "\tRotation Rxyz (deg) : " << vpMath::deg(rxyz[0]) << " "
+     << vpMath::deg(rxyz[1]) << " " << vpMath::deg(rxyz[2]) << "\t"
+     << std::endl;
 
   return os;
 }

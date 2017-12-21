@@ -36,11 +36,8 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpFeatureVanishingPoint_H
 #define vpFeatureVanishingPoint_H
-
-
 
 /*!
   \file vpFeatureVanishingPoint.h \brief Class that defines 2D vanishing
@@ -48,13 +45,11 @@
 */
 
 #include <visp3/core/vpMatrix.h>
-#include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/core/vpPoint.h>
+#include <visp3/visual_features/vpBasicFeature.h>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRGBa.h>
-
-
 
 /*!
   \class vpFeatureVanishingPoint
@@ -66,67 +61,62 @@
 class VISP_EXPORT vpFeatureVanishingPoint : public vpBasicFeature
 {
 public:
-  typedef enum
-    {
-      X = 1,   // x coordinates
-      Y = 2    // y coordinates
-    } vpFeatureVanishingPointType;
+  typedef enum {
+    X = 1, // x coordinates
+    Y = 2  // y coordinates
+  } vpFeatureVanishingPointType;
 
   /*
     attributes and members directly related to the vpBasicFeature needs
     other functionalities ar useful but not mandatory
   */
-  //no Z required
+  // no Z required
 
 public:
   //! Default constructor.
-  vpFeatureVanishingPoint() ;
+  vpFeatureVanishingPoint();
   //! Destructor.
   virtual ~vpFeatureVanishingPoint() {}
 
   // void buildFrom(const vpPoint &p) ;
-  void buildFrom(const double _x, const double _y) ;
+  void buildFrom(const double _x, const double _y);
 
-  void display(const vpCameraParameters &cam,
-               const vpImage<unsigned char> &I,
-               const vpColor &color=vpColor::green,
-               unsigned int thickness=1) const;
-  void display(const vpCameraParameters &cam,
-               const vpImage<vpRGBa> &I,
-               const vpColor &color=vpColor::green,
-               unsigned int thickness=1) const;
+  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I,
+               const vpColor &color = vpColor::green,
+               unsigned int thickness = 1) const;
+  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
+               const vpColor &color = vpColor::green,
+               unsigned int thickness = 1) const;
 
   //! feature duplication
-  vpFeatureVanishingPoint *duplicate() const ;
+  vpFeatureVanishingPoint *duplicate() const;
 
   //! compute the error between two visual features from a subset
   //! a the possible features
   vpColVector error(const vpBasicFeature &s_star,
-                    const unsigned int select = FEATURE_ALL)  ;
+                    const unsigned int select = FEATURE_ALL);
   //! compute the error between a visual features and zero
-  vpColVector error(const unsigned int select = FEATURE_ALL)  ;
+  vpColVector error(const unsigned int select = FEATURE_ALL);
 
   //! get the point x-coordinates
-  double get_x()  const ;
+  double get_x() const;
   //! get the point y-coordinates
-  double get_y()   const ;
+  double get_y() const;
 
   //! Default initialization.
-  void init() ;
+  void init();
   //! compute the interaction matrix from a subset a the possible features
-  vpMatrix  interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
 
   //! print the name of the feature
-  void print(const unsigned int select = FEATURE_ALL ) const ;
+  void print(const unsigned int select = FEATURE_ALL) const;
 
   //! Set the point x-coordinates
-  void set_x(const double _x) ;
+  void set_x(const double _x);
   //! Set the point y-coordinates
-  void set_y(const double _y) ;
+  void set_y(const double _y);
   //! Set the point xy coordinates
-  void set_xy(const double _x, const double _y) ;
-
-
+  void set_xy(const double _x, const double _y);
 
 public:
   /*
@@ -135,6 +125,6 @@ public:
   // feature selection
   static unsigned int selectX();
   static unsigned int selectY();
-} ;
+};
 
 #endif

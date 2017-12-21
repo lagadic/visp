@@ -42,54 +42,53 @@
   \brief Parsing command line arguments.
 */
 
-
 /*!
   \example parse-argv2.cpp
 
   Example of command line parsing.
 */
 
-#include <stdio.h>
-#include <sstream>
 #include <iomanip>
+#include <sstream>
+#include <stdio.h>
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/io/vpParseArgv.h>
 
-int main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   try {
     using ::std::cout;
     using ::std::endl;
 
-    bool   bool_val = false;
-    int    int_val = 3;
-    long   long_val = 33333333;
-    float  float_val = 3.14f;
+    bool bool_val = false;
+    int int_val = 3;
+    long long_val = 33333333;
+    float float_val = 3.14f;
     double double_val = 3.1415;
-    char   *string_val = NULL;
+    char *string_val = NULL;
 
-    vpParseArgv::vpArgvInfo argTable[] =
-    {
-      {"-bool", vpParseArgv::ARGV_CONSTANT_BOOL, 0, (char *) &bool_val,
-       "Bool enabled."},
-      {"-integer", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &int_val,
-       "An integer value."},
-      {"-long", vpParseArgv::ARGV_LONG, (char*) NULL, (char *) &long_val,
-       "A long value."},
-      {"-float", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &float_val,
-       "A float value."},
-      {"-double", vpParseArgv::ARGV_DOUBLE, (char*) NULL, (char *) &double_val,
-       "A double value."},
-      {"-string", vpParseArgv::ARGV_STRING, (char*) NULL, (char *) &string_val,
-          "A chain value."},
-      {"-h", vpParseArgv::ARGV_HELP, (char*) NULL, (char *) NULL,
-          "Print the help."},
-      {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL}
-    } ;
+    vpParseArgv::vpArgvInfo argTable[] = {
+        {"-bool", vpParseArgv::ARGV_CONSTANT_BOOL, 0, (char *)&bool_val,
+         "Bool enabled."},
+        {"-integer", vpParseArgv::ARGV_INT, (char *)NULL, (char *)&int_val,
+         "An integer value."},
+        {"-long", vpParseArgv::ARGV_LONG, (char *)NULL, (char *)&long_val,
+         "A long value."},
+        {"-float", vpParseArgv::ARGV_FLOAT, (char *)NULL, (char *)&float_val,
+         "A float value."},
+        {"-double", vpParseArgv::ARGV_DOUBLE, (char *)NULL,
+         (char *)&double_val, "A double value."},
+        {"-string", vpParseArgv::ARGV_STRING, (char *)NULL,
+         (char *)&string_val, "A chain value."},
+        {"-h", vpParseArgv::ARGV_HELP, (char *)NULL, (char *)NULL,
+         "Print the help."},
+        {(char *)NULL, vpParseArgv::ARGV_END, (char *)NULL, (char *)NULL,
+         (char *)NULL}};
 
     // Read the command line options
-    if(vpParseArgv::parse(&argc, argv, argTable, vpParseArgv::ARGV_NO_DEFAULTS)) {
+    if (vpParseArgv::parse(&argc, argv, argTable,
+                           vpParseArgv::ARGV_NO_DEFAULTS)) {
       return (-1);
     }
 
@@ -108,9 +107,9 @@ int main(int argc, const char ** argv)
          << " -h to see how to change these parameters." << endl;
 
     return 0;
-  }
-  catch(const vpException &e) {
-    std::cout << "Catch a ViSP exception: " << e.getStringMessage() << std::endl;
+  } catch (const vpException &e) {
+    std::cout << "Catch a ViSP exception: " << e.getStringMessage()
+              << std::endl;
     return 1;
   }
 }

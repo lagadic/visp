@@ -65,10 +65,12 @@ class vpThetaUVector;
   minimal representation.
 
   Class that consider the case of the Euler
-  \f$(\varphi,\theta,\psi)\f$ angle using the z-y-x convention, where \f$(\varphi,\theta,\psi)\f$ are respectively the
-  rotation angles around the \f$z\f$, \f$y\f$ and \f$x\f$ axis.
+  \f$(\varphi,\theta,\psi)\f$ angle using the z-y-x convention, where
+\f$(\varphi,\theta,\psi)\f$ are respectively the rotation angles around the
+\f$z\f$, \f$y\f$ and \f$x\f$ axis.
 
-  \f[R_{zyx}(\varphi,\theta,\psi) = R_z(\varphi) \; R_y(\theta) \; R_x(\psi)\f]
+  \f[R_{zyx}(\varphi,\theta,\psi) = R_z(\varphi) \; R_y(\theta) \;
+R_x(\psi)\f]
 
   with
 
@@ -101,8 +103,11 @@ class vpThetaUVector;
   \f[
   R_{zyx}(\varphi,\theta,\psi) = \left(
   \begin{array}{ccc}
-  \cos\varphi \cos\theta & -\sin\varphi \cos\psi + \cos\varphi\sin\theta\sin\psi & \sin\varphi \sin\psi +\cos\varphi\sin\theta\cos\psi \\
-  \sin\varphi \cos\theta & \cos\varphi\cos\psi + \sin\varphi\sin\theta \sin\psi & -\cos\varphi \sin\psi +\sin\varphi\sin\theta\cos\psi \\
+  \cos\varphi \cos\theta & -\sin\varphi \cos\psi +
+\cos\varphi\sin\theta\sin\psi & \sin\varphi \sin\psi
++\cos\varphi\sin\theta\cos\psi \\
+  \sin\varphi \cos\theta & \cos\varphi\cos\psi + \sin\varphi\sin\theta
+\sin\psi & -\cos\varphi \sin\psi +\sin\varphi\sin\theta\cos\psi \\
   -\sin\theta & \cos\theta \sin\psi & \cos\theta \cos\psi
   \end{array}
   \right)
@@ -158,25 +163,25 @@ public:
   vpRzyxVector(const double phi, const double theta, const double psi);
 
   // initialize a Rzyx vector from a rotation matrix
-  explicit vpRzyxVector(const vpRotationMatrix& R) ;
+  explicit vpRzyxVector(const vpRotationMatrix &R);
 
   // initialize a Rzyx vector from a ThetaU vector
-  explicit vpRzyxVector(const vpThetaUVector& tu) ;
+  explicit vpRzyxVector(const vpThetaUVector &tu);
   explicit vpRzyxVector(const vpColVector &rzyx);
 
   //! Destructor.
-  virtual ~vpRzyxVector() {};
+  virtual ~vpRzyxVector(){};
 
   // convert a rotation matrix into Rzyx vector
-  vpRzyxVector buildFrom(const vpRotationMatrix& R) ;
+  vpRzyxVector buildFrom(const vpRotationMatrix &R);
 
   // convert a ThetaU vector into a Rzyx vector
-  vpRzyxVector buildFrom(const vpThetaUVector& R) ;
+  vpRzyxVector buildFrom(const vpThetaUVector &R);
 
   void buildFrom(const double phi, const double theta, const double psi);
 
   vpRzyxVector &operator=(const vpColVector &rzyx);
-  vpRzyxVector &operator=(double x) ;
-} ;
+  vpRzyxVector &operator=(double x);
+};
 
 #endif

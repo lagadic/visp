@@ -4,9 +4,8 @@
 
 @interface ViewController : UIViewController
 
-@property (nonatomic, strong) UIImageView *myImageView;
+@property(nonatomic, strong) UIImageView *myImageView;
 
 @end
 
 #endif
-

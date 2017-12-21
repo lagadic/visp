@@ -42,60 +42,62 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp3/core/vpConfig.h>
-#if ( defined(VISP_HAVE_DIRECTSHOW) ) 
+#if (defined(VISP_HAVE_DIRECTSHOW))
 
+#include <dshow.h>
 #include <qedit.h>
 #include <stdio.h>
-#include <dshow.h>
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
 
 /*!
-	This class is needed in order to implement a callback function
-	associated with the grabber
+        This class is needed in order to implement a callback function
+        associated with the grabber
 */
 class VISP_EXPORT vpDirectShowSampleGrabberI : public ISampleGrabberCB
 {
-	vpDirectShowSampleGrabberI();
-	virtual ~vpDirectShowSampleGrabberI();
+  vpDirectShowSampleGrabberI();
+  virtual ~vpDirectShowSampleGrabberI();
 
-	//needed by the interface
-	STDMETHODIMP_(ULONG) AddRef() { return 1; }
-    STDMETHODIMP_(ULONG) Release() { return 2; }
- 
-    STDMETHODIMP QueryInterface(REFIID riid, void **ppvObject);
- 
-	//not implemented
-    STDMETHODIMP SampleCB(double Time, IMediaSample *pSample)
-    {
-		return E_NOTIMPL;
-    }
- 
-	//our callback function
-    STDMETHODIMP BufferCB(double Time, BYTE *pBuffer, long BufferLen);
+  // needed by the interface
+  STDMETHODIMP_(ULONG) AddRef() { return 1; }
+  STDMETHODIMP_(ULONG) Release() { return 2; }
+
+  STDMETHODIMP QueryInterface(REFIID riid, void **ppvObject);
+
+  // not implemented
+  STDMETHODIMP SampleCB(double Time, IMediaSample *pSample)
+  {
+    return E_NOTIMPL;
+  }
+
+  // our callback function
+  STDMETHODIMP BufferCB(double Time, BYTE *pBuffer, long BufferLen);
 
 private:
-	//the currently connected media type
-	AM_MEDIA_TYPE connectedMediaType;
+  // the currently connected media type
+  AM_MEDIA_TYPE connectedMediaType;
 
-	//true if the source media type is not a standard one
-	bool specialMediaType;
-	//true if the image needs to be flipped (only for special media types)
-	bool invertedSource;
+  // true if the source media type is not a standard one
+  bool specialMediaType;
+  // true if the image needs to be flipped (only for special media types)
+  bool invertedSource;
 
-	//booleans used to signal a demand from acquire
-	bool acqGrayDemand;
-	bool acqRGBaDemand;
+  // booleans used to signal a demand from acquire
+  bool acqGrayDemand;
+  bool acqRGBaDemand;
 
-	//pointer on the image to fill during the next callback if there has been a demand
-	vpImage<vpRGBa> * rgbaIm;
-	vpImage<unsigned char> * grayIm;
+  // pointer on the image to fill during the next callback if there has been a
+  // demand
+  vpImage<vpRGBa> *rgbaIm;
+  vpImage<unsigned char> *grayIm;
 
-	//semaphore used to synchronize the productor (callback) and the consumer (acquire)
-	HANDLE copySem;
+  // semaphore used to synchronize the productor (callback) and the consumer
+  // (acquire)
+  HANDLE copySem;
 
-	friend class vpDirectShowGrabberImpl;
+  friend class vpDirectShowGrabberImpl;
 };
 
 #endif

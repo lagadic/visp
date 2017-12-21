@@ -36,67 +36,59 @@
  *
  *****************************************************************************/
 
-
 /*!
   \file vpFeatureBuilderEllipse.cpp
   \brief  conversion between tracker
   and visual feature Ellipse
 */
 
-#include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/core/vpMath.h>
-
-
+#include <visp3/visual_features/vpFeatureBuilder.h>
 
 /*!
   Initialize an ellipse feature thanks to a vpCircle.
-  The vpFeatureEllipse is initialized thanks to the parameters of the circle in the camera frame and in the image plan.
-  All the parameters are given in meter.
+  The vpFeatureEllipse is initialized thanks to the parameters of the circle
+  in the camera frame and in the image plan. All the parameters are given in
+  meter.
 
   \warning To be sure that the vpFeatureEllipse is well initialized,
-  you have to be sure that at least the circle coordinates in the image 
+  you have to be sure that at least the circle coordinates in the image
   plan and in the camera frame are computed and stored in the vpCircle.
 
   \param s : Visual feature to initialize.
 
   \param t : The vpCircle used to create the vpFeatureEllipse.
 */
-void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCircle &t )
+void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCircle &t)
 {
-  try
-  {
+  try {
 
     // 3D data
-    double alpha = t.cP[0] ;
-    double beta = t.cP[1] ;
-    double gamma = t.cP[2] ;
+    double alpha = t.cP[0];
+    double beta = t.cP[1];
+    double gamma = t.cP[2];
 
-    double X0 = t.cP[3] ;
-    double Y0 = t.cP[4] ;
-    double Z0 = t.cP[5] ;
+    double X0 = t.cP[3];
+    double Y0 = t.cP[4];
+    double Z0 = t.cP[5];
 
     // equation p 318 prior eq (39)
-    double d = alpha*X0 + beta*Y0 + gamma*Z0 ;
+    double d = alpha * X0 + beta * Y0 + gamma * Z0;
 
-    double A = alpha / d ;
-    double B = beta / d ;
-    double C = gamma / d ;
+    double A = alpha / d;
+    double B = beta / d;
+    double C = gamma / d;
 
-    s.setABC(A,B,C) ;
+    s.setABC(A, B, C);
 
+    // 2D data
+    s.buildFrom(t.p[0], t.p[1], t.p[2], t.p[3], t.p[4]);
 
-    //2D data
-    s.buildFrom( t.p[0],  t.p[1],  t.p[2],  t.p[3],  t.p[4] ) ;
-
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
-  }
-
 }
-
 
 /*!
   Initialize an ellipse feature thanks to a vpSphere.
@@ -105,46 +97,40 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCircle &t )
   All the parameters are given in meter.
 
   \warning To be sure that the vpFeatureEllipse is well initialized,
-  you have to be sure that at least the sphere coordinates in the image 
+  you have to be sure that at least the sphere coordinates in the image
   plan and in the camera frame are computed and stored in the vpSphere.
 
   \param s : Visual feature to initialize.
 
   \param t : The vpSphere used to create the vpFeatureEllipse.
 */
-void vpFeatureBuilder::create(vpFeatureEllipse &s,  const vpSphere &t)
+void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpSphere &t)
 {
-  try
-  {
+  try {
 
     // 3D data
-    double X0 = t.cP[0] ;
-    double Y0 = t.cP[1] ;
-    double Z0 = t.cP[2] ;
-    double R = t.cP[3] ;
+    double X0 = t.cP[0];
+    double Y0 = t.cP[1];
+    double Z0 = t.cP[2];
+    double R = t.cP[3];
 
-    double d = vpMath::sqr(X0) + vpMath::sqr(Y0) + vpMath::sqr(Z0) -
-      vpMath::sqr(R) ;
+    double d =
+        vpMath::sqr(X0) + vpMath::sqr(Y0) + vpMath::sqr(Z0) - vpMath::sqr(R);
 
+    double A = X0 / d;
+    double B = Y0 / d;
+    double C = Z0 / d;
 
-    double A = X0 / d ;
-    double B = Y0 / d ;
-    double C = Z0 / d ;
+    s.setABC(A, B, C);
 
-    s.setABC(A,B,C) ;
+    // 2D data
+    s.buildFrom(t.p[0], t.p[1], t.p[2], t.p[3], t.p[4]);
 
-    //2D data
-    s.buildFrom( t.p[0],  t.p[1],  t.p[2],  t.p[3],  t.p[4] ) ;
-
-
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
-
 
 #ifdef VISP_HAVE_MODULE_BLOB
 /*!
@@ -153,56 +139,55 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,  const vpSphere &t)
   of the dot given in pixel. The camera parameters are used to convert the
   pixel parameters to parameters given in meter.
 
-  \warning With a vpDot there is no information about 3D parameters. 
-  Thus the parameters \f$(A,B,C)\f$ can not be set. You have to compute them and
-  initialized them outside the method.
+  \warning With a vpDot there is no information about 3D parameters.
+  Thus the parameters \f$(A,B,C)\f$ can not be set. You have to compute them
+  and initialized them outside the method.
 
   \param s : Visual feature to initialize.
 
-  \param cam : The parameters of the camera used to acquire the image containing the vpDot.
+  \param cam : The parameters of the camera used to acquire the image
+  containing the vpDot.
 
   \param t : The vpDot used to create the vpFeatureEllipse.
 */
 void vpFeatureBuilder::create(vpFeatureEllipse &s,
-			      const vpCameraParameters &cam,
-			      const vpDot &t )
+                              const vpCameraParameters &cam, const vpDot &t)
 {
-  try
-  {
+  try {
 
-    unsigned int order = 3 ;
-    vpMatrix mp(order,order) ; mp =0 ;
-    vpMatrix m(order,order) ; m = 0 ;
+    unsigned int order = 3;
+    vpMatrix mp(order, order);
+    mp = 0;
+    vpMatrix m(order, order);
+    m = 0;
 
-    mp[0][0] = t.m00 ;
+    mp[0][0] = t.m00;
     mp[1][0] = t.m10;
-    mp[0][1] = t.m01 ;
-    mp[2][0] = t.m20 ;
-    mp[1][1] = t.m11 ;
-    mp[0][2] = t.m02 ;
+    mp[0][1] = t.m01;
+    mp[2][0] = t.m20;
+    mp[1][1] = t.m11;
+    mp[0][2] = t.m02;
 
-    vpPixelMeterConversion::convertMoment(cam,order,mp,m) ;
+    vpPixelMeterConversion::convertMoment(cam, order, mp, m);
 
-    double  m00 = m[0][0] ;
-    double  m01 = m[0][1] ;
-    double  m10 = m[1][0] ;
-    double  m02 = m[0][2] ;
-    double  m11 = m[1][1] ;
-    double  m20 = m[2][0] ;
+    double m00 = m[0][0];
+    double m01 = m[0][1];
+    double m10 = m[1][0];
+    double m02 = m[0][2];
+    double m11 = m[1][1];
+    double m20 = m[2][0];
 
-    double xc = m10/m00 ; // sum j /S
-    double yc = m01/m00 ; // sum i /S
+    double xc = m10 / m00; // sum j /S
+    double yc = m01 / m00; // sum i /S
 
-    double mu20 = 4*(m20 - m00*vpMath::sqr(xc))/(m00) ;
-    double mu02 = 4*(m02 - m00*vpMath::sqr(yc))/(m00) ;
-    double mu11 = 4*(m11 - m00*xc*yc)/(m00) ;
+    double mu20 = 4 * (m20 - m00 * vpMath::sqr(xc)) / (m00);
+    double mu02 = 4 * (m02 - m00 * vpMath::sqr(yc)) / (m00);
+    double mu11 = 4 * (m11 - m00 * xc * yc) / (m00);
 
-    s.buildFrom(xc, yc,  mu20, mu11, mu02  ) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+    s.buildFrom(xc, yc, mu20, mu11, mu02);
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
 
@@ -210,58 +195,57 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
   Initialize an ellipse feature thanks to a vpDot2 and camera parameters.
   The vpFeatureEllipse is initialized thanks to the parameters
   of the dot given in pixel. The camera parameters are used to convert the
-  pixel parameters to parameters given in meter. 
+  pixel parameters to parameters given in meter.
 
-  \warning With a vpDot2 there is no information about 3D parameters. 
-  Thus the parameters \f$(A,B,C)\f$ can not be set. You have to compute them and
-  initialized them outside the method.
+  \warning With a vpDot2 there is no information about 3D parameters.
+  Thus the parameters \f$(A,B,C)\f$ can not be set. You have to compute them
+  and initialized them outside the method.
 
   \param s : Visual feature to initialize.
 
-  \param cam : The parameters of the camera used to acquire the image containing the vpDot2.
+  \param cam : The parameters of the camera used to acquire the image
+  containing the vpDot2.
 
   \param t : The vpDot2 used to create the vpFeatureEllipse.
 */
 void vpFeatureBuilder::create(vpFeatureEllipse &s,
-			      const vpCameraParameters &cam,
-			      const vpDot2 &t )
+                              const vpCameraParameters &cam, const vpDot2 &t)
 {
-  try
-  {
+  try {
 
-    unsigned int order = 3 ;
-    vpMatrix mp(order,order) ; mp =0 ;
-    vpMatrix m(order,order) ; m = 0 ;
+    unsigned int order = 3;
+    vpMatrix mp(order, order);
+    mp = 0;
+    vpMatrix m(order, order);
+    m = 0;
 
-    mp[0][0] = t.m00 ;
+    mp[0][0] = t.m00;
     mp[1][0] = t.m10;
-    mp[0][1] = t.m01 ;
-    mp[2][0] = t.m20 ;
-    mp[1][1] = t.m11 ;
-    mp[0][2] = t.m02 ;
+    mp[0][1] = t.m01;
+    mp[2][0] = t.m20;
+    mp[1][1] = t.m11;
+    mp[0][2] = t.m02;
 
-    vpPixelMeterConversion::convertMoment(cam,order,mp,m) ;
+    vpPixelMeterConversion::convertMoment(cam, order, mp, m);
 
-    double  m00 = m[0][0] ;
-    double  m01 = m[0][1] ;
-    double  m10 = m[1][0] ;
-    double  m02 = m[0][2] ;
-    double  m11 = m[1][1] ;
-    double  m20 = m[2][0] ;
+    double m00 = m[0][0];
+    double m01 = m[0][1];
+    double m10 = m[1][0];
+    double m02 = m[0][2];
+    double m11 = m[1][1];
+    double m20 = m[2][0];
 
-    double xc = m10/m00 ; // sum j /S
-    double yc = m01/m00 ; // sum i /S
+    double xc = m10 / m00; // sum j /S
+    double yc = m01 / m00; // sum i /S
 
-    double mu20 = 4*(m20 - m00*vpMath::sqr(xc))/(m00) ;
-    double mu02 = 4*(m02 - m00*vpMath::sqr(yc))/(m00) ;
-    double mu11 = 4*(m11 - m00*xc*yc)/(m00) ;
+    double mu20 = 4 * (m20 - m00 * vpMath::sqr(xc)) / (m00);
+    double mu02 = 4 * (m02 - m00 * vpMath::sqr(yc)) / (m00);
+    double mu11 = 4 * (m11 - m00 * xc * yc) / (m00);
 
-    s.buildFrom(xc, yc,  mu20, mu11, mu02  ) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+    s.buildFrom(xc, yc, mu20, mu11, mu02);
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
 #endif //#ifdef VISP_HAVE_MODULE_BLOB
@@ -271,61 +255,61 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s,
   Initialize an ellipse feature thanks to a vpMeEllipse and camera parameters.
   The vpFeatureEllipse is initialized thanks to the parameters
   of the ellipse given in pixel. The camera parameters are used to convert the
-  pixel parameters to parameters given in meter. 
+  pixel parameters to parameters given in meter.
 
-  \warning With a vpMeEllipse there is no information about 3D parameters. 
-  Thus the parameters \f$(A,B,C)\f$ can not be set. You have to compute them and
-  initialized them outside the method.
+  \warning With a vpMeEllipse there is no information about 3D parameters.
+  Thus the parameters \f$(A,B,C)\f$ can not be set. You have to compute them
+  and initialized them outside the method.
 
   \param s : Visual feature to initialize.
 
-  \param cam : The parameters of the camera used to acquire the image containing the vpDot2.
+  \param cam : The parameters of the camera used to acquire the image
+  containing the vpDot2.
 
   \param t : The vpMeEllipse used to create the vpFeatureEllipse.
 */
 void vpFeatureBuilder::create(vpFeatureEllipse &s,
-			      const vpCameraParameters &cam,
-			      const vpMeEllipse &t )
+                              const vpCameraParameters &cam,
+                              const vpMeEllipse &t)
 {
-  try
-  {
+  try {
 
-    unsigned int order = 3 ;
-    vpMatrix mp(order,order) ; mp =0 ;
-    vpMatrix m(order,order) ; m = 0 ;
+    unsigned int order = 3;
+    vpMatrix mp(order, order);
+    mp = 0;
+    vpMatrix m(order, order);
+    m = 0;
 
-    //The opposite of vpDot and vpDot2 because moments in vpMeEllipse 
-    //are computed in the ij coordinate system whereas the moments in vpDot and vpDot2
-    //are computed in the uv coordinate system
-    mp[0][0] = t.get_m00() ;
+    // The opposite of vpDot and vpDot2 because moments in vpMeEllipse
+    // are computed in the ij coordinate system whereas the moments in vpDot
+    // and vpDot2  are computed in the uv coordinate system
+    mp[0][0] = t.get_m00();
     mp[1][0] = t.get_m01();
-    mp[0][1] = t.get_m10() ;
-    mp[2][0] = t.get_m02() ;
-    mp[1][1] = t.get_m11() ;
-    mp[0][2] = t.get_m20() ;
+    mp[0][1] = t.get_m10();
+    mp[2][0] = t.get_m02();
+    mp[1][1] = t.get_m11();
+    mp[0][2] = t.get_m20();
 
-    vpPixelMeterConversion::convertMoment(cam,order,mp,m) ;
+    vpPixelMeterConversion::convertMoment(cam, order, mp, m);
 
-    double  m00 = m[0][0] ;
-    double  m01 = m[0][1] ;
-    double  m10 = m[1][0] ;
-    double  m02 = m[0][2] ;
-    double  m11 = m[1][1] ;
-    double  m20 = m[2][0] ;
+    double m00 = m[0][0];
+    double m01 = m[0][1];
+    double m10 = m[1][0];
+    double m02 = m[0][2];
+    double m11 = m[1][1];
+    double m20 = m[2][0];
 
-    double xc = m10/m00 ; // sum j /S
-    double yc = m01/m00 ; // sum i /S
+    double xc = m10 / m00; // sum j /S
+    double yc = m01 / m00; // sum i /S
 
-    double mu20 = 4*(m20 - m00*vpMath::sqr(xc))/(m00) ;
-    double mu02 = 4*(m02 - m00*vpMath::sqr(yc))/(m00) ;
-    double mu11 = 4*(m11 - m00*xc*yc)/(m00) ;
+    double mu20 = 4 * (m20 - m00 * vpMath::sqr(xc)) / (m00);
+    double mu02 = 4 * (m02 - m00 * vpMath::sqr(yc)) / (m00);
+    double mu11 = 4 * (m11 - m00 * xc * yc) / (m00);
 
-    s.buildFrom(xc, yc,  mu20, mu11, mu02  ) ;
-  }
-  catch(...)
-  {
-    vpERROR_TRACE("Error caught") ;
-    throw ;
+    s.buildFrom(xc, yc, mu20, mu11, mu02);
+  } catch (...) {
+    vpERROR_TRACE("Error caught");
+    throw;
   }
 }
 #endif //#ifdef VISP_HAVE_MODULE_ME

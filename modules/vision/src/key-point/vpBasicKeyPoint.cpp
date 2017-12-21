@@ -36,15 +36,13 @@
  *
  *****************************************************************************/
 
-
 #include <visp3/vision/vpBasicKeyPoint.h>
 
 /*!
   Basic constructor.
 */
 vpBasicKeyPoint::vpBasicKeyPoint()
-  : referenceImagePointsList(), currentImagePointsList(), matchedReferencePoints(), _reference_computed(false)
+  : referenceImagePointsList(), currentImagePointsList(),
+    matchedReferencePoints(), _reference_computed(false)
 {
 }
-
-

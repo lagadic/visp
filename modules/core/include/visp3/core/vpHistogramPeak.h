@@ -36,8 +36,6 @@
  *
  *****************************************************************************/
 
-
-
 /*!
   \file vpHistogramPeak.h
   \brief Declaration of the vpHistogramPeak class.
@@ -66,15 +64,15 @@
 
 class VISP_EXPORT vpHistogramPeak
 {
-public :
+public:
   vpHistogramPeak();
   vpHistogramPeak(unsigned char level, unsigned value);
-  vpHistogramPeak(const vpHistogramPeak & p);
+  vpHistogramPeak(const vpHistogramPeak &p);
 
   /*! Destructor that does nothing. */
   virtual ~vpHistogramPeak() {}
 
-  vpHistogramPeak & operator=(const vpHistogramPeak &p);
+  vpHistogramPeak &operator=(const vpHistogramPeak &p);
   bool operator==(const vpHistogramPeak &p) const;
 
   /*!
@@ -87,10 +85,7 @@ public :
     \sa setValue(), set()
 
   */
-  inline void setLevel(unsigned char lvl)
-    {
-      this->level = lvl;
-    };
+  inline void setLevel(unsigned char lvl) { this->level = lvl; };
   /*!
 
     Set the peak number of pixels having a same gray level. To set the
@@ -101,10 +96,7 @@ public :
     \sa setLevel(), set()
 
   */
-  inline void setValue(unsigned val)
-    {
-      this->value = val;
-    };
+  inline void setValue(unsigned val) { this->value = val; };
   /*!
 
     Set the peak gray \e level and number of pixels at this gray level.
@@ -116,11 +108,11 @@ public :
 
   */
   inline void set(unsigned char lvl, unsigned val)
-    {
-      this->level = lvl;
-      this->value = val;
-    };
-      
+  {
+    this->level = lvl;
+    this->value = val;
+  };
+
   /*!
 
     Get the peak gray \e level. The number of pixels having this
@@ -131,10 +123,7 @@ public :
     \sa getValue()
 
   */
-  inline unsigned char getLevel() const
-    { 
-      return level;
-    };
+  inline unsigned char getLevel() const { return level; };
   /*!
 
     Get the peak number of pixels having a same gray level. The
@@ -145,22 +134,18 @@ public :
     \sa getLevel()
 
   */
-  inline unsigned getValue() const
-    {
-      return value;
-    };
+  inline unsigned getValue() const { return value; };
 
   //---------------------------------
   // Printing
   //---------------------------------
-  friend VISP_EXPORT std::ostream &operator << (std::ostream &s,	const vpHistogramPeak &p);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &s,
+                                              const vpHistogramPeak &p);
 
-
-protected :
+protected:
   unsigned char level; //! Gray level ot the peak.
-  unsigned value;         //! Number of pixels on the gray level.
+  unsigned value;      //! Number of pixels on the gray level.
 };
-
 
 /*
  * Local variables:

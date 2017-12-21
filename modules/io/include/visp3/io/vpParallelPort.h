@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpParallelPort_h
 #define vpParallelPort_h
 
@@ -49,13 +48,13 @@
 
 #ifdef VISP_HAVE_PARPORT
 
+#include <errno.h>
 #include <iostream>
-#  include <stdio.h>
-#  include <errno.h>
-#  include <linux/parport.h>
-#  include <linux/ppdev.h>
+#include <linux/parport.h>
+#include <linux/ppdev.h>
+#include <stdio.h>
 
-#  include <visp3/io/vpParallelPortException.h>
+#include <visp3/io/vpParallelPortException.h>
 
 /*!
 
@@ -97,7 +96,7 @@ private:
 private:
   int fd; // parallel port descriptor
   char device[FILENAME_MAX];
-} ;
+};
 
 #endif
 

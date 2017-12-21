@@ -29,7 +29,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Interface for the Irisa's Viper S850 robot controlled by an Adept MotionBlox.
+ * Interface for the Irisa's Viper S850 robot controlled by an Adept
+ *MotionBlox.
  *
  * Authors:
  * Fabien Spindler
@@ -46,22 +47,23 @@
 #include <iostream>
 #include <stdio.h>
 
-#include <visp3/robot/vpRobot.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpViper850.h>
 
 // low level controller api
 extern "C" {
-#  include "irisa_Viper850.h"
-#  include "trycatch.h"
+#include "irisa_Viper850.h"
+#include "trycatch.h"
 }
 
-// If USE_ATI_DAQ defined, use DAQ board instead of serial connexion to acquire data using comedi
+// If USE_ATI_DAQ defined, use DAQ board instead of serial connexion to
+// acquire data using comedi
 #define USE_ATI_DAQ
 
 #ifdef USE_ATI_DAQ
-#  include <visp3/sensor/vpForceTorqueAtiSensor.h>
+#include <visp3/sensor/vpForceTorqueAtiSensor.h>
 #endif
 
 /*!
@@ -112,18 +114,21 @@ extern "C" {
 
   - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
     M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
-    a calibration stage. We can also consider a custom tool vpViper850::TOOL_CUSTOM and set this
-    during robot initialisation or using set_eMc().
+    a calibration stage. We can also consider a custom tool
+vpViper850::TOOL_CUSTOM and set this during robot initialisation or using
+set_eMc().
 
   - \f$ {\cal F}_s \f$: the force/torque sensor frame, with \f$d7=0.0666\f$.
 
   This class allows to control the Viper650 arm robot in position
   and velocity:
   - in the joint space (vpRobot::ARTICULAR_FRAME),
-  - in the fixed reference frame \f$ {\cal F}_f \f$ (vpRobot::REFERENCE_FRAME),
+  - in the fixed reference frame \f$ {\cal F}_f \f$
+(vpRobot::REFERENCE_FRAME),
   - in the camera or tool frame \f$ {\cal F}_c \f$ (vpRobot::CAMERA_FRAME),
   - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed
-  in the reference frame \f$ {\cal F}_f \f$ and rotations in the camera or tool frame \f$ {\cal F}_c \f$ .
+  in the reference frame \f$ {\cal F}_f \f$ and rotations in the camera or
+tool frame \f$ {\cal F}_c \f$ .
 
   All the translations are expressed in meters for positions and m/s
   for the velocities. Rotations are expressed in radians for the
@@ -177,11 +182,11 @@ int main()
   acquired by the camera attached to the robot, with:
 
   \code
-#include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpRobotViper850.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/robot/vpRobotViper850.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
 
 int main()
 {
@@ -207,10 +212,10 @@ int main()
   frame like here in the joint space:
 
   \code
-#include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpRobotViper850.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/robot/vpRobotViper850.h>
 
 int main()
 {
@@ -241,10 +246,10 @@ int main()
   velocity used to reach the desired position.
 
   \code
-#include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpRobotViper850.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/robot/vpRobotViper850.h>
 
 int main()
 {
@@ -273,10 +278,10 @@ int main()
   space:
 
   \code
-#include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpRobotViper850.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/robot/vpRobotViper850.h>
 
 int main()
 {
@@ -308,15 +313,13 @@ int main()
 }
   \endcode
 
-  It is also possible to specify the position of a custom tool cartesian frame. To this end
-  this frame is to specify with respect of the end effector frame in \f$^e {\bf M}_c\f$ transformation.
-  This could be done by initializing the robot thanks to
-  init(vpViper850::vpToolType, const vpHomogeneousMatrix &) or
-  init(vpViper850::vpToolType, const std::string &) or using set_eMc(). The following example illustrates
-  this usecase:
-  \code
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/robot/vpRobotViper850.h>
+  It is also possible to specify the position of a custom tool cartesian
+frame. To this end this frame is to specify with respect of the end effector
+frame in \f$^e {\bf M}_c\f$ transformation. This could be done by initializing
+the robot thanks to init(vpViper850::vpToolType, const vpHomogeneousMatrix &)
+or init(vpViper850::vpToolType, const std::string &) or using set_eMc(). The
+following example illustrates this usecase: \code #include
+<visp3/core/vpHomogeneousMatrix.h> #include <visp3/robot/vpRobotViper850.h>
 
 int main()
 {
@@ -340,19 +343,16 @@ int main()
   positions from a position file with readPosFile() and savePosFile()
   methods.
 */
-class VISP_EXPORT vpRobotViper850
-  :
-  public vpViper850,
-  public vpRobot
+class VISP_EXPORT vpRobotViper850 : public vpViper850, public vpRobot
 {
 
-public:  /* Constantes */
-
+public: /* Constantes */
   /*! \enum vpControlModeType Control mode. */
   typedef enum {
     AUTO,   //!< Automatic control mode (default).
-    MANUAL,  //!< Manual control mode activated when the dead man switch is in use.
-    ESTOP  //!< Emergency stop activated.
+    MANUAL, //!< Manual control mode activated when the dead man switch is in
+            //!< use.
+    ESTOP   //!< Emergency stop activated.
   } vpControlModeType;
 
   /* Vitesse maximale par default lors du positionnement du robot.
@@ -363,14 +363,12 @@ public:  /* Constantes */
   static const double defaultPositioningVelocity; // = 20.0;
 
 private: /* Not allowed functions. */
-
   /*!
     Copy constructor not allowed.
    */
-  vpRobotViper850 (const vpRobotViper850 & robot);
+  vpRobotViper850(const vpRobotViper850 &robot);
 
 private: /* Attributs prives. */
-
   /** \brief Vrai ssi aucun objet de la classe vpRobotViper850 n'existe.
    *
    * Il ne peut exister simultanement qu'un seul objet de la classe
@@ -400,10 +398,9 @@ private: /* Attributs prives. */
   vpForceTorqueAtiSensor ati;
 #endif
 
-public:  /* Methode publiques */
-
-  explicit vpRobotViper850 (bool verbose=true);
-  virtual ~vpRobotViper850 (void);
+public: /* Methode publiques */
+  explicit vpRobotViper850(bool verbose = true);
+  virtual ~vpRobotViper850(void);
 
   // Force/Torque control
   void biasForceTorqueSensor();
@@ -419,33 +416,32 @@ public:  /* Methode publiques */
     \return The control mode indicating if the robot is in automatic,
     manual (usage of the dead man switch) or emergnecy stop mode.
   */
-  vpControlModeType getControlMode() const {
-    return controlMode;
-  }
+  vpControlModeType getControlMode() const { return controlMode; }
 
   void getForceTorque(vpColVector &H) const;
   vpColVector getForceTorque() const;
 
   double getMaxRotationVelocityJoint6() const;
-  void getPosition (const vpRobot::vpControlFrameType frame,
-                    vpColVector &position);
-  void getPosition (const vpRobot::vpControlFrameType frame,
-                    vpColVector &position, double &timestamp);
-  void getPosition (const vpRobot::vpControlFrameType frame,
-                    vpPoseVector &position);
-  void getPosition (const vpRobot::vpControlFrameType frame,
-                    vpPoseVector &position, double &timestamp);
+  void getPosition(const vpRobot::vpControlFrameType frame,
+                   vpColVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame,
+                   vpColVector &position, double &timestamp);
+  void getPosition(const vpRobot::vpControlFrameType frame,
+                   vpPoseVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame,
+                   vpPoseVector &position, double &timestamp);
 
-  double getPositioningVelocity (void) const;
+  double getPositioningVelocity(void) const;
   bool getPowerState() const;
 
-  void getVelocity (const vpRobot::vpControlFrameType frame,
-                    vpColVector & velocity);
-  void getVelocity (const vpRobot::vpControlFrameType frame,
-                    vpColVector & velocity, double &timestamp);
+  void getVelocity(const vpRobot::vpControlFrameType frame,
+                   vpColVector &velocity);
+  void getVelocity(const vpRobot::vpControlFrameType frame,
+                   vpColVector &velocity, double &timestamp);
 
-  vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
-  vpColVector getVelocity (const vpRobot::vpControlFrameType frame, double &timestamp);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame,
+                          double &timestamp);
 
   double getTime() const;
 
@@ -456,20 +452,20 @@ public:  /* Methode publiques */
 
   void init(void);
   void init(vpViper850::vpToolType tool,
-            vpCameraParameters::vpCameraParametersProjType
-            projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
+            vpCameraParameters::vpCameraParametersProjType projModel =
+                vpCameraParameters::perspectiveProjWithoutDistortion);
   void init(vpViper850::vpToolType tool, const std::string &filename);
   void init(vpViper850::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 
-  void move(const std::string &filename) ;
+  void move(const std::string &filename);
 
   void openGripper();
 
-  void powerOn() ;
-  void powerOff() ;
+  void powerOn();
+  void powerOff();
 
-  static bool readPosFile(const std::string &filename, vpColVector &q)  ;
-  static bool savePosFile(const std::string &filename, const vpColVector &q)  ;
+  static bool readPosFile(const std::string &filename, vpColVector &q);
+  static bool savePosFile(const std::string &filename, const vpColVector &q);
 
   void set_eMc(const vpHomogeneousMatrix &eMc_);
   void set_eMc(const vpTranslationVector &etc_, const vpRxyzVector &erc_);
@@ -479,19 +475,19 @@ public:  /* Methode publiques */
 
   // Position control
   void setPosition(const vpRobot::vpControlFrameType frame,
-                   const vpColVector &position) ;
-  void setPosition (const vpRobot::vpControlFrameType frame,
-                    const double pos1, const double pos2, const double pos3,
-                    const double pos4, const double pos5, const double pos6) ;
-  void setPosition(const std::string &filename) ;
-  void setPositioningVelocity (const double velocity);
+                   const vpColVector &position);
+  void setPosition(const vpRobot::vpControlFrameType frame, const double pos1,
+                   const double pos2, const double pos3, const double pos4,
+                   const double pos5, const double pos6);
+  void setPosition(const std::string &filename);
+  void setPositioningVelocity(const double velocity);
 
   // State
-  vpRobot::vpRobotStateType setRobotState (vpRobot::vpRobotStateType newState);
+  vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
 
   // Velocity control
-  void setVelocity (const vpRobot::vpControlFrameType frame,
-                    const vpColVector & velocity);
+  void setVelocity(const vpRobot::vpControlFrameType frame,
+                   const vpColVector &velocity);
 
   void stopMotion();
   void unbiasForceTorqueSensor();

@@ -37,23 +37,22 @@
  *
  *****************************************************************************/
 
-
 #ifndef __VP_KINECT__
 #define __VP_KINECT__
 
 #include <visp3/core/vpConfig.h>
-// Note that libfreenect needs libusb-1.0 and libpthread 
+// Note that libfreenect needs libusb-1.0 and libpthread
 #if defined(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES)
 
 #include <iostream>
 #include <libfreenect.hpp>
 
-#include <visp3/core/vpMutex.h> // need pthread
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
 #include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpMutex.h> // need pthread
+#include <visp3/core/vpPixelMeterConversion.h>
 
 /*!
 
@@ -63,8 +62,8 @@
 
   \brief Driver for the Kinect-1 device.
 
-  To be enabled this class requires libfreenect 3rd party. Installation instructions are provided here
-  https://visp.inria.fr/3rd_freenect.
+  To be enabled this class requires libfreenect 3rd party. Installation
+instructions are provided here https://visp.inria.fr/3rd_freenect.
 
   The following example shows how to use this class to acquire data
   (depth map and color image) from a Kinect.
@@ -110,17 +109,17 @@ int main() {
 */
 class VISP_EXPORT vpKinect : public Freenect::FreenectDevice
 {
-//private:
-//#ifndef DOXYGEN_SHOULD_SKIP_THIS
-//  vpKinect(const vpKinect &); // Not implemented!
-//  vpKinect &operator=(const vpKinect &){
-//    throw vpException(vpException::functionNotImplementedError,"Not implemented!");
-//    return *this;
-//  }
-//#endif
+  // private:
+  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //  vpKinect(const vpKinect &); // Not implemented!
+  //  vpKinect &operator=(const vpKinect &){
+  //    throw vpException(vpException::functionNotImplementedError,"Not
+  //    implemented!"); return *this;
+  //  }
+  //#endif
 
 public:
-  /*! 
+  /*!
     Depth map resolution.
   */
   typedef enum {
@@ -134,54 +133,60 @@ public:
   void start(vpKinect::vpDMResolution res = DMAP_LOW_RES);
   void stop();
 
-  bool getDepthMap(vpImage<float>& map);
-  bool getDepthMap(vpImage<float>& map, vpImage<unsigned char>& Imap);
-  bool getRGB(vpImage<vpRGBa>& IRGB);
+  bool getDepthMap(vpImage<float> &map);
+  bool getDepthMap(vpImage<float> &map, vpImage<unsigned char> &Imap);
+  bool getRGB(vpImage<vpRGBa> &IRGB);
 
-
-  inline void getIRCamParameters(vpCameraParameters &cam) const {
+  inline void getIRCamParameters(vpCameraParameters &cam) const
+  {
     cam = IRcam;
   }
-  inline void getRGBCamParameters(vpCameraParameters &cam) const {
+  inline void getRGBCamParameters(vpCameraParameters &cam) const
+  {
     cam = RGBcam;
   }
-  inline void setIRCamParameters(const vpCameraParameters &cam) {
+  inline void setIRCamParameters(const vpCameraParameters &cam)
+  {
     IRcam = cam;
   }
-  inline void setRGBCamParameters(const vpCameraParameters &cam) {
+  inline void setRGBCamParameters(const vpCameraParameters &cam)
+  {
     RGBcam = cam;
   }
 
-  void warpRGBFrame(const vpImage<vpRGBa> & Irgb, const vpImage<float> & Idepth, vpImage<vpRGBa> & IrgbWarped);//warp the RGB image into the Depth camera frame
+  void warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &Idepth,
+                    vpImage<vpRGBa> &IrgbWarped); // warp the RGB image into
+                                                  // the Depth camera frame
 
- private:
-  //!Instantiation of Freenect virtual functions
+private:
+  //! Instantiation of Freenect virtual functions
   // Do not call directly even in child
-  void VideoCallback(void* rgb, uint32_t timestamp);
+  void VideoCallback(void *rgb, uint32_t timestamp);
 
   // Do not call directly even in child
-  void DepthCallback(void* depth, uint32_t timestamp);
+  void DepthCallback(void *depth, uint32_t timestamp);
 
- private:
+private:
   vpMutex m_rgb_mutex;
   vpMutex m_depth_mutex;
 
-  vpCameraParameters RGBcam, IRcam;//intrinsic parameters of the two cameras
-  vpHomogeneousMatrix rgbMir;//Transformation from IRcam coordinate frame to RGBcam coordinate frame.
-  vpHomogeneousMatrix irMrgb;//Transformation from RGBcam coordinate frame to IRcam coordinate frame .
+  vpCameraParameters RGBcam, IRcam; // intrinsic parameters of the two cameras
+  vpHomogeneousMatrix rgbMir; // Transformation from IRcam coordinate frame to
+                              // RGBcam coordinate frame.
+  vpHomogeneousMatrix irMrgb; // Transformation from RGBcam coordinate frame
+                              // to IRcam coordinate frame .
   vpDMResolution DMres;
-  unsigned int hd;//height of the depth map
-  unsigned int wd;//width of the depth map
+  unsigned int hd; // height of the depth map
+  unsigned int wd; // width of the depth map
 
-  //Access protected by a mutex:
+  // Access protected by a mutex:
   vpImage<float> dmap;
   vpImage<vpRGBa> IRGB;
   bool m_new_rgb_frame;
   bool m_new_depth_map;
   bool m_new_depth_image;
-  unsigned int height;//height of the rgb image
-  unsigned int width;//width of the rgb image
-
+  unsigned int height; // height of the rgb image
+  unsigned int width;  // width of the rgb image
 };
 
 #endif

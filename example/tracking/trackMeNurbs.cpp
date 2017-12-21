@@ -49,35 +49,38 @@
   Tracking of a nurbs using vpMe.
 */
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h>
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <sstream>
 #include <iomanip>
+#include <sstream>
+#include <stdio.h>
+#include <stdlib.h>
 
-#if defined(VISP_HAVE_MODULE_ME) && (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_ME) &&                                          \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                     \
+     defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
-#include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/core/vpColor.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 
-#include <visp3/me/vpMeNurbs.h>
-#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
+#include <visp3/me/vpMeNurbs.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"cdi:h"
+#define GETOPTARGS "cdi:h"
 
 void usage(const char *name, const char *badparam, std::string ipath);
-bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display);
+bool getOptions(int argc, const char **argv, std::string &ipath,
+                bool &click_allowed, bool &display);
 
 /*!
 
@@ -114,8 +117,7 @@ OPTIONS:                                               Default\n\
      Turn off the display.\n\
 \n\
   -h\n\
-     Print the help.\n",
-    ipath.c_str());
+     Print the help.\n", ipath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -133,21 +135,32 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath,
+                bool &click_allowed, bool &display)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'c': click_allowed = false; break;
-    case 'd': display = false; break;
-    case 'i': ipath = optarg_; break;
-    case 'h': usage(argv[0], NULL, ipath); return false; break;
+    case 'c':
+      click_allowed = false;
+      break;
+    case 'd':
+      display = false;
+      break;
+    case 'i':
+      ipath = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, ipath);
+      return false;
+      break;
 
     default:
       usage(argv[0], optarg_, ipath);
-      return false; break;
+      return false;
+      break;
     }
   }
 
@@ -162,9 +175,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
   return true;
 }
 
-
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string env_ipath;
@@ -174,17 +185,18 @@ main(int argc, const char ** argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
-    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH environment variable value
+    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+    // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Set the default input path
-    if (! env_ipath.empty())
+    if (!env_ipath.empty())
       ipath = env_ipath;
 
-
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display) == false) {
-      exit (-1);
+    if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display) ==
+        false) {
+      exit(-1);
     }
 
     // Get the option values
@@ -195,43 +207,44 @@ main(int argc, const char ** argv)
     // the input path comming from the command line option
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
-        std::cout << std::endl
-                  << "WARNING: " << std::endl;
+        std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+                  << "  is different from VISP_IMAGE_PATH=" << env_ipath
+                  << std::endl
                   << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
-    if (opt_ipath.empty() && env_ipath.empty()){
+    if (opt_ipath.empty() && env_ipath.empty()) {
       usage(argv[0], NULL, ipath);
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
-      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
-                << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl << std::endl;
+      std::cerr << std::endl << "ERROR:" << std::endl;
+      std::cerr
+          << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH "
+          << std::endl
+          << "  environment variable to specify the location of the "
+          << std::endl
+          << "  image path where test images are located." << std::endl
+          << std::endl;
       exit(-1);
     }
-
 
     // Declare an image, this is a gray level image (unsigned char)
     // it size is not defined yet, it will be defined when the image is
     // read on the disk
-    vpImage<unsigned char> I ;
+    vpImage<unsigned char> I;
 
     // Set the path location of the image sequence
     filename = vpIoTools::createFilePath(ipath, "ellipse-1/image.%04d.pgm");
 
     // Build the name of the image file
     vpVideoReader reader;
-    //Initialize the reader and get the first frame.
+    // Initialize the reader and get the first frame.
     reader.setFileName(filename.c_str());
     reader.setFirstFrameIndex(1);
     reader.open(I);
 
-    // We open a window using either X11, GTK or GDI.
+// We open a window using either X11, GTK or GDI.
 #if defined VISP_HAVE_X11
     vpDisplayX display;
 #elif defined VISP_HAVE_GTK
@@ -244,83 +257,80 @@ main(int argc, const char ** argv)
 
     if (opt_display) {
       // Display size is automatically defined by the image (I) size
-      display.init(I, 100, 100,"Display...") ;
+      display.init(I, 100, 100, "Display...");
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
       // therefore is is no longuer necessary to make a reference to the
       // display variable.
-      vpDisplay::display(I) ;
-      vpDisplay::flush(I) ;
+      vpDisplay::display(I);
+      vpDisplay::flush(I);
     }
 
-    vpMeNurbs nurbs ;
+    vpMeNurbs nurbs;
 
-    vpMe me ;
-    me.setRange(30) ;
-    me.setSampleStep(5) ;
-    me.setPointsToTrack(60) ;
-    me.setThreshold(15000) ;
+    vpMe me;
+    me.setRange(30);
+    me.setSampleStep(5);
+    me.setPointsToTrack(60);
+    me.setThreshold(15000);
 
     nurbs.setMe(&me);
-    nurbs.setDisplay(vpMeSite::RANGE_RESULT) ;
+    nurbs.setDisplay(vpMeSite::RANGE_RESULT);
     nurbs.setNbControlPoints(14);
 
-    if (opt_click_allowed)
-    {
-      std::cout << "Click on points along the edge with the left button." << std::endl;
+    if (opt_click_allowed) {
+      std::cout << "Click on points along the edge with the left button."
+                << std::endl;
       std::cout << "Then click on the right button to continue." << std::endl;
       nurbs.initTracking(I);
-    }
-    else
-    {
+    } else {
       // Create a list of points to automate the test
       std::list<vpImagePoint> list;
-      list.push_back(vpImagePoint(178,357));
-      list.push_back(vpImagePoint(212,287));
-      list.push_back(vpImagePoint(236,210));
+      list.push_back(vpImagePoint(178, 357));
+      list.push_back(vpImagePoint(212, 287));
+      list.push_back(vpImagePoint(236, 210));
       list.push_back(vpImagePoint(240, 118));
       list.push_back(vpImagePoint(210, 40));
 
-      nurbs.initTracking(I, list) ;
+      nurbs.initTracking(I, list);
     }
     if (opt_display) {
-      nurbs.display(I, vpColor::green) ;
+      nurbs.display(I, vpColor::green);
     }
 
-    nurbs.track(I) ;
+    nurbs.track(I);
     if (opt_display && opt_click_allowed) {
       std::cout << "A click to continue..." << std::endl;
-      vpDisplay::getClick(I) ;
+      vpDisplay::getClick(I);
     }
-    std::cout <<"------------------------------------------------------------"<<std::endl;
+    std::cout
+        << "------------------------------------------------------------"
+        << std::endl;
 
-    for (int iter = 1 ; iter < 40 ; iter++)
-    {
-      //read the image
-      reader.getFrame(I,iter);
+    for (int iter = 1; iter < 40; iter++) {
+      // read the image
+      reader.getFrame(I, iter);
       if (opt_display) {
         // Display the image
-        vpDisplay::display(I) ;
+        vpDisplay::display(I);
       }
 
-      //Track the nurbs
-      nurbs.track(I) ;
-
+      // Track the nurbs
+      nurbs.track(I);
 
       if (opt_display) {
-        nurbs.display(I,vpColor::green) ;
-        vpDisplay::flush(I) ;
+        nurbs.display(I, vpColor::green);
+        vpDisplay::flush(I);
         vpTime::wait(100);
       }
     }
     if (opt_display && opt_click_allowed) {
       std::cout << "A click to exit..." << std::endl;
-      vpDisplay::getClick(I) ;
+      vpDisplay::getClick(I);
     }
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return 0;
   }
@@ -330,7 +340,9 @@ main(int argc, const char ** argv)
 
 int main()
 {
-  std::cout << "visp_me module or X11, GTK, GDI or OpenCV display functionalities are required..." << std::endl;
+  std::cout << "visp_me module or X11, GTK, GDI or OpenCV display "
+               "functionalities are required..."
+            << std::endl;
 }
 
 #endif

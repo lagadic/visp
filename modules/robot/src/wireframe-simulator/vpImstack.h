@@ -44,12 +44,12 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-void			fprintf_imstack (void);
-void			load_imstack (void);
-void			pop_imstack (void);
-void			push_imstack (void);
-void			swap_imstack (void);
-void			add_imstack (void);
+void fprintf_imstack(void);
+void load_imstack(void);
+void pop_imstack(void);
+void push_imstack(void);
+void swap_imstack(void);
+void add_imstack(void);
 
 #endif
 #endif

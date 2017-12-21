@@ -41,7 +41,6 @@
 
 #include <visp3/core/vpMatrix.h>
 
-
 /*!
   \file vpSubMatrix.h
 
@@ -60,44 +59,44 @@
 
   \sa vpMatrix vpColvector vpRowVector
 */
-class VISP_EXPORT vpSubMatrix : public vpMatrix{
+class VISP_EXPORT vpSubMatrix : public vpMatrix
+{
 
-  private :
-      //! Eye method unavailable
-      void eye(unsigned int n);
-      //! Eye method unavailable
-      void eye(unsigned int m, unsigned int n);
-      //! Copy constructor unavailable
-      vpSubMatrix(const vpSubMatrix& /* m */);      
-       
-  protected :
- 
-      unsigned int pRowNum;
-      unsigned int pColNum;
-      vpMatrix *parent;
-      
-  public:
+private:
+  //! Eye method unavailable
+  void eye(unsigned int n);
+  //! Eye method unavailable
+  void eye(unsigned int m, unsigned int n);
+  //! Copy constructor unavailable
+  vpSubMatrix(const vpSubMatrix & /* m */);
 
-    //!Default constructor
-    vpSubMatrix();
-    //!Constructor
-    vpSubMatrix(vpMatrix &m, const unsigned int & row, const unsigned int &col , const unsigned int & nrows ,  const unsigned int & ncols);
-    //!Destructor
-    ~vpSubMatrix();
-    
-    //! Initialisation of vpMatrix
-    void init(vpMatrix &m, const unsigned int & row, const unsigned int &col , const unsigned int & nrows ,  const unsigned int & ncols);
-    
-    //!Check is parent vpRowVector has changed since initialization
-    void checkParentStatus() const;
-	
-    //! Operation such as subA = subB
-    vpSubMatrix & operator=(const vpSubMatrix &B);
-    //! Operation such as subA = B
-    vpSubMatrix & operator=(const vpMatrix &B);
-    //! Operation such as subA = x
-    vpSubMatrix & operator=(const double &x);
-    
+protected:
+  unsigned int pRowNum;
+  unsigned int pColNum;
+  vpMatrix *parent;
+
+public:
+  //! Default constructor
+  vpSubMatrix();
+  //! Constructor
+  vpSubMatrix(vpMatrix &m, const unsigned int &row, const unsigned int &col,
+              const unsigned int &nrows, const unsigned int &ncols);
+  //! Destructor
+  ~vpSubMatrix();
+
+  //! Initialisation of vpMatrix
+  void init(vpMatrix &m, const unsigned int &row, const unsigned int &col,
+            const unsigned int &nrows, const unsigned int &ncols);
+
+  //! Check is parent vpRowVector has changed since initialization
+  void checkParentStatus() const;
+
+  //! Operation such as subA = subB
+  vpSubMatrix &operator=(const vpSubMatrix &B);
+  //! Operation such as subA = B
+  vpSubMatrix &operator=(const vpMatrix &B);
+  //! Operation such as subA = x
+  vpSubMatrix &operator=(const double &x);
 };
 
 #endif

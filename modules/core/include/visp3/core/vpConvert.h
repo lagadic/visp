@@ -37,7 +37,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef __vpConvert_h__
 #define __vpConvert_h__
 
@@ -49,8 +48,8 @@
 #include <visp3/core/vpConfig.h>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-  #include <opencv2/core/core.hpp>
-  #include <opencv2/features2d/features2d.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/features2d/features2d.hpp>
 #endif
 
 #include <visp3/core/vpImagePoint.h>
@@ -69,25 +68,43 @@ public:
   static void convertFromOpenCV(const cv::KeyPoint &from, vpImagePoint &to);
   static void convertFromOpenCV(const cv::Point2f &from, vpImagePoint &to);
   static void convertFromOpenCV(const cv::Point2d &from, vpImagePoint &to);
-  static void convertFromOpenCV(const cv::Point3f &from, vpPoint &to, const bool cameraFrame=false);
-  static void convertFromOpenCV(const cv::Point3d &from, vpPoint &to, const bool cameraFrame=false);
+  static void convertFromOpenCV(const cv::Point3f &from, vpPoint &to,
+                                const bool cameraFrame = false);
+  static void convertFromOpenCV(const cv::Point3d &from, vpPoint &to,
+                                const bool cameraFrame = false);
 
-  static void convertFromOpenCV(const std::vector<cv::KeyPoint> &from, std::vector<vpImagePoint> &to);
-  static void convertFromOpenCV(const std::vector<cv::Point2f> &from, std::vector<vpImagePoint> &to);
-  static void convertFromOpenCV(const std::vector<cv::Point2d> &from, std::vector<vpImagePoint> &to);
-  static void convertFromOpenCV(const std::vector<cv::Point3f> &from, std::vector<vpPoint> &to, const bool cameraFrame=false);
-  static void convertFromOpenCV(const std::vector<cv::Point3d> &from, std::vector<vpPoint> &to, const bool cameraFrame=false);
-  static void convertFromOpenCV(const std::vector<cv::DMatch> &from, std::vector<unsigned int> &to);
+  static void convertFromOpenCV(const std::vector<cv::KeyPoint> &from,
+                                std::vector<vpImagePoint> &to);
+  static void convertFromOpenCV(const std::vector<cv::Point2f> &from,
+                                std::vector<vpImagePoint> &to);
+  static void convertFromOpenCV(const std::vector<cv::Point2d> &from,
+                                std::vector<vpImagePoint> &to);
+  static void convertFromOpenCV(const std::vector<cv::Point3f> &from,
+                                std::vector<vpPoint> &to,
+                                const bool cameraFrame = false);
+  static void convertFromOpenCV(const std::vector<cv::Point3d> &from,
+                                std::vector<vpPoint> &to,
+                                const bool cameraFrame = false);
+  static void convertFromOpenCV(const std::vector<cv::DMatch> &from,
+                                std::vector<unsigned int> &to);
 
   static void convertToOpenCV(const vpImagePoint &from, cv::Point2f &to);
   static void convertToOpenCV(const vpImagePoint &from, cv::Point2d &to);
-  static void convertToOpenCV(const vpPoint &from, cv::Point3f &to, const bool cameraFrame=false);
-  static void convertToOpenCV(const vpPoint &from, cv::Point3d &to, const bool cameraFrame=false);
+  static void convertToOpenCV(const vpPoint &from, cv::Point3f &to,
+                              const bool cameraFrame = false);
+  static void convertToOpenCV(const vpPoint &from, cv::Point3d &to,
+                              const bool cameraFrame = false);
 
-  static void convertToOpenCV(const std::vector<vpImagePoint> &from, std::vector<cv::Point2f> &to);
-  static void convertToOpenCV(const std::vector<vpImagePoint> &from, std::vector<cv::Point2d> &to);
-  static void convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv::Point3f> &to, const bool cameraFrame=false);
-  static void convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv::Point3d> &to, const bool cameraFrame=false);
+  static void convertToOpenCV(const std::vector<vpImagePoint> &from,
+                              std::vector<cv::Point2f> &to);
+  static void convertToOpenCV(const std::vector<vpImagePoint> &from,
+                              std::vector<cv::Point2d> &to);
+  static void convertToOpenCV(const std::vector<vpPoint> &from,
+                              std::vector<cv::Point3f> &to,
+                              const bool cameraFrame = false);
+  static void convertToOpenCV(const std::vector<vpPoint> &from,
+                              std::vector<cv::Point3d> &to,
+                              const bool cameraFrame = false);
 
 private:
   static vpImagePoint keyPointToVpImagePoint(const cv::KeyPoint &keypoint);
@@ -107,7 +124,6 @@ private:
   static cv::Point3d vpObjectPointToPoint3d(const vpPoint &point);
 
 #endif
-
 };
 
 #endif

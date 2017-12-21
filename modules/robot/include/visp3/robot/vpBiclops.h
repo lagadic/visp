@@ -44,10 +44,10 @@
 /* --------------------------------------------------------------------- */
 
 /* --- ViSP --- */
-#include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpPoseVector.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpPoseVector.h>
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpTranslationVector.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
@@ -64,11 +64,13 @@
   \brief Jacobian, geometric model functionnalities... for biclops, pan, tilt
   head.
 
-  Two different Denavit Hartenberg representations of the robot are implemented.
-  As mentionned in vpBiclops::DenavitHartenbergModel they differ in the orientation
-  of the tilt axis. Use setDenavitHartenbergModel() to select the representation.
+  Two different Denavit Hartenberg representations of the robot are
+  implemented. As mentionned in vpBiclops::DenavitHartenbergModel they differ
+  in the orientation of the tilt axis. Use setDenavitHartenbergModel() to
+  select the representation.
 
-  See http://www.traclabs.com/tracbiclops.htm for more details concerning the hardware.
+  See http://www.traclabs.com/tracbiclops.htm for more details concerning the
+  hardware.
 
 */
 
@@ -76,8 +78,8 @@ class VISP_EXPORT vpBiclops
 {
 public:
   /*!
-    Two different Denavit Hartenberg representations of the robot are implemented.
-    They differ in the orientation of the tilt axis.
+    Two different Denavit Hartenberg representations of the robot are
+    implemented. They differ in the orientation of the tilt axis.
 
     The first representation, vpBiclops::DH1 is given by:
 
@@ -105,23 +107,23 @@ public:
     \end{tabular}
     \f]
 
-    where \f$q_1^*, q_2^*\f$ are respectively the pan and tilt joint positions.
+    where \f$q_1^*, q_2^*\f$ are respectively the pan and tilt joint
+    positions.
 
-    In those representations, the pan is oriented from left to right, while the tilt is oriented
+    In those representations, the pan is oriented from left to right, while
+    the tilt is oriented
     - in vpBiclops::DH1 from down to top,
     - in vpBiclops::DH2 from top to down.
 
 
     */
-  typedef enum
-  {
+  typedef enum {
     DH1, /*!< First Denavit Hartenberg representation. */
     DH2  /*!< Second Denavit Hartenberg representation. */
   } DenavitHartenbergModel;
 
-public: /* Constants */
-
-  static const unsigned int ndof;  /*!< Number of dof */
+public:                           /* Constants */
+  static const unsigned int ndof; /*!< Number of dof */
 
   /* Geometric model */
   static const float h;
@@ -130,39 +132,35 @@ public: /* Constants */
   static const float tiltJointLimit;
   static const float speedLimit;
 
-
 protected:
   DenavitHartenbergModel dh_model_;
   vpHomogeneousMatrix cMe_; // Camera frame to mobile platform frame
 
 public:
-  vpBiclops (void);
+  vpBiclops(void);
   /*! Destructor that does nothing. */
-  virtual ~vpBiclops() {};
+  virtual ~vpBiclops(){};
 
   /** @name Inherited functionalities from vpBiclops */
   //@{
 
-  void init (void);
+  void init(void);
 
-  void computeMGD (const vpColVector &q, vpHomogeneousMatrix & fMc) const;
-  vpHomogeneousMatrix computeMGD (const vpColVector & q) const;
-  void computeMGD (const vpColVector &q,  vpPoseVector &fvc) const;
+  void computeMGD(const vpColVector &q, vpHomogeneousMatrix &fMc) const;
+  vpHomogeneousMatrix computeMGD(const vpColVector &q) const;
+  void computeMGD(const vpColVector &q, vpPoseVector &fvc) const;
 
   /*!
-    Return the tranformation \f${^c}{\bf M}_e\f$ between the camera frame and the end
-    effector frame.
+    Return the tranformation \f${^c}{\bf M}_e\f$ between the camera frame and
+    the end effector frame.
     */
-  vpHomogeneousMatrix get_cMe() const
-  {
-    return cMe_;
-  }
+  vpHomogeneousMatrix get_cMe() const { return cMe_; }
 
   void get_cVe(vpVelocityTwistMatrix &_cVe) const;
-  void get_fMc (const vpColVector &q, vpHomogeneousMatrix &fMc) const;
-  void get_fMc (const vpColVector &q,  vpPoseVector &fvc) const;
-  vpHomogeneousMatrix get_fMc (const vpColVector &q) const;
-  vpHomogeneousMatrix get_fMe (const vpColVector &q) const;
+  void get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const;
+  void get_fMc(const vpColVector &q, vpPoseVector &fvc) const;
+  vpHomogeneousMatrix get_fMc(const vpColVector &q) const;
+  vpHomogeneousMatrix get_fMe(const vpColVector &q) const;
 
   void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
   void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
@@ -176,27 +174,26 @@ public:
     return dh_model_;
   }
 
-  void set_cMe() ;
+  void set_cMe();
   /*!
-    Set the transformation between the camera frame and the end effector frame.
+    Set the transformation between the camera frame and the end effector
+    frame.
     */
-  void set_cMe(const vpHomogeneousMatrix &cMe)
-  {
-    cMe_ = cMe;
-  }
+  void set_cMe(const vpHomogeneousMatrix &cMe) { cMe_ = cMe; }
   /*!
     Set the Denavit Hartenberg representation used to model the head.
 
     \sa vpBiclops::DenavitHartenbergModel
     */
-  inline void setDenavitHartenbergModel(vpBiclops::DenavitHartenbergModel m=vpBiclops::DH1)
+  inline void setDenavitHartenbergModel(
+      vpBiclops::DenavitHartenbergModel m = vpBiclops::DH1)
   {
     dh_model_ = m;
   }
 
   //@}
-  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpBiclops & constant);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                              const vpBiclops &constant);
 };
-
 
 #endif

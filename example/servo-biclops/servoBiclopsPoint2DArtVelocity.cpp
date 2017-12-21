@@ -41,56 +41,52 @@
 /*!
   \file servoBiclopsPoint2DArtVelocity.cpp
 
-  \brief Example of eye-in-hand control law. We control here a real robot, the biclops
-  robot (pan-tilt head provided by Traclabs). The velocity is
-  computed in articular. The visual feature is the center of gravity of a
-  point.
+  \brief Example of eye-in-hand control law. We control here a real robot, the
+  biclops robot (pan-tilt head provided by Traclabs). The velocity is computed
+  in articular. The visual feature is the center of gravity of a point.
 
 */
-
 
 /*!
   \example servoBiclopsPoint2DArtVelocity.cpp
 
-  Example of eye-in-hand control law. We control here a real robot, the biclops
-  robot (pan-tilt head provided by Traclabs). The velocity is
-  computed in articular. The visual feature is the center of gravity of a
-  point.
+  Example of eye-in-hand control law. We control here a real robot, the
+  biclops robot (pan-tilt head provided by Traclabs). The velocity is computed
+  in articular. The visual feature is the center of gravity of a point.
 
 */
 
-
-
-#include <visp3/core/vpTime.h>
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDebug.h> // Debug trace
 #include <signal.h>
 #include <stdlib.h>
-#if ( defined (VISP_HAVE_BICLOPS) && (defined (VISP_HAVE_DC1394) || defined(VISP_HAVE_DIRECTSHOW)) )
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpDebug.h> // Debug trace
+#include <visp3/core/vpTime.h>
+#if (defined(VISP_HAVE_BICLOPS) &&                                           \
+     (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_DIRECTSHOW)))
 
 #ifdef VISP_HAVE_PTHREAD
-#  include <pthread.h>
+#include <pthread.h>
 #endif
 
+#include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vpDirectShowGrabber.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpDisplay.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
 
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/visual_features/vpFeaturePoint.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/vs/vpServo.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/robot/vpRobotBiclops.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/io/vpParseArgv.h>
-#include <visp3/vs/vpServoDisplay.h>
 #include <visp3/blob/vpDot.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/io/vpParseArgv.h>
+#include <visp3/robot/vpRobotBiclops.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/vs/vpServoDisplay.h>
 
 // Exception
 #include <visp3/core/vpException.h>
@@ -99,18 +95,17 @@
 pthread_mutex_t mutexEndLoop = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
-void signalCtrC( int /* signumber */)
+void signalCtrC(int /* signumber */)
 {
 #ifdef VISP_HAVE_PTHREAD
-  pthread_mutex_unlock( &mutexEndLoop );
+  pthread_mutex_unlock(&mutexEndLoop);
 #endif
   vpTime::wait(10);
   vpTRACE("Ctrl-C pressed...");
 }
 
-
 // List of allowed command line options
-#define GETOPTARGS	"c:d:h"
+#define GETOPTARGS "c:d:h"
 
 /*!
 
@@ -123,7 +118,8 @@ void signalCtrC( int /* signumber */)
   \param user : Username.
 
  */
-void usage(const char *name, const char *badparam, std::string& conf, std::string& debugdir, std::string& user)
+void usage(const char *name, const char *badparam, std::string &conf,
+           std::string &debugdir, std::string &user)
 {
   fprintf(stdout, "\n\
   Example of eye-in-hand control law. We control here a real robot, the biclops\n\
@@ -145,7 +141,7 @@ OPTIONS:                                               Default\n\
      it writes biclops.txt file.\n", conf.c_str(), debugdir.c_str(), user.c_str());
 
   if (badparam) {
-    fprintf(stderr, "ERROR: \n" );
+    fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
   }
 }
@@ -162,19 +158,29 @@ Set the program options.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string& conf, std::string &debugdir, std::string& user)
+bool getOptions(int argc, const char **argv, std::string &conf,
+                std::string &debugdir, std::string &user)
 {
   const char *optarg_;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'c': conf = optarg_; break;
-    case 'd': debugdir = optarg_; break;
-    case 'h': usage(argv[0], NULL, conf, debugdir, user); return false; break;
+    case 'c':
+      conf = optarg_;
+      break;
+    case 'd':
+      debugdir = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, conf, debugdir, user);
+      return false;
+      break;
 
     default:
-      usage(argv[0], optarg_, conf, debugdir, user); return false; break;
+      usage(argv[0], optarg_, conf, debugdir, user);
+      return false;
+      break;
     }
   }
 
@@ -189,36 +195,38 @@ bool getOptions(int argc, const char **argv, std::string& conf, std::string &deb
   return true;
 }
 
-
-
-int
-main(int argc, const char ** argv)
+int main(int argc, const char **argv)
 {
-  std::cout << std::endl ;
-  std::cout << "-------------------------------------------------------" << std::endl ;
-  std::cout << " Test program for vpServo "  <<std::endl ;
-  std::cout << " Eye-in-hand task control, velocity computed in the camera frame" << std::endl ;
-  std::cout << " Simulation " << std::endl ;
-  std::cout << " task : servo a point " << std::endl ;
-  std::cout << "-------------------------------------------------------" << std::endl ;
-  std::cout << std::endl ;
+  std::cout << std::endl;
+  std::cout << "-------------------------------------------------------"
+            << std::endl;
+  std::cout << " Test program for vpServo " << std::endl;
+  std::cout
+      << " Eye-in-hand task control, velocity computed in the camera frame"
+      << std::endl;
+  std::cout << " Simulation " << std::endl;
+  std::cout << " task : servo a point " << std::endl;
+  std::cout << "-------------------------------------------------------"
+            << std::endl;
+  std::cout << std::endl;
 
-  try{
+  try {
 
 #ifdef VISP_HAVE_PTHREAD
-    pthread_mutex_lock( &mutexEndLoop );
+    pthread_mutex_lock(&mutexEndLoop);
 #endif
-    signal( SIGINT,&signalCtrC );
+    signal(SIGINT, &signalCtrC);
 
-    //default unix configuration file path
+    // default unix configuration file path
     std::string opt_conf = "/usr/share/BiclopsDefault.cfg";
 
     std::string username;
     std::string debugdir;
     std::string opt_debugdir;
 
-    // Set the default output path
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+// Set the default output path
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||             \
+                         (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_debugdir = "/tmp";
 #elif defined(_WIN32)
     opt_debugdir = "C:/temp";
@@ -228,8 +236,8 @@ main(int argc, const char ** argv)
     vpIoTools::getUserName(username);
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_conf, opt_debugdir , username) == false) {
-      exit (-1);
+    if (getOptions(argc, argv, opt_conf, opt_debugdir, username) == false) {
+      exit(-1);
     }
 
     // Get the option value
@@ -244,13 +252,12 @@ main(int argc, const char ** argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(dirname);
-      }
-      catch (...) {
+      } catch (...) {
         usage(argv[0], NULL, opt_conf, debugdir, username);
-        std::cerr << std::endl
-                  << "ERROR:" << std::endl;
+        std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
-        std::cerr << "  Check your -d " << debugdir << " option " << std::endl;
+        std::cerr << "  Check your -d " << debugdir << " option "
+                  << std::endl;
         exit(-1);
       }
     }
@@ -260,16 +267,17 @@ main(int argc, const char ** argv)
     sprintf(filename, "%s/biclops.txt", debugdir.c_str());
     FILE *fd = fopen(filename, "w");
 
-    vpRobotBiclops robot(opt_conf.c_str()) ;
+    vpRobotBiclops robot(opt_conf.c_str());
     robot.setDenavitHartenbergModel(vpBiclops::DH2);
 
     {
-      vpColVector q(2); q=0;
-      robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
-      robot.setPosition( vpRobot::ARTICULAR_FRAME,q );
+      vpColVector q(2);
+      q = 0;
+      robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+      robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
     }
 
-    vpImage<unsigned char> I ;
+    vpImage<unsigned char> I;
 
 #if defined VISP_HAVE_DC1394
     vp1394TwoGrabber g;
@@ -277,164 +285,157 @@ main(int argc, const char ** argv)
     vpDirectShowGrabber g;
 #endif
 
-    g.open(I) ;
+    g.open(I);
 
-    try{
-      g.acquire(I) ;
-    }
-    catch(...)
-    {
-      vpERROR_TRACE(" Error caught") ;
-      return(-1) ;
+    try {
+      g.acquire(I);
+    } catch (...) {
+      vpERROR_TRACE(" Error caught");
+      return (-1);
     }
 
-    // We open a window using either X11 or GTK or GDI.
-    // Its size is automatically defined by the image (I) size
+// We open a window using either X11 or GTK or GDI.
+// Its size is automatically defined by the image (I) size
 #if defined VISP_HAVE_X11
-    vpDisplayX display(I, 100, 100,"Display X...") ;
+    vpDisplayX display(I, 100, 100, "Display X...");
 #elif defined VISP_HAVE_GTK
-    vpDisplayGTK display(I, 100, 100,"Display GTK...") ;
+    vpDisplayGTK display(I, 100, 100, "Display GTK...");
 #elif defined(_WIN32)
-    vpDisplayGDI display(I, 100, 100,"Display GDI...") ;
+    vpDisplayGDI display(I, 100, 100, "Display GDI...");
 #endif
 
-    try{
-      vpDisplay::display(I) ;
-      vpDisplay::flush(I) ;
-    }
-    catch(...)
-    {
-      vpERROR_TRACE(" Error caught") ;
-      return(-1) ;
+    try {
+      vpDisplay::display(I);
+      vpDisplay::flush(I);
+    } catch (...) {
+      vpERROR_TRACE(" Error caught");
+      return (-1);
     }
 
+    vpServo task;
 
-    vpServo task ;
+    vpDot dot;
 
-    vpDot dot ;
-
-    try{
-      std::cout << "Click on a dot to initialize the tracking..." << std::endl;
+    try {
+      std::cout << "Click on a dot to initialize the tracking..."
+                << std::endl;
       dot.setGraphics(true);
-      dot.initTracking(I) ;
+      dot.initTracking(I);
       dot.track(I);
-      vpERROR_TRACE("after dot.initTracking(I) ") ;
-    }
-    catch(...)
-    {
-      vpERROR_TRACE(" Error caught") ;
-      return(-1) ;
+      vpERROR_TRACE("after dot.initTracking(I) ");
+    } catch (...) {
+      vpERROR_TRACE(" Error caught");
+      return (-1);
     }
 
-    vpCameraParameters cam ;
+    vpCameraParameters cam;
 
     // sets the current position of the visual feature
-    vpFeaturePoint p ;
-    vpFeatureBuilder::create(p,cam, dot)  ;  //retrieve x,y and Z of the vpPoint structure
+    vpFeaturePoint p;
+    vpFeatureBuilder::create(
+        p, cam, dot); // retrieve x,y and Z of the vpPoint structure
 
-    p.set_Z(1) ;
+    p.set_Z(1);
     // sets the desired position of the visual feature
-    vpFeaturePoint pd ;
-    pd.buildFrom(0,0,1) ;
+    vpFeaturePoint pd;
+    pd.buildFrom(0, 0, 1);
 
     // define the task
     // - we want an eye-in-hand control law
     // - articular velocity are computed
-    task.setServo(vpServo::EYEINHAND_L_cVe_eJe) ;
-    task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
+    task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
+    task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
 
-
-    vpTRACE("Set the position of the camera in the end-effector frame ") ;
-    vpHomogeneousMatrix cMe ;
+    vpTRACE("Set the position of the camera in the end-effector frame ");
+    vpHomogeneousMatrix cMe;
     //  robot.get_cMe(cMe) ;
 
-    vpVelocityTwistMatrix cVe ;
-    robot.get_cVe(cVe) ;
-    std::cout << cVe <<std::endl ;
-    task.set_cVe(cVe) ;
+    vpVelocityTwistMatrix cVe;
+    robot.get_cVe(cVe);
+    std::cout << cVe << std::endl;
+    task.set_cVe(cVe);
 
     std::cout << "Click in the image to start the servoing..." << std::endl;
-    vpDisplay::getClick(I) ;
+    vpDisplay::getClick(I);
 
     // Set the Jacobian (expressed in the end-effector frame)
-    vpMatrix eJe ;
-    robot.get_eJe(eJe) ;
-    task.set_eJe(eJe) ;
+    vpMatrix eJe;
+    robot.get_eJe(eJe);
+    task.set_eJe(eJe);
 
     // we want to see a point on a point
-    task.addFeature(p,pd) ;
+    task.addFeature(p, pd);
 
     // set the gain
-    task.setLambda(0.2) ;
+    task.setLambda(0.2);
 
     // Display task information
-    task.print() ;
+    task.print();
 
-    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-    unsigned int iter=0 ;
-    vpTRACE("\t loop") ;
+    unsigned int iter = 0;
+    vpTRACE("\t loop");
 #ifdef VISP_HAVE_PTHREAD
-    while( 0 != pthread_mutex_trylock( &mutexEndLoop ) )
+    while (0 != pthread_mutex_trylock(&mutexEndLoop))
 #else
-    for ( ; ; )
+    for (;;)
 #endif
     {
-      std::cout << "---------------------------------------------" << iter <<std::endl ;
+      std::cout << "---------------------------------------------" << iter
+                << std::endl;
 
-      g.acquire(I) ;
-      vpDisplay::display(I) ;
+      g.acquire(I);
+      vpDisplay::display(I);
 
-      dot.track(I) ;
+      dot.track(I);
 
       //    vpDisplay::displayCross(I,(int)dot.I(), (int)dot.J(),
       //			   10,vpColor::green) ;
 
-
-      vpFeatureBuilder::create(p,cam, dot);
+      vpFeatureBuilder::create(p, cam, dot);
 
       // get the jacobian
-      robot.get_eJe(eJe) ;
-      task.set_eJe(eJe) ;
+      robot.get_eJe(eJe);
+      task.set_eJe(eJe);
 
       //  std::cout << (vpMatrix)cVe*eJe << std::endl ;
 
-      vpColVector v ;
-      v = task.computeControlLaw() ;
+      vpColVector v;
+      v = task.computeControlLaw();
 
-      vpServoDisplay::display(task,cam,I) ;
-      vpDisplay::flush(I) ;
+      vpServoDisplay::display(task, cam, I);
+      vpDisplay::flush(I);
 
-      std::cout << "v: " << v.t() ;
-      robot.setVelocity(vpRobot::ARTICULAR_FRAME, v) ;
+      std::cout << "v: " << v.t();
+      robot.setVelocity(vpRobot::ARTICULAR_FRAME, v);
 
-      std::cout << "|| s - s* || = " << ( task.getError() ).sumSquare() << std::endl;
+      std::cout << "|| s - s* || = " << (task.getError()).sumSquare()
+                << std::endl;
 
       {
         vpColVector s_minus_sStar(2);
         s_minus_sStar = task.s - task.sStar;
-        fprintf(fd, "%f %f %f %f %f\n",
-                v[0], v[1],
-                s_minus_sStar[0], s_minus_sStar[1],
-                ( task.getError() ).sumSquare());
+        fprintf(fd, "%f %f %f %f %f\n", v[0], v[1], s_minus_sStar[0],
+                s_minus_sStar[1], (task.getError()).sumSquare());
       }
     }
 
     std::cout << "Display task information " << std::endl;
-    task.print() ;
+    task.print();
     task.kill();
 
     fclose(fd);
 
-  } catch (...) { vpERROR_TRACE("Throw uncatched..."); }
-
+  } catch (...) {
+    vpERROR_TRACE("Throw uncatched...");
+  }
 }
 
-
 #else
-int
-main()
+int main()
 {
-  vpERROR_TRACE("You don't have a biclops head connected to your computer or 1394 framegrabbing capabilities...");
+  vpERROR_TRACE("You don't have a biclops head connected to your computer or "
+                "1394 framegrabbing capabilities...");
 }
 #endif

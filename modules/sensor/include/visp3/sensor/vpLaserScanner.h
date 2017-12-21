@@ -38,7 +38,6 @@
 #ifndef vpLaserScanner_h
 #define vpLaserScanner_h
 
-
 #include "visp3/core/vpConfig.h"
 
 /*!
@@ -57,28 +56,23 @@
  */
 class VISP_EXPORT vpLaserScanner
 {
- public:
-  /*! Default constructor that initialize all the internal variable to zero. */
-    vpLaserScanner() : ip("null"), port(0) {};
+public:
+  /*! Default constructor that initialize all the internal variable to zero.
+   */
+  vpLaserScanner() : ip("null"), port(0){};
   /*! Copy constructor. */
   vpLaserScanner(const vpLaserScanner &scanner)
-    : ip(scanner.ip), port(scanner.port)
-  {
-  };
+    : ip(scanner.ip), port(scanner.port){};
   /*! Default destructor that does nothing. */
-  virtual ~vpLaserScanner() {};
+  virtual ~vpLaserScanner(){};
 
   /*! Set the Ethernet address of the laser. */
-  void setIpAddress(std::string ip_address) {
-    this->ip = ip_address;
-  };
+  void setIpAddress(std::string ip_address) { this->ip = ip_address; };
 
   /*! Set the communication port. */
-  void setPort(int com_port) {
-    this->port = com_port;
-  };
+  void setPort(int com_port) { this->port = com_port; };
 
- protected:
+protected:
   std::string ip;
   int port;
 };

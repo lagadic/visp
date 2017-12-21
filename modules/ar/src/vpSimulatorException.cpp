@@ -43,17 +43,24 @@
 
 #include <visp3/ar/vpSimulatorException.h>
 
-vpSimulatorException::vpSimulatorException (const int id, const char* format, ...)
+vpSimulatorException::vpSimulatorException(const int id, const char *format,
+                                           ...)
 {
   this->code = id;
   va_list args;
   va_start(args, format);
   setMessage(format, args);
-  va_end (args);
+  va_end(args);
 }
 
-vpSimulatorException::vpSimulatorException (const int id, const std::string & msg)
-  : vpException(id, msg){ ; }
+vpSimulatorException::vpSimulatorException(const int id,
+                                           const std::string &msg)
+  : vpException(id, msg)
+{
+  ;
+}
 
-vpSimulatorException::vpSimulatorException (const int id)
-  : vpException(id){ ; }
+vpSimulatorException::vpSimulatorException(const int id) : vpException(id)
+{
+  ;
+}

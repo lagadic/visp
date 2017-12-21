@@ -36,13 +36,12 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpPlane_hh
 #define vpPlane_hh
 
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpPoint.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpPoint.h>
 
 /*!
   \class vpPlane
@@ -61,38 +60,38 @@ class VISP_EXPORT vpPlane
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   // for backward compatibility
- public:
+public:
 #else
- private:
+private:
 #endif
-  double A,B,C,D ;
+  double A, B, C, D;
 
 public:
-  typedef enum {
-    object_frame,
-    camera_frame
-  } vpPlaneFrame;
-  vpPlane() ;
-  vpPlane(const vpPlane& P) ;
-  vpPlane(const double A, const double B,const  double C,const  double D) ;
-  vpPlane(const vpPoint& P, const vpColVector &n, vpPlaneFrame frame=camera_frame) ;
-  vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame=camera_frame) ;
-  void init(const vpPoint& P, const vpPoint& Q, const vpPoint& R, vpPlaneFrame frame=camera_frame) ;
-  void init(const vpColVector& P, const vpColVector &n) ;
-  void init(const vpPlane& P) ;
+  typedef enum { object_frame, camera_frame } vpPlaneFrame;
+  vpPlane();
+  vpPlane(const vpPlane &P);
+  vpPlane(const double A, const double B, const double C, const double D);
+  vpPlane(const vpPoint &P, const vpColVector &n,
+          vpPlaneFrame frame = camera_frame);
+  vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R,
+          vpPlaneFrame frame = camera_frame);
+  void init(const vpPoint &P, const vpPoint &Q, const vpPoint &R,
+            vpPlaneFrame frame = camera_frame);
+  void init(const vpColVector &P, const vpColVector &n);
+  void init(const vpPlane &P);
 
   // SET the parameter
   /*! Set plane parameter A. */
-  inline void setA(const double a) {   this->A = a ; }
+  inline void setA(const double a) { this->A = a; }
   /*! Set plane parameter B. */
-  inline void setB(const double b) {   this->B = b ; }
+  inline void setB(const double b) { this->B = b; }
   /*! Set plane parameter C. */
-  inline void setC(const double c) {   this->C = c ; }
+  inline void setC(const double c) { this->C = c; }
   /*! Set plane parameter D. */
-  inline void setD(const double d) {   this->D = d ; }
+  inline void setD(const double d) { this->D = d; }
   /*! Set plane parameters A, B, C, D. */
-  inline void setABCD(const double a, const double b,
-                      const double c, const double d)
+  inline void setABCD(const double a, const double b, const double c,
+                      const double d)
   {
     this->A = a;
     this->B = b;
@@ -100,17 +99,17 @@ public:
     this->D = d;
   }
 
-  vpPlane& operator =(const vpPlane& f) ;
+  vpPlane &operator=(const vpPlane &f);
 
   // GET information
   /*! \return The value of the plane parameter A. */
-  double getA() const { return A ; }
+  double getA() const { return A; }
   /*! \return The value of the plane parameter B. */
-  double getB() const { return B ; }
+  double getB() const { return B; }
   /*! \return The value of the plane parameter C. */
-  double getC() const { return C ; }
+  double getC() const { return C; }
   /*! \return The value of the plane parameter D. */
-  double getD() const { return D ; }
+  double getD() const { return D; }
 
   /*!
 
@@ -118,13 +117,14 @@ public:
     corresponding to the plane parameters.
 
   */
-  inline vpColVector getABCD() const {
+  inline vpColVector getABCD() const
+  {
     vpColVector n(4);
-    n[0]=A;
-    n[1]=B;
-    n[2]=C;
-    n[3]=D;
-    
+    n[0] = A;
+    n[1] = B;
+    n[2] = C;
+    n[3] = D;
+
     return n;
   }
   /*!
@@ -137,33 +137,30 @@ public:
 
     \sa getABCD()
   */
-  inline vpColVector abcd() const {
+  inline vpColVector abcd() const
+  {
     vpColVector n(4);
-    n[0]=A;
-    n[1]=B;
-    n[2]=C;
-    n[3]=D;
-    
+    n[0] = A;
+    n[1] = B;
+    n[2] = C;
+    n[3] = D;
+
     return n;
   }
 
   vpColVector getNormal() const;
   void getNormal(vpColVector &n) const;
 
-  friend VISP_EXPORT std::ostream& operator<< (std::ostream& os, vpPlane& p);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpPlane &p);
 
   // Operation with  Plane
-  void projectionPointOnPlan(const vpPoint& P, vpPoint& Pproj) const ;
+  void projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj) const;
 
-  double rayIntersection(const vpPoint &M0,
-			 const vpPoint &M1,
-			 vpColVector &H )const ;
+  double rayIntersection(const vpPoint &M0, const vpPoint &M1,
+                         vpColVector &H) const;
 
-  double getIntersection(const vpColVector &M1,vpColVector &H )const ;
+  double getIntersection(const vpColVector &M1, vpColVector &H) const;
   void changeFrame(const vpHomogeneousMatrix &cMo);
-
-} ;
-
-
+};
 
 #endif

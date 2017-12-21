@@ -29,7 +29,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Median Absolute Deviation (MAD), MPDE, Mean shift kernel density estimation.
+ * Median Absolute Deviation (MAD), MPDE, Mean shift kernel density
+ *estimation.
  *
  * Authors:
  * Andrew Comport
@@ -44,19 +45,16 @@
 /*!
  * \brief Contains various estimators for scale.
  * \n Methods : Median Absolute Deviation (MAD),
- * 							MPDE, Mean shift kernel density estimation.
- * \author Andrew Comport
- * \date 24/10/03
+ * 							MPDE, Mean shift kernel density
+ * estimation. \author Andrew Comport \date 24/10/03
  */
 // ==========================================================
-
 
 #ifndef VPSCALE_HH
 #define VPSCALE_HH
 
-#include <visp3/core/vpColVector.h>
 #include <math.h>
-
+#include <visp3/core/vpColVector.h>
 
 /*!
   \class vpScale
@@ -79,10 +77,9 @@ private:
   unsigned int dimension;
 
 public:
-
   //! Constructor
   vpScale();
-  vpScale(double kernel_bandwidth, unsigned int dim=1);
+  vpScale(double kernel_bandwidth, unsigned int dim = 1);
   //! Destructor
   virtual ~vpScale(void);
 
@@ -92,7 +89,6 @@ public:
 
   double KernelDensity_EPANECHNIKOV(vpColVector &X);
   double KernelDensityGradient_EPANECHNIKOV(double X, unsigned int n);
-
 };
 
 #endif

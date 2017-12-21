@@ -44,23 +44,23 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include "vpMy.h"
 #include "vpArit.h"
+#include "vpMy.h"
 
-Matrix	*get_tmstack (void);
-void	load_tmstack (Matrix m);
-void	pop_tmstack (void);
-void	push_tmstack (void);
-void	swap_tmstack (void);
+Matrix *get_tmstack(void);
+void load_tmstack(Matrix m);
+void pop_tmstack(void);
+void push_tmstack(void);
+void swap_tmstack(void);
 
-void	postmult_tmstack (Matrix m);
-void	postrotate_tmstack (Vector *vp);
-void	postscale_tmstack (Vector *vp);
-void	posttranslate_tmstack (Vector *vp);
-void	premult_tmstack (Matrix m);
-void	prerotate_tmstack (Vector *vp);
-void	prescale_tmstack (Vector *vp);
-void	pretranslate_tmstack (Vector *vp);
+void postmult_tmstack(Matrix m);
+void postrotate_tmstack(Vector *vp);
+void postscale_tmstack(Vector *vp);
+void posttranslate_tmstack(Vector *vp);
+void premult_tmstack(Matrix m);
+void prerotate_tmstack(Vector *vp);
+void prescale_tmstack(Vector *vp);
+void pretranslate_tmstack(Vector *vp);
 
 #endif
 #endif

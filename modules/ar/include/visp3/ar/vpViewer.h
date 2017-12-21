@@ -36,7 +36,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef vpViewer_HH
 #define vpViewer_HH
 /*!
@@ -57,18 +56,18 @@
 
 #if defined(VISP_HAVE_SOWIN)
 
-  #include <Inventor/Win/SoWin.h>
-  #include <Inventor/Win/viewers/SoWinExaminerViewer.h>
+#include <Inventor/Win/SoWin.h>
+#include <Inventor/Win/viewers/SoWinExaminerViewer.h>
 
 #elif defined(VISP_HAVE_SOQT)
 
-  #include <Inventor/Qt/SoQt.h>
-  #include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
+#include <Inventor/Qt/SoQt.h>
+#include <Inventor/Qt/viewers/SoQtExaminerViewer.h>
 
 #elif defined(VISP_HAVE_SOXT)
 
-  #include <Inventor/Xt/SoXt.h>
-  #include <Inventor/Xt/viewers/SoXtExaminerViewer.h>
+#include <Inventor/Xt/SoXt.h>
+#include <Inventor/Xt/viewers/SoXtExaminerViewer.h>
 
 #endif
 
@@ -94,9 +93,9 @@
 #endif
 
 // visp
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpCameraParameters.h>
 
 /*!
   \class vpViewer
@@ -126,42 +125,38 @@ class VISP_EXPORT vpViewer : public SoXtExaminerViewer
   friend class vpSimulator;
 
 public:
-  typedef enum{
-    internalView,
-    externalView
-  } vpViewerType;
+  typedef enum { internalView, externalView } vpViewerType;
 #if defined(VISP_HAVE_SOWIN)
-  vpViewer(HWND parent,  vpSimulator *simu, vpViewerType type);
+  vpViewer(HWND parent, vpSimulator *simu, vpViewerType type);
 #elif defined(VISP_HAVE_SOQT)
-  vpViewer(QWidget * parent,  vpSimulator *simu, vpViewerType type);
+  vpViewer(QWidget *parent, vpSimulator *simu, vpViewerType type);
 #elif defined(VISP_HAVE_SOXT)
-  vpViewer(Widget parent,  vpSimulator *simu, vpViewerType type);
+  vpViewer(Widget parent, vpSimulator *simu, vpViewerType type);
 #endif
 
   virtual ~vpViewer();
-  void  resize(int x, int y, bool fixed = false);
+  void resize(int x, int y, bool fixed = false);
   virtual void actualRedraw(void);
 
 private:
-
-  vpViewerType  viewerType;
+  vpViewerType viewerType;
   vpSimulator *simu;
-  SbBool processSoEvent(const SoEvent * const event);
+  SbBool processSoEvent(const SoEvent *const event);
 #if defined(VISP_HAVE_SOWIN)
-  static HWND init(const char * appname) {return SoWin::init(appname);};
-  static void mainLoop() {SoWin::mainLoop();};
-  static void exitMainLoop() {SoWin::exitMainLoop();};
+  static HWND init(const char *appname) { return SoWin::init(appname); };
+  static void mainLoop() { SoWin::mainLoop(); };
+  static void exitMainLoop() { SoWin::exitMainLoop(); };
 #elif defined(VISP_HAVE_SOQT)
-  static QWidget * init(const char * appname) {return SoQt::init(appname);};
-  static void mainLoop() { SoQt::mainLoop();};
-  static void exitMainLoop() {SoQt::exitMainLoop();};
+  static QWidget *init(const char *appname) { return SoQt::init(appname); };
+  static void mainLoop() { SoQt::mainLoop(); };
+  static void exitMainLoop() { SoQt::exitMainLoop(); };
 #elif defined(VISP_HAVE_SOXT)
-  static Widget init(const char * appname) {return SoXt::init(appname);};
-  static void mainLoop() { SoXt::mainLoop();};
-  static void exitMainLoop() {SoXt::exitMainLoop();};
+  static Widget init(const char *appname) { return SoXt::init(appname); };
+  static void mainLoop() { SoXt::mainLoop(); };
+  static void exitMainLoop() { SoXt::exitMainLoop(); };
 #endif
 };
 
-#endif //VISP_HAVE_COIN3D_AND_GUI
+#endif // VISP_HAVE_COIN3D_AND_GUI
 
 #endif

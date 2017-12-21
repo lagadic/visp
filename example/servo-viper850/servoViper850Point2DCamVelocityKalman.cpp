@@ -39,14 +39,13 @@
  *
  *****************************************************************************/
 
-
 /*!
   \example servoViper850Point2DCamVelocityKalman.cpp
 
   Example of eye-in-hand control law. We control here a real robot, the ADEPT
-  Viper 850 robot (arm, with 6 degrees of freedom). The velocity is computed in
-  the camera frame. The visual feature is the center of gravity of a point. We
-  use here a linear Kalman filter with a constant velocity state model to
+  Viper 850 robot (arm, with 6 degrees of freedom). The velocity is computed
+  in the camera frame. The visual feature is the center of gravity of a point.
+  We use here a linear Kalman filter with a constant velocity state model to
   estimate the moving target motion.
 
 */
@@ -54,37 +53,36 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h> // Debug trace
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <sstream>
+#include <stdio.h>
+#include <stdlib.h>
 
-#if (defined (VISP_HAVE_VIPER850) && defined (VISP_HAVE_DC1394))
+#if (defined(VISP_HAVE_VIPER850) && defined(VISP_HAVE_DC1394))
 
-#include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/visual_features/vpFeaturePoint.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/vs/vpServo.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/robot/vpRobotViper850.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpException.h>
-#include <visp3/vs/vpServoDisplay.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/blob/vpDot2.h>
-#include <visp3/vs/vpAdaptiveGain.h>
-#include <visp3/core/vpLinearKalmanFilterInstantiation.h>
 #include <visp3/core/vpDisplay.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/core/vpException.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpLinearKalmanFilterInstantiation.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpPoint.h>
 #include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/robot/vpRobotViper850.h>
+#include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
+#include <visp3/vs/vpAdaptiveGain.h>
+#include <visp3/vs/vpServo.h>
+#include <visp3/vs/vpServoDisplay.h>
 
-int
-main()
+int main()
 {
   // Log file creation in /tmp/$USERNAME/log.dat
   // This file contains by line:
@@ -98,17 +96,15 @@ main()
 
   // Create a log filename to save velocities...
   std::string logdirname;
-  logdirname ="/tmp/" + username;
+  logdirname = "/tmp/" + username;
 
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(logdirname) == false) {
     try {
       // Create the dirname
       vpIoTools::makeDirectory(logdirname);
-    }
-    catch (...) {
-      std::cerr << std::endl
-                << "ERROR:" << std::endl;
+    } catch (...) {
+      std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
       exit(-1);
     }
@@ -119,12 +115,12 @@ main()
   // Open the log file name
   std::ofstream flog(logfilename.c_str());
 
-  vpServo task ;
-  
+  vpServo task;
+
   try {
     // Initialize linear Kalman filter
     vpLinearKalmanFilterInstantiation kalman;
-    
+
     // Initialize the kalman filter
     unsigned int nsignal = 2; // The two values of dedt
     double rho = 0.3;
@@ -132,19 +128,19 @@ main()
     vpColVector sigma_measure(nsignal);
     unsigned int state_size = 0; // Kalman state vector size
 
-    kalman.setStateModel(vpLinearKalmanFilterInstantiation::stateConstVelWithColoredNoise_MeasureVel);
+    kalman.setStateModel(vpLinearKalmanFilterInstantiation::
+                             stateConstVelWithColoredNoise_MeasureVel);
     state_size = kalman.getStateSize();
-    sigma_state.resize(state_size*nsignal);
-    sigma_state = 0.00001; // Same state variance for all signals 
-    sigma_measure = 0.05; // Same measure variance for all the signals
-    double dummy = 0; // non used parameter dt for the velocity state model 
+    sigma_state.resize(state_size * nsignal);
+    sigma_state = 0.00001; // Same state variance for all signals
+    sigma_measure = 0.05;  // Same measure variance for all the signals
+    double dummy = 0; // non used parameter dt for the velocity state model
     kalman.initFilter(nsignal, sigma_state, sigma_measure, rho, dummy);
 
     // Initialize the robot
-    vpRobotViper850 robot ;
+    vpRobotViper850 robot;
 
-
-    vpImage<unsigned char> I ;
+    vpImage<unsigned char> I;
 
     bool reset = false;
     vp1394TwoGrabber g(reset);
@@ -156,91 +152,103 @@ main()
     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_FORMAT7_0);
     g.setColorCoding(vp1394TwoGrabber::vpCOLOR_CODING_MONO8);
 #endif
-    g.open(I) ;
+    g.open(I);
 
-    double Tloop = 1./80.f;
+    double Tloop = 1. / 80.f;
 
     vp1394TwoGrabber::vp1394TwoFramerateType fps;
     g.getFramerate(fps);
-    switch(fps) {
-    case vp1394TwoGrabber::vpFRAMERATE_15 : Tloop = 1.f/15.f; break;
-    case vp1394TwoGrabber::vpFRAMERATE_30 : Tloop = 1.f/30.f; break;
-    case vp1394TwoGrabber::vpFRAMERATE_60 : Tloop = 1.f/60.f; break;
-    case vp1394TwoGrabber::vpFRAMERATE_120: Tloop = 1.f/120.f; break;
-    default: break;
+    switch (fps) {
+    case vp1394TwoGrabber::vpFRAMERATE_15:
+      Tloop = 1.f / 15.f;
+      break;
+    case vp1394TwoGrabber::vpFRAMERATE_30:
+      Tloop = 1.f / 30.f;
+      break;
+    case vp1394TwoGrabber::vpFRAMERATE_60:
+      Tloop = 1.f / 60.f;
+      break;
+    case vp1394TwoGrabber::vpFRAMERATE_120:
+      Tloop = 1.f / 120.f;
+      break;
+    default:
+      break;
     }
 
 #ifdef VISP_HAVE_X11
-    vpDisplayX display(I, (int)(100+I.getWidth()+30), 200, "Current image") ;
+    vpDisplayX display(I, (int)(100 + I.getWidth() + 30), 200,
+                       "Current image");
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV display(I, (int)(100+I.getWidth()+30), 200, "Current image") ;
+    vpDisplayOpenCV display(I, (int)(100 + I.getWidth() + 30), 200,
+                            "Current image");
 #elif defined(VISP_HAVE_GTK)
-    vpDisplayGTK display(I, (int)(100+I.getWidth()+30), 200, "Current image") ;
+    vpDisplayGTK display(I, (int)(100 + I.getWidth() + 30), 200,
+                         "Current image");
 #endif
 
-    vpDisplay::display(I) ;
-    vpDisplay::flush(I) ;
+    vpDisplay::display(I);
+    vpDisplay::flush(I);
 
-    vpDot2 dot ;
+    vpDot2 dot;
     vpImagePoint cog;
 
     dot.setGraphics(true);
 
-    for (int i=0; i< 10; i++)
-      g.acquire(I) ;
+    for (int i = 0; i < 10; i++)
+      g.acquire(I);
 
     std::cout << "Click on a dot..." << std::endl;
-    dot.initTracking(I) ;
+    dot.initTracking(I);
 
     cog = dot.getCog();
-    vpDisplay::displayCross(I, cog, 10, vpColor::blue) ;
+    vpDisplay::displayCross(I, cog, 10, vpColor::blue);
     vpDisplay::flush(I);
 
-    vpCameraParameters cam ;
+    vpCameraParameters cam;
     // Update camera parameters
-    robot.getCameraParameters (cam, I);
+    robot.getCameraParameters(cam, I);
 
     // sets the current position of the visual feature
-    vpFeaturePoint p ;
+    vpFeaturePoint p;
     // retrieve x,y and Z of the vpPoint structure
-    vpFeatureBuilder::create(p,cam, dot);  
+    vpFeatureBuilder::create(p, cam, dot);
 
     // sets the desired position of the visual feature
-    vpFeaturePoint pd ;
-    pd.buildFrom(0,0,1) ;
+    vpFeaturePoint pd;
+    pd.buildFrom(0, 0, 1);
 
     // define the task
     // - we want an eye-in-hand control law
     // - robot is controlled in the camera frame
-    task.setServo(vpServo::EYEINHAND_CAMERA) ;
-    task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE) ;
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
 
     // - we want to see a point on a point
-    task.addFeature(p,pd) ;
+    task.addFeature(p, pd);
 
     // - set the constant gain
-    vpAdaptiveGain	lambda;
+    vpAdaptiveGain lambda;
     lambda.initStandard(4, 0.2, 30);
-    task.setLambda(lambda) ;
+    task.setLambda(lambda);
 
-    // Display task information 
-    task.print() ;
+    // Display task information
+    task.print();
 
     // Now the robot will be controlled in velocity
-    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL) ;
+    robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
-    vpColVector v, v1, v2 ;
+    vpColVector v, v1, v2;
     int iter = 0;
     vpColVector vm(6);
     double t_0, t_1, Tv;
     vpColVector err(2), err_1(2);
-    vpColVector dedt_filt(2), dedt_mes(2);	
+    vpColVector dedt_filt(2), dedt_mes(2);
     dc1394video_frame_t *frame = NULL;
-    
+
     t_1 = vpTime::measureTimeMs();
 
-    for ( ; ; ) {
+    for (;;) {
       try {
         t_0 = vpTime::measureTimeMs(); // t_0: current time
 
@@ -256,34 +264,34 @@ main()
         frame = g.dequeue(I);
 
         // Display this image
-        vpDisplay::display(I) ;
+        vpDisplay::display(I);
 
         // Achieve the tracking of the dot in the image
-        dot.track(I) ;
+        dot.track(I);
 
         // Get the dot cog
         cog = dot.getCog();
 
-        // Display a green cross at the center of gravity position in the image
-        vpDisplay::displayCross(I, cog, 10, vpColor::green) ;
+        // Display a green cross at the center of gravity position in the
+        // image
+        vpDisplay::displayCross(I, cog, 10, vpColor::green);
 
         // Update the point feature from the dot location
         vpFeatureBuilder::create(p, cam, dot);
 
         // Compute the visual servoing skew vector
-        v1 = task.computeControlLaw() ;
+        v1 = task.computeControlLaw();
 
         // Get the error ||s-s*||
         err = task.getError();
 
-        //!terme correctif : de/dt = Delta s / Delta t - L*vc
-        if (iter==0){
+        //! terme correctif : de/dt = Delta s / Delta t - L*vc
+        if (iter == 0) {
           err_1 = 0;
           dedt_mes = 0;
-        }
-        else{
+        } else {
           vpMatrix J1 = task.getTaskJacobian();
-          dedt_mes = (err - err_1)/(Tv) - J1 *vm;
+          dedt_mes = (err - err_1) / (Tv)-J1 * vm;
           err_1 = err;
         }
 
@@ -292,35 +300,34 @@ main()
           dedt_mes = 0;
         kalman.filter(dedt_mes);
         // Get the filtered values
-        for (unsigned int i=0; i < nsignal; i++) {
-          dedt_filt[i] = kalman.Xest[i*state_size];
+        for (unsigned int i = 0; i < nsignal; i++) {
+          dedt_filt[i] = kalman.Xest[i * state_size];
         }
         if (iter < 2)
           dedt_filt = 0;
 
         vpMatrix J1p = task.getTaskJacobianPseudoInverse();
-        v2 = - J1p*dedt_filt;
+        v2 = -J1p * dedt_filt;
 
         // Update the robot camera velocity
         v = v1 + v2;
 
         // Display the current and desired feature points in the image display
-        vpServoDisplay::display(task, cam, I) ;
+        vpServoDisplay::display(task, cam, I);
 
         // Apply the computed camera velocities to the robot
-        robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+        robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
-        iter ++;
+        iter++;
         // Synchronize the loop with the image frame rate
-        vpTime::wait(t_0, 1000.*Tloop);
+        vpTime::wait(t_0, 1000. * Tloop);
         // Release the ring buffer used for the last image to start a new acq
         g.enqueue(frame);
-      }
-      catch(...) {
+      } catch (...) {
         std::cout << "Tracking failed... Stop the robot." << std::endl;
         v = 0;
         // Stop robot
-        robot.setVelocity(vpRobot::CAMERA_FRAME, v) ;
+        robot.setVelocity(vpRobot::CAMERA_FRAME, v);
         // Kill the task
         task.kill();
         return 0;
@@ -329,8 +336,8 @@ main()
       // Save velocities applied to the robot in the log file
       // v[0], v[1], v[2] correspond to camera translation velocities in m/s
       // v[3], v[4], v[5] correspond to camera rotation velocities in rad/s
-      flog << v[0] << " " << v[1] << " " << v[2] << " "
-           << v[3] << " " << v[4] << " " << v[5] << " ";
+      flog << v[0] << " " << v[1] << " " << v[2] << " " << v[3] << " " << v[4]
+           << " " << v[5] << " ";
 
       // Get the measured joint velocities of the robot
       vpColVector qvel;
@@ -340,8 +347,8 @@ main()
       //   velocities in m/s
       // - qvel[3], qvel[4], qvel[5] correspond to measured joint rotation
       //   velocities in rad/s
-      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " "
-           << qvel[3] << " " << qvel[4] << " " << qvel[5] << " ";
+      flog << qvel[0] << " " << qvel[1] << " " << qvel[2] << " " << qvel[3]
+           << " " << qvel[4] << " " << qvel[5] << " ";
 
       // Get the measured joint positions of the robot
       vpColVector q;
@@ -351,42 +358,40 @@ main()
       //   positions in m
       // - q[3], q[4], q[5] correspond to measured joint rotation
       //   positions in rad
-      flog << q[0] << " " << q[1] << " " << q[2] << " "
-           << q[3] << " " << q[4] << " " << q[5] << " ";
+      flog << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << " " << q[4]
+           << " " << q[5] << " ";
 
       // Save feature error (s-s*) for the feature point. For this feature
-      // point, we have 2 errors (along x and y axis).  This error is expressed
-      // in meters in the camera frame
-      flog << ( task.getError() ).t() << std::endl; // s-s* for point
+      // point, we have 2 errors (along x and y axis).  This error is
+      // expressed in meters in the camera frame
+      flog << (task.getError()).t() << std::endl; // s-s* for point
 
       // Flush the display
-      vpDisplay::flush(I) ;
+      vpDisplay::flush(I);
     }
 
-    flog.close() ; // Close the log file
+    flog.close(); // Close the log file
 
     // Display task information
-    task.print() ;
+    task.print();
 
     // Kill the task
     task.kill();
 
     return 0;
-  }
-  catch (...)
-  {
-    flog.close() ; // Close the log file
+  } catch (...) {
+    flog.close(); // Close the log file
     // Kill the task
     task.kill();
-    vpERROR_TRACE(" Test failed") ;
+    vpERROR_TRACE(" Test failed");
     return 0;
   }
 }
 
 #else
-int
-main()
+int main()
 {
-  vpERROR_TRACE("You do not have a Viper robot or a firewire framegrabber connected to your computer...");
+  vpERROR_TRACE("You do not have a Viper robot or a firewire framegrabber "
+                "connected to your computer...");
 }
 #endif

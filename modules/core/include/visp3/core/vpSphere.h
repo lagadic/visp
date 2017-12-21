@@ -44,13 +44,12 @@
 #ifndef vpSphere_hh
 #define vpSphere_hh
 
-
-#include <visp3/core/vpMath.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpMath.h>
 
-#include <visp3/core/vpForwardProjection.h>
 #include <math.h>
+#include <visp3/core/vpForwardProjection.h>
 /*!
   \class vpSphere
   \ingroup group_core_geometry
@@ -61,51 +60,44 @@
 class VISP_EXPORT vpSphere : public vpForwardProjection
 {
 public:
-  void init() ;
-  vpSphere() ;
-  virtual ~vpSphere() ;
+  void init();
+  vpSphere();
+  virtual ~vpSphere();
 
 public:
-  explicit vpSphere(const vpColVector& oP) ;
-  vpSphere(const double X0, const double Y0,
-     const double Z0,
-     const double R) ;
+  explicit vpSphere(const vpColVector &oP);
+  vpSphere(const double X0, const double Y0, const double Z0, const double R);
 
+  void setWorldCoordinates(const vpColVector &oP);
+  void setWorldCoordinates(const double X0, const double Y0, const double Z0,
+                           const double R);
 
-  void setWorldCoordinates(const vpColVector& oP) ;
-  void setWorldCoordinates(const double X0, const double Y0,
-         const double Z0,
-         const double R) ;
+  double get_x() const { return p[0]; }
+  double get_y() const { return p[1]; }
+  double get_mu20() const { return p[2]; }
+  double get_mu11() const { return p[3]; }
+  double get_mu02() const { return p[4]; }
 
-  double get_x() const { return p[0] ; }
-  double get_y() const { return p[1] ; }
-  double get_mu20() const { return p[2] ; }
-  double get_mu11() const { return p[3] ; }
-  double get_mu02() const { return p[4] ; }
+  double getX() const { return cP[0]; }
+  double getY() const { return cP[1]; }
+  double getZ() const { return cP[2]; }
 
-  double getX() const { return cP[0] ; }
-  double getY() const { return cP[1] ; }
-  double getZ() const { return cP[2] ; }
+  double getR() const { return cP[3]; }
 
-  double getR() const { return cP[3] ; }
+  void projection();
+  void projection(const vpColVector &cP, vpColVector &p);
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP);
+  void changeFrame(const vpHomogeneousMatrix &cMo);
 
-  void projection() ;
-  void projection(const vpColVector &cP, vpColVector &p) ;
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) ;
-  void changeFrame(const vpHomogeneousMatrix &cMo) ;
-
+  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green,
+               const unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I,
-               const vpCameraParameters &cam,
-               const vpColor &color=vpColor::green,
-               const unsigned int thickness=1) ;
-  void display(const vpImage<unsigned char> &I,
-               const vpHomogeneousMatrix &cMo,
-               const vpCameraParameters &cam,
-               const vpColor &color=vpColor::green,
-               const unsigned int thickness=1) ;
+               const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green,
+               const unsigned int thickness = 1);
 
-  vpSphere *duplicate() const ;
-} ;
-
+  vpSphere *duplicate() const;
+};
 
 #endif

@@ -40,11 +40,12 @@
 */
 
 #include <cstdlib>
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #include <visp3/core/vpUDPClient.h>
 
-namespace {
+namespace
+{
 struct DataType {
   double double_val;
   int int_val;
@@ -54,34 +55,41 @@ struct DataType {
 };
 }
 
-int main() {
+int main()
+{
   try {
     std::string servername = "127.0.0.1";
     unsigned int port = 50037;
     vpUDPClient client(servername, port);
 
-    //Send custom data type
+    // Send custom data type
     DataType data_type(1234.56789, 123450);
-    char data[sizeof(data_type.double_val)+sizeof(data_type.int_val)];
+    char data[sizeof(data_type.double_val) + sizeof(data_type.int_val)];
     memcpy(data, &data_type.double_val, sizeof(data_type.double_val));
-    memcpy(data+sizeof(data_type.double_val), &data_type.int_val, sizeof(data_type.int_val));
-    std::string msg(data, sizeof(data_type.double_val)+sizeof(data_type.int_val));
-    if (client.send(msg) != (int) sizeof(data_type.double_val)+sizeof(data_type.int_val))
+    memcpy(data + sizeof(data_type.double_val), &data_type.int_val,
+           sizeof(data_type.int_val));
+    std::string msg(data,
+                    sizeof(data_type.double_val) + sizeof(data_type.int_val));
+    if (client.send(msg) !=
+        (int)sizeof(data_type.double_val) + sizeof(data_type.int_val))
       std::cerr << "Error client.send()!" << std::endl;
 
     if (client.receive(msg)) {
       data_type.double_val = *reinterpret_cast<const double *>(msg.c_str());
-      data_type.int_val = *reinterpret_cast<const int *>(msg.c_str()+sizeof(data_type.double_val));
+      data_type.int_val = *reinterpret_cast<const int *>(
+          msg.c_str() + sizeof(data_type.double_val));
 
-      std::cout << "Receive from the server double_val: " << data_type.double_val << " ; int_val: " << data_type.int_val << std::endl;
+      std::cout << "Receive from the server double_val: "
+                << data_type.double_val << " ; int_val: " << data_type.int_val
+                << std::endl;
     }
 
-    //Send user message
+    // Send user message
     while (true) {
       std::cout << "Enter the message to send:" << std::endl;
       std::string msg = "";
       std::getline(std::cin, msg);
-      if (client.send(msg) != (int) msg.size())
+      if (client.send(msg) != (int)msg.size())
         std::cerr << "Error client.send()!" << std::endl;
       if (client.receive(msg))
         std::cout << "Receive from the server: " << msg << std::endl;

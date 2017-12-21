@@ -42,9 +42,9 @@
 
 #include <visp3/core/vpConfig.h>
 
+#include <visp3/core/vpImageFilter.h>
 #include <visp3/tt/vpTemplateTracker.h>
 #include <visp3/tt/vpTemplateTrackerHeader.h>
-#include <visp3/core/vpImageFilter.h>
 
 #include <visp3/tt_mi/vpTemplateTrackerMI.h>
 #include <visp3/tt_mi/vpTemplateTrackerMIBSpline.h>
@@ -52,9 +52,11 @@
 /*!
   \class vpTemplateTrackerMIInverseCompositional
   \ingroup group_tt_mi_tracker
-  The algorithm implemented in this class is described in \cite Dame12a and \cite Marchand16a.
+  The algorithm implemented in this class is described in \cite Dame12a and
+  \cite Marchand16a.
 */
-class VISP_EXPORT vpTemplateTrackerMIInverseCompositional: public vpTemplateTrackerMI
+class VISP_EXPORT vpTemplateTrackerMIInverseCompositional
+  : public vpTemplateTrackerMI
 {
 public:
   /*! Minimization method. */
@@ -67,19 +69,20 @@ public:
 
 private:
   vpMinimizationTypeMIInverseCompositional minimizationMethod;
-  bool    CompoInitialised;
-  bool    useTemplateSelect;//use only the strong gradient pixels to compute the Jabocian
-  //pour eval evolRMS
-  double  evolRMS;
-  double  *x_pos;
-  double  *y_pos;
-  double  threshold_RMS;
-  //valeur pour calculer Quasi_Newton
+  bool CompoInitialised;
+  bool useTemplateSelect; // use only the strong gradient pixels to compute
+                          // the Jabocian
+  // pour eval evolRMS
+  double evolRMS;
+  double *x_pos;
+  double *y_pos;
+  double threshold_RMS;
+  // valeur pour calculer Quasi_Newton
   vpColVector p_prec;
   vpColVector G_prec;
-  vpMatrix    KQuasiNewton;
+  vpMatrix KQuasiNewton;
 
-  //bool    useAYOptim;
+  // bool    useAYOptim;
 
 public: // AY Optimisation
   void initTemplateRefBspline(unsigned int ptIndex, double &et);
@@ -92,32 +95,44 @@ protected:
   void computeEvalRMS(const vpColVector &p);
   void initPosEvalRMS(const vpColVector &p);
 
-//private:
-//#ifndef DOXYGEN_SHOULD_SKIP_THIS
-//  vpTemplateTrackerMIInverseCompositional(const vpTemplateTrackerMIInverseCompositional &)
-//    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
-//      evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()//, useAYOptim(false)
-//  {
-//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-//  }
-//  vpTemplateTrackerMIInverseCompositional &operator=(const vpTemplateTrackerMIInverseCompositional &){
-//    throw vpException(vpException::functionNotImplementedError, "Not implemented!");
-//    return *this;
-//  }
-//#endif
+  // private:
+  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  //  vpTemplateTrackerMIInverseCompositional(const
+  //  vpTemplateTrackerMIInverseCompositional &)
+  //    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA),
+  //    CompoInitialised(false), useTemplateSelect(false),
+  //      evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(),
+  //      G_prec(), KQuasiNewton()//, useAYOptim(false)
+  //  {
+  //    throw vpException(vpException::functionNotImplementedError, "Not
+  //    implemented!");
+  //  }
+  //  vpTemplateTrackerMIInverseCompositional &operator=(const
+  //  vpTemplateTrackerMIInverseCompositional &){
+  //    throw vpException(vpException::functionNotImplementedError, "Not
+  //    implemented!"); return *this;
+  //  }
+  //#endif
 
 public:
   //! Default constructor.
   vpTemplateTrackerMIInverseCompositional()
-    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
-      evolRMS(0), x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(), KQuasiNewton()//, useAYOptim(false)
-  {}
-  explicit vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp);
+    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA),
+      CompoInitialised(false), useTemplateSelect(false), evolRMS(0),
+      x_pos(NULL), y_pos(NULL), threshold_RMS(0), p_prec(), G_prec(),
+      KQuasiNewton() //, useAYOptim(false)
+  {
+  }
+  explicit vpTemplateTrackerMIInverseCompositional(
+      vpTemplateTrackerWarp *_warp);
 
-  /*! Use only the strong gradient pixels to compute the Jabobian. By default this feature is disabled. */
-  void  setUseTemplateSelect(bool b) {useTemplateSelect = b;}
-  void  setThresholdRMS(double threshold){threshold_RMS=threshold;}
-  void  setMinimizationMethod(vpMinimizationTypeMIInverseCompositional method){minimizationMethod=method;}
+  /*! Use only the strong gradient pixels to compute the Jabobian. By default
+   * this feature is disabled. */
+  void setUseTemplateSelect(bool b) { useTemplateSelect = b; }
+  void setThresholdRMS(double threshold) { threshold_RMS = threshold; }
+  void setMinimizationMethod(vpMinimizationTypeMIInverseCompositional method)
+  {
+    minimizationMethod = method;
+  }
 };
 #endif
-

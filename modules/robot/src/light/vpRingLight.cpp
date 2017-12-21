@@ -36,31 +36,30 @@
  *
  *****************************************************************************/
 
-
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_MODULE_IO) && defined(VISP_HAVE_PARPORT)
 
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#  include <fcntl.h>
-#  include <sys/ioctl.h>
-#  include <sys/time.h>
-#  include <unistd.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-#  include <visp3/robot/vpRingLight.h>
-#  include <visp3/core/vpDebug.h>
-#  include <visp3/core/vpTime.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpTime.h>
+#include <visp3/robot/vpRingLight.h>
 
 /*!
   \file vpRingLight.cpp
   \brief Ring light management under unix.
 */
 
-
 /*!
 
-  Constructor to acces to the ring light device connected to the parallel port.
+  Constructor to acces to the ring light device connected to the parallel
+  port.
 
   Open and initialise the default parallel port device "/dev/parport0" to
   communicate with the ring light.
@@ -71,10 +70,7 @@
 
   Turn the ring light off.
 */
-vpRingLight::vpRingLight() : parport()
-{
-  off();
-}
+vpRingLight::vpRingLight() : parport() { off(); }
 
 /*!
   Destructor to close the device.
@@ -84,16 +80,13 @@ vpRingLight::vpRingLight() : parport()
   \exception vpParallelPortException::closing If the device used to access to
   the parallel port can't be closed.
 */
-vpRingLight::~vpRingLight()
-{
-  off();
-}
+vpRingLight::~vpRingLight() { off(); }
 
 /*!
   Activates the ring light by sending a pulse throw the parallel port.
 
-  The pulse width is 500 us. This pulse activates a NE555 which turns on on the
-  light during 10ms.
+  The pulse width is 500 us. This pulse activates a NE555 which turns on on
+  the light during 10ms.
 
 */
 void vpRingLight::pulse()
@@ -113,20 +106,20 @@ void vpRingLight::pulse()
   // vpTRACE("Actual data 0x%x = %d\n", data, data);
 
   data = data | mask_pulse_d1 | mask_mode_pulse_d2;
-  //vpTRACE("Send 0x%x = %d\n", data, data);
+  // vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data); // send a 0-1 pulse
 
   // Wait 500 micro seconds
   struct timeval ti, tc; // Initial and current time
   struct timeval tempo;
   tempo.tv_usec = 500;
-  gettimeofday(&ti,0L);
+  gettimeofday(&ti, 0L);
   do {
-    gettimeofday(&tc,0L);
+    gettimeofday(&tc, 0L);
   } while (tc.tv_usec < ti.tv_usec + tempo.tv_usec);
 
   data = data & (~mask_pulse_d1);
-  //vpTRACE("Send 0x%x = %d\n", data, data);
+  // vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data); // send a 1-0 pulse
 }
 
@@ -156,18 +149,18 @@ void vpRingLight::pulse(double time)
   // vpTRACE("Actual data 0x%x = %d\n", data, data);
 
   data = data | mask_pulse_d1 | mask_mode_pulse_d3;
-  //vpTRACE("Send 0x%x = %d\n", data, data);
+  // vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data); // send a 0-1 pulse
 
   // Wait 500 micro seconds
   struct timeval ti, tc; // Initial and current time
-  gettimeofday(&ti,0);
+  gettimeofday(&ti, 0);
   do {
-    gettimeofday(&tc,0);
-  } while (tc.tv_usec < ti.tv_usec + time*1000);
+    gettimeofday(&tc, 0);
+  } while (tc.tv_usec < ti.tv_usec + time * 1000);
 
   data = data & (~mask_pulse_d1);
-  //vpTRACE("Send 0x%x = %d\n", data, data);
+  // vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data); // send a 1-0 pulse
 }
 
@@ -188,12 +181,12 @@ void vpRingLight::on()
 
   // To activates the light we send a pulse
   int mask_mode_onoff_d2 = 0x04; // D2 is Hight
-  int mask_on_d1 = 0x02;      // D1 is Hight to turn the light on
+  int mask_on_d1 = 0x02;         // D1 is Hight to turn the light on
   unsigned char data = 0x00;
-  //data = parport.getData(); // actual value of the data bus
+  // data = parport.getData(); // actual value of the data bus
 
   data = data | mask_on_d1 | mask_mode_onoff_d2;
-  //vpTRACE("Send 0x%x = %d\n", data, data);
+  // vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data);
 }
 
@@ -214,16 +207,17 @@ void vpRingLight::off()
 
   // To activates the light we send a pulse
   int mask_mode_onoff_d2 = 0x04; // D2 is Hight
-  int mask_off_d1 = 0x00;      // D1 is Low to turn the light off
+  int mask_off_d1 = 0x00;        // D1 is Low to turn the light off
   unsigned char data = 0x00;
-  //data = parport.getData(); // actual value of the data bus
+  // data = parport.getData(); // actual value of the data bus
 
   data = data | mask_off_d1 | mask_mode_onoff_d2;
-  //vpTRACE("Send 0x%x = %d\n", data, data);
+  // vpTRACE("Send 0x%x = %d\n", data, data);
   parport.sendData(data);
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpRingLight.cpp.o) has no symbols
-void dummy_vpRingLight() {};
+// Work arround to avoid warning: libvisp_robot.a(vpRingLight.cpp.o) has no
+// symbols
+void dummy_vpRingLight(){};
 #endif

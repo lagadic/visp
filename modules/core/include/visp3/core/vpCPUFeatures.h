@@ -33,7 +33,6 @@
  *
  *****************************************************************************/
 
-
 #ifndef __vpCPUFeatures_h_
 #define __vpCPUFeatures_h_
 
@@ -62,15 +61,16 @@ int main()
   \endcode
 */
 
-namespace vpCPUFeatures {
-  VISP_EXPORT bool checkSSE2();
-  VISP_EXPORT bool checkSSE3();
-  VISP_EXPORT bool checkSSSE3();
-  VISP_EXPORT bool checkSSE41();
-  VISP_EXPORT bool checkSSE42();
-  VISP_EXPORT bool checkAVX();
-  VISP_EXPORT bool checkAVX2();
-  VISP_EXPORT void printCPUInfo();
+namespace vpCPUFeatures
+{
+VISP_EXPORT bool checkSSE2();
+VISP_EXPORT bool checkSSE3();
+VISP_EXPORT bool checkSSSE3();
+VISP_EXPORT bool checkSSE41();
+VISP_EXPORT bool checkSSE42();
+VISP_EXPORT bool checkAVX();
+VISP_EXPORT bool checkAVX2();
+VISP_EXPORT void printCPUInfo();
 }
 
 #endif

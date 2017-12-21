@@ -44,12 +44,13 @@
   \brief Class which provides a simulator for the robot Afma6.
 */
 
-#include <visp3/robot/vpRobotWireFrameSimulator.h>
 #include <visp3/robot/vpAfma6.h>
+#include <visp3/robot/vpRobotWireFrameSimulator.h>
 
 #include <string>
 
-#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) &&                                         \
+    ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
 
 /*!
   \class vpSimulatorAfma6
@@ -58,9 +59,9 @@
 
   \brief Simulator of Irisa's gantry robot named Afma6.
 
-  Implementation of the vpRobotWireFrameSimulator class in order to simulate Irisa's
-  Afma6 robot. This robot is a gantry robot with six degrees of
-  freedom manufactured in 1992 by the french Afma-Robots company.
+  Implementation of the vpRobotWireFrameSimulator class in order to simulate
+Irisa's Afma6 robot. This robot is a gantry robot with six degrees of freedom
+manufactured in 1992 by the french Afma-Robots company.
 
   \warning This class uses threading capabilities. Thus on Unix-like
   platforms, the libpthread third-party library need to be
@@ -86,16 +87,17 @@
   frame like here in the joint space:
 
   \code
-#include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpSimulatorAfma6.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/robot/vpSimulatorAfma6.h>
 
 int main()
 {
   vpSimulatorAfma6 robot;
 
-  robot.init(vpAfma6::TOOL_CCMOP, vpCameraParameters::perspectiveProjWithoutDistortion);
+  robot.init(vpAfma6::TOOL_CCMOP,
+vpCameraParameters::perspectiveProjWithoutDistortion);
 
   vpColVector q(6);
   // Set a joint position
@@ -123,16 +125,17 @@ int main()
   space:
 
   \code
-#include <visp3/core/vpConfig.h>
-#include <visp3/robot/vpSimulatorAfma6.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/robot/vpSimulatorAfma6.h>
 
 int main()
 {
   vpSimulatorAfma6 robot;
 
-  robot.init(vpAfma6::TOOL_GRIPPER, vpCameraParameters::perspectiveProjWithoutDistortion);
+  robot.init(vpAfma6::TOOL_GRIPPER,
+vpCameraParameters::perspectiveProjWithoutDistortion);
 
   vpColVector qvel(6);
   // Set a joint velocity
@@ -173,111 +176,121 @@ int main()
 
 */
 
-
-class VISP_EXPORT vpSimulatorAfma6 : public vpRobotWireFrameSimulator, public vpAfma6
+class VISP_EXPORT vpSimulatorAfma6 : public vpRobotWireFrameSimulator,
+                                     public vpAfma6
 {
-  public:
-    static const double defaultPositioningVelocity;
+public:
+  static const double defaultPositioningVelocity;
 
-  private:
-    vpColVector q_prev_getdis;
-    bool first_time_getdis;
+private:
+  vpColVector q_prev_getdis;
+  bool first_time_getdis;
 
-    double positioningVelocity;
+  double positioningVelocity;
 
-    vpColVector zeroPos;
-    vpColVector reposPos;
+  vpColVector zeroPos;
+  vpColVector reposPos;
 
-    bool toolCustom;
-    std::string arm_dir;
+  bool toolCustom;
+  std::string arm_dir;
 
 public:
-    vpSimulatorAfma6();
-    explicit vpSimulatorAfma6(bool display);
-    virtual ~vpSimulatorAfma6();
+  vpSimulatorAfma6();
+  explicit vpSimulatorAfma6(bool display);
+  virtual ~vpSimulatorAfma6();
 
-    void getCameraParameters(vpCameraParameters &cam,
-                             const unsigned int &image_width,
-                             const unsigned int &image_height);
-    void getCameraParameters(vpCameraParameters &cam,
-                             const vpImage<unsigned char> &I);
-    void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I);
-    void getDisplacement(const vpRobot::vpControlFrameType frame,
-                         vpColVector &displacement);
-    void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
-    void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp);
-    void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position);
-    void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position, double &timestamp);
-    double getPositioningVelocity (void){return positioningVelocity;}
-    void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q);
-    void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp);
-    vpColVector getVelocity (const vpRobot::vpControlFrameType frame);
-    vpColVector getVelocity (const vpRobot::vpControlFrameType frame, double &timestamp);
+  void getCameraParameters(vpCameraParameters &cam,
+                           const unsigned int &image_width,
+                           const unsigned int &image_height);
+  void getCameraParameters(vpCameraParameters &cam,
+                           const vpImage<unsigned char> &I);
+  void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I);
+  void getDisplacement(const vpRobot::vpControlFrameType frame,
+                       vpColVector &displacement);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q,
+                   double &timestamp);
+  void getPosition(const vpRobot::vpControlFrameType frame,
+                   vpPoseVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame,
+                   vpPoseVector &position, double &timestamp);
+  double getPositioningVelocity(void) { return positioningVelocity; }
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q,
+                   double &timestamp);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
+  vpColVector getVelocity(const vpRobot::vpControlFrameType frame,
+                          double &timestamp);
 
-    void get_cMe(vpHomogeneousMatrix &cMe);
-    void get_cVe(vpVelocityTwistMatrix &cVe);
-    void get_eJe(vpMatrix &eJe);
-    void get_fJe(vpMatrix &fJe);
+  void get_cMe(vpHomogeneousMatrix &cMe);
+  void get_cVe(vpVelocityTwistMatrix &cVe);
+  void get_eJe(vpMatrix &eJe);
+  void get_fJe(vpMatrix &fJe);
 
-    void init (vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraParametersProjType projModel=vpCameraParameters::perspectiveProjWithoutDistortion);
-    bool initialiseCameraRelativeToObject(const vpHomogeneousMatrix &cMo);
-    void initialiseObjectRelativeToCamera(const vpHomogeneousMatrix &cMo);
+  void init(vpAfma6::vpAfma6ToolType tool,
+            vpCameraParameters::vpCameraParametersProjType projModel =
+                vpCameraParameters::perspectiveProjWithoutDistortion);
+  bool initialiseCameraRelativeToObject(const vpHomogeneousMatrix &cMo);
+  void initialiseObjectRelativeToCamera(const vpHomogeneousMatrix &cMo);
 
-    void move(const char *filename) ;
+  void move(const char *filename);
 
-    static bool readPosFile(const std::string &filename, vpColVector &q);
-    static bool savePosFile(const std::string &filename, const vpColVector &q);
-    void setCameraParameters(const vpCameraParameters &cam) ;
-    void setJointLimit(const vpColVector &limitMin, const vpColVector &limitMax);
+  static bool readPosFile(const std::string &filename, vpColVector &q);
+  static bool savePosFile(const std::string &filename, const vpColVector &q);
+  void setCameraParameters(const vpCameraParameters &cam);
+  void setJointLimit(const vpColVector &limitMin,
+                     const vpColVector &limitMax);
 
-    void setPosition(const vpRobot::vpControlFrameType frame,const vpColVector &q);
-    void setPosition (const vpRobot::vpControlFrameType frame,
-                      const double pos1,
-                      const double pos2,
-                      const double pos3,
-                      const double pos4,
-                      const double pos5,
-                      const double pos6);
-    void setPosition(const char *filename);
-    void setPositioningVelocity (const double vel) {positioningVelocity = vel;}
-    bool setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint=NULL, const double &errMax = 0.001);
-    vpRobot::vpRobotStateType setRobotState (const vpRobot::vpRobotStateType newState);
+  void setPosition(const vpRobot::vpControlFrameType frame,
+                   const vpColVector &q);
+  void setPosition(const vpRobot::vpControlFrameType frame, const double pos1,
+                   const double pos2, const double pos3, const double pos4,
+                   const double pos5, const double pos6);
+  void setPosition(const char *filename);
+  void setPositioningVelocity(const double vel) { positioningVelocity = vel; }
+  bool setPosition(const vpHomogeneousMatrix &cdMo,
+                   vpImage<unsigned char> *Iint = NULL,
+                   const double &errMax = 0.001);
+  vpRobot::vpRobotStateType
+  setRobotState(const vpRobot::vpRobotStateType newState);
 
-    void setVelocity (const vpRobot::vpControlFrameType frame, const vpColVector & velocity);
+  void setVelocity(const vpRobot::vpControlFrameType frame,
+                   const vpColVector &velocity);
 
-    void stopMotion();
+  void stopMotion();
 
 protected:
-    /** @name Protected Member Functions Inherited from vpSimulatorAfma6 */
-    //@{
-    void computeArticularVelocity();
-    void compute_fMi();
-    void findHighestPositioningSpeed(vpColVector &q);
-    void getExternalImage(vpImage<vpRGBa> &I);
-    inline void get_fMi(vpHomogeneousMatrix *fMit) {
+  /** @name Protected Member Functions Inherited from vpSimulatorAfma6 */
+  //@{
+  void computeArticularVelocity();
+  void compute_fMi();
+  void findHighestPositioningSpeed(vpColVector &q);
+  void getExternalImage(vpImage<vpRGBa> &I);
+  inline void get_fMi(vpHomogeneousMatrix *fMit)
+  {
 #if defined(_WIN32)
-#  if defined(WINRT_8_1)
-      WaitForSingleObjectEx(mutex_fMi, INFINITE, FALSE);
-#  else // pure win32
-      WaitForSingleObject(mutex_fMi, INFINITE);
-#  endif
-      for (int i = 0; i < 8; i++)
-        fMit[i] = fMi[i];
-      ReleaseMutex(mutex_fMi);
-#elif defined(VISP_HAVE_PTHREAD)
-      pthread_mutex_lock (&mutex_fMi);
-      for (int i = 0; i < 8; i++)
-        fMit[i] = fMi[i];
-      pthread_mutex_unlock (&mutex_fMi);
+#if defined(WINRT_8_1)
+    WaitForSingleObjectEx(mutex_fMi, INFINITE, FALSE);
+#else // pure win32
+    WaitForSingleObject(mutex_fMi, INFINITE);
 #endif
-    }
-    void init();
-    void initArms();
-    void initDisplay();
-    int isInJointLimit (void);
-    bool singularityTest(const vpColVector &q, vpMatrix &J);
-    void updateArticularPosition();
-    //@}
+    for (int i = 0; i < 8; i++)
+      fMit[i] = fMi[i];
+    ReleaseMutex(mutex_fMi);
+#elif defined(VISP_HAVE_PTHREAD)
+    pthread_mutex_lock(&mutex_fMi);
+    for (int i = 0; i < 8; i++)
+      fMit[i] = fMi[i];
+    pthread_mutex_unlock(&mutex_fMi);
+#endif
+  }
+  void init();
+  void initArms();
+  void initDisplay();
+  int isInJointLimit(void);
+  bool singularityTest(const vpColVector &q, vpMatrix &J);
+  void updateArticularPosition();
+  //@}
 };
 
 #endif

@@ -36,26 +36,29 @@
  *
  *****************************************************************************/
 
-
 #ifndef __vpPoseException_H
 #define __vpPoseException_H
 
-
-/* ------------------------------------------------------------------------- */
-/* --- INCLUDE ------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
-
+/* -------------------------------------------------------------------------
+ */
+/* --- INCLUDE -------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /* Classes standards. */
 
 #include <visp3/core/vpException.h>
 
-#include <iostream>                /* Classe std::ostream.    */
-#include <string>                  /* Classe string.     */
+#include <iostream> /* Classe std::ostream.    */
+#include <string>   /* Classe string.     */
 
-/* ------------------------------------------------------------------------- */
-/* --- CLASS --------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+ */
+/* --- CLASS ---------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /*!
   \class vpPoseException
@@ -64,37 +67,37 @@
  */
 class VISP_EXPORT vpPoseException : public vpException
 {
-  public:
-    /*!
-    \brief Lists the possible error than can be emmited while calling
-    vpPose member
-   */
-    enum errorCodeEnum
-    {
-      poseError,
-      //! something is not initialized
-      notInitializedError,
-      //! function not implemented
-      notImplementedERR,
-      //! index out of range
-      outOfRangeError,
-      notEnoughPointError
-    } ;
+public:
+  /*!
+  \brief Lists the possible error than can be emmited while calling
+  vpPose member
+ */
+  enum errorCodeEnum {
+    poseError,
+    //! something is not initialized
+    notInitializedError,
+    //! function not implemented
+    notImplementedERR,
+    //! index out of range
+    outOfRangeError,
+    notEnoughPointError
+  };
 
-  public:
-    vpPoseException (const int id,  const char* format, ...)
-    {
-      this->code = id;
-      va_list args;
-      va_start(args, format);
-      setMessage(format, args);
-      va_end (args);
-    }
-    vpPoseException (const int id, const std::string & msg)
-      : vpException(id, msg){ ; }
-    explicit vpPoseException (const int id)
-      : vpException(id){ ; }
-    // vpPoseException() : vpException() { ;}
+public:
+  vpPoseException(const int id, const char *format, ...)
+  {
+    this->code = id;
+    va_list args;
+    va_start(args, format);
+    setMessage(format, args);
+    va_end(args);
+  }
+  vpPoseException(const int id, const std::string &msg) : vpException(id, msg)
+  {
+    ;
+  }
+  explicit vpPoseException(const int id) : vpException(id) { ; }
+  // vpPoseException() : vpException() { ;}
 };
 
 #endif

@@ -78,12 +78,14 @@
   \f]
 
   The forward kinematics of the robot is given by the homogeneous
-  matrix \f${^f}M_e\f$ which is implemented in get_fMe(). 
+  matrix \f${^f}M_e\f$ which is implemented in get_fMe().
 
   \f[
   {^f}M_e = \left[\begin{array}{cccc}
-  c_1s_4c_5+s_1c_4c_5  & -c_1s_4s_5-s_1c_4s_5 & c_1c_4-s_1s_4 &a_1c_1-d_3s_1 \\
-  s_1s_4c_5-c_1c_4c_5  & -s_1s_4s_5+c_1c_4s_5 & s_1c_4+c_1s_4 &a_1s_1+d_3c_1 \\
+  c_1s_4c_5+s_1c_4c_5  & -c_1s_4s_5-s_1c_4s_5 & c_1c_4-s_1s_4 &a_1c_1-d_3s_1
+  \\
+  s_1s_4c_5-c_1c_4c_5  & -s_1s_4s_5+c_1c_4s_5 & s_1c_4+c_1s_4 &a_1s_1+d_3c_1
+  \\
   -s_5 & -c_5  & d_4+q_2 \\
   0  &   0  &   0  &   1    \\
   \end{array}
@@ -99,59 +101,58 @@
 
 */
 
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBa.h>
-#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
-
 
 class VISP_EXPORT vpAfma4
 {
- public:
+public:
   vpAfma4();
   /*! Destructor that does nothing. */
-  virtual ~vpAfma4() {};
+  virtual ~vpAfma4(){};
 
   /** @name Inherited functionalities from vpAfma4 */
   //@{
-  void init (void);
+  void init(void);
 
-  vpHomogeneousMatrix getForwardKinematics(const vpColVector & q) const;
-/*   int getInverseKinematics(const vpHomogeneousMatrix & fMc, */
-/* 			   vpColVector & q, const bool &nearest=true); */
-  vpHomogeneousMatrix get_fMc (const vpColVector & q) const;
-  void get_fMe(const vpColVector & q, vpHomogeneousMatrix & fMe) const;
-  void get_fMc(const vpColVector & q, vpHomogeneousMatrix & fMc) const;
+  vpHomogeneousMatrix getForwardKinematics(const vpColVector &q) const;
+  /*   int getInverseKinematics(const vpHomogeneousMatrix & fMc, */
+  /* 			   vpColVector & q, const bool &nearest=true); */
+  vpHomogeneousMatrix get_fMc(const vpColVector &q) const;
+  void get_fMe(const vpColVector &q, vpHomogeneousMatrix &fMe) const;
+  void get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const;
 
   void get_cMe(vpHomogeneousMatrix &cMe) const;
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
-  void get_cVf(const vpColVector & q, vpVelocityTwistMatrix &cVf) const;
+  void get_cVf(const vpColVector &q, vpVelocityTwistMatrix &cVf) const;
   void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
   void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
   void get_fJe_inverse(const vpColVector &q, vpMatrix &fJe_inverse) const;
 
-  friend VISP_EXPORT std::ostream & operator << (std::ostream & os, const vpAfma4 & afma4);
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os,
+                                              const vpAfma4 &afma4);
 
   vpColVector getJointMin() const;
   vpColVector getJointMax() const;
   //@}
 
- public:
-
+public:
   static const unsigned int njoint; ///< Number of joint.
 
- protected:
+protected:
   // Denavit Hartenberg parameters
-  double _a1; // distance along x2
-  double _d3; // distance along z2
-  double _d4; // distance along z3
+  double _a1;           // distance along x2
+  double _d3;           // distance along z2
+  double _d4;           // distance along z3
   double _joint_max[4]; // Maximal value of the joints
   double _joint_min[4]; // Minimal value of the joints
 
   // Minimal representation of _eMc
   vpTranslationVector _etc; // meters
-  vpRxyzVector        _erc; // radian
+  vpRxyzVector _erc;        // radian
 
   vpHomogeneousMatrix _eMc; // Camera extrinsic parameters: effector to camera
 };
@@ -163,4 +164,3 @@ class VISP_EXPORT vpAfma4
  */
 
 #endif
-

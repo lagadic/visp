@@ -36,40 +36,41 @@
  *
  *****************************************************************************/
 
-
 /*!
   \example kinectAcquisition.cpp
 
-  \brief Example that shows how to acquire depth map and RGB images from a kinect device, and show the warped RGB frame
+  \brief Example that shows how to acquire depth map and RGB images from a
+  kinect device, and show the warped RGB frame
 
 */
 
-
-#include <visp3/core/vpConfig.h>
 #include <iostream>
+#include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES
 
-#if (defined (VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI))	
-
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) ||                     \
+     defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/core/vpTime.h>
+#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpKinect.h>
-#include <visp3/core/vpTime.h>
 
-int main() {
+int main()
+{
   try {
-    // Init Kinect
+// Init Kinect
 #ifdef VISP_HAVE_LIBFREENECT_OLD
-    // This is the way to initialize Freenect with an old version of libfreenect packages under ubuntu lucid 10.04
+    // This is the way to initialize Freenect with an old version of
+    // libfreenect packages under ubuntu lucid 10.04
     Freenect::Freenect<vpKinect> freenect;
-    vpKinect & kinect = freenect.createDevice(0);
+    vpKinect &kinect = freenect.createDevice(0);
 #else
     Freenect::Freenect freenect;
-    vpKinect & kinect = freenect.createDevice<vpKinect>(0);
+    vpKinect &kinect = freenect.createDevice<vpKinect>(0);
 #endif
 
     // Set tilt angle in degrees
@@ -78,17 +79,21 @@ int main() {
       kinect.setTiltDegrees(angle);
     }
 
-    // Init display
+// Init display
 #if 1
-    kinect.start(vpKinect::DMAP_MEDIUM_RES); // Start acquisition thread with a depth map resolution of 480x640
-    vpImage<unsigned char> Idmap(480,640);//for medium resolution
-    vpImage<float> dmap(480,640);//for medium resolution
+    kinect.start(vpKinect::DMAP_MEDIUM_RES); // Start acquisition thread with
+                                             // a depth map resolution of
+                                             // 480x640
+    vpImage<unsigned char> Idmap(480, 640);  // for medium resolution
+    vpImage<float> dmap(480, 640);           // for medium resolution
 #else
-    kinect.start(vpKinect::DMAP_LOW_RES); // Start acquisition thread with a depth map resolution of 240x320 (default resolution)
-    vpImage<unsigned char> Idmap(240,320);//for low resolution
-    vpImage<float> dmap(240,320);//for low resolution
+    kinect.start(vpKinect::DMAP_LOW_RES);   // Start acquisition thread with a
+                                            // depth map resolution of 240x320
+                                            // (default resolution)
+    vpImage<unsigned char> Idmap(240, 320); // for low resolution
+    vpImage<float> dmap(240, 320);          // for low resolution
 #endif
-    vpImage<vpRGBa> Irgb(480,640),Iwarped(480,640);
+    vpImage<vpRGBa> Irgb(480, 640), Iwarped(480, 640);
 
 #if defined VISP_HAVE_X11
     vpDisplayX display, displayRgb, displayRgbWarped;
@@ -106,15 +111,15 @@ int main() {
     vpDisplayGDI displayRgbWarped;
 #endif
 
-    display.init(Idmap, 100, 200,"Depth map");
-    displayRgb.init(Irgb, 900, 200,"Color Image");
-    displayRgbWarped.init(Iwarped,900,700,"Warped Color Image");
+    display.init(Idmap, 100, 200, "Depth map");
+    displayRgb.init(Irgb, 900, 200, "Color Image");
+    displayRgbWarped.init(Iwarped, 900, 700, "Warped Color Image");
 
     // A click to stop acquisition
     std::cout << "Click in one image to stop acquisition" << std::endl;
 
-    while(!vpDisplay::getClick(Idmap,false) && !vpDisplay::getClick(Irgb,false))
-    {
+    while (!vpDisplay::getClick(Idmap, false) &&
+           !vpDisplay::getClick(Irgb, false)) {
       kinect.getDepthMap(dmap);
       kinect.getDepthMap(dmap, Idmap);
       kinect.getRGB(Irgb);
@@ -124,20 +129,18 @@ int main() {
       vpDisplay::display(Irgb);
       vpDisplay::flush(Irgb);
 
-      //Warped RGB image:
-      kinect.warpRGBFrame(Irgb,dmap, Iwarped);
+      // Warped RGB image:
+      kinect.warpRGBFrame(Irgb, dmap, Iwarped);
       vpDisplay::display(Iwarped);
       vpDisplay::flush(Iwarped);
     }
     std::cout << "Stop acquisition" << std::endl;
     kinect.stop(); // Stop acquisition thread
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
-  }
-  catch(...) {
+  } catch (...) {
     std::cout << "Catch an exception " << std::endl;
     return 1;
   }
@@ -145,20 +148,19 @@ int main() {
 
 #else
 
-int
-main()
+int main()
 {
-  std::cout << "You should install a video device (X11, GTK, OpenCV, GDI) to run this example" << std::endl;
+  std::cout << "You should install a video device (X11, GTK, OpenCV, GDI) to "
+               "run this example"
+            << std::endl;
 }
 #endif
 
 #else
-int
-main()
+int main()
 {
-  std::cout << "You should install libfreenect to run this example" << std::endl;
+  std::cout << "You should install libfreenect to run this example"
+            << std::endl;
 }
 
 #endif
-
-

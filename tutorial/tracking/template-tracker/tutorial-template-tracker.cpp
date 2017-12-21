@@ -1,23 +1,25 @@
 /*! \example tutorial-template-tracker.cpp */
 #include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpVideoReader.h>
 //! [Include]
 #include <visp3/tt/vpTemplateTrackerSSDInverseCompositional.h>
 #include <visp3/tt/vpTemplateTrackerWarpHomography.h>
 //! [Include]
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100) 
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   std::string videoname = "bruegel.mpg";
 
-  for (int i=0; i<argc; i++) {
+  for (int i = 0; i < argc; i++) {
     if (std::string(argv[i]) == "--videoname")
-      videoname = std::string(argv[i+1]);
+      videoname = std::string(argv[i + 1]);
     else if (std::string(argv[i]) == "--help") {
-      std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--help]\n" << std::endl;
+      std::cout << "\nUsage: " << argv[0]
+                << " [--name <video name>] [--help]\n"
+                << std::endl;
       return 0;
     }
   }
@@ -58,7 +60,7 @@ int main(int argc, char** argv)
   tracker.initClick(I);
   //! [Init]
 
-  while(1){
+  while (1) {
     g.acquire(I);
     vpDisplay::display(I);
 

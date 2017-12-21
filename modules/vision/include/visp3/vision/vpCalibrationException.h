@@ -39,23 +39,27 @@
 #ifndef __vpCalibrationException_H
 #define __vpCalibrationException_H
 
-
-/* ------------------------------------------------------------------------- */
-/* --- INCLUDE ------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
-
+/* -------------------------------------------------------------------------
+ */
+/* --- INCLUDE -------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /* Classes standards. */
 //
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#include <iostream>                /* Classe std::ostream.    */
-#include <string>                  /* Classe string.     */
+#include <iostream> /* Classe std::ostream.    */
+#include <string>   /* Classe string.     */
 
-/* ------------------------------------------------------------------------- */
-/* --- CLASS --------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+ */
+/* --- CLASS ---------------------------------------------------------------
+ */
+/* -------------------------------------------------------------------------
+ */
 
 /*!
 
@@ -64,39 +68,40 @@
  */
 class VISP_EXPORT vpCalibrationException : public vpException
 {
-  public:
-    /*!
-    \brief Lists the possible error than can be emmited while calling
-    vpCalibration member
-   */
-    enum errorCodeEnum
-    {
-      //! error returns by a constructor
-      constructionError,
-      //! something is not initialized
-      notInitializedError,
-      //! function not implemented
-      notImplementedError,
-      //! index out of range
-      outOfRangeError,
-      //! iterative algorithm doesn't converge
-      convergencyError,
-      forbiddenOperatorError,
-    } ;
+public:
+  /*!
+  \brief Lists the possible error than can be emmited while calling
+  vpCalibration member
+ */
+  enum errorCodeEnum {
+    //! error returns by a constructor
+    constructionError,
+    //! something is not initialized
+    notInitializedError,
+    //! function not implemented
+    notImplementedError,
+    //! index out of range
+    outOfRangeError,
+    //! iterative algorithm doesn't converge
+    convergencyError,
+    forbiddenOperatorError,
+  };
 
-  public:
-    vpCalibrationException (const int id,  const char* format, ...)
-    {
-      this->code = id;
-      va_list args;
-      va_start(args, format);
-      setMessage(format, args);
-      va_end (args);
-    }
-    vpCalibrationException (const int id, const std::string & msg)
-      : vpException(id, msg){ ; }
-    explicit vpCalibrationException (const int id)
-      : vpException(id){ ; }
+public:
+  vpCalibrationException(const int id, const char *format, ...)
+  {
+    this->code = id;
+    va_list args;
+    va_start(args, format);
+    setMessage(format, args);
+    va_end(args);
+  }
+  vpCalibrationException(const int id, const std::string &msg)
+    : vpException(id, msg)
+  {
+    ;
+  }
+  explicit vpCalibrationException(const int id) : vpException(id) { ; }
 };
 
 #endif

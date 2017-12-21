@@ -42,18 +42,15 @@
   Test some vpExponentialMap functionalities.
 */
 
-
-#include <visp3/core/vpTranslationVector.h>
-#include <visp3/core/vpRotationVector.h>
-#include <visp3/core/vpThetaUVector.h>
-#include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpExponentialMap.h>
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpRotationVector.h>
+#include <visp3/core/vpRxyzVector.h>
+#include <visp3/core/vpThetaUVector.h>
+#include <visp3/core/vpTranslationVector.h>
 
-
-int
-main()
+int main()
 {
   try {
     vpTranslationVector t;
@@ -72,9 +69,9 @@ main()
 
     vpColVector v(6); // Velocity vector [t, thetaU]^t
 
-    v[0] = t[0]; // t_x
-    v[1] = t[1]; // t_y
-    v[2] = t[2]; // t_z
+    v[0] = t[0];  // t_x
+    v[1] = t[1];  // t_y
+    v[2] = t[2];  // t_z
     v[3] = tu[0]; // ThetaU_x
     v[4] = tu[1]; // ThetaU_y
     v[5] = tu[2]; // ThetaU_z
@@ -123,8 +120,7 @@ main()
     std::cout << "Velocity from displacement observed during 2 s: \n"
               << v << std::endl;
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

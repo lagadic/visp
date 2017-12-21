@@ -38,16 +38,15 @@
  *
  *****************************************************************************/
 
-#include <visp3/vision/vpPose.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpMath.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/vision/vpPose.h>
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define L 0.1
-
 
 /*!
   \example testPoseRansac.cpp
@@ -56,57 +55,55 @@
 
 */
 
-int
-main()
+int main()
 {
   try {
     std::cout << "Pose computation with matched points" << std::endl;
-    std::vector<vpPoint> P;  //  Point to be tracked
+    std::vector<vpPoint> P; //  Point to be tracked
 
-    P.push_back( vpPoint(-L,-L, 0 ) );
-    P.push_back( vpPoint(L,-L, 0 ) );
-    P.push_back( vpPoint(L,L, 0 ) );
-    P.push_back( vpPoint(-L,L, 0 ) );
-    
-    double L2 = L*3.0;
-    P.push_back( vpPoint(0,-L2, 0 ) );
-    P.push_back( vpPoint(L2,0, 0 ) );
-    P.push_back( vpPoint(0,L2, 0 ) );
-    P.push_back( vpPoint(-L2,0, 0 ) );
-    
-    vpHomogeneousMatrix cMo_ref(0, 0.2, 1, 0, 0, 0) ;
-    for(size_t i=0 ; i < P.size(); i++)
-    {
-      P[i].project(cMo_ref) ;
-      P[i].print() ;
+    P.push_back(vpPoint(-L, -L, 0));
+    P.push_back(vpPoint(L, -L, 0));
+    P.push_back(vpPoint(L, L, 0));
+    P.push_back(vpPoint(-L, L, 0));
+
+    double L2 = L * 3.0;
+    P.push_back(vpPoint(0, -L2, 0));
+    P.push_back(vpPoint(L2, 0, 0));
+    P.push_back(vpPoint(0, L2, 0));
+    P.push_back(vpPoint(-L2, 0, 0));
+
+    vpHomogeneousMatrix cMo_ref(0, 0.2, 1, 0, 0, 0);
+    for (size_t i = 0; i < P.size(); i++) {
+      P[i].project(cMo_ref);
+      P[i].print();
       std::cout << std::endl;
     }
 
-    //Introduce an error
+    // Introduce an error
     double error = 0.01;
-    P[3].set_y(P[3].get_y() + 2*error);
+    P[3].set_y(P[3].get_y() + 2 * error);
     P[6].set_x(P[6].get_x() + error);
-    
+
     vpPose pose;
-    for(size_t i=0 ; i < P.size() ; i++)
+    for (size_t i = 0; i < P.size(); i++)
       pose.addPoint(P[i]);
-    
-    unsigned int nbInlierToReachConsensus = (unsigned int)(75.0 * (double)(P.size()) / 100.0);
+
+    unsigned int nbInlierToReachConsensus =
+        (unsigned int)(75.0 * (double)(P.size()) / 100.0);
     double threshold = 0.001;
-    
+
     pose.setRansacNbInliersToReachConsensus(nbInlierToReachConsensus);
     pose.setRansacThreshold(threshold);
-    
-    vpHomogeneousMatrix cMo ;
-    //vpPose::ransac(lp,lP, 5, 1e-6, ninliers, lPi, cMo) ;
+
+    vpHomogeneousMatrix cMo;
+    // vpPose::ransac(lp,lP, 5, 1e-6, ninliers, lPi, cMo) ;
     pose.computePose(vpPose::RANSAC, cMo);
-    
+
     std::vector<vpPoint> inliers = pose.getRansacInliers();
-    
+
     std::cout << "Inliers: " << std::endl;
-    for (unsigned int i = 0; i < inliers.size() ; i++)
-    {
-      inliers[i].print() ;
+    for (unsigned int i = 0; i < inliers.size(); i++) {
+      inliers[i].print();
       std::cout << std::endl;
     }
 
@@ -114,19 +111,23 @@ main()
     vpPoseVector pose_est = vpPoseVector(cMo);
 
     std::cout << std::endl;
-    std::cout << "reference cMo :\n" << pose_ref.t() << std::endl << std::endl;
-    std::cout << "estimated cMo :\n" << pose_est.t() << std::endl << std::endl;
+    std::cout << "reference cMo :\n"
+              << pose_ref.t() << std::endl
+              << std::endl;
+    std::cout << "estimated cMo :\n"
+              << pose_est.t() << std::endl
+              << std::endl;
 
     int test_fail = 0;
-    for(unsigned int i=0; i<6; i++) {
-      if (std::fabs(pose_ref[i]-pose_est[i]) > 0.001)
+    for (unsigned int i = 0; i < 6; i++) {
+      if (std::fabs(pose_ref[i] - pose_est[i]) > 0.001)
         test_fail = 1;
     }
 
-    std::cout << "Pose is " << (test_fail ? "badly" : "well") << " estimated" << std::endl;
+    std::cout << "Pose is " << (test_fail ? "badly" : "well") << " estimated"
+              << std::endl;
     return test_fail;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

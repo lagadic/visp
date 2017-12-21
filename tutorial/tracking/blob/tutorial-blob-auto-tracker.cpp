@@ -1,8 +1,8 @@
 //! \example tutorial-blob-auto-tracker.cpp
+#include <visp3/blob/vpDot2.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/blob/vpDot2.h>
 #include <visp3/io/vpImageIo.h>
 
 int main()
@@ -38,14 +38,16 @@ int main()
       std::cout << "Blob characteristics: " << std::endl;
       std::cout << " width : " << blob.getWidth() << std::endl;
       std::cout << " height: " << blob.getHeight() << std::endl;
-#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
+#if VISP_VERSION_INT > VP_VERSION_INT(2, 7, 0)
       std::cout << " area: " << blob.getArea() << std::endl;
 #endif
       std::cout << " gray level min: " << blob.getGrayLevelMin() << std::endl;
       std::cout << " gray level max: " << blob.getGrayLevelMax() << std::endl;
-      std::cout << " grayLevelPrecision: " << blob.getGrayLevelPrecision() << std::endl;
+      std::cout << " grayLevelPrecision: " << blob.getGrayLevelPrecision()
+                << std::endl;
       std::cout << " sizePrecision: " << blob.getSizePrecision() << std::endl;
-      std::cout << " ellipsoidShapePrecision: " << blob.getEllipsoidShapePrecision() << std::endl;
+      std::cout << " ellipsoidShapePrecision: "
+                << blob.getEllipsoidShapePrecision() << std::endl;
     }
     //! [Learn]
     //! [Setting]
@@ -53,7 +55,7 @@ int main()
       // Set blob characteristics for the auto detection
       blob.setWidth(50);
       blob.setHeight(50);
-#if VISP_VERSION_INT > VP_VERSION_INT(2,7,0)
+#if VISP_VERSION_INT > VP_VERSION_INT(2, 7, 0)
       blob.setArea(1700);
 #endif
       blob.setGrayLevelMin(0);
@@ -71,19 +73,21 @@ int main()
 
     //! [Add learned dot]
     if (learn) {
-      // The blob that is tracked by initTracking() is not in the list of auto detected blobs
-      // We add it:
+      // The blob that is tracked by initTracking() is not in the list of auto
+      // detected blobs We add it:
       blob_list.push_back(blob);
     }
     //! [Add learned dot]
-    std::cout << "Number of auto detected blob: " << blob_list.size() << std::endl;
+    std::cout << "Number of auto detected blob: " << blob_list.size()
+              << std::endl;
     std::cout << "A click to exit..." << std::endl;
 
-    while(1) {
+    while (1) {
       vpDisplay::display(I);
 
       //! [Display]
-      for(std::list<vpDot2>::iterator it=blob_list.begin(); it != blob_list.end(); ++it) {
+      for (std::list<vpDot2>::iterator it = blob_list.begin();
+           it != blob_list.end(); ++it) {
         (*it).setGraphics(true);
         (*it).setGraphicsThickness(3);
         (*it).track(I);
@@ -97,8 +101,7 @@ int main()
 
       vpTime::wait(40);
     }
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

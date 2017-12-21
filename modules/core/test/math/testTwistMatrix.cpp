@@ -42,24 +42,21 @@
   \brief Test some vpMatrix functionalities.
 */
 
-
-
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
+#include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRxyzVector.h>
 #include <visp3/core/vpTranslationVector.h>
-#include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
-int
-main()
+int main()
 {
   try {
     vpTRACE("--------------------------");
@@ -74,9 +71,9 @@ main()
 
     // Set the rotation
     vpRxyzVector cre;
-    cre[0] =  M_PI/2.;
-    cre[1] = -M_PI/2.;
-    cre[2] = -M_PI/4.;
+    cre[0] = M_PI / 2.;
+    cre[1] = -M_PI / 2.;
+    cre[2] = -M_PI / 4.;
 
     // Build rotation matrix
     vpRotationMatrix cRe(cre);
@@ -85,7 +82,7 @@ main()
     vpVelocityTwistMatrix cVe(cte, cRe);
 
     vpTRACE("cVe twist matrix:");
-    cVe.print (std::cout, 6);
+    cVe.print(std::cout, 6);
 
     // Set a speed skew
     vpColVector ev(6);
@@ -93,12 +90,12 @@ main()
     ev[0] = 1.;
     ev[1] = 0.1;
     ev[2] = -0.5;
-    ev[3] = M_PI/180.;
-    ev[4] = M_PI/18.;
-    ev[5] = M_PI/10.;
+    ev[3] = M_PI / 180.;
+    ev[4] = M_PI / 18.;
+    ev[5] = M_PI / 10.;
 
     vpTRACE("ev colvector:");
-    ev.print (std::cout, 6);
+    ev.print(std::cout, 6);
 
     // Set a speed skew
     vpColVector cv;
@@ -106,10 +103,9 @@ main()
     cv = cVe * ev;
 
     vpTRACE("cv = cVe * ev:");
-    cv.print (std::cout, 6);
+    cv.print(std::cout, 6);
     return 0;
-  }
-  catch(vpException &e) {
+  } catch (vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return 1;
   }

@@ -47,7 +47,7 @@
 
 #include "vpBound.h"
 
-void parser (Bound_scene *bsp);
+void parser(Bound_scene *bsp);
 
 #endif
 #endif
