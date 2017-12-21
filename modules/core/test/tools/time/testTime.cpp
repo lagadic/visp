@@ -48,8 +48,8 @@
                          (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <unistd.h>
 #elif defined(_WIN32)
-#include <mmsystem.h>
-#include <winbase.h>
+//#include <mmsystem.h>
+//#include <winbase.h>
 #include <windows.h>
 #endif
 #include <cmath>
