@@ -1,17 +1,19 @@
 // Copyright (c) 2017 Franka Emika GmbH
 // Use of this source code is governed by the Apache-2.0 license, see LICENSE
-#include <array>
-#include <atomic>
-#include <cmath>
-#include <functional>
+
 #include <iostream>
-#include <iterator>
-#include <mutex>
-#include <thread>
 
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_FRANKA
+
+#include <array>
+#include <atomic>
+#include <cmath>
+#include <functional>
+#include <iterator>
+#include <mutex>
+#include <thread>
 
 #include <franka/duration.h>
 #include <franka/exception.h>
