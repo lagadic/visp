@@ -5,13 +5,14 @@
      Copyright (C) 2005 - 2017 by Inria. All rights reserved.
                       https://visp.inria.fr
 
-ViSP 3.1.0 (under development)
+ViSP 3.1.0 (released December 22nd, 2017)
   - Contributors:
     . This release was possible thanks to contributions from Fabien Spindler,
       Souriya Trinh, Wenfeng Cai, Oleksandr Borysov, Marc Pouliquen, Ronald Ensing,
       Yuriy Baranov, Jason Chevie
-    . Google Summer of Code 2017: Vikas Thamizharasan that developed for the model-based
-      tracker Blender import/export CAD model plugins and a Qt-based CAD model viewer
+    . Google Summer of Code 2017: Vikas Thamizharasan that developed for the
+      model-based tracker Blender import/export CAD model plugins and a Qt-based
+      CAD model viewer
   - New features
     . Improve vpRealSense to better support R200 device
     . Improve vpConfig.h header content to remove path to build tree when installed
@@ -38,13 +39,16 @@ ViSP 3.1.0 (under development)
     . Introduce AppVeyor check for continuous integration (MSVC + mingw-w64)
     . Fix slow acquisition of color pointcloud with RealSense camera
     . Improve vpIoTools to make recursive folder and sort files
-    . Add display of polygon lines (vpDisplay::displayLine() / vpDisplay::displayDotLine())
+    . Add display of polygon lines (vpDisplay::displayLine() /
+      vpDisplay::displayDotLine())
     . Add CPU capabilities check
     . Improve VISP_INPUT_IMAGE_PATH env var usage to get more flexibility
     . Update ViSP license to GPLv2 or later
     . Introduce new imgproc module dedicated to image processing and tutorials
     . Add UDP client / server
     . Add compat with Intel Compiler icc
+    . Add new class vpRealSense2 to support Realsense 2 SDK
+    . Add Franka Control Interface C++ API detection and native examples from Franka
   - Tutorials
     . New tutorial: How to extend ViSP creating a new contrib module
     . New tutorial: AprilTag marker detection on iOS
