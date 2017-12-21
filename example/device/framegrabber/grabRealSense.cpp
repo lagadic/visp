@@ -183,7 +183,7 @@ int main()
 #ifdef VISP_HAVE_PCL
         rs.acquire( (unsigned char *) color.bitmap, (unsigned char *) depth.bitmap, NULL, pointcloud, (unsigned char *) infrared_display.bitmap );
 #else
-        rs.acquire( (unsigned char *) color.bitmap, (unsigned char *) depth.bitmap, NULL, (unsigned char *) infrared_y8.bitmap );
+        rs.acquire( (unsigned char *) color.bitmap, (unsigned char *) depth.bitmap, NULL, (unsigned char *) infrared_display.bitmap );
 #endif
       }
 
