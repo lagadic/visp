@@ -418,10 +418,12 @@ void vpDetectorAprilTag::setAprilTagPoseEstimationMethod(
 
 /*!
   From the AprilTag code:
+  <blockquote>
   detection of quads can be done on a lower-resolution image,
   improving speed at a cost of pose accuracy and a slight
   decrease in detection rate. Decoding the binary payload is
   still done at full resolution.
+  </blockquote>
   Default is 1.0, increase this value to reduce the computation time.
 
   \param quadDecimate : Value for quad_decimate.
@@ -433,10 +435,12 @@ void vpDetectorAprilTag::setAprilTagQuadDecimate(const float quadDecimate)
 
 /*!
   From the AprilTag code:
+  <blockquote>
   What Gaussian blur should be applied to the segmented image
   (used for quad detection?)  Parameter is the standard deviation
   in pixels.  Very noisy images benefit from non-zero values
   (e.g. 0.8).
+  </blockquote>
   Default is 0.0.
 
   \param quadSigma : Value for quad_sigma.
@@ -448,10 +452,12 @@ void vpDetectorAprilTag::setAprilTagQuadSigma(const float quadSigma)
 
 /*!
   From the AprilTag code:
+  <blockquote>
   when non-zero, detections are refined in a way intended to
   increase the number of detected tags. Especially effective for
   very small tags near the resolution threshold (e.g. 10px on a
   side).
+  </blockquote>
   Default is 0.
 
   \param refineDecode : If true, set refine_decode to 1.
@@ -463,12 +469,14 @@ void vpDetectorAprilTag::setAprilTagRefineDecode(const bool refineDecode)
 
 /*!
   From the AprilTag code:
+  <blockquote>
   When non-zero, the edges of the each quad are adjusted to "snap
   to" strong gradients nearby. This is useful when decimation is
   employed, as it can increase the quality of the initial quad
   estimate substantially. Generally recommended to be on (1).
   Very computationally inexpensive. Option is ignored if
   quad_decimate = 1.
+  </blockquote>
   Default is 1.
 
   \param refineEdges : If true, set refine_edges to 1.
@@ -480,6 +488,7 @@ void vpDetectorAprilTag::setAprilTagRefineEdges(const bool refineEdges)
 
 /*!
   From the AprilTag code:
+  <blockquote>
   when non-zero, detections are refined in a way intended to
   increase the accuracy of the extracted pose. This is done by
   maximizing the contrast around the black and white border of
@@ -488,6 +497,7 @@ void vpDetectorAprilTag::setAprilTagRefineEdges(const bool refineEdges)
   refine_decode.
   This option must be enabled in order for "goodness" to be
   computed.
+  </blockquote>
   Default is 0.
 
   \param refinePose : If true, set refine_pose to 1.
